@@ -1,176 +1,285 @@
-Return-Path: <linux-kernel+bounces-593551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53DF8A7FA75
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:56:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD6F8A7FAC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D9B23B16B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:54:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 237CC440DEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A927F267F70;
-	Tue,  8 Apr 2025 09:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WHv5fXN7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E307A267B78
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F5726B962;
+	Tue,  8 Apr 2025 09:53:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C424B26772C;
+	Tue,  8 Apr 2025 09:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744105946; cv=none; b=stAFBxo9LEPHrD8PtfhnWtHSqANc16jV92SCd4K1g7R2wfSCJXL63tmKdVbT/eorGAqzt2B9xXYMq64bUX5EbuWlKTk0cy5ZDVZDGsCL/038v5TZjwxR5NAUXXlyJdxJOHyB0fd8aDobNvx4sZFwUvkS6+gas24ZlWllqQpAQdE=
+	t=1744106030; cv=none; b=Woo2fzWOcWpy3rgNCVfVYUnNp6uDJU89utY0YJoA9B1ZdNczkl5r7pK0l8yK/FAfg0XIQ3OwvC1K/zPjpdNzm5o7whJ6EtBdOctDf5zHKKJZ2ElL457N1dSLU92Him7jp6YSXkIbNv1GrNEupl9tJB5DuGZvO4pm8M3NloHeSOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744105946; c=relaxed/simple;
-	bh=60csaoMkd9b4BLus/GgeNpMVPuRHpVoH48hsGkF0brA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SMAIVB0TjuucLYludLvvCy+whpFFtB4KWzK4s7/FskSsusfgJK5vvKYQtzPrnoHUj/atnBRSimnfTfExQzRRVWii7lxZHiqMitIF7554h9tBABZ1KpHqTFkE1T/w2aycgrx820aF/hHja8sXB2Qa3UB/nryQwIfj1IhRTNMqrFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WHv5fXN7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744105943;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5OZHISnONE4t2902PGwoKIvjQlqckwAUXfpsZ5bT8VE=;
-	b=WHv5fXN7u0YVP7eRLfdCTTD5Zp4RrYncUC6E3wXZ/cheLbRO9uuXiARy4V3Zyxt0R6y6zZ
-	sBwo1KuWHW0Xjr40LpzkUcjCvEuFB6BTGIlGsnbDZ9N809U9yU3UcwniyXHOj/MkBmcB3d
-	0d8M78Ir09aILe2Fwv/AMcz6/kPXrjM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-524-1P6Jm_EpMqq7ujURnNKtJA-1; Tue, 08 Apr 2025 05:52:22 -0400
-X-MC-Unique: 1P6Jm_EpMqq7ujURnNKtJA-1
-X-Mimecast-MFC-AGG-ID: 1P6Jm_EpMqq7ujURnNKtJA_1744105941
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-39c1b1c0969so4584384f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 02:52:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744105941; x=1744710741;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5OZHISnONE4t2902PGwoKIvjQlqckwAUXfpsZ5bT8VE=;
-        b=eza+mW300f+EOaPCW8pwPuxviyZaRHYHbbyJwo7LiP6ZR9BZMhrsdCyL4hX57d4oF2
-         ceNUVnWx1gA2RJtksYnJnYeM1TT35uKjG9T4NEWMRV4Ojwy570qHWgvaxz1DiIaJzD3y
-         Qq36ys86BJrcosm0ZG57jeBm3lK283esmAtutIuv2sp56xUVi6MeYWkPmzaLzPQcsBzq
-         9yrbwbPLGIJ5hKK6uaOFlgqpTr+2ah+XFRYjfdnN35zJW8YkOV78ifRdq5nDxfAimo2z
-         Xw24IKZXx6b8+RXfpIegdLHFxQ0928bmRmqgFZj0lNvtcxN9FHPjediDaV+sGeGXDSAz
-         KpnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyGcbDfNBVmJ+I4/jb9FQkrF66pJ78kr7KQ+SNWyTDgm9YW2oS4BcTpp26MNGWW57sh7+sZ0aH4gF4nc4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8jYStoCD9al0bcO2PmLW+Nag/GPl/AOcqATsTFg3qCi0tjng+
-	4JcbKtOM/d/n5BHMtl+jfg+leJ+8nmyvB7TWpaChsP0FrY5HwBlIh5IrMO5f9xf33sxU0MDqiBp
-	ENyQQnzrPSVf80t0Zpz4aD0UbPwh5QOvXOlh8z4yqQ0UzEz1BgLV/w7Sdki5Zbg==
-X-Gm-Gg: ASbGncvLopEWi1zmhavyhWrl8npYeqFqxg4yrdGmSG08rtJ40n1yn1WEukPIrXH5wqs
-	dYO9KFlVeQ7poC1dbUNnQroJUQF0YXWpilqiXHFvujspmfZlTfWn2e6eBiRUbyfGM3Kjf/cyjsK
-	DbFI5e6KMUqj2PbQsioF514oHzgvfLDMHAvHral73pECypKnK5Xz/7ka61XhvpS0Zcpa1YGMNaA
-	y0lUgWYflkFV0N+YTKfR1FjeLkYxmu76YoBfahL1zUyZAiMsZvxTR3zcqch0CpsTVZYtOqXVGhK
-	EHLA4UY4ew9HhKEnIA4ga2boFdoKhix6zZXG9gvhYRQzcRtFQA+FQHbpNKybJF7zNr2ikhxgiGd
-	rMayw4Yc+dKnXrc0Zz7lZAeee+z0tTn7p3euGK4WQ
-X-Received: by 2002:a05:6000:2702:b0:39c:1257:cc28 with SMTP id ffacd0b85a97d-39cbc73213cmr8872982f8f.59.1744105940822;
-        Tue, 08 Apr 2025 02:52:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF2gVGfjfruzCCWFTilzPtgfgunNMxeHGGBQBFO5rsVQP+31PZLP2Be7Tye6UxULUDwvgznqQ==
-X-Received: by 2002:a05:6000:2702:b0:39c:1257:cc28 with SMTP id ffacd0b85a97d-39cbc73213cmr8872975f8f.59.1744105940450;
-        Tue, 08 Apr 2025 02:52:20 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c707:4f00:a44a:5ad6:765a:635? (p200300cbc7074f00a44a5ad6765a0635.dip0.t-ipconnect.de. [2003:cb:c707:4f00:a44a:5ad6:765a:635])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c301a727bsm14307091f8f.27.2025.04.08.02.52.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Apr 2025 02:52:20 -0700 (PDT)
-Message-ID: <c8bc199d-30e1-4f0c-868c-6cbab1fbc747@redhat.com>
-Date: Tue, 8 Apr 2025 11:52:18 +0200
+	s=arc-20240116; t=1744106030; c=relaxed/simple;
+	bh=dOf1JRoMub1nYzFKZp8phk8MhMzCLqdcpqvhC8KTFh0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fUuIvfqsO8wZbrIHgPY3TM/RrisBbbmPIiacP18oe0hFzqmJw1VFQMVfuGDG0TbRh4AobsrW8dkDGIcDZPS016dYYGUjabF9WSri5YOnpVWT9lQJDeB5vRN/gZE06+7EhAeTAv0q/2rNMjcMpb1W9/AxlNyT9qv3F1R2rheZ1us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC0D71688;
+	Tue,  8 Apr 2025 02:53:48 -0700 (PDT)
+Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ABBF53F6A8;
+	Tue,  8 Apr 2025 02:53:43 -0700 (PDT)
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-openrisc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	sparclinux@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH v2 08/12] arm64: mm: Use enum to identify pgtable level instead of *_SHIFT
+Date: Tue,  8 Apr 2025 10:52:18 +0100
+Message-ID: <20250408095222.860601-9-kevin.brodsky@arm.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250408095222.860601-1-kevin.brodsky@arm.com>
+References: <20250408095222.860601-1-kevin.brodsky@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] mm/gup: fix wrongly calculated returned value in
- fault_in_safe_writeable()
-To: Baoquan He <bhe@redhat.com>, linux-mm@kvack.org
-Cc: akpm@linux-foundation.org, osalvador@suse.de, mingo@kernel.org,
- yanjun.zhu@linux.dev, linux-kernel@vger.kernel.org
-References: <20250407030306.411977-1-bhe@redhat.com>
- <20250407030306.411977-2-bhe@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250407030306.411977-2-bhe@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 07.04.25 05:03, Baoquan He wrote:
-> Not like fault_in_readable() or fault_in_writeable(), in
-> fault_in_safe_writeable() local variable 'start' is increased page
-> by page to loop till the whole address range is handled. However,
-> it mistakenly calcalates the size of handled range with 'uaddr - start'.
-> 
-> Here fix the code bug in fault_in_safe_writeable(), and also adjusting
-> the codes in fault_in_readable() and fault_in_writeable() to use local
-> variable 'start' to loop so that codes in these three functions are
-> consistent.
-> 
+Commit 90292aca9854 ("arm64: mm: use appropriate ctors for page
+tables") introduced pgtable ctor calls in pgd_pgtable_alloc(). To
+identify the pgtable level and call the appropriate ctor, the
+*_SHIFT value associated with the pgtable level is used. However,
+those values do not unambiguously identify a level, because if a
+given level is folded, the *_SHIFT value will be equal to that of
+the upper level (e.g. PMD_SHIFT == PUD_SHIFT if PMD is folded).
 
-I probably phrased it poorly in my other reply: the confusing part (to 
-me) is adjusting "start". Maybe we should have unsigned long start,end,cur;
+As things stand, there is probably not much damaged done by calling
+the ctor for a different level, and ARCH_ENABLE_SPLIT_PMD_PTLOCK is
+only selected if PMD isn't folded (so we don't needlessly initialise
+pmd_ptlock). Still, this is pretty confusing, and it would get even
+more confusing when adding ctor calls for the remaining levels.
 
-Maybe we should really split the "fix" from the cleanups, and tag the 
-fix with a Fixes:.
+Let's simplify all this by using an enum to identify the pgtable
+level instead; this way folding becomes irrelevant. This is inspired
+by one of the m68k pgtable allocators
+(arch/m68k/include/asm/motorola_pgalloc.h).
 
-I was wondering if these functions could be simplified a bit. But the 
-overflow handling is a bit nasty.
+Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+---
+ arch/arm64/mm/mmu.c | 54 +++++++++++++++++++++++++++------------------
+ 1 file changed, 33 insertions(+), 21 deletions(-)
 
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 8c5c471cfb06..eca324b3a6fc 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -46,6 +46,13 @@
+ #define NO_CONT_MAPPINGS	BIT(1)
+ #define NO_EXEC_MAPPINGS	BIT(2)	/* assumes FEAT_HPDS is not used */
+ 
++enum pgtable_type {
++	TABLE_PTE,
++	TABLE_PMD,
++	TABLE_PUD,
++	TABLE_P4D,
++};
++
+ u64 kimage_voffset __ro_after_init;
+ EXPORT_SYMBOL(kimage_voffset);
+ 
+@@ -107,7 +114,7 @@ pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+ }
+ EXPORT_SYMBOL(phys_mem_access_prot);
+ 
+-static phys_addr_t __init early_pgtable_alloc(int shift)
++static phys_addr_t __init early_pgtable_alloc(enum pgtable_type pgtable_type)
+ {
+ 	phys_addr_t phys;
+ 
+@@ -192,7 +199,7 @@ static void init_pte(pte_t *ptep, unsigned long addr, unsigned long end,
+ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+ 				unsigned long end, phys_addr_t phys,
+ 				pgprot_t prot,
+-				phys_addr_t (*pgtable_alloc)(int),
++				phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+ 				int flags)
+ {
+ 	unsigned long next;
+@@ -207,7 +214,7 @@ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+ 		if (flags & NO_EXEC_MAPPINGS)
+ 			pmdval |= PMD_TABLE_PXN;
+ 		BUG_ON(!pgtable_alloc);
+-		pte_phys = pgtable_alloc(PAGE_SHIFT);
++		pte_phys = pgtable_alloc(TABLE_PTE);
+ 		ptep = pte_set_fixmap(pte_phys);
+ 		init_clear_pgtable(ptep);
+ 		ptep += pte_index(addr);
+@@ -243,7 +250,7 @@ static void alloc_init_cont_pte(pmd_t *pmdp, unsigned long addr,
+ 
+ static void init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
+ 		     phys_addr_t phys, pgprot_t prot,
+-		     phys_addr_t (*pgtable_alloc)(int), int flags)
++		     phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags)
+ {
+ 	unsigned long next;
+ 
+@@ -277,7 +284,8 @@ static void init_pmd(pmd_t *pmdp, unsigned long addr, unsigned long end,
+ static void alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
+ 				unsigned long end, phys_addr_t phys,
+ 				pgprot_t prot,
+-				phys_addr_t (*pgtable_alloc)(int), int flags)
++				phys_addr_t (*pgtable_alloc)(enum pgtable_type),
++				int flags)
+ {
+ 	unsigned long next;
+ 	pud_t pud = READ_ONCE(*pudp);
+@@ -294,7 +302,7 @@ static void alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
+ 		if (flags & NO_EXEC_MAPPINGS)
+ 			pudval |= PUD_TABLE_PXN;
+ 		BUG_ON(!pgtable_alloc);
+-		pmd_phys = pgtable_alloc(PMD_SHIFT);
++		pmd_phys = pgtable_alloc(TABLE_PMD);
+ 		pmdp = pmd_set_fixmap(pmd_phys);
+ 		init_clear_pgtable(pmdp);
+ 		pmdp += pmd_index(addr);
+@@ -325,7 +333,7 @@ static void alloc_init_cont_pmd(pud_t *pudp, unsigned long addr,
+ 
+ static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+ 			   phys_addr_t phys, pgprot_t prot,
+-			   phys_addr_t (*pgtable_alloc)(int),
++			   phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+ 			   int flags)
+ {
+ 	unsigned long next;
+@@ -339,7 +347,7 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+ 		if (flags & NO_EXEC_MAPPINGS)
+ 			p4dval |= P4D_TABLE_PXN;
+ 		BUG_ON(!pgtable_alloc);
+-		pud_phys = pgtable_alloc(PUD_SHIFT);
++		pud_phys = pgtable_alloc(TABLE_PUD);
+ 		pudp = pud_set_fixmap(pud_phys);
+ 		init_clear_pgtable(pudp);
+ 		pudp += pud_index(addr);
+@@ -383,7 +391,7 @@ static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+ 
+ static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
+ 			   phys_addr_t phys, pgprot_t prot,
+-			   phys_addr_t (*pgtable_alloc)(int),
++			   phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+ 			   int flags)
+ {
+ 	unsigned long next;
+@@ -397,7 +405,7 @@ static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
+ 		if (flags & NO_EXEC_MAPPINGS)
+ 			pgdval |= PGD_TABLE_PXN;
+ 		BUG_ON(!pgtable_alloc);
+-		p4d_phys = pgtable_alloc(P4D_SHIFT);
++		p4d_phys = pgtable_alloc(TABLE_P4D);
+ 		p4dp = p4d_set_fixmap(p4d_phys);
+ 		init_clear_pgtable(p4dp);
+ 		p4dp += p4d_index(addr);
+@@ -427,7 +435,7 @@ static void alloc_init_p4d(pgd_t *pgdp, unsigned long addr, unsigned long end,
+ static void __create_pgd_mapping_locked(pgd_t *pgdir, phys_addr_t phys,
+ 					unsigned long virt, phys_addr_t size,
+ 					pgprot_t prot,
+-					phys_addr_t (*pgtable_alloc)(int),
++					phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+ 					int flags)
+ {
+ 	unsigned long addr, end, next;
+@@ -455,7 +463,7 @@ static void __create_pgd_mapping_locked(pgd_t *pgdir, phys_addr_t phys,
+ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+ 				 unsigned long virt, phys_addr_t size,
+ 				 pgprot_t prot,
+-				 phys_addr_t (*pgtable_alloc)(int),
++				 phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+ 				 int flags)
+ {
+ 	mutex_lock(&fixmap_lock);
+@@ -468,10 +476,11 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+ extern __alias(__create_pgd_mapping_locked)
+ void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
+ 			     phys_addr_t size, pgprot_t prot,
+-			     phys_addr_t (*pgtable_alloc)(int), int flags);
++			     phys_addr_t (*pgtable_alloc)(enum pgtable_type),
++			     int flags);
+ #endif
+ 
+-static phys_addr_t __pgd_pgtable_alloc(int shift)
++static phys_addr_t __pgd_pgtable_alloc(enum pgtable_type pgtable_type)
+ {
+ 	/* Page is zeroed by init_clear_pgtable() so don't duplicate effort. */
+ 	void *ptr = (void *)__get_free_page(GFP_PGTABLE_KERNEL & ~__GFP_ZERO);
+@@ -480,23 +489,26 @@ static phys_addr_t __pgd_pgtable_alloc(int shift)
+ 	return __pa(ptr);
+ }
+ 
+-static phys_addr_t pgd_pgtable_alloc(int shift)
++static phys_addr_t pgd_pgtable_alloc(enum pgtable_type pgtable_type)
+ {
+-	phys_addr_t pa = __pgd_pgtable_alloc(shift);
++	phys_addr_t pa = __pgd_pgtable_alloc(pgtable_type);
+ 	struct ptdesc *ptdesc = page_ptdesc(phys_to_page(pa));
+ 
+ 	/*
+ 	 * Call proper page table ctor in case later we need to
+ 	 * call core mm functions like apply_to_page_range() on
+ 	 * this pre-allocated page table.
+-	 *
+-	 * We don't select ARCH_ENABLE_SPLIT_PMD_PTLOCK if pmd is
+-	 * folded, and if so pagetable_pte_ctor() becomes nop.
+ 	 */
+-	if (shift == PAGE_SHIFT)
++	switch (pgtable_type) {
++	case TABLE_PTE:
+ 		BUG_ON(!pagetable_pte_ctor(NULL, ptdesc));
+-	else if (shift == PMD_SHIFT)
++		break;
++	case TABLE_PMD:
+ 		BUG_ON(!pagetable_pmd_ctor(NULL, ptdesc));
++		break;
++	default:
++		break;
++	}
+ 
+ 	return pa;
+ }
 -- 
-Cheers,
-
-David / dhildenb
+2.47.0
 
 
