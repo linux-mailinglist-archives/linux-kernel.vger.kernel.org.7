@@ -1,170 +1,223 @@
-Return-Path: <linux-kernel+bounces-594757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD1DA81610
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:52:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C1FA81617
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B86784A2AAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:52:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFF971BA7B41
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC65237703;
-	Tue,  8 Apr 2025 19:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B4324C081;
+	Tue,  8 Apr 2025 19:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n/xbRt6S"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vmZ9s3+S"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27D122171B;
-	Tue,  8 Apr 2025 19:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175E7245012
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 19:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744141936; cv=none; b=fHsPauTyiv8X7vKD4Elwyf7Cz7PQBNUKUl/Kk8KnKmAolZYWF2jg7FaWc+HXfrc7TApLuOtOdTADP3klvKjtULwxmddTmpAE8ukPgaduuqW5H1CRM9jg9d2TXth4Iyefj5GodfaIbU6S3J3WwG6WuURSwZR+eyiNU4yHUSixSeM=
+	t=1744142074; cv=none; b=JnDQ6Y/PMBsbTAGEMe2dPt7MNw6BUnq0VpnSvwjzCI603JzCCWQfYG4wqdfGcdEIJXmRbWKJnj2iBfiQh+Gninbb2kFlcaSbuAxsiYm528koCS2cixotm+q19xt1KWAke3YftMbyrtnAGtOxq5BMfhJknLZw834AtFbPlYbdBtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744141936; c=relaxed/simple;
-	bh=HKS7Ar6A7lqn1suRVTzjHjNCIc9YBZ0PeKtU7mMeSjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jpsLjUKHIHJ3ihwTq2vh5QYGFcFnQiyi2uBhXudvIxWJNaty4XZv2s0H0cXoHzr4wcxu61w87tsWCK6P+WQ1iSV7nzerw79+VMk5fGAQ73j6bJV/qvvXOlaz5NhU59AaIEOmGZD/GcjXf+P74eeOeK7STe3q8nY7eaEQAkXjj9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n/xbRt6S; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744141935; x=1775677935;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HKS7Ar6A7lqn1suRVTzjHjNCIc9YBZ0PeKtU7mMeSjc=;
-  b=n/xbRt6S/iAO3eMSQ4VqqKLzQ57lI+WUvOCF2YQ72EI89wL71Kf1XFzq
-   AC1GIbrPh/nogeaZ33CZpwB3t5/apoGZfu6+aKEwOoFv2bssDMW8pSBCK
-   w/NAHV6g9101HGk52hAdMAf/fQjjP05EUj+05T7chRQklU+oyFISWTUhE
-   ovvb6+wllvCoa+J5NKwxUR18t0vtyAlEghdRWq3EeHh0PmNN9HSSRB+Hj
-   CXeqQqixq8v4Mef+NuGZz/uvyCoGvS2QmKAXTMOZ2EaaY0E12Gr3qxcgl
-   jK49+p6NKrmNHKtLJ9f4SoVeqO3ZIL8WD9RjECFEbGXan9Juvfkqcn8B7
-   A==;
-X-CSE-ConnectionGUID: ywXs7NTsRPaeV9vZQBIIQQ==
-X-CSE-MsgGUID: ssQ00d/FRPS0Laa7sn6OPQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45757239"
-X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
-   d="scan'208";a="45757239"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 12:52:14 -0700
-X-CSE-ConnectionGUID: YnWkD9miTgWM1NW6d+qmSw==
-X-CSE-MsgGUID: 0ueH4Z0qS3aoF+VRoFZPeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
-   d="scan'208";a="159351547"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 12:52:11 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u2EzQ-0000000AVLG-2SJ1;
-	Tue, 08 Apr 2025 22:52:08 +0300
-Date: Tue, 8 Apr 2025 22:52:08 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Alex Elder <elder@riscstar.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	benjamin.larsson@genexis.eu, bastien.curutchet@bootlin.com,
-	u.kleine-koenig@baylibre.com, lkundrak@v3.sk,
-	devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] serial: 8250_of: add support for an optional bus
- clock
-Message-ID: <Z_V-aKBOFHt-0RKz@smile.fi.intel.com>
-References: <20250408175146.979557-1-elder@riscstar.com>
- <20250408175146.979557-3-elder@riscstar.com>
+	s=arc-20240116; t=1744142074; c=relaxed/simple;
+	bh=+4iqyUTi0E7UltQIdQPFstwrYJASj34CNxi5y1rMv0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KjNPPtQwvzqb2QSM9nA7fkeopRwC/ym7xPUm/++Fj1A4SHE63S4sCimiM/X8xOSLeTsD5E++WGUl/f25YrW7RwgXfhYI0XUarBzdkeC5MSHNcn892O9rumTkjrEy9sAyUYGv9NQ/vYY2k1oXLEHDtXpfhfreBME+oojHj9hyawY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vmZ9s3+S; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso5869894b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 12:54:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744142071; x=1744746871; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KBGk/fKPNmRqrd1bCAlViX+nWV4o6WwNupDuItfdSOI=;
+        b=vmZ9s3+S7EREsPsSVrlOEBDS6ovxDIM8zv2M7+p5KvY852nXt6gFq+mHBnZ/tmwE03
+         NgtHB2y+8XQva5+aPDhsPp4ZbQbrkbShNBPDyvuPiCr0O7Pcq+QHWw9yYsfc95S1O+C0
+         r9uSZgpFJjYk/TEoQq2+yNLercrBz+EBTT6jl36PjcVWHhDkdpQyiLg30UZHR0OjO2d8
+         pQAruMWN+nRDtFoOSVMSRd2cMyn7fk/4T1GLp4h+KvKJdlkVAcEfI8/X+pn6GBow/pQX
+         OMlP2dwz0GhXkXeiNGzebKC6KcP2tlW/QkZVEcgQQeN2iOhejDVAVou+Z4WxoHdUuFBT
+         F1iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744142071; x=1744746871;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KBGk/fKPNmRqrd1bCAlViX+nWV4o6WwNupDuItfdSOI=;
+        b=DGBdXYSqV9Fp16m6r9sljpiFI3oQk06mS61fnpURvpEiAJE77b72KLxUF5rsSBtIxp
+         ogeIVTfWTV9Q3Lezaju/7LK+Aa/Hy336u90GxkhEFsQckN8OXAiynQhau8lzg/h+6Oy4
+         mCofGxIaL8wAX9V9lgZt7vWjr6G2RuNn+qffnqINKghqmqg/upgHJnJk2u9DzzeoZWuh
+         RB9s5a9qwCdhOfnSgJzV7THmWiccuGfb65TFcByU0k6FNkJQSArGTbjOX0yGvjKWhNTR
+         ltPqDRVfE3/5fEm5rzZgwR88UH3sn9s/gYxY+cEWE/zFgGxbXuEsMIPvvNdng8QuiSPc
+         Ju7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWDwiL2zV03WPhi2j1/JP+ST6X6S762jZwZN1pyUr7W2msKGY1XM1N/Lkkaw9il723sQ6tNnFkzafb+0uE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5uoorqxpWOQWJ6GGaSBOCiksRy8R82IDzs0yGSDYsjAYOFmI6
+	8LqlcOuoRWU2BK2haBEMaK/Vu5IGzd6u2ID4KcCPewDDI9xbqkPqnwrBcDywRA==
+X-Gm-Gg: ASbGncuV9w2FI0IseHRVTPBv/qCaincOaNV77J7YkcMW/BvwUiuOp2aAC0232LSL9HP
+	kpC+8DdZsLBjQ/IX/aSFrYzdHFUQYblUoC/5EH04phrboTIhjByHm46VGZf7CTxgU3OUAqGpmDG
+	Vf+hAPKcUrQCC0Fh0zaB8nfZTX+GBBCJ7Kmxw5vDSoxGpihckqbqiLCBi7JOaybDheOMRcBVqbw
+	a86isTZblW4vuSozdbcD/cce9YQ4qmnbqc1gOlX5vI4dShkZXiZKNbYhL9GdUR9bGBPHekCnQEY
+	YZ5HDCxfE95KfGFbdh/x3GS6oYpc8fax/vkis5bJbtHgK9VaKkT41RqNVhWKv5/5lFtbQOT6Qr+
+	XVpV+p4uevZpyeYvC3tvO5dYLZB9HPu02dvG6/9s/kxE=
+X-Google-Smtp-Source: AGHT+IFpX171nkKO4/pkD9or/PTfHZTRPoVBCZggU+DSor2BZJYvT8pJQsh9q1mKL13bLo8q2/aXiQ==
+X-Received: by 2002:a05:6a00:4608:b0:736:b101:aed3 with SMTP id d2e1a72fcca58-73bae4957c5mr347163b3a.1.1744142071138;
+        Tue, 08 Apr 2025 12:54:31 -0700 (PDT)
+Received: from ?IPV6:2a00:79e0:2e14:7:4da8:81cb:274b:fff0? ([2a00:79e0:2e14:7:4da8:81cb:274b:fff0])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d97f3719sm11009549b3a.71.2025.04.08.12.54.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 12:54:30 -0700 (PDT)
+Message-ID: <4e96d3ba-043c-4707-9bb9-8987d8c53025@google.com>
+Date: Tue, 8 Apr 2025 12:54:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408175146.979557-3-elder@riscstar.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Tue, Apr 08, 2025 at 12:51:43PM -0500, Alex Elder wrote:
-> The SpacemiT UART requires a bus clock to be enabled, in addition to
-> it's "normal" core clock.  Look up the core clock by name, and if
-> that's found, look up the bus clock.  If named clocks are used, both
-> are required.
-> 
-> Supplying a bus clock is optional.  If no bus clock is needed, the clocks
-> aren't named and we only look up the first clock.
-
-Code and description are not aligned. And What you are described above make
-more sense to me than what's done below.
-
-Also can we simply not not touch this conditional at all, but just add
-a new one before? Like
-
-	/* Get clk rate through clk driver if present */
-
-	/* Try named clock first */
-	if (!port->uartclk) {
-		...
-	}
-
-	/* Try unnamed core clock */
-// the below is just an existing code.
-	if (!port->uartclk) {
-		...
-	}
-
-...
-
->  	/* Get clk rate through clk driver if present */
->  	if (!port->uartclk) {
-> -		info->clk = devm_clk_get_enabled(dev, NULL);
-> +		info->clk = devm_clk_get_optional_enabled(dev, "core");
->  		if (IS_ERR(info->clk)) {
-> -			ret = dev_err_probe(dev, PTR_ERR(info->clk), "failed to get clock\n");
-> +			ret = dev_err_probe(dev, PTR_ERR(info->clk),
-> +					    "failed to get core clock\n");
-
-Can be still one line.
-
->  			goto err_pmruntime;
->  		}
->  
-> +		/* If we got the core clock, look for a bus clock */
-> +		if (info->clk) {
-> +			info->bus_clk = devm_clk_get_enabled(dev, "bus");
-> +			if (IS_ERR(info->bus_clk)) {
-> +				ret = dev_err_probe(dev, PTR_ERR(info->bus_clk),
-> +					    "failed to get bus clock\n");
-
-Something with indentation happened here and below.
-
-> +				goto err_pmruntime;
-> +			}
-> +		} else {
-> +			/* Fall back to getting the one unnamed clock */
-> +			info->clk = devm_clk_get_enabled(dev, NULL);
-> +			if (IS_ERR(info->clk)) {
-> +				ret = dev_err_probe(dev, PTR_ERR(info->clk),
-> +						"failed to get clock\n");
-> +				goto err_pmruntime;
-> +			}
-> +		}
-> +
->  		port->uartclk = clk_get_rate(info->clk);
->  	}
-
-> +
-
-Stray change.
-
->  	/* If current-speed was set, then try not to change it. */
->  	if (of_property_read_u32(np, "current-speed", &spd) == 0)
->  		port->custom_divisor = port->uartclk / (16 * spd);
-
--- 
-With Best Regards,
-Andy Shevchenko
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] power: supply: core: add function to get supplies
+ from fwnode
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Badhri Jagan Sridharan <badhri@google.com>,
+ Sebastian Reichel <sre@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-pm@vger.kernel.org,
+ RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
+References: <20250312-batt_ops-v1-0-88e0bb3129fd@google.com>
+ <20250312-batt_ops-v1-2-88e0bb3129fd@google.com>
+ <Z9rMiONSFDJInPYM@kuha.fi.intel.com>
+Content-Language: en-US
+From: Amit Sunil Dhamne <amitsd@google.com>
+In-Reply-To: <Z9rMiONSFDJInPYM@kuha.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
+On 3/19/25 6:54 AM, Heikki Krogerus wrote:
+> On Wed, Mar 12, 2025 at 04:42:02PM -0700, Amit Sunil Dhamne via B4 Relay wrote:
+>> From: Amit Sunil Dhamne <amitsd@google.com>
+>>
+>> Add a new helper function power_supply_get_by_fwnode_reference_array()
+>> to retrieve a list of power_supplies associated with the fwnode's
+>> property. The property can contain multiple nodes where each node is
+>> associated with a power_supply. The list of power_supply objects will be
+>> stored in an array supplied by the caller and the return value will
+>> indicate the size of the resulting array.
+> I don't think this API is necessary. If I've understood what you are
+> after here, the batteries should simply have the Type-C psy(s) listed
+> in the supplied_to and/or supplied_from.
+>
+> So you just need to make sure your battery nodes have the USB Type-C
+> node(s) listed in the "power-supplies" property in your DT, no?
+Thanks Heikki! I will evaluate between this approach vs OF graph 
+approach (as suggested in previous review) and implement it in v2.
+>
+> thanks,
+>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+>> ---
+>>   drivers/power/supply/power_supply_core.c | 60 ++++++++++++++++++++++++++++++++
+>>   include/linux/power_supply.h             |  5 +++
+>>   2 files changed, 65 insertions(+)
+>>
+>> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
+>> index 76c340b38015af0a67a0d91305e6242a8646bf53..df1a52f85125748c4fdcb10687aa7ed2f626ded1 100644
+>> --- a/drivers/power/supply/power_supply_core.c
+>> +++ b/drivers/power/supply/power_supply_core.c
+>> @@ -593,6 +593,66 @@ struct power_supply *devm_power_supply_get_by_phandle(struct device *dev,
+>>   EXPORT_SYMBOL_GPL(devm_power_supply_get_by_phandle);
+>>   #endif /* CONFIG_OF */
+>>   
+>> +static int power_supply_match_fwnode(struct device *dev, const void *data)
+>> +{
+>> +	return dev && dev->parent && dev->parent->fwnode == data;
+>> +}
+>> +
+>> +/**
+>> + * power_supply_get_by_fwnode_reference_array() - Returns an array of power
+>> + * supply objects associated with each fwnode reference present in the property
+>> + * @fwnode: Pointer to fwnode to lookup property
+>> + * @property: Name of property holding references
+>> + * @psy: Resulting array of power_supply pointers. To be provided by the caller.
+>> + * @size: size of power_supply pointer array.
+>> + *
+>> + * If power supply was found, it increases reference count for the
+>> + * internal power supply's device. The user should power_supply_put()
+>> + * after usage.
+>> + *
+>> + * Return: On success returns the number of power supply objects filled
+>> + * in the @psy array.
+>> + * -EOVERFLOW when size of @psy array is not suffice.
+>> + * -EINVAL when @psy is NULL or @size is 0.
+>> + * -ENODATA when fwnode does not contain the given property
+>> + */
+>> +int power_supply_get_by_fwnode_reference_array(struct fwnode_handle *fwnode,
+>> +					       const char *property,
+>> +					       struct power_supply **psy,
+>> +					       ssize_t size)
+>> +{
+>> +	int ret, index, count = 0;
+>> +	struct fwnode_reference_args args;
+>> +	struct device *dev;
+>> +
+>> +	if (!psy || !size)
+>> +		return -EINVAL;
+>> +
+>> +	for (index = 0; index < size &&
+>> +	     !(ret = fwnode_property_get_reference_args(fwnode, property, NULL,
+>> +							0, index, &args));
+>> +	     ++index) {
+>> +		dev = class_find_device(&power_supply_class, NULL, args.fwnode,
+>> +					power_supply_match_fwnode);
+>> +		fwnode_handle_put(args.fwnode);
+>> +		if (!dev)
+>> +			continue;
+>> +
+>> +		if (count > size)
+>> +			return -EOVERFLOW;
+>> +
+>> +		psy[count] = dev_get_drvdata(dev);
+>> +		atomic_inc(&psy[count]->use_cnt);
+>> +		++count;
+>> +	}
+>> +
+>> +	if (ret != -ENOENT)
+>> +		return ret;
+>> +
+>> +	return index ? count : -ENODATA;
+>> +}
+>> +EXPORT_SYMBOL_GPL(power_supply_get_by_fwnode_reference_array);
+>> +
+>>   int power_supply_get_battery_info(struct power_supply *psy,
+>>   				  struct power_supply_battery_info **info_out)
+>>   {
+>> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+>> index 6ed53b292162469d7b357734d5589bff18a201d0..3f062607e5cd7c7f04384e34128ae0953e25d981 100644
+>> --- a/include/linux/power_supply.h
+>> +++ b/include/linux/power_supply.h
+>> @@ -820,6 +820,11 @@ devm_power_supply_get_by_phandle(struct device *dev, const char *property)
+>>   { return NULL; }
+>>   #endif /* CONFIG_OF */
+>>   
+>> +extern int
+>> +power_supply_get_by_fwnode_reference_array(struct fwnode_handle *fwnode,
+>> +					   const char *property,
+>> +					   struct power_supply **psy,
+>> +					   ssize_t size);
+>>   extern const enum power_supply_property power_supply_battery_info_properties[];
+>>   extern const size_t power_supply_battery_info_properties_size;
+>>   extern int power_supply_get_battery_info(struct power_supply *psy,
+>>
+>> -- 
+>> 2.49.0.rc0.332.g42c0ae87b1-goog
+>>
 
