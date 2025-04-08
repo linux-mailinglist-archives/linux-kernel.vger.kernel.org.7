@@ -1,202 +1,134 @@
-Return-Path: <linux-kernel+bounces-593988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26CCEA80AEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:11:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9A0A80B6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1932F7B57C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:08:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECA4F1BC507E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5223263C76;
-	Tue,  8 Apr 2025 12:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3330427D77A;
+	Tue,  8 Apr 2025 12:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="VeocFFTV";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="kqwjPbbz"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ZUlCpXUO"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D664E26FA41;
-	Tue,  8 Apr 2025 12:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.168
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744117130; cv=fail; b=HL12aQ54bcBsgocv4p8h+32caFvbmxEeBY8XwwwFArv5fxspkM3IcuGpSXyf3k1Ffmw4eLCgp8CJIVVM3Vt3RnvlldJu1e/NXNGdPzt/EQ9i253U1bS6zsor85YlDN9cANAUCYfrRyP5UbU7ciRKTjWIsuFkzUHN3rzGLua1nuE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744117130; c=relaxed/simple;
-	bh=g3QKDvfhsk2GAI2mRKSaUm3V/hcLXaDErVhj98ymhGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=teTYOa6iwBh0MG15b/5RJMXiJrr4v0HasTM8JAXjBBm+B59Da61OfUiCv4JsLjT6Kcvkkwf3LecBM8e4ChkUEM4HSga2IfJ7BU8ECR1l52kc9ejD0KPiAiIBkllVQ7kLxftnl/0FQ7EW75XxObK20vpWeHAqLgNgEP8K37uy2o4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=VeocFFTV; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=kqwjPbbz; arc=fail smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5385den8006814;
-	Tue, 8 Apr 2025 07:58:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=yJOqC6wo9qdmSuZP0vcf2izbU73bAhtwA9oHIf1oryA=; b=
-	VeocFFTVZFyFMUgh1ABl9y5WOr9iDpa+JZ9dLh0oOKakhzlKLsyudzV+atJiJYPg
-	xgDEuZYbxz5vqcUbqX7xp0JZe5NAxsZetXITCnsYpaWGcBsLr3d+V8B+jI9u+Zws
-	bRNln5gEMUfEnq2Bo+m6tk8z5u+SMxA6EzVwlzRW2KyW9lB2Nl4GPI4ys1MiRkss
-	jFS5yFO/AFth1GszSP5vZmZ+oWAw4QRKg1HCIZYRcU2XWX1MFFEKZJ4BqHWQxs8g
-	URff9lzaf/FLoO/vHA3E+es8CXYoVikC8OpcCRWpPRn9QiORH8iq80IxWORaoRwC
-	BRRL2y/pHPlqCk5/X0iC6w==
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2040.outbound.protection.outlook.com [104.47.66.40])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 45u0xgm71d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Apr 2025 07:58:33 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WJY9jqBumAH0wQpcGfYmB/j8eC6sBxTXW84pgEaYqAbvgS1/aKFzGjJ1bxe3lUxsAnlcLNx2wdq6yNFPU+6TU1ERpOYD5zvhIP7JZdcAwZa7V5Vn6b0b3z3syv6Iy9MF8M/HPc/lWCMhZayaqM0EjCYBO3suARo6DYwX4Vwk7K2D9deY3Wo6Ptu/LcZCNZjPiBVwK1qHf0h8e0lw/XvG2UEmZroo7aWcGEPA6xQtIa8z6WJpI29X4DqCfn7Znu4k9mm5aMorFTB2SO9X5CmO5aXat8uaf9sBhIylyd2YYF+FwOUtlqUn6sU+zGCurL4ttk9JmuJiNHDPovZKvVAMRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yJOqC6wo9qdmSuZP0vcf2izbU73bAhtwA9oHIf1oryA=;
- b=rVLD5OQaR6AYDW4a6WKbdiLrAeCbRs/g/slfYUy2DJ49zKOi34N6Pcq2dkaUMIawhZU2MQDtecgXNr4gYQw4J0z7J++MApJcr+08JyTd952/x39At9MWu92ZMN+ResIK//IC5hDCKQV0GJBNdEjAiNyf+sMD3S9NaMxzzQzex63l+yrNoQPslrswM+g2rdhyXwIp9WtDPDB1tf4wD9wgwOJ96YRkfTBw+04I+cbZzeoXw36gxO5dRdloKmtNHtagrdijNB7k/F8ibxpdfWTGC7wq3iM4mPcj65M4aeZJyLUNEdG8lHDFZoaoOG/uE5GIXZg1Fucj4qZL49TS4OL+rA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 84.19.233.75) smtp.rcpttodomain=cirrus.com smtp.mailfrom=cirrus.com;
- dmarc=fail (p=reject sp=reject pct=100) action=oreject
- header.from=opensource.cirrus.com; dkim=none (message not signed); arc=none
- (0)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D2227D769
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744117151; cv=none; b=HnOtOETWvZtpyIcmDuIiFU1ussr67EmCMjAsEXJ6Q2HXEMHP3y783rv6coypg8Uz+6lbv589Z4p/a4wcBWwz0fn/lh1/MgNDsOkEj3WVFgg89swYak5TTTugUcP6TCm/UOxhLghvrOtrmSuIw+XAfTGR5lp8XIZA76rBT+m58sQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744117151; c=relaxed/simple;
+	bh=56UFcJd+cny+RJSE4ASEku42icOHbo+F8jsHDB/KZXs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ikEgeSZaZpg+h2DF3U+Y6531Z4SEI+5atin/sJ0kaS+ijYrkhras20wmfTG0MJmI143F3OU6YlN8W5FyYiJHJCnz4zXgw8VBL4kEkwP/0qNl36ilVbHIUJa2HN75vFjjUfxWB1YmmTIhFjZhj0e0zJw6NlrPKL1jUy4UyuvIcs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ZUlCpXUO; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39c2688619bso3367202f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 05:59:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yJOqC6wo9qdmSuZP0vcf2izbU73bAhtwA9oHIf1oryA=;
- b=kqwjPbbzmNrTLToC2Wo2IZTt2FByHwD5WDh+MiA4ODRjHK6Bu5oZTN/zkoALuYxLYUfw1cPIVnBkXPo4hbAa4EwD1UF+m470vieNrEwShfxJlegLIQd0zUggGeanGcZpvMYtE4LxgP1pQSJ0UBYIVaiS3p2F9FEqs1J1dXc4y/c=
-Received: from CH0PR03CA0315.namprd03.prod.outlook.com (2603:10b6:610:118::15)
- by IA1PR19MB6275.namprd19.prod.outlook.com (2603:10b6:208:3e9::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Tue, 8 Apr
- 2025 12:58:25 +0000
-Received: from CH2PEPF0000014A.namprd02.prod.outlook.com
- (2603:10b6:610:118:cafe::e5) by CH0PR03CA0315.outlook.office365.com
- (2603:10b6:610:118::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.35 via Frontend Transport; Tue,
- 8 Apr 2025 12:58:25 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
- smtp.mailfrom=cirrus.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
-Received-SPF: Fail (protection.outlook.com: domain of cirrus.com does not
- designate 84.19.233.75 as permitted sender) receiver=protection.outlook.com;
- client-ip=84.19.233.75; helo=edirelay1.ad.cirrus.com;
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- CH2PEPF0000014A.mail.protection.outlook.com (10.167.244.107) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.22
- via Frontend Transport; Tue, 8 Apr 2025 12:58:24 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id ADB83406544;
-	Tue,  8 Apr 2025 12:58:23 +0000 (UTC)
-Received: from [198.90.208.23] (ediswws06.ad.cirrus.com [198.90.208.23])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 9930A820259;
-	Tue,  8 Apr 2025 12:58:23 +0000 (UTC)
-Message-ID: <e3447ca4-ea19-4c84-802e-dc3832ea2dd6@opensource.cirrus.com>
-Date: Tue, 8 Apr 2025 13:58:23 +0100
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744117148; x=1744721948; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MlPD6UmTKDrvcl8iMNArvTcmNGeakqnKSKCJEwvJ8i4=;
+        b=ZUlCpXUOIOrJ+8AbdVsU+jQ2beqY8jy1yFEZh7EK3dycKDwWYxZL5XM+0hYUrh3RxK
+         5xtpgouefnfNxwvANnpY1oL7k8rOGO1WfbG9qSSDNr39hTZwJ/Od43JQUOXBBexumALz
+         OdDfbrdFSxrj0TGCWU/qA1pdhBRMTRD05CWJoWRtAFbGsc96y8sNS1Em7aAIjIBGS0WF
+         TvTMkpoAHV9kPJWgjNZixgOWCjBF+se9/LODOV7pvmWe/vD8esqy4IATq8hgPEY/wWG6
+         Wlfpfzo3gsxk/v2Ijbuw57zUCBZxW3s0P8UqKS6stOIy1WKhXZTnXo8pDVb1bSbq0t3e
+         KhjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744117148; x=1744721948;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MlPD6UmTKDrvcl8iMNArvTcmNGeakqnKSKCJEwvJ8i4=;
+        b=e3jCwbOgCIFxqgSWomj42ihYtAhHKVKxvrzDUkGoK7ky+7o4XduGqt1nfjUR8eg920
+         Z3hRhk3Or6vvWjPJx4gF6OVWCv+D7poFBPaGNJw4YpsKshfazNCW/25PN6eVUx35MXKa
+         ulVRzcFpBTagjaHIKGLqMub1ZHeZEQpEQQdvDycMq4j2fuaLXn58+zGDpGs7adxMg9xw
+         sqlqDLrXXEyztG/zR4fWPRt52v/p4mfg8f+oDct7mw8cFcnPB7y/Q6QMfq7+3K4PiOQZ
+         uCalZ815rqqpwyADll69Nq1D5Gkyh0/o2SK9ZegkI/xisTcNkmv+m6tRqQsXQFvI15LW
+         uZdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXO5XTyDx4fqic61tMklB6qb4LX6AfkStw62DL7ADBVXjDLty+nTDxez4E2BfifzIY6SJd9azqp0mu2+xQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywECqo6sTt+pG266IXJQegb7YxJHcWg414IH7kJyZUPmj1nx+C
+	MAGN+R6af8xCxBB84nwpJqdRv5ZtuFiZWkH1VcQWFn+axn3MtNyiprpmfU5SbG4=
+X-Gm-Gg: ASbGncsb3PqOtvb5jNygZo5iYF2bvl5xEMitK+bufEQxu+spptHde2qWMs+QYXveU9/
+	b1mAwj0ugnfhvgy1V8ggeRuIgGKqlds9KqYmOl+ZZuwsVrMLadOTCk2gsGopg8nKqZ65JI+CwnL
+	mR/FjGdPMb+RIcgvBAatQEdIB1OnstD3HIVEoIxq03Jo8ZNG03tBn/P63axO6XQc6HVtwLjlpSU
+	SBsVBrhGHTE8KZ8uvIq6O+FT/1plyATbaLXjmVolg2ivkW5u1jRQ2Oq4aJVmoum8WS4qzItyMeo
+	EzB1w+JCLcfFp2418LRy/62S9xFRpnh+oTO/nQ==
+X-Google-Smtp-Source: AGHT+IGkXjN5qtJmkBtIehVIzJHV8dp9lfBLoe92z7LUIF53uF/JRZAl+scS9BRrlB21U+HR9VKQnA==
+X-Received: by 2002:a05:6000:4387:b0:391:4231:40a with SMTP id ffacd0b85a97d-39cba9328a4mr15125150f8f.33.1744117147943;
+        Tue, 08 Apr 2025 05:59:07 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:2adf:eaae:f6ea:1a73])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec16a5776sm165820155e9.22.2025.04.08.05.59.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 05:59:07 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/6] gpio: extend build coverage with COMPILE_TEST=y
+Date: Tue, 08 Apr 2025 14:59:00 +0200
+Message-Id: <20250408-gpio-compile-test-v1-0-140e108e9392@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/5] ASoC: cs35l56: Add struct to index firmware
- registers
-To: Mark Brown <broonie@kernel.org>,
-        Stefan Binding <sbinding@opensource.cirrus.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com
-References: <20250407151842.143393-1-sbinding@opensource.cirrus.com>
- <20250407151842.143393-3-sbinding@opensource.cirrus.com>
- <c1043fc8-40e3-4ff9-bade-bedfe7a19a18@sirena.org.uk>
-Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <c1043fc8-40e3-4ff9-bade-bedfe7a19a18@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000014A:EE_|IA1PR19MB6275:EE_
-X-MS-Office365-Filtering-Correlation-Id: 367876f0-c3bd-4676-431e-08dd769d0ca7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|61400799027|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SzJEQ01VRldOS2EyMklaWm1YVzFkSktibXJLSjI3cUJ5WmJLZWRZaXdIVFgr?=
- =?utf-8?B?UkU2TGMwSE1vaVcxMVNOLzkvZTR4eFQ5OWRaV1hsczh4NVQ3M054Z1IwMGpa?=
- =?utf-8?B?b2tiR0g0U2RVNVFJMGdLeHNyTzV4Mk8xUW9pK2s3Umo2eDJlb2pYbXhCRFBG?=
- =?utf-8?B?OTlKR0ppWmhRaTBHejZBVDJyV0NJWUk2OE5KUjkzQnJUbENWZlcweVFQZVVn?=
- =?utf-8?B?NzlncERMbXlkYllLUjJOSkI3M09hR0ZEa01DRVVpK0hwMTNtQlVkK041MUlN?=
- =?utf-8?B?V3FEV0lqeGlkOGtpTGZ5UUtwbTZwWU5xcE9nRTh0Tlk2S2VZSzMvTk4zQkpS?=
- =?utf-8?B?WTg2UXI5cXVVS1ZqbElXWGlRSUd5cUd2cjJTSjhSdWtrZWt5TW5HeWNhWmox?=
- =?utf-8?B?SEpBWWZGS0V3UER3VE1NbjlFZ014ZTZSQVdlVFplZ1hKR24wOUdqakdJYTN6?=
- =?utf-8?B?UUhJRjJ2azhFaGg1NEl0WFJlZ0RzT2JrZmpTcUgvd1ZOSjI5UmExYSs0SkQ1?=
- =?utf-8?B?VXZVTklWRzFCam02MW50S3U0blhKQ3dkaHVoNWdGV1crRUxkakcwenZUckNz?=
- =?utf-8?B?OVVXUHZmY2N3dko3bEgzU1FCbGhEK0lpT0FvOEFYVERoU2dTcGE4Y283ck93?=
- =?utf-8?B?clkzZmVPMXRRSzg5NEtldXZWaE50Zmd2aWJrQlB5c1RQRDB1RXRpWi9Da29j?=
- =?utf-8?B?YmlYOE5UWnlFR0pVakphYi81N01ncWdEQkFubVp4OVkzd3BGZ0FGaTlKRTVk?=
- =?utf-8?B?ZUp5ZnFjRTlCYk9ueTBlS2lGWDJUc3NGWW5qZGh0aEo1WW1FOUR0TG16OEJS?=
- =?utf-8?B?aGJ4NWdxSkVFQUVabUdyK2pOczlFaUY0SFZnb3BjbldOYUVCSzJSSFpaUzdU?=
- =?utf-8?B?UlJTcCtmOVIrQjhyQ0QzV1F6NjFseHVGazdhcHpHNUg2UnBUSStxa210UW9P?=
- =?utf-8?B?R00vdXlCSi94dlNsQWxlVWJtNXlBcmhnL3pmWFh3RzFBc0pnUjZsdU5zS05O?=
- =?utf-8?B?ZVJGZXN1dkZOSFQzS0xIaVBKOHlIZkIwQndpaWJYQWhxODQ1UHdVbTM4MHBT?=
- =?utf-8?B?UUNJYnI0ejR2aDBDc1krbDdGbkxVSnF2bXE1SVFxWEFKbE5DSDRhbjVvZjFX?=
- =?utf-8?B?RHNscElJOENXb2YrSG9mOGtYWi84QnJGbnhFZ3pMQWhjc2RBTEtzbE1waHpE?=
- =?utf-8?B?WDdTczdLRS9abSt6aS9EcEN3RFVrRlp0YUFzekxqZkdQaGE1Mit6elBYV1JU?=
- =?utf-8?B?QzBueTVtK214REgwUGlGWUNVMEZRWnY3ZHFDK3lmTm5JMEhhbjF1NmNoSll3?=
- =?utf-8?B?VTROeFFmQkQyVGpWOGxGUTNGT1NVTzNwUkkrMEJPMGoxdHV2TUwzNEM0ckNM?=
- =?utf-8?B?MDFrTmZwbTAvT2hrMHVoUVgzQ0FWK1diM0FJV1BlUk05T1NtVERidmJrWmIw?=
- =?utf-8?B?bHc5WWt4cXhPTGl5NFNSWDA3NDBlRGhFcDBWMWdHazVKRnlIQUVYSStiM09G?=
- =?utf-8?B?SldPMjNOeGZaV0RkYktHY2VQTmgwclRIbjZwWHpCNm5NSnRhRjZhTWl5RHVF?=
- =?utf-8?B?enZrNExudXlkS1VVT2YxL0thdVE4L29zUGVHVjJpcWZiZHNRL2xnWGJWV1ht?=
- =?utf-8?B?amdTY0R3V2o3S1k4V1hVV0tmdHZqbm1xczBCNURYUVV4MmFsSGszVTJ4UWNR?=
- =?utf-8?B?WVBLM0FubW1OYkJTMkdmcENQV3JQU0lRd2JCYUtDd0o3Q2Y4OWxITzFnUTli?=
- =?utf-8?B?M1drdzdSNDdPQjhyTjRlZEpBREEvTGwwMGg3YVFsc3F2RjN2QkdJN1B5bUNr?=
- =?utf-8?B?K0RpMXJRcnRpcjNYV2ZvTUxldjlXWllsc3QwZHEyK0pYQzMrUDVKNEMxayta?=
- =?utf-8?B?WGRzNXEwMHpwRGlHMEFzMFBBd2Y0enZQV29uQ2dzU2hESW51eHpVZjBGMGM2?=
- =?utf-8?B?QWJsRTh4eVFjK2E2UUdEMnR1NWZkUDdhL28xT21qNUMrdFFGY0xVZnkwSDVk?=
- =?utf-8?B?V3d0VmtkOFk4azZnRW0yRWNKY3VtbXlacXhzUFZOQS9qVE4yTytpSHRqRTgx?=
- =?utf-8?Q?1EyvbF?=
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(61400799027)(82310400026);DIR:OUT;SFP:1102;
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 12:58:24.8365
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 367876f0-c3bd-4676-431e-08dd769d0ca7
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000014A.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR19MB6275
-X-Proofpoint-GUID: yBe7nSdKlkbQ94sh6kghHcBJ9R1Ni1Xk
-X-Authority-Analysis: v=2.4 cv=bOIWIO+Z c=1 sm=1 tr=0 ts=67f51d79 cx=c_pps a=+kc2f53xTGsvuL7uaCOpcA==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10
- a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10 a=D_BJW31Sfilxvfs3FaoA:9 a=QEXdDO2ut3YA:10 a=BGLuxUZjE2igh1l4FkT-:22
-X-Proofpoint-ORIG-GUID: yBe7nSdKlkbQ94sh6kghHcBJ9R1Ni1Xk
-X-Proofpoint-Spam-Reason: safe
+X-B4-Tracking: v=1; b=H4sIAJQd9WcC/x3MTQqAIBBA4avIrBsw7f8q0SJsqoFKUYkgvHvS8
+ lu890IgzxRgEC94ujmwvTLKQoDZ52sj5CUblFS11KrBzbFFY0/HB2GkELE3laq7dumlJsid87T
+ y8z/HKaUP8JQ56GMAAAA=
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=966;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=56UFcJd+cny+RJSE4ASEku42icOHbo+F8jsHDB/KZXs=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn9R2W9Gy3ksEsbvwWuUemSsRZ3R5tZGcm1pBHn
+ V8cXprRvEWJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/UdlgAKCRARpy6gFHHX
+ coBMEAC5Rov3DU3OcmZbw01q4M81iTHD8ZkdLXejUs53cDJizyOuTjbIWLlVaitk+oYxbm8S6gT
+ CUP5WYG9Qdl0/yC9X4rvX6jY2vmC/nh+9OEPYJKEcAb7aS8bb9L6uv7Lvu/CTl876hEyUirScHr
+ bCj/Hkxbap+gL2gyJQWTmm5L1sLGZIlXsL/kQaQvpHvgiJfFaDb/D6l0dWHP1aYLkzZXJ5eqL8Q
+ jA+9e6aPIprNMhz5MP3Q20nJbPGWrQuhGrO3yTm+08OQbebq2D8na/HjLkQBP3JURdtnT9rIHvP
+ T680bgoGLS0AH0pkxkWpj7zPwvZBdj4S+UjWcej95RfS3RrGNvipTb++9RuJCjBSrGGo3cbtNKr
+ td22Kxcfwl7w1I7qtz9ghvgqM/dlHyMQLJN56HYrS2oZSK22c8EGxe6YzFs32N09POpBL4VfePd
+ bkK48vhplDkYrAJdmQJsEVZnLJ2e2zG+LygtIfsBY/y6+RGbhR/Ait+FM+x48raiAewYC5ZzWuS
+ 6oOemIsSBGkL/5GSPoBjivmRQtx/Z9U8K7pWRSKFIvjxI4z7iAt5v3iy8LN2aR+0wDtN63ypL5O
+ VELYaZ9Y/pjjVTHM+xvFeyOAQQX5ui4ZTa5yjGTnCjukHgdNzOmzGdFIyh1rhkaYt0TlocSdWYe
+ SVHtGRjFC/01PSw==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On 07/04/2025 8:16 pm, Mark Brown wrote:
-> On Mon, Apr 07, 2025 at 04:16:41PM +0100, Stefan Binding wrote:
-> 
->> Firmware based registers may be different addresses across different
->> device ids and revision ids. Create a structure to store and access
->> these addresses.
-> 
-> This is fine but note that this is the use case that the regmap_field_
-> APIs were created for, that also helps deal with things if anyone is
-> clever and resizes fields or shifts within registers.  It's purely a
-> question of taste if you want to use that.
+There are some drivers that aren't build with allmodconfig that don't
+have any requirements on arch/ headers so make them depend on
+COMPILE_TEST and extend the build coverage.
 
-The regmap_field stuff looks like a lot of unnecessary complexity and
-overhead just for 6 registers with alternate addresses.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (6):
+      gpio: zynq: enable building the modules with COMPILE_TEST=y
+      gpio: msc313: enable building the module with COMPILE_TEST=y
+      gpio: pl061: enable building the module with COMPILE_TEST=y
+      gpio: rtd: enable building the module with COMPILE_TEST=y
+      gpio: tb10x: enable building the module with COMPILE_TEST=y
+      gpio: tn48m: enable building the module with COMPILE_TEST=y
 
-(In fact, the regmap_field stuff looks like an over-complex way of
-solving a non-problem. The original commit is talking about replacing
-masks and shifts "all over the code" to make the code neater. But
-really, all those extra structs and pointers and allocated memory just
-to replace a logical & or | ? Every struct regmap_field has a pointer
-to the struct regmap !!?! So if I've got 100 fields there are 100 copies
-of the struct regmap pointer that my driver already has.)
+ drivers/gpio/Kconfig | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+---
+base-commit: 0e871365f7f9aeb9b590e345458b2083e067cd13
+change-id: 20250326-gpio-compile-test-9c42587d903e
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
