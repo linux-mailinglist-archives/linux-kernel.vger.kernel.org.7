@@ -1,157 +1,123 @@
-Return-Path: <linux-kernel+bounces-594467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36958A81247
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:27:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D83F2A8125A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3381F465164
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:24:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C09A883537
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC5522E40E;
-	Tue,  8 Apr 2025 16:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5954022DFA8;
+	Tue,  8 Apr 2025 16:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lcz9Sx02"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eYSPj+Ke"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCD222DFA4;
-	Tue,  8 Apr 2025 16:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E8822C35B
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 16:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744129436; cv=none; b=PPENIHTw/yEsWDxW7Fwj1RC7/pBLss6X3m0P7PhyZVkK8cwvaR6u7Rbd+If4PPqkdFXduN7pdpHJyGKiHV2I6xzMi1JlA1rrO0u0cylJXQnpu0FWoee+mt1adYyQBiqbB+C3CUIQuj1VF+JE67lGmOo6BuAb+Z+y8Ubz00t25cY=
+	t=1744129560; cv=none; b=cww6553widSKnUdip6359aZLJ+sK1RW70M0KwN5Yc56wT++FIn9fbaTs7HeVn7astuVAU876H2b0tFoNyeEqFGnYEM90SHDsh3NqSx0C+U83EQoave1Mn3Cii2FWjRmr/Jl8Ow+lkKVIoraIua2xpNAwanIDmqY3E4nI3yGp6jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744129436; c=relaxed/simple;
-	bh=weuM5HHgCtZNBPja0bMhFSdjHzltz9a4z0dVDbIuEn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=br5EmkZnXVUlKqOdgNFsYsmc1IoQ23KVmUaDdk3dQfZYJVBhA6jO2s4i06IPBtUjiHMG3BrhlVil/dJRnyZXmNr7PsLhWNOzjJ5s7VyZqqkDqeY3GGVVgE7Hbt/58JkLn6qJb6qNVUndp5ZC7tQykkm1VH0eaeFfEUWBYbaANx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lcz9Sx02; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6D56C4CEE5;
-	Tue,  8 Apr 2025 16:23:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744129435;
-	bh=weuM5HHgCtZNBPja0bMhFSdjHzltz9a4z0dVDbIuEn0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lcz9Sx02EkL93wNfEQgiN+4bu3Mry8XBiie4IWFmbJrdYzR/7HOm+EMCwxM7u3jgh
-	 cBv0DAJ327eotLodf2+R0WA+3bLPy8XI62PDSNVk+YNvNiYn/80foCrXRuCH1Ic6D8
-	 0LgCE4wao6dnF1ZKlaF08T5mogoE+pgj2rEfownT/ffUmkbfq9oko0pSKTcVFZo0Dq
-	 NuFtqn/rRJVEBo3MPw79Utp+zu4zgUhqhN8iFcPyEr+J4w6xlbyHtFtqYp1YgHKe/l
-	 w2Z3ke6GiXlNbL5tiRBAOp9npfJ/+5AxXvNebMrzkulSrjIXUQV0yPGX0IAE/CGN/k
-	 Tt/+3/Dz0whZg==
-Date: Tue, 8 Apr 2025 17:23:51 +0100
-From: Conor Dooley <conor@kernel.org>
-To: jean-baptiste.maneyrol@tdk.com
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: imu: icm42600: add interrupt
- naming support
-Message-ID: <20250408-dandy-rental-c76bcb4a5788@spud>
-References: <20250407-iio-imu-inv-icm42600-rework-interrupt-using-names-v2-0-c278acf587b2@tdk.com>
- <20250407-iio-imu-inv-icm42600-rework-interrupt-using-names-v2-1-c278acf587b2@tdk.com>
+	s=arc-20240116; t=1744129560; c=relaxed/simple;
+	bh=ljFPIOq3znfMAq1hPUQc5glriASqAaiOXMDYR6i6u48=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JS45sbOLycaR9pKN+mPgEWe+ObVnPzZd+aFh5tc8Hjxgdyme6JifDswOdTkQkgDi5UNDdbz1Y3zbQPnkqtVpkgObSLaBkWq7xOoswUd8/KC4j+w2DXyDTPhSyOpPb7Oafzp59BPwPRq8USIpU7GSLzkFNGdsgbpkbT/ZsNGGXg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eYSPj+Ke; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43ceeb85ab2so4372435e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 09:25:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744129557; x=1744734357; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RFphVcqK3mFE7z2xyqgIGdTaijWdMSkT/C4V2pISyXU=;
+        b=eYSPj+Kes8bLRHabUmJ0gn2WrliHC1zORE4e26cCsDtm65ZJ55AZGmUewn8sgUH7LJ
+         /gBOs+RBRBeAvS94Yz1NP7RxSJYeu7w6949M0x/uRuYiPUDnis09fpaCARnFQV8eu96Z
+         VG2MsepuGlcGlmPCcJEighzg2Z/lXYUikFTz0ttfl8VdAAgx4m69tOBjey5fctaUSjqu
+         GvkUBldDd/WQKmOVPIaaSjkLPTw14xeuWnELcfBSCWwYHngXu/d/4LLVZokszjWZcBNV
+         X5onQIadAY2tFoWXuh/+8Wg+j9ToOkORTWCRptreCb28gSe3XpzlruKVVwF8NAPZcBIN
+         cvsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744129557; x=1744734357;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RFphVcqK3mFE7z2xyqgIGdTaijWdMSkT/C4V2pISyXU=;
+        b=g0qhGEA6LR065cgG1dygLOkaz8djDxOD0GYNyhzn8OD/RJOD2J15iGZccbNkLSnfgW
+         469Mr3Zlt5BbmXaiW2OC2AAJDkuT9vOr76u+CPUurAaw61DD7ZSqfVUIZaBMqC0Ayw3e
+         GDVpPJNmO1XwNOoNsJUi4bhJKQTJnBB84suMXKi+7BmD7CBkRnD5z5JVSTiV2yKdnmzK
+         f4+W7S8FtxESk0RrOfaqwirJxl2G3Yg5oy1WCICTw412bejnHzYnMwnRuVQhHk1qUuxk
+         ABNvWCvKK2XNOdJDWFJCTyQ4HBfEKcU58hPM57uBuTyZpaGwTNVm7cNOoaYSv/xDvnAV
+         aZ+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUN1PN38bXpvvl+jrExYmxHNArSrX4RMI3l2t2Tr2QswO7F63elzlC1XtaPD/4qDYU0BDWCk1s1Q/CG5r0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6HnPzd2OYcq4t9fxVD/SKvTrCbTSTFlArhyFLi1U0Wqhy4xcU
+	yxKyojOOaqCuP8dHwOGC1bAJtYqGkvxsi4FwKs6FYCM1fA9frutzUWBxK1G0nPk=
+X-Gm-Gg: ASbGnctN0HeCZm7EjHKnx5TuVcK3F9erFwte4nx6YwibgAFYvZ9vcB6ovgBCXIH5uVP
+	rU/6P16AqwxPVub4HODr05L18mXDO8g9+E4ny6M2YnuJUVXFjfLkgM1BtILdz4azyZF5/oc9dOC
+	58GfpPKNfFs8SV0azsqtJeBgyxGaUAsgREYV5BxjhxkQ7+xnNGYFH4xC2cG142lKnFgdtQliDCQ
+	60bYZ5cngkq9rb9Zv5vd/+iY6pcZiQnqQJmje/4+0hWUMzHAGuK3L+O768OpK0UyhbHfXihMw1D
+	SQa7/VqNnKTdjfN86fuaAFsKBo7CEP4mBxBThnd0jxpRmq0Z+c3F/7K0LD7rHMceocHpIjcGrA=
+	=
+X-Google-Smtp-Source: AGHT+IHcjPw7vTVflIx/On2eYRJY4Tq9MrtcT3MQ3yA+ESz6rLfbUvrWYzlL9vvcgtQLsbxNYvAtHw==
+X-Received: by 2002:a05:600c:848d:b0:439:a3df:66f3 with SMTP id 5b1f17b1804b1-43ecfa18ba7mr56191265e9.6.1744129557114;
+        Tue, 08 Apr 2025 09:25:57 -0700 (PDT)
+Received: from [192.168.1.26] ([178.197.198.86])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34a7615sm164763125e9.9.2025.04.08.09.25.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 09:25:56 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: krzk+dt@kernel.org, linux-fsd@tesla.com, robh@kernel.org, 
+ conor+dt@kernel.org, richardcochran@gmail.com, alim.akhtar@samsung.com, 
+ Swathi K S <swathi.ks@samsung.com>
+Cc: jayati.sahu@samsung.com, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
+In-Reply-To: <20250307044904.59077-1-swathi.ks@samsung.com>
+References: <CGME20250307045516epcas5p3b4006a5e2005beda04170179dc92ad16@epcas5p3.samsung.com>
+ <20250307044904.59077-1-swathi.ks@samsung.com>
+Subject: Re: [PATCH v8 0/2] arm64: dts: fsd: Add Ethernet support for FSD
+ SoC
+Message-Id: <174412955552.86459.1583748766350981659.b4-ty@linaro.org>
+Date: Tue, 08 Apr 2025 18:25:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ct6e+utvgFb1PaQy"
-Content-Disposition: inline
-In-Reply-To: <20250407-iio-imu-inv-icm42600-rework-interrupt-using-names-v2-1-c278acf587b2@tdk.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
---ct6e+utvgFb1PaQy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 07 Mar 2025 10:19:02 +0530, Swathi K S wrote:
+> FSD platform has two instances of EQoS IP, one is in FSYS0 block and
+> another one is in PERIC block. This patch series add required DT file
+> modifications for the same.
+> 
+> Changes since v1:
+> 1. Addressed the format related corrections.
+> 2. Addressed the MAC address correction.
+> 
+> [...]
 
-On Mon, Apr 07, 2025 at 09:57:16PM +0200, Jean-Baptiste Maneyrol via B4 Rel=
-ay wrote:
-> From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
->=20
-> Add interrupt-names field for specifying interrupt used. Only INT1
-> is supported by the driver currently.
->=20
-> Add minItems 1 for interrupts since interrupt is mandatory for the driver.
->=20
-> Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-> ---
->  .../devicetree/bindings/iio/imu/invensense,icm42600.yaml    | 13 +++++++=
-++++++
->  1 file changed, 13 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/imu/invensense,icm4260=
-0.yaml b/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
-> index 7e4492bbd0278a336587dc5ac04da7153453da29..707f2169ce9a3ca41d81560be=
-d15786fe010109e 100644
-> --- a/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
-> +++ b/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
-> @@ -41,6 +41,17 @@ properties:
->    interrupts:
->      maxItems: 1
-> =20
-> +  interrupt-names:
-> +    minItems: 1
-> +    maxItems: 1
-> +    items:
-> +      enum:
-> +        - INT1
-> +        - INT2
+Applied, thanks!
 
-I might be misremembering from looking up the datasheet, but it gave the
-impression that either all interrupts can be wired to int1 or int1 and
-int2 are usable. How come maxItems is set to one here, not two? Surely
-someone could wire them both up, even if the driver only ever uses the
-former.
+[1/2] arm64: dts: fsd: Add Ethernet support for FSYS0 Block of FSD SoC
+      https://git.kernel.org/krzk/linux/c/1d62af229b18bff2430ea5dde0e129d43515e12c
+[2/2] arm64: dts: fsd: Add Ethernet support for PERIC Block of FSD SoC
+      https://git.kernel.org/krzk/linux/c/ebeab0be707ddcffd2b7f6ff4f9bd8e0c1c49fdd
 
-> +    description: |
-> +      choose chip interrupt pin to be used as interrupt input, beware th=
-at the
-> +      only support interrupt pin is INT1 for the moment.
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-What linux supports should not be part of the hardware description.
-
-> +
->    drive-open-drain:
->      type: boolean
-> =20
-> @@ -76,6 +87,7 @@ examples:
->              reg =3D <0x68>;
->              interrupt-parent =3D <&gpio2>;
->              interrupts =3D <7 IRQ_TYPE_EDGE_FALLING>;
-> +            interrupt-names =3D "INT1";
->              vdd-supply =3D <&vdd>;
->              vddio-supply =3D <&vddio>;
->          };
-> @@ -95,6 +107,7 @@ examples:
->              spi-cpol;
->              interrupt-parent =3D <&gpio1>;
->              interrupts =3D <2 IRQ_TYPE_EDGE_FALLING>;
-> +            interrupt-names =3D "INT1";
->              vdd-supply =3D <&vdd>;
->              vddio-supply =3D <&vddio>;
->          };
->=20
-> --=20
-> 2.49.0
->=20
->=20
-
---ct6e+utvgFb1PaQy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ/VNlwAKCRB4tDGHoIJi
-0rS2AQCnm9DYKRvtnDPGowZ4dvJAqiYQE6oES141rk+xib1wuAEA9xoFkksxQwRU
-fLx3hu6Y9gvxMJR06DgEn+9VQ5/+NgU=
-=a6IA
------END PGP SIGNATURE-----
-
---ct6e+utvgFb1PaQy--
 
