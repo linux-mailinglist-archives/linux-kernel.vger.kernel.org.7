@@ -1,147 +1,135 @@
-Return-Path: <linux-kernel+bounces-593541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD6BA7FA4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:52:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02DD8A7FA59
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A38CE7A9CA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:50:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE5EB1744B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31014266EEC;
-	Tue,  8 Apr 2025 09:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A886B267700;
+	Tue,  8 Apr 2025 09:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GWAl6PnR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8VmJ4aMc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DjGqfLmF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5eKetpmQ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GWrQlabB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D153025FA28
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B9D266F1D;
+	Tue,  8 Apr 2025 09:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744105895; cv=none; b=Sm+k4v8cePEyO/gRCdP0s9FCMKRFc+sCx2u1yofsYjAUT7IZPaoZCqwzp99QAQr4ruRJd0XRRQuHjIKiFOK1piZ5kzGNWz4IN6wB4GDK89DMhaHK8StzpvTTyzEwHY0pAfm+AXP7dKdsaGtOeXDsHa7cL0+jXwzWFGLt4MqSb7E=
+	t=1744105940; cv=none; b=qDqpE1CiQ9gMzdCE3RdR4nBLe/URhE0m9bvoipvHWI6ZYGP7QgzM9w1+a+poib/pOjMFRGmM+tgTTVZFvwcrC9neC9SAp49YRjRk6hR4gXqIeDTSETVhWGojdF/uaPlL3qbIpHJq09gWSEBYGE8h1Nh3+A+dbGHNBww1PllVheY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744105895; c=relaxed/simple;
-	bh=2rmDqBVNnJow/Izch2RKqEREyckuweIDxTIuLkdoYTU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PeiNXS/grPPVGvVL3itsc88srz6DPH2A8OS/d9JdhTsawiBAoQktzRPLzJLlZrxJIBbc9xxnRgUPD98mo/Xh6JHjcWAZyCHSL67r6+8kbMlpQV0m/MO8cjk1OG4ZOTpN0haaL8s5qwdnYADfqoG7dBFjHWUAABxqM+K3j0GYdrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GWAl6PnR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8VmJ4aMc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DjGqfLmF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5eKetpmQ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E6F561F38D;
-	Tue,  8 Apr 2025 09:51:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744105892; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=plKxmgLrHG7bYDg0n35vnbolULMBfb11CTmaF6tUImQ=;
-	b=GWAl6PnRxEl1TBt8vJuqr53VvYctpbp3mT1532NXHVlMtcWzgFdWHwLHDqBROa+i1x9FpX
-	16V+x5b5wZ8Cx5AgyZEQvBBp/r54cS6BxyWcgAWShnAj5nPszAPJovrc4YUZ9e977pdhV0
-	x1xJDpmKMhOAN1sf6E2Omhmj6IsuUEQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744105892;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=plKxmgLrHG7bYDg0n35vnbolULMBfb11CTmaF6tUImQ=;
-	b=8VmJ4aMcCWd09rWg4aXIx7WlCvc4dWh5Id4eACbrw6jN0oVfeV0L+lQOQJuMvVvu1a7w+q
-	xBbfo2f50SW3DZAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=DjGqfLmF;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=5eKetpmQ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744105891; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=plKxmgLrHG7bYDg0n35vnbolULMBfb11CTmaF6tUImQ=;
-	b=DjGqfLmF7eMwAetIg6NnLyqBQWNcSj5lkvXhJ47IZtT5LXWtyLqX4p5pP2njWu3s8ZB53Q
-	pw4rSu/zlTQZGfH1LfytrNzOYuCfv6syVPJ60Ino9f5UY6H+BySFOs9GOitbf5HGNIrUaQ
-	U3x5ftyKepPlU29aaPMKOuAVCilBOcc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744105891;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=plKxmgLrHG7bYDg0n35vnbolULMBfb11CTmaF6tUImQ=;
-	b=5eKetpmQLiJYJjBMAhE040256fxz+pc2pwa86qzC+UiPLFWFvdDjcYj94LK5wji8xsna7R
-	TjseWkD3LnX+1IAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D200713A1E;
-	Tue,  8 Apr 2025 09:51:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lU2/MqPx9GezawAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 08 Apr 2025 09:51:31 +0000
-Date: Tue, 08 Apr 2025 11:51:31 +0200
-Message-ID: <87a58rasm4.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: cs46xx: Remove commented out code
-In-Reply-To: <20250408083015.796638-2-thorsten.blum@linux.dev>
-References: <20250408083015.796638-2-thorsten.blum@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1744105940; c=relaxed/simple;
+	bh=sIUvOd8p97+lcTTDarHIe6iGuOljbNgcNFgMSSA+1gA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FrrNKPYvdWmrfy8gydCIAIY5Kzebf22K0dHNfeQP62/fdq9ZUu0VWpsArsekyka2dWuIRkmu+o6aN4xslQSlLP6GWKMqtWvPAw8BxEfT6HkEEQmsDd5/H1XFtfPVa9dhU76em0QTyWPBhnWL0fYmXvrsztkhpRjH/gAWpcdyfFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GWrQlabB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5382JK1K014105;
+	Tue, 8 Apr 2025 09:52:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2bLzXGPNdf14yhwDNjr5G7XTe8KRDfZT9vpWF09aeWM=; b=GWrQlabBujxHZsPA
+	44I2Sr/I2jdrVz0d15xAOeuFZdkCwd9NHC1sr7Z29oKehwCJMuKC6KCC92vFSUqy
+	FyCq2MNeiGj6Gaw/Zg0ZMyvwcqWGUKVN9ces4O2XWcyz5vr1wNRRbR3/EHdUHB+P
+	fF+WJUKTcG5g1yypnatsmlHpyvkhDWwBm8vjMgVBldsKHC7Wh3qRG0cc9Ge2g/2G
+	cqu0ag4gkDVNBR25v3SKeNgcy2SmvB4lWTgpqNJxsYApH2BIPoCAXzCRW+VY/yz/
+	0wfZM+oS7O8IY/0lXQ07HHG2ONUHhn4HHkYW2idRW3qzzYGRZ3oWGPV89auSsKqi
+	w05Lqg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twpm79x0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Apr 2025 09:52:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5389qA5d001149
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 8 Apr 2025 09:52:10 GMT
+Received: from [10.216.15.222] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 8 Apr 2025
+ 02:52:06 -0700
+Message-ID: <618e7026-b32b-681b-787e-839ecbaf490b@quicinc.com>
+Date: Tue, 8 Apr 2025 15:22:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: E6F561F38D
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH ath-next v4 3/9] wifi: ath12k: fix failed to set mhi state
+ error during reboot with hardware grouping
+Content-Language: en-US
+To: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>,
+        Johannes Berg
+	<johannes@sipsolutions.net>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        "Karthikeyan
+ Periyasamy" <quic_periyasa@quicinc.com>,
+        Kalle Valo <kvalo@kernel.org>, Harshitha Prem <quic_hprem@quicinc.com>
+CC: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250408-fix_reboot_issues_with_hw_grouping-v4-0-95e7bf048595@oss.qualcomm.com>
+ <20250408-fix_reboot_issues_with_hw_grouping-v4-3-95e7bf048595@oss.qualcomm.com>
+From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
+In-Reply-To: <20250408-fix_reboot_issues_with_hw_grouping-v4-3-95e7bf048595@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: TZLIXGopljX7Tjt34G-8eiryIPwJ64hq
+X-Proofpoint-ORIG-GUID: TZLIXGopljX7Tjt34G-8eiryIPwJ64hq
+X-Authority-Analysis: v=2.4 cv=MpRS63ae c=1 sm=1 tr=0 ts=67f4f1ca cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=xIekBQewz7G2E8zR-ygA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-08_03,2025-04-07_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=691 clxscore=1015 priorityscore=1501 impostorscore=0
+ spamscore=0 bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0
+ phishscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504080070
 
-On Tue, 08 Apr 2025 10:30:12 +0200,
-Thorsten Blum wrote:
+
+
+On 4/8/2025 11:36 AM, Aditya Kumar Singh wrote:
+> With hardware grouping, during reboot, whenever a device is removed, it
+> powers down itself and all its partner devices in the same group. Now this
+> is done by all devices and hence there is multiple power down for devices
+> and hence the following error messages can be seen:
 > 
-> The code has been commented out ever since commit 1da177e4c3f4
-> ("Linux-2.6.12-rc2"), remove it.
+> ath12k_pci 0002:01:00.0: failed to set mhi state POWER_OFF(3) in current mhi state (0x0)
+> ath12k_pci 0002:01:00.0: failed to set mhi state: POWER_OFF(3)
+> ath12k_pci 0002:01:00.0: failed to set mhi state DEINIT(1) in current mhi state (0x0)
+> ath12k_pci 0002:01:00.0: failed to set mhi state: DEINIT(1)
+> ath12k_pci 0003:01:00.0: failed to set mhi state POWER_OFF(3) in current mhi state (0x0)
+> ath12k_pci 0003:01:00.0: failed to set mhi state: POWER_OFF(3)
+> ath12k_pci 0003:01:00.0: failed to set mhi state DEINIT(1) in current mhi state (0x0)
+> ath12k_pci 0003:01:00.0: failed to set mhi state: DEINIT(1)
+> ath12k_pci 0004:01:00.0: failed to set mhi state POWER_OFF(3) in current mhi state (0x0)
+> ath12k_pci 0004:01:00.0: failed to set mhi state: POWER_OFF(3)
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> To prevent this, check if the ATH12K_PCI_FLAG_INIT_DONE flag is already
+> set before powering down. If it is set, it indicates that another partner
+> device has already performed the power down, and this device can skip this
+> step.
+> 
+> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.3.1-00173-QCAHKSWPL_SILICONZ-1
+> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.4.1-00199-QCAHKSWPL_SILICONZ-1
+> Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
+> 
+> Signed-off-by: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
 
-Applied now.  Thanks.
-
-
-Takashi
+Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
 
