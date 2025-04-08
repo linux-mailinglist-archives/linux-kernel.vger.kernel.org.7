@@ -1,98 +1,300 @@
-Return-Path: <linux-kernel+bounces-593525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5032A7FA25
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:46:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138D4A7FA15
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4145F3A8764
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:42:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FB2E173BD4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09FD267B00;
-	Tue,  8 Apr 2025 09:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5A1IDII"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6A8264A9E;
+	Tue,  8 Apr 2025 09:42:57 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B060267AF2;
-	Tue,  8 Apr 2025 09:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F26A21129A
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744105195; cv=none; b=llkIFgHLgxVXoiXmb5ZER3oYPi6WNKhxmfQrMULguMNxPpyD7ntZSjth6AwrqJ/0o/XVBKUPz0YelSeVni5PQO1kd983pXXAwlR2wCzs5Cl9Y+3mXIDiSdl8b4cFX6PonQUywhmeUW2zPmaoDxp3J6YUY8yVviFM6ytVN/9U/aQ=
+	t=1744105377; cv=none; b=AbhTus01guAsavcbcVvlo2xYvTyJtSumD62JEbK6os5cnP+K54qF/7Pp8DWXrOvsDQMoxt3rICyhDDMIcQCA8LJs26H6/FhM7+DTaTOFTDAaYLgVv0omsnW8Kd62SSnpxjdrSsrzYJIkJsyRzQc9xrryIfAAqAzCq8alq4/3EU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744105195; c=relaxed/simple;
-	bh=3gDZsk2A3D/pEYugevyHrBygtLAgaecfyjqDZoJz+ls=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ohkyI2kLWLajYs2qNhbQ3xKZgLqMfsMyLPaqjI2U7m8C+89fhs7gR3HzQTjNgMoskQqmiSXEo4qiyap/ukKkVzqb6bf+UB0+8k+jJh7LYQGtYS1tQp6BSEysmDwgVi339ZCTk1OCrmRmIwEphAV5WWY+TaA/ZFg2yaO3hs5HhLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5A1IDII; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B36CC4CEE8;
-	Tue,  8 Apr 2025 09:39:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744105194;
-	bh=3gDZsk2A3D/pEYugevyHrBygtLAgaecfyjqDZoJz+ls=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=j5A1IDIIFWFx4rOC3LpeaZaioc4nMhF8+bFl07kRiP6CCqTTKHa1YJPC2xFq4lwsF
-	 Dr4NtEgGmcWtgVlQg+KbNKXAJOlbbSAR2FEAiq61TRol93Wk1eIa77PSS2DIABPfOb
-	 A2rQ0ogTUc77v0mCVNurooK7EE0kuotI7daj34wrLy2GqR6J4aoqbUij+RxyRAz8pV
-	 bwZRTZQqVvXF9aWbw3mwCOmiMbnoODuhkcfd9efzulrKh/vf6qNIj0YnFQc+NCxKxn
-	 4D6G9dHTGfjbMojbiOzm39gxmZC5iK8NJHoExd3A7Oo4NY6Rf86WKcBSb1gTostdWW
-	 cY7bIVp72yqLg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 340B638111D4;
-	Tue,  8 Apr 2025 09:40:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1744105377; c=relaxed/simple;
+	bh=+81PGJSgNzOkg5RPBDu0ASqN0buf8wiRfhG8ESfO2Qw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DefhE+eRjJFGtlpKkyXsiNAIfLygQSgbERBS9G6+VobkYhGkcZNMDujhCmBZ0Es5+n9FmlcXcos7yjYTPYT59pIvHyMfojknPCqKJ4NSfQ16kFljJzibkuKtJ1CoFPHbDzUIrNeSlPp3y3SpUwOQhCn6fJjfRH71lyKqcPiRUok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZX1Hz6b4xz2CdgP;
+	Tue,  8 Apr 2025 17:39:27 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id A08FC1401F3;
+	Tue,  8 Apr 2025 17:42:50 +0800 (CST)
+Received: from [10.67.120.170] (10.67.120.170) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 8 Apr 2025 17:42:50 +0800
+Message-ID: <ab20d545-7dc8-4dd0-bd05-256089034ec3@huawei.com>
+Date: Tue, 8 Apr 2025 17:42:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dma mapping benchmark: modify the framework to adapt
+ to more map modes
+To: Barry Song <21cnbao@gmail.com>
+CC: <chenxiang66@hisilicon.com>, <yangyicong@huawei.com>, <hch@lst.de>,
+	<iommu@lists.linux.dev>, <jonathan.cameron@huawei.com>,
+	<prime.zeng@huawei.com>, <fanghao11@huawei.com>,
+	<linux-kernel@vger.kernel.org>
+References: <20250212022718.1995504-1-xiaqinxin@huawei.com>
+ <20250212022718.1995504-2-xiaqinxin@huawei.com>
+ <CAGsJ_4waiZ2+NBJG+SCnbNk+nQ_ZF13_Q5FHJqZyxyJTcEop2A@mail.gmail.com>
+From: Qinxin Xia <xiaqinxin@huawei.com>
+In-Reply-To: <CAGsJ_4waiZ2+NBJG+SCnbNk+nQ_ZF13_Q5FHJqZyxyJTcEop2A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] sctp: detect and prevent references to a freed transport
- in sendmsg
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174410523201.1843579.6108769809547984395.git-patchwork-notify@kernel.org>
-Date: Tue, 08 Apr 2025 09:40:32 +0000
-References: <20250404-kasan_slab-use-after-free_read_in_sctp_outq_select_transport__20250404-v1-1-5ce4a0b78ef2@igalia.com>
-In-Reply-To: <20250404-kasan_slab-use-after-free_read_in_sctp_outq_select_transport__20250404-v1-1-5ce4a0b78ef2@igalia.com>
-To: =?utf-8?q?Ricardo_Ca=C3=B1uelo_Navarro_=3Crcn=40igalia=2Ecom=3E?=@codeaurora.org
-Cc: marcelo.leitner@gmail.com, lucien.xin@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- revest@google.com, kernel-dev@igalia.com, linux-sctp@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Fri, 04 Apr 2025 16:53:21 +0200 you wrote:
-> sctp_sendmsg() re-uses associations and transports when possible by
-> doing a lookup based on the socket endpoint and the message destination
-> address, and then sctp_sendmsg_to_asoc() sets the selected transport in
-> all the message chunks to be sent.
-> 
-> There's a possible race condition if another thread triggers the removal
-> of that selected transport, for instance, by explicitly unbinding an
-> address with setsockopt(SCTP_SOCKOPT_BINDX_REM), after the chunks have
-> been set up and before the message is sent. This can happen if the send
-> buffer is full, during the period when the sender thread temporarily
-> releases the socket lock in sctp_wait_for_sndbuf().
-> 
-> [...]
-
-Here is the summary with links:
-  - sctp: detect and prevent references to a freed transport in sendmsg
-    https://git.kernel.org/netdev/net/c/f1a69a940de5
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
 
+在 2025/4/7 13:28, Barry Song 写道:
+> On Wed, Feb 12, 2025 at 3:27 PM Qinxin Xia <xiaqinxin@huawei.com> wrote:
+>> In this patch map_benchmark abstract in four interface: prepare, unprepare,
+>> do_map, do_unmap. When there's a new mode to add, need four steps:
+>> 1) Add the mode in map_benchmark.h
+>>
+>> 2) Defines the mode param, like struct dma_xxx_map_param, and this object
+>>     will be return in prepare and as input parameter in other ops;
+>>
+>> 3) Defines the ops functions:prepare, unprepare, do_map, do_unmap.
+>>
+>> 4) Add the new mode in dma_map_benchmark_ops.
+>>
+>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
+>> ---
+>>   include/linux/map_benchmark.h |   6 ++
+>>   kernel/dma/map_benchmark.c    | 122 +++++++++++++++++++++++++++-------
+>>   2 files changed, 105 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/include/linux/map_benchmark.h b/include/linux/map_benchmark.h
+>> index 62674c83bde4..054db02a03a7 100644
+>> --- a/include/linux/map_benchmark.h
+>> +++ b/include/linux/map_benchmark.h
+>> @@ -15,6 +15,11 @@
+>>   #define DMA_MAP_TO_DEVICE       1
+>>   #define DMA_MAP_FROM_DEVICE     2
+>>
+>> +enum {
+>> +       DMA_MAP_SINGLE_MODE,
+>> +       DMA_MAP_MODE_MAX
+>> +};
+>> +
+>>   struct map_benchmark {
+>>          __u64 avg_map_100ns; /* average map latency in 100ns */
+>>          __u64 map_stddev; /* standard deviation of map latency */
+>> @@ -27,5 +32,6 @@ struct map_benchmark {
+>>          __u32 dma_dir; /* DMA data direction */
+>>          __u32 dma_trans_ns; /* time for DMA transmission in ns */
+>>          __u32 granule;  /* how many PAGE_SIZE will do map/unmap once a time */
+>> +       __u8  map_mode; /* the mode of dma map */
+> We previously added some padding to ensure the uABI remained consistent.
+> I just noticed that Tiantao’s commit (8ddde07a3d285a0f3cec, "dma-mapping:
+> benchmark: extract a common header file for map_benchmark definition")
+> accidentally removed that padding, which has completely broken the ABIs.
+>
+> Could you send a patch to fix this regression, and CC it to
+> stable@vger.kernel.org before adding the new field which should
+> use the expansion[] instead.
+OK, I will send a patch to fix this regression in next version.
+>
+>>   };
+>>   #endif /* _KERNEL_DMA_BENCHMARK_H */
+>> diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
+>> index cc19a3efea89..d8ec0ce058d8 100644
+>> --- a/kernel/dma/map_benchmark.c
+>> +++ b/kernel/dma/map_benchmark.c
+>> @@ -5,6 +5,7 @@
+>>
+>>   #define pr_fmt(fmt)    KBUILD_MODNAME ": " fmt
+>>
+>> +#include <linux/cleanup.h>
+>>   #include <linux/debugfs.h>
+>>   #include <linux/delay.h>
+>>   #include <linux/device.h>
+>> @@ -31,17 +32,98 @@ struct map_benchmark_data {
+>>          atomic64_t loops;
+>>   };
+>>
+>> +struct map_benchmark_ops {
+>> +       void *(*prepare)(struct map_benchmark_data *map);
+>> +       void (*unprepare)(void *arg);
+>> +       int (*do_map)(void *arg);
+>> +       int (*do_unmap)(void *arg);
+>> +};
+>> +
+>> +struct dma_single_map_param {
+>> +       struct device *dev;
+>> +       dma_addr_t addr;
+>> +       void *xbuf;
+>> +       u32 npages;
+>> +       u32 dma_dir;
+>> +};
+>> +
+>> +static void *dma_single_map_benchmark_prepare(struct map_benchmark_data *map)
+>> +{
+>> +       struct dma_single_map_param *mparam __free(kfree) = kzalloc(sizeof(*mparam),
+>> +                                                                   GFP_KERNEL);
+>> +       if (!mparam)
+>> +               return NULL;
+>> +
+>> +       mparam->npages = map->bparam.granule;
+>> +       mparam->dma_dir = map->bparam.dma_dir;
+>> +       mparam->dev = map->dev;
+>> +       mparam->xbuf = alloc_pages_exact(mparam->npages * PAGE_SIZE, GFP_KERNEL);
+>> +       if (!mparam->xbuf)
+>> +               return NULL;
+>> +
+>> +       /*
+>> +        * for a non-coherent device, if we don't stain them in the
+>> +        * cache, this will give an underestimate of the real-world
+>> +        * overhead of BIDIRECTIONAL or TO_DEVICE mappings;
+>> +        * 66 means evertything goes well! 66 is lucky.
+>> +        */
+>> +       if (mparam->dma_dir != DMA_FROM_DEVICE)
+>> +               memset(mparam->xbuf, 0x66, mparam->npages * PAGE_SIZE);
+>> +
+>> +       return_ptr(mparam);
+>> +}
+>> +
+>> +static void dma_single_map_benchmark_unprepare(void *arg)
+>> +{
+>> +       struct dma_single_map_param *mparam = arg;
+>> +
+>> +       free_pages_exact(mparam->xbuf, mparam->npages * PAGE_SIZE);
+>> +       kfree(mparam);
+>> +}
+>> +
+>> +static int dma_single_map_benchmark_do_map(void *arg)
+>> +{
+>> +       struct dma_single_map_param *mparam = arg;
+>> +
+>> +       mparam->addr = dma_map_single(mparam->dev, mparam->xbuf,
+>> +                                     mparam->npages * PAGE_SIZE, mparam->dma_dir);
+>> +       if (unlikely(dma_mapping_error(mparam->dev, mparam->addr))) {
+>> +               pr_err("dma_map_single failed on %s\n", dev_name(mparam->dev));
+>> +               return -ENOMEM;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int dma_single_map_benchmark_do_unmap(void *arg)
+>> +{
+>> +       struct dma_single_map_param *mparam = arg;
+>> +
+>> +       dma_unmap_single(mparam->dev, mparam->addr,
+>> +                        mparam->npages * PAGE_SIZE, mparam->dma_dir);
+>> +       return 0;
+>> +}
+>> +
+>> +static struct map_benchmark_ops dma_single_map_benchmark_ops = {
+>> +       .prepare = dma_single_map_benchmark_prepare,
+>> +       .unprepare = dma_single_map_benchmark_unprepare,
+>> +       .do_map = dma_single_map_benchmark_do_map,
+>> +       .do_unmap = dma_single_map_benchmark_do_unmap,
+>> +};
+>> +
+>> +static struct map_benchmark_ops *dma_map_benchmark_ops[DMA_MAP_MODE_MAX] = {
+>> +       [DMA_MAP_SINGLE_MODE] = &dma_single_map_benchmark_ops,
+>> +};
+>> +
+>>   static int map_benchmark_thread(void *data)
+>>   {
+>> -       void *buf;
+>> -       dma_addr_t dma_addr;
+>>          struct map_benchmark_data *map = data;
+>> -       int npages = map->bparam.granule;
+>> -       u64 size = npages * PAGE_SIZE;
+>> +       __u8 map_mode = map->bparam.map_mode;
+>>          int ret = 0;
+>>
+>> -       buf = alloc_pages_exact(size, GFP_KERNEL);
+>> -       if (!buf)
+>> +       void *arg = dma_map_benchmark_ops[map_mode]->prepare(map);
+>> +
+>> +       if (!arg)
+>>                  return -ENOMEM;
+>>
+>>          while (!kthread_should_stop())  {
+>> @@ -49,23 +131,10 @@ static int map_benchmark_thread(void *data)
+>>                  ktime_t map_stime, map_etime, unmap_stime, unmap_etime;
+>>                  ktime_t map_delta, unmap_delta;
+>>
+>> -               /*
+>> -                * for a non-coherent device, if we don't stain them in the
+>> -                * cache, this will give an underestimate of the real-world
+>> -                * overhead of BIDIRECTIONAL or TO_DEVICE mappings;
+>> -                * 66 means evertything goes well! 66 is lucky.
+>> -                */
+>> -               if (map->dir != DMA_FROM_DEVICE)
+>> -                       memset(buf, 0x66, size);
+>> -
+>>                  map_stime = ktime_get();
+>> -               dma_addr = dma_map_single(map->dev, buf, size, map->dir);
+>> -               if (unlikely(dma_mapping_error(map->dev, dma_addr))) {
+>> -                       pr_err("dma_map_single failed on %s\n",
+>> -                               dev_name(map->dev));
+>> -                       ret = -ENOMEM;
+>> +               ret = dma_map_benchmark_ops[map_mode]->do_map(arg);
+>> +               if (ret)
+>>                          goto out;
+>> -               }
+>>                  map_etime = ktime_get();
+>>                  map_delta = ktime_sub(map_etime, map_stime);
+>>
+>> @@ -73,7 +142,9 @@ static int map_benchmark_thread(void *data)
+>>                  ndelay(map->bparam.dma_trans_ns);
+>>
+>>                  unmap_stime = ktime_get();
+>> -               dma_unmap_single(map->dev, dma_addr, size, map->dir);
+>> +               ret = dma_map_benchmark_ops[map_mode]->do_unmap(arg);
+>> +               if (ret)
+>> +                       goto out;
+>>                  unmap_etime = ktime_get();
+>>                  unmap_delta = ktime_sub(unmap_etime, unmap_stime);
+>>
+>> @@ -108,7 +179,7 @@ static int map_benchmark_thread(void *data)
+>>          }
+>>
+>>   out:
+>> -       free_pages_exact(buf, size);
+>> +       dma_map_benchmark_ops[map_mode]->unprepare(arg);
+>>          return ret;
+>>   }
+>>
+>> @@ -209,6 +280,11 @@ static long map_benchmark_ioctl(struct file *file, unsigned int cmd,
+>>
+>>          switch (cmd) {
+>>          case DMA_MAP_BENCHMARK:
+>> +               if (map->bparam.map_mode >= DMA_MAP_MODE_MAX) {
+>> +                       pr_err("invalid map mode\n");
+>> +                       return -EINVAL;
+>> +               }
+>> +
+>>                  if (map->bparam.threads == 0 ||
+>>                      map->bparam.threads > DMA_MAP_MAX_THREADS) {
+>>                          pr_err("invalid thread number\n");
+>> --
+>> 2.33.0
+>>
+> Thanks
+> Barry
 
