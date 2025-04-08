@@ -1,149 +1,125 @@
-Return-Path: <linux-kernel+bounces-593380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C1EAA7F87D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:53:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5AC5A7F885
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CBE4189EE4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:50:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A717440E94
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE6D266B61;
-	Tue,  8 Apr 2025 08:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E073D26461A;
+	Tue,  8 Apr 2025 08:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oe1N0b15"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ktdRQGpq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFAA266B52;
-	Tue,  8 Apr 2025 08:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F3D263F2C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744102067; cv=none; b=KiKT/Pgqbr+ccQgZ/Y9VqLRKWmccMldUBQqfowj4qJQaDCvNCmCtFqzwWltkirLli7iAhanSSh4MCmOJEbudkN5aruUwJbf+uTZnN5Z+ygCbGQ/pcmNzF5Ykl8x5x9oU3hymG0FSSWsqISM+6AkOjIlYM6ezDziIzV1ejJsvGxg=
+	t=1744102093; cv=none; b=qpxvb0Pg4hnDDfWeocwJ3YfWbXd5AgUDSAhGPnxF+I11UwITTkHp6RPMziNln1gu8ZS8NWkH4Nr/6P/vXPPYWZ7rDQHhF11Q+WPhdP96oqv6LrvN1UEjGxuwYZNKiKJOJRGI0JpANcFA90upzd/5Q9cunjmFhZCkag2evuKMeR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744102067; c=relaxed/simple;
-	bh=d3fTvX5BZTPRs8hQ2VMYCFfr+KnxtkagbC7FLYvrnHQ=;
+	s=arc-20240116; t=1744102093; c=relaxed/simple;
+	bh=pPDZXAl+n83OgTG8wqkCh1xzr29gNLTH8LwtUQUJo9g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GojSPCPwpwcWhWlMYCgd2EJZygXPw5x02nVd7LUh6C73+q55Czqt30U/Ekvzjjn4YoTQ8ZrpBJHJBvjTmdJukM/9MO9KJK1FoUEw2/4O6be7NEb2MqhBylwjTxnyN6VIKTSvvyWeZc+9WV5rI+Nfbz/MtodKPqmY64cYliDhEjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oe1N0b15; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54c0fa6d455so6324904e87.1;
-        Tue, 08 Apr 2025 01:47:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744102064; x=1744706864; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uZjJJ3Y3msGY6Y5zjatg8PUOypRoSEmuipNZV0rAkh0=;
-        b=Oe1N0b155UTrKWPX2tZPfB8MXtQJrSvJgBPuY48Pocwe50rSevkyfTa8qukSK2xa68
-         +a5xPVAE2TCCw1L8cdZvh6GP+PClEW3iYS2dFTAzeBt7xp0tjx/lPehiNqo3CtnBwYhO
-         TKDSYHOUt9a23XEjCmHMW1OnYc1HQrfTRluDTLwZAJO0exK/Sy7V7o8sHWndN63cuH+n
-         2o/GenBoXKXVwlEe98ssVf87amA1R0KKJQYK06i+Ge07CNPP7MMClSP7YqOSfAnpklsm
-         E45coJUTFtyfjrum1wX5gzM73RW0/i3k3nh9ceBUZ6xKwcFqmVz6vn6Xu+yqUOqa2gcT
-         flUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744102064; x=1744706864;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uZjJJ3Y3msGY6Y5zjatg8PUOypRoSEmuipNZV0rAkh0=;
-        b=KrCj9f9jhl0kBpqb9tZz3QKEFYiUouA+9tucLiTg5F9oxVu091en8hzds4dFIpl/EV
-         9xUlk3RHlB3ftPsiOcVXyBHmlWzGXMFIenM7PL1Q0pPJCiOxzTYU92BddVv2M8O4Fizf
-         d0tpB9H/qUnZOTPEZ5CVn1QMJ3oaPMnm/PkC/IvYSI7HLN1d0zkDYZuWpLm/wB4mSmtZ
-         XikzcfHhVg+qI0WJnwbrIAoVQu1dO+a9oZ74rUYE05aEFEedY+TsQDrWUh5BwfeBLMvJ
-         JSAQCgKLCwF4rHFPDI9SAkXnvXxA4lmGh4oxIFEeaK8pjcLSauFgCIXwFZwM/wRUPAA2
-         kaJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHKjgJOhgQl39yMbCFsB2I++fSINewQvCriNFhDizTwPPGKtQYMn4h2Ao85mPGILx4bwGMhPiHi7zZ@vger.kernel.org, AJvYcCVqJDbMqwF/1ARxJHzOiNnjwH+rci96mp8lQj+fusyxwbkdPayUWQZxTxDqkT/4wdA4EyxsZdLzvOL0WnAw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3+oSvttQwuZifF07iwywCVjvK6IDnfURkXh9BJuM7gzh36EJx
-	kQohehlkDQ2i8HxndJ+YkrK5VwfO1BZR9Z7OsYFdc+RGs66L5GKE
-X-Gm-Gg: ASbGncsOFeqUajoFaykTJL0nRp5fbCceL4O12C8YHQFeHKaH7EjhoRYBe93DfDbZgAf
-	lRO/tnsDnBC4n0ElLyDSPPODwzbcC6VgLKXOdF9aP8Wvi2v/UYhcj6vEW9omq7XO6x5vYC7m3nd
-	mTL9Cr9+RkuwF9wKeEXDMvNHLwwBqJIyZ9YhXMstCPmznZERKfvwX3ebq4rZCqZwqbSAlePkexE
-	l0Y0lBnfSR1RLxNtjUHIrlnx/Kzi2ScLj0MIqbyGCHPKaUxDEgzcLxK6upb3/CMaBHSAqKVzUKk
-	UAN5YvT4xAK7gnf3s88GJukQWAhtNp5m8qNHcnLbf30vJL0=
-X-Google-Smtp-Source: AGHT+IEspu9bvS8K6ymNPHWqVaXJQF1y6gERy0Ugs1WYod/RIPWOuIDKZQKk76TcgIgQ7OtQI6hyFA==
-X-Received: by 2002:a05:6512:3d9f:b0:54a:cc76:1676 with SMTP id 2adb3069b0e04-54c227f8f37mr5156194e87.44.1744102063985;
-        Tue, 08 Apr 2025 01:47:43 -0700 (PDT)
-Received: from mva-rohm ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e65ce3esm1459572e87.166.2025.04.08.01.47.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 01:47:43 -0700 (PDT)
-Date: Tue, 8 Apr 2025 11:47:39 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 14/14] MAINTAINERS: Add BD96802 specific header
-Message-ID: <872fdf7c24d1ff4379d1234f03766bda64c5c5b4.1744090658.git.mazziesaccount@gmail.com>
-References: <cover.1744090658.git.mazziesaccount@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZGJOGQqaP0BHXnhZvRVjYC2F7tnWJMpf/RzZCmGc3wCoA02qBBCJjRYauZpWu34PPJ2QLcfUMGofpuN8zuuBasv77brQLQKD9c7v7bCAfxgwO5jAqX1zclNZB6LshLgc8Sh+ggFZKQG90OIT0XUcfBMBnwSN9v55b1RxGlX+3/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ktdRQGpq; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744102092; x=1775638092;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pPDZXAl+n83OgTG8wqkCh1xzr29gNLTH8LwtUQUJo9g=;
+  b=ktdRQGpq8Va507PqlBnVDe0DEb6wtIDj6ipfytvIp5MjZiqquQKJBXJJ
+   bsW04oIbdPRNroCvUhPpeWbDli5hx6y4SRTtyePSZL40QL3pZvfKyWLZM
+   gjbr1uXa48yrTLfuso85r5dk+fnSVwA1KSTjcqy4ZZ0PiHLNuuGmgCKxk
+   crrhlk/QUx6dkisyV9FyCACQEmnbeHkfvBKHazbdYE4U7EN3cfn6zNFmn
+   Gw0xbTorhAA+dCUAtnqJeZKpea5g19u+TNujqbFlqlTkYQ9+Ci5A7x8j9
+   DhijCzVe9whx8w+DwMk6TvEHngLjte8jL//Gb+Wr3YoG0hUgl7ncw9FdV
+   Q==;
+X-CSE-ConnectionGUID: V6FpZqi2RvqLtXOjxwY2qQ==
+X-CSE-MsgGUID: j4sWZSW9TbKCXTZv+Cc2gQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45641149"
+X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
+   d="scan'208";a="45641149"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 01:48:11 -0700
+X-CSE-ConnectionGUID: 4fDSiAloSFWOPjykVx0wrQ==
+X-CSE-MsgGUID: VQV3nGtOS7G+XzBwttWmBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
+   d="scan'208";a="129153624"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 01:48:09 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u24co-0000000ALLr-3hfP;
+	Tue, 08 Apr 2025 11:48:06 +0300
+Date: Tue, 8 Apr 2025 11:48:06 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: gregkh@linuxfoundation.org, david.m.ertman@intel.com,
+	ira.weiny@intel.com, lee@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mfd: core: Support auxiliary device
+Message-ID: <Z_TixhOQM-DFoG-2@smile.fi.intel.com>
+References: <20250407074614.1665575-1-raag.jadav@intel.com>
+ <Z_OQgqt0Wg17N05j@smile.fi.intel.com>
+ <Z_OQqgSjHxq6kwDp@smile.fi.intel.com>
+ <Z_TYq5J0CPFvdm7e@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oO1EjVqHxCEX0Gpx"
-Content-Disposition: inline
-In-Reply-To: <cover.1744090658.git.mazziesaccount@gmail.com>
-
-
---oO1EjVqHxCEX0Gpx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Z_TYq5J0CPFvdm7e@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Add the include/linux/mfd/rohm-bd96802.h to the list of the ROHM PMIC
-specific files maintained by the undersigned.
+On Tue, Apr 08, 2025 at 11:04:59AM +0300, Raag Jadav wrote:
+> On Mon, Apr 07, 2025 at 11:45:30AM +0300, Andy Shevchenko wrote:
+> > On Mon, Apr 07, 2025 at 11:44:50AM +0300, Andy Shevchenko wrote:
+> > > On Mon, Apr 07, 2025 at 01:16:14PM +0530, Raag Jadav wrote:
+> > > > Extend MFD subsystem to support auxiliary child device. This is useful
+> > > > for MFD usecases where parent device is on a discoverable bus and doesn't
+> > > > fit into the platform device criteria. Purpose of this implementation is
+> > > > to provide discoverable MFDs just enough infrastructure to register
+> > > > independent child devices with their own memory and interrupt resources
+> > > > without abusing the platform device.
+> > > > 
+> > > > Current support is limited to just PCI type MFDs, but this can be further
+> > > > extended to support other types like USB in the future.
+> > > 
+> > > > PS: I'm leaning towards not doing any of the ioremap or regmap on MFD
+> > > > side and think that we should enforce child devices to not overlap.
+> > > 
+> > > Yes, but we will have the cases in the future, whatever,
+> > > for the first step it's okay.
+> > > 
+> > > > If there's a need to handle common register access by parent device,
+> > > > then I think it warrants its own driver which adds auxiliary devices
+> > > > along with a custom interface to communicate with them, and MFD on
+> > > > AUX is not the right solution for it.
+> > 
+> > And yes, I still consider enforcing regmap is the right step to go.
+> 
+> Unless there's an explicit need for it, I think we should leave that
+> choice to the individial drivers instead of forcing them to revamp.
+> But let's see what Lee and Greg have to say about this.
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Doing that is call to inherit all issues with shared resources and locking
+as I already said.
 
----
-Revision history:
-v1 =3D> :
- - No changes
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 96b827049501..82f408e07e2b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21000,6 +21000,7 @@ F:	include/linux/mfd/rohm-bd71828.h
- F:	include/linux/mfd/rohm-bd718x7.h
- F:	include/linux/mfd/rohm-bd957x.h
- F:	include/linux/mfd/rohm-bd96801.h
-+F:	include/linux/mfd/rohm-bd96802.h
- F:	include/linux/mfd/rohm-generic.h
- F:	include/linux/mfd/rohm-shared.h
-=20
---=20
-2.49.0
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---oO1EjVqHxCEX0Gpx
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmf04qsACgkQeFA3/03a
-ocV7ywf/aQPC6wzuJuLhhN5ZGQPBcHH+gf8g80bKxpKgLVweaAMR988vYQ8g1oxJ
-z7A87RgukgK8zNUrTuIR3qGWsaEw3giRcWhcIH5dLvCPktwI0tqSGgeXMKWxsBTz
-j8InzAQedal7tQDwb/OowDkFMimM/zO4YL5nYzPLNonNRTfsWoFxGgMty8tKpaSN
-Y4LskZbdE8hRaB+goTjwojKPkUhefloXOpZJWugf+LWYBYZYLXkG/aOBy9dmNRre
-6UVTFYNYt/TMfMEd41J4SBWJH+Qs4he41oPBXz63KJVT/IUQM4Imw8v171Uq36I1
-UEPBexl54xZ8dzIKlZgIWnhxcljHQw==
-=JPNc
------END PGP SIGNATURE-----
-
---oO1EjVqHxCEX0Gpx--
 
