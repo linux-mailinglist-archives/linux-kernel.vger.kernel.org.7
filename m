@@ -1,228 +1,455 @@
-Return-Path: <linux-kernel+bounces-594021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8DCA80BB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:19:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BAAA80C4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53CEA7B4501
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:18:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADC1B50239A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB13D38384;
-	Tue,  8 Apr 2025 13:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7A42D600;
+	Tue,  8 Apr 2025 13:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gG31rh+j"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2064.outbound.protection.outlook.com [40.107.96.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZSKRHRPb"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE083C00;
-	Tue,  8 Apr 2025 13:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744118360; cv=fail; b=hxAQAimoW4jQx+kXSUs5uuD+X3T7PyQ96nVsyaFu+ZNfIGkkQEgOOguG8COY3fE31L0nZXuacnatyUH5ZjgdKKP0rY4F6jGM8oTtuIWGSqqJKGY/QUS30o9Lqd89gP0ihpDc/hAmwsG3MLeQCmmvzjzX0aZGtmmbwn0YvbXRSAc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744118360; c=relaxed/simple;
-	bh=uoD6yinaT9cF3fthC6n125mh2q3GI3kyCADc88Jq6pc=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=aoaj+jraCf8zIL8IJCjx9c/zceoeKE6Q9LbxO1WAYESWKhWVnj4Dcvi+pZsgan7yglQ6QlLEU4JmjrjPGtD9gDn0vcv/UDBxEFSH92ETBfodDLjSwVy3mN2hUmYO9O8NOzHnaKM/MlbtDowqJ6i5A1SmFnZfeTp+k2xq6aBTSpg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gG31rh+j; arc=fail smtp.client-ip=40.107.96.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f8OeU9K3iZs9ySL5+wDFOOwzK4c8wSejo/Fov7e/mxpfkF3etN51HjdQvl0EfnAAgO+lXvhTMZcrlnvF8UFvrW70YfYIIwK9QPJM+Fhv6ErxaF8rX4yG0OSvIZ1GZRpK9g9MhwZRA8/O1FhPAmVm9xstNNo3XWaPHrO7f9DhXA70ZWcMWCpnC9iorrrB88esaaH/rm1FFum6dmpwErSuli8NMLzxwMON6evFuiDAXZzHCf5Nozh814qqXKOct62U0Beg61fTmKtQp5z/fgcUdo3p5t1TpszHyrDm83ACuGY0ZiLuAjljDRoqBnSzV+FgLgT/vZJqVPxEJM6iSk6QMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4GE9g0FYZQ/AsdykOyAdaYzjUgJFAoVJedyiuWpTrhc=;
- b=qxQ8XVByjII98acBUKWj4kJD1a9qQu3NaknAcZg50su3UzWhn/MMQ65a296aclG4gNeKBGFzE/pm1jNApmIeOfRYcqwhxnnQVp1Bd/QcUgD+cUZi9UxU87QDVcX9HwDofnZbwDOuHn8ImkMPW7iKcqqE198V/QCXgPGu6Swy9BMzQT3fuijyn3xdjEIyiuENUgE3q3+yzhV+hbA1LiUdRDsG6mLjicXxHQCHknBLyMiyeo3EsfyqjJE+SoX26ZCs1pcWMWQ+fAU9pn6/t9QhS87QVMr9Lbr/T5Bg2E2vCZAxZxehhuxfJP2w2Be0hvzY2ATLVSsIY/gzvcINMSpWDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4GE9g0FYZQ/AsdykOyAdaYzjUgJFAoVJedyiuWpTrhc=;
- b=gG31rh+j+C2E1bKu/9W/5erxhfxwgoE1oFd1QYQm/Zce0tGQ1fVjrGYb1s1AKh+XVJPAWGdos8U1fx4Q8GTnF1KN7lG1rGFEJUDOwuureRmvYi4Ik6/7fjjzQkyea4QgRY71Q4ZmP6bnxf1eKoVIjO4ErK1wktYU8p6O6Ser2A84vPYUkj/H6st/hit+03UeLQTv9WPgMlnn9YKWIiCT+k0h9g3m8iKwpF/lUSkpc8fXxYo6i6BY9NRg7fzUa5Tag7GDF4Sy+C3kbouyGG6bEwHy+9iH9S3tR/TeHzXTWYbqpjQReteo2ZqFGTKErm3v6qwEmSMEUvL412/1+y3IPw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by SA0PR12MB4381.namprd12.prod.outlook.com (2603:10b6:806:70::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Tue, 8 Apr
- 2025 13:19:16 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%6]) with mapi id 15.20.8632.017; Tue, 8 Apr 2025
- 13:19:16 +0000
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Apr 2025 22:19:12 +0900
-Message-Id: <D91ACTUAWQTF.2AZ98BUA5ZKJ6@nvidia.com>
-Cc: "Danilo Krummrich" <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rust: alloc: allow coercion from `Box<T>` to `Box<dyn
- U>` if T implements U
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Benno Lossin"
- <benno.lossin@proton.me>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250408-box_trait_objs-v1-1-58d8e78b0fb2@nvidia.com>
- <D916LG7Z9Q31.5RVNMYM38E2D@proton.me>
- <CANiq72k9Lo-M5v338iWWSiwrnU+JwP+aEZeLiR291xc2c+ESOg@mail.gmail.com>
-In-Reply-To: <CANiq72k9Lo-M5v338iWWSiwrnU+JwP+aEZeLiR291xc2c+ESOg@mail.gmail.com>
-X-ClientProxiedBy: TYCPR01CA0050.jpnprd01.prod.outlook.com
- (2603:1096:405:2::14) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761863C00;
+	Tue,  8 Apr 2025 13:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744118438; cv=none; b=m7BET0+TXsEQOvI3dl+j0tCXWqeDBA0T66Jd24t6itwgtjleCxOxlusbppRmKvZeFWFoYwVr0o236IWuucKOJBEv//6ocVBjkSKwvLC2gz2ATPXPWQfBnPFgW7jBLY5a49Q/1eol3QHBXTDnUtR2ZVFzQPtYnIMLxLHmbYnKHNU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744118438; c=relaxed/simple;
+	bh=ew77iTJXMeiY7VLKA7ubX/P/8KCT6I6hHqItB2aZ9EM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0g3kHJss3bau8I7e0R1ZQR3gmsTWa9NX5cvTNTBnQl24d8Zvq4u/vlbQWMbfE3Nwfb1MBxDtD8xU0/xuW+YgpdFqFrNKWe0TAO8ldTKMEFVfTXyqvrtf1+qbzE2Koo1i7ODGG35yMgmZLqU89ggxAV0kVJuKjwKLi9myMq9yoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZSKRHRPb; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30dd5a93b49so50166781fa.0;
+        Tue, 08 Apr 2025 06:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744118434; x=1744723234; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AqGCWUN00EqG8+9hEzWouzwuxZo1aHhQ8hA3XaHvu/w=;
+        b=ZSKRHRPbrqln8Q+BwDg2095fjZ5SfX5UxbG1dYhfkxS2/1St1Eb5dymp31kiu33pWG
+         ziXnRuJH6N61QdgeuDQAJ7bkj/y0KjAi88ptB78nDxk8vmL5SQgB+QgtcjmH6rXbGizN
+         pqwj9WwCPti2trztibNS9Ns3d0Vw0JaBaYQJI3HvTrdn4RRl5U3Wn21owhgMIcvuziHV
+         KSwpEX+nrd6vKdPNueUJ3o+lOtHPuspfhnGt95GnYzoVZXU2A9BCO552N2shu+KVgP7D
+         acfC28is8zX8J4BLRnAoduZNuTe5Za+sAIWD0GQ9kKWksdyL3K6BvUmt99YS5dy3F71i
+         9eBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744118434; x=1744723234;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AqGCWUN00EqG8+9hEzWouzwuxZo1aHhQ8hA3XaHvu/w=;
+        b=rkPbpQPaG3UmWTKTL8zoYC56iz/IfzW6W/KqDMTE4EXY43MUVpX1alpdTARTsXGthJ
+         E4H3/FkxdeOqzFkMmVwyQ+BJavuFL4ogGDwwmkHuLjA+nhhBcTqUYdQB6ZpVm4JrdjYD
+         jo7flnCQumPPvnhj0MrdYC35IHjypkZTLX4qPUAF76SzBWbKUC69RWO0fD/exFxJC6/i
+         fNrD+4+M+P+xSQqW8wrWptBY//d3GQIQgCBeBA6+hjaWGEXJu5shToFRKGzCt8756ONp
+         6HzbohvmoBhLbywl2/emcYjnaQPbhvFJ1906w1vw15uOOl+dhLOS6N8q0jADwyrXZQzV
+         dS4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUUbcO1EywQ3P9ZBUGf0U+2+8tZWdMXcggKsKSR6gaLBLPiw+vlDgUpNyzzyIWwbzDoVmTH/jM/ha+6@vger.kernel.org, AJvYcCXcv4gyPf+SyRkRw26arfbxA0m9H27JyPabiLyU/buDwClzQCiDDjkda9rQx2Xgn4Qxsyw5c709Zignmn7W@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkUw5TD2LoSKgrWsSkqTnl1TaVJj+U69hOwC3ILz0uIIskxOBY
+	IbvWTvuCYrU0ADF97b/ptzx19MewA4b0TH8LKwwvxh8+EAs2prao
+X-Gm-Gg: ASbGncsmB0kjfNH/uN1Okw/oDG9/FiUMtmZMkjF6HbOiEtllvHfyi0V8y1otXzPQEFD
+	8Y78PM1fiBapKGRpVcPPrR3GrrJY/r0NWI533thzXRMFJbWkp4eH5Q6pzqEoTCDhGHyxTo5hFDd
+	WM3s2EVweT56KgtJ+2rG0K5y8PazhODQTdeYsN9I3u8PhJy5za+SLh9Rt0sVsg2+WCafkjUqUYe
+	eNiAP3qT7mYHXkHab8kS+JYdthvZkdxKVk775b2pft3fdp92+l+yYC3mamYOJnd+6Wxi+brIAQ8
+	h882W2SJNGA6gHQXFhzAMCEw2ULp7fLAOrYBEtVZ275kWEIjTC+tcs1T7oFalxtO84DAB9TUcNQ
+	ij/p9ww==
+X-Google-Smtp-Source: AGHT+IF5ka75jbvTjBNXuR8hKu8LFh4jM4MbKJb+EKox7FPWdyzZ86fidkMWsWR4NDR3GMf86r6dew==
+X-Received: by 2002:a05:651c:2115:b0:30c:5c6:91e0 with SMTP id 38308e7fff4ca-30f0a0ec026mr52056281fa.2.1744118433999;
+        Tue, 08 Apr 2025 06:20:33 -0700 (PDT)
+Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f0314b908sm19189081fa.55.2025.04.08.06.20.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 06:20:33 -0700 (PDT)
+Date: Tue, 8 Apr 2025 15:20:31 +0200
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Zimmermann <tzimmrmann@suse.de>
+Subject: Re: [PATCH v3 2/3] drm/st7571-i2c: add support for Sitronix ST7571
+ LCD controller
+Message-ID: <Z_Uin2dvmbantQU4@gmail.com>
+References: <20250408-st7571-v3-0-200693efec57@gmail.com>
+ <20250408-st7571-v3-2-200693efec57@gmail.com>
+ <87cydn9bkx.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SA0PR12MB4381:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d6afc43-eb42-464c-1469-08dd769ff5d0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|10070799003|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TjlKbTRkMGpxdmdHNno0TkkxRllSYnhieHE4YXN6ckRuaTRoaGYweU9wNG9u?=
- =?utf-8?B?YXhwMkhTbHgrc0hJamZxWDQ4ZXNOSFNVN3M2aUZGbHd5a3UwUTZkaXE0TmNw?=
- =?utf-8?B?TFZaUk0xZG1RQXpGeWRlT2paYWFRNE1nTHFxRFhQV2hCVXZNc3dSYVJTaVRV?=
- =?utf-8?B?anZ4UUdoZ0pUc0FoeEtGdDR3KzRLWWdqV3pOcVpvWUVBVHM5akc1aFpTVENM?=
- =?utf-8?B?V0dmMkYzWVQyL3kxbnFYT3g5d3FMODhXYk5ObHpBdVBWdDRlS1JtaVo1cml2?=
- =?utf-8?B?ZXRxdUVuUXRLbXpNRklMSTRQcTBhNkgxUnhRYmhYTDU3eXdXKzBvVll6bGNh?=
- =?utf-8?B?cUtWQU41S2JOeEhaRm1KbkhEU0cvTDRzcDJPR21aQ0dKWXQ3K29pQytzNTNs?=
- =?utf-8?B?UFRDVkM4MmlReG52Mjg4YVpVTUtVdmZSQms4VThNbmlWdHJpVjBGN011MWZP?=
- =?utf-8?B?Rk9GUHEyNmQrR21uRTY1V3pSa01pdUNOTHJ2dy9LRXhIclQ1dDRUSlViWmZV?=
- =?utf-8?B?bzkzUENabkpreWphSWZhZmNPUE1GYlhVNkVsUGx2S1lDaFQ4b0ZKak14Ujcz?=
- =?utf-8?B?NmxaQ2xuQVFTaGJENmIzODJIN0FNRWNPMktLUFVUMlVncUVtMmJYbXFGRUN5?=
- =?utf-8?B?d3FSWHliVmhtSkJURXdFeXNnSFJzTkJ1RFlVRUVRWDVKVkRzQVk5TWJnVkhU?=
- =?utf-8?B?TG5Sc21KR2ZuWkpRRHZBWWVJZ0pxMkRwT3FjdkpOcW1pMFBybTFuaEtQTzdB?=
- =?utf-8?B?Y2Evcyt3UHFMZzBER1IyV01Dd3dwL242Sm8zSElMTE4wNGIwUU9ZVXp2emg5?=
- =?utf-8?B?OWhTOWwxSk5HZXgreUtybHpCOUg1WGZQTk1xVUNNTWhXM05VL1FuaVpEUGJB?=
- =?utf-8?B?Qjh5OUVDK2s1clBnNFAyTCtXUldhbmplYmovTHpJY3lOdCtWMXo2S1psbHNi?=
- =?utf-8?B?Rk9CMUw0UDFnR2hDaklZOHl4ZzRKVmQzVW9acEVLYTE5UWVPSGFjY2J3ck0z?=
- =?utf-8?B?bDBXMzlFdnNES21IU0JnVUw3ek9GQXpFQmQxNjBlVnBIOVd2UHNuUjdkeXpN?=
- =?utf-8?B?YStLWWJXcEZXczg4azcwRlpEK1UxbVNkWjVTTXpibWNrM1o5bC8zdXdnNGFL?=
- =?utf-8?B?cE8zZWRLWGtLWmJDbGpCWkZuSHQ2WlMxc0ptSEdPdE04bCtDQmE2ckVZcTJ3?=
- =?utf-8?B?aFVXWlZ6RTlUaW1yZFZ0eTB0d3RPWllmMEFubjJRMlF3WFFkMVZHQUhBZ1Fm?=
- =?utf-8?B?aEpNRDMxWlp1K08xTkFIREN3elBzSVNBalZlek1lVFRyTllDSGRwOWpadEkx?=
- =?utf-8?B?ZGdTNERITnVoSjZNVUN1Y0FNUmx1UE9DeVBWYWRIZW4yWjE0RmZyRE4yUGM2?=
- =?utf-8?B?T3gycWs0SGRwZnU1ampIU0YvK1FMZzRPWXduYitFcGdEVHIwb20wR2NRSisy?=
- =?utf-8?B?VDdNUmJ2OStPaXowdVZmNzAyR2Z0Qmc0WCtUaW5kenZEem9oNWZRZk1qZCtE?=
- =?utf-8?B?ekgrRWR0SmxvTzVjM0ZJbW8rZjFZVlBHZVdUOForc0VXZlBENUdOcmdRWHJ1?=
- =?utf-8?B?RzVuWUhJT2t1eHZPLzFIMk5jYUsrZUFUdzEwRm4xRm1UWEhsUWI4eExyTUVj?=
- =?utf-8?B?UjhJM2ZPUzNCMUl1dGswaUJxd1N0T3o1YnNWbktDczc2M1dadndiV2pCZ0tv?=
- =?utf-8?B?Y1BhOVBKUThuU1Q3dkZHMGROcVBBV3B3d3hsblRGZTdYSncrVG5tS1BNSTZG?=
- =?utf-8?B?bmlncEdWSnZ6d3Fwa2Q2dURYeVJWYXNPa3hWQXRBRE0vb254QzU4dXo1c0hj?=
- =?utf-8?B?RkJGTnZ4c0hJM1A0ME5DK3ZzZFM3QjliWGgvNHBHNDFvYTJtano4ZWVGMy9y?=
- =?utf-8?B?OUhRSlFmUHIrdDJJcTgvN3JON3UrM2VOVm9tTzludEl1Nk9qbjl2WHR5TnFX?=
- =?utf-8?Q?tQVX1xN5OZ4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(10070799003)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d1VreHArc3NnU3hKa3Z1aVRpMVB4dTZnaUJ4V0Jrb2dMdUZBa20xU3FzdDFY?=
- =?utf-8?B?RjlWdmI5cjZxOHp4QlRRSEpRVkZmTnVSTlBqbFBOQS9SUEdqTk5pV1kyZGlY?=
- =?utf-8?B?VlphN2F2OHZvTSt5c2FyajdRdWE3d0RtRnNwOFQzayt1ZjF4L0sxOW92SGNZ?=
- =?utf-8?B?d0tRbndRU09KSzRGQWRaclFoWDNPTUEzejkvcjR3UjBiOEJlYjBkNmx4UmVL?=
- =?utf-8?B?MkR3K3NDM1J6emRkSFp1bW9rMytzdUJlN1NZa0d3SHQ1TDg0UlQ0Z1dUS1NI?=
- =?utf-8?B?cndWZ0k5aGNqbVlDSjV4MjdWcU1OM1JxMENTUEJKMmc1QUdYckREMnN5M0Zx?=
- =?utf-8?B?a1lLTWRsYTh6bDdTQ2wySVBiY2pJc1Y1bzlFeHlFMy9QR1JCZ0R4MU14cWpj?=
- =?utf-8?B?VUZOUXpWSmtYN01mUktaU0t6VURoRytTZDJpdGZqL2VEUzUxTlRabUJieURH?=
- =?utf-8?B?WXNYVDBzeVJjem9YTGlkb2ExTmFKOVFHc1k0UHlvdmVsTmtHZWpKZDliWlBY?=
- =?utf-8?B?RlNiVFNuNGkxWXY3bjk1ck04K1hXaGZRWUtHbmM4d0tPVkIxeE5STVlZclF3?=
- =?utf-8?B?akNYSnc0citSWEU5QUVKNG96eUQxWC9QVTd5dDAzTG84SFpCZld6YzRKVldi?=
- =?utf-8?B?N0txQXdEbUtocTlIcytrNW4xcUwxUTFYaFJEa0s0MHdJMEZCRHl1cUE3YUVJ?=
- =?utf-8?B?c2dMb0pVVXVOOWlqUE9zaFBZVkxtWWZDUWROR0J0U2lIcGtxVngwbUZCdzZB?=
- =?utf-8?B?bWVjK0N6eGdpY3VDNk9YM3Q2UDRPOEk0V1BnU250MDkvTzBDbmNSLzhNUlZU?=
- =?utf-8?B?NUwzZStULzZkbHo0cUoxQUJ5V0VOKzVLelhqd1o2Q0NBRjNWV3dLSnNwNDBS?=
- =?utf-8?B?dSt2ZGxzeEJGVCtyNHdYeFpNWGFHdnljTVI1K0F1UmdQNWxEWmNpY3ZYKzk0?=
- =?utf-8?B?bFJvcmJVeDRtcW1GSGtjcFVyc2pseEFTR244RGY1bVdvVDZ2cTBVdDF1NXhx?=
- =?utf-8?B?dG40MDFTMzJtSGZHN0NPekNHcnlGdGNybFpKalVFMGxGYlJhbk5jY0NsTFps?=
- =?utf-8?B?bWhZaEZhd0hWcDVHSTRPeXNDaWRGOFE5emI2Wk91RXlYalpmYjVyc2F6clpY?=
- =?utf-8?B?NDFpTExaSW4vTEFnYUFYNjE5dUhnVStIM1BaTFpyT0hNMjZ2VThTQ1hibzdX?=
- =?utf-8?B?a1ZoMnpHNkdlZ2lLM1hESTVJc0tKbDc2VDA4VTNxUFNmUVJFRTJQTzNrZk9J?=
- =?utf-8?B?Q0Vabkg2SUFyZVUwRmdJZ3hoZW0wOWg0VTFWWVRkMlhVSkl4UXh3N3hkN0t2?=
- =?utf-8?B?cC9ncDhzZi92dzRUV1o3dWRGQ0RoS2p6TnBwcmxiS0hiM1JQMW1CeGZQaUhQ?=
- =?utf-8?B?VXp3b1pRTHRkNDlGWS8wRmlRYTZSNEhVUTdSWWZPNTNaKzg4NVBXSURCQVhq?=
- =?utf-8?B?ejJYN2RpTGt3elhxRUhURVVGUmsxaDYxWmM4WjUzSisvUEVaNXZPV3JMaE8w?=
- =?utf-8?B?N3dqYUVLeERvRXBKdldvd3VIaEpSYXQxVGUxS1N0dDgyUncvOEMvTDAwTVJw?=
- =?utf-8?B?QmMxUUhPTkR4TGFUZUpmaUdHNHNuM29HMng3MkdnU1JZNm5Zbmk2OVJqaGUy?=
- =?utf-8?B?STNjbmJCaVBPc1pmU1JFL0Y5aXlsMWRTcGhGUWFqR2tTOXJneFVLZUpUdVll?=
- =?utf-8?B?b0E1VC9vMElCeWFqaFQzNFJPWVF0N1IxSURXTTlpdzdwa2V3R2wyMW9RYTRv?=
- =?utf-8?B?VWgvTUJ1a3lIMWRXamlPTVdmeDhRR0JHVXg0TUFQQm5BZytCVDFrWTNSSlBn?=
- =?utf-8?B?ZWxhVEtEbStoK0pPeFlzOHR1UncwTk9VSk1xRmc5UDJpWlhWdWJBUWNIV25l?=
- =?utf-8?B?dWN5Z1JPTzVjcDJ0TnNjSlQ1eTNRT2hQblpWeGxlZmZRZmxCdXNJTElHcE9U?=
- =?utf-8?B?K3ZsbFExWjRlTnJOaGY4TGtwTnprd0c1MkNTTzRsRmRNWWhRQ3FqdFdYVVFw?=
- =?utf-8?B?TEwrL0ZaNFZwTEhWME00MzZESzZGdWZCbFZGVGZ3d3JnVTI3dHBsYmpkdjI5?=
- =?utf-8?B?WFVPQVRVRWdYYlRFVHh2cTZOd3JqUHJZQVQzWStCL0lqT3Z4dUhVY2RmZDM0?=
- =?utf-8?B?a3Q3YmQvcFgzNkRFOU83R1R6SFpTQXBFUmIwNGM3R0NBZmtWcWNpR3plczRE?=
- =?utf-8?Q?JjyDSQaWZMW+M2BUfeoGr0Q0trGsTEzPbcu+SjHY/Ped?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d6afc43-eb42-464c-1469-08dd769ff5d0
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 13:19:16.2631
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5LW2mxTiBbZPcyEX0nbRe7zFu4GUcRWtTLb9NKFWxbItg9bMmGI7+n3hDS/bYVGMy5bhzyGEYu55qpP/xZdY8A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4381
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZXwCdfs2wH9Csgkp"
+Content-Disposition: inline
+In-Reply-To: <87cydn9bkx.fsf@minerva.mail-host-address-is-not-set>
 
-On Tue Apr 8, 2025 at 7:35 PM JST, Miguel Ojeda wrote:
-> On Tue, Apr 8, 2025 at 12:22=E2=80=AFPM Benno Lossin <benno.lossin@proton=
-.me> wrote:
->>
->> You forgot to add the `A: Allocator` generic here and in the impl below.
->
-> Yeah, for this sort of changes (ideally, all patches, really), please
-> test with both the minimum supported version and the latest.
 
-Apologies for that, I had no idea how to build using a specific
-toolchain and did the wrong thing, which is sending without proper
-testing.
+--ZXwCdfs2wH9Csgkp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I had some trouble finding how to 1) find out the minimum supported Rust
-version, and 2) how to build using a specific toolchain.
+Hello Javier,
 
-For 1) I eventually found a hardcoded version in
-scripts/min-tool-version.sh ; and 2) is somehow documentated in the
-Quick Start guide that mentions the `rustup override set stable`
-command.
+Thank you for your review and suggestions.
 
-I can send a patch against the Coding Guidelines adding a section to
-encourage testing against the minimum version and explain how to force a
-specific Rust version if you can confirm this would be helpful (and that
-min-tool-version.sh is the correct way to check the minimum supported
-Rust version).
+On Tue, Apr 08, 2025 at 12:44:46PM +0200, Javier Martinez Canillas wrote:
+> Marcus Folkesson <marcus.folkesson@gmail.com> writes:
+>=20
+> Hello Marcus,
+>=20
+> > Sitronix ST7571 is a 4bit gray scale dot matrix LCD controller.
+> > The controller has a SPI, I2C and 8bit parallel interface, this
+> > driver is for the I2C interface only.
+> >
+>=20
+> I would structure the driver differently. For example, what was done
+> for the Solomon SSD130X display controllers, that also support these
+> three interfaces:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/d=
+rivers/gpu/drm/solomon
+>=20
+> Basically, it was split in a ssd130x.c module that's agnostic of the
+> transport interface and implements all the core logic for the driver.
+>=20
+> And a set of different modules that have the interface specific bits:
+> ssd130x-i2c.c and ssd130x-spi.c.
+>=20
+> That way, adding for example SPI support to your driver would be quite
+> trivial and won't require any refactoring. Specially since you already
+> are using regmap, which abstracts away the I2C interface bits.
 
->
-> For instance, there is another issue, `#[pointee]` is only applicable
-> when you have the feature:
->
->     error: cannot find attribute `pointee` in this scope
->      --> rust/kernel/alloc/kbox.rs:66:18
->       |
->     66 | pub struct Box<#[pointee] T: ?Sized, A:
-> Allocator>(NonNull<T>, PhantomData<A>);
+Yes, I had in mind to start looking into this after the initial version.
+The driver is writtin in this in mind, everything that is common for all
+interfaces is easy to move out.
 
-Mmm that one is trickier to address - I don't know of a way to make this
-`#[pointee]` attribute depedent on `CONFIG_RUSTC_HAS_COERCE_POINTEE`...
-Only solution I see if having two separate declarations for `Box`, and
-then we have the problem of bindings the rustdoc to the declaration that
-is picked at build time... Any idea for how to best address this?
+>=20
+> > Reviewed-by: Thomas Zimmermann <tzimmrmann@suse.de>
+> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> > ---
+> >  drivers/gpu/drm/tiny/Kconfig      |  11 +
+> >  drivers/gpu/drm/tiny/Makefile     |   1 +
+> >  drivers/gpu/drm/tiny/st7571-i2c.c | 721 ++++++++++++++++++++++++++++++=
+++++++++
+>=20
+> I personally think that the tiny sub-directory is slowly becoming a
+> dumping ground for small drivers. Instead, maybe we should create a
+> drivers/gpu/drm/sitronix/ sub-dir and put all Sitronix drivers there?
+>=20
+> So far we have drivers in tiny for: ST7735R, ST7586 and ST7571 with
+> your driver. And also have a few more Sitronix drivers in the panel
+> sub-directory (although those likely should remain there).
+>=20
+> I have a ST7565S and plan to write a driver for it. And I know someone
+> who is working on a ST7920 driver. That would be 5 Sitronix drivers and
+> the reason why I think that a dedicated sub-dir would be more organized.
+>=20
+> Maybe there's even common code among these drivers and could be reused?
+>=20
+> Just a thought though, it's OK to keep your driver as-is and we could do
+> refactor / move drivers around as follow-up if agreed that is desirable.
 
-Thanks,
-Alex.
+That sounds like a good idea.
 
+[...]
+
+>=20
+> > +#define drm_to_st7571(_dev) container_of(_dev, struct st7571_device, d=
+ev)
+> > +
+>=20
+> I usually prefer these to be static inline functions instead of a
+> macro. That way you get type checking and the end result should be
+> basically the same.
+
+I agree, I will change this to a static inline function.
+
+>=20
+> > +struct st7571_device {
+> > +	struct drm_device dev;
+> > +
+> > +	struct drm_plane primary_plane;
+> > +	struct drm_crtc crtc;
+> > +	struct drm_encoder encoder;
+> > +	struct drm_connector connector;
+> > +
+> > +	struct drm_display_mode mode;
+> > +
+> > +	struct i2c_client *client;
+> > +	struct regmap *regmap;
+> > +	bool ignore_nak;
+> > +
+>=20
+> I know you mentioned that the chip sometimes nacks some I2C messages but
+> maybe we want to better understand why that is the case before adding a
+> flag like this?
+>=20
+> In particular, I see in the "6.4 MICROPROCESSOR INTERFACE" section of the
+> datasheet the following note:
+>=20
+> "By connecting SDA_OUT to SDA_IN externally, the SDA line becomes fully
+> I2C interface compatible. Separating acknowledge-output from serial data
+> input is advantageous for chip-on-glass (COG) applications. In COG
+> applications, the ITO resistance and the pull-up resistor will form a
+> voltage  divider, which affects acknowledge-signal level. Larger ITO
+> resistance will raise the acknowledged-signal level and system cannot
+> recognize this level as a valid logic =E2=80=9C0=E2=80=9D level. By separ=
+ating SDA_IN from
+> SDA_OUT, the IC can be used in a mode that ignores the acknowledge-bit.
+> For applications which check acknowledge-bit, it is necessary to minimize
+> the ITO resistance of the SDA_OUT trace to guarantee a valid low level."
+
+This has completely flown under the radar, thank you for pointing it out.
+
+I will put the text from the datasheet together with ignore_nak.
+
+>=20
+> ...
+>=20
+> > +static int st7571_set_pixel_format(struct st7571_device *st7571,
+> > +				   u32 pixel_format)
+> > +{
+> > +	switch (pixel_format) {
+> > +	case DRM_FORMAT_C1:
+> > +		return st7571_set_color_mode(st7571, ST7571_COLOR_MODE_BLACKWHITE);
+> > +	case DRM_FORMAT_C2:
+> > +		return st7571_set_color_mode(st7571, ST7571_COLOR_MODE_GRAY);
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+>=20
+> These should be DRM_FORMAT_R1 and DRM_FORMAT_R2 and not C{1,2}. The former
+> is for displays have a single color (i.e: grey) while the latter is when a
+> pixel can have different color, whose values are defined by a CLUT table.
+>=20
+
+I see.
+Does fbdev only works with CLUT formats? I get this error when I switch
+to DRM_FORMAT_R{1,2}:
+
+[drm] Initialized st7571 1.0.0 for 0-003f on minor 0
+st7571 0-003f: [drm] format C1   little-endian (0x20203143) not supported
+st7571 0-003f: [drm] No compatible format found
+st7571 0-003f: [drm] *ERROR* fbdev: Failed to setup emulation (ret=3D-22)
+
+
+> ...
+>=20
+> > +
+> > +static const uint32_t st7571_primary_plane_formats[] =3D {
+> > +	DRM_FORMAT_C1,
+> > +	DRM_FORMAT_C2,
+> > +};
+> > +
+>=20
+> I would add a DRM_FORMAT_XRGB8888 format. This will allow your display to
+> be compatible with any user-space. Your st7571_fb_blit_rect() can then do
+> a pixel format conversion from XRGB8888 to the native pixel format.
+
+This were discussed in v2, but there were limitations in the helper
+functions that we currently have.
+
+I will look into how this could be implemented in a generic way, but maybe =
+that is
+something for a follow up patch?
+
+
+[...]
+> > +
+> > +static const struct drm_plane_helper_funcs st7571_primary_plane_helper=
+_funcs =3D {
+> > +	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
+> > +	.atomic_check =3D st7571_primary_plane_helper_atomic_check,
+> > +	.atomic_update =3D st7571_primary_plane_helper_atomic_update,
+> > +};
+>=20
+> Maybe you want an .atomic_disable callback that clears your screen ?
+
+Good point, yes, I will add that.
+
+>=20
+>=20
+> > +
+> > +/*
+> > + * CRTC
+> > + */
+> > +
+> > +static const struct drm_crtc_helper_funcs st7571_crtc_helper_funcs =3D=
+ {
+> > +	.atomic_check =3D drm_crtc_helper_atomic_check,
+>=20
+> I think you could have an .mode_valid callback that just checks the fixed=
+ mode.
+
+Got it.
+
+>=20
+> > +/*
+> > + * Encoder
+> > + */
+> > +
+> > +static const struct drm_encoder_funcs st7571_encoder_funcs =3D {
+> > +	.destroy =3D drm_encoder_cleanup,
+> > +};
+>=20
+> I recommend to have an encoder .atomic_{en,dis}able callbacks to init and=
+ turn=20
+> off your display respectively. That way, the driver can call st7571_lcd_i=
+nit()
+> only when the display is going to be used instead of at probe time.
+
+I will look into this as well.
+
+>=20
+> ...
+>=20
+> > +static enum drm_mode_status st7571_mode_config_mode_valid(struct drm_d=
+evice *dev,
+> > +						       const struct drm_display_mode *mode)
+> > +{
+> > +	struct st7571_device *st7571 =3D drm_to_st7571(dev);
+> > +
+> > +	return drm_crtc_helper_mode_valid_fixed(&st7571->crtc, mode, &st7571-=
+>mode);
+> > +}
+>=20
+> The fact that you are calling a drm_crtc_helper here is an indication tha=
+t probably
+> this should be done in a struct drm_crtc_helper_funcs .mode_valid callbac=
+k instead,
+> as mentioned above.
+
+I will move it to drm_crtc_helper_funcs.
+
+>=20
+> > +
+> > +static const struct drm_mode_config_funcs st7571_mode_config_funcs =3D=
+ {
+> > +	.fb_create =3D drm_gem_fb_create_with_dirty,
+> > +	.mode_valid =3D st7571_mode_config_mode_valid,
+>=20
+> And that way you could just drop this handler.
+
+Yep, thanks.
+
+>=20
+> > +	.atomic_check =3D drm_atomic_helper_check,
+> > +	.atomic_commit =3D drm_atomic_helper_commit,
+> > +};
+> > +
+>=20
+> ...
+>=20
+> > +static int st7571_probe(struct i2c_client *client)
+> > +{
+> > +	struct st7571_device *st7571;
+> > +	struct drm_device *dev;
+> > +	int ret;
+> > +
+> > +	st7571 =3D devm_drm_dev_alloc(&client->dev, &st7571_driver,
+> > +				    struct st7571_device, dev);
+> > +	if (IS_ERR(st7571))
+> > +		return PTR_ERR(st7571);
+> > +
+> > +	dev =3D &st7571->dev;
+> > +	st7571->client =3D client;
+> > +	i2c_set_clientdata(client, st7571);
+> > +
+> > +	ret =3D st7571_parse_dt(st7571);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	st7571->mode =3D st7571_mode(st7571);
+> > +
+> > +	/*
+> > +	 * The chip nacks some messages but still works as expected.
+> > +	 * If the adapter does not support protocol mangling do
+> > +	 * not set the I2C_M_IGNORE_NAK flag at the expense * of possible
+> > +	 * cruft in the logs.
+> > +	 */
+> > +	if (i2c_check_functionality(client->adapter, I2C_FUNC_PROTOCOL_MANGLI=
+NG))
+> > +		st7571->ignore_nak =3D true;
+> > +
+> > +	st7571->regmap =3D devm_regmap_init(&client->dev, &st7571_regmap_bus,
+> > +					   client, &st7571_regmap_config);
+> > +	if (IS_ERR(st7571->regmap)) {
+> > +		dev_err(&client->dev, "Failed to initialize regmap\n");
+>=20
+> If you use dev_err_probe(), you can give some indication to users about
+> what failed. It prints messages in the /sys/kernel/debug/devices_deferred
+> debugfs entry.
+
+Got it, thanks.
+
+>=20
+> > +
+> > +static void st7571_remove(struct i2c_client *client)
+> > +{
+> > +	struct st7571_device *st7571 =3D i2c_get_clientdata(client);
+> > +
+> > +	drm_dev_unplug(&st7571->dev);
+>=20
+> I think you are missing a drm_atomic_helper_shutdown() here.
+
+This is a change for v3. As the device has been unplugged already, it
+won't do anything, so I removed it.
+
+Isn't it right to do so?
+
+
+>=20
+> And also a struct i2c_driver .shutdown callback to call to
+> drm_atomic_helper_shutdown() as well.
+>=20
+> --=20
+> Best regards,
+>=20
+> Javier Martinez Canillas
+> Core Platforms
+> Red Hat
+>=20
+
+Best regards,
+Marcus Folkesson
+
+--ZXwCdfs2wH9Csgkp
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmf1IpoACgkQiIBOb1ld
+UjIDKA/+PSZ5CWmnyWYCRXKWBsPRzDUm1rsoRl2NmXt9DdQ8DxNWfgOOv/Itogj+
+3ifsnIvctBee7IKub3+TXFKXqlkxVwmkmrNdy27ut6jGcA2oldEJMeeLYk2kXiVC
+gNZgCg9tTw/MBGzccNDy9D9rssA/MxJM1Uvep0LKo6dTc5KKs73ITF8KJNSmCauj
+h7THDMOzOcacGyb0/WuGe8qqiIZmiNoHdoIMjHc9vbTgYFRyoCGMLvaZTo5b1NO/
+v0wvdSX5Zi4Gz/fOcz7eIOtVIZvrKEobWDNzWosvOAbtw6NM8iApmcdn7HfpADH6
+Wt+IdzMi28sbOZ0dHmtkfgUhtR6pnorLyYl8hwuzYKoPjyitP3BgSVTGQeHjdxaV
+HiShRHa7bhNMOXxfF+BXeUmTqBxWFJiqn6QD8nRCBPMy+I/I91ZrbdE8eIedp0s2
+tRtBbFCqBG1rmlcp/RlDPq/Ftllk8JmmfcDpaTYGl8jX4y2FIDnGB3JYvKiOTxaO
+w6BckLC3Lcpce0VlGcpDktW89ossTJQ+RjEH6/SjFVfNevuSFaoe0eAvG1YOni3B
+FD97Hqm6umjp+yyulTcTr0NLgQbkBxXwMhB3GRABKwssdxHP2zkXGgjA3gYCYNNA
+TsOzTs8Ntkxo+U6QsqKNW7yTvkRYzDX6YJ5N7ofUuKBkhKpmB5Q=
+=6hqo
+-----END PGP SIGNATURE-----
+
+--ZXwCdfs2wH9Csgkp--
 
