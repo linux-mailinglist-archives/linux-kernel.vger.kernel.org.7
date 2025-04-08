@@ -1,122 +1,99 @@
-Return-Path: <linux-kernel+bounces-593254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7948A7F738
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:03:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF6FA7F74C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B2C71893948
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:03:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 035E43AF029
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9440825F98F;
-	Tue,  8 Apr 2025 08:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="YmlTKyVG"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DFB263C74;
+	Tue,  8 Apr 2025 08:08:36 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C692202996
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B19720459F;
+	Tue,  8 Apr 2025 08:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744099394; cv=none; b=dx2Us9gdHfpq6U+40lje2MEV6AgarUV1rnemEf1a9TSkwXBTZl3YpjBBTZpHbckeZ5u2VJKg80fTp2ujMe7oK3BigoTN81OlTFwGka+rFqkaEJdZOszpWXd6eyL+VmBh2bntRCWZ+A2qr6Dt7IKU+zI1iBuK2qSXUR6h+R2wmVQ=
+	t=1744099715; cv=none; b=kqdZPkik5Jfe6WrIMJej3vPZus/fHOkMFut2m7PIemcTCC6RVx/1wu4blVMrZ9FYkwgm37CxGwZo4zYBb+cZd+9PxGpTz3i0Zw5bCEYfmsViPPMZTLTdIYZyj1HFOWMZdcr3/Nr4G3jw4fmOEVuXpUEVAl5c9G6FDyUikJrqrR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744099394; c=relaxed/simple;
-	bh=eOAw0hyWHLIINvb14CVs1GR58Bxf6TZohiFSnFDaF2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KXNbgiH8AXpV4dxM4W+MFBx6qIJBAMYiEhkS1Nn6BuFLIRv/b9lt552BASWfsAoYuaJV5xd7ZHZWNACQ6jKpzpu2NBxbxbMpwehuHQRrVSvVL85CKrYMNVHesDYMuk1XS1c2e6Yd6N+C579N32KbNbjpYCppIHxnZshz0JBKANw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=YmlTKyVG; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=eOAw
-	0hyWHLIINvb14CVs1GR58Bxf6TZohiFSnFDaF2U=; b=YmlTKyVGuYg4ZkoKlIoi
-	PC2qp9kjkR2bU5Pm9PA8uQ8xV68iSkwgBVeqQW/KsbkFjrcUbI5kt8ce48C+dYIe
-	MbYBFLDhPn8sS/4WLGF/p9s/yYLQkKvcRqnf+DqbX9clAQhKbQvfPrK/Sryfagkl
-	aqH+280eqnHXCcIbqZgGmSeZ+XFEfK12zyQ4nOJx1pETMKx/V9rFy9JkaHWddcvA
-	KhqIajrZb3E+M1wOfMc+nIncIcDWruk6U4uUzGH8Z5BSEfPW5t00T3UJMdQegrNC
-	SSWhJwZkFCZPvutSnAU6U+MCw11kvlJWQJMGhAeAURMUuVP66dkgWPNxmyxJpbRR
-	FA==
-Received: (qmail 4102305 invoked from network); 8 Apr 2025 10:03:07 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Apr 2025 10:03:07 +0200
-X-UD-Smtp-Session: l3s3148p1@ahJnyD8yFpcgAwDPXyfYALbiJ46yNPq3
-Date: Tue, 8 Apr 2025 10:03:06 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
-Subject: Re: [PATCH v3] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb board
- device-tree
-Message-ID: <Z_TYOm6xuYcQEt_V@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
-References: <20250314-rzn1d400-eb-v3-1-45c4fd3f6e01@bootlin.com>
- <D8IEWP78KVOE.1SD29H0S51FZM@bootlin.com>
- <Z_TA46i0KfFq89ch@shikoro>
- <CAMuHMdWLvqKP6QnLGuR3AT1SEJ_XO5F4119JCqgptv4RFWx8tA@mail.gmail.com>
+	s=arc-20240116; t=1744099715; c=relaxed/simple;
+	bh=r+T5hIHBLgYvpmfuRv9rLfqPaPhsXS05wJYQCJNX7Uw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tQed6t/7mmkVNBxrIrr9WoQKy2TB34puYObCcLpYkBlDrKzYNd4FCPXhWonjZvjc2XK9uOJDmQL1baDVw3Uq8KnUQcvDBkLwjhGD5fJbYrYM2iaIulMxhn9UEDmEuI2ZlHeAsNVuD9RaSl/n3VeOUzgJZ/5ru8hC3nE3H/HVYVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4ZWymr5bcnzHrFr;
+	Tue,  8 Apr 2025 15:45:48 +0800 (CST)
+Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id B585D1800D1;
+	Tue,  8 Apr 2025 15:49:11 +0800 (CST)
+Received: from [10.174.176.70] (10.174.176.70) by
+ kwepemg200005.china.huawei.com (7.202.181.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 8 Apr 2025 15:49:10 +0800
+Message-ID: <bfa5e258-fcca-4bb8-b5e9-50ba8e7fa249@huawei.com>
+Date: Tue, 8 Apr 2025 15:49:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="O0J9fWFvFi2G9MU+"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWLvqKP6QnLGuR3AT1SEJ_XO5F4119JCqgptv4RFWx8tA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3] ipv6: sit: fix skb_under_panic with overflowed
+ needed_headroom
+To: Paolo Abeni <pabeni@redhat.com>, <davem@davemloft.net>,
+	<dsahern@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
+	<horms@kernel.org>, <kuniyu@amazon.com>
+CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250401021617.1571464-1-wangliang74@huawei.com>
+ <fe13ece8-67ea-48c0-a155-0cb6d2bcfc52@redhat.com>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <fe13ece8-67ea-48c0-a155-0cb6d2bcfc52@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemg200005.china.huawei.com (7.202.181.32)
 
 
---O0J9fWFvFi2G9MU+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+在 2025/4/3 19:50, Paolo Abeni 写道:
+> On 4/1/25 4:16 AM, Wang Liang wrote:
+>> @@ -1452,7 +1457,9 @@ static int ipip6_tunnel_init(struct net_device *dev)
+>>   	tunnel->dev = dev;
+>>   	strcpy(tunnel->parms.name, dev->name);
+>>   
+>> -	ipip6_tunnel_bind_dev(dev);
+>> +	err = ipip6_tunnel_bind_dev(dev);
+>> +	if (err)
+>> +		return err;
+>>   
+>>   	err = dst_cache_init(&tunnel->dst_cache, GFP_KERNEL);
+>>   	if (err)
+> I think you additionally need to propagate the error in
+> ipip6_tunnel_update() and handle it in ipip6_changelink() and
+> ipip6_tunnel_change().
 
 
-> > Please do with the minor review comments addressed. I have some patches
-> > depending on it. Which means that I am using this DTS regularly now and
-> > it works great.
->=20
-> v4 was posted on March 24th?
+Thanks，I will add it in next patch.
 
-Mea culpa, I overlooked it in the list. I am sorry.
+>
+> Side note: possibly other virtual devices are prone to similar issue. I
+> suspect vxlan and gre. Could you please have a look?
 
 
---O0J9fWFvFi2G9MU+
-Content-Type: application/pgp-signature; name="signature.asc"
+Ok, I will try to reproduce the issue in vxvlan/gre scene later.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmf02DYACgkQFA3kzBSg
-KbZKlw/6AjOgH6RhHYUZCXliEOaraIhmt7GNbKOGM1poWQNlOa2Wi4qSDbjE8Q/P
-EDdgHu9Kgwfm4C6NOn8Y6heSbnFSxhe2UQFsCHyDiUK5ABVayN1cI4IXldbF0YA2
-C1LL+SxWIYf5dNlQt0m+ZL1g1VkIUDNqKLByqXT854g/rk91Gwak/uhbUljhC/d0
-D31Q1afnNqc2FLAchDEddbpjW2ejJZIZM2MK1a9sF64Xnru5Y2GSuGAzjV5mKdj1
-r3MbgXvj+85GV6UNyoWhiFWhoS8LBe5CpXAoGCjB3zsmgsD6UZlXMnN33fr+1g9B
-ooD9YzWiPjqMRM2Fe2k58sM38mu4o2aAwotVXw/Xud50vs0fHd7inR88do+eq6kK
-dthigEb7wLkHYMHzXhzaGAWCW5m3Xt68wh36guUTQx0uRC3FgoJhBxGr6M5Scyf/
-YMIyu8p5NjE+Aktkjw9CtgC8jvfcICNxwlizqj8pBnGRl0SwQf0saukHf+f28m7P
-mbTTSexNVh1NmAdNubwtGcxA/P2zzyfQfCJfglSf4tSO+8vlBzq4s6gP4rR8br/1
-25AZM+SHFJvysENWujxmrsqVKzJ5svin3CRzSXvFsUmRbHpmTWUUQBe0zykkGFx/
-1jwGRNgo294/N2DpnbhT+Mqi7xQ8nf1pauB6HUUqYbU7lm48zNA=
-=0lay
------END PGP SIGNATURE-----
-
---O0J9fWFvFi2G9MU+--
+> Thanks,
+>
+> Paolo
+>
+>
 
