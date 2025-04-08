@@ -1,60 +1,71 @@
-Return-Path: <linux-kernel+bounces-595038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77890A81943
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 01:21:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E869DA81955
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 01:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFE227ACFDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:20:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9BF8448658
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E2B2566EA;
-	Tue,  8 Apr 2025 23:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE042571BB;
+	Tue,  8 Apr 2025 23:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKoNIRl3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/hvt4AH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A96B13AD38;
-	Tue,  8 Apr 2025 23:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F1E2571B2
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 23:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744154492; cv=none; b=oIjtY7E0ULGZoSYYV72t8oDqUEJgVRYEkeOuMrkX8tmCzk1xWpJUC9dEy8vozb7hhup0Bogy8+6WoynbTaEU1uMwMdAe5+5S9bOmG05mXNLPJHTvDDTFvaDjrXZ7W+allczH5hIwcJ+qTj8PVsF3N/dfKDYkq8r0htf8tM/VQXo=
+	t=1744154652; cv=none; b=hJZDSfrGff0R46h0Eg5jy2+TR67PnNNg4hyrzliJcjnFp78dYBbvIoUuGBQn2ScT85Gn9AmLD54ZkvQLJl/YGiFKCMwFg42LbsGhOwoWly9IS0dQzT1jvW36KdvF5QQOcpoWZhNVKsuWT0ZPNedDG9Lg1eltRJOJFL4LeJsoQHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744154492; c=relaxed/simple;
-	bh=6d8DS2c1XUJ/qszREAImQZ2aWdY7e6kZYhcPZ2KqisM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h8jQAxJd/q9dYe/6bKL9CGO5QmimsGg+R632scBzFyVKe6Wno6Co+BKkSZd40hkieTQQFuSvF1rE7kr53JN1X/h3vru1PlTnXPBMqteYLl5nEnPCCCqXpiJnX/10R3rNOEeZy1z03hkZJ0PksIsr9qVOXwaANHpkZ+lmZlktfUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKoNIRl3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2D9BC4CEE5;
-	Tue,  8 Apr 2025 23:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744154492;
-	bh=6d8DS2c1XUJ/qszREAImQZ2aWdY7e6kZYhcPZ2KqisM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vKoNIRl3AfJ6MpOlDh2bENqi4sqXN8MN0J8Hhv3PMsHen1hiyo9AJ714mRJ+xiDyy
-	 JdENxrecA1Tnmtde/N0Upfa9gxycU7ONjZwFhyN96fc4hfl7/j2tUKUDpptoOJmNxL
-	 gqE0X7Lo3DiZwcQCJoPXnvNVZuVH830YxKtFiepQ91OgheKbOMvWxEgk2alhUcBarK
-	 s9hs1Hmg7UIlp3hVy9LBXzjai9nozWNG9VUC7B64GysUNtyzwe2smGQdLT5c1gW8p8
-	 OzkoyDElVWAm7FZSoHEVCA0QgIxxF1twdjw3RkQXNOlSHsD3g+/w7CsXfGUejqkKG0
-	 awVimNjrkq57A==
-Date: Tue, 8 Apr 2025 16:21:31 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org, hch@lst.de,
-	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
-	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, catherine.hoang@oracle.com
-Subject: Re: [PATCH v6 02/12] xfs: add helpers to compute log item overhead
-Message-ID: <20250408232131.GK6307@frogsfrogsfrogs>
-References: <20250408104209.1852036-1-john.g.garry@oracle.com>
- <20250408104209.1852036-3-john.g.garry@oracle.com>
- <Z_WoUawfJ_QFF5kP@dread.disaster.area>
+	s=arc-20240116; t=1744154652; c=relaxed/simple;
+	bh=Z+y+TvvbX6H4MZSWf6kxTQkHX4zoax64bXySg9jfE/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=IwXwnxj4aKBouUHZnQZLvgqFqPuTSk29AF6bLJSv4VGEau7UyqE6cNg2J6Q9lkJtzuJHcTAfow/UfKr5zuPJR6rbG0+wq3SzE3MXmTSZ9yEev4ViocFheEHRoTbh5kzk53lJU096/I/2IkDWShRBOO6V+B2T6nFcEcr4OuspECM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/hvt4AH; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744154651; x=1775690651;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Z+y+TvvbX6H4MZSWf6kxTQkHX4zoax64bXySg9jfE/Q=;
+  b=K/hvt4AHJC9svbfBftvfGl+cPuKhf+Hp/JpKFrGfIKkxnZzLQQ5oxUlk
+   vGaQ8kpK8k4maPsvvyPqHc7X8/L6kWJbDx+cDVXtK35q1b1lpfkuUiqwi
+   f1RJ1AYrPtI055oq+yYkxDvO8cd+j1XbDef0r2DASvoiJVheLixUdDZ85
+   q1pmnlTwMqtGqPH4eIBZrFaJqAMN2hk+4S+7TW/Kgc3eiUrv/KmBQyU1f
+   mQh6ljBHo0WwC3UuPlldzVyJCldHJ3VGPgRodSYgIX9vBWkRUjTlR5OCA
+   ajzFYYPLWzj+9tMzgZs8duopTHq6jg1ozIfbvT+5tMPWH5V5BBRUxn85f
+   w==;
+X-CSE-ConnectionGUID: TyWG+S7gTKWBVcGshJspeQ==
+X-CSE-MsgGUID: Um8OflU6Q22yFfFKVz/Bvw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="48318155"
+X-IronPort-AV: E=Sophos;i="6.15,199,1739865600"; 
+   d="scan'208";a="48318155"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 16:24:10 -0700
+X-CSE-ConnectionGUID: /1fLLVCGSayODjVfxoFgPw==
+X-CSE-MsgGUID: OzRJ/k2PQoaIkhLenW6lUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,199,1739865600"; 
+   d="scan'208";a="128944671"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 08 Apr 2025 16:24:08 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u2IIY-00084V-1P;
+	Tue, 08 Apr 2025 23:24:06 +0000
+Date: Wed, 9 Apr 2025 07:23:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: fs/namei.c:232:6: error: unexpected token, expected comma
+Message-ID: <202504090937.ZGGFamL2-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,92 +74,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z_WoUawfJ_QFF5kP@dread.disaster.area>
 
-On Wed, Apr 09, 2025 at 08:50:57AM +1000, Dave Chinner wrote:
-> On Tue, Apr 08, 2025 at 10:41:59AM +0000, John Garry wrote:
-> > From: "Darrick J. Wong" <djwong@kernel.org>
-> > 
-> > Add selected helpers to estimate the transaction reservation required to
-> > write various log intent and buffer items to the log.  These helpers
-> > will be used by the online repair code for more precise estimations of
-> > how much work can be done in a single transaction.
-> > 
-> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > ---
-> >  fs/xfs/libxfs/xfs_trans_resv.c |  6 +++---
-> >  fs/xfs/libxfs/xfs_trans_resv.h |  4 ++++
-> >  fs/xfs/xfs_bmap_item.c         | 10 ++++++++++
-> >  fs/xfs/xfs_bmap_item.h         |  3 +++
-> >  fs/xfs/xfs_buf_item.c          | 19 +++++++++++++++++++
-> >  fs/xfs/xfs_buf_item.h          |  3 +++
-> >  fs/xfs/xfs_extfree_item.c      | 10 ++++++++++
-> >  fs/xfs/xfs_extfree_item.h      |  3 +++
-> >  fs/xfs/xfs_log_cil.c           |  4 +---
-> >  fs/xfs/xfs_log_priv.h          | 13 +++++++++++++
-> >  fs/xfs/xfs_refcount_item.c     | 10 ++++++++++
-> >  fs/xfs/xfs_refcount_item.h     |  3 +++
-> >  fs/xfs/xfs_rmap_item.c         | 10 ++++++++++
-> >  fs/xfs/xfs_rmap_item.h         |  3 +++
-> >  14 files changed, 95 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/fs/xfs/libxfs/xfs_trans_resv.c b/fs/xfs/libxfs/xfs_trans_resv.c
-> > index 13d00c7166e1..ce1393bd3561 100644
-> > --- a/fs/xfs/libxfs/xfs_trans_resv.c
-> > +++ b/fs/xfs/libxfs/xfs_trans_resv.c
-> > @@ -47,7 +47,7 @@ xfs_buf_log_overhead(void)
-> >   * will be changed in a transaction.  size is used to tell how many
-> >   * bytes should be reserved per item.
-> >   */
-> > -STATIC uint
-> > +uint
-> >  xfs_calc_buf_res(
-> >  	uint		nbufs,
-> >  	uint		size)
-> > @@ -84,7 +84,7 @@ xfs_allocfree_block_count(
-> >   * in the same transaction as an allocation or a free, so we compute them
-> >   * separately.
-> >   */
-> > -static unsigned int
-> > +unsigned int
-> >  xfs_refcountbt_block_count(
-> >  	struct xfs_mount	*mp,
-> >  	unsigned int		num_ops)
-> > @@ -129,7 +129,7 @@ xfs_rtrefcountbt_block_count(
-> >   *	  additional to the records and pointers that fit inside the inode
-> >   *	  forks.
-> >   */
-> > -STATIC uint
-> > +uint
-> >  xfs_calc_inode_res(
-> >  	struct xfs_mount	*mp,
-> >  	uint			ninodes)
-> > diff --git a/fs/xfs/libxfs/xfs_trans_resv.h b/fs/xfs/libxfs/xfs_trans_resv.h
-> > index 0554b9d775d2..e76052028cc9 100644
-> > --- a/fs/xfs/libxfs/xfs_trans_resv.h
-> > +++ b/fs/xfs/libxfs/xfs_trans_resv.h
-> > @@ -97,6 +97,10 @@ struct xfs_trans_resv {
-> >  
-> >  void xfs_trans_resv_calc(struct xfs_mount *mp, struct xfs_trans_resv *resp);
-> >  uint xfs_allocfree_block_count(struct xfs_mount *mp, uint num_ops);
-> > +unsigned int xfs_refcountbt_block_count(struct xfs_mount *mp,
-> > +		unsigned int num_ops);
-> > +uint xfs_calc_buf_res(uint nbufs, uint size);
-> > +uint xfs_calc_inode_res(struct xfs_mount *mp, uint ninodes);
-> 
-> Why are these exported? They aren't used in this patch, and any code
-> that doing calculate log reservation calculation should really be
-> placed in xfs_trans_resv.c along with all the existing log
-> reservation calculations...
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   bec7dcbc242c6c087cede1a6fdfaeb5d6eaf25bf
+commit: e896474fe4851ffc4dd860c92daa906783090346 getname_maybe_null() - the third variant of pathname copy-in
+date:   6 months ago
+config: mips-randconfig-r064-20250408 (https://download.01.org/0day-ci/archive/20250409/202504090937.ZGGFamL2-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 92c93f5286b9ff33f27ff694d2dc33da1c07afdd)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250409/202504090937.ZGGFamL2-lkp@intel.com/reproduce)
 
-I've redone this in a different manner, will send a full patchset after
-it runs through QA.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504090937.ZGGFamL2-lkp@intel.com/
 
---D
+All errors (new ones prefixed by >>):
 
-> -Dave
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+   In file included from fs/namei.c:25:
+   In file included from include/linux/pagemap.h:8:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> fs/namei.c:232:6: error: unexpected token, expected comma
+     232 |         if (get_user(c, pathname))
+         |             ^
+   arch/mips/include/asm/uaccess.h:97:33: note: expanded from macro 'get_user'
+      97 |         access_ok(__p, sizeof(*__p)) ? __get_user((x), __p) :           \
+         |                                        ^
+   arch/mips/include/asm/uaccess.h:177:23: note: expanded from macro '__get_user'
+     177 |                 __get_data_asm((x), user_lb, __gu_ptr);                 \
+         |                                     ^
+   <inline asm>:3:10: note: instantiated into assembly here
+       3 |         .set    eva
+         |                    ^
+   fs/namei.c:232:6: error: instruction requires a CPU feature not currently enabled
+     232 |         if (get_user(c, pathname))
+         |             ^
+   arch/mips/include/asm/uaccess.h:97:33: note: expanded from macro 'get_user'
+      97 |         access_ok(__p, sizeof(*__p)) ? __get_user((x), __p) :           \
+         |                                        ^
+   arch/mips/include/asm/uaccess.h:177:23: note: expanded from macro '__get_user'
+     177 |                 __get_data_asm((x), user_lb, __gu_ptr);                 \
+         |                                     ^
+   <inline asm>:4:2: note: instantiated into assembly here
+       4 |         lbe $3, 0($4)
+         |         ^
+   1 warning and 2 errors generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +232 fs/namei.c
+
+   225	
+   226	struct filename *__getname_maybe_null(const char __user *pathname)
+   227	{
+   228		struct filename *name;
+   229		char c;
+   230	
+   231		/* try to save on allocations; loss on um, though */
+ > 232		if (get_user(c, pathname))
+   233			return ERR_PTR(-EFAULT);
+   234		if (!c)
+   235			return NULL;
+   236	
+   237		name = getname_flags(pathname, LOOKUP_EMPTY);
+   238		if (!IS_ERR(name) && !(name->name[0])) {
+   239			putname(name);
+   240			name = NULL;
+   241		}
+   242		return name;
+   243	}
+   244	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
