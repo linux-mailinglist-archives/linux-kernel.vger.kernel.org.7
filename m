@@ -1,94 +1,152 @@
-Return-Path: <linux-kernel+bounces-593758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF28A7FE01
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:09:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E844A7FE20
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAAD73B19D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BFF319E2B78
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F4626A0EB;
-	Tue,  8 Apr 2025 11:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AC4269CEB;
+	Tue,  8 Apr 2025 11:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ugd/oVQU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fgAvkt6L"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD20E26A1D7;
-	Tue,  8 Apr 2025 11:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB95269B0B
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 11:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744110003; cv=none; b=tNc1pxS2Ffd8sPt5gOXp7IBaFH0K6t8SFBp00e0eY23lK5mCrPXEJqnN3VUAsBT/uJj654y9CNAcdu9wcrAAXmnesGi5dXjWRAEzZu2oDz9TR2zoPU1jdsHo0rh4UCP4/0NSOtvaDZL7E9iJl7c5nQuAkZyWys3J4OgJNiOi8u0=
+	t=1744110094; cv=none; b=PWpw47XKU9sQ5hP/kD411BRj+/OAuJoabCYa23DtAb6BinkoRPyX8G4jK8xkQBg9eQ6mIq4t0XHDc031HsrJm1oKqVlpbsjE8pSoLz3/zZyBtDp+Sto6qmX7YKi3yJyAALvhsO5NkgNQGJB7IyAHtqWoDypjUDhQFuG0rMbvVa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744110003; c=relaxed/simple;
-	bh=nezKGRzA0eCRz4mrbu9nFXapNZPXTwoaOMKIo5c+Tcc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=fnKVOIqCYiUtisZd+rIvjm+9fQIfF9ORYVuCi/AP9Y9Q08RZirEMgIQg3gqEq1tKrINGey+z4/zf+bultb/6ZKZab3NdzTZZQzvtpls3qpP6EsAGDwD6ORHo5xyojQGtZK1OtBQKfudQLH4+dE8/i9z1Upy/+8vl65YX0lL+AFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ugd/oVQU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33287C4CEE5;
-	Tue,  8 Apr 2025 11:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744110003;
-	bh=nezKGRzA0eCRz4mrbu9nFXapNZPXTwoaOMKIo5c+Tcc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Ugd/oVQUYz1MuEFrKAVGBG4Jtf21jB17eo9lV47/m/xU671qAxPvTVBTcUs6tJG6a
-	 /BG1OuGDMMSqePvNEo+pue5G3k14Lb6Sf/MKYRzSHRV2Yidu3MXV8fegLbp9rcwfMg
-	 Gtc26hUeS3SAKOSViLcUSIAMAKnr2ONMNJptKBzfrDi0wiomEFpo0iFrNLYSveqhn+
-	 ytB2cO9PNsMP0jw+iLWCMf2+vBiMV7JEA4AWa1CS46gF5N9UMK3ImvpwVVnZpY77I9
-	 KrZ8xu08NpK4vLJ3NjwkDpms/O5J1/FYwjpgryjVakOCe62P8Dj/nBp5kohxhuuyHO
-	 5C4kEjaq7cYRA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE2A538111D4;
-	Tue,  8 Apr 2025 11:00:41 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1744110094; c=relaxed/simple;
+	bh=9vZ07Fu9TFUznVzjN0MD5NdxVuzdwWr225mK7qPMJLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=IuY/+sA6HG6LWNyWQtsV7K6Qje2xdxgea8cW8zuEWCfPszP/bXP58PASc2//Tz5TuaYcbdBZtLyNXRxJdc740I1gI6j5gy9pTgBixyj4hrX/2r/kWyCMZuJoiq6l1LA+ph0/0u+zSaej+ApfcZhBJSnZWI9xc+uiTlnIadYC0uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fgAvkt6L; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso58779795e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 04:01:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744110090; x=1744714890; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NirbuKEOTyR2moljejzdS649GYkI8qfTa3FOlPaWlDQ=;
+        b=fgAvkt6L6AnUQ/sC4a0Tx5fQ3HeLZ/DrMb5BkPpSBuG6jpwqx6Ujfk/Ll9y/QlqN4+
+         Ne331SGeeVPkDvHMMrA7WTDhp2SzGCWTYxUNguI+X3yflfrXFz+lTOHpBnZgsVdegzHO
+         WV51bHHShySZ0SlT/Wfy6/JVWtiXsnRCbr0ElDIoITs2sCx9QcdY70s8infd8PnBiGZK
+         SeGZ0RkyjV/Z4J1v1TV5XUuo0zlJP7E1mu8SlNt5MdOW0JiztWqJmJ3ChbaUkiyFmRqC
+         8dRQ8ZwdCya14cbjpD7OUCO+GriIFmSSX0K7FfhHOeP2oKo7ZfhkoQ6gvaa70MwLPICN
+         YCbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744110090; x=1744714890;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NirbuKEOTyR2moljejzdS649GYkI8qfTa3FOlPaWlDQ=;
+        b=rTr0XDbTOtSzFlGs/uHIV3otcvIR2oKEWjLVtO9jYzdpcxwrNhMpQVRMXoRV14nTLR
+         BkEKWWSC+uUQpMsyaDxuL4K1pW6WAHablzAc6s8xGbhgq8Gr4LvVIzGefpCRM+iui4kc
+         G8Tph1FKtGe8zqHdTLvWrlpnfDJERT8/yxB2i643TPyv7tn8T9JWx3r3i2/V0hkLgzy7
+         DzFtGybR9/V+tR7kdX/dXi5IaikiFJI6TgiYsNHw3J2RUaSWy6aq2lLykYd2+JtoQb/b
+         WPYKmfiEXZFUro4i7WgXcKU9OWu/3ce3+jMomXJ6//8ghV2uG/P2NKRRBBbwTSIhHKl5
+         d4Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9u9nec4YjlpjbXk4uCg4gsOQ4iofL4+D9rdrX+9SOsQ9qvn/7X3JLIWN0ZgzQFciuikBPASMCo92jeLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ3Nqiu0szwb6fY+Sg26YHyhTwpMk19PWGCSRnD9TeyHOrtULo
+	KTot0JQ3hXNX3dnuvn0HGSs9JLoepLm3CZkL45G48bMDY6i3+YrahTH1FITRx04=
+X-Gm-Gg: ASbGnctPbJOiN3PNGP3/rHQylQTR8qC9J/NwAcRgIdUXJCUpAWZ9cmRgiSZZ6W6uBzu
+	DDdpap7pHjyotgLxLHChd8fOniij0AvOsLV72vswyt5L3bXSkBW/FrZ2MSQPZAnIaiLhSC6F0B1
+	DHvPX+TJzV+/5gddwMyYdg8dsKBN7TAqpxVPp5uNolDLC4GawuN0rA3msDA98oWbyj9sKSrCD74
+	SoSoyIrFgDe9I0wPE97KZ5+gjke/hBoPqCHrTtoUUk5GOUGKfGC8R9I7bbhuu0FECzFvFtbGFZq
+	HT4XL7VmP2CILW7d4iO/P55wMJduew8g6KyUHPStPuial2viUsn3Pg+nhL5l
+X-Google-Smtp-Source: AGHT+IG1HG474H6q6bPpOt7xbsbQ8wAky1uvAa0teAmjbL304Djm6yn2qTXg3DoixKQK6rupsAkAwQ==
+X-Received: by 2002:a05:600c:524c:b0:43c:e70d:44f0 with SMTP id 5b1f17b1804b1-43f1890857emr4294885e9.19.1744110090538;
+        Tue, 08 Apr 2025 04:01:30 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ec169b8a3sm159770715e9.19.2025.04.08.04.01.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 04:01:30 -0700 (PDT)
+Date: Tue, 8 Apr 2025 14:01:26 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Rob Clark <robdclark@chromium.org>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>,
+	Gustavo Padovan <gustavo@padovan.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Pekka Paalanen <pekka.paalanen@collabora.com>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] dma-buf/sw_sync: Decrement refcount on error in
+ sw_sync_ioctl_get_deadline()
+Message-ID: <a010a1ac-107b-4fc0-a052-9fd3706ad690@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] eth: nfp: remove __get_unaligned_cpu32 from netronome drivers
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174411004025.1874546.1538210583155348122.git-patchwork-notify@kernel.org>
-Date: Tue, 08 Apr 2025 11:00:40 +0000
-References: <20250407083306.1553921-1-julian@outer-limits.org>
-In-Reply-To: <20250407083306.1553921-1-julian@outer-limits.org>
-To: Julian Vetter <julian@outer-limits.org>
-Cc: arnd@arndb.de, louis.peens@corigine.com, kuba@kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, shannon.nelson@amd.com, vladimir.oltean@nxp.com,
- akiyano@amazon.com, csander@purestorage.com, florian.fainelli@broadcom.com,
- oss-drivers@corigine.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Hello:
+Call dma_fence_put(fence) before returning an error if
+dma_fence_to_sync_pt() fails.  Use an unwind ladder at the
+end of the function to do the cleanup.
 
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Fixes: 70e67aaec2f4 ("dma-buf/sw_sync: Add fence deadline support")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: style changes.
 
-On Mon,  7 Apr 2025 10:33:06 +0200 you wrote:
-> The __get_unaligned_cpu32 function is deprecated. So, replace it with
-> the more generic get_unaligned and just cast the input parameter.
-> 
-> Signed-off-by: Julian Vetter <julian@outer-limits.org>
-> ---
->  drivers/net/ethernet/netronome/nfp/nfd3/dp.c | 2 +-
->  drivers/net/ethernet/netronome/nfp/nfdk/dp.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma-buf/sw_sync.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-Here is the summary with links:
-  - eth: nfp: remove __get_unaligned_cpu32 from netronome drivers
-    https://git.kernel.org/netdev/net-next/c/fc2e4f4f7b5f
-
-You are awesome, thank you!
+diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
+index f5905d67dedb..22a808995f10 100644
+--- a/drivers/dma-buf/sw_sync.c
++++ b/drivers/dma-buf/sw_sync.c
+@@ -438,15 +438,17 @@ static int sw_sync_ioctl_get_deadline(struct sync_timeline *obj, unsigned long a
+ 		return -EINVAL;
+ 
+ 	pt = dma_fence_to_sync_pt(fence);
+-	if (!pt)
+-		return -EINVAL;
++	if (!pt) {
++		ret = -EINVAL;
++		goto put_fence;
++	}
+ 
+ 	spin_lock_irqsave(fence->lock, flags);
+-	if (test_bit(SW_SYNC_HAS_DEADLINE_BIT, &fence->flags)) {
+-		data.deadline_ns = ktime_to_ns(pt->deadline);
+-	} else {
++	if (!test_bit(SW_SYNC_HAS_DEADLINE_BIT, &fence->flags)) {
+ 		ret = -ENOENT;
++		goto unlock;
+ 	}
++	data.deadline_ns = ktime_to_ns(pt->deadline);
+ 	spin_unlock_irqrestore(fence->lock, flags);
+ 
+ 	dma_fence_put(fence);
+@@ -458,6 +460,13 @@ static int sw_sync_ioctl_get_deadline(struct sync_timeline *obj, unsigned long a
+ 		return -EFAULT;
+ 
+ 	return 0;
++
++unlock:
++	spin_unlock_irqrestore(fence->lock, flags);
++put_fence:
++	dma_fence_put(fence);
++
++	return ret;
+ }
+ 
+ static long sw_sync_ioctl(struct file *file, unsigned int cmd,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.47.2
 
 
