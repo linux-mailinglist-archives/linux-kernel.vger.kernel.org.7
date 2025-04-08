@@ -1,177 +1,139 @@
-Return-Path: <linux-kernel+bounces-593982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A31A80BE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:22:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61734A80B14
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C956B904CD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:04:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A46465966
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E540326E14D;
-	Tue,  8 Apr 2025 12:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF34279328;
+	Tue,  8 Apr 2025 12:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHLCtdfO"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XlmfdtPt"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B66C2676FA;
-	Tue,  8 Apr 2025 12:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12ECF27816D
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744116823; cv=none; b=DTO/sVPlRoB4cIrRbCOnEMmHM0ybig/bipFNpfwdK54E+5+W4xW9l5WtvNqBvg3TSWbz5vBj9XQAvVX9YIy8RmDfemIsw1cLfDB+I8arhaWD9bFQEI1SwEB3yWteseardN+3FTVP1dtpTlbZzLsPc2RknEXDlMlngYLahDOlP60=
+	t=1744116901; cv=none; b=Dc3hrrrVGfCMjGmr6i0X+gK9AU0rEJVbjro+Z0s/BgIZqSLjO2NFS3twpXH+QAUWzqIT/6fbmqmMJgxo0pdNf+wNAOP/mz1FxIagsDmtbZzDd0rJfiSo2BlqtVX20+OftIO8zk635hAuEO4InaIm7wD5wF/9utw6xjZzdgXjmQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744116823; c=relaxed/simple;
-	bh=ANRuPSUX1yQYlirs/55RG2vUbIaqAiDgBcLWkS79nlg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FwnLbkkc4SCCyrjZl9+LYENx2ASS6/6CDmmZQ/MeI5LLiknU/XBRFHlNH7L/9CfkvY/ldlcGFAKpeo/geQFlYH3YkPRQk3WOXddbK18bEhwZfavR1KrwE/yRlYzj2cQCk4ppO5I/2xLfbHZwTlhTEw67Oma6dxfwL5nxbHCUwKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHLCtdfO; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac2963dc379so915846466b.2;
-        Tue, 08 Apr 2025 05:53:39 -0700 (PDT)
+	s=arc-20240116; t=1744116901; c=relaxed/simple;
+	bh=r4MPn5KxjvOr4Rq45HUgATPOr8OD0EgPiS0EyQ/17RI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B4DRYb+ZscKGrmUFkyuzKReNiqifAqcbWX9EijYwjnxqi6/v5EklWb7Q4Udik6j8dXWZ+pFXVAy0fp0FFm5RJ/O8WTXxSQxPfTLB08Mg7vLpeFzOD/l3KhJ3D7DCDmvDDaJ0g1Gn4c/eWjrdcN2xudTxeK9lNthinPw1+YScrwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XlmfdtPt; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6f6ca9a3425so65067717b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 05:54:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744116818; x=1744721618; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=23H5BtSYVmOZ7yC+0VeF4pw/eWnuPDNyjqSPU4O+LQE=;
-        b=nHLCtdfOoYqDgifY58NAR3Gl+KxLdpoziAFZRQS3sEr/RgIRbGDNhV+QuTbpJBNiiB
-         XpY/NNopeleCRv5Tn8VtH8Dfe7yuuwMAF7krlwGiD6gvgKV7Vr4m9c+pcUOFh9/79ZtF
-         KYujUSY3gwsxDP2shEsvOLvRHS+pOWl1V9loPgq8nXmyqdSn5CtcJDmpRfvxBiWDKMl2
-         Whj/j7d/cJNgSH6aJi+71TRZ1nSsSqYwbB5gXkcTCP7tjZ2BnFY+sIGCl5qr9yQL2YBz
-         f21npHnByTf/jcmNxHqKFHky//GuAeeR97lT6mIOEHge4wkkvg9EFGXKivpt6ymRW4HP
-         dfzQ==
+        d=linaro.org; s=google; t=1744116898; x=1744721698; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yk0jmNlqMc02tYB39edyin8JE2b7A3WmTNlfw1td2zw=;
+        b=XlmfdtPteNtmxLSaAFDZCgyC0gXBE4Q6LOV+ivJ5FKCJZuURNljXMOOq26YNmJliFy
+         Rszwth1hXnyLQx4yb9DhsErl4BweF5LI0V2BFbMpZTFiNjt2uY7YoxLfubbn9Wbpt+zg
+         hI1KGrIWi6VqA739abL87CzgvsNKJ1nDbOTMC9E2k7uKW41zkimJCDDHCodwP+zxROi2
+         hmg5lobOjZCjRQxMxGHD0qthbkQLznjRwWR1aIzkuNsCXygex5jezvYjQb5fDcuibkAF
+         uwPJVU5v0TafnLjbSk/C9IGm0JVbGdidheF3z6TF27NeuNNqHqdLQN1Bx1+kbi/gKOCY
+         L8lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744116818; x=1744721618;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=23H5BtSYVmOZ7yC+0VeF4pw/eWnuPDNyjqSPU4O+LQE=;
-        b=JpWorw/3LVooKVRK4pxBTezTa/o3737945zTTM5n2UY9Kj9aH4nSNdA2/hV3CJL/NL
-         2mArclEgxn9Cysoetk2tpO4Ir6Zc/w+5JeqlJWsDBjl44uKNO38zW9YKJ3fRUCXe/H9H
-         qROnLFnfDaKDRcQg1EQ2WCdKwyP71jLxQthcU0KSFh9eLARhtaLo4cDrSFzH8NJwVNMv
-         UxcZSDN2nEGdrKm3UMYiSIaxoA6Z4SW+LBh6BQydLe6ZJrvKTMCown5+ly9CGgYUzVcl
-         t6puW67G4FDsxhYQr4GARZJFOun+9PgcEp9cnSbaehcvJoYZZJSTMyiVkgCeSKbOfTQ6
-         oavA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPNzuaP3ABFfjWejstCPBBG83T8pVyrKKJiKi+KifrxvQtI2jN+bnob6M+w4QuKjLLw8N88ZE/5nitYYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6CCz9VbgZ3u4nEz06aVgU92GDyMRGcTSy7AqAPNVXPzl8Y9Gz
-	K5pjGQCEIQHDWLH13ow650CFY4EbSYlm+WNrI3WVtmT7HqJRNvcZ
-X-Gm-Gg: ASbGncv/I6Acz5ShTQdQSVyweRaXGQnYcFFz2vpeii25hrconh9wEeIbbu4ZWlxRyZH
-	k4Oib4AainZUu5OYUVU35WKpDHcZYsXtNfmvRj54HbTeM11QWK+t+SJ2x2bvqsQXu1eDzgPSkAf
-	9Ho1UULXtKkQTW6JLqy9h+Zg+bVbZd4r00Xj/HRNlSRG7y/0w96KJzcgIs9+UmUxcvqOy0a4gvh
-	T1aW6/69CTpBUX4wAbip3WFWzjI4DwwZG5EkEhJhVgQxb4XQbcMwgQ5GW4ulb7TUaAdsAN/7zNX
-	DznysGlvi/bwW/keMT3FfEKfIwBzwd/+iB3pef362GC8q1kpk674bQ==
-X-Google-Smtp-Source: AGHT+IGvmN1EO4VHRezExYMW/kUpvaSsqhCo9Bd2ESrlndGiMScDggYQTe9O53Y7t99TmRR9Zxt9lQ==
-X-Received: by 2002:a17:907:98a:b0:ac1:791c:1532 with SMTP id a640c23a62f3a-ac7d19f4f5cmr1566313466b.51.1744116818364;
-        Tue, 08 Apr 2025 05:53:38 -0700 (PDT)
-Received: from [192.168.0.50] ([79.119.240.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfe67e17sm915537466b.34.2025.04.08.05.53.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Apr 2025 05:53:37 -0700 (PDT)
-Message-ID: <cc66d83c-fb1e-4982-ae68-d5ebd78bbbce@gmail.com>
-Date: Tue, 8 Apr 2025 15:53:36 +0300
+        d=1e100.net; s=20230601; t=1744116898; x=1744721698;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yk0jmNlqMc02tYB39edyin8JE2b7A3WmTNlfw1td2zw=;
+        b=B0LmgvvrfV46nCza8YWaJOuHDVnjZyC+4slo7ufTsho9XpPRh6kWVzbtiJECVCBgmJ
+         QIlccWRf4Ihdc59bRLVME3aFHgX6uMNBPA/TGLdNdxOFq4LTcFWlhIMxDSaAG2M3JZeT
+         SXDKZTUV7BZoZD9IAAgJ3BVgaZsq+sVt4TINdSa6BuJm6K99Xs45KHnAnMnwpaGw5Oyi
+         Obzas7cd69vHB3w/oatfeViA6ZrZnxXA0COk4kgE4pOXwLyC8gC8wBnL1lw+197MhbP5
+         qsxy6wMP+i0mbyWQqbIsxmYyOD8agHOq03eBngb68K7JvCV9dYxOtyTzfHMb0oK2lfUt
+         ufEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWZQU+UxtOPKnkxAsElqChzvTEY4Buu6Z6JPU3AnJvqhrXtbZel8F8n9Uzt+pz05m/G5U2/RDiegdez9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPFP/yIxxKfCoexpkn/dsgBbKTTns9EJDHCer5JE02Bq6EgjZ2
+	FfcytoDSetUxzYPb5mOW4bYVsPN3dcskiGNuKC6q84HAvbTlXK2gFd9fu6ssnlPShPoEJF4/4pb
+	v+ykV+J1G5t9Tu/ZTigtr8HOkzNUoG6x5zn42kA==
+X-Gm-Gg: ASbGncv4t7PfDhAr98krWENPASZcKkLUZoVivzzz8JZ9BwVwR64/beCQskUfCFfSjgr
+	1D0y9mMbmpGTf/TOYKLjtnMAMKjH4k/S6WNG3Oj/D56YmsEZdjDSUSBlOVwISe28wCAMf+RDWMT
+	zrjd+YPtKg2GDGhsu7qgLKqhIB3uE=
+X-Google-Smtp-Source: AGHT+IHTxHBd425yatfvjSy7aWzx/QfcCVYH5495z1ua7eNtDp8zPmcN+TAK9mP9YSF4OzEsmd0vPSFHANuJwlrpgWw=
+X-Received: by 2002:a05:690c:a84:b0:6f9:9d40:35cb with SMTP id
+ 00721157ae682-703f41267b0mr224639557b3.6.1744116898053; Tue, 08 Apr 2025
+ 05:54:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] RE: [RFC -v1] wifi: rtw88: sdio: Tx status for
- management frames
-To: Zhen XIN <zhen.xin@nokia-sbell.com>, Ping-Ke Shih <pkshih@realtek.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <b7651a17-afeb-4abd-ae23-29a85a2f6412@nokia-sbell.com>
-Content-Language: en-US
-From: Bitterblue Smith <rtl8821cerfe2@gmail.com>
-In-Reply-To: <b7651a17-afeb-4abd-ae23-29a85a2f6412@nokia-sbell.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250404231533.174419-1-ebiggers@kernel.org>
+In-Reply-To: <20250404231533.174419-1-ebiggers@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 8 Apr 2025 14:54:21 +0200
+X-Gm-Features: ATxdqUF-OlOdEIxCE1qPuhQhC_jv3bjWDPwF3BCWGXm2DWhZIQfUgr8SjCy-Un8
+Message-ID: <CAPDyKFqmgUUWOmH-r20VSfNZW7KC4RX4BTobGHf5F3uuLZtj0A@mail.gmail.com>
+Subject: Re: [PATCH v13 0/3] Support for wrapped inline encryption keys on
+ Qualcomm SoCs
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Gaurav Kashyap <quic_gaurkash@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Jens Axboe <axboe@kernel.dk>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 08/04/2025 06:29, Zhen XIN wrote:
-> 
-> On 1/1/1970 8:00 AM, Ping-Ke Shih wrote:
->> Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
->>>>> @@ -1195,7 +1195,7 @@ static void rtw_sdio_indicate_tx_status(struct rtw_dev *rtwdev,
->>>>>          skb_pull(skb, rtwdev->chip->tx_pkt_desc_sz);
->>>>>
->>>>>          /* enqueue to wait for tx report */
->>>>> -       if (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS) {
->>>>> +       if (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS && queue
->>>>> + <= RTW_TX_QUEUE_VO) {
->>>> Is this because you have seen "failed to get tx report"?
->>>> Have you tried to increasing RTW_TX_PROBE_TIMEOUT?
->>>>
->>>> If it still can't get TX report, we might take this workaround with
->>>> comments to mention why we need it. Or a local variable with proper
->>>> naming to point out this, like
->>>>
->>>>          bool queue_has_no_tx_report = queue > RTW_TX_QUEUE_VO;
->>>>
->>>>
->>>> By the way, USB behavior is very like to SDIO, but TX report seems to work well.
->>> On my RTL8822CS I can confirm your thought:
->>> I don't notice any extra "failed to get tx report" messages regardless
->>> of whether I have "&& queue <= RTW_TX_QUEUE_VO" or not.
->>>
->> This workaround might need an chip attribute to enable then.
->> Not sure if people in the GitHub thread have experiments on all supported SDIO WiFi chips.
-> 
-> On my RTL8723DS, without condition"&& queue <= RTW_TX_QUEUE_VO", there are messages in the console:
-> 
-> [ 23.298425] rtw_8723ds mmc2:0001:1: failed to get tx report from firmware
-> 
-> Ever after I doubled the RTW_TX_PROBE_TIMEOUT (500 * 2), there messages were still there, and AP mode didn't work:
-> 
-> root@OpenWrt:~# iw dev phy0-ap0 station dump Station 04:ea:56:2f:6f:07 (on phy0-ap0) inactive time: 480 ms ... authorized: no authenticated: yes associated: yes
-> 
-> Seems tx status report didn't reach hostapd.
-> 
-> 
+On Sat, 5 Apr 2025 at 01:16, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> Add support for hardware-wrapped inline encryption keys to the Qualcomm
+> ICE (Inline Crypto Engine) and UFS (Universal Flash Storage) drivers.
+>
+> I'd like these patches to be taken through the scsi tree for 6.16.
+> But the Qualcomm / msm tree would be okay too if that is preferred.
+>
+> The block layer framework for this feature was merged in 6.15; refer to
+> the "Hardware-wrapped keys" section of
+> Documentation/block/inline-encryption.rst.  This patchset wires it up
+> for the newer Qualcomm SoCs, such as SM8650, which have a HWKM (Hardware
+> Key Manager) and support the SCM calls needed to easily use it.
+>
+> Tested on the SM8650 HDK with xfstests, specifically generic/368 and
+> generic/369, in combination with the required fscrypt patch
+> https://lore.kernel.org/r/20250404225859.172344-1-ebiggers@kernel.org
+> which I plan to apply separately.
+>
+> Changed in v13:
+>    - Rebased onto latest upstream
+>    - Resent just the remaining driver patches
+>
+> For changes in v12 and earlier, see
+> https://lore.kernel.org/r/20250210202336.349924-1-ebiggers@kernel.org
+>
+> Eric Biggers (2):
+>   soc: qcom: ice: make qcom_ice_program_key() take struct blk_crypto_key
+>   ufs: qcom: add support for wrapped keys
+>
+> Gaurav Kashyap (1):
+>   soc: qcom: ice: add HWKM support to the ICE driver
+>
+>  drivers/mmc/host/sdhci-msm.c |  16 +-
+>  drivers/soc/qcom/ice.c       | 350 ++++++++++++++++++++++++++++++++---
+>  drivers/ufs/host/ufs-qcom.c  |  57 ++++--
+>  include/soc/qcom/ice.h       |  34 ++--
+>  4 files changed, 396 insertions(+), 61 deletions(-)
+>
 
-That's because management frames are going to the high queue instead
-of the management queue:
+For the series and MMC parts:
 
-static u8 rtw_sdio_get_tx_qsel(struct rtw_dev *rtwdev, struct sk_buff *skb,
-			       u8 queue)
-{
-	switch (queue) {
-	case RTW_TX_QUEUE_BCN:
-		return TX_DESC_QSEL_BEACON;
-	case RTW_TX_QUEUE_H2C:
-		return TX_DESC_QSEL_H2C;
-	case RTW_TX_QUEUE_MGMT:
-		if (rtw_chip_wcpu_11n(rtwdev))
-			return TX_DESC_QSEL_HIGH;
-		else
-			return TX_DESC_QSEL_MGMT;
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org> # For MMC
 
-And the chip is not configured to provide TX reports for the high
-queue.
-
-All the chips should be using the management queue for management
-frames. What happens if you change it like this?
-
-	case RTW_TX_QUEUE_MGMT:
-		return TX_DESC_QSEL_MGMT;
-
-If that doesn't work, try to change the rqpn table as well. Right now
-it's like this:
-
-static const struct rtw_rqpn rqpn_table_8723d[] = {
-	{RTW_DMA_MAPPING_NORMAL, RTW_DMA_MAPPING_NORMAL,
-	 RTW_DMA_MAPPING_LOW, RTW_DMA_MAPPING_LOW,
-	 RTW_DMA_MAPPING_EXTRA, RTW_DMA_MAPPING_HIGH},
-
-I think RTW_DMA_MAPPING_EXTRA for dma_map_mg is wrong for SDIO. This
-is what the out of tree rtl8723ds driver does:
-
-static const struct rtw_rqpn rqpn_table_8723d[] = {
-	{RTW_DMA_MAPPING_HIGH, RTW_DMA_MAPPING_NORMAL,
-	 RTW_DMA_MAPPING_LOW, RTW_DMA_MAPPING_LOW,
-	 RTW_DMA_MAPPING_HIGH, RTW_DMA_MAPPING_HIGH},
+Kind regards
+Uffe
 
