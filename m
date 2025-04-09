@@ -1,193 +1,157 @@
-Return-Path: <linux-kernel+bounces-596486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17541A82CAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:41:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 751F4A82BD5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBEA3443288
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:41:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BD4F17B58C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB821C1F07;
-	Wed,  9 Apr 2025 16:40:59 +0000 (UTC)
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B652676D5;
+	Wed,  9 Apr 2025 15:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="hSurYbEE"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5232B250EC;
-	Wed,  9 Apr 2025 16:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BCF1C6FFD;
+	Wed,  9 Apr 2025 15:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744216859; cv=none; b=V9SihzSRkbCzMMiVZ0axqhYyBcFUCY+fjY1kzuBcIn45KbrID0t2KzAvEWkZkI6sBw3dom2Gj7Qw3CjA8FBxW3unb2UuSi4EBi2j4prXWITMrPC8V7BPBmLtSMEFV/IFLxocbFrhdDQJS/tpLGBBPlXgpK1gycKElCZfI9JqSdg=
+	t=1744214281; cv=none; b=UtHu5D8qctHn5kG1+vh/0+vyV3GC2DClsPxVjV5uBK1MW7j02JsP47In0Yfk2PuGZpGPYWv/bNwzAaMXmC3ZMcPnuoWau1icOOqM5zD75+x2rnM+JwbMibtZVXjY0Oh3xWTJpKvlZAFp8d0ng5edT643kKaAfKF5CkU05pU51J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744216859; c=relaxed/simple;
-	bh=OI5wgGn82uQMPS6lLA25QzrQbaTdxqnp0IH22m1DyYo=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=Nv06vjN3RoMDScrl7dpEEci8iVJkMVXB23gT+ziH1kYPjhYbg2bIzrDliGFH6OBBsDRuiZPlkIVIJeMG7j5YQOPIX1mb1uQxQff8CRwYRw9QydrLSKaZ5Fvv/OhU2vWN6ifJtsFr9i0c8OWq2SR8P0arPTHntFGvdgPZ82peB74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:43496)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1u2XjD-003P6n-CY; Wed, 09 Apr 2025 09:52:39 -0600
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:42542 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1u2XjC-005LKU-AL; Wed, 09 Apr 2025 09:52:39 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,  "Maciej W. Rozycki"
- <macro@orcam.me.uk>,  "Richard Henderson" <richard.henderson@linaro.org>,
-  "Ivan Kokshaysky" <ink@unseen.parts>,  "Matt Turner"
- <mattst88@gmail.com>,  "John Paul Adrian Glaubitz"
- <glaubitz@physik.fu-berlin.de>,  "Magnus Lindholm" <linmag7@gmail.com>,
-  "Paul E. McKenney" <paulmck@kernel.org>,  "Alexander Viro"
- <viro@zeniv.linux.org.uk>,  linux-alpha@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-References: <alpine.DEB.2.21.2502181912230.65342@angie.orcam.me.uk>
-	<CAHk-=wgBZk1FFOyiTKLnz4jNe-eZtYsrztcYRRXZZxF8evk1Rw@mail.gmail.com>
-	<alpine.DEB.2.21.2502202106200.65342@angie.orcam.me.uk>
-	<alpine.DEB.2.21.2504072042350.29566@angie.orcam.me.uk>
-	<CAHk-=whKa0-myNkpq2aMCQ=o7S+Sqj--TQEM8wfC9b2C04jidA@mail.gmail.com>
-	<e1356a60-525b-4405-ad5b-eb6e93de8fef@app.fastmail.com>
-Date: Wed, 09 Apr 2025 10:52:02 -0500
-In-Reply-To: <e1356a60-525b-4405-ad5b-eb6e93de8fef@app.fastmail.com> (Arnd
-	Bergmann's message of "Tue, 08 Apr 2025 10:37:49 +0200")
-Message-ID: <87v7rd8h99.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1744214281; c=relaxed/simple;
+	bh=LHDRTqB/4aFtHHTphM5iyORZ3GnZAyBxGXVbnQv0x7o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LYx8qBGotABFGpM8mt/XDTp7EB4FSABItiiovmRZjYte6UdsUlu2CYSa4cG/EO8CH/QwpObjZ3VrvfDI2c1GH3y90Tge8uapYvp27WH0pkh6bJZeWNrbMl3Zrwi2EqPZ/sdRrZa460xmZn9z5wRjExrmbqoo5/vRDCBxlhj701E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=hSurYbEE; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 539D8iiA003194;
+	Wed, 9 Apr 2025 17:57:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	ciBgB/a2M9sVi4sdzHlbrYxfyvZ/g7Jwnk3UWviHnV8=; b=hSurYbEEBJuu1CAq
+	stGgu8szSgpCQ2UKDGHSmM8CBXilyyF91vAlwc9PWSkxz+i/QNvNa61zMWSw5aIZ
+	w9516O7NcptcMcNiLdRt/D8/qt6aGTDY1qxFBswF9XC737zJho7f8EkTMcyEj5bD
+	K/tPBqHHpsG8PMc5cyLUbVCwft7pK499XNFuXUf2+StAyuCZrDTtA89kxBjBldw7
+	sRzFUBxd1F2PzPj6cg+FT4Bj3Yj0u6f7IHIRcXE2A4mLpTx92Myygsh2+JOJPgjb
+	FnKc1ZQYinD4oibRZ8f+iXPZqUl85QOnEa3K4+lw9zijhxUaFUEAC/GNS/QkThRs
+	9jUOFw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45tw5gbyth-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Apr 2025 17:57:44 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DD0FB40045;
+	Wed,  9 Apr 2025 17:56:38 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 378189BAC1C;
+	Wed,  9 Apr 2025 17:54:35 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Apr
+ 2025 17:54:34 +0200
+Message-ID: <9c9172b8-508c-4855-9299-aab72ac2fae6@foss.st.com>
+Date: Wed, 9 Apr 2025 17:54:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1u2XjC-005LKU-AL;;;mid=<87v7rd8h99.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1+KvPU/sBTkEuKVGsgKzXmasJ0CNfVkiPI=
-X-Spam-Level: 
-X-Spam-Virus: No
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
-	*      [score: 0.3749]
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;"Arnd Bergmann" <arnd@arndb.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 598 ms - load_scoreonly_sql: 0.03 (0.0%),
-	signal_user_changed: 3.7 (0.6%), b_tie_ro: 2.6 (0.4%), parse: 0.99
-	(0.2%), extract_message_metadata: 16 (2.6%), get_uri_detail_list: 3.6
-	(0.6%), tests_pri_-2000: 10 (1.7%), tests_pri_-1000: 2.2 (0.4%),
-	tests_pri_-950: 0.95 (0.2%), tests_pri_-900: 0.84 (0.1%),
-	tests_pri_-90: 165 (27.6%), check_bayes: 162 (27.1%), b_tokenize: 8
-	(1.4%), b_tok_get_all: 11 (1.8%), b_comp_prob: 2.6 (0.4%),
-	b_tok_touch_all: 136 (22.8%), b_finish: 0.90 (0.2%), tests_pri_0: 381
-	(63.8%), check_dkim_signature: 0.42 (0.1%), check_dkim_adsp: 4.2
-	(0.7%), poll_dns_idle: 4.8 (0.8%), tests_pri_10: 1.77 (0.3%),
-	tests_pri_500: 12 (2.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] Alpha: Emulate unaligned LDx_L/STx_C for data consistency
-X-SA-Exim-Connect-IP: 166.70.13.51
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org, viro@zeniv.linux.org.uk, paulmck@kernel.org, linmag7@gmail.com, glaubitz@physik.fu-berlin.de, mattst88@gmail.com, ink@unseen.parts, richard.henderson@linaro.org, macro@orcam.me.uk, torvalds@linux-foundation.org, arnd@arndb.de
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 0/7] Add STM32MP25 SPI NOR support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <christophe.kerello@foss.st.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com>
+ <20250408-opal-pillbug-of-acumen-0fbb68@shite>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20250408-opal-pillbug-of-acumen-0fbb68@shite>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-09_05,2025-04-08_04,2024-11-22_01
 
-"Arnd Bergmann" <arnd@arndb.de> writes:
 
-> On Tue, Apr 8, 2025, at 02:34, Linus Torvalds wrote:
->> On Mon, 7 Apr 2025 at 13:46, Maciej W. Rozycki <macro@orcam.me.uk> wrote:
->>>
->>>  So unless I'm proved otherwise (e.g. that all such code paths are now
->>> gone from networking, which may or may not be the case: I saw IPX go but I
->>> can see AppleTalk still around; or that no sub-longword accesses are ever
->>> used in the relevant networking paths), I'm going to keep kernel emulation
->>> in v2, because what just used to be wrapped in an unaligned LDQ/STQ pair,
->>> which we trapped on and emulated, will now become an LDQ_L/STQ_C loop.
->>>
->>>  Do you happen to know what the situation is here?
+
+On 4/8/25 08:38, Krzysztof Kozlowski wrote:
+> On Mon, Apr 07, 2025 at 03:27:31PM GMT, Patrice Chotard wrote:
+>> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+>> ---
+>> Patrice Chotard (7):
+>>       MAINTAINERS: add entry for STM32 OCTO MEMORY MANAGER driver
+>>       dt-bindings: memory-controllers: Add STM32 Octo Memory Manager controller
+>>       memory: Add STM32 Octo Memory Manager driver
+>>       arm64: dts: st: Add OMM node on stm32mp251
+>>       arm64: dts: st: Add ospi port1 pinctrl entries in stm32mp25-pinctrl.dtsi
+>>       arm64: dts: st: Add SPI NOR flash support on stm32mp257f-ev1 board
+>>       arm64: defconfig: Enable STM32 Octo Memory Manager and OcstoSPI driver
 >>
->> I think networking ends up using 'get_unaligned()' properly for header
->> accesses these days for any of this.
->>
->> If you don't, some architectures will literally silently give you
->> garbage back and not even fault.
->>
->> Admittedly that's mainly some really broken old 32-bit ARM stuff and
->> hopefully it's all dead by now.
->
-> Yes, the last one doing this was EBSA110, which we removed in 2020.
->
->> So unless you actually *see* the unaligned faults, I really think you
->> shouldn't emulate them.
->>
->> And I'd like to know where they are if you do see them
+>>  .../memory-controllers/st,stm32mp25-omm.yaml       | 226 ++++++++++
+>>  MAINTAINERS                                        |   6 +
+>>  arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi      |  51 +++
+>>  arch/arm64/boot/dts/st/stm32mp251.dtsi             |  54 +++
+>>  arch/arm64/boot/dts/st/stm32mp257f-ev1.dts         |  32 ++
+>>  arch/arm64/configs/defconfig                       |   2 +
+>>  drivers/memory/Kconfig                             |  17 +
+>>  drivers/memory/Makefile                            |   1 +
+>>  drivers/memory/stm32_omm.c                         | 474 +++++++++++++++++++++
+>>  9 files changed, 863 insertions(+)
+>> ---
+>> base-commit: 88424abd55ab36c3565898a656589a0a25ecd92f
+> 
+> That's unknown commit.
+> 
+> b4 diff '20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com'
+> Using cached copy of the lookup
+> ---
+> Analyzing 81 messages in the thread
+> Preparing fake-am for v7: MAINTAINERS: add entry for STM32 OCTO MEMORY MANAGER driver
+> ERROR: Could not write fake-am tree
+> ---
+> Could not create fake-am range for lower series v7
+> 
+> I tried on latest next, on some March next, on latest mainline. It seems
+> you use some weird base here, so anyway I won't be able to apply it.
 
-I was nerd sniped by this so I took a look.
+It was based on next-20250317 plus the 2 ospi patches already merged 
+by Mark Brown, that's why.
 
-I have a distinct memory that even the ipv4 stack can generate unaligned
-loads.  Looking at the code in net/ipv4/ip_input.c:ip_rcv_finish_core
-there are several unprotected accesses to iph->daddr.
+> 
+> Please split the patchset per subsystem and send something based on
+> maintainer tree (so for me my for-next branch), mainline (which is the
+> same as for-next currently) or linux-next.... which would be the same as
+> my for-next branch currently.
 
-Which means that if the lower layers ever give something that is not 4
-byte aligned for ipv4 just reading the destination address will be an
-unaligned read.
+ok
 
-There are similar unprotected accesses to the ipv6 destination address
-but it is declared as an array of bytes.  So that address can not
-be misaligned.
+Thanks
+Patrice
 
-There is a theoretical path through 802.2 that adds a 3 byte sap
-header that could cause problems.  We have LLC_SAP_IP defined
-but I don't see anything calling register_8022_client that would
-be needed to hook that up to the ipv4 stack.
-
-As long as the individual ethernet drivers have the hardware deliver
-packets 2 bytes into an aligned packet buffer the 14 byte ethernet
-header will end on a 16 byte aligned location, I don't think there
-is a way to trigger unaligned behavior with ipv4 or ipv6.
-
-Hmm.  Looking appletalk appears to be built on top of SNAP.
-So after the ethernet header processing the code goes through
-net/llc/llc_input.c:llc_rcv and then net/802/snap_rcv before
-reaching any of the appletalk protocols.
-
-I think the common case for llc would be 3 bytes + 5 bytes for snap,
-for 8 bytes in the common case.  But the code seems to be reading
-4 or 5 bytes for llc so I am confused.  In either case it definitely
-appears there are cases where the ethernet headers before appletalk
-can be an odd number of bytes which has the possibility of unaligning
-everything.
-
-Both of the appletalk protocols appear to make unguarded 16bit reads
-from their headers.  So having a buffer that is only 1 byte aligned
-looks like it will definitely be a problem.
-
-> FWIW, all the major architectures that have variants without
-> unaligned load/store (arm32, mips, ppc, riscv) trap and emulate
-> them for both user and kernel access for normal memory, but
-> they don't emulate it for atomic ll/sc type instructions.
-> These instructions also trap and kill the task on the
-> architectures that can do hardware unaligned access (x86
-> cmpxchg8b being a notable exception).
-
-I don't see anything that would get atomics involved in the networking
-stack.  No READ_ONCE on packet data or anything like that.  I believe
-that is fairly fundamental as well.  Whatever is processing a packet is
-the only code processing that packet.
-
-So I would be very surprised if the kernel needed emulation of any
-atomics, just emulation of normal unaligned reads.  I haven't looked to
-see if the transmission paths do things that will result in unaligned
-writes.
-
-Eric
+> 
+> Best regards,
+> Krzysztof
+> 
 
