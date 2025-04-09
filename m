@@ -1,104 +1,76 @@
-Return-Path: <linux-kernel+bounces-596472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87D8A82C69
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:32:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5C0BA82C64
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A10104627E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:29:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C222317708D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9892E26B2DF;
-	Wed,  9 Apr 2025 16:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZ7xuUxM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5032A26B944;
+	Wed,  9 Apr 2025 16:27:35 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CA11BF33F;
-	Wed,  9 Apr 2025 16:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B1C26A1C4;
+	Wed,  9 Apr 2025 16:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744216143; cv=none; b=Qvjya4iguBIQ13nv/Q3yyUXNvTPvotsxSzPX+0dcWGTnjkjLsKhV0xnXz9FSnlcKAm94w6lICfdqoFNnLtCUGwJbXwuObYuOOacLFDHBfK6py401nB+kriR4JdNymV0IqvT5gdanv/md+HSgQDpWXo5V5mi4M+ipDmn3w0vB5yI=
+	t=1744216055; cv=none; b=BY2Kjtvr9TdSIdT0da6mZg140XcC0vJxFvDLn1rfFVAIJVpbtnDvBO3yKYEGuNyTkXfAbbZ2HbJvtqTeMGyHbcNHcRMIPxbfEqT2z+o1dxk4grtPOC3EiqMrPwMjYEZvS/PH99eJ9uhE68ky6S7Ln1I+0Z3QeNuu+WniuDAuS8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744216143; c=relaxed/simple;
-	bh=1q+VSynmwPlJU7x8bslFD2SHwUAh5gUYIiUR0Udy/8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LByPeX0WZS0FBO3K8/B1bTf80qobQ2J7Xk0c6RcgojR5YAHCQG3SY2UMjZD5XlJjgrpYxchsKIdUbTgBW2iul3TSHVJ9t72bAknXz8pghskBNHVQB/nkkL/fbc5VZnXL5H7zxz1nGT7Vfnk4anRah08HGayPnEsYZO0pqHWcLRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZ7xuUxM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC88C4CEE3;
-	Wed,  9 Apr 2025 16:28:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744216142;
-	bh=1q+VSynmwPlJU7x8bslFD2SHwUAh5gUYIiUR0Udy/8o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eZ7xuUxMgK193/vloPthk0DdEqC6xqgVTZ2tv4qrUxfwPflPQeu64Wc1z2ve1i4wC
-	 savT8q+JPWhHWAXM9qKH3P2CysPMI+H8NXPMOk/sADqIA6DAB3buTZJnOOAFNZIVcp
-	 xtJ59dTw/q73luTZIcB+YnEXt0/P970/6Vyuq487Q7JJzQq94DHiDYCvTEthE3ECZE
-	 N0fowb03flN7jgsWj1nNsLjDhfnsVDPtyeENaAqDuX3MlYm8kOFld2pfheQecXSH1X
-	 Nt2CNZxpIaNjxZa1plq3c+89EGabUCvao75NbpjqHZXPR3QYDBVULQ6/dbKGkd7p8P
-	 lIz9Am9lmbk4w==
-Date: Wed, 9 Apr 2025 19:28:47 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pratyush Yadav <ptyadav@amazon.de>,
-	Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org,
-	graf@amazon.com, akpm@linux-foundation.org, luto@kernel.org,
-	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com,
-	benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com, dwmw2@infradead.org,
-	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com,
-	corbet@lwn.net, krzk@kernel.org, mark.rutland@arm.com,
-	pbonzini@redhat.com, pasha.tatashin@soleen.com, hpa@zytor.com,
-	peterz@infradead.org, robh+dt@kernel.org, robh@kernel.org,
-	saravanak@google.com, skinsburskii@linux.microsoft.com,
-	rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com,
-	usama.arif@bytedance.com, will@kernel.org,
-	devicetree@vger.kernel.org, kexec@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v5 09/16] kexec: enable KHO support for memory
- preservation
-Message-ID: <Z_agP1ohC3sVZrM7@kernel.org>
-References: <mafs05xjmqsqc.fsf@amazon.de>
- <20250403114209.GE342109@nvidia.com>
- <Z-6UA3C1TPeH_kGL@kernel.org>
- <20250403142438.GF342109@nvidia.com>
- <Z--sUYCvP3Q8nT8e@kernel.org>
- <20250404124729.GH342109@nvidia.com>
- <Z-_kSXrHWU5Bf3sV@kernel.org>
- <20250404143031.GB1336818@nvidia.com>
- <Z_KnovvW7F2ZyzhX@kernel.org>
- <20250407141626.GB1557073@nvidia.com>
+	s=arc-20240116; t=1744216055; c=relaxed/simple;
+	bh=Y+GL7LA0QIAIS1xC03B1KxjQD58LQz5juvhWin5MPio=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=diRknS9EIFElHIkNFb2egRWtVmeihkwnewKVwo4f4dVEiMPMk3/H4FHap5cJ84sbOtK+TP+2CKwcf2PBVqYdiekYxeicF1mkXROvoILS7EIbSStXZNqd0DhflcPmc/7h5iMxYrQM6RGwF16B8Q3ItvM+xtPL4RMWhBmhdmvPuKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB568C4CEE2;
+	Wed,  9 Apr 2025 16:27:33 +0000 (UTC)
+Date: Wed, 9 Apr 2025 12:28:53 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>
+Subject: Re: [PATCH] tracing: Allow the top level trace_marker to write into
+ another instance
+Message-ID: <20250409122853.7e5a29e6@gandalf.local.home>
+In-Reply-To: <1516bba1-15ea-4b8a-ac83-e7db98b37397@efficios.com>
+References: <20250408112714.403a4368@gandalf.local.home>
+	<1516bba1-15ea-4b8a-ac83-e7db98b37397@efficios.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407141626.GB1557073@nvidia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 07, 2025 at 11:16:26AM -0300, Jason Gunthorpe wrote:
-> On Sun, Apr 06, 2025 at 07:11:14PM +0300, Mike Rapoport wrote:
+On Wed, 9 Apr 2025 12:18:22 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+
+> > The top level instance can set this option but it can not clear it, and
+> > it will bring the writing of the trace_marker back to its buffer.  
 > 
-> KHO needs to provide a way to give back an allocated struct page/folio
-> that can be freed back to the buddy alloactor, of the proper
-> order. Whatever you call that function it belongs to KHO as it is
-> KHO's primary responsibility to manage the buddy allocator and the
-> struct pages.
+> Why choose to redirect the top level trace marker from the global
+> buffer to the specific one rather than allow it to iterate on a
+> set of "interested" buffers ?
 
-If order is only important for freeing memory back to page allocator, you
-don't really need it. Freeing contiguous power-of-two number of pages with
-proper alignment will give the same result, just a tad slower.
- 
-> Jason
-> 
+Hmm, interesting idea. I guess we could do it that way instead, although it
+may cause a bit more overhead needing to keep track of the buffers that are
+interested and also make sure they do not disappear.
 
--- 
-Sincerely yours,
-Mike.
+I guess this could be done only in the write system call and the open
+doesn't get affected. I guess the list of "interested buffers" can be
+maintained by RCU, so that when a write happens, it writes to each
+interested buffer via a list_for_each_entry_rcu(), under a RCU read lock so
+that the buffers do not disappear when writing to them.
+
+Masami, what do you think?
+
+-- Steve
 
