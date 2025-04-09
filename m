@@ -1,151 +1,201 @@
-Return-Path: <linux-kernel+bounces-595322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C179CA81CB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:12:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058B5A81CB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AB8E88714C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:11:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C65C41B68252
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C631E260D;
-	Wed,  9 Apr 2025 06:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93A41DDA1E;
+	Wed,  9 Apr 2025 06:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="myj2VGBz"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFjjhB7O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E5A1E1A17
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 06:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C48259C;
+	Wed,  9 Apr 2025 06:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744179065; cv=none; b=NFOlpDLum1VoIJFlJ3ip5vWZh/ECKKaytkAunXtjwXbjHk0JV4DNNeA6wBs0tlOwIC1OY7myquIjN5ws5cBRuck8EjfLcn41E3dp71qIBNJ4FKd5lBBaK2ggwkZCNGVJsJ/mp5BYFYH5oyt7sQmzbk6LrAIyqCbqfh5IEbPw/is=
+	t=1744179040; cv=none; b=RGeiO8UjOXPOF6PhtqBSlx+bnKOtXzB0dGrqlj4U+lvo/lCioFFKFFUhEWzQPizRCSutlKYuUyqdbuWwwwHpHSKxheSeArfQTbf7Q3gAAJXVFKu8Ou5q+JujdN8MEg0vqc66D6j3Jrx3YOzz9vC1ETNlWm02S4NWarJlJMVwxMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744179065; c=relaxed/simple;
-	bh=uzrqNAXM/KeEjp8qWr6xTf3VLWW7e0MNaK/cvBjUNjU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=GBu1dX+ww1o7jHjVf4FF2BPbEAwZ+r0Y8L/CogHaRc4tRWbjLcAA/gUUZarw17Tj8sFvseNDFAnLhQTqccgOsowmb4y1S3BqJ/Z+H4g+dkmv7AeBA+0eQsDGy8I3s6nINlzqLDtj0gHFdiRuaIdXkH5pzXCuNMB/v3QIz3oa/Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=myj2VGBz; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2242ce15cc3so57888705ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 23:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744179063; x=1744783863; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fqf5UWKI2N4Og32+0x3lkK0y6IoadYAF1NX3nVy0tDA=;
-        b=myj2VGBzUEMh9WWBl8PbndsnolpHgWAFjY+H89MlE4NCQDk/nYGLm50jWfoc5TZm7a
-         OJwWE2D/YQcMXiXHN5/8Btg8cnxPWXv9YdsavlPvWNxi17+7LZYJdSS6DLKH6AaVd92G
-         FjnKd00JRbhPPE7oqcoGEyueKA/y8broW+VwFY5xLgnHH/NHRerovynrmf1Ry6WYNK6x
-         JNnJ1UhporZKoIpHSkvjyjVyQRLoVBpUtY7VW9F5NEXsgb7bMU2CYu1LIDJ9GHTtpBAW
-         L9agZBtxjPGR3Spv3ldU+YPSk78k9C8L9FSXMCiLSpBTnKaU7r879cbjgKuakGvhsuna
-         YsUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744179063; x=1744783863;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fqf5UWKI2N4Og32+0x3lkK0y6IoadYAF1NX3nVy0tDA=;
-        b=HfRFq60OaTIbjMimvMAonvq6VJV8KtHvgiXmH4VmQImeLvaSIuvMfAseL5JBpL5xV6
-         BeuJGPtLonQ54rckEz2qFRFQiffcqcJUuyFpKIa9inovEsj/RKIDE8z4Y0tf4bNn0LiS
-         PrJupBxliCTJd4J1T68OOfG3zxukP392eOIVvJfct8oJeH017mqBLA+EzQJjkuaci404
-         AaGeT4ippKc8VWc/bj7K9vcc1OBjIBqkRq1KHHyHmBVeUlj/SnFPsywdhMs+hT9XzP0G
-         9mqLw40FgAS3wL0fjw0sZFxw+49Dplcfc7hZA7sSti0ci6JlM9PpaDl4hANB9QGiiMPH
-         rCQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjQD2lce01nrrTKs0hd/+5IkjxP/JM2Dhr9GmWDVokUtv/FbNrYz9QyPHjGOBhvosVC0hFopvWxvcQclk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDhnq92+2sxrpiaovyvhoeUrccNCkEQYw2mLn2Q9mmtFX/YRpI
-	X0mll3aAfN5e5UFSioyQgQypMWkgfzZBnAWlCKXJDHr/L7cGvAZFjZCb+TlsG0BcEnyXGKsTinL
-	zYBPhAg==
-X-Google-Smtp-Source: AGHT+IGTJmhyKoOQj5ofXOm1qSdH7c8rI40Gef8T69sqKGe8/stfnPpqWWQ8Denfs/4DODYgAhfMLIhSLSVj
-X-Received: from pltf12.prod.google.com ([2002:a17:902:74cc:b0:224:2ae9:b271])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d2d0:b0:223:5525:6239
- with SMTP id d9443c01a7336-22ac2a1a660mr27592605ad.38.1744179063507; Tue, 08
- Apr 2025 23:11:03 -0700 (PDT)
-Date: Tue,  8 Apr 2025 23:10:33 -0700
-In-Reply-To: <20250409061043.700792-1-irogers@google.com>
+	s=arc-20240116; t=1744179040; c=relaxed/simple;
+	bh=fcb3h/TEDOOZlExJ06Sjkb98E+IeGhwQKU9+F/GNFRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t5QwVntinjB1E/mqVMx9bzE/T4/1xsR4IaJ19iHTnHlYdEyfQPZveR2WtDWJqscb3z9YFuJO4gwG6H2X98B5zW7W+FkQE1/EMkmSswwWU/5RNVAY0TlsJDtt81TWWiQsPlZz1pyin3ezK2OImly/fqEY1e7CQWskq4noxbuGOsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kFjjhB7O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4DC0C4CEE3;
+	Wed,  9 Apr 2025 06:10:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744179039;
+	bh=fcb3h/TEDOOZlExJ06Sjkb98E+IeGhwQKU9+F/GNFRc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kFjjhB7OMiLNGC+dXWbTK4QwnM3o0/d2n/V7LlizQckxrTzu8gDgWExSbNImoTxgw
+	 +/2yFkXEhi1qBJmD5Iy5wKR9hqPXk02fIMeDKR+UxMVukMjcGDcoXo1rIOFPBpb67U
+	 /zF9qaw6zLTuNNv0PXEmQeFBXmlK8Sf6dEG5O17juczTSWlBZiATh3HMtave1QRAlg
+	 QgAsrD4dDCbiZ2KtROtvwJkhkJXjn7UvdvJwpG9byNWJ/Mk3vD6a70LFiOCYv/6b0H
+	 853j53LLyNBPQpi280S3SgSzwkrBaEGO1U/t0yKHetZFNHWIydIJy/AGA567wTGHHV
+	 0D2CVI5CZppAg==
+Message-ID: <7bbe235d-be3a-4851-b9db-c3c9e956a9fd@kernel.org>
+Date: Wed, 9 Apr 2025 08:10:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250409061043.700792-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250409061043.700792-7-irogers@google.com>
-Subject: [PATCH v4 06/16] perf intel-tpebs: Reduce scope of tpebs_events_size
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Weilin Wang <weilin.wang@intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	John Garry <john.g.garry@oracle.com>, Howard Chu <howardchu95@gmail.com>, 
-	Levi Yun <yeoreum.yun@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] i3c: master: Add Qualcomm I3C controller driver
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Cc: alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, jarkko.nikula@linux.intel.com,
+ linux-i3c@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org
+References: <20250403134644.3935983-1-quic_msavaliy@quicinc.com>
+ <20250403134644.3935983-3-quic_msavaliy@quicinc.com>
+ <20250404-provocative-mayfly-of-drama-eeddc1@shite>
+ <4fe9f898-63bf-4815-a493-23bdee93481e@quicinc.com>
+ <e93c50ce-30dd-45ef-b945-019e703bd7c3@kernel.org>
+ <6ab62bb9-2758-4a12-aec3-6de9efc3075a@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <6ab62bb9-2758-4a12-aec3-6de9efc3075a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Moved to record argument computation rather than being global.
+On 09/04/2025 07:48, Mukesh Kumar Savaliya wrote:
+> Hi Krzysztof,
+> 
+> On 4/9/2025 12:11 AM, Krzysztof Kozlowski wrote:
+>> On 08/04/2025 15:23, Mukesh Kumar Savaliya wrote:
+>>>>> +
+>>>>> +static int i3c_geni_runtime_get_mutex_lock(struct geni_i3c_dev *gi3c)
+>>>>> +{
+>>>>
+>>>> You miss sparse/lockdep annotations.
+>>>>
+>>> This is called in pair only, but to avoid repeated code in caller
+>>> functions, we have designed this wrapper.
+>>> i3c_geni_runtime_get_mutex_lock()
+>>> i3c_geni_runtime_put_mutex_unlock().
+>>>
+>>> caller function maintains the parity. e.g. geni_i3c_master_priv_xfers().
+>>>
+>>> Does a comment help here ? Then i can write up to add.
+>>
+>> I do not see how this is relevant to my comment at all.
+>>
+> What i understood is you suspect about lock/unlock imbalance right ?
+> I know that Lockdep annotations will be used to check if locks are 
+> acquired and released in a proper order.
+> 
+> You want me to add below code in both the functions mentioned ?
+>      lockdep_assert_held(&gi3c->lock);
+> 
+> What exact sparse/attribute can be added ? I am not sure about that.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/intel-tpebs.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+I don't think you tried enough.
 
-diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.c
-index 2b04deaf66ff..e3bed86145b9 100644
---- a/tools/perf/util/intel-tpebs.c
-+++ b/tools/perf/util/intel-tpebs.c
-@@ -29,7 +29,6 @@
- #define PERF_DATA		"-"
- 
- bool tpebs_recording;
--static size_t tpebs_event_size;
- static LIST_HEAD(tpebs_results);
- static pthread_t tpebs_reader_thread;
- static struct child_process tpebs_cmd;
-@@ -86,15 +85,20 @@ static int get_perf_record_args(const char **record_argv, char buf[],
- static int evsel__tpebs_start_perf_record(struct evsel *evsel, int control_fd[], int ack_fd[])
- {
- 	const char **record_argv;
-+	size_t tpebs_event_size = 0;
- 	int ret;
- 	char buf[32];
- 	char cpumap_buf[50];
-+	struct tpebs_retire_lat *t;
- 
- 	cpu_map__snprint(evsel->evlist->core.user_requested_cpus, cpumap_buf,
- 			 sizeof(cpumap_buf));
- 
- 	scnprintf(buf, sizeof(buf), "--control=fd:%d,%d", control_fd[0], ack_fd[1]);
- 
-+	list_for_each_entry(t, &tpebs_results, nd)
-+		tpebs_event_size++;
-+
- 	record_argv = calloc(12 + 2 * tpebs_event_size, sizeof(char *));
- 	if (!record_argv)
- 		return -ENOMEM;
-@@ -226,7 +230,6 @@ static struct tpebs_retire_lat *tpebs_retire_lat__new(struct evsel *evsel)
- 		return NULL;
- 	}
- 	list_add_tail(&result->nd, &tpebs_results);
--	tpebs_event_size++;
- 	return result;
- }
- 
-@@ -289,7 +292,7 @@ int evsel__tpebs_open(struct evsel *evsel)
- 	if (ret)
- 		return ret;
- 
--	if (tpebs_event_size > 0) {
-+	if (!list_empty(&tpebs_results)) {
- 		struct pollfd pollfd = { .events = POLLIN, };
- 		int control_fd[2], ack_fd[2], len;
- 		char ack_buf[8];
--- 
-2.49.0.504.g3bcea36a83-goog
+git grep sparse -- Documentation/
+which gives you the file name, so:
+git grep lock -- Documentation/dev-tools/sparse.rst
 
+Use sparse instead of lockdep.
+
+>>>
+>>>>> +	int ret;
+>>>>> +
+>>>>> +	mutex_lock(&gi3c->lock);
+>>>>> +	reinit_completion(&gi3c->done);
+>>>>> +	ret = pm_runtime_get_sync(gi3c->se.dev);
+>>>>> +	if (ret < 0) {
+>>>>> +		dev_err(gi3c->se.dev, "error turning on SE resources:%d\n", ret);
+>>>>> +		pm_runtime_put_noidle(gi3c->se.dev);
+>>>>> +		/* Set device in suspended since resume failed */
+>>>>> +		pm_runtime_set_suspended(gi3c->se.dev);
+>>>>> +		mutex_unlock(&gi3c->lock);
+>>>>
+>>>> Either you lock or don't lock, don't mix these up.
+>>>>
+>>> Caller is taking care of not calling i3c_geni_runtime_put_mutex_unlock()
+>>> if this failed.
+>>
+>>
+>> I do not see how this is relevant to my comment at all.
+>>
+> same as above
+
+
+>>>>> +		return ret;
+>>>>> +	}
+>>>>> +
+>>>>> +	return 0;
+>>>>> +}
+>>>>> +
+>>>>> +static void i3c_geni_runtime_put_mutex_unlock(struct geni_i3c_dev *gi3c)
+>>>>> +{
+>>>>
+>>>> Missing annotations.
+>>>>
+>>> Shall i add a comment here ?
+>>
+>> Do you understand what is sparse? And lockdep?
+>>
+> Little but not clear on exact sparse attribute to be added. please help 
+> me. if you can help with some clear comment and sample, will be easier 
+> if you can.
+
+You did not even bother to grep for simple term.
+
+
+Best regards,
+Krzysztof
 
