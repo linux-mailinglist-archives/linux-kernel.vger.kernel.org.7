@@ -1,127 +1,164 @@
-Return-Path: <linux-kernel+bounces-596261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CCF6A82997
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:12:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8488A8298B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E11118909C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:04:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADA8B16E691
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8018266B75;
-	Wed,  9 Apr 2025 14:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B562690ED;
+	Wed,  9 Apr 2025 14:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="L/UJCNDr"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZeqCwJg"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9CD26FA77;
-	Wed,  9 Apr 2025 14:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF5E268FE7;
+	Wed,  9 Apr 2025 14:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744210617; cv=none; b=Beo6gKzZkHHdbVLPuQHTpphWULPB3mckCxw2zuTuCYBuAA9p5YqCCITP47ftsyaxy1RJt8koI3MIPgqjgK2OZBw98f54p4fBRN7Hpm925wucu8ojHzBjB1EbIupf8dF2kLkOarcHprSanTi1K5uw4017Zq6rnbaNi4R/2jyU3Ps=
+	t=1744210633; cv=none; b=XO+iXoshCPL4wuLI9I0vD45eVD9q86c8YxODaWvRG4mpl4HinaVpSN3ekMYDCeHhEIKiBRSjX7T4tLme7c17rXekX0zrMZ1D3LceMC1IL55A9uMVre3mxAKYYSti5bewdWZzez39SgfWWKxOk7Gi7REnP/juc7pBDtUPSZakHp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744210617; c=relaxed/simple;
-	bh=ujbrfAuU1zKdwr5Rw8sKUz/PSsEcuRiBC+aiIUpZZ/Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TZ4Q+90/fyuq3LVSGNxFE7VMsMI81y7QRsbu9Zkw3fl86MvbNSrj0jMYmHXksH2L0ylmHR4K8eBC/2T56z2WHas+W/ZqqbTbUjb2U6I/Lb5CTCr90jhlntFEw35bM3GMEr3G6wgtBCxL/pgu64yncv/nH7UmR37cL1MIjcO9Gq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=L/UJCNDr; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C7F2320485;
-	Wed,  9 Apr 2025 14:56:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744210612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V1rTe2Fts4AcW9pI/PJXuH3N++IjKrJP5kBuSEpK1gE=;
-	b=L/UJCNDr9eD96NKvVg2JDbYqC1Q8yMbtvCqDNkDvuUQ4tNumae3aRU/PFz+QMMWMjr+qgT
-	5WUVN5pswVGmeb5l4mz2gouTQ1h17X3/TpcHP/hfCUdQ6x4JOyGrer+FnqNMsU9+jrq41q
-	6+8LZ3j8GOScfL7XVZyij/amFRiTriFF0f+SJkbMT6O0mk4mz9yvl96iv3xSvGggMp173b
-	2MRxElsPAMv6wsU4Pw6mvq2MkykeHRFvPBoPE+XLW/psP02vavXo7E9dL4xJdyd2Aqdm5T
-	umy6Sl/j7ad3YMvUjhMfURwh3amMhyo8/qRnmcaryJn1lxEBlI43pLmqo+W7EA==
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Wed, 09 Apr 2025 16:55:59 +0200
-Subject: [PATCH v6 12/12] MAINTAINERS: Add entry on MAX7360 driver
+	s=arc-20240116; t=1744210633; c=relaxed/simple;
+	bh=ADNGUNPjht6pF0bZgUe8BuYoaHN32NWDtMTTxruXVD0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l37MTtjHZ2v0bkWrM61EP+SxMHT1a5awUuYYVk/63qML4xzXeqcdK04E4GP6UmNpPjv70SgTQwojWMCqhLR9VP8if13rmKB4+P/WM2ZOqioFL7iBlpDOKwF52/rl9gZfsSCDCCugRiDWuc78iPzqToHyhhOuOWApI3lbsL4wqGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZeqCwJg; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30bf8f3fbd6so7626851fa.2;
+        Wed, 09 Apr 2025 07:57:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744210630; x=1744815430; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XTxp3qW+KPuzf+zXWuGUYa2ldWHd+1dpKttsCAAJnR4=;
+        b=eZeqCwJgTbS5AM6/SUnly4j1VmICDewXKwZQoCl5BQt2jc4KyR06uxYC0ZcYBBwLo8
+         EXhRZaFBn9NlIFcwEo7miiNaozhgRz7HD+Wg718CUT6QnlhowxQjt8+lNNj/lX4V8IZL
+         ckPTuIMZHlY9VSf0jkTQNIG5g8hhZwxHI2K7r8oWmaTSg8p4dZs7eBKsGjy/OHnzC1L+
+         VtkNNn+rV8AhCSFRIe1h6JgdB+qpC4SiwVaUjib8xGU1dV6geF8wwVeZg7DZEYrdhGl6
+         kBK2urHK4ucHnSb+cnsMTPtSDRm8PhpEmXLuRF3qAR2+DSl9bcJO9RJasFe/Rc1z3m8V
+         2KYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744210630; x=1744815430;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XTxp3qW+KPuzf+zXWuGUYa2ldWHd+1dpKttsCAAJnR4=;
+        b=nZlfv7ZQEr//dhqLH6WF9DWZ7u03yXdJyJFKvuHSap/kxUx4nprYxVQrVph4VM04Df
+         yZZDr4r9h3HuH4XI94TyPHgTyOiGR1yURxC5gPaghegSr08gxwIHJGjRrWhhBEPqO2eb
+         stK34X0gv5tdVvIuzcudgsn9YPERfcVlI7rwQusMK71JvJMkK1GNwYDCX7CL5x+ALHTI
+         8TwyrLTSGD1hLshnM8HwWS+6yonKiuExbAcbG+VSRKBVEUEmfwToXeAQE+aK33S+6BMk
+         0DaoDtL+shmIy3jolXW2QMJ6DHmqwpJmgJR6kVXyhji5UsqlYOBUL1FHi0XwIxEbun4w
+         coLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFX8QzIMSXVI+CgvUU7pPa0v0AR7lsWYyTuX4FIY+L9WOXSVsy3calB7ZWurL3Q376ARgvbkv8MT9tqA==@vger.kernel.org, AJvYcCWYQGJC5GsLGApCVJWagnf+p1oL7miZ4H9SFvfxhvNQasewdwNv9aLX1tX4+RB1FmAV3lLUYayd@vger.kernel.org, AJvYcCWz08ISi45ig7p41fdcVaK7iDfwYaMRuWWOJ+CKSJ7UaU/yZCuzOgwKC0XmlZPyRgOajtat1XIfZ6MJajM=@vger.kernel.org, AJvYcCX/V9DPdGCJPdjWZrJg2jiamquDXqZ2Pb45hYFjEq3KD7FNQBiv8ESfo8pk6O1VoyyiS/zfMehoaH5Abw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM8WwaEjUGmW4L5YKM2lJJqN4tLfWERz2QDm4jduPt3XTJxdzY
+	gB6g07QOtkFR/Vyk30zkkG0OBUXDhnLJrQViQfDhb4OyTbX5nRpy
+X-Gm-Gg: ASbGnctBNw9viPsr3mSFcabmVEFcGRUm/KOA9eWuV/YqabS74uWwDYDVwnPdL8vDUSp
+	WXl7oJ346mvIZq80AlRLx1kzy/b20ToWZUL60ptStVogxfdOSe+12rCHQC7/V4BqQ/7LLLWOu+4
+	aUnhG+EPlcx2kE7EKWEiduQi05v+8I/A8uCaMPkKGTmbXsWv2cMviZcM28tftLYDLz/dQcyc+mf
+	GMBk5CIrR9PLUaTgHNDcAxLmUTZPOTYPwVDi+YrysZBYxW1DBmD9Ifx864lJf+tUL0KBIlSpDaj
+	0HX3UmycvA6odJ9SRAwqdBPgurGxMqZFOMK3uhWzr1AOGTTvvIipkczwgyquzXp79UBlEQ==
+X-Google-Smtp-Source: AGHT+IG7fk9emZaqKs/kKGowvaUASd2CDo9SSBq5dR2zvDPKxRK4W1C4hr7cqLTnQPNN0OUJNfi0kg==
+X-Received: by 2002:a05:651c:221a:b0:30d:62c1:3bfc with SMTP id 38308e7fff4ca-30f4387ba49mr2911011fa.7.1744210629436;
+        Wed, 09 Apr 2025 07:57:09 -0700 (PDT)
+Received: from [172.27.52.232] (auburn-lo423.yndx.net. [93.158.190.104])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f4649d61csm1929521fa.7.2025.04.09.07.57.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Apr 2025 07:57:09 -0700 (PDT)
+Message-ID: <02d570de-001b-4622-b4c4-cfedf1b599a1@gmail.com>
+Date: Wed, 9 Apr 2025 16:56:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] kasan: Avoid sleepable page allocation from atomic
+ context
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Nicholas Piggin <npiggin@gmail.com>,
+ Guenter Roeck <linux@roeck-us.net>, Juergen Gross <jgross@suse.com>,
+ Jeremy Fitzhardinge <jeremy@goop.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, kasan-dev@googlegroups.com, sparclinux@vger.kernel.org,
+ xen-devel@lists.xenproject.org, linuxppc-dev@lists.ozlabs.org,
+ linux-s390@vger.kernel.org, stable@vger.kernel.org
+References: <cover.1744128123.git.agordeev@linux.ibm.com>
+ <2d9f4ac4528701b59d511a379a60107fa608ad30.1744128123.git.agordeev@linux.ibm.com>
+ <3e245617-81a5-4ea3-843f-b86261cf8599@gmail.com>
+ <Z/aDckdBFPfg2h/P@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+Content-Language: en-US
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+In-Reply-To: <Z/aDckdBFPfg2h/P@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250409-mdb-max7360-support-v6-12-7a2535876e39@bootlin.com>
-References: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
-In-Reply-To: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Kamel Bouhara <kamel.bouhara@bootlin.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-pwm@vger.kernel.org, andriy.shevchenko@intel.com, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744210599; l=1082;
- i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=ujbrfAuU1zKdwr5Rw8sKUz/PSsEcuRiBC+aiIUpZZ/Y=;
- b=D8BuH7Sii+uy0a+EoZ5WjwRuEd+ugSVK8+aFammXWvJVKbWvuRYUW52uSu9ciCM+fr9vHTsd2
- X2mXMcSdi5+Aj3FBvFiCFYLx0IJMLVaWAtWO4fnZAVIbn3MSuEdJ8Qn
-X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
- pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdeivdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedthfegtedvvdehjeeiheehheeuteejleektdefheehgfefgeelhfetgedttdfhteenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvfedprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhhoohhnihgvs
- ehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehukhhlvghinhgvkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphifmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-Add myself as maintainer of Maxim MAX7360 driver and device-tree bindings.
 
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
----
- MAINTAINERS | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 96b827049501..0c4988ec7052 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14554,6 +14554,19 @@ L:	linux-iio@vger.kernel.org
- S:	Maintained
- F:	drivers/iio/temperature/max30208.c
- 
-+MAXIM MAX7360 KEYPAD LED MFD DRIVER
-+M:	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/gpio/maxim,max7360-gpio.yaml
-+F:	Documentation/devicetree/bindings/mfd/maxim,max7360.yaml
-+F:	drivers/gpio/gpio-max7360.c
-+F:	drivers/input/keyboard/max7360-keypad.c
-+F:	drivers/input/misc/max7360-rotary.c
-+F:	drivers/mfd/max7360.c
-+F:	drivers/pinctrl/pinctrl-max7360.c
-+F:	drivers/pwm/pwm-max7360.c
-+F:	include/linux/mfd/max7360.h
-+
- MAXIM MAX77650 PMIC MFD DRIVER
- M:	Bartosz Golaszewski <brgl@bgdev.pl>
- L:	linux-kernel@vger.kernel.org
+On 4/9/25 4:25 PM, Alexander Gordeev wrote:
+> On Wed, Apr 09, 2025 at 04:10:58PM +0200, Andrey Ryabinin wrote:
+> 
+> Hi Andrey,
+> 
+>>> @@ -301,7 +301,7 @@ static int kasan_populate_vmalloc_pte(pte_t *ptep, unsigned long addr,
+>>>  	if (likely(!pte_none(ptep_get(ptep))))
+>>>  		return 0;
+>>>  
+>>> -	page = __get_free_page(GFP_KERNEL);
+>>> +	page = __get_free_page(GFP_ATOMIC);
+>>>  	if (!page)
+>>>  		return -ENOMEM;
+>>>  
+>>
+>> I think a better way to fix this would be moving out allocation from atomic context. Allocate page prior
+>> to apply_to_page_range() call and pass it down to kasan_populate_vmalloc_pte().
+> 
+> I think the page address could be passed as the parameter to kasan_populate_vmalloc_pte().
 
--- 
-2.39.5
+We'll need to pass it as 'struct page **page' or maybe as pointer to some struct, e.g.:
+struct page_data {
+ struct page *page;
+};
+
+
+So, the kasan_populate_vmalloc_pte() would do something like this:
+
+kasan_populate_vmalloc_pte() {
+	if (!pte_none)
+		return 0;
+	if (!page_data->page)
+		return -EAGAIN;
+
+	//use page to set pte
+
+        //NULLify pointer so that next kasan_populate_vmalloc_pte() will bail
+	// out to allocate new page
+	page_data->page = NULL; 
+}
+
+And it might be good idea to add 'last_addr' to page_data, so that we know where we stopped
+so that the next apply_to_page_range() call could continue, instead of starting from the beginning. 
+
+
+> 
+>> Whenever kasan_populate_vmalloc_pte() will require additional page we could bail out with -EAGAIN,
+>> and allocate another one.
+> 
+> When would it be needed? kasan_populate_vmalloc_pte() handles just one page.
+> 
+
+apply_to_page_range() goes over range of addresses and calls kasan_populate_vmalloc_pte()
+multiple times (each time with different 'addr' but the same '*unused' arg). Things will go wrong
+if you'll use same page multiple times for different addresses.
+
+
+> Thanks!
 
 
