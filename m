@@ -1,102 +1,102 @@
-Return-Path: <linux-kernel+bounces-596173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F02A82831
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:41:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E034A8283F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8152A3AC2CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:37:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A7D3B6F56
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FFC265CC8;
-	Wed,  9 Apr 2025 14:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E0D26657F;
+	Wed,  9 Apr 2025 14:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nm/UjriE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f7ESogK7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252EA25D52D;
-	Wed,  9 Apr 2025 14:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F6518A6A5
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 14:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744209470; cv=none; b=q23fAgqtVNfxIye5hosh2b5OcGQxF3ODgTQIbUpx+56jtAr3c3TyACSMtiW8Q45/O/I+HOm1s7gLDDdPTmGi/BfYcmsKbalLteS6jz00h645bNFKF27Au4ye0vOGGZ8FJW9N3tSM9+6bQMi2gLzfUnOLK/YgSPnO0ttQlFTDFXQ=
+	t=1744209491; cv=none; b=aweUHRWWnzVOhOu8B2zB0loKTdFoiGmXsVvTPfMq1Gs14Mjg8NZB4Up0VYj+iiZoYYPmR+lC0EIYapBrrU6kzYjex47toK4WAEfyGuLCn4pAvnsuleeMWCPFCj+kDlSWzM5a7RTdDUHDhdJ0pwSQiyBRVoUc6H5PU8io4LnwSI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744209470; c=relaxed/simple;
-	bh=1Nnt71nyAGfZU1DSl3LMzHdL2W8BDPs3/42qienzcBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HZN/I4rN1S6R1Zt6UhgXOeazpfEfXG5vbLanq4MBpJFttlrZ/622/75rRioCeX7YtoXVXYwn3DqgZ/jBplxkqdv5BfQ0IZ2oAUE9M+vwOlstKmlNcQwANnHlRPxWqpVM9cNmtJ4PBfCBiZLcKF5LDAeaCzlvw8KgAAzfULMnOvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nm/UjriE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20EB8C4CEE7;
-	Wed,  9 Apr 2025 14:37:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744209469;
-	bh=1Nnt71nyAGfZU1DSl3LMzHdL2W8BDPs3/42qienzcBo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nm/UjriEQ41a9dIZ6xHY+y3hyC6MnTaOXqlSMDSDLCaDUOCfh3mg+lx25ZaJt8O90
-	 2VE7ysFbTceVolCa+/Ns/l/Nix/9waBQQja4+Ew6/muE98rmtgX+4/H0nQEhNbV4DL
-	 RvQBGm2b+A1tVW9Gd/tAhJdV2GgwzKgwcXSgvcoDNU1mJUnx1SlRxEeYZnM5eO12uT
-	 sMvQnwhR4BV12ZzokXSDzQ2kJI+x1Hf7V1PMQD6FJIk03D3PGuwz+Jls9Rhl4XscXz
-	 Qy3ULf47PTzuVn7j5h8EDtJLd2depQ+KRR5v+8UfNm62LwVPn5DdkZGF82RopOOHrN
-	 HrjKr7CoS5diA==
-Date: Wed, 9 Apr 2025 15:37:45 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com, kunit-dev@googlegroups.com,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] ASoC: cs-amp-lib-test: Don't select SND_SOC_CS_AMP_LIB
-Message-ID: <6e94dd2e-e242-4bff-be85-d3029fb08693@sirena.org.uk>
-References: <20250409104544.878475-1-rf@opensource.cirrus.com>
- <a47c2074-2e28-43e6-a7a1-c3ac662723cf@sirena.org.uk>
- <5feaca10-f3bc-49bb-8e5b-9d9efa918e16@opensource.cirrus.com>
+	s=arc-20240116; t=1744209491; c=relaxed/simple;
+	bh=ErELJ+IvzBg8JUs2VCu5poGPg2Qa3wNKqZ6l2/qOkGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l4m8rdaUNpyp84eTsDMMo2jv2uqzBX+OnxuYkEvLcJXcuKYJAEsSmHSDQDkHzg2HOtekzI0Sv03QoZamIB/p8bemGgYh2AkVeDYVgHUdd5VcvLCCLZBemMaxX+9Blwtqbj6yeX+ZXxA1TTc1RF3db4suaHEZlXx5PeqashDSilM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f7ESogK7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744209487;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1Hoi62apL/kuZgKTkkcKVIdRZ0albzH6pcMNtz2urrg=;
+	b=f7ESogK7dQ96JCD4VGpFE4zMY1jEBs6jFlMv4A1PECgpWB9McnoIEwZYVG1H1B3dGz0qfD
+	vooSjW0WxB3oq9NYjD5VTjt5+zSf5dtYufAEKWEJtC1Uog9KHYN9xGOAPEycmLvqr6Wrq/
+	1g3/DH1TJMz206YEdYicWz9sA7jLpDg=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-428-uc4W8_dJM0qKm9Je6oQ9GQ-1; Wed,
+ 09 Apr 2025 10:38:06 -0400
+X-MC-Unique: uc4W8_dJM0qKm9Je6oQ9GQ-1
+X-Mimecast-MFC-AGG-ID: uc4W8_dJM0qKm9Je6oQ9GQ_1744209485
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 19F0A180AF71;
+	Wed,  9 Apr 2025 14:38:05 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.89.181])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8A3CE180B486;
+	Wed,  9 Apr 2025 14:38:03 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH] locking/lockdep: Prevent abuse of lockdep subclass
+Date: Wed,  9 Apr 2025 10:37:51 -0400
+Message-ID: <20250409143751.2010391-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0uIvSnhXV3OF6Eij"
-Content-Disposition: inline
-In-Reply-To: <5feaca10-f3bc-49bb-8e5b-9d9efa918e16@opensource.cirrus.com>
-X-Cookie: Words must be weighed, not counted.
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+As I have seen code trying to use a subclass value >=
+MAX_LOCKDEP_SUBCLASSES (8), add a DEBUG_LOCKS_WARN_ON() statement to
+notify the users that such a large value is not allowed.
 
---0uIvSnhXV3OF6Eij
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/locking/lockdep.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-On Wed, Apr 09, 2025 at 03:34:27PM +0100, Richard Fitzgerald wrote:
-> On 09/04/2025 3:24 pm, Mark Brown wrote:
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 58d78a33ac65..3fb79d8fecdf 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -5101,6 +5101,9 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ 		lockevent_inc(lockdep_nocheck);
+ 	}
+ 
++	if (DEBUG_LOCKS_WARN_ON(subclass >= MAX_LOCKDEP_SUBCLASSES))
++		return 0;
++
+ 	if (subclass < NR_LOCKDEP_CACHING_CLASSES)
+ 		class = lock->class_cache[subclass];
+ 	/*
+-- 
+2.48.1
 
-> > This by itself results in the Cirrus tests being removed from a kunit
-> > --alltests run which is a regression in coverage.  I'd expect to see
-> > some corresponding updates in the KUnit all_tests.config to keep them
-> > enabled.
-
-> That's the defined behaviour of KUNIT_ALL_TESTS. It shouldn't have been
-> running as part of an alltests if nothing had selected it. That seems to
-> make people angry. Probably the same people who would complain if there
-> was a bug in the code that they didn't want to test.
-
-Hence the updates to all_tests.config...
-
---0uIvSnhXV3OF6Eij
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf2hjgACgkQJNaLcl1U
-h9BVjQf/fdLWBj7HT/DQHtQwaIbKOwxGF4Q0TvYZATrbpHLVXW0PHfb4T9roq4ko
-zHE4Yj4QuZdksWN7K9loTUlMWwmEEpFWwJZcOCa2h2oNdTnc4DIUQwsPsYYwDnLK
-/sGfJw+QE1JNuvUD8AhFQj6ktrhnB1zlA2O0m0TYYpPzCq8PWkIqBc3oPUHx5oXu
-xmTCjDYboD9qbg+V/NCxzdm8kxbL9Xxn5r5818sbhUV5weR9FRBXUIM7jBJI7tjW
-L2ubgWyQQgPOxITux/RRimFFxM/ERgQnVxxgEtJ+BulhHs9GQ585opY+Jmyh4So1
-sSrxHRY3Qx3B53VOu0+DwzIbpCS0pA==
-=RazQ
------END PGP SIGNATURE-----
-
---0uIvSnhXV3OF6Eij--
 
