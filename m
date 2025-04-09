@@ -1,236 +1,338 @@
-Return-Path: <linux-kernel+bounces-596601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D5C5A82E16
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:58:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834DAA82E1F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2ED244715C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:58:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C11A3BBDFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223A427604D;
-	Wed,  9 Apr 2025 17:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0540227702B;
+	Wed,  9 Apr 2025 18:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YsYvw3uq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mqmqyOLP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B6B1CF8B;
-	Wed,  9 Apr 2025 17:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744221490; cv=fail; b=q55M+kQQkBqxiS7ugRBAFPdrWHYD1WJQoM2rTFMcfKPT8NJFoM0nccHEwm2m3TQwGrQMbMS1kcK5cpZrGNJJHsZskFkW5hiBAG6Lz1l7qJl7i9IwzO7bc2Oeh7Q29PPOW3ezq4uE1B/i12ojw//pGhTOq6kU+OyDRkPLnblUKL4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744221490; c=relaxed/simple;
-	bh=bB4zJhZFHf3CuVZICbTj7BjL+5jiTgNIf2L0Sw8Pqp0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=fit+HqE7vXtnNkAu8yPD8eg4IzwNG1QeMAiebM6jMF9pDefxFsNU4L2EUEkm4nqQvq+UhcWjkIVBgoAKYF3kSI/iumSzSDfZMytoGMqq0AVZd9LB559hiLRMaoc5Aez2CrQSeFnxmYLUEnoPPFzaLOwwnNX3DL995oAynjU4naE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YsYvw3uq; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744221488; x=1775757488;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=bB4zJhZFHf3CuVZICbTj7BjL+5jiTgNIf2L0Sw8Pqp0=;
-  b=YsYvw3uq6atzxVI6ynfXfD+nnZlgEkKMpGkyEovoB4kQQX9HvLoMFWHH
-   h9IdXu8k2tWRFoB/N+v3V5ql2jYrmgCSf7bHf85QcG6zMfJMqTZu/Z20n
-   2l5lH64sNlR0ouJUEDEwnXYNLvy4vZZqXMRRhyGsI87ZBEZxTZ+tFVwgu
-   xhuuh/pMaKJ1hkLXQXBzMLn1w7x/OGbZrBhUeqDW6xPZ56zrpuQ1DZ4Jt
-   hx6Kn4WfmADuhUK3Kzusm+ah2KVpyQ+FMw/QGF9fzviuM6SIUJ1zRjR8/
-   dKTEjZDZq3zA4WIDUM90XNgLW33cmCJmjcta63zzhGFsu7DS/xbM/2kSw
-   Q==;
-X-CSE-ConnectionGUID: zXiWh/s5R1iYffm4MqpM0Q==
-X-CSE-MsgGUID: EhErM5dNSMeArfyKeheSrQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="68196947"
-X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
-   d="scan'208";a="68196947"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 10:58:07 -0700
-X-CSE-ConnectionGUID: My2MMgARR8eSxqLFIrsA/w==
-X-CSE-MsgGUID: SGhChE2+S+iVrk9kRw2+Lw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
-   d="scan'208";a="129008155"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 10:58:06 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 9 Apr 2025 10:58:05 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 9 Apr 2025 10:58:05 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.46) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 9 Apr 2025 10:58:05 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cyL42yz4ZZgoJk+Pe4MKWinacGGcSFtMkRH67F0ehDD8vOEIH4qPuQRyeu7SJglA1A+ZfldTL9FOtlouVy9EE2CeJoosGKJHcR8nfeyJzwm3Aj02eFk99buK5xJBqgIHJyfffkzQr8sswNsaoMaMDoL2XR0Pfq//bZxak2VC6MKHHlCZnPTIkFGrU5vtx8c2whbx/rKfeDVhoGfMPpeQBQY6L4UuWInQe/30mocqCHpQ9fEmS5krgIP9A6jXuOUKv+BXM2ajAKgczR8QjgQTjH4RGuDhjn6rM/6V4WCAYK0I320m2SiCocTf2/SIT1/mRvNOwhKoXiGBBRoqF2sOUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vD1Bq0xDZtRKumjG7twRFd5uBOzkGkwUyMfDTuD/yrk=;
- b=tk4JrSvuqT5rr9TJz7i5iM+7kJGU1pIG9CUs/PO56M6+wbbXPyMkBtMjnzkVG0ojxWEgAaWgkRMSJuYQsZrrb1nlDA3GoNPd80YOY7JfDpQeY3/bU+/IUZJUUZhFpjfCz+d5Qyfw+U/WhymhBiphGkpQ65nF0RoMbSOXn6l+9iEM1awkflic39XqPJTWuWF+aZNTksiLtSlyeBaF6lLnig0e+Nd94vyI69N7kN/DRf3MPoecyuvGt7fusdpEjN8JbO3AtwMJyJ0t9OvnmslqTplIWHB1s+sjWkgWppxnjLj3uGzZzBZ0lJPALx40FKdkEVWql+JPjPEDXRYrXjMgjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by SA1PR11MB8394.namprd11.prod.outlook.com (2603:10b6:806:37c::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.20; Wed, 9 Apr
- 2025 17:58:01 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%5]) with mapi id 15.20.8606.029; Wed, 9 Apr 2025
- 17:58:01 +0000
-Date: Wed, 9 Apr 2025 12:58:29 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Li Ming <ming.li@zohomail.com>, <dave@stgolabs.net>,
-	<jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <dan.j.williams@intel.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Li Ming
-	<ming.li@zohomail.com>
-Subject: Re: [PATCH v2 1/1] cxl/feature: Update out_len in set feature
- failure case
-Message-ID: <67f6b545d3be9_e8fcb2949a@iweiny-mobl.notmuch>
-References: <20250409022521.510146-1-ming.li@zohomail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250409022521.510146-1-ming.li@zohomail.com>
-X-ClientProxiedBy: MW4PR04CA0268.namprd04.prod.outlook.com
- (2603:10b6:303:88::33) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0942726FA5D;
+	Wed,  9 Apr 2025 17:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744221599; cv=none; b=exf5rYKrPec3DrMBbwQqQnkIiQz2FBOihTxfra06H0CLtZPCCDHXvJhnnrnXXeVXDO4gs6Sn45XXLSAmwvAhtRcUXUKJRJklKZjdjBlhFDSKghTnazsSi8FB7AEGiXaCo0hVOepzpL/1YUiw58zcn7g1ctojHoYLy18MdAM8vyA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744221599; c=relaxed/simple;
+	bh=7xfO8S5P70mtmNq6teszI7P5gFMBxJ5kBAQeuYM1XTM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nPJKW1s00h4yyF11EYy0IBeqNRUVuhhzIIVpALGgmgt6/TGYybirvRu5Na1Bvth52YJZiWsI4sbxy5p76ZVm/B5JOrsSxcdJjgjo1FmVh1Ll6UbERtTj1+qi6Kohaj5O8a+JWs7kNY+dZ/fb/aBFWo/mE/9/CAn9Or7bvNboYS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mqmqyOLP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 539AA3hX016808;
+	Wed, 9 Apr 2025 17:59:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gFAsJZPpxtaEj1yMAH4zv7GRSSWRzyvYcL/0JMQxEkI=; b=mqmqyOLPtmd9zpES
+	Cfh6HF+4KyK9Ir1Q37DnRXMyh4BbzfZdAL0OzJqMFQ+l+gGWEk4z+BVsdKYTaLy5
+	W4iG/pgpuRq1eT3q32Auh81FENQDBoNCYry2dnU8zAtE11WDT2Ux2T8PWaBV3V1b
+	rXgkQt7+nQVqrdxpOnmt3NyVmLC4K3IZFewqAbFk5nTdb4JHFEU5s6/ZvHMNSo+/
+	Wt/HNfhbTNMByeKMnHhNPrbtDw+NZsZ+aZfyeLSH4xGDnuaDIv/uljZqvm+/9IA5
+	z22o0m0xG1FkZcdIBS1jkPT7fk8E0VjS6o55iTcK21NkhTC1+FK19vYq5IKllh8x
+	2bvacw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twd2v9bu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Apr 2025 17:59:52 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 539HxpDv004736
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 9 Apr 2025 17:59:51 GMT
+Received: from [10.216.18.165] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 9 Apr 2025
+ 10:59:46 -0700
+Message-ID: <054c3ee4-78d3-68b2-0dca-8fc339cbea80@quicinc.com>
+Date: Wed, 9 Apr 2025 23:29:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SA1PR11MB8394:EE_
-X-MS-Office365-Filtering-Correlation-Id: 939eb01d-4f28-45fa-b50b-08dd779011a5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?TGjOC5/ZMeK35oHeLups5f94p5SrKqIe4+IvaTxMSP2dbaXi8MG12UFXkr2p?=
- =?us-ascii?Q?dtnibWeihvPXc1iyk5ndQO+YY47NQLIXRLnhYK8iqv2Orxj/XVkadUHNN7HX?=
- =?us-ascii?Q?KfeY49ezz2YjPxV9849FNMVl9OZjHQ+m//79OwiwJXX8c23uCJh48VowHl94?=
- =?us-ascii?Q?C1bn/I3UvkceZP5Wh3VJ+/ZIA5YywvjGJu6siO4nsELTU2gHEMBaZuv8nlPZ?=
- =?us-ascii?Q?5RtDF1oU5kpqsmTJzG/1hU2r1kDUO78rk/Pc3E1kimUmwRj++Ee4ndudNzXX?=
- =?us-ascii?Q?RySnlbA1QtxoVQ7juV41KbzA6odobSryYdDaMlrIM802+D6nl8Mqmmr+Iw9Y?=
- =?us-ascii?Q?RtiBmD3gQVbiN3z+MEv801K0tWy+ZkG/c2UoQqTK2CORIYkwUuEiu0PGUALb?=
- =?us-ascii?Q?k/h/Emphi0GirRB4BZn1fSj8l2TKeQvIQQxhMsv+e85rQn79usH64txyAuf2?=
- =?us-ascii?Q?tMSO5WiOKZjR3kGi+K5gCBztVmiJk4bW75YcWvSr7IX1kCLjPQAHvScxraeI?=
- =?us-ascii?Q?cYmf31BFfr32tqxPAfXWfk1l5VdSlZhrwtyULrxbzKqD9ib7OswTv1vSIh4R?=
- =?us-ascii?Q?0gd5mYtaua53LX/HZwDMINyaKVQy82nJfRm9Dh4FlapoNClQQSWBWUYFCYpr?=
- =?us-ascii?Q?xRfmYCzQlJJ9bNbJdyvd7VWoifcjvBHMitB7i1cRliOAkkdEYUasH/OvQIcq?=
- =?us-ascii?Q?eIVDNTLKydoIYwbjkBYuqrq7tTChzfRvCOn1+L4iArmzADMIBjD2w7RQ7OG/?=
- =?us-ascii?Q?wXCaEnHwOOI8Z6BYjoHnqDws4XBt21gp56JEMutUtuqiPQokIw+d6Fj2NRdX?=
- =?us-ascii?Q?INCfXKkzMVzk4Ln9Niuaee2qX1nG8TIaDFK5ZiOPSHUy8g8gcXR0PDq29Q4T?=
- =?us-ascii?Q?6ThNDQqJk1/xlEDv1v54OCHAmf37Hf+Tcqpd0XgaOg0nskHw06DG8j7A/Vbg?=
- =?us-ascii?Q?lp/b5mJ8wRe+37SKsTJokbxl5DKesgAYY8bu6HXzW8gjlNhoZGtm39LOfCuD?=
- =?us-ascii?Q?GYoc8NSKNcdcIBK7oWFl1TJtfTt0EK0HtKK210b9qXTGaYVgaUxnY34tHeeV?=
- =?us-ascii?Q?56KRDnAqOKDKhvdhesvT6fLwPUKaAdnqj2bC3KwRtespgqEd7BxgjXLHRLbl?=
- =?us-ascii?Q?Eej1oF9CN6YFAd3JhFk4IploXQVV/fIrV6tl0+wnUIp/o/xffpBaJP8usFht?=
- =?us-ascii?Q?aYwf0U/OkisOgS/nxcCeWy/q1pKdgRlQF4tNBc78FbshkTG7y3dbYIRAcMza?=
- =?us-ascii?Q?z+bCLyZXpwegsBl1qc5tkl3rt6eMNki0aRKISscRKd3NN17Dye9km+HTql3g?=
- =?us-ascii?Q?8rE9DS7GM+qH8U6R8Ns4AuoNKURuloyNf88+SZ/JIF80pudhIQNSEF7GvxjW?=
- =?us-ascii?Q?b8bxNxphDEdtX/KBXrtmem3+dNUO?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?oFUvpx+RNdJOoI+v8DP42rfhoD5+Srh0xCreMn6LtijL83+/v8a9/1uUEq7e?=
- =?us-ascii?Q?OqHBEOe7Ks/6apF+Jn6SoRw6Y4Smcayv6XfIdeIzKnuHEEL5ogJlK+xGqMqh?=
- =?us-ascii?Q?Ed4wPP83iXTANOiJUG8QEUhZyPkZgrLgveFhCTTSm1fHSnaqu/WAduNtRtPX?=
- =?us-ascii?Q?k2hIpq4z1LwKha7EaRuWM0+xuvBWhvih6XdqcnnsmOJqEed4exsxh3SLbxyZ?=
- =?us-ascii?Q?bcleXsxZ08kCp0tkJp23cnpbaJpI82nBfwAIpwEZp9UCoBtx2E8rwdoeHKgZ?=
- =?us-ascii?Q?v+iy0hPqLH0TNrp5R0FKOHd4fm0GkW7h7s97GcujAYGytGzV37nOtx5C/1k1?=
- =?us-ascii?Q?avzdMRvLxyh8i7RQr2qMhpmucoQYASuxTmikEriEP5vbpsteP4/bOUYNkIlF?=
- =?us-ascii?Q?sjuw4KgLOHIg54qtLiBT2aFsDIz9y1r7YbL5Fg4n53IPPky4OEFDzNK+FDQJ?=
- =?us-ascii?Q?hpUa60fDIZ9fSplbKCcvwJRh9JALogvXDM+QuOFYmymy73eMfUM9TZHdxCl+?=
- =?us-ascii?Q?FKI9YjMyelrc3+LJjwMbS7KVprClWG+XnXMEM6gVgopMQqE3+FYgE/qgN8C1?=
- =?us-ascii?Q?T3WiE3amEkF1nKWb6gFEE3noIMtkdjGDaAsJQPDdkWy0lIsxsLyLpYPJvViB?=
- =?us-ascii?Q?vSGPOYvGDOFOEww3V5nxE8S3yjlxV59y7aJQR0BeM3QPAwod3H1hLNEGVXAo?=
- =?us-ascii?Q?4rWWtxvih2K796Em+rg+vMj3ZmrCY4sse2bWCofN3uuFucy21tkpNEuXfqFI?=
- =?us-ascii?Q?qUNIEjrOin+yzgAbfV5ZMOud30XbhS8ZlGAgtMGSz1THB7UXl3rvXVsEhtgD?=
- =?us-ascii?Q?9IqrM9xY2DH2sxQcIfpdkYbfdfmkz/9OPUGof+16N91Alj9ht4QgTO7RPtCI?=
- =?us-ascii?Q?NAdrTIpdZ078+q6ZcCjB0s3LK2sSY1yTqXiOpPo2s9ySV9Ay1NEp8W/GaMtm?=
- =?us-ascii?Q?Z26kjOlMMsqMsPpbCWxI/fmT75IqNqXGHfvCNTJrHO8m2YjqmDdEl1eKq/WI?=
- =?us-ascii?Q?Xlqt9jVaA+FqDCIccnlDp5EYT4FZjo7dvzMrLhBSsL+mwaiU51qzAJaLhMcC?=
- =?us-ascii?Q?NYZzr7xmahvqGImVdyxtWLW8lPJgwDGLn0VVlaGzmFM3RruJt8Pcgbvc9UMO?=
- =?us-ascii?Q?A9zWGCqzIv//1lKzqZz2eZfdHt2XXgBFIiBBFeO5gdJp8rOTq20pQrzpXwlN?=
- =?us-ascii?Q?ln8hNvMECUFmrIxIzB7M99kcWJOxSqZt91Q21vrLtZcRmCoD8Bs6+AC6qALX?=
- =?us-ascii?Q?nV3FK79DZus+uXE6+0/1emTTU8LbwYNq1sXHiJ/dZKDqXKtrW9McWbyYYW2u?=
- =?us-ascii?Q?qWshrU1PhqhJ1w/DFYK3JZ2XvfbPSumqrcgothHF7YAh2uaKd1TyKGfQEYf/?=
- =?us-ascii?Q?6NM22YwEVjsIiUjCcuqO4bdrX4GNcQQBC+YlFmq4v3yzBsVzF7guBJp/W09p?=
- =?us-ascii?Q?cafodpw/SIMeMLZgRQXQq99HMZLLLxLBHxqRfSodu2FC1N3D8uTsFoIbYjSS?=
- =?us-ascii?Q?688STApj+zehrs5UFaj2rl0sw23S/JmU/oYIRGC0GZiRpO0oIaYAuYJ2jWj1?=
- =?us-ascii?Q?fg6wEoQtvHXSOqvvMBHvBDExNJOsIYnCYDwZIy7f?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 939eb01d-4f28-45fa-b50b-08dd779011a5
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2025 17:58:01.3250
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FWouLRKr7RMsuQ/sHHc2pCHYjOPciRsF+2Xcw/LFa6uKtCnMlGg5pQ0OajKihTJW4XhqVc7ypP99yHjBPhmrjQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8394
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 00/20] Add support for HEVC and VP9 codecs in decoder
+Content-Language: en-US
+To: <neil.armstrong@linaro.org>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        "Hans
+ Verkuil" <hverkuil@xs4all.nl>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <stable@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
+References: <20250408-iris-dec-hevc-vp9-v1-0-acd258778bd6@quicinc.com>
+ <801511ac-78db-476b-8f1d-a478b0b64bcb@linaro.org>
+ <72a5b302-5c99-4457-86c8-5fa994c93c4a@linaro.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <72a5b302-5c99-4457-86c8-5fa994c93c4a@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: p3PfYbYQV7mbiC_x2qO09XwCjuxY0OXt
+X-Proofpoint-GUID: p3PfYbYQV7mbiC_x2qO09XwCjuxY0OXt
+X-Authority-Analysis: v=2.4 cv=NaLm13D4 c=1 sm=1 tr=0 ts=67f6b598 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=qC_FGOx9AAAA:8
+ a=MtqB9aAArxYXyEGXeLUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=fsdK_YakeE02zTmptMdW:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-09_06,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ priorityscore=1501 adultscore=0 malwarescore=0 suspectscore=0
+ lowpriorityscore=0 bulkscore=0 mlxlogscore=999 clxscore=1011 phishscore=0
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504090117
 
-Li Ming wrote:
-> CXL subsystem supports userspace to configure features via fwctl
-> interface, it will configure features by using Set Feature command.
-> Whatever Set Feature succeeds or fails, CXL driver always needs to
-> return a structure fwctl_rpc_cxl_out to caller, and returned size is
-> updated in a out_len parameter. The out_len should be updated not only
-> when the set feature succeeds, but also when the set feature fails.
+
+
+On 4/9/2025 9:56 PM, Neil Armstrong wrote:
+> On 09/04/2025 16:29, Bryan O'Donoghue wrote:
+>> On 08/04/2025 16:54, Dikshita Agarwal wrote:
+>>> Hi All,
+>>>
+>>> This patch series adds initial support for the HEVC(H.265) and VP9
+>>> codecs in iris decoder. The objective of this work is to extend the
+>>> decoder's capabilities to handle HEVC and VP9 codec streams,
+>>> including necessary format handling and buffer management.
+>>> In addition, the series also includes a set of fixes to address issues
+>>> identified during testing of these additional codecs.
+>>>
+>>> These patches also address the comments and feedback received from the
+>>> RFC patches previously sent. I have made the necessary improvements
+>>> based on the community's suggestions.
+>>>
+>>> Changes sinces RFC:
+>>> - Added additional fixes to address issues identified during further
+>>> testing.
+>>> - Moved typo fix to a seperate patch [Neil]
+>>> - Reordered the patches for better logical flow and clarity [Neil,
+>>> Dmitry]
+>>> - Added fixes tag wherever applicable [Neil, Dmitry]
+>>> - Removed the default case in the switch statement for codecs [Bryan]
+>>> - Replaced if-else statements with switch-case [Bryan]
+>>> - Added comments for mbpf [Bryan]
+>>> - RFC:
+>>> https://lore.kernel.org/linux-media/20250305104335.3629945-1-quic_dikshita@quicinc.com/
+>>>
+>>> These patches are tested on SM8250 and SM8550 with v4l2-ctl and
+>>> Gstreamer for HEVC and VP9 decoders, at the same time ensured that
+>>> the existing H264 decoder functionality remains uneffected.
+>>>
+>>> Note: 1 of the fluster compliance test is fixed with firmware [1]
+>>> [1]:
+>>> https://lore.kernel.org/linux-firmware/1a511921-446d-cdc4-0203-084c88a5dc1e@quicinc.com/T/#u
+>>>
 > 
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
->
-
-With fixes tag Dave found.
-
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8 v6.15-rc1
+> <snip>
 > 
-> v2:
-> - Adjust changelog
-> ---
->  drivers/cxl/core/features.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>>> ---
+>>> Dikshita Agarwal (20):
+>>>        media: iris: Skip destroying internal buffer if not dequeued
+>>>        media: iris: Update CAPTURE format info based on OUTPUT format
+>>>        media: iris: Add handling for corrupt and drop frames
+>>>        media: iris: Avoid updating frame size to firmware during reconfig
+>>>        media: iris: Send V4L2_BUF_FLAG_ERROR for buffers with 0 filled length
+>>>        media: iris: Add handling for no show frames
+>>>        media: iris: Improve last flag handling
+>>>        media: iris: Skip flush on first sequence change
+>>>        media: iris: Prevent HFI queue writes when core is in deinit state
+>>>        media: iris: Remove redundant buffer count check in stream off
+>>>        media: iris: Remove deprecated property setting to firmware
+>>>        media: iris: Fix missing function pointer initialization
+>>>        media: iris: Fix NULL pointer dereference
+>>>        media: iris: Fix typo in depth variable
+>>>        media: iris: Add a comment to explain usage of MBPS
+>>>        media: iris: Add HEVC and VP9 formats for decoder
+>>>        media: iris: Add platform capabilities for HEVC and VP9 decoders
+>>>        media: iris: Set mandatory properties for HEVC and VP9 decoders.
+>>>        media: iris: Add internal buffer calculation for HEVC and VP9 decoders
+>>>        media: iris: Add codec specific check for VP9 decoder drain handling
+>>>
+>>>   drivers/media/platform/qcom/iris/iris_buffer.c     |  22 +-
+>>>   drivers/media/platform/qcom/iris/iris_ctrls.c      |  35 +-
+>>>   drivers/media/platform/qcom/iris/iris_hfi_common.h |   1 +
+>>>   .../platform/qcom/iris/iris_hfi_gen1_command.c     |  44 ++-
+>>>   .../platform/qcom/iris/iris_hfi_gen1_defines.h     |   5 +-
+>>>   .../platform/qcom/iris/iris_hfi_gen1_response.c    |  22 +-
+>>>   .../platform/qcom/iris/iris_hfi_gen2_command.c     | 143 +++++++-
+>>>   .../platform/qcom/iris/iris_hfi_gen2_defines.h     |   5 +
+>>>   .../platform/qcom/iris/iris_hfi_gen2_response.c    |  57 ++-
+>>>   drivers/media/platform/qcom/iris/iris_hfi_queue.c  |   2 +-
+>>>   drivers/media/platform/qcom/iris/iris_instance.h   |   6 +
+>>>   .../platform/qcom/iris/iris_platform_common.h      |  28 +-
+>>>   .../platform/qcom/iris/iris_platform_sm8250.c      |  15 +-
+>>>   .../platform/qcom/iris/iris_platform_sm8550.c      | 143 +++++++-
+>>>   drivers/media/platform/qcom/iris/iris_vb2.c        |   3 +-
+>>>   drivers/media/platform/qcom/iris/iris_vdec.c       | 113 +++---
+>>>   drivers/media/platform/qcom/iris/iris_vdec.h       |  11 +
+>>>   drivers/media/platform/qcom/iris/iris_vidc.c       |   3 -
+>>>   drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 397 ++++++++++++++++++++-
+>>>   drivers/media/platform/qcom/iris/iris_vpu_buffer.h |  46 ++-
+>>>   20 files changed, 948 insertions(+), 153 deletions(-)
+>>> ---
+>>> base-commit: 7824b91d23e9f255f0e9d2acaa74265c9cac2e9c
+>>> change-id: 20250402-iris-dec-hevc-vp9-2654a1fc4d0d
+>>>
+>>> Best regards,
+>>
+>> Assuming we merge Neils sm8650 stuff first, which I think we should merge
+>> first, you'll have a subsequent build error to fix [1]
 > 
-> diff --git a/drivers/cxl/core/features.c b/drivers/cxl/core/features.c
-> index f4daefe3180e..066dfc29a3dd 100644
-> --- a/drivers/cxl/core/features.c
-> +++ b/drivers/cxl/core/features.c
-> @@ -528,13 +528,13 @@ static void *cxlctl_set_feature(struct cxl_features_state *cxlfs,
->  	rc = cxl_set_feature(cxl_mbox, &feat_in->uuid,
->  			     feat_in->version, feat_in->feat_data,
->  			     data_size, flags, offset, &return_code);
-> +	*out_len = sizeof(*rpc_out);
->  	if (rc) {
->  		rpc_out->retval = return_code;
->  		return no_free_ptr(rpc_out);
->  	}
->  
->  	rpc_out->retval = CXL_MBOX_CMD_RC_SUCCESS;
-> -	*out_len = sizeof(*rpc_out);
->  
->  	return no_free_ptr(rpc_out);
->  }
-> -- 
-> 2.34.1
+> I agree, it would be simpler, I prepared a fix to apply on top of this patchset.
+Lets sort out the platform data handling. More so, when i see that the patch you
+are adding more of 8650 specific data into 8550 file.
 > 
+>>
+>> https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/linaro/arm-laptop/wip/x1e80100-6.15-rc1-dell-inspiron14-camss-ov02c10-ov02e10-audio-iris?ref_type=heads
+>>
+>> Testing your series in isolation. I can confirm vp9 decodes also getting some
+>> strange prinouts which we need to follow up to see if they exist with the
+>> baseline driver [2].
+>>
+>> https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/linaro/arm-laptop/wip/x1e80100-6.15-rc1-dell-inspiron14-camss-ov02c10-ov02e10-audio-iris-20250408-iris-dec-hevc-vp9-v1-0-acd258778bd6@quicinc.com?ref_type=heads
+>>
+> 
+> <snip>
+> 
+>> [  126.582170] qcom-iris aa00000.video-codec: session error received
+>> 0x1000006: unknown
+>> [  126.582177] qcom-iris aa00000.video-codec: session error received
+>> 0x4000004: invalid operation for current state
+> 
+> With the following on top of the last SM8650 patchet + this patchset, I have the
+> same HEVC errors on SM8650, but VP9 works fine:
+> [  115.185745] qcom-iris aa00000.video-codec: session error received 0x4000004:
+> invalid operation for current state
+> [  115.221058] qcom-iris aa00000.video-codec: session error received 0x1000006:
+> unknown
+> 
+> ==========================================><==============================================
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+> b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+> index 65f3accc2fb2..7d5116528fca 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+> @@ -213,6 +213,22 @@ static void iris_set_sm8550_preset_registers(struct
+> iris_core *core)
+>      writel(0x0, core->reg_base + 0xB0088);
+>  }
+> 
+> +static void iris_set_sm8650_preset_registers(struct iris_core *core)
+> +{
+> +    writel(0x0, core->reg_base + 0xB0088);
+> +    writel(0x33332222, core->reg_base + 0x13030);
+> +    writel(0x44444444, core->reg_base + 0x13034);
+> +    writel(0x1022, core->reg_base + 0x13038);
+> +    writel(0x0, core->reg_base + 0x13040);
+> +    writel(0xFFFF, core->reg_base + 0x13048);
+> +    writel(0x33332222, core->reg_base + 0x13430);
+> +    writel(0x44444444, core->reg_base + 0x13434);
+> +    writel(0x1022, core->reg_base + 0x13438);
+> +    writel(0x0, core->reg_base + 0x13440);
+> +    writel(0xFFFF, core->reg_base + 0x13448);
+> +    writel(0x99, core->reg_base + 0xA013C);
+> +}
+This is strange, h264 decoder does not need any of those while VP9 needed it to
+work. I could see the same set of registers in downstream code, but cannot
+recollect now on the need to add those.
 
-
+Regards,
+Vikash
+> +
+>  static const struct icc_info sm8550_icc_table[] = {
+>      { "cpu-cfg",    1000, 1000     },
+>      { "video-mem",  1000, 15000000 },
+> @@ -390,6 +406,7 @@ struct iris_platform_data sm8550_data = {
+> 
+>  /*
+>   * Shares most of SM8550 data except:
+> + * - set_preset_registers to iris_set_sm8650_preset_registers
+>   * - vpu_ops to iris_vpu33_ops
+>   * - clk_rst_tbl to sm8650_clk_reset_table
+>   * - controller_rst_tbl to sm8650_controller_reset_table
+> @@ -400,7 +417,7 @@ struct iris_platform_data sm8650_data = {
+>      .init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
+>      .init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
+>      .vpu_ops = &iris_vpu33_ops,
+> -    .set_preset_registers = iris_set_sm8550_preset_registers,
+> +    .set_preset_registers = iris_set_sm8650_preset_registers,
+>      .icc_tbl = sm8550_icc_table,
+>      .icc_tbl_size = ARRAY_SIZE(sm8550_icc_table),
+>      .clk_rst_tbl = sm8650_clk_reset_table,
+> @@ -428,20 +445,34 @@ struct iris_platform_data sm8650_data = {
+>      .ubwc_config = &ubwc_config_sm8550,
+>      .num_vpp_pipe = 4,
+>      .max_session_count = 16,
+> -    .max_core_mbpf = ((8192 * 4352) / 256) * 2,
+> -    .input_config_params =
+> -        sm8550_vdec_input_config_params,
+> -    .input_config_params_size =
+> -        ARRAY_SIZE(sm8550_vdec_input_config_params),
+> +    .max_core_mbpf = NUM_MBS_8K * 2,
+> +    .input_config_params_default =
+> +        sm8550_vdec_input_config_params_default,
+> +    .input_config_params_default_size =
+> +        ARRAY_SIZE(sm8550_vdec_input_config_params_default),
+> +    .input_config_params_hevc =
+> +        sm8550_vdec_input_config_param_hevc,
+> +    .input_config_params_hevc_size =
+> +        ARRAY_SIZE(sm8550_vdec_input_config_param_hevc),
+> +    .input_config_params_vp9 =
+> +        sm8550_vdec_input_config_param_vp9,
+> +    .input_config_params_vp9_size =
+> +        ARRAY_SIZE(sm8550_vdec_input_config_param_vp9),
+>      .output_config_params =
+>          sm8550_vdec_output_config_params,
+>      .output_config_params_size =
+>          ARRAY_SIZE(sm8550_vdec_output_config_params),
+>      .dec_input_prop = sm8550_vdec_subscribe_input_properties,
+>      .dec_input_prop_size = ARRAY_SIZE(sm8550_vdec_subscribe_input_properties),
+> -    .dec_output_prop = sm8550_vdec_subscribe_output_properties,
+> -    .dec_output_prop_size = ARRAY_SIZE(sm8550_vdec_subscribe_output_properties),
+> -
+> +    .dec_output_prop_avc = sm8550_vdec_subscribe_output_properties_avc,
+> +    .dec_output_prop_avc_size =
+> +        ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_avc),
+> +    .dec_output_prop_hevc = sm8550_vdec_subscribe_output_properties_hevc,
+> +    .dec_output_prop_hevc_size =
+> +        ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_hevc),
+> +    .dec_output_prop_vp9 = sm8550_vdec_subscribe_output_properties_vp9,
+> +    .dec_output_prop_vp9_size =
+> +        ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_vp9),
+>      .dec_ip_int_buf_tbl = sm8550_dec_ip_int_buf_tbl,
+>      .dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_ip_int_buf_tbl),
+>      .dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
+> ==========================================><==============================================
+> 
+> Thanks,
+> Neil
 
