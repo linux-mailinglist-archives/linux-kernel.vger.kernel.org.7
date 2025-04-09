@@ -1,110 +1,124 @@
-Return-Path: <linux-kernel+bounces-595676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE63A82181
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:58:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A96E5A8214D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CC547B3218
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:57:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00DA23B3CE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD42825D556;
-	Wed,  9 Apr 2025 09:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2B925C6E3;
+	Wed,  9 Apr 2025 09:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="cwrItvD6"
-Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Ebs9lb/Y"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665812B2DA;
-	Wed,  9 Apr 2025 09:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8946522DFA2
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744192720; cv=none; b=TScFuIkjUfZJVogwKF4ghfVfVl+za/qbl51D6kvCm5njf7fQBTcyy7+zAYod/MhQ0obzWQSprJh//sJdkoyR9wO81I5mRIvZuJu/NgHbpvxLs44zIgQQuZq+nWGOqEr7Sd3XvAPshvVZmvw2OYPinscX0oZT8wamHVUuT433rno=
+	t=1744192205; cv=none; b=JOnZstPeSf8p1Dnd9rtAn+ssmUKI9lQT6ebg4kWeTjBz8XntH1vSwgbUpzYLPZMicWXSH5vclS/n1+WabojQuMDsK/HLQSLIZEuZQvYibi+KF88Jt6KgvHgFMfxLbsB9vn8eFYARi2Gzrm4a/qamAv0UaX7LUcZMj90BxRxFVnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744192720; c=relaxed/simple;
-	bh=+3JfXT1Xs5fV6IP12sI9JzAAOim7iJsMfyQ6w0e5gxA=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=X77FfHmXB+fYSTfJyYNdwj9ixWGgh/K3TIl6y0cgzjeuRNq95umvQZfBEwLo/sdn33mBMuVrijXnv5kn5l5s2CkpNkDo2OOPBlpv9gfVtB+JOqfpaTdAxCO4i2QjWFmvfF12QuSSsX4kw0JDRXcWdAfqIRzRxqC3/DKhooyvi3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=cwrItvD6; arc=none smtp.client-ip=162.62.57.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1744192706; bh=+lyAfonLE1WC9lkwgR5fNnzG/kCwzKlfRCzS5ujqlpw=;
-	h=From:To:Cc:Subject:Date;
-	b=cwrItvD6FrtHAYm0SuOuDYeuj5NWQs5VI52utkSpmpBwYd3dTvnOlac3ARXKUhApE
-	 ayt31MIt0qZtTLm4tCfFHuKkOtmszFWcRFwFyPLlgKXGRleK/iUHVd0QYM5TaiMzhp
-	 ore0gNQja84Z6QW8NlZsLP6PNqUZky0lFUpaLaIc=
-Received: from localhost.localdomain ([116.128.244.169])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id C71194AE; Wed, 09 Apr 2025 17:49:49 +0800
-X-QQ-mid: xmsmtpt1744192189tzh3ku7q2
-Message-ID: <tencent_D6C4728C5C687C042BA7C156B0F3ECF7AE05@qq.com>
-X-QQ-XMAILINFO: MLQF5pNkQhvxiqkx6mdELVKIwLq3+oG8ZVIOq2Njw6DkGw45tjnxQoLppcwGyC
-	 kX2Vy+O/6O/hEEL5PHfSDLMsNvDkvpP6gY59SRTODlsmX5aHEsakNUonbkva2xj+6te53r7OhkwB
-	 3t8Q993M5iU7iBO9Fv7TyN9CFBM6X2v4o5s3LDHLjj5uL9q9A2hVu2VfSKs8WtZsyItJflyOPSOO
-	 JpT4lC3PUy11nC59brIj8nlCsRp13g1swZQ6wYFEu1Mm3po+E5oR327UxAz8LQJAEzoFnWcW29ha
-	 YJyz/jaVYxROdRSXTDBeVriXxuhHLEcDz7muziNqeVEqO/5Z5fv0T3a6PUULYD6hxhFU9ub0rzoA
-	 ByTMCm1GpiKGObCPRi8yc83aW0NDegFqINhG/S8diTbruYYGipiVuFOj6erAifJX8cK/nteSIOzp
-	 tWwkEm+fVh58xKtISGm281HM/XmqEzjoH16HmkvNG2UjzHFnQq/2hAqC17H4B14OcS4QAJJCl9Qy
-	 j9LPpaA0WT9htPGUbbQTKlGyxJlryVoLeWuD1KE37un53DfuRhATbVBqPeIr++rk61Jon08aeTMH
-	 NT94fqnPG1FdIVRo/cxPSV1OJ5kGwObNMAMVbMxKZdGziaxAtT++7NdUtTyCg0uO3MMSEZVOIguV
-	 sWazrMy7lMhigpm2DeBzA4MiAT8AMLD3gz9HlyjaNPnPsMwumxNtbWTvhIqKKNyg211NqNelMG6b
-	 GdldoKbojB2iAPxzrKToFi1b13LCZXyUpivo+EP2rdSmUGGw+BdoToavO3pF74xPBXVKlMRjlSxC
-	 49NhYV8VA84WLsJDnQ5m/eaYUIFfBxKKPcnxz1HOdmhXV9vo61ypceiw9eJ3r70+8+S+lyVEZyVG
-	 EDgJv8mqxACW0shN2ta0XWjSOHAazrzRpQGVtlycQwjkzL4Qj8kSlAdgSCWygXYSaxNwwDh3nzHN
-	 9R6ttKlcebFZt7ny8umA==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Yaxiong Tian <iambestgod@qq.com>
-To: rafael@kernel.org,
-	viresh.kumar@linaro.org,
-	Pierre.Gondois@arm.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yaxiong Tian <tianyaxiong@kylinos.cn>
-Subject: [PATCH 0/2]  Fix and optimize some comments in the CPCC EM model 
-Date: Wed,  9 Apr 2025 17:49:48 +0800
-X-OQ-MSGID: <20250409094948.1684994-1-iambestgod@qq.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744192205; c=relaxed/simple;
+	bh=hVqtJeffgH2b8MnqixATFFg4ghegSRPLmWmRJv6WvA0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RRY4BRrX9G2sfnZuL8QWeNsY+ggtNffUKCOmRkBMqDE2D9JVgUZQObcKQoVQnaQzNMDprh/aEYf7bj4kJvGMwvYSgDBC0OgsDKhS53aGKq8nQ2giGwRay0PZxY5YP3K9cYY3QlH68joqi5aECjAOsgtDyXXB6YtTvCRfAfAReJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Ebs9lb/Y; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1744192193; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=lXUcDKRxDV4X0iJjxRxdbiFSJvXNKAqKD9dZOYnRnxE=;
+	b=Ebs9lb/YmvfwNc/tYCLFBerDsQA53d108yMQ0+UhOdmhrb/ufvKQvNd0POUFiuC+IaVugUIzG/zmat2ubxvfsV3nfuNXBTC8T40At4etzSCM4EmIXZecq6F+n07ua2/ty23puonnfQ52a2bLIT1X82n29OCBl641uFy0OyO1Tpg=
+Received: from 30.74.144.109(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WWJc55q_1744192192 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 09 Apr 2025 17:49:52 +0800
+Message-ID: <0e294c56-d924-4d40-aa24-584235e8c923@linux.alibaba.com>
+Date: Wed, 9 Apr 2025 17:49:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: huge_memory: add folio_mark_accessed() when zapping
+ file THP
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
+Cc: willy@infradead.org, hannes@cmpxchg.org, 21cnbao@gmail.com,
+ ryan.roberts@arm.com, ziy@nvidia.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <fc117f60d7b686f87067f36a0ef7cdbc3a78109c.1744190345.git.baolin.wang@linux.alibaba.com>
+ <39176ab9-33d5-4919-b368-2fd2467f08fe@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <39176ab9-33d5-4919-b368-2fd2467f08fe@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Yaxiong Tian <tianyaxiong@kylinos.cn>
 
-Commit <740fcdc2c20ec> ("cpufreq: CPPC: Register EM based on efficiency 
-class information") introduced a very good feature. However, since commit
-<1b600da510735a> ("PM: EM: Optimize em_cpu_energy() and remove division"), 
-the energy calculation formula in the EM model has changed. Therefore, some
-comments need to be updated and corrected to avoid misunderstandings.
 
-I carefully analyzed the code theoretically and found that the new energy 
-calculation formula doesn't affect the current code - in fact, it has brought 
-some improvements. For example, consider four efficiency classes (1, 2, 3, 4). 
-Under the old logic, there were cases where tasks would be scheduled to class 4 
-CPUs instead of class 3 CPUs. This happened because the old energy calculation 
-formula divided by CPU capacity, and since class 3 CPUs have lower capacity than 
-class 4, it sometimes went against the original intention.
+On 2025/4/9 17:46, David Hildenbrand wrote:
+> On 09.04.25 11:38, Baolin Wang wrote:
+>> When investigating performance issues during file folio unmap, I 
+>> noticed some
+>> behavioral differences in handling non-PMD-sized folios and PMD-sized 
+>> folios.
+>> For non-PMD-sized file folios, it will call folio_mark_accessed() to 
+>> mark the
+>> folio as having seen activity, but this is not done for PMD-sized folios.
+>>
+>> This might not cause obvious issues, but a potential problem could be 
+>> that,
+>> it might lead to reclaim hot file folios under memory pressure, as quoted
+>> from Johannes:
+>>
+>> "
+>> Sometimes file contents are only accessed through relatively short-lived
+>> mappings. But they can nevertheless be accessed a lot and be hot. It's
+>> important to not lose that information on unmap, and end up kicking out a
+>> frequently used cache page.
+>> "
+>>
+>> Therefore, we should also add folio_mark_accessed() for PMD-sized file
+>> folios when unmapping.
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+>> Acked-by: Zi Yan <ziy@nvidia.com>
+>> ---
+>> Changes from RFC:
+>>   - Update the commit message, per Johannes.
+>>   - Collect Acked tags from Johannes and Zi. Thanks.
+>> ---
+>>   mm/huge_memory.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 2a47682d1ab7..955781b4e946 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -2260,6 +2260,10 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct 
+>> vm_area_struct *vma,
+>>                   zap_deposited_table(tlb->mm, pmd);
+>>               add_mm_counter(tlb->mm, mm_counter_file(folio),
+>>                          -HPAGE_PMD_NR);
+>> +
+>> +            if (flush_needed && pmd_young(orig_pmd) &&
+>> +                likely(vma_has_recency(vma)))
+>> +                folio_mark_accessed(folio);
+> 
+> So the flush_needed check is really just a pmd_present() check. (the 
+> latter would be clearer, but I don't mind)
 
-Considering that the comments about CPPC_EM_COST_GAP might be confusing, I've 
-added some analytical comments before CPPC_EM_COST_GAP in the latest code to 
-help other developers better understand. 
+Yes, we've already checked pmd_present() before, so I assume the 
+flush_needed check is cheaper:)
 
-Of course, this is just my personal understanding - please point out if 
-there are any mistakes.
+> Acked-by: David Hildenbrand <david@redhat.com>
 
-Yaxiong Tian (2):
-  cpufreq: cppc: Update and opt comment for cost calculation method
-  cpufreq: cppc: Add comments for CPPC_EM_COST_GAP calculation
-
- drivers/cpufreq/cppc_cpufreq.c | 44 ++++++++++++++++++++++++++++++----
- 1 file changed, 40 insertions(+), 4 deletions(-)
-
--- 
-2.25.1
-
+Thanks.
 
