@@ -1,90 +1,84 @@
-Return-Path: <linux-kernel+bounces-595494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4959AA81F0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:02:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C44FAA81EDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAFEF423761
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 07:59:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C7D47A32F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 07:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4065725D215;
-	Wed,  9 Apr 2025 07:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6878525A64B;
+	Wed,  9 Apr 2025 07:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TXVtdMMe"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2070.outbound.protection.outlook.com [40.107.93.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Gyb4YbtI"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C5F25A35E;
-	Wed,  9 Apr 2025 07:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744185524; cv=fail; b=YjuFoa6SV49iksC/ur+crNEXuPi90JPLdiD/aEdmr/FDyYYdphyMArZoXUTHeHG7duoWRRDnRAfRv4hVqlEtAKVn+tkp7jo0vsD4D9T6hfN4vyoElHk/C/iEUOb8Go9lkD4Csz7O2kTWihzhzFzqCTQ6aBGOzK9hSX9ocOGnym4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744185524; c=relaxed/simple;
-	bh=EQw2bcF067O36lua6IAUKIXn9+so6VYeoyvH+KuBb4c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QMquPxT1Dn1+5gAu6deFHxqULPqT0OfVh54wfL84MWy4fxOoavz/STxmjxdDWb1NdrASQocv5pVu4XE49x/cgezyO3wVq3JX1Xv7huQ6uRfrDpXKs+oFaXv1yoi9/ookU4535u/Cmwuh/vFpCpB/RfCcXVY0H3X2/tOVngdYx0I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TXVtdMMe; arc=fail smtp.client-ip=40.107.93.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yibAen9reA9ut5VFHrte22oKDBaIZzQVsYdSkXclsQHIFfz3GNjAEANdyNuHLrahDDreF3jNyd2p8OOhrpifS3nnS27Ac2SXQieAMXjbV58Hn9/fohcwXSjy3dx7IZWAkoINU0qp6NmIenn8Ip4bGp6hopalJ19ld/u7AVV/JWOEBjtFb42yp4cV1oDv2nTGQocLwPmrUaMIl5eFmQINHyth1xRpQzXSwomiCZ30oiTcy5juTW8uo0bYy7hhM37RGkbj2lY8WMTAlDUs5vbAIfZj15kKEsdoBQqJ6lLK3uhw6xSFA19SfdEogxJWzVumZUm5mvtH9zPW4H+zWXH9Kw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bvee5zeZ8b/e2tICwns+kHBROTnp+iw3PwNKtHaPDF8=;
- b=YCXlmnIuSnnCBVn545uqRyYTSi2bse123dk91ptnPznAJlpqoWVv8mlKU0QNnyFjCvW8zF6W/wwX9QYD5LI9Oac4GRqAGArdoOnHxqDC/WkTcxq+hrvS7mY809eGK0P5tYQUdLy7IfNRnnKZxq97vNjdpcG0wb2z9QbePi6xvVyUwdJ1deJM+7QVyoj/+EKITo2mdcp5XFTHr7jT++NkPhLBb68cEfx81tZ/aQmhViAqR3p+Ux6a4Vv+Z2D+bgDvL3SJq+9ceqsdHaQgsB9fC9x8WYOD4vbf4agiPhaQ7IRPlNN2wCEq+n1DXNc155uN7uhXG1oUd8HP+vDL2vsv9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bvee5zeZ8b/e2tICwns+kHBROTnp+iw3PwNKtHaPDF8=;
- b=TXVtdMMeRp0f427nYqH/9yjg+c15T+2f/J72ncJ37GAJ5PrPKViL0lSone5UF2vKMP0N0opqs6IR1ldI18aYkvncQ4535Ey8sCQ5Zhx4GxH9o/GS4tLACNfquD5zlHV8cXRF+lLcnbWD7Tix7cn1WIY8EwFsruEo2zA2SPJljD0=
-Received: from BY5PR20CA0005.namprd20.prod.outlook.com (2603:10b6:a03:1f4::18)
- by SJ2PR12MB9005.namprd12.prod.outlook.com (2603:10b6:a03:53d::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.32; Wed, 9 Apr
- 2025 07:58:38 +0000
-Received: from SJ5PEPF000001D3.namprd05.prod.outlook.com
- (2603:10b6:a03:1f4:cafe::6b) by BY5PR20CA0005.outlook.office365.com
- (2603:10b6:a03:1f4::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.34 via Frontend Transport; Wed,
- 9 Apr 2025 07:58:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001D3.mail.protection.outlook.com (10.167.242.55) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8632.13 via Frontend Transport; Wed, 9 Apr 2025 07:58:38 +0000
-Received: from sindhu.amdval.net (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Apr
- 2025 02:58:32 -0500
-From: Sandipan Das <sandipan.das@amd.com>
-To: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<tglx@linutronix.de>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <eranian@google.com>,
-	<songliubraving@meta.com>, <ravi.bangoria@amd.com>, <ananth.narayan@amd.com>,
-	<sandipan.das@amd.com>
-Subject: [PATCH 4/4] perf/x86/amd/uncore: Prevent UMC counters from saturating
-Date: Wed, 9 Apr 2025 13:27:09 +0530
-Message-ID: <c8e5808145985bb558d8daaefe42586b74d4085d.1744184837.git.sandipan.das@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1744184837.git.sandipan.das@amd.com>
-References: <cover.1744184837.git.sandipan.das@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB49025A646
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 07:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744185465; cv=none; b=bGSunqBtwgQdOl6njl+uUzjubvVAzESBzB6Wo4qmyaB3M73jUuqsoqT8C0SzIxXRSQ7RKfjoSMz7XhpSJ1fkSRD5HKu40IafSWyck7BHSlqeRopF0edezUWicH6Gz+bSlefKF+3Ga2SKt43nBcLuWIXThf7Qdh13n5Z7dm/mbEc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744185465; c=relaxed/simple;
+	bh=EUimRn0GQUHWJwQMLzq8kpEhkDARwbjxXagfaCn67bk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D2qccO7faa1ATQbni68pM8ehOkTn8JkDYAbg9LwmteL1gr7+TlMrYjN2MDi2iZufL8QLeXlfsQGNHYWPKuEbeHY0GNnnl/5h+xh9rC3jPYsU7vxX0c/lvMYzcYCXiuE+1KLv6H+7nN2P7s+p3Flyz5LFRdPvZOs0mL/qs2A/oYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Gyb4YbtI; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39ac9aea656so5425000f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 00:57:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744185461; x=1744790261; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gXDxRCjCfZuXXrdnfOdDIFh1kl7XI8kOcfsAbWkZgo4=;
+        b=Gyb4YbtIj9M5R10DfBKlBnQN5LueIJ53QzWC46M9IhwXVdlLdg+C/afLCd4Pp1pcJh
+         t7ps6xp7eBK56NnHJgLpFePY6qXiK7MeGy/NouxFaeJuRfnS9Srz7iTestVLUItEHRCD
+         l5yjPAoR/oCdU3pyKPUOYb4/0eR736IB+JS1epr79ZmdfHC59DRu5GEhMQeci0dyDYMC
+         FSTKD12/Yh5XuPIiSIh9j5CkKkm+26H9Zh4FQCwjyWG8KzIvtKncxd/8EzZ6rPsyGTxI
+         b5/NzklHP//05jdMQISEaEgf3ECOoyo/E88353UYf3Yy3LZ+Np//hdMbePN9hbCSydt4
+         PTuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744185461; x=1744790261;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gXDxRCjCfZuXXrdnfOdDIFh1kl7XI8kOcfsAbWkZgo4=;
+        b=b1dnXY8DMRxjQiVKs/c4v6g6Bjala89qVfPD+UqqXaVxVe8pEZREnZkC4ch2NisQQc
+         bLDHAvuZy/EC7VcCsQL/CalYDOGAqeMIzampHxP/NdugqpIho/liHYkQDt4JdbMUmssm
+         OjZ722hLnMTWN5Yyw6zDLxn0iiwMcYGuQugG+PvDpV+a8YHDh5OFr/3lTHH2mTIgMBiP
+         7+Tfh/8FbIaMfEtn3zhsOxHDvj8iIlhl6+BxZQyPygBGh5L3KXEFPpcicsThY1416Rxa
+         q9hAsNw6Fc+G06UIceaH8Wa/4WkNEE6K+20P6/eXfSTsvuORPkN8BXxWfHXZ8cq+F+zu
+         DunA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbFUgW2Lbx831c1fuOJIJl6JkZSaLUZBX+OrLSogGXzaphVo6UV4KnbDuHll3cWxXYYBA+aLynJA+ocWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqnkwBCj5+EeKZ9M13BGSpo1+3zbh3KojAlWMjvBL9p0HNA6lO
+	eopi1xQIxCeutxImwMlKT087m/mErSt+tsv0BT/vDou0BG319NVeI6keuWuGtX8=
+X-Gm-Gg: ASbGnctiEY1mvdxM/57LYfEkii4KlScTZsMYmXEafSLSLyCeT1q/szjnbpu8I3tgmGD
+	e/NZkw/Vcd7RXOD2UQTehaDhnTigtxbHREXH0Wj3el1y8CQPLS5PtVkVRmdpbq2ijYnSdVaKPWw
+	sqMcP2VEMiJwVPThRmKUMdVBn+t/yYjAqqyd7O9JKfXV2crnXfFhh+VJ2LuLpjNiXUt8EuMrgwX
+	f16EsRE2bDZyombYAU2QEyHJvhqtB8zN2fSURR9+/mYf2b8pHQQW3sxEc1cDmKF/UsTud4mXrgd
+	pJIXnOG/jicVAk1VYPU3zmHbgRtyknft1KKoovCI
+X-Google-Smtp-Source: AGHT+IHk+usthCOyo0rT6xLnc06ABawNMxokSw5jSpmTwWPZ24n6QoqFvQfjomHiByEDjNqdLAzbIw==
+X-Received: by 2002:a05:6000:290a:b0:391:456b:6ab7 with SMTP id ffacd0b85a97d-39d87ab60camr1783660f8f.34.1744185460716;
+        Wed, 09 Apr 2025 00:57:40 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7880:1c3f:3ac3:7c62])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39d8938a30bsm837918f8f.43.2025.04.09.00.57.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 00:57:40 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] Immutable tag between the GPIO and regulator trees for v6.16-rc1
+Date: Wed,  9 Apr 2025 09:57:31 +0200
+Message-ID: <20250409075731.16802-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,125 +86,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D3:EE_|SJ2PR12MB9005:EE_
-X-MS-Office365-Filtering-Correlation-Id: b1db04eb-dd31-426d-bf5e-08dd773c566a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026|30052699003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6Khj82S7xwAz+7/O91pcUDuDwMvVzZvt1dxmE6/HCYmOXAxX6RLQTLU+WARW?=
- =?us-ascii?Q?np4s03+GHdfXYuav+/uwo33WHDAF3RhjdQ6y8POjzzhIKWR0AUnPUnk/W9ZU?=
- =?us-ascii?Q?+XLDu0czDFESrFWWjTY9XQyTt7A40VCvAV0HX2dEXBthhv4t7lVqjmzub3j8?=
- =?us-ascii?Q?na5IH7Upr133SlmoeuGtPI/3NYh5dUkRGX4WiZW/NcWfPNMGWlq2TML9OWcC?=
- =?us-ascii?Q?5K1/rHWVA/y59CbaFeYE5QwZhlAKU6jI+04wh2L41XnBfdSuGIkeZnpuJlWT?=
- =?us-ascii?Q?jXm+L2dQgWkdl31b+BROL/aOnVQlJ871uWWeN72nQ2w94XpDdr++RvPwGVBT?=
- =?us-ascii?Q?GT94ZYas7/8XTw4GoRv8ZgD8tnKGetYR9Q9Mh0C7BgvYiEz84MtFkP3PY4bf?=
- =?us-ascii?Q?NGQoRjEK9rny8w6GUZbUtk1m7le5Ce53Np1TBquhKrpF0Y3jjCHJfd0Z2RVk?=
- =?us-ascii?Q?zmxIleuf0VC5nOLdFzQdoEMAAcpNTaMY8+BP164U9wYTzasLV1/53IfK8NFa?=
- =?us-ascii?Q?h0vtEO5SDbRLHCdf7KSl1TrPpvjQYiKypOfJ3DpwlSROfyqtgBOI8s6Mg5pb?=
- =?us-ascii?Q?WRXdCsrHBnE3IKrtJ3Itin1Orsvo6a3I5tNtadCGl4f1Xf7JfueyTGPVFwo4?=
- =?us-ascii?Q?3sovMRtVz4rISRIFdwCIZqMj3J5JVAZ0ELNUGJG1FSbUvcrknop1YMj2/VK5?=
- =?us-ascii?Q?yKgXHIXfpNbzGjrw5xtwzn6Bqbq/YRBcgXH0WwDGES+1XIi+kfsGZQDo6rOY?=
- =?us-ascii?Q?d+bXe0FSE8AxexravWH4iZebXe3vG2iCAUlsBvzU1SrOJGIXPQty3awhrim/?=
- =?us-ascii?Q?UUsrwr2+uCULWUuT4buD9ihhMUEhrlS7xKtJusFzOicUSYt+QUrg+4jnUq46?=
- =?us-ascii?Q?ca1oA4YlzaAhjyQCd9kKZW/HqX9sUnTl/WUk3oaabKIbzx/Nh/GthAHqRBG4?=
- =?us-ascii?Q?YScuayjKyxYRX8GLd4sGYKVZhcD6iickD1zajcKvuzl5WZJYWo7RUT3pkpE8?=
- =?us-ascii?Q?gxz1IckGowEhRrWfIPpddJMEBrUpCEODYcm8r48+qdQyyhYPlsw+VratDr7e?=
- =?us-ascii?Q?kypezzrT73otXChT/uxEGr8db/6xpDahqC1MlN11Lwv/HAyP9PS1QAON8/YS?=
- =?us-ascii?Q?XvTjka8ctn+UJgzKrtHNBziC1+WfcYReNq5ebebhZnvl9gwoggoj1siMC3P0?=
- =?us-ascii?Q?DciKCpakUoFEG3bMNKUXYbr9j8Y92mUF30z6vhMG8Fkie+4sVTXgp9H9LxQg?=
- =?us-ascii?Q?A6JohJ6bZcgdiTYMmNBNKb/sEbaWJIaoIdClPc0QKT8P8A7yg1lXWCfhDHLp?=
- =?us-ascii?Q?kPkkT59TDZ4cYqEY5C75zOQFFIA3l8WAKYOsT157GAVkpHJXmUgwytBM5yin?=
- =?us-ascii?Q?E6rZ4WS9+ZXiCfBK03EKLgH1nz+WeKtrv1EsXf8rTsko9UMFmKNstImFbljh?=
- =?us-ascii?Q?TXvXbsUUMGiF8VKNgcEtFJsxzFhlBn3ag9q3Dqwv1ty0ISW1AVVE+b0VfkI4?=
- =?us-ascii?Q?9EmCNiXWEsgSq4k=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026)(30052699003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2025 07:58:38.6651
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1db04eb-dd31-426d-bf5e-08dd773c566a
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9005
 
-Unlike L3 and DF counters, UMC counters (PERF_CTRs) set the Overflow bit
-(bit 48) and saturate on overflow. A subsequent pmu->read() of the event
-reports an incorrect accumulated count as there is no difference between
-the previous and the current values of the counter.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-To avoid this, inspect the current counter value and proactively reset
-the corresponding PERF_CTR register on every pmu->read(). Combined with
-the periodic reads initiated by the hrtimer, the counters never get a
-chance saturate but the resolution reduces to 47 bits.
+Hi Mark,
 
-Fixes: 25e56847821f ("perf/x86/amd/uncore: Add memory controller support")
-Signed-off-by: Sandipan Das <sandipan.das@amd.com>
----
- arch/x86/events/amd/uncore.c | 32 +++++++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
+Please pull the following change from the GPIO tree that will allow you to
+apply the second patch[1] in the series using gpiod_is_equal() in regulator
+core.
 
-diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
-index 8135dd60668c..fe746d803a5d 100644
---- a/arch/x86/events/amd/uncore.c
-+++ b/arch/x86/events/amd/uncore.c
-@@ -965,6 +965,36 @@ static void amd_uncore_umc_start(struct perf_event *event, int flags)
- 	perf_event_update_userpage(event);
- }
- 
-+static void amd_uncore_umc_read(struct perf_event *event)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
-+	u64 prev, new, shift;
-+	s64 delta;
-+
-+	shift = COUNTER_SHIFT + 1;
-+	prev = local64_read(&hwc->prev_count);
-+
-+	/*
-+	 * UMC counters do not have RDPMC assignments. Read counts directly
-+	 * from the corresponding PERF_CTR.
-+	 */
-+	rdmsrl(hwc->event_base, new);
-+
-+	/*
-+	 * Unlike the other uncore counters, UMC counters saturate and set the
-+	 * Overflow bit (bit 48) on overflow. Since they do not roll over,
-+	 * proactively reset the corresponding PERF_CTR when bit 47 is set so
-+	 * that the counter never gets a chance to saturate.
-+	 */
-+	if (new & BIT_ULL(63 - COUNTER_SHIFT))
-+		wrmsrl(hwc->event_base, 0);
-+
-+	local64_set(&hwc->prev_count, new);
-+	delta = (new << shift) - (prev << shift);
-+	delta >>= shift;
-+	local64_add(delta, &event->count);
-+}
-+
- static
- void amd_uncore_umc_ctx_scan(struct amd_uncore *uncore, unsigned int cpu)
- {
-@@ -1043,7 +1073,7 @@ int amd_uncore_umc_ctx_init(struct amd_uncore *uncore, unsigned int cpu)
- 				.del		= amd_uncore_del,
- 				.start		= amd_uncore_umc_start,
- 				.stop		= amd_uncore_stop,
--				.read		= amd_uncore_read,
-+				.read		= amd_uncore_umc_read,
- 				.capabilities	= PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT,
- 				.module		= THIS_MODULE,
- 			};
--- 
-2.43.0
+Bartosz
 
+[1] https://lore.kernel.org/all/20250407-gpiod-is-equal-v1-2-7d85f568ae6e@linaro.org/
+
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpiod-is-equal-for-v6.16-rc1
+
+for you to fetch changes up to 265daffe788aa1cc5925d0afcde4fe6e99c66638:
+
+  gpio: provide gpiod_is_equal() (2025-04-09 09:32:06 +0200)
+
+----------------------------------------------------------------
+Immutable tag for the regulator tree to pull from
+
+gpio: provide gpiod_is_equal()
+
+----------------------------------------------------------------
+Bartosz Golaszewski (1):
+      gpio: provide gpiod_is_equal()
+
+ drivers/gpio/gpiolib.c        | 14 ++++++++++++++
+ include/linux/gpio/consumer.h |  9 +++++++++
+ 2 files changed, 23 insertions(+)
 
