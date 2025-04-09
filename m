@@ -1,86 +1,74 @@
-Return-Path: <linux-kernel+bounces-596020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C036A825EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:16:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA74A825BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A67527B7B0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:15:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E50308C3C3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCC9267F4D;
-	Wed,  9 Apr 2025 13:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A5F264A97;
+	Wed,  9 Apr 2025 13:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XyQ+LArk"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gXCy5yl5"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93437267B00;
-	Wed,  9 Apr 2025 13:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E75263C76
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 13:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744204420; cv=none; b=aHi14JIEzAAuBMH+b8x4Y7/d6zTt4o9yLlGObkEkOLNtBNmourmwqX0gk5OFLeo+cgBF+jK9+R2AFe+uedmNhSrIlX4gJmYyL0RTHtgv6Q2HMkyxc/qpprKL8dtPN9E36SpSWrHHjowDQTyAe0QJ8O/0fBNACpoDieSWODdMIo0=
+	t=1744204400; cv=none; b=idH+wbgJ+70ruD8zxesH29BMmTz3TbHI2vwVSEOQ35E/28W2coZBK2igi2tTJri4fd5+X6/uGvtE6TEwqM8IT7QzWkYZ4VzT8WsoLjoQ88FrHf5lKYvIEENU237QaBqNxyNFGbD5X3ki3oLgS2DbHvkr1pPgvz19M9vzOo1nxOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744204420; c=relaxed/simple;
-	bh=viVwHHTxF6+VTBDbjKYNenuIu/RWABNZL++TFWSVyFM=;
+	s=arc-20240116; t=1744204400; c=relaxed/simple;
+	bh=pjKrGK2aEr7zkX+T3vxIp/LJ9TSuRWsNbfcccXAMTV4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PFA9wPl4/5IBDE0iUl2J8/VLsefEtPpKuZvMusdz27D23+dB3bIMUtzyRbFuuvnH68WNFuNFcHDupTNiAUR2A/RtcSfcfXYYf23vysb1nw4nPoxU/D10FSHKhW5kPk3myIodvONNgT7M8bNY9Ul/iliZwbVbmEq7FwGhTP9wCa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XyQ+LArk; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=INXGtzrzTcOycVVgHDrQvZt4XFs7SA5UDbyIykm2Qghkyz4W/MGzyTfaoADzLjKbKV40KGBw/TcJkO+HSqJFNCcgKFSZ2efql+SRGYgJZtHlA4QqJ+IjKt/CEPb28vN2aOxwTc5qUTYsT+RPBEjHKyupwpcNN0sRj0vw7oaLY1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gXCy5yl5; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744204416;
-	bh=viVwHHTxF6+VTBDbjKYNenuIu/RWABNZL++TFWSVyFM=;
+	s=mail; t=1744204395;
+	bh=pjKrGK2aEr7zkX+T3vxIp/LJ9TSuRWsNbfcccXAMTV4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XyQ+LArkrochmO+b0d542pBtg7+g39QPZ2C3ffAIm6ktWnv1qbR9f1fNDDBqWZGwq
-	 sseSflJzE/6zOZENR4byzATkav3WfdozLSBv/dxLUsEGJ47zwLIEwWd8mz/QrTR+7b
-	 dT9psFkIeIg+0x4226hCfHB/fbHaoTFDcANS+L/qjhIYdKK0y38Vh7yyNJnohIcWq3
-	 fhY2lQx/KVTkwPQsNiNsFodqtDJvmqzEw0c90LhH3euzcMm0Qv4zM90At7bvTO0G33
-	 Jy8QOUVsAY2MBvCANjOC8B5tETB6HQSrPMKPhFf65FX5XE4nqzu/2iFK6wDNXgCKnW
-	 OQnJ5ncTj7U9Q==
+	b=gXCy5yl59A3Qjsx8C3KBLyS5J9WGi57d1p8L7g0tOwq4WkuzlHv2toE6mle+T1q6m
+	 f0Aw+ld54eC/U6vu7uIn0+b7P0707dbphVRUp/L2QyfhkGYymBht4UhAq9/SChDim8
+	 samN665teK77+WtZksjGaqlyBkPn1STL2I5BspOzP+eQE7EqVPxlieF+27lQCQYxWK
+	 LtdUw65fFG0Gb1QaycdnZJrsMYnkP2b6qAzGSlOdXdB3ORq2J5ZFVyYPYvwIRQwN0N
+	 Y69I7KO96BO+lK2S2b/sWmeDZc+HAoi8kJjx7cPvw+t7YnTLdVvAtiDPQAvkeF2/qT
+	 W9o4JXiMVapyQ==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5633017E35E5;
-	Wed,  9 Apr 2025 15:13:35 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id CC40917E0EB8;
+	Wed,  9 Apr 2025 15:13:14 +0200 (CEST)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: chunkuang.hu@kernel.org
 Cc: p.zabel@pengutronix.de,
 	airlied@gmail.com,
 	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
 	matthias.bgg@gmail.com,
 	angelogioacchino.delregno@collabora.com,
-	ck.hu@mediatek.com,
-	jitao.shi@mediatek.com,
-	jie.qiu@mediatek.com,
-	junzhi.zhao@mediatek.com,
 	dri-devel@lists.freedesktop.org,
 	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	kernel@collabora.com,
-	dmitry.baryshkov@linaro.org,
 	lewis.liao@mediatek.com,
 	ives.chenjh@mediatek.com,
 	tommyyl.chen@mediatek.com,
 	jason-jh.lin@mediatek.com
-Subject: [PATCH v8 09/23] drm/mediatek: mtk_hdmi: Move plugged_cb/codec_dev setting to new function
+Subject: [PATCH v1 3/5] drm/mediatek: mtk_dpi: Add support for additional output formats
 Date: Wed,  9 Apr 2025 15:13:04 +0200
-Message-ID: <20250409131318.108690-10-angelogioacchino.delregno@collabora.com>
+Message-ID: <20250409131306.108635-4-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250409131318.108690-1-angelogioacchino.delregno@collabora.com>
-References: <20250409131318.108690-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250409131306.108635-1-angelogioacchino.delregno@collabora.com>
+References: <20250409131306.108635-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,47 +77,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for splitting common bits of this driver, move the
-mutex-protected cable plugged callback and codec device setting
-to a new function called mtk_hdmi_audio_set_plugged_cb().
+Add support for configuring the Display Parallel Interface block
+to output YUV444 8/10 bits, YUV422 10/12 bits (8 bits support is
+already present), BGR 8-bits, and RGB 10-bits.
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
+The enablement of the various additional output formats in SoCs
+platform data will be done in a different change.
+
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/gpu/drm/mediatek/mtk_hdmi.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_dpi.c | 33 ++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-index 2cfab3419415..87cf97136fb7 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-@@ -1586,17 +1586,22 @@ static int mtk_hdmi_audio_get_eld(struct device *dev, void *data, uint8_t *buf,
- 	return 0;
+diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
+index 5a66dfe3ad40..a9e8113a1618 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dpi.c
++++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
+@@ -59,7 +59,8 @@ enum mtk_dpi_out_channel_swap {
+ 
+ enum mtk_dpi_out_color_format {
+ 	MTK_DPI_COLOR_FORMAT_RGB,
+-	MTK_DPI_COLOR_FORMAT_YCBCR_422
++	MTK_DPI_COLOR_FORMAT_YCBCR_422,
++	MTK_DPI_COLOR_FORMAT_YCBCR_444
+ };
+ 
+ struct mtk_dpi {
+@@ -450,9 +451,15 @@ static void mtk_dpi_config_disable_edge(struct mtk_dpi *dpi)
+ static void mtk_dpi_config_color_format(struct mtk_dpi *dpi,
+ 					enum mtk_dpi_out_color_format format)
+ {
+-	mtk_dpi_config_channel_swap(dpi, MTK_DPI_OUT_CHANNEL_SWAP_RGB);
++	mtk_dpi_config_channel_swap(dpi, dpi->channel_swap);
+ 
+ 	switch (format) {
++	case MTK_DPI_COLOR_FORMAT_YCBCR_444:
++		mtk_dpi_config_yuv422_enable(dpi, false);
++		mtk_dpi_config_csc_enable(dpi, true);
++		if (dpi->conf->swap_input_support)
++			mtk_dpi_config_swap_input(dpi, false);
++		break;
+ 	case MTK_DPI_COLOR_FORMAT_YCBCR_422:
+ 		mtk_dpi_config_yuv422_enable(dpi, true);
+ 		mtk_dpi_config_csc_enable(dpi, true);
+@@ -743,10 +750,18 @@ static unsigned int mtk_dpi_bus_fmt_bit_num(unsigned int out_bus_format)
+ 	switch (out_bus_format) {
+ 	default:
+ 	case MEDIA_BUS_FMT_RGB888_1X24:
++	case MEDIA_BUS_FMT_BGR888_1X24:
+ 	case MEDIA_BUS_FMT_RGB888_2X12_LE:
+ 	case MEDIA_BUS_FMT_RGB888_2X12_BE:
+ 	case MEDIA_BUS_FMT_YUYV8_1X16:
++	case MEDIA_BUS_FMT_YUV8_1X24:
+ 		return MTK_DPI_OUT_BIT_NUM_8BITS;
++	case MEDIA_BUS_FMT_RGB101010_1X30:
++	case MEDIA_BUS_FMT_YUYV10_1X20:
++	case MEDIA_BUS_FMT_YUV10_1X30:
++		return MTK_DPI_OUT_BIT_NUM_10BITS;
++	case MEDIA_BUS_FMT_YUYV12_1X24:
++		return MTK_DPI_OUT_BIT_NUM_12BITS;
+ 	}
  }
  
--static int mtk_hdmi_audio_hook_plugged_cb(struct device *dev, void *data,
--					  hdmi_codec_plugged_cb fn,
-+static void mtk_hdmi_audio_set_plugged_cb(struct mtk_hdmi *hdmi, hdmi_codec_plugged_cb fn,
- 					  struct device *codec_dev)
- {
--	struct mtk_hdmi *hdmi = data;
--
- 	mutex_lock(&hdmi->update_plugged_status_lock);
- 	hdmi->plugged_cb = fn;
- 	hdmi->codec_dev = codec_dev;
- 	mutex_unlock(&hdmi->update_plugged_status_lock);
-+}
-+
-+static int mtk_hdmi_audio_hook_plugged_cb(struct device *dev, void *data,
-+					  hdmi_codec_plugged_cb fn,
-+					  struct device *codec_dev)
-+{
-+	struct mtk_hdmi *hdmi = data;
+@@ -757,8 +772,15 @@ static unsigned int mtk_dpi_bus_fmt_channel_swap(unsigned int out_bus_format)
+ 	case MEDIA_BUS_FMT_RGB888_1X24:
+ 	case MEDIA_BUS_FMT_RGB888_2X12_LE:
+ 	case MEDIA_BUS_FMT_RGB888_2X12_BE:
++	case MEDIA_BUS_FMT_RGB101010_1X30:
+ 	case MEDIA_BUS_FMT_YUYV8_1X16:
++	case MEDIA_BUS_FMT_YUYV10_1X20:
++	case MEDIA_BUS_FMT_YUYV12_1X24:
+ 		return MTK_DPI_OUT_CHANNEL_SWAP_RGB;
++	case MEDIA_BUS_FMT_BGR888_1X24:
++	case MEDIA_BUS_FMT_YUV8_1X24:
++	case MEDIA_BUS_FMT_YUV10_1X30:
++		return MTK_DPI_OUT_CHANNEL_SWAP_BGR;
+ 	}
+ }
  
-+	mtk_hdmi_audio_set_plugged_cb(hdmi, fn, codec_dev);
- 	mtk_hdmi_update_plugged_status(hdmi);
+@@ -767,11 +789,18 @@ static unsigned int mtk_dpi_bus_fmt_color_format(unsigned int out_bus_format)
+ 	switch (out_bus_format) {
+ 	default:
+ 	case MEDIA_BUS_FMT_RGB888_1X24:
++	case MEDIA_BUS_FMT_BGR888_1X24:
+ 	case MEDIA_BUS_FMT_RGB888_2X12_LE:
+ 	case MEDIA_BUS_FMT_RGB888_2X12_BE:
++	case MEDIA_BUS_FMT_RGB101010_1X30:
+ 		return MTK_DPI_COLOR_FORMAT_RGB;
+ 	case MEDIA_BUS_FMT_YUYV8_1X16:
++	case MEDIA_BUS_FMT_YUYV10_1X20:
++	case MEDIA_BUS_FMT_YUYV12_1X24:
+ 		return MTK_DPI_COLOR_FORMAT_YCBCR_422;
++	case MEDIA_BUS_FMT_YUV8_1X24:
++	case MEDIA_BUS_FMT_YUV10_1X30:
++		return MTK_DPI_COLOR_FORMAT_YCBCR_444;
+ 	}
+ }
  
- 	return 0;
 -- 
 2.49.0
 
