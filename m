@@ -1,239 +1,334 @@
-Return-Path: <linux-kernel+bounces-595606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F93A820BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13723A820A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2A171BA5E45
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:09:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB5841B6458E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5425D25D524;
-	Wed,  9 Apr 2025 09:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B34525D1F1;
+	Wed,  9 Apr 2025 09:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=BLAIZE.COM header.i=@BLAIZE.COM header.b="MU9CQPhs"
-Received: from mx08-0063e101.pphosted.com (mx08-0063e101.pphosted.com [185.183.31.155])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hJJmLdMc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8EE42048;
-	Wed,  9 Apr 2025 09:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.31.155
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744189724; cv=fail; b=q4CU/Ak1SrNOlUtonf6X1S1g4EyWgMRsMmR4m8/gs5AvK4wzMoZ7SydMeqM+PKDT5nI0lsFUZ0ebgmxqG70UEp/32hci+b8Sx5pwy144jPS57YY1C+cZaR7BpzE8ezurfcJZ+Tk9FgfKXOfg2EfvF+n95G8XovPHA6xQchcPhY4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744189724; c=relaxed/simple;
-	bh=d8FJR2WdY0/4YY8iFRHWHo1nNCLUHf3NmkiocE8S+aA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ku6L3Th2JqZGvRQMCT6zzloHp2xyanjbVqh/dJMLu61UXX4/GXnSOb23imTSHSLCsXgIEYhSHXsD64C1jWqxvYvHSWsM+zoXFmVyl7ZPzyykCpzba8LeXIYIn+2p8dC8aGLh7kfXLjENLg+kxLbUNsx8/8hrN5LLCMYshQpZYR0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blaize.com; spf=pass smtp.mailfrom=blaize.com; dkim=pass (1024-bit key) header.d=BLAIZE.COM header.i=@BLAIZE.COM header.b=MU9CQPhs; arc=fail smtp.client-ip=185.183.31.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blaize.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blaize.com
-Received: from pps.filterd (m0247494.ppops.net [127.0.0.1])
-	by mx08-0063e101.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5398ZROf012133;
-	Wed, 9 Apr 2025 09:58:18 +0100
-Received: from pnzpr01cu001.outbound.protection.outlook.com (mail-centralindiaazlp17011031.outbound.protection.outlook.com [40.93.132.31])
-	by mx08-0063e101.pphosted.com (PPS) with ESMTPS id 45tsussqu8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Apr 2025 09:58:18 +0100 (BST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eV7WDKTgZQ4GMGiJ0LVK869zyeHeTR2wEFFJxe71YDPq7S/dTFvtX6knj/qRTs5Lb7yqFPK/ea13CnI8uKbF+/YlxWmSzjksNuNmT09qwDiW8nG7Swp84g612og8YPJD1mbIJtVPsU59FLtKKP+i8G0AOHC9K07ZlUEf4zkhO0ssodiwAi04owUCFdToGpgut0Joh4yKtLZCWy/izKzzuKu+HV9fslkiUtU2F7qqySS4RocEF30je0Cldg0NmswM1LCwi4NE2qh0agLdjQQDA+lIckZsEwQcaKZQkR67qggQzDYCyN82R47Y2XKcgWGDRDEIh7gk7A3fjYO2G3lk2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ederJYcrJn2OnAMJzL621zkPkHX+G9H/Q9hufda2hR8=;
- b=oeqO0urmUDYAGDk3Pp7kbPYJm8Y6xNT0ZP2sWnnekjhteBKJiw8aD428GL5bsy0wCmbBPzktUMY+oHGDuzaZBkeREIINqu/d4xEQBb/QjgKgcD0PbXdLcrXV2S0la9ZsEVXRgCvJW4U+impk66nPbA0JpAJ74lsjoNISnPuGRpuyF6G5cTr9Fw7o8m1DM4+pPj9tlw68IKMFwRknd8s3CKCfHwSVaheiKp2o3W0dBazwdv5VLJJwwRTriybmIftmmTnBvuBljy9Ii5At79dpifhLkAPP2aW630OEf7JNg7dyJXIoC6rWVZDCx5DzAgdfBg0Zf3BYOo2A5y5rKMU1vg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=blaize.com; dmarc=pass action=none header.from=blaize.com;
- dkim=pass header.d=blaize.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=BLAIZE.COM;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ederJYcrJn2OnAMJzL621zkPkHX+G9H/Q9hufda2hR8=;
- b=MU9CQPhsFZdpIxKkEYwy2Pip8eKRXARBjzSTLyYhXSN6DNBejyR5qDiu6KW/K8Ee0mHSbSsuCBDMYnobC84F7D1rwMtISbukxOHaiKWQUGFbBT5qdPo5BUnoi0jsTTRUMaZSi05aygzKynSPzm+Yj2coDEEokbFqP+bqMbPyQ8I=
-Received: from MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:12a::5)
- by MAZPR01MB8052.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:85::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.37; Wed, 9 Apr
- 2025 08:58:13 +0000
-Received: from MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::309a:12cf:74a4:5655]) by MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::309a:12cf:74a4:5655%3]) with mapi id 15.20.8632.017; Wed, 9 Apr 2025
- 08:58:13 +0000
-Message-ID: <fddbe517-db80-4957-a277-a6619cf50286@blaize.com>
-Date: Wed, 9 Apr 2025 09:58:06 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpio: blzp1600: drop dependency on OF headers
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        James Cowgill <james.cowgill@blaize.com>,
-        Matt Redfearn <matt.redfearn@blaize.com>,
-        Neil Jones
- <neil.jones@blaize.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250408143629.125576-1-brgl@bgdev.pl>
-Content-Language: en-US
-From: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
-In-Reply-To: <20250408143629.125576-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0239.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:350::13) To MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:12a::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC605EEB3
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744189414; cv=none; b=PtU9uwtFd08Y0qhHln0wxVTZ6f1bDl1l5+XJ1ErVjH8XkalxBbS5FEejAWnZ0YWGMYmdPGvTIqxC4/w8GK2YSt6ez9RCtr+Ea/6Q036Bqhfs9AACVfNSRMAl/o2JEka2VbMjOJLAbhtT7Q+KG+M/rY/nBewzrRUA4XXjKmQuy5k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744189414; c=relaxed/simple;
+	bh=QA3nJaPyAJH5uYiUpZPkoDzGVFQ2noXtWNi0K/toFis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b1tQxkOsFE8xtQCESTPJarsQXSpxejgsNM0f4g19JVpsSkqi0gSlrkQLm3cXsse9lBQBXs87tCKSneG5jSYNvwOi6Q41vSvy5sSpDuN1SJXjkRxSfSBhGpDT9r7wG/6pn6v77Z9v9BdVnv7aLF3BCbCnW+eiv8MxmlGWRKM47jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hJJmLdMc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744189411;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zgbxmuYrSy8JOaWo/nuTKwkjtdKwgu/XlEfM6sVsJfQ=;
+	b=hJJmLdMcwTugA+ONBU+Z0z+3uJpyY01ifq294XY3rwwx9f26loRbQubH9s+020gjqDcz67
+	HYeg/gF1ly5J8af25BKmc/+LZhX/+bsfKfCTi9Vl0kZgR/CCiKYsfdoaDbhiaDfR3gVsu8
+	QOnem0v01fBqRp8HCraoRrBVWZZMOuQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-499-3T8zUvn6Py28Zv-Z8IZawQ-1; Wed, 09 Apr 2025 05:03:30 -0400
+X-MC-Unique: 3T8zUvn6Py28Zv-Z8IZawQ-1
+X-Mimecast-MFC-AGG-ID: 3T8zUvn6Py28Zv-Z8IZawQ_1744189409
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d51bd9b45so43918585e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 02:03:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744189409; x=1744794209;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zgbxmuYrSy8JOaWo/nuTKwkjtdKwgu/XlEfM6sVsJfQ=;
+        b=rqMjQPMutYRCru8LNazFrne/BcUOSBQXK/aMiUdOL0oy/Kwgp3G3LtR4/PBWrsYg+K
+         Nx0x5wr7Iwhj3l8d3UD1KVs7G7I7GKWaRPEjudt7BMOXfZd4HhfxMXUNxfS60MCpzCgK
+         Bsh8P+WLUlkavtvJzscA7LwaksKDTaf9lS9qodghCiL5Doi94Kz3ooFKlHa9A8Yh+S42
+         m+PxuRW9pGyehP6w6CQxxte5WIAJEXR8+j0KGpgNTgvgTyO6eRBa/JNJa5eC6g1vFIRV
+         46XVGUfNnux1BpjTSbEyZQOrSxTr1HK3clFFomDPDvHfty4aT3wnJjgzEYxe/Bw2niEW
+         tcog==
+X-Forwarded-Encrypted: i=1; AJvYcCVdF/OBvBLNmwemaWuglMtaSijkEVx+vR2jX3sQvGJDNAr7U3pFB5P+WWZEgWEOXjzFpfubyX79Xst9BC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUD3/jZtaqsZKNN1sKAiCmvSRsxK6lpVPA9Ust4tmlSlvqQfUX
+	FDwwmYS1i4TZgq6+HKbL3uxGwj7yRjvamyfCol1t9jJn7UkWVmLu7YmmwYfIZ67eo6eTILMS0BW
+	UjxL5rxqoqBWL/ssbnDpEmbY4u21yeXLO0aLadTvDD+lZPRp1EE8pQGKh5aca0w==
+X-Gm-Gg: ASbGncv4Rjh1LcxiinJgp0WS9zP4+P4Yg2udFyOr+MGFpoVzptkXDP/ICrJb/dDsjGL
+	vU8xTXtvd3RDXuuSk+Azf+fuAcQLnp1rgU0o/J0iUB9mW3YUuqngGDJPMbtoE6RI6agwt+pj/XW
+	GimnsS2LSlVnX9hVWZM1ijor7Sx4qx5wl8ZB2Ml5CRK1R7yRkWikzrS1l8snr/Zow/YqtTYy4hd
+	OScfc/0xTJhdWjCjQS1KreId94VCZVvntJEOj50tH6C0PdiJkNaA2vrhMJANLSmbp/1tjWjdh3N
+	DWZ7Pgn+lZlIQYshWVM8YdI5Ja1TdBeSOOPQUcKyet3QPdJZ2mGUkMOar7TlSLn0r1pU91Q0gYS
+	8zmeyB/LuOyILCyZTW/VyICsPHCvJp3gM5A==
+X-Received: by 2002:a05:600c:1f89:b0:43b:cc3c:60bc with SMTP id 5b1f17b1804b1-43f1ecd6b3amr21009415e9.15.1744189408757;
+        Wed, 09 Apr 2025 02:03:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGPOcpb7BVdvTaw0JCDlorc3Z/WoVMrXHrWdfC29nWG8SR9DR4kxaToeMAS20R5DXtlP5DETA==
+X-Received: by 2002:a05:600c:1f89:b0:43b:cc3c:60bc with SMTP id 5b1f17b1804b1-43f1ecd6b3amr21009105e9.15.1744189408266;
+        Wed, 09 Apr 2025 02:03:28 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c70d:8400:ed9b:a3a:88e5:c6a? (p200300cbc70d8400ed9b0a3a88e50c6a.dip0.t-ipconnect.de. [2003:cb:c70d:8400:ed9b:a3a:88e5:c6a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39d89361165sm1041910f8f.19.2025.04.09.02.03.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Apr 2025 02:03:27 -0700 (PDT)
+Message-ID: <5f0fe985-7512-4a94-aa5b-ddae176838a1@redhat.com>
+Date: Wed, 9 Apr 2025 11:03:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0PR01MB10184:EE_|MAZPR01MB8052:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1c020aad-df93-4148-dc34-08dd7744a899
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UXRnTUhBN0lFTmVuMzZEczRhZ0lRazE4ODRldW9ObE5QL0dvOTNJaldCdndk?=
- =?utf-8?B?dUh4Ui9OL01kaTIyQjl5ZHFmRTgyLzdtd3dGS0JkanozdlVrYm1vWnNXUmpC?=
- =?utf-8?B?RkdRSm96VGdUelQ1ZmNUWVFTNUVMakV2Tlc2dk5zWUk2SmFkSU1VVUtFUUZV?=
- =?utf-8?B?RGVOVGNZUXpQL1NNM0x6aHVJK1ZNMUpnTGhQdzYxV2RLNllWb0tUQ1RLYnRC?=
- =?utf-8?B?Nm5DekRsVTdSckZSR3FtZW91Skk2dm9hcGlxTFVyVUw3U2hSaUI5V1dSbjhZ?=
- =?utf-8?B?enFpUEdGUFkyRGsxTnlTOWNGalVmMDl5aENVNDFZRzIxdVczbFdlcFA1Qjc4?=
- =?utf-8?B?WnhWY3MvSVdZVGhhRTY4UFNhTG5JV251Z3RobmlYOTBOYisxaHkyY1BBeFZB?=
- =?utf-8?B?TmVORUxCVFMrM1BoUGQ4UzhNTnFocWVlOEN2cDh6cGhyVzZ3WG9CdnA1dW5B?=
- =?utf-8?B?SGU4TjgzMW9oYXZGQ3ZwT0dEVW5zTVlwSzVnbW1tQklvdUVLS3RhM1JUaXZX?=
- =?utf-8?B?WHdmK3h1OFBRR1JCTEpFQlBPdVhmeHhMR1NQRmg4d2hRWFcvancyR3lVM3h2?=
- =?utf-8?B?U3l6QTRJRGkxblJYQm12SC9VVlFMZEpFR1pNN1Z0OUxJc2dGZm9HUzZxWjhm?=
- =?utf-8?B?RlBNYnkrZzRJTUcvZy9xWHhKVjhGU0tXUVBUcHRYak5TMDRkVDdicE05bEZx?=
- =?utf-8?B?THJqSkY0NmJLeTlJa3U5dTlTaFZLY2tKcHlEbWdoaTJndU9NQ1Z3Rm9Ldk9E?=
- =?utf-8?B?bVhkbVFMREpERlllYStqTWU2OXU1dFpsNm84c1JmektscnNNNEVteTJNWWJ4?=
- =?utf-8?B?VXNJK3M0b0ZOVWFsaGtyanVYVTdmQlFOYXNsNzZiVVJiR1JYeFZqdmowQWIx?=
- =?utf-8?B?bFU5dDl6bExqNFpxOUpYeUpNWWo4MXlOc294VGdBUytoVUxiY0FCQUIrTk9Z?=
- =?utf-8?B?YmdMQlA3d3VaNGd1Z2FLRVRVRmpwWklEdDl1UDAySGhuRHBFSFpVTCt5Wk0y?=
- =?utf-8?B?UWRJRGhiWHlSTDhDNitHNDZJNTRoUXJZcGphS2xNVjVxSDlqSkViMFVHbVJX?=
- =?utf-8?B?NDFkSWVGVU9qWDNQcjJ3N3B6KytGSXRhZWZVSGpaR0EvWFZoS0M1SEw0TE40?=
- =?utf-8?B?MkFKWVVRWnpMeWVXdGJnM2tZeERPYU41UUt3T1A5ZGRxVy8yTjJJWXlIbEQy?=
- =?utf-8?B?WVdrSmhpeEk4U2VXcWh2TlN3aXFrUC9rdjJFZmJ6ZFZJRUZ6Wi9idmhoMkJS?=
- =?utf-8?B?VThMS2lpZVdzYTJoVkl3SWRxaUR4dzV1MjRYTW9ZUkRSUFNrOFVqVXBKVExY?=
- =?utf-8?B?YmkyOFNVVkpVWWxKaEQ4MzVsQ0owT0Q1QjVkUU9NU2Rjb1QrcnNOQ3pwUFEw?=
- =?utf-8?B?NzRNdzhUNXRCcE5GdGZRVHFUTlYyVk9HQU56cExRWGhLanJNRW1vUXhGTzls?=
- =?utf-8?B?bkMzTTEvdUMyWUpPaG9HZUpITlFxTFlSU3VFb09tN3l5bzVaYUFDOE5tclZD?=
- =?utf-8?B?di9WT1ZReGphYkh2L0hKbGtrNkQzMkljUzVndjlhSEg1WmQ3dXBjZlNzSHgz?=
- =?utf-8?B?cWdmTHhkZGhaVjM2S1E0ck9aMG9GZXFBd3QwS1poY2psNVJ0SnFteUxWYlBG?=
- =?utf-8?B?M2dncXRLdU9PblRDWEVvLzg3c0RRQWhaakxlc3VHQ2xURkI5MUplMWZVd1V0?=
- =?utf-8?B?N0pGRlQyNjA1TjN2OGViSmdlY28wREl6SjU3bWl2UWZEajNXNUxMNC9LemRY?=
- =?utf-8?B?NXdqblB2WkhQWUJYTjZySncvb0RrT3JjcFV1VkZuNk44bnB3NUU5MHo4Vmto?=
- =?utf-8?B?d3pCQmhyY3lDQXBOa3lrcEU5MVQzSTBuZmN1U0tGb3JTSmRPbFF0YUI5OGRL?=
- =?utf-8?Q?8DIGFh2s2fM0N?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OEt0NnJOTExFbkgvdTRqcFZjamRKdzNQQks5bHpNTDZnTkdnVEVsMzZiNTJs?=
- =?utf-8?B?YTBmNUxNYVBTcjRma2RIbHVIb2lhR29JMlhwYU5DeUFEQ29wVlBiT2x4WUlr?=
- =?utf-8?B?SUZQRTY4bzJ4Vi9kQUFndzhlMExlZ3Jka3Vzd0Z5Tyt5TGtWSG4yaGJGZElt?=
- =?utf-8?B?Z3hjT1BTYWtKU01adDdDR3k5NUJKS2ZsdWJuaTNqTUxqWHB5c3p0TlZWdmNC?=
- =?utf-8?B?aDZ1cTkyVGxJazJCRDNsbm1UckFlSHRmUHdjTndLS29TYmFnckpUSGl3RFh5?=
- =?utf-8?B?VWpzUWt4bXhaR2FCczRZMW0zMm43ZDRqaHZacUE3Wm5yNG1ZNGlXUVBIT2xa?=
- =?utf-8?B?d3JJZ2hEZ2NGRkdKZ3QrQkoycnBrQXA4M211cFRqUTJHVHhkMHZ6VmFMcngx?=
- =?utf-8?B?OGNvU1BWbk1ORlA2ZHkrRkt3c0NkUHU2eVFvQTViQUpWV1lQS2ZSNWU5ZHJG?=
- =?utf-8?B?Y28xcmQxV1FTTHhmK1NNOWtadWxjVmE1MDhYbHVEUm4yOVZKYWFVNWNibzVZ?=
- =?utf-8?B?ZjJQOHA1Q1UzaVorajRuWmpvSWpDd3N6U1hzcm1WY1VVbUdhZVpVeGp4Skty?=
- =?utf-8?B?ZFc0SDBLa090YmgwSk9kR251S3dZRmhhRTdOUCtzOWdkbkQ4MGw4aitVMlJ2?=
- =?utf-8?B?Lzhob3d2K3o3U05XRGFpbEtFQ3NhNEgzSWZiQUZ6Nkg1bm04YjFWdHJxZDhL?=
- =?utf-8?B?Qld0cEpzbkY5d1ZSQ2ozazQ5U1RuMU5Lcnh1czVidkZDN2QrWEExRUdLUzlt?=
- =?utf-8?B?dys0R05CK0NUSDFmNDZaNk5GNWE3by9hVU1LYVRMeGgvTUhQdTZJVXM3bGFS?=
- =?utf-8?B?akhyYlZIdFo4c2szOW9rRHV3UERSQ1dtbm9NRWMxYjNPSWNHVktxbGsvTVhV?=
- =?utf-8?B?RDRBYVErcDJTVk5TR1h2dnFOL2ViaVFIcXBGQTU2cnRIVHNRSWNFd1JiN2tU?=
- =?utf-8?B?WW4ydnozMU1jYm9yS1d6b2lZdTErM0JxMjE4dlVvVFBWcFJmWUlaQStlYUk1?=
- =?utf-8?B?OEtVWGxOT0M4MG9BQXBIaDI1aUVnMzZuSTE4M3RWdVp0S21xelpIKzJOQmly?=
- =?utf-8?B?TUpqMG9pMkZLNkp1bXBvbzFIeE9pdEFRZVQvbFpGMVJmYXpFUTFueCtVcHQw?=
- =?utf-8?B?SVV5Mmo0WTExY0JQYytwbmJzbERnUUJSVlJyaGV3eEZIOUYzUE9CN3p1UFVW?=
- =?utf-8?B?WEwwMXdrOVlXR2lBNkthK1hFWmVXdm1FaXV2VStvY2VpRG9FRTh0OUpYT1k4?=
- =?utf-8?B?ekVZTjdrcnJJaW11dWZDNUZZNXdXRkRlL0ZsUWJNWEYyOHdobHpSRkpBRjdU?=
- =?utf-8?B?WXJOQXF3WmEyRkZxc2lPaHU1QWNPTVhTSVJad1NLaXBNaHhVb25aclpWT05p?=
- =?utf-8?B?VFJUOHc2TjdweHdtS2ZmOXUvMStFd1poT2RTVzNvQU1XSmRGRU5NZk41YVdL?=
- =?utf-8?B?bTI2WXNSTXhQZFRLSFUwOVpldWJYWTNDdzlkUXViNmlvYVNmWnQxVmF1RjRG?=
- =?utf-8?B?bk9KS0IzMm9pVExQaHM4UEY0RGwrUFNCUmVCbHZzcHh4ZnVxaU5HQUtvWjlF?=
- =?utf-8?B?OU9NZDR5SkRNYWRtUWxEb2xmSlNOSjJCZnIwa05RMm5JV3FUOFo3cThrU08x?=
- =?utf-8?B?UVhYNmI5bjFOK291RVVWNG1ITGtadXc0V1pjWDJHR2U2OHpVVW5OYWUwM2FL?=
- =?utf-8?B?ZWp3ejVXck55NzA5RWhjL3N3UWpWaFdXNkJqN3lDTzVyc1RlWGNDZnFDWHlZ?=
- =?utf-8?B?ZURqcFNPeUh3ZmYxN2Y0eHp3TEwxemxYSHZ3Z2JCSllJZ3AxbDAydXR4VVNk?=
- =?utf-8?B?cXZscVdpNVZyYjhYNm81TmVub2h4ZmFmNkJCS01QbjhsYm5ueFA3bXNQRmxu?=
- =?utf-8?B?Sm9UUEVnYk5HdUN1bkFadWFqc1Q5cVJGYXNCa2dLNFNpWFUxdU1NWVo3eFVj?=
- =?utf-8?B?WTJIQlMyNmNzeTBnNU91Y2VrUWdmWDNXQmxqajloRGVWcUZPQnNDZTdaTmZ5?=
- =?utf-8?B?c2RZMlZsR1JwQ3laNi9SMGFQWE9ncG1uWnl0SWVQTmJrT2xmMjJmZFo3Rmd5?=
- =?utf-8?B?aU9UUzhFNmdSeU9wd3VKQTBYa0E1K1F3dFVIQ04rb0E4T2M5bGxqeDNzK2Nk?=
- =?utf-8?B?YlNLaXg1UGVpbytLejFMdUE5aUZ0b3dzdnltMC9VVEpNR1Y4cUFuMlFWWEZV?=
- =?utf-8?Q?qJgx5lTdJrfX2R32/fj9Auc=3D?=
-X-OriginatorOrg: blaize.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c020aad-df93-4148-dc34-08dd7744a899
-X-MS-Exchange-CrossTenant-AuthSource: MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2025 08:58:12.9939
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 9d1c3c89-8615-4064-88a7-bb1a8537c779
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EVEuXMfCSb4seLZbe3CuPKzmvfG2lEaYgSEyygWza4kAs3T3eS2oH23Qx5wH4xI+n/iTyMHTYzYmjIkw54okRCmYNA8zCyDTWOzIZLwXikg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAZPR01MB8052
-X-Proofpoint-GUID: WAGoSduzrzoMxAdAdCPJekn4wLRUgdvn
-X-Authority-Analysis: v=2.4 cv=AuPu3P9P c=1 sm=1 tr=0 ts=67f636aa cx=c_pps a=fZMYyGB11ZxAXgy8cNnk8Q==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=XR8D0OoHHMoA:10 a=-5LYVjoNHPMA:10 a=KKAkSRfTAAAA:8 a=SrsycIMJAAAA:8 a=9vjL5g7GzHWEwis0LdkA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=zapPnUM7SFj2ezx6rUw-:22
-X-Proofpoint-ORIG-GUID: WAGoSduzrzoMxAdAdCPJekn4wLRUgdvn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-09_03,2025-04-08_04,2024-11-22_01
-X-Proofpoint-Spam-Reason: orgsafe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/hugetlb: Convert &folio->page to folio_page(folio, 0)
+To: Matthew Wilcox <willy@infradead.org>, nifan.cxl@gmail.com
+Cc: muchun.song@linux.dev, mcgrof@kernel.org, a.manzanares@samsung.com,
+ dave@stgolabs.net, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Fan Ni <fan.ni@samsung.com>
+References: <20250409004937.634713-1-nifan.cxl@gmail.com>
+ <Z_XmUrbxKtYmzmJ6@casper.infradead.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Z_XmUrbxKtYmzmJ6@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 08/04/2025 15:36, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Use the generic boolean device property getter instead of the
-> OF-specific variant. This allows us to stop pulling in linux/of.h. While
-> at it: drop the of_irq.h inclusion as none of its symbols are used in
-> this driver.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->   drivers/gpio/gpio-blzp1600.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-blzp1600.c b/drivers/gpio/gpio-blzp1600.c
-> index 77ad0e596f3e..2760a13c0801 100644
-> --- a/drivers/gpio/gpio-blzp1600.c
-> +++ b/drivers/gpio/gpio-blzp1600.c
-> @@ -10,9 +10,8 @@
->   #include <linux/interrupt.h>
->   #include <linux/io.h>
->   #include <linux/module.h>
-> -#include <linux/of.h>
-> -#include <linux/of_irq.h>
->   #include <linux/platform_device.h>
-> +#include <linux/property.h>
->   #include <linux/slab.h>
->   #include <linux/spinlock.h>
->   
-> @@ -217,7 +216,6 @@ static int blzp1600_gpio_set_config(struct gpio_chip *gc, unsigned int offset, u
->   
->   static int blzp1600_gpio_probe(struct platform_device *pdev)
->   {
-> -	struct device_node *node = pdev->dev.of_node;
->   	struct blzp1600_gpio *chip;
->   	struct gpio_chip *gc;
->   	int ret;
-> @@ -240,7 +238,7 @@ static int blzp1600_gpio_probe(struct platform_device *pdev)
->   	gc = &chip->gc;
->   	gc->set_config = blzp1600_gpio_set_config;
->   
-> -	if (of_property_read_bool(node, "interrupt-controller")) {
-> +	if (device_property_present(&pdev->dev, "interrupt-controller")) {
->   		struct gpio_irq_chip *girq;
->   
->   		chip->irq = platform_get_irq(pdev, 0);
+On 09.04.25 05:15, Matthew Wilcox wrote:
+> On Tue, Apr 08, 2025 at 05:49:10PM -0700, nifan.cxl@gmail.com wrote:
+>> From: Fan Ni <fan.ni@samsung.com>
+>>
+>> Convert the use of &folio->page to folio_page(folio, 0) where struct
+>> filio fits in. This is part of the efforts to move some fields out of
+>> struct page to reduce its size.
+> 
+> Thanks for sending the patch.  You've mixed together quite a few things;
+> I'd suggest focusing on one API at a time.
 
-Reviewed-by: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
+Agreed.
+
+> 
+>>   		folio_get(folio);
+>> -		folio_add_file_rmap_pmd(folio, &folio->page, vma);
+>> +		folio_add_file_rmap_pmd(folio, folio_page(folio, 0), vma);
+>>   		add_mm_counter(mm, mm_counter_file(folio), HPAGE_PMD_NR);
+> 
+> I think this is fine, but would defer to David Hildenbrand.
+
+For now this should be fine. We want a pointer at the actual first page. 
+In some future (with folios spanning multiple PMDs), this will not be 
+correct.
+
+But the THP changes should *absolutely* not be included in this hugetlb 
+patch. I was severly confused staring at the usage of 
+folio_add_file_rmap_pmd() in hugetlb context/
+
+Actually, having to go  back to my comments below to fix them up now 
+that I see that this is
+
+  mm/huge_memory.c     | 30 +++++++++++++++++-------------
+  mm/hugetlb.c         | 20 +++++++++++---------
+  mm/hugetlb_vmemmap.c | 12 ++++++------
+
+Makes me angry.
+
+> 
+>>   		folio_get(folio);
+>> -		folio_add_file_rmap_pud(folio, &folio->page, vma);
+>> +		folio_add_file_rmap_pud(folio, folio_page(folio, 0), vma);
+>>   		add_mm_counter(mm, mm_counter_file(folio), HPAGE_PUD_NR);
+> 
+> If that is fine, then so is this (put them in the same patchset).
+> 
+>>   		spin_unlock(ptl);
+>> -		if (flush_needed)
+>> -			tlb_remove_page_size(tlb, &folio->page, HPAGE_PMD_SIZE);
+>> +		if (flush_needed) {
+>> +			tlb_remove_page_size(tlb, folio_page(folio, 0),
+>> +					     HPAGE_PMD_SIZE);
+>> +		}
+> 
+> You don't need to add the extra braces here.  I haven't looked into this
+> family of APIs; not sure if we should be passing the folio here or
+> if it should be taking a folio argument.
+> 
+>>   		if (folio_maybe_dma_pinned(src_folio) ||
+>> -		    !PageAnonExclusive(&src_folio->page)) {
+>> +		    !PageAnonExclusive(folio_page(src_folio, 0))) {
+>>   			err = -EBUSY;
+> 
+> mmm.  Another David question.
+
+For now this should be correct. (first page mapped by the PMD stores the 
+flag)
+
+> 
+>>   	for (i = new_nr_pages; i < nr_pages; i += new_nr_pages) {
+>> -		struct page *new_head = &folio->page + i;
+>> +		struct page *new_head = folio_page(folio, i);
+>>   
+> 
+> This is definitely the right thing to do.
+> 
+>> @@ -3403,7 +3405,7 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
+>>   	if (new_order)
+>>   		folio_set_order(folio, new_order);
+>>   	else
+>> -		ClearPageCompound(&folio->page);
+>> +		ClearPageCompound(folio_page(folio, 0));
+>>   }
+> 
+> I might be inclined to leave this one alone; this whole function needs
+> to be rewritten as part of the folio split.
+> 
+>>   		folio_split_memcg_refs(folio, old_order, split_order);
+>> -		split_page_owner(&folio->page, old_order, split_order);
+>> +		split_page_owner(folio_page(folio, 0), old_order, split_order);
+>>   		pgalloc_tag_split(folio, old_order, split_order);
+> 
+> Not sure if split_folio_owner is something that should exist.  Haven't
+> looked into it.
+> 
+>>   		 */
+>> -		free_page_and_swap_cache(&new_folio->page);
+>> +		free_page_and_swap_cache(folio_page(new_folio, 0));
+>>   	}
+> 
+> free_page_and_swap_cache() should be converted to be
+> free_folio_and_swap_cache().
+> 
+>>   
+>> -	return __folio_split(folio, new_order, &folio->page, page, list, true);
+>> +	return __folio_split(folio, new_order, folio_page(folio, 0), page,
+>> +			     list, true);
+>>   }
+> 
+> Probably right.
+> 
+>>   {
+>> -	return __folio_split(folio, new_order, split_at, &folio->page, list,
+>> -			false);
+>> +	return __folio_split(folio, new_order, split_at, folio_page(folio, 0),
+>> +			     list, false);
+>>   }
+> 
+> Ditto.
+> 
+>>   
+>> -	return split_huge_page_to_list_to_order(&folio->page, list, ret);
+>> +	return split_huge_page_to_list_to_order(folio_page(folio, 0), list,
+>> +						ret);
+>>   }
+> 
+> Ditto.
+> 
+>>   
+>> -		if (is_migrate_isolate_page(&folio->page))
+>> +		if (is_migrate_isolate_page(folio_page(folio, 0)))
+>>   			continue;
+> 
+> I think we need an is_migrate_isolate_folio() instead of this.
+> 
+>>   	if (folio_test_anon(folio))
+>> -		__ClearPageAnonExclusive(&folio->page);
+>> +		__ClearPageAnonExclusive(folio_page(folio, 0));
+>>   	folio->mapping = NULL;
+> 
+> ... David.
+
+See above.
+
+> 
+>>   
+>> -		split_page_owner(&folio->page, huge_page_order(src), huge_page_order(dst));
+>> +		split_page_owner(folio_page(folio, 0), huge_page_order(src),
+>> +				 huge_page_order(dst));
+> 
+> See earlier.
+> 
+>>   	if (folio_mapcount(old_folio) == 1 && folio_test_anon(old_folio)) {
+>> -		if (!PageAnonExclusive(&old_folio->page)) {
+>> +		if (!PageAnonExclusive(folio_page(old_folio, 0))) {
+>>   			folio_move_anon_rmap(old_folio, vma);
+>> -			SetPageAnonExclusive(&old_folio->page);
+>> +			SetPageAnonExclusive(folio_page(old_folio, 0));
+>>   		}
+> 
+> David.
+
+See above.
+
+> 
+>>   	}
+>>   	VM_BUG_ON_PAGE(folio_test_anon(old_folio) &&
+>> -		       PageAnonExclusive(&old_folio->page), &old_folio->page);
+>> +		       PageAnonExclusive(folio_page(old_folio, 0)),
+>> +		       folio_page(old_folio, 0));
+> 
+> The PageAnonExclusive() part of this change is for David to comment on,
+> but this should be a VM_BUG_ON_FOLIO() instead of calling folio_page()
+> to keep this a VM_BUG_ON_PAGE().
+
+Agreed.
+
+
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
