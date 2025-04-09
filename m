@@ -1,108 +1,78 @@
-Return-Path: <linux-kernel+bounces-595982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772F9A8254C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:52:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2598CA82563
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 666E24C55D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:51:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA991BA050D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E948E264618;
-	Wed,  9 Apr 2025 12:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AE826560F;
+	Wed,  9 Apr 2025 12:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="AjV/dOy9";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="BSpSUJGC"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bijmABSU"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA9A2641CB;
-	Wed,  9 Apr 2025 12:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744203018; cv=fail; b=VNXr8riY9rxeumlpqQvrGkEnST+OTYaizm1OdAvG9yRhy/c4LcQhMcPB/mFd614mmhERAG+dT+aO8AFJ7bgmjfuVkGtmI2jnQstUiavD0EVt9C6m4jNbAeqtTpivq1fxLWMKgJQykDCFMwJh0X0SOOxuroBz+JwBhsVKRnmUAYI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744203018; c=relaxed/simple;
-	bh=KISMwVKiF5FhwaN+/F7T5SOm1fiOaFSy1QE/9Xx3oy4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sjuGEf56UBf3G7iMJ97Ccvkre8ePGstJGYxcl1Zz7dDBQkFUf18Unm/hiWSfOYAQrQIsDM0nc1bdV05H9mzrN9aKcjT9rbXV9t2N2JxIz/m4piY/EqZFrFDdp86iS4ZF+yJi8m566yiHRIR1o5bF8Iw6iUfgzEsIksrRr6X6e2o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=AjV/dOy9; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=BSpSUJGC; arc=fail smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 539Cn0KG028564;
-	Wed, 9 Apr 2025 07:49:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=NuUzThu8mJCj3E5bnQ8/Jcb0RuUUy0VGnVAQ4uKJJ0U=; b=
-	AjV/dOy9yDhFVWEPBWCW+zEbbDlwNjr5oV7ZtUE4+iAh8qIrKQ3L4F/HbXXFtnO8
-	IUmf3xOcHJfjE9B7YfCAivysDgdVXYxgOxPAu/qGUKvTM30/kOT4IHR1aSeGhuls
-	xER+6eSB+YL2kfEB5T/tjI1Blf6DZlgl2ihQX4cgYRG41tlB4yzaAUUGGk7SBcop
-	upayj5uL4r/XadD5TRR7h8e5+2cmLLkG7ut81/EZR8LZPj0zMjvEWUmw6xOYogYC
-	FEEjNI7mZ/dt+EKYoffrhURw7J4xrYjyYrGZd2er8OEUjG9tAfnBRoNeIxwj4wnj
-	ZZLZak1aAVEgsePeCizzCw==
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 45ws7tr018-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Apr 2025 07:49:50 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L80r+jFv4OqV9zN7rrkeu/dqFlfvcAX9UfTus+RU/gEJfvUwEENN/hLMXDfwLf+Dbah2qkqY+46qYUyn/YmoM4evSo/DDtc3glLzkBin0XrbDkG2tdYuT2mq5QGQyFzxS7mM2U7ft+932QWtfk6ufFySolHunfvR0DRe3GqqwMXPex7Dd+1+AdYRg4E6qoVQ2jUTlk3N/E2OyhEmEQULB6lhtqQvniCKgo3HDngViVETjD7Mp/bQgqpCVKkj7juU8XE3TgUxQderWWxSKcQtxcGmmZjWZOMGP/3kpzgDldEX3YNlMBRqdx9Mu9tL6Q7cL+9UsiFjHXHdBQjzb8ubyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NuUzThu8mJCj3E5bnQ8/Jcb0RuUUy0VGnVAQ4uKJJ0U=;
- b=d7SdKhTj7ygBKNbcyh/aUfHmH/T5q20YiRxv9gldXJd3Yle6xol/ReDAKM6MGRkZlNHHTDjiC2scsABRrfxf04ZvFN7SvPgfROQB3j3juF/bQwiFjLwqqcpT1/viM3Xd9wHipcsbXr3Ul9IB6yH1mmFyQ/IBH/Pkpjvq6peHr1h3GtJrbAZ47XwuZw9D5q7Sk1ta966WfdV3z3d8htJNkRhRDyB+o5L3YYYwvstQINIFoGSJUn5hZLjL8ewuqXGdjVm4bPtvu2/o7H9tCRcjBqO/zcGja0IJFhZ556/RIjPvZKONS+4kAtfPWilO4B9qvnIpzu9HkWQXIk5P3dkQmw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 84.19.233.75) smtp.rcpttodomain=cirrus.com smtp.mailfrom=cirrus.com;
- dmarc=fail (p=reject sp=reject pct=100) action=oreject
- header.from=opensource.cirrus.com; dkim=none (message not signed); arc=none
- (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NuUzThu8mJCj3E5bnQ8/Jcb0RuUUy0VGnVAQ4uKJJ0U=;
- b=BSpSUJGCs6yJJ78wndnrSyvwzI98XqcUc93C1xP+9U5X1Ldi+wI9x3iXNvO36VZHa+FH3k+0znWr4ICGO/gKNI1+znau9quTp1BPX82IMpjgg/tOMzwyaxoB+sCrCn/3YZDjV4zvQZQ8ithpbbvQGz6DI8++InNQ7ap3GdAJN2k=
-Received: from BL6PEPF00013E08.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:22e:400:0:1001:0:5) by CH4PR19MB8636.namprd19.prod.outlook.com
- (2603:10b6:610:222::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.31; Wed, 9 Apr
- 2025 12:49:43 +0000
-Received: from BN2PEPF00004FBE.namprd04.prod.outlook.com
- (2a01:111:f403:c803::7) by BL6PEPF00013E08.outlook.office365.com
- (2603:1036:903:4::4) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.20 via Frontend Transport; Wed,
- 9 Apr 2025 12:49:43 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
- smtp.mailfrom=cirrus.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
-Received-SPF: Fail (protection.outlook.com: domain of cirrus.com does not
- designate 84.19.233.75 as permitted sender) receiver=protection.outlook.com;
- client-ip=84.19.233.75; helo=edirelay1.ad.cirrus.com;
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- BN2PEPF00004FBE.mail.protection.outlook.com (10.167.243.184) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.22
- via Frontend Transport; Wed, 9 Apr 2025 12:49:42 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id B986E40654A;
-	Wed,  9 Apr 2025 12:49:41 +0000 (UTC)
-Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id B784C82026C;
-	Wed,  9 Apr 2025 12:49:41 +0000 (UTC)
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: broonie@kernel.org
-Cc: lgirdwood@gmail.com, yung-chuan.liao@linux.intel.com,
-        pierre-louis.bossart@linux.dev, peter.ujfalusi@linux.intel.com,
-        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com
-Subject: [PATCH v3 3/3] ASoC: SDCA: Create DAI drivers from DisCo
-Date: Wed,  9 Apr 2025 13:49:41 +0100
-Message-Id: <20250409124941.1447265-4-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250409124941.1447265-1-ckeepax@opensource.cirrus.com>
-References: <20250409124941.1447265-1-ckeepax@opensource.cirrus.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A7A264A97
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 12:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744203142; cv=none; b=YyKpEVduATDUERq7mkq0wIVaY7h+/sCiRU0ir8robck8iuX6gj3gzUDZm2Fv94v6juPJwdnjKwW6xrxp00uJ1QM6PMp13rZUxSGoqxjGe1gSk393NUG864T7lpjQ1tH5SH4mA0qrStT7EfnoTVpCqlCMn+SAjvBIQ02S7/nIofA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744203142; c=relaxed/simple;
+	bh=VRVdHQosnpdghOkblzY+Q6O7G0A0ldhMteIRbIkzuHY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=nAWTyi3XeV36oFhHZpPuYzIBZfnnbDggEabCkYp1hp0riUgxrhyY4u1dyV+FRy3WkkZXdEtuJay9ifvsnB6W+joDIgET/gdFkIMXvAZU8pEP0TLemIHOQSLeL7O94kRjLDV9rNqcIVwexnNsEuD0oxvjXmVr1spLR8FNT6302Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com; spf=pass smtp.mailfrom=partner.samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bijmABSU; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=partner.samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250409125216euoutp01319daae0f8559cf6d8c7d0fdd4f9aa6d~0p4MLJBs00473904739euoutp01x
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 12:52:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250409125216euoutp01319daae0f8559cf6d8c7d0fdd4f9aa6d~0p4MLJBs00473904739euoutp01x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1744203137;
+	bh=d4Y7SWFI4qVzd8NlSNxlD8Ff/ZD2SwDfY5q3CblmY7g=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=bijmABSUltROHCz0+LgBRXSBu6ooK+6V9Mfi0Y6T6YQg2ukPCjjX3JI+/JQcW9o5/
+	 ttLfd8MJEtizuMnzT3rjazezu4zvbzHGmp1AIVPMGEgk0+X+0KBjB2BKes7D6/Frhx
+	 lXL6lonKnJJa+ir9cqnqXff3BBN9+bYyATM2XtH0=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250409125216eucas1p1453b5f9e90636a05728dcc6173dc4531~0p4L8PL5M1939619396eucas1p1i;
+	Wed,  9 Apr 2025 12:52:16 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id FB.22.20397.08D66F76; Wed,  9
+	Apr 2025 13:52:16 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250409125216eucas1p150b189cd13807197a233718302103a02~0p4Leaiy90659606596eucas1p1V;
+	Wed,  9 Apr 2025 12:52:16 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250409125216eusmtrp11e8b63b62e7462829208962a12713787~0p4LdzomC0724607246eusmtrp1j;
+	Wed,  9 Apr 2025 12:52:16 +0000 (GMT)
+X-AuditID: cbfec7f5-e59c770000004fad-53-67f66d8050f5
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id ED.1D.19654.08D66F76; Wed,  9
+	Apr 2025 13:52:16 +0100 (BST)
+Received: from localhost.localdomain (unknown [106.210.135.126]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250409125215eusmtip26ea0b30a2e1e7930bd611bbc1d4e540d~0p4LCrRvT2770527705eusmtip2u;
+	Wed,  9 Apr 2025 12:52:15 +0000 (GMT)
+From: "e.kubanski" <e.kubanski@partner.samsung.com>
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc: bjorn@kernel.org, magnus.karlsson@intel.com,
+	maciej.fijalkowski@intel.com, jonathan.lemon@gmail.com, "e.kubanski"
+	<e.kubanski@partner.samsung.com>
+Subject: [PATCH] xsk: Fix race condition in AF_XDP generic RX path
+Date: Wed,  9 Apr 2025 14:49:50 +0200
+Message-Id: <20250409124950.58819-1-e.kubanski@partner.samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,457 +80,151 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBE:EE_|CH4PR19MB8636:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 63712bb6-0ea0-4665-2c69-08dd7764fff2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|61400799027;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TrWDPVzQ9QHXxOW3ZfQXK3/spPUv5OopfEkeu63qHQTdhd6V4juL3JU06EMq?=
- =?us-ascii?Q?mEo1yPDGa0p1Z5E23xuNgsX2Dt24kQt7+OSN8bwWC03uKtzUYnnM8cGj1vuh?=
- =?us-ascii?Q?YHwYT39hwPegNFqbCxhCLHAT68y1W3yymAr2Gt3QtkX/QhZW2oSH9hHJzdlW?=
- =?us-ascii?Q?x3aCZ1o66Anh1H/mhhDxNVIF0PuZJcbkfixWqazOQPaaj3+e0tJXex9Qb/vm?=
- =?us-ascii?Q?uofDqXiTlV/sDsjB3coJk9W2uvSzuKt+8iSB0SzRJqMtWmAuhihb4DKzsJsM?=
- =?us-ascii?Q?n0a/LMtVdzD7LRkLRAMWS58/t23ryTFZQAFqZ1kzK14leRajV2yejX7vRFBD?=
- =?us-ascii?Q?qh5zOYbCkz5qzkptsOMz0ZPOjTIie9REWQI30KgTdeUtjPx9dbM0DoZIRAZl?=
- =?us-ascii?Q?OSTRu3JBjz9cJYU5AhLtNADLhNDHmM8QjBktFjgDIUDq/suEJkx5vWENb5b9?=
- =?us-ascii?Q?6cUXTH/wfQ9eX3yfmgyYP65enBwXLF0XvkXadfDFNnTaqYga12Ai+u2EkI9M?=
- =?us-ascii?Q?uTRz/H0JONJcTrswpf8n1LiwVTqQeXct/sDituVN/2oIGXZ6SN4QKm8fvZOr?=
- =?us-ascii?Q?U/zbhUrlhSovHHM4wa318CYU4OaKRZX/E2iM1meFFIkjpTC4aEW+8G1x4UNu?=
- =?us-ascii?Q?dwLtGyl8Fk3JmMr7PyrtKwwlofKSIef1ZEqoGkEzJB8GDiSSu05hSYUuCx8O?=
- =?us-ascii?Q?SkQhS39GOehlsUBqW595SpTc4qhGyv1iG8uD20TdRd/PAG4ZydvuAKhINK7/?=
- =?us-ascii?Q?vZBQfym65u3mvtZIkC9d8wZbOjAq0G7bSBDiWHvOtXW9sM4xz7u0o+ympLTX?=
- =?us-ascii?Q?uXTPmk236zbbu7rgDRjOK3r1oWoxTdOb79aBei6Il1mPpppuSVr9hSf/XS7F?=
- =?us-ascii?Q?is1ZKSoqkhG1YmWqPS93S62HUX3kfxIU+Eovbv3A8MbmCW/MMG6ic5sIKUPt?=
- =?us-ascii?Q?sl4Ejq9gwV7lY6z+N5HtWRIqHELIyyRIyg4PatFqXPioeih6X64tNlOnDGhq?=
- =?us-ascii?Q?klqkly7Y+QFwSorKf5BFih3WeHc0OPvkZvoPrbQAl/exT+xOXULyiNgc+cEW?=
- =?us-ascii?Q?JVTA458wiqyV31TkLe03E+ccfkURMDBMEFkfS/p/V4it14f9EbnA3yYOvHNW?=
- =?us-ascii?Q?hU7cMtxpMbVeoFqpbcxtPkmeKn750U+K9YvLVRs/kzS1kwmrISnEck/HBN1i?=
- =?us-ascii?Q?XaIIRBsS5mcdO49gRNZVi2ktIYLji3TqybOWPlUZjX4ewL28SMSySIzMOWoL?=
- =?us-ascii?Q?J+lqCytDWhV0fYY69s/VRbvA+bTjZ2Hy8ZTdCAF9tzBLYKyM2ib2333cs+wz?=
- =?us-ascii?Q?pfxBM6WwjnBAehfFvBht50aktvadpS+UVKuw5TpjyUmdbqzxzGtvAYD5uc1M?=
- =?us-ascii?Q?E88DJg04KcOziNGU6o3WUfaKsaemXDaLi4iWcoOgLQ/Mt5pZ827Eu/oWI1Dq?=
- =?us-ascii?Q?DislPmjZJS4Yuv3UV9tyVb6QR4v5frlMfjJgExDySTCBp23p5CymYpOKCn6h?=
- =?us-ascii?Q?nkgWf2pICQ4MLbPne13A2wsh3M9V4NzyK9oS?=
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(61400799027);DIR:OUT;SFP:1102;
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2025 12:49:42.8787
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63712bb6-0ea0-4665-2c69-08dd7764fff2
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF00004FBE.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH4PR19MB8636
-X-Authority-Analysis: v=2.4 cv=dauA3WXe c=1 sm=1 tr=0 ts=67f66cee cx=c_pps a=MPHjzrODTC1L994aNYq1fw==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=XR8D0OoHHMoA:10 a=s63m1ICgrNkA:10
- a=RWc_ulEos4gA:10 a=w1d2syhTAAAA:8 a=TKdQKM3kYW3HcpqIAtQA:9 a=BGLuxUZjE2igh1l4FkT-:22
-X-Proofpoint-GUID: g2NyCyEFJuhs89ZzWPGKOXS4SHuORugb
-X-Proofpoint-ORIG-GUID: g2NyCyEFJuhs89ZzWPGKOXS4SHuORugb
-X-Proofpoint-Spam-Reason: safe
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIKsWRmVeSWpSXmKPExsWy7djP87oNud/SDa60qVpsfb+KxeLB7KXM
+	FrvWzWS2uLxrDpvFzePPWSxWHDrBbnFsgZgDu8fOWXfZPRbvecnksWlVJ5vHwXd7mDw+b5IL
+	YI3isklJzcksSy3St0vgypj07AZbwWPpip7dF9gaGL+LdTFyckgImEh0Pf3E3MXIxSEksIJR
+	Yv2j74wQzhdGiUsLPzOCVAkJfGaU2LSXB6Zj/8XFrBBFyxklTm78BdX+lVHiwLPbLCBVbALG
+	Ek3f94PZIgIWEpsWfQPrYBaYxSixZM8usISwgJPEwpV/2EFsFgFVib8n74LZvALOEgdvLWCE
+	WCcvsf/gWWaIuKDEyZlPwHqZgeLNW2eDbZYQmMsh8XnSFTaIBheJ/imbWCBsYYlXx7ewQ9gy
+	Eqcn97BANDQzSsya2ckO4fQwSqy5egVoHQeQYy2x9qQtiMksoCmxfpc+RK+jxNFZD9khKvgk
+	brwVhLiBT2LStunMEGFeiY42IYhqHYkbF59DbZWS+D5zM9Q1HhJbT+5gg4RorERn1wKWCYwK
+	s5B8NgvJZ7MQbljAyLyKUTy1tDg3PbXYOC+1XK84Mbe4NC9dLzk/dxMjMNWc/nf86w7GFa8+
+	6h1iZOJgPMQowcGsJML7duKXdCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8i/a3pgsJpCeWpGan
+	phakFsFkmTg4pRqYhLQ4FqZMSeS9Piv8QuexfZvKNWOWaLMdzk1tCbdds+7VYcv/8wKqfjoq
+	fTaV4nKwOvPStul020T+q8ahP5IMt+vf3DVxUcF7Nc7KDYY3tR32WK5aFqp+/mhTkpVlxP7u
+	c/0KZ76yRWVNqj584MAtH5kl34JzT23ZfdPjW59btPb2k++byg60Z0tN1crxMFynWlE/Z84j
+	yZYlO+vuqJ1n4XQ5L3z42E0m5syXOquyJ61V5axPvZN5t1zl4spCDo+gnYXXMjsCPf80mKRl
+	eKSZr+8vNq98tHBOzOEMx91ng/Z736lgcOL8LPRI3K3Hfr5rS6h2uNq5335pnbx38nZ97UsN
+	N3z57XF1sGr9mZNKLMUZiYZazEXFiQBV1rXYpAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsVy+t/xe7oNud/SDaZ8ZbHY+n4Vi8WD2UuZ
+	LXatm8lscXnXHDaLm8efs1isOHSC3eLYAjEHdo+ds+6yeyze85LJY9OqTjaPg+/2MHl83iQX
+	wBqlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5eglzHp
+	2Q22gsfSFT27L7A1MH4X62Lk5JAQMJHYf3ExaxcjF4eQwFJGiV9fZzFCJKQk/qz7wwxhC0v8
+	udbFBlH0mVHi+5QudpAEm4CxRNP3/SwgtoiAlcSD2/+YQYqYBeYxSszZtZ4VJCEs4CSxcOUf
+	sAYWAVWJvyfvgtm8As4SB28tgNomL7H/4FlmiLigxMmZT8CGMgPFm7fOZp7AyDcLSWoWktQC
+	RqZVjCKppcW56bnFRnrFibnFpXnpesn5uZsYgUG+7djPLTsYV776qHeIkYmD8RCjBAezkgjv
+	24lf0oV4UxIrq1KL8uOLSnNSiw8xmgLdN5FZSjQ5HxhneSXxhmYGpoYmZpYGppZmxkrivGxX
+	zqcJCaQnlqRmp6YWpBbB9DFxcEo1MHFV926sZDTeJxUsrPHggY3Ckr3qvSFrs9J3ni6XvVpc
+	6Z1Qmhw5MXFx78/0k+v3nRSouyJ7U/Kj1pNpUl9KasRM1PhNju2ZeuqTRO8q60mH59V2H2d5
+	lcH1p3DNyx/z8ufXl57LTwcC7/9pFRLLJxq0m3xkYFkpufbfZ5+/pR9K29LKrk5LvrShTYfx
+	Oe+KbbNn3uA8sr3CTKUq7stRc8u7Oqdtr83J1WG9WDG9yp1N4HSeGb+iSO7HKntR2+fKl8JZ
+	754UiLeLDLVZHGiW5Px19+xLOxls97FtmSNo+OxzpMd2lke8O77eDF5fJR/s3BXioF79e1ed
+	67H2jrU/UvMrlnesrxZ/pVO700uJpTgj0VCLuag4EQBCJHS2+wIAAA==
+X-CMS-MailID: 20250409125216eucas1p150b189cd13807197a233718302103a02
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250409125216eucas1p150b189cd13807197a233718302103a02
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250409125216eucas1p150b189cd13807197a233718302103a02
+References: <CGME20250409125216eucas1p150b189cd13807197a233718302103a02@eucas1p1.samsung.com>
 
-Use the previously parsed DisCo information from ACPI to create the DAI
-drivers required to connect an SDCA Function into an ASoC soundcard.
+rx_lock moved from xsk_socket to xsk_buff_pool.
+Previous synchronization didn't take care of
+shared umem mode in generic RX path where sockets
+share the same xsk_buff_pool.
 
-Create DAI driver structures and populate the supported sample rates
-and sample widths into them based on the Input/Output Terminal and any
-attach Clock Source entities. More complex relationships with channels
-etc. will be added later as constraints as part of the DAI startup.
+RX queue is exclusive to xsk_socket, while FILL
+queue can be shared between multiple sockets.
+This could result in race condition where two
+CPU cores access RX path of two different sockets
+sharing the same umem.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Now both queues are protected by acquiring spinlock
+in shared xsk_buff_pool.
+
+Lock contention may be minimized in the future by some
+per-thread FQ buffering.
+
+It's safe and necessary to move spin_lock_bh(rx_lock)
+after xsk_rcv_check():
+* xs->pool and spinlock_init is synchronized by
+  xsk_bind() -> xsk_is_bound() memory barriers.
+* xsk_rcv_check() may return true at the moment
+  of xsk_release() or xsk_unbind_dev(),
+  however this will not cause any data races or
+  race conditions. xsk_unbind_dev() removes xdp
+  socket from all maps and waits for completion
+  of all outstanding rx operations. Packets in
+  RX path will either complete safely or drop.
+
+Signed-off-by: Eryk Kubanski <e.kubanski@partner.samsung.com>
 ---
+ include/net/xdp_sock.h      | 3 ---
+ include/net/xsk_buff_pool.h | 2 ++
+ net/xdp/xsk.c               | 6 +++---
+ net/xdp/xsk_buff_pool.c     | 1 +
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-Changes since v2:
- - Add missing kerneldoc
-
- include/sound/sdca_asoc.h     |  12 +-
- include/sound/sdca_function.h |  23 ++++
- sound/soc/sdca/sdca_asoc.c    | 226 +++++++++++++++++++++++++++++++++-
- 3 files changed, 255 insertions(+), 6 deletions(-)
-
-diff --git a/include/sound/sdca_asoc.h b/include/sound/sdca_asoc.h
-index d19e7e969283a..9121531f08260 100644
---- a/include/sound/sdca_asoc.h
-+++ b/include/sound/sdca_asoc.h
-@@ -14,11 +14,14 @@ struct device;
- struct sdca_function_data;
- struct snd_kcontrol_new;
- struct snd_soc_component_driver;
-+struct snd_soc_dai_driver;
-+struct snd_soc_dai_ops;
- struct snd_soc_dapm_route;
- struct snd_soc_dapm_widget;
+diff --git a/include/net/xdp_sock.h b/include/net/xdp_sock.h
+index bfe625b55d55..df3f5f07bc7c 100644
+--- a/include/net/xdp_sock.h
++++ b/include/net/xdp_sock.h
+@@ -71,9 +71,6 @@ struct xdp_sock {
+ 	 */
+ 	u32 tx_budget_spent;
  
- int sdca_asoc_count_component(struct device *dev, struct sdca_function_data *function,
--			      int *num_widgets, int *num_routes, int *num_controls);
-+			      int *num_widgets, int *num_routes, int *num_controls,
-+			      int *num_dais);
+-	/* Protects generic receive. */
+-	spinlock_t rx_lock;
+-
+ 	/* Statistics */
+ 	u64 rx_dropped;
+ 	u64 rx_queue_full;
+diff --git a/include/net/xsk_buff_pool.h b/include/net/xsk_buff_pool.h
+index 50779406bc2d..7f0a75d6563d 100644
+--- a/include/net/xsk_buff_pool.h
++++ b/include/net/xsk_buff_pool.h
+@@ -53,6 +53,8 @@ struct xsk_buff_pool {
+ 	refcount_t users;
+ 	struct xdp_umem *umem;
+ 	struct work_struct work;
++	/* Protects generic receive in shared and non-shared umem mode. */
++	spinlock_t rx_lock;
+ 	struct list_head free_list;
+ 	struct list_head xskb_list;
+ 	u32 heads_cnt;
+diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
+index 89d2bef96469..e2a75f3be237 100644
+--- a/net/xdp/xsk.c
++++ b/net/xdp/xsk.c
+@@ -337,13 +337,14 @@ int xsk_generic_rcv(struct xdp_sock *xs, struct xdp_buff *xdp)
+ 	u32 len = xdp_get_buff_len(xdp);
+ 	int err;
  
- int sdca_asoc_populate_dapm(struct device *dev, struct sdca_function_data *function,
- 			    struct snd_soc_dapm_widget *widgets,
-@@ -26,9 +29,14 @@ int sdca_asoc_populate_dapm(struct device *dev, struct sdca_function_data *funct
- int sdca_asoc_populate_controls(struct device *dev,
- 				struct sdca_function_data *function,
- 				struct snd_kcontrol_new *kctl);
-+int sdca_asoc_populate_dais(struct device *dev, struct sdca_function_data *function,
-+			    struct snd_soc_dai_driver *dais,
-+			    const struct snd_soc_dai_ops *ops);
- 
- int sdca_asoc_populate_component(struct device *dev,
- 				 struct sdca_function_data *function,
--				 struct snd_soc_component_driver *component_drv);
-+				 struct snd_soc_component_driver *component_drv,
-+				 struct snd_soc_dai_driver **dai_drv, int *num_dai_drv,
-+				 const struct snd_soc_dai_ops *ops);
- 
- #endif // __SDCA_ASOC_H__
-diff --git a/include/sound/sdca_function.h b/include/sound/sdca_function.h
-index 77ffb1f4e1ca9..be7e4a88cbed0 100644
---- a/include/sound/sdca_function.h
-+++ b/include/sound/sdca_function.h
-@@ -168,6 +168,20 @@ enum sdca_ot_controls {
- 	SDCA_CTL_OT_NDAI_PACKETTYPE			= 0x17,
- };
- 
-+/**
-+ * enum sdca_usage_range - Column definitions for Usage
-+ */
-+enum sdca_usage_range {
-+	SDCA_USAGE_NUMBER				= 0,
-+	SDCA_USAGE_CBN					= 1,
-+	SDCA_USAGE_SAMPLE_RATE				= 2,
-+	SDCA_USAGE_SAMPLE_WIDTH				= 3,
-+	SDCA_USAGE_FULL_SCALE				= 4,
-+	SDCA_USAGE_NOISE_FLOOR				= 5,
-+	SDCA_USAGE_TAG					= 6,
-+	SDCA_USAGE_NCOLS				= 7,
-+};
+-	spin_lock_bh(&xs->rx_lock);
+ 	err = xsk_rcv_check(xs, xdp, len);
+ 	if (!err) {
++		spin_lock_bh(&xs->pool->rx_lock);
+ 		err = __xsk_rcv(xs, xdp, len);
+ 		xsk_flush(xs);
++		spin_unlock_bh(&xs->pool->rx_lock);
+ 	}
+-	spin_unlock_bh(&xs->rx_lock);
 +
- /**
-  * enum sdca_mu_controls - SDCA Controls for Mixer Unit
-  *
-@@ -246,6 +260,15 @@ enum sdca_cs_controls {
- 	SDCA_CTL_CS_SAMPLERATEINDEX			= 0x10,
- };
- 
-+/**
-+ * enum sdca_samplerateindex_range - Column definitions for SampleRateIndex
-+ */
-+enum sdca_samplerateindex_range {
-+	SDCA_SAMPLERATEINDEX_INDEX			= 0,
-+	SDCA_SAMPLERATEINDEX_RATE			= 1,
-+	SDCA_SAMPLERATEINDEX_NCOLS			= 2,
-+};
-+
- /**
-  * enum sdca_cx_controls - SDCA Controls for Clock Selector
-  *
-diff --git a/sound/soc/sdca/sdca_asoc.c b/sound/soc/sdca/sdca_asoc.c
-index a54275e2c8449..ccbe58d73ef5e 100644
---- a/sound/soc/sdca/sdca_asoc.c
-+++ b/sound/soc/sdca/sdca_asoc.c
-@@ -89,6 +89,8 @@ static bool exported_control(struct sdca_control *control)
-  * required number of DAPM routes for the Function.
-  * @num_controls: Output integer pointer, will be filled with the
-  * required number of ALSA controls for the Function.
-+ * @num_dais: Output integer pointer, will be filled with the
-+ * required number of ASoC DAIs for the Function.
-  *
-  * This function counts various things within the SDCA Function such
-  * that the calling driver can allocate appropriate space before
-@@ -97,13 +99,15 @@ static bool exported_control(struct sdca_control *control)
-  * Return: Returns zero on success, and a negative error code on failure.
-  */
- int sdca_asoc_count_component(struct device *dev, struct sdca_function_data *function,
--			      int *num_widgets, int *num_routes, int *num_controls)
-+			      int *num_widgets, int *num_routes, int *num_controls,
-+			      int *num_dais)
- {
- 	int i, j;
- 
- 	*num_widgets = function->num_entities - 1;
- 	*num_routes = 0;
- 	*num_controls = 0;
-+	*num_dais = 0;
- 
- 	for (i = 0; i < function->num_entities - 1; i++) {
- 		struct sdca_entity *entity = &function->entities[i];
-@@ -113,6 +117,7 @@ int sdca_asoc_count_component(struct device *dev, struct sdca_function_data *fun
- 		case SDCA_ENTITY_TYPE_OT:
- 			*num_routes += !!entity->iot.clock;
- 			*num_routes += !!entity->iot.is_dataport;
-+			*num_dais += !!entity->iot.is_dataport;
- 			break;
- 		case SDCA_ENTITY_TYPE_PDE:
- 			*num_routes += entity->pde.num_managed;
-@@ -986,6 +991,205 @@ int sdca_asoc_populate_controls(struct device *dev,
+ 	return err;
  }
- EXPORT_SYMBOL_NS(sdca_asoc_populate_controls, "SND_SOC_SDCA");
  
-+static unsigned int rate_find_mask(unsigned int rate)
-+{
-+	switch (rate) {
-+	case 0:
-+		return SNDRV_PCM_RATE_8000_768000;
-+	case 5512:
-+		return SNDRV_PCM_RATE_5512;
-+	case 8000:
-+		return SNDRV_PCM_RATE_8000;
-+	case 11025:
-+		return SNDRV_PCM_RATE_11025;
-+	case 16000:
-+		return SNDRV_PCM_RATE_16000;
-+	case 22050:
-+		return SNDRV_PCM_RATE_22050;
-+	case 32000:
-+		return SNDRV_PCM_RATE_32000;
-+	case 44100:
-+		return SNDRV_PCM_RATE_44100;
-+	case 48000:
-+		return SNDRV_PCM_RATE_48000;
-+	case 64000:
-+		return SNDRV_PCM_RATE_64000;
-+	case 88200:
-+		return SNDRV_PCM_RATE_88200;
-+	case 96000:
-+		return SNDRV_PCM_RATE_96000;
-+	case 176400:
-+		return SNDRV_PCM_RATE_176400;
-+	case 192000:
-+		return SNDRV_PCM_RATE_192000;
-+	case 352800:
-+		return SNDRV_PCM_RATE_352800;
-+	case 384000:
-+		return SNDRV_PCM_RATE_384000;
-+	case 705600:
-+		return SNDRV_PCM_RATE_705600;
-+	case 768000:
-+		return SNDRV_PCM_RATE_768000;
-+	case 12000:
-+		return SNDRV_PCM_RATE_12000;
-+	case 24000:
-+		return SNDRV_PCM_RATE_24000;
-+	case 128000:
-+		return SNDRV_PCM_RATE_128000;
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static u64 width_find_mask(unsigned int bits)
-+{
-+	switch (bits) {
-+	case 0:
-+		return SNDRV_PCM_FMTBIT_S8 | SNDRV_PCM_FMTBIT_S16_LE |
-+		       SNDRV_PCM_FMTBIT_S20_LE | SNDRV_PCM_FMTBIT_S24_LE |
-+		       SNDRV_PCM_FMTBIT_S32_LE;
-+	case 8:
-+		return SNDRV_PCM_FMTBIT_S8;
-+	case 16:
-+		return SNDRV_PCM_FMTBIT_S16_LE;
-+	case 20:
-+		return SNDRV_PCM_FMTBIT_S20_LE;
-+	case 24:
-+		return SNDRV_PCM_FMTBIT_S24_LE;
-+	case 32:
-+		return SNDRV_PCM_FMTBIT_S32_LE;
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static int populate_rate_format(struct device *dev,
-+				struct sdca_function_data *function,
-+				struct sdca_entity *entity,
-+				struct snd_soc_pcm_stream *stream)
-+{
-+	struct sdca_control_range *range;
-+	unsigned int sample_rate, sample_width;
-+	unsigned int clock_rates = 0;
-+	unsigned int rates = 0;
-+	u64 formats = 0;
-+	int sel, i;
-+
-+	switch (entity->type) {
-+	case SDCA_ENTITY_TYPE_IT:
-+		sel = SDCA_CTL_IT_USAGE;
-+		break;
-+	case SDCA_ENTITY_TYPE_OT:
-+		sel = SDCA_CTL_OT_USAGE;
-+		break;
-+	default:
-+		dev_err(dev, "%s: entity type has no usage control\n",
-+			entity->label);
-+		return -EINVAL;
-+	}
-+
-+	if (entity->iot.clock) {
-+		range = selector_find_range(dev, entity->iot.clock,
-+					    SDCA_CTL_CS_SAMPLERATEINDEX,
-+					    SDCA_SAMPLERATEINDEX_NCOLS, 0);
-+		if (!range)
-+			return -EINVAL;
-+
-+		for (i = 0; i < range->rows; i++) {
-+			sample_rate = sdca_range(range, SDCA_SAMPLERATEINDEX_RATE, i);
-+			clock_rates |= rate_find_mask(sample_rate);
-+		}
-+	} else {
-+		clock_rates = UINT_MAX;
-+	}
-+
-+	range = selector_find_range(dev, entity, sel, SDCA_USAGE_NCOLS, 0);
-+	if (!range)
-+		return -EINVAL;
-+
-+	for (i = 0; i < range->rows; i++) {
-+		sample_rate = sdca_range(range, SDCA_USAGE_SAMPLE_RATE, i);
-+		sample_rate = rate_find_mask(sample_rate);
-+
-+		if (sample_rate & clock_rates) {
-+			rates |= sample_rate;
-+
-+			sample_width = sdca_range(range, SDCA_USAGE_SAMPLE_WIDTH, i);
-+			formats |= width_find_mask(sample_width);
-+		}
-+	}
-+
-+	stream->formats = formats;
-+	stream->rates = rates;
-+
-+	return 0;
-+}
-+
-+/**
-+ * sdca_asoc_populate_dais - fill in an array of DAI drivers for a Function
-+ * @dev: Pointer to the device against which allocations will be done.
-+ * @function: Pointer to the Function information.
-+ * @dais: Array of DAI drivers to be populated.
-+ * @ops: DAI ops to be attached to each of the created DAI drivers.
-+ *
-+ * This function populates an array of ASoC DAI drivers from the DisCo
-+ * information for a particular SDCA Function. Typically,
-+ * snd_soc_asoc_count_component will be used to allocate an
-+ * appropriately sized array before calling this function.
-+ *
-+ * Return: Returns zero on success, and a negative error code on failure.
-+ */
-+
-+int sdca_asoc_populate_dais(struct device *dev, struct sdca_function_data *function,
-+			    struct snd_soc_dai_driver *dais,
-+			    const struct snd_soc_dai_ops *ops)
-+{
-+	int i, j;
-+	int ret;
-+
-+	for (i = 0, j = 0; i < function->num_entities - 1; i++) {
-+		struct sdca_entity *entity = &function->entities[i];
-+		struct snd_soc_pcm_stream *stream;
-+		const char *stream_suffix;
-+
-+		switch (entity->type) {
-+		case SDCA_ENTITY_TYPE_IT:
-+			stream = &dais[j].playback;
-+			stream_suffix = "Playback";
-+			break;
-+		case SDCA_ENTITY_TYPE_OT:
-+			stream = &dais[j].capture;
-+			stream_suffix = "Capture";
-+			break;
-+		default:
-+			continue;
-+		}
-+
-+		if (!entity->iot.is_dataport)
-+			continue;
-+
-+		stream->stream_name = devm_kasprintf(dev, GFP_KERNEL, "%s %s",
-+						     entity->label, stream_suffix);
-+		if (!stream->stream_name)
-+			return -ENOMEM;
-+		/* Channels will be further limited by constraints */
-+		stream->channels_min = 1;
-+		stream->channels_max = SDCA_MAX_CHANNEL_COUNT;
-+
-+		ret = populate_rate_format(dev, function, entity, stream);
-+		if (ret)
-+			return ret;
-+
-+		dais[j].id = i;
-+		dais[j].name = entity->label;
-+		dais[j].ops = ops;
-+		j++;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_NS(sdca_asoc_populate_dais, "SND_SOC_SDCA");
-+
- /**
-  * sdca_asoc_populate_component - fill in a component driver for a Function
-  * @dev: Pointer to the device against which allocations will be done.
-@@ -1000,16 +1204,19 @@ EXPORT_SYMBOL_NS(sdca_asoc_populate_controls, "SND_SOC_SDCA");
-  */
- int sdca_asoc_populate_component(struct device *dev,
- 				 struct sdca_function_data *function,
--				 struct snd_soc_component_driver *component_drv)
-+				 struct snd_soc_component_driver *component_drv,
-+				 struct snd_soc_dai_driver **dai_drv, int *num_dai_drv,
-+				 const struct snd_soc_dai_ops *ops)
- {
- 	struct snd_soc_dapm_widget *widgets;
- 	struct snd_soc_dapm_route *routes;
- 	struct snd_kcontrol_new *controls;
--	int num_widgets, num_routes, num_controls;
-+	struct snd_soc_dai_driver *dais;
-+	int num_widgets, num_routes, num_controls, num_dais;
- 	int ret;
+@@ -1724,7 +1725,6 @@ static int xsk_create(struct net *net, struct socket *sock, int protocol,
+ 	xs = xdp_sk(sk);
+ 	xs->state = XSK_READY;
+ 	mutex_init(&xs->mutex);
+-	spin_lock_init(&xs->rx_lock);
  
- 	ret = sdca_asoc_count_component(dev, function, &num_widgets, &num_routes,
--					&num_controls);
-+					&num_controls, &num_dais);
- 	if (ret)
- 		return ret;
- 
-@@ -1025,6 +1232,10 @@ int sdca_asoc_populate_component(struct device *dev,
- 	if (!controls)
- 		return -ENOMEM;
- 
-+	dais = devm_kcalloc(dev, num_dais, sizeof(*dais), GFP_KERNEL);
-+	if (!dais)
-+		return -ENOMEM;
-+
- 	ret = sdca_asoc_populate_dapm(dev, function, widgets, routes);
- 	if (ret)
- 		return ret;
-@@ -1033,6 +1244,10 @@ int sdca_asoc_populate_component(struct device *dev,
- 	if (ret)
- 		return ret;
- 
-+	ret = sdca_asoc_populate_dais(dev, function, dais, ops);
-+	if (ret)
-+		return ret;
-+
- 	component_drv->dapm_widgets = widgets;
- 	component_drv->num_dapm_widgets = num_widgets;
- 	component_drv->dapm_routes = routes;
-@@ -1040,6 +1255,9 @@ int sdca_asoc_populate_component(struct device *dev,
- 	component_drv->controls = controls;
- 	component_drv->num_controls = num_controls;
- 
-+	*dai_drv = dais;
-+	*num_dai_drv = num_dais;
-+
- 	return 0;
- }
- EXPORT_SYMBOL_NS(sdca_asoc_populate_component, "SND_SOC_SDCA");
+ 	INIT_LIST_HEAD(&xs->map_list);
+ 	spin_lock_init(&xs->map_list_lock);
+diff --git a/net/xdp/xsk_buff_pool.c b/net/xdp/xsk_buff_pool.c
+index 1f7975b49657..3a5f16f53178 100644
+--- a/net/xdp/xsk_buff_pool.c
++++ b/net/xdp/xsk_buff_pool.c
+@@ -87,6 +87,7 @@ struct xsk_buff_pool *xp_create_and_assign_umem(struct xdp_sock *xs,
+ 	pool->addrs = umem->addrs;
+ 	pool->tx_metadata_len = umem->tx_metadata_len;
+ 	pool->tx_sw_csum = umem->flags & XDP_UMEM_TX_SW_CSUM;
++	spin_lock_init(&pool->rx_lock);
+ 	INIT_LIST_HEAD(&pool->free_list);
+ 	INIT_LIST_HEAD(&pool->xskb_list);
+ 	INIT_LIST_HEAD(&pool->xsk_tx_list);
 -- 
-2.39.5
+2.34.1
 
 
