@@ -1,86 +1,165 @@
-Return-Path: <linux-kernel+bounces-595854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B073BA823CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:44:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B604A823D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACD0F1B87601
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:44:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 885BD4A67B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043BF25E46F;
-	Wed,  9 Apr 2025 11:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512F325E820;
+	Wed,  9 Apr 2025 11:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ap8n6ozw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HHQyIUCH"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9D625E471;
-	Wed,  9 Apr 2025 11:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A93125E81A;
+	Wed,  9 Apr 2025 11:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744199020; cv=none; b=InJNxuF75IMtgWQJ7BpteO30uoMXvmm9ZVmOnejR52aGpPEwNn9DXLp1sXEsRlvMI63NpaLPudjUyePj8vY9RnBPSLq2Ph4FCI/Wy7IGjaRIF9gR94929o0825GHhTszXA/dutZkmQoawUYTgxCcFMKruYVXncKGU4LesQ7GIfg=
+	t=1744199048; cv=none; b=MVcFXpdGauQDJKaH8E/+DVPwXZTOWIKwXxpbwgsqT1VTCjw3/lJUmiZzZ1/EMAJIzHzVskmqv0A6TGhlYFOPuETW36zJOFf0qcktwgjHYGaov0csUxwRWQfr/aC0ZJ7m1d3JTwGxumhGbnYonJ5c2V9R0Ar/2rg1irBT968Bk4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744199020; c=relaxed/simple;
-	bh=/ExwSPSjB5A67WWvkavS/Xj8MeFFIKCvmUnKkrHdxss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tAuP+eXcm0TtiE6MT5FJM3PAVulDA13t4Y1XeO+i4HIEkwEEmm08yRcbX9wraJ/pKGkiS3q2qSIm7xefmn+u/h62mc9Dkr6CDjtiKDx+qJ5D3Odgt8S+cMkNnSyxjsMiOq2xbCZt7fVnU9tFatuhT3vT8f+Nd3cOgJSISBrp1X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ap8n6ozw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36F8AC4CEE3;
-	Wed,  9 Apr 2025 11:43:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744199019;
-	bh=/ExwSPSjB5A67WWvkavS/Xj8MeFFIKCvmUnKkrHdxss=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ap8n6ozwg6WEWWceStLoX1sudClwRpVYjGvLV4c9TVajzEI6qG15P7fd/BmiZjju4
-	 T8yhnxBTXMJhHs47hfLOlsIFtRWb1D+9Mi19mV7TjdAuI6S0Uu4udvH9HiawDQ4H8u
-	 LmygXeaJrd8liyJ5GHiqypSNG0p0zzfDhkFBZerL3DFbbXOZDlFkrCt+jwUZDhOTBZ
-	 rS/RFgHADeRuu+r2o7sGlD7ujxs1DuYCW9pbLLnWUb0X3eTWon1oqWD4DWXtA1HQEW
-	 HB3kjtnhUFOxondC//AUg2EPGz4h4im93nuUckazZw4dR3xdk2vKjRDkdlIYbpX0QE
-	 lTAyvOBIfLNLQ==
-Date: Wed, 9 Apr 2025 13:43:34 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: "Ahmed S. Darwish" <darwi@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
-	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 0/2] x86/cacheinfo: Fixes for CPUID(0x80000005) and
- CPUID(0x80000006)
-Message-ID: <Z_ZdZpJqgeZ16Fwj@gmail.com>
-References: <20250409105429.1048199-1-darwi@linutronix.de>
+	s=arc-20240116; t=1744199048; c=relaxed/simple;
+	bh=1cPrVQ7kf4CjzELcx2r3Mt/clhzq06BtS1bl+mQBAbc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=DD2hdH/ja8NiBXpGk/ES4H5KNvWDsihFFo+C84eR8IY4fhWvLUZdKCGXr2QhFIPG6OYLMEnFrnnaHyaSrvga7OsjCu7fBzFYWGkm/fmK6RJhLJjaBHo4OCLyfmyHv+TQ42IOAdf9IuK++ZuUv67IMEsjLCin3cVmLQ5NJrKSjeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HHQyIUCH; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1744199024; x=1744803824; i=markus.elfring@web.de;
+	bh=ZcboPvUR5IHm0tuhCfo0KhbP/W6yUMqtAc0Ziq24U7U=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=HHQyIUCH2tXvFr1A9+pq3qpGYQJ58DNhx0SvwG3ZcnAQEInuolYwItp6q8aHQxVg
+	 9hEl7g83CAsnsLDxLy4+Zgi4Df4Y52kd3Zpx0PZyPYXvqp795SEd0YmCe7oLPBHv9
+	 tgO0IAfSBqan6RYKvkp6oSpmviw4XgDD2c7l4cjiEt6HqZsTNIgBRPMOlR0+9NBJ2
+	 RUBPJuCX1DNTjQklZjsYcrc3H1fgU3BMzSgGUGMjgYqHkF8acEhUTCZgapXHaL+Ha
+	 2tUxHRSJmhrGhnVHowTMdo1uRY1wpnvW7olHQU6ik0AW+4o3dsQsObvMtINTV7Alf
+	 pX6+q01rCHUk9xptsQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.27]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N30dV-1t4LfG3KqT-00xgZ1; Wed, 09
+ Apr 2025 13:43:43 +0200
+Message-ID: <3727de04-7993-4b81-80c0-adb40b847307@web.de>
+Date: Wed, 9 Apr 2025 13:43:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409105429.1048199-1-darwi@linutronix.de>
+User-Agent: Mozilla Thunderbird
+To: linux-sunxi@lists.linux.dev, linux-crypto@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Andre Przywara
+ <andre.przywara@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+ Corentin Labbe <clabbe.montjoie@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Ovidiu Panait <ovidiu.panait.oss@gmail.com>,
+ Samuel Holland <samuel@sholland.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] crypto: sun8i-ce-hash - Refine exception handling in
+ sun8i_ce_hash_run()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jEGNiMKs8nAQw2qIQjUCQq/KWOsVvdlxMimxs5ulT7dkC8Jy8vn
+ sjvXtDkHx1NdmMR2lfMzvk9aLWGt6cUsQAf4s4emy/sWUqdg3UOLtEjqk17QN47SO7dFcJb
+ AXUoI3lNiWi1QxGCvZBv3C1zvrsuJNDxfKbgyudePrBW8wI9qmNQ4IeqhC27tyOSa3ZpB6i
+ 1sbNZMcwz1m1/XdJa+Dgw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xNwPz1kyRa4=;mhac4w7rrkZIUH0v2PZOyYFCNiY
+ JyzmGclW/6PQvJJ45Nz42p+6+B9uGh+XKN1ZwSDZpqjHJ5OimogrHASfjWlyFI14Hh0YYUOol
+ ZkUJknhX4uAv5J+cFMubYlTZGUG/Bo++ZnvSGmGnF70rAcMsxeAMHcAVrBD8L2ujzwCsu8Nqe
+ 4JB3h+oEyfqn9FfS5GOfCXVPcf4+EDFGoQ8QvUd+qjCzbD0dtLan5W5QV7m8loLKGao52gnhI
+ FPfJYsA++FkB+UbSCAlBRw7Xm+gZv01E7L3fPOLV/2lrIhXxhNjiGO3svor4dTetQW5vXW5HR
+ 8fTBaqSwwVxuFLK/1bACOSrkbyo8WTEoeUzI8GZHaui31Z/XXFBKUzdEody1ymjEVGlMDdTrB
+ epPne+q0z0xzaIWBJyBAIjZFBYogkQZ4dxc5BdI4kdH5keHGGptYQlAoLBChZhWrQQ/uhUJK8
+ TzxmOn/KSiIhwLOUUo/mG1bh9emuXe14PRzcl/nugKDccjefIYJ+0Dq8+/gKyvKyXXRGZyD1q
+ okI2wmDTI3VGUiHjZQI0fjdleH1QJqkR9B986Mu1aw+3DMv2czXTuMI8Ac7+63pJxuK/RWys/
+ MQzG9ZhH6fx8HNTraJBRgH3J006Tze/vLmPqGhZjdGIqhANJPp+I8IuMLQju9yme3Y4wCQ3WZ
+ qOR2embihPCMKfrba+MTqjHe5FOLEXqgyeRFRL3isO0gPaQAiHNZ8Klk5PlgMIrRGS509nvFM
+ I+5enqjNqKWdUcj9AjZRG20o+4d8hKYJBRS0UVCrscp44yGgG8aW2M5BlWk9faqnicr7Kz1tS
+ J2QbvRCUcAr2DBHu82vCmCbhWeL8dvRRzOIYc/Ljoya4rNX3A9EG8sbvcccOhLyth3mS29lIl
+ 08m+rEr/FPMIuI/GKUqALXQpa2tlbFMizemDSUJ3dNUsgwhiXZ57OtlZRx582WVHUUyxjEb4u
+ 3Oe6kQvxD/soNWmJC2ESsC6OzZWcIPvqfwXlEzkUcw8K1gJxGcg1Lq0vfxCFeiq3vEMDCNv7l
+ 4R3tkXylq+wgilTD8HgWiKsGtM3rRPufDeD3jKunDbAwhQMDeOpcGeCjAb7YuixPJzGru9m5Y
+ l1hVZfZvuNN6tjfgEljjut8M49BAwGWByQ6uWpkk2yGySY+82oOo8otShveK2kS38P5GzsRFx
+ 2i1/j2BzovByq9gGjlz5llgCv92MpDkwPpt9QkzA2J7/baSD1tcoVPSVbfwqRYRVZpIJLs6Gr
+ cHtSBZikXE8fIQC2liW+EtsF+sALU5F5FMujb4W3+pqqrQakTozhzTUrvwIeWKixNi+VGuxc+
+ YYxy35wkU0EPEoMUeji3co3tbLllbFWCeGWyUQis0S8lxv0NXhThkW59OqfliT9sn217/IJxN
+ kRxcwoW+UFf+a44sfTstf4N36E1XsLqTFkxemtsKQ/gej5PECPnTs2a20VBDGZuVWqlTstS/J
+ fz61JGNz42bJBhKTE7MNA9yRm6vdHnT4o9Yi9lW3tCK44ZDyt4SnI2F3fValD3iGEAf0ewnUA
+ l5CXOLI5PhcXDfZoi08=
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 9 Apr 2025 13:26:55 +0200
 
-* Ahmed S. Darwish <darwi@linutronix.de> wrote:
+Two if branches contained duplicate source code.
+Thus avoid the specification of repeated error code assignments by using
+additional labels instead.
 
-> Hi,
-> 
-> While working on the x86-cpuid-db CPUID model on top of the CPUID(2) and
-> CPUID(4) cleanups at tip/x86/cpu,[*] I've discovered some L1/2/3 cache
-> associativity parsing issues for the AMD CPUID(4) emulation logic .
-> 
-> Here are the fixes on top of -rc1.
+This issue was transformed by using the Coccinelle software.
 
-Could you please send these against tip:master?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-tip:x86/cpu already has your previous series, and I don't see the need 
-to create a version skew between v6.15 and the x86 tree for v6.16.
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c b/drivers/c=
+rypto/allwinner/sun8i-ce/sun8i-ce-hash.c
+index ba13fb75c05d..7d31e190bb6a 100644
+=2D-- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c
+@@ -399,14 +399,14 @@ int sun8i_ce_hash_run(struct crypto_engine *engine, =
+void *breq)
+ 	}
+ 	if (len > 0) {
+ 		dev_err(ce->dev, "remaining len %d\n", len);
+-		err =3D -EINVAL;
+-		goto err_unmap_src;
++		goto e_inval_src;
+ 	}
+ 	addr_res =3D dma_map_single(ce->dev, result, digestsize, DMA_FROM_DEVICE=
+);
+ 	cet->t_dst[0].addr =3D desc_addr_val_le32(ce, addr_res);
+ 	cet->t_dst[0].len =3D cpu_to_le32(digestsize / 4);
+ 	if (dma_mapping_error(ce->dev, addr_res)) {
+ 		dev_err(ce->dev, "DMA map dest\n");
++e_inval_src:
+ 		err =3D -EINVAL;
+ 		goto err_unmap_src;
+ 	}
+@@ -428,16 +428,15 @@ int sun8i_ce_hash_run(struct crypto_engine *engine, =
+void *breq)
+ 		j =3D hash_pad(bf, 2 * bs, j, byte_count, false, bs);
+ 		break;
+ 	}
+-	if (!j) {
+-		err =3D -EINVAL;
+-		goto err_unmap_result;
+-	}
++	if (!j)
++		goto e_inval_result;
 
-Thanks,
+ 	addr_pad =3D dma_map_single(ce->dev, buf, j * 4, DMA_TO_DEVICE);
+ 	cet->t_src[i].addr =3D desc_addr_val_le32(ce, addr_pad);
+ 	cet->t_src[i].len =3D cpu_to_le32(j);
+ 	if (dma_mapping_error(ce->dev, addr_pad)) {
+ 		dev_err(ce->dev, "DMA error on padding SG\n");
++e_inval_result:
+ 		err =3D -EINVAL;
+ 		goto err_unmap_result;
+ 	}
+=2D-
+2.49.0
 
-	Ingo
 
