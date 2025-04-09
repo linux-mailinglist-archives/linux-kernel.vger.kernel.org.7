@@ -1,134 +1,115 @@
-Return-Path: <linux-kernel+bounces-595653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1BEA8213E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:45:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65AA1A82143
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 770431B8096B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:46:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A36077AD1B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CE225C6F7;
-	Wed,  9 Apr 2025 09:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951A625D214;
+	Wed,  9 Apr 2025 09:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EijrNYNw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r8aO4zvm"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450F62512D6
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C8B25D219
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744191943; cv=none; b=YK5fkOpeTC8kp85JVRUigR5W1AlZHiN2Hug9DgIsbxa7ydezlgvJIAyf5EWvTFEQYTMlV6VctNJkFWlhcDecfI0Nef5Vw8iSZ0Jpj+i9yD7b6V7MVJX0yoE2R8sbOcIKYLYWWSNqWwFcSFi0x1Xr2dXnV0TkGdyBjB13fQ/IE/0=
+	t=1744191958; cv=none; b=qNa5elSVt1Ge2joMCgRS64clhEg+Crh0AA3qS8bpCD632g4nrOkT4YPDl9lv5DmirdJ+kZPV0JtfrXns1zA2JDCGp4bquULyD4pCCp1uMgB39g/ehJWF5AntGbzlNg6idmiAsks7BYRkKSpW3+n9JTwQndbo6Uy+tAa1uxckRYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744191943; c=relaxed/simple;
-	bh=mxlPo90HtB4sfM6i7FrlD+5M/txT/bjN9IXalakFByQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PUyl/7cOUqXNwxsKrFJEipUjAYBxTDcT9gcBTVi/4NS0OojKS00O39ZDyWP9LaUHfTGDKNA+1Jgtf791SHGwY81nrSTzufLLkihbar+xqiY+J7Pqwb7Rw7gCy7Xt0YFlY5LpZyWKblHUv720sCibWPwO5yPKw96WnPLOH0wLxd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EijrNYNw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744191941;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mxlPo90HtB4sfM6i7FrlD+5M/txT/bjN9IXalakFByQ=;
-	b=EijrNYNw8K7IRAy5F//GAO7ZB/xT0ZaxlVViD0YzB0cmPk7Y4c36fmImnlSDSXq+nxhKnw
-	bND+/v++VGOCxaAvU5832WCFCFwirTP9RDSGbm523mvocYvRcNVDWKseidcS3BTUaVx4qk
-	K7paBUykgyUxAWPPfEhUBk83YC7MwL4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-286-z8-qwL-sPAevxcnBcL-gow-1; Wed, 09 Apr 2025 05:45:39 -0400
-X-MC-Unique: z8-qwL-sPAevxcnBcL-gow-1
-X-Mimecast-MFC-AGG-ID: z8-qwL-sPAevxcnBcL-gow_1744191938
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43cec217977so41938245e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 02:45:39 -0700 (PDT)
+	s=arc-20240116; t=1744191958; c=relaxed/simple;
+	bh=jbY8OFRGtCS3qGB2dY7IOuwbUBWjbDPtzPyd0O8E/WA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ixWZR2WaGsB/9PjRISn9k0uD7aPmPxP0zR1fOBSQsIL+6sfQ3URfrv1K93wV6Wt1TRvjeuVkBS/AqP3mawys69MWII+TKCeJL4Hl6BYL1P/qA4gTnSbQJAFOQeKrdIcINPRlzI6y7OdbTB/5uAOQ7+fUscL08orWbjD51SvEEn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r8aO4zvm; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-39c2da64df9so4365309f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 02:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744191954; x=1744796754; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jbY8OFRGtCS3qGB2dY7IOuwbUBWjbDPtzPyd0O8E/WA=;
+        b=r8aO4zvmzxwWaruksoc0zgn83lutnuIMskxjEAoafYbf/yG5XzD82W4K/ESlugpz2H
+         sfpgLEa5qdi0SdCzUyOcGodp3trJ3WpKd/kQ6aMXUcVxDqH1+D/FfTxm9lDxrPEOuaTf
+         yfysVF8uv87aI7CTTiSOodxdGdYzraoFnxm4hj2l43KNAEav2RT5EzBolLmdqB+uuodf
+         tCvg6EP5/3QpVPzVKQ/VVMNlG1f85K7IINkRxlfhE/SORvGdvm69UH2RUcf9zYJlejiy
+         EJv+FVXE0eMO2EJhQ1CZ2yzRZzIdoB10qvY5HfbKIe1WcmfHWx2I1zUSalsnGSTcliAw
+         /mWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744191938; x=1744796738;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mxlPo90HtB4sfM6i7FrlD+5M/txT/bjN9IXalakFByQ=;
-        b=sKviWxf5SmRBUYoW6ybcxqvvsbn2VuHhzLjGMtKYku1AY8mFMJypIyCbi5hARhkg9x
-         4qSZrCpof+CAK0bQ3WuzUQxESoFr0h903EDhg8RrDN9QkBjWfM160r1l1I7ZMcXndSC3
-         4CC96Rd7LCn+URf+Idpyr/T6y7bZCkjlISRBwYSZRYLvhxsKHHpP7XQ8B3Kh23SZ+axR
-         me/1hIQ1iCNMlVXXisojmNo1gcZgpLNpAD8LibrG0eApJY+wn0ih/Bzvn+HAS3h0wl3s
-         1gqtoHcLf42gY0dSOR6sWVX6G4PAtK2YIWXBYNN1lK92Rdqn3k5Ckpy0AKcbfz01mJPF
-         s23g==
-X-Gm-Message-State: AOJu0Yz67yqqD2zAZh0l6KZ+9MQ0xnXz3kEBXOw1hZOBmQkRj8ZUklkE
-	KyGQKGIeG6MzwdSIIKqz/rtufOgDNKyjFj+R+YN2+oERbtwTaRA2rG1cLBVytJJYgysYlg4z3Qf
-	ihFzawh0WwpiJOWlXPAIUtkBW+dZ12DC0UWmpCTdulEKhsPS3dHHs/o1mNCNiP+rmk1qdtSnqJe
-	hUfD8RfAhSlV0mh6b8PWoxq4XCfntG7QJs+rXD4icd4w6zKPU=
-X-Gm-Gg: ASbGnctNgwuJyfCAUhdYm/7tCXdqwkUHwelI0MLrsf5R1WSroQ8Vw4Vo6yRmeK1YqVm
-	JmA+N1IoVIGfyQHf8SaNg36uRAIbkDbpccCKHuJkCyOcYaiICddyJS2lMbdCJlxZwT4THUrR2LD
-	mCrOqZTn2XfWFLllMrW9V3bYcR4LJXEoOwQZAXEO/DiYqVIUiCcpHWwCxGJ/n3y8KE2PjyzRyVz
-	YmdtXiC/K6NCTWHi9zvVM+pxJH7pQkyjwQEJLQhkw0ywHUDssqH3B5w6HMRAbREVY0pZAY/lOG5
-	3/xrRI+Jhkiyrv6qkglEzdoZF24zBGPWMjehaJo=
-X-Received: by 2002:a05:600c:5009:b0:43d:46de:b0eb with SMTP id 5b1f17b1804b1-43f1fe16c8amr17501115e9.12.1744191938496;
-        Wed, 09 Apr 2025 02:45:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEXy3ExrtM+5HnBTv45Hio9rD/j2j1oGBy3iKDcc31KCzK7Iv6sdOUTHWX2rGlRX6KCFkiNAw==
-X-Received: by 2002:a05:600c:5009:b0:43d:46de:b0eb with SMTP id 5b1f17b1804b1-43f1fe16c8amr17500885e9.12.1744191938099;
-        Wed, 09 Apr 2025 02:45:38 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([195.174.134.30])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f207c914csm14151605e9.39.2025.04.09.02.45.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 02:45:37 -0700 (PDT)
-Message-ID: <fde0a08192f4e0d51d2e9e234d3612de6311cb79.camel@redhat.com>
-Subject: Re: [PATCH v12 0/3] sched: Restructure task_mm_cid_work for
- predictability
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
- Ingo Molnar <mingo@redhat.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney"
-	 <paulmck@kernel.org>, Shuah Khan <shuah@kernel.org>
-Date: Wed, 09 Apr 2025 11:45:35 +0200
-In-Reply-To: <89bc1d11-c2bc-43d7-9a22-e159175706cc@efficios.com>
-References: <20250311062849.72083-1-gmonaco@redhat.com>
-	 <b0b6e10b8651ed59051e426c187ed64b785c4b8c.camel@redhat.com>
-	 <89bc1d11-c2bc-43d7-9a22-e159175706cc@efficios.com>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+        d=1e100.net; s=20230601; t=1744191954; x=1744796754;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jbY8OFRGtCS3qGB2dY7IOuwbUBWjbDPtzPyd0O8E/WA=;
+        b=nIUeuNkXw7D3O0GTw0n3N13lnkXV7eDOq7y1yVlDcJRBeMcRy8nf5zgSQnXl7Z4AVD
+         iAf1KpYQRFkjkqx8u6H92K4bSpCykw/OdoTX8eXEhBv18tz5wZjC0jZR0+rqYt/Dovh1
+         cc57XoMn2oqRVrfatiPq54pVBIQJ0KUY3MHyDkWtz7mGysVp30Kb2vW0c7ExBIqwLG+u
+         EDXZlNypydrYNKktfn3gPaqdZqc82fRf3gy/10ut665AxSxS91Yshx/32ODIJWmpprSW
+         F4qVZq2O2GCTZdHh1aN4Eui51oInRnU2hcc3a5dEyaGXbad4Ym0gq9ZkdnaU2shoP40i
+         XQNg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6p7TbxkJlveDjlw4leDvLQ2AoYJdaO4OGSY/945GJlZHWxfTtPx++fuEtuUFo0L/rB0ebsscr6VBualU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhDsHb2gwWsbB0X5eSwDlIIhPuMSMEMULk7iTBNDLbCfjnoF5z
+	9KMzS/FqsuJUO429+9JVHBRiJ7ji6jxPoQdsQ0+FUS5H4ez+qK+k+k0hzS1bhFpKgRBiOlg+EAM
+	zMec7dh+PunwaTQ==
+X-Google-Smtp-Source: AGHT+IFU5PtqYzywsfZTZnvn0+eGgwmBOUG2VhP8fojRJNHYDCxKaO4/6DkqMYUH/KrEpuJdW/spl9clwX6DMWQ=
+X-Received: from wrbdi7.prod.google.com ([2002:a05:6000:ac7:b0:39a:bed5:1512])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2ca:b0:39c:30cd:352c with SMTP id ffacd0b85a97d-39d88525afamr1619648f8f.8.1744191954414;
+ Wed, 09 Apr 2025 02:45:54 -0700 (PDT)
+Date: Wed, 9 Apr 2025 09:45:52 +0000
+In-Reply-To: <CAJ-ks9njZbqRFVXTFkG1ms2UxsHtym+gP6Od-Hz+=sj+VeTX3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20250307-no-offset-v1-0-0c728f63b69c@gmail.com>
+ <20250307-no-offset-v1-2-0c728f63b69c@gmail.com> <Z9gIvLY1uubS6OX-@google.com>
+ <CAJ-ks9njZbqRFVXTFkG1ms2UxsHtym+gP6Od-Hz+=sj+VeTX3g@mail.gmail.com>
+Message-ID: <Z_ZB0BZuugdjsBR3@google.com>
+Subject: Re: [PATCH 2/2] rust: workqueue: remove HasWork::OFFSET
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-03-26 at 10:33 -0400, Mathieu Desnoyers wrote:
-> On 2025-03-26 03:31, Gabriele Monaco wrote:
-> > On Tue, 2025-03-11 at 07:28 +0100, Gabriele Monaco wrote:
-> > > This patchset moves the task_mm_cid_work to a preemptible and
-> > > migratable
-> > > context. This reduces the impact of this work to the scheduling
-> > > latency
-> > > of real time tasks.
-> > > The change makes the recurrence of the task a bit more
-> > > predictable.
-> > >=20
-> >=20
-> > The series was review and, in my opinion, is ready for inclusion.
-> > Peter, Ingo, can we merge it?
+On Mon, Mar 17, 2025 at 07:35:55AM -0400, Tamir Duberstein wrote:
+> On Mon, Mar 17, 2025 at 7:34=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+> >
+> > Overall looks good to me, but please CC the WORKQUEUE maintainers on th=
+e
+> > next version.
 >=20
-> I agree. I've reviewed the entire series a few weeks ago and it
-> looks good to me.
->=20
+> Thanks! Does there need to be another version? No changes have been reque=
+sted.
 
-Gentle reminder. Peter, Ingo can we merge this?
+Yes, it needs a new version to fix conflicts with commit 7b948a2af6b5
+("rust: pci: fix unrestricted &mut pci::Device") that landed in the
+merge window just now. More generally, a new version is also recommended
+if maintainers are missing in the CC list.
 
-Thanks,
-Gabriele
+As an FYI, I'm looking to do some additional work on the workqueue
+abstractions to support delayed work items for use by GPU drivers. Since
+I agree with this change, I'll base my work on top of your series.
 
+Alice
 
