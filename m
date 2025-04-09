@@ -1,75 +1,98 @@
-Return-Path: <linux-kernel+bounces-596304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B765A82A31
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:27:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0DBA829F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A9378C3412
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:15:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BDD97A5273
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D512676CA;
-	Wed,  9 Apr 2025 15:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B02A268C70;
+	Wed,  9 Apr 2025 15:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdod68NQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prwWxa2j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779BC266B60
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C847725E476;
+	Wed,  9 Apr 2025 15:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744211738; cv=none; b=TMQaVP6x/5WDctjmvnPzoKM2MsBq6j+xc/DiUsLRk041PG6ECgg9GsIug+jDIUnKzsfPT7NWWARqkMXnViphCZtKsHJlIF/Ay001NSX30vskSjc3O3q7Hb11lRKFrYdU2znkbrGx39NaoT9HZDHBlaFRz9QeoQKbc+hgQDhCBOg=
+	t=1744211767; cv=none; b=pnck+Lb427/MIsOheCJKjl/EgOXEJ5fGBC+X8ARQZ7VghF6Pn2DmcOGJN8Rk8RYvXxp9I7bdIimIZfCX/fLO4kwb6zwK2lG92wIVbQ99Uv/aZ58mRo2cbxW/TbkI4HNK/kjG5RGCKwgLY4mh04YBSsiOXAgiFMvMi9UiZyLe2cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744211738; c=relaxed/simple;
-	bh=ijk8EHdNPCzS8fw2wIGDYZPPz5dns1bRD8VMGPY02Fk=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=GHm1mr6p2UvKIAFilCM7kGnaAi9vNFLJ5gx1eCbnYJJGj55p17OQrz5Q5sF1q03tdrgwDgRiBzAYOcLXLTz4cb1aL8vogDUjyS+4yev2iKruKhrP4OXLS9M7P5jj7HEgLFs3t540ASwjLPFgO5B9Qj5jASpjXY0zy/dvx0vlV2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdod68NQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90164C4CEE2;
-	Wed,  9 Apr 2025 15:15:37 +0000 (UTC)
+	s=arc-20240116; t=1744211767; c=relaxed/simple;
+	bh=DKKmY2V8mvcFiDPGL8AqRokOoZks78KJFsmlJwP4lzg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V4sdgLScvDQV/AdX4lEE3aK9banfuT9R08Pz8P4oSuAo7u/ybSoFRTQNxzxpQ+HQKY6+Le0RSvYXLpiWGnehuCZ3uxN3K9kz1IVQ6cffsSQpZrLkEy9Q62OtLj/heMTYUP6GL3GeD0J3hTuAd1rM5zOdPptXSjEeaXYsx39ZOF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prwWxa2j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D09C6C4CEE2;
+	Wed,  9 Apr 2025 15:16:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744211737;
-	bh=ijk8EHdNPCzS8fw2wIGDYZPPz5dns1bRD8VMGPY02Fk=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=tdod68NQ/Pl+STS253Nkxk/XgtltVIBAlgKbwgQK4q/1daELzmh9xDRMbPXXKRDHZ
-	 UnqYeXN1ljn+3DVA0GZxXrQqUdkTXSu5wajAYhmt63RalHKkTZQKt9wuE2xDXUUL9o
-	 s/HLFtDGuA+BYrPPJNtjpnqGS68N6BIGO/FnkNPiW0Q/dm552/5/CGdeV2/DnROySs
-	 aRe6CVQFHW5cvkP1hi+CFAlIhkzVKqO8E1VLwfEAk83aw3dqAX0OtF6vv+bSoiHMfG
-	 jVI9QgRvfyiRP9989PmeU9Wr18rB3h84vE1XP7SCt5rMiXtlsNhTSHGbcw1ZCSN/wi
-	 q9ZoToCKnjSLw==
-Message-ID: <9281e95d084cfe6a3045bfad8413d9a1@kernel.org>
-Date: Wed, 09 Apr 2025 15:15:35 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com>
-Subject: Re: [PATCH v3 12/15] drm/tests: hdmi: Setup ycbcr_420_allowed
- before initializing connector
-In-Reply-To: <20250326-hdmi-conn-yuv-v3-12-294d3ebbb4b2@collabora.com>
-References: <20250326-hdmi-conn-yuv-v3-12-294d3ebbb4b2@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, kernel@collabora.com, linux-kernel@vger.kernel.org, "Dave
- Stevenson" <dave.stevenson@raspberrypi.com>, "David Airlie" <airlied@gmail.com>, "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>, "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>, "Simona
- Vetter" <simona@ffwll.ch>, "Thomas Zimmermann" <tzimmermann@suse.de>
-Content-Transfer-Encoding: 7bit
+	s=k20201202; t=1744211766;
+	bh=DKKmY2V8mvcFiDPGL8AqRokOoZks78KJFsmlJwP4lzg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=prwWxa2jeOysxWDkTt9VgGDKrkB1xLCe7tUzVro3a+2ivcoJyEDhBTgRYCedqGMsY
+	 /CnEI4jUGLnsV2TUkK1rNK4WNfYFQL2Mrb2hjpNCPEZZhF0m63BxJ4bw0iQHA9ecu0
+	 dHqsT1XpHVXFKNcLllHD+vC0a49v0hEnXLZdOVx0I7Cv4JTuhABuLEtTP7ae8lo7Fx
+	 5pyziH8b5DwUFkkwc4mydVA5KBBFHZoLIdz6VTjVzH18YcXdQA+ymIMi4VuRNegXdJ
+	 yAAjcNfasD7pqptxmXs6q7Cw5I3Rgkn7MRdgP4JPm9xKa1VNxyS1ZL3MeDpo+ym9dW
+	 0jd0DHZdZbkXw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Michal Nazarewicz <mina86@mina86.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] [v4] dma/contiguous: avoid warning about unused size_bytes
+Date: Wed,  9 Apr 2025 17:15:42 +0200
+Message-Id: <20250409151557.3890443-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 26 Mar 2025 12:20:01 +0200, Cristian Ciocaltea wrote:
-> Initializing HDMI connector via drmm_connector_hdmi_init() requires its
-> ->ycbcr_420_allowed flag to be adjusted according to the supported
-> formats passed as function argument, prior to the actual invocation.
-> 
-> In order to allow providing test coverage for YUV420 modes, ensure the
-> 
-> [ ... ]
+From: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+When building with W=1, this variable is unused for configs with
+CONFIG_CMA_SIZE_SEL_PERCENTAGE=y:
 
-Thanks!
-Maxime
+kernel/dma/contiguous.c:67:26: error: 'size_bytes' defined but not used [-Werror=unused-const-variable=]
+
+Change this to a macro to avoid the warning.
+
+Fixes: c64be2bb1c6e ("drivers: add Contiguous Memory Allocator")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v4: fix type mistake from v3
+v3: use a macro instead of constant
+v2: fix spelling mistake.
+---
+ kernel/dma/contiguous.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+index 055da410ac71..8df0dfaaca18 100644
+--- a/kernel/dma/contiguous.c
++++ b/kernel/dma/contiguous.c
+@@ -64,8 +64,7 @@ struct cma *dma_contiguous_default_area;
+  * Users, who want to set the size of global CMA area for their system
+  * should use cma= kernel parameter.
+  */
+-static const phys_addr_t size_bytes __initconst =
+-	(phys_addr_t)CMA_SIZE_MBYTES * SZ_1M;
++#define size_bytes ((phys_addr_t)CMA_SIZE_MBYTES * SZ_1M)
+ static phys_addr_t  size_cmdline __initdata = -1;
+ static phys_addr_t base_cmdline __initdata;
+ static phys_addr_t limit_cmdline __initdata;
+-- 
+2.39.5
+
 
