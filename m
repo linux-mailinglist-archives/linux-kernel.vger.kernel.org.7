@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-596498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 037F8A82CD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:51:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12895A82CDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C82D1B636A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:51:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A817E44189C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F470270EB4;
-	Wed,  9 Apr 2025 16:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9QaJfZn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF00C26FDAC;
+	Wed,  9 Apr 2025 16:52:19 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD81B26FDB7;
-	Wed,  9 Apr 2025 16:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FFF26FD9E;
+	Wed,  9 Apr 2025 16:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744217449; cv=none; b=GGlMIoOgg9SIzpRq4Gn1p/3tG/GpoqbRaQZ6xf77IYTTlSUxWmZ88tZ+ep+Q2gdXIWAI4Q2mJz6Ye3qRCKzJerIXYBHyfOKR3g4dwHd0rRE/1XGT7wdrBWSkGEpIJi2b/3WC1u3sw7nC5aYGFQhkg4yANypkIZ/yVtZu4hgPVOM=
+	t=1744217539; cv=none; b=iPog1bDB9Vrzp/x8uO5PFg89JvAdUsJ6QPDJn160A/PNNVWetTRaA+StgfCWIXmQKfd4PGPVcUBixSDS7men146QpGLXz4dWjTEYT6pGqa0IHUZM0X4NkWMRZdETFelexNDBUbI28JX9nZWssje0IMbENto5DLr8RP0FtdyT1F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744217449; c=relaxed/simple;
-	bh=L2zhW57W2bSVr2kyXSmjFw+geDGQYlYeUYJjKoNr4Cc=;
+	s=arc-20240116; t=1744217539; c=relaxed/simple;
+	bh=bvwQ472L379Yq6v8SYt72rXOtmKMPW+jU4BhUm1qzrc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qs9upNlN0Hy0RFnGiTZvNiNe/h/cuQ3U5t0LnEdbvPROoh+HdbhEMUTAMjW8HWhA8OknK2d68QjMKomKVeEIZfwIkONKVMrjVHMinbkQTBMzDRqCeDzwMTb5PVRgrtc/rWmKPoFaT+NsaI8nnste2+p1zAS45it5h2tOqZ5qM0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9QaJfZn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F987C4CEE2;
-	Wed,  9 Apr 2025 16:50:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744217448;
-	bh=L2zhW57W2bSVr2kyXSmjFw+geDGQYlYeUYJjKoNr4Cc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U9QaJfZnBnQSIR5M8enh8sBaeR/0/sBui2ciV2j+k7aKoL0w6ouJJaa5nTzoPPFiq
-	 DUdctyOAAlYFd4OzTv8VXYWA3iOIegghBb+D+hyWOboVVwMcK8AhaKVc7KwnVQo8y4
-	 0IsIxkK46urKYYpRrA+cwRH1J7KB8oq9Zb9vx4pa85BJije+5UqINIhrkF6+Fk9AOS
-	 6UFPU2VmFDNZ4l0gU0TzqkkZBBxd9jJE8x7cXY1EXa7kyAwMr/8EP75PUpuITHFiAy
-	 FmB9+P10ITDK0k+iiI0K5OmqNaJFwOxx1f1S5s18W7zbfOSnNADvpaQOwqFwsmTS7z
-	 MHKbMEeJqBkWw==
-Date: Wed, 9 Apr 2025 17:50:44 +0100
-From: Simon Horman <horms@kernel.org>
-To: Shannon Nelson <shannon.nelson@amd.com>
-Cc: andrew+netdev@lunn.ch, brett.creeley@amd.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	michal.swiatkowski@linux.intel.com, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net 5/6] pds_core: smaller adminq poll starting interval
-Message-ID: <20250409165044.GM395307@horms.kernel.org>
-References: <20250407225113.51850-1-shannon.nelson@amd.com>
- <20250407225113.51850-6-shannon.nelson@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QIMGINKvAZApqjjZpMQj2m6aODwwKOpRiKHamkkc2gNG5qe5uNFBiRq+gUBsMquC7h0RPwmL/54pyFjomzAxxHp6AFgS+eIEoUc6hp+F4ZvU5iE4a+Sf4WgyThqfjH6ztS2F5FEiNTOf459nHS8mY06KecnIqpiPSAmGyjY48bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: /fh3//y/Rsqyh0G2paCC3A==
+X-CSE-MsgGUID: CG8aIYwiSz+cm2o5r8X0dw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="56370682"
+X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
+   d="scan'208";a="56370682"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 09:51:53 -0700
+X-CSE-ConnectionGUID: NlDWNtcXRfe/Sj85aIJBLA==
+X-CSE-MsgGUID: QpQVxbbOTb+b3VLV6FuErg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
+   d="scan'208";a="128617519"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 09:51:51 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andy@kernel.org>)
+	id 1u2YeS-0000000Anf9-2y49;
+	Wed, 09 Apr 2025 19:51:48 +0300
+Date: Wed, 9 Apr 2025 19:51:48 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Nuno Sa <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 2/2] iio: dac: adi-axi-dac: use unique bus free check
+Message-ID: <Z_alpFoaQQUlWdfo@smile.fi.intel.com>
+References: <20250409-ad3552r-fix-bus-read-v2-0-34d3b21e8ca0@baylibre.com>
+ <20250409-ad3552r-fix-bus-read-v2-2-34d3b21e8ca0@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,19 +67,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250407225113.51850-6-shannon.nelson@amd.com>
+In-Reply-To: <20250409-ad3552r-fix-bus-read-v2-2-34d3b21e8ca0@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Apr 07, 2025 at 03:51:12PM -0700, Shannon Nelson wrote:
-> Shorten the adminq poll starting interval in order to speed
-> up the transaction response time.
-
-Hi Shannon,
-
-I think this warrants some further explanation as to why this is a bug fix.
-
+On Wed, Apr 09, 2025 at 11:16:55AM +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
 > 
-> Fixes: 01ba61b55b20 ("pds_core: Add adminq processing and commands")
-> Signed-off-by: Shannon Nelson <shannon.nelson@amd.com>
+> Use a unique function for the bus free check by polling, to reduce
+> duplicated code. An error is always thrown in case of timeout.
 
 ...
+
+> +static int axi_dac_wait_bus_free(struct axi_dac_state *st)
+> +{
+> +	u32 val;
+> +	int ret;
+> +
+> +	ret = regmap_read_poll_timeout(st->regmap, AXI_DAC_UI_STATUS_REG, val,
+> +		FIELD_GET(AXI_DAC_UI_STATUS_IF_BUSY, val) == -1, 10,
+> +		100 * KILO);
+
+Same comment as in the previous patch. Okay, it seems more than in the single
+case. Perhaps to change that as well here?
+
+> +	if (ret == -ETIMEDOUT)
+> +		dev_err(st->dev, "AXI bus timeout\n");
+
+Why do you need this? The error code will go to the user space at the end? If
+yes, it will be enough to have it printed there, no?
+
+> +	return ret;
+> +}
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
