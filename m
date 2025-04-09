@@ -1,195 +1,221 @@
-Return-Path: <linux-kernel+bounces-596290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC9BBA829DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:18:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE21A82719
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25C6F170E1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:12:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32F13463DD3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919BE1DFFD;
-	Wed,  9 Apr 2025 15:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3083264FB3;
+	Wed,  9 Apr 2025 14:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="bHmY4oja"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S8UNhrHn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B141482F5;
-	Wed,  9 Apr 2025 15:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8B52253E4;
+	Wed,  9 Apr 2025 14:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744211465; cv=none; b=to2dshDOgROYSz62f+h4hNO4yoOOzOR9RbiGWEDDbTWpC2TFPwsX3jW4mrqJzatbSt9ELIOu0nZkeAIfSMLKMpwBBCe2l4uxa2nSjBFahvml25Q0wF1l0RLUc5h2RfgGyzXeyvACNXBm6w7NZbuTWmY6HyuVyOvoBvHfZ06X3qo=
+	t=1744207455; cv=none; b=hH6M59VW+GGIB8lI7QXz66DkDlME0NBfdp/k+Jb0IlADmuJLASRWjhAL3aHpFfwfP/OtlnIp038VJhk0NTi7YWck2pRVrLpZ6Yq0xl5nk5oe6KCRNwm9xDw4lTR/L9Il1JyZoG1mNB0sVtutGh9c1Zk0tNQ2Jesp32L2TDJcfkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744211465; c=relaxed/simple;
-	bh=TG1LlNv3LjfaexLcZPWLJHwERX1O6QwezQqaTLTKUZI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IDHSltdBRs+0cJgKMxUYZPoKVgcP5pE7dKuArnQ4xvx87jaL9tJjkiLRwOPq/fWEm63QI3COK3U70PtE9Z30bGeQbi7RxL5YaBl69BaWAjXTVaVVflspfrfqj8r4aDAlRxw6AmbSfrSZ4XD9jwHa/yaMol/Q1En2PUkpUxz4hcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=bHmY4oja; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5398iQla002699;
-	Wed, 9 Apr 2025 08:24:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=rICUF5sAyQ2j6QCV40vr2zeqUur
-	mbGVzpoDh7KePLiI=; b=bHmY4ojaOA1mfhwFrZYwamIT1RGZL+TJD0teNm5zDUK
-	l/6DnPKsSarbKI49AQqB9YvwJZph1i2I83UCapatKdYdS9DqqvOjsIpXkCEJ7KMA
-	92bnXmrUpe7Uf4jPab/Yj+BwfQ+M8TBoC+SbWlVskSJ1eKLWqrW+DanxbZV9h8B9
-	dUUNrblCE2XnCc6iTF5ahuVcEDaKT/D37nET0Z8HMp9cpz21DLz37i/jTft1BwUL
-	qJIboD7bU+lSFkUFl0CFDCzynCsHN8EvLDjAEllAPJXgxoHUlvH6XFiehH3+s8yJ
-	MDRdfpreGDYQMPShw3s8Ww3Ox54iqA7iZknDqw9m9xA==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 45u1e6dqnh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Apr 2025 08:24:17 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 539COFRL052173
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 9 Apr 2025 08:24:15 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Wed, 9 Apr 2025 08:24:15 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Wed, 9 Apr 2025 08:24:15 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Wed, 9 Apr 2025 08:24:15 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 539CNunk016887;
-	Wed, 9 Apr 2025 08:23:58 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <jic23@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <marcelo.schmitt1@gmail.com>
-Subject: [PATCH v1 0/7] iio: adc: Add support for AD4170 series of ADCs
-Date: Wed, 9 Apr 2025 09:23:50 -0300
-Message-ID: <cover.1744200264.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1744207455; c=relaxed/simple;
+	bh=HcsrtxcBfrTGd4om7Qx2pPfzoIlpON5iTTrTwya39ng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F6tYDuP//xMkkD4DwqEUxLVrtNszwewwsdd/UTkqq/dRbnOHEIvTMDXTbAiJXF0fThM4RIjSVfFQfy3apL2xrTTqPJYSmBgJNawWYFIRW4JMb/UJxwSpTnFXGfpdjMcnMplcm+J6dyPUpyyYDb/io5Wh/hMjg2mSd3zvbSkGXSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S8UNhrHn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 866C6C4CEE3;
+	Wed,  9 Apr 2025 14:04:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744207454;
+	bh=HcsrtxcBfrTGd4om7Qx2pPfzoIlpON5iTTrTwya39ng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S8UNhrHn7rhtr8XgDlour0jm5WNeS37YzYZj1/QvEAnSBn/4Vr4Ev02vPFY9lOpRO
+	 GryoW3AT/cDrxQy6gRv4LKbDwqeHjPDJGIJPevauC0SDkpb8te9kCeLRjp4Zyo4/fC
+	 /zhNKx+eObZ0AZC0SGWVAPHPtktS5zzLHF9ryeCLPfLmBGbmCipMj7/NHToaEsmWKH
+	 2Sqc5sC6ZqYORNZQ7Yi/44mnQSvzYLKOuiTAGf3rtw+0QnVH3pu/Ws1fHu8yrkJElv
+	 i7gq3qnk1Ix6lOz98q9/Z1YcHdE8NphXmVkS0pq4gvIEGynmcG4ugUgBnN7CJMsQIP
+	 MoTkZYznsf3wA==
+Date: Wed, 9 Apr 2025 16:04:06 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 24/24] arm64: Kconfig: Enable GICv5
+Message-ID: <Z/Z+VtK96h1yezE7@lpieralisi>
+References: <20250408-gicv5-host-v1-24-1f26db465f8d@kernel.org>
+ <202504092127.YaPW3UWk-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: 71u7Qt8axE4aFoAbKAY2Oo0wE-pcfTcn
-X-Authority-Analysis: v=2.4 cv=cdjSrmDM c=1 sm=1 tr=0 ts=67f666f1 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=XR8D0OoHHMoA:10 a=LZWaY_n9-dVI2q1oZpsA:9
-X-Proofpoint-GUID: 71u7Qt8axE4aFoAbKAY2Oo0wE-pcfTcn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-09_04,2025-04-08_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 impostorscore=0 spamscore=0 malwarescore=0
- priorityscore=1501 adultscore=0 mlxscore=0 clxscore=1011 mlxlogscore=999
- phishscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504090073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202504092127.YaPW3UWk-lkp@intel.com>
 
-This patch set adds support for Analog Devices AD4170 and similar sigma-delta ADCs.
+On Wed, Apr 09, 2025 at 09:44:42PM +0800, kernel test robot wrote:
+> Hi Lorenzo,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on 0af2f6be1b4281385b618cb86ad946eded089ac8]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Lorenzo-Pieralisi/Documentation-devicetree-bindings-Add-GICv5-DT-bindings/20250408-190630
+> base:   0af2f6be1b4281385b618cb86ad946eded089ac8
+> patch link:    https://lore.kernel.org/r/20250408-gicv5-host-v1-24-1f26db465f8d%40kernel.org
+> patch subject: [PATCH 24/24] arm64: Kconfig: Enable GICv5
+> config: arm64-randconfig-001-20250409 (https://download.01.org/0day-ci/archive/20250409/202504092127.YaPW3UWk-lkp@intel.com/config)
+> compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 92c93f5286b9ff33f27ff694d2dc33da1c07afdd)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250409/202504092127.YaPW3UWk-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202504092127.YaPW3UWk-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+> >> drivers/irqchip/irq-gic-v5-iwb.c:298:3: error: cannot jump from this goto statement to its label
+>      298 |                 goto out_free;
+>          |                 ^
+>    drivers/irqchip/irq-gic-v5-iwb.c:300:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
+>      300 |         guard(mutex)(&its->dev_alloc_lock);
 
-I've arranged the patches so that the first ones comprise changes more typical
-of IIO device drivers while the last one has the most uncommon changes.
-I believe to have applied all suggestions to the RFC version.
+This is clearly wrong, will update code in the IWB (if we are keeping
+the current IWB driver) and ITS by removing the guard where misused and
+keeping the mutex_lock/unlock().
 
-Patch 1 adds device tree documentation for the parts.
-Patch 2 adds basic device support.
-Patch 3 adds support for buffered ADC reading.
-Patch 4 adds clock provider support
-Patch 5 adds GPIO controller support.
-Patch 6 adds internal temperature sensor support.
-Patch 7 adds support for external RTD and bridge circuit sensors.
+Lorenzo
 
-For context, an initial version of the ad4170 driver was developed by
-Ana-Maria Cusco. I then picked that up, created dt docs, and did several
-improvements to the driver.
-
-This first version has so many changes compared to the RFC version that it's not
-worth listing them all. The most significant one, though, are listed below.
-
-Change log RFC -> v1
-
-[IIO driver changes]
-- Split off extra features into smaller additional patches.
-- No longer pushing timestamp data to buffers.
-- Used iio_for_each_active_channel() to iterate over channels in trigger handler.
-- Correctly implemented incomplete/broken usage of SPI optimized messages.
-- No longer setting interrupt direction in driver.
-- Register names, register field names, and names of constants for register
-  fields now follow an established pattern.
-- Data ready interrupt config now set according to interrupt-names dt property.
-- Added scan_mask to validate chan 0 is enabled when multiple chans are enabled.
-- Added a comment explaining the reason to disable all channel at buffer_predisable().
-- Complemented comment about channel 0 being required to be enabled when more
-  than one channel is enabled.
-- New GPIO controller support patch.
-- New internal temperature sensor support patch.
-
-There are some places where I used find_closest() to match/verify values from
-dt. On the last patch, I added ad4170_find_table_index() to avoid find_closest()
-but may use something else if there are any generic helper for such thing.
-
-[device tree changes]
-- Dropped adi,ad4170.h. All dt documentation is now in adi,ad4170.yaml.
-- Described external bridge circuits and RTD sensors as specialized channels
-  with specific properties for excitation control.
-- Bridge circuit excitation properties are now sensor-node only.
-- Added compatibles for 2 more similar chips.
-- Added ldac-gpios.
-- Dropped adi,dig-aux1, DIG_AUX1 now set according to Data Ready interrupt choice.
-- Dropped adi,dig-aux2, DIG_AUX2 now set according to LDAC GPIO presence.
-- Dropped adi,sync-option, SYNC_CTRL will only of be set for multi-device sync.
-- Dropped adi,burnout-current-nanoamp since open wire detection should be a runtime config.
-- Complemented adi,buffered-pos/neg description with possible reason to not enable them.
-- adi,gpion-power-down-switch renamed to adi,power-down-switch-pin is now a
-  sensor-node only prop.
-
-About the bridge power-down-switch pins, it was mentioned that maybe they could
-be described as regulators that the bridge circuit would consume. One
-complication of that approach is that the AD4170 powerdown switches close to
-AVSS/GND and that doesn't help determining regulator maximum voltage. It may
-also be desired to control the power switches at runtime to save power by
-closing the power down switches when the bridge would not be in use. Because of
-that, I have removed pw-down switch props from the dt-binding.
-
-Not sure what to do about the various possible multiplexed inputs to the ADC.
-Even though the IIO driver doesn't handle all of them, I'm keeping those since
-dt-bindings are intended to be OS agnostic and we are expected to make bindings
-complete.
-
-Ana-Maria Cusco (1):
-  iio: adc: Add basic support for AD4170
-
-Marcelo Schmitt (6):
-  dt-bindings: iio: adc: Add AD4170
-  iio: adc: ad4170: Add support for buffered data capture
-  iio: adc: ad4170: Add clock provider support
-  iio: adc: ad4170: Add GPIO controller support
-  iio: adc: ad4170: Add support for internal temperature sensor
-  iio: adc: ad4170: Add support for weigh scale and RTD sensors
-
- .../bindings/iio/adc/adi,ad4170.yaml          |  527 +++
- MAINTAINERS                                   |    8 +
- drivers/iio/adc/Kconfig                       |   16 +
- drivers/iio/adc/Makefile                      |    1 +
- drivers/iio/adc/ad4170.c                      | 2817 +++++++++++++++++
- 5 files changed, 3369 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad4170.yaml
- create mode 100644 drivers/iio/adc/ad4170.c
-
-
-base-commit: 1c2409fe38d5c19015d69851d15ba543d1911932
--- 
-2.47.2
-
+>          |         ^
+>    include/linux/cleanup.h:319:15: note: expanded from macro 'guard'
+>      319 |         CLASS(_name, __UNIQUE_ID(guard))
+>          |                      ^
+>    include/linux/compiler.h:166:29: note: expanded from macro '__UNIQUE_ID'
+>      166 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+>          |                             ^
+>    include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
+>       84 | #define __PASTE(a,b) ___PASTE(a,b)
+>          |                      ^
+>    include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
+>       83 | #define ___PASTE(a,b) a##b
+>          |                       ^
+>    <scratch space>:82:1: note: expanded from here
+>       82 | __UNIQUE_ID_guard576
+>          | ^
+>    drivers/irqchip/irq-gic-v5-iwb.c:288:3: error: cannot jump from this goto statement to its label
+>      288 |                 goto out_free;
+>          |                 ^
+>    drivers/irqchip/irq-gic-v5-iwb.c:300:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
+>      300 |         guard(mutex)(&its->dev_alloc_lock);
+>          |         ^
+>    include/linux/cleanup.h:319:15: note: expanded from macro 'guard'
+>      319 |         CLASS(_name, __UNIQUE_ID(guard))
+>          |                      ^
+>    include/linux/compiler.h:166:29: note: expanded from macro '__UNIQUE_ID'
+>      166 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+>          |                             ^
+>    include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
+>       84 | #define __PASTE(a,b) ___PASTE(a,b)
+>          |                      ^
+>    include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
+>       83 | #define ___PASTE(a,b) a##b
+>          |                       ^
+>    <scratch space>:82:1: note: expanded from here
+>       82 | __UNIQUE_ID_guard576
+>          | ^
+>    2 errors generated.
+> 
+> 
+> vim +298 drivers/irqchip/irq-gic-v5-iwb.c
+> 
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  247  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  248  static struct gicv5_iwb_chip_data *
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  249  __init gicv5_iwb_init_bases(void __iomem *iwb_base,
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  250  			     struct fwnode_handle *handle,
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  251  			     struct irq_domain *parent_domain, u32 device_id)
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  252  {
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  253  	u32 nr_wires, idr0, cr0;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  254  	struct gicv5_iwb_chip_data *iwb_node;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  255  	struct msi_domain_info *msi_info;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  256  	struct gicv5_its_chip_data *its;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  257  	struct gicv5_its_dev *its_dev;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  258  	int ret;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  259  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  260  	msi_info = msi_get_domain_info(parent_domain);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  261  	its = msi_info->data;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  262  	if (!its) {
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  263  		pr_warn("IWB %pOF can't find parent ITS, bailing\n",
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  264  			to_of_node(handle));
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  265  		return ERR_PTR(-ENODEV);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  266  	}
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  267  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  268  	iwb_node = kzalloc(sizeof(*iwb_node), GFP_KERNEL);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  269  	if (!iwb_node)
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  270  		return ERR_PTR(-ENOMEM);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  271  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  272  	iwb_node->iwb_base = iwb_base;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  273  	iwb_node->device_id = device_id;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  274  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  275  	idr0 = iwb_readl(iwb_node, GICV5_IWB_IDR0);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  276  	nr_wires = (FIELD_GET(GICV5_IWB_IDR0_IW_RANGE, idr0) + 1) * 32;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  277  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  278  	iwb_node->domain = irq_domain_create_hierarchy(parent_domain, 0,
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  279  			   nr_wires, handle, &gicv5_iwb_irq_domain_ops,
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  280  			   iwb_node);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  281  	irq_domain_update_bus_token(iwb_node->domain, DOMAIN_BUS_WIRED);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  282  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  283  	cr0 = iwb_readl(iwb_node, GICV5_IWB_CR0);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  284  	if (!FIELD_GET(GICV5_IWB_CR0_IWBEN, cr0)) {
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  285  		pr_err("IWB %s must be enabled in firmware\n",
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  286  		       fwnode_get_name(handle));
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  287  		ret = -EINVAL;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  288  		goto out_free;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  289  	}
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  290  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  291  	iwb_node->nr_regs = FIELD_GET(GICV5_IWB_IDR0_IW_RANGE, idr0) + 1;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  292  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  293  	for (unsigned int n = 0; n < iwb_node->nr_regs; n++)
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  294  		iwb_writel(iwb_node, 0, GICV5_IWB_WENABLER + (sizeof(u32) * n));
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  295  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  296  	ret = gicv5_iwb_wait_for_wenabler(iwb_node);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  297  	if (ret)
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08 @298  		goto out_free;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  299  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  300  	guard(mutex)(&its->dev_alloc_lock);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  301  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  302  	its_dev = gicv5_its_alloc_device(its, roundup_pow_of_two(nr_wires),
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  303  					 device_id, true);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  304  	if (IS_ERR(its_dev)) {
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  305  		ret = -ENODEV;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  306  		goto out_free;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  307  	}
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  308  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  309  	return iwb_node;
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  310  out_free:
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  311  	irq_domain_remove(iwb_node->domain);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  312  	kfree(iwb_node);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  313  
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  314  	return ERR_PTR(ret);
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  315  }
+> 6b60a5125729caf Lorenzo Pieralisi 2025-04-08  316  
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
