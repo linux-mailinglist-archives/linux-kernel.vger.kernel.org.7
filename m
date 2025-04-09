@@ -1,295 +1,228 @@
-Return-Path: <linux-kernel+bounces-595898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01724A82458
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:08:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 466E5A82461
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4241B83184
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:08:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18CB4C47E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B43F25E80B;
-	Wed,  9 Apr 2025 12:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84ED225EFB2;
+	Wed,  9 Apr 2025 12:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KkbzC/uQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="QxWJJXEY"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9AF25F782
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 12:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3283425E476
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 12:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744200459; cv=none; b=aUiXx2fpqa/+0jdiOBVXBOOb9UzgWZh4pJKZhAo4tfB6PZkbjpHVzYfQ1+68V7m7HdA0gPe6vKRfm0RDoeSs2pxabgbL0wTeG5e74hF+boucy5ZJlWAZgwPHVKOVuzvwGK2EMnXPwPCGiNdG+pyZU1jcIumgX7yVMnIf0AXqIdU=
+	t=1744200487; cv=none; b=Q7/OqSKfCLTkSISNJP9JmUMpR8Avz+Z33TBYcFlyOFZJxXWgXWwyUjgctYlJ161sSJ/DqbD+mCTqAT8QbAmdt84Sh8+nXmmP6jtug8YEg/DWtShxVn92KognPXxdbp0ry0mojrFHw8hQWDSMsTVnncWJv2qk9JLuW7zNguTO4YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744200459; c=relaxed/simple;
-	bh=b8JlKxfWsW1Q1FUlQniB4qLGZUd/o9jlhbIFjs404XU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IlQCFTyECHeURf2Ow5JXWI9QQfNcoBd6Dl9OM0GkB2AifdGHX9kN/6QKzyIXsG8Yx1KD0x1SW+OULoZY6TFf8LagtOtU9dh+j6yie24aKZ9Zj2yOjdQ4B6nGtskqMG/aQtmen/dQa8sshgb9feUQGHSj7Ti87FFrAMT8WaDR7Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KkbzC/uQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744200456;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=93G2Nz5v0VWYsyTUc29spHX3l7oxT61r/O1+sjmvXx0=;
-	b=KkbzC/uQdxPdTxoM4x3vhyGYvg5SJJG4ewQcH00kSQ3KrrEEuN661YMTqzxr2smDga6qDg
-	esp6aA8p99RDwZOMyfKFDqScXcnnO2RkIG6tbwbnWqnyau/pDESvmdISNClFMI44WF44Hy
-	uX/mPxVBPlubZ9dGFyL3vLS2pAhNuK8=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-411-7-0RetauPpeua32tzyjGlQ-1; Wed, 09 Apr 2025 08:07:33 -0400
-X-MC-Unique: 7-0RetauPpeua32tzyjGlQ-1
-X-Mimecast-MFC-AGG-ID: 7-0RetauPpeua32tzyjGlQ_1744200452
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43cf446681cso46710965e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 05:07:33 -0700 (PDT)
+	s=arc-20240116; t=1744200487; c=relaxed/simple;
+	bh=dzw32U5Zfh0E0XuZmJTDSPi9UolEJJ3QEAe61/yHJ9E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IxaZ2JlhDNNVv5yuL2R7eG5QPjMzdFY8ZSeMaVS+QiO9k/WJKhxnxeVVjf+ROOtFKQTJNLYWha2Ue4a3+ekWgtQCtoraSEOoC52Rv4p1gu1BCtKqT83TwQLfc+lP346Jg1dOzPlTTRae74lbfAQiVS4UVBBqZ1XTlueovyq/0XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=QxWJJXEY; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-227cf12df27so5127905ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 05:08:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1744200484; x=1744805284; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3OOpcAyL7ROG1hFPOjwQq+aHU/5G0bNnWbHQ+0O2R4E=;
+        b=QxWJJXEYXQVBi0PXmfSKt+X0vmX8XZbX2s7hgAy/wiQ0m6rnYdiZjrIL0/0wZjs4/G
+         XeyMZTkseGsXBsRGjc0WPvZVoyrYv33La5jIiyLTEZLKMQmcKQcvG+lT+NmNuW2TaitG
+         VPaNVjqrlrBYCofP5iCUHmFcV2EXFvAfXXJMDdBwl8pZUr3QKuoDWgOqN36HUIr04B3p
+         lqT7mVCgykWEQE/K6qhOgHI54GTHH59HoN+ZDkfqGLTjOuVGjxJQMfOUx9eNLFJP4kK+
+         tgUFU90QLNCAMvVcKSGZnH0msul7CHwfwnB4pjhbUcAmdGDVMRLUEZpMoKyxnZ9mJw7g
+         ukzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744200452; x=1744805252;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=93G2Nz5v0VWYsyTUc29spHX3l7oxT61r/O1+sjmvXx0=;
-        b=VN+Dc+3jYwjeNXfeu919x43YnUheYWv6e4zHd9dmBL0mZBvN7QbwbY1lIrA8vd57JZ
-         /FM8kGmvuNlNc5jWMZ/VkRKJXVyMaPTHjjpB6FEiOJq3c+ylqpvjMp02+G0RMmxZxPnR
-         eeIi1o/x1dzIx8e8E1GsOagSMSimiP8WMRdjRpiEuZ0iskRlUcEYGbXmVTohA5iUfNYN
-         SZs82lwloEB7dULI78K4Aapw55kSJnqVqIut8ytFTWh1wk9eqK5/AO4/ZzZUJmqwQtYZ
-         pLsT/rINoyACTHwV3csVTlZbDD6+8AwJXEQeI4eEvNjr8Q4zyGSum7hIBxMwv/RyCZU1
-         SqHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWA8ZJ//DZlpamUdb/smtvCaLVCJ9TVZU/LIOu28hiJ+5GPmO1s+XF68tl8o1yeTUADVJD9fe5z1loqlZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyylmzifWSn7oWQBu1dtbT9VNNHZWGDs24Cpe4fd/g6dO7IPO+i
-	epoHte2C6f9YPLlfZR1GYZ66Em3lHQPKI/Ys3WWowLuxYrL2jGfmDfPfVx1Gk/fh+Y5E18v2Ga8
-	sqPi+0N8jhxtjIVA4/nCL5g2PT1DHSqlH9o3DB23IvwyhRvh4/LdG2JL8dl7frw==
-X-Gm-Gg: ASbGncsqQ5wEUN2nIiNFlqGdEVrmAuta42BHOIbBhu6H5wX9ObUrWCjtLQgwyBZlZul
-	TWgGuJH+uajrY2wvM25lrZtgsPGjsMBNL8VTia1mM4diCn6EooHvrf6kfiDECat767sy17Y8c/w
-	WXQs1LH8A34W6a0IbH/8z0uGJUAyQMJG6hxBEdVTqT2bXqfbyKYXhSlI9LUvb+548k5fg2gdg4k
-	AOTQ/qQOHXSNJ3g4n3bIJ7/Ce+cSsQ6G+XbVW374z9xugT/rJR2GI/UU4ppRC92VaeRXcbhdpsg
-	keo99g==
-X-Received: by 2002:a05:600c:4f06:b0:43c:eec7:eabb with SMTP id 5b1f17b1804b1-43f1eca7d49mr25281755e9.8.1744200452006;
-        Wed, 09 Apr 2025 05:07:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgSZUF2eaDFJtZf7ycuhgCh7uKezx7J6gwsxBt6Ke0ZQtqogJFzTU/28nf3axU595G1MOTHA==
-X-Received: by 2002:a05:600c:4f06:b0:43c:eec7:eabb with SMTP id 5b1f17b1804b1-43f1eca7d49mr25281355e9.8.1744200451567;
-        Wed, 09 Apr 2025 05:07:31 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f2066d26bsm18374765e9.22.2025.04.09.05.07.29
+        d=1e100.net; s=20230601; t=1744200484; x=1744805284;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3OOpcAyL7ROG1hFPOjwQq+aHU/5G0bNnWbHQ+0O2R4E=;
+        b=TXVj/sfbxjZh+/LZtWpmWlxlx/dRRx7M4COPaXylEf8I1bvOZuCsdZwTz1jdp8MyDS
+         Tcyc4SBmDVS0EY/BYQhFhZ/qRPPkNedvI35QLfN9GpYeXceOKMvxt5gfaLB0cBXX2Edl
+         8CN7xTiiuhlrvoiVEYMBhbCXfcUHMkUEgTC5fgFz305FTNnN/iwxWJbtnPeLQIQ4kS3/
+         Y1A4QAr7eVORLJp5ZhU4xqDqTolBXdM7UdVpXxucbkOu6Hc3RHfZTFZLCh8aNrdaZHgX
+         dz4SeRUdoeuevr2RYLy5SiRrYfwKJiZrYE2w954YV2OOPqDSY+1lVxT6gEI7f4lo9I0v
+         Sdpw==
+X-Gm-Message-State: AOJu0YzuzxPfdDAFWmcTCoddJDcpTI50l6l2VhSyvakPv2BNxKcJ09hb
+	9xi6K6Z8mbwRqNzfy3N9Cg07wA09DEyu6oUEAB4Q65y/FwCk0VWuNzWNa4K3sA==
+X-Gm-Gg: ASbGnct8BqCkfVNQy25/9FCJVdz0MJBH2upmLKy+bH+ObFSthnbRDFulJRbqb4Usod/
+	pTkKUjReKMRUaMVQKgKfA1qgv9boj1HTtIJqklk5HNcJ6irGEUFkxFjYw/80XjgbvJzp26ulg/B
+	OahcPgsEogoGIXaFC8Hxich1VHBZ8tJWhgKy0kAd1i6kdCYo9bRw2OiNtPgmRlOa6eygeAly92D
+	PglPdZAxxNS50tqrP9tUtWw7dFtSCQPU02xcKE0woDwbmFY3+OCwmtdh4PkvtuJ8ISDchH+yMpD
+	Ybx6V5bIOom/A4EiU52vrTc8lxSfjeQNAVXFY7MpJkW7zJmAotBc4UsylLbcCtghbqk=
+X-Google-Smtp-Source: AGHT+IGPpmQEb/0iEnjSlBvi3KHI+GPm33s3LcpAcMLvzaa4drHvz+f8jcbOid+GLjlk9x1H3RyjfA==
+X-Received: by 2002:a17:902:ce83:b0:223:5187:a886 with SMTP id d9443c01a7336-22ac32daa00mr37962105ad.22.1744200484315;
+        Wed, 09 Apr 2025 05:08:04 -0700 (PDT)
+Received: from n37-107-136.byted.org ([115.190.40.11])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b8c62dsm10017875ad.95.2025.04.09.05.07.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 05:07:30 -0700 (PDT)
-Date: Wed, 9 Apr 2025 08:07:27 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Daniel Verkamp <dverkamp@chromium.org>,
-	Halil Pasic <pasic@linux.ibm.com>, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org, Chandra Merla <cmerla@redhat.com>,
-	Stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
-	Thomas Huth <thuth@redhat.com>, Eric Farman <farman@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Wei Wang <wei.w.wang@intel.com>
-Subject: Re: [PATCH v1] s390/virtio_ccw: don't allocate/assign airqs for
- non-existing queues
-Message-ID: <20250409073652-mutt-send-email-mst@kernel.org>
-References: <20250407045456-mutt-send-email-mst@kernel.org>
- <a86240bc-8417-48a6-bf13-01dd7ace5ae9@redhat.com>
- <33def1b0-d9d5-46f1-9b61-b0269753ecce@redhat.com>
- <88d8f2d2-7b8a-458f-8fc4-c31964996817@redhat.com>
- <CABVzXAmMEsw70Tftg4ZNi0G4d8j9pGTyrNqOFMjzHwEpy0JqyA@mail.gmail.com>
- <3bbad51d-d7d8-46f7-a28c-11cc3af6ef76@redhat.com>
- <20250407170239-mutt-send-email-mst@kernel.org>
- <440de313-e470-4afa-9f8a-59598fe8dc21@redhat.com>
- <20250409065216-mutt-send-email-mst@kernel.org>
- <4ad4b12e-b474-48bb-a665-6c1dc843cd51@redhat.com>
+        Wed, 09 Apr 2025 05:08:03 -0700 (PDT)
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Don <joshdon@google.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mel Gorman <mgorman@suse.de>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [RFC PATCH v2 0/7] Defer throttle when task exits to user
+Date: Wed,  9 Apr 2025 20:07:39 +0800
+Message-Id: <20250409120746.635476-1-ziqianlu@bytedance.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ad4b12e-b474-48bb-a665-6c1dc843cd51@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 09, 2025 at 01:12:19PM +0200, David Hildenbrand wrote:
-> On 09.04.25 12:56, Michael S. Tsirkin wrote:
-> > On Wed, Apr 09, 2025 at 12:46:41PM +0200, David Hildenbrand wrote:
-> > > On 07.04.25 23:20, Michael S. Tsirkin wrote:
-> > > > On Mon, Apr 07, 2025 at 08:47:05PM +0200, David Hildenbrand wrote:
-> > > > > > In my opinion, it makes the most sense to keep the spec as it is and
-> > > > > > change QEMU and the kernel to match, but obviously that's not trivial
-> > > > > > to do in a way that doesn't break existing devices and drivers.
-> > > > > 
-> > > > > If only it would be limited to QEMU and Linux ... :)
-> > > > > 
-> > > > > Out of curiosity, assuming we'd make the spec match the current QEMU/Linux
-> > > > > implementation at least for the 3 involved features only, would there be a
-> > > > > way to adjust crossvm without any disruption?
-> > > > > 
-> > > > > I still have the feeling that it will be rather hard to get that all
-> > > > > implementations match the spec ... For new features+queues it will be easy
-> > > > > to force the usage of fixed virtqueue numbers, but for free-page-hinting and
-> > > > > reporting, it's a mess :(
-> > > > 
-> > > > 
-> > > > Still thinking about a way to fix drivers... We can discuss this
-> > > > theoretically, maybe?
-> > > 
-> > > Yes, absolutely. I took the time to do some more digging; regarding drivers
-> > > only Linux seems to be problematic.
-> > > 
-> > > virtio-win, FreeBSD, NetBSD and OpenBSD and don't seem to support
-> > > problematic features (free page hinting, free page reporting) in their
-> > > virtio-balloon implementations.
-> > > 
-> > > So from the known drivers, only Linux is applicable.
-> > > 
-> > > reporting_vq is either at idx 4/3/2
-> > > free_page_vq is either at idx 3/2
-> > > statsq is at idx2 (only relevant if the feature is offered)
-> > > 
-> > > So if we could test for the existence of a virtqueue at an idx easily, we
-> > > could test from highest-to-smallest idx.
-> > > 
-> > > But I recall that testing for the existance of a virtqueue on s390x resulted
-> > > in the problem/deadlock in the first place ...
-> > > 
-> > > -- 
-> > > Cheers,
-> > > 
-> > > David / dhildenb
-> > 
-> > So let's talk about a new feature bit?
-> 
-> Are you thinking about a new feature that switches between "fixed queue
-> indices" and "compressed queue indices", whereby the latter would be the
-> legacy default and we would expect all devices to switch to the new
-> fixed-queue-indices layout?
-> 
-> We could make all new features require "fixed-queue-indices".
+This is a continuous work based on Valentin Schneider's posting here:
+Subject: [RFC PATCH v3 00/10] sched/fair: Defer CFS throttle to user entry
+https://lore.kernel.org/lkml/20240711130004.2157737-1-vschneid@redhat.com/
 
-I see two ways:
-1. we make driver behave correctly with in spec and out of spec devices
-   and we make qemu behave correctly with in spec and out of spec devices
-2. a new feature bit
+Valentin has described the problem very well in the above link. We also
+have task hung problem from time to time in our environment due to cfs quota.
+It is mostly visible with rwsem: when a reader is throttled, writer comes in
+and has to wait, the writer also makes all subsequent readers wait,
+causing problems of priority inversion or even whole system hung.
 
-I prefer 1, and when we add a new feature we can also
-document that it should be in spec if negotiated.
+To improve this situation, change the throttle model to task based, i.e.
+when a cfs_rq is throttled, mark its throttled status but do not
+remove it from cpu's rq. Instead, for tasks that belong to this cfs_rq,
+when they get picked, add a task work to them so that when they return
+to user, they can be dequeued. In this way, tasks throttled will not
+hold any kernel resources. When cfs_rq gets unthrottled, enqueue back
+those throttled tasks.
 
-My question is if 1 is practical.
+There are consequences because of this new throttle model, e.g. for a
+cfs_rq that has 3 tasks attached, when 2 tasks are throttled on their
+return2user path, one task still running in kernel mode, this cfs_rq is
+in a partial throttled state:
+- Should its pelt clock be frozen?
+- Should this state be accounted into throttled_time?
 
+For pelt clock, I chose to keep the current behavior to freeze it on
+cfs_rq's throttle time. The assumption is that tasks running in kernel
+mode should not last too long, freezing the cfs_rq's pelt clock can keep
+its load and its corresponding sched_entity's weight. Hopefully, this can
+result in a stable situation for the remaining running tasks to quickly
+finish their jobs in kernel mode.
 
+For throttle time accounting, I can see several possibilities:
+- Similar to current behavior: starts accounting when cfs_rq gets
+  throttled(if cfs_rq->nr_queued > 0) and stops accounting when cfs_rq
+  gets unthrottled. This has one drawback, e.g. if this cfs_rq has one
+  task when it gets throttled and eventually, that task doesn't return
+  to user but blocks, then this cfs_rq has no tasks on throttled list
+  but time is accounted as throttled; Patch2 and patch3 implements this
+  accounting(simple, fewer code change).
+- Starts accounting when the throttled cfs_rq has at least one task on
+  its throttled list; stops accounting when it's unthrottled. This kind
+  of over accounts throttled time because partial throttle state is
+  accounted.
+- Starts accounting when the throttled cfs_rq has no tasks left and its
+  throttled list is not empty; stops accounting when this cfs_rq is
+  unthrottled; This kind of under accounts throttled time because partial
+  throttle state is not accounted. Patch7 implements this accounting.
+I do not have a strong feeling which accounting is the best, it's open
+for discussion.
 
+There is also the concern of increased duration of (un)throttle operations
+in v1. I've done some tests and with a 2000 cgroups/20K runnable tasks
+setup on a 2sockets/384cpus AMD server, the longest duration of
+distribute_cfs_runtime() is in the 2ms-4ms range. For details, please see:
+https://lore.kernel.org/lkml/20250324085822.GA732629@bytedance/
+For throttle path, with Chengming's suggestion to move "task work setup"
+from throttle time to pick time, it's not an issue anymore.
 
+Patches:
+Patch1 is preparation work;
 
-> > 
-> > Since vqs are probed after feature negotiation, it looks like
-> > we could have a feature bit trigger sane behaviour, right?
-> 
-> In the Linux driver, yes. In QEMU (devices), we add the queues when
-> realizing, so we'd need some mechanism to adjust the queue indices based on
-> feature negotiation I guess?
+Patch2-3 provide the main functionality.
+Patch2 deals with throttle path: when a cfs_rq is to be throttled, mark
+throttled status for this cfs_rq and when tasks in throttled hierarchy
+gets picked, add a task work to them so that when those tasks return to
+user space, the task work can throttle it by dequeuing the task and
+remember this by adding the task to its cfs_rq's limbo list;
+Patch3 deals with unthrottle path: when a cfs_rq is to be unthrottled,
+enqueue back those tasks in limbo list;
 
-Well we can add queues later, nothing prevents that.
+Patch4 deals with the dequeue path when task changes group, sched class
+etc. Task that is throttled is dequeued in fair, but task->on_rq is
+still set so when it changes task group or sched class or has affinity
+setting change, core will firstly dequeue it. But since this task is
+already dequeued in fair class, this patch handle this situation.
 
+Patch5-6 are clean ups. Some code are obsolete after switching to task
+based throttle mechanism.
 
-> For virtio-balloon it might be doable to simply always create+indicate
-> free-page hinting to resolve the issue easily.
+Patch7 implements an alternative accounting mechanism for task based
+throttle.
 
+Changes since v1:
+- Move "add task work" from throttle time to pick time, suggested by
+  Chengming Zhou;
+- Use scope_gard() and cond_resched_tasks_rcu_qs() in
+  throttle_cfs_rq_work(), suggested by K Prateek Nayak;
+- Remove now obsolete throttled_lb_pair(), suggested by K Prateek Nayak;
+- Fix cfs_rq->runtime_remaining condition check in unthrottle_cfs_rq(),
+  suggested by K Prateek Nayak;
+- Fix h_nr_runnable accounting for delayed dequeue case when task based
+  throttle is in use;
+- Implemented an alternative way of throttle time accounting for
+  discussion purpose;
+- Make !CONFIG_CFS_BANDWIDTH build.
+I hope I didn't omit any feedbacks I've received, but feel free to let me
+know if I did.
 
-OK, so
-- for devices, we suggest that basically VIRTIO_BALLOON_F_REPORTING
-  only created with VIRTIO_BALLOON_F_FREE_PAGE_HINT and 
-  VIRTIO_BALLOON_F_FREE_PAGE_HINT only created with VIRTIO_BALLOON_F_STATS_VQ
+As in v1, all change logs are written by me and if they read bad, it's
+my fault.
 
-I got that.
+Comments are welcome.
 
+Base commit: tip/sched/core, commit 6432e163ba1b("sched/isolation: Make
+use of more than one housekeeping cpu").
 
-Now, for drivers.
+Aaron Lu (4):
+  sched/fair: Take care of group/affinity/sched_class change for
+    throttled task
+  sched/fair: get rid of throttled_lb_pair()
+  sched/fair: fix h_nr_runnable accounting with per-task throttle
+  sched/fair: alternative way of accounting throttle time
 
-If the dependency is satisfied as above, no difference.
+Valentin Schneider (3):
+  sched/fair: Add related data structure for task based throttle
+  sched/fair: Handle throttle path for task based throttle
+  sched/fair: Handle unthrottle path for task based throttle
 
-What should drivers do if not?
+ include/linux/sched.h |   4 +
+ kernel/sched/core.c   |   3 +
+ kernel/sched/fair.c   | 449 ++++++++++++++++++++++--------------------
+ kernel/sched/sched.h  |   7 +
+ 4 files changed, 248 insertions(+), 215 deletions(-)
 
-
-
-I think the thing to do would be to first probe spec compliant
-vq numbers? If not there, try with the non compliant version?
-
-
-However,  you wrote:
-> > > But I recall that testing for the existance of a virtqueue on s390x resulted
-> > > in the problem/deadlock in the first place ...
-
-I think the deadlock was if trying to *use* a non-existent virtqueue?
-
-This is qemu code:
-
-    case CCW_CMD_READ_VQ_CONF:
-        if (check_len) {
-            if (ccw.count != sizeof(vq_config)) {
-                ret = -EINVAL;
-                break;
-            }
-        } else if (ccw.count < sizeof(vq_config)) {
-            /* Can't execute command. */
-            ret = -EINVAL;
-            break;
-        }
-        if (!ccw.cda) {
-            ret = -EFAULT;
-        } else {
-            ret = ccw_dstream_read(&sch->cds, vq_config.index);
-            if (ret) {
-                break;
-            }
-            vq_config.index = be16_to_cpu(vq_config.index);
-            if (vq_config.index >= VIRTIO_QUEUE_MAX) {
-                ret = -EINVAL;
-                break;
-            }
-            vq_config.num_max = virtio_queue_get_num(vdev,
-                                                     vq_config.index);
-            vq_config.num_max = cpu_to_be16(vq_config.num_max);
-            ret = ccw_dstream_write(&sch->cds, vq_config.num_max);
-            if (!ret) {
-                sch->curr_status.scsw.count = ccw.count - sizeof(vq_config);
-            }
-        }
-
-and
-
-            
-int virtio_queue_get_num(VirtIODevice *vdev, int n)
-{               
-    return vdev->vq[n].vring.num;
-}           
-            
-
-
-it seems to happily return vq size with no issues?
-
-
-
-
-> For virtio-fs it might not be that easy.
-
-virtio fs? But it has no features?
-
-> > 
-> > I kind of dislike it that we have a feature bit for bugs though.
-> > What would be a minimal new feature to add so it does not
-> > feel wrong?
-> 
-> Probably as above: fixed vs. compressed virtqueue indices?
-> 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
+-- 
+2.39.5
 
 
