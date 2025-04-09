@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-596620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A2FA82E37
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:11:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08796A82E39
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34D651B6625A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:11:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 339A47AEB6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16768279349;
-	Wed,  9 Apr 2025 18:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D9227781B;
+	Wed,  9 Apr 2025 18:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="cXvB1Fp9"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="RSaLncYf"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1911278163
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 18:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3750427701F
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 18:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744222208; cv=none; b=EP8BrlD+HkZfefnUuFnU8u3BeemWP21k9L1NceN0BD2jcr2qdoiy61B0KAo4K7B/DcaChHA99c+k3dnR0DwHSmqIzoGQdf4N4qxcwc1cFeBOuwRKzokfgPFeb5PP7c5+SQgfbhaxUpxsm3WkQiihyChaJUAmE4KwKIKOVeI/aco=
+	t=1744222209; cv=none; b=bEIrLn9vj+dQRez4ANHzbc0LguJMXnLJ0UBqzRum+rhDjPhKdWe1hhW8EPQf/pclXvFfJiCALkim6C2daieMClClimPmt/MFAXAerV3zZ/d1wsAv52YhnOaJSA0Ra0g+S1p12lD3tkSXkjiYay0zvcdQUnQnZ1nlcyYh4I6P8zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744222208; c=relaxed/simple;
-	bh=VetJwdVnmt9o+9NgFD12q9lF77Mr8AU8osE01DjUJQY=;
+	s=arc-20240116; t=1744222209; c=relaxed/simple;
+	bh=i55/zbqHXEP9n9Jp0TAj7NFy/jb3tlzhWzJIzs8Xu6o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Br5bobwRJwhtQxVT9l1ISPlraWtoNvaOt59bZkBFtB27Cp6aSlH46HUfPPRYn0GzcMwU7IIx4MWTgEaMgDhVoW2/kjwcDoLIggx3JBuEPex+s7JU0qEqbC/9lbMYCUHj3vztOhMi57JQoam8pw3PVatYpt+jCGRwaJyjILxdSoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=cXvB1Fp9; arc=none smtp.client-ip=209.85.214.174
+	 MIME-Version; b=g/wSyEeetP4fmCLh4xB+HAEd02VKUY3Z8az3B3AJcfrZGTudEvErv6R3fLdgyPfjruHJecFIpdbUmaS7SPGkzYMRvpfzJG8SJpuIuCuBSkmfW/1QMG+0UogcLX3OBUr7NxvjpZdo2e5k3Sy1vEheUM1qJ/ukWiFQeGrcZ2FPoTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=RSaLncYf; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neverthere.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-227aaa82fafso61777375ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 11:10:05 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-736a7e126c7so6636291b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 11:10:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=neverthere.org; s=google; t=1744222205; x=1744827005; darn=vger.kernel.org;
+        d=neverthere.org; s=google; t=1744222206; x=1744827006; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hBTWW1bMzl2CRoN9DxUuvCANdTsm/r2Yn73XwZqFoAs=;
-        b=cXvB1Fp9ZCoN3ysP8abtSRWImqci91DBQnI7lhArIKiEBn8Q3A9YWOwjAr8y36c11e
-         f0CpS/Q/HIwLX1WG3f/zsKJjfJaSbgghiPJ7qkREwzbg1QYmfD7GIKggkVfYV+Bed9X0
-         PPhmC6qK4SYJOyjmxgpd0klJMacbgsmP/LuU8EpR2IOvGMpWMxLVaRB8jvqphl/RdiP9
-         OL8jQUXHgr0KuG/BN/J0bYRQs8uC0ieti1f3beo6ZN2jCygHdIaS788muTdH9uIVdJvl
-         GeOn9WECv8fhXPYiVGtZF8ebNg75vp6AAzZBeJcULd9aY1UDfTSJianBtKTnlJUxM5Be
-         DDrg==
+        bh=yXkvdn8RYwOYRtLEQqbmHYo+oTivxTewzyUjW/RrAvo=;
+        b=RSaLncYfq/JQT8quSaD8HPe010CF8Gk2IXfwF1AUIpPELiX4m6z9Eo6FYnJJxignO7
+         ZIesmBeUUP4Ito8vZUdiqJhYJIT6O98HvBMZFciJ+95YGRtYpVLIWuKSOKvRC0HatV11
+         fFn+x6Y8DscWMEenIOJxo9P3p31DLd7r8GCB5P853ckYvjg9YpqB5y6XP7UixNZMBfXT
+         e/DmYGAYg4dRogzUmXXtmJJaY231DfJr/Tp4/N/8hWi+nPhAVkhoiMMYKyvvIn7wtBv8
+         a7Uz4cNoXVBvGpNt9tw5Gb36yQ892XW+t5Ok2Ei0H6H9Fy2gXEGpf+/7uHbT5OMxgcPN
+         iwFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744222205; x=1744827005;
+        d=1e100.net; s=20230601; t=1744222206; x=1744827006;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hBTWW1bMzl2CRoN9DxUuvCANdTsm/r2Yn73XwZqFoAs=;
-        b=ekJA630PYJqYMeHuT4y+72b6ojvYPDqsYkH1pub5OZylHA151K8L7yKjd0Gt94HK86
-         13Mz1YZCfntggR6Y+MLwYBi440IScjgAMZFlai5zHnq61PmuDqUlQj0Gnifxtm91BrF4
-         BmTYTu1XAIaM06+WMIj/TYpQvzGm/cDSWzZ1jDIHHIERgT+n55xq0/LXGcSR9G0fyrpn
-         IoT3jFMukk3ife7kDuG2jg5cATPK990/kdI1TevSi98qjgoJzhzERZ8S/H/jt6TPnvRX
-         SEgB8ajdwHEVOEUgfvhvn7NC3d0lMP1nav424njKLoQMnAq6JW2LlZPc7ADVOnIGnX8p
-         t0TA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTTsF0zk4XzUZImNqcFBozjCvRhwdmKToKvwyJbcF8tnpidnRhhgqbEmzqR5f9DDGUzcBioAdFaeymMSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygQZoHP+xUGc8U1/sSlad3F6LaV1frATKEO5wibebcqpWjXSO0
-	4q2957tkJb3rje9XTtd4Rjw9BxXwXviMsy43n64Axul+OLgQtu2SxTk+Z331Mw==
-X-Gm-Gg: ASbGnct2bZgwuHscZrmNCWJ0f69TqmhG3uEkRmLYScc55afHMKlKn7IULX2xSaheVpA
-	BHwNYkrzeqM4nZyb+h424LOSEhVW+mSODbww4/dgdBtknYqnHhOuPxOHJvVDrrWJx+cH8zQvkvE
-	oEWMzVmLFOz6r9M3ikeiJJLcUnmeJb15h6rt2MUCMvvAQwdvWkHuMiLbE+4PZy5u87sJ8RtgI7+
-	mf8Y6HNoEJDEBOStjoAUSvH/w8jXwa7mexhUuxll56a8jdnRmkyM7t4OeBsVVMc2ltgLTn0xuL1
-	G3vyTpZNSB6jIcCgI144O//G89+Vw0OaJUPvioLzWno//gUUieXzwxPE8+xjhpvMa3sCZNGI3vP
-	uFujuFh+2V7j2rI4h
-X-Google-Smtp-Source: AGHT+IEbvJg/FKfqIDacdEXN8Xg2+4syugs3og5CrvGDawc3QHoqniEQpk8Om9Y2kzXyvpuSWvzc3Q==
-X-Received: by 2002:a17:902:ccc8:b0:227:e7c7:d451 with SMTP id d9443c01a7336-22ac3f9a8fcmr61552775ad.29.1744222205228;
-        Wed, 09 Apr 2025 11:10:05 -0700 (PDT)
+        bh=yXkvdn8RYwOYRtLEQqbmHYo+oTivxTewzyUjW/RrAvo=;
+        b=mDirnCmGNZqHwxkdJu6xooownpt1b4wirMEoZq18/ZTEZNsFYmJj2sBX9Kq4L738Qf
+         QN8s3fxAuRDi3Pp1IqOowhbDCjY8s22Htns+BUs0lxlPsvpCgvUwym+aWFCq3u0xb/6S
+         TM4xGDm5Hth4w1c7c2miko71wd73U+vZU6+F+k6n3yENvrinUKDWxZYomG7Vj8LUGRdX
+         jhK8aGCqIkGxZ6Aby43o7qLrbx8a+GY8RAV7eNjW+KHwW8OV+PVKTmtKWm8dq4snW6lh
+         h8UPNdQ/C8SOZC3NPjiFYmfyrVFXaIUHVL5EWaHhyd7UczbRV9XRWaiwSa44IUj5LNg/
+         2/+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUZXJWmtrLzXzukBY+vgjfprr8ly4CMedRV9dIhToaJIF0JxvfKNXuo+zYaKtjTnmDgxVMrzw3dRcuDfRo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4FOQ1PJ//goPNhjuyRlfu5xrUwKrqXC+xv4ohALMQTf5J4EGf
+	wlMdqh1eAfptaUzFKyfh8TyrQNXm91tWJosa5YoVLCbO7JVZQkepVxxiP6xdAA==
+X-Gm-Gg: ASbGncsutJDXYwX+HPPk8zlWyxkJ+uz0fQP74jy3bMMsmbEsZJsoxSSWgb7Nk32i45z
+	vnpDyXfTVFTc8WcW9QsdkTOeGVYyB/mMlGBG+gA4oNsVIgBWfU5pJQEqbJxIA7foSlqRTuS+wnH
+	qTs69uN4RLOn+mxBrZKH/fdWM9qLzwBi/hHfVfVp1Qzohm81fnIVxo/Ku4BiTCYWO+ZbWidZQnT
+	UWIir8lYau/v5+XWV1Hrjqu6LPAFSRspfgMv78ogMrTSSe18WVSkC240YWAlTs6rq8VRTLZF2Uj
+	375jJ6MQeWBWt0p3Ua71Ct03SUGf1PO46zLpFBQIwBwMKPgUFjOy5BF3XpGoBlLR7hB69Zz6kEt
+	k+EiQkNIsLCVG/PnU
+X-Google-Smtp-Source: AGHT+IHQQm9vHH/AY/TOYUwpph9KfJogqhoEu+d3uc5fVZC2OAR1SKhB7+yES8VUq3t8TR37cQizmA==
+X-Received: by 2002:a05:6a00:2e1d:b0:739:4a93:a5db with SMTP id d2e1a72fcca58-73bafd709c2mr3555922b3a.22.1744222206442;
+        Wed, 09 Apr 2025 11:10:06 -0700 (PDT)
 Received: from tiamat (c-69-181-214-135.hsd1.ca.comcast.net. [69.181.214.135])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1d4490dsm1655851b3a.41.2025.04.09.11.10.04
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1e69c2asm1714749b3a.175.2025.04.09.11.10.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 11:10:05 -0700 (PDT)
+        Wed, 09 Apr 2025 11:10:06 -0700 (PDT)
 From: Michael Rubin <matchstick@neverthere.org>
 To: gregkh@linuxfoundation.org,
 	dpenkler@gmail.com,
@@ -79,9 +79,9 @@ To: gregkh@linuxfoundation.org,
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Michael Rubin <matchstick@neverthere.org>
-Subject: [PATCH v1 08/23] staging: gpib: tms9914: u8 over uint8_t
-Date: Wed,  9 Apr 2025 18:09:38 +0000
-Message-ID: <20250409180953.398686-9-matchstick@neverthere.org>
+Subject: [PATCH v1 09/23] staging: gpib: ines: u8 over uint8_t
+Date: Wed,  9 Apr 2025 18:09:39 +0000
+Message-ID: <20250409180953.398686-10-matchstick@neverthere.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250409180953.398686-1-matchstick@neverthere.org>
 References: <20250409180953.398686-1-matchstick@neverthere.org>
@@ -99,220 +99,156 @@ CHECK: Prefer kernel type 'u8' over 'uint8_t'
 
 Signed-off-by: Michael Rubin <matchstick@neverthere.org>
 ---
- drivers/staging/gpib/include/tms9914.h | 24 +++++++++---------
- drivers/staging/gpib/tms9914/tms9914.c | 34 +++++++++++++-------------
- 2 files changed, 29 insertions(+), 29 deletions(-)
+ drivers/staging/gpib/ines/ines.h      | 20 ++++++++++----------
+ drivers/staging/gpib/ines/ines_gpib.c | 22 +++++++++++-----------
+ 2 files changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/staging/gpib/include/tms9914.h b/drivers/staging/gpib/include/tms9914.h
-index 08a40d84825f..d9ba11426ab1 100644
---- a/drivers/staging/gpib/include/tms9914.h
-+++ b/drivers/staging/gpib/include/tms9914.h
-@@ -79,11 +79,11 @@ enum {
+diff --git a/drivers/staging/gpib/ines/ines.h b/drivers/staging/gpib/ines/ines.h
+index abe977f8f961..396cf0bd9ad1 100644
+--- a/drivers/staging/gpib/ines/ines.h
++++ b/drivers/staging/gpib/ines/ines.h
+@@ -36,30 +36,30 @@ struct ines_priv {
  };
  
  // interface functions
--int tms9914_read(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *buffer,
-+int tms9914_read(struct gpib_board *board, struct tms9914_priv *priv, u8 *buffer,
- 		 size_t length, int *end, size_t *bytes_read);
--int tms9914_write(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *buffer,
-+int tms9914_write(struct gpib_board *board, struct tms9914_priv *priv, u8 *buffer,
- 		  size_t length, int send_eoi, size_t *bytes_written);
--int tms9914_command(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *buffer,
-+int tms9914_command(struct gpib_board *board, struct tms9914_priv *priv, u8 *buffer,
- 		    size_t length, size_t *bytes_written);
- int tms9914_take_control(struct gpib_board *board, struct tms9914_priv *priv, int syncronous);
- /* alternate version of tms9914_take_control which works around buggy tcs
-@@ -96,7 +96,7 @@ void tms9914_request_system_control(struct gpib_board *board, struct tms9914_pri
- 				    int request_control);
- void tms9914_interface_clear(struct gpib_board *board, struct tms9914_priv *priv, int assert);
- void tms9914_remote_enable(struct gpib_board *board, struct tms9914_priv *priv, int enable);
--int tms9914_enable_eos(struct gpib_board *board, struct tms9914_priv *priv, uint8_t eos_bytes,
-+int tms9914_enable_eos(struct gpib_board *board, struct tms9914_priv *priv, u8 eos_bytes,
- 		       int compare_8_bits);
- void tms9914_disable_eos(struct gpib_board *board, struct tms9914_priv *priv);
- unsigned int tms9914_update_status(struct gpib_board *board, struct tms9914_priv *priv,
-@@ -105,14 +105,14 @@ int tms9914_primary_address(struct gpib_board *board,
- 			    struct tms9914_priv *priv, unsigned int address);
- int tms9914_secondary_address(struct gpib_board *board, struct tms9914_priv *priv,
- 			      unsigned int address, int enable);
--int tms9914_parallel_poll(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *result);
-+int tms9914_parallel_poll(struct gpib_board *board, struct tms9914_priv *priv, u8 *result);
- void tms9914_parallel_poll_configure(struct gpib_board *board,
--				     struct tms9914_priv *priv, uint8_t config);
-+				     struct tms9914_priv *priv, u8 config);
- void tms9914_parallel_poll_response(struct gpib_board *board,
- 				    struct tms9914_priv *priv, int ist);
- void tms9914_serial_poll_response(struct gpib_board *board,
--				  struct tms9914_priv *priv, uint8_t status);
--uint8_t tms9914_serial_poll_status(struct gpib_board *board, struct tms9914_priv *priv);
-+				  struct tms9914_priv *priv, u8 status);
-+u8 tms9914_serial_poll_status(struct gpib_board *board, struct tms9914_priv *priv);
- int tms9914_line_status(const struct gpib_board *board, struct tms9914_priv *priv);
- unsigned int tms9914_t1_delay(struct gpib_board *board, struct tms9914_priv *priv,
- 			      unsigned int nano_sec);
-@@ -125,10 +125,10 @@ void tms9914_release_holdoff(struct tms9914_priv *priv);
- void tms9914_set_holdoff_mode(struct tms9914_priv *priv, enum tms9914_holdoff_mode mode);
- 
- // wrappers for io functions
--uint8_t tms9914_ioport_read_byte(struct tms9914_priv *priv, unsigned int register_num);
--void tms9914_ioport_write_byte(struct tms9914_priv *priv, uint8_t data, unsigned int register_num);
--uint8_t tms9914_iomem_read_byte(struct tms9914_priv *priv, unsigned int register_num);
--void tms9914_iomem_write_byte(struct tms9914_priv *priv, uint8_t data, unsigned int register_num);
-+u8 tms9914_ioport_read_byte(struct tms9914_priv *priv, unsigned int register_num);
-+void tms9914_ioport_write_byte(struct tms9914_priv *priv, u8 data, unsigned int register_num);
-+u8 tms9914_iomem_read_byte(struct tms9914_priv *priv, unsigned int register_num);
-+void tms9914_iomem_write_byte(struct tms9914_priv *priv, u8 data, unsigned int register_num);
- 
- // interrupt service routine
- irqreturn_t tms9914_interrupt(struct gpib_board *board, struct tms9914_priv *priv);
-diff --git a/drivers/staging/gpib/tms9914/tms9914.c b/drivers/staging/gpib/tms9914/tms9914.c
-index 4064320df4c1..7afd710a105c 100644
---- a/drivers/staging/gpib/tms9914/tms9914.c
-+++ b/drivers/staging/gpib/tms9914/tms9914.c
-@@ -193,7 +193,7 @@ void tms9914_release_holdoff(struct tms9914_priv *priv)
- }
- EXPORT_SYMBOL_GPL(tms9914_release_holdoff);
- 
--int tms9914_enable_eos(struct gpib_board *board, struct tms9914_priv *priv, uint8_t eos_byte,
-+int tms9914_enable_eos(struct gpib_board *board, struct tms9914_priv *priv, u8 eos_byte,
- 		       int compare_8_bits)
- {
- 	priv->eos = eos_byte;
-@@ -210,7 +210,7 @@ void tms9914_disable_eos(struct gpib_board *board, struct tms9914_priv *priv)
- }
- EXPORT_SYMBOL(tms9914_disable_eos);
- 
--int tms9914_parallel_poll(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *result)
-+int tms9914_parallel_poll(struct gpib_board *board, struct tms9914_priv *priv, u8 *result)
- {
- 	// execute parallel poll
- 	write_byte(priv, AUX_CS | AUX_RPP, AUXCR);
-@@ -236,7 +236,7 @@ static void set_ppoll_reg(struct tms9914_priv *priv, int enable,
+-int ines_read(struct gpib_board *board, uint8_t *buffer, size_t length,
++int ines_read(struct gpib_board *board, u8 *buffer, size_t length,
+ 	      int *end, size_t *bytes_read);
+-int ines_write(struct gpib_board *board, uint8_t *buffer, size_t length,
++int ines_write(struct gpib_board *board, u8 *buffer, size_t length,
+ 	       int send_eoi, size_t *bytes_written);
+-int ines_accel_read(struct gpib_board *board, uint8_t *buffer, size_t length,
++int ines_accel_read(struct gpib_board *board, u8 *buffer, size_t length,
+ 		    int *end, size_t *bytes_read);
+-int ines_accel_write(struct gpib_board *board, uint8_t *buffer, size_t length,
++int ines_accel_write(struct gpib_board *board, u8 *buffer, size_t length,
+ 		     int send_eoi, size_t *bytes_written);
+-int ines_command(struct gpib_board *board, uint8_t *buffer, size_t length, size_t *bytes_written);
++int ines_command(struct gpib_board *board, u8 *buffer, size_t length, size_t *bytes_written);
+ int ines_take_control(struct gpib_board *board, int synchronous);
+ int ines_go_to_standby(struct gpib_board *board);
+ void ines_request_system_control(struct gpib_board *board, int request_control);
+ void ines_interface_clear(struct gpib_board *board, int assert);
+ void ines_remote_enable(struct gpib_board *board, int enable);
+-int ines_enable_eos(struct gpib_board *board, uint8_t eos_byte, int compare_8_bits);
++int ines_enable_eos(struct gpib_board *board, u8 eos_byte, int compare_8_bits);
+ void ines_disable_eos(struct gpib_board *board);
+ unsigned int ines_update_status(struct gpib_board *board, unsigned int clear_mask);
+ int ines_primary_address(struct gpib_board *board, unsigned int address);
+ int ines_secondary_address(struct gpib_board *board, unsigned int address, int enable);
+-int ines_parallel_poll(struct gpib_board *board, uint8_t *result);
+-void ines_parallel_poll_configure(struct gpib_board *board, uint8_t config);
++int ines_parallel_poll(struct gpib_board *board, u8 *result);
++void ines_parallel_poll_configure(struct gpib_board *board, u8 config);
+ void ines_parallel_poll_response(struct gpib_board *board, int ist);
+-void ines_serial_poll_response(struct gpib_board *board, uint8_t status);
+-uint8_t ines_serial_poll_status(struct gpib_board *board);
++void ines_serial_poll_response(struct gpib_board *board, u8 status);
++u8 ines_serial_poll_status(struct gpib_board *board);
+ int ines_line_status(const struct gpib_board *board);
+ int ines_t1_delay(struct gpib_board *board, unsigned int nano_sec);
+ void ines_return_to_local(struct gpib_board *board);
+diff --git a/drivers/staging/gpib/ines/ines_gpib.c b/drivers/staging/gpib/ines/ines_gpib.c
+index 3b7c8fc0f2e8..465ee125945b 100644
+--- a/drivers/staging/gpib/ines/ines_gpib.c
++++ b/drivers/staging/gpib/ines/ines_gpib.c
+@@ -95,7 +95,7 @@ static inline unsigned short num_in_fifo_bytes(struct ines_priv *ines_priv)
+ 	return ines_inb(ines_priv, IN_FIFO_COUNT);
  }
  
- void tms9914_parallel_poll_configure(struct gpib_board *board,
--				     struct tms9914_priv *priv, uint8_t config)
-+				     struct tms9914_priv *priv, u8 config)
- {
- 	priv->ppoll_enable = (config & PPC_DISABLE) == 0;
- 	priv->ppoll_line = (config & PPC_DIO_MASK) + 1;
-@@ -253,7 +253,7 @@ void tms9914_parallel_poll_response(struct gpib_board *board,
- EXPORT_SYMBOL(tms9914_parallel_poll_response);
- 
- void tms9914_serial_poll_response(struct gpib_board *board,
--				  struct tms9914_priv *priv, uint8_t status)
-+				  struct tms9914_priv *priv, u8 status)
- {
- 	unsigned long flags;
- 
-@@ -268,7 +268,7 @@ void tms9914_serial_poll_response(struct gpib_board *board,
- }
- EXPORT_SYMBOL(tms9914_serial_poll_response);
- 
--uint8_t tms9914_serial_poll_status(struct gpib_board *board, struct tms9914_priv *priv)
-+u8 tms9914_serial_poll_status(struct gpib_board *board, struct tms9914_priv *priv)
- {
- 	u8 status;
- 	unsigned long flags;
-@@ -419,7 +419,7 @@ int tms9914_line_status(const struct gpib_board *board, struct tms9914_priv *pri
- }
- EXPORT_SYMBOL(tms9914_line_status);
- 
--static int check_for_eos(struct tms9914_priv *priv, uint8_t byte)
-+static int check_for_eos(struct tms9914_priv *priv, u8 byte)
- {
- 	static const u8 seven_bit_compare_mask = 0x7f;
- 
-@@ -452,8 +452,8 @@ static int wait_for_read_byte(struct gpib_board *board, struct tms9914_priv *pri
- 	return 0;
- }
- 
--static inline uint8_t tms9914_read_data_in(struct gpib_board *board,
--					   struct tms9914_priv *priv, int *end)
-+static inline u8 tms9914_read_data_in(struct gpib_board *board,
-+				      struct tms9914_priv *priv, int *end)
- {
- 	unsigned long flags;
- 	u8 data;
-@@ -484,7 +484,7 @@ static inline uint8_t tms9914_read_data_in(struct gpib_board *board,
- 	return data;
- }
- 
--static int pio_read(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *buffer,
-+static int pio_read(struct gpib_board *board, struct tms9914_priv *priv, u8 *buffer,
- 		    size_t length, int *end, size_t *bytes_read)
+-static ssize_t pio_read(struct gpib_board *board, struct ines_priv *ines_priv, uint8_t *buffer,
++static ssize_t pio_read(struct gpib_board *board, struct ines_priv *ines_priv, u8 *buffer,
+ 			size_t length, size_t *nbytes)
  {
  	ssize_t retval = 0;
-@@ -505,7 +505,7 @@ static int pio_read(struct gpib_board *board, struct tms9914_priv *priv, uint8_t
+@@ -133,7 +133,7 @@ static ssize_t pio_read(struct gpib_board *board, struct ines_priv *ines_priv, u
  	return retval;
  }
  
--int tms9914_read(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *buffer,
-+int tms9914_read(struct gpib_board *board, struct tms9914_priv *priv, u8 *buffer,
- 		 size_t length, int *end, size_t *bytes_read)
+-int ines_accel_read(struct gpib_board *board, uint8_t *buffer,
++int ines_accel_read(struct gpib_board *board, u8 *buffer,
+ 		    size_t length, int *end, size_t *bytes_read)
  {
  	ssize_t retval = 0;
-@@ -565,7 +565,7 @@ static int pio_write_wait(struct gpib_board *board, struct tms9914_priv *priv)
+@@ -213,7 +213,7 @@ static int ines_write_wait(struct gpib_board *board, struct ines_priv *ines_priv
  	return 0;
  }
  
--static int pio_write(struct gpib_board *board, struct tms9914_priv *priv, uint8_t *buffer,
-+static int pio_write(struct gpib_board *board, struct tms9914_priv *priv, u8 *buffer,
- 		     size_t length, size_t *bytes_written)
+-int ines_accel_write(struct gpib_board *board, uint8_t *buffer, size_t length,
++int ines_accel_write(struct gpib_board *board, u8 *buffer, size_t length,
+ 		     int send_eoi, size_t *bytes_written)
  {
- 	ssize_t retval = 0;
-@@ -590,7 +590,7 @@ static int pio_write(struct gpib_board *board, struct tms9914_priv *priv, uint8_
+ 	size_t count = 0;
+@@ -393,7 +393,7 @@ static struct ines_pci_id pci_ids[] = {
+ static const int num_pci_chips = ARRAY_SIZE(pci_ids);
+ 
+ // wrappers for interface functions
+-int ines_read(struct gpib_board *board, uint8_t *buffer, size_t length,
++int ines_read(struct gpib_board *board, u8 *buffer, size_t length,
+ 	      int *end, size_t *bytes_read)
+ {
+ 	struct ines_priv *priv = board->private_data;
+@@ -412,7 +412,7 @@ int ines_read(struct gpib_board *board, uint8_t *buffer, size_t length,
+ 	return retval;
  }
  
- int tms9914_write(struct gpib_board *board, struct tms9914_priv *priv,
--		  uint8_t *buffer, size_t length, int send_eoi, size_t *bytes_written)
-+		  u8 *buffer, size_t length, int send_eoi, size_t *bytes_written)
+-int ines_write(struct gpib_board *board, uint8_t *buffer, size_t length, int send_eoi,
++int ines_write(struct gpib_board *board, u8 *buffer, size_t length, int send_eoi,
+ 	       size_t *bytes_written)
  {
- 	ssize_t retval = 0;
- 
-@@ -660,7 +660,7 @@ static void check_my_address_state(struct gpib_board *board,
- 	}
+ 	struct ines_priv *priv = board->private_data;
+@@ -420,7 +420,7 @@ int ines_write(struct gpib_board *board, uint8_t *buffer, size_t length, int sen
+ 	return nec7210_write(board, &priv->nec7210_priv, buffer, length, send_eoi, bytes_written);
  }
  
--int tms9914_command(struct gpib_board *board, struct tms9914_priv *priv,  uint8_t *buffer,
-+int tms9914_command(struct gpib_board *board, struct tms9914_priv *priv,  u8 *buffer,
- 		    size_t length, size_t *bytes_written)
+-int ines_command(struct gpib_board *board, uint8_t *buffer, size_t length, size_t *bytes_written)
++int ines_command(struct gpib_board *board, u8 *buffer, size_t length, size_t *bytes_written)
  {
- 	int retval = 0;
-@@ -864,14 +864,14 @@ EXPORT_SYMBOL_GPL(tms9914_online);
+ 	struct ines_priv *priv = board->private_data;
  
- #ifdef CONFIG_HAS_IOPORT
- // wrapper for inb
--uint8_t tms9914_ioport_read_byte(struct tms9914_priv *priv, unsigned int register_num)
-+u8 tms9914_ioport_read_byte(struct tms9914_priv *priv, unsigned int register_num)
- {
- 	return inb(priv->iobase + register_num * priv->offset);
+@@ -462,7 +462,7 @@ void ines_remote_enable(struct gpib_board *board, int enable)
+ 	nec7210_remote_enable(board, &priv->nec7210_priv, enable);
  }
- EXPORT_SYMBOL_GPL(tms9914_ioport_read_byte);
  
- // wrapper for outb
--void tms9914_ioport_write_byte(struct tms9914_priv *priv, uint8_t data, unsigned int register_num)
-+void tms9914_ioport_write_byte(struct tms9914_priv *priv, u8 data, unsigned int register_num)
+-int ines_enable_eos(struct gpib_board *board, uint8_t eos_byte, int compare_8_bits)
++int ines_enable_eos(struct gpib_board *board, u8 eos_byte, int compare_8_bits)
  {
- 	outb(data, priv->iobase + register_num * priv->offset);
- 	if (register_num == AUXCR)
-@@ -881,14 +881,14 @@ EXPORT_SYMBOL_GPL(tms9914_ioport_write_byte);
- #endif
+ 	struct ines_priv *priv = board->private_data;
  
- // wrapper for readb
--uint8_t tms9914_iomem_read_byte(struct tms9914_priv *priv, unsigned int register_num)
-+u8 tms9914_iomem_read_byte(struct tms9914_priv *priv, unsigned int register_num)
- {
- 	return readb(priv->mmiobase + register_num * priv->offset);
+@@ -497,14 +497,14 @@ int ines_secondary_address(struct gpib_board *board, unsigned int address, int e
+ 	return nec7210_secondary_address(board, &priv->nec7210_priv, address, enable);
  }
- EXPORT_SYMBOL_GPL(tms9914_iomem_read_byte);
  
- // wrapper for writeb
--void tms9914_iomem_write_byte(struct tms9914_priv *priv, uint8_t data, unsigned int register_num)
-+void tms9914_iomem_write_byte(struct tms9914_priv *priv, u8 data, unsigned int register_num)
+-int ines_parallel_poll(struct gpib_board *board, uint8_t *result)
++int ines_parallel_poll(struct gpib_board *board, u8 *result)
  {
- 	writeb(data, priv->mmiobase + register_num * priv->offset);
- 	if (register_num == AUXCR)
+ 	struct ines_priv *priv = board->private_data;
+ 
+ 	return nec7210_parallel_poll(board, &priv->nec7210_priv, result);
+ }
+ 
+-void ines_parallel_poll_configure(struct gpib_board *board, uint8_t config)
++void ines_parallel_poll_configure(struct gpib_board *board, u8 config)
+ {
+ 	struct ines_priv *priv = board->private_data;
+ 
+@@ -518,14 +518,14 @@ void ines_parallel_poll_response(struct gpib_board *board, int ist)
+ 	nec7210_parallel_poll_response(board, &priv->nec7210_priv, ist);
+ }
+ 
+-void ines_serial_poll_response(struct gpib_board *board, uint8_t status)
++void ines_serial_poll_response(struct gpib_board *board, u8 status)
+ {
+ 	struct ines_priv *priv = board->private_data;
+ 
+ 	nec7210_serial_poll_response(board, &priv->nec7210_priv, status);
+ }
+ 
+-uint8_t ines_serial_poll_status(struct gpib_board *board)
++u8 ines_serial_poll_status(struct gpib_board *board)
+ {
+ 	struct ines_priv *priv = board->private_data;
+ 
 -- 
 2.43.0
 
