@@ -1,276 +1,136 @@
-Return-Path: <linux-kernel+bounces-595627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C33A820FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:26:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17697A820F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32663880776
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:25:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77383461FAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E9A25D52F;
-	Wed,  9 Apr 2025 09:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC0725D21A;
+	Wed,  9 Apr 2025 09:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="t1+zmKGV"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jR1YVk9c"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBDF25C703
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CAC1D6DBC;
+	Wed,  9 Apr 2025 09:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744190762; cv=none; b=dNOd6HAnML0b+mdMRgKXU1LPehdeQTomtYPHWpAs+xYs1fubS2bORQWPyCX8sUjlGZI3LstxSfASql+CecDxgmXoZVGnDRWYrCEIepFzoSa+tXJGGybHqLizDKavDKgFeBWYi86U8wAUacFiDE40h7p2h+Ctb1f+sNOEB4b+MJg=
+	t=1744190699; cv=none; b=GjmUOdeUgguve4OdHCOGGpf6szWbnFX5gsdEB1db1GmZNn4xt9RCgf0ZIGwaLXaSUFC74BTYZ9BqGehm6rAGXovPd65zFlL0VBMoWMNz6Gt8rCUPIa9yoLEG31gyAaWMD4B9T7MON3CPJ6BQfMHVKkbw25leiaCI5mWOwQJQh20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744190762; c=relaxed/simple;
-	bh=jcwBfldelS5c0jSTsE4Kp6YvMT4Tu091LMvQ8hLdekE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BZHgCI/PuTtMLpt9W9xKRJYY2QkCFAOp3lSdLa5r0T4EiIn106QBWpsYFhmKEdFLqCyR3D2hAarkQR/vSD6aJMxpa5hYc8LglBZ5hElCVS4IRC4oe+LiHEPxDXjrHAmBQBrwuAUVRhpUoerP3AmNa0MA1zkLLIWm4zWUi8D2N0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=t1+zmKGV; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso7061543f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 02:26:00 -0700 (PDT)
+	s=arc-20240116; t=1744190699; c=relaxed/simple;
+	bh=9y05Lr8UWQZsTrWL/CPzmibQKQ++CzKzchknlhwYLJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EYXAfMddVicuuM+BFfOAT3QT0ZmK8lGkC9YY18U7zq02y9r1VA/h8is9Tn54L9TZeaMHhf5dJ6+rn50T1V+Mdlaqva+LXbPcvKEY0BbON1CTbFS9LqFogmTwPx3tka3Y8Wimn7x/MI6cmChzCT6218+FAQZaa7y78qZabQKFoRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jR1YVk9c; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43ede096d73so29897205e9.2;
+        Wed, 09 Apr 2025 02:24:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744190759; x=1744795559; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Wt3P/PZ2A+bsUg/oTQhsQUkmjpYKm6Jh4MgXrIAoQbk=;
-        b=t1+zmKGV1bgktYlXXAhes+oDH56rkv0/iEL73HoXu7gLvofVjObyxOw2gYcy6oEf8E
-         JX3XTNduyc/dTDxfBGE2sON8Y8pSXJ4pxggz9zfraYUrhiKgs6orSZAJCagBPSFsWjRs
-         k6MCPD9aPe0EdVklwYSEjg1EDi/2SaQm1V+LWIfM6VQsN31zFGccNTQgyOxAuNaz2tZv
-         BIewm+qKQ1dy1RXwc52uci0mV4e93T/yhpI38wavxphoBU/Jajy1NLn+j2D32aJqGwdG
-         8UjqfdulVDEVzoAzMqWThZ+nTXq8N+0iJE9kQKXMZUYnJEeXC6I/3+mmOn3ouPYhbD/F
-         2kbQ==
+        d=gmail.com; s=20230601; t=1744190696; x=1744795496; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vd0ZQP+RaOtlGM+Bn/aOlJ8Q6DsEZ41QfPHQrkJtrP8=;
+        b=jR1YVk9cLBFnHqNysUdJBwk9ddBfbSm04okKephe52GV/uO38d+k/soA7yIP3I31wt
+         CHfes3fpsmxzwW4UtKZ3mCYU5MjWQpwHwH4DzOraNV7tS8hJhBfZzfsqGlZv7r31MUCL
+         CK1td8bI/coF4alj6e+6vXNGlh4ng430z6tkJ5Jl+PgyQMXVsp4C6GVgH+pAVn/8ydU6
+         nDLhiWIzAND7MiWaHdz+C2+wKt9lF8a0yMHPq1c3wVN0+5TxSmNb2Iuj5NGeYSeuUTTa
+         fr0npykId5gllULslGMzPZdot6HX9jM8D1LE8s9DZ5+f4gtooLr8oombqzTPWg8eA/uf
+         CWqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744190759; x=1744795559;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wt3P/PZ2A+bsUg/oTQhsQUkmjpYKm6Jh4MgXrIAoQbk=;
-        b=JitlFAcXUmMWwShh2r/unXFXZJbK4v/aSck1mZobRDX0g+i1Vg6GbokfgFowtgZSYL
-         JhtfZc8XQjQp2TJZTOVmCT5qZmQmAAesikXmosOzVp/P5VZICCS3vvYO8d3PxJ5BoQkr
-         c8JDqIu5z4h8ABs1SeGSDt34b81Gg2ce7KUg9DHC7tB306l21Q+PQxIHAbEEB7FKcgZs
-         5/TSxGuWOiy7IqjsRdeNXS2NEScAcXyCAAUBAcJhhoiKl1iBxdxy23qSI5befqH7aAF1
-         5I/zGHcB4loTkGmM+cbPpJbqaEr0sEVJL+QoZZuZelSiL8msX1TE31y+0UGuv4UQBmx9
-         gSfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXiLRCrP1RJ/kSQXsdPxCz/EgSFRPhfbVhidFZoHXakaeErkk8y0JarhhpdXUM2zITVHPwPhXP7zKb/RY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn4WTa9ory+lXpzYVIuF+Jkava66rONnMpq5HcU+ui/iVDo4gq
-	mqBRzFjtwxtr09BSCEQrPV8afEK5qy3I0I/QWmFlfUF2vP1+m7Qh1TQqNWofKgg=
-X-Gm-Gg: ASbGncsCXzQiprr6mmV9E+nkl3HqNFqOrkerJYK15KNxH8K7SAx/eMJKEgc8s3vtnCI
-	9UE+F5BK87Cxyi3R2iXdIu2n3DKkFksg4AHTzqChPMGjQVU93EaQhCTS3yECueAG6xw3lDn0rlb
-	fYUEIuftpAbn+hQQfaWiGdHT5ceZU41E7Njo+GLuc8lneGM/WcIwTI6uyDZKEAomHR2lXQ8e8cG
-	B1qV03dfrucVAHv6erkW0x+KJ1eF6sOUu1Wcw4grREZwdsm+sh8Kk1drNMflgzTL099pZ0W0z25
-	KFrpQrHVm78jN7GLWwGXp4ldqzO+l/GZVwCIFM9uPAqBmIuLKFVHzqs7KGVdv14TqjLVvdzwBKR
-	eewwcF0sICjJn
-X-Google-Smtp-Source: AGHT+IF2W60HyjSsanXCbQ9L1wsO5+PxuL8njMCAxCqnMoNOXFuOtG6P0fbWAqj4LGVy335MUd1DNA==
-X-Received: by 2002:a05:6000:4285:b0:391:487f:2828 with SMTP id ffacd0b85a97d-39d87aa1ff1mr1996324f8f.10.1744190758752;
-        Wed, 09 Apr 2025 02:25:58 -0700 (PDT)
-Received: from archlinux (host-87-15-70-119.retail.telecomitalia.it. [87.15.70.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39d893fdf84sm1046430f8f.86.2025.04.09.02.25.57
+        d=1e100.net; s=20230601; t=1744190696; x=1744795496;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vd0ZQP+RaOtlGM+Bn/aOlJ8Q6DsEZ41QfPHQrkJtrP8=;
+        b=sTUdmDXcWpIfymEltJJjM/5/plb6GpX6vJSrCckuvz5NbcCFgobfGmRz7gUOd9wD0b
+         fuAgBrNe2r//BMawNcqiQYHVXevxJvZkRvxymUzfZpbgcYWbDtLUBgOGilqEnCWrR1MK
+         m92Iq74zlIWm3i2dCupUqE3Z4wWqo1qKVKD9B63cmQ9BVM/FAoULCj/gef3uhCKXllN/
+         bv3et6OOIUQYcyG5tvjnae+ILC/IqNSxyBTpinHi6HpQ0FI3lwidmrg6FL9FCbam3Jj8
+         X9YeEgRKD2QalzQTN9hUczd3+wxl4KSQ9JjoVARgYkC9Wy7A+XVqRM+4QWQ5K4Oq/W8U
+         Q+LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlp53fVHXVkxPXmDcKM9Z34rGmlQ5ows/vt69QSCREuUEeMbz+Lu1geXLBObNughU1JMPr498=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj49TL9kbOb/g/keti/XlY8EidhkGP9cuTJFr6pGpysLBKS6O7
+	BnJvFRbdgxyYxeXRcGRmydswQUD4BoqFY6zW3n88I4EnefsQUG0i
+X-Gm-Gg: ASbGncu7JS3+jBk0KZmziftfBmRvpSHcAVy7CaASsZWhuIl/f71/4RTZXrCgNPiAclP
+	r4VIypPOYaXitcXr2Ao7x5NRi2vdM5tpMQCJfTejYFH17DxDjS32M4XVqTvqPBPbqAzMpl/r0Iz
+	J28OHvzsL4gvYnlW0P40vDpgaQa++YBQSIZO3XlsIZnK3rMt0y6SE9x4Q+/xQrk07EY7/SzUUs4
+	le3QbTz16fX4TqtakmudYB+KQ4hFVS3h8OzepjwVW0dJ7OfDM6R7wCvjE7F+r8ospmIJOf0sauc
+	y8ayxhKlDRuv9RtDCHyLHSItyaVm+BNJtKnmMH97UYFv2KrpDXuGgwpFjEufSaXeH2f/qqEocYc
+	Vyw==
+X-Google-Smtp-Source: AGHT+IE8dy+g6fAtm0+Z63ZSBTKVqiQ1ETK79CJd1TMR6OU1rnor+Qjq/XABT4WyE/1qRq6Svnoriw==
+X-Received: by 2002:a05:600c:1992:b0:43d:160:cd97 with SMTP id 5b1f17b1804b1-43f1ed4b5e0mr16806455e9.25.1744190695676;
+        Wed, 09 Apr 2025 02:24:55 -0700 (PDT)
+Received: from fedora.advaoptical.com ([82.166.23.19])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f235a5b08sm10036735e9.33.2025.04.09.02.24.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 02:25:58 -0700 (PDT)
-Date: Wed, 9 Apr 2025 11:24:42 +0200
-From: Angelo Dureghello <adureghello@baylibre.com>
-To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Jonathan Corbet <corbet@lwn.net>, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 5/5] iio: dac: ad3552r-hs: add support for internal
- ramp
-Message-ID: <ldn4jhz7oeo7sxygifra36daydbo3mdsf6dznxbugoixwmn7ci@gok34zr2mund>
-References: <20250408-wip-bl-ad3552r-fixes-v4-0-b33c0264bd78@baylibre.com>
- <20250408-wip-bl-ad3552r-fixes-v4-5-b33c0264bd78@baylibre.com>
- <0900650872a1533a344df375e99ce116046b3ee0.camel@gmail.com>
+        Wed, 09 Apr 2025 02:24:55 -0700 (PDT)
+From: Sagi Maimon <maimon.sagi@gmail.com>
+To: jonathan.lemon@gmail.com,
+	vadim.fedorenko@linux.dev,
+	richardcochran@gmail.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Sagi Maimon <maimon.sagi@gmail.com>
+Subject: [PATCH v1] ptp: ocp: add irig and dcf NULL-check in __handle_signal functions
+Date: Wed,  9 Apr 2025 12:24:46 +0300
+Message-ID: <20250409092446.64202-1-maimon.sagi@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0900650872a1533a344df375e99ce116046b3ee0.camel@gmail.com>
 
-On 09.04.2025 07:32, Nuno Sá wrote:
-> On Tue, 2025-04-08 at 12:18 +0200, Angelo Dureghello wrote:
-> > From: Angelo Dureghello <adureghello@baylibre.com>
-> > 
-> > The ad3552r can be feeded from the HDL controller by an internally
-> > generated 16bit ramp, useful for debug pourposes. Add debugfs a file
-> > to enable or disable it.
-> > 
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > ---
+In __handle_signal_outputs and __handle_signal_inputs add
+irig and dcf NULL-check
 
-Hi Nuno,
-> 
-> Hi Angelo,
-> 
-> One issue that needs a respin and then a minor comment... With it,
-> 
-> Reviewed-by: Nuno Sá <nuno.sa@analog.com>
-> 
-> >  drivers/iio/dac/ad3552r-hs.c | 166 +++++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 160 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/iio/dac/ad3552r-hs.c b/drivers/iio/dac/ad3552r-hs.c
-> > index
-> > 37397e188f225a8099745ec03f7c604da76960b1..9a8eed7a06e4f2e7b23d59764b8f2fc21e2c4537
-> > 100644
-> > --- a/drivers/iio/dac/ad3552r-hs.c
-> > +++ b/drivers/iio/dac/ad3552r-hs.c
-> > @@ -7,6 +7,7 @@
-> >   */
-> >  
-> >  #include <linux/bitfield.h>
-> > +#include <linux/debugfs.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/gpio/consumer.h>
-> >  #include <linux/iio/backend.h>
-> > @@ -54,6 +55,18 @@ struct ad3552r_hs_state {
-> >  	struct ad3552r_hs_platform_data *data;
-> >  	/* INTERFACE_CONFIG_D register cache, in DDR we cannot read values. */
-> >  	u32 config_d;
-> > +	/* Protects backend I/O operations from concurrent accesses. */
-> > +	struct mutex lock;
-> > +};
-> > +
-> > +enum ad3552r_sources {
-> > +	AD3552R_SRC_IIO_BUFFER,
-> > +	AD3552R_SRC_BACKEND_RAMP_GEN,
-> > +};
-> > +
-> > +static const char * const dbgfs_attr_source[] = {
-> > +	[AD3552R_SRC_IIO_BUFFER] = "iio-buffer",
-> > +	[AD3552R_SRC_BACKEND_RAMP_GEN] = "backend-ramp-generator",
-> >  };
-> 
-> nit: I would use more generic strings. I assume "iio-buffer" is just the "normal"
-> data so use something like that. For the ramp, is it 16 bits? I would just use ex:
-> RAMP_16. I do not thing that the "backend" prefix (as well as "-generator") to add
-> much.
-> >  
+Signed-off-by: Sagi Maimon <maimon.sagi@gmail.com>
+---
+ drivers/ptp/ptp_ocp.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-are 
-"normal", "ramp-16bit"
-ok ?
-Or please let me know the names you prefer.
-
-> 
-> ...
-> 
-> > +
-> > +static ssize_t ad3552r_hs_show_data_source_avail(struct file *f,
-> > +						 char __user *userbuf,
-> > +						 size_t count, loff_t *ppos)
-> > +{
-> > +	ssize_t len = 0;
-> > +	char *buf;
-> > +	int i;
-> > +
-> > +	buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
-> > +	if (!buf)
-> > +		return -ENOMEM;
-> > +
-> 
-> When are we freeing this memory? I also do not see the point for a PAGE_SIZE
-> allocation for such a small string table. I would say to simplify things and use a
-> local buffer with 64/128 bytes (should be more than enough). If you see this growing
-> in the future, you can also go with seq_file.
->
-agh, frogot the free. Sorry.
-Ok, i'll use 128.
+diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+index 7945c6be1f7c..4e4a6f465b01 100644
+--- a/drivers/ptp/ptp_ocp.c
++++ b/drivers/ptp/ptp_ocp.c
+@@ -2434,15 +2434,19 @@ ptp_ocp_dcf_in(struct ptp_ocp *bp, bool enable)
+ static void
+ __handle_signal_outputs(struct ptp_ocp *bp, u32 val)
+ {
+-	ptp_ocp_irig_out(bp, val & 0x00100010);
+-	ptp_ocp_dcf_out(bp, val & 0x00200020);
++	if (bp->irig_out)
++		ptp_ocp_irig_out(bp, val & 0x00100010);
++	if (bp->dcf_out)
++		ptp_ocp_dcf_out(bp, val & 0x00200020);
+ }
  
-> - Nuno Sá
-> 
-> > +	for (i = 0; i < ARRAY_SIZE(dbgfs_attr_source); i++) {
-> > +		len += scnprintf(buf + len, PAGE_SIZE - len, "%s ",
-> > +				 dbgfs_attr_source[i]);
-> > +	}
-> > +	buf[len - 1] = '\n';
-> > +
-> > +	return simple_read_from_buffer(userbuf, count, ppos, buf, len);
-> > +}
-> > +
-> > +static const struct file_operations ad3552r_hs_data_source_fops = {
-> > +	.owner = THIS_MODULE,
-> > +	.write = ad3552r_hs_write_data_source,
-> > +	.read = ad3552r_hs_show_data_source,
-> > +};
-> > +
-> > +static const struct file_operations ad3552r_hs_data_source_avail_fops = {
-> > +	.owner = THIS_MODULE,
-> > +	.read = ad3552r_hs_show_data_source_avail,
-> > +};
-> > +
-> >  static int ad3552r_hs_setup(struct ad3552r_hs_state *st)
-> >  {
-> >  	u16 id;
-> > @@ -550,11 +678,7 @@ static int ad3552r_hs_setup(struct ad3552r_hs_state *st)
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	ret = iio_backend_data_source_set(st->back, 0, IIO_BACKEND_EXTERNAL);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	ret = iio_backend_data_source_set(st->back, 1, IIO_BACKEND_EXTERNAL);
-> > +	ret = ad3552r_hs_set_data_source(st, IIO_BACKEND_EXTERNAL);
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > @@ -661,6 +785,26 @@ static const struct iio_info ad3552r_hs_info = {
-> >  	.debugfs_reg_access = &ad3552r_hs_reg_access,
-> >  };
-> >  
-> > +static void ad3552r_hs_debugfs_init(struct iio_dev *indio_dev)
-> > +{
-> > +	struct ad3552r_hs_state *st = iio_priv(indio_dev);
-> > +	struct dentry *d = iio_get_debugfs_dentry(indio_dev);
-> > +
-> > +	if (!IS_ENABLED(CONFIG_DEBUG_FS))
-> > +		return;
-> > +
-> > +	d = iio_get_debugfs_dentry(indio_dev);
-> > +	if (!d) {
-> > +		dev_warn(st->dev, "can't set debugfs in driver dir\n");
-> > +		return;
-> > +	}
-> > +
-> > +	debugfs_create_file("data_source", 0600, d, st,
-> > +			    &ad3552r_hs_data_source_fops);
-> > +	debugfs_create_file("data_source_available", 0600, d, st,
-> > +			    &ad3552r_hs_data_source_avail_fops);
-> > +}
-> > +
-> >  static int ad3552r_hs_probe(struct platform_device *pdev)
-> >  {
-> >  	struct ad3552r_hs_state *st;
-> > @@ -705,7 +849,17 @@ static int ad3552r_hs_probe(struct platform_device *pdev)
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	return devm_iio_device_register(&pdev->dev, indio_dev);
-> > +	ret = devm_iio_device_register(&pdev->dev, indio_dev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = devm_mutex_init(&pdev->dev, &st->lock);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ad3552r_hs_debugfs_init(indio_dev);
-> > +
-> > +	return ret;
-> >  }
-> >  
-> >  static const struct of_device_id ad3552r_hs_of_id[] = {
-> > 
-> 
+ static void
+ __handle_signal_inputs(struct ptp_ocp *bp, u32 val)
+ {
+-	ptp_ocp_irig_in(bp, val & 0x00100010);
+-	ptp_ocp_dcf_in(bp, val & 0x00200020);
++	if (bp->irig_out)
++		ptp_ocp_irig_in(bp, val & 0x00100010);
++	if (bp->dcf_out)
++		ptp_ocp_dcf_in(bp, val & 0x00200020);
+ }
+ 
+ static u32
+-- 
+2.45.2
+
 
