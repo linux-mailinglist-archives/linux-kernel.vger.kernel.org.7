@@ -1,147 +1,131 @@
-Return-Path: <linux-kernel+bounces-596819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA3D2A83189
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:04:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 261D1A83184
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E8B016BB9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:59:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C87A8A0B01
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3F32147F3;
-	Wed,  9 Apr 2025 19:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A84217719;
+	Wed,  9 Apr 2025 19:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aI9teiPp"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZCxfOvJ9"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1992063FA
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 19:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A072202C44
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 19:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744228432; cv=none; b=kpwT57WRGTeNFK/z+jppULfDgEnGBDgXVwZcMg3saCYshzx2RXYU7+wWNpg63GQDpiP4/XdGJrEdZZCc+LqlUg8PBi6Q3IrhdvtyNwEcNLLT9bEHOxKs8OTpA05pESFkSWHYs7AuPAq5oby4876bDgJS0DP0l9CE6LzVibrUlC0=
+	t=1744228502; cv=none; b=QXTv5g/yiAHmIVTsOp5ppQ5iM/8mbZBB5Gf1y093lGD3QVkOnNwG7nI/8F2b+G4pELqbVP5zz8RzAV4J++18f1RU8AQfyaXVygSCkWDbuR+dCJeRGayt2D+Q9qMruhADSOx9YVfPSvKBMJFlnScGowr21AonCBbpp3tN5FnXfD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744228432; c=relaxed/simple;
-	bh=rv4mMwuG4jkn773xC8sA0ToKXoLaQgRn7SHaoclVUrY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WXA7QcFwjfCtKy2gaTy+oBglVGOHlFYCPe656Jgp1Lxa8dIWkr0mGSsWRRu//2phH0+UrXKsSMVLfxEfUAzCU1WvPJV40vN0EhajfmarAqjlyevbe89Mc5hCLgHtZL8tBv2gCiFvauYDYpmZhY8ZaeAbNU3Mq9nm1lLFPom8Jvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aI9teiPp; arc=none smtp.client-ip=209.85.210.202
+	s=arc-20240116; t=1744228502; c=relaxed/simple;
+	bh=xn68JtN4Qk06N0r1rRh9xofitl+E4BHuD3TI27fRFfs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gdJ/k+LRqaFt+7RZcDk7EpncK8T7xwBSxmJOXii8CEObHtjTCNb50p6WpCPbZ3Nl/yePyStQ6qPGpIRur1KNxxvk6NRZnVZnMGjS9+TeQdqpHl45Olc8wwZDdjB8FgEEmcCwDReT8LtkALg4Jy4f4GmSZiKCfzJWHZKzve8kkK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZCxfOvJ9; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-736c7d0d35aso7918b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 12:53:49 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-73009f59215so7556b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 12:55:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744228429; x=1744833229; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B/LBm3aV4zfAmxi92/BK6RmsqnpaBnCdXpzKq52/Foc=;
-        b=aI9teiPp4IOAdU9GBsw2c5UUNtJjfzYDo5oOlVpoK02KZbfJDi4/BUpMOgjUTDDP77
-         Zo1cFX/mi1CVaa7zifjJZefTiSM4bKVOBRbxcHWDsR4ra5zIy6Q8gxph2QBBXdTfWPR0
-         5OQe5GpPbqiVQys+My9WQ6FIq3wGpo5XZ/aX/6wj+SeZn0pkfDwDGx1345vl3dMMVxH9
-         XNN9BcliriZjlo6Nu9bsZMO7F7TC8FUiDzYlGA2mNiW7XM6g2jB0KjlK3q1zQA8WX7QA
-         IvmRm67Z5XfxmOWM6F9ibvqDxN6Uam9M7Va/UcIZ8+KdMP9uVdgncS5xeXVLnTkaWbTL
-         dP/A==
+        d=google.com; s=20230601; t=1744228500; x=1744833300; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0Cxlom7LaqSTPNZq2xmK4+ieYxW2eyaqpLd90fUc9Os=;
+        b=ZCxfOvJ9TKKPij5ol67bpHIKIN4ocgS+jlyjWabJe8rXDb7dM8omjhhxvwYxlWRr6E
+         JIzw6ekXdJnOU2mOBKpne10r/Qkv7Asz8xse2pRvFjqNwexGmJcUME6MWjd8ICEGhLKB
+         zaFHWxbzT4grejh044ZTkQjeRnWZLVkxOTp+K7epeWHGeHjhG/7XOrPXafSKwyxQq3+u
+         +QE4r7Uo+HthUF69Y/vSQUOq+ak5SWi6Ix6svcpia1HFtuRcl0vSPUuhg4GkbHELIXmH
+         6N6D3JUEauqJvcOyrF/t/w6S6+OquM6H7REDjcfWmOklshz/K9MwIsrHhBmWcRXgi9Q9
+         PXpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744228429; x=1744833229;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B/LBm3aV4zfAmxi92/BK6RmsqnpaBnCdXpzKq52/Foc=;
-        b=ILCrx65vzAyoB6eCURM6btiwGVUpSDWVsHURy7YuKt/zk5WklY/Xh9Q7XgfrCGEFMu
-         a2ld7vm3Y1IrI6t8EOBTpUr3SkQJcQQpvSQdD59bBJ4L3XZzcyABd6Gb0n6rF8YkOvCr
-         iKHRB8aSyVgLZJMCQtZ2b+oFBXvLuS779HAt4kukipjVxdlojmOyZbTwm0HZn04IPZLf
-         qaLYxwMSI3RS1HerjsEjYkra8RjL3lyJuGCjWEM6duSHahMJR1Ueq6WHyruPGb+95TsI
-         PAomoZOqh1BKXaNT/hux/pceVAcMvFzZLElAcyHNkpSIShoEpEKtDDyEqZDgRGVqpmmx
-         tL/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWI9TnAv+NWxi6UbzpAjDan5kqUBz9E6b2lF2CUPMhLqzgdEhNW6eYjhQbM7D7puYsblOhvq6zwJjpFTRU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCoI2ZwdxBXEX1jVMQcC6u7LMBV5FS3GOfX5yJmg06YjzWLvzu
-	Ji3MozYKNx8wUlJbWItddTi6ZRDUw0SJBhnlki8mBUNcdlcQ/zRxWPNH6AvpxTjDjqpXcSL6PKK
-	QQA==
-X-Google-Smtp-Source: AGHT+IEeESm/upruWypiAiAFjj3gqiD2FWPZpn5Oi58JT7YjI+D2LtDvdvxhwdzcKYcXLoDvWUFBt/R8XtU=
-X-Received: from pfkq6.prod.google.com ([2002:a05:6a00:846:b0:737:6e43:8e34])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:130c:b0:736:bfc4:ef2c
- with SMTP id d2e1a72fcca58-73bbec49ac8mr221785b3a.0.1744228428902; Wed, 09
- Apr 2025 12:53:48 -0700 (PDT)
-Date: Wed, 9 Apr 2025 12:53:47 -0700
-In-Reply-To: <20250409014136.2816971-1-mlevitsk@redhat.com>
+        d=1e100.net; s=20230601; t=1744228500; x=1744833300;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0Cxlom7LaqSTPNZq2xmK4+ieYxW2eyaqpLd90fUc9Os=;
+        b=HaZDXSg9D1CG2wTX3VHtFXqhaInxb6c2DfNv7YqVeLxHT8dxxH8/UwjEqIp/L3ySaM
+         piMe+PC93RF4DnP7r9qIz32WF6hw9yC3ZOjY61ymiiA6ksu96EWX1//QjXvedeT5amEB
+         V8yYfjet2HjKHpHHRareHSMhVw+2MWirbqtn2tGTouZZUsPvajNZ2buBZY+B6RlQbHYz
+         ckd5q+fQBxDb6EDVJ3i1U4s9nk9cO3w1Vi75wOq746qi8kTVOyUbxlgf6XjaDoK7OyVT
+         sXib2gxJfAX6CsCvnlXvasKXFr0a7EmGdUby1QvmRP3sE0NHxNN3XBXbWbi54xLW+NrE
+         IpDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXM6Ux1Xc8XK9U/ZgqIf5Goz5pCB4fgzvXCl6fMsGFivUzZfsGuk0PgkPSIiMGez62FZs5akf4FJHgf+Lo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrPwDSVEBRIMkXKkDVtJEEN1uQdNh03o27TBeOUbkF7wDKXYk2
+	yB1tuvwJGQ2WMCqKpBYlkFQIF5V96YErIzBCoe6Wi5O5FcuGNeG1CjbVz0WN9+/CJsYjgLF42db
+	PAKB008f95Dv3Xw==
+X-Google-Smtp-Source: AGHT+IE+v/JVOzdWcyI0nV5rZ7/P1D+Fevt3cx+6ulg9GOA2p6sFNANwQH15D7aywnU+YXm3dQlH5ywEzddm+mE=
+X-Received: from pfix12.prod.google.com ([2002:aa7:9a8c:0:b0:736:86e0:8dee])
+ (user=tjmercier job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:7287:b0:1fe:5e67:21af with SMTP id adf61e73a8af0-201695c7b73mr609078637.30.1744228500266;
+ Wed, 09 Apr 2025 12:55:00 -0700 (PDT)
+Date: Wed,  9 Apr 2025 19:54:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250409014136.2816971-1-mlevitsk@redhat.com>
-Message-ID: <Z_bQS63A2bd-LzgQ@google.com>
-Subject: Re: [PATCH v2 0/4] KVM: extract lock_all_vcpus/unlock_all_vcpus
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: kvm@vger.kernel.org, Alexander Potapenko <glider@google.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, kvm-riscv@lists.infradead.org, 
-	Oliver Upton <oliver.upton@linux.dev>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Jing Zhang <jingzhangos@google.com>, Waiman Long <longman@redhat.com>, x86@kernel.org, 
-	Kunkun Jiang <jiangkunkun@huawei.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Anup Patel <anup@brainfault.org>, Albert Ou <aou@eecs.berkeley.edu>, kvmarm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Zenghui Yu <yuzenghui@huawei.com>, 
-	Borislav Petkov <bp@alien8.de>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Keisuke Nishimura <keisuke.nishimura@inria.fr>, Sebastian Ott <sebott@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Atish Patra <atishp@atishpatra.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	Will Deacon <will@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
-	Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	Joey Gouly <joey.gouly@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Andre Przywara <andre.przywara@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
+Message-ID: <20250409195448.3697351-1-tjmercier@google.com>
+Subject: [PATCH] alloc_tag: Handle incomplete bulk allocations in vm_module_tags_populate
+From: "T.J. Mercier" <tjmercier@google.com>
+To: Suren Baghdasaryan <surenb@google.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: "T.J. Mercier" <tjmercier@google.com>, Janghyuck Kim <janghyuck.kim@samsung.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-+Adrian
+alloc_pages_bulk_node may partially succeed and allocate fewer than the
+requested nr_pages. There are several conditions under which this can
+occur, but we have encountered the case where CONFIG_PAGE_OWNER is
+enabled causing all bulk allocations to always fallback to single page
+allocations due to commit 187ad460b841 ("mm/page_alloc: avoid page
+allocator recursion with pagesets.lock held").
 
-On Tue, Apr 08, 2025, Maxim Levitsky wrote:
-> Implement Paolo's suggestion of reusing
+Currently vm_module_tags_populate immediately fails when
+alloc_pages_bulk_node returns fewer than the requested number of pages.
+This patch causes vm_module_tags_populate to retry bulk allocations for
+the remaining memory instead.
 
-Ha!  I *knew* this felt familiar when I suggested extracting (un)lock_all_vcpus()
-to common code in the context of the TDX series.
+Reported-by: Janghyuck Kim <janghyuck.kim@samsung.com>
+Signed-off-by: T.J. Mercier <tjmercier@google.com>
+---
+ lib/alloc_tag.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-https://lore.kernel.org/all/Z-V0qyTn2bXdrPF7@google.com
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index 1d893e313614..25ecc1334b67 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -422,11 +422,20 @@ static int vm_module_tags_populate(void)
+ 		unsigned long old_shadow_end = ALIGN(phys_end, MODULE_ALIGN);
+ 		unsigned long new_shadow_end = ALIGN(new_end, MODULE_ALIGN);
+ 		unsigned long more_pages;
+-		unsigned long nr;
++		unsigned long nr = 0;
+ 
+ 		more_pages = ALIGN(new_end - phys_end, PAGE_SIZE) >> PAGE_SHIFT;
+-		nr = alloc_pages_bulk_node(GFP_KERNEL | __GFP_NOWARN,
+-					   NUMA_NO_NODE, more_pages, next_page);
++		while (nr < more_pages) {
++			unsigned long allocated;
++
++			allocated = alloc_pages_bulk_node(GFP_KERNEL | __GFP_NOWARN,
++				NUMA_NO_NODE, more_pages - nr, next_page + nr);
++
++			if (!allocated)
++				break;
++			nr += allocated;
++		}
++
+ 		if (nr < more_pages ||
+ 		    vmap_pages_range(phys_end, phys_end + (nr << PAGE_SHIFT), PAGE_KERNEL,
+ 				     next_page, PAGE_SHIFT) < 0) {
+-- 
+2.49.0.504.g3bcea36a83-goog
 
-> sev_lock/unlock_vcpus_for_migration in arm and riscv code
-> for the purpose of taking vcpu->mutex of all vcpus of a VM.
-> 
-> Because sev_lock/unlock_vcpus_for_migration already have a workaround
-> for lockdep max lock depth, this fixes the lockdep warnings on arm
-> which were the inspiration for this refactoring.
-> 
-> This patch series was only compile tested on all 3 architectures.
-> 
-> V2: added trylock option to kvm_lock_all_vcpus to be better compatible
-> with the orginal code.
-> 
-> Best regards,
-> 	Maxim Levitsky
-> 
-> Maxim Levitsky (4):
->   locking/mutex: implement mutex_trylock_nested
->   KVM: x86: move sev_lock/unlock_vcpus_for_migration to kvm_main.c
->   KVM: arm64: switch to using kvm_lock/unlock_all_vcpus
->   RISC-V: KVM: switch to kvm_lock/unlock_all_vcpus
-> 
->  arch/arm64/include/asm/kvm_host.h     |  3 --
->  arch/arm64/kvm/arch_timer.c           |  4 +-
->  arch/arm64/kvm/arm.c                  | 43 ----------------
->  arch/arm64/kvm/vgic/vgic-init.c       |  4 +-
->  arch/arm64/kvm/vgic/vgic-its.c        |  8 +--
->  arch/arm64/kvm/vgic/vgic-kvm-device.c | 12 ++---
->  arch/riscv/kvm/aia_device.c           | 34 +------------
->  arch/x86/kvm/svm/sev.c                | 65 ++----------------------
->  include/linux/kvm_host.h              |  6 +++
->  include/linux/mutex.h                 |  8 +++
->  kernel/locking/mutex.c                | 14 ++++--
->  virt/kvm/kvm_main.c                   | 71 +++++++++++++++++++++++++++
->  12 files changed, 116 insertions(+), 156 deletions(-)
-> 
-> -- 
-> 2.26.3
-> 
-> 
 
