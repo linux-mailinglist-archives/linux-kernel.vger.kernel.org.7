@@ -1,68 +1,66 @@
-Return-Path: <linux-kernel+bounces-595926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C16A8249A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:25:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B56A8249D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 984847B2E3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:23:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0A01BC0CDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5B1261593;
-	Wed,  9 Apr 2025 12:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F99263C82;
+	Wed,  9 Apr 2025 12:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKackW6x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5Q6K2GH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0F125EF80
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 12:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5852638BF
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 12:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744201409; cv=none; b=OoLrxOp0LSxLU5rSrRbOsqHk+4SzXsWxNoDSXWL9BsSmN/OzQx9p7ZExA2bWFEhbyICfB8WgIf6zNMWMZg45YtfIfuxNr8RqtwmdGa8ATAi6YQkDCJhVZrtofbnKFTGckO2LGUPUT9tClHVOb4PaqL6vw1P0yxxaN0eWcBApN10=
+	t=1744201416; cv=none; b=Iy6m+CT+5+2k8cODz2TJfZGghFVO1x28B9fXLAH5MZzeCZ4yCqNahET9tv/K4MOAiso0ntm6YVQkMaAU8ZsJvOoCUbiYDYqnAMzJXRi/bEcs9hnfILH7YoOME0b2ucVmFnOnhMATtihfgxMJYSK8EaOjUkCQH50Va1r/TtyvgXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744201409; c=relaxed/simple;
-	bh=vxHQZ3DXPVolZSGM5QSjA4upyIcrsxp7pynHAqIHr2I=;
+	s=arc-20240116; t=1744201416; c=relaxed/simple;
+	bh=sQRIW9/Mcz4WWypepfvC9IXPumM0UmWhaNt2XOzwpzU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=h803cR/VNx3lBGUbaS+0Ce6qVgzuM07vv7kI70obCo+q8VDJo84i5uTbtLgl2as/g0mxWAJFV0Jmzw4oYNVuWOb3C8Finm5HdDnZ/UfhX777OmSrhCwVwARzMyEedornX3VdhzkqMVzHGWi+ZDbF6gHrUwAw0KN0yl3X80buwMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKackW6x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CB69C4CEE3;
-	Wed,  9 Apr 2025 12:23:24 +0000 (UTC)
+	 MIME-Version; b=P/5liTvjjmuLg3iSqv1BL1zALpcmy1obofFnkWxVKMBjjSf/ZECuG5f/mggKbw8cNWVusZ168mRhs91xYD99lOilrer4Ox8DtNaHqK9MacvbC+hXPwJ0vAAEFrhnALWcUScM8GjoyDv0Nr1eCP18RfbU09bjE2/U02DUaKPa1SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5Q6K2GH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88520C4CEE3;
+	Wed,  9 Apr 2025 12:23:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744201408;
-	bh=vxHQZ3DXPVolZSGM5QSjA4upyIcrsxp7pynHAqIHr2I=;
+	s=k20201202; t=1744201416;
+	bh=sQRIW9/Mcz4WWypepfvC9IXPumM0UmWhaNt2XOzwpzU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qKackW6x79hPogCNQE9yr6P14+tltBlYVB1j2uguSKJ17jueb85dYfbq+jg4O3rbT
-	 ldxrcX/DkfWG9/6dyzVegmnouE/jELg6PhDzN1DYwUsCkWB6WaB4KuNsXNbzCinS3H
-	 mCtQm5y14l2f21Qo4/ZuMf55bdZy8TUwjYayioNuL87Wqg+eIFemia4s4EzCtTM6sD
-	 zyzXFAV1FoHCs9mk7idgc36MiD1XJgmWIblYLsL1ntzlKfxvM504YkzKPGLRTaq0We
-	 khbKHoev09931Z/Hg5SIb6r2Yka7XsQYxNB7dl6xJHwXwnXIcqm593joLOjCfTcfnG
-	 eg9TcVAC0w2Fg==
+	b=U5Q6K2GHVGY48V8GjMz7Muc/vifp4Sjn7yvD8+rrfC65gu45lv1xLJ1fFY+u6IAn/
+	 LQBXxu/umemj2o5uj94faGur2kdLCHnTV9SGJJPc7n+bH7efBaFxwlk9Re8C230oKp
+	 M5b1KkX62opgmi/3khYq3+CnjqbnFmupbci+yYRI2cleD26CECd1MeJS3FlAM8Gm03
+	 wIZOTfnd9KYUBlQlOBfSgb5hKnmMujR+a4v0+X+BAitxSbt6MpK2JKCT+tmq/N6co+
+	 X+nRfKssHlQgw9wAIJxYHhL04KYFn7pIybn0FnsLWT2L7TnSJqHpVLCGt57ZNyNOmm
+	 VSe1FG2SLGZXg==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Frank Binns <frank.binns@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Arnd Bergmann <arnd@arndb.de>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Alessio Belle <alessio.belle@imgtec.com>,
-	dri-devel@lists.freedesktop.org,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+	Markus Stockhausen <markus.stockhausen@gmx.de>,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	Mark Brown <broonie@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 01/10] drm/imagination: avoid unused-const-variable warning
-Date: Wed,  9 Apr 2025 14:22:53 +0200
-Message-Id: <20250409122314.2848028-1-arnd@kernel.org>
+Subject: [PATCH 02/10] [v2] clocksource: atmel_tcb: fix kconfig dependency
+Date: Wed,  9 Apr 2025 14:22:54 +0200
+Message-Id: <20250409122314.2848028-2-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250409122131.2766719-1-arnd@kernel.org>
+In-Reply-To: <20250409122314.2848028-1-arnd@kernel.org>
 References: <20250409122131.2766719-1-arnd@kernel.org>
+ <20250409122314.2848028-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,80 +71,40 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-When CONFIG_DEBUG_FS is disabled, the stid_fmts[] array is not referenced
-anywhere, causing a W=1 warning with gcc:
+Build-testing this driver on arm without CONFIG_OF produces a warning:
 
-In file included from drivers/gpu/drm/imagination/pvr_fw_trace.c:7:
-drivers/gpu/drm/imagination/pvr_rogue_fwif_sf.h:75:39: error: 'stid_fmts' defined but not used [-Werror=unused-const-variable=]
-   75 | static const struct rogue_km_stid_fmt stid_fmts[] = {
-      |                                       ^~~~~~~~~
+drivers/clocksource/timer-atmel-tcb.c:368:34: error: 'atmel_tcb_of_match' defined but not used [-Werror=unused-const-variable=]
+  368 | static const struct of_device_id atmel_tcb_of_match[] = {
+      |                                  ^~~~~~~~~~~~~~~~~~
 
-Rather than adding more #ifdef blocks, address this by changing the
-existing #ifdef into equivalent IS_ENABLED() checks so gcc can see
-where the symbol is used but still eliminate it from the object file.
+Change the dependency to allow build-testing on all architectures but
+instead require CONFIG_OF to be present.
 
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpu/drm/imagination/pvr_fw_trace.c | 8 ++++----
- drivers/gpu/drm/imagination/pvr_fw_trace.h | 2 --
- 2 files changed, 4 insertions(+), 6 deletions(-)
+v2: fix build regression from dropped CONFIG_ARM dependency
+---
+ drivers/clocksource/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/imagination/pvr_fw_trace.c b/drivers/gpu/drm/imagination/pvr_fw_trace.c
-index 5dbb636d7d4f..93269299d6a4 100644
---- a/drivers/gpu/drm/imagination/pvr_fw_trace.c
-+++ b/drivers/gpu/drm/imagination/pvr_fw_trace.c
-@@ -122,8 +122,6 @@ void pvr_fw_trace_fini(struct pvr_device *pvr_dev)
- 	pvr_fw_object_unmap_and_destroy(fw_trace->tracebuf_ctrl_obj);
- }
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 487c85259967..a7d5a465100e 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -437,8 +437,8 @@ config ATMEL_ST
  
--#if defined(CONFIG_DEBUG_FS)
--
- /**
-  * update_logtype() - Send KCCB command to trigger FW to update logtype
-  * @pvr_dev: Target PowerVR device
-@@ -447,7 +445,7 @@ static const struct file_operations pvr_fw_trace_fops = {
- void
- pvr_fw_trace_mask_update(struct pvr_device *pvr_dev, u32 old_mask, u32 new_mask)
- {
--	if (old_mask != new_mask)
-+	if (IS_ENABLED(CONFIG_DEBUG_FS) && old_mask != new_mask)
- 		update_logtype(pvr_dev, new_mask);
- }
+ config ATMEL_TCB_CLKSRC
+ 	bool "Atmel TC Block timer driver" if COMPILE_TEST
+-	depends on ARM && HAS_IOMEM
+-	select TIMER_OF if OF
++	depends on ARM && OF && HAS_IOMEM
++	select TIMER_OF
+ 	help
+ 	  Support for Timer Counter Blocks on Atmel SoCs.
  
-@@ -457,6 +455,9 @@ pvr_fw_trace_debugfs_init(struct pvr_device *pvr_dev, struct dentry *dir)
- 	struct pvr_fw_trace *fw_trace = &pvr_dev->fw_dev.fw_trace;
- 	u32 thread_nr;
- 
-+	if (!IS_ENABLED(CONFIG_DEBUG_FS))
-+		return;
-+
- 	static_assert(ARRAY_SIZE(fw_trace->buffers) <= 10,
- 		      "The filename buffer is only large enough for a single-digit thread count");
- 
-@@ -469,4 +470,3 @@ pvr_fw_trace_debugfs_init(struct pvr_device *pvr_dev, struct dentry *dir)
- 				    &pvr_fw_trace_fops);
- 	}
- }
--#endif
-diff --git a/drivers/gpu/drm/imagination/pvr_fw_trace.h b/drivers/gpu/drm/imagination/pvr_fw_trace.h
-index 0074d2b18da0..1d0ef937427a 100644
---- a/drivers/gpu/drm/imagination/pvr_fw_trace.h
-+++ b/drivers/gpu/drm/imagination/pvr_fw_trace.h
-@@ -65,7 +65,6 @@ struct pvr_fw_trace {
- int pvr_fw_trace_init(struct pvr_device *pvr_dev);
- void pvr_fw_trace_fini(struct pvr_device *pvr_dev);
- 
--#if defined(CONFIG_DEBUG_FS)
- /* Forward declaration from <linux/dcache.h>. */
- struct dentry;
- 
-@@ -73,6 +72,5 @@ void pvr_fw_trace_mask_update(struct pvr_device *pvr_dev, u32 old_mask,
- 			      u32 new_mask);
- 
- void pvr_fw_trace_debugfs_init(struct pvr_device *pvr_dev, struct dentry *dir);
--#endif /* defined(CONFIG_DEBUG_FS) */
- 
- #endif /* PVR_FW_TRACE_H */
 -- 
 2.39.5
 
