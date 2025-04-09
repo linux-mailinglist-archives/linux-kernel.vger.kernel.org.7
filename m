@@ -1,176 +1,146 @@
-Return-Path: <linux-kernel+bounces-596456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57754A82C2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:20:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C653A82C36
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7C85189C7F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:16:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBB283A801E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0B0267B0A;
-	Wed,  9 Apr 2025 16:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56CC262801;
+	Wed,  9 Apr 2025 16:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="s0HBnx6a"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OF0OEXQc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A034B25EF89;
-	Wed,  9 Apr 2025 16:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2C1259C;
+	Wed,  9 Apr 2025 16:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744215348; cv=none; b=Zevh6crzDmc5wQu215IKMbjhD/0D6mllL7pCMwa4kblNZ3omKMMhszkieHZnlTuCS4hSXqpLO8HA1/bOyIvHYLzvZbWo56/ZJeSyTqeqgWA317AUdBVWw2kKvxmOiNAm/EeLYpJvcSfgE0yvSlop3GzFrNzBuu9RAOh6IZTUMpU=
+	t=1744215300; cv=none; b=PQKhHnBj4q0M7DpbdwcN4yOxZjZA7eOCrRUhjMMET7GplW49RkFbaORrPjU61l7tLRvCKgSPSgfqQ1UDkM/dP+ncP8UGyZWZwrvh+AgwjGs5AtyPXfZOMttGA7X6oFyGso/QWzDd/qFt2ooO6OFakf55UreF61xJwrBicjqVSmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744215348; c=relaxed/simple;
-	bh=LdDJwsIvAbC0f3V9AIB/Mgo0Pr+yFTss4XerUL/AZtg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=jlE6qJGKN9+wwNI0L8CWRv436TMMs5xpfvCLxP7KvPaKnK0POe5Cy9Ke9vgtVsgKt4TIcjeXg1jpgnZSiJZB7gxF0nlk0Fmuzj42AYmqCo6cA8HsptehWqUA0DxIczqYmfC6C6YWdAcai2yon6Fyj0plRW5hn1TjfGJT5jJ73VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=s0HBnx6a; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 539D8pcO024589;
-	Wed, 9 Apr 2025 18:15:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	CxjdOwdJ7SNh53Og2MxYLJTmOtZ3kMTySkgEXWMk7NA=; b=s0HBnx6aYrH7URD1
-	9rIHNVf/u4zhS2t2tpW+MRwR8oNeNa/0rIITljFzMAsyXB/SbwrGjPmfJHEyHKQA
-	bYGWUxN/EYpGjHTHcgJOsaGXca38hSQQLzV4/8SRs4lGgiWupDvp6gfylvxTNpkq
-	ohMmCkkJSvBvnGrppBa8CPzptC8JNfiNU7UsMLvNQqdtQgOWGODUjyAEEOm1FrDf
-	/yBnjpi0FLWI+Z1Wmwxovzzm2yRsdHlpKEWVdZC/tw3s2aUEQQegDbntxvf1Lyck
-	YTVJqzl61ATPzXCIEUu8nGDMNnFGTRjPmW+edF5/kgxI45JMktPcrNn4QtEhTK05
-	EeNVIw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45tw6eknuk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Apr 2025 18:15:19 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0AB524002D;
-	Wed,  9 Apr 2025 18:14:09 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 25BEE9FD18D;
-	Wed,  9 Apr 2025 18:13:21 +0200 (CEST)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Apr
- 2025 18:13:20 +0200
-Message-ID: <d32208f0-b3ec-4a57-86cb-0c53a1dd798a@foss.st.com>
-Date: Wed, 9 Apr 2025 18:13:19 +0200
+	s=arc-20240116; t=1744215300; c=relaxed/simple;
+	bh=GFhgPvjeV+4kxWhSShAi/VAKJZTLcNpslJPf5qiw/K8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fg1CF/qDZbc2vH0UuDdWv/64TlsKNd//ENI86GIXJ8XZT+043ShPgfhYylCsLYb+Lh/GaLe/4w4qZ4UC3kSsUni8R6S4onuvHSQxpsAum8+4ZYIDcdjTRWsQ4tjCQd+MXVbIazBtfBewK4VrjtJZwNtVmqIGNrGF4KgOGhWNAto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OF0OEXQc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA347C4CEE2;
+	Wed,  9 Apr 2025 16:14:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744215299;
+	bh=GFhgPvjeV+4kxWhSShAi/VAKJZTLcNpslJPf5qiw/K8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OF0OEXQcUT0pLP4/uoSEHSkPMIp/MtXq726IkvPUc672dL1SlJttj8vtOtyuNle8Q
+	 dHnVY2tZqSBQ3kqZstj1jPckjVJ1NN+lRRUVmum7DT3UOIzKa0LpJNLPxv6sF0Edcb
+	 h1V9RKvggw0a3qAg7G4C6ISb8wv35HfAgX6KWJifZ5qu8Nu0qliJK7N9soQRr1iVg/
+	 8kgfKsCYKL4xYse7wcC7zjp4Du2zly4eWZOKpqZ4FP+p2OKs2Irru4pgege7wObNjO
+	 Jg1RKKOGYLGox6w7tZTto8HcEj3TSflEcIC+xLMvjJbftTt+U6mHlkLhfdYxn64Wu1
+	 5/yHBeADu5noA==
+Date: Wed, 9 Apr 2025 09:14:56 -0700
+From: Kees Cook <kees@kernel.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
+Subject: Re: [PATCH v2] build_bug.h: more user friendly error messages in
+ BUILD_BUG_ON_ZERO()
+Message-ID: <202504090914.BC7A6BD89@keescook>
+References: <20250329-build_bug-v2-1-1c831e5ddf89@wanadoo.fr>
+ <202504070945.BAC93C0@keescook>
+ <9dc6f94e-c739-4fdf-8e43-4386d35e02e5@wanadoo.fr>
+ <202504081202.7CA5DBE@keescook>
+ <4c01c2a6-5271-41e4-8013-836e59aeae6d@wanadoo.fr>
+ <Z_aBjSP4WB062Ii9@yury>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Linux-stm32] [PATCH v8 0/7] Add STM32MP25 SPI NOR support
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        <devicetree@vger.kernel.org>,
-        Catalin
- Marinas <catalin.marinas@arm.com>,
-        <linux-kernel@vger.kernel.org>,
-        Philipp
- Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com>
- <20250408-opal-pillbug-of-acumen-0fbb68@shite>
- <9c9172b8-508c-4855-9299-aab72ac2fae6@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <9c9172b8-508c-4855-9299-aab72ac2fae6@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-09_05,2025-04-08_04,2024-11-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_aBjSP4WB062Ii9@yury>
 
+On Wed, Apr 09, 2025 at 10:17:49AM -0400, Yury Norov wrote:
+> On Wed, Apr 09, 2025 at 09:26:41PM +0900, Vincent Mailhol wrote:
+> > +To: Yury Norov
+> > 
+> > On 09/04/2025 at 04:03, Kees Cook wrote:
+> > > On Tue, Apr 08, 2025 at 10:23:53PM +0900, Vincent Mailhol wrote:
+> > >> On 08/04/2025 at 01:46, Kees Cook wrote:
+> > >>> On Sat, Mar 29, 2025 at 01:48:50AM +0900, Vincent Mailhol wrote:
+> > >>>> __BUILD_BUG_ON_ZERO_MSG(), as introduced in [1], makes it possible to
+> > >>>> do a static assertions in expressions. The direct benefit is to
+> > >>>> provide a meaningful error message instead of the cryptic negative
+> > >>>> bitfield size error message currently returned by BUILD_BUG_ON_ZERO():
+> > >>>>
+> > >>>>   ./include/linux/build_bug.h:16:51: error: negative width in bit-field '<anonymous>'
+> > >>>>      16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
+> > >>>>         |                                                   ^
+> > >>>>
+> > >>>> Get rid of BUILD_BUG_ON_ZERO()'s bitfield size hack. Instead rely on
+> > >>>> __BUILD_BUG_ON_ZERO_MSG() which in turn relies on C11's
+> > >>>> _Static_assert().
+> > >>>>
+> > >>>> Use some macro magic, similarly to static_assert(), to either use an
+> > >>>> optional error message provided by the user or, when omitted, to
+> > >>>> produce a default error message by stringifying the tested
+> > >>>> expression. With this, for example:
+> > >>>>
+> > >>>>   BUILD_BUG_ON_ZERO(1 > 0)
+> > >>>>
+> > >>>> would now throw:
+> > >>>>
+> > >>>>   ./include/linux/compiler.h:197:62: error: static assertion failed: "1 > 0 is true"
+> > >>>
+> > >>> This is so much easier to read! Thanks for this. :)
+> > >>>
+> > >>> If no one else snags it, I can take this via the hardening tree for
+> > >>> -next once -rc2 is released.
+> > >>
+> > >> I discussed about this with Andrew by DM.
+> > >>
+> > >> Andrew can pick it up but for the next-next release. That is to say,
+> > >> wait for [1] to be merged in v6.16 and then take it to target the v6.17
+> > >> merge windows.
+> > >>
+> > >> If you can take it in your hardening-next tree and have it merged in
+> > >> v6.16, then this is convenient for me.
+> > >>
+> > >> Just make sure that you send it to Linus after Yury's bitmap-for-next
+> > >> get merged: https://github.com/norov/linux/commits/bitmap-for-next/
+> > > 
+> > > Could this land via Yury's tree?
+> > 
+> > Hi Yury,
+> > 
+> > I have this patch:
+> > 
+> > https://lore.kernel.org/all/20250329-build_bug-v2-1-1c831e5ddf89@wanadoo.fr/
+> > 
+> > which depends on commit b88937277df ("drm/i915: Convert REG_GENMASK*()
+> > to fixed-width GENMASK_U*()") in your bitmap-for-next tree.
+> > 
+> > I discussed this with Andrew (by DM) and Kees. Because of the
+> > dependency, it would be convenient if this patch went through your tree.
+> > 
+> > What do you think?
+> 
+> Sure, I can merge it. Please everyone send your tags before the end of
+> week.
 
+Thanks!
 
-On 4/9/25 17:54, Patrice CHOTARD wrote:
-> 
-> 
-> On 4/8/25 08:38, Krzysztof Kozlowski wrote:
->> On Mon, Apr 07, 2025 at 03:27:31PM GMT, Patrice Chotard wrote:
->>> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
->>> ---
->>> Patrice Chotard (7):
->>>       MAINTAINERS: add entry for STM32 OCTO MEMORY MANAGER driver
->>>       dt-bindings: memory-controllers: Add STM32 Octo Memory Manager controller
->>>       memory: Add STM32 Octo Memory Manager driver
->>>       arm64: dts: st: Add OMM node on stm32mp251
->>>       arm64: dts: st: Add ospi port1 pinctrl entries in stm32mp25-pinctrl.dtsi
->>>       arm64: dts: st: Add SPI NOR flash support on stm32mp257f-ev1 board
->>>       arm64: defconfig: Enable STM32 Octo Memory Manager and OcstoSPI driver
->>>
->>>  .../memory-controllers/st,stm32mp25-omm.yaml       | 226 ++++++++++
->>>  MAINTAINERS                                        |   6 +
->>>  arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi      |  51 +++
->>>  arch/arm64/boot/dts/st/stm32mp251.dtsi             |  54 +++
->>>  arch/arm64/boot/dts/st/stm32mp257f-ev1.dts         |  32 ++
->>>  arch/arm64/configs/defconfig                       |   2 +
->>>  drivers/memory/Kconfig                             |  17 +
->>>  drivers/memory/Makefile                            |   1 +
->>>  drivers/memory/stm32_omm.c                         | 474 +++++++++++++++++++++
->>>  9 files changed, 863 insertions(+)
->>> ---
->>> base-commit: 88424abd55ab36c3565898a656589a0a25ecd92f
->>
->> That's unknown commit.
->>
->> b4 diff '20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com'
->> Using cached copy of the lookup
->> ---
->> Analyzing 81 messages in the thread
->> Preparing fake-am for v7: MAINTAINERS: add entry for STM32 OCTO MEMORY MANAGER driver
->> ERROR: Could not write fake-am tree
->> ---
->> Could not create fake-am range for lower series v7
->>
->> I tried on latest next, on some March next, on latest mainline. It seems
->> you use some weird base here, so anyway I won't be able to apply it.
-> 
-> It was based on next-20250317 plus the 2 ospi patches already merged 
-> by Mark Brown, that's why.
-> 
->>
->> Please split the patchset per subsystem and send something based on
->> maintainer tree (so for me my for-next branch), mainline (which is the
->> same as for-next currently) or linux-next.... which would be the same as
->> my for-next branch currently.
-> 
-> ok
+Reviewed-by: Kees Cook <kees@kernel.org>
 
-For memory-controller subsystem i will include:
- _ memory controller dt-bindings
- _ memory controller driver
- _ defconfig update
- _ Maintainers file update
-
-Are you ok with this proposal ?
-
-Patrice
-
-> 
-> Thanks
-> Patrice
-> 
->>
->> Best regards,
->> Krzysztof
->>
-> _______________________________________________
-> Linux-stm32 mailing list
-> Linux-stm32@st-md-mailman.stormreply.com
-> https://st-md-mailman.stormreply.com/mailman/listinfo/linux-stm32
+-- 
+Kees Cook
 
