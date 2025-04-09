@@ -1,313 +1,202 @@
-Return-Path: <linux-kernel+bounces-597020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E980A83419
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 00:32:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3524DA8341D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 00:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20AA3447875
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D895419E2EA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E33421B9E0;
-	Wed,  9 Apr 2025 22:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCB121B8F5;
+	Wed,  9 Apr 2025 22:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BHkvd6t4"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLD8E5p/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F23026ACB;
-	Wed,  9 Apr 2025 22:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E6426ACB;
+	Wed,  9 Apr 2025 22:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744237955; cv=none; b=L9xgtCrWIYU8ZYjlKixaFzTTwnwNFegmMOttwpnLbaQhqGPBlHZMJDJ3z9aQXT3yGYXZyx8m5u+AvpMagJSNQRXsaFTiPM6SF8Em/WxXse1ZoIUUI5qqmP8PE/uKrTvZc3odV1omAj9HxpuOGUO4FOMWnj4hnR9WRswm/0xQnUo=
+	t=1744238062; cv=none; b=TH7v6CrjgGerfxOm5E59EsX/WywDivuAS69EaxZHJOE9flUjx6hgZe7GbD5EHBd6+jmvwCRJbvJcRZ0NLHiiZnHOkf0cJEQJoUMlUows+PhqpjYv44fzpWID/FRn3YDHlSxG4HEnLpkgZFakzLurtvO7atdQkhUmuf8il8VG4bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744237955; c=relaxed/simple;
-	bh=GJBF9YT4qTUceYQdIfBhE7d1Hxel8j5IxMQVI15xlC4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NZeoV0y3g5lczPewR0uw6QJIuDai2jdsTTkIAr2v9fFg53tgJtW9LavvLhVqDM7PMcj49U6qV9bz9E5kZySeXq+fcUs5/PL8Su6Zo1RspOfq0U8xl5TSO10SsSBhdqENls36pnOsxzCYj8RfrX4bupJyv82b22DllsCiDAUm7ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BHkvd6t4; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 539MWMnZ1602107
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 9 Apr 2025 17:32:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744237943;
-	bh=F2DUGq4PpnA0mRyUvzOtXn7CGfV1K5I0ALvoIWAGTP0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=BHkvd6t4u0ETPPoqD59yPKVttkp1xjIwR36DmTsiR6+Pcvt5W1ITb6cbaDP0vqQf0
-	 XmQ4s/9vtrT5foUApEyyObbMLGq49bn2PGUfRismcohq6IKzD5KrTagCVqGQzRF/D1
-	 IHC7RSMTGK2s2sJ7t2WhbqELNFJVs78OzU5OdRIo=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 539MWMUG006103
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 9 Apr 2025 17:32:22 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 9
- Apr 2025 17:32:22 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 9 Apr 2025 17:32:22 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 539MWMgB116920;
-	Wed, 9 Apr 2025 17:32:22 -0500
-Message-ID: <fe735242-4643-432a-adaf-27e29719948a@ti.com>
-Date: Wed, 9 Apr 2025 17:32:22 -0500
+	s=arc-20240116; t=1744238062; c=relaxed/simple;
+	bh=gmOYp4s9nc5Kx5WbhVn4dgwRNBQqeNH3HhdTyYK58YY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tb2XfL9LNHWaac00yu59TNkNSn/P0xIOHawTuCeWXsRykO33IkBgE1oakqMOfQ8XWyiklMzpbJfSqnyA0BvdbXwPe/Lr4vrDwklMqLdbVhpwizPwmWFwSQeXEVrAnX9A0G5aEbz78FLeJizN/HGLmIVmEZ1Hq0Nb9kqyN1L+8Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLD8E5p/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B90C4CEE2;
+	Wed,  9 Apr 2025 22:34:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744238062;
+	bh=gmOYp4s9nc5Kx5WbhVn4dgwRNBQqeNH3HhdTyYK58YY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bLD8E5p/BeTYeY/SUm/Ay3O7Xgf/Y0NeYtUiXHz0zlzHLXVU6pzwcj939aN/NCY2w
+	 BYRGvXEQRj0Phxvi55L4VdES+GxbuHVUlyhS+XVozoncgcxVca+2V19My6NaaUx37u
+	 vUBOcajVpBH/a2vslsEENyiifZd+/aR4156vhF2QpmG8YnqUwBCKcJEHfBqCacTc0b
+	 Obbfwnuve4rsMmq/FVcIxLtb/kS8UdTZikncuHWiJnkag2ZZs4U8GHe7erbBNEW4d+
+	 MvGiLhdcO/kWSV6H4bmtvjS5gpyvjciXFg4Cml7me9iVO6PFGphpsv0Q/d3mGqkuQV
+	 +nfPFRVsnv8ug==
+Date: Wed, 9 Apr 2025 23:34:16 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
+	Donglin Peng <dolinux.peng@gmail.com>,
+	Zheng Yejian <zhengyejian@huaweicloud.com>, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH v4 2/4] ftrace: Add support for function argument to
+ graph tracer
+Message-ID: <ccc40f2b-4b9e-4abd-8daf-d22fce2a86f0@sirena.org.uk>
+References: <20250227185804.639525399@goodmis.org>
+ <20250227185822.810321199@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 06/11] arm64: dts: ti: k3-am62a7-sk: Enable IPC with
- remote processors
-To: Beleswar Prasad Padhi <b-padhi@ti.com>,
-        Devarsh Thakkar
-	<devarsht@lewv0571a.ent.ti.com>,
-        Nishanth Menon <nm@ti.com>, Andrew Davis
-	<afd@ti.com>,
-        Hari Nagalla <hnagalla@ti.com>
-CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Markus
- Schneider-Pargmann <msp@baylibre.com>
-References: <20250405001518.1315273-1-jm@ti.com>
- <20250405001518.1315273-7-jm@ti.com>
- <6868f593-0728-4e92-a57b-87db6a0037f6@ti>
- <f42607f5-e39d-48a1-89c0-11d4982a2426@ti.com>
- <f8f1d877-3d13-4ba7-90e1-455923458c11@ti.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <f8f1d877-3d13-4ba7-90e1-455923458c11@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DHuvGhJEzs16pwP+"
+Content-Disposition: inline
+In-Reply-To: <20250227185822.810321199@goodmis.org>
+X-Cookie: Yow!  Are we laid back yet?
 
-Hi Beleswar,
 
-On 4/7/25 11:00 PM, Beleswar Prasad Padhi wrote:
-> Hi Judith, Andrew,
-> 
-> On 07/04/25 19:43, Judith Mendez wrote:
->> Hi Devarsh,
->>
->> On 4/7/25 8:54 AM, Devarsh Thakkar wrote:
->>> Hi Judith,
->>>
->>> On 05/04/25 05:45, Judith Mendez wrote:
->>>  > From: Devarsh Thakkar <devarsht@ti.com>
->>>>
->>>
->>> Thanks for the patch.
->>>
->>>> For each remote proc, reserve memory for IPC and bind the mailbox
->>>> assignments. Two memory regions are reserved for each remote processor.
->>>> The first region of 1MB of memory is used for Vring shared buffers
->>>> and the second region is used as external memory to the remote 
->>>> processor
->>>> for the resource table and for tracebuffer allocations.
->>>>
->>>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
->>>> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
->>>> Signed-off-by: Judith Mendez <jm@ti.com>
->>>> ---
->>>>   arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 96 
->>>> +++++++++++++++++++++++--
->>>>   1 file changed, 90 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts 
->>>> b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->>>> index 1c9d95696c839..7d817b447c1d0 100644
->>>> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->>>> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->>>> @@ -52,6 +52,42 @@ linux,cma {
->>>>               linux,cma-default;
->>>>           };
->>>> +        c7x_0_dma_memory_region: c7x-dma-memory@99800000 {
->>>> +            compatible = "shared-dma-pool";
->>>> +            reg = <0x00 0x99800000 0x00 0x100000>;
->>>> +            no-map;
->>>> +        };
->>>> +
->>>> +        c7x_0_memory_region: c7x-memory@99900000 {
->>>> +            compatible = "shared-dma-pool";
->>>> +            reg = <0x00 0x99900000 0x00 0xf00000>;
->>>> +            no-map;
->>>> +        };
->>>> +
->>>> +        mcu_r5fss0_core0_dma_memory_region: r5f-dma-memory@9b800000 {
->>>> +            compatible = "shared-dma-pool";
->>>> +            reg = <0x00 0x9b800000 0x00 0x100000>;
->>>> +            no-map;
->>>> +        };
->>>> +
->>>> +        mcu_r5fss0_core0_memory_region: r5f-dma-memory@9b900000 {
->>>> +            compatible = "shared-dma-pool";
->>>> +            reg = <0x00 0x9b900000 0x00 0xf00000>;
->>>> +            no-map;
->>>> +        };
->>>> +
->>>> +        wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
->>>> +            compatible = "shared-dma-pool";
->>>> +            reg = <0x00 0x9c800000 0x00 0x100000>;
->>>> +            no-map;
->>>> +        };
->>>> +
->>>> +        wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
->>>> +            compatible = "shared-dma-pool";
->>>> +            reg = <0x00 0x9c900000 0x00 0xf00000>;
->>>> +            no-map;
->>>> +        };
->>>> +
->>>>           secure_tfa_ddr: tfa@9e780000 {
->>>>               reg = <0x00 0x9e780000 0x00 0x80000>;
->>>>               alignment = <0x1000>;
->>>> @@ -63,12 +99,6 @@ secure_ddr: optee@9e800000 {
->>>>               alignment = <0x1000>;
->>>>               no-map;
->>>>           };
->>>> -
->>>> -        wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
->>>> -            compatible = "shared-dma-pool";
->>>> -            reg = <0x00 0x9c900000 0x00 0x01e00000>;
->>>> -            no-map;
->>>> -        };
->>>>       };
->>>
->>> This is missing the edgeAI specific remote-core carveouts and 
->>> RTOS-to-RTOS IPC memory regions [1] being used by edgeAI firmwares 
->>> which come as pre-packaged in the official SDK release for AM62A.
->>>
->>> There is only one official SDK release for AM62A (which is edgeAI 
->>> based) [2] which packages these edgeAI remoteproc firmwares and in my 
->>> view it is a fair expectation that remote core careveouts in 
->>> device-tree should align with firmwares released in SDK.
->>>
->>> This is because most developers (including me) and vendors download 
->>> this official SDK release and use it with latest upstream kernel and 
->>> modules (right now we are applying required patches locally) and this 
->>> patch won't suffice for this, in-fact it won't work since the 
->>> remoteproc firmwares are already using regions beyond the 
->>> reserved-regions from this patch.
->>
->> I understand your point, currently with this patch remoteproc loading
->> will not work for some cores. However, the goal here is to standardize
->> as much as possible the memory carveout sizes, push the "demo firmware"
->> to request resources the correct way from resource table, 
-> 
-> 
-> It is indeed more suitable if the memory carveouts are called out in the 
-> resource table of the firmware. But you will still need to reserve that 
-> memory sections in the Device Tree so that Kernel does not map that 
-> memory for anything else. So I am thinking how moving to resource table 
-> will help solve this problem?
+--DHuvGhJEzs16pwP+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The point is that our default FW is doing things incorrectly. We want to
-push the existing FW to
-1. Request resources via resource table.
-2. Fix their memory requirements (recent offline discussion proved that
-FW is requesting more than it needs)
-3. FW should adapt to Linux not Linux adapt to FW
+On Thu, Feb 27, 2025 at 01:58:06PM -0500, Steven Rostedt wrote:
+> From: Sven Schnelle <svens@linux.ibm.com>
+>=20
+> Wire up the code to print function arguments in the function graph
+> tracer. This functionality can be enabled/disabled during runtime with
+> options/funcgraph-args.
 
-If not, then then we should try to move to Zephyr firmware or other/
-better options.
+We've been seeing the PID filters selftest failing for a while on
+several arm64 systems, a bisect I managed to run without running into
+any confounding issues pointed to this patch which is in mainline as
+ff5c9c576e75.  It's in the ftrace code, but I'm not immediately seeing
+the relevance.  Output from a failing run:
 
-Hope I am able to explain myself better this time around.
+ 6190 18:38:41.261255  # not ok 48 ftrace - function pid filters
+ 6191 18:38:41.274039  # # execute: /lava-922575/1/tests/2_kselftest-ftrace=
+/automated/linux/kselftest/ftrace/test.d/ftrace/func-filter-pid.tc
+ 6192 18:38:41.285261  # # + checkreq /lava-922575/1/tests/2_kselftest-ftra=
+ce/automated/linux/kselftest/ftrace/test.d/ftrace/func-filter-pid.tc
+ 6193 18:38:41.296551  # # + grep ^#[ t]*requires: /lava-922575/1/tests/2_k=
+selftest-ftrace/automated/linux/kselftest/ftrace/test.d/ftrace/func-filter-=
+pid.tc
+ 6194 18:38:41.307877  # # + cut -f2- -d:
+ 6195 18:38:41.308157  # # + requires=3D set_ftrace_pid set_ftrace_filter f=
+unction:tracer
+ 6196 18:38:41.319397  # # + eval check_requires  set_ftrace_pid set_ftrace=
+_filter function:tracer
+ 6197 18:38:41.319681  # # + check_requires set_ftrace_pid set_ftrace_filte=
+r function:tracer
+ 6198 18:38:41.319905  # # + p=3Dset_ftrace_pid
+ 6199 18:38:41.330653  # # + r=3Dset_ftrace_pid
+ 6200 18:38:41.330936  # # + t=3Dset_ftrace_pid
+ 6201 18:38:41.331161  # # + [ set_ftrace_pid !=3D set_ftrace_pid ]
+ 6202 18:38:41.331367  # # + [ set_ftrace_pid !=3D set_ftrace_pid ]
+ 6203 18:38:41.342045  # # + [ set_ftrace_pid !=3D set_ftrace_pid ]
+ 6204 18:38:41.342330  # # + [ ! -e set_ftrace_pid ]
+ .......
+ 6364 18:39:15.411636  # # + grep -v 7190
+ 6365 18:39:15.411865  # # + wc -l
+ 6366 18:39:15.412073  # # + count_other=3D3
+ 6367 18:39:15.412554  # # + [ 2 -eq 0 -o 3 -ne 0 ]
+ 6368 18:39:15.412773  # # + fail PID filtering not working?
+ 6369 18:39:15.422776  # # + do_reset
+ 6370 18:39:15.423055  # # + [ 1 -eq 1 ]
+ 6371 18:39:15.423278  # # + echo nofunction-fork
+ 6372 18:39:15.423485  # # + [ 1 -eq 1 ]
+ 6373 18:39:15.423681  # # + echo 0
+ 6374 18:39:15.423873  # # + echo PID filtering not working?
+ 6375 18:39:15.434095  # # PID filtering not working?
+ 6376 18:39:15.434377  # # + exit_fail
+ 6377 18:39:15.434602  # # + exit 1
 
-~ Judith
+bisect log:
 
-> 
-> Thanks,
-> Beleswar
-> 
->> and move away
->> from this dependency and limitations that we have with our firmware. We
->> should soon be able to generate our own firmware using Zephyr, which
->> Andrew is pioneering, so with this firmware we should move to the
->> correct direction upstream. Downstream we are still using the memory
->> carveout sizes that the firmware folk want so desperately to keep, for
->> now..
->>
->> ~ Judith
->>
->>>
->>> [1]: 
->>> https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel/tree/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts?h=ti-linux-6.6.y-cicd#n103
->>> [2]: https://www.ti.com/tool/PROCESSOR-SDK-AM62A
->>>
->>> Regards
->>> Devarsh
->>>
->>>>       opp-table {
->>>> @@ -741,3 +771,57 @@ dpi1_out: endpoint {
->>>>           };
->>>>       };
->>>>   };
->>>> +
->>>> +&mailbox0_cluster0 {
->>>> +    status = "okay";
->>>> +
->>>> +    mbox_r5_0: mbox-r5-0 {
->>>> +        ti,mbox-rx = <0 0 0>;
->>>> +        ti,mbox-tx = <1 0 0>;
->>>> +    };
->>>> +};
->>>> +
->>>> +&mailbox0_cluster1 {
->>>> +    status = "okay";
->>>> +
->>>> +    mbox_c7x_0: mbox-c7x-0 {
->>>> +        ti,mbox-rx = <0 0 0>;
->>>> +        ti,mbox-tx = <1 0 0>;
->>>> +    };
->>>> +};
->>>> +
->>>> +&mailbox0_cluster2 {
->>>> +    status = "okay";
->>>> +
->>>> +    mbox_mcu_r5_0: mbox-mcu-r5-0 {
->>>> +        ti,mbox-rx = <0 0 0>;
->>>> +        ti,mbox-tx = <1 0 0>;
->>>> +    };
->>>> +};
->>>> +
->>>> +&wkup_r5fss0 {
->>>> +    status = "okay";
->>>> +};
->>>> +
->>>> +&wkup_r5fss0_core0 {
->>>> +    mboxes = <&mailbox0_cluster0>, <&mbox_r5_0>;
->>>> +    memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
->>>> +            <&wkup_r5fss0_core0_memory_region>;
->>>> +};
->>>> +
->>>> +&mcu_r5fss0 {
->>>> +    status = "okay";
->>>> +};
->>>> +
->>>> +&mcu_r5fss0_core0 {
->>>> +    mboxes = <&mailbox0_cluster2>, <&mbox_mcu_r5_0>;
->>>> +    memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
->>>> +            <&mcu_r5fss0_core0_memory_region>;
->>>> +};
->>>> +
->>>> +&c7x_0 {
->>>> +    mboxes = <&mailbox0_cluster1>, <&mbox_c7x_0>;
->>>> +    memory-region = <&c7x_0_dma_memory_region>,
->>>> +            <&c7x_0_memory_region>;
->>>> +    status = "okay";
->>>> +};
->>>
->>
+git bisect start
+# status: waiting for both good and bad commits
+# good: [38fec10eb60d687e30c8c6b5420d86e8149f7557] Linux 6.14
+git bisect good 38fec10eb60d687e30c8c6b5420d86e8149f7557
+# status: waiting for bad commit, 1 good commit known
+# bad: [46086739de22d72319e37c37a134d32db52e1c5c] Add linux-next specific f=
+iles for 20250409
+git bisect bad 46086739de22d72319e37c37a134d32db52e1c5c
+# bad: [390513642ee6763c7ada07f0a1470474986e6c1c] io_uring: always do atomi=
+c put from iowq
+git bisect bad 390513642ee6763c7ada07f0a1470474986e6c1c
+# good: [9b960d8cd6f712cb2c03e2bdd4d5ca058238037f] Merge tag 'for-6.15/bloc=
+k-20250322' of git://git.kernel.dk/linux
+git bisect good 9b960d8cd6f712cb2c03e2bdd4d5ca058238037f
+# good: [023b1e9d265ca0662111a9df23d22b4632717a8a] Merge git://git.kernel.o=
+rg/pub/scm/linux/kernel/git/netdev/net
+git bisect good 023b1e9d265ca0662111a9df23d22b4632717a8a
+# good: [3a90a72aca0a98125f0c7350ffb7cc63665f8047] Merge tag 'asm-generic-6=
+=2E15-2' of git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic
+git bisect good 3a90a72aca0a98125f0c7350ffb7cc63665f8047
+# good: [4a4b30ea80d8cb5e8c4c62bb86201f4ea0d9b030] Merge tag 'bcachefs-2025=
+-03-24' of git://evilpiepirate.org/bcachefs
+git bisect good 4a4b30ea80d8cb5e8c4c62bb86201f4ea0d9b030
+# bad: [a7e135fe59a516b2a981fc5820e7a1e2118b427e] Merge tag 'probes-v6.15' =
+of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace
+git bisect bad a7e135fe59a516b2a981fc5820e7a1e2118b427e
+# bad: [31eb415bf6f06c90fdd9b635caf3a6c5110a38b6] Merge tag 'ftrace-v6.15' =
+of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace
+git bisect bad 31eb415bf6f06c90fdd9b635caf3a6c5110a38b6
+# good: [e8eac9fc4832976af800628ba8cbd351edc7f841] ext4: remove unneeded fo=
+rward declaration in namei.c
+git bisect good e8eac9fc4832976af800628ba8cbd351edc7f841
+# good: [129245cfbd6d79c6d603f357f428010ccc0f0ee7] ext4: correct the error =
+handle in ext4_fallocate()
+git bisect good 129245cfbd6d79c6d603f357f428010ccc0f0ee7
+# good: [dc208c69c033d3caba0509da1ae065d2b5ff165f] scripts/sorttable: Allow=
+ matches to functions before function entry
+git bisect good dc208c69c033d3caba0509da1ae065d2b5ff165f
+# bad: [5ba8f4a39ecd160c7b6ef8ef1373375799710a97] function_graph: Remove th=
+e unused variable func
+git bisect bad 5ba8f4a39ecd160c7b6ef8ef1373375799710a97
+# good: [533c20b062d7c25cbcbadb31e3ecb95a08ddb877] ftrace: Add print_functi=
+on_args()
+git bisect good 533c20b062d7c25cbcbadb31e3ecb95a08ddb877
+# bad: [c7a60a733c373eed0094774c141bf2934237e7ff] ftrace: Have funcgraph-ar=
+gs take affect during tracing
+git bisect bad c7a60a733c373eed0094774c141bf2934237e7ff
+# bad: [ff5c9c576e754563b3be4922c3968bc3b0269541] ftrace: Add support for f=
+unction argument to graph tracer
+git bisect bad ff5c9c576e754563b3be4922c3968bc3b0269541
+# first bad commit: [ff5c9c576e754563b3be4922c3968bc3b0269541] ftrace: Add =
+support for function argument to graph tracer
 
+--DHuvGhJEzs16pwP+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf29ecACgkQJNaLcl1U
+h9C/RQf/cS98rzGre4Btito8xfRMWxN4iL8li9UjZ1s/+dqwsIjH/FFivQ9mapwD
+EjnwgdeGvMHOVbFDNnFwLtCEWudaobj1tRxBRya6jXRuIOCbwJfQgt65ZdvsFLWa
+z3ZzdgX4jfJPzjxE4mbpnwkfbWy7dtsj5+wtLM07vrBt6lLePfTgS9A4gLvLjOum
+jK0dzHTQb9nYgWmpI1pMatNYDcsuhCLDimamEf1qEfu1HDF/gz5Nck1wDZ2BfJGu
+xGb0GqRT1JxjpqxyHjXXNjN9keQ88BMAfDs2gU0X50eIkqvR3IVOPw+8uYL+FEpz
+4dVW2KbvSN6ohrRWxdJfrVIe6DC6VQ==
+=/9p0
+-----END PGP SIGNATURE-----
+
+--DHuvGhJEzs16pwP+--
 
