@@ -1,167 +1,130 @@
-Return-Path: <linux-kernel+bounces-596475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F9FA82C87
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:34:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5825BA82C66
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EF7019E7232
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F26319E1A75
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7B026FA6A;
-	Wed,  9 Apr 2025 16:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234E3265626;
+	Wed,  9 Apr 2025 16:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="XRQjGNaA"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SXphMJo5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D171E26B2D6
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 16:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5D726B2D2
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 16:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744216247; cv=none; b=V64WLfjyHl12sS/VvKgY1AqBzq8lxx/cEaQTOyNDfhUr9VW0c+uvc3wx81s9KaOK+FN34iZVQKq1H/tReV4suyKp6Q6hRTT/wE0rBoyutqkdOaMvRFM5P4udVPQmpfJTdC65Jb5A993XJD3f3JOWOS4uHn+nkNPxamdTn8XbT5M=
+	t=1744216041; cv=none; b=jRAfspfL9QOBCsr3Qq3PQt4jPXGYYr6Db2u0p6OSCi35ll+gHT0dII3NUx+AcRHvcxwzZlZPQr8VwoRQ1GQk1tn684e27PKDKm0ezxIfuTmvASzgGhi5e2rvkcM6BiAUh0qgOoH3R6rB7Qqx6YkF22NlSWz1mBzUk9bAF+GX3Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744216247; c=relaxed/simple;
-	bh=UeTrrZiGC4g6FG2Qnmk09OC7YXGPlzyFy/Av0RePg+M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hDOKi9wkRmxya2NJY1+WQlcSpuvPQ1AiOcQl7wEf3whOCwty9nP8b6dOnsZgR3PpRVJIZvA1POJOx9gZuR7CzrsRFZYTD6Qq1btcjonSwG+Qg42T575dYvKuE3Fx5NSsNiQ4ZZj8NgXLELCe5I9lMa4ZTquCG8D8tvKcjJGT2EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=XRQjGNaA; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse-pc.fritz.box (host-88-217-226-44.customer.m-online.net [88.217.226.44])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 1F5742FC0052;
-	Wed,  9 Apr 2025 18:30:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1744216235;
+	s=arc-20240116; t=1744216041; c=relaxed/simple;
+	bh=owusETY1s+j/BjQaWuvuz+kXCSomTM+MS1xmYqWk+Lg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c9puTliuZDEbRYWXO2Ih4zLkSyp6ph2O2Vtd+uzXkgqu+7w0XCOTApxSwR8Aq3f5MtEaCZL+XfM+8zNhxzPu+9lJE0nlT4c2UZXeN8HKYhFcJTLA64LTFOmmbPpeVhjiW+rztE22LhPcPwy5pXYROn8qn1M8UTnpVCyYEKc46Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SXphMJo5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744216038;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=sv1LGOUNmwh012y33sRSiC7ve03lgZzUYhRmkjBwcVA=;
-	b=XRQjGNaAsffNeMT1xzJZ/i2Bd7TmAdxH7TPzVC7w9SP+FIx+zgLwLELTfbNfohYTNpTpTA
-	gnaGqNlrxQNhyEW+m4BjBzxQ0UKgxStGUVVk2tOUofLxMllcEZUv2x0ELu2fCpM+FGUbTt
-	A8rOEcPJSZboiSdAByCdRk0kHXnUr2Y=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	siqueira@igalia.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Werner Sembach <wse@tuxedocomputers.com>
-Subject: [PATCH 1/1] drm/amd/display: Add quirk to force backlight type on some TUXEDO devices
-Date: Wed,  9 Apr 2025 18:27:00 +0200
-Message-ID: <20250409163029.130651-2-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250409163029.130651-1-wse@tuxedocomputers.com>
-References: <20250409163029.130651-1-wse@tuxedocomputers.com>
+	bh=hsgiCJGgL4kjs2GhqE6JzTnn5GYHpXyhtdfwAsQVubo=;
+	b=SXphMJo5jS1Y7Kn+MHJDR5eC9rUpyf4AM0C/307I7N0+P+9bOHE6TauYGuGL3eK8lYxlqJ
+	hX0FwgOy9NbIsdpP/duP8tGJl5ESzHt/aQdOq0O6TRzIclJ4pv6fSfAdhg03VDfHDrAvA9
+	MUjBPfF/2uj/Z0FywiyxIutMKCKSpYU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-10-8o6wEAkHNAa9f96do4D5Lg-1; Wed,
+ 09 Apr 2025 12:27:17 -0400
+X-MC-Unique: 8o6wEAkHNAa9f96do4D5Lg-1
+X-Mimecast-MFC-AGG-ID: 8o6wEAkHNAa9f96do4D5Lg_1744216035
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 660F9180AB19;
+	Wed,  9 Apr 2025 16:27:15 +0000 (UTC)
+Received: from localhost (unknown [10.22.88.189])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 56AF4180175D;
+	Wed,  9 Apr 2025 16:27:13 +0000 (UTC)
+Date: Wed, 9 Apr 2025 13:27:12 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>, Tejun Heo <tj@kernel.org>,
+	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
+	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH] sched: do not call __put_task_struct() on rt if
+ pi_blocked_on is set
+Message-ID: <Z_af4PF18ocF0bBW@uudg.org>
+References: <Z_W-i-ya0Q6fkXRh@uudg.org>
+ <20250409114330.1444221e@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250409114330.1444221e@gandalf.local.home>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-The display backlight on TUXEDO Polaris AMD Gen2 and Gen3 with panels
-BOE 2420 and BOE 2423 must be forced to pwn controlled to be able to
-control the brightness.
+On Wed, Apr 09, 2025 at 11:43:30AM -0400, Steven Rostedt wrote:
+> On Tue, 8 Apr 2025 21:27:37 -0300
+> "Luis Claudio R. Goncalves" <lgoncalv@redhat.com> wrote:
+> 
+> >  {
+> > +	bool defer = false;
+> > +
+> >  	if (!refcount_dec_and_test(&t->usage))
+> >  		return;
+> >  
+> >  	/*
+> >  	 * In !RT, it is always safe to call __put_task_struct().
+> > -	 * Under RT, we can only call it in preemptible context.
+> > +	 * Under RT, we can only call it in preemptible context,
+> > +	 * when not blocked on a PI chain.
+> >  	 */
+> > -	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || preemptible()) {
+> > +#ifdef CONFIG_PREEMPT_RT
+> > +	if (!preemptible() || current->pi_blocked_on)
+> > +		defer = true;
+> > +#endif
+> 
+> Why add the ugly #ifdef back?
+> 
+> 	if (!IS_ENABLED(CONFIG_PREEMPT_RT) ||
+> 	    (preemptible() && !current->pi_blocked_on)) {
 
-This could already be archived via a module parameter, but this patch adds
-a quirk to apply this by default on the mentioned device + panel
-combinations.
+I had to add the #ifdef to avoid the build failing if CONFIG_RT_MUTEXES is
+not set. I do know SMP, FUTEX, I2C, PSTORE and a few more things depend on
+CONFIG_RT_MUTEXES being enabled, but I opted for being thorough.
 
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-Cc: stable@vger.kernel.org
----
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 32 ++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
+I would be more than glad getting rid of the #ifdef and simplifying the patch
+if that possible build failure is not a case to worry about, if RT_MUTEXES are
+always enabled nowadays.
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 39df45f652b32..2bad6274ad8ff 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -1625,11 +1625,13 @@ static bool dm_should_disable_stutter(struct pci_dev *pdev)
- struct amdgpu_dm_quirks {
- 	bool aux_hpd_discon;
- 	bool support_edp0_on_dp1;
-+	bool boe_2420_2423_bl_force_pwm;
- };
- 
- static struct amdgpu_dm_quirks quirk_entries = {
- 	.aux_hpd_discon = false,
--	.support_edp0_on_dp1 = false
-+	.support_edp0_on_dp1 = false,
-+	.boe_2420_2423_bl_force_pwm = false
- };
- 
- static int edp0_on_dp1_callback(const struct dmi_system_id *id)
-@@ -1644,6 +1646,12 @@ static int aux_hpd_discon_callback(const struct dmi_system_id *id)
- 	return 0;
- }
- 
-+static int boe_2420_2423_bl_force_pwm_callback(const struct dmi_system_id *id)
-+{
-+	quirk_entries.boe_2420_2423_bl_force_pwm = true;
-+	return 0;
-+}
-+
- static const struct dmi_system_id dmi_quirk_table[] = {
- 	{
- 		.callback = aux_hpd_discon_callback,
-@@ -1722,6 +1730,20 @@ static const struct dmi_system_id dmi_quirk_table[] = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "HP EliteBook 665 16 inch G11 Notebook PC"),
- 		},
- 	},
-+	{
-+		// TUXEDO Polaris AMD Gen2
-+		.callback = boe_2420_2423_bl_force_pwm_callback,
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_NAME, "GMxNGxx"),
-+		},
-+	},
-+	{
-+		// TUXEDO Polaris AMD Gen3
-+		.callback = boe_2420_2423_bl_force_pwm_callback,
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_NAME, "GMxZGxx"),
-+		},
-+	},
- 	{}
- 	/* TODO: refactor this from a fixed table to a dynamic option */
- };
-@@ -3586,6 +3608,7 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
- 	struct amdgpu_device *adev;
- 	struct drm_luminance_range_info *luminance_range;
- 	int min_input_signal_override;
-+	u32 panel;
- 
- 	if (aconnector->bl_idx == -1 ||
- 	    aconnector->dc_link->connector_signal != SIGNAL_TYPE_EDP)
-@@ -3610,6 +3633,13 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
- 		caps->aux_support = false;
- 	else if (amdgpu_backlight == 1)
- 		caps->aux_support = true;
-+	else if (amdgpu_backlight == -1 &&
-+		 quirk_entries.boe_2420_2423_bl_force_pwm) {
-+		panel = drm_edid_get_panel_id(aconnector->drm_edid);
-+		if (panel == drm_edid_encode_panel_id('B', 'O', 'E', 0x0974) ||
-+		    panel == drm_edid_encode_panel_id('B', 'O', 'E', 0x0977))
-+			caps->aux_support = false;
-+	}
- 	if (caps->aux_support)
- 		aconnector->dc_link->backlight_control_type = BACKLIGHT_CONTROL_AMD_AUX;
- 
--- 
-2.43.0
+Luis
+
+> -- Steve
+> 
+> > +
+> > +	if (!defer) {
+> >  		static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_SLEEP);
+> >  
+> >  
+> 
+---end quoted text---
 
 
