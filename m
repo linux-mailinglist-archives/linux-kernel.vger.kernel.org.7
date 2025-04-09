@@ -1,108 +1,163 @@
-Return-Path: <linux-kernel+bounces-596129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E63DA827AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:24:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5281A827AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:25:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65C878A4E6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:24:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD3544A3AC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A3925E81E;
-	Wed,  9 Apr 2025 14:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06492561CE;
+	Wed,  9 Apr 2025 14:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pz7C2Awi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="FGCSBHhW"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC7E1EEF9;
-	Wed,  9 Apr 2025 14:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA2915ECD7
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 14:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744208650; cv=none; b=eYDCpEXQUo9TVB4KQNkwAvg2Ps7eAkDQyJ+pgyWR7tKKamzXaTj3rbTYL5WxbqCBSIl6xz6+kuPfqaXO7jOX94/EIq7PzopLzx6sn0Kw8vQPgT7XjSv2pbiauvRHiFa9xgfsCtbs2qvU+QqPyHv70NGPDaQrHUJKire8t8c3jo0=
+	t=1744208678; cv=none; b=DUaq0DgYWg7hb/wcI7nmpakyaWS3vs9pEG9tf8NLPqCC2Jk5wp5DmDlFfY8YrilAh1CPUuQrRzqT6TAJ2EvXxhuA0a5YP/QLm/xq4wb3EOOzORDE+kUvWyB4/ZDmg/5S0Vhm9rH2N30brlKoEoH2J9SYAxo4BuGQ6wKU4yTvfQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744208650; c=relaxed/simple;
-	bh=+bUKzVAvFQYvkMjsCyigBf4UoBW+YWb6/sF+uZDucnU=;
+	s=arc-20240116; t=1744208678; c=relaxed/simple;
+	bh=6/u5m1jBcdHSJva39xbCZKrMFZjzeW8DF1B14oSOKlc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NwuqcEHK29cKn/iv/5SXHID7WDU2Q1sJIOassgFoOqN5LTF8Rsl2r3Ut8BGVj3BAtNPin5eoTmL+HoESfwgvNYqxETuecTZcITRmaJDtDqQ/fo5IW9btofqrUQ+YDRzEF5Le9DRiCh2dAMoVZvUvR05xfNWj6gBWAjxTHgxtjdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pz7C2Awi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2D34C4CEE7;
-	Wed,  9 Apr 2025 14:24:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744208649;
-	bh=+bUKzVAvFQYvkMjsCyigBf4UoBW+YWb6/sF+uZDucnU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pz7C2Awi2qN3TQS6JrMYXalXUoAJ8NiXCAj2KDVU71iXJrHuklPN63FU4bgUz0hP5
-	 1wkjoganzMXRa5vI/apOM/XrMxgrg2PN0KMCwmAA4fhbjRWtYTSVuwzmGCghoCfS/C
-	 JtpiMyb7iyFMPyncMFtQfMHfkfDWo/L62omJps7KT0KEvkTyvv3jFKlz2iXcNgP3Fo
-	 BKwImXLAv+Xi8/RLn+Tq5Be3drgBPCjtv3uGPsOfv9Ox9SV4nhFooECBYsDqXsIHKZ
-	 UdN7brVOZwzeJA09ypJaPVLQkZ1Q08ZJwoX5hHvswn+tEN6X63wxzqH4O64s9o9XRD
-	 5bfuX2uBk//6Q==
-Date: Wed, 9 Apr 2025 15:24:04 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com
-Subject: Re: [PATCH] ASoC: cs-amp-lib-test: Don't select SND_SOC_CS_AMP_LIB
-Message-ID: <a47c2074-2e28-43e6-a7a1-c3ac662723cf@sirena.org.uk>
-References: <20250409104544.878475-1-rf@opensource.cirrus.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hdY0W9A14FPWZci5oIrnIkT6IkJCavGomAQIN3r1xbqi3HsguyysL4P/BPVwzJMMWi+sCZH5ThEmsDkzdJ+tGlMsipKLV27UMiTtFNkgze6c0nau/0bnwIOrKsFJ66RGjY7EprpjtVvnJLtE+wNniLU6sKVS77cxR5mS89L2wgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=FGCSBHhW; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22438c356c8so67150765ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 07:24:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1744208675; x=1744813475; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=w/247GU5kAXrWlzdAEKnKFSLcJSyBRJQxmFUsRk34ps=;
+        b=FGCSBHhWQSEJ/2IFpnZ7N0HnYWPBCeIPOAgD6sKPNYlgTJDXFczAxj0YcW5YwLyfQZ
+         Or8unqhYZaSEr6oi+s5fP8s3rv/C98Dx6/fGun3ASyWznSi4aTdMvKcz5QubZ2rPalc0
+         j7KI4gLnPBYHTXnQZCnemmVpojQXuhCL9gKshAALK6vz6IiHHoWJEWwFcN9kFQtEDJQB
+         ORuPx9BkAx3XBwn/5ao7gGUxZnyc+z7R1dsD71FAZtR3s7Sa8MmBU7p1E8ZtvQNM8Kxf
+         B2S92AoIN0i1+DoFy69oZfrZb0n29BD8alKmGvXB2GWo8ADF9N/Ryv2Pk+ZsLifqiK9y
+         ckFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744208675; x=1744813475;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w/247GU5kAXrWlzdAEKnKFSLcJSyBRJQxmFUsRk34ps=;
+        b=CdPVyo2915ydacbWNCu+rhRNk/YrdH/WS8meiI2AETWU7L+giJBRpTS82IQXa5cF71
+         MMji/36QxhkIg3zAmGgjdlGkzFMO+5EJMOnntQJjxBFFDQV0e8Rg0AFZ6h1T+sNf+JE5
+         dJSJVHQAu+HGbWybXuq0SDnzjVehBv+utp/4bxjKxDxOvAk5t0f9CarowHjfyEFtXF2c
+         WyoxzrdkuZcn34FHgJnmmfDYkctWtqdZikpVDJv4AYcoq/IDBdHETs+jNaoNet5WZXnM
+         7ZJGpA6opJ0jl6sGmuqWqOruZy8YzcXGwtiwX1z0UpLnSjW8FToYIivSyhiPX5tpBMPt
+         sc6w==
+X-Gm-Message-State: AOJu0YxRBdOA7bjeXPcobDmHUW/fBWgTJNIgV5ki1w1zkN3MsyhsAxGQ
+	1OQArD3sdqZhDMtXuZ3LoVRoczAlYAarlyYrW9UHCxOYeyZbvsISpHDyIQEATg==
+X-Gm-Gg: ASbGncu2+4/Shk89zT2NzTLwFVjlnuOQ0rAnQkXrj7CKmYYzVhYEY4SXWztRDO8/sk+
+	nlEfCBAdPcn7e4mgawCPEG4jEit69f4jckMUYUU3B51zDaKEsHcWHPsmLhyD3idLwWIZJ7ON9QK
+	FHwzm+P/OUWFWhE0RqKZbma0h9QfI1CP+LUwfIaE+4vfeLwq2BY+3xVq4XBDXpd4m68PkRDg79V
+	kL4R8CbZPFE4q8r3D/xiG+WfB5ay1BVqRckj6f0B8ninKEGZP3ItinLfyPIy4Eo0c8ZbNQIAeKr
+	+QX6fSS7vgb0umFuyyiaXh/g6Kgdwk0iR95vl216
+X-Google-Smtp-Source: AGHT+IHkq9PrBRh5bEbrMFd4TtWNwe5eTqKHX2qUyRTr1z8/K6J7F81wNhoRQ1kBbvB5ATIMBjxgfQ==
+X-Received: by 2002:a17:903:94e:b0:223:fbc7:25f4 with SMTP id d9443c01a7336-22ac29a9929mr45469925ad.14.1744208675041;
+        Wed, 09 Apr 2025 07:24:35 -0700 (PDT)
+Received: from bytedance ([115.190.40.10])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b6288asm12440185ad.9.2025.04.09.07.24.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 07:24:34 -0700 (PDT)
+Date: Wed, 9 Apr 2025 22:24:14 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>
+Cc: linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>
+Subject: Re: [RFC PATCH v2 7/7] sched/fair: alternative way of accounting
+ throttle time
+Message-ID: <20250409142414.GA687147@bytedance>
+References: <20250409120746.635476-1-ziqianlu@bytedance.com>
+ <20250409120746.635476-8-ziqianlu@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LjPT8NQEUqQoI9cF"
-Content-Disposition: inline
-In-Reply-To: <20250409104544.878475-1-rf@opensource.cirrus.com>
-X-Cookie: Surprise due today.  Also the rent.
-
-
---LjPT8NQEUqQoI9cF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250409120746.635476-8-ziqianlu@bytedance.com>
 
-On Wed, Apr 09, 2025 at 11:45:44AM +0100, Richard Fitzgerald wrote:
-> Depend on SND_SOC_CS_AMP_LIB instead of selecting it.
->=20
-> KUNIT_ALL_TESTS should only build tests for components that are
-> already being built, it should not cause other stuff to be added
-> to the build.
+On Wed, Apr 09, 2025 at 08:07:46PM +0800, Aaron Lu wrote:
+> Implement an alternative way of accounting cfs_rq throttle time which:
+> - starts accounting when a throttled cfs_rq has no tasks enqueued and its
+>   throttled list is not empty;
+> - stops accounting when this cfs_rq gets unthrottled or a task gets
+>   enqueued.
+> 
+> This way, the accounted throttle time is when the cfs_rq has absolutely
+> no tasks enqueued and has tasks throttled.
+> 
+> Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
+> ---
+>  kernel/sched/fair.c  | 112 ++++++++++++++++++++++++++++++++-----------
+>  kernel/sched/sched.h |   4 ++
+>  2 files changed, 89 insertions(+), 27 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 20471a3aa35e6..70f7de82d1d9d 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5300,6 +5300,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>  
+>  static void check_enqueue_throttle(struct cfs_rq *cfs_rq);
+>  static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
+> +static void account_cfs_rq_throttle_self(struct cfs_rq *cfs_rq);
+>  
+>  static void
+>  requeue_delayed_entity(struct sched_entity *se);
+> @@ -5362,10 +5363,14 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>  		if (throttled_hierarchy(cfs_rq)) {
+>  			struct rq *rq = rq_of(cfs_rq);
+>  
+> -			if (cfs_rq_throttled(cfs_rq) && !cfs_rq->throttled_clock)
+> -				cfs_rq->throttled_clock = rq_clock(rq);
+> -			if (!cfs_rq->throttled_clock_self)
+> -				cfs_rq->throttled_clock_self = rq_clock(rq);
+> +			if (cfs_rq->throttled_clock) {
+> +				cfs_rq->throttled_time +=
+> +					rq_clock(rq) - cfs_rq->throttled_clock;
+> +				cfs_rq->throttled_clock = 0;
+> +			}
 
->  config SND_SOC_CS_AMP_LIB_TEST
-> -	tristate "KUnit test for Cirrus Logic cs-amp-lib"
-> -	depends on KUNIT
-> +	tristate "KUnit test for Cirrus Logic cs-amp-lib" if !KUNIT_ALL_TESTS
-> +	depends on SND_SOC_CS_AMP_LIB && KUNIT
->  	default KUNIT_ALL_TESTS
-> -	select SND_SOC_CS_AMP_LIB
->  	help
->  	  This builds KUnit tests for the Cirrus Logic common
->  	  amplifier library.
+This probably needs more explanation.
 
-This by itself results in the Cirrus tests being removed from a kunit
---alltests run which is a regression in coverage.  I'd expect to see
-some corresponding updates in the KUnit all_tests.config to keep them
-enabled.
+We can also take cfs_b->lock and directly accounts the time into
+cfs_b->throttled_time, but considering enqueue can be frequent so to
+avoid possible lock contention, I chose to account this time to the cpu
+local cfs_rq and on unthrottle, add the local accounted time to
+cfs_b->throttled_time.
 
---LjPT8NQEUqQoI9cF
-Content-Type: application/pgp-signature; name="signature.asc"
+This has a side effect though: when reading cpu.stat and cpu.stat.local
+for a task group with quota setting, the throttled_usec in cpu.stat can
+be slightly smaller than throttled_usec in cpu.stat.local since some
+throttled time is not accounted to cfs_b yet...
 
------BEGIN PGP SIGNATURE-----
-
-iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf2gwMACgkQJNaLcl1U
-h9APhQf2IkAczMn1TG1mpvzVIO9PkrIMBo9XUTw/LAgmriLVU8bTq+Ds9SOtzv/y
-bhZhab9lkzpNl3qbFzVuCkkvHcpNxlR9/B3g+EFRgR78rGw1rILoqOyZ9eUgyCp5
-qGqIGty6oxxY3NJ3et4YPXBXwJpkBLwWhWn4aEq1lif4d3qCTKARSou3ARRR89mb
-/+kYXF34GvtIfZaeI5Cl0xwy5WW85DCojUaLRam1hnPXydZ+viHHYbM52qqrYMKc
-f+GVTOIvR3FadRuSJL1FxZKT+cz34ZXYdfrAxiJEgrRFtNAH+xYs6J/u3LKN5mRO
-qctoPxg94qtE8ZTCxtZxt2F1GIv8
-=0aND
------END PGP SIGNATURE-----
-
---LjPT8NQEUqQoI9cF--
+> +
+> +			if (cfs_rq->throttled_clock_self)
+> +				account_cfs_rq_throttle_self(cfs_rq);
+>  		}
+>  #endif
+>  	}
 
