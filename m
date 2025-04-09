@@ -1,129 +1,196 @@
-Return-Path: <linux-kernel+bounces-595407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B0AA81DCE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:04:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AB9AA81DD1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95AF58A1B64
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 07:01:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E2914C1075
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 07:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA74921A95D;
-	Wed,  9 Apr 2025 07:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="0rz7Pa/U"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8D4219A9E
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 07:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B55C22CBE8;
+	Wed,  9 Apr 2025 07:03:24 +0000 (UTC)
+Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6F1189B84;
+	Wed,  9 Apr 2025 07:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.164.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744182131; cv=none; b=GpJ67W0k2RyFIcejUJ13b79bfOicsbVhvmzcxjgIo1KF8t2YHRBEYHJDw31ulQZ4zMKxzoVXh4okivi/LMKMWOrvF/fD5faDcuJ/xHfor0xt9/Az1/DvTDgmFF6mVM/0tXiw61YfvgWe3dCwcamiTqjIhhCGakzMrar+UYFMctk=
+	t=1744182204; cv=none; b=utZVM3BZQSs8NSxMyIzV77FaJt3ku1Yr92LYqix4rkQ8Rv9MVW5uSiQjednfYVtqxmoJVTJIX/R4BbWKq9rWNVpEaQtrGa9fisBjcm334KljoUiZlT0E55AIYuom245UyHo5T8aQBGTznSgISulm86Vahq57UuqtlYZs7J9L0nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744182131; c=relaxed/simple;
-	bh=LYOxysk7LpLeibzmXywLU0KOzfGt6ylPgoDtIPwcId8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kSQciipbbNtT08OPZs4BLpx25LkoBbitLv6OEIAZxFYAq1diKoJSkTyeR1rdMP1cgbKVLZIQKHFISpmTQ/y96zKsPRGOlCDD4Bg4tbPqkezGxFoqLB8CTLwXyj+yE/IVI4d1zM/kvwor9ZtQn+oBPYw7M5BmGGYsAGORKv0Days=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=0rz7Pa/U; arc=none smtp.client-ip=44.202.169.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6010a.ext.cloudfilter.net ([10.0.30.248])
-	by cmsmtp with ESMTPS
-	id 2ANqutS86Xshw2PRhuTlpv; Wed, 09 Apr 2025 07:02:02 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 2PRhumOVUUuTA2PRhuvW7v; Wed, 09 Apr 2025 07:02:01 +0000
-X-Authority-Analysis: v=2.4 cv=caLUrGDM c=1 sm=1 tr=0 ts=67f61b69
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0W9ZJ4sf5g1JPoPztzuh32ONwPdai1ebV30SG+aO88Y=; b=0rz7Pa/UnlIhoS0XzrofJptErB
-	nxeH/0C3UHg1Gn43uBbNOdJZ+2tfSQzxEm2M6BVQJ1gHAP6fACnJJ2Gmh8VHvwi3/F+kSO4nPM+ob
-	71GdYx7HsKytQ0aAShILMCoHyIxlfmQczRoQDfz4NkeeLNGcGVloG2lgRxHKpbCCyr7Usafx8zsSN
-	HBUfJhFH0ECna1rRUwcTroTNGpTNZmSnaErR1xkExoCECnGzx3bX7z+3QZkWfPGt/XYewHNlPLfQI
-	EVDVx3dqAeiZyPpyib4MDnmvO8/FiW/NQFLzf8Y0QvPTJjSQYjBczk8zWzWrGBb0oe7roulj+G98z
-	UG2fcOAQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:43768 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1u2PRf-00000000SbI-0uUY;
-	Wed, 09 Apr 2025 01:01:59 -0600
-Message-ID: <e4b882ee-996f-4da8-8ccb-ae9699b91110@w6rz.net>
-Date: Wed, 9 Apr 2025 00:01:55 -0700
+	s=arc-20240116; t=1744182204; c=relaxed/simple;
+	bh=q39kQhDN49GLm/lEOP32rR1ke0TxfqFy3ziGaeITL1I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TnPl1bjuoG1WizjEpEkr0Mz41O97PBgG27gUwkOlKDIu4/T4XhdoFIbaqfYkA7hToOLPO9Czm2JW6TMOieht/6oGazFACt+LKLmSoQberLZQo4KnC6uI33S/SZNgvW+5TOHnVPlGIw/JMPKHmtXc12548CZ8fCPv+ZLEObGMaC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=162.243.164.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
+Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
+	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwBnR7yyG_Zn9W65Ew--.14899S2;
+	Wed, 09 Apr 2025 15:03:14 +0800 (CST)
+Received: from phytium.com.cn (unknown [123.150.8.50])
+	by mail (Coremail) with SMTP id AQAAfwBnaoasG_ZnhURkAA--.7272S3;
+	Wed, 09 Apr 2025 15:03:09 +0800 (CST)
+From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+To: chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	jiaxun.yang@flygoat.com,
+	rppt@kernel.org,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	Jonathan.Cameron@huawei.com,
+	dave.hansen@linux.intel.com,
+	dan.j.williams@intel.com,
+	alison.schofield@intel.com
+Cc: chenbaozi@phytium.com.cn,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Subject: [PATCH 1/1] LoongArch: Introduce the numa_memblks conversion
+Date: Wed,  9 Apr 2025 15:02:50 +0800
+Message-Id: <20250409070250.3225839-1-wangyuquan1236@phytium.com.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/279] 5.15.180-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250408104826.319283234@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250408104826.319283234@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1u2PRf-00000000SbI-0uUY
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:43768
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 16
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfAiwFwoNU60tOn7+Fe/obaAOSXUa6vNXJxfjyulGyKHxB1Jp/FMcFoecULcvAmdGrHkHhqRFdppZKH6co0FsFz2KAPmrutVDGtIxTHUZyPynq4WzoCZV
- pURy2Cp4SCtd98BKOjs8x+Zrl7Imo9qtVS8bRx3yLZp2jJfYTIuzrhBJN/FV13n/Bc4knMwRAzHXgrgiosP4SuHoChmdZGxhKP0=
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAfwBnaoasG_ZnhURkAA--.7272S3
+X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQAPAWf1gRgDIgADsm
+Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=wangyuquan
+	1236@phytium.com.cn;
+X-Coremail-Antispam: 1Uk129KBjvJXoWxXFWxtrW7Gr45Ar4UJrW5ZFb_yoWrGF4rpF
+	ZxCrs3Xr48Wr18Ja40kry29w15Kwn7KanxXa47GFyfZF12vryDZr40grn2vFyUt3y8ur40
+	9rn5C3WavF4rJ3JanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
+	UUUUU
 
-On 4/8/25 03:46, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.180 release.
-> There are 279 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 10 Apr 2025 10:47:53 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.180-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+"mm: introduce numa_memblks"(87482708210f) has moved numa_memblks
+from x86 to the generic code, but loongarch was left out of this
+conversion.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+This patch introduces the generic numa_memblks.
 
-Tested-by: Ron Economos <re@w6rz.net>
+Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+---
+
+Background
+----------
+I am managed to land the patch[1] "mm: numa_memblks: introduce numa_add_reserved_memblk"
+but kernel test CI noticed build errors[2] from loongarch64-linux-gcc.
+
+Link:
+[1]: https://lore.kernel.org/all/20250409040121.3212489-1-wangyuquan1236@phytium.com.cn/
+[2]: https://lore.kernel.org/all/202503282026.QNaOAK79-lkp@intel.com/
+
+ arch/loongarch/Kconfig            |  1 +
+ arch/loongarch/include/asm/numa.h | 14 ----------
+ arch/loongarch/kernel/numa.c      | 43 +------------------------------
+ 3 files changed, 2 insertions(+), 56 deletions(-)
+
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 067c0b994648..5906ccd06705 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -186,6 +186,7 @@ config LOONGARCH
+ 	select MODULES_USE_ELF_RELA if MODULES
+ 	select NEED_PER_CPU_EMBED_FIRST_CHUNK
+ 	select NEED_PER_CPU_PAGE_FIRST_CHUNK
++	select NUMA_MEMBLKS
+ 	select OF
+ 	select OF_EARLY_FLATTREE
+ 	select PCI
+diff --git a/arch/loongarch/include/asm/numa.h b/arch/loongarch/include/asm/numa.h
+index b5f9de9f102e..bbf9f70bd25f 100644
+--- a/arch/loongarch/include/asm/numa.h
++++ b/arch/loongarch/include/asm/numa.h
+@@ -22,20 +22,6 @@ extern int numa_off;
+ extern s16 __cpuid_to_node[CONFIG_NR_CPUS];
+ extern nodemask_t numa_nodes_parsed __initdata;
+ 
+-struct numa_memblk {
+-	u64			start;
+-	u64			end;
+-	int			nid;
+-};
+-
+-#define NR_NODE_MEMBLKS		(MAX_NUMNODES*2)
+-struct numa_meminfo {
+-	int			nr_blks;
+-	struct numa_memblk	blk[NR_NODE_MEMBLKS];
+-};
+-
+-extern int __init numa_add_memblk(int nodeid, u64 start, u64 end);
+-
+ extern void __init early_numa_add_cpu(int cpuid, s16 node);
+ extern void numa_add_cpu(unsigned int cpu);
+ extern void numa_remove_cpu(unsigned int cpu);
+diff --git a/arch/loongarch/kernel/numa.c b/arch/loongarch/kernel/numa.c
+index 30a72fd528c0..0ed384635566 100644
+--- a/arch/loongarch/kernel/numa.c
++++ b/arch/loongarch/kernel/numa.c
+@@ -18,6 +18,7 @@
+ #include <linux/efi.h>
+ #include <linux/irq.h>
+ #include <linux/pci.h>
++#include <linux/numa_memblks.h>
+ #include <asm/bootinfo.h>
+ #include <asm/loongson.h>
+ #include <asm/numa.h>
+@@ -145,48 +146,6 @@ void numa_remove_cpu(unsigned int cpu)
+ 	cpumask_clear_cpu(cpu, &cpus_on_node[nid]);
+ }
+ 
+-static int __init numa_add_memblk_to(int nid, u64 start, u64 end,
+-				     struct numa_meminfo *mi)
+-{
+-	/* ignore zero length blks */
+-	if (start == end)
+-		return 0;
+-
+-	/* whine about and ignore invalid blks */
+-	if (start > end || nid < 0 || nid >= MAX_NUMNODES) {
+-		pr_warn("NUMA: Warning: invalid memblk node %d [mem %#010Lx-%#010Lx]\n",
+-			   nid, start, end - 1);
+-		return 0;
+-	}
+-
+-	if (mi->nr_blks >= NR_NODE_MEMBLKS) {
+-		pr_err("NUMA: too many memblk ranges\n");
+-		return -EINVAL;
+-	}
+-
+-	mi->blk[mi->nr_blks].start = PFN_ALIGN(start);
+-	mi->blk[mi->nr_blks].end = PFN_ALIGN(end - PAGE_SIZE + 1);
+-	mi->blk[mi->nr_blks].nid = nid;
+-	mi->nr_blks++;
+-	return 0;
+-}
+-
+-/**
+- * numa_add_memblk - Add one numa_memblk to numa_meminfo
+- * @nid: NUMA node ID of the new memblk
+- * @start: Start address of the new memblk
+- * @end: End address of the new memblk
+- *
+- * Add a new memblk to the default numa_meminfo.
+- *
+- * RETURNS:
+- * 0 on success, -errno on failure.
+- */
+-int __init numa_add_memblk(int nid, u64 start, u64 end)
+-{
+-	return numa_add_memblk_to(nid, start, end, &numa_meminfo);
+-}
+-
+ static void __init node_mem_init(unsigned int node)
+ {
+ 	unsigned long start_pfn, end_pfn;
+-- 
+2.34.1
 
 
