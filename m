@@ -1,77 +1,44 @@
-Return-Path: <linux-kernel+bounces-595110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F668A81A8E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 03:37:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BCDA81A96
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 03:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 595984C32FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 01:37:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C854F7AE99B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 01:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2335146A68;
-	Wed,  9 Apr 2025 01:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A127E155753;
+	Wed,  9 Apr 2025 01:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sx8Bkbs5"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF573250EC
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 01:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lPCYIr2x"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F50250EC;
+	Wed,  9 Apr 2025 01:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744162643; cv=none; b=n5l5LgfzcFplsfQCkX6dGL9T9/6RstseZb5htcjV5MwvgrRoYvN2G+0dFixGZ47LRCgEt8uB4Evm/omCteEeU8OK6u6mJ8FJbkOz50qPCjpznE4dYO3VOWKnk6wEVSidYP3rpx7azl1hxNYQrS/Z8GJwDb/4RfwRjoPeSM/Z4fY=
+	t=1744162719; cv=none; b=ienAtXzlD3TBMG36YceYfPqcCtwnpGEPYaKi9IqApC5jb6X43d0ThhiJI5FEVev7q4ZAQwxxFtVUoRax9RfNUfB/7MprZVvPRTsHADL4jdrKJsch0RL1eRd/fwJ9kZEfooNVDThZYKhDqviLdE4sWNP9QXnOICD3/7LxoqNNSxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744162643; c=relaxed/simple;
-	bh=3XIP/pef7D1FT7Zu2FtKEoaBa9I2gehVksiNBjxm+Ws=;
+	s=arc-20240116; t=1744162719; c=relaxed/simple;
+	bh=/Aqhjl5oClsTu1nqE+4odId5RVqnkUfrHVKtJCSZwMU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OCCpOQX/fmToQkLxhSzvHphsR5UlULZsps9xO306TIO7o6ff11e5/eVPlWKy/KeVEybbs2qKpECnKR7knSApCZ52CG9gjip2wzb6GQL0STAMlKbzfoy3ljrLvSfYwbtCABFvCpOWdXMd1vprSNogm3FPhG6zeWLBQbpK2rf3Q3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sx8Bkbs5; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-227a8cdd241so72423925ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 18:37:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744162640; x=1744767440; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9jg7a01cS3PWALct/tvK5cNQVh50VGd9fF1vFgvvu2I=;
-        b=Sx8Bkbs5/vmcY/Y1Btaussl/c9cfUeiggp14jN/c+OzJ7d4KwKdm0kyPGMii2jOuzF
-         NTAHNAi/glm7hoJrOZm1BCZmUeEC071XfdFES9Siu0yGYJ7mzC08uQmTiu8rk6epXWQL
-         TNy9r14iaYusKw87aTzd1A7DTy06UFtXRXkTURNUaCn5r0lqz2VWGyXZZdbm8WMswWNC
-         cPl82zzkYwa9+0ZyBDf90NfoqqMB122mutn46BUIrdIUvvJwuK0E9YJD7ZNVKHrkgzsI
-         VGEGe2k3uiY1ouFiFA/RX+4DXtaFJNm7z3Bt2ll+jPNMKf39wH5rrrokFt+HlM4zLttk
-         ykIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744162640; x=1744767440;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9jg7a01cS3PWALct/tvK5cNQVh50VGd9fF1vFgvvu2I=;
-        b=OcR+PMaH40gB8AACS0a0ps6jGIFvmAqPXLFENy5q4zk4mDBMxtCgsFHk0qd5kb+Rp2
-         dAvlKeago7/J8gRgl8MimiXJmrWhxJ6xumrqVKDYR7e54tKyOhR+eyiVCFHfnzHksvok
-         HD6CbAQ57TR8ScyUvQxot5YLpFI88399fbttGiQ5gjdrvjXe6cQtdJL8c7fkZHNHC4v3
-         xTpUl8EFZm3Jy8nriPhSugfQoEEVR8aBGmO9P6j8ztnSxyJgLinFE2J8cr76xe87Vcjb
-         zajo+/b5ntRbBXDvV9Ux7GGBzepyOF7R+slVZ+Q/KqSPjwL7vnLRy/6baJKbVBanzNsO
-         LgVQ==
-X-Gm-Message-State: AOJu0Yz350D0C49Zzij3TwisommaMmDIo6Ax4IUOZKwtbjE6XZIjH2Zi
-	OvUe8H1qRnhwndoawlOLlC9XcpKoBuUXAbbiOqDoLquEzO//LvppC6wODTLJ
-X-Gm-Gg: ASbGncsucZ922joKi0FUfDhfZnDiK7XV0aXGa9WbPhCmio7FkjuONnW7bRLsNZs+ZAH
-	QkECW50/oEYu4c+Ryx4DbFU/63EgmiXiLu7C21r00gKfxbco/fZPbp4D4wqlP+3HjnDRLdA66yi
-	QQCI4BEDra3rDwwHDf7d39iJ16rkSsviXPxhBpYF0D5XaZAz2cBpPTdJfhaeNn1yKULQyZtC80R
-	QtjSOwY2SgzRaw3usSe82VeIkqPrtX/QeBNjTIMP0ivhHPeQaMGLMK3TsSjjYxlJ0wj/rc4O71D
-	2Hf/jv6b3BdiZ5Zi9CWbcj71sxcSGRCwr/W04ATA0bTuJQ==
-X-Google-Smtp-Source: AGHT+IE8VrQjUwkOTMGD8k0oVoZ+EWxPk10Kn65W7/MZJDIBYD34SspBN6FTCdGOV4Q539L6Bx1MQw==
-X-Received: by 2002:a17:902:ccce:b0:216:644f:bc0e with SMTP id d9443c01a7336-22ac29bc06dmr21229025ad.24.1744162639905;
-        Tue, 08 Apr 2025 18:37:19 -0700 (PDT)
-Received: from [192.168.1.6] ([58.29.143.236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7cb5304sm9775ad.189.2025.04.08.18.37.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Apr 2025 18:37:19 -0700 (PDT)
-Message-ID: <a536eeca-8e35-4986-9071-789260d0db49@gmail.com>
-Date: Wed, 9 Apr 2025 10:37:15 +0900
+	 In-Reply-To:Content-Type; b=OMNfyH5pma40Vyeo/LIOeLCI7Yd8sRdaxzqUrsUnixmgaP5Woq/Kx9usW5d+tAdCPKdfP6cORp2NwUrE2qfbEb5zxqp/j3d0x4wIqExwYDHucfPyOSFmtto1PHc5Ycsk71Dei1OfelVi+mxkxFtSkPAuOG4CrKofI3aiHChjpUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=lPCYIr2x; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=c3z3dr7lgCFWhzF4uE+NiRcEM2IRJ/mxV0Clz0l0eIg=;
+	b=lPCYIr2xPYp0mI+Bylyk7TGs4qKH2qxyv+9MNdMV1yG0A1seS/tMaV/NAo3YLt
+	U5LyMq+5lAThv82osy/J0uHt5GtSMKPWCwKtEnB2kBVITMo+7AFioivjKdfK88sT
+	fOj7sKgjsjsW/hFdER/S8TNe8Xuo2Op7rzubd3q9EPNxs=
+Received: from [192.168.142.52] (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wBXH3NXz_VnptM4FA--.59992S2;
+	Wed, 09 Apr 2025 09:37:29 +0800 (CST)
+Message-ID: <1731bcdd-22ad-4c71-a94e-b3576c1e7dc2@163.com>
+Date: Wed, 9 Apr 2025 09:37:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,61 +46,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET sched_ext/for-6.16] sched_ext: Reduce usage of
- static_keys
-To: Tejun Heo <tj@kernel.org>, void@manifault.com, arighi@nvidia.com,
- Changwoo Min <changwoo@igalia.com>
-Cc: linux-kernel@vger.kernel.org, sched-ext@meta.com
-References: <20250408230616.2369765-1-tj@kernel.org>
-From: Changwoo Min <multics69@gmail.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <20250408230616.2369765-1-tj@kernel.org>
+Subject: Re: [v7 2/5] PCI: Refactor capability search functions to eliminate
+ code duplication
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, robh@kernel.org, jingoohan1@gmail.com,
+ thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250402042020.48681-1-18255117159@163.com>
+ <20250402042020.48681-3-18255117159@163.com>
+ <8b693bfc-73e0-2956-2ba3-1bfd639660b6@linux.intel.com>
+ <c6706073-86b0-445a-b39f-993ac9b054fa@163.com>
+ <bf6f0acb-9c48-05de-6d6d-efb0236e2d30@linux.intel.com>
+ <f77f60a0-72d2-4a9c-864e-bd8c4ea8a514@163.com>
+ <ef0237d9-f5da-44d7-ab45-2be037cf0f25@163.com>
+ <3689b121-1ff2-f0f6-59f4-293cda8ea6a8@linux.intel.com>
+ <ef311715-3e61-4bf5-bdae-58fd87a3d5e7@163.com>
+ <e4db2248-ed8b-d270-d417-9efdca947e8e@linux.intel.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <e4db2248-ed8b-d270-d417-9efdca947e8e@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBXH3NXz_VnptM4FA--.59992S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtr15Xw47JFykGF43AFy5Jwb_yoWDJrXE93
+	929as29w1I9Fs7Aw4fKrs8urZ0g3yUWryYq3sYqrZ8GFn5AayDAr4vk3s2v34xGa4Yyrsx
+	Kr4Yqr42y34IkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUboqcUUUUUU==
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWwUpo2f1RouuSgABsu
 
-Hi Tejun,
 
-Thank you for the cleanup. Looks good to me.
 
-Acked-by: Changwoo Min <changwoo@igalia.com>
+On 2025/4/9 00:18, Ilpo Järvinen wrote:
+>> Move the Capability search logic into a header-based macro that accepts a
+>> config space accessor function as an argument.  This enables controller
+>> drivers to perform Capability discovery using their early access mechanisms
+>> prior to full device initialization while maintaining the original search
+>> behavior.
+> 
+> ... while maintaining ... ->
+> 
+> ... while sharing the Capability search code.
+> 
 
-Regards,
-Changwoo Min
+Dear Ilpo,
 
-On 4/9/25 08:06, Tejun Heo wrote:
-> sched_ext uses static_keys to optimize branches on ops flags and which ops
-> are implemented. Some of those branches aren't that hot and while others are
-> hotter, they are unlikely to cause meaningful overhead difference given
-> everything else that's going on. static_keys were used more because there
-> was no reason not to use static_keys. However, the planned multiple
-> hierarchical scheduler support won't work with global static_keys as these
-> branches would have to be based on the specific ops instance.
+Thank you very much for your reply. Will change.
+
+>>
+>> Convert the existing PCI core Capability search implementation to use this new
+>> macro
 > 
-> This patchset replaces static_key usages with tests on ops.flags and a
-> bitmap tracking which operation is implemented. I couldn't see performance
-> difference in numerous hackbench runs on a Ryzen 3990x machine before and
-> after the patchset.
+> I think the rest of this paragraph after this are unnecessary.
 > 
-> This patchset contains the following five patches:
+
+Will delete.
+
+>> , eliminating code duplication. The refactoring preserves the original
+>> functionality without behavioral changes, while allowing both the core and
+>> drivers to share common Capability discovery logic.
 > 
->   0001-sched_ext-Indentation-updates.patch
->   0002-sched_ext-Remove-scx_ops_enq_-static_keys.patch
->   0003-sched_ext-Remove-scx_ops_cpu_preempt-static_key.patch
->   0004-sched_ext-Remove-scx_ops_allow_queued_wakeup-static_.patch
->   0005-sched_ext-Make-scx_has_op-a-bitmap.patch
+> Other than that, it seemed good enough for me.
 > 
-> and is also available in the following git branch:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-remove-static_keys
-> 
-> diffstat follows. Thanks.
-> 
->   kernel/sched/ext.c |   91 +++++++++++++++++++++++------------------------------
->   kernel/sched/ext.h |    8 ----
->   2 files changed, 42 insertions(+), 57 deletions(-)
-> 
-> --
-> tejun
-> 
+
+
+Best regards,
+Hans
 
 
