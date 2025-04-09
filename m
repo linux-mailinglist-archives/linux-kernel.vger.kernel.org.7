@@ -1,108 +1,171 @@
-Return-Path: <linux-kernel+bounces-595449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2116EA81E55
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:31:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D17A81F32
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A417E17CAA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 07:31:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0C38A4B3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2646B25A2D1;
-	Wed,  9 Apr 2025 07:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nTR7db3e"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C32325C701;
+	Wed,  9 Apr 2025 08:01:40 +0000 (UTC)
+Received: from spam.asrmicro.com (asrmicro.com [210.13.118.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEA5125B9;
-	Wed,  9 Apr 2025 07:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEDC25B669
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 08:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.13.118.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744183878; cv=none; b=Wnh7HLnngLSHxmBWfvlFvbh7AnnLzPDFNm4IgpWE+S0Wb2r4Po6fRqMRPDSbRFDtARMic7+Si5QAgaU2uwrYzxpd0m5EU68F6rt8mvoEW9reUaML39kYpFKTRIe0zDsdKn8Mj37DNfp5RdxISjtOI6qPfLdro7KEAIstwA00lIs=
+	t=1744185700; cv=none; b=hLS4n2jWy9QbhsWohsB5Uz0NHD+/qj5MBGgkLcjzYNafQXMSJB04EuLgcu9QJS7p+Yu9REOiz4TIu8KOd9qxkr1zGc/itF9mvC1wjyzgRHHJ+INx60VmRFXwEnGCI7oTJijtc5y66EIW/KaVT1FG2dSnyJ87i6Rw4XwYohYeaMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744183878; c=relaxed/simple;
-	bh=XJ4yiMlPFZ0E5bm/nEKVZBLSD9bRDLtD5zJNPS/i5kM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E4oskdEfWpI9KGoDs/pSidZfWvkTHR9Bv53COrKHfpp9vCTjlmBpc/aWn1up6fFrjkw81n4bus+WHPIGB1BCXNaS2wOcXpgynTFM0cQzu6i/6TG7QLawBGzgW6M8FME0MYjCL0juIvQ6yV/N3nH+SYBTa91G3WggjWYUK01BrvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nTR7db3e; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744183877; x=1775719877;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XJ4yiMlPFZ0E5bm/nEKVZBLSD9bRDLtD5zJNPS/i5kM=;
-  b=nTR7db3etmAMslOlNgHA+ou+qyuSbjqY3YsmYlVLxjVUkn1F/FNpvwlv
-   ugeQBA8KHaSTOiT1TdZ61w+cPqglyDLfS0aGCImbCOPFOKpn3KxNGYkYN
-   hSe6DKoawBFqDFTWqb6wpsaXNCim9tPbUkdeLgjhzSbaFxh8BST5JmgDl
-   MMeDUYOviwD5MbYRuNEAddLvDoFMwCQ7fvokqbMPa08HPDB59jmg5om4o
-   jHlEIOecS5+OlrAhNoc+9Q6nXD9KVKk6SzCxvKv3ZE9HNSYjovYksTOKF
-   TSc50zy9WKcwBH7AJurijOEj3ehcrReP6QotA4AkfuQ3gTg7RqP/v87Fw
-   g==;
-X-CSE-ConnectionGUID: xGhPT4WpR8K7cwKlTybv9w==
-X-CSE-MsgGUID: P5lfAww8QfKZlLguzgwnVQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="33249071"
-X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
-   d="scan'208";a="33249071"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 00:31:16 -0700
-X-CSE-ConnectionGUID: axqmlmtWSTiV2ZNdem3GEg==
-X-CSE-MsgGUID: SdZDg75jT7WkFzie1NHoSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
-   d="scan'208";a="133219310"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 00:31:14 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u2Ptv-0000000AeSi-2NP8;
-	Wed, 09 Apr 2025 10:31:11 +0300
-Date: Wed, 9 Apr 2025 10:31:11 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Kees Bakker <kees@ijzerbout.nl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Mika Westerberg <westeri@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 6/6] gpiolib: acpi: Deduplicate some code in
- __acpi_find_gpio()
-Message-ID: <Z_YiP91I9ojNnOi4@smile.fi.intel.com>
-References: <20250403160034.2680485-1-andriy.shevchenko@linux.intel.com>
- <20250403160034.2680485-7-andriy.shevchenko@linux.intel.com>
- <9715c8dd-38df-48fd-a9d1-7a78163dc989@ijzerbout.nl>
+	s=arc-20240116; t=1744185700; c=relaxed/simple;
+	bh=uB80WfCPadHDQNF1Ma8F2Btk9k5iSpMqhcGgLwl8MCg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eF6jUwulEn0GCX1DSdEVHfq7Dc7i5KFE58fLOe7KK4EUeL0GrMAx1CR6YQnE9DGcxqGD1ERJJeScWmyco+eVRrUBhRz8VwXIkhG09NyjcHjpih+02j/Od6qleRJz8do/VjyIr6TrKb80lAG/gKOEuIzpYaXxMl6u0thUSeR3YSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com; spf=pass smtp.mailfrom=asrmicro.com; arc=none smtp.client-ip=210.13.118.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asrmicro.com
+Received: from spam.asrmicro.com (localhost [127.0.0.2] (may be forged))
+	by spam.asrmicro.com with ESMTP id 5397Xwcr002996
+	for <linux-kernel@vger.kernel.org>; Wed, 9 Apr 2025 15:33:58 +0800 (GMT-8)
+	(envelope-from huajianyang@asrmicro.com)
+Received: from exch03.asrmicro.com (exch03.asrmicro.com [10.1.24.118])
+	by spam.asrmicro.com with ESMTPS id 5397Xk2e002977
+	(version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=FAIL);
+	Wed, 9 Apr 2025 15:33:46 +0800 (GMT-8)
+	(envelope-from huajianyang@asrmicro.com)
+Received: from localhost (10.26.128.141) by exch03.asrmicro.com (10.1.24.118)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Wed, 9 Apr 2025 15:33:49
+ +0800
+From: Huajian Yang <huajianyang@asrmicro.com>
+To: <pablo@netfilter.org>
+CC: <kadlec@netfilter.org>, <razor@blackwall.org>, <idosch@nvidia.com>,
+        <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+        <kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
+        <bridge@lists.linux.dev>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Huajian Yang <huajianyang@asrmicro.com>
+Subject: [PATCH] net: Expand headroom to send fragmented packets in bridge fragment forward
+Date: Wed, 9 Apr 2025 15:33:36 +0800
+Message-ID: <20250409073336.31996-1-huajianyang@asrmicro.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9715c8dd-38df-48fd-a9d1-7a78163dc989@ijzerbout.nl>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: exch03.asrmicro.com (10.1.24.118) To exch03.asrmicro.com
+ (10.1.24.118)
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:spam.asrmicro.com 5397Xwcr002996
 
-On Tue, Apr 08, 2025 at 10:09:25PM +0200, Kees Bakker wrote:
-> Op 03-04-2025 om 17:59 schreef Andy Shevchenko:
+The config NF_CONNTRACK_BRIDGE will change the way fragments are processed.
+Bridge does not know that it is a fragmented packet and forwards it
+directly, after NF_CONNTRACK_BRIDGE is enabled, function nf_br_ip_fragment
+will check and fraglist this packet.
 
-...
+Some network devices that would not able to ping large packet under bridge,
+but large packet ping is successful if not enable NF_CONNTRACK_BRIDGE.
 
-> Please, check the changes in this function again.
-> `__acpi_find_gpio` doesn't fill `info` anymore. The callers of this function
-> will continue with
-> an uninitialized struct.
+In function nf_br_ip_fragment, checking the headroom before sending is
+undoubted, but it is unreasonable to directly drop skb with insufficient
+headroom.
 
-My gosh, you are so right! Now I'm puzzled of what I was tested...
-Nevertheless, I will fix this ASAP today, test (and double test to
-be sure it works), and push it.
+Using skb_copy_expand to expand the headroom of skb instead of dropping
+it.
 
+Signed-off-by: Huajian Yang <huajianyang@asrmicro.com>
+---
+ net/bridge/netfilter/nf_conntrack_bridge.c | 14 ++++++++++++--
+ net/ipv6/netfilter.c                       | 14 ++++++++++++--
+ 2 files changed, 24 insertions(+), 4 deletions(-)
+
+diff --git a/net/bridge/netfilter/nf_conntrack_bridge.c b/net/bridge/netfilter/nf_conntrack_bridge.c
+index 816bb0fde718..b8fb81a49377 100644
+--- a/net/bridge/netfilter/nf_conntrack_bridge.c
++++ b/net/bridge/netfilter/nf_conntrack_bridge.c
+@@ -62,7 +62,7 @@ static int nf_br_ip_fragment(struct net *net, struct sock *sk,
+ 
+ 		if (first_len - hlen > mtu ||
+ 		    skb_headroom(skb) < ll_rs)
+-			goto blackhole;
++			goto expand_headroom;
+ 
+ 		if (skb_cloned(skb))
+ 			goto slow_path;
+@@ -70,7 +70,7 @@ static int nf_br_ip_fragment(struct net *net, struct sock *sk,
+ 		skb_walk_frags(skb, frag) {
+ 			if (frag->len > mtu ||
+ 			    skb_headroom(frag) < hlen + ll_rs)
+-				goto blackhole;
++				goto expand_headroom;
+ 
+ 			if (skb_shared(frag))
+ 				goto slow_path;
+@@ -97,6 +97,16 @@ static int nf_br_ip_fragment(struct net *net, struct sock *sk,
+ 
+ 		return err;
+ 	}
++
++expand_headroom:
++	struct sk_buff *expand_skb;
++
++	expand_skb = skb_copy_expand(skb, ll_rs, skb_tailroom(skb), GFP_ATOMIC);
++	if (unlikely(!expand_skb))
++		goto blackhole;
++	kfree_skb(skb);
++	skb = expand_skb;
++
+ slow_path:
+ 	/* This is a linearized skbuff, the original geometry is lost for us.
+ 	 * This may also be a clone skbuff, we could preserve the geometry for
+diff --git a/net/ipv6/netfilter.c b/net/ipv6/netfilter.c
+index 581ce055bf52..619d4b97581b 100644
+--- a/net/ipv6/netfilter.c
++++ b/net/ipv6/netfilter.c
+@@ -166,7 +166,7 @@ int br_ip6_fragment(struct net *net, struct sock *sk, struct sk_buff *skb,
+ 
+ 		if (first_len - hlen > mtu ||
+ 		    skb_headroom(skb) < (hroom + sizeof(struct frag_hdr)))
+-			goto blackhole;
++			goto expand_headroom;
+ 
+ 		if (skb_cloned(skb))
+ 			goto slow_path;
+@@ -174,7 +174,7 @@ int br_ip6_fragment(struct net *net, struct sock *sk, struct sk_buff *skb,
+ 		skb_walk_frags(skb, frag2) {
+ 			if (frag2->len > mtu ||
+ 			    skb_headroom(frag2) < (hlen + hroom + sizeof(struct frag_hdr)))
+-				goto blackhole;
++				goto expand_headroom;
+ 
+ 			/* Partially cloned skb? */
+ 			if (skb_shared(frag2))
+@@ -208,6 +208,16 @@ int br_ip6_fragment(struct net *net, struct sock *sk, struct sk_buff *skb,
+ 		kfree_skb_list(iter.frag);
+ 		return err;
+ 	}
++
++expand_headroom:
++	struct sk_buff *expand_skb;
++
++	expand_skb = skb_copy_expand(skb, ll_rs, skb_tailroom(skb), GFP_ATOMIC);
++	if (unlikely(!expand_skb))
++		goto blackhole;
++	kfree_skb(skb);
++	skb = expand_skb;
++
+ slow_path:
+ 	/* This is a linearized skbuff, the original geometry is lost for us.
+ 	 * This may also be a clone skbuff, we could preserve the geometry for
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.48.1
 
 
