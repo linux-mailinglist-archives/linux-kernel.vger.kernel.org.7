@@ -1,171 +1,149 @@
-Return-Path: <linux-kernel+bounces-595503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D17A81F32
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:04:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498F6A81E5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0C38A4B3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:02:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28A39189D2CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 07:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C32325C701;
-	Wed,  9 Apr 2025 08:01:40 +0000 (UTC)
-Received: from spam.asrmicro.com (asrmicro.com [210.13.118.86])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B993C25A2D9;
+	Wed,  9 Apr 2025 07:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oW73w/Ts"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEDC25B669
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 08:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.13.118.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6102147F8;
+	Wed,  9 Apr 2025 07:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744185700; cv=none; b=hLS4n2jWy9QbhsWohsB5Uz0NHD+/qj5MBGgkLcjzYNafQXMSJB04EuLgcu9QJS7p+Yu9REOiz4TIu8KOd9qxkr1zGc/itF9mvC1wjyzgRHHJ+INx60VmRFXwEnGCI7oTJijtc5y66EIW/KaVT1FG2dSnyJ87i6Rw4XwYohYeaMw=
+	t=1744184024; cv=none; b=UbJi6XKakzH7LpFtFuj+C7JcATB9jHg4xv9E2w6z2naSZWWACjGY8N7wBlgujwj7EnB/vxm4nc5M2SeJPtQUyPLmCQCfmbeUgrFupjLz6ym1sDoFAU0P1H9GXDRSVwcuCH9XTB0vgb1CDH/c5ibq4FyDCp4WoFkHz0CAxBKQ1bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744185700; c=relaxed/simple;
-	bh=uB80WfCPadHDQNF1Ma8F2Btk9k5iSpMqhcGgLwl8MCg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eF6jUwulEn0GCX1DSdEVHfq7Dc7i5KFE58fLOe7KK4EUeL0GrMAx1CR6YQnE9DGcxqGD1ERJJeScWmyco+eVRrUBhRz8VwXIkhG09NyjcHjpih+02j/Od6qleRJz8do/VjyIr6TrKb80lAG/gKOEuIzpYaXxMl6u0thUSeR3YSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com; spf=pass smtp.mailfrom=asrmicro.com; arc=none smtp.client-ip=210.13.118.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asrmicro.com
-Received: from spam.asrmicro.com (localhost [127.0.0.2] (may be forged))
-	by spam.asrmicro.com with ESMTP id 5397Xwcr002996
-	for <linux-kernel@vger.kernel.org>; Wed, 9 Apr 2025 15:33:58 +0800 (GMT-8)
-	(envelope-from huajianyang@asrmicro.com)
-Received: from exch03.asrmicro.com (exch03.asrmicro.com [10.1.24.118])
-	by spam.asrmicro.com with ESMTPS id 5397Xk2e002977
-	(version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=FAIL);
-	Wed, 9 Apr 2025 15:33:46 +0800 (GMT-8)
-	(envelope-from huajianyang@asrmicro.com)
-Received: from localhost (10.26.128.141) by exch03.asrmicro.com (10.1.24.118)
- with Microsoft SMTP Server (TLS) id 15.0.847.32; Wed, 9 Apr 2025 15:33:49
- +0800
-From: Huajian Yang <huajianyang@asrmicro.com>
-To: <pablo@netfilter.org>
-CC: <kadlec@netfilter.org>, <razor@blackwall.org>, <idosch@nvidia.com>,
-        <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
-        <bridge@lists.linux.dev>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Huajian Yang <huajianyang@asrmicro.com>
-Subject: [PATCH] net: Expand headroom to send fragmented packets in bridge fragment forward
-Date: Wed, 9 Apr 2025 15:33:36 +0800
-Message-ID: <20250409073336.31996-1-huajianyang@asrmicro.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1744184024; c=relaxed/simple;
+	bh=TbjocJ7oJ1wE3teiuUGsEIirnON9GZPBxazhTpNsjqw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k+EBDbYMluDnYZpiOdDmTGOfDoQHgmH8MEtatqRQPB6ZXhHYgVKejRuvoldNsJW/KIiUO5AzMsZ78lMhPCcwG8OGDiBrKCT+TMQlNywYzXp6bbUDbI3XTZiAJxFzCHMXTk/wFnt5gfbSpxykYq8Ay1WluFuMkCCn4ostdYv3XD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oW73w/Ts; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DC08C4CEE3;
+	Wed,  9 Apr 2025 07:33:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744184023;
+	bh=TbjocJ7oJ1wE3teiuUGsEIirnON9GZPBxazhTpNsjqw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oW73w/TsFr0FI4Nb5NBVXBMLKDRdct1Vd9vmmIUIlj9K2WHxNSt7WHJSQ329866Qo
+	 NifXrmT9lNFgsxuTKdNI9dk1AbnOTu1Y1mSkysC/T0r094cl3hTH78GZr0m8Fc3EB7
+	 ++07A2yv5AYaXYag9RR5C+eUZgZkvn/HKMoTkk1vf3KbmoYhTr9Xvg94plqka26gM7
+	 zB3Aw6CUSUR02TTgqGU4YAm2N3+ZU/M3aHdXSUHXW/Y4IjOh47KUBL4SRgeaV3b/iu
+	 g06d6+I5XtAnQxRu+WBi74SydfBtiERzaAy2OP7O9Q3AcIw2EiZlRnhDLYmVp6FkOm
+	 kecHwhnyKc8Qg==
+Message-ID: <f26c71f4-3a17-4335-943c-90e3671c9266@kernel.org>
+Date: Wed, 9 Apr 2025 09:33:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: memory-controllers: Add MediaTek DRAM
+ controller interface
+To: =?UTF-8?B?Q3J5c3RhbCBHdW8gKOmDreaZtik=?= <Crystal.Guo@mediatek.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+References: <20250403065030.22761-1-crystal.guo@mediatek.com>
+ <20250403065030.22761-2-crystal.guo@mediatek.com>
+ <20250406-hasty-saffron-flamingo-5c1dae@shite>
+ <bf1f44c34097d090894303cf6e3a9f017f4d5b38.camel@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <bf1f44c34097d090894303cf6e3a9f017f4d5b38.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: exch03.asrmicro.com (10.1.24.118) To exch03.asrmicro.com
- (10.1.24.118)
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:spam.asrmicro.com 5397Xwcr002996
 
-The config NF_CONNTRACK_BRIDGE will change the way fragments are processed.
-Bridge does not know that it is a fragmented packet and forwards it
-directly, after NF_CONNTRACK_BRIDGE is enabled, function nf_br_ip_fragment
-will check and fraglist this packet.
+On 09/04/2025 09:16, Crystal Guo (郭晶) wrote:
+> On Sun, 2025-04-06 at 14:35 +0200, Krzysztof Kozlowski wrote:
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
+>>
+>>
+>> On Thu, Apr 03, 2025 at 02:48:47PM GMT, Crystal Guo wrote:
+>>> +maintainers:
+>>> +  - Crystal Guo <crystal.guo@mediatek.com>
+>>> +
+>>> +description:
+>>> +  A MediaTek DRAM controller interface to provide the current data
+>>> rate of DRAM.
+>>
+>> DRAM controller does not offer scaling? Or PHY/timing configuration?
+>> This binding looks pretty incomplete.
+>>
+> 
+> The PHY/timing configuration is completed during the bootloader stage.
+> In the kernel, we currently only need to provide an interface to
+> retrieve the current DDR data rate.
+Not really, that's what you currently want to do in kernel, but not what
+you for example will want next days. Binding is supposed to be complete,
+so if you do not have any scaling/interconnect then extend the
+description of hardware and explain that memory controller is non
+configurable, cannot scale and it exposes only read interface. Or
+something similar.
 
-Some network devices that would not able to ping large packet under bridge,
-but large packet ping is successful if not enable NF_CONNTRACK_BRIDGE.
-
-In function nf_br_ip_fragment, checking the headroom before sending is
-undoubted, but it is unreasonable to directly drop skb with insufficient
-headroom.
-
-Using skb_copy_expand to expand the headroom of skb instead of dropping
-it.
-
-Signed-off-by: Huajian Yang <huajianyang@asrmicro.com>
----
- net/bridge/netfilter/nf_conntrack_bridge.c | 14 ++++++++++++--
- net/ipv6/netfilter.c                       | 14 ++++++++++++--
- 2 files changed, 24 insertions(+), 4 deletions(-)
-
-diff --git a/net/bridge/netfilter/nf_conntrack_bridge.c b/net/bridge/netfilter/nf_conntrack_bridge.c
-index 816bb0fde718..b8fb81a49377 100644
---- a/net/bridge/netfilter/nf_conntrack_bridge.c
-+++ b/net/bridge/netfilter/nf_conntrack_bridge.c
-@@ -62,7 +62,7 @@ static int nf_br_ip_fragment(struct net *net, struct sock *sk,
- 
- 		if (first_len - hlen > mtu ||
- 		    skb_headroom(skb) < ll_rs)
--			goto blackhole;
-+			goto expand_headroom;
- 
- 		if (skb_cloned(skb))
- 			goto slow_path;
-@@ -70,7 +70,7 @@ static int nf_br_ip_fragment(struct net *net, struct sock *sk,
- 		skb_walk_frags(skb, frag) {
- 			if (frag->len > mtu ||
- 			    skb_headroom(frag) < hlen + ll_rs)
--				goto blackhole;
-+				goto expand_headroom;
- 
- 			if (skb_shared(frag))
- 				goto slow_path;
-@@ -97,6 +97,16 @@ static int nf_br_ip_fragment(struct net *net, struct sock *sk,
- 
- 		return err;
- 	}
-+
-+expand_headroom:
-+	struct sk_buff *expand_skb;
-+
-+	expand_skb = skb_copy_expand(skb, ll_rs, skb_tailroom(skb), GFP_ATOMIC);
-+	if (unlikely(!expand_skb))
-+		goto blackhole;
-+	kfree_skb(skb);
-+	skb = expand_skb;
-+
- slow_path:
- 	/* This is a linearized skbuff, the original geometry is lost for us.
- 	 * This may also be a clone skbuff, we could preserve the geometry for
-diff --git a/net/ipv6/netfilter.c b/net/ipv6/netfilter.c
-index 581ce055bf52..619d4b97581b 100644
---- a/net/ipv6/netfilter.c
-+++ b/net/ipv6/netfilter.c
-@@ -166,7 +166,7 @@ int br_ip6_fragment(struct net *net, struct sock *sk, struct sk_buff *skb,
- 
- 		if (first_len - hlen > mtu ||
- 		    skb_headroom(skb) < (hroom + sizeof(struct frag_hdr)))
--			goto blackhole;
-+			goto expand_headroom;
- 
- 		if (skb_cloned(skb))
- 			goto slow_path;
-@@ -174,7 +174,7 @@ int br_ip6_fragment(struct net *net, struct sock *sk, struct sk_buff *skb,
- 		skb_walk_frags(skb, frag2) {
- 			if (frag2->len > mtu ||
- 			    skb_headroom(frag2) < (hlen + hroom + sizeof(struct frag_hdr)))
--				goto blackhole;
-+				goto expand_headroom;
- 
- 			/* Partially cloned skb? */
- 			if (skb_shared(frag2))
-@@ -208,6 +208,16 @@ int br_ip6_fragment(struct net *net, struct sock *sk, struct sk_buff *skb,
- 		kfree_skb_list(iter.frag);
- 		return err;
- 	}
-+
-+expand_headroom:
-+	struct sk_buff *expand_skb;
-+
-+	expand_skb = skb_copy_expand(skb, ll_rs, skb_tailroom(skb), GFP_ATOMIC);
-+	if (unlikely(!expand_skb))
-+		goto blackhole;
-+	kfree_skb(skb);
-+	skb = expand_skb;
-+
- slow_path:
- 	/* This is a linearized skbuff, the original geometry is lost for us.
- 	 * This may also be a clone skbuff, we could preserve the geometry for
--- 
-2.48.1
-
+Best regards,
+Krzysztof
 
