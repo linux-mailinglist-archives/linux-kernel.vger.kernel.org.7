@@ -1,127 +1,123 @@
-Return-Path: <linux-kernel+bounces-596095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB90EA826F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:03:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B13FA8270A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 325811B662D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:03:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8178D8A11A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0302A266586;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9E2266B60;
 	Wed,  9 Apr 2025 14:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c6/2GOgr"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JY6X6USE"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE64D265CD8
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 14:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702D726562C;
+	Wed,  9 Apr 2025 14:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744207363; cv=none; b=JeMwjJhz2HUBBm9r7LfnfemIzCsMleIkeAqRVy5Zzpp1kQDZb6xpUu3/wvBOF7p3ldNGysCTC5cuwYRiBdJAY5EmWX4o6MG8yEczdm4kC3RGrBOC7WCwDymE1I2uv38Y9D26U3cMW6mHoMS1sNVvMfciHB1VLa4Rq9uEW7El8TQ=
+	t=1744207364; cv=none; b=T0mDV59EQOChbTtaFZpyxJ//7K1Ucj88+yJoIhwoFLFsbecJ9h8wYZntYd+iHQKjzWyehrIlBzt6YWTdq8scvEdWcshXJ7f4oYl5E+tshmUhRRpYb3V0Kdp2ihnhOvwANMRLOIVcbeb1uNMgryzAt5Ap9XlEog66U//o0PGzgfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744207363; c=relaxed/simple;
-	bh=mG96fuhZeMSiI4R/GosBkkESrvmzH8d+f53dlK48H50=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xh4j3yyLGmec9RfLTriU3J/3J1AHpew/mUlRuQqdRmtSrVFDutjQhhlfTxCW1/y1Z3hcw5Cm/Dc2wP5QY3yb/MIygq7bLEhoQLocy4rVFultwAsFFq2SErkswYFxX/YapwRNT7YoPsE4S+FZpDHDSbXtKuvBlbnZIeQb49nAV5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=c6/2GOgr; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac25d2b2354so1230407466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 07:02:41 -0700 (PDT)
+	s=arc-20240116; t=1744207364; c=relaxed/simple;
+	bh=JRIrYSvIxXTm+pb4gvvJehPRD2NURTieCgUGjektsv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q+jUNuI66hdaVmikVwGG1fJTECL5p3w8x1PXbA8MtmLoqeJ8l0ejYEwrAhkFUMVDfiENAg+7Lgb8gWD4gmKLXG+y0qe9VzwgCeD4MJY46ec1x3zoJydsRxMF2L8z6lYjOp++3GoHM/Frf1s8BFGM0oNt6ZpzoQfwwO7dVGL7LEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JY6X6USE; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39c1ef4ae3aso529459f8f.1;
+        Wed, 09 Apr 2025 07:02:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1744207360; x=1744812160; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KqfKoc5OtBfHsLnQESTgykRUnwgehQk6QiKSOB65pWU=;
-        b=c6/2GOgrVvbSHtrK+LOIIbr0+LrQoYbcN751ah95zeEs2SdrJmgGHXWszmRH7Gkc8E
-         qzW3EcCRkcAs0Bq2D+QGLK9MIMpqDJPLX079X9EkB8/CIiwJHqaNO2m+usSsi3rGCJkg
-         OD6V1PDrycsWyNzHrcBRHV/WFhSxU6A1nYqVk=
+        d=gmail.com; s=20230601; t=1744207361; x=1744812161; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eWkSRo+s8E+NVFcYoRe4I5C9QjyjskzPyPuoXhbSgfo=;
+        b=JY6X6USEY0XKjx3OW4AfLZjBEOzCd/n+PEAKVFHap7tvSigMXhG6F9KmLg0+EFnLil
+         WmoFlKwRg2r3PYGD3RzcOTkG5A3BqdOTMQLVvNcKS0sCewYnWviOQgMxFPv75wRnQiYj
+         Fa4LDcUB4rzdUoPygfMBxrkHyRqVz5sOsluCgohI8wj0HXeWxBQXQyw7uuclXsbZK21D
+         TjUVqeg1tJXem+lh39MyS0JBnoD/oktruzMOMxKIKu1bxu9QUbTBA6IJ8qYVbJAFJ4bz
+         xLfHaQYWy9PUVXUDDh63Lrtk39NZas9LK+KGOEqaO6rztFcL6GL8o4rDSTuHeq40O2wl
+         68Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744207360; x=1744812160;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KqfKoc5OtBfHsLnQESTgykRUnwgehQk6QiKSOB65pWU=;
-        b=p1i3tGXMSfDaYkqnk7LR3kUnVgykNHA0/MLsv1tp5rrb1vm+ERCOPRyzgEzISuBmf/
-         8fIuEs8PYMafsYvmzKkplgCbnVD4vKI3m75qfSo8EVrYWxbbXilHgASb/fhE7WaCWdqW
-         kz9KQTNGN9uueEWzQOwI8k0B05eKpdoGWkUJGbsxdpb2oQtcONri45ENvG/x1MJD8utq
-         Rs9rIerUPN9I9gRLHUrBE81JZ/JzuPy20j40Hfegaj3+ObLlsACvAUl8SY29cLJw9UwO
-         DaQVHvWwv/h6t2MljpRsKF49c9UBWrinwAvLwOYii7m/TpXkhF0ZdJqeaonZDKkg/dVK
-         Jz8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXfkxyxHgZDxuSFmTu6bWVXz+YCmTYdTFEmvVT33PZNYDVoKTtzgfmwp40Y9TKOJUseSH0BblwmA7wBTwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQNZV74Dy/MnKS3Ii6JYgIsGta8GwDfiHJIuWNiEmntSei9b5t
-	foAqTrwocIiO5dbwgubdHlSzxjn6SpCMdtPJXUM9EYAHkVUlyuA6XoM94SVYcQ==
-X-Gm-Gg: ASbGncv/eaaYJRc4kePNJgTv1mKfjAXjrSz8NuQ2+x5AaOVn0TLYfiTbFmL4xVWGPpe
-	B6MbzF0O1y25ehj7H0VjpRETQ+xCnX77xSKQTBsdIw5OQ60jkiAqyGtVtSxFGLtmoPJDjsWMR0Z
-	LnBgvezZpf0cLl0A8zefMqZ1AUMDFwSS5TiAm9vt4QJHtTWsEevhbyKHO0N9eOaUU+HmgIJ6fdc
-	Yo72nK517uySeWn9dI4zfFSv6gKnF6hDcUMF0bR50JVfrHrA4uWJbEZobHPRgt1UebYvtcwz2I3
-	l/SbZRMycUV96Jxjnb6M2CV+ww4pdNOSKfNahbh3bXMBkdKTRe5RaQHFtDsVlUdSH2//CqSKxgb
-	mW9D6rieIZtbzgIhl2ewYPJiQbe3oxFkdyw==
-X-Google-Smtp-Source: AGHT+IEWLkJa6H04bRvIjATOXf67M7GaZevp9XaqI0gC2rlSAY+sEhjXK4b4hzkWvOJzYrzvKZi5EQ==
-X-Received: by 2002:a17:907:9714:b0:ac2:84db:5916 with SMTP id a640c23a62f3a-aca9b6acee1mr356442466b.31.1744207358401;
-        Wed, 09 Apr 2025 07:02:38 -0700 (PDT)
-Received: from akuchynski.c.googlers.com.com (185.155.90.34.bc.googleusercontent.com. [34.90.155.185])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1be95d0sm102657966b.55.2025.04.09.07.02.37
+        d=1e100.net; s=20230601; t=1744207361; x=1744812161;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eWkSRo+s8E+NVFcYoRe4I5C9QjyjskzPyPuoXhbSgfo=;
+        b=SxJVflZ+8tRmkFa9SqAHuFIwRRJbzXFHTW0mMs2rIA2veginRNp9Fl60vifKPv3uhd
+         6Q86eX/fxSPj4xgTaeESaD36qfeAtnvOxRbJoW3DtNe6jgAaLEOY4JwIIoddVjUaDJSy
+         nPBPO810gk8ms8TPMkt2OXhXYKswcgM5d11lJaSZhpfVmh8HLV6rbYnhmUccOlKeYN6H
+         50ShDp+64VcGBWm2IU6qNi1wWCLwsHOG19wXeDtDIkXrtgboC7HSKlRoElIvHFbSk5kk
+         grl4RVNClR/Gqz0oC85d8sSUU/l210l34LIUsjw4HXFZIJXXO4VdvVAIoL/mVblRGfay
+         6qeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZmZeHoPb/0mqpeId4HLqds894BXRY+uN7KUX4nKCVqIg4dZw15NcaWn8h1Nw/uZvKOVgzrY+MKjdSiy81@vger.kernel.org, AJvYcCW56Y/Tp16em9LvIa7yUwvhTS+Uwl9CUle+88YsRBmUGNIe2uP19NHRviiHsam/r8/DQj77kq8SwLjTj1SK@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWNYUE9MWzKmiD58eNKnTiw1xobeVbvKDUiMoxPbsUD43Ogh0Q
+	xjGgBY+cJk5IYB8DyYfcBlJ7l2boep0CQMLIZJCgZXFiuvKHPI7h
+X-Gm-Gg: ASbGncs2EXnNduJld0g9q+YHRxdgjiZg4wWNzI7qBIbOqs54NSJh5xIMRhRAz8BqIeN
+	3vBal0pFk1eXE3xInDtZohi2n6uGurEfvAgbds44AUc46JTtFCjm8Dd3V0LiQpYji4wgFFBbqC1
+	racQpjCvC9VV/Zfa9hRNLatCeenRZu33+vK+lZkeKbkMrfvgnO3beOymKF6GN0KZp0MZoy5ISaM
+	Ys4td/R/gzCWsHZRtLkI9G4VuC0GzgVvEL8tKlkF5NdiqkTDmEI6cfAXo3vhUOYBsoGduTw+El3
+	R7dU8fCHGXYe4X4/sGQcOqHPUfee3TzpiZ36Z+9e2IYIK++DL6t6LL6C
+X-Google-Smtp-Source: AGHT+IF049ubS5HdXQTc8n0xRJ+vhzdOB+ReFA0a6AeS7aGfjHRQyQyoNcgumkbEH6FOJaXvkv0ctw==
+X-Received: by 2002:a05:6000:22c7:b0:39b:fa24:9523 with SMTP id ffacd0b85a97d-39d820acaf4mr6568070f8f.7.1744207359981;
+        Wed, 09 Apr 2025 07:02:39 -0700 (PDT)
+Received: from f (cst-prg-17-207.cust.vodafone.cz. [46.135.17.207])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f205ecb8dsm21327535e9.7.2025.04.09.07.02.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 07:02:38 -0700 (PDT)
-From: Andrei Kuchynski <akuchynski@chromium.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jameson Thies <jthies@google.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Benson Leung <bleung@chromium.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	Pooja Katiyar <pooja.katiyar@intel.com>,
-	Madhu M <madhu.m@intel.com>
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrei Kuchynski <akuchynski@chromium.org>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] usb: typec: ucsi: displayport: Fix NULL pointer access
-Date: Wed,  9 Apr 2025 14:02:21 +0000
-Message-ID: <20250409140221.654892-3-akuchynski@chromium.org>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-In-Reply-To: <20250409140221.654892-1-akuchynski@chromium.org>
-References: <20250409140221.654892-1-akuchynski@chromium.org>
+        Wed, 09 Apr 2025 07:02:39 -0700 (PDT)
+Date: Wed, 9 Apr 2025 16:02:29 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Eric Chanudet <echanude@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>
+Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
+Message-ID: <4qyflnhrml2gvnvtguj5ee7ewrz3ejhgdb2lfihifzjscc5orh@6ah6qxppgk5n>
+References: <20250408210350.749901-12-echanude@redhat.com>
+ <20250409-egalisieren-halbbitter-23bc252d3a38@brauner>
+ <20250409131444.9K2lwziT@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250409131444.9K2lwziT@linutronix.de>
 
-This patch ensures that the UCSI driver waits for all pending tasks in the
-ucsi_displayport_work workqueue to finish executing before proceeding with
-the partner removal.
+On Wed, Apr 09, 2025 at 03:14:44PM +0200, Sebastian Andrzej Siewior wrote:
+> One question: Do we need this lazy/ MNT_DETACH case? Couldn't we handle
+> them all via queue_rcu_work()?
+> If so, couldn't we have make deferred_free_mounts global and have two
+> release_list, say release_list and release_list_next_gp? The first one
+> will be used if queue_rcu_work() returns true, otherwise the second.
+> Then once defer_free_mounts() is done and release_list_next_gp not
+> empty, it would move release_list_next_gp -> release_list and invoke
+> queue_rcu_work().
+> This would avoid the kmalloc, synchronize_rcu_expedited() and the
+> special-sauce.
+> 
 
-Cc: stable@vger.kernel.org
-Fixes: af8622f6a585 ("usb: typec: ucsi: Support for DisplayPort alt mode")
-Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
----
- drivers/usb/typec/ucsi/displayport.c | 2 ++
- 1 file changed, 2 insertions(+)
+To my understanding it was preferred for non-lazy unmount consumers to
+wait until the mntput before returning.
 
-diff --git a/drivers/usb/typec/ucsi/displayport.c b/drivers/usb/typec/ucsi/displayport.c
-index acd053d4e38c..8aae80b457d7 100644
---- a/drivers/usb/typec/ucsi/displayport.c
-+++ b/drivers/usb/typec/ucsi/displayport.c
-@@ -299,6 +299,8 @@ void ucsi_displayport_remove_partner(struct typec_altmode *alt)
- 	if (!dp)
- 		return;
- 
-+	cancel_work_sync(&dp->work);
-+
- 	dp->data.conf = 0;
- 	dp->data.status = 0;
- 	dp->initialized = false;
--- 
-2.49.0.504.g3bcea36a83-goog
+That aside if I understood your approach it would de facto serialize all
+of these?
 
+As in with the posted patches you can have different worker threads
+progress in parallel as they all get a private list to iterate.
+
+With your proposal only one can do any work.
+
+One has to assume with sufficient mount/unmount traffic this can
+eventually get into trouble.
 
