@@ -1,63 +1,56 @@
-Return-Path: <linux-kernel+bounces-595612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1528FA820C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:14:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15858A820CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0151A1BA6437
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:14:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B51017D24E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF8025D8E0;
-	Wed,  9 Apr 2025 09:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E88225D218;
+	Wed,  9 Apr 2025 09:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lG/4VHfL"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C068B1DE3A5;
-	Wed,  9 Apr 2025 09:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQjILLio"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC532B9CD
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744190064; cv=none; b=a2NJ5KjFad1/thtOq4THT2QeigdJUK7n0POYZWfm3lzPn8NJ01jVWpefFg28jvfI0LZHr/Xgm3Q2gvI5ZVF7jEEk5zFVaZp37kkuBZRsvZWkzfj/YIq/1oHyGswHc8/nRe7aFzRsQ/jbcqa/Is+iEAViAO1mlle7Tb0Gpv9Evzg=
+	t=1744190114; cv=none; b=JXKNcA/49s3oJ1GUVkDptyH908nv0BwkaCEv18hqXiRv5zexJpX8uZxRLzWt7o5PW+vYlzedyfIUoHO/nzWbM4J1GARWJU0mdS/M7V+bfMSpw0xcXOy1vgLj8Pz63NjtnOGpfeVgBFoYc+lJrrVAI5oFEBkanFqXqOb8W599Uec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744190064; c=relaxed/simple;
-	bh=pidPjAxOQUC9n6C32lfwewePZ3cS4lFV9cAEdT1v+4U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YrSHEgzgExUfyMP5VgtBrHcBL+RxVo46XrJxpwltCwVhSh/D6snE95otbUcm8FSHzTgKTHvfHGFFqX5/CY45oyHm8NL4jzTaUakhMjxcfsccgzLTCD57EPdJ6z0N3Am/OkNoGanJm4b3dGhdD2wnKK6lBDQ5EP+ua4bkJBYbT60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=lG/4VHfL; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=pidPj
-	AxOQUC9n6C32lfwewePZ3cS4lFV9cAEdT1v+4U=; b=lG/4VHfLm/ZuH9BG9qDIM
-	EcfSx2PPtF0SrMRZLuUbPDrjPSgxIsti0Szju+Uu4P5ln0WElCBX7CA7nUMrA+eG
-	hVA7c8j4XVANu6TvuXctOTtFvvO6rmtiytTUXXelrD6VSAfT5jYfHPOy6HO5Yt/F
-	bu5tiyQYiv5ixt729oFqxM=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgCXX+owOvZnHjkdAQ--.48217S4;
-	Wed, 09 Apr 2025 17:13:23 +0800 (CST)
-From: lvxiafei <xiafei_xupt@163.com>
-To: fw@strlen.de
-Cc: coreteam@netfilter.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	horms@kernel.org,
-	kadlec@netfilter.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvxiafei@sensetime.com,
-	netdev@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	pabeni@redhat.com,
-	pablo@netfilter.org,
-	xiafei_xupt@163.com
-Subject: Re: [PATCH V3] netfilter: netns nf_conntrack: per-netns net.netfilter.nf_conntrack_max sysctl
-Date: Wed,  9 Apr 2025 17:13:19 +0800
-Message-Id: <20250409091319.17856-1-xiafei_xupt@163.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20250409072028.GA14003@breakpoint.cc>
-References: <20250409072028.GA14003@breakpoint.cc>
+	s=arc-20240116; t=1744190114; c=relaxed/simple;
+	bh=ZtSTmmrQf4eBTePGmz/rBiScMQFDVV+Tq3GtHruUWN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tz97SeAwZtPUc6Nr/JFMAmiLR7khXfFBlBPb16GrF9pi2pSxaVpGgI8FLwuzHdwxYJUWVYYtQalLt1s1+DBxcRtbYSjXLyermONzAaUjwE+pofSclp0tPoBQ5cEji0bVnhYxJmtoUFV6q45nkebWhh73koOVxHycbzZIkBC9GbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQjILLio; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19D54C4CEE3;
+	Wed,  9 Apr 2025 09:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744190114;
+	bh=ZtSTmmrQf4eBTePGmz/rBiScMQFDVV+Tq3GtHruUWN0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NQjILLiogdKVo3228BuoAAfAPb8JdtSdAIQgGkjJmQ0xXN6cW19GP4Nqqwzkz4EbW
+	 Nm+48PRf+WEzxtvXdcQf6BQNPjewnFQ0hSC9Oua2EQaXzhy8YVBoR4nfntC2LHm5yq
+	 JhaFytFD6ymboQI5pD+hrEFrYHc2Ye+b8Hr0WIdIlXWFBB8j422DR8NYjDOIOUyFlw
+	 MaWwQVYErAfZiTnhyM+os556ZsWQpZutxRjvZpY56LiHBs0DudnMcndLdaCugjqvSQ
+	 B5XzJd5x4/0Z1WbbWe2GUlsvZM0M9W+ESSlWsEFgrCJelBDJw0vGqUD6M04ilXhOY/
+	 23MB5L1end5/Q==
+From: Philipp Stanner <phasta@kernel.org>
+To: Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: lists.freedesktop.org@web.codeaurora.org,
+	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Philipp Stanner <phasta@kernel.org>
+Subject: [PATCH] drm/nouveau: Remove forgotten TODO
+Date: Wed,  9 Apr 2025 11:14:14 +0200
+Message-ID: <20250409091413.94102-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,19 +58,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgCXX+owOvZnHjkdAQ--.48217S4
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjTRROJ5UUUUU
-X-CM-SenderInfo: x0ldwvplb031rw6rljoofrz/1tbiEBMqU2f2NYWJnwAAsN
 
-Florian Westphal <fw@strlen.de> wrote:
-> Whats the function of nf_conntrack_max?
-> After this change its always 0?
+commit ebb945a94bba ("drm/nouveau: port all engines to new engine module
+format") introduced a TODO to nouveau_chan.h, stating that an
+unspecified rework would take place in the "near future".
 
-nf_conntrack_max is a global (ancestor) limit, by default
-nf_conntrack_max = max_factor * nf_conntrack_htable_size.
+Almost 13 years have passed since this "near future", so it can be
+safely assumed that the TODO is not needed anymore. Besides, its content
+is useless anyways since it does not specify *what* should have been
+done.
 
-init_net.ct.sysctl_max is a parameter for each netns, and
-setting it will not affect the value of nf_conntrack_max.
+Remove the TODO.
+
+Signed-off-by: Philipp Stanner <phasta@kernel.org>
+---
+ drivers/gpu/drm/nouveau/nouveau_chan.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nouveau_chan.h b/drivers/gpu/drm/nouveau/nouveau_chan.h
+index 016f668c0bc1..3b73ec91c4ff 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_chan.h
++++ b/drivers/gpu/drm/nouveau/nouveau_chan.h
+@@ -33,7 +33,6 @@ struct nouveau_channel {
+ 		u64 addr;
+ 	} push;
+ 
+-	/* TODO: this will be reworked in the near future */
+ 	bool accel_done;
+ 	void *fence;
+ 	struct {
+-- 
+2.48.1
 
 
