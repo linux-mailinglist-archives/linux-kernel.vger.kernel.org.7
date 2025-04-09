@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-595767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF372A822DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:54:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F40A822DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6334F3BF8C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:54:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D2DF1B61F9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CE725DB0B;
-	Wed,  9 Apr 2025 10:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C6E25DD13;
+	Wed,  9 Apr 2025 10:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C+7LEF1U";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TJw38jNw"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s3CHB2NB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XWyD4lLR"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BE825D902
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 10:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6236625DCE0
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 10:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744196079; cv=none; b=DCIt0YtGMT+NpnV3QmIvcxbtfztbijXFhzqgpzIFEWeYe+3S+2J2XTkLZltmtqfsqB7NzJqpXH7Z4rwlf3FfIs1RlshT6U5ZTRSA3CYHQ8DwABRg2/WOmOqMf/B8G/RoCgX1iHc4/ewDK7kU0/tdjku2zT9J5qk+rFxwTFRgzF8=
+	t=1744196082; cv=none; b=cvmrKGxF0tghdhkSRVhamnrlW4/efA4Ow884IYpCkeqex26PmQdRA8Gyj7gfeApv6t6kpN9ByBMKKq0mKE4Ql42q9egrFLoJyjXHZ/upE5nmbhssuepRiBkYous0NpLJEd1elttQ4g1p5NBPD0/Ts32O6qCazwFEk2yvEatpDss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744196079; c=relaxed/simple;
-	bh=foWHeaBGdITXMe6fxABe/UavD0jCHlXOU5UxFDAqikg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ALNhZl/p2kns88YreKbYsdPFmtX1d5+PXxK9zloGzAIEOoIRAhXsYSluKyLsES17VZ7N2lbZTSbO9590y/yWk6NZz0NGKTBKXi8vo0ZMP0VzdsWUABwL2XoJ2216kcoPWz2Yuh0j/oAIULW3MYFuG90cXZ4PisqclVqHlZIlCmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C+7LEF1U; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TJw38jNw; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1744196082; c=relaxed/simple;
+	bh=WE+fR5R5Le2F26iYDkYuRg3MPTRSQ5mwY9M7TxWrkFA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=m9HH+KghSL9eMAVNpf4J8d75P7EvVGDaji3xof+T5lieM3DPhq+qF+5HVPQNVUhFtEdYl2VJwpK6u8dDtJzvtfrgncMhPQxEaX3fqXMfGsJ4mem66GCBEXHpwoOaQxMHlQPjjNYE6OxUMWuGmFeCT84NmxWmI5g44m7mflLfGTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s3CHB2NB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XWyD4lLR; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744196076;
+	s=2020; t=1744196079;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EBpeEk0XW9fD4NiTOaLzx+OjubRdln2MtWdhcPEd/m8=;
-	b=C+7LEF1UcoBSXWyB0emj3FKQx4xorA9dFh2dTV/s7YxGR1n6QcaLieDuvh9av2I3zSG864
-	hDVXMr+HOunFmT4r+Aahc+IgJcVdMeFxF0lP8KYrVsu2VouNTAKubRnITa1EA5zTVTjkoS
-	zv2jAMOndULqSr4oi75d3tI/JIbQfzghYGy2omcgjS9fA2CbrHG3ohqx3OZltDQAqsqbBt
-	hoLxffDUkZv/9cxgYIBK1JBeYKnleBqloR7CmfrgxkoaOCGbz3aCWlMmcWGj7ZJOaVXfKX
-	dOXEhH3C+YDiwi8SnMEOZWcHdWDo+JVQo9hs1AqfqheVCNxbHNCjeS7GT9PNXw==
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XvJ+dWA6n4Y9zbDSWY3pwiECtlWOSXm6zw8uMdiQHXw=;
+	b=s3CHB2NB/qNITMhs6Z62BubXqDLM/AGqImnPEBsJtPFSmy9aR/oQYnBRo4UxW1gy7a5CFd
+	T8HPLxqJG0a0KprySNdUUdIwI2F2lB8Qn6Arzkp0SSehWUIqfPmWXdE5hpn1fFWOaFcGkK
+	7LNe6Ssas5IWMTNJewjmrzV7hOOJsyG/uNGOrai7TaHlb2FA9THl0USQh3KgljYz5kYK07
+	G/4B9WU0aD4u3mu0xaQ8g4uOMnPafzcWFmiR8Mb46iGcajDY3cTdW7bC1zXHaWOJvFkHdk
+	dFxg4M5X2cX7l9AIC3Xyn1nsQhyDyc8n0Nv3dMLNV6uN0fZ40PGabW0HiWRX0Q==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744196076;
+	s=2020e; t=1744196079;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EBpeEk0XW9fD4NiTOaLzx+OjubRdln2MtWdhcPEd/m8=;
-	b=TJw38jNw6D5WIGE0odMJd43HYfAi3KbLM7BSXttFihfBOdPMLsinFILofdsZ8rCw9W9IJR
-	fI8zFONN6smV9DBQ==
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XvJ+dWA6n4Y9zbDSWY3pwiECtlWOSXm6zw8uMdiQHXw=;
+	b=XWyD4lLRS6fJOg4OqWntbuC/rIE+ovupR4y5DgcN1smAbLX0rifow4pxT650S9IJ7oV7iw
+	+sRd8H66vR0unmBA==
 To: Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -61,93 +64,101 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v1 0/2] x86/cacheinfo: Fixes for CPUID(0x80000005) and CPUID(0x80000006)
-Date: Wed,  9 Apr 2025 12:54:23 +0200
-Message-ID: <20250409105429.1048199-1-darwi@linutronix.de>
+Subject: [PATCH v1 1/2] x86/cacheinfo: Properly parse CPUID(0x80000005) L1d/L1i associativity
+Date: Wed,  9 Apr 2025 12:54:24 +0200
+Message-ID: <20250409105429.1048199-2-darwi@linutronix.de>
+In-Reply-To: <20250409105429.1048199-1-darwi@linutronix.de>
+References: <20250409105429.1048199-1-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+For the AMD CPUID(4) emulation cache info logic, the same associativity
+mapping array, assocs[], is used for both CPUID(0x80000005) and
+CPUID(0x80000006).
 
-While working on the x86-cpuid-db CPUID model on top of the CPUID(2) and
-CPUID(4) cleanups at tip/x86/cpu,[*] I've discovered some L1/2/3 cache
-associativity parsing issues for the AMD CPUID(4) emulation logic .
+This is incorrect since per the AMD manuals, the mappings for
+CPUID(0x80000005) L1d/L1i associativity is:
 
-Here are the fixes on top of -rc1.
+   n = 0x1 -> 0xfe	n
+   n = 0xff		fully associative
 
-* Summary:
+while assocs[] maps these values to:
 
-The AMD CPUID(4) emulation logic, uses CPUID(0x80000005) and
-CPUID(0x80000006) for extracting the L1/L2/L3 cache info.  It then uses
-an assocs[] associativity mapping array to map the extracted
-associativity values to their CPUID(4) equivalents.
+   n = 0x1, 0x2, 0x4	n
+   n = 0x3, 0x7, 0x9	0
+   n = 0x6		8
+   n = 0x8		16
+   n = 0xa		32
+   n = 0xb		48
+   n = 0xc		64
+   n = 0xd		96
+   n = 0xe		128
+   n = 0xf		fully associative
 
-Using the same associativity mapping array for both leaves is invalid.
+which is only valid for CPUID(0x80000006).
 
-Per the AMD manuals, the associativity field semantics between
-CPUID(0x80000005) and CPUID(0x80000006) is different.  The first patch
-fixes that for the former leaf.  For the latter leaf, the second patch
-completes the associativity mapping array and handles the special case of
-an L2/L3 associativity of 9, which is just a marker — not a real cache
-associativity value.
+Parse CPUID(0x80000005) L1d/L1i associativity values as shown in the AMD
+manuals.  Since the 0xffff literal is used to denote full associativity
+at the AMD CPUID(4)-emulation logic, define AMD_CPUID4_FULLY_ASSOCIATIVE
+for it instead of spreading that literal in more places.
 
-* Example testing for L1d cacheinfo:
+Mark the assocs[] mapping array as only valid for CPUID(0x80000006) L2/L3
+cache information.
 
-On a Qemu-emulated AMD machine without CPUID(0x8000001d) topology
-extensions, and with below cpuid(1) view:
+Fixes: a326e948c538 ("x86, cacheinfo: Fixup L3 cache information for AMD multi-node processors")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
+---
+ arch/x86/kernel/cpu/cacheinfo.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-   L1 data cache information (0x80000005/ecx):
-      line size (bytes) = 0x40 (64)
-      lines per tag     = 0x1 (1)
-      associativity     = 0x8 (8)
-      size (KB)         = 0x20 (32)
-   L1 instruction cache information (0x80000005/edx):
-      line size (bytes) = 0x40 (64)
-      lines per tag     = 0x1 (1)
-      associativity     = 0x4 (4)
-      size (KB)         = 0x40 (64)
-   L2 unified cache information (0x80000006/ecx):
-      line size (bytes) = 0x40 (64)
-      lines per tag     = 0x1 (1)
-      associativity     = 8-way (6)
-      size (KB)         = 0x200 (512)
-   L3 cache information (0x80000006/edx):
-      line size (bytes)     = 0x40 (64)
-      lines per tag         = 0x1 (1)
-      associativity         = 16-way (8)
-      size (in 512KB units) = 0x10 (16)
-
-Before applying this PQ, we get:
-
-   /sys/devices/system/cpu/cpu[0-8]/cache/index0/ways_of_associativity: 16
-   /sys/devices/system/cpu/cpu[0-8]/cache/index0/number_of_sets: 32
-
-and after:
-
-   /sys/devices/system/cpu/cpu[0-8]/cache/index0/ways_of_associativity: 8
-   /sys/devices/system/cpu/cpu[0-8]/cache/index0/number_of_sets: 64
-
-Thanks,
-
-[*] https://lore.kernel.org/lkml/20250304085152.51092-1-darwi@linutronix.de
-    https://lore.kernel.org/lkml/20250324133324.23458-1-darwi@linutronix.de
-
-8<--
-
-Ahmed S. Darwish (2):
-  x86/cacheinfo: Properly parse CPUID(0x80000005) L1d/L1i associativity
-  x86/cacheinfo: Properly parse CPUID(0x80000006) L2/L3 associativity
-
- arch/x86/kernel/cpu/cacheinfo.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
-
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
---
+diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+index b3a520959b51..7a95e1ce73f8 100644
+--- a/arch/x86/kernel/cpu/cacheinfo.c
++++ b/arch/x86/kernel/cpu/cacheinfo.c
+@@ -208,6 +208,9 @@ union l3_cache {
+ 	unsigned val;
+ };
+ 
++#define AMD_CPUID4_FULLY_ASSOCIATIVE	0xffff
++
++/* L2/L3 associativity mapping */
+ static const unsigned short assocs[] = {
+ 	[1] = 1,
+ 	[2] = 2,
+@@ -219,7 +222,7 @@ static const unsigned short assocs[] = {
+ 	[0xc] = 64,
+ 	[0xd] = 96,
+ 	[0xe] = 128,
+-	[0xf] = 0xffff /* fully associative - no way to show this currently */
++	[0xf] = AMD_CPUID4_FULLY_ASSOCIATIVE
+ };
+ 
+ static const unsigned char levels[] = { 1, 1, 2, 3 };
+@@ -258,7 +261,7 @@ amd_cpuid4(int leaf, union _cpuid4_leaf_eax *eax,
+ 	case 0:
+ 		if (!l1->val)
+ 			return;
+-		assoc = assocs[l1->assoc];
++		assoc = (l1->assoc == 0xff) ? AMD_CPUID4_FULLY_ASSOCIATIVE : l1->assoc;
+ 		line_size = l1->line_size;
+ 		lines_per_tag = l1->lines_per_tag;
+ 		size_in_kb = l1->size_in_kb;
+@@ -295,7 +298,7 @@ amd_cpuid4(int leaf, union _cpuid4_leaf_eax *eax,
+ 	eax->split.num_cores_on_die = topology_num_cores_per_package();
+ 
+ 
+-	if (assoc == 0xffff)
++	if (assoc == AMD_CPUID4_FULLY_ASSOCIATIVE)
+ 		eax->split.is_fully_associative = 1;
+ 	ebx->split.coherency_line_size = line_size - 1;
+ 	ebx->split.ways_of_associativity = assoc - 1;
+-- 
 2.49.0
+
 
