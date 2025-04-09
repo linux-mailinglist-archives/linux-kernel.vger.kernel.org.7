@@ -1,153 +1,130 @@
-Return-Path: <linux-kernel+bounces-595614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61AEA820CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:15:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E298A820C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EBC24A0067
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:15:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39BB44A099F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3783425DAE9;
-	Wed,  9 Apr 2025 09:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A9025D522;
+	Wed,  9 Apr 2025 09:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YoYwVDrW"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IP7Wimv0"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DC325D904
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09573155389
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744190068; cv=none; b=SiuDPKnkecg2PUyIx+11+8SYSyO+Ht/m9tewI4OlkQVpuQhFRUWdOCoMsbBtr34jY+8uOVtYeNw7kAu24qgUIbN6nbbg5yDOhHqT5vm2m/0ZgZm9kJyJTQbpbuxpzS3xe9jmeF5pxBXCzD6GzQYcBJENPdchl8qWNm1T7We8mVc=
+	t=1744190007; cv=none; b=Ot9tI01cqR5+ktIa6d+e9L5A2hcrYaFj8XhkVvZLnFFVfX6SFzXuiP4hzM3aBoxTDQLlTIF4jWCMcNxNuNyWQ90XmgIY+yU6AMk9qmzJ9OhdaOq8Amko3nno70M0ywobJisZ1/Bwr8fH5aCus21QPF50XfsA7YeqSG7ju9DZtc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744190068; c=relaxed/simple;
-	bh=1D5iZVjmIKarwRYdGD7MtKz/UH9NKBv0KmWvvei4cMw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bYKHeT/tbC2OezV15O18QuxTKmzqMXlWui/GB4i2zd+H+7RP29TdZnFw96PbSSe9ZJCWY6QKYaFUMVTicACydrbc1RnACYfiwrXUzKFuWrTnL30CfrT1NqS3OY9XPYElovYuuSaPQ72Z7E3UzRBrda8sHmbNJhxHZiyIfSlyAI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YoYwVDrW; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e8f8657f29so53597296d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 02:14:26 -0700 (PDT)
+	s=arc-20240116; t=1744190007; c=relaxed/simple;
+	bh=w8jM+kjNpQwYUHFIVj+21LsNdXWV4iKMqaSnGVehs7c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dhDuAsiX2vsYyn+Nx7fF7NYTe1QFdNyePAE62LIXBg7CPqJSYGoS4zBE02E6Vz89ls0sE2uJ7vzjjXBns5E/vGEzKs1S6Ujy+Pkujrv2c44qyGj1Hl9TASlWQZ/G5McF8s9MHB0QqExHRBZZIfxPp2FSoKB5R6/s5ByF9eQPLMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IP7Wimv0; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-306bf444ba2so3025527a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 02:13:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744190066; x=1744794866; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sJ4R9s+Smn1DtIHoE8sXkA1kzL8Ka1xkN88DpPb5/Eg=;
-        b=YoYwVDrW2iEMirBt77NlownLR8qiSTWNt7CvcgJzG7WBnR882LKIdGJMGxlfhFa+i0
-         F0T0UOricDhTe2sTwaVgmMZ7T3gf+59t06soW8A8LyiKszpudctDXd3GXyUN6mrBYvWK
-         qupvqacjHOJ4g6+YtzZmh8jj0/bWRhQFSz3ZgBm0KGGCCEcbay0Q3R5LZj/vbVbeO5zJ
-         XjU2++7+/5MtdEFVA/KysLBPgsQnUPOkCpDFNvXLuq88IG36pomMDUhkf94gtQksQPo7
-         vWtPE9HBME/yaMSvmdb17RGX14n/Yp9GzgVVjiuVQO6dIFHk6GnhNeAJBWlS5690n8lP
-         iePQ==
+        d=chromium.org; s=google; t=1744190004; x=1744794804; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BaNms8AAHYU6+Lu110JwWuCHuNcKevGY2uAR6UWGQNE=;
+        b=IP7Wimv0+4lMP02bu2jDuBGVXZS7Y0PuCUYtYQeKWoEvcrAeFQRpmnubsCOhcIHL4u
+         R9G9YZq5lwvDEMELvAWCQkokl2aS2fKt2BUaQnPXBlaM+GJ2YnbiJw85X9FhLXuWyiMT
+         f85gli5YSFazGR4wFm6WTc9hhjR41Pvg6Cey0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744190066; x=1744794866;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sJ4R9s+Smn1DtIHoE8sXkA1kzL8Ka1xkN88DpPb5/Eg=;
-        b=iGpOH0UAiAoywqNXK153FOKyIxJjIYEm1kqtV6xirfJmf/5p9s5rgm861tzGfQwbUn
-         DXbGtXzShLn8IMw9NaX8Fq1biz9uPlW7hOd1tt27jbTO3KxVDY+axZIaBPrAG2XC3foo
-         2bSqn4fgr7VETn+njJmtwTdom20hT40kAZeI1eDy0oQgw6IcRmFXrB2h+5BlhZoh5HaR
-         EmwKwhwzltiNBd5XWXBW53MmoPPX3GeSl+FLDwS80CbcALiznKM6KzL+m23guVwe2e5M
-         ZAm3pIoeU+9NhFHfQRn2rmRHu4Oyga+Kp0a3mg61ByTjTnu/7E75kI30tHuT0g7JvfkY
-         KXKw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6zphfSpQyM7749hhsldrVpItqEZfayx+wiIHnRxHOr2pDKXOaoMDFwRi8Bt2dq0EiTeabTGFln8U/YU8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9xpklYfsDbwalUW3QkIE2OehFfcepOyze9+TtWqXQfaumZAU/
-	v/vb8mKmXmNvQh7S1ivBcw76kfmUk2T6N8w2W/REOQCNUCw3vUhq
-X-Gm-Gg: ASbGncuJw/d378tob3nDxLlHHfOFyXshgoa7laihKLphH8+1QjmihZLABLRgDalpIYi
-	o7wAORLymplzM889XVmwuuJKIeEotKOW/R7FIcs+d1LJbjMJEjAtmgimCLOdXr1A/Nkx5+dKXK5
-	ljU2W42h5uWG8J+q2PHKLc1len6NQfglvLNs9eXfFCC/KEVmNk+GlcjQe2RYQ70RwBEBHRFRpmV
-	fQuhcQa6MChX/4Cf5SVQbYJQhOvTicrXQSwMn69FQ5+VMv0o2QBRrmUPV2aAWBroaqpe1Q0VWTx
-	p5cfq3Xx39MlM1g3waR00QK/ceTHdgy/fNng0GZn8ZN4SQ==
-X-Google-Smtp-Source: AGHT+IEt+/uef1nd1EUQSOIdciPRgiNmmp4psQdY7P6wpuKI3PKyWfXaaQtxpAU+m9n/rZsfa7iUZg==
-X-Received: by 2002:a05:6214:40b:b0:6e8:9e8f:cfb with SMTP id 6a1803df08f44-6f0dd0ad2fbmr20136336d6.24.1744190065911;
-        Wed, 09 Apr 2025 02:14:25 -0700 (PDT)
-Received: from ubuntu ([105.112.112.184])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f0dea07c50sm5073136d6.77.2025.04.09.02.14.25
+        d=1e100.net; s=20230601; t=1744190004; x=1744794804;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BaNms8AAHYU6+Lu110JwWuCHuNcKevGY2uAR6UWGQNE=;
+        b=kjn7N391am40M3jQUzfgFs9YiE9HbQ1Me53UoUpfUs9kwYyawiLBK+bov6o4mIC6DG
+         AivbhOK00noCXyNWTtaTw6eHdngy68ibbD+ZRsMkCBgJcQ9UY5gqUBopuLHe7e0OFjsJ
+         nTfUqHZReZOph7m38Z3Dkq9l1lkmAH5/hvSoiI4kWcUE0LE2SKLqKCuJAazlBQ9xZT52
+         OgL3qfqn4MuGQzogxux/OYHui9otqfgehVLJm7N2v4F/iNo3Lt7pWty6N3iNULMDZ8Q8
+         493KclHOldG03tnTienkZgb3l7E84Lz2SGClIHuHCLCjCVabxQc25sXJYSdkFrgsK7el
+         x5Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCWPDrqohFwV1C3f8JxOP/tgPk/pa+x2fGMAO+UBP7yPidxIu4Cn51eacaMxejHwyQOlYRsYJYZxrR02kKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQz1yDFGvbe4QIC/+VvyULDVXb1MuIo3orW2tXOgOgQqmBPyQj
+	qC3tFkVL/1YdpcTYDPRW56/Heby6O0VR1JAeTuANMPOdGiOxM5AGIPQ7tgoZGQ==
+X-Gm-Gg: ASbGncvoTgyGsEZXkrxJTkiiLi199pxs/W/oIiOc5rY/ZIUmdWbKtnVGq3GRpc6Csje
+	8yBOEAtHW38qx6rSA1aWzZSY+Hd6yyNUfvnbpBbpe5v/IlCcBOpD+C8+rd7zkQJfiQ8BEE/U++Q
+	hNRy+18Rz4lBITAGEK8XFG7FQwAfoAY8pIf+IKd0E3xDiMX/Wx8yPGqtLtTujWNh4/0hZDRV4xZ
+	rYdvm9VRlg+9AAo5cXFwSak1wxbTxAv3kYWda+aqVv90RYCWCgNGa/jh1ksBGnFJtYpApGEDCME
+	/NNfyk/GJVZUHvLYFDnRDk4+shElTlJU8/zW3xveYcSIwnkP2d9PnXOBm07HiclRrJlM4dROZFE
+	/xYOEOz9C32UYU8S9E4dt0IU+rqKT
+X-Google-Smtp-Source: AGHT+IG2BgqZHSIHI8aYAkVrTJn/SDbhHGgzVIz93kwK2lBJoxcfDzl64PMZYZKZH2NJ1T9ptVPhUw==
+X-Received: by 2002:a17:90a:d644:b0:306:b78a:e22d with SMTP id 98e67ed59e1d1-306dbbc2ce6mr2970209a91.20.1744190004299;
+        Wed, 09 Apr 2025 02:13:24 -0700 (PDT)
+Received: from yuanhsinte.c.googlers.com (95.147.221.35.bc.googleusercontent.com. [35.221.147.95])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd10dc40sm1182551a91.9.2025.04.09.02.13.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 02:14:25 -0700 (PDT)
-From: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-To: outreachy@lists.linux.dev,
-	julia.lawall@inria.fr
-Cc: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	david.laight.linux@gmail.com,
-	dan.carpenter@linaro.org,
-	andy@kernel.org,
-	Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-Subject: [PATCH v9 2/2] staging: rtl8723bs: Use % 4096 instead of & 0xfff
-Date: Wed,  9 Apr 2025 09:12:55 +0000
-Message-Id: <c590448d7cdef06dbc5af06090581523f8247212.1744189500.git.abrahamadekunle50@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1744189500.git.abrahamadekunle50@gmail.com>
-References: <cover.1744189500.git.abrahamadekunle50@gmail.com>
+        Wed, 09 Apr 2025 02:13:23 -0700 (PDT)
+From: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Date: Wed, 09 Apr 2025 09:13:11 +0000
+Subject: [PATCH] thermal: sysfs: Return ENODATA instead of EAGAIN for reads
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250409-temp-v1-1-9a391d8c60fd@chromium.org>
+X-B4-Tracking: v=1; b=H4sIACc69mcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDEwNL3ZLU3AJds9SkFEPjxBSDlKQUJaDSgqLUtMwKsDHRsbW1AHYO/vd
+ WAAAA
+X-Change-ID: 20250409-temp-6ebd13ad0dbd
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+X-Mailer: b4 0.15-dev-7be4f
 
-The sequence number is constrained to a range of [0, 4095], which
-is a total of 4096 values. The bitmask operation using `& 0xfff` is
-used to perform this wrap-around. While this is functionally correct,
-it obscures the intended semantic of a 4096-based wrap.
+When userspace nonblocking reads temperature via sysfs, EAGAIN error
+returned by thermal driver will confuse user from the usual meaning of
+EAGAIN, the read would block. Change to throw ENODATA instead of EAGAIN
+to userspace. Also, ENODATA more accurately reflects that data is not
+currently available.
 
-Using a modulo operation `% 4096u` makes the wrap-around logic
-explicit and easier to understand. It clearly signals that the
-sequence number cycles through a range of 4096 values.
-It also makes the code robust against potential changes of the 4096
-upper limit, especially when it becomes a non power-of-2 value while
-the AND(&) works solely for power-of-2 values.
-
-The use of `% 4096u` also guarantees that the modulo operation is
-performed with unsigned arithmetic, preventing potential issues with
-the signed types.
-
-Suggested-by: Andy Shevchenko <andy@kernel.org>
-Suggested-by: David Laight <david.laight.linux@gmail.com>
-Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
 ---
- drivers/staging/rtl8723bs/core/rtw_xmit.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/thermal/thermal_sysfs.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-index 5def2467f42b..76f25ab6a779 100644
---- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-@@ -943,7 +943,7 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
+diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
+index 24b9055a0b6c515b865e0d7e2db1d0de176ff767..3d1713e053dfb867933d95131f1f2491d2ecd07e 100644
+--- a/drivers/thermal/thermal_sysfs.c
++++ b/drivers/thermal/thermal_sysfs.c
+@@ -40,8 +40,11 @@ temp_show(struct device *dev, struct device_attribute *attr, char *buf)
  
- 			if (psta) {
- 				psta->sta_xmitpriv.txseq_tid[pattrib->priority]++;
--				psta->sta_xmitpriv.txseq_tid[pattrib->priority] &= 0xFFF;
-+				psta->sta_xmitpriv.txseq_tid[pattrib->priority] %= 4096u;
- 				pattrib->seqnum = psta->sta_xmitpriv.txseq_tid[pattrib->priority];
+ 	ret = thermal_zone_get_temp(tz, &temperature);
  
- 				SetSeqNum(hdr, pattrib->seqnum);
-@@ -964,12 +964,12 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
- 						pattrib->ampdu_en = false;/* AGG BK */
- 					} else if (SN_EQUAL(pattrib->seqnum, tx_seq)) {
- 						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] =
--							(tx_seq + 1) & 0xfff;
-+							(tx_seq + 1) % 4096u;
+-	if (ret)
++	if (ret) {
++		if (ret == -EAGAIN)
++			return -ENODATA;
+ 		return ret;
++	}
  
- 						pattrib->ampdu_en = true;/* AGG EN */
- 					} else {
- 						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] =
--							(pattrib->seqnum + 1) & 0xfff;
-+							(pattrib->seqnum + 1) % 4096u;
- 
- 						pattrib->ampdu_en = true;/* AGG EN */
- 					}
+ 	return sprintf(buf, "%d\n", temperature);
+ }
+
+---
+base-commit: a24588245776dafc227243a01bfbeb8a59bafba9
+change-id: 20250409-temp-6ebd13ad0dbd
+
+Best regards,
 -- 
-2.34.1
+Hsin-Te Yuan <yuanhsinte@chromium.org>
 
 
