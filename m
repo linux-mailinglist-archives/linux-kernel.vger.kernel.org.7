@@ -1,139 +1,168 @@
-Return-Path: <linux-kernel+bounces-595828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AF6A82386
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:27:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF1DA82397
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4D617F08E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:27:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C7B885451
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EB125DD0B;
-	Wed,  9 Apr 2025 11:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08E725DCE5;
+	Wed,  9 Apr 2025 11:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="EZiTOGN5"
-Received: from server.wki.vra.mybluehostin.me (server.wki.vra.mybluehostin.me [162.240.238.73])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q8VIeEx1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B9625D556;
-	Wed,  9 Apr 2025 11:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.238.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F13D1FF5F7
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 11:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744198021; cv=none; b=EPo7bj9dK9CnCbGD1owJMpbm4fK1Y5+5rV2ClksmUc5X1IAuQEK1AY6CJNUZ+XFGG8ufsBOJT/w43cMf2N2BJmNgaGdEFsNTL+aFs4Zd39/pFQ/aw0zONCo5/opBaYsY/sQJNttDuHh9ssDvY6Raf1LHpyY05IwSiyOH3qvC7N0=
+	t=1744198170; cv=none; b=evyguxPcDfIC+selzmZsSbOe+F4vmOzbJDU62DdPNYnHxREX7yu12a4k/FU7p0DNFvFt4jI3yViFRulL5EWu89eO5Pkw3glV/Njs1IF7i1AbE0WydBFnk66Zu8Oo9LKY9wrfBMnzFUr+8jbjY4/HoAgGHESURVtushgwnHng+KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744198021; c=relaxed/simple;
-	bh=d5BtOjPPRFG910sk+qDsz+sS/QMq62FGUCQDk6Lox74=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=g5mlZ71ZLVUnX0XPKnQYQsGi7p7wvcK+fY7W/U3duuGM1CnmEqmCmQrBymSxPBqWypmhO2zZ9zzJMoH7Ok2Rru89pAog/RcciF4O7DbwCgcAPeD5F2QSbOWRyu5HB7d+ZE6ksHVzsngApXdYdQYr6IPvydHbKl86YW5/18kXJl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=EZiTOGN5; arc=none smtp.client-ip=162.240.238.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=A8OUMSsqyLIihlV/s3RjCMqd4+HGdZT4D0Danegj940=; b=EZiTOGN5QQPVhS/G4Z4pNruK7K
-	Lfv9vKeuYOP1u1erh9WoRg7nI1cSIKzxsHkncbTo8oKfM7F2pMbuG4ZTcgRRkQ8vx4BZcni338eCh
-	XIKPyYQeTfJ3aMPeDWr1JPZP9OehXPDOD5S3mTp9mYMalDEZwAGo9WBoBEDLjNi4LHK9q0BItJ70S
-	cJupGhxCNYFmNmk5ZLNovJABpuWcqmUiBWQdt9ldIGqiVfvEHqHyG1V+G//RoO9XaC/+8qDju3hHf
-	RAIwH/K/T4gzv6ZTwAwnljEsCfjbyKN9Sw6TRs0dS48JFmBtQaC+esYd7hKOjPMiQLUkod+2KGGh4
-	olE+CtdA==;
-Received: from [122.175.9.182] (port=6319 helo=zimbra.couthit.local)
-	by server.wki.vra.mybluehostin.me with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1u2Ta2-000000000OO-3638;
-	Wed, 09 Apr 2025 16:56:54 +0530
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id C2069178207F;
-	Wed,  9 Apr 2025 16:56:46 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id 9F487178245B;
-	Wed,  9 Apr 2025 16:56:46 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id emKaGm-byJBY; Wed,  9 Apr 2025 16:56:46 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id 52C58178207F;
-	Wed,  9 Apr 2025 16:56:46 +0530 (IST)
-Date: Wed, 9 Apr 2025 16:56:46 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
-	rogerq <rogerq@kernel.org>, andrew+netdev <andrew+netdev@lunn.ch>, 
-	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
-	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>, 
-	robh <robh@kernel.org>, krzk+dt <krzk+dt@kernel.org>, 
-	conor+dt <conor+dt@kernel.org>, nm <nm@ti.com>, 
-	ssantosh <ssantosh@kernel.org>, tony <tony@atomide.com>, 
-	richardcochran <richardcochran@gmail.com>, 
-	glaroque <glaroque@baylibre.com>, schnelle <schnelle@linux.ibm.com>, 
-	m-karicheri2 <m-karicheri2@ti.com>, rdunlap <rdunlap@infradead.org>, 
-	diogo ivo <diogo.ivo@siemens.com>, basharath <basharath@couthit.com>, 
-	horms <horms@kernel.org>, jacob e keller <jacob.e.keller@intel.com>, 
-	m-malladi <m-malladi@ti.com>, 
-	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
-	afd <afd@ti.com>, s-anna <s-anna@ti.com>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	netdev <netdev@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-omap <linux-omap@vger.kernel.org>, 
-	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
-	mohan <mohan@couthit.com>
-Message-ID: <890030824.1024606.1744198006152.JavaMail.zimbra@couthit.local>
-In-Reply-To: <64a3cd3b-feee-4414-8569-01642b127ac8@lunn.ch>
-References: <20250407102528.1048589-1-parvathi@couthit.com> <20250407113714.1050076-6-parvathi@couthit.com> <64a3cd3b-feee-4414-8569-01642b127ac8@lunn.ch>
-Subject: Re: [PATCH net-next v4 05/11] net: ti: prueth: Adds ethtool support
- for ICSSM PRUETH Driver
+	s=arc-20240116; t=1744198170; c=relaxed/simple;
+	bh=zXYaCCk7Xexl/noIb6OuPUIMVrNTYDA8ydr6oeZbr1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LN5iISKDrpxQy7k9fRjxO4i6R4c4vi/XcdMDj7CGiDK76SPL9cgKLj8GSFVbSfsx5Hr1SZJ6Hj3UjptuLvEuEdADSP6jQEkG2FwVW2MrhkBJEE1SqCrlXD17Dm7lsMymz7MRuVnxqSSoKGQ8CfPJd0tsBFfuVAOPLYGAdhaMqiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q8VIeEx1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744198167;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L9Of+gzTbsEE9FaHMGyGpxjiy7YHu1Oa9tXAD/zDQnY=;
+	b=Q8VIeEx10rgi9nE38iOPrX0WC1XVU/dkQ9u9oLKyMWIYv599Qc7woGFEVG0rOv5G8XQFek
+	EEXf8Mum9P3prkX+GxEFjsxh9YA4Z1t1v58jXb0GoR2HPFENVSZRkSp3JrbHWpwc9sw28G
+	Xa/HjGWFQQt4F2GI/ZW/7osbo07YRz0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-547-2Sb6ZC_POsi-lpR4UKm0UQ-1; Wed,
+ 09 Apr 2025 07:29:23 -0400
+X-MC-Unique: 2Sb6ZC_POsi-lpR4UKm0UQ-1
+X-Mimecast-MFC-AGG-ID: 2Sb6ZC_POsi-lpR4UKm0UQ_1744198161
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 06B321800257;
+	Wed,  9 Apr 2025 11:29:21 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.54])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 18DE1180B487;
+	Wed,  9 Apr 2025 11:29:15 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  9 Apr 2025 13:28:45 +0200 (CEST)
+Date: Wed, 9 Apr 2025 13:28:39 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>
+Subject: Re: [PATCH 1/2] uprobes/x86: Add support to emulate nop5 instruction
+Message-ID: <20250409112839.GA32748@redhat.com>
+References: <20250408211310.51491-1-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - FF113 (Linux)/8.8.15_GA_3968)
-Thread-Topic: prueth: Adds ethtool support for ICSSM PRUETH Driver
-Thread-Index: Id9woddb5lTowb7DJcpLv93q8Zy6wA==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.wki.vra.mybluehostin.me
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.wki.vra.mybluehostin.me: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.wki.vra.mybluehostin.me: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250408211310.51491-1-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hi,
+On 04/08, Jiri Olsa wrote:
+>
+> --- a/arch/x86/kernel/uprobes.c
+> +++ b/arch/x86/kernel/uprobes.c
+> @@ -608,6 +608,16 @@ static void riprel_post_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
+>  		*sr = utask->autask.saved_scratch_register;
+>  	}
+>  }
+> +
+> +static int is_nop5_insn(uprobe_opcode_t *insn)
+> +{
+> +	return !memcmp(insn, x86_nops[5], 5);
+> +}
+> +
+> +static bool emulate_nop5_insn(struct arch_uprobe *auprobe)
+> +{
+> +	return is_nop5_insn((uprobe_opcode_t *) &auprobe->insn);
+> +}
 
->> +#define PRUETH_MODULE_VERSION "0.2"
-> 
->> +static void icssm_emac_get_drvinfo(struct net_device *ndev,
->> +				   struct ethtool_drvinfo *info)
->> +{
->> +	strscpy(info->driver, PRUETH_MODULE_DESCRIPTION, sizeof(info->driver));
->> +	strscpy(info->version, PRUETH_MODULE_VERSION, sizeof(info->version));
-> 
-> Driver version numbers are pointless, they never change, but the
-> kernel is changing all the time. Leave version blank, and the core
-> will fill in the kernel version, which is useful.
-> 
+Why do we need 2 functions? Can't branch_setup_xol_ops() just use
+is_nop5_insn(insn->kaddr) ?
 
-Understood. We will address this in the next version.
+>  #else /* 32-bit: */
+>  /*
+>   * No RIP-relative addressing on 32-bit
+> @@ -621,6 +631,10 @@ static void riprel_pre_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
+>  static void riprel_post_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
+>  {
+>  }
+> +static bool emulate_nop5_insn(struct arch_uprobe *auprobe)
+> +{
+> +	return false;
+> +}
 
+Hmm, why? I mean, why we can't emulate x86_nops[5] if !CONFIG_X86_64 ?
 
-Thanks and Regards,
-Parvathi.
+OTOH. What if the kernel is 64-bit, but the probed task is 32-bit and it
+uses the 64-bit version of BYTES_NOP5?
+
+Perhaps this is fine, I simply don't know, so let me ask...
+
+> @@ -852,6 +866,8 @@ static int branch_setup_xol_ops(struct arch_uprobe *auprobe, struct insn *insn)
+>  		break;
+>
+>  	case 0x0f:
+> +		if (emulate_nop5_insn(auprobe))
+> +			goto setup;
+
+I think this will work, but if we want to emulate nop5, then perhaps
+we can do the same for other nops?
+
+For the moment, lets forget about compat tasks on a 64-bit kernel, can't
+we simply do something like below?
+
+Oleg.
+---
+
+diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+index 9194695662b2..76d2cceca6c4 100644
+--- a/arch/x86/kernel/uprobes.c
++++ b/arch/x86/kernel/uprobes.c
+@@ -840,12 +840,16 @@ static int branch_setup_xol_ops(struct arch_uprobe *auprobe, struct insn *insn)
+ 	insn_byte_t p;
+ 	int i;
+ 
++	/* prefix* + nop[i]; same as jmp with .offs = 0 */
++	for (i = 1; i <= ASM_NOP_MAX; ++i) {
++		if (!memcmp(insn->kaddr, x86_nops[i], i))
++			goto setup;
++	}
++
+ 	switch (opc1) {
+ 	case 0xeb:	/* jmp 8 */
+ 	case 0xe9:	/* jmp 32 */
+ 		break;
+-	case 0x90:	/* prefix* + nop; same as jmp with .offs = 0 */
+-		goto setup;
+ 
+ 	case 0xe8:	/* call relative */
+ 		branch_clear_offset(auprobe, insn);
 
 
