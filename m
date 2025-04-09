@@ -1,136 +1,143 @@
-Return-Path: <linux-kernel+bounces-595958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8D0A82505
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:37:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685F0A82501
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 753C13BE0D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:36:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7BFA7B6C6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8A625F78B;
-	Wed,  9 Apr 2025 12:36:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30AA1D6DBB;
-	Wed,  9 Apr 2025 12:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2D225F7AC;
+	Wed,  9 Apr 2025 12:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n1gEqkhQ"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B692561CE
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 12:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744202179; cv=none; b=ZfAdjiNXl5YGNvtlIIPWOpyDyS49IYHAaaf63W0W0W7CX+NH91hGFf28AImGvlyqqTlyEBuZgH9e47eQMK9tHG8bEcma/D0KX19M2RpEywchan8GU1xK/D0bEAPh6cOwU9jfpkmS7IhvgCN5TXsQ4SXZTUedfEXOP2HaYqamo9U=
+	t=1744202205; cv=none; b=Vex4YLIKHd6J53qysPQ9it4W78vJdVMSdWaae4Mil8mGHzu05YRiNIzz64pNM0PAOeJmSjzmIr/5Y+8uAlGNvZEBr6tltNCv/puPKzAzOxlvNOTMEWNJYYhf7ak9DiUyLUPm0WcqhkpLul8hyzZ3zKpr85hrU1278RKyzxWwepk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744202179; c=relaxed/simple;
-	bh=vsq2H4wbKekMe2rcYLkaDpskemfC+TPVC8LbUtF7AS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SeT7Ur450BvsZqxqN4nkQSWHXWeElKal2ljZvFgAlKssHsa/dYFSIjZ1WChB4FwLbpYV7KBGhVCpwOM5ETodPUu1jJ1eRutHh99Fc5PiVEuOx9vEmDT+zTdAxpKoLCquUZlVMAhSE5m3eifXZ8RdomsxTZAQAkXVSUH6tGO1rYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F11715A1;
-	Wed,  9 Apr 2025 05:36:16 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B53D63F59E;
-	Wed,  9 Apr 2025 05:36:13 -0700 (PDT)
-Date: Wed, 9 Apr 2025 13:36:10 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-sunxi@lists.linux.dev, linux-crypto@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
- Corentin Labbe <clabbe.montjoie@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Ovidiu Panait
- <ovidiu.panait.oss@gmail.com>, Samuel Holland <samuel@sholland.org>, LKML
- <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>
-Subject: Re: [PATCH] crypto: sun8i-ce-hash - Refine exception handling in
- sun8i_ce_hash_run()
-Message-ID: <20250409133610.59d42bec@donnerap.manchester.arm.com>
-In-Reply-To: <3727de04-7993-4b81-80c0-adb40b847307@web.de>
-References: <3727de04-7993-4b81-80c0-adb40b847307@web.de>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1744202205; c=relaxed/simple;
+	bh=pCcQnsh8CRxpv5xHp1wrSTOStnKxLEg4YyQW1LbBAlA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XnIoFACYCKDwcnDfivUgus83yb9O9tyNIky9LDuaGmIzDfVthyEo+wFChHUHRts8m+YfWcYmXgGX+X8cyxbrWZJY60XvTrEt1WUc/cYAn61pWO1QB70zAwb9Go+aotR5oVRjgRuNyWotwqnDrvlAi3Rb0Oh0JtylhcIrvtsVxB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n1gEqkhQ; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e6f4b3ebe5so11284628a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 05:36:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744202201; x=1744807001; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QH7veB4JfW1Wles/JBHNgdIkw9ORpNInhsceujqVsTs=;
+        b=n1gEqkhQi7XM/04q79n2aM4jKTrzu0XaHTUaarT8ZZArWln5aOd8F1PXqVIei/hYbW
+         mB23eTe7Q4+n0HRC7lTKikJR3x8XghGcTsgjqRKRNXTWRb8ob5nf3tIfcpsUFJ4HLal1
+         fZ6WMeCsgJePHnRQugr26IrBYBUJ4V5K5vqVYw2JYQ7bvy4V5kw8nj4J/87kFY4eMzlE
+         BYRFXiNgLUhvhUt145i+bqsDvfa0ky27fEW9xQ7oQfZA7pRQGXvRk6+qjaHmZNbT/byv
+         tJuzpEKVZnVdze88aOKSVLj2pmMz/aemn02hw8C/2mtd7muUSnGMNyY5zh4V1kD9CHLh
+         QcKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744202201; x=1744807001;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QH7veB4JfW1Wles/JBHNgdIkw9ORpNInhsceujqVsTs=;
+        b=MD6rSho6gzGGZz2S5+pfMyFQEAwSaz567ZMmEhgVEU4Qy3TZ7tq6ucPI49FQaJWw/X
+         g1mOCVj5bVojmF60xL34i90U1StN/TDeptObn6DOPo4nvAUjIJmYiM+cQ4wq+7bhCgEH
+         NwmbDIxAM0cfyFQJikQp5jiB+PIPxBsamHqdtVPAT+++Uo4dAGkSnxnMBE/YHwudhs7o
+         8lNuMPu7uKjgvSXK1B8KxvlJXZE4bpSqW/XU1v7x6KwyZukH4kK279sbyuRgNqZZlV/Z
+         VbT0AN8eb8BRji/f1i6+nhrJeXttJts4haeoIb+uhUoFNFr2WTQynrQSwDQZSqrvozE7
+         ylYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWn6JgygMhSDHJ+Dw37wMdTTmuJoEFKi84e3iar/3EQtHQyAjvf0O1dLAUTMGFcOsYwTStb5LhMfbwQIJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOvbDrCBnevDzhn+BPXWIbmoWL+bzqJc1IdJSXU7cAeJEEeTTE
+	xjIrXDaYVv2+eNy9WHvCQtfz4eglDoJWH2PisuUZEZuxGvQ7YKPIOoTeF5bJqv+sGRoj+CUkaUy
+	6
+X-Gm-Gg: ASbGncvK9rXUHB1hZXd78X8ftlfnxngL1wz6bRei83tcRHNIP883H+/JRfb3SI9fKdP
+	3bfNphLb7psut3ju1tPawFT31cQZ/Ffk+rT08CVnpB1pbAl0Fv/i5wTwDDJA/cuYlOX+ayfeD8H
+	0aTdGBMCu98mo2Jd3zInTn6gEFquVtUNiOwYYG0zMhxMzNaIWdH2LBxkO1IhwC3ofgw5vsKxzuh
+	Q4vpfGSKVmWjDND6LXnhYUSZ/XhbRCHZ53tSO4cBQ1kiYnTBVzOFMH063SWCYhpd90gqhHdp/Gn
+	T/EDo9OahfJy0d9QDuYV3oJjizncqLmlRA6gwU/Zxab+3vRs3jA=
+X-Google-Smtp-Source: AGHT+IElIPi4StbNu1fXcOUzTMwgB5987RBpnEzg2VNy/DLgYGEJx5pDeTwmq7vbIqpvHrwBZzfZ+w==
+X-Received: by 2002:a17:907:1c1a:b0:ac3:9587:f2ac with SMTP id a640c23a62f3a-aca9d644d3bmr191195666b.33.1744202201219;
+        Wed, 09 Apr 2025 05:36:41 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:ef30:9738:960c:8c08:7b2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1bb3167sm90726666b.21.2025.04.09.05.36.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 05:36:40 -0700 (PDT)
+Date: Wed, 9 Apr 2025 14:36:35 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, Sam Day <me@samcday.com>,
+	Chandana Kishori Chiluveru <cchiluve@qti.qualcomm.com>
+Subject: Re: [PATCH] serial: msm: Configure correct working mode before
+ starting earlycon
+Message-ID: <Z_Zp0yCXrYM9zG83@linaro.org>
+References: <20250408-msm-serial-earlycon-v1-1-429080127530@linaro.org>
+ <058f8b9c-55db-4735-bf61-b1e0f3d05953@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <058f8b9c-55db-4735-bf61-b1e0f3d05953@quicinc.com>
 
-On Wed, 9 Apr 2025 13:43:39 +0200
-Markus Elfring <Markus.Elfring@web.de> wrote:
+On Wed, Apr 09, 2025 at 03:30:02PM +0530, Mukesh Kumar Savaliya wrote:
+> On 4/8/2025 10:52 PM, Stephan Gerhold wrote:
+> > The MSM UART DM controller supports different working modes, e.g. DMA or
+> > the "single-character mode", where all reads/writes operate on a single
+> > character rather than 4 chars (32-bit) at once. When using earlycon,
+> > __msm_console_write() always writes 4 characters at a time, but we don't
+> > know which mode the bootloader was using and we don't set the mode either.
+> > 
+> Looks surprising. I haven't seen pre-kernel UART console ever works in DMA
+> mode. It was always fixed to work in FIFO/PIO mode. From what i know.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 9 Apr 2025 13:26:55 +0200
-> 
-> Two if branches contained duplicate source code.
-> Thus avoid the specification of repeated error code assignments by using
-> additional labels instead.
+I'm sure you're right, since it doesn't really make sense to implement
+DMA mode for the UART console in earlier firmware or the bootloader.
 
-Is that really useful? I think the current code reads easier, with the
-usual pattern of setting the error code and the goto'ing out.
-Now there is one rather opaque label it goes to, so a reader doesn't see
-the error code immediately. And it really just saves one line per case
-here. Plus the added danger that future changes might break this again.
+DMA is just the side note here though. As I wrote in the patch
+description, the real problem this patch fixes is the "single-character
+mode". This is still FIFO/PIO mode, except that the register will
+take/return just a single character rather than 4 chars at once.
 
-And then there is the oddity that it jumps *into* an "if" branch, which
-looks odd, I think typically we goto the end of the function, outside of
-any other statements.
+This mode is used by firmware on some platforms and I'm planning to make
+use of this mode in U-Boot to fix some edge cases. It's much more simple
+to implement reliably for something minimal like U-Boot. With that
+change in U-Boot, I get the garbled output shown below in the earlycon
+serial console. This patch fixes it.
 
-Cheers,
-Andre
+> > This causes garbled output if the bootloader was using the single-character
+> > mode, because only every 4th character appears in the serial console, e.g.
+> > 
+> >    "[ 00oni pi  000xf0[ 00i s 5rm9(l)l s 1  1 SPMTA 7:C 5[ 00A ade k d[
+> >     00ano:ameoi .Q1B[ 00ac _idaM00080oo'"
+> > 
+> > If the bootloader was using the DMA ("DM") mode, output would likely fail
+> > entirely. Later, when the full serial driver probes, the port is
+> > re-initialized and output works as expected.
+> > 
+> AFAIR, console UART was always configured in FIFO/PIO mode. For non Console
+> application e.g. Bluetooth it works in DMA mode.
 
-> This issue was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c
-> index ba13fb75c05d..7d31e190bb6a 100644
-> --- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c
-> +++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c
-> @@ -399,14 +399,14 @@ int sun8i_ce_hash_run(struct crypto_engine *engine, void *breq)
->  	}
->  	if (len > 0) {
->  		dev_err(ce->dev, "remaining len %d\n", len);
-> -		err = -EINVAL;
-> -		goto err_unmap_src;
-> +		goto e_inval_src;
->  	}
->  	addr_res = dma_map_single(ce->dev, result, digestsize, DMA_FROM_DEVICE);
->  	cet->t_dst[0].addr = desc_addr_val_le32(ce, addr_res);
->  	cet->t_dst[0].len = cpu_to_le32(digestsize / 4);
->  	if (dma_mapping_error(ce->dev, addr_res)) {
->  		dev_err(ce->dev, "DMA map dest\n");
-> +e_inval_src:
->  		err = -EINVAL;
->  		goto err_unmap_src;
->  	}
-> @@ -428,16 +428,15 @@ int sun8i_ce_hash_run(struct crypto_engine *engine, void *breq)
->  		j = hash_pad(bf, 2 * bs, j, byte_count, false, bs);
->  		break;
->  	}
-> -	if (!j) {
-> -		err = -EINVAL;
-> -		goto err_unmap_result;
-> -	}
-> +	if (!j)
-> +		goto e_inval_result;
-> 
->  	addr_pad = dma_map_single(ce->dev, buf, j * 4, DMA_TO_DEVICE);
->  	cet->t_src[i].addr = desc_addr_val_le32(ce, addr_pad);
->  	cet->t_src[i].len = cpu_to_le32(j);
->  	if (dma_mapping_error(ce->dev, addr_pad)) {
->  		dev_err(ce->dev, "DMA error on padding SG\n");
-> +e_inval_result:
->  		err = -EINVAL;
->  		goto err_unmap_result;
->  	}
-> --
-> 2.49.0
-> 
+I think console UART in msm_serial does use DMA at least for receiving
+at the moment, since we don't differentiate between "console" or
+"non-console" use case in the upstream driver (as far as I can tell).
+My patch doesn't change anything about this though, it just ensures the
+UART controller is in the expected mode before starting earlycon.
 
+Thanks,
+Stephan
 
