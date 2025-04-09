@@ -1,74 +1,92 @@
-Return-Path: <linux-kernel+bounces-596681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964C2A82F22
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:43:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06C4A82F0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A764A1186
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:41:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B4717A7FAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DCC279330;
-	Wed,  9 Apr 2025 18:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB525278147;
+	Wed,  9 Apr 2025 18:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bg6ZO7Bb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwSLT6GO"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C53B278178
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 18:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FF2278141;
+	Wed,  9 Apr 2025 18:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744224088; cv=none; b=Xytm/dgMXiR24hhpCvBJxBLHbkwpSy5ZzH4OKU5N3vrKoSpA6qp05NnEnGvgeG+IHAYxg4exnQ+r8dBwtPN/cu2hMNvO/AUcEjo2XLEcPaRHDJnX0RiYPmRyzNHRgBC5bSMeP9SKgOFy6TIYqZZUiL3Ik1pm5lfYLLxLeVt6TzY=
+	t=1744224053; cv=none; b=fifHNuWBqOIZzVMf2St9Xr6fUCpy+3QVGF+HY4WzWi6TPptKgpUCggNYbxjtbzxVyzwQiED/RBa/1w4j+U0LJpDANiqSKBmcQA1ZWF2dWJtMR1bDBd6HKspqHiC/dTo89iXfMaI2P81YSf3+7iVKhdJETrKhnIaUOZAbVvQE68U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744224088; c=relaxed/simple;
-	bh=FcHX028iX5LkisRplgkLc8pOcmbMwMbd35p1B7+k4oQ=;
+	s=arc-20240116; t=1744224053; c=relaxed/simple;
+	bh=7ce31LOaktiwPuRBBPpSmmXKf6M/YMvZPR0T7UZBGh4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pgziubxZ5fnQV1fWoGCyd5t1ONnkStIdqcozLdDSjhUUCV3jmK8+LtloCIOKyvDfsc40sqS5oa84bCiXEqocGLpq5Ly5wSHoMU1XAk40Wu4ynx9lGPn0LBwJhK08lgxkDQ4aokxwIVgkgV6elLZqHSN/pcuKFLojMZQp/VpMvzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bg6ZO7Bb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744224086;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/udgtrvs2rAgp9bOsMF5Zy+uqnCHPJnsUE8E48V9ktk=;
-	b=Bg6ZO7Bb1J3UnfcQqA01BC0v+dl3lBBuY4JUIqazSHUHP9zeGJZu1F0pW2sDGPVt6fqhd7
-	C1Fa5neKlGuPCUwORFF+IpQqTUR50eGtOok3nhSxcJFFmB9tUz1iyMJu/Xr4pDw+4yVuxc
-	NXspY/xDd7kUmbPYs6zXeqgte+ct+GM=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-562-nJIx-zFjOaWIkhAkafWLFg-1; Wed,
- 09 Apr 2025 14:41:22 -0400
-X-MC-Unique: nJIx-zFjOaWIkhAkafWLFg-1
-X-Mimecast-MFC-AGG-ID: nJIx-zFjOaWIkhAkafWLFg_1744224080
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EDE5B1800EC5;
-	Wed,  9 Apr 2025 18:41:19 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.54])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id EE4761956094;
-	Wed,  9 Apr 2025 18:41:16 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  9 Apr 2025 20:40:44 +0200 (CEST)
-Date: Wed, 9 Apr 2025 20:40:40 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org,
-	Peter Ziljstra <peterz@infradead.org>
-Subject: Re: [RFC PATCH] pidfs: ensure consistent ENOENT/ESRCH reporting
-Message-ID: <20250409184040.GF32748@redhat.com>
-References: <20250409-sesshaft-absurd-35d97607142c@brauner>
- <20250409-rohstoff-ungnade-d1afa571f32c@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZK706aEs7/OOFr6ZcF12JgDmMUxq/UksY/fRos6Ou+Reg5uXNk2S9WCBA0M3257NLibar7qcL8cWtvHLqO1NCZcc5wt4wlH7xoZfOkTVeIBDxFPOwxACmGkYY9IQTyTa40d888T+/fokAp0fA90kUYRMBJIV1ADzH0PKvir1qZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NwSLT6GO; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-227d6b530d8so66216775ad.3;
+        Wed, 09 Apr 2025 11:40:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744224051; x=1744828851; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XKCylbKIjrgOfv1bOhlYLqzn746P08J59uI4yN7YCeY=;
+        b=NwSLT6GOJL7nuSu3848e0KNpM6ULT4lyMxJJYKoC0tXT6nJDPVQjUQCLxKz4lQg8cg
+         p4rjqv3/D5xHAeLWCwSn3KZ9TQyEYoxefYenYLi4Ff9n78ybSzKmwdtlJHLMAwPC48Im
+         f9uKVDBLz+h1w4JVnYodda/JdKzgAmbrE5YCsg5HAEOKnC9TuUSkUjxGz5hQNWcqIYsd
+         y58L1o2zWwSgqIrnG4en8I1dWrTGSgOCnLIE7ZwIkz/go3LcZ5sFpV5p25yS5XdvZwUN
+         pJg7RPWbSyI4JI0lD4xBEmy+F7UKp2IA4ls0tkN/VwQOaVgtE2YyE3DeWz/9ayqPJA9E
+         /8IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744224051; x=1744828851;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XKCylbKIjrgOfv1bOhlYLqzn746P08J59uI4yN7YCeY=;
+        b=NxNRTBz2f8PgtNq07rSPZriIaj1/UBLBTeCfkXoV4+Ki4L2/L5sWdaOeoO2ujroal/
+         NYwwN2f3KU/52osyY4JxoJEpZbi75BAtIPhfvfrdNKhuhTU2BsT9e32bFuekY4usJQQ5
+         Z+QR6lE0zBevT6SzntYozhCbZYaS/3lZR44F9yipgQFZ7tgYr3DbOjFFZXEfgHEuBGXJ
+         SN+dGu65jJo2axERhT2BODrncT+uhifeuxP8STcaybhsX6KTa6BYHMni8IY+ZFY5WGrq
+         6Ap4gVpnIY5BgCRCOOThkBAnAnTRBofFRKraJI0tYyJ2qwMX70IpN5biZy9MKAGH5vfJ
+         VEZw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Jh0JJ8+kBUMUgXx6gBB0X2iNSea1llHwosn9nGxa1tP3x+R7xi+K7eQXgnwA8D6ZAUY1Vlk2QS7Y@vger.kernel.org, AJvYcCUOWMIZPIzXHm60oduypPUykmviYSqUGPPlcIOq1Xw7POj/uq34gTxh9UrO8Yk6dfSOZQgoWXHT/OJHtw==@vger.kernel.org, AJvYcCUpTUPz5DtyJC/Dg3xYyblBIzFTt0wI8iSHwl/Y27EgH1ytXTkm6yeGiHluXJIHl2EMajxMpfMqbyuuKbMg@vger.kernel.org, AJvYcCVnuH74Tg8YQvhOlM5vnyJJmr/M4XO+tZxKly/TU5RGG9dEL3QVREUd/AZkLz2ahiucuLVPukJ+ZdiQc8w=@vger.kernel.org, AJvYcCWXbjZiKCyeCtue4ESjl3YQjChFvbc/mL7tI2ri7FJC/aFK3EpCf611BgxHNVXmtCw5d8qoe41KLNAs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0DuhSWIzYtZ1TL41KhkYFfyG8WKF60mDgaWa94G2oqswgu5hl
+	CT9ZV793LclvNMzAx2Re/ugGZbbgeetiJCdQi2aKjE7X3Hx8e+Pk
+X-Gm-Gg: ASbGncvMNLkRbtCsvuvoxk133Tg612aHDxOiqCGN9fxX76HbJk4L+CCgzKXUMKlTRYL
+	t+7yqs8EnWlDNzCdtf+FU1zFT20vJ7IVS4OS709uzJlfaF6PPqmBqclCdHHlEexADrvVKtNfNn1
+	HS6F8N2qWycQtu+M2ZscgwzW2a/hsGTDdjoY8jFjcQg0naOam1siaO/fBXd3SQZ8lKUCt7hkc5f
+	wNeD4KzGEVh+GjUzRjeDJbBrb/RWB+ON+UckWVqg0iDT+NECN+SpUNF1PESiyaODpomuohJDWBk
+	S3vn3BZMrn6wnl8UP6ZaW9wEdpbL7IhORIy8wx/C1Q==
+X-Google-Smtp-Source: AGHT+IEvVcXJt7NNKX5SaeEVlcZaK6qMDnh8XmZ4fCAiKyzsL52qof/mXos31CnmY0ZKrW4CD72UiA==
+X-Received: by 2002:a17:902:d2ca:b0:224:1c41:a4cd with SMTP id d9443c01a7336-22ac296e7d5mr49925255ad.3.1744224051208;
+        Wed, 09 Apr 2025 11:40:51 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:cff4:8871:54bb:4c97])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccb5c5sm15464235ad.222.2025.04.09.11.40.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 11:40:50 -0700 (PDT)
+Date: Wed, 9 Apr 2025 11:40:47 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kamel Bouhara <kamel.bouhara@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	andriy.shevchenko@intel.com, =?utf-8?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v6 10/12] input: keyboard: Add support for MAX7360 keypad
+Message-ID: <chhnkepvlbiv6xvgh5zso526xsp4zk7tgzsqzoqe7b5jmvdyrw@afio6lmx55zv>
+References: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
+ <20250409-mdb-max7360-support-v6-10-7a2535876e39@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,137 +95,250 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250409-rohstoff-ungnade-d1afa571f32c@brauner>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <20250409-mdb-max7360-support-v6-10-7a2535876e39@bootlin.com>
 
-Christian,
+Hi Mathieu,
 
-I will actually read your patch tomorrow, but at first glance
-
-On 04/09, Christian Brauner wrote:
->
-> The seqcounter might be
-> useful independent of pidfs.
-
-Are you sure? ;) to me the new pid->pid_seq needs more justification...
-
-Again, can't we use pid->wait_pidfd->lock if we want to avoid the
-(minor) problem with the wrong ENOENT?
-
-or even signal->siglock, although in this case we will need
-pid_task() + lock_task_sighand()...
-
-Oleg.
-
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  include/linux/pid.h |  1 +
->  kernel/exit.c       | 11 +++++++++++
->  kernel/fork.c       | 22 ++++++++++++----------
->  kernel/pid.c        |  1 +
->  4 files changed, 25 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/pid.h b/include/linux/pid.h
-> index 311ecebd7d56..b54a4c1ef602 100644
-> --- a/include/linux/pid.h
-> +++ b/include/linux/pid.h
-> @@ -65,6 +65,7 @@ struct pid
->  	struct hlist_head inodes;
->  	/* wait queue for pidfd notifications */
->  	wait_queue_head_t wait_pidfd;
-> +	seqcount_rwlock_t pid_seq;
->  	struct rcu_head rcu;
->  	struct upid numbers[];
->  };
-> diff --git a/kernel/exit.c b/kernel/exit.c
-> index 1b51dc099f1e..8050572fe682 100644
-> --- a/kernel/exit.c
-> +++ b/kernel/exit.c
-> @@ -133,17 +133,28 @@ struct release_task_post {
->  static void __unhash_process(struct release_task_post *post, struct task_struct *p,
->  			     bool group_dead)
->  {
-> +	struct pid *pid;
+On Wed, Apr 09, 2025 at 04:55:57PM +0200, Mathieu Dubois-Briand wrote:
+> +struct max7360_keypad {
+> +	struct input_dev *input;
+> +	unsigned int rows;
+> +	unsigned int cols;
+> +	unsigned int debounce_ms;
+> +	int irq;
+> +	struct regmap *regmap;
+> +	unsigned short keycodes[MAX7360_MAX_KEY_ROWS * MAX7360_MAX_KEY_COLS];
+> +};
 > +
-> +	lockdep_assert_held_write(&tasklist_lock);
+> +static irqreturn_t max7360_keypad_irq(int irq, void *data)
+> +{
+> +	struct max7360_keypad *max7360_keypad = data;
+> +	unsigned int val;
+> +	unsigned int row, col;
+> +	unsigned int release;
+> +	unsigned int code;
+> +	int ret;
+
+int error;
+
 > +
->  	nr_threads--;
-> +
-> +	pid = task_pid(p);
-> +	raw_write_seqcount_begin(&pid->pid_seq);
->  	detach_pid(post->pids, p, PIDTYPE_PID);
->  	if (group_dead) {
->  		detach_pid(post->pids, p, PIDTYPE_TGID);
->  		detach_pid(post->pids, p, PIDTYPE_PGID);
->  		detach_pid(post->pids, p, PIDTYPE_SID);
-> +	}
-> +	raw_write_seqcount_end(&pid->pid_seq);
->  
-> +	if (group_dead) {
->  		list_del_rcu(&p->tasks);
->  		list_del_init(&p->sibling);
->  		__this_cpu_dec(process_counts);
->  	}
-> +
->  	list_del_rcu(&p->thread_node);
->  }
->  
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 4a2080b968c8..1480bf6f5f38 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -2109,24 +2109,26 @@ static int __pidfd_prepare(struct pid *pid, unsigned int flags, struct file **re
->  int pidfd_prepare(struct pid *pid, unsigned int flags, struct file **ret)
->  {
->  	int err = 0;
-> +	unsigned int seq;
->  
-> -	if (!(flags & PIDFD_THREAD)) {
 > +	do {
-> +		seq = raw_seqcount_begin(&pid->pid_seq);
->  		/*
->  		 * If this is struct pid isn't used as a thread-group
->  		 * leader pid but the caller requested to create a
->  		 * thread-group leader pidfd then report ENOENT to the
->  		 * caller as a hint.
->  		 */
-> -		if (!pid_has_task(pid, PIDTYPE_TGID))
-> +		if (!(flags & PIDFD_THREAD) && !pid_has_task(pid, PIDTYPE_TGID))
->  			err = -ENOENT;
-> -	}
-> -
-> -	/*
-> -	 * If this wasn't a thread-group leader struct pid or the task
-> -	 * got reaped in the meantime report -ESRCH to userspace.
-> -	 */
-> -	if (!pid_has_task(pid, PIDTYPE_PID))
-> -		err = -ESRCH;
-> +		/*
-> +		 * If this wasn't a thread-group leader struct pid or
-> +		 * the task got reaped in the meantime report -ESRCH to
-> +		 * userspace.
-> +		 */
-> +		if (!pid_has_task(pid, PIDTYPE_PID))
-> +			err = -ESRCH;
-> +	} while (read_seqcount_retry(&pid->pid_seq, seq));
->  	if (err)
->  		return err;
->  
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 4ac2ce46817f..bbca61f62faa 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -271,6 +271,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
->  	upid = pid->numbers + ns->level;
->  	idr_preload(GFP_KERNEL);
->  	spin_lock(&pidmap_lock);
-> +	seqcount_rwlock_init(&pid->pid_seq, &tasklist_lock);
->  	if (!(ns->pid_allocated & PIDNS_ADDING))
->  		goto out_unlock;
->  	pidfs_add_pid(pid);
-> -- 
-> 2.47.2
-> 
+> +		ret = regmap_read(max7360_keypad->regmap, MAX7360_REG_KEYFIFO, &val);
+> +		if (ret) {
+> +			dev_err(&max7360_keypad->input->dev, "Failed to read max7360 FIFO");
 
+This will return name pf the input device, whereas logging name of the
+platform device (representing the hardware device) would be much more
+interesting. You can either use max7360_keypad->input->dev.parent, or,
+better yet, add *dev pointer to struct max7360_keypad.
+
+> +			return IRQ_NONE;
+> +		}
+> +
+> +		/* FIFO overflow: ignore it and get next event. */
+> +		if (val == MAX7360_FIFO_OVERFLOW)
+> +			dev_warn(&max7360_keypad->input->dev, "max7360 FIFO overflow");
+> +	} while (val == MAX7360_FIFO_OVERFLOW);
+> +
+> +	if (val == MAX7360_FIFO_EMPTY) {
+> +		dev_dbg(&max7360_keypad->input->dev, "Got a spurious interrupt");
+> +
+> +		return IRQ_NONE;
+> +	}
+> +
+> +	row = FIELD_GET(MAX7360_FIFO_ROW, val);
+> +	col = FIELD_GET(MAX7360_FIFO_COL, val);
+> +	release = val & MAX7360_FIFO_RELEASE;
+> +
+> +	code = MATRIX_SCAN_CODE(row, col, MAX7360_ROW_SHIFT);
+> +
+> +	dev_dbg(&max7360_keypad->input->dev, "key[%d:%d] %s\n", row, col,
+> +		release ? "release" : "press");
+> +
+> +	input_event(max7360_keypad->input, EV_MSC, MSC_SCAN, code);
+> +	input_report_key(max7360_keypad->input, max7360_keypad->keycodes[code], !release);
+> +	input_sync(max7360_keypad->input);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int max7360_keypad_open(struct input_dev *pdev)
+> +{
+> +	struct max7360_keypad *max7360_keypad = input_get_drvdata(pdev);
+> +	int ret;
+
+"int error" for variables holding error codes or 0. Also elsewhere in
+the driver.
+
+> +
+> +	/* Somebody is using the device: get out of sleep. */
+> +	ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_CONFIG,
+> +				MAX7360_CFG_SLEEP, MAX7360_CFG_SLEEP);
+> +	if (ret)
+> +		dev_err(&max7360_keypad->input->dev, "Failed to write max7360 configuration\n");
+
+Log error code?
+
+Explicit error return please.
+		retrun error;
+	}
+> +
+> +	return ret;
+
+	return 0;
+
+> +}
+> +
+> +static void max7360_keypad_close(struct input_dev *pdev)
+> +{
+> +	struct max7360_keypad *max7360_keypad = input_get_drvdata(pdev);
+> +	int ret;
+> +
+> +	/* Nobody is using the device anymore: go to sleep. */
+> +	ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_CONFIG, MAX7360_CFG_SLEEP, 0);
+> +	if (ret)
+> +		dev_err(&max7360_keypad->input->dev,
+> +			"Failed to write max7360 configuration\n");
+
+Log error code?
+
+> +}
+> +
+> +static int max7360_keypad_hw_init(struct max7360_keypad *max7360_keypad)
+> +{
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	val = max7360_keypad->debounce_ms - MAX7360_DEBOUNCE_MIN;
+> +	ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_DEBOUNCE,
+> +				MAX7360_DEBOUNCE,
+> +				FIELD_PREP(MAX7360_DEBOUNCE, val));
+> +	if (ret) {
+> +		return dev_err_probe(&max7360_keypad->input->dev, ret,
+> +			"Failed to write max7360 debounce configuration\n");
+> +	}
+
+No need for braces with single line statements.
+
+> +
+> +	ret = regmap_write_bits(max7360_keypad->regmap, MAX7360_REG_INTERRUPT,
+> +				MAX7360_INTERRUPT_TIME_MASK,
+> +				FIELD_PREP(MAX7360_INTERRUPT_TIME_MASK, 1));
+> +	if (ret) {
+> +		return dev_err_probe(&max7360_keypad->input->dev, ret,
+> +			"Failed to write max7360 keypad interrupt configuration\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int max7360_keypad_build_keymap(struct max7360_keypad *max7360_keypad)
+> +{
+> +	struct input_dev *input_dev = max7360_keypad->input;
+> +	struct device *dev = input_dev->dev.parent->parent;
+> +	struct matrix_keymap_data keymap_data;
+> +	const char *propname = "linux,keymap";
+> +	unsigned int max_keys;
+> +	int size;
+> +	int ret;
+> +
+> +	size = device_property_count_u32(dev, propname);
+> +	if (size <= 0) {
+> +		dev_err(dev, "missing or malformed property %s: %d\n", propname, size);
+> +		return size < 0 ? size : -EINVAL;
+> +	}
+> +
+> +	max_keys = max7360_keypad->cols * max7360_keypad->rows;
+> +	if (size > max_keys) {
+> +		dev_err(dev, "%s size overflow (%d vs max %u)\n", propname, size, max_keys);
+> +		return -EINVAL;
+> +	}
+> +
+> +	u32 *keys __free(kfree) = kmalloc_array(size, sizeof(*keys), GFP_KERNEL);
+> +	if (!keys)
+> +		return -ENOMEM;
+> +
+> +	ret = device_property_read_u32_array(dev, propname, keys, size);
+> +	if (ret) {
+> +		dev_err(dev, "failed to read %s property: %d\n", propname, ret);
+> +		return ret;
+> +	}
+> +
+> +	keymap_data.keymap = keys;
+> +	keymap_data.keymap_size = size;
+> +	ret = matrix_keypad_build_keymap(&keymap_data, NULL, max7360_keypad->rows, max7360_keypad->cols,
+> +					 max7360_keypad->keycodes, max7360_keypad->input);
+
+What if it fails? Error handling please.
+
+Also, it looks like you are repeating what matrix_keypad_build_keymap()
+is already doing. If you pass NULL as keymap data, won't it do the right
+thing?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int max7360_keypad_parse_fw(struct device *dev,
+> +				   struct max7360_keypad *max7360_keypad,
+> +				   bool *autorepeat)
+> +{
+> +	int ret;
+> +
+> +	ret = matrix_keypad_parse_properties(dev->parent, &max7360_keypad->rows,
+> +					     &max7360_keypad->cols);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!max7360_keypad->rows || !max7360_keypad->cols ||
+> +	    max7360_keypad->rows > MAX7360_MAX_KEY_ROWS ||
+> +	    max7360_keypad->cols > MAX7360_MAX_KEY_COLS) {
+> +		dev_err(dev, "Invalid number of columns or rows (%ux%u)\n",
+> +			max7360_keypad->cols, max7360_keypad->rows);
+> +		return -EINVAL;
+> +	}
+> +
+> +	*autorepeat = device_property_read_bool(dev->parent, "autorepeat");
+> +
+> +	max7360_keypad->debounce_ms = MAX7360_DEBOUNCE_MIN;
+> +	ret = device_property_read_u32(dev->parent, "keypad-debounce-delay-ms",
+> +				       &max7360_keypad->debounce_ms);
+> +	if (ret == -EINVAL) {
+> +		dev_info(dev, "Using default keypad-debounce-delay-ms: %u\n",
+> +			 max7360_keypad->debounce_ms);
+> +	} else if (ret < 0) {
+> +		dev_err(dev, "Failed to read keypad-debounce-delay-ms property\n");
+> +		return ret;
+> +	}
+> +
+> +	if (!in_range(max7360_keypad->debounce_ms, MAX7360_DEBOUNCE_MIN,
+> +		      MAX7360_DEBOUNCE_MAX - MAX7360_DEBOUNCE_MIN)) {
+> +		dev_err(dev, "Invalid keypad-debounce-delay-ms: %u, should be between %u and %u.\n",
+> +			max7360_keypad->debounce_ms, MAX7360_DEBOUNCE_MIN, MAX7360_DEBOUNCE_MAX);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int max7360_keypad_probe(struct platform_device *pdev)
+> +{
+> +	struct max7360_keypad *max7360_keypad;
+> +	struct device *dev = &pdev->dev;
+> +	struct input_dev *input;
+> +	struct regmap *regmap;
+> +	bool autorepeat;
+> +	int ret;
+> +	int irq;
+> +
+> +	regmap = dev_get_regmap(dev->parent, NULL);
+> +	if (!regmap)
+> +		dev_err_probe(dev, -ENODEV, "Could not get parent regmap\n");
+
+		return dev_err_probe(...) ?
+
+Thanks.
+
+-- 
+Dmitry
 
