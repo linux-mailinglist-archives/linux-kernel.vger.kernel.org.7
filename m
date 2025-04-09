@@ -1,111 +1,138 @@
-Return-Path: <linux-kernel+bounces-596771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD96A83088
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 128C6A8308D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AFB1442E5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:28:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 825204431DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5743F1E520E;
-	Wed,  9 Apr 2025 19:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CD61F4CBF;
+	Wed,  9 Apr 2025 19:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t6nnY5P5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J1niUu0p"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A95165F1A;
-	Wed,  9 Apr 2025 19:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CDE1C5F18
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 19:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744226921; cv=none; b=tD3x2RjwUoiqYBY6BnPqkxd5+2o8lZTFeT5uR7ql+rQRg87bqVNboNxm2xYywVufBMDIuamum5X/A79VqQat9dFizHUegdnQsaMKxzFCWNXynLg6M+Wf/431hlx2FV98t5hDFsFUyHqZ2yY1mBqbgT4c6qWBRQ1FIW/U7as2pZ8=
+	t=1744227020; cv=none; b=EVWyuBl2XDYf45/SX2sMd7+EbLAVwrtZRR9GZcfwDA21NVRZXsc4yeqwyjMne57axJ79/83Csll4m/883kuKaoCdGUmqlRHxE0clVca/dISZP5tBXh7npMdfyLjamas4FhULL75DiITXEcakC0/foBIY9Wdo4yb96AXE4+DQYz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744226921; c=relaxed/simple;
-	bh=DhFwMu1PKUY4hicZ2+TMOX5Fqw+M6yOZu7nOaMMC/38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iyCd1jbMcusx4rS7+TtqN0216protfBR56RvxDfr/DyYAU89w7/rOjfMkoSwEmd9ddJeFhfSqgfn0NdlI2MaeCqqxP8PkdgumtSVj22YQzAug2PupMZaLE1y3s/ufhf6bLLtJuv3fWda5yqlkQrXWiLp71R4WWQus/PQ4QlT91E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t6nnY5P5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48BC3C4CEEA;
-	Wed,  9 Apr 2025 19:28:40 +0000 (UTC)
+	s=arc-20240116; t=1744227020; c=relaxed/simple;
+	bh=rLVCto77rXoyxOAnxaMssoEXsBuoenM6dX6qAsp7LJA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=shyb8T3P4veV+ZuyaORVGSZsoRA/R7gg/2xzRJDQfIPHzDd6uJB/5pD2KuqnHiPvUq9ytNrnhikUv4gbFIO06esRTXoHbUZyMAeWTBt9UMe0yXxN7tDC3jLIYjkJsk/Bs3egnNipCBv1B3+z04vDmf2CZNgyeIgav5kcbnQy1uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J1niUu0p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBBD9C4CEE2;
+	Wed,  9 Apr 2025 19:30:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744226920;
-	bh=DhFwMu1PKUY4hicZ2+TMOX5Fqw+M6yOZu7nOaMMC/38=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=t6nnY5P5bU0W7rQ8BC7DtGFfUACwss+wCt0kxkjCwbEzewsdu7f6z9SKj8BkvNSEo
-	 UlbnyZyFNrj4hfWfGdwOd9/H5nfJEN9wSvhZy7MtGoZ1jgCbG5E8BgoeHQ4PZfB57l
-	 WHILETRO3wQZAeUfPMvpyzFxFledF1Fb/JqW7aoved8oKzrgE9GWottedblTnESW/l
-	 7rCgj8eBDrbJ6tZmzayOVA+DPBJX9RLXZ4iU42/9QeZfVaVccfQs7xFKpUxDIMGgRd
-	 tVA2hNZ3VU6qu8CuBPMsrqDIZhr9LEsw81p7XTgqHczn9LfluxCUr/I99KeszxMyGj
-	 0O8YoRUInNdmw==
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2b8e2606a58so3833139fac.0;
-        Wed, 09 Apr 2025 12:28:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVBIS41QfOXTcnEU3KCOqNxh6at7j28prlbTfChJPaegxi9UELbYUt5ZIOBsNIFbd00Arw+BCm/2dcgiXg=@vger.kernel.org, AJvYcCW2rx9vr/5vCz+Uti4D/49nC1ooO0xXf6FzWhOKpPzQzND4LVAmIi1is6VglYPi37rtz2JgaKiSFzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjcxHKIdM0ijK0cC5/X5S4KJ1579aelm9w26Bms3++nwG9WryQ
-	NneyVyu9a6fe2ubQ1VZVYhMu/pSshcqcCbJfOBnAUwpSNytEr5bCNlkAR2vZ4/fwGSKaWml72HC
-	/69uGwW6DqqDNGzQeoAUosjMI5kk=
-X-Google-Smtp-Source: AGHT+IFQrvV9siJvA+vy09af+rlvAnNn8NW1kjNdBkk+pxh+gUmoXyC+FogYn/4QTdn7lohQj3L7WQQYxEOm0GLA+n8=
-X-Received: by 2002:a05:6870:aa98:b0:2cc:3603:f05f with SMTP id
- 586e51a60fabf-2d08e08e3aemr2986761fac.35.1744226919578; Wed, 09 Apr 2025
- 12:28:39 -0700 (PDT)
+	s=k20201202; t=1744227020;
+	bh=rLVCto77rXoyxOAnxaMssoEXsBuoenM6dX6qAsp7LJA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=J1niUu0p0A3DahxPhmu1LIUq0mTzpQKDmuoX9Yztwgp9FC1oCJ8I/9s16smqTl+ak
+	 YsOzxgTjBsjbYorLgBqjPP1m0NYmD5FLaF0K1k+LWkdnGqZLhAjPVuYbxgDN7UwwkJ
+	 8jfYHUI/Z+oK4+G0MCFQYifIKFjB2w3nqAgyVCYhTooFw544GUMfS+OLYLGpC3FwfW
+	 OBFoFoj0GDDwywwb7Tjeg5QcBr0NU/TH8QNFDiwt75VR1p14tRgCrqVExjecyRxyl8
+	 DBSGHlS90oKRUGW/Om9qrVWihkDkGFRBV4jfiHAC9PTut4chu0kk2ej66uwikEVl3D
+	 diDASiRuG2n8w==
+From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Song Shuai <songshuaishuai@tinylab.org>,
+	Daniel Maslowski <cyrevolt@gmail.com>,
+	linux-riscv@lists.infradead.org
+Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	Nick Kossifidis <mick@ics.forth.gr>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] riscv: kexec_file: Support loading Image binary file
+Date: Wed,  9 Apr 2025 21:29:57 +0200
+Message-ID: <20250409193004.643839-1-bjorn@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
- <20250317-plat2faux_dev-v1-1-5fe67c085ad5@arm.com> <CAJZ5v0gcRDJFJtnPY+sszkUEYsdqxfm194Y7=namkD0qYnokHg@mail.gmail.com>
- <20250409-adorable-venomous-cormorant-d01246@sudeepholla>
-In-Reply-To: <20250409-adorable-venomous-cormorant-d01246@sudeepholla>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 9 Apr 2025 21:28:28 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jty2P6KoMH2i3vYwTaTH8a0HUBisKF0BBpHvoWuSOdDw@mail.gmail.com>
-X-Gm-Features: ATxdqUGJQTSKhadOFmwt9qo96GsZu6OMpUapnTgnX2HxAu4AGKLXm61CGMUf6h8
-Message-ID: <CAJZ5v0jty2P6KoMH2i3vYwTaTH8a0HUBisKF0BBpHvoWuSOdDw@mail.gmail.com>
-Subject: Re: [PATCH 1/9] cpuidle: psci: Transition to the faux device interface
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 9, 2025 at 9:18=E2=80=AFPM Sudeep Holla <sudeep.holla@arm.com> =
-wrote:
->
-> On Wed, Apr 09, 2025 at 08:03:32PM +0200, Rafael J. Wysocki wrote:
-> > On Mon, Mar 17, 2025 at 11:13=E2=80=AFAM Sudeep Holla <sudeep.holla@arm=
-.com> wrote:
-> > >
-> > > The PSCI cpuidle driver does not require the creation of a platform
-> > > device. Originally, this approach was chosen for simplicity when the
-> > > driver was first implemented.
-> > >
-> > > With the introduction of the lightweight faux device interface, we no=
-w
-> > > have a more appropriate alternative. Migrate the driver to utilize th=
-e
-> > > faux bus, given that the platform device it previously created was no=
-t
-> > > a real one anyway. This will simplify the code, reducing its footprin=
-t
-> > > while maintaining functionality.
-> > >
-> > > Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> > > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> > > Cc: linux-pm@vger.kernel.org
-> > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> >
-> > Do you want me to pick up this one?
-> >
->
-> Yes you can pick this up.
->
-> Just checked again, this is v1 and correct version.
+From: Björn Töpel <bjorn@rivosinc.com>
 
-Applied as 6.16 material, thanks!
+Hi!
+
+For over a year ago, Daniel and I was testing the V2 of Song's series.
+I also promised to take the V2, that had been sitting on the lists for
+too long, to rebase it on a new kernel, and re-test it.
+
+One year later, here's the V3! ;-)
+
+There are no changes from V2 other, than some simple checkpatch
+cleanups.
+
+Song's original cover:
+  | This series makes the kexec_file_load() syscall support to load
+  | Image binary file. At the same time, corresponding support for
+  | kexec-tools had been pushed to my repo[2].
+  |
+  | Now, we can leverage that kexec-tools and this series to use the
+  | kexec_load() or kexec_file_load() syscall to boot both vmlinux and
+  | Image file, as seen in these combo tests:
+  |
+  | ```
+  | 1. kexec -l vmlinux
+  | 2. kexec -l Image
+  | 3. kexec -s -l vmlinux
+  | 4. kexec -s -l Image
+  | ```
+
+Notably, kexec-tools has still not made it upstream. I've prepared a
+branch on my GH [3], that I indend to post ASAP. That branch is a
+collection of fixes/features, including Song's userland Image loading.
+
+The V2 is here [2], and V1 [1].
+
+I've tested the kexec-file/Image on qemu-rv64, with following
+combinations:
+ * ACPI/UEFI 
+ * DT/UEFI
+ * DT
+
+both "regular" kexec (-s + -e), and crashkernels (-p).
+
+Note that there are two purgatory patches that has to be present (part
+of -rc1, so all good):
+  commit 28093cfef5dd ("riscv/kexec_file: Handle R_RISCV_64 in purgatory relocator")
+  commit 3f7023171df4 ("riscv/purgatory: 4B align purgatory_start")
+
+[1] https://lore.kernel.org/linux-riscv/20230914020044.1397356-1-songshuaishuai@tinylab.org/
+[2] https://lore.kernel.org/linux-riscv/20231016092006.3347632-1-songshuaishuai@tinylab.org/
+[3] https://github.com/bjoto/kexec-tools/tree/rv-on-master
+
+Song Shuai (2):
+  riscv: kexec_file: Split the loading of kernel and others
+  riscv: kexec_file: Support loading Image binary file
+
+ arch/riscv/include/asm/image.h         |   2 +
+ arch/riscv/include/asm/kexec.h         |   6 +
+ arch/riscv/kernel/Makefile             |   2 +-
+ arch/riscv/kernel/elf_kexec.c          | 485 -------------------------
+ arch/riscv/kernel/kexec_elf.c          | 144 ++++++++
+ arch/riscv/kernel/kexec_image.c        |  96 +++++
+ arch/riscv/kernel/machine_kexec_file.c | 361 ++++++++++++++++++
+ 7 files changed, 610 insertions(+), 486 deletions(-)
+ delete mode 100644 arch/riscv/kernel/elf_kexec.c
+ create mode 100644 arch/riscv/kernel/kexec_elf.c
+ create mode 100644 arch/riscv/kernel/kexec_image.c
+
+
+base-commit: a24588245776dafc227243a01bfbeb8a59bafba9
+-- 
+2.45.2
+
 
