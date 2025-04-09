@@ -1,215 +1,284 @@
-Return-Path: <linux-kernel+bounces-595975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86EDA82535
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:48:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B65A8253F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64075189AE6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:48:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64D6A46561D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DC7262814;
-	Wed,  9 Apr 2025 12:48:31 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C173925A2D1;
+	Wed,  9 Apr 2025 12:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b82oRnuF"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF202620F5
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 12:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DA42620D1
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 12:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744202910; cv=none; b=Ii9uOtpnDYnk60geG+WXQHk98QjctjtCBAdHW4E6Ox8qxhoBUT6aha5qnlpYYSWlrg7WSYtJa9Wr0AeaR2xHQBwIUBcHQ7+qWw9Ve2aklRcV8DMa3/D4q47TTQlxAQAQBW5ytYUymfzYX3MKFDTJyeOzBbzU7Ytl6p9NVBe9SxI=
+	t=1744202959; cv=none; b=aYKCLp1d9Dlkoi4EbFMFJKm1YllWUcCtHu3HAmxPqK6nXimRbanSpKbJt7hVad0fxcXMlxJTU41FNX+Wlvz5TAaPEywuwLlxolgwEUSop3OapBLLhz/vTju4VhZYdUxke38HUnM40fF8pcs2Xhh8KtsUboZ4gd7URWBlbqFaaJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744202910; c=relaxed/simple;
-	bh=Hp1aMvB2P2HlCnLz/nFvNLwZgXBFJFItXCEwHjLm2LM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Bk+a+3gfc1/ZiACFr7O95pACUvrgHkknTsSKPBVgL+943rU6rJwTHHjvjlcCH5lUnxybYyuK80IcxJ4fnqVj5LCHBRhIMyF6Z6d2Uuhcv41BAv9zFPUvuOuIHVfGYf/e+VkFtSOuU9RIuoE40/Reqpfr7LEuvAmLEJC8rEup8cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d43541a706so66688475ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 05:48:28 -0700 (PDT)
+	s=arc-20240116; t=1744202959; c=relaxed/simple;
+	bh=114xrRYfMDpqZbVsu61+eeWndUu4dIUnfdi6ZWw8+JE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OTriLv8F00a9LrXB/DfjTMoVrk9ohd6D8K56wzeZIr8vvaeJS/4msJ2+P+4NNvxPBZIeOFE2p8LvWNFujhHCjzHkwgDhN8Ny6zoZsL0vLZj7YtyTTyDsMPysFOSQuNztNSe3ejp33zTOj7fzGEE31uHhew8jfLFkME1vTHusHkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b82oRnuF; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-70427fb838cso24441697b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 05:49:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744202957; x=1744807757; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EeYTwgoKGzk2F10OwjsE7wT2TnLkZjym1rp+v2jZcv0=;
+        b=b82oRnuFxlfjR+2Q19rNe9xwhwSMDaJLh6hXqos3QDjArCmXCSem5Ap1ElzE2tcrV2
+         OLnpMCLnsk3bI5f0S7yHVIbzWfQQVnIgRuJWY4tquaSGY4cLRKWN4F5sk02pAzqt0EHV
+         Y9Z0Gw+fk2nj8iB+xVGUQk4pK3rjoBFcPiQ2ffeDIHt8IwYn4gKbdYVrMggDh2Kv0O4W
+         Dca0gSO8+XKtPtkX1jpDqNR/UcKUc/kDPSUSL178rPU0yL0Gs/Wo+kLDDcqjiUh+KlFQ
+         fVv9qX7WBpj6JIZGEKgD3CWSrDSxuUXdZ1t/8J+SEAJkElP3YFINfZQzUft5hm5pTHsR
+         oQ4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744202908; x=1744807708;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MVbJDbW6DnvYqnD/sT2e+c92Ee4xPt8hlnH5eChnEWU=;
-        b=g/Ljg4zFf9Fr+vvAdj51wwm++sNiWqQBod8eu4zUlaxREPrwN+wk2K7duXPlRHz4tx
-         U1DpNWgEQPC/76luZWGCMEOZUg5lVSACd6dmZ8mLuoY6XFN4jNApkUEIXx9LFdWM9pQH
-         6X7tzaiOGXViP9NjRt2clsFCEYRS2pyAaQC1CzWtsM4DRilWIm5R4rpMwZwlJB5UD+PX
-         YvShbgP8IeP9dQ9KuBFNQypbRz1Lk15GcFI1YLt2RBo3M9wHM5UvG1G9zX7YQb0Mc9nE
-         uFeieHht5doTMLWq84ndeUA/+hx2yonzGYQ1fWB8yaQ2GQEmh4kIX09W3UScbaJKn/iE
-         SRMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGJY2tExX2xoTxk/S7BMTzZuG3f370zCWzjutvYZ0/yxrFmQSf/3OmgBUw/Yhx88LWuuZVWG/TT3Ux15Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwX1QT1l8jVMEJjmM2/eAUk1rsd71W7YWrkjULDFmpEME0Xc2/
-	zfb210Yy+YU7xgnVVxKJbtM6oFbZaufAJz7t1XYKACohmEugQoE9Fg/2KtWlEm5O8e1PspAP5PR
-	zYMe5fwWcwP1f0BXduQlW3BGTJK14fcUyykSo23YEwtY1liC9TAjB0Lk=
-X-Google-Smtp-Source: AGHT+IG1xOPYxQlgSNbRi4NE3ESwXRr35/x8vqwedb9O3tFKHkfPk17amflPw5DRDHccLTDf7AJukZgD/8UFcqGc7coCXOGiczin
+        d=1e100.net; s=20230601; t=1744202957; x=1744807757;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EeYTwgoKGzk2F10OwjsE7wT2TnLkZjym1rp+v2jZcv0=;
+        b=bvFpcOSvTMy2w1jv3XsvrNcR2PsuprsEba8wXnc9WPzfJvDK454ys107Z87tHqKyB7
+         saKkQO6EEX+Mep6tbvYOBReq/oZQj957gM4VoFyKsbEX8VEza0LYQBzvKTUPq3Ks6Q+O
+         XmwqX/56G0HNrrLRIzCjkbIbn4x6U7TmT3dQtp97eDVKmejJNH43WQseIzR+JMKW8pF2
+         Qo3l8sioODkwOoIG2d5v6mOvR1BDnet+N1urwTJHnPDDaKFgKYE7wzbKcoYwTDWtd1HC
+         wZPD9TCSo9ULlgPJbcGx94Shuqn9V9TDONAv4BI1o+AzZzbVfdxM2fomAZXOBm7Vp+eE
+         GMfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsCRZ22ApZe+nk+XmeEtzdR2T8h4Ks3GrFg2i2/nS7E1DqL0J+8W/zCn9B7U5OthxKSffNlaqevtk77HQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhfa8K1mI/M5+mvJJuE5NOr+AE0lZUNvATdTPNQJJcegSAB9B9
+	MbF/FiR2Uz3bgbPyr15/N6uKgyvjCMz3wxUeK3FVQzsnAdX5bqs6DAK4Ow527H1bBjXYbOhDeZg
+	tNmJKDa2rhVSlnHqwHDpF0jJ378WVDaBt8vSf2w==
+X-Gm-Gg: ASbGncu8ndkGYqDoGgneb9Qjpkg9dRvfBHhMWWr9vI/GRwCakdnzp8HQyouCE9vt/p2
+	2Drb3UUjnjUgd1p763AtmvZ7BYL4yMdY7MjgDt1xYLs8Nb4W5sKl22KUmiyOwv/MFqko7f0WN97
+	bY0vucB/y/S0JQvar0ZPGVXrU=
+X-Google-Smtp-Source: AGHT+IFFrOM5iQ+syWdBk4gtlvAAaRcdg0F4uOku/70K/G81PVazqAESRvcwZBLhcBGLw9VTHa6/7U780dqRDiooazU=
+X-Received: by 2002:a05:690c:480a:b0:6fd:346f:97ba with SMTP id
+ 00721157ae682-70538806353mr52669847b3.11.1744202956829; Wed, 09 Apr 2025
+ 05:49:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda7:0:b0:3d3:dfb6:2203 with SMTP id
- e9e14a558f8ab-3d77c2b287emr27400545ab.19.1744202908146; Wed, 09 Apr 2025
- 05:48:28 -0700 (PDT)
-Date: Wed, 09 Apr 2025 05:48:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67f66c9c.050a0220.25d1c8.0003.GAE@google.com>
-Subject: [syzbot] [net?] KASAN: null-ptr-deref Write in rcuref_put (4)
-From: syzbot <syzbot+27d7cfbc93457e472e00@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+References: <20250407222702.2199047-1-jm@ti.com> <20250407222702.2199047-2-jm@ti.com>
+In-Reply-To: <20250407222702.2199047-2-jm@ti.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 9 Apr 2025 14:48:41 +0200
+X-Gm-Features: ATxdqUEoNFFtpo1c0F2wJLOIYQ9yffuIdmomLfFFB1bdHGETwhIu47n14gQF_YU
+Message-ID: <CAPDyKFqx-G4NynanFWrspz7-uXXF74RfjcU-Sw2nq2JhL3LPuQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PENDING: mmc: sdhci*: Add set_hs_ena to sdhci_ops
+To: Judith Mendez <jm@ti.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Josua Mayer <josua@solid-run.com>, 
+	Moteen Shah <m-shah@ti.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Tue, 8 Apr 2025 at 00:27, Judith Mendez <jm@ti.com> wrote:
+>
+> This patch adds set_hs_ena call to sdhci_ops so that host
+> controller drivers have the option to implement a custom
+> callback for SDHCI_CTRL_HISPD control.
+>
+> On TI devices (for HS modes and legacy mode), timing was closed on
+> half cycle timing. If any of HIGH_SPEED_ENA, UHS_MODE_SELECT, or
+> V1P8_SIGNAL_ENA is set for these modes, host controller switches to
+> full cycle timing which may cause read/write failures and/or cqe error
+> logs.
+>
+> So add set_hs_ena() to sdhci_ops so each host controller driver
+> can implement their own .set_hs_ena callback.
+>
+> Also add sdhci_am654_set_hs_ena to sdhci_am654 driver and only set
+> HIGH_SPEED_ENA, for modes > MMC_TIMING_SD_HS.
+>
+> Signed-off-by: Judith Mendez <jm@ti.com>
 
-syzbot found the following issue on:
+What does "PENDING" mean or compared to "PATCH"? I guess you want some
+review and test of this - or there anything else?
 
-HEAD commit:    a52a3c18cdf3 Merge tag 'ntb-6.15' of https://github.com/jo..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15764be4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=695196aa2bd08d99
-dashboard link: https://syzkaller.appspot.com/bug?extid=27d7cfbc93457e472e00
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> ---
+>  drivers/mmc/host/sdhci.c       | 55 +++++++++++++++++++++-------------
+>  drivers/mmc/host/sdhci.h       |  2 ++
+>  drivers/mmc/host/sdhci_am654.c | 16 ++++++++++
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I think it would be better to split this up in two parts. One for
+sdhci and one for sdhci_am654.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/326c7eeab15a/disk-a52a3c18.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/10c3ccb3546c/vmlinux-a52a3c18.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0bd8832c1d9c/bzImage-a52a3c18.xz
+Other than that I am going to defer to Adrian to see what he thinks about this.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+27d7cfbc93457e472e00@syzkaller.appspotmail.com
+Kind regards
+Uffe
 
-==================================================================
-BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-BUG: KASAN: null-ptr-deref in atomic_sub_return_release include/linux/atomic/atomic-instrumented.h:326 [inline]
-BUG: KASAN: null-ptr-deref in __rcuref_put include/linux/rcuref.h:89 [inline]
-BUG: KASAN: null-ptr-deref in rcuref_put+0x1a1/0x240 include/linux/rcuref.h:153
-Write of size 4 at addr 0000000000000041 by task udevd/6807
-
-CPU: 1 UID: 0 PID: 6807 Comm: udevd Not tainted 6.14.0-syzkaller-13389-ga52a3c18cdf3 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_report+0xe3/0x5b0 mm/kasan/report.c:524
- kasan_report+0x143/0x180 mm/kasan/report.c:634
- check_region_inline mm/kasan/generic.c:-1 [inline]
- kasan_check_range+0x28f/0x2a0 mm/kasan/generic.c:189
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- atomic_sub_return_release include/linux/atomic/atomic-instrumented.h:326 [inline]
- __rcuref_put include/linux/rcuref.h:89 [inline]
- rcuref_put+0x1a1/0x240 include/linux/rcuref.h:153
- dst_release+0x24/0x1b0 net/core/dst.c:167
- dst_cache_reset_now+0x1b0/0x220 net/core/dst_cache.c:183
- wg_socket_clear_peer_endpoint_src+0x40/0x50 drivers/net/wireguard/socket.c:312
- wg_expired_retransmit_handshake+0xd3/0x2d0 drivers/net/wireguard/timers.c:73
- call_timer_fn+0x189/0x650 kernel/time/timer.c:1789
- expire_timers kernel/time/timer.c:1840 [inline]
- __run_timers kernel/time/timer.c:2414 [inline]
- __run_timer_base+0x66e/0x8e0 kernel/time/timer.c:2426
- run_timer_base kernel/time/timer.c:2435 [inline]
- run_timer_softirq+0xb7/0x170 kernel/time/timer.c:2445
- handle_softirqs+0x2d6/0x9b0 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0xfb/0x220 kernel/softirq.c:680
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xd9/0x140 kernel/locking/spinlock.c:194
-Code: 9c 8f 44 24 20 42 80 3c 2b 00 74 08 4c 89 f7 e8 3d bd ff f5 f6 44 24 21 02 75 55 41 f7 c7 00 02 00 00 74 01 fb bf 01 00 00 00 <e8> 32 58 65 f5 65 8b 05 0b 1e 3a 07 85 c0 74 46 48 c7 04 24 0e 36
-RSP: 0018:ffffc90003f97280 EFLAGS: 00000206
-RAX: ba8754475f048600 RBX: 1ffff920007f2e54 RCX: ffffffff81cb37bc
-RDX: 0000000000000000 RSI: ffffffff8e687288 RDI: 0000000000000001
-RBP: ffffc90003f97310 R08: ffffffff905eac77 R09: 1ffffffff20bd58e
-R10: dffffc0000000000 R11: fffffbfff20bd58f R12: 1ffff920007f2e50
-R13: dffffc0000000000 R14: ffffc90003f972a0 R15: 0000000000000246
- __debug_check_no_obj_freed lib/debugobjects.c:1108 [inline]
- debug_check_no_obj_freed+0x572/0x590 lib/debugobjects.c:1129
- free_pages_prepare mm/page_alloc.c:1269 [inline]
- free_unref_folios+0x576/0x17e0 mm/page_alloc.c:2737
- folios_put_refs+0x70a/0x800 mm/swap.c:992
- folio_batch_release include/linux/pagevec.h:101 [inline]
- shmem_undo_range+0x595/0x1820 mm/shmem.c:1125
- shmem_truncate_range mm/shmem.c:1237 [inline]
- shmem_evict_inode+0x29d/0xa80 mm/shmem.c:1365
- evict+0x4f9/0x9b0 fs/inode.c:810
- __dentry_kill+0x20d/0x630 fs/dcache.c:660
- dput+0x19f/0x2b0 fs/dcache.c:902
- __fput+0x60b/0x9f0 fs/file_table.c:473
- task_work_run+0x251/0x310 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8f833170a8
-Code: 48 8b 05 83 9d 0d 00 64 c7 00 16 00 00 00 83 c8 ff 48 83 c4 20 5b c3 64 8b 04 25 18 00 00 00 85 c0 75 20 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 5b 48 8b 15 51 9d 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007ffc3678eaf8 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 00007f8f83761ae0 RCX: 00007f8f833170a8
-RDX: 00005574fff315c8 RSI: 00007ffc3678e2f8 RDI: 0000000000000008
-RBP: 00005571a8e7a620 R08: 0000000000000006 R09: cd47be37b8f960f8
-R10: 000000000000010f R11: 0000000000000246 R12: 0000000000000002
-R13: 00005571a8e8a890 R14: 0000000000000008 R15: 00005571a8e73910
- </TASK>
-==================================================================
-----------------
-Code disassembly (best guess):
-   0:	9c                   	pushf
-   1:	8f 44 24 20          	pop    0x20(%rsp)
-   5:	42 80 3c 2b 00       	cmpb   $0x0,(%rbx,%r13,1)
-   a:	74 08                	je     0x14
-   c:	4c 89 f7             	mov    %r14,%rdi
-   f:	e8 3d bd ff f5       	call   0xf5ffbd51
-  14:	f6 44 24 21 02       	testb  $0x2,0x21(%rsp)
-  19:	75 55                	jne    0x70
-  1b:	41 f7 c7 00 02 00 00 	test   $0x200,%r15d
-  22:	74 01                	je     0x25
-  24:	fb                   	sti
-  25:	bf 01 00 00 00       	mov    $0x1,%edi
-* 2a:	e8 32 58 65 f5       	call   0xf5655861 <-- trapping instruction
-  2f:	65 8b 05 0b 1e 3a 07 	mov    %gs:0x73a1e0b(%rip),%eax        # 0x73a1e41
-  36:	85 c0                	test   %eax,%eax
-  38:	74 46                	je     0x80
-  3a:	48                   	rex.W
-  3b:	c7                   	.byte 0xc7
-  3c:	04 24                	add    $0x24,%al
-  3e:	0e                   	(bad)
-  3f:	36                   	ss
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>  3 files changed, 53 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 5f78be7ae16d7..3a878cf0c59b9 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -2355,6 +2355,27 @@ static bool sdhci_presetable_values_change(struct sdhci_host *host, struct mmc_i
+>                (sdhci_preset_needed(host, ios->timing) || host->drv_type != ios->drv_type);
+>  }
+>
+> +void sdhci_set_hs_ena(struct sdhci_host *host, unsigned char timing)
+> +{
+> +       u8 ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
+> +
+> +       if (timing == MMC_TIMING_SD_HS ||
+> +           timing == MMC_TIMING_MMC_HS ||
+> +           timing == MMC_TIMING_MMC_HS400 ||
+> +           timing == MMC_TIMING_MMC_HS200 ||
+> +           timing == MMC_TIMING_MMC_DDR52 ||
+> +           timing == MMC_TIMING_UHS_SDR50 ||
+> +           timing == MMC_TIMING_UHS_SDR104 ||
+> +           timing == MMC_TIMING_UHS_DDR50 ||
+> +           timing == MMC_TIMING_UHS_SDR25)
+> +               ctrl |= SDHCI_CTRL_HISPD;
+> +       else
+> +               ctrl &= ~SDHCI_CTRL_HISPD;
+> +
+> +       sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
+> +}
+> +EXPORT_SYMBOL_GPL(sdhci_set_hs_ena);
+> +
+>  void sdhci_set_ios_common(struct mmc_host *mmc, struct mmc_ios *ios)
+>  {
+>         struct sdhci_host *host = mmc_priv(mmc);
+> @@ -2436,23 +2457,6 @@ void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>             !sdhci_presetable_values_change(host, ios))
+>                 return;
+>
+> -       ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
+> -
+> -       if (!(host->quirks & SDHCI_QUIRK_NO_HISPD_BIT)) {
+> -               if (ios->timing == MMC_TIMING_SD_HS ||
+> -                    ios->timing == MMC_TIMING_MMC_HS ||
+> -                    ios->timing == MMC_TIMING_MMC_HS400 ||
+> -                    ios->timing == MMC_TIMING_MMC_HS200 ||
+> -                    ios->timing == MMC_TIMING_MMC_DDR52 ||
+> -                    ios->timing == MMC_TIMING_UHS_SDR50 ||
+> -                    ios->timing == MMC_TIMING_UHS_SDR104 ||
+> -                    ios->timing == MMC_TIMING_UHS_DDR50 ||
+> -                    ios->timing == MMC_TIMING_UHS_SDR25)
+> -                       ctrl |= SDHCI_CTRL_HISPD;
+> -               else
+> -                       ctrl &= ~SDHCI_CTRL_HISPD;
+> -       }
+> -
+>         if (host->version >= SDHCI_SPEC_300) {
+>                 u16 clk, ctrl_2;
+>
+> @@ -2468,7 +2472,12 @@ void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>                         sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+>                 }
+>
+> -               sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
+> +               if (!(host->quirks & SDHCI_QUIRK_NO_HISPD_BIT)) {
+> +                       if (host->ops->set_hs_ena)
+> +                               host->ops->set_hs_ena(host, ios->timing);
+> +                       else
+> +                               sdhci_set_hs_ena(host, ios->timing);
+> +               }
+>
+>                 if (!host->preset_enabled) {
+>                         /*
+> @@ -2510,8 +2519,14 @@ void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>
+>                 /* Re-enable SD Clock */
+>                 host->ops->set_clock(host, host->clock);
+> -       } else
+> -               sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
+> +       } else {
+> +               if (!(host->quirks & SDHCI_QUIRK_NO_HISPD_BIT)) {
+> +                       if (host->ops->set_hs_ena)
+> +                               host->ops->set_hs_ena(host, ios->timing);
+> +                       else
+> +                               sdhci_set_hs_ena(host, ios->timing);
+> +               }
+> +       }
+>  }
+>  EXPORT_SYMBOL_GPL(sdhci_set_ios);
+>
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index cd0e35a805427..ebecb49792ca1 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -704,6 +704,7 @@ struct sdhci_ops {
+>         void            (*set_timeout)(struct sdhci_host *host,
+>                                        struct mmc_command *cmd);
+>         void            (*set_bus_width)(struct sdhci_host *host, int width);
+> +       void            (*set_hs_ena)(struct sdhci_host *host, unsigned char timing);
+>         void (*platform_send_init_74_clocks)(struct sdhci_host *host,
+>                                              u8 power_mode);
+>         unsigned int    (*get_ro)(struct sdhci_host *host);
+> @@ -857,6 +858,7 @@ int sdhci_get_ro(struct mmc_host *mmc);
+>  void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq);
+>  int sdhci_request_atomic(struct mmc_host *mmc, struct mmc_request *mrq);
+>  void sdhci_set_bus_width(struct sdhci_host *host, int width);
+> +void sdhci_set_hs_ena(struct sdhci_host *host, unsigned char timing);
+>  void sdhci_reset(struct sdhci_host *host, u8 mask);
+>  bool sdhci_do_reset(struct sdhci_host *host, u8 mask);
+>  void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
+> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+> index f75c31815ab00..67a64de4972c9 100644
+> --- a/drivers/mmc/host/sdhci_am654.c
+> +++ b/drivers/mmc/host/sdhci_am654.c
+> @@ -429,6 +429,19 @@ static int sdhci_am654_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>         return 0;
+>  }
+>
+> +static void sdhci_am654_set_hs_ena(struct sdhci_host *host, unsigned char timing)
+> +{
+> +       u8 ctrl = 0;
+> +
+> +       if (timing > MMC_TIMING_SD_HS) {
+> +               sdhci_set_hs_ena(host, timing);
+> +       } else {
+> +               ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
+> +               ctrl &= ~SDHCI_CTRL_HISPD;
+> +               sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
+> +       }
+> +}
+> +
+>  static u32 sdhci_am654_cqhci_irq(struct sdhci_host *host, u32 intmask)
+>  {
+>         int cmd_error = 0;
+> @@ -578,6 +591,7 @@ static const struct sdhci_ops sdhci_am654_ops = {
+>         .get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
+>         .set_uhs_signaling = sdhci_set_uhs_signaling,
+>         .set_bus_width = sdhci_set_bus_width,
+> +       .set_hs_ena = sdhci_am654_set_hs_ena,
+>         .set_power = sdhci_set_power_and_bus_voltage,
+>         .set_clock = sdhci_am654_set_clock,
+>         .write_b = sdhci_am654_write_b,
+> @@ -608,6 +622,7 @@ static const struct sdhci_ops sdhci_j721e_8bit_ops = {
+>         .get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
+>         .set_uhs_signaling = sdhci_set_uhs_signaling,
+>         .set_bus_width = sdhci_set_bus_width,
+> +       .set_hs_ena = sdhci_am654_set_hs_ena,
+>         .set_power = sdhci_set_power_and_bus_voltage,
+>         .set_clock = sdhci_am654_set_clock,
+>         .write_b = sdhci_am654_write_b,
+> @@ -632,6 +647,7 @@ static const struct sdhci_ops sdhci_j721e_4bit_ops = {
+>         .get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
+>         .set_uhs_signaling = sdhci_set_uhs_signaling,
+>         .set_bus_width = sdhci_set_bus_width,
+> +       .set_hs_ena = sdhci_am654_set_hs_ena,
+>         .set_power = sdhci_set_power_and_bus_voltage,
+>         .set_clock = sdhci_j721e_4bit_set_clock,
+>         .write_b = sdhci_am654_write_b,
+> --
+> 2.49.0
+>
 
