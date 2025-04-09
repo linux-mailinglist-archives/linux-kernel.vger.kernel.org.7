@@ -1,196 +1,162 @@
-Return-Path: <linux-kernel+bounces-595625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC06FA820F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:26:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDCC3A82101
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2B7E8A6016
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:25:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D835719E73BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BD225C71C;
-	Wed,  9 Apr 2025 09:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IxeHFLHW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D3525D52F;
+	Wed,  9 Apr 2025 09:27:26 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9342528F0
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BEC12CDAE;
+	Wed,  9 Apr 2025 09:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744190721; cv=none; b=sWajRix0B0Rcy9EUJwPSdczB9Ky/A0SYsSzdCX3eozw5CdH3wn/3gXeDwBgq+R7x5xLF2C4KTzdYrHG/MclhSlTkOxzLcY4mnlBmpeS/O2D8Qf97p6oUSZ1wkm/uADC2KxyClOEVmk3UQnTv0Tr10YbIdcxzTY7Iyi7omt99YHM=
+	t=1744190845; cv=none; b=LNGbklS40vRpCghaWTaMajyT0nZUIJoC4o5PM5+zKw1rCyVzZQmlo7xQM1hQ9jcZVdMr6/sQHQInX9V2tYZEi4t9Kh5kpixUo5Ir/bvQc/FoVM1tZIJQzQAzwIkQbTJCQw41xlmCXvA79W0KxZSibKK7HQdAYz9setQgrBrztaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744190721; c=relaxed/simple;
-	bh=ENCAoRn5BfFq2DRPgPGEYfkfSWvKxwZ0dR5JIt637qA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ilbq1KwJawlpwA9Vj1P18coRZEGNd52qL6rUJNuddGm5+gLx2OiQW2ttufezZDx4kGVpsSqZ42OC2rfYj9XG08dkRXwU0cupzhJmDcFpWQjn0wQfTy+XVLJKGarH1iKrA7CMYnR9zMKfa8zAD4qFVsYQU1qc69kk5vz98HwrZ2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IxeHFLHW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744190718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iOxMqARnhIE739NzdQalx+rcbMgzJwzjVaS+45XQCpc=;
-	b=IxeHFLHWqWu/6APGv22rTDsoiCQ2VLdO/J+36gyewFxgRYxHsBN1+P/kgRKbmRcPcDLMdJ
-	bLOEpVmusur+MKJLAFESL5vjoIt3qMvSW0xYDVUAXY9OE5DHM0FLJCGzmiqrjI8gUSANVt
-	/aE+HQHlj6RZk841kSKY/HYv/1qXQIQ=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-637-ogPxGEaFNG-2uHgoILepNg-1; Wed, 09 Apr 2025 05:25:16 -0400
-X-MC-Unique: ogPxGEaFNG-2uHgoILepNg-1
-X-Mimecast-MFC-AGG-ID: ogPxGEaFNG-2uHgoILepNg_1744190715
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d0a037f97so39178725e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 02:25:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744190715; x=1744795515;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iOxMqARnhIE739NzdQalx+rcbMgzJwzjVaS+45XQCpc=;
-        b=wESlxerbRJLP/CAmNCcbrKMluzLLNbb9hOQrRcRy8M2g92ZqlA7SwkcUP8jV7Uywer
-         7fPMT6ANQ/Mqf4XQ6cTErE5joy2x9nNGaodyMgzHIj9DB30f+gjoOMS2ylWkBZ5HD+UR
-         k3m+ZSmgQHWlov3mtQvhz2g8CCbzsEsTCdj7SgjQihVPHfIoo8RU8PBgG/dDaXKyqHpJ
-         gLVV1V2y9n5nBIuNIvOrLtCYl3rOvLaLjh8ZOjsvKJ/labMwUOKmBeEvAMUCIgyTlccD
-         avvsRMMIt8X5wuV9qmufaero/LMbr/QCMg6Vne/g332SgaRAi4vpHAFjl8okOmvbwjyU
-         iQHA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4eDhYB1XrEVTw2ob+4cEEnWRohfHvADL8MVY5g20Wxq6qP+x2trSO8pz6V6gbD8c1oigEV+LDgo9wS1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3SAXVIqTNh1Z26NKMFY4M3Oyq4WaMzBw8Ler+PT/Gk0j/Gu8b
-	o3Azg4+1mWH9Of5ZBPgI+hMpMLXFLq1IbKFZcxooiNrY1fZMfNPpX9STNA0eoVGDKquMepvCiPL
-	Y+EziaMURngQiXdic25cNOXPq5WRy4C2u3OVTnRukMeBafHuVpE7J7XIL6lwAOw==
-X-Gm-Gg: ASbGncsrOZI3G9jIBmjPWrQlXDyaTOSHxId28emJo8NmyqfnpVhIig1ziMy7Oema9y7
-	fKRLelqNZMkqjOnX5vLBQ39oYIS8tjx+8FVRnrs7sLbu3HA5F+VK3gQ9kqAuJzKuj6TJiA1r1cX
-	NZqG0FioYLkjvm5IV6ohhY5qRDzeO8SPq1hHC9mpMfFbe2xdCyy3rYeh11RzUTMFCKqIqHNSXMh
-	vfTNW1uQCq8JM5lDjQWLjTGiniWfS18v6cDAZR8yi3bgN2wWEU7aXX64h2ObaKInrDp8IqvmyG5
-	roCvIJ1M+xf33uFW01HSifo2ndPGDV75JQa0+2cqDBVHF3o4feYBwDJodkg83XmJB0H60RHvHgP
-	TD5QOarlyJRfwARqx7bsgld/gEcFNpMbysw==
-X-Received: by 2002:a05:600c:5009:b0:43d:7588:667b with SMTP id 5b1f17b1804b1-43f1fdef66amr21772535e9.10.1744190715408;
-        Wed, 09 Apr 2025 02:25:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE+W5DAxJzTMiI3e984CnLCs8Esm5MPjNOzbxUZrKyvuC4DNY17Iah9nmK3loc5kgXJE4OnRQ==
-X-Received: by 2002:a05:600c:5009:b0:43d:7588:667b with SMTP id 5b1f17b1804b1-43f1fdef66amr21772195e9.10.1744190715044;
-        Wed, 09 Apr 2025 02:25:15 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c70d:8400:ed9b:a3a:88e5:c6a? (p200300cbc70d8400ed9b0a3a88e50c6a.dip0.t-ipconnect.de. [2003:cb:c70d:8400:ed9b:a3a:88e5:c6a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f2338d6ebsm10385655e9.2.2025.04.09.02.25.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 02:25:14 -0700 (PDT)
-Message-ID: <8335de39-024f-4be5-a69f-42949dbf7b33@redhat.com>
-Date: Wed, 9 Apr 2025 11:25:13 +0200
+	s=arc-20240116; t=1744190845; c=relaxed/simple;
+	bh=hO0SDwT67pLhlDTtYRqAD+v/GxTRKC3nAKAXae4odSQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WCyctYudoFmfCerD96XMpv3R+ZeA3/HDORfJjl7TmJZp17v/8gzQM1yp5EmREXY6qY/W8drCmPI0grUSG5njvbItvXT0xcqmOSrUcCsmBZ1pMPI4rE9TghRRpfvSPhK4x8WMRAOOs21mjLa9BIt0AkAlKNqbdOt9IPcQlga8QaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZXcyw6zgBz4f3m7J;
+	Wed,  9 Apr 2025 17:26:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id EDDC91A058E;
+	Wed,  9 Apr 2025 17:27:13 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCnC2BvPfZncubXIw--.15724S3;
+	Wed, 09 Apr 2025 17:27:13 +0800 (CST)
+Subject: Re: [PATCH RFC v2 00/14] md: introduce a new lockless bitmap
+To: Christoph Hellwig <hch@lst.de>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: xni@redhat.com, colyli@kernel.org, axboe@kernel.dk, agk@redhat.com,
+ snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, kbusch@kernel.org, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250328060853.4124527-1-yukuai1@huaweicloud.com>
+ <Z-aCzTWXzFWe4oxU@infradead.org>
+ <c6c608e2-23e7-486f-100a-d1fb6cfff4f2@huaweicloud.com>
+ <20250409083208.GA2326@lst.de>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <115c3b08-aff1-dd97-fe6a-7901452ce62c@huaweicloud.com>
+Date: Wed, 9 Apr 2025 17:27:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/mm: stop prefetching the mmap semaphore on page
- faults
-To: Mateusz Guzik <mjguzik@gmail.com>, dave.hansen@linux.intel.com
-Cc: linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
-References: <20250401143520.1113572-1-mjguzik@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250401143520.1113572-1-mjguzik@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20250409083208.GA2326@lst.de>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnC2BvPfZncubXIw--.15724S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWry5WFWDtw4fJw4fCFykXwb_yoW5CFW3pF
+	ZxKr1Fkr4DJrWxWrn7Zws7XFyFk3ykJFZrJrySq3sYkr98Grna9r18KayYqa4UXr48JF4a
+	vFWvq34rXa15AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 01.04.25 16:35, Mateusz Guzik wrote:
-> The prefetchw dates back decades and the fundamental notion of doing
-> something like this on a lock is shady.
-> 
-> Moreover, for few years now in the fast path faults are handled with RCU
-> + per-vma locking, hopefully not even looking at the lock to begin with.
-> 
-> As such just remove it.
-> 
-> I did not see a point benchmarking this. Given that it is not expected
-> to be looked at by default justifies not doing the prefetch.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
->   arch/x86/mm/fault.c | 3 ---
->   1 file changed, 3 deletions(-)
-> 
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 296d294142c8..697432f63c59 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -13,7 +13,6 @@
->   #include <linux/mmiotrace.h>		/* kmmio_handler, ...		*/
->   #include <linux/perf_event.h>		/* perf_sw_event		*/
->   #include <linux/hugetlb.h>		/* hstate_index_to_shift	*/
-> -#include <linux/prefetch.h>		/* prefetchw			*/
->   #include <linux/context_tracking.h>	/* exception_enter(), ...	*/
->   #include <linux/uaccess.h>		/* faulthandler_disabled()	*/
->   #include <linux/efi.h>			/* efi_crash_gracefully_on_page_fault()*/
-> @@ -1496,8 +1495,6 @@ DEFINE_IDTENTRY_RAW_ERRORCODE(exc_page_fault)
->   
->   	address = cpu_feature_enabled(X86_FEATURE_FRED) ? fred_event_data(regs) : read_cr2();
->   
-> -	prefetchw(&current->mm->mmap_lock);
-> -
->   	/*
->   	 * KVM uses #PF vector to deliver 'page not present' events to guests
->   	 * (asynchronous page fault mechanism). The event happens when a
+Hi,
 
-I'm sure if this would have any value, we'd get notified about it :)
+ÔÚ 2025/04/09 16:32, Christoph Hellwig Ð´µÀ:
+> On Sat, Mar 29, 2025 at 09:11:13AM +0800, Yu Kuai wrote:
+>> The purpose here is to hide the low level bitmap IO implementation to
+>> the API disk->submit_bio(), and the bitmap IO can be converted to buffer
+>> IO to the bdev_file. This is the easiest way that I can think of to
+>> resue the pagecache, with natural ability for dirty page writeback. I do
+>> think about creating a new anon file and implement a new
+>> file_operations, this will be much more complicated.
+> 
+> I've started looking at this a bit now, sorry for the delay.
+> 
+> As far as I can see you use the bitmap file just so that you have your
+> own struct address_space and thus page cache instance and then call
+> read_mapping_page and filemap_write_and_wait_range on it right?
+Yes.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+> 
+> For that you'd be much better of just creating your own trivial
+> file_system_type with an inode fully controlled by your driver
+> that has a trivial set of address_space ops instead of oddly
+> mixing with the block layer.
 
--- 
-Cheers,
+Yes, this is exactly what I said implement a new file_operations(and
+address_space ops), I wanted do this the easy way, just reuse the raw
+block device ops, this way I just need to implement the submit_bio ops
+for new hidden disk.
 
-David / dhildenb
+I can try with new fs type if we really think this solution is too
+hacky, however, the code line will be much more. :(
+
+> 
+> Note that either way I'm not sure using the page cache here is an
+> all that good idea, as we're at the bottom of the I/O stack and
+> thus memory allocations can very easily deadlock.
+
+Yes, for the page from bitmap, this set do the easy way just read and
+ping all realted pages while loading the bitmap. For two reasons:
+
+1) We don't need to allocate and read pages from IO path;(In the first
+RFC version, I'm using a worker to do that).
+2) In the first RFC version, I find and get page in the IO path, turns
+out page reference is an *atomic*, and the overhead is not acceptable;
+
+And the only action from IO path is that if bitmap page is dirty,
+filemap_write_and_wait_range() is called from async worker, the same as
+old bitmap, to flush bitmap dirty pages.
+> 
+> What speaks against using your own folios explicitly allocated at
+> probe time and then just doing manual submit_bio on that?  That's
+> probably not much more code but a lot more robust.
+
+I'm not quite sure if I understand you correctly. Do you means don't use
+pagecache for bitmap IO, and manually create BIOs like the old bitmap,
+meanwhile invent a new solution for synchronism instead of the global
+spin_lock from old bitmap?
+
+Thanks,
+Kuai
+
+> 
+> Also a high level note: the bitmap_operations aren't a very nice
+> interface.  A lot of methods are empty and should just be called
+> conditionally.  Or even better you'd do away with the expensive
+> indirect calls and just directly call either the old or new
+> bitmap code.
+> 
+>> Meanwhile, bitmap file for the old bitmap will be removed sooner or
+>> later, and this bdev_file implementation will compatible with bitmap
+>> file as well.
+> 
+> Which would also mean that at that point the operations vector would
+> be pointless, so we might as well not add it to start with.
+> 
+> .
+> 
 
 
