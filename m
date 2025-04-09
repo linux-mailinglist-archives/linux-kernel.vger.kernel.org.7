@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-596425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B799BA82BCD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:05:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D11BA82BD7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 264FC4A2502
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:59:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A5CE9A771E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E47E2690F0;
-	Wed,  9 Apr 2025 15:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2551267F7F;
+	Wed,  9 Apr 2025 15:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="aRkaHkll"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KyDZVNkg"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF73F267B9F
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9429D21A422;
+	Wed,  9 Apr 2025 15:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744214230; cv=none; b=LjLh8HV7SxMiACDGAfJZGKC4RsstyGvlU4ugz3okAntFXE9mVRz+YvxkTyxJYIKi4dEQwKWMnt9EQwkLv6cyrnJcj+mMXWFtNBqSKkMw7XN/jor6nLRlWJXQFyEM8G1xrKMUbrjSNRIPiWPdCOV9TSh341HQN3H//2HzYHQhFZI=
+	t=1744214120; cv=none; b=H+pwbqabq/DvXArsO3dIc5lmtjrIMSEx5zALuvSsN9LUW4Ofirrn9oCMC2GiiLBSHZUuDsrJHbDgXWgChxtXw0dJUj48LzyxJK61SSDZDa/FWiFANE+n/audHfB61piYq/73XN9g+f99oIKb68chClDe28x3cy6Pltve0G6mOCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744214230; c=relaxed/simple;
-	bh=o5Ss/7SRTUHdQRRvriDzXrgvhGE29l/1IqKebEKZmZc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X4I6/Oz1fXupa62iCwge8J6546qvH1ow+O/lebHuNJl8nFz2Tu/h1ub4Y5vpjxS4wq5JVXMglYLFiY2YtBxDRw1vX4qLEdwj1GAtAOrRN9SGr13/SrpCVnrT9+o6HYL4yPbDUw0bo/y/ZJ7Ic0FsWmGn2MILklE6aORH16UUzB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=aRkaHkll; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=pq+avEanNTE2ylz89cC98GhRgY4JbA8jvhBnU/hKhDg=; b=aRkaHkll0OvdZRwkWzxq6DOO0T
-	XH/MzIcIcYv+GXrVOrvwq2FuyAVdtVPInUe5JNqDqpGTGjycY6NaEhixHFV0pwX0wbhjVKicJr3ks
-	ogEN8MKFhxFNxhFxD/y9jkzztkej8cN+g6ceDJsSwUi0KmWoK8qLg/Q8/fvuumVQwVQuiYs7mgL+c
-	MDUAEy0vyYUK3CSQyFxV5OJybrQMKlcW8/hX8G4JwndjicUUik+ZR7XEkwuTB+fy7APE9XAV6bw8v
-	Bmo0BdBdOJkSX01Mm0VCsjVDVJK2FqayhXkkU2aZA4C0yiKlTZByGhgWLrC7Ks0vJfaedmVgVIZKi
-	Tk8U6hnA==;
-Received: from [77.26.4.178] (helo=edoras.jupiter)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1u2XnP-00ECwp-4e; Wed, 09 Apr 2025 17:56:59 +0200
-From: Jose Maria Casanova Crespo <jmcasanova@igalia.com>
-To: Melissa Wen <mwen@igalia.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Jose Maria Casanova Crespo <jmcasanova@igalia.com>,
-	dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1744214120; c=relaxed/simple;
+	bh=Z/u/y9H7bfrbhw7EKyJc7oXjEouvThyVHbJQ7zqQJAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lJJurgi+cw29k2eKt9EYORNr8EfvFUFvEBbP7a3Lvac0pUHGWdwtxIOkxPZ69b76Yk5WXeypiUzq+3S3H/lkmc+ixDAHaiNdrBhWPD26MSkS+FkalTzrfFu/z3uIKInZeFuUoJ/P7nKquCmWJA6FjJCntUpQ0yPAS1FGYn9E8H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KyDZVNkg; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39c1ef4acf2so4317305f8f.0;
+        Wed, 09 Apr 2025 08:55:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744214115; x=1744818915; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=96rYjwJIel7XEnNFVJz6mXlV9QKD/8bYydzJ5fW5Jfw=;
+        b=KyDZVNkgF23xPtkolHniJFzGMEIgjNLVotLAEwi/sAtHM7iWPcT/WNYdjIrQS4wGE+
+         l0k5EZh84XW6220bctNmB9OwTnTrurnSgi3ofDKHtBByGSseyZKnDtLP7Atg5FM4/mVo
+         gE52Pykb8KtUlPbMX2GDcgSEfNEargrtMrY6KncbokPi6lNVKqYNqzCLuoHKC+yrIctS
+         XoyrhJmdfyV2Uq1ms0fxMUsZ6uYaalyHVSCpmnj+/vFqeOTj8e9NckNFq1s1kEOxvD7g
+         taVr5dK+LguBTfzAVYoCHaCPeKs8GOiCeY8e5u4ZUKNMBEk4aVVqf2yC2bElS26HXhga
+         QTgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744214115; x=1744818915;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=96rYjwJIel7XEnNFVJz6mXlV9QKD/8bYydzJ5fW5Jfw=;
+        b=Dj5FakiZcKqYGctdYG6mjuARYm9PUgVWtY6m6HqhLFShtPMam3sgQUgtmHzQWunb7Z
+         Lm2jYdNdHrjuoR4QNOQTgpYzUpe4ClND07f0Qf8tODbob2/IaAKfTC4t2irbmiNALv1Q
+         yHkPLetU9JLvxX4SiaDsQ5WR6Mp51hORnSVonVVjUGc/jmZcRfiTIsmUNUNxT/L2EpG8
+         ZKI5WXh3eea8ZzyoukAnfWdHKwMaSA+8gMsZHCkh+fYNILZA43Tbev4Efmu4NDRjaV53
+         dL5bpZOoovZ1JSbNSbF+E9RPvU87ojSqoU0YtzN19nxEHMTKm2aHJ4aqtJMFcZyH7DOO
+         AGFw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8mcAbDtnYYa13cCxMWKVyw7Bt06wDhXaWJp7GMZ1ouC6+EEcadtTxgHyeXqaZYbxoimKLYui24D1XfjuW@vger.kernel.org, AJvYcCXuxFIFYHctcwt8jUs24pn/uzMQrJ78D61yPvI3fYps1oq/BpMf6Y4BwrNrHQI9iCn+OGoctCZEXXS5GOFz@vger.kernel.org
+X-Gm-Message-State: AOJu0YykzBhsymzKa56QaQpig8TI1ua0MDcd/06Ll69zYJPqhYrIIsAi
+	3qf4WtzC7PhpFLXNwnJvGGw+xCNTT6oa4Wh0EMGHFzNpXylVuCINxdbtYO1H
+X-Gm-Gg: ASbGncv9gknQNclYVhYDIHEMjM9ycBfBDq7GBwfe6f6d3VFq3+8+4EckSdrd7twUWi9
+	lbm1y9ANfwv42kV3ED9yqVO4tEwPVhIn0IjzeKVad6bqiLDyHoV4eOg86c98z2+UWc3ful6A6Nf
+	ULLoan/NqLLD0uVort4QrSHhnszPeluvleQPqS0RmeQSZ6jhtH0UMDvk+olO28XM9QB5xkbAO88
+	ETnclwB+LIRr/Xc2yUTVrRW/HyPuKGIk4VB5ziJCU7DHyRe8hnf9J0FpwkhqtSYndoEfpsRD4/0
+	Tgu9hNpR/6ZwT5t5i/rrLdxR6M3wABpzvRGhn3AOwG3FtHU2zjzY
+X-Google-Smtp-Source: AGHT+IHr37EuT6rktM5MvALsQLaLzfvBH30bEBRwNNyCckdtfvbLhW4XZugzfoE7BQicQ9uyDyhe4A==
+X-Received: by 2002:a05:6000:2585:b0:391:2306:5131 with SMTP id ffacd0b85a97d-39d87cd329fmr3448191f8f.45.1744214114754;
+        Wed, 09 Apr 2025 08:55:14 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43f20625592sm23893915e9.10.2025.04.09.08.55.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 08:55:14 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/v3d: client ranges from axi_ids are different with V3D 7.1
-Date: Wed,  9 Apr 2025 17:55:04 +0200
-Message-ID: <20250409155504.1093400-3-jmcasanova@igalia.com>
+Subject: [PATCH][V2] select: do_pollfd: add unlikely branch hint return path
+Date: Wed,  9 Apr 2025 16:55:10 +0100
+Message-ID: <20250409155510.577490-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250409155504.1093400-2-jmcasanova@igalia.com>
-References: <20250409155504.1093400-2-jmcasanova@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The client mask has been reduced from 8 bits on V3D 4.1 to 7 bits
-on V3d 7.1, so the ranges for each client are not compatible.
+Adding an unlikely() hint on the fd < 0 comparison return path improves
+run-time performance of the poll() system call. gcov based coverage
+analysis based on running stress-ng and a kernel build shows that this
+path return path is highly unlikely.
 
-A new CSD client can now report MMU errors on 7.1
+Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
+a 6.15-rc1 kernel and a poll of 1024 file descriptors with zero timeout
+shows an call reduction from 32818 ns down to 32635 ns, which is a ~0.5%
+performance improvement.
 
-Signed-off-by: Jose Maria Casanova Crespo <jmcasanova@igalia.com>
+Results based on running 25 tests with turbo disabled (to reduce clock
+freq turbo changes), with 30 second run per test and comparing the number
+of poll() calls per second. The % standard deviation of the 25 tests
+was 0.08%, so results are reliable.
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/v3d/v3d_irq.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/v3d/v3d_irq.c b/drivers/gpu/drm/v3d/v3d_irq.c
-index 1810743ea7b8..0cc1c7e5b412 100644
---- a/drivers/gpu/drm/v3d/v3d_irq.c
-+++ b/drivers/gpu/drm/v3d/v3d_irq.c
-@@ -199,12 +199,31 @@ v3d_hub_irq(int irq, void *arg)
- 			{0xA0, 0xA1, "TFU"},
- 			{0xC0, 0xE0, "MMU"},
- 			{0xE0, 0xE1, "GMP"},
-+		}, v3d71_axi_ids[] = {
-+			{0x00, 0x30, "L2T"},
-+			{0x30, 0x38, "CLE"},
-+			{0x38, 0x39, "PTB"},
-+			{0x39, 0x3A, "PSE"},
-+			{0x3A, 0x3B, "CSD"},
-+			{0x40, 0x60, "TLB"},
-+			{0x60, 0x70, "MMU"},
-+			{0x7C, 0x7E, "TFU"},
-+			{0x7F, 0x80, "GMP"},
- 		};
- 		const char *client = "?";
+V2: replace mincore with poll() in commit message to fix a cut-n-paste error,
+    add more info about the gcov analysis
+
+---
+ fs/select.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/select.c b/fs/select.c
+index 7da531b1cf6b..0eaf3522abe9 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -857,7 +857,7 @@ static inline __poll_t do_pollfd(struct pollfd *pollfd, poll_table *pwait,
+ 	int fd = pollfd->fd;
+ 	__poll_t mask, filter;
  
- 		V3D_WRITE(V3D_MMU_CTL, V3D_READ(V3D_MMU_CTL));
+-	if (fd < 0)
++	if (unlikely(fd < 0))
+ 		return 0;
  
--		if (v3d->ver >= V3D_GEN_41) {
-+		if (v3d->ver >= V3D_GEN_71) {
-+			axi_id = axi_id & 0x7F;
-+			for (size_t i = 0; i < ARRAY_SIZE(v3d71_axi_ids); i++) {
-+				if (axi_id >= v3d71_axi_ids[i].begin &&
-+				    axi_id < v3d71_axi_ids[i].end) {
-+					client = v3d71_axi_ids[i].client;
-+					break;
-+				}
-+			}
-+		} else if (v3d->ver >= V3D_GEN_41) {
- 			axi_id = axi_id & 0xFF;
- 			for (size_t i = 0; i < ARRAY_SIZE(v3d41_axi_ids); i++) {
- 				if (axi_id >= v3d41_axi_ids[i].begin &&
+ 	CLASS(fd, f)(fd);
 -- 
 2.49.0
 
