@@ -1,87 +1,150 @@
-Return-Path: <linux-kernel+bounces-595086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D208CA81A23
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 02:51:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7023A81A32
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 02:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FCD9468B82
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:51:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B06914C137A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109747E107;
-	Wed,  9 Apr 2025 00:51:08 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D645513790B;
+	Wed,  9 Apr 2025 00:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZL1Lxqaf"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43595DDBC
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 00:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9720D8BEA
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 00:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744159867; cv=none; b=XZOo1FfD0mNMiEgt0zmiHR2gFvjXRAjERZvnw9gooWHhEHrI2U+Ui4LBhVjV0tTDyw7KmAL4lPDVAyONdN8cR0qE/moO29GFD2P4qsEoP2825I9seMbTjrW7hyD9UWpwmTrwzEaAnIZixm37epx9j3Jpb4InVpa8iAzP3QQojp8=
+	t=1744160252; cv=none; b=CwrANuTuX8aZ3AmbNNJ/pvXRQFmsHQVjgy8bpTs0z1d3Zk/PiAdw5Z9UKnlLZBrxmJNSgA6ROCX+B7RvR4tMpNU4+QRiXtfgIE8urx2iYpGNthkCgD5piqgxkGOj/3jND2XbelXoXjkaeDM6r3oHasedykUqpkTm/dacYQVmwKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744159867; c=relaxed/simple;
-	bh=TydRVdPn+p6hylClZuMmzrQoXaa/p+EK3FiKnsrOQRM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eqW1nQ5VTRqiEJrgCk61BW7Kd/4k9jHWj4KrfotsvwrNcgYFgHOVFlK9Ph4kZyerwOUAN6nSjHgcexb68v13TWWQZ6wIx+J8hMHosRg/3IrdaIRaajYWJoqNrV0oy5q7p20/q5Czbo/1CVMlSVGtQJQZjQvzdibO+liDDhNXiA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d43d1df18bso66443035ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 17:51:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744159863; x=1744764663;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pSzNwONIWh5y6FDtc3cWxp0nEsJS5BN4r4vz+IUgfpU=;
-        b=wSc6AIPdG0wlkzFoxYRTX8pSVNazYB2/BF7+P7U0oB3pL7UHVmtEv0+kGNJ9wSzNUC
-         OchhPmJdnshqq/Rkmm0CtVtVz2GkVjLyP+UJX2HKsmWmoYBkHSb2pp4AlaCzlB/ad/uO
-         kbTst85QHPGEHX1xxmMO66eJUvEmUMPig6uaGIF8ovyiFzEW92ZXYmvmoaIvYnkA80l0
-         Pg5DhpG5sQM36NPdQot07EmkEAE46dPH4Gap9Miw93wuCfT5sT9IRTHXHRP83c1d9ebN
-         d8fZBhRrkMIkYbGVBk7OQ12oHx6erBpsr3MTlqaQ5yeKLeY3sIsYgcsVWi3oYRkHQID8
-         pkPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsDUbADqOCYl3l28fMzSdu/5HdLURUopfihUjdTmrQpWj6OSG3jXPDfiXGNvRo+EkgCRDw9JBmFw7MxDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFfL9r4O6kxhf3N7qi2lA3XEVV3mS2MrPVHx7fywGHDLftS3rY
-	NlF2oIo4CdcsBNTZzKqeb2t8GF37/auGGrr+NgJLC8a5Ku8hU37Rup/4iefKimy42T37HQpw2FO
-	dLvi9CEGp6HuhXsnwZaKi2NCHqEYS/1bi22107DOUsXNJ8WV8JEjchi8=
-X-Google-Smtp-Source: AGHT+IGP3SHGjP4CEscrYMBDEv2pt/DiAlII8XgEtwQLWd9ajzXsCEylkgmUCYsXFNDl6Ke3TjVsURm3qIa7TEqGyctboH+/nKuw
+	s=arc-20240116; t=1744160252; c=relaxed/simple;
+	bh=el5cStiYN6ldNZC/HVBQbK10K82xnqqs9ET4H6q4jqw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kakMmQijmhkd0N57rDcYjxhaGE+r8AIvHuTDJj88MODJ7b8uPaLRumtokdK7wxzbFQkv8UvZxgoAWIOQ1sIvttaqeVJ3nJJAMIABCs4J14HzRVYFyanbdlbpdaIwf0Sik/LoVgev/CQExGPv+nZS7d9SYqZ+S5jemhkNbulB4rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZL1Lxqaf; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1744160246; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=3u6V+RZKHcCI6WcdOem5D2yjNJ6f17csLnu4f6RrGNE=;
+	b=ZL1LxqafeNJpojIAMygEhFaQio1w2YuPXfIscK4styDP8iqcKg4GMNtE+X4TBdHFbWldPAOmm/V2me/fGOtB2eJb0XaD8irOZFRq4wFkmIuqYHku+D5ZkO2tLmXEdgIwG4xAOIqMF7PZ8g5zIzZqHenM819pdZ0svumHOVUVIwA=
+Received: from 30.74.144.109(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WWHHqoY_1744159928 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 09 Apr 2025 08:52:09 +0800
+Message-ID: <0b668098-5623-4062-b219-605dc91c0877@linux.alibaba.com>
+Date: Wed, 9 Apr 2025 08:52:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1529:b0:3d3:dece:3dab with SMTP id
- e9e14a558f8ab-3d776c8075dmr9286035ab.1.1744159863337; Tue, 08 Apr 2025
- 17:51:03 -0700 (PDT)
-Date: Tue, 08 Apr 2025 17:51:03 -0700
-In-Reply-To: <tencent_8AC8BB0933599E021BCA4B351B8B252FBA08@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67f5c477.050a0220.258fea.0004.GAE@google.com>
-Subject: Re: [syzbot] [wireless?] general protection fault in cfg80211_mlme_deauth
-From: syzbot <syzbot+00778a9a557a2a5e1a33@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-unregister_netdevice: waiting for DEV to become free
-
-unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm: huge_memory: add folio_mark_accessed() when
+ zapping file THP
+To: Zi Yan <ziy@nvidia.com>, Johannes Weiner <hannes@cmpxchg.org>
+Cc: akpm@linux-foundation.org, willy@infradead.org, david@redhat.com,
+ 21cnbao@gmail.com, ryan.roberts@arm.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <34bab7a60930472377afbfeefe05b980d0512aa4.1744118089.git.baolin.wang@linux.alibaba.com>
+ <282545E0-5B66-492D-B63F-838C6F066A22@nvidia.com>
+ <20250408160205.GD816@cmpxchg.org>
+ <2C391CDE-0C6D-4ECD-9EDF-5CC165999EA2@nvidia.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <2C391CDE-0C6D-4ECD-9EDF-5CC165999EA2@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-Tested on:
 
-commit:         a2458824 Merge tag 'linux_kselftest-kunit-6.15-rc2' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1269b74c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=eecd7902e39d7933
-dashboard link: https://syzkaller.appspot.com/bug?extid=00778a9a557a2a5e1a33
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1549b74c580000
+On 2025/4/9 00:12, Zi Yan wrote:
+> On 8 Apr 2025, at 12:02, Johannes Weiner wrote:
+> 
+>> On Tue, Apr 08, 2025 at 11:29:43AM -0400, Zi Yan wrote:
+>>> On 8 Apr 2025, at 9:16, Baolin Wang wrote:
+>>>
+>>>> When investigating performance issues during file folio unmap, I noticed some
+>>>> behavioral differences in handling non-PMD-sized folios and PMD-sized folios.
+>>>> For non-PMD-sized file folios, it will call folio_mark_accessed() to mark the
+>>>> folio as having seen activity, but this is not done for PMD-sized folios.
+>>>>
+>>>> This might not cause obvious issues, but a potential problem could be that,
+>>>> it might lead to more frequent refaults of PMD-sized file folios under memory
+>>>> pressure. Therefore, I am unsure whether the folio_mark_accessed() should be
+>>
+>> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
+Thanks for taking a look.
+
+>>> How likely will the system get PMD-sized file folios when it is under
+>>> memory pressure? Johannes’ recent patch increases THP allocation successful
+>>> rate, maybe it was not happening before but will be after the patch?
+>>
+>> It's not so much about whether the refault can construct a THP again,
+>> but whether we should have evicted this data under pressure to begin
+>> with. It's more about IO and paging. And it's the same consideration
+>> why we transfer the young bit for base pages.
+> 
+> Got it. It clarifies things a lot.
+> 
+>>
+>> Sometimes file contents are only accessed through relatively
+>> short-lived mappings. But they can nevertheless be accessed a lot and
+>> be hot. It's important to not lose that information on unmap, and end
+>> up kicking out a frequently used cache page.
+
+Yes, that's what I also understand. Thanks for the explanation.
+
+> So folio_mark_accessed() will prevent the folio from going down in
+> the LRU lists, when PTE access information is transferred to the folio.
+> The addition of folio_mark_accessed() makes sense to me now.
+> 
+> Baolin, can you include Johannes’s explanation in your commit log?
+
+Sure. Will do.
+
+> 
+> Feel free to add Acked-by: Zi Yan <ziy@nvidia.com>
+
+Thanks for reviewing.
+
+>>>> added for PMD-sized file folios?
+>>>
+>>> Do you see any performance change after your patch?
+
+Not yet, just some theoretical analysis from code inspection.
+
+>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>> ---
+>>>>   mm/huge_memory.c | 4 ++++
+>>>>   1 file changed, 4 insertions(+)
+>>>>
+>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>> index 6ac6d468af0d..b3ade7ac5bbf 100644
+>>>> --- a/mm/huge_memory.c
+>>>> +++ b/mm/huge_memory.c
+>>>> @@ -2262,6 +2262,10 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>>>>   				zap_deposited_table(tlb->mm, pmd);
+>>>>   			add_mm_counter(tlb->mm, mm_counter_file(folio),
+>>>>   				       -HPAGE_PMD_NR);
+>>>> +
+>>>> +			if (flush_needed && pmd_young(orig_pmd) &&
+>>>> +			    likely(vma_has_recency(vma)))
+>>>> +				folio_mark_accessed(folio);
+>>>>   		}
+>>>>
+>>>>   		spin_unlock(ptl);
+>>>> -- 
+>>>> 2.43.5
+> 
+> 
+> Best Regards,
+> Yan, Zi
 
