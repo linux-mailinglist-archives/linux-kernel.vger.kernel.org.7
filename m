@@ -1,164 +1,234 @@
-Return-Path: <linux-kernel+bounces-596062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63979A82672
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:41:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71483A8269A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B49BE9000D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:41:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5024E16A053
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBE0264F88;
-	Wed,  9 Apr 2025 13:41:09 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4A726461B;
+	Wed,  9 Apr 2025 13:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HWRgIlrg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC2826461B;
-	Wed,  9 Apr 2025 13:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE8F264FAE;
+	Wed,  9 Apr 2025 13:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744206068; cv=none; b=T/dqsjzviCtxJl2awLFK+XQSGM809x9hUU3citqjg6wB2ykp5cIb73QBqfoP6Ey9q/x5LdyBNwM9ffwkRxTmzt4PBv0irJc5ooJZFm4LwEmnRY8S2WNkH5EvWaQkqNcwuVowkyQAfPBeH0TAJ/cM7ANF6ybvuyHMNZbQe4kFdIk=
+	t=1744206308; cv=none; b=P6i7pn+Ve8Y75pneGQqfjfdZKqqFEir/RGUIvRx7rfq15CmjlPCzNQI7u0CYbUV36xT2XfpfaUcIgZvrI8+ATr7ZRda5gNT+YCyRA+c2ULTg5VuCQytsvinlRfJ9wvD62IPxWohtEhcmFwDABmdV4onaru4G6LWXUVttNpq6Q5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744206068; c=relaxed/simple;
-	bh=+1atZIFJ5wuqFQAdnBtVviK8HirErlh/0SzSdL6g428=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=p7tq+XIUvodycdWLVUlYWgkFZwoQ3033dNpdGxo56vE7Dc9doIa1tWdXMnLM4GyycpIrKzGsUL4aIgvqT+hjxqqJePUptetVW85XaQ3LiQ+KtKcQOF38Qj6WLIjsuWRYX/k1vr4TCOGv0mky1llQfQI7u8fVoSFF90T5Zck7stU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73450C4CEE7;
-	Wed,  9 Apr 2025 13:41:07 +0000 (UTC)
-Date: Wed, 9 Apr 2025 09:42:26 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH] ftrace: Show subops in enabled_functions
-Message-ID: <20250409094226.23f75293@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744206308; c=relaxed/simple;
+	bh=XRXZVaaIKpLxs1YQiTVdMowxNrf5xQjhz6daXuKTH7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uxX+xnq4l2A+va7439u0NtGnFXTRhKdod7pkNqEELXokheRPm3D/xH7DVaMw84qhWdZ21N40w58HK9Eh2wBnbX6kEwdEugYPEgdZNRtKF5isXI8w8fFbH5UmiMqMeuYHVOLYJ4urtZ+Umil9SuQ5eo+z2VqPGN39hRfjSsmLZrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HWRgIlrg; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744206307; x=1775742307;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XRXZVaaIKpLxs1YQiTVdMowxNrf5xQjhz6daXuKTH7o=;
+  b=HWRgIlrgB09X4bn/+xRbM2Juu7pN65UVI2qgrMZ0TvGgTei7X9Ghwjr/
+   rZ8xg2eMUCkK6oY7+YXlE6FhKxWKiHPpfamlOvEaczO1TkMn/VX2wzu1T
+   vHIGv6HHHprmmoIu58vmdX+y3Ro3AQcENG+htC0oESHRQJJtv9Pe3g/MX
+   ng+BFLDEDqOu7tyZ9mjJXt312H9brKprczo81JWEvo4ATAZYrpCAnDg9t
+   34cpzyKC/WHdDaqGa1zYjqyp663ZRjs1p0eBMe2OP+hPqljuFjE33Ekda
+   pnv+gr4LxatqIs+GEO38P29QYr912GVF1Ph51OARW8f6/LO3tpCVquYKE
+   g==;
+X-CSE-ConnectionGUID: fLwJu6uWRUGENDIWctfN9Q==
+X-CSE-MsgGUID: nK4ciFJISXmEOrrhBDDOBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56316990"
+X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
+   d="scan'208";a="56316990"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 06:45:05 -0700
+X-CSE-ConnectionGUID: Q7HdWu6oSqycABrrsRjOzQ==
+X-CSE-MsgGUID: Iwd85F9iTKGgugmgI/sJBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
+   d="scan'208";a="133463845"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 09 Apr 2025 06:45:01 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u2Vjf-0008uF-10;
+	Wed, 09 Apr 2025 13:44:59 +0000
+Date: Wed, 9 Apr 2025 21:44:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>
+Subject: Re: [PATCH 24/24] arm64: Kconfig: Enable GICv5
+Message-ID: <202504092127.YaPW3UWk-lkp@intel.com>
+References: <20250408-gicv5-host-v1-24-1f26db465f8d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250408-gicv5-host-v1-24-1f26db465f8d@kernel.org>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Hi Lorenzo,
 
-The function graph infrastructure uses subops of the function tracer.
-These are not shown in enabled_functions. Add a "subops:" section to the
-enabled_functions line to show what functions are attached via subops. If
-the subops is from the function_graph infrastructure, then show the entry
-and return callbacks that are attached.
+kernel test robot noticed the following build errors:
 
-Here's an example of the output:
+[auto build test ERROR on 0af2f6be1b4281385b618cb86ad946eded089ac8]
 
-schedule_on_each_cpu (1)                tramp: 0xffffffffc03ef000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60     subops: {ent:trace_graph_entry+0x0/0x20 ret:trace_graph_return+0x0/0x150}
+url:    https://github.com/intel-lab-lkp/linux/commits/Lorenzo-Pieralisi/Documentation-devicetree-bindings-Add-GICv5-DT-bindings/20250408-190630
+base:   0af2f6be1b4281385b618cb86ad946eded089ac8
+patch link:    https://lore.kernel.org/r/20250408-gicv5-host-v1-24-1f26db465f8d%40kernel.org
+patch subject: [PATCH 24/24] arm64: Kconfig: Enable GICv5
+config: arm64-randconfig-001-20250409 (https://download.01.org/0day-ci/archive/20250409/202504092127.YaPW3UWk-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 92c93f5286b9ff33f27ff694d2dc33da1c07afdd)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250409/202504092127.YaPW3UWk-lkp@intel.com/reproduce)
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- include/linux/ftrace.h |  2 ++
- kernel/trace/fgraph.c  |  2 ++
- kernel/trace/ftrace.c  | 36 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 40 insertions(+)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504092127.YaPW3UWk-lkp@intel.com/
 
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index fbabc3d848b3..fc939ca2ff66 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -328,6 +328,7 @@ ftrace_func_t ftrace_ops_get_func(struct ftrace_ops *ops);
-  * DIRECT - Used by the direct ftrace_ops helper for direct functions
-  *            (internal ftrace only, should not be used by others)
-  * SUBOP  - Is controlled by another op in field managed.
-+ * GRAPH  - Is a component of the fgraph_ops structure
-  */
- enum {
- 	FTRACE_OPS_FL_ENABLED			= BIT(0),
-@@ -349,6 +350,7 @@ enum {
- 	FTRACE_OPS_FL_PERMANENT                 = BIT(16),
- 	FTRACE_OPS_FL_DIRECT			= BIT(17),
- 	FTRACE_OPS_FL_SUBOP			= BIT(18),
-+	FTRACE_OPS_FL_GRAPH			= BIT(19),
- };
- 
- #ifndef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 8d925cbdce3a..c5b207992fb4 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -1382,6 +1382,8 @@ int register_ftrace_graph(struct fgraph_ops *gops)
- 	/* Always save the function, and reset at unregistering */
- 	gops->saved_func = gops->entryfunc;
- 
-+	gops->ops.flags |= FTRACE_OPS_FL_GRAPH;
-+
- 	ret = ftrace_startup_subops(&graph_ops, &gops->ops, command);
- 	if (!ret)
- 		fgraph_array[i] = gops;
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 1a48aedb5255..cd62f5ab3dfe 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -4323,6 +4323,40 @@ static inline int print_rec(struct seq_file *m, unsigned long ip)
- }
- #endif
- 
-+static void print_subops(struct seq_file *m, struct ftrace_ops *ops, struct dyn_ftrace *rec)
-+{
-+	struct ftrace_ops *subops;
-+	bool first = true;
-+
-+	list_for_each_entry(subops, &ops->subop_list, list) {
-+		if (!((subops->flags & FTRACE_OPS_FL_ENABLED) &&
-+		      hash_contains_ip(rec->ip, subops->func_hash)))
-+			continue;
-+		if (first) {
-+			seq_printf(m, "\tsubops:");
-+			first = false;
-+		}
-+		if (subops->flags & FTRACE_OPS_FL_GRAPH) {
-+			struct fgraph_ops *gops;
-+
-+			gops = container_of(subops, struct fgraph_ops, ops);
-+			seq_printf(m, " {ent:%pS ret:%pS}",
-+				   (void *)gops->entryfunc,
-+				   (void *)gops->retfunc);
-+			continue;
-+		}
-+		if (subops->trampoline) {
-+			seq_printf(m, " {%pS (%pS)}",
-+				   (void *)subops->trampoline,
-+				   (void *)subops->func);
-+			add_trampoline_func(m, subops, rec);
-+		} else {
-+			seq_printf(m, " {%pS}",
-+				   (void *)subops->func);
-+		}
-+	}
-+}
-+
- static int t_show(struct seq_file *m, void *v)
- {
- 	struct ftrace_iterator *iter = m->private;
-@@ -4375,6 +4409,7 @@ static int t_show(struct seq_file *m, void *v)
- 						   (void *)ops->trampoline,
- 						   (void *)ops->func);
- 					add_trampoline_func(m, ops, rec);
-+					print_subops(m, ops, rec);
- 					ops = ftrace_find_tramp_ops_next(rec, ops);
- 				} while (ops);
- 			} else
-@@ -4387,6 +4422,7 @@ static int t_show(struct seq_file *m, void *v)
- 			if (ops) {
- 				seq_printf(m, "\tops: %pS (%pS)",
- 					   ops, ops->func);
-+				print_subops(m, ops, rec);
- 			} else {
- 				seq_puts(m, "\tops: ERROR!");
- 			}
+All errors (new ones prefixed by >>):
+
+>> drivers/irqchip/irq-gic-v5-iwb.c:298:3: error: cannot jump from this goto statement to its label
+     298 |                 goto out_free;
+         |                 ^
+   drivers/irqchip/irq-gic-v5-iwb.c:300:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
+     300 |         guard(mutex)(&its->dev_alloc_lock);
+         |         ^
+   include/linux/cleanup.h:319:15: note: expanded from macro 'guard'
+     319 |         CLASS(_name, __UNIQUE_ID(guard))
+         |                      ^
+   include/linux/compiler.h:166:29: note: expanded from macro '__UNIQUE_ID'
+     166 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+         |                             ^
+   include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
+      84 | #define __PASTE(a,b) ___PASTE(a,b)
+         |                      ^
+   include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
+      83 | #define ___PASTE(a,b) a##b
+         |                       ^
+   <scratch space>:82:1: note: expanded from here
+      82 | __UNIQUE_ID_guard576
+         | ^
+   drivers/irqchip/irq-gic-v5-iwb.c:288:3: error: cannot jump from this goto statement to its label
+     288 |                 goto out_free;
+         |                 ^
+   drivers/irqchip/irq-gic-v5-iwb.c:300:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
+     300 |         guard(mutex)(&its->dev_alloc_lock);
+         |         ^
+   include/linux/cleanup.h:319:15: note: expanded from macro 'guard'
+     319 |         CLASS(_name, __UNIQUE_ID(guard))
+         |                      ^
+   include/linux/compiler.h:166:29: note: expanded from macro '__UNIQUE_ID'
+     166 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+         |                             ^
+   include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
+      84 | #define __PASTE(a,b) ___PASTE(a,b)
+         |                      ^
+   include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
+      83 | #define ___PASTE(a,b) a##b
+         |                       ^
+   <scratch space>:82:1: note: expanded from here
+      82 | __UNIQUE_ID_guard576
+         | ^
+   2 errors generated.
+
+
+vim +298 drivers/irqchip/irq-gic-v5-iwb.c
+
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  247  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  248  static struct gicv5_iwb_chip_data *
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  249  __init gicv5_iwb_init_bases(void __iomem *iwb_base,
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  250  			     struct fwnode_handle *handle,
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  251  			     struct irq_domain *parent_domain, u32 device_id)
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  252  {
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  253  	u32 nr_wires, idr0, cr0;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  254  	struct gicv5_iwb_chip_data *iwb_node;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  255  	struct msi_domain_info *msi_info;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  256  	struct gicv5_its_chip_data *its;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  257  	struct gicv5_its_dev *its_dev;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  258  	int ret;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  259  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  260  	msi_info = msi_get_domain_info(parent_domain);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  261  	its = msi_info->data;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  262  	if (!its) {
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  263  		pr_warn("IWB %pOF can't find parent ITS, bailing\n",
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  264  			to_of_node(handle));
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  265  		return ERR_PTR(-ENODEV);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  266  	}
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  267  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  268  	iwb_node = kzalloc(sizeof(*iwb_node), GFP_KERNEL);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  269  	if (!iwb_node)
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  270  		return ERR_PTR(-ENOMEM);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  271  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  272  	iwb_node->iwb_base = iwb_base;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  273  	iwb_node->device_id = device_id;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  274  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  275  	idr0 = iwb_readl(iwb_node, GICV5_IWB_IDR0);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  276  	nr_wires = (FIELD_GET(GICV5_IWB_IDR0_IW_RANGE, idr0) + 1) * 32;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  277  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  278  	iwb_node->domain = irq_domain_create_hierarchy(parent_domain, 0,
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  279  			   nr_wires, handle, &gicv5_iwb_irq_domain_ops,
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  280  			   iwb_node);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  281  	irq_domain_update_bus_token(iwb_node->domain, DOMAIN_BUS_WIRED);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  282  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  283  	cr0 = iwb_readl(iwb_node, GICV5_IWB_CR0);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  284  	if (!FIELD_GET(GICV5_IWB_CR0_IWBEN, cr0)) {
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  285  		pr_err("IWB %s must be enabled in firmware\n",
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  286  		       fwnode_get_name(handle));
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  287  		ret = -EINVAL;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  288  		goto out_free;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  289  	}
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  290  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  291  	iwb_node->nr_regs = FIELD_GET(GICV5_IWB_IDR0_IW_RANGE, idr0) + 1;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  292  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  293  	for (unsigned int n = 0; n < iwb_node->nr_regs; n++)
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  294  		iwb_writel(iwb_node, 0, GICV5_IWB_WENABLER + (sizeof(u32) * n));
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  295  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  296  	ret = gicv5_iwb_wait_for_wenabler(iwb_node);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  297  	if (ret)
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08 @298  		goto out_free;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  299  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  300  	guard(mutex)(&its->dev_alloc_lock);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  301  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  302  	its_dev = gicv5_its_alloc_device(its, roundup_pow_of_two(nr_wires),
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  303  					 device_id, true);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  304  	if (IS_ERR(its_dev)) {
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  305  		ret = -ENODEV;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  306  		goto out_free;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  307  	}
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  308  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  309  	return iwb_node;
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  310  out_free:
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  311  	irq_domain_remove(iwb_node->domain);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  312  	kfree(iwb_node);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  313  
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  314  	return ERR_PTR(ret);
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  315  }
+6b60a5125729caf Lorenzo Pieralisi 2025-04-08  316  
+
 -- 
-2.47.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
