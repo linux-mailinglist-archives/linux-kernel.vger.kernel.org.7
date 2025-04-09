@@ -1,157 +1,163 @@
-Return-Path: <linux-kernel+bounces-596610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC26A82E32
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:10:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80719A82E31
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63846444BE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:09:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B361B66081
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE32270EC5;
-	Wed,  9 Apr 2025 18:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB96270ED1;
+	Wed,  9 Apr 2025 18:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FNgcZyQI"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="MhpdCp/9"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB911CF8B;
-	Wed,  9 Apr 2025 18:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434211CF8B
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 18:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744222158; cv=none; b=m8A66j3/yFBZQpXYBqO6k0FKhFy/qSTSUZTxO9vGBnlpc5G+VND5LSLq/ruYRYhclzyCsuApoiwmpKhLnn59xfCDQvUstRNQs0jAhsDIul0rS9uPL2GqIyQa0tb8Pzigz02cwi2jLq4HCjnUGW83S3KmU1ezAyRW43DxI7It6io=
+	t=1744222197; cv=none; b=Csij4GrR7nSAWy+kp4ofg6swVnLvJsrZf2/DEL87wzMj3yBHjGy3cYeeRrHKCYdmQ5TTkADLY7vUDKcHxLnin8xE4GNnVbkNgX1gPzScmNuRybnUNilsP1KHV2SS7BXOI7w4MhtCg1hXodLZgEz7h0Q7+1S5OgctsQZRsM7uPKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744222158; c=relaxed/simple;
-	bh=DtTCKK7iCTevDaulFE/y82vN/R8ldpmuojMHLJ3+uxQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZWTJa4IsJ1+3yJcLttiCUFU2kU6BvLkKP/gJ3LFMMy65Rdh8tOyuK5YdApkC6LwwIQKgKpM8s3Rl4PZz8sufacHjGUxxdBji5kPYL4Kurvu6PH1uToP1y5Cf51FD7IjAl+C//TYYBXMWVxCkueWYue7395P+ebVI9bjdChMpHaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FNgcZyQI; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e5c7d6b96fso12394050a12.3;
-        Wed, 09 Apr 2025 11:09:14 -0700 (PDT)
+	s=arc-20240116; t=1744222197; c=relaxed/simple;
+	bh=csD3xSMbgrDPv5RDbSufZkLmV7nSPfQVdf+sgWjlRKw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XdMwlUL34GdyPssj1SLTvMCgYeeiUY2cpBehH/LW0xudmKsP6lhiCMMnU9PGHBZi30H28pQTBe8KRybZjmhXwmV9gtcie6564GMmgBQsVYTjoqNJfg9VDgFODrffHTL/NRvFEC6Njr1NBMlfFTLMokjuaGmn5xm7UVTx9DUAabU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=MhpdCp/9; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neverthere.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-224171d6826so101731795ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 11:09:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744222153; x=1744826953; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DtTCKK7iCTevDaulFE/y82vN/R8ldpmuojMHLJ3+uxQ=;
-        b=FNgcZyQIq7P0pTakBNpfslK87cBd/UbOh+mWyGfZnF+6JBhXF42Q6YFjA8q4YZK5OP
-         aRy88lF0eNL2UgyTDqZtDQtul5u6Yssu9n5UiOPkxtbFN/K1nAQowuKgB4dXwE2X2rO1
-         JE/NknCfXgkt/a4rRwz0t4PSN8sv2ddbQod2CdCyHuegvVSzB4Xb/735FW+TvvOsK/yz
-         73rQ+onCYoQBFoF/K3RbUrhIcdVgsOt9hXluZmKcVnZ9sL2r1OCsyvs5NBNFX/uv0p+k
-         lvtnbzh23GDjcLEkmtWNJVKiFa1paqt9ABbQ2MsocpaGMWp5WTrmDHNY7lI2hkLKbu46
-         OCKA==
+        d=neverthere.org; s=google; t=1744222195; x=1744826995; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pYrGToWVdj+sV2ioOcCHVAVkWswfBeGzYQuytZUWl2c=;
+        b=MhpdCp/9Btd595RM53F1CmJ7At2hqM2QsH4nvMhqHWt2n933IPiHbqK5ivWnzdrifv
+         jxRrdzQAjIhd300L2hdiuE18QBIr12nPP0GhsCCpmldb8iHZOJB8SrGsb1wZ7eXEdSbi
+         ikWCg0C+hSR0JyFg5CznMqKmluKRKDS3kPo/gJHw2rhBlpQ3pQ6w4zNqRo0rLs23z0T9
+         IISV1DH2XCeLCVlZ+veV3SdwB+MqaMPyO2hMzatmIngECg2YrMZbWzWe0W2k9842JMaf
+         Fhe2EzRTine7st7uILWS+J+zReCbI3txMrnYsfXv+n2rrFU+Eg7etE4frnEZAKvgjtH4
+         VIGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744222153; x=1744826953;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DtTCKK7iCTevDaulFE/y82vN/R8ldpmuojMHLJ3+uxQ=;
-        b=idFXyF1wW1dCo6YloD8XJiqwGZby8nvEClZsUSruTg62ej7WVfj+wU7mB9Jxkm7Ouv
-         PHdH10BFgPENogJ4Iou/NjgSKWaTpr9aiJTvZEIYc9cYoO/X5Knu9J6U2oDEB/oOE08i
-         HioBXyaXgljSQIr1cjtNwhmv1ZZsMFCbH4gIBeLXdKSKui90a527aypCR7dqtxkjQqqY
-         LqqV8iVyW18qR+zi6UdzvA+/W1MDwigFWNK4rdncBduIxqJb+3ik6ysk6i8uaM9bTwRY
-         gpGM30s5+5yk1uq2C4Ac56WWMkCGQ1Xu+yfFHCHXt3vaQzAxxuOWhXG0ZLIzCnrJBp3Z
-         iP+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVRQGH3Ydb0/zilrTcPAIuF1ADjht3mQHoNlOG2MwTkDOtUo/SIBBBEvOwQDpB+jNahYLUj/V27R07n1C0=@vger.kernel.org, AJvYcCVdtU7hDwmMP+0aXj896HG4YRzGO0Z+pB2PtmBfwqQuC53uT/TyOlSOMzERMyxV2rv2Ts5xdRY/bwoCF1wE@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTlOqYzMbE8jfLxrzMvx57OCWuMwzWjmFR+mQiVv67krMnrfsv
-	LDUtz2/I8IprfL/z4EcYq2pk0rwtV7QodaJH07x1vKPnzkcP9bcn
-X-Gm-Gg: ASbGnctNfruPt8tQt5Sg2ITU8Kjjan4j0ZuxGAA/wPk1o/0f2iSrVEZ01hOGR8j5PAk
-	94ThapmsSLnE8UZuB7qqbaMH8IkADrx6uvPgr+KomrCGzGHyXvNZGAX92KAth+35awBlYM5L7/+
-	Tiplw9ICPVf3vwqci5rt8Qe7jkvPg5nyMaXC2zdPKJIV/R9iDwMmP/T7ivuBxtUGlJlAGTr/j2R
-	UxLCj6pqlILyHL4msd0OPTLRUbpWH52w+4fbbFRTXgTWev0hOVKp7jKPZhxpAvkq00tUXkQBgXM
-	YfhvvuLNNKIp7i5vdRuTUYOx6NpYp68ZOF5BSOR9k0G8BpVYzh75wU/qkg==
-X-Google-Smtp-Source: AGHT+IHROJVO3GnWtbq6DcJP3REe9bvDX/RZD2YzKK7u7UX/9R2YSeBIZCwQu6Ke9jXvHTdeMSyzlg==
-X-Received: by 2002:a05:6402:84e:b0:5eb:95a8:da89 with SMTP id 4fb4d7f45d1cf-5f2f7752814mr3274642a12.32.1744222152610;
-        Wed, 09 Apr 2025 11:09:12 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:908:e842:bf20:f49e:dfb1:b879:dac0])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f2fbc2e3f8sm1117633a12.48.2025.04.09.11.09.09
+        d=1e100.net; s=20230601; t=1744222195; x=1744826995;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pYrGToWVdj+sV2ioOcCHVAVkWswfBeGzYQuytZUWl2c=;
+        b=jFFScJPa42j2msS2W43BAK/CNbKhQijlOIjVitkR5qVBAtUdFhq8/wdScTIH4Dx5mt
+         Zp88zd5AgcKSCsQERaZcUEgB05RxjQVMLSY6Ev4K5SqBsNRq5vbzgKYspGEP3DZa1vtX
+         jC0DsZiJfON13z/oQG3GEOr5n3HRVb4Wh3wpCG+rluspT+nzVP9JUiiY1PyEhixYd5a6
+         REp29DnsHEJRtyJk3HnS1JlZOc4j0sWyxi+FBG0PDUg1ba/GZ7Z96xHNQoul25P5UoST
+         vd2h1Q06QCnJWhU4g5SXJGwRvyXYxnstivChoWOUsN1IlyXFQWR3Z6PG8Hdj1+43IGZO
+         2Nfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdxDJcC7e7XTrDs+JxGjIxHyHhMA7A4sKrQ3CV1bhctHQfidM04Dr/uiAhPyWqlk2+Ngvz7PKv9Y3/Dcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxinFs5AH9edqwt5cAT4AFd4sC/mlzM0GDOp9SBTxKjG4X23BRr
+	bZK41wGE9m4dZEbIOGPEuq1R/GnsNuvkq24Wx3U9HjO6y2OY826g2ZU6qnnkXKgMo5Q3fbzuZBY
+	=
+X-Gm-Gg: ASbGncslp8GSc00DDd6nn7sBHJu0Yz2AmbSP4sxmCgv4VeSl7fIw3kEYdaehpPiP7oF
+	8/iZE1l7MkZ+Rq1/8Jhs+pkyFE7NkKtmSkvlr7wbQ5WwaVZ72Pp11F+tT7DOrELcIivNsr/AZ35
+	7IXetIxko/yqeTvcMhqw2mdqKR3Xj6Qxth0bwtBB42NTVJ7/2/b28Z03PelZhgR0Na8U+Ys81C+
+	nYMvrGVUu0Iq9ikZBlqMiXlLAE4eMSOKkwp+gCkIasxy0bQBBRTkWvbwoZd3PI8mtx9cSLvgrLz
+	gFw3aJGZhd2z3YFUsv65+eVASZpKc52/JevlrQhO9jhuQbKbBVDilcYtRKebZOu2C5dhC5MVWXb
+	m0hnwlg==
+X-Google-Smtp-Source: AGHT+IGT5+uwOr+yxY/pgNk55XEAsRW4cr1nQCtxEkyrOG2eZh5gneJ9m1CIWXdz0YIBy7sb9vS8iQ==
+X-Received: by 2002:a17:902:db08:b0:220:be86:a421 with SMTP id d9443c01a7336-22ac3fe6feemr61587985ad.38.1744222195517;
+        Wed, 09 Apr 2025 11:09:55 -0700 (PDT)
+Received: from tiamat (c-69-181-214-135.hsd1.ca.comcast.net. [69.181.214.135])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1d4659csm1717653b3a.65.2025.04.09.11.09.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 11:09:11 -0700 (PDT)
-From: Ole Schuerks <ole0811sch@gmail.com>
-To: masahiroy@kernel.org
-Cc: deltaone@debian.org,
-	jan.sollmann@rub.de,
-	jude.gyimah@rub.de,
-	linux-kbuild@vger.kernel.org,
+        Wed, 09 Apr 2025 11:09:55 -0700 (PDT)
+From: Michael Rubin <matchstick@neverthere.org>
+To: gregkh@linuxfoundation.org,
+	dpenkler@gmail.com,
+	dan.carpenter@linaro.org
+Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	mcgrof@kernel.org,
-	nathan@kernel.org,
-	nicolas@fjasle.eu,
-	ole0811sch@gmail.com,
-	thorsten.berger@rub.de
-Subject: Re: [PATCH v7 00/11] kconfig: Add support for conflict resolution
-Date: Wed,  9 Apr 2025 20:08:46 +0200
-Message-Id: <20250409180846.23742-1-ole0811sch@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAK7LNAT48101gZzcHF3U-VL1i0Ekns6zXKpNDb3MnScoSNr-kw@mail.gmail.com>
-References: <CAK7LNAT48101gZzcHF3U-VL1i0Ekns6zXKpNDb3MnScoSNr-kw@mail.gmail.com>
+	Michael Rubin <matchstick@neverthere.org>
+Subject: [PATCH v1 00/23] staging: gpib: u8 over uint8_t and u64 over uint64_t
+Date: Wed,  9 Apr 2025 18:09:30 +0000
+Message-ID: <20250409180953.398686-1-matchstick@neverthere.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Feb 11, 2025 at 01:46 AM, Masahiro Yamada wrote:=0D
-> On Tue, Feb 11, 2025 at 12:43=E2=80=AFAM Luis Chamberlain <mcgrof@kernel.=
-org> wrote:=0D
->>=0D
->> On Mon, Feb 10, 2025 at 02:00:52PM +0900, Masahiro Yamada wrote:=0D
->>> Thanks for this, but I have no plans to merge the SAT solver.=0D
->>>=0D
->>> The reason is that my future plan is to move toolchain selection=0D
->>> to the Kconfig stage instead of specifying it statically from the comma=
-nd line.=0D
->>=0D
->> That makes sense.=0D
->>=0D
->>> This approach was suggested by Linus [1], and to achieve that,=0D
->>> the shell evaluation must be dynamically re-evaluated [2].=0D
->>=0D
->> Sure.=0D
->>=0D
->>> The SAT solver would likely conflict with this plan. At least due to th=
-e=0D
->>> significant amount of additional code, which would be an obstacle.=0D
->>=0D
->> I can't see how the toolchain selection, if set on Kconfig can't be=0D
->> leveraged later to enable / disable the SAT solver, however I can=0D
->> see the amount of code shuffling incurred to be an extra hurdle to=0D
->> address and a preference to leave that for later.=0D
->>=0D
->> In other words, I susepct it is still possible to evaluate to=0D
->> add support for the SAT solver post toolchain kconfig integration.=0D
->>=0D
->> Thoughts?=0D
->=0D
->=0D
-> It depends on how the dynamic shell evaluation is implemented.=0D
-> This is not limited to bool/tristate, but SAT solver only works for=0D
-> those two types.=0D
-=0D
-=0D
-I just wanted to clarify, configfix already supports string/int/hex values.=
-=0D
-Configfix uses SAT-variables that correspond to a kconfig-symbol being set=
-=0D
-to a specific value (e.g., one such variable would be `NR_CPUS=3D1`). The=0D
-sample values for which such a variable is created are currently collected=
-=0D
-from default and range properties.=0D
-=0D
-This collecting of sample values is going to be the main challenge of=0D
-integrating configfix with dynamic shell evaluations. I believe the=0D
-integration is feasible, but even if serious problems should arise, a=0D
-decent alternative is to have configfix simply ignore the possibility of=0D
-changing the symbol values that are inputs to or results of dynamic shell=0D
-evaluations. That should amount to roughly the same capabilities as the=0D
-current version without dynamic shell evaluations.=0D
-=0D
-Best regards,=0D
-Ole Schuerks=0D
+Preferring u8 over uint8_t and preferring u64 over uint64_t to adhere to
+Linux code style.
+
+* Patch 1 - Patch 22:
+	Reported by checkpatch.pl.
+	CHECK: Prefer kernel type 'u8' over 'uint8_t'
+
+* Patch 23:
+	Reported by checkpatch.pl.
+	CHECK: Prefer kernel type 'u64' over 'uint64_t'
+
+Michael Rubin (23):
+  staging: gpib: cb7210: u8 over uint8_t
+  staging: gpib: ibsys: u8 over uint8_t
+  staging: gpib: fluke_gpib: u8 over uint8_t
+  staging: gpib: fmh_gpib: u8 over uint8_t
+  staging: gpib: gpib_proto: u8 over uint8_t
+  staging: gpib: gpib_types: u8 over uint8_t
+  staging: gpib: nec7210: u8 over uint8_t
+  staging: gpib: tms9914: u8 over uint8_t
+  staging: gpib: ines: u8 over uint8_t
+  staging: gpib: gpib_ioctl: u8 over uint8_t
+  staging: gpib: gpib_user: u8 over uint8_t
+  staging: gpib: agilent_82350b: u8 over uint8_t
+  staging: gpib: agilent_82357a: u8 over uint8_t
+  staging: gpib: cec: u8 over uint8_t
+  staging: gpib: gpib_os: u8 over uint8_t
+  staging: gpib: gpib_bitbang: u8 over uint8_t
+  staging: gpib: hp_82335: u8 over uint8_t
+  staging: gpib: hp_82341: u8 over uint8_t
+  staging: gpib: lpvo_usb_gpib: u8 over uint8_t
+  staging: gpib: ni_usb: u8 over uint8_t
+  staging: gpib: pc2: u8 over uint8_t
+  staging: gpib: tnt4882: u8 over uint8_t
+  staging: gpib: gpib_ioctl: u64 over uint64_t
+
+ .../gpib/agilent_82350b/agilent_82350b.c      | 22 +++++-----
+ .../gpib/agilent_82357a/agilent_82357a.c      | 20 +++++-----
+ drivers/staging/gpib/cb7210/cb7210.c          | 26 ++++++------
+ drivers/staging/gpib/cb7210/cb7210.h          | 12 +++---
+ drivers/staging/gpib/cec/cec_gpib.c           | 16 ++++----
+ drivers/staging/gpib/common/gpib_os.c         |  8 ++--
+ drivers/staging/gpib/common/iblib.c           | 12 +++---
+ drivers/staging/gpib/common/ibsys.h           |  6 +--
+ drivers/staging/gpib/eastwood/fluke_gpib.c    | 28 ++++++-------
+ drivers/staging/gpib/eastwood/fluke_gpib.h    | 12 +++---
+ drivers/staging/gpib/fmh_gpib/fmh_gpib.c      | 32 +++++++--------
+ drivers/staging/gpib/fmh_gpib/fmh_gpib.h      |  6 +--
+ drivers/staging/gpib/gpio/gpib_bitbang.c      | 20 +++++-----
+ drivers/staging/gpib/hp_82335/hp82335.c       | 20 +++++-----
+ drivers/staging/gpib/hp_82341/hp_82341.c      | 26 ++++++------
+ drivers/staging/gpib/include/gpib_proto.h     | 14 +++----
+ drivers/staging/gpib/include/gpib_types.h     | 18 ++++-----
+ drivers/staging/gpib/include/nec7210.h        | 33 ++++++++-------
+ drivers/staging/gpib/include/tms9914.h        | 24 +++++------
+ drivers/staging/gpib/ines/ines.h              | 20 +++++-----
+ drivers/staging/gpib/ines/ines_gpib.c         | 22 +++++-----
+ .../gpib/lpvo_usb_gpib/lpvo_usb_gpib.c        |  8 ++--
+ drivers/staging/gpib/nec7210/nec7210.c        | 40 +++++++++----------
+ drivers/staging/gpib/ni_usb/ni_usb_gpib.c     | 16 ++++----
+ drivers/staging/gpib/pc2/pc2_gpib.c           | 16 ++++----
+ drivers/staging/gpib/tms9914/tms9914.c        | 34 ++++++++--------
+ drivers/staging/gpib/tnt4882/tnt4882_gpib.c   | 28 ++++++-------
+ drivers/staging/gpib/uapi/gpib_ioctl.h        | 16 ++++----
+ drivers/staging/gpib/uapi/gpib_user.h         | 26 ++++++------
+ 29 files changed, 290 insertions(+), 291 deletions(-)
+
+-- 
+2.43.0
+
 
