@@ -1,202 +1,170 @@
-Return-Path: <linux-kernel+bounces-596936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4831CA83301
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:10:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E1BA832FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19DF98A3FE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:08:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 041FB7A64C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF0B214226;
-	Wed,  9 Apr 2025 21:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA1D2144B0;
+	Wed,  9 Apr 2025 21:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="baw1qUL+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ssY7+9Wr"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E48B1E25E8;
-	Wed,  9 Apr 2025 21:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003D81C07C3;
+	Wed,  9 Apr 2025 21:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744232942; cv=none; b=gMOdKjSsopJsKrP/lfXjuERzVBztWJrTDlgO/KLT8W8DDI8JOtS/bNdkR8IVrgv5VCZeo5Dydbd4t6B+vfgIYFuHTWNtQkGKBXRmNBVLrPSLU8o71laDs7hmsilqSpbRJDIl3Q0VEAnufnVpfNzerpz2mxAgvjTLF0/n+M5Vit4=
+	t=1744232921; cv=none; b=JAl20rCczZdxfcVi5+83UyzjY7fbFCx0M2YgC19nJWV029TpD51+X3DqDTevXlmo0ft54AO0L6EOAo1AeswsdocsdcpaWLJ1rXDs1V93S3WkBsEQE89AQo6AJ11xP3tI29K+ihP2QjT8DABd/3nxXYRqkpXSpvpcaz+2/9Io/Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744232942; c=relaxed/simple;
-	bh=9FwTOr+ksva7BcWKrWAypW1bPBx+E92LgMFk7X5OZQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LoHyy5pR6zuiAhKMODBx0v2pvgc/hX037m2d+cc8cbz3nBDsurdW3o4OJ0LSdZJhY3k38PzfUJrdwmHRE5lC8p3p5QOnw13wmtmd2lV88mSiQkBoiVzcJAzYS47a6gXW6MIsxZwSyEzRc1LBEQKDnjTfdNUNiH8810ee4Ed5ySo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=baw1qUL+; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744232941; x=1775768941;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9FwTOr+ksva7BcWKrWAypW1bPBx+E92LgMFk7X5OZQw=;
-  b=baw1qUL+iKw3QVkMa3yHvG9nBCX17LWKrW7MjjL4SDtfiEdvPcbXHZ6N
-   pkhY+KHVbbWx0yuumbXZZS9dUdtTbJ/sVyYp99y6c0dnMiOhO28Tc9Gns
-   C0R9iWlwZUPa47WaIaNTomWcZDQtOCyPoUO+ttpZKYyq1Ntu7pAdV6XlW
-   dlb5+UN1ZMq4xaRBpY7qf+a15iosxOCP+yJ2Upm1X4rzr+/WrjkshuMau
-   l2fmhjaUh5C9ydDd8GpR09krh8onoeeOMLugYjB+Fqs+DVz2UiNcKB8Tx
-   U0Py6Q9KWFhT7ixJWjW/xeAyQnz6gvn0b10XPj/GjEumWb5hl5bZ6y+rw
-   g==;
-X-CSE-ConnectionGUID: GwgRp4y/RQeB/a8o2r/MEA==
-X-CSE-MsgGUID: JmPlGaUcRsWSRQMnVqP+6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="45820533"
-X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
-   d="scan'208";a="45820533"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 14:09:00 -0700
-X-CSE-ConnectionGUID: dRISYAzsS+uR+D60TYeNVA==
-X-CSE-MsgGUID: PYadYmTTQIqQqMRejQ+j1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
-   d="scan'208";a="133816955"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 09 Apr 2025 14:08:57 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u2cfG-0009KJ-14;
-	Wed, 09 Apr 2025 21:08:54 +0000
-Date: Thu, 10 Apr 2025 05:08:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>, broonie@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stuart Henderson <stuarth@opensource.cirrus.com>,
-	Qi Zhou <qi.zhou@cirrus.com>,
-	Piotr Stankiewicz <piotrs@opensource.cirrus.com>
-Subject: Re: [PATCH 2/2] ASoC: cs48l32: Add driver for Cirrus Logic CS48L32
- audio DSP
-Message-ID: <202504100405.7znimLX7-lkp@intel.com>
-References: <20250408162310.670041-3-rf@opensource.cirrus.com>
+	s=arc-20240116; t=1744232921; c=relaxed/simple;
+	bh=+856jdLoLLEWWyhtLMynN+pZtUSFemOl6XgY4gF3HzI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MTuQSDwYZP3aX2ljQt3Sc4B4RM2xIayn74imiMo5XrV0qs8GvWqkXY8XvQTSoHHzO6G6jWAwT+KtObAUUxuSRPRcGUOLRhqGnk/N1RSUIC6Cdga18KOV3ivturcncQjj3g1vXEt3bLpdwsoaww5vmtnb2xYGhXh5KWn2Zwf7N5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ssY7+9Wr; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZXwXk6Gy2zm0yTh;
+	Wed,  9 Apr 2025 21:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1744232916; x=1746824917; bh=BhvBwC5z/9Md8oVXDSlpI8ae
+	/9CWhxuq5tuzJzRJjFg=; b=ssY7+9WrKDiMCS7FMwgSBpVMfMv77FB29qiKeYYJ
+	/c0uVOXUtIMQwxCw8O9aoDU3slZR3TDewugWoSfW+O7ujkXMX5mx5uZEqJDfV+w0
+	oNEIeiACxNBHltzCsTtRC/6TNObLNdw7tjO5NpcBfAIuqEVWavn9q4Z8nDM+JPSX
+	ng3TljFWV3W3E55cWplWfzAVwPEcc8ekM+fi68omXFvMNaDHvMb5Pdx+lcYIsgU1
+	taI5GpVckB2yro5vZEu/yvSWVAJEw9nn6SJTl4pQu5LzxekyR4eBiZ7zzgJDN7Kl
+	dyuTa9iPZjj3yWvjhu4S8Ty8DWhfTmONETMgdEZfJ3znGg==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id AYpURVZjfLjP; Wed,  9 Apr 2025 21:08:36 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZXwXY5bd8zm0ySJ;
+	Wed,  9 Apr 2025 21:08:28 +0000 (UTC)
+Message-ID: <15df00e9-d5d9-4d16-b334-e1b8cb96f654@acm.org>
+Date: Wed, 9 Apr 2025 14:08:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408162310.670041-3-rf@opensource.cirrus.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V6 2/3] scsi: ufs-qcom: Add support to dump MCQ registers
+To: Manish Pandey <quic_mapa@quicinc.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com,
+ quic_bhaskarv@quicinc.com, quic_rampraka@quicinc.com, quic_cang@quicinc.com,
+ quic_nguyenb@quicinc.com
+References: <20250407142110.16925-1-quic_mapa@quicinc.com>
+ <20250407142110.16925-3-quic_mapa@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250407142110.16925-3-quic_mapa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Richard,
+On 4/7/25 7:21 AM, Manish Pandey wrote:
+> +int ufs_qcom_dump_regs(struct ufs_hba *hba, size_t offset, size_t len,
+> +		     const char *prefix, enum ufshcd_res id)
+> +{
+> +	u32 *regs __free(kfree) = NULL;
+> +	size_t pos;
+> +
+> +	if (offset % 4 != 0 || len % 4 != 0)
+> +		return -EINVAL;
+> +
+> +	regs = kzalloc(len, GFP_ATOMIC);
+> +	if (!regs)
+> +		return -ENOMEM;
+> +
+> +	for (pos = 0; pos < len; pos += 4)
+> +		regs[pos / 4] = readl(hba->res[id].base + offset + pos);
+> +
+> +	print_hex_dump(KERN_ERR, prefix,
+> +			len > 4 ? DUMP_PREFIX_OFFSET : DUMP_PREFIX_NONE,
+> +				16, 4, regs, len, false);
 
-kernel test robot noticed the following build warnings:
+The indentation of the print_hex_dump() arguments is not compliant with
+the Linux kernel coding style.
 
-[auto build test WARNING on broonie-sound/for-next]
-[also build test WARNING on tiwai-sound/for-next tiwai-sound/for-linus robh/for-next linus/master v6.15-rc1 next-20250409]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> +	return 0;
+> +}
+> +
+> +static void ufs_qcom_dump_mcq_hci_regs(struct ufs_hba *hba)
+> +{
+> +	/* voluntarily yield the CPU to prevent CPU hog during data dumps */
+> +	/* RES_MCQ_1 */
+> +	ufs_qcom_dump_regs(hba, 0x0, 256 * 4, "MCQ HCI 1da0000-1da03f0", RES_MCQ);
+> +	cond_resched();
+> +
+> +	/* RES_MCQ_2 */
+> +	ufs_qcom_dump_regs(hba, 0x400, 256 * 4, "MCQ HCI 1da0400-1da07f0", RES_MCQ);
+> +	cond_resched();
+> +
+> +	/*RES_MCQ_VS */
+> +	ufs_qcom_dump_regs(hba, 0x0, 5 * 4, "MCQ VS 1da4000-1da4010", RES_MCQ_VS);
+> +	cond_resched();
+> +
+> +	/* RES_MCQ_SQD_1 */
+> +	ufs_qcom_dump_regs(hba, 0x0, 256 * 4, "MCQ SQD 1da5000-1da53f0", RES_MCQ_SQD);
+> +	cond_resched();
+> +
+> +	/* RES_MCQ_SQD_2 */
+> +	ufs_qcom_dump_regs(hba, 0x400, 256 * 4, "MCQ SQD 1da5400-1da57f0", RES_MCQ_SQD);
+> +	cond_resched();
+> +
+> +	/* RES_MCQ_SQD_3 */
+> +	ufs_qcom_dump_regs(hba, 0x800, 256 * 4, "MCQ SQD 1da5800-1da5bf0", RES_MCQ_SQD);
+> +	cond_resched();
+> +
+> +	/* RES_MCQ_SQD_4 */
+> +	ufs_qcom_dump_regs(hba, 0xc00, 256 * 4, "MCQ SQD 1da5c00-1da5ff0", RES_MCQ_SQD);
+> +	cond_resched();
+> +
+> +	/* RES_MCQ_SQD_5 */
+> +	ufs_qcom_dump_regs(hba, 0x1000, 256 * 4, "MCQ SQD 1da6000-1da63f0", RES_MCQ_SQD);
+> +	cond_resched();
+> +
+> +	/* RES_MCQ_SQD_6 */
+> +	ufs_qcom_dump_regs(hba, 0x1400, 256 * 4, "MCQ SQD 1da6400-1da67f0", RES_MCQ_SQD);
+> +	cond_resched();
+> +
+> +	/* RES_MCQ_SQD_7 */
+> +	ufs_qcom_dump_regs(hba, 0x1800, 256 * 4, "MCQ SQD 1da6800-1da6bf0", RES_MCQ_SQD);
+> +	cond_resched();
+> +
+> +	/* RES_MCQ_SQD_8 */
+> +	ufs_qcom_dump_regs(hba, 0x1c00, 256 * 4, "MCQ SQD 1da6c00-1da6ff0", RES_MCQ_SQD);
+> +	cond_resched();
+> +}
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Richard-Fitzgerald/ASoC-dt-bindings-Add-Cirrus-Logic-CS48L32-audio-DSP/20250409-002905
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-patch link:    https://lore.kernel.org/r/20250408162310.670041-3-rf%40opensource.cirrus.com
-patch subject: [PATCH 2/2] ASoC: cs48l32: Add driver for Cirrus Logic CS48L32 audio DSP
-config: powerpc64-randconfig-003-20250410 (https://download.01.org/0day-ci/archive/20250410/202504100405.7znimLX7-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 92c93f5286b9ff33f27ff694d2dc33da1c07afdd)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250410/202504100405.7znimLX7-lkp@intel.com/reproduce)
+There is a lot of repetition in the ufs_qcom_dump_mcq_hci_regs()
+function. Has it been considered to move the cond_resched() call into
+ufs_qcom_dump_regs() such that it occurs only once in this patch?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504100405.7znimLX7-lkp@intel.com/
+For the ufs_qcom_dump_mcq_hci_regs() function, a table-based approach
+may be appropriate since what that function does is to call
+ufs_qcom_dump_regs() repeatedly but each time with different arguments.
 
-All warnings (new ones prefixed by >>):
+Thanks,
 
->> sound/soc/codecs/cs48l32.c:3435:3: warning: variable 'i' is uninitialized when used here [-Wuninitialized]
-    3435 |                 i + 1, ana_mode_l, ana_mode_r);
-         |                 ^
-   include/linux/dev_printk.h:165:39: note: expanded from macro 'dev_dbg'
-     165 |         dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                              ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:274:19: note: expanded from macro 'dynamic_dev_dbg'
-     274 |                            dev, fmt, ##__VA_ARGS__)
-         |                                        ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:59: note: expanded from macro '_dynamic_func_call'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |                                                                  ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:248:65: note: expanded from macro '_dynamic_func_call_cls'
-     248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
-         |                                                                        ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:224:15: note: expanded from macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   sound/soc/codecs/cs48l32.c:3408:7: note: initialize the variable 'i' to silence this warning
-    3408 |         int i;
-         |              ^
-         |               = 0
-   1 warning generated.
-
-
-vim +/i +3435 sound/soc/codecs/cs48l32.c
-
-  3402	
-  3403	static int cs48l32_init_inputs(struct snd_soc_component *component)
-  3404	{
-  3405		struct cs48l32_codec *cs48l32_codec = snd_soc_component_get_drvdata(component);
-  3406		struct regmap *regmap = cs48l32_codec->core.regmap;
-  3407		unsigned int ana_mode_l, ana_mode_r, dig_mode;
-  3408		int i;
-  3409	
-  3410		/*
-  3411		 * Initialize input modes from the A settings. For muxed inputs the
-  3412		 * B settings will be applied if the mux is changed
-  3413		 */
-  3414		switch (cs48l32_codec->in_type[0][0]) {
-  3415		default:
-  3416		case CS48L32_IN_TYPE_DIFF:
-  3417			ana_mode_l = 0;
-  3418			break;
-  3419		case CS48L32_IN_TYPE_SE:
-  3420			ana_mode_l = 1 << CS48L32_INx_SRC_SHIFT;
-  3421			break;
-  3422		}
-  3423	
-  3424		switch (cs48l32_codec->in_type[1][0]) {
-  3425		default:
-  3426		case CS48L32_IN_TYPE_DIFF:
-  3427			ana_mode_r = 0;
-  3428			break;
-  3429		case CS48L32_IN_TYPE_SE:
-  3430			ana_mode_r = 1 << CS48L32_INx_SRC_SHIFT;
-  3431			break;
-  3432		}
-  3433	
-  3434		dev_dbg(cs48l32_codec->core.dev, "IN%d_1 Analogue mode=#%x,#%x\n",
-> 3435			i + 1, ana_mode_l, ana_mode_r);
-  3436	
-  3437		regmap_update_bits(regmap,
-  3438				   CS48L32_IN1L_CONTROL1,
-  3439				   CS48L32_INx_SRC_MASK,
-  3440				   ana_mode_l);
-  3441	
-  3442		regmap_update_bits(regmap,
-  3443				   CS48L32_IN1R_CONTROL1,
-  3444				   CS48L32_INx_SRC_MASK,
-  3445				   ana_mode_r);
-  3446	
-  3447		for (i = 0; i < ARRAY_SIZE(cs48l32_codec->pdm_sup); i++) {
-  3448			dig_mode = cs48l32_codec->pdm_sup[i] << CS48L32_IN1_PDM_SUP_SHIFT;
-  3449	
-  3450			dev_dbg(cs48l32_codec->core.dev, "IN%d PDM_SUP=#%x\n", i + 1, dig_mode);
-  3451	
-  3452			regmap_update_bits(regmap,
-  3453					   CS48L32_INPUT1_CONTROL1 + (i * 0x40),
-  3454					   CS48L32_IN1_PDM_SUP_MASK, dig_mode);
-  3455		}
-  3456	
-  3457		return 0;
-  3458	}
-  3459	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Bart.
 
