@@ -1,178 +1,169 @@
-Return-Path: <linux-kernel+bounces-595557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D975A82034
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:37:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E214A82039
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DBA24A6941
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:36:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 198C14C3D27
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBFB25D1FF;
-	Wed,  9 Apr 2025 08:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3AA25D1E4;
+	Wed,  9 Apr 2025 08:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="JxOHfEpA"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LToqfAyZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F98F22D4D4;
-	Wed,  9 Apr 2025 08:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57D924EF6E;
+	Wed,  9 Apr 2025 08:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744187771; cv=none; b=Akkfs69WJHnJONS/AEiFXDvW4lqK1w0IpTcPW8aNhorq6L16EWsRNhlLvL7xeljhYayNiweqUJnDVxMOyGWvjll2CsYbhKQ6IDxXJznpOk6HHEdeDmwpJjZ3cGy/j6si2tm19kvk1Vdodu74mMTU15vPaI/49zomqFDHB0uqVDM=
+	t=1744187794; cv=none; b=AZtj15h3+mAouOYsTDEIv5m46460r0YplYfxiApYwMCJSZ1jUncMO3z+68WJqAglwohHoKxULBW+l41+6mWYZ2uzfPmymNmaI6fKsf9nM7jRIbHEu/gmW9cTbyjc8aS79I4zTpjd/8R7aDKMl5g9Ue7ACzJYTVvgFEIKwOTJW/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744187771; c=relaxed/simple;
-	bh=ndma1L/vxUMfXkDwaQPrl7wCz2eHmQ0e3LdcIJkDHd0=;
+	s=arc-20240116; t=1744187794; c=relaxed/simple;
+	bh=vX+yZVgdB9/F5MVYvn74uJvoipKBMh2DUd7klkO7k9w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q9Oq7AIbJ2r027kHSv4GO4YzaTf1iqRr5ijeIfRsIqd61di3FuXoySFe2SwkYgrDTVdi5sWfzMTaH0JOs48F/IbzIXwvyNwQX20jud1tQZNuVljstw2mAi5VMnnCtmWUIXm4d6fDgG9l6r9TB0QQa9Cnin3RZiShMAhHQofURCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=JxOHfEpA; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Q3ecYacwG4Aorvd7wfw9EgBZG2LtEkkY7JvpnDXhS48=; b=JxOHfEpADDwTcatS2ifIslfKRW
-	7sPd0FGyUmBnOsdVtrf88xQQYyNdqrJwverEDU/kZrjwttigjkfiWrUqsqoS5Eim3L9KT7L7adelx
-	CbLsaCDvLtsUUOzw2Pm0XuUrmtm8MCN/ia2POGL5WFxwkYgh4fLaPS8o5tn7Mnm062w5bA1QUj6x8
-	a9yejTFS3Rfk7W+EB55xuo2GzIROnZdn86J18+M7YSb1P3q6RBoWFV0avEkPf8txze37hcOBl/ZER
-	8U0xxf6857IFe+FbIjTGwqUYmrMPMw94U6bYSLpeRCkvkv/olb9aOBwOTFdx5dh4IPQDNrPAYie7T
-	716a9zzQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47374)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1u2Quf-0000GO-1d;
-	Wed, 09 Apr 2025 09:36:01 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1u2Qud-0002Pp-0k;
-	Wed, 09 Apr 2025 09:35:59 +0100
-Date: Wed, 9 Apr 2025 09:35:59 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: Re: [PATCH net-next v2 0/2] Add Marvell PHY PTP support
-Message-ID: <Z_Yxb6-qclDSWk01@shell.armlinux.org.uk>
-References: <20250407-feature_marvell_ptp-v2-0-a297d3214846@bootlin.com>
- <Z_P3FKEhv1s0y4d7@shell.armlinux.org.uk>
- <20250407182028.75531758@kmaincent-XPS-13-7390>
- <Z_P-K7mEEH6ProlC@shell.armlinux.org.uk>
- <20250407183914.4ec135c8@kmaincent-XPS-13-7390>
- <Z_WJO9g5Al1Yr_LX@shell.armlinux.org.uk>
- <20250409103130.43ab4179@kmaincent-XPS-13-7390>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jEl946XomQ2tBoBVGKZHK/qxVPLdSQ47VZeQZJz5OZXs/EyK1P7VZEMNpQRublB/jOONhYUouSJY+xWLuTahmAArjZJy8U1hj8LxK2JibwCAjwPisO0FlYzv5RNPH7Ht1oCtih+4/cNp8phigAOzsClFSYsoRD5EkfVejc9s8sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LToqfAyZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F804C4CEE3;
+	Wed,  9 Apr 2025 08:36:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744187794;
+	bh=vX+yZVgdB9/F5MVYvn74uJvoipKBMh2DUd7klkO7k9w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LToqfAyZBCAwbrvMCMoeHIj0Lxug8wM554pi3hWLDi3YOomdjvMQXBliD4xgl8EGj
+	 NpK5L6cfCseJR/8kFixUbWCaUvKUTek8yVYvtgzcBJAXlIeMcGtniKZrD70Wm65yIV
+	 ubUWNgqGxqw88dpvGkBezGf3uXGpI1oabMCUj8ujP+iB5s9RvIy5aZKznDwjisK+AL
+	 cFVBwnnTLexCbcss/E6LORaCIdmfxwBkHDb0ZfLvKtFd5yWzjMKJnYJqFEsprn1i1O
+	 JX7Rnyj5DkpdRw6FL16CCxJyqSlCp0yivyoHecmuJzsUuXmefr9RjUzoAsbKXSkAdw
+	 ULp4ymWjwMBQg==
+Date: Wed, 9 Apr 2025 10:36:29 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: sforshee@kernel.org, linux-fsdevel@vger.kernel.org, 
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, Linux regressions mailing list <regressions@lists.linux.dev>, 
+	lennart@poettering.net
+Subject: Re: 6.15-rc1/regression/bisected - commit 474f7825d533 is broke
+ systemd-nspawn on my system
+Message-ID: <20250409-sektflaschen-gecko-27c021fbd222@brauner>
+References: <CABXGCsPXitW-5USFdP4fTGt5vh5J8MRZV+8J873tn7NYXU61wQ@mail.gmail.com>
+ <20250407-unmodern-abkam-ce0395573fc2@brauner>
+ <CABXGCsNk2ycAKBtOG6fum016sa_-O9kD04betBVyiUTWwuBqsQ@mail.gmail.com>
+ <20250408-regal-kommt-724350b8a186@brauner>
+ <CABXGCsPzb3KzJQph_PCg6N7526FEMqtidejNRZ0heF6Mv2xwdA@mail.gmail.com>
+ <20250408-vorher-karnickel-330646f410bd@brauner>
+ <CABXGCsO56m1e6EO82JNxT6-DGt6isp-9Wf1fk4Pk10ju=-zmVA@mail.gmail.com>
+ <20250408-deprimierend-bewandern-6c2878453555@brauner>
+ <CABXGCsPx7X7aTtS_9XopXb29r9n=Tjxm7ik007XDOhzS7-WCSw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250409103130.43ab4179@kmaincent-XPS-13-7390>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABXGCsPx7X7aTtS_9XopXb29r9n=Tjxm7ik007XDOhzS7-WCSw@mail.gmail.com>
 
-On Wed, Apr 09, 2025 at 10:31:30AM +0200, Kory Maincent wrote:
-> On Tue, 8 Apr 2025 21:38:19 +0100
-> "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+On Tue, Apr 08, 2025 at 06:05:23PM +0500, Mikhail Gavrilov wrote:
+> On Tue, Apr 8, 2025 at 3:22 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> >
+> > Resolved it for you:
+> >
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=work.bisect
 > 
-> > On Mon, Apr 07, 2025 at 06:39:14PM +0200, Kory Maincent wrote:
-> > > On Mon, 7 Apr 2025 17:32:43 +0100
-> > > "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
-> > > > I'm preferring to my emails in connection with:
-> > > > 
-> > > > https://lore.kernel.org/r/ZzTMhGDoi3WcY6MR@shell.armlinux.org.uk
-> > > > 
-> > > > when I tested your work last time, it seemed that what was merged hadn't
-> > > > even been tested. In the last email, you said you'd look into it, but I
-> > > > didn't hear anything further. Have the problems I reported been
-> > > > addressed?  
-> > > 
-> > > It wasn't merged it was 19th version and it worked and was tested, but not
-> > > with the best development design. I have replied to you that I will do some
-> > > change in v20 to address this.
-> > > https://lore.kernel.org/all/20241113171443.697ac278@kmaincent-XPS-13-7390/
-> > > 
-> > > It gets finally merged in v21.  
-> > 
-> > Okay, so I'm pleased to report that this now works on the Macchiatobin:
-> > 
-> > where phc 2 is the mvpp2 clock, and phc 0 is the PHY.
+> I can confirm that systemd-nspawn is working on the kernel built from
+> branch work.bisect.
+> It confirms the correctness of my bisect.
 > 
-> Great, thank you for the testing!
+> > sudo /usr/bin/systemd-nspawn -q --ephemeral -D /var/lib/mock/fedora-rawhide-x86_64/root
+> [sudo] password for mikhail:
+> [root@root-7a084a9cbe689c8a ~]# uname -r
+> 6.15.0-rc1-work.bisect+
 > 
-> > 
-> > # ethtool -T eth2
-> > Time stamping parameters for eth2:
-> > Capabilities:
-> >         hardware-transmit
-> >         software-transmit
-> >         hardware-receive
-> >         software-receive
-> >         software-system-clock
-> >         hardware-raw-clock
-> > PTP Hardware Clock: 2
-> > Hardware Transmit Timestamp Modes:
-> >         off
-> >         on
-> >         onestep-sync
-> >         onestep-p2p
-> > Hardware Receive Filter Modes:
-> >         none
-> >         all
-> > 
-> > So I guess that means that by default it's using PHC 2, and thus using
-> > the MVPP2 PTP implementation - which is good, it means that when we add
-> > Marvell PHY support, this won't switch to the PHY implementation.
-> 
-> Yes.
-> 
-> > 
-> > Now, testing ethtool:
-> > 
-> > $ ./ethtool --get-hwtimestamp-cfg eth2
-> > netlink error: Operation not supported
-> > 
-> > Using ynl:
-> > 
-> > # ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --dump
-> > tsconfig-get --json '{"header":{"dev-name":"eth2"}}' []
-> > 
-> > So, It's better, something still isn't correct as there's no
-> > configuration. Maybe mvpp2 needs updating first? If that's the case,
-> > then we're not yet in a position to merge PHY PTP support.
-> 
-> Indeed mvpp2 has not been update to support the ndo_hwtstamp_get/set NDOs.
-> Vlad had made some work to update all net drivers to these NDOs but he never
-> send it mainline:
-> https://github.com/vladimiroltean/linux/commits/ndo-hwtstamp-v9
-> 
-> I have already try to ping him on this but without success.
-> Vlad any idea on when you could send your series upstream?
+> And I attached the full kernel log below.
 
-Right, and that means that the kernel is not yet ready to support
-Marvell PHY PTP, because all the pre-requisits to avoid breaking
-mvpp2 have not yet been merged.
+Ok, I see the bug. It's caused by pecularity in systemd that a specific
+implementation detail of mount_setattr() papered over.
 
-So that's a NAK on this series from me.
+Basically, I added a shortcut to mount_settatr():
 
-I'd have thought this would be obvious given my well known stance
-on why I haven't merged Marvell PHY PTP support before.
+        /* Don't bother walking through the mounts if this is a nop. */
+        if (attr.attr_set == 0 &&
+            attr.attr_clr == 0 &&
+            attr.propagation == 0)
+                return 0;
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+So that we:
+
+* don't pointlessly do path lookup
+* don't pointlessly walk the mount tree and hold the namespace semaphore etc.
+
+When I added copy_mount_setattr() this cycle this optimization got
+broken because I moved it into this helper and we now do path lookup and
+walk the mount tree even if there's no mount properties to change at
+all.
+
+That's just a performance thing, not a correctness thing though.
+
+systemd has the following code:
+
+	int make_fsmount(
+	                int error_log_level,
+	                const char *what,
+	                const char *type,
+	                unsigned long flags,
+	                const char *options,
+	                int userns_fd) {
+	
+<snip>
+	
+	        mnt_fd = fsmount(fs_fd, FSMOUNT_CLOEXEC, 0);
+	        if (mnt_fd < 0)
+	                return log_full_errno(error_log_level, errno, "Failed to create mount fd for \"%s\" (\"%s\"): %m", what, type);
+	
+	        if (mount_setattr(mnt_fd, "", AT_EMPTY_PATH|AT_RECURSIVE,
+	                          &(struct mount_attr) {
+	                                  .attr_set = ms_flags_to_mount_attr(f) | (userns_fd >= 0 ? MOUNT_ATTR_IDMAP : 0),
+	                                  .userns_fd = userns_fd,
+	                          }, MOUNT_ATTR_SIZE_VER0) < 0)
+	
+<snip>
+
+So if userns_fd is greater or equal than zero MOUNT_ATTR_IDMAP will be
+raised otherwise not.
+
+Later in the code we find this function used in nspawn during:
+
+	static int get_fuse_version(uint32_t *ret_major, uint32_t *ret_minor) {
+
+<snip>
+	        /* Get a FUSE handle. */
+	        fuse_fd = open("/dev/fuse", O_CLOEXEC|O_RDWR);
+<snip>
+	        mnt_fd = make_fsmount(LOG_DEBUG, "nspawn-fuse", "fuse.nspawn", 0, opts, -EBADF);
+
+This will cause the aforementioned mount_setattr() call to be called
+with:
+
+	        if (mount_setattr(mnt_fd, "", AT_EMPTY_PATH|AT_RECURSIVE,
+	                          &(struct mount_attr) {
+	                                  .attr_set = 0,
+	                                  .userns_fd = -EBADF,
+	                          }, MOUNT_ATTR_SIZE_VER0) < 0)
+
+This means:
+
+attr_set == 0 && attr_clear == 0 and propagation == 0 and we'd thus
+never trigger a path lookup on older kernels. But now we do thus causing
+the hang.
+
+I've restored the old behavior. Can you please test?:
+
+https://web.git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=work.mount.fixes
 
