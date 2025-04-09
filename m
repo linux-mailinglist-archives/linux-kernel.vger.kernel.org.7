@@ -1,223 +1,157 @@
-Return-Path: <linux-kernel+bounces-595609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FA7A820C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:11:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC61DA820C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 373FE1B8694E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:11:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA5A51BA64A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF9025D219;
-	Wed,  9 Apr 2025 09:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3C725D21F;
+	Wed,  9 Apr 2025 09:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="x68SfJeD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ATH4sD7m";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="x68SfJeD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ATH4sD7m"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="APcPPBQd"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FF615F330
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD24B25C6FA
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744189892; cv=none; b=c8ATj4bUnXvKUDUEbnMjs+fAhkzh5uOH25vY5ysfIvb+aGWpkh0GQauLnQCc2ne1vmOKimrR8Z+KySF+kp6QsL8xXPHbmE+Dcm0NYnP8FCW2juB+DoOFDTSvSyChKIYq4fGBmrDnYj0+jo1URTgQRLWiYVzUxOWo8Z5uNQZEoSA=
+	t=1744190062; cv=none; b=nyt6EPjh9F4rat0UJqonaki8DkdBN3jEHz0rzNySfUq5t1uv4R+gGhsO2XCcJaDBvgZmH+KRWWirZn05VdHdEUL1Eugy3GtubpFfQZ3notP3g88WC241wvu69aOsrp2j27AcTGjSxkEN8uCBcLHCCIIcImbOt6IdsAucU0tzTyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744189892; c=relaxed/simple;
-	bh=oxBpfxWpETYNWAwIwG57Qtk/PEMDni3sXW1IrlVnkiA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B8+e7QwikMyuQO0pHnenR4MR2KUqiChQhxVxLDwQ6xlWqnsaG4W1iAfLZnzKjrFJYoQtlLLV5wSucvSoRJ+VE0L0GgD140/Py07ZR7yVjUsTy+phMMGtYbjfa4h4QWME+O45RMDcGZMKoYkbgR+PaDW6V3n4NXIRy6Jq3pXxIu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=x68SfJeD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ATH4sD7m; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=x68SfJeD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ATH4sD7m; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 15F1F21163;
-	Wed,  9 Apr 2025 09:11:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744189889; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7VXKOBNGUI9fKpg7pWhEZW+0RN6rg/pB63thRan8omU=;
-	b=x68SfJeDcHWG4nFcDgc0x+pMik057A/7bA8Si1mY8jdtIS8ZV99dKP54JG6sLgFH4x29rT
-	QoY47pkCg30pmyOhVz14P/MJBWT04qTcrNT3+aMGP5L1UbuP5howowKrCoXiBsAqoXdkVr
-	tpK3Azj1uysVQmPb7LZpkHVHGeBeNY8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744189889;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7VXKOBNGUI9fKpg7pWhEZW+0RN6rg/pB63thRan8omU=;
-	b=ATH4sD7mpWPE4lfUe+bcILMf7OGxlOw2A3qtnSff+apAYhQUB7VOa1SIOkMbO8Sr4VczvK
-	WPGh52nLDaQz8ZDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744189889; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7VXKOBNGUI9fKpg7pWhEZW+0RN6rg/pB63thRan8omU=;
-	b=x68SfJeDcHWG4nFcDgc0x+pMik057A/7bA8Si1mY8jdtIS8ZV99dKP54JG6sLgFH4x29rT
-	QoY47pkCg30pmyOhVz14P/MJBWT04qTcrNT3+aMGP5L1UbuP5howowKrCoXiBsAqoXdkVr
-	tpK3Azj1uysVQmPb7LZpkHVHGeBeNY8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744189889;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7VXKOBNGUI9fKpg7pWhEZW+0RN6rg/pB63thRan8omU=;
-	b=ATH4sD7mpWPE4lfUe+bcILMf7OGxlOw2A3qtnSff+apAYhQUB7VOa1SIOkMbO8Sr4VczvK
-	WPGh52nLDaQz8ZDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0351313691;
-	Wed,  9 Apr 2025 09:11:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qdSUAME59mfRawAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 09 Apr 2025 09:11:29 +0000
-Message-ID: <0f2091ba-0a43-4dd3-aa48-fe284530044a@suse.cz>
-Date: Wed, 9 Apr 2025 11:11:37 +0200
+	s=arc-20240116; t=1744190062; c=relaxed/simple;
+	bh=KPrSjQFz6RDMLvo3Gr/vxAHo3CF4mjppfNm8W6oMQVw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NQvw6PK77nyOGLTiU7bc+tN83SZraIF7ACLYJ4WpLDnR3cQAD6Bi+m8ZN54ESt2Y2B/zbEu361x9KPJHH68FNJX1nqgOl9jt4ndUHlDhoSaGdi+EeSQDbPRuOXQW45CNhSDch+I7YzYaiq+9Gs1K1h/CFfO7LU3t3WfsiY2l1gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=APcPPBQd; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-47663aeff1bso59460021cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 02:14:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744190059; x=1744794859; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LuSuDtNF61PvgQQchQkid6uP+93V9BVfdt5rCLmmpzU=;
+        b=APcPPBQdD2cTL4lpxEZFyhbXatPqS151moiFmWQ7Ma3w64nWkQQ4/rG2R0YVPpQU4M
+         poD19MXMVx+lwrGNeLTOi9/mDwbJO2tgFB5A4+hFwpsnDsKNW12ZCA2pJOsCCn3qOy3y
+         DLWnwBgSjXiwF8dX72X9IpntXXmw+Ad41QgAXudYqhlbO1GzmRQbwJNhESLJEyoaGZXg
+         srB0Q01dmjTgqyofONcF6QsRoGbHUu88pbHVmOUkAc3XTOnJAqoBnrBTJ8hjcXqunhLG
+         rG2UjGUYNJPGuOdBvCT8zTIxOpvDPTMis7m+y6364vE+7C7Z2//zqC4lNlbOgK8wdBv+
+         O9/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744190059; x=1744794859;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LuSuDtNF61PvgQQchQkid6uP+93V9BVfdt5rCLmmpzU=;
+        b=Z9ZG89R7O3IdYJ7EmA07lJRdijsb2x8cs7rEegENWpTiKhVpU0KVazxSz8jwIV8VK1
+         y7IH2lByNXExZL3qdIRQyYFh7i7zhjDaTGNeq56sCcI5vZl7xwQOuN9whl2VigwWiux7
+         EDnDJ3alYVO7ECSrUcIYmJ5RkVX1yBb/bwHfpfriIdsJon6v/+bjAvBWiw79X/Eah44x
+         DOW6xbogCMf7BOYbffVE3cuUcVPDZreWxAWBG0I8lYFV08mtCghDFQ6SBoBrpg8I8/IQ
+         cNjyAmgRyzPta0UWk5PCvDjJ4mx2oba2IXszHBZ1hCj2cyGKpfhR8ANcfCVsInipEDcq
+         mjpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWblutdcJPGo4M+qKagjrvgLhoD79R3V6dqe50JUjtVRpSXjskO19p95e/s3wrGK9Vt7c4Oo6Q5r+unfFc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ2cVBL4qKpJW6D/dsmUKuvjf6blMtslPWnoTSJyrNoLkzhadO
+	M8MHxKUS61VMyo1F3uzbc7jXYgn+FOcd2JifLCbivkInLx5n1VDa
+X-Gm-Gg: ASbGnctepAjHmDod7hO6X4niHM5/UG0wSzqJbDTQW7cnfOnPJUy1g7KsJSMHbil/bjN
+	Z8Gu6w117HjbTkPoVlB2cg2WJuidmCjFKznJ1bsaFoQvTY+V1SlOorsvkVlsDLWfMcRKe7RTf6g
+	gmCzFDBKeMrhFhcKTginIRnBHYnlREbraFzXzN3z4wCeIw0SYC7VSbMGm6V8tgBcVzWtBgiMjy1
+	fuBUV0naYTGE6+q8QB33eiMR9nGZl3peAphbIUpQeJ8ZD+bhulphrEoSjzzVrEqeE0ufHyE2o/B
+	Reh2yWO0pPieiIvORv4fqx5MdJBzdaUGoXr63CpI8bzrSA==
+X-Google-Smtp-Source: AGHT+IHROIfff9EygQflh2Ny77Q7Q9H1hfUvsrr1DY/l79I/KwXjFhlSR1X4Vw9Pm8MnS2NAuG8V5A==
+X-Received: by 2002:a05:622a:50f:b0:474:e3e8:1a58 with SMTP id d75a77b69052e-4795f2d0919mr25813461cf.16.1744190059511;
+        Wed, 09 Apr 2025 02:14:19 -0700 (PDT)
+Received: from ubuntu ([105.112.112.184])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47964ef728esm4631941cf.73.2025.04.09.02.14.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 02:14:19 -0700 (PDT)
+From: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+To: outreachy@lists.linux.dev,
+	julia.lawall@inria.fr
+Cc: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	david.laight.linux@gmail.com,
+	dan.carpenter@linaro.org,
+	andy@kernel.org,
+	Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+Subject: [PATCH v9 0/2] staging: rtl8723bs: Improve readability and clarity of sequence number wrapping
+Date: Wed,  9 Apr 2025 09:12:53 +0000
+Message-Id: <cover.1744189500.git.abrahamadekunle50@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: kvmalloc: make kmalloc fast path real fast path
-To: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, Yafang Shao
- <laoar.shao@gmail.com>, Harry Yoo <harry.yoo@oracle.com>,
- Kees Cook <kees@kernel.org>, joel.granados@kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Josef Bacik <josef@toxicpanda.com>, linux-mm@kvack.org
-References: <20250401073046.51121-1-laoar.shao@gmail.com>
- <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org> <Z-y50vEs_9MbjQhi@harry>
- <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
- <Z-0gPqHVto7PgM1K@dread.disaster.area> <Z-0sjd8SEtldbxB1@tiehlicka>
- <zeuszr6ot5qdi46f5gvxa2c5efy4mc6eaea3au52nqnbhjek7o@l43ps2jtip7x>
- <Z-43Q__lSUta2IrM@tiehlicka> <Z-48K0OdNxZXcnkB@tiehlicka>
- <Z-7m0CjNWecCLDSq@tiehlicka> <Z_YjKs5YPk66vmy8@tiehlicka>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <Z_YjKs5YPk66vmy8@tiehlicka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.dev,gmail.com,oracle.com,kernel.org,vger.kernel.org,toxicpanda.com,kvack.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On 4/9/25 9:35 AM, Michal Hocko wrote:
-> On Thu 03-04-25 21:51:46, Michal Hocko wrote:
->> Add Andrew
-> 
-> Andrew, do you want me to repost the patch or can you take it from this
-> email thread?
+The patchset adds spaces around binary operators, breaks long lines to enhance readability
+and provides clarity on sequence number wrapping by using a modulo operation % 4096u, in
+place of the bitwise AND(&) operation & 0xfff.
+The patches are required to be applied in sequence.
 
-I'll take it as it's now all in mm/slub.c
+Changes in v8:
+* PATCH 1:
+	- Added Reviewed-by tag to commit message.
+* PATCH 2:
+	- Added Reviewed-by tag to commit message.
+Changes in v7:
+* PATCH 1:
+	- Added blank line to enhance readability
+* PATCH 2:
+	- Changed `power of 2` to `power-of-2` in commit message.
+Changes in v6:
+	- Modified cover letter BLURB to reference newly added line breaks.
+* PATCH 1:
+	- Added line breaks to long lines to improve readability.
+	- Changed commit message to include the information about the broken
+	  lines added to the patch.
+	- Changed subject line title to also include the newly added line breaks.
+* PATCH 2:
+	- Changed instances of `& 0xfff` to `% 4096u` which were now in the broken lines
+	  after the broken lines have been done in PATCH 1.
+Changes in v5:
+	- Converted the patch with the subject "Use % 4096 instead of & 0xfff"
+	  patch to a patchset.
+	- Added a patch to add spaces around binary operator.
+Changes in v4:
+	- Corrected patch to use '%' instead of '&'.
+	- To ensure this change does not affect the functional
+	behaviour, I compared the generated object files before and
+	after the change using the `cmp` which compares the two
+	object files byte by byte as shown below:
 
->> Also, Dave do you want me to redirect xlog_cil_kvmalloc to kvmalloc or
->> do you preffer to do that yourself?
->>
->> On Thu 03-04-25 09:43:41, Michal Hocko wrote:
->>> There are users like xfs which need larger allocations with NOFAIL
->>> sementic. They are not using kvmalloc currently because the current
->>> implementation tries too hard to allocate through the kmalloc path
->>> which causes a lot of direct reclaim and compaction and that hurts
->>> performance a lot (see 8dc9384b7d75 ("xfs: reduce kvmalloc overhead for
->>> CIL shadow buffers") for more details).
->>>
->>> kvmalloc does support __GFP_RETRY_MAYFAIL semantic to express that
->>> kmalloc (physically contiguous) allocation is preferred and we should go
->>> more aggressive to make it happen. There is currently no way to express
->>> that kmalloc should be very lightweight and as it has been argued [1]
->>> this mode should be default to support kvmalloc(NOFAIL) with a
->>> lightweight kmalloc path which is currently impossible to express as
->>> __GFP_NOFAIL cannot be combined by any other reclaim modifiers.
->>>
->>> This patch makes all kmalloc allocations GFP_NOWAIT unless
->>> __GFP_RETRY_MAYFAIL is provided to kvmalloc. This allows to support both
->>> fail fast and retry hard on physically contiguous memory with vmalloc
->>> fallback.
->>>
->>> There is a potential downside that relatively small allocations (smaller
->>> than PAGE_ALLOC_COSTLY_ORDER) could fallback to vmalloc too easily and
->>> cause page block fragmentation. We cannot really rule that out but it
->>> seems that xlog_cil_kvmalloc use doesn't indicate this to be happening.
->>>
->>> [1] https://lore.kernel.org/all/Z-3i1wATGh6vI8x8@dread.disaster.area/T/#u
->>> Signed-off-by: Michal Hocko <mhocko@suse.com>
->>> ---
->>>  mm/slub.c | 8 +++++---
->>>  1 file changed, 5 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/mm/slub.c b/mm/slub.c
->>> index b46f87662e71..2da40c2f6478 100644
->>> --- a/mm/slub.c
->>> +++ b/mm/slub.c
->>> @@ -4972,14 +4972,16 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
->>>  	 * We want to attempt a large physically contiguous block first because
->>>  	 * it is less likely to fragment multiple larger blocks and therefore
->>>  	 * contribute to a long term fragmentation less than vmalloc fallback.
->>> -	 * However make sure that larger requests are not too disruptive - no
->>> -	 * OOM killer and no allocation failure warnings as we have a fallback.
->>> +	 * However make sure that larger requests are not too disruptive - i.e.
->>> +	 * do not direct reclaim unless physically continuous memory is preferred
->>> +	 * (__GFP_RETRY_MAYFAIL mode). We still kick in kswapd/kcompactd to start
->>> +	 * working in the background but the allocation itself.
->>>  	 */
->>>  	if (size > PAGE_SIZE) {
->>>  		flags |= __GFP_NOWARN;
->>>  
->>>  		if (!(flags & __GFP_RETRY_MAYFAIL))
->>> -			flags |= __GFP_NORETRY;
->>> +			flags &= ~__GFP_DIRECT_RECLAIM;
->>>  
->>>  		/* nofail semantic is implemented by the vmalloc fallback */
->>>  		flags &= ~__GFP_NOFAIL;
->>> -- 
->>> 2.49.0
->>>
->>
->> -- 
->> Michal Hocko
->> SUSE Labs
-> 
+	$ make drivers/staging/rtl8723bs/core/rtw_xmit.o
+	$ cmp rtw_xmit_before.o rtw_xmit_after.o
+
+	No differences were found in the output, confirming that the
+	change does not alter the compiled output.
+Changes in v3:
+	- Added more description to the commit message.
+	- Removed blank line in the tag block.
+	- Added more patch recipients.
+Changes in v2:
+	- Changed the commit message t a more descriptive message which
+	makes it clear why the patch does the change.
+	- changed the subject title to include `4096u` to show that an
+	unsigned module is used.
+Changes in v1:
+	- Added more patch recipients.
+
+Abraham Samuel Adekunle (2):
+  staging: rtl8723bs: Add spaces and line breaks to improve readability
+  staging: rtl8723bs: Use % 4096 instead of & 0xfff
+
+ drivers/staging/rtl8723bs/core/rtw_xmit.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+-- 
+2.34.1
 
 
