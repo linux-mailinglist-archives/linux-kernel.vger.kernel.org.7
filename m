@@ -1,220 +1,122 @@
-Return-Path: <linux-kernel+bounces-595865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D833CA823E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:46:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3F4A823D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12871892FC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:47:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F1F51B875AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2531F25F7B4;
-	Wed,  9 Apr 2025 11:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F8E25F984;
+	Wed,  9 Apr 2025 11:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMDUaLSU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="06GJB62Q";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LnoJB+lV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AB225F79B;
-	Wed,  9 Apr 2025 11:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F00125E474;
+	Wed,  9 Apr 2025 11:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744199088; cv=none; b=VJm/RuJ2K990rVGuy35xqyfa3mNwmQ57QOEC9r8lBnetj/dTU3IwWb1MG1znDFky/+91PrErFv4lU3B6lO1gWl3+degYXUvtxSN6zGfXGGhJ6J1VVIl0udp4kI3HTbsmvVKLYtPhgZgkv8RpsTVXoCchStGyWmKAhaMOFbOpiRQ=
+	t=1744199069; cv=none; b=bQeshuEjo+UJMwObFYMkfML9wz6OTKavOB7jFBn9EwrmHypBxUQP4BHESxuBdWjV1tCiJW6Ks9SFaC6AxyPqeLK2WiDHRasFlqx9h6iNGHPgsGh5jxeNf5L+OUMuzk7924Vjd0a93KshldXxJvxsocjNmxlnZ7a50RYaENL9kkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744199088; c=relaxed/simple;
-	bh=iY5EsMn0jbpG1tVs5WE3pjqlXKU5g3mGBlcrgN1cXYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K94MPIYmJocz308pkAjQ+vvSaor1mNGGK05TSMaKvvc8zwPkdJwlZuRKmx1IYP9HZrcAugLQeIGakhKepoYaV0oTqSdgsXia7u3/HNd3VOXCIBd74RSwNiDs4tnsRN2ZXQmjeL86jfvtZRzna5AyNXzKMhexAGsPfg60ShsxpUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMDUaLSU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16AE4C4CEE3;
-	Wed,  9 Apr 2025 11:44:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744199087;
-	bh=iY5EsMn0jbpG1tVs5WE3pjqlXKU5g3mGBlcrgN1cXYc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cMDUaLSUyLPCKE3KdacRrB7QnxUH+0jk0pESqIXiQKEsxLcCF2xAFWQX2RIyd5YQ8
-	 KNKqKDS90oZxLNTs2h2Ik2FADoZpLfLW3YrJgNlAYlWiaoUo6ZOqF5G1ODNxdwlQR9
-	 SPs66F1TVr1Hmy8KdzvyXEadbrW/q+Eh3p1Cq32uzgIXvgzoSUJQWvrwSm2/YzsUrA
-	 PQ5+hnvTIzwni/cgbOF+Fv50dLYr1HopFBixZys1xGedu9I0AiYRZnaJ4LwvaE3hsz
-	 EYJqadhzq6P4aGkC/qsgx9jVIqKZuxkiZ+64uOVB1KbJ7M/eDsrKYDuu5gPm+iq8Ft
-	 +JKuPV/3N/9cg==
-Date: Wed, 9 Apr 2025 19:44:25 +0800
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva"
- <gustavoars@kernel.org>, Kees Cook <kees@kernel.org>, Russell King
- <linux@armlinux.org.uk>, linux-hardening@vger.kernel.org,
- netdev@vger.kernel.org
-Subject: Re: [PATCH v3 00/33] Implement kernel-doc in Python
-Message-ID: <20250409194425.496d092d@sal.lan>
-In-Reply-To: <87r021wsgp.fsf@intel.com>
-References: <cover.1744106241.git.mchehab+huawei@kernel.org>
-	<87r021wsgp.fsf@intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1744199069; c=relaxed/simple;
+	bh=DCJhSV9luWiVVXn+zitm4es6HN9LClcLvSbf6r2kNyI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=nNrZ6Ldd+BTRi4tk0XQr41tOuDevhtlRHRuBR2ycOYfJp5C+dJ1SXBoEqZVOw6tk3Go0rfqXoLObYbB2iJujaP9JDiX3AdVcpcEgo1ovEPVN6iI12xZRCerX7cPRIJ+CVWDB399OWNKTyuSlse3tZ+bkZHKLBv6hD2UyW8LGQdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=06GJB62Q; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LnoJB+lV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 09 Apr 2025 11:44:25 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744199066;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OaNQ//RioA9tEezXEgj3i3LPXW9ebuuCC9jfO2Z68Rk=;
+	b=06GJB62Q3vsAGkQMVW8V5fpQavWoYKvHmc+QrlPWWvDhPPmWKVccxHNdT3/HS53iQLR59n
+	bs0+jra4WVJ0AEos6zVNm3iM0a1QRSWS8+Q/HgGpubExrmO+ZtxIlFnCGs4jClCd/AUaUF
+	ALMQxEDbIQt0HtK+TFwnh5xNnUw3f7SFfR9V4HZpxG3U4ROq+zjNkPLz3vxKyjl8u+C7nE
+	oelViusnBTFSml1a2GhrFNe+NaG95ZMtkSgtlhP+k5tRHCsIpz3YfYt8gRK/lhSFYZWz/C
+	vc3EOS5OoOl2l50o2c1CvztOQvBqJg2MINHuan6cMj8qgukNo7UhJ5knOHzpjA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744199066;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OaNQ//RioA9tEezXEgj3i3LPXW9ebuuCC9jfO2Z68Rk=;
+	b=LnoJB+lVAZGYco3aSpH4dLYnfTbMRtqrQH66xoIH0BR6I7imCJ7Ziq3Vn4TfEzJvmaRGKh
+	MdTVezuxtJ5OBgDw==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/bugs: Use SBPB in write_ibpb() if applicable
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To:
+ <17c5dcd14b29199b75199d67ff7758de9d9a4928.1744148254.git.jpoimboe@kernel.org>
+References:
+ <17c5dcd14b29199b75199d67ff7758de9d9a4928.1744148254.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Message-ID: <174419906525.31282.18273479175080824059.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-Em Wed, 09 Apr 2025 13:16:06 +0300
-Jani Nikula <jani.nikula@linux.intel.com> escreveu:
+The following commit has been merged into the x86/urgent branch of tip:
 
-> On Tue, 08 Apr 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > Hi Jon,
-> >
-> > This changeset contains the kernel-doc.py script to replace the verable
-> > kernel-doc originally written in Perl. It replaces the first version and the
-> > second series I sent on the top of it.  
-> 
-> Yay! Thanks for doing this. I believe this will make contributing to
-> kernel-doc more accessible in the long run.
-> 
-> > I tried to stay as close as possible of the original Perl implementation
-> > on the first patch introducing kernel-doc.py, as it helps to double check
-> > if each function was  properly translated to Python.  This have been 
-> > helpful debugging troubles that happened during the conversion.
-> >
-> > I worked hard to make it bug-compatible with the original one. Still, its
-> > output has a couple of differences from the original one:
-> >
-> > - The tab expansion works better with the Python script. With that, some
-> >   outputs that contain tabs at kernel-doc markups are now different;
-> >
-> > - The new script  works better stripping blank lines. So, there are a couple
-> >   of empty new lines that are now stripped with this version;
-> >
-> > - There is a buggy logic at kernel-doc to strip empty description and
-> >   return sections. I was not able to replicate the exact behavior. So, I ended
-> >   adding an extra logic to strip empty sections with a different algorithm.
-> >
-> > Yet, on my tests, the results are compatible with the venerable script
-> > output for all .. kernel-doc tags found in Documentation/. I double-checked
-> > this by adding support to output the kernel-doc commands when V=1, and
-> > then I ran a diff between kernel-doc.pl and kernel-doc.py for the same
-> > command lines.
-> >
-> > The only patch that doesn't belong to this series is a patch dropping
-> > kernel-doc.pl. I opted to keep it for now, as it can help to better
-> > test the new tools.
-> >
-> > With such changes, if one wants to build docs with the old script,
-> > all it is needed is to use KERNELDOC parameter, e.g.:
-> >
-> > 	$ make KERNELDOC=scripts/kernel-doc.pl htmldocs  
-> 
-> I guess that's good for double checking that the python version
-> reproduces the output of the old version, warts and all. And it could be
-> used standalone for comparing the output for .[ch] files directly
-> instead of going through Sphinx.
-> 
-> But once we're reasonably sure the new one works fine, I think the
-> natural follow-up will be to import the kernel-doc python module from
-> the kernel-doc Sphinx extension instead of running it with
-> subprocess.Popen(). It'll bypass an absolutely insane amount of forks,
-> python interpreter launches and module imports.
-> 
-> It'll also open the door for passing the results in python native
-> structures instead of text, also making it possible to cache parse
-> results instead of parsing the source files for every kernel-doc
-> directive in rst.
+Commit-ID:     fc9fd3f98423367c79e0bd85a9515df26dc1b3cc
+Gitweb:        https://git.kernel.org/tip/fc9fd3f98423367c79e0bd85a9515df26dc1b3cc
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Tue, 08 Apr 2025 14:47:31 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 09 Apr 2025 12:41:30 +02:00
 
-Yes, this is on my plan. I have already a patch series for that,
-but it still requires some care to ensure that the results will be
-identical.
+x86/bugs: Use SBPB in write_ibpb() if applicable
 
-> Another idea regarding code organization, again for future. Maybe we
-> should have a scripts/python/ directory structure, so we can point
-> python path there, and be able to import stuff from there? And
-> reasonably share code between modules. And have linters handle it
-> recursively, etc, etc.
+write_ibpb() does IBPB, which (among other things) flushes branch type
+predictions on AMD.  If the CPU has SRSO_NO, or if the SRSO mitigation
+has been disabled, branch type flushing isn't needed, in which case the
+lighter-weight SBPB can be used.
 
-Sounds like a plan. I did some code reorg already, but surely there
-are spaces for improvements. 
+The 'x86_pred_cmd' variable already keeps track of whether IBPB or SBPB
+should be used.  Use that instead of hardcoding IBPB.
 
-> Anyway, I applaud the work, and I regret that I don't have time to
-> review it in detail. Regardless, I think the matching output is the most
-> important part.
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/17c5dcd14b29199b75199d67ff7758de9d9a4928.1744148254.git.jpoimboe@kernel.org
+---
+ arch/x86/entry/entry.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I did several tests here to check the output, making it similar to the
-output from the Perl version.
-
-> 
-> 
-> BR,
-> Jani.
-> 
-> > ---
-> >
-> > v3:
-> > - rebased on the top of v6.15-rc1;
-> > - Removed patches that weren't touching kernel-doc and its Sphinx extension;
-> > - The "Re" class was renamed to "KernRe"
-> > - It contains one patch from Sean with an additional hunk for the
-> >   python version.
-> >
-> > Mauro Carvalho Chehab (32):
-> >   scripts/kernel-doc: rename it to scripts/kernel-doc.pl
-> >   scripts/kernel-doc: add a symlink to the Perl version of kernel-doc
-> >   scripts/kernel-doc.py: add a Python parser
-> >   scripts/kernel-doc.py: output warnings the same way as kerneldoc
-> >   scripts/kernel-doc.py: better handle empty sections
-> >   scripts/kernel-doc.py: properly handle struct_group macros
-> >   scripts/kernel-doc.py: move regex methods to a separate file
-> >   scripts/kernel-doc.py: move KernelDoc class to a separate file
-> >   scripts/kernel-doc.py: move KernelFiles class to a separate file
-> >   scripts/kernel-doc.py: move output classes to a separate file
-> >   scripts/kernel-doc.py: convert message output to an interactor
-> >   scripts/kernel-doc.py: move file lists to the parser function
-> >   scripts/kernel-doc.py: implement support for -no-doc-sections
-> >   scripts/kernel-doc.py: fix line number output
-> >   scripts/kernel-doc.py: fix handling of doc output check
-> >   scripts/kernel-doc.py: properly handle out_section for ReST
-> >   scripts/kernel-doc.py: postpone warnings to the output plugin
-> >   docs: add a .pylintrc file with sys path for docs scripts
-> >   docs: sphinx: kerneldoc: verbose kernel-doc command if V=1
-> >   docs: sphinx: kerneldoc: ignore "\" characters from options
-> >   docs: sphinx: kerneldoc: use kernel-doc.py script
-> >   scripts/kernel-doc.py: Set an output format for --none
-> >   scripts/kernel-doc.py: adjust some coding style issues
-> >   scripts/lib/kdoc/kdoc_parser.py: fix Python compat with < v3.13
-> >   scripts/kernel-doc.py: move modulename to man class
-> >   scripts/kernel-doc.py: properly handle KBUILD_BUILD_TIMESTAMP
-> >   scripts/lib/kdoc/kdoc_parser.py: remove a python 3.9 dependency
-> >   scripts/kernel-doc.py: Properly handle Werror and exit codes
-> >   scripts/kernel-doc: switch to use kernel-doc.py
-> >   scripts/lib/kdoc/kdoc_files.py: allow filtering output per fname
-> >   scripts/kernel_doc.py: better handle exported symbols
-> >   scripts/kernel-doc.py: Rename the kernel doc Re class to KernRe
-> >
-> > Sean Anderson (1):
-> >   scripts: kernel-doc: fix parsing function-like typedefs (again)
-> >
-> >  .pylintrc                         |    2 +
-> >  Documentation/Makefile            |    2 +-
-> >  Documentation/conf.py             |    2 +-
-> >  Documentation/sphinx/kerneldoc.py |   46 +
-> >  scripts/kernel-doc                | 2440 +----------------------------
-> >  scripts/kernel-doc.pl             | 2439 ++++++++++++++++++++++++++++
-> >  scripts/kernel-doc.py             |  315 ++++
-> >  scripts/lib/kdoc/kdoc_files.py    |  282 ++++
-> >  scripts/lib/kdoc/kdoc_output.py   |  793 ++++++++++
-> >  scripts/lib/kdoc/kdoc_parser.py   | 1715 ++++++++++++++++++++
-> >  scripts/lib/kdoc/kdoc_re.py       |  273 ++++
-> >  11 files changed, 5868 insertions(+), 2441 deletions(-)
-> >  create mode 100644 .pylintrc
-> >  mode change 100755 => 120000 scripts/kernel-doc
-> >  create mode 100755 scripts/kernel-doc.pl
-> >  create mode 100755 scripts/kernel-doc.py
-> >  create mode 100644 scripts/lib/kdoc/kdoc_files.py
-> >  create mode 100755 scripts/lib/kdoc/kdoc_output.py
-> >  create mode 100755 scripts/lib/kdoc/kdoc_parser.py
-> >  create mode 100755 scripts/lib/kdoc/kdoc_re.py  
-> 
+diff --git a/arch/x86/entry/entry.S b/arch/x86/entry/entry.S
+index cabe65a..175958b 100644
+--- a/arch/x86/entry/entry.S
++++ b/arch/x86/entry/entry.S
+@@ -21,7 +21,7 @@
+ SYM_FUNC_START(write_ibpb)
+ 	ANNOTATE_NOENDBR
+ 	movl	$MSR_IA32_PRED_CMD, %ecx
+-	movl	$PRED_CMD_IBPB, %eax
++	movl	_ASM_RIP(x86_pred_cmd), %eax
+ 	xorl	%edx, %edx
+ 	wrmsr
+ 
 
