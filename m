@@ -1,132 +1,201 @@
-Return-Path: <linux-kernel+bounces-596905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C212AA832AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:43:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9853AA832B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C62ED466608
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:42:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A67223B7A74
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6C7257AC2;
-	Wed,  9 Apr 2025 20:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C30C21421D;
+	Wed,  9 Apr 2025 20:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uQ2JPrfy"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hrcq5M/9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865B321CA14
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 20:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEBA1EB18C;
+	Wed,  9 Apr 2025 20:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744231077; cv=none; b=dwmtlU3Csh62JQt72xDWmGkwVqsmFvcCXEiYvwDnsfdFIe3ZaqNpt+OyX13h9r3XRJvp0VqiysCQTKTyQ3KpqE7HVc5OKO4TfDgwDonspAO/6vOj9DgeTIg9WMOD+MuoDPMEQDX19M4RAnH6xk2UCGb1RsQYZSJNJAOWSMJ1di8=
+	t=1744231166; cv=none; b=Etr8xEzfeHLY0cOMyIHSlajyt05xw0fhudBvDkt5P+Qkjq9T8y0kHp7pVS62CMt/ZEHKxjc7WmRvMkBd2w4ZO4qDeTetmCWGZZeCW+yRozn1Kc2QuhtNIpq4l2eBehdPF7b1i153PynGit1xL1T147JQ9YRJVCbZa1N68LRSRYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744231077; c=relaxed/simple;
-	bh=CoKrSJInLiIXwlY1ZZ7M5lRUgwJwFwDmaqWcxDpmqQ8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TdmT6WqSBX/0qR8fDl4j/z9bsCYBDdjY3gUB49ltE9Eq1OgLqq2WQj9p/roMIgR+FqPA/nQj85bhOPfFxlbs3PrLmwaamqa6PKEGeTxwmdQVzrkPv3ByyH5kFawNxT0HPhfzgmeC+sm3UpOx1vPv5FpYV9w5iqYQxOnNbcDHezQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uQ2JPrfy; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ab78e6edb99so13304666b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 13:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744231066; x=1744835866; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+Ow5hOPbiIZXZpWZ6Uu6oQmw7CcTYqg39bQG6yedoPQ=;
-        b=uQ2JPrfyUL4InhIYJFfMorllx1mzrBQFlwuQghTNuTEbVA9uzUptUuwbdJBoR7sROh
-         daTsVIxDMfBXo7w+dSyQIlEzyUb9SpHT0s+U2OejvKDOAe3f63hTr98Ocglgvzu0kOiW
-         5aPEr7xyLzTl/SR6ZlMYr3KMb2J5nR6dp7PwMY4q7l3ifdl5qy1+OgUVTT277z/DVMtl
-         2C09nOWOU+haKmfD+V5qqmX+QlaBeru5pUvZXVlQFAbDo2gCCRE1xllwbOGyryoVxG9o
-         dXbAP/8Wj70FG/MrKFv2EC/bpoxg3391AilSGNJjDySBH7hlpRXOohBHIJSVpJIL6W02
-         aTBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744231066; x=1744835866;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+Ow5hOPbiIZXZpWZ6Uu6oQmw7CcTYqg39bQG6yedoPQ=;
-        b=sncDzkWnQukL5FyQVbJsztlg1pCQgvYKz3ZFVsK0TRXzQYMTpU5ajKAg6AOU5dLgdL
-         72tSklOHi/B9M7PII3sFNyHe3ehkkI0+r4vaONhmPF9JhJq+CTIO7l+ZybcOKzoHjDwR
-         hOsl6+iBHvsmqM9TW+GnrqjG81wzPjX33UyTxyypndLttHA3YmBSFDFF7epBdlpD7/VG
-         Egypn7eVBI46Zg+zXCIg3FLH2Y1bZ07oqX0pTAThC5GMobW7ObQLdi9bW/wQlE84+wgo
-         +abYiwUuT31bFxjjiIsNChV6WKVLHBkKeuPSS6ZJu27migz2u0Fp6/tZcPSH8/gi7PHL
-         ShUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVO+LfjpLxg4yhv7FUkFVIjYyr98NU2vpMPNCKSvbQOdfMzipYBnhifoRfHhGzIN6w9b601u6p8+ZW1izY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyml4rfXmdjGQoKZ8UQuUM82I9ON5nIXdePTU8/eTgxtW5nHzMj
-	syZY46ypwYT20BBUb4BdMQueqI7JKc+zdfq7w+jgOru9p2Zd3AbX00lR1lvI27M=
-X-Gm-Gg: ASbGncsFG6qGY/hOujjmISODIzALm3SvSSYoAgmEFIeDKqTQuDuamk8rOWGRhlsJREe
-	WyW1Qz9eHIzwOcVsy7pXHABuGgutijRLopKy20qO0ADypUTFJDsXdCsd3GWeDldL4DvMkfc1m6t
-	gFAqTwBwFJAB3/NqYLG0Er1fMGLHWTRq6blJ745W3y8qdz7dGFwyR/YqQOFQQZme1TZx68fUWI1
-	+DQiQlc4Olr7ecsZQ4QD//GD9SeL815YcFxND+781ocDHOoSWira2ctkS2+Xyq5Y+GEE77ukK1z
-	pzXm2tCk69eqssnUfwFOWyvQKuL+XGmyUwZFzywro6P24HoH9irHJ7QfFBztyq0Sx0S4X1gorrq
-	rRxGAD12xugA4IkZ1EGU4xyY4hq8=
-X-Google-Smtp-Source: AGHT+IHIxFKwjUo5uFV6Jyj3wWXPZsF8lPwam2ydOiylWhWcuYhWeTd4XU5X8ZDB51XZhRzJ2FSu4w==
-X-Received: by 2002:a17:907:7d8b:b0:ac7:9acf:4ef with SMTP id a640c23a62f3a-acabd4d7131mr6904366b.56.1744231066055;
-        Wed, 09 Apr 2025 13:37:46 -0700 (PDT)
-Received: from puffmais.c.googlers.com (40.162.204.35.bc.googleusercontent.com. [35.204.162.40])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ccc001sm145850366b.126.2025.04.09.13.37.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 13:37:45 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 09 Apr 2025 21:37:53 +0100
-Subject: [PATCH v4 32/32] MAINTAINERS: add myself as reviewer for Samsung
- S2M MFD
+	s=arc-20240116; t=1744231166; c=relaxed/simple;
+	bh=PXaRRTFy7bWWNGMulgtEHLLhwWsaJHDiExnPpSJMUqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=b35ecuy3ngaSyEsYhu4/PwBizrPpkeiYWooVWEXf4KscUklgjV5LvjLR/GxqVp4fY6eMK7N5Mkjjkrj6RvW9E8uYMNqZOo8yC1dHuu+AUDLWEVPY/B+p1/mrrzeTMVQA8anSPcTpa7YzfuavcSJ6sVzZIk58OHjkIq2Rylxpj7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hrcq5M/9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BD62C4CEE2;
+	Wed,  9 Apr 2025 20:39:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744231164;
+	bh=PXaRRTFy7bWWNGMulgtEHLLhwWsaJHDiExnPpSJMUqk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=hrcq5M/9WJL/uZTfsfkfvnttmSUwSmNTgSasnH275o5mt4mrHFKgCqC2DwbI5tZqX
+	 qSq1SZwRnb8dxZA23eYVF5GPS4Wvg2DhTxJilrc1vDO84zTMQWmo+bmdsSL3HgWFKD
+	 EcnTPXo88O1Cr+2eWNZKbpMSIwVjZjHO54BjWWFOvhQreh0YwT88hmLCvRTp8wWW+i
+	 R7xWr8TB0A81SIdG45MsfJfNqyNU+jV1izbnyw482/ZBA5dt2y9Ui9eCBlJ1ITAWqJ
+	 Zs4XiV4KOC5gtNhz013rvnodETzfPM4r4kcrjrRlLR69T96xIvh13IDPUqa59EwREW
+	 DNAvtJ1Z250CA==
+Date: Wed, 9 Apr 2025 15:39:23 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manikandan Karunakaran Pillai <mpillai@cadence.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kw@linux.com" <kw@linux.com>,
+	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/7] PCI: cadence: Add header support for PCIe next
+ generation controllers
+Message-ID: <20250409203923.GA295549@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250409-s2mpg10-v4-32-d66d5f39b6bf@linaro.org>
-References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
-In-Reply-To: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CH2PPF4D26F8E1CE94EC3F4A0D6B9849818A2A12@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
 
-I'm working on a Samsung device which includes this MFD and would like
-to be Cc'ed to further contributions and help on reviewing them. Add me
-as reviewer.
+On Thu, Mar 27, 2025 at 11:26:21AM +0000, Manikandan Karunakaran Pillai wrote:
+> Add the required definitions for register addresses and register bits
+> for the next generation Cadence PCIe controllers - High performance
+> rchitecture(HPA) controllers. Define register access functions for
+> SoC platforms with different base address
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+"Next generation" is not really meaningful since there will probably
+be a next-next generation, and "high performance architecture" is
+probably not much better because the next-next generation will
+presumably be "higher than high performance."
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d4d577b54d798938b7a8ff0c2bdbd0b61f87650f..9f05af52b062d8cab0f8b48b2625432108604c3e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21397,6 +21397,7 @@ F:	drivers/platform/x86/samsung-laptop.c
- 
- SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS
- M:	Krzysztof Kozlowski <krzk@kernel.org>
-+R:	André Draszik <andre.draszik@linaro.org>
- L:	linux-kernel@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
+I would just use the codename or marketing name and omit "next
+generation."  Maybe that's "HPA" and we can look forward to another
+superlative name for the next generation after this :)
 
--- 
-2.49.0.604.gff1f9ca942-goog
+s/High performance/High Performance/
+s/rchitecture/Architecture/
 
+Add period at end of sentence.
+
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG(bar, fn) \
+> +	(((bar) < BAR_3) ? CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG0(fn) : \
+> +			CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG1(fn))
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG0(pfn) (0x4000 * (pfn))
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG1(pfn) ((0x4000 * (pfn)) + 0x04)
+> +#define CDNS_PCIE_HPA_LM_EP_VFUNC_BAR_CFG(bar, fn) \
+> +	(((bar) < BAR_3) ? CDNS_PCIE_HPA_LM_EP_VFUNC_BAR_CFG0(fn) : \
+> +			CDNS_PCIE_HPA_LM_EP_VFUNC_BAR_CFG1(fn))
+> +#define CDNS_PCIE_HPA_LM_EP_VFUNC_BAR_CFG0(vfn) ((0x4000 * (vfn)) + 0x08)
+> +#define CDNS_PCIE_HPA_LM_EP_VFUNC_BAR_CFG1(vfn) ((0x4000 * (vfn)) + 0x0C)
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_APERTURE_MASK(f) \
+> +	(GENMASK(9, 4) << ((f) * 10))
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_APERTURE(b, a) \
+> +	(((a) << (4 + ((b) * 10))) & (CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_APERTURE_MASK(b)))
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_CTRL_MASK(f) \
+> +	(GENMASK(3, 0) << ((f) * 10))
+> +#define CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_CTRL(b, c) \
+> +	(((c) << ((b) * 10)) & (CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_CTRL_MASK(b)))
+
+Wow, these names are ... loooong.  This would be more readable if they
+could be abbreviated a bit.  "PCIE" could be dropped with no loss.
+There are probably other words that could be dropped too.
+
+>  struct cdns_pcie_ops {
+>  	int	(*start_link)(struct cdns_pcie *pcie);
+>  	void	(*stop_link)(struct cdns_pcie *pcie);
+>  	bool	(*link_up)(struct cdns_pcie *pcie);
+>  	u64     (*cpu_addr_fixup)(struct cdns_pcie *pcie, u64 cpu_addr);
+> +	int	(*pcie_host_init_root_port)(struct cdns_pcie_rc *rc);
+> +	int	(*pcie_host_bar_ib_config)(struct cdns_pcie_rc *rc,
+> +					   enum cdns_pcie_rp_bar bar,
+> +					   u64 cpu_addr, u64 size,
+> +					   unsigned long flags);
+> +	int	(*pcie_host_init_address_translation)(struct cdns_pcie_rc *rc);
+> +	void	(*pcie_detect_quiet_min_delay_set)(struct cdns_pcie *pcie);
+> +	void	(*pcie_set_outbound_region)(struct cdns_pcie *pcie, u8 busnr, u8 fn,
+> +					    u32 r, bool is_io, u64 cpu_addr,
+> +					    u64 pci_addr, size_t size);
+> +	void	(*pcie_set_outbound_region_for_normal_msg)(struct cdns_pcie *pcie,
+> +							   u8 busnr, u8 fn, u32 r,
+> +							   u64 cpu_addr);
+> +	void	(*pcie_reset_outbound_region)(struct cdns_pcie *pcie, u32 r);
+
+Also some pretty long names here that don't fit the style of the
+existing members (none of the others have the "pcie_" prefix).
+
+> + * struct cdns_pcie_reg_offset - Register bank offset for a platform
+> + * @ip_reg_bank_off - ip register bank start offset
+> + * @iP_cfg_ctrl_reg_off - ip config contrl register start offset
+
+s/@iP_cfg_ctrl_reg_off/@ip_cfg_ctrl_reg_off/
+
+"scripts/kernel-doc -none <file>" should find errors like this for you.
+
+s/contrl/control/
+
+> + * @axi_mstr_common_off - AXI master common register start
+> + * @axi_slave_off - AXI skave offset start
+
+s/skave/slave/
+
+> +struct cdns_pcie_reg_offset {
+> +	u32  ip_reg_bank_off;
+> +	u32  ip_cfg_ctrl_reg_off;
+> +	u32  axi_mstr_common_off;
+> +	u32  axi_slave_off;
+> +	u32  axi_master_off;
+> +	u32  axi_hls_off;
+> +	u32  axi_ras_off;
+> +	u32  axi_dti_off;
+>  };
+>  
+>  /**
+> @@ -305,10 +551,12 @@ struct cdns_pcie {
+>  	struct resource		*mem_res;
+>  	struct device		*dev;
+>  	bool			is_rc;
+> +	bool			is_hpa;
+>  	int			phy_count;
+>  	struct phy		**phy;
+>  	struct device_link	**link;
+>  	const struct cdns_pcie_ops *ops;
+> +	struct cdns_pcie_reg_offset cdns_pcie_reg_offsets;
+
+Why does struct cdns_pcie need to contain an entire struct
+cdns_pcie_reg_offset instead of just a pointer to it?
+
+> +static inline u32 cdns_reg_bank_to_off(struct cdns_pcie *pcie, enum cdns_pcie_reg_bank bank)
+> +{
+> +	u32 offset;
+> +
+> +	switch (bank) {
+> +	case REG_BANK_IP_REG:
+> +		offset = pcie->cdns_pcie_reg_offsets.ip_reg_bank_off;
+
+It's a little hard to untangle this without being able to apply the
+series, but normally we would add the struct cdns_pcie_reg_offset
+definition, the inclusion in struct cdns_pcie, this use of it, and the
+setting of it in the same patch.
+
+>  #ifdef CONFIG_PCIE_CADENCE_EP
+> @@ -556,7 +909,10 @@ static inline int cdns_pcie_ep_setup(struct cdns_pcie_ep *ep)
+>  	return 0;
+>  }
+>  #endif
+> -
+
+Probably spurious change?  Looks like we would want the blank line
+here.
+
+> +bool cdns_pcie_linkup(struct cdns_pcie *pcie);
+> +bool cdns_pcie_hpa_linkup(struct cdns_pcie *pcie);
+> +int cdns_pcie_hpa_startlink(struct cdns_pcie *pcie);
+> +void cdns_pcie_hpa_stop_link(struct cdns_pcie *pcie);
+>  void cdns_pcie_detect_quiet_min_delay_set(struct cdns_pcie *pcie);
 
