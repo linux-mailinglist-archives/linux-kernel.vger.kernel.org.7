@@ -1,127 +1,133 @@
-Return-Path: <linux-kernel+bounces-596429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA3EA82BDC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:07:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CCA7A82BE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C631246423E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:00:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E3B119E48CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129251C5F14;
-	Wed,  9 Apr 2025 16:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7ED1C5F09;
+	Wed,  9 Apr 2025 16:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bUU/TICQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JL8EOc5U"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE94E1AF0AF;
-	Wed,  9 Apr 2025 16:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12CC2561CC;
+	Wed,  9 Apr 2025 16:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744214435; cv=none; b=t3XvN61gNdhPCXzuQQMMMa+43vspzKdf9bqtxK7QQqBD2XjC739D7k/sbMPCuUiH9cna+z82c0ZokxZ155k2Hjp/WHeTfIa+gwq3pt8TFfK5qoZS5iqMD3fo1A/FCfB3QISNKpL9YoShlZnhiaZsxEZLY5QQFfp6m4bYhlvt7oo=
+	t=1744214488; cv=none; b=FXs7xf18ZTgKZPb0IGccJsHHkyP7OI6TrS7XFgpq5pe6D9yNzVjfaDMSHm3eiHbmPAEiqhP6kIHFW/I2glwE69jEU2AxQ67Q6/GMJAI5stYpkKDRGfoDUk+wxzrTq7vpTPrFVFU7BxLkHv3l/7g54YU6zl412OqLRB2Yu52rNF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744214435; c=relaxed/simple;
-	bh=uMKu+jFYPg96rqO8KN7gZyvKhno3jI10KclYtsC1aKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OAy9G6fzq6Eljxhurc9bHWSetH1skvy2Pt4W26577Ge5vgkI1gebPKiPHZTfqth66ItoGezVxfgr4oj147s4q4DKLfMuvHTivL2LS4pXLMBtpRsb7rBIL3qLcmHKMlu6YdD6HLTAhkrKoAPdTDmRei90B1SMmO2B8bfjfiuNXNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bUU/TICQ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744214433; x=1775750433;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uMKu+jFYPg96rqO8KN7gZyvKhno3jI10KclYtsC1aKQ=;
-  b=bUU/TICQJOcEGKRV/B0u2vAEJn45Wl7Ii03Woj7Era/9dUHAj80QTG/6
-   vAKO6mrL/0+mnSk+MX+tbqXBoMn3G+IVWIEh7jeAvlss8rDZ3fu2yrjbY
-   Ge7Wh/yyEDFzobFzNwbXGf1LPK1frEE61bJjG4HprKbrtymgDA5IEKJ3Q
-   Y0LS53wceGGkP7yXfG0BR1YpQJol9wVoJm4wCe+xPrANw9Bf80f1tcI07
-   9DiEQbyaQZvcbPl1e22h2byvILVFZXlGcjUQ0ef1oFexY0jP617FIk5Or
-   LhbSSlMqhguoEB0WqMUB4uAFNntqAkMnakH9rUvYNxYdN9v4kvHAxQeqv
-   Q==;
-X-CSE-ConnectionGUID: d4g4DevrTi6nITvsL5mFEA==
-X-CSE-MsgGUID: KMdxu9A4SyKSiWkQq126xQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="57069910"
-X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
-   d="scan'208";a="57069910"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 09:00:32 -0700
-X-CSE-ConnectionGUID: M6haKlFeT6mLpHo/o0g4oQ==
-X-CSE-MsgGUID: YEcl2JY6RJ+PfT5TKRRWKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
-   d="scan'208";a="159614553"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 09:00:28 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1u2Xqi-0000000Amra-49ph;
-	Wed, 09 Apr 2025 19:00:24 +0300
-Date: Wed, 9 Apr 2025 19:00:24 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v6 05/12] regmap: irq: Remove unreachable goto
-Message-ID: <Z_aZmJxPwIBgcwhG@smile.fi.intel.com>
-References: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
- <20250409-mdb-max7360-support-v6-5-7a2535876e39@bootlin.com>
- <1b280408-888e-48e1-8e6b-de4e7a913e74@sirena.org.uk>
- <Z_aUeKm0k1zReS_D@smile.fi.intel.com>
- <7126e672-a829-489e-a0c0-8d6d64a8b2f4@sirena.org.uk>
+	s=arc-20240116; t=1744214488; c=relaxed/simple;
+	bh=0u5bAlhyzUTkQjn8mO8HV7RJ6HPAVrpDfucNCvnu8pM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OKOtNABNovp0tw3CmOCiNwSrcvV8D9UWsxqd9g6JgGeoQXWuRgFyB+rU2dBfIeDdfQV4OdqEDrYZQpYrWRkg94BqRVydV7upSRdiIFvKqfC6hs5fnxRZNLlFPT6qoCbmGiFOPLJGMer5L23CO05rLcCW6eFDGIvDIxFHOLt60ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JL8EOc5U; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F010244416;
+	Wed,  9 Apr 2025 16:01:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744214482;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QASM93YoBn1cH19f+hF6k4ieDhMQtmf59MfvRZCYBw8=;
+	b=JL8EOc5UQ0nu9M2/wr6h8ohj5UkaYIp1nn8pgRqDO19EwTZ94rWxQG26TQYOkT2JsyKcLQ
+	A15UxGRS7Ww8pMbJp1LaEKS2lqme+S5XoiWKL4HuYMYPugbnoIXWzItcKTyb2dtpN7iv1S
+	Mwb7jx1+tDhksDfnaoxhi52281Ij4kkVGDgqYsgxr6ixy/6FBF9BK2LsQM0KkfIv/jmWB3
+	TxPU0q6goN+1upwillBiyF8QBPmE8IO5ytmu2vCook+GhAjH4l/3SpFJo2jqiRdcfAoehD
+	V1a5Y02gfHw1oXf7WDb3pMGNBlwP2bp7FcILoCBa92BlYq3dZl0jqMNy0XL5HQ==
+Date: Wed, 9 Apr 2025 18:01:20 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Richard
+ Cochran <richardcochran@gmail.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/2] net: phy: Add Marvell PHY PTP support
+Message-ID: <20250409180120.61353f37@kmaincent-XPS-13-7390>
+In-Reply-To: <Z_aTjBrUw79skcAg@shell.armlinux.org.uk>
+References: <20250407-feature_marvell_ptp-v2-0-a297d3214846@bootlin.com>
+	<20250407-feature_marvell_ptp-v2-2-a297d3214846@bootlin.com>
+	<Z_aTjBrUw79skcAg@shell.armlinux.org.uk>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7126e672-a829-489e-a0c0-8d6d64a8b2f4@sirena.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdeigeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeffffhheduhedvvddvgeevveeuveehheefveeuleeguefftedujedvffevteetnecuffhomhgrihhnpehtvghrmhgsihhnrdgtohhmpdgsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnv
+ ghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehkrggsvghlsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed, Apr 09, 2025 at 04:46:04PM +0100, Mark Brown wrote:
-> On Wed, Apr 09, 2025 at 06:38:32PM +0300, Andy Shevchenko wrote:
-> > On Wed, Apr 09, 2025 at 04:19:27PM +0100, Mark Brown wrote:
-> 
-> > > BUG() can be compiled out, CONFIG_BUG.
-> 
-> > Yes, and it's still has unreachable() there. So, this change is correct.
-> > See include/asm-generic/bug.h for the details of the implementation.
-> > And yes, if we have an architecture that does not do this way, it has to
-> > be fixed.
-> 
-> unreachable() just annotates things, AFAICT it doesn't actually
-> guarantee to do anything in particular if the annotation turns out to be
-> incorrect.
+On Wed, 9 Apr 2025 16:34:36 +0100
+"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
-I;m not sure I follow. unreachable is a wrapper on top of
-__builtin_unreachable() which is intrinsic of the compiler.
+> On Mon, Apr 07, 2025 at 04:03:01PM +0200, Kory Maincent wrote:
+> > From: Russell King <rmk+kernel@armlinux.org.uk>
+> >=20
+> > From: Russell King <rmk+kernel@armlinux.org.uk>
+> >=20
+> > Add PTP basic support for Marvell 88E151x PHYs. These PHYs support
+> > timestamping the egress and ingress of packets, but does not support
+> > any packet modification.
+> >=20
+> > The PHYs support hardware pins for providing an external clock for the
+> > TAI counter, and a separate pin that can be used for event capture or
+> > generation of a trigger (either a pulse or periodic).  This code does
+> > not support either of these modes.
+> >=20
+> > The driver takes inspiration from the Marvell 88E6xxx DSA and DP83640
+> > drivers.  The hardware is very similar to the implementation found in
+> > the 88E6xxx DSA driver, but the access methods are very different,
+> > although it may be possible to create a library that both can use
+> > along with accessor functions.
+> >=20
+> > Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> >=20
+> > Add support for interruption.
+> > Fix L2 PTP encapsulation frame detection.
+> > Fix first PTP timestamp being dropped.
+> > Fix Kconfig to depends on MARVELL_PHY.
+> > Update comments to use kdoc. =20
+>=20
+> Would you mind forwarding me the changes you actually made so I can
+> integrate them into the version I have (which is structured quite
+> differently from - what I assume - is a much older version of my
+> patches please?
 
-https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html#index-_005f_005fbuiltin_005funreachable
+I don't know how you want this but here is a diff with your first patch sent
+mainline:
+https://termbin.com/gzei
+There is also a small fix in the tai part:
+https://termbin.com/6a18
 
--- 
-With Best Regards,
-Andy Shevchenko
+> The PTP IP is re-used not only in Marvell PHY drivers but also their
+> DSA drivers, and having it all in drivers/net/phy/ as this version
+> has does not make sense.
 
+Ok, didn't know that.
 
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
