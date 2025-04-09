@@ -1,183 +1,156 @@
-Return-Path: <linux-kernel+bounces-595314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C82A81CAC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:09:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDFA8A81CB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95C061B66F86
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:10:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBFBA3B3A74
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A631DDA1E;
-	Wed,  9 Apr 2025 06:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754EC1D8A0A;
+	Wed,  9 Apr 2025 06:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T/nbRtKC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cf2/p/d/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HWlFoaPd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oaA27RzR"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KnuFQagS"
+Received: from mail-oo1-f74.google.com (mail-oo1-f74.google.com [209.85.161.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA8A1DC9B5
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 06:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C101D7999
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 06:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744178955; cv=none; b=tzeYFKQptYk94nbMSMR3Cz8LYsAx6Wvcl19HnAC3QJR1t/BrdZDjH94om9Re1ct2PS/hBt4PgCiq3Apy9lNwEgOjTsDLW9zJO+y/Kb5CgdEjB5T4+lJ/u2KBURIBaTjMkNoYs3/QJWkGwiN5wQVgkUwbagwoL5lzXLSZnP+u5H4=
+	t=1744179054; cv=none; b=XnCkMPCAy7pt07a9OuW32buEj3vIx+PDGheug16LAaxkTDIrf/nX0t3gNPxSc+hvcIO83qoaXiF6kdGuEWX/2hYUTZWQFklsJO9FvDCo7QjPNzL7GcrxIaLvsn0hCmCLjrc/jiI0DXFMhSGxAUrn/iGEMHAnT960Y0UrHC/E65c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744178955; c=relaxed/simple;
-	bh=Supx3D5Y29RXFWXYuDVHLysXSPi5C+siOewfAF7Fus8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gHS3aB+WgdzavMYDd4LYxVqlwTEZ5OaeH0Y4QRVjrK7OH9a5UzphFZDQugLHt8P+WKtisqAmHk7oNY92hwNrgeh74r6ExDHrTfOcwk58Ia8BW2N2UucILGY7iN0EdrlVF1HXklHaTl3+yavtreIQI64Z22sM89VmnH2acWUZw+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T/nbRtKC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cf2/p/d/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HWlFoaPd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oaA27RzR; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C281521166;
-	Wed,  9 Apr 2025 06:09:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744178945; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TBegudRsJrjXblUZdaP4yqKXC2h1wJ3m6MC0Zz4oM4A=;
-	b=T/nbRtKCLaKZ9ofBeuBJQn7ZDCAATz3RuepJR4r87UD8JhU+mvDvxeueqZd7dGNLOQ5Um+
-	J1O1T43sErZW4qDA43zLcWeBcjwUR/0BvLbyOM1luq83tcRwAPaR5IeXrDxPeu2/CZczDk
-	c/5Hs+A+3gFHIp2nfFGxTjPQ1yOdh1c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744178945;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TBegudRsJrjXblUZdaP4yqKXC2h1wJ3m6MC0Zz4oM4A=;
-	b=Cf2/p/d/9DtLsdGhVQ/6BzkGbaZJL45AxBv6groolpM1wiDtNyh5zlirjYU1PvweMQIj80
-	VXiS/R2AVXwXoXCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=HWlFoaPd;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=oaA27RzR
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744178944; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TBegudRsJrjXblUZdaP4yqKXC2h1wJ3m6MC0Zz4oM4A=;
-	b=HWlFoaPdi01UUs6ZVPrO8+PZm6mV1zpX6vQKdjkwyjPuI33/IcuZEjOfrVINv/2HSyI/BI
-	vAoU3bRlP5ciyd13+p57ZDx6OAE3hs51s+lyq85pzsLcRo7eFKN+OCCvAz5qM1q0mP9VxE
-	jNkdB6t3PGcxUDwWPwlMqt5uJWlmeh8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744178944;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TBegudRsJrjXblUZdaP4yqKXC2h1wJ3m6MC0Zz4oM4A=;
-	b=oaA27RzRUAL2bzTWrFgdbFk3Vgt5ki91oI5HC73KBVIwOcRTYMwjM6CrP/zv5zcPYOhJgW
-	jf1MetLNe7m2X4Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 428F0137AC;
-	Wed,  9 Apr 2025 06:09:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id igVLDgAP9mc1NQAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 09 Apr 2025 06:09:04 +0000
-Message-ID: <63adb9ff-1591-4aff-923f-b523b4981e8a@suse.de>
-Date: Wed, 9 Apr 2025 08:09:03 +0200
+	s=arc-20240116; t=1744179054; c=relaxed/simple;
+	bh=VOlrE0q1Dgt0/ufOq2NjQaIoTeL0CeB1PTgY3Vto+Q4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=Df063wohLKDVuIXKCNAOS3PcayeZHlcTv2yMpDdX+GTg6P4o1M7IcgOiOlh7wB7KDsuB2K9L2Zd62EeXXzPSc2oY9C4PW1ymxqReiIHvH2m/alNC0XLUMchSzFxWxs9T26xsR2X0pU7LN/ielZ3R8NVk+jptSH1IQdl5mh11xn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KnuFQagS; arc=none smtp.client-ip=209.85.161.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-oo1-f74.google.com with SMTP id 006d021491bc7-6037a5f0f1bso6384207eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 23:10:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744179052; x=1744783852; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IQysTOtg9Kdj+LrUMGXjnelf/uERWnWmH3sm6GDGrDs=;
+        b=KnuFQagSm5GTyhX1SSFrHZgPcs4q+p0SHHFCyNnt6dfKQjr2xByeUR13qQdNCbwoWd
+         tqWbOj7JDe6BRS84/N+ywKJuT9iiz9aSy0yQaf18D6wUKV2YGpK/uWyFUqBF3TKX11Pg
+         DWssBktP9qb1nSoKHiJ/C05F8TgJ+IjTZIulgpcgybBdwR7Zd0Ne4rQJw8Y+n39RmHCQ
+         YihXqJpu0l7b5E3365IZQtziv4eMF7vafCJjMuv7wBm94TsKEsr93XOD2vXd+kucHPHN
+         pSR6GGOwTdp506ii2kkKXyiPrUj2iECcDXCC2dOS+wpy65LQ30GmTo/+E8XoL2C3zYbc
+         md5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744179052; x=1744783852;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IQysTOtg9Kdj+LrUMGXjnelf/uERWnWmH3sm6GDGrDs=;
+        b=LeEQXu5WNQZxAfOEonJ716HZRaCAonh91hrhZId+IGryiUvdbna+kX6+0hiCf7OJqq
+         eMzjdvUOwSc0OR9AGabukz+80AiPc0qske0jom78Ae/fk5gV5DpKop1+6VHKgPdZ5mES
+         8zaZINqYeXDkMWhz9zIa+L7/SzBTUz4ryLvpcZAP7K4IarkI90svyrjetYNPo6FcKSXY
+         dP+cg3Gbuy7BqhR6qRI7k2E2Gm3GYWzL7qqLlueA6KFkCnE30N2LfLpYqgakjn04wCVW
+         jOWk9eMWXFbpF9lTRxb5OfYr7vte4MJWjZYkJohyarrbvCY4IhyeXcFX6p3wW5aXShqe
+         jY9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVwYrUR/aeRUKP2hmL285hWK6GCPrLdTQjtG7uX8A030PAwPls0ghxh1LnMoFtaNQAJAjfzRn8ZqgK1m58=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb0EditNu+c1AgeFSoTnIOeFSDbgLzlGGYOtIgxT+SyMmSk1Pi
+	EST1EJK4tqYC+933J7dEdRyef2zN8VMyFX867XQV6mIdUGg1ThcIefSU+zRszUN3y9z9SdYBx+U
+	q1ePX+g==
+X-Google-Smtp-Source: AGHT+IEQV4QF+BtOk9XKaaDJXmt70/LQ97tjKNA6w7SsotefkMcSscPT06n12/bTAX31grcBsCWOjkz9q7z4
+X-Received: from oabxi11.prod.google.com ([2002:a05:6870:4f0b:b0:2c1:fc56:4d62])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:9598:b0:2a7:d856:94a
+ with SMTP id 586e51a60fabf-2d08dded4damr919045fac.22.1744179052187; Tue, 08
+ Apr 2025 23:10:52 -0700 (PDT)
+Date: Tue,  8 Apr 2025 23:10:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] nvmet-fcloop: swap list_add_tail arguments
-To: Daniel Wagner <wagi@kernel.org>, James Smart <james.smart@broadcom.com>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>, Jens Axboe <axboe@kernel.dk>
-Cc: James Smart <jsmart2021@gmail.com>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250408-nvmet-fcloop-part-one-v1-0-382ec97ab7eb@kernel.org>
- <20250408-nvmet-fcloop-part-one-v1-1-382ec97ab7eb@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250408-nvmet-fcloop-part-one-v1-1-382ec97ab7eb@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: C281521166
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[gmail.com,lists.infradead.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
+Message-ID: <20250409061043.700792-1-irogers@google.com>
+Subject: [PATCH v4 00/16] Intel TPEBS min/max/mean/last support
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Weilin Wang <weilin.wang@intel.com>, 
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
+	John Garry <john.g.garry@oracle.com>, Howard Chu <howardchu95@gmail.com>, 
+	Levi Yun <yeoreum.yun@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 4/8/25 17:29, Daniel Wagner wrote:
-> The newly element to be added to the list is the first argument of
-> list_add_tail. This fix is missing dcfad4ab4d67 ("nvmet-fcloop: swap
-> the list_add_tail arguments").
-> 
-> Fixes: 437c0b824dbd ("nvme-fcloop: add target to host LS request support")
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->   drivers/nvme/target/fcloop.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/nvme/target/fcloop.c b/drivers/nvme/target/fcloop.c
-> index e1abb27927ff74c9c55ddefd9581aab18bf3b00f..da195d61a9664cba21880a4b99ba0ee94a58f81a 100644
-> --- a/drivers/nvme/target/fcloop.c
-> +++ b/drivers/nvme/target/fcloop.c
-> @@ -478,7 +478,7 @@ fcloop_t2h_xmt_ls_rsp(struct nvme_fc_local_port *localport,
->   	if (targetport) {
->   		tport = targetport->private;
->   		spin_lock(&tport->lock);
-> -		list_add_tail(&tport->ls_list, &tls_req->ls_list);
-> +		list_add_tail(&tls_req->ls_list, &tport->ls_list);
->   		spin_unlock(&tport->lock);
->   		queue_work(nvmet_wq, &tport->ls_work);
->   	}
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+The patches add support to computing the min, max, mean or last
+retirement latency and then using that value as the basis for metrics.
+When values aren't available, support is added to use the retirement
+latency as recorded for an event in the perf json.
 
-Cheers,
+Support is added for reading the retirement latency from the forked
+perf command more than once. To avoid killing the process commands are
+sent through the control fd. Some name handling is changed to make it
+more robust.
 
-Hannes
+Rather than retirement latency events having issues with perf record,
+make it so that the retirement latency modifier enables sample
+weights.
+
+v4: Don't use json min/max in retirement latency stats as they will
+    never update afterwards. Warn once if json data is used when TPEBS
+    recording was requested.
+
+v3: Two fixes from Kan Liang. Ensure min/max statistics don't vary
+    when real samples are encountered.
+
+v2: Addition of header cleanup patch originally posted:
+    https://lore.kernel.org/lkml/20241210191823.612631-1-irogers@google.com/
+    as there are no arch specific reasons not to build this code.
+    Fix bug in "perf pmu-events: Add retirement latency to JSON events
+    inside of perf" where "t->stats.n != 0" should have been
+    "t->stats.n == 0".
+    Add patch so that perf record of a retirement latency event
+    doesn't crash but instead enables sample weights for the event.
+
+Ian Rogers (16):
+  perf intel-tpebs: Cleanup header
+  perf intel-tpebs: Simplify tpebs_cmd
+  perf intel-tpebs: Rename tpebs_start to evsel__tpebs_open
+  perf intel-tpebs: Separate evsel__tpebs_prepare out of
+    evsel__tpebs_open
+  perf intel-tpebs: Move cpumap_buf out of evsel__tpebs_open
+  perf intel-tpebs: Reduce scope of tpebs_events_size
+  perf intel-tpebs: Inline get_perf_record_args
+  perf intel-tpebs: Ensure events are opened, factor out finding
+  perf intel-tpebs: Refactor tpebs_results list
+  perf intel-tpebs: Add support for updating counts in evsel__tpebs_read
+  perf intel-tpebs: Add mutex for tpebs_results
+  perf intel-tpebs: Don't close record on read
+  perf intel-tpebs: Use stats for retirement latency statistics
+  perf stat: Add mean, min, max and last --tpebs-mode options
+  perf pmu-events: Add retirement latency to JSON events inside of perf
+  perf record: Retirement latency cleanup in evsel__config
+
+ tools/perf/Documentation/perf-stat.txt   |   7 +
+ tools/perf/builtin-stat.c                |  29 +-
+ tools/perf/pmu-events/empty-pmu-events.c | 216 +++----
+ tools/perf/pmu-events/jevents.py         |   6 +
+ tools/perf/pmu-events/pmu-events.h       |   3 +
+ tools/perf/util/Build                    |   2 +-
+ tools/perf/util/evlist.c                 |   1 -
+ tools/perf/util/evsel.c                  |  22 +-
+ tools/perf/util/evsel.h                  |   6 +
+ tools/perf/util/intel-tpebs.c            | 682 ++++++++++++++---------
+ tools/perf/util/intel-tpebs.h            |  40 +-
+ tools/perf/util/parse-events.c           |   4 +
+ tools/perf/util/pmu.c                    |  52 +-
+ tools/perf/util/pmu.h                    |   3 +
+ 14 files changed, 666 insertions(+), 407 deletions(-)
+
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.49.0.504.g3bcea36a83-goog
+
 
