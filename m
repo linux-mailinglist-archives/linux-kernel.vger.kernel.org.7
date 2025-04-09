@@ -1,74 +1,86 @@
-Return-Path: <linux-kernel+bounces-596009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 674BDA825BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:13:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7416BA825E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA2AA460903
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:13:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61AEA4A64DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2D1264A85;
-	Wed,  9 Apr 2025 13:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F23267721;
+	Wed,  9 Apr 2025 13:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BQ8IdTx/"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Nw05zIMO"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77ED5263C78
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 13:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D350267B88;
+	Wed,  9 Apr 2025 13:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744204400; cv=none; b=ecRXRsY/zdFEjCX68uu/9MwK5pwGKT4/HYAGLRvYXrd4UIYe2PB0gEr75Xqw73l1nRzu7NKGmpO4mkAljcPz0/2yJPqnWNh2Dzjyv6ylGJAvmExkIF21XUnqOW+GtdzULwMP6rueFXeAzS8uJZEVHPPZlx2EDyXR0mFIxDfajIs=
+	t=1744204421; cv=none; b=sZMX9cozBwT9DMfYinoV1SBv02NyvjMmrNuEZy4XTBKgdOeUEnXZoKUUSpKHMa0W8cgHais85dr5XpI2Rsj/i/JE4VDv2r3eiRiPtN5D+/G8N6vMRVgkQhlhVjLVCaNFVX0Q8GTISgybh8TuXzwP3n94ti5zDz5uHARsh743ypw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744204400; c=relaxed/simple;
-	bh=CG25b6n9nGE5IFWaYyW41HSL8jKv0tYuhZeoxo8nyso=;
+	s=arc-20240116; t=1744204421; c=relaxed/simple;
+	bh=0ZnyNYBunZVKrfVBzEg9Tb9rO3d2s/FodrkAnZmDM8k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NtSWm3umC1dfU0wDVIWFR7o7abkcRKRSW5nBwNHO4n4tIIQjSu0nrzm0ePw15aNjpnmla0tXrBc8GveTEz5SxX9eBZyQaIg8DPGChPDKfbXMV0zB6gCGYFLIOv9Gt3l061kT57pEfOwxIdUc9W6Y966UUdo5y2tRtK1+MSjii3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BQ8IdTx/; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=S1KgLWwR2I25MhE3N6gFFYurbOGPzzltzWiSPxW2ThiACWsf9HBL32+OSrMXgnNEQWnpkBSyDgbtWGQNDhr1KeoBFkDPveymIOEzxSjAMUMg7oUPqR3bFwS9S6wi1/tMLtsfLcnTb7aWsIB7WivS857OZJ11YDgtLs35bRE8rd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Nw05zIMO; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744204396;
-	bh=CG25b6n9nGE5IFWaYyW41HSL8jKv0tYuhZeoxo8nyso=;
+	s=mail; t=1744204418;
+	bh=0ZnyNYBunZVKrfVBzEg9Tb9rO3d2s/FodrkAnZmDM8k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BQ8IdTx/bzMVxrkWX9HLnu4rDqwHKJQYA4imHPW5DQjX66I/fl5HCsan8xLQAxCmq
-	 kenreOatWfPVLEAJgMRj7GPjUmTtq3mxLrPwLDLb5do2aITAOpix/vwvBpGJRV0kf1
-	 72G8CFSbx+sPds2SyO6AIB676JkHBjCpE6oBqHo8/ISb/tzNOnXDWVZZxVGQs12Jn4
-	 6vRxS/BCFs4iSCxkQ3DJPembhutsoj1Uj5TMYO40c7JsOVXxj0brYccqj/3l0LL/sI
-	 A/w3/tXdBT/8PyIGC47ct/4VzWtZXnqf1My0ge1vqjorFY3Q8nIpsQv7609tWtH9Xv
-	 hK/z3EkJOyi8Q==
+	b=Nw05zIMOfCfBk6dAHUb1kH3bef413GVK0/DBmfXTSI4P+us5nwZE/kQUGwt9UU+Tf
+	 OVhg6f4cRdYwkOX/dHCngMWaqoQXZCNHORuW9/DSs3EVmN2B2gkyNS/rVyVit4GRai
+	 4Z3f282PtpKfrtymYppJvRIfyfAKyOe8O+M8TrEM0x33jLGJlqBqj4wtUauveGPf46
+	 iEO6xSOKRd6usgScpcK/jS32pYdKWqwYOID6QAPz+LH7P1on8cDgdgVZeKU4fVIIWz
+	 bMB0n3IlliR9jSD5fg9aWJg3y2eKLsE1Q3u43SuFQGCDp5P33JWdGmV1LxDwnu0pc0
+	 0hfUGn33BqYUw==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C857D17E0F85;
-	Wed,  9 Apr 2025 15:13:15 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1003117E0FC1;
+	Wed,  9 Apr 2025 15:13:37 +0200 (CEST)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: chunkuang.hu@kernel.org
 Cc: p.zabel@pengutronix.de,
 	airlied@gmail.com,
 	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
 	matthias.bgg@gmail.com,
 	angelogioacchino.delregno@collabora.com,
+	ck.hu@mediatek.com,
+	jitao.shi@mediatek.com,
+	jie.qiu@mediatek.com,
+	junzhi.zhao@mediatek.com,
 	dri-devel@lists.freedesktop.org,
 	linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	kernel@collabora.com,
+	dmitry.baryshkov@linaro.org,
 	lewis.liao@mediatek.com,
 	ives.chenjh@mediatek.com,
 	tommyyl.chen@mediatek.com,
 	jason-jh.lin@mediatek.com
-Subject: [PATCH v1 4/5] drm/mediatek: mtk_dpi: Allow additional output formats on MT8195/88
+Subject: [PATCH v8 10/23] drm/mediatek: mtk_hdmi: Move N/CTS setting to new function
 Date: Wed,  9 Apr 2025 15:13:05 +0200
-Message-ID: <20250409131306.108635-5-angelogioacchino.delregno@collabora.com>
+Message-ID: <20250409131318.108690-11-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250409131306.108635-1-angelogioacchino.delregno@collabora.com>
-References: <20250409131306.108635-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250409131318.108690-1-angelogioacchino.delregno@collabora.com>
+References: <20250409131318.108690-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,68 +89,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Allow additional output formats in both DPI and DP_INTF blocks of
-the MT8195 and MT8188 SoCs (as the latter is fully compatible with,
-hence reuses, the former's platform data for both blocks) by adding:
+In preparation for splitting common bits of this driver, moving
+the hdmi_rec_n_table struct array, and the hdmi_recommended_n(),
+hdmi_mode_clock_to_hz(), hdmi_expected_cts() functions, add one
+function called mtk_hdmi_get_ncts() that sets both N and CTS in
+a single call.
 
-1. New formats to the `mt8195_output_fmts` array for dp_intf,
-   lacking YUV422 12-bits support, and adding RGB888 2X12_LE/BE
-   (8-bits), BGR888 (8-bits) RGB101010 1x30 (10-bits), and YUV
-   formats, including YUV422 8/10 bits, and YUV444 8/10 bits; and
-2. A new `mt8195_dpi_output_fmts` array for DPI only, with all of
-   for formats added to dp_intf and with the addition of the
-   YUYV12_1X24 (YUV422 12-bits) output format.
-
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/gpu/drm/mediatek/mtk_dpi.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_hdmi.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-index a9e8113a1618..9de537a77493 100644
---- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-@@ -1093,9 +1093,29 @@ static const u32 mt8183_output_fmts[] = {
- 	MEDIA_BUS_FMT_RGB888_2X12_BE,
- };
+diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+index 87cf97136fb7..e7acf392b8f4 100644
+--- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
++++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+@@ -675,6 +675,13 @@ static unsigned int hdmi_expected_cts(unsigned int audio_sample_rate,
+ 				     128 * audio_sample_rate);
+ }
  
-+static const u32 mt8195_dpi_output_fmts[] = {
-+	MEDIA_BUS_FMT_RGB888_1X24,
-+	MEDIA_BUS_FMT_RGB888_2X12_LE,
-+	MEDIA_BUS_FMT_RGB888_2X12_BE,
-+	MEDIA_BUS_FMT_RGB101010_1X30,
-+	MEDIA_BUS_FMT_YUYV8_1X16,
-+	MEDIA_BUS_FMT_YUYV10_1X20,
-+	MEDIA_BUS_FMT_YUYV12_1X24,
-+	MEDIA_BUS_FMT_BGR888_1X24,
-+	MEDIA_BUS_FMT_YUV8_1X24,
-+	MEDIA_BUS_FMT_YUV10_1X30,
-+};
++static void mtk_hdmi_get_ncts(unsigned int sample_rate, unsigned int clock,
++			      unsigned int *n, unsigned int *cts)
++{
++	*n = hdmi_recommended_n(sample_rate, clock);
++	*cts = hdmi_expected_cts(sample_rate, clock, *n);
++}
 +
- static const u32 mt8195_output_fmts[] = {
- 	MEDIA_BUS_FMT_RGB888_1X24,
-+	MEDIA_BUS_FMT_RGB888_2X12_LE,
-+	MEDIA_BUS_FMT_RGB888_2X12_BE,
-+	MEDIA_BUS_FMT_RGB101010_1X30,
- 	MEDIA_BUS_FMT_YUYV8_1X16,
-+	MEDIA_BUS_FMT_YUYV10_1X20,
-+	MEDIA_BUS_FMT_BGR888_1X24,
-+	MEDIA_BUS_FMT_YUV8_1X24,
-+	MEDIA_BUS_FMT_YUV10_1X30,
- };
+ static void do_hdmi_hw_aud_set_ncts(struct mtk_hdmi *hdmi, unsigned int n,
+ 				    unsigned int cts)
+ {
+@@ -705,8 +712,7 @@ static void mtk_hdmi_hw_aud_set_ncts(struct mtk_hdmi *hdmi,
+ {
+ 	unsigned int n, cts;
  
- static const struct mtk_dpi_factor dpi_factor_mt2701[] = {
-@@ -1208,8 +1228,8 @@ static const struct mtk_dpi_conf mt8192_conf = {
+-	n = hdmi_recommended_n(sample_rate, clock);
+-	cts = hdmi_expected_cts(sample_rate, clock, n);
++	mtk_hdmi_get_ncts(sample_rate, clock, &n, &cts);
  
- static const struct mtk_dpi_conf mt8195_conf = {
- 	.max_clock_khz = 594000,
--	.output_fmts = mt8183_output_fmts,
--	.num_output_fmts = ARRAY_SIZE(mt8183_output_fmts),
-+	.output_fmts = mt8195_dpi_output_fmts,
-+	.num_output_fmts = ARRAY_SIZE(mt8195_dpi_output_fmts),
- 	.pixels_per_iter = 1,
- 	.is_ck_de_pol = true,
- 	.swap_input_support = true,
+ 	dev_dbg(hdmi->dev, "%s: sample_rate=%u, clock=%d, cts=%u, n=%u\n",
+ 		__func__, sample_rate, clock, n, cts);
 -- 
 2.49.0
 
