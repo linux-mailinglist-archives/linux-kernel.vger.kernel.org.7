@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-595706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CBAAA821E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:20:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B733EA821E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B9E64635BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:19:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80E1F1BA42C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F3B25DCFC;
-	Wed,  9 Apr 2025 10:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B733925DB0A;
+	Wed,  9 Apr 2025 10:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKazUwED"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YXZtnNYh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF0325D8FF;
-	Wed,  9 Apr 2025 10:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFFB25DAF2;
+	Wed,  9 Apr 2025 10:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744193898; cv=none; b=LRY+qGVPW0qJ0ykeIDYoABt/Ula6Ks0Ru7CVx4hmW8szSSPopq20vbpF67eCB7kotTE4wq1pxGG4JZ96g/YFtNPBx9Ybhjor2kNbfkTosuF4UTqs/8zFg0Y+46Z5A71mPOzrkMAuAxA2ymomLXfg9RpmEDYBylObaR/ZUqC9NhM=
+	t=1744193889; cv=none; b=jiotmlX0CKtjVfUs/ZSQTApEio7z98XfJ/B5Rj1CUrvPzb7H3J1XXNQ+uG0bA7t9Tww6OozGFPNiQ6lK1U7oKRuyUJYQALM0PYjWv52L/NBa/6oITUCHl9zox7D3xXFnhD1Y7huZkSdJoa+12Koed6Hj0fH500sJcgbkeV9Gaeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744193898; c=relaxed/simple;
-	bh=6ksrS2ukx8baDR5oexJ+ylv0YSfETRiMQmVoTYYKO+I=;
+	s=arc-20240116; t=1744193889; c=relaxed/simple;
+	bh=f+bCIdAzqJR9DhddeAL7a4pbRlb41V0+iBkDqnK4uPw=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=d1+nXNHO/bOukpPXx0lwV+U6U8VpfAhIiMW1YyYc6kPJh3IIjuyur9+nZTE90oMfx/bf5stNgKcTG3naDw/+BVnG1plWGUYusDwzTuf8xrK61y88aIGSPVTcPQGQjaRwfS02pwH5WlJnXOO0+4pWIhpPHJe+Nf5nv2axgis1Sis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKazUwED; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8511AC4CEE3;
-	Wed,  9 Apr 2025 10:18:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=pDSSVe9c3ihr1MZbFLNvkf94bNbz1nKgyO1jsu9PXMsyyYE8mFWBDsLkTqeiGbxdsD7qpasWIXklPvIXZkwBXUOK6qZJc7dPnb+yftHGGOlIEN8VGKYcIypI1760RP8IgWebkS71HGz8/z57GJLS/vHTtZk/Qk/wEvoaT0Dx3hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YXZtnNYh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04CDFC4CEE3;
+	Wed,  9 Apr 2025 10:18:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744193896;
-	bh=6ksrS2ukx8baDR5oexJ+ylv0YSfETRiMQmVoTYYKO+I=;
+	s=k20201202; t=1744193889;
+	bh=f+bCIdAzqJR9DhddeAL7a4pbRlb41V0+iBkDqnK4uPw=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=mKazUwEDITjrCP8v10OLJWD66s96oERJAVdRel9k9zj4em/4y3EiQfqt3eAZ6Mk3f
-	 UHqdfD3zwIZTAQYwEEt2AtC0/DUU4r80hKU+SOVnoS8VFucFXWQBMsIo2jtyxTriFd
-	 zOIQ4GqKa1Y72VNUKHtUNeGf7XbT/E8XsbWzsaXNDuSf1U8vzasWx3kROuUczIivBW
-	 xaMdalUbev4Or76Ih9wXiGHSlSqp/Vgc3Zzq4DxL9en9rlev2cXMqYpLG+elzTFjfM
-	 caA2Xmd+HJaILs9NeKva3ndXvn3aSV9FUAXM5oa+MmndTbOkZkIEAz2yD6pSlUcVI2
-	 nrxn1zVra3KOg==
+	b=YXZtnNYhI0ExO3Xz+2umZoCr8dAntmR65/Pie71QwTkGGcgMTr7lRS3VkaL40b4Y5
+	 Og5Sq6uKSlVPqjStKt1HKMs2WfPoiM9Z+/05aKmC4b4FzNtYc9idf9n5Z9NvfHaQ/G
+	 VLC23t+ASc2M3jCiIVHQDtFfY4R1J+6IoAO/o+1EsMmlLu3jeFiS5yM+hoKlGR3twB
+	 Cl95eeY6YbyjPW5nY9grdpYAtJOv2HeS9fSPdetXrKXlSq4D8aMS0/zoqH9zQ/jb3u
+	 MyVxz+W8vJXfVbzhfE8QVNFz6qVaPJnoa+EpgKO2yM166eOU1T7CpPj8eB5V8Jv7YY
+	 8hxo4wFpUofDg==
 From: Andreas Hindborg <a.hindborg@kernel.org>
 To: "Oliver Mangold" <oliver.mangold@pm.me>
 Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
@@ -49,16 +49,16 @@ Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
  Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
   "Trevor Gross" <tmgross@umich.edu>,  "Asahi Lina" <lina@asahilina.net>,
   <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 3/5] rust: Add missing SAFETY documentation for ARef
- example
-In-Reply-To: <20250325-unique-ref-v9-3-e91618c1de26@pm.me> (Oliver Mangold's
-	message of "Tue, 25 Mar 2025 11:57:10 +0000")
+Subject: Re: [PATCH v9 4/5] rust: kbuild: provide
+ `RUSTC_HAS_DO_NOT_RECOMMEND` symbol
+In-Reply-To: <20250325-unique-ref-v9-4-e91618c1de26@pm.me> (Oliver Mangold's
+	message of "Tue, 25 Mar 2025 11:57:19 +0000")
 References: <20250325-unique-ref-v9-0-e91618c1de26@pm.me>
-	<BilXj9TIYuQxgQ8GYVKxO0m88NUME1b-jtwrV9ZX3W9GXO-QJGFpb9rChJZarPa4e2AAvgJTm_DINEIW1JINlA==@protonmail.internalid>
-	<20250325-unique-ref-v9-3-e91618c1de26@pm.me>
+	<XJFS-SfVD4o0dEirvLz4JpaMPMyZ5TOplstLcc8j23SzVy0LIwpjj_RH9mCvK67zffFaUlz2R8agRPAAXltIrQ==@protonmail.internalid>
+	<20250325-unique-ref-v9-4-e91618c1de26@pm.me>
 User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 09 Apr 2025 11:26:31 +0200
-Message-ID: <87a58pd6t4.fsf@kernel.org>
+Date: Wed, 09 Apr 2025 11:27:49 +0200
+Message-ID: <874iyxd6qy.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,63 +69,50 @@ Content-Type: text/plain
 
 "Oliver Mangold" <oliver.mangold@pm.me> writes:
 
-> SAFETY comment in rustdoc example was just 'TODO'. Fixed.
+> From: Miguel Ojeda <ojeda@kernel.org>
 >
+> Rust 1.85.0 (current stable version) stabilized [1]
+> `#[diagnostic::do_not_recommend]` [2].
+>
+> In order to use it across all supported Rust versions, introduce a new
+> Kconfig symbol for it.
+>
+> This allows to perform conditional compilation based on it, e.g. on the
+> use site to enable the attribute:
+>
+>     #[cfg_attr(RUSTC_HAS_DO_NOT_RECOMMEND, diagnostic::do_not_recommend)]
+>     impl A for i32 {}
+>
+> An alternative would have been to `allow` the following warning:
+>
+>     #![allow(unknown_or_malformed_diagnostic_attributes)]
+>
+> However, that would lose the checking for typos across all versions,
+> which we do not want to lose.
+>
+> One can also use the Kconfig symbol to allow the warning in older
+> compilers instead, to avoid repeating the `cfg_attr` line above in all
+> use sites:
+>
+>     #![cfg_attr(
+>         not(RUSTC_HAS_DO_NOT_RECOMMEND),
+>         expect(unknown_or_malformed_diagnostic_attributes)
+>     )]
+>
+> That still loses the checking for typos in older versions, but we still
+> keep it in newer ones, thus we should still catch mistakes eventually.
+>
+> In this case we can promote it to `expect` as shown above, so that we do
+> not forget to remove these lines if we stop using the attribute somewhere.
+>
+> Link: https://github.com/rust-lang/rust/pull/132056 [1]
+> Link: https://doc.rust-lang.org/reference/attributes/diagnostics.html#the-diagnosticdo_not_recommend-attribute [2]
+> Link: https://lore.kernel.org/rust-for-linux/CANiq72mYfhuRWkjomb1vOMMPOaxvdS6qjfVLAwxUw6ecdqyh2A@mail.gmail.com/
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 > Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
-> ---
->  rust/kernel/types.rs | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index c8b78bcad259132808cc38c56b9f2bd525a0b755..db29f7c725e631c11099fa9122901ec2b3f4a039 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-> @@ -492,7 +492,7 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
->      ///
->      /// struct Empty {}
->      ///
-> -    /// # // SAFETY: TODO.
-> +    /// // SAFETY: We do not free anything.
-
-How about:
-
-  This implementation will never free the underlying object, so the
-  object is kept alive longer than the safety requirement specifies.
 
 
->      /// unsafe impl RefCounted for Empty {
->      ///     fn inc_ref(&self) {}
->      ///     unsafe fn dec_ref(_obj: NonNull<Self>) {}
-> @@ -500,7 +500,7 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
->      ///
->      /// let mut data = Empty {};
->      /// let ptr = NonNull::<Empty>::new(&mut data).unwrap();
-> -    /// # // SAFETY: TODO.
-> +    /// // SAFETY: We keep `data` around longer than the `ARef`.
-
-This is not sufficient. The safety requirement is:
-
-  Callers must ensure that the reference count was incremented at least once, and that they
-  are properly relinquishing one increment. That is, if there is only one increment, callers
-  must not use the underlying object anymore -- it is only safe to do so via the newly
-  created [`ARef`].
-
-How about:
-
-  The `RefCounted` implementation for `Empty` does not count references
-  and never frees the underlying object. Thus we can act as having a
-  refcount on the object that we pass to the newly created `ARef`.
-
-I think this example actually exposes a soundness hole. When the
-underlying object is allocated on the stack, the safety requirements are
-not sufficient to ensure the lifetime of the object. We could safely
-return `data_ref` and have the underlying object go away. We should add
-to the safety requirement of `ARef::from_raw`:
-
-  `ptr` must be valid while the refcount is positive.
-
-That would allow the code in this example, but prevent the issue
-outlined above.
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
 
 Best regards,
