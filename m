@@ -1,123 +1,135 @@
-Return-Path: <linux-kernel+bounces-596789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E9BA830C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:49:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9CB6A83180
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:02:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39E45880530
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:49:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 000B53BF140
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1F1214A79;
-	Wed,  9 Apr 2025 19:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEBD212FA2;
+	Wed,  9 Apr 2025 19:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e2S6XtIj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="bu761F/c"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240912101B3;
-	Wed,  9 Apr 2025 19:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C46211A05;
+	Wed,  9 Apr 2025 19:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744228118; cv=none; b=Fi5IZB1ZEQbHplpTvvmyrjJv2sUdj2/k0GHL0cuJgOSRnwyD8qNTSJbvqlTL7rXk5oKqa1BukunhNBEXaI8fNq54xMI56lpWVK34BhqQ/4DvnRmwmkEq3z0o1u6hbOI3tRK/SIfM67mwanGfbf2WQWF+UvX0nSPCapKqeQ2S8VE=
+	t=1744228204; cv=none; b=fpT4tXIn5LWbzKGMWsnA5to5sYQny8oAvViKr4SjIQaKtlxTbOi5c6Lsa+jIY9VOcptZcfo/dsIXty9SRop9kgP9l6NJF1L/LSDnQuiNGl63QpWtUxbrSnzlaeyCrXIcJCfnotEfc1JsPahnLs1k2zwefYseR9YxwjMYJF/DKB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744228118; c=relaxed/simple;
-	bh=iCtHLk33YvZVAWXt7i5RyMq9fMhcsg+qWem2feATC5g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t7hT7bVaO7mSjZvNcRoXW6BR6Q11xIy2c5n3melxRPs6+n3IUgnkusWwoDKTlgKZIT9lPell+85dGJ31xkWZSPxpqFhQwTPF1nVptopCLYGlEyV3RU42QPzvpl2Aj9tZo3L++huDpD6C9Q/+0B8vuJsCxlSau080dVOrY/ylHTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e2S6XtIj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 539HE1fJ005921;
-	Wed, 9 Apr 2025 19:48:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	coBhNxrqtvBjPYHNF8KL0UPazsmtH2wkILUKTEDK9Ns=; b=e2S6XtIjbzWLlY6q
-	fo78D1uUsMyMxOYWpZpFxhOCCARzdl7gtnOj53Rdl5NISfNXMnxpL+wNkS3PjSgL
-	70tEo+M+3hg4xC0hMGnMvLL2d5t+d9SMSxs87U09EsqbZbkJTjL1flpu1nJEWpbu
-	rmwPcMu9ifoOcazPSOK/2R4xChDjn523xVqP5Hj4eXGA+3rDAAH8R9smBy/HmEaL
-	MKDHlV5LvWRMHS+QQb1C9y4E6jbMzrNW61NJYB18EI/S5ggeLZwPuit98n+AjQoH
-	aQ/7SeNwiIzmDniW9t/3jcqHYEwzdTbufT0kq1aJAtTNWmw3A+yl4Ak+uTBOEXX2
-	Hulo6w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twtb4pc5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Apr 2025 19:48:25 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 539JmOYE031475
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 9 Apr 2025 19:48:24 GMT
-Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 9 Apr 2025 12:48:24 -0700
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
-        <tiwai@suse.com>, <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>
-Subject: [PATCH v38 31/31] ALSA: usb-audio: qcom: Notify USB audio devices on USB offload probing
-Date: Wed, 9 Apr 2025 12:48:04 -0700
-Message-ID: <20250409194804.3773260-32-quic_wcheng@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250409194804.3773260-1-quic_wcheng@quicinc.com>
-References: <20250409194804.3773260-1-quic_wcheng@quicinc.com>
+	s=arc-20240116; t=1744228204; c=relaxed/simple;
+	bh=G9Bp3DpoBCRu+rCxHWLYH+18xBOavKtmr+c7ZFrPNAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qik0jmqLpW+gQxVi1Y5VFiNc3vHjz+z9FgfHcsFmvcL6SQfM3gXSkNGjtFrJUYoyu1wAuTBcs77mf8gNhGeyQKR1ZdoQJASDDQy1SXawKxBm9qIbEO0W8mUP9sUYQmRJECmvgW/MK8APDEa8zQx0jMlY48R005abJO+L+lJ8rTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=bu761F/c; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=E2HlTtwxLd9nT5IoqMKzFcnK1TKTGBf/+hXBsha3OC0=; b=bu761F/cnGf4xjmbFaozkvDJp5
+	vTyxg5oOaCd7ENdEmVDL0pU4V4Cq8CyTcaWP1OPQ/uDWoBVYDCkSR7erU3TzyRMKF31PbksfmQL4k
+	C6XALf30HUWZsHVB8WLlU0QqZItinPhKBn9DKrwxEN4yhXBPFhNOCNEktwcBNNwg0uhowEFGd56nU
+	9Ol1G/jKa6RFZ3DL1CTotfPq69jYyMYz5c7OQXXh4+xfdL9tXNm5bMBWAuBJrkPgXWsiLlD3RWvKt
+	ar/1SgXh/NFN6bN4mNyDU8ht9YE40T2JT93MmA4pPYZYO8JrSqs/I0VoNuFcmIoye6ctJ0x7kWjoY
+	elQIcboA==;
+Received: from [189.7.87.174] (helo=[192.168.0.224])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1u2bQn-00EHz1-5C; Wed, 09 Apr 2025 21:49:53 +0200
+Message-ID: <b402252a-91de-4983-abc1-65f78e7e6ae7@igalia.com>
+Date: Wed, 9 Apr 2025 16:49:45 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: drivers/gpu/drm/vc4/vc4_gem.c:604 vc4_lock_bo_reservations()
+ error: uninitialized symbol 'ret'.
+To: Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Melissa Wen <mwen@igalia.com>
+References: <f5dd7fb6-6a99-407f-846f-0de2d0abe177@stanley.mountain>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <f5dd7fb6-6a99-407f-846f-0de2d0abe177@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NyMvLVILQomADtA_HpADUenBomJUU4EG
-X-Authority-Analysis: v=2.4 cv=LLlmQIW9 c=1 sm=1 tr=0 ts=67f6cf09 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=3H110R4YSZwA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=0R9NKns1a96QCZ5VGfgA:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: NyMvLVILQomADtA_HpADUenBomJUU4EG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-09_06,2025-04-08_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- clxscore=1015 mlxlogscore=999 malwarescore=0 phishscore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 spamscore=0 adultscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504090132
 
-If the vendor USB offload class driver is not ready/initialized before USB
-SND discovers attached devices, utilize snd_usb_rediscover_devices() to
-find all currently attached devices, so that the ASoC entities are notified
-on available USB audio devices.
++ König
 
-Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
----
- sound/usb/qcom/qc_audio_offload.c | 2 ++
- 1 file changed, 2 insertions(+)
+Hi Dan,
 
-diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
-index 378249a264a3..5874eb5ba827 100644
---- a/sound/usb/qcom/qc_audio_offload.c
-+++ b/sound/usb/qcom/qc_audio_offload.c
-@@ -1952,6 +1952,8 @@ static int qc_usb_audio_probe(struct auxiliary_device *auxdev,
- 	if (ret < 0)
- 		goto release_qmi;
- 
-+	snd_usb_rediscover_devices();
-+
- 	return 0;
- 
- release_qmi:
+On 02/04/25 05:43, Dan Carpenter wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   acc4d5ff0b61eb1715c498b6536c38c1feb7f3c1
+> commit: 04630796c437a9285643097825cbd3cd06603f47 drm/vc4: Use DRM Execution Contexts
+> date:   2 months ago
+> config: arm64-randconfig-r073-20250402 (https://download.01.org/0day-ci/archive/20250402/202504021500.3AM1hKKS-lkp@intel.com/config)
+> compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202504021500.3AM1hKKS-lkp@intel.com/
+> 
+> smatch warnings:
+> drivers/gpu/drm/vc4/vc4_gem.c:604 vc4_lock_bo_reservations() error: uninitialized symbol 'ret'.
+> 
+> vim +/ret +604 drivers/gpu/drm/vc4/vc4_gem.c
+> 
+> cdec4d3613230f Eric Anholt 2017-04-12  589  static int
+> 04630796c437a9 Maíra Canal 2024-12-20  590  vc4_lock_bo_reservations(struct vc4_exec_info *exec,
+> 04630796c437a9 Maíra Canal 2024-12-20  591  			 struct drm_exec *exec_ctx)
+> cdec4d3613230f Eric Anholt 2017-04-12  592  {
+> 04630796c437a9 Maíra Canal 2024-12-20  593  	int ret;
+> cdec4d3613230f Eric Anholt 2017-04-12  594
+> cdec4d3613230f Eric Anholt 2017-04-12  595  	/* Reserve space for our shared (read-only) fence references,
+> cdec4d3613230f Eric Anholt 2017-04-12  596  	 * before we commit the CL to the hardware.
+> cdec4d3613230f Eric Anholt 2017-04-12  597  	 */
+> 04630796c437a9 Maíra Canal 2024-12-20  598  	drm_exec_init(exec_ctx, DRM_EXEC_INTERRUPTIBLE_WAIT, exec->bo_count);
+> 04630796c437a9 Maíra Canal 2024-12-20  599  	drm_exec_until_all_locked(exec_ctx) {
+> 04630796c437a9 Maíra Canal 2024-12-20  600  		ret = drm_exec_prepare_array(exec_ctx, exec->bo,
+> 04630796c437a9 Maíra Canal 2024-12-20  601  					     exec->bo_count, 1);
+> 
+> This is a false positive in Smatch.  I can silence the warning on my
+> end easily enough to say that we always enter the drm_exec_until_all_locked()
+> loop.  But the question is why do we only test the last "ret" instead of
+> testing all of them?
+
+AFAIU `drm_exec_until_all_locked` will loop until all GEM objects are
+locked and no more contention exists. As we have a single operation
+inside the loop, we don't need to check "ret" for every iteration.
+
+I believe Christian will possibly give you a more precise answer as he
+designed the API.
+
+Best Regards,
+- Maíra
+
+> 
+> 04630796c437a9 Maíra Canal 2024-12-20  602  	}
+> cdec4d3613230f Eric Anholt 2017-04-12  603
+> cdec4d3613230f Eric Anholt 2017-04-12 @604  	if (ret) {
+> 04630796c437a9 Maíra Canal 2024-12-20  605  		drm_exec_fini(exec_ctx);
+> cdec4d3613230f Eric Anholt 2017-04-12  606  		return ret;
+> 7edabee06a5622 Eric Anholt 2016-09-27  607  	}
+> d5b1a78a772f1e Eric Anholt 2015-11-30  608
+> cdec4d3613230f Eric Anholt 2017-04-12  609  	return 0;
+> cdec4d3613230f Eric Anholt 2017-04-12  610  }
+> 
+
 
