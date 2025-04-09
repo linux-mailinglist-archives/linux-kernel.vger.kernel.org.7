@@ -1,199 +1,218 @@
-Return-Path: <linux-kernel+bounces-595499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CFBA81F27
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:03:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A81CA81F05
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F5EE8A51C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:01:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6BFC7B2AD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 07:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF1F25C710;
-	Wed,  9 Apr 2025 08:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D0C2AEE1;
+	Wed,  9 Apr 2025 08:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="giaaNJah"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2046.outbound.protection.outlook.com [40.107.236.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PoN8zveM"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F6925C6EF;
-	Wed,  9 Apr 2025 08:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744185656; cv=fail; b=RYF1yevNZFX3ftZqcqCnECsrtiwMtwlzC7mh35zDEHCUHsvGHUt62bGUI92AP6yOkn0Ex+0tglqvgHRf0QXw1nFY6ZO8DswRggJCLoGKHMCnqwzr2IgXtUDrIh0Wn9n/sSgFPBcqrhe4c80/OLd0tLTsxk0tCmovMsM8e5agFoY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744185656; c=relaxed/simple;
-	bh=wFUXdTxT+gU18LGF9Vge+C/YZqIYvoHUKOTXaxRrbBo=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=JOxjFnKRPB7CDo8RyiH2Xnodh5+/s33aZl6rUz9UeWiXrmu7zfAIafZjxm0P7KVdcya+Z1pvvS2xk7S5WgupAehkbS8uPkny6oxSWkKUnOulTUt3EKyHD8uv0OwA7MF3w9dWAGrFgi3q2srxvyGr36DhZmSCNUpOdv35614RzMM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=giaaNJah; arc=fail smtp.client-ip=40.107.236.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kFWbuU4u67kFarq2D2CwdEUsFmqhjx0usjOJvBXH2OW/Y1HIrDYVuk/Oq1DYoD9exqz6RX5p+8P8+dvwHdP79jN7VSIjrQNhOiZoZxxZ+Ys3SoAX533QYGTNdEB3uNtkEc3d8DAeMwEV3Mu6eHJ5C9lLKxaSG+PNPODL5V904IwV/cyeNBwpmzEoPKLicaQxuD3+GiImc2ctecag3CyE1KdpzqfBgXg0SJYaQwNlep1By2GYpqOs25oIMktZ8Kjv1/wojF4dO5/WI6ETGSFvj3EzeJ0e95f2nQyDW4lurpLoARM0U2pvzoMUMGnkmN4Fxo2raIRE/u89BsyW889kvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CzeJc3Y4uDIea6iSgothMkjYwcxragFJxil7O8rGe/Q=;
- b=iVGe52VqLWWLHwHVb57T4TYiph7mjIeVAxBsxo3KxwGTKOA48GtMO1vpu1wJGvbhZu/MRgC9EsoBldhVUaXGjb1na7U+tMV6rn95l0/JH0zLvfOOoLFNYA9PrF1Ed0C4Dy2qIO4YMBcjBGfDQqz/9mZ4KqPgYmPnu8lxGgIctFm4HJZ+sTOfoe4mk5XtVXxufP2GmMvH6wsELaTyDrqTShqooiUIaz8drlhu76rZZsB20o9Bux5g/gOPYC63/BsW5E+ts17dhFOTqeWJquPS9uht7SwWX0/32aj/oZWIcYXoRMKKt9D6qisFC/WU/70mpjKpBnf/rxbA8v2MFoQeZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CzeJc3Y4uDIea6iSgothMkjYwcxragFJxil7O8rGe/Q=;
- b=giaaNJahR7+Ew+bvkgCI5A9tOmAO09KmLFeP0GPyZZVk8Yldj+XmJM6pTrR28kSHWxcpX2lsYrAbTEk1ibA3fX+9bGRMSprzAA0Vow5v/GAMNmqhwFpiqqX7OlSQUqNOhRd8DTHUvL8mSf7zYGJWVwf1TjU+V2LTjH2eR2i43C2vb2iD9rueXdAza7STRYTQ/AO1cx3oG4F7TJBJZJDOg82z9zLGa6XlKFIc7rzfKieHl6M2bMF3/xwMy1UTGGV4ycjVsicE+WLRMHEaqwJmXfIhQIH7rA7kTTAiSD4tqMTKKdVrR31gM8u0hels7FhdkaIHIXtvrTwxtn5JxW1G1A==
-Received: from SJ0PR13CA0027.namprd13.prod.outlook.com (2603:10b6:a03:2c0::32)
- by CYYPR12MB8924.namprd12.prod.outlook.com (2603:10b6:930:bd::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.32; Wed, 9 Apr
- 2025 08:00:50 +0000
-Received: from SJ1PEPF00002321.namprd03.prod.outlook.com
- (2603:10b6:a03:2c0:cafe::3b) by SJ0PR13CA0027.outlook.office365.com
- (2603:10b6:a03:2c0::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.11 via Frontend Transport; Wed,
- 9 Apr 2025 08:00:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF00002321.mail.protection.outlook.com (10.167.242.91) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8606.22 via Frontend Transport; Wed, 9 Apr 2025 08:00:50 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 9 Apr 2025
- 01:00:26 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 9 Apr
- 2025 01:00:26 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Wed, 9 Apr 2025 01:00:26 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 5.15 000/279] 5.15.180-rc1 review
-In-Reply-To: <20250408104826.319283234@linuxfoundation.org>
-References: <20250408104826.319283234@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716DB25A35E;
+	Wed,  9 Apr 2025 08:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744185649; cv=none; b=pEgi7zU6JAVamlPc5BupVfotcOy9XxjzYeOXRL8n50yYBDelUyhgGS4tDdg7jT0D8srq6UXYw83OE498ydl8PK7B059AEwaLuWG6y5IJ+VFychlSkMkI/78xVZ18jSrc7qyNjjYjpGXWxH0dZ1F3a9uLI/PngnMtrfDq5WGZNkc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744185649; c=relaxed/simple;
+	bh=lai/0uIpGhoob1j7YYLfN9RhgTWvu4LC5LrNo8HVgmE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ctCbIlmSQhBC4oLQ63WDa1PeRCmbP22R7wWHlbSB/bvZot4zsuvM9MeZxmZkHkQaBmHTVjp+fSbAw40g4nWKhMIEL4UJm+gJaJafGfnNMhkkwUTsgvJzN+j2uUE6d2o7TwXoh4zFQspSFO3ryJuGGfyYcrFkQNL6tSzO07wG2nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PoN8zveM; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5499e3ec54dso7718010e87.0;
+        Wed, 09 Apr 2025 01:00:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744185645; x=1744790445; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GBbnnLl0KVKjf6mjo45SSeu87gd4uemqTNQJ2BYDFwU=;
+        b=PoN8zveM+TNWMum/dfCVwNZidd5tgzG6UEIhoFRMY0IPARVllInpxLXT6+RJrKG3o7
+         A4qtnePtIWzmCgoxcusrWFEbeO9Nc0cRvfX/8xrR47ygm0NreS+4FiR6vYGlc7bxXeK1
+         Pn7Rd/uGQ/PA5g1WgJs9COyFOpZQSXIcJgnXbL1OOUwHsIu4yqwGQdah8Jxh0D/2eLRs
+         E1IZFrkaagxtanSNhDgLm4EVFGdl1eXrG9b3FMsHhA5xmQ337jzi79Mmh1DpOT96wj1J
+         936EOf5I7wHv1ouVaR/SeI3kJEkX6JyI0uENvkx/Pb7tLdW4w5QagPZet35IwodtQTRX
+         t31g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744185645; x=1744790445;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GBbnnLl0KVKjf6mjo45SSeu87gd4uemqTNQJ2BYDFwU=;
+        b=kFxb72n2NIbL2kYAqYIo921bvWyndZYnjYDlU+LGBnhK3Mb0mO+DQQGnuiGkpwzBJC
+         CxK963QSMRez7QGSsJtOyum133joJmucUWkXvoompo9e4/SdNLuqLsCuairArhS8punE
+         Qi5W6qYN9DdL7MgxCF7283jbuTwc2mo4cJRHhbER3Zaa7Rkr+V+RvGKFSzMk1/20u8Ww
+         bOih7NZvYGZxKstW6FNQb/IYN/BVgUFXNzMKfrf8dRaugfHcoJy9gahWn66ANvk/1zF3
+         +MD+RKDYrFTBjF5vRrLIAe6ke/USNGsO5iqWCJ0d1JfYImkVk27Su25WQsQTtFRUuu9Y
+         j96Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVjj7qEcm3MISq1fZlPb675vbxXTpV/OMqIrq/+elXpiYs/9QKwYTn9OJKZSfn3Id/KqhH/XjTmLTTYGNsz@vger.kernel.org, AJvYcCX5lWvuVTrBNl2ZjtfYkxLiUgkb1Pi80oSy1Q6+tR0ICTE/2jqud6jrUTU0ca53MWxkUTnP+pv6UkX5Z+VH@vger.kernel.org, AJvYcCXn2vzEute7o35dKmXLaNmu1ancA7ANM17Js0q32GRslqBx2SjndrtE1ODHh7Ava0bojlij1ZOFJKy6Ew==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN4ZJkCVkjegBUudxYdmA6551OIOkXtti3JW4o9skfhNuwys39
+	hjG9QZfjOz17K4JJR4C4vsfjgHiI4iZWLds8OwWEAdn0QIiuS8QU
+X-Gm-Gg: ASbGncu88Wq4EmLqUXeZvqa6b6+RBCCyQr95vyMRzecxvw3bp71lnecCSCXwtC/XkDS
+	saq/uzq3ngGYmTzgB6n0KiuxSJC5gVzNRn//2oaQ3g6hj1RueBJYuKvcSm5U+Z80hxlGzObvqzN
+	BjvECWiPcmcAoEN5crdQCqbr5TSQMc8/d1csd8VCAH82oUTCfBZZg1zQmO8ddAUnVtMb5HkwCbA
+	vyf402yOp6PcVMg4+2p6RLoGdZIyfSV4KSlJpjn2lH4KYEZZGxPeSbRfvnx6fSeDZByFhGDrCf/
+	10Q0aF94aqlxgFUvVk1HM3uzYYCXAwdXi7Pdf6rC
+X-Google-Smtp-Source: AGHT+IHmm3xwFUNBjJf7Z0s3XKqvoj33/yIUNMY6ovsT12BpAUgSNVPHON4VBQkOdsDaLeakrQ9q6w==
+X-Received: by 2002:a05:6512:32c1:b0:545:3031:40aa with SMTP id 2adb3069b0e04-54c436f0cbcmr452590e87.9.1744185645324;
+        Wed, 09 Apr 2025 01:00:45 -0700 (PDT)
+Received: from T15.. ([46.175.113.10])
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-54c4565f79csm70790e87.114.2025.04.09.01.00.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 01:00:44 -0700 (PDT)
+From: Wojciech Slenska <wojciech.slenska@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: Wojciech Slenska <wojciech.slenska@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: qcom: pinctrl-qcm2290: Add egpio support
+Date: Wed,  9 Apr 2025 10:00:29 +0200
+Message-Id: <20250409080030.62254-1-wojciech.slenska@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <0015d367-bd22-4e86-a904-5534f697b8f7@rnnvmail202.nvidia.com>
-Date: Wed, 9 Apr 2025 01:00:26 -0700
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002321:EE_|CYYPR12MB8924:EE_
-X-MS-Office365-Filtering-Correlation-Id: b19835d1-7f38-4812-6fe9-08dd773ca4e2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MFJLVzlZbnV2NEl6SEYyRVJSZE9CVjE1ZVNtUXF2cStzaG45K3ZEdkU1RUM3?=
- =?utf-8?B?N3NGY1pXZlYwdEpLd2NHOTRPLzNiekhYMTMvZWhxOEpmanQyWTc5WFZab3Vp?=
- =?utf-8?B?NGdha2tza1FqZFh2aW9VVDNwc0wrWjUxazBlOFl6VXhRV3JmcWoyaVg1MkRZ?=
- =?utf-8?B?Ti92bXVyaTVEZ1B4eHl2aFJlVTN2QWJNakV2WFhiRTEzYms3KzNpNDdRVFMw?=
- =?utf-8?B?NDk0YzBsd3BPKzV5ZzR5VWZ4VGdXSngrL3dEampUMmNJQ08weTF4UFF3ajhY?=
- =?utf-8?B?cDFKSElnQ0tvSDZXKytvN3RoNEtyZEdpQ1liOGhRU3pCVnJxMWFudUlSVnpj?=
- =?utf-8?B?VGR0czJDMlk0ZmxEeUJ0UXV0aFpqUWJMYlRERkgySHMzUS9XSkdSU2g5ejda?=
- =?utf-8?B?NDhzc3pSUm8wTGVGQmVmYlZrK2I2SDFaRjU5RmJmemN6VUpETU4vaS9sWWJS?=
- =?utf-8?B?TW5rRnh3Q3M4Tk5qU3BoSmNyd2ZvS3ZxeHdpdStmcWNPam1MZ1pTYXFJREhV?=
- =?utf-8?B?WmR0SS91QnVPZUNOU01rdG14RkxUV2NIS3dienZpZDBlSTRCRlU1emplUVJ0?=
- =?utf-8?B?dHZzWDl4YStDOHIweG1YL0poSDlmUDdSSWJTUHplZHloQ1BPTjdwa0l2ZkJ3?=
- =?utf-8?B?RzgrV3JDdjVZV3FlQnQ2b1FWZlZOUk9pMHVPdG80RFE1QWpoQlFOcThsd2lS?=
- =?utf-8?B?SHp5MkVEbGtMem9ZSGlDVEh6MFBmenkzQnZCWUxZMlh6TnQ4dkVVZ05mSW10?=
- =?utf-8?B?ZkhCdU5PRkdFMElnaVZQcklFbnJnSng1K1hWWENtYWt0cWhSR2paNGVGaGFu?=
- =?utf-8?B?UHBHSVNZL1ZMNmprUzlmTEcvSXBmcVduenB3cFgzVXgvdGd0QXA4RldYMGxl?=
- =?utf-8?B?cmRwKzZUNVBLc0RPT0xyY2ZBV25BMVQ2WHNDWWhHbGVQYTgyY2ZiQlB1N2cx?=
- =?utf-8?B?a0dBMnBKMXpmcERkNTZ5QVN1S2RacThub0pLM29KWEJ3TlZYVlJCSU9FWjEv?=
- =?utf-8?B?YVVUbE53dmhqbkxhckJIMVppQVp2MjAxVDg5ZVY0cFNNaTBIQ1h3UW90WC9L?=
- =?utf-8?B?ZmhiOHdYcXFQamZYZ3NPRkpvNnplZjJPczkzTFVsbndTaUVCRWxNR1BwRXhy?=
- =?utf-8?B?V2hUZURYTm94amNhYi8wNDBXQTRGcGtKMmFTMkxrb00wN3Z4dm5nc01nYTIv?=
- =?utf-8?B?R0RRVzI3cEFlN0JnS3VHTDNJMlVac25UcGNmSlI0bm5oL2tPNEIwSXpUVHpJ?=
- =?utf-8?B?OWg0QXY3SDdJYUIxbGdURU9tenlDWmhBN3NscU41L2NNV2JqYVRxbGJHY0Vk?=
- =?utf-8?B?QWJwNkpWWUhxMGlmcjFiQlVhMFdqT2tRRzZnc0U0Q3JvTk1NMXY5TUN0ODVE?=
- =?utf-8?B?R20xSnpyZk1PS2ZIeXl6WmJveCtZSzMwMHhjRTZaOFM5cWNpcXdCeGY2L2Yv?=
- =?utf-8?B?WlhuMVZ1YnRpejRlcE5WWjlhNEJNWFJZcDJmS2xiNlZCTExUMHVIR2x5Y09h?=
- =?utf-8?B?R0NZMU1ETkd1SUdKSEEwQzhMVDZmQ1hCYk51OGJrSFBQWGRtVHRJN0xWeVJu?=
- =?utf-8?B?UnIzZVROaTZacmFjVUVCbjVqbHhYZ052aU1VaDBVMVVNa3NxRnJOS2ZWNUYv?=
- =?utf-8?B?dHNtYUtkVFBmMVJuaUJFRklOa0Frc2lrZ1ZyeE1aOUt6RzM2bmdjRzRBbUw2?=
- =?utf-8?B?ejdFUjBjYkNKVTVMZjFUam03aldaRUFXNGU0R2c5MnZmUXZwMTNoRVZZOVNo?=
- =?utf-8?B?V1ZMVVNjVWpJSlRDTDhwOVZkcjJqbldjcktwUWZrWXlzanJkMnVsZ0RWVHpH?=
- =?utf-8?B?dXowOFlWam9HbVlXSllhYUJsYlY5cFRnTnpPSG1Pb3lMQ04yMDFsbEMrS0Vt?=
- =?utf-8?B?T2d3aGptdHhQQ0kyNE9nQUJNMlJwaGZueDNxd3ZhMHhTeGVzNVl2Sy9XZkJy?=
- =?utf-8?B?b0RMZzRRczFSUWtoS1dodVl5MWpXTUpvclhSdGt1elB4dldlR2w2NldFdGdh?=
- =?utf-8?Q?xB/AQsMRWYoR21aveGRBdQf7qDw62w=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2025 08:00:50.3274
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b19835d1-7f38-4812-6fe9-08dd773ca4e2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002321.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8924
+Content-Transfer-Encoding: 8bit
 
-On Tue, 08 Apr 2025 12:46:23 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.180 release.
-> There are 279 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 10 Apr 2025 10:47:53 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.180-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+qcm2290 supports the egpio feature on GPIOs ranging from 98 to 126.
+This change is necessary to allow these GPIOs to be driven by TLMM.
 
-All tests passing for Tegra ...
+Signed-off-by: Wojciech Slenska <wojciech.slenska@gmail.com>
+---
+ drivers/pinctrl/qcom/pinctrl-qcm2290.c | 70 +++++++++++++++-----------
+ 1 file changed, 41 insertions(+), 29 deletions(-)
 
-Test results for stable-v5.15:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    101 tests:	101 pass, 0 fail
+diff --git a/drivers/pinctrl/qcom/pinctrl-qcm2290.c b/drivers/pinctrl/qcom/pinctrl-qcm2290.c
+index ba699eac9ee8..f885af571ec9 100644
+--- a/drivers/pinctrl/qcom/pinctrl-qcm2290.c
++++ b/drivers/pinctrl/qcom/pinctrl-qcm2290.c
+@@ -37,6 +37,8 @@
+ 		.mux_bit = 2,			\
+ 		.pull_bit = 0,			\
+ 		.drv_bit = 6,			\
++		.egpio_enable = 12,		\
++		.egpio_present = 11,		\
+ 		.oe_bit = 9,			\
+ 		.in_bit = 0,			\
+ 		.out_bit = 1,			\
+@@ -387,6 +389,7 @@ enum qcm2290_functions {
+ 	msm_mux_ddr_pxi1,
+ 	msm_mux_ddr_pxi2,
+ 	msm_mux_ddr_pxi3,
++	msm_mux_egpio,
+ 	msm_mux_gcc_gp1,
+ 	msm_mux_gcc_gp2,
+ 	msm_mux_gcc_gp3,
+@@ -816,6 +819,13 @@ static const char * const sd_write_groups[] = {
+ static const char * const jitter_bist_groups[] = {
+ 	"gpio96", "gpio97",
+ };
++static const char * const egpio_groups[] = {
++	"gpio98", "gpio99", "gpio100", "gpio101", "gpio102", "gpio103",
++	"gpio104", "gpio105", "gpio106", "gpio107", "gpio108", "gpio109",
++	"gpio110", "gpio111", "gpio112", "gpio113", "gpio114", "gpio115",
++	"gpio116", "gpio117", "gpio118", "gpio119", "gpio120", "gpio121",
++	"gpio122", "gpio123", "gpio124", "gpio125", "gpio126",
++};
+ static const char * const ddr_pxi2_groups[] = {
+ 	"gpio102", "gpio103",
+ };
+@@ -851,6 +861,7 @@ static const struct pinfunction qcm2290_functions[] = {
+ 	MSM_PIN_FUNCTION(ddr_pxi1),
+ 	MSM_PIN_FUNCTION(ddr_pxi2),
+ 	MSM_PIN_FUNCTION(ddr_pxi3),
++	MSM_PIN_FUNCTION(egpio),
+ 	MSM_PIN_FUNCTION(gcc_gp1),
+ 	MSM_PIN_FUNCTION(gcc_gp2),
+ 	MSM_PIN_FUNCTION(gcc_gp3),
+@@ -1037,35 +1048,35 @@ static const struct msm_pingroup qcm2290_groups[] = {
+ 	[95] = PINGROUP(95, nav_gpio, gp_pdm0, qdss_gpio, wlan1_adc1, _, _, _, _, _),
+ 	[96] = PINGROUP(96, qup4, nav_gpio, mdp_vsync, gp_pdm1, sd_write, jitter_bist, qdss_cti, qdss_cti, _),
+ 	[97] = PINGROUP(97, qup4, nav_gpio, mdp_vsync, gp_pdm2, jitter_bist, qdss_cti, qdss_cti, _, _),
+-	[98] = PINGROUP(98, _, _, _, _, _, _, _, _, _),
+-	[99] = PINGROUP(99, _, _, _, _, _, _, _, _, _),
+-	[100] = PINGROUP(100, atest, _, _, _, _, _, _, _, _),
+-	[101] = PINGROUP(101, atest, _, _, _, _, _, _, _, _),
+-	[102] = PINGROUP(102, _, phase_flag, dac_calib, ddr_pxi2, _, _, _, _, _),
+-	[103] = PINGROUP(103, _, phase_flag, dac_calib, ddr_pxi2, _, _, _, _, _),
+-	[104] = PINGROUP(104, _, phase_flag, qdss_gpio, dac_calib, ddr_pxi3, _, pwm_8, _, _),
+-	[105] = PINGROUP(105, _, phase_flag, qdss_gpio, dac_calib, ddr_pxi3, _, _, _, _),
+-	[106] = PINGROUP(106, nav_gpio, gcc_gp3, qdss_gpio, _, _, _, _, _, _),
+-	[107] = PINGROUP(107, nav_gpio, gcc_gp2, qdss_gpio, _, _, _, _, _, _),
+-	[108] = PINGROUP(108, nav_gpio, _, _, _, _, _, _, _, _),
+-	[109] = PINGROUP(109, _, qdss_gpio, _, _, _, _, _, _, _),
+-	[110] = PINGROUP(110, _, qdss_gpio, _, _, _, _, _, _, _),
+-	[111] = PINGROUP(111, _, _, _, _, _, _, _, _, _),
+-	[112] = PINGROUP(112, _, _, _, _, _, _, _, _, _),
+-	[113] = PINGROUP(113, _, _, _, _, _, _, _, _, _),
+-	[114] = PINGROUP(114, _, _, _, _, _, _, _, _, _),
+-	[115] = PINGROUP(115, _, pwm_9, _, _, _, _, _, _, _),
+-	[116] = PINGROUP(116, _, _, _, _, _, _, _, _, _),
+-	[117] = PINGROUP(117, _, _, _, _, _, _, _, _, _),
+-	[118] = PINGROUP(118, _, _, _, _, _, _, _, _, _),
+-	[119] = PINGROUP(119, _, _, _, _, _, _, _, _, _),
+-	[120] = PINGROUP(120, _, _, _, _, _, _, _, _, _),
+-	[121] = PINGROUP(121, _, _, _, _, _, _, _, _, _),
+-	[122] = PINGROUP(122, _, _, _, _, _, _, _, _, _),
+-	[123] = PINGROUP(123, _, _, _, _, _, _, _, _, _),
+-	[124] = PINGROUP(124, _, _, _, _, _, _, _, _, _),
+-	[125] = PINGROUP(125, _, _, _, _, _, _, _, _, _),
+-	[126] = PINGROUP(126, _, _, _, _, _, _, _, _, _),
++	[98] = PINGROUP(98, _, _, _, _, _, _, _, _, egpio),
++	[99] = PINGROUP(99, _, _, _, _, _, _, _, _, egpio),
++	[100] = PINGROUP(100, atest, _, _, _, _, _, _, _, egpio),
++	[101] = PINGROUP(101, atest, _, _, _, _, _, _, _, egpio),
++	[102] = PINGROUP(102, _, phase_flag, dac_calib, ddr_pxi2, _, _, _, _, egpio),
++	[103] = PINGROUP(103, _, phase_flag, dac_calib, ddr_pxi2, _, _, _, _, egpio),
++	[104] = PINGROUP(104, _, phase_flag, qdss_gpio, dac_calib, ddr_pxi3, _, pwm_8, _, egpio),
++	[105] = PINGROUP(105, _, phase_flag, qdss_gpio, dac_calib, ddr_pxi3, _, _, _, egpio),
++	[106] = PINGROUP(106, nav_gpio, gcc_gp3, qdss_gpio, _, _, _, _, _, egpio),
++	[107] = PINGROUP(107, nav_gpio, gcc_gp2, qdss_gpio, _, _, _, _, _, egpio),
++	[108] = PINGROUP(108, nav_gpio, _, _, _, _, _, _, _, egpio),
++	[109] = PINGROUP(109, _, qdss_gpio, _, _, _, _, _, _, egpio),
++	[110] = PINGROUP(110, _, qdss_gpio, _, _, _, _, _, _, egpio),
++	[111] = PINGROUP(111, _, _, _, _, _, _, _, _, egpio),
++	[112] = PINGROUP(112, _, _, _, _, _, _, _, _, egpio),
++	[113] = PINGROUP(113, _, _, _, _, _, _, _, _, egpio),
++	[114] = PINGROUP(114, _, _, _, _, _, _, _, _, egpio),
++	[115] = PINGROUP(115, _, pwm_9, _, _, _, _, _, _, egpio),
++	[116] = PINGROUP(116, _, _, _, _, _, _, _, _, egpio),
++	[117] = PINGROUP(117, _, _, _, _, _, _, _, _, egpio),
++	[118] = PINGROUP(118, _, _, _, _, _, _, _, _, egpio),
++	[119] = PINGROUP(119, _, _, _, _, _, _, _, _, egpio),
++	[120] = PINGROUP(120, _, _, _, _, _, _, _, _, egpio),
++	[121] = PINGROUP(121, _, _, _, _, _, _, _, _, egpio),
++	[122] = PINGROUP(122, _, _, _, _, _, _, _, _, egpio),
++	[123] = PINGROUP(123, _, _, _, _, _, _, _, _, egpio),
++	[124] = PINGROUP(124, _, _, _, _, _, _, _, _, egpio),
++	[125] = PINGROUP(125, _, _, _, _, _, _, _, _, egpio),
++	[126] = PINGROUP(126, _, _, _, _, _, _, _, _, egpio),
+ 	[127] = SDC_QDSD_PINGROUP(sdc1_rclk, 0x84004, 0, 0),
+ 	[128] = SDC_QDSD_PINGROUP(sdc1_clk, 0x84000, 13, 6),
+ 	[129] = SDC_QDSD_PINGROUP(sdc1_cmd, 0x84000, 11, 3),
+@@ -1095,6 +1106,7 @@ static const struct msm_pinctrl_soc_data qcm2290_pinctrl = {
+ 	.ngpios = 127,
+ 	.wakeirq_map = qcm2290_mpm_map,
+ 	.nwakeirq_map = ARRAY_SIZE(qcm2290_mpm_map),
++	.egpio_func = 9,
+ };
+ 
+ static int qcm2290_pinctrl_probe(struct platform_device *pdev)
+-- 
+2.34.1
 
-Linux version:	5.15.180-rc1-g0b4857306c61
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
 
