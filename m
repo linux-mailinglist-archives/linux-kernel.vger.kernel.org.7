@@ -1,89 +1,169 @@
-Return-Path: <linux-kernel+bounces-596938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC904A83303
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:11:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9563BA8330B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0136A8A0A77
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:11:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84AE44A0EF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35E7213E74;
-	Wed,  9 Apr 2025 21:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17B5214818;
+	Wed,  9 Apr 2025 21:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EkpCov4T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OmtFaNPb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Mj60UDye"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD071DB34B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 21:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F912147F7;
+	Wed,  9 Apr 2025 21:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744233093; cv=none; b=dTvLh+ZDfytNmzh67//c1eI5AM5M6vvo2J4yehwqSGqryzaFKW6C39QALShBoBqZuBDXI1nB78BxqSAr9hk+rk5/IizLpQ6bQPv6fPFcjLxWSPFIcnQFPMOsiThhDbndECRXgs5/anFHq/S5QTG5AH1rvGDA6gok+nTZy7l3Jmw=
+	t=1744233142; cv=none; b=PMlPBp5v4cEmpHHFbEFlEMhq4E2svv2i74mhQISYcBimbZeePG8HbwjeRJ870eg/+qLochY7gIYfNugAi9JdGPZ7QzIZA9xs69lCTfxy/trf7uzWvuWldoHb5ltDiPoaltG5VAoOSPrWcbNK02Iw9FCeOJolctQE/IXz5LohQhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744233093; c=relaxed/simple;
-	bh=wkDkk7Z7cHX0G/3db/Y8x874CyZ7qgRMDvsW3aX43Mw=;
-	h=Date:From:To:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Efn6Z9SFCcvYt477oK4GsHGyM2hmEc8YtsWsS/pcRvGjwMb9uYjxnT58r7w65fePSHKyjaj+ilZjPzzezt41BvrSF1ISO3kCwXAWRBcRMwyvHrlz0sntCtz0Snb1gTd8k6z0VTWLk1xM6WfjPz6/e92XTpnWJhk++M7XIwuJzjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EkpCov4T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6031BC4CEE2;
-	Wed,  9 Apr 2025 21:11:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1744233092;
-	bh=wkDkk7Z7cHX0G/3db/Y8x874CyZ7qgRMDvsW3aX43Mw=;
-	h=Date:From:To:Subject:In-Reply-To:References:From;
-	b=EkpCov4TlqvKEMnRMX1IEGR3zgILgKvQFRsBgMWR54sJJEx66O/dYPxv0Xulirzrs
-	 vz6lff52oiMZjAnl6I9LDUCXOWCxOuNJ2rE+3w6WYAwW2dXV0fbn6JtSzENLvM7dKF
-	 wQs+1uZT0bs9HXm+1RBEc41UzwO2r+Sa9251Pc0I=
-Date: Wed, 9 Apr 2025 14:11:31 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "T.J. Mercier" <tjmercier@google.com>, Suren Baghdasaryan
- <surenb@google.com>, Kent Overstreet <kent.overstreet@linux.dev>, Janghyuck
- Kim <janghyuck.kim@samsung.com>, linux-mm@kvack.org,
+	s=arc-20240116; t=1744233142; c=relaxed/simple;
+	bh=CIcEj47j7D9sJ6Vfzua7+dlSs0YPaM4cccnDm1gu3xo=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=JJQuIr/fWhpiXpIyRf0lruwNGqyCqsAiH35I4j97bjCPApSjm1pvDc6SHpH1B/m/xJl+Ag6LRH9B+HDPkPDuvJ7cscD+RYZzSaeDrAgpECZ56nNHptT6l5n602IAqTx7q3oD+sgE4wcwWd5uC+PwbbmNk1iTOmcSugoAlNd+PRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OmtFaNPb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Mj60UDye; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 09 Apr 2025 21:12:11 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744233136;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mZcQYVb/1gtOZBb+Bo9eTmIOgqSQzQz4ZcTZVzAUOCQ=;
+	b=OmtFaNPbxklxga3hQ0t72WuCO8hBRRgI8La2oxqqVoPVWLkDHtkrOTdJA/Oda0hPq0QDhx
+	2nX9RJo1pc6uChtPjhCGQ5ybbdJzNZyxtR4FUQe+nFRH/C6LQVSL+VxZMZ1nlE+t9sWwA5
+	xyiDTN4aa2+jjwDlgQwKtiH1zD3fqVtks5fnHIYcNTw2a/tTKBXcGsVBQbOX/uIEFlaaEQ
+	DGBZskVE/wM3aZ2M6j15w6xnOB2nCFkdPHo8xd5oedCCbflXCtqkaEWrDl7VqWHsdstg2h
+	XqBisLBFyIYCfFgshE1YHe5JAUc2s8SvLL6/DwzqLsXXZrYcYaqeEIMh4LUtTg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744233136;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mZcQYVb/1gtOZBb+Bo9eTmIOgqSQzQz4ZcTZVzAUOCQ=;
+	b=Mj60UDyeD7qQCUkNFsoUsQpkDieLVQpdsrQloBVIASDr8MIYWagHusNHn0TjqJA+gORP5Z
+	6BizbF/gmDWngSCg==
+From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: timers/urgent] timekeeping: Add a lockdep override in tick_freeze()
+Cc: Borislav Petkov <bp@alien8.de>,
+ Chris Bainbridge <chris.bainbridge@gmail.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] alloc_tag: Handle incomplete bulk allocations in
- vm_module_tags_populate
-Message-Id: <20250409141131.bd67f6b19ea7e770dce40ac7@linux-foundation.org>
-In-Reply-To: <20250409140848.da67768ac1f5e79d7296de4d@linux-foundation.org>
-References: <20250409195448.3697351-1-tjmercier@google.com>
-	<20250409140848.da67768ac1f5e79d7296de4d@linux-foundation.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+In-Reply-To: <20250404133429.pnAzf-eF@linutronix.de>
+References: <20250404133429.pnAzf-eF@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Message-ID: <174423313221.31282.12756480935760918765.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On Wed, 9 Apr 2025 14:08:48 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+The following commit has been merged into the timers/urgent branch of tip:
 
-> On Wed,  9 Apr 2025 19:54:47 +0000 "T.J. Mercier" <tjmercier@google.com> wrote:
-> 
-> > alloc_pages_bulk_node may partially succeed and allocate fewer than the
-> > requested nr_pages. There are several conditions under which this can
-> > occur, but we have encountered the case where CONFIG_PAGE_OWNER is
-> > enabled causing all bulk allocations to always fallback to single page
-> > allocations due to commit 187ad460b841 ("mm/page_alloc: avoid page
-> > allocator recursion with pagesets.lock held").
-> > 
-> > Currently vm_module_tags_populate immediately fails when
-> > alloc_pages_bulk_node returns fewer than the requested number of pages.
-> > This patch causes vm_module_tags_populate to retry bulk allocations for
-> > the remaining memory instead.
-> 
-> Please describe the userspace-visible runtime effects of this change.  In a way
-> which permits a user who is experiencing some problem can recognize that this
-> patch will address that problem.
->
-> ...
->
-> Reported-by: Janghyuck Kim <janghyuck.kim@samsung.com>
+Commit-ID:     92e250c624ea37fde64bfd624fd2556f0d846f18
+Gitweb:        https://git.kernel.org/tip/92e250c624ea37fde64bfd624fd2556f0d846f18
+Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate:    Fri, 04 Apr 2025 15:34:29 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 09 Apr 2025 22:30:39 +02:00
 
-A Closes: link will presumably help with the above info.  checkpatch
-now warns about the absence of a Closes:
+timekeeping: Add a lockdep override in tick_freeze()
 
+tick_freeze() acquires a raw spinlock (tick_freeze_lock). Later in the
+callchain (timekeeping_suspend() -> mc146818_avoid_UIP()) the RTC driver
+acquires a spinlock which becomes a sleeping lock on PREEMPT_RT.  Lockdep
+complains about this lock nesting.
+
+Add a lockdep override for this special case and a comment explaining
+why it is okay.
+
+Reported-by: Borislav Petkov <bp@alien8.de>
+Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lore.kernel.org/all/20250404133429.pnAzf-eF@linutronix.de
+Closes: https://lore.kernel.org/all/20250330113202.GAZ-krsjAnurOlTcp-@fat_crate.local/
+Closes: https://lore.kernel.org/all/CAP-bSRZ0CWyZZsMtx046YV8L28LhY0fson2g4EqcwRAVN1Jk+Q@mail.gmail.com/
+---
+ kernel/time/tick-common.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+index a47bcf7..9a38594 100644
+--- a/kernel/time/tick-common.c
++++ b/kernel/time/tick-common.c
+@@ -509,6 +509,7 @@ void tick_resume(void)
+ 
+ #ifdef CONFIG_SUSPEND
+ static DEFINE_RAW_SPINLOCK(tick_freeze_lock);
++static DEFINE_WAIT_OVERRIDE_MAP(tick_freeze_map, LD_WAIT_SLEEP);
+ static unsigned int tick_freeze_depth;
+ 
+ /**
+@@ -528,9 +529,22 @@ void tick_freeze(void)
+ 	if (tick_freeze_depth == num_online_cpus()) {
+ 		trace_suspend_resume(TPS("timekeeping_freeze"),
+ 				     smp_processor_id(), true);
++		/*
++		 * All other CPUs have their interrupts disabled and are
++		 * suspended to idle. Other tasks have been frozen so there
++		 * is no scheduling happening. This means that there is no
++		 * concurrency in the system at this point. Therefore it is
++		 * okay to acquire a sleeping lock on PREEMPT_RT, such as a
++		 * spinlock, because the lock cannot be held by other CPUs
++		 * or threads and acquiring it cannot block.
++		 *
++		 * Inform lockdep about the situation.
++		 */
++		lock_map_acquire_try(&tick_freeze_map);
+ 		system_state = SYSTEM_SUSPEND;
+ 		sched_clock_suspend();
+ 		timekeeping_suspend();
++		lock_map_release(&tick_freeze_map);
+ 	} else {
+ 		tick_suspend_local();
+ 	}
+@@ -552,8 +566,16 @@ void tick_unfreeze(void)
+ 	raw_spin_lock(&tick_freeze_lock);
+ 
+ 	if (tick_freeze_depth == num_online_cpus()) {
++		/*
++		 * Similar to tick_freeze(). On resumption the first CPU may
++		 * acquire uncontended sleeping locks while other CPUs block on
++		 * tick_freeze_lock.
++		 */
++		lock_map_acquire_try(&tick_freeze_map);
+ 		timekeeping_resume();
+ 		sched_clock_resume();
++		lock_map_release(&tick_freeze_map);
++
+ 		system_state = SYSTEM_RUNNING;
+ 		trace_suspend_resume(TPS("timekeeping_freeze"),
+ 				     smp_processor_id(), false);
 
