@@ -1,230 +1,191 @@
-Return-Path: <linux-kernel+bounces-595987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2598CA82563
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:55:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCFFCA82549
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA991BA050D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:53:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 020828A836C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AE826560F;
-	Wed,  9 Apr 2025 12:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399432638A9;
+	Wed,  9 Apr 2025 12:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bijmABSU"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnoGH7/S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A7A264A97
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 12:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE9D262D29;
+	Wed,  9 Apr 2025 12:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744203142; cv=none; b=YyKpEVduATDUERq7mkq0wIVaY7h+/sCiRU0ir8robck8iuX6gj3gzUDZm2Fv94v6juPJwdnjKwW6xrxp00uJ1QM6PMp13rZUxSGoqxjGe1gSk393NUG864T7lpjQ1tH5SH4mA0qrStT7EfnoTVpCqlCMn+SAjvBIQ02S7/nIofA=
+	t=1744203032; cv=none; b=bMfNNee1a00yDB2rZ0Xxa6Jukyh8xAmKwITFrjjSfMTOfrZu+8uTWrEmnplraOkVxLBxdMeSKrdY88uKMD96MNs8E6HGf6zgDl7eNv8pfX6Y6P6zAAFm78QA0fBMP9iWuVufIzduZadWnB23RETuHDLi/69awZE3VlfsDwYGleU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744203142; c=relaxed/simple;
-	bh=VRVdHQosnpdghOkblzY+Q6O7G0A0ldhMteIRbIkzuHY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=nAWTyi3XeV36oFhHZpPuYzIBZfnnbDggEabCkYp1hp0riUgxrhyY4u1dyV+FRy3WkkZXdEtuJay9ifvsnB6W+joDIgET/gdFkIMXvAZU8pEP0TLemIHOQSLeL7O94kRjLDV9rNqcIVwexnNsEuD0oxvjXmVr1spLR8FNT6302Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com; spf=pass smtp.mailfrom=partner.samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bijmABSU; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=partner.samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250409125216euoutp01319daae0f8559cf6d8c7d0fdd4f9aa6d~0p4MLJBs00473904739euoutp01x
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 12:52:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250409125216euoutp01319daae0f8559cf6d8c7d0fdd4f9aa6d~0p4MLJBs00473904739euoutp01x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744203137;
-	bh=d4Y7SWFI4qVzd8NlSNxlD8Ff/ZD2SwDfY5q3CblmY7g=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=bijmABSUltROHCz0+LgBRXSBu6ooK+6V9Mfi0Y6T6YQg2ukPCjjX3JI+/JQcW9o5/
-	 ttLfd8MJEtizuMnzT3rjazezu4zvbzHGmp1AIVPMGEgk0+X+0KBjB2BKes7D6/Frhx
-	 lXL6lonKnJJa+ir9cqnqXff3BBN9+bYyATM2XtH0=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250409125216eucas1p1453b5f9e90636a05728dcc6173dc4531~0p4L8PL5M1939619396eucas1p1i;
-	Wed,  9 Apr 2025 12:52:16 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id FB.22.20397.08D66F76; Wed,  9
-	Apr 2025 13:52:16 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250409125216eucas1p150b189cd13807197a233718302103a02~0p4Leaiy90659606596eucas1p1V;
-	Wed,  9 Apr 2025 12:52:16 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250409125216eusmtrp11e8b63b62e7462829208962a12713787~0p4LdzomC0724607246eusmtrp1j;
-	Wed,  9 Apr 2025 12:52:16 +0000 (GMT)
-X-AuditID: cbfec7f5-e59c770000004fad-53-67f66d8050f5
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id ED.1D.19654.08D66F76; Wed,  9
-	Apr 2025 13:52:16 +0100 (BST)
-Received: from localhost.localdomain (unknown [106.210.135.126]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250409125215eusmtip26ea0b30a2e1e7930bd611bbc1d4e540d~0p4LCrRvT2770527705eusmtip2u;
-	Wed,  9 Apr 2025 12:52:15 +0000 (GMT)
-From: "e.kubanski" <e.kubanski@partner.samsung.com>
-To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc: bjorn@kernel.org, magnus.karlsson@intel.com,
-	maciej.fijalkowski@intel.com, jonathan.lemon@gmail.com, "e.kubanski"
-	<e.kubanski@partner.samsung.com>
-Subject: [PATCH] xsk: Fix race condition in AF_XDP generic RX path
-Date: Wed,  9 Apr 2025 14:49:50 +0200
-Message-Id: <20250409124950.58819-1-e.kubanski@partner.samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744203032; c=relaxed/simple;
+	bh=/jW9B44kyqNV8gjRORD3bHRgIUAe308jn00yw2IwXDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eRvWhsgeGwdK9vmIk2KIV7+Ph3ae9W+fLwnFeOfYASV+2zeOkBDtS3cbi+LuVa++4bbChlm2sstsUQ1rM5M8O0n/qGFYQQh20zSQHkaK59PEpJKyZ2uhzB8vGIg2a/wpc0YVkAiQejPoZe5QP4hnL+VhN/YIR6cKv92o/X6CaDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnoGH7/S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1F78C4CEE3;
+	Wed,  9 Apr 2025 12:50:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744203032;
+	bh=/jW9B44kyqNV8gjRORD3bHRgIUAe308jn00yw2IwXDM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MnoGH7/So9vd/9bpPO03vMLSZNhWbekAYvl+BCmmbTLqGQSlJFJqS1PdM3P8y5Wyy
+	 yu16DR8o9W8yUb7HCTLY/WAx7vMerpZygbwYzDGFD6QyfzHi7sAzFYVNni2gxOjuLA
+	 nh2oLbhT54uQPNQtanuMpZEbkqyQx2bpm/8foNQEyaAl0ZegA32hKwCncxgV0d/MFj
+	 W3UUEG9gYWm2vYrBhZz19jSvTXA/PU6n0qvnRXatLAbwWyDpCCuI0JwJcvD02O3Rzd
+	 JCNLumTwG0/c3mNIXIvMwQtuJGhgODmSlZABTMFyzs7WmdY5KjjuHHmubf7rnF26iD
+	 VaIWwvtYKojGg==
+Date: Wed, 9 Apr 2025 18:20:21 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	op-tee@lists.trustedfirmware.org,
+	linux-arm-kernel@lists.infradead.org,
+	Olivier Masse <olivier.masse@nxp.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T . J . Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	azarrabi@qti.qualcomm.com, Simona Vetter <simona.vetter@ffwll.ch>,
+	Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH v6 05/10] tee: implement restricted DMA-heap
+Message-ID: <Z_ZtDQQY4eouqBh8@sumit-X1>
+References: <20250305130634.1850178-1-jens.wiklander@linaro.org>
+ <20250305130634.1850178-6-jens.wiklander@linaro.org>
+ <Z-JOPgcWlpTlskgd@sumit-X1>
+ <CAHUa44GjpHT5Nqo+Ar5jNYNPV-YJQYpLTCf=7oJ1o0VjP-t0nA@mail.gmail.com>
+ <Z-ucuPzwz4IqVTgb@sumit-X1>
+ <CAHUa44FpsCVrbwj1=nsJVJFVJSF1kzKdWAkAMXRu6EdLrLvh8g@mail.gmail.com>
+ <Z_To9V-JOKZ7ChhE@sumit-X1>
+ <CAHUa44EGWuVPjoxpG-S66he=6dkvkwzxNewaGKVKXUxrO41ztg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIKsWRmVeSWpSXmKPExsWy7djP87oNud/SDa60qVpsfb+KxeLB7KXM
-	FrvWzWS2uLxrDpvFzePPWSxWHDrBbnFsgZgDu8fOWXfZPRbvecnksWlVJ5vHwXd7mDw+b5IL
-	YI3isklJzcksSy3St0vgypj07AZbwWPpip7dF9gaGL+LdTFyckgImEh0Pf3E3MXIxSEksIJR
-	Yv2j74wQzhdGiUsLPzOCVAkJfGaU2LSXB6Zj/8XFrBBFyxklTm78BdX+lVHiwLPbLCBVbALG
-	Ek3f94PZIgIWEpsWfQPrYBaYxSixZM8usISwgJPEwpV/2EFsFgFVib8n74LZvALOEgdvLWCE
-	WCcvsf/gWWaIuKDEyZlPwHqZgeLNW2eDbZYQmMsh8XnSFTaIBheJ/imbWCBsYYlXx7ewQ9gy
-	Eqcn97BANDQzSsya2ckO4fQwSqy5egVoHQeQYy2x9qQtiMksoCmxfpc+RK+jxNFZD9khKvgk
-	brwVhLiBT2LStunMEGFeiY42IYhqHYkbF59DbZWS+D5zM9Q1HhJbT+5gg4RorERn1wKWCYwK
-	s5B8NgvJZ7MQbljAyLyKUTy1tDg3PbXYOC+1XK84Mbe4NC9dLzk/dxMjMNWc/nf86w7GFa8+
-	6h1iZOJgPMQowcGsJML7duKXdCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8i/a3pgsJpCeWpGan
-	phakFsFkmTg4pRqYhLQ4FqZMSeS9Piv8QuexfZvKNWOWaLMdzk1tCbdds+7VYcv/8wKqfjoq
-	fTaV4nKwOvPStul020T+q8ahP5IMt+vf3DVxUcF7Nc7KDYY3tR32WK5aFqp+/mhTkpVlxP7u
-	c/0KZ76yRWVNqj584MAtH5kl34JzT23ZfdPjW59btPb2k++byg60Z0tN1crxMFynWlE/Z84j
-	yZYlO+vuqJ1n4XQ5L3z42E0m5syXOquyJ61V5axPvZN5t1zl4spCDo+gnYXXMjsCPf80mKRl
-	eKSZr+8vNq98tHBOzOEMx91ng/Z736lgcOL8LPRI3K3Hfr5rS6h2uNq5335pnbx38nZ97UsN
-	N3z57XF1sGr9mZNKLMUZiYZazEXFiQBV1rXYpAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsVy+t/xe7oNud/SDaZ8ZbHY+n4Vi8WD2UuZ
-	LXatm8lscXnXHDaLm8efs1isOHSC3eLYAjEHdo+ds+6yeyze85LJY9OqTjaPg+/2MHl83iQX
-	wBqlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5eglzHp
-	2Q22gsfSFT27L7A1MH4X62Lk5JAQMJHYf3ExaxcjF4eQwFJGiV9fZzFCJKQk/qz7wwxhC0v8
-	udbFBlH0mVHi+5QudpAEm4CxRNP3/SwgtoiAlcSD2/+YQYqYBeYxSszZtZ4VJCEs4CSxcOUf
-	sAYWAVWJvyfvgtm8As4SB28tgNomL7H/4FlmiLigxMmZT8CGMgPFm7fOZp7AyDcLSWoWktQC
-	RqZVjCKppcW56bnFRnrFibnFpXnpesn5uZsYgUG+7djPLTsYV776qHeIkYmD8RCjBAezkgjv
-	24lf0oV4UxIrq1KL8uOLSnNSiw8xmgLdN5FZSjQ5HxhneSXxhmYGpoYmZpYGppZmxkrivGxX
-	zqcJCaQnlqRmp6YWpBbB9DFxcEo1MHFV926sZDTeJxUsrPHggY3Ckr3qvSFrs9J3ni6XvVpc
-	6Z1Qmhw5MXFx78/0k+v3nRSouyJ7U/Kj1pNpUl9KasRM1PhNju2ZeuqTRO8q60mH59V2H2d5
-	lcH1p3DNyx/z8ufXl57LTwcC7/9pFRLLJxq0m3xkYFkpufbfZ5+/pR9K29LKrk5LvrShTYfx
-	Oe+KbbNn3uA8sr3CTKUq7stRc8u7Oqdtr83J1WG9WDG9yp1N4HSeGb+iSO7HKntR2+fKl8JZ
-	754UiLeLDLVZHGiW5Px19+xLOxls97FtmSNo+OxzpMd2lke8O77eDF5fJR/s3BXioF79e1ed
-	67H2jrU/UvMrlnesrxZ/pVO700uJpTgj0VCLuag4EQBCJHS2+wIAAA==
-X-CMS-MailID: 20250409125216eucas1p150b189cd13807197a233718302103a02
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250409125216eucas1p150b189cd13807197a233718302103a02
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250409125216eucas1p150b189cd13807197a233718302103a02
-References: <CGME20250409125216eucas1p150b189cd13807197a233718302103a02@eucas1p1.samsung.com>
+In-Reply-To: <CAHUa44EGWuVPjoxpG-S66he=6dkvkwzxNewaGKVKXUxrO41ztg@mail.gmail.com>
 
-rx_lock moved from xsk_socket to xsk_buff_pool.
-Previous synchronization didn't take care of
-shared umem mode in generic RX path where sockets
-share the same xsk_buff_pool.
+On Tue, Apr 08, 2025 at 03:28:45PM +0200, Jens Wiklander wrote:
+> On Tue, Apr 8, 2025 at 11:14 AM Sumit Garg <sumit.garg@kernel.org> wrote:
+> >
+> > On Tue, Apr 01, 2025 at 10:33:04AM +0200, Jens Wiklander wrote:
+> > > On Tue, Apr 1, 2025 at 9:58 AM Sumit Garg <sumit.garg@kernel.org> wrote:
+> > > >
+> > > > On Tue, Mar 25, 2025 at 11:55:46AM +0100, Jens Wiklander wrote:
+> > > > > Hi Sumit,
+> > > > >
+> > > >
+> > > > <snip>
+> > > >
+> > > > >
+> > > > > >
+> > > > > > > +
+> > > > > > > +#include "tee_private.h"
+> > > > > > > +
+> > > > > > > +struct tee_dma_heap {
+> > > > > > > +     struct dma_heap *heap;
+> > > > > > > +     enum tee_dma_heap_id id;
+> > > > > > > +     struct tee_rstmem_pool *pool;
+> > > > > > > +     struct tee_device *teedev;
+> > > > > > > +     /* Protects pool and teedev above */
+> > > > > > > +     struct mutex mu;
+> > > > > > > +};
+> > > > > > > +
+> > > > > > > +struct tee_heap_buffer {
+> > > > > > > +     struct tee_rstmem_pool *pool;
+> > > > > > > +     struct tee_device *teedev;
+> > > > > > > +     size_t size;
+> > > > > > > +     size_t offs;
+> > > > > > > +     struct sg_table table;
+> > > > > > > +};
+> > > > > > > +
+> > > > > > > +struct tee_heap_attachment {
+> > > > > > > +     struct sg_table table;
+> > > > > > > +     struct device *dev;
+> > > > > > > +};
+> > > > > > > +
+> > > > > > > +struct tee_rstmem_static_pool {
+> > > > > > > +     struct tee_rstmem_pool pool;
+> > > > > > > +     struct gen_pool *gen_pool;
+> > > > > > > +     phys_addr_t pa_base;
+> > > > > > > +};
+> > > > > > > +
+> > > > > > > +#if !IS_MODULE(CONFIG_TEE) && IS_ENABLED(CONFIG_DMABUF_HEAPS)
+> > > > > >
+> > > > > > Can this dependency rather be better managed via Kconfig?
+> > > > >
+> > > > > This was the easiest yet somewhat flexible solution I could find. If
+> > > > > you have something better, let's use that instead.
+> > > > >
+> > > >
+> > > > --- a/drivers/tee/optee/Kconfig
+> > > > +++ b/drivers/tee/optee/Kconfig
+> > > > @@ -5,6 +5,7 @@ config OPTEE
+> > > >         depends on HAVE_ARM_SMCCC
+> > > >         depends on MMU
+> > > >         depends on RPMB || !RPMB
+> > > > +       select DMABUF_HEAPS
+> > > >         help
+> > > >           This implements the OP-TEE Trusted Execution Environment (TEE)
+> > > >           driver.
+> > >
+> > > I wanted to avoid that since there are plenty of use cases where
+> > > DMABUF_HEAPS aren't needed.
+> >
+> > Yeah, but how the users will figure out the dependency to enable DMA
+> > heaps with TEE subsystem.
+> 
+> I hope, without too much difficulty. They are after all looking for a
+> way to allocate memory from a DMA heap.
+> 
+> > So it's better we provide a generic kernel
+> > Kconfig which enables all the default features.
+> 
+> I disagree, it should be possible to configure without DMABUF_HEAPS if desired.
 
-RX queue is exclusive to xsk_socket, while FILL
-queue can be shared between multiple sockets.
-This could result in race condition where two
-CPU cores access RX path of two different sockets
-sharing the same umem.
+It's hard to see a use-case for that additional compile time option. If
+you are worried about kernel size then those can be built as modules. On
+the other hand the benifit is that we avoid ifdefery and providing sane
+TEE defaults where features can be detected and enabled at runtime
+instead.
 
-Now both queues are protected by acquiring spinlock
-in shared xsk_buff_pool.
+> 
+> >
+> > > This seems to do the job:
+> > > +config TEE_DMABUF_HEAP
+> > > + bool
+> > > + depends on TEE = y && DMABUF_HEAPS
+> > >
+> > > We can only use DMABUF_HEAPS if the TEE subsystem is compiled into the kernel.
+> >
+> > Ah, I see. So we aren't exporting the DMA heaps APIs for TEE subsystem
+> > to use. We should do that such that there isn't a hard dependency to
+> > compile them into the kernel.
+> 
+> I was saving that for a later patch set as a later problem. We may
+> save some time by not doing it now.
+>
 
-Lock contention may be minimized in the future by some
-per-thread FQ buffering.
+But I think it's not a correct way to just reuse internal APIs from DMA
+heaps subsystem without exporting them. It can be seen as a inter
+subsystem API contract breach. I hope it won't be an issue with DMA heap
+maintainers regarding export of those APIs.
 
-It's safe and necessary to move spin_lock_bh(rx_lock)
-after xsk_rcv_check():
-* xs->pool and spinlock_init is synchronized by
-  xsk_bind() -> xsk_is_bound() memory barriers.
-* xsk_rcv_check() may return true at the moment
-  of xsk_release() or xsk_unbind_dev(),
-  however this will not cause any data races or
-  race conditions. xsk_unbind_dev() removes xdp
-  socket from all maps and waits for completion
-  of all outstanding rx operations. Packets in
-  RX path will either complete safely or drop.
-
-Signed-off-by: Eryk Kubanski <e.kubanski@partner.samsung.com>
----
- include/net/xdp_sock.h      | 3 ---
- include/net/xsk_buff_pool.h | 2 ++
- net/xdp/xsk.c               | 6 +++---
- net/xdp/xsk_buff_pool.c     | 1 +
- 4 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/include/net/xdp_sock.h b/include/net/xdp_sock.h
-index bfe625b55d55..df3f5f07bc7c 100644
---- a/include/net/xdp_sock.h
-+++ b/include/net/xdp_sock.h
-@@ -71,9 +71,6 @@ struct xdp_sock {
- 	 */
- 	u32 tx_budget_spent;
- 
--	/* Protects generic receive. */
--	spinlock_t rx_lock;
--
- 	/* Statistics */
- 	u64 rx_dropped;
- 	u64 rx_queue_full;
-diff --git a/include/net/xsk_buff_pool.h b/include/net/xsk_buff_pool.h
-index 50779406bc2d..7f0a75d6563d 100644
---- a/include/net/xsk_buff_pool.h
-+++ b/include/net/xsk_buff_pool.h
-@@ -53,6 +53,8 @@ struct xsk_buff_pool {
- 	refcount_t users;
- 	struct xdp_umem *umem;
- 	struct work_struct work;
-+	/* Protects generic receive in shared and non-shared umem mode. */
-+	spinlock_t rx_lock;
- 	struct list_head free_list;
- 	struct list_head xskb_list;
- 	u32 heads_cnt;
-diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
-index 89d2bef96469..e2a75f3be237 100644
---- a/net/xdp/xsk.c
-+++ b/net/xdp/xsk.c
-@@ -337,13 +337,14 @@ int xsk_generic_rcv(struct xdp_sock *xs, struct xdp_buff *xdp)
- 	u32 len = xdp_get_buff_len(xdp);
- 	int err;
- 
--	spin_lock_bh(&xs->rx_lock);
- 	err = xsk_rcv_check(xs, xdp, len);
- 	if (!err) {
-+		spin_lock_bh(&xs->pool->rx_lock);
- 		err = __xsk_rcv(xs, xdp, len);
- 		xsk_flush(xs);
-+		spin_unlock_bh(&xs->pool->rx_lock);
- 	}
--	spin_unlock_bh(&xs->rx_lock);
-+
- 	return err;
- }
- 
-@@ -1724,7 +1725,6 @@ static int xsk_create(struct net *net, struct socket *sock, int protocol,
- 	xs = xdp_sk(sk);
- 	xs->state = XSK_READY;
- 	mutex_init(&xs->mutex);
--	spin_lock_init(&xs->rx_lock);
- 
- 	INIT_LIST_HEAD(&xs->map_list);
- 	spin_lock_init(&xs->map_list_lock);
-diff --git a/net/xdp/xsk_buff_pool.c b/net/xdp/xsk_buff_pool.c
-index 1f7975b49657..3a5f16f53178 100644
---- a/net/xdp/xsk_buff_pool.c
-+++ b/net/xdp/xsk_buff_pool.c
-@@ -87,6 +87,7 @@ struct xsk_buff_pool *xp_create_and_assign_umem(struct xdp_sock *xs,
- 	pool->addrs = umem->addrs;
- 	pool->tx_metadata_len = umem->tx_metadata_len;
- 	pool->tx_sw_csum = umem->flags & XDP_UMEM_TX_SW_CSUM;
-+	spin_lock_init(&pool->rx_lock);
- 	INIT_LIST_HEAD(&pool->free_list);
- 	INIT_LIST_HEAD(&pool->xskb_list);
- 	INIT_LIST_HEAD(&pool->xsk_tx_list);
--- 
-2.34.1
-
+-Sumit
 
