@@ -1,198 +1,99 @@
-Return-Path: <linux-kernel+bounces-596374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEDEBA82AC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:42:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3875A82B3D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4F337A6779
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:41:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600558A5913
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E1E26657D;
-	Wed,  9 Apr 2025 15:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FDC267AE8;
+	Wed,  9 Apr 2025 15:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="RPyiv0vG"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EgKl4Y8u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831D1259CB3
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB5717A319;
+	Wed,  9 Apr 2025 15:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744213320; cv=none; b=KmtskockPacDT0Tc6yYXrcHZucgi36LWtM8MI2tDkMocXBp772kQ4LnTeWuIdSnGzljxCIDwuDaFnjwOlS9mL7Qk/VqmfpEuOIsy0w+SujBPjaryBcZ8stAaICFR+dEqnQQtdB4ydOj4aNfC14fdBfSya6T2AXSMrtpV83c2sVA=
+	t=1744213400; cv=none; b=B4MnAjWC4botPH3ThPHF9PtLvTup1DTccwr4OpsPd2CmkCKpYUpLjjjAyoT7topZPdcJQXSgAci5i327QnF8p8q+WuXHBsAW38sBwjiJP2rBO1veDsbRq72uECd69iYX5eyltVYv40rsjuk9Xlp8qzAGs2WJv0MYN3p5lnZRmNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744213320; c=relaxed/simple;
-	bh=Q6OGpSVxIa1TzU8YTuINcPALNgKDev2a8ASm19SQxQ0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=p5yYKqMIEnwaSQGlV80Rpkd6ZA6nuA0J1/yGC/UhuvmLvIq859jYFjwF1tKG3UEEMexxzZ5MWQTiQV5GVco0KpalwtSETN9jnM+/Ry/P7Tt+lkiA5ePu+J9YhOz4w309Ga8NTmig0zmlB1U0fpU8HgDJEG2GV5uyx1aLshDCKMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=RPyiv0vG; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=S+qn1CnEm9/PZdH4urciI0YYFqE/hTqAghA1/E92Jp0=;
-  b=RPyiv0vGv/s3jdJSIhzSTGQiMhP5yA96I0DQMXd0vCFqZjPAu+rGKnIp
-   2pOo14+CdPYOo2nSBeofqi5E+lCN0m0HYDoYBO4W2XfQH1EAXSe+k6bDG
-   4Iu5t4thKUe7d97T2xAPgcz7RVzftLBA5u8OyW/xWt5OIQJlC8dh6nhu2
-   o=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.15,200,1739833200"; 
-   d="scan'208";a="217160243"
-Received: from 74-95-99-105-richmond.hfc.comcastbusiness.net (HELO hadrien) ([74.95.99.105])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 17:41:56 +0200
-Date: Wed, 9 Apr 2025 11:41:54 -0400 (EDT)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Erick Karanja <karanja99erick@gmail.com>
-cc: gregkh@linuxfoundation.org, outreachy@lists.linux.dev, 
-    philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] staging: rtl8723bs: Initializing variables at
- declaration
-In-Reply-To: <0fb58ca930030af2a4c730b0f5328e64210b795b.1744192642.git.karanja99erick@gmail.com>
-Message-ID: <9dce3c-6ac-8b7e-fdbc-75e14f73fcc4@inria.fr>
-References: <cover.1744192642.git.karanja99erick@gmail.com> <0fb58ca930030af2a4c730b0f5328e64210b795b.1744192642.git.karanja99erick@gmail.com>
+	s=arc-20240116; t=1744213400; c=relaxed/simple;
+	bh=k2miXl1ondWrQPYCbSibfKxqRNlBY3ts+SvGry/cRgk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ah/iVhnGGIzlh/NuqUYdDZoORyIwxCIu2jduF9BqE6/6nf9cC7uQ7vV8TXaDl58CwlajABSZ5c4B4UVR5m+fbWw/bqN9nEQkzRaaxVRxzNFlm3zTyV/85/gOxP6mcGBf2B0zOULVyvtA1jbAnPk+0iVzmNWW1bvbTS35bavKpbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EgKl4Y8u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A787C4CEED;
+	Wed,  9 Apr 2025 15:43:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744213400;
+	bh=k2miXl1ondWrQPYCbSibfKxqRNlBY3ts+SvGry/cRgk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EgKl4Y8uJ+s5Gz5sent1TRwKfM8y2q6rYNnkUISndsVOhcV5LpclHSAOkCTqvQE38
+	 bEdrWzlSUkQdYAWhZMRX4wGhQjtBToSEUuePU93eTJtlS40XgWyC85SO768NhPlaFr
+	 CFKFBzHlI+d0jtv9QX2Hu2/Lql3iyhn7H93xc0zGY+bhPVC1js3JkZQfOVLM7cSRkp
+	 jdsD8Lt4Sbc1iVHom025Jp91jw1191YzRdK7p1B7fHV9BoTAAX4UXnHm7FH2v3NV8n
+	 sQqzaetf34PQVDUxa9U0w1GkF/eRiXEtSX/xg9wScjXmaOmtmjobAQNEnmx8te7813
+	 OwQr6mEreRP2Q==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2c764f2c223so2306692fac.0;
+        Wed, 09 Apr 2025 08:43:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUyPA/jmyvXL7XRrAOXNVN2OPFEu8LHkZG8dZkFIfJjvbPveSfme0MlHJlthhCG4zvcByqJyCKxXxrb@vger.kernel.org, AJvYcCX5FtqQAKLHoq/5wbsp64rBfeYEVM992tsZmS+8q9H3i+fVjvz992VqNH7jViQBUl03NtHoc1rKdjWU+jmF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5O3x+jtg4G/NTVgWx7NYZAzo2bDmB4svuTn0ZXmvyuuCk9CgR
+	BTpBns3g3Y3ZPx9SMs79g+N3obC/teirae4Eo34qQ1DA/mPuCp5li86ZYb639lzvf3rLU0DQ7gJ
+	2wD+0pp/PE6cdcWbZq2DBPWNv5Y4=
+X-Google-Smtp-Source: AGHT+IHPfE7dSRIjUYkW2+C2sa2qSFLVGvgXTJUA6F0Mi8pbopsKWhs/TqIWlOIiHcyTG8p1i7bwABRt1Z+JrILnmHE=
+X-Received: by 2002:a05:6870:2dc3:b0:29e:7a13:1341 with SMTP id
+ 586e51a60fabf-2d0916bbd32mr1573160fac.8.1744213399488; Wed, 09 Apr 2025
+ 08:43:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250331163227.280501-1-andriy.shevchenko@linux.intel.com>
+ <CAJZ5v0ib46bqNkJ9em9GKbUhJpCOjDqgLOyDQmqO1n8LMWJpyQ@mail.gmail.com> <Z_aIUokzC0eD-Uw-@smile.fi.intel.com>
+In-Reply-To: <Z_aIUokzC0eD-Uw-@smile.fi.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 9 Apr 2025 17:43:07 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0j3e0j=ZGxa3C5pWpL6-fOcFORGZKRG9jhmo4wCZpoD7Q@mail.gmail.com>
+X-Gm-Features: ATxdqUHtH2lSvDOr3ZxfU0yUHCQhcz0XkxwEBoMwEN8JjU_WlQo_X1RURciyf_M
+Message-ID: <CAJZ5v0j3e0j=ZGxa3C5pWpL6-fOcFORGZKRG9jhmo4wCZpoD7Q@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] device property: Add a note to the fwnode.h
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Len Brown <lenb@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Apr 9, 2025 at 4:46=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Wed, Apr 09, 2025 at 04:19:03PM +0200, Rafael J. Wysocki wrote:
+> > On Mon, Mar 31, 2025 at 6:32=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > Add a note to the fwnode.h that the header should not be used
+> > > directly in the leaf drivers, they all should use the higher
+> > > level APIs and the respective headers.
+> > >
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> >
+> > Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Thank you, but you already commented on this and proposed the better word=
+ing
+> which is in v2. So, what should I do now?
 
-
-On Wed, 9 Apr 2025, Erick Karanja wrote:
-
-> Make the code more readable by moving trivial
-> initializations up with the declarations instead
-> of wasting a line on that.
->
-> Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
-> ---
->  .../staging/rtl8723bs/hal/rtl8723bs_xmit.c    | 39 ++++++-------------
->  1 file changed, 11 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c b/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
-> index 5dc1c12fe03e..d134d185bfae 100644
-> --- a/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
-> +++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
-> @@ -120,13 +120,10 @@ static s32 rtl8723_dequeue_writeport(struct adapter *padapter)
->   */
->  s32 rtl8723bs_xmit_buf_handler(struct adapter *padapter)
->  {
-> -	struct xmit_priv *pxmitpriv;
-> +	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
->  	u8 queue_empty, queue_pending;
->  	s32 ret;
->
-> -
-> -	pxmitpriv = &padapter->xmitpriv;
-> -
->  	if (wait_for_completion_interruptible(&pxmitpriv->xmit_comp)) {
->  		netdev_emerg(padapter->pnetdev,
->  			     "%s: down SdioXmitBufSema fail!\n", __func__);
-> @@ -242,8 +239,7 @@ static s32 xmit_xmitframes(struct adapter *padapter, struct xmit_priv *pxmitpriv
->  						/* pxmitbuf->priv_data will be NULL, and will crash here */
->  						if (pxmitbuf->len > 0 &&
->  						    pxmitbuf->priv_data) {
-> -							struct xmit_frame *pframe;
-> -							pframe = (struct xmit_frame *)pxmitbuf->priv_data;
-> +							struct xmit_frame *pframe = (struct xmit_frame *)pxmitbuf->priv_data;
-
-I'm not sure that it's worth making this change here given that it makes
-the line even longer.
-
->  							pframe->agg_num = k;
->  							pxmitbuf->agg_num = k;
->  							rtl8723b_update_txdesc(pframe, pframe->buf_addr);
-> @@ -326,8 +322,7 @@ static s32 xmit_xmitframes(struct adapter *padapter, struct xmit_priv *pxmitpriv
->  		/*  dump xmit_buf to hw tx fifo */
->  		if (pxmitbuf) {
->  			if (pxmitbuf->len > 0) {
-> -				struct xmit_frame *pframe;
-> -				pframe = (struct xmit_frame *)pxmitbuf->priv_data;
-> +				struct xmit_frame *pframe = (struct xmit_frame *)pxmitbuf->priv_data;
-
-This also makes a long line.
-
->  				pframe->agg_num = k;
->  				pxmitbuf->agg_num = k;
->  				rtl8723b_update_txdesc(pframe, pframe->buf_addr);
-> @@ -357,12 +352,9 @@ static s32 xmit_xmitframes(struct adapter *padapter, struct xmit_priv *pxmitpriv
->   */
->  static s32 rtl8723bs_xmit_handler(struct adapter *padapter)
->  {
-> -	struct xmit_priv *pxmitpriv;
-> +	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
->  	s32 ret;
->
-> -
-> -	pxmitpriv = &padapter->xmitpriv;
-> -
->  	if (wait_for_completion_interruptible(&pxmitpriv->SdioXmitStart)) {
->  		netdev_emerg(padapter->pnetdev, "%s: SdioXmitStart fail!\n",
->  			     __func__);
-> @@ -408,13 +400,9 @@ static s32 rtl8723bs_xmit_handler(struct adapter *padapter)
->
->  int rtl8723bs_xmit_thread(void *context)
->  {
-> -	s32 ret;
-> -	struct adapter *padapter;
-> -	struct xmit_priv *pxmitpriv;
-> -
-> -	ret = _SUCCESS;
-> -	padapter = context;
-> -	pxmitpriv = &padapter->xmitpriv;
-> +	s32 ret = _SUCCESS;
-> +	struct adapter *padapter = context;
-> +	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
->
->  	allow_signal(SIGTERM);
->
-> @@ -435,16 +423,13 @@ s32 rtl8723bs_mgnt_xmit(
->  )
->  {
->  	s32 ret = _SUCCESS;
-> -	struct pkt_attrib *pattrib;
-> -	struct xmit_buf *pxmitbuf;
-> +	struct pkt_attrib *pattrib = &pmgntframe->attrib;
-> +	struct xmit_buf *pxmitbuf = pmgntframe->pxmitbuf;
->  	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
->  	struct dvobj_priv *pdvobjpriv = adapter_to_dvobj(padapter);
->  	u8 *pframe = (u8 *)(pmgntframe->buf_addr) + TXDESC_OFFSET;
->  	u8 txdesc_size = TXDESC_SIZE;
->
-> -	pattrib = &pmgntframe->attrib;
-> -	pxmitbuf = pmgntframe->pxmitbuf;
-> -
->  	rtl8723b_update_txdesc(pmgntframe, pmgntframe->buf_addr);
->
->  	pxmitbuf->len = txdesc_size + pattrib->last_txcmdsz;
-> @@ -557,15 +542,13 @@ s32 rtl8723bs_init_xmit_priv(struct adapter *padapter)
->
->  void rtl8723bs_free_xmit_priv(struct adapter *padapter)
->  {
-> -	struct xmit_priv *pxmitpriv;
-> +	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
->  	struct xmit_buf *pxmitbuf;
-> -	struct __queue *pqueue;
-> +	struct __queue *pqueue = &pxmitpriv->pending_xmitbuf_queue;
->  	struct list_head *plist, *phead;
->  	struct list_head tmplist;
->
->
-> -	pxmitpriv = &padapter->xmitpriv;
-> -	pqueue = &pxmitpriv->pending_xmitbuf_queue;
->  	phead = get_list_head(pqueue);
->  	INIT_LIST_HEAD(&tmplist);
->
-> --
-> 2.43.0
->
->
->
+The tag is for the v2, sorry.  Let me add it there.
 
