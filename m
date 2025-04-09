@@ -1,158 +1,93 @@
-Return-Path: <linux-kernel+bounces-595794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9005CA82331
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:12:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 445DDA82347
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EACC27B5582
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:11:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F7D23B9F6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714AA25D539;
-	Wed,  9 Apr 2025 11:12:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40F725B67C;
-	Wed,  9 Apr 2025 11:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B880525E465;
+	Wed,  9 Apr 2025 11:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLAl5bix"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A9325DD00;
+	Wed,  9 Apr 2025 11:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744197141; cv=none; b=rqoLS75663/czsYGNtFlpqKldMp8fIgXuE6vjVm8REaOLiL8wSaE1x1vcszhFe015VkyotN5ni8GH2FcMqoGnlAS72jWTa7CjR5kRzIalbsrgibP6XRI39hPgq+36PwQY4rWTL6hfLTRLl45Vd9GIVFN49s2rsG6E9xq77AaIm8=
+	t=1744197161; cv=none; b=On4uO1gcSaF9gr5OmHHw7oJFesBTxzuQfitqxsccORq89+KLn4BVATMOOUfWSSU63VwJIZ2Jg/V0qk3Ysdx+532gvVeVmJYPoVtDj7//eA/UFJbdzGiSPJcunDt7mP8PBkE+dE7dRXGUqWBhyTlRrJ5KeNoRLunZMxh6yViZhhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744197141; c=relaxed/simple;
-	bh=DbCo3zQBVGhLx2s27nDfxKdE++jQWAc8ZqVNI5Xdrdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jTxZbpOsRMtOgL8PvUXwjhUA1rMAlJhpBGZySAbwjQwilEAT067S90PpQ+ObczVTZqzEFaRJ2xLvJrA6eqOOe0dNz3gmbab2rVfm5vF4Do6jdZYkCsPY7ROpOu+nPr0oQXviIkiZXDgOw4QyOz76n28C1v4ecK9pz6BnDmu06PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B186B1595;
-	Wed,  9 Apr 2025 04:12:18 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C69193F694;
-	Wed,  9 Apr 2025 04:12:16 -0700 (PDT)
-Date: Wed, 9 Apr 2025 12:12:13 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: "Matthew Bystrin" <dev.mbstr@gmail.com>
-Cc: "Cristian Marussi" <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, <arm-scmi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	"Philipp Zabel" <p.zabel@pengutronix.de>,
-	"Peng Fan" <peng.fan@nxp.com>
-Subject: Re: [PATCH] firmware: arm_scmi: add timeout in
- do_xfer_with_response()
-Message-ID: <20250409-fierce-astonishing-bug-dd2adb@sudeepholla>
-References: <20250402104254.149998-1-dev.mbstr@gmail.com>
- <20250402-hidden-unyielding-carp-7ee32d@sudeepholla>
- <Z-1gY8mQLznSg5Na@pluto>
- <D8X9JJGPGDNL.1OTKIJODRFKNN@gmail.com>
+	s=arc-20240116; t=1744197161; c=relaxed/simple;
+	bh=fu51QOdu0zYhDKD62Nv58+jXxwkA8j6Vk7jJgAZWlZE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gJtuEzri81VsieomUHt9e7bqn1zGsEr5rLazWxJiNaRZuNSYu2YL+BaKPqf/TDHCYxQbZb4A4ATj5WADupjdNrifFnyHYrxcr0q3ffNOLq0n6ztidHWF/fkZ+AIFLP/LyElNf8v3+osE+xF6XxENYM37h4vTmDxEUHV2aYib7SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JLAl5bix; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37294C4CEE3;
+	Wed,  9 Apr 2025 11:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744197160;
+	bh=fu51QOdu0zYhDKD62Nv58+jXxwkA8j6Vk7jJgAZWlZE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=JLAl5bix5PnBCG9MPoDPmDDSS+9dKNLwSxnhHqiPzo3yiSbih42XhF5kBZ7FdyGxk
+	 1TkGdHnjKz63EVW2+nlY93c/esFEVweREzsiJSlHRHbnOpDHghy0mII92PtNh866gh
+	 HomtMZA9B1uEaDsEZN4LD4BspIMBk46pKy/epLmK80OHf0WrDMBwbXfz8opJ1tLa6r
+	 gkzFIMG09u/9rBSVqMVPcFD/hJTAlDGJEV6z/RCn5gZNJIIC3gXbMoJ4+C+D0WF/wo
+	 +OPUExpfgCNcfwQSBmJ5H7mo7QuVqsrABQKUxX4/AaNQmsZa71P0pRPSjdkkFccHrK
+	 3rV6Ttp+4Iyiw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Tamir Duberstein" <tamird@gmail.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Bjorn Helgaas"
+ <bhelgaas@google.com>,  "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+  "Rafael J. Wysocki" <rafael@kernel.org>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  "Tejun Heo" <tj@kernel.org>,  "Lai Jiangshan"
+ <jiangshanlai@gmail.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] rust: retain pointer mut-ness in `container_of!`
+In-Reply-To: <20250409-no-offset-v2-1-dda8e141a909@gmail.com> (Tamir
+	Duberstein's message of "Wed, 09 Apr 2025 06:03:21 -0400")
+References: <20250409-no-offset-v2-0-dda8e141a909@gmail.com>
+	<wNTv3DUCxugtsN73Pr6pIECzSTPNWa-VY-rRpG5RjiIyLAloJxoS_AXQnHXzLZmiA-1MLPTMEP7XkdDgu8yGew==@protonmail.internalid>
+	<20250409-no-offset-v2-1-dda8e141a909@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 09 Apr 2025 13:12:15 +0200
+Message-ID: <87semhbncg.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D8X9JJGPGDNL.1OTKIJODRFKNN@gmail.com>
+Content-Type: text/plain
 
-On Thu, Apr 03, 2025 at 10:50:17PM +0300, Matthew Bystrin wrote:
-> Hi Sudeep, Cristian,
-> 
-> Thanks for having a look on the patch.
-> 
-> Cristian Marussi, Apr 02, 2025 at 19:05:
-> > > Please post this patch along with the vendor specific protocols mentioned
-> > > above and with the reasoning as why 2s is not sufficient.
-> >
-> > Ack on this, it would be good to understand why a huge 2 secs is not
-> > enough...and also...
-> 
-> I've been working on firmware update using SCMI vendor/platform-specific
-> extension on FPGA prototype, so not posted it initially. I'm open to share the
-> details if needed, but need some extra time for preparations. For now I'm
-> posting a brief description of the extension. It has 2 commands:
-> 
-> - Obtain firmware version number.
-> - Update firmware. Firmware image is placed into shared physically contiguous
->   memory, Agent sends to platform micro controller (PuC) physical address and
->   size of the update image to start update procedure. After update is completed
->   (successfully or not) PuC sends delayed response.
-> 
-> 	Agent ----     start update         ---> Platform uC
-> 	Agent <--- update procedure started ---- Platform uC
-> 	...
-> 	Agent <--- (async) update completed ---- Platform uC
-> 
-> I've faced timeout problem with the async completion response. And update can't
-> be done faster than 10s due to SPI flash write speed limit.
-> 
+"Tamir Duberstein" <tamird@gmail.com> writes:
 
-Understood.
+> Avoid casting the input pointer to `*const _`, allowing the output
+> pointer to be `*mut` if the input is `*mut`. This allows a number of
+> `*const` to `*mut` conversions to be removed at the cost of slightly
+> worse ergonomics when the macro is used with a reference rather than a
+> pointer; the only example of this was in the macro's own doctest.
+>
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-> Why not to use notifications?
-> 
-> First of all, semantics. IIUC notifications can be sent by PuC in any time. This
-> is not suitable for updates, because procedure is initiated by an agent, not by
-> a platform.
-> 
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-The start update should retain as soon as Platform uC acks the request.
-And 2 notifications can be sent out for update procedure started and
-completed. I don't see any issue there. What is the semantics you are
-talking about ?
 
-> Secondly, code implementing  notification waiting duplicates delayed response
-> code. I had implemented it as a proof-of-concept before I prepared this patch.
-> 
+Best regards,
+Andreas Hindborg
 
-Even delayed response as some timeout so I would rather prefer to use
-notifications in your usecase as it is completely async.
 
-> > > Also instead of churning up existing users/usage, we can explore to had
-> > > one with this timeout as alternative if you present and convince the
-> > > validity of your use-case and the associated timing requirement.
-> > > 
-> >
-> > ...with the proposed patch (and any kind of alternative API proposed
-> > by Sudeep) the delayed response timeout becomes a parameter of the method
-> > do_xfer_with_response() and so, as a consequence, this timoeut becomes
-> > effectively configurable per-transaction, while usually a timeout is
-> > commonly configurable per-channel,
-> 
-> Totally agree, usually it is. And that's why I didn't change do_xfer() call.
-> Here is the thing I want to pay attention to.
-> 
-> Let's focus on delayed responses. I think delayed response timeout should not be
-> defined by transport but rather should be defined by _function_ PuC providing.
-> And of course platform and transport could influence on the timeout value.
-> 
 
-I think in your case, it is not even transport specific. It is more operation
-specific and hence I prefer notifications.
-
-> > so valid as a whole for any protocol
-> > on that channel across the whole platform, AND optionally describable as
-> > different from the default standard value via DT props (like max-rx-timeout).
-> >
-> > Is this what we want ? (a per-transaction configurable timeout ?)
-> >
-> > If not, it could be an option to make instead this a per-channel optional
-> > new DT described property so that you can configure globally a different
-> > delayed timeout.
-> 
-> Taking into account my previous comment, I don't think that having a per-channel
-> timeout for delayed response would solve the problem in the right way. What
-> about having a per-protocol timeout at least?
-> 
-
-Yes neither per-transport nor per-protocol timeout will suffice in your case.
-This 10s timeout is specific to the update operation and hence use
-notification. All other solution is just workarounds not generic solution.
-
--- 
-Regards,
-Sudeep
 
