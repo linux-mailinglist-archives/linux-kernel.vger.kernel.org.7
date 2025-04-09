@@ -1,122 +1,157 @@
-Return-Path: <linux-kernel+bounces-596693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C147A82F44
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:52:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939F8A82F48
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F12E1893DED
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:52:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A20857A4507
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6876D2777FC;
-	Wed,  9 Apr 2025 18:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FCB277809;
+	Wed,  9 Apr 2025 18:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KtWfgqwM"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MO56qGBq"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CE0267B00
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 18:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C810A15624B
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 18:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744224733; cv=none; b=jPPHZU2oDtz68/X+7aaqz5PIDYf7IKr75jNR1v0T+L0KaC+lk4OW59wL1BwlFvul8LLD8/ikdcfisE44w1p5s+6Sxciyrz3BHMwBdjxIWKxGs1Wc5iVHl7dhd/D8F+qt/XBUM5SeyhgRFJ6kCfc0CKKvtOB78Oi2627hSTctUoQ=
+	t=1744224747; cv=none; b=BzyCPlefMfOKQ2j4VBbL2Mny2J4mJpqJZ5DyiXlov9byU86XJxNfdBFP1J+bO4bpOwZwpglqkTY7A98fZ2qkv3/YVRvimPzHxDZNU186BSf3ie8BVF9HLcB3j3baXNu0a7YOsxmBrKxZFqDiZezEG/nOPNRPnTd9Cz428Xj6Wg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744224733; c=relaxed/simple;
-	bh=UYddorqevsRwxFwmg1do08PnXxZnhargYzpzeVk9+Lo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PZo2eTzMpUbk+jisa1tcft3TzIAvCp/fB6bQZaY9SO3AJML0RQFns1dfabPld9jWt15mrRAjXjnJSju0BrLPoiY4cy7ElUZS1GVAb1AGzUGLzlby0H+j2RDvGNt5HYQrRvnW8t77kfTuCpumQhsl0GNxYzPtg1HgIYeMSa+OE1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KtWfgqwM; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3feaedb39e9so2130071b6e.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 11:52:11 -0700 (PDT)
+	s=arc-20240116; t=1744224747; c=relaxed/simple;
+	bh=bb1BCpU6u1F4XaRmgOC4W+hVZuPLD19ojT0zGDPVb1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J3F9x+IqjY0GYetSTHtcj5XTuaKoZm9BQQpLQms9txUGeUuELRLvLS3MSl8PtSL1dSY0s6RfORTAazgq1wc8PpBnw62vnHvn9bgQfnbwovoa36F5az3rZ+fhjzbPEojMSy9mlAZ2EwdiuGwTFhiGxPM10l5BPYgE1c/IIds2HuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MO56qGBq; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-391342fc1f6so6265904f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 11:52:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1744224731; x=1744829531; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6GibFRXqwcx9teBdvxC1Ow1/QUI0XP30meo2aqGd17M=;
-        b=KtWfgqwMxjgv3tYpbz0XKxyPVTiAuA/9tq5neQ7x8o5D6hiFfwGsql9rTyN5cF3kbb
-         qlqlgGGtsF10wdfvHwJjlM2zxaG+GAQ9waUa6USDAOpni4Sh1gDEmw8+7ylEDXxYmf6D
-         3A9Vz5VLpzti4uVkTQAYmZ4Zkm00vjLjdQ96k=
+        d=gmail.com; s=20230601; t=1744224744; x=1744829544; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xCVIdbEnISAVHM1v2E2J31fW79EefnXRviLqNVsb5SI=;
+        b=MO56qGBqbIuYkR+mGdZ3P5IC5BEbe4v4DqLcwqo29WcycT4VE4LVgxb8opYw39LkzX
+         Dxpq/YnR6D7oobOssDTV5MBmFXevrxs3v/dYkpWc2FwjkF0mbf/RTzVlarw+ep9Xl9Zg
+         d9Fs5rXHUinWNCrBi8IZ+BRw+/ScFqH5m1w5wOgM6PKlXkw9F4ogoX0ykz3ZVlGf+m6w
+         SD0ceFImwSqAwIxJZ3Pi6kmLnHy7iexehJ74DheNV3UTv0B7Z9DyN8euZIWEj9D22tve
+         KmlyiMZpFxhdjMUjEloZaSZvGxx1eEW1kb7TAhbQ+c1CdETxJSdyVuu6Y9TeJ0JwdZzY
+         Bu3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744224731; x=1744829531;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6GibFRXqwcx9teBdvxC1Ow1/QUI0XP30meo2aqGd17M=;
-        b=Lv0oXYN3M7UDjtzOcxDc+1tkjf4Cqm4s3v8sEs1Bvs5VW3EUSlYTMPbJQcgbZHrloY
-         Ml+M3NevudtoVKrjs3noad6nz5UJ1wI3+Tw5agycytzHY3qjDeSJ3lWacVsDVKLE1dZX
-         ek4tXqqlKujow21KJmi+ykh1Hz/qAD2Fv1PzXu8/KwNmdY+gVL+gfwhLLAvak3V0uujO
-         quwrGUimOCDBKDELUcccOgs/F2QXGvUiF1H645Wk9t6DCIrjn4W7hntd0wyuPfaOiPQG
-         GYmsWINRDZqc5QLFp7sw6V/9QgSptIG6JC2KBi/fixMBQv6umaPJGjp2gVpFgw+aCs2z
-         QNpA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5vtCTrfXk3/SbQBnDQiyCpnI3mg9kcnnVAmSht4L3Yn6gDaJi4BnNew7LKqIYwckkzYv2kkQNTVqOWNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW2OzI8bjAMKg6rZAP8GCfUeeWX9d+o3YW6zLvYAXxxj0/8DQ1
-	NKsZEIlVOI7EDNwmz71ym3eSMddYUGCYOaBtKf5P0HU/cJONyov6nSvHTqCtjeI=
-X-Gm-Gg: ASbGncvbU1nsGL3hMTgIS5KILDcupvy1DMgyLD0ITDRHENd1R0nXQ1qmX4gZmn7L7cI
-	TSX3tGhJBqPz7MaX0akNtyMFarjwZ7M0mWGXuPxvBPn6a6D07ItnCHMPm5ZUvRGEnxxqkK8ocZV
-	7DI/HEn0P8ksaa7vFwKW2mvvdUTsr+S1lql0A6C9NR4q3RtB+BbAmqsslIvb50PVte0q9R5m8P0
-	ZuteEsoGAE0B4Vf8hBrbhs17Bv8frbOn7+WjD5mJ8V/5IctPClpD0Sljc3EpgNH1rAyQ9PcqF1Q
-	THXhtLuGIHKyduV+TRXvPcm4aF9rhm4yd7Q6D5hxUFFjPZAqETg=
-X-Google-Smtp-Source: AGHT+IFoOWUYGnhxYrZFsDOJwhFDr8tTOXYJZckfR4G3iPbT4vRE7iwS/DWM3qg2w//4iHId28KWdA==
-X-Received: by 2002:a05:6808:218f:b0:3f8:498c:9ef7 with SMTP id 5614622812f47-400740bf168mr1827591b6e.24.1744224730849;
-        Wed, 09 Apr 2025 11:52:10 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-400762eb331sm254058b6e.29.2025.04.09.11.52.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 11:52:10 -0700 (PDT)
-Message-ID: <c1b5c202-5899-4a2e-abc9-93bd4b17ac87@linuxfoundation.org>
-Date: Wed, 9 Apr 2025 12:52:08 -0600
+        d=1e100.net; s=20230601; t=1744224744; x=1744829544;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xCVIdbEnISAVHM1v2E2J31fW79EefnXRviLqNVsb5SI=;
+        b=Cb30ba31m7apqrl9n4tNWPI/1VqWcgzfnYnymJryQhQexwVT1DGaWZp4UXm/mfCpWS
+         DsSvvtXiySxvF5JIJ9RaWzqzCgPDQLUzOHNkW19EbvVG/0z3qNTaG5A7LAHLMr8xCInr
+         OaXRTjRggBxMj/+II1KVnxVwA5ADKLlCDTjjLKhNfFdP/zcXM1biNGdOjHCRzhyxDpIB
+         Xxssw0uGoNOirH7XJNJCoyy24g40iJpB0bqU4X7YzV45zwuz92k+OkZFBaBEr/AbE6ky
+         j0eeLIVtkgWKeyMSVsLvwgQKUhkwPFtQI6pj94ufHzUrqQAV2fJMgR13xFR4HfOWhW1u
+         1jpg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOtOrNuyQ54glHxPxUVxHEEU20u/iKKvmLX3/ekoyw1vgbUw87NsfnmJqYbuwSX54dsMY15ljqfrTziH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5xeJmJvyXH5hTDsKHg2636QlFhDisa7IHDKYr/P8rRbDx5W2G
+	DpiWnv1TjlnwROlCth4twCrqlx/q6uoowxkiGj4DSuBdACcPv2AwQLUovw==
+X-Gm-Gg: ASbGncsRMZLZwPYyKjXE/pmve6ynKSSQadJG8CWuyPvhEIAAhgpkL0k5A3gJvmwTXU1
+	vS5JZJWxXroPOZmxIEOTsEBIh+iZtuuOgjnCjeygtJltz218BRqvll8/UIiZ6vPbBo5Wdcy5Ngu
+	UtkNFTb8D5Gm7NicU0q+ZobITO/gNP6SRmnnrWqNp+eqt+H2JDJ3ZsKd5tG7+eeqjLUq4DmzIYY
+	TMInrRKdFkgnLGnceebaqApVFrbfH1XyFamBlo2a+u1d90+cqyblN7Z0cxALR0SiCxDBFIHeie6
+	B+7antAbCJ8rlTX0fJQ4w52CGyxtEmHsy4oxGo+AqyOgTmhz7+LG4ZsGX0rk5xO2F+tpPjR8YqU
+	b7hY=
+X-Google-Smtp-Source: AGHT+IFzHMs8v+x+fqbf8EJaLOokSyNCKkLysUCzAg9iwIuL/fHNWqtDfjEXm8SBtK1JSxE2iUr9OA==
+X-Received: by 2002:a5d:5c84:0:b0:391:2932:e67b with SMTP id ffacd0b85a97d-39d87ac017dmr4022308f8f.35.1744224743857;
+        Wed, 09 Apr 2025 11:52:23 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39d893f0b90sm2391844f8f.79.2025.04.09.11.52.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 11:52:23 -0700 (PDT)
+Date: Wed, 9 Apr 2025 19:52:22 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+ kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH 1/2] erofs: add __packed annotation to union(__le16..)
+Message-ID: <20250409195222.4cadc368@pumpkin>
+In-Reply-To: <20250408114448.4040220-1-hsiangkao@linux.alibaba.com>
+References: <20250408114448.4040220-1-hsiangkao@linux.alibaba.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/269] 6.6.87-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250409115840.028123334@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250409115840.028123334@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 4/9/25 06:02, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.87 release.
-> There are 269 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 11 Apr 2025 11:58:04 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.87-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Tue,  8 Apr 2025 19:44:47 +0800
+Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
 
-Compiled and booted on my test system. No dmesg regressions.
+> I'm unsure why they aren't 2 bytes in size only in arm-linux-gnueabi.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+IIRC one of the arm ABI aligns structures on 32 bit boundaries.
 
-thanks,
--- Shuah
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/r/202504051202.DS7QIknJ-lkp@intel.com
+> Fixes: 61ba89b57905 ("erofs: add 48-bit block addressing on-disk support")
+> Fixes: efb2aef569b3 ("erofs: add encoded extent on-disk definition")
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> ---
+>  fs/erofs/erofs_fs.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
+> index 61a5ee11f187..94bf636776b0 100644
+> --- a/fs/erofs/erofs_fs.h
+> +++ b/fs/erofs/erofs_fs.h
+> @@ -56,7 +56,7 @@ struct erofs_super_block {
+>  	union {
+>  		__le16 rootnid_2b;	/* nid of root directory */
+>  		__le16 blocks_hi;	/* (48BIT on) blocks count MSB */
+> -	} rb;
+> +	} __packed rb;
+>  	__le64 inos;            /* total valid ino # (== f_files - f_favail) */
+>  	__le64 epoch;		/* base seconds used for compact inodes */
+>  	__le32 fixed_nsec;	/* fixed nanoseconds for compact inodes */
+> @@ -148,7 +148,7 @@ union erofs_inode_i_nb {
+>  	__le16 nlink;		/* if EROFS_I_NLINK_1_BIT is unset */
+>  	__le16 blocks_hi;	/* total blocks count MSB */
+>  	__le16 startblk_hi;	/* starting block number MSB */
+> -};
+> +} __packed;
+
+That shouldn't be necessary and will kill performance on some systems.
+The 'packed' on the member should be enough to reduce the size.
+
+I'd add a compile assert (of some form) on the size of the structure.
+
+	David
+
+>  
+>  /* 32-byte reduced form of an ondisk inode */
+>  struct erofs_inode_compact {
+> @@ -369,9 +369,9 @@ struct z_erofs_map_header {
+>  			 * bit 7   : pack the whole file into packed inode
+>  			 */
+>  			__u8	h_clusterbits;
+> -		};
+> +		} __packed;
+>  		__le16 h_extents_hi;	/* extent count MSB */
+> -	};
+> +	} __packed;
+
+Ditto
+
+>  };
+>  
+>  enum {
+
 
