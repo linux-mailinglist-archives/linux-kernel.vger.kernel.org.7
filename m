@@ -1,119 +1,131 @@
-Return-Path: <linux-kernel+bounces-596554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE43A82D8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:27:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79249A82DB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43ABB7A6AF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:26:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 710D6461EEB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664CD27604A;
-	Wed,  9 Apr 2025 17:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCB826738C;
+	Wed,  9 Apr 2025 17:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYC6KdqJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="LmU2o3W7"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA56926E143;
-	Wed,  9 Apr 2025 17:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23B61A5BA4
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 17:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744219619; cv=none; b=PdYmtuvVHt9Xkb3jXguOa3da51jZFDXrPU3SwoJSgPtFke9p/VtP9jOBYBgV/eGz2565+92rKPKlbREdrZCVA6DZz1Oegr57rZaYh/4fTIH0y4btT54s61GFSxA5pQaesuCqaP4fwVC/SshW2tDhvbSByZvpDNOPWN4LLH43I6k=
+	t=1744220001; cv=none; b=ggDedB9xuyjXPTzHDNsmPL4tvFs9rEqtxpXR97J4EaTAoAkVSV0t2ZjgbTV8dKAoFh1DSkwEllOp3HkcNCfgK/i95EC2DRbMtqdrQIZ70Xc5E0zTTxyAC94A8R6owimVF+b0bHGY26HzrQ3GqyZIPpQHrV9K2DUGGIt26OGJVWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744219619; c=relaxed/simple;
-	bh=4cE3ikxzQkLEyV7rkhTFdWv+Qyfv6keFT8/eBBjAhZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d/F97R6nUrjaCLQImHXu2Dl/gFu/vviSDTtyemPf4xHlYgpGfaM1QaDjT4DFmPzISAvN384DrdUpee5YZ3FjTBCfhGsIoxODdV2aW1BOCG99/FFDZq+rk5TOhesHgX3sCy6SYZVPTxCz8eDqCL77WTOeGNlT1YymhzGVSZ4u9Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYC6KdqJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21365C4CEE2;
-	Wed,  9 Apr 2025 17:26:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744219619;
-	bh=4cE3ikxzQkLEyV7rkhTFdWv+Qyfv6keFT8/eBBjAhZI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DYC6KdqJt4RFGGFPtu/ik51HXgvpTIVHF34pbK/3XtcwcHmcs5YSmjrJouHQGQrc+
-	 MmsK5WUVNAwXkS7mYUYMhHjZaRlEQEgIcVcYdek5BaeB++qKPFAx9MupiOY/x04NZg
-	 6gioCrKWH5/rUgo4FSEshEFNl8njFmqwB2BQswAgHYWZhzr4rRq8n/ttEmvSB3qXsm
-	 MbrUCqGdQ3IrPO+qcqouLbeY2jdgu2JJCVxrDDNs3a+Og7qmDpWXh15uxxf52T3GMx
-	 awp0Ask9g31o7fusZTOuk9lKstDC81qBY4hqvtzpEy9os3n1QKl4SojY743RitVeig
-	 xx3LTZWv9DJEQ==
-Date: Wed, 9 Apr 2025 10:26:56 -0700
-From: Kees Cook <kees@kernel.org>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>, John Sperbeck <jsperbeck@google.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 1/4] sysctl: move u8 register test to lib/test_sysctl.c
-Message-ID: <202504091020.3A06E6C548@keescook>
-References: <20250321-jag-test_extra_val-v1-0-a01b3b17dc66@kernel.org>
- <20250321-jag-test_extra_val-v1-1-a01b3b17dc66@kernel.org>
+	s=arc-20240116; t=1744220001; c=relaxed/simple;
+	bh=UDsScVawTwMhviryuJnaMYaRiEHTchUhs9U9vyHyEts=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=i851HYn/Kii0ZeaqdaYyqGrRiPJbFZqBD2NwVgH7GN/VqFJpxmoOg0NSO0+5e8Zk2L1E8KhFdWz4wzKrmSHS9faMEEoRRUt1AzU2+HhvDcfIjm+Qg8yLkorh6wz7o4a3MBodfpOvmL4YLvWrm8HIBCkr4wRJufkn5vTsI4nBwIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=LmU2o3W7; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1744219690;
+	bh=Tx0Hr945Xe0rUvgIJ5OIe+KhPZ6SaToN7Vw0a9/byQo=;
+	h=From:To:Cc:Subject:Date;
+	b=LmU2o3W7qap/AsEeLwZfRBRIPsSlXOHH/mDMK5bI9nm3GOmpacdhbnHurB8dV4mzb
+	 AmPPveDEsS+jNPfHZd8kjqwPCXr5v+PirYS/zkMvj4FQxnDOfWr8kyopBDjoxW2KsM
+	 3aSnPFAC5FgEqoNNSjTHCSPYUNlZXkuTITETL3lA=
+Received: from localhost.localdomain ([116.148.99.229])
+	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
+	id 7090107A; Thu, 10 Apr 2025 01:28:09 +0800
+X-QQ-mid: xmsmtpt1744219689tp7uccbam
+Message-ID: <tencent_A8520B8C5C017A6C86DAD38B120D1B4D2905@qq.com>
+X-QQ-XMAILINFO: NnYhxYSyuBnLoiY02xCxdjTDiiqKpCIFUzYrRQdufj93eM9uj7y9BA7aQFfHOF
+	 ZfQDHlcAg5U+EENz8IGC0vm5F7KaU0XZzSdUqCSth8Nl0MX6w8VBB2yf/nUmb8BuJRR03BHCm+za
+	 VMuRq1WR9sxsIZ+Rmbx7f6+H3s7R1B+rAmYZRkIJsvLGNGeL2TqavaFFdXfEjyzCq4aUOTOxTQgL
+	 aZIbld+j+TE+smkfXku3Zvtn7lVdjE8mpRdIcQCIyUM3MpCyEgcALsyM9PCH5tohq+qTpVC9neCU
+	 lHUCuRbJj6Jp72dVeaY5GGdS0lt4n4XXITZaVt6irTHkLkadgMNhRNWYYGxwKwGpffpNfXbsMqje
+	 zaWWj60roeL7OUTWGPrgwTTTg5YV5ibadLsRZooo+EMBC4WyHxKmr/lSOqnOA4JyfRBGxcOMqKaR
+	 2YSBToDxRuzCh79LVUlDAJySZGYE/fIMheVbP9Y3PDIawjh3jPLV80m6H173OaOPZkqwDuejkSId
+	 UP1mF1T71KrnwA0BbIv57vwa9Kyp0Gp6ac7Cew9z/m158TNbv2oUiW60y8vzDDyJHdxgXm0M2v98
+	 H6M/Y4ugR3SwPlaOhISnLJuxh/Je36yzGFKmUk/FbV5zZOcSTK14zZyTHG0pf5XiG3fFNy62Fz42
+	 rIq7q3VzR6FBSoIVDpTDVpB9sWZE18m310NIefwEOZpkLQSITb5ce1tMxsqAN2jSXoeifQ8WmiqH
+	 Z7V6gVxwk0voMS4/F42CM94DEHs8naF2BAHmD3vJkdiXOQmtc3k8Jd+y6vay4xhVaCdPx6P0YI+l
+	 t6bPEmsCGlMQBCfCIo307CJIk8Yzzly5Zmc1hOSTE7sqjQ08GD8Z5H5NpiQK2eS93v7AfBE3n+Kh
+	 cSIJNUV2PHOKT1kSzi7pb9G63m72wpAZ/3wuW9kFC/SkHQM5B8vC+r72Rv5/vGkNO5Gay43PRCwW
+	 f7SdK9AfDJ6LTFobkj1BJMZyYKNan0dashq3Qpu4S2aJ7fHIl5Naqz4KauPNctrANwicwYmYG01r
+	 ELN0qkHw==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: zhoumin <teczm@foxmail.com>
+To: hirofumi@mail.parknet.co.jp
+Cc: linux-kernel@vger.kernel.org,
+	zhoumin <teczm@foxmail.com>
+Subject: [PATCH] fat: Optimized FAT bad char check
+Date: Thu, 10 Apr 2025 01:27:12 +0800
+X-OQ-MSGID: <20250409172712.698457-1-teczm@foxmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321-jag-test_extra_val-v1-1-a01b3b17dc66@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 21, 2025 at 01:47:24PM +0100, Joel Granados wrote:
-> If the test added in commit b5ffbd139688 ("sysctl: move the extra1/2
-> boundary check of u8 to sysctl_check_table_array") is run as a module, a
-> lingering reference to the module is left behind, and a 'sysctl -a'
-> leads to a panic.
-> 
-> To reproduce
->     CONFIG_KUNIT=y
->     CONFIG_SYSCTL_KUNIT_TEST=m
-> 
-> Then run these commands:
->     modprobe sysctl-test
->     rmmod sysctl-test
->     sysctl -a
-> 
-> The panic varies but generally looks something like this:
-> 
->     BUG: unable to handle page fault for address: ffffa4571c0c7db4
->     #PF: supervisor read access in kernel mode
->     #PF: error_code(0x0000) - not-present page
->     PGD 100000067 P4D 100000067 PUD 100351067 PMD 114f5e067 PTE 0
->     Oops: Oops: 0000 [#1] SMP NOPTI
->     ... ... ...
->     RIP: 0010:proc_sys_readdir+0x166/0x2c0
->     ... ... ...
->     Call Trace:
->      <TASK>
->      iterate_dir+0x6e/0x140
->      __se_sys_getdents+0x6e/0x100
->      do_syscall_64+0x70/0x150
->      entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> Move the test to lib/test_sysctl.c where the registration reference is
-> handled on module exit
-> 
-> 'Fixes: b5ffbd139688 ("sysctl: move the extra1/2 boundary check of u8 to
+1. Add first-Character Validation based on FAT Spec 6.1 ->
+Note the following -> 2
+2. Add check for 0x7F (DEL character) even though the specification
+does not explicitly mention it
 
-Typoe: drop leading '
+Signed-off-by: zhoumin <teczm@foxmail.com>
+---
+ fs/fat/namei_vfat.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
 
-> sysctl_check_table_array")'
-
-And avoid wrapping this line for the field.
-
-> 
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
-
-Otherwise looks good to me.
-
-Reviewed-by: Kees Cook <kees@kernel.org>
-
-(And I should  note that there is a push to move kunit tests into a
-"/tests/" subdir, but that's separate from this series.)
-
+diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+index dd910edd2404..d264057f32aa 100644
+--- a/fs/fat/namei_vfat.c
++++ b/fs/fat/namei_vfat.c
+@@ -195,16 +195,6 @@ static const struct dentry_operations vfat_dentry_ops = {
+ 	.d_compare	= vfat_cmp,
+ };
+ 
+-/* Characters that are undesirable in an MS-DOS file name */
+-
+-static inline bool vfat_bad_char(wchar_t w)
+-{
+-	return (w < 0x0020)
+-	    || (w == '*') || (w == '?') || (w == '<') || (w == '>')
+-	    || (w == '|') || (w == '"') || (w == ':') || (w == '/')
+-	    || (w == '\\');
+-}
+-
+ static inline bool vfat_replace_char(wchar_t w)
+ {
+ 	return (w == '[') || (w == ']') || (w == ';') || (w == ',')
+@@ -220,10 +210,17 @@ static inline int vfat_is_used_badchars(const wchar_t *s, int len)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < len; i++)
+-		if (vfat_bad_char(s[i]))
+-			return -EINVAL;
++	for (i = 0; i < len; i++) {
++		if (i == 0 && s[0] == 0x05)
++			continue;
+ 
++		/* Characters that are undesirable in an MS-DOS file name */
++		if ((s[i] < 0x0020) || (s[i] == '*') || (s[i] == '?') ||
++			(s[i] == '<') || (s[i] == '>') || (s[i] == '|')
++			|| (s[i] == '"') || (s[i] == ':') || (s[i] == '/')
++			|| (s[i] == '\\') || (s[i] == 0x7f))
++			return -EINVAL;
++	}
+ 	if (s[i - 1] == ' ') /* last character cannot be space */
+ 		return -EINVAL;
+ 
 -- 
-Kees Cook
+2.43.0
+
 
