@@ -1,124 +1,238 @@
-Return-Path: <linux-kernel+bounces-596847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A9C5A831E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:26:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53EA6A831E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 214203B0B0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:25:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355711795F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF0F2135CB;
-	Wed,  9 Apr 2025 20:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BFC211A15;
+	Wed,  9 Apr 2025 20:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NxGI2Hei";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f55uKGnw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mlR+CXiY"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DE92116FB;
-	Wed,  9 Apr 2025 20:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CF7101C8;
+	Wed,  9 Apr 2025 20:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744230356; cv=none; b=hPK6ASeX4oKCPgvbP7XKsl5iKLxNUNUp/JMJZZToAfHqMnJRRyA/w4LhLEG/tAd6nzYXrTsLOFxIPyZZ3sNM9ikhiFksyB6wxMskWoNhUykt37HxeYXMBw/iaxhU9D6uW95Sa6zspdGjMvRfyXHorU0wijLrEkZmmCmemFip+po=
+	t=1744230447; cv=none; b=H08SvxGZOB+zMSgHQWr8hh5jMMLoKef7OK2NDVy3aydZQMYvv0ZBlv5wRTdaYKAfAjCzglXlmhRXbv1cEgZ9ldiMiMzw5FuPK7k+ax3QrKn1lamJ8PkhDI3KYXIzCnyzSG26tPdEsDIQi4GYtCPxyVbID66XAWt0M3OfXj5EWZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744230356; c=relaxed/simple;
-	bh=TBcrm+nnno6fSkJwnAU4+w+ZXLzvOFMD0XXZV7NIdB0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RtDko/V7pLadlvWyrHpxoamLlVUHdtZo4FWhv8OsApPLaMABOJ952DFP97x5oHIl0HH4396Vr5ZGP+MGS8F0OeayH8Ak/H2WoY4lKeul4HUQirq5GJEbm02U8kgk1x1Hql9rFjDfvcR6wyTo8pil7fO4VkbpDtMb+skcFA5NTS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NxGI2Hei; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f55uKGnw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744230352;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jX7UwbTFq4MDr+4yUCjoMR+NhYvyl7m3Cb4/7T+oT5Y=;
-	b=NxGI2HeijQ6yixBjNQIswa8i+haKPv9Pb6KANvfV7JwmmvvVCOPj4FnvJzfDM+kpKfVzJg
-	p83NlBtDa8kItJzxrCtKXnHNPYC6K2W41p9tnO7C71O4U6rCE3pfKcqJtUgnUWXfeXakU3
-	NwEWU+5fR0Yq2HpOzXQ4D6c/qzM4/UYHVoilB+/yLIduwk7niQeE8DgmhcM9fClX6MplZ1
-	W6X/rq+7aEfO3WwsTBXdI3AlVVzCPCcs3RwVSGkJkEIAH3A5q3xwfpHrTiF2W5oRQuDkpr
-	M8+JlWeWHQm0oaA0tJXMVzB823tLU0Pfoq2/5Le6nkzKGIG7ZSB1IrTtysQgwA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744230352;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jX7UwbTFq4MDr+4yUCjoMR+NhYvyl7m3Cb4/7T+oT5Y=;
-	b=f55uKGnwXOWUYbDpIFrKzPoAcWRzIJiCfqLRi3MHwbN3yQAsNJ0bpvO5UOdvHuVBx6aI7H
-	FoBVpDpM6dPodlBg==
-To: "Bird, Tim" <Tim.Bird@sony.com>, Gon Solo <gonsolo@gmail.com>, Duje
- =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ricardo Ribalda
- <ribalda@chromium.org>, "linux-spdx@vger.kernel.org"
- <linux-spdx@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: RE: spdxcheck: python git module considered harmful (was RE:
- [PATCH] scripts/spdxcheck: Limit the scope of git.Repo)
-In-Reply-To: <MW5PR13MB5632440E0CA2EABD11B79F3CFDB42@MW5PR13MB5632.namprd13.prod.outlook.com>
-References: <20250225-spx-v1-1-e935b27eb80d@chromium.org>
- <12647854.O9o76ZdvQC@radijator> <Z_Tgp8L_8goc63K1@pampelmuse>
- <Z_TtXaRnaU1zXbXv@pampelmuse> <Z_T8OiLQzKDGhOJs@pampelmuse>
- <MW5PR13MB5632E13F8F5B0B2B6DE3D16CFDB52@MW5PR13MB5632.namprd13.prod.outlook.com>
- <871pu2usq7.ffs@tglx>
- <MW5PR13MB5632440E0CA2EABD11B79F3CFDB42@MW5PR13MB5632.namprd13.prod.outlook.com>
-Date: Wed, 09 Apr 2025 22:25:51 +0200
-Message-ID: <87h62xt73k.ffs@tglx>
+	s=arc-20240116; t=1744230447; c=relaxed/simple;
+	bh=fEbv5zBpraILF+Ghnm54tkWozFw0v+CbBgAZephHFoo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tbs19YqjXApIMgxAnCCZMF2yITpKE+l4aQRmR6gUnMIpxMhpCI7xK1czvMhN4adOjJOywNIIxn3MAXVh0sNFSCDpMyqlHYCScgD/Z14os2dN3IEnvaMBHu7mQ5ptYJ6yxHFBuLPfQMibbKTLLawPJeO6kJMCf1uLaCJJk4rapdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mlR+CXiY; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e60cfef9cfso177680a12.2;
+        Wed, 09 Apr 2025 13:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744230444; x=1744835244; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J0LAM8wut9PB5pz05xM4sp997UQqATNN0PYbo23aLv4=;
+        b=mlR+CXiY76+zgimfpKpIIituwjq2EFuj+J1ujP8DcK8Rn1WmJHzcuZoHF6Yo0ZBPXw
+         DtR4Rf72BOlVNBGs//Hd4U8mHqWw/1uWMfZYI/n8N5kPPOzhPUMVHPNO8Tq737cjVJXG
+         j3bjQxUKivfzQatd3qdPKfzTVTiZRLGbiuWwd9i0SV4XanTz9b4W+nSO3lUPLRu/BSSh
+         MFGLYTO8+GFN7xYHobFAr30FksIlVR5N6ipbs0Sle74P0A/L9h4H3srXC58Ip5ymVDzT
+         NRpjJ2YsYNjvRnEXUhHEYUeHKni47EaesCyFO8kFt1WhY5vtL4yVWDS+wQlrDyaE4c7J
+         lFqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744230444; x=1744835244;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J0LAM8wut9PB5pz05xM4sp997UQqATNN0PYbo23aLv4=;
+        b=pVSKY/fcSj4L0xxCB8EJiTbL/N7RCb3UqHw14f4yvuRAb/9uUCMFpASsvxupG+2kn+
+         eHvrMXCbUwm3ICRazqq+HkC1jF9jidQ5BJBspL6ZqfxYGsl/Gboh+AC21I68ahmdEjVU
+         QYn7cbY5w+kj7UNaRYqlTY5S1U5ZYEHUplszqm2Jvv48AQbXZ67cT+9aAk/lLI+GYsgv
+         aY4lLCUbcH7pBT8OKVGrzgmp0eBPATAq65/cLlDFNXX5LNaGtIAcBHK4w4UQDjdnb6wP
+         +P7hjAkbzRfXiCG7td6hFJ/O81gA6nQ2Ng6Blq/DT/Siin5JUBMAGCmNTa/sRWN9csdw
+         6k2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUfL2KWWk/jnR8Xetszmio37Yik2gFjiZzP6Am233MYVbMKzFZk/zbWZwoNYRCuOiCS9fICbEP3akrIhulW@vger.kernel.org, AJvYcCXahGeo4U3TYt+parNNNsnNsUG3KGs7D4W/mt/pNzgesECfHEz1TUZK4TValHL65brLgwEl5lGPQeqPcPOT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn36rGRTstUbGa3Eae6V44pa0WIWyfNciff+V4aYV7fnGG51Ky
+	QD8/VgjydWJ1qR7nkMw7SjHzj3jKFDdsV2S37gsv9Qgx2YXhj1TaLL3CGVFXYncRvHo7KptwILC
+	XBc1KpY/zPAbObgraX5LZOSwsLyk=
+X-Gm-Gg: ASbGncsRZSGjSQE//hEt2UTRlYr2uuqO/0Loaeyy32xlsJB0oFSUsDL67k5gYxwFDeE
+	2yVEWgbmUJepvHROWFvltnWP8nKL7Gzu5OJmCC9JesRQQ+gUU+6+4/ab3Kv8PdhMyafCo3FSJ/8
+	FaWB5kjocDh32kXHztYujo
+X-Google-Smtp-Source: AGHT+IGuQy4DnmjwQ9A6RQoT1MD/6UgYznoCA9Kpk7nYN37cfGWMeQEMlO/3HPRLThtJNF2da/qGvE7mElSV2NyMWXM=
+X-Received: by 2002:a05:6402:4416:b0:5f2:1572:643b with SMTP id
+ 4fb4d7f45d1cf-5f3290edbebmr227085a12.0.1744230444042; Wed, 09 Apr 2025
+ 13:27:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <c58291cd-0775-4c90-8443-ba71897b5cbb@p183>
+In-Reply-To: <c58291cd-0775-4c90-8443-ba71897b5cbb@p183>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 9 Apr 2025 22:27:12 +0200
+X-Gm-Features: ATxdqUGtAF0YoVOpwXPnhA1JTNpmAMSamK1sRZQNMtQLNmmBN_hoYbY-w1Rn9SQ
+Message-ID: <CAGudoHGtvBArbAhpynYLd=FzshR+UM-qx=n_1wOq1BPqW9nTXA@mail.gmail.com>
+Subject: Re: [PATCH] proc: allow to mark /proc files permanent outside of fs/proc/
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Tim!
-
-On Wed, Apr 09 2025 at 17:44, Tim Bird wrote:
->> From: Thomas Gleixner <tglx@linutronix.de>
->> On Tue, Apr 08 2025 at 17:34, Tim Bird wrote:
->> And yes, it ignores not yet tracked files, but if you want to check
->> them, then it's easy enough to commit them temporarily or provide a
->> dedicated file target to the tools, which ignores git.
+On Wed, Apr 9, 2025 at 9:20=E2=80=AFPM Alexey Dobriyan <adobriyan@gmail.com=
+> wrote:
 >
-> OK.  Yes. That's an easy workaround.
-
-Actually spdxcheck supports that already:
-
-   scripts/spdxcheck.py path/to/file
-
->> Good luck for coming up with a clever and clean solution for that!
+> From 06e2ff406942fef65b9c397a7f44478dd4b61451 Mon Sep 17 00:00:00 2001
+> From: Alexey Dobriyan <adobriyan@gmail.com>
+> Date: Sat, 5 Apr 2025 14:50:10 +0300
+> Subject: [PATCH 1/1] proc: allow to mark /proc files permanent outside of
+>  fs/proc/
 >
-> I thought about various solutions for this, but each one I came up
-> with had other drawbacks.  If it was just a matter of separating 
-> *.[chS] files from ELF object files, that would be easy to deal with.
-> But we put SPDX headers on all kinds of files, and there are lots
-> of other types of files generated during a build that are not just
-> ELF objects.  And build rules change over time.  So even if I made
-> a comprehensive system today to catch build-generated outliers,
-> the solution would probably need constant updating and tweaking, which
-> IMHO makes it a no-go.
-
-I'm glad that I'm not the only one who came to this conclusion :)
-
->> Just for the record: I rather wish that people would contribute to
->> eliminate the remaining 17% (15397 files) which do not have SPDX
->> identifiers than complaining about the trivial to solve short-comings of
->> the tool, which was written to help this effort and to make sure that it
->> does not degrade.
+> From: Mateusz Guzik <mjguzik@gmail.com>
 >
-> I agree with this.  Analyzing where the headers are missing is interesting.
-> But it's more important to just fix the missing ones.
-> I'll spend more of my time working on missing headers,
-> rather than on tools to analyze and report them.
+> Add proc_make_permanent() function to mark PDE as permanent to speed up
+> open/read/close (one alloc/free and lock/unlock less).
+>
+> Enable it for built-in code and for compiled-in modules.
+> This function becomes nop magically in modular code.
+>
+> Use it on /proc/filesystems to add a user.
+>
+>                 Note, note, note!
+>
+> If built-in code creates and deletes PDEs dynamically (not in init
+> hook), then proc_make_permanent() must not be used.
+>
+> It is intended for simple code:
+>
+>         static int __init xxx_module_init(void)
+>         {
+>                 g_pde =3D proc_create_single();
+>                 proc_make_permanent(g_pde);
+>                 return 0;
+>         }
+>         static void __exit xxx_module_exit(void)
+>         {
+>                 remove_proc_entry(g_pde);
+>         }
+>
+> If module is built-in then exit hook never executed and PDE is
+> permanent so it is OK to mark it as such.
+>
+> If module is module then rmmod will yank PDE, but proc_make_permanent()
+> is nop and core /proc code will do everything right.
+>
+> [adobriyan@gmail.com: unexport function (usual exporting is a bug)]
+> [adobriyan@gmail.com: rewrite changelog]
+>
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> ---
+>  fs/filesystems.c        |  4 +++-
+>  fs/proc/generic.c       | 12 ++++++++++++
+>  fs/proc/internal.h      |  3 +++
+>  include/linux/proc_fs.h | 10 ++++++++++
+>  4 files changed, 28 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/filesystems.c b/fs/filesystems.c
+> index 58b9067b2391..81dcd0ddadb6 100644
+> --- a/fs/filesystems.c
+> +++ b/fs/filesystems.c
+> @@ -252,7 +252,9 @@ static int filesystems_proc_show(struct seq_file *m, =
+void *v)
+>
+>  static int __init proc_filesystems_init(void)
+>  {
+> -       proc_create_single("filesystems", 0, NULL, filesystems_proc_show)=
+;
+> +       struct proc_dir_entry *pde =3D
+> +               proc_create_single("filesystems", 0, NULL, filesystems_pr=
+oc_show);
+> +       proc_make_permanent(pde);
+>         return 0;
+>  }
+>  module_init(proc_filesystems_init);
+> diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+> index a3e22803cddf..0342600c0172 100644
+> --- a/fs/proc/generic.c
+> +++ b/fs/proc/generic.c
+> @@ -826,3 +826,15 @@ ssize_t proc_simple_write(struct file *f, const char=
+ __user *ubuf, size_t size,
+>         kfree(buf);
+>         return ret =3D=3D 0 ? size : ret;
+>  }
+> +
+> +/*
+> + * Not exported to modules:
+> + * modules' /proc files aren't permanent because modules aren't permanen=
+t.
+> + */
+> +void impl_proc_make_permanent(struct proc_dir_entry *pde);
+> +void impl_proc_make_permanent(struct proc_dir_entry *pde)
+> +{
+> +       if (pde) {
+> +               pde_make_permanent(pde);
+> +       }
+> +}
+> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+> index 96122e91c645..885b1cd38020 100644
+> --- a/fs/proc/internal.h
+> +++ b/fs/proc/internal.h
+> @@ -80,8 +80,11 @@ static inline bool pde_is_permanent(const struct proc_=
+dir_entry *pde)
+>         return pde->flags & PROC_ENTRY_PERMANENT;
+>  }
+>
+> +/* This is for builtin code, not even for modules which are compiled in.=
+ */
+>  static inline void pde_make_permanent(struct proc_dir_entry *pde)
+>  {
+> +       /* Ensure magic flag does something. */
+> +       static_assert(PROC_ENTRY_PERMANENT !=3D 0);
+>         pde->flags |=3D PROC_ENTRY_PERMANENT;
+>  }
+>
+> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+> index ea62201c74c4..2d59f29b49eb 100644
+> --- a/include/linux/proc_fs.h
+> +++ b/include/linux/proc_fs.h
+> @@ -247,4 +247,14 @@ static inline struct pid_namespace *proc_pid_ns(stru=
+ct super_block *sb)
+>
+>  bool proc_ns_file(const struct file *file);
+>
+> +static inline void proc_make_permanent(struct proc_dir_entry *pde)
+> +{
+> +       /* Don't give matches to modules. */
+> +#if defined CONFIG_PROC_FS && !defined MODULE
+> +       /* This mess is created by defining "struct proc_dir_entry" elsew=
+here. */
+> +       void impl_proc_make_permanent(struct proc_dir_entry *pde);
+> +       impl_proc_make_permanent(pde);
+> +#endif
+> +}
+> +
+>  #endif /* _LINUX_PROC_FS_H */
 
-Very appreciated.
+This diff should not be changing /proc/filesystems, that's for the
+other patch to do.
 
-Thanks,
+So I think this patch is all you and my name needs to be dropped from
+it, along with marking /proc/filesystems as permanent.
 
-        tglx
+Given that you kept the name (proc_make_permanent), the
+fs/filesystems.c side of things is identical so my first patch can be
+just swapped for this one.
+
+Alternatively I can resend the patchset with this (augmented as
+described above).
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
