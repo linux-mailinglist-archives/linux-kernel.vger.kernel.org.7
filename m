@@ -1,277 +1,173 @@
-Return-Path: <linux-kernel+bounces-595253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3927A81C33
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 07:36:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C86C6A81C27
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 07:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC8E461648
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 05:36:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78DF11B674DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 05:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EF919D080;
-	Wed,  9 Apr 2025 05:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC9A1D9A54;
+	Wed,  9 Apr 2025 05:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KAp9ECwL"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2070.outbound.protection.outlook.com [40.107.223.70])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="sEqNrV7E"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2057.outbound.protection.outlook.com [40.92.42.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76EC1DA31D;
-	Wed,  9 Apr 2025 05:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38391624CC
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 05:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.57
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744176952; cv=fail; b=ukSMC+jG3QJxNtOr+UAET7rMi021U2v2ehgOFBv8mKDsKZ6BFeQw1W6Zik/UscDkIHyKmNJ1FLtKv3hxZxf/MJOTRq/qsuPliQdKEwnuvR1UTES7Ae+NJ4CgPU050JXgVfzFZe2Q2g9sArLkY6xOLa4MdoGKFCDTifq5joDTW/Y=
+	t=1744176889; cv=fail; b=Q9WckHvEoqOvLBdntpsFAj7IaEJMlqLdYiE66IqeQcEfTUC6TTdIA8lg/5RDzOG07BEaMIu7nD6Pv8ty6SNYqc0QExSVlJt/nw8RfzbDzd3S+f6hBCLzLb0Rr/yGtwZGy0BANTr2IDkJBZI85GZqhSfLDrB2cPFqHpGbKNAsyqw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744176952; c=relaxed/simple;
-	bh=ch2OO2uTFB++vKi2+f1AmC4xBJXbFwWRLby8k++DEiU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d342Mmc+wKq4lHa+wKcwGhbpe8j9de6wwyNl/oCAuWodGwziOVb592PW1otUDo5DdPcpXmYOCk74LOa2yfSeqI00saSLkzb36I9o7oat1qG63MqQuhDkw7bxd+oYa0+kANQAVdISienqGeNB5l48nAxnYagTrTP0WSloyV1/oVE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KAp9ECwL; arc=fail smtp.client-ip=40.107.223.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1744176889; c=relaxed/simple;
+	bh=1QFkqZQUYEbCFbPS/riNrwTPZF9DNf3dEvBztauYRMw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MKP9fcF2WDPUn1d1tX5lvvnkZjCWTGtIDyuiyumZta2OeG1ClfX6P7CatQB8geUBkem0Pd0jIh40DbOL96iC2pJDKIqTjjbZjcbAPnt4pCyrVhosmXXKnqKqDIXdOjqegIoVljfCUuEREJSoBkftfz4RIh5ixevF/Gjlz3orzmc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=sEqNrV7E; arc=fail smtp.client-ip=40.92.42.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PiLYbBsIImWNERnKOKH69jIla+kTktNKt7HKWpQAn84TeYwTtqJwlglFsjWWO+usrCmX70CzsRIX87jD13w9AfZAJUZTo5j4DGCq5k4LmxWluntxFSGdXjnug93XMWcx/YEVdkEFTuByGjmB8vgHClRV8X9U4eTnNsSlyZsp8AUkxrdcU5a767DqDzYwhCN/DLugJiRtBt7qxzuzznDCNpyyemCzmaMZY3cOx9sUrsKO2N/12Z372+0VPCAwtkzJ2ljhZIZwVwdm++gqNgZZ2RdyblRvIliox9OypiTp3WrI1WYIdChTdSTakfKffEzXG6Hq7cScp/5pE3FE/g4kTQ==
+ b=UQyN0J1obPvoiUYooiINk0e0TigpJxYLoWdp/LgKzEOVZUBjWML46QbSMV2LOpRXAh23THMxCsVA/sKTws9EACkKe1rMfVqgEWCNeLvyaHxXt277xMlAEREd5DHA6dwex0e3XYnDf1TSGh+P2+VgwTIW8n4SJ145aVS1burG7DaBJSazBfVIgkpad/WOSH7pDwLD7NZcjHdvDCYfLbjVHoaHgxzbvfuScjXszT8hNpyVWRpyFPh18IJmLZH8eFFRN+9ePBK9dm2fxLS/XsxeNwgiQL11rYN0ZumhOiuOQTQfKTmPbGlx67itLHWuy06XwmL8JRuKiLKGg3yOxUmz4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ILSpoY+KJ7iz7AV48G5OaYYYNNxC1jjMGxxokpXzcuI=;
- b=YDhBgmz9vTOuZfJG78iyBYwz7J9wpLCPR9aXvMbDqAsELD48U6ZaUD+5dKUOf3WmM0yHieQhgDh8hBZDvUxE7l1KieMcfjQ9NxoBogafsjCDgX355vhdpSQBAaWZ2GQFtkt0VrLXs/b+yNQeBnbbNqN46dO86scVzkQ/MvBwsxiNfnkCqOdPz8Ke0E5zVOKbYlosnJSLWBCYHxTTAreakpjBCvEacsSM3/pBaxX0Cf06qXEWJXZrecYVf/xE5FnCyxfmf4pYamD735ypJFFFmmrzgR8PEV8Ka+4tTNWxDwlseSuiM3s6zeA4D8tHRCk2vG7t2HQu2hZHlaAtf4zYCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=1QFkqZQUYEbCFbPS/riNrwTPZF9DNf3dEvBztauYRMw=;
+ b=S7R06+xMDzpW8fTwl6Bw+CScir2htBluTdljulnaOmlV/e5yYB48G0QVdw5UeUt2kr8FJMiz2NUsY3yuEdOREzQn3gz07HkWZJCsrUBKwz75ors2FQJI+UN5tIGnYjS8Ht4URXQURx1g9CGSjhQ/cHVtAfS/NB03pVHEh1SsDNLiOV9TGaR4lSdm8G63cqJVG0cSqloJbnKWTlRuvGDIxVNi9Olit8gWDzqw5Fuh1z+iw+d+8QKxiUGaPi+FLTEMrP2Rwdl0igrksT626WfEx7aaZ6YUivJtX2G06jVQxmBausBw5deiDm5Bk1pq00CLpDxPJRHeSBgl7GbBWCcIuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ILSpoY+KJ7iz7AV48G5OaYYYNNxC1jjMGxxokpXzcuI=;
- b=KAp9ECwLFn/n0bAPEwjcN21meoXO+AnNFgHuaCnDMssqqlc3toja/nWIc8nAOMSXU8hJXVxiG6ldhISK9tkIrHRiMFcaVJF5yog7WT2QClyxNqlVCXthui1ob9g3lRgtUjv7I+3xUOaSRBZscmX1z+jJfNx2iH1bJYhdcSQ1e3k=
-Received: from DM5PR08CA0039.namprd08.prod.outlook.com (2603:10b6:4:60::28) by
- LV8PR12MB9418.namprd12.prod.outlook.com (2603:10b6:408:202::15) with
+ bh=1QFkqZQUYEbCFbPS/riNrwTPZF9DNf3dEvBztauYRMw=;
+ b=sEqNrV7EmnPghuqspLfIgd4Qr9q9z5p1ft5MokhdJwfW5kWGdjzeeoXT83Q2QL/Zm5O2B2apO7Spywans/01e6iB1Zxd2G40zRYHklY26Uxbvn0Ssf55vqOLapV0BjPI8DXHzRDSztWUSq5ahvOP4Ed9lBFZFKZHHMLs6PXoGdNLeLK098hs5jHVs756tfNy9HywNULRyiuhcotGoY7ArNXMYTAgZGKtwW4GROHPbNBpZvZp6+wat9M8CNvM8YBKIChga0p4efKakKZ8t302X7JEdONqRHDy+e9WBGOvbtHu0ml08CVTKtPkOHWx1UzmYqE7rwcFBBtf6qakukhGkg==
+Received: from BYAPR12MB3205.namprd12.prod.outlook.com (2603:10b6:a03:134::32)
+ by PH8PR12MB7159.namprd12.prod.outlook.com (2603:10b6:510:229::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.20; Wed, 9 Apr
- 2025 05:35:47 +0000
-Received: from DS1PEPF00017096.namprd05.prod.outlook.com
- (2603:10b6:4:60:cafe::7e) by DM5PR08CA0039.outlook.office365.com
- (2603:10b6:4:60::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.28 via Frontend Transport; Wed,
- 9 Apr 2025 05:35:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS1PEPF00017096.mail.protection.outlook.com (10.167.18.100) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8632.13 via Frontend Transport; Wed, 9 Apr 2025 05:35:45 +0000
-Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Apr
- 2025 00:35:38 -0500
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
-	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Waiman Long
-	<llong@redhat.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>, "Dhananjay
- Ugwekar" <Dhananjay.Ugwekar@amd.com>, Huang Rui <ray.huang@amd.com>, "Perry
- Yuan" <perry.yuan@amd.com>, K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: [PATCH v2 2/4] sched/topology: Introduce sched_update_asym_prefer_cpu()
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.32; Wed, 9 Apr
+ 2025 05:34:45 +0000
+Received: from BYAPR12MB3205.namprd12.prod.outlook.com
+ ([fe80::489:5515:fcf2:b991]) by BYAPR12MB3205.namprd12.prod.outlook.com
+ ([fe80::489:5515:fcf2:b991%2]) with mapi id 15.20.8632.021; Wed, 9 Apr 2025
+ 05:34:44 +0000
+From: Stephen Eta Zhou <stephen.eta.zhou@outlook.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>
+CC: "tglx@linutronix.de" <tglx@linutronix.de>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] clocksource: timer-sp804: Fix read_current_timer()
+ issue when clock source is not registered
+Thread-Topic: [PATCH v2] clocksource: timer-sp804: Fix read_current_timer()
+ issue when clock source is not registered
+Thread-Index: AQHbqLderlCb5U/wyESgbrIohsfvhbOay5H9
 Date: Wed, 9 Apr 2025 05:34:44 +0000
-Message-ID: <20250409053446.23367-3-kprateek.nayak@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250409053446.23367-1-kprateek.nayak@amd.com>
-References: <20250409053446.23367-1-kprateek.nayak@amd.com>
+Message-ID:
+ <BYAPR12MB3205003E2BD5B78ECBDD2CDFD5B42@BYAPR12MB3205.namprd12.prod.outlook.com>
+References:
+ <BYAPR12MB3205D7A2BAA2712C89E03C4FD5D42@BYAPR12MB3205.namprd12.prod.outlook.com>
+ <BYAPR12MB320552F9F18EBC4F51E7213CD5B52@BYAPR12MB3205.namprd12.prod.outlook.com>
+ <65bfb302-3e93-4d1f-a70c-66439cf5f122@kernel.org>
+In-Reply-To: <65bfb302-3e93-4d1f-a70c-66439cf5f122@kernel.org>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BYAPR12MB3205:EE_|PH8PR12MB7159:EE_
+x-ms-office365-filtering-correlation-id: 2a264c6e-3f1c-4fd5-ad5a-08dd77283bfd
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15030799003|8060799006|19110799003|8062599003|15080799006|461199028|3412199025|440099028|102099032;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?cpHdyRBaGRqBUKEV0fl61TooGY3HXm+ax6uyF5i92jxbQVUkyga+49m0L2?=
+ =?iso-8859-1?Q?vgRahU/vnQpuvMkzYwtZ5ou2e4dhAnsIEFbBiLnu/XdPYQPCHv3IYSLJWg?=
+ =?iso-8859-1?Q?BXo6MZ+iiJIsQgpDuudlaPVAMjMbnnaFB51CKCvZtutEfPrFReOdzZAUqo?=
+ =?iso-8859-1?Q?TmM+dD0qyK50PXmUhwa9LHURpxBrBBJ1/PGOtuX7QfOM8zCsjsf0Y989O1?=
+ =?iso-8859-1?Q?IctD/qbOEakZcnPGOm/yYkPLsPaSdKblwgotLvbU3o4GMzjJJnwaOhHZ6V?=
+ =?iso-8859-1?Q?oIrkT1D5V/LcVyOjVBsZNeYNP+xKQY9t14QHhod9eGbfeIwJmw/RHHGxn+?=
+ =?iso-8859-1?Q?L/IsMej+KE848MLI1couFtsZE4sMdsiO5xhVokPaKwXldQuYDxyDlGnJbF?=
+ =?iso-8859-1?Q?UwoPy4ncpdYmsY67YqqDabVuVx2+pWJQaJnlrNEnNG5MbvprzZY2iZvhTR?=
+ =?iso-8859-1?Q?L7AStjV9L7Q07spip1U8lWZYdllMfx9kjkgiOQQ9Kcg7yTNUVePJ7mwpBr?=
+ =?iso-8859-1?Q?yGL59FtZnDmiE34vbcjDdALjE8Mnvw3P1/HayaIqZ8VCXiUdTiGHu5K3Pb?=
+ =?iso-8859-1?Q?2utwJ3PEPQVCvqjagkT8mR5DVEf/syAGTLj+wfc9Yd17EaLC40BWLYehmb?=
+ =?iso-8859-1?Q?Sn9smK4UR1BGOvk1OKTifSz3082Nh9LE3c9Vl2AaYzc4Y0sIf8d+Kge3Ki?=
+ =?iso-8859-1?Q?8N6/Mx3iPXLJQSs7ND8Ne975aBVt980uOlm9xIEUEH8xfZqkmYwTetpPCy?=
+ =?iso-8859-1?Q?lq1PxC8HwRYDF0Ra1dm41575T8b4nw8h1TgsoBJ1v9rQfwsotgoTSl9kWI?=
+ =?iso-8859-1?Q?JCfWESEICmcZBNKOE3lz+SASlSGPscNfcr8mVYeF7PZGav1c+uoDnM/8LP?=
+ =?iso-8859-1?Q?loZ341eyi8XKJjyI29/nT1hPpCbNE7OppBeYxREMcDcrpTo6jWFxSNjkv1?=
+ =?iso-8859-1?Q?I+wPz51Cmk/U4TYYYNQoJvranSGRNTYDlx4xHd2wOb93gDc/ton3v/MBG9?=
+ =?iso-8859-1?Q?Cg51KBjNI3BkEoxDzl7KuErlw3cKc1FWx5dPzBZxzXsQUi+g486fZW8XMQ?=
+ =?iso-8859-1?Q?zv53Qwhy/KJwdhM7Q0BkGYCOnd4xEzmGYLjrYM/I9eob1B2LG926eAvmAj?=
+ =?iso-8859-1?Q?ftNm4iuzxgUj1xHAymj82j3lZlmW4=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?VwtkpvewAGkoht2r9NAL16z90i1n6lAazOin2JBrTtPI7MOhklwUNo2232?=
+ =?iso-8859-1?Q?3PR7ToiILOgLdQna/Szi36qnvvAZzkOUqbQA7qghmHgxXgAOeNj2FW3Gp9?=
+ =?iso-8859-1?Q?ot/+YM5gDfnNJNRqYsvLvPbWXRnEVVh8v7fFez3uILGn0rxdyE2kHIMJ0q?=
+ =?iso-8859-1?Q?0QA7DkLGjAffHVc/WYMT0iY52wGRkRZxA/fUc85r4KjK+HSvoS8Zz9TJ4w?=
+ =?iso-8859-1?Q?yyuH4wmgOTcMlPUWQCzc+8TnRab7mn+KRB8ysEAzOawRT66Jia+TlQ1FTC?=
+ =?iso-8859-1?Q?JU2J+ZhPhQ51Dlazq4+sgAUMOucRDXWIAJie7g91cgyRauhF24Oo2545h1?=
+ =?iso-8859-1?Q?CdwAV7A9SPzXPCuwi3ijB79DJJEaMthIY7/seS+AscxNpy5vEt0I+yHcWn?=
+ =?iso-8859-1?Q?mmIhP2n7nv66ZNgziBInr134NHL/pN1KdsDZ4MRiyTKC7wH05j02DCOkJd?=
+ =?iso-8859-1?Q?S7ePPH2ay8gA2wfI28G3b/W7uig/sMbtEqPhM/X1eBNIi/ppqCLcBzXFDX?=
+ =?iso-8859-1?Q?YF2oExRed//eNMeaVj4YxKjZJf2M9OVrqJb6mDi1lq99tKGa8T7Hq0zxfu?=
+ =?iso-8859-1?Q?LWxgJC+0UtvH1jnclWUbEq5k/V7YGQzFG9SytuO8porncDZ0UBZvdyx21g?=
+ =?iso-8859-1?Q?xFwLB46YsBl4mzqKvBQtamw+Lv7gJdcGxwivkfuzDQSc1ef7XDMDUl1AwU?=
+ =?iso-8859-1?Q?92ZYD8sQSI0FKMUZpvGq7ad2+oTV8eajN+aHTim5KCPPHUldEfDUK/qPK3?=
+ =?iso-8859-1?Q?0JgbjYsNreROEfXxdWj0Ij41VWfQjhNqQQrZ+XonmTIz7E+PC7ZTDeMq0C?=
+ =?iso-8859-1?Q?4hQ6kqf2B2nat4cySg/th+fVt0y/H0KodlIuFlQDLfpEGP4QDKAoLtrHrm?=
+ =?iso-8859-1?Q?dOJFbTre/wDzYWH1Ga0lXcsdtMMQYYrwSoUpgY+2/3P5xgI+tb4mQJ3u0X?=
+ =?iso-8859-1?Q?2rqJjh77dsohxeGgeAM6rtpL0ydU+FxlbhVeWuS/PmW2wyAWE3jGr9eWUW?=
+ =?iso-8859-1?Q?I/+WdEKtYYuwvsxIudm4Tj4InSbrYwG/KO06jk54VNfEbvRi5j+o7XwV4f?=
+ =?iso-8859-1?Q?fsafWVmYVSlUGWTOzbH5Kc1s5PfBZ9+ePrcQhM8TRlE2Rrbl0xzh9jL9Sy?=
+ =?iso-8859-1?Q?HtA6vbphlwAqCnYD3/h7QH1LLU5pkEyfdhqTgFY/mFTp14CZfseu9V4REl?=
+ =?iso-8859-1?Q?JKDPijc5fR7p1YdjDzp48RPItkfS6OEQGJaynBExlznt9gvKwSem7CSb4J?=
+ =?iso-8859-1?Q?tRI6VwPhKyI9j3AcZNmGk/o6z2qwdK5PzGlwpBYwQ=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00017096:EE_|LV8PR12MB9418:EE_
-X-MS-Office365-Filtering-Correlation-Id: 334b92e8-d2ff-4fb2-d10a-08dd77286047
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?c/jkuA3i9ySLKpNiWc9C1wUmKGtpq57QX7N93VZ0iYGGNspcLcJFqNb8Fnju?=
- =?us-ascii?Q?01fVagu2mXFOKUmxcENDkNGkxc3fsCPBlYhPHyt2+vZNJt+GAoHts6+ZhIRM?=
- =?us-ascii?Q?Eod3bvHzmJikuMMzHqdG+rBtC3pa8/BVYKPnwyQX7wrmdvnp5ngloT1wGgVy?=
- =?us-ascii?Q?oUUcL5jhLLrpjGXH1trSkJmurAi21aYzIpQ+XSUjyA1At0UiIoTTPmCNb7UN?=
- =?us-ascii?Q?rygJMtiFgItZxIORT68mOl6olHOO0I+UMTTJnzt7/rwSWXe4ozcrkzSQxaaF?=
- =?us-ascii?Q?XUUZNafTfFgV/0PCF55oqpR8nlTlr8WsIYmDHyG3pRCB5iUTpBPCF6QDFJRZ?=
- =?us-ascii?Q?im9EG2SDc3uiKzLYSnXmsEROcEpCFfKPeguah7p/L+P6eDDMzVfxu+FtYRXr?=
- =?us-ascii?Q?1i0KGL9d5b7S35lZHjnJWqfu/AsORla+S6ZS00rtby7TVPDxk823dTMNLekL?=
- =?us-ascii?Q?xVnvXifWJfoWX5rS2QM0fgIn/feZ8bb5GvbxwHmstpLzIKkTFKhjhP+D0lmm?=
- =?us-ascii?Q?yYpUqwY/D11uRdR0px6b49RPao4a2IPFFod/KmHWi4CzvBZUVxbwSmbU8hmY?=
- =?us-ascii?Q?b77/JWWGzMb7buE+Xgz63BMEtAALfk0Zg+cRCcknUs0/Q8IG8KkBVtEG1Beq?=
- =?us-ascii?Q?eiEQIjCAoYU/HyQdx0/gRAgKRPethfGlv2fkHp6iYeit8XskV5KjkFYSzAz6?=
- =?us-ascii?Q?StdizHBjGwSeaLlIr27Gm5lON11+YA7kQMQzD6k7Tr3pAchsF7p7c22YuVd1?=
- =?us-ascii?Q?qUbXKPhVKdn5OXDbgSlhmrF0YM95cdU/6V7V7A1gN+oEpKPXSfF+WPjKYpi8?=
- =?us-ascii?Q?S0ygGvGWTurozk6vWHqGL1XXFnRahZ9JidMtafRzUNOWxLEUmOYlGtyi1oT8?=
- =?us-ascii?Q?XCZ3ZzeVwJ9ERBUGN+mMpoUrIivWG37LW15AxeSks63tP+jDK2JwKaGUTyY6?=
- =?us-ascii?Q?CRZHOOCV3dBYk8FCownd81BgcOtxCE0A0QLLWrMqX0QfPvawCkqB00e2TwYA?=
- =?us-ascii?Q?78ZknisWaOUJHFk0wIef49bsD3euS+NdnZGkH2/Pp1f4XXezzeeD584bdNqP?=
- =?us-ascii?Q?4ig2et/VXNDGR6XRUK6rLyWy6n78h3iYhOKxiU82OOth+HU4sGLaup+siNEK?=
- =?us-ascii?Q?2jBH6p8i+nN+FnjpP1oRNV17aHaVjsnesG8EnYsqVoJnv4CTN6odY+5jvFcU?=
- =?us-ascii?Q?0jvPmZTHivgS0CC3vclZj9FQfElmK6OkbrGyIU5L3Kb8NEK6afy9+/Z8/JvV?=
- =?us-ascii?Q?T+QWe7qlpD73GURIDvd340bQAEwgvWLt0ff9bR/z370dGupff5jWhBZcqllO?=
- =?us-ascii?Q?05QPU7VuT9zlThZqO8sekJY9g1E+k1TGNUNPZqylt4jz/SfKovNDxB4XOAJJ?=
- =?us-ascii?Q?lknSA8gsknnU1jnPrifun5sfL+oObQK0w8qyAHRnDoZEsuddhNbUhbCHjsP8?=
- =?us-ascii?Q?OxcDHloqJbXx0nvGaIMKhD22EU001RKeksp5APzjbD1w8Oy4bZg/UGj4vL0T?=
- =?us-ascii?Q?yR5JlKRX4SzosZZBFY+q5s3pVFIqgHKfX2ziDvYFALSaT6ZOks8BzhM6hg?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2025 05:35:45.3257
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3205.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a264c6e-3f1c-4fd5-ad5a-08dd77283bfd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2025 05:34:44.4876
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 334b92e8-d2ff-4fb2-d10a-08dd77286047
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF00017096.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9418
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7159
 
-A subset of AMD Processors supporting Preferred Core Rankings also
-feature the ability to dynamically switch these rankings at runtime to
-bias load balancing towards or away from the LLC domain with larger
-cache.
-
-To support dynamically updating "sg->asym_prefer_cpu" without needing to
-rebuild the sched domain, introduce sched_update_asym_prefer_cpu() which
-recomutes the "asym_prefer_cpu" when the core-ranking of a CPU changes.
-
-sched_update_asym_prefer_cpu() swaps the "sg->asym_prefer_cpu" with the
-CPU whose ranking has changed if the new ranking is greater than that of
-the "asym_prefer_cpu". If CPU whose ranking has changed is the current
-"asym_prefer_cpu", it scans the CPUs of the sched groups to find the new
-"asym_prefer_cpu" and sets it accordingly.
-
-get_group() for non-overlapping sched domains returns the sched group
-for the first CPU in the sched_group_span() which ensures all CPUs in
-the group see the updated value of "asym_prefer_cpu".
-
-Overlapping groups are allocated differently and will require moving the
-"asym_prefer_cpu" to "sg->sgc" but since the current implementations do
-not set "SD_ASYM_PACKING" at NUMA domains, skip additional
-indirection and place a SCHED_WARN_ON() to alert any future users.
-
-Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
----
- include/linux/sched/topology.h |  6 ++++
- kernel/sched/topology.c        | 58 ++++++++++++++++++++++++++++++++++
- 2 files changed, 64 insertions(+)
-
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index 7b4301b7235f..198bb5cc1774 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -195,6 +195,8 @@ struct sched_domain_topology_level {
- };
- 
- extern void __init set_sched_topology(struct sched_domain_topology_level *tl);
-+extern void sched_update_asym_prefer_cpu(int cpu, int old_prio, int new_prio);
-+
- 
- # define SD_INIT_NAME(type)		.name = #type
- 
-@@ -223,6 +225,10 @@ static inline bool cpus_share_resources(int this_cpu, int that_cpu)
- 	return true;
- }
- 
-+static inline void sched_update_asym_prefer_cpu(int cpu, int old_prio, int new_prio)
-+{
-+}
-+
- #endif	/* !CONFIG_SMP */
- 
- #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index bbc2fc2c7c22..a2a38e1b6f18 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1333,6 +1333,64 @@ static void init_sched_groups_capacity(int cpu, struct sched_domain *sd)
- 	update_group_capacity(sd, cpu);
- }
- 
-+#ifdef CONFIG_SMP
-+
-+/* Update the "asym_prefer_cpu" when arch_asym_cpu_priority() changes. */
-+void sched_update_asym_prefer_cpu(int cpu, int old_prio, int new_prio)
-+{
-+	int asym_prefer_cpu = cpu;
-+	struct sched_domain *sd;
-+
-+	guard(rcu)();
-+
-+	for_each_domain(cpu, sd) {
-+		struct sched_group *sg;
-+		int group_cpu;
-+
-+		if (!(sd->flags & SD_ASYM_PACKING))
-+			continue;
-+
-+		/*
-+		 * Groups of overlapping domain are replicated per NUMA
-+		 * node and will require updating "asym_prefer_cpu" on
-+		 * each local copy.
-+		 *
-+		 * If you are hitting this warning, consider moving
-+		 * "sg->asym_prefer_cpu" to "sg->sgc->asym_prefer_cpu"
-+		 * which is shared by all the overlapping groups.
-+		 */
-+		WARN_ON_ONCE(sd->flags & SD_OVERLAP);
-+
-+		sg = sd->groups;
-+		if (cpu != sg->asym_prefer_cpu) {
-+			/*
-+			 * Since the parent is a superset of the current group,
-+			 * if the cpu is not the "asym_prefer_cpu" at the
-+			 * current level, it cannot be the preferred CPU at a
-+			 * higher levels either.
-+			 */
-+			if (!sched_asym_prefer(cpu, sg->asym_prefer_cpu))
-+				return;
-+
-+			WRITE_ONCE(sg->asym_prefer_cpu, cpu);
-+			continue;
-+		}
-+
-+		/* Ranking has improved; CPU is still the preferred one. */
-+		if (new_prio >= old_prio)
-+			continue;
-+
-+		for_each_cpu(group_cpu, sched_group_span(sg)) {
-+			if (sched_asym_prefer(group_cpu, asym_prefer_cpu))
-+				asym_prefer_cpu = group_cpu;
-+		}
-+
-+		WRITE_ONCE(sg->asym_prefer_cpu, asym_prefer_cpu);
-+	}
-+}
-+
-+#endif /* CONFIG_SMP */
-+
- /*
-  * Set of available CPUs grouped by their corresponding capacities
-  * Each list entry contains a CPU mask reflecting CPUs that share the same
--- 
-2.34.1
-
+On 08/04/2025 20:52, Krzysztof Kozlowski wrote:=0A=
+> It does not look like patch at all - it has duplicated From and Subject.=
+=0A=
+> Please read submitting patches. The patch fails this in multiple places.=
+=0A=
+>=0A=
+> What's more the actual patch is corrupted, so could not be even applied.=
+=0A=
+> You can try by yourself to apply it and see.=0A=
+> =0A=
+> Anyway, follow closely submitting patches.=0A=
+> =0A=
+> About the actual problem: I don't understand how commit msg is related=0A=
+> to it.=0A=
+=0A=
+Hi Krzysztof,=0A=
+=0A=
+Thanks for the review.=0A=
+=0A=
+I will revise this patch and send an updated version.=0A=
+=0A=
+Best regards,=0A=
+Stephen=
 
