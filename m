@@ -1,99 +1,98 @@
-Return-Path: <linux-kernel+bounces-597062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C28A8349E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 01:36:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7339CA834B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 01:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ACD18A16E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:36:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA9B74467CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662AD21CC7C;
-	Wed,  9 Apr 2025 23:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF5C21D5AA;
+	Wed,  9 Apr 2025 23:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qbWXL3kM"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABC921C18A;
-	Wed,  9 Apr 2025 23:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEw2Qz0s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB7F21C18A;
+	Wed,  9 Apr 2025 23:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744241787; cv=none; b=NkcVI9zsqorgCje/8xzGKytvYztngynJmx5UEgCIanNXa6t+oSEijfR17eCW6tv40NoZwnxTfPUjTZI5p2sF2HnFRr8yla068z+QkcxDml+vZvgEigBAGVzdGzhZYtf9E5o4TNg5OBDkZ5hKTOi8uqthv22HJ//0H4ypyQ/ajU0=
+	t=1744242015; cv=none; b=e+yAd7BKRjOMyfR4g4z27qelnTNUJubGRRMLq+DWxlQi/jx9b7qA2psG+dVmS34AdGVy/gb+YJVLrsAEqnCo5nxecCZdV3enHsEfOAmmUwfQXMyRYKN215G0ZUDAKRXAbBDLytC9l6grnO9hfiX+TuYK2awUsg8KSRhfkPLYTu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744241787; c=relaxed/simple;
-	bh=B9M0Kkn8BdoLz8MLU9R4GOCMyNBAs8tSClMg/badPUg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=ajgAieSiI3z25s1MkVg3w10SwbPjQR3XWuanbp3Ngwtx0d5yx/syajub9Gn9eY0d/22F9wJ7tX/xG7kvBBRTM5kDBC3aiYJO7TsHedkkBr4Mlhmr1Q4enj6LqTfgkNBUh14I8ryzTkplhmvK1RsbAQayasTHt+anb9Bei2IVbR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qbWXL3kM; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1053)
-	id 1D1472052509; Wed,  9 Apr 2025 16:36:26 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1D1472052509
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1744241786;
-	bh=xwELah0qp569GnM+NBppCLXTQ2siGBhErPh6sbtP7Jg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qbWXL3kMsutIK7bMwt7ACCvgToGXAUzUAE+lAhuDON7uCLISEEEfyR1S3AoSQyNar
-	 Ev1OhVAmmeqcnSd4rpFh1H4cFFntsM6J9fH7ZknPIWn/TU253sy6cqfIwFHjXFxeIQ
-	 fbqQZ5fQBC8eSfhphzMuBkJrvYIfRCQRohB81cd4=
-From: Vijay Balakrishna <vijayb@linux.microsoft.com>
-To: Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>
-Cc: James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tyler Hicks <code@tyhicks.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 2/2] dt-bindings: arm: cpus: Add edac-enabled property
-Date: Wed,  9 Apr 2025 16:36:25 -0700
-Message-Id: <1744241785-20256-3-git-send-email-vijayb@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1744241785-20256-1-git-send-email-vijayb@linux.microsoft.com>
-References: <1744241785-20256-1-git-send-email-vijayb@linux.microsoft.com>
+	s=arc-20240116; t=1744242015; c=relaxed/simple;
+	bh=14PKKDLENZFH1SGpMbnvyTFTgJJEJGfeGEhIALWz2MA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=hJHHWsdd8w8wrFaqt2kysGrZkjEQlHQ7Cp2DQIk/OVVC27ActM4U6nIHlLrMIWxf8AWK3Lx08LzCJONnZKZ/GsWiWT8A4My9+LU1RxRRA8Pq2A5zBrpGCWdHqPVZ0Yl54SjwSpvmqIo8k+PV5bvrAUQorRvMJlUVyRpYFbSxY9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kEw2Qz0s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE8E9C4CEE3;
+	Wed,  9 Apr 2025 23:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744242015;
+	bh=14PKKDLENZFH1SGpMbnvyTFTgJJEJGfeGEhIALWz2MA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=kEw2Qz0sEE8+fCWYaisJKKDs7lAxeLrCF2dRRdh+K1znaJBMvMK7Kc1SZb2Ku7rMr
+	 ciBtIOMdg8iC5SA4Py3R6vRaxOc2UEiGJUzC/A5dH0YzFUWgZx+k0T1M6gv/DgYcfe
+	 Jj5eSoLkUQoM+Dkntiy2EHSWKJ5QSalACKKKFIDB3r0O9iEUaEmfFepPLvio75znjg
+	 sJRTgDT+hqy02rsxOJslMzw85yem8AyWJ24MHuGj8CaS/j8Rmyi8Z7qHjblK74gZxC
+	 a4S+59uCJI6rOtnSRSA3n4KOEWkbYrx8N6hv2p9QYrO6q36ibl2vtE45uat2coa5+M
+	 ZcSidx5xw0Nkw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCFE38111DC;
+	Wed,  9 Apr 2025 23:40:53 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v2 1/2] bpf: Check link_create parameter for
+ multi_kprobe
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174424205228.3077267.12250129138735203026.git-patchwork-notify@kernel.org>
+Date: Wed, 09 Apr 2025 23:40:52 +0000
+References: <20250407035752.1108927-1-chen.dylane@linux.dev>
+In-Reply-To: <20250407035752.1108927-1-chen.dylane@linux.dev>
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: song@kernel.org, jolsa@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, rostedt@goodmis.org, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, laoar.shao@gmail.com, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
 
-From: Sascha Hauer <s.hauer@pengutronix.de>
+Hello:
 
-Some ARM Cortex CPUs like the A53, A57 and A72 have Error Detection And
-Correction (EDAC) support on their L1 and L2 caches. This is implemented
-in implementation defined registers, so usage of this functionality is
-not safe in virtualized environments or when EL3 already uses these
-registers. This patch adds a edac-enabled flag which can be explicitly
-set when EDAC can be used.
+This series was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-[vijayb: Added A72 to the commit message]
-Signed-off-by: Vijay Balakrishna <vijayb@linux.microsoft.com>
----
- Documentation/devicetree/bindings/arm/cpus.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Mon,  7 Apr 2025 11:57:51 +0800 you wrote:
+> The flags in link_create no used in multi_kprobe, return -EINVAL if
+> they assigned, keep it same as other link attach apis. Perhaps due to
+> their usage habits, users may set the target_fd to -1. Therefore, no
+> check is carried out here, and it is kept consistent with the multi_uprobe.
+> 
+> Fixes: 0dcac2725406 ("bpf: Add multi kprobe link")
+> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> 
+> [...]
 
-diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
-index 2e666b2a4dcd..18d649a18552 100644
---- a/Documentation/devicetree/bindings/arm/cpus.yaml
-+++ b/Documentation/devicetree/bindings/arm/cpus.yaml
-@@ -331,6 +331,12 @@ properties:
-       corresponding to the index of an SCMI performance domain provider, must be
-       "perf".
- 
-+  edac-enabled:
-+    $ref: '/schemas/types.yaml#/definitions/flag'
-+    description:
-+      Some CPUs support Error Detection And Correction (EDAC) on their L1 and
-+      L2 caches. This flag marks this function as usable.
-+
-   qcom,saw:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description: |
+Here is the summary with links:
+  - [bpf-next,v2,1/2] bpf: Check link_create parameter for multi_kprobe
+    https://git.kernel.org/bpf/bpf-next/c/243911982aa9
+  - [bpf-next,v2,2/2] bpf: Check link_create parameter for multi_uprobe
+    https://git.kernel.org/bpf/bpf-next/c/a76116f422c4
+
+You are awesome, thank you!
 -- 
-2.49.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
