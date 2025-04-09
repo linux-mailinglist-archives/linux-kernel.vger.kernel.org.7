@@ -1,94 +1,98 @@
-Return-Path: <linux-kernel+bounces-596952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ADC5A83336
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:20:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2BF2A83339
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11EFA3AE5CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:17:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F31D33B4C56
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79650215171;
-	Wed,  9 Apr 2025 21:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ADF21770B;
+	Wed,  9 Apr 2025 21:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6kAg0M2"
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="bVPY8moo"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AFD202C40;
-	Wed,  9 Apr 2025 21:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC18719CD07
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 21:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744233468; cv=none; b=YYYiSS2qAHeyrGXry8bzYbOuVTpKIXYJa0kSarWSt4LGIwzZFKK5IdkEN/fikGXamYJ+SB09cneAkY5m+PF/USw9j6eeHdmKUBPDjkIQP4TJEDAarr3B8DRmBeifZnGjLWWTEZYicCy/7OnDLFCUgub6ga9IqFqqAu7obbXFdY8=
+	t=1744233469; cv=none; b=q1WqjeH0WA7CxfoTI8sYNQnHrmscthgb2klfGwu4hrhl3cd6AtgVqZjsw0ZS+CB5e43lZ8beC9k3oWThOB24prmUSXZ+QCWCW70fHcSWFsbzWv3xNt03uW3gPos48TMAhZ+TNrSqQCMz5MeYhLjS0n5DvXIzdYganvRLWJoKPF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744233468; c=relaxed/simple;
-	bh=JVLsErMm1lbZgGTUGBXuZBa0TVE6alCzPguq9pnhM9I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hkL1cuQcvYHyzqgP52ImBc/6kFpcujTi18jGydeqMqdZ9vrduIuTV6gYzJva5XQsAyCHbGtVnepiLVTyLCpqnZ5z5Jo1ovrwkepWZaXVZBqtAiqC5DxXfh/JLGM7sjdk0FNxXckKcJHWX+bgPGHMwl5sTXX12guoPRy8OnyW5VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U6kAg0M2; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-736c1138ae5so61107b3a.3;
-        Wed, 09 Apr 2025 14:17:47 -0700 (PDT)
+	s=arc-20240116; t=1744233469; c=relaxed/simple;
+	bh=VMdYZrLAD8DMV1DpO50jqiz0vFY6aFjrLaJXiBM7mvI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WPtGBqCko+YGCVAED5+iDOXLi8RAWiUR9Bd2chc/un0055+sCG+GfNvnLHeuvHDwGlJgRkL8/cZ69ndTyctAB1e/SOkKDggAOX1CVeqBd5zEktMNNBFtWDMII08x97Y/702BX8z951xILHqAYSmaKy/HAhSEBwX5CN9U3qJVFXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=bVPY8moo; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-85b41281b50so5124039f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 14:17:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744233466; x=1744838266; darn=vger.kernel.org;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744233466; x=1744838266; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6pVlwzrEmx32p/oFLtQxJLU3h+GY6t/2EgH6uv7p6PI=;
-        b=U6kAg0M2Ip5KpP5w2LtDKD05MfmghlG4Zt878OtU9/mKiQIO9d0VXs2pJmGyQHTDt3
-         BsNYPPL2uLBLkOg2HVkaFJJk2mNvRrYREK9Fa1RyOEYHdmGWPXH4GP3xDFfNXCEluUpq
-         bj0kfZplfoosvkOAV7xCfm2JT1Q/dKdEvxStxAqVRKZe2DGYsv0G03LV6j+whL6kYaqt
-         cJDnJcdfd+gRbgknGKvcnGMERv3/KaYNov3F+RzzxYnoli481fkUZfMFXBz3WSBWyfm2
-         0M2AUlSXjhzy5yT+NxETqUYo/Qy3fm4Bc4YHq4U6dtq4+qNVEwD2yWA/oQr4s0ANrUam
-         gdJg==
+        bh=rrV5UlJLrK5aj5lTpRQRYMaHqlL0u3EBGUfh4HcWOG4=;
+        b=bVPY8mooGRXZnFbyiZgysvh7XZ+c1nIRhkLwk9qtWfFI/KTkPZW5d/QjeUO0H6Jhqj
+         FeoyiT/0JUaPh2f+2pzBaJsW40YRETM9N7jMIfQhD4Xfstc9JiqGWLMC3xome1KsaN0/
+         BzJpScvxyL+8joBKnnHnXZJTbEbfT5MglkcwPsBGXCFqT+nr7KQuHgpifT5mrYNcFFR0
+         1Kc9qpqRn0xhcmzcqCGCXNLVzv57aLhpkrZgX6LFVmnwrtfPtfmK4IxganXVQDydYbxK
+         XuURMpGoF56af+0HiNYJbRpULycS1SUrxGBaGsbGf0IhzTure6XfuD+gdWc2m+fKICeF
+         VGsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1744233466; x=1744838266;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6pVlwzrEmx32p/oFLtQxJLU3h+GY6t/2EgH6uv7p6PI=;
-        b=Fo+DE46RHIbqbne4mmMko41RkHjhPph9Ccn/q7AcPH40uGit5OujwSa4kNfmlbNJRf
-         uaJ5zTlDN+AaB6Isr4UQ2rk+bloxu4OVDjqEXf53MLVpfqrrgQ9TTq8A6ILyBc0lGHBd
-         owrfjscaVDpX1rFkZUV55KT0aT+43cSDgnnSjtH8lKGwjun+VrxMyQfuITiwhUoU2uwh
-         FJnTmNbw8NEA6f4kEjxWsSfv4SDrYPw/E/OiMVEzwiqeFsknQouBvISQPBjFlMmu2kqb
-         y2qtDnvjCL4IOFP9FluVueCk0rw9h5VWYxNxEkOeh3DbgWPlYiWj6PCVdchFOQVgmsHC
-         pLlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIjZGmwxjZy78bbJed2rDLYqtdBY4sOIi/EmZxH7wa3X6Z9Bx1ozcwwG5d4mkWQvNZ8tzMIv4TLladknU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynmrn5kAwUmqXLqA4FpM5UN635Ky8pAWuBmT6gqCzevFGjlRED
-	zhuI5DBZH5vhoTUf87cjQkCIUCjod7lbw6BaFdlIVqX0pK7jqomM
-X-Gm-Gg: ASbGncvkIdLndgOw3jKmPh80goULWAPSi3wwYAxa578L5+qQAPVPJbc9A7LsUeQxhcU
-	E/NpI6Pxnyj0uDaLbEyllAB66Q8J5m9SRkrCZHMoJgAEniciSEamvJS6uxVogLlebeS/E6yidyD
-	oHkeDswdiVmfYTY3R4VnMppDPDvOjcHyn8Uz9hGyHS5dbpLjBkADFssDbIN5a2JdYN47rFskdwf
-	OsTCau43FyqLHKWtHGXnPHf7jv/0BGi5IPO2uvPpapGjdKumdm9AVjpxK+PiH1CPxMXYFWer4fk
-	p30JlhpX4FFb9qXroS76cpLi3IhhaS+oHkZu0Jj12hT5Anx1FgKy2NCYtfc=
-X-Google-Smtp-Source: AGHT+IGmPmWoSu8tga2SfVkZJNouE0+nOCKOrGe4roKu39WWRmF9KPusYmzx3vw22zaprVmqFp/tNw==
-X-Received: by 2002:a05:6a20:94c7:b0:1f3:3c5d:cd86 with SMTP id adf61e73a8af0-20169480cf3mr905809637.11.1744233466357;
-        Wed, 09 Apr 2025 14:17:46 -0700 (PDT)
-Received: from sid-Inspiron-15-3525.. ([106.222.229.33])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b02a2d3abffsm1475046a12.48.2025.04.09.14.17.39
+        bh=rrV5UlJLrK5aj5lTpRQRYMaHqlL0u3EBGUfh4HcWOG4=;
+        b=f3QaLZsPfAOdOMh7Vg0xbZYcv0NXc8DXL4yFbD4z6bADWXPxIy4MHlUzTqUeuJXGYU
+         dpqXTIWRUB9JVkzsi78iBfi9G3iHuCf8Fc4Mp8S05CVCaVMKvf1RUh8xKnMxaXebExF0
+         6lj3GH2IFeqSyNoBESJAA+kNnmc0yaLojp0B0vm8SABDokoUpfqq4F46GoZPRNGQboax
+         Y+GTPNMAzJsGUkg3hpMcSmxFCDZDtuuZgCK97GS0Pv09xqzsH9AH2jSzeRsgZZ4ztou8
+         Jd/r8qaXH7F7ux5KCEDfkkEng1MGXgaJWLuaEXFuVZSHRUD3UajAMUCYNYlxiBfFsl8R
+         ePmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxDMcoWFtEZgN9hUmj2nz7aW2ibA0IJagtFefzL6sB9LxwWPXkWzfEmAZGcgKz5pIb1Bo02d6TnzzcgsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8drRf8AILDKgiFOKKfond43szC2D7ZawYVF25SifVl7qb/Y7h
+	sjOO+OQ2Jocy7hBIX+sI830Nq/oeVvDwnWvosALG/qj6jaeQw5cNK2UW7E8r9880b0dCUdhaHiY
+	XDgw=
+X-Gm-Gg: ASbGncu8t2sTyQudCSONyEUQjgcKS+p8HulzE048qh9kQoHQ7CVdfmoijmHZhcHYv/K
+	czVuNc138pcHZjQbYTH1G+qR9ODP26AQ7qui8qxJtvLo8TB+8Pbp/L5yUHFwSnzu2Dg5tMjIW4C
+	L4s27vlpjW3OpautZ4Zz2Z5H/TathOmZxLTb+W2w5eg+6u8VcjItVvfUk8TJUZi1rWciY7roinm
+	fotHCo0d8SqgVXJ2eXqpaz+LPNFH3RhPF6FWRn5FW+u22BmFkw4UfSINzo2K4DFchted16qQP7Q
+	cvNk7qS73b39pnLL1/zODHZlE5+gXz848AhgxM961HSxA0EgvC9qRbzC1AjSGKBqmjgb6FyLG1Z
+	UMb7cR90faFCZWA==
+X-Google-Smtp-Source: AGHT+IG6Fs0mDXRYU2o6Td0yWxwYb8N9uHgcDDzyd75KPdUxyiPuO9N5OH70dXQk1TVcz0gCoG5PKQ==
+X-Received: by 2002:a05:6e02:1887:b0:3d2:6768:c4fa with SMTP id e9e14a558f8ab-3d7e4780824mr6626785ab.21.1744233465833;
+        Wed, 09 Apr 2025 14:17:45 -0700 (PDT)
+Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505cf8e91sm420735173.6.2025.04.09.14.17.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 09 Apr 2025 14:17:45 -0700 (PDT)
-From: Siddarth G <siddarthsgml@gmail.com>
-To: slongerbeam@gmail.com,
-	p.zabel@pengutronix.de,
-	mchehab@kernel.org,
-	gregkh@linuxfoundation.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com
-Cc: linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	Siddarth G <siddarthsgml@gmail.com>
-Subject: [PATCH] staging/media/imx: fix null pointer dereference
-Date: Thu, 10 Apr 2025 02:47:27 +0530
-Message-ID: <20250409211727.62710-1-siddarthsgml@gmail.com>
-X-Mailer: git-send-email 2.43.0
+From: Alex Elder <elder@riscstar.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: p.zabel@pengutronix.de,
+	dlan@gentoo.org,
+	heylenay@4d2.org,
+	guodong@riscstar.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	spacemit@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/7] clk: spacemit: add K1 reset support
+Date: Wed,  9 Apr 2025 16:17:33 -0500
+Message-ID: <20250409211741.1171584-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,47 +101,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Cppcheck warnings:
+This series adds reset controller support for the SpacemiT K1 SoC.
 
-drivers/staging/media/imx/imx-media-fim.c:79:6:
-error: Null pointer dereference: fi [ctunullpointer]
-  if (fi->denominator == 0) {
+As before, this version is built upon the clock controller driver that
+Haylen Chu has out for review (currently at v6):
+  https://lore.kernel.org/lkml/20250401172434.6774-1-heylenay@4d2.org/
 
-drivers/staging/media/imx/imx-media-csi.c:795:27:
-note: Calling function imx_media_fim_set_stream, 2nd argument is null
-  imx_media_fim_set_stream(priv->fim, NULL, false);
+All of these patches are available here:
+  https://github.com/riscstar/linux/tree/outgoing/reset-v3
 
-drivers/staging/media/imx/imx-media-fim.c:388:3:
-note: Calling function update_fim_nominal, 2nd argument is null
-  update_fim_nominal(fim, fi);
+Between version 2 and version 3 there was no feedback, however:
+  - Haylen posted v6 of the clock series, and it included some changes
+    that affected the logic in this reset code.
+  - I was informed that defining CCU nodes without any clocks led to
+    warnings about "clocks" being a required property when running
+    "make dtbs_check".  For that reason, I made clock properties
+    optional for reset-only CCU nodes.
+  - This code is now based on v6.15-rc1, which includes a few commits
+    that were listed as dependencies previously.
 
-drivers/staging/media/imx/imx-media-fim.c:79:6:
-note: Dereferencing argument fi that is null
-  if (fi->denominator == 0) {
+Here is version 2 of this series.
+  https://lore.kernel.org/lkml/20250328210233.1077035-1-elder@riscstar.com/
 
-To fix the issue, add a check to validate that the 'fi' is not
-null before accessing its members.
+Between version 1 and version 2:
+  - Added Rob's Reviewed-by tag on the first patch
+  - Renamed the of_match_data data type (and one or two other symbols) to
+    use "spacemit" rather than "k1".
+  - Replaced the abbreviated "rst" or "RST" in names of newly-defined
+    sympols with "reset" or "RESET" respectively.
+  - Eliminated rcdev_to_controller(), which was only used once.
+  - Changed a function that unsafely did a read/modify/write of a register
+    to use regmap_update_bits() instead as suggested by Haylen.
+  - Eliminated a null check for a pointer known to be non-null.
+  - Reordered the assignment of reset controller device fields.
+  - Added a "sentinel" comment as requested by Yixun.
+  - Updated to be based on Linux v6.14 final.
 
-Signed-off-by: Siddarth G <siddarthsgml@gmail.com>
----
- drivers/staging/media/imx/imx-media-fim.c | 3 +++
- 1 file changed, 3 insertions(+)
+Here is the first version of this series.
+  https://lore.kernel.org/lkml/20250321151831.623575-1-elder@riscstar.com/
 
-diff --git a/drivers/staging/media/imx/imx-media-fim.c b/drivers/staging/media/imx/imx-media-fim.c
-index ccbc0371fba2..25f79d0f87b9 100644
---- a/drivers/staging/media/imx/imx-media-fim.c
-+++ b/drivers/staging/media/imx/imx-media-fim.c
-@@ -76,6 +76,9 @@ static bool icap_enabled(struct imx_media_fim *fim)
- static void update_fim_nominal(struct imx_media_fim *fim,
- 			       const struct v4l2_fract *fi)
- {
-+	if (!fi)
-+		return;
-+
- 	if (fi->denominator == 0) {
- 		dev_dbg(fim->sd->dev, "no frame interval, FIM disabled\n");
- 		fim->enabled = false;
+					-Alex
+
+Alex Elder (7):
+  dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
+  clk: spacemit: rename spacemit_ccu_data fields
+  clk: spacemit: add reset controller support
+  clk: spacemit: define existing syscon resets
+  clk: spacemit: make clocks optional
+  clk: spacemit: define new syscons with only resets
+  riscv: dts: spacemit: add reset support for the K1 SoC
+
+ .../soc/spacemit/spacemit,k1-syscon.yaml      |  29 +-
+ arch/riscv/boot/dts/spacemit/k1.dtsi          |  18 +
+ drivers/clk/spacemit/ccu-k1.c                 | 340 ++++++++++++++++--
+ .../dt-bindings/clock/spacemit,k1-syscon.h    | 128 +++++++
+ 4 files changed, 488 insertions(+), 27 deletions(-)
+
 -- 
-2.43.0
+2.45.2
 
 
