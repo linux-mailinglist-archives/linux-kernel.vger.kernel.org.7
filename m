@@ -1,59 +1,87 @@
-Return-Path: <linux-kernel+bounces-595177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F940A81B4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 04:50:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D4B0A81AE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 04:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58CAD1B883CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 02:50:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0385885F02
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 02:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F2A1922F4;
-	Wed,  9 Apr 2025 02:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94E719259F;
+	Wed,  9 Apr 2025 02:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/05zKN0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dDO8Siqy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6B6250EC;
-	Wed,  9 Apr 2025 02:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BB02940F;
+	Wed,  9 Apr 2025 02:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744167039; cv=none; b=qgpyYilzz1fDuOO7KmJwGBhFHhfafMd5mRqdUuFj5HAuqjgn2NUidy6I3Vb406kbB4WTpoS9i1elFjdFM1NqD+mLVfy7SSmuDiQvr84up7wSqDDq6jUbJl4kOfoFWryzS+PPIpH3ft4XK55D34/n7Lz+REpYxxnK1ZetreYqrms=
+	t=1744165426; cv=none; b=CXTDcpijfwWhgfmN0g0avPm0fGWC8yms8xD2/xN0c9K86mrFlA/Q4VZpgbyW5s/dMxqMqUTjsaeR9Ae6w1o26D8DFkpwqgCyXbfnTs5p6bEbGqkoLlVUHibEfv2qcjvaXJ0DMPcGu5gj76tHsJWOD95Oxa0XBXSeLpw7mmvHNgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744167039; c=relaxed/simple;
-	bh=1vyMQj7G0bbnlgmsq19xl83Td1ymxWFwpTojbnZNiFM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BE2uUMZgUd7z5yT4JBv76gTJrITvKdf/jZ9n2NDdzQ4BSLSbWAytptIWQaA8unUIVDpKB8b1MML0WocaPulG1dsBvL4g7FZ0OviHzkgipXK3+zcgNrrO+8OxFx0rmo0wSt4Qp0nGMsz+97UhtO2VyOMqh64relTihcSR/xaYki4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/05zKN0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA4BC4CEE5;
-	Wed,  9 Apr 2025 02:50:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744167038;
-	bh=1vyMQj7G0bbnlgmsq19xl83Td1ymxWFwpTojbnZNiFM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=p/05zKN0Z5ms9qbA/u4dubP7wCDMrwWlKM2JCSpb4M8Gsf/hMeXkgjQFG1Jo5SEJ9
-	 HaW07bFjALlsDI4mj3OWn6tHpmhf4quF/BiQCoTgu4CuFA0/qnenKp++viiEt2xCQK
-	 bh5qLg4xVmQ1ZoIFJsCl1jhcbUOcgEAAO7EcHtwv8HwfLZuDkjF2M/VCmZUbiE6C2o
-	 l393zMAZIhnPqi/lGOAx8e+8HFmClUN/FUbeFewPlL/LRvR+TRTz2WBZhee6wAF97I
-	 fZlJR1q1WikcO13H7E3kxXNZoyQ8iMqLihBV44Cf0cY0BHYMQK4njrXKV7nWtEc5IE
-	 22qxyyhyhMXxA==
-From: SeongJae Park <sj@kernel.org>
-To: Ze Zuo <zuoze1@huawei.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
+	s=arc-20240116; t=1744165426; c=relaxed/simple;
+	bh=MFPau5lifW8jMHZfdSw/2NIo4U/nm4MojtGTr6OejvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IE67xO1vS0ttFzC9Cm6kNytfEJyddYrk/YLFfoHNc196DRGrHGZGyzkVW9DUoEdj6AC0RcwAWE9QbOcZ1xSoUi1qxmMGH34WEi/JmQdZ9oWJfr5C3jJvbzc+x4YNJohYzah2AVhItTBKf4fJZ4FITXbKP1wUzfso9LjPjsXDrqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dDO8Siqy; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744165424; x=1775701424;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=MFPau5lifW8jMHZfdSw/2NIo4U/nm4MojtGTr6OejvA=;
+  b=dDO8Siqys7DzuxEvSpe77omIdtD2GWcQzhjauHflJcrfMachxAGCH4mc
+   1PzeTVD45B+yrBP/ZY+Z4ObtOrOTEXHQS5E7nurP+1zRCQtPhWxbkdbrn
+   vc8tGh3qFIjDrfMUmPaNPRKGqxjYidYUtTHThjSD0oMrL/Mk3yWPZJa8l
+   +ZrYyO4YfqipK4XQQjetvorQOC6SVdEn9nfV9fVoIx+8Cqq0iTwIUqLya
+   OoqgYf9TIm8m30ULMAtthM5SArjCYV+oIRXPRYOiBQDKwjEdGs8/8YXot
+   Ph4gA9jjFAR9IgxMW1GaNH2MZ83U9PBSihUoU4ZRZIXSUSq1/dogWElk0
+   A==;
+X-CSE-ConnectionGUID: ohBDsV96RoK/XZCdlNcHBA==
+X-CSE-MsgGUID: dCEoFr3rQv2P1V6GgWaWoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45784192"
+X-IronPort-AV: E=Sophos;i="6.15,199,1739865600"; 
+   d="scan'208";a="45784192"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 19:23:43 -0700
+X-CSE-ConnectionGUID: Ppnwobg6RqKNtrFV7mD+Qw==
+X-CSE-MsgGUID: Stmnr3IERtGTLHBlnrrVNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,199,1739865600"; 
+   d="scan'208";a="165675265"
+Received: from haibo-optiplex-7090.sh.intel.com ([10.239.153.94])
+  by orviesa001.jf.intel.com with ESMTP; 08 Apr 2025 19:23:39 -0700
+From: Haibo Xu <haibo1.xu@intel.com>
+To: 
+Cc: xiaobo55x@gmail.com,
+	Haibo Xu <haibo1.xu@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Stephen Brennan <stephen.s.brennan@oracle.com>,
+	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com
-Subject: Re: [RFC PATCH] mm/damon: add full LPAE support for memory monitoring above 4GB
-Date: Tue,  8 Apr 2025 19:50:36 -0700
-Message-Id: <20250409025036.70633-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250408075553.959388-1-zuoze1@huawei.com>
-References: 
+	linux-riscv@lists.infradead.org
+Subject: [PATCH] perf symbols: Ignore mapping symbols on riscv
+Date: Wed,  9 Apr 2025 10:51:56 +0800
+Message-ID: <20250409025202.201046-1-haibo1.xu@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,64 +90,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Ze,
+RISCV ELF use mapping symbols with special names $x, $d to
+identify regions of RISCV code or code with different ISAs[1].
+These symbols don't identify functions, so will confuse the
+perf output.
 
-On Tue, 8 Apr 2025 15:55:53 +0800 Ze Zuo <zuoze1@huawei.com> wrote:
+The patch filters out these symbols at load time, similar to
+"4886f2ca perf symbols: Ignore mapping symbols on aarch64".
 
-> Previously, DAMON's physical address space monitoring only supported
-> memory ranges below 4GB on LPAE-enabled systems. This was due to
-> the use of 'unsigned long' in 'struct damon_addr_range', which is
-> 32-bit on ARM32 even with LPAE enabled.
+[1] https://github.com/riscv-non-isa/riscv-elf-psabi-doc/blob/
+    master/riscv-elf.adoc#mapping-symbol
 
-Nice finding!
+Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
+---
+ tools/perf/util/symbol-elf.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> 
-> This patch modifies the data types to properly support >4GB physical
-> address spaces:
-> 1. Changes 'start' and 'end' in 'struct damon_addr_range' from
->    'unsigned long' to 'unsigned long long' (u64)
-> 2. Updates all related arithmetic operations and comparisons
-> 3. Adjusts print formats from %lu to %llu where needed
-> 4. Maintains backward compatibility for non-LPAE systems
-> 
-> Since the overhead of always using u64 is negligible on 32-bit systems,
-> should we prefer this simplified approach over the conditional typedef?
-> 
-> Alternative implementation approaches to consider:
-> 
-> 1. Introduce damon_addr_t that adapts to CONFIG_PHYS_ADDR_T_64BIT
-> 2. Convert all DAMON address operations to use this type
-> 
-> Just like implementation:
->  #ifdef CONFIG_PHYS_ADDR_T_64BIT
->     typedef unsigned long long damon_addr_t;
->  #else
->     typedef unsigned long damon_addr_t;
->  #endif
-> 
-> This method could potentially cause minor issues with print formatting
-> and division operations. We'd appreciate any suggestions for better
-> approaches. Thank you for your input.
-> 
-> The patch change allows DAMON to work with:
-> - 32-bit ARM with LPAE (40-bit physical addresses)
-> - 64-bit ARM systems
-> - x86_64 physical address monitoring
-> while preserving existing behavior on 32-bit systems without LPAE.
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index fbf6d0f73af9..55b1409b0593 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -1733,6 +1733,12 @@ dso__load_sym_internal(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+ 				continue;
+ 		}
+ 
++		/* Reject RISCV ELF "mapping symbols" */
++		if (ehdr.e_machine == EM_RISCV) {
++			if (elf_name[0] == '$' && strchr("dx", elf_name[1]))
++				continue;
++		}
++
+ 		if (runtime_ss->opdsec && sym.st_shndx == runtime_ss->opdidx) {
+ 			u32 offset = sym.st_value - syms_ss->opdshdr.sh_addr;
+ 			u64 *opd = opddata->d_buf + offset;
+-- 
+2.43.0
 
-Again, nice finding and good improvement.  Thank you so much for sharing this
-nice patch.
-
-But, this doesn't seem like a very small and simple change.  I think we can
-find the best approach together, by understanding impact of this change for
-short term and long term.  For that, could you please also share how prevalent
-32-bit ARM machines with LPAE are, and what would be your expected usage of
-physical address space monitoring on such machines, in both short term and long
-term?
-
-
-Thanks,
-SJ
-
-[...]
 
