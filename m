@@ -1,83 +1,137 @@
-Return-Path: <linux-kernel+bounces-595220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A6BA81BC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:04:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E46A81BC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E419E3B5256
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 04:04:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 586BE1B81239
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 04:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D9419259E;
-	Wed,  9 Apr 2025 04:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A031D516A;
+	Wed,  9 Apr 2025 04:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Z/Wzxxpy"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k38rmXDx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4898215A85E
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 04:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C2A3D76;
+	Wed,  9 Apr 2025 04:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744171472; cv=none; b=iSxZ3fl5y957ai2D97pNXN5W/wW84joqlTdguUWjOOHGGfMFQ26nKX4b7xxzH+hkiLATcktJHk3LrPNGf6klU4DY+Z7ARCKuJWI66E2WGB5bOykS8Vn/PnEeZhoJGA6dK4tJIpuJlvOBgkt/VTeyPi//nZ0JOypt9bHQk/huxI8=
+	t=1744171442; cv=none; b=olL5OWO3wkj98legQX9jFgFGKmCu7o4xeOM2gdyBngYWgzA/H2caPgmfhph9YgEPSbjikNMspdBKZGh+uRhjtTx0Vu83zd2iHy88+xdaVYtfhCey3C1QEZGJaGY7aZNcylBqhNVE6GMoxlghGtr7mx0WAfmQc4N9WJE2QvL4DKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744171472; c=relaxed/simple;
-	bh=yCu93LjqeX2aYztx3cMVxU9CSP/hvv5zO/BxHil2Ghk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ices2ebvoil8ZgQo/+E9yJweoiYXyEsFNraNDnhA+yHhC34OFLVVvsRyaic/64AaTxvk55kBK6gDA9tiyS+9YFJv9kpYqxAdinErjL0jBD1umE0vDN0cCrlzBB1bg3eWvikd/cHQ/qDg4/6qO2PunzZ750L+YJTnrtlvUgTh/kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Z/Wzxxpy; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KMy80c3f8tEJeFyo9se2EyPspzDN/qpz4L/88YxV2ng=; b=Z/WzxxpyINanl2EsfIlsyFuev5
-	SIbAThSmAa9X21F0nhcUC1N0hxDY0QhCj2+G4w/ENuHe3y0HRsTp37pk7nGsa3bvnnkdzZLeOweVO
-	+L+F1RQRGPvyFHqzdGgNm51jbAsSTGAxUxR+WqgrPx4K4vnv/V2XtpMYnPFO9L13C7iASIgkPQtyr
-	1+7QzAnVi6cGgHWoQNliHWE/ED832NhzHZo7gqBhgOEWfIC2TqBO7yQAFl0FR+rGhm0Xj2JCd2fkk
-	daIZu1ZL9ZsFt0qWyDLIeAZwJ47YHCSazcWsdJLQ4BuXgJWxerkOMhyKwQIcdLgMXeyo4M8aD6FEa
-	V6xVQ/Zw==;
-Received: from [191.204.192.64] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1u2MfV-00Dmp4-Tt; Wed, 09 Apr 2025 06:04:06 +0200
-Message-ID: <1d7eac7c-e0ab-4208-b003-26b818478709@igalia.com>
-Date: Wed, 9 Apr 2025 01:03:57 -0300
+	s=arc-20240116; t=1744171442; c=relaxed/simple;
+	bh=D03yomViP85sZ7xkf5etK1i+y2JadkTdw7EFuab7kVs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jAhp7rL0dFnuuskT192xMNhs8k9ZVWUAWLYc0cFeqv2E8xTsBKrYgWTrzFX/1pmFfbB8HCmQnshJwOyqrMvAz+qASC8dvSPntCGktZp6I3NuAVLKXVydwTxjxSJ20fZW873Bd5xg/8gIi8nZBLmtpH3m9aCHZobRqbATMwZLCvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k38rmXDx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE062C4CEE3;
+	Wed,  9 Apr 2025 04:04:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744171441;
+	bh=D03yomViP85sZ7xkf5etK1i+y2JadkTdw7EFuab7kVs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=k38rmXDxCqQT3hB1u+hC500R/vsTcgMNqpyf28DpXoFQjPVOT2cBOIGUq8iYzHmtR
+	 thy3gTfGh6mudDEgEDE7H7rcxh0cm8APa8RqH4TIimxpDcYS+PrPJC7IvK1rETxmNh
+	 LKciXo0L86TV6fF/bgGXzzflAs0RJeZPEKpJV4oubf1f5+lRwmj5n3recncubx/C3u
+	 qrkoGjlNe1l2hB3O2nkt5VTyKIntsGTfxQZFXxklWZQ5Z19Ry+zUT7hIiC2KrIvFWU
+	 j3yWdce7Yh82xrCzZ21QTg6gbBl+UToTMWf/B6nxooQuW0MAEANgwNC7uQU85OARhF
+	 qz7FeadRPIrhw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH v2 00/24] ARM / arm64: dts: qcom: Use the header with DSI phy clock IDs
+Date: Tue,  8 Apr 2025 23:03:59 -0500
+Message-ID: <174417136198.113796.2666820396319444637.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250408-dts-qcom-dsi-phy-clocks-v2-0-73b482a6dd02@linaro.org>
+References: <20250408-dts-qcom-dsi-phy-clocks-v2-0-73b482a6dd02@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] drm: Fix potential overflow issue in event_string
- array
-To: jiangfeng@kylinos.cn
-Cc: mripard@kernel.org, christian.koenig@amd.com, rodrigo.vivi@intel.com,
- dri-devel@lists.freedesktop.org, raag.jadav@intel.com, simona@ffwll.ch,
- maarten.lankhorst@linux.intel.com, linux-kernel@vger.kernel.org,
- tzimmermann@suse.de, airlied@gmail.com
-References: <20250409014633.31303-1-jiangfeng@kylinos.cn>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20250409014633.31303-1-jiangfeng@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Em 08/04/2025 22:46, jiangfeng@kylinos.cn escreveu:
-> From: Feng Jiang <jiangfeng@kylinos.cn>
-> 
-> When calling scnprintf() to append recovery method to event_string,
-> the second argument should be `sizeof(event_string) - len`, otherwise
-> there is a potential overflow problem.
-> 
-> Fixes: b7cf9f4ac1b8 ("drm: Introduce device wedged event")
-> Signed-off-by: Feng Jiang <jiangfeng@kylinos.cn>
 
-Reviewed-by: André Almeida <andrealmeid@igalia.com>
+On Tue, 08 Apr 2025 11:31:57 +0200, Krzysztof Kozlowski wrote:
+> Changes in v2:
+> - Collect tags and rebase (no changes).
+> - Dependency was merged, so this can send be applied freely.
+> - Link to v1: https://lore.kernel.org/r/20250127-dts-qcom-dsi-phy-clocks-v1-0-9d8ddbcb1c7f@linaro.org
+> 
+> Use the header with DSI phy clock IDs to make code more readable.
+> Changes done with sed with alignment/wrapping fixups. Verified with
+> dtx_diff.
+> 
+> [...]
+
+Applied, thanks!
+
+[01/24] ARM: dts: qcom: msm8226: Use the header with DSI phy clock IDs
+        commit: 17268faf29992d37033d6ad1a5ed5d924f2430d8
+[02/24] ARM: dts: qcom: msm8974: Use the header with DSI phy clock IDs
+        commit: 1afdd80d1e021f758c975d857c6beb6da5c891bd
+[03/24] ARM: dts: qcom: msm8916: Use the header with DSI phy clock IDs
+        commit: 651af46f33ab284400e0fc307e5a81de54c75945
+[04/24] arm64: dts: qcom: msm8917: Use the header with DSI phy clock IDs
+        commit: 7c92da246e1a6933f25fa015d6c43a6bcfb2c7b3
+[05/24] arm64: dts: qcom: msm8939: Use the header with DSI phy clock IDs
+        commit: 011e7f2c26dcb42c255ab54207f548d68c3b8e38
+[06/24] arm64: dts: qcom: msm8953: Use the header with DSI phy clock IDs
+        commit: 8e35fab460cce97e387a2c975db45b762b551521
+[07/24] arm64: dts: qcom: msm8976: Use the header with DSI phy clock IDs
+        commit: b06f27d09ed455f153d2523f96bbd94ecf6a69d8
+[08/24] arm64: dts: qcom: msm8996: Use the header with DSI phy clock IDs
+        commit: 4b32499da71716e075ea2dba115e3fe8b6f8ed2f
+[09/24] arm64: dts: qcom: msm8998: Use the header with DSI phy clock IDs
+        commit: f4220c41decc1944ef319c859840aa5405eee6fa
+[10/24] arm64: dts: qcom: qcm2290: Use the header with DSI phy clock IDs
+        commit: 48478f726f3793a9d1cf9b10d6487a81ea7e3c73
+[11/24] arm64: dts: qcom: sc7180: Use the header with DSI phy clock IDs
+        commit: adaa876233c102e53fb2bafe4f502474613f4ed2
+[12/24] arm64: dts: qcom: sc8180x: Use the header with DSI phy clock IDs
+        commit: 4390fc773154ea25c0aeb4e75d0425cfa8de431f
+[13/24] arm64: dts: qcom: sdm630: Use the header with DSI phy clock IDs
+        commit: 3c1ae3b255555406c5ff030190649437e399dde9
+[14/24] arm64: dts: qcom: sdm670: Use the header with DSI phy clock IDs
+        commit: dc489ba0dea37e3655d265f5889ade0d173229d5
+[15/24] arm64: dts: qcom: sdm845: Use the header with DSI phy clock IDs
+        commit: 77764620c1888e8c8dc169f7c2f693fc4db96964
+[16/24] arm64: dts: qcom: sm6115: Use the header with DSI phy clock IDs
+        commit: b44bf3bc74912649b2495894e82f5384e24e2060
+[17/24] arm64: dts: qcom: sm6125: Use the header with DSI phy clock IDs
+        commit: 4f40ebbebcd9a7a03b72aac478c7df7c7b44c635
+[18/24] arm64: dts: qcom: sm6350: Use the header with DSI phy clock IDs
+        commit: ab7cd7f3968f14171d50ba0b0655186c3857d258
+[19/24] arm64: dts: qcom: sm8150: Use the header with DSI phy clock IDs
+        commit: 35ed99d7f589f310688fa0d088913e5c8927da43
+[20/24] arm64: dts: qcom: sm8250: Use the header with DSI phy clock IDs
+        commit: 855ff06098b7f3a2aca21b79d32d212fd096a98e
+[21/24] arm64: dts: qcom: sm8350: Use the header with DSI phy clock IDs
+        commit: ee4bb3169263bad99d68e0039e944ae53e77691a
+[22/24] arm64: dts: qcom: sm8450: Use the header with DSI phy clock IDs
+        commit: 0d18a031499d4ea2b86cdc8120c22bdcf22bcac0
+[23/24] arm64: dts: qcom: sm8550: Use the header with DSI phy clock IDs
+        commit: 0d046b7ad7d3c7f2dfc53fc5ad48e2fe2c3f2186
+[24/24] arm64: dts: qcom: sm8650: Use the header with DSI phy clock IDs
+        commit: 314ffec606514cdf6d4bbedaaeeba0c826b6afc2
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
