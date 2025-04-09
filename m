@@ -1,67 +1,105 @@
-Return-Path: <linux-kernel+bounces-596352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8D6EA82A89
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:35:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE18A82AFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB31B7AF1B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:32:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 791B09C0CE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65D0267B77;
-	Wed,  9 Apr 2025 15:32:46 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91BA266F05;
+	Wed,  9 Apr 2025 15:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KBnYOYzB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A47726772D;
-	Wed,  9 Apr 2025 15:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C8725F796
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744212766; cv=none; b=c3dFsMtzbIbTf6KJZheSaSa2PPsrg2pgYDvt8I7qda6An//5mYidmGyurxDIWmGaSMQdDIe2Fku3fQdLxgXONXeagNIyjIQ9NwXIYvUl0pYZCJ6on7BZxaccGVOUVoVHiMnhWLQmIDV0jFX/bh1jN698i5ZfuXKw7JPYpom2/wI=
+	t=1744212868; cv=none; b=rcp8VaNMG47b4yYHrBv3aSUdkqWrYFSHd3SkUaW+qREI79/9YvNohYSOv+et5/+vcawptdf4NgVc6+f2ByfbbkBhZmaBLcV+FB1gxQuvtA84CXFRAJTof4L6bnR0v8runKWLOo3QJlsOCm7TG5v3RhBXo2cc47mpIKnRzbO87DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744212766; c=relaxed/simple;
-	bh=1cTMcNUOZR0G8ilOHV2oQzN4qri7oZSuiQ5k9Z6bwOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p26zzze0ZIYlslRBSF/N2i1B13or0EyEINkNbx5JjeXvZsXIZiP/mg2zuEftUPZfDz6OPDFlcJ6uAGgesc/U1Fru/0asvn+jeaEh2wnAAxxYOCSjQ0vZG3PFM3tO8GyI3mQ72Iqtz1c9qf+dR/iztx8yVjL2tqSmvZPqPmyVubQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36ECBC4CEE2;
-	Wed,  9 Apr 2025 15:32:45 +0000 (UTC)
-Date: Wed, 9 Apr 2025 11:34:04 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Tom Zanussi <zanussi@kernel.org>
-Subject: Re: [PATCH] tracing: Add common_comm to histograms
-Message-ID: <20250409113404.5b2085a7@gandalf.local.home>
-In-Reply-To: <20250409083244.fe29885ef4f9253977a2bf61@kernel.org>
-References: <20250407154912.3c6c6246@gandalf.local.home>
-	<20250409083244.fe29885ef4f9253977a2bf61@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744212868; c=relaxed/simple;
+	bh=PPcWwuA+6UDKNbLjvBDA/JbvETZrQpjuMfImtxrbGRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LbzqFVv9uP0jGjhVUDo8yLtoHum67oFJu0ieEXw8J3QB3bV3Z8bgEz9+b7g7lFvrWy+qMmUi9xMrh8w9fZgHqLTrGgFXWxrzctsvTNfULuWRm5+ri+sKuFb1LQ1XdxQRZYzv0zQItteuDYIFvM02A72O0k6lx2T2XQg3sD6w088=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KBnYOYzB; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744212867; x=1775748867;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PPcWwuA+6UDKNbLjvBDA/JbvETZrQpjuMfImtxrbGRw=;
+  b=KBnYOYzBf70IpMYahoZvaCnUutme3HnamnkmyZuhFmsLuwTRkR48yhBl
+   arfrchK4CoA4FR3YRkCzcHkwZqABOBdGEuX/yqzIwem9BwmzVhO94nZIm
+   kuYyp0lSK8FKo8iB+M/NGixDda1kHCK9u5Tf6wZERKKtBu+vhM133Uufo
+   J7+PoKiWqOLvepjRr+OKNr4tVHD2pje4YB0Nx8ou6TUmuNBrd3UdGVom8
+   LQyjJKAye9+705OLWNqr2rU4hKes5+r4ji84TCOTPBA4szaazD8WkH87s
+   hQ4xTYZJxmiI3WxgGFz8bVh5v6Zt3O52Dl0XvcSfeKOL9g3ga9tYHg+QH
+   A==;
+X-CSE-ConnectionGUID: y1tm8CHTSCywmjfvV9z9tA==
+X-CSE-MsgGUID: GgOHzmxKTMa6Qd/PmLZ9Kw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="63091702"
+X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
+   d="scan'208";a="63091702"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 08:34:27 -0700
+X-CSE-ConnectionGUID: rLvAAFH4TYC7NBdjuvDOBA==
+X-CSE-MsgGUID: 4nd6ddGaR8KtUaGdUAZ4hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
+   d="scan'208";a="133486967"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 08:34:25 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u2XRW-0000000AmOr-1X3m;
+	Wed, 09 Apr 2025 18:34:22 +0300
+Date: Wed, 9 Apr 2025 18:34:22 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Peter Rosin <peda@axentia.se>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/10] [RESEND] mux: adg792a: remove incorrect
+ of_match_ptr annotation
+Message-ID: <Z_aTfqQvNlYeT5Id@smile.fi.intel.com>
+References: <20250409122131.2766719-1-arnd@kernel.org>
+ <20250409122314.2848028-1-arnd@kernel.org>
+ <20250409122314.2848028-4-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250409122314.2848028-4-arnd@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 9 Apr 2025 08:32:44 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+On Wed, Apr 09, 2025 at 02:22:56PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Building with W=1 shows a warning about adg792a_of_match being unused
+> when CONFIG_OF is disabled:
+> 
+> drivers/mux/adg792a.c:134:34: error: unused variable 'adg792a_of_match' [-Werror,-Wunused-const-variable]
 
-> BTW, the string field size must always be MAX_FILTER_STR_VAL (for comparing
-> with other string filters, which checks the size at first.)
-> Somewhere we should comment it.
+Yes, please, somebody apply this, I have got 3+ LKP emails about this in the
+past.
 
-I believe that's more of an implementation detail of the underlining
-infrastructure. I don't think it matters for the users of the interface. It
-may be a limitation in max size.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Is that what you want to comment? That the string held (for all strings)
-has a max size defined by the MAX_FILTER_STR_VAL, which currently is 256?
+-- 
+With Best Regards,
+Andy Shevchenko
 
--- Steve
+
 
