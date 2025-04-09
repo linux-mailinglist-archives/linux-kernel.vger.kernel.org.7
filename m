@@ -1,170 +1,150 @@
-Return-Path: <linux-kernel+bounces-595389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF3CEA81D8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:56:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8144CA81D93
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29FDD8810DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:56:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05BA61BA2860
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C6A213245;
-	Wed,  9 Apr 2025 06:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wpo34Jty"
-Received: from mail-lj1-f195.google.com (mail-lj1-f195.google.com [209.85.208.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BD62147FE;
+	Wed,  9 Apr 2025 06:57:12 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204788BEA
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 06:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B30212FA2;
+	Wed,  9 Apr 2025 06:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744181799; cv=none; b=iE98LL0GQN9NRhzyMSlMyQHHBZHN+EPAG1dewkl2tdZwuBsEN3xmzrdKux8t6KSRaXFIcAV6HETJSVydJPdd22j3PObv65J56escKeFOIuY00uxedrQ3cvqiCOn/+Z5vqb4JxwNQHOiHERBBWW+jz9rUCTPhB0EahNFzdEmAvUs=
+	t=1744181831; cv=none; b=cHefyLdW+LEuvr+qi7bZsTQN4MoELGUlaHoaaK0wk8XsZMla09/BVcmmF6GcmxCVNkB9awvM8PxrWnUP6DmC5JAYBlFwy6nU0XaRv+/+1vQlUDChtStLIFZoaC3zsoQYIrVEmUfP5a2SQBTJEv2PqviV8TaQBCgvC6IeDvIxAc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744181799; c=relaxed/simple;
-	bh=BjM74d3qOj4WFq/rv1u4BQwYRQzFj7HlZdsedrXiHww=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CQTleQqNhgMy76X96xaYV2+oxSdJsdn7w48woTOB/GqK6wzjl9W3XvzYBq0Gf0oRML4pWOGio3I7RIyPdy/1ADiF09M/BnjS5ehsRVx7PqoSwjAN1foDodWD80hcFomxWoNcYlJJtqX4d5NjFIQrcKc3WG6vRZ6fmnt1g6kSFyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wpo34Jty; arc=none smtp.client-ip=209.85.208.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f195.google.com with SMTP id 38308e7fff4ca-30613802a04so68642821fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 23:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744181796; x=1744786596; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jjIvxdAuy2MeeVy7LEAPdLmUJzVDv11s/zyfAAdCQNo=;
-        b=Wpo34JtyWGMcplWmXwwVKcc/wLYBFzvXSsQ5DDwNmBEIW7dfRB4VLCkb+ssSmzQGY/
-         3mGppUssr6v5ZqY0Dcpb583J12KfK4Ta17bkp675s2E9BQFzkNE1h4+65J58NqYWSqUd
-         Jh6iCAi5QUxKAs0ZbL+QTbhaHQkFxuQWnMqTSSxzmw/wmzXDxhuBAyi1E+tRg1oZdARM
-         o8/IJSEwJga6nnEp3Z1Uy1lOUqmBVVkNtIxfZw4ZtVcjA/A3oUKGNVcKSdQYXAiDA/o7
-         xfhBiGIqBKaItANYE2Kzooz8TPXl/OIjSxDg4ap1FgAwDqmnc0zSQKC10OSFn8p2PwD3
-         y5CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744181796; x=1744786596;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jjIvxdAuy2MeeVy7LEAPdLmUJzVDv11s/zyfAAdCQNo=;
-        b=VTDHZ9/hRnJYnZQH5yUHgC4l2PLGgUhFfUAYsxZDPyrJuk2steyv0xK5X6qh76VbxE
-         q6oViks+XgcIkl/6VF84U2qHuRE8ps7qlTJoPgnOU8AoWixIN/uhxKkVwm6JscnAiDR4
-         kzoHKEYzzpyMkEAd5QhFo0hUGjI2+CZg7HyN02LtE++5tzZeQ4tXLRb5jjdiLONAc5Ur
-         KysRgdIgQOB1S/nPRuwJWUYW8QSAhkQ9JnY5bYqfp7JXerTq6KYWjAm7D2PFIXmf8mH0
-         EJtHjSKzldwFV1Mni6I7/sxa/W8IcInLhwSgPIPVQ44mgH6OZ+clTLFrKjnymG8YjT2y
-         9x+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVe8JqjVyaCcxbkZO4BbUK4lXSJRtK/45La8db6hRgxdKBRuSe+/klxzxMtANqgKEh+6KXGI5sr5U9BD2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB6qvNv0EfKl1f8CMH0WYl2wMOQFr2W5VD924ngoPGgxu7guhl
-	c1tGw55jIqqrYAZeUqKh9LwxmVpxFO0pKYchuCecRFhtYVrKAo7qKk/hxVqJOiboi5o32kueKjJ
-	uABReGWfACoqcpMIqJBttVV10w6A=
-X-Gm-Gg: ASbGncsLLh2MhoNbFUbvdhEVOst9Nudh0ecWu9zR1NeLVQoSrqU6Puwm6clOTcEcbTx
-	G/nA14+qU8K1Iti6RJBcdxmwhVVbv/gd8OQntPSX3RIBPtJagGCw8z2ENt2a0Ps7dhcR4GfgzzJ
-	NpQFZgJjDer+eUTZHzmy7nlN4=
-X-Google-Smtp-Source: AGHT+IH4cs0L7iaEN3ryz46jwGlpgHLEgomNPUkcsrj6VC0T34zbeunfaB5HdRA5i0a+2B7oUBa5S/o8D2ZbF+37Kz0=
-X-Received: by 2002:a05:6512:1325:b0:549:8d07:ff0d with SMTP id
- 2adb3069b0e04-54c437c1043mr468732e87.45.1744181795984; Tue, 08 Apr 2025
- 23:56:35 -0700 (PDT)
+	s=arc-20240116; t=1744181831; c=relaxed/simple;
+	bh=5OqQXLP2ulysEHMnWREeyJq89gXDNN8qHGaB8hrEtD4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iNTmpgQE0zJm7PF98PyOjO0m0mFI0xocBIQX5l1YPr7gz13VJFJi9gfluZvwx73NchnP6obh0psUGB7PQRnNC1MZZjVYE/CR/Rh4fL3Kvx1E9MorqhtihjdmE6DycWaq47Tf8He6gtScj8mbgsXqNjAnhahRiwiKsNV5DYi6Y1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4ZXYZG0X2szHrW0;
+	Wed,  9 Apr 2025 14:53:42 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 68E481402C4;
+	Wed,  9 Apr 2025 14:57:05 +0800 (CST)
+Received: from localhost.huawei.com (10.50.165.33) by
+ kwepemh100008.china.huawei.com (7.202.181.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 9 Apr 2025 14:57:04 +0800
+From: Lifeng Zheng <zhenglifeng1@huawei.com>
+To: <rafael@kernel.org>, <lenb@kernel.org>, <robert.moore@intel.com>,
+	<viresh.kumar@linaro.org>, <mario.limonciello@amd.com>,
+	<gautham.shenoy@amd.com>, <ray.huang@amd.com>, <perry.yuan@amd.com>,
+	<pierre.gondois@arm.com>
+CC: <acpica-devel@lists.linux.dev>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>,
+	<cenxinghai@h-partners.com>, <zhenglifeng1@huawei.com>, <hepeng68@huawei.com>
+Subject: [PATCH v6 0/8] Add functions for getting and setting registers related to autonomous selection in cppc_acpi
+Date: Wed, 9 Apr 2025 14:56:55 +0800
+Message-ID: <20250409065703.1461867-1-zhenglifeng1@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407134654.92841-1-hupu.gm@gmail.com> <e52847fc-8aae-4fd7-90e4-494be02e214b@linux.ibm.com>
-In-Reply-To: <e52847fc-8aae-4fd7-90e4-494be02e214b@linux.ibm.com>
-From: hupu <hupu.gm@gmail.com>
-Date: Wed, 9 Apr 2025 14:56:23 +0800
-X-Gm-Features: ATxdqUF9iCPIkMFh7UWkrGRUQMbd83I4vq-X5ZN6H_hfgRHpgIIDH3IP6GHoZqQ
-Message-ID: <CADHxFxR=7nESr7_XxXKb22h7LHfX2XNxeqw86+YnOLsK1KP2BQ@mail.gmail.com>
-Subject: Re: [RFC 1/1] sched: Remove unreliable wake_cpu check in proxy_needs_return
-To: 20250407134654.92841-1-hupu.gm@gmail.com
-Cc: jstultz@google.com, linux-kernel@vger.kernel.org, juri.lelli@redhat.com, 
-	peterz@infradead.org, vschneid@redhat.com, mingo@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, hupu@transsion.com, 
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-Hi Madadi Vineeth Reddy,
-Thank you for your prompt review, and my sincere apologies for not
-providing the repository and branch details clearly in my initial
-submission. This was an oversight on my part.
+The patch series is organized in two parts:
 
-The patch is based on the following repository:
-https://github.com/johnstultz-work/linux-dev.git
+ - patch 1-6 refactor out the general CPPC register get and set functions
+   in cppc_acpi.c
 
-Specifically, the changes are present in these Proxy Execution
-development branches:
-a) proxy-exec-WIP
-b) proxy-exec-v15-WIP
+ - patches 7-8 add functions for getting and setting values of auto_sel,
+   energy_perf and auto_act_window in cppc_acpi.c
 
-The proxy_needs_return function resides in these branches as part of
-the ongoing Proxy Execution feature work.
-Please let me know if you need additional information or further
-clarifications. Thank you again for your time and guidance.
+Changelog:
 
-Best regards,
-hupu
+v6:
 
+ - Remove the last patch, will resent it in the future after reaching an
+   agreement with Sumit
+ - split patch 3 into 2 smaller patches
+ - Remove the printing of reg_idx in cppc_get_reg_val() and
+   cppc_set_reg_val()
+ - Change the logic for determing whether a register is supported in
+   cppc_get_reg_val() and cppc_set_reg_val()
 
-Madadi Vineeth Reddy <vineethr@linux.ibm.com> =E4=BA=8E2025=E5=B9=B44=E6=9C=
-=889=E6=97=A5=E5=91=A8=E4=B8=89 14:01=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 07/04/25 19:16, hupu wrote:
-> > The (p->wake_cpu !=3D cpu_of(rq)) check in proxy_needs_return() is unsa=
-fe
-> > during early wakeup phase. When called via ttwu_runnable() path:
-> >
-> > |-- try_to_wake_up
-> >     |-- ttwu_runnable
-> >         |-- proxy_needs_return    //we are here
-> >     |-- select_task_rq
-> >     |-- set_task_cpu              //set p->wake_cpu here
-> >     |-- ttwu_queue
-> >
-> > The p->wake_cpu at this point reflects the CPU where donor last ran bef=
-ore
-> > blocking, not the target migration CPU. During blocking period:
-> > 1. CPU affinity may have been changed by other threads
-> > 2. Proxy migrations might have altered the effective wake_cpu
-> > 3. set_task_cpu() hasn't updated wake_cpu yet in this code path
-> >
-> > This makes the wake_cpu vs current CPU comparison meaningless and poten=
-tially
-> > dangerous. Rely on find_proxy_task()'s later migration logic to handle =
-CPU
-> > placement based on up-to-date affinity and scheduler state.
-> >
-> > Signed-off-by: hupu <hupu.gm@gmail.com>
-> > ---
-> >  kernel/sched/core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 3c4ef4c71cfd..ca4ca739eb85 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -4047,7 +4047,7 @@ static inline bool proxy_needs_return(struct rq *=
-rq, struct task_struct *p)
-> >
-> >       raw_spin_lock(&p->blocked_lock);
-> >       if (__get_task_blocked_on(p) && p->blocked_on_state & BO_NEEDS_RE=
-TURN) {
-> > -             if (!task_current(rq, p) && (p->wake_cpu !=3D cpu_of(rq))=
-) {
-> > +             if (!task_current(rq, p)) {
-> >                       if (task_current_donor(rq, p)) {
-> >                               put_prev_task(rq, p);
-> >                               rq_set_donor(rq, rq->idle);
->
-> Which tree is this change based on? I don't see `proxy_needs_return` in t=
-ip/sched/core.
->
-> Thanks,
-> Madadi Vineeth Reddy
->
+v5:
+
+ - add more explanation to the commit logs and comments
+ - change REG_OPTIONAL from bin to hex
+ - split patch 2 into 3 smaller patches
+ - remove CPPC_REG_VAL_READ() and CPPC_REG_VAL_WRITE() macros
+ - move the modification part in patch 5 into a separate patch
+ - rename the sysfs file from "energy_perf" to
+   energy_performance_preference_val
+
+v4:
+
+ - add REG_OPTIONAL and IS_OPTIONAL_CPC_REG to judge if a cpc register is
+   an optional one
+ - check whether the register is optional before CPC_SUPPORTED check in
+   cppc_get_reg_val() and cppc_set_reg_val()
+ - check the register's type in cppc_set_reg_val()
+ - add macros to generally implement registers getting and setting
+   functions
+ - move some logic codes from cppc_cpufreq.c to cppc_acpi.c
+ - replace cppc_get_auto_sel_caps() by cppc_get_auto_sel()
+
+v3:
+
+ - change cppc_get_reg() and cppc_set_reg() name to cppc_get_reg_val() and
+   cppc_set_reg_val()
+ - extract cppc_get_reg_val_in_pcc() and cppc_set_reg_val_in_pcc()
+ - return the result of cpc_read() in cppc_get_reg_val()
+ - add pr_debug() in cppc_get_reg_val_in_pcc() when pcc_ss_id < 0
+ - rename 'cpunum' to 'cpu' in cppc_get_reg_val()
+ - move some macros from drivers/cpufreq/cppc_cpufreq.c to
+   include/acpi/cppc_acpi.h with a CPPC_XXX prefix
+
+v2:
+
+ - fix some incorrect placeholder
+ - change kstrtoul to kstrtobool in store_auto_select
+
+---
+Discussions of previous versions:
+v1: https://lore.kernel.org/all/20241114084816.1128647-1-zhenglifeng1@huawei.com/
+v2: https://lore.kernel.org/all/20241122062051.3658577-1-zhenglifeng1@huawei.com/
+v3: https://lore.kernel.org/all/20241216091603.1247644-1-zhenglifeng1@huawei.com/
+v4: https://lore.kernel.org/all/20250113122104.3870673-1-zhenglifeng1@huawei.com/
+v5: https://lore.kernel.org/all/20250206131428.3261578-1-zhenglifeng1@huawei.com/
+
+Lifeng Zheng (8):
+  ACPI: CPPC: Add IS_OPTIONAL_CPC_REG macro to judge if a cpc_reg is
+    optional
+  ACPI: CPPC: Optimize cppc_get_perf()
+  ACPI: CPPC: Rename cppc_get_perf() to cppc_get_reg_val()
+  ACPI: CPPC: Extract cppc_get_reg_val_in_pcc()
+  ACPI: CPPC: Add cppc_set_reg_val()
+  ACPI: CPPC: Refactor register value get and set ABIs
+  ACPI: CPPC: Modify cppc_get_auto_sel_caps() to cppc_get_auto_sel()
+  ACPI: CPPC: Add three functions related to autonomous selection
+
+ drivers/acpi/cppc_acpi.c     | 304 +++++++++++++++++++++--------------
+ drivers/cpufreq/amd-pstate.c |   3 +-
+ include/acpi/cppc_acpi.h     |  30 +++-
+ 3 files changed, 210 insertions(+), 127 deletions(-)
+
+-- 
+2.33.0
+
 
