@@ -1,85 +1,48 @@
-Return-Path: <linux-kernel+bounces-596149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAFC9A827F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:33:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE04A827FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0034E18845EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:32:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 031323BBF97
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0768266EFB;
-	Wed,  9 Apr 2025 14:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E889266B4F;
+	Wed,  9 Apr 2025 14:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M1MhdMu5"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="picSNNT9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E80B266B71;
-	Wed,  9 Apr 2025 14:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DEE25D908;
+	Wed,  9 Apr 2025 14:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744209106; cv=none; b=QGYJFmRTYtz9u9xAzvMFuanvchVI/0YKbLTV5PaAgoM/ZuoKPGzpRt0Ut5gEFuZsg3nTSA/hsdfA5XyibwxmmNfQVl7OAMvBxmHhsq+tP0l+mOLjjHTyBpWBLCocdBoRsKZqosM00P57iPkmVJnUMf0tKcQGF8dcb1rtlXcqQhc=
+	t=1744209181; cv=none; b=FM32nJ0sqq4ALWLmagKeSUkCi6hkORotAmuBZqwp26hJYEmR6qGRVK26xETNTvmJbsLNzXnNeRtXuONqJ1a7OEMhw88+Sw3f9LO4EF4AQb+4qBjTzKau0MT18VFA/Is4E+lAbnFNbPgRm5f9gRPu3y+0valb3znJH+GkYRr+0sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744209106; c=relaxed/simple;
-	bh=kehAxItDvgtX+tKg7TkyId9CAXsLYlIqEI/xXHXIkZg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G47Ugdz+czwmlxPXCNCM1P4e0t6a1hNtVmg/RNyNVX7JSNnVuusqSbkOS54MSPGP49anr3F/Aa1QK0qSw3iFV+mNuXPCFcJUVobr6Avv4iW9ul6M8sxlOmkYUwnbaek1bfXR6T0dS6X5Df8wEiRKldIrnGGgmKCMwVftN7QzMiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M1MhdMu5; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so34962115e9.0;
-        Wed, 09 Apr 2025 07:31:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744209103; x=1744813903; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xAx3Sy8VitFS5n0m7xguZIFBZ5naFd5vtkTxSJ/vHOo=;
-        b=M1MhdMu5885dAQbwg+5pZbQJGtMKBiROCqASM3V+0QT2t+cmEQpq1wU6QN0bL5HW0G
-         JkJ1VB2P0+SOiAAHmvAQNAy5Veb0Sqe+FcmzPEVEO4JR0MlVZZkxTfjyzsSjkjSgUJJC
-         HYNLAEvBhYjQQF3u2zJwF1EY9QE6I2g6EbcL31h8Zwx4lW6MkA7a7BlnZDvaeIHqKqB6
-         nEElSXBWWraq8URYcpA6BfWyqcZemQglV0dtxZnX6st+aKwRxPo3/xsxfjB99v09JV2q
-         a9CzZFjycSSaj9id2dti7bQFGXJ55gp/slL7wh37Fm3L2K8zIMfiNxBpdwyobbn2Y7B9
-         EBNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744209103; x=1744813903;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xAx3Sy8VitFS5n0m7xguZIFBZ5naFd5vtkTxSJ/vHOo=;
-        b=PmZL7yMWScVHJZXXwKHU4yBFRIhcSR7ykx13YVboEbEn6Y3mTkIe7Qz35lEg+EMclM
-         huDRACxnPzzWPevK5fQ54HSfh6ncpJdozlqvW+MaCGCgiG8Ct9WdlWAw8YlxNzbO7+UY
-         IcFZgPjAGCE2dbGCXRUzgYwkRQRs/UlPSd0bpS+9y/8eschdAC3+70NYlKyZS1851vVp
-         lnKQ5qzlWpQC8axfzQuD/zjPkwxVGVU/EQacIz1Pa5LKKg2n+ytOU7Oroj26Par1miWL
-         wL1Uf+3dhWX7CvVkZladnRxaz6h8AN4IAI9tNmBgH+JTLbW6syQ3IEBYUijqkJFNkiyr
-         Y40w==
-X-Forwarded-Encrypted: i=1; AJvYcCWyYNh7Y0IggkDpZoqQkqBF+njcAL/zfSey3Qk25w4RX6scwK8739zu3Xq5sZRjkjqTC5BuuoIM1z9VV9ig@vger.kernel.org, AJvYcCXfEuZmrErwb/XvkrET7bOQk9VJ12ayVl0metN5NPrPH7/jlOfJQ1jmVMbZLk7WlVW8fmoU3Gu+Pij9twSl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMS2XsgLE5ZtvX0HydO/Apx4YUR+7dOLu7hscmA9Olm8wCl05Y
-	qd6mOWG9X/UDxEwN99wo+0kwir9C8iCciwBUwVdFRPUL/P3m0qI5
-X-Gm-Gg: ASbGncsGgtkjfq2IGl8JEn2oEAuPBtCoBD8JTelE87qgHQpztTkIDK7uxNuRdwZcwP4
-	N06wz+xvdlxhQgol6JVHHVM2XrzG/7FYILv6l5+q3a1D0FWX+2J6/H/fnsa9r7gnpEIrfV0ONiM
-	bBtuk0wUmKcgJUNQQSyoaiMUzwbEz2OVKsNNT7auAeUbS41fa8ta1B1S2F3gE5yKHOM64pE+XQh
-	M4chH3LIQx4tF/2pvaejvMc1hU0WmNR8rQWT87k4en9QllMXJyKkbK8MkW1T3WnLT6d95/mY20O
-	Mu/MoP12v4zbGD/YwGnXLpqCebSHhJnJl/BQBgY0EA==
-X-Google-Smtp-Source: AGHT+IHxJbg8rbvWk3qrs1dFCbH1e7U/BsmqoTWA9z90R/ywpZLV/p8qzON3hSGVMyTQeN+VuaWIeQ==
-X-Received: by 2002:a05:600c:1d05:b0:43c:f513:9591 with SMTP id 5b1f17b1804b1-43f1fe16b84mr20419385e9.14.1744209102563;
-        Wed, 09 Apr 2025 07:31:42 -0700 (PDT)
-Received: from localhost ([194.120.133.58])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43f2338db0dsm18889835e9.7.2025.04.09.07.31.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 07:31:42 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] select: do_pollfd: add unlikely branch hint return path
-Date: Wed,  9 Apr 2025 15:31:38 +0100
-Message-ID: <20250409143138.568173-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744209181; c=relaxed/simple;
+	bh=cX6gFBabJR2vRXRIMDyuOchKc8UluFvVmb7Kf9ib1eM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qKuU5LYAkmjc3CFFVIbfMYINLg6n3qV0YAf5uUtuF8Ok2D+m7zkYButzgiRylBU7y41kP2sxklKEBsUiu7uIzlnFmsHlhB0IwBBav9YlrtSH7eMpAjms6b/UROziQM4XCDTeuWHsmNhzxfNGzyfF4jlKYfTo/IPmh+9XKzkODUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=picSNNT9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2556FC4CEE2;
+	Wed,  9 Apr 2025 14:33:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744209181;
+	bh=cX6gFBabJR2vRXRIMDyuOchKc8UluFvVmb7Kf9ib1eM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=picSNNT9cU0BCRu3ihC/hXQcQvQtikpynjepuXmNwNj2IoVLXZ81M9ZDx+HzoXEZJ
+	 HFX9Kan9SeUv2aYqIrXtgpHcUtYdh2lW2z7eHaVqA0QD1JaJaeh9ixxUPIXkIWi6pw
+	 fWIw7dhgG2flpLMnMjYUvxu4YW4JiSBsP5TfaYI9fIUySIwdQFG4boW4sf3zhLdfZO
+	 8f39QDI/iplthS1G/JXjQlO0eikvrNL2vOB54glf1xXJKiGLg3u6wePXhLIFd4dRK+
+	 aS+o5jn5WKHwdwZVyvtCDErPMgBApN/f9F62BZtqxO0BPTTKXMaPPkgkF3vBjBGWx6
+	 sOJJwp0sv4liw==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v2 00/12] nfsd: observability improvements
+Date: Wed, 09 Apr 2025 10:32:22 -0400
+Message-Id: <20250409-nfsd-tracepoints-v2-0-cf4e084fdd9c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,41 +50,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPeE9mcC/2WNQQqDMBBFryKzbkoSjdSueo/iIiYTHVoSmYi0i
+ HdvKnTV5Xvw398gIxNmuFYbMK6UKcUC+lSBm2wcUZAvDFpqI2tZixiyFwtbh3OiuGThLtp63yl
+ jbAtlNjMGeh3Je194orwkfh8Pq/raX6z9j61KSNE00gyhUUNnwu2BHPF5TjxCv+/7B0t0iSOxA
+ AAA
+X-Change-ID: 20250303-nfsd-tracepoints-c82add9155a6
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
+ Anna Schumaker <anna@kernel.org>
+Cc: Sargun Dillon <sargun@sargun.me>, linux-nfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2264; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=cX6gFBabJR2vRXRIMDyuOchKc8UluFvVmb7Kf9ib1eM=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBn9oUTUe8+LBHHcGK7i0XPA0xoDP8zOPicn879n
+ 1VmJGODuGyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZ/aFEwAKCRAADmhBGVaC
+ Fch7D/9kiflWjltcwg7isG7lUtbHJcqQ57oQMKvUMgCxN9fZ5UPIItFRJHVIpd0AwMvY1avLyXE
+ 46gFknIeQG2HPf+QwLDXsN8Bves6mgQbwVt9XBcS0HBJOiOeT5cxZCZfylWiwN0jL93O7kItPAA
+ MJwa2tHhrziO9YL7Mtlhj/Yf0A1YGd9tyAa3GEiU8LukUjF5re7gwyDwNMOvVVFbxTiRCngLpAt
+ JXV3xxt8jFHU7cVXBObMsPh8w/izIhLTwW/4VSSy5bZsBRxpCsbUcTDVj0SU7C0CuY2CLbMaGe9
+ mcAdAyF2l1aKH5EcC2Pe3fNDx5wb9r/D1VryAavFNbtEyIKdOEksQomQQJtrvuy+wJxDXPz5yUX
+ yqz0TITZKlenOdmRTCNGbe1/jaNyik/buUI6W1qflK0X4M++htHVKxmy191c5gfZA+wbSGJPRtX
+ 0fN/Jr1xCmlbsJKeljMFhytj5ioTa/TBNL3oMxpSqWVbNZfUO1V93n55BymeYbG2iAycdGIxtbf
+ u8WoVWLf2X38dA0i4e2QEG7sqrOm6FAd9cZGcznmJsfD/iUtWaP/c/vH7tCi4hJL0iNkRnPrNcF
+ uL4Lj+dVR+OO3fsnSdiTR8vDHaOf9lZIQ3vPNRVVHRb/HTad+IBO2CUGUNPw5AJ7gwUSaJPQxMw
+ Ln+KF8Q2n8GXwAg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Adding an unlikely() hint on the fd < 0 comparison return path improves
-run-time performance of the mincore system call. gcov based coverage
-analysis shows that this path return path is highly unlikely.
+While troubleshooting a performance problem internally, it became
+evident that we needed tracepoints in nfsd_commit. The first patch adds
+that. While discussing that, Sargun pointed out some tracepoints he
+added using kprobes. Those are converted to static tracepoints here, and
+the legacy dprintk's removed.
 
-Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
-a 6.15-rc1 kernel and a poll of 1024 file descriptors with zero timeout
-shows an call reduction from 32818 ns down to 32635 ns, which is a ~0.5%
-performance improvement.
+Lastly, I've updated the svc_xprt_dequeue tracepoint to show how long
+the xprt sat on the queue before being serviced.
 
-Results based on running 25 tests with turbo disabled (to reduce clock
-freq turbo changes), with 30 second run per test and comparing the number
-of poll() calls per second. The % standard deviation of the 25 tests
-was 0.08%, so results are reliable.
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/select.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- Break tracepoints out into multiple patches
+- Flesh out the tracepoints in these locations to display the same info
+  as legacy dprintks.
+- have all the tracepoints SVC_XPRT_ENDPOINT_* info
+- update svc_xprt_dequeue tracepoint to show how long xprt was on queue
+- Link to v1: https://lore.kernel.org/r/20250306-nfsd-tracepoints-v1-0-4405bf41b95f@kernel.org
 
-diff --git a/fs/select.c b/fs/select.c
-index 7da531b1cf6b..0eaf3522abe9 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -857,7 +857,7 @@ static inline __poll_t do_pollfd(struct pollfd *pollfd, poll_table *pwait,
- 	int fd = pollfd->fd;
- 	__poll_t mask, filter;
- 
--	if (fd < 0)
-+	if (unlikely(fd < 0))
- 		return 0;
- 
- 	CLASS(fd, f)(fd);
+---
+Jeff Layton (12):
+      nfsd: add commit start/done tracepoints around nfsd_commit()
+      sunrpc: add info about xprt queue times to svc_xprt_dequeue tracepoint
+      sunrpc: move the SVC_RQST_EVENT_*() macros to common header
+      nfsd: add a tracepoint for nfsd_setattr
+      nfsd: add a tracepoint to nfsd_lookup_dentry
+      nfsd: add tracepoints around nfsd_create events
+      nfsd: add tracepoints for symlink events
+      nfsd: add tracepoints for hardlink events
+      nfsd: add tracepoints for unlink events
+      nfsd: add tracepoints to rename events
+      nfsd: add tracepoints for readdir events
+      nfsd: add tracepoint for getattr events
+
+ fs/nfsd/nfs3proc.c              |  67 +++------
+ fs/nfsd/nfs4proc.c              |  45 ++++++
+ fs/nfsd/nfsproc.c               |  39 ++----
+ fs/nfsd/trace.h                 | 298 ++++++++++++++++++++++++++++++++++++++++
+ fs/nfsd/vfs.c                   |  10 +-
+ include/linux/sunrpc/svc_xprt.h |   1 +
+ include/trace/events/sunrpc.h   |  36 +----
+ include/trace/misc/fs.h         |  21 +++
+ include/trace/misc/sunrpc.h     |  23 ++++
+ net/sunrpc/svc_xprt.c           |   1 +
+ 10 files changed, 433 insertions(+), 108 deletions(-)
+---
+base-commit: 71238ba71a67aab408cfe14b6a5ae3c9b83082f9
+change-id: 20250303-nfsd-tracepoints-c82add9155a6
+
+Best regards,
 -- 
-2.49.0
+Jeff Layton <jlayton@kernel.org>
 
 
