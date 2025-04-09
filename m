@@ -1,273 +1,261 @@
-Return-Path: <linux-kernel+bounces-595240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6964FA81C10
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 07:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F049DA81C12
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 07:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DFAE175321
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 05:21:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD69D4603E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 05:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5D21D7999;
-	Wed,  9 Apr 2025 05:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AB31D7999;
+	Wed,  9 Apr 2025 05:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tz0oNzNh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ob2FhZlU"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3284F158DAC
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 05:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3B3F9CB
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 05:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744176056; cv=none; b=BDk6BjSyq/NwQCMXinLGsVY+W787qxDO4QGM6oInYquaK1zW5o92gaNdNpqeC2feIkVA9v6ik9fDKq8V7Kbc2+C855Yo67YLH5/HsG69noW9ZWNpKkq0JtONDqHt0/ANHsytbMy5UNTa6eDHXH3OF3J6Eb31JQpipXFXiNI+9Ko=
+	t=1744176509; cv=none; b=ti4fabYCrOeLuFpZnLrXQxHtfYB0PQmEHKMIo/Vg4OU9xFTYUl1lPWja8js7Uwgm3ipJuLpaajVs6wCorl+KQAnEydzWK1wF74ATXsUMfxJJhPWG2YNqt4heHSo2zLyTewSyyZ8kYtQhm/c7vL3ZJFzJkuTtGmzivDgH51EgH5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744176056; c=relaxed/simple;
-	bh=qEER/RgVCOioJPbMmsKJ72fps24z+FpHP98LKMZRgy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RKPcX2naDzt4ffe3Biq6o8Llnd8BchXVes5f+LXT2gP+/vT/fO9rs9mzDGYHmOXzUfrd6QsOSO9a4Ch1yV1w6n13wly51mf+sCUp2XTtYwjLAPZIRgg3qT5WjDzqHStfP4JmYGg0lTxappa1anAK9Pb6TeOzD0tK+gByXGVH6+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tz0oNzNh; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744176055; x=1775712055;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qEER/RgVCOioJPbMmsKJ72fps24z+FpHP98LKMZRgy8=;
-  b=Tz0oNzNhrbSsbpX9baFOciG05kkYmROvnzZGZygIOLrOBV6Xk5AnNnGp
-   BOfixlSSgSs77rAjanB3uHe6VTgZiME4uD/Nfkxla63RA/LD9C7Sjcptj
-   XXE5G38E2SQVjFBoRf/HWsDCfz+kIoZ5xBVkZi9NxOwgRKpl0Of20qoHF
-   ThAkKqNAuvIaeDUD+/pDS6ry1pIF8zmfRZdg/8fAwUK8uREPVAUyJmTOs
-   KFdtug1bcyVgI2OKxYPPYJb1kVAIe9ZrdPW4AHrqV7foBU0JRDuEsO+5k
-   p8e2Ay3EgkWTUH05lqM6xLjjMXqeAkxTvv+qR9xaHF30aQOCm5yKbJhRQ
-   Q==;
-X-CSE-ConnectionGUID: yWsE7uKhQ72yRN5Cy3a6Kw==
-X-CSE-MsgGUID: 8eY862peS0GaeFXYBPeoTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45348889"
-X-IronPort-AV: E=Sophos;i="6.15,199,1739865600"; 
-   d="scan'208";a="45348889"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 22:20:54 -0700
-X-CSE-ConnectionGUID: 5otkT78iTxWk/lUttB9mag==
-X-CSE-MsgGUID: 3fmEncnOSRSVDKK+BN7tWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,199,1739865600"; 
-   d="scan'208";a="133601185"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 08 Apr 2025 22:20:49 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u2Nri-0008H5-1s;
-	Wed, 09 Apr 2025 05:20:46 +0000
-Date: Wed, 9 Apr 2025 13:20:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wentao Liang <vulab@iscas.ac.cn>, harry.wentland@amd.com,
-	sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com,
-	alexander.deucher@amd.com, christian.koenig@amd.com,
-	Xinhui.Pan@amd.com, airlied@gmail.com, simona@ffwll.ch
-Cc: oe-kbuild-all@lists.linux.dev, hamza.mahfooz@amd.com,
-	chiahsuan.chung@amd.com, sunil.khatri@amd.com, alex.hung@amd.com,
-	aurabindo.pillai@amd.com, hersenxs.wu@amd.com,
-	mario.limonciello@amd.com, mwen@igalia.com,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, Wentao Liang <vulab@iscas.ac.cn>
-Subject: Re: [PATCH v2] drm/amd/display: Add error check for avi and vendor
- infoframe setup function
-Message-ID: <202504091230.CXdkQbvK-lkp@intel.com>
-References: <20250408022018.2786-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1744176509; c=relaxed/simple;
+	bh=IbFFdw0egMCKCtPUZ1oui8WHqhaYdV7vmsdVcu1ZpRY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FUqpzVAN45IhfdH9TE0SOZ4fPFtujqpvsMaEQjOFXYSJ5/lmdKKRdxntZ2b7VJVT4IeB6peWunIWyv0JXEYnPDnue5bOK0vMBHpD3+QmTwBxj4NxXzLEM6UCF0ddxKo5oFUUXt8IhPg+f1fOVSMuivxi55XjxOAoqhtKmRxEelo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ob2FhZlU; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5390e11H013886;
+	Wed, 9 Apr 2025 05:28:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=g69eVT1ol18IO6QR4WSJPXpCjVxrf+G4BquZYxF4y
+	zU=; b=ob2FhZlUPXLhBUXx54RCSnK0+bfs0Scd1dDYNMZ51OG9Ajc8cnFgEtocd
+	7x1QYrv3OJD6wwNXPgTNsRUtkTQRGPJDmWwfVFQswoPzjtWvYA9/drKE4ioYa8hH
+	YjD887xtoTkEIbf7HilYOFU4Ch3UnhZaL7B9/1CPqVXmcMeUaDA0l2yO/O8+Xlsa
+	J2moOe3TPDTyUkA8YBF9igbJZstkUREIN1bt5SwOjAvUZNYzVehxaySwRrZv+fWy
+	fxvMAzrRM2krU2VVn1pb+ajwYoCdN7dnmvGNpwVwHBIlubUeINjDl029WoHJjDEe
+	F+0CZ5TuWIqQSYWUbanozet8N3bNg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45w57putk4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Apr 2025 05:28:16 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5395QNJR002530;
+	Wed, 9 Apr 2025 05:28:16 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45w57putjs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Apr 2025 05:28:16 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53955Kc9014473;
+	Wed, 9 Apr 2025 05:28:14 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45ufunp6g5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Apr 2025 05:28:14 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5395SCON52756914
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 9 Apr 2025 05:28:12 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9AC7F20040;
+	Wed,  9 Apr 2025 05:28:12 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 759D720043;
+	Wed,  9 Apr 2025 05:28:10 +0000 (GMT)
+Received: from li-06431bcc-2712-11b2-a85c-a6fe68df28f9.ibm.com.com (unknown [9.124.222.191])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  9 Apr 2025 05:28:10 +0000 (GMT)
+From: Donet Tom <donettom@linux.ibm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Mike Rapoport <rppt@kernel.org>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, rafael@kernel.org,
+        Danilo Krummrich <dakr@kernel.org>, Donet Tom <donettom@linux.ibm.com>
+Subject: [PATCH 1/2] mm/memblock: Added a New Memblock Function to Check if the Current Node's Memblock Region Intersects with a Memory Block
+Date: Wed,  9 Apr 2025 10:57:56 +0530
+Message-ID: <50142a29010463f436dc5c4feb540e5de3bb09df.1744175097.git.donettom@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408022018.2786-1-vulab@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: LA20b6d-QkhrqUWu8HLC1sjClDJeKaK6
+X-Proofpoint-GUID: ZOWH6i46-zSl6W0_NELOitU5EhlJIuV_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-09_02,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ spamscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 mlxlogscore=999
+ priorityscore=1501 malwarescore=0 impostorscore=0 phishscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504090020
 
-Hi Wentao,
+A new function, curr_node_memblock_intersect_memory_block, has been
+added to check if the current node's NID intersects with a memory block.
 
-kernel test robot noticed the following build errors:
+This function takes the start and end PFN of a memory block, along with
+the node ID being registered. It then finds the memblock region of the
+current node and check if the passed memory block intersects with it. If
+there is an intersection, the function returns true; otherwise, itreturns
+false.
 
-[auto build test ERROR on drm-exynos/exynos-drm-next]
-[also build test ERROR on linus/master v6.15-rc1 next-20250408]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+There are two scenarios to consider during the search:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Wentao-Liang/drm-amd-display-Add-error-check-for-avi-and-vendor-infoframe-setup-function/20250408-102113
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git exynos-drm-next
-patch link:    https://lore.kernel.org/r/20250408022018.2786-1-vulab%40iscas.ac.cn
-patch subject: [PATCH v2] drm/amd/display: Add error check for avi and vendor infoframe setup function
-config: csky-randconfig-001-20250409 (https://download.01.org/0day-ci/archive/20250409/202504091230.CXdkQbvK-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250409/202504091230.CXdkQbvK-lkp@intel.com/reproduce)
+1. The memory block size is greater than the memblock region size.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504091230.CXdkQbvK-lkp@intel.com/
+This means that multiple memblocks can be present within a single
+memory block. If the start or end of the memblock is within the
+start and end of the memory block, it indicates that the memblock
+is part of that memory block. Therefore, the memory block can be
+added to the node where the memblock resides.
 
-All errors (new ones prefixed by >>):
+2. The memory block size is less than or equal to the memblock size
 
-   In file included from include/linux/device.h:15,
-                    from include/linux/acpi.h:14,
-                    from include/linux/i2c.h:13,
-                    from include/drm/display/drm_dp_helper.h:27,
-                    from drivers/gpu/drm/amd/amdgpu/../display/dc/os_types.h:37,
-                    from drivers/gpu/drm/amd/amdgpu/../display/dc/dm_services_types.h:29,
-                    from drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:29:
-   drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: In function 'fill_stream_properties_from_drm_display_mode':
->> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:6221:42: error: passing argument 1 of '_dev_err' from incompatible pointer type [-Wincompatible-pointer-types]
-    6221 |                         dev_err(connector->dev, "Failed to setup avi infoframe: %zd\n", err);
-         |                                 ~~~~~~~~~^~~~~
-         |                                          |
-         |                                          struct drm_device *
-   include/linux/dev_printk.h:110:25: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                         ^~~
-   drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:6221:25: note: in expansion of macro 'dev_err'
-    6221 |                         dev_err(connector->dev, "Failed to setup avi infoframe: %zd\n", err);
-         |                         ^~~~~~~
-   include/linux/dev_printk.h:86:36: note: expected 'const struct device *' but argument is of type 'struct drm_device *'
-      86 | void _dev_err(const struct device *dev, const char *fmt, ...)
-         |               ~~~~~~~~~~~~~~~~~~~~~^~~
-   drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:6227:42: error: passing argument 1 of '_dev_err' from incompatible pointer type [-Wincompatible-pointer-types]
-    6227 |                         dev_err(connector->dev, "Failed to setup vendor infoframe: %zd\n", err);
-         |                                 ~~~~~~~~~^~~~~
-         |                                          |
-         |                                          struct drm_device *
-   include/linux/dev_printk.h:110:25: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                         ^~~
-   drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:6227:25: note: in expansion of macro 'dev_err'
-    6227 |                         dev_err(connector->dev, "Failed to setup vendor infoframe: %zd\n", err);
-         |                         ^~~~~~~
-   include/linux/dev_printk.h:86:36: note: expected 'const struct device *' but argument is of type 'struct drm_device *'
-      86 | void _dev_err(const struct device *dev, const char *fmt, ...)
-         |               ~~~~~~~~~~~~~~~~~~~~~^~~
+This means that multiple memory blocks can be part of a single memblock
+region. If the start or end of the memory block is within the start and
+end of the memblock, it indicates that the memory block is part of the
+memblock. Therefore, the memory block can be added to the node where
+the memblock resides.
 
+In the current implementation, during node device initialization, to
+find the memory block NID, it iterates over each PFN of the memory
+block until it finds a match. On large systems, this can take a
+long time.
 
-vim +/_dev_err +6221 drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c
+With this function, the boot time is reduced.
 
-  6156	
-  6157	static void fill_stream_properties_from_drm_display_mode(
-  6158		struct dc_stream_state *stream,
-  6159		const struct drm_display_mode *mode_in,
-  6160		const struct drm_connector *connector,
-  6161		const struct drm_connector_state *connector_state,
-  6162		const struct dc_stream_state *old_stream,
-  6163		int requested_bpc)
-  6164	{
-  6165		struct dc_crtc_timing *timing_out = &stream->timing;
-  6166		const struct drm_display_info *info = &connector->display_info;
-  6167		struct amdgpu_dm_connector *aconnector = NULL;
-  6168		struct hdmi_vendor_infoframe hv_frame;
-  6169		struct hdmi_avi_infoframe avi_frame;
-  6170		ssize_t err;
-  6171	
-  6172		if (connector->connector_type != DRM_MODE_CONNECTOR_WRITEBACK)
-  6173			aconnector = to_amdgpu_dm_connector(connector);
-  6174	
-  6175		memset(&hv_frame, 0, sizeof(hv_frame));
-  6176		memset(&avi_frame, 0, sizeof(avi_frame));
-  6177	
-  6178		timing_out->h_border_left = 0;
-  6179		timing_out->h_border_right = 0;
-  6180		timing_out->v_border_top = 0;
-  6181		timing_out->v_border_bottom = 0;
-  6182		/* TODO: un-hardcode */
-  6183		if (drm_mode_is_420_only(info, mode_in)
-  6184				&& stream->signal == SIGNAL_TYPE_HDMI_TYPE_A)
-  6185			timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR420;
-  6186		else if (drm_mode_is_420_also(info, mode_in)
-  6187				&& aconnector
-  6188				&& aconnector->force_yuv420_output)
-  6189			timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR420;
-  6190		else if ((connector->display_info.color_formats & DRM_COLOR_FORMAT_YCBCR444)
-  6191				&& stream->signal == SIGNAL_TYPE_HDMI_TYPE_A)
-  6192			timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR444;
-  6193		else
-  6194			timing_out->pixel_encoding = PIXEL_ENCODING_RGB;
-  6195	
-  6196		timing_out->timing_3d_format = TIMING_3D_FORMAT_NONE;
-  6197		timing_out->display_color_depth = convert_color_depth_from_display_info(
-  6198			connector,
-  6199			(timing_out->pixel_encoding == PIXEL_ENCODING_YCBCR420),
-  6200			requested_bpc);
-  6201		timing_out->scan_type = SCANNING_TYPE_NODATA;
-  6202		timing_out->hdmi_vic = 0;
-  6203	
-  6204		if (old_stream) {
-  6205			timing_out->vic = old_stream->timing.vic;
-  6206			timing_out->flags.HSYNC_POSITIVE_POLARITY = old_stream->timing.flags.HSYNC_POSITIVE_POLARITY;
-  6207			timing_out->flags.VSYNC_POSITIVE_POLARITY = old_stream->timing.flags.VSYNC_POSITIVE_POLARITY;
-  6208		} else {
-  6209			timing_out->vic = drm_match_cea_mode(mode_in);
-  6210			if (mode_in->flags & DRM_MODE_FLAG_PHSYNC)
-  6211				timing_out->flags.HSYNC_POSITIVE_POLARITY = 1;
-  6212			if (mode_in->flags & DRM_MODE_FLAG_PVSYNC)
-  6213				timing_out->flags.VSYNC_POSITIVE_POLARITY = 1;
-  6214		}
-  6215	
-  6216		if (stream->signal == SIGNAL_TYPE_HDMI_TYPE_A) {
-  6217			err = drm_hdmi_avi_infoframe_from_display_mode(&avi_frame,
-  6218								       (struct drm_connector *)connector,
-  6219								       mode_in);
-  6220			if (err < 0)
-> 6221				dev_err(connector->dev, "Failed to setup avi infoframe: %zd\n", err);
-  6222			timing_out->vic = avi_frame.video_code;
-  6223			err = drm_hdmi_vendor_infoframe_from_display_mode(&hv_frame,
-  6224									  (struct drm_connector *)connector,
-  6225									  mode_in);
-  6226			if (err < 0)
-  6227				dev_err(connector->dev, "Failed to setup vendor infoframe: %zd\n", err);
-  6228			timing_out->hdmi_vic = hv_frame.vic;
-  6229		}
-  6230	
-  6231		if (aconnector && is_freesync_video_mode(mode_in, aconnector)) {
-  6232			timing_out->h_addressable = mode_in->hdisplay;
-  6233			timing_out->h_total = mode_in->htotal;
-  6234			timing_out->h_sync_width = mode_in->hsync_end - mode_in->hsync_start;
-  6235			timing_out->h_front_porch = mode_in->hsync_start - mode_in->hdisplay;
-  6236			timing_out->v_total = mode_in->vtotal;
-  6237			timing_out->v_addressable = mode_in->vdisplay;
-  6238			timing_out->v_front_porch = mode_in->vsync_start - mode_in->vdisplay;
-  6239			timing_out->v_sync_width = mode_in->vsync_end - mode_in->vsync_start;
-  6240			timing_out->pix_clk_100hz = mode_in->clock * 10;
-  6241		} else {
-  6242			timing_out->h_addressable = mode_in->crtc_hdisplay;
-  6243			timing_out->h_total = mode_in->crtc_htotal;
-  6244			timing_out->h_sync_width = mode_in->crtc_hsync_end - mode_in->crtc_hsync_start;
-  6245			timing_out->h_front_porch = mode_in->crtc_hsync_start - mode_in->crtc_hdisplay;
-  6246			timing_out->v_total = mode_in->crtc_vtotal;
-  6247			timing_out->v_addressable = mode_in->crtc_vdisplay;
-  6248			timing_out->v_front_porch = mode_in->crtc_vsync_start - mode_in->crtc_vdisplay;
-  6249			timing_out->v_sync_width = mode_in->crtc_vsync_end - mode_in->crtc_vsync_start;
-  6250			timing_out->pix_clk_100hz = mode_in->crtc_clock * 10;
-  6251		}
-  6252	
-  6253		timing_out->aspect_ratio = get_aspect_ratio(mode_in);
-  6254	
-  6255		stream->out_transfer_func.type = TF_TYPE_PREDEFINED;
-  6256		stream->out_transfer_func.tf = TRANSFER_FUNCTION_SRGB;
-  6257		if (stream->signal == SIGNAL_TYPE_HDMI_TYPE_A) {
-  6258			if (!adjust_colour_depth_from_display_info(timing_out, info) &&
-  6259			    drm_mode_is_420_also(info, mode_in) &&
-  6260			    timing_out->pixel_encoding != PIXEL_ENCODING_YCBCR420) {
-  6261				timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR420;
-  6262				adjust_colour_depth_from_display_info(timing_out, info);
-  6263			}
-  6264		}
-  6265	
-  6266		stream->output_color_space = get_output_color_space(timing_out, connector_state);
-  6267		stream->content_type = get_output_content_type(connector_state);
-  6268	}
-  6269	
+Boot time without this function - 32TB RAM
+==========================================
+Startup finished in 1min 12.413s (kernel)
 
+Boot time with this function -  32TB RAM
+========================================
+Startup finished in 18.031s (kernel)
+
+Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+---
+ include/linux/memblock.h |  2 ++
+ mm/memblock.c            | 67 +++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 68 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index ef5a1ecc6e59..db87f7daa46c 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -277,6 +277,8 @@ static inline bool memblock_is_driver_managed(struct memblock_region *m)
+ 
+ int memblock_search_pfn_nid(unsigned long pfn, unsigned long *start_pfn,
+ 			    unsigned long  *end_pfn);
++bool curr_node_memblock_intersect_memory_block(unsigned long start_pfn,
++				unsigned long end_pfn, int curr_nid);
+ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
+ 			  unsigned long *out_end_pfn, int *out_nid);
+ 
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 0a53db4d9f7b..570ab7ac4dce 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -6,6 +6,8 @@
+  * Copyright (C) 2001 Peter Bergner.
+  */
+ 
++#include "linux/stddef.h"
++#include "linux/types.h"
+ #include <linux/kernel.h>
+ #include <linux/slab.h>
+ #include <linux/init.h>
+@@ -17,7 +19,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/memblock.h>
+ #include <linux/mutex.h>
+-
++#include <linux/minmax.h>
+ #include <asm/sections.h>
+ #include <linux/io.h>
+ 
+@@ -1909,6 +1911,69 @@ bool __init_memblock memblock_is_map_memory(phys_addr_t addr)
+ 	return !memblock_is_nomap(&memblock.memory.regions[i]);
+ }
+ 
++/**
++ * curr_node_memblock_intersect_memory_block:  checks if the current node's memblock
++ * region intersects with the memory block.
++ * @start_pfn: memory block start pfn
++ * @end_pfn: memory block end_pfn
++ * @curr_nid: Current node
++ *
++ * This function takes the start and end PFN of a memory block, as well as the node ID
++ * that is being registered. It then finds the memblock region of the current node and
++ * checks if the passed memory block intersects with the memblock. If there is an
++ * intersection, the function returns true; otherwise, it returns false.
++ *
++ * Return:
++ * If the current node's memblock region intersects with the memory block, it returns
++ * true; otherwise, it returns false.
++ */
++bool __init_memblock curr_node_memblock_intersect_memory_block(unsigned long start_pfn,
++						unsigned long end_pfn, int curr_nid)
++{
++	struct memblock_region *r;
++	unsigned long r_start, r_end;
++	unsigned long size = end_pfn - start_pfn;
++	unsigned long r_size = 0;
++
++	for_each_mem_region(r) {
++		r_start = PFN_DOWN(r->base);
++		r_end = PFN_DOWN(r->base + r->size);
++		r_size = r_end - r_start;
++
++		if (r->nid == curr_nid) {
++			if (size > r_size) {
++				/*
++				 * The memory block size is greater than the memblock
++				 * region size, meaning multiple memblocks can be present
++				 * within a single memory block. If the memblock's start
++				 * or end is within the memory block's start and end, It
++				 * indicates that the memblock is part of this memory block.
++				 * Therefore, the memory block can be added to the node
++				 * where the memblock resides.
++				 */
++				if (in_range(r_start, start_pfn, size) ||
++						in_range(r_end, start_pfn, size))
++					return true;
++			} else {
++				/*
++				 * The memory block size is less than or equal to the
++				 * memblock size, meaning multiple memory blocks can
++				 * be part of a single memblock region. If the memory
++				 * block's start or end is within the memblock's start
++				 * and end, it indicates that the memory block is part of
++				 * the memblock. Therefore, the memory block can be added
++				 * to the node where the memblock resides.
++				 */
++				if (in_range(start_pfn, r_start, r_size) ||
++						in_range(end_pfn, r_start, r_size))
++					return true;
++			}
++		}
++	}
++	return false;
++}
++
++
+ int __init_memblock memblock_search_pfn_nid(unsigned long pfn,
+ 			 unsigned long *start_pfn, unsigned long *end_pfn)
+ {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.48.1
+
 
