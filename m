@@ -1,121 +1,169 @@
-Return-Path: <linux-kernel+bounces-595793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E3CA8233B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:13:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED30CA82335
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F636189529D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:11:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 196B44A5EF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C619F25DAF3;
-	Wed,  9 Apr 2025 11:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DC325DD00;
+	Wed,  9 Apr 2025 11:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zxEB2b6G"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IuRXUoRV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B51425B67C
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 11:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170DA25C71D;
+	Wed,  9 Apr 2025 11:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744197089; cv=none; b=pS/cGNBpnKEq0GmLIehuCHeY+ASEUODoSEDnkbd/TLEwnv5ZH9G9+k4uRdPoASRKJtEZzX2SpD3jUonM03cLplOs3SOJr/N8glqfXTAKz7XFGbBHVlDdz2RgVFqwORkBw9MmoUWwOdXs823kwjqTcoikzhtdNIcPsh+nSMioI6o=
+	t=1744197142; cv=none; b=oujBtYU2rjmLD6oI7LAzg9LoYx/5V/B3VGOCmPbieXQCAUqne/i2aMRwJzafJvLS5UlNgrW19VeKXI+QMqpERG3UwebVSLqUKwQ5SLJUH3YutV/DWMBcGyfY8PKZMlS/twtcuF9scrupfF/OicpZ30t2RY9oCfYd/WXgwGKsLjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744197089; c=relaxed/simple;
-	bh=ik9ItygRr9yIPW2Mc/PZYhjH6z8YDKHWGfbwtOGw0G4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BXyWp8NjzQyuJDIGTjzmDtaCTmw24dHMqcLbtYgxqGkXb/fYY/n4pyyBjEjMifZJshLkjOddPmGkhZ+726feXpEpVtNKfO/T6T3RDcakM4f9kkrD4bB5dYSKgB5GNcLHae/lQzZ3Zhl80nsegVRE4ORiPkBzWivKV0n9a7p5lTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zxEB2b6G; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39ac8e7688aso4800484f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 04:11:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744197085; x=1744801885; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8hUKCIZwdAKFsLiLYa1VO4wMgsObAoyYESjSHJd2mFE=;
-        b=zxEB2b6GkdiH5RmQGYPA3R6M5aRd5o+w45x3omMFEvfbuyTTH1UUKCjgHexbzE20Z3
-         FBnSwe3I/kefB9m2+uAyc2/JUxG1tRXmXyakGFEfNwdA8+xBu6NUvxHc3VZTmn7BOqav
-         0QVDG/000kfdhBTDn/Zoub4TOXiMjvnxITWnZpuP3BdNAtij1kxHvhQaU4G4V8o7VHux
-         UY2kAMmkucXkx2kLg+spYODepMpDSFj43Q9cS4BFhgFiYjkSP+bD9QbmMABc9D0UY8/e
-         FnIVALYTLymZtFSuYjn/ig1/fnDs9U5n4c6GyiaxvYDi84UTm53P9WLSxF5D8HxzpPsp
-         ERzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744197085; x=1744801885;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8hUKCIZwdAKFsLiLYa1VO4wMgsObAoyYESjSHJd2mFE=;
-        b=QZEbakp149S6TZbeDUmKczMti4o/yABiy8T52/qMCRoPEnasHfrTZmplB48zhajkgX
-         7OwVE1y0Xfb9fdsNGWuRZWiRLxTkUBNmSViqsTGXEg+Jh4EWc2Qw4aWoTGFl274iKFnm
-         zhTivE/H+Bh+sD4dKCIuHWLsuLlspwoZPXI5hqu/a9T7MtsaJ7z1YxyZNtyNnDwA3099
-         kcVa/o+KUO/7nB7XiGNkLfnebRSOsKWjic7BmqXVMnNJNm7VezQpeRsfV5fRt0IeRLdp
-         7mpTwhG0nfPVHdleNv2vdbua6Yn2/UIDRY9Da7LF4ux3oUX3rtoVXBYuiivpl954S3VF
-         8d0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUtOu+4fnswBD0o/NsxBl6UjOlP8YQi8AWLP+lkaCUheMXc6dIs8Zlc58n6Ju6PeKMr8qgxu40GCCOzV+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0aHdXUz+fUGpDdZE7LO90XrU7Zs2nuMdcrKyh7mGFDlSchqrb
-	608zuw8VTi5F5Bxo+hk0+6LIfoMTwj7UeOfx4DC4ghTKJNYcLctXyH6On3LAf3U=
-X-Gm-Gg: ASbGncul7L+RKqCq/tH132/YI7XrIBsZmTVfj537nUs4iOYJe+vYk/wTCOKdZiZTY5i
-	2DZDTqvg7/hbdSKmF1Ey7UR1jISG/ztMs38YLzpJ8JEDNzFJ9nngv6Yga7d0+Dsic915Ki2nrQu
-	1i7B+/CDjIIqccWHOiicXyHZbhNDYjAE9tFxvh0UdzQ+ru0esQ/4KrG5rgMPSoUMhrAus+aMaWu
-	b8ZgKS60hK6s6hKdyr+xybtZuVOTcwLVd4yZfWsg6TZTEVYzIRXxuVE1eF+EWRe094577muhf1P
-	kghbUP7gqfp9BRYfCqt3/+4MS7IFu5RSw4PznbaBcdVt8w==
-X-Google-Smtp-Source: AGHT+IGXax2LtMxOpUGA9r+oCr9bPGcaXFt/3GzRkKF3FDOJvk1Gx+REYad/Sskufy4uK+n2UYFvKA==
-X-Received: by 2002:a05:6000:4009:b0:391:4684:dbef with SMTP id ffacd0b85a97d-39d87ab6243mr2104415f8f.17.1744197085566;
-        Wed, 09 Apr 2025 04:11:25 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43f23158849sm13409175e9.0.2025.04.09.04.11.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 04:11:25 -0700 (PDT)
-Date: Wed, 9 Apr 2025 14:11:21 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: Erick Karanja <karanja99erick@gmail.com>, gregkh@linuxfoundation.org,
-	outreachy@lists.linux.dev, philipp.g.hortmann@gmail.com,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] staging: rtl8723bs: Improve code readability
-Message-ID: <22a2c8a7-9669-40bd-b886-713833de5cc4@stanley.mountain>
-References: <cover.1744192642.git.karanja99erick@gmail.com>
- <97a2637f3ccefb3de0e15fd04f29f5f209f2a506.1744192642.git.karanja99erick@gmail.com>
- <3dda7f97-4ed8-cf6d-9310-60ed6259a386@inria.fr>
+	s=arc-20240116; t=1744197142; c=relaxed/simple;
+	bh=sxNzWeLknqUyzVMF6d4y49XHlMG3GHMlSEneyM5P2V8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AsOOlFa0gwYNmezWBdKNSDe8yPRoNjLM6UmECXIkMLhxpSXgEfjyMIGuePUQacmaY5VeLnRsGBwaumhxvWGviVEhgltTuZBZkhPS7GMIgHPha4rymogM9j2aN3AQoxnEnwrjuQM5LizMdbVnZEEST91jxSdEcG5YozzvOkdwzV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IuRXUoRV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5398TgeP032297;
+	Wed, 9 Apr 2025 11:12:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QNg6R2eh4WoQiKofBVHMx4Z8dMgsbFBHkzRO7DTyCM4=; b=IuRXUoRVqW0QUKry
+	midT09z1E/R6uibsODQQwUGPS1MSfH4g0+RBojeHNirKi5AD4FybJNqG87LqbJbC
+	BapvaQKXbzSrahdFGtUSM9+TRSotZOoBjvYzo0IBUd+ukZKm30FFVb/gYP34hhtw
+	A6FtJFYDDbqNIgIb7CvmC/KqFt9791x3UbF+enXMPKQOw5D94oyD4kEoFs95q3iU
+	y37WAelSY6c7kBsWQTit1dx9mGs3nPwJbphpddsVbW31mN1t6T3TmTaT0gfTvo3/
+	dc80EP5K5j80EYTqnTLGmR1RkfpomIWH+I71vYuKGeFNdBXH9K62uTdzjCeOmq8c
+	JTuLXA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twbeb5vh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Apr 2025 11:12:16 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 539BCFHc014671
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 9 Apr 2025 11:12:15 GMT
+Received: from [10.216.8.212] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 9 Apr 2025
+ 04:12:11 -0700
+Message-ID: <3c5a0470-7c60-c6f7-85b2-9dc5f90e44f0@quicinc.com>
+Date: Wed, 9 Apr 2025 16:42:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3dda7f97-4ed8-cf6d-9310-60ed6259a386@inria.fr>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] bus: mhi: ep: Update read pointer only after buffer is
+ written
+To: Sumit Kumar <quic_sumk@quicinc.com>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        Alex Elder <elder@kernel.org>,
+        "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>
+CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_akhvin@quicinc.com>,
+        <quic_skananth@quicinc.com>, <quic_vbadigan@quicinc.com>,
+        <stable@vger.kernel.org>, Youssef Samir <quic_yabdulra@quicinc.com>
+References: <20250409-rp_fix-v1-1-8cf1fa22ed28@quicinc.com>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <20250409-rp_fix-v1-1-8cf1fa22ed28@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: aL7EV4aHrtXG7PqdiEYUfHsAxwFQwll_
+X-Authority-Analysis: v=2.4 cv=T7OMT+KQ c=1 sm=1 tr=0 ts=67f65610 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=ljfrh_M9o-RCrfJy5NoA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: aL7EV4aHrtXG7PqdiEYUfHsAxwFQwll_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-09_04,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=999 lowpriorityscore=0 adultscore=0 phishscore=0 bulkscore=0
+ mlxscore=0 malwarescore=0 suspectscore=0 priorityscore=1501 spamscore=0
+ clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504090065
 
-On Wed, Apr 09, 2025 at 07:04:18AM -0400, Julia Lawall wrote:
-> > @@ -729,10 +721,9 @@ static void hal_ReadEFuse_WiFi(
-> >  		}
-> >
-> >  		if (offset < EFUSE_MAX_SECTION_8723B) {
-> > -			u16 addr;
-> > +			u16 addr = offset * PGPKT_DATA_SIZE;
-> >  			/*  Get word enable value from PG header */
-> >
-> > -			addr = offset * PGPKT_DATA_SIZE;
+
+
+On 4/9/2025 4:17 PM, Sumit Kumar wrote:
+> Inside mhi_ep_ring_add_element, the read pointer (rd_offset) is updated
+> before the buffer is written, potentially causing race conditions where
+> the host sees an updated read pointer before the buffer is actually
+> written. Updating rd_offset prematurely can lead to the host accessing
+> an uninitialized or incomplete element, resulting in data corruption.
 > 
-> I'm not sure about this one, due to the comment.
+> Invoke the buffer write before updating rd_offset to ensure the element
+> is fully written before signaling its availability.
 > 
-> julia
+> Fixes: bbdcba57a1a2 ("bus: mhi: ep: Add support for ring management")
+> cc: stable@vger.kernel.org
+> Co-developed-by: Youssef Samir <quic_yabdulra@quicinc.com>
+> Signed-off-by: Youssef Samir <quic_yabdulra@quicinc.com>
+> Signed-off-by: Sumit Kumar <quic_sumk@quicinc.com>
+Reviewed-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+
+- Krishna Chaitanya.
+> ---
+> ---
+>   drivers/bus/mhi/ep/ring.c | 16 ++++++++++------
+>   1 file changed, 10 insertions(+), 6 deletions(-)
 > 
-
-I feel like it works.  I wish there were a blank line after the
-declaration but that's something for a different patch.  Both of
-these are okay with me.  Try to be more creative with the subjects
-next time.  (Just put the file name in the subject because that's
-the only difference).
-
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
-
+> diff --git a/drivers/bus/mhi/ep/ring.c b/drivers/bus/mhi/ep/ring.c
+> index aeb53b2c34a8cd859393529d0c8860462bc687ed..26357ee68dee984d70ae5bf39f8f09f2cbcafe30 100644
+> --- a/drivers/bus/mhi/ep/ring.c
+> +++ b/drivers/bus/mhi/ep/ring.c
+> @@ -131,19 +131,23 @@ int mhi_ep_ring_add_element(struct mhi_ep_ring *ring, struct mhi_ring_element *e
+>   	}
+>   
+>   	old_offset = ring->rd_offset;
+> -	mhi_ep_ring_inc_index(ring);
+>   
+>   	dev_dbg(dev, "Adding an element to ring at offset (%zu)\n", ring->rd_offset);
+> +	buf_info.host_addr = ring->rbase + (old_offset * sizeof(*el));
+> +	buf_info.dev_addr = el;
+> +	buf_info.size = sizeof(*el);
+> +
+> +	ret = mhi_cntrl->write_sync(mhi_cntrl, &buf_info);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mhi_ep_ring_inc_index(ring);
+>   
+>   	/* Update rp in ring context */
+>   	rp = cpu_to_le64(ring->rd_offset * sizeof(*el) + ring->rbase);
+>   	memcpy_toio((void __iomem *) &ring->ring_ctx->generic.rp, &rp, sizeof(u64));
+>   
+> -	buf_info.host_addr = ring->rbase + (old_offset * sizeof(*el));
+> -	buf_info.dev_addr = el;
+> -	buf_info.size = sizeof(*el);
+> -
+> -	return mhi_cntrl->write_sync(mhi_cntrl, &buf_info);
+> +	return ret;
+>   }
+>   
+>   void mhi_ep_ring_init(struct mhi_ep_ring *ring, enum mhi_ep_ring_type type, u32 id)
+> 
+> ---
+> base-commit: 1e26c5e28ca5821a824e90dd359556f5e9e7b89f
+> change-id: 20250328-rp_fix-d7ebc18bc3be
+> 
+> Best regards,
 
