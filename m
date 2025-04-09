@@ -1,171 +1,140 @@
-Return-Path: <linux-kernel+bounces-597076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 057F5A834E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:02:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CF9A834DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 01:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9833466079
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 00:02:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAE078A3021
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999A94685;
-	Thu, 10 Apr 2025 00:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CErOvc4u"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F97921D59C;
+	Wed,  9 Apr 2025 23:59:17 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7BC5CB8
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 00:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082232144C4;
+	Wed,  9 Apr 2025 23:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744243336; cv=none; b=X9zHgrnUI3fyk0n4rcsjgMfDEnlaeoq3Asj9IM0evTBKF4cu4IHLKxuD05ZeMWtvsMFaK5LkV3qZLJyv2Fr/IbWXB/e24udsFkHfD8vw5XH7z4Y4LAZSjkQlK9PY5ZZyi7feDCHL1iEiAjvc/XQW6gdR2gNCvj7vVKUyHtXjStY=
+	t=1744243157; cv=none; b=oIEz8yCm41AGfodNpnDF63F34Iaghd5oGlfEktDrt5hW6mejfkjhDeU2sr0N5DifzWqNnxvpNMg6siJwtjLdMVSf8LffYvATCO2BgwYgQ773MbxU8HI0mOVQeAFQYIxEnSTwxY2rXjnOrOjxlZmYG4Zh8YEC6UwkENOxrXo88Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744243336; c=relaxed/simple;
-	bh=rKF1hbfcgw75F2EN5uNgusCOV3BqZbHH4JOjXRGX65w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dgbUN4cqtW44i0OxtpWnAau/ste+Lcf21+BZGvH+X7AVR6HhpZGnBMbyk52FkKo5pRBehqgfW9A4lZz61cum+Dybvobq/zuTAC37TnVu1r/621HbPKT9/vZ2sl1IqwKacpIKU2sD4ovE1WIVwx76BGr9PiILJ9AhvI1iSygCtmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CErOvc4u; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1744243324; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Aoq6JYCaV1p9yraciQnzm7D38594vGRZlTcVPXdUJs8=;
-	b=CErOvc4ukleVfOY+MFBpeEjrFbzWoD0cZXlHnn1TBPkJrRceYDh9pfwcj/LS7KpXkTzdGHSsPgu2I6AWlpoQMWu5+0ryWGeCboWJ6T9LiphyAEtGnEUKBdDjTxJ2FO9IKSSmyhvzsGGlZVDgHPLjq7j0WLMyaaIif/tBgwHd4E0=
-Received: from 30.134.5.237(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WWLx0T9_1744243006 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 10 Apr 2025 07:56:46 +0800
-Message-ID: <7af3e868-04cb-47b1-a81b-651be3756ec5@linux.alibaba.com>
-Date: Thu, 10 Apr 2025 07:56:45 +0800
+	s=arc-20240116; t=1744243157; c=relaxed/simple;
+	bh=fbizQkJURv/VI4ti6Z1JNgUGnYq1ZQ73QlfCFSh6YFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RawUuz+QRiy0SxngPhLbjfZFq7574DotMyTm2efu0PI37gIYOKot/YAnpSSjYxSY5GWXrzW/5RmgEfZJtLeiJr+dh5KXnx5zl8gSR8DjAOBTBn8cFnU5iU2ALLQHaWfBolNEy9kIwg/UcmZezg/Lku/qhVbn4Tt/xu/PBgKdyXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.27.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id C5016343371;
+	Wed, 09 Apr 2025 23:59:13 +0000 (UTC)
+Date: Wed, 9 Apr 2025 23:59:09 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	benjamin.larsson@genexis.eu, bastien.curutchet@bootlin.com,
+	andriy.shevchenko@linux.intel.com, u.kleine-koenig@baylibre.com,
+	lkundrak@v3.sk, devicetree@vger.kernel.org,
+	linux-serial@vger.kernel.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] serial: 8250_of: add support for an optional bus
+ clock
+Message-ID: <20250409235909-GYB19066@gentoo>
+References: <20250409192213.1130181-1-elder@riscstar.com>
+ <20250409192213.1130181-3-elder@riscstar.com>
+ <20250409214345-GYA19066@gentoo>
+ <04facbe3-cd40-4d79-a204-2b91880da331@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] erofs: add __packed annotation to union(__le16..)
-To: David Laight <david.laight.linux@gmail.com>
-Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
- kernel test robot <lkp@intel.com>
-References: <20250408114448.4040220-1-hsiangkao@linux.alibaba.com>
- <20250409195222.4cadc368@pumpkin>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20250409195222.4cadc368@pumpkin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <04facbe3-cd40-4d79-a204-2b91880da331@riscstar.com>
 
-Hi David,
+Hi Alex,
 
-On 2025/4/10 02:52, David Laight wrote:
-> On Tue,  8 Apr 2025 19:44:47 +0800
-> Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+On 17:47 Wed 09 Apr     , Alex Elder wrote:
+> On 4/9/25 4:43 PM, Yixun Lan wrote:
+> > Hi Alex,
+> > 
+> > On 14:22 Wed 09 Apr     , Alex Elder wrote:
+> >> The SpacemiT UART requires a bus clock to be enabled, in addition to
+> >> it's "normal" core clock.  Look up the optional bus clock by name,
+> >> and if that's found, look up the core clock using the name "core".
+> >>
+> >> Supplying a bus clock is optional.  If no bus clock is needed, the
+> >> the first/only clock is used for the core clock.
+> >>
+> >> Signed-off-by: Alex Elder <elder@riscstar.com>
+> >> ---
+> >> v2: Update logic to more check for the optional bus clock first
+> >>
+> >>   drivers/tty/serial/8250/8250_of.c | 11 ++++++++++-
+> >>   1 file changed, 10 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/tty/serial/8250/8250_of.c b/drivers/tty/serial/8250/8250_of.c
+> >> index 11c860ea80f60..a90a5462aa72a 100644
+> >> --- a/drivers/tty/serial/8250/8250_of.c
+> >> +++ b/drivers/tty/serial/8250/8250_of.c
+> >> @@ -123,7 +123,16 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+> >>   
+> >>   	/* Get clk rate through clk driver if present */
+> >>   	if (!port->uartclk) {
+> >> -		info->clk = devm_clk_get_enabled(dev, NULL);
+> >> +		struct clk *bus_clk;
+> > we also need to handle clk in suspend/resume procedure, so
+> > I think you need to put bus_clk inside struct of_serial_info..
 > 
->> I'm unsure why they aren't 2 bytes in size only in arm-linux-gnueabi.
+> OK, I didn't do anything for that in previous versions of the
+> series.
 > 
-> IIRC one of the arm ABI aligns structures on 32 bit boundaries.
-
-Thanks for your reply, but I'm not sure if it's the issue.
-
+> I think that means we'd call clk_disable_unprepare() on
+> the bus clock after doing so for the function clock.  And
+> clk_prepare_enable() on the bus clock before doing that for
+> the function clock in of_serial_resume().  That's easy.
 > 
->>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/r/202504051202.DS7QIknJ-lkp@intel.com
->> Fixes: 61ba89b57905 ("erofs: add 48-bit block addressing on-disk support")
->> Fixes: efb2aef569b3 ("erofs: add encoded extent on-disk definition")
->> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
->> ---
->>   fs/erofs/erofs_fs.h | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
->> index 61a5ee11f187..94bf636776b0 100644
->> --- a/fs/erofs/erofs_fs.h
->> +++ b/fs/erofs/erofs_fs.h
->> @@ -56,7 +56,7 @@ struct erofs_super_block {
->>   	union {
->>   		__le16 rootnid_2b;	/* nid of root directory */
->>   		__le16 blocks_hi;	/* (48BIT on) blocks count MSB */
->> -	} rb;
->> +	} __packed rb;
->>   	__le64 inos;            /* total valid ino # (== f_files - f_favail) */
->>   	__le64 epoch;		/* base seconds used for compact inodes */
->>   	__le32 fixed_nsec;	/* fixed nanoseconds for compact inodes */
->> @@ -148,7 +148,7 @@ union erofs_inode_i_nb {
->>   	__le16 nlink;		/* if EROFS_I_NLINK_1_BIT is unset */
->>   	__le16 blocks_hi;	/* total blocks count MSB */
->>   	__le16 startblk_hi;	/* starting block number MSB */
->> -};
->> +} __packed;
+right, pretty much similar to info->clk
+
+> Is there anything further you think is required?  There is
+> no clock rate associated with the bus clock that I know of,
+> so even if the function clock rate changes, the bus clock
+> can remain as-is.
 > 
-> That shouldn't be necessary and will kill performance on some systems.
-> The 'packed' on the member should be enough to reduce the size.
+no further info I know of, my best guess, the rate doesn't
+really matter, a wide clk range should just work fine.
 
-It cannot be resolved by the following diff:
-
-diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
-index 94bf636776b0..1f6233dfdcb0 100644
---- a/fs/erofs/erofs_fs.h
-+++ b/fs/erofs/erofs_fs.h
-@@ -148,14 +148,14 @@ union erofs_inode_i_nb {
-         __le16 nlink;           /* if EROFS_I_NLINK_1_BIT is unset */
-         __le16 blocks_hi;       /* total blocks count MSB */
-         __le16 startblk_hi;     /* starting block number MSB */
--} __packed;
-+};
-
-  /* 32-byte reduced form of an ondisk inode */
-  struct erofs_inode_compact {
-         __le16 i_format;        /* inode format hints */
-         __le16 i_xattr_icount;
-         __le16 i_mode;
--       union erofs_inode_i_nb i_nb;
-+       union erofs_inode_i_nb i_nb __packed;
-         __le32 i_size;
-         __le32 i_mtime;
-         union erofs_inode_i_u i_u;
-@@ -171,7 +171,7 @@ struct erofs_inode_extended {
-         __le16 i_format;        /* inode format hints */
-         __le16 i_xattr_icount;
-         __le16 i_mode;
--       union erofs_inode_i_nb i_nb;
-+       union erofs_inode_i_nb i_nb __packed;
-         __le64 i_size;
-         union erofs_inode_i_u i_u;
-
-I doesn't work and will report
-
-In file included from <command-line>:
-In function 'erofs_check_ondisk_layout_definitions',
-     inlined from 'erofs_module_init' at ../fs/erofs/super.c:817:2:
-./../include/linux/compiler_types.h:542:38: error: call to '__compiletime_assert_332' declared with attribute error: BUILD_BUG_ON failed: sizeof(struct erofs_inode_compact) != 32
-   542 |  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-       |
-
+> > 
+> >> +
+> >> +		bus_clk = devm_clk_get_optional_enabled(dev, "bus");
+> > for the 'optional', we can interpret it's optional for other vendor
+> > UART, but a must required clk for SpacemiT's k1 UART controller
+> > 
+> > would it better to guard this inside a compatible test or even introduce
+> > a flag in compatible data?
 > 
-> I'd add a compile assert (of some form) on the size of the structure.
+> I don't personally think so. We could, but the DT binding is going
+> out of its way to define when the bus clock is required.  This is
+> simpler, and generic.
+> 
+I would personally choose the way of introducing a flag of compatible data,
+but it's a lot change of the code (may not worth the effort)..
 
-you mean
+anyway, I'm fine with your current version, and yes, it's generic
+thanks for doing this..
 
-@@ -435,6 +435,7 @@ static inline void erofs_check_ondisk_layout_definitions(void)
-         };
-
-         BUILD_BUG_ON(sizeof(struct erofs_super_block) != 128);
-+       BUILD_BUG_ON(sizeof(union erofs_inode_i_nb) != 2);
-         BUILD_BUG_ON(sizeof(struct erofs_inode_compact) != 32);
-
-?
-
-
-./../include/linux/compiler_types.h:542:38: error: call to '__compiletime_assert_332' declared with attribute error: BUILD_BUG_ON failed: sizeof(union erofs_inode_i_nb) != 2
-   542 |  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-       |                                      ^
-
-That doesn't work too.
-
-Thanks,
-Gao Xiang
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
