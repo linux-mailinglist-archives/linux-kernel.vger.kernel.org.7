@@ -1,158 +1,148 @@
-Return-Path: <linux-kernel+bounces-595803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76CAA82346
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:16:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9F4A82350
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 981171B848E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:14:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E0CC8C12AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A536325DB1B;
-	Wed,  9 Apr 2025 11:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C88025D914;
+	Wed,  9 Apr 2025 11:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="M/pSLXX0"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ndkVFXp2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T3ygFDei"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80E525DB19;
-	Wed,  9 Apr 2025 11:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0990433AC;
+	Wed,  9 Apr 2025 11:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744197246; cv=none; b=p8sxDnZSkEVCGeKZ1qn5IruOSwlYccXUPJOmSG7rkeFLtJBvLgJqsTr521KaKsxnS0t+zlOOk2rDHDfG5a4HNvKRBMW8jN+HiCo2WiNNTpjaxd7/0Cw1WeaZFe1bU/qWFCNjC69tJbW7i1xsujabEQM9uYmA+4PSegiFoVVBKOU=
+	t=1744197230; cv=none; b=PvQ3IjiFa47bq6gSo1Ld3/7RCSuON2RxJpydk9v05xhQIjH1y4+jIqe4+XXtV67MMRGjPWYB4AxBj4k7jAWY8oRrQFCVGeek3C5wL0olC6YlkOBpQEntffSs3+QC8VpQY3tMbM5toW89hf+rRcMe92hcCXIZVyrD2XGxcs5dxrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744197246; c=relaxed/simple;
-	bh=jqo5HxxGhvzTzgubMoInNzjOBMJ67bIXYB7bcU/dgHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dGusjZv7CGn/umcuvMF8JBuvkMg2DLpkKwLd+Xgx2T0mIV7uflFRU7oqrBaSr/FsLTNZ5Fj1T/btSMVzudM0Ws99dkuQkGCgk2edRAJfQOUhCXd32/INaFneSZDY8jQ5kAfRh8lLMCb6Mevpt+4m39vPVq2wC6rPDQtlhZcA8HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=M/pSLXX0; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7F3DC40E021D;
-	Wed,  9 Apr 2025 11:14:00 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id h6FXT82fAaNf; Wed,  9 Apr 2025 11:13:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1744197235; bh=Z+kdrJw5u0x8UOKXCbftptPKteCCCY2ZN7JQDeXz64g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M/pSLXX03o7RlfCjM0a0d60z+uslg9vb2bmKjWNowzOMYOzLJK7R4FkiONPwZBKyv
-	 0TK4inJABZF6pyxhwbvfLM7ppPs4ySM/vsbFnyoKrJSpgCKZt9guv7yNdYm7LNZXUH
-	 TktdO4REClguIsZHEswUFuoCGAywSdsDW3OVot/HqvxPtmEf3Qad0+Yg0MgYFeTF/L
-	 Fq3671G3Ab/ncJfW/l7EiB8EMlWXvRsdYsz8C2n9dKDxfB01UU3sQV+Il2ttv407iH
-	 zkJ0xagCdhOkU3m+SDrDPGsE/uCrBFYGVWaIL42lSk+oj9Txgso8wO6e90V1RfISOM
-	 AeR7DcdnGlJLrtYTzoRX1EkU2MURwI5i98yK1DbU27lWzTDd2E+6zMtDsE9WIHzDdi
-	 RIrgtmAVHh3MMEJSbz9/ncHt0SwE0t8AS/pUTnP5OtQOQWh2kCy+ECI1Nepf1L8O/6
-	 fWCRV27Iu5xdKZCfJcaz8vUmyOmESGRIFsoIIM31tQY/e2I+kAleZXHU9U2dOIhTrV
-	 mtuWqkbHmMjLzpoSRoluhJuB5Nws510Ij0y3EKcmBLfKxh3IknFFv/45WqchOoX6A/
-	 KvimvoI16NuUORA0upvD9qNYFX4OWqXOc2a5WWHj0CYgbavuz7vY9jEdjznBWi+h50
-	 X+0hzc4+kl/ZPo11MFzpsBLA=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7366D40E01A3;
-	Wed,  9 Apr 2025 11:13:47 +0000 (UTC)
-Date: Wed, 9 Apr 2025 13:13:41 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Naveen N Rao <naveen@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, x86@kernel.org
-Subject: [PATCH 1/2] Documentation/x86: Update the naming of CPU features for
- /proc/cpuinfo
-Message-ID: <20250409111341.GDZ_ZWZS4LckBcirLE@fat_crate.local>
-References: <20250403094308.2297617-1-naveen@kernel.org>
- <20250403121727.GFZ-58VzYwaTBv4rbu@fat_crate.local>
- <4uxkf5riuv66kdxa7zteubdfsjy4vac6td5z6cckilyiqjceft@zk3mzmfv3lgk>
- <20250403132121.GJZ-6LUVmn5S2BMF-A@fat_crate.local>
- <en5nisgiq2in7sjj2ysovxrqcuqh6ruhi32nsfrwamrt6odftc@jehodnirqa64>
+	s=arc-20240116; t=1744197230; c=relaxed/simple;
+	bh=qvZ41SeZUWTJUM2/0wOjudaZGd/o08OfWeoXOJTa5LQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mlD54hVIctHwKpbRVqyAMhlgq/4M+stztxPpojLb11rb74qke890oRsR6plwTeOeONmEBJl0r9oU2jwpxpUn9Gpe74DpkhzA3ISxPFDccLwL0/CdxR5ceeM/JhpYd1w8RAijhuMA3MBPkDiv26F4BzWsCyKLNzPDfyRW8BU+ufY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ndkVFXp2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T3ygFDei; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744197226;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1UIP4ZGix9p5MaH9RHiON2iNZ1qNwydPjYtJFAn6h60=;
+	b=ndkVFXp2m4OiYv7D2NIsqsFhmpQaMrSMq4M/Fxl214eOX7BqCBLgBejQ21mYGWpaoi+Sed
+	fiChITipD81wOCRi1M013UAXtjJ8J6bKfMJYV1HWIIDrukJA6EYi75IbNO9Y3p0eGnjNJj
+	qxCEh2pnxJuTBIYoHrH09g6phqYuPdkGfnqjCf//lvjqIY2aU8etRxte3SLw7MEaCPoDkS
+	/l6+j6s0C5wQiifRFsEnK6u/w9o2aw+nK+fSQBlY7Ks9EIm0gFH4UHtBNWirDgvr6VqJKu
+	KS/1NxaCjEu+Vg4I1Y2I8mlQqJFIlJzoAhpOnOPOxI38446wm31YohyCasKkMA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744197226;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1UIP4ZGix9p5MaH9RHiON2iNZ1qNwydPjYtJFAn6h60=;
+	b=T3ygFDeiKIpY65OR/wfBjvG7m5xLPXI2LXSCfvJFe1hMWt2WW8vCSUQfhLAenBcfB8+5oZ
+	dJ6r7/B2gnhDWvBA==
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>, Marc Zyngier
+ <maz@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Sascha Bischoff <sascha.bischoff@arm.com>, Timothy Hayes
+ <timothy.hayes@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Lorenzo
+ Pieralisi <lpieralisi@kernel.org>
+Subject: Re: [PATCH 22/24] irqchip/gic-v5: Add GICv5 ITS support
+In-Reply-To: <20250408-gicv5-host-v1-22-1f26db465f8d@kernel.org>
+References: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
+ <20250408-gicv5-host-v1-22-1f26db465f8d@kernel.org>
+Date: Wed, 09 Apr 2025 13:13:46 +0200
+Message-ID: <87tt6xtwnp.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <en5nisgiq2in7sjj2ysovxrqcuqh6ruhi32nsfrwamrt6odftc@jehodnirqa64>
+Content-Type: text/plain
 
-From: "Naveen N Rao (AMD)" <naveen@kernel.org>
-Date: Wed, 9 Apr 2025 12:42:45 +0200
+On Tue, Apr 08 2025 at 12:50, Lorenzo Pieralisi wrote:
+>  
+> +void gicv5_irs_syncr(void)
+> +{
+> +	u32 syncr;
+> +	u32 statusr;
+> +	int ret;
+> +	struct gicv5_irs_chip_data *irs_data;
+> +
+> +	irs_data = list_first_entry_or_null(&irs_nodes,
+> +					    struct gicv5_irs_chip_data, entry);
+> +	if (WARN_ON(!irs_data))
+> +		return;
+> +
+> +	syncr = FIELD_PREP(GICV5_IRS_SYNCR_SYNC, 1);
+> +	irs_writel(irs_data, syncr, GICV5_IRS_SYNCR);
+> +
+> +	ret = readl_relaxed_poll_timeout_atomic(
+> +			irs_data->irs_base + GICV5_IRS_SYNC_STATUSR, statusr,
+> +			FIELD_GET(GICV5_IRS_SYNC_STATUSR_IDLE, statusr), 1,
+> +			USEC_PER_SEC);
+> +
+> +	if (ret == -ETIMEDOUT)
+> +		pr_err_ratelimited("SYNCR timeout...\n");
 
-Commit
+This timeout poll thing looks very familiar by now. Third variant :)
 
-  78ce84b9e0a5 ("x86/cpufeatures: Flip the /proc/cpuinfo appearance logic")
+> +static int gicv5_its_wait_for_invalidation(struct gicv5_its_chip_data *its)
+> +{
+> +	int ret;
+> +	u32 statusr;
+> +
+> +	ret = readl_relaxed_poll_timeout_atomic(
+> +			its->its_base + GICV5_ITS_STATUSR, statusr,
+> +			FIELD_GET(GICV5_ITS_STATUSR_IDLE, statusr), 1,
+> +			USEC_PER_SEC);
+> +
+> +	if (ret == -ETIMEDOUT)
+> +		pr_err_ratelimited("STATUSR timeout...\n");
+> +
+> +	return ret;
+> +}
 
-changed how CPU feature names should be specified. Update document to
-reflect the same.
+And number four follows suit :)
 
-Signed-off-by: Naveen N Rao (AMD) <naveen@kernel.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- Documentation/arch/x86/cpuinfo.rst | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+> +
+> +static void gicv5_its_syncr(struct gicv5_its_chip_data *its,
+> +			    struct gicv5_its_dev *its_dev)
+> +{
+> +	int ret;
+> +	u64 syncr;
+> +	u32 statusr;
+> +
+> +	syncr = FIELD_PREP(GICV5_ITS_SYNCR_SYNC, 1) |
+> +		FIELD_PREP(GICV5_ITS_SYNCR_DEVICEID, its_dev->device_id);
+> +
+> +	its_writeq(its, syncr, GICV5_ITS_SYNCR);
+> +
+> +	ret = readl_relaxed_poll_timeout_atomic(
+> +			its->its_base + GICV5_ITS_SYNC_STATUSR, statusr,
+> +			FIELD_GET(GICV5_ITS_SYNC_STATUSR_IDLE, statusr), 1,
+> +			USEC_PER_SEC);
+> +
+> +	if (ret == -ETIMEDOUT)
+> +		pr_err_ratelimited("SYNCR timeout...\n");
+> +}
 
-diff --git a/Documentation/arch/x86/cpuinfo.rst b/Documentation/arch/x86/cpuinfo.rst
-index 6ef426a52cdc..7114f34ba3e6 100644
---- a/Documentation/arch/x86/cpuinfo.rst
-+++ b/Documentation/arch/x86/cpuinfo.rst
-@@ -130,14 +130,18 @@ x86_cap/bug_flags[] arrays in kernel/cpu/capflags.c. The names in the
- resulting x86_cap/bug_flags[] are used to populate /proc/cpuinfo. The naming
- of flags in the x86_cap/bug_flags[] are as follows:
- 
--a: The name of the flag is from the string in X86_FEATURE_<name> by default.
------------------------------------------------------------------------------
--By default, the flag <name> in /proc/cpuinfo is extracted from the respective
--X86_FEATURE_<name> in cpufeatures.h. For example, the flag "avx2" is from
--X86_FEATURE_AVX2.
--
--b: The naming can be overridden.
----------------------------------
-+a: Flags do not appear by default in /proc/cpuinfo
-+--------------------------------------------------
-+
-+Feature flags are omitted by default from /proc/cpuinfo as it does not make
-+sense for the feature to be exposed to userspace in most cases. For example,
-+X86_FEATURE_ALWAYS is defined in cpufeatures.h but that flag is an internal
-+kernel feature used in the alternative runtime patching functionality. So the
-+flag does not appear in /proc/cpuinfo.
-+
-+b: Specify a flag name if absolutely needed
-+-------------------------------------------
-+
- If the comment on the line for the #define X86_FEATURE_* starts with a
- double-quote character (""), the string inside the double-quote characters
- will be the name of the flags. For example, the flag "sse4_1" comes from
-@@ -148,14 +152,6 @@ needed. For instance, /proc/cpuinfo is a userspace interface and must remain
- constant. If, for some reason, the naming of X86_FEATURE_<name> changes, one
- shall override the new naming with the name already used in /proc/cpuinfo.
- 
--c: The naming override can be "", which means it will not appear in /proc/cpuinfo.
------------------------------------------------------------------------------------
--The feature shall be omitted from /proc/cpuinfo if it does not make sense for
--the feature to be exposed to userspace. For example, X86_FEATURE_ALWAYS is
--defined in cpufeatures.h but that flag is an internal kernel feature used
--in the alternative runtime patching functionality. So, its name is overridden
--with "". Its flag will not appear in /proc/cpuinfo.
--
- Flags are missing when one or more of these happen
- ==================================================
- 
--- 
-2.43.0
+Along with #5 
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+        tglx
 
