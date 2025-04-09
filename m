@@ -1,231 +1,121 @@
-Return-Path: <linux-kernel+bounces-595661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EEF0A82153
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:51:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38BD7A82171
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21EBB3B55FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:50:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 149431705FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCAB25D524;
-	Wed,  9 Apr 2025 09:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B9A25D53C;
+	Wed,  9 Apr 2025 09:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n/mXTtzP"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="uQDWmYB2"
+Received: from out203-205-221-164.mail.qq.com (out203-205-221-164.mail.qq.com [203.205.221.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6877225C70B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38AE25D206;
+	Wed,  9 Apr 2025 09:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744192264; cv=none; b=AVnCN3dTf2+Gd4+AYK/EO/JrXY15h+YIv5hwmdfJguHcljXCva0MIg9iYzeiZBGjD+XkUaT40EulXNcLt4Ag95WccyWDGNsIMe0B2Nk6iZGzZlBFRuewNu5bI2jnPfYs5GhIt1UHejDs6sIemmNPj6mbS2oXbP6t0EMrgxqpQKM=
+	t=1744192611; cv=none; b=ahxXmXz/BiLt6e1ZsHNjpk8bzE+nw/Mn2G2esz/XIss18376S7b137tpQ+1QQ6eOIamr9BBsgzwTisnQetztpTQ+RCiHRTt742/rWuwYeIt3wFvsXUlXx6AQGVTqT0bGhhNp4gvBnXhlzuWgkldLbk3aJcSSf/GextZb3L5HMZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744192264; c=relaxed/simple;
-	bh=DpUkIKGDpIBV3cYAXbEup5OjKbfXtLEX/LwSCYEclE8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aBOGCzkyLR2OzYCXxIKjC3BrC3rFBw2Ye7oIsJucD+RmNG15+sGnI3dhv6Jggz4r43Qnxthj2oq8SKlX7KUDnKGjIry3PD7My2wNiPnLf7s0V8Tn70Lq7R5ZtxiTxBVddfILkNlXTobdy9ePMIc/f3VbLtSwwsaLUph2tLSDnyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n/mXTtzP; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-52403e39a23so5205856e0c.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 02:51:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744192260; x=1744797060; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1njNObE6GIJqOAUn6DtRc5r3V4Q5XV6eVkgK12erEv4=;
-        b=n/mXTtzPLQGerKvlRcpBFBjJb/WS639fjIVNzGQUqR6egcxs8mSi7bbSGNJOAOQam7
-         8XNaDo2tUGNhAVDE18HMejiyv8gvtoGnlRGZfhzUTXsJS9A7Rs+qXziA01kj9gD4IUXu
-         UR4xV8Aty/ZfMyXlhJh6kTYs1/EG63m06nqo/gPrJFkJ1NWGrP7eYQpJn3+VOODaqWFl
-         0rQp/WyuL47Yc+4IaBQwAXuM0KsynVc9kcrKnI/7zLPsT0LccxFq0Dwi+t4Zr5J8VAM1
-         PGeql7h7+ZH+L3+cep4W/85P/PFf25CNLfbYQntJevEIZTsINhcRLnPUYkAcjuhL5wnV
-         xg2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744192260; x=1744797060;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1njNObE6GIJqOAUn6DtRc5r3V4Q5XV6eVkgK12erEv4=;
-        b=l/8wVfkUDdfXmro2mRqSlzcS6VpTOpkrTFK1m47fhwuhnD11PIgr7WYref1mycltF7
-         40NLJJWd1MJ9/53VDmozoMAuaWoZ5o7eUjwswLzu8wvImaXd5lE0SjqY8eI6ZtVSwUgK
-         +rpXqfUV6DMIF4gpdK/pVL4gUDhcm7u43m30xQnP1m7KphVUOI2wIenofVWBpLVQ89NF
-         VR+2//i9IiG15CvjElNeHAHuJRo6mjjxqWWzG714DKns1c016nWq0nETxiCzpPzlWM5d
-         441gCRd/FIyGH2Y+Z6IqM4N/vYhVDc2qYWWNWDQlgLG/3zZyOCWPOm+tcXYBCVn8r18K
-         qkiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoGyqdDcBmg4f0Dc0QzwKmGWRWf6kglqbWubokj9inFjTzq3qAaE8EWmOdnWuRLxuQNpLj1WlooiDOn5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLZ4zcbZiOAwwBfvLsh/1hh+ho/yMUk3axyu3IhFDcKiVRECNl
-	rH95SyngwaiY9WZKPYXSfDYKco4j5fSkNG2d6BWTGm7DH6FPl1B1tADhjNENTEpfBlPkslU7GG0
-	m+f+d/BG8FS6BoDtDaAgxG3y1pdPI5e3e8kiPDw==
-X-Gm-Gg: ASbGnctS8ye0TetPBdNYqHKw4duoVwQXJ1geMU7j2PWLhHaMdF5ShbWvimUVF3bXHtl
-	OBXOU5XWxqCgdG7jxLScXm0V+igLQOSIXqVUuD44SyGqKmX4mH+rAvZP1YOzP8gxNuD9EziJk21
-	99u9ew5I36gLg2spKpD9S8QDK9SFKhBrilQqP2F3zc4ZOpAwROICJU5Mk=
-X-Google-Smtp-Source: AGHT+IHsG0WKPLT9y5IYgBaUgVr1z4LIH9R6xpKkJTuJ5byGHhHn7WE9slVfaWZ/SR14YCSc7WcOvPakH+olVCjROHA=
-X-Received: by 2002:a05:6102:570f:b0:4bb:e80b:473d with SMTP id
- ada2fe7eead31-4c9c41848f6mr1465104137.6.1744192260230; Wed, 09 Apr 2025
- 02:51:00 -0700 (PDT)
+	s=arc-20240116; t=1744192611; c=relaxed/simple;
+	bh=wK1y6dHPy4sbGssX93eGO5NCjBNTcZms0HLXlXqdmeM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=jtv11MKwsNwKkb1Sa+YJd6JoRktsBib6m3n5wpwSfWzjAQ/OnaKGvbZvj49SBD8LvsvGMzmgDWOVg1M+b/Oqeteqpl0JItVyMyRhzLJPv4qncfBstTlz+dwYsaAcqT6rmZG1L+21Iv9reO3JJkc7OO2WSGEPQbxANKNOCgVNLAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=uQDWmYB2; arc=none smtp.client-ip=203.205.221.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1744192304; bh=7Y4Q2wgqKIpLG/t08yDgQVZzMfyRABq6eyXLD9OhCis=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=uQDWmYB2tfWuwCCZsRlCVj4aTl+da6p3nlEofHUzzk2CrS7ds5gks04Q65pcDUDhy
+	 WiELwRIPqxWSQKPxjSIxazBDaoe4Yunoz6qlArOBVaMyRTXkCvv/dMRr1VKhbIHvLM
+	 ejc+Co1WifnhhvkJSDBvmB+KeJPJpjtLyq13WPkg=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id CEB04603; Wed, 09 Apr 2025 17:51:43 +0800
+X-QQ-mid: xmsmtpt1744192303tvp8i7h6x
+Message-ID: <tencent_C797B88F7509E18C70E48CD99275BAFD1E0A@qq.com>
+X-QQ-XMAILINFO: Mg/13mbJq/Ru6Y7pf9rnxlFchTWPyEfj/S7AIffDwpj/H3SURotqVEM0ta4n4o
+	 ZtdnahsYqyYJQJPtQtsf81LRHSRFKgO2Dj+sVSh+karuWL2kVQXDdRZimbIHkMVWraPzcPTx2Qil
+	 bdVQrfGSrwza+eTwNvLP1jJDB4Tey/GJLKkspk6YU6lysjskwbb1ECNP8w2q0B/zDqgbfcPYFVOP
+	 7trh+3dEOe+rgNoSllQOJJa5su2sWN8qCxUT649mCf/irsowHNNatTcMm6hLWJSrpO675SZ/2Lnd
+	 uMlAY8/bcxY+u1lzb5pkgMbjDu15Dx+NLmejAxHB7fSuA+5xdX2ODVHdendZ1plUrQMgnl29808H
+	 prWJUXBecvGmi+QuOjMnbD2l2bE/VP0nMAWsdW5hJVBYvwG72nAOCi38Zx8bz0bybIMPBkPsmpHZ
+	 UNIMAz7UuojB80IptKuedAcJ6zfBoazA6qYuooGVsWGQNypi3lU4GJF0Hqn3TdUN0xxZsVrW4Cvg
+	 PLodkWCUJcfWvY9SGZoNKXnzgU9C5xPX7JFZFOp5ee6bmEiCP4gFvBbkKQkzyAUrt1vNvbXQZKZK
+	 RXJIVg48NkltijSl2RzHvDNPeu+SfPw3cpRpMC+SjDV4vXvAVEFK839Kn9arNEWXaFQqyL269wj8
+	 0Nf9dqjRc4dF3REMRGWJ3Mf0LCLlX8IAJLWDKg6JyqMrVQpQQgcNTAH6z1QHcFdJw4HHFSapvlVb
+	 XYBv4mLYfL5voJivFH1bf2lxe/OW+533BNTsUbmYm8Mdp+V7GV2k2blvRNcbPni9dMIGijuLf3+c
+	 V46QHZ5SsduccyktGbi0FBjLKtbk9smm7fjdMKgetkfxCGMzh6VFejEbTm8wdZQsH+i1FLKKPAEW
+	 PF5Q4jVOdImlujCKr6hicre872nrZZWU6oyfyJ4GTa0+SGSuo0vhDb32ZjOcf65WJpULIEipUEsi
+	 KY7zC6agAZI08t5lH3oN06jxYC+TdVWCfdzqwdGttuMTx/Jf1xx+aoc9fiQJJS0dz358MXu/0OXP
+	 tlNFIBXw==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Yaxiong Tian <iambestgod@qq.com>
+To: rafael@kernel.org,
+	viresh.kumar@linaro.org,
+	Pierre.Gondois@arm.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yaxiong Tian <tianyaxiong@kylinos.cn>
+Subject: [PATCH 1/2] cpufreq: cppc: Update and opt comment for cost calculation method
+Date: Wed,  9 Apr 2025 17:51:41 +0800
+X-OQ-MSGID: <20250409095141.1691685-1-iambestgod@qq.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <tencent_D6C4728C5C687C042BA7C156B0F3ECF7AE05@qq.com>
+References: <tencent_D6C4728C5C687C042BA7C156B0F3ECF7AE05@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408104820.353768086@linuxfoundation.org>
-In-Reply-To: <20250408104820.353768086@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 9 Apr 2025 15:20:48 +0530
-X-Gm-Features: ATxdqUHXBcjtcqSTk0bz5Hn75TBoEbSUnr0VzKiWJ8WGDtcsvBL0fc7wW3KoqtA
-Message-ID: <CA+G9fYty2+wHZUUVBWposQB1uDV+Z-b3+5HgsJP-a=z3pjEseQ@mail.gmail.com>
-Subject: Re: [PATCH 5.10 000/227] 5.10.236-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 8 Apr 2025 at 16:26, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.10.236 release.
-> There are 227 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 10 Apr 2025 10:47:53 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.10.236-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.10.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+From: Yaxiong Tian <tianyaxiong@kylinos.cn>
 
+commit <1b600da510735a> ("PM: EM: Optimize em_cpu_energy() and remove division")
+updated the energy calculation method, so the original comment needs to be updated
+and opt.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Signed-off-by: Yaxiong Tian  <tianyaxiong@kylinos.cn>
+---
+ drivers/cpufreq/cppc_cpufreq.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+index b3d74f9adcf0..756034b21682 100644
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -379,9 +379,18 @@ static unsigned int get_perf_level_count(struct cpufreq_policy *policy)
+ 	return 1 + max_cap / CPPC_EM_CAP_STEP - min_cap / CPPC_EM_CAP_STEP;
+ }
+ 
+-/*
+- * The cost is defined as:
+- *   cost = power * max_frequency / frequency
++/**
++ * compute_cost - Calculate the cost for a given CPU and performance level step
++ * @cpu:  Target CPU
++ * @step: Performance level step
++ *
++ * CPPC uses a linear cost model since it only provides relative efficiency ratios:
++ *   Base cost (per CPU):    CPPC_EM_COST_GAP * efficiency_class
++ *   Step cost (per level):  step * CPPC_EM_COST_STEP
++ *
++ * Lower cost implies higher efficiency. The model ensures:
++ *   1. Higher efficiency CPUs (low efficiency_class) always have lower cost.
++ *   2. Higher performance levels (larger step) linearly increase cost.
+  */
+ static inline unsigned long compute_cost(int cpu, int step)
+ {
+-- 
+2.25.1
 
-## Build
-* kernel: 5.10.236-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 327fc1af5609fca2b091894de2ee904fa6391306
-* git describe: v5.10.235-228-g327fc1af5609
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10=
-.235-228-g327fc1af5609
-
-## Test Regressions (compared to v5.10.234-463-g92c950d96187)
-
-## Metric Regressions (compared to v5.10.234-463-g92c950d96187)
-
-## Test Fixes (compared to v5.10.234-463-g92c950d96187)
-
-## Metric Fixes (compared to v5.10.234-463-g92c950d96187)
-
-## Test result summary
-total: 39096, pass: 26647, fail: 2806, skip: 9346, xfail: 297
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 101 total, 101 passed, 0 failed
-* arm64: 30 total, 30 passed, 0 failed
-* i386: 22 total, 22 passed, 0 failed
-* mips: 22 total, 22 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 21 total, 21 passed, 0 failed
-* riscv: 9 total, 9 passed, 0 failed
-* s390: 9 total, 9 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 26 total, 26 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
