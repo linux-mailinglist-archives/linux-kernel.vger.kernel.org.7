@@ -1,102 +1,240 @@
-Return-Path: <linux-kernel+bounces-595502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3CCA81F3A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:06:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95C1A81F44
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBEC419E233B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:02:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD7C73B7D9E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C502925C6F1;
-	Wed,  9 Apr 2025 08:01:29 +0000 (UTC)
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5487225A64B;
+	Wed,  9 Apr 2025 08:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="a/FKFrCa"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E2825A2D3;
-	Wed,  9 Apr 2025 08:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7373C25A620;
+	Wed,  9 Apr 2025 08:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744185689; cv=none; b=IO54+oPxecPYWfuqD2Yf9DM356QCIIGxpIbsjZRelAliKyehQYBvNzh5mcaA57l2iF+TnomswsexaWURUWcIzE81RAJuCik6gdmrve2WaOmfTGwzTR0/P7UYYbWh5i+hxHILEOR+lQdeNuhnOva09Eo4TyuFoBlaqb2RQbaxPQs=
+	t=1744185766; cv=none; b=R1sDRaE8j4nANunxapx1jhhzr1hSCA1T8qZE1tEykZ7+ghh5ZYIpv5VVkjRtDB4Yuay5l3Mwy1Ml2fovfGrOzgLmndeCaDE4O5UXUqzfoqKtCClewA7LD/u05JFi1uNip5fj1+9rz/azcReXKML24wyhzIOM2itZSFL2hn3WSxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744185689; c=relaxed/simple;
-	bh=ievrKbhc+/kCMJgRKegGmufHgF677ZHOuyPhMkd2aeg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Exu5BK44CRnsaUGs1SbbOxKoISYpRUy6jrUim3O0DAiEWnW+WjP13ZjIqmd1cvuwM+saD5+riMr1+qK7JGgyjaAEGvq7+mfb7i76oZOajadHMMF5jhcpZ2DQhUIo0D/3YvwtgrvytrHwf27iF8Y1MZ31RtfXfIV9MVg9HrgzALc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
-Received: from [198.18.0.1] (gy-adaptive-ssl-proxy-2-entmail-virt205.gy.ntes [27.18.106.237])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1133fc98e;
-	Wed, 9 Apr 2025 16:01:09 +0800 (GMT+08:00)
-Message-ID: <2a862d73-2aaf-48ad-8e01-2138241d9bea@whut.edu.cn>
-Date: Wed, 9 Apr 2025 16:01:09 +0800
+	s=arc-20240116; t=1744185766; c=relaxed/simple;
+	bh=7JaXlk6Ow9kqmxyDvnnDUnrF65VEYrVRFf8JaGGZOzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GIx6VZlQ0McHZcTGOJ6iu9r03FfTsVvlwvXrCtYMuUDR6dx2fODZdWrrIGCStNrbSoKYysQphIOKtKemWZ1KR4wadzeRR7ENyxmyznY0u0K71UYpPcBetZnB6bSUoDTITc8gzjef9EomAPQBJNoUe/vraAUQATkJkfGAOSBWzNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=a/FKFrCa; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1744185762;
+	bh=7JaXlk6Ow9kqmxyDvnnDUnrF65VEYrVRFf8JaGGZOzQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=a/FKFrCa77AVRLxjzYVOvcjwp+87ulCaBy9i3Sc5IcLSkwc61Q0yuCOBHqIkY8fhJ
+	 a1Ay1U0RhhezDhFFNsR98n86ynE3q1rsMBxcJ2ECvcrmKoRDUhc42ocS5pNkJqatrv
+	 x17qvv+xbAZuHRqlQXDJTs2G4wgKlv1fJRpHB7/0x2sjO1joIoGKHdD4UrQungmhmw
+	 moti4p1yuyefkKWKLYmsjQbRKriNaDoubLISqG0TNJkRCo79F5818GditJBrmHmjAy
+	 EZj9CF8PcLmpKpStDSaZ117+PlvknNFC0fPFQ5F9Nzr88OM3c3pK7zTUhXD4492XVd
+	 gs+pGjfbQrWew==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id F2C1317E07F3;
+	Wed,  9 Apr 2025 10:02:41 +0200 (CEST)
+Date: Wed, 9 Apr 2025 10:02:37 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v5 2/4] drm/panthor: Add driver IOCTL for setting BO
+ labels
+Message-ID: <20250409100237.1a152238@collabora.com>
+In-Reply-To: <20250408222427.1214330-3-adrian.larumbe@collabora.com>
+References: <20250408222427.1214330-1-adrian.larumbe@collabora.com>
+	<20250408222427.1214330-3-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] dt-bindings: phy: spacemit: add K1 USB2 PHY
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250407-b4-k1-usb3-v3-2-v1-0-bf0bcc41c9ba@whut.edu.cn>
- <20250407-b4-k1-usb3-v3-2-v1-1-bf0bcc41c9ba@whut.edu.cn>
- <02157e96-9524-4590-9ca6-e4390176d74e@kernel.org>
-Content-Language: en-US
-From: Ze Huang <huangze@whut.edu.cn>
-In-Reply-To: <02157e96-9524-4590-9ca6-e4390176d74e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCGhkfVktMSkJIQxhPT0gYHVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJTFVKQ1VKS01VSUhMWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQk
-	tLWQY+
-X-HM-Tid: 0a9619913a0703a1kunm1133fc98e
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PU06Thw5EDJCPD0DMD8PLlEU
-	ViFPCVFVSlVKTE9PSkNOTUxMSUxJVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlJ
-	TFVKQ1VKS01VSUhMWVdZCAFZQUpDQkI3Bg++
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 4/7/25 9:18 PM, Krzysztof Kozlowski wrote:
-> On 07/04/2025 14:38, Ze Huang wrote:
->> +
->> +properties:
->> +  compatible:
->> +    const: spacemit,k1-usb2-phy
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  "#phy-cells":
->> +    const: 0
->> +
-> No supplies? No resets? Are you sure hardware does not use them?
+On Tue,  8 Apr 2025 23:24:22 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-No resets are used for the USB 2.0 PHY, but there is a VBUS supply, which
-I included in the DWC3 glue nodes.
+> Allow UM to label a BO for which it possesses a DRM handle.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
->
-> Best regards,
-> Krzysztof
->
->
+Just one minor doc issue below, but with this fixed, it's
+
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+
+> ---
+>  drivers/gpu/drm/panthor/panthor_drv.c | 42 ++++++++++++++++++++++++++-
+>  drivers/gpu/drm/panthor/panthor_gem.h |  2 ++
+>  include/uapi/drm/panthor_drm.h        | 19 ++++++++++++
+>  3 files changed, 62 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/pant=
+hor/panthor_drv.c
+> index 310bb44abe1a..163c027562aa 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -1330,6 +1330,44 @@ static int panthor_ioctl_vm_get_state(struct drm_d=
+evice *ddev, void *data,
+>  	return 0;
+>  }
+> =20
+> +static int panthor_ioctl_bo_set_label(struct drm_device *ddev, void *dat=
+a,
+> +				  struct drm_file *file)
+> +{
+> +	struct drm_panthor_bo_set_label *args =3D data;
+> +	struct drm_gem_object *obj;
+> +	const char *label;
+> +	int ret =3D 0;
+> +
+> +	obj =3D drm_gem_object_lookup(file, args->handle);
+> +	if (!obj)
+> +		return -ENOENT;
+> +
+> +	if (args->size && args->label) {
+> +		if (args->size > PANTHOR_BO_LABEL_MAXLEN) {
+> +			ret =3D -E2BIG;
+> +			goto err_label;
+> +		}
+> +
+> +		label =3D strndup_user(u64_to_user_ptr(args->label), args->size);
+> +		if (IS_ERR(label)) {
+> +			ret =3D PTR_ERR(label);
+> +			goto err_label;
+> +		}
+> +	} else if (args->size && !args->label) {
+> +		ret =3D -EINVAL;
+> +		goto err_label;
+> +	} else {
+> +		label =3D NULL;
+> +	}
+> +
+> +	panthor_gem_bo_set_label(obj, label);
+> +
+> +err_label:
+> +	drm_gem_object_put(obj);
+> +
+> +	return ret;
+> +}
+> +
+>  static int
+>  panthor_open(struct drm_device *ddev, struct drm_file *file)
+>  {
+> @@ -1399,6 +1437,7 @@ static const struct drm_ioctl_desc panthor_drm_driv=
+er_ioctls[] =3D {
+>  	PANTHOR_IOCTL(TILER_HEAP_CREATE, tiler_heap_create, DRM_RENDER_ALLOW),
+>  	PANTHOR_IOCTL(TILER_HEAP_DESTROY, tiler_heap_destroy, DRM_RENDER_ALLOW),
+>  	PANTHOR_IOCTL(GROUP_SUBMIT, group_submit, DRM_RENDER_ALLOW),
+> +	PANTHOR_IOCTL(BO_SET_LABEL, bo_set_label, DRM_RENDER_ALLOW),
+>  };
+> =20
+>  static int panthor_mmap(struct file *filp, struct vm_area_struct *vma)
+> @@ -1508,6 +1547,7 @@ static void panthor_debugfs_init(struct drm_minor *=
+minor)
+>   * - 1.2 - adds DEV_QUERY_GROUP_PRIORITIES_INFO query
+>   *       - adds PANTHOR_GROUP_PRIORITY_REALTIME priority
+>   * - 1.3 - adds DRM_PANTHOR_GROUP_STATE_INNOCENT flag
+> + * - 1.4 - adds DRM_IOCTL_PANTHOR_BO_SET_LABEL ioctl
+>   */
+>  static const struct drm_driver panthor_drm_driver =3D {
+>  	.driver_features =3D DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
+> @@ -1521,7 +1561,7 @@ static const struct drm_driver panthor_drm_driver =
+=3D {
+>  	.name =3D "panthor",
+>  	.desc =3D "Panthor DRM driver",
+>  	.major =3D 1,
+> -	.minor =3D 3,
+> +	.minor =3D 4,
+> =20
+>  	.gem_create_object =3D panthor_gem_create_object,
+>  	.gem_prime_import_sg_table =3D drm_gem_shmem_prime_import_sg_table,
+> diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/pant=
+hor/panthor_gem.h
+> index 0582826b341a..e18fbc093abd 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gem.h
+> +++ b/drivers/gpu/drm/panthor/panthor_gem.h
+> @@ -13,6 +13,8 @@
+> =20
+>  struct panthor_vm;
+> =20
+> +#define PANTHOR_BO_LABEL_MAXLEN	PAGE_SIZE
+> +
+>  /**
+>   * struct panthor_gem_object - Driver specific GEM object.
+>   */
+> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_dr=
+m.h
+> index 97e2c4510e69..26b52f147360 100644
+> --- a/include/uapi/drm/panthor_drm.h
+> +++ b/include/uapi/drm/panthor_drm.h
+> @@ -127,6 +127,9 @@ enum drm_panthor_ioctl_id {
+> =20
+>  	/** @DRM_PANTHOR_TILER_HEAP_DESTROY: Destroy a tiler heap. */
+>  	DRM_PANTHOR_TILER_HEAP_DESTROY,
+> +
+> +	/** @DRM_PANTHOR_BO_SET_LABEL: Label a BO. */
+> +	DRM_PANTHOR_BO_SET_LABEL,
+>  };
+> =20
+>  /**
+> @@ -977,6 +980,20 @@ struct drm_panthor_tiler_heap_destroy {
+>  	__u32 pad;
+>  };
+> =20
+> +/**
+> + * struct drm_panthor_bo_set_label - Arguments passed to DRM_IOCTL_PANTH=
+OR_BO_SET_LABEL
+> + */
+> +struct drm_panthor_bo_set_label {
+> +	/** @handle: Handle of the buffer object to label. */
+> +	__u32 handle;
+> +
+> +	/** @size: Length of the label, including the NULL terminator. */
+
+We probably want to document the limit here (page size).
+
+> +	__u32 size;
+> +
+> +	/** @label: User pointer to a NULL-terminated string */
+> +	__u64 label;
+> +};
+> +
+>  /**
+>   * DRM_IOCTL_PANTHOR() - Build a Panthor IOCTL number
+>   * @__access: Access type. Must be R, W or RW.
+> @@ -1019,6 +1036,8 @@ enum {
+>  		DRM_IOCTL_PANTHOR(WR, TILER_HEAP_CREATE, tiler_heap_create),
+>  	DRM_IOCTL_PANTHOR_TILER_HEAP_DESTROY =3D
+>  		DRM_IOCTL_PANTHOR(WR, TILER_HEAP_DESTROY, tiler_heap_destroy),
+> +	DRM_IOCTL_PANTHOR_BO_SET_LABEL =3D
+> +		DRM_IOCTL_PANTHOR(WR, BO_SET_LABEL, bo_set_label),
+>  };
+> =20
+>  #if defined(__cplusplus)
 
 
