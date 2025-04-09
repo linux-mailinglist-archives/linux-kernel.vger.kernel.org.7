@@ -1,139 +1,123 @@
-Return-Path: <linux-kernel+bounces-596743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F19A8301C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:12:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81749A8305F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7201D4633BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:12:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F5D7467438
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74F227CB3B;
-	Wed,  9 Apr 2025 19:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560DD27932A;
+	Wed,  9 Apr 2025 19:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O4AFoIIb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="gVX0ydxn";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="Y/z0hXg8"
+Received: from send54.i.mail.ru (send54.i.mail.ru [89.221.237.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6112C27C16A;
-	Wed,  9 Apr 2025 19:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F5927817E
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 19:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.221.237.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744225869; cv=none; b=ZIV/SmyXeUdDehwBwjn1v7dAwkWx3R4tL5hCX+sYC8rxKdhCNc1ja6g9cpM8jUAw/RAQVXeM/A7AjDQPzLnDPaA9mTZGW4iy7OFB1tzoaGwzvy+nwJCqpVI92bnNjnyq9KFrcy7kOnbqAjmWdWjpCYOtjEgHqS6DQT7XqqEicaI=
+	t=1744225909; cv=none; b=UJuqSsoS9h9WdFTrTlqHOgDWXx66p9IZVz3F1uevydSBgv09c6DyHcXQ/O8S7h6jyq9SWu8b/X6GIMlUdp8Mt86yVAN2CllCmZL9J6I0/yIind1OITY6mDb1MeWEWEfFeyjpkxkv9bWFLFE8hqq3Df5bsNgxOLVD8hbLTLkw7s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744225869; c=relaxed/simple;
-	bh=k90V0P8J6O3PoWv+NqE4CVkXpZJtGBSEOWwyYOKdD5A=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Dw8qbgVlTuNiIBdX/Nz80YotiVo53h2HfHhfVDDDQXb6iqJ94wO+3iAmED++5g4OCuSMEINdFfy6fomfK4jpcokXGJOySq1diFIYFVo9cq5cy6O6o7Ug3DG1jKXwKordLWJ0DdvwELZ1LsomMPOb0qL7nM0gaMknOt8JAUrMnR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O4AFoIIb; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744225868; x=1775761868;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=k90V0P8J6O3PoWv+NqE4CVkXpZJtGBSEOWwyYOKdD5A=;
-  b=O4AFoIIblz+YHLPICdMnVi6g++TXlmKC+Vd/f+lfFgbAZNzmJ4fVXSbK
-   8Orsdw2xAboG7pum2qPA0suaj3NpS0nKH4OE75zVuGZEWdh2n1Rkqmjwj
-   F3Wvxq4eAekPAZ2ZDwDIGhYlCk90nhuUS5Q507iKPVrKpi0oPtZpE4ZuA
-   oyupgxKy/8n2eBuvlCPC13c0rjCSHPgWcNUkEtFgFLncQapFXJm/bYdpY
-   ECIGHD4G09F9yIYbbt6OvYojBm2/D1HhhyNQHyClhnEjLFmgrO3/XwTOR
-   le9GQcUt1swwpbBdMOjmXQ+aMMyd0NMzrfoXWJsciDUXx1VkZPfnJxFPs
-   g==;
-X-CSE-ConnectionGUID: EC6VLGWsS3KrPerhnEr8JQ==
-X-CSE-MsgGUID: cscae/vURlahcaTRnLYZBw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="56386788"
-X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
-   d="scan'208";a="56386788"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 12:11:04 -0700
-X-CSE-ConnectionGUID: rgnZR/P3TMueQaA3PdFHkQ==
-X-CSE-MsgGUID: TQQ0cCT/TLuCOZmmjX6pGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
-   d="scan'208";a="133401299"
-Received: from mdroper-mobl2.amr.corp.intel.com (HELO xpardee-desk.intel.com) ([10.124.220.250])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 12:11:03 -0700
-From: Xi Pardee <xi.pardee@linux.intel.com>
-To: xi.pardee@linux.intel.com,
-	irenic.rajneesh@gmail.com,
-	david.e.box@linux.intel.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v3 8/8] platform/x86:intel/pmc: Move error handling to init function
-Date: Wed,  9 Apr 2025 12:10:50 -0700
-Message-ID: <20250409191056.15434-9-xi.pardee@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250409191056.15434-1-xi.pardee@linux.intel.com>
-References: <20250409191056.15434-1-xi.pardee@linux.intel.com>
+	s=arc-20240116; t=1744225909; c=relaxed/simple;
+	bh=D1QIXXR7l+l9GdMtWaIDbyAaCgToOndwYS4HMT8d7Js=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mTeg9dRQ16ZBjGwnrTjQzrMDWhMHyrrsWcGSN2koOA6B/O96CYfjFEP403Sj4WrCjxiadlDlUzm3QLH136QIODO89xQAyZVWvr0ihzIlR8+ECPXnisDMGT8FANqbqYxuprgqDZtxcuYNAlANQujvZWje/y0od6vm7e+GAMy9igY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inbox.ru; spf=pass smtp.mailfrom=inbox.ru; dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b=gVX0ydxn; dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b=Y/z0hXg8; arc=none smtp.client-ip=89.221.237.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inbox.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inbox.ru
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru;
+	s=mail4; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References
+	:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive:X-Cloud-Ids;
+	bh=84UBC03hNCb13+HyRaHqv/Gf1Qk28Q4O2obKNbI4KFY=; t=1744225905; x=1744315905; 
+	b=gVX0ydxn4sLZvrjL9F01FJspFb0l4ozbtmGX4dDUn3/3NvK4H+6EFpePe6aGn+wt+41umC4N407
+	t1FNy1tGvVfzy/NA1bjBW2z08ERRmzAQLr4q9rh1jFF+g7PxFhk3/2rClXao5lom+Mwk27rT5MVdl
+	s6nFkWt+WTmCF/HJn5zqbbd1BDcPsxlpPNh0MtEeRJI314cPKMtYcSKUbKyB754OggBN/jBaZIMYU
+	6RySU6vgPbKLBmfe1bRMS11WzBC2PoRioFcp8vwdxYjThCV8nPqxveZblBjlC3YNWcarJmgOjm3Vi
+	arXrAjwPCuDGrJHxiuwzA3koRQFUojQ4crIg==;
+Received: from [10.113.18.11] (port=56498 helo=send266.i.mail.ru)
+	by exim-fallback-84c6bcc6b7-rvrz8 with esmtp (envelope-from <fido_max@inbox.ru>)
+	id 1u2apk-00000000HlL-1wTc
+	for linux-kernel@vger.kernel.org; Wed, 09 Apr 2025 22:11:36 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru;
+	s=mail4; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References
+	:Cc:To:Subject:MIME-Version:Date:Message-ID:From:Sender:Reply-To:To:Cc:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+	List-Archive:X-Cloud-Ids:Disposition-Notification-To;
+	bh=84UBC03hNCb13+HyRaHqv/Gf1Qk28Q4O2obKNbI4KFY=; t=1744225896; x=1744315896; 
+	b=Y/z0hXg8Pz0k++Xyc+31sbSDFCZXVquz536yyIxj2jF0wz67XioAGgduv5S7NuRRHqQzD3OmJpG
+	Bs6/7Ogmrj0Srj1NJH3yd6HK47qV5UoUYCHM4K/x8p/CVTGM77SVJhz49Lh5HAwiDg4HZIXNRF+RZ
+	jjzLpvp2zs6NGGiZexmxI8lt3o3qx5Ch8oFEtLNDyrkuG2Vq2PMQqGEbRvUKNbg8+4nAvUX3B4tVg
+	mUcP9oSir+WQ3CfhsRrFSe68oPeFbkuelfESQSOcwx7V7Tb687ndZvC//p2MJavITFxysObUGXTYM
+	uVQ4zgE4c54W/cEgVOiXZ5m4LTY7wfGID8OA==;
+Received: by exim-smtp-85ff495cfc-pbccc with esmtpa (envelope-from <fido_max@inbox.ru>)
+	id 1u2apT-000000002uu-1LK8; Wed, 09 Apr 2025 22:11:20 +0300
+Message-ID: <c11d39bb-cdb8-45f0-95cd-283e7cc6aff4@inbox.ru>
+Date: Wed, 9 Apr 2025 22:11:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] riscv: module: Fix out-of-bounds relocation access
+To: Samuel Holland <samuel.holland@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ linux-riscv@lists.infradead.org
+Cc: Andrew Jones <ajones@ventanamicro.com>,
+ Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>,
+ Pritesh Patel <pritesh.patel@einfochips.com>,
+ Darshan Prajapati <darshan.prajapati@einfochips.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Amma Lee <lixiaoyun@binary-semi.com>,
+ Charlie Jenkins <charlie@rivosinc.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
+ <cleger@rivosinc.com>, Jinjie Ruan <ruanjinjie@huawei.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ linux-kernel@vger.kernel.org
+References: <20250409171526.862481-1-samuel.holland@sifive.com>
+Content-Language: en-US
+From: Maxim Kochetkov <fido_max@inbox.ru>
+In-Reply-To: <20250409171526.862481-1-samuel.holland@sifive.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Mailru-Src: smtp
+X-4EC0790: 10
+X-7564579A: EEAE043A70213CC8
+X-77F55803: 4F1203BC0FB41BD96AB534CA17E18E8F0A3910F3FACDD3ABE247BFD61724D6D6182A05F5380850404C228DA9ACA6FE27F559D9661971D0633DE06ABAFEAF6705B516B0159FFEB1245581499C14029E4892B1A6A82314B74A
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7D9C4478D0B876341EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F79006373768BF035B57E5168638F802B75D45FF914D58D5BE9E6BC1A93B80C6DEB9DEE97C6FB206A91F05B2C264463944ADC3AF2E070BE324C7D3C4737E40CF06D14244BB0A4F435E46E6718B35066C979671628AA50765F79006370BDD70ABAC747F53389733CBF5DBD5E913377AFFFEAFD269176DF2183F8FC7C04A3B2F4BA56A4D558941B15DA834481FCF19DD082D7633A0EF3E4896CB9E6436389733CBF5DBD5E9D5E8D9A59859A8B605A8BD9291DE3CBBCC7F00164DA146DA6F5DAA56C3B73B237318B6A418E8EAB86D1867E19FE14079C09775C1D3CA48CF3D321E7403792E342EB15956EA79C166A417C69337E82CC275ECD9A6C639B01B78DA827A17800CE7588D3C263EAE74EA731C566533BA786AA5CC5B56E945C8DA
+X-C1DE0DAB: 0D63561A33F958A5D2C5362076D858755002B1117B3ED696EC201ACD4C4FE43D957033528158102E823CB91A9FED034534781492E4B8EEAD2B25D9E4C92BC8ACBDAD6C7F3747799A
+X-C8649E89: 1C3962B70DF3F0ADBF74143AD284FC7177DD89D51EBB7742424CF958EAFF5D571004E42C50DC4CA955A7F0CF078B5EC49A30900B95165D34A08F09726D78E07B05CE5DE609FFDC6A1A883DA2B18F73D5BC77801A7008F6053FCBC04C6AF4AC4E1D7E09C32AA3244CEF0E5157C137FD2077DD89D51EBB77427457E7BBCDCF6C79EA455F16B58544A239EFC82C7514BDDC5DA084F8E80FEBD3498BCAF62EB65D490083D0702184784583DB18EBE73F7D69
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+ObcCpyrx6l7KImUglyhkEat/+ysWwi0gdhEs0JGjl6ggRWTy1haxBpVdbIX1nthFXMZebaIdHP2ghjoIc/363UZI6Kf1ptIMVS2bpaGes9W5t2eaDMAwOw4=
+X-Mailru-Sender: 689FA8AB762F7393FE9E42A757851DB6139DF3AADA6965A8B4E9B47FDAE4E847BBFB7C714878DA8290DE4A6105A3658D481B2AED7BCCC0A49AE3A01A4DD0D55C6C99E19F044156F45FEEDEB644C299C0ED14614B50AE0675
+X-Mras: Ok
+X-Mailru-Src: fallback
+X-7564579A: B8F34718100C35BD
+X-77F55803: 6242723A09DB00B42C873DBEF56FA202667A580FD6CABA1DE1B0B2FC19EC507D049FFFDB7839CE9EAA34CF5C6B6AE4ADCA2DE81BFCD9F3BAA7FAFDA73B9E49C193EA71A8D200491DBFA8D37B0E9A9100
+X-7FA49CB5: 0D63561A33F958A58B7F1C8D9B898E925002B1117B3ED696E1D6070841965061393D891B5189421702ED4CEA229C1FA827C277FBC8AE2E8BADDA55AA3FEC6D35
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+OYcBso8Zm+oliTz8oZwnDrFsY77LZRcHyw5ht0smWrfSeTW5FiI8avd9v29gUBslpEZ9wIMwqVP4jLQVQ+dVm7x9BpDHadBV9RMjI809PraZHseEjuITRoiaFR8K1qqU5A==
+X-Mailru-MI: 20000000000000800
+X-Mras: Ok
 
-Move error handling code to generic_core_init() function. The previous
-implementation is that init function called for "full cleanup" function
-when error occurs which is error prone. The init function should handle
-the error path itself to improve code maintainability.
+09.04.2025 20:14, Samuel Holland пишет:
+> The current code allows rel[j] to access one element past the end of the
+> relocation section. Simplify to num_relocations which is equivalent to
+> the existing size expression.
+> 
+> Fixes: 080c4324fa5e ("riscv: optimize ELF relocation function in riscv")
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 
-Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
----
- drivers/platform/x86/intel/pmc/core.c | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+Reviewed-by: Maxim Kochetkov <fido_max@inbox.ru>
 
-diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-index 26c1c75b709a..c39e5f5f1475 100644
---- a/drivers/platform/x86/intel/pmc/core.c
-+++ b/drivers/platform/x86/intel/pmc/core.c
-@@ -1584,10 +1584,26 @@ int generic_core_init(struct pmc_dev *pmcdev, struct pmc_dev_info *pmc_dev_info)
- 	if (pmc_dev_info->dmu_guid)
- 		pmc_core_punit_pmt_init(pmcdev, pmc_dev_info->dmu_guid);
- 
--	if (ssram)
--		return pmc_core_ssram_get_lpm_reqs(pmcdev, pmc_dev_info->pci_func);
-+	if (ssram) {
-+		ret = pmc_core_ssram_get_lpm_reqs(pmcdev, pmc_dev_info->pci_func);
-+		if (ret)
-+			goto unmap_regbase;
-+	}
- 
- 	return 0;
-+
-+unmap_regbase:
-+	for (unsigned int i = 0; i < ARRAY_SIZE(pmcdev->pmcs); ++i) {
-+		struct pmc *pmc = pmcdev->pmcs[i];
-+
-+		if (pmc && pmc->regbase)
-+			iounmap(pmc->regbase);
-+	}
-+
-+	if (pmcdev->punit_ep)
-+		pmt_telem_unregister_endpoint(pmcdev->punit_ep);
-+
-+	return ret;
- }
- 
- static const struct x86_cpu_id intel_pmc_core_ids[] = {
-@@ -1735,7 +1751,8 @@ static int pmc_core_probe(struct platform_device *pdev)
- 		ret = generic_core_init(pmcdev, pmc_dev_info);
- 
- 	if (ret) {
--		pmc_core_clean_structure(pdev);
-+		platform_set_drvdata(pdev, NULL);
-+		mutex_destroy(&pmcdev->lock);
- 		return ret;
- 	}
- 
--- 
-2.43.0
 
 
