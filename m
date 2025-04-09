@@ -1,102 +1,99 @@
-Return-Path: <linux-kernel+bounces-595751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31931A822A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:47:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A5F7A82290
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC20A8A1BFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:46:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32C0C3BA5DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FF525DB1B;
-	Wed,  9 Apr 2025 10:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mzcYAHgI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C086525DAF1;
+	Wed,  9 Apr 2025 10:45:43 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697752566F3;
-	Wed,  9 Apr 2025 10:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414622550C5;
+	Wed,  9 Apr 2025 10:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744195617; cv=none; b=gvgILeVZaUGNJwuUI40JVDMfSvUHoHpc7XGrb+sKlyncqjPxoY00T8zlPC5VJV1ZjezfSJplJ6T7fX1H53JmduYVJrnON2+/SXzYj5952rEnYImL/zSvca4Hpi6hWSiaXmS9ZdvBvxHNZi+sJo3IaTL4OjHcIBm32F97Es/O24k=
+	t=1744195543; cv=none; b=ujdYMVB7hGpVQMYDkUxCvi98mJ2tLPO5hdjFAGNet7F3wKXys8n4bW35Msd6dozFjMNjXFKUUkPQJ83TFfcL0AwS8ukxZa/OXEVFi0qLGOnRYMmRWAMkhCicHMIoAXiS557hpZTZmOanImIgbyuoW2tr3RlTavqnMXngwjiAuyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744195617; c=relaxed/simple;
-	bh=IOcIpFE6jTQjeFrOWgbckjiDdf9pdeuZRXCDxYjN5eA=;
+	s=arc-20240116; t=1744195543; c=relaxed/simple;
+	bh=Zd42bH/iKPNHGtL2PyAIzxQXMD0Ub6g/t7/nY59Wno4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N2nHNRB6rg9IUa9jUW58Ud1x46Uz44EUTww6DyA9PfvuZ10YFdB8NZotJufqyPHsOK8JqJ6WbV6IRSZNa3f53+zNT31rtyyxN3cFqnrGm08gAYl/wiJX0VHKl5gUIpSSx+PMEA4mcqVlRDWMRDq5NrDgiyjX7aobXgBdO6WCVhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mzcYAHgI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54656C4CEE7;
-	Wed,  9 Apr 2025 10:46:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744195616;
-	bh=IOcIpFE6jTQjeFrOWgbckjiDdf9pdeuZRXCDxYjN5eA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mzcYAHgIthAWVKOkYgOqgl96brwdu2acWnmnzdXnhZdo0K4y8rWbVuifob9+YLlfF
-	 7fti74uImyojXfkkb5XpEK2bUShTsJ38kSzOKIZjtoTdVmcWa73/+gWAuEsiJJrN5O
-	 5pXijL32f8Q+oCoUFfgnz6DTNLPwMw5NN/f8fTNQ=
-Date: Wed, 9 Apr 2025 12:45:21 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	Justin Forbes <jforbes@redhat.com>,
-	Dmitry Vyukov <dvyukov@google.com>, namhyung@kernel.org,
-	irogers@google.com, acme@kernel.org, ak@linux.intel.com
-Subject: Re: [PATCH 6.14 000/728] 6.14.2-rc3 review
-Message-ID: <2025040902-shimmer-anchor-0019@gregkh>
-References: <20250408195232.204375459@linuxfoundation.org>
- <929581ef-cc54-4619-8f4d-0e0f3369a38c@gmail.com>
- <1de4a315-1855-4eba-9bfe-d61018be5705@leemhuis.info>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KElfBFiGs04KQ/6oqFbJS3Q7LpVly5WN4lvL6skkNKNYV9OpKBGRPF0quOXb/l4ATZe/pOtw8LiATVm8jKK029oaeZK/8TMgsGwfiKcLZUh30v0xvFJJ92bY07jnMikYvax0n3AQZzzV1HriIbcrKfh1Zvs5Unh9mfqgrnSSI6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1u2Svt-0005gk-4E; Wed, 09 Apr 2025 12:45:25 +0200
+Date: Wed, 9 Apr 2025 12:45:25 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Yang =?utf-8?B?SHVhamlhbu+8iOadqOWNjuWBpe+8iQ==?= <huajianyang@asrmicro.com>
+Cc: Florian Westphal <fw@strlen.de>,
+	"pablo@netfilter.org" <pablo@netfilter.org>,
+	"kadlec@netfilter.org" <kadlec@netfilter.org>,
+	"razor@blackwall.org" <razor@blackwall.org>,
+	"idosch@nvidia.com" <idosch@nvidia.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"dsahern@kernel.org" <dsahern@kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"netfilter-devel@vger.kernel.org" <netfilter-devel@vger.kernel.org>,
+	"coreteam@netfilter.org" <coreteam@netfilter.org>,
+	"bridge@lists.linux.dev" <bridge@lists.linux.dev>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIG5ldDog?=
+ =?utf-8?Q?Expand_headroo?= =?utf-8?Q?m?= to send fragmented packets in
+ bridge fragment forward
+Message-ID: <20250409104525.GC17911@breakpoint.cc>
+References: <20250409073336.31996-1-huajianyang@asrmicro.com>
+ <20250409091821.GA17911@breakpoint.cc>
+ <0a711412f54c4dc6a7d58f4fa391dc0f@exch03.asrmicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1de4a315-1855-4eba-9bfe-d61018be5705@leemhuis.info>
+In-Reply-To: <0a711412f54c4dc6a7d58f4fa391dc0f@exch03.asrmicro.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, Apr 09, 2025 at 09:09:02AM +0200, Thorsten Leemhuis wrote:
-> On 09.04.25 01:05, Florian Fainelli wrote:
-> > On 4/8/25 12:55, Greg Kroah-Hartman wrote:
-> >> This is the start of the stable review cycle for the 6.14.2 release.
-> >> There are 728 patches in this series, all will be posted as a response
-> >> to this one.† If anyone has any issues with these being applied, please
-> >> let me know.
-> > 
-> > perf fails to build with:
-> > 
-> > util/hist.c: In function '__hists__add_entry':
-> > util/hist.c:745:37: error: 'struct addr_location' has no member named
-> > 'parallelism'
-> > † 745 |†††††††††††††††† .parallelism††† = al->parallelism,
-> > ††††† |†††††††††††††††††††††††††††††††††††† ^~
-> > make[6]: *** [/local/users/fainelli/buildroot/output/arm64/build/linux-
-> > custom/tools/build/Makefile.build:86: /local/users/fainelli/buildroot/
-> > output/arm64/build/linux-custom/tools/perf/util/hist.o] Error 1
+Yang HuajianÔºàÊù®ÂçéÂÅ•Ôºâ <huajianyang@asrmicro.com> wrote:
+> > if (skb_headroom(skb) < ll_rs)
+> >	goto expand_headroom;
 > 
-> Same here. From a quick look and test-compile it seems that the patch
-> "perf report: Add parallelism sort key" that is included in this rc
-> depends on f13bc61b2e3795 ("perf report: Add machine parallelism").
+> > ... but I'm not sure what the actual problem is.
 > 
-> The former is 2/7 of a series, where the latter is 1/7 (
-> https://lore.kernel.org/all/0f8c1b8eb12619029e31b3d5c0346f4616a5aeda.1739437531.git.dvyukov@google.com/
-> )
+> Yes, your guess is correct!
+> 
+> Actual problem: I think it is unreasonable to directly drop skb with insufficient headroom.
+> 
+> > Why does this need to make a full skb copy?
+> > Should that be using skb_expand_head()?
+> 
+> Using skb_expand_head has the same effect.
+ 
+> > Actually, can't you just (re)use the slowpath for the skb_headroom < ll_rs case instead of adding headroom expansion?
+> 
+> I tested it just now, reuse the slowpath will successed.
+> But maybe this change cannot resolve all cases if the netdevice really needs this headroom.
 
-Thanks, now dropped, and I've verified that this fixes the build issue.
-I'll do a new -rc round in a bit.
+The slowpath considers headroom requirements, see ip_frag_next():
 
-thanks for testing!
+        skb2 = alloc_skb(len + state->hlen + state->ll_rs, GFP_ATOMIC);
 
-greg k-h
+You should wait for more feedback and then send a v2 tomorrow.
+
+Thanks!
 
