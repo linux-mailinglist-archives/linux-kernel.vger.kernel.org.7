@@ -1,172 +1,290 @@
-Return-Path: <linux-kernel+bounces-597018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF74A8340F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 00:25:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB69EA8341A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 00:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49D647ADEEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:24:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 140CB19E236B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD00A215175;
-	Wed,  9 Apr 2025 22:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFDB21B90B;
+	Wed,  9 Apr 2025 22:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wu3031ZS"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tc1qAQXY"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795D8219312
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 22:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BBB21A451
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 22:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744237511; cv=none; b=DsED49nwshcUyNgYsbY17AOFVgnxt0UoZpCUt3QAOpHi8YphLaJ/Xqad63dRHgizR1T87YtuGDZGK90+2yd47TJcuG03r2spo7xhFJmrhj2MvQBY+4NEKXtxpsajN6eURGEacWCYGonFuaoyKneR6nbcWVzAP8ukRwr5eVcPpow=
+	t=1744237955; cv=none; b=cyCD+UDOjBuomkDT1nDtVnSIPxH37yLbpo0DH4D8NmpVaq3eTcLpv3DyCj57sMjwakyTdafnvf9HW5eu871vQL7rzL7enkDXqnAlqKV0Jq16pNQAmS4061z1niT8ykbNQp2bZs029IJpbvBGlNAW+D2Lxwigfs+Od5/6/9oEXXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744237511; c=relaxed/simple;
-	bh=V2eqXiCs4SpRA0SYhjL4O3Q/R8qXxXt+aFmNuivnOoU=;
+	s=arc-20240116; t=1744237955; c=relaxed/simple;
+	bh=By8viJdoAUoJoi7XSd3M03yuIGRREsQtuwL88PTCdwY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qFZ7MZFrVRzfnMi/3W0iXGLxpic+uYdvI52QdsveQq1K43vDV7La3+p5G0ldFCJ4lzQ+n95x84hzQ4lgfjYevgEmH+Z1aDsHGm2UkSj1rZ/9VFGbYxy1B1zJvzgPBfB+h7QEDeyoHUSQlhFf9GqiyjKeMNLb8RvMzO9d5Jq5G90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wu3031ZS; arc=none smtp.client-ip=209.85.160.173
+	 To:Cc:Content-Type; b=FGs4a/X+YOol8mdjVrxXGehFa8KbxGozsUSOgasu6orPZ2c0LdETrFx5YgquR9uAU+8OrIyzB/RlTpLM8QBaPn/nnqOyLFWIntxbysSz4bF9teo0wYnUzMehw9RUtmByxMm9umD84cl5BgHFf/+nm11Lk4XEVGM7othRNVOlYHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tc1qAQXY; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4769e30af66so53001cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 15:25:09 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5cbd8b19bso1512a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 15:32:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744237508; x=1744842308; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1744237952; x=1744842752; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q6VkcL1eVjhOXy3NwPz+IIGJIZCrP2Xy4Qb57z8uV2s=;
-        b=wu3031ZSSRV/VZLKh/qeDon1nq7Gim1eaklMmzRtSA+wGz+stFjIolxBW61oziR4e/
-         407ECgvnQduj0H4vtbzQYNjwDanwo5FP2tcDp7WuJUTELlSoTM0kedI/QiYbLM30j0UK
-         VidqtdUM51KARJ1P2fK9nBLgPLESR38PPRJu3E5iUs0okrHSlrxc6iYU/NxkgV+WncLb
-         SU4aoTgIVaDa1YfF0uW1UrQZroSj7CztaeFMNaxQodhpN54hY8vanJCHhxYEcZyQ9JzW
-         rqkQKpv60w6LivZb3+qLdNKFxY0mTtFhxWA5akAIdZk7R5J4y1FE0XM+vPvxUUSNkGz7
-         v/JA==
+        bh=GMu1FH4a99+6xCgJv+Tb84Trq4JVQxXXa7kqUK3IbB0=;
+        b=tc1qAQXYDH9dtG0Lq3PAf39LIbi8AL15JVsy1Bfqfc1gOnT4OUu/DhTH2xSoadfJ2m
+         nWBc+vRBq9HqRfy26lVsQ6id6qgyQM2JWlQnzCc2wCEr+DRP7NbYh/Eqenh6Py+TCpkr
+         3uiInRAoESBmm/oAWDtkaYyG4uzzUgCD36bN4XnMcmYiWIq/gdjkeCvT68WEDaXs7Yvj
+         sVAilBhl50zNYc/CLEF67pN3Qp6XPPiInlYMVKDvO8Bt6t4Yfyo7ZkU0mKkUVZQtad7w
+         j5YCIer26BBK0mk770akmFQ5GqJt/q5swr/RNx5uT9Lz+XBUnjVtDmkm8FJrAgVAlE7b
+         /Qvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744237508; x=1744842308;
+        d=1e100.net; s=20230601; t=1744237952; x=1744842752;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q6VkcL1eVjhOXy3NwPz+IIGJIZCrP2Xy4Qb57z8uV2s=;
-        b=Yyr4xQ5FwVu6U8X2hIceWXUZHGei5T1dZcbO8IjrS0NrmPeEw2stQpASFsApVdVWDb
-         9RX+wAY0foxdHtPkE6WIq4eyuTqGZ7p5EzjMNyOxxBN48Mhli8Toq+Kx7yvEHllj2sYi
-         dCaFi1UOa4UF8JaIQ3I2qTym6w+VQ3OOidcPr/WLJbyciXfsSocVTe7IWsOAtHXrq1Wi
-         h1GKMkBeVUVReNKYBuK5HWo7p4vMVOWwabl02XXOb7Ik1mOrhG9+ALvlRFa6ppWpCnJF
-         hREpwJ6M4hzIJQxQbRvCQu5mRKMyi3etBt3uX3ZiV34EVURex1j6grqsk2BUQcAkf82i
-         2KTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLN9tee3pXorElZcrgqnb216tyQp4+ndS66NhXzj59Aqj+WVhLTqDGYvFSEyGHrN33u3KoRpOyzyf37KM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeP2pjt8HnnJ2LAs3UruPwsSmj1OVZHHmUVzk5AmdNEUqbDA40
-	5+1pIpSumR4rmYbA1nrpIkFu7HynWw6pgxDvMxwZPYaPI1/SQyAD0NQhmleHorgcHxHFCzVckKI
-	lerrLWIFIfcTn1TUYQr1buQ9JAFPzSjpWzQ8D
-X-Gm-Gg: ASbGnctqMg2k6DNfiNEElTlh3PmkSIRzKLv5Rsbl2mNrAtMXZZZmz/hsgJDLlWvwtrV
-	InrHHUo0+edNQUx5VyLqUhlhbgv971wGo+/qVpBGL5pelLp83Fh4Ol/KB8gZwlpTQXJLeZ2NB7/
-	uyA1TENWIkroST1KRwCEHn
-X-Google-Smtp-Source: AGHT+IGpK1nTv3QYV69BKXwAms+Br0nl0lvJ5Uk9xf/xohJG6OR08FIXXFBC0PNGoHrQSjTfkCUmTt1Yrbf+S0p5cKM=
-X-Received: by 2002:ac8:5acd:0:b0:477:2c1e:d252 with SMTP id
- d75a77b69052e-4796c96f058mr1059021cf.20.1744237508081; Wed, 09 Apr 2025
- 15:25:08 -0700 (PDT)
+        bh=GMu1FH4a99+6xCgJv+Tb84Trq4JVQxXXa7kqUK3IbB0=;
+        b=ZGDBGjnOB7AN+ol0eurKelELjUxqxTk7J2N0+TmsWb5MBF87ULHWhS5X/uHp6gfKoc
+         Z1iQPy+PUDNF8HMlTbRkB87vXdKNk51MembaReOK6srauNHin9Eb1whnQSs0ZJk29jYT
+         80op058XF49gQgwWoeqjXyCV848UasxVhS0W5f251tIRibVaG+wedaOX0faHz6rJOg9m
+         L9xFJMADnPH0q8OGyMmpK4Wez5GKECKt1moBJ3Ed90/uB23G2wxK6d7rYjt12KvBR0HY
+         2zr8xu58F1z3XTMDGPX692UH3wiFZno1mnTaTiV14yAbVnEzszmYgk66xjmLbWt62bF3
+         fLaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTidt/WNqBkOQFxkl0xzOEL5qxdYTOmx0XWrb7eoNs95cxDQAFn8R9rZjIqwEyBF9oXev7r05FpZEzZ+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlC0HKdFk47nJDQ7AS4RVK5sHaRlbK66uz4LJB2zkZqwy8blCw
+	Ksf0qd01XDdmUyRVKkREKddllWkAhkBFNCRhnH6/bxosibsmC0PHq6bFxad1KlUh8JIO6VI4LQ0
+	lFOYWGj6mcrYoCYAxHDkkKUdhLj4VTZm0TPj4
+X-Gm-Gg: ASbGncuVEIFR3kUpKhbUMrUn7stmh8fbW0TFbjJNeXXkRq9JBk58XV1E4SgEGatgNma
+	eOydHVpkBUMrqEjsTYPj5YDPx0hn9VrR9nde8UBkLcD10tJsm4AJhSAvC3ZwNjAex9WbSd8W79O
+	EKlOiCYFxD8Tpsrthjp6i6cxDGOGqcyvTqC15d9Xl6KLU/R4jwVPuZ
+X-Google-Smtp-Source: AGHT+IENolhEXzO3rinX4oLrIHh82oHYmfpNxwGNuU8PEr5id+7uNdCOqNh7a5iRadgkh5271oXOm5pqZaF50y0gefE=
+X-Received: by 2002:aa7:dac6:0:b0:5e5:c024:ec29 with SMTP id
+ 4fb4d7f45d1cf-5f328d6ccdbmr28589a12.0.1744237951690; Wed, 09 Apr 2025
+ 15:32:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409195448.3697351-1-tjmercier@google.com>
- <20250409140848.da67768ac1f5e79d7296de4d@linux-foundation.org>
- <20250409141131.bd67f6b19ea7e770dce40ac7@linux-foundation.org>
- <CABdmKX3D-iCwkuAXLsFyyJD7LikoR0rygR6CnR4Fv-u9+OjnZg@mail.gmail.com>
- <kamspewougkeipnlpdhbzyhu63ildqmfpuw46loqcjohrbr6bf@enpp5occ33eo> <CABdmKX149kZUHpjM8CUb-eyJtkFxp04DngcAunuZZxaAM5Uwng@mail.gmail.com>
-In-Reply-To: <CABdmKX149kZUHpjM8CUb-eyJtkFxp04DngcAunuZZxaAM5Uwng@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 9 Apr 2025 15:24:57 -0700
-X-Gm-Features: ATxdqUHGt-53GL_coL_36lwwjJpL5XL3-y4ysraGJcyYVXampYsTl_5Q3Qg6o3Q
-Message-ID: <CAJuCfpEKjoQkhTTX3fdm-_2AuagjDdKne1+eN0rCeHYCN=UMTQ@mail.gmail.com>
-Subject: Re: [PATCH] alloc_tag: Handle incomplete bulk allocations in vm_module_tags_populate
-To: "T.J. Mercier" <tjmercier@google.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Janghyuck Kim <janghyuck.kim@samsung.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
+References: <20250330234039.29814-1-christiansantoslima21@gmail.com>
+In-Reply-To: <20250330234039.29814-1-christiansantoslima21@gmail.com>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Wed, 9 Apr 2025 15:32:19 -0700
+X-Gm-Features: ATxdqUHRf-B9-YGZ1PElPo9dmH5T3f12ShZBn14fNGAx_Ks12v9UsYMLEah-Kjo
+Message-ID: <CAGSQo00LhscUpQCpL9UwkzK5c1rD1QxutZTOenuZP1d-B==KBQ@mail.gmail.com>
+Subject: Re: [PATCH v6] rust: transmute: Add methods for FromBytes trait
+To: "Christian S. Lima" <christiansantoslima21@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, ~lkcamp/patches@lists.sr.ht, richard120310@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 9, 2025 at 3:11=E2=80=AFPM T.J. Mercier <tjmercier@google.com> =
-wrote:
+On Sun, Mar 30, 2025 at 4:40=E2=80=AFPM Christian S. Lima
+<christiansantoslima21@gmail.com> wrote:
 >
-> On Wed, Apr 9, 2025 at 2:57=E2=80=AFPM Kent Overstreet
-> <kent.overstreet@linux.dev> wrote:
-> >
-> > On Wed, Apr 09, 2025 at 02:51:18PM -0700, T.J. Mercier wrote:
-> > > On Wed, Apr 9, 2025 at 2:11=E2=80=AFPM Andrew Morton <akpm@linux-foun=
-dation.org> wrote:
-> > > >
-> > > > On Wed, 9 Apr 2025 14:08:48 -0700 Andrew Morton <akpm@linux-foundat=
-ion.org> wrote:
-> > > >
-> > > > > On Wed,  9 Apr 2025 19:54:47 +0000 "T.J. Mercier" <tjmercier@goog=
-le.com> wrote:
-> > > > >
-> > > > > > alloc_pages_bulk_node may partially succeed and allocate fewer =
-than the
-> > > > > > requested nr_pages. There are several conditions under which th=
-is can
-> > > > > > occur, but we have encountered the case where CONFIG_PAGE_OWNER=
- is
-> > > > > > enabled causing all bulk allocations to always fallback to sing=
-le page
-> > > > > > allocations due to commit 187ad460b841 ("mm/page_alloc: avoid p=
-age
-> > > > > > allocator recursion with pagesets.lock held").
-> > > > > >
-> > > > > > Currently vm_module_tags_populate immediately fails when
-> > > > > > alloc_pages_bulk_node returns fewer than the requested number o=
-f pages.
-> > > > > > This patch causes vm_module_tags_populate to retry bulk allocat=
-ions for
-> > > > > > the remaining memory instead.
-> > > > >
-> > > > > Please describe the userspace-visible runtime effects of this cha=
-nge.  In a way
-> > > > > which permits a user who is experiencing some problem can recogni=
-ze that this
-> > > > > patch will address that problem.
-> > > > >
-> > > > > ...
-> > > > >
-> > > > > Reported-by: Janghyuck Kim <janghyuck.kim@samsung.com>
-> > > >
-> > > > A Closes: link will presumably help with the above info.  checkpatc=
-h
-> > > > now warns about the absence of a Closes:
-> > >
-> > > Hi Andrew, This was reported on our internal bug tracker so there is
-> > > no public link I can provide here. If it's better not to add a
-> > > Reported-by in this case, then I will do that in the future.
-> >
-> > In that case perhaps cut and paste the info from your internal bug
-> > tracker?
-> >
-> > Commit messages can include quite a bit more than just a short
-> > description of the commit, when it's relevant - e.g. I try to include
-> > the literal log of the oops being fixed when appropriate.
-> >
-> > It really helps when looking at things weeks or months later and trying
-> > to remember "ok, exactly what was that code path I need to watch out
-> > for?"
+> Methods receive a slice and perform size check to add a valid way to make
+> conversion safe. An Option is used, in error case just return `None`.
 >
-> Agreed, it would have been better to include this. I think the
-> modprobe errors I followed up with would be good to append to the
-> commit message.
+> The conversion between slices `[T]` is separated from others, because I
+> couldn't implement it in the same way as the other conversions.
 >
-> Shall I send a v2?
+> Link: https://github.com/Rust-for-Linux/linux/issues/1119
+> Signed-off-by: Christian S. Lima <christiansantoslima21@gmail.com>
+> ---
+> Changes in v2:
+> - Rollback the implementation for the macro in the repository and impleme=
+nt
+>   methods in trait
+> - Link to v2: https://lore.kernel.org/rust-for-linux/20241012193657.290cc=
+79c@eugeo/T/#t
+>
+> Changes in v3:
+> - Fix grammar errors
+> - Remove repeated tests
+> - Fix alignment errors
+> - Fix tests not building
+> - Link to v3: https://lore.kernel.org/rust-for-linux/20241109055442.85190=
+-1-christiansantoslima21@gmail.com/
+>
+> Changes in v4:
+> - Removed core::simd::ToBytes
+> - Changed trait and methods to safe Add
+> - Result<&Self, Error> in order to make safe methods
+> - Link to v4: https://lore.kernel.org/rust-for-linux/20250314034910.13446=
+3-1-christiansantoslima21@gmail.com/
+>
+> Changes in v5:
+> - Changed from Result to Option
+> - Removed commentaries
+> - Returned trait impl to unsafe
+> - Link to v5: https://lore.kernel.org/rust-for-linux/20250320014041.10147=
+0-1-christiansantoslima21@gmail.com/
+>
+> Changes in v6:
+> - Add endianess check to doc test and use match to check
+> success case
+> - Reformulated safety comments
+> ---
+>  rust/kernel/transmute.rs | 89 +++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 83 insertions(+), 6 deletions(-)
+>
+> diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
+> index 1c7d43771a37..16dfa5c7d467 100644
+> --- a/rust/kernel/transmute.rs
+> +++ b/rust/kernel/transmute.rs
+> @@ -9,29 +9,106 @@
+>  ///
+>  /// It's okay for the type to have padding, as initializing those bytes =
+has no effect.
+>  ///
+> +/// # Example
+> +/// ```
+> +/// let foo =3D &[1, 2, 3, 4];
+> +///
+> +/// let result =3D u32::from_bytes(foo);
+> +///
+> +/// #[cfg(target_endian =3D "little")]
+> +/// match result {
+> +///     Some(x) =3D> assert_eq!(*x, 0x4030201),
+> +///     None =3D> unreachable!()
+> +/// }
+> +///
+> +/// #[cfg(target_endian =3D "big")]
+> +/// match result {
+> +///     Some(x) =3D> assert_eq!(*x, 0x1020304),
+> +///     None =3D> unreachable!()
+> +/// }
+> +/// ```
+> +///
+>  /// # Safety
+>  ///
+>  /// All bit-patterns must be valid for this type. This type must not hav=
+e interior mutability.
+> -pub unsafe trait FromBytes {}
+> +pub unsafe trait FromBytes {
+> +    /// Converts a slice of bytes to a reference to `Self` when possible=
+.
+> +    fn from_bytes(bytes: &[u8]) -> Option<&Self>;
+> +
+> +    /// Converts a mutable slice of bytes to a reference to `Self` when =
+possible.
+> +    fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
+> +    where
+> +        Self: AsBytes;
+> +}
+>
+>  macro_rules! impl_frombytes {
+>      ($($({$($generics:tt)*})? $t:ty, )*) =3D> {
+>          // SAFETY: Safety comments written in the macro invocation.
+> -        $(unsafe impl$($($generics)*)? FromBytes for $t {})*
+> +        $(unsafe impl$($($generics)*)? FromBytes for $t {
+> +            fn from_bytes(bytes: &[u8]) -> Option<&$t> {
 
-Yes please and add the userspace visible effect you posted earlier along wi=
-th:
+Consider factoring this out into a helper function, e.g.
+```
+fn from_bytes_sized<T: FromBytes + Sized>(bytes: &[u8]) -> Option<&T> {
+```
+which you can then call in here. If you were not trying to handle
+`?Sized`, we could even put it in the trait default implementation.
 
-Fixes: 0f9b685626da "alloc_tag: populate memory for module tags as needed"
+> +                if bytes.len() =3D=3D core::mem::size_of::<$t>() {
+> +                    let slice_ptr =3D bytes.as_ptr().cast::<$t>();
 
-With that added:
+There's no alignment check, and so the resulting constructed reference
+may be misaligned, which is UB. Same below.
 
-Acked-by: Suren Baghdasaryan <surenb@google.com>
+> +                    unsafe { Some(&*slice_ptr) }
+> +                } else {
+> +                    None
+> +                }
+> +            }
+> +
+> +            fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut $t>
+> +            where
+> +            Self: AsBytes,
+> +            {
+> +                if bytes.len() =3D=3D core::mem::size_of::<$t>() {
+> +                    let slice_ptr =3D bytes.as_mut_ptr().cast::<$t>();
+> +                    unsafe { Some(&mut *slice_ptr) }
+> +                } else {
+> +                    None
+> +                }
+> +            }
+> +        })*
+>      };
+>  }
+>
+>  impl_frombytes! {
+>      // SAFETY: All bit patterns are acceptable values of the types below=
+.
+> +    // Checking the pointer size makes this operation safe and it's nece=
+ssary
+> +    // to dereference to get the value and return it as a reference to `=
+Self`.
+>      u8, u16, u32, u64, usize,
+>      i8, i16, i32, i64, isize,
+> -
+> -    // SAFETY: If all bit patterns are acceptable for individual values =
+in an array, then all bit
+> -    // patterns are also acceptable for arrays of that type.
+> -    {<T: FromBytes>} [T],
+>      {<T: FromBytes, const N: usize>} [T; N],
+>  }
+>
+> +// SAFETY: If all bit patterns are acceptable for individual values in a=
+n array, then all bit
+> +// patterns are also acceptable for arrays of that type.
+> +unsafe impl<T: FromBytes> FromBytes for [T] {
+> +    fn from_bytes(bytes: &[u8]) -> Option<&Self> {
+> +        let slice_ptr =3D bytes.as_ptr().cast::<T>();
+> +        if bytes.len() % core::mem::size_of::<T>() =3D=3D 0 {
+> +            let slice_len =3D bytes.len() / core::mem::size_of::<T>();
+> +            // SAFETY: Since the code checks the size and can be divided=
+ into blocks of size T
+> +            // the slice is valid because the size is multiple of T.
+> +            unsafe { Some(core::slice::from_raw_parts(slice_ptr, slice_l=
+en)) }
+> +        } else {
+> +            None
+> +        }
+> +    }
+> +
+> +    fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
+> +    where
+> +        Self: AsBytes,
+> +    {
+> +        let slice_ptr =3D bytes.as_mut_ptr().cast::<T>();
+> +        if bytes.len() % core::mem::size_of::<T>() =3D=3D 0 {
+> +            let slice_len =3D bytes.len() / core::mem::size_of::<T>();
+> +            // SAFETY: Since the code checks the size and can be divided=
+ into blocks of size T
+> +            // the slice is valid because the size is multiple of T.
+> +            unsafe { Some(core::slice::from_raw_parts_mut(slice_ptr, sli=
+ce_len)) }
+> +        } else {
+> +            None
+> +        }
+> +    }
+> +}
+> +
+>  /// Types that can be viewed as an immutable slice of initialized bytes.
+>  ///
+>  /// If a struct implements this trait, then it is okay to copy it byte-f=
+or-byte to userspace. This
+> --
+> 2.49.0
+>
+>
 
