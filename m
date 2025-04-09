@@ -1,234 +1,302 @@
-Return-Path: <linux-kernel+bounces-596465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E044A82C57
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:28:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3465A82C70
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A128188D1CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B264F8813BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C4B26B2CF;
-	Wed,  9 Apr 2025 16:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E21A26B941;
+	Wed,  9 Apr 2025 16:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ECMYXpYS"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FBSW7T70";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="jd9jZo7z"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78BB26B2C0
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 16:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744215889; cv=none; b=tfb7WUIFu9NkIzvJmjPQez+PKVWpT/WI7mjuZMbC+u6uh+7ka+c7xy3mRXKubz8FTCzE6eB2A7DQwYV6/F27hlP2ujx6RFLnhKM+HNMLHMKNLijtDyh9hDmqGGYnGAF0JlCy2mqdzyZPxW51jIq7r2xmGHN+ACoZ9jvAldQpvoA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744215889; c=relaxed/simple;
-	bh=lvlXYICDJi35YqS6cjABd93tOh3oXdZkL+FPD3eVhWE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VNzqnqWRu1tnRBD/czTZuqIBcYOd8be8vOcwGzy+mltT9nb2+DbkvjFLnUulj9P1fX2OoB80sTqnWT7NtF42kEsJ9ShvIjjUKilzd/hxTwV297mqvmjpFk6cC7uFEbwa5lufxDOMPFdkGu4X0V0mPpTtJIqCyfTi6NWpn3aqOf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ECMYXpYS; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so7074775e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 09:24:47 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA881DC07D;
+	Wed,  9 Apr 2025 16:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744216039; cv=fail; b=o0ohGa8RqL4Y+35FTiedPNHM8ByB5/WLCar2YNk0BVubdA/ViAUXotH87q1ttnQ2NVHRPwRRlesr22RIFelazbl/L5svngj3hMGl4TAk6myY0IvTiwFDouu1hc5zc5mEqmRKnUQrLP2PDVo008F7z/ug1cXc8bQwbE+wGBH+LEU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744216039; c=relaxed/simple;
+	bh=VZSsA1T/hfo7NRHeU5oUGkD6Kn+EVETCjoKDyBRgSYY=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=p1tATvEHV2eOlbIrHilA/TS7KyWK0Boqc9nVQYgVh9sq6/j63mLhDdZvAuVUqF32reAtF8WAuMOYkhszzWbpBcw6qiAEQ1GRvuhvPGsFWttg5KWP1dYH/czgLb6ApQT4F8rrzmvivkPo8/BGcDSudZV2WFapInQ06yjesJj4Czw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=FBSW7T70; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=jd9jZo7z; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 539GN0Zc009441;
+	Wed, 9 Apr 2025 16:26:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=o5kFV63ZVjZkvHN7KpqHymwb1vvo6DYxTH4nuKj2Cqo=; b=
+	FBSW7T70G72Ozke0QmxKt9D1OvAlViiJ3GHxrUTvOR+OVb+xxcKyY4bppx8aRuAx
+	A/yACNKq3yaxO1Fq8k+xDXRypuUdYNyrLzgwHWlPOatJIT8AWFJguxbYsOBJv0gV
+	p8lr1w8WfkwVS2j3rJLR38TfjAIs7GAIDiINQnH1FjJ/ASAZcMGpNsoQ+XSb2ZhS
+	6fNFTKYhTiobn+P7NjsCTF738et0dlgKEzODQfYujdhv2eXXDWVs2zkxVuRTcXkN
+	Em67pXTEIEIDyumZqD74ZeWVNoPQsTApdyTWdATdys6txvd/FEe+swkSIDGfwt6U
+	i5gvbeDWZrqIHDyt4efpig==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45tvd9ygq1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 09 Apr 2025 16:26:47 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 539Fgdr5023959;
+	Wed, 9 Apr 2025 16:26:46 GMT
+Received: from bl2pr02cu003.outbound.protection.outlook.com (mail-eastusazlp17010007.outbound.protection.outlook.com [40.93.11.7])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45ttyhbfep-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 09 Apr 2025 16:26:46 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tXjq9xyJW8Qn7NZMmg/ir7ooX1RLt+T/ddtt7g+ThtvVdwgml9+ZUokUf2JScvnTZuFrPzpzT/PLxcgH9uiuNoAI8zNeUdtd7PgscUCZ7PaX1VT+P+CwuO4GvTzlyOTAKo6G/zXL+eLeFa+KPPPMA77rwj1x1Ykyfo56Yn1LyUb/hTPRt0mi5UoHnzWUlsUIK9xEbbgh9PaUbqBkgqtjDGsdqrBjXy27qvz42C9PHpa/yI7bPLaLaQcmbF6kfI0UUW7XhPsoBpQlC+EO0KbvWBgpYrfBh8IBDpIytelxPDNUyV9V4oBsRtX+J3SYiwqlEgGIA5GjkmaLhpRg9v2gKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=o5kFV63ZVjZkvHN7KpqHymwb1vvo6DYxTH4nuKj2Cqo=;
+ b=aPNlM1cTJAWAxUb1zFuOyQBBjk5P47fOnLofoWD1JamjNa2diSzmeiH76HfBRLfxbM3v9PGQYG0fMYiOTtqyQ15PGgxANn6eP1lZBp4SJRrnG6hKGG1bQ3PyQhIJapcBtu8mZe9dQx9ABXcdVFfQtAzkkIPpMicyiWyof/xorOxwkLegUE5Zxs14qM7MF54GzsKsiJET3IWlJ1cvZOYAhGYqH98C6oz8ZZcbD6mivTmZCWfRIUHmzK2doT3MCvum/Jju1zpwPw/01o1XRg5XrwHoI5mG4O1HKKnOJS8VQwekCEg98xxpenb+uCUhvUuA6vC5D8sOkRjoHVxmgk8lOg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744215886; x=1744820686; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OKtecGAATRVTmYAsg19IHdqraZXP+b9x28g1m/3NA6k=;
-        b=ECMYXpYSNnD5gqp1RsxWyLObqhfZlD746GxmlC9rpfhPi5oyhXU1BsleE0p03/2daP
-         cNOj9IWKjqzo5oSY6l8abMcr/avbUheHJdGwotwdpb/IcZNrZQrZc7E2+kltZt+PdBzs
-         GFx93c3Vlz804GSLhTER1wEt+m9Ji8T6dWLghR7mKVTIWaBoxxYDeg/qwRxpEtFoJNMX
-         B4USt3UvK+Dt9iLrHhinHvTAGmGYqq4Y01EeOo/8M2BcoHczCHEWwW/pE/MwEYYXZ4j0
-         Jw0d8XLcCCRQ1QDMxv53gg432jrs24BUuVjxPYvijJ7fNSaB4ujVYf8Ep/ZJdbD4yZz9
-         V9eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744215886; x=1744820686;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OKtecGAATRVTmYAsg19IHdqraZXP+b9x28g1m/3NA6k=;
-        b=exCtcfkSbwP7YCAlvGmDDHPh5GfQ57JvBZCghntq3I+sZURQTk26GpaQ4ml1CuNXXe
-         6HC9RKQwyOHfLXsErsehOI+nSqqsGo98vKvvCFhsmy+tPmD2syX5KfH+DRGqIW3ufqp9
-         RHMlwDmiDcVilFeRBwL/CSrXGbjps6BVifAkNyzA4PR03C4GssonO3pVot4vqbYE3ZxT
-         q5rS38RnJxzQqpxwQCWepbKecMIjcyDvYEQfaQw7lY9cXnan5USyBRsj7i6lbI6Qx8wT
-         vJIUFBaFWqNX1u+jFdscpxEVguXeXzkBiyBX6bOZBNHw4NI5zqjnDhTe3KCB1k4PRJjC
-         yoow==
-X-Gm-Message-State: AOJu0YwlPzTNWQPCXR8KHIQVIbsWUrVaWHlPG0UtyQXQItK7rac/P/VY
-	YqoFd/mlGUfaxYIU66WbUoUIJ/m2EaEscP2FzA51FyPTicYepQXQo8r7V/016WyINaivZHLg5oG
-	MOTI=
-X-Gm-Gg: ASbGncv8wi0lHCCPDpL+TIG7KRa+NJywhSikodSxVon865QQ9391x5YMDugm5hDDIqo
-	aqIrjzY1S98i/FKWshdghSZfWnQB4avUY0O7aqA8ASywdElkkzhZzvpUBKlPD8V6myxLf7IqCvn
-	1vX3vi5hirnCY7ZzAzuCIM4P4U4iBENLj8Ix3psknKWqbQ/0C0Gl3cAxguk+0hYLLKOA+sY4oS6
-	SgDjjCEELlYExiLbeFGwdBZVTJB9nQO2ixRnq5WFYyoFrY7hIVrOrBquJ5wi5WiHOtdDVrj5sdT
-	ThEbDKQIv4zmlBVFzuE2tspexelGZYBKJbL1qPjp0pNSCX8sjU7dOIn5JPg=
-X-Google-Smtp-Source: AGHT+IF4jICUHkAlBCxnMi5UpN9IEfyZzvyaGw6aA22YNi5e8wkLTxDKAPo44B6JeZpl9141X2izVA==
-X-Received: by 2002:a05:600c:4a16:b0:435:edb0:5d27 with SMTP id 5b1f17b1804b1-43f2c5d2eddmr1285985e9.9.1744215885937;
-        Wed, 09 Apr 2025 09:24:45 -0700 (PDT)
-Received: from [192.168.68.117] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43f207aed49sm24257705e9.34.2025.04.09.09.24.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 09:24:45 -0700 (PDT)
-Message-ID: <c7acfc41-d0a5-42b6-9a73-1c298089ee8d@linaro.org>
-Date: Wed, 9 Apr 2025 17:24:44 +0100
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o5kFV63ZVjZkvHN7KpqHymwb1vvo6DYxTH4nuKj2Cqo=;
+ b=jd9jZo7zBCaqYspehf0fLR2V4fj8ADg2g84gEDSIghY88+QSMZVRE6C0yXKHkPCJQKTsoGzVvMir/7mGcmK3gC7zHcr31Zl6GmJ/WFGAn/lSEB7xcT2wMuErQNz8EPvKBKo9koLdXWGaVvsoSxDGIRsopd0Ly17OavhfAdNYEdU=
+Received: from MW6PR10MB7639.namprd10.prod.outlook.com (2603:10b6:303:244::14)
+ by CH4PR10MB8193.namprd10.prod.outlook.com (2603:10b6:610:23c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.33; Wed, 9 Apr
+ 2025 16:26:44 +0000
+Received: from MW6PR10MB7639.namprd10.prod.outlook.com
+ ([fe80::69ee:3509:9565:9cd6]) by MW6PR10MB7639.namprd10.prod.outlook.com
+ ([fe80::69ee:3509:9565:9cd6%6]) with mapi id 15.20.8632.017; Wed, 9 Apr 2025
+ 16:26:43 +0000
+Message-ID: <0fb7ccca-3645-402a-b023-d73de61d9737@oracle.com>
+Date: Wed, 9 Apr 2025 09:26:41 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Bug report] NULL pointer dereference in frwr_unmap_sync()
+From: Dai Ngo <dai.ngo@oracle.com>
+To: Li Nan <linan666@huaweicloud.com>, Chuck Lever <chuck.lever@oracle.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-nfs@vger.kernel.org, trondmy@hammerspace.com, sagi@grimberg.me,
+        cel@kernel.org, "wanghai (M)" <wanghai38@huawei.com>,
+        yanhaitao2@huawei.com, chengjike.cheng@huawei.com,
+        dingming09@huawei.com
+References: <e7c72dfc-ecbc-bd99-16f6-977afa642f18@huaweicloud.com>
+ <314f60a8-4b0d-45f9-87f4-5a4757d34aea@oracle.com>
+ <355c8355-a6bc-181f-73e7-1baf7749f984@huaweicloud.com>
+ <89b0c30b-9b7b-4507-ba1f-0493e88c6791@oracle.com>
+Content-Language: en-US
+In-Reply-To: <89b0c30b-9b7b-4507-ba1f-0493e88c6791@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR13CA0060.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c2::35) To MW6PR10MB7639.namprd10.prod.outlook.com
+ (2603:10b6:303:244::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [RFC PATCH] mux: core: add exclusive mux controls support
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com
-References: <20250326154613.3735-1-srinivas.kandagatla@linaro.org>
- <95b7eaf0-2040-a25a-4c41-ab86aba82a8d@axentia.se>
- <02f09c34-09ed-486e-a8a8-23b0df718197@linaro.org>
- <dbe94425-8013-b866-9b6b-39ea499576e9@axentia.se>
-Content-Language: en-US
-In-Reply-To: <dbe94425-8013-b866-9b6b-39ea499576e9@axentia.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW6PR10MB7639:EE_|CH4PR10MB8193:EE_
+X-MS-Office365-Filtering-Correlation-Id: 88c6b88d-38fa-458d-e5ef-08dd778350c8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bDNaS2VIVU9jaHZNVitQNjVBd05tcUdCUHo3WHVGRE5vVlBxWFNFRjFWSUts?=
+ =?utf-8?B?Yi93cG5JWDNzSytQTkhqVFptNUhMT1dNWEtWekpSS1VZc3pkMVU5YkhveFRM?=
+ =?utf-8?B?L1ZmZW5uQzc0YUxUUE02YkVWdmdXQXd4REdvMzlJT2VHbGNiMEc1eUNLNitV?=
+ =?utf-8?B?Snp5cDh4SmVpRG92aFJoZDBNMkFMSXZ2azZpSnNPaklUckVRdXF4Z3gzZ3Nn?=
+ =?utf-8?B?TStwTEdmSWFveGhKUXl3N3NVeUFEQnZsaUVGdUhwNkNYUGhvby9LOFppdmhD?=
+ =?utf-8?B?NmJUL3BHNGNOdnE1R2kvSnNnRVN2TGpNa3dTYUdQOHFYUEs3UmVqajB3Z3Qz?=
+ =?utf-8?B?Q0FCYVNSRmpkT1pJWmJqVlFhK0ROazhxUVBsL0QwMVJWY256UzZMNG1hL25i?=
+ =?utf-8?B?ZG5aaWlZY1I0bktwVFB0SE11a0p6NW10QlpJa0JXa3ZrVlM0MElWeTF3M21H?=
+ =?utf-8?B?MWI4a2NTcWk4ZDM3ZUc3RTd4NXBtbEM0Qml4dlc1QmNIRU5LMWhJL0RGTjZS?=
+ =?utf-8?B?akxPVFRKb3VUb0ZxZm9lczlQRlB6alV1Qm9JTU1oTTNWb1RQRDNWTVJkaHJy?=
+ =?utf-8?B?bDFOWlRqTi8vVGdmZFlVRUsyQmUvRUhaLzNDZGtBV1NqdDdoSzY4R1Z5aVZj?=
+ =?utf-8?B?cVJybXFvTkg0WnFuQVhzdy9tVThlT2plOWVoSUY0ZkFldkVzcEhycXlrdldp?=
+ =?utf-8?B?Z2pEZ0w0cGdsMWoxR1hDUnJ2dTQ1MkFZanZiUUdrL0E3UFphOXQxZ0lBS3RM?=
+ =?utf-8?B?NWNKUHhNUnA4MGxTWXFQRUREUWlPUU9EMmhkeGRZSVFtSTJjODFNeXo5Zmxs?=
+ =?utf-8?B?Uk10ZlA3NDgxVEl6b1ZnbFYvZWxZMVp2NFlaVEZkUnB1YnBETzYxRUpmR0NZ?=
+ =?utf-8?B?SklSeU1OenAzN3pBVW53ZHJrSmx2WGtybTVVNStab0doSHF4RlQxL0JNekND?=
+ =?utf-8?B?QjlDNklBbFM1bzJtL3o5NUtjSW5vOWtQOFhMd0RGaE1tdUd3dUFZb3pvMjBl?=
+ =?utf-8?B?SEVrTS9xaEkxY1QyWThRRWtmcmt6RFBCQ24yZGlHdURoVHQvQlQ5UEVEMGZt?=
+ =?utf-8?B?YisvTEROUHJyQkJaSXlzVXRxUWt2eDRveElhcDlZYWNlVGJ4QzNtWHNZNGk4?=
+ =?utf-8?B?K3NLM0hER3pNVDhLT2hDTnlHUVlwN01QK254Y2ZsYXR4TmJUYlhlRUpNdzMr?=
+ =?utf-8?B?NHltcDJreGNLSWNxVWFLTE9CdEYrU2FTWDY1Y0ZMUFpEZzhtMjBBcS9zSm9o?=
+ =?utf-8?B?QWtLUDhBZFVySk55OWYwMTV4R3dQOC95YzRSRHY2OGpIdSt3bVlGblI0eEkz?=
+ =?utf-8?B?ek5ScUtKVTdmSUpqb1NTQ0lYK1F0dGdZOWRTdWRUWk1kQnF0b0Z3NlJ0ZDky?=
+ =?utf-8?B?VlNSMzBRZlBqa210L2pvcXR1TTZrdVBmZE12dDl0WlFpVUMxamF5UW1xblE3?=
+ =?utf-8?B?NW5UQ0Q3Q1lJM0ZESGVXRUV2WUtSeHg5TzdqNFVMbXBPd0daMHg3YTZqZlZ6?=
+ =?utf-8?B?d2dBNklWN2dxRVp4V2hWVU5sSTRJTjNOTFRaMTUrL3hjQWN0ODdCM2svWDlQ?=
+ =?utf-8?B?UGY2RU1pSkRxNHhiUmVBU2pwZnVQWUx4ajl0UWVialFuOE9uZ0JUQWlESU9j?=
+ =?utf-8?B?VFhTTEhtZVFqWDdnRktpK05UNUw1N0g1OVFTajZucURtOUZnSzZGYWFCVzVq?=
+ =?utf-8?B?akJ6NXRaUis2SnBGYVpVaWJuNC90YlpRcGxuMzJYalpFa3VvV0JCcEprWnhv?=
+ =?utf-8?B?bGpwWEJ4WDNCVUJtV1VyenVtTjZpeTVjckxMek50TkdSaU1xc0o0aklxaVBv?=
+ =?utf-8?B?emk1NjNTZFVrL1NkTCs4aXk3Y2loaVVOM3lRbU43ZE9LM3l3WUNac3hKVFht?=
+ =?utf-8?Q?ib/FKuLStcxxj?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR10MB7639.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?di93cGx3aHo2ZnRIZlhNd2dBZEdSK2M0RXJwdWJFT0xxUlhLRDVwK1RNWU12?=
+ =?utf-8?B?MFBDTDhwNUtxTDFaMVNpTkprUGdnTkZjTjNPNzRIekJudThiVy9DUnZLdGo3?=
+ =?utf-8?B?SWt6Y1dxMlpzc3lxenJNMDlrNk1GalZheEdCcDBRcGRvVHNXWHhRWFdFMkNZ?=
+ =?utf-8?B?eFpZbkd5dnFkREJ0ZUVzaXREanltVktJTmU4T1pkeHdrbTk5bW9DQ2kvRkFL?=
+ =?utf-8?B?MUFyMjRiRXBqQlJvbHBYUmRhWG1YYk5nNjc1OXNaaFpybjVvYWNvdjlnTk41?=
+ =?utf-8?B?TVZnZmlIUmFVZ0xlQWVpVmc3QmZOTjVVY013MW01WTJDUExpOHRQRHpuWC9l?=
+ =?utf-8?B?TjNLaktHWFlqcHlVUDd4K29NaDM1aGorZ2J3U1RNbll3ckcxT2hySHpsOFdY?=
+ =?utf-8?B?S1BkZmtIRjZKTVNCb2t0L1ZldDhGclAyczV5S0Y2NWhoQ052cWVIUmE4RGJy?=
+ =?utf-8?B?VEZESlEwZlU2NjlOdjJzY1BLTzhWTG1EdVFmY1Bac1dYSGtQOStuNkZsdEx1?=
+ =?utf-8?B?S0VYc3l6L1M5U1V4YldJbkFWSmJxcHhVNzNNSHVML1FRQ08wdGpjNEQ2WXRM?=
+ =?utf-8?B?Mko1bkw4QlhWL0hocGYxY1IySGMxbC81YXlKbDlBV2o2WllSNGQ3c3VCUkE5?=
+ =?utf-8?B?azUwcytVd3lNOTVqc0thVkNjWjZaRnRDbWQzUjVWMGpQZmpzOW85UEk0S2lH?=
+ =?utf-8?B?MlJ5TmNXZ2NmWEcxQkIyNXJFd1NQYkNmd1hyelNrc3RpYUNxMW56Vkw3Q1JB?=
+ =?utf-8?B?TlJrTGJqV0xYQndkc0V2RmRsbGwzU09qcE9oNFVaaDFwc215aGh2ek4vdXFF?=
+ =?utf-8?B?K0pkeXRlQ3Jwc2h4TW5JcW4xd25MdVRsSThTZ3E0MFJWYS9WYUpKUUFTb21V?=
+ =?utf-8?B?UFNHMGVyc2lkZHlEOXN1Y29QbWU4TnpibGFoNGhJV0FOSjJkRHA0alFYZWZO?=
+ =?utf-8?B?VFB2MGRPQ1pCN3loaTllazE5dWtqUHBvc2tkNStxeVN3dCtjZEFrU0U2cHJR?=
+ =?utf-8?B?dUtRTlI2cDhUVEY1OEd1M1cvelB1QzFTU0xNN2pVOUo5VXRnK1JYS2Y3WE9r?=
+ =?utf-8?B?TzFiOXg4RkpUUjVSdUxzN1Q4WTFoRTFIZEc5YktQNjR0cHNmQmx2VlJhTzVl?=
+ =?utf-8?B?djU5bFVvODVvc3YrYzF3c0ZtcGk2UnE1cUNiTFVjM2NQZWlTc2h6b25LVE9m?=
+ =?utf-8?B?TUM1RkZKNEJWNXNlKzlLQTcxMXlBOEhFdjFHRWVzcDI5SU1vTVd3TVRLR0Zo?=
+ =?utf-8?B?NjVCZGhzeHZvTXl6MkNON0o2aXRUZU8veXc5MEtkSXUvbzZ1UzFVRVZwNVpv?=
+ =?utf-8?B?bkZJWFZhY3VaZU1XVXFVcTQ4Y3B5ZzFtNXR6dTlJNW8rZEFRMG1tRDkvcW12?=
+ =?utf-8?B?Y0NJNGs1MGNRUllEWEwvSkVOdkx4OFFwaWNoNGlMU0xuTy9SYi80OTB4bHRN?=
+ =?utf-8?B?Q29Wek4xTjNtYno4L1p1M3JRNGljK2dtaHBRUU5CenE3SllmSFhMMGV3RmF5?=
+ =?utf-8?B?VlVBc25ha001cDVwalRTZHVQNldFN2d1ZTh1WldCekgvZEpnMkx6bzJOamU2?=
+ =?utf-8?B?UXR0bWZ3akNZMmdmOTVLRXgrT0Y1bDZnN2RteDk1NzJES3Z1aFFmOWtIVGQw?=
+ =?utf-8?B?S3BSUUFlR3dPRmJKaUtPMWY5TUlpL24xUStCNXk4aFYya2NIMHBNdkU4Q2h6?=
+ =?utf-8?B?d1RjaGNMOUl1L2k5ekdrbHhoR20zU1dKcmJaMGgvc3BRRlpkdnRGVnkreUE2?=
+ =?utf-8?B?d1ZkdUJEOUxJWXpiZnFIR2JBTm44OUFjT2Fqc0dEcFN6bWxmUEN4OUpkV0NS?=
+ =?utf-8?B?dlpFditRcVJqUE1keGdGdWtuWGViRWFUaGwvMlpaQ1F0SlZUV2pHLzF5VUFC?=
+ =?utf-8?B?SnZIa1BjbkhPOXJRZTNMdEFTU3NpZDBNcE1jcGNmaWxvaUE3WkE1ZFhrTGRz?=
+ =?utf-8?B?MW1DV0ZaKy9xRysyM0FOMnZTQjhRckZxeXEra2R2RDVseXdYZ2JOcUcrRmwv?=
+ =?utf-8?B?aXV3aUF6Qm1kTlhkU1RiMWgwcEFSTnFUa2tJdFlNM2o0aE4wTFlxVFNmbDJY?=
+ =?utf-8?B?eTYzK0IvYmpUQkc1d1ZqR3RQZGtNemIzelZVak9YaE9lOUwzL3A2WTVlK1Ba?=
+ =?utf-8?Q?SFQB7o4BHKsk4zycU/p0EEsLN?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	R2NSnGlEyli3HHQodnXDjnRgUd2yxq65O3+cxH8zsPsBBetxElXNgm+uVUrLmqlle17egYeE/pijwHFNx7BCttECMeg5dMC4wqtBMD4cRZRVq9mkcyOnAAQj1LpmiIhzvsvcfSAe5O5TVcHjNtuLFG2Gc5vIm8oAz4P2kFvJMxVLXx71iUJrNBw0knZ9juuOsTpTVmLyd59clshnJTSJACxWGTi3oet9c/NTuXzPciss++2irRzQ9glWbL0Ran1UexfSfhL5j1JeXpf5z8nxl4e3Xi7twoZSeJ27lezkIQYJrkia59iDTYBeFtlv6ooVz+odxtYaML5vCEGps1NJdM71ncpvNvqh+7QmIBklgzHMUCRqg1oBEU5n0/LLu4iCxNyiKOYD4Ru93PIuKU+bBkPMpUcI+DqUaYXMDld0VjA6rA4iyIWyDnGU21r5kzMl6+JcfbjYSex4H5+9GTTqdLheXtjibm4/Io6HMqBjRaM9jWrDgMxEthYbIzjVqWav7Kn9pYUnN3FFN0He2Qf6srHy4eqBTZecOerbeGOKGSq7Zxnj64YJJaGXEVZd3NoNXLkz2RE6uWmdkf0nsdm0lMtWeZ4sTTFyxmNTlA6pz0I=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88c6b88d-38fa-458d-e5ef-08dd778350c8
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR10MB7639.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2025 16:26:43.8543
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NPF2GaUmNowThnnKCP09Um1ihr2LbAbf05GUQ6gLjtfgU2Tqwy6JU9xRIwjnSV1apAmiwLtanScEJ0ohlFDH7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH4PR10MB8193
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-09_05,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 mlxscore=0
+ mlxlogscore=999 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
+ definitions=main-2504090105
+X-Proofpoint-ORIG-GUID: j_NfNcuEN1TurtmREpHnG0J324Hn_Ce-
+X-Proofpoint-GUID: j_NfNcuEN1TurtmREpHnG0J324Hn_Ce-
 
+On 3/9/25 12:40 PM, Dai Ngo wrote:
+> Hi Nan,
+>
+> Can you try the attached patch with 6.14-rc4?
+>
+> This patch adds a spinlock to protect the rl_free_mrs and 
+> rl_registered list.
+> I have seen list corruption in our RDMA testing but the problem is 
+> hard to
+> reproduce so I have not submitted this patch to upstream.
 
+Any update on testing of this patch?
 
-On 07/04/2025 14:39, Peter Rosin wrote:
-> 
-> 
-> 2025-04-07 at 12:36, Srinivas Kandagatla wrote:
+Thanks,
+-Dai
+
+>
+> Thanks,
+> -Dai
+>
+> On 3/5/25 6:40 PM, Li Nan wrote:
 >>
->> On 03/04/2025 21:58, Peter Rosin wrote:
->>>> @@ -479,6 +487,10 @@ int mux_control_deselect(struct mux_control *mux)
->>>>    {
->>>>        int ret = 0;
->>>>    +    /* exclusive mux control do not deselection */
->>>> +    if (mux->exclusive)
->>>> +        return -EINVAL;
->>> This is unfortunate. I think there is value in being able to deselect
->>> muxes in exclusive mode. Otherwise you might need to keep track of
->>> some idle-state in the code, when it would be more flexible to have
->>> it specified in e.g. the DT node. The best idle-state may very well
->>> be hardware dependent, and is often not some central thing for the
->>> consumer driver.
 >>
->> Does it mean exclusive mux can deselect a mux however its not mandatory to deslect between each mux selects?
-> 
-> Yes, that was what I tried to say.
-> 
->>
+>> 在 2025/3/5 22:02, Chuck Lever 写道:
+>>> On 3/4/25 9:43 PM, Li Nan wrote:
+>>>> We found a following problem in kernel 5.10, and the same problem 
+>>>> should
+>>>> exist in mainline:
+>>>>
+>>>> During NFS mount using 'soft' option over RoCE network, we observed 
+>>>> kernel
+>>>> crash with below trace when network issues occur 
+>>>> (congestion/disconnect):
+>>>>    nfs: server 10.10.253.211 not responding, timed out
+>>>>    BUG: kernel NULL pointer dereference, address: 00000000000000a0
+>>>>    RIP: 0010:frwr_unmap_sync+0x77/0x200 [rpcrdma]
+>>>>    Call Trace:
+>>>>     ? __die_body.cold+0x8/0xd
+>>>>     ? no_context+0x155/0x230
+>>>>     ? __bad_area_nosemaphore+0x52/0x1a0
+>>>>     ? exc_page_fault+0x2dc/0x550
+>>>>     ? asm_exc_page_fault+0x1e/0x30
+>>>>     ? frwr_unmap_sync+0x77/0x200 [rpcrdma]
+>>>>     xprt_release+0x9e/0x1a0 [sunrpc]
+>>>>     rpc_release_resources_task+0xe/0x50 [sunrpc]
+>>>>     rpc_release_task+0x19/0xa0 [sunrpc]
+>>>>     rpc_async_schedule+0x29/0x40 [sunrpc]
+>>>>     process_one_work+0x1b2/0x350
+>>>>     worker_thread+0x49/0x310
+>>>>     ? rescuer_thread+0x380/0x380
+>>>>     kthread+0xfb/0x140
+>>>>
+>>>> Problem analysis:
+>>>> The crash happens in frwr_unmap_sync() when accessing 
+>>>> req->rl_registered
+>>>> list, caused by either NULL pointer or accessing freed MR resources.
+>>>> There's a race condition between:
+>>>> T1
+>>>> __ib_process_cq
+>>>>   wc->wr_cqe->done (frwr_wc_localinv)
+>>>>    rpcrdma_flush_disconnect
+>>>>     rpcrdma_force_disconnect
+>>>>      xprt_force_disconnect
+>>>>       xprt_autoclose
+>>>>        xprt_rdma_close
+>>>>         rpcrdma_xprt_disconnect
+>>>>          rpcrdma_reqs_reset
+>>>>           frwr_reset
+>>>>            rpcrdma_mr_pop(&req->rl_registered)
+>>>> T2
+>>>> rpc_async_schedule
+>>>>   rpc_release_task
+>>>>    rpc_release_resources_task
+>>>>     xprt_release
+>>>>      xprt_rdma_free
+>>>>       frwr_unmap_sync
+>>>>        rpcrdma_mr_pop(&req->rl_registered)
+>>>>                     This problem also exists in function 
+>>>> rpcrdma_mrs_destroy().
+>>>>
 >>>
->>>> +
->>>>        if (mux->idle_state != MUX_IDLE_AS_IS &&
->>>>            mux->idle_state != mux->cached_state)
->>>>            ret = mux_control_set(mux, mux->idle_state);
->>>> @@ -523,13 +535,15 @@ static struct mux_chip *of_find_mux_chip_by_node(struct device_node *np)
->>>>     * @mux_name: The name identifying the mux-control.
->>>>     * @state: Pointer to where the requested state is returned, or NULL when
->>>>     *         the required multiplexer states are handled by other means.
->>>> + * @get_type: Type of mux get, shared or exclusive
->>>>     *
->>>>     * Return: A pointer to the mux-control, or an ERR_PTR with a negative errno.
->>>>     */
->>>>    static struct mux_control *mux_get(struct device *dev, const char *mux_name,
->>>> -                   unsigned int *state)
->>>> +                   unsigned int *state, enum mux_control_get_type get_type)
->>>>    {
->>>>        struct device_node *np = dev->of_node;
->>>> +    struct mux_control *mux_ctrl;
->>>>        struct of_phandle_args args;
->>>>        struct mux_chip *mux_chip;
->>>>        unsigned int controller;
->>>> @@ -606,7 +620,25 @@ static struct mux_control *mux_get(struct device *dev, const char *mux_name,
->>>>            return ERR_PTR(-EINVAL);
->>>>        }
->>>>    -    return &mux_chip->mux[controller];
->>>> +    mux_ctrl = &mux_chip->mux[controller];
->>>> +
->>>> +    if (mux_ctrl->exclusive) {
->>>> +        mux_ctrl = ERR_PTR(-EPERM);
->>>> +        put_device(&mux_chip->dev);
->>>> +        return mux_ctrl;
->>>> +    }
->>>> +
->>>> +    if (get_type == EXCLUSIVE_GET && mux_ctrl->open_count) {
->>>> +        mux_ctrl = ERR_PTR(-EBUSY);
->>>> +        put_device(&mux_chip->dev);
->>>> +        return mux_ctrl;
->>>> +    }
->>>> +
->>>> +    mux_ctrl->open_count++;
->>>> +    if (get_type == EXCLUSIVE_GET)
->>>> +        mux_ctrl->exclusive = true;
->>>> +
->>>> +    return mux_ctrl;
->>> This is racy with no guarantee that you are the only consumer after you
->>
->> Yes, there is a chance of race here. locking around mux_chip access should help fix this race.
-> 
-> Yes, some locking is indeed needed.
-> 
->>> have gotten an exclusive mux. My sketchy vision was to have an API
->>> function that requests an ordinary shared mux to be exclusive, and then
->>> another to make the mux shared again. Those would take/release the same
->>
->> hm,  dynamically going between shared to exclusive is going bring more challenges and consumer side its going to be more complicated.
-> 
-> It is not important to be able to toggle between shared and exclusive.
-> So, if that's difficult, don't do it. But if it somehow makes the
-> implementation neater, it's certainly a possibility.
-> 
->>
->> My idea to do this way was to allow more flags like optional to mux, in same likes  regulators or resets.. etc.
-> 
-> Yes, there are uses for optional muxes.
-I will try to add these flags in v2.
-
-> 
->>> lock as when selecting/deselecting, but also mark the mux as exclusive
->>> and trigger_not_  taking/releasing the lock in select/deselect.
+>>> Dai, is this the same as the system test problem you've been looking 
+>>> at?
 >>>
->>> But then we have the little thing that conditional locking is not
->>> exactly ideal. Which is why I haven't done this before. I simply never
->>> got it to a point where I felt it was good enough...
->>>
->>> Another reason for me not having done it is that I also feel that it
->>> might not be ideal to reuse mux_control_select and mux_control_deselect
->>> at all since the rules for using those when the mux is shared are ...
->>> a bit difficult, and will remain that way. Thus, having those functions
->>> *sometimes*  behave like they are easy and sometimes requiring great
->>> detail will make the already bad shared case even more error prone.
->>>
->>> I wish I could see how to do this sanely.
 >>
->> How about going with current approach with locking as suggested?
-> 
-> There needs to be operations to
-> - acquire an exclusive mux
-> - set the state of an exclusive mux
-> - return an exclusive mux to its idle state
-> - release an exclusive mux
-
-> 
-> Only adding the locking to kill races in acquire/release will still
-> have the problem with reusing the same API for setting the state of
-> an exclusive mux and selecting a state from a shared mux. And as I
-> said, I think it's bad to try to keep those seemingly similar ops
-> as the same APIs. I think it would be better to add mux_control_set()
-> and mux_control_unset() APIs (naming?) and have those error out if
-> tried with a shared mux. In the same vein, mux_control_select() and
-> mux_control_deselect() should error out if tried with an exclusive
-> mux.
-
-Yes, having dedicated apis can make it bit more explicit to the consumer 
-side.
-I will try that in v2.
-
-thanks,
-Srini
-> 
-> Cheers,
-> Peter
+>> Thank you for looking into it. Is there a patch that needs to be 
+>> tested? We
+>> are happy to help with the testing.
+>>
 
