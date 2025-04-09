@@ -1,175 +1,143 @@
-Return-Path: <linux-kernel+bounces-596344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8B1CA82AB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:40:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C25BA82A96
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D3489A44E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:30:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5976719E1510
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78AE267B89;
-	Wed,  9 Apr 2025 15:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CB32638A9;
+	Wed,  9 Apr 2025 15:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/qvpMxC"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LATRf7Yg"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A00C267700;
-	Wed,  9 Apr 2025 15:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA19B25F78F
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744212624; cv=none; b=Vz6e0iosnw8rvAlGjm40abNShhpoDqcpY/vvVfMJk8In9PFT05oYg3rdFSEEWyfFsqO/mLt5MQfw3sRrAFpRyJrOvrKlL3RaAgzuIMsZhG1dfGCLpbXZjRFDNLpWfdiWcgxIfNMU0/D/WAPDgy4emY1rG2YFS0aBoRskUfNFH0U=
+	t=1744212619; cv=none; b=HkdRLHmulBe2sUHAPSEXjOvsuOktBuOV+gtFEaCit5SrJMJi1UrRuWVJyp3+zLNnii7p90u+KsqcQPXmjx9/k+ZV5CZrb7/6wWFUYsG6miV6Pku/F4ASy4EhlmbpXGkn2bbAFIb8JICKxKNKmT6owDzgcHcZckOPzORUYJgatQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744212624; c=relaxed/simple;
-	bh=2c8Imyjxh5wJ8QbYOd6mxWFUbOT5GO1SJNdmlNcU2HA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ma2SRoITWPIIVS+nawdnX9q2UzEjCqULsd5YCV9nMPY3tA5/sCGlcBmaTx5t7FY1G+oWz+QEUKYJVh0Qtdf3yGWIRGXmDnCFX5l+BaP9LqIggDlVrB0tZ2nJ6ECEzkA7cqjdZ2YR8o1S6JEA+4FNlhYUugwDoxvMV6X/zGiBit8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/qvpMxC; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-738fd9dbe8aso448744b3a.1;
-        Wed, 09 Apr 2025 08:30:22 -0700 (PDT)
+	s=arc-20240116; t=1744212619; c=relaxed/simple;
+	bh=cSb7Z4Wciv1Wkwau8LKbnH/lEO+Br0IiyaGQ53DULh4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IDpsD/ne0N89+25RNWTusspa5wIxcFiy4NGpD7V0RpVacmkXTatUio99Pg2HkgLg6bPqBa95j2YbLdviWrlYfI1Y5OaDlm6GRwhOAKqKrLcuFFMZpdjD32v7bj4LGcU95iyUfJ42bZzVrf9JsiF0HBCNclnPuI5z3NzmDiEOlFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LATRf7Yg; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso6511915e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 08:30:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744212622; x=1744817422; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z8RHRVKQouQftyjR10Wqn4eO6RF5eyTqUXdahuKdSrg=;
-        b=j/qvpMxCsGrKiZU860c5FA8cYLBcxm8Pt645rdC13gnxdRNEi0uDAqUjhmwGHDEClP
-         rZirFohxi90G0YtmMViaPj7fU4GsMkWRoDD8OHPLfD6plkB+foMSheA/WlXKRhD0m/hD
-         LS7pGy83jBmZA/miraVDf8eacCeVKUBu35LTn84xgAhjQh874ltCXMghIqFsuYAvJssW
-         PLzPsh2D6J/R9Kp/yBar+uds0P0b6i2NRLfpqmF/pI+ZjnaP4g1AWZv0exNWr/h6jnnv
-         uWMqnLLwBXXStRL7V/K2zD3DwqJ3YpYMXbVTybJPnJWjSGj4Is3NznZTlp776KFKpO+a
-         SRIw==
+        d=suse.com; s=google; t=1744212616; x=1744817416; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NYoWpZxajoIHIaYiHf4bHzvKRXNdl/YUkiNhw0QxN6A=;
+        b=LATRf7YgIdU7Ij3Z1tcNFBbqHpiiYtDbVrPQ1n9CxweRrLccxcKjZLTCH62zmCZBAw
+         nxdkLX5hr8XCJD9SzS4P3hxQNYRTtSTKhWJi0tUDQEdBz6Kmfbef35WQkOQHm8mKhem3
+         JtnHNBetEq9UfUru6fVQShSA4609iFWhw+GOwS1HX3fyf/bt6gY3X0sIt7dt3f7XKUQc
+         wIf1ouuGpI4rL1FZZ0mH9NB8DOW4ZRpRakuWt76WsH+EzIzJ8mQ0GeD6Emd6KHxL9M5N
+         LgcMhBHJPk/21qkBtt0UN/3fvkrPnk4OwRpD0e4FS0dHv2pYYpU9c1HXWlvKTXGwHKvn
+         Sieg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744212622; x=1744817422;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z8RHRVKQouQftyjR10Wqn4eO6RF5eyTqUXdahuKdSrg=;
-        b=HrmFp7PDutM1Hm1jgrkdsLajuTQ5Onp9pVHxz/Lmb9+62yA/b5ROl9MgwBygvFNpHS
-         SHYMGGuMNoNTyaxkbcXanLQ4zjlWqP8oGVj5thUtJIR/+A9+AM0N+lhZgy9usTXzfA+Y
-         V7BL+/CPvJskpSHoIW9xeysxyskYfRz9VGeODw2HuNNQgtLTR4d9gNvqFgvd3awssX+e
-         QKneKayIVUeY8TlZEVMPD14r27ROePjJPMVG2kGuZGJStxucazrgVvMl4no5bv0Ye9DJ
-         fUu9vLPB1tQMPd95Fkg6cszOk6ihRzGrIbApFms4CKZhcUqkmXUlBvXnbOKXxJ84Ic7M
-         tbGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPDdrsEYCh+fsUW1bijgLBHvWlQf0jTBMOrRFsLBmv/DTz9newAWtz/mB89Y18LU24aikr2UrNOB/xX7Xl@vger.kernel.org, AJvYcCW0qOfdWRS8wbQcNn3UDsO3uw5sfubceSq/O0DtMyeh1FscbKbNlB5jsidfsYmSR7eJ54rNqaDwxczRNoYS@vger.kernel.org, AJvYcCXrR8qqrQ1dalNTI2TbY1v16OKy9mihRuzWfuAce3WBFFGGJSIp9oSPl3D8LGGLDV3oR7358mkZBxiC38fbrOhX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4vE7GtTV43pmRoOjS6WgSa4CfXmwn1gpb6zaMh/4bRMbmmdeB
-	6FdaA/3ucYs+8NJuc5fEzlSfyHyMuJEG74T/wbXyn2xjBjRI3nix6EZZ2NzNj6LHRUbsVMg9Ge7
-	uXXyLm+YjGMpeYKtzYVSNj2+qZgE=
-X-Gm-Gg: ASbGncsZ5wMcvc5BtW1bOUOc9rUCXU9SSlxpEtYfNB2AL5XrbpSEiiD9v+FMnPZjMqG
-	jwNDddLs6STofyXXeSSVQL2s4EYLUf6/9q7H9H/kFJIIaxW9zfmBy2cOMpxdRidM833VVrS2XtT
-	KARCqT3p7Ku9jny8pDQE23tw==
-X-Google-Smtp-Source: AGHT+IFvw7UU8V9RYaU2yDGTDkK4qSbmVBUa5uAZXnS90yUfYYPnyAx4R3eS12INHlN8U3kMlOUeGD8W96fBB246NpQ=
-X-Received: by 2002:a05:6a00:3a01:b0:736:559f:eca9 with SMTP id
- d2e1a72fcca58-73bae5272f5mr1833806b3a.3.1744212621584; Wed, 09 Apr 2025
- 08:30:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744212616; x=1744817416;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NYoWpZxajoIHIaYiHf4bHzvKRXNdl/YUkiNhw0QxN6A=;
+        b=O6GpvKw+adK3CoOmJDPEnkVuc0cnxj9ALVs8fzvYGz33jgm1rBtjGQMMEIRoG8djAJ
+         64xalXJGDPuusiAr2V1KL6ULCS1bRtfSkA7b9D8S1dFtl+WWh52mWnFZ32R1bM/9bKe+
+         3OhDKxhKkCN0wXcfYu79BLS5eNEoYT2qsm2r4wT7W7kA47oybfnV+aUwUYYokxvq6z/L
+         eDWBVO686kg5oofworqsSJmnyISPxU3pHl8RuHlp2U9uKqUJwmVnVl6i0r8Zi5ASwrWu
+         ijrIexiSHG1Dq25RZF3kB0W0ZljUN4zitzAvIpNkHt+1MaS67yaeryckgCw5oEhgqrAS
+         ffCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+QbyYE1eneJlHQyjmNjdO7QoEax1brwYpaPsDJs3g9SuKjIjyu8iiZW8EaUXRQ/WdoRaEA4/iVXD0i48=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5PX/QAMouXBziHhDrHNYFDdWn4U++JqZgNiqaWpqgeK/f58Ji
+	0EV1s2QBxyibu0Lvi61f/pz7il9tB8XzOXct2rfSIrZJbaah+CtvE5QwZ4xUJkw=
+X-Gm-Gg: ASbGnctNs6tnIYnkoy3fMwut5Ht7sMquHi8RNQ6wqDt8B1ln5X3gYY84hq3WOeJUpbf
+	hRLjhEnjGkPp7boXneEkeXoHCRw3KYpuqT0Yfo3FHPWM7W2Pwug/aLynmamAw/4eK69AMOg0LDw
+	Bu7JqgjR8cAnHqOBqxx/YP2l3xzMzz5t4unVkfjg8O76Puw8qCSYUo1zyex7Xfx+KPk3H9uwZJB
+	QgtQEQpRyytrj7WsspUAP3EuK/TwyGGwjZiB+GGqFz7Q8wepygRdZ0RPaZyC+YwWaKX0IF5BtYW
+	BN4pgnqG4s6yLvwemQLBYFwklba+qqlrB8TqNHmmuhQ=
+X-Google-Smtp-Source: AGHT+IEPdF7TEMEPsBlbKy0LICAaKI5tSy/hvaMwPsy/0iACmx4P26wxRXBvDW6KHmSYeJXA9kBcqA==
+X-Received: by 2002:a05:600c:1c0b:b0:439:873a:1114 with SMTP id 5b1f17b1804b1-43f1ef33982mr29289245e9.6.1744212616063;
+        Wed, 09 Apr 2025 08:30:16 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233c817dsm19339265e9.23.2025.04.09.08.30.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 08:30:15 -0700 (PDT)
+Date: Wed, 9 Apr 2025 17:30:13 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Aditya Garg <gargaditya08@live.com>,
+	"alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	Maxime Ripard <mripard@kernel.org>,
+	"airlied@redhat.com" <airlied@redhat.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"apw@canonical.com" <apw@canonical.com>,
+	"joe@perches.com" <joe@perches.com>,
+	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
+	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
+	Kees Cook <kees@kernel.org>, "tamird@gmail.com" <tamird@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	Hector Martin <marcan@marcan.st>,
+	"asahi@lists.linux.dev" <asahi@lists.linux.dev>
+Subject: Re: [PATCH v4 0/3] Use proper printk format in appletbdrm
+Message-ID: <Z_aSbrS1hk8nltqc@pathway.suse.cz>
+References: <PN3PR01MB9597382EFDE3452410A866AEB8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <Z_ThPOOKXa3VwvmO@smile.fi.intel.com>
+ <PN3PR01MB959761E1B759183D83C1AC33B8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <Z_TuqoRpTrjN07zo@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409-topic-smem_dramc-v1-0-94d505cd5593@oss.qualcomm.com>
- <20250409-topic-smem_dramc-v1-3-94d505cd5593@oss.qualcomm.com>
- <CACu1E7GMf0Mx2ZX_t76h+b1CPin49LGix7c5uvoWaJZC3dKyOw@mail.gmail.com> <c2dac38b-bbe5-4cd1-9d33-b4bba629d54b@oss.qualcomm.com>
-In-Reply-To: <c2dac38b-bbe5-4cd1-9d33-b4bba629d54b@oss.qualcomm.com>
-From: Connor Abbott <cwabbott0@gmail.com>
-Date: Wed, 9 Apr 2025 11:30:10 -0400
-X-Gm-Features: ATxdqUHcBvVK0Cb2KxzN_hC_D58IOi6LWCz6c0PE-YPMPs9wv_qjFpk5kCr2vVc
-Message-ID: <CACu1E7F71M0Z5KUdArRYbLEMXoS3jQEtp=0-4LEYFRysOsYZfA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] drm/msm/a6xx: Get HBB dynamically, if available
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Rob Clark <robdclark@gmail.com>, 
-	Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z_TuqoRpTrjN07zo@smile.fi.intel.com>
 
-On Wed, Apr 9, 2025 at 11:22=E2=80=AFAM Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 4/9/25 5:12 PM, Connor Abbott wrote:
-> > On Wed, Apr 9, 2025 at 10:48=E2=80=AFAM Konrad Dybcio <konradybcio@kern=
-el.org> wrote:
-> >>
-> >> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >>
-> >> The Highest Bank address Bit value can change based on memory type use=
-d.
-> >>
-> >> Attempt to retrieve it dynamically, and fall back to a reasonable
-> >> default (the one used prior to this change) on error.
-> >>
-> >> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >> ---
-> >>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 22 ++++++++++++++++------
-> >>  1 file changed, 16 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/m=
-sm/adreno/a6xx_gpu.c
-> >> index 06465bc2d0b4b128cddfcfcaf1fe4252632b6777..0cc397378c99db35315209=
-d0265ad9223e8b55c7 100644
-> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> >> @@ -13,6 +13,7 @@
-> >>  #include <linux/firmware/qcom/qcom_scm.h>
-> >>  #include <linux/pm_domain.h>
-> >>  #include <linux/soc/qcom/llcc-qcom.h>
-> >> +#include <linux/soc/qcom/smem.h>
-> >>
-> >>  #define GPU_PAS_ID 13
-> >>
-> >> @@ -669,17 +670,22 @@ static void a6xx_calc_ubwc_config(struct adreno_=
-gpu *gpu)
-> >>  static void a6xx_set_ubwc_config(struct msm_gpu *gpu)
-> >>  {
-> >>         struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> >> +       u32 hbb =3D qcom_smem_dram_get_hbb();
-> >> +       u32 ubwc_mode =3D adreno_gpu->ubwc_config.ubwc_swizzle & 1;
-> >> +       u32 level2_swizzling_dis =3D !(adreno_gpu->ubwc_config.ubwc_sw=
-izzle & 2);
-> >> +       u32 hbb_hi, hbb_lo;
-> >> +
-> >>         /*
-> >>          * We subtract 13 from the highest bank bit (13 is the minimum=
- value
-> >>          * allowed by hw) and write the lowest two bits of the remaini=
-ng value
-> >>          * as hbb_lo and the one above it as hbb_hi to the hardware.
-> >>          */
-> >> -       BUG_ON(adreno_gpu->ubwc_config.highest_bank_bit < 13);
-> >> -       u32 hbb =3D adreno_gpu->ubwc_config.highest_bank_bit - 13;
-> >> -       u32 hbb_hi =3D hbb >> 2;
-> >> -       u32 hbb_lo =3D hbb & 3;
-> >> -       u32 ubwc_mode =3D adreno_gpu->ubwc_config.ubwc_swizzle & 1;
-> >> -       u32 level2_swizzling_dis =3D !(adreno_gpu->ubwc_config.ubwc_sw=
-izzle & 2);
-> >> +       if (hbb < 0)
-> >> +               hbb =3D adreno_gpu->ubwc_config.highest_bank_bit;
-> >
-> > No. The value we expose to userspace must match what we program.
-> > You'll break VK_EXT_host_image_copy otherwise.
->
-> I didn't know that was exposed to userspace.
->
-> The value must be altered either way - ultimately, the hardware must
-> receive the correct information. ubwc_config doesn't seem to be const,
-> so I can edit it there if you like it better.
->
-> Konrad
+On Tue 2025-04-08 12:38:50, Andy Shevchenko wrote:
+> On Tue, Apr 08, 2025 at 08:52:10AM +0000, Aditya Garg wrote:
+> > > On 8 Apr 2025, at 2:11 PM, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Tue, Apr 08, 2025 at 12:17:13PM +0530, Aditya Garg wrote:
+> > >> The vsprint patch was originally being sent as a seperate patch [1], and
+> > >> I was waiting it to be taken up. But as suggested by Petr, I'm sending
+> > >> them via DRM.
+> > > 
+> > > You need to do something about your tools, really.
+> > 
+> > Uhh, I'll just revert to the tried and tested macOS mail.
+> > 
+> > Although I don't think a resend is necessary here now.
+> 
+> I dunno. If people are using `b4`, it might mess up the patch ordering,
+> I haven't checked this myself (it depends if it takes [PATCH x/y] or message
+> threading into account first).
 
-Yes, you should be calling qcom_smem_dram_get_hbb() in
-a6xx_calc_ubwc_config(). You can already see there's a TODO there to
-plug it in.
+JFYI, it seems that b4 handles this correctly. AFAIK, it checks the
+[PATCH x/y] in subjects.
 
-Connor
+But I am not sure what DRM guys are using. I guess that they are using
+patchwork. I am not sure how it handles this...
+
+Best Regards,
+Petr
 
