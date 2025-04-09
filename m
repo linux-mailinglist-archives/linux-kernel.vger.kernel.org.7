@@ -1,113 +1,137 @@
-Return-Path: <linux-kernel+bounces-596964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2BBA83343
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:23:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB208A8335A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1D033B4C38
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:21:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EE86882060
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9942E2144CD;
-	Wed,  9 Apr 2025 21:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B083F219A80;
+	Wed,  9 Apr 2025 21:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QP2YPL6w"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="Ccb2jbKs"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8021DA61B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 21:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744233679; cv=none; b=PncFtGAZe8fOFCJI3lvkojVHKfKxe8BHyiX0YP3iAhqSzD52Hh5RNKiG43WZ20dCiTb2qnqxYYSyTypLQ8qhlb91NM9c1iDHh/BNIxBYPPupy2N8UKAfDeo65d2Hi1WM4eiV+7Bez3Ax09g6TassJIhETTF9qNRcQ3Gm/kNPYm0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744233679; c=relaxed/simple;
-	bh=JctmxEqORIs/qobly8TAxYS65hZ+r3fxmrYpUoOy4no=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bWa4/r+JkuZ2u/gneJaeJFRfE8epf2ftbqP0B+JxBus7u5mfprYDvODmjLOg4ibFqP22obglwSA0RViF1HrxfRSVFHH3afxVmJikP+0f42uasU0OSrt9ack/7kpSHIEiP0thw3pjgem1D2INSvzVOUVL9mcMO+pXBrF5t5GJIyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QP2YPL6w; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so347239a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 14:21:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1744233674; x=1744838474; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=buPe9q2pIFl1+XWfQxs4eptqi71z7xZe6Y0D7OVnE/8=;
-        b=QP2YPL6wSrmypHamoQzDI8t7QNnnS3pumze9fFnpTMsNsCZTMJ0XtsMLIrPeCaxI0G
-         IM6lezOM4OY9c2ye6tzoXIWCoMytcT8OZBT9N/sAanUCzI7ozxJdaawDNKK2g+PKNK19
-         7SkMkVuiSbTi6S3IgInBAT351DtvgQDWyLblc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744233674; x=1744838474;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=buPe9q2pIFl1+XWfQxs4eptqi71z7xZe6Y0D7OVnE/8=;
-        b=n2qaHxS+RRXFdPK/SUG7YgPHaQcXrcdInqDJbmuhhZqq8K8Qz3XLZ0jwUtnVu3/nxu
-         3I/0tsw7hnLhm0QgpLrJ6hW2Q53QYU3RiHe1vQY6kPrB39NPXwZrVh7PxpwnC2mbihb+
-         Aumv1xo0yG5dKjAEojQOVFd+KsEVlHdBzZLa5Xx9wodNOCgV683ijUiTJmyNVcUlD8/k
-         oZVkT1E/qBPvkBtf0V36Q7uI6x2fs6AxlHwb2yLucFmrpTTajjXWZ8D1psd2MF6bRD5Q
-         bzhdABgeCfCHn9GmSPo1rsPaQHYYsbdHqMKxnKVzC6Dnk+pxyoqozkdivkgoA0OAHSBd
-         ws3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVtyIVU62Fjqlx2wo7qrsygnau2yZC8bd1jSILC9Ky3QgugxgdiFh6Tv0v1/ic4wYarKNwGDM7uugILaN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWsI7pP51pOyQDkqJ89RJY0gB5p0eZanFG5KdRScbsAz24zzrB
-	eDtKZ117hY26zavB4w5czkWn1gYueUtbmkd8+EzeaneCjSq9/KBVFgz2G8iPgJGW0lhUfTgkiyI
-	Ab38=
-X-Gm-Gg: ASbGncsJLOm+1XitkdETs7yf/8lzjLT/KsJz5jdlyhg42i8TfUxWk8iNQg528IXrf/D
-	o07o+WRoy+tcgs4mxGJcs6j1L8MnguUaVZDhSuZhHoC+eoujMS2LHaQkDXZVyhH90cIDPecpI18
-	Qu19wfkNryCJHI3k90pqjPWp1RAZA6FjRVvyBt5q9vkmZ0ueq5D5DTdgon58GHkIkT3VYvKLJlM
-	uiUJqamSOTDJapDV11ge4K5xQ63yQEALuYytGTCVu7aN+7F564DwYZOimQBWDOYzQ4PyrHAhr0D
-	eOUlDcZS2zPMfebyADmwXfzLaTT0fQrux1NpHsNXdz68nt/B1zBbGLEKTHdofOciIGEfzbjhwai
-	wBuCu2xtzJQmUz4exB6AKVT7HZQ==
-X-Google-Smtp-Source: AGHT+IF8hNYul/+3vTlO9ZRfAODl8uwFsZtRy+PalT8MwFPOgz3KdG/aANB7QnwSFSm488p2lNpYXg==
-X-Received: by 2002:a05:6402:354c:b0:5e0:8840:5032 with SMTP id 4fb4d7f45d1cf-5f329f7d855mr234204a12.3.1744233673957;
-        Wed, 09 Apr 2025 14:21:13 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f2fbbac7efsm1317004a12.4.2025.04.09.14.21.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 14:21:12 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac7bd86f637so237043566b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 14:21:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXIuJEs6UkrLiJ5qBr1NPkw9A+M5FOv5p3kSf8sozE8xcxcPSi0hEXNBunj4KXD6AIItl44eR+HJZSkE20=@vger.kernel.org
-X-Received: by 2002:a17:907:3e03:b0:ac4:3d0:8bca with SMTP id
- a640c23a62f3a-acabd3d0008mr15534666b.29.1744233672221; Wed, 09 Apr 2025
- 14:21:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A282144B0;
+	Wed,  9 Apr 2025 21:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744233810; cv=pass; b=jWwh7h1VKkyTABtoFp7u24MSJnMZlJ2YfGsq6TtkAh5OV6H1VZhocD0NvGgPhH1Sj/huEZkDAEs1CXu30yA0UJLenb6khzTI2pJU6/9BipwWLwiz5m1XL332psjIKBYJ/BmR9QeZHL10Pu7j5+wspRofOwbyzvS9oAmdEPA1Cyw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744233810; c=relaxed/simple;
+	bh=/OHk8acnz8cW0VYDt/bTZP39BdRTGq3ZOtIifYd959U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Dtetx7MWISXFHj54BJn8qLfQE3VRC/wpsyDJGqZk7O5t8ofPGDEnOXrV9K36f2Tg0Ii/ByB4SE+FB0+sG+fq3yhBC0kzZ2zq2RlfV7cmktBlbXQr3OaZmFPJCR4vE4dWoqxW8idvTr5Fo70a2NwoMQhKZ08zscaIye8wbdeE9Kg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=Ccb2jbKs; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744233774; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=RjHKEp8WSHtySVTIZL1UHaAi9p+b3pD2hRw8KNv/ZiQQUNeqnfGEWgIMJTJJUZs8bSa9Lcy99lT/O8RVGBFIJSS6Cn7PTSGBFoLjZUS4UyD1XSWrpKhXmLs8j4L27JXtunu75L7wgYNVP4l1JMkPdBzAqLnyYsLLoEPRw1gcSNU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744233774; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=V5FUjgoiTygqR7CMcv8uAi3udMBMdnQJxLq1c2Z+zEU=; 
+	b=V7hDf2jL8RZ2GWpnFUp85dxd0lq+o1MRZKTjSX17h5lIe4BgBwC0OpZJqs04qFzfCQl07/1a3oNtcUNEjKHjaCOTNgCrOS1dwPLc2qWYXo18Y6uPk9/Zf7f62B0p5pGjBmYyhZGRHsrTDZ4kcOigIfgC7iryRniPKSr6xh8GOeE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744233774;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=V5FUjgoiTygqR7CMcv8uAi3udMBMdnQJxLq1c2Z+zEU=;
+	b=Ccb2jbKsq+Y5Jr2aIc9EKqujtwQw5PXLgmIk4U/zsx6F86iuAb8M4eZ7F1nVy3uB
+	3y7F6wAqBvwgglZjc6uo6sSNUYBBUECc1lKe4f0kPbJ7wUrB0xsjb/r31kr1ZOQNnpC
+	EVOrE/oUhhKiaFN41wRlPHoZau8k6An6KlVMB/Tw=
+Received: by mx.zohomail.com with SMTPS id 1744233772379460.9766127739156;
+	Wed, 9 Apr 2025 14:22:52 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: [PATCH v6 0/4] Panthor BO tagging and GEMS debug display
+Date: Wed,  9 Apr 2025 22:22:18 +0100
+Message-ID: <20250409212233.2036154-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1744098446.git.jpoimboe@kernel.org> <35ae5c17e8cc88506b5ae8f3b06d9491f7ef319c.1744098446.git.jpoimboe@kernel.org>
- <20250409143821.GE9833@noisy.programming.kicks-ass.net> <4q77jakv67gmglrcbzojngyutbfi3pzgsjayrymkg7dhkxo4hl@mczk3gots764>
- <CAHk-=whAtuMohKpzrzt0HFLP0RdU=KB-_4fu25gG6O4R=+PXvg@mail.gmail.com> <qik3dltarxj5trsbgzoifhf545nss4vwnabhql7i2b7qiowq52@y3d5pirwd4ni>
-In-Reply-To: <qik3dltarxj5trsbgzoifhf545nss4vwnabhql7i2b7qiowq52@y3d5pirwd4ni>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 9 Apr 2025 14:20:55 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiL8J8v3+XKJGM4Ro83UqJTh7q0GD9UUYrDnwx24jR83A@mail.gmail.com>
-X-Gm-Features: ATxdqUEBdx-85Mkx0CMFS-itK6BiScBBS7fXJDNR22U3-XpHuoRmmUR6hSViEGM
-Message-ID: <CAHk-=wiL8J8v3+XKJGM4Ro83UqJTh7q0GD9UUYrDnwx24jR83A@mail.gmail.com>
-Subject: Re: [PATCH RFC 4/5] x86/alternative: Improve code generation readability
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 9 Apr 2025 at 12:51, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
->
-> What if we were to use a global asm() to define an alternative .macro
-> whenever "alternative.h" gets included?
+This patch series is aimed at providing UM with detailed memory profiling
+information in debug builds. It is achieved through a device-wide list of
+DRM GEM objects, and also implementing the ability to label BO's from UM
+through a new IOCTL.
 
-Yeah, I wouldn't mind that, but I have this dim memory of us having
-tried it at some point and it didn't work.
+The new debugfs file shows a list of driver DRM GEM objects in tabular mode.
+To visualise it, cat sudo cat /sys/kernel/debug/dri/*.gpu/gems.
+To test this functionality from UM, please refer to this Mesa patch series:
+https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/34224
 
-I think the issue was that the in-compiler assembler was not as
-complete as the external one (ie not doing macros at all or something
-like that).
+Discussion of previous revision of this patch series can be found at:
+https://lore.kernel.org/dri-devel/20250408222427.1214330-1-adrian.larumbe@collabora.com/T/#t
 
-             Linus
+Changelog:
+v6:
+ - Replaced some mutex calls with scoped guards
+ - Documented data size limits in the label ioctl
+ - Simplified GEMS status flags treatment (Panthor doesn't use madvise)
+ - Fixed some array size and string bugs
+ - Improved the naming of GEM status and usage flags to reflect their meaning
+ - Improved the formatting of the output table
+
+v5:
+ - Kept case and naming of kernel BO's consistent
+ - Increased the driver minor after new ioctl
+ - Now adds BO to debugfs GEMs list at GEM object creation time
+ - No longer try to hide BO creator's name when it's a workqueue or modprobe
+ - Reworked the procedure for printing GEM state and kernel BO flags
+ - Turned kernel BO flags and GEM state flags into bit enums
+ - Wait until BO state is marked as initialied for debugfs display
+
+v4:
+ - Labelled all kernel BO's, not just heap chunks.
+ - Refactored DebugGFs GEMs list handling functions
+ - Added debugfs GEMS node mask to tell different kinds of BO's
+
+Adrián Larumbe (4):
+  drm/panthor: Introduce BO labeling
+  drm/panthor: Add driver IOCTL for setting BO labels
+  drm/panthor: Label all kernel BO's
+  drm/panthor: show device-wide list of DRM GEM objects over DebugFS
+
+ drivers/gpu/drm/panthor/panthor_device.c |   5 +
+ drivers/gpu/drm/panthor/panthor_device.h |  11 ++
+ drivers/gpu/drm/panthor/panthor_drv.c    |  68 ++++++-
+ drivers/gpu/drm/panthor/panthor_fw.c     |   8 +-
+ drivers/gpu/drm/panthor/panthor_gem.c    | 229 ++++++++++++++++++++++-
+ drivers/gpu/drm/panthor/panthor_gem.h    |  80 +++++++-
+ drivers/gpu/drm/panthor/panthor_heap.c   |   6 +-
+ drivers/gpu/drm/panthor/panthor_sched.c  |   9 +-
+ include/uapi/drm/panthor_drm.h           |  23 +++
+ 9 files changed, 428 insertions(+), 11 deletions(-)
+
+--
+2.48.1
 
