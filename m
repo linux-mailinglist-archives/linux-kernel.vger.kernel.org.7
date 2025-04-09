@@ -1,208 +1,363 @@
-Return-Path: <linux-kernel+bounces-595682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ADF0A821AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:05:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3CB9A821A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6132176DE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:04:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87E451B85FE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B8B22E3F7;
-	Wed,  9 Apr 2025 10:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4201625D914;
+	Wed,  9 Apr 2025 10:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hvs7gwMG"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOz1jvAM"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C5425D8E2;
-	Wed,  9 Apr 2025 10:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9854D25D908
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 10:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744193020; cv=none; b=lNWe0O1S2fJ22h9TwecEMc0QaNWbKM1UvajBPRNteKDmc6DM7XHg3ctCgSleHVc3t0zW2j7UdMIpaGSFEf25wZRbS9tisr0dvImeIlUZknwglnzfec94ujB2Gwf6crz2PNNu13fZJKP3i/fg1F8HMTnYLA8MTFm9VAk+tI7wMgQ=
+	t=1744193062; cv=none; b=MXBODSykjOOaNKiXDkv4m+s5lEPbnpUYBMn6NEietNqGsXioArPOw4isYMoQnQWQvwN1opZOe7wFdid4+eFL8OvMS5xTWRqs5ldbBMu89AahRS1ZkpmPib60lF3AbUA44umoQ53aOU3Fvb9lsuwLmobz2+BBFVq32L2IyFCkexc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744193020; c=relaxed/simple;
-	bh=4HUFzLijaqqmDi2vGvHYj35FaaFCBBHbUp2YtC3ZOZs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ROSFfBvGDTJ7uYQML4WZm1KgJKkuI+cVyPSbwJml5D8rh1LBEKpSbY17EP2NoIEV+an9Az0vV8Ot5+jekRw/TcT7VnXlrUpjbzeVCwFMiDNuQp9THx1WZbXkCoEeiBu2qYz2Oa4NbwrlAodIKE9P0HpceqjVbscUbZdFjKXIChM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hvs7gwMG; arc=none smtp.client-ip=209.85.160.179
+	s=arc-20240116; t=1744193062; c=relaxed/simple;
+	bh=WnoJ0PIhBCizQsaB0J6OXZzdneIQzB5SWyb2HjwPjmE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gMyFMD6LunJNLpmtgxfriegvh7oIDN8ymBkzO6Vrc4QYQpWY9PKJimLHOyYDW98VK47IvwY5hG3ynCrAKL84kF57mVls7pvMFICu1w4JFDYatTJKRWCvXTRVWuO+mTrWki336kA6N0p497Ot8Qh/C2m8yFCA1ziv6UBirbqea2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VOz1jvAM; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-47692b9d059so30909311cf.3;
-        Wed, 09 Apr 2025 03:03:38 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf257158fso45975505e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 03:04:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744193017; x=1744797817; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HLbUqyimeGVgLsepfBGSq56KRRSrML5/eyV4qttU/Qc=;
-        b=hvs7gwMGNj0PdgWsLRWVvUkqo6FlvwRlqoNV63AZVxig/tIfoTeEUB+AArODTPA0sk
-         XUKhHgvywftlJAn0CuyuX99f6NahgMHySgeU6NLtFd3CYkb8M5mbq0HFbC8wviVNiHJH
-         gfF7fh8h1cBOXhtF4fDOud8xCMFMqxH83bZxHBu3of/t6y1hwmJaB60M4uyD3r2tVAXl
-         fsUHRMBG1zSSN8j3QKcUFpdExkG1OWf+DgcxhkhV40VEOzBqjWq4csC6xppypwrlwAKN
-         AZ5S9jZfd3ZoV+wAVCpkkad/nYnTFnko9+DDLPwTZsXDqpB3nUbSsi+LDMUZ6pi/PPX4
-         17Cg==
+        d=gmail.com; s=20230601; t=1744193059; x=1744797859; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VC5fxHs8CeiwKADjawPGTUOJECA0Psky3GgKPj4Ekoc=;
+        b=VOz1jvAMCBllzoElYeqspHv0qgo9KzTDgYL2V3EDpAYUFfOqpycWQ41STCaTTW0QgK
+         V8O0v6zG0Sb2m26hxvdVK+N32TllAGg+mErypil6RaZ5+8hp+CzBTYRy2rVzpoiIg3JD
+         X9Wq4J637mnv0An36PEW3zbfmdi1ndBtisQNz6HkejiLD3ABZKA7Wyjggc/2pruRQ5dk
+         smwGU4tJS/FodgbkFdXmktTfmpNHC+oyMTN8m7/ZlkIuj1iZ6x5ceNHI9APZrRNCk1Be
+         MgSsr6CgNTIresLSCAERdZDbMBUjqOSiGy8BreZIO0rlpiU9y3aikscZmk0qr8ASJ3EV
+         wuSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744193017; x=1744797817;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1744193059; x=1744797859;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HLbUqyimeGVgLsepfBGSq56KRRSrML5/eyV4qttU/Qc=;
-        b=FwcDNOZoDD3kpQJdnXoXT6cCX9q7ti34jIadca//QVFihphvVihipGTfv6fP0s3voY
-         i1zkzHwQI2zgTPe6jliazox42iR6c1hwMzuQZexUL5Qbt95FA46T2pDyer9ZGt2aDLO8
-         T9bgUljmtdnODjqRu+rGckTwfqw10vqHAYtHkUyQc7CvGtcHD78Kch2IsQ5aK+mxVPGf
-         nl6/TpTOT28F9sDSrYETCIJw3hmuUNQG6rcvq8tPovDRZsNFmBuKGOFRZ83GFZIpPyB7
-         /sBssxVW4Y2TaPIPv8KynmHIVP3xa9kTJost2njeF7fd9sNtYL50yxFDlf2x9EH2MwIr
-         xzkA==
-X-Forwarded-Encrypted: i=1; AJvYcCU087j11aenNoS2hwjNog5N/CNAFxLLmfLeu2coBfZ26Zc0p4LmM6LsUQLnHhv9k+y52Og6Dy983MX+jce4tM8=@vger.kernel.org, AJvYcCU3U1U9QK++O1Coze9KJ2duT02f4t555P6c72s4QizCKp0B6O+0jrOY57uvJq8i3lfBu4JYmOVLEQxWAiQ=@vger.kernel.org, AJvYcCWkbA03xnWLOBxEy9yx5037axzEUuaiYG3Huzl4qRyacjyaXxK43Oax8vcEpxD2EVbr7G+jtmfJ/JD2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY4PP1mUaPxXiA1aZAyTmyiRxlguSlD0IIPkjpLa+H7ZFzXjbP
-	ZMPryilpi0TPm/GgNURn2rVh5WeRzI1IscWmHJupeapFmEclvQIe
-X-Gm-Gg: ASbGncsCXpXwkx9q06clWh550RICqcYYZxAGQ79u4fgmiSIHxfryyosAZ8PODxeoU8c
-	hTsnx/wUHuCtPz415eXFS83wwGfs5RToQvQiDIrhM9bzZV2Mvnk9GqSdwSm0t+4THa+AmNn/uN5
-	hKdh2Ni5vbZ5I71NDqys02BoBVjtjEKmlR8g5CwoRrsZag+adXyNLYOU2dRnX339QFOOPCmmUqy
-	bLDYXAcLoRybbWcEn4zRwkOPoIbtBCOOs4alAcyoCtMNEVtjjWwWVhdx57dur9PIWZbkEWCD+EY
-	+OzSAjlCCYxffcq3EcLxvvTTz7kjvOkVQdX5cQSKhe0NIWsH75YfPxJYptJiAA==
-X-Google-Smtp-Source: AGHT+IFFQbGuyHGDbxmZnvE7TtoQqlMptM6af/CxtRq0PDqB0wtWM621NnohNAdBvFkAmzbxIl56GQ==
-X-Received: by 2002:ac8:5dd1:0:b0:477:dcc:6c18 with SMTP id d75a77b69052e-479600a2faamr24389841cf.14.1744193017296;
-        Wed, 09 Apr 2025 03:03:37 -0700 (PDT)
-Received: from [192.168.1.159] ([2600:4041:5be7:7c00:70db:4589:e2e1:f14])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47964de11absm5149601cf.34.2025.04.09.03.03.35
+        bh=VC5fxHs8CeiwKADjawPGTUOJECA0Psky3GgKPj4Ekoc=;
+        b=mf/AkBzp8BCQScOtNWQkGdbqJudf7VnxjHUwsHe47DCLOcUEkFbzlQ263Sn5PjPUja
+         Ql4edpuo3sjYKtTn0zh/HaNHdtUgLEyZaGRqsLKw3mvkEVr8TsSbctxbyA/ttwknfAO/
+         aSSRY7+Ip1DAIQ8uX3VRUL8s752TwDDmztRHxC8D876VRbGDVHcADEU8p+wiOh4DHNhu
+         OOjNMiBTatbGtZGreQQEydPTXhUnnEJaVDEC3Pt+ngJoU9Zq/VZu/IWk4++1w76QV6EX
+         CGnZNhIF8BdvkHQ9BZqI9U9EL3HUf4XhFLBw2OklUUU6vhMc1kwPq2Mce91sgA1Ql1TJ
+         OTeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGGPu7DhY/ClqxV0+gA+IkYZpDL2ZwUemA3zhZ0MY1m8945tg7+NHjlxATmE6MqLWJxoAuioAsM4iKivk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB0ewg0UCrOroQ+KXekuxwOJY8jSY7vy54rUoHvlQDRH6kMK05
+	2jSH8NSgccucZ6zCDo6Y00NQZdtZpVnkkcRFQ9sccEvxB0TuXgQ1
+X-Gm-Gg: ASbGncu/XZy87a4DeOohK4WGc2X+AHhPVhIvb+IfCjWcjuKXLDuw4aVe3tnIY1bq04D
+	fK6lb0s27e8fxxC+FErsfEPI/XNsNe3tzjQwOl+BTQwoLWXPN3+vqOP/RVJvfTwpU2rsso8DRBq
+	Mq83uuSeiscOQBdUc6IvlZXZp7G22Zw2URwqsjnwg4lgmjacFCbNDLdNqM/EV02NtlkSHvrw51b
+	dj4/ILv6CXkHEgCiyygNXgTW9BzfGtYwEoFQ302p+BsCvgVjonqBjrEEHE/ebgtDoKgc1vRGvOr
+	rDUIJSh2H4KtYTt79wG1of4Na7D8ncZiYNaMJA==
+X-Google-Smtp-Source: AGHT+IH0nKJUVbc50t7mTes5ovg4GgAkVaz1UTKljMjTHPB4yYKVLS/PxCuutuNL9VHzd7Cnpi+unQ==
+X-Received: by 2002:a05:600c:1f16:b0:43d:649:4e50 with SMTP id 5b1f17b1804b1-43f1fe01880mr18160855e9.13.1744193058483;
+        Wed, 09 Apr 2025 03:04:18 -0700 (PDT)
+Received: from pc.. ([197.155.71.138])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f205ecac8sm14930295e9.4.2025.04.09.03.04.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 03:03:36 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 09 Apr 2025 06:03:22 -0400
-Subject: [PATCH v2 2/2] rust: workqueue: remove HasWork::OFFSET
+        Wed, 09 Apr 2025 03:04:18 -0700 (PDT)
+From: Erick Karanja <karanja99erick@gmail.com>
+To: gregkh@linuxfoundation.org,
+	outreachy@lists.linux.dev
+Cc: karanja99erick@gmail.com,
+	philipp.g.hortmann@gmail.com,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] staging: rtl8723bs: Improve code readability
+Date: Wed,  9 Apr 2025 13:04:04 +0300
+Message-ID: <97a2637f3ccefb3de0e15fd04f29f5f209f2a506.1744192642.git.karanja99erick@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1744192642.git.karanja99erick@gmail.com>
+References: <cover.1744192642.git.karanja99erick@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250409-no-offset-v2-2-dda8e141a909@gmail.com>
-References: <20250409-no-offset-v2-0-dda8e141a909@gmail.com>
-In-Reply-To: <20250409-no-offset-v2-0-dda8e141a909@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org, Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
+Content-Transfer-Encoding: 8bit
 
-Implement `HasWork::work_container_of` in `impl_has_work!`, narrowing
-the interface of `HasWork` and replacing pointer arithmetic with
-`container_of!`. Remove the provided implementation of
-`HasWork::get_work_offset` without replacement; an implementation is
-already generated in `impl_has_work!`. Remove the `Self: Sized` bound on
-`HasWork::work_container_of` which was apparently necessary to access
-`OFFSET` as `OFFSET` no longer exists.
+Make the code more readable by moving trivial
+initializations up with the declarations instead
+of wasting a line on that.
 
-A similar API change was discussed on the hrtimer series[1].
-
-Link: https://lore.kernel.org/all/20250224-hrtimer-v3-v6-12-rc2-v9-1-5bd3bf0ce6cc@kernel.org/ [1]
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Tested-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
 ---
- rust/kernel/workqueue.rs | 45 ++++++++++++---------------------------------
- 1 file changed, 12 insertions(+), 33 deletions(-)
+ .../staging/rtl8723bs/hal/rtl8723b_hal_init.c | 84 ++++++-------------
+ 1 file changed, 25 insertions(+), 59 deletions(-)
 
-diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
-index f98bd02b838f..1d640dbdc6ad 100644
---- a/rust/kernel/workqueue.rs
-+++ b/rust/kernel/workqueue.rs
-@@ -429,51 +429,23 @@ pub unsafe fn raw_get(ptr: *const Self) -> *mut bindings::work_struct {
- ///
- /// # Safety
- ///
--/// The [`OFFSET`] constant must be the offset of a field in `Self` of type [`Work<T, ID>`]. The
--/// methods on this trait must have exactly the behavior that the definitions given below have.
-+/// The methods on this trait must have exactly the behavior that the definitions given below have.
- ///
- /// [`impl_has_work!`]: crate::impl_has_work
--/// [`OFFSET`]: HasWork::OFFSET
- pub unsafe trait HasWork<T, const ID: u64 = 0> {
--    /// The offset of the [`Work<T, ID>`] field.
--    const OFFSET: usize;
--
--    /// Returns the offset of the [`Work<T, ID>`] field.
--    ///
--    /// This method exists because the [`OFFSET`] constant cannot be accessed if the type is not
--    /// [`Sized`].
--    ///
--    /// [`OFFSET`]: HasWork::OFFSET
--    #[inline]
--    fn get_work_offset(&self) -> usize {
--        Self::OFFSET
--    }
--
-     /// Returns a pointer to the [`Work<T, ID>`] field.
-     ///
-     /// # Safety
-     ///
-     /// The provided pointer must point at a valid struct of type `Self`.
--    #[inline]
--    unsafe fn raw_get_work(ptr: *mut Self) -> *mut Work<T, ID> {
--        // SAFETY: The caller promises that the pointer is valid.
--        unsafe { (ptr as *mut u8).add(Self::OFFSET) as *mut Work<T, ID> }
--    }
-+    unsafe fn raw_get_work(ptr: *mut Self) -> *mut Work<T, ID>;
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+index e15ec6452fd0..2cf2c66140f1 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+@@ -501,8 +501,7 @@ void Hal_GetEfuseDefinition(
+ 	switch (type) {
+ 	case TYPE_EFUSE_MAX_SECTION:
+ 		{
+-			u8 *pMax_section;
+-			pMax_section = pOut;
++			u8 *pMax_section = pOut;
  
-     /// Returns a pointer to the struct containing the [`Work<T, ID>`] field.
-     ///
-     /// # Safety
-     ///
-     /// The pointer must point at a [`Work<T, ID>`] field in a struct of type `Self`.
--    #[inline]
--    unsafe fn work_container_of(ptr: *mut Work<T, ID>) -> *mut Self
--    where
--        Self: Sized,
--    {
--        // SAFETY: The caller promises that the pointer points at a field of the right type in the
--        // right kind of struct.
--        unsafe { (ptr as *mut u8).sub(Self::OFFSET) as *mut Self }
--    }
-+    unsafe fn work_container_of(ptr: *mut Work<T, ID>) -> *mut Self;
- }
+ 			if (efuseType == EFUSE_WIFI)
+ 				*pMax_section = EFUSE_MAX_SECTION_8723B;
+@@ -513,8 +512,7 @@ void Hal_GetEfuseDefinition(
  
- /// Used to safely implement the [`HasWork<T, ID>`] trait.
-@@ -504,8 +476,6 @@ macro_rules! impl_has_work {
-         // SAFETY: The implementation of `raw_get_work` only compiles if the field has the right
-         // type.
-         unsafe impl$(<$($generics)+>)? $crate::workqueue::HasWork<$work_type $(, $id)?> for $self {
--            const OFFSET: usize = ::core::mem::offset_of!(Self, $field) as usize;
+ 	case TYPE_EFUSE_REAL_CONTENT_LEN:
+ 		{
+-			u16 *pu2Tmp;
+-			pu2Tmp = pOut;
++			u16 *pu2Tmp = pOut;
+ 
+ 			if (efuseType == EFUSE_WIFI)
+ 				*pu2Tmp = EFUSE_REAL_CONTENT_LEN_8723B;
+@@ -525,8 +523,7 @@ void Hal_GetEfuseDefinition(
+ 
+ 	case TYPE_AVAILABLE_EFUSE_BYTES_BANK:
+ 		{
+-			u16 *pu2Tmp;
+-			pu2Tmp = pOut;
++			u16 *pu2Tmp = pOut;
+ 
+ 			if (efuseType == EFUSE_WIFI)
+ 				*pu2Tmp = (EFUSE_REAL_CONTENT_LEN_8723B-EFUSE_OOB_PROTECT_BYTES);
+@@ -537,8 +534,7 @@ void Hal_GetEfuseDefinition(
+ 
+ 	case TYPE_AVAILABLE_EFUSE_BYTES_TOTAL:
+ 		{
+-			u16 *pu2Tmp;
+-			pu2Tmp = pOut;
++			u16 *pu2Tmp = pOut;
+ 
+ 			if (efuseType == EFUSE_WIFI)
+ 				*pu2Tmp = (EFUSE_REAL_CONTENT_LEN_8723B-EFUSE_OOB_PROTECT_BYTES);
+@@ -549,8 +545,7 @@ void Hal_GetEfuseDefinition(
+ 
+ 	case TYPE_EFUSE_MAP_LEN:
+ 		{
+-			u16 *pu2Tmp;
+-			pu2Tmp = pOut;
++			u16 *pu2Tmp = pOut;
+ 
+ 			if (efuseType == EFUSE_WIFI)
+ 				*pu2Tmp = EFUSE_MAX_MAP_LEN;
+@@ -561,8 +556,7 @@ void Hal_GetEfuseDefinition(
+ 
+ 	case TYPE_EFUSE_PROTECT_BYTES_BANK:
+ 		{
+-			u8 *pu1Tmp;
+-			pu1Tmp = pOut;
++			u8 *pu1Tmp = pOut;
+ 
+ 			if (efuseType == EFUSE_WIFI)
+ 				*pu1Tmp = EFUSE_OOB_PROTECT_BYTES;
+@@ -573,8 +567,7 @@ void Hal_GetEfuseDefinition(
+ 
+ 	case TYPE_EFUSE_CONTENT_LEN_BANK:
+ 		{
+-			u16 *pu2Tmp;
+-			pu2Tmp = pOut;
++			u16 *pu2Tmp = pOut;
+ 
+ 			if (efuseType == EFUSE_WIFI)
+ 				*pu2Tmp = EFUSE_REAL_CONTENT_LEN_8723B;
+@@ -585,8 +578,7 @@ void Hal_GetEfuseDefinition(
+ 
+ 	default:
+ 		{
+-			u8 *pu1Tmp;
+-			pu1Tmp = pOut;
++			u8 *pu1Tmp = pOut;
+ 			*pu1Tmp = 0;
+ 		}
+ 		break;
+@@ -729,10 +721,9 @@ static void hal_ReadEFuse_WiFi(
+ 		}
+ 
+ 		if (offset < EFUSE_MAX_SECTION_8723B) {
+-			u16 addr;
++			u16 addr = offset * PGPKT_DATA_SIZE;
+ 			/*  Get word enable value from PG header */
+ 
+-			addr = offset * PGPKT_DATA_SIZE;
+ 			for (i = 0; i < EFUSE_MAX_WORD_UNIT; i++) {
+ 				/*  Check word enable condition in the section */
+ 				if (!(wden & (0x01<<i))) {
+@@ -835,9 +826,8 @@ static void hal_ReadEFuse_BT(
+ 			}
+ 
+ 			if (offset < EFUSE_BT_MAX_SECTION) {
+-				u16 addr;
++				u16 addr = offset * PGPKT_DATA_SIZE;
+ 
+-				addr = offset * PGPKT_DATA_SIZE;
+ 				for (i = 0; i < EFUSE_MAX_WORD_UNIT; i++) {
+ 					/*  Check word enable condition in the section */
+ 					if (!(wden & (0x01<<i))) {
+@@ -1196,10 +1186,9 @@ void rtl8723b_InitBeaconParameters(struct adapter *padapter)
+ {
+ 	struct hal_com_data *pHalData = GET_HAL_DATA(padapter);
+ 	u16 val16;
+-	u8 val8;
++	u8 val8 = DIS_TSF_UDT;
+ 
+ 
+-	val8 = DIS_TSF_UDT;
+ 	val16 = val8 | (val8 << 8); /*  port0 and port1 */
+ 
+ 	/*  Enable prot0 beacon function for PSTDMA */
+@@ -1496,10 +1485,7 @@ s32 rtl8723b_InitLLTTable(struct adapter *padapter)
+ {
+ 	unsigned long start, passing_time;
+ 	u32 val32;
+-	s32 ret;
 -
-             #[inline]
-             unsafe fn raw_get_work(ptr: *mut Self) -> *mut $crate::workqueue::Work<$work_type $(, $id)?> {
-                 // SAFETY: The caller promises that the pointer is not dangling.
-@@ -513,6 +483,15 @@ unsafe fn raw_get_work(ptr: *mut Self) -> *mut $crate::workqueue::Work<$work_typ
-                     ::core::ptr::addr_of_mut!((*ptr).$field)
-                 }
-             }
-+
-+            #[inline]
-+            unsafe fn work_container_of(
-+                ptr: *mut $crate::workqueue::Work<$work_type $(, $id)?>,
-+            ) -> *mut Self {
-+                // SAFETY: The caller promises that the pointer points at a field of the right type
-+                // in the right kind of struct.
-+                unsafe { $crate::container_of!(ptr, Self, $field) }
-+            }
-         }
-     )*};
- }
-
+-
+-	ret = _FAIL;
++	s32 ret = _FAIL;
+ 
+ 	val32 = rtw_read32(padapter, REG_AUTO_LLT);
+ 	val32 |= BIT_AUTO_INIT_LLT;
+@@ -2273,9 +2259,8 @@ void rtl8723b_fill_fake_txdesc(
+ 	/*  Encrypt the data frame if under security mode excepct null data. Suggested by CCW. */
+ 	/*  */
+ 	if (bDataFrame) {
+-		u32 EncAlg;
++		u32 EncAlg = padapter->securitypriv.dot11PrivacyAlgrthm;
+ 
+-		EncAlg = padapter->securitypriv.dot11PrivacyAlgrthm;
+ 		switch (EncAlg) {
+ 		case _NO_PRIVACY_:
+ 			SET_TX_DESC_SEC_TYPE_8723B(pDesc, 0x0);
+@@ -2378,9 +2363,7 @@ static void hw_var_set_opmode(struct adapter *padapter, u8 variable, u8 *val)
+ static void hw_var_set_macaddr(struct adapter *padapter, u8 variable, u8 *val)
+ {
+ 	u8 idx = 0;
+-	u32 reg_macid;
+-
+-	reg_macid = REG_MACID;
++	u32 reg_macid = REG_MACID;
+ 
+ 	for (idx = 0 ; idx < 6; idx++)
+ 		rtw_write8(GET_PRIMARY_ADAPTER(padapter), (reg_macid+idx), val[idx]);
+@@ -2389,9 +2372,7 @@ static void hw_var_set_macaddr(struct adapter *padapter, u8 variable, u8 *val)
+ static void hw_var_set_bssid(struct adapter *padapter, u8 variable, u8 *val)
+ {
+ 	u8 idx = 0;
+-	u32 reg_bssid;
+-
+-	reg_bssid = REG_BSSID;
++	u32 reg_bssid = REG_BSSID;
+ 
+ 	for (idx = 0 ; idx < 6; idx++)
+ 		rtw_write8(padapter, (reg_bssid+idx), val[idx]);
+@@ -2399,9 +2380,7 @@ static void hw_var_set_bssid(struct adapter *padapter, u8 variable, u8 *val)
+ 
+ static void hw_var_set_bcn_func(struct adapter *padapter, u8 variable, u8 *val)
+ {
+-	u32 bcn_ctrl_reg;
+-
+-	bcn_ctrl_reg = REG_BCN_CTRL;
++	u32 bcn_ctrl_reg = REG_BCN_CTRL;
+ 
+ 	if (*(u8 *)val)
+ 		rtw_write8(padapter, bcn_ctrl_reg, (EN_BCN_FUNCTION | EN_TXBCN_RPT));
+@@ -2422,12 +2401,8 @@ static void hw_var_set_correct_tsf(struct adapter *padapter, u8 variable, u8 *va
+ {
+ 	u8 val8;
+ 	u64 tsf;
+-	struct mlme_ext_priv *pmlmeext;
+-	struct mlme_ext_info *pmlmeinfo;
+-
+-
+-	pmlmeext = &padapter->mlmeextpriv;
+-	pmlmeinfo = &pmlmeext->mlmext_info;
++	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
++	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
+ 
+ 	tsf = pmlmeext->TSFValue-do_div(pmlmeext->TSFValue, (pmlmeinfo->bcn_interval*1024))-1024; /* us */
+ 
+@@ -2543,15 +2518,12 @@ static void hw_var_set_mlme_join(struct adapter *padapter, u8 variable, u8 *val)
+ 	u8 val8;
+ 	u16 val16;
+ 	u32 val32;
+-	u8 RetryLimit;
+-	u8 type;
+-	struct mlme_priv *pmlmepriv;
++	u8 RetryLimit = 0x30;
++	u8 type = *(u8 *)val;
++	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+ 	struct eeprom_priv *pEEPROM;
+ 
+ 
+-	RetryLimit = 0x30;
+-	type = *(u8 *)val;
+-	pmlmepriv = &padapter->mlmepriv;
+ 	pEEPROM = GET_EEPROM_EFUSE_PRIV(padapter);
+ 
+ 	if (type == 0) { /*  prepare to join */
+@@ -2850,12 +2822,11 @@ void SetHwReg8723B(struct adapter *padapter, u8 variable, u8 *val)
+ 
+ 	case HW_VAR_ACK_PREAMBLE:
+ 		{
+-			u8 regTmp;
++			u8 regTmp = 0;
+ 			u8 bShortPreamble = *val;
+ 
+ 			/*  Joseph marked out for Netgear 3500 TKIP channel 7 issue.(Temporarily) */
+ 			/* regTmp = (pHalData->nCur40MhzPrimeSC)<<5; */
+-			regTmp = 0;
+ 			if (bShortPreamble)
+ 				regTmp |= 0x80;
+ 			rtw_write8(padapter, REG_RRSR+2, regTmp);
+@@ -3226,9 +3197,7 @@ void GetHwReg8723B(struct adapter *padapter, u8 variable, u8 *val)
+  */
+ u8 SetHalDefVar8723B(struct adapter *padapter, enum hal_def_variable variable, void *pval)
+ {
+-	u8 bResult;
+-
+-	bResult = _SUCCESS;
++	u8 bResult = _SUCCESS;
+ 
+ 	switch (variable) {
+ 	default:
+@@ -3244,9 +3213,7 @@ u8 SetHalDefVar8723B(struct adapter *padapter, enum hal_def_variable variable, v
+  */
+ u8 GetHalDefVar8723B(struct adapter *padapter, enum hal_def_variable variable, void *pval)
+ {
+-	u8 bResult;
+-
+-	bResult = _SUCCESS;
++	u8 bResult = _SUCCESS;
+ 
+ 	switch (variable) {
+ 	case HAL_DEF_MAX_RECVBUF_SZ:
+@@ -3281,9 +3248,8 @@ u8 GetHalDefVar8723B(struct adapter *padapter, enum hal_def_variable variable, v
+ 	case HW_DEF_RA_INFO_DUMP:
+ 		{
+ 			u8 mac_id = *(u8 *)pval;
+-			u32 cmd;
++			u32 cmd = 0x40000100 | mac_id;
+ 
+-			cmd = 0x40000100 | mac_id;
+ 			rtw_write32(padapter, REG_HMEBOX_DBG_2_8723B, cmd);
+ 			msleep(10);
+ 			rtw_read32(padapter, 0x2F0);	// info 1
 -- 
-2.49.0
+2.43.0
 
 
