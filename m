@@ -1,122 +1,134 @@
-Return-Path: <linux-kernel+bounces-595704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B733EA821E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:19:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C842A821B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80E1F1BA42C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:18:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F362D3BA2A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B733925DB0A;
-	Wed,  9 Apr 2025 10:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC44525D1F0;
+	Wed,  9 Apr 2025 10:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YXZtnNYh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ndC0RNz7"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFFB25DAF2;
-	Wed,  9 Apr 2025 10:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E921DF247;
+	Wed,  9 Apr 2025 10:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744193889; cv=none; b=jiotmlX0CKtjVfUs/ZSQTApEio7z98XfJ/B5Rj1CUrvPzb7H3J1XXNQ+uG0bA7t9Tww6OozGFPNiQ6lK1U7oKRuyUJYQALM0PYjWv52L/NBa/6oITUCHl9zox7D3xXFnhD1Y7huZkSdJoa+12Koed6Hj0fH500sJcgbkeV9Gaeg=
+	t=1744193121; cv=none; b=piZ1HzFKE7X6j+WhnLYysZKMH0Jb6bU0pjNE0Etd33jrqFshPn3kB9wS6o49Wo7IOW6bdg1sPwLZRvUmklx8K0pjyWfc8gZsNpoxqMeH4kj1AXZlWcOAopG+HJlDLaG3cnlZePWhJjm5I+XrvL+zeVdFXuWNaT/XPsayTsygsM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744193889; c=relaxed/simple;
-	bh=f+bCIdAzqJR9DhddeAL7a4pbRlb41V0+iBkDqnK4uPw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pDSSVe9c3ihr1MZbFLNvkf94bNbz1nKgyO1jsu9PXMsyyYE8mFWBDsLkTqeiGbxdsD7qpasWIXklPvIXZkwBXUOK6qZJc7dPnb+yftHGGOlIEN8VGKYcIypI1760RP8IgWebkS71HGz8/z57GJLS/vHTtZk/Qk/wEvoaT0Dx3hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YXZtnNYh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04CDFC4CEE3;
-	Wed,  9 Apr 2025 10:18:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744193889;
-	bh=f+bCIdAzqJR9DhddeAL7a4pbRlb41V0+iBkDqnK4uPw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=YXZtnNYhI0ExO3Xz+2umZoCr8dAntmR65/Pie71QwTkGGcgMTr7lRS3VkaL40b4Y5
-	 Og5Sq6uKSlVPqjStKt1HKMs2WfPoiM9Z+/05aKmC4b4FzNtYc9idf9n5Z9NvfHaQ/G
-	 VLC23t+ASc2M3jCiIVHQDtFfY4R1J+6IoAO/o+1EsMmlLu3jeFiS5yM+hoKlGR3twB
-	 Cl95eeY6YbyjPW5nY9grdpYAtJOv2HeS9fSPdetXrKXlSq4D8aMS0/zoqH9zQ/jb3u
-	 MyVxz+W8vJXfVbzhfE8QVNFz6qVaPJnoa+EpgKO2yM166eOU1T7CpPj8eB5V8Jv7YY
-	 8hxo4wFpUofDg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Oliver Mangold" <oliver.mangold@pm.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Asahi Lina" <lina@asahilina.net>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 4/5] rust: kbuild: provide
- `RUSTC_HAS_DO_NOT_RECOMMEND` symbol
-In-Reply-To: <20250325-unique-ref-v9-4-e91618c1de26@pm.me> (Oliver Mangold's
-	message of "Tue, 25 Mar 2025 11:57:19 +0000")
-References: <20250325-unique-ref-v9-0-e91618c1de26@pm.me>
-	<XJFS-SfVD4o0dEirvLz4JpaMPMyZ5TOplstLcc8j23SzVy0LIwpjj_RH9mCvK67zffFaUlz2R8agRPAAXltIrQ==@protonmail.internalid>
-	<20250325-unique-ref-v9-4-e91618c1de26@pm.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 09 Apr 2025 11:27:49 +0200
-Message-ID: <874iyxd6qy.fsf@kernel.org>
+	s=arc-20240116; t=1744193121; c=relaxed/simple;
+	bh=dftAXhrtSj6CtjhCfME+c+dNS0JOX5D/+C+I3mPSItA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=jb1Y9BO8A3t0hP4gnmfPQvTZYaRU41X2Vhcepar3MPJPlK5qW5eej5QIy97Rlcvxd25AHYMA0WpTvbXKBLhj5u4jj9DFJ45h6NEXzW1dr+TOOd5Di7AgwIwXrehqCihkqmurc6RBQKHYdphxerISmqFMB10gsXbrGruEdu/Bk0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ndC0RNz7; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1744193111; bh=JRw+TJVVfisiKuNwIGnJ9MSWyLObSQOGDeMTJZPcRVw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ndC0RNz7vT64SFOnaVQruznx06fGF6P9wA0huFcB/VwCAQK4TzYmQhECigPjW7w/R
+	 rgzDsMQnwkw1txl0O+VyTB7SnFF8bbkmTGsgkHQ8Y2AHTN9vSNWCV9oIVxzSnSJlzW
+	 zsrW15yrvSX0LohLPTa86RRxJ3U9DmMgKsEhLSW4=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id CF320A71; Wed, 09 Apr 2025 17:51:51 +0800
+X-QQ-mid: xmsmtpt1744192311tpyuc4d19
+Message-ID: <tencent_2353FA17ABE475CC48686CA43867C9D6A605@qq.com>
+X-QQ-XMAILINFO: N3l5ASPewLWqJR+Oh04cuw2lq01R2qAcvty0EhcJ7UWAJsqCLQ8yJ6NR9x2NAT
+	 JJMj6K/t2RfqcTJIZV0m8mOJ+/tzVKKKl4638WDi3gWh4F5FbFMgA2xgWWZCalZCfgWGBugxCqt4
+	 QNhhoKxQuhzcnuUI5TfgoYxSG4MkTfn2jSHaLtizhdwfXgJKHhhPtVJTwUuxgsjb0UZ8Wye+Pwvz
+	 VXydZXSSwXPpG5Z+2C3LMOJwvl2+iJrxL7ITJYt2gUY7E6gXuIY/uxHs0uNO69t3Tqs4/Kpdmtae
+	 ke2G8fIAksW809Rz+kL8f9JtvOazsRxbUKJxBiszsDD7Q8Tbs0ttp2bDh5D84LT757k0dEe67em7
+	 hScaiveMARQqums6RZg5IeL1hcnNgAEft6dM4aCvGimu0w0j5klJoYkBrN0zvgBu0pAgrupiR4RP
+	 l7m9sA+DDL8s4GmWlzpfQuffkoYh2BnUoXesLt2PzoXWa9fRcafLMEkKePt0JblW97BPo9AtpCnq
+	 jmg+YHYWoHAgZMGG+rFDIYyY7HA2NAUnco70e7xkzovOrRPzKq2g5UymvBu5Vi75NvVUfLnPxelp
+	 V24E11jiGsN6o9pqvTLvDq+TSro4i6FGJUY9nRSh/mJfrVhlFX/WT+8BxapBaVpOVKp6V2zYkefX
+	 LYuXgifOpyXszB/4Q3kXmdWxAdXiuuY8UDbnnwfdG7+w+sQ0XwEDgk3NE7LlQofM2ghVOWunlfSL
+	 Oaa9/92F+hGDheqn0DZf6JZsLoWPouriLn+kNwvgCfMnToRHlAJiUK32AM4g9hAjqbc5mYyLwRB3
+	 ZZhvFUKSXlT4kdKrylrHXQdTfsbDsRPlv6TC9cJxwJUNPXlpY8IVTyvrwyytnxeY4veO/dOhugAS
+	 Gr8QSJCXQMJFmGnIHd1tDS03ivFcnrWlwK7C02FW71uxAiwtl0d9UHvKApc0vSUnmCRyIbTc/uAA
+	 RVTj6H5VnOMbPFCjc7IwqD8sRsyzs+
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Yaxiong Tian <iambestgod@qq.com>
+To: rafael@kernel.org,
+	viresh.kumar@linaro.org,
+	Pierre.Gondois@arm.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yaxiong Tian <tianyaxiong@kylinos.cn>
+Subject: [PATCH 2/2] cpufreq: cppc: Add comments for CPPC_EM_COST_GAP calculation
+Date: Wed,  9 Apr 2025 17:51:50 +0800
+X-OQ-MSGID: <20250409095150.1692220-1-iambestgod@qq.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <tencent_D6C4728C5C687C042BA7C156B0F3ECF7AE05@qq.com>
+References: <tencent_D6C4728C5C687C042BA7C156B0F3ECF7AE05@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-"Oliver Mangold" <oliver.mangold@pm.me> writes:
+From: Yaxiong Tian <tianyaxiong@kylinos.cn>
 
-> From: Miguel Ojeda <ojeda@kernel.org>
->
-> Rust 1.85.0 (current stable version) stabilized [1]
-> `#[diagnostic::do_not_recommend]` [2].
->
-> In order to use it across all supported Rust versions, introduce a new
-> Kconfig symbol for it.
->
-> This allows to perform conditional compilation based on it, e.g. on the
-> use site to enable the attribute:
->
->     #[cfg_attr(RUSTC_HAS_DO_NOT_RECOMMEND, diagnostic::do_not_recommend)]
->     impl A for i32 {}
->
-> An alternative would have been to `allow` the following warning:
->
->     #![allow(unknown_or_malformed_diagnostic_attributes)]
->
-> However, that would lose the checking for typos across all versions,
-> which we do not want to lose.
->
-> One can also use the Kconfig symbol to allow the warning in older
-> compilers instead, to avoid repeating the `cfg_attr` line above in all
-> use sites:
->
->     #![cfg_attr(
->         not(RUSTC_HAS_DO_NOT_RECOMMEND),
->         expect(unknown_or_malformed_diagnostic_attributes)
->     )]
->
-> That still loses the checking for typos in older versions, but we still
-> keep it in newer ones, thus we should still catch mistakes eventually.
->
-> In this case we can promote it to `expect` as shown above, so that we do
-> not forget to remove these lines if we stop using the attribute somewhere.
->
-> Link: https://github.com/rust-lang/rust/pull/132056 [1]
-> Link: https://doc.rust-lang.org/reference/attributes/diagnostics.html#the-diagnosticdo_not_recommend-attribute [2]
-> Link: https://lore.kernel.org/rust-for-linux/CANiq72mYfhuRWkjomb1vOMMPOaxvdS6qjfVLAwxUw6ecdqyh2A@mail.gmail.com/
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+The existing comments about CPPC_EM_COST_GAP were too brief. To help other
+developers better understand its design rationale, this commit adds detailed
+explanations about it.
 
+Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
+---
+ drivers/cpufreq/cppc_cpufreq.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-
-
-Best regards,
-Andreas Hindborg
-
+diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+index 756034b21682..c8e281ca95c0 100644
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -358,7 +358,34 @@ static void cppc_cpufreq_register_em(struct cpufreq_policy *policy);
+ #define CPPC_EM_CAP_STEP	(20)
+ /* Increase the cost value by CPPC_EM_COST_STEP every performance state. */
+ #define CPPC_EM_COST_STEP	(1)
+-/* Add a cost gap correspnding to the energy of 4 CPUs. */
++
++/*
++ * In the current EM (Energy Model), energy consumption is calculated as:
++ *   ps->cost * sum_util;
++ *
++ * For CPPC, the cost calculation uses a linear model: cost = a + b * step.
++ *
++ * For a task A with utilization 'util' in a performance domain (pd):
++ * Before placement:
++ *   energy_pd_before = a * sum_util_pd + b * step * sum_util_pd;
++ * After placement:
++ *   energy_pd_after = a * (sum_util_pd + util) + b * (sum_util_pd + util) *
++ *                    (step + util/CPPC_EM_CAP_STEP);
++ * Energy difference:
++ *   energy_diff = a * util + b * util * step_pd +
++ *                 b * (sum_util_pd + util) * util/cap_step
++ *
++ * The placement decision depends on the bias 'a' and slope 'b'. Considering the
++ * extreme case where little cores are nearly full and big cores are nearly idle:
++ *   energy_diff_pd = a_diff * util - b * util * step_pd_small -
++ *                 b * util * sum_util_pd_small/cap_step
++ *
++ * Ignoring smaller terms, the key condition becomes:
++ *   a_diff > b * sum_util_pd_small / step_cap
++ *
++ * Therefore, for a pd domain with 4 CPUs, for ensures the scheduler will prefer
++ * placing it.we can configure accordingly.
++ */
+ #define CPPC_EM_COST_GAP	(4 * SCHED_CAPACITY_SCALE * CPPC_EM_COST_STEP \
+ 				/ CPPC_EM_CAP_STEP)
+ 
+-- 
+2.25.1
 
 
