@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-596030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB46A825F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:18:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E0AA82605
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A93B4A682E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:18:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C11171BA14CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4368126A0CA;
-	Wed,  9 Apr 2025 13:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10E626A1B9;
+	Wed,  9 Apr 2025 13:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Bo8K55/u"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FG2W2L65"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E9B269CF1;
-	Wed,  9 Apr 2025 13:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E805264FAE;
+	Wed,  9 Apr 2025 13:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744204435; cv=none; b=pjfsxx9DXYEiGOUvSWDR4yFQCaJVnfkNSXlUTm9inpAaLKcOnC6E+2jlkJ6FFQyoa6sbr70aQCoCuCc/cZLZBgmiP5PHiHeESgLnL+dIYDMAj1pP9rvL9qa3+Q0GkXwJpyUiEKehH+2+zepptb8pF2q4UFj89SiLoZNILAqoGLU=
+	t=1744204437; cv=none; b=DKVl4LMSFi6m+Qgao+XyidczN/Lw+6QV/wxcACPo+ezTnE1K8LsxlCJB1aQGwwDi7EowPAVf/HbtH8wmx+zwaYag/Ka04UjJn9j6Chhzk/vyRXvSjy+2bANsnMKmrExoKkEaOFayV0NJ1KmJPuOYx5/c52WWyvB05O9e0DJmOIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744204435; c=relaxed/simple;
-	bh=SlDROGe6exFigpwAfSIEv4Jg5WPYMv1AVZFCsehToL8=;
+	s=arc-20240116; t=1744204437; c=relaxed/simple;
+	bh=DcoySUyFDoBBukYLR9UFDjQxQD7Rqkm+3PricCV6HgY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LbTRb9fmdpMwOxPrcyhAnqG6VYXjNy+UdNjkc5WLRk1x2APE6WzDfQxCgScCejRRSWHRjsUS2k33IVDCfeJqprgBqDt0KNZpb/LCUppF2guq5DlPQvV2VO2aiBiZLTE+eQaZpaFeLGfK5Z8i3zypFpn2tbuqNhw2Ne4cayrpjVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Bo8K55/u; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=gIDAyE0fvO4nNrcFnSzPSjAWS2Vj3MxcZkrqjUMNaWaXfOpZIhgPq8h+x/QPzhkEyNZrwnDPrnB1PNJWUU8ukVc+WWjJXFcxjVCfkPF9IvySw+vIMtPYIAMJ8fJJ5axRTjIR96vZ28FiSpguClt7lMu96c/UO+MZF/cDh8mhrQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FG2W2L65; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744204432;
-	bh=SlDROGe6exFigpwAfSIEv4Jg5WPYMv1AVZFCsehToL8=;
+	s=mail; t=1744204434;
+	bh=DcoySUyFDoBBukYLR9UFDjQxQD7Rqkm+3PricCV6HgY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Bo8K55/uoI3Iotk1ncyxvBUEmTvgFTfyGz11LEXD8BnIQSbc3LCfFKETh1ub2iUfS
-	 2ZERwjhNU27Q0egoZUA8MluijtO7JZMVhJbuXwybqOM/NcppapZ7Td+Pz1rZnyp2ww
-	 E/oLs7k2KmbTmlaFvIdlcVUbQhAWJOEFbOYdxB8zBQX/ho1bXDqh9QiLs7dF0IkOHn
-	 a/HeWPjAA9GVFPFdv4ByAk2LfXigI6POkUmCFITahdxNT1ZX7JwOyyBRrXLwyCzfYF
-	 o2gyJgINfoh7VsYxYcG6+dNXWwBFRSoD4HjbGZkX3SBMfqcSTnvXL9VyrbaGOS5NET
-	 5YpXa0HoOZb5A==
+	b=FG2W2L65qf1+hVCSuiM74ZMgruV0JbumgXceVKg28r79CcU6KLzPFUxw0UTqAPEYt
+	 G2RwW6C/J5xNKtLsBSsei3th7qBZHg8IHBp17kU8SiB0kXeOBbF20hLdhg++CVVJlw
+	 PQA9As7A8kgxlBNyWUr2SWjoQP1B3UNbmC7HRFooIsjurIAO5c9wv1Yv5I3CNuCcaS
+	 /jmbv4/dZDOfIY0E2bmbTpeDf4P9QHMNWebM1GS+s09IuYL9fwWxzbYUttFztG+ZzN
+	 rr0YHTx0FPQNG65NTEViK+tTZlHmixj7gyKist8LEpcsvMg4vmvj0hF0YLOT4Jc6Dm
+	 wcXVSFFsdHlLA==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BAB8D17E10F7;
-	Wed,  9 Apr 2025 15:13:50 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 727BD17E0EB8;
+	Wed,  9 Apr 2025 15:13:52 +0200 (CEST)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: chunkuang.hu@kernel.org
 Cc: p.zabel@pengutronix.de,
@@ -75,9 +75,9 @@ Cc: p.zabel@pengutronix.de,
 	ives.chenjh@mediatek.com,
 	tommyyl.chen@mediatek.com,
 	jason-jh.lin@mediatek.com
-Subject: [PATCH v8 18/23] drm/mediatek: mtk_hdmi_common: Assign DDC adapter pointer to bridge
-Date: Wed,  9 Apr 2025 15:13:13 +0200
-Message-ID: <20250409131318.108690-19-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v8 19/23] drm/mediatek: mtk_hdmi_common: Add OP_HDMI if helper funcs assigned
+Date: Wed,  9 Apr 2025 15:13:14 +0200
+Message-ID: <20250409131318.108690-20-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250409131318.108690-1-angelogioacchino.delregno@collabora.com>
 References: <20250409131318.108690-1-angelogioacchino.delregno@collabora.com>
@@ -89,29 +89,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for adding the new HDMI TX v2 IP driver, assign the
-pointer to the DDC adapter to struct drm_bridge during probe.
+In preparation for adding the HDMI TX v2 driver, and to allow
+a future modernization of the HDMI v1 one, perform changes
+that enable the usage of the HDMI Helpers provided by DRM.
 
-This commit brings no functional changes.
+Check if the HDMI driver provides the function pointers to
+hdmi_{clear,write}_infoframe used by the HDMI Helper API and,
+if present, add DRM_BRIDGE_OP_HDMI to the drm_bridge ops,
+enabling the drm API to register the bridge as HDMI and to use
+the HDMI Helper functions.
+
+If the hdmi_{write,clear}_infoframe pointers are not assigned,
+vendor and product strings and HDMI helpers will not be used,
+hence this commit brings no functional changes to drivers that
+have not been refactored to use the new helpers.
+
+This also means that, in the current state, there is effectively
+no functional change to mtk_hdmi and its other components.
 
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/gpu/drm/mediatek/mtk_hdmi_common.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/mediatek/mtk_hdmi_common.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_common.c b/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
-index 5ea45608921c..2c91f65f26fa 100644
+index 2c91f65f26fa..d58752b772e8 100644
 --- a/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
 +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
-@@ -411,6 +411,7 @@ struct mtk_hdmi *mtk_hdmi_common_probe(struct platform_device *pdev)
+@@ -410,6 +410,11 @@ struct mtk_hdmi *mtk_hdmi_common_probe(struct platform_device *pdev)
+ 	hdmi->bridge.of_node = pdev->dev.of_node;
  	hdmi->bridge.ops = DRM_BRIDGE_OP_DETECT | DRM_BRIDGE_OP_EDID
  			 | DRM_BRIDGE_OP_HPD;
++
++	if (ver_conf->bridge_funcs->hdmi_write_infoframe &&
++	    ver_conf->bridge_funcs->hdmi_clear_infoframe)
++		hdmi->bridge.ops |= DRM_BRIDGE_OP_HDMI;
++
  	hdmi->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
-+	hdmi->bridge.ddc = hdmi->ddc_adpt;
+ 	hdmi->bridge.ddc = hdmi->ddc_adpt;
  	hdmi->bridge.vendor = "MediaTek";
- 	hdmi->bridge.product = "On-Chip HDMI";
- 
 -- 
 2.49.0
 
