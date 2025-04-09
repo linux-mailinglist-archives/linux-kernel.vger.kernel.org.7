@@ -1,163 +1,269 @@
-Return-Path: <linux-kernel+bounces-596536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3537DA82D4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:10:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B94AA82D58
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B6551B64032
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:10:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBBED464D2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89458276028;
-	Wed,  9 Apr 2025 17:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCF3277011;
+	Wed,  9 Apr 2025 17:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ovq1dc1I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bG4C8JoY"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F1D270EBF;
-	Wed,  9 Apr 2025 17:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0554C277002;
+	Wed,  9 Apr 2025 17:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744218619; cv=none; b=HJJ+h2rKd5/WspYj+6/WfpyJz2T4D7jOS7b9Q8hA5q1LII4xF8bEqmjctmNSLPqLH+BvgZleUCgdqCz4N/5TSKdhu8HlwyY4SLFhbqOPJ/euQmHgGLIXgZVvPKifuZLEZH+E/NvKk2Z+SnIT3XoeAbwv2fGmqzXxtnPozdKvYUQ=
+	t=1744218690; cv=none; b=LvVu9i55x0gDwbBDZ9kNprY9F8vBnuxU7ZNGetYIlhznSLlHgOYzI1swME66/m7F/xqtBN8LbE/vV/lYHX5PUiiCogOC/v87dfFl2M4pGmDHpo4BtwHRyujwQlL+h6mujfReAOa7lTLgqCocipES3WbROBBK4s6lNPvZ876uFRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744218619; c=relaxed/simple;
-	bh=cAQwVlXf7+CjPLnuPwVGgRDY9ncDHb1puhcdzHnY0jY=;
+	s=arc-20240116; t=1744218690; c=relaxed/simple;
+	bh=D6BVn03W4IKZEe/MCFk1MNoxK/IQ47mQ0uyL6OtZ8EM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jOQbuN0gkJhbivQHZW1/LG1eXQM/KVJyF62lP0gwtR5cYqPMadotQd58/uwSbDXWzj+tyfxly7JyDSG3l+pa+jcc4Jrin0QiIkb1zJUbMXD7fLrOFHFQAKdFP9Boytu0BLXy9olh1gLq70Rbs+H5Jfo1yHwRxXtY/0KQq38YtJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ovq1dc1I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C601C4AF0B;
-	Wed,  9 Apr 2025 17:10:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744218618;
-	bh=cAQwVlXf7+CjPLnuPwVGgRDY9ncDHb1puhcdzHnY0jY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ovq1dc1IXAl5wnc9ryHVYFDKGcsVmLts9fdhHxRd6Ws8T5QKCvKmR7LKHn5l+zlbu
-	 x4Arzznvq6P+X5kbPB2XgQQwiQnmInizm6I4RF9aLofbJ8AvKSoOHxAJxZet9U3zH/
-	 d3rUtnBvtvX87CFu9D31IQd4NUkTEPgs5/XivyzKTtfxpeEP7DW92lD18Dk0voOsen
-	 2VQdXPuQWZhUJpSp2xilMss32k6mfkVcFTNj5zg0dBylCElIpBN3wz+74cDt3E35Sm
-	 gaf/vF5ywRmKIodBboG2VjREIsD5FNI6dccSzg5xmmDB51XgrxLU/9JPjjRV6Yt3O7
-	 AnEketpdYnnmg==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2c7f876b321so2190276fac.1;
-        Wed, 09 Apr 2025 10:10:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUvXz0SyhbDjXjwyYRKFVZM1Auun3RgQEgzFxGr/+aexioRPf+QiGLieC31lmBqT0b9iqbun+wWpQgHGFR1@vger.kernel.org, AJvYcCXTkEDr6DizXVuRfl4CM19Xgkz8kWlKpYaGJBmCyMg+qRtcDiaNbDjjyVtMCDjmIV4Da8RRZEYQlJw=@vger.kernel.org, AJvYcCXkx/RvTiFUIQeiNtoX1gGFMs3Kp1tpxe3ZPUuG7XoZ9PH9jGRFRwpRmn0v54eKBTnj6gOR15fPOCgb@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmYVsxio7HxGkjkGiQLvCkDy0S/uKocDU+A+BTJ89EmpffWM4h
-	ymdOf8vf5EVr6og5af/cDlHuHtP6RG5ZOYYiD+fx0w2Y7V5fHEfTlheNQTEmjxd6gW9Sadqxqca
-	ZEvQpnOWs9ULlf4i7EHyuv3ms1uY=
-X-Google-Smtp-Source: AGHT+IE1HcaprfbES+AEj26IYVhioa7kyOAsoqMrfIDfQQwSe2RuMsl/a8oiE9RCn4sEC+kDDYA6hgAtGjfVmjvNbho=
-X-Received: by 2002:a05:6870:ab0d:b0:2c2:2f08:5e5b with SMTP id
- 586e51a60fabf-2d0917bb20cmr1802929fac.13.1744218617585; Wed, 09 Apr 2025
- 10:10:17 -0700 (PDT)
+	 To:Cc:Content-Type; b=IfvPtX9wPeCnXHNztRESiqz66Q+yOnpgIh6a9HnDAxj9C4/NRKA5Bj+a/6JaHOljvcfgdR2Zvy/52cwsSkcZlW099TLSVVv2h/I82sxUHo6l8iw8n+xg8XJDjd1EtW97RMH8O9v8SNhJHSJzkhmF1ZoYqJd7EcmgoZnzL6l6uMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bG4C8JoY; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e677f59438so10561528a12.2;
+        Wed, 09 Apr 2025 10:11:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744218687; x=1744823487; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ylDrT2YMOpwFaEsR9XQfKs+Xj9kBsGYPmtVt1tViWc0=;
+        b=bG4C8JoYVWzQfa6Wd/tW0V5CwqsDxplduCEKphvj67I8h6plCvYmgZ+yLKjtWExy+i
+         oKTi7InIhTlCwgsD+DGOEzSWU9tpeq2TeK3zxg/Ex6hit7CdpakiBvgDyOri+ghe+83+
+         1+fl+jx79nhCMeKbWxSt8fZ6itTZRX/RY+ZVoCI1BGLKK5VbwQlnUS67yI7yZJ/GMqDN
+         4C3daq/pN2yAvwpfDw42AW3z8vMln2ii8UC05m9PY3V5GWbqPD4sTr/21mOVAfu7KyPL
+         xKTxDeocJ84RMFQrleol/J6w6oqbLD+5TXUkqF/1YX0jalEKQhus/BIc+O5gq5fSoPNX
+         2mNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744218687; x=1744823487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ylDrT2YMOpwFaEsR9XQfKs+Xj9kBsGYPmtVt1tViWc0=;
+        b=chVd2AtfJlw7kSnb9evTL+nwJkKvdbP+0WxkIIdbPfw0/Rja8JbqvKVLIC1Alag8U4
+         VJPkYjGg8qUB2NzJoWnlaILtKr+65HE5vEFG3gnr0REWoD6VU8oiJk8ve/Zgks8s9oIL
+         2cs25AcqkMfHLI80C7BSO21gKTvlqrLYw9XoRkvC8b5lUeBQ8VJ856NeBLs8Vmh+N5Md
+         O//jVN/ZBYOqy6nuGcr/Z8YSF4+GBj2y5JPoJ9r/EyvZg1b+IyobfPapz2pQYndmae9o
+         376zxAzWr+eMKFBgYxpgsxhP8b6UbT8berWW0+3u5oKWrxYGqS2/dqB65YPsjcbeKLmI
+         fE/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWz/oy5G2WpqBaQUYPuPOo0CCh80p7FrLkrQtFQezetTQufYuMRoO/ooxAPxJvRHw0blcLBk23z6tGxy5n8@vger.kernel.org, AJvYcCXN8razJURZ8G92Ligv4Vw3qMjlI5fMkHPz+0HfJA2bMPSeE1qgzwsxOr5yiIgW/OurvHgufXFzAB3L98qCmQ==@vger.kernel.org, AJvYcCXOPfvGi4G5rdQahvO312yeO9ShGbxTyduomIDigcbejkTp3DP55OIbWQcaSkE1Vwi9D7Ll94ppvINmlkjy@vger.kernel.org
+X-Gm-Message-State: AOJu0YworAU9BxzN1WZpJPJy4TbfhBLRMc8WOWBFedD6Ic+ULu+le2W9
+	k+c0oeznCAYIpPAsdEJXV9Prt3r5WFVq+4s0W/aY83Hc9Q7pqG0gkSKlz9XNwioa4ORfl6QZo2X
+	0ZpoHvxenHNrpqm7n0BVVTPiEgW8=
+X-Gm-Gg: ASbGncsbvLtdaFMv1Q4kLuBxuG1jl5a2S8ZUzZuwE9A+kVo95Ci09160DmXjHP7Vt8L
+	zD0jioZNBia4jHqmN3f9uLr7x1UTNF7E61fSMpZavGj3/d6U2lkEkSVQ7xbU5dlOhrnOG5LXiZz
+	ksLJtzrwRmjF6SRiRio36lJA==
+X-Google-Smtp-Source: AGHT+IFMi4DahhOFJeO26fMjVb7AIcnezeeOJc4AEg+4JuObcPNLWYHgjpzjbSOdAbAL7OA5hICBd/vdP9/YgryTi1o=
+X-Received: by 2002:a05:6402:1e96:b0:5ee:497:67d6 with SMTP id
+ 4fb4d7f45d1cf-5f2f77573e3mr3606997a12.33.1744218686735; Wed, 09 Apr 2025
+ 10:11:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409065703.1461867-1-zhenglifeng1@huawei.com> <20250409065703.1461867-3-zhenglifeng1@huawei.com>
-In-Reply-To: <20250409065703.1461867-3-zhenglifeng1@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 9 Apr 2025 19:10:06 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0is5YXxqHDAC4Ki44U9mwDH3KvW0=JmFYS-25QwKYDR1A@mail.gmail.com>
-X-Gm-Features: ATxdqUEZY7ZSPbkwrXMr4u7_twpdladBp3zkPIRv7P3Mi7CxPU_yAnM6-yPmvM4
-Message-ID: <CAJZ5v0is5YXxqHDAC4Ki44U9mwDH3KvW0=JmFYS-25QwKYDR1A@mail.gmail.com>
-Subject: Re: [PATCH v6 2/8] ACPI: CPPC: Optimize cppc_get_perf()
-To: Lifeng Zheng <zhenglifeng1@huawei.com>
-Cc: rafael@kernel.org, lenb@kernel.org, robert.moore@intel.com, 
-	viresh.kumar@linaro.org, mario.limonciello@amd.com, gautham.shenoy@amd.com, 
-	ray.huang@amd.com, perry.yuan@amd.com, pierre.gondois@arm.com, 
-	acpica-devel@lists.linux.dev, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linuxarm@huawei.com, 
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, lihuisong@huawei.com, 
-	cenxinghai@h-partners.com, hepeng68@huawei.com
+References: <20250409-tonyk-overlayfs-v1-0-3991616fe9a3@igalia.com> <20250409-tonyk-overlayfs-v1-2-3991616fe9a3@igalia.com>
+In-Reply-To: <20250409-tonyk-overlayfs-v1-2-3991616fe9a3@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 9 Apr 2025 19:11:15 +0200
+X-Gm-Features: ATxdqUErSC32zqmZdURY7CsPA7SOb5uoyIOnGn5UfJAupYrKAMpX0onYca1Dqm0
+Message-ID: <CAOQ4uxit5nYeGPN1_uB7c37=eKQi_T-0LtoQaTZHVisAUDoBsg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ovl: Make ovl_dentry_weird() accept casefold dentries
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 9, 2025 at 8:57=E2=80=AFAM Lifeng Zheng <zhenglifeng1@huawei.co=
-m> wrote:
+On Wed, Apr 9, 2025 at 5:01=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@igal=
+ia.com> wrote:
 >
-> Optimize cppc_get_perf() with three changes:
+> ovl_dentry_weird() is used to avoid problems with filesystems that has
+> their d_hash and d_compare implementations. Create an exception for this
+> function, where only casefold filesystems are eligible to use their own
+> d_hash and d_compare functions, allowing to support casefold
+> filesystems.
+
+What do you mean by this sentence?
+Any casefold fs can be on any layer?
+All layers on the same casefold sb? same casefold fstype?
+
+
 >
-> 1. Change the error kind to "no such device" when pcc_ss_id < 0, as other
-> register value getting functions.
->
-> 2. Add a check to verify if the register is supported to be read before
-> using it. The logic is:
->
-> (1) If the register is of the integer type, check whether the register is
-> optional and its value is 0. If yes, the register is not supported.
->
-> (2) If the register is of other types, a null one is not supported.
->
-> 3. Return the result of cpc_read() instead of 0.
->
-> Reviewed-by: Pierre Gondois <pierre.gondois@arm.com>
-> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 > ---
->  drivers/acpi/cppc_acpi.c | 21 ++++++++++++++-------
->  1 file changed, 14 insertions(+), 7 deletions(-)
+>  fs/overlayfs/namei.c     | 11 ++++++-----
+>  fs/overlayfs/overlayfs.h |  2 +-
+>  fs/overlayfs/params.c    |  3 ++-
+>  fs/overlayfs/util.c      | 12 +++++++-----
+>  4 files changed, 16 insertions(+), 12 deletions(-)
 >
-> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> index 39f019e265da..2f789d3b3cad 100644
-> --- a/drivers/acpi/cppc_acpi.c
-> +++ b/drivers/acpi/cppc_acpi.c
-> @@ -1201,20 +1201,29 @@ static int cppc_get_perf(int cpunum, enum cppc_re=
-gs reg_idx, u64 *perf)
->
->         reg =3D &cpc_desc->cpc_regs[reg_idx];
->
-> +       if (reg->type =3D=3D ACPI_TYPE_INTEGER ?
-> +           (IS_OPTIONAL_CPC_REG(reg_idx) && !reg->cpc_entry.int_value) :
-> +           IS_NULL_REG(&reg->cpc_entry.reg)) {
-
-Please avoid using the ternary operator in any new kernel code.
-
-Why not write it this way
-
-if ((reg->type =3D=3D ACPI_TYPE_INTEGER && IS_OPTIONAL_CPC_REG(reg_idx)
-    && !reg->cpc_entry.int_value) || (reg->type !=3D ACPI_TYPE_INTEGER &&
-    IS_NULL_REG(&reg->cpc_entry.reg)) {
-
-> +               pr_debug("CPC register is not supported\n");
-> +               return -EOPNOTSUPP;
-> +       }
-> +
->         if (CPC_IN_PCC(reg)) {
->                 int pcc_ss_id =3D per_cpu(cpu_pcc_subspace_idx, cpunum);
->                 struct cppc_pcc_data *pcc_ss_data =3D NULL;
-> -               int ret =3D 0;
-> +               int ret;
->
-> -               if (pcc_ss_id < 0)
-> -                       return -EIO;
-> +               if (pcc_ss_id < 0) {
-> +                       pr_debug("Invalid pcc_ss_id\n");
-> +                       return -ENODEV;
-> +               }
->
->                 pcc_ss_data =3D pcc_data[pcc_ss_id];
->
->                 down_write(&pcc_ss_data->pcc_lock);
->
->                 if (send_pcc_cmd(pcc_ss_id, CMD_READ) >=3D 0)
-> -                       cpc_read(cpunum, reg, perf);
-> +                       ret =3D cpc_read(cpunum, reg, perf);
->                 else
->                         ret =3D -EIO;
->
-> @@ -1223,9 +1232,7 @@ static int cppc_get_perf(int cpunum, enum cppc_regs=
- reg_idx, u64 *perf)
->                 return ret;
+> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+> index be5c65d6f8484b1fba6b3fee379ba1d034c0df8a..140bc609ffebe00151cbb4467=
+20f5106dbeb2ef2 100644
+> --- a/fs/overlayfs/namei.c
+> +++ b/fs/overlayfs/namei.c
+> @@ -192,7 +192,7 @@ struct dentry *ovl_decode_real_fh(struct ovl_fs *ofs,=
+ struct ovl_fh *fh,
+>                 return real;
 >         }
 >
-> -       cpc_read(cpunum, reg, perf);
-> -
-> -       return 0;
-> +       return cpc_read(cpunum, reg, perf);
+> -       if (ovl_dentry_weird(real)) {
+> +       if (ovl_dentry_weird(real, ofs)) {
+>                 dput(real);
+>                 return NULL;
+>         }
+> @@ -244,7 +244,7 @@ static int ovl_lookup_single(struct dentry *base, str=
+uct ovl_lookup_data *d,
+>                 goto out_err;
+>         }
+>
+> -       if (ovl_dentry_weird(this)) {
+> +       if (ovl_dentry_weird(this, ofs)) {
+>                 /* Don't support traversing automounts and other weirdnes=
+s */
+>                 err =3D -EREMOTE;
+>                 goto out_err;
+> @@ -365,6 +365,7 @@ static int ovl_lookup_data_layer(struct dentry *dentr=
+y, const char *redirect,
+>                                  struct path *datapath)
+>  {
+>         int err;
+> +       struct ovl_fs *ovl =3D OVL_FS(layer->fs->sb);
+
+ofs please
+
+>
+>         err =3D vfs_path_lookup(layer->mnt->mnt_root, layer->mnt, redirec=
+t,
+>                         LOOKUP_BENEATH | LOOKUP_NO_SYMLINKS | LOOKUP_NO_X=
+DEV,
+> @@ -376,7 +377,7 @@ static int ovl_lookup_data_layer(struct dentry *dentr=
+y, const char *redirect,
+>                 return err;
+>
+>         err =3D -EREMOTE;
+> -       if (ovl_dentry_weird(datapath->dentry))
+> +       if (ovl_dentry_weird(datapath->dentry, ovl))
+>                 goto out_path_put;
+>
+>         err =3D -ENOENT;
+> @@ -767,7 +768,7 @@ struct dentry *ovl_get_index_fh(struct ovl_fs *ofs, s=
+truct ovl_fh *fh)
+>
+>         if (ovl_is_whiteout(index))
+>                 err =3D -ESTALE;
+> -       else if (ovl_dentry_weird(index))
+> +       else if (ovl_dentry_weird(index, ofs))
+>                 err =3D -EIO;
+>         else
+>                 return index;
+> @@ -815,7 +816,7 @@ struct dentry *ovl_lookup_index(struct ovl_fs *ofs, s=
+truct dentry *upper,
+>                 dput(index);
+>                 index =3D ERR_PTR(-ESTALE);
+>                 goto out;
+> -       } else if (ovl_dentry_weird(index) || ovl_is_whiteout(index) ||
+> +       } else if (ovl_dentry_weird(index, ofs) || ovl_is_whiteout(index)=
+ ||
+>                    inode_wrong_type(inode, d_inode(origin)->i_mode)) {
+>                 /*
+>                  * Index should always be of the same file type as origin
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index 6f2f8f4cfbbc177fbd5441483395d7ff72efe332..f3de013517598c44c15ca9f95=
+0f6c2f0a5c2084b 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -445,7 +445,7 @@ void ovl_dentry_init_reval(struct dentry *dentry, str=
+uct dentry *upperdentry,
+>                            struct ovl_entry *oe);
+>  void ovl_dentry_init_flags(struct dentry *dentry, struct dentry *upperde=
+ntry,
+>                            struct ovl_entry *oe, unsigned int mask);
+> -bool ovl_dentry_weird(struct dentry *dentry);
+> +bool ovl_dentry_weird(struct dentry *dentry, struct ovl_fs *ovl);
+>  enum ovl_path_type ovl_path_type(struct dentry *dentry);
+>  void ovl_path_upper(struct dentry *dentry, struct path *path);
+>  void ovl_path_lower(struct dentry *dentry, struct path *path);
+> diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
+> index 6759f7d040c89d3b3c01572579c854a900411157..459e8bddf1777c12c9fa0bdfc=
+150e2ea22eaafc3 100644
+> --- a/fs/overlayfs/params.c
+> +++ b/fs/overlayfs/params.c
+> @@ -277,6 +277,7 @@ static int ovl_mount_dir_check(struct fs_context *fc,=
+ const struct path *path,
+>                                enum ovl_opt layer, const char *name, bool=
+ upper)
+>  {
+>         struct ovl_fs_context *ctx =3D fc->fs_private;
+> +       struct ovl_fs *ovl =3D fc->s_fs_info;
+
+ofs pls
+
+>
+>         if (!d_is_dir(path->dentry))
+>                 return invalfc(fc, "%s is not a directory", name);
+> @@ -290,7 +291,7 @@ static int ovl_mount_dir_check(struct fs_context *fc,=
+ const struct path *path,
+>         if (sb_has_encoding(path->mnt->mnt_sb))
+>                 return invalfc(fc, "case-insensitive capable filesystem o=
+n %s not supported", name);
+>
+> -       if (ovl_dentry_weird(path->dentry))
+> +       if (ovl_dentry_weird(path->dentry, ovl))
+>                 return invalfc(fc, "filesystem on %s not supported", name=
+);
+>
+>         /*
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index 0819c739cc2ffce0dfefa84d3ff8f9f103eec191..4dd523a1a13ab0a6cf51d967d=
+0b712873e6d8580 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -200,15 +200,17 @@ void ovl_dentry_init_flags(struct dentry *dentry, s=
+truct dentry *upperdentry,
+>         spin_unlock(&dentry->d_lock);
 >  }
 >
->  /**
+> -bool ovl_dentry_weird(struct dentry *dentry)
+> +bool ovl_dentry_weird(struct dentry *dentry, struct ovl_fs *ovl)
+
+ovl_fs *ofs as first argument please
+
+>  {
+> +       int flags =3D DCACHE_NEED_AUTOMOUNT | DCACHE_MANAGE_TRANSIT;
+> +
+> +       if (!ovl->casefold)
+> +               flags |=3D DCACHE_OP_HASH | DCACHE_OP_COMPARE;
+> +
+>         if (!d_can_lookup(dentry) && !d_is_file(dentry) && !d_is_symlink(=
+dentry))
+>                 return true;
+>
+> -       return dentry->d_flags & (DCACHE_NEED_AUTOMOUNT |
+> -                                 DCACHE_MANAGE_TRANSIT |
+> -                                 DCACHE_OP_HASH |
+> -                                 DCACHE_OP_COMPARE);
+> +       return dentry->d_flags & flags;
+>  }
+>
+>  enum ovl_path_type ovl_path_type(struct dentry *dentry)
+>
 > --
+> 2.49.0
+>
 
