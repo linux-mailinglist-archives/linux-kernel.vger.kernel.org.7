@@ -1,157 +1,89 @@
-Return-Path: <linux-kernel+bounces-596947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A0A8A8330E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:14:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC904A83303
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F75C7A839C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0136A8A0A77
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7051721B9D1;
-	Wed,  9 Apr 2025 21:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35E7213E74;
+	Wed,  9 Apr 2025 21:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H1KD3/g0"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EkpCov4T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16482147E3
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 21:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD071DB34B
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 21:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744233127; cv=none; b=iGfaRYD59fXWcDr99C7rzeEnS6AG+AwLQTLjcRWD8M4ES2q4xyYEDK1knYH2EvgKepCT4WATOnSI/FTT7wJZz1GXrwx1nYnxaXe8Fo4zWyEQSdR/n+GIIlGOkslqxRYcWRtG/THJgwRsCLxq0vO3RqBXR2u4HQauaZBNSX0auSI=
+	t=1744233093; cv=none; b=dTvLh+ZDfytNmzh67//c1eI5AM5M6vvo2J4yehwqSGqryzaFKW6C39QALShBoBqZuBDXI1nB78BxqSAr9hk+rk5/IizLpQ6bQPv6fPFcjLxWSPFIcnQFPMOsiThhDbndECRXgs5/anFHq/S5QTG5AH1rvGDA6gok+nTZy7l3Jmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744233127; c=relaxed/simple;
-	bh=KyxwRkCpc0W3aXEsLcSVXCo0y6WnzNVBnEHVFD/JCvA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cbs6ArWHrjqrDU0WhxoUrvzE6UVnFVYH0VSizFZzjD+WmLOoFuYKCUV5dAY1bzvtnUNlmhg1PPFt/jT4/tWLn8TN52O9qU/OUQWD3WU3eUiZBt9vO9gymrqUc1+DKVISFZnsFYfHah0IFoXJ0exrk9/4tv/KEvgmIpm+bkQZEnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H1KD3/g0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84ED5C4CEE9;
-	Wed,  9 Apr 2025 21:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744233126;
-	bh=KyxwRkCpc0W3aXEsLcSVXCo0y6WnzNVBnEHVFD/JCvA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=H1KD3/g04K6xRjD6iZt64mse9KSCnND6c2vS995TLgo1wPT4YQxMxWnuFo1ig7NWn
-	 G+0MWIkgRiOdwjyDDUdxuvOAtSABF4fhmYwf+LT/z0JS/+AVfSB4kV/yO+ZvJex1AP
-	 g81CtR/JiP8c8cPQjrSMoKDwxkfk3Og2RMw3x+XBKsZz8wK1Vqw0V9Vdfq2ZXVi5Kb
-	 lUSLmf0ebmhOvCEVnlRGuUj83USJ9Kr5uZIvj6cvq+J3P1rMf0RswndCjssUD014t+
-	 CRiwHXcYHOoTp8ZgDczCVDvjiryvujJTC9evWnpj78bIQqdaLkoUXfGMMQhgYg17zY
-	 xwSY1GAgtKErg==
-From: Ingo Molnar <mingo@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Andy Lutomirski <luto@amacapital.net>,
-	Dave Hansen <dave@sr71.net>,
-	Brian Gerst <brgerst@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Chang S . Bae" <chang.seok.bae@intel.com>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 8/8] x86/fpu: Use 'fpstate' variable names consistently
-Date: Wed,  9 Apr 2025 23:11:27 +0200
-Message-ID: <20250409211127.3544993-9-mingo@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250409211127.3544993-1-mingo@kernel.org>
-References: <20250409211127.3544993-1-mingo@kernel.org>
+	s=arc-20240116; t=1744233093; c=relaxed/simple;
+	bh=wkDkk7Z7cHX0G/3db/Y8x874CyZ7qgRMDvsW3aX43Mw=;
+	h=Date:From:To:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Efn6Z9SFCcvYt477oK4GsHGyM2hmEc8YtsWsS/pcRvGjwMb9uYjxnT58r7w65fePSHKyjaj+ilZjPzzezt41BvrSF1ISO3kCwXAWRBcRMwyvHrlz0sntCtz0Snb1gTd8k6z0VTWLk1xM6WfjPz6/e92XTpnWJhk++M7XIwuJzjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EkpCov4T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6031BC4CEE2;
+	Wed,  9 Apr 2025 21:11:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1744233092;
+	bh=wkDkk7Z7cHX0G/3db/Y8x874CyZ7qgRMDvsW3aX43Mw=;
+	h=Date:From:To:Subject:In-Reply-To:References:From;
+	b=EkpCov4TlqvKEMnRMX1IEGR3zgILgKvQFRsBgMWR54sJJEx66O/dYPxv0Xulirzrs
+	 vz6lff52oiMZjAnl6I9LDUCXOWCxOuNJ2rE+3w6WYAwW2dXV0fbn6JtSzENLvM7dKF
+	 wQs+1uZT0bs9HXm+1RBEc41UzwO2r+Sa9251Pc0I=
+Date: Wed, 9 Apr 2025 14:11:31 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "T.J. Mercier" <tjmercier@google.com>, Suren Baghdasaryan
+ <surenb@google.com>, Kent Overstreet <kent.overstreet@linux.dev>, Janghyuck
+ Kim <janghyuck.kim@samsung.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] alloc_tag: Handle incomplete bulk allocations in
+ vm_module_tags_populate
+Message-Id: <20250409141131.bd67f6b19ea7e770dce40ac7@linux-foundation.org>
+In-Reply-To: <20250409140848.da67768ac1f5e79d7296de4d@linux-foundation.org>
+References: <20250409195448.3697351-1-tjmercier@google.com>
+	<20250409140848.da67768ac1f5e79d7296de4d@linux-foundation.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-A few uses of 'fps' snuck in, which is rather confusing
-(to me) as it suggests frames-per-second. ;-)
+On Wed, 9 Apr 2025 14:08:48 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
 
-Rename them to the canonical 'fpstate' name.
+> On Wed,  9 Apr 2025 19:54:47 +0000 "T.J. Mercier" <tjmercier@google.com> wrote:
+> 
+> > alloc_pages_bulk_node may partially succeed and allocate fewer than the
+> > requested nr_pages. There are several conditions under which this can
+> > occur, but we have encountered the case where CONFIG_PAGE_OWNER is
+> > enabled causing all bulk allocations to always fallback to single page
+> > allocations due to commit 187ad460b841 ("mm/page_alloc: avoid page
+> > allocator recursion with pagesets.lock held").
+> > 
+> > Currently vm_module_tags_populate immediately fails when
+> > alloc_pages_bulk_node returns fewer than the requested number of pages.
+> > This patch causes vm_module_tags_populate to retry bulk allocations for
+> > the remaining memory instead.
+> 
+> Please describe the userspace-visible runtime effects of this change.  In a way
+> which permits a user who is experiencing some problem can recognize that this
+> patch will address that problem.
+>
+> ...
+>
+> Reported-by: Janghyuck Kim <janghyuck.kim@samsung.com>
 
-No change in functionality.
-
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/fpu/api.h |  2 +-
- arch/x86/kernel/fpu/core.c     | 14 +++++++-------
- arch/x86/kernel/fpu/xstate.c   |  4 ++--
- 3 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
-index f42de5f05e7e..8e6848f55dcd 100644
---- a/arch/x86/include/asm/fpu/api.h
-+++ b/arch/x86/include/asm/fpu/api.h
-@@ -136,7 +136,7 @@ static inline void fpstate_free(struct fpu *fpu) { }
- #endif
- 
- /* fpstate-related functions which are exported to KVM */
--extern void fpstate_clear_xstate_component(struct fpstate *fps, unsigned int xfeature);
-+extern void fpstate_clear_xstate_component(struct fpstate *fpstate, unsigned int xfeature);
- 
- extern u64 xstate_get_guest_group_perm(void);
- 
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 4d1a205b7ce2..d0a45f6492cb 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -273,16 +273,16 @@ EXPORT_SYMBOL_GPL(fpu_alloc_guest_fpstate);
- 
- void fpu_free_guest_fpstate(struct fpu_guest *gfpu)
- {
--	struct fpstate *fps = gfpu->fpstate;
-+	struct fpstate *fpstate = gfpu->fpstate;
- 
--	if (!fps)
-+	if (!fpstate)
- 		return;
- 
--	if (WARN_ON_ONCE(!fps->is_valloc || !fps->is_guest || fps->in_use))
-+	if (WARN_ON_ONCE(!fpstate->is_valloc || !fpstate->is_guest || fpstate->in_use))
- 		return;
- 
- 	gfpu->fpstate = NULL;
--	vfree(fps);
-+	vfree(fpstate);
- }
- EXPORT_SYMBOL_GPL(fpu_free_guest_fpstate);
- 
-@@ -333,12 +333,12 @@ EXPORT_SYMBOL_GPL(fpu_update_guest_xfd);
-  */
- void fpu_sync_guest_vmexit_xfd_state(void)
- {
--	struct fpstate *fps = x86_task_fpu(current)->fpstate;
-+	struct fpstate *fpstate = x86_task_fpu(current)->fpstate;
- 
- 	lockdep_assert_irqs_disabled();
- 	if (fpu_state_size_dynamic()) {
--		rdmsrl(MSR_IA32_XFD, fps->xfd);
--		__this_cpu_write(xfd_state, fps->xfd);
-+		rdmsrl(MSR_IA32_XFD, fpstate->xfd);
-+		__this_cpu_write(xfd_state, fpstate->xfd);
- 	}
- }
- EXPORT_SYMBOL_GPL(fpu_sync_guest_vmexit_xfd_state);
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 00e87afa876d..79ad768647f8 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -1395,9 +1395,9 @@ void xrstors(struct xregs_state *xstate, u64 mask)
- }
- 
- #if IS_ENABLED(CONFIG_KVM)
--void fpstate_clear_xstate_component(struct fpstate *fps, unsigned int xfeature)
-+void fpstate_clear_xstate_component(struct fpstate *fpstate, unsigned int xfeature)
- {
--	void *addr = get_xsave_addr(&fps->regs.xsave, xfeature);
-+	void *addr = get_xsave_addr(&fpstate->regs.xsave, xfeature);
- 
- 	if (addr)
- 		memset(addr, 0, xstate_sizes[xfeature]);
--- 
-2.45.2
+A Closes: link will presumably help with the above info.  checkpatch
+now warns about the absence of a Closes:
 
 
