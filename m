@@ -1,47 +1,95 @@
-Return-Path: <linux-kernel+bounces-595305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED115A81CA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:08:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C82A81CAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB7D93B0E9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:07:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95C061B66F86
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9841DC9B5;
-	Wed,  9 Apr 2025 06:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A631DDA1E;
+	Wed,  9 Apr 2025 06:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXTT4SHt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T/nbRtKC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cf2/p/d/";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HWlFoaPd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oaA27RzR"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0165D3FFD;
-	Wed,  9 Apr 2025 06:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA8A1DC9B5
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 06:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744178870; cv=none; b=SWU+NcCg6QZdlJAWoD+90u5/jo8LOglIodCcrLu7QQqV1nxU1WUokoeX1HuC9d1zoKmTzzdrJdHzdiPYiZfb6S0SkAvPJH0D5A5IayoRPLcYa/5oKI5uvPOIZUIEIcRrYuMJRdSD24E4nIj1abr9j3ZZQaLOTRB137q4zgJ1VFk=
+	t=1744178955; cv=none; b=tzeYFKQptYk94nbMSMR3Cz8LYsAx6Wvcl19HnAC3QJR1t/BrdZDjH94om9Re1ct2PS/hBt4PgCiq3Apy9lNwEgOjTsDLW9zJO+y/Kb5CgdEjB5T4+lJ/u2KBURIBaTjMkNoYs3/QJWkGwiN5wQVgkUwbagwoL5lzXLSZnP+u5H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744178870; c=relaxed/simple;
-	bh=jznKGqM7OIKIRDaNKhp41YBmLqZQSYOXFvzxAVG7FO0=;
+	s=arc-20240116; t=1744178955; c=relaxed/simple;
+	bh=Supx3D5Y29RXFWXYuDVHLysXSPi5C+siOewfAF7Fus8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KJRnNm9M23vuTYhq7+QkLDXdz14zG3UoKvxqZOY9rtZ6sxM3Y75IWFN8a1fsDN1EaOYjXnZdn4k0UQZaDZi/a/efPsDiiOcoStnDYpuZtVCwgDwZwDLaG7rvZmYKM4A1eAAWnQvfVnWMsZ+u0NaqlZZdTwmIpx5ElKz0/9SRbzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXTT4SHt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90F16C4CEE3;
-	Wed,  9 Apr 2025 06:07:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744178869;
-	bh=jznKGqM7OIKIRDaNKhp41YBmLqZQSYOXFvzxAVG7FO0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mXTT4SHt7doPyaQJmaWnbL1EpL2VKZeGI/rDqQRXcxrjdN+WChlQLY0HEFjJxdnVw
-	 40YaB15751jFS94DbV7e18v+B9E3Y1ojwrh2WM3E1ypcHRz7CJQfRhc9iOiheNQ4j4
-	 jc+tPwIC0MujHZa8T4/+ppyRz0u4pjbbnwLzp3opNLrkp1jRBeiL9hLPBgesYm0Uqa
-	 6GyCcIcde88s4aAsltLQbVSb8DTMz4TG4X0FWyDPSC/COqA79zPRVtpv/W/v+Cq89T
-	 6rNFkDLT/0PNUrw/WFovUYm/AsUGC4pXe7hkxubnNhzNd8cz+FgbRBJSCbR+kc8i6T
-	 sqPDqj0PbTFEQ==
-Message-ID: <04d90c1b-1b73-4b6a-b7fc-351754fbb16b@kernel.org>
-Date: Wed, 9 Apr 2025 08:07:42 +0200
+	 In-Reply-To:Content-Type; b=gHS3aB+WgdzavMYDd4LYxVqlwTEZ5OaeH0Y4QRVjrK7OH9a5UzphFZDQugLHt8P+WKtisqAmHk7oNY92hwNrgeh74r6ExDHrTfOcwk58Ia8BW2N2UucILGY7iN0EdrlVF1HXklHaTl3+yavtreIQI64Z22sM89VmnH2acWUZw+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T/nbRtKC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cf2/p/d/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HWlFoaPd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oaA27RzR; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C281521166;
+	Wed,  9 Apr 2025 06:09:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1744178945; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TBegudRsJrjXblUZdaP4yqKXC2h1wJ3m6MC0Zz4oM4A=;
+	b=T/nbRtKCLaKZ9ofBeuBJQn7ZDCAATz3RuepJR4r87UD8JhU+mvDvxeueqZd7dGNLOQ5Um+
+	J1O1T43sErZW4qDA43zLcWeBcjwUR/0BvLbyOM1luq83tcRwAPaR5IeXrDxPeu2/CZczDk
+	c/5Hs+A+3gFHIp2nfFGxTjPQ1yOdh1c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1744178945;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TBegudRsJrjXblUZdaP4yqKXC2h1wJ3m6MC0Zz4oM4A=;
+	b=Cf2/p/d/9DtLsdGhVQ/6BzkGbaZJL45AxBv6groolpM1wiDtNyh5zlirjYU1PvweMQIj80
+	VXiS/R2AVXwXoXCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=HWlFoaPd;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=oaA27RzR
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1744178944; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TBegudRsJrjXblUZdaP4yqKXC2h1wJ3m6MC0Zz4oM4A=;
+	b=HWlFoaPdi01UUs6ZVPrO8+PZm6mV1zpX6vQKdjkwyjPuI33/IcuZEjOfrVINv/2HSyI/BI
+	vAoU3bRlP5ciyd13+p57ZDx6OAE3hs51s+lyq85pzsLcRo7eFKN+OCCvAz5qM1q0mP9VxE
+	jNkdB6t3PGcxUDwWPwlMqt5uJWlmeh8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1744178944;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TBegudRsJrjXblUZdaP4yqKXC2h1wJ3m6MC0Zz4oM4A=;
+	b=oaA27RzRUAL2bzTWrFgdbFk3Vgt5ki91oI5HC73KBVIwOcRTYMwjM6CrP/zv5zcPYOhJgW
+	jf1MetLNe7m2X4Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 428F0137AC;
+	Wed,  9 Apr 2025 06:09:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id igVLDgAP9mc1NQAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 09 Apr 2025 06:09:04 +0000
+Message-ID: <63adb9ff-1591-4aff-923f-b523b4981e8a@suse.de>
+Date: Wed, 9 Apr 2025 08:09:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,98 +97,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/10] dt-bindings: display: msm: document DSI
- controller and phy on SA8775P
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Ayushi Makhija <quic_amakhija@quicinc.com>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, robdclark@gmail.com,
- dmitry.baryshkov@linaro.org, sean@poorly.run, marijn.suijten@somainline.org,
- andersson@kernel.org, robh@kernel.org, robh+dt@kernel.org,
- krzk+dt@kernel.org, konradybcio@kernel.org, conor+dt@kernel.org,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com,
- quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
- quic_jesszhan@quicinc.com
-References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
- <20250311122445.3597100-4-quic_amakhija@quicinc.com>
- <20250312-calm-steadfast-cricket-fe9dd8@krzk-bin>
- <654d409e-2325-46e7-a064-ed9e64277e69@quicinc.com>
- <a168a473-c363-4041-8e3e-84fa44e92b10@kernel.org>
- <zpmr6cpiixyu2sj7r7oqpqsge6dcqw6xszldf7ugznmcrxqsme@efiwnggcn5qx>
- <a654d62e-502a-4a47-96c4-a44c14860e54@kernel.org>
- <767e11cd-e338-4e00-a8e7-2e15f3da84b4@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/8] nvmet-fcloop: swap list_add_tail arguments
+To: Daniel Wagner <wagi@kernel.org>, James Smart <james.smart@broadcom.com>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, Jens Axboe <axboe@kernel.dk>
+Cc: James Smart <jsmart2021@gmail.com>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250408-nvmet-fcloop-part-one-v1-0-382ec97ab7eb@kernel.org>
+ <20250408-nvmet-fcloop-part-one-v1-1-382ec97ab7eb@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <767e11cd-e338-4e00-a8e7-2e15f3da84b4@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250408-nvmet-fcloop-part-one-v1-1-382ec97ab7eb@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: C281521166
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[gmail.com,lists.infradead.org,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 08/04/2025 22:26, Dmitry Baryshkov wrote:
->>>>>>> +          - const: qcom,sa8775p-dsi-ctrl
->>>>>>> +          - const: qcom,mdss-dsi-ctrl
->>>>>>
->>>>>> Drop fallback
->>>>>>
->>>>>   
->>>>> Hi Krzysztof,
->>>>>
->>>>> I couldn't understand the meaning of "Drop fallback", could please elaborate it ?
->>>> Look at SM8750 example on the lists. Keep only front compatible.
->>>
->>> Why?
->>
->> To make things simpler and shorter.
+On 4/8/25 17:29, Daniel Wagner wrote:
+> The newly element to be added to the list is the first argument of
+> list_add_tail. This fix is missing dcfad4ab4d67 ("nvmet-fcloop: swap
+> the list_add_tail arguments").
 > 
-> I'd prefer consistency. Previous platforms use qcom,mdss-dsi-ctrl.
-Then you should have objected month(s) ago when Rob asked for dropping
-fallback and since then we consistently drop it.
+> Fixes: 437c0b824dbd ("nvme-fcloop: add target to host LS request support")
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>   drivers/nvme/target/fcloop.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nvme/target/fcloop.c b/drivers/nvme/target/fcloop.c
+> index e1abb27927ff74c9c55ddefd9581aab18bf3b00f..da195d61a9664cba21880a4b99ba0ee94a58f81a 100644
+> --- a/drivers/nvme/target/fcloop.c
+> +++ b/drivers/nvme/target/fcloop.c
+> @@ -478,7 +478,7 @@ fcloop_t2h_xmt_ls_rsp(struct nvme_fc_local_port *localport,
+>   	if (targetport) {
+>   		tport = targetport->private;
+>   		spin_lock(&tport->lock);
+> -		list_add_tail(&tport->ls_list, &tls_req->ls_list);
+> +		list_add_tail(&tls_req->ls_list, &tport->ls_list);
+>   		spin_unlock(&tport->lock);
+>   		queue_work(nvmet_wq, &tport->ls_work);
+>   	}
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Best regards,
-Krzysztof
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
