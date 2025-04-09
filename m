@@ -1,210 +1,146 @@
-Return-Path: <linux-kernel+bounces-595313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C222EA81CB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:10:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED115A81CA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF7A8880B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:09:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB7D93B0E9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD481E503C;
-	Wed,  9 Apr 2025 06:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9841DC9B5;
+	Wed,  9 Apr 2025 06:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a+rA8mRv"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXTT4SHt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7C21E3779
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 06:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0165D3FFD;
+	Wed,  9 Apr 2025 06:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744178890; cv=none; b=oYouWUHo3XekImBKB0I6bvA6uBdhbitx/gVXFd1kVg4F+qrb8I6MhKqRxC8ynEOWbA18ytJz+cwokllSdDYIZaGd7lsCgLEffzdl3zTp+NgowEfR1RcgQSYc2WORZHrhevrmrVA40WKL6G2KiVc338C3CQNB/iQSrm3/qe0ahmg=
+	t=1744178870; cv=none; b=SWU+NcCg6QZdlJAWoD+90u5/jo8LOglIodCcrLu7QQqV1nxU1WUokoeX1HuC9d1zoKmTzzdrJdHzdiPYiZfb6S0SkAvPJH0D5A5IayoRPLcYa/5oKI5uvPOIZUIEIcRrYuMJRdSD24E4nIj1abr9j3ZZQaLOTRB137q4zgJ1VFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744178890; c=relaxed/simple;
-	bh=dmk99xLT8Nx0mz4ddF1+mWBkWibkJI69saN0P2VeVFI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=pCiGzhXjNoshaxeWzFJz8G8NOvJcalpycDJp9R4Q7DYBcIwJQtbpUPi0D3alPNL9TrSl8wDJeSoS9lXqqEKDpPpECusquW5vl9nZwSW4TJD1bINvd8M4EOrHbhVBiFtEvFOcz768gE2yhODGDYAxzQ9f/92ip87erLiSNM02pOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a+rA8mRv; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3052d29759bso9292489a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 23:08:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744178887; x=1744783687; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hurkMSaqLGDLbW/1AFRFsncWr/nyXd3OBuzAUIRrz+4=;
-        b=a+rA8mRvJ5OTqLMAKKcvgqXTTFlz9gqNXx+Seq5jJmMvgceQa+BLSvKgVHG8k5EM5j
-         zSEXGQuHxghXgSqZ/aLBwfTEhjNqMBJSYe2DHdz5vqmAfGa4ZKL/XoZupaEkXGR/0wBK
-         BLbHICr5B03kAvcfZeGBKLmqarmSnPeVU+kHKUBYMaWQ1Tt/lU7fwFu+3V9B/vnBNbGh
-         8+U2V2hmcGs75Ak0nkK/636nN0piVLhOT8ew4U7FVqZ1A74B8kSZBvGiq++v/SPAAvWL
-         Lp3t/A24RxRm4ncqk78Vy4SHtgxj8tBQ50RWsJnDm2Uc0/pff7rn2dtGu9aYx6+uBHWs
-         FLiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744178887; x=1744783687;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hurkMSaqLGDLbW/1AFRFsncWr/nyXd3OBuzAUIRrz+4=;
-        b=wLjpJR9hCeX5I2WhJvFQqT6opBsTO8/8nC/FI4pWrTVL6GHXTJrXbVLfxRrqbBAwWc
-         m08iesZVOH+GDicTrov1XuMCOC7iiz+RWa3b6v7CagFmt+Zgx3TZUPcsrKqxDXc/drBi
-         4MLuaCcrdi/zIpBqAEj7WHBXEiMxyaBng9BB1Atxuism2mao7b2EnxTiZcgz4ikJ0MOT
-         bBntiLx0paU/aJyxKtbHqoiOkC0/olPzmQvXnz2KW0xYO7+lxhU57qryn1/xKxxXw8Um
-         Blfozo2z1SD3WgM0GgQAmnQ3Vne0nVDEvw8Jx03Yj5Z51vlqRhQz6+GyD55ZNqakquiI
-         u+DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/sNymdXO+rpjPrHGQVEz9nU3FocR8TummR0DADbbmIw/Btzb3sJWHD6C+s3oVAzTSRP6WLV8lQfLXJvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAVmJ2j7gL1Fioxj4aVlRW6+WkfCXmFVmo+0RUXPMNekylGl2W
-	vEsGUH6iuZKxEvxk/0spi1MfDnx7Sal27WBPj0kp5ijztbJGuLqSOOxglDq5Ke29yt4sv0yFkzX
-	9KzCfOw==
-X-Google-Smtp-Source: AGHT+IGDBd1RJDjnp6C+cFyERKUExc5ASS2VzUckmoLnYpHkRVZBs1hw2I96gdK0fDr9JWUQ4ACs+bhXeAVK
-X-Received: from pjkk7.prod.google.com ([2002:a17:90b:57e7:b0:2fa:1fac:269c])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4ece:b0:2ee:5bc9:75c3
- with SMTP id 98e67ed59e1d1-306dbb8db11mr2441976a91.5.1744178887340; Tue, 08
- Apr 2025 23:08:07 -0700 (PDT)
-Date: Tue,  8 Apr 2025 23:07:34 -0700
-In-Reply-To: <20250409060744.698511-1-irogers@google.com>
+	s=arc-20240116; t=1744178870; c=relaxed/simple;
+	bh=jznKGqM7OIKIRDaNKhp41YBmLqZQSYOXFvzxAVG7FO0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KJRnNm9M23vuTYhq7+QkLDXdz14zG3UoKvxqZOY9rtZ6sxM3Y75IWFN8a1fsDN1EaOYjXnZdn4k0UQZaDZi/a/efPsDiiOcoStnDYpuZtVCwgDwZwDLaG7rvZmYKM4A1eAAWnQvfVnWMsZ+u0NaqlZZdTwmIpx5ElKz0/9SRbzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXTT4SHt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90F16C4CEE3;
+	Wed,  9 Apr 2025 06:07:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744178869;
+	bh=jznKGqM7OIKIRDaNKhp41YBmLqZQSYOXFvzxAVG7FO0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mXTT4SHt7doPyaQJmaWnbL1EpL2VKZeGI/rDqQRXcxrjdN+WChlQLY0HEFjJxdnVw
+	 40YaB15751jFS94DbV7e18v+B9E3Y1ojwrh2WM3E1ypcHRz7CJQfRhc9iOiheNQ4j4
+	 jc+tPwIC0MujHZa8T4/+ppyRz0u4pjbbnwLzp3opNLrkp1jRBeiL9hLPBgesYm0Uqa
+	 6GyCcIcde88s4aAsltLQbVSb8DTMz4TG4X0FWyDPSC/COqA79zPRVtpv/W/v+Cq89T
+	 6rNFkDLT/0PNUrw/WFovUYm/AsUGC4pXe7hkxubnNhzNd8cz+FgbRBJSCbR+kc8i6T
+	 sqPDqj0PbTFEQ==
+Message-ID: <04d90c1b-1b73-4b6a-b7fc-351754fbb16b@kernel.org>
+Date: Wed, 9 Apr 2025 08:07:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250409060744.698511-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250409060744.698511-8-irogers@google.com>
-Subject: [PATCH v4 07/16] perf intel-tpebs: Inline get_perf_record_args
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Weilin Wang <weilin.wang@intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	John Garry <john.g.garry@oracle.com>, Howard Chu <howardchu95@gmail.com>, 
-	Levi Yun <yeoreum.yun@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/10] dt-bindings: display: msm: document DSI
+ controller and phy on SA8775P
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Ayushi Makhija <quic_amakhija@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, robdclark@gmail.com,
+ dmitry.baryshkov@linaro.org, sean@poorly.run, marijn.suijten@somainline.org,
+ andersson@kernel.org, robh@kernel.org, robh+dt@kernel.org,
+ krzk+dt@kernel.org, konradybcio@kernel.org, conor+dt@kernel.org,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com,
+ quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
+ quic_jesszhan@quicinc.com
+References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
+ <20250311122445.3597100-4-quic_amakhija@quicinc.com>
+ <20250312-calm-steadfast-cricket-fe9dd8@krzk-bin>
+ <654d409e-2325-46e7-a064-ed9e64277e69@quicinc.com>
+ <a168a473-c363-4041-8e3e-84fa44e92b10@kernel.org>
+ <zpmr6cpiixyu2sj7r7oqpqsge6dcqw6xszldf7ugznmcrxqsme@efiwnggcn5qx>
+ <a654d62e-502a-4a47-96c4-a44c14860e54@kernel.org>
+ <767e11cd-e338-4e00-a8e7-2e15f3da84b4@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <767e11cd-e338-4e00-a8e7-2e15f3da84b4@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Code is short enough to be inlined and there are no error cases when
-made inline. Make the implicit NULL pointer at the end of the argv
-explicit. Move the fixed number of arguments before the variable
-number of arguments. Correctly size the argv allocation and zero when
-feeing to avoid a dangling pointer.
+On 08/04/2025 22:26, Dmitry Baryshkov wrote:
+>>>>>>> +          - const: qcom,sa8775p-dsi-ctrl
+>>>>>>> +          - const: qcom,mdss-dsi-ctrl
+>>>>>>
+>>>>>> Drop fallback
+>>>>>>
+>>>>>   
+>>>>> Hi Krzysztof,
+>>>>>
+>>>>> I couldn't understand the meaning of "Drop fallback", could please elaborate it ?
+>>>> Look at SM8750 example on the lists. Keep only front compatible.
+>>>
+>>> Why?
+>>
+>> To make things simpler and shorter.
+> 
+> I'd prefer consistency. Previous platforms use qcom,mdss-dsi-ctrl.
+Then you should have objected month(s) ago when Rob asked for dropping
+fallback and since then we consistently drop it.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/intel-tpebs.c | 75 +++++++++++++----------------------
- 1 file changed, 28 insertions(+), 47 deletions(-)
-
-diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.c
-index e3bed86145b9..c4c818f32239 100644
---- a/tools/perf/util/intel-tpebs.c
-+++ b/tools/perf/util/intel-tpebs.c
-@@ -47,72 +47,53 @@ struct tpebs_retire_lat {
- 	double val;
- };
- 
--static int get_perf_record_args(const char **record_argv, char buf[],
--				const char *cpumap_buf)
-+static int evsel__tpebs_start_perf_record(struct evsel *evsel, int control_fd[], int ack_fd[])
- {
--	struct tpebs_retire_lat *e;
--	int i = 0;
-+	const char **record_argv;
-+	int tpebs_event_size = 0, i = 0, ret;
-+	char control_fd_buf[32];
-+	char cpumap_buf[50];
-+	struct tpebs_retire_lat *t;
-+
-+	list_for_each_entry(t, &tpebs_results, nd)
-+		tpebs_event_size++;
- 
--	pr_debug("tpebs: Prepare perf record for retire_latency\n");
-+	record_argv = malloc((10 + 2 * tpebs_event_size) * sizeof(*record_argv));
-+	if (!record_argv)
-+		return -ENOMEM;
- 
- 	record_argv[i++] = "perf";
- 	record_argv[i++] = "record";
- 	record_argv[i++] = "-W";
- 	record_argv[i++] = "--synth=no";
--	record_argv[i++] = buf;
- 
--	if (!cpumap_buf) {
--		pr_err("tpebs: Require cpumap list to run sampling\n");
--		return -ECANCELED;
--	}
--	/* Use -C when cpumap_buf is not "-1" */
--	if (strcmp(cpumap_buf, "-1")) {
-+	scnprintf(control_fd_buf, sizeof(control_fd_buf), "--control=fd:%d,%d",
-+		  control_fd[0], ack_fd[1]);
-+	record_argv[i++] = control_fd_buf;
-+
-+	record_argv[i++] = "-o";
-+	record_argv[i++] = PERF_DATA;
-+
-+	if (!perf_cpu_map__is_any_cpu_or_is_empty(evsel->evlist->core.user_requested_cpus)) {
-+		cpu_map__snprint(evsel->evlist->core.user_requested_cpus, cpumap_buf,
-+				 sizeof(cpumap_buf));
- 		record_argv[i++] = "-C";
- 		record_argv[i++] = cpumap_buf;
- 	}
- 
--	list_for_each_entry(e, &tpebs_results, nd) {
-+	list_for_each_entry(t, &tpebs_results, nd) {
- 		record_argv[i++] = "-e";
--		record_argv[i++] = e->name;
-+		record_argv[i++] = t->name;
- 	}
--
--	record_argv[i++] = "-o";
--	record_argv[i++] = PERF_DATA;
--
--	return 0;
--}
--
--static int evsel__tpebs_start_perf_record(struct evsel *evsel, int control_fd[], int ack_fd[])
--{
--	const char **record_argv;
--	size_t tpebs_event_size = 0;
--	int ret;
--	char buf[32];
--	char cpumap_buf[50];
--	struct tpebs_retire_lat *t;
--
--	cpu_map__snprint(evsel->evlist->core.user_requested_cpus, cpumap_buf,
--			 sizeof(cpumap_buf));
--
--	scnprintf(buf, sizeof(buf), "--control=fd:%d,%d", control_fd[0], ack_fd[1]);
--
--	list_for_each_entry(t, &tpebs_results, nd)
--		tpebs_event_size++;
--
--	record_argv = calloc(12 + 2 * tpebs_event_size, sizeof(char *));
--	if (!record_argv)
--		return -ENOMEM;
--
--	ret = get_perf_record_args(record_argv, buf, cpumap_buf);
--	if (ret)
--		goto out;
-+	record_argv[i++] = NULL;
-+	assert(i == 10 + 2 * tpebs_event_size || i == 8 + 2 * tpebs_event_size);
-+	/* Note, no workload given so system wide is implied. */
- 
- 	assert(tpebs_cmd.pid == 0);
- 	tpebs_cmd.argv = record_argv;
- 	tpebs_cmd.out = -1;
- 	ret = start_command(&tpebs_cmd);
--out:
--	free(record_argv);
-+	zfree(&tpebs_cmd.argv);
- 	return ret;
- }
- 
--- 
-2.49.0.504.g3bcea36a83-goog
-
+Best regards,
+Krzysztof
 
