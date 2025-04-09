@@ -1,215 +1,103 @@
-Return-Path: <linux-kernel+bounces-595899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 886A2A8245C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:08:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7889DA8243C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06F047AAB9E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:07:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65EF4C0716
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68F525FA09;
-	Wed,  9 Apr 2025 12:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC4625E812;
+	Wed,  9 Apr 2025 12:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhqxgiUk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnESXfsP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDBB25E471;
-	Wed,  9 Apr 2025 12:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2629325DAF1;
+	Wed,  9 Apr 2025 12:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744200465; cv=none; b=ELYNddHyzRrDJc+2PYwSMbv5v++z/wWRbGOt4pwRcpuYebJP6HCSdNxk+A8OwWQdBs3bC26sg6EuJGYwrfMsp0/QNF5LfgvuIMe5jaRjOgLDrLI26AsikaF6hFSBYPkcxUgmh3Lo3KDkvRRSty32lB4/YVyOs8pr8ZeQkpMNyMU=
+	t=1744200427; cv=none; b=f2BegTnrGOl2V6WgTzIcCNuu643Z9uKKHcee1Sl4pcZnYntu8Pd4FX4vfY7ZuJUWQOtytmNFvR3cT0g8poJGqIrh2YsdbGLfh7wfZreJKD9itDlx5qoou70fyGrO7qh6vVggmKd+J0nSsX7yQUwg5x8wQ9Hx4VwHJkQ312SMvts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744200465; c=relaxed/simple;
-	bh=FdUb0DPDYi+ttgoinI37K88fuRyaVge7JDVXiVilF7E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XcNksFkot4tsp9YKxl1KmiF7mC7B3atWiA9KGb0S7PdoJKUDFpEDg/Pom0cbkJ57O+41zt72UWS7oA/KncJf74Ds4nyUV4AbUaMLsQuMbk5uCwng0v4UnES5Tevjc/UV5nJb7de1MBPWarHCDpbNDXynRtV1SO0HMc/Ik+pvuNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GhqxgiUk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3DACC4CEE7;
-	Wed,  9 Apr 2025 12:07:27 +0000 (UTC)
+	s=arc-20240116; t=1744200427; c=relaxed/simple;
+	bh=BwNeimq54CTkvFpSGiKXiYXjx08EMGJ9jbsWqhvChmw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Eni6827s8xjd+mgoOubnEgDLCXUgtuXXdZs4kaHCUKcO1cOzYnMv1qE7jyhTTaoUOxAV6IHpj38iNvefQh8ODbRJBtR+qFzXMs/jtlw/ygfuvxwR27logZ8hdCPdjP7ZNX/B//kKINv82WeK4bTTMLI1PvqTULRGNtHury7ZZGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnESXfsP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9119FC4CEED;
+	Wed,  9 Apr 2025 12:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744200464;
-	bh=FdUb0DPDYi+ttgoinI37K88fuRyaVge7JDVXiVilF7E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GhqxgiUktLqE62NnlGbCozLGAOy1ebYKCfRTbO1C2V8isrEUvyivtHWOlIWWY3iNe
-	 lT7qBhQi0YUXEHd/a3nybBs+okp72WCBqbBHa/gUT5qc5stTjpZBUhmQIEvTFikt5z
-	 3QEX/nurLaDWBdA3+xqEX+t36u0MD+4s/DDnE947U63BOSLACxJE4ATzBnB7162kEM
-	 uJVlOhBR6ng/gxrCkIJmx2DVTmwcGtpsyRWe122qGV/9UBAusoKc1mqJjzRiizRz4e
-	 qqynMSOHuqVH/gL+pm4QM8yBcDL9Jr5dx5FDs1H6jkyRMDbX2Cuq8465NG5c4c31Ao
-	 m0BWGZ8ZfmD1w==
-From: Philipp Stanner <phasta@kernel.org>
-To: Sumit Semwal <sumit.semwal@linaro.org>,
-	Gustavo Padovan <gustavo@padovan.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Felix Kuehling <Felix.Kuehling@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Russell King <linux+etnaviv@armlinux.org.uk>,
-	Christian Gmeiner <christian.gmeiner@gmail.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Frank Binns <frank.binns@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Qiang Yu <yuq825@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Dave Airlie <airlied@redhat.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	Huang Rui <ray.huang@amd.com>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Melissa Wen <mwen@igalia.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Zack Rusin <zack.rusin@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Bas Nieuwenhuizen <bas@basnieuwenhuizen.nl>,
-	Yang Wang <kevinyang.wang@amd.com>,
-	Jesse Zhang <jesse.zhang@amd.com>,
-	Tim Huang <tim.huang@amd.com>,
-	Sathishkumar S <sathishkumar.sundararaju@amd.com>,
-	Saleemkhan Jamadar <saleemkhan.jamadar@amd.com>,
-	Sunil Khatri <sunil.khatri@amd.com>,
-	Lijo Lazar <lijo.lazar@amd.com>,
-	Hawking Zhang <Hawking.Zhang@amd.com>,
-	Ma Jun <Jun.Ma2@amd.com>,
-	Yunxiang Li <Yunxiang.Li@amd.com>,
-	Eric Huang <jinhuieric.huang@amd.com>,
-	Asad Kamal <asad.kamal@amd.com>,
-	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
-	Jack Xiao <Jack.Xiao@amd.com>,
-	Friedrich Vock <friedrich.vock@gmx.de>,
-	=?UTF-8?q?Michel=20D=C3=A4nzer?= <mdaenzer@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org,
-	etnaviv@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	lima@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	spice-devel@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org
-Subject: [PATCH 2/2] dma-fence: Improve docu for dma_fence_check_and_signal()
-Date: Wed,  9 Apr 2025 14:06:38 +0200
-Message-ID: <20250409120640.106408-4-phasta@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250409120640.106408-2-phasta@kernel.org>
-References: <20250409120640.106408-2-phasta@kernel.org>
+	s=k20201202; t=1744200426;
+	bh=BwNeimq54CTkvFpSGiKXiYXjx08EMGJ9jbsWqhvChmw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MnESXfsPE0sLlqc3vxCHtsUA//CG30IpEbjXZLNIWtTHTpzLFLa7183Wu1lIrd2Yk
+	 4hGtESN7vf35UjhpIvsBXNOhMCf88Vkji+xEHAhoZfSAunhkt9cA3KhV4ejjDnd8x6
+	 M7geIj2dV0s2K0jtn1avnnlgBb8VKyCG3WUEFwHIEf5RvVjaYFJ8dTYvMqHYKuaU9I
+	 QZaXziHkJbWEVOmw/U3ZNVhOouAaR5i1U3OObgPogWydxPgjSiEHVNsgxR718lwJgr
+	 VjabyVi7UvE5UJ0BfWU84CKLRX8fDPb8exhpbR9MNQzMfOIkvkDyZpBtVzRaMGG+Ad
+	 0VDjAY6SxtkRA==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2c7f876b320so3852898fac.1;
+        Wed, 09 Apr 2025 05:07:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVxqQ1+QSZxKPSPa1dOQhUw3Ebhp0667C89eUPoyMhmAPrIJsuxugsezO0SF3oG0ZAp7f/WKmmTEA8=@vger.kernel.org, AJvYcCWVoXMPXQXAJREXf68Sff+lVV/EwGz0lfICLe6mYtBxzxE8hqNBowlpoHJfcD1c67AjKrFhATxdIlfyWsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx87hFAzja+nwWqmln+h3cRbB6OQz6AUr29SqVqAmgzMSB+hxD
+	E+QhYejB5zivGa1D10iw83NXbccjAr+T5teGBXtGb18LF2jHpW/W61nkkciN/TIoJo0im8RlQxP
+	FBW3QedACo94MpOQ6uQJyP9NcCC0=
+X-Google-Smtp-Source: AGHT+IHVqCCnJuQty5MXTBD8rmwgBf/nXLO4eE3vdP9++XGNhRQpIv1iVi/1uJsF8s+zaA1huDaB+EFNKjXL9KOJun4=
+X-Received: by 2002:a05:6871:2b03:b0:2c2:5a63:9cd4 with SMTP id
+ 586e51a60fabf-2d08dde7200mr1144222fac.19.1744200425848; Wed, 09 Apr 2025
+ 05:07:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <4661520.LvFx2qVVIh@rjwysocki.net> <3892c0eb983900c184c6d06ffe8364e2da23ae2a.camel@linux.intel.com>
+In-Reply-To: <3892c0eb983900c184c6d06ffe8364e2da23ae2a.camel@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 9 Apr 2025 14:06:52 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iJpXBp5A-ozrjFeG=m+wj2NJYOwNPy-NAgKNXR2ySYYg@mail.gmail.com>
+X-Gm-Features: ATxdqUESgrWGwfTn-3mvYnvHO1qukxgxAr4ejQGffm43awB-XDAHQ_oDcP1Xw8o
+Message-ID: <CAJZ5v0iJpXBp5A-ozrjFeG=m+wj2NJYOwNPy-NAgKNXR2ySYYg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] cpuidle: teo: Refine handling of short idle intervals
+To: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Christian Loehle <christian.loehle@arm.com>, Doug Smythies <dsmythies@telus.net>, 
+	Aboorva Devarajan <aboorvad@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The documentation of the return value of dma_fence_check_and_signal()
-and dma_fence_check_and_signal_locked() reads as if the returned boolean
-only describes whether dma_fence_signal() (or similar) has been called
-before this function call already. That's not the case, since
-dma_fence_ops.signaled() usually just checks through the sequence number
-whether the hardware is finished with a fence. That doesn't mean a
-signaling function has been called already.
+On Wed, Apr 9, 2025 at 8:52=E2=80=AFAM Artem Bityutskiy
+<artem.bityutskiy@linux.intel.com> wrote:
+>
+> On Thu, 2025-04-03 at 21:16 +0200, Rafael J. Wysocki wrote:
+> > Hi Everyone,
+> >
+> > This series is intended to address an issue with overly aggressive sele=
+ction
+> > of idle state 0 (the polling state) in teo on x86 in some cases when ti=
+mer
+> > wakeups dominate the CPU wakeup pattern.
+>
+> Hi Rafael, I ran SPECjbb2015 with and without these 2 patches on Granite =
+Rapids
+> Xeon (GNR).
+>
+> Expectation: no measurable difference, because there is almost no POLL in=
+ case
+> of SPECjbb2015 on GNR.
+>
+> Result: no measurable difference.
+>
+> Conclusion: these 2 patches do not introduce a regression as measured by
+> SPECjbb2015 on GNR.
+>
+> "No regression" is also a useful piece of information, so reporting.
 
-Make the documentation clearer.
-
-Move the Return: documentation to the end, since that's the officially
-recommended docu style.
-
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
- include/linux/dma-fence.h | 26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/dma-fence.h b/include/linux/dma-fence.h
-index dc2ad171458b..3df370b2cc7c 100644
---- a/include/linux/dma-fence.h
-+++ b/include/linux/dma-fence.h
-@@ -385,14 +385,21 @@ void dma_fence_enable_sw_signaling(struct dma_fence *fence);
-  * dma_fence_check_and_signal_locked - Checks a fence and signals it if necessary
-  * @fence: the fence to check
-  *
-- * Returns true if the fence was already signaled, false if not. Since this
-- * function doesn't enable signaling, it is not guaranteed to ever return
-- * true if dma_fence_add_callback(), dma_fence_wait() or
-+ * Checks whether the fence was already signaled, and, if not, whether
-+ * &struct dma_fence_ops.signaled indicates that it should be signaled. If so,
-+ * the fence gets signaled here.
-+ *
-+ * Since this function doesn't enable signaling, it is not guaranteed to ever
-+ * return true if dma_fence_add_callback(), dma_fence_wait() or
-  * dma_fence_enable_sw_signaling() haven't been called before.
-  *
-  * This function requires &dma_fence.lock to be held.
-  *
-  * See also dma_fence_check_and_signal().
-+ *
-+ * Return: true if the fence was already signaled, or if
-+ * &struct dma_fence_ops.signaled is implemented and indicates that this fence
-+ * can be treated as signaled; false otherwise.
-  */
- static inline bool
- dma_fence_check_and_signal_locked(struct dma_fence *fence)
-@@ -412,9 +419,12 @@ dma_fence_check_and_signal_locked(struct dma_fence *fence)
-  * dma_fence_check_and_signal - Checks a fence and signals it if necessary
-  * @fence: the fence to check
-  *
-- * Returns true if the fence was already signaled, false if not. Since this
-- * function doesn't enable signaling, it is not guaranteed to ever return
-- * true if dma_fence_add_callback(), dma_fence_wait() or
-+ * Checks whether the fence was already signaled, and, if not, whether
-+ * &struct dma_fence_ops.signaled indicates that it should be signaled. If so,
-+ * the fence gets signaled here.
-+ *
-+ * Since this function doesn't enable signaling, it is not guaranteed to ever
-+ * return true if dma_fence_add_callback(), dma_fence_wait() or
-  * dma_fence_enable_sw_signaling() haven't been called before.
-  *
-  * It's recommended for seqno fences to call dma_fence_signal when the
-@@ -423,6 +433,10 @@ dma_fence_check_and_signal_locked(struct dma_fence *fence)
-  * value of this function before calling hardware-specific wait instructions.
-  *
-  * See also dma_fence_check_and_signal_locked().
-+ *
-+ * Return: true if the fence was already signaled, or if
-+ * &struct dma_fence_ops.signaled is implemented and indicates that this fence
-+ * can be treated as signaled; false otherwise.
-  */
- static inline bool
- dma_fence_check_and_signal(struct dma_fence *fence)
--- 
-2.48.1
-
+Thank you!
 
