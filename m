@@ -1,92 +1,168 @@
-Return-Path: <linux-kernel+bounces-595590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E18A82091
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:52:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 977C9A8208E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92B654C5039
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:51:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E13723BA953
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D5625D206;
-	Wed,  9 Apr 2025 08:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F200D25D201;
+	Wed,  9 Apr 2025 08:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJXY6lsz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UCaxguYr"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59F225A357;
-	Wed,  9 Apr 2025 08:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0B91DED5C
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 08:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744188684; cv=none; b=kmIjrel3Pxuw6BuoA2CksKEurR6sOnEckIPZtk50TyjqU2cf8Vm3cqA+5udC2jrhksc2QhqAa/cWxNuIp4otBYhn0yY0R4vsSd9yVNAiZKNm5np1oqed93FVvAXa1djwFkxRiyQpcHl/lQS2SvuGl+Sfa3ObeKqmLMeWUrbLyBM=
+	t=1744188710; cv=none; b=cScZCn71SOBjnFi+CswC6zeRtoCMRZvTTWnV2hYNF8AR6dx0/oAYuAxs/SbQkX9mWBwYVMHglgFcZPcbI0U1qMtU05bNbwmK9tGfG1v8E9Bm0hrtglS4Z1VCOHKOF0avkrFej4WtqmSDCcOxP9dAj1AmlYc2dSdgyjAgSt+km/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744188684; c=relaxed/simple;
-	bh=AL5W+KRUqaJomjLaLeEEJHtcXw0BSUHBCWmlwEEAeeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MKClCRGGcBRWdDzMX5miGnk2Sj6i0yhQfevkCCVc9H8YVNyeIptVmfUiiXjiPS0bE8BBB+jOKdw86CHUdvAVJ7/IjcGWMl9tPxNlWNpOjUtx7H8BWxcZ+vRgtX+Tm2DgM3d3NfEHnk3vXxuCsfvPqI6sLnYiRfeG+RWPgQru5mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJXY6lsz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 735EEC4CEE3;
-	Wed,  9 Apr 2025 08:51:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744188683;
-	bh=AL5W+KRUqaJomjLaLeEEJHtcXw0BSUHBCWmlwEEAeeU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uJXY6lsz5OMOeMj5aFUOGvH4/cXFTMy98fHqjKBXPn6omJo8XPcSMFbVhpzjfvhzW
-	 ymV7kkvFMyDUReKBV81qFzDN95WZlmJbWrj3ycxUOGkLovmm25el8igW9gbjIUfOQE
-	 fv91KZN1oP4bdxPED3xp+DXE/KsEYaSc05uekioxLanU2Xq+8B/DP8l0pKs6ucQtPB
-	 OgxmudNHQgpt23WESrBzQcOvtRiHeu29qTjLmr8aQ+USyLnc+cKTpOyKW04KAeuOIB
-	 rUlHWKByGkltuVevmK7ewCXZkoWs3y3k9QkjnmNaY0icuCJNsKe0Lm5ZHMH2AqDiep
-	 jZiGSMYKyAGfA==
-Date: Wed, 9 Apr 2025 10:51:16 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Timothy Hayes <timothy.hayes@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 13/24] arm64/sysreg: Add ICH_HFGWTR_EL2
-Message-ID: <Z/Y1BCFxBwV97rV/@lpieralisi>
-References: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
- <20250408-gicv5-host-v1-13-1f26db465f8d@kernel.org>
- <a1c79f36-322f-4444-992b-1b69d8232124@app.fastmail.com>
+	s=arc-20240116; t=1744188710; c=relaxed/simple;
+	bh=ZdX4ylzskOvlzS/dy0Hz+BZ5yhPSDECThaJX99P04N8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GY5C3bCfWV/MmcsOpzUpzLvZHdQj3WYw9JvTlI9R2rIkYgNkI6OInRbr8bEviagsQIGhNOTPvyvNHbaCNOb65ugJKlSZtEXDouh671dxh4BMNhRFg9rcwHLS4SvkCuChgfR3VhzKLudNm2Ujpypmfb6hgkkAbDOtJ6SjVV4Hcgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UCaxguYr; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43d007b2c79so48566055e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 01:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744188707; x=1744793507; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=W9EIcXKJmOaJtQk62oAIpx09pwCOcTfkyNYjV4byDb0=;
+        b=UCaxguYrNZtdhVJfn0EZBgznR4z/EiwhjffgxZJNqRiyl0f+9HY6LoepRSMvgzQ38a
+         oeESJrVnJ7+Cd6Yv+Bu45cTa89pFmiMiLb58+Uq+5kYtXg6AojMoieH0ZvF2ONwjkSu3
+         TY1P+AU5FtGmnzRitJgqWzLCo3gvF5jeUvR57+OpPgWl2tXkjDC4LkCVY4CtGjzfZ2zG
+         LspSlPHZ4zWpjxUWcnvxFR7xzc4Oz7CUGnL7jg10cGq/6tmt13Al9iz+SU/DMAIBDhLJ
+         N4IMjPQJor7/Qblj3OB9rymsUNWaGy6WLMQN3LhaviNsgwGiMB+lvy/bpDO4/00RdRIO
+         TfHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744188707; x=1744793507;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W9EIcXKJmOaJtQk62oAIpx09pwCOcTfkyNYjV4byDb0=;
+        b=ehHMeTkZKZRCc7NoD5oKrf1Nd6SDV0Q+FF7xuQ/y/EoC9wTQeH5qrqQAuwTGODar7R
+         evovWo67fi7y2VKtwImt4YKVY9VaZ75V6wk7yw3LcyOe1xuyQVLmXx3oesafLaRCD0Uw
+         14Dl2O/aDDioYYiu1P0aeKDn0X4mEJBSf3rqjO62Wi+MbuIfuqRgWicyc7pOkxVpDrhf
+         IHhCZTpvlkVeFlVP2aZ2j+ogSE48nn4BkBZBq2zPG6HjuAyKPB0/SdAqZvkLi5QrwAEI
+         TU9/DnCsdScWdwyGmTEP+IditgOtSrZyw5ChGf1MhMH6umGZ0L35if/tona665qVe+5T
+         WOgA==
+X-Gm-Message-State: AOJu0YybUGfAmaJW3+8mbJw02JFjgfTdM0LhfbBGdP0z0Y5e9LceIAfB
+	K0mS1myGTLxkLxHKFdFA4VzYxalM75BWDwdOOH5xFacWZFPDoK1pBUFXpXLA7aV94DwsAS9V4/E
+	GQzp9QAwjCdAtZg==
+X-Google-Smtp-Source: AGHT+IFFC1oenasUlX25FhpPJr1NS865doQr/pWc7WJ9+kFbWFNqv3muUFiv4LensE/F5lJnwv2wYu4ZTJalJZ4=
+X-Received: from wmbg24.prod.google.com ([2002:a05:600c:a418:b0:43c:fce2:1db2])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:5492:b0:43d:40b0:5b with SMTP id 5b1f17b1804b1-43f1ed4b96amr12837835e9.25.1744188706743;
+ Wed, 09 Apr 2025 01:51:46 -0700 (PDT)
+Date: Wed, 9 Apr 2025 08:51:44 +0000
+In-Reply-To: <20250406110718.126146-3-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a1c79f36-322f-4444-992b-1b69d8232124@app.fastmail.com>
+Mime-Version: 1.0
+References: <20250406110718.126146-1-fujita.tomonori@gmail.com> <20250406110718.126146-3-fujita.tomonori@gmail.com>
+Message-ID: <Z_Y1IBcp_NNnks8R@google.com>
+Subject: Re: [PATCH v1 2/2] rust: task: add Rust version of might_sleep()
+From: Alice Ryhl <aliceryhl@google.com>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	boqun.feng@gmail.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	a.hindborg@samsung.com, tmgross@umich.edu, dakr@kernel.org, mingo@redhat.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, pmladek@suse.com
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Apr 09, 2025 at 09:48:49AM +0200, Arnd Bergmann wrote:
-> On Tue, Apr 8, 2025, at 12:50, Lorenzo Pieralisi wrote:
-> > Add ICH_HFGWTR_EL2 register description to sysreg.
-> >
-> > Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Marc Zyngier <maz@kernel.org>
+On Sun, Apr 06, 2025 at 08:07:18PM +0900, FUJITA Tomonori wrote:
+> Adds a helper function equivalent to the C's might_sleep(), which
+> serves as a debugging aid and a potential scheduling point.
 > 
-> No comment on the contents, but I feel that having ten patches
-> adding new sysregs one group at a time is a bit worse than a
-> single patch adding them all. The patch descriptions don't add
-> any particular information about why these are distinct, and you
-> need them all anyway, so I'd suggest combining them into a
-> larger patch.
+> Note that this function can only be used in a nonatomic context.
+> 
+> This will be used by Rust version of read_poll_timeout().
+> 
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> ---
+>  rust/helpers/task.c |  6 ++++++
+>  rust/kernel/task.rs | 26 ++++++++++++++++++++++++++
+>  2 files changed, 32 insertions(+)
+> 
+> diff --git a/rust/helpers/task.c b/rust/helpers/task.c
+> index 31c33ea2dce6..2c85bbc2727e 100644
+> --- a/rust/helpers/task.c
+> +++ b/rust/helpers/task.c
+> @@ -1,7 +1,13 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+> +#include <linux/kernel.h>
+>  #include <linux/sched/task.h>
+>  
+> +void rust_helper_might_resched(void)
+> +{
+> +	might_resched();
+> +}
+> +
+>  struct task_struct *rust_helper_get_current(void)
+>  {
+>  	return current;
+> diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
+> index 9e6f6854948d..1f0156b38ab5 100644
+> --- a/rust/kernel/task.rs
+> +++ b/rust/kernel/task.rs
+> @@ -380,3 +380,29 @@ fn eq(&self, other: &Kuid) -> bool {
+>  }
+>  
+>  impl Eq for Kuid {}
+> +
+> +/// Annotation for functions that can sleep.
+> +///
+> +/// Equivalent to the C side [`might_sleep()`], this function serves as
+> +/// a debugging aid and a potential scheduling point.
+> +///
+> +/// This function can only be used in a nonatomic context.
+> +#[track_caller]
+> +#[inline]
+> +pub fn might_sleep() {
+> +    #[cfg(CONFIG_DEBUG_ATOMIC_SLEEP)]
+> +    {
+> +        let loc = core::panic::Location::caller();
+> +        // SAFETY: FFI call.
 
-I posted them separately to simplify "reviewing" their content,
-I will do whatever is preferred.
+Overall this looks okay to me, but this safety comment could be
+improved. This being an FFI call is not the reason *why* it is safe to
+make this call.
 
-Thanks,
-Lorenzo
+// SAFETY: `file.as_ptr()` is valid for reading for `file.len()` bytes.
+
+And I might separate the file into a separate variable for clarity:
+let loc = core::panic::Location::caller();
+let file = loc.file();
+
+> +        unsafe {
+> +            crate::bindings::__might_sleep_precision(
+> +                loc.file().as_ptr().cast(),
+> +                loc.file().len() as i32,
+> +                loc.line() as i32,
+> +            )
+> +        }
+> +    }
+> +
+> +    // SAFETY: FFI call.
+> +    unsafe { crate::bindings::might_resched() }
+
+And here you can say
+// SAFETY: Always safe to call.
+
+Alice
 
