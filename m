@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-596942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6612CA8330C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:13:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825A0A83307
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04DCB1B67A67
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:12:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C605A8A0F7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB05215F48;
-	Wed,  9 Apr 2025 21:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9380E214226;
+	Wed,  9 Apr 2025 21:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hl5BKyNG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjhWI0ad"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18F92147FE
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 21:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA25219312
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 21:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744233109; cv=none; b=snlFYlsx9woUgM4d2O1y/yEq4nMfMpgzx8dOqjt5Ds+J64TB2RanjjdGoeCiNnz+DQGn3ZiqkomVDFEdZTNN2Sm/elsWZZDTdvZQ/VVJTcxFAJ5ou8FnlziwzSU/rNjplTq68mMhll1OiE0R0h5HjDkE/r2lKBmxNyiJbzsmC1Y=
+	t=1744233113; cv=none; b=MhNTKy1FfuRs6p90n9nOLFenegjBp2s0cTph4mGQUHyWr+akyCYHQRjeGcCfhVjj+fnVfigycFA4gOeiEM4AEYvc9Tl0sMGm+44acWMsp2NcCkY+fI9fl0lNiZK3IG73bDacMb6QG2cIAXHAMs9dEODfcwgMbMk8oML0wpRMSXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744233109; c=relaxed/simple;
-	bh=HDFc8XxXpcfoEsZT3dQ6ISqPPlGcS2r3vI+88Ffx9xE=;
+	s=arc-20240116; t=1744233113; c=relaxed/simple;
+	bh=gIsSH7NLDAYfvrqsitKKMX80cNwtsfaHUeTr2OobYTQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eItlXxz4/Av07rvt/5SLu0A0tO5KncQ+Wa/plxmMuG6GhbAG5iC25XMIV00zMhcjp4O7waAhe8T1aoxu1vTAoxJEX+4QREJPVG94zkU8MhlWNv/qE1yMkhM7tSx1Q8P/GZEEbaM+jgdGZlJhc3lYjRnKnN6Kzv7mz8R7jNQgXbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hl5BKyNG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BA9CC4CEE9;
-	Wed,  9 Apr 2025 21:11:45 +0000 (UTC)
+	 MIME-Version; b=I4JSzsG4hK/5llzxAFUFIU+FAs8SpJfCUfQtlxxdBpTBpI+Lyw3bbphBzCvLIJTMX+bwsmoSmzp8JA53e5tQwT0in4ramQnQYbo2qGiiu0d1aypxDamOYq5Lr/kp+jV3jhYVKzysfcw3jfbwQYBYa7H1AMW4CzTQcSSNYFVlKvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjhWI0ad; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F538C4CEE2;
+	Wed,  9 Apr 2025 21:11:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744233108;
-	bh=HDFc8XxXpcfoEsZT3dQ6ISqPPlGcS2r3vI+88Ffx9xE=;
+	s=k20201202; t=1744233112;
+	bh=gIsSH7NLDAYfvrqsitKKMX80cNwtsfaHUeTr2OobYTQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Hl5BKyNGiw9/wcg2KlNeabgbcuA8c5E0PcOX3ce5h/nn08Io+lnRZPrl2l5hCagMg
-	 NxkIBt2tSF9nN5O+lK/QG/F6Ii+wYFPBmqwhpjWDKkVAwImKJoOUsyX8Dg7NMQUfIN
-	 AiuGxZ7QrM1arLIOYcC86XC55S6zg4RkIVDnAr+hRKoCDtvLZ5Ne8DmWx0Nr7OJ+xq
-	 XSd9Lm0cxADg4bjPHDQop36IvtUlpiy4Tewq+Ix9O7+BLcbb4AuD+U6B/kawcMOy9Z
-	 YRPiT9ei2TYeDJ+2pyQh+OUS4T810cQK2LQCNrcL9xinhrUd6vpab84Lm9veY5/6Xa
-	 EKw6MZFImeG8w==
+	b=sjhWI0adDOMsF+5uu3DN2H6nDT0foDq7caTYZCamXxDs/Xm7Slz8dQL/JXL/J0Dsy
+	 QX1WHRWFCFONJmL28FEmCJP1azG/nxZsdxveSb+NCxhYSIr0R9LQCV4aUkDSb1mNA0
+	 pFQbdJWonjP3bGouCsoFXMwhAYDHAcAI/SbCBBA2MoJaJRayN8Xfv3JQF7HdOLYm6n
+	 tnoVjT5/1C46b7dEThRe4fbSH8Xa+3+emZMLaEW3fMov8E/46WdbCJn1GRVO6fKeXS
+	 0oJcHpjTBFI810nhlCjZV6Jvp2lijrlkqSczIDr2DLQK9arQqX78aPOlQp+KqC9aNt
+	 ZHx0aQxRiS5Bg==
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Andy Lutomirski <luto@amacapital.net>,
@@ -57,9 +57,9 @@ Cc: Andy Lutomirski <luto@amacapital.net>,
 	Fenghua Yu <fenghua.yu@intel.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	Uros Bizjak <ubizjak@gmail.com>
-Subject: [PATCH 3/8] x86/fpu: Make task_struct::thread constant size
-Date: Wed,  9 Apr 2025 23:11:22 +0200
-Message-ID: <20250409211127.3544993-4-mingo@kernel.org>
+Subject: [PATCH 4/8] x86/fpu: Remove the thread::fpu pointer
+Date: Wed,  9 Apr 2025 23:11:23 +0200
+Message-ID: <20250409211127.3544993-5-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250409211127.3544993-1-mingo@kernel.org>
 References: <20250409211127.3544993-1-mingo@kernel.org>
@@ -71,50 +71,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Turn thread.fpu into a pointer. Since most FPU code internals work by passing
-around the FPU pointer already, the code generation impact is small.
+As suggested by Oleg, remove the thread::fpu pointer, as we can
+calculate it via x86_task_fpu() at compile-time.
 
-This allows us to remove the old kludge of task_struct being variable size:
+This improves code generation a bit:
 
-  struct task_struct {
+   kepler:~/tip> size vmlinux.before vmlinux.after
+   text        data        bss        dec         hex        filename
+   26475405    10435342    1740804    38651551    24dc69f    vmlinux.before
+   26475339    10959630    1216516    38651485    24dc65d    vmlinux.after
 
-       ...
-       /*
-        * New fields for task_struct should be added above here, so that
-        * they are included in the randomized portion of task_struct.
-        */
-       randomized_struct_fields_end
-
-       /* CPU-specific state of this task: */
-       struct thread_struct            thread;
-
-       /*
-        * WARNING: on x86, 'thread_struct' contains a variable-sized
-        * structure.  It *MUST* be at the end of 'task_struct'.
-        *
-        * Do not put anything below here!
-        */
-  };
-
-... which creates a number of problems, such as requiring thread_struct to be
-the last member of the struct - not allowing it to be struct-randomized, etc.
-
-But the primary motivation is to allow the decoupling of task_struct from
-hardware details (<asm/processor.h> in particular), and to eventually allow
-the per-task infrastructure:
-
-   DECLARE_PER_TASK(type, name);
-   ...
-   per_task(current, name) = val;
-
-... which requires task_struct to be a constant size struct.
-
-The fpu_thread_struct_whitelist() quirk to hardened usercopy can be removed,
-now that the FPU structure is not embedded in the task struct anymore, which
-reduces text footprint a bit.
-
+Suggested-by: Oleg Nesterov <oleg@redhat.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Fixed-by: Oleg Nesterov <oleg@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Fenghua Yu <fenghua.yu@intel.com>
@@ -123,189 +91,92 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Uros Bizjak <ubizjak@gmail.com>
-Link: https://lore.kernel.org/r/20240605083557.2051480-2-mingo@kernel.org
+Link: https://lore.kernel.org/r/20240605083557.2051480-3-mingo@kernel.org
 ---
- arch/x86/include/asm/processor.h | 20 +++++++++-----------
- arch/x86/kernel/fpu/core.c       | 23 ++++++++++++-----------
- arch/x86/kernel/fpu/init.c       | 17 ++++++++++-------
- arch/x86/kernel/process.c        |  2 +-
- include/linux/sched.h            | 15 ++++-----------
- 5 files changed, 36 insertions(+), 41 deletions(-)
+ arch/x86/include/asm/processor.h | 5 +----
+ arch/x86/kernel/fpu/core.c       | 4 +---
+ arch/x86/kernel/fpu/init.c       | 1 -
+ arch/x86/kernel/process.c        | 2 --
+ arch/x86/kernel/vmlinux.lds.S    | 4 ++++
+ 5 files changed, 6 insertions(+), 10 deletions(-)
 
 diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 2f631e0adea3..5ea7e5d2c4de 100644
+index 5ea7e5d2c4de..b7f7c9c83409 100644
 --- a/arch/x86/include/asm/processor.h
 +++ b/arch/x86/include/asm/processor.h
-@@ -516,21 +516,19 @@ struct thread_struct {
- #endif
+@@ -514,12 +514,9 @@ struct thread_struct {
  
- 	/* Floating point and extended processor state */
--	struct fpu		fpu;
--	/*
--	 * WARNING: 'fpu' is dynamically-sized.  It *MUST* be at
--	 * the end.
--	 */
-+	struct fpu		*fpu;
+ 	struct thread_shstk	shstk;
+ #endif
+-
+-	/* Floating point and extended processor state */
+-	struct fpu		*fpu;
  };
  
--#define x86_task_fpu(task) (&(task)->thread.fpu)
--
--extern void fpu_thread_struct_whitelist(unsigned long *offset, unsigned long *size);
-+#define x86_task_fpu(task) ((task)->thread.fpu)
+-#define x86_task_fpu(task) ((task)->thread.fpu)
++#define x86_task_fpu(task)	((struct fpu *)((void *)(task) + sizeof(*(task))))
  
--static inline void arch_thread_struct_whitelist(unsigned long *offset,
--						unsigned long *size)
-+/*
-+ * X86 doesn't need any embedded-FPU-struct quirks:
-+ */
-+static inline void
-+arch_thread_struct_whitelist(unsigned long *offset, unsigned long *size)
- {
--	fpu_thread_struct_whitelist(offset, size);
-+	*offset = 0;
-+	*size = 0;
- }
- 
- static inline void
+ /*
+  * X86 doesn't need any embedded-FPU-struct quirks:
 diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index dc6d7f93c446..853a738fdf2d 100644
+index 853a738fdf2d..974b276ff0da 100644
 --- a/arch/x86/kernel/fpu/core.c
 +++ b/arch/x86/kernel/fpu/core.c
-@@ -593,8 +593,19 @@ static int update_fpu_shstk(struct task_struct *dst, unsigned long ssp)
- int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
- 	      unsigned long ssp)
- {
-+	/*
-+	 * We allocate the new FPU structure right after the end of the task struct.
-+	 * task allocation size already took this into account.
-+	 *
-+	 * This is safe because task_struct size is a multiple of cacheline size.
-+	 */
+@@ -600,13 +600,11 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
+ 	 * This is safe because task_struct size is a multiple of cacheline size.
+ 	 */
  	struct fpu *src_fpu = x86_task_fpu(current);
--	struct fpu *dst_fpu = x86_task_fpu(dst);
-+	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
-+
-+	BUILD_BUG_ON(sizeof(*dst) % SMP_CACHE_BYTES != 0);
-+	BUG_ON(!src_fpu);
-+
-+	dst->thread.fpu = dst_fpu;
+-	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
++	struct fpu *dst_fpu = x86_task_fpu(dst);
  
+ 	BUILD_BUG_ON(sizeof(*dst) % SMP_CACHE_BYTES != 0);
+ 	BUG_ON(!src_fpu);
+ 
+-	dst->thread.fpu = dst_fpu;
+-
  	/* The new task's FPU state cannot be valid in the hardware. */
  	dst_fpu->last_cpu = -1;
-@@ -663,16 +674,6 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
- 	return 0;
- }
  
--/*
-- * Whitelist the FPU register state embedded into task_struct for hardened
-- * usercopy.
-- */
--void fpu_thread_struct_whitelist(unsigned long *offset, unsigned long *size)
--{
--	*offset = offsetof(struct thread_struct, fpu.__fpstate.regs);
--	*size = fpu_kernel_cfg.default_size;
--}
--
- /*
-  * Drops current FPU state: deactivates the fpregs and
-  * the fpstate. NOTE: it still leaves previous contents
 diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-index ad5cb2943d37..848ea79886ba 100644
+index 848ea79886ba..da41a1d2c40f 100644
 --- a/arch/x86/kernel/fpu/init.c
 +++ b/arch/x86/kernel/fpu/init.c
-@@ -71,8 +71,15 @@ static bool __init fpu__probe_without_cpuid(void)
- 	return fsw == 0 && (fcw & 0x103f) == 0x003f;
- }
- 
-+static struct fpu x86_init_fpu __attribute__ ((aligned (64))) __read_mostly;
-+
+@@ -76,7 +76,6 @@ static struct fpu x86_init_fpu __attribute__ ((aligned (64))) __read_mostly;
  static void __init fpu__init_system_early_generic(void)
  {
-+	fpstate_reset(&x86_init_fpu);
-+	current->thread.fpu = &x86_init_fpu;
-+	set_thread_flag(TIF_NEED_FPU_LOAD);
-+	x86_init_fpu.last_cpu = -1;
-+
- 	if (!boot_cpu_has(X86_FEATURE_CPUID) &&
- 	    !test_bit(X86_FEATURE_FPU, (unsigned long *)cpu_caps_cleared)) {
- 		if (fpu__probe_without_cpuid())
-@@ -150,6 +157,8 @@ static void __init fpu__init_task_struct_size(void)
- {
- 	int task_size = sizeof(struct task_struct);
+ 	fpstate_reset(&x86_init_fpu);
+-	current->thread.fpu = &x86_init_fpu;
+ 	set_thread_flag(TIF_NEED_FPU_LOAD);
+ 	x86_init_fpu.last_cpu = -1;
  
-+	task_size += sizeof(struct fpu);
-+
- 	/*
- 	 * Subtract off the static size of the register state.
- 	 * It potentially has a bunch of padding.
-@@ -164,14 +173,9 @@ static void __init fpu__init_task_struct_size(void)
- 
- 	/*
- 	 * We dynamically size 'struct fpu', so we require that
--	 * it be at the end of 'thread_struct' and that
--	 * 'thread_struct' be at the end of 'task_struct'.  If
--	 * you hit a compile error here, check the structure to
--	 * see if something got added to the end.
-+	 * 'state' be at the end of 'it:
- 	 */
- 	CHECK_MEMBER_AT_END_OF(struct fpu, __fpstate);
--	CHECK_MEMBER_AT_END_OF(struct thread_struct, fpu);
--	CHECK_MEMBER_AT_END_OF(struct task_struct, thread);
- 
- 	arch_task_struct_size = task_size;
- }
-@@ -213,7 +217,6 @@ static void __init fpu__init_system_xstate_size_legacy(void)
-  */
- void __init fpu__init_system(void)
- {
--	fpstate_reset(x86_task_fpu(current));
- 	fpu__init_system_early_generic();
- 
- 	/*
 diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 47694e391506..3ce4cce46f3f 100644
+index 3ce4cce46f3f..88868a90459e 100644
 --- a/arch/x86/kernel/process.c
 +++ b/arch/x86/kernel/process.c
-@@ -103,7 +103,7 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
+@@ -102,8 +102,6 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
+ #ifdef CONFIG_VM86
  	dst->thread.vm86 = NULL;
  #endif
- 	/* Drop the copied pointer to current's fpstate */
--	x86_task_fpu(dst)->fpstate = NULL;
-+	dst->thread.fpu = NULL;
+-	/* Drop the copied pointer to current's fpstate */
+-	dst->thread.fpu = NULL;
  
  	return 0;
  }
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index f96ac1982893..4ecc0c6b1cb0 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1646,22 +1646,15 @@ struct task_struct {
- 	struct user_event_mm		*user_event_mm;
- #endif
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index ccdc45e5b759..d9ca2d1754da 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -181,6 +181,10 @@ SECTIONS
+ 		/* equivalent to task_pt_regs(&init_task) */
+ 		__top_init_kernel_stack = __end_init_stack - TOP_OF_KERNEL_STACK_PADDING - PTREGS_SIZE;
  
--	/*
--	 * New fields for task_struct should be added above here, so that
--	 * they are included in the randomized portion of task_struct.
--	 */
--	randomized_struct_fields_end
--
- 	/* CPU-specific state of this task: */
- 	struct thread_struct		thread;
- 
- 	/*
--	 * WARNING: on x86, 'thread_struct' contains a variable-sized
--	 * structure.  It *MUST* be at the end of 'task_struct'.
--	 *
--	 * Do not put anything below here!
-+	 * New fields for task_struct should be added above here, so that
-+	 * they are included in the randomized portion of task_struct.
- 	 */
--};
-+	randomized_struct_fields_end
-+} __attribute__ ((aligned (64)));
- 
- #define TASK_REPORT_IDLE	(TASK_REPORT + 1)
- #define TASK_REPORT_MAX		(TASK_REPORT_IDLE << 1)
++		__x86_init_fpu_begin = .;
++		. = __x86_init_fpu_begin + 128*PAGE_SIZE;
++		__x86_init_fpu_end = .;
++
+ #ifdef CONFIG_X86_32
+ 		/* 32 bit has nosave before _edata */
+ 		NOSAVE_DATA
 -- 
 2.45.2
 
