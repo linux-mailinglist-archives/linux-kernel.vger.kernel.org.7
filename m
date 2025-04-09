@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-596926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EFEA832E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:59:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E28C6A832EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FE0B7A5C1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:57:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5737C3BE9D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF6521481E;
-	Wed,  9 Apr 2025 20:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3846121481D;
+	Wed,  9 Apr 2025 21:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mwyy8DdU"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Tu9YuzZS"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAA81E5018;
-	Wed,  9 Apr 2025 20:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A5F21148F;
+	Wed,  9 Apr 2025 21:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744232302; cv=none; b=lOs3m1FFP9K1C7FUPfeCtRRHyTRwSD8X4Zc8XRwSJ8x3vrbCmRUqEYORzx+s05i16fNadTyctC93nXBpz6u3HC1GhcWIjuZsDrXI/MzhweQ80A7MlyfKxbbcg8A8o8KD1Y9IuH3zfd1bMeIHLhMUIBk0ceBgUr69kJlVe3FGB70=
+	t=1744232413; cv=none; b=ZKZaPnvqvUaKtqo2g6nuv4HmXWykUFDOSgVjRja6Wmz/VZDoybPsslWiJ0CDJBSZ5XouNPkWPO2fCq82Vn5XD+/e1j54U86mWKsVbrRMJI+xBHXnLlHVrtxSQnM4YAarv209m4uFBuDyq/Skt1IjmA6aTqnDlK0h6VhPhXdfHVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744232302; c=relaxed/simple;
-	bh=6ec0alS8XiULM/vgWxWgwfHpG7Je0oApq0VdXu9F0v4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iN0ZWi7qTMQSzlh0yu/4cX42feD/wZzLZnOwfAIg1/LeuvlrJM632V8rJ/LRTGI7krlHUwuhWbbVS4j+CpLqLZmlVyO40WDYgCD/VLTqONUSNaYvNuf2LSfMWTjk35qeOy8GrtMx2e7bOblNe6gkYBgKorVZm5Kog6jJSIn5k8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mwyy8DdU; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b03bc416962so35332a12.0;
-        Wed, 09 Apr 2025 13:58:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744232300; x=1744837100; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0anQ+IpqWVzDF/uK9u1Pq2W1Y/RyglC7ZuUoWh/6VYc=;
-        b=mwyy8DdUym2PNXB10h67fTadWN5VgDr4mhCoJJNNZ4s5FflNklIzbw95RZVFVSMhLt
-         2MLBQMgaXWjVbCpzlxI7aCrbdJjL4bAghLqCN7q+w9F7iGNM4mz135O0mPwDUpoN1v4b
-         qrfGockCdOiGVXfQLxryNGGuCAmvYvKRHWIPIg1BNsxaxefNdS5tx/M5eAKfakiWWXp7
-         qrfOSU3+1d/nCKIkRyeilRS7irC8XN0p/dpfg3i6+YFQ1tdLOc8QIeaG9hIUq6WYlZ1j
-         rZOLZvmfYE9/ZZXiyqgvsHL9f09rHhM6MxIYquZYayZfUDFpVYzljjv2yxZ/CVCM1v9B
-         cIjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744232300; x=1744837100;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0anQ+IpqWVzDF/uK9u1Pq2W1Y/RyglC7ZuUoWh/6VYc=;
-        b=nGYhDfEnsky7RKNmTwyFkB/21rLXy1PTg5jUG8xDPr80bSjue+2keOFa1n70bNLQhZ
-         vOTBdAMtnQqncPH4L0++xt4E9z46+OL387OInED5Sf8JvHOOlOqicTORFgI7RONM2zuj
-         dB3xVINDqd1AffmkEzf31C7hAlmR+MIxZuZcb+evgfXMwHa2XF3Lsdp6Kf9S0hltRuEr
-         bUHtuj9WZDh7b84hORDvCOS0Pgan+NJy/Qk8S3yKu6SesrUS12wybDF/q8/KFv3IZETf
-         LWMx3cnWxs0IVZEDSSPFWerpyt5aZBEnOJbTyyuOKxsjzdyEt/W3DKtqYaQHLnL2RVZf
-         mAFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCYhxoe5EHqHp2WZoI9vkMk32pmFll3aBPMCMV2IPKfuUsc2MWIDcJinUQo8bvmbs21wfmeQUyGz92Jw==@vger.kernel.org, AJvYcCVWD36u5hxYWPSTC8aDqblTveZR/QmkjnCgko8XEsIP7ej1Np4kQm7R6lwLgtnWN8DN8XMWRY2MuEfEnn+G@vger.kernel.org, AJvYcCVzaUIRo6+8u3dHBuoCvfpmohqE+jP71bMHj2r7vWJL376iYIp2Tdmv5BYWxTmwOPEmQoquGMzh3irA@vger.kernel.org, AJvYcCWEBAYghVCr/gZCdahZlwcV1s4ghAHxmwjXYt7w6uyJgGH2xrfOKlnrcBQAqqTBI4URslzf1pWngoczXZA=@vger.kernel.org, AJvYcCX3PXCEjeIUDZ2Ag/GVKb4S7mjlHeXAjnLb6bdbRzUByHLk/q7GasPBIm1KPV/vGv5J93Fz1bSaq3d8@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzqwrDNodHemZHSabqWdPiSq59WgiKTQ717fxMPe6I8m1vm3+f
-	0HXLlbDqoxSC7VsDotjXx3g3EvD9gR2MUDL92idJwb5tLJpFm/yE
-X-Gm-Gg: ASbGncvvdOqd3BHZcnXBoGPIpSW2T9V57FSAe/aoMXujNUp4K8nJIsVBWFizN4R8FFG
-	XXL5/5S1+7uYSXvAoro+YRdK8RncqkUWEPR+JVxOQsZ+zaaUm8uIMAZtftnBVLXXCFtD5z6mr/d
-	33zAMh3CoAdYmB8/TD81/57ojol37M57Tt9Bm7FAN43BqvVaxFg39fhCL6rS3eouAVxb2+OHMSG
-	S656+l8jqhEwCvzFxBVehmSPLG0bev1W1/q4+0UWlvNsp/xH9YFZD4FnrfmaQhDBrBucQ/Ii8fy
-	uYxKxHMk2Q1LgMYIe4tOH0ITfAIhrc1MQzykqv+W+g==
-X-Google-Smtp-Source: AGHT+IFpzhH7we9mCqBfCUsctssS5nONXoCjPZ/7FgmxJonyD7BwRkw3BofxA9xAGU2028ValekKbA==
-X-Received: by 2002:a17:90b:4a81:b0:2ff:6fc3:79c4 with SMTP id 98e67ed59e1d1-3072ba14733mr497341a91.27.1744232300372;
-        Wed, 09 Apr 2025 13:58:20 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:cff4:8871:54bb:4c97])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306df08f63bsm1990940a91.24.2025.04.09.13.58.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 13:58:19 -0700 (PDT)
-Date: Wed, 9 Apr 2025 13:58:16 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kamel Bouhara <kamel.bouhara@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	andriy.shevchenko@intel.com, =?utf-8?Q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v6 01/12] dt-bindings: mfd: gpio: Add MAX7360
-Message-ID: <triuq2rqofk4psfauemu6uikizvphnqg7om5x4b6sjc3tjg2a4@5fvv5l4kollo>
-References: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
- <20250409-mdb-max7360-support-v6-1-7a2535876e39@bootlin.com>
+	s=arc-20240116; t=1744232413; c=relaxed/simple;
+	bh=u9y+3WWgJyQXBNeDtdGlxMTb4ab/g/8Jj2VBJvdZcxo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZYGhAlm6bL7LiyG/bMZOywPK76A82gkO6gKFKxl4U6P8dwsg55iXet1vn2YbBugo1WnKYpXFW/WMBsYvkeuBnwRY3ZXjf4OckWSeimlu7/n2xXOq8B+efr/rUtCAH76hZb3E4yYPsyKVmvaDkgtRs0slFIewtNZ30/xCdsON+x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Tu9YuzZS; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZXwLq65xqzm22HC;
+	Wed,  9 Apr 2025 21:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1744232401; x=1746824402; bh=4qpDFoC7jRxlhD7xqwhzQhGg
+	yvb+J8AtlP8vjZ317ng=; b=Tu9YuzZSu7T2UHbDvRpWrtn4uRosQ3C0b6s7XEYA
+	B0ab7ir4m4iKX7BJ1bSeSH1o8JdiJIpRBo/DdQlhrUiisho8j8IzYAJWHSGFX3dg
+	rVpooRaJGjgvnAk/klH9Z/i+wzOthYUh1i1UsTLUBiwQWpVUfR5MBOPGImQ2tTw+
+	wgiiRHJZMUvNL2pL1PC1EMqQTawBLauXcyk/4PyOr3dgXdYtgyEXbOWiI1IUaH5D
+	chDNTuLcjOaR8X5Kdm5RC3dA+x6FxhHhkYpHHDlJllZYy1W3/tGtpDxkbIRc8y1U
+	ASRwg261OTtr5f02QwQbfa8wE4STj1j/SPO8wyHBjDSM9A==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id lxL8XKZCaJb9; Wed,  9 Apr 2025 21:00:01 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZXwLc2rFzzm0pKY;
+	Wed,  9 Apr 2025 20:59:51 +0000 (UTC)
+Message-ID: <2e19c458-4136-4860-b853-1314c4ab5952@acm.org>
+Date: Wed, 9 Apr 2025 13:59:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409-mdb-max7360-support-v6-1-7a2535876e39@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: mcq: Add NULL check in ufshcd_mcq_abort()
+To: Chenyuan Yang <chenyuan0y@gmail.com>, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, peter.wang@mediatek.com, minwoo.im@samsung.com,
+ manivannan.sadhasivam@linaro.org, viro@zeniv.linux.org.uk,
+ cw9316.lee@samsung.com, quic_nguyenb@quicinc.com, quic_cang@quicinc.com,
+ stanley.chu@mediatek.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250409204537.3566793-1-chenyuan0y@gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250409204537.3566793-1-chenyuan0y@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Mathieu,
-
-On Wed, Apr 09, 2025 at 04:55:48PM +0200, Mathieu Dubois-Briand wrote:
-> Add device tree bindings for Maxim Integrated MAX7360 device with
-> support for keypad, rotary, gpios and pwm functionalities.
+On 4/9/25 1:45 PM, Chenyuan Yang wrote:
+> A race can occur between the MCQ completion path and the abort handler:
+> once a request completes, __blk_mq_free_request() sets rq->mq_hctx to
+> NULL, meaning the subsequent ufshcd_mcq_req_to_hwq() call in
+> ufshcd_mcq_abort() can return a NULL pointer. If this NULL pointer is
+> dereferenced, the kernel will crash.
 > 
-> +
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      io-expander@38 {
-> +        compatible = "maxim,max7360";
-> +        reg = <0x38>;
-> +
-> +        interrupt-parent = <&gpio1>;
-> +        interrupts = <23 IRQ_TYPE_LEVEL_LOW>,
-> +                     <24 IRQ_TYPE_LEVEL_LOW>;
-> +        interrupt-names = "inti", "intk";
-> +
-> +        keypad,num-rows = <8>;
-> +        keypad,num-columns = <4>;
-> +        linux,keymap = <
-> +          MATRIX_KEY(0x00, 0x00, KEY_F5)
-> +          MATRIX_KEY(0x01, 0x00, KEY_F4)
-> +          MATRIX_KEY(0x02, 0x01, KEY_F6)
-> +          >;
-> +        keypad-debounce-delay-ms = <10>;
-> +        autorepeat;
-> +
-> +        rotary-debounce-delay-ms = <2>;
-> +        linux,axis = <0>; /* REL_X */
+> Add a NULL check for the returned hwq pointer. If hwq is NULL, log an
+> error and return FAILED, preventing a potential NULL-pointer dereference.
+> 
+> This is similar to the fix in commit 74736103fb41
+> ("scsi: ufs: core: Fix ufshcd_abort_one racing issue").
+> 
+> This is found by our static analysis tool KNighter.
+> 
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> Fixes: f1304d442077 ("scsi: ufs: mcq: Added ufshcd_mcq_abort()")
+> ---
+>   drivers/ufs/core/ufs-mcq.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
+> index 240ce135bbfb..2c8792911616 100644
+> --- a/drivers/ufs/core/ufs-mcq.c
+> +++ b/drivers/ufs/core/ufs-mcq.c
+> @@ -692,6 +692,11 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd)
+>   	}
+>   
+>   	hwq = ufshcd_mcq_req_to_hwq(hba, scsi_cmd_to_rq(cmd));
+> +	if (!hwq) {
+> +		dev_err(hba->dev, "%s: failed to get hwq for tag %d\n",
+> +			__func__, tag);
+> +		return FAILED;
+> +	}
+>   
+>   	if (ufshcd_mcq_sqe_search(hba, hwq, tag)) {
+>   		/*
 
-Probably this has been already discussed, but shouldn't keyboard and
-rotary encoder be represented as sub-nodes here, similar to how GPIO
-block is represented?
+This patch makes the ufshcd_cmd_inflight() check just above the
+modified code superfluous. Please remove it.
 
-Thanks.
+Additionally, please change the error message such that it reports
+that the command has already completed.
 
--- 
-Dmitry
+Thanks,
+
+Bart.
 
