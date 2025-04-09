@@ -1,96 +1,135 @@
-Return-Path: <linux-kernel+bounces-596271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D35A829D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:17:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42AF5A82A04
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84BA63B8CA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:06:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 862B53B8E19
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DB426AAA9;
-	Wed,  9 Apr 2025 15:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87022143C5D;
+	Wed,  9 Apr 2025 15:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="iy1ZC5Lt"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USeGB18u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5762F266EE2;
-	Wed,  9 Apr 2025 15:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25C3266F14
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744210862; cv=none; b=gqQg53rYN//mhQHbGLBufvc5gQu8E1CmnV3gCiaVqscqywaqSHjyRRY0QHD65db1RSRCdWGkTHFv/v/CgO8zyZqxoLhdVHQzC8qlxOlQSudBW4ytgCknxqMGfMlNCqq4jgSpM/YzoCZkJPUcWC3XeUOPrfxnyWf45E9xnEUZcjc=
+	t=1744210928; cv=none; b=MyiWxy5DR6CBV34mfDEWlZi1BTWQCMN3Ucb5re5sEKdIf0GyiiRgqyQL/0wJI3Kvem5hg4LG2AAZeNS9d6j/zm0Y0qAkoKLN0SWpYlzEvo5ntT3drNwl8UqNZmbMYwvb5kr7oBThSo3WDyPkAA2X1zpPCCfq2eSOl8ksf/2+n7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744210862; c=relaxed/simple;
-	bh=fMDoY8ee2pXnS8Dw18Q0OcUjEYyFmG9NC+Qch2lQWCU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Qythytpzi08P0s0TqRUImVECIsWbcYyEtQdBsVBsskFrVanKYtwUB8u4mKG98zlYjAeoEZsLqtZxtjqw1jsN70B3sxInp73OykdnuCY0qGMNhzfL8s+Bek8jRfTzca3ttQQQe/q3/1gkCWdJ+llIOIUXKKLz8JBq2mSV7CJZI3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=iy1ZC5Lt; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=gTwuFNmtqnHIRgvVLsZLNjX7p2roYlt+cuvH6TzFv0Y=; b=iy1ZC5LteO2FtEIBZEALLeGi8G
-	tC4TqL/owFmKmTq3psa7w2KadEpzsOo5QsZlxIB41odsB3EwZXTyeYKUkhFu0JQSA1tZlOudQR9za
-	IAAMp1Laoq8C6ogBQIOhVvGmdntuCPSDG3sUbtdIJD1zkHek8nFzhyYfxhJr+ROtaSzLP6OLktG5j
-	DVsDEwyF9ZpJWeVYrK//CqtQJtZ3xhULCQtH8pbMfNrauiK9CRaMkismPTu6+WLDr48Uzga6RW2Cn
-	4phQdelACspP9jCgTt2kUusbTdL6y25gtcRMjfSlM6kbII46A6do6209XDN/95RcdIOoz6hl82ilC
-	fLLzqXRg==;
-Received: from [191.204.192.64] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1u2WvA-00EBVR-QF; Wed, 09 Apr 2025 17:00:57 +0200
-From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Wed, 09 Apr 2025 12:00:43 -0300
-Subject: [PATCH 3/3] ovl: Enable support for casefold filesystems
+	s=arc-20240116; t=1744210928; c=relaxed/simple;
+	bh=aJQppEWjaL2KF5deFSae2ldF9ctBxth+C4C3IIXJlnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PjF4zoXmS6oHG0fOFW5MhFhhJo2Y+J3/EDz5+Bqvg1hfEskPySFEWpehnRINSuWm5HPC7Idrskal10esqvrFnTi1YyNm7ROqP6clNRBdtytZ7BVrd3qUzGYVh6G8syADFPOvW7aBNniXjJbAyDioPPYKRwNcYYJO4RN39oTjvAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USeGB18u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CA47C4CEE2;
+	Wed,  9 Apr 2025 15:02:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744210927;
+	bh=aJQppEWjaL2KF5deFSae2ldF9ctBxth+C4C3IIXJlnw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=USeGB18uwqiTZNbG1Z0F1wrI5ftkJYJTV2a43/QfqQGLa3C3TQ3TW142CivEOBMV1
+	 Rym2Y9R+o367sWZ2dWJQOJKZ5pTsKMsSKD9BkwX4gskWdEbokQGKIE5cOrixPNmHLA
+	 DYNFzGHPfnbAZ2JX6sjDYJ3Rk1hx4e/+iVrc+pm6eOTuLp14sordp1lKImVmnQpxRH
+	 OB8ijywqomEfMx4P5JyBtEZuQJvC9tfMxTvRCz34DyMz/IM9SCS2Cd+oagIKismoqY
+	 F+IFRxzgZLYcXKSDlIrmWP08NbI7yP6tNtM6l3Wwax8qpvf52G3Vp3JQKUtDEDWzPw
+	 bya+z+Besvnuw==
+Date: Wed, 9 Apr 2025 17:02:04 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	kernel@collabora.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 06/15] drm/connector: hdmi: Factor out bpc and format
+ computation logic
+Message-ID: <20250409-funny-hopping-condor-cbc50c@houat>
+References: <20250326-hdmi-conn-yuv-v3-0-294d3ebbb4b2@collabora.com>
+ <20250326-hdmi-conn-yuv-v3-6-294d3ebbb4b2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250409-tonyk-overlayfs-v1-3-3991616fe9a3@igalia.com>
-References: <20250409-tonyk-overlayfs-v1-0-3991616fe9a3@igalia.com>
-In-Reply-To: <20250409-tonyk-overlayfs-v1-0-3991616fe9a3@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
- Theodore Tso <tytso@mit.edu>, Gabriel Krisman Bertazi <krisman@kernel.org>
-Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- kernel-dev@igalia.com, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-X-Mailer: b4 0.14.2
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yynkvojouwztmong"
+Content-Disposition: inline
+In-Reply-To: <20250326-hdmi-conn-yuv-v3-6-294d3ebbb4b2@collabora.com>
 
-Enable support for casefold filesystems in overlayfs.
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- fs/overlayfs/params.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--yynkvojouwztmong
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 06/15] drm/connector: hdmi: Factor out bpc and format
+ computation logic
+MIME-Version: 1.0
 
-diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
-index 459e8bddf1777c12c9fa0bdfc150e2ea22eaafc3..28a660f09cff2573c648a00363c153be3903aa5b 100644
---- a/fs/overlayfs/params.c
-+++ b/fs/overlayfs/params.c
-@@ -289,7 +289,7 @@ static int ovl_mount_dir_check(struct fs_context *fc, const struct path *path,
- 	 * failures.
- 	 */
- 	if (sb_has_encoding(path->mnt->mnt_sb))
--		return invalfc(fc, "case-insensitive capable filesystem on %s not supported", name);
-+		ovl->casefold = true;
- 
- 	if (ovl_dentry_weird(path->dentry, ovl))
- 		return invalfc(fc, "filesystem on %s not supported", name);
+Hi,
 
--- 
-2.49.0
+On Wed, Mar 26, 2025 at 12:19:55PM +0200, Cristian Ciocaltea wrote:
+> In preparation to support fallback to an alternative output format, e.g.
+> YUV420, when RGB cannot be used for any of the available color depths,
+> move the bpc try loop out of hdmi_compute_config() and, instead, make it
+> part of hdmi_compute_format_bpc().  Additionally, add a new parameter to
+> the latter holding the output format to be checked and eventually set.
+>
+> This improves code reusability and further extensibility.
+>=20
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
+I think patch 5 could be squashed into this one.
+
+> ---
+>  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 50 ++++++++++++-------=
+------
+>  1 file changed, 23 insertions(+), 27 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gp=
+u/drm/display/drm_hdmi_state_helper.c
+> index 160964190d82ac233fdbe34ac54024a007a19872..6de0abb15ecb36fd4eb98725e=
+2a3835e5e0db134 100644
+> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> @@ -608,42 +608,19 @@ static int
+>  hdmi_compute_format_bpc(const struct drm_connector *connector,
+>  			struct drm_connector_state *conn_state,
+>  			const struct drm_display_mode *mode,
+> -			unsigned int bpc)
+> +			unsigned int max_bpc, enum hdmi_colorspace fmt)
+>  {
+>  	struct drm_device *dev =3D connector->dev;
+> -
+> -	/*
+> -	 * TODO: Add support for YCbCr420 output for HDMI 2.0 capable
+> -	 * devices, for modes that only support YCbCr420.
+> -	 */
+
+And we should fix that comment for now.
+
+Once fixed,
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+
+Maxime
+
+--yynkvojouwztmong
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ/aL7AAKCRDj7w1vZxhR
+xRX7AP9oCS18KWYPOr+6QUwEjFua6SqgR4gNhMjWooVbQ7iSmQEAiyIln41e61EW
+KUxzlYInnsg5bfGRUAn7NvOBEPb9ZQE=
+=yeix
+-----END PGP SIGNATURE-----
+
+--yynkvojouwztmong--
 
