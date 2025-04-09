@@ -1,184 +1,158 @@
-Return-Path: <linux-kernel+bounces-595566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E38A82045
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:40:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E30AA8204B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D18CF1B84CF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:40:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C3BD1B85348
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178E025A2DC;
-	Wed,  9 Apr 2025 08:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1D625D21F;
+	Wed,  9 Apr 2025 08:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="O3lOgIBA"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="idiVMP5Z"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D0223A562
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 08:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1B525D206
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 08:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744188032; cv=none; b=SVfXtzBjHmsfEB7shLWnosPPQFi3p/S4pvFOd478zs3poSl1NBBZylu1MTlRb8BdkUWCf81TckHolXLKgEzUmN+4cU7dXXQa5U0yoDCWUAz2ympeypquYuIbLTLwqIvBvPd9aG2idbuXHTmfUIN/OeLZ51y8f3TvjYz6d6PGK/E=
+	t=1744188049; cv=none; b=c2BngQgRstC5S9OHVk52SOvO83NLmgv2oB/2Ly/Wd7nfS73TjWWBG4V0OuFzXCxPUM5CTyhTqajyx3q0Dstjtkyvh7jspNNZMUL2/+OS3V+sSTLiAyvG/e7nWNxefYJUDizhq4T8WDoSTqoftMIHF3UkPnkxzJ8c9D5maQpDmYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744188032; c=relaxed/simple;
-	bh=q54ISzeguJ9lPIJtvtdQyT1rx08b8j76Hf0WHg/XzKM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s5G5Fgpxw/kr16mbkqJxCvDrlmM2QLtLVpFT6uaoqRgk1pISqEk0Az+cQ+hVbbczKLRM5Nt8mQJUsMoFV+fJrxuzLGU8cs0cq3QzMxdu6prK9+o8x3YgLogh0xvmvXihVa2aTFphkoT+XLBRBzQo5SaJcORaGSw6KYjdbG69fr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=O3lOgIBA; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-af52a624283so414151a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 01:40:30 -0700 (PDT)
+	s=arc-20240116; t=1744188049; c=relaxed/simple;
+	bh=1VmSF1FsDxlYv2R/Yfi5O2efY79iuhVVKCImNUHwSDM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=c6jGU8fbSHTE3tykO4lgpZbkSJZAafkdxm6eKpG703Dvx9mASKln6gBQfG8t+lHMvEcjxNXxSN+EClkDDTOA5uZ2iBZa/OrilPqodj8SgXgUoJNZ8pSUnRPYYsWwGNlz0yHZ7E1QJpFeagRUMjUOd1e5J4s1A2/F6+uUa3eHTJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=idiVMP5Z; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f2f391864so3569423f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 01:40:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744188030; x=1744792830; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QmKa4CWZYpgoBno9ey2ENQmH1yn8Vca6Nt7aqMHaMwA=;
-        b=O3lOgIBAWJ7/0zAqurjvRFegHs6R+gaxfxoL29AzBr9jn1WLBgWJuwvA+FwOs7Ipm6
-         HRA4ZR3DlI7JCIFjDLbh7rG/qP2wxU0e4wcc1sZp9/aXSd82ZtKP6G19ZcCKmx/0QfZi
-         etusL+ld3JazZNpKve/w6c5W1TneOnwKxAhD6Rkr9AZfZ5DjgUFQEqi1lrgZtzvHfdol
-         GuWcfu+ke5ysllj6iGVRUOtZCGWlyLJV0Yiav4MLPkXnnnZOOwUo7yth0I657sZEvFeF
-         p+SYNaUIJ2d5QlZvWtLGSCiy+HARi/Fro/OjsOaUWi5oPlVDpzORdF1nI7mwTsQYgSRa
-         TqvA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744188046; x=1744792846; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YfgRSjZMirwP4A4DT85B9dRR+tHIO2UwmfqRGQoebTc=;
+        b=idiVMP5ZxGM5uy5Lqg9/I8DHqtaXTshcRlICrYnn3Lc40+k90GSYwtAuUrjKVCiwlK
+         vuWTA0dSZzIWBOOEfPbcYutTuo1BSNvoKTMROXtJ30y3vR3r655//VajQlPVo8mucsAs
+         k4iXtcj6X5Senz+UJhUIXAx9TKf8F0j60MLNTmfSeqeCYaGpd8S+7rOdarUat7a+sRe1
+         ztGJm6pKAF8kqXIxgL9boP8aCJS40SlBZgTJW7NOCjzBIlZOXpCpkBHCpUJgCA0X/xJN
+         p4cbm2kBVx5xggm4ap5csZFIr5uNsJeNCrnSLLMR40LVxS1lX2fEtTHRmGW0CbX7HVFs
+         I4Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744188030; x=1744792830;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QmKa4CWZYpgoBno9ey2ENQmH1yn8Vca6Nt7aqMHaMwA=;
-        b=al1icG4KtKpCxchliCdxXZgMqAVc+DSpOpbZ30qG8pum6UBRhBUH9NAFOifihvUj1q
-         OJhsRCC8ARcNUz9t3bZjR5X2xRx528hICV9uC8AzacqeVyKnrHrBAFQN22aM8yzxbyfn
-         z8i515yBdkosrBxAafDCZFHtnd+LU15jt+e8A8baCD6Q5uNG2zDGbwTtIZ4mv2GGSnxb
-         wOKZOfbKF1uvs+zL+If3DV65U85141PVYXNFYZwAOy09zh1KRnzOjq0JtT0QoAbVyF3O
-         aHC0lwsrUlO1V+0xaSWKcmP2LfY2crVDz5pClXH/oguqyCYPXiGnlJiVmSAqPVbpgFRa
-         crSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWLpYiGNncfzz46Yh3rzDyGacKHsclQ5YdaMOQp5kIlgp1lw/8zzxcGNcRs6Ri9lTsiQihWnr761b0U9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ8Z9lrsX6OCn+TR8EV+PFccg4RiPvNyg8VeEGJJYl4upawKKs
-	FzcQQWoLvKZcjlL+n7hHESMK3BATgbfOniBFaWA+AdkjDNOsaDgQbRsd19xTTEY=
-X-Gm-Gg: ASbGnct9DGFyF4Jt9f4fKz57jAX82hty6mrblP1QeJc+jM/U6RUk34h9LlwggJ1eNLG
-	Sc1ihNLI42TZZuhEFa/Bp/5YwuuSltLYRGsohZepUaVE8cyZC10ygtE/esqUfUW/hVAb9ENe1YU
-	pbfa4TkW1GhWR4FsRhB2Xky6UCCwIagJbXTGdGzLwzAFaUwI7gceiL4vgUFKTu3oWPQTiiVIyuX
-	XlIzOZO9HTUnVdNmG8W8hUJxZ0p2Ahp+BZmEB72FZ/pqlAvbcmMkm76OpbMQVG7gXttwlLxxAl7
-	gKALfzljl5zrn6wTG++Qp2hbnXDDHBHsUl8Fm1/4o0HXAZHb7Kwdy4mwUxbvbX9Jm31vOlrwTjw
-	o
-X-Google-Smtp-Source: AGHT+IGsjauNZ+5/GC/nZjSunHRmkAUzg5IoFGDp2f/2A4+hPimavOQXB5e0AQHxXFkAnu0UzdWshg==
-X-Received: by 2002:a05:6a21:2d0a:b0:1f2:f1a8:70ca with SMTP id adf61e73a8af0-20143921c85mr8989716637.5.1744188030229;
-        Wed, 09 Apr 2025 01:40:30 -0700 (PDT)
-Received: from dev-linux (syn-076-088-115-008.res.spectrum.com. [76.88.115.8])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b02a0dee30asm691019a12.32.2025.04.09.01.40.28
+        d=1e100.net; s=20230601; t=1744188046; x=1744792846;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YfgRSjZMirwP4A4DT85B9dRR+tHIO2UwmfqRGQoebTc=;
+        b=D6RO8ax1AqaBWVzGxKAdObpvAgpcqWUVOkIGIS0TlUNSxDuAum61pr27vMzQg4GZIO
+         U4DLDVED5W/KyJ16pSXzaMlr5CuCImF3VxU1YUn+Qgzb2sHUSYBg6QXS2UtRYVZzdmGu
+         1PaPxOQSHHBMW1nj+I5uto1G8Uw28blJp7d+GB/xxNwDOvPfs+P4+MvZtUzlc3XjpE2s
+         I/7Uc4Om1Y+G9VDtdlDjqKbrmh9TW6FIz1sQXbebGTRmWY8nehPEeCBmLsosxLMrRa1v
+         N8BEvAKvHVvrptojKLeV4sobKibbum6yAD5eJpPRbJCTrum0L9z1FDXuO4z9GuUDV0kk
+         7Fvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwYUxpjRgctf9bw0ADMVK+yNnSQjq66tUBX2Mcbl57Kh2G+4Ckr5DnzKNlCdugzQGTGW4Je4xY9vGE8Jo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzL+c9pBhiDpVJctXdoAxazGXbjvwdUkdu6UK8qdlz2vAvvGpb
+	oddG5UunQ+24ZBLV9CetmSsTaZ7pcB+BguWmfmzZVFmoqm4iF9/SgIF+TBT+7CoJpbZzz1/R9hI
+	2M/g=
+X-Gm-Gg: ASbGncumWBlzoBtcmM5JWfpWWpnd1ennzhxwqOgvGJ5OAO9uCroDe6g5ilLa/yLlRdW
+	00ReGXRsZWbqc9WNA9cUDoCRhvOXZhTTbffUxeyh17HP/ItPVR0A222dtfhXLlOvD2xXeVx9K/J
+	6q7n7jevCEyeip4u5wnqfd5qQ4rq0a8HPeiXI+zPSfLzCAokN6IYDU5cTOgxEFEqBkRZLLZylVk
+	d/l5WDjcfuD7AOEeKZfv1X7g+XHLjyx9ZSh1DXJUFmf7NQPe1kikY7p1PcHSePzeCQo3ubMoRku
+	u2wiys3DOueAJplZRZRBgLmJL2fC+qRikrqkb7YhKoc5
+X-Google-Smtp-Source: AGHT+IG/uLzpRERbCl1zMbJkXY/9e21B4Oye6Db7RIlllWZzhZho8vNAYbf9zIjaFjjXBvnoPW3ZfQ==
+X-Received: by 2002:a05:6000:4009:b0:391:3cb7:d441 with SMTP id ffacd0b85a97d-39d87ab6642mr1445941f8f.25.1744188046123;
+        Wed, 09 Apr 2025 01:40:46 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:7880:1c3f:3ac3:7c62])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233c8219sm8726235e9.21.2025.04.09.01.40.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 01:40:29 -0700 (PDT)
-Date: Wed, 9 Apr 2025 01:40:27 -0700
-From: Sukrut Bellary <sbellary@baylibre.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Andreas Kemnade <andreas@kemnade.info>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] dt-bindings: clock: ti: add ti,autoidle.yaml
- reference
-Message-ID: <Z/Yye/z+g5CZJRzg@dev-linux>
-References: <20250404014500.2789830-1-sbellary@baylibre.com>
- <20250404014500.2789830-5-sbellary@baylibre.com>
- <20250404194206.GA171263-robh@kernel.org>
+        Wed, 09 Apr 2025 01:40:45 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/7] iio: convert GPIO chips to using new value setters
+Date: Wed, 09 Apr 2025 10:40:38 +0200
+Message-Id: <20250409-gpiochip-set-rv-iio-v2-0-4b36428f39cb@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250404194206.GA171263-robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIYy9mcC/22NQQ6CMBBFr0Jm7ZgpLaKuvIdhAWWESQwlU9JoC
+ He3krhz+V7y318hsgpHuBYrKCeJEqYM5aEAP7bTwCh9ZiiprMiRwWGW4EeZMfKCmlAkYEcn59n
+ Z+mJ6yMtZ+SGvvXpvMo8Sl6Dv/SSZr/316r+9ZJDw7KzpiGxrXHV7ytRqOAYdoNm27QPDd74Vt
+ wAAAA==
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Cosmin Tanislav <cosmin.tanislav@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1839;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=1VmSF1FsDxlYv2R/Yfi5O2efY79iuhVVKCImNUHwSDM=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn9jKL4ZxP/or07B09bNRWDnOGUJzJeTfjcs1xc
+ 42EVnXNzv6JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/YyiwAKCRARpy6gFHHX
+ ckkZEACfY8X9eP3FTD7PsTbprsHNKdiedrNEre7r1anPs+AIMIiioakugWK8lLaKg/b0Oq6EL9A
+ iHk9z5hacSoe6g1CNB1DyC1QnXre0cYOwDScwvRjz9qfShj603Vjc+k+90JMdv61gQMKMsELcY8
+ Iir8y+VHhI1yNhk7SI0lWwsRra0jrg1gsAHcE2M3DECmWXicFYuLofI6/12i4B8hDWu9TjquYLp
+ PuT3jKMlJLz3ez2d+ukBGVnkNSFi/cx7n2CaV29RuhLy1SKTIgZ4j8gUlq8qg3RFPvwWL0lS/du
+ /iA1MfeP4VJI/yEx1zpnGVGd8U1u3E/vpza0Eg8fHbl6ucXPFIv13zz+BfkkaipxzLPMUfvM7fl
+ 4d/Kdr6obV74gUzBCswJHGUjQRX0zulefhXy54u2qyS6OMpV/xwZLx8sXXudahrC3kO4EG+SAcT
+ Cnn51si0tPt/LDHOJ4RVkK4Cooda0mpm4zf+e1zqlxyPS8YgGc+Uf3tgn+M81YRPss/mPjE6oWN
+ OHyvG7X2BMIPUTI4Rhwq3b0V8m1yNodxzeBNoeI+jZ247HpmarrknhbASt5M84HznC5M2EkEScD
+ GU74ckqRtNrsPzVDQ1/fo1o5Md+OULTwqVnRI/CGMZOWKumNFixNnCYDHZHGGwXG8DlcdCEEp2J
+ sABS+CKuL2MV9Ww==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Fri, Apr 04, 2025 at 02:42:06PM -0500, Rob Herring wrote:
-> On Thu, Apr 03, 2025 at 06:45:00PM -0700, Sukrut Bellary wrote:
-> > ti,divider-clock uses properties from ti,autoidle.
-> > 
-> > As we are converting autoidle binding to ti,autoidle.yaml,
-> > fix the reference here.
-> > 
-> > Add dual license.
-> 
-> Do you have rights to do so?
+struct gpio_chip now has callbacks for setting line values that return
+an integer, allowing to indicate failures. We're in the process of
+converting all GPIO drivers to using the new API. This series converts
+all the IIO GPIO controllers and also contains some additional
+refactoring patches for ad5592r in preparation for the conversion.
 
-I will keep it as is.
-May be Andreas can take care of this.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Changes in v2:
+- move devm_mutex_init() earlier in probe() to avoid using a goto
+- rework returning on error in ad5592r_set_channel_modes(): return
+  immediately instead of saving the return value and going to the bottom
+  of the function
+- use scoped_guard() in one more place to fix a build warning reported
+  by the build bot
+- Link to v1: https://lore.kernel.org/r/20250407-gpiochip-set-rv-iio-v1-0-8431b003a145@linaro.org
 
-> > 
-> > Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
-> > ---
-> >  .../bindings/clock/ti/ti,divider-clock.yaml   | 24 ++++---------------
-> >  1 file changed, 5 insertions(+), 19 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> > index 3fbe236eb565..aba879ae302d 100644
-> > --- a/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> > @@ -1,4 +1,4 @@
-> > -# SPDX-License-Identifier: GPL-2.0-only
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> >  %YAML 1.2
-> >  ---
-> >  $id: http://devicetree.org/schemas/clock/ti/ti,divider-clock.yaml#
-> > @@ -55,9 +55,10 @@ description: |
-> >    is missing it is the same as supplying a zero shift.
-> >  
-> >    This binding can also optionally provide support to the hardware autoidle
-> > -  feature, see [1].
-> > +  feature.
-> >  
-> > -  [1] Documentation/devicetree/bindings/clock/ti/autoidle.txt
-> > +allOf:
-> > +  - $ref: /schemas/clock/ti/ti,autoidle.yaml#
-> >  
-> >  properties:
-> >    compatible:
-> > @@ -97,7 +98,6 @@ properties:
-> >      minimum: 1
-> >      default: 1
-> >  
-> > -
-> >    ti,max-div:
-> >      $ref: /schemas/types.yaml#/definitions/uint32
-> >      description:
-> > @@ -116,20 +116,6 @@ properties:
-> >        valid divisor programming must be a power of two,
-> >        only valid if ti,dividers is not defined.
-> >  
-> > -  ti,autoidle-shift:
-> > -    $ref: /schemas/types.yaml#/definitions/uint32
-> > -    description:
-> > -      bit shift of the autoidle enable bit for the clock,
-> > -      see [1].
-> > -    maximum: 31
-> > -    default: 0
-> > -
-> > -  ti,invert-autoidle-bit:
-> > -    type: boolean
-> > -    description:
-> > -      autoidle is enabled by setting the bit to 0,
-> > -      see [1]
-> > -
-> >    ti,set-rate-parent:
-> >      type: boolean
-> >      description:
-> > @@ -156,7 +142,7 @@ required:
-> >    - clocks
-> >    - reg
-> >  
-> > -additionalProperties: false
-> > +unevaluatedProperties: false
-> >  
-> >  examples:
-> >    - |
-> > -- 
-> > 2.34.1
-> > 
+---
+Bartosz Golaszewski (7):
+      iio: dac: ad5592r: destroy mutexes in detach paths
+      iio: dac: ad5592r: use lock guards
+      iio: dac: ad5592r: use new GPIO line value setter callbacks
+      iio: adc: ti-ads7950: use new GPIO line value setter callbacks
+      iio: adc: ad4130: use new GPIO line value setter callbacks
+      iio: addac: ad74413r: use new GPIO line value setter callbacks
+      iio: addac: ad74115: use new GPIO line value setter callbacks
+
+ drivers/iio/adc/ad4130.c       |  10 +--
+ drivers/iio/adc/ti-ads7950.c   |  17 +++--
+ drivers/iio/addac/ad74115.c    |  18 +++--
+ drivers/iio/addac/ad74413r.c   |  28 ++++----
+ drivers/iio/dac/ad5592r-base.c | 147 ++++++++++++++++++-----------------------
+ 5 files changed, 103 insertions(+), 117 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250401-gpiochip-set-rv-iio-b064ce43791d
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
