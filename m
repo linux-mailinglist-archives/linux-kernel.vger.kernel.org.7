@@ -1,110 +1,229 @@
-Return-Path: <linux-kernel+bounces-595107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF9AA81A88
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 03:31:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8B5A81A85
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 03:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1C44A8606
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 01:31:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A552A3BFCB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 01:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D15474BE1;
-	Wed,  9 Apr 2025 01:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DC117A30D;
+	Wed,  9 Apr 2025 01:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="TMiAeJ3W"
-Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wbUxru1E"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC7A1F5F6
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 01:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBAE6BFC0;
+	Wed,  9 Apr 2025 01:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744162287; cv=none; b=V4yo2g8RP2wG0GFw0tgk23sokflASoxQUORJ8R6gs4KaCrlG4zLx482+lIj0yVDEDF8/5HCd00T/IArapBHiLzVZVk8qymQlkhXtOfotcJX58v52x0iWmQl51gOAhS65aXe4sj1D7y7V7JV0kB7K6HMdOk684/TIoBbJLZNIuyE=
+	t=1744162183; cv=none; b=TmJAdA/9WsNg2/sAQM0d6xNhuvUrC0TZRCGU/vSC/AVsYQwoEKANISy/RxbL9yHvVHDLreyp74FGW2R+mN8lMuqucHnkpcyZL3fh0TGNbcu2ik82CY7hIhtQWY2DfcJlh+7v8ANWsYvII73P7XqcNKME2ObHfNbIso1yl2QDVsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744162287; c=relaxed/simple;
-	bh=MNqubeCDKTLai57rROoLQl6MXjA/yucUP5NQ3iaWGi0=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=jUd7KdYQxvPNy81Z8J0f4UaN9ij4O9IL78s7Jqvgf5NWFuhB9ZvJJrzDPIKyXs32mZBC44joztU4xW5AhcHvw+gD7Jv+3HCyCIs6kFWRYz/Rf999ZQEieo3+M57b51Qmf7KTXQD82MRHF3h/Tq1vUx/UQVNY/FWn8VO6h7fXo34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=TMiAeJ3W; arc=none smtp.client-ip=203.205.221.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1744161980; bh=8xG24UL2oD6sowBVKyUcqL6lu1Pxha72RIbpwlU2QqM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=TMiAeJ3W2CX+M4/QNKK79X5mWhS43FPBE/V97NuclFnwEUF/dXnUayK4xdaEVkGgS
-	 6Ooekgctwmd68SSPmM6nB2sRRUuKFUlk3/VAlot1yPTRBCaHed14EEqbaDhYZgrNqC
-	 o+ks5nZxo+BgPozrLxiX1qut8XLKN6PVmPZrl1uU=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id 6923B6D0; Wed, 09 Apr 2025 09:26:18 +0800
-X-QQ-mid: xmsmtpt1744161978t0ur988bm
-Message-ID: <tencent_611BCC4B4F1B7A2556BA47BBBB33119E7108@qq.com>
-X-QQ-XMAILINFO: Nr4sKL92GIu+Mkb5twI0gKZ0Z5FTYhN+Ckdb4FiItO9LswPDoHyYRap7yjYuHX
-	 RRGou+llDxhf4EMPaugP/x8NJYyI78R1D+opjKzW4QiUERpZaIfI+Vi1z05Do71tT/yDrb/YTgPY
-	 G/MJxdYHhWaTLBBt6FzkNxuZ61Ipq+D6y44MxQaXVrv7OI3Nk8CZUcT4yazRKZqspA+5n11gsKqv
-	 FIxmJr5dUFINPP6qmBuX6NvHYQSDa3IotUEOo1d5mnx6Esmnd2+sPI/LKdGcI7iazVls2PYHN6ws
-	 oQ4cMvgcU2M1U70Vc6nL2PqjUeQKwhYC16q1iwE+if9Q1ake+MufeUoQ0mFQOBV+uHPe6laLP9Mr
-	 nqCHHK2dvISU2Efa4XhlJgOFCAyeojmRNXJJYChUZh6gqJGodt+FoCtBQbzR/CYJVq0oW6ASUAn+
-	 JJL/Z/72b89+n6FAuyFSPosfkb3gOC2yj7p9haF1o/aXZ59j9sNiBsHNUC04dFM5EhvY4Rw3TYjs
-	 XyOIDZaDzq85sWZyWXUg8Tqdop14MdERAd1iO8IfYuJRE7Cqllfv3cCGR1iJLCQ/z+xbeK6DCacQ
-	 7A5QT2aPHam4k+8AF4VCLCXvb5TgTShk/tAcGXuJaMA4DUmYlMG0LxE0duWgA1jQkEoIkug8AXTG
-	 c91YR1JTF6ndr4xWvUdQeL8WigzGBG3XFXC8puJsAQuHCCKkXlVkiqAHKxwkNTwZZfMdk7/SNkWB
-	 jif+QQkdDUsKKy3b9pwMXQakakzH/0Pf42OYY5FAzE8BxLfIxQ/02e5vYlPrurmKG4A3lRAFNxX/
-	 IHI49kuNjqHOypHcRYZAPkFMV4Je3pvoFcC6BC4J5PC8z2ZhsQ0yiK6v5lDAf5bAg2mu2ZKhl7BJ
-	 EPxLSy7pLG0ZThSi6qbM1YB/1+ZTtsNeC/uEdej0hPj+4s2Nj+bwAMYrIe0OctlVcv9rAFPTxKvG
-	 e0cHLYvFu0hZyoEXFzqg==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+00778a9a557a2a5e1a33@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [wireless?] general protection fault in cfg80211_mlme_deauth
-Date: Wed,  9 Apr 2025 09:26:18 +0800
-X-OQ-MSGID: <20250409012617.1586212-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <67f50e3e.050a0220.396535.0561.GAE@google.com>
-References: <67f50e3e.050a0220.396535.0561.GAE@google.com>
+	s=arc-20240116; t=1744162183; c=relaxed/simple;
+	bh=jqXJkpKflOLHdYCCkc79nFsoqa/SSDo+aaoBYTvRk5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nM68ePbwV+V26LQqSNmvSgoJ/U79y3CLUOhlG0PnLClW8ujG3mQK5aLGgp8u2LkHRKUSl4h1/vJvl59s7jrPHdkzGOIcSKswVpHm/5wa3r85D1VeTdYBkFc2hOVlGExL6wWwXAz0AegfqgTRB/Vwm/X8r+qzWjnkyvb9Ls28+S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wbUxru1E; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DC66C82E;
+	Wed,  9 Apr 2025 03:27:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1744162062;
+	bh=jqXJkpKflOLHdYCCkc79nFsoqa/SSDo+aaoBYTvRk5I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wbUxru1EE88T40IODiloHKP2PaubUSiAkNqWJhKJnCCQbociv+8fDM2gL/XEvA/zw
+	 J4JWjChCJ38Gh/i0dcszgMIJWmir2KdlmejeOoI4oCncYPRKOX3Yd/k78sZqZcFhEg
+	 /7KDZMSsVHwHgOLM0qlrbZNRXyitzKmqGToMfGb4=
+Date: Wed, 9 Apr 2025 04:29:14 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 11/17] media: rzg2l-cru: Add register mapping support
+Message-ID: <20250409012914.GD31475@pendragon.ideasonboard.com>
+References: <20250328173032.423322-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250328173032.423322-12-tommaso.merciai.xr@bp.renesas.com>
+ <TY3PR01MB11346ECE31CB6C8DC33459C2486AF2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <CA+V-a8sJQnyJb_uq9yEcjHRW7ZFOw3g2XQyygcozWTgMjrYxRQ@mail.gmail.com>
+ <TY3PR01MB113462DC897E0DB681B1C020F86AF2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <CA+V-a8ukJ+_Bhy-4nU_CFD4rMoTRxEY-q+bXHHZ-9Mz8gQ362A@mail.gmail.com>
+ <20250402092618.GH4845@pendragon.ideasonboard.com>
+ <TY3PR01MB11346DF814762C667FF97074286AF2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <CA+V-a8tsCEhmhNSbMMiuN6b2rJCoSekf+-e6EHr5wE5C000ZxQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+V-a8tsCEhmhNSbMMiuN6b2rJCoSekf+-e6EHr5wE5C000ZxQ@mail.gmail.com>
 
-#syz test
+On Mon, Apr 07, 2025 at 04:55:33PM +0000, Lad, Prabhakar wrote:
+> On Wed, Apr 2, 2025 at 10:39 AM Biju Das wrote:
+> > On 02 April 2025 10:26, Laurent Pinchart wrote:
+> > > On Wed, Apr 02, 2025 at 08:25:06AM +0000, Lad, Prabhakar wrote:
+> > > > On Wed, Apr 2, 2025 at 9:20 AM Biju Das wrote:
+> > > > > On 02 April 2025 08:35, Lad, Prabhakar wrote:
+> > > > > > On Wed, Apr 2, 2025 at 7:31 AM Biju Das wrote:
+> > > > > > > > On 28 March 2025 17:30, Tommaso Merciai wrote:
+> > > > > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > > > > >
+> > > > > > > > Prepare for adding support for RZ/G3E and RZ/V2HP SoCs, which
+> > > > > > > > have a CRU-IP that is mostly identical to RZ/G2L but with
+> > > > > > > > different register offsets and additional registers. Introduce
+> > > > > > > > a flexible register mapping mechanism to handle these
+> > > > > > > > variations.
+> > > > > > > >
+> > > > > > > > Define the `rzg2l_cru_info` structure to store register
+> > > > > > > > mappings and pass it as part of the OF match data. Update the
+> > > > > > > > read/write functions to check out-of-bound accesses and use
+> > > > > > > > indexed register offsets from `rzg2l_cru_info`, ensuring
+> > > > > > > > compatibility across different SoC variants.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > > > > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> > > > > > > > ---
+> > > > > > > > Changes since v2:
+> > > > > > > >  - Implemented new rzg2l_cru_write/read() that now are checking out-of-bound
+> > > > > > > >    accesses as suggested by LPinchart.
+> > > > > > > >  - Fixed AMnMBxADDRL() and AMnMBxADDRH() as suggested by LPinchart.
+> > > > > > > >  - Update commit body
+> > > > > > > >
+> > > > > > > > Changes since v4:
+> > > > > > > >  - Mark __rzg2l_cru_write_constant/__rzg2l_cru_read_constant
+> > > > > > > >    as __always_inline
+> > > > > > > >
+> > > > > > > >  .../platform/renesas/rzg2l-cru/rzg2l-core.c   | 46 ++++++++++++-
+> > > > > > > >  .../renesas/rzg2l-cru/rzg2l-cru-regs.h        | 66 ++++++++++---------
+> > > > > > > >  .../platform/renesas/rzg2l-cru/rzg2l-cru.h    |  4 ++
+> > > > > > > >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 58 ++++++++++++++--
+> > > > > > > >  4 files changed, 139 insertions(+), 35 deletions(-)
+> > > > > > > >
+> > > > > > > > diff --git
+> > > > > > > > a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> > > > > > > > b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> > > > > > > > index eed9d2bd08414..abc2a979833aa 100644
+> > > > > > > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> > > > > > > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> > > > > > > > @@ -22,6 +22,7 @@
+> > > > > > > >  #include <media/v4l2-mc.h>
+> > > > > > > >
+> > > > > > > >  #include "rzg2l-cru.h"
+> > > > > > > > +#include "rzg2l-cru-regs.h"
+> > > > > > > >
+> > > > > > > >  static inline struct rzg2l_cru_dev *notifier_to_cru(struct
+> > > > > > > > v4l2_async_notifier *n)  { @@ -269,6 +270,9 @@ static int
+> > > > > > > > rzg2l_cru_probe(struct platform_device *pdev)
+> > > > > > > >
+> > > > > > > >       cru->dev = dev;
+> > > > > > > >       cru->info = of_device_get_match_data(dev);
+> > > > > > > > +     if (!cru->info)
+> > > > > > > > +             return dev_err_probe(dev, -EINVAL,
+> > > > > > > > +                                  "Failed to get OF match data\n");
+> > > > > > > >
+> > > > > > > >       irq = platform_get_irq(pdev, 0);
+> > > > > > > >       if (irq < 0)
+> > > > > > > > @@ -317,8 +321,48 @@ static void rzg2l_cru_remove(struct platform_device *pdev)
+> > > > > > > >       rzg2l_cru_dma_unregister(cru);  }
+> > > > > > > >
+> > > > > > > > +static const u16 rzg2l_cru_regs[] = {
+> > > > > > > > +     [CRUnCTRL] = 0x0,
+> > > > > > > > +     [CRUnIE] = 0x4,
+> > > > > > > > +     [CRUnINTS] = 0x8,
+> > > > > > > > +     [CRUnRST] = 0xc,
+> > > > > > > > +     [AMnMB1ADDRL] = 0x100,
+> > > > > > > > +     [AMnMB1ADDRH] = 0x104,
+> > > > > > > > +     [AMnMB2ADDRL] = 0x108,
+> > > > > > > > +     [AMnMB2ADDRH] = 0x10c,
+> > > > > > > > +     [AMnMB3ADDRL] = 0x110,
+> > > > > > > > +     [AMnMB3ADDRH] = 0x114,
+> > > > > > > > +     [AMnMB4ADDRL] = 0x118,
+> > > > > > > > +     [AMnMB4ADDRH] = 0x11c,
+> > > > > > > > +     [AMnMB5ADDRL] = 0x120,
+> > > > > > > > +     [AMnMB5ADDRH] = 0x124,
+> > > > > > > > +     [AMnMB6ADDRL] = 0x128,
+> > > > > > > > +     [AMnMB6ADDRH] = 0x12c,
+> > > > > > > > +     [AMnMB7ADDRL] = 0x130,
+> > > > > > > > +     [AMnMB7ADDRH] = 0x134,
+> > > > > > > > +     [AMnMB8ADDRL] = 0x138,
+> > > > > > > > +     [AMnMB8ADDRH] = 0x13c,
+> > > > > > > > +     [AMnMBVALID] = 0x148,
+> > > > > > > > +     [AMnMBS] = 0x14c,
+> > > > > > > > +     [AMnAXIATTR] = 0x158,
+> > > > > > > > +     [AMnFIFOPNTR] = 0x168,
+> > > > > > > > +     [AMnAXISTP] = 0x174,
+> > > > > > > > +     [AMnAXISTPACK] = 0x178,
+> > > > > > > > +     [ICnEN] = 0x200,
+> > > > > > > > +     [ICnMC] = 0x208,
+> > > > > > > > +     [ICnMS] = 0x254,
+> > > > > > > > +     [ICnDMR] = 0x26c,
+> > > > > > > > +};
+> > > > > > >
+> > > > > > > Do we need enum, can't we use struct instead with all these entries instead?
+> > > > > > >
+> > > > > > What benefit do you foresee when using struct? With the current
+> > > > > > approach being used a minimal diff is generated when
+> > > > > > switched to struct there will be lots of changes.
+> > > > >
+> > > > > The mapping is convinient when you want to iterate throught it.
+> > > > > Here, if you just want to access the offset value from its name, a
+> > > > > structure looks more appropriate.
+> > > >
+> > > > Thanks, as this patch has been reviewed by Laurent a couple of times
+> > > > we will change this to struct If he insists.
+> > >
+> > > How would a struct look like ? I'm not sure what is being proposed.
+> >
+> > It will be
+> >
+> > struct rzg2l_cru_regs {
+> >         u16 cru_n_ctrl;
+> >         u16 cru_n_ie;
+> >         u16 cru_n_ints;
+> >         u16 cru_n_rst;
+> > };
+> >
+> > static const struct rzg2l_cru_regs rzg2l_cru_regs = {
+> >         .cru_n_ctrl = 0x0,
+> >         .cru_n_ie = 0x4,
+> >         .cru_n_ints = 0x8,
+> >         .cru_n_rst = 0xc,
+> > };
+> >
+> > You can access it using info->regs->cru_n_ctrl instead of info->regs[CRUnCTRL]
+> > This is proposal.
+>
+> Are you OK with the above proposal?
 
-diff --git a/net/wireless/sme.c b/net/wireless/sme.c
-index cf998500a965..b983faa5bbf1 100644
---- a/net/wireless/sme.c
-+++ b/net/wireless/sme.c
-@@ -269,6 +269,16 @@ void cfg80211_conn_work(struct work_struct *work)
- 			memcpy(bssid_buf, wdev->conn->params.bssid, ETH_ALEN);
- 			bssid = bssid_buf;
- 		}
-+
-+		if (wdev->conn->state == CFG80211_CONN_ASSOC_FAILED) {
-+			printk("bssid: %p, pbssid: %p, dis bssid: %p, connected: %d, %s\n",
-+				wdev->conn->bssid, wdev->conn->params.bssid,
-+				wdev->disconnect_bssid, wdev->connected, __func__);
-+			BUG_ON(!wdev->conn->bssid ||
-+			       !wdev->conn->params.bssid ||
-+			       !wdev->disconnect_bssid);
-+		}
-+
- 		treason = NL80211_TIMEOUT_UNSPECIFIED;
- 		if (cfg80211_conn_do_work(wdev, &treason)) {
- 			struct cfg80211_connect_resp_params cr;
-@@ -411,6 +421,8 @@ bool cfg80211_sme_rx_assoc_resp(struct wireless_dev *wdev, u16 status)
- 		return true;
- 	}
- 
-+	printk("bssid: %p, pbssid: %p, dis bssid: %p, %s\n",
-+		wdev->conn->bssid, wdev->conn->params.bssid, wdev->disconnect_bssid, __func__);
- 	wdev->conn->state = CFG80211_CONN_ASSOC_FAILED;
- 	schedule_work(&rdev->conn_work);
- 	return false;
+I may be missing something, but I don't see why this would be a
+significantly better option. It seems it would make the callers more
+complex, and decrease readability.
 
+-- 
+Regards,
+
+Laurent Pinchart
 
