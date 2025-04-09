@@ -1,255 +1,117 @@
-Return-Path: <linux-kernel+bounces-596621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08796A82E39
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:11:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5E9A82E2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 339A47AEB6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:10:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 268011B65F07
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D9227781B;
-	Wed,  9 Apr 2025 18:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2F627604A;
+	Wed,  9 Apr 2025 18:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="RSaLncYf"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/25IWCv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3750427701F
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 18:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB451CF8B;
+	Wed,  9 Apr 2025 18:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744222209; cv=none; b=bEIrLn9vj+dQRez4ANHzbc0LguJMXnLJ0UBqzRum+rhDjPhKdWe1hhW8EPQf/pclXvFfJiCALkim6C2daieMClClimPmt/MFAXAerV3zZ/d1wsAv52YhnOaJSA0Ra0g+S1p12lD3tkSXkjiYay0zvcdQUnQnZ1nlcyYh4I6P8zc=
+	t=1744222185; cv=none; b=iAqPpRK8nL28xVQ+KltRq0fF9NWxlsJK93qa2wRFNzVjkWgTl21bME92hDfzu1X/Xcr74WIBlN+89oAMxlAMewW0CQNtPXqaK7zjR+r3wurzI9fonjHEG/+G9WpT99CKhL/B9j6YrPEjRlHDNKJy9e4Tq3GpcdM0+VX00KRgpRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744222209; c=relaxed/simple;
-	bh=i55/zbqHXEP9n9Jp0TAj7NFy/jb3tlzhWzJIzs8Xu6o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g/wSyEeetP4fmCLh4xB+HAEd02VKUY3Z8az3B3AJcfrZGTudEvErv6R3fLdgyPfjruHJecFIpdbUmaS7SPGkzYMRvpfzJG8SJpuIuCuBSkmfW/1QMG+0UogcLX3OBUr7NxvjpZdo2e5k3Sy1vEheUM1qJ/ukWiFQeGrcZ2FPoTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=RSaLncYf; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neverthere.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-736a7e126c7so6636291b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 11:10:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=neverthere.org; s=google; t=1744222206; x=1744827006; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yXkvdn8RYwOYRtLEQqbmHYo+oTivxTewzyUjW/RrAvo=;
-        b=RSaLncYfq/JQT8quSaD8HPe010CF8Gk2IXfwF1AUIpPELiX4m6z9Eo6FYnJJxignO7
-         ZIesmBeUUP4Ito8vZUdiqJhYJIT6O98HvBMZFciJ+95YGRtYpVLIWuKSOKvRC0HatV11
-         fFn+x6Y8DscWMEenIOJxo9P3p31DLd7r8GCB5P853ckYvjg9YpqB5y6XP7UixNZMBfXT
-         e/DmYGAYg4dRogzUmXXtmJJaY231DfJr/Tp4/N/8hWi+nPhAVkhoiMMYKyvvIn7wtBv8
-         a7Uz4cNoXVBvGpNt9tw5Gb36yQ892XW+t5Ok2Ei0H6H9Fy2gXEGpf+/7uHbT5OMxgcPN
-         iwFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744222206; x=1744827006;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yXkvdn8RYwOYRtLEQqbmHYo+oTivxTewzyUjW/RrAvo=;
-        b=mDirnCmGNZqHwxkdJu6xooownpt1b4wirMEoZq18/ZTEZNsFYmJj2sBX9Kq4L738Qf
-         QN8s3fxAuRDi3Pp1IqOowhbDCjY8s22Htns+BUs0lxlPsvpCgvUwym+aWFCq3u0xb/6S
-         TM4xGDm5Hth4w1c7c2miko71wd73U+vZU6+F+k6n3yENvrinUKDWxZYomG7Vj8LUGRdX
-         jhK8aGCqIkGxZ6Aby43o7qLrbx8a+GY8RAV7eNjW+KHwW8OV+PVKTmtKWm8dq4snW6lh
-         h8UPNdQ/C8SOZC3NPjiFYmfyrVFXaIUHVL5EWaHhyd7UczbRV9XRWaiwSa44IUj5LNg/
-         2/+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUZXJWmtrLzXzukBY+vgjfprr8ly4CMedRV9dIhToaJIF0JxvfKNXuo+zYaKtjTnmDgxVMrzw3dRcuDfRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4FOQ1PJ//goPNhjuyRlfu5xrUwKrqXC+xv4ohALMQTf5J4EGf
-	wlMdqh1eAfptaUzFKyfh8TyrQNXm91tWJosa5YoVLCbO7JVZQkepVxxiP6xdAA==
-X-Gm-Gg: ASbGncsutJDXYwX+HPPk8zlWyxkJ+uz0fQP74jy3bMMsmbEsZJsoxSSWgb7Nk32i45z
-	vnpDyXfTVFTc8WcW9QsdkTOeGVYyB/mMlGBG+gA4oNsVIgBWfU5pJQEqbJxIA7foSlqRTuS+wnH
-	qTs69uN4RLOn+mxBrZKH/fdWM9qLzwBi/hHfVfVp1Qzohm81fnIVxo/Ku4BiTCYWO+ZbWidZQnT
-	UWIir8lYau/v5+XWV1Hrjqu6LPAFSRspfgMv78ogMrTSSe18WVSkC240YWAlTs6rq8VRTLZF2Uj
-	375jJ6MQeWBWt0p3Ua71Ct03SUGf1PO46zLpFBQIwBwMKPgUFjOy5BF3XpGoBlLR7hB69Zz6kEt
-	k+EiQkNIsLCVG/PnU
-X-Google-Smtp-Source: AGHT+IHQQm9vHH/AY/TOYUwpph9KfJogqhoEu+d3uc5fVZC2OAR1SKhB7+yES8VUq3t8TR37cQizmA==
-X-Received: by 2002:a05:6a00:2e1d:b0:739:4a93:a5db with SMTP id d2e1a72fcca58-73bafd709c2mr3555922b3a.22.1744222206442;
-        Wed, 09 Apr 2025 11:10:06 -0700 (PDT)
-Received: from tiamat (c-69-181-214-135.hsd1.ca.comcast.net. [69.181.214.135])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1e69c2asm1714749b3a.175.2025.04.09.11.10.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 11:10:06 -0700 (PDT)
-From: Michael Rubin <matchstick@neverthere.org>
-To: gregkh@linuxfoundation.org,
-	dpenkler@gmail.com,
-	dan.carpenter@linaro.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Michael Rubin <matchstick@neverthere.org>
-Subject: [PATCH v1 09/23] staging: gpib: ines: u8 over uint8_t
-Date: Wed,  9 Apr 2025 18:09:39 +0000
-Message-ID: <20250409180953.398686-10-matchstick@neverthere.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250409180953.398686-1-matchstick@neverthere.org>
-References: <20250409180953.398686-1-matchstick@neverthere.org>
+	s=arc-20240116; t=1744222185; c=relaxed/simple;
+	bh=kCI21FTKGNcphhvldNNqlklI/r6/6piUInLJbiHh91k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D//rubttSi9QNrvoV0+2GwO6hA4w5SYunlDKdYIUQbuj2H4qcBOh2UXtg4SYUnKByMAKKnkK0ooK0cLWAimuM5xWhvAhlSzY764h7ulEBg91cxnQG1/VpRjIx5lBk+7fpvIAmjXgZcMl6RBD5Ld0vy8TVVxAZJgwsMQIpTw0LLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/25IWCv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF413C4CEE2;
+	Wed,  9 Apr 2025 18:09:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744222184;
+	bh=kCI21FTKGNcphhvldNNqlklI/r6/6piUInLJbiHh91k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h/25IWCvI+Ek6aGjEzNWfaxumM7PeT29lRuYNYu20DXeA4wd5h2juFd9UoPhNaMvF
+	 h4qS2z6usFESZ4Hf+2Ri+hZQBUWzDo4cw48csFsH7u5wHJEjKqsF4+JktepXiuPfP2
+	 3fn/U7l9YgN9XDZZxRq3XS5+JKt/MfQfKUNrjNnkgkGG6TW9aogy9WjR7kaPHxmEJy
+	 tESR43ZCr40x+JTwHrJRwWyak6u1l/JTylgrHYm67jxPEwR78egsvJ9pHU0QkX5mtv
+	 MGicyaJgNq3xeHcBfkmsmQkfnVNn+gFm3hWAxFo8Dz/OE9mjjRnmpMcpbJcE188KgC
+	 u+2o00hcJQgqQ==
+Date: Wed, 9 Apr 2025 19:09:40 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
+Message-ID: <815b2990-570a-4603-b33f-2af1f0851434@sirena.org.uk>
+References: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
+ <202504081630.4CE88E855@keescook>
+ <db50faff-7290-4193-b861-f60e36f1d1e3@sirena.org.uk>
+ <CAHk-=wjc+piYyUw36s4ttEkY32jVkxhRtyrt431wew7XcDS2Qg@mail.gmail.com>
+ <a9a459c2-674d-43dc-9e27-41de0471f602@sirena.org.uk>
+ <CAHk-=whKEuQQh2JymabBQLrLs=pEfx0qYVmUnYZRq_tOFj90sA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yDyFX6sToBiDf73T"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whKEuQQh2JymabBQLrLs=pEfx0qYVmUnYZRq_tOFj90sA@mail.gmail.com>
+X-Cookie: Words must be weighed, not counted.
 
-Reported by checkpatch.pl.
 
-CHECK: Prefer kernel type 'u8' over 'uint8_t'
+--yDyFX6sToBiDf73T
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Michael Rubin <matchstick@neverthere.org>
----
- drivers/staging/gpib/ines/ines.h      | 20 ++++++++++----------
- drivers/staging/gpib/ines/ines_gpib.c | 22 +++++++++++-----------
- 2 files changed, 21 insertions(+), 21 deletions(-)
+On Wed, Apr 09, 2025 at 10:42:19AM -0700, Linus Torvalds wrote:
+> On Wed, 9 Apr 2025 at 10:29, Mark Brown <broonie@kernel.org> wrote:
 
-diff --git a/drivers/staging/gpib/ines/ines.h b/drivers/staging/gpib/ines/ines.h
-index abe977f8f961..396cf0bd9ad1 100644
---- a/drivers/staging/gpib/ines/ines.h
-+++ b/drivers/staging/gpib/ines/ines.h
-@@ -36,30 +36,30 @@ struct ines_priv {
- };
- 
- // interface functions
--int ines_read(struct gpib_board *board, uint8_t *buffer, size_t length,
-+int ines_read(struct gpib_board *board, u8 *buffer, size_t length,
- 	      int *end, size_t *bytes_read);
--int ines_write(struct gpib_board *board, uint8_t *buffer, size_t length,
-+int ines_write(struct gpib_board *board, u8 *buffer, size_t length,
- 	       int send_eoi, size_t *bytes_written);
--int ines_accel_read(struct gpib_board *board, uint8_t *buffer, size_t length,
-+int ines_accel_read(struct gpib_board *board, u8 *buffer, size_t length,
- 		    int *end, size_t *bytes_read);
--int ines_accel_write(struct gpib_board *board, uint8_t *buffer, size_t length,
-+int ines_accel_write(struct gpib_board *board, u8 *buffer, size_t length,
- 		     int send_eoi, size_t *bytes_written);
--int ines_command(struct gpib_board *board, uint8_t *buffer, size_t length, size_t *bytes_written);
-+int ines_command(struct gpib_board *board, u8 *buffer, size_t length, size_t *bytes_written);
- int ines_take_control(struct gpib_board *board, int synchronous);
- int ines_go_to_standby(struct gpib_board *board);
- void ines_request_system_control(struct gpib_board *board, int request_control);
- void ines_interface_clear(struct gpib_board *board, int assert);
- void ines_remote_enable(struct gpib_board *board, int enable);
--int ines_enable_eos(struct gpib_board *board, uint8_t eos_byte, int compare_8_bits);
-+int ines_enable_eos(struct gpib_board *board, u8 eos_byte, int compare_8_bits);
- void ines_disable_eos(struct gpib_board *board);
- unsigned int ines_update_status(struct gpib_board *board, unsigned int clear_mask);
- int ines_primary_address(struct gpib_board *board, unsigned int address);
- int ines_secondary_address(struct gpib_board *board, unsigned int address, int enable);
--int ines_parallel_poll(struct gpib_board *board, uint8_t *result);
--void ines_parallel_poll_configure(struct gpib_board *board, uint8_t config);
-+int ines_parallel_poll(struct gpib_board *board, u8 *result);
-+void ines_parallel_poll_configure(struct gpib_board *board, u8 config);
- void ines_parallel_poll_response(struct gpib_board *board, int ist);
--void ines_serial_poll_response(struct gpib_board *board, uint8_t status);
--uint8_t ines_serial_poll_status(struct gpib_board *board);
-+void ines_serial_poll_response(struct gpib_board *board, u8 status);
-+u8 ines_serial_poll_status(struct gpib_board *board);
- int ines_line_status(const struct gpib_board *board);
- int ines_t1_delay(struct gpib_board *board, unsigned int nano_sec);
- void ines_return_to_local(struct gpib_board *board);
-diff --git a/drivers/staging/gpib/ines/ines_gpib.c b/drivers/staging/gpib/ines/ines_gpib.c
-index 3b7c8fc0f2e8..465ee125945b 100644
---- a/drivers/staging/gpib/ines/ines_gpib.c
-+++ b/drivers/staging/gpib/ines/ines_gpib.c
-@@ -95,7 +95,7 @@ static inline unsigned short num_in_fifo_bytes(struct ines_priv *ines_priv)
- 	return ines_inb(ines_priv, IN_FIFO_COUNT);
- }
- 
--static ssize_t pio_read(struct gpib_board *board, struct ines_priv *ines_priv, uint8_t *buffer,
-+static ssize_t pio_read(struct gpib_board *board, struct ines_priv *ines_priv, u8 *buffer,
- 			size_t length, size_t *nbytes)
- {
- 	ssize_t retval = 0;
-@@ -133,7 +133,7 @@ static ssize_t pio_read(struct gpib_board *board, struct ines_priv *ines_priv, u
- 	return retval;
- }
- 
--int ines_accel_read(struct gpib_board *board, uint8_t *buffer,
-+int ines_accel_read(struct gpib_board *board, u8 *buffer,
- 		    size_t length, int *end, size_t *bytes_read)
- {
- 	ssize_t retval = 0;
-@@ -213,7 +213,7 @@ static int ines_write_wait(struct gpib_board *board, struct ines_priv *ines_priv
- 	return 0;
- }
- 
--int ines_accel_write(struct gpib_board *board, uint8_t *buffer, size_t length,
-+int ines_accel_write(struct gpib_board *board, u8 *buffer, size_t length,
- 		     int send_eoi, size_t *bytes_written)
- {
- 	size_t count = 0;
-@@ -393,7 +393,7 @@ static struct ines_pci_id pci_ids[] = {
- static const int num_pci_chips = ARRAY_SIZE(pci_ids);
- 
- // wrappers for interface functions
--int ines_read(struct gpib_board *board, uint8_t *buffer, size_t length,
-+int ines_read(struct gpib_board *board, u8 *buffer, size_t length,
- 	      int *end, size_t *bytes_read)
- {
- 	struct ines_priv *priv = board->private_data;
-@@ -412,7 +412,7 @@ int ines_read(struct gpib_board *board, uint8_t *buffer, size_t length,
- 	return retval;
- }
- 
--int ines_write(struct gpib_board *board, uint8_t *buffer, size_t length, int send_eoi,
-+int ines_write(struct gpib_board *board, u8 *buffer, size_t length, int send_eoi,
- 	       size_t *bytes_written)
- {
- 	struct ines_priv *priv = board->private_data;
-@@ -420,7 +420,7 @@ int ines_write(struct gpib_board *board, uint8_t *buffer, size_t length, int sen
- 	return nec7210_write(board, &priv->nec7210_priv, buffer, length, send_eoi, bytes_written);
- }
- 
--int ines_command(struct gpib_board *board, uint8_t *buffer, size_t length, size_t *bytes_written)
-+int ines_command(struct gpib_board *board, u8 *buffer, size_t length, size_t *bytes_written)
- {
- 	struct ines_priv *priv = board->private_data;
- 
-@@ -462,7 +462,7 @@ void ines_remote_enable(struct gpib_board *board, int enable)
- 	nec7210_remote_enable(board, &priv->nec7210_priv, enable);
- }
- 
--int ines_enable_eos(struct gpib_board *board, uint8_t eos_byte, int compare_8_bits)
-+int ines_enable_eos(struct gpib_board *board, u8 eos_byte, int compare_8_bits)
- {
- 	struct ines_priv *priv = board->private_data;
- 
-@@ -497,14 +497,14 @@ int ines_secondary_address(struct gpib_board *board, unsigned int address, int e
- 	return nec7210_secondary_address(board, &priv->nec7210_priv, address, enable);
- }
- 
--int ines_parallel_poll(struct gpib_board *board, uint8_t *result)
-+int ines_parallel_poll(struct gpib_board *board, u8 *result)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	return nec7210_parallel_poll(board, &priv->nec7210_priv, result);
- }
- 
--void ines_parallel_poll_configure(struct gpib_board *board, uint8_t config)
-+void ines_parallel_poll_configure(struct gpib_board *board, u8 config)
- {
- 	struct ines_priv *priv = board->private_data;
- 
-@@ -518,14 +518,14 @@ void ines_parallel_poll_response(struct gpib_board *board, int ist)
- 	nec7210_parallel_poll_response(board, &priv->nec7210_priv, ist);
- }
- 
--void ines_serial_poll_response(struct gpib_board *board, uint8_t status)
-+void ines_serial_poll_response(struct gpib_board *board, u8 status)
- {
- 	struct ines_priv *priv = board->private_data;
- 
- 	nec7210_serial_poll_response(board, &priv->nec7210_priv, status);
- }
- 
--uint8_t ines_serial_poll_status(struct gpib_board *board)
-+u8 ines_serial_poll_status(struct gpib_board *board)
- {
- 	struct ines_priv *priv = board->private_data;
- 
--- 
-2.43.0
+> > Sadly it seems like the build bots didn't find it, or at least if they
+> > found it they didn't identify it well enough to end up with reporting
+> > the issue to someone who'd fix it.
 
+> I wouldn't be entirely surpised if a lot of the build bots end up
+> running old distros (because "enterprise").
+
+I know bunch of them are running Debian, often with a default GCC of
+whatever the base Debian version they're running has at any given time.
+
+> So this is presumably only happening with certain compiler versions,
+> and I expect the build bots have a fairly small set of compilers they
+> end up testing.
+
+Yeah.  The other problem we have is that AFAIK unlike clang we don't
+really have people actively working on GCC coverage specifically,
+everyone mostly just assumes everyone else is doing it since GCC is the
+default (me being as guilty of that as everyone else here).  The work
+Arnd's doing is the nearest thing I'm aware of but that's more
+intermittent and I gather his toolchains don't have plugins enabled
+which wouldn't help here.
+
+--yDyFX6sToBiDf73T
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf2t+MACgkQJNaLcl1U
+h9Ar3gf/bNjNiXDl7G09DGcsgAUaQr9cKmUaIKMRVIGFn6IX6T97ZT6Q0ShC960u
+iyDQ0hZQmYF6gGzuZFW6YOBiq4SAK+oiy4t9+hqGJqshNbg/GzsTsjf1nfA3qXF5
+i29fMHYyBzuZckBypge04FtsZtqs3JMlpdeqix9God7Zq0gVXI93f6KUC4uosY2P
+0NJv+wzpppd42rI8CgPQJfcBQWpGfibjvGupubBEcnp6RwVW/7OL5IEErn13hbOS
+x6GQOQ63UdJVHykkM200vF++qoVnOwUy1Mc9nMbgL9WFkyOh+nJ5s+k2RzJ/LOFI
+U6b/+9NcaE2H+xSgfGLgoFMQnIs2Qg==
+=BZW+
+-----END PGP SIGNATURE-----
+
+--yDyFX6sToBiDf73T--
 
