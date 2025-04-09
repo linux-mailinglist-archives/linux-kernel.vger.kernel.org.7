@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-595611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC61DA820C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:14:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0206A820CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA5A51BA64A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:14:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B31357B41E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3C725D21F;
-	Wed,  9 Apr 2025 09:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF29025D8ED;
+	Wed,  9 Apr 2025 09:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="APcPPBQd"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ResvGiNr"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD24B25C6FA
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15DC25D536
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744190062; cv=none; b=nyt6EPjh9F4rat0UJqonaki8DkdBN3jEHz0rzNySfUq5t1uv4R+gGhsO2XCcJaDBvgZmH+KRWWirZn05VdHdEUL1Eugy3GtubpFfQZ3notP3g88WC241wvu69aOsrp2j27AcTGjSxkEN8uCBcLHCCIIcImbOt6IdsAucU0tzTyE=
+	t=1744190065; cv=none; b=BQHjqIf0uyzuz+eZFETzqtMggbzijAeaS9xjDKFGg9mCa74Fx5EFqgxo9825ii31uyWOY6ce0V3slDddJmGiRK1YD8vPeexFPpBwdtzuRI5QwJ/sD0x1NU31pv9ct5lHz6GB1xN73dSmSGv3fMBprea5CrShe6HchwgCnfLT7Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744190062; c=relaxed/simple;
-	bh=KPrSjQFz6RDMLvo3Gr/vxAHo3CF4mjppfNm8W6oMQVw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NQvw6PK77nyOGLTiU7bc+tN83SZraIF7ACLYJ4WpLDnR3cQAD6Bi+m8ZN54ESt2Y2B/zbEu361x9KPJHH68FNJX1nqgOl9jt4ndUHlDhoSaGdi+EeSQDbPRuOXQW45CNhSDch+I7YzYaiq+9Gs1K1h/CFfO7LU3t3WfsiY2l1gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=APcPPBQd; arc=none smtp.client-ip=209.85.160.172
+	s=arc-20240116; t=1744190065; c=relaxed/simple;
+	bh=7tuF8mS/RBiXqmBPIHQCKgLB4C5lh2LqoT+PdNMhZKU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bxazwhYbDnkBDrLgyOg7ssXKR9fXjnpg15Yqug91jkjC2PxL+OJmZJJnHa4SqB+hSI9Q+H5pBI8bUpWiD7czxFJ/jurXPhEv+VFTA8Mbum0d82qNjZSDj9zx/kbX+kLuNrZnRyC9ELnbgR1JQ8jfXqwLTCjYetkvXsxs6yjFRc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ResvGiNr; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-47663aeff1bso59460021cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 02:14:20 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-476af5479feso63990721cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 02:14:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744190059; x=1744794859; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LuSuDtNF61PvgQQchQkid6uP+93V9BVfdt5rCLmmpzU=;
-        b=APcPPBQdD2cTL4lpxEZFyhbXatPqS151moiFmWQ7Ma3w64nWkQQ4/rG2R0YVPpQU4M
-         poD19MXMVx+lwrGNeLTOi9/mDwbJO2tgFB5A4+hFwpsnDsKNW12ZCA2pJOsCCn3qOy3y
-         DLWnwBgSjXiwF8dX72X9IpntXXmw+Ad41QgAXudYqhlbO1GzmRQbwJNhESLJEyoaGZXg
-         srB0Q01dmjTgqyofONcF6QsRoGbHUu88pbHVmOUkAc3XTOnJAqoBnrBTJ8hjcXqunhLG
-         rG2UjGUYNJPGuOdBvCT8zTIxOpvDPTMis7m+y6364vE+7C7Z2//zqC4lNlbOgK8wdBv+
-         O9/w==
+        d=gmail.com; s=20230601; t=1744190063; x=1744794863; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7n9MYWIYdQKtlJKSmxfHZ9iLzwcGKDDGvLn3OqdhaMc=;
+        b=ResvGiNrhe20jPMU1rxx6BS3XQnSrPre9RNMRKfM6QSBgmwmIpD8WuEapdYnPLGGib
+         R9O17e8WO4dtBA1v+1f5C6PHaSmzrruMG+Mf0FbHRUe6RXWIweY2pfUotzMD6CaBglBX
+         7b4CMKKEt/1XONXvkufC7U/2hfywwEl/yoOSUVsMbzOFi02xT0qWtCtYTq+b1OzJTf5+
+         KEPGAp9v6NrLKl25tOlqi3nl06hqP/lPz9laZ4ctjBBAANyH458Ua+3ORyGehCuJvKoP
+         f2quG5apCtsMU9pbjNleKV6nOxBeBN/ja7aT9agKd9dtOTFvvD/uZRjmIdGIApsUkhVs
+         ZSLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744190059; x=1744794859;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LuSuDtNF61PvgQQchQkid6uP+93V9BVfdt5rCLmmpzU=;
-        b=Z9ZG89R7O3IdYJ7EmA07lJRdijsb2x8cs7rEegENWpTiKhVpU0KVazxSz8jwIV8VK1
-         y7IH2lByNXExZL3qdIRQyYFh7i7zhjDaTGNeq56sCcI5vZl7xwQOuN9whl2VigwWiux7
-         EDnDJ3alYVO7ECSrUcIYmJ5RkVX1yBb/bwHfpfriIdsJon6v/+bjAvBWiw79X/Eah44x
-         DOW6xbogCMf7BOYbffVE3cuUcVPDZreWxAWBG0I8lYFV08mtCghDFQ6SBoBrpg8I8/IQ
-         cNjyAmgRyzPta0UWk5PCvDjJ4mx2oba2IXszHBZ1hCj2cyGKpfhR8ANcfCVsInipEDcq
-         mjpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWblutdcJPGo4M+qKagjrvgLhoD79R3V6dqe50JUjtVRpSXjskO19p95e/s3wrGK9Vt7c4Oo6Q5r+unfFc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ2cVBL4qKpJW6D/dsmUKuvjf6blMtslPWnoTSJyrNoLkzhadO
-	M8MHxKUS61VMyo1F3uzbc7jXYgn+FOcd2JifLCbivkInLx5n1VDa
-X-Gm-Gg: ASbGnctepAjHmDod7hO6X4niHM5/UG0wSzqJbDTQW7cnfOnPJUy1g7KsJSMHbil/bjN
-	Z8Gu6w117HjbTkPoVlB2cg2WJuidmCjFKznJ1bsaFoQvTY+V1SlOorsvkVlsDLWfMcRKe7RTf6g
-	gmCzFDBKeMrhFhcKTginIRnBHYnlREbraFzXzN3z4wCeIw0SYC7VSbMGm6V8tgBcVzWtBgiMjy1
-	fuBUV0naYTGE6+q8QB33eiMR9nGZl3peAphbIUpQeJ8ZD+bhulphrEoSjzzVrEqeE0ufHyE2o/B
-	Reh2yWO0pPieiIvORv4fqx5MdJBzdaUGoXr63CpI8bzrSA==
-X-Google-Smtp-Source: AGHT+IHROIfff9EygQflh2Ny77Q7Q9H1hfUvsrr1DY/l79I/KwXjFhlSR1X4Vw9Pm8MnS2NAuG8V5A==
-X-Received: by 2002:a05:622a:50f:b0:474:e3e8:1a58 with SMTP id d75a77b69052e-4795f2d0919mr25813461cf.16.1744190059511;
-        Wed, 09 Apr 2025 02:14:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744190063; x=1744794863;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7n9MYWIYdQKtlJKSmxfHZ9iLzwcGKDDGvLn3OqdhaMc=;
+        b=NJtB7Z0K4mt2f6gk/pqnaoRIq2cSZtMDiIngOQSs0RTugJhmEjYqmnXwLkiJkuQKob
+         de4XC8uPHY5y3n75Bl1WFq1hicOv/d6Y7FzMirMTKi1yK3Ejk6IP8+qyHoIp8o11SSzn
+         8j/JdXOso8W4I3rPXUrmxt4vo2BktHSdWNI/MpELa2bvchnSfJXxhxrdYaqN9MQFMyKs
+         BC0oi3zZCF7dPZxw2/cvxyvosdyRMo/7/NVMe7jTK1T97iEFmvOvglbsgLUX/z5PsT4m
+         nhwC+l5XkATaY61W1BZO549P2Tqf2CSeLTEJSAhyj3eJe3Se1iJWuVhKHrrj7yapRIyp
+         idDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX89LuXQq5njm5AM/NY1h/Giw89xzFfBwUgefmQhMVWJZNWOCzL15Who3+knYRYSD5tWzvLcfPEG9SYy4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBqhLK7meQQmAq6QOgoAHrIeYeMvLiNoNqegqUKSrWzDVJV1gA
+	vNyfMvq1Z3v7s5NZUZiHlZF5PY/QHCtb512Bxw9rrzsNIKwTjRm4
+X-Gm-Gg: ASbGnctb46H2ieOU+DebX0JwJufcU8bUw7/P2ll8gyb0ovFO4xz+6g+CnqIWT+PHDKT
+	oQ2m4CNqH74A+BuAcZy6KSDpHIu0jOAshWlriMnrpktnZneI2y0dHjOb6kxwSm+BiXNsNaGG1/O
+	5Ava3thMgrseFWZaqcyKpCxSw4AUKA0aiJxCFvhCS/Et0WXzR9rztW1xvsY1n09LCr2imMmG1Qw
+	r2HRUYlaxhM8JA9DNtFBEQcPhuhbKXIYawsfVJcdh6SrHON7jhNxvqc9jqsfAGnvKsoc/n7zYtw
+	v85gXlaDSsEukkXROXFttSkHZBFjNQOmh3knCliHBgYn3gSo7iv9WMR3
+X-Google-Smtp-Source: AGHT+IGxXACYCWd8q0QSUfwe2C7F/fvpjaUMq7LuvpgmQ5wyXh+jaW1cXxA555291Gn8JmKjg23lmg==
+X-Received: by 2002:a05:622a:1a0d:b0:474:fc9b:d2a7 with SMTP id d75a77b69052e-47960079a98mr21007151cf.6.1744190062709;
+        Wed, 09 Apr 2025 02:14:22 -0700 (PDT)
 Received: from ubuntu ([105.112.112.184])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47964ef728esm4631941cf.73.2025.04.09.02.14.18
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47964eb99cfsm4677911cf.52.2025.04.09.02.14.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 02:14:19 -0700 (PDT)
+        Wed, 09 Apr 2025 02:14:22 -0700 (PDT)
 From: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
 To: outreachy@lists.linux.dev,
 	julia.lawall@inria.fr
@@ -79,10 +81,12 @@ Cc: gregkh@linuxfoundation.org,
 	dan.carpenter@linaro.org,
 	andy@kernel.org,
 	Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-Subject: [PATCH v9 0/2] staging: rtl8723bs: Improve readability and clarity of sequence number wrapping
-Date: Wed,  9 Apr 2025 09:12:53 +0000
-Message-Id: <cover.1744189500.git.abrahamadekunle50@gmail.com>
+Subject: [PATCH v9 1/2] staging: rtl8723bs: Add spaces and line breaks to improve readability
+Date: Wed,  9 Apr 2025 09:12:54 +0000
+Message-Id: <3b9a0572ad56699b095642fc169c9603e08616e9.1744189500.git.abrahamadekunle50@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1744189500.git.abrahamadekunle50@gmail.com>
+References: <cover.1744189500.git.abrahamadekunle50@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,66 +95,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The patchset adds spaces around binary operators, breaks long lines to enhance readability
-and provides clarity on sequence number wrapping by using a modulo operation % 4096u, in
-place of the bitwise AND(&) operation & 0xfff.
-The patches are required to be applied in sequence.
+The code contains no spaces around binary operators with long lines
+which reduces readability thereby not adhering to Linux kernel coding
+style.
 
-Changes in v8:
-* PATCH 1:
-	- Added Reviewed-by tag to commit message.
-* PATCH 2:
-	- Added Reviewed-by tag to commit message.
-Changes in v7:
-* PATCH 1:
-	- Added blank line to enhance readability
-* PATCH 2:
-	- Changed `power of 2` to `power-of-2` in commit message.
-Changes in v6:
-	- Modified cover letter BLURB to reference newly added line breaks.
-* PATCH 1:
-	- Added line breaks to long lines to improve readability.
-	- Changed commit message to include the information about the broken
-	  lines added to the patch.
-	- Changed subject line title to also include the newly added line breaks.
-* PATCH 2:
-	- Changed instances of `& 0xfff` to `% 4096u` which were now in the broken lines
-	  after the broken lines have been done in PATCH 1.
-Changes in v5:
-	- Converted the patch with the subject "Use % 4096 instead of & 0xfff"
-	  patch to a patchset.
-	- Added a patch to add spaces around binary operator.
-Changes in v4:
-	- Corrected patch to use '%' instead of '&'.
-	- To ensure this change does not affect the functional
-	behaviour, I compared the generated object files before and
-	after the change using the `cmp` which compares the two
-	object files byte by byte as shown below:
+Add white spaces around the binary operators and use line breaks to
+increase readability and ensure adherence to Linux kernel coding
+styles.
 
-	$ make drivers/staging/rtl8723bs/core/rtw_xmit.o
-	$ cmp rtw_xmit_before.o rtw_xmit_after.o
+Suggested-by: Andy Shevchenko <andy@kernel.org>
+Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+---
+ drivers/staging/rtl8723bs/core/rtw_xmit.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-	No differences were found in the output, confirming that the
-	change does not alter the compiled output.
-Changes in v3:
-	- Added more description to the commit message.
-	- Removed blank line in the tag block.
-	- Added more patch recipients.
-Changes in v2:
-	- Changed the commit message t a more descriptive message which
-	makes it clear why the patch does the change.
-	- changed the subject title to include `4096u` to show that an
-	unsigned module is used.
-Changes in v1:
-	- Added more patch recipients.
-
-Abraham Samuel Adekunle (2):
-  staging: rtl8723bs: Add spaces and line breaks to improve readability
-  staging: rtl8723bs: Use % 4096 instead of & 0xfff
-
- drivers/staging/rtl8723bs/core/rtw_xmit.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+index 297c93d65315..5def2467f42b 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
++++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+@@ -963,11 +963,14 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
+ 					if (SN_LESS(pattrib->seqnum, tx_seq)) {
+ 						pattrib->ampdu_en = false;/* AGG BK */
+ 					} else if (SN_EQUAL(pattrib->seqnum, tx_seq)) {
+-						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (tx_seq+1)&0xfff;
++						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] =
++							(tx_seq + 1) & 0xfff;
+ 
+ 						pattrib->ampdu_en = true;/* AGG EN */
+ 					} else {
+-						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (pattrib->seqnum+1)&0xfff;
++						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] =
++							(pattrib->seqnum + 1) & 0xfff;
++
+ 						pattrib->ampdu_en = true;/* AGG EN */
+ 					}
+ 				}
 -- 
 2.34.1
 
