@@ -1,59 +1,111 @@
-Return-Path: <linux-kernel+bounces-595395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC4EA81D9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:58:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90724A81DAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30C121BA2D4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:58:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82E094C2C85
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F90C2192E6;
-	Wed,  9 Apr 2025 06:57:14 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF4F214A81;
+	Wed,  9 Apr 2025 06:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cOJkvfOu"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BE921480A;
-	Wed,  9 Apr 2025 06:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEFC2135AD;
+	Wed,  9 Apr 2025 06:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744181834; cv=none; b=QfNEubkLVB41tmjZygrdUf9Q3yXj16sSLd4T1XG5Ogu2tmxMb+q2cOsUBF5GjvjnsGJXq8aIlcAW0r+h69p6s/01uJK66UcC5V2ROqeF1DpKXTf1pJJsrWmWZnsArGVtnoDu09wOkH1qjhVYxutVLTGsHKP2j8F+PmCoOef6Kd0=
+	t=1744181926; cv=none; b=UWxFAY0UaOXjroPzejZ+aG2WlDoPS41TcxNh5NgvnI7Rny3HmqDcZ/QZRahFWNv531xrHuw6xIIpbj81HZfu0rOy+oA2YuZJJJFszEIiOJCrUc5A892+oDk1EtEFp4etuIXmjZrKbi+E4tstwm/AXMRPB6gx6alM8N+KZo94IC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744181834; c=relaxed/simple;
-	bh=HZIAnWwYXI0GD3+vPl8GdAlYDWdxm+atB2qN4CFg+G4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Hlc0jg8vwEECztqRjNoVBWW+A82EKMzYuVaKujNvmpIAyFh/lqNxInQFWOcwV12DCbQNnogDvuRs5I+gdaARHoj0m1RLO5A3Zj32diX8YtMN84u+i/GPI0sg438qSs9so79eW8ElQ71NO6/ysvUR0BMgf8GproK9nRi0hNdNXvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZXYdT3J1Rz13LXs;
-	Wed,  9 Apr 2025 14:56:29 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2DBB0180B4A;
-	Wed,  9 Apr 2025 14:57:10 +0800 (CST)
-Received: from localhost.huawei.com (10.50.165.33) by
- kwepemh100008.china.huawei.com (7.202.181.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 9 Apr 2025 14:57:09 +0800
-From: Lifeng Zheng <zhenglifeng1@huawei.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>, <robert.moore@intel.com>,
-	<viresh.kumar@linaro.org>, <mario.limonciello@amd.com>,
-	<gautham.shenoy@amd.com>, <ray.huang@amd.com>, <perry.yuan@amd.com>,
-	<pierre.gondois@arm.com>
-CC: <acpica-devel@lists.linux.dev>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>,
-	<cenxinghai@h-partners.com>, <zhenglifeng1@huawei.com>, <hepeng68@huawei.com>
-Subject: [PATCH v6 8/8] ACPI: CPPC: Add three functions related to autonomous selection
-Date: Wed, 9 Apr 2025 14:57:03 +0800
-Message-ID: <20250409065703.1461867-9-zhenglifeng1@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250409065703.1461867-1-zhenglifeng1@huawei.com>
-References: <20250409065703.1461867-1-zhenglifeng1@huawei.com>
+	s=arc-20240116; t=1744181926; c=relaxed/simple;
+	bh=ssDD1kW5JSR1Z4yzJ04AQNes/YaLGBHflCTnsWlmZ14=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QkzwwLckMt1XE4MNYQWgFSM4qs75GjNnL/ERBcmlSPUDl2s26dF9nOPNwo1xCuH2E2L0Dv5qUn3+78GphrNoJepCjIJtR+87uYWKtJKZ2dS0c9tIaRDcJd4sJ94Sf2xtsemPL+Dde1HiRo92XsvnVvYOi8O5Yg/Q4UH9OuhcAvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cOJkvfOu; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-227d6b530d8so57602305ad.3;
+        Tue, 08 Apr 2025 23:58:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744181924; x=1744786724; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tuG1FMMyGEJx8Q/a143BVklY8otPVHsKGWCgeB32e5Q=;
+        b=cOJkvfOuqimAldFwBEUXE3PVTDk6Sehr/Avp5wexjP9sc3sbUlLmckx5Cm6PUsGjiT
+         vXKWGANLH/5GR1hk/uQRDrg7N4F+Bbifx2b9imC6t0/jgrgFmQRCgu2zHeOQhWc+lQan
+         vs8oOZGxPMZ51a61UHw7XLbrIPzIl1sUA3lX8IGdXQ8Mi0JLAvfWaq4CNWSLxnCbPnE1
+         /mQB29wIcDN8fMs/Ozvttr3vewtP+ks5YCKjNRwGBq2nq4HmyhTnGsUu/xganDXokuu/
+         9QRgSYrnIRu/ObSbaqzL1f5KS0h4mwz+Z1ffc4zLQtf7OioCO3nPZw8e8sHkzZrUJDVj
+         E1AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744181924; x=1744786724;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tuG1FMMyGEJx8Q/a143BVklY8otPVHsKGWCgeB32e5Q=;
+        b=tC7RbIdR/ZfKoc6E1TIPNAZNAbNXlujUl9vRIDkiRIvOm7W6ruRO83TZSjPq7ETwSf
+         nV9EubB4zpo1e/Jcxz6t5iMtDm16yZEM7e0tSTIn1AFA61El31uKGyEUQiLnYNKGAU1D
+         u8z1KuP19PLwsnJEDZoGWgoOrFZ1x+x1ddS+v1JWKHlw7zLKSo1VLkKxkW+tkngaogFE
+         JT8b7bpUmG8l38yuokWn1jZWLw7HKbxlsT4AA66wwiraPdRTFJODpGx0LqMD8j87TOcG
+         zU05cqhbZuwvu+Cy2E0jXzonSuWcCiQ3xwpxnh9cElSQKV77mvIwFUt09+hQuFZ/o5ZP
+         jKbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUS35M4orQikQ8Es8o4rbsNYpLtg6j+CiOB6GikLobN88yTv5ylLlflWI8yTeDQVxLzdbLrgTkbLkHFh2fdWg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTjLffgIeZl1F31nDsu8ivpLBxJ5cIP+njlRs7GAedp/1ZoXg/
+	2pEOrr2zzp4uHHUMHjRcnONcI84E7RdsL+9Llb73osd2o/kpl8qGgKeb+IYV
+X-Gm-Gg: ASbGncvQNl/Qtm854tlk/9/EMNsYanIrCwggfaYOXx4U3NOZ5U6pyr/MqTY3kaVnoEU
+	GVx0e92PALaNiGOh4r9RM63bXRl8foLGQVzhkX/pwevbfDYBct4chbHi20zrnKIU3dFPNaaJrLS
+	9z5H7KRxZsCCY093oMh36aVDlcK1GZUphXrHdlzJJJ5fgSMsyaFzF/zkWHvF7bBopmytEi2u6Nj
+	sVuow46Y2urBjvx1MzBNmKrB3JknnNc4V1d2onrYRirQoRqTJqlc7OYG9Z38Httvavl+OUZuOO8
+	VXsjxbymUSIS7sQ3Uzm+aeOiLR26pNT8MgOtFOZcGjSb9Zj7VGGvsmlYkX9l7gned/CVaV5D4Vs
+	tZWzfSKY4wBPuBJ2Gew==
+X-Google-Smtp-Source: AGHT+IG81noXBo50t3m2OCMXKg+0aYF1KMaorNM1Bcv25LP3aY0UkFvPSaDMXpFVTZFnE5FrkJ7rsg==
+X-Received: by 2002:a17:902:ec8c:b0:215:89a0:416f with SMTP id d9443c01a7336-22ac29b86abmr21043375ad.30.1744181924161;
+        Tue, 08 Apr 2025 23:58:44 -0700 (PDT)
+Received: from mew.. (p4204131-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.160.176.131])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccb596sm4407815ad.220.2025.04.08.23.58.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 23:58:43 -0700 (PDT)
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Cc: x86@kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	loongarch@lists.linux.dev,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	peterz@infradead.org,
+	hpa@zytor.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	tangyouling@loongson.cn,
+	hejinyang@loongson.cn,
+	yangtiezhu@loongson.cn,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu
+Subject: [PATCH v5 0/4] rust: Add bug/warn abstractions
+Date: Wed,  9 Apr 2025 15:57:57 +0900
+Message-ID: <20250409065802.136971-1-fujita.tomonori@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,167 +113,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemh100008.china.huawei.com (7.202.181.93)
 
-cppc_set_epp - write energy performance preference register value, based on
-ACPI 6.5, s8.4.6.1.7
+This patchset adds warn_on macro with the bug/warn abstraction that
+utilizes the kernel's BUG/WARN feature via assembly.
 
-cppc_get_auto_act_window - read autonomous activity window register value,
-based on ACPI 6.5, s8.4.6.1.6
+Currently, Rust code simply wraps BUG() macro; however the approach
+doesn't provide the proper debug information. For example, I added
+bindings::BUG() to rnull's init method and got the following output:
 
-cppc_set_auto_act_window - write autonomous activity window register value,
-based on ACPI 6.5, s8.4.6.1.6
+# insmod /root/rnull_mod.ko
+rnull_mod: Rust null_blk loaded
+------------[ cut here ]------------
+kernel BUG at rust/helpers/bug.c:7!
+Oops: invalid opcode: 0000 [#1] SMP CPU: 0 UID: 0 PID: 31 Comm: insmod Not tainted 6.14.0-rc1+ #103
+RIP: 0010:rust_helper_BUG+0x8/0x10
+(snip)
 
-Reviewed-by: Pierre Gondois <pierre.gondois@arm.com>
-Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
----
- drivers/acpi/cppc_acpi.c | 80 ++++++++++++++++++++++++++++++++++++++++
- include/acpi/cppc_acpi.h | 24 ++++++++++++
- 2 files changed, 104 insertions(+)
+The kernel's BUG/WARN feature (lib/bug.c) can only be used from
+assembly. Rust code needs to directly execute the same assembly code
+used on the C side. To avoid duplicating the assembly code, this
+approach follows the same strategy as the static branch code: it
+generates the assembly code for Rust using the C preprocessor at
+compile time.
 
-diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-index ef2394c074e3..3d5eace44af5 100644
---- a/drivers/acpi/cppc_acpi.c
-+++ b/drivers/acpi/cppc_acpi.c
-@@ -1608,6 +1608,86 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable)
- }
- EXPORT_SYMBOL_GPL(cppc_set_epp_perf);
- 
-+/**
-+ * cppc_set_epp() - Write the EPP register.
-+ * @cpu: CPU on which to write register.
-+ * @epp_val: Value to write to the EPP register.
-+ */
-+int cppc_set_epp(int cpu, u64 epp_val)
-+{
-+	if (epp_val > CPPC_ENERGY_PERF_MAX)
-+		return -EINVAL;
-+
-+	return cppc_set_reg_val(cpu, ENERGY_PERF, epp_val);
-+}
-+EXPORT_SYMBOL_GPL(cppc_set_epp);
-+
-+/**
-+ * cppc_get_auto_act_window() - Read autonomous activity window register.
-+ * @cpu: CPU from which to read register.
-+ * @auto_act_window: Return address.
-+ *
-+ * According to ACPI 6.5, s8.4.6.1.6, the value read from the autonomous
-+ * activity window register consists of two parts: a 7 bits value indicate
-+ * significand and a 3 bits value indicate exponent.
-+ */
-+int cppc_get_auto_act_window(int cpu, u64 *auto_act_window)
-+{
-+	unsigned int exp;
-+	u64 val, sig;
-+	int ret;
-+
-+	ret = cppc_get_reg_val(cpu, AUTO_ACT_WINDOW, &val);
-+	if (ret)
-+		return ret;
-+
-+	sig = val & CPPC_AUTO_ACT_WINDOW_MAX_SIG;
-+	exp = (val >> CPPC_AUTO_ACT_WINDOW_SIG_BIT_SIZE) & CPPC_AUTO_ACT_WINDOW_MAX_EXP;
-+	*auto_act_window = sig * int_pow(10, exp);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(cppc_get_auto_act_window);
-+
-+/**
-+ * cppc_set_auto_act_window() - Write autonomous activity window register.
-+ * @cpu: CPU on which to write register.
-+ * @auto_act_window: usec value to write to the autonomous activity window register.
-+ *
-+ * According to ACPI 6.5, s8.4.6.1.6, the value to write to the autonomous
-+ * activity window register consists of two parts: a 7 bits value indicate
-+ * significand and a 3 bits value indicate exponent.
-+ */
-+int cppc_set_auto_act_window(int cpu, u64 auto_act_window)
-+{
-+	/* The max value to stroe is 1270000000 */
-+	u64 max_val = CPPC_AUTO_ACT_WINDOW_MAX_SIG * int_pow(10, CPPC_AUTO_ACT_WINDOW_MAX_EXP);
-+	int exp = 0;
-+	u64 val;
-+
-+	if (auto_act_window > max_val)
-+		return -EINVAL;
-+
-+	/*
-+	 * The max significand is 127, when auto_act_window is larger than
-+	 * 129, discard the precision of the last digit and increase the
-+	 * exponent by 1.
-+	 */
-+	while (auto_act_window > CPPC_AUTO_ACT_WINDOW_SIG_CARRY_THRESH) {
-+		auto_act_window /= 10;
-+		exp += 1;
-+	}
-+
-+	/* For 128 and 129, cut it to 127. */
-+	if (auto_act_window > CPPC_AUTO_ACT_WINDOW_MAX_SIG)
-+		auto_act_window = CPPC_AUTO_ACT_WINDOW_MAX_SIG;
-+
-+	val = (exp << CPPC_AUTO_ACT_WINDOW_SIG_BIT_SIZE) + auto_act_window;
-+
-+	return cppc_set_reg_val(cpu, AUTO_ACT_WINDOW, val);
-+}
-+EXPORT_SYMBOL_GPL(cppc_set_auto_act_window);
-+
- /**
-  * cppc_get_auto_sel() - Read autonomous selection register.
-  * @cpu: CPU from which to read register.
-diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
-index 31767c65be20..325e9543e08f 100644
---- a/include/acpi/cppc_acpi.h
-+++ b/include/acpi/cppc_acpi.h
-@@ -32,6 +32,15 @@
- #define	CMD_READ 0
- #define	CMD_WRITE 1
- 
-+#define CPPC_AUTO_ACT_WINDOW_SIG_BIT_SIZE	(7)
-+#define CPPC_AUTO_ACT_WINDOW_EXP_BIT_SIZE	(3)
-+#define CPPC_AUTO_ACT_WINDOW_MAX_SIG	((1 << CPPC_AUTO_ACT_WINDOW_SIG_BIT_SIZE) - 1)
-+#define CPPC_AUTO_ACT_WINDOW_MAX_EXP	((1 << CPPC_AUTO_ACT_WINDOW_EXP_BIT_SIZE) - 1)
-+/* CPPC_AUTO_ACT_WINDOW_MAX_SIG is 127, so 128 and 129 will decay to 127 when writing */
-+#define CPPC_AUTO_ACT_WINDOW_SIG_CARRY_THRESH 129
-+
-+#define CPPC_ENERGY_PERF_MAX	(0xFF)
-+
- /* Each register has the folowing format. */
- struct cpc_reg {
- 	u8 descriptor;
-@@ -159,6 +168,9 @@ extern int cpc_read_ffh(int cpunum, struct cpc_reg *reg, u64 *val);
- extern int cpc_write_ffh(int cpunum, struct cpc_reg *reg, u64 val);
- extern int cppc_get_epp_perf(int cpunum, u64 *epp_perf);
- extern int cppc_set_epp_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls, bool enable);
-+extern int cppc_set_epp(int cpu, u64 epp_val);
-+extern int cppc_get_auto_act_window(int cpu, u64 *auto_act_window);
-+extern int cppc_set_auto_act_window(int cpu, u64 auto_act_window);
- extern int cppc_get_auto_sel(int cpu, bool *enable);
- extern int cppc_set_auto_sel(int cpu, bool enable);
- extern int amd_get_highest_perf(unsigned int cpu, u32 *highest_perf);
-@@ -229,6 +241,18 @@ static inline int cppc_get_epp_perf(int cpunum, u64 *epp_perf)
- {
- 	return -EOPNOTSUPP;
- }
-+static inline int cppc_set_epp(int cpu, u64 epp_val)
-+{
-+	return -EOPNOTSUPP;
-+}
-+static inline int cppc_get_auto_act_window(int cpu, u64 *auto_act_window)
-+{
-+	return -EOPNOTSUPP;
-+}
-+static inline int cppc_set_auto_act_window(int cpu, u64 auto_act_window)
-+{
-+	return -EOPNOTSUPP;
-+}
- static inline int cppc_get_auto_sel(int cpu, bool *enable)
- {
- 	return -EOPNOTSUPP;
+The 1st to 3th patches export the BUG/WARN assembly code for Rust on
+x86, RISC-V, and ARM64 architecture, with no functional changes on the
+C side. They have already been acked by the maintainers of their
+respective architectures.
+
+No change for arm32 and LoongArch; they still use the current
+approach; just wrapping C's macro.
+
+UML doesn't use the assembly BUG/WARN feature; just wrapping generic
+BUG/WARN functions implemented in C works.
+
+The last patch adds warn_on implementation on the top of the
+abstraction. To make the patchset easier to review, the remaining
+features such as bug() are not included in this patchset. These
+features will be added after this patchset is merged.
+
+This has been tested on x86, ARM64, and RISC-V (QEMU), with only a
+compile test performed for LoongArch, arm32, and UML.
+
+v5:
+- fix indentation in the macro
+- use $crate::ffi::c_char instead ::kernel::ffi::c_uchar
+- add support for building on arm32
+v4: https://lore.kernel.org/lkml/20250305110814.272792-1-fujita.tomonori@gmail.com/
+- added Acked-by tag to the RISC-V and ARM64 asm change
+- simplify the asm code
+- use the cfgs on the macro rather in its expansion
+- use a const fn for bugflag_taint over macro
+- dropped LoongArch assembly change
+- dropped warn_on_once; make the patch easier to review
+v3: https://lore.kernel.org/lkml/20250213135759.190006-1-fujita.tomonori@gmail.com/
+- rebased on rust-next
+- use ANNOTATE_REACHABLE macro (replaced ASM_REACHABLE)
+- added Acked-by tag to the x86 change
+v2: https://lore.kernel.org/lkml/20241218062009.2402650-1-fujita.tomonori@gmail.com/
+- remove target_arch cfg by using asm comment
+- clean up the changes to loongarch asm
+v1: https://lore.kernel.org/lkml/20241210001802.228725-1-fujita.tomonori@gmail.com/
+
+
+FUJITA Tomonori (4):
+  x86/bug: Add ARCH_WARN_ASM macro for BUG/WARN asm code sharing with
+    Rust
+  riscv/bug: Add ARCH_WARN_ASM macro for BUG/WARN asm code sharing with
+    Rust
+  arm64/bug: Add ARCH_WARN_ASM macro for BUG/WARN asm code sharing with
+    Rust
+  rust: Add warn_on macro
+
+ arch/arm64/include/asm/asm-bug.h              |  33 ++++-
+ arch/riscv/include/asm/bug.h                  |  37 +++---
+ arch/x86/include/asm/bug.h                    |  56 ++++-----
+ rust/Makefile                                 |   8 ++
+ rust/helpers/bug.c                            |   5 +
+ rust/kernel/.gitignore                        |   2 +
+ rust/kernel/bug.rs                            | 114 ++++++++++++++++++
+ rust/kernel/generated_arch_reachable_asm.rs.S |   7 ++
+ rust/kernel/generated_arch_warn_asm.rs.S      |   7 ++
+ rust/kernel/lib.rs                            |   1 +
+ 10 files changed, 223 insertions(+), 47 deletions(-)
+ create mode 100644 rust/kernel/bug.rs
+ create mode 100644 rust/kernel/generated_arch_reachable_asm.rs.S
+ create mode 100644 rust/kernel/generated_arch_warn_asm.rs.S
+
+
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
 -- 
-2.33.0
+2.43.0
 
 
