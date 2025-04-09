@@ -1,90 +1,96 @@
-Return-Path: <linux-kernel+bounces-596404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9166FA82B8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:58:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D09A82B03
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A5F460987
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:54:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F39C189DA68
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0A4268FD9;
-	Wed,  9 Apr 2025 15:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDB6267B8C;
+	Wed,  9 Apr 2025 15:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="bWJPExSI"
-Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOSdnjid"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CBA17CA17;
-	Wed,  9 Apr 2025 15:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F2E1A8F68;
+	Wed,  9 Apr 2025 15:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744213657; cv=none; b=oQdS6pNe+ErimNXTFj+qkGvcogbXLr0bcMfGmdmQg22jaJ5xePnBLjvmjWb+ADyOrVrwJiDU4Zh4T5KcZBYZIlReUBza5MNjGPziu9E/my5hS3PGRPelfrq8X2rV1nztZUT585eoSDy7yU0lq3roOE1q7mjGg3PazjafodxOrOs=
+	t=1744213327; cv=none; b=r1D5WqqSQAIa82NIvhgMHCaQQkJj2+J5mAU/IkMizHijo6scS+YiMEuFoO00aG1l6c9nTsbwrXopBr1CMkF3xi0mx41pXw+dsGo9LQMQhI8iCE4d9ylen01W9dXOzTDnc3vP2Il11bt1BNTZKQnf8mUpeMfd108MyJzzNQT0Nxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744213657; c=relaxed/simple;
-	bh=uFQGScYkT9rGW7RUOTBDJsMqufbmEHss3iSSPhWaxa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IFpRkgkhlk4+uTqYXb0ZFZ1nh4NpEWn+KZBkCOCEgfPEAJSdWyM/OzvLkT0ESsU1PfEpWawWt6p+0vjvTVH81J0pANwA0p2+Yv4ah/6DjA+udfr2EJ3ZzZ78Un9j74yqSbEIZrcHroUkEa7QjVEb1F6r8rIyex013QaJ8zueZ+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=bWJPExSI; arc=none smtp.client-ip=37.205.15.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
-Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by bee.tesarici.cz (Postfix) with ESMTPSA id A58CE22544C;
-	Wed,  9 Apr 2025 17:40:36 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
-	t=1744213236; bh=Q3oGetcbcRnS+hTNIu7MsUHEGW7j/Mqa2tl6ukaL52Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bWJPExSIyEEz5P4nfkubwk2SFmZZqzUsRHqlsf2YWUvvOu8tgAZKjExuMxT/OG6gd
-	 /Zik8DSGJo89gmqK9dyfxzM7q2CxCqpiUF468VPigOQUQnHPZI6oDtJwzZU2i325ow
-	 6ELfRuTALNHkk6TX2coGrPrmFlggSctN9SDUuSGKwMzybzS25mwYO7vtpEY0k0St9a
-	 4w1778ZcS3+9sVQJJjKTGr09M8arI8RccjT1UouuVGqUrp+egIQo9wgoJEbLTKrf8y
-	 zzv1OG56Lb5ibhHs7aYZSc1XDFKYBqbBRNESVZx+nPQERMs8TlVFF+FaI1Xbihemrn
-	 afsVZuN7aSOzA==
-Date: Wed, 9 Apr 2025 17:40:36 +0200
-From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Petr Tesarik <ptesarik@suse.com>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] usb: core: warn if a GFP zone flag is passed to
- hcd_buffer_alloc()
-Message-ID: <20250409174036.7ee76248@meshulam.tesarici.cz>
-In-Reply-To: <20250325134000.575794-1-ptesarik@suse.com>
-References: <20250320154733.392410-1-ptesarik@suse.com>
-	<20250325134000.575794-1-ptesarik@suse.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1744213327; c=relaxed/simple;
+	bh=elt1729OMFG3MyDsDxWsdrT3EfbovhSmungsHV+AHN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tK9zvoFVf8JSzb5LnHCV/9pzeHO5zMeMbkvrjJkJpH9RJpLjbwNfZkbfrfmEV9UHVdosgPPuqJ/67Cj+ByQiqE7a3U0PLirVu/HWLi2LMOD8Fhb56uAxHLInZcfGrWvmdsZGuFi5cUU6KgSqTfdUj5/33PxFNuOAFwFXKb9W6x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOSdnjid; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24B8FC4CEE7;
+	Wed,  9 Apr 2025 15:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744213326;
+	bh=elt1729OMFG3MyDsDxWsdrT3EfbovhSmungsHV+AHN0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oOSdnjidmSa7TsdajaHdkVipM3TJI8+pVfJKmPWxzMXJ/dsJOxJAIZyfCHH6/JCPO
+	 ZqTpU1DX56CilyQtnMyZnLp1ps2SyG+eR7WTnmA4U2qUbbCFr/nO2wIaO6DNAeTH7F
+	 m5ohAphau/oXvzLYjNYXVCYvc70c4f0lahusgcfZmv2solEF/Aqb7HctihR2bAryKB
+	 od2ZFELJztsL7Ti52iAnkMSqlXhxAVozc4IYrzX5n7BTvGlg1nSKBnNWfVaV9lZcnh
+	 AfVq0xWTsH6JLJYSFUr0FGeqBJgo/uzWKgDBtoUSNDXbH+U/VT+oVNCMK3WpJwLltp
+	 BoocmFRwav1sA==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.14 000/726] 6.14.2-rc4 review
+Date: Wed,  9 Apr 2025 17:41:53 +0200
+Message-ID: <20250409154154.1232949-1-ojeda@kernel.org>
+In-Reply-To: <20250409115934.968141886@linuxfoundation.org>
+References: <20250409115934.968141886@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 25 Mar 2025 14:40:00 +0100
-Petr Tesarik <ptesarik@suse.com> wrote:
+On Wed, 09 Apr 2025 14:03:36 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.14.2 release.
+> There are 726 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 11 Apr 2025 11:58:08 +0000.
+> Anything received after that time might be too late.
 
-> Remove a misleading comment and issue a warning if a zone modifier is
-> specified when allocating a hcd buffer.
-> 
-> There is no valid use case for a GFP zone modifier in hcd_buffer_alloc():
-> - PIO mode can use any kernel-addressable memory
-> - dma_alloc_coherent() ignores memory zone bits
-> 
-> This function is called by usb_alloc_coherent() and indirectly by
-> usb_submit_urb(). Despite the comment, no in-tree users currently pass
-> GFP_DMA.
-> 
-> Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
+for loongarch64:
 
-I know this was posted during the merge window, but that's now over.
-Any comment on this patch?
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-Petr T
+Thanks!
+
+Cheers,
+Miguel
 
