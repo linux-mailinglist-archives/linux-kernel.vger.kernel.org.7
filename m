@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-596452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A24A82C29
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:19:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57754A82C2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C3443AA277
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:13:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7C85189C7F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BD32641C6;
-	Wed,  9 Apr 2025 16:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0B0267B0A;
+	Wed,  9 Apr 2025 16:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBI1MXOX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="s0HBnx6a"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD8325E457;
-	Wed,  9 Apr 2025 16:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A034B25EF89;
+	Wed,  9 Apr 2025 16:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744215201; cv=none; b=hwWOovFbcg7/9J1wvq0IlDDr2vKNA36KcPXqhztPt8mTgd1NMP7Vwv1dfN0KJpkSdRgnLLDdLwXuW3RB4asI8JxitOEYg9iEGrTzabtnDtQAJ5etRXjuhmjVqKKhhDcfb64Ch1MSU76zuPMVIuuxaKRg429kDBN40oWt1uy5YEc=
+	t=1744215348; cv=none; b=Zevh6crzDmc5wQu215IKMbjhD/0D6mllL7pCMwa4kblNZ3omKMMhszkieHZnlTuCS4hSXqpLO8HA1/bOyIvHYLzvZbWo56/ZJeSyTqeqgWA317AUdBVWw2kKvxmOiNAm/EeLYpJvcSfgE0yvSlop3GzFrNzBuu9RAOh6IZTUMpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744215201; c=relaxed/simple;
-	bh=yJiCj/KLlXnc9aM7spTJqyiJV+1GV9RlHUWP2ACtPZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ENS+u0flAHKQ9JyW7/K1xktaqEQffZ/cUnPWNnFDgbXPOlPiqLj/2FnkmvT641iJ46cZVemZlPtnzSEg0xy2IeCHdblymSmOU4xB/YlrP5LCIGy0I7k5fCFGFvUXL5EQOvksCtjO1ElIzfOByfeBLE642Zt4ymr4DqKF21O2y5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBI1MXOX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4E36C4CEE2;
-	Wed,  9 Apr 2025 16:13:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744215201;
-	bh=yJiCj/KLlXnc9aM7spTJqyiJV+1GV9RlHUWP2ACtPZo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KBI1MXOXwVafCWYo+bPClyePCICCqCXlYMV85Ynv+NoJzmLqqF3hHAsdT48jkgaeK
-	 mMqkQGxACw+U0ptiJFw+sM6RFCGwY6GdmnlB2APJZ6zyMdsqDjX5/EYDxaOZHdo9AV
-	 vhxO7x6IO6HFpRIE/jT5HHWinHqmaQjZqgmVzGklKKCZ1izAAUy6sTyArpospnfXBs
-	 /sxzDbj6QJw/L1pHrBqVy8SN0L4wgGpOHLLH6G0PfjcOwBQLJot7QHz+BtZ/7hoMnB
-	 urAdV1I6eyzJBdu0195rw8mZUSQHbPhNZKWokCa7H5rGtHmeXANHFtgKyzztYd8rdS
-	 wghHpRIrHr25Q==
-Message-ID: <b01e955d-329a-4130-8cd9-fce4d31cbc54@kernel.org>
-Date: Wed, 9 Apr 2025 18:13:15 +0200
+	s=arc-20240116; t=1744215348; c=relaxed/simple;
+	bh=LdDJwsIvAbC0f3V9AIB/Mgo0Pr+yFTss4XerUL/AZtg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=jlE6qJGKN9+wwNI0L8CWRv436TMMs5xpfvCLxP7KvPaKnK0POe5Cy9Ke9vgtVsgKt4TIcjeXg1jpgnZSiJZB7gxF0nlk0Fmuzj42AYmqCo6cA8HsptehWqUA0DxIczqYmfC6C6YWdAcai2yon6Fyj0plRW5hn1TjfGJT5jJ73VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=s0HBnx6a; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 539D8pcO024589;
+	Wed, 9 Apr 2025 18:15:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	CxjdOwdJ7SNh53Og2MxYLJTmOtZ3kMTySkgEXWMk7NA=; b=s0HBnx6aYrH7URD1
+	9rIHNVf/u4zhS2t2tpW+MRwR8oNeNa/0rIITljFzMAsyXB/SbwrGjPmfJHEyHKQA
+	bYGWUxN/EYpGjHTHcgJOsaGXca38hSQQLzV4/8SRs4lGgiWupDvp6gfylvxTNpkq
+	ohMmCkkJSvBvnGrppBa8CPzptC8JNfiNU7UsMLvNQqdtQgOWGODUjyAEEOm1FrDf
+	/yBnjpi0FLWI+Z1Wmwxovzzm2yRsdHlpKEWVdZC/tw3s2aUEQQegDbntxvf1Lyck
+	YTVJqzl61ATPzXCIEUu8nGDMNnFGTRjPmW+edF5/kgxI45JMktPcrNn4QtEhTK05
+	EeNVIw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45tw6eknuk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Apr 2025 18:15:19 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0AB524002D;
+	Wed,  9 Apr 2025 18:14:09 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 25BEE9FD18D;
+	Wed,  9 Apr 2025 18:13:21 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Apr
+ 2025 18:13:20 +0200
+Message-ID: <d32208f0-b3ec-4a57-86cb-0c53a1dd798a@foss.st.com>
+Date: Wed, 9 Apr 2025 18:13:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,155 +66,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/3] memory: mtk-smi: mt8188: Use
- devm_pm_runtime_enable
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Friday Yang <friday.yang@mediatek.com>
-Cc: Yong Wu <yong.wu@mediatek.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20250408033206.12176-1-friday.yang@mediatek.com>
- <20250408033206.12176-4-friday.yang@mediatek.com>
- <20250408-woodoo-quick-worm-bf82b4@shite>
- <e777f95c-c21f-4a91-b044-5fc19eb22c3d@collabora.com>
- <258c8fda-70cc-4624-aef6-7cbef3cdbde6@kernel.org>
- <399f89fb-092e-4fb3-8a0b-987dea129554@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [Linux-stm32] [PATCH v8 0/7] Add STM32MP25 SPI NOR support
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        <devicetree@vger.kernel.org>,
+        Catalin
+ Marinas <catalin.marinas@arm.com>,
+        <linux-kernel@vger.kernel.org>,
+        Philipp
+ Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com>
+ <20250408-opal-pillbug-of-acumen-0fbb68@shite>
+ <9c9172b8-508c-4855-9299-aab72ac2fae6@foss.st.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <399f89fb-092e-4fb3-8a0b-987dea129554@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <9c9172b8-508c-4855-9299-aab72ac2fae6@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-09_05,2025-04-08_04,2024-11-22_01
 
-On 09/04/2025 17:50, AngeloGioacchino Del Regno wrote:
-> Il 09/04/25 11:56, Krzysztof Kozlowski ha scritto:
->> On 09/04/2025 10:26, AngeloGioacchino Del Regno wrote:
->>> Il 08/04/25 08:29, Krzysztof Kozlowski ha scritto:
->>>> On Tue, Apr 08, 2025 at 11:31:56AM GMT, Friday Yang wrote:
->>>>> Replace pm_runtime_enable with the devres-enabled version which
->>>>> can trigger pm_runtime_disable.
->>>>>
->>>>> Signed-off-by: Friday Yang <friday.yang@mediatek.com>
->>>>> ---
->>>>>    drivers/memory/mtk-smi.c | 16 +++++++++-------
->>>>>    1 file changed, 9 insertions(+), 7 deletions(-)
->>>>>
->>>>> diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
->>>>> index f25d46d2ef33..daef6d350419 100644
->>>>> --- a/drivers/memory/mtk-smi.c
->>>>> +++ b/drivers/memory/mtk-smi.c
->>>>> @@ -713,16 +713,17 @@ static int mtk_smi_larb_probe(struct platform_device *pdev)
->>>>>    	if (ret)
->>>>>    		goto err_link_remove;
->>>>>
->>>>> -	pm_runtime_enable(dev);
->>>>> +	ret = devm_pm_runtime_enable(dev);
->>>>> +	if (ret)
->>>>> +		goto err_link_remove;
->>>>> +
->>>>>    	platform_set_drvdata(pdev, larb);
->>>>>    	ret = component_add(dev, &mtk_smi_larb_component_ops);
->>>>>    	if (ret)
->>>>> -		goto err_pm_disable;
->>>>> +		goto err_link_remove;
->>>>>
->>>>>    	return 0;
->>>>>
->>>>> -err_pm_disable:
->>>>> -	pm_runtime_disable(dev);
->>>>
->>>> You now broke/changed the order of cleanup without any explanation.
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>>
+
+
+On 4/9/25 17:54, Patrice CHOTARD wrote:
+> 
+> 
+> On 4/8/25 08:38, Krzysztof Kozlowski wrote:
+>> On Mon, Apr 07, 2025 at 03:27:31PM GMT, Patrice Chotard wrote:
+>>> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+>>> ---
+>>> Patrice Chotard (7):
+>>>       MAINTAINERS: add entry for STM32 OCTO MEMORY MANAGER driver
+>>>       dt-bindings: memory-controllers: Add STM32 Octo Memory Manager controller
+>>>       memory: Add STM32 Octo Memory Manager driver
+>>>       arm64: dts: st: Add OMM node on stm32mp251
+>>>       arm64: dts: st: Add ospi port1 pinctrl entries in stm32mp25-pinctrl.dtsi
+>>>       arm64: dts: st: Add SPI NOR flash support on stm32mp257f-ev1 board
+>>>       arm64: defconfig: Enable STM32 Octo Memory Manager and OcstoSPI driver
 >>>
->>> I agree some comment in the commit description saying that the cleanup reordering
->>> doesn't matter in this specific case would've been nice to have, but anyway IMO
->>> it's not a big deal - he didn't break anything, anyway :-)
+>>>  .../memory-controllers/st,stm32mp25-omm.yaml       | 226 ++++++++++
+>>>  MAINTAINERS                                        |   6 +
+>>>  arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi      |  51 +++
+>>>  arch/arm64/boot/dts/st/stm32mp251.dtsi             |  54 +++
+>>>  arch/arm64/boot/dts/st/stm32mp257f-ev1.dts         |  32 ++
+>>>  arch/arm64/configs/defconfig                       |   2 +
+>>>  drivers/memory/Kconfig                             |  17 +
+>>>  drivers/memory/Makefile                            |   1 +
+>>>  drivers/memory/stm32_omm.c                         | 474 +++++++++++++++++++++
+>>>  9 files changed, 863 insertions(+)
+>>> ---
+>>> base-commit: 88424abd55ab36c3565898a656589a0a25ecd92f
 >>
->> Cleanup orderings are tricky, so are you sure nothing got here called in
->> incorrect moment?
-> 
-> Yes.
-> 
->  >> I see that runtime PM will be disabled much later and
->> what certainty you have that device won't get resumed that time?
+>> That's unknown commit.
 >>
-> How can a device that failed to probe be resumed?! Who's going to resume it?! :-)
+>> b4 diff '20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com'
+>> Using cached copy of the lookup
+>> ---
+>> Analyzing 81 messages in the thread
+>> Preparing fake-am for v7: MAINTAINERS: add entry for STM32 OCTO MEMORY MANAGER driver
+>> ERROR: Could not write fake-am tree
+>> ---
+>> Could not create fake-am range for lower series v7
+>>
+>> I tried on latest next, on some March next, on latest mainline. It seems
+>> you use some weird base here, so anyway I won't be able to apply it.
+> 
+> It was based on next-20250317 plus the 2 ospi patches already merged 
+> by Mark Brown, that's why.
+> 
+>>
+>> Please split the patchset per subsystem and send something based on
+>> maintainer tree (so for me my for-next branch), mainline (which is the
+>> same as for-next currently) or linux-next.... which would be the same as
+>> my for-next branch currently.
+> 
+> ok
 
-That's unbind path.
+For memory-controller subsystem i will include:
+ _ memory controller dt-bindings
+ _ memory controller driver
+ _ defconfig update
+ _ Maintainers file update
+
+Are you ok with this proposal ?
+
+Patrice
 
 > 
-> Also, in the remove phase, all users get removed first, there's no ISR (implies
-> that there's no isr that will resume this device inadvertently, and other than
-> no isr - there's no kthread/queue/this/that that could do this), and no nothing.
+> Thanks
+> Patrice
 > 
-> Moreover, SMI-LARB cannot be removed unless all of the components are unbound;
-> SMI-Common (be it a common or a sub-common) cannot be removed if SMI-LARB is still
-> using it.
-> 
-> No I don't see anything that can resume it before devm does its job.
-
-so this should be in commit msg... I doubt that author did any
-investigation but instead just blindly converted to devm.
-
-> 
-> If you do see something though, I'm curious to understand what I'm missing here :-)
-
-You change the order of cleanup and this is known to introduce errors.
-Real bugs during probe error paths or removal. Some are tricky to
-trigger, but some are obvious and really happening. The easiest to
-trigger issues is for devices sharing interrupts (there is even CONFIG
-for that). That's why generic recommendation is don't use devm with
-shared interrupts. Even more generic recommendation is don't mix devm
-with non-devm, but just choose one.
-
-Best regards,
-Krzysztof
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> _______________________________________________
+> Linux-stm32 mailing list
+> Linux-stm32@st-md-mailman.stormreply.com
+> https://st-md-mailman.stormreply.com/mailman/listinfo/linux-stm32
 
