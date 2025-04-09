@@ -1,204 +1,192 @@
-Return-Path: <linux-kernel+bounces-595901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D7FA82460
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:09:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5C5A8246B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4716C1BA4B21
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:08:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1048F3AF288
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4404F25EF97;
-	Wed,  9 Apr 2025 12:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C627725EF81;
+	Wed,  9 Apr 2025 12:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpsj4Jtp"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="1/C1GspJ"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA6625E471;
-	Wed,  9 Apr 2025 12:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD4425E471
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 12:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744200487; cv=none; b=njAjIzOTkxiTw3v6uHtCLK93EdUpOIO75NGCy7K5TELXIH/M1FrPYVhgURiW3qpZPHJjloIOP8ger9U0Q1Rxn295jgsyO8+RPEvpFjrRNv/SHCyq9ORjQeh+C2UnxyRjw1KRNT6f7kQJmXgbyOgxWvGB5efadGcpIvdcaXQccEo=
+	t=1744200620; cv=none; b=khBblbNCwmU/7iuN80lOLvMvpEx85seEjhJs0hNSirgG1jTSI5eHjLB82H+Oekj9ZOZChNfHReXfE7+71uGieMdrXxjWcfsV3R2ZL2lMjRbKH7gTYUH8VRPjghDWrBYA/ReijozWsBxPYGMpOtIFTHAMG+d0m4asFd35lIHzVv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744200487; c=relaxed/simple;
-	bh=lq1OiQsVOMHwrGtmmhdpg6FWU56qqzjfijOiXVoJzFc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y8ORSggcpZ6YCu6c2qye32TP9UJn1i69XztjmlDHLuJ8s3drLhdOJuPsVrG4ZPGML9cuieEp1QfN9q/Tw3TsY5mLMRChP0DsAiI3zzNZN40vxl5wwP1Oa3b6m1kh+0tGoXetyg0LiVZJ9VO1mBu3TpAdPaSUDpurX4WVu4ZtzA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpsj4Jtp; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e61da95244so10949430a12.2;
-        Wed, 09 Apr 2025 05:08:05 -0700 (PDT)
+	s=arc-20240116; t=1744200620; c=relaxed/simple;
+	bh=7EbvCyUEXn2qtD5n42Iv8tV6gC107je0x9KkT+DB1Ho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sD/K5udTJ75vchHkrW8m66HZI4zezN33u29dbWUkcckz+QFQluBQbo5kHYBtp5m99wc7C/bXRwIjaHzDsml3vDm8WzvrxpfiBYhoESAWJsTp3SbnfVNotogNh9PV3DlJ8Tj7vYgABnFlttfI01VLYUdiwt12OB6PcyuZdjHd8fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=1/C1GspJ; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d43c972616so2067545ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 05:10:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744200484; x=1744805284; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NWhG9TBVd/wh+MuWkoZWly0RfKaqH96r0b+wVnwq3FA=;
-        b=bpsj4Jtpsm1qVPBmY+5dqvJzP8E6wW4Zi+Vln2aITbBM6Yv2nXlMQQpN1m4Cg4d8/e
-         VEeBvrT6HjOPnaVp2pMEO0vA8tDG+kTkCooWcD9GDnANHC2hE8ls/Lij/FusHEiw41nm
-         ZHUZG9ytpQa/1c8hy8vkpP3yFYDJb8XqBJCTHepaUh2uFSXnb5taKO1nBhypgUuE3bat
-         08vJXnoEldYAbbdKL1TuhbiUqDKmyeZ8lhk39pslTgLiizHDngbbe5LFtNJtiM9VnJb0
-         g5jNeEy8JGPFsz8Echc70Xb5QQIwMpEviG1E+nWC6PdsQzQaaLlXP5dMUO02U3Rl3ssi
-         wF3A==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744200617; x=1744805417; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xZ20LkStNkObd3KEihi6TUJmcbZftlQkn47bOpKz8AE=;
+        b=1/C1GspJG8yzgxSoVPr3ZUVnvaU3BB7PKSkRKpxiBZmr2QtZSkzOymmvjT9K6s2nsx
+         KjSFvQpviDA/8GMbZrEVxJpNmEJrKjw1vOUuCCgJhtkozK1aKQhibkOGwWzt3rNkIG4I
+         lF7Tp7kgWfxyuAQXNMLGGQK0X5kK5iZcoODGRpHY12RJub+QXnxpDk002etGHx3whnUw
+         HIUlkZUS6I50eOx//gZOA2n62RucEk4ObalGTOVKPrlXqezDr/ZZxBaJbqtkMmdPBXpv
+         t96hIeVpCsQHaQisyYgHIf+K+G6AuFm4McaWZ/F0A++v9Yaaj52150YuQg8HHZ23ppoM
+         eSSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744200484; x=1744805284;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NWhG9TBVd/wh+MuWkoZWly0RfKaqH96r0b+wVnwq3FA=;
-        b=KRtjp9aDBQnjLehB1lm1RqCz6QLxm9x/1j1mLWf+KNvuz1+NMKY0PMiMVA6UwCVnM3
-         6Cs683+IO39AjUy4dph2C6gMh668eCGGHEyCir9nhx9whvqkRlvQbmT0JHD+SBm6NL3c
-         0hEAegY80R9gsGj55kdPq0E0/glkK4OkKGqfRmlB0cQZSlomBMM6TwbUoWZu2OayPKk9
-         0j+XQLtksS0NXADP9f9EFoY3ZDoTFkhYJiwDvU+OhLQD3z18ErvkxuEq/3/bNOD8AUN0
-         0qht2esdJriTqZyaPStzN891zpdVNxsbmIFJEILWBfgg3bbSltOyp6rT4gYslkWaPv2C
-         4z6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUF1iYDadpF3oM7A5puSfTMEU3I56sfUCWYGyTukH4l24P/RoSYtbIrur07MjjUq6w+pBWXfDyVYxZLqivzD3Bm+ynz@vger.kernel.org, AJvYcCWvzMj1Bb+zqLYENUD9jd2XLOohHGrbqbLE/0pj9Y0QQ9p6vy6QKzTlGaSZwSCer8ARhOKOKse3oeFgY3Cg@vger.kernel.org, AJvYcCXaua+EgJ008UmsvkHK/Hknci6Bltf2t5P0G1GpOb9vG6TOEpQ0J1F6jDsDfS7G3arMXEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv0SrcZZ83qnoFhSWops5y/7noIAfacuHlqc0O/FEltx0VXOAP
-	7bj05HPJWiGDLYrR68CGnuZ8WbLSS6AILUyNOX7i6l+jUmgEu7TF
-X-Gm-Gg: ASbGncuNCc3+YsGfruZvzW9QXeSM+2J57ZWF1U6xwl97BM1oJaGFL+DdfxNer0dUHVm
-	hIjjtMs3VDOBRAOXThL0T6p59v1KmAJ/buoXzj+GvS0mkCvi6VYVLii3BUNinpiWym3iq1ODjWp
-	zgz6vZoNAcpWTb7J13Su2b42jPI2MH5X/w6ndKAxBOlno+OeiC2Mpi0mzqcrm0dmyl/qAcb9vq+
-	fwlGcqOBVEMXJxAd/6C1v0LB7/M7bRDUtgZmhXNmZmVHXcRdqdCi6IZV6EHJcvccTl/QhxcCz97
-	52gRTdkxOVuZFxhfWTdPf5Pcd+xQg9HLklzw6/5X5kZevBE=
-X-Google-Smtp-Source: AGHT+IE4gmN92nUmZyVQlBNP4+nAs0/QbGtCFNatkp92wpmQEcVPxKH1Iuhd5MEBckojcC+d5Mo1vg==
-X-Received: by 2002:a17:907:3e9e:b0:ac3:c020:25e9 with SMTP id a640c23a62f3a-aca9d6449e2mr185657466b.34.1744200483911;
-        Wed, 09 Apr 2025 05:08:03 -0700 (PDT)
-Received: from krava (85-193-35-57.rib.o2.cz. [85.193.35.57])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1bea593sm88154666b.62.2025.04.09.05.08.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 05:08:03 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 9 Apr 2025 14:08:01 +0200
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>
-Subject: Re: [PATCH 1/2] uprobes/x86: Add support to emulate nop5 instruction
-Message-ID: <Z_ZjIerx-QvY7BSI@krava>
-References: <20250408211310.51491-1-jolsa@kernel.org>
- <20250409112839.GA32748@redhat.com>
+        d=1e100.net; s=20230601; t=1744200617; x=1744805417;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xZ20LkStNkObd3KEihi6TUJmcbZftlQkn47bOpKz8AE=;
+        b=rTd6x5Grs4K3mkDuxeXdAm5GvWhXpMoSenDr4sOIOJ1/Oy4fPhgi8IeZKpk/1xfbYi
+         reFeOLQclfziPp49i396eClyTIYqNiRO79k/nAJfarNi34DlPQOIC9xYsISuKfGh6SNu
+         7DIJwy7Pijn94w9OHh9d0K6VDcxNX9iWQ+9WakvMjMILw6WhBFSmXCXBHQsm3e2/08fZ
+         BL7iUyn8gnsOAInIs9BqJq4PZuYJQmdgcvVo6Gc9TnPNroUEzJdigbRV+qSyyDR59HgY
+         g/EWPloUnsHu506A2mcEDEgC/tOfwJuGnhSCVPiaVL9mQRCf+N6GtCzpVkE4DLSn0AJw
+         sOTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURVkzVT/bLy/VCcLL4v8z1E0D3jSAwWxJZqkQ8S64sXsS6Qf5yELDhIEwXR4jhurcM6giYhm8v1+n377A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+Xr0yxwgxO8bWBZ+hVh4bFJHl1h2GQERXL1NqONS2IWAnEf0q
+	RzJd1VRMn2WT+lQ/FnIyUJUqpISRwye3YnSnOQpm5LednNlmfn4W51RnPTaqULE=
+X-Gm-Gg: ASbGnctLaA5kcZYMMxPXrEQ4e15Tc2Hrc/kswL6MqY7qnTvuwMXHSUYC3H0gPGasyOY
+	fS/+WgrwA9xr0Eu2Im4eJZNYaz7atkeTHmfxKt/pZSgQcs0s8aCsD+lhNgcqbiFkEaTlPgEWAsV
+	6x/uH5zVd+ujsOvBKi9yq7cI0yofHK0YG8cbKREX7uUv+iURv6u+MACfhExmVLG9uToCrIytfBE
+	go6E5RNsNCVhc1OHRmNbspU4k27gP/ghTpbYkl6g+lzbAv61DnzFTFJncg3UyoIhu+ojIOEf2fr
+	cbHGC5RxN8cQlo3MiBbH0WCj+7a7zfg3Aeq9bzXRNU+bJv7BVP2sg1PgVGtnzXKtycrmGxrGGgc
+	euWiW
+X-Google-Smtp-Source: AGHT+IHOJ53eVbLiI0OAfSwCZqdwNMQH9qWfpQM+iXRoOuzCIFtY9CzuuScoSIUUfueyiH3NuZt54g==
+X-Received: by 2002:a05:6e02:4413:10b0:3d3:de5f:af25 with SMTP id e9e14a558f8ab-3d7035afda7mr62331215ab.0.1744200617264;
+        Wed, 09 Apr 2025 05:10:17 -0700 (PDT)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505dfd795sm204358173.97.2025.04.09.05.10.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Apr 2025 05:10:16 -0700 (PDT)
+Message-ID: <0ca876ea-2607-407f-a0e8-98bb4bd94135@riscstar.com>
+Date: Wed, 9 Apr 2025 07:10:15 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409112839.GA32748@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] serial: 8250_of: add support for an optional bus
+ clock
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, benjamin.larsson@genexis.eu,
+ bastien.curutchet@bootlin.com, u.kleine-koenig@baylibre.com, lkundrak@v3.sk,
+ devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250408175146.979557-1-elder@riscstar.com>
+ <20250408175146.979557-3-elder@riscstar.com>
+ <Z_V-aKBOFHt-0RKz@smile.fi.intel.com>
+ <2b322564-10c0-4bbd-89d9-bc9da405f831@riscstar.com>
+ <Z_YhwJ1ZGSodMcMH@smile.fi.intel.com>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <Z_YhwJ1ZGSodMcMH@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 09, 2025 at 01:28:39PM +0200, Oleg Nesterov wrote:
-> On 04/08, Jiri Olsa wrote:
-> >
-> > --- a/arch/x86/kernel/uprobes.c
-> > +++ b/arch/x86/kernel/uprobes.c
-> > @@ -608,6 +608,16 @@ static void riprel_post_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
-> >  		*sr = utask->autask.saved_scratch_register;
-> >  	}
-> >  }
-> > +
-> > +static int is_nop5_insn(uprobe_opcode_t *insn)
-> > +{
-> > +	return !memcmp(insn, x86_nops[5], 5);
-> > +}
-> > +
-> > +static bool emulate_nop5_insn(struct arch_uprobe *auprobe)
-> > +{
-> > +	return is_nop5_insn((uprobe_opcode_t *) &auprobe->insn);
-> > +}
+On 4/9/25 2:29 AM, Andy Shevchenko wrote:
+> On Tue, Apr 08, 2025 at 03:11:10PM -0500, Alex Elder wrote:
+>> On 4/8/25 2:52 PM, Andy Shevchenko wrote:
+>>> On Tue, Apr 08, 2025 at 12:51:43PM -0500, Alex Elder wrote:
 > 
-> Why do we need 2 functions? Can't branch_setup_xol_ops() just use
-> is_nop5_insn(insn->kaddr) ?
-
-I need is_nop5_insn in other changes I have in queue, so did not want
-to introduce extra changes
-
+>>>> The SpacemiT UART requires a bus clock to be enabled, in addition to
+>>>> it's "normal" core clock.  Look up the core clock by name, and if
+>>>> that's found, look up the bus clock.  If named clocks are used, both
+>>>> are required.
+>>>>
+>>>> Supplying a bus clock is optional.  If no bus clock is needed, the clocks
+>>>> aren't named and we only look up the first clock.
+>>>
+>>> Code and description are not aligned. And What you are described above make
+>>> more sense to me than what's done below.
+>>
+>> I want to do this the right way.
+>>
+>> My explanation says:
+>> - look up the core clock by name
+>>      - if that is found, look up the bus clock
+>>      - both clocks are required in this case (error otherwise)
+>> - If the "core" clock is not found:
+>>      - look up the first clock.
+>>
+>> And my code does:
+>> - look up the core clock by name (not found is OK)
+>>      - if it is found, look up the bus clock by name
+>>      - If that is not found or error, it's an error
+>> - if the "core" clock is not found
+>>      - look up the first clock
+>>
+>> What is not aligned?
 > 
-> >  #else /* 32-bit: */
-> >  /*
-> >   * No RIP-relative addressing on 32-bit
-> > @@ -621,6 +631,10 @@ static void riprel_pre_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
-> >  static void riprel_post_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
-> >  {
-> >  }
-> > +static bool emulate_nop5_insn(struct arch_uprobe *auprobe)
-> > +{
-> > +	return false;
-> > +}
-> 
-> Hmm, why? I mean, why we can't emulate x86_nops[5] if !CONFIG_X86_64 ?
+> That you are telling that bus is optional and core is not, the code does the
+> opposite (and yes, I understand the logic behind, but why not doing the same in
+> the code, i.e. check for the *optional* bus clock first?
 
-ok, so the following uprobe optimization is for CONFIG_X86_64 only, so I followed
-that, but I guess we might emulate nop5 for !CONFIG_X86_64
+Ahh, now I see what you mean.  The result will be the same,
+but if it "reads better" that way to you then I'm all for it.
 
-> 
-> OTOH. What if the kernel is 64-bit, but the probed task is 32-bit and it
-> uses the 64-bit version of BYTES_NOP5?
-> 
-> Perhaps this is fine, I simply don't know, so let me ask...
+One of the reasons I did it this way was that I wasn't sure
+how to express a "don't care" clock name as a DTS binding,
+so I just tried to avoid that.
 
-hum, did not think of that, let me try it
+In other words, I thought about adding the "bus" clock as an
+optional first lookup, and then leaving the existing code to
+look up the core clock by position--without caring about the
+name.  But I assume named clocks aren't guaranteed to be in
+any particular order ("core" clock *could* be listed second).
 
-> 
-> > @@ -852,6 +866,8 @@ static int branch_setup_xol_ops(struct arch_uprobe *auprobe, struct insn *insn)
-> >  		break;
-> >
-> >  	case 0x0f:
-> > +		if (emulate_nop5_insn(auprobe))
-> > +			goto setup;
-> 
-> I think this will work, but if we want to emulate nop5, then perhaps
-> we can do the same for other nops?
-> 
-> For the moment, lets forget about compat tasks on a 64-bit kernel, can't
-> we simply do something like below?
+So I look up the "core" clock by (optional) name, and if not
+found look it up by position.  If it is found, I look up the
+bus clock--required in this case.
 
-I sent similar change (CONFIG_X86_64 only) in this thread:
-  https://lore.kernel.org/bpf/Z_O0Z1ON1YlRqyny@krava/T/#m59c430fb5a30cb9faeb9587fd672ea0adbf3ef4f
+Now that I write that I understand why you felt the logic was
+a bit inverted.
 
-uprobe won't attach on nop9/10/11 atm, also I don't have practical justification
-for doing that.. nop5 seems to have future, because of the optimization
+I'll send v2 today and will rearrange the logic to match what
+you're talking about.
 
-thanks,
-jirka
-
-
+>>> Also can we simply not not touch this conditional at all, but just add
+>>> a new one before? Like
+>>>
+>>> 	/* Get clk rate through clk driver if present */
+>>>
+>>> 	/* Try named clock first */
+>>> 	if (!port->uartclk) {
+>>> 		...
+>>> 	}
+>>>
+>>> 	/* Try unnamed core clock */
+>>> // the below is just an existing code.
+>>
+>> That's easy enough.  I think it might be a little more code
+>> but I have no problem with that.
 > 
-> Oleg.
-> ---
+> I;m fine with a little more code, but it will be much cleaner in my point of
+> view and as a bonus the diff will be easier to review.
+
+I understand that completely.  Thanks a lot for clarifying.
+
+					-Alex
+
+>>> 	if (!port->uartclk) {
+>>> 		...
+>>> 	}
 > 
-> diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-> index 9194695662b2..76d2cceca6c4 100644
-> --- a/arch/x86/kernel/uprobes.c
-> +++ b/arch/x86/kernel/uprobes.c
-> @@ -840,12 +840,16 @@ static int branch_setup_xol_ops(struct arch_uprobe *auprobe, struct insn *insn)
->  	insn_byte_t p;
->  	int i;
->  
-> +	/* prefix* + nop[i]; same as jmp with .offs = 0 */
-> +	for (i = 1; i <= ASM_NOP_MAX; ++i) {
-> +		if (!memcmp(insn->kaddr, x86_nops[i], i))
-> +			goto setup;
-> +	}
-> +
->  	switch (opc1) {
->  	case 0xeb:	/* jmp 8 */
->  	case 0xe9:	/* jmp 32 */
->  		break;
-> -	case 0x90:	/* prefix* + nop; same as jmp with .offs = 0 */
-> -		goto setup;
->  
->  	case 0xe8:	/* call relative */
->  		branch_clear_offset(auprobe, insn);
-> 
+
 
