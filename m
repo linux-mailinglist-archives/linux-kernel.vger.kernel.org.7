@@ -1,50 +1,70 @@
-Return-Path: <linux-kernel+bounces-595190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F9FA81B75
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 05:34:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6BBA81B49
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 04:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F8B77AEC52
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 03:33:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A0DC8863C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 02:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C031B0F19;
-	Wed,  9 Apr 2025 03:34:06 +0000 (UTC)
-Received: from sxb1plsmtpa01-03.prod.sxb1.secureserver.net (sxb1plsmtpa01-03.prod.sxb1.secureserver.net [188.121.53.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBDF18F2FC;
+	Wed,  9 Apr 2025 02:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="crxGwqIc"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991A684A3E
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 03:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744169645; cv=none; b=Ynxb3dvdQpRx/kFv8Ap+hfOvSsZ4MmNighPgnEA4ihBcT82qRo1g1EHqLxT15u/cG7AUSGlRwgQImZwBrvBP63ietl5uGIqgLff1dg6s8olAdF74cC1lXI1vKT3YQZq9QGWzunV0tCp5t/XaK4SCzgrt0++bDv6AaFMZTOzbiy4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744169645; c=relaxed/simple;
-	bh=toW3KA9+TmBF/9NBpleTzpxkjhMfYyM4G4UYJkmYawM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=shoLreh6knFQ6GD6rfQvroqB9pGP7VA7Se1fIYCr7gowoA83wlMfg3bYruHBnCi+e9K2RwMmA3NKyqk+J5gbiJWxLG/s3kjwIkP7j6QzVET880Wk5mYwmqreslKxyZJxn2J8cGFSblbZ8r5+69X/w8zGnlxo7cL5VhyBELnRYbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from phoenix.fritz.box ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPA
-	id 2LUruEW75rx2R2LV2uPJ13; Tue, 08 Apr 2025 19:49:13 -0700
-X-CMAE-Analysis: v=2.4 cv=fqYmZE4f c=1 sm=1 tr=0 ts=67f5e02a
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17 a=VwQbUJbxAAAA:8
- a=1XWaLZrsAAAA:8 a=hSkVLCK3AAAA:8 a=FXvPX3liAAAA:8 a=bXcLvHvqEZcXFsVHyC0A:9
- a=cQPPKAXgyycSBL8etih5:22 a=UObqyxdv-6Yh2QiB9mM_:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-From: Phillip Lougher <phillip@squashfs.org.uk>
-To: linux-fsdevel@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3500726ACB;
+	Wed,  9 Apr 2025 02:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744166937; cv=pass; b=svz8RJ6igqi/M2pGXIMulDvdb2wC1eX8LQAB6x4XEJyA8jWSKYnv6SjU9bWbgxQ4+2VAeB0E/o93mnkZU8zX1ig00fEMiZm40h+pcJT3uOd+4CxI+mnrppMTlWIXOHubyRmp/vbcOJh5trmmhZhmT1EmFwm0jeaIVeW+vsnfkgo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744166937; c=relaxed/simple;
+	bh=lscGfddQOWE8AhqxBdTatyY2pkbkU2TqgJ7DNijPCQ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ulBc1ofNsIyJhJY5Rt8yEUKsNtpSgJ9DnoR8exZabFyGW7b7d9aFCWOLUgrn9N7b8Jd3dj3IaPA4lDpOadW+3rEUARgJuaJYGaIuUzikFbKdXvWaUdZI0BLtqd4zyvdAOlioCw2SIQYftzdd8oblM7/pVh6vz0ux+JAEd/MBFDI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=crxGwqIc; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744166924; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=j8kr/U6Mhg6pNnJ59+Ueg3DXV7i8FnpJgdofZdbPJPoD0iy5v4oa05jKdB1yINAAaP9EgQ6eOl2cRP+uwL0IbLVCfN5Lp9ntusM6aC65vFDcfIrinn/w7bssIMyLmXwACwu6jvnnPRP2h0D/I1FZUJ+3FmqHPIYPOqQsjwzzNsQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744166924; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Lo6rdbpVKNpqrSIHHGzsgA1k3qr45/jNwyi8MvtoIIw=; 
+	b=PPTJbscpob4lLJfai1vezKfdZyXwqwU5GO+l9gSCMvqMJmpf1SaZhv7lj36H/qgvpVP22gdLdCxa3RjAFdhJJa7EOc3V3rvkTLPgn+dZhePkW3ebQtiIfqNn/kZ8MmtXcA55fSRFVcZHj9upHz9Twg+7/DLY71E0mz6yPB8CIQk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744166924;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
+	bh=Lo6rdbpVKNpqrSIHHGzsgA1k3qr45/jNwyi8MvtoIIw=;
+	b=crxGwqIct4nGSKOU6B67xz/gTuEmgQxUx0G6HJl+dQ8gsEWIyn0oTdJ65DN4oGeB
+	ecQ68eW6/CcKACYF+t/27AH9gfkhnWX8uJgFlGntFPzefh4gkLitzzcgN0WcGyB14TL
+	INU/IoXMWgI1W9hZHj8lRM0Vc0RJrY9wahZLCJJ8=
+Received: by mx.zohomail.com with SMTPS id 1744166922314423.9205214893128;
+	Tue, 8 Apr 2025 19:48:42 -0700 (PDT)
+From: Li Ming <ming.li@zohomail.com>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org
-Cc: Phillip Lougher <phillip@squashfs.org.uk>,
-	syzbot+65761fc25a137b9c8c6e@syzkaller.appspotmail.com
-Subject: [PATCH] Squashfs: check return result of sb_min_blocksize
-Date: Wed,  9 Apr 2025 03:47:47 +0100
-Message-Id: <20250409024747.876480-1-phillip@squashfs.org.uk>
-X-Mailer: git-send-email 2.39.2
+	shiju.jose@huawei.com,
+	Li Ming <ming.li@zohomail.com>
+Subject: [RFC PATCH 1/1] cxl/feature: Using Full Data Transfer only when offset is 0
+Date: Wed,  9 Apr 2025 10:48:25 +0800
+Message-Id: <20250409024825.510632-1-ming.li@zohomail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,63 +72,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfKDx+p3FQwcKVnUhI8GKRy8ZRCFp7zzz8AlvfLP53Y8sgSMAX7ziXIRWI4vHcU/f0a4tnkGSM6rDUCzkyLPkBLPKMHg4Jaq4ZKeG3lfsbowlvhQ7WMxr
- 31psyHeNOXxQT8K5jNyo/JaOMWaob82EjIkj9JAbJvceLXaSf5z2nqLnR/XwPBtV/KIetdVtlTFdxj/o0TW9jkjC016hRFnW0D8QuT4y//UZl4bvrY2x/7SZ
- bm11cDhBbq4rV5cS7Z8qEHKuN9jEBbpwFicHlGqKBcJeKR1x7cXjKLtEiCxQ8EVFZx19xfHnxqK4SxN9uNO/0PeS38HpL/1NWO05YzatKkbIbBQnbGd/YR03
- EoxN/xcxOHwh7dthHIA2QYKzLOrpnSF2f6/GIbyYTlYhQuDdEIA=
+Feedback-ID: rr08011227f20bcca5c106d8699ac36b9a000053f8b3e81b113ef9f3641ee97bd85e20a86509cb1e8636800a:zu0801122782f97f2525511600c75b1c5a000080bbaa6f63aba2bc0f88beb6a2e927c4f46ff526ae8eaae98d:rf0801122d7f72687dca2b6df80bade99f0000368d6f36486f75a5b6b022f677aaecdffd7ec0da5960db1f6d71e5db776d35:ZohoMail
+X-ZohoMailClient: External
 
-Syzkaller reports an "UBSAN: shift-out-of-bounds in squashfs_bio_read" bug.
+Per CXL r3.2 section 8.2.10.6.3 Set Feature(Opcode 0502h)
 
-Syzkaller forks multiple processes which after mounting the Squashfs
-filesystem, issues an ioctl("/dev/loop0", LOOP_SET_BLOCK_SIZE, 0x8000).
-Now if this ioctl occurs at the same time another process is in the
-process of mounting a Squashfs filesystem on /dev/loop0, the failure
-occurs.   When this happens the following code in squashfs_fill_super()
-fails.
+"If the Feature data is transferred in its entirely, the caller makes
+one call to Set Feature with Action = Full Data Transfer. The Offset
+field is not used and shall be ignored."
 
-----
-msblk->devblksize = sb_min_blocksize(sb, SQUASHFS_DEVBLK_SIZE);
-msblk->devblksize_log2 = ffz(~msblk->devblksize);
-----
+It implies if using Full Data Transfer, the received data should be
+updated from offset 0 on device side.
 
-sb_min_blocksize() returns 0, which means msblk->devblksize is set to 0.
+Current driver implementation is if feature data size is less than mbox
+payload - set feature header, driver will use Full Data Transfer even if
+user provides an offset. Per above description, feature data will be
+written from offset 0 rather than the offset value user provided, the
+result will not be what user expects.
 
-As a result, ffz(~msblk->devblksize) returns 64, and msblk->devblksize_log2
-is set to 64.
+The changes is checking if the offset caller provides is equal to 0, if
+yes, using Full Data Transfer, if not, using Initiate Data Transfer -
+Finish Data Transfer.
 
-This subsequently causes the
+After the changes, all Set Feature transfer scenarios are below:
 
-UBSAN: shift-out-of-bounds in fs/squashfs/block.c:195:36
-shift exponent 64 is too large for 64-bit type 'u64' (aka
-'unsigned long long')
+1. data size + header is less than mbox payload and offset is 0
+	Full Data Transfer
 
-This commit adds a check for a 0 return by sb_min_blocksize().
+2. data size + header is less than mbox payload and offset is not 0
+	Initiate Data Transfer(with all feature data) - Finish Data Transfer(with no feature data)
 
-Reported-by: syzbot+65761fc25a137b9c8c6e@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/67f0dd7a.050a0220.0a13.0230.GAE@google.com/
-Fixes: 0aa666190509 ("Squashfs: super block operations")
-Signed-off-by: Phillip Lougher <phillip@squashfs.org.uk>
+3. data size + header us greater than mbox payload with any value of offset
+	Initiate Data Transfer - Continue Data Transfer - Finish Data Transfer
+
+Fixes: 14d502cc2718e ("cxl/mbox: Add SET_FEATURE mailbox command")
+Signed-off-by: Li Ming <ming.li@zohomail.com>
 ---
- fs/squashfs/super.c | 5 +++++
- 1 file changed, 5 insertions(+)
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8 v6.15-rc1
+---
+ drivers/cxl/core/features.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
-index 67c55fe32ce8..d8256b23ad9a 100644
---- a/fs/squashfs/super.c
-+++ b/fs/squashfs/super.c
-@@ -202,6 +202,11 @@ static int squashfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	msblk->panic_on_errors = (opts->errors == Opt_errors_panic);
+diff --git a/drivers/cxl/core/features.c b/drivers/cxl/core/features.c
+index f4daefe3180e..fcc624cefe89 100644
+--- a/drivers/cxl/core/features.c
++++ b/drivers/cxl/core/features.c
+@@ -259,6 +259,17 @@ size_t cxl_get_feature(struct cxl_mailbox *cxl_mbox, const uuid_t *feat_uuid,
+ 	return data_rcvd_size;
+ }
  
- 	msblk->devblksize = sb_min_blocksize(sb, SQUASHFS_DEVBLK_SIZE);
-+	if (!msblk->devblksize) {
-+		errorf(fc, "squashfs: unable to set blocksize\n");
-+		return -EINVAL;
++static bool is_last_feat_transfer(struct cxl_mbox_set_feat_in *pi)
++{
++	switch (le32_to_cpu(pi->flags) & CXL_SET_FEAT_FLAG_DATA_TRANSFER_MASK) {
++	case CXL_SET_FEAT_FLAG_FULL_DATA_TRANSFER:
++	case CXL_SET_FEAT_FLAG_FINISH_DATA_TRANSFER:
++		return true;
++	default:
++		return false;
 +	}
++}
 +
- 	msblk->devblksize_log2 = ffz(~msblk->devblksize);
+ /*
+  * FEAT_DATA_MIN_PAYLOAD_SIZE - min extra number of bytes should be
+  * available in the mailbox for storing the actual feature data so that
+@@ -294,14 +305,14 @@ int cxl_set_feature(struct cxl_mailbox *cxl_mbox,
+ 	if (hdr_size + FEAT_DATA_MIN_PAYLOAD_SIZE > cxl_mbox->payload_size)
+ 		return -ENOMEM;
  
- 	mutex_init(&msblk->meta_index_mutex);
+-	if (hdr_size + feat_data_size <= cxl_mbox->payload_size) {
++	if (hdr_size + feat_data_size <= cxl_mbox->payload_size && !offset) {
+ 		pi->flags = cpu_to_le32(feat_flag |
+ 					CXL_SET_FEAT_FLAG_FULL_DATA_TRANSFER);
+ 		data_in_size = feat_data_size;
+ 	} else {
+ 		pi->flags = cpu_to_le32(feat_flag |
+ 					CXL_SET_FEAT_FLAG_INITIATE_DATA_TRANSFER);
+-		data_in_size = cxl_mbox->payload_size - hdr_size;
++		data_in_size = min(feat_data_size, cxl_mbox->payload_size - hdr_size);
+ 	}
+ 
+ 	do {
+@@ -322,7 +333,8 @@ int cxl_set_feature(struct cxl_mailbox *cxl_mbox,
+ 		}
+ 
+ 		data_sent_size += data_in_size;
+-		if (data_sent_size >= feat_data_size) {
++		if (data_sent_size >= feat_data_size &&
++		    is_last_feat_transfer(pi)) {
+ 			if (return_code)
+ 				*return_code = CXL_MBOX_CMD_RC_SUCCESS;
+ 			return 0;
 -- 
-2.39.2
+2.34.1
 
 
