@@ -1,148 +1,163 @@
-Return-Path: <linux-kernel+bounces-595800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A9F4A82350
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:17:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D224A82344
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E0CC8C12AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:13:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9F91BC18DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C88025D914;
-	Wed,  9 Apr 2025 11:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DBD25E440;
+	Wed,  9 Apr 2025 11:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ndkVFXp2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T3ygFDei"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ul2sa/bm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0990433AC;
-	Wed,  9 Apr 2025 11:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CFF25DD17
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 11:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744197230; cv=none; b=PvQ3IjiFa47bq6gSo1Ld3/7RCSuON2RxJpydk9v05xhQIjH1y4+jIqe4+XXtV67MMRGjPWYB4AxBj4k7jAWY8oRrQFCVGeek3C5wL0olC6YlkOBpQEntffSs3+QC8VpQY3tMbM5toW89hf+rRcMe92hcCXIZVyrD2XGxcs5dxrY=
+	t=1744197237; cv=none; b=ubOwraH2XGGw5sadYjKcoyRQbLcBz+oTrgQKLPjf7jcVx14IXc01d7oZkzehd0CjbeiAHLo4Zaa2caW7tXyqdyIZIC20U25zALRp/3AHSDQ4D/1OkbX6kHGA/CBAsancf1O82to8xFdIkXlvRx32/lKGz7dab7Acqml2M6F4YSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744197230; c=relaxed/simple;
-	bh=qvZ41SeZUWTJUM2/0wOjudaZGd/o08OfWeoXOJTa5LQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mlD54hVIctHwKpbRVqyAMhlgq/4M+stztxPpojLb11rb74qke890oRsR6plwTeOeONmEBJl0r9oU2jwpxpUn9Gpe74DpkhzA3ISxPFDccLwL0/CdxR5ceeM/JhpYd1w8RAijhuMA3MBPkDiv26F4BzWsCyKLNzPDfyRW8BU+ufY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ndkVFXp2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T3ygFDei; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744197226;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1UIP4ZGix9p5MaH9RHiON2iNZ1qNwydPjYtJFAn6h60=;
-	b=ndkVFXp2m4OiYv7D2NIsqsFhmpQaMrSMq4M/Fxl214eOX7BqCBLgBejQ21mYGWpaoi+Sed
-	fiChITipD81wOCRi1M013UAXtjJ8J6bKfMJYV1HWIIDrukJA6EYi75IbNO9Y3p0eGnjNJj
-	qxCEh2pnxJuTBIYoHrH09g6phqYuPdkGfnqjCf//lvjqIY2aU8etRxte3SLw7MEaCPoDkS
-	/l6+j6s0C5wQiifRFsEnK6u/w9o2aw+nK+fSQBlY7Ks9EIm0gFH4UHtBNWirDgvr6VqJKu
-	KS/1NxaCjEu+Vg4I1Y2I8mlQqJFIlJzoAhpOnOPOxI38446wm31YohyCasKkMA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744197226;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1UIP4ZGix9p5MaH9RHiON2iNZ1qNwydPjYtJFAn6h60=;
-	b=T3ygFDeiKIpY65OR/wfBjvG7m5xLPXI2LXSCfvJFe1hMWt2WW8vCSUQfhLAenBcfB8+5oZ
-	dJ6r7/B2gnhDWvBA==
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>, Marc Zyngier
- <maz@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Sascha Bischoff <sascha.bischoff@arm.com>, Timothy Hayes
- <timothy.hayes@arm.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Lorenzo
- Pieralisi <lpieralisi@kernel.org>
-Subject: Re: [PATCH 22/24] irqchip/gic-v5: Add GICv5 ITS support
-In-Reply-To: <20250408-gicv5-host-v1-22-1f26db465f8d@kernel.org>
-References: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
- <20250408-gicv5-host-v1-22-1f26db465f8d@kernel.org>
-Date: Wed, 09 Apr 2025 13:13:46 +0200
-Message-ID: <87tt6xtwnp.ffs@tglx>
+	s=arc-20240116; t=1744197237; c=relaxed/simple;
+	bh=irPkddcl4pFObPk7qkg7MigXFgzvZCovZUOJcpGQdDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PHNIfZ+mLPQYzv2IgGi0KFWRR4w5Rc30x817fqde/s2y0F7mzn0WAKX7TLbOGTq2c5O70CR78TbZlUnp1ySMgaal5J8xy2e/iaz9q0Vmc6TMmx6X/AhKZUNwlmO6gLcjp9P1n/D2xq63p/7X8L1g5rcLm9q4WyYk6PRICjBYnjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ul2sa/bm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 275F9C4CEE3;
+	Wed,  9 Apr 2025 11:13:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744197236;
+	bh=irPkddcl4pFObPk7qkg7MigXFgzvZCovZUOJcpGQdDs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ul2sa/bmReApoaPP+p5rT3iJ9yU/ytY58lZKc49bC9qMsIP3zD2h7Pwwq+M2plsxb
+	 b9UnKv2vmXI8BhWv6WAQc6i6CP/CRqjSRUzMvWG0sGHNGexSxa9tpEzqFLUn6oRCJs
+	 4jOwi3sjQBoximySG2LB9O7aI/qgHZfXBqwcYyQ1MLWE+CKyUm1qH1A/BR2wJ/yAu2
+	 j8MGKP0iHe3RRScIutOtKLPwhrNrab3Fx0QXiNadawJruhVyZG/P5iKxnpjnsG3ZqS
+	 ySBVsThLZMhrBpc4KCV56bbyRfwMcxi4meSaPGN+h/D1qEB/wIDkNbQaZONTYcizzL
+	 NZMJDwDxiQQ1Q==
+Message-ID: <de04dc00-f01d-4c27-a6f8-873398bf8d4a@kernel.org>
+Date: Wed, 9 Apr 2025 13:13:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2][PATCH 4/5] x86/cpu: Move AMD erratum 1386 table over to
+ 'x86_cpu_id'
+To: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, tglx@linutronix.de, bp@alien8.de,
+ kan.liang@linux.intel.com
+References: <20241213185127.F38B6EE9@davehans-spike.ostc.intel.com>
+ <20241213185132.07555E1D@davehans-spike.ostc.intel.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20241213185132.07555E1D@davehans-spike.ostc.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 08 2025 at 12:50, Lorenzo Pieralisi wrote:
->  
-> +void gicv5_irs_syncr(void)
-> +{
-> +	u32 syncr;
-> +	u32 statusr;
-> +	int ret;
-> +	struct gicv5_irs_chip_data *irs_data;
-> +
-> +	irs_data = list_first_entry_or_null(&irs_nodes,
-> +					    struct gicv5_irs_chip_data, entry);
-> +	if (WARN_ON(!irs_data))
-> +		return;
-> +
-> +	syncr = FIELD_PREP(GICV5_IRS_SYNCR_SYNC, 1);
-> +	irs_writel(irs_data, syncr, GICV5_IRS_SYNCR);
-> +
-> +	ret = readl_relaxed_poll_timeout_atomic(
-> +			irs_data->irs_base + GICV5_IRS_SYNC_STATUSR, statusr,
-> +			FIELD_GET(GICV5_IRS_SYNC_STATUSR_IDLE, statusr), 1,
-> +			USEC_PER_SEC);
-> +
-> +	if (ret == -ETIMEDOUT)
-> +		pr_err_ratelimited("SYNCR timeout...\n");
+I noted this on IRC...
 
-This timeout poll thing looks very familiar by now. Third variant :)
+On 13. 12. 24, 19:51, Dave Hansen wrote:
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> The AMD erratum 1386 detection code uses and old style 'x86_cpu_desc'
+> table. Replace it with 'x86_cpu_id' so the old style can be removed.
+> 
+> I did not create a new helper macro here. The new table is certainly
+> more noisy than the old and it can be improved on. But I was hesitant
+> to create a new macro just for a single site that is only two ugly
+> lines in the end.
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> ---
+> 
+>   b/arch/x86/kernel/cpu/amd.c |    9 ++++-----
+>   1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff -puN arch/x86/kernel/cpu/amd.c~amd-x86_cpu_id arch/x86/kernel/cpu/amd.c
+> --- a/arch/x86/kernel/cpu/amd.c~amd-x86_cpu_id	2024-12-13 10:47:55.714076132 -0800
+> +++ b/arch/x86/kernel/cpu/amd.c	2024-12-13 10:47:55.718076292 -0800
+> @@ -795,10 +795,9 @@ static void init_amd_bd(struct cpuinfo_x
+>   	clear_rdrand_cpuid_bit(c);
+>   }
+>   
+> -static const struct x86_cpu_desc erratum_1386_microcode[] = {
+> -	AMD_CPU_DESC(0x17,  0x1, 0x2, 0x0800126e),
+> -	AMD_CPU_DESC(0x17, 0x31, 0x0, 0x08301052),
+> -	{},
 
-> +static int gicv5_its_wait_for_invalidation(struct gicv5_its_chip_data *its)
-> +{
-> +	int ret;
-> +	u32 statusr;
-> +
-> +	ret = readl_relaxed_poll_timeout_atomic(
-> +			its->its_base + GICV5_ITS_STATUSR, statusr,
-> +			FIELD_GET(GICV5_ITS_STATUSR_IDLE, statusr), 1,
-> +			USEC_PER_SEC);
-> +
-> +	if (ret == -ETIMEDOUT)
-> +		pr_err_ratelimited("STATUSR timeout...\n");
-> +
-> +	return ret;
-> +}
+If I am to tell, the {} is needed, otherwise you touch the array OOB (at 
+least with the "m->flags & X86_CPU_ID_FLAG_ENTRY_VALID" test -- if the 
+bit is set in the memory, then much more than that...).
 
-And number four follows suit :)
+> +static const struct x86_cpu_id erratum_1386_microcode[] = {
+> +	X86_MATCH_VFM_STEPS(VFM_MAKE(X86_VENDOR_AMD, 0x17, 0x01), 0x2, 0x2, 0x0800126e),
+> +	X86_MATCH_VFM_STEPS(VFM_MAKE(X86_VENDOR_AMD, 0x17, 0x31), 0x0, 0x0, 0x08301052),
+>   };
+>   
+>   static void fix_erratum_1386(struct cpuinfo_x86 *c)
+> @@ -814,7 +813,7 @@ static void fix_erratum_1386(struct cpui
+>   	 * Clear the feature flag only on microcode revisions which
+>   	 * don't have the fix.
+>   	 */
+> -	if (x86_cpu_has_min_microcode_rev(erratum_1386_microcode))
+> +	if (x86_match_min_microcode_rev(erratum_1386_microcode))
+>   		return;
+>   
+>   	clear_cpu_cap(c, X86_FEATURE_XSAVES);
 
-> +
-> +static void gicv5_its_syncr(struct gicv5_its_chip_data *its,
-> +			    struct gicv5_its_dev *its_dev)
-> +{
-> +	int ret;
-> +	u64 syncr;
-> +	u32 statusr;
-> +
-> +	syncr = FIELD_PREP(GICV5_ITS_SYNCR_SYNC, 1) |
-> +		FIELD_PREP(GICV5_ITS_SYNCR_DEVICEID, its_dev->device_id);
-> +
-> +	its_writeq(its, syncr, GICV5_ITS_SYNCR);
-> +
-> +	ret = readl_relaxed_poll_timeout_atomic(
-> +			its->its_base + GICV5_ITS_SYNC_STATUSR, statusr,
-> +			FIELD_GET(GICV5_ITS_SYNC_STATUSR_IDLE, statusr), 1,
-> +			USEC_PER_SEC);
-> +
-> +	if (ret == -ETIMEDOUT)
-> +		pr_err_ratelimited("SYNCR timeout...\n");
-> +}
+thanks,
+-- 
+js
+suse labs
 
-Along with #5 
-
-Thanks,
-
-        tglx
 
