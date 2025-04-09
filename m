@@ -1,74 +1,72 @@
-Return-Path: <linux-kernel+bounces-595770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FAEA822DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:55:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F4EA822E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EE1F7B3B6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:54:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4606C8C36D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE53725DCE0;
-	Wed,  9 Apr 2025 10:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A8025DAFD;
+	Wed,  9 Apr 2025 10:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cMZI7iKf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vd8kpkLt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jakPLrOD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B9025E44C
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 10:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A7825D911
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 10:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744196087; cv=none; b=qp+6RGEwy+OJTjIGkZCucjgZnfvxdqSnZDupSH8kUm+9L6HeUX337IQLAPeNKOLLo9qByrNK28TzDME+2X7fhxZ+8OYZ/lB+TFcgxDStmZ+i27U3/86kyZQVpoE8sCrxju6Qm36MCtiRWIsb2bXBXKTK7EZE+6J9cDq0pnhMxMI=
+	t=1744196116; cv=none; b=bDvqJ2v4eF2U52Ny9YkAO5U0/wNg916Z6Tg288jHDIe4tKpBVS4fOWp3IKisuGVYgmd2Lo/GPEnnekbW34yHFHbmCvD+S46pgDIQAMOo84BJIdmci1U0ei7qGRLNSLGc8auaXBBKtG4npWhevtqDQAPiyYULFwHZx/qaQhamOms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744196087; c=relaxed/simple;
-	bh=pHflYcKqFoKG8cLoQ/9fnD6NmQ/Wt4RsX+dpA1DRZdg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hxXmHZcUi3KLPRqFXOFFdGhJ5tMyV3nfEmFbIWRw9n8RR5exoiBMKGPRDyEhXZIQPJMV+zTeZuLtGV1b+bV+FHftds/K6b7GGW21om0i3kE2usPIi/AZarjzLDtkqalSZRYN073d3Z1oRri3cA8DcSZTyKo38OeyZTxU1He82uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cMZI7iKf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vd8kpkLt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744196082;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gsys2pZg1b9LKpYoW/QXl009adwTq+tVztT5ium1pgk=;
-	b=cMZI7iKfSi3CmZHK88pNQOQmqk+hFZVyMLbt8/mbgWCbz50PwljRUVt85euhWplp/g8ArV
-	vU9AA07s0kzIprA5txZLyWYL5iPkF3rjB9nqXVbxLgDv/oGgho94rR0QJUMJxKzFqKayvJ
-	UfRvVYq3vyuAtvIOvKWqHDtD4lJF1ALqZ46hiPG9O1JjMZcpxsmm8Fb1in2EL3QxMH1oDF
-	hvNkJqDibZWwI78N0Vn+jPkymIPxOrHaWfgaWyQUuKufgWp+MmjW78PmHEyatpaf9ncmsD
-	iQwmSAiHwZ2BJsacJP6+Y2xkVK0QtWGd51dOmEq4390ioTPuV4NXTzRXhCh4PA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744196082;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gsys2pZg1b9LKpYoW/QXl009adwTq+tVztT5ium1pgk=;
-	b=vd8kpkLtAItLxWmAEHdHdLt6FGOJhk1u5EzHQwzv9on66iKYvsZPmkJdQFE1p824Wyf5VH
-	O/KwZ8/4OuisIeAQ==
-To: Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	x86@kernel.org,
-	x86-cpuid@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v1 2/2] x86/cacheinfo: Properly parse CPUID(0x80000006) L2/L3 associativity
-Date: Wed,  9 Apr 2025 12:54:25 +0200
-Message-ID: <20250409105429.1048199-3-darwi@linutronix.de>
-In-Reply-To: <20250409105429.1048199-1-darwi@linutronix.de>
-References: <20250409105429.1048199-1-darwi@linutronix.de>
+	s=arc-20240116; t=1744196116; c=relaxed/simple;
+	bh=wwPowS5KN5fssJ/zxxMmn3uLfB0eWfpJldUm6y0TjQ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q/XluaQgm2RG/fykT+Ny7IsR9pq0rEiIab4LE83Z73i1A79k7GRptp6jTXV5WpwlXeAF7gKDLAPRF/Zxnc1oF00DiscxCJySV80mXKFIfD+Wlg6uHpxqkqhIruUAGItgs8QEO5FleuweYfZr5E1NzhFohR46A465RrpSuqotKXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jakPLrOD; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744196115; x=1775732115;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wwPowS5KN5fssJ/zxxMmn3uLfB0eWfpJldUm6y0TjQ4=;
+  b=jakPLrODJ8k5WAqxOKEOIh+cPchOiCUKN3Jn206YjMSNoJxz6x06BCO6
+   hZ8nTNBmxrJKsKe/tHNhsmJKdnJxbhwllF/pj35ze5GunVc0qGampCzV7
+   AyYY8vHl0hCDYyhQ8awkmMOjyGN6ekE8Gp7bKAoYPNrPGfF/IW+Rm3yHd
+   P5a00DQ8H5GgPoQB0WFTTR44vQ3hT6OjcCUuHqkNNo4uol8gxrFKelN/Z
+   MCDwIXlNxXhajYdYq5xB0HR6R/M6YcY7JyuyMAS22lGtu/vaamHK6PtHC
+   SPJVY4i4Z4ONq7YLbz91gqnNMdAC/LzsgaNs0Zdd4p99YREE8kPa7PAFS
+   A==;
+X-CSE-ConnectionGUID: pkw+4y7+Tk2dB73+KrSVBg==
+X-CSE-MsgGUID: mv78BWsVS1uhc2Yabtwv2Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56330049"
+X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
+   d="scan'208";a="56330049"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 03:55:14 -0700
+X-CSE-ConnectionGUID: TlIqvDV0QFKSDaxaQeMmoQ==
+X-CSE-MsgGUID: lgUv3hFyQzmxbRCCr2pT/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
+   d="scan'208";a="128459861"
+Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
+  by orviesa010.jf.intel.com with ESMTP; 09 Apr 2025 03:55:12 -0700
+From: Raag Jadav <raag.jadav@intel.com>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	dakr@kernel.org,
+	andriy.shevchenko@linux.intel.com
+Cc: linux-kernel@vger.kernel.org,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v2] devres: simplify devm_kstrdup() using devm_kmemdup()
+Date: Wed,  9 Apr 2025 16:24:32 +0530
+Message-Id: <20250409105432.1852355-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,74 +75,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Complete the AMD CPUID(4) emulation logic, which uses CPUID(0x80000006)
-for L2/L3 cache info and an assocs[] associativity mapping array, by
-adding entries for 3-way caches and 6-way caches.
+devm_kstrdup() logic pretty much reflects devm_kmemdup() for strings,
+so just reuse it.
 
-Properly handle the case where CPUID(0x80000006) returns an L2/L3
-associativity of 9.  This is not real associativity, but a marker to
-indicate that the respective L2/L3 cache information should be retrieved
-from CPUID(0x8000001d) instead.  If such a marker is encountered, return
-early from legacy_amd_cpuid4(), thus effectively emulating an "invalid
-index" CPUID(4) response with a cache type of zero.
-
-When checking if CPUID(0x80000006) L2/L3 cache info output is valid, and
-given the associtivity marker 9 above, do not just check if the whole
-ECX/EDX register is zero.  Rather, check if the associativity is zero or
-9.  An associativity of zero implies no L2/L3 cache, which make it the
-more correct check anyway vs. a zero check of the whole output register.
-
-Fixes: a326e948c538 ("x86, cacheinfo: Fixup L3 cache information for AMD multi-node processors")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
+Signed-off-by: Raag Jadav <raag.jadav@intel.com>
 ---
- arch/x86/kernel/cpu/cacheinfo.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 7a95e1ce73f8..038f819da20e 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -208,13 +208,20 @@ union l3_cache {
- 	unsigned val;
- };
+v2: Style adjustment (Andy)
+
+ drivers/base/devres.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+index d8a733ea5e1a..eee63bc1f062 100644
+--- a/drivers/base/devres.c
++++ b/drivers/base/devres.c
+@@ -976,17 +976,10 @@ EXPORT_SYMBOL_GPL(devm_krealloc);
+  */
+ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+ {
+-	size_t size;
+-	char *buf;
+-
+ 	if (!s)
+ 		return NULL;
  
-+/*
-+ * AMD_L2_L3_INVALID_ASSOC: Cache info for the respective L2/L3 cache should
-+ * be determined from CPUID(0x8000001d) instead of CPUID(0x80000006).
-+ */
- #define AMD_CPUID4_FULLY_ASSOCIATIVE	0xffff
-+#define AMD_L2_L3_INVALID_ASSOC		0x9
+-	size = strlen(s) + 1;
+-	buf = devm_kmalloc(dev, size, gfp);
+-	if (buf)
+-		memcpy(buf, s, size);
+-	return buf;
++	return devm_kmemdup(dev, s, strlen(s) + 1, gfp);
+ }
+ EXPORT_SYMBOL_GPL(devm_kstrdup);
  
- /* L2/L3 associativity mapping */
- static const unsigned short assocs[] = {
- 	[1] = 1,
- 	[2] = 2,
-+	[3] = 3,
- 	[4] = 4,
-+	[5] = 6,
- 	[6] = 8,
- 	[8] = 16,
- 	[0xa] = 32,
-@@ -267,7 +274,7 @@ amd_cpuid4(int leaf, union _cpuid4_leaf_eax *eax,
- 		size_in_kb = l1->size_in_kb;
- 		break;
- 	case 2:
--		if (!l2.val)
-+		if (!l2.assoc || l2.assoc == AMD_L2_L3_INVALID_ASSOC)
- 			return;
- 		assoc = assocs[l2.assoc];
- 		line_size = l2.line_size;
-@@ -276,7 +283,7 @@ amd_cpuid4(int leaf, union _cpuid4_leaf_eax *eax,
- 		size_in_kb = __this_cpu_read(cpu_info.x86_cache_size);
- 		break;
- 	case 3:
--		if (!l3.val)
-+		if (!l3.assoc || l3.assoc == AMD_L2_L3_INVALID_ASSOC)
- 			return;
- 		assoc = assocs[l3.assoc];
- 		line_size = l3.line_size;
 -- 
-2.49.0
+2.34.1
 
 
