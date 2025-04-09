@@ -1,78 +1,173 @@
-Return-Path: <linux-kernel+bounces-596339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805FBA82AA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:39:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C27A82ACD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64B039A4005
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:28:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 691883B396D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538342676C2;
-	Wed,  9 Apr 2025 15:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A405265626;
+	Wed,  9 Apr 2025 15:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qGJ+Qcgd"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vSfbzYsw"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BB625D908;
-	Wed,  9 Apr 2025 15:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52B215DBBA
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744212528; cv=none; b=TLDpdAHuYHutCrPzAqUC3k8HUx4krtz7nRTbx/LCJaFsNUM+bAAJvN1JF3Xw/xyjIUvg9+RNkeFFg4O2BQri5oor23BVejwi+/lGpHDkCkt0TSmNTUefyy4p8Km1r/xNCt42stvGdoxYAAMr/vxgtgcGj5R8hO2e68zLNCSzUxw=
+	t=1744212603; cv=none; b=lkun63G//vgpBlc5oF3+0G7o8TIw8Db2z3wx87sAOxgEPwCpOgKUd0XNmB3xrKpFDKGvrvIWQKrkUpir33QmBQ9PFb3OIEZBa5hR8HL8frlbBRZjmO/4TMIMItgTo80uqHpFQNUs2E1vLb+GAP9Hk0iuWZMfVDFoU0HsQcuCFh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744212528; c=relaxed/simple;
-	bh=9e4D7tu8NpiZEjh0zjN7AOEJmEjmxGVQQpxC3EDMjGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVYy66bWBOvbhe/C0a1RU0t4WbDbE/8eGkXIjZwPFMMaW1D/vF2DGRJwD3bDQ5ysMdqBbrlHYa4FOREDve47fjpWFK/I6SH8CzbkmmsgT/rVvL6z8RcD9iydDYKrLhkUhbBvVNVgv06Oy/uJuYhrlD3zqYiY6Z9AXqr8KjkS1kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qGJ+Qcgd; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=GVms8sZy6YVwer8huqwdL535e2d50tSk6udp7SjsHpk=; b=qGJ+QcgdKd4LJA67qLXYZsIQBD
-	ymHrSKgC+FhlSm3H9jhw1TJt/JTJElPeI3AVMc2zG+VNsbQzSKkaDwa2hs7YnBLzYddTM2061/aKq
-	rdCKx0uxpXOpAJkRD3yKX9Zo7s/MJalDZK3D6GFtrEe+e2aIRJKTKklWlHdwbnIZ+iCo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u2XLs-008Z3N-Sg; Wed, 09 Apr 2025 17:28:32 +0200
-Date: Wed, 9 Apr 2025 17:28:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Lucien.Jheng" <lucienx123@gmail.com>
-Cc: linux-clk@vger.kernel.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, daniel@makrotopia.org, ericwouds@gmail.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	joseph.lin@airoha.com, wenshin.chung@airoha.com,
-	lucien.jheng@airoha.com
-Subject: Re: [PATCH v8 net-next PATCH 1/1] net: phy: air_en8811h: Add clk
- provider for CKO pin
-Message-ID: <b8f9732e-bc33-4e73-b7bb-8513d8343983@lunn.ch>
-References: <20250409150902.3596-1-lucienx123@gmail.com>
+	s=arc-20240116; t=1744212603; c=relaxed/simple;
+	bh=7ammzMgtsA5awXQq4UPk8mbvXIdjRXw5ww7TtoQg/L4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=l/6X/CxcsBj1KfqCiBSbYAYKoYJPsep9hKwogniF5+f2/XLjsSbcaTbBBOCpzCXuSgWfNnKppdcOM9+Pu3Wo3nR9zDlgD5MktLta4kz1lOEURmC2ZKaPiU+gaW2esqj7NqqPsWx5LgxYa3GR1bawHred4dvpzjOmKD3bDUJCRpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vSfbzYsw; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250409152958euoutp01f67296f123d584a8a9a7001171435eb5~0sB3506h12148721487euoutp01E
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:29:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250409152958euoutp01f67296f123d584a8a9a7001171435eb5~0sB3506h12148721487euoutp01E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1744212598;
+	bh=ul03oSv4pyZS+HSpbQ9I5MY9es9yGM9SGJkg+qohyNs=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=vSfbzYswfp8l1tx9lhcgpbjc+7l6PpAOUa79990tWvNoiDDzxaoWY9KDg4sGQQi1q
+	 ycYpaHTZx7+MPwdK1JXs+/HHGaP5r9uYglUMQzm7DCaic1gSVtKkBprYG+O59PCpaA
+	 sWV020oNcyliWRtOq1ATaDY1mySnKbmN5NHLy6H0=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250409152958eucas1p2a824e7ff30453a67b524a18556764d17~0sB3s3A7q0925809258eucas1p2Z;
+	Wed,  9 Apr 2025 15:29:58 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id AB.07.20409.67296F76; Wed,  9
+	Apr 2025 16:29:58 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250409152957eucas1p27f59b1452aa3e9b3aa0b2cc98c5a99fc~0sB3WYg7e0956309563eucas1p2D;
+	Wed,  9 Apr 2025 15:29:57 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250409152957eusmtrp1f75476af527f9f945de78d01ff4c9049~0sB3V01k11007810078eusmtrp1-;
+	Wed,  9 Apr 2025 15:29:57 +0000 (GMT)
+X-AuditID: cbfec7f4-c0df970000004fb9-4b-67f69276a3fb
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id D1.77.19654.57296F76; Wed,  9
+	Apr 2025 16:29:57 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250409152956eusmtip1c210070b9e71c88426ba2634c970e62c~0sB2Wubt70379603796eusmtip1R;
+	Wed,  9 Apr 2025 15:29:56 +0000 (GMT)
+Message-ID: <208140cb-dc22-4e7d-9f1f-7d5ed30d16dc@samsung.com>
+Date: Wed, 9 Apr 2025 17:29:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409150902.3596-1-lucienx123@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] [v4] dma/contiguous: avoid warning about unused
+ size_bytes
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Robin Murphy <robin.murphy@arm.com>,
+	Michal Nazarewicz <mina86@mina86.com>, Kyungmin Park
+	<kyungmin.park@samsung.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250409151557.3890443-1-arnd@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7djP87plk76lG3zdzmnxd9IxdottWzax
+	Wvz6YmFxtukNu8XlXXPYLBYcb2G1OPjhCasDu8eaeWsYPX7/msTosWlVJ5vHi80zGT3W/XnF
+	5NG3ZRWjx+dNcgHsUVw2Kak5mWWpRfp2CVwZb27tYS44w10x7/Jm1gbG/ZxdjJwcEgImEo8+
+	nGHsYuTiEBJYwSix6theNgjnC6PE/NkvmCGcz4wSu39cYIJpmTfvLytEYjmjxI8NX1kgnI+M
+	EvdW9bKAVPEK2El8aLsE1sEioCLRt/4RG0RcUOLkzCdgNaIC8hL3b81g72Lk4BAWCJR4e40D
+	JCwioCxx/dscsJuYBS4zSkx5NQFsDrOAuMStJ/PBbDYBQ4mut11gMzkFzCU+HHrLAlEjL7H9
+	7RywsyUEPnBIHO3eyA5xtovE4f0XoGxhiVfHt0DZMhKnJ/ewQDS0M0os+H2fCcKZwCjR8PwW
+	I0SVtcSdc7/YQE5lFtCUWL9LHyLsKPF11l5WkLCEAJ/EjbeCEEfwSUzaNp0ZIswr0dEmBFGt
+	JjHr+Dq4tQcvXGKewKg0CylYZiF5cxaSd2Yh7F3AyLKKUTy1tDg3PbXYKC+1XK84Mbe4NC9d
+	Lzk/dxMjMDGd/nf8yw7G5a8+6h1iZOJgPMQowcGsJMI7Ie9buhBvSmJlVWpRfnxRaU5q8SFG
+	aQ4WJXHeRftb04UE0hNLUrNTUwtSi2CyTBycUg1MM9ed+twcYmK+yk/Vf8WCT3IzHzgHmB9Q
+	18h3C76udpbnrNOW1WIhvlv/bD++SrPvR/jctWqfP5maTPGqn52Z3lTgobrMc0GXjEfD7VCH
+	rBsqOtcu8GzP3CJ54fkxHx899lP/U1KsJ5f5aPDdtso2PPHxrVVUqWGB6Nflk9YkZ2/Y3mGy
+	m/noy2lhnv2v70QHbD8347zks+rSGYaRM1S8jcN8V7/xl3RymsYoKtHD0PGYPyhzvYVB260v
+	igXzdvk5xL6Qf3Kq7JheYLPn/c6Y2dye4u3OAlcf5Hr1JXUe0f5Zzzpvrymjethb0wMcXGsj
+	0mTlv146+ir97JtL9/JlGsovLWKoS7WZKDtvqZoSS3FGoqEWc1FxIgA1lrgzuwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsVy+t/xu7qlk76lG7SsN7b4O+kYu8W2LZtY
+	LX59sbA42/SG3eLyrjlsFguOt7BaHPzwhNWB3WPNvDWMHr9/TWL02LSqk83jxeaZjB7r/rxi
+	8ujbsorR4/MmuQD2KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSc
+	zLLUIn27BL2MN7f2MBec4a6Yd3kzawPjfs4uRk4OCQETiXnz/rJ2MXJxCAksZZTYPnk+C0RC
+	RuLktAZWCFtY4s+1LjaIoveMEme2zWEGSfAK2El8aLvEBGKzCKhI9K1/xAYRF5Q4OfMJ2CBR
+	AXmJ+7dmsHcxcnAICwRKvL3GARIWEVCWuP5tDiPITGaBy4wSjRNeMkMs6GKU6H27HWwzs4C4
+	xK0n88EWsAkYSnS97QJbwClgLvHh0FsWiBozia6tXYwQtrzE9rdzmCcwCs1CcscsJKNmIWmZ
+	haRlASPLKkaR1NLi3PTcYiO94sTc4tK8dL3k/NxNjMBI3Hbs55YdjCtffdQ7xMjEwXiIUYKD
+	WUmEd0Let3Qh3pTEyqrUovz4otKc1OJDjKbAwJjILCWanA9MBXkl8YZmBqaGJmaWBqaWZsZK
+	4rxsV86nCQmkJ5akZqemFqQWwfQxcXBKNTAp56u1PnToOCs85ZVf7d1374QYVaqOfxfy/mu4
+	6L327qaFh2KYHk/zmlAuXnLq9lW5lN3M2U2Tudo4HS44X7r6ec7ZC2YahdwsDva+E3bl/Z7q
+	92TR3/Ly7NlGM6ecFLu+YF0uz4ZX+XXOFxIyp/ckZsqZHlTd8Kd7/53vfhkSxzXmc10Ry6m+
+	kyB+/MxTqXDd9JQw0ST7209+pgk+V53z+t0z9k0szGmrn841YEy2U/km1XvEoLc66fq77+/v
+	xvY+uljWdH3luYK1mywSa5VaHrqf/ezZ+5bX9dPqzlLRbX7VH6NurOHxb623v5q7eaXB+UmN
+	6xcZTVm27t6q+uu3W7O/WYZOMX+yZHGdyPVFSizFGYmGWsxFxYkA4b1y+k0DAAA=
+X-CMS-MailID: 20250409152957eucas1p27f59b1452aa3e9b3aa0b2cc98c5a99fc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250409151611eucas1p299f54f1a61fb8412e515129c82021cd5
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250409151611eucas1p299f54f1a61fb8412e515129c82021cd5
+References: <CGME20250409151611eucas1p299f54f1a61fb8412e515129c82021cd5@eucas1p2.samsung.com>
+	<20250409151557.3890443-1-arnd@kernel.org>
 
-On Wed, Apr 09, 2025 at 11:09:02PM +0800, Lucien.Jheng wrote:
-> EN8811H outputs 25MHz or 50MHz clocks on CKO, selected by GPIO3.
-> CKO clock operates continuously from power-up through md32 loading.
-> Implement clk provider driver so we can disable the clock output in case
-> it isn't needed, which also helps to reduce EMF noise
-> 
-> Signed-off-by: Lucien.Jheng <lucienx123@gmail.com>
+On 09.04.2025 17:15, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> When building with W=1, this variable is unused for configs with
+> CONFIG_CMA_SIZE_SEL_PERCENTAGE=y:
+>
+> kernel/dma/contiguous.c:67:26: error: 'size_bytes' defined but not used [-Werror=unused-const-variable=]
+>
+> Change this to a macro to avoid the warning.
+>
+> Fixes: c64be2bb1c6e ("drivers: add Contiguous Memory Allocator")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-    Andrew
+Thanks, applied to dma-mapping-fixes branch.
+
+
+> ---
+> v4: fix type mistake from v3
+> v3: use a macro instead of constant
+> v2: fix spelling mistake.
+> ---
+>   kernel/dma/contiguous.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+> index 055da410ac71..8df0dfaaca18 100644
+> --- a/kernel/dma/contiguous.c
+> +++ b/kernel/dma/contiguous.c
+> @@ -64,8 +64,7 @@ struct cma *dma_contiguous_default_area;
+>    * Users, who want to set the size of global CMA area for their system
+>    * should use cma= kernel parameter.
+>    */
+> -static const phys_addr_t size_bytes __initconst =
+> -	(phys_addr_t)CMA_SIZE_MBYTES * SZ_1M;
+> +#define size_bytes ((phys_addr_t)CMA_SIZE_MBYTES * SZ_1M)
+>   static phys_addr_t  size_cmdline __initdata = -1;
+>   static phys_addr_t base_cmdline __initdata;
+>   static phys_addr_t limit_cmdline __initdata;
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
