@@ -1,201 +1,194 @@
-Return-Path: <linux-kernel+bounces-595531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2704FA81FA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:24:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2ED0A81FAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 051714A4CE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87ACC1B64CBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F91B25B697;
-	Wed,  9 Apr 2025 08:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE93425C6E5;
+	Wed,  9 Apr 2025 08:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hQnE6zRK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WZOUbe1U"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="E4jU7UFR"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056493D76;
-	Wed,  9 Apr 2025 08:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744187061; cv=none; b=iyfmZ0h4xMAhv96dTBjBtA1poROXL3kfLV5hBie2xvPBiN9PvtK+QRXLEUvtMrgLPMtaJfw11Wi4SUw/kaLaQadx36MO7dt96wH//iZuVSS5zA9sQHCcNRD+pbIch+iJhXZbv2IaguTUKHOD5LSgULbxZB9wYzaaL8SnwO8CMmw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744187061; c=relaxed/simple;
-	bh=9XNrrbQY+ZhBcLYlIQCF7yDqVaIX2d8urPCGwQ/VR8g=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=rbSLGdDSWz44WE7Cz4a14LtPXy/56mmULnduqdsIy9ZCBBcuduRJNHysuu5mln1fs5BhSsUr157cPZTp4yEhh/jlRgCINENSsGFbI1bgvUrvQKuFm2Am1EvtZTNZ1Uf8X0Xg8jzmIZq4U7HwVAC6rnSFFP9AvFPKWLzmI/mgjNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hQnE6zRK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WZOUbe1U; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id ECFCD13801EF;
-	Wed,  9 Apr 2025 04:24:17 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-12.internal (MEProxy); Wed, 09 Apr 2025 04:24:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1744187057;
-	 x=1744273457; bh=ENiLxrZmoDckOJtASvweiIDsrXIatxbamkFYlhQSny0=; b=
-	hQnE6zRKO1PZI38LSU3vzazuK/bDhLPPNDebrjG6CVv6enrWKXlKJO4xZ55XmDCe
-	sp7hwidnxKGu72TFPIdKPRtmgWwqBTbmH1gIjSCvGvFXOUEcH+NSnQg8lx2yWNKL
-	VhSwuUaAdG+DasY1vgo1c2MxvixgQDx9bWZAA+SnkJj8HCct0/Vflt5XguR8moXK
-	h6A6luiAlW8taMtY/cZaa325fATzm+bB/xepT0cFqJix5k1PEJMn2+jidwvFnqgD
-	z+jzoDx1YT/3q+QRNYu0qjUTz8qb8IF4JlvI3JgBRw0z/MHGg1VmzriBso86mK2v
-	YaZu8qrVEwTLWJQBbekdrQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744187057; x=
-	1744273457; bh=ENiLxrZmoDckOJtASvweiIDsrXIatxbamkFYlhQSny0=; b=W
-	ZOUbe1UZ/LGrEdVdgK/SaMbKkRGBk0jR3pNh7gSDB8L5iZsVzJzOJivhCMJxztJN
-	D9HM/aYksFO+b4Dod/c2bzyf/b6fqvfhpGDJK6zuyLwBRAjhyjMcEkz7dpPTvisE
-	SH3SgnZDO3gMPaPblRLfcedlaqcfrOGzs2D9V+ww+eyAMK846KPeu89s4grtVW0y
-	T+IJBhXzJTK4khpnmqV3qaLd5l/yFjPV+5vX/XPUYLycdG2pFamlFU5etFcs9qKD
-	GkuUdC7K4K01hH1wRtY7xoE48AGAuwW10iX8BBvM7ni8o3KOuWHoQ4ZkkOhuvQzM
-	TPJtIC9LSKdWGHcXA00Lw==
-X-ME-Sender: <xms:sS72Z0D-XbSobP2uNGGUgsC_ldZWZ9T76xIDbjV8RTGVndlwqjqeBQ>
-    <xme:sS72Z2jdaGlkSno-C999pE3Ft_Kp_xTK9oCVBuIa6tKreBPjhDPy_RiQXe1LK1PQC
-    6p_yAY_hxsZ3eNZzM8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdehhedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    udefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegtrghtrghlihhnrdhmrghrih
-    hnrghssegrrhhmrdgtohhmpdhrtghpthhtohepshgrshgthhgrrdgsihhstghhohhffhes
-    rghrmhdrtghomhdprhgtphhtthhopehtihhmohhthhihrdhhrgihvghssegrrhhmrdgtoh
-    hmpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlphhivghrrghlih
-    hsiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgriieskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllh
-    eskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:sS72Z3kN0ltrrSaTV53OcJmmhaYnl2xcfigBHwMKSq5oOoFf-SJ7kw>
-    <xmx:sS72Z6ze-W5htbLwDMMcI5celWJfMbnK_TDijN_w8nJZljsQr4Bkwg>
-    <xmx:sS72Z5QbRmlUeFzg6sLCY5c1dv7R0JkgzZjfOkIcwZo6m1roHMwn1A>
-    <xmx:sS72Z1ZS9xTU0zIfEfJ-zVb5u7wrEK_Xh6drTBR1Z8lKuuFFoxHrYg>
-    <xmx:sS72Z3efnl_iVnkOvjGkdGPvh8gdYfZ4feQP_0de21Pg4iZCQ54qKK40>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 744A32220074; Wed,  9 Apr 2025 04:24:17 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE9B25B68C;
+	Wed,  9 Apr 2025 08:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744187126; cv=pass; b=T108OJ1ERf9LT36SAW5CSAOimtOGz50QEMyUYRjUQNbHMefr1iopi7DXwfeVW1ivskJ6+ELmjUG2h97FfN2WxbEeMvQassDXsHaQSvNbpkoRyb0Z4ODnvJU1tjV2cTf2W0kJHCpyLH7Bt6E1rZqHGBXyWMc+zS8lnWhxYSKHetA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744187126; c=relaxed/simple;
+	bh=8UrwX46Ocp72It3PbNl4PTRyMJT3wPsUyp2d1M9RVS0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CaWQ5cRzWDUXBjt0HLNwekVBvC7XKUkcJWWguunKU/bqFELEE/hjpEQpqYoFSW9oQ3qW7dH4hVTvuNgLg6yfwtfJIObkBZ7r3cMlxCoDposwhoJPCZnn3AvVB5H2NYHA2Df6OEm3HuT6nnKJl9PD/iYJWOyk8xQ1328bDYpiqVc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=E4jU7UFR; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744187098; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=K9Rhiiiok+mdXUDDaYtCQGfL4Gt76o5nYAaNDvpFIeQKWkRB1Fc6SuKndIvy8kwEbQucS0juA8z94/lmNCPAbyi0FMxK4ky8uUgrl9P2b4z2dvaZ9MnzDXbXHV0VzNz6/g1fqROa7fTiqFYq7Udl4FswT7LnOSaZ0u188EUrIRw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744187098; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=gj2kV+wt8S2Y4pLqmUJgQHSVfSyy5Lw/0M6Y/S4SF4M=; 
+	b=GJG0to3QksSyoJl9jhVeqRwdjXijjkeQwdVVlIxJVzblKiwyOuX4ByiPbBomrWb0s6WFQH/XocFpuoOgaVuzPnHpcbKB0DhNwLQfzYvpTArV1456jGfs/TtcPUAK8V7LjjleE7eTzyJmkBfSguvQIVk391SI4AHve+X9Ez803EY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744187098;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=gj2kV+wt8S2Y4pLqmUJgQHSVfSyy5Lw/0M6Y/S4SF4M=;
+	b=E4jU7UFRQ9WEzXcpcUqYGtM7aPqeGhjrUQH4Q9nNoZHc+OxFsZ6c7cFfk7NRHFIc
+	Zg1sm7Ynd46TonP+e/QTfTeAKGvPfozCJctZCz+uWeuHbt9cvARICRu+uD3884rg6WT
+	9g9V7AEz145ivmE892XYrVHpqg5Fi5EFXqVCBb1E=
+Received: by mx.zohomail.com with SMTPS id 1744187097015753.044433887251;
+	Wed, 9 Apr 2025 01:24:57 -0700 (PDT)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+	Youssef Samir <quic_yabdulra@quicinc.com>,
+	Matthew Leung <quic_mattleun@quicinc.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Yan Zhen <yanzhen@vivo.com>,
+	Qiang Yu <quic_qianyu@quicinc.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kunwu Chan <chentao@kylinos.cn>
+Cc: Carl Vanderlip <quic_carlv@quicinc.com>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] bus: mhi: host: don't free bhie tables during power off
+Date: Wed,  9 Apr 2025 13:24:26 +0500
+Message-ID: <20250409082444.582295-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T274101974a25e0dd
-Date: Wed, 09 Apr 2025 10:23:57 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
- "Marc Zyngier" <maz@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>
-Cc: "Sascha Bischoff" <sascha.bischoff@arm.com>,
- "Timothy Hayes" <timothy.hayes@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Message-Id: <ed63bb91-e9ac-409a-a9a0-25b233fe2e15@app.fastmail.com>
-In-Reply-To: <20250408-gicv5-host-v1-20-1f26db465f8d@kernel.org>
-References: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
- <20250408-gicv5-host-v1-20-1f26db465f8d@kernel.org>
-Subject: Re: [PATCH 20/24] irqchip/gic-v5: Add GICv5 LPI/IPI support
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Tue, Apr 8, 2025, at 12:50, Lorenzo Pieralisi wrote:
-> @@ -22,12 +25,346 @@ static u32 irs_readl(struct gicv5_irs_chip_data 
-> *irs_data, const u64 reg_offset)
->  	return readl_relaxed(irs_data->irs_base + reg_offset);
->  }
-> 
-> +static u64 irs_readq(struct gicv5_irs_chip_data *irs_data, const u64 
-> reg_offset)
-> +{
-> +	return readq_relaxed(irs_data->irs_base + reg_offset);
-> +}
-> +
->  static void irs_writel(struct gicv5_irs_chip_data *irs_data, const u32 
-> val,
->  		       const u64 reg_offset)
->  {
->  	writel_relaxed(val, irs_data->irs_base + reg_offset);
->  }
-> 
-> +static void irs_writeq(struct gicv5_irs_chip_data *irs_data, const u64 
-> val,
-> +		       const u64 reg_offset)
-> +{
-> +	writeq_relaxed(val, irs_data->irs_base + reg_offset);
-> +}
+Fix dma_direct_alloc() failure at resume time during bhie_table
+allocation. There is a crash report where at resume time, the memory
+from the dma doesn't get allocated and MHI fails to re-initialize.
+There may be fragmentation of some kind which fails the allocation
+call.
 
-I think the use of _relaxed memory accessors needs some code
-comments here. The definition of these is that you don't care
-about ordering relative to DMA master accesses, yet you seem to
-very much have accesses to the 'ist' from the GIC, as well as
-DMA accesses from an MSI device, and I would expect both to
-require ordering.
+To fix it, don't free the memory at power down. Use the same allocated
+memory again and again after every resume/hibernation. This patch has
+been tested with resume and hibernation both.
 
-> +/* Wait for completion of an IST change */
-> +static int gicv5_irs_ist_wait_for_idle(struct gicv5_irs_chip_data 
-> *irs_data)
-> +{
-> +	int ret;
-> +	u32 val;
-> +
-> +	ret = readl_relaxed_poll_timeout_atomic(
-> +			irs_data->irs_base + GICV5_IRS_IST_STATUSR, val,
-> +			FIELD_GET(GICV5_IRS_IST_STATUSR_IDLE, val), 1,
-> +			USEC_PER_SEC);
-> +
+Here are the crash logs:
 
-What is the significance of the 1 second timeout? This is probably
-a million times longer than I would expect any hardware interaction
-to be specified to take. Are you waiting for another thread here?
+[ 3029.338587] mhi mhi0: Requested to power ON
+[ 3029.338621] mhi mhi0: Power on setup success
+[ 3029.668654] kworker/u33:8: page allocation failure: order:7, mode:0xc04(GFP_NOIO|GFP_DMA32), nodemask=(null),cpuset=/,mems_allowed=0
+[ 3029.668682] CPU: 4 UID: 0 PID: 2744 Comm: kworker/u33:8 Not tainted 6.11.11-valve10-1-neptune-611-gb69e902b4338 #1ed779c892334112fb968aaa3facf9686b5ff0bd7
+[ 3029.668690] Hardware name: Valve Galileo/Galileo, BIOS F7G0112 08/01/2024
+[ 3029.668694] Workqueue: mhi_hiprio_wq mhi_pm_st_worker [mhi]
+[ 3029.668717] Call Trace:
+[ 3029.668722]  <TASK>
+[ 3029.668728]  dump_stack_lvl+0x4e/0x70
+[ 3029.668738]  warn_alloc+0x164/0x190
+[ 3029.668747]  ? srso_return_thunk+0x5/0x5f
+[ 3029.668754]  ? __alloc_pages_direct_compact+0xaf/0x360
+[ 3029.668761]  __alloc_pages_slowpath.constprop.0+0xc75/0xd70
+[ 3029.668774]  __alloc_pages_noprof+0x321/0x350
+[ 3029.668782]  __dma_direct_alloc_pages.isra.0+0x14a/0x290
+[ 3029.668790]  dma_direct_alloc+0x70/0x270
+[ 3029.668796]  mhi_alloc_bhie_table+0xe8/0x190 [mhi faa917c5aa23a5f5b12d6a2c597067e16d2fedc0]
+[ 3029.668814]  mhi_fw_load_handler+0x1bc/0x310 [mhi faa917c5aa23a5f5b12d6a2c597067e16d2fedc0]
+[ 3029.668830]  mhi_pm_st_worker+0x5c8/0xaa0 [mhi faa917c5aa23a5f5b12d6a2c597067e16d2fedc0]
+[ 3029.668844]  ? srso_return_thunk+0x5/0x5f
+[ 3029.668853]  process_one_work+0x17e/0x330
+[ 3029.668861]  worker_thread+0x2ce/0x3f0
+[ 3029.668868]  ? __pfx_worker_thread+0x10/0x10
+[ 3029.668873]  kthread+0xd2/0x100
+[ 3029.668879]  ? __pfx_kthread+0x10/0x10
+[ 3029.668885]  ret_from_fork+0x34/0x50
+[ 3029.668892]  ? __pfx_kthread+0x10/0x10
+[ 3029.668898]  ret_from_fork_asm+0x1a/0x30
+[ 3029.668910]  </TASK>
 
-> +	l2istsz = BIT(n + 1);
-> +	if (l2istsz > KMALLOC_MAX_SIZE) {
-> +		u8 lpi_id_cap = ilog2(KMALLOC_MAX_SIZE) - 2 + istsz;
-> +
-> +		pr_warn("Limiting LPI ID bits from %u to %u\n",
-> +			lpi_id_bits, lpi_id_cap);
-> +		lpi_id_bits = lpi_id_cap;
-> +		l2istsz = KMALLOC_MAX_SIZE;
-> +	}
+Tested-on: QCNFA765 WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ drivers/bus/mhi/host/boot.c | 11 +++++++----
+ drivers/bus/mhi/host/init.c | 15 +++------------
+ 2 files changed, 10 insertions(+), 16 deletions(-)
 
-The use of KMALLOC_MAX_SIZE seem arbitrary here. I remember discussing
-this in the past and concluding that this is fine for all cases
-that may be relevant, but it would be good to explain the reasoning
-in a comment.
+diff --git a/drivers/bus/mhi/host/boot.c b/drivers/bus/mhi/host/boot.c
+index efa3b6dddf4d2..8b3d2b9d239c3 100644
+--- a/drivers/bus/mhi/host/boot.c
++++ b/drivers/bus/mhi/host/boot.c
+@@ -323,6 +323,7 @@ void mhi_free_bhie_table(struct mhi_controller *mhi_cntrl,
+ 				  mhi_buf->buf, mhi_buf->dma_addr);
+ 
+ 	kfree(image_info->mhi_buf);
++	image_info->mhi_buf = NULL;
+ 	kfree(image_info);
+ }
+ 
+@@ -584,10 +585,12 @@ void mhi_fw_load_handler(struct mhi_controller *mhi_cntrl)
+ 	 * device transitioning into MHI READY state
+ 	 */
+ 	if (fw_load_type == MHI_FW_LOAD_FBC) {
+-		ret = mhi_alloc_bhie_table(mhi_cntrl, &mhi_cntrl->fbc_image, fw_sz);
+-		if (ret) {
+-			release_firmware(firmware);
+-			goto error_fw_load;
++		if (!mhi_cntrl->fbc_image) {
++			ret = mhi_alloc_bhie_table(mhi_cntrl, &mhi_cntrl->fbc_image, fw_sz);
++			if (ret) {
++				release_firmware(firmware);
++				goto error_fw_load;
++			}
+ 		}
+ 
+ 		/* Load the firmware into BHIE vec table */
+diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
+index 13e7a55f54ff4..3c20e4541357e 100644
+--- a/drivers/bus/mhi/host/init.c
++++ b/drivers/bus/mhi/host/init.c
+@@ -1173,8 +1173,9 @@ int mhi_prepare_for_power_up(struct mhi_controller *mhi_cntrl)
+ 		/*
+ 		 * Allocate RDDM table for debugging purpose if specified
+ 		 */
+-		mhi_alloc_bhie_table(mhi_cntrl, &mhi_cntrl->rddm_image,
+-				     mhi_cntrl->rddm_size);
++		if (!mhi_cntrl->rddm_image)
++			mhi_alloc_bhie_table(mhi_cntrl, &mhi_cntrl->rddm_image,
++					     mhi_cntrl->rddm_size);
+ 		if (mhi_cntrl->rddm_image) {
+ 			ret = mhi_rddm_prepare(mhi_cntrl,
+ 					       mhi_cntrl->rddm_image);
+@@ -1202,16 +1203,6 @@ EXPORT_SYMBOL_GPL(mhi_prepare_for_power_up);
+ 
+ void mhi_unprepare_after_power_down(struct mhi_controller *mhi_cntrl)
+ {
+-	if (mhi_cntrl->fbc_image) {
+-		mhi_free_bhie_table(mhi_cntrl, mhi_cntrl->fbc_image);
+-		mhi_cntrl->fbc_image = NULL;
+-	}
+-
+-	if (mhi_cntrl->rddm_image) {
+-		mhi_free_bhie_table(mhi_cntrl, mhi_cntrl->rddm_image);
+-		mhi_cntrl->rddm_image = NULL;
+-	}
+-
+ 	mhi_cntrl->bhi = NULL;
+ 	mhi_cntrl->bhie = NULL;
+ 
+-- 
+2.43.0
 
-> +	if (irs_data->flags & IRS_FLAGS_NON_COHERENT)
-> +		dcache_clean_inval_poc((unsigned long)ist,
-> +				       (unsigned long)ist + l2istsz);
-> +	else
-> +		dsb(ishst);
-...
-> +	baser = (virt_to_phys(ist) & GICV5_IRS_IST_BASER_ADDR_MASK) |
-> +		FIELD_PREP(GICV5_IRS_IST_BASER_VALID, 0x1);
-
-Here it seems like you are open-coding the DMA mapping interface
-details, in particular the mapping of the 'ist' memory area into
-the gic's DMA master space, the coherency and the barrier that is
-normally part of a (non-relaxed) writeq().  Is there a reason
-you can't use the normal interfaces here, using dma_alloc_coherent()
-or dma_alloc_noncoherent()?
-
-Do you expect actual implementation to not be cache-coherent?
-
-        Arnd
 
