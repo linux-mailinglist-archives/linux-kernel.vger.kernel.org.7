@@ -1,325 +1,257 @@
-Return-Path: <linux-kernel+bounces-596566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E53A82DAC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:31:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CBD8A82DA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D8524654E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:31:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A1F33BE84D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CF127702D;
-	Wed,  9 Apr 2025 17:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CE920E32F;
+	Wed,  9 Apr 2025 17:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3fMox3Ub"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2048.outbound.protection.outlook.com [40.107.102.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KZ+wfKJh"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07DD277009;
-	Wed,  9 Apr 2025 17:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744219872; cv=fail; b=Z80rPKtmE+/7oVqFVtXMtcs6DuW0Sv2zQ9SeLcsollcAPqMOF4fCR5aj/JO/Wr0+NGHsdtkLGEq+3J3hZJgzgqjqKVZsrYSU2ZoY8V32iqoMAeSjivgKrEYYfJdm6mMakdb8O81B8P+FpzxVuKqUN9L4Jq5BK2caQdGP3yMSFGA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744219872; c=relaxed/simple;
-	bh=HoEgJARUVCxRPIfwhjqdhUeDRHnAdQYbujvcIkRBuCs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fi4w9wq1yB74diVJ9vy+UOyf/Nhpn9/8ueoKbIqaYvBXWsdb5nqDs2prorWV9Gd+VeUW7ugP009u6MEzvV3OWU5CxAvHo53ehyije4cCcuweiCtcCkm1JRJ658Zn1EmiazHsMzx5GRConUD5dM2GKc+qlbZy3CkVW3RDK2bPII8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3fMox3Ub; arc=fail smtp.client-ip=40.107.102.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zv7LvUvEluDQRrJhviGDp2FeFu4bWqwOL3wnvq5iZAn368PefdKlPTh+VieybahYWUZlEJFuFFfPJhEofKdiWJ1tbgSfDmqUu3poT9UwdkOtBuMoWzPjyGYkOsAQG5xBp1m97JiGpF9H4O2X8L+l8PfejhB5/ckYa8XuiD9KUNoYsbFshtfRRY0RZLX0KrbuLPPNXDcRI+TgizNTNW+LaderCp/iLTZaZxYTjeAgkAUwMouq5/GQLLIDQt7hSmDTUt8Q+xIQio5ZH0EviwS6eN4M/s3iE/w+BpyLQPqb4MRxbVOzBsR/S6I2De88ByRDpnwG2jywpQxfeSk/oWweCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6IVYRG+PnyeSbpOiss6G3ikRcLE4nEeWSSk6m15LPjw=;
- b=rr8Q+NEK5XNJLOYFDlLg0S3cqhuBYhL625s0XBEDb+1C0GrytPrTmFiOG1E8eo/+/srC9j1zChpo53QTDoaQBi1H5gfMq/1QaqeCYXVDu2LzDh+bFkcjXXxsgl0uA1e5+h01HVpr0hprtwIxz9DP44bTPWCGJZQctyEL2SH7fpakV62eyCXpt3jCsihWmVtOvlIK4oogk1g+KklZu7K1gNj5n3JaPACzMjBeBhLjCxDSaKwA77phjgiH8CHzu2d/FKB09b3uFWn8Cc/swrsA/kJRvGv+0cedMMk5i4RnmqNKz9ZcIwIcvz+s4SfKVKJbpb0T9b+g0H/MCRhTlaezXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6IVYRG+PnyeSbpOiss6G3ikRcLE4nEeWSSk6m15LPjw=;
- b=3fMox3UbTFs77LbEZ7EUkwNKaHiGTj0j5crpJBrMFJNfbMqRIY4VaAjlUsnrogb+z8KX0UPwfu3ctkhcVAtgxDYTVnN7aRo5o2uQjDSrRG7d7T8Ngd/YpDA1iEb8tfHBpTl6OLiWQ1ih6ea24Y12XhSszEwBgVZ7C5EBCyCINh8=
-Received: from PH7P223CA0028.NAMP223.PROD.OUTLOOK.COM (2603:10b6:510:338::29)
- by DS0PR12MB7727.namprd12.prod.outlook.com (2603:10b6:8:135::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.36; Wed, 9 Apr
- 2025 17:31:05 +0000
-Received: from CY4PEPF0000E9D2.namprd03.prod.outlook.com
- (2603:10b6:510:338:cafe::75) by PH7P223CA0028.outlook.office365.com
- (2603:10b6:510:338::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.34 via Frontend Transport; Wed,
- 9 Apr 2025 17:31:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CY4PEPF0000E9D2.mail.protection.outlook.com (10.167.241.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8632.13 via Frontend Transport; Wed, 9 Apr 2025 17:31:04 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Apr
- 2025 12:31:03 -0500
-Received: from xhdipdslab69.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 9 Apr 2025 12:30:58 -0500
-From: Nipun Gupta <nipun.gupta@amd.com>
-To: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <krzk+dt@kernel.org>,
-	<gregkh@linuxfoundation.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
-	<ogabbay@kernel.org>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <derek.kiernan@amd.com>, <dragan.cvetic@amd.com>,
-	<arnd@arndb.de>
-CC: <praveen.jain@amd.com>, <harpreet.anand@amd.com>,
-	<nikhil.agarwal@amd.com>, <srivatsa@csail.mit.edu>, <code@tyhicks.com>,
-	<ptsm@linux.microsoft.com>, Nipun Gupta <nipun.gupta@amd.com>
-Subject: [PATCH v2 3/3] accel/amdpk: add debugfs support
-Date: Wed, 9 Apr 2025 23:00:33 +0530
-Message-ID: <20250409173033.2261755-3-nipun.gupta@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250409173033.2261755-1-nipun.gupta@amd.com>
-References: <20250409173033.2261755-1-nipun.gupta@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607711BD517
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 17:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744219855; cv=none; b=bydtP7BQA1xlN/sF4+8k6UpJkXIznjf+qEPlrsM7HDBul6qIcxAht3qzsiMmwEaWoLxVmLF+PNhTsikVQ9+d8WgiNqvubHOj2D7tBOCRbdqlUiyNtki7OjXgauT92kYiPi2oqi6GhUXCn7QBePihKYoHfDh1Aa2NEkCwtENFRK0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744219855; c=relaxed/simple;
+	bh=aw3wX6eyPROsxcJExM63NBEeA9/tyTtp89PgqxCVbj8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GpVK/9ovx4bVqGpWVb4CvnRjk42R1hwsIrSawBKo8/zD4qW8iU6nntyfBI4Rfeiuh3CzSZWDkRec44nEJ5ohF1gJ2UiYPtC80a281ck3wyAJgbST5QqJJfdAr9d3B7Wj/kyMNqPYsPA+J+9yxWdr82/xktv+z2v3vPTptClzXlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KZ+wfKJh; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43ce8f82e66so44318595e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 10:30:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744219850; x=1744824650; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jFuCrVcielRSxkqN5LBqmHKeHllW5E8rT4ctitcywvo=;
+        b=KZ+wfKJhrIG2IuWOGMpSmLGqrQKPUb0Pq2w+e5A+MDZ27u2FX+ijFznugBeQK9sZZf
+         3jYWAGat5WvZNEnIp/rY/SEhWzQql+U2f7Kqfoy9zN8JHatp7/n/QzjsgiLnUU56Dbea
+         z0i/2xjHDd5VNjWz1Kt/z6EbXZywg2LqIzao7KL32Nf8jMfI4ZdsWeCqLQX4e1w7MLV/
+         xuR2pFr0ae7fqkBRYVS+tmXFYKi8nBWntYsX4wVTpoa72mFgzEbCoHmhK3VS6S+fo+tA
+         FNDcXBvsYYrjKEz6mQAFimLOus+EAV1ni4cZhBNbS1uIQsGvrXbpGa588ESfXIOkZrHx
+         4Gnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744219850; x=1744824650;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jFuCrVcielRSxkqN5LBqmHKeHllW5E8rT4ctitcywvo=;
+        b=Cg9wd8VWgS5fTxNMtWwWyWJCd1kLbbi4C9O7EXQeqTzHeNU++y132XYAZn3joRvRGZ
+         PChKtxwwCBm0by3PNBJJGUA5FsPHtOCFA+DaGM/h9D+jIQAWYO5ir+qSbXU03dMyWrXM
+         jCfY9XCmYVu76gSofMSBhwf2X7k9qwS+QoZw97CruSw6OcfsHyOryG4vqwb3zvTqNQBF
+         0iBByO7eXTtLbYigsCPRdRaHENz0ohQJIULFoAyMRbbtdchRvb6OPvyRbV2jZEUGIrOo
+         rJgjVzZ0tiwVFJYx23KrYntKrKmCEfYB7mGo5im16Oh35CaD87GU7TvXbviEXHj2706c
+         nu2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWcS0HNUMkdSwFQJIbL0oVqClDRkZT9uxvRu+XI1gp7do+mjssuQa534YxqOo9Kgq/6QBUiSp3V0onEec0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6xn58wSyFLvbbRRUG+BpLbZpj9lUvpDMpZAiiSKN7Nfw+ECxG
+	OMMFvElNaHUaxNKOyV9QW0WMc7U/PyLDdu1/Urbty08+hIZhHFY/iOTCpL39qFmcJhIENk8TsIC
+	6XyAkZOELLg==
+X-Google-Smtp-Source: AGHT+IGOHH9oihfNAW2IS+f2IzXxx5SZ5pL5GY7qNP9YIhIPG4cLX1oYAQZci0raRdZxy6hcKyk1fZ5uOCFrjw==
+X-Received: from wmbev15.prod.google.com ([2002:a05:600c:800f:b0:43d:7e5:30f0])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:40dc:b0:391:ba6:c066 with SMTP id ffacd0b85a97d-39d87ac7fc2mr3710134f8f.35.1744219850563;
+ Wed, 09 Apr 2025 10:30:50 -0700 (PDT)
+Date: Wed, 09 Apr 2025 17:30:48 +0000
+In-Reply-To: <20250408185009.GF816@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: nipun.gupta@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D2:EE_|DS0PR12MB7727:EE_
-X-MS-Office365-Filtering-Correlation-Id: f670368b-7797-4c20-fda0-08dd778c4e61
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700013|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?J1YwUwhWjEsLf2bmtvIKqtoploVQiGnnDJeyyMrLz0bCGgfaLEbNPF9/KkUS?=
- =?us-ascii?Q?o3zYvJqn7zypwJ8iUwj7uCNQZXrOj6kqLCaY+YptlV1M0hR0VPCtZI3bcBJJ?=
- =?us-ascii?Q?ds6vwOjjcqY/m3HW8MAAZVar6x+mezlayIfvRjd+d3HMIydLD+/LgLCIvC0Z?=
- =?us-ascii?Q?KKo+B2bMVlLg0vtumDfQJUlZQ9TESmzCwcLgQmvBSaW6kt0W/m2UuurIbSev?=
- =?us-ascii?Q?uWHN+CYlgu/mHW8m3YbW0ofAmQTHkSJfgXE3sT3JLwj5fmDXLZrFeLabyVRz?=
- =?us-ascii?Q?cuxr1AkRVpSmdVSFGbHKV5N3nZeAvRFqM6fgPpULrTM47b9F8fe1wF9/n8kX?=
- =?us-ascii?Q?rl01E0mwQeBaluj+ZZ56PDC/zkGoFX6VwdDuYpyA2mrBAKee0tHopQkCgoL8?=
- =?us-ascii?Q?YdhNIdCbRtUVsC5l0YlatqLzT+VeZgbC+yGYZWHElcYNKsHq3lmPwIZdbedE?=
- =?us-ascii?Q?PdzSimKTiUlD+BSqwiwG6thq7sse+goyDBF6VfN31upWR9i/uUoXSxlJsKjf?=
- =?us-ascii?Q?Zb87WrUMoDeYCu/wJ2wl7KfBCaTkVp4CE8zwmDOC5W1WYNjM6+xOEZ5HGHpE?=
- =?us-ascii?Q?EpV8CvVp81X2dshe9Ba8+CDyQgcrBwPlYkM77sQis74SMifMPuNxtF20mF87?=
- =?us-ascii?Q?pcN/HADKm2f7mEUEnZdQGEwYBG7Copywc+tWsdwum0+n7JKjLoD0zNXNRJnO?=
- =?us-ascii?Q?ibFY2hDcxt3htefWBouUvyGvc8owR3KAuWCDadhLUaAONBZ44amgzHK44Cgy?=
- =?us-ascii?Q?AM0O16ghBw2y2P8Tmti/0/mxWW9McwEb3WuWbqVDJK904/hvh1IGIEGJZAkh?=
- =?us-ascii?Q?J3IRQWm8dZTdQLLJLSBgLjQBWR5A6rTVr9zEnXEd/N23ICoDgxEDdmWeCmGp?=
- =?us-ascii?Q?Bk1RlfqCwFARKLcvbAwmgyZf1apkQaEyMTL51v/TbaLsqpGf80CdgcQ8XhDR?=
- =?us-ascii?Q?sVTUKxaon5a4MMwar+akfaMnQAjbWOa5kvjxxbOIVpIQGIYcrgTiWFroMFys?=
- =?us-ascii?Q?lf9Ox/R34OHTknjPlW6gGNHPY1dtQ4fu02jtdLFf7PoGXYHTk5NuqVkQlQrY?=
- =?us-ascii?Q?AUyEIBtr/K3/lKBXEM0HTueiiYyOK4M4NCgM0wgvXc2v59mQqHtCQSXoHuJo?=
- =?us-ascii?Q?qxas3ejerf/3s7E5GURF+TwD25pQOEFIA41iB0gP4Fv69+J8EyOtw58pmjV1?=
- =?us-ascii?Q?RfLz5umNJREo3DeFhfIvaeEcG7E3imCYND3FguRskz26c7NepDb2jPfbkeCY?=
- =?us-ascii?Q?owlnX4zrlRsZEXhFVA32GN9lSgFR7bUicZpApx28EjLoRFbyp99e7ZqJwSan?=
- =?us-ascii?Q?kDTsLX+KKNr6jeKT8olY64zlHMrAJVtg/oK8O5Ka7/CKDyqzILz+q3fiZrbt?=
- =?us-ascii?Q?oAoQQd/FQuD6nJHFhSJhBllMmRE9mnznW+xlIM2/uDPyGm3bH2/YVRn3KMPo?=
- =?us-ascii?Q?pkhkPgwwbIcqhPEDqfEr+bpplyRcgxaHzI3zUGwID+f72vmL0a9qcZKdHfqy?=
- =?us-ascii?Q?x5CC6yN7YMxMn5k=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700013)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2025 17:31:04.9087
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f670368b-7797-4c20-fda0-08dd778c4e61
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9D2.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7727
+Mime-Version: 1.0
+References: <20250407180154.63348-1-hannes@cmpxchg.org> <D91FIQHR9GEK.3VMV7CAKW1BFO@google.com>
+ <20250408185009.GF816@cmpxchg.org>
+X-Mailer: aerc 0.20.0
+Message-ID: <D92AC0P9594X.3BML64MUKTF8Z@google.com>
+Subject: Re: [PATCH 1/2] mm: page_alloc: speed up fallbacks in rmqueue_bulk()
+From: Brendan Jackman <jackmanb@google.com>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mel Gorman <mgorman@techsingularity.net>, Carlos Song <carlos.song@nxp.com>, <linux-mm@kvack.org>, 
+	<linux-kernel@vger.kernel.org>, kernel test robot <oliver.sang@intel.com>, 
+	<stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add debugfs support for AMD PKI accelerator. The debugfs support prints
-the following:
+On Tue Apr 8, 2025 at 6:50 PM UTC, Johannes Weiner wrote:
+>> >	/*
+>> >	 * Find the largest available free page in the other list. This roughl=
+y
+>> >	 * approximates finding the pageblock with the most free pages, which
+>> >	 * would be too costly to do exactly.
+>> >	 */
+>> >	for (current_order =3D MAX_PAGE_ORDER; current_order >=3D min_order;
+>> >				--current_order) {
+>>=20
+>> IIUC we could go one step further here and also avoid repeating this
+>> iteration? Maybe something for a separate patch though?
+>
+> That might be worth a test, but agree this should be a separate patch.
+>
+> AFAICS, in the most common configurations MAX_PAGE_ORDER is only one
+> step above pageblock_order or even the same. It might not be worth the
+> complication.
 
-- Hardware info
-- Hardware configuration
-- Busy and idle cycles count in the PK engines
-- pending requests for each queue
+Oh yeah, makes sense.
 
-Signed-off-by: Nipun Gupta <nipun.gupta@amd.com>
+>>         /*
+>> -        * Try the different freelists, native then foreign.
+>> +        * First try the freelists of the requested migratetype, then tr=
+y
+>> +        * fallbacks. Roughly, each fallback stage poses more of a fragm=
+entation
+>> +        * risk.
+>
+> How about "then try fallback modes with increasing levels of
+> fragmentation risk."
+
+Yep, nice thanks.
+
+>>          * The fallback logic is expensive and rmqueue_bulk() calls in
+>>          * a loop with the zone->lock held, meaning the freelists are
+>> @@ -2332,7 +2329,7 @@ __rmqueue(struct zone *zone, unsigned int order, i=
+nt migratetype,
+>>         case RMQUEUE_CLAIM:
+>>                 page =3D __rmqueue_claim(zone, order, migratetype, alloc=
+_flags);
+>>                 if (page) {
+>> -                       /* Replenished native freelist, back to normal m=
+ode */
+>> +                       /* Replenished requested migratetype's freelist,=
+ back to normal mode */
+>>                         *mode =3D RMQUEUE_NORMAL;
+>
+> This line is kind of long now. How about:
+>
+> 			/* Replenished preferred freelist, back to normal mode */
+
+Yep, sounds good - it's still 81 characters, the rest of this file
+sticks to 80 for comments, I guess I'll leave it to Andrew to decide if
+that is an issue?
+
+> But yeah, I like your proposed changes. Would you care to send a
+> proper patch?
+
+Sure, pasting below. Andrew, could you fold this in? Also, I haven't
+done this style of patch sending before, please let me know if I'm doing
+something to make your life difficult.
+
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+
+Aside from the commen stuff fixed by the patch below:
+
+Reviewed-by: Brendan Jackman <jackmanb@google.com>
+
 ---
 
-Changes RFC->v2:
-- this is a new patch which adds debugfs (removed some sysfs which was
-  defined in RFC patch) and added more debugfs information
+From 8ff20dbb52770d082e182482d2b47e521de028d1 Mon Sep 17 00:00:00 2001     =
+                                                                           =
+                                                                           =
+                                                        =20
+From: Brendan Jackman <jackmanb@google.com>
+Date: Wed, 9 Apr 2025 17:22:14 +000
+Subject: [PATCH] page_alloc: speed up fallbacks in rmqueue_bulk() - comment=
+ updates
 
- drivers/accel/amdpk/Makefile        |   3 +-
- drivers/accel/amdpk/amdpk_debugfs.c | 107 ++++++++++++++++++++++++++++
- drivers/accel/amdpk/amdpk_drv.c     |   1 +
- drivers/accel/amdpk/amdpk_drv.h     |   2 +
- 4 files changed, 112 insertions(+), 1 deletion(-)
- create mode 100644 drivers/accel/amdpk/amdpk_debugfs.c
+Tidy up some terminology and redistribute commentary.                      =
+                                                                           =
+                                                                           =
+                                                                           =
+                                    =20
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
+---
+ mm/page_alloc.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/accel/amdpk/Makefile b/drivers/accel/amdpk/Makefile
-index 826f43ccebdf..8c0532e45a4f 100644
---- a/drivers/accel/amdpk/Makefile
-+++ b/drivers/accel/amdpk/Makefile
-@@ -5,4 +5,5 @@
-
- obj-$(CONFIG_DRM_ACCEL_AMDPK) := amdpk.o
-
--amdpk-y := amdpk_drv.o
-+amdpk-y := amdpk_drv.o \
-+	   amdpk_debugfs.o
-diff --git a/drivers/accel/amdpk/amdpk_debugfs.c b/drivers/accel/amdpk/amdpk_debugfs.c
-new file mode 100644
-index 000000000000..341f1817503d
---- /dev/null
-+++ b/drivers/accel/amdpk/amdpk_debugfs.c
-@@ -0,0 +1,107 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2025 Advanced Micro Devices, Inc.
-+ */
-+
-+#include <linux/seq_file.h>
-+#include <drm/drm_debugfs.h>
-+#include "amdpk_drv.h"
-+
-+static int amdpk_hw_info(struct seq_file *s, void *unused)
-+{
-+	struct drm_debugfs_entry *entry = s->private;
-+	u64 maxtotalreqs, rqmaxpending, mults;
-+	struct amdpk_dev *pkdev;
-+	u64 v, hwv, cnt;
-+
-+	pkdev = to_amdpk_dev(entry->dev);
-+
-+	v = pk_rdreg(pkdev->regs, REG_SEMVER);
-+	seq_printf(s, "Hardware interface version: %lld.%lld.%lld\n",
-+		   AMDPK_SEMVER_MAJOR(v), AMDPK_SEMVER_MINOR(v), AMDPK_SEMVER_PATCH(v));
-+
-+	hwv = pk_rdreg(pkdev->regs, REG_HW_VERSION);
-+	seq_printf(s, "Hardware implementation version: %lld.%lld.%lld\n",
-+		   AMDPK_HWVER_MAJOR(hwv), AMDPK_HWVER_MINOR(hwv), AMDPK_HWVER_SVN(hwv));
-+
-+	cnt = pk_rdreg(pkdev->regs, REG_CFG_REQ_QUEUES_CNT);
-+	seq_printf(s, "Count request queues: %lld\n", cnt);
-+
-+	maxtotalreqs = pk_rdreg(pkdev->regs, REG_CFG_MAX_PENDING_REQ);
-+	seq_printf(s, "Total max pending requests: %lld\n", maxtotalreqs);
-+
-+	rqmaxpending = pk_rdreg(pkdev->regs, REG_CFG_MAX_REQ_QUEUE_ENTRIES);
-+	seq_printf(s, "Total max pending requests: %lld\n", rqmaxpending);
-+
-+	mults = pk_rdreg(pkdev->regs, REG_CFG_PK_INST);
-+	seq_printf(s, "Pkcores 64 multipliers: %lld\n", mults >> 16);
-+	seq_printf(s, "Pkcores 256 multipliers: %lld\n", mults & 0xFFFF);
-+
-+	return 0;
-+}
-+
-+static int amdpk_hw_config(struct seq_file *s, void *unused)
-+{
-+	struct drm_debugfs_entry *entry = s->private;
-+	struct amdpk_dev *pkdev;
-+	u64 addr, size, depth;
-+	int i, j;
-+
-+	pkdev = to_amdpk_dev(entry->dev);
-+	for (i = 0; i < pkdev->max_queues; i++) {
-+		seq_printf(s, "Queue-%d:\n", i);
-+		for (j = 0; j < MAX_RQMEM_PER_QUEUE; j++) {
-+			addr = pk_rdreg(pkdev->regs, REG_RQ_CFG_PAGE(i, j));
-+			seq_printf(s, "    page_addr[%d]: %llx\n", j, addr);
-+		}
-+		size = pk_rdreg(pkdev->regs, REG_RQ_CFG_PAGE_SIZE(i));
-+		seq_printf(s, "    page_size: %lld\n", size);
-+		depth = pk_rdreg(pkdev->regs, REG_RQ_CFG_DEPTH(i));
-+		seq_printf(s, "    page_depth: %lld\n", depth);
-+	}
-+
-+	return 0;
-+}
-+
-+static int amdpk_cycle_count(struct seq_file *s, void *unused)
-+{
-+	struct drm_debugfs_entry *entry = s->private;
-+	u64 busy_cycles, idle_cycles;
-+	struct amdpk_dev *pkdev;
-+
-+	pkdev = to_amdpk_dev(entry->dev);
-+	busy_cycles = pk_rdreg(pkdev->regs, REG_PK_BUSY_CYCLES);
-+	seq_printf(s, "PK busy cycles: %lld\n", busy_cycles);
-+	idle_cycles = pk_rdreg(pkdev->regs, REG_PK_IDLE_CYCLES);
-+	seq_printf(s, "PK idle cycles: %lld\n", idle_cycles);
-+
-+	return 0;
-+}
-+
-+static int amdpk_pending_reqs(struct seq_file *s, void *unused)
-+{
-+	struct drm_debugfs_entry *entry = s->private;
-+	struct amdpk_dev *pkdev;
-+	u64 pending_reqs;
-+	int i;
-+
-+	pkdev = to_amdpk_dev(entry->dev);
-+	for (i = 0; i < pkdev->max_queues; i++) {
-+		pending_reqs = pk_rdreg(pkdev->regs, REG_CTL_BASE(i) + REG_CTL_PENDING_REQS);
-+		seq_printf(s, "Queue-%d pending requests: %lld\n", i, pending_reqs);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct drm_debugfs_info amdpk_debugfs_list[] = {
-+	{"hw_info", amdpk_hw_info, 0},
-+	{"hw_config", amdpk_hw_config, 0},
-+	{"cycle_count", amdpk_cycle_count, 0},
-+	{"pending_reqs", amdpk_pending_reqs, 0},
-+};
-+
-+void amdpk_debugfs_init(struct amdpk_dev *pkdev)
-+{
-+	drm_debugfs_add_files(&pkdev->ddev, amdpk_debugfs_list, ARRAY_SIZE(amdpk_debugfs_list));
-+}
-diff --git a/drivers/accel/amdpk/amdpk_drv.c b/drivers/accel/amdpk/amdpk_drv.c
-index 17c328d03db8..14cb6e7449ce 100644
---- a/drivers/accel/amdpk/amdpk_drv.c
-+++ b/drivers/accel/amdpk/amdpk_drv.c
-@@ -678,6 +678,7 @@ static int amdpk_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "DRM register failed, ret %d", ret);
- 		return ret;
- 	}
-+	amdpk_debugfs_init(pkdev);
-
- 	return amdpk_create_device(pkdev, dev, irq);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index dfb2b3f508af4..220bd0bcc38c3 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2183,21 +2183,13 @@ try_to_claim_block(struct zone *zone, struct page *=
+page,
  }
-diff --git a/drivers/accel/amdpk/amdpk_drv.h b/drivers/accel/amdpk/amdpk_drv.h
-index c14c10db5d97..c260c3fb5626 100644
---- a/drivers/accel/amdpk/amdpk_drv.h
-+++ b/drivers/accel/amdpk/amdpk_drv.h
-@@ -258,6 +258,8 @@ struct amdpk_user {
- #define to_amdpk_dev(dev) container_of(dev, struct amdpk_dev, ddev)
- #define to_amdpk_work(work) container_of(work, struct amdpk_work, cq_work)
-
-+void amdpk_debugfs_init(struct amdpk_dev *pkdev);
-+
- static void __maybe_unused pk_wrreg(char __iomem *regs, int addr, u64 val)
+ =20
+ /*
+- * Try finding a free buddy page on the fallback list.
+- *
+- * This will attempt to claim a whole pageblock for the requested type
+- * to ensure grouping of such requests in the future.
+- *
+- * If a whole block cannot be claimed, steal an individual page, regressin=
+g to
+- * __rmqueue_smallest() logic to at least break up as little contiguity as
+- * possible.
++ * Try to allocate from some fallback migratetype by claiming the entire b=
+lock,
++ * i.e. converting it to the allocation's start migratetype.
+  *
+  * The use of signed ints for order and current_order is a deliberate=20
+  * deviation from the rest of this file, to make the for loop
+  * condition simpler.
+  */
+-
+-/* Try to claim a whole foreign block, take a page, expand the remainder *=
+/
+ static __always_inline struct page *
+ __rmqueue_claim(struct zone *zone, int order, int start_migratetype,
+                                                unsigned int alloc_flags)
+@@ -2247,7 +2239,10 @@ __rmqueue_claim(struct zone *zone, int order, int st=
+art_migratetype,
+        return NULL;
+ }
+ =20
+-/* Try to steal a single page from a foreign block */
++/*
++ * Try to steal a single page from some fallback migratetype. Leave the re=
+st of
++ * the block as its current migratetype, potentially causing fragmentation=
+.
++ */
+ static __always_inline struct page *
+ __rmqueue_steal(struct zone *zone, int order, int start_migratetype)
  {
- 	iowrite64(val, regs + addr);
---
-2.34.1
+@@ -2307,7 +2302,8 @@ __rmqueue(struct zone *zone, unsigned int order, int =
+migratetype,
+        }
+ =20
+        /*
+-        * Try the different freelists, native then foreign.
++        * First try the freelists of the requested migratetype, then try
++        * fallbacks modes with increasing levels of fragmentation risk.
+         *
+         * The fallback logic is expensive and rmqueue_bulk() calls in
+         * a loop with the zone->lock held, meaning the freelists are
+@@ -2332,7 +2328,7 @@ __rmqueue(struct zone *zone, unsigned int order, int =
+migratetype,
+        case RMQUEUE_CLAIM:
+                page =3D __rmqueue_claim(zone, order, migratetype, alloc_fl=
+ags);
+                if (page) {
+-                       /* Replenished native freelist, back to normal mode=
+ */
++                       /* Replenished preferred freelist, back to normal m=
+ode. */
+                        *mode =3D RMQUEUE_NORMAL;
+                        return page;
+                }
+
+base-commit: aa42382db4e2a4ed1f4ba97ffc50e2ce45accb0c
+--=20
+2.49.0.504.g3bcea36a83-goog
+
 
 
