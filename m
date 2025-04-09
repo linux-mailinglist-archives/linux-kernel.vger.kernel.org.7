@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-596890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B8AA8329D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:41:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7582A8329E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84DFB4A042C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:40:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 044284A0891
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B388234964;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF863214236;
 	Wed,  9 Apr 2025 20:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A7twnjgU"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OTdhWDRD"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AAB2153F7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EE12153EA
 	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 20:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744231064; cv=none; b=fFu5iltEL7/cA+RL23x5nGAY62rMOJQCHh9LusfoMfYnbOq19TWY1WVmGmuWhVZWeiIL1o8WrHvO/2ZbA3wkSA98juMTKstSH4VBwUZLuSBZhKevPdii2I3aBJyfmFbMnmlE7P6aZDeEZs9bvLPceuNJDAkk+6Ui6muomYU4X/o=
+	t=1744231064; cv=none; b=P5jy0l0J0Dcvs20YmX73J1GRDrOhr7GyuwItdFCfenGpGfHAu8pIUrTUeO0yqnmzihgQAQ4c+gPqwgGiK/d3tXmaK+A80UIfOOal2b9vW5u+h37WDehn9cI1w8Q9OnkFRKjL1CSOo0IkBl0e1GWDvWYWu0pTrrgVq1GBczRxcg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744231064; c=relaxed/simple;
-	bh=ko021o0chPJ/pDx9CtG/i6EPLlich4rSb+hQ8wotehM=;
+	bh=XNPLpibedDTSu7S33NUIPTJnGACKRxAom0wu7hI1PCg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=h9t0W/T9ojK0KQMLaRpybTmr6l5T8zdmXGBX/LvHv0tgxQwiPgZIdX3bRP79TZRAx4XFzUOCezgANSIHMaCku3h7ikvz8gzI0czjrpw8OYxaqsz5jU4m+pvqDZQ/nhtVwRdWZuj+xrd51P5UtP9QvcdTBGmxVJLhfhTey53v5Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A7twnjgU; arc=none smtp.client-ip=209.85.218.45
+	 In-Reply-To:To:Cc; b=UieZFbwBs2PN/5nLuRdufpZDSkWGChD4qf24MOzsAtpagQ3GhvnyEolLJyokqaFdU8JVHski+727sIZbrlTu260DIlhIo6QqBGXRF34ffqH5Ot/AdSgGou8xAAjXqHA4eU4WE3WGAyJxnghoFeYhy5VTJMnG4WfYMD2GxOdbCMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OTdhWDRD; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac3b12e8518so19571866b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 13:37:39 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac41514a734so19043066b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 13:37:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744231056; x=1744835856; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1744231057; x=1744835857; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JzewZfPwk4hJVFLYHiSrmH9jhhrX57HEhFAQDXSOGew=;
-        b=A7twnjgU0FQj1w/J+xk+0icOR48aVQtiHwss7vaJfG28nSpmGXYScy6L1vwVmewCED
-         vv2w2q0xE+Z7RTdKGgr89NNoIz8/1pX7NvJZ0zrHyjZmX0FfB1cR3KTEKGxOUfubZNGk
-         shhOqn8IQSNPHXxmNR+pO6x3i6U8woiQNzLdGF8yvj84QarUrbSE3SjBh09KTIbuibJX
-         T1fX7QECToQ7DTxkWnNqxCjPV5PEUmd1uUspLym2OyasjzEmL/VwkWwRzhh/vQnwyDqz
-         W3CMQ0UbC9+SggmQlFAOItX1+YjdcqCkYcklTAmr8/FETj2j8hVZnRxqsirSmI7v1xOd
-         l2sQ==
+        bh=VzEjXNkLNu9GbyJRrsPm3OGWMuRzZZwPEzkpfwqOZVo=;
+        b=OTdhWDRDj8cUyEoBcRy7n2oKEqS8SgsRPrT6JDTUeTBOAMtzCua5No5Q6xxgkkjQ30
+         ySFmmvi/cjO70Cux0AUtba6idIXfriM/xq0dEAeX2uJTeaA7ykRJ4PephyEEdtXyuB1p
+         SWeee4xi5TdhVVehwgKKaiTo+k3Pc9xccaLl/pS9H+2MhcZLNxCSvreS0WAR9IapoLM8
+         3mu1bBm9SlQv0x5/Gwjp6IinFBKpCn0aMxdsrBAZZJyUoAUrd8H/AOf66634XKwo47IM
+         XTo/OABATYwfv/mfMFBnarXmOCfk5+HKV9ux4YldAG7mBKTmISLFOgKENqHiShYIXf0O
+         8HZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744231056; x=1744835856;
+        d=1e100.net; s=20230601; t=1744231057; x=1744835857;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JzewZfPwk4hJVFLYHiSrmH9jhhrX57HEhFAQDXSOGew=;
-        b=jsU7KoRn5qsii+cu/n+l0O2qeZM2p+oC30xQ7oY5byWXzSrWgDJacMIqcvU9jvWIHe
-         ekPQTQYe5qiQWrhGLvckNdOmUQ4zVntC9HJV3MLUljicin5yzjlVU6n3UNKECUB7qS2G
-         CtUuDPa1wky6+T4AL6TUyJAXbmaOn9XXZ169n8GuIYbsPtW09YvqqYOIAS1TLbkGY4P7
-         X8sif0d5bpf3t8Lkt099eHudu+vYG/qYUD15dR8529HEqb/N4H4ybTL5lQyK4bA6EAk8
-         Z9w8AyahwdaoUDaOFCv3byy1qEYrgZUkvq0mSH8vC1hSWqexf0rJ0y5lAPatMBoLACBZ
-         ZgCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjbjQQ6Knqq2GwweAHBMHBncSMD4K9REUasKHH2Yy2AXC3huF59ZHO5VTyHhmF6piPBLvfgboi8CvSHUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUdJydfW67VZSDd4l9rd4vvmh5NAiKFJm796E2iCHE/d3ysin4
-	F0dgcp1ekb581iEUpx3k4MluF78KrJO7WXhAE9IcqyPIozvGHqqDI42CttZDPoA=
-X-Gm-Gg: ASbGncsikIalRp9Funx5SLQ9gwQIt0XJnFwsnmBbfhppdcLYoGXKSOQslWrnGn8hc5m
-	FuxmLsK7tPMikbzEfXQRl3ow7PqmzYy65FK7NhxJnZHHvMVy8BJ3LOGJKS+3RgOaB9rQHOezy3f
-	hOqNWKbvo0Jc3rE/Imp2+ns8aypjJAf0i9nfxQOPoOVDRqDTx7yMwEjVrxbo9zGyYA154nzv7Dg
-	2zN+CbUvNwD8+yO55oWl/0GDzmPEjqiJ7K5zikxv829LX7fIEj0e+2rgjHXtgXky06enOj0xD3B
-	i/8bR8pkOyWfGOimli0GqMbIEuH620iTAskG6m9Cask32kDHQq4oRW1gDQtmwueV2DXktFCGmQR
-	YRI4gYK5f93ka/AdWXwjrzV/0JeY=
-X-Google-Smtp-Source: AGHT+IGpsT9IiqTJupkCVJCKwUjfYOLBHOS0zZILWuXu5C8V5rItHRHHHMylNW+J8A+q4dyb1hPgug==
-X-Received: by 2002:a17:907:7d9f:b0:aca:a16f:ee8f with SMTP id a640c23a62f3a-acabd12b147mr8466766b.8.1744231056245;
+        bh=VzEjXNkLNu9GbyJRrsPm3OGWMuRzZZwPEzkpfwqOZVo=;
+        b=ce5wjt1cVHB/Jpnsu2TMEaiUA598I7ejMWXS597T57v81ZoBwu/jwsCmJizATX8BIS
+         hlB89p4vtaPsWHh225odvAmsq7gi+voLtxwOl0ytRm0iuFRcbp9kaN2ZaSopcKGxHY9p
+         3mOj5r+nCODNzsQf8IrBfoJGaH62izyJSq6THLSV9l2lUuYfl3Q8y1CPbH3jCDS97W5F
+         MvJOUEtaXCZuRXGdo4ViGT7BM4K2wLIJGzYUlv+oJ5X0XJwyIlMgpNG2ny7eF6agoJqn
+         4q3EJvN1/GJrHhNqaECofOq+0LKHh35Hks+n7AlzmDA3D30QEBm/APEJVdo9TV44uaH6
+         2Nqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXweLauEcBYetNkqY8ZvGlPb5+LmRnnTUZadT10yHdvKDB9RrYqG3phwrPQPum6IAfMVuv2Xepr5IYwJk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc8NBiNntoNHs26Q66QUk3Pnh2+pSkUOlg4+KdnXgo2zQNRJ+9
+	YmTlSiT2sYXN28QDByyKLfBXijp2BvfCAKRD1Ouva1FydSaoL5b1Yxcwd7vwjOQ=
+X-Gm-Gg: ASbGncuQThkpJqg6LIEYq00/RMFB0kEd2mxD9AfbhvC+uwNhvjOGJ45lSUKBEPh95z9
+	MqnpVfeG9yFxFG4b6i0TfDZSefiBsi5OGTcnpGZQuBuLyIetCWquvyVivVabxbG2D9I6ByTmllM
+	1f4Apy6T8dRl3hbTmcR5b2G5NkN0Ih4NDPvjmG5Qls0BzjOEf5sf8PhQVg0mx0Jyc2Z/FcfNAyQ
+	1ATWxXvBbd7qEEhAc2bZOnbPhjvmmmuz+AXFJUUrc+eo6vsbxxbEd69jPODefJRRbrmhCpxTV6S
+	VFsXU9n2JoNST2guzldrt0VePop+OgpdOV22C5xC84FHkzJGs63Jhl1NKt9hPREGqO5d2NF8l2i
+	/6+S5EsVDfUm9z/L6aJE/LQD+LgiVQPqljp32Zw==
+X-Google-Smtp-Source: AGHT+IGzaRFtKWEVWYdD0lu6CSjddwUa5mqgDytfA0O5AR616wmqNvg2sZQEFHwPTrDOE7dwUEpCcw==
+X-Received: by 2002:a17:907:3d09:b0:ac7:edc4:3d42 with SMTP id a640c23a62f3a-acabd24cb8amr9037566b.24.1744231056790;
         Wed, 09 Apr 2025 13:37:36 -0700 (PDT)
 Received: from puffmais.c.googlers.com (40.162.204.35.bc.googleusercontent.com. [35.204.162.40])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ccc001sm145850366b.126.2025.04.09.13.37.35
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ccc001sm145850366b.126.2025.04.09.13.37.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 13:37:35 -0700 (PDT)
+        Wed, 09 Apr 2025 13:37:36 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 09 Apr 2025 21:37:34 +0100
-Subject: [PATCH v4 13/32] mfd: sec: Use dev_err_probe() where appropriate
+Date: Wed, 09 Apr 2025 21:37:35 +0100
+Subject: [PATCH v4 14/32] mfd: sec-i2c: s2dos05/s2mpu05: Use explicit
+ regmap config and drop default
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250409-s2mpg10-v4-13-d66d5f39b6bf@linaro.org>
+Message-Id: <20250409-s2mpg10-v4-14-d66d5f39b6bf@linaro.org>
 References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
 In-Reply-To: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
@@ -104,94 +105,93 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
 
-dev_err_probe() exists to simplify code and harmonise error messages,
-there's no reason not to use it here.
+When support for PMICs without compatibles was removed in
+commit f736d2c0caa8 ("mfd: sec: Remove PMICs without compatibles"),
+sec_regmap_config effectively became an orphan, because S5M8763X was
+the only user left of it before removal, using the default: case of the
+switch statement.
 
-While at it, harmonise some error messages.
+When s2dos05 and s2mpu05 support was added in commit bf231e5febcf
+("mfd: sec-core: Add support for the Samsung s2dos05") and commit
+ed33479b7beb ("mfd: sec: Add support for S2MPU05 PMIC"), they ended up
+using that orphaned regmap_config in a non-obvious way due to the
+default: case of the device type switch matching statement taking
+effect again.
+
+To make things more obvious, and to help the reader of this code while
+reasoning about what the intention might be here, and to ensure future
+additions to support new devices in this driver don't forget to add a
+regmap config, add an explicit regmap config for these two devices, and
+completely remove the generic regmap config as it becomes an orphan
+again that shouldn't be used by any device.
+
+Note that this commit doesn't fix the issue that s2dos05_regmap_config
+ands2mpu05_regmap_config really are incomplete, but I have no
+documentation on them.
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/mfd/sec-common.c |  6 +++---
- drivers/mfd/sec-i2c.c    | 10 +++-------
- drivers/mfd/sec-irq.c    | 14 +++++++-------
- 3 files changed, 13 insertions(+), 17 deletions(-)
+v2:
+* squash two previously separate patches into this one (Krzysztof)
+---
+ drivers/mfd/sec-i2c.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mfd/sec-common.c b/drivers/mfd/sec-common.c
-index 1a6f14dda825adeaeee1a677459c7399c144d553..f4c606c5ee5a809a106b13e947464f35a926b199 100644
---- a/drivers/mfd/sec-common.c
-+++ b/drivers/mfd/sec-common.c
-@@ -229,9 +229,9 @@ int sec_pmic_probe(struct device *dev, unsigned long device_type,
- 		num_sec_devs = ARRAY_SIZE(s2mpu05_devs);
- 		break;
- 	default:
--		dev_err(sec_pmic->dev, "Unsupported device type %lu\n",
--			sec_pmic->device_type);
--		return -EINVAL;
-+		return dev_err_probe(sec_pmic->dev, -EINVAL,
-+				     "Unsupported device type %lu\n",
-+				     sec_pmic->device_type);
- 	}
- 	ret = devm_mfd_add_devices(sec_pmic->dev, -1, sec_devs, num_sec_devs,
- 				   NULL, 0, NULL);
 diff --git a/drivers/mfd/sec-i2c.c b/drivers/mfd/sec-i2c.c
-index 966d116dd781ac6ab63453f641b2a68bba3945a9..a107a9c1e760f90fcb59a9944b74e9a39a0d946c 100644
+index a107a9c1e760f90fcb59a9944b74e9a39a0d946c..81f90003eea2a40f2caaebb49fc9494b89370e7f 100644
 --- a/drivers/mfd/sec-i2c.c
 +++ b/drivers/mfd/sec-i2c.c
-@@ -134,7 +134,6 @@ static int sec_pmic_i2c_probe(struct i2c_client *client)
- 	const struct regmap_config *regmap;
- 	unsigned long device_type;
- 	struct regmap *regmap_pmic;
--	int ret;
+@@ -61,7 +61,7 @@ static bool s2mpu02_volatile(struct device *dev, unsigned int reg)
+ 	}
+ }
  
+-static const struct regmap_config sec_regmap_config = {
++static const struct regmap_config s2dos05_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ };
+@@ -120,6 +120,11 @@ static const struct regmap_config s2mpu02_regmap_config = {
+ 	.cache_type = REGCACHE_FLAT,
+ };
+ 
++static const struct regmap_config s2mpu05_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++};
++
+ static const struct regmap_config s5m8767_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+@@ -138,6 +143,9 @@ static int sec_pmic_i2c_probe(struct i2c_client *client)
  	device_type = (unsigned long)of_device_get_match_data(&client->dev);
  
-@@ -166,12 +165,9 @@ static int sec_pmic_i2c_probe(struct i2c_client *client)
+ 	switch (device_type) {
++	case S2DOS05:
++		regmap = &s2dos05_regmap_config;
++		break;
+ 	case S2MPA01:
+ 		regmap = &s2mpa01_regmap_config;
+ 		break;
+@@ -156,12 +164,16 @@ static int sec_pmic_i2c_probe(struct i2c_client *client)
+ 	case S2MPU02:
+ 		regmap = &s2mpu02_regmap_config;
+ 		break;
++	case S2MPU05:
++		regmap = &s2mpu05_regmap_config;
++		break;
+ 	case S5M8767X:
+ 		regmap = &s5m8767_regmap_config;
+ 		break;
+ 	default:
+-		regmap = &sec_regmap_config;
+-		break;
++		return dev_err_probe(&client->dev, -ENODEV,
++				     "Unsupported device type %lu\n",
++				     device_type);
  	}
  
  	regmap_pmic = devm_regmap_init_i2c(client, regmap);
--	if (IS_ERR(regmap_pmic)) {
--		ret = PTR_ERR(regmap_pmic);
--		dev_err(&client->dev, "Failed to allocate register map: %d\n",
--			ret);
--		return ret;
--	}
-+	if (IS_ERR(regmap_pmic))
-+		return dev_err_probe(&client->dev, PTR_ERR(regmap_pmic),
-+				     "regmap init failed\n");
- 
- 	return sec_pmic_probe(&client->dev, device_type, client->irq,
- 			      regmap_pmic, client);
-diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
-index b75d7fe86253037b4b7256a4d8c089003d58bc44..340f5f14eba3fad3b25935803dd33e91f7ec6629 100644
---- a/drivers/mfd/sec-irq.c
-+++ b/drivers/mfd/sec-irq.c
-@@ -487,18 +487,18 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
- 		sec_irq_chip = &s2mpu05_irq_chip;
- 		break;
- 	default:
--		dev_err(sec_pmic->dev, "Unknown device type %lu\n",
--			sec_pmic->device_type);
--		return -EINVAL;
-+		return dev_err_probe(sec_pmic->dev, -EINVAL,
-+				     "Unsupported device type %lu\n",
-+				     sec_pmic->device_type);
- 	}
- 
- 	ret = devm_regmap_add_irq_chip(sec_pmic->dev, sec_pmic->regmap_pmic,
- 				       sec_pmic->irq, IRQF_ONESHOT,
- 				       0, sec_irq_chip, &sec_pmic->irq_data);
--	if (ret != 0) {
--		dev_err(sec_pmic->dev, "Failed to register IRQ chip: %d\n", ret);
--		return ret;
--	}
-+	if (ret != 0)
-+		return dev_err_probe(sec_pmic->dev, ret,
-+				     "Failed to add %s IRQ chip\n",
-+				     sec_irq_chip->name);
- 
- 	/*
- 	 * The rtc-s5m driver requests S2MPS14_IRQ_RTCA0 also for S2MPS11
 
 -- 
 2.49.0.604.gff1f9ca942-goog
