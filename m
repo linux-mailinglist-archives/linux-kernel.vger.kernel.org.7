@@ -1,56 +1,52 @@
-Return-Path: <linux-kernel+bounces-595815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E29CA82363
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:20:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED46BA82369
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2D31894813
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:21:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA57317E1B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2082A25DCFD;
-	Wed,  9 Apr 2025 11:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8t7VrR/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3BE25DD17;
+	Wed,  9 Apr 2025 11:21:16 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7784C25C6FB;
-	Wed,  9 Apr 2025 11:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC34125DD02
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 11:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744197638; cv=none; b=PlgsPnjs64FoC57YvyKr8Gy+QW4BEbL8CdyhQMHm+6BIn7n1FYDv/k+R8ypYEpse1j2xLxUbTS0wV8zlbcsSdJSUMNeJ2J/VYVBzw+d4wkLDXJ9NBZKGoB4k0U6J6krLPKywg46VhIqlNc89D3agjWsfpCfwlovTTk/n6taDD2g=
+	t=1744197676; cv=none; b=uH1/hZchDM2BPvhXLVu0QvZJIBv3lnVYQt+jvw4Vqt9rhXN09MUkCAlwx77LJU55EbvabsmLedPjJRotwgRH4DhknwqzP8kHZY4wH5L3K6GYxpj5Hea1qr5RG5aa8CvlYtBaW44hPwubRRLPzVrvdZU4sl1T4fe/z0ozokfaJao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744197638; c=relaxed/simple;
-	bh=kQ3av6akCnzRh9ZgnPfK5Lh+ld6NFHODijIeHOoTRAQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QZh7I0e59BEayE1+oPy/Mt6Q8J3NM4XYepH2QmRkBulR3OcS/9ux+su2V/kycoYQ83THD+XmN+90T1GvSqsyK4xG9w2gnxfOqEWcTIp5eHMb8OwsurcSbWrvl0mQQ1XzlUUPkfMAp9obcsABzt7o3yf060yQ3cSTyJuSG4gn5ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8t7VrR/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D7BC4CEE7;
-	Wed,  9 Apr 2025 11:20:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744197638;
-	bh=kQ3av6akCnzRh9ZgnPfK5Lh+ld6NFHODijIeHOoTRAQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=t8t7VrR/laewHRaFKc2AIUfZojdILaXQagD7f0Of4Swlne9WnF+OnChjMmuuiT4+1
-	 ZN7IdCKV3kBCDUvLY8tYX2Ptbqj/d8uNPPlkHQpXEnucKPnit2gaSs3n8h9U+wHyl1
-	 6/ZWZjiprYC/XEnzPmQFr0xAekicihm1HYsQ4HZ9SdEsksywpgheTGawvyss8RsUsd
-	 2vML3gp805PEsJa5aDlecTsmQSrOOrvoZ7gOdPzKwJyuw5FaMVIR9BM9O1xzOQ6qBK
-	 +TLij76edIqDTazdQjG26ve0al4QsMQrAttoaktt4FOvZrjvIdkTE0SjC/93++Ghxl
-	 5b0yJ6wWaRw6g==
-From: Leon Romanovsky <leon@kernel.org>
-To: jgg@ziepe.ca, phaddad@nvidia.com, markzhang@nvidia.com, 
- Sharath Srinivasan <sharath.srinivasan@oracle.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, haakon.bugge@oracle.com, aron.silverton@oracle.com
-In-Reply-To: <bf0082f9-5b25-4593-92c6-d130aa8ba439@oracle.com>
-References: <bf0082f9-5b25-4593-92c6-d130aa8ba439@oracle.com>
-Subject: Re: [PATCH v2] RDMA/cma: Fix workqueue crash in
- cma_netevent_work_handler
-Message-Id: <174419763484.373763.12978802764991350026.b4-ty@kernel.org>
-Date: Wed, 09 Apr 2025 07:20:34 -0400
+	s=arc-20240116; t=1744197676; c=relaxed/simple;
+	bh=7tije2NwPJ8JUYfrk6Nbn+v7LM8+SxWVe/sBjMR5O0Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=D926sQNS7UtF1KemEr7pSL5+EiYqo/lutyOG56/igKziDMe4iiTZIgkaIcil5hpN41bWeXD9qEM084mQN/hTEITmWAa7hdvzHyIVZLj6I0Hb3fAS+NLfahvj2WGt1Wd2tt0R8rLK7NowFn9vFXU/a6JxXYXS+aZS3G5XhkIYgkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u2TUH-0007P8-9J; Wed, 09 Apr 2025 13:20:57 +0200
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u2TUH-0045qb-02;
+	Wed, 09 Apr 2025 13:20:57 +0200
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u2TUG-00GOXj-2s;
+	Wed, 09 Apr 2025 13:20:56 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH v2 0/3] clk: add support for TI CDCE6214
+Date: Wed, 09 Apr 2025 13:20:56 +0200
+Message-Id: <20250409-clk-cdce6214-v2-0-40b25b722ecb@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,33 +55,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+X-B4-Tracking: v=1; b=H4sIABhY9mcC/3XMQQ6CMBCF4auQWVszrZWKK+9hWGA7wETTkhYbD
+ OHuVvYu/5e8b4VEkSnBtVohUubEwZdQhwrs2PmBBLvSoFCdUeNF2NdTWGepVlILtEajPjmragP
+ lMkXqedm5e1t65DSH+Nn1LH/rHyhLgeLhNBlsVNfI/jaRH95zDJ6XoyNot237AlhQTvitAAAA
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, kernel@pengutronix.de, 
+ =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
+ Sascha Hauer <s.hauer@pengutronix.de>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744197656; l=1820;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=7tije2NwPJ8JUYfrk6Nbn+v7LM8+SxWVe/sBjMR5O0Q=;
+ b=wtk51CkFO3YbZTL5b/0C5IvLP+ysM1hbgF4ZS46yRAaWSbds4EsLOrt8XfdIWFC34e1pRsfyZ
+ BREidgiYMF1BlIltodnePbIalauiAdowFpHxTVkavHjtfRTSXSJTOsj
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
+Differential Outputs, Two Inputs, and Internal EEPROM.
 
-On Wed, 26 Mar 2025 14:05:32 -0700, Sharath Srinivasan wrote:
-> struct rdma_cm_id has member "struct work_struct net_work"
-> that is reused for enqueuing cma_netevent_work_handler()s
-> onto cma_wq.
-> 
-> Below crash[1] can occur if more than one call to
-> cma_netevent_callback() occurs in quick succession,
-> which further enqueues cma_netevent_work_handler()s for the
-> same rdma_cm_id, overwriting any previously queued work-item(s)
-> that was just scheduled to run i.e. there is no guarantee
-> the queued work item may run between two successive calls
-> to cma_netevent_callback() and the 2nd INIT_WORK would overwrite
-> the 1st work item (for the same rdma_cm_id), despite grabbing
-> id_table_lock during enqueue.
-> 
-> [...]
+This series adds a common clk framework driver for this chip along with
+the dt-bindings document and a small fix needed for the common clk
+framework.
 
-Applied, thanks!
+Sascha
 
-[1/1] RDMA/cma: Fix workqueue crash in cma_netevent_work_handler
-      https://git.kernel.org/rdma/rdma/c/052996ebc39e3e
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+Changes in v2:
+- Use consistent quotes in binding document
+- make clock-names an enum to make each clock fully optional
+- drop '|' in binding description where not needed
+- encode clock input mode into integer
+- encode clock output mode into integer
+- do not use defines for reg properties
+- support setting load capacity for the oscillator via device tree
+- support setting Bias current for the oscillator via device tree
+- support setting polarities of CMOS outputs via device tree
+- fix compatible string in driver
+- remove unused struct cdce6214_config
+- Link to v1: https://lore.kernel.org/r/20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de
+
+---
+Sascha Hauer (3):
+      clk: make determine_rate optional for non reparenting clocks
+      dt-bindings: clock: add TI CDCE6214 binding
+      clk: add TI CDCE6214 clock driver
+
+ .../devicetree/bindings/clock/ti,cdce6214.yaml     |  167 +++
+ drivers/clk/Kconfig                                |    7 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-cdce6214.c                         | 1284 ++++++++++++++++++++
+ drivers/clk/clk.c                                  |    3 +-
+ include/dt-bindings/clock/ti,cdce6214.h            |   24 +
+ 6 files changed, 1485 insertions(+), 1 deletion(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250408-clk-cdce6214-0c74043dc267
 
 Best regards,
 -- 
-Leon Romanovsky <leon@kernel.org>
+Sascha Hauer <s.hauer@pengutronix.de>
 
 
