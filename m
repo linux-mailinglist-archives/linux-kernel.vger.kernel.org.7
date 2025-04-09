@@ -1,170 +1,239 @@
-Return-Path: <linux-kernel+bounces-595863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22857A823DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:46:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9354FA823E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 13:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F918C1C37
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:45:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 313918A2474
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C3E262D29;
-	Wed,  9 Apr 2025 11:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D04E25E829;
+	Wed,  9 Apr 2025 11:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uTuemDd+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bv3WdAk7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eRhRZ1AH"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A00A25EFB2;
-	Wed,  9 Apr 2025 11:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9431925E45D
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 11:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744199071; cv=none; b=i1ER+SvUWHOqi3V12c3xDWUuLUiDhJ20I8KclgW/1loPt7TBnxCy17NA+J5z+AGvkg/69rwCvAlPZkLj8zsQEy4NZ7N57ialxYugDafBI/94YevRvIMiTYZr7HsynUhR8GRv51dCeZvgAX2xA7rjuIJXhhIZiahG57KPAn2KBXk=
+	t=1744199102; cv=none; b=ZpYeJlmCmy+9McR6f/WQft/sjKuvFvstNG3pbWYEoVdeyKOBMYtwCPkmCeXwB7Fbm/uvtM0LBAs+gOwk6LQv2jtSF4kN+jF7geHKoNnVBgsf5EbvTkKXj31376nKYbD2u6K3A9znT8Nbxsjej3OxgBbl1rqFGq57JsAQvsxZI7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744199071; c=relaxed/simple;
-	bh=gG0h0DYYiY5/F0mFY1uOl7OgnLBbSfvSMZsVvvp3RK4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=OoV85w8aM+o/EKhsLamJpmA1KVfkDW07cQmjKXXO+m2CHa9xSFCAbu7gBgiVIhvq3HZjKlfYthUFyiUUbIqaRLETDiB14PKuZjH5uQeK5Ar2sc/ni/1N+2BYaEKcvM7ROLEfPwOuIFz4ufEMUMGw70YCHd1AFPzXUmbqulkxS8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uTuemDd+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bv3WdAk7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 09 Apr 2025 11:44:26 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744199067;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gLb12RdfUXFfWpJ/dnTaYv5AVVEebS4hUjZr+3tHWl4=;
-	b=uTuemDd+9j8s6Um/CWrc2vsPuq9VQOUn7qYiJkX6PTDslPlOW1+lLbgzkLrkcMxUEe/He/
-	UpDIFTqqwDQbJSAEx/mgCGTOL+GZfVrjraACPwQMw1t2HAaa+HDnhq1TdR/J/eElqmmxIf
-	nm9NCn+/mGXZstbzw74eMKMFhPJBMAVcQrEIxNqKe880grhcSZYX5FP2x9V4DZfkkjY9rl
-	uxQfbvmmO8UVnqjkZ7ogp10ShpY1m+WlkQe7oYoENpX18nN+Uww43vN9M6PVAno5MIYqkB
-	7IO975hp8E+TmwppgPo/reVA25lh56ZeSz2obasw3AeaaJnkan7bSuRdRbuDoQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744199067;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gLb12RdfUXFfWpJ/dnTaYv5AVVEebS4hUjZr+3tHWl4=;
-	b=bv3WdAk7TSXtf2Z34pyTfPdnn6GU3sjHsQxCyViUJN2XhAN5F4Ghbf1q2E1h3XL/5ESkPv
-	CsDogaYlH5w1UfBQ==
-From: "tip-bot2 for Andy Shevchenko" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/early_printk: Use 'mmio32' for consistency, fix
- comments
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>, Denis Mukhin <dmukhin@ford.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250407172214.792745-1-andriy.shevchenko@linux.intel.com>
-References: <20250407172214.792745-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1744199102; c=relaxed/simple;
+	bh=zarmtMGLBF0fyOl9uqcT3OTLO4TlTelE1W7ZZgRVdbA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=szBFAry59MTPqZqxsY99Fbbw2DZlk0iQEGpwFY2pDhOyND7xfKUV4VaMpS8stISbQ5rPLa25249Kw9WoSgomgOj9GfwH2fwFIzreZSrbL//Y93pjWA79dZiajDVRc00sLexskHzr6Riz2MfhifkJJw+CEeDvnsmdTEpQkKFHCW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eRhRZ1AH; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5240317b3e0so2491895e0c.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 04:45:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744199099; x=1744803899; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xbrTJkqffrjK4gGBxAkdXaIIHS0s0LVR8DdB7dEPTSI=;
+        b=eRhRZ1AHrL0mNJBiLafzfzMLNBnRjWAyjpTQKZdMFpJQSBFllZYyLHiSyWLNQH8Kvr
+         sLTv6g5NczFrugQ6j9IQjLpS8Dnv7PV5KNu8os/MO36SHWX7Fksx3BlBJqcaqXx+oQC4
+         Sin0JrARmH6sZl0GVoLVanDONR8HBHrMwZGlRSF8V7RJchP/fVzUtkpajLi9BxvfYcDp
+         ZjHkdo+b3ABLEaNt+FQm7dIZI0jXSYv6gCcd1bL4P3lKurhZOv+JbBLNbETF1t02rdbE
+         qpEEdQ5kEZHmQkqh7iDLNKyyRjuBQITJ45kz2bPo8yBDsfS5/hENeVlIBMOPZMdICFV7
+         ysqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744199099; x=1744803899;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xbrTJkqffrjK4gGBxAkdXaIIHS0s0LVR8DdB7dEPTSI=;
+        b=oMFiktbd7EB9k3zyaWNRD0F0J/Bo3pEIFiaI7jnTzUD7nHjJVvFB6yZbiXsy6zod6w
+         Ch3E4DqSrnfZyL/0dR/52n2iubp9OLHOm82fhPBidQrcl4LEtMfksDcDeQ254YEZH5CK
+         OLwhj6hghxsWdZRED7Bakt6SwQz9BQbJu2Vjr5TlxB/O6fl75i7Kfo4LNAH3kK3u1XXn
+         nZGQ2/91i7lwwgB2Abij5r2/T9Dq01a5N7AKf543N5Z2NEfFeDJE6T6F1onbHaReI/vB
+         1cBC91Q75u1cTG+v/0HHC40Anzbxa5tzpA+TQNvnO9B8orX+fPSARsPAXq4fr5mFr5TR
+         t7nA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhpmQFSbPzgID3Ef5+72nCozZUu7ko8eO3WZa27ILFLA/4MKigWkh31T4KXt58aNnXD82oMeY6XZNaHHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy/hNlDowDMEbAKqj4LkjeQfagPgcNF1YBXF4WQt2e5LIxQq76
+	uEpbbg5X0OomYbmJ1GSptgxjKqwBgpFP2rlnWSWfcNQ8kGqyBWSt2A8DCIS/BF2osr4kIbQOTXg
+	sXPZJYNrIeIXigR3xH7N9AGVTcwd2CPTSvHoTbQ==
+X-Gm-Gg: ASbGncszbvqK90RrCtZon6cxKvvhPoZy/9+BxtOwtSVY2v03Dp10c6d+RJkrvy76kFU
+	gDK6lpwY6XGGCQOa0JuF+G6mdIeNKApkUnA0rWdBLOJi3S+kdLF0ounCwoaY3Ck7My0JwTwD5YX
+	C7Cx2e3OI9+nP6k44qQKVhKbFXRL+yxHjlsEvoR8jhHFTFq6STh+2K+X0=
+X-Google-Smtp-Source: AGHT+IHrVANQVRjeANWQVvB1yYz56RRWrcD33zCSJP1mZGCTeaSlafYnKAspMapR8pMTmVjYUIGkaTzo6983LDNHlLA=
+X-Received: by 2002:a05:6122:3c81:b0:516:230b:eec with SMTP id
+ 71dfb90a1353d-527a91a11e8mr1685385e0c.5.1744199099347; Wed, 09 Apr 2025
+ 04:44:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174419906679.31282.16262283502465088009.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20250408154121.378213016@linuxfoundation.org>
+In-Reply-To: <20250408154121.378213016@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 9 Apr 2025 17:14:47 +0530
+X-Gm-Features: ATxdqUH3MDuXzU1QyOuT7vb7JPOkq70ygkcjB1HRs6SVGaji56XLgCR3FT9aB1s
+Message-ID: <CA+G9fYtDLzpJaO6buxdm7xxRqWRoVjKsoEjEas-CUKCwhXweeQ@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/423] 6.12.23-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Tue, 8 Apr 2025 at 21:26, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.23 release.
+> There are 423 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 10 Apr 2025 15:40:31 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.23-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Commit-ID:     996457176bb7c64b3d30996592c754205ec4d3ea
-Gitweb:        https://git.kernel.org/tip/996457176bb7c64b3d30996592c754205ec4d3ea
-Author:        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-AuthorDate:    Mon, 07 Apr 2025 20:22:14 +03:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 09 Apr 2025 12:27:08 +02:00
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-x86/early_printk: Use 'mmio32' for consistency, fix comments
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-First of all, using 'mmio' prevents proper implementation of 8-bit accessors.
-Second, it's simply inconsistent with uart8250 set of options. Rename it to
-'mmio32'. While at it, remove rather misleading comment in the documentation.
->From now on mmio32 is self-explanatory and pciserial supports not only 32-bit
-MMIO accessors.
+## Build
+* kernel: 6.12.23-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: a285b6821aebfc3e637c25e08623950368c6dc6c
+* git describe: v6.12.22-424-ga285b6821aeb
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
+.22-424-ga285b6821aeb
 
-Also, while at it, fix the comment for the "pciserial" case. The comment
-seems to be a copy'n'paste error when mentioning "serial" instead of
-"pciserial" (with double quotes). Fix this.
+## Test Regressions (compared to v6.12.19-371-g03f13769310a)
 
-With that, move it upper, so we don't calculate 'buf' twice.
+## Metric Regressions (compared to v6.12.19-371-g03f13769310a)
 
-Fixes: 3181424aeac2 ("x86/early_printk: Add support for MMIO-based UARTs")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Denis Mukhin <dmukhin@ford.com>
-Link: https://lore.kernel.org/r/20250407172214.792745-1-andriy.shevchenko@linux.intel.com
----
- Documentation/admin-guide/kernel-parameters.txt |  5 +----
- arch/x86/kernel/early_printk.c                  | 10 +++++-----
- 2 files changed, 6 insertions(+), 9 deletions(-)
+## Test Fixes (compared to v6.12.19-371-g03f13769310a)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 76e538c..d9fd26b 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1407,18 +1407,15 @@
- 			earlyprintk=serial[,0x...[,baudrate]]
- 			earlyprintk=ttySn[,baudrate]
- 			earlyprintk=dbgp[debugController#]
-+			earlyprintk=mmio32,membase[,{nocfg|baudrate}]
- 			earlyprintk=pciserial[,force],bus:device.function[,{nocfg|baudrate}]
- 			earlyprintk=xdbc[xhciController#]
- 			earlyprintk=bios
--			earlyprintk=mmio,membase[,{nocfg|baudrate}]
- 
- 			earlyprintk is useful when the kernel crashes before
- 			the normal console is initialized. It is not enabled by
- 			default because it has some cosmetic problems.
- 
--			Only 32-bit memory addresses are supported for "mmio"
--			and "pciserial" devices.
--
- 			Use "nocfg" to skip UART configuration, assume
- 			BIOS/firmware has configured UART correctly.
- 
-diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
-index 611f27e..3aad78b 100644
---- a/arch/x86/kernel/early_printk.c
-+++ b/arch/x86/kernel/early_printk.c
-@@ -389,10 +389,10 @@ static int __init setup_early_printk(char *buf)
- 	keep = (strstr(buf, "keep") != NULL);
- 
- 	while (*buf != '\0') {
--		if (!strncmp(buf, "mmio", 4)) {
--			early_mmio_serial_init(buf + 4);
-+		if (!strncmp(buf, "mmio32", 6)) {
-+			buf += 6;
-+			early_mmio_serial_init(buf);
- 			early_console_register(&early_serial_console, keep);
--			buf += 4;
- 		}
- 		if (!strncmp(buf, "serial", 6)) {
- 			buf += 6;
-@@ -407,9 +407,9 @@ static int __init setup_early_printk(char *buf)
- 		}
- #ifdef CONFIG_PCI
- 		if (!strncmp(buf, "pciserial", 9)) {
--			early_pci_serial_init(buf + 9);
-+			buf += 9; /* Keep from match the above "pciserial" */
-+			early_pci_serial_init(buf);
- 			early_console_register(&early_serial_console, keep);
--			buf += 9; /* Keep from match the above "serial" */
- 		}
- #endif
- 		if (!strncmp(buf, "vga", 3) &&
+## Metric Fixes (compared to v6.12.19-371-g03f13769310a)
+
+## Test result summary
+total: 111716, pass: 86981, fail: 7665, skip: 17015, xfail: 55
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 139 total, 136 passed, 3 failed
+* arm64: 57 total, 54 passed, 3 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 34 total, 33 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 40 total, 35 passed, 5 failed
+* riscv: 25 total, 23 passed, 2 failed
+* s390: 22 total, 17 passed, 5 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 49 total, 47 passed, 2 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+* rt-tests-cyclicdeadline
+* rt-tests-pi-stress
+* rt-tests-pmqtest
+* rt-tests-rt-migrate-test
+* rt-tests-signaltest
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
