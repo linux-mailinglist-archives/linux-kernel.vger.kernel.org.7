@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-596868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2213A831FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:33:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3524CA83200
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FF714604D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4548A1B646AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9458D21C9F7;
-	Wed,  9 Apr 2025 20:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B033421E087;
+	Wed,  9 Apr 2025 20:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NbZyzqQ4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="euX+sC9/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D724821C18D
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 20:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D48F2144CE
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 20:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744230601; cv=none; b=GsUpausYrxwYikXvmgSUgeXMV+pimxrZtezvobYd08W4AToGsd1/hpjZ0n80zl+WNjzL2VJv/yFtGfn29m+TAv21z/k8s4P8HtFbl+M4ZTQklmRavZAl/wKo7PcRuLxFHMaHCND8kfuPrNCIRnJAFyvvGqA8eIxRGmVmmAdWP2E=
+	t=1744230606; cv=none; b=U6OK4t566N1vgxERohQ401baa/xO4oqV8c4Bz45KiuyfZxt/VnqFXlrSyT8XqtGBbWPKcZg9FQxhZ9aLV0NcH0jRuRjtJLraoIhBN5cn7mk5DsFPKTpMOX8VgdNaTrRSkJlkX6DIxcVgQ9TUYJi0imXd8hraCOefBSCVrO6Ztjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744230601; c=relaxed/simple;
-	bh=X+VA0lIwOAQriS1JPvrMBGkDqxSlHlVnTNRR/Wd/Eg0=;
+	s=arc-20240116; t=1744230606; c=relaxed/simple;
+	bh=RftBqIIl8lR6WHu6LqWA1bNchIhsxk7EQktxcdo8gD8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Oa3aDYsEwYDQ7I/UCGhLuq+NcUAzPD8jplxstYlzLNtYu1ESA4sdLLP84cl5Bnq792yflH+Pevq1HsC1FZ5rOHq++GO1BnvjtSgr068DWovXmN0uMzC2VHAr1J8NhCRSEuJowxh30pmS87RmjQU5ojKu4/n6M0MRbtpKbkvKx/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NbZyzqQ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72091C4CEE8;
-	Wed,  9 Apr 2025 20:29:59 +0000 (UTC)
+	 MIME-Version; b=fVr5i3b0TwTIyx5s1SzdxC5vLEerzJC0IVPo6pO9wZa5JQtm7qRHcdv6QZpu8Pq2KEbfX/Wt0xwikU36Sna/vpdX1bu/xro5lxq1g0bUFUCI80TAyEUShel4T5tOxTcKruccGMmwZEa+FXt61p3/DZhzucnMyuZR8f3dThzNWmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=euX+sC9/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 373F0C4CEE8;
+	Wed,  9 Apr 2025 20:30:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744230601;
-	bh=X+VA0lIwOAQriS1JPvrMBGkDqxSlHlVnTNRR/Wd/Eg0=;
+	s=k20201202; t=1744230604;
+	bh=RftBqIIl8lR6WHu6LqWA1bNchIhsxk7EQktxcdo8gD8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NbZyzqQ4A9UMHSh86js+hS/pYDbOuSkNui4MOBd2Z771zIbNiFZQs8HNkzgAgaWeP
-	 cmnA1+2yODLe+EAJfdMMhCKR2uQJ8SZI9d16N/HtxmRPbksj8ievLs12XXmxdE5axL
-	 jQUPiegdpf4WeHxhF547Qs+jZYnlI75HyF6WDOY63F7aiGovG31J92vsYvv1TUay3M
-	 eA0P08luKyDkxda6y++m67mx67+u+A7nl6BcUU4OhxER8JH5BCwaeztmOu94om+2K7
-	 U6rwNPHf5vNEsxDuwJRoVkAzNkr46VcBLNqzqfSNKJLcYRJIfDUCYr4wrn9+TftTfa
-	 mD2yOKA1gSvlg==
+	b=euX+sC9/Crwt4mi3qBvdi0MlyXHpm9PSSAWcNft6fe3CFnrh4slXgG3TjHvrMQLAY
+	 I97IJCGUnP62aNhzqsqf+H2tUd7zSaQ3X6ZG2cHLrtIzR5cfl0k+4H3LEJQ3Up5Xa7
+	 Wp3AfdBnPjVuDWX5mh/VIWiZ14uvHMfOFyvbuhHut+sjGvRE2pMFj0uQwQpfdPofPf
+	 TNxlBI1gfwckqy/+lU8V8yH26H4e65CGvEcxg/RRdF0pEXtnXf2FijG6SFRZpwANNX
+	 cAcRjT41WSmdZSyyxnsycfySpB+76TxXSJq+iq2Xtv3NeRVtyn9pSBZ7QMZy/Ipls5
+	 twC+B2SzaFF/g==
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Juergen Gross <jgross@suse.com>,
@@ -51,9 +51,9 @@ Cc: Juergen Gross <jgross@suse.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 16/20] x86/msr: Rename 'mce_wrmsrl()' to 'mce_wrmsrq()'
-Date: Wed,  9 Apr 2025 22:29:03 +0200
-Message-ID: <20250409202907.3419480-17-mingo@kernel.org>
+Subject: [PATCH 17/20] x86/msr: Rename 'rdmsrl_amd_safe()' to 'rdmsrq_amd_safe()'
+Date: Wed,  9 Apr 2025 22:29:04 +0200
+Message-ID: <20250409202907.3419480-18-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250409202907.3419480-1-mingo@kernel.org>
 References: <20250409202907.3419480-1-mingo@kernel.org>
@@ -72,60 +72,31 @@ Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Xin Li <xin@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 ---
- arch/x86/kernel/cpu/mce/core.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/amd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 765b799c7090..255927f0284e 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -423,7 +423,7 @@ noinstr u64 mce_rdmsrq(u32 msr)
- 	return EAX_EDX_VAL(val, low, high);
- }
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 8937923c9f81..0aefa41f1209 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -31,7 +31,7 @@
  
--static noinstr void mce_wrmsrl(u32 msr, u64 v)
-+static noinstr void mce_wrmsrq(u32 msr, u64 v)
+ u16 invlpgb_count_max __ro_after_init;
+ 
+-static inline int rdmsrl_amd_safe(unsigned msr, u64 *p)
++static inline int rdmsrq_amd_safe(unsigned msr, u64 *p)
  {
- 	u32 low, high;
- 
-@@ -829,7 +829,7 @@ void machine_check_poll(enum mcp_flags flags, mce_banks_t *b)
- 		/*
- 		 * Clear state for this bank.
- 		 */
--		mce_wrmsrl(mca_msr_reg(i, MCA_STATUS), 0);
-+		mce_wrmsrq(mca_msr_reg(i, MCA_STATUS), 0);
- 	}
- 
- 	/*
-@@ -910,8 +910,8 @@ static noinstr bool quirk_skylake_repmov(void)
- 	      MCI_STATUS_ADDRV | MCI_STATUS_MISCV |
- 	      MCI_STATUS_AR | MCI_STATUS_S)) {
- 		misc_enable &= ~MSR_IA32_MISC_ENABLE_FAST_STRING;
--		mce_wrmsrl(MSR_IA32_MISC_ENABLE, misc_enable);
--		mce_wrmsrl(MSR_IA32_MCx_STATUS(1), 0);
-+		mce_wrmsrq(MSR_IA32_MISC_ENABLE, misc_enable);
-+		mce_wrmsrq(MSR_IA32_MCx_STATUS(1), 0);
- 
- 		instrumentation_begin();
- 		pr_err_once("Erratum detected, disable fast string copy instructions.\n");
-@@ -1274,7 +1274,7 @@ static __always_inline void mce_clear_state(unsigned long *toclear)
- 
- 	for (i = 0; i < this_cpu_read(mce_num_banks); i++) {
- 		if (arch_test_bit(i, toclear))
--			mce_wrmsrl(mca_msr_reg(i, MCA_STATUS), 0);
-+			mce_wrmsrq(mca_msr_reg(i, MCA_STATUS), 0);
- 	}
- }
- 
-@@ -1693,7 +1693,7 @@ noinstr void do_machine_check(struct pt_regs *regs)
- 	instrumentation_end();
- 
- clear:
--	mce_wrmsrl(MSR_IA32_MCG_STATUS, 0);
-+	mce_wrmsrq(MSR_IA32_MCG_STATUS, 0);
- }
- EXPORT_SYMBOL_GPL(do_machine_check);
- 
+ 	u32 gprs[8] = { 0 };
+ 	int err;
+@@ -636,7 +636,7 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
+ 	 */
+ 	if (c->x86_model < 0x14 && cpu_has(c, X86_FEATURE_LAHF_LM) && !cpu_has(c, X86_FEATURE_HYPERVISOR)) {
+ 		clear_cpu_cap(c, X86_FEATURE_LAHF_LM);
+-		if (!rdmsrl_amd_safe(0xc001100d, &value)) {
++		if (!rdmsrq_amd_safe(0xc001100d, &value)) {
+ 			value &= ~BIT_64(32);
+ 			wrmsrl_amd_safe(0xc001100d, value);
+ 		}
 -- 
 2.45.2
 
