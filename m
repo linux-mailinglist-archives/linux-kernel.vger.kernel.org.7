@@ -1,166 +1,147 @@
-Return-Path: <linux-kernel+bounces-596288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E3FDA829DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:17:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390F8A829DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD3C6502B75
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:11:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EFDE1BC7B96
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8F22686A2;
-	Wed,  9 Apr 2025 15:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4A926657F;
+	Wed,  9 Apr 2025 15:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dF/+tUgb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF98267F6C
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="GUkKmlg4"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486E417C224
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744211396; cv=none; b=Us4OC00R7wlJjlUgmoeRB0taY/V0E6ahtl2zivgBHNzHOYp7UxP2ml2SUoaZ0J/ZIE2rBWAUw2fZVJ9aMLs83DPBDRM0pnew8tDjZo7dp+WIgy5UYFiyDYXXQFtYtLn2kDUMGqQjG3h5RfoiIVTszDZ+ga8NNMpde2VQHLRb0BM=
+	t=1744211467; cv=none; b=nd7zVLtljvces7vKAPs3JA0l2a+hOL2hMbHi+tyhLPNxh70KW8tqw0VIcKVit2gptRY825PgXPNrlTXwYhDS2qaz0lNWrlZQOI2CnPxWDwI9U0/ahmzmVSssoebxmmbhXS7U+akE2fcqktrH+7am2IPUulZyLuOQqvmYOnNNztg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744211396; c=relaxed/simple;
-	bh=ZgPt0kY4v51PrWRwjEFd1UVcxTCxhC8NiE86uy2w7SY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mvuOtRGZyJmiHtKdj7zq0Jrbx+HNpQlViPrX2QY9woofUoiTJW1BluTtEWXZqVdz8AHYCgk7+1Qx3lDQeW7nhyKk0U0kB8dw1/w4GiAWGEvXLg/+BUkjXDphgHsT8nVFXmXOD1lt7bsmmDb2LoS4j9pqUvrGyK1amCf8AC4MG5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dF/+tUgb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744211393;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B57j4Ps108WJ39MtEA7WB4JULRneEM8e8M06m5Z+dPI=;
-	b=dF/+tUgbuupjhVv9H07zxI4cQUX731qYGJfE63WcBTJ5IoUZyMC2icRibtK42u/S38yc5i
-	ZWCZssRfYW/CjxiNwn6HBhObbziTOmzPWPE6k/L57sr/Kt5rFgMuU112eCzorsu6g6S0IJ
-	5xeh5j+67/K6oxrByMMR08INCsZyb5M=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-615-vUz62eWFOZm305aVqBE-Sw-1; Wed, 09 Apr 2025 11:09:50 -0400
-X-MC-Unique: vUz62eWFOZm305aVqBE-Sw-1
-X-Mimecast-MFC-AGG-ID: vUz62eWFOZm305aVqBE-Sw_1744211390
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-6fda4eaca22so76041957b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 08:09:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744211390; x=1744816190;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B57j4Ps108WJ39MtEA7WB4JULRneEM8e8M06m5Z+dPI=;
-        b=GunKXP/in+YWJeq1c8DuD16u9mmxj6NOE7l44SGTDuqx8fQwWIETgQ2seRQjOWlIUr
-         0MShkFLpIRPa0zJ9jl1eiiMPb1TmjHBXZ/9ca7m/4EaATAHAeaEapTcpga9AHSnsE/ZI
-         ewNo0LUqZJIigJK6W4pnffGgQG1bCfEDxbPiL1qSTCqDkPucnTjkVx3q8mehRYuRsgN4
-         8NFvBJJtNARgMXX5PFcFvwkRoy/ORIJ92hlfj85+CktT6Mp05I64hhhAPG108AU+yUWt
-         C1XWh90ImeQb/7GxNb4QFOZ8xco6oNGP8yY00EXXYzKZEjCddMDaF6LmuhByyy0K4fIg
-         Fh5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU8+jFGd5HWcCexgGJ4ulsHrZAowUDHpYBSJ7iIUK3hRzFS5UaqnQPf7+KPe5osMyeawNHGeqRJ2Hfu/xY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHHbVKAgcQt/joSQdJiFtlM6JVsQWOPpM5R9lkk0GYXycOW83w
-	1BuRqFTk8vCtnE3z5qUBGGTYIEgNLXdIVhZbwxI1PXjLdQ3Dm964VCGcjAGJS07JobDzboEQp+E
-	V94hSLF1jbtVas8yPORhm8ugubPBrcE0+vD8VQ+jrjqGfcvnz99PDxUSi6rEULrBXiP5rQvx1uK
-	tpFvyV3+mnuPZfgA6GzBIw+hoileK/40vM4Z0g
-X-Gm-Gg: ASbGncvU7bBY6++KXH36/IQSJ2fXrjqLSvggKWH0yTd/MQ+l55GYteC2JpU53cwZQRm
-	wGAiXc8bD9cZWCXM1/RxDza96yv9SmLibYF6E60eKuKhxvOML5iAFHHJvhqCDK3uLFJ0=
-X-Received: by 2002:a05:6902:2485:b0:e6d:fe4e:2fea with SMTP id 3f1490d57ef6-e702ef93146mr5070947276.22.1744211389891;
-        Wed, 09 Apr 2025 08:09:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFAPGM5gyLOwLfn2UdRTVZky07wzaGcSPFlzlIDICN1npX81A2QuWPKW22/H4HhkZ/sajnEFn3RzZLt/hxweLI=
-X-Received: by 2002:a05:6902:2485:b0:e6d:fe4e:2fea with SMTP id
- 3f1490d57ef6-e702ef93146mr5070899276.22.1744211389481; Wed, 09 Apr 2025
- 08:09:49 -0700 (PDT)
+	s=arc-20240116; t=1744211467; c=relaxed/simple;
+	bh=AePvhI2SXWmJLqUoOjPYK90Odz11O+/6J4DVCQO4bY4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=PK0OQm8ZuYzNk8TVBUdYQrRqDw9Djtpu0YsZ8OSkVZ+ZicHpTKMLDIZdwV2GXbmxyPdHO1sEUCs7BAq//xXA4/3cf/UtMyI3/JnUyR+FtUddkI4VgaFOeTwIcOXAXoMxyentxL6LeT2DTBOujKiEtDG5pZI330zoh0xmwiKcIKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=GUkKmlg4 reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=nsBLPsTvN38zqZ7XLV3XXpP451e6QwNbgp2j43yn7Vs=; b=G
+	UkKmlg49Qai7KCvxxafh6vTCGInchXnp22q/mHTJCVznnB9wswN6gktrvJAOyy6n
+	1i6lwoT/pcmWAzCFOP2CDhj/IE0poU3pQA2Hww3DJcRlfrJncauM4Z0Ozz9kwzG6
+	2mOV8KfbooJhpxPEpb35j4lkw5w3Dt7obUyVqp31Mk=
+Received: from xavier_qy$163.com ( [2408:820c:340b:d070:c540:cde:b0c8:b3ab]
+ ) by ajax-webmail-wmsvr-40-117 (Coremail) ; Wed, 9 Apr 2025 23:10:17 +0800
+ (CST)
+Date: Wed, 9 Apr 2025 23:10:17 +0800 (CST)
+From: Xavier  <xavier_qy@163.com>
+To: "Gavin Shan" <gshan@redhat.com>
+Cc: dev.jain@arm.com, akpm@linux-foundation.org, baohua@kernel.org,
+	ryan.roberts@arm.com, catalin.marinas@arm.com, ioworker0@gmail.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	will@kernel.org
+Subject: Re:Re: [PATCH v2 1/1] mm/contpte: Optimize loop to reduce redundant
+ operations
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <34a4bf01-6324-482b-a011-32974d68e02f@redhat.com>
+References: <027cc666-a562-46fa-bca5-1122ea00ec0e@arm.com>
+ <20250408085809.2217618-1-xavier_qy@163.com>
+ <20250408085809.2217618-2-xavier_qy@163.com>
+ <34a4bf01-6324-482b-a011-32974d68e02f@redhat.com>
+X-NTES-SC: AL_Qu2fBv6avkwq4SieY+kfmk4QgeY+WMW1vP4m34NSN5FwjD/pywkgQGVSIETq9eO0NCSzmgmGehVR0OBiRbhaTaA3b0gv6O+zHMLliZXa4jTDGA==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403100943.120738-1-sgarzare@redhat.com> <20250403100943.120738-5-sgarzare@redhat.com>
- <20250408110012.GFZ_UBvOcEfEcIM4mI@fat_crate.local> <eqtiiphs6rtjo7nirkw7zcicew75wnl4ydenrt5vl6jdpqdgj6@2brjlyjbqhoq>
- <20250408112820.GBZ_UIVPp-LuIiVrIV@fat_crate.local> <o2u7p3wb64lcc4sziunr274hyubkgmspzdjcvihbpzkw6mkvpo@sjq3vi4y2qfl>
- <20250409102120.GCZ_ZKIJw9WkXpTz4u@fat_crate.local> <CAGxU2F7r_fWgr2YRmCvh2iQ1vPg30f-+W6FXyuidbakZkwhw2w@mail.gmail.com>
- <20250409113154.GGZ_ZaqgfRrrMij_Zm@fat_crate.local> <409a9171bc3224dd55344729ab3106917ac113bf.camel@HansenPartnership.com>
-In-Reply-To: <409a9171bc3224dd55344729ab3106917ac113bf.camel@HansenPartnership.com>
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Wed, 9 Apr 2025 17:09:38 +0200
-X-Gm-Features: ATxdqUFDHs60Y8bJz4qgiFtoScY5UJ31NSfT68Bf62VVN8_SmIl8qmI4-UUsk9k
-Message-ID: <CAGxU2F4cPgM1Uh+TDPBNsB1J8M-QgnEBF=vXQmxktJw3MXQbLg@mail.gmail.com>
-Subject: Re: [PATCH v6 4/4] x86/sev: register tpm-svsm platform device
-To: James Bottomley <James.Bottomley@hansenpartnership.com>, Borislav Petkov <bp@alien8.de>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, "H. Peter Anvin" <hpa@zytor.com>, 
-	linux-coco@lists.linux.dev, linux-integrity@vger.kernel.org, 
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Joerg Roedel <jroedel@suse.de>, Dionna Glaze <dionnaglaze@google.com>, 
-	Claudio Carvalho <cclaudio@linux.ibm.com>, linux-kernel@vger.kernel.org, 
-	Dov Murik <dovmurik@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <711cf430.b25d.1961b1a1b0e.Coremail.xavier_qy@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:dSgvCgCXv2vZjfZnXrSSAA--.27650W
+X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiTgcqEGf18hkl0QAGs4
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Wed, 9 Apr 2025 at 14:22, James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> On Wed, 2025-04-09 at 13:31 +0200, Borislav Petkov wrote:
-> > On Wed, Apr 09, 2025 at 12:43:01PM +0200, Stefano Garzarella wrote:
-> > > Sorry, maybe I missed something.
-> > >
-> > > tpm_svsm.c registers the driver with
-> > > module_platform_driver_probe().
-> > >
-> > > Someone (the platform I guess) has to register the device by
-> > > calling platform_device_register(), as we already do for example
-> > > for sev_guest.
-> >
-> > Maybe that platform device thing is the wrong approach. Why does the
-> > core code need to register some dummy platform device in the first
-> > place? Why can't drivers/char/tpm/tpm_svsm.c probe and init without
-> > it?
->
-> Because of the way driver and device matching works in Linux.  We have
-> to have a struct device because that sits at the he heart of the TPM
-> driver binding.  If we have a struct device, it has to sit on a bus
-> (because that's the Linux design) and if we don't have a bus then we
-> have to use a platform device (or, now, we could use a struct device on
-> the faux bus).
-
-I tried to look at faux bus, but IIUC, it doesn't fit. I mean, we
-could use it if we had a driver here in sev/core.c, but using a
-separate module for the tpm-svsm driver, how do we get the module to
-load when we find out that the device is there?
-
-In short, my question: how do we load the module automatically when we
-discover the device?
-
-faux seems more useful to me when there's no need to discover the
-device, but loading the module itself starts everything. If, on the
-other hand, we want to have it load when we discover it, we have to
-either have a bus or have core code that registers a platform_device
-that will then be recognized by the driver in a separate module.
-
-> Busses can be either physical (PCI, GSC, ...) and
-> abstract (virtio, xen, scsi, ...), so it's not impossible, if the SVSM
-> has more than one device, that it should have it's own SVSM bus which
-> we could then act a bit like the virtio bus and the SVSM vTPM struct
-> device could sit on this (the TPM subsystem, like most driver
-> subsystems, doesn't care about busses, it only cares that the abstract
-> bus device id matching works).
-
-Yes, I'm also looking at introducing a svsm bus as we've already
-discussed, but that's going to take some time.
-
-In the end though, platform_device is not that bad IMO. The tpm-svsm
-is really a device provided by the (virtual) platform, so doing some
-sort of discovery of the bus in sev/core.c and registering the device
-if discovered might be a compromise for now until we develop the bus.
-
-If you agree, I'll move all the discovery here in sev/core.c as I
-suggested earlier, so that when we get the bus we'll move this code
-somehow into the bus.
-@Borsilav @James WDYT?
-
-Thanks,
-Stefano
-
+CgpIaSBHYXZpbiwKClRoYW5rIHlvdSBmb3IgY2FyZWZ1bGx5IHJldmlld2luZyB0aGlzIHBhdGNo
+IGFuZCByYWlzaW5nIHlvdXIgcXVlc3Rpb25zLiAKSSdsbCB0cnkgdG8gZXhwbGFpbiBhbmQgYW5z
+d2VyIHRoZW0gYmVsb3cuCgoKQXQgMjAyNS0wNC0wOSAxMjowOTo0OCwgIkdhdmluIFNoYW4iIDxn
+c2hhbkByZWRoYXQuY29tPiB3cm90ZToKPkhpIFhhdmllciwKPgo+T24gNC84LzI1IDY6NTggUE0s
+IFhhdmllciB3cm90ZToKPj4gVGhpcyBjb21taXQgb3B0aW1pemVzIHRoZSBjb250cHRlX3B0ZXBf
+Z2V0IGZ1bmN0aW9uIGJ5IGFkZGluZyBlYXJseQo+PiAgIHRlcm1pbmF0aW9uIGxvZ2ljLiBJdCBj
+aGVja3MgaWYgdGhlIGRpcnR5IGFuZCB5b3VuZyBiaXRzIG9mIG9yaWdfcHRlCj4+ICAgYXJlIGFs
+cmVhZHkgc2V0IGFuZCBza2lwcyByZWR1bmRhbnQgYml0LXNldHRpbmcgb3BlcmF0aW9ucyBkdXJp
+bmcKPj4gICB0aGUgbG9vcC4gVGhpcyByZWR1Y2VzIHVubmVjZXNzYXJ5IGl0ZXJhdGlvbnMgYW5k
+IGltcHJvdmVzIHBlcmZvcm1hbmNlLgo+PiAKPj4gU2lnbmVkLW9mZi1ieTogWGF2aWVyIDx4YXZp
+ZXJfcXlAMTYzLmNvbT4KPj4gLS0tCj4+ICAgYXJjaC9hcm02NC9tbS9jb250cHRlLmMgfCAyMiAr
+KysrKysrKysrKysrKysrKysrKy0tCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDIwIGluc2VydGlvbnMo
+KyksIDIgZGVsZXRpb25zKC0pCj4+IAo+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9tbS9jb250
+cHRlLmMgYi9hcmNoL2FybTY0L21tL2NvbnRwdGUuYwo+PiBpbmRleCBiY2FjNGY1NWY5YzEuLjAz
+NGQxNTNkN2QxOSAxMDA2NDQKPj4gLS0tIGEvYXJjaC9hcm02NC9tbS9jb250cHRlLmMKPj4gKysr
+IGIvYXJjaC9hcm02NC9tbS9jb250cHRlLmMKPj4gQEAgLTE1Miw2ICsxNTIsMTggQEAgdm9pZCBf
+X2NvbnRwdGVfdHJ5X3VuZm9sZChzdHJ1Y3QgbW1fc3RydWN0ICptbSwgdW5zaWduZWQgbG9uZyBh
+ZGRyLAo+PiAgIH0KPj4gICBFWFBPUlRfU1lNQk9MX0dQTChfX2NvbnRwdGVfdHJ5X3VuZm9sZCk7
+Cj4+ICAgCj4KPkknbSB3YW5kZXJpbmcgaG93IGl0IGNhbiB3b3JrLiBNb3JlIGRldGFpbHMgYXJl
+IGdpdmVuIGJlbG93Lgo+Cj4+ICsjZGVmaW5lIENIRUNLX0NPTlRQVEVfRkxBRyhzdGFydCwgcHRl
+cCwgb3JpZ19wdGUsIGZsYWcpIFwKPj4gKwlkbyB7IFwKPj4gKwkJaW50IF9zdGFydCA9IHN0YXJ0
+OyBcCj4+ICsJCXB0ZV90ICpfcHRlcCA9IHB0ZXA7IFwKPj4gKwkJd2hpbGUgKF9zdGFydCsrIDwg
+Q09OVF9QVEVTKSB7IFwKPj4gKwkJCWlmIChwdGVfIyNmbGFnKF9fcHRlcF9nZXQoX3B0ZXArKykp
+KSB7IFwKPj4gKwkJCQlvcmlnX3B0ZSA9IHB0ZV9tayMjZmxhZyhvcmlnX3B0ZSk7IFwKPj4gKwkJ
+CQlicmVhazsgXAo+PiArCQkJfSBcCj4+ICsJCX0gXAo+PiArCX0gd2hpbGUgKDApCj4+ICsKPgo+
+Q09OVF9QVEVTIGlzIDE2IHdpdGggdGhlIGFzc3VtcHRpb24gb2YgNEtCIGJhc2UgcGFnZSBzaXpl
+LiBDSEVDS19DT05UUFRFX0ZMQUcoKQo+Y29sbGVjdHMgdGhlIGZsYWcgZm9yIHB0ZXBbc3RhcnQs
+IENPTlRfUFRFU10uCj4KPj4gICBwdGVfdCBjb250cHRlX3B0ZXBfZ2V0KHB0ZV90ICpwdGVwLCBw
+dGVfdCBvcmlnX3B0ZSkKPj4gICB7Cj4+ICAgCS8qCj4+IEBAIC0xNjksMTEgKzE4MSwxNyBAQCBw
+dGVfdCBjb250cHRlX3B0ZXBfZ2V0KHB0ZV90ICpwdGVwLCBwdGVfdCBvcmlnX3B0ZSkKPj4gICAJ
+Zm9yIChpID0gMDsgaSA8IENPTlRfUFRFUzsgaSsrLCBwdGVwKyspIHsKPj4gICAJCXB0ZSA9IF9f
+cHRlcF9nZXQocHRlcCk7Cj4+ICAgCj4+IC0JCWlmIChwdGVfZGlydHkocHRlKSkKPj4gKwkJaWYg
+KHB0ZV9kaXJ0eShwdGUpKSB7Cj4+ICAgCQkJb3JpZ19wdGUgPSBwdGVfbWtkaXJ0eShvcmlnX3B0
+ZSk7Cj4+ICsJCQlDSEVDS19DT05UUFRFX0ZMQUcoaSwgcHRlcCwgb3JpZ19wdGUsIHlvdW5nKTsK
+Pj4gKwkJCWJyZWFrOwo+PiArCQl9Cj4+ICAgCj4+IC0JCWlmIChwdGVfeW91bmcocHRlKSkKPj4g
+KwkJaWYgKHB0ZV95b3VuZyhwdGUpKSB7Cj4+ICAgCQkJb3JpZ19wdGUgPSBwdGVfbWt5b3VuZyhv
+cmlnX3B0ZSk7Cj4+ICsJCQlDSEVDS19DT05UUFRFX0ZMQUcoaSwgcHRlcCwgb3JpZ19wdGUsIGRp
+cnR5KTsKPj4gKwkJCWJyZWFrOwo+PiArCQl9Cj4+ICAgCX0KPj4gICAKPj4gICAJcmV0dXJuIG9y
+aWdfcHRlOwo+Cj5UaGVyZSBhcmUgdHdvIGlzc3VlcyBhcyBJIGNhbiBzZWU6ICgxKSBUaGUgbG9v
+cCBzdG9wcyBvbiBhbnkgZGlydHkgb3IgeW91bmcgZmxhZy4gQW5vdGhlcgo+ZmxhZyBjYW4gYmUg
+bWlzc2VkIHdoZW4gb25lIGZsYWcgaXMgc2Vlbi4gRm9yIGV4YW1wbGUsIHdoZW4gcHRlcFswXSBo
+YXMgYm90aCBkaXJ0eS95b3VuZwo+ZmxhZywgb25seSB0aGUgZGlydHkgZmxhZyBpcyBjb2xsZWN0
+ZWQuICgyKSBDSEVDS19DT05UUFRFX0ZMQUcoKSBpdGVyYXRlcyBwdGVwW2ksIENPTlRfUFRFU10s
+Cj5jb25mbGljdGluZyB0byB0aGUgb3V0ZXIgbG9vcCwgd2hpY2ggaXRlcmF0ZXMgcHRlcFswLCBD
+T05UX1BURVNdLgoKTm8gZmxhZ3Mgd2lsbCBiZSBtaXNzZWQuIFRoZSBvdXRlciBsb29wIGlzIHVz
+ZWQgdG8gY2hlY2sgZm9yIHRoZSBmaXJzdCBmbGFnLAp3aGljaCBjb3VsZCBiZSBlaXRoZXIgdGhl
+IGRpcnR5IG9yIHlvdW5nIGZsYWcuCk9uY2UgdGhpcyBmbGFnIChsZXQncyBhc3N1bWUgaXQncyB0
+aGUgZGlydHkgZmxhZykgaXMgZm91bmQgaW4gdGhlIGktdGggUFRFLAp0aGUgZGlydHkgZmxhZyBv
+ZiBvcmlnX3B0ZSB3aWxsIGJlIHNldCwgYW5kIHRoZSBjb2RlIHdpbGwgaW1tZWRpYXRlbHkgZW50
+ZXIKdGhlIGlubmVyIGxvb3AsIG5hbWVseSBDSEVDS19DT05UUFRFX0ZMQUcuIFRoaXMgaW5uZXIg
+bG9vcCB3aWxsIGNvbnRpbnVlCnRvIGNoZWNrIG9ubHkgZm9yIHRoZSB5b3VuZyBmbGFnIHN0YXJ0
+aW5nIGZyb20gdGhlIGktdGggcG9zaXRpb24sIGFuZCB3ZSBuZWVkbid0CmNvbmNlcm4gYWJvdXQg
+dGhlIGRpcnR5IGZsYWcgYW55bW9yZS4KSWYgQ0hFQ0tfQ09OVFBURV9GTEFHIGZpbmRzIHRoZSB5
+b3VuZyBmbGFnIGluIHRoZSBqLXRoIFBURSwgdGhlIHlvdW5nIGZsYWcKb2Ygb3JpZ19wdGUgd2ls
+bCBiZSBzZXQuIEF0IHRoaXMgcG9pbnQsIGJvdGggdGhlIHlvdW5nIGFuZCBkaXJ0eSBmbGFncyBv
+ZgpvcmlnX3B0ZSBoYXZlIGJlZW4gc2V0LCBhbmQgdGhlcmUncyBubyBuZWVkIGZvciBmdXJ0aGVy
+IGxvb3AganVkZ21lbnRzLCBzbwp0aGUgYm90aCB0aGUgaW5uZXIgYW5kIG91dGVyIGxvb3BzIGNh
+biBiZSBleGl0ZWQgZGlyZWN0bHkuIFRoaXMgYXBwcm9hY2gKcmVkdWNlcyB1bm5lY2Vzc2FyeSBy
+ZXBlYXRlZCB0cmF2ZXJzYWxzIGFuZCBqdWRnbWVudHMuCgo+Cj5CZXNpZGVzLCBJIGFsc28gZG91
+YnQgaG93IG11Y2ggcGVyZm9ybWFuY2UgY2FuIGJlIGdhaW5lZCBieSBiYWlsaW5nIGVhcmx5IG9u
+IChkaXJ0eSB8IHlvdW5nKS4KPkhvd2V2ZXIsIGl0J3MgYXZvaWRlZCB0byBjcm9zcyB0aGUgTDFE
+IGNhY2hlIGxpbmUgYm91bmRhcnkgaWYgcG9zc2libGUuIFdpdGggNEtCIGJhc2UgcGFnZQo+c2l6
+ZSwgMTI4IGJ5dGVzIGFyZSBuZWVkZWQgZm9yIHB0ZXBbQ09OVF9QVEVTXSwgZXF1YWwgdG8gdHdv
+IGNhY2hlIGxpbmVzLiBJZiB3ZSBjYW4gYmFpbAo+ZWFybHkgd2l0aCBsdWNrLCB3ZSBkb24ndCBo
+YXZlIHRvIHN0ZXAgaW50byBhbm90aGVyIGNhY2hlIGxpbmUuIE5vdGUgdGhhdCBleHRyYSBjaGVj
+a3MgbmVlZHMKPm1vcmUgQ1BVIGN5Y2xlcy4KCkNvbXBhcmVkIHRvIHRoZSBwcmV2aW91cyBmdW5j
+dGlvbiwgdGhpcyBjb2RlIGRvZXNuJ3QgYWRkIGFueSBleHRyYSBjaGVja3MuCkV2ZW4gaW4gdGhl
+IHdvcnN0LWNhc2Ugc2NlbmFyaW8sIHdoZXJlIG5laXRoZXIgYSBkaXJ0eSBub3IgYSB5b3VuZyBm
+bGFnIGlzCmZvdW5kIGFtb25nIHRoZSAxNiBQVEVzLCB0aGUgbnVtYmVyIG9mIGNoZWNrcyBpcyB0
+aGUgc2FtZSBhcyBpbiB0aGUgb3JpZ2luYWwKZnVuY3Rpb24uIElmIGFueSBmbGFnIGlzIGZvdW5k
+IGVhcmxpZXIsIHRoZSBvcHRpbWl6ZWQgcGF0Y2ggd2lsbCByZWR1Y2UgdGhlCm51bWJlciBvZiBz
+dWJzZXF1ZW50IGNoZWNrcyBmb3IgdGhhdCBmbGFnIGNvbXBhcmVkIHRvIHRoZSBvcmlnaW5hbCBj
+b2RlLgoKSSdtIG5vdCBzdXJlIGlmIG15IGV4cGxhbmF0aW9uIGlzIGNsZWFyLiBJZiB5b3UgaGF2
+ZSBhbnkgZnVydGhlciBxdWVzdGlvbnMsCmZlZWwgZnJlZSB0byBjb21tdW5pY2F0ZSB3aXRoIG1l
+IGFnYWluLgoKLS0KVGhhbmtzLApYYXZpZXI=
 
