@@ -1,53 +1,60 @@
-Return-Path: <linux-kernel+bounces-595771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 441D8A822E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:55:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1CBA822DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82153189BA6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:55:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D81188632F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB1425DCEC;
-	Wed,  9 Apr 2025 10:54:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF5C25DAF4;
-	Wed,  9 Apr 2025 10:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986E525DCFF;
+	Wed,  9 Apr 2025 10:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYUaGBT4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C7B25DAE3;
+	Wed,  9 Apr 2025 10:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744196092; cv=none; b=jrVjMOIZLnpsrLpDvWxcBYXkYOm/JIbu9OjApWKo9wxUap9ALocTKo2p3akPh+2CUgWmjvZB4AWvZnk4ezFgBEUoies/kifO7saU6s+BADMFot6LCbhf0AdzVbTjSfFxO1GmEoUk/Z/Xxxixsjcqi0ee0yy058BNrbz9RsMNCUw=
+	t=1744196082; cv=none; b=i9O2JAwj1bkdWbjWTNDL89hvwViFcwGZR++BBrZSTU/SvKW8XInlsru3xjZbqs+xbMgK3WMSvRBZQHYFJHnImepjskYRVneXfyXBtsnQqvxjomm9hnj4vdbWbLGBxXETiXRzE3fVt5CpL8sc2t81DjjTq80EtnsyLWlKj5UH39Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744196092; c=relaxed/simple;
-	bh=0hk/XJsEEPgQAdzlnsrmd34v4ducnJiXKdi+3uwsWfc=;
+	s=arc-20240116; t=1744196082; c=relaxed/simple;
+	bh=afhU1dWHc1n2usOgVXlNTp6Z03tRmuPrfnW4JN6sGnI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5BUQ5s8E76LJDeuKvLQbRlaLDn+pqW34Zhw2+TaCXVm22fXCx03F/p3woI8woPKtNyNsZlkAG1vwAIOn+MAf/98V0LES7RWEOATpydv7eze+Ht6uVuBxQmtmP3tA58f+6wR2xDZMC1qMYWpK+grcvrUKMoh9bzzTZlaB8uWlfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3CFC81595;
-	Wed,  9 Apr 2025 03:54:50 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 533103F694;
-	Wed,  9 Apr 2025 03:54:48 -0700 (PDT)
-Date: Wed, 9 Apr 2025 11:54:34 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Matthew Bystrin <dev.mbstr@gmail.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, arm-scmi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Philipp Zabel <p.zabel@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH] firmware: arm_scmi: add timeout in
- do_xfer_with_response()
-Message-ID: <Z_ZR2WNBwfQqLQMd@pluto>
-References: <20250402104254.149998-1-dev.mbstr@gmail.com>
- <20250402-hidden-unyielding-carp-7ee32d@sudeepholla>
- <Z-1gY8mQLznSg5Na@pluto>
- <D8X9JJGPGDNL.1OTKIJODRFKNN@gmail.com>
- <D91JD15NY3Y0.23E428W332D@gmail.com>
- <Z_ZRXBed2WVZ_O8Q@pluto>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ojl7wIhUvq5u2dseIWUaMstYAe2Wph0+FpiMCcDMPDwmM/jlnG3J5ED12GVHEefZK6RIAHifgOGqvg8HZdZEUv49uPVwI0m1/fulHdah/oTXjaEefoIPz+MoC95pDf0MZ/rmo6eyV+RbYf63QERcjjuUJRfvlzqdZBG+Jil7O3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYUaGBT4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA6D2C4CEE9;
+	Wed,  9 Apr 2025 10:54:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744196081;
+	bh=afhU1dWHc1n2usOgVXlNTp6Z03tRmuPrfnW4JN6sGnI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dYUaGBT4bXK9TCbssJPfEPUva0lZneoBqwQa0OgLrsIkYaC0XT5A2FDeWRqmvLn4b
+	 b4KPKLJByHOuQPm8Dcx/o4vG0huxiFJUHdES81SZmIerrt2LxHP6iaIhFJt/2De7zm
+	 F0RravFF/v/qBlZCNhoa991MvZ43K9Q4GghxU/ixUEvtBts6i71ZzH/MwSpY0gn5vb
+	 +WK26KNWBuOeaBNV1P67Rdpc0TSpFYMw/MIfQThpwx6WtGsSRR89FwIDZ4XYEbPGlH
+	 6JQMUqRisD9NsnnmCQeNuDi0+ClH8/+mvRoJUiJon3Oc5OybOSyOuguOiuFp8RCki6
+	 xIYuuEFAfEkmQ==
+Date: Wed, 9 Apr 2025 12:54:35 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: mark.barnett@arm.com
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, irogers@google.com, ben.gainey@arm.com,
+	deepak.surti@arm.com, ak@linux.intel.com, will@kernel.org,
+	james.clark@arm.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 3/5] perf: Allow adding fixed random jitter to the
+ sampling period
+Message-ID: <Z_ZR65SK9hEm561W@gmail.com>
+References: <20250408171530.140858-1-mark.barnett@arm.com>
+ <20250408171530.140858-4-mark.barnett@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,27 +63,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z_ZRXBed2WVZ_O8Q@pluto>
+In-Reply-To: <20250408171530.140858-4-mark.barnett@arm.com>
 
-On Wed, Apr 09, 2025 at 11:52:12AM +0100, Cristian Marussi wrote:
-> On Tue, Apr 08, 2025 at 11:22:38PM +0300, Matthew Bystrin wrote:
-> > Sudeep, Cristian,
-> > 
-> 
-> Hi,
-> 
-> > Gentle ping.
-> >
-> 
-> we replied already...both of us :P
-> 
-> https://lore.kernel.org/arm-scmi/20250402104254.149998-1-dev.mbstr@gmail.com/
-> 
-> Maybe in your spam folder ?
 
-Wait...I have just seen Peng's reply mentioning some reply of yours,
-which I never saw ..  maybe MY spam folder :P ....jeezzz...
+* mark.barnett@arm.com <mark.barnett@arm.com> wrote:
 
-Thanks,
-Cristian
+> @@ -14384,6 +14409,7 @@ static void __init perf_event_init_all_cpus(void)
+>  		cpuctx->online = cpumask_test_cpu(cpu, perf_online_mask);
+>  		cpuctx->heap_size = ARRAY_SIZE(cpuctx->heap_default);
+>  		cpuctx->heap = cpuctx->heap_default;
+> +
+>  	}
+>  }
+
+A stray newline snuck up on you here I think. ;-)
+
+	Ingo
 
