@@ -1,97 +1,101 @@
-Return-Path: <linux-kernel+bounces-596494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9023DA82CCA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:47:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4C9A82CE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF7DE7AF881
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:46:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 028663B7444
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30ABC26FDA8;
-	Wed,  9 Apr 2025 16:47:38 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEED026FDA8;
+	Wed,  9 Apr 2025 16:49:33 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C389326FD99;
-	Wed,  9 Apr 2025 16:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B911DFFD;
+	Wed,  9 Apr 2025 16:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744217257; cv=none; b=RXRl+/BwY3bGm0BKGE5yzUfim6nh1LtHmMVlMlqMLm1m6vxTo5uRlvBnYeGGqF/DeIBDu6rIPsuTPanRdBKRqh53FXts/dRuRh28/2OsBlGzWv8peS6zHTCz1zNyJAsmUMOWrDjXM7sxMLQv2h9paQ/747eMUyf6pmxm8zdYgxc=
+	t=1744217373; cv=none; b=ikrpbpOPnXKQ8s07N7OdGiTTqfcJxq8z6sWDrPms+KrNfhSPJurTSRxgNDfOBijo5cVCrUK/QTzAxNCWHW++M4II1xRiGDYMzM8oJGPhZ4hgzZJtImuRslFPb3DQkrHZv8O8esvnLyTnFzoMEbPNJ0Q9c4MLn4wqoNT8Yq1Px9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744217257; c=relaxed/simple;
-	bh=Hjw4v5OLo085UBRbutbpnMjWuHi68TiVyARn066UPRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MtwkTyAdhIl7ep3hGpffnVhBWQfVTr1e9zW9lOpsHU33SHon2He7EJWs5auu9j6wQ4i/X9NSqvv+Cg8JyXk0Yytps3GOWG6Ix5TAn4CTFpC8nNXSqJaUBlfo49Z5zUUjE/zAr5SUY1KfMEYKTVhdTq3BkAstAiikhLm9sL4QOGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C303C4CEE2;
-	Wed,  9 Apr 2025 16:47:36 +0000 (UTC)
-Date: Wed, 9 Apr 2025 12:48:55 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ayush Jain <Ayush.jain3@amd.com>
-Cc: <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
- <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
- <linux-kselftest@vger.kernel.org>, <Naveen.Rao@amd.com>,
- <Kalpana.Shetty@amd.com>, <Narasimhan.V@amd.com>, Shuah Khan
- <skhan@linuxfoundation.org>
-Subject: Re: [PATCH v2] selftests/ftrace: Convert poll to a gen_file
-Message-ID: <20250409124855.4dc8fd58@gandalf.local.home>
-In-Reply-To: <20250409044632.363285-1-Ayush.jain3@amd.com>
-References: <20250409044632.363285-1-Ayush.jain3@amd.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744217373; c=relaxed/simple;
+	bh=ohqSg3uL9U8X2utjsHNNmkbc85ajApTInDk/ZUqjaCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OKT82UlHHuptDpL0IB52hGkoyYzSX8gScBDi0v5DQzrtmFWW+WiB6E8qOEoOTt3AeYD9anKZ2OFKGkmxvGC+a78L7+z6BNn99zAnVHw3ZvPEE4GE8Gc3RiKvD8r3QpTcMK8ujv7DjBHsq05dIZIuszg/17CalunBATo4445y75g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: 4bt8YLn/SZK0dbFot+XbDA==
+X-CSE-MsgGUID: 2LWYIrUhQ9GZob9gxSuefA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="45598683"
+X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
+   d="scan'208";a="45598683"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 09:49:31 -0700
+X-CSE-ConnectionGUID: VtuiWBZlTUCo5IUdr68law==
+X-CSE-MsgGUID: 1Aihe0+hSkeE0TMw5t9SMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
+   d="scan'208";a="165851114"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 09:49:29 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andy@kernel.org>)
+	id 1u2YcA-0000000AndM-0C72;
+	Wed, 09 Apr 2025 19:49:26 +0300
+Date: Wed, 9 Apr 2025 19:49:25 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Nuno Sa <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 1/2] iio: dac: adi-axi-dac: fix bus read
+Message-ID: <Z_alFXGBhFxk-h0e@smile.fi.intel.com>
+References: <20250409-ad3552r-fix-bus-read-v2-0-34d3b21e8ca0@baylibre.com>
+ <20250409-ad3552r-fix-bus-read-v2-1-34d3b21e8ca0@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250409-ad3552r-fix-bus-read-v2-1-34d3b21e8ca0@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 9 Apr 2025 04:46:32 +0000
-Ayush Jain <Ayush.jain3@amd.com> wrote:
+On Wed, Apr 09, 2025 at 11:16:54AM +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> Fix bus read function.
+> 
+> Testing the driver, on a random basis, wrong reads was detected, mainly
+> by a wrong DAC chip ID read at first boot.
+> Before reading the expected value from the AXI regmap, need always to
+> wait for busy flag to be cleared.
 
-> Poll program is a helper to ftracetest, thus make it a
-> generic file and remove it from being run as a test.
-> 
-> Currently when executing tests using
->     $ make run_tests
->       CC       poll
->     TAP version 13
->     1..2
->     # timeout set to 0
->     # selftests: ftrace: poll
->     # Error: Polling file is not specified
->     not ok 1 selftests: ftrace: poll # exit=255
-> 
-> Fix this by using TEST_GEN_FILES to build the 'poll' binary as a helper
-> rather than as a test.
-> 
-> Fixes: 80c3e28528ff ("selftests/tracing: Add hist poll() support test")
-> 
-> Signed-off-by: Ayush Jain <Ayush.jain3@amd.com>
+...
 
-Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> +	ret = regmap_read_poll_timeout(st->regmap,
+> +				AXI_DAC_UI_STATUS_REG, ival,
+> +				FIELD_GET(AXI_DAC_UI_STATUS_IF_BUSY, ival) == 0,
+> +				10, 100 * KILO);
 
--- Steve
+It's timeout, we have special constants for that, I believe you wanted to have
+USEC_PER_MSEC here.
 
-> ---
->  tools/testing/selftests/ftrace/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/ftrace/Makefile b/tools/testing/selftests/ftrace/Makefile
-> index 49d96bb16355..7c12263f8260 100644
-> --- a/tools/testing/selftests/ftrace/Makefile
-> +++ b/tools/testing/selftests/ftrace/Makefile
-> @@ -6,6 +6,6 @@ TEST_PROGS := ftracetest-ktap
->  TEST_FILES := test.d settings
->  EXTRA_CLEAN := $(OUTPUT)/logs/*
->  
-> -TEST_GEN_PROGS = poll
-> +TEST_GEN_FILES := poll
->  
->  include ../lib.mk
+> +	if (ret)
+> +		return ret;
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
