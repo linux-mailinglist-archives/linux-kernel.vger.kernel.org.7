@@ -1,147 +1,164 @@
-Return-Path: <linux-kernel+bounces-596775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3198FA8308F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02964A83094
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96AC03BB7A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:30:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05F763BBBE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390A8207E16;
-	Wed,  9 Apr 2025 19:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7604F1F2B99;
+	Wed,  9 Apr 2025 19:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JS6FVVeU"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ik/xfEBw"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61107202978;
-	Wed,  9 Apr 2025 19:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1C81F03FA
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 19:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744227023; cv=none; b=WEe1pxwneY4jvU8rKb/OLCqLicRzhY9FcIM6ETfoRK7UEPttNtX3YJDTJJr0BXQsHAWsB/4IfzVtcI8D5Sk6hi/oe+1gGBKadmfpV6Ejzkd6OacRm/WjRVuMLQrKtuoCLIIosXOB/jvPsFownz2grNMR0HBmWxcqwTGMC8JRKQM=
+	t=1744227077; cv=none; b=QsgVZkNgwnDB21WFS3OK8XbQ9m+BlB0uPh/yWIlEbfadqyRQxR3VsOGQZsZ2XsYDfC/abUK2KZYQbcnmMBI4byNQRDpAkWsMBnb4J9V43CAuOsaFusJSmSShv+EeK1xhHs35kCdB35RKvMFplvEsXMfqegm+Tj++4jXn1ORgSg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744227023; c=relaxed/simple;
-	bh=t4u/q6sRSEWyUERde3llNPL9IiDRHYERj2C5djskamU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SwpOanGCKSHn+fIsR8cpgGTMhaNnvCd6W8IjUCjWvGqTSzsVIDUc/90sIoUkxhUY8v76Jn5NHlNZkAHi42ZlL1yOg8cVciTLEwWMzcSzSCg7BjmEKzzJXP0CGyNqN1U0590WDqcFRFed3CcdzNs8GlLWJlI50lnSNC1ljesurEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JS6FVVeU; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744227019;
-	bh=t4u/q6sRSEWyUERde3llNPL9IiDRHYERj2C5djskamU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=JS6FVVeUIqgnOONv0XQvXmw23VuDLc0E+7Lvwj5TkaBPfw+pUJHu9qbA4mEX6PxO9
-	 JMJgAi/Rbky3lZHs8fI4/ZRrzUSzqB6sYmoPjPd7yPJ+hfGD2P139zBbIufjfAZw0o
-	 WT59HFDZgjW+uySU1J3fhYJHfmLsg+W+q++5+TIa57oK9RE6vO7mCPF96Ar9ra/R5E
-	 IuoS2wTFpjjrxRtzkapjpCcT7IjT3e5BCkZ94hpok3QtRanuTDKCYF+Maci7gZq8Wi
-	 yTtxNOPVZivIPGzHHQdbu/PIh2CBoZM1NCBvlb3LA8f8o4DafdDmpbSZo3iJG/YRE0
-	 OecnRd0sDQ9yQ==
-Received: from [192.168.13.180] (unknown [IPv6:2606:6d00:11:e976::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 19FBE17E0125;
-	Wed,  9 Apr 2025 21:30:17 +0200 (CEST)
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Date: Wed, 09 Apr 2025 15:30:09 -0400
-Subject: [PATCH] media: verisilicono: Enable NV15 support for Rockchip
- VDPU981
+	s=arc-20240116; t=1744227077; c=relaxed/simple;
+	bh=3h2o48w0QjOK4ZeGT9FMMoj4ho63MyVRsU5z0hBWp/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CJ4WTvt/VwC/e1K8vCJIe/7XF4zVju5CvybzmTJWerUjnfeYDYrCYbY14mm7AuCI5gLyZV1e+JoIdyXurrzG0oAnZEf/4VIpaou/QjpkJG9EV4wbKmn4vTEQ0O/rUQoi969nH7PU2HRuScdouqPPe67/TtlwLeba+xaud+DI8t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ik/xfEBw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 539HroPf010446
+	for <linux-kernel@vger.kernel.org>; Wed, 9 Apr 2025 19:31:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	10ynH9XRCJ86PYB1I7aS6LqVmbsLmtnJe9E3XkJ/SOw=; b=Ik/xfEBw6FirLzxm
+	2ll0LrlaShaPzjzPACGOnomHswT9nQ593DQ8CddiJMhrUecvhHHwRRNflKyD9Wd8
+	Iyr2umpXrFSbN6OH0UdouTlisTA/UaGzN99rr33ZpTfeMhQi8hjhncShba2tObFK
+	ZT3dHj3JTO6XGboJqlMVAPg+slroAl4JQChb7UuzyQuTOlyM35HJZTDf/Y/q+YHY
+	cAwY62S760IWTdoXFQyOCGbdGSq7R9d3IVOrWwbJGipFfEnQi6Grwp+Q3xWCm3hn
+	sCNSe/C+cy8Gz6e37FG1kFQETYJu6llxsqUstosIO8RFQ+uggd8EtDivb1cq8iLK
+	dGoHTg==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twftmcar-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 19:31:15 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c54788bdf7so1156185a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 12:31:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744227069; x=1744831869;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=10ynH9XRCJ86PYB1I7aS6LqVmbsLmtnJe9E3XkJ/SOw=;
+        b=XR/zdpo8edBUYVLspTDcsuIG5j8WZsQqRlQZrLhVfuWYlCmBCP342eS4VsvUd9E/fD
+         IYhQ64FII9+2uGCmGOwH/CHh2jomHMUCCC+Rl/hFIEXr+FlKx6k5qJqCPm7WqqbP4TKl
+         zxrfCOwoa1QK9U1GSmLEd1+Y+6LuaaXhiFjrf6FXN4Wa7cyo9Sw8sTOgTgonIKMNRgox
+         8KfawHvBSsv3iOJ/ZvaYVtBDx2LPffZjnsYx2S97L1vcMIaH0chxF3uSxmteY/z3W/l8
+         jNNfftibv6lGH1ZUMQiCpVFaIFLS+mgwn4NYS3Aucu97EqUYszdd+MJXrjLYeQWS3Wy0
+         boYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSZTwEzlHFOi3B83ryROiCfQxtzDpJaL4MgCE2Bwj1XK9gEcsec4yRcgjpBVWR2iiNqLAfxNvaYsLJG2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRs+v4mAtCuOUUSct1fMchhl8+swGjmHhzgqAIIgSvdL5umL2O
+	QOdZhKT0kUlJHdOI8zklGSjaFpzRGUNL8gIld4/8BX0F0mOCx1pI/6h+NhsenXMwBq3rl2lJyQT
+	wkzC+AaqOcGaHWsoGDlz2C9kAj39BfVWRyuzfRNJt75m4nRM1YgP1MerJbkJ7K2w=
+X-Gm-Gg: ASbGncvRtuduhioLfOIUvpj1WEIKQL9x0wQd+AOvqV/Wpx260VDqtnvk7rxQ3FN1LNd
+	KwW2ANjki61NEzXQWMsDcBQ3m/0YBKi5s2QEww91VDvAZvO0l0m+MVpr44Lu8e3b+Ya4c3GzLTR
+	RW+1+DsqqK6+zOQg9eIVOLflCKXxaUjX+7l0NJWTVtw+KRyC0hQk4r2OSc7p73WoUzeTq/CZswE
+	SsGfBoctabtPpy5AyndQb/tViEIEKJg8bEd2M4P3Fgj7THJ7s6msSRYA1hFA58FE36IafJnFqRL
+	B33gOVfESbqPRiHBmprkFCoTnI6FJNBejLYrOY3RNam2BO4pDYnr9YX7A3MGF5m7qA==
+X-Received: by 2002:a05:620a:430e:b0:7c5:e283:7d0f with SMTP id af79cd13be357-7c79cbec03dmr237798785a.8.1744227069294;
+        Wed, 09 Apr 2025 12:31:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGdZkJ3uyM1k6il1QQ4tZzm6Kb6iei6rLgcgi9hbyDE+GWGGvqjoDJjonneM8n5/WqFQGtLg==
+X-Received: by 2002:a05:620a:430e:b0:7c5:e283:7d0f with SMTP id af79cd13be357-7c79cbec03dmr237796685a.8.1744227068851;
+        Wed, 09 Apr 2025 12:31:08 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1bea588sm142930566b.67.2025.04.09.12.31.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Apr 2025 12:31:08 -0700 (PDT)
+Message-ID: <2124b898-2676-4002-8688-d3e19e55e368@oss.qualcomm.com>
+Date: Wed, 9 Apr 2025 21:31:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: qcs8300-ride: enable WLAN on
+ qcs8300-ride
+To: Stone Zhang <quic_stonez@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_miaoqing@quicinc.com,
+        quic_zhichen@quicinc.com, quic_yuzha@quicinc.com
+References: <20250325075331.1662306-1-quic_stonez@quicinc.com>
+ <20250325075331.1662306-3-quic_stonez@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250325075331.1662306-3-quic_stonez@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250409-b4-hantro-nv15-support-v1-1-7e11e47fd0c9@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAMDK9mcC/x2MywqAIBAAfyX23IKZIvQr0aHHVntRWUsC6d+Tj
- jMwUyCRMCUYmgJCmRMHX6FrG1jP2R+EvFUGrbRVRvW4GKz+koA+dxbTHWOQC5XbaDfkZts7qHE
- U2vn5x+P0vh8u04MLaAAAAA==
-X-Change-ID: 20250403-b4-hantro-nv15-support-07def4e7a537
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Heiko Stuebner <heiko@sntech.de>
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- kernel@collabora.com, Nicolas Dufresne <nicolas.dufresne@collabora.com>
-X-Mailer: b4 0.14.2
+X-Authority-Analysis: v=2.4 cv=B5+50PtM c=1 sm=1 tr=0 ts=67f6cb03 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=DgEYNLXXC2yaUqHi_YcA:9 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: nTadsV3G1dgSF-VBHcGsYEH5BiEEk_Sa
+X-Proofpoint-ORIG-GUID: nTadsV3G1dgSF-VBHcGsYEH5BiEEk_Sa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-09_06,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ suspectscore=0 malwarescore=0 bulkscore=0 phishscore=0 spamscore=0
+ priorityscore=1501 adultscore=0 impostorscore=0 lowpriorityscore=0
+ mlxscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504090130
 
-This is a "customer" format, though on Rockchip RK3588 it has been
-verified to be NV15 format, which matches what the GPU and display
-handles has 10bit pixel formats.
+On 3/25/25 8:53 AM, Stone Zhang wrote:
+> Enable WLAN on qcs8300-ride by adding a node for the PMU module
+> of the WCN6855 and assigning its LDO power outputs to the existing
+> WiFi module.
+> 
+> On the qcs8300-ride platform, the corresponding firmware and BDF
+> are QCA6698AQ instead of WCN6855, which have been added in the
+> 20250211 release.
+> 
+> Signed-off-by: Stone Zhang <quic_stonez@quicinc.com>
+> ---
 
-Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
----
- drivers/media/platform/verisilicon/hantro_v4l2.c           |  1 +
- .../platform/verisilicon/rockchip_vpu981_hw_av1_dec.c      |  4 ++++
- drivers/media/platform/verisilicon/rockchip_vpu_hw.c       | 14 ++++++++++++++
- 3 files changed, 19 insertions(+)
+[...]
 
-diff --git a/drivers/media/platform/verisilicon/hantro_v4l2.c b/drivers/media/platform/verisilicon/hantro_v4l2.c
-index 2bce940a58227c2bfef2bc3343992e4588ab36a4..7c3515cf7d64a090adfb8d8aff368f9a617f8c8a 100644
---- a/drivers/media/platform/verisilicon/hantro_v4l2.c
-+++ b/drivers/media/platform/verisilicon/hantro_v4l2.c
-@@ -77,6 +77,7 @@ int hantro_get_format_depth(u32 fourcc)
- 	switch (fourcc) {
- 	case V4L2_PIX_FMT_P010:
- 	case V4L2_PIX_FMT_P010_4L4:
-+	case V4L2_PIX_FMT_NV15:
- 	case V4L2_PIX_FMT_NV15_4L4:
- 		return 10;
- 	default:
-diff --git a/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c b/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
-index 69b5d9e12926fb408c08f8ba2139d05ba44389b7..e4703bb6be7c175a89c0b8868cf2eafb84a872ed 100644
---- a/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
-+++ b/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
-@@ -2202,6 +2202,10 @@ static void rockchip_vpu981_postproc_enable(struct hantro_ctx *ctx)
- 	case V4L2_PIX_FMT_NV12:
- 		hantro_reg_write(vpu, &av1_pp_out_format, 3);
- 		break;
-+	case V4L2_PIX_FMT_NV15:
-+		/* this mapping is RK specific */
-+		hantro_reg_write(vpu, &av1_pp_out_format, 10);
-+		break;
- 	default:
- 		hantro_reg_write(vpu, &av1_pp_out_format, 0);
- 	}
-diff --git a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
-index 964122e7c355934cd80eb442219f6ba51bba8b71..f7c4a176167b40fe79ec5a6759dff8a77e849ae3 100644
---- a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
-+++ b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
-@@ -92,6 +92,20 @@ static const struct hantro_fmt rockchip_vpu981_postproc_fmts[] = {
- 			.step_height = MB_DIM,
- 		},
- 	},
-+	{
-+		.fourcc = V4L2_PIX_FMT_NV15,
-+		.codec_mode = HANTRO_MODE_NONE,
-+		.match_depth = true,
-+		.postprocessed = true,
-+		.frmsize = {
-+			.min_width = ROCKCHIP_VPU981_MIN_SIZE,
-+			.max_width = FMT_4K_WIDTH,
-+			.step_width = MB_DIM,
-+			.min_height = ROCKCHIP_VPU981_MIN_SIZE,
-+			.max_height = FMT_4K_HEIGHT,
-+			.step_height = MB_DIM,
-+		},
-+	},
- 	{
- 		.fourcc = V4L2_PIX_FMT_P010,
- 		.codec_mode = HANTRO_MODE_NONE,
 
----
-base-commit: 9ddc3d6c16ea2587898a315f20f7b8fbd791dc1b
-change-id: 20250403-b4-hantro-nv15-support-07def4e7a537
+> +
+> +	wcn6855-pmu {
+> +		compatible = "qcom,wcn6855-pmu";
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&wlan_en_state>;
 
-Best regards,
--- 
-Nicolas Dufresne <nicolas.dufresne@collabora.com>
+property-n
+property-names
 
+please
+
+>  };
+> @@ -406,6 +507,13 @@ ethernet0_mdio: ethernet0-mdio-pins {
+>  			bias-pull-up;
+>  		};
+>  	};
+> +
+> +	wlan_en_state: wlan-en-state {
+> +		pins = "gpio54";
+> +		function = "gpio";
+> +		output-low;
+> +		bias-pull-up;
+
+Please flip the bias and output property order to keep it consistent
+
+Konrad
 
