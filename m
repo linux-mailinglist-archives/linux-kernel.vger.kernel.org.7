@@ -1,125 +1,225 @@
-Return-Path: <linux-kernel+bounces-595890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609EFA8242F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:05:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA5C5A82435
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CEA28A5A2B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:05:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1DF18A87FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D3225F79C;
-	Wed,  9 Apr 2025 12:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FC726156D;
+	Wed,  9 Apr 2025 12:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Do2eW7o2"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iYGxWCao";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Yxt+dh9w"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFF325EF8F;
-	Wed,  9 Apr 2025 12:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9102525E825;
+	Wed,  9 Apr 2025 12:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744200287; cv=none; b=ehEN9NpTHp9ywOrwKNPblE3Y6eRDdJ3/mYn8wIzBJvh4On0gIDv9E9/sMdobS9uZofaQk4v2BzKz4jlU63cdINIyX9e6nD0BZE0R17znrbCrYFax/xoceJ61mYW9WMddgsJ0dC/N5WNPPlksd37c71Jn2a9uGaZf8uN9DIQvkNs=
+	t=1744200302; cv=none; b=rrOP6Hx8yqFeHS80bhVgkAM3uVpIp3UMwwZ6LHwE3tblvubFFhc10y2uLK12bBpRSXjw6gw2w4vVBcoA/lcTMkrTYBWnsxrs0zQhpXe+FwF0AMU7NMAHv7hULg4ji1X1PtYpKmflgkQ8PCf+ikRSxQQRLFBvWlCi8McXz/s8eH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744200287; c=relaxed/simple;
-	bh=3eISLvMZBxP/ooZQeBCga7d69iQG8hNqCRD4i6rUm48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qA2gF5P1H+FUj5Bc0MlR//dDK+GNmOr9dz25pLs7Qct4XVEmyzZZWAs8L7omBAa4SUVZ3Uv7v//nP+n45aD88jde1fwxJe0y1Dx1Q2vm9dpdLgeHJyXr46z6pnDjp46ViQ2oF6IIPgwfLOR4LHI5PpSQ8YnnjxHC9JWiUUxT0os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Do2eW7o2; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=OAVZ/6PMd5CIYGP1LffsV13Ct6MPa7aS43NNYUi9Muc=; b=Do2eW7o21PD63tUeD1m2JPMF3Y
-	GA5PJ2TY9XpQdy9chWaHuYljs1HgVw6p5M9TaxjWcsYXPcY68Nmh+BBlqBEFfjV182S1AM0QCVxcE
-	Mg97XRoHA317XEdNLGpJRIrwHtQCfQNRRgkRtx6Y8UULja95mNyri9hyyr5XhP3K1DcA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u2UAX-008X2W-Vg; Wed, 09 Apr 2025 14:04:37 +0200
-Date: Wed, 9 Apr 2025 14:04:37 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Ng, Boon Khai" <boon.khai.ng@altera.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	"Gerlach, Matthew" <matthew.gerlach@altera.com>,
-	"Ang, Tien Sung" <tien.sung.ang@altera.com>,
-	"Tham, Mun Yew" <mun.yew.tham@altera.com>,
-	"G Thomas, Rohan" <rohan.g.thomas@altera.com>
-Subject: Re: [PATCH net-next v3 2/2] net: stmmac: dwxgmac2: Add support for
- HW-accelerated VLAN stripping
-Message-ID: <3eb3bb21-eee9-44b6-b680-4c629df29d34@lunn.ch>
-References: <20250408081354.25881-1-boon.khai.ng@altera.com>
- <20250408081354.25881-3-boon.khai.ng@altera.com>
- <c65bfe99-a6e1-4485-90ee-aee0b8e0984d@lunn.ch>
- <BN8PR03MB5073B710F5040EAC06595AE2B4B42@BN8PR03MB5073.namprd03.prod.outlook.com>
+	s=arc-20240116; t=1744200302; c=relaxed/simple;
+	bh=GlZwCY4BAgacwhTavkIs9jTWFfuHo5KprQF5+BHZN7w=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=F+5aKz90LWtzbbGINET+QH8b/2KPjOFDOmr/5/Jk/it2a2GgZ2vJUlfZug0rjm/P4+fh5Y6W+j9T3CtEkG1bIL/MsFt7/f+9qk4JBCjVd7LsYGoobPGh/JaLjZvnbXu91a/9XILtfsm9x3PNLZwMNvCgd9xMpCCVvvS9q+i/xPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iYGxWCao; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Yxt+dh9w; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 09 Apr 2025 12:04:56 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744200297;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LBtR6S8RUveQuXCe3grfrCeco9UkmctVrebUu0e0Y/s=;
+	b=iYGxWCaoyzyWXWSgqh5TpdrQjHjpwybBpTgbTwJuqgyK8cP2jukGZGOHwCYCm8oV6E/2DZ
+	aHkGB/xDP8EId7j3aCq+HSH6SutUiTQPD7r8ASL/cVYHrDwLnNLLDmWYU1+1lFzckyn1yI
+	VhP+/pgVyA5GXIv0tO8vIvPvvf7WrzmLDTwccoqthXc/x80s3sC5s4MBtthh3sLJ+ukFlW
+	f+clpKw/R6hZxk84O3pf14R4OgrReft3JyXPCsRTl6LtERbtJYNN+g3ViMmBpJqAd7KnxU
+	E21qZ52Z5KPTGDfbCOtsDqJQ4v7Nb02zzqhetxYaKCIUsuIbUmKjhmQXpCRusA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744200297;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LBtR6S8RUveQuXCe3grfrCeco9UkmctVrebUu0e0Y/s=;
+	b=Yxt+dh9wXqJ7V2bpMLdDpCJNc9pVBPTBzoVzr5nAdAN9y1y7AnkwECvDT+h4Wkeuy+FS0e
+	7UiP/YXt7Jxx6vAA==
+From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] Documentation/x86: Zap the subsection letters
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250409111435.GEZ_ZWmz3_lkP8S9Lb@fat_crate.local>
+References: <20250409111435.GEZ_ZWmz3_lkP8S9Lb@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BN8PR03MB5073B710F5040EAC06595AE2B4B42@BN8PR03MB5073.namprd03.prod.outlook.com>
+Message-ID: <174420029649.31282.6766699753807343972.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 09, 2025 at 03:12:53AM +0000, Ng, Boon Khai wrote:
-> > This appears to be identical to dwmac4_wrback_get_rx_vlan_tci() ?
-> > 
-> > Can it be moved into the shared code, or am i missing something?
-> > 
-> >         Andrew
-> 
-> Hi Andrew thanks for the quick response.
-> 
-> For the dwmac4 IP it has the following format at the 
-> Receive Normal Descriptor 0 (RDES0)
-> 
->            31                                                                                                0
->               ------------------------------------- -----------------------------------
-> RDES0 |   Inner VLAN TAG [31:16]   | Outer VLAN TAG [31:16   |
->               ------------------------------------- -----------------------------------
-> 
-> While for dwxgmac2 IP it has the following format at the RDES0
-> Depending on the Tunneled Frame bit (TNP)
-> 
-> For Non-Tunneled Frame (TNP=0)
->            31                                                                                                0
->               ------------------------------------- -----------------------------------
-> RDES0 |   Inner VLAN TAG [31:16 ]  | Outer VLAN TAG [31:16]   |
->               ------------------------------------- -----------------------------------
-> 
-> For Tunneled Frame (TNP=1)
->            31                                        8 7                          3 2                  0
->               -------------------------------- ----------------------- ----------------
-> RDES0 |   VNID/VSID                    |    Reserved         | OL2L3         |
->               -------------------------------- ----------------------- ----------------
-> 
-> While the logic for handling Tunneled Frame and Non-Tunneled
-> Frame is not yet implemented in the 
-> dwxgmac2_wrback_get_rx_vlan_tci() function, I believe it is
-> prudent to maintain separate functions within their respective
-> descriptor driver files, (dwxgmac2_descs.c and dwmac4_descs.c)
+The following commit has been merged into the x86/urgent branch of tip:
 
-Please add a comment, or describe this in the commit message.
+Commit-ID:     254a6d14c9c952e8eae0fafd4fed3778721b948e
+Gitweb:        https://git.kernel.org/tip/254a6d14c9c952e8eae0fafd4fed3778721b948e
+Author:        Borislav Petkov (AMD) <bp@alien8.de>
+AuthorDate:    Wed, 09 Apr 2025 13:14:35 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 09 Apr 2025 13:56:52 +02:00
 
-	Andrew
+Documentation/x86: Zap the subsection letters
+
+The subsections already have numbering - no need for the letters too.
+
+Zap the latter.
+
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20250409111435.GEZ_ZWmz3_lkP8S9Lb@fat_crate.local
+---
+ Documentation/arch/x86/cpuinfo.rst | 51 ++++++++++++++++-------------
+ 1 file changed, 29 insertions(+), 22 deletions(-)
+
+diff --git a/Documentation/arch/x86/cpuinfo.rst b/Documentation/arch/x86/cpuinfo.rst
+index 7114f34..f80e2a5 100644
+--- a/Documentation/arch/x86/cpuinfo.rst
++++ b/Documentation/arch/x86/cpuinfo.rst
+@@ -79,8 +79,9 @@ feature flags.
+ How are feature flags created?
+ ==============================
+ 
+-a: Feature flags can be derived from the contents of CPUID leaves.
+-------------------------------------------------------------------
++Feature flags can be derived from the contents of CPUID leaves
++--------------------------------------------------------------
++
+ These feature definitions are organized mirroring the layout of CPUID
+ leaves and grouped in words with offsets as mapped in enum cpuid_leafs
+ in cpufeatures.h (see arch/x86/include/asm/cpufeatures.h for details).
+@@ -89,8 +90,9 @@ cpufeatures.h, and if it is detected at run time, the flags will be
+ displayed accordingly in /proc/cpuinfo. For example, the flag "avx2"
+ comes from X86_FEATURE_AVX2 in cpufeatures.h.
+ 
+-b: Flags can be from scattered CPUID-based features.
+-----------------------------------------------------
++Flags can be from scattered CPUID-based features
++------------------------------------------------
++
+ Hardware features enumerated in sparsely populated CPUID leaves get
+ software-defined values. Still, CPUID needs to be queried to determine
+ if a given feature is present. This is done in init_scattered_cpuid_features().
+@@ -104,8 +106,9 @@ has only one feature and would waste 31 bits of space in the x86_capability[]
+ array. Since there is a struct cpuinfo_x86 for each possible CPU, the wasted
+ memory is not trivial.
+ 
+-c: Flags can be created synthetically under certain conditions for hardware features.
+--------------------------------------------------------------------------------------
++Flags can be created synthetically under certain conditions for hardware features
++---------------------------------------------------------------------------------
++
+ Examples of conditions include whether certain features are present in
+ MSR_IA32_CORE_CAPS or specific CPU models are identified. If the needed
+ conditions are met, the features are enabled by the set_cpu_cap or
+@@ -114,8 +117,8 @@ the feature X86_FEATURE_SPLIT_LOCK_DETECT will be enabled and
+ "split_lock_detect" will be displayed. The flag "ring3mwait" will be
+ displayed only when running on INTEL_XEON_PHI_[KNL|KNM] processors.
+ 
+-d: Flags can represent purely software features.
+-------------------------------------------------
++Flags can represent purely software features
++--------------------------------------------
+ These flags do not represent hardware features. Instead, they represent a
+ software feature implemented in the kernel. For example, Kernel Page Table
+ Isolation is purely software feature and its feature flag X86_FEATURE_PTI is
+@@ -130,8 +133,8 @@ x86_cap/bug_flags[] arrays in kernel/cpu/capflags.c. The names in the
+ resulting x86_cap/bug_flags[] are used to populate /proc/cpuinfo. The naming
+ of flags in the x86_cap/bug_flags[] are as follows:
+ 
+-a: Flags do not appear by default in /proc/cpuinfo
+---------------------------------------------------
++Flags do not appear by default in /proc/cpuinfo
++-----------------------------------------------
+ 
+ Feature flags are omitted by default from /proc/cpuinfo as it does not make
+ sense for the feature to be exposed to userspace in most cases. For example,
+@@ -139,8 +142,8 @@ X86_FEATURE_ALWAYS is defined in cpufeatures.h but that flag is an internal
+ kernel feature used in the alternative runtime patching functionality. So the
+ flag does not appear in /proc/cpuinfo.
+ 
+-b: Specify a flag name if absolutely needed
+--------------------------------------------
++Specify a flag name if absolutely needed
++----------------------------------------
+ 
+ If the comment on the line for the #define X86_FEATURE_* starts with a
+ double-quote character (""), the string inside the double-quote characters
+@@ -155,25 +158,28 @@ shall override the new naming with the name already used in /proc/cpuinfo.
+ Flags are missing when one or more of these happen
+ ==================================================
+ 
+-a: The hardware does not enumerate support for it.
+---------------------------------------------------
++The hardware does not enumerate support for it
++----------------------------------------------
++
+ For example, when a new kernel is running on old hardware or the feature is
+ not enabled by boot firmware. Even if the hardware is new, there might be a
+ problem enabling the feature at run time, the flag will not be displayed.
+ 
+-b: The kernel does not know about the flag.
+--------------------------------------------
++The kernel does not know about the flag
++---------------------------------------
++
+ For example, when an old kernel is running on new hardware.
+ 
+-c: The kernel disabled support for it at compile-time.
+-------------------------------------------------------
++The kernel disabled support for it at compile-time
++--------------------------------------------------
++
+ For example, if 5-level-paging is not enabled when building (i.e.,
+ CONFIG_X86_5LEVEL is not selected) the flag "la57" will not show up [#f1]_.
+ Even though the feature will still be detected via CPUID, the kernel disables
+ it by clearing via setup_clear_cpu_cap(X86_FEATURE_LA57).
+ 
+-d: The feature is disabled at boot-time.
+-----------------------------------------
++The feature is disabled at boot-time
++------------------------------------
+ A feature can be disabled either using a command-line parameter or because
+ it failed to be enabled. The command-line parameter clearcpuid= can be used
+ to disable features using the feature number as defined in
+@@ -186,8 +192,9 @@ disable specific features. The list of parameters includes, but is not limited
+ to, nofsgsbase, nosgx, noxsave, etc. 5-level paging can also be disabled using
+ "no5lvl".
+ 
+-e: The feature was known to be non-functional.
+-----------------------------------------------
++The feature was known to be non-functional
++------------------------------------------
++
+ The feature was known to be non-functional because a dependency was
+ missing at runtime. For example, AVX flags will not show up if XSAVE feature
+ is disabled since they depend on XSAVE feature. Another example would be broken
 
