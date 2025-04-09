@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-596915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 515E5A832C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:49:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F48A832CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 22:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40C434606C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:49:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6D9C19E7EDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B502116F5;
-	Wed,  9 Apr 2025 20:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B034213E90;
+	Wed,  9 Apr 2025 20:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPEFewp/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ij1rG687"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A04317A2E7;
-	Wed,  9 Apr 2025 20:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD25202C39;
+	Wed,  9 Apr 2025 20:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744231786; cv=none; b=h58NqdqPP0cFfnGdqQql3ejvpxgZ0yoi7Fszd7Aiuz0V05XgUytLuXQ0E33uwovbbAFC2ZYRW4NdNFOSjuBuewJDT5HBXbVXY/f909TkaxcFxMXtmvGpOBBBOJAPruRVAiRJXJ06/ASGzMk/GudJJGzxL6zNG5fpRt0WV4zlAMY=
+	t=1744231798; cv=none; b=kojdA1yqq+DefokNn/2ymi1xZqM6/IWreP4++gWcIdHArGlMiejJbKijAzeQumR9xMMfUau0dA2+h2olVnvsciPVNYIQDtnkGeexj78RFu8ayquoi9upHPj25966g5fc3STVoLKQNJYfQlpTG0jJC9hhvhs3jeyDNQU6CVKWusE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744231786; c=relaxed/simple;
-	bh=NozBD7uf0mEfFz72Q+HWrklJjBxU4koxeAHUjP0UPPw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i7e/gYqaYt6ch9NY/UtecMKMzxlgPb41+JTkQ41CMbQKA4F41Fa1XRrFNue4ugRsuqFtLKFDCoARjboR2iU0hetVHgUBM/O/pUFLYov2YLhZo9dPyMVJUfmad4zJuhoY4OvCiWD4A82RuyY5MK5LxYmn2s2+WOT2ASxMnjl16yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPEFewp/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62C6CC4CEE2;
-	Wed,  9 Apr 2025 20:49:44 +0000 (UTC)
+	s=arc-20240116; t=1744231798; c=relaxed/simple;
+	bh=upxJCIerQNn+Pb4XOfmEnVDdSI9k3YpPcXbhGqc/rvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MaKuSWQ2Z2OUs+wmye4o8JUg1+9bWsKKBGH23FmHbtdm2liD0ToX8pLCxvmkNMUE7NAVrO/gOISJUUCLoMCIDmLXrvSZ0sioDUaYfi+avZXI3WDThKuSYdUKlfvfRynHROCvPj9ba2y519meoR0Wk1swLYKlSX4DvDJqmy/oMNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ij1rG687; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DAC1C4CEE2;
+	Wed,  9 Apr 2025 20:49:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744231784;
-	bh=NozBD7uf0mEfFz72Q+HWrklJjBxU4koxeAHUjP0UPPw=;
+	s=k20201202; t=1744231796;
+	bh=upxJCIerQNn+Pb4XOfmEnVDdSI9k3YpPcXbhGqc/rvA=;
 	h=From:To:Cc:Subject:Date:From;
-	b=vPEFewp/CEcOJm4xepNr29RV9Rod7H/Ms9KcO6fUCblcJOCu/YMbBG+0m1TJ7FDNx
-	 GMpWrvRPy+b3LIXhad4p9gSDtnXzK5xeJLwHpcIk59o0wNqrctHMFenwNr4c8dvXcS
-	 AXg4ZnGvbXVRXRIis9CseshHE0kaftyQY62TrEY2P/4g/fl4ZRWZxZ7uDaEEFiH2WZ
-	 f7ODITtnT+Q4KcVeN/n4GhrKjOUE3mYj3bgfEcDg8ca82jvGUKflz/wKW3KpOivKEf
-	 N3MnePIr1K/d9o04u35mVI85M5ci4hkZy+1aGPmzp3g8nPVfZUUvrpPoV/0UB72vt9
-	 ZzkdbHE5kgowQ==
+	b=ij1rG687XeqKDxUahbHUYaXslHmmmsBtkH8pi6W3fzvWLSLz8zAPefSB5+noeB55I
+	 iTEnZtzdIJyvJ4UbTwQG5SeAtgwskae6WEXP161PXOincklayrdRehLtpoUrAvakSq
+	 OiSwamawFFQ+wyhOTrcVla+Nr9Xcc+eGOCBAp95c55eaHE+z9086BDc9FEued3lWtY
+	 f9FwPfn7C+7OJ7ayy/6rlSJ3tyk+v855DyBZTjix0euyHUByhMTQ+dewLSJuY6v1cy
+	 PR8bBDN5sBU5NDQy8QkRVrF16xFe+nomrc9G/69RXUxBfIpm3164++hl1VqHSp2ZcF
+	 3W+y0BKih9Tig==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
+Cc: linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: marvell: Drop unused "pinctrl-names"
-Date: Wed,  9 Apr 2025 15:49:35 -0500
-Message-ID: <20250409204936.1521405-1-robh@kernel.org>
+Subject: [PATCH] arm64: dts: qcom: Drop undocumented "clock-names" for parade,ps8830
+Date: Wed,  9 Apr 2025 15:49:49 -0500
+Message-ID: <20250409204950.1521733-1-robh@kernel.org>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,60 +59,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-"pinctrl-names" depends on "pinctrl-[0-9]" properties, but none are
-present for the pca9555 nodes.
+Remove "clock-names" as it is not defined for the parade,ps8830 binding.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- arch/arm64/boot/dts/marvell/armada-7040-db.dts | 1 -
- arch/arm64/boot/dts/marvell/armada-8040-db.dts | 2 --
- arch/arm64/boot/dts/marvell/cn9130-db.dtsi     | 1 -
- 3 files changed, 4 deletions(-)
+ arch/arm64/boot/dts/qcom/x1e001de-devkit.dts             | 3 ---
+ arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts    | 2 --
+ arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi | 1 -
+ 3 files changed, 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-7040-db.dts b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
-index 2b5e45d2c5a6..3add6506ff20 100644
---- a/arch/arm64/boot/dts/marvell/armada-7040-db.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
-@@ -124,7 +124,6 @@ &cp0_i2c0 {
+diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+index 5e3970b26e2f..335b0fa174f0 100644
+--- a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
++++ b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+@@ -777,7 +777,6 @@ typec-mux@8 {
+ 		reg = <0x08>;
  
- 	expander0: pca9555@21 {
- 		compatible = "nxp,pca9555";
--		pinctrl-names = "default";
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		reg = <0x21>;
-diff --git a/arch/arm64/boot/dts/marvell/armada-8040-db.dts b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
-index 9d45e881a97d..21ecb9c12505 100644
---- a/arch/arm64/boot/dts/marvell/armada-8040-db.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
-@@ -122,7 +122,6 @@ &cp0_i2c0 {
- 	/* U31 */
- 	expander0: pca9555@21 {
- 		compatible = "nxp,pca9555";
--		pinctrl-names = "default";
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		reg = <0x21>;
-@@ -131,7 +130,6 @@ expander0: pca9555@21 {
- 	/* U25 */
- 	expander1: pca9555@25 {
- 		compatible = "nxp,pca9555";
--		pinctrl-names = "default";
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		reg = <0x25>;
-diff --git a/arch/arm64/boot/dts/marvell/cn9130-db.dtsi b/arch/arm64/boot/dts/marvell/cn9130-db.dtsi
-index be56a2336265..50e9e0724828 100644
---- a/arch/arm64/boot/dts/marvell/cn9130-db.dtsi
-+++ b/arch/arm64/boot/dts/marvell/cn9130-db.dtsi
-@@ -209,7 +209,6 @@ i2c@1 {
- 			/* U12 */
- 			cp0_module_expander1: pca9555@21 {
- 				compatible = "nxp,pca9555";
--				pinctrl-names = "default";
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				reg = <0x21>;
+ 		clocks = <&rpmhcc RPMH_RF_CLK5>;
+-		clock-names = "xo";
+ 
+ 		vdd-supply = <&vreg_rtmr2_1p15>;
+ 		vdd33-supply = <&vreg_rtmr2_3p3>;
+@@ -832,7 +831,6 @@ typec-mux@8 {
+ 		reg = <0x08>;
+ 
+ 		clocks = <&rpmhcc RPMH_RF_CLK3>;
+-		clock-names = "xo";
+ 
+ 		vdd-supply = <&vreg_rtmr0_1p15>;
+ 		vdd33-supply = <&vreg_rtmr0_3p3>;
+@@ -887,7 +885,6 @@ typec-mux@8 {
+ 		reg = <0x8>;
+ 
+ 		clocks = <&rpmhcc RPMH_RF_CLK4>;
+-		clock-names = "xo";
+ 
+ 		vdd-supply = <&vreg_rtmr1_1p15>;
+ 		vdd33-supply = <&vreg_rtmr1_3p3>;
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
+index 86e87f03b0ec..6dc898844cca 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
+@@ -612,7 +612,6 @@ typec-mux@8 {
+ 		reg = <0x08>;
+ 
+ 		clocks = <&rpmhcc RPMH_RF_CLK3>;
+-		clock-names = "xo";
+ 
+ 		vdd-supply = <&vreg_rtmr0_1p15>;
+ 		vdd33-supply = <&vreg_rtmr0_3p3>;
+@@ -676,7 +675,6 @@ typec-mux@8 {
+ 		reg = <0x8>;
+ 
+ 		clocks = <&rpmhcc RPMH_RF_CLK4>;
+-		clock-names = "xo";
+ 
+ 		vdd-supply = <&vreg_rtmr1_1p15>;
+ 		vdd33-supply = <&vreg_rtmr1_3p3>;
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
+index 5867953c7356..3949b17353e7 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
+@@ -792,7 +792,6 @@ typec-mux@8 {
+ 		reset-gpios = <&pm8550_gpios 10 GPIO_ACTIVE_LOW>;
+ 
+ 		clocks = <&rpmhcc RPMH_RF_CLK3>;
+-		clock-names = "xo";
+ 
+ 		vdd-supply = <&vreg_rtmr0_1p15>;
+ 		vdd33-supply = <&vreg_rtmr0_3p3>;
 -- 
 2.47.2
 
