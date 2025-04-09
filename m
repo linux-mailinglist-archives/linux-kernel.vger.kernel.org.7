@@ -1,126 +1,129 @@
-Return-Path: <linux-kernel+bounces-597046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16EA2A8347A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 01:27:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8037A8347E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 01:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E111887952
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:26:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACF911889488
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDD322171E;
-	Wed,  9 Apr 2025 23:26:04 +0000 (UTC)
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EA421D587
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 23:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DA621CA07;
+	Wed,  9 Apr 2025 23:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WlctK6Il"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DA8215783
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 23:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744241164; cv=none; b=QbpCedDiFn87V6TmJs1PHt5UChLdqlmbscEiRrseee9gysn2oNRP8CTQs8Elu26YeXbkknbm/uShdrAGqSuxCsfIYxnPqVSvDLLjhIbXcRElf+zkB2fCZ+c6WLea4Kv43od5gbTCQo1g+RMLkilwS25MJBRNoQGDjpPYTORKKjw=
+	t=1744241242; cv=none; b=WOoAKQE4DlTCqS2aGmtDLqkYGmVvvyvYahzcUbvdUhcrwvBCdh6nl5S2X1iuxe01Pt1WkIM3Zd7f0iTqF0hCLb26aKJIrqd6nZrwc+YfmaayNk6gYjX5o4xL+auLIoEED4ya+ZGVf24SDsTt8RnjVeQv2bcYGflF2Sz4Zwct9Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744241164; c=relaxed/simple;
-	bh=k5o7fS+i8T+QcFuWSe/nMJvcJbDBrIItRZD96KmBbus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gAZKE2V812ytl4leZ1UVUgAOOWHxPNVE7mA/IZxfStkba804KgMngS8Q5qfDKvheGx4sqZzvSwrhxuQ9D/9sOOVtaxFeTtaBsfCm4A6VBxYtJLXLldAAt4NiZMDljXXhoi3dIhzYumSyzQhAquzPxupbTTqEqjLRFMbzSfzO6xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id E506372C8CC;
-	Thu, 10 Apr 2025 02:26:00 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-	id D38F47CCB3A; Thu, 10 Apr 2025 02:26:00 +0300 (IDT)
-Date: Thu, 10 Apr 2025 02:26:00 +0300
-From: "Dmitry V. Levin" <ldv@strace.io>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Charlie Jenkins <charlie@rivosinc.com>, Kees Cook <kees@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] riscv: Avoid fortify warning in syscall_get_arguments()
-Message-ID: <20250409232600.GB31728@strace.io>
-References: <20250409-riscv-avoid-fortify-warning-syscall_get_arguments-v1-1-7853436d4755@kernel.org>
+	s=arc-20240116; t=1744241242; c=relaxed/simple;
+	bh=Y5HhM6EsVGkJyT/9D53oUbp7SPaw+yWlNrza0lyy1yQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=I2LHnNtP73ZonxwYw+M5AWrrNUgh7pYgvEnFKPzGmM44JDDMwkOE9fv1bv5zR23uYZoUKOiY0gpHVj4cFp1mBGQUbxEGfKTBxpys3QaBmya7kHWuGpS1tlgK1XULQKIaxu9zcANFT+UwWezHcTU4PPA/A1peD1Xj5d3K65YCo/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WlctK6Il; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744241240; x=1775777240;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Y5HhM6EsVGkJyT/9D53oUbp7SPaw+yWlNrza0lyy1yQ=;
+  b=WlctK6IlOdqSPaEglZxFOlsGamu9J9ndIv8nGeFhjWRzV0otjnpnKm38
+   CEfNgTGf4KqDtK/MEmedBAoJDDbjAwfl1tQX3hnluGpX4o1hMEnyK9Wmw
+   v87JPNoh8fU6PKnuK9kacWjkLkuGTRi/4/DeLJ0IhhCq1f2vuVYokWy9z
+   6/VEiIHeUjBFjG/jcnVndAopoxWgFxc+xrwCmPJWDKvYSvyt9LVaZJhio
+   txFAPgkQgqgX5WQdUCT1mOOh8FragJn+4D0kBLodk1jtILxGqEzobev3i
+   DdVDiSkWtvYumr8vLWNQZ934mZIRMQ9TIDWS2cJJXuG3/NPDVR+wKpbAS
+   g==;
+X-CSE-ConnectionGUID: f/UMs7kmQRqtDHzC5J7RLw==
+X-CSE-MsgGUID: G3atcde+SNeRw1hInfkR5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="68224036"
+X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
+   d="scan'208";a="68224036"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 16:27:16 -0700
+X-CSE-ConnectionGUID: xYuDvFZiT364WBcycUH0fw==
+X-CSE-MsgGUID: VXsmifrDTE+CeuC8Oj2FOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
+   d="scan'208";a="133593029"
+Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.124.161.191])
+  by orviesa003.jf.intel.com with ESMTP; 09 Apr 2025 16:27:15 -0700
+From: "Chang S. Bae" <chang.seok.bae@intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	colinmitchell@google.com,
+	chao.gao@intel.com,
+	chang.seok.bae@intel.com
+Subject: [PATCH v3 0/6] x86: Support for Intel Microcode Staging Feature
+Date: Wed,  9 Apr 2025 16:27:07 -0700
+Message-ID: <20250409232713.4536-1-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250320234104.8288-1-chang.seok.bae@intel.com>
+References: <20250320234104.8288-1-chang.seok.bae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409-riscv-avoid-fortify-warning-syscall_get_arguments-v1-1-7853436d4755@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 09, 2025 at 02:24:46PM -0700, Nathan Chancellor wrote:
-> When building with CONFIG_FORTIFY_SOURCE=y and W=1, there is a warning
-> because of the memcpy() in syscall_get_arguments():
-> 
->   In file included from include/linux/string.h:392,
->                    from include/linux/bitmap.h:13,
->                    from include/linux/cpumask.h:12,
->                    from arch/riscv/include/asm/processor.h:55,
->                    from include/linux/sched.h:13,
->                    from kernel/ptrace.c:13:
->   In function 'fortify_memcpy_chk',
->       inlined from 'syscall_get_arguments.isra' at arch/riscv/include/asm/syscall.h:66:2:
->   include/linux/fortify-string.h:580:25: error: call to '__read_overflow2_field' declared with attribute warning: detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Werror=attribute-warning]
->     580 |                         __read_overflow2_field(q_size_field, size);
->         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   cc1: all warnings being treated as errors
-> 
-> The fortified memcpy() routine enforces that the source is not overread
-> and the destination is not overwritten if the size of either field and
-> the size of the copy are known at compile time. The memcpy() in
-> syscall_get_arguments() intentionally overreads from a1 to a5 in
-> 'struct pt_regs' but this is bigger than the size of a1.
-> 
-> Normally, this could be solved by wrapping a1 through a5 with
-> struct_group() but there was already a struct_group() applied to these
-> members in commit bba547810c66 ("riscv: tracing: Fix
-> __write_overflow_field in ftrace_partial_regs()").
-> 
-> Just avoid memcpy() altogether and write the copying of args from regs
-> manually, which clears up the warning at the expense of three extra
-> lines of code.
-> 
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
-> I omitted a Fixes tag because I think this has always been an overread
-> if I understand correctly but it is only the addition of the checks from
-> commit f68f2ff91512 ("fortify: Detect struct member overflows in
-> memcpy() at compile-time") that it becomes a noticeable issue.
-> 
-> This came out of a discussion from the addition of
-> syscall_set_arguments(), where the same logic causes a more noticeable
-> fortify warning because it happens without W=1, as it is an overwrite:
-> https://lore.kernel.org/20250408213131.GA2872426@ax162/
-> ---
->  arch/riscv/include/asm/syscall.h | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/riscv/include/asm/syscall.h b/arch/riscv/include/asm/syscall.h
-> index 121fff429dce66b31fe79b691b8edd816c8019e9..eceabf59ae482aa1832b09371ddb3ba8cd65f91d 100644
-> --- a/arch/riscv/include/asm/syscall.h
-> +++ b/arch/riscv/include/asm/syscall.h
-> @@ -62,8 +62,11 @@ static inline void syscall_get_arguments(struct task_struct *task,
->  					 unsigned long *args)
->  {
->  	args[0] = regs->orig_a0;
-> -	args++;
-> -	memcpy(args, &regs->a1, 5 * sizeof(args[0]));
-> +	args[1] = regs->a1;
-> +	args[2] = regs->a2;
-> +	args[3] = regs->a3;
-> +	args[4] = regs->a4;
-> +	args[5] = regs->a5;
->  }
->  
->  static inline int syscall_get_arch(struct task_struct *task)
+Hi all,
 
-Reviewed-by: Dmitry V. Levin <ldv@strace.io>
+This is another revision addressing feedback from the last posting [1]
+over the past few weeks:
+
+  *  Dave suggested using a local variable to clarify the scope handled
+     by each helper, via a function argument [2]. Accordingly, the patch
+     order was adjusted (patch 2 <-> patch 3).
+
+  *  Chao provided helpful feedback, leading to additional refinements.
+
+This round contains relatively smaller changes compared to the last one,
+but I hope this iteration provide a chance to draw more reviews or even
+collect a few tags.
+
+As before, the patch series is based on tip/master and is also available
+in this repo:
+    git://github.com/intel-staging/microcode.git staging_v3
+
+Thanks,
+Chang
+
+[1]: V2: https://lore.kernel.org/lkml/Z+O8DK5NZJL43Nt6@intel.com/
+[2]: https://lore.kernel.org/lkml/b01224ee-c935-4b08-a76f-5dc49341182d@intel.com/
+
+Chang S. Bae (6):
+  x86/microcode: Introduce staging step to reduce late-loading time
+  x86/microcode/intel: Establish staging control logic
+  x86/microcode/intel: Define staging state struct
+  x86/microcode/intel: Implement staging handler
+  x86/microcode/intel: Support mailbox transfer
+  x86/microcode/intel: Enable staging when available
+
+ arch/x86/include/asm/msr-index.h         |   9 +
+ arch/x86/include/asm/topology.h          |   1 +
+ arch/x86/kernel/cpu/microcode/core.c     |  11 +
+ arch/x86/kernel/cpu/microcode/intel.c    | 338 +++++++++++++++++++++++
+ arch/x86/kernel/cpu/microcode/internal.h |   4 +-
+ 5 files changed, 362 insertions(+), 1 deletion(-)
 
 
+base-commit: 033163360247053bec75b81ac2d34aeb9d994e59
 -- 
-ldv
+2.45.2
+
 
