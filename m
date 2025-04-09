@@ -1,156 +1,132 @@
-Return-Path: <linux-kernel+bounces-595298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B41CA81C93
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:05:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CCAEA81C9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CC7C46738C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:03:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E2C78A0B76
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AE41DF96F;
-	Wed,  9 Apr 2025 06:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499851DC98C;
+	Wed,  9 Apr 2025 06:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bNCGTpwN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kajvnHrf"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504571DE4FB;
-	Wed,  9 Apr 2025 06:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251BE3FFD;
+	Wed,  9 Apr 2025 06:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744178596; cv=none; b=O9lTYv8kTU+9HrDU6FmK7klzv9NqnhiUP13iQJ1j02GsmZbD3xzU9s1a7OGUfQGbz1+47+Q/1l5kMVfJw/39ms6Jw+M/Bn6O4/PWUoHB8C4st+K8yErWm7VDc49Ma5CvQlcKyVQLnCxNxbDNg9iLyQrIZN8/xaajLCB9sSLSsOY=
+	t=1744178689; cv=none; b=fRJwPm/U61dP295x5zWCsSfTJDjnoF7Vj5F7AZ0819MWd/kYT1yzLWpNrtwmEkisZAyLGG+nV6ND1wacOoj23QurrPDdDKqfayQCFCuDnNI+yoQXp0o+ALezwP1gBsmLfD5nk8xpsZWD/6eZ84hclh6X4kkgjBghi/VZMZESKis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744178596; c=relaxed/simple;
-	bh=PC2Cvk3hQ6ILTfs1axrdvZeQZiDqDu4ODKLySChbf7c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GRjPhuATHqIxaw6l7w35cmOHknrZ47XZClv5z+q1bKBSZDcpbC43WA+RkOR0rNJhIbusmL7a1CW9Ao51QvMjqy0OhptW+L4WQqMSWaE7WL75/KNIt1jLCcZniC9j4CtFCgPZtmLyOEEDKfDjgMZ1/iCe8YQOWFOtUE+xAcvqzho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bNCGTpwN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74033C4CEE3;
-	Wed,  9 Apr 2025 06:03:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744178595;
-	bh=PC2Cvk3hQ6ILTfs1axrdvZeQZiDqDu4ODKLySChbf7c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bNCGTpwNtqhjwkBxrcKicZtLgSQCrTSimburI1kUZbPyPgyf0m2Fuv02WDFw9A0KV
-	 Z/pZhHtEX7NzXilgoFDSWa9P10SddYfY/u5lrPCsf8gTLEytItl/2+IYQN66CPaVXv
-	 jG2+TNYvonlnFICwqePiGdmuP+oJcuOZy48bjyLKHz+S8qDcyIY89KIwrH/xix9mHU
-	 eN1YS7Zv4tSJbB5THHFVdjI0BSjYf4n2l/XBbh8b/i+N83F7z2e4l0BgEG5gP1YCjC
-	 C/bAkZ6YJGA54WRj93qGXuqhdZ2kpSY3qije0fA8t2yoWOstMIr9tCmS1jZyzYX67W
-	 2oyyiT2p1Rxhg==
-Message-ID: <018b15a8-4f5b-4752-b865-06608b82e7d5@kernel.org>
-Date: Wed, 9 Apr 2025 08:03:10 +0200
+	s=arc-20240116; t=1744178689; c=relaxed/simple;
+	bh=m4/mW/yD1FOsUz2/Xtq3pAZUmygrqnr24wXblD4T+o8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m/hWK+q+ke0T/hwHNWO6wk+b/ARbLiH29BweE3mcvjfy6p18JDoTmkkFkeqv1m9YHJrT7ZOvLQp3a8hFnKQCELBFwkwnQXD+UVo0D4a4+jt9heL3l2RbwIe7+lHSBNZkAf/VkqqzRcNRBEu8GvKzZViABJPC1NIkl4pJjloTzeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kajvnHrf; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-524038ba657so482608e0c.0;
+        Tue, 08 Apr 2025 23:04:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744178687; x=1744783487; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+V4ALGdx0ZvhM0ESKguXWcucuSIXI2xNRiiSByOwwaE=;
+        b=kajvnHrfBOf6hsCRMD7+niF75pqba5nEqDzqiYP1jmsoEtljlrHi+n9hw/oNIdT8UR
+         F4O9B6TB+61uuvrocp6EmAI8xvZ+WT6awSOOzT6XSy/oBH+LXYEiCmctdnrvDtlNny3r
+         fH9p5lD0YZx5XMz62NOVZWNe17X/5RWw+drNw1QUcYuK7SDDE9D9Lu6HA7jwiB3L+SJc
+         ZTqkC++nrEJdteXUFazO50cUqpHsQinssq/f2MxEViVH08dEN5OiZJdqEv7c79HV9pUR
+         RVFPBjHNDbxKepw41Rlqy33LfX+a/C3x4PX3LorfUYgiKYAATHTYzCes/E539DESxP3k
+         wdrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744178687; x=1744783487;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+V4ALGdx0ZvhM0ESKguXWcucuSIXI2xNRiiSByOwwaE=;
+        b=akb/pBvhooTUVp78HXcUokFmvRW/gck+dqzQmF9C/aB6c3kpdaIjPycwdKE0DWM8tl
+         vWkSEFwI2T+/UDV+PxZiB3VniF/rKGETOOBq/1zkqCvMEhvqZRXA0g4ZJ7hWOH9GNI/R
+         4w4eSicubCFayefw7kEXmifGT/mZEhRbgLf4yG0BQyO4IQBGUDByLyi8+cSysd4L+wYs
+         nViBboSKD/GaQDPJ4knyv8K2idf33GVQeqXMwg9N2BXOlRFsSG1eQ+Dp+B6OUDbK11pA
+         nfxe1yg8cgcWWUm5Dr4+p7g3CVw26rcpAVnHei1PitwDbkCsAAiHXtJYDXkA1hDPlp0M
+         6lhw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0XkbGEWcYJqSGHau2usA5knZ+n0KSpLUu1oIATtGvELlmwNt0q9PjQD3UMhS1MiciTTHKQQhxqQv6KA==@vger.kernel.org, AJvYcCXaDXIhOapqNBdKg9p2JEacn7zpwV1cf3oH9TZ7W9uv/Mdine/A6yk8KEGqEtxBnQ4nXPVJKeX8pLCv5zdU@vger.kernel.org
+X-Gm-Message-State: AOJu0YztpL2gyoEsP4OsA6A5hQ8vAwduXJcXeprZFjrtMLboeohk3vUD
+	cLzJbmnEUipL3ABDR8QfJXQNDlHX+/aGMJEqOWm0q34WmCHdTdQm
+X-Gm-Gg: ASbGnctVkDgnK5fNJLPGvAdkCo0PUWc1A7dSrW9AqmfvsvqitU4Rx56JWR6iHG+HaUi
+	gGcoVW0AwXw9kHS9QcIwsjVdoBrOTRfM24Ifa6hm3pD+EAlOFsmK2Ad8P4XAj/VDQusj/Yj8Aym
+	ik9KKULkKhW3jPmJxKl60ALdXPrdmaU7HCZGYACYltqWNTxjlFN5hhTEtWKt6KLYXrq3FeTRHQy
+	UwaagIBqE4/2ziW9XbEPDPoNUcl57uXcVFOesBxeWX4VXSttfmer3qXE7VT6aObG93e27GohApc
+	KBdyeCzTffvmPAeZi7vY9D5arC/UOo2kKouluI3Oh6cPeMtNrhz3HA5TL6Vq4QgepsIDwj+yZPB
+	a
+X-Google-Smtp-Source: AGHT+IHwv4W8fgLGzlrXAXf4jygzq2dLL2QYjoAC/5xm7B4+8GUF26c/3eTljqp4QP/9LBBlmzf9oQ==
+X-Received: by 2002:a05:6122:410:b0:524:2fe0:3898 with SMTP id 71dfb90a1353d-5279ac99ae9mr4306442e0c.5.1744178686881;
+        Tue, 08 Apr 2025 23:04:46 -0700 (PDT)
+Received: from localhost.localdomain ([200.189.18.171])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-527abd4cb9esm99510e0c.6.2025.04.08.23.04.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 23:04:45 -0700 (PDT)
+From: miltonials <miltonjosue2001@gmail.com>
+To: jikos@kernel.org
+Cc: bentiss@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Milton Barrera <miltonjosue2001@gmail.com>
+Subject: [PATCH] HID: quirks: Add ADATA XPG alpha wireless mouse support
+Date: Wed,  9 Apr 2025 00:04:28 -0600
+Message-ID: <20250409060428.1188-1-miltonjosue2001@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: fpga: zynq: Document ICAP on boot
-To: Sam Winchenbach <sam.winchenbach@framepointer.org>
-Cc: linux-kernel@vger.kernel.org, mdf@kernel.org, hao.wu@intel.com,
- yilun.xu@intel.com, trix@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, michal.simek@amd.com, linux-fpga@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Sam Winchenbach <swinchenbach@arka.org>
-References: <20250328141944.119504-1-sam.winchenbach@framepointer.org>
- <02496a88-3d9c-49ee-93ab-8f1400fc0c6b@kernel.org>
- <p4bujnmgkcvsu4qipmgh2j2loedepmwgp7zlaxrurhaveb6tbc@ibqtbjnbzdzj>
- <14b12882-119d-4c24-9634-e4cc37a39212@kernel.org>
- <2ccsnpv67gsu354uo7xe7syrxs265ncj6hl26v3cwf2dfm7hyu@ihkemyajuiag>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2ccsnpv67gsu354uo7xe7syrxs265ncj6hl26v3cwf2dfm7hyu@ihkemyajuiag>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 31/03/2025 15:07, Sam Winchenbach wrote:
->>> Before writing the fabric to the FPGA the driver disables the ICAP, enabling
->>> the PCAP. Once writing is complete it unconditionally disables the PCAP,
->>> enabling the ICAP. This patch just makes it so, depending on the use case,
->>> the ICAP can be enabled at boot. This will not prevent the system from being
->>> able to load a fabric through the driver. I added in this boolean so existing
->>> behavior would be maintained.
->>>
->>> Do you recommend another approach such as writing to a sysfs attribute to
->>> switch from PCAP to ICAP?
->> Not sure yet. Can't you check the status of ICAP before programming and
->> then enable it only if was enabled before?
-> 
-> I am having a bit of difficulty understanding this so let's talk about cases
-> where the ICAP is enabled/disabled -
-> 
-> 1. When writing the fabric from the driver
->    In this situation it might make sense to read the state of the ICAP
->    interface when preparing the fabric, before enabling PCAP. When the write
->    completes you could re-enable the ICAP if it was previously enabled.
-> 
->    This might be outside the scope of this change - and I am not comfortable
->    enough with this use-case to understand potential side effects from doing
->    this. Logically it makes sense, but there may be a very specific reason that
->    the ICAP must be enabled after doing a fabric load or partial
->    reconfiguration.
-> 
-> 2. When the FPGA driver loads and is probed by the DTS
->    In this situation, which is covered by this patch, the FPGA is loaded by
->    BootROM/FSBL but contains functionality that requires the ICAP. Unless the
->    user has made modifications to the FSBL or 3rd stage bootloader there is no
->    clear way to enable the ICAP interface. Checking to see if it had been
->    enabled prior to loading this driver does not (in my opinion) make a lot of
->    sense here.
-> 
->    Perhaps the name of the DTS is confusing? The suffix '-on-load' was meant to
->    indicate when the driver was loaded, not the fabric. Would the suffix
->    '-on-probe' be more clear?
-None of these two, because you refer to software. Property is fine but
-you need to describe the actual state of hardware or system or entire
-stack, e.g. "fpga-with-sem".
-Best regards,
-Krzysztof
+From: Milton Barrera <miltonjosue2001@gmail.com>
+
+This patch adds HID_QUIRK_ALWAYS_POLL for the ADATA XPG wireless gaming mouse (USB ID 125f:7505) and its USB dongle (USB ID 125f:7506). Without this quirk, the device does not generate input events properly.
+
+Signed-off-by: Milton Barrera <miltonjosue2001@gmail.com>
+---
+ drivers/hid/hid-ids.h    | 4 ++++
+ drivers/hid/hid-quirks.c | 2 ++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 288a2b864..106273131 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -41,6 +41,10 @@
+ #define USB_VENDOR_ID_ACTIONSTAR	0x2101
+ #define USB_DEVICE_ID_ACTIONSTAR_1011	0x1011
+ 
++#define USB_VENDOR_ID_ADATA_XPG 0x125f
++#define USB_VENDOR_ID_ADATA_XPG_WL_GAMING_MOUSE 0x7505
++#define USB_VENDOR_ID_ADATA_XPG_WL_GAMING_MOUSE_DONGLE 0x7506
++
+ #define USB_VENDOR_ID_ADS_TECH		0x06e1
+ #define USB_DEVICE_ID_ADS_TECH_RADIO_SI470X	0xa155
+ 
+diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
+index 646171598..0731473cc 100644
+--- a/drivers/hid/hid-quirks.c
++++ b/drivers/hid/hid-quirks.c
+@@ -27,6 +27,8 @@
+ static const struct hid_device_id hid_quirks[] = {
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_AASHIMA, USB_DEVICE_ID_AASHIMA_GAMEPAD), HID_QUIRK_BADPAD },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_AASHIMA, USB_DEVICE_ID_AASHIMA_PREDATOR), HID_QUIRK_BADPAD },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_ADATA_XPG, USB_VENDOR_ID_ADATA_XPG_WL_GAMING_MOUSE), HID_QUIRK_ALWAYS_POLL },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_ADATA_XPG, USB_VENDOR_ID_ADATA_XPG_WL_GAMING_MOUSE_DONGLE), HID_QUIRK_ALWAYS_POLL },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_AFATECH, USB_DEVICE_ID_AFATECH_AF9016), HID_QUIRK_FULLSPEED_INTERVAL },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_AIREN, USB_DEVICE_ID_AIREN_SLIMPLUS), HID_QUIRK_NOGET },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_AKAI_09E8, USB_DEVICE_ID_AKAI_09E8_MIDIMIX), HID_QUIRK_NO_INIT_REPORTS },
+-- 
+2.43.0
+
 
