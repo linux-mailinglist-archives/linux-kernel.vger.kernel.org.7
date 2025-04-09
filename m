@@ -1,155 +1,140 @@
-Return-Path: <linux-kernel+bounces-595742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75F86A82282
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:43:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5D4A82281
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 301CB3B4AF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:42:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB35F4A74D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDAC25DAE2;
-	Wed,  9 Apr 2025 10:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D7125D908;
+	Wed,  9 Apr 2025 10:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HCWhznDU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rT0KkMH/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HCWhznDU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rT0KkMH/"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="faOg85dN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D15F25522B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 10:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D86425D8EC
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 10:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744195372; cv=none; b=k0tJWuDO8JL9OsIFtxKUgZbPPbpVJ4o9AF759YmjDfVb7GT0J6T4djBZwCX/57LPMxDzdNXA4uwNg7XDETdiSdNBPJw0th/D7kxgRfQSR2gYpwd3DHVVbt3b0aRGUuBXpULsM8aYJDnI3x14lu89OXoncG0q1Ljli95FDrsWuDU=
+	t=1744195397; cv=none; b=VCOH6QB3YsPq93vOj0fe5btvFrsIiUO1NcekVahWbPaoFlz/7r+LZNIfrKm9oyHL2+uwyDJ8oTIgD/6d2o4nd2BJXJsceuGh05O5YtKeQ/HsyQQr3aX3KQ60TtJ3/foPEBuR4NqIAoXL38OVUSToT9ZWsXgyWRloT2RslHygYGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744195372; c=relaxed/simple;
-	bh=EdCjpD8KSUrLuHs5GvIkdcerRehZ40AK1poflo4d2k4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=djVGLU8TPLuFtu2kCepKi4MViKKV0qmPEv45OV1DbXII1w9kFuab0VE2TQcdsWH3fizROOftDwcrNbxPm05WFZzR4t/VeV1ZPU5BLrcB80QDuUjMcUnH3n+UWOub4jqHjZUL07zjN/UGb2zx1S+r1znx+zTnObbIknBQV/2c1Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HCWhznDU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rT0KkMH/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HCWhznDU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rT0KkMH/; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C122421169;
-	Wed,  9 Apr 2025 10:42:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744195368; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1744195397; c=relaxed/simple;
+	bh=A/FlqmaIzcO4c8nAuBHIloGWE3rDWwPZOR27kQ1vVdA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P3uuvG6gWNNLJt2g6o7fmgp8rAyfT9BZfjt4LDjZPdw18UTwXPfwu6pFponne4W1xtzFuUxbU36f9AA85GDhO6fetDJm1DaFkCUfVDxPRF/J4jdSg512fyXbvOMJcPb3izsTpseuI6ousB1ZABTNuWPqjUAng32zKJyUAcA5u0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=faOg85dN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744195395;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Yen6uUM+rymVHNJ1ppKOFMdkW13sc3zHqEh7q670KX0=;
-	b=HCWhznDUKFBV83n2K/OHI8uPFkO+hBE+L385r6JhK3IVciLS5fWENZYdz8RIu2J9+nzv+p
-	Hm9isDnYmA+vpR90moAaR8KugyylDl1ZSoK7CvpZyInHvK4bAW8siJnWj/9gVNTdVA5G8v
-	Kzz43O2LYpmJWz+klV00BHQBO2pRtvg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744195368;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yen6uUM+rymVHNJ1ppKOFMdkW13sc3zHqEh7q670KX0=;
-	b=rT0KkMH/b8UG/NRNl/bkB1rAntWBtQsjK3NLBDy/p4I1VlCn7UzIDJFzj69aVK/E969g3+
-	qyLqRcEJqB0HN9CA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744195368; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yen6uUM+rymVHNJ1ppKOFMdkW13sc3zHqEh7q670KX0=;
-	b=HCWhznDUKFBV83n2K/OHI8uPFkO+hBE+L385r6JhK3IVciLS5fWENZYdz8RIu2J9+nzv+p
-	Hm9isDnYmA+vpR90moAaR8KugyylDl1ZSoK7CvpZyInHvK4bAW8siJnWj/9gVNTdVA5G8v
-	Kzz43O2LYpmJWz+klV00BHQBO2pRtvg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744195368;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yen6uUM+rymVHNJ1ppKOFMdkW13sc3zHqEh7q670KX0=;
-	b=rT0KkMH/b8UG/NRNl/bkB1rAntWBtQsjK3NLBDy/p4I1VlCn7UzIDJFzj69aVK/E969g3+
-	qyLqRcEJqB0HN9CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AF3EE13691;
-	Wed,  9 Apr 2025 10:42:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id aL/EKihP9me3CQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 09 Apr 2025 10:42:48 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3BFADA0838; Wed,  9 Apr 2025 12:42:48 +0200 (CEST)
-Date: Wed, 9 Apr 2025 12:42:48 +0200
-From: Jan Kara <jack@suse.cz>
-To: Artem Sadovnikov <a.sadovnikov@ispras.ru>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, 
-	Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	Eric Sandeen <sandeen@redhat.com>, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH] ext4: fix off-by-one error in do_split
-Message-ID: <z4fxzkutn3bjrpb4kmezorp6hbbapsvmijoznbny5ll2qajmm5@i5dl3zy2inch>
-References: <20250404082804.2567-3-a.sadovnikov@ispras.ru>
- <odgkvml62unm4ux3sbnympgyzj22z7dwjgdvdmlbgtiybq4j7z@gnnaygdp7muw>
- <fc291720-bba7-4799-b451-ae7c84e6697c@ispras.ru>
+	bh=EnfObN/lFf683o8WuLfplJQb1/cYuQGkU+V1Bcc+zTA=;
+	b=faOg85dNB73UyyYuViZ5JaBU2Z5/JC4V1aLvF2hI6jgsxqbeAjWF/q6bDFwSJkETQoJ9eJ
+	44pRSgJPynh7bAAHYYr0RhX7muoQwgWQfEfWAEd+Db83RD6WyBuKFLjR4IoZg/Z+zlKsnN
+	C1gT7BPCJlQHkpdeRroEXwAkqUgEuwA=
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
+ [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-663-UOC1KOW8PlyWlHMHxkuBjA-1; Wed, 09 Apr 2025 06:43:14 -0400
+X-MC-Unique: UOC1KOW8PlyWlHMHxkuBjA-1
+X-Mimecast-MFC-AGG-ID: UOC1KOW8PlyWlHMHxkuBjA_1744195393
+Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e63533f0a65so801745276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 03:43:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744195393; x=1744800193;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EnfObN/lFf683o8WuLfplJQb1/cYuQGkU+V1Bcc+zTA=;
+        b=lqDhl9A0FPAhuwDYHwkI/hhmDO4fBj7dqUtkD+lGcA0L1f/pb53r7RGF3qBWVW8i/s
+         MiCbHlsFXY5Gp341uSH9y2CykCyg8d8DxNu16VSNvDcWbwJjqD3HtOqb/8mMu+wDHTvY
+         /aKE9szamIyfq+ukO6QR/tfRSRGGG+eKWE78rODrBPXeNviVulwpoqtqhEVwzP4oeYly
+         joeCZi2+loIv3EJOdGxbUR+oUxrDN/kXqVEofTNoH/VfHFxnVxoVlG5DbrbZNjbkEJcS
+         JooreB7RQVnw5tkI9NTDbULIW2jnvteklfJBHabXpsCeOIC+iLOzh80CargZ9GFO8vUX
+         gRig==
+X-Forwarded-Encrypted: i=1; AJvYcCXH1KFsntL2wEV4ZEq7rZX5KlpK9+Su+FtL0zHN22zkoZf81DPoxchHjW286q95sOqzim97WqTK4cxhIHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3fyb4Xt8iiavJ6TwEXA26k/kVlfx6ib+JzYpzQwLxrkUoN0hd
+	MFLCuPuGEyk45/4QvXcryxtxWdhyCvW/WMZBTAdDh43Z1aowvEK3ADEy67f4pnGTa0RvumXzVSu
+	Z0PSxGkTJ3L7qNffgIee1aXZJh1RsrNfKSdHgDKJHc2d9QecsL1GCnxleOLeuuKY4zBMvl5N/6c
+	RsGbKyWgeGDvaIvyl4wJSTRtFBAb72bU9nuxBE
+X-Gm-Gg: ASbGncspCYpjwXDskXfbi6O7LOz/iKVK6JcTuqJyMT4buUcNR77BUtiWysSx2IcJbbq
+	yQ86QiJiOv+86FQYkznaA8y7y+MJFHeO9cNLmadljxlABgm9w5OpWrN+HvDljPIEEIaA=
+X-Received: by 2002:a05:6902:2487:b0:e61:142a:82b1 with SMTP id 3f1490d57ef6-e6e5da76d6dmr11417302276.16.1744195393473;
+        Wed, 09 Apr 2025 03:43:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9XLCSiAWV0l0Xyy3erc/2RwiuGpJfzHLbxLJRgI2MfphnLTk5GZMmDYdIvEsBTniIkRBZyC9Yc3m0F9mrx/U=
+X-Received: by 2002:a05:6902:2487:b0:e61:142a:82b1 with SMTP id
+ 3f1490d57ef6-e6e5da76d6dmr11417256276.16.1744195393057; Wed, 09 Apr 2025
+ 03:43:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fc291720-bba7-4799-b451-ae7c84e6697c@ispras.ru>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+References: <20250403100943.120738-1-sgarzare@redhat.com> <20250403100943.120738-5-sgarzare@redhat.com>
+ <20250408110012.GFZ_UBvOcEfEcIM4mI@fat_crate.local> <eqtiiphs6rtjo7nirkw7zcicew75wnl4ydenrt5vl6jdpqdgj6@2brjlyjbqhoq>
+ <20250408112820.GBZ_UIVPp-LuIiVrIV@fat_crate.local> <o2u7p3wb64lcc4sziunr274hyubkgmspzdjcvihbpzkw6mkvpo@sjq3vi4y2qfl>
+ <20250409102120.GCZ_ZKIJw9WkXpTz4u@fat_crate.local>
+In-Reply-To: <20250409102120.GCZ_ZKIJw9WkXpTz4u@fat_crate.local>
+From: Stefano Garzarella <sgarzare@redhat.com>
+Date: Wed, 9 Apr 2025 12:43:01 +0200
+X-Gm-Features: ATxdqUEEmadHBgiIuGJgxnDt-QGQF_QGugtY5XSP7f88rY67_2s-xBx1Kyl3594
+Message-ID: <CAGxU2F7r_fWgr2YRmCvh2iQ1vPg30f-+W6FXyuidbakZkwhw2w@mail.gmail.com>
+Subject: Re: [PATCH v6 4/4] x86/sev: register tpm-svsm platform device
+To: Borislav Petkov <bp@alien8.de>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, "H. Peter Anvin" <hpa@zytor.com>, 
+	linux-coco@lists.linux.dev, linux-integrity@vger.kernel.org, 
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Joerg Roedel <jroedel@suse.de>, Dionna Glaze <dionnaglaze@google.com>, 
+	Claudio Carvalho <cclaudio@linux.ibm.com>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, linux-kernel@vger.kernel.org, 
+	Dov Murik <dovmurik@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue 08-04-25 16:38:36, Artem Sadovnikov wrote:
-> On 07.04.2025 16:02, Jan Kara wrote:
-> > Thanks for debugging this! The fix looks good, but I'm still failing to see
-> > the use-after-free / end-of-buffer issue. If we wrongly split to two parts
-> > count/2 each, then dx_move_dirents() and dx_pack_dirents() seem to still
-> > work correctly. Just they will make too small amount of space in bh but
-> > still at least one dir entry gets moved? Following add_dirent_to_buf() is
-> > more likely to fail due to ENOSPC but still I don't see the buffer overrun
-> > issue? Can you please tell me what I'm missing? Thanks!
-> 
-> add_dirent_to_buf() only checks for available space if its de parameter
-> is NULL, but make_indexed_dir() provides a non-NULL de, so that space
-> check is skipped entirely. add_dirent_to_buf() then calls
-> ext4_insert_dentry() which will write a filename that's potentially
-> larger than entry size and will cause an out-of-bounds write.
+On Wed, 9 Apr 2025 at 12:21, Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Tue, Apr 08, 2025 at 01:54:07PM +0200, Stefano Garzarella wrote:
+> > I see, so IIUC I can just apply the following change to this patch and avoid
+> > to export snp_svsm_vtpm_probe() at all, right?
+> >
+> > diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+> > index acbd9bc526b1..fa83e6c7f990 100644
+> > --- a/arch/x86/coco/sev/core.c
+> > +++ b/arch/x86/coco/sev/core.c
+> > @@ -2702,8 +2702,10 @@ static int __init snp_init_platform_device(void)
+> >         if (platform_device_register(&sev_guest_device))
+> >                 return -ENODEV;
+> > -       if (platform_device_register(&tpm_svsm_device))
+> > -               return -ENODEV;
+> > +       if (snp_svsm_vtpm_probe()) {
+> > +               if (platform_device_register(&tpm_svsm_device))
+> > +                       return -ENODEV;
+> > +       }
+> >         pr_info("SNP guest platform device initialized.\n");
+> >         return 0;
+>
+> No, this should go in tpm_svsm_probe().
 
-Indeed. I didn't notice this detail. Thanks for explanation!
+Sorry, maybe I missed something.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+tpm_svsm.c registers the driver with module_platform_driver_probe().
+
+Someone (the platform I guess) has to register the device by calling
+platform_device_register(), as we already do for example for
+sev_guest.
+
+If we move platform_device_register() to tpm_svsm_probe() how will the
+probe be invoked?
+
+Thanks,
+Stefano
+
 
