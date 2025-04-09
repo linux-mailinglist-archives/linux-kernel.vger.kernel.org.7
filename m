@@ -1,127 +1,211 @@
-Return-Path: <linux-kernel+bounces-596114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC0DA82773
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:15:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 753CCA82777
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB037188E5C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:15:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C9B8461A7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F185C266586;
-	Wed,  9 Apr 2025 14:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83ECB146A68;
+	Wed,  9 Apr 2025 14:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHgzEa2P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="BZ3TuqHB"
+Received: from YT6PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11022086.outbound.protection.outlook.com [40.107.193.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D0B266562;
-	Wed,  9 Apr 2025 14:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744208094; cv=none; b=JxSxC0LHmQy+7Xfh6ZYqvzh8OVjSpPCJvce7rvkYSiDqr8n5MJbxXmEfOuTUSS5gByfO6g+M1b2u6a4rHxAV+ijx1fh3Omg2tcSDVKWlL/QMLR0Tcifp+Wy4lXTfQyCRASngloveEL25MO5OEN8jYY6iWGS8vwNjhTxrfZwfjZE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744208094; c=relaxed/simple;
-	bh=Sz7Ar48KE4txY+Gbl2J3yWZDzFynseII097OkDBTw60=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=lLrTxexeZG9XVwmAEGLTopUUkQRXkvncUZqUqz3LsAk8OiQthsWAQLfo+y3d9dJJl6/hGrJz19djP2hX4zRF4JiFiP3LGJdMkX3fEhxaN3SScefebP7LRgKQ7MbOA44pTzARoNyCGfVBvomL+9BVCfgoGyBp2sFpeYjeGU26bSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHgzEa2P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05941C4CEF3;
-	Wed,  9 Apr 2025 14:14:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744208094;
-	bh=Sz7Ar48KE4txY+Gbl2J3yWZDzFynseII097OkDBTw60=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=hHgzEa2Py3OsRnURP0dR+bHfuyrRsc685WJloe0naiT11O7ZWNzOQnoQ6GpE22sej
-	 YrlY7aEMIDFOqc9QkuTVecfR1cJqQ+RMRu9Sm0rVWhrXyirtLFXPfEB9kN8HD2dxIj
-	 kDDeKa7BOURRbExG846Neu2ANImjpF8kx7snyiCotgfdhTLKLuduCIwdhHV2dkaO+V
-	 g/Q4uuODXHhMbZ4NqSkc0nYJVvZV/mjSJsdw6eAobBojYyZzbhhJpRenrn4L1slyAf
-	 CEyKcUah9nN8puooD9stve/j4tCpOd+icFrINfqHogvp/4EaiDQa++GPw2ePjmN6Qp
-	 zT1nl4lwXMRdA==
-Date: Wed, 09 Apr 2025 09:14:52 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DB125F788
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 14:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.193.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744208154; cv=fail; b=Tq5vEraq8n9bWg+R2b+JICSAIUqNo7E+ktduYGtz39rfCW9yVZs1Rp3Ryzz2peTBCshcH2DJ8te33nW8IPS0cwha796M7veacHnwmJsB2Lc73HBcL7GAtOBtyhWQxfS2DwAH2W7zNJLmIzwNnCRWwo9tWzHvofecMSXtIP5W13o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744208154; c=relaxed/simple;
+	bh=Sbcg+nXXxhBLwisHdYMXXEEq7LRO7pRCHpYSPSgkdZs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=p+VxQti/zI5u2rjUwt2zwtrmEy0TT1RLgpt6kjszgofDb5KAtievSSG4YCX0TKk2ZLPqbkbFQSYIIKZc2zYr9Uay/VNFDmlAI3/2i4s0ciK5xo6xxzpuOKn4yazBm6tuN9o4MMV0pgqKP5NuRQ/4oRvx/n2l/SyE5orElpaQyKM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=BZ3TuqHB; arc=fail smtp.client-ip=40.107.193.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JQ/YurlrgGsZRGA5qJbx4LSp5IhMHyYQza0xbrHyrmkfqicqzBPHTwQLvjRaIkTTDMmERANMCpmgIX4QE1zvMyXFGtaXCuIDSShvMaQMXnGcIORcg7JFZ0tNO+f1GzzaA0iv+xzIN6ClzfZMGjl4mPnVVsx+9roN5ibD2rm1kjFOao69rV19abar9DRpdiwp35Ptc0mjk8nDTiimMhrb5w6E65awE/r+Oudb8oRmd8FPi5wp9b1+NeB3jCvwKvWhTHJhzSU5Ocv1W8bGZ1CEg+eO3uxhnvLvk0ohMQJ0y48nW0hsOt4pmAEo6pgt+8KZCNKCDyFU9AC690UToSZcHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BAAOvs0ebaDSWwZh0w4Vvtniyl0KMk/cRz8hiKgow9E=;
+ b=Fh6kw/3GQHbW8+XOHc23fry4wGTUn/Ly0T4QxZJkjlInqtNA5dXWtVgFWPL71QJY+Ud0Tmcq8WwQodeQ3OTJJuOUfLGffUy9hO/SmKhYTATraU1BYiN9rbN3BPm/qYuA+qjVR2tVpyUvtviQ/hRtODQYTVaudMosM12ps31DV5E+2mRWyFPfs0eklwjCII1bkVEscg/wxwu4zETmxHUH4R2xBXP0pcFI/GkhzqBMfG1uD9Zxnm5DU+TjZXt9N/aFl1cDXJ63iX5hFRpkz67c+dr5sJH13pD3LAlPMBijBhDaDDKci+SqA3KUMNnlMz4YWzVBR3dNNEkt+Pg6Z6qRkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BAAOvs0ebaDSWwZh0w4Vvtniyl0KMk/cRz8hiKgow9E=;
+ b=BZ3TuqHBuhgsG7SdASMOofNnK+954j2//5oSHqNfiYz0vTqcFW9f3NjCvi6AyLVBTkwXTkha5M5vq7PovRHTQqtmDa5hMxC1svJIbsEBqdsV2mdIpwVMcESQ5EFhIe91cnjlgy4E8dfRn9+sAdzKljA8Xb5e9HO34cIrlFmOU3hd7TIUEYHTli7LmzrElvRMrIwNkyAt5RhuBNQt9nAcSabQ5P9YtGupA9rS8W2mag1j28NL78wrTplv16eL4STaf/CqvXoz+9Oz6844dJ1ADHpxmIeBqE8sSqCGDGdxCPvqwh/ttv0EQJnnRkefrrd9zmDkKljdvQFhokyo/RAbCw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT3PR01MB10750.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:fa::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.33; Wed, 9 Apr
+ 2025 14:15:44 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%7]) with mapi id 15.20.8606.033; Wed, 9 Apr 2025
+ 14:15:44 +0000
+Message-ID: <c0df7480-1c18-421f-9348-2d39b7bebb49@efficios.com>
+Date: Wed, 9 Apr 2025 10:15:42 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/3] sched: Move task_mm_cid_work to mm work_struct
+To: Peter Zijlstra <peterz@infradead.org>,
+ Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Ingo Molnar <mingo@redhat.com>, "Paul E. McKenney" <paulmck@kernel.org>,
+ linux-mm@kvack.org, Ingo Molnar <mingo@redhat.org>,
+ Shuah Khan <shuah@kernel.org>
+References: <20250311062849.72083-1-gmonaco@redhat.com>
+ <20250311062849.72083-3-gmonaco@redhat.com>
+ <20250409140303.GA9833@noisy.programming.kicks-ass.net>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20250409140303.GA9833@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR0101CA0240.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:66::14) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: andersson@kernel.org, devicetree@vger.kernel.org, 
- konradybcio@kernel.org, krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, conor+dt@kernel.org
-To: Juerg Haefliger <juerg.haefliger@canonical.com>
-In-Reply-To: <20250408145252.581060-1-juerg.haefliger@canonical.com>
-References: <20250404090108.3333211-1-juerg.haefliger@canonical.com>
- <20250408145252.581060-1-juerg.haefliger@canonical.com>
-Message-Id: <174420798688.310428.4343070033252638387.robh@kernel.org>
-Subject: Re: [PATCH v2 0/3] HP EliteBook Ultra G1q support
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT3PR01MB10750:EE_
+X-MS-Office365-Filtering-Correlation-Id: ce94e1af-45e5-4bf9-bead-08dd777103c4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bjFpbTJSOE5FdzZURmZFdHlULzNTL2VKVkdrampkNjZQS3ZlVEN4TEZ4VWxs?=
+ =?utf-8?B?TzFJV0ZJaksvd0tLVmVvNURSeW83cjdYUWs1ZitETDV1M294aExzWTZUMEpx?=
+ =?utf-8?B?ajU1UUs4NWRzWklEZDZJWUgzTlQ3M0FoRUJTUGxIRm11SW43dWZzaENKeDU1?=
+ =?utf-8?B?eDJZMWU1WGVRVkFCR3prbStTM2g0Ull2VDNVdnBxVVIwWWpEU0ZxZkFkbjFH?=
+ =?utf-8?B?bWprbFp1TUFUcDUvZ3FERzdrMDQzM3N5cFh1RUNiMW9RZHFBZGZzeFVSRGZp?=
+ =?utf-8?B?TEE5N3F4dm5QQnpCam5xTTFleTJpMFp0TDFlWFBma0huOGp5Q29hRDA0RnRo?=
+ =?utf-8?B?Y2J0TW4yMWpwOGQzZ3RESnAxaTRkRUlWaVNVdE1YdUNRUFVKcnJEVnlUeThJ?=
+ =?utf-8?B?YU5COGhiSjNFV3AxT3hSb2JLVWhZWVp5MjRpWTNzTC91SzVzL05lbHN1TUpa?=
+ =?utf-8?B?V09mSHIrQ1ZyUnZ2MExQMW5ERnc4TTlYZjFzVTVkNzRsMC80aktad0lLWUhC?=
+ =?utf-8?B?ZlNqNk5pOWZxaTVqY05SRmNJYW43ZHVzNmd4YVlGd1Z6UkxXVktXM3p1bm1V?=
+ =?utf-8?B?Kzg3eitkejdtWHliWjdqbzlhTnJaY1I0eSt2cE8zVC9STWRVeGd1SXFUNHI2?=
+ =?utf-8?B?UTdRYjcyZ2RmM1lUaTlYN0swMUdqc3k3dURaSjdOeDBka2I0S1hYaktVUGdC?=
+ =?utf-8?B?L1pkZjNudHFncW9JQitvRS9wb1JjbnNnQ1plMVlKWGlLSXh2MUYvQzVHd2w0?=
+ =?utf-8?B?WWIwM0dHbUpHUC9qa3I4aGF6MElIUUNLZHhURVpLSVJPQXYxdzl4ekV1TERo?=
+ =?utf-8?B?T3g3KzFVdWF6TTE0OU9nMGM2ZVEzdU04OEd6c1JHT3VXejMvamtpRVpMcW1o?=
+ =?utf-8?B?RjIwc0NENUZOVllDb1lQUjhSOVhkc1pDZlF6NFY4ckJhOUdPRXFhdUJNUEdu?=
+ =?utf-8?B?bldBbzVDSEYzS1N6U3FDQVNZc1lvQlRIQ3BBZlZSc2dNMnFaOE80Z0w4anA1?=
+ =?utf-8?B?YkZKaTdqMzR2U09TTWN0OUVubVh1dytoaENua1gyUXUzeGZ3MTZhVkhMcXRP?=
+ =?utf-8?B?Zkd0U1VuekJvbFVEdzVZampYSWdxTEtmSnp1WWZkUldHTXVCU21VS0wvb2lC?=
+ =?utf-8?B?VVoxU2lpUy80ZmJUTVh4ZGdIblM0aHZ0UVN3VWd5WWFKRi9aLzY3U1hzVm9q?=
+ =?utf-8?B?OUtTQVV2cGd2U1lWZ3ZoM00yUDlXeDZGS04vTnRLeDZkcXBJMkxabTJRUytp?=
+ =?utf-8?B?dkR2d240OVBKVnoyMXN4eHNPaG4wL0p5R05uUCtPMUZYdVlBT1hpSWsrM2Vp?=
+ =?utf-8?B?L3I5cTVpeWZiOGVHdnhaM004VjJYYllRMDAzYi9pS245d3FEamoyajIyRFhY?=
+ =?utf-8?B?UGNUOWxhYWp2OS9Dd2FReGtJWVNYWGEyazdSVEVBZExqcWVvczJWdzdEaVJ3?=
+ =?utf-8?B?QUtHamZFQk9oaENjU2RHaWNGWHpqTUx5YkFzVnBEbDMvWkJFMUhqK3Q1RTl1?=
+ =?utf-8?B?a3d6VlEzdjZoOW1MTDFQN0RRQmt2REZ5NTcxMHNxNis1MDg4a2VWcmVQM2ly?=
+ =?utf-8?B?dnlHZnNXcG1xdGQ0WUdZS1VpUDBhRWdpbEdjdTdQWjRMZ1VtaG93aElnR0ZM?=
+ =?utf-8?B?NzlhTlkvd1lyNmQxRk5mVFcrTHJpSlRyU2NFM2VDc0lnN2tPQlFwVWUzWGY5?=
+ =?utf-8?B?VlFyREs2Y1BtQ2pDOTV6MXRhY3ptbXJWbE1mRERRb3BYMjlsWk1oMC9RL2RV?=
+ =?utf-8?Q?har9xWgnMJcnQ5HGxWYpGintqi2+tjwMAspgO8t?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NDBhUkNjTDdDRkpIQVZTUnAzbStUQ0QrN2VxSGRPd05MZldXVmFXMXJraEQ2?=
+ =?utf-8?B?YVViSVFOQlFTZlBWeUdkSVN5N240NXdWVDMxOCtqUWozamFiWUZWLzJwem9J?=
+ =?utf-8?B?S0RXbWxuQW4xNzBDd3ovLzlLV0s5Q3N3Qkgxek82TmxJcWkxeWExQVJWU1pk?=
+ =?utf-8?B?TnZrS2VQc2NLNXg2RkgwazBFRHBPOEI5cVF6SVNtVTRSb0JzMjBqYWo5aitm?=
+ =?utf-8?B?YzU2YS9UZWViZzIrZURZUkprSExnNUF6SXlNY1VWMzZHWi9sNUNWRVN2ZkVY?=
+ =?utf-8?B?UUgzcnltejJibC9qMHc0NEYzbEFwbEIyTzFrODZYVGY1a3NVUWpKVkF6MDla?=
+ =?utf-8?B?c3ROMElyV05kWG5kR0MzOERGSEQ1ek15UUlsbUJoaXp3T2c4MHZnSGJZVzE4?=
+ =?utf-8?B?ZnM0WWF6NmZhcGRwclAxZDErLzlKZ3Z5Q0Y4bmVhRXhCWFFSME93YlRtbHFL?=
+ =?utf-8?B?ZUttSjJBVGpBejV5M3VCMmV4d1RkWkFiZkVuUnpCT3NFeEZWUk01U2w2NTRI?=
+ =?utf-8?B?R0lranhYZ29DNFIyeFBrZjR3aWRVTU9VSkhEVWo4NVhJaDZnRHBYZDl4REZH?=
+ =?utf-8?B?Y3NpUWdYbE5YbjZpSFRYVnFrVVczekVleHVIamlBRjE0OHBCRnJoTzE1dHdz?=
+ =?utf-8?B?U213OUVTWjk2bWFzelk5Z3Jrc1ZDeDNMRGpEMjloeWNSQzFpRXVzOWVER2Rp?=
+ =?utf-8?B?N1lqTDNDZWVQWlZJZ25yQTR4czNXNWFmMTY4QW5jT01YeGtZY1I0MnFqUEM2?=
+ =?utf-8?B?cE1odWZwanNCckZESDY2bTNLb2pMZ2xpcE9TTThpL2l5aUttanVsaEhZM0hX?=
+ =?utf-8?B?SWhYK2NZOHZRRldKeFFTYk1qTURrUEpVWDB4bUVuT05TUmc4UmFBYjB2TlR1?=
+ =?utf-8?B?dm1lOFR3RjdvT2JudEMrRThZbWh4QW9HM1BPZktEdTRXb1dxVmZaVlhCQ2hF?=
+ =?utf-8?B?TzArVllrNW56OFRva1JyejhyZDJyNThjbjdac3RyV1VJTjhQRjFSZjBEODc1?=
+ =?utf-8?B?TnRxUDlMSFIzSlJ1YnRJelNwcXY0cWNyckl6Tmo1S2k3cVM4cW9wMWpXOTYz?=
+ =?utf-8?B?RnlLMmVJQWN1M0o3cE9lQ0dCdVNHTjhWajJVbGNZSjA3ZnZ0QTNDZHdheVl5?=
+ =?utf-8?B?eUptd1ZLTTFTNDBBWXlnQmhzbUJ2R3E3QitjaWdhdDJGWFgvcnJOVXhFMUE5?=
+ =?utf-8?B?WnUvbFc1czlqczBEWkxScmkxUCtRYlJMa2hzcTF0M0svM0Y5b3pUbzZaaFNj?=
+ =?utf-8?B?LzluTXNzYTg0NzVra1dDc3Rjbjdlcy84MlBmbDRZS0hhcUVYOGxzR3Bwa3pp?=
+ =?utf-8?B?aFVPS2kwQzRPVHFsZXBISnU3dmt0RUU1VmtEa3o5bVJZRW5tWFRjSWMwcEUx?=
+ =?utf-8?B?bDE1Ly9ObytJejM2akJjQ3BTSjZ5Z2krVDhFS0loOEVvN1NTdFk2TFVDY0Yy?=
+ =?utf-8?B?TnplbDk2RzgyZ3VPWFpleFRuRU1UUnZGdG14RzJlYVJPOGthVVZrTC83T1I2?=
+ =?utf-8?B?L1hBcDZaUGhHbVE0NDNZTEJtNnYzRjZMejE5NnNYaWlNa053MFoxOUdsbFQ1?=
+ =?utf-8?B?bzBiM3J1YUNFU2c3eGZsZUJSTTJlbnVhSG9qQ29nMmdic1M0K2x0MmJGZDcv?=
+ =?utf-8?B?K2drT1dia1pEd2ZKUEx1MlF4QlZpb3AzVTk5aHZOU3IzaGVycWtObTlVY1lx?=
+ =?utf-8?B?aDFRYzZoQWhqTGZsTU5UdVA0M0hzVmdUM3laVEMwQnlKR2x6UHk5WWxIaktL?=
+ =?utf-8?B?T05jc0pWZnp0US85N0tzNm5wS3RneGhwTUZIZmI1NFNNNEhtSEpkQzEwaDU0?=
+ =?utf-8?B?a0hybmtzTmZ5N2VsYUxRbXIrdTlnYjIrVDRXYjhrU002RURrR05qR0ZVajg4?=
+ =?utf-8?B?UXhpUEhOZDZwKzY1V3ZBcFpmbVZXcEZtS0xEcWx4UktEVlFZTHRlYm1mSnZl?=
+ =?utf-8?B?RFJVOWhCWVZtTjJXSjl2WVRBSHJHS3hiMFNFWExiZ3NRV1hHQVRpRlBQUnJD?=
+ =?utf-8?B?VzcydFdudmVoUnVHYVh0Z1ZQWlBCaXY2RG9ldXp5eDNib2VYUnh3bDNKZlEx?=
+ =?utf-8?B?U1BoejY0VHhvK212aXZLRjZRREVqd0JzelcvRHhWb3JINlEraUlWcjJoRkpw?=
+ =?utf-8?B?ZXZ1NVY1OW4zbzNsOE05MVZKMjZSWUNNdkZxNW9NSVhURjN5Z3p0NzMvcklG?=
+ =?utf-8?Q?5cPR/rlDNn3JE8c2JzNGKIY=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce94e1af-45e5-4bf9-bead-08dd777103c4
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2025 14:15:43.8509
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /atXb4dU+e+6QWTe8rbd8sB0HbD0K7/308YArZNQxLlCUaJX94w/bvcewX67MVaOLAXT1XVjy7T1csPWXPoIrSmKluAdXARrP2KhsQRv/yM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT3PR01MB10750
 
-
-On Tue, 08 Apr 2025 16:52:48 +0200, Juerg Haefliger wrote:
-> Add support for the HP EliteBook Ultra G1q 14" AI laptop.
+On 2025-04-09 10:03, Peter Zijlstra wrote:
+> On Tue, Mar 11, 2025 at 07:28:45AM +0100, Gabriele Monaco wrote:
+>> +static inline void rseq_preempt_from_tick(struct task_struct *t)
+>> +{
+>> +	u64 rtime = t->se.sum_exec_runtime - t->se.prev_sum_exec_runtime;
+>> +
+>> +	if (rtime > RSEQ_UNPREEMPTED_THRESHOLD)
+>> +		rseq_preempt(t);
+>> +}
 > 
-> Based on HWINFO64 and APCI tables, it seems to be the same HW as the
-> HP OmniBook X 14.
+> This confused me.
 > 
-> v1->v2:
->   - Don't rename the X14 dts to dtsi and directly include the dts
->   - Add a label to the sound node and use that to override the model
->   - Reorder the dt doc patch before the dt usage
-> 
-> Juerg Haefliger (3):
->   arm64: dts: qcom: x1e80100-hp-omnibook-x14: add sound label and pull
->     out the model
->   dt-bindings: arm: qcom: Document HP EliteBook Ultra G1q
->   arm64: dts: qcom: x1e80100-hp-elitebook-ultra-g1q: DT for HP EliteBook
->     Ultra G1q
-> 
->  .../devicetree/bindings/arm/qcom.yaml         |  1 +
->  arch/arm64/boot/dts/qcom/Makefile             |  1 +
->  .../qcom/x1e80100-hp-elitebook-ultra-g1q.dts  | 36 +++++++++++++++++++
->  .../dts/qcom/x1e80100-hp-omnibook-x14.dts     |  7 ++--
->  drivers/firmware/qcom/qcom_scm.c              |  1 +
->  5 files changed, 44 insertions(+), 2 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-hp-elitebook-ultra-g1q.dts
-> 
-> --
-> 2.43.0
-> 
-> 
-> 
+> The goal seems to be to tickle __rseq_handle_notify_resume() so it'll
+> end up queueing that work thing. But why do we want to set PREEMPT_BIT
+> here?
 
+In that scenario, we trigger (from tick) the fact that we may recompact the
+mm_cid, and thus need to update the rseq mm_cid field before returning to
+userspace.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Changing the value of the mm_cid field while userspace is within a rseq
+critical section should abort the critical section, because the rseq
+critical section should be able to expect the mm_cid to be invariant
+for the whole c.s..
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Thanks,
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/v6.15-rc1-3-gb09878285d23 (best guess, 1/4 blobs matched)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250408145252.581060-1-juerg.haefliger@canonical.com:
-
-arch/arm64/boot/dts/qcom/x1e80100-hp-elitebook-ultra-g1q.dtb: pinctrl@f100000 (qcom,x1e80100-tlmm): Unevaluated properties are not allowed ('bt-en-sleep' was unexpected)
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
+Mathieu
 
 
 
-
-
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
