@@ -1,161 +1,325 @@
-Return-Path: <linux-kernel+bounces-596278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A49A829B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:14:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 208D4A82A08
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A352F1C0029F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:09:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA39C3BFBDD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437B726F454;
-	Wed,  9 Apr 2025 15:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1357F26FDBB;
+	Wed,  9 Apr 2025 15:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WDR7QX+P"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="LS9up8sz"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E5A26B978
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3406626FD82;
+	Wed,  9 Apr 2025 15:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744211045; cv=none; b=WZzKZqtxJRNk+M2MM+fY4QqaTR1EEPdIQtTdN3SuJZXCpWdziVV6DZXQ/HppTDseGDNDdi8Q/wX0vdg3/k7o/uJxADPZ23roe7WNjUWzgPzG7nxnFkN6WuZOlnDE3cioNxdyjKMRrRu5cjs5G4HwxJ6ywAaMuKt1Tce97xn2+bE=
+	t=1744211069; cv=none; b=c6NMv5vIqyJOXwcKuehS5LVxoQGjmCLdwCVB/tDb3nGEdUp8pW8g1cyBUofuR8hRB9JAJAahLGWt5Z9ixFVQN57k8HWpuLAqjTfuJoom5pHcHH8L5fZul67iHF3vFdi8uwOqsVZHlG8VgnHm77EiwZfn2VoZT0zA6xUB4Xry21U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744211045; c=relaxed/simple;
-	bh=A70GfRt6rS7q055BdUvnvblK20cYmxXB3ubM9CYqwaE=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=pSnCrWM7JhJTwcgDevafX2v0hGatjG47foopYNqNocS9iN+xzW1PWQGgWSWD3In0hdoPBpAnyhKiHoz+ChodRYEBC+P1Jd9hyxMeAk/o8P83KZn+ZfW5GSD7i+ZVMa73bbNLL1HZwZImcgZCGY5uVwdAWRad0H7jvrU9yy4Wl2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=WDR7QX+P; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abf3d64849dso1174282966b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 08:04:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1744211041; x=1744815841; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AdQ6uVYA6aRCHZvQyDMxVKHgqhU7FXpMW3GkKnr+FVY=;
-        b=WDR7QX+Py5LOlnsKZjgHFenGgdqNgR44gD9SeNFV/hPGgSAO/MD1sRAy+6fSgem+2b
-         BC9Ud1L9LzOn5iT4aF3gssabFKZ2P1n72tRU6XeSF4fFhjbjMeP221A8OMRF43Kq9U7c
-         oPZ49n3UF9f/AMC/kgPQ5hGDKJ7cniL0o5uq0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744211041; x=1744815841;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AdQ6uVYA6aRCHZvQyDMxVKHgqhU7FXpMW3GkKnr+FVY=;
-        b=ja8oLsvPtkWMOJ5i69jBY5IlBGRufPGO56YzrdBw9o8ZT0CWeWOt/PqPMDZusk1+Ia
-         FlpLpe+IzTZWbGwUc6qNPsT7V1RAf7CCnGJov1cKu3EouYKiO88UBH3p4bKE8Q0FefBt
-         zJk4gbqXJ9ExzJVI6vDVSf/hrE5mMedXTONexy3K61I91pMZCaJn0hp7SLWF9ZB+o5fn
-         dmyj/hH5uJxqf7U98LibPxss3+RNrF7LlmUIuHyjRnN26MDce/hWY6+zi78n87Yv1vRb
-         Ui+As5obS9/16CEcsTgpo+kstVX1p2suKZImNJHCVGslLzUcYo6M/poVITgnfp9BXeTE
-         ACZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFxeEou6upLQmerShvsdQ7M5WibGB+RPIPywIdcFW471g99ysqNM6KsEJq4Dg0hXHnxDfm2XnQLRsZhu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOs7piCwwNUO4hEJciebcThgyGd2Qp12/+nOE7gynYOuBzBsTB
-	/szoGkGRyjaf8YQeNbzXoOK6GktnlEG+VExmX8zwhO/8QqOJAExXPJ41jHC/Cw==
-X-Gm-Gg: ASbGnctgkcbwsQjLjJIbcFkFhgUCRJhDYQssdXrGmssXd83IoW+MDFctDI6Wfo2A4du
-	Jrka7n1R0mLa5dnNSuhggZI+d5kkRjaZ1CdsPPjTmFm3tITCXl9pVpSt8qaLbSA2uy4JD57rm4P
-	Ch82P2OIM6XISA4UxL+ExcXTKmk+4bx/MD7+hpurMhqQLePLb4g6JdQzFO+KCWMW1rmADJ1itpR
-	KxFZE0EbfS1/jJ7/Hn0fJe8mr7EAPP8vAe65/sbQKZew5eW8R0yRvoMa5ibnYFt6ND8I1iTMBTK
-	OOs+VUcA4Kc/Dd7L3jPOLICkio8a4vTwuBPKOOUji7lW6AfJ5kzkpt/Q6N9+Fz1fJYMfvIX0vuO
-	xfcw=
-X-Google-Smtp-Source: AGHT+IH8rvSNSI9ZT7sJJpxIkBiqflzFJXcmfoY4w8kr3Fxm/euzzgm+d6qqs73HjSj0q7bCQs8BSw==
-X-Received: by 2002:a17:907:97d4:b0:ac3:121e:f2cb with SMTP id a640c23a62f3a-aca9d5dd4femr248936966b.1.1744211040164;
-        Wed, 09 Apr 2025 08:04:00 -0700 (PDT)
-Received: from [192.168.178.39] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ce7042sm106602666b.165.2025.04.09.08.03.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 08:03:59 -0700 (PDT)
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-To: Wentao Liang <vulab@iscas.ac.cn>, <kvalo@kernel.org>
-CC: <christophe.jaillet@wanadoo.fr>, <megi@xff.cz>, <saikrishnag@marvell.com>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Date: Wed, 09 Apr 2025 17:03:58 +0200
-Message-ID: <1961b144f30.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-In-Reply-To: <d791185d-6a23-4c6f-8a93-d5464409939a@broadcom.com>
-References: <20250406081930.2909-1-vulab@iscas.ac.cn>
- <d791185d-6a23-4c6f-8a93-d5464409939a@broadcom.com>
-User-Agent: AquaMail/1.54.1 (build: 105401536)
-Subject: Re: [PATCH] brcm80211: fmac: Add error check for brcmf_usb_dlneeded()
+	s=arc-20240116; t=1744211069; c=relaxed/simple;
+	bh=vXNbrTLUQrlYNydORT5K+rP57dVB2oADM2jV2AgBth4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hANqiunfNiLMiZ5Roz7J4XNLzWR1U5UKXcZjlvxHGPyXmNxadVdNaUVenVq5cYKm6l3wX18rn5Qz0KzBlEZLdtuW/hbEAAQcV4jGh+1zBtiPNo+GwRc9zWfRjM4KVPDiY5mnh9kj5ordAMb80kbQpX0/mVo3drKho2rtmEyEinM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=LS9up8sz; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ZXmSR19b9z9t7P;
+	Wed,  9 Apr 2025 17:04:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1744211063; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vXNbrTLUQrlYNydORT5K+rP57dVB2oADM2jV2AgBth4=;
+	b=LS9up8szfCpBJACvt4gXa2EtpB97sVavX67wzRPpNDGRm6AHGs0RWhd+AXtPqRnp9op8zM
+	yE04pWSHbv+2bVCH/VYb7yTY+oy+qVUAZ4WW9/6lnP3PpHLGzc4tcRtTF4O7CQkK3tXhvX
+	cCiMrZuEgIld1a2KfjtHsIUu/oAQCKCx7fGs11u4gWzMoATXWnWjLCYPUuT99rUvw0HFVE
+	FckYqYRVDbBSXy1btg0Kjd2aoH0hjFAIPruG1nC4IsLJddiCYtoMfHQpDpP9RKPQBOiAnR
+	HJHimkXP9tmHGGqthFRauJolLOimIaLd2csSieO9zeWinLAUXQxNFxqKta20mA==
+Message-ID: <0b2fc70d8fae566c8ca43bafc929e2bd19725924.camel@mailbox.org>
+Subject: Re: [PATCH 1/2] dma-fence: Rename dma_fence_is_signaled()
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
+	phasta@kernel.org, Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>, Gustavo Padovan
+ <gustavo@padovan.org>, Felix Kuehling <Felix.Kuehling@amd.com>, Alex
+ Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, Lucas Stach
+ <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>,
+ Christian Gmeiner <christian.gmeiner@gmail.com>,  Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Frank Binns
+ <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, Qiang Yu
+ <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>, Sean Paul
+ <sean@poorly.run>,  Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>, Marijn Suijten
+ <marijn.suijten@somainline.org>,  Lyude Paul <lyude@redhat.com>, Danilo
+ Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>,  Steven Price
+ <steven.price@arm.com>, Dave Airlie <airlied@redhat.com>, Gerd Hoffmann
+ <kraxel@redhat.com>,  Matthew Brost <matthew.brost@intel.com>, Huang Rui
+ <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,  Melissa Wen
+ <mwen@igalia.com>, =?ISO-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>, Zack
+ Rusin <zack.rusin@broadcom.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Lucas De Marchi
+ <lucas.demarchi@intel.com>, Thomas =?ISO-8859-1?Q?Hellstr=F6m?=
+ <thomas.hellstrom@linux.intel.com>, Bas Nieuwenhuizen
+ <bas@basnieuwenhuizen.nl>,  Yang Wang <kevinyang.wang@amd.com>, Jesse Zhang
+ <jesse.zhang@amd.com>, Tim Huang <tim.huang@amd.com>,  Sathishkumar S
+ <sathishkumar.sundararaju@amd.com>, Saleemkhan Jamadar
+ <saleemkhan.jamadar@amd.com>, Sunil Khatri <sunil.khatri@amd.com>, Lijo
+ Lazar <lijo.lazar@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>, Ma Jun
+ <Jun.Ma2@amd.com>, Yunxiang Li <Yunxiang.Li@amd.com>, Eric Huang
+ <jinhuieric.huang@amd.com>, Asad Kamal <asad.kamal@amd.com>, Srinivasan
+ Shanmugam <srinivasan.shanmugam@amd.com>,  Jack Xiao <Jack.Xiao@amd.com>,
+ Friedrich Vock <friedrich.vock@gmx.de>, Michel =?ISO-8859-1?Q?D=E4nzer?=
+ <mdaenzer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, Thomas Gleixner
+ <tglx@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Dan
+ Carpenter <dan.carpenter@linaro.org>,  linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,  linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org,  amd-gfx@lists.freedesktop.org,
+ etnaviv@lists.freedesktop.org,  intel-gfx@lists.freedesktop.org,
+ lima@lists.freedesktop.org,  linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org,  nouveau@lists.freedesktop.org,
+ virtualization@lists.linux.dev,  spice-devel@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org
+Date: Wed, 09 Apr 2025 17:04:00 +0200
+In-Reply-To: <334e843c-d7fe-4e33-b4fc-f3d18226465a@amd.com>
+References: <20250409120640.106408-2-phasta@kernel.org>
+	 <20250409120640.106408-3-phasta@kernel.org>
+	 <20250409143917.31303d22@collabora.com>
+	 <73d41cd84c73b296789b654e45125bfce88e0dbf.camel@mailbox.org>
+	 <72eb974dfea8fa1167cf97e29848672223f6fc5b.camel@mailbox.org>
+	 <ab7d1937-d0e9-45f8-8f7d-ddd7a1a9d3d5@amd.com>
+	 <9a90f7f14c22c01aa28d89aa91bf4dfa4049c062.camel@mailbox.org>
+	 <334e843c-d7fe-4e33-b4fc-f3d18226465a@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: 9wh48drngnos9i43y9zpcu5f5mrpihgx
+X-MBO-RS-ID: f0082fb0ff96fc9be99
 
-On April 9, 2025 2:11:08 PM Arend van Spriel <arend.vanspriel@broadcom.com> 
-wrote:
+On Wed, 2025-04-09 at 16:10 +0200, Christian K=C3=B6nig wrote:
+> Am 09.04.25 um 16:01 schrieb Philipp Stanner:
+> > On Wed, 2025-04-09 at 15:14 +0200, Christian K=C3=B6nig wrote:
+> > > Am 09.04.25 um 14:56 schrieb Philipp Stanner:
+> > > > On Wed, 2025-04-09 at 14:51 +0200, Philipp Stanner wrote:
+> > > > > On Wed, 2025-04-09 at 14:39 +0200, Boris Brezillon wrote:
+> > > > > > Hi Philipp,
+> > > > > >=20
+> > > > > > On Wed,=C2=A0 9 Apr 2025 14:06:37 +0200
+> > > > > > Philipp Stanner <phasta@kernel.org> wrote:
+> > > > > >=20
+> > > > > > > dma_fence_is_signaled()'s name strongly reads as if this
+> > > > > > > function
+> > > > > > > were
+> > > > > > > intended for checking whether a fence is already
+> > > > > > > signaled.
+> > > > > > > Also
+> > > > > > > the
+> > > > > > > boolean it returns hints at that.
+> > > > > > >=20
+> > > > > > > The function's behavior, however, is more complex: it can
+> > > > > > > check
+> > > > > > > with a
+> > > > > > > driver callback whether the hardware's sequence number
+> > > > > > > indicates
+> > > > > > > that
+> > > > > > > the fence can already be treated as signaled, although
+> > > > > > > the
+> > > > > > > hardware's /
+> > > > > > > driver's interrupt handler has not signaled it yet. If
+> > > > > > > that's
+> > > > > > > the
+> > > > > > > case,
+> > > > > > > the function also signals the fence.
+> > > > > > >=20
+> > > > > > > (Presumably) this has caused a bug in Nouveau (unknown
+> > > > > > > commit),
+> > > > > > > where
+> > > > > > > nouveau_fence_done() uses the function to check a fence,
+> > > > > > > which
+> > > > > > > causes a
+> > > > > > > race.
+> > > > > > >=20
+> > > > > > > Give the function a more obvious name.
+> > > > > > This is just my personal view on this, but I find the new
+> > > > > > name
+> > > > > > just
+> > > > > > as
+> > > > > > confusing as the old one. It sounds like something is
+> > > > > > checked,
+> > > > > > but
+> > > > > > it's
+> > > > > > clear what, and then the fence is forcibly signaled like it
+> > > > > > would
+> > > > > > be
+> > > > > > if
+> > > > > > you call drm_fence_signal(). Of course, this clarified by
+> > > > > > the
+> > > > > > doc,
+> > > > > > but
+> > > > > > given the goal was to make the function name clearly
+> > > > > > reflect
+> > > > > > what
+> > > > > > it
+> > > > > > does, I'm not convinced it's significantly better.
+> > > > > >=20
+> > > > > > Maybe dma_fence_check_hw_state_and_propagate(), though it
+> > > > > > might
+> > > > > > be
+> > > > > > too long of name. Oh well, feel free to ignore this
+> > > > > > comments if
+> > > > > > a
+> > > > > > majority is fine with the new name.
+> > > > > Yoa, the name isn't perfect (the perfect name describing the
+> > > > > whole
+> > > > > behavior would be
+> > > > > dma_fence_check_if_already_signaled_then_check_hardware_state
+> > > > > _and
+> > > > > _pro
+> > > > > pa
+> > > > > gate() ^^'
+> > > > >=20
+> > > > > My intention here is to have the reader realize "watch out,
+> > > > > the
+> > > > > fence
+> > > > > might get signaled here!", which is probably the most
+> > > > > important
+> > > > > event
+> > > > > regarding fences, which can race, invoke the callbacks and so
+> > > > > on.
+> > > > >=20
+> > > > > For details readers will then check the documentation.
+> > > > >=20
+> > > > > But I'm of course open to see if there's a majority for this
+> > > > > or
+> > > > > that
+> > > > > name.
+> > > > how about:
+> > > >=20
+> > > > dma_fence_check_hw_and_signal() ?
+> > > I don't think that renaming the function is a good idea in the
+> > > first
+> > > place.
+> > >=20
+> > > What the function does internally is an implementation detail of
+> > > the
+> > > framework.
+> > >=20
+> > > For the code using this function it's completely irrelevant if
+> > > the
+> > > function might also signal the fence, what matters for the caller
+> > > is
+> > > the returned status of the fence. I think this also counts for
+> > > the
+> > > dma_fence_is_signaled() documentation.
+> > It does obviously matter. As it's currently implemented, a lot of
+> > important things happen implicitly.
+>=20
+> Yeah, but that's ok.
+>=20
+> The code who calls this is the consumer of the interface and so
+> shouldn't need to know this. That's why we have created the DMA fence
+> framework in the first place.
+>=20
+> For the provider side when a driver or similar implements the
+> interface the relevant documentation is the dma_fence_ops structure.
+>=20
+> > I only see improvement by making things more obvious.
+> >=20
+> > In any case, how would you call a wrapper that just does
+> > test_bit(IS_SIGNALED, =E2=80=A6) ?
+>=20
+> Broken, that was very intentionally removed quite shortly after we
+> created the framework.
+>=20
+> We have a few cases were implementations do check that for their
+> fences, but consumers should never be allowed to touch such
+> internals.
 
-> On 4/6/2025 10:19 AM, Wentao Liang wrote:
->> The function brcmf_usb_dlneeded() calls the function brcmf_usb_dl_cmd()
->> but dose not check its return value. The 'id.chiprev' is uninitialized if
->> the function brcmf_usb_dl_cmd() fails, and may propagate to
->> 'devinfo->bus_pub.chiprev'.
->>
->> Add error handling for brcmf_usb_dl_cmd() to return the function if the
->> 'id.chiprev' is uninitialized.
->
-> Thanks for the patch, but NAK. Let me explain why below...
->
->> Fixes: 71bb244ba2fd ("brcm80211: fmac: add USB support for bcm43235/6/8 
->> chipsets")
->> Cc: stable@vger.kernel.org # v3.4+
->> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
->> ---
->> drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c | 7 ++++++-
->> 1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c 
->> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
->> index 2821c27f317e..50dddac8a2ab 100644
->> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
->> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
->> @@ -790,6 +790,7 @@ brcmf_usb_dlneeded(struct brcmf_usbdev_info *devinfo)
->> {
->> struct bootrom_id_le id;
->> u32 chipid, chiprev;
->> + int err;
->>
->> brcmf_dbg(USB, "Enter\n");
->>
->> @@ -798,7 +799,11 @@ brcmf_usb_dlneeded(struct brcmf_usbdev_info *devinfo)
->>
->> /* Check if firmware downloaded already by querying runtime ID */
->> id.chip = cpu_to_le32(0xDEAD);
->> - brcmf_usb_dl_cmd(devinfo, DL_GETVER, &id, sizeof(id));
->> + err = brcmf_usb_dl_cmd(devinfo, DL_GETVER, &id, sizeof(id));
->> + if (err) {
->> + brcmf_err("DL_GETID Failed\n");
->> + return false;
->
-> The boolean return value does not indicate pass or fail. It answers the
-> question implied by the function name brcmf_usb_dlneeded(), ie. is the
-> USB device running firmware (false) or do we need to download firmware
-> (true). So returning false here is not going to help us.
->
-> The id.chip is initialized to 0xDEAD so upon a failure that value is
-> being passed to brcmf_usb_prepare_fw_request() which will consequently
-> return NULL, because we do not support a 0xDEAD chip. So there is no
-> need to bail out here. Just print the failure message is enough although
-> I would suggest to include the err value:
->
-> - brcmf_usb_dl_cmd(devinfo, DL_GETVER, &id, sizeof(id));
-> + err = brcmf_usb_dl_cmd(devinfo, DL_GETVER, &id, sizeof(id));
-> + if (err)
-> + brcmf_err("DL_GETVER failed: err=%d\n", err);
+There is theory and there is practice. In practice, those internals are
+being used by Nouveau, i915, Xe, vmgfx and radeon.
 
-Maybe an error message in brcmf_usb_dl_cmd() would suffice printing the 
-command id and error value. That way every invocation of the function logs 
-a message upon failure.
+So it seems that we failed quite a bit at communicating clearly how the
+interface should be used.
 
-Regards,
-Arend
->
+And, to repeat myself, with both name and docu of that function, I
+think it is very easy to misunderstand what it's doing. You say that it
+shouldn't matter =E2=80=93 and maybe that's true, in theory. In practice, i=
+t
+does matter. In practice, APIs get misused and have side-effects. And
+making that harder is desirable.
 
+In any case, I might have to add another such call to Nouveau, because
+the solution preferred by you over the callback causes another race.
+Certainly one could solve this in a clean way, but someone has to do
+the work, and we're talking about more than a few hours here.
+
+In any case, be so kind and look at patch 2 and tell me there if you're
+at least OK with making the documentation more detailed.
+
+P.
+
+>=20
+> Regards,
+> Christian.
+>=20
+> >=20
+> > P.
+> >=20
+> > > What we should improve is the documentation of the dma_fence_ops-
+> > > > enable_signaling and dma_fence_ops->signaled callbacks.
+> > > Especially see the comment about reference counts on
+> > > enable_signaling
+> > > which is missing on the signaled callback. That is most likely
+> > > the
+> > > root cause why nouveau implemented enable_signaling correctly but
+> > > not
+> > > the other one.
+> > >=20
+> > > But putting that aside I think we should make nails with heads
+> > > and
+> > > let the framework guarantee that the fences stay alive until they
+> > > are
+> > > signaled (one way or another). This completely removes the burden
+> > > to
+> > > keep a reference on unsignaled fences from the drivers /
+> > > implementations and make things more over all more defensive.
+> > >=20
+> > > Regards,
+> > > Christian.
+> > >=20
+> > > > P.
+> > > >=20
+> > > > > P.
+> > > > >=20
+> > > > >=20
+> > > > > > Regards,
+> > > > > >=20
+> > > > > > Boris
+>=20
 
 
