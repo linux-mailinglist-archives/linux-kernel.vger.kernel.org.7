@@ -1,70 +1,90 @@
-Return-Path: <linux-kernel+bounces-595259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 137FDA81C42
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 07:40:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A283A81C47
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 07:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7A997A9059
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 05:39:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DABFE7AA776
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 05:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F64A1DB122;
-	Wed,  9 Apr 2025 05:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FC41DE3AA;
+	Wed,  9 Apr 2025 05:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="BD2+mYsE"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hhLT9PEe"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D8FAD23
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 05:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03541D90C8;
+	Wed,  9 Apr 2025 05:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744177219; cv=none; b=WzvQIWiRjtfzHWXKmOrdE0WcnT7+8qbA6PciSZ7/qGRWS9tVOS6Z41yrQkWLVF6RXWL3mH8Xm/QK1FXqIIfYhhiLfUbgJd2z3RGWjEL3pqaf0owIjGYGodQs1UIGLF2MYgiWokt+erYhae8Tk237EuYdHHUchUlWiL/48m9MTcQ=
+	t=1744177424; cv=none; b=mfEBb3bvLmqJbIViRqRYs22uK7Tbqu8V57l0b3AIKyqLjv/Ng19U5aGuDCUIvYcQ2VBiHEUp8q7zrQo+g1a7SL/OnpLr9MO3xGXqwCPW7gEvDXgc2rgnjwnxu7YyCJ2ddHcevL7a3cuyRa07OAnkusdh7OEtDo2HvjoL908Z+ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744177219; c=relaxed/simple;
-	bh=p2GFHM2SMwaLrS/LX43HuyNtduhmC1N3l6ZuO7SkAJk=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=H3Q+VZMim5NzLYR/dkTOEtbF34bzHa0L1aJ1hPx60quOoKoCIeTn8wjXvxbOFJq1ZAw6xwqBnkHWsdhGdtINLCkRy991pYLqn+vGmta9SfQ/t5dv67VAEd9aWZ7jkG6hPi7+h6iuKr5STeUu92R3pyOIa2v6rSvFsPDm/BoQHcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=BD2+mYsE; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1744177206; bh=BfL6JcWIeyrbV5o3kWQ/ZfYXA19kUu6xJqzkEOaxgUI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=BD2+mYsENwhdVVlXcRCVjGyhBsaiRgX2xj3LbxIeFKFBA/ttF3dumMh/NPqNRiJRi
-	 ApwwB/FfWtcDZpX6PmfKcT3moW8LpMCGRv3K6l5ZsFHl90aB6eqnZ0HJCiFVKUvHWW
-	 eHUBma5DpVm4B0OV53OTFTN3cHlEkuTvzF4HMxLY=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id A0516AB7; Wed, 09 Apr 2025 13:40:05 +0800
-X-QQ-mid: xmsmtpt1744177205tmhgbarl9
-Message-ID: <tencent_89E9E2EC86CF4C78866CA42CAD6E6095B00A@qq.com>
-X-QQ-XMAILINFO: MzViUhZOUTdXMYQWWhi6yrOIqQdhqgLB/gOXfcBbIrHFVfiMyYNpGFbtOdxIrc
-	 LOpqdA6G8txgEqhxzNzMpO/xbj2YsdgCP2htMntU3/u048Md6/5nj8kPlQSzDP/3s67Ri6P7+FFy
-	 1DMhaHxCDcnkLD6obahafBG+wU+xiUwCRclDajDMni8ISil4wz+pZbO04K81OF9PkQaLPlCSfMn0
-	 9l34lU3MAns6NK3UKpEEXOJBEHG4zlFEc65l7qxz8Ewvj7z9AF9rFsx6wttLXapXcmGe/jllTtbu
-	 U+Go12QL86Ge67BIQ27FtCNycXnj6N2Tfa+PCARUBvC7oPknBCotY7whmMsSpizk7uJuStfxqupG
-	 CT3Kczlus7fULfM/Kn33QXfUy1fnSEyXFffeke1MzpAyvUzonQleOz1GO77fiQdauxzoyNiC9yzW
-	 fUNwHQ7nlQ0nZG6n8RboYx7MCQ2siAcx28bPo82lPCWNiv9CYmc6VG4Z7/r6LcfiiUoBtyjo6k40
-	 52l2O30m5DFtpIHL57ApkDG+MaJvghAr+On2kQIW2+pJDEEDZgwB2EyzptDY0l1wFSnLd0nQZmwP
-	 GHIEasDshfw/TagLW2yD0u7dzjLlCQiy8eNDxtogKBM6ttP2qqkp9N1+ggckC8sXZSFZsqa3M97/
-	 x2DS/QcuXa1OsmfG6Ge751A+Vp7BredyvrHPw/sS8vipxVQKi0ckxSH/yoyOdYqyrm8axVyBvDIo
-	 gbKEiiPf61SrPLfQSAAlYh3/AwxjXcIT1lrAPOCnam7ZvoMQGUgABfcDVv1+HLvErJBVDM3vAmEr
-	 Q533yH8OnNChH9HlQnrCFldZLPvUnQKpuYWXpCar/PGX3VrhEUmaSjz3ic1nKpuZlXXqi767HIUC
-	 aezYtXHL7WWiIFv7FjZAsMGa+pMsNEZ/vd3rFWD5vZ
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+00778a9a557a2a5e1a33@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [wireless?] general protection fault in cfg80211_mlme_deauth
-Date: Wed,  9 Apr 2025 13:40:05 +0800
-X-OQ-MSGID: <20250409054004.1820638-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <67f50e3e.050a0220.396535.0561.GAE@google.com>
-References: <67f50e3e.050a0220.396535.0561.GAE@google.com>
+	s=arc-20240116; t=1744177424; c=relaxed/simple;
+	bh=QsoIXU3R68W1HSWv2/JVUojsjXdbneDZX/yJ/K2kuwY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RsG5/y8eDOdzsWFZcgoZwZeBYJ9nSs/GVGgjAag/z42O2QZsnhOUcx7vVfEBsjBSIKX/1CyBaOVt97rgCWKA/dOsih0KlZy+nMpkCA2vaYD4tq5ePEskSv4v+uzOhp5ChzKz0ymrZYm07gWD8i+V1v3ckclTtQV73sMMI96OCKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hhLT9PEe; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-af9925bbeb7so4797091a12.3;
+        Tue, 08 Apr 2025 22:43:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744177422; x=1744782222; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h0+8QrxIEMZCQLvXkMsmq3iISJHFTsUHU35F1UKNl04=;
+        b=hhLT9PEeU2q/oI9zI+bedzLllKwoUz24pLU+SrNUkzJ5PUe5Z8T1+XJcowY1B7a4e1
+         HARXf8rGxhFQubajX0qOWtLKMfT4o65/+D/aPCvk0BmXEmbCfiSog4co5QAI1adtZ36w
+         64QHuscj5QVRTcdMzzabZkYrOJ8kKsuPyEZi85fJEM1ySw+j08jebCKS+KhR418nbaLO
+         QUbMTu14FLkzVYhh9cOjM2WK7c4M3qb5JsTex7hDHDrT/mQPPWT/dy5kUkjyoZVqZg5w
+         W4dveLBqzjiGC11x9dPEubFztVIhdBWO8/m6sPzHz8wEiXvma3NvLo0OS2bwRLMwTjeD
+         UHVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744177422; x=1744782222;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h0+8QrxIEMZCQLvXkMsmq3iISJHFTsUHU35F1UKNl04=;
+        b=jNgs9dDYshhcDMXgALBnS2dQyxDjoBH11S9wjHfUCXRckMEGMI7tycYbXRExxC4Wkp
+         rgtFMD5yy5lzRhDv4n4oH2qmS93coGfoxeEV6Srqcat9sF7duG7vYTZe4VX0fo1URYs8
+         ulc92BgFHfsp3+I1pdVth8EYgk4UKpNF9TWg8nWFNuOL/Vr3tm0X3qDld3DN2t4llrLU
+         ZxPx6Ayl63WoXGHWdMrqaTEVBJrqKAZEEVW3JCG3jFKKaHU8h+8EOm3q69tpClkcuJp7
+         8Qg/akY+59HEbBpezYouiAijvzHgxjHvGQMiv/8vJFQUAhf6/fJxMqYu/6xdOi9DA6q8
+         qR+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUGYPTPIfIJutwYt5d3+TH4z6OOhygFglXxI5vRI5QnsXNd9Wf/STdS4J0qPheH0zAFXYhoMECLKconRA0=@vger.kernel.org, AJvYcCWInofD7BycCrP2MuNHu7VKxm9Q7eYknXbgRex9iSAHSZBMec8zXaHzqGrJ85UXUV1L9k/JMPrK@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpZcFe75hJ3LpKUH6PDxl8VpWPa9rwHfgInkQF3Je+0QTo3m0j
+	mATiglEk6LJBDzIzZLJcrgWcdzK0K1uREQsodrKMPEz4MS3glcgt
+X-Gm-Gg: ASbGnctSt61k0bnmJv622bUjL/+8BA4sdEd2q4TG2slBAxuG2BleoLVo3OcAkd9V8cT
+	tHVmCdagbqmPfM9jCr97KwO5nTkKGSLhcfNJN39ikA01/sek5D9hnOuaHU+KeNSn2LBgTbYOXak
+	Vm/kURnDfU9hnfzq9iR+J0Mjg8Vj5sW6Soxc+nZpKUuafjTox3yXRINtJHgkh6ybSGM+ojFFwoq
+	aPl5fIZJqX6JOyqiKoLDiiUz7EKbj17CQ4tfaibFzTNefziwmWZhWMq48OksKYzWmMUKLmkTGO1
+	mMCV9YwEoTkdW4bBMpWDF7M/5KyR2/OtP7VfygUZDb467frA+zML
+X-Google-Smtp-Source: AGHT+IGKx3TUSZM6JYyNC5zESYyJS1sGFIz3I8qCoEYJ2ix9eYBl4TE/4p/f/SuiBZHe3Jm+/aDkMQ==
+X-Received: by 2002:a05:6a21:9104:b0:1f5:5807:13c7 with SMTP id adf61e73a8af0-2015aea8f13mr1902804637.17.1744177421971;
+        Tue, 08 Apr 2025 22:43:41 -0700 (PDT)
+Received: from nsys.iitm.ac.in ([103.158.43.24])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-73bb1d68cb1sm395591b3a.75.2025.04.08.22.43.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 22:43:41 -0700 (PDT)
+From: Abdun Nihaal <abdun.nihaal@gmail.com>
+To: bharat@chelsio.com
+Cc: Abdun Nihaal <abdun.nihaal@gmail.com>,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	vishal@chelsio.com,
+	rahul.lakkireddy@chelsio.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] cxgb4: fix memory leak in cxgb4_init_ethtool_filters() error path
+Date: Wed,  9 Apr 2025 11:13:21 +0530
+Message-ID: <20250409054323.48557-1-abdun.nihaal@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,21 +93,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-#syz test
+In the for loop used to allocate the loc_array and bmap for each port, a
+memory leak is possible when the allocation for loc_array succeeds,
+but the allocation for bmap fails. This is because when the control flow
+goes to the label free_eth_finfo, only the allocations starting from
+(i-1)th iteration are freed.
 
-diff --git a/net/wireless/sme.c b/net/wireless/sme.c
-index cf998500a965..39bc68b3428a 100644
---- a/net/wireless/sme.c
-+++ b/net/wireless/sme.c
-@@ -226,6 +226,9 @@ static int cfg80211_conn_do_work(struct wireless_dev *wdev,
- 		*treason = NL80211_TIMEOUT_ASSOC;
- 		fallthrough;
- 	case CFG80211_CONN_ASSOC_FAILED:
-+		BUG_ON(!wdev->conn->bssid);
-+		BUG_ON(!wdev->conn->params.bssid);
-+		BUG_ON(!wdev->disconnect_bssid);
- 		cfg80211_mlme_deauth(rdev, wdev->netdev, params->bssid,
- 				     NULL, 0,
- 				     WLAN_REASON_DEAUTH_LEAVING, false);
+Fix that by freeing the loc_array in the bmap allocation error path.
+
+Fixes: d915c299f1da ("cxgb4: add skeleton for ethtool n-tuple filters")
+Signed-off-by: Abdun Nihaal <abdun.nihaal@gmail.com>
+---
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
+index 7f3f5afa864f..1546c3db08f0 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
+@@ -2270,6 +2270,7 @@ int cxgb4_init_ethtool_filters(struct adapter *adap)
+ 		eth_filter->port[i].bmap = bitmap_zalloc(nentries, GFP_KERNEL);
+ 		if (!eth_filter->port[i].bmap) {
+ 			ret = -ENOMEM;
++			kvfree(eth_filter->port[i].loc_array);
+ 			goto free_eth_finfo;
+ 		}
+ 	}
+-- 
+2.47.2
 
 
