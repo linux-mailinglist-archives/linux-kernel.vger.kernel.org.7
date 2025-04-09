@@ -1,114 +1,307 @@
-Return-Path: <linux-kernel+bounces-595941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2665EA824B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:28:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF441A824AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20D534E075B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:27:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D6937B680E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6B52561CC;
-	Wed,  9 Apr 2025 12:25:24 +0000 (UTC)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093B1262807;
+	Wed,  9 Apr 2025 12:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="L5ZSYsuJ"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B6325FA23;
-	Wed,  9 Apr 2025 12:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC4B2620C8;
+	Wed,  9 Apr 2025 12:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744201524; cv=none; b=NwdObYD8RoiW0suE28dJQ+cb0xzpnIDUxV/vepzWnu60AnQWGV48uOqjOdpSvtLNU8GZOs4HiPmijuvW69AyvTNwK6yqlatx3b7gD/4HxCSRcrpA5Qe9CfyNMxRmGYk0kGr9XPVGVcKlj6wV+pnEXA88hYzsxVRSoaHnaxRqQGw=
+	t=1744201554; cv=none; b=hUE9v5XL/hK4fXhGxXbite2pAfhxfK/FY/QA384GlRV7wHg0thomr8ymt/Jt80FAsrwGYcjLwfscupSi6wU1MOgzld9lUIIPco13TmXd1ivDA/A3e2RJJ104lfWMj8vQYrjNkIhxkvOrAzRTW0OzjqFKCgnr7IAd4ERAavBswbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744201524; c=relaxed/simple;
-	bh=LYcF6PfU4i0kmmqI/TkLAuqKe40Ucw7uWLG9JphBXvc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BrZDB3Wo5zGHpgQ319t7rEODFO8olOHn4UxGsJL9nVa5fml2cQB47bQd75UtWnjg9gDOz36VveMaI7p3/XVulHA/F50VL3Oc0Y4yILmFCFZYCBaSikp2ijE8C7p4gr18UcEPkwW13pe+1OB4xjPeIQ7r3BtceOb3FGDYUjJNbEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86b9b1def28so6162802241.3;
-        Wed, 09 Apr 2025 05:25:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744201520; x=1744806320;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4bwpqyi0C/Omv8Oxh3ieog7x4LQHMwE5JHHlM6bbhPs=;
-        b=I7MlbksafnjdKaAwCA7LHhI2lS8tthwf2HKptAh/0KD/bHvCAgNIdWWN3SMh80oUqA
-         eTnvaV10qG4ZbHKvYzXOZusxtxeLUxs2OJLn4fGxXt/iOBobUNgt2mow/piauTaFcru7
-         HmxW7t118jTbyKhVhz0XXWlX+acNQHAn8lEoPnc0JtULePGnMlsl3v6VxYde+MXbTwUF
-         ZWKs2Nf7tb45mMW/wOJJnjQimV6Wkey1u1Yt6naEPIBfLKWpT5qFgv4QbiVA3JnU81m0
-         QKqmBkusaI2rDAawXb+mVVseJDz1vMm88vLLKqTaFbJgDM2R9dk9JXbhMZsV/fHBvV/o
-         mX7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUI5g8VsVS2xvd+8b6/wgHWnTw8UXfhJR6RwjY+g9cAJkFtWt22EswEHteSY21d3AMvSUnDgBJdqezwmHgDrrthJZY=@vger.kernel.org, AJvYcCV0H2arxsCUjXmg6OkmI9Hp+kkyvNv03AoUb4x5CEmEJEdbV+gFlgDge5fKJWyxE3/XFW04PxpogT8mzLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxry3/FaJ1JsKi0WVMTdZtkun5DsxYD5RxojkuKormgsrE5SBYa
-	VCE2SKJb/H+IbsLO/CaDomny4eKPnFJuUQgVpdp9g237aAZTYD1fFgA31eet5LA=
-X-Gm-Gg: ASbGncvlaSgTUMQ19ODinQk3XQQHrGIRCPzU91NE6O3xPh4gr4ylFWriMvSeEoOzMXR
-	Kg6OHopBKGrvA1D0irhZHJItXq85jaID6KuBQtenWtpX36g9GBE+TSvrdO2Vg9tcmiM9TOzrxzN
-	mig7uu936x409tH5PMdfw4iH0E7q2wm4sNjvBLxMDRAkrK3PAMmPVOvQJvVeJCWITU9NkZ6Kc4J
-	+Ndn4G4uplSnsaaOeCOgRxlHKtkBFGi7F9m7VnpnyYAxN9Es+VMwc/dRAiWNTf4X2CuzocnAvQ4
-	BxUu5jTdXEpiw/xoFdzaLpcjfVy8G5WtPAeFIzd/Q7R2xgfca+PrAWgjzb15iUuhvrqNtGTmpWN
-	2ubdrDm7aTzS+Vo1Opg==
-X-Google-Smtp-Source: AGHT+IG1p3blamTdqchW2JXW+tXf91ECJAQQHXdkrQGNcHCZosqvrwkg9yMjbtWj5aoBGD5oOMVj/Q==
-X-Received: by 2002:a05:6102:4bc1:b0:4c3:64bc:7d00 with SMTP id ada2fe7eead31-4c9c447d902mr2124796137.24.1744201520120;
-        Wed, 09 Apr 2025 05:25:20 -0700 (PDT)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8755716eebesm205489241.19.2025.04.09.05.25.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 05:25:19 -0700 (PDT)
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-52403e39a23so5310684e0c.2;
-        Wed, 09 Apr 2025 05:25:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV7PadJpSMneuck1kc0xokyycxrNVhsQcJk7HIrCpnf/x5lYUPslktkF5ktkq6xWJyyCFo7w0QS7QtQmOgyXvlZmd0=@vger.kernel.org, AJvYcCXUooeSLcZTw12GOyyqcl1Oaj+PDwRUeeY+O+ohxRw84ATuFjvUjbkwfs+yxPcXHaRxx80gAt0BbXd5hX0=@vger.kernel.org
-X-Received: by 2002:a05:6122:3291:b0:523:dd87:fe95 with SMTP id
- 71dfb90a1353d-527a92355f4mr1715214e0c.9.1744201519093; Wed, 09 Apr 2025
- 05:25:19 -0700 (PDT)
+	s=arc-20240116; t=1744201554; c=relaxed/simple;
+	bh=tYJnQ974Zys7Ol/8cY+C5mpYQQIzGOy9TOcyoP6Rsj4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q326rBEifcWxDN4zXU+2qXAlbndNc91CdnUTIaVULnLlrglXkR+crby4uqDTxPizmkoblnpnsFdgTIVlKLMlgu0ErI44ALXeDX69zDOkDZuwkZ+FUGlsP/U/QaKbXJLiZIGJemoKtM45y+KEangVbbeRd+xsNUaz4tahqXfs2dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=L5ZSYsuJ; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5398mI2B009329;
+	Wed, 9 Apr 2025 08:25:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=6OGho
+	wcTsy6Jc5v1+rS984AXxVoNr3xwOkUgP6ehtb8=; b=L5ZSYsuJRrIWahAyGUseV
+	dqNn7Lmw1sa4VeryIHOQIghkcnRmsmxYf4VcB5+uj3xMtPA4AZNwZ99qaW6hNqr+
+	rCkYnpOd2dH3VzeN5zC89BepGL/RmuAZ+7iIIdN0SqDk02nunA9c+0rUdJ0frMtd
+	WX9Lqb1h12F2cDZEiwG7/DUy2OMtBM9a/1cWwZxMdk4tKoNASvc3z2wG51aR77Te
+	ozgnH8iw+mq9TqRX6VpQF4UH5L8HdMaCouTcPI73EnQjUYaEQbXZHWENa8N9MAt3
+	fc6xXgbM90k89TSBn8535NkRjuO/IjxuXXNecrSVxvj9JxvLEoPJaJN6I7OHMKeZ
+	Q==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 45vvjr0sk6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Apr 2025 08:25:36 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 539CPYSo052331
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 9 Apr 2025 08:25:34 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Wed, 9 Apr 2025
+ 08:25:34 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Wed, 9 Apr 2025 08:25:34 -0400
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 539CPL38016956;
+	Wed, 9 Apr 2025 08:25:23 -0400
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <jic23@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <marcelo.schmitt1@gmail.com>
+Subject: [PATCH v1 4/7] iio: adc: ad4170: Add clock provider support
+Date: Wed, 9 Apr 2025 09:25:20 -0300
+Message-ID: <65b71e307d37b8e3e26937a1e67398b2af0af399.1744200264.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1744200264.git.marcelo.schmitt@analog.com>
+References: <cover.1744200264.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250401090133.68146-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250401090133.68146-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250401090133.68146-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 9 Apr 2025 14:25:05 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWY+rYzPO5TmowdDvoyURVZBiXgWu7MEZE4eh7ze_tJrg@mail.gmail.com>
-X-Gm-Features: ATxdqUFzwtuDtvELHopcKxYge5NHyDOHhLRTNuKkyueoCSJD1WhC4pXt_PeD_Zk
-Message-ID: <CAMuHMdWY+rYzPO5TmowdDvoyURVZBiXgWu7MEZE4eh7ze_tJrg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] arm: shmobile_defconfig: Drop individual Renesas SoC entries
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Russell King <linux@armlinux.org.uk>, Magnus Damm <magnus.damm@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Authority-Analysis: v=2.4 cv=Var3PEp9 c=1 sm=1 tr=0 ts=67f66740 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=XR8D0OoHHMoA:10 a=gAnH3GRIAAAA:8 a=EjOB5vySZ_iNcyL_diIA:9
+X-Proofpoint-ORIG-GUID: 6mE6HjjgTNH3pENmI9tujKMr46M-clYa
+X-Proofpoint-GUID: 6mE6HjjgTNH3pENmI9tujKMr46M-clYa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-09_04,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0 phishscore=0
+ mlxscore=0 malwarescore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504090074
 
-On Tue, 1 Apr 2025 at 11:02, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> ARCH_RENESAS is already enabled in shmobile_defconfig, which ensures that
-> all ARM32 Renesas SoCs are enabled by default. As a result, explicitly
-> listing individual Renesas SoC entries is redundant. Remove these entries
-> to simplify the configuration.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The AD4170 chip can use an externally supplied clock at the XTAL2 pin, or
+an external crystal connected to the XTAL1 and XTAL2 pins. Alternatively,
+the AD4170 can provide it's 16 MHz internal clock at the XTAL2 pin. Extend
+the AD4170 driver so it effectively uses the provided external clock, if
+any, or supplies it's own clock as a clock provider.
 
-Thanks, will queue in renesas-devel for v6.16.
+Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+---
+ drivers/iio/adc/ad4170.c | 135 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 134 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/iio/adc/ad4170.c b/drivers/iio/adc/ad4170.c
+index 5ffcdedf3e7f..97cf4465038f 100644
+--- a/drivers/iio/adc/ad4170.c
++++ b/drivers/iio/adc/ad4170.c
+@@ -7,6 +7,8 @@
+ 
+ #include <linux/bitfield.h>
+ #include <linux/bitops.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
+@@ -62,6 +64,7 @@
+ #define AD4170_DATA_16B_STATUS_REG			0x1A
+ #define AD4170_DATA_24B_REG				0x1E
+ #define AD4170_PIN_MUXING_REG				0x69
++#define AD4170_CLOCK_CTRL_REG				0x6B
+ #define AD4170_ADC_CTRL_REG				0x71
+ #define AD4170_CHAN_EN_REG				0x79
+ #define AD4170_CHAN_SETUP_REG(x)			(0x81 + 4 * (x))
+@@ -89,6 +92,9 @@
+ #define AD4170_PIN_MUXING_DIG_AUX1_CTRL_MSK		GENMASK(5, 4)
+ #define AD4170_PIN_MUXING_SYNC_CTRL_MSK			GENMASK(3, 2)
+ 
++/* AD4170_CLOCK_CTRL_REG */
++#define AD4170_CLOCK_CTRL_CLOCKSEL_MSK			GENMASK(1, 0)
++
+ /* AD4170_ADC_CTRL_REG */
+ #define AD4170_ADC_CTRL_MULTI_DATA_REG_SEL_MSK		BIT(7)
+ #define AD4170_ADC_CTRL_CONT_READ_MSK			GENMASK(5, 4)
+@@ -121,6 +127,12 @@
+ 
+ /* AD4170 register constants */
+ 
++/* AD4170_CLOCK_CTRL_REG constants */
++#define AD4170_CLOCK_CTRL_CLOCKSEL_INT			0x0
++#define AD4170_CLOCK_CTRL_CLOCKSEL_INT_OUT		0x1
++#define AD4170_CLOCK_CTRL_CLOCKSEL_EXT			0x2
++#define AD4170_CLOCK_CTRL_CLOCKSEL_EXT_XTAL		0x3
++
+ /* AD4170_CHAN_MAP_REG constants */
+ #define AD4170_CHAN_MAP_AIN0			0
+ #define AD4170_CHAN_MAP_AIN1			1
+@@ -238,6 +250,10 @@ enum ad4170_regulator {
+ 	AD4170_MAX_SUP
+ };
+ 
++static const char *const ad4170_clk_sel[] = {
++	"ext-clk", "xtal"
++};
++
+ enum ad4170_int_pin_sel {
+ 	AD4170_INT_PIN_SDO,
+ 	AD4170_INT_PIN_DIG_AUX1,
+@@ -320,6 +336,9 @@ struct ad4170_state {
+ 	struct ad4170_chan_info chan_infos[AD4170_MAX_CHANNELS];
+ 	struct ad4170_setup_info setup_infos[AD4170_MAX_SETUPS];
+ 	u32 mclk_hz;
++	unsigned int clock_ctrl;
++	struct clk *ext_clk;
++	struct clk_hw int_clk_hw;
+ 	int pins_fn[AD4170_NUM_ANALOG_PINS];
+ 	u32 int_pin_sel;
+ 	int sps_tbl[ARRAY_SIZE(ad4170_filt_names)][AD4170_MAX_FS_TBL_SIZE][2];
+@@ -1693,13 +1712,127 @@ static int ad4170_parse_channels(struct iio_dev *indio_dev)
+ 	return 0;
+ }
+ 
++static struct ad4170_state *clk_hw_to_ad4170(struct clk_hw *hw)
++{
++	return container_of(hw, struct ad4170_state, int_clk_hw);
++}
++
++static unsigned long ad4170_sel_clk(struct ad4170_state *st,
++				    unsigned int clk_sel)
++{
++	st->clock_ctrl &= ~AD4170_CLOCK_CTRL_CLOCKSEL_MSK;
++	st->clock_ctrl |= FIELD_PREP(AD4170_CLOCK_CTRL_CLOCKSEL_MSK, clk_sel);
++	return regmap_write(st->regmap16, AD4170_CLOCK_CTRL_REG, st->clock_ctrl);
++}
++
++static unsigned long ad4170_clk_recalc_rate(struct clk_hw *hw,
++					    unsigned long parent_rate)
++{
++	return AD4170_INT_CLOCK_16MHZ;
++}
++
++static int ad4170_clk_output_is_enabled(struct clk_hw *hw)
++{
++	struct ad4170_state *st = clk_hw_to_ad4170(hw);
++	u32 clk_sel;
++
++	clk_sel = FIELD_GET(AD4170_CLOCK_CTRL_CLOCKSEL_MSK, st->clock_ctrl);
++	return clk_sel == AD4170_CLOCK_CTRL_CLOCKSEL_INT_OUT;
++}
++
++static int ad4170_clk_output_prepare(struct clk_hw *hw)
++{
++	struct ad4170_state *st = clk_hw_to_ad4170(hw);
++
++	return ad4170_sel_clk(st, AD4170_CLOCK_CTRL_CLOCKSEL_INT_OUT);
++}
++
++static void ad4170_clk_output_unprepare(struct clk_hw *hw)
++{
++	struct ad4170_state *st = clk_hw_to_ad4170(hw);
++
++	ad4170_sel_clk(st, AD4170_CLOCK_CTRL_CLOCKSEL_INT);
++}
++
++static const struct clk_ops ad4170_int_clk_ops = {
++	.recalc_rate = ad4170_clk_recalc_rate,
++	.is_enabled = ad4170_clk_output_is_enabled,
++	.prepare = ad4170_clk_output_prepare,
++	.unprepare = ad4170_clk_output_unprepare,
++};
++
++static int ad4170_register_clk_provider(struct iio_dev *indio_dev)
++{
++	struct ad4170_state *st = iio_priv(indio_dev);
++	struct device *dev = indio_dev->dev.parent;
++	struct fwnode_handle *fwnode = dev_fwnode(dev);
++	struct clk_init_data init = {};
++	int ret;
++
++	if (!IS_ENABLED(CONFIG_COMMON_CLK))
++		return 0;
++
++	init.name = fwnode_get_name(fwnode);
++	init.ops = &ad4170_int_clk_ops;
++
++	st->int_clk_hw.init = &init;
++	ret = devm_clk_hw_register(dev, &st->int_clk_hw);
++	if (ret)
++		return ret;
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
++					   &st->int_clk_hw);
++}
++
++static int ad4170_clock_select(struct iio_dev *indio_dev)
++{
++	struct ad4170_state *st = iio_priv(indio_dev);
++	struct device *dev = &st->spi->dev;
++	int ret;
++
++	st->mclk_hz = AD4170_INT_CLOCK_16MHZ;
++	ret = device_property_match_property_string(dev, "clock-names",
++						    ad4170_clk_sel,
++						    ARRAY_SIZE(ad4170_clk_sel));
++	if (ret < 0) {
++		/* Use internal clock reference */
++		st->clock_ctrl |= FIELD_PREP(AD4170_CLOCK_CTRL_CLOCKSEL_MSK,
++					     AD4170_CLOCK_CTRL_CLOCKSEL_INT_OUT);
++		return ad4170_register_clk_provider(indio_dev);
++	}
++
++	/* Use external clock reference */
++	st->ext_clk = devm_clk_get_enabled(dev, ad4170_clk_sel[ret]);
++	if (IS_ERR(st->ext_clk))
++		return dev_err_probe(dev, PTR_ERR(st->ext_clk),
++				     "Failed to get external clock\n");
++
++	st->clock_ctrl |= FIELD_PREP(AD4170_CLOCK_CTRL_CLOCKSEL_MSK,
++				     AD4170_CLOCK_CTRL_CLOCKSEL_EXT + ret);
++
++	st->mclk_hz = clk_get_rate(st->ext_clk);
++	if (st->mclk_hz < AD4170_EXT_CLOCK_MHZ_MIN ||
++	    st->mclk_hz > AD4170_EXT_CLOCK_MHZ_MAX) {
++		return dev_err_probe(dev, -EINVAL,
++				     "Invalid external clock frequency %u\n",
++				     st->mclk_hz);
++	}
++	return 0;
++}
++
+ static int ad4170_parse_firmware(struct iio_dev *indio_dev)
+ {
+ 	struct ad4170_state *st = iio_priv(indio_dev);
+ 	struct device *dev = &st->spi->dev;
+ 	int reg_data, ret, i;
+ 
+-	st->mclk_hz = AD4170_INT_CLOCK_16MHZ;
++	ret = ad4170_clock_select(indio_dev);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "Failed to setup device clock\n");
++
++	ret = regmap_write(st->regmap16, AD4170_CLOCK_CTRL_REG, st->clock_ctrl);
++	if (ret)
++		return ret;
+ 
+ 	for (i = 0; i < AD4170_NUM_ANALOG_PINS; i++)
+ 		st->pins_fn[i] = AD4170_PIN_UNASIGNED;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.47.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
