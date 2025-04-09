@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-595702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5FFA821E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:18:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CBAAA821E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D9DF1BA384E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:18:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B9E64635BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0086925D543;
-	Wed,  9 Apr 2025 10:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F3B25DCFC;
+	Wed,  9 Apr 2025 10:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="irhM08H+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKazUwED"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3BD2550CB;
-	Wed,  9 Apr 2025 10:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF0325D8FF;
+	Wed,  9 Apr 2025 10:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744193882; cv=none; b=AZ676IXAclOv3U2iHMSF1AghpXtFB2mIVVHvWIqYpyVguR1hHhcBoMu6ket8n9JURCTaMJYb2EM6wYAKm7M2kyYHf9HoNs0PM/IGUuwAQItANYxVzfntYMNBOvEsEFbsAJyJzQhR/A+j4dsWy9McecnjMVvbyn3vQwnm9eBdEtw=
+	t=1744193898; cv=none; b=LRY+qGVPW0qJ0ykeIDYoABt/Ula6Ks0Ru7CVx4hmW8szSSPopq20vbpF67eCB7kotTE4wq1pxGG4JZ96g/YFtNPBx9Ybhjor2kNbfkTosuF4UTqs/8zFg0Y+46Z5A71mPOzrkMAuAxA2ymomLXfg9RpmEDYBylObaR/ZUqC9NhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744193882; c=relaxed/simple;
-	bh=YZ8Vuy/Bdu1plHkalSCMkdI6Kjd0KGZkqN2QecLoloU=;
+	s=arc-20240116; t=1744193898; c=relaxed/simple;
+	bh=6ksrS2ukx8baDR5oexJ+ylv0YSfETRiMQmVoTYYKO+I=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Wxc0L14Q1vpnOcakFsjFebSAEy260P+f7cO/RbI9SgFxRNZHI5F/N9ISU9UR17JTkA+Er+DYUEtbyrBsjOOvXk5Givj8ApLPWiC60knCIwyUdYukY1BksQ48GlFU7rOmveDM5k+qCC1vWGUFilxeFA28TiNbgCVZ9LJlTgqYzN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=irhM08H+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE91C4CEE3;
-	Wed,  9 Apr 2025 10:17:58 +0000 (UTC)
+	 MIME-Version:Content-Type; b=d1+nXNHO/bOukpPXx0lwV+U6U8VpfAhIiMW1YyYc6kPJh3IIjuyur9+nZTE90oMfx/bf5stNgKcTG3naDw/+BVnG1plWGUYusDwzTuf8xrK61y88aIGSPVTcPQGQjaRwfS02pwH5WlJnXOO0+4pWIhpPHJe+Nf5nv2axgis1Sis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKazUwED; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8511AC4CEE3;
+	Wed,  9 Apr 2025 10:18:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744193881;
-	bh=YZ8Vuy/Bdu1plHkalSCMkdI6Kjd0KGZkqN2QecLoloU=;
+	s=k20201202; t=1744193896;
+	bh=6ksrS2ukx8baDR5oexJ+ylv0YSfETRiMQmVoTYYKO+I=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=irhM08H+WWs5hAQf9VnIl0jVMNf1qcpUJ2bwZ1Ntgw1VrsA2ODzITQwXj2OTxWPhf
-	 9PuUuJZ07XvbJZ1OsZc2r5I9rih4z0A4jRfR4iL5OpKmqHpIoW7vYDMvNYlaus1+hZ
-	 4UV1FB8BhmvBcXcV7B4maXbSnN6h+RShFAny4VczjydCAO80NiibEsY1b7wNkRJtY4
-	 vbK8x7g1BbDl5PPS276OefEsRZbrDnJzqvU2eMRHvoLioGUlL67NX4lQColO5B4zDX
-	 rhMYjy+lRCgOeXLAkc7ckOel5WFxVeg2u55iYLUACtFeRCHMKeZYg2Y6NmX2P813KF
-	 QfTojZmaT0VAA==
+	b=mKazUwEDITjrCP8v10OLJWD66s96oERJAVdRel9k9zj4em/4y3EiQfqt3eAZ6Mk3f
+	 UHqdfD3zwIZTAQYwEEt2AtC0/DUU4r80hKU+SOVnoS8VFucFXWQBMsIo2jtyxTriFd
+	 zOIQ4GqKa1Y72VNUKHtUNeGf7XbT/E8XsbWzsaXNDuSf1U8vzasWx3kROuUczIivBW
+	 xaMdalUbev4Or76Ih9wXiGHSlSqp/Vgc3Zzq4DxL9en9rlev2cXMqYpLG+elzTFjfM
+	 caA2Xmd+HJaILs9NeKva3ndXvn3aSV9FUAXM5oa+MmndTbOkZkIEAz2yD6pSlUcVI2
+	 nrxn1zVra3KOg==
 From: Andreas Hindborg <a.hindborg@kernel.org>
 To: "Oliver Mangold" <oliver.mangold@pm.me>
 Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
@@ -49,15 +49,16 @@ Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
  Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
   "Trevor Gross" <tmgross@umich.edu>,  "Asahi Lina" <lina@asahilina.net>,
   <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 2/5] rust: Rename AlwaysRefCounted to RefCounted
-In-Reply-To: <20250325-unique-ref-v9-2-e91618c1de26@pm.me> (Oliver Mangold's
-	message of "Tue, 25 Mar 2025 11:57:01 +0000")
+Subject: Re: [PATCH v9 3/5] rust: Add missing SAFETY documentation for ARef
+ example
+In-Reply-To: <20250325-unique-ref-v9-3-e91618c1de26@pm.me> (Oliver Mangold's
+	message of "Tue, 25 Mar 2025 11:57:10 +0000")
 References: <20250325-unique-ref-v9-0-e91618c1de26@pm.me>
-	<NS6AE7mNgtRfxl85HOWeO3zIH468tz7eUKbw4V3koVm5OyDvyzeBU2dOQxWsmq_sOpeO35v4JqphdwYEjDk4qg==@protonmail.internalid>
-	<20250325-unique-ref-v9-2-e91618c1de26@pm.me>
+	<BilXj9TIYuQxgQ8GYVKxO0m88NUME1b-jtwrV9ZX3W9GXO-QJGFpb9rChJZarPa4e2AAvgJTm_DINEIW1JINlA==@protonmail.internalid>
+	<20250325-unique-ref-v9-3-e91618c1de26@pm.me>
 User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 09 Apr 2025 10:41:46 +0200
-Message-ID: <87ikndd8vp.fsf@kernel.org>
+Date: Wed, 09 Apr 2025 11:26:31 +0200
+Message-ID: <87a58pd6t4.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,14 +69,63 @@ Content-Type: text/plain
 
 "Oliver Mangold" <oliver.mangold@pm.me> writes:
 
-> AlwaysRefCounted will become a marker trait to indicate that it is allowed
-> to obtain an ARef from a `&`, which cannot be allowed for types which are
-> also Ownable.
+> SAFETY comment in rustdoc example was just 'TODO'. Fixed.
+>
+> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+> ---
+>  rust/kernel/types.rs | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+> index c8b78bcad259132808cc38c56b9f2bd525a0b755..db29f7c725e631c11099fa9122901ec2b3f4a039 100644
+> --- a/rust/kernel/types.rs
+> +++ b/rust/kernel/types.rs
+> @@ -492,7 +492,7 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+>      ///
+>      /// struct Empty {}
+>      ///
+> -    /// # // SAFETY: TODO.
+> +    /// // SAFETY: We do not free anything.
 
-I would suggest using `ARef<T>` and `&T` in the commit message.
+How about:
 
-v6.15-rc1 includes some more uses of `AlwaysRefCounted` that need to be
-converted. Otherwise looks good to me.
+  This implementation will never free the underlying object, so the
+  object is kept alive longer than the safety requirement specifies.
+
+
+>      /// unsafe impl RefCounted for Empty {
+>      ///     fn inc_ref(&self) {}
+>      ///     unsafe fn dec_ref(_obj: NonNull<Self>) {}
+> @@ -500,7 +500,7 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+>      ///
+>      /// let mut data = Empty {};
+>      /// let ptr = NonNull::<Empty>::new(&mut data).unwrap();
+> -    /// # // SAFETY: TODO.
+> +    /// // SAFETY: We keep `data` around longer than the `ARef`.
+
+This is not sufficient. The safety requirement is:
+
+  Callers must ensure that the reference count was incremented at least once, and that they
+  are properly relinquishing one increment. That is, if there is only one increment, callers
+  must not use the underlying object anymore -- it is only safe to do so via the newly
+  created [`ARef`].
+
+How about:
+
+  The `RefCounted` implementation for `Empty` does not count references
+  and never frees the underlying object. Thus we can act as having a
+  refcount on the object that we pass to the newly created `ARef`.
+
+I think this example actually exposes a soundness hole. When the
+underlying object is allocated on the stack, the safety requirements are
+not sufficient to ensure the lifetime of the object. We could safely
+return `data_ref` and have the underlying object go away. We should add
+to the safety requirement of `ARef::from_raw`:
+
+  `ptr` must be valid while the refcount is positive.
+
+That would allow the code in this example, but prevent the issue
+outlined above.
 
 
 Best regards,
