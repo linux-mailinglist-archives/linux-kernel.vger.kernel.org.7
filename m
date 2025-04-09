@@ -1,110 +1,93 @@
-Return-Path: <linux-kernel+bounces-595620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B41A820E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:19:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B04B8A820F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B069A19E8325
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:19:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1B903BD0A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E7F2528F0;
-	Wed,  9 Apr 2025 09:18:38 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F8829D0B;
+	Wed,  9 Apr 2025 09:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="dvNj2xq6"
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36611DE3AA;
-	Wed,  9 Apr 2025 09:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3911D6DBC
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 09:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744190317; cv=none; b=XeqEcgfUd7TmDXnCeSOEKOl1sOudVADq4PBAcTyKMJ/+NwebjZhLLob5MiB98qfwBkJPX9KN6UQ0qShMN/NPFedmYFSJG6tbMNrvZ2yaWH29S+kVz6bpiz+WND4v/yOVCvx/qlrOsLRiylJFpLxU3LUxiJ1iVQ8ytCj6b+3vhDI=
+	t=1744190762; cv=none; b=a04W5UlET8YQJPKsfyLGY5CjU3sXNDrlERPJWt/y44kxHn+ecTJ8kYHDP9Skkv0aI3Kx06k+AUUG5qbRDkvsP1HwCjsEESf6k94+w0zhpsgw2QWUCy8mfgcjTYAJlDP0ZH3YYIkuCsESbas5TdHUrgD4t3HdAUOHOp4+D879MT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744190317; c=relaxed/simple;
-	bh=SvN3Gcf50djMUpmY0B1/0uK5pLnCZSO+X3P+SrDIIZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UXs28hxFtEpV5IoLWvP1OlH7PVxRxgxEY0BAlSsQRkyxASSQvrmHNdzvVYwH4Vsn4wgBLhCF2vEMSdpGVLgz3hMBnurR9Fdm5FQTjK2Ii5Sr7hjHaEgZw/eEmeBhFQrPGCaZPSXfky8mW3jxvb6jom9G75FlK6A/8HjAzSDVG4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1u2RZd-0004ns-Qe; Wed, 09 Apr 2025 11:18:21 +0200
-Date: Wed, 9 Apr 2025 11:18:21 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Huajian Yang <huajianyang@asrmicro.com>
-Cc: pablo@netfilter.org, kadlec@netfilter.org, razor@blackwall.org,
-	idosch@nvidia.com, davem@davemloft.net, dsahern@kernel.org,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, bridge@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: Expand headroom to send fragmented packets in
- bridge fragment forward
-Message-ID: <20250409091821.GA17911@breakpoint.cc>
-References: <20250409073336.31996-1-huajianyang@asrmicro.com>
+	s=arc-20240116; t=1744190762; c=relaxed/simple;
+	bh=5C3KFfpI2O18fhzqUymS8oo6Dz0Be0VyIM8bX3M5FJs=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=FFQkMIjzj/YD7XGA20R214Vci1ssduIOKzdzqA6zM7GCTDC34aHIhtnuMglgVfWZM7Cny3o86rtYjDFRaw97IIJzrBLCxL9ThYvHOjjFYRXQ5aH5KPiFl/zjNp9SLIuMo4Rr4R21bAcLYwMyLH/p76sXJCHAhIgC6CGJK8E5+ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=dvNj2xq6; arc=none smtp.client-ip=162.62.57.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1744190448; bh=IyXzpMljFwbVc8yVsFLowQkOycriDOazz3w1HXnYK6k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=dvNj2xq6T44K1q8VaR28CDmaZih5YRtmbtXu8K0PnAbtAHAovYL9bV74eXWCiaXoW
+	 r43FhZU8Z9GYJmZqDMU/Mzyi2ESs/RGAxgL+03Qei71WOixg+Gc74sVNtlUG0WDrtB
+	 9S10a/YqoLP1rgYoHYLcHsvyXxgiSXkHEKgjbS/A=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 52F2428E; Wed, 09 Apr 2025 17:20:47 +0800
+X-QQ-mid: xmsmtpt1744190447t434o2d3o
+Message-ID: <tencent_618DFA25908DA8126BDD965DF1991ACFE007@qq.com>
+X-QQ-XMAILINFO: MQ+wLuVvI2LQ7oBZzapUPIixASPfB7l64/jdHjf8A0Lw5r2k/edc0Y7cY9hmPr
+	 qLAnxlESx/LHSsHgp9u/zGQYm3QU4yQQasY/t+65vfT0Jesk+7CkCgaYJGky8r1s8bOQKt03SCSs
+	 eAdPKYDjqzmq+/Eds0SKSC0ydz+rJOLbIVoXK3UtoiNfNegMVsqKMnWQrvF6Oz437aV+5mLl/Fqo
+	 uPCgV5ohJLy/JCG0pRF5m0o2h3OxgNhbpaN4lCEEkoA6P/Hf7s6tZBPOGuEYw8Dko94OTZK0HgBI
+	 dj6HrdVsJkvwTZ1bVt5WzjZvzKTWiimWSgTbdwvaYRURFhfqXPNlgviMiwKxDL/P3QAkB49xy3WO
+	 VX0pH9REBld3yVo9ZOldFmkESTFzpLW1ajD8uWNAp4D1k7/vdBzSAIyABAPo8/lanAXGSBV4df5U
+	 qQ2UlbVtJ+AgtmxIkpEf5u6rwcGYAtC+LpW17P7BnYfYCsgcFz4di/mu56XcEKpAoai2kUmJ14Qd
+	 FS0TsjLW47dmTq8z8cgpBXwL2HzYIttnmLa5VaimKUqV8/7AvWR9dRbPIFzWm1AgnuiMxT7y0nlt
+	 Caf4X/XP3yYe2RQIc1nsuzceXSYojIrx93uBwSXNoju5lQaXucb8mgpj4RiP5rFye9yKZhtVG87+
+	 gs+F+V1DSHTA170Wv2OlnhJAh3LCpf7DgGpd7SA0BKiZQjp8XdycRLa4t1RR0ByoP6+fRHAsXAwr
+	 ExlZaLNztlI8aRoZfDp7qjP/EVJfE4J/L+7i+T/ZmDqFo/MeEq1Rpo4E0kiMO/QvIS4817nLbYFv
+	 ZkdqhkiixyoWyuElJYqp6/896JyFqAbIMU156qEcjv+TgByWiGkeRtRoNMR4KD4S/FLnn6Aw6c4i
+	 0KUr11cKkyazZFAuXGFgWAa/+LGBiyImzdtzX3H/fNHw83pO0zztY=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+00778a9a557a2a5e1a33@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [wireless?] general protection fault in cfg80211_mlme_deauth
+Date: Wed,  9 Apr 2025 17:20:47 +0800
+X-OQ-MSGID: <20250409092046.2027303-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <67f50e3e.050a0220.396535.0561.GAE@google.com>
+References: <67f50e3e.050a0220.396535.0561.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409073336.31996-1-huajianyang@asrmicro.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 
-Huajian Yang <huajianyang@asrmicro.com> wrote:
-> The config NF_CONNTRACK_BRIDGE will change the way fragments are processed.
-> Bridge does not know that it is a fragmented packet and forwards it
-> directly, after NF_CONNTRACK_BRIDGE is enabled, function nf_br_ip_fragment
-> will check and fraglist this packet.
-> 
-> Some network devices that would not able to ping large packet under bridge,
-> but large packet ping is successful if not enable NF_CONNTRACK_BRIDGE.
+#syz test: upstream 0af2f6be1b42
 
-Can you add a new test to tools/testing/selftests/net/netfilter/ that
-demonstrates this problem?
+diff --git a/net/wireless/sme.c b/net/wireless/sme.c
+index cf998500a965..39bc68b3428a 100644
+--- a/net/wireless/sme.c
++++ b/net/wireless/sme.c
+@@ -226,6 +226,9 @@ static int cfg80211_conn_do_work(struct wireless_dev *wdev,
+ 		*treason = NL80211_TIMEOUT_ASSOC;
+ 		fallthrough;
+ 	case CFG80211_CONN_ASSOC_FAILED:
++		BUG_ON(!wdev->conn->bssid);
++		BUG_ON(!wdev->conn->params.bssid);
++		BUG_ON(!wdev->disconnect_bssid);
+ 		cfg80211_mlme_deauth(rdev, wdev->netdev, params->bssid,
+ 				     NULL, 0,
+ 				     WLAN_REASON_DEAUTH_LEAVING, false);
 
-> In function nf_br_ip_fragment, checking the headroom before sending is
-> undoubted, but it is unreasonable to directly drop skb with insufficient
-> headroom.
-
-Are we talking about
-if (first_len - hlen > mtu
-  or
-skb_headroom(skb) < ll_rs)
-
-?
-
->  
->  		if (first_len - hlen > mtu ||
->  		    skb_headroom(skb) < ll_rs)
-> -			goto blackhole;
-> +			goto expand_headroom;
-
-I guess this should be
-
-if (first_len - hlen > mtu)
-	goto blackhole;
-if (skb_headroom(skb) < ll_rs)
-	goto expand_headroom;
-
-... but I'm not sure what the actual problem is.
-
-> +expand_headroom:
-> +	struct sk_buff *expand_skb;
-> +
-> +	expand_skb = skb_copy_expand(skb, ll_rs, skb_tailroom(skb), GFP_ATOMIC);
-> +	if (unlikely(!expand_skb))
-> +		goto blackhole;
-
-Why does this need to make a full skb copy?
-Should that be using skb_expand_head()?
-
->  slow_path:
-
-Actually, can't you just (re)use the slowpath for the skb_headroom < ll_rs
-case instead of adding headroom expansion?
 
