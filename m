@@ -1,106 +1,214 @@
-Return-Path: <linux-kernel+bounces-595347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF72A81CF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:19:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F19A81CF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580B6189400B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:19:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D67C77AA6DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D931D63E8;
-	Wed,  9 Apr 2025 06:18:55 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357871ADC69;
+	Wed,  9 Apr 2025 06:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SSbdmMbA"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB9E15A85E;
-	Wed,  9 Apr 2025 06:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A711D7999
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 06:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744179535; cv=none; b=bJ6yGJHZDBN9O04eJf4RuJ0YF3/qzUhqcz41C/m4lKxvRXolIz3OTwUKbJVN5BuLdfA3a2bCm0xeYB338Wn0nDjMi4Q0oR0haJP/or/SRIGjhiZb20wLVUGkysFhpfo1/FYDIKHPdfX01uBexDimB00kLYCNFtZDc+RZctnjpVI=
+	t=1744179589; cv=none; b=NGp79kExe6Z/1ZomYE6K4idcaTXayKNktBH99ReYJ9zzZScDJkTqugg2U7r8qVZXjyGDOkIgPdjCtQuStdj8UacgvMANMhCRlw0+qxPy1YD4wv2W8ihDbU9uvJ5FShrr52pbE24rNEP1dCB5p8UTOQIWBAIxrQdujrlIR+GELhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744179535; c=relaxed/simple;
-	bh=G1LHBNBqeyiZOMPl2PflZcM6o/1KMAKeUJr20z5gmA4=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=EA799e893SXeLZK6LaWsmo/WRIK8jaVWyBGzNO+5TBMMsXRQv4mVpAVxTxNbMtA0NS2jtDwmIb343S+gZDmZt1J9mmPpeONw2uZLK441yD2wqCxxRVH42YnLsu3OEKpB+4l1/I1U0VhVrImL5AKWOudiXiFkQ1xOQnEubgiyi6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZXXjj27pnz69Xk;
-	Wed,  9 Apr 2025 14:15:05 +0800 (CST)
-Received: from kwepemg500006.china.huawei.com (unknown [7.202.181.43])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5806E180467;
-	Wed,  9 Apr 2025 14:18:50 +0800 (CST)
-Received: from [10.67.121.110] (10.67.121.110) by
- kwepemg500006.china.huawei.com (7.202.181.43) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 9 Apr 2025 14:18:49 +0800
-Subject: Re: [PATCH] MAINTAINERS: Maintainer change for hisi_dma
-To: Zhou Wang <wangzhou1@hisilicon.com>, Jie Hai <haijie1@huawei.com>,
-	<vkoul@kernel.org>, <dmaengine@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250402085423.347526-1-haijie1@huawei.com>
- <ff50caa3-c753-feb0-7518-9d0e8a79a8f6@hisilicon.com>
-From: liulongfang <liulongfang@huawei.com>
-Message-ID: <0ea7b0ba-8719-7bd1-c572-0c94d5614b83@huawei.com>
-Date: Wed, 9 Apr 2025 14:18:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1744179589; c=relaxed/simple;
+	bh=Dsos4Eph2hyrXoTpRMexeLNWHl9vYmg+WAx8jemvLdw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MRmJ9Az4rdrLh1+2qU68Y21BNalLpy4T7XMRhgSTUEQiogEzVnQCDfRCUbLpvSpU9y92g/6kxNsN9CukB/kTu0bT3Wt/3loo/uYT8IKnsEE+lHtEqTHK4JX3tcGNGLmDj1svKUikXaXevkEbNRoAG6LGVYelS1a2DAksi+DUXHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SSbdmMbA; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5493b5bc6e8so7954606e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 23:19:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1744179586; x=1744784386; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xPFx8UgUAY0xlIDn/x5aIYb1lovd1B9jsWSk1FiXXns=;
+        b=SSbdmMbAr9Wlz1uKVY1UYyheVxbLN9Io90AzlObkGV9TgmT+HDwSiJe4Yaa70i0YNC
+         0W0lLj2Bq+Rc8RsLkSq86d6oqvLuztpe1JiSRfDW98mIOIqorwUYN4pQkj10jrDHmUME
+         kOfNgR8hv94PXKPd4oK0od3ODJWK2ZHRActBA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744179586; x=1744784386;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xPFx8UgUAY0xlIDn/x5aIYb1lovd1B9jsWSk1FiXXns=;
+        b=f3Pfd2Mex0cyVNPzGkxDaFSTJVtN6i/0cHtnwPauSU9rmUxeFT9fBXD8hNBrW92hJ3
+         veOxgRG7rfRGT2pgsVHqaP5Y7fwPtIZE/uW2VTG+Py7mWvXykn+0rGCV8GkRz1q8HL3z
+         NXRMaCisJ3ZGo9LzVnzXyetwYMt2VLjQFXBiY2hY3DQq5uCuERi7VYqp5AbLuUNp9tcn
+         1uPkVv7RMiNGSJKHNev2sy6yWKpLPe4+58frgVdCBrz9YryCXQjyE7jurB10MYl2eiOJ
+         pDuvgrZ1+30ExiOOfMPYJy4sp/WvCRiK8sQ8TCEpn1ujILCP9gAGhk8UmW1anflc0KKb
+         KaTw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2mW66lrqj626GsK2ClpLOmuPB88/0JtpYVl3voScwVMkOGyMLjBjb7pPBXs4OcLrZQu/gCWRHdQa5o08=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzRyzpMhSZ5AVL005AZG4M9W4DmdSiyHF5QAf8MNsRg3itr0HU
+	FskZrS45yMQkNJIQ4ad2aGiSV+0f1oiQ8fTsm7pMcTdDyCMSpugeQ/JU0yCboMQAOuazB2Z8sgV
+	ffH3D7omHMzcFkCCGvv3n7waeQqew8QR/SkJm
+X-Gm-Gg: ASbGncv2g0iIel5DLH6nE4rNozVHBWbgrvQP5JCj+XsjcEY7c/YLTBf/FOw+2ak+I02
+	hQIwAryudJ9ZMYvEopCoj5Uqq+j5jvtLaUmpDld+02M/O+a2dljqk32uLydZeZo6j5iq7Nwbms2
+	Cx5YUEetSoVRQlCrpO60sOFG3VSGTLe+jWRJ7jp5htf+8RARdK/w==
+X-Google-Smtp-Source: AGHT+IF6USYpAM9lg3k8+AOqxfZjq6iN1XgABgZ7lN+hrkpyKB/hsy6JujD3QodyEr1gyD8+wAk4r3Qa2Kqqw1r74QQ=
+X-Received: by 2002:a05:6512:1103:b0:545:49d:5474 with SMTP id
+ 2adb3069b0e04-54c4370f307mr358171e87.20.1744179585702; Tue, 08 Apr 2025
+ 23:19:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ff50caa3-c753-feb0-7518-9d0e8a79a8f6@hisilicon.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg500006.china.huawei.com (7.202.181.43)
+References: <20250403110915.75322-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250403110915.75322-1-angelogioacchino.delregno@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Wed, 9 Apr 2025 14:19:34 +0800
+X-Gm-Features: ATxdqUGA8j7J3cMwwhvKkgHKxtLogzcNaUx9TtG6kN-tP3TulVKQHf_ux6bE6j8
+Message-ID: <CAGXv+5G8kUg87+JzuCW5sZKHTBA3-CnwSFdrucn_k1rgcpJHOg@mail.gmail.com>
+Subject: Re: [PATCH] drm/mediatek: mtk_dp: Fix hdmi codec and phy driver unregistration
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
+	simona@ffwll.ch, matthias.bgg@gmail.com, nancy.lin@mediatek.com, 
+	ck.hu@mediatek.com, djkurtz@chromium.org, littlecvr@chromium.org, 
+	bibby.hsieh@mediatek.com, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/4/8 17:07, Zhou Wang wrote:
-> On 2025/4/2 16:54, Jie Hai wrote:
->> I am moving on to other things and longfang is going to
->> take over the role of hisi_dma maintainer. Update the
->> MAINTAINERS accordingly.
-> 
-> Thanks Jie Hai for maintaining hisi_dma driver! Best wishes to you.
-> Welcome Longfang to maintain this driver together!
+On Thu, Apr 3, 2025 at 7:09=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
 >
+> During probe, this driver is registering two platform devices: one
+> for the HDMI Codec driver and one for the DisplayPort PHY driver.
+>
+> In the probe function, none of the error cases are unregistering
+> any of the two platform devices and this may cause registration
+> of multiple instances of those in case this driver returns one or
+> more probe deferral(s) in the "wrong" spots.
+>
+> In order to fix this, add devm actions to unregister those and
+> remove the manual calls to platform_device_unregister in the
+> mtk_dp_remove() function, as those would otherwise be redundant.
+>
+> Fixes: e71a8ebbe086 ("drm/mediatek: dp: Audio support for MT8195")
+> Fixes: caf2ae486742 ("drm/mediatek: dp: Add support for embedded DisplayP=
+ort aux-bus")
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_dp.c | 30 ++++++++++++++++++++++++++----
+>  1 file changed, 26 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek=
+/mtk_dp.c
+> index 3d4648d2e15f..3eb685a46d99 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+> @@ -2648,6 +2648,13 @@ static const struct hdmi_codec_ops mtk_dp_audio_co=
+dec_ops =3D {
+>         .hook_plugged_cb =3D mtk_dp_audio_hook_plugged_cb,
+>  };
+>
+> +static void mtk_dp_unregister_pdevs(void *data)
+> +{
+> +       struct platform_device *ext_pdev =3D data;
+> +
+> +       platform_device_unregister(ext_pdev);
+> +}
+> +
+>  static int mtk_dp_register_audio_driver(struct device *dev)
+>  {
+>         struct mtk_dp *mtk_dp =3D dev_get_drvdata(dev);
+> @@ -2658,18 +2665,29 @@ static int mtk_dp_register_audio_driver(struct de=
+vice *dev)
+>                 .data =3D mtk_dp,
+>                 .no_capture_mute =3D 1,
+>         };
+> +       int ret;
+>
+>         mtk_dp->audio_pdev =3D platform_device_register_data(dev,
+>                                                            HDMI_CODEC_DRV=
+_NAME,
+>                                                            PLATFORM_DEVID=
+_AUTO,
+>                                                            &codec_data,
+>                                                            sizeof(codec_d=
+ata));
+> -       return PTR_ERR_OR_ZERO(mtk_dp->audio_pdev);
+> +       if (IS_ERR(mtk_dp->audio_pdev))
+> +               return PTR_ERR(mtk_dp->audio_pdev);
+> +
+> +       ret =3D devm_add_action_or_reset(dev, mtk_dp_unregister_pdevs, mt=
+k_dp->phy_dev);
 
-Thanks to Jie Hai for maintaining the hisi_dma driver,
-and I will continue to maintain it going forward.
+Wrong platform device given here. You want audio_pdev instead.
 
-Thanks.
-Longfang.
 
-> Acked-by: Zhou Wang <wangzhou1@hisilicon.com>
-> 
-> Thanks,
-> Zhou
-> 
->>
->> Signed-off-by: Jie Hai <haijie1@huawei.com>
->> ---
->>  MAINTAINERS | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index e0045ac4327b..a9866eefda15 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -10651,7 +10651,7 @@ F:	net/dsa/tag_hellcreek.c
->>  
->>  HISILICON DMA DRIVER
->>  M:	Zhou Wang <wangzhou1@hisilicon.com>
->> -M:	Jie Hai <haijie1@huawei.com>
->> +M:	Longfang Liu <liulongfang@huawei.com>
->>  L:	dmaengine@vger.kernel.org
->>  S:	Maintained
->>  F:	drivers/dma/hisi_dma.c
-> .
-> 
+Having briefly looked at this driver, I think it needs more cleanup. :o
+
+
+ChenYu
+
+> +       if (ret) {
+> +               platform_device_unregister(mtk_dp->audio_pdev);
+> +               return dev_err_probe(dev, ret,
+> +                                    "Failed to add codec unregister devm=
+ action");
+> +       }
+> +       return 0;
+>  }
+>
+>  static int mtk_dp_register_phy(struct mtk_dp *mtk_dp)
+>  {
+>         struct device *dev =3D mtk_dp->dev;
+> +       int ret;
+>
+>         mtk_dp->phy_dev =3D platform_device_register_data(dev, "mediatek-=
+dp-phy",
+>                                                         PLATFORM_DEVID_AU=
+TO,
+> @@ -2679,6 +2697,13 @@ static int mtk_dp_register_phy(struct mtk_dp *mtk_=
+dp)
+>                 return dev_err_probe(dev, PTR_ERR(mtk_dp->phy_dev),
+>                                      "Failed to create device mediatek-dp=
+-phy\n");
+>
+> +       ret =3D devm_add_action_or_reset(dev, mtk_dp_unregister_pdevs, mt=
+k_dp->phy_dev);
+> +       if (ret) {
+> +               platform_device_unregister(mtk_dp->phy_dev);
+> +               return dev_err_probe(dev, ret,
+> +                                    "Failed to add phy unregister devm a=
+ction");
+> +       }
+> +
+>         mtk_dp_get_calibration_data(mtk_dp);
+>
+>         mtk_dp->phy =3D devm_phy_get(&mtk_dp->phy_dev->dev, "dp");
+> @@ -2848,9 +2873,6 @@ static void mtk_dp_remove(struct platform_device *p=
+dev)
+>         pm_runtime_disable(&pdev->dev);
+>         if (mtk_dp->data->bridge_type !=3D DRM_MODE_CONNECTOR_eDP)
+>                 del_timer_sync(&mtk_dp->debounce_timer);
+> -       platform_device_unregister(mtk_dp->phy_dev);
+> -       if (mtk_dp->audio_pdev)
+> -               platform_device_unregister(mtk_dp->audio_pdev);
+>  }
+>
+>  #ifdef CONFIG_PM_SLEEP
+> --
+> 2.48.1
+>
 
