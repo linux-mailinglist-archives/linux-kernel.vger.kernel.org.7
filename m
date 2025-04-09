@@ -1,173 +1,175 @@
-Return-Path: <linux-kernel+bounces-596341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C27A82ACD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:43:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8B1CA82AB8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 691883B396D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:29:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D3489A44E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A405265626;
-	Wed,  9 Apr 2025 15:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78AE267B89;
+	Wed,  9 Apr 2025 15:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vSfbzYsw"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/qvpMxC"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52B215DBBA
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A00C267700;
+	Wed,  9 Apr 2025 15:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744212603; cv=none; b=lkun63G//vgpBlc5oF3+0G7o8TIw8Db2z3wx87sAOxgEPwCpOgKUd0XNmB3xrKpFDKGvrvIWQKrkUpir33QmBQ9PFb3OIEZBa5hR8HL8frlbBRZjmO/4TMIMItgTo80uqHpFQNUs2E1vLb+GAP9Hk0iuWZMfVDFoU0HsQcuCFh0=
+	t=1744212624; cv=none; b=Vz6e0iosnw8rvAlGjm40abNShhpoDqcpY/vvVfMJk8In9PFT05oYg3rdFSEEWyfFsqO/mLt5MQfw3sRrAFpRyJrOvrKlL3RaAgzuIMsZhG1dfGCLpbXZjRFDNLpWfdiWcgxIfNMU0/D/WAPDgy4emY1rG2YFS0aBoRskUfNFH0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744212603; c=relaxed/simple;
-	bh=7ammzMgtsA5awXQq4UPk8mbvXIdjRXw5ww7TtoQg/L4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=l/6X/CxcsBj1KfqCiBSbYAYKoYJPsep9hKwogniF5+f2/XLjsSbcaTbBBOCpzCXuSgWfNnKppdcOM9+Pu3Wo3nR9zDlgD5MktLta4kz1lOEURmC2ZKaPiU+gaW2esqj7NqqPsWx5LgxYa3GR1bawHred4dvpzjOmKD3bDUJCRpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vSfbzYsw; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250409152958euoutp01f67296f123d584a8a9a7001171435eb5~0sB3506h12148721487euoutp01E
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:29:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250409152958euoutp01f67296f123d584a8a9a7001171435eb5~0sB3506h12148721487euoutp01E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744212598;
-	bh=ul03oSv4pyZS+HSpbQ9I5MY9es9yGM9SGJkg+qohyNs=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=vSfbzYswfp8l1tx9lhcgpbjc+7l6PpAOUa79990tWvNoiDDzxaoWY9KDg4sGQQi1q
-	 ycYpaHTZx7+MPwdK1JXs+/HHGaP5r9uYglUMQzm7DCaic1gSVtKkBprYG+O59PCpaA
-	 sWV020oNcyliWRtOq1ATaDY1mySnKbmN5NHLy6H0=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250409152958eucas1p2a824e7ff30453a67b524a18556764d17~0sB3s3A7q0925809258eucas1p2Z;
-	Wed,  9 Apr 2025 15:29:58 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id AB.07.20409.67296F76; Wed,  9
-	Apr 2025 16:29:58 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250409152957eucas1p27f59b1452aa3e9b3aa0b2cc98c5a99fc~0sB3WYg7e0956309563eucas1p2D;
-	Wed,  9 Apr 2025 15:29:57 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250409152957eusmtrp1f75476af527f9f945de78d01ff4c9049~0sB3V01k11007810078eusmtrp1-;
-	Wed,  9 Apr 2025 15:29:57 +0000 (GMT)
-X-AuditID: cbfec7f4-c0df970000004fb9-4b-67f69276a3fb
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id D1.77.19654.57296F76; Wed,  9
-	Apr 2025 16:29:57 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250409152956eusmtip1c210070b9e71c88426ba2634c970e62c~0sB2Wubt70379603796eusmtip1R;
-	Wed,  9 Apr 2025 15:29:56 +0000 (GMT)
-Message-ID: <208140cb-dc22-4e7d-9f1f-7d5ed30d16dc@samsung.com>
-Date: Wed, 9 Apr 2025 17:29:55 +0200
+	s=arc-20240116; t=1744212624; c=relaxed/simple;
+	bh=2c8Imyjxh5wJ8QbYOd6mxWFUbOT5GO1SJNdmlNcU2HA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ma2SRoITWPIIVS+nawdnX9q2UzEjCqULsd5YCV9nMPY3tA5/sCGlcBmaTx5t7FY1G+oWz+QEUKYJVh0Qtdf3yGWIRGXmDnCFX5l+BaP9LqIggDlVrB0tZ2nJ6ECEzkA7cqjdZ2YR8o1S6JEA+4FNlhYUugwDoxvMV6X/zGiBit8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/qvpMxC; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-738fd9dbe8aso448744b3a.1;
+        Wed, 09 Apr 2025 08:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744212622; x=1744817422; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z8RHRVKQouQftyjR10Wqn4eO6RF5eyTqUXdahuKdSrg=;
+        b=j/qvpMxCsGrKiZU860c5FA8cYLBcxm8Pt645rdC13gnxdRNEi0uDAqUjhmwGHDEClP
+         rZirFohxi90G0YtmMViaPj7fU4GsMkWRoDD8OHPLfD6plkB+foMSheA/WlXKRhD0m/hD
+         LS7pGy83jBmZA/miraVDf8eacCeVKUBu35LTn84xgAhjQh874ltCXMghIqFsuYAvJssW
+         PLzPsh2D6J/R9Kp/yBar+uds0P0b6i2NRLfpqmF/pI+ZjnaP4g1AWZv0exNWr/h6jnnv
+         uWMqnLLwBXXStRL7V/K2zD3DwqJ3YpYMXbVTybJPnJWjSGj4Is3NznZTlp776KFKpO+a
+         SRIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744212622; x=1744817422;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z8RHRVKQouQftyjR10Wqn4eO6RF5eyTqUXdahuKdSrg=;
+        b=HrmFp7PDutM1Hm1jgrkdsLajuTQ5Onp9pVHxz/Lmb9+62yA/b5ROl9MgwBygvFNpHS
+         SHYMGGuMNoNTyaxkbcXanLQ4zjlWqP8oGVj5thUtJIR/+A9+AM0N+lhZgy9usTXzfA+Y
+         V7BL+/CPvJskpSHoIW9xeysxyskYfRz9VGeODw2HuNNQgtLTR4d9gNvqFgvd3awssX+e
+         QKneKayIVUeY8TlZEVMPD14r27ROePjJPMVG2kGuZGJStxucazrgVvMl4no5bv0Ye9DJ
+         fUu9vLPB1tQMPd95Fkg6cszOk6ihRzGrIbApFms4CKZhcUqkmXUlBvXnbOKXxJ84Ic7M
+         tbGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPDdrsEYCh+fsUW1bijgLBHvWlQf0jTBMOrRFsLBmv/DTz9newAWtz/mB89Y18LU24aikr2UrNOB/xX7Xl@vger.kernel.org, AJvYcCW0qOfdWRS8wbQcNn3UDsO3uw5sfubceSq/O0DtMyeh1FscbKbNlB5jsidfsYmSR7eJ54rNqaDwxczRNoYS@vger.kernel.org, AJvYcCXrR8qqrQ1dalNTI2TbY1v16OKy9mihRuzWfuAce3WBFFGGJSIp9oSPl3D8LGGLDV3oR7358mkZBxiC38fbrOhX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4vE7GtTV43pmRoOjS6WgSa4CfXmwn1gpb6zaMh/4bRMbmmdeB
+	6FdaA/3ucYs+8NJuc5fEzlSfyHyMuJEG74T/wbXyn2xjBjRI3nix6EZZ2NzNj6LHRUbsVMg9Ge7
+	uXXyLm+YjGMpeYKtzYVSNj2+qZgE=
+X-Gm-Gg: ASbGncsZ5wMcvc5BtW1bOUOc9rUCXU9SSlxpEtYfNB2AL5XrbpSEiiD9v+FMnPZjMqG
+	jwNDddLs6STofyXXeSSVQL2s4EYLUf6/9q7H9H/kFJIIaxW9zfmBy2cOMpxdRidM833VVrS2XtT
+	KARCqT3p7Ku9jny8pDQE23tw==
+X-Google-Smtp-Source: AGHT+IFvw7UU8V9RYaU2yDGTDkK4qSbmVBUa5uAZXnS90yUfYYPnyAx4R3eS12INHlN8U3kMlOUeGD8W96fBB246NpQ=
+X-Received: by 2002:a05:6a00:3a01:b0:736:559f:eca9 with SMTP id
+ d2e1a72fcca58-73bae5272f5mr1833806b3a.3.1744212621584; Wed, 09 Apr 2025
+ 08:30:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] [v4] dma/contiguous: avoid warning about unused
- size_bytes
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Robin Murphy <robin.murphy@arm.com>,
-	Michal Nazarewicz <mina86@mina86.com>, Kyungmin Park
-	<kyungmin.park@samsung.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250409151557.3890443-1-arnd@kernel.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7djP87plk76lG3zdzmnxd9IxdottWzax
-	Wvz6YmFxtukNu8XlXXPYLBYcb2G1OPjhCasDu8eaeWsYPX7/msTosWlVJ5vHi80zGT3W/XnF
-	5NG3ZRWjx+dNcgHsUVw2Kak5mWWpRfp2CVwZb27tYS44w10x7/Jm1gbG/ZxdjJwcEgImEo8+
-	nGHsYuTiEBJYwSix6theNgjnC6PE/NkvmCGcz4wSu39cYIJpmTfvLytEYjmjxI8NX1kgnI+M
-	EvdW9bKAVPEK2El8aLsE1sEioCLRt/4RG0RcUOLkzCdgNaIC8hL3b81g72Lk4BAWCJR4e40D
-	JCwioCxx/dscsJuYBS4zSkx5NQFsDrOAuMStJ/PBbDYBQ4mut11gMzkFzCU+HHrLAlEjL7H9
-	7RywsyUEPnBIHO3eyA5xtovE4f0XoGxhiVfHt0DZMhKnJ/ewQDS0M0os+H2fCcKZwCjR8PwW
-	I0SVtcSdc7/YQE5lFtCUWL9LHyLsKPF11l5WkLCEAJ/EjbeCEEfwSUzaNp0ZIswr0dEmBFGt
-	JjHr+Dq4tQcvXGKewKg0CylYZiF5cxaSd2Yh7F3AyLKKUTy1tDg3PbXYKC+1XK84Mbe4NC9d
-	Lzk/dxMjMDGd/nf8yw7G5a8+6h1iZOJgPMQowcGsJMI7Ie9buhBvSmJlVWpRfnxRaU5q8SFG
-	aQ4WJXHeRftb04UE0hNLUrNTUwtSi2CyTBycUg1MM9ed+twcYmK+yk/Vf8WCT3IzHzgHmB9Q
-	18h3C76udpbnrNOW1WIhvlv/bD++SrPvR/jctWqfP5maTPGqn52Z3lTgobrMc0GXjEfD7VCH
-	rBsqOtcu8GzP3CJ54fkxHx899lP/U1KsJ5f5aPDdtso2PPHxrVVUqWGB6Nflk9YkZ2/Y3mGy
-	m/noy2lhnv2v70QHbD8347zks+rSGYaRM1S8jcN8V7/xl3RymsYoKtHD0PGYPyhzvYVB260v
-	igXzdvk5xL6Qf3Kq7JheYLPn/c6Y2dye4u3OAlcf5Hr1JXUe0f5Zzzpvrymjethb0wMcXGsj
-	0mTlv146+ir97JtL9/JlGsovLWKoS7WZKDtvqZoSS3FGoqEWc1FxIgA1lrgzuwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsVy+t/xu7qlk76lG7SsN7b4O+kYu8W2LZtY
-	LX59sbA42/SG3eLyrjlsFguOt7BaHPzwhNWB3WPNvDWMHr9/TWL02LSqk83jxeaZjB7r/rxi
-	8ujbsorR4/MmuQD2KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSc
-	zLLUIn27BL2MN7f2MBec4a6Yd3kzawPjfs4uRk4OCQETiXnz/rJ2MXJxCAksZZTYPnk+C0RC
-	RuLktAZWCFtY4s+1LjaIoveMEme2zWEGSfAK2El8aLvEBGKzCKhI9K1/xAYRF5Q4OfMJ2CBR
-	AXmJ+7dmsHcxcnAICwRKvL3GARIWEVCWuP5tDiPITGaBy4wSjRNeMkMs6GKU6H27HWwzs4C4
-	xK0n88EWsAkYSnS97QJbwClgLvHh0FsWiBozia6tXYwQtrzE9rdzmCcwCs1CcscsJKNmIWmZ
-	haRlASPLKkaR1NLi3PTcYiO94sTc4tK8dL3k/NxNjMBI3Hbs55YdjCtffdQ7xMjEwXiIUYKD
-	WUmEd0Let3Qh3pTEyqrUovz4otKc1OJDjKbAwJjILCWanA9MBXkl8YZmBqaGJmaWBqaWZsZK
-	4rxsV86nCQmkJ5akZqemFqQWwfQxcXBKNTAp56u1PnToOCs85ZVf7d1374QYVaqOfxfy/mu4
-	6L327qaFh2KYHk/zmlAuXnLq9lW5lN3M2U2Tudo4HS44X7r6ec7ZC2YahdwsDva+E3bl/Z7q
-	92TR3/Ly7NlGM6ecFLu+YF0uz4ZX+XXOFxIyp/ckZsqZHlTd8Kd7/53vfhkSxzXmc10Ry6m+
-	kyB+/MxTqXDd9JQw0ST7209+pgk+V53z+t0z9k0szGmrn841YEy2U/km1XvEoLc66fq77+/v
-	xvY+uljWdH3luYK1mywSa5VaHrqf/ezZ+5bX9dPqzlLRbX7VH6NurOHxb623v5q7eaXB+UmN
-	6xcZTVm27t6q+uu3W7O/WYZOMX+yZHGdyPVFSizFGYmGWsxFxYkA4b1y+k0DAAA=
-X-CMS-MailID: 20250409152957eucas1p27f59b1452aa3e9b3aa0b2cc98c5a99fc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250409151611eucas1p299f54f1a61fb8412e515129c82021cd5
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250409151611eucas1p299f54f1a61fb8412e515129c82021cd5
-References: <CGME20250409151611eucas1p299f54f1a61fb8412e515129c82021cd5@eucas1p2.samsung.com>
-	<20250409151557.3890443-1-arnd@kernel.org>
+References: <20250409-topic-smem_dramc-v1-0-94d505cd5593@oss.qualcomm.com>
+ <20250409-topic-smem_dramc-v1-3-94d505cd5593@oss.qualcomm.com>
+ <CACu1E7GMf0Mx2ZX_t76h+b1CPin49LGix7c5uvoWaJZC3dKyOw@mail.gmail.com> <c2dac38b-bbe5-4cd1-9d33-b4bba629d54b@oss.qualcomm.com>
+In-Reply-To: <c2dac38b-bbe5-4cd1-9d33-b4bba629d54b@oss.qualcomm.com>
+From: Connor Abbott <cwabbott0@gmail.com>
+Date: Wed, 9 Apr 2025 11:30:10 -0400
+X-Gm-Features: ATxdqUHcBvVK0Cb2KxzN_hC_D58IOi6LWCz6c0PE-YPMPs9wv_qjFpk5kCr2vVc
+Message-ID: <CACu1E7F71M0Z5KUdArRYbLEMXoS3jQEtp=0-4LEYFRysOsYZfA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] drm/msm/a6xx: Get HBB dynamically, if available
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Rob Clark <robdclark@gmail.com>, 
+	Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09.04.2025 17:15, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Wed, Apr 9, 2025 at 11:22=E2=80=AFAM Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
 >
-> When building with W=1, this variable is unused for configs with
-> CONFIG_CMA_SIZE_SEL_PERCENTAGE=y:
+> On 4/9/25 5:12 PM, Connor Abbott wrote:
+> > On Wed, Apr 9, 2025 at 10:48=E2=80=AFAM Konrad Dybcio <konradybcio@kern=
+el.org> wrote:
+> >>
+> >> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> >>
+> >> The Highest Bank address Bit value can change based on memory type use=
+d.
+> >>
+> >> Attempt to retrieve it dynamically, and fall back to a reasonable
+> >> default (the one used prior to this change) on error.
+> >>
+> >> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> >> ---
+> >>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 22 ++++++++++++++++------
+> >>  1 file changed, 16 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/m=
+sm/adreno/a6xx_gpu.c
+> >> index 06465bc2d0b4b128cddfcfcaf1fe4252632b6777..0cc397378c99db35315209=
+d0265ad9223e8b55c7 100644
+> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> >> @@ -13,6 +13,7 @@
+> >>  #include <linux/firmware/qcom/qcom_scm.h>
+> >>  #include <linux/pm_domain.h>
+> >>  #include <linux/soc/qcom/llcc-qcom.h>
+> >> +#include <linux/soc/qcom/smem.h>
+> >>
+> >>  #define GPU_PAS_ID 13
+> >>
+> >> @@ -669,17 +670,22 @@ static void a6xx_calc_ubwc_config(struct adreno_=
+gpu *gpu)
+> >>  static void a6xx_set_ubwc_config(struct msm_gpu *gpu)
+> >>  {
+> >>         struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
+> >> +       u32 hbb =3D qcom_smem_dram_get_hbb();
+> >> +       u32 ubwc_mode =3D adreno_gpu->ubwc_config.ubwc_swizzle & 1;
+> >> +       u32 level2_swizzling_dis =3D !(adreno_gpu->ubwc_config.ubwc_sw=
+izzle & 2);
+> >> +       u32 hbb_hi, hbb_lo;
+> >> +
+> >>         /*
+> >>          * We subtract 13 from the highest bank bit (13 is the minimum=
+ value
+> >>          * allowed by hw) and write the lowest two bits of the remaini=
+ng value
+> >>          * as hbb_lo and the one above it as hbb_hi to the hardware.
+> >>          */
+> >> -       BUG_ON(adreno_gpu->ubwc_config.highest_bank_bit < 13);
+> >> -       u32 hbb =3D adreno_gpu->ubwc_config.highest_bank_bit - 13;
+> >> -       u32 hbb_hi =3D hbb >> 2;
+> >> -       u32 hbb_lo =3D hbb & 3;
+> >> -       u32 ubwc_mode =3D adreno_gpu->ubwc_config.ubwc_swizzle & 1;
+> >> -       u32 level2_swizzling_dis =3D !(adreno_gpu->ubwc_config.ubwc_sw=
+izzle & 2);
+> >> +       if (hbb < 0)
+> >> +               hbb =3D adreno_gpu->ubwc_config.highest_bank_bit;
+> >
+> > No. The value we expose to userspace must match what we program.
+> > You'll break VK_EXT_host_image_copy otherwise.
 >
-> kernel/dma/contiguous.c:67:26: error: 'size_bytes' defined but not used [-Werror=unused-const-variable=]
+> I didn't know that was exposed to userspace.
 >
-> Change this to a macro to avoid the warning.
+> The value must be altered either way - ultimately, the hardware must
+> receive the correct information. ubwc_config doesn't seem to be const,
+> so I can edit it there if you like it better.
 >
-> Fixes: c64be2bb1c6e ("drivers: add Contiguous Memory Allocator")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Konrad
 
+Yes, you should be calling qcom_smem_dram_get_hbb() in
+a6xx_calc_ubwc_config(). You can already see there's a TODO there to
+plug it in.
 
-Thanks, applied to dma-mapping-fixes branch.
-
-
-> ---
-> v4: fix type mistake from v3
-> v3: use a macro instead of constant
-> v2: fix spelling mistake.
-> ---
->   kernel/dma/contiguous.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-> index 055da410ac71..8df0dfaaca18 100644
-> --- a/kernel/dma/contiguous.c
-> +++ b/kernel/dma/contiguous.c
-> @@ -64,8 +64,7 @@ struct cma *dma_contiguous_default_area;
->    * Users, who want to set the size of global CMA area for their system
->    * should use cma= kernel parameter.
->    */
-> -static const phys_addr_t size_bytes __initconst =
-> -	(phys_addr_t)CMA_SIZE_MBYTES * SZ_1M;
-> +#define size_bytes ((phys_addr_t)CMA_SIZE_MBYTES * SZ_1M)
->   static phys_addr_t  size_cmdline __initdata = -1;
->   static phys_addr_t base_cmdline __initdata;
->   static phys_addr_t limit_cmdline __initdata;
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Connor
 
