@@ -1,157 +1,83 @@
-Return-Path: <linux-kernel+bounces-595217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07AA3A81BBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:02:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A6BA81BC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 06:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 356B31B80E42
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 04:03:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E419E3B5256
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 04:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331031D54C0;
-	Wed,  9 Apr 2025 04:02:46 +0000 (UTC)
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C4D3D76;
-	Wed,  9 Apr 2025 04:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D9419259E;
+	Wed,  9 Apr 2025 04:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Z/Wzxxpy"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4898215A85E
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 04:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744171365; cv=none; b=Ldn17isHl+CxKhiUYlH4u6TvMybqAYmINAa6mfgdt3hUhFAbGJOwEPIiRlYA3C5bcn2PtAk7O7ZQxim9TKvKHnEjfpMY4VpCK+JrpmUziZNSkbCLUxnXCXP7+uenREf2yO+4nxEdfIngH9dF4QkYb99GuuWSHSIu3Dyb/V/HauQ=
+	t=1744171472; cv=none; b=iSxZ3fl5y957ai2D97pNXN5W/wW84joqlTdguUWjOOHGGfMFQ26nKX4b7xxzH+hkiLATcktJHk3LrPNGf6klU4DY+Z7ARCKuJWI66E2WGB5bOykS8Vn/PnEeZhoJGA6dK4tJIpuJlvOBgkt/VTeyPi//nZ0JOypt9bHQk/huxI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744171365; c=relaxed/simple;
-	bh=ltVOTq6OdODO4CeVRkToE7me66wnLAqvC9n9gxVv1iM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pqjsK7epY04eD1WMIG7iP5Ni7RJ8R/32eNgqggxBClwEfelUpIisc7/ge5DLafORgkRmsAqdZqwQbNP5J7393Ox3dAv4Ul+amPRx6qrDVgEbFrFQWG4Ku40JAxRqqq4ATw8jUtMJQZx5qYEnIyfp92KpDB3UPpcBkL6i9J4quqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=206.189.21.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwDn76c08fVnBtCwEw--.12678S2;
-	Wed, 09 Apr 2025 12:01:56 +0800 (CST)
-Received: from phytium.com.cn (unknown [123.150.8.50])
-	by mail (Coremail) with SMTP id AQAAfwBHSoYw8fVnOyxkAA--.72S3;
-	Wed, 09 Apr 2025 12:01:53 +0800 (CST)
-From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-To: Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com,
-	rppt@kernel.org,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	akpm@linux-foundation.org,
-	alison.schofield@intel.com,
-	rrichter@amd.com,
-	bfaccini@nvidia.com,
-	haibo1.xu@intel.com,
-	david@redhat.com
-Cc: linux-cxl@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	chenbaozi@phytium.com.cn,
-	loongarch@lists.linux.dev,
-	Yuquan Wang <wangyuquan1236@phytium.com.cn>
-Subject: [PATCH v2] mm: numa_memblks: introduce numa_add_reserved_memblk
-Date: Wed,  9 Apr 2025 12:01:21 +0800
-Message-Id: <20250409040121.3212489-1-wangyuquan1236@phytium.com.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744171472; c=relaxed/simple;
+	bh=yCu93LjqeX2aYztx3cMVxU9CSP/hvv5zO/BxHil2Ghk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ices2ebvoil8ZgQo/+E9yJweoiYXyEsFNraNDnhA+yHhC34OFLVVvsRyaic/64AaTxvk55kBK6gDA9tiyS+9YFJv9kpYqxAdinErjL0jBD1umE0vDN0cCrlzBB1bg3eWvikd/cHQ/qDg4/6qO2PunzZ750L+YJTnrtlvUgTh/kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Z/Wzxxpy; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KMy80c3f8tEJeFyo9se2EyPspzDN/qpz4L/88YxV2ng=; b=Z/WzxxpyINanl2EsfIlsyFuev5
+	SIbAThSmAa9X21F0nhcUC1N0hxDY0QhCj2+G4w/ENuHe3y0HRsTp37pk7nGsa3bvnnkdzZLeOweVO
+	+L+F1RQRGPvyFHqzdGgNm51jbAsSTGAxUxR+WqgrPx4K4vnv/V2XtpMYnPFO9L13C7iASIgkPQtyr
+	1+7QzAnVi6cGgHWoQNliHWE/ED832NhzHZo7gqBhgOEWfIC2TqBO7yQAFl0FR+rGhm0Xj2JCd2fkk
+	daIZu1ZL9ZsFt0qWyDLIeAZwJ47YHCSazcWsdJLQ4BuXgJWxerkOMhyKwQIcdLgMXeyo4M8aD6FEa
+	V6xVQ/Zw==;
+Received: from [191.204.192.64] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1u2MfV-00Dmp4-Tt; Wed, 09 Apr 2025 06:04:06 +0200
+Message-ID: <1d7eac7c-e0ab-4208-b003-26b818478709@igalia.com>
+Date: Wed, 9 Apr 2025 01:03:57 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm: Fix potential overflow issue in event_string
+ array
+To: jiangfeng@kylinos.cn
+Cc: mripard@kernel.org, christian.koenig@amd.com, rodrigo.vivi@intel.com,
+ dri-devel@lists.freedesktop.org, raag.jadav@intel.com, simona@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, linux-kernel@vger.kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com
+References: <20250409014633.31303-1-jiangfeng@kylinos.cn>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <20250409014633.31303-1-jiangfeng@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAfwBHSoYw8fVnOyxkAA--.72S3
-X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQAOAWf0L0IFaAAfsC
-Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=wangyuquan
-	1236@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvJXoWxXFW7Ar4xuF4DCr48Xr47Jwb_yoW5Zw4rpa
-	yUG3Z8XF4xGw1xGw1xuryj9w1S93WrKr1DJFZrGr13ZF4rWry2vr4UtFsxZr1DtrW7ur1r
-	Wr4vyw15uw1rAFUanT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
-	UUUUU
 
-acpi_parse_cfmws() currently adds empty CFMWS ranges to numa_meminfo
-with the expectation that numa_cleanup_meminfo moves them to
-numa_reserved_meminfo. There is no need for that indirection when it is
-known in advance that these unpopulated ranges are meant for
-numa_reserved_meminfo in support of future hotplug / CXL provisioning.
+Em 08/04/2025 22:46, jiangfeng@kylinos.cn escreveu:
+> From: Feng Jiang <jiangfeng@kylinos.cn>
+> 
+> When calling scnprintf() to append recovery method to event_string,
+> the second argument should be `sizeof(event_string) - len`, otherwise
+> there is a potential overflow problem.
+> 
+> Fixes: b7cf9f4ac1b8 ("drm: Introduce device wedged event")
+> Signed-off-by: Feng Jiang <jiangfeng@kylinos.cn>
 
-Introduce and use numa_add_reserved_memblk() to add the empty CFMWS
-ranges directly.
-
-Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
----
-
-Changes in v2 (Thanks to Dan & Alison):
-- Use numa_add_reserved_memblk() to replace numa_add_memblk() in acpi_parse_cfmws()
-- Add comments to describe the usage of numa_add_reserved_memblk()
-- Updating the commit message to clarify the purpose of the patch
-
- drivers/acpi/numa/srat.c     |  2 +-
- include/linux/numa_memblks.h |  1 +
- mm/numa_memblks.c            | 22 ++++++++++++++++++++++
- 3 files changed, 24 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-index 0a725e46d017..751774f0b4e5 100644
---- a/drivers/acpi/numa/srat.c
-+++ b/drivers/acpi/numa/srat.c
-@@ -453,7 +453,7 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
- 		return -EINVAL;
- 	}
- 
--	if (numa_add_memblk(node, start, end) < 0) {
-+	if (numa_add_reserved_memblk(node, start, end) < 0) {
- 		/* CXL driver must handle the NUMA_NO_NODE case */
- 		pr_warn("ACPI NUMA: Failed to add memblk for CFMWS node %d [mem %#llx-%#llx]\n",
- 			node, start, end);
-diff --git a/include/linux/numa_memblks.h b/include/linux/numa_memblks.h
-index dd85613cdd86..991076cba7c5 100644
---- a/include/linux/numa_memblks.h
-+++ b/include/linux/numa_memblks.h
-@@ -22,6 +22,7 @@ struct numa_meminfo {
- };
- 
- int __init numa_add_memblk(int nodeid, u64 start, u64 end);
-+int __init numa_add_reserved_memblk(int nid, u64 start, u64 end);
- void __init numa_remove_memblk_from(int idx, struct numa_meminfo *mi);
- 
- int __init numa_cleanup_meminfo(struct numa_meminfo *mi);
-diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
-index ff4054f4334d..541a99c4071a 100644
---- a/mm/numa_memblks.c
-+++ b/mm/numa_memblks.c
-@@ -200,6 +200,28 @@ int __init numa_add_memblk(int nid, u64 start, u64 end)
- 	return numa_add_memblk_to(nid, start, end, &numa_meminfo);
- }
- 
-+/**
-+ * numa_add_reserved_memblk - Add one numa_memblk to numa_reserved_meminfo
-+ * @nid: NUMA node ID of the new memblk
-+ * @start: Start address of the new memblk
-+ * @end: End address of the new memblk
-+ *
-+ * Add a new memblk to the numa_reserved_meminfo.
-+ *
-+ * Usage Case: numa_cleanup_meminfo() reconciles all numa_memblk instances
-+ * against memblock_type information and moves any that intersect reserved
-+ * ranges to numa_reserved_meminfo. However, when that information is known
-+ * ahead of time, we use numa_add_reserved_memblk() to add the numa_memblk
-+ * to numa_reserved_meminfo directly.
-+ *
-+ * RETURNS:
-+ * 0 on success, -errno on failure.
-+ */
-+int __init numa_add_reserved_memblk(int nid, u64 start, u64 end)
-+{
-+	return numa_add_memblk_to(nid, start, end, &numa_reserved_meminfo);
-+}
-+
- /**
-  * numa_cleanup_meminfo - Cleanup a numa_meminfo
-  * @mi: numa_meminfo to clean up
--- 
-2.34.1
-
+Reviewed-by: André Almeida <andrealmeid@igalia.com>
 
