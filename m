@@ -1,149 +1,171 @@
-Return-Path: <linux-kernel+bounces-596703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5946A82F8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:56:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE086A82F9E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A659846626B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:55:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCE874671D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2C1279346;
-	Wed,  9 Apr 2025 18:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDD727BF8F;
+	Wed,  9 Apr 2025 18:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="bt9G6FXx"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UwwXgD9U";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qmdwCcMj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A1127CB0D
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 18:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4820E27932D;
+	Wed,  9 Apr 2025 18:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744224842; cv=none; b=FsIq80fwKKebSJQnrBxZFaJahTrc1XhJZgScCZd/Z4WJyzM/zLIYyer0q3vKIOTQ+1nP30EGE4MDFs6Rwy+nV4OYzwUrrycJNVz6/Hs+yUwv6FNZV4JZ/ATxLTRWylO0TrnY+XXIgMYeEZKY72LUcCWAFu0tbjMlCDwLm6/NEbQ=
+	t=1744224870; cv=none; b=MEiOXTntduqi+DxAJZbuBEgqspVeil+Iklyd/5+18BYquQkW11VeXCFIxmAft95waWg8fakqzFK6NQcllWTVOe07C+Gp90kHOq0//vH/nCEMfiPloRBhTJo0snjBTKgU5XPCG5mqPSEjRv0YhuMm5SPE1lkkbtghqHyu61hOEpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744224842; c=relaxed/simple;
-	bh=S/Xg5A+TBhyzRVId5bzth89Ojw9mymrrKQfHfcRjiX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ALRYTjrN5PlbbSD4ZVGXuA55fDWJxACinbOGCaaOwvk5uSFp43U0o4Y1iwdfIN/kkWyAN2r4jdWjk9qCy1MpUTGYa+U8nCjUtrBRiH1jZ6dHbRavQ/aZPBRi6ApP0btbPXXhPUCQNF/O/sLKuWv8eSTAcV8nRdQYk9Hhb2iD9pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=bt9G6FXx; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso837461f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 11:54:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1744224839; x=1744829639; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OLxDcef/gKFj6jpgfhC8SbBxJlwQndkI5ymOb6usHAQ=;
-        b=bt9G6FXx68QxzInEZNyasP9vtSMHVVC3jUlRw0o11gUoED0b0GgR2IRFss8stPYhmJ
-         GYOkbP9KQCqpT3PuwhkXMgPV6e8zDmhhoIjP5RvLl7eNWN+Jm2PfQuJfyql1uA2uBpXy
-         kJb+A86Xo/V+cETNAEbcdl0mDJgetV3wmOLxDhMRGzjbb45UXk+eYP/ljCsnXNE0UVnB
-         7KhMWCqxZnsN74RHQ0dKoF5YRujlFAz+p4I6GwdUM2wHrrF0gzPsjwx9Y3OT+Oag9YOe
-         vysiP45lDcgUroQw0kRKp4O/sO3FbQj/SNWNYnBlFE2X7P6Z5O6ppdzZZZtB3AXKATHC
-         lCYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744224839; x=1744829639;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OLxDcef/gKFj6jpgfhC8SbBxJlwQndkI5ymOb6usHAQ=;
-        b=pNGNVm0sXzCnWm62JHJJajFqoEW1190teGAEPvr+BkDbY+KkovyJUPCqi7y21l7DFZ
-         dGz39UQBs2NnjO0AuBUVGsjaJ2/DvrP8/siUs2THD197xp8/XdbRXCSYuFOZ32TWT4w5
-         R5OQUX69ichQMB20fQHGV3EiGzsHjyhIsRTCr68h39z0fJ8cvccPvAjVfEf6YVNCwVyd
-         FH8bbOUq28d4xA3g690J+YQE+Hnt6PKIfOeqUUPJ8c76+TwjGiakpP5ICjrkJg4aX5Ud
-         0If2ajkOjo4esvOhsIjiGY5cAi3u7l8EnwbWW0Hb3d5bQHoDZ1Bqsv96hWdaUDgZdP5T
-         1sLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSDTQzVDGgrE3N+IV1ECv2ni+/Tqv+b8DAxkH3QF3gu8wp+e4vdjOqpn0asosvLKfujoh6kz2TUsd9DgQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXHj/vilRsk01KRif1ZyugnvsdSO1N+U6zIjo57bTq4rQAkkmn
-	SfC3vqgHw5V6v9zJGKGujgPcuUw7ItSO1nhpZ9BhNJ/HOMNI7Ki713vxgbywZSs=
-X-Gm-Gg: ASbGncsFAiIG5w//hfNCI/iLNY0kYpCTVV+FN1mWeedFJQtO3V17hFXV2tYmUgoHwh/
-	p9yidA/+i0z2Xzmt1ngoKmudAAOAZ+YPtxW6S7oYA9mBQAannMA5BFnnxSe8Sr4r0ETNsvathH0
-	TAm/26mav8KN/yj6hEiS4PyFT1mI1xGVS8M0zDFbLepbhZR8Yi/DYhYYgJLQzUFWASl508XKsLC
-	HSUmA8bzT3oiBUUlRTq5ebrESWGiCkxoPTR0era4bA8Niq8bgPUnnrfOzm2n2h7/QMT/xm9AVd6
-	zpK+EhUbQviARpqJPITWjboEV9qokslm4GIzNQEcJYBAg0R1jM0rSVZZ2whiaLiFo0+hTw==
-X-Google-Smtp-Source: AGHT+IFomURG1YZ6MaU3eQzhvE9DCFtZWTCQi1bNYeooIn598e5QS01eOCe8n8ZhHftKe9tnJoa+TQ==
-X-Received: by 2002:a05:6000:2585:b0:390:f0ff:2c10 with SMTP id ffacd0b85a97d-39d8e32c615mr411689f8f.19.1744224839182;
-        Wed, 09 Apr 2025 11:53:59 -0700 (PDT)
-Received: from localhost (cst2-173-28.cust.vodafone.cz. [31.30.173.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f235a5d31sm24520595e9.35.2025.04.09.11.53.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 11:53:58 -0700 (PDT)
-Date: Wed, 9 Apr 2025 20:53:57 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, 
-	linux-riscv@lists.infradead.org, Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>, 
-	Pritesh Patel <pritesh.patel@einfochips.com>, Darshan Prajapati <darshan.prajapati@einfochips.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] riscv: module: Allocate PLT entries for
- R_RISCV_PLT32
-Message-ID: <20250409-cf4fead4fda7b1b11bf4107d@orel>
-References: <20250409171526.862481-1-samuel.holland@sifive.com>
- <20250409171526.862481-2-samuel.holland@sifive.com>
+	s=arc-20240116; t=1744224870; c=relaxed/simple;
+	bh=mMG6xH4tZQ2fTDUJgPzk70r/8nOTLnpgQpsI7uB3zkw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=dN04Pho3S3OGLzPw45NaR/2ycbczZ5WjMiKWbcD7Ok4HRxq1YDVbHGgHXAMvzespj+QMEnMJTlmPh2d08qLlviDtZ9SsxkHM8pJeMMeHlsxptEAX6qvPLWwR66B1uNHzb4PM4L1j1Dgo5oQ01id41xyyrOAC6Mv+PoOgZZVW7rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UwwXgD9U; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qmdwCcMj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 09 Apr 2025 18:54:21 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744224867;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WvAiMyF7rx9J7jNxozNCGf3dIM4d28Yv0WOtKBRR93E=;
+	b=UwwXgD9Uaam9Ybj4wH/+FRdmgZ8/KhwvEfNNLFF0fZa8qOEyDKRhnFr1dSj+F4DgQeDHuh
+	QqY32w32arlsTIlbz4AinPn5j8EZu74THo7PsNTqKWLFDradoNSz6jglWj2lslUGm6WYgf
+	GkEnqyO/YkdMXZ6UHYn3Ceb9OZFLC60CkI2FigPWb4m0c4cTdfS56vgab8JToThvU9fFBK
+	D0nxw/tzZMCOfM5IeNp0FgCLOBmvsi0TZ57929J4ezXrRyid8s10+4jZcNklfjAfvyc7wF
+	9igIBLR4zWndZd6U0Knz3jrLcOrxsFlGDDXsi5C/rC5blmQYXKxJwT6LOen+og==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744224867;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WvAiMyF7rx9J7jNxozNCGf3dIM4d28Yv0WOtKBRR93E=;
+	b=qmdwCcMjZaRzNPkNIIIh52RQvpfA6XflWYv9lHO8GgXHrQ71xZDLAUTIAGa9s5y3vtj7AO
+	1eHer5EkCwdhBkCg==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/msi] genirq/msi: Rename msi_[un]lock_descs()
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Jonathan Cameron <Jonathan.Cameron@huwei.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250319105506.864699741@linutronix.de>
+References: <20250319105506.864699741@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409171526.862481-2-samuel.holland@sifive.com>
+Message-ID: <174422486256.31282.18049333911691421551.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 09, 2025 at 10:14:50AM -0700, Samuel Holland wrote:
-> apply_r_riscv_plt32_rela() may need to emit a PLT entry for the
-> referenced symbol, so there must be space allocated in the PLT.
-> 
-> Fixes: 8fd6c5142395 ("riscv: Add remaining module relocations")
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
-> 
-> Changes in v2:
->  - New patch for v2
-> 
->  arch/riscv/kernel/module-sections.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/riscv/kernel/module-sections.c b/arch/riscv/kernel/module-sections.c
-> index e264e59e596e..91d0b355ceef 100644
-> --- a/arch/riscv/kernel/module-sections.c
-> +++ b/arch/riscv/kernel/module-sections.c
-> @@ -73,16 +73,17 @@ static bool duplicate_rela(const Elf_Rela *rela, int idx)
->  static void count_max_entries(Elf_Rela *relas, int num,
->  			      unsigned int *plts, unsigned int *gots)
->  {
-> -	unsigned int type, i;
-> -
-> -	for (i = 0; i < num; i++) {
-> -		type = ELF_RISCV_R_TYPE(relas[i].r_info);
-> -		if (type == R_RISCV_CALL_PLT) {
-> +	for (int i = 0; i < num; i++) {
-> +		switch (ELF_R_TYPE(relas[i].r_info)) {
+The following commit has been merged into the irq/msi branch of tip:
 
-I see ELF_R_TYPE() is equivalent to ELF_RISCV_R_TYPE(). So OK.
+Commit-ID:     9357e329cdeb6f2d27b431a22d4965700bec478a
+Gitweb:        https://git.kernel.org/tip/9357e329cdeb6f2d27b431a22d4965700bec478a
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Wed, 19 Mar 2025 11:57:01 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 09 Apr 2025 20:47:30 +02:00
 
-> +		case R_RISCV_CALL_PLT:
-> +		case R_RISCV_PLT32:
->  			if (!duplicate_rela(relas, i))
->  				(*plts)++;
-> -		} else if (type == R_RISCV_GOT_HI20) {
-> +			break;
-> +		case R_RISCV_GOT_HI20:
->  			if (!duplicate_rela(relas, i))
->  				(*gots)++;
-> +			break;
->  		}
->  	}
->  }
-> -- 
-> 2.47.0
->
+genirq/msi: Rename msi_[un]lock_descs()
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+Now that all abuse is gone and the legit users are converted to
+guard(msi_descs_lock), rename the lock functions and document them as
+internal.
 
-Thanks,
-drew
+No functional change.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huwei.com>
+Link: https://lore.kernel.org/all/20250319105506.864699741@linutronix.de
+
+
+
+---
+ include/linux/msi.h |  8 ++++----
+ kernel/irq/msi.c    | 16 ++++++++++------
+ 2 files changed, 14 insertions(+), 10 deletions(-)
+
+diff --git a/include/linux/msi.h b/include/linux/msi.h
+index 4e43991..8c0ec9f 100644
+--- a/include/linux/msi.h
++++ b/include/linux/msi.h
+@@ -229,11 +229,11 @@ struct msi_dev_domain {
+ 
+ int msi_setup_device_data(struct device *dev);
+ 
+-void msi_lock_descs(struct device *dev);
+-void msi_unlock_descs(struct device *dev);
++void __msi_lock_descs(struct device *dev);
++void __msi_unlock_descs(struct device *dev);
+ 
+-DEFINE_LOCK_GUARD_1(msi_descs_lock, struct device, msi_lock_descs(_T->lock),
+-		    msi_unlock_descs(_T->lock));
++DEFINE_LOCK_GUARD_1(msi_descs_lock, struct device, __msi_lock_descs(_T->lock),
++		    __msi_unlock_descs(_T->lock));
+ 
+ struct msi_desc *msi_domain_first_desc(struct device *dev, unsigned int domid,
+ 				       enum msi_desc_filter filter);
+diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
+index 5747d20..a8f7701 100644
+--- a/kernel/irq/msi.c
++++ b/kernel/irq/msi.c
+@@ -343,26 +343,30 @@ int msi_setup_device_data(struct device *dev)
+ }
+ 
+ /**
+- * msi_lock_descs - Lock the MSI descriptor storage of a device
++ * __msi_lock_descs - Lock the MSI descriptor storage of a device
+  * @dev:	Device to operate on
++ *
++ * Internal function for guard(msi_descs_lock). Don't use in code.
+  */
+-void msi_lock_descs(struct device *dev)
++void __msi_lock_descs(struct device *dev)
+ {
+ 	mutex_lock(&dev->msi.data->mutex);
+ }
+-EXPORT_SYMBOL_GPL(msi_lock_descs);
++EXPORT_SYMBOL_GPL(__msi_lock_descs);
+ 
+ /**
+- * msi_unlock_descs - Unlock the MSI descriptor storage of a device
++ * __msi_unlock_descs - Unlock the MSI descriptor storage of a device
+  * @dev:	Device to operate on
++ *
++ * Internal function for guard(msi_descs_lock). Don't use in code.
+  */
+-void msi_unlock_descs(struct device *dev)
++void __msi_unlock_descs(struct device *dev)
+ {
+ 	/* Invalidate the index which was cached by the iterator */
+ 	dev->msi.data->__iter_idx = MSI_XA_MAX_INDEX;
+ 	mutex_unlock(&dev->msi.data->mutex);
+ }
+-EXPORT_SYMBOL_GPL(msi_unlock_descs);
++EXPORT_SYMBOL_GPL(__msi_unlock_descs);
+ 
+ static struct msi_desc *msi_find_desc(struct msi_device_data *md, unsigned int domid,
+ 				      enum msi_desc_filter filter)
 
