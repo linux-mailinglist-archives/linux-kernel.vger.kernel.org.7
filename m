@@ -1,126 +1,165 @@
-Return-Path: <linux-kernel+bounces-595722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23581A8221A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:31:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E52A82224
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 12:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC5018C2BE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:30:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12E88A19A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4026825DCEB;
-	Wed,  9 Apr 2025 10:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3A825DAE3;
+	Wed,  9 Apr 2025 10:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="StMW4ovH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWmn87rl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCFC25DAE2;
-	Wed,  9 Apr 2025 10:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3438B13B59B;
+	Wed,  9 Apr 2025 10:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744194600; cv=none; b=Cpy5sybc+t9Ng2k/qIN/wCYZIrcFNFXHcjzhZcorfc/5eMSpTnruG1y92kaHycU9Xwb4fIMdbYHnD/W/L9mYKMJ85zA9r2Jms9qdn3JnuT4GFHbNiMd0sD8T5rO6hFGt5J5Wwz6NVfrbS6haRF7SpxW7+6JFUIkHn/u3q4hGSGk=
+	t=1744194649; cv=none; b=HTwYmIlhmq3pO05k2ek0ivkFut3J4BzdD+E6g3D5G6++QLvpQXe08FTElBDjnVKba0ZVC3ruCbDGB0KRD8d87o9kD8M+iRJYqIrrIogfF903xAVpVSEGeYmRyELAU3LZsE/rik/PPeKeuC3pEWdyjjJ3BZhAGcnbRGZdGegzTj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744194600; c=relaxed/simple;
-	bh=5Tc53pxjVxa86rw6gH92zMKZ+MrFWBmscHtIF90fUbw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=a4lNZ9/gCzjsJNNlEfoRYIHi1O+0cNX1gW4LtXO7qaerqdHMYcLzIZAkXPi+1b8KiadopF7jFbdNf4TheaeGt/JU/xh9CidKwDk0tQmz4qafqxmWKb6yH5gFZqvQJ5e9EtkRcwF+29v+0IWTszAwOVrF3CWQ8YqqxatdejZGSFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=StMW4ovH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F366DC4CEF1;
-	Wed,  9 Apr 2025 10:29:59 +0000 (UTC)
+	s=arc-20240116; t=1744194649; c=relaxed/simple;
+	bh=CIzSWQr2fxowjjcyE1pGFvoBUxHTEzwh5eGjyymix3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oKbHVvxXgBj+Pvi+ykO/ctyLt08Z5mf5/FlH0DIM9Td5E1HqhQ8wu2PfAZAT69IcIBc7UHGRhNu3cEIhdXxvFEQbAfD5Hgj/ndrm9rDWFGjLqpAsT9KYd69bl/RQkwo2EcGoiAmqOMeaFsmPg5rB+BLgyUBelHSiSOhb8LhibQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWmn87rl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96E2FC4CEE3;
+	Wed,  9 Apr 2025 10:30:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744194600;
-	bh=5Tc53pxjVxa86rw6gH92zMKZ+MrFWBmscHtIF90fUbw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=StMW4ovHSUyCy0+izavTlNwSpEpKr8rMeuYeFidLnUbP1k8f1+ROBtKZ/7L5TZ8+6
-	 lkX4pA8L4hQsZ+1qVdhyr2/qhPiZtYT7F2g/uxI6j/TtdTD4+AhhA3Mfx30NuHwRM8
-	 fPJc4Vul1+/FqUbZBqwrlsLX/q2FlY+47w3nJXSi/5LX+eaQZLn+Lon/sfB8n0+sMp
-	 S5Lg7wwSj9dp68628kgFFlRDJP+7WN/OZs6XJ069bp3twRlCJTTgpeQyd66C2t1GWS
-	 MaOMVkWI1AiXKgHKvDzrYCAef/XJEaKhvDo1DJxLQxvkTUMm6AlEQD6E+T5Vr9H3u7
-	 2GRCr7Cosjxkw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E70F1C369A4;
-	Wed,  9 Apr 2025 10:29:59 +0000 (UTC)
-From: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>
-Date: Wed, 09 Apr 2025 18:29:34 +0800
-Subject: [PATCH v2 4/4] ASoC: ac97: Add DT support
+	s=k20201202; t=1744194648;
+	bh=CIzSWQr2fxowjjcyE1pGFvoBUxHTEzwh5eGjyymix3s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qWmn87rlAUQYXSgWIh045wU/TuVqaNrrIrAVIA9E0PcXE1XiZHj4Ox8Y/420Wqy8P
+	 Su+jrC/cfSsF3QJ9S9GWhW42ZNOkT0TfmDg8e7AbdLmsAqiReN7nTU068EbxZBI7BM
+	 zYMq1vhcLyfg0E9GgXqhl6ns9f9uRh8tfJywEShHCl1G3XFgHXgNU/djyK7bQbRexR
+	 HTRXKkn38VXbUu0iurAKH7lGf4h5vO5gTAdkXTHErirnfjZc0PCEfzcZvAK9/Y+/XD
+	 N9ByBmt5FVUqPUaiQ3pEIVWq1rCFRKOD5QtXFcJ8TwS+KL9zXHzhjqyKQ+t3b/NbVp
+	 /m39+4Fj4yPZg==
+Date: Wed, 9 Apr 2025 12:30:41 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 20/24] irqchip/gic-v5: Add GICv5 LPI/IPI support
+Message-ID: <Z/ZMUchUElp4AdCC@lpieralisi>
+References: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
+ <20250408-gicv5-host-v1-20-1f26db465f8d@kernel.org>
+ <87wmbtu4cz.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250409-loongson1-ac97-v2-4-65d5db96a046@gmail.com>
-References: <20250409-loongson1-ac97-v2-0-65d5db96a046@gmail.com>
-In-Reply-To: <20250409-loongson1-ac97-v2-0-65d5db96a046@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>
-Cc: linux-mips@vger.kernel.org, linux-sound@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Keguang Zhang <keguang.zhang@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744194597; l=1140;
- i=keguang.zhang@gmail.com; s=20231129; h=from:subject:message-id;
- bh=zOmvkdjOxEXNVbs0rnSsZ3qVKBPQtGNTr4XJg6yjJq8=;
- b=jfNHiiIkUNks040IkOBwMATTw/hJJ5gyDUmpLJgM7FznX3ndazW6dGT6L7akPE4GzfABZMK0M
- ieaYWoGQzQBCt8WwkEyWxPiy9djLBa5PMCuLUho+FVmzn9p9yHGRTuF
-X-Developer-Key: i=keguang.zhang@gmail.com; a=ed25519;
- pk=FMKGj/JgKll/MgClpNZ3frIIogsh5e5r8CeW2mr+WLs=
-X-Endpoint-Received: by B4 Relay for keguang.zhang@gmail.com/20231129 with
- auth_id=102
-X-Original-From: Keguang Zhang <keguang.zhang@gmail.com>
-Reply-To: keguang.zhang@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wmbtu4cz.ffs@tglx>
 
-From: Keguang Zhang <keguang.zhang@gmail.com>
+On Wed, Apr 09, 2025 at 10:27:24AM +0200, Thomas Gleixner wrote:
+> On Tue, Apr 08 2025 at 12:50, Lorenzo Pieralisi wrote:
+> > +/* Wait for completion of an IST change */
+> > +static int gicv5_irs_ist_wait_for_idle(struct gicv5_irs_chip_data *irs_data)
+> > +{
+> > +	int ret;
+> > +	u32 val;
+> > +
+> > +	ret = readl_relaxed_poll_timeout_atomic(
+> > +			irs_data->irs_base + GICV5_IRS_IST_STATUSR, val,
+> > +			FIELD_GET(GICV5_IRS_IST_STATUSR_IDLE, val), 1,
+> > +			USEC_PER_SEC);
+> > +
+> > +	if (ret == -ETIMEDOUT)
+> > +		pr_err_ratelimited("IST_STATUSR.IDLE timeout...\n");
+> > +
+> > +	return ret;
+> 
+> I'm sure I've seen that code before and without looking I'm sure the
+> diff between the two functions is ~2 lines.
 
-Add an of_match_table with 'realtek,alc203' to provide
-DT support for the AC97 generic codec driver.
+Yep, you have a point, will do my best to consolidate them.
 
-Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
----
- sound/soc/codecs/ac97.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> > +
+> > +	mtree_lock(&lpi_mt);
+> > +	ret = mas_empty_area(&mas, 0, num_lpis - 1, lpis);
+> > +	if (ret) {
+> > +		pr_err("Failed to perform a dynamic alloc in the LPI MT!\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	lpi_base = mas.index;
+> > +
+> > +	/*
+> > +	 * We don't really care about the entry itself, only about
+> > +	 * allocation of a maple tree ranges describing in use LPIs.
+> > +	 * That's why, upon allocation, we try to merge slots adjacent
+> > +	 * with the empty one we are allocating to minimize the number
+> > +	 * of slots we take from maple tree nodes for nothing, all
+> > +	 * we need to keep track of is in use ranges.
+> > +	 */
+> 
+> I'm really not convinced that you need a maple tree and the code
+> complexity for this. What's wrong with a simple bitmap other than that
+> it might need 1MB memory?
 
-diff --git a/sound/soc/codecs/ac97.c b/sound/soc/codecs/ac97.c
-index 0e013edfe63d..d8444a083af2 100644
---- a/sound/soc/codecs/ac97.c
-+++ b/sound/soc/codecs/ac97.c
-@@ -13,6 +13,7 @@
- #include <linux/kernel.h>
- #include <linux/device.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <sound/core.h>
- #include <sound/pcm.h>
- #include <sound/ac97_codec.h>
-@@ -127,9 +128,18 @@ static int ac97_probe(struct platform_device *pdev)
- 			&soc_component_dev_ac97, &ac97_dai, 1);
- }
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id ac97_codec_of_match[] = {
-+	{ .compatible = "realtek,alc203", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ac97_codec_of_match);
-+#endif
-+
- static struct platform_driver ac97_codec_driver = {
- 	.driver = {
- 		.name = "ac97-codec",
-+		.of_match_table = of_match_ptr(ac97_codec_of_match),
- 	},
- 
- 	.probe = ac97_probe,
+Yes, I wrote it in the cover letter (again, easy to miss), I have
+to admit I am not convinced either. We need 24 bits max, so a 2MB
+chunk of memory worst case but other than that I can't really argue
+to be honest.
 
--- 
-2.43.0
+I also thought about re-using the GICv3 ITS LPI allocator (which
+does the same thing - agree, it is an on-purpose one, so maybe
+it is better to reuse a core code construct).
 
+Marc obviously has more background knowledge on this - I am
+open to reworking this LPI allocator and remove the MT.
 
+> > +static int gicv5_irq_lpi_domain_alloc(struct irq_domain *domain,
+> > +				      unsigned int virq, unsigned int nr_irqs,
+> > +				      void *arg)
+> > +{
+> > +	irq_hw_number_t hwirq;
+> > +	struct irq_data *irqd;
+> > +	u32 *base_lpi = arg;
+> > +	int i, ret;
+> > +
+> > +	hwirq = *base_lpi;
+> > +
+> > +	for (i = 0; i < nr_irqs; i++) {
+> > +		irqd = irq_desc_get_irq_data(irq_to_desc(virq + i));
+> 
+> irq_get_irq_data() and irq_domain_get_irq_data() exist for a reason.
+
+Point taken.
+
+> > +
+> > +		irq_domain_set_info(domain, virq + i, hwirq + i,
+> > +				    &gicv5_lpi_irq_chip, NULL,
+> > +				    handle_fasteoi_irq, NULL, NULL);
+> > +		irqd_set_single_target(irqd);
+> > +static int gicv5_irq_ipi_domain_alloc(struct irq_domain *domain,
+> > +				      unsigned int virq, unsigned int nr_irqs,
+> > +				      void *arg)
+> > +{
+> > +	int ret, i;
+> > +	u32 lpi;
+> > +	struct irq_data *irqd = irq_desc_get_irq_data(irq_to_desc(virq));
+> 
+> Again. Zero reason to fiddle with irq_desc.
+
+I will update it.
+
+Thanks Thomas,
+Lorenzo
 
