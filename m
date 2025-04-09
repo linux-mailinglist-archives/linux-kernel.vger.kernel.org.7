@@ -1,144 +1,184 @@
-Return-Path: <linux-kernel+bounces-596134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64121A827B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:25:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC44A827D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FFFA4A3828
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:25:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24DFF4A3FE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634E926657D;
-	Wed,  9 Apr 2025 14:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D35A26657F;
+	Wed,  9 Apr 2025 14:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hzmlOKPI"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Y1BbvLAC";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iAOOv5bS"
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486D8265CB5;
-	Wed,  9 Apr 2025 14:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DD425E836;
+	Wed,  9 Apr 2025 14:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744208718; cv=none; b=h5BbQ0eHXGx6qiyNpY67D/ei3Et3g0DAmrW8GknwOyeKQllDWfl+tf35Cq27lSLfS0nrszy3jckYhE0UPpGW3W9RFicmK3nIBceUsIxMX6qMXX5bow/ZMwfOPyj7+zHZ+Wkoz+tYHWRlxXFGbC+ngHX194iptnfxn+AOqu63ZLM=
+	t=1744208798; cv=none; b=Mr6AyjCjGmR5fltPjh620n09ct9O1NLE16F/YZReeAkO4pclVY3LdhOj0wxCkZTEUQt0hRZq+V84Mw+Kt4AWvzrSwBCbSlewIpTDvhn72tbQaTsMbV99jMDeVVPI5SlbLr69b0ooq1d0hDbrv/V+/TdFSuJl5lrFX2oy0wNYQbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744208718; c=relaxed/simple;
-	bh=qCQcsvfYktQKjto5hQwySNvL5iBrBUQml5G8WWesrTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fgHJjCTMmRmGmkAUGHoSmHDQk+5nKjXcyCpXdZANSPYovglbSdnQfOTzfryzaC2hUI7+a/78IZdMwpmwlZyfGje7m2h3wPs8jbi2luJ9SqTVdCGutngSmP71Cm7zIzIc1OJksnJp5VaUHR2wAefnzHEbAxTACLcpqp3/H4FIzPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hzmlOKPI; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-30549dacd53so831483a91.1;
-        Wed, 09 Apr 2025 07:25:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744208715; x=1744813515; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zfJxLC7wLvSINk+yl7dVGie7f5vAe0C3LCRWygQl7Xw=;
-        b=hzmlOKPIJUawVMKiMrOosO01chQCSWjloIOhh+QCyGhaZD3HRegilQSJpcMXIqDZci
-         mrfVgdaq/QjJ56R3eDMaXCPsh/lW/8X48XcStN4L+9EOiXfOUy29atgqpWuGSZP9DCbj
-         uC3E4OUr5sPZki9QLzNQSr3nGKZetfPF1KLq9/dpgvtE0oR6094NtuAIWNJTEnpBuEVD
-         BHiGSi9GIhoSwgd0RiSn+YK2U0LcCe++7IFVNJlBobQcaG5UgUdLwn6lB2WjY1WmEg8P
-         5tfYudYUW/JkzY/xUR1NnveizlbCCor29umfdM/sE9LB2IGsstO0jKSZzlwTMV1fUZ7a
-         LW1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744208715; x=1744813515;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zfJxLC7wLvSINk+yl7dVGie7f5vAe0C3LCRWygQl7Xw=;
-        b=hvsU69PNblKi4w9vETzaTWBwNi4Tgg7UYoqnUnBXopYjiGq1ab62u/kE2fgrreDGiw
-         LUeqJfLS76IFRDvf0lUJtKtSycoZIfrwX0S+b8zAgOLGomgQ1n/3qabV9/79mIWzdLMZ
-         lZoKkpdK4+iM+5fS1V4FQacy58VzexjX/HxNxnxqvd9EsYBORKIQY5Eu7oCySHuy/+3M
-         H/4IqGhLTsoI4XJTl2gb5qUx6r2G8So58fi+K9Q4FHUt8tyI/qv6JaNBReSSWDbFwqtZ
-         ho57Mk6VufEOzmRDFK2Mi0APOe/bO0JHCY43AtHsdWsaoq180XpdG6s/OT9wItMvsCVR
-         HPIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGWRGyxYC9w3RkHrdBbJRA7x6CB/3fGtNaWB+G2vIOYGHNgH5puKwdowICijBLiMjDPcFyAwKCXG6+VwqN@vger.kernel.org, AJvYcCXCIKZqRXzSjZ1xFVc8FImRWiitnfvSKD+JZgGD9Cbqpi2hC2D3Cq/DstSHH0alwQWFvSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRFC2nmkzzl4thL5OhAz9G8UBFNO3WObGev5/kRJjFKrb7I3z9
-	5B8We2tgmjW4Nrrz/Y8YJR1hwdjgM1ff2v2u2Vw8hQCwExu6QQg=
-X-Gm-Gg: ASbGncuCTAoy+kgtZ2IYtUnyf1cB1nsm+jpxMVv0gaYt5BJbXzMw5ePLEuQT9/9ZqnQ
-	qlVB7rIGIPkeR8QozONmyiyvo2acF6hB9zHx6uPk0TSfU8Ar4V/gx6zlDCN5Aq2hNAv5vZEvBBJ
-	vc3/MRCSF2OzdMre3BsPbLSf4XeX0dphI3PScBsrlrqgfEtBkT2/N+EknJkNqr41jmBYxhM1PLu
-	3KF6mZL7cPRNNyS1NZK98LJgtKItx0kzGABqOiGqb+kOQ4Dw4SwZzrgNCw0yXlhmj5fTVVExe34
-	NwnVsfz0vjvB0g67hS00cf1dMb+Yl2zLAQg+vfYQ
-X-Google-Smtp-Source: AGHT+IHGLYcoO/orX7nCWeuHDsnJqoy2EHiHXumGysMZgYJ95by5Ga9thZxXcKt+YCsnQ/TLrwaXgQ==
-X-Received: by 2002:a17:90b:5283:b0:2ff:6e58:89f5 with SMTP id 98e67ed59e1d1-306dc0452bfmr4891770a91.6.1744208715405;
-        Wed, 09 Apr 2025 07:25:15 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-306dd10c42asm1832714a91.7.2025.04.09.07.25.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 07:25:14 -0700 (PDT)
-Date: Wed, 9 Apr 2025 07:25:14 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: andrii@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-	john.fastabend@gmail.com, martin.lau@linux.dev, eddyz87@gmail.com,
-	song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC bpf-next 10/13] bpf: verifier: Add indirection to
- kallsyms_lookup_name()
-Message-ID: <Z_aDSipnuvNAhHbE@mini-arch>
-References: <cover.1744169424.git.dxu@dxuuu.xyz>
- <7540678e9a46c13f680f2aacab28bb88446583f5.1744169424.git.dxu@dxuuu.xyz>
+	s=arc-20240116; t=1744208798; c=relaxed/simple;
+	bh=ISzOGYjfEwHL6gSIuR7OkHy//PCA55CQ35Cejl1vCjc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=UC29ojJ8oDBtakOjRr/Mv4WjFtw0ccTq/KFR6bKHevcimhP1L1Dy0tZXzodpw/FmRA3IU+ZUoyesD2bLEzX6CMqqKgHO00HYb/vi/JnyGhYopZ24vkYnNozGCf/SqfVP//6M/88swpvqbxRW2pNNfO0vD0CW0GCm4qsk58sr0c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Y1BbvLAC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iAOOv5bS; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 562302540169;
+	Wed,  9 Apr 2025 10:26:34 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-12.internal (MEProxy); Wed, 09 Apr 2025 10:26:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1744208794;
+	 x=1744295194; bh=x3ZOzUdjtOFEuhwm/cEU4y2EYS4Yk/OhdGqcU/ZOYUc=; b=
+	Y1BbvLACgsmfOucFr02y1rD7MJGoemJUJeW52i2NlM7IPVt5/89qC12Z+JMRJPJA
+	D2lM5JCjDyu7MXKXhBSypuX1MQ0WBt5WczGCo+p6tQ64EKPprfgJdfdQQUrA5t6P
+	MfMBELg7Py08YDC0filjwfHxJQpQ2rGr6FUJ8OM/oTQPqzJCJVn73cgw/yJKIykP
+	vvi/kcqPmoYyI7hxVWfbdtx6X7TGYQvTTBPfYZDXapAFBeNm3q7Q5UwVjRj8d+1Z
+	DtCsE2VFJVRPHYmY8Dad5lmn2yHLQ/p5q1/eVOXZD2AuJPD1AA1m+yy19d4mQOy7
+	UTLS8QXzpICcBF46SvKzoQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744208794; x=
+	1744295194; bh=x3ZOzUdjtOFEuhwm/cEU4y2EYS4Yk/OhdGqcU/ZOYUc=; b=i
+	AOOv5bSXN4zOuAhHIH4Vnwzu70mVL/q61W/3Rr6LqXXmYj0Ol/MvOzv7ppWzzbaL
+	4i4hjp/ycjO4PxLWIF8KbcOWpZ52Mpgbkk8lSrqTGid3CvHcPtEVI3ppNGahxJjU
+	/m66S8s5qxEFL/nZhrjA+ZlXzaXrnUb67cWJ7Ojk6CCMVC9WQ6hMEUugHFG0RTN+
+	Wm55V+7Izo2ZedVMI4sRaxNK5S2+YnLXeUCThDDAeuqvjDLSGUThtIyPHtuQTc27
+	ij6584i4h+ibcyyP8EIdXIq4IhadhXPsLvL6UD52h7lolypp7EmxOkfSyLBa5eEi
+	thjY9XHKUHchMOx9MFY/Q==
+X-ME-Sender: <xms:mYP2ZwQxcmHCBTElBtemUn65cg2NTinW55Gi_aI96z74njjfWVc8Yg>
+    <xme:mYP2Z9ySTgWG7AWS-5uPOOJBU30ZA5Weq_d97SnhxREvpZHQ7WUU01mmysUBhcq0O
+    Gv17yYKvcGP2eXyg5w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdeivdefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    udefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegtrghtrghlihhnrdhmrghrih
+    hnrghssegrrhhmrdgtohhmpdhrtghpthhtohepshgrshgthhgrrdgsihhstghhohhffhes
+    rghrmhdrtghomhdprhgtphhtthhopehtihhmohhthhihrdhhrgihvghssegrrhhmrdgtoh
+    hmpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlphhivghrrghlih
+    hsiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgriieskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllh
+    eskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:mYP2Z92HlvwhatWvgobJpwRwqu66wOkDzubjSB1rNKGkbHuyOlMmdw>
+    <xmx:mYP2Z0DTx_RoxVa7Z4Au6mNklIHZtswjXlpjNvTSu09A1matMP6cCw>
+    <xmx:mYP2Z5g2JDyJsHveBwK0Bv30ps0u7LgESsWOI5BP6qmObSKqQvKzuA>
+    <xmx:mYP2Zwprfsk7p3d4zRQC5PAwBxyk1uT9B_MRSEGcymoZBLcpu19iIA>
+    <xmx:moP2Z9t--rONNyP_3OX_CvoZi5R7nx2eVEhmVNI42lyG57C2EDQj5cDm>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id CCD372220073; Wed,  9 Apr 2025 10:26:33 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7540678e9a46c13f680f2aacab28bb88446583f5.1744169424.git.dxu@dxuuu.xyz>
+X-ThreadId: T274101974a25e0dd
+Date: Wed, 09 Apr 2025 16:25:53 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Lorenzo Pieralisi" <lpieralisi@kernel.org>
+Cc: "Marc Zyngier" <maz@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ "Sascha Bischoff" <sascha.bischoff@arm.com>,
+ "Timothy Hayes" <timothy.hayes@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Message-Id: <6e71b946-d6c0-48ee-b1e9-7c767a4dda12@app.fastmail.com>
+In-Reply-To: <Z/Zy2zxD33/7sRrx@lpieralisi>
+References: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
+ <20250408-gicv5-host-v1-20-1f26db465f8d@kernel.org>
+ <ed63bb91-e9ac-409a-a9a0-25b233fe2e15@app.fastmail.com>
+ <Z/ZH5IBQAZ8rc9Cz@lpieralisi>
+ <e7e4e9f0-a9e4-48d4-9bed-a4c52453ee8e@app.fastmail.com>
+ <Z/Zy2zxD33/7sRrx@lpieralisi>
+Subject: Re: [PATCH 20/24] irqchip/gic-v5: Add GICv5 LPI/IPI support
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On 04/08, Daniel Xu wrote:
-> kallsyms_lookup_name() cannot be exported from the kernel for policy
-> reasons, so add this layer of indirection to allow the verifier to still
-> do kfunc and global variable relocations.
-> 
-> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> ---
->  include/linux/bpf.h   |  2 ++
->  kernel/bpf/core.c     | 14 ++++++++++++++
->  kernel/bpf/verifier.c | 13 +++++--------
->  3 files changed, 21 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index 44133727820d..a5806a7b31d3 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -2797,6 +2797,8 @@ static inline int kfunc_desc_cmp_by_id_off(const void *a, const void *b)
->  }
->  const struct bpf_kfunc_desc *
->  find_kfunc_desc(const struct bpf_prog *prog, u32 func_id, u16 offset);
-> +unsigned long bpf_lookup_type_addr(struct btf *btf, const struct btf_type *func,
-> +				   const char **name);
->  int bpf_get_kfunc_addr(const struct bpf_prog *prog, u32 func_id,
->  		       u16 btf_fd_idx, u8 **func_addr);
->  
-> diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-> index e892e469061e..13301a668fe0 100644
-> --- a/kernel/bpf/core.c
-> +++ b/kernel/bpf/core.c
-> @@ -1639,6 +1639,20 @@ find_kfunc_desc(const struct bpf_prog *prog, u32 func_id, u16 offset)
->  }
->  EXPORT_SYMBOL_GPL(find_kfunc_desc);
->  
-> +unsigned long bpf_lookup_type_addr(struct btf *btf, const struct btf_type *t,
-> +				   const char **name)
-> +{
-> +	unsigned long addr;
-> +
-> +	*name = btf_name_by_offset(btf, t->name_off);
-> +	addr = kallsyms_lookup_name(*name);
-> +	if (!addr)
-> +		return -ENOENT;
-> +
-> +	return addr;
-> +}
-> +EXPORT_SYMBOL_GPL(bpf_lookup_type_addr);
+On Wed, Apr 9, 2025, at 15:15, Lorenzo Pieralisi wrote:
+> On Wed, Apr 09, 2025 at 12:56:52PM +0200, Arnd Bergmann wrote:
+>
+> KMALLOC_MAX_SIZE is set according to MAX_PAGE_ORDER, that should
+> be fine for most set-ups (well, obviously implementations that
+> only support a 1-level IST can't expect a very large number of
+> IRQs -  we set that to 12 bits worth of IDs deliberately but
+> given the current memory allocation limits it can be much higher).
+>
+> A 2-level IST can easily manage 24-bits worth of IDs split into
+> two-level tables with the current kmalloc() limits.
+>
+> For the ITS DT and ITT the same reasoning goes, so the capping
+> is the (rare) exception not the rule and I don't expect this to be a
+> problem at all or I am missing something.
 
-Let's namespecify all these new exports? EXPORT_SYMBOL_NS_GPL
+Ok, just mention that estimation in the source code. If someone
+ever runs into the limit and it does become a problem, they can
+then figure out whether they have an unusually small
+KMALLOC_MAX_SIZE or an unusually large number of interupts.
+
+>> >> Do you expect actual implementation to not be cache-coherent?
+>> >
+>> > It is allowed by the architecture - I don't have a crystal ball
+>> > but if I want to add support for a non-coherent IRS the DMA mapping
+>> > like sequence above has to be there - alternatives are welcome.
+>> 
+>> I see that we have a few GICv3 implementations that are marked
+>> as non-coherent in DT. I don't understand why they'd do that,
+>> but I guess there is not much to be done about it.
+>
+> You don't understand why the GIC HW is not coherent or why we set it
+> up as such in the driver ?
+
+I meant why hardware would be built like that. I would have
+assumed that the GIC is designed to be closely tied to the
+CPU core and the L2 cache, so it shouldn't be hard to make
+it coherent even if the rest of the system is not.
+
+>> The only other idea I have would be to use an uncached allocation
+>> for the non-coherent case, the same way that dma_alloc_coherent()
+>> or maybe dma_alloc_wc() does. This still has the same problem
+>> with bypassing the dma-mapping.h interface because of the lack
+>> of a device pointer, but it would at least avoid the cache flushes
+>> at runtime. If I read this code right, the data in here is only
+>> written by the CPU and read by the GIC, so a WC buffer wouldn't
+>> be more expensive, right?
+>
+> The IST is also written by the GIC, the CPU reads it (explicity, with a
+> memory read rather than through instructions) only if the table is two
+> level and we are allocating L2 entries on demand to check whether an
+> L2 entry is valid.
+>
+> I am not sure the CMOs are that bad given that's what we do
+> for GICv3 already but it is worth looking into it.
+
+If the reads are common enough, then an uncached mapping would
+likely be slower than the flushes. Not sure which way is better
+without L2, you'd probably have to measure on real hardware,
+though you could perhaps do that on a GICv3 one if the access
+patterns are similar enough.
+
+      Arnd
 
