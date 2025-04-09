@@ -1,164 +1,212 @@
-Return-Path: <linux-kernel+bounces-596980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FCCCA8336E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:34:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1EEA83373
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 763413B468B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:34:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310D019E18BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08039215191;
-	Wed,  9 Apr 2025 21:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBC4218E92;
+	Wed,  9 Apr 2025 21:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nufb9xb9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fCw3vf4R"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B211B0F19
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 21:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C442135A1
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 21:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744234451; cv=none; b=AMAlBieuD5JhA+c6n2619mFTbhGDFo2aGfg4cfyF5p2V8cyfu6iKC2BNh/iCJQSV/AnaG/g+/DQw9VYrgQDbh6fKvTZd4o9IHQ1NlbosQrMrq80IhyKGFogNsZHjlIi9Rd+h42SxwlFtR2psY7O06PcSNknnmHWLqXPlH1yf2Q0=
+	t=1744234530; cv=none; b=iH1hpEBQ8aZJy3Hp53VwBLv6Aw869MS2XojGHfIqBbiEBftbkXYVUpmJNW4VEh28bwaRCkJdh5F8xY+sNZJrgG+I/3cNd+YCXFDouaMTdC8a3ElWYioZsE+c0yHUNvlC3iE+n9+ZYH+Ib7skzRV+4lxepQ30s5piGhHBWYnPa1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744234451; c=relaxed/simple;
-	bh=a48WLQkkP4gWo/eLBpfCmDza6nZ39Kc1DDQYC5pcMAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J/gOpor2NnW8sQJYQLd6+0dCKks1Y4YdjDqijOYa6g1vNFKrtyZcnI5BV0yc4Ih2ZbzafVL3RTUfpDns26qcu22jpSI9KGuzdQJz3+X0v6J5ZRZLEiC4/Xr6w0flObM3oQrZigm4Eh8SzpDhzpE50WMoVLmF2wgT+qpAFDknb/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nufb9xb9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA986C4CEE2;
-	Wed,  9 Apr 2025 21:34:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744234450;
-	bh=a48WLQkkP4gWo/eLBpfCmDza6nZ39Kc1DDQYC5pcMAg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nufb9xb9hRrg4Y4JrZG03t9mCjGEsDxSMzfT4DyDqc41mI5iHEWFp12mICAsO9s8A
-	 d+4v0ZQgYN81AyalzmB/+s0s/czMQpYOnWWyzm3x2c4KPLhkwRvofjP7VZHW1P0fNq
-	 J2b1Ix2NGLnF2PD4zkPRyvqYIIqNE3jHH60J7z4b1uGnuYDLWTcYP8UpYwJDTMaC9F
-	 XqqBQq+zBwyDsygR0jioHQUbHD85XyBBZHerC5K+fRobaXlj7nw+94qbSclL54Ppd7
-	 Z1z+fr9iwNFExIhczcFdOP7x4iebNYx49syYV/OVHuvMtlfmuAhJDv8kA8nYACy3HU
-	 Zx4GYNvheJtOA==
-Date: Wed, 9 Apr 2025 23:34:06 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org,
-	linux-kernel@vger.kernel.org, hpa@zytor.com
-Subject: Re: [PATCH] x86/Kconfig: Fix dependency for X86_DEBUG_FPU
-Message-ID: <Z_bnzs3IPyhVIYaT@gmail.com>
-References: <20250407231057.328010-1-skhan@linuxfoundation.org>
- <Z_TIMh7UsWQiSkqg@gmail.com>
- <f9642a9f-27d4-4f84-818c-390194b898bf@linuxfoundation.org>
+	s=arc-20240116; t=1744234530; c=relaxed/simple;
+	bh=DtY0vGLHcf+CQtDC0YI1wt0uIFmrfTa1t3e4mx9zvdM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SWDYBYw0T8it5sZhmGE/S92dquxXbg3HN61HGlXwboCN3LF8VuBGfnwaUzKnt2/r3rHmG4234yFNdfGVxerOENIEpguW5CzMKFiILbE564vJT0qZUV0c83/dXWluJ5qcXjA9bvC7McdlKGkiOtnbK2XOLhEAxu0tC2hpUzX9fc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fCw3vf4R; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e789411187so1166a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 14:35:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744234527; x=1744839327; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hBtSrPe7WZluOp+nomC0bfsWMrHWKW7U6czDExpfaAo=;
+        b=fCw3vf4RkVMD5pOIcusYCTrUZap1afG4lCsUpH+n8vzMY/ljPsawNY1duH3HXfB7f8
+         KfNvs0A7H2SLmw13begfhqmE206b+9W6CCylnvNXNhpkw26Trzloxg1S1GC0DSqXstBC
+         jbL4as8zawV4hVKyg+kJUkdiVxaPtKgV7gbX/01VeWx0k4beP4JL8ThWTWOPkMw/g9r8
+         pPMfv1pN+zBP8C1g1T4XdM0OCRs3yoZJLf1OMhCIvWkBkfB6sRLLwQoMStYB4NRvIEEJ
+         BWgUInl1ss3N+kFgGTskG8XWOnAMizbsvv9r1/ME0j8Zwa6pKF8nGrDAVdG4CUUAw4s3
+         oYNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744234527; x=1744839327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hBtSrPe7WZluOp+nomC0bfsWMrHWKW7U6czDExpfaAo=;
+        b=CRW/NSI7YZs1ylIPf86wlbcDHIdbJkPTXrRVSaHpRjBkrg5EskDU5wkAHjjwIDw2kE
+         nJ60Kj1JGz3ItGv7f0ixdSV/uNOFicPEPt4eLAjh7e3olpWR+ccjJZ8pSYXRG/VsKxeh
+         HYCGsL3Kv59P88EepwAUHH/fsnB6o9UDUE5uQIllAvJ6RK4JSUBbhNbdflX6MxM7zAr5
+         qoRuG5HvUHq3MT3ptU6nmXND6Sl7OB0y0aifEtOJK+7jFPRfB4kAAl4UHPnY+NEc8YbD
+         wMUzGlta+pVekSZcL3mLqZalAoKO/dYWcYSkjvTjcNA7dM3o/SQ+hnaOx1QQ0djG625m
+         tKFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWKeBaSpX4zCyrNK+aZxku45U5QJ1GAQIocJ/ASffUjR1A67aBigmIWDPdyDyApf/wEYUf/J0pwd4JJ6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxoKJGM5Sy60JmEHxKH/TFbwwsPg0SukPFJQmqdnEUVPvSwjw3
+	lDohpmPOxV5X5AXHglVvdf8Ubjkf8CASk4IDl8Ct587BPjhwUZ3pETQ2VmD7A8adBbkkBBrI9l9
+	ia1hBo4gWf6QIViHEVh0vCuHr7Pq8I3T7wqpT
+X-Gm-Gg: ASbGncu9eLhsvNpFJ/ehwnufNBF3W/gY+t5CIxiDvVc6gX5gORyRsOfB7KJADXKvznB
+	imPu5BNw1rHZCprWrWNnL35ViewH+48gMfmZih2xRujaPmliqM3Bu6oWRYb5Npl787DzHsMI/Sn
+	DQwqnqaqm8UrspSnsUgq8/TU1I3TsnnOKMeahrDTu6P/p3/1iMrmUd48eV+YakrfY=
+X-Google-Smtp-Source: AGHT+IHPCp84FrskA1MxfUD14D4kgZf0Pn5Jyg9pNQCJj5QuZD0wTInhm0c57wkfzvcDWR168vHuSJT3TGtpjWG2WvY=
+X-Received: by 2002:a50:99d7:0:b0:5ed:f521:e06c with SMTP id
+ 4fb4d7f45d1cf-5f3291cd5a2mr14691a12.7.1744234526715; Wed, 09 Apr 2025
+ 14:35:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9642a9f-27d4-4f84-818c-390194b898bf@linuxfoundation.org>
+References: <20250408220311.1033475-1-ojeda@kernel.org>
+In-Reply-To: <20250408220311.1033475-1-ojeda@kernel.org>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Wed, 9 Apr 2025 14:35:15 -0700
+X-Gm-Features: ATxdqUFhVkSOwO53hFox7UAmqaM-iyfDXe_LO4ZiaZoTyX7HLUuRtwe61t2vc0E
+Message-ID: <CAGSQo00QxBbUb8AxwqtRKXy96na_HUVmAG9nWmX=cVvozqwWaA@mail.gmail.com>
+Subject: Re: [PATCH] rust: kasan/kbuild: fix missing flags on first build
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	kasan-dev@googlegroups.com, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Sami Tolvanen <samitolvanen@google.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Apr 8, 2025 at 3:03=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
+e:
+>
+> If KASAN is enabled, and one runs in a clean repository e.g.:
+>
+>     make LLVM=3D1 prepare
+>     make LLVM=3D1 prepare
+>
+> Then the Rust code gets rebuilt, which should not happen.
+>
+> The reason is some of the LLVM KASAN `rustc` flags are added in the
+> second run:
+>
+>     -Cllvm-args=3D-asan-instrumentation-with-call-threshold=3D10000
+>     -Cllvm-args=3D-asan-stack=3D0
+>     -Cllvm-args=3D-asan-globals=3D1
+>     -Cllvm-args=3D-asan-kernel-mem-intrinsic-prefix=3D1
+>
+> Further runs do not rebuild Rust because the flags do not change anymore.
+>
+> Rebuilding like that in the second run is bad, even if this just happens
+> with KASAN enabled, but missing flags in the first one is even worse.
+>
+> The root issue is that we pass, for some architectures and for the moment=
+,
+> a generated `target.json` file. That file is not ready by the time `rustc=
+`
+> gets called for the flag test, and thus the flag test fails just because
+> the file is not available, e.g.:
+>
+>     $ ... --target=3D./scripts/target.json ... -Cllvm-args=3D...
+>     error: target file "./scripts/target.json" does not exist
+>
+> There are a few approaches we could take here to solve this. For instance=
+,
+> we could ensure that every time that the config is rebuilt, we regenerate
+> the file and recompute the flags. Or we could use the LLVM version to
+> check for these flags, instead of testing the flag (which may have other
+> advantages, such as allowing us to detect renames on the LLVM side).
+>
+> However, it may be easier than that: `rustc` is aware of the `-Cllvm-args=
+`
+> regardless of the `--target` (e.g. I checked that the list printed
+> is the same, plus that I can check for these flags even if I pass
+> a completely unrelated target), and thus we can just eliminate the
+> dependency completely.
+>
+> Thus filter out the target.
+>
+> This does mean that `rustc-option` cannot be used to test a flag that
+> requires the right target, but we don't have other users yet, it is a
+> minimal change and we want to get rid of custom targets in the future.
+>
+> We could only filter in the case `target.json` is used, to make it work
+> in more cases, but then it would be harder to notice that it may not
+> work in a couple architectures.
+>
+> Cc: Matthew Maurer <mmaurer@google.com>
+> Cc: Sami Tolvanen <samitolvanen@google.com>
+> Cc: stable@vger.kernel.org
+> Fixes: e3117404b411 ("kbuild: rust: Enable KASAN support")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+> By the way, I noticed that we are not getting `asan-instrument-allocas` e=
+nabled
+> in neither C nor Rust -- upstream LLVM renamed it in commit 8176ee9b5dda =
+("[asan]
+> Rename asan-instrument-allocas -> asan-instrument-dynamic-allocas")). But=
+ it
+> happened a very long time ago (9 years ago), and the addition in the kern=
+el
+> is fairly old too, in 342061ee4ef3 ("kasan: support alloca() poisoning").
+> I assume it should either be renamed or removed? Happy to send a patch if=
+ so.
+>
+>  scripts/Makefile.compiler | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+> index 8956587b8547..7ed7f92a7daa 100644
+> --- a/scripts/Makefile.compiler
+> +++ b/scripts/Makefile.compiler
+> @@ -80,7 +80,7 @@ ld-option =3D $(call try-run, $(LD) $(KBUILD_LDFLAGS) $=
+(1) -v,$(1),$(2),$(3))
+>  # TODO: remove RUSTC_BOOTSTRAP=3D1 when we raise the minimum GNU Make ve=
+rsion to 4.4
+>  __rustc-option =3D $(call try-run,\
+>         echo '#![allow(missing_docs)]#![feature(no_core)]#![no_core]' | R=
+USTC_BOOTSTRAP=3D1\
+> -       $(1) --sysroot=3D/dev/null $(filter-out --sysroot=3D/dev/null,$(2=
+)) $(3)\
+> +       $(1) --sysroot=3D/dev/null $(filter-out --sysroot=3D/dev/null --t=
+arget=3D%,$(2)) $(3)\
+>         --crate-type=3Drlib --out-dir=3D$(TMPOUT) --emit=3Dobj=3D- - >/de=
+v/null,$(3),$(4))
 
-* Shuah Khan <skhan@linuxfoundation.org> wrote:
+The problem with this change is that some `rustc` flags will only be
+valid on some platforms. For example, if we check if a
+`-Zsanitizer=3Dshadow-call-stack` is available, it will fail for non
+aarch64 targets. I don't think we're currently directly detecting any
+of these, because all of the stuff we're using is known present by
+virtue of minimum compiler version, which means we can possibly get
+away with this change for now. That said, this isn't a long term
+solution unless we are getting rid of target.json files altogether, as
+one of the main adaptations we've been putting in those is to enable
+additional target features.
 
-> On 4/8/25 00:54, Ingo Molnar wrote:
-> > 
-> > * Shuah Khan <skhan@linuxfoundation.org> wrote:
-> > 
-> > > Compile fails when X86_DEBUG_FPU is enabled and X86_REQUIRED_FEATURE_FPU is
-> > > disabled. Add explicit dependency on X86_REQUIRED_FEATURE_FPU to fix it.
-> > > 
-> > > ../arch/x86/kernel/fpu/regset.c:411:(.text+0x4cf2f): undefined reference to `fpregs_soft_get'
-> > > ld: vmlinux.o: in function `fpregs_set':
-> > > ../arch/x86/kernel/fpu/regset.c:445:(.text+0x4d0da): undefined reference to `fpregs_soft_set'
-> > > ld: vmlinux.o: in function `copy_fpstate_to_sigframe':
-> > > ../arch/x86/kernel/fpu/signal.c:197:(.text+0x4da98): undefined reference to `fpregs_soft_get'
-> > > 
-> > 
-> > So I cannot reproduce this build failure on either v6.14 or v6.15-rc1:
-> > 
-> >    starship:~/tip> git describe
-> >    v6.15-rc1
-> > 
-> >    starship:~/tip> grep -E 'X86_32=|M486SX=|X86_REQUIRED_FEATURE|X86_DEBUG_FPU' .config
-> >    CONFIG_X86_32=y
-> >    CONFIG_M486SX=y
-> >    CONFIG_X86_REQUIRED_FEATURE_ALWAYS=y
-> >    CONFIG_X86_DEBUG_FPU=y
-> > 
-> >    starship:~/tip> make -j128 ARCH=i386 bzImage modules
-> > 
-> >    ...
-> >    Kernel: arch/x86/boot/bzImage is ready  (#5)
-> > 
-> > > Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-> > > ---
-> > > 6.14 compile worked without X86_REQUIRED_FEATURE_FPU enabled. Might be a
-> > > new dependency. Enabling X86_REQUIRED_FEATURE_FPU fixed it for me on my
-> > > test system.
-> > 
-> > So vanilla v6.14 does not have X86_REQUIRED_FEATURE Kconfig flags, at
-> > all:
-> > 
-> >    starship:~/tip> grep FPU .config
-> >    CONFIG_ARCH_HAS_KERNEL_FPU_SUPPORT=y
-> >    CONFIG_X86_DEBUG_FPU=y
-> >    # CONFIG_TEST_FPU is not set
-> > 
-> > Because X86_REQUIRED_FEATURE_FPU is a new v6.15-rc1 feature, introduced
-> > via:
-> > 
-> >    3d37d9396eb3 ("x86/cpufeatures: Add {REQUIRED,DISABLED} feature configs")
-> > 
-> > I have no doubt you are seeing this build failure - but I think there
-> > might be some other .config detail required to reproduce it, not
-> > mentioned in your changelog. Could you please send the config you used?
-> > 
-> 
-> Config attached.
-> 
-> grep _FPU /boot/config-6.14.0+
-> CONFIG_ARCH_HAS_KERNEL_FPU_SUPPORT=y
-> CONFIG_X86_DEBUG_FPU=y
-> # CONFIG_TEST_FPU is not set
-> 
-> I noticed you are building ARCH=i386 - can you reproduce this
-> with x86_64? That is what I am building.
-> 
-> thanks,
-> -- Shuah
-
-> #
-> # Automatically generated file; DO NOT EDIT.
-> # Linux/x86 6.14.0 Kernel Configuration
-> #
-> CONFIG_CC_VERSION_TEXT="gcc (Debian 14.2.0-17) 14.2.0"
-
-Is this a vanilla v6.14 kernel? Because on upstream v6.14 'make 
-oldconfig' gives me:
-
-  Generate BTF type information (DEBUG_INFO_BTF) [N/y/?] (NEW) 
-
-Maybe different build environment?
-
-... and after answering that with 'N' the build succeeds:
-
-  LD      arch/x86/boot/setup.elf
-  OBJCOPY arch/x86/boot/setup.bin
-  BUILD   arch/x86/boot/bzImage
-Kernel: arch/x86/boot/bzImage is ready  (#3)
-
-More importantly, X86_REQUIRED_FEATURE_FPU *does not exist* in the 
-vanilla v6.14 kernel, it's a new v6.15 feature. So this part of your 
-changelog totally doesn't apply to a v6.14 kernel:
-
-> > > Compile fails when X86_DEBUG_FPU is enabled and X86_REQUIRED_FEATURE_FPU is
-> > > disabled. Add explicit dependency on X86_REQUIRED_FEATURE_FPU to fix it.
-
-Thanks,
-
-	Ingo
+>
+>  # rustc-option
+>
+> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> --
+> 2.49.0
 
