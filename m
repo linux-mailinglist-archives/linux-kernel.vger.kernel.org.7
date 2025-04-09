@@ -1,160 +1,125 @@
-Return-Path: <linux-kernel+bounces-596996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6336FA833B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:53:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7BD9A833B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 23:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C36411B63D2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:53:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B4394A1643
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8D221B9D5;
-	Wed,  9 Apr 2025 21:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0F8219A93;
+	Wed,  9 Apr 2025 21:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9jjtyv2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mIpD+3Zs"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2D621A451;
-	Wed,  9 Apr 2025 21:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D304215787;
+	Wed,  9 Apr 2025 21:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744235554; cv=none; b=OpdPy2MrhONVo/7rqQt/zEA41ceFntWPu0V/Id1s3gKA3kKxeXYdoZO4WqCVNiTgMt+RDr2kiuJqwywwTKLdsPlaR7IVzsMbVfP8fZSY5ooq+bf24pnA2iuEeAd25vJBZZ/tKBH3IXLho72ZkmE+J2yiKryUaNzPJjOTrShcPLY=
+	t=1744235595; cv=none; b=QwPUn6QjrsnPkISjeBmSg3+KPqj0ymm2OEepFZPJMd0o6t9PSktyuUXHqc4XsrhqE/LJqsfkz/TxYNtHEwcJ2nibsMcND/M3T8mMdyh8e2TbqwxaHrqXZTf6S5yQ26oy1p0RArNdm7AnImwC5JvbYDRxQnTCEuN+laZMZqQKQ0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744235554; c=relaxed/simple;
-	bh=tDrAT+BbyeoPC1cnbHm+N0m2OZYVHsC6MBKxaijdOFE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GCc/QeaigD569UoOUXuUfuveVjtnqAifOjMgNhsE6Gm2I2FvrQK1TAtfC6+BJEf5gjXCXZB5CUbZK/iA6NUBBWCUZiB8T97P0bT4It/i1fEgNnM6TTAlo+VCzPD73zPGmWbbag6d15ZUpXdt1lxe+c3SDf7ifijxWiFo0Qlqf0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K9jjtyv2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F1375C4CEED;
-	Wed,  9 Apr 2025 21:52:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744235554;
-	bh=tDrAT+BbyeoPC1cnbHm+N0m2OZYVHsC6MBKxaijdOFE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=K9jjtyv29hIh4quHKzqIOZFAsLHTicus/m/wRN6J5XGuzpWFVK58fQVW0UY2DPkPP
-	 wAn5mm+8S264/+dcpUFBbEMb9rBfFwVe1twam4W8ZSKJMJLHFu5oP7rCGagzeJUfBK
-	 N0xaum3ROG6A3bKWYnMlJuRUbHBXW/cfUL+tAg9rvuc+g+RUL6dgUGTwEew9L3MPuq
-	 twbcgU8iuSVzn9MbRT+T3mzDnlvwHZ/ma7aNZRFcMACR71bVQQ229vyzHckKUc23nh
-	 a1Xyt1BSwLWLVpOABV1p0QeVYDd9C2nuXzPwULEsyF9rMSzqtraYB99ghAZEejCMys
-	 O8M5HarrwbJXw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E571DC36002;
-	Wed,  9 Apr 2025 21:52:33 +0000 (UTC)
-From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
-Date: Wed, 09 Apr 2025 23:52:14 +0200
-Subject: [PATCH v4 3/3] arm64: dts: apple: Add SPMI controller nodes
+	s=arc-20240116; t=1744235595; c=relaxed/simple;
+	bh=FDKPD1lNkys1gBdpLGebFxEB5tYdC6/xm01UvetLAMQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ezyfE45aC8A168pVul1yGTM6Wg6Dogs4kI+SFtCq/GqaBPuUUoOOFu4Zf5quvkYOHJaCOBqiHAqIemX/2lrjSqk77HUx86U6V7Lk9W4Tw+aM2NCBv8OCyNEXvtVOI6RyQ7NX9XqXigq1jyF/qrOyIUkgVhYxjzPzI6UQzeGNh5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIpD+3Zs; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ff6ce72844so22529a91.2;
+        Wed, 09 Apr 2025 14:53:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744235593; x=1744840393; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FDKPD1lNkys1gBdpLGebFxEB5tYdC6/xm01UvetLAMQ=;
+        b=mIpD+3ZsDu9JXbB2gAqxN2Hv0iOu1B9up1Ap0k1+/zjr3ZSIDpDavsS8sdqDJVDold
+         MIpphuruXS7p1V4Ce5dMrgZ/uzWaWTPNojfRtaPukBVLl2EbNVtVzJB8PREq9Yqj6Nv2
+         X8u3wgzx/bOkGZPCwGguDqd5itbDPo+zbNyDNfPoob42c8mrbRSm1LGWyd8BuskjJS+u
+         5MZ+3QH1/HFZY59wsmRY3sfM6Cvb4vElRUVJ26uFu+meDWT7Q/7vatOG9VCPOWJMRZDH
+         qx2NOV9Y6Sxhu6xMf5jzcnGO8QgB3BseP/kVJc47Z3Je2pyDooQ+eqx5F9ykmoTcZBOC
+         eUAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744235593; x=1744840393;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FDKPD1lNkys1gBdpLGebFxEB5tYdC6/xm01UvetLAMQ=;
+        b=U6dF1X7opZgnw/QRGq6FGtL+qUH+NNg5b4NJhPFhE+Vo0hUZWz/0hsAfszY2H1ccA5
+         igQ5Nbm5XS4/DbqWl+vmxo6X5kZFg2bOgmW/qhv9luW9s1muLQQNE09pWF3L89NZRQmZ
+         jztts1EIzjkoXoTaEwxzmJ4DhPzgGeDEUQ2ShoVhLSRKjXrvPXx8YI7jtQPWiYILAI9N
+         bx01CFb0iPXh6cMP9dtG81FMKVTLFO18KXHi4KhWNiVoQ4r0jTbA01w4Ct4dwHr0GsIb
+         NaVjLYcACf9PSRUorKag2JjX6R57M1VUEKUmSUc8weoWGK0UcxveQ89Y2Z/2W8FhXX1E
+         AgFw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7yn1lNBArXU/QFnJLEsFtoqQPWZaNEueavEgTjr2Sw67T/Rn5ANUz6nX94tBGePFpjyOoKlVATlyWBRJ6@vger.kernel.org, AJvYcCUsJXoYGwL3EcLhY7nOhgP/Tvrok/v/GPuuT63sAAiukmuTjqicxnhsh/f1O47JUzf8ewHtyAIL@vger.kernel.org, AJvYcCXLZV+I+vpYOsJuTkmkWi5sx6+guEU5z0WqAtq9t9a2JnjAhnND72PTKhpfHy8OUX+VLva/+WBOSoY8cpc=@vger.kernel.org, AJvYcCXTI62LxZwWBDw6mBYq0vbN9r20v1+5EKA2S/2If5uegeC3iJgo43ZrG+3pdzilTQ14cQXbwFKHxiYSgesi7qg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz34jQuDSSYXMOictVgH5UHG6TNEpZ+t69UBIzNC/1COIk+Zcx
+	ryJ50txZ6X9VMNshBhM/RbAIUdllY3aWhj2qxf75WHZ0vSQtrq0tBDwkN1v/6+2455/sTvGAhfj
+	0jGwt9OuvVIh+JJcwZ9hnNEqVdWs=
+X-Gm-Gg: ASbGncskcwNUM8qMzzq8zao22/wKLVt+jy1cO0Vgpwo+JF5nbwaQWyG7PmCZ/5yX2zD
+	fyWeCtvpvN9MLXh8ZmrgmD0jvZMahukha9je3f52tohnamSkgSu77L2n+b0nHh3yFDJixZAqWfv
+	ScrXvOkCmMR03igrkKXzWWbQ==
+X-Google-Smtp-Source: AGHT+IFiuhaY/Oly3F84cyX5S5R8FUrNDPu5Xzylln3EzIuMjB3WyRn7MtyfEuyKE/ITRvwSR7ZCmrBzmJQr0cXhyI4=
+X-Received: by 2002:a17:90b:3b4e:b0:2fe:b77a:2eba with SMTP id
+ 98e67ed59e1d1-306dd32267fmr2318847a91.1.1744235593163; Wed, 09 Apr 2025
+ 14:53:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250409-spmi-v4-3-eb81ecfd1f64@gmail.com>
-References: <20250409-spmi-v4-0-eb81ecfd1f64@gmail.com>
-In-Reply-To: <20250409-spmi-v4-0-eb81ecfd1f64@gmail.com>
-To: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Stephen Boyd <sboyd@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Neal Gompa <neal@gompa.dev>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Sasha Finkelstein <fnkl.kernel@gmail.com>, 
- Nick Chan <towinchenmi@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744235552; l=2708;
- i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
- bh=GL5MDHX1ynp82oR1XOrB9Oz6SPOYuVIO8f/ENpih52M=;
- b=eQ4cnKeAdHlViCFW86uXUAWuk+qcZDOtzliKB2jTojwIJAhnsrdgxfBvAUS5m5KGemviidJ7+
- hVrUhk3rK6cDV8thV+2YlzTrYJLZlMpMvvPNKo8WS6i069iXeXTce9X
-X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
- pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
-X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
- auth_id=283
-X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Reply-To: fnkl.kernel@gmail.com
+References: <20250408220311.1033475-1-ojeda@kernel.org> <CAGSQo00QxBbUb8AxwqtRKXy96na_HUVmAG9nWmX=cVvozqwWaA@mail.gmail.com>
+In-Reply-To: <CAGSQo00QxBbUb8AxwqtRKXy96na_HUVmAG9nWmX=cVvozqwWaA@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 9 Apr 2025 23:53:01 +0200
+X-Gm-Features: ATxdqUEHQeM8b7saMWZkuyDOWEJ-eHfp3twazwBDYlb872_Qrhvs9x-AXSKsD9A
+Message-ID: <CANiq72niPycmVwHBfqttgD+X1qvg2L_P-=X79YEREUGLitqoaA@mail.gmail.com>
+Subject: Re: [PATCH] rust: kasan/kbuild: fix missing flags on first build
+To: Matthew Maurer <mmaurer@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	kasan-dev@googlegroups.com, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Sami Tolvanen <samitolvanen@google.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+On Wed, Apr 9, 2025 at 11:35=E2=80=AFPM Matthew Maurer <mmaurer@google.com>=
+ wrote:
+>
+> The problem with this change is that some `rustc` flags will only be
+> valid on some platforms. For example, if we check if a
 
-Add device tree entries for the SPMI controller
+Indeed -- this limitation is acknowledged in the commit message. The
+priority is fixing the issue, not future features/needs, so I went
+with this.
 
-Reviewed-by: Nick Chan <towinchenmi@gmail.com>
-Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
----
- arch/arm64/boot/dts/apple/t600x-die0.dtsi | 7 +++++++
- arch/arm64/boot/dts/apple/t8103.dtsi      | 8 ++++++++
- arch/arm64/boot/dts/apple/t8112.dtsi      | 7 +++++++
- 3 files changed, 22 insertions(+)
+In any case, if we need to test a flag that requires the target, it is
+likely we can do the check based on the Rust version, the
+architecture, the Rust's LLVM version, etc.
 
-diff --git a/arch/arm64/boot/dts/apple/t600x-die0.dtsi b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-index e9b3140ba1a996eeb91b3f60470833060b632bd2..4c224e686ffe5602329f7f394d3354559c4130ab 100644
---- a/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-@@ -45,6 +45,13 @@ pinctrl_smc: pinctrl@290820000 {
- 				<AIC_IRQ 0 749 IRQ_TYPE_LEVEL_HIGH>;
- 	};
- 
-+	nub_spmi0: spmi@2920a1300 {
-+		compatible = "apple,t6000-spmi", "apple,spmi";
-+		reg = <0x2 0x920a1300 0x0 0x100>;
-+		#address-cells = <2>;
-+		#size-cells = <0>;
-+	};
-+
- 	wdt: watchdog@2922b0000 {
- 		compatible = "apple,t6000-wdt", "apple,wdt";
- 		reg = <0x2 0x922b0000 0x0 0x4000>;
-diff --git a/arch/arm64/boot/dts/apple/t8103.dtsi b/arch/arm64/boot/dts/apple/t8103.dtsi
-index 97b6a067394e311ed19392a34237c74936dbb7d7..bdb1cb9e406a441e458b1c735359b0148146e91b 100644
---- a/arch/arm64/boot/dts/apple/t8103.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8103.dtsi
-@@ -11,6 +11,7 @@
- #include <dt-bindings/interrupt-controller/apple-aic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/pinctrl/apple.h>
-+#include <dt-bindings/spmi/spmi.h>
- 
- / {
- 	compatible = "apple,t8103", "apple,arm-platform";
-@@ -741,6 +742,13 @@ pcie_pins: pcie-pins {
- 			};
- 		};
- 
-+		nub_spmi: spmi@23d0d9300 {
-+			compatible = "apple,t8103-spmi", "apple,spmi";
-+			reg = <0x2 0x3d0d9300 0x0 0x100>;
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+		};
-+
- 		pinctrl_nub: pinctrl@23d1f0000 {
- 			compatible = "apple,t8103-pinctrl", "apple,pinctrl";
- 			reg = <0x2 0x3d1f0000 0x0 0x4000>;
-diff --git a/arch/arm64/boot/dts/apple/t8112.dtsi b/arch/arm64/boot/dts/apple/t8112.dtsi
-index d9b966d68e4fae2dfb21d6fb7a97ebba81643ae8..950d1f906ba3023c1d118179207a2099345aae94 100644
---- a/arch/arm64/boot/dts/apple/t8112.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8112.dtsi
-@@ -782,6 +782,13 @@ wdt: watchdog@23d2b0000 {
- 			interrupts = <AIC_IRQ 379 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		nub_spmi: spmi@23d714000 {
-+			compatible = "apple,t8112-spmi", "apple,spmi";
-+			reg = <0x2 0x3d714000 0x0 0x100>;
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+		};
-+
- 		pinctrl_smc: pinctrl@23e820000 {
- 			compatible = "apple,t8112-pinctrl", "apple,pinctrl";
- 			reg = <0x2 0x3e820000 0x0 0x4000>;
+As for `target.json`s, the plan is indeed to get rid of them, since
+they are permanently unstable. So any features used by the
+`target.json`s need to be requested to upstream Rust (e.g. flags) so
+that we can do the same without a custom target specification, so that
+eventually we can remove all of them (and thus `rustc-option` will
+work in all cases again).
 
--- 
-2.49.0
+Thanks for taking a look!
 
-
+Cheers,
+Miguel
 
