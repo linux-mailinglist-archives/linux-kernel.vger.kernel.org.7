@@ -1,101 +1,104 @@
-Return-Path: <linux-kernel+bounces-595628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D65A820FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:26:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A74A820EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 11:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4BB880399
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:26:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D64B8A3A21
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 09:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAF525D219;
-	Wed,  9 Apr 2025 09:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E5F25D551;
+	Wed,  9 Apr 2025 09:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="VVrwu/tW"
-Received: from mail.nic.cz (mail.nic.cz [217.31.204.67])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="Bhbga7i8"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2C529D0B;
-	Wed,  9 Apr 2025 09:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.31.204.67
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744190801; cv=none; b=jQxmOpYcCDdL4rXcoMkrnawlla4wMulPXVRPCy41gGw9D8U0WTBjbnNGbmBLabCZxBfSqLYQn3fpPUElUA8ADRT5nz+oizT9xuyvhb0uDqUuN7WKP2uU9HhG1zkMIVRoFDn5OOu+RtoTBlSQknfmsbMyDM9NRWEvXMRy0xcHuPQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744190801; c=relaxed/simple;
-	bh=i6Un4LBrv7+umUVjVMx0RfOQwqJo1mgsjWpVn24kD1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pu+HKN9OFDST9unFq/EtfX2E+RmcWQzppL8W3YXBQ4btUHUT1zd8G9QhHxQPmT7s16wpzoJyVp1d/R4Cuk/Qysccja6DPGP6YOss4lr0a88mYIbkMOPFgSpF1MYlPANhqb+Yfi1waalhxzZITP/MDSktya4C4SVFKOwK3qKBAKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nic.cz; spf=pass smtp.mailfrom=nic.cz; dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b=VVrwu/tW; arc=none smtp.client-ip=217.31.204.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nic.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nic.cz
-Received: from solitude (unknown [172.20.6.77])
-	by mail.nic.cz (Postfix) with ESMTPS id CC6531C1262;
-	Wed,  9 Apr 2025 11:17:28 +0200 (CEST)
-Authentication-Results: mail.nic.cz;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-	t=1744190248; bh=i6Un4LBrv7+umUVjVMx0RfOQwqJo1mgsjWpVn24kD1c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Reply-To:
-	 Subject:To:Cc;
-	b=VVrwu/tWDhfFMGpRzlFpShahG82/37rTB1DPaqBIli+GcT54xRbJXOP9Rt21GKd/Y
-	 lKUBraLBQAk3uiGNVsaCZ92XK40tw615cKFExlZ1PCJPDsy8CVitAqqIGNYo2mPRtW
-	 Lq49aH/pXBCrhnWEF7ZZDBIs3ouLFRSJa2Wjvd+w=
-Date: Wed, 9 Apr 2025 11:17:28 +0200
-From: Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] platform: cznic: use new GPIO line value setter callbacks
-Message-ID: <7r44ci6ojbkc2gsvaj5ekgd76sictqek3xmhhebicugm43rbt5@micbmk7ndzm3>
-References: <20250408-gpiochip-set-rv-platform-cznic-v1-1-c3d4e724433f@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C4F1DE3AA;
+	Wed,  9 Apr 2025 09:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744190323; cv=pass; b=CExwJDuw8EZGb6wFbs+yXLAEsne7YOK0W4vGu2b3UfZ31wCTSJJ3pUqyN0XZlJnOECIGA52pf2oSpxYerIRfn8dJWpkXezF2Dr/jtEu+yNYziRkUnENbv5Y5h4vztYLOLNlnUlIZoA0KE9rKAxogtWOPYyhnLaTv6IKtb/QBC/Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744190323; c=relaxed/simple;
+	bh=/EWHlmYXaX+Bvh8b073v4/q3puALtJJtIUIUWp1XOsM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fbwb3Fz48D1E3Y6vtTFFqnT602hvbTNo+C7BaJ1Ox4zA6wMBk79THKRvN1J6U8XkNHNWmLg+B1a/Ngun7g87sRXJirZ1TNg2C9BmH0r5WPhf0dMSQbSo1KsDf37k/CrFIhVT9360zD4tcRJ5/E1wpsXAb6T5EpRh3+i8EW+9GMA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=Bhbga7i8; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1744190298; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=noaV+5Df7rQy8pCXBcixf29FwbUky43S4/ZSdvz6tjX0An1kW0dbpUW+Hm4dzlD1T+MvD/NahFZZBeWQjlRMDF9fHVpDLRggTfuG5+XVK3QGXxBNcHnKIC7vjaNNA+6rgOhSWDCIqZ484SrUM9DItiVjJtTw52C3bvZVwIDxjnU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744190298; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=QBe9+uH6ODWa9iTcZwQDOb5iAmFt+z8pNalKVqBUYEk=; 
+	b=YBqdjpsLfDAFVWjnL1A2GbS87D+d+HlmjHL0QGUIqDatEtQhonsJnwMe5AR5jLbeoI6HaJWC8mV1G+uuYWnMtgCqvBpoL7BIIp9nj3kuu4LGOWDL60O6TQ/MTJCQlgrKKej1NGfsGyAgku1ITW56WVg9dfuIDgMI4t/DYLZX9eQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744190298;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=QBe9+uH6ODWa9iTcZwQDOb5iAmFt+z8pNalKVqBUYEk=;
+	b=Bhbga7i8hGzD+nSQq80LKELsH1eX8cZ5OproLFqKtbjHp4knUmOwnnmoncWms+2/
+	FEB3/GQvzHSxr26Y3Ps/P7KA/LMp0nLfs1QEwskVSYDuCrpJUVf5vKmErJv5Tzsca4U
+	poDVoe6nRxR8BS/8WRnMh2R8E1K4shxwS4fUJwmNpc2bwQzTmW2s5caCAUqkzzYHaVs
+	UXN5T7AVejbu9GEtK1FhVG0kvZYVyr/wZLrEesdskjXq5x14Gn/HYr7gUV7uDVf1ikj
+	eqPQs82Bfcq6dfD0XOBa2qohgmK8bDgaROe/4nooV9Z1y/8IrrInncej/RwTXUVWgAc
+	BXyIDJvj5g==
+Received: by mx.zohomail.com with SMTPS id 1744190296788595.8894788219615;
+	Wed, 9 Apr 2025 02:18:16 -0700 (PDT)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Michael Zhu <michael.zhu@starfivetech.com>,
+	Drew Fustini <drew@beagleboard.org>
+Cc: devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH 1/2] dt-bindings: riscv: starfive: add Orange Pi RV board compatible
+Date: Wed,  9 Apr 2025 17:18:00 +0800
+Message-ID: <20250409091801.855083-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408-gpiochip-set-rv-platform-cznic-v1-1-c3d4e724433f@linaro.org>
-X-Rspamd-Action: no action
-X-Rspamd-Server: mail
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: CC6531C1262
-X-Rspamd-Pre-Result: action=no action;
-	module=multimap;
-	Matched map: WHITELISTED_IP
-X-Spamd-Result: default: False [-0.10 / 16.00];
-	MIME_GOOD(-0.10)[text/plain];
-	WHITELISTED_IP(0.00)[172.20.6.77];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[]
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Tue, Apr 08, 2025 at 09:19:19AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Orange Pi RV is a newly released JH7110 board by Xunlong.
 
-...
+Add a compatible string to the starfive platform DT binding.
 
-> -static void omnia_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
-> -				    unsigned long *bits)
-> +static int omnia_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
-> +				   unsigned long *bits)
->  {
->  	unsigned long ctl = 0, ctl_mask = 0, ext_ctl = 0, ext_ctl_mask = 0;
->  	struct omnia_mcu *mcu = gpiochip_get_data(gc);
->  	unsigned int i;
-> +	int ret;
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+---
+ Documentation/devicetree/bindings/riscv/starfive.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-In this driver the name `err' is used everywhere for this kind of
-variable (when it contains error code or zero for success).
-`ret' is only used if the variable can also contain positive return
-value.
+diff --git a/Documentation/devicetree/bindings/riscv/starfive.yaml b/Documentation/devicetree/bindings/riscv/starfive.yaml
+index 7ef85174353de..dd5cd51e38797 100644
+--- a/Documentation/devicetree/bindings/riscv/starfive.yaml
++++ b/Documentation/devicetree/bindings/riscv/starfive.yaml
+@@ -31,6 +31,7 @@ properties:
+               - pine64,star64
+               - starfive,visionfive-2-v1.2a
+               - starfive,visionfive-2-v1.3b
++              - xunlong,orangepi-rv
+           - const: starfive,jh7110
+ 
+ additionalProperties: true
+-- 
+2.49.0
 
-Bartosz, I will send updated version, if that is okay with you?
-
-Marek
 
