@@ -1,132 +1,116 @@
-Return-Path: <linux-kernel+bounces-596394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB55A82B53
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:54:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6F0A82B6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA52F19E3DB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:49:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40F001B61284
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D6D269B1C;
-	Wed,  9 Apr 2025 15:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129B7277015;
+	Wed,  9 Apr 2025 15:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D97d9TYc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtQKUrHW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8001269B18
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 15:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE5E277007;
+	Wed,  9 Apr 2025 15:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744213551; cv=none; b=RRQ0BA78m8EVxAGfQD8eDHghoh/o9Wo+E+lnognmxJDE3bxuDOOwEKMkbNGf4fMKJOskl1uFn9ZLrJoRym4mp4SuzRBeP4ppMw4wt7PGpT/qXJrJua54ncprWk9dL5znsmbpk2E1crdVzFDCXbrphTgQMFzGh04ZEcYHr0Nfjzg=
+	t=1744213571; cv=none; b=EDOQCCjOAchZJGfDheDbka07jGSwonw78PBGNw1XclG90Vm5KHKa7ZtW7dV3RBFp+cwy3QybEj3s0KrxSRWr2LKgse4rU4jXHVDT9jFr2eayEfElz2t6Bx1aoAoXDJMxvagSXyjWwIwlBq5JWKZHw9F8hXlXtKLJF9iRtXvdLDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744213551; c=relaxed/simple;
-	bh=9+jM3XDC4pJwKKFy98/5nEADTzTKl066DhLAnBJyI68=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pxUEquM88wB0DtmWgl6qXlUg+FmRua5uUAMSb5Hql7qK5uT+l4lQ9+taDbJw6ylH4B8TmgMHuu81RdSddXYrrJgMwjNCgjksIDSCOwcyOJZ3uX4PZoYy/u/Pndc9Zg7M7vlYFHK5opUBm34joQAJ1yDoIZbcHSjGsDRIeNlwatE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D97d9TYc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD853C4CEE8;
-	Wed,  9 Apr 2025 15:45:49 +0000 (UTC)
+	s=arc-20240116; t=1744213571; c=relaxed/simple;
+	bh=vMJrlyFnjoqqmGoioQWBvWZ1yISZadfrxOaMgELN/sE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nsK1BrqeI5d/T4yg4AiL1WSlqbYjtMus7TXNVhmfE57khNYbJsTWiVPsI3pLNjvgIZows6lG3sKgS79j9VMZWyZbiwKNtA95pvnNq18tEccHYfY2LmlDTvQzw7lmDn83+zzTz+hYSCB3wN8x8N5AeDAtixR47pVj3Mxt+CGKewY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rtQKUrHW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EF76C4CEE7;
+	Wed,  9 Apr 2025 15:46:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744213551;
-	bh=9+jM3XDC4pJwKKFy98/5nEADTzTKl066DhLAnBJyI68=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D97d9TYcu1wEnPn+Lb+nxvppipO459lGS+IEtwN5V9/dOKmlRgSa7yk2lN7ZoOH0t
-	 9Lsrbpf1d1rTzIxAXrQls3tRsmZ9Nb3aqb3GDv2jE618wKvlc4IxTJvFpM+X+1R6St
-	 OxS7XSsLrxFHToeaaPumDm8dwzxFeD4I5puvHbzWaN2eqLkV2/JPHeZ2D9ZmW+DtTw
-	 UJXbBZKi4WLQMoldu1/Z21WP4iJPEGP9Dd8IimdNe189je+vdxblYWemD7eCR9UE/y
-	 T16wrISp8UFFxWzv2UJWMXA6FT55zlM2oXtkTgTbqS+aaULEbCBSH+bGjauxFHrjC+
-	 wL2xPprHwj2ZA==
-Message-ID: <e4eff0d1-1304-460c-8651-95be694db316@kernel.org>
-Date: Wed, 9 Apr 2025 17:45:47 +0200
+	s=k20201202; t=1744213571;
+	bh=vMJrlyFnjoqqmGoioQWBvWZ1yISZadfrxOaMgELN/sE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rtQKUrHWrZ2FSeQYFkcEV4CGuq/CYzfyJgUtdMPvbSuuWopwf18CFbnX6iiaeMC+F
+	 SX/zNt1LEM80SCx3aq2OE8R9y+R6anoOpS3vpbYdQcVoW7oRu+reD/2pUpsWUXo2LR
+	 iCNE/gJmyvbvpkBW3o8+fGMIN9doH3mbJkgubJfSbf9sihVaNJE5R2lRdFDJk/bQwh
+	 MQXZPzonSVoU/v1zZDgYhGw7x42Hf07pRQrnnCSyeGRoaEdCpuUeV/qF2TghtkCWC8
+	 4aGkvZdEAZS4cOF208CY3JI6qzFcetbedt1cU4pFYcr/5xi338lNywdl8V2azguFyh
+	 9cbiNbA405jCw==
+Date: Wed, 9 Apr 2025 16:46:04 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v6 05/12] regmap: irq: Remove unreachable goto
+Message-ID: <7126e672-a829-489e-a0c0-8d6d64a8b2f4@sirena.org.uk>
+References: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
+ <20250409-mdb-max7360-support-v6-5-7a2535876e39@bootlin.com>
+ <1b280408-888e-48e1-8e6b-de4e7a913e74@sirena.org.uk>
+ <Z_aUeKm0k1zReS_D@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2][PATCH 4/5] x86/cpu: Move AMD erratum 1386 table over to
- 'x86_cpu_id'
-To: Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, tglx@linutronix.de, kan.liang@linux.intel.com
-References: <20241213185127.F38B6EE9@davehans-spike.ostc.intel.com>
- <20241213185132.07555E1D@davehans-spike.ostc.intel.com>
- <de04dc00-f01d-4c27-a6f8-873398bf8d4a@kernel.org>
- <20250409151817.GAZ_aPueHsozDBe0sZ@fat_crate.local>
- <9cbd7ada-9083-433d-afd7-ea3242068faf@intel.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <9cbd7ada-9083-433d-afd7-ea3242068faf@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cQn7E9YAulFrDkPz"
+Content-Disposition: inline
+In-Reply-To: <Z_aUeKm0k1zReS_D@smile.fi.intel.com>
+X-Cookie: Words must be weighed, not counted.
 
-On 09. 04. 25, 17:21, Dave Hansen wrote:
-> On 4/9/25 08:18, Borislav Petkov wrote:
->> On Wed, Apr 09, 2025 at 01:13:53PM +0200, Jiri Slaby wrote:
->>> If I am to tell, the {} is needed, otherwise you touch the array OOB (at
->>> least with the "m->flags & X86_CPU_ID_FLAG_ENTRY_VALID" test -- if the bit
->>> is set in the memory, then much more than that...).
->> Send a patch pls.
-> 
-> I'm compiling this as we speak:
-> 
->> https://git.kernel.org/pub/scm/linux/kernel/git/daveh/devel.git/commit/?h=testme&id=d41cad0e49200c1d812daa8a40600405888b666f
-> 
-> I'll throw it in x86/urgent in a bit.
 
-LGTM. It should have had a link to this thread and feel free to add:
+--cQn7E9YAulFrDkPz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+On Wed, Apr 09, 2025 at 06:38:32PM +0300, Andy Shevchenko wrote:
+> On Wed, Apr 09, 2025 at 04:19:27PM +0100, Mark Brown wrote:
 
-thanks,
--- 
-js
-suse labs
+> > BUG() can be compiled out, CONFIG_BUG.
+
+> Yes, and it's still has unreachable() there. So, this change is correct.
+> See include/asm-generic/bug.h for the details of the implementation.
+> And yes, if we have an architecture that does not do this way, it has to
+> be fixed.
+
+unreachable() just annotates things, AFAICT it doesn't actually
+guarantee to do anything in particular if the annotation turns out to be
+incorrect.
+
+--cQn7E9YAulFrDkPz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf2ljsACgkQJNaLcl1U
+h9BlaQf4gUpWNlETPHRZXjDQr/n4EFgXaLshmryE1reYNw7Jh07SJCohl7snptEs
+IRVt9+5+nNGtISlJs4QXa6Hkqr/ytOpw5rXRmTSBkKhhbvdStUJkUv9X7jkQiNy/
+1zhBb6ShA8nqUjHnZRhvjEO6JGKp4Cu1Iugs8pUjEfkDwLqU6NCq3yxqqqGnhGAY
+/t7uOcrizg3jQtZYzmaXjZZYGv4yKaujcVEffu2QyhtF5ulLGwNm9hYz7x5ZHLBq
+zJllpNQrrQp/6/GFZw/FY4J/8Xam5xUPHuxCe2ibHn0Xq1ym/JobQc2BjihrwKT+
+xQwyPXj7Kb9z78qnphRGjcRw4Oeo
+=pR1K
+-----END PGP SIGNATURE-----
+
+--cQn7E9YAulFrDkPz--
 
