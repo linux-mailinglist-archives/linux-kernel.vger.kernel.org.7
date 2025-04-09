@@ -1,189 +1,108 @@
-Return-Path: <linux-kernel+bounces-596229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4945A82917
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:00:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98264A8291E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2F481794B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:55:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DA11462DFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 14:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369BA267391;
-	Wed,  9 Apr 2025 14:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E61267B86;
+	Wed,  9 Apr 2025 14:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PAwKdEvj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pe5gwDei"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBF7267386
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 14:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3BA2676F7;
+	Wed,  9 Apr 2025 14:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744210188; cv=none; b=k+kWEJzXTFzU3RCelc0wczlcLs8tHdvaJMiD0PMuYGpW390f2FYV07qGvg1GIVkxXRX/G4+asJk1irs+/vmwq8HYiOwmDSxLi6L6iSWLn6lgJZ2unWjedLwTqXS/bNyr3KpJ7LckGh9aGa5R2Q4Tl7sfQ/8in7/8F+GD2gqwL0c=
+	t=1744210207; cv=none; b=dTSRgX5xxZq4bPTE2+oy1cAheEg1eft11K1eIxNTDxS0LhXoS0Az6syIlP/m8aJBUxKKhotckcCxJZT8dFJUBlamrf1e5JOm6BRMJCOFZJH2/kVN6GOGgQDwx8aDXTgmN/j+p4OXs+P3drg11rKwII9fdml/MYbk40MXKu+SMOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744210188; c=relaxed/simple;
-	bh=85+UIcf1eKLU/wNzZgNVq10Yo7Ip9fEDwLj2BK/wH0Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FZzy0UPBbUygBzFab3iv0TN6hW+6blElu2cFUk/Zm7LO1Po6uZeCLeaOt5g2JGtu9Lt9HgHH5fooOGN/KQTCypIlnLw+i3yh3JkDkel7NMO0A2REQzJ05q9cBPsPe3z2WV/SEh1Mj9RtXG/VynxGa4LVSiwNsh3LseKiE1puYxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PAwKdEvj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53983U0H004584
-	for <linux-kernel@vger.kernel.org>; Wed, 9 Apr 2025 14:49:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NAji33sbWftR/X6dZ2NUeyfjXLgktdVt707HtkxaLX0=; b=PAwKdEvjtewbtaba
-	2V2qQjPJwGOamRfReF4UgYHmeMQPWAMYT6bC8e2TsfZzNn5hpIluqBIcCB2VD5gc
-	oIcllz4ev5MxKTTUAPQFCQpXLI0okxFDYPb+0hqeu2guc4fWqE4WpMVWiqA6TDkm
-	1Nu7jGCBtZabRfZRQHgLGTpe+6bNB7hC04kvxNiG7Z9fPjZTYfFWlXM+fBE5DMk5
-	I2kHcg/lPeC1cHyJgoYwIdpDZgC0VDBBsw/tRTNrxw3Z0Zex0SaxodPfbAQHR5hd
-	xUSYZLu71lvANyR44l+aMLnRsMs7iprErdrR2G9V117gWTJx0e8Eh89vuI4XbtaV
-	qqfsaQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twtb3teh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 14:49:45 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c54734292aso162256885a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 07:49:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744210184; x=1744814984;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NAji33sbWftR/X6dZ2NUeyfjXLgktdVt707HtkxaLX0=;
-        b=XIHSNAHvmt1swRBhKmciBkzfFJRkvRGnGRnWZyylMmT1o5XN4HvnRwO6J+VW5pG52W
-         XsWxhNx3ASZIBceuzO083Od+qlXhTqUtTU8qXHpYKipet5mycbm+R8N8d8bxWBIiSFry
-         dSsM7zj6teq/MTpl3WzhoswW50H32jWDVicNC0YJCYSz8YKJv+nhFTy4sgUsbKpLbLON
-         uSjIIVZbWvXJJ24N5zbINHHosB8WBn7J00dcraxaKx3/pHHhkmWsGgC6ZSIkgXYkuCV3
-         cTlH5Mpa7BCTf+RvEV8HuxwqrFRl9dnILOrlKinT3SAiODegt9j7B8/JjjQc3VoM93Y5
-         ox1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWiKvSj5AI0ftGzL8wNHzxcWVYiKMuNj3fLcJOjih25avPfGpn9m1vOmMF7UP/Cj2jnf67fUam7iCfoB6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrmxWTEKw8a6EVUUITtd1+efHr5+kb+kqS68A0qYkCleecD1VC
-	NF3L1CsDFv1tDfuL/4zhicUYdLkjdqVbkjlOc/5WRxraJyu54JRDOYkHzTjSpLfrbgeZbnLbVmC
-	/NBf73QoSAcWmxt0mqyhA6Ctxh5vs8APc9LWoIHlWZQEF5OTEqGH/aYUlCmSl8so=
-X-Gm-Gg: ASbGncv5GOOkQTmElh15CcAIvjPBcEvxnLVnM/vnxdAwxvbW+ao0KYvtpogUY9PZQOH
-	aeb/oh6amjS8o74FJDhsKWN85y2eMudFA+W+LDKdsouEcIuL9ZJ/mgWetT+skeOpl0lsaOSty/f
-	W14K1K306NUTi09v/RJk68dpEZnf4wi6NjUaPBwWs+cQSu4RZcyZHZQDdl7pIFmaAPz3gB3qIXG
-	PMnGL/Foszew8aIkinyH3XOZMOVQyUyI7crvbrnI1rXFmo8IYbn/KANYyJp4o8j9bzTCqd4m33h
-	6Rgz6oWpJJuq7fI66e+L726o+5A6M5ruEIUmB0EMOpZxTNtkPZd6HumcdabetfiW4Q==
-X-Received: by 2002:a05:620a:1792:b0:7c3:c9d4:95e3 with SMTP id af79cd13be357-7c79cc382dcmr170872085a.10.1744210184449;
-        Wed, 09 Apr 2025 07:49:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFMm5nWNQB+SUuTMx8XfwA9o0yrLRkaTZP7ACAR3JyVEdTKjbhOMoZD8lRtbWW3IF+TISiTyg==
-X-Received: by 2002:a05:620a:1792:b0:7c3:c9d4:95e3 with SMTP id af79cd13be357-7c79cc382dcmr170869385a.10.1744210183947;
-        Wed, 09 Apr 2025 07:49:43 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ccd205sm108975966b.141.2025.04.09.07.49.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 07:49:43 -0700 (PDT)
-Message-ID: <83713b15-d74d-4620-b9a0-9c57f216c6bc@oss.qualcomm.com>
-Date: Wed, 9 Apr 2025 16:49:40 +0200
+	s=arc-20240116; t=1744210207; c=relaxed/simple;
+	bh=Cz0c1otcz5ivBtfWQnjKI3YpuR7rHan3cgUck1PboH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hKbBX8MF3/3cibKEKa9MS+cq1H9ZOokyQfMZFt1v66UxurmpTai89APC3f1KD8q9eLTTrIk5QXY32LltHKPMXhg05ZLrjQQMS/lFGE3OUlGIVOjhC/u7O33IzWtqYOi2ovrmjYY8lU6UmO1sgwjmGPHfB2H3XUhJdA8XK2ZbYMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pe5gwDei; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744210206; x=1775746206;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Cz0c1otcz5ivBtfWQnjKI3YpuR7rHan3cgUck1PboH8=;
+  b=Pe5gwDei7ZA7gyHQWC/5b/+9mN2uiYETf0wYdqFgC9EKG2ffdZ6gV9HE
+   N0WxgNxJvHOOOV3GNOtHJBCjFqxN2HbyUd7zX8yfEDJ9YsShhlEsBfb66
+   RPoKXutepKErQuIz5Rl2dSDCbpq7CpX0rJhqiOrse5JGAsUwM/A54SVNC
+   ZIsA5jJTRTuY9I1YwjLCDNt1BUI6mMryESVZfvV0YHQ2SCx3DF1ozNUZR
+   Gyn5bXRXHMgyv7hje+qtR8163T9vbSAY1+rXUouu/9DLT646BDMi5sVRS
+   4iWJq0rxvV2r86RQozNUUx/ZjVnF2Z1NxhTXfmWN4rX6ZAHV7YK5oUUyE
+   Q==;
+X-CSE-ConnectionGUID: /8YIi+OxS7mTgTrY9/lRDQ==
+X-CSE-MsgGUID: WlGOY/HYRqmPsfH/h3yrdQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="45814560"
+X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
+   d="scan'208";a="45814560"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 07:50:04 -0700
+X-CSE-ConnectionGUID: UOpZGCB0RiO368SS3Fd8vQ==
+X-CSE-MsgGUID: N3FzkT0/R0OymyamC9Mkiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
+   d="scan'208";a="129442429"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 07:50:02 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u2Wka-0000000AldU-15on;
+	Wed, 09 Apr 2025 17:50:00 +0300
+Date: Wed, 9 Apr 2025 17:50:00 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Mika Westerberg <westeri@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v1 0/2] gpiolib: acpi: Fix missing info filling
+Message-ID: <Z_aJGKjVfKtc18Zk@smile.fi.intel.com>
+References: <20250409132942.2550719-1-andriy.shevchenko@linux.intel.com>
+ <20250409134443.GT3152277@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/10] dt-bindings: PCI: Add binding for Toshiba TC956x
- PCIe switch
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        chaitanya chundru <quic_krichai@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Jingoo Han <jingoohan1@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com,
-        amitk@kernel.org, dmitry.baryshkov@linaro.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        jorge.ramirez@oss.qualcomm.com
-References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
- <20250225-qps615_v4_1-v4-1-e08633a7bdf8@oss.qualcomm.com>
- <20250226-eager-urchin-of-performance-b71ae4@krzk-bin>
- <8e301a7b-c475-4642-bf91-7a5176a00d1f@oss.qualcomm.com>
- <385c7c77-0cb7-f899-4934-dfa58328235a@oss.qualcomm.com>
- <a79eaaa9-0fe9-45d9-b55f-ba2c327eaaaf@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <a79eaaa9-0fe9-45d9-b55f-ba2c327eaaaf@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: nCux4Qoy7n1tQPGSpKBWbdohmDxKnHMY
-X-Authority-Analysis: v=2.4 cv=LLlmQIW9 c=1 sm=1 tr=0 ts=67f6890a cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=3h54kFN3o8ui-8ShBWYA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: nCux4Qoy7n1tQPGSpKBWbdohmDxKnHMY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-09_05,2025-04-08_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- clxscore=1015 mlxlogscore=999 malwarescore=0 phishscore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 spamscore=0 adultscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504090093
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250409134443.GT3152277@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 4/9/25 3:22 PM, Konrad Dybcio wrote:
-> On 4/1/25 7:52 AM, Krishna Chaitanya Chundru wrote:
->>
->>
->> On 3/25/2025 7:26 PM, Konrad Dybcio wrote:
->>> On 2/26/25 8:30 AM, Krzysztof Kozlowski wrote:
->>>> On Tue, Feb 25, 2025 at 03:03:58PM +0530, Krishna Chaitanya Chundru wrote:
->>>>> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->>>>>
->>>>> Add a device tree binding for the Toshiba TC956x PCIe switch, which
->>>>> provides an Ethernet MAC integrated to the 3rd downstream port and two
->>>>> downstream PCIe ports.
->>>>>
->>>>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->>>>> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
->>>>
->>>> Drop, file was named entirely different. I see other changes, altough
->>>> comparing with b4 is impossible.
->>>>
->>>> Why b4 does not work for this patch?
->>>>
->>>>    b4 diff '20250225-qps615_v4_1-v4-1-e08633a7bdf8@oss.qualcomm.com'
->>>>    Checking for older revisions
->>>>    Grabbing search results from lore.kernel.org
->>>>    Nothing matching that query.
->>>>
->>>> Looks like you use b4 but decide to not use b4 changesets/versions. Why
->>>> making it difficult for reviewers and for yourself?
->>>>
->>>>
->>>>> ---
->>>>>   .../devicetree/bindings/pci/toshiba,tc956x.yaml    | 178 +++++++++++++++++++++
->>>>>   1 file changed, 178 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/pci/toshiba,tc956x.yaml b/Documentation/devicetree/bindings/pci/toshiba,tc956x.yaml
->>>>> new file mode 100644
->>>>> index 000000000000..ffed23004f0d
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/pci/toshiba,tc956x.yaml
->>>>
->>>> What is "x" here? Wildcard?
->>>
->>> Yes, an overly broad one. Let's use the actual name going forward.
->>>
->> ok I will update the next series the name from tc956x to tc9563 as
->> suggested.
+On Wed, Apr 09, 2025 at 04:44:43PM +0300, Mika Westerberg wrote:
+> On Wed, Apr 09, 2025 at 04:27:52PM +0300, Andy Shevchenko wrote:
+> > Kees reported that code, while being refactored, missed the point of
+> > filling the info structure which supplies GPIO flags to the upper layer.
+> > Indeed, without that part the GPIO expander get no IRQ on Intel Edison,
+> > for example. Fix this in this series.
+> > 
+> > Andy Shevchenko (2):
+> >   gpiolib: acpi: Use temporary variable for struct acpi_gpio_info
+> >   gpiolib: acpi: Make sure we fill struct acpi_gpio_info
 > 
-> As per internal discussions, 956*4* would be the correct name for this one
+> Both,
+> 
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-I misread. It's supposed to be 3. Sorry for the confusion.
+Pushed to my review and testing queue, thanks!
 
-Konrad
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
