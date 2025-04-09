@@ -1,160 +1,149 @@
-Return-Path: <linux-kernel+bounces-596732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A94A8300F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:11:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ADC4A83007
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 21:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A2E3A372C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:07:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 720977A6ABE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A21277030;
-	Wed,  9 Apr 2025 19:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E12267B00;
+	Wed,  9 Apr 2025 19:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZ48ZnXG"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ublz1CXm"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B528253B46
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 19:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406011C5D63
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 19:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744225667; cv=none; b=pt72L0FnWZUoGvEExYd2cB6wzdxxxM4jGk0A1fycJ3O562n2kWPEyHvtImEbS+OCtH5FJ6MQ1uHa+Pd72Kyayoymyxppu/3tvpaqStV3oLK7PrNJNW96UsX9lN0/ZcwTzLjA1JET0wyGsQr7X1I42CIZU5Y/BHhJ2xSd/dPhaKA=
+	t=1744225725; cv=none; b=RKPXgaarL92oWkxee6P5r4JTETF+fFTuPHOI1MDgp8mM9QjzGCBb6nA1ZVD+LEIIhqhxcJhHt0cSV2Us5av8LUU2LYDdpHs76X+mVQg2qZV2c+jYK2XKzgQOdRVQ7NFvS8apMfr0MguPMnxeWePsH+AnkQTYkVG6f8Czd5X4g+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744225667; c=relaxed/simple;
-	bh=p8HVe7xedrGPEDuldvMPssv9wwdcT/NuIRjDddynKkA=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=iQnA8r0dOrxyR+ymccYBLkBWo2XhG7pN1Pm8J70kgPtSYIfKOeInKGoVF+1s3jMP2CetNu+fqlsmj2Vffoj45pj1IonezJ/4QIHDOwnhEWpA46trq50QBymZ6FPOLA/o/pxyMV22Z6XkQsLsky2ISh2W2KWqy0bUPDUyN5xZ7FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KZ48ZnXG; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2279915e06eso70337875ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 12:07:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744225663; x=1744830463; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p8HVe7xedrGPEDuldvMPssv9wwdcT/NuIRjDddynKkA=;
-        b=KZ48ZnXGLVne98z31JDpmvak5QmOPWqpdIbmnDWbtcwgcQcsjA9sXCSzbgdpYuvJfO
-         NO9KXyfDVOYVBH79qAgA9ru4GEtdg4p4e6W9abKgNUPqaN6WJDDjrDmhCfQJ0mv+5kDt
-         M5CgRJWTk5jvD/d4dRKbsEP7Ol/VbTavVb/7f3k28Ma7jNkLWFGI0P6M3OX6NC0XaZXd
-         Ul9QxFEs45tXGSqcB0cPriYTJ2BD3GnCTqhzTBPje5Mzjdp3J22EckPJ+miztRL454r4
-         W2TnWPjR+C4LyBm4i7PvKQ9YZx8A5Fs3PGrLJ0Dyn+e4Q7XovuNrt1OI5LnixsZI1cGf
-         G2JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744225663; x=1744830463;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p8HVe7xedrGPEDuldvMPssv9wwdcT/NuIRjDddynKkA=;
-        b=We/WDKYC+U+5rJh8U35g8Ll+zrIPjBjvHBjg8wCmeF4y2Z5j0EtaTNvUKaPOnUwb9G
-         ceSUh1pYGLVaKJZvoJ+OMz8dmjg/KD4U/PvPyr5eMa85EX8N0fo23f2mdRkBwYRxOpNw
-         hA3lmksiIH+aG8fBKK6bHajShTO5czvS7Zg5+wzKVEaU0n0S3XsZuqn9E5kzvZI1tuht
-         eu+gAV4YhZZYATKXc/JF8YsYBOsS+gmmaYLwzYesPISW6EWg1za1PqOOn3baSuff6TAZ
-         SNAbib6o2TOp0JVavRKh8uj9AmeC2dUXEtFAX+Tlcv17TOb/jbHUXmz5id9IuO78PVO6
-         BmSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDabUjaHR14oAu3x7PIIP89T81tAMPz+poX0B6fxsjp190Dt6+0bzbvwSCCVsrqijvupDZhg04cigORLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLQo+HeSZF67B3VfRkpbQ3+JQ9alCW2kkZJzovehwjrvYTjHp0
-	hzdF8oVzPnKPcokuevjLV60iiy5fj+6pjvrwuHuJrrrtkL4FSNt4
-X-Gm-Gg: ASbGncuvuu4SWXFkLQtJ7iMuuog0eqquBAZmk/h+FCUIWJ88XnbJpPdjL1di2RMgFkr
-	tkLDhYy9tO/1Oz6m++6X3fwkIvG/bR8wyFlT1LgWAD7hSTIXvhUEz0dC7kdTiWVpFDXGnRX6MtH
-	ms/CRbVgpuG6u2Qkahby+Jl0LOxCyAuNDDng/oRzL3icku/ROGyN3qt72MBcTuXgvm/y+p/3/1p
-	0pjHyOoa14P5AMM1kKDdBV+wJL+FV32y4cYCYX3ZrKQXy6JJI+26mXQelHD19sQV2lBtbafcMi2
-	BLkB3YjQELMS02JKYIU4Wh0wHKFPFNCfBevp6AwJ/jKtk8hTehk=
-X-Google-Smtp-Source: AGHT+IF5h875Jogrqv3kb3o1pmmskiEWW4ftOUzVoMmRy0SzkzmraclThn1i4sXhZJQ+6epXy1d3jw==
-X-Received: by 2002:a17:902:ec86:b0:224:2717:7992 with SMTP id d9443c01a7336-22b42c13392mr371565ad.33.1744225663408;
-        Wed, 09 Apr 2025 12:07:43 -0700 (PDT)
-Received: from smtpclient.apple ([202.8.105.124])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ce503dsm15602805ad.259.2025.04.09.12.07.41
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Apr 2025 12:07:42 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1744225725; c=relaxed/simple;
+	bh=C5KMsG8hLiNkhMG2R2yhs8GG0soJXSaxFUn+sWzM15g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DA9u62KLfuxjSZ+xefT19CJyCemCLivuSjd9jGfotMaUcS2C4wdDqK7mdk/uHyiInoH4DK3h7j9LEaZJ6bwvrXX00sF5Ue5IY0O1DBA+i0OdebhaKMhijaELu/3vt6yPH+w5KnBMlcdB+N78txA69zn9MEvoNQxNWxoy09dYIjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ublz1CXm; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=MWq7+ZDeu6lqJHXnARaq7nLRtV46HbSzyx3OJzyzJMY=; b=Ublz1CXmy2JM4TN48lLyQmk0YA
+	eEteI5fUkemxJXiM1OpYItcz6MZbTTauiv+DwjvwOMjyGEzk0hzOUgyDN8GWPLtxewu3UgZA7eJQH
+	XbbARf5uXjuPkBI/LhOlJZIc258rEQNWjCjAOJq2czH77zsq7wmp3HRbZXQS/CEQ0LZs0N5l+Ufws
+	7cHS35b3l77Bvfgc6dTl90k/iq2K0ZVhDbKqtDXMXtk5+43k4JyxfmoA/KZmFjvT1mS4uy+mw5+LG
+	0/YgOFTV0y8rc3hxid5KNiudKvVSrcdYNYkCVmNCn74/5OVloO2WTN01HVwxWq/BjHXJMm01wbOC6
+	PWxUfIFg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u2amo-00000008ffB-25gk;
+	Wed, 09 Apr 2025 19:08:34 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 153713003FF; Wed,  9 Apr 2025 21:08:34 +0200 (CEST)
+Date: Wed, 9 Apr 2025 21:08:34 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>, linux-mm@kvack.org,
+	Ingo Molnar <mingo@redhat.org>, Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH v12 2/3] sched: Move task_mm_cid_work to mm work_struct
+Message-ID: <20250409190834.GQ9833@noisy.programming.kicks-ass.net>
+References: <20250311062849.72083-1-gmonaco@redhat.com>
+ <20250311062849.72083-3-gmonaco@redhat.com>
+ <20250409140303.GA9833@noisy.programming.kicks-ass.net>
+ <c0df7480-1c18-421f-9348-2d39b7bebb49@efficios.com>
+ <20250409152025.GK9833@noisy.programming.kicks-ass.net>
+ <e916f393-b18c-4641-ace7-cf23b7508e09@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
-Subject: Re: [PATCH] fix mismatched parentheses
-From: Jemmy Wong <jemmywong512@gmail.com>
-In-Reply-To: <bb44ee43-b08f-4a4a-bdde-dda785756680@t-8ch.de>
-Date: Thu, 10 Apr 2025 03:07:29 +0800
-Cc: Jemmy <jemmywong512@gmail.com>,
- Willy Tarreau <w@1wt.eu>,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3ACE8CC1-220D-4D92-9C91-596AF985A7AB@gmail.com>
-References: <20250409181934.5589-1-jemmywong512@gmail.com>
- <bb44ee43-b08f-4a4a-bdde-dda785756680@t-8ch.de>
-To: =?utf-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: Apple Mail (2.3826.500.181.1.5)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e916f393-b18c-4641-ace7-cf23b7508e09@efficios.com>
 
-Hi Thomas,
+On Wed, Apr 09, 2025 at 11:53:05AM -0400, Mathieu Desnoyers wrote:
+> On 2025-04-09 11:20, Peter Zijlstra wrote:
+> > On Wed, Apr 09, 2025 at 10:15:42AM -0400, Mathieu Desnoyers wrote:
+> > > On 2025-04-09 10:03, Peter Zijlstra wrote:
+> > > > On Tue, Mar 11, 2025 at 07:28:45AM +0100, Gabriele Monaco wrote:
+> > > > > +static inline void rseq_preempt_from_tick(struct task_struct *t)
+> > > > > +{
+> > > > > +	u64 rtime = t->se.sum_exec_runtime - t->se.prev_sum_exec_runtime;
+> > > > > +
+> > > > > +	if (rtime > RSEQ_UNPREEMPTED_THRESHOLD)
+> > > > > +		rseq_preempt(t);
+> > > > > +}
+> > > > 
+> > > > This confused me.
+> > > > 
+> > > > The goal seems to be to tickle __rseq_handle_notify_resume() so it'll
+> > > > end up queueing that work thing. But why do we want to set PREEMPT_BIT
+> > > > here?
+> > > 
+> > > In that scenario, we trigger (from tick) the fact that we may recompact the
+> > > mm_cid, and thus need to update the rseq mm_cid field before returning to
+> > > userspace.
+> > > 
+> > > Changing the value of the mm_cid field while userspace is within a rseq
+> > > critical section should abort the critical section, because the rseq
+> > > critical section should be able to expect the mm_cid to be invariant
+> > > for the whole c.s..
+> > 
+> > But, if we run that compaction in a worker, what guarantees the
+> > compaction is done and mm_cid is stable, but the time this task returns
+> > to userspace again?
+> 
+> So let's say we have a task which is running and not preempted by any
+> other task on a cpu for a long time.
+> 
+> The idea is to have the tick do two things:
+> 
+> A) trigger the mm_cid recompaction,
+> 
+> B) trigger an update of the task's rseq->mm_cid field at some point
+>    after recompaction, so it can get a mm_cid value closer to 0.
+> 
+> So in its current form this patch will indeed trigger rseq_preempt()
+> for *every tick* after the task has run for more than 100ms, which
+> I don't think is intended. This should be fixed.
+> 
+> Also, doing just an rseq_preempt() is not the correct approach, as
+> AFAIU it won't force the long running task to release the currently
+> held mm_cid value.
+> 
+> I think we need something that looks like the following based on the
+> current patch:
+> 
+> - rename rseq_preempt_from_tick() to rseq_tick(),
+> 
+> - modify rseq_tick() to ensure it calls rseq_set_notify_resume(t)
+>   rather than rseq_preempt().
+> 
+> - modify rseq_tick() to ensure it only calls it once every
+>   RSEQ_UNPREEMPTED_THRESHOLD, rather than every tick after
+>   RSEQ_UNPREEMPTED_THRESHOLD.
+> 
+> - modify rseq_tick() so at some point after the work has
+>   compacted mm_cids, we do the same things as switch_mm_cid()
+>   does, namely to release the currently held cid and get a likely
+>   smaller one (closer to 0). If the value changes, then we should
+>   trigger rseq_preempt() so the task updates the mm_cid field before
+>   returning to userspace and restarts ongoing rseq critical section.
+> 
+> Thoughts ?
 
-Thank you for pointing out these details.=20
-
-I=E2=80=99m new to the community and really appreciate your advice.=20
-
-I=E2=80=99ve addressed your feedback and will send a v2 patch in a new =
-email shortly.
-
-Best regards,
-Jemmy
-
-> On Apr 10, 2025, at 2:30=E2=80=AFAM, Thomas Wei=C3=9Fschuh =
-<linux@weissschuh.net> wrote:
->=20
-> Hi Jemmy,
->=20
-> good catch and thanks for your patch!
-> There are some small formal issues with it, though.
-> Could you fix those and send a v2?
->=20
-> The patch subject should start with "tools/nolibc: ", and could be a =
-bit
-> more specific: "fix mismatched parenthesis in minor()"
->=20
-> (more below)
->=20
-> On 2025-04-10 02:19:34+0800, Jemmy Wong wrote:
->> Corrects an imbalance where opening parentheses exceed closing ones.
->=20
-> Use imperative language: "Correct an ..."
->=20
-> As this is a bugfix, a Fixes tag would be great.
-> In this case:
->=20
-> Fixes: eba6d00d38e7 ("tools/nolibc/types: move makedev to types.h and =
-make it a macro")
->=20
->> Signed-off-by: Jemmy Wong <Jemmywong512@gmail.com>
->>=20
->> ---
->> tools/include/nolibc/types.h | 2 +-
->> 1 file changed, 1 insertion(+), 1 deletion(-)
->>=20
->> diff --git a/tools/include/nolibc/types.h =
-b/tools/include/nolibc/types.h
->> index b26a5d0c417c..b57e054cca82 100644
->> --- a/tools/include/nolibc/types.h
->> +++ b/tools/include/nolibc/types.h
->> @@ -201,7 +201,7 @@ struct stat {
->> /* WARNING, it only deals with the 4096 first majors and 256 first =
-minors */
->> #define makedev(major, minor) ((dev_t)((((major) & 0xfff) << 8) | =
-((minor) & 0xff)))
->> #define major(dev) ((unsigned int)(((dev) >> 8) & 0xfff))
->> -#define minor(dev) ((unsigned int)(((dev) & 0xff))
->> +#define minor(dev) ((unsigned int)(((dev) & 0xff)))
->>=20
->> #ifndef offsetof
->> #define offsetof(TYPE, FIELD) ((size_t) &((TYPE *)0)->FIELD)
->=20
->=20
-> Thomas
-
+Yes, that seems better. Also be sure there's a comment around there
+somewhere that explains this. Because I'm sure I'll have forgotten all
+about this in a few months time :-)
 
