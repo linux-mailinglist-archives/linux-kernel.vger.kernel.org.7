@@ -1,124 +1,67 @@
-Return-Path: <linux-kernel+bounces-596354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2D1A82ABC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:41:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8D6EA82A89
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C7BD189E114
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:34:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB31B7AF1B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C0E267733;
-	Wed,  9 Apr 2025 15:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FZo9teaG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65D0267B77;
+	Wed,  9 Apr 2025 15:32:46 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D64A26770E;
-	Wed,  9 Apr 2025 15:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A47726772D;
+	Wed,  9 Apr 2025 15:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744212802; cv=none; b=Ixy0R8ce8ktsZiZyvm3D60xlfHCpBgogK61TSnHmUPappz2DqVyO6e1E3JDVDPti6i7C8bkz5jjAhtq/ECrESYeNxS78UDydTj9+srKjGNTP4jyLwoh9DsX2kJwY/NHiLJUqTTK1hIlwLEYL7aBmhrJ9DK9kapSexkTFo40om0U=
+	t=1744212766; cv=none; b=c3dFsMtzbIbTf6KJZheSaSa2PPsrg2pgYDvt8I7qda6An//5mYidmGyurxDIWmGaSMQdDIe2Fku3fQdLxgXONXeagNIyjIQ9NwXIYvUl0pYZCJ6on7BZxaccGVOUVoVHiMnhWLQmIDV0jFX/bh1jN698i5ZfuXKw7JPYpom2/wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744212802; c=relaxed/simple;
-	bh=mErJO8k3cpuBPBmJcDHzl2+V5zvBB5RozSbgoAix5w4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IuGuocMQWGzs7kFQdYW8mf4aFpWh/42MDiwZfEvE3igRNO1A7MVifHHDjTui3C6txBneFOjjzupSAaJqD55KC/dS0k6LyluQylkoeJqzcK5vecZSgd9Mr5cf6CRupHYid6OnXvPiV5b+bpjlhbXXhpVy74bwVwbEHe7YSM9bVBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FZo9teaG; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744212802; x=1775748802;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mErJO8k3cpuBPBmJcDHzl2+V5zvBB5RozSbgoAix5w4=;
-  b=FZo9teaGJkxPaEiVsT4BfSjJMFK6MSuY3RtK/d1aeA9xrBD3d/DOVEpS
-   2a4yfZ2/9amjjvwpCXjepGFt0kz5UaKEpgkCbN3bz8TbX9Rbs7VXnK4mS
-   WHf7jioaKznua+i2RXNv/2TeT9skJP0TLDY0oJsPs839PdginhkUsr7c+
-   HWALEAH6VQ81qqMRpmNH/1R2h+3tcTVkgGZfTEm+WBJuMHRGB99uSIH7d
-   uYkWBC0STkw55rGWGqfN6WuyxRO4Vsj5oTkOxHh1pSK1qt4qCqHFKjOvW
-   n0o1TwoXuUrEHvNfONgXwvBUjyQLC+/zVdBHr9A1K6VovEJRuXpSXFIs8
-   w==;
-X-CSE-ConnectionGUID: GTXsCr01TgGN7u6G3SpJ0w==
-X-CSE-MsgGUID: jW5wamcWSDKOJZc1jxYnRg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="45582295"
-X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
-   d="scan'208";a="45582295"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 08:33:21 -0700
-X-CSE-ConnectionGUID: Fpvn1roRQguN0PtW+NjSfA==
-X-CSE-MsgGUID: hp7hC+GATASRmDoW92HvTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,200,1739865600"; 
-   d="scan'208";a="128354896"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 08:33:17 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u2XQQ-0000000AmNz-0KQG;
-	Wed, 09 Apr 2025 18:33:14 +0300
-Date: Wed, 9 Apr 2025 18:33:13 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Oliver Graute <oliver.graute@kococonnector.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Yu Jiaoliang <yujiaoliang@vivo.com>, linux-input@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/10] [v2] Input: stmpe-ts - use module alias instead of
- device table
-Message-ID: <Z_aTOUUmyXpWnt57@smile.fi.intel.com>
-References: <20250409122131.2766719-1-arnd@kernel.org>
- <20250409122314.2848028-1-arnd@kernel.org>
- <20250409122314.2848028-3-arnd@kernel.org>
+	s=arc-20240116; t=1744212766; c=relaxed/simple;
+	bh=1cTMcNUOZR0G8ilOHV2oQzN4qri7oZSuiQ5k9Z6bwOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p26zzze0ZIYlslRBSF/N2i1B13or0EyEINkNbx5JjeXvZsXIZiP/mg2zuEftUPZfDz6OPDFlcJ6uAGgesc/U1Fru/0asvn+jeaEh2wnAAxxYOCSjQ0vZG3PFM3tO8GyI3mQ72Iqtz1c9qf+dR/iztx8yVjL2tqSmvZPqPmyVubQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36ECBC4CEE2;
+	Wed,  9 Apr 2025 15:32:45 +0000 (UTC)
+Date: Wed, 9 Apr 2025 11:34:04 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Tom Zanussi <zanussi@kernel.org>
+Subject: Re: [PATCH] tracing: Add common_comm to histograms
+Message-ID: <20250409113404.5b2085a7@gandalf.local.home>
+In-Reply-To: <20250409083244.fe29885ef4f9253977a2bf61@kernel.org>
+References: <20250407154912.3c6c6246@gandalf.local.home>
+	<20250409083244.fe29885ef4f9253977a2bf61@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409122314.2848028-3-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 09, 2025 at 02:22:55PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> When compile tested with W=1 on x86_64 with driver as built-in:
-> 
->   stmpe-ts.c:371:34: error: unused variable 'stmpe_ts_ids' [-Werror,-Wunused-const-variable]
-> 
-> Ideally this would be referenced from the platform_driver, but since
-> the compatible string is already matched by the mfd driver for its
-> parent device, that would break probing.
-> 
-> In this case, the of_device_id table just serves as a module alias
-> for loading the driver, while the device itself is probed using
-> the platform device name.
-> 
-> Remove the table and instead use a module alias that reflects how
-> the driver is actually probed.
+On Wed, 9 Apr 2025 08:32:44 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-...
+> BTW, the string field size must always be MAX_FILTER_STR_VAL (for comparing
+> with other string filters, which checks the size at first.)
+> Somewhere we should comment it.
 
-> +MODULE_ALIAS("platform:stmpe-ts");
+I believe that's more of an implementation detail of the underlining
+infrastructure. I don't think it matters for the users of the interface. It
+may be a limitation in max size.
 
-Isn't the preferable way to have platform device ID table instead?
-Krzysztof?
+Is that what you want to comment? That the string held (for all strings)
+has a max size defined by the MAX_FILTER_STR_VAL, which currently is 256?
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+-- Steve
 
