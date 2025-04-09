@@ -1,228 +1,487 @@
-Return-Path: <linux-kernel+bounces-595510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C870BA81F57
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:09:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F63FA81F5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 10:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED5151BC11E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:04:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 986161BC1C7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 08:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3589925B664;
-	Wed,  9 Apr 2025 08:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A3925A62C;
+	Wed,  9 Apr 2025 08:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="H9kbCebU"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X0HfnFIR"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DAB25B673;
-	Wed,  9 Apr 2025 08:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D409F25B67E
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 08:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744185832; cv=none; b=ndWMEQIYmqDj3hGqZJrxp7o/HOC/2CQ5xnJkF7Mj4WnUAWBqoNdTq6QetATSiM18HIvAvnbeeQT6mHS49/aBRsdlLQLqCaxGvIgsIaHY9g4H95tQRWU6wcgp9VLJMp7QeRE1c9wqLVaaiX76JwA4PMgzKdxryLT9qUMlNZiyVoM=
+	t=1744185843; cv=none; b=ouyV6XVd69sosM8yU5L+Wu1TAl12cAlP+qd6+gx1giIkvb3MGqjJUdU+tHpMDUpmHzm/IEJtoDByiRvU8zXJ+WtMoY4LUuKERIOUag5JC/+meSHGgpD2+nLDlSRmFXmUwuwAMk1BwH4bJXsDnd3JETgmxLIHlZYWDpXAEakEK94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744185832; c=relaxed/simple;
-	bh=7fqznLAyvHu/jJ9za6hfLAeZqCvQ3xojCZMtgLC3XYw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=V3VYGwF19eduEdHH0T1XTdf6vjdkqiuB4AteDqRjiUL+susHcJAaGWohJiHkl91/B/fHCwcnSMDyq18WYx5ASbf66sAPMmB4LnyMnepAjbsGNS+qJuADw1/fF0LhI9enKQq7lF/HVsIUSN0YpdI0eoAQkgnm9f9951A+TAH+jC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=H9kbCebU; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4ZXb711qMBz9t4w;
-	Wed,  9 Apr 2025 10:03:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1744185821; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7fqznLAyvHu/jJ9za6hfLAeZqCvQ3xojCZMtgLC3XYw=;
-	b=H9kbCebUZR1c7HOrQgYjPIYBVEFAXQSWcq6/p1UyaFsQL5RVW8qDJPZJDp+qC3GjKNVxRt
-	DRZL0n/rENniKePXYZaCqEJY0i7wRIVO8nj1NZnDeePrW2Dn3W1dB+9XWKWpB33dMcfYJ9
-	J2f7juccWHrQ6rBYVzSeuDhek0t6v0Y1omaNC+VbHOyOLNiRNHXjOlg+v77wj55CLq6kZe
-	I8GCkSKnPB7VGieK0t/tUrz6+VwPURjf1eHIX/aqKevwbGEZET2BfNY4v4zU1C5ZKlQMsV
-	q1BjHRuzslbwi9G5yJVXKkWQP5uTYc6Ftpwgx9gaAtErlzy1rplwxy1+/krYeg==
-Message-ID: <2486e9eba3806f8e7fc3df724e916929a627fac7.camel@mailbox.org>
-Subject: Re: [PATCH v8 00/10] Improve gpu_scheduler trace events + UAPI
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>, Pierre-Eric
- Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, Tvrtko Ursulin
- <tvrtko.ursulin@igalia.com>, Philipp Stanner <phasta@kernel.org>, Danilo
- Krummrich <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	etnaviv@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, lima@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, linux-arm-msm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, nouveau@lists.freedesktop.org
-Date: Wed, 09 Apr 2025 10:03:34 +0200
-In-Reply-To: <f3416edf-46f8-4296-86bd-600ab629fe60@damsy.net>
-References: <20250320095818.40622-1-pierre-eric.pelloux-prayer@amd.com>
-	 <f3416edf-46f8-4296-86bd-600ab629fe60@damsy.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1744185843; c=relaxed/simple;
+	bh=ZaVw5OY/Fp/j2BL95jCBKv6mfWVHYmdtI7BWrOnSXVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lw0FkEJQPgIOlqywQ6UyexAFqPKaLmJGXc38FU0lOAzdKcDruMAloRhZG/JH9nRxoSxgiB+G7b9zosz9KgDU1zk1JEnBqp/q+MnlGMU91w+djAGhpWKqS/mCTgqjwEjaPVQAw1h8Gg1JcvOrhbwyhquYvHnEAxHIy+pMqi7dRd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X0HfnFIR; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22435603572so62773275ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 01:04:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744185841; x=1744790641; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cZkefp3SsqAWOBBxs1VEWuV1y8jA3RO3nWFxkIRrTSA=;
+        b=X0HfnFIRj5VA6KsJPY1o4BRlXI9ouuU3TeMDv0VG+E1uM+ynGugnAOd7AUrmNMaAMw
+         wG/PXZw1ixv65Auj+TgkA7+lUdbh0X1Qt8EdZfIeQxoNf0QO62SPO+hQUHPvOaO4KRQf
+         dtreqXyh4fz+sCxV+bLXTbBQAqb9qPBvidNnsFvwCeSMSwXXohM9ZAONEedDvVFtIkDj
+         7WUf2fiORiwLi3zJ4V+qJOY2oU9gJ6AP8C16dVDJKebS8t5+tDUfsCyIhzyCUaeruPOW
+         iW9yXE2QEhelS4Q0nBQA9g+dKZxtXJcBjU/LpM7Qnp1jRwdxsEgT+OrKD5CktTODSHd/
+         Ln1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744185841; x=1744790641;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cZkefp3SsqAWOBBxs1VEWuV1y8jA3RO3nWFxkIRrTSA=;
+        b=o3nOXRdAqy7fezrzG0QaPRUMgyFaZbK0xOyxjn9u8KJfoSsHtev8oDDz51qjbcVSLN
+         brJ1urVjCzuivR9i03ktVW/K6c5to6dPvpqRZ8xcdMIe3VoLbUkSFEyOPpVcXzMtcg+j
+         YT4cGN0X4KAov7hIxglHubO+P7ZFt4HKVD+uefCsoGjm/OX6x+s0JZ7lUBrhcEcDukEv
+         i4nQIO30HOWuhVVZlz36bztE8+NRQ5E8B51gYZ9u/ggwcUo5ng0zmOxoM9yFzjF7FxNk
+         pAoHaqfTqoFv4o/utALn3fsWB1H9nRlrUmqfEHNO4H9aovwFx0rmzhI6eMr+a5FSKEQR
+         MjfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfHKs+vtAm6wkSgGQkUdxv7g/FIG02wHerGJ2GCARD8ZAQDtzkVmYF1Z9jxBDAhNTLmXZCZb5kbzoM8dI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsaHL0DnDKhi0jrnoyAC2VjCRofGG/1CMj1mC/RUHbhZk25H9h
+	T2E+wIYOEzOL15vuF8BGiN2xEsHwwTnSfdUBHbqitQEqXwE6Zw0cLFft7dDqjg==
+X-Gm-Gg: ASbGncvqZmr88gI5DqbnCSwVZLWHEP4D2TZKlU+iuw8Z+J9/nHSO/i67quMNWuyZIyy
+	2vx4LCpfrPReybCHVpkA6GiH83UKzZrlC7k0kIUw3xzPmOiucmgPKS4ZU/tT9gLcONNC8/J9oQg
+	gZppjc0N8vAEVe+OhY48rZB9bJHxhx4vRI5zrjFq7zdcob/FPvsBQrN8pTu9blpmph23ja0DDfI
+	XSrxz3Wz8lRg0ql7q7l6GFtX3Aw4PWkQb/4O/3CFE256IhjpkS/Dpa+TmeTW6aVcKEsB8sAS0EA
+	1zK7RXbeEwT7i10gyayG5wRTzu3rhZWpk1FxZ85LCRFI1tkc8/A=
+X-Google-Smtp-Source: AGHT+IHzv+8zIVtNQ9GRK5QB/aNaohw8UHnO+WeQYD3ggOvprCdhZxsimpY14GlAS7+65p73hE+tow==
+X-Received: by 2002:a17:902:ccc8:b0:224:c46:d162 with SMTP id d9443c01a7336-22ac2992075mr29880945ad.20.1744185841087;
+        Wed, 09 Apr 2025 01:04:01 -0700 (PDT)
+Received: from thinkpad ([120.56.198.53])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7c9937fsm5677465ad.155.2025.04.09.01.03.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 01:04:00 -0700 (PDT)
+Date: Wed, 9 Apr 2025 13:33:54 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, 
+	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, p.zabel@pengutronix.de, 
+	johan+linaro@kernel.org, cassel@kernel.org, quic_schintav@quicinc.com, 
+	fabrice.gasnier@foss.st.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/9 RESEND] PCI: stm32: Add PCIe Endpoint support for
+ STM32MP25
+Message-ID: <dirqsnrzjoiht7vvzzwh73gf3zuwyco6lc46k6s6pkifde2uzw@icmtn7x53swc>
+References: <20250325065935.908886-1-christian.bruel@foss.st.com>
+ <20250325065935.908886-5-christian.bruel@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: ac77wnkq97cnh7ipc437xrje46qmhgfq
-X-MBO-RS-ID: 890d0c8e5ddfbadb243
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250325065935.908886-5-christian.bruel@foss.st.com>
 
-On Wed, 2025-04-09 at 09:52 +0200, Pierre-Eric Pelloux-Prayer wrote:
-> Hi,
->=20
-> I've rebased the series on top of drm-next, applied the minor tweaks
-> suggested by Tvrtko on v8 and=20
-> the R-b tags. The result can be found on gitlab.fdo:
->=20
-> https://gitlab.freedesktop.org/pepp/linux/-/commits/improve_gpu_scheduler=
-_trace_v9
->=20
-> I believe it's ready to be merged, unless I've missed something?
+On Tue, Mar 25, 2025 at 07:59:30AM +0100, Christian Bruel wrote:
+> Add driver to configure the STM32MP25 SoC PCIe Gen1 2.5GT/s or Gen2 5GT/s
+> controller based on the DesignWare PCIe core in endpoint mode.
+> 
+> Uses the common reference clock provided by the host.
+> 
+> The PCIe core_clk receives the pipe0_clk from the ComboPHY as input,
+> and the ComboPHY PLL must be locked for pipe0_clk to be ready.
+> Consequently, PCIe core registers cannot be accessed until the ComboPHY is
+> fully initialised and refclk is enabled and ready.
+> 
+> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+> ---
+>  drivers/pci/controller/dwc/Kconfig         |  12 +
+>  drivers/pci/controller/dwc/Makefile        |   1 +
+>  drivers/pci/controller/dwc/pcie-stm32-ep.c | 420 +++++++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-stm32.h    |   1 +
+>  4 files changed, 434 insertions(+)
+>  create mode 100644 drivers/pci/controller/dwc/pcie-stm32-ep.c
+> 
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index 0c18879b604c..4a3eb838557c 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -401,6 +401,18 @@ config PCIE_STM32
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called pcie-stm32.
+>  
+> +config PCIE_STM32_EP
+> +	tristate "STMicroelectronics STM32MP25 PCIe Controller (endpoint mode)"
+> +	depends on ARCH_STM32 || COMPILE_TEST
+> +	depends on PCI_ENDPOINT
+> +	select PCIE_DW_EP
+> +	help
+> +	  Enables endpoint support for DesignWare core based PCIe controller
+> +	  found in STM32MP25 SoC.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called pcie-stm32-ep.
+> +
+>  config PCI_DRA7XX
+>  	tristate
+>  
+> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+> index 576d99cb3bc5..caebd98f6dd3 100644
+> --- a/drivers/pci/controller/dwc/Makefile
+> +++ b/drivers/pci/controller/dwc/Makefile
+> @@ -29,6 +29,7 @@ obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
+>  obj-$(CONFIG_PCIE_VISCONTI_HOST) += pcie-visconti.o
+>  obj-$(CONFIG_PCIE_RCAR_GEN4) += pcie-rcar-gen4.o
+>  obj-$(CONFIG_PCIE_STM32) += pcie-stm32.o
+> +obj-$(CONFIG_PCIE_STM32_EP) += pcie-stm32-ep.o
+>  
+>  # The following drivers are for devices that use the generic ACPI
+>  # pci_root.c driver but don't support standard ECAM config access.
+> diff --git a/drivers/pci/controller/dwc/pcie-stm32-ep.c b/drivers/pci/controller/dwc/pcie-stm32-ep.c
+> new file mode 100644
+> index 000000000000..a8e9c5a9b127
+> --- /dev/null
+> +++ b/drivers/pci/controller/dwc/pcie-stm32-ep.c
+> @@ -0,0 +1,420 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * STMicroelectronics STM32MP25 PCIe endpoint driver.
+> + *
+> + * Copyright (C) 2025 STMicroelectronics
+> + * Author: Christian Bruel <christian.bruel@foss.st.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/of_gpio.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset.h>
+> +#include "pcie-designware.h"
+> +#include "pcie-stm32.h"
+> +
+> +enum stm32_pcie_ep_link_status {
+> +	STM32_PCIE_EP_LINK_DISABLED,
+> +	STM32_PCIE_EP_LINK_ENABLED,
+> +};
+> +
+> +struct stm32_pcie {
+> +	struct dw_pcie pci;
+> +	struct regmap *regmap;
+> +	struct reset_control *rst;
+> +	struct phy *phy;
+> +	struct clk *clk;
+> +	struct gpio_desc *perst_gpio;
+> +	enum stm32_pcie_ep_link_status link_status;
+> +	unsigned int perst_irq;
+> +};
+> +
+> +static void stm32_pcie_ep_init(struct dw_pcie_ep *ep)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> +	enum pci_barno bar;
+> +
+> +	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
+> +		dw_pcie_ep_reset_bar(pci, bar);
+> +}
+> +
+> +static int stm32_pcie_enable_link(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +
+> +	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+> +			   STM32MP25_PCIECR_LTSSM_EN,
+> +			   STM32MP25_PCIECR_LTSSM_EN);
+> +
+> +	return dw_pcie_wait_for_link(pci);
+> +}
+> +
+> +static void stm32_pcie_disable_link(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +
+> +	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR, STM32MP25_PCIECR_LTSSM_EN, 0);
+> +}
+> +
+> +static int stm32_pcie_start_link(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +	struct dw_pcie_ep *ep = &pci->ep;
+> +	int ret;
+> +
+> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_ENABLED) {
+> +		dev_dbg(pci->dev, "Link is already enabled\n");
+> +		return 0;
+> +	}
+> +
+> +	ret = stm32_pcie_enable_link(pci);
+> +	if (ret) {
+> +		dev_err(pci->dev, "PCIe cannot establish link: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	dw_pcie_ep_linkup(ep);
+> +
 
-Has slipped my radar for a while, sorry.
+This callback should only be used when the epc_features::linkup_notifier flag is
+set. That only applies to platforms supporting LINK_UP interrupt. In this case,
+once the start_link() callback returns, it is assumed that the link is active.
+So no need to call dw_pcie_ep_linkup().
 
-I browsed over the series=20
+> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_ENABLED;
+> +
+> +	enable_irq(stm32_pcie->perst_irq);
+> +
+> +	return 0;
+> +}
+> +
+> +static void stm32_pcie_stop_link(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +
+> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_DISABLED) {
+> +		dev_dbg(pci->dev, "Link is already disabled\n");
+> +		return;
+> +	}
+> +
+> +	disable_irq(stm32_pcie->perst_irq);
+> +
+> +	stm32_pcie_disable_link(pci);
+> +
+> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_DISABLED;
+> +}
+> +
+> +static int stm32_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+> +				unsigned int type, u16 interrupt_num)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> +
+> +	switch (type) {
+> +	case PCI_IRQ_INTX:
+> +		return dw_pcie_ep_raise_intx_irq(ep, func_no);
+> +	case PCI_IRQ_MSI:
+> +		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
+> +	default:
+> +		dev_err(pci->dev, "UNKNOWN IRQ type\n");
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static const struct pci_epc_features stm32_pcie_epc_features = {
+> +	.msi_capable = true,
+> +	.align = SZ_64K,
+> +};
+> +
+> +static const struct pci_epc_features*
+> +stm32_pcie_get_features(struct dw_pcie_ep *ep)
+> +{
+> +	return &stm32_pcie_epc_features;
+> +}
+> +
+> +static const struct dw_pcie_ep_ops stm32_pcie_ep_ops = {
+> +	.init = stm32_pcie_ep_init,
+> +	.raise_irq = stm32_pcie_raise_irq,
+> +	.get_features = stm32_pcie_get_features,
+> +};
+> +
+> +static const struct dw_pcie_ops dw_pcie_ops = {
+> +	.start_link = stm32_pcie_start_link,
+> +	.stop_link = stm32_pcie_stop_link,
+> +};
+> +
+> +static int stm32_pcie_enable_resources(struct stm32_pcie *stm32_pcie)
+> +{
+> +	int ret;
+> +
+> +	ret = phy_init(stm32_pcie->phy);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = clk_prepare_enable(stm32_pcie->clk);
+> +	if (ret)
+> +		phy_exit(stm32_pcie->phy);
+> +
+> +	return ret;
+> +}
+> +
+> +static void stm32_pcie_disable_resources(struct stm32_pcie *stm32_pcie)
+> +{
+> +	clk_disable_unprepare(stm32_pcie->clk);
+> +
+> +	phy_exit(stm32_pcie->phy);
+> +}
+> +
+> +static void stm32_pcie_perst_assert(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +	struct device *dev = pci->dev;
+> +
+> +	dev_dbg(dev, "PERST asserted by host. Shutting down the PCIe link\n");
+> +
+> +	/*
+> +	 * Do not try to release resources if the PERST# is
+> +	 * asserted before the link is started.
 
-Can you pro forma send the v9 (with the scheduler maintainers also in
-the cover letter's CC) with the changelog, please?
+Make use of 80 columns.
 
-Then I'd ACK and someone (probably me?) can take it in.
+> +	 */
+> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_DISABLED) {
+> +		dev_dbg(pci->dev, "Link is already disabled\n");
+> +		return;
+> +	}
+> +
+> +	stm32_pcie_disable_link(pci);
+> +
+> +	stm32_pcie_disable_resources(stm32_pcie);
+> +
+> +	pm_runtime_put_sync(dev);
+> +
+> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_DISABLED;
+> +}
+> +
+> +static void stm32_pcie_perst_deassert(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +	struct device *dev = pci->dev;
+> +	struct dw_pcie_ep *ep = &pci->ep;
+> +	int ret;
+> +
+> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_ENABLED) {
+> +		dev_dbg(pci->dev, "Link is already enabled\n");
+> +		return;
+> +	}
+> +
+> +	dev_dbg(dev, "PERST de-asserted by host. Starting link training\n");
+> +
+> +	ret = pm_runtime_resume_and_get(dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "pm runtime resume failed: %d\n", ret);
+> +		return;
+> +	}
+> +
+> +	ret = stm32_pcie_enable_resources(stm32_pcie);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to enable resources: %d\n", ret);
+> +		goto err_pm_put_sync;
+> +	}
+> +
+> +	ret = dw_pcie_ep_init_registers(ep);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to complete initialization: %d\n", ret);
+> +		goto err_disable_resources;
+> +	}
+> +
+> +	pci_epc_init_notify(ep->epc);
+> +
+> +	ret = stm32_pcie_enable_link(pci);
+> +	if (ret) {
+> +		dev_err(dev, "PCIe Cannot establish link: %d\n", ret);
+> +		goto err_deinit_notify;
+> +	}
 
-Thanks
-P.
+Link is supposed to be enabled only by the start_link() callback.
 
->=20
-> Thanks,
-> Pierre-Eric
->=20
-> Le 20/03/2025 =C3=A0 10:57, Pierre-Eric Pelloux-Prayer a =C3=A9crit=C2=A0=
-:
-> > Hi,
-> >=20
-> > The initial goal of this series was to improve the drm and amdgpu
-> > trace events to be able to expose more of the inner workings of
-> > the scheduler and drivers to developers via tools.
-> >=20
-> > Then, the series evolved to become focused only on gpu_scheduler.
-> > The changes around vblank events will be part of a different
-> > series, as well as the amdgpu ones.
-> >=20
-> > Moreover Sima suggested to make some trace events stable uAPI,
-> > so tools can rely on them long term.
-> >=20
-> > The first patches extend and cleanup the gpu scheduler events,
-> > then add a documentation entry in drm-uapi.rst.
-> >=20
-> > The last 2 patches are new in v8. One is based on a suggestion
-> > from Tvrtko and gets rid of drm_sched_job::id. The other is a
-> > cleanup of amdgpu trace events to use the fence=3D%llu:%llu format.
-> >=20
-> > The drm_sched_job patches don't affect gpuvis which has code to
-> > parse
-> > the gpu_scheduler events but these events are not enabled.
-> >=20
-> > Changes since v7:
-> > * uint64_t -> u64
-> > * reworked dependencies tracing (Tvrtko)
-> > * use common name prefix for all events (Tvrtko)
-> > * dropped drm_sched_job::id (Tvrtko)
-> >=20
-> > Useful links:
-> > - userspace tool using the updated events:
-> > https://gitlab.freedesktop.org/tomstdenis/umr/-/merge_requests/37
-> > - v7:
-> > https://lists.freedesktop.org/archives/dri-devel/2025-January/488117.ht=
-ml
-> >=20
-> > Pierre-Eric Pelloux-Prayer (10):
-> > =C2=A0=C2=A0 drm/debugfs: output client_id in in drm_clients_info
-> > =C2=A0=C2=A0 drm/sched: store the drm client_id in drm_sched_fence
-> > =C2=A0=C2=A0 drm/sched: add device name to the drm_sched_process_job ev=
-ent
-> > =C2=A0=C2=A0 drm/sched: cleanup gpu_scheduler trace events
-> > =C2=A0=C2=A0 drm/sched: trace dependencies for gpu jobs
-> > =C2=A0=C2=A0 drm/sched: add the drm_client_id to the drm_sched_run/exec=
-_job
-> > events
-> > =C2=A0=C2=A0 drm/sched: cleanup event names
-> > =C2=A0=C2=A0 drm/doc: document some tracepoints as uAPI
-> > =C2=A0=C2=A0 drm: get rid of drm_sched_job::id
-> > =C2=A0=C2=A0 drm/amdgpu: update trace format to match gpu_scheduler_tra=
-ce
-> >=20
-> > =C2=A0 Documentation/gpu/drm-uapi.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 19 ++++
-> > =C2=A0 drivers/accel/amdxdna/aie2_ctx.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +-
-> > =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c=C2=A0=C2=A0=C2=A0 |=
-=C2=A0=C2=A0 2 +-
-> > =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +-
-> > =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_job.c=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0=C2=A0 8 +-
-> > =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_job.h=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +-
-> > =C2=A0 drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 32 ++----
-> > =C2=A0 drivers/gpu/drm/drm_debugfs.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 10 =
-+-
-> > =C2=A0 drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c=C2=A0 |=C2=A0=C2=A0=
- 2 +-
-> > =C2=A0 drivers/gpu/drm/imagination/pvr_job.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
-> > =C2=A0 drivers/gpu/drm/imagination/pvr_queue.c=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0=C2=A0 5 +-
-> > =C2=A0 drivers/gpu/drm/imagination/pvr_queue.h=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
-> > =C2=A0 drivers/gpu/drm/lima/lima_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
-> > =C2=A0 drivers/gpu/drm/lima/lima_sched.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 6 +-
-> > =C2=A0 drivers/gpu/drm/lima/lima_sched.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +-
-> > =C2=A0 drivers/gpu/drm/msm/msm_gem_submit.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 8 +-
-> > =C2=A0 drivers/gpu/drm/nouveau/nouveau_sched.c=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +-
-> > =C2=A0 drivers/gpu/drm/panfrost/panfrost_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
-> > =C2=A0 drivers/gpu/drm/panthor/panthor_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +-
-> > =C2=A0 drivers/gpu/drm/panthor/panthor_mmu.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
-> > =C2=A0 drivers/gpu/drm/panthor/panthor_sched.c=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0=C2=A0 5 +-
-> > =C2=A0 drivers/gpu/drm/panthor/panthor_sched.h=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +-
-> > =C2=A0 .../gpu/drm/scheduler/gpu_scheduler_trace.h=C2=A0=C2=A0 | 103
-> > +++++++++++++-----
-> > =C2=A0 drivers/gpu/drm/scheduler/sched_entity.c=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 |=C2=A0 16 ++-
-> > =C2=A0 drivers/gpu/drm/scheduler/sched_fence.c=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +-
-> > =C2=A0 drivers/gpu/drm/scheduler/sched_internal.h=C2=A0=C2=A0=C2=A0 |=
-=C2=A0=C2=A0 2 +-
-> > =C2=A0 drivers/gpu/drm/scheduler/sched_main.c=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0 11 +-
-> > =C2=A0 drivers/gpu/drm/v3d/v3d_submit.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
-> > =C2=A0 drivers/gpu/drm/xe/xe_sched_job.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +-
-> > =C2=A0 include/drm/gpu_scheduler.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 13 ++-
-> > =C2=A0 30 files changed, 186 insertions(+), 96 deletions(-)
-> >=20
+> +
+> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_ENABLED;
+> +
+> +	return;
+> +
+> +err_deinit_notify:
+> +	pci_epc_deinit_notify(ep->epc);
+> +
+> +err_disable_resources:
+> +	stm32_pcie_disable_resources(stm32_pcie);
+> +
+> +err_pm_put_sync:
+> +	pm_runtime_put_sync(dev);
+> +}
+> +
+> +static irqreturn_t stm32_pcie_ep_perst_irq_thread(int irq, void *data)
+> +{
+> +	struct stm32_pcie *stm32_pcie = data;
+> +	struct dw_pcie *pci = &stm32_pcie->pci;
+> +	u32 perst;
+> +
+> +	perst = gpiod_get_value(stm32_pcie->perst_gpio);
+> +	if (perst)
+> +		stm32_pcie_perst_assert(pci);
+> +	else
+> +		stm32_pcie_perst_deassert(pci);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int stm32_add_pcie_ep(struct stm32_pcie *stm32_pcie,
+> +			     struct platform_device *pdev)
+> +{
+> +	struct dw_pcie_ep *ep = &stm32_pcie->pci.ep;
+> +	struct device *dev = &pdev->dev;
+> +	int ret;
+> +
+> +	ret = pm_runtime_resume_and_get(dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "pm runtime resume failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+> +				 STM32MP25_PCIECR_TYPE_MASK,
+> +				 STM32MP25_PCIECR_EP);
+> +	if (ret) {
+> +		goto err_pm_put_sync;
+> +		return ret;
+> +	}
+> +
+> +	reset_control_assert(stm32_pcie->rst);
+> +	reset_control_deassert(stm32_pcie->rst);
+> +
+> +	ep->ops = &stm32_pcie_ep_ops;
+> +
+> +	ret = dw_pcie_ep_init(ep);
+> +	if (ret) {
+> +		dev_err(dev, "failed to initialize ep: %d\n", ret);
+> +		goto err_pm_put_sync;
+> +	}
+> +
+> +	ret = stm32_pcie_enable_resources(stm32_pcie);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable resources: %d\n", ret);
+> +		goto err_ep_deinit;
+> +	}
+> +
+> +	ret = dw_pcie_ep_init_registers(ep);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to initialize DWC endpoint registers\n");
+> +		goto err_disable_resources;
+> +	}
+> +
+> +	pci_epc_init_notify(ep->epc);
+> +
 
+You are calling dw_pcie_ep_init_registers() and  pci_epc_init_notify() from 2
+places. I think the one in stm32_pcie_perst_deassert() should be dropped since
+the DBI registers are available at this point itself.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
