@@ -1,112 +1,193 @@
-Return-Path: <linux-kernel+bounces-596408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987AFA82BCE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:06:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17541A82CAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F9B59A5A70
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 15:54:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBEA3443288
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 16:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1835B268FD5;
-	Wed,  9 Apr 2025 15:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SLKe4Qvt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mxwNy5hj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB821C1F07;
+	Wed,  9 Apr 2025 16:40:59 +0000 (UTC)
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33081B423C;
-	Wed,  9 Apr 2025 15:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5232B250EC;
+	Wed,  9 Apr 2025 16:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744213725; cv=none; b=ptQfBVdsQmHq0uQCyxUos7VfD0KDlE7zVUW1ptQigibSN8sLIdxGvoXRTxeIOgoa4smdIc+kNFL9YPN/HO6G8dtNMSfRxKqe0IDquxKmorxKgn+a3i5db8SNVt91TlgQre6l3FQCpfmFR29wtddMeTDC9BjkpUrlng32+74kODI=
+	t=1744216859; cv=none; b=V9SihzSRkbCzMMiVZ0axqhYyBcFUCY+fjY1kzuBcIn45KbrID0t2KzAvEWkZkI6sBw3dom2Gj7Qw3CjA8FBxW3unb2UuSi4EBi2j4prXWITMrPC8V7BPBmLtSMEFV/IFLxocbFrhdDQJS/tpLGBBPlXgpK1gycKElCZfI9JqSdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744213725; c=relaxed/simple;
-	bh=21zqOVhJ2Rq/5IPkRUI3IEET6ToGEtyltfJffE9GPqk=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=cf3zenqEFYJsLsJZGvc/y0hAtJy+dpPWyxQTPLBZAEa6mmXBznBeANNIYwxAVmsAgu6qLW4U94fz5OyaKCNWJNq+Kwsgfz4fuki4AYiqtQRvE/T3KWWHFvdBzpreK20MBRRO71/xk0hp5vmg2UMPUfzNIN1m8OcR741jBbIISwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SLKe4Qvt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mxwNy5hj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 09 Apr 2025 15:48:31 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744213716;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=7iMr7lCZRq85IJ6t7DIZfsLQU70nnQxRTR/udw1pzmU=;
-	b=SLKe4QvtTPuH/JfdaYEAHGzw74KfS8w11g6U+sp0PVuh6G1ezH4aoDsDoBYES2wDRXPJe/
-	fsgvHj5e3iZhGbhywA8Sxbstoip6yFDX03Ojdef1wm8nAiLzBLIJ6Ggn9p1NCDKtsdOZdL
-	mKxOluyvgfjgNFslGIJON6+aN3g9roNS0k35pm1+Wi2E8lrvrepy1vasEBjtywpd7SIpzM
-	8Nz6TJHhtlj+8PuK9Uy2kA0L0eV1ohAkXOzL6K+eTE7gDFq0/w62IPC0QM/M79B2EKEdXU
-	eUv7MoBnLQNdsh8pb32TUipf2Y/9DDbWAuq5Lyzpt2sTnICKdZiqsfYTUpFcHA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744213716;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=7iMr7lCZRq85IJ6t7DIZfsLQU70nnQxRTR/udw1pzmU=;
-	b=mxwNy5hjhSpee2uRlopNldM+NRGDvA+1stDitNKQwZgJO7fYZKRwJ/6cs4O2v7oCx7WUwl
-	ZTluBCpayqV7UECg==
-From: "tip-bot2 for Dave Hansen" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/urgent] x86/cpu: Avoid running off the end of an AMD erratum table
-Cc: Jiri Slaby <jirislaby@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1744216859; c=relaxed/simple;
+	bh=OI5wgGn82uQMPS6lLA25QzrQbaTdxqnp0IH22m1DyYo=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=Nv06vjN3RoMDScrl7dpEEci8iVJkMVXB23gT+ziH1kYPjhYbg2bIzrDliGFH6OBBsDRuiZPlkIVIJeMG7j5YQOPIX1mb1uQxQff8CRwYRw9QydrLSKaZ5Fvv/OhU2vWN6ifJtsFr9i0c8OWq2SR8P0arPTHntFGvdgPZ82peB74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:43496)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1u2XjD-003P6n-CY; Wed, 09 Apr 2025 09:52:39 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:42542 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1u2XjC-005LKU-AL; Wed, 09 Apr 2025 09:52:39 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,  "Maciej W. Rozycki"
+ <macro@orcam.me.uk>,  "Richard Henderson" <richard.henderson@linaro.org>,
+  "Ivan Kokshaysky" <ink@unseen.parts>,  "Matt Turner"
+ <mattst88@gmail.com>,  "John Paul Adrian Glaubitz"
+ <glaubitz@physik.fu-berlin.de>,  "Magnus Lindholm" <linmag7@gmail.com>,
+  "Paul E. McKenney" <paulmck@kernel.org>,  "Alexander Viro"
+ <viro@zeniv.linux.org.uk>,  linux-alpha@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+References: <alpine.DEB.2.21.2502181912230.65342@angie.orcam.me.uk>
+	<CAHk-=wgBZk1FFOyiTKLnz4jNe-eZtYsrztcYRRXZZxF8evk1Rw@mail.gmail.com>
+	<alpine.DEB.2.21.2502202106200.65342@angie.orcam.me.uk>
+	<alpine.DEB.2.21.2504072042350.29566@angie.orcam.me.uk>
+	<CAHk-=whKa0-myNkpq2aMCQ=o7S+Sqj--TQEM8wfC9b2C04jidA@mail.gmail.com>
+	<e1356a60-525b-4405-ad5b-eb6e93de8fef@app.fastmail.com>
+Date: Wed, 09 Apr 2025 10:52:02 -0500
+In-Reply-To: <e1356a60-525b-4405-ad5b-eb6e93de8fef@app.fastmail.com> (Arnd
+	Bergmann's message of "Tue, 08 Apr 2025 10:37:49 +0200")
+Message-ID: <87v7rd8h99.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174421371162.31282.17082226366215885447.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1u2XjC-005LKU-AL;;;mid=<87v7rd8h99.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+KvPU/sBTkEuKVGsgKzXmasJ0CNfVkiPI=
+X-Spam-Level: 
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
+	*      [score: 0.3749]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;"Arnd Bergmann" <arnd@arndb.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 598 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 3.7 (0.6%), b_tie_ro: 2.6 (0.4%), parse: 0.99
+	(0.2%), extract_message_metadata: 16 (2.6%), get_uri_detail_list: 3.6
+	(0.6%), tests_pri_-2000: 10 (1.7%), tests_pri_-1000: 2.2 (0.4%),
+	tests_pri_-950: 0.95 (0.2%), tests_pri_-900: 0.84 (0.1%),
+	tests_pri_-90: 165 (27.6%), check_bayes: 162 (27.1%), b_tokenize: 8
+	(1.4%), b_tok_get_all: 11 (1.8%), b_comp_prob: 2.6 (0.4%),
+	b_tok_touch_all: 136 (22.8%), b_finish: 0.90 (0.2%), tests_pri_0: 381
+	(63.8%), check_dkim_signature: 0.42 (0.1%), check_dkim_adsp: 4.2
+	(0.7%), poll_dns_idle: 4.8 (0.8%), tests_pri_10: 1.77 (0.3%),
+	tests_pri_500: 12 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] Alpha: Emulate unaligned LDx_L/STx_C for data consistency
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org, viro@zeniv.linux.org.uk, paulmck@kernel.org, linmag7@gmail.com, glaubitz@physik.fu-berlin.de, mattst88@gmail.com, ink@unseen.parts, richard.henderson@linaro.org, macro@orcam.me.uk, torvalds@linux-foundation.org, arnd@arndb.de
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-The following commit has been merged into the x86/urgent branch of tip:
+"Arnd Bergmann" <arnd@arndb.de> writes:
 
-Commit-ID:     f0df00ebc57f803603f2a2e0df197e51f06fbe90
-Gitweb:        https://git.kernel.org/tip/f0df00ebc57f803603f2a2e0df197e51f06fbe90
-Author:        Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate:    Wed, 09 Apr 2025 06:58:37 -07:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Wed, 09 Apr 2025 07:57:16 -07:00
+> On Tue, Apr 8, 2025, at 02:34, Linus Torvalds wrote:
+>> On Mon, 7 Apr 2025 at 13:46, Maciej W. Rozycki <macro@orcam.me.uk> wrote:
+>>>
+>>>  So unless I'm proved otherwise (e.g. that all such code paths are now
+>>> gone from networking, which may or may not be the case: I saw IPX go but I
+>>> can see AppleTalk still around; or that no sub-longword accesses are ever
+>>> used in the relevant networking paths), I'm going to keep kernel emulation
+>>> in v2, because what just used to be wrapped in an unaligned LDQ/STQ pair,
+>>> which we trapped on and emulated, will now become an LDQ_L/STQ_C loop.
+>>>
+>>>  Do you happen to know what the situation is here?
+>>
+>> I think networking ends up using 'get_unaligned()' properly for header
+>> accesses these days for any of this.
+>>
+>> If you don't, some architectures will literally silently give you
+>> garbage back and not even fault.
+>>
+>> Admittedly that's mainly some really broken old 32-bit ARM stuff and
+>> hopefully it's all dead by now.
+>
+> Yes, the last one doing this was EBSA110, which we removed in 2020.
+>
+>> So unless you actually *see* the unaligned faults, I really think you
+>> shouldn't emulate them.
+>>
+>> And I'd like to know where they are if you do see them
 
-x86/cpu: Avoid running off the end of an AMD erratum table
+I was nerd sniped by this so I took a look.
 
-The NULL array terminator at the end of erratum_1386_microcode was
-removed during the switch from x86_cpu_desc to x86_cpu_id. This
-causes readers to run off the end of the array.
+I have a distinct memory that even the ipv4 stack can generate unaligned
+loads.  Looking at the code in net/ipv4/ip_input.c:ip_rcv_finish_core
+there are several unprotected accesses to iph->daddr.
 
-Replace the NULL.
+Which means that if the lower layers ever give something that is not 4
+byte aligned for ipv4 just reading the destination address will be an
+unaligned read.
 
-Fixes: f3f325152673 ("x86/cpu: Move AMD erratum 1386 table over to 'x86_cpu_id'")
-Reported-by: Jiri Slaby <jirislaby@kernel.org>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
----
- arch/x86/kernel/cpu/amd.c | 1 +
- 1 file changed, 1 insertion(+)
+There are similar unprotected accesses to the ipv6 destination address
+but it is declared as an array of bytes.  So that address can not
+be misaligned.
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 79569f7..a839ff5 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -805,6 +805,7 @@ static void init_amd_bd(struct cpuinfo_x86 *c)
- static const struct x86_cpu_id erratum_1386_microcode[] = {
- 	X86_MATCH_VFM_STEPS(VFM_MAKE(X86_VENDOR_AMD, 0x17, 0x01), 0x2, 0x2, 0x0800126e),
- 	X86_MATCH_VFM_STEPS(VFM_MAKE(X86_VENDOR_AMD, 0x17, 0x31), 0x0, 0x0, 0x08301052),
-+	{}
- };
- 
- static void fix_erratum_1386(struct cpuinfo_x86 *c)
+There is a theoretical path through 802.2 that adds a 3 byte sap
+header that could cause problems.  We have LLC_SAP_IP defined
+but I don't see anything calling register_8022_client that would
+be needed to hook that up to the ipv4 stack.
+
+As long as the individual ethernet drivers have the hardware deliver
+packets 2 bytes into an aligned packet buffer the 14 byte ethernet
+header will end on a 16 byte aligned location, I don't think there
+is a way to trigger unaligned behavior with ipv4 or ipv6.
+
+Hmm.  Looking appletalk appears to be built on top of SNAP.
+So after the ethernet header processing the code goes through
+net/llc/llc_input.c:llc_rcv and then net/802/snap_rcv before
+reaching any of the appletalk protocols.
+
+I think the common case for llc would be 3 bytes + 5 bytes for snap,
+for 8 bytes in the common case.  But the code seems to be reading
+4 or 5 bytes for llc so I am confused.  In either case it definitely
+appears there are cases where the ethernet headers before appletalk
+can be an odd number of bytes which has the possibility of unaligning
+everything.
+
+Both of the appletalk protocols appear to make unguarded 16bit reads
+from their headers.  So having a buffer that is only 1 byte aligned
+looks like it will definitely be a problem.
+
+> FWIW, all the major architectures that have variants without
+> unaligned load/store (arm32, mips, ppc, riscv) trap and emulate
+> them for both user and kernel access for normal memory, but
+> they don't emulate it for atomic ll/sc type instructions.
+> These instructions also trap and kill the task on the
+> architectures that can do hardware unaligned access (x86
+> cmpxchg8b being a notable exception).
+
+I don't see anything that would get atomics involved in the networking
+stack.  No READ_ONCE on packet data or anything like that.  I believe
+that is fairly fundamental as well.  Whatever is processing a packet is
+the only code processing that packet.
+
+So I would be very surprised if the kernel needed emulation of any
+atomics, just emulation of normal unaligned reads.  I haven't looked to
+see if the transmission paths do things that will result in unaligned
+writes.
+
+Eric
 
