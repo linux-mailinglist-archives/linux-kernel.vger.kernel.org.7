@@ -1,131 +1,190 @@
-Return-Path: <linux-kernel+bounces-596568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DDDFA82DB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:32:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160D3A82DB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 19:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E2598A29E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:31:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C69A1888F8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 17:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05639277816;
-	Wed,  9 Apr 2025 17:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J9chif8P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652BD276033;
-	Wed,  9 Apr 2025 17:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9D52777EC;
+	Wed,  9 Apr 2025 17:31:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FC627702F;
+	Wed,  9 Apr 2025 17:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744219879; cv=none; b=pCaleREsEJsk0nCTZ+/3rBtU4Ed7BKFOdYYxleXcxTqU46BODp1uQ4JUCzR5lGYi/EzBKY/u4qjUGU6rrdbSC5L8uoRO/ibqTjUoce52Y0z0pA+X2DKsSf2wVM7OJG5l6NZJht6uQfG/AeRaE8Kvk0jcvSIhmxvLz8wgLweboxY=
+	t=1744219876; cv=none; b=AHOsOgApmDUMNnrJUz6qsQ0j/TR2zKV7siB540zEEsFAMafXmwJYLEmKV8PVlaSsfEwcpT+Br8I//tJc93AnJzGaD0CQjDEJZxMqyBNfLCyG6D2hcCRVEx+3lXf8CPBPmll1yCaqOPqehjG3Q7vsrr6kYC4RkjLcrhKgQ0k/J08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744219879; c=relaxed/simple;
-	bh=/KSAzOtM7aiTTYljms4mdtfVBEj2qsQb/69FLyxbRX4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LC+HjJgWlCt4NTHVFM1tnjS2olYV/ZGX/IJkcFIWk9kj8H+HObPS3EtpAMewX6XGlSUkfRWREVM6sxYNH5csd3jmDufHYPDXeIkcph7d0U35y0jEYbxatSSAcHDtyozDpWN70TtRJl5mJB2qf9hkpoSEgRrWStPkDyJRLgae4r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J9chif8P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D48FDC4CEE2;
-	Wed,  9 Apr 2025 17:31:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744219878;
-	bh=/KSAzOtM7aiTTYljms4mdtfVBEj2qsQb/69FLyxbRX4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=J9chif8PhEJkEY5oiu29S+j7ER1fjswyP4DQ8EScfj6cQ1EBs1NDViamcukDPmusS
-	 2Vg+RPuIP02xVbiFL2LolN+rBcSIpXK7E3+ck8lvUti8VY6AjusRpapPI5TFC4BW1N
-	 +5QdRmGogPXSqW5OJnIo57+XWVo+W+72q9jrMQikdh3vx6TKBswTjDaiXEDZiIFH3o
-	 dAJXtqccLU8tETgfnWCgO3bPKiAx04o4vrvNG2P1qXYtUrtSGjP7pD6bv2lt8dzjzY
-	 5abCy6PPYr4NLKWwZC3iGbBOtppEHNbsOeg0BCOEkatUogLVdUQljLAIDVUpkanIJv
-	 Cf0OaVqjeRLaA==
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-72b82c8230aso1729914a34.2;
-        Wed, 09 Apr 2025 10:31:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUGMhIaCyXb6poLCvGKii0o2Xging2Co2t0XApRdnhThf1bj/IkJnrQxs8Tl2lSNOjVik3Ssm3soG+sUG4=@vger.kernel.org, AJvYcCUT3csXyfOHoKdGlyzGEMtK7Q6+tdaiy2XGsvezUXdkYENAcfJ4uPwbMjhAH+hnEraw4sPeW62frSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzINNWzYX+JcO5+3KuGSpOfuF89zLtBH08hTDT/Wyhxf04eSUPV
-	V0EbxRRklaKNqUtXEgQ/DnWhNDNlczPCT44x4MKSm4VIX8NxDzcMF8Xv6YRm8Sz45vHEg8NeVkd
-	dK1GxmAx4aG05SxHCuXqH+d8LoHs=
-X-Google-Smtp-Source: AGHT+IEAtVmrDRCPu1hpw3CmGLtl1aASqQX4u/CGbNIqF1wIOqTeHigoWrys7lxDPpwX/kDJ5l3laXTtsSHvA+SMm0E=
-X-Received: by 2002:a05:6830:3691:b0:727:3111:1416 with SMTP id
- 46e09a7af769-72e70a86f4cmr2491038a34.24.1744219878187; Wed, 09 Apr 2025
- 10:31:18 -0700 (PDT)
+	s=arc-20240116; t=1744219876; c=relaxed/simple;
+	bh=N85pMNik+GwCAx2RSBW629DEr8NxuF243qnxQBAdB1U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YMtN6/b81j8WlyD95xI6//a/vWLqCmRmIHHKWDeuPIQF2xblk0VZzLOp58bIJ2OsT/WGlvEXJYpLPFrPM+jhYoxy379PCSBgkgczstvVeqnRbvJMELcLFr5KFnbR+4nb3E3F2NV7DjiG4oxb0URZLK2LN+PjdkWBr261hTaE0BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A626E15A1;
+	Wed,  9 Apr 2025 10:31:13 -0700 (PDT)
+Received: from [10.57.89.24] (unknown [10.57.89.24])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 79A673F694;
+	Wed,  9 Apr 2025 10:31:08 -0700 (PDT)
+Message-ID: <6ccce610-62ba-484a-a8a0-d63b9081b037@arm.com>
+Date: Wed, 9 Apr 2025 18:31:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409-temp-v1-1-9a391d8c60fd@chromium.org>
-In-Reply-To: <20250409-temp-v1-1-9a391d8c60fd@chromium.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 9 Apr 2025 19:31:07 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ixiiSiGvc_8D8YxK22yKOAzkdrNaMNjydOHD7gQVc9tQ@mail.gmail.com>
-X-Gm-Features: ATxdqUExT1IilYd9Zre-BtZH4MzFK1pPUNA-4K543ua8c6G3QCNNI1bQ2sg9oYA
-Message-ID: <CAJZ5v0ixiiSiGvc_8D8YxK22yKOAzkdrNaMNjydOHD7gQVc9tQ@mail.gmail.com>
-Subject: Re: [PATCH] thermal: sysfs: Return ENODATA instead of EAGAIN for reads
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 28/45] arm64: rme: support RSI_HOST_CALL
+To: Gavin Shan <gshan@redhat.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev
+Cc: Joey Gouly <joey.gouly@arm.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20250213161426.102987-1-steven.price@arm.com>
+ <20250213161426.102987-29-steven.price@arm.com>
+ <12b5ba41-4b1e-4876-9796-d1d6bb344015@redhat.com>
+ <54f1fbb1-4fa1-4b09-bbac-3afcbb7ec478@arm.com>
+ <b76ffc1c-32e1-4bf6-916a-41af9378fb4b@redhat.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <b76ffc1c-32e1-4bf6-916a-41af9378fb4b@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 9, 2025 at 11:13=E2=80=AFAM Hsin-Te Yuan <yuanhsinte@chromium.o=
-rg> wrote:
->
-> When userspace nonblocking reads temperature via sysfs, EAGAIN error
-> returned by thermal driver will confuse user from the usual meaning of
-> EAGAIN, the read would block.
+On 08/04/2025 06:19, Gavin Shan wrote:
+> On 4/8/25 2:34 AM, Steven Price wrote:
+>> On 04/03/2025 06:01, Gavin Shan wrote:
+>>> On 2/14/25 2:14 AM, Steven Price wrote:
+>>>> From: Joey Gouly <joey.gouly@arm.com>
+>>>>
+>>>> Forward RSI_HOST_CALLS to KVM's HVC handler.
+>>>>
+>>>> Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+>>>> Signed-off-by: Steven Price <steven.price@arm.com>
+>>>> ---
+>>>> Changes since v4:
+>>>>    * Setting GPRS is now done by kvm_rec_enter() rather than
+>>>>      rec_exit_host_call() (see previous patch - arm64: RME: Handle
+>>>> realm
+>>>>      enter/exit). This fixes a bug where the registers set by user
+>>>> space
+>>>>      were being ignored.
+>>>> ---
+>>>>    arch/arm64/kvm/rme-exit.c | 22 ++++++++++++++++++++++
+>>>>    1 file changed, 22 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/kvm/rme-exit.c b/arch/arm64/kvm/rme-exit.c
+>>>> index c785005f821f..4f7602aa3c6c 100644
+>>>> --- a/arch/arm64/kvm/rme-exit.c
+>>>> +++ b/arch/arm64/kvm/rme-exit.c
+>>>> @@ -107,6 +107,26 @@ static int rec_exit_ripas_change(struct kvm_vcpu
+>>>> *vcpu)
+>>>>        return -EFAULT;
+>>>>    }
+>>>>    +static int rec_exit_host_call(struct kvm_vcpu *vcpu)
+>>>> +{
+>>>> +    int ret, i;
+>>>> +    struct realm_rec *rec = &vcpu->arch.rec;
+>>>> +
+>>>> +    vcpu->stat.hvc_exit_stat++;
+>>>> +
+>>>> +    for (i = 0; i < REC_RUN_GPRS; i++)
+>>>> +        vcpu_set_reg(vcpu, i, rec->run->exit.gprs[i]);
+>>>> +
+>>>> +    ret = kvm_smccc_call_handler(vcpu);
+>>>> +
+>>>> +    if (ret < 0) {
+>>>> +        vcpu_set_reg(vcpu, 0, ~0UL);
+>>>> +        ret = 1;
+>>>> +    }
+>>>> +
+>>>> +    return ret;
+>>>> +}
+>>>> +
+>>>
+>>> I don't understand how a negative error can be returned from
+>>> kvm_smccc_call_handler().
+>>
+>> I don't believe it really can. However kvm_smccc_call_handler() calls
+>> kvm_psci_call() and that has a documentation block which states:
+>>
+>>   * This function returns: > 0 (success), 0 (success but exit to user
+>>   * space), and < 0 (errors)
+>>   *
+>>   * Errors:
+>>   * -EINVAL: Unrecognized PSCI function
+>>
+>> But I can't actually see code which returns the negative value...
+>>
+> 
+> I think the comments for kvm_psci_call() aren't correct since its return
+> value
+> can't be negative after 7e484d2785e2 ("KVM: arm64: Return NOT_SUPPORTED
+> to guest
+> for unknown PSCI version"). The comments should have been adjusted in
+> that commit.
+> 
+> Please take a look on 37c8e4947947 ("KVM: arm64: Let errors from SMCCC
+> emulation
+> to reach userspace"). Similarly, the block of code to set GPR0 to ~0ULL
+> when negative
+> error is returned from kvm_smccc_call_handler() in this patch needs to
+> be dropped.
+> 
+>>> Besides, SMCCC_RET_NOT_SUPPORTED has been set to GPR[0 - 3] if the
+>>> request can't be
+>>> supported. Why we need to set GPR[0] to ~0UL, which corresponds to
+>>> SMCCC_RET_NOT_SUPPORTED
+>>> if I'm correct. I guess change log or a comment to explain the questions
+>>> would be
+>>> nice.
+>>
+>> I'll add a comment explaining we don't expect negative codes. And I'll
+>> expand ~0UL to SMCCC_RET_NOT_SUPPORTED which is what it should be.
+>>
+> 
+> Please refer to the above reply. The block of code needs to be dropped.
 
-Why would it block?
+Thanks for the pointers, I had not been aware of that change. Yes this
+code should be updated to match.
 
-> Change to throw ENODATA instead of EAGAIN to userspace.
+Thanks,
+Steve
 
-Casting error codes tends to be confusing.
+>> Thanks,
+>> Steve
+>>
+>>>>    static void update_arch_timer_irq_lines(struct kvm_vcpu *vcpu)
+>>>>    {
+>>>>        struct realm_rec *rec = &vcpu->arch.rec;
+>>>> @@ -168,6 +188,8 @@ int handle_rec_exit(struct kvm_vcpu *vcpu, int
+>>>> rec_run_ret)
+>>>>            return rec_exit_psci(vcpu);
+>>>>        case RMI_EXIT_RIPAS_CHANGE:
+>>>>            return rec_exit_ripas_change(vcpu);
+>>>> +    case RMI_EXIT_HOST_CALL:
+>>>> +        return rec_exit_host_call(vcpu);
+>>>>        }
+>>>>          kvm_pr_unimpl("Unsupported exit reason: %u\n",
+>>>
+> 
+> Thanks,
+> Gavin
+> 
 
-> Also, ENODATA more accurately reflects that data is not currently availab=
-le.
-
-It means something else, "try again" vs "no data available (possibly at all=
-)".
-
-The error code comes from the thermal driver and if it wants to say
-"try again" then this is what it wants to say.
-
-> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
-> ---
->  drivers/thermal/thermal_sysfs.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sy=
-sfs.c
-> index 24b9055a0b6c515b865e0d7e2db1d0de176ff767..3d1713e053dfb867933d95131=
-f1f2491d2ecd07e 100644
-> --- a/drivers/thermal/thermal_sysfs.c
-> +++ b/drivers/thermal/thermal_sysfs.c
-> @@ -40,8 +40,11 @@ temp_show(struct device *dev, struct device_attribute =
-*attr, char *buf)
->
->         ret =3D thermal_zone_get_temp(tz, &temperature);
->
-> -       if (ret)
-> +       if (ret) {
-> +               if (ret =3D=3D -EAGAIN)
-> +                       return -ENODATA;
->                 return ret;
-> +       }
->
->         return sprintf(buf, "%d\n", temperature);
->  }
->
-> ---
-> base-commit: a24588245776dafc227243a01bfbeb8a59bafba9
-> change-id: 20250409-temp-6ebd13ad0dbd
->
-> Best regards,
-> --
-> Hsin-Te Yuan <yuanhsinte@chromium.org>
->
->
 
