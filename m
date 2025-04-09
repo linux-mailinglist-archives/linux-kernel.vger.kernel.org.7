@@ -1,86 +1,77 @@
-Return-Path: <linux-kernel+bounces-596680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-596682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47CF8A82F21
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:43:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86375A82F25
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 20:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47E27887514
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:41:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 644F3161391
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 18:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0BA278174;
-	Wed,  9 Apr 2025 18:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E0F27817C;
+	Wed,  9 Apr 2025 18:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="J+HdTpgL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DDNVpVlq"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77007277801
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 18:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4AA278155
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 18:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744224085; cv=none; b=M5v1WwSuurJge6L2EBi4TAD3KxgRr1LxYKrWqL66ygexmWhGl5ArxehN0UroxBLlooAcspwoZE7XpzShZktTMytGUYbnhJwq3TmQ3Ew/fcZ5O2C+p0Z5k/z+wiFY5g7AdKAB7R9nZTMNWMveCWuuEMgHVcupmhs1/X0nZiqYDVQ=
+	t=1744224211; cv=none; b=IygbGRvMqq6hEW3d/UV3DUITdnkTBuLx1pIi4fDjOYwC9jViArDwVK2CbHJi/j6tOwcn+q55Gs0+oAJupfNhlk0cCK1cwG2YHQvEhW7GL4LK9VpnlKooSSMtyP83xa+VzHTKudHEQd1NtqB/qFhq5SCndVDze4HkUm957+Ff86o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744224085; c=relaxed/simple;
-	bh=A76G8XO3zeb5iD/DYgQmAiHYDX+OwlRFq71ay9w4RiY=;
+	s=arc-20240116; t=1744224211; c=relaxed/simple;
+	bh=39vz9Jz4SIUGg6Pb+C8ys6F0B1ja7AbNj2X6gnj3wFU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cTV807ipLYneutXqwNI6Lix1AcnD+lBW0hliTESV+nD2Tqwzy7oNMZ8V1FxXip2v7ORVApLRAZep0/Mgoxpzn47GG14ItjXpVoD9t9uaadEsbvbnDL0Cwyxc+0ixKvfM4x/TkWbQYYgSdwNB0lI78xgr8PVWLlPF2LHup1/i5P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=J+HdTpgL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 539HDOGw004582
-	for <linux-kernel@vger.kernel.org>; Wed, 9 Apr 2025 18:41:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GV+cfJ7GNGGjHR/3RZM3RCjysFsTfWhGkXK6dcXL924=; b=J+HdTpgLzJR9RJc6
-	mCenU2yWAm7L89LiUW0y/J660IyjKd6LaoehduFSW1fNLXzxcHv3Mc5UPRRCWSJY
-	NGKvLYnnFLWrkYBdEOrc7vAhgaoqNq4PAn6TL0bIxbXAqPwALoEE/zbRj8zLrtOU
-	lW0NMH43rtqCgjJwV5E254VWskBrw6JwPuaFTLTOJs0jQlTVhJighlNrn+ZApnig
-	3rRqGWciKj1Gw4wRXsdFWtWfQprGAuF6LsYPiuoUjxQI9LSZjLTfK14z86b/YEQk
-	ga1AvdB23XAixhazqHS6xbpVTwisv6fCpaqZYv/fXrJbCtVuuoeR71ZjfXFyxSmQ
-	NOiDug==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twtb4hfc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 18:41:23 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c5530c2e01so325985a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 11:41:23 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=HExTjPStC7xG79Y7HlwAcQ1rXn9/vWZqVmyBwHjVSXmgr4ZrRwIrJvtmGf7ncDN0r6617TZC1qlVHx/ZUx9ZI1fLL/Wtz7V4hCOLLZyjIXmfrtL7NKjadIRl45M5CThGV85FIa2rF3pPmXk7fwYBhZe4sRtbNnhD16YwhRXuXro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=DDNVpVlq; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-72c27166ab3so10231a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 11:43:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1744224208; x=1744829008; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=yUFP4lEaxI/UXTQ8hF09KRKSpAvq6LdwMQOtlQ6n0zQ=;
+        b=DDNVpVlqYMNnXaIbuqd/VFeygNyScS2JLzUmcXTGkOd1UZKmt3v5Mc/iPwZ4n3D27v
+         A8E9G6z9qvRLykKpUhRUEmNCHfSp+h3ppTLcGRV01qnwVWJDBFP4owZhMGLZBvwDuAgR
+         vkASSjCS5mglXr6Qm51jCAo0VbSJQ2ylml6kI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744224082; x=1744828882;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GV+cfJ7GNGGjHR/3RZM3RCjysFsTfWhGkXK6dcXL924=;
-        b=MYZz4/aFEcLWDmN8bLGLVw+/icfLTTtlhtFcD9L9CMe+cAUmnn4YBlUk+uVbu56VQf
-         3z3eKn7KWPt/7lV8d6q1ZpBy+VfevjgPUXz0cMzhZmBDJrL1yJAERFQbNNvQrASouoLD
-         j+tfI12LmIpFqTrnharJJLIx8XyLWMQdDfxtP1wmXPvsSGeaWQtt2SYduoCiZQGHPK0W
-         p1HaLlMGmIu3ToLzw7oWHRCyJHK7Djpb4KHRXZsXzn+b5OqJWbT09j9c8WyJn/Ezi+OU
-         9d2ZzO40uvnm8gZ5RV5WJ1M2bvkifOHmXjdB8LICtC3pp/zm+VFIawj6+pmWTvOY+AHo
-         OC1g==
-X-Forwarded-Encrypted: i=1; AJvYcCU39S0RkkrGq0sRc0T0w7B030AdzDc/t6TyiOJi9IQ6OdE3Wi2aNFReOlijhzFciI22kyhnJqzM9+T5BfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwwidENKS5Z2jFMCVeaoPRU/S9qZ/In1AL+3ojzA1o1VOIERyd
-	9XlZkLn882YCXqExzIIC3f/PvsOXGwCw5vNz3q94CbTRqK2coaK7K/EuMoC1y5sWSFIrq1Znf6y
-	OlZ+ntSJLWKX/115OYIKAQtTn2FvTcOjHsw58+jnXJnORHsBndInVKzk1qz1QLc0=
-X-Gm-Gg: ASbGncuGQuwjOH5tHYJxhbeqkULDks7x/X70EeWTesovbAcztpySyKvQmVwed3QZpx5
-	7ETDKJhApK/6sd5av/KQAIc5EZIExvSUEwnJoC1k0xINk3JbN4d9W61sgEWGmXNB56o4pZvGLFp
-	NBMjj4sg4bOWZlPesKrDVA8T3HNw5Cm68F6LQgMVQtHsGHwE8FE+92JixZGPQxVrhOGjxkMjpDc
-	pzRnsvDfz+hcshfhoeFrGuTWPsdnmPs32VanlFMEMfTZxCEQSvJJI7j88oGTrlPImL0lhKyuBV/
-	MEqgmt84YtLQiMPAn2/gCavyM1PwuaoV64YYvCRFAwz6n9eeV4XLip9I2mYjODukGQ==
-X-Received: by 2002:a05:620a:280e:b0:7c0:af16:b4b3 with SMTP id af79cd13be357-7c79cb2956emr240300385a.0.1744224082386;
-        Wed, 09 Apr 2025 11:41:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHfdsHLhjTbUmUhDsUafcwjWCN06cz8NCJ2SisE7fVfjCUv/0AdQTlhlx5gH2u/I84DmW937Q==
-X-Received: by 2002:a05:620a:280e:b0:7c0:af16:b4b3 with SMTP id af79cd13be357-7c79cb2956emr240298885a.0.1744224082014;
-        Wed, 09 Apr 2025 11:41:22 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ccc2dcsm135479366b.132.2025.04.09.11.41.20
+        d=1e100.net; s=20230601; t=1744224208; x=1744829008;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yUFP4lEaxI/UXTQ8hF09KRKSpAvq6LdwMQOtlQ6n0zQ=;
+        b=oVr0vOUGQwtC9StXgkdHmQnhlSqTwtO3W1V63NL/3LA+i70Dx4+Og3gmMEngPQTtI5
+         eOcmZu2ilYh5pCteLSbA3yCYqWzgVDmJh5wyhtwg0v2EPO+VL2iLkcSG72nfnQnlWCSL
+         T4wNaDgH1GBk7pqY7uEJ40zIk9WsGDHxcRg4MG9pYWDIs7vrnF8k2QK5ysF8IwpDKk2W
+         C2lEd1MqVpX0zV8NMld6hQMBnyKVnvY5FiqatyoVN8BFqFk1+GM4dRMXLmgflXvbfq0m
+         AW3SY/E8ZhOQoJlr5bLuB+eGZiOIfgk3PFQmhG9H6VlLSsgPNq6kcWYKQteyVF5y0XkG
+         8Biw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrcgThW7Bvcf6kfBR3vkhCRgQEhbPITT5tCOHIzdaNry98FvZFYQ42BxXHjKgaLtau3xh7DgqAtd/jVow=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/VpQ+h3X6/Yb8SbefPzDFIA2uUgIzOmVfbBA4YKUQef3FX0Xo
+	WT7BEsVxpEskEIma5DgkYGim1i5TMRPU+FJ48iz/qgG3MZjGV+Mq3xyAy14bBg==
+X-Gm-Gg: ASbGncslrT8QTEhVoBgSnwkKTD9UeIGc+/zJXQvNgIPvRsjabuxOHnnC09X8wm2mV+E
+	BVwdOT1C0mg1s7xF4MW3+n1ya6LXdqkIxjW0DtjLlqGkhbovzhR5Qkfzuz9aVt0hMVBByuIus6H
+	P/eOl9IngRILrbCJUTQWePW+IQqVwKeiF1BcclI4zG9fkTtfnoOAW0wzKPYd+jIrLyKGwX9Pejq
+	7mv15kWqdZM+QE3CX+X6HtgWP8FxS+lwYR/BIrPQqfJmch76iZNENE4Uab+BIL5i7h7xKxS/7q0
+	gw+N3EDAOkZKzN01pf7CaNYij49B4wRHA5iKDTRQHs3Y6SCNrE59v/Vm2QlJSZv+Z76RA6yAECq
+	ZQxCsxWbu8Eo+uLny
+X-Google-Smtp-Source: AGHT+IF+btWX9Vo26E5xa94gpnRIcQR2MzTl8AHguTxH8TEW16aEw9TQysoZkDfa3NYurrnfcDnCXQ==
+X-Received: by 2002:a05:6830:6019:b0:72b:87bd:ad47 with SMTP id 46e09a7af769-72e7baae198mr27677a34.3.1744224208126;
+        Wed, 09 Apr 2025 11:43:28 -0700 (PDT)
+Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2d096cd3764sm325488fac.31.2025.04.09.11.43.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 11:41:21 -0700 (PDT)
-Message-ID: <6298f149-caae-49d0-af68-c3d102d0ef7d@oss.qualcomm.com>
-Date: Wed, 9 Apr 2025 20:41:19 +0200
+        Wed, 09 Apr 2025 11:43:27 -0700 (PDT)
+Message-ID: <25b7888d-f704-493b-a2d7-c5e8fff9cfb4@broadcom.com>
+Date: Wed, 9 Apr 2025 20:43:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,63 +79,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/6] arm64: dts: qcom: ipq5424: Add the IMEM node
-To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
-References: <20250408-wdt_reset_reason-v1-0-e6ec30c2c926@oss.qualcomm.com>
- <20250408-wdt_reset_reason-v1-2-e6ec30c2c926@oss.qualcomm.com>
+Subject: Re: [PATCH v4 03/13] media: pci: cx18-av-vbi: Replace open-coded
+ parity calculation with parity_odd()
+To: Kuan-Wei Chiu <visitorckw@gmail.com>, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ jk@ozlabs.org, joel@jms.id.au, eajames@linux.ibm.com,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, dmitry.torokhov@gmail.com,
+ mchehab@kernel.org, awalls@md.metrocast.net, hverkuil@xs4all.nl,
+ miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+ louis.peens@corigine.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, parthiban.veerasooran@microchip.com,
+ johannes@sipsolutions.net, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+ yury.norov@gmail.com, akpm@linux-foundation.org, jdelvare@suse.com,
+ linux@roeck-us.net, alexandre.belloni@bootlin.com, pgaj@cadence.com
+Cc: hpa@zytor.com, alistair@popple.id.au, linux@rasmusvillemoes.dk,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsi@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
+ linux-input@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mtd@lists.infradead.org, oss-drivers@corigine.com,
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ linux-serial@vger.kernel.org, bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+ Frank.Li@nxp.com, linux-hwmon@vger.kernel.org,
+ linux-i3c@lists.infradead.org, david.laight.linux@gmail.com,
+ andrew.cooper3@citrix.com, Yu-Chun Lin <eleanor15x@gmail.com>
+References: <20250409154356.423512-1-visitorckw@gmail.com>
+ <20250409154356.423512-4-visitorckw@gmail.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250408-wdt_reset_reason-v1-2-e6ec30c2c926@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ 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
+In-Reply-To: <20250409154356.423512-4-visitorckw@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: VifDEpyhozrBkUmwwZEw3_jE_z3C1bn4
-X-Authority-Analysis: v=2.4 cv=LLlmQIW9 c=1 sm=1 tr=0 ts=67f6bf53 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=o4o9nyK-Q1O9M6IKefoA:9 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-ORIG-GUID: VifDEpyhozrBkUmwwZEw3_jE_z3C1bn4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-09_06,2025-04-08_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- clxscore=1015 mlxlogscore=787 malwarescore=0 phishscore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 spamscore=0 adultscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504090123
 
-On 4/8/25 10:49 AM, Kathiravan Thirumoorthy wrote:
-> Add the IMEM node to the device tree to extract debugging information
-> like system restart reason, which is populated via IMEM. Define the
-> IMEM region to enable this functionality. Corresponding DTS and driver
-> changes will be added incrementally.
+On 4/9/2025 5:43 PM, Kuan-Wei Chiu wrote:
+> Refactor parity calculations to use the standard parity_odd() helper.
+> This change eliminates redundant implementations.
 > 
-> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+> Co-developed-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 > ---
->  arch/arm64/boot/dts/qcom/ipq5424.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>   drivers/media/pci/cx18/cx18-av-vbi.c | 12 ++----------
+>   1 file changed, 2 insertions(+), 10 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> index 5d6ed2172b1bb0a57c593f121f387ec917f42419..a772736f314f46d11c473160c522af4edeb900b7 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-> @@ -486,6 +486,15 @@ ssphy_0: phy@7d000 {
->  			status = "disabled";
->  		};
->  
-> +		sram@8600000 {
-> +			compatible = "qcom,ipq5424-imem", "syscon", "simple-mfd";
-> +			reg = <0 0x08600000 0 0x1000>;
-> +			ranges = <0 0 0x08600000 0x1000>;
+> diff --git a/drivers/media/pci/cx18/cx18-av-vbi.c b/drivers/media/pci/cx18/cx18-av-vbi.c
+> index 65281d40c681..15b515b95956 100644
+> --- a/drivers/media/pci/cx18/cx18-av-vbi.c
+> +++ b/drivers/media/pci/cx18/cx18-av-vbi.c
 
-It looks like this should be a little longer
+[...]
 
-Konrad
+> @@ -278,7 +270,7 @@ int cx18_av_decode_vbi_line(struct v4l2_subdev *sd,
+>   		break;
+>   	case 6:
+>   		sdid = V4L2_SLICED_CAPTION_525;
+> -		err = !odd_parity(p[0]) || !odd_parity(p[1]);
+> +		err = !parity_odd(p[0]) || !parity_odd(p[1]);
+
+No need to call parity_odd() twice here. Instead you could do:
+
+		err = !parity_odd(p[0] ^ p[1]);
+
+This is orthogonal to the change to parity_odd() though. More specific 
+to the new parity_odd() you can now do following as parity_odd() 
+argument is u64:
+
+		err = !parity_odd(*(u16 *)p);
+
+Regards,
+Arend
+
 
