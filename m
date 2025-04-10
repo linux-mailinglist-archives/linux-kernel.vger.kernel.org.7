@@ -1,238 +1,213 @@
-Return-Path: <linux-kernel+bounces-597473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B034EA83A3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:06:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED65A83A3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:06:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD8F1B80A7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:05:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62812446296
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F80204F65;
-	Thu, 10 Apr 2025 07:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8807205E2E;
+	Thu, 10 Apr 2025 07:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="US7F0PhH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yMMfquHO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="G3BKhYOz"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D54202C26;
-	Thu, 10 Apr 2025 07:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0AA2045B0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744268732; cv=none; b=FnAV4oOw4eqvCt0IYBFacVB+Ghqu+5cWa7yMrJ6J23VAzbsJz9oGSLE/i6VKHnhmDjQlo0J25asAO0xuWGHGYlPSARJSbdIse7qfEB+3urLF5W6+o5QHY4kBkSXrdB8BuZgrfwsRqw0d/NXTagUXHdbpqghAtOsXKqHUFToi5eU=
+	t=1744268734; cv=none; b=iDlro8wLyJoc9WzA5WVWlKBFn8M1XUNahlh/cBlwYlF1fGzMKlo2UbQnSKgyDYpqdPR7X78SBKJRsp9QH4Q0FCTbe0fvA/WlSQ5YaCfAF4IL929FlYXvxa8vaYUzVqel7dobMZt3v6asMsoVZhX3TT52MfUdxM7lDx4KC+bpbAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744268732; c=relaxed/simple;
-	bh=QJLmLJtRLDLbgdHLnpjmlHW2HiSNjA+XBSi5dv+F25Q=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Fk95ppDP6PpyJ1PlnMYR1+OGX9xoiOi/gn3fcSjsZ8YexnyKCXTkDgmDSwZ8J5ndxqC2Qe9UnGLpw36ZnLMnwUld+AczeyTlUHrFqtVV4rdYRtL0j5Y21+ISmkEqa81bjVHcBPP6ZEGX6jpWEPETzeuE2MpXSzP7osJiirvV46U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=US7F0PhH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yMMfquHO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 10 Apr 2025 07:05:22 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744268728;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ax53kxwqMjFEtwiakcKVbHBR11PkxdEppVH9Bx1IDzk=;
-	b=US7F0PhHbuFVbt7bACLzDt8X6QedNby3V+WWQd7QJE/97PA3Qmwlxu6q6GIFLWSOCN4WQM
-	zO0uINhU7L/5D9kHZC6hgTgeVgFO0nc6glz1QAQhF0lA9kBlrrL0/7vZNIEp0b2Yengud6
-	HHXX7PAp2/oPsJXXy5uG3y11mzCRkjYuxhStXWHxjs3oOkFpY6QXyDi3pqbxkNfeACSp3r
-	3aaQ/pINefq9xIW/okQQvQZ/Vj2rZffeGKo9Ekf4YOdSXwIoKegGPpElXnwKvp4ZFaUv4i
-	m/eU5RMu2DirXXr+WjxCe3rmX6vCyX7Vekh+aGCtKZxVmzRlzJWU59/KP0iumA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744268728;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ax53kxwqMjFEtwiakcKVbHBR11PkxdEppVH9Bx1IDzk=;
-	b=yMMfquHO+eKcUb7YN7DxnYcxERbquNLrFh0YLQzg0j2ohLLNFH8wLNRBX117SB90Q+hOn4
-	b+x27xVcEVr72EAw==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/asm] x86: Remove __FORCE_ORDER workaround
-Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
- Juergen Gross <jgross@suse.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Kees Cook <keescook@chromium.org>, Peter Zijlstra <peterz@infradead.org>,
- Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
- Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250407112316.378347-1-ubizjak@gmail.com>
-References: <20250407112316.378347-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1744268734; c=relaxed/simple;
+	bh=p7gn8HCoRfmei461kdKTMrhmaoZ+R8QG+5SxtGUWr5I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dcmiOGoJtUrhckOjmnPUUBYLVGFrRqQKO33/xHKwu68VfypcNrdL5Ewifu2pAEfwQRrvZQZkPxUt/JRQ4tyrCWoS99GLlh2hSQzU1XveiG+jbdtBE9oLQqzrQv3uUJH91o9U83jUFJz7cNcpKX7t5ZsO8F8K+/liHaheklXJfYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=G3BKhYOz; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3f6a92f2328so292896b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 00:05:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1744268731; x=1744873531; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vvw7nYWiLBIqfTSpurYIsb0A2VRmihRadD2HqJzvOMM=;
+        b=G3BKhYOzZP4xxuWMSgqCgVjAEzHrd5QEyCSOvh8myjhiGNoF6xkDuZtW1aJOt5sppM
+         9Q67xiSs7O2+McVoyKWUeTbdPgwoojZYVqkluaENJQsw9Yor0ORZ1y6MlymFJ9C2z05p
+         DAVCrTgO5E1nb66UyWSUw1scLkdl8QKD58UiDjd+2N4bGD+3JS4UXwd7cayFfL6kYoRy
+         N9XLJd5hSeRQG5F/SvSQ5RHVSAbK1Ap7tRnVTAV1UslG1j/InDhTZOhpoDDSFhOyW8xG
+         m8Q28j/JscHUp+PMIgUFqSyvJzZLwnscgLHmIHvjwdkG5eE6MXoa95dF9eV4Fvvxyg+p
+         Z7Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744268731; x=1744873531;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vvw7nYWiLBIqfTSpurYIsb0A2VRmihRadD2HqJzvOMM=;
+        b=I5VAJJTNxG8iQGlRafUHMEOmSB6CbPa/CfrFV0nFfqFZFx+oma5Vveru88/4BC1WgY
+         fZa53SfRDoXgcRkRulLXJV9rA+OQrBXT/qOcODUss+bccAbu48A3/NMuavTu6F8Kh7el
+         OcOrB7M+vgbdQAfugWArsIXBoGZ1y+oBIZmp3aTH4IPczXz7n5z1dOx3p1YOvv/kNiO0
+         COP8mdDjgVBNxREoC2XqQ0gXeye/+H3rgwG4bZ/Jl4OccmfWZ1x+7bKKOqSMlP4RzGOr
+         o+wVJKphrPn2r8By1k9aAf0iwQfj/JmCqR5oNjp5HjEjcAVTuea8G1kqAkMIztIfG+ZZ
+         t61w==
+X-Forwarded-Encrypted: i=1; AJvYcCXUjbtnRL6dGA10kPGfUSHGnBz+PmUAh01eFhelUHaFKycoiuV9yL1YqofopzW56B2j/DBGDUcroWr7hoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpNQGFWqHePXbekTKQa/ZHbJGxqYgFdDa0creA9tBfClncI8t7
+	fgM7A+nxZQzuk+x/8MddGUrt8M3t6Phn0Z3cykP2ev0PLqumD9UhhqZVSVUHTA==
+X-Gm-Gg: ASbGncsDB57xx/dW1NqNUroS9ClzWMAzw/J2NHDzgc1XbiM2COi+5FRIZYjxo6phh2r
+	DtaQxXBKaBNRt0hl683fRPzWEGTYpfcwwcgB2b2W/uLMxrCjG9VQbfXBTPGWueNaV5fpGna390B
+	wtVM1W/d9zILvU9avtTLapmOm0H1Fz49ifvd3IM95yrR7ga/eVmEYaoAIXktmGXN+werukvzxRt
+	cNhVJKcgGj7aqZn0FMnRHAwf2EorCEShY4w9pzUdIXhAOsUvM0IiLsTNCfArkJoPnB5A+ODNWz2
+	MT7G/Gs4U75lhPncw5gPUbyjoZTthnj/2+dYYj8bT39v7d7SAFOr0aTUbUKYot8ng33xAw==
+X-Google-Smtp-Source: AGHT+IF/4Hhe3gfMVMHnBMPKqqrqs5V8qr1hvivIjhC40n+SJ1Uz45EXIUL/JoOL6so0taxy89Y6cQ==
+X-Received: by 2002:a05:6808:11c1:b0:3f9:aeb6:6e92 with SMTP id 5614622812f47-4007bfe2744mr915328b6e.9.1744268730964;
+        Thu, 10 Apr 2025 00:05:30 -0700 (PDT)
+Received: from aus-ird.tenstorrent.com ([38.104.49.66])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40076282ce8sm461369b6e.9.2025.04.10.00.05.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 00:05:30 -0700 (PDT)
+From: Cyril Bur <cyrilbur@tenstorrent.com>
+To: palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	paul.walmsley@sifive.com,
+	charlie@rivosinc.com,
+	jrtc27@jrtc27.com,
+	ben.dooks@codethink.co.uk,
+	alex@ghiti.fr
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	jszhang@kernel.org
+Subject: [PATCH v6 2/5] riscv: implement user_access_begin() and families
+Date: Thu, 10 Apr 2025 07:05:23 +0000
+Message-Id: <20250410070526.3160847-3-cyrilbur@tenstorrent.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250410070526.3160847-1-cyrilbur@tenstorrent.com>
+References: <20250410070526.3160847-1-cyrilbur@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174426872208.31282.12151608220831424422.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/asm branch of tip:
+From: Jisheng Zhang <jszhang@kernel.org>
 
-Commit-ID:     a23be6ccd8b966ae2483bfc873720b2868ad63c3
-Gitweb:        https://git.kernel.org/tip/a23be6ccd8b966ae2483bfc873720b2868ad63c3
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Mon, 07 Apr 2025 13:23:01 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 10 Apr 2025 08:42:26 +02:00
+Currently, when a function like strncpy_from_user() is called,
+the userspace access protection is disabled and enabled
+for every word read.
 
-x86: Remove __FORCE_ORDER workaround
+By implementing user_access_begin() and families, the protection
+is disabled at the beginning of the copy and enabled at the end.
 
-GCC PR82602 that caused invalid scheduling of volatile asms:
+The __inttype macro is borrowed from x86 implementation.
 
-  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82602
-
-was fixed for gcc-8.1.0, the current minimum version of the
-compiler required to compile the kernel.
-
-Remove workaround that prevented invalid scheduling for
-compilers, affected by PR82602.
-
-There were no differences between old and new kernel object file
-when compiled for x86_64 defconfig with gcc-8.1.0.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lore.kernel.org/r/20250407112316.378347-1-ubizjak@gmail.com
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
 ---
- arch/x86/include/asm/debugreg.h      | 12 ++++++------
- arch/x86/include/asm/special_insns.h | 21 +++++----------------
- 2 files changed, 11 insertions(+), 22 deletions(-)
+ arch/riscv/include/asm/uaccess.h | 76 ++++++++++++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
 
-diff --git a/arch/x86/include/asm/debugreg.h b/arch/x86/include/asm/debugreg.h
-index fdbbbfe..719d95f 100644
---- a/arch/x86/include/asm/debugreg.h
-+++ b/arch/x86/include/asm/debugreg.h
-@@ -23,7 +23,7 @@ DECLARE_PER_CPU(unsigned long, cpu_dr7);
+diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
+index fee56b0c8058..c9a461467bf4 100644
+--- a/arch/riscv/include/asm/uaccess.h
++++ b/arch/riscv/include/asm/uaccess.h
+@@ -61,6 +61,19 @@ static inline unsigned long __untagged_addr_remote(struct mm_struct *mm, unsigne
+ #define __disable_user_access()							\
+ 	__asm__ __volatile__ ("csrc sstatus, %0" : : "r" (SR_SUM) : "memory")
  
- static __always_inline unsigned long native_get_debugreg(int regno)
- {
--	unsigned long val = 0;	/* Damn you, gcc! */
-+	unsigned long val;
++/*
++ * This is the smallest unsigned integer type that can fit a value
++ * (up to 'long long')
++ */
++#define __inttype(x) __typeof__(		\
++	__typefits(x, char,			\
++	  __typefits(x, short,			\
++	    __typefits(x, int,			\
++	      __typefits(x, long, 0ULL)))))
++
++#define __typefits(x, type, not) \
++	__builtin_choose_expr(sizeof(x) <= sizeof(type), (unsigned type)0, not)
++
+ /*
+  * The exception table consists of pairs of addresses: the first is the
+  * address of an instruction that is allowed to fault, and the second is
+@@ -368,6 +381,69 @@ do {									\
+ 		goto err_label;						\
+ } while (0)
  
- 	switch (regno) {
- 	case 0:
-@@ -43,7 +43,7 @@ static __always_inline unsigned long native_get_debugreg(int regno)
- 		break;
- 	case 7:
- 		/*
--		 * Apply __FORCE_ORDER to DR7 reads to forbid re-ordering them
-+		 * Use "asm volatile" for DR7 reads to forbid re-ordering them
- 		 * with other code.
- 		 *
- 		 * This is needed because a DR7 access can cause a #VC exception
-@@ -55,7 +55,7 @@ static __always_inline unsigned long native_get_debugreg(int regno)
- 		 * re-ordered to happen before the call to sev_es_ist_enter(),
- 		 * causing stack recursion.
- 		 */
--		asm volatile("mov %%db7, %0" : "=r" (val) : __FORCE_ORDER);
-+		asm volatile("mov %%db7, %0" : "=r" (val));
- 		break;
- 	default:
- 		BUG();
-@@ -83,15 +83,15 @@ static __always_inline void native_set_debugreg(int regno, unsigned long value)
- 		break;
- 	case 7:
- 		/*
--		 * Apply __FORCE_ORDER to DR7 writes to forbid re-ordering them
-+		 * Use "asm volatile" for DR7 writes to forbid re-ordering them
- 		 * with other code.
- 		 *
- 		 * While is didn't happen with a DR7 write (see the DR7 read
- 		 * comment above which explains where it happened), add the
--		 * __FORCE_ORDER here too to avoid similar problems in the
-+		 * "asm volatile" here too to avoid similar problems in the
- 		 * future.
- 		 */
--		asm volatile("mov %0, %%db7"	::"r" (value), __FORCE_ORDER);
-+		asm volatile("mov %0, %%db7"	::"r" (value));
- 		break;
- 	default:
- 		BUG();
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index 6266d6b..ecda17e 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -10,30 +10,19 @@
- #include <linux/irqflags.h>
- #include <linux/jump_label.h>
- 
--/*
-- * The compiler should not reorder volatile asm statements with respect to each
-- * other: they should execute in program order. However GCC 4.9.x and 5.x have
-- * a bug (which was fixed in 8.1, 7.3 and 6.5) where they might reorder
-- * volatile asm. The write functions are not affected since they have memory
-- * clobbers preventing reordering. To prevent reads from being reordered with
-- * respect to writes, use a dummy memory operand.
-- */
--
--#define __FORCE_ORDER "m"(*(unsigned int *)0x1000UL)
--
- void native_write_cr0(unsigned long val);
- 
- static inline unsigned long native_read_cr0(void)
- {
- 	unsigned long val;
--	asm volatile("mov %%cr0,%0\n\t" : "=r" (val) : __FORCE_ORDER);
-+	asm volatile("mov %%cr0,%0" : "=r" (val));
- 	return val;
- }
- 
- static __always_inline unsigned long native_read_cr2(void)
- {
- 	unsigned long val;
--	asm volatile("mov %%cr2,%0\n\t" : "=r" (val) : __FORCE_ORDER);
-+	asm volatile("mov %%cr2,%0" : "=r" (val));
- 	return val;
- }
- 
-@@ -45,7 +34,7 @@ static __always_inline void native_write_cr2(unsigned long val)
- static __always_inline unsigned long __native_read_cr3(void)
- {
- 	unsigned long val;
--	asm volatile("mov %%cr3,%0\n\t" : "=r" (val) : __FORCE_ORDER);
-+	asm volatile("mov %%cr3,%0" : "=r" (val));
- 	return val;
- }
- 
-@@ -66,10 +55,10 @@ static inline unsigned long native_read_cr4(void)
- 	asm volatile("1: mov %%cr4, %0\n"
- 		     "2:\n"
- 		     _ASM_EXTABLE(1b, 2b)
--		     : "=r" (val) : "0" (0), __FORCE_ORDER);
-+		     : "=r" (val) : "0" (0));
- #else
- 	/* CR4 always exists on x86_64. */
--	asm volatile("mov %%cr4,%0\n\t" : "=r" (val) : __FORCE_ORDER);
-+	asm volatile("mov %%cr4,%0" : "=r" (val));
- #endif
- 	return val;
- }
++static __must_check __always_inline bool user_access_begin(const void __user *ptr, size_t len)
++{
++	if (unlikely(!access_ok(ptr, len)))
++		return 0;
++	__enable_user_access();
++	return 1;
++}
++#define user_access_begin user_access_begin
++#define user_access_end __disable_user_access
++
++static inline unsigned long user_access_save(void) { return 0UL; }
++static inline void user_access_restore(unsigned long enabled) { }
++
++/*
++ * We want the unsafe accessors to always be inlined and use
++ * the error labels - thus the macro games.
++ */
++#define unsafe_put_user(x, ptr, label)	do {				\
++	long __err = 0;							\
++	__put_user_nocheck(x, (ptr), __err);				\
++	if (__err)							\
++		goto label;						\
++} while (0)
++
++#define unsafe_get_user(x, ptr, label)	do {				\
++	long __err = 0;							\
++	__inttype(*(ptr)) __gu_val;					\
++	__get_user_nocheck(__gu_val, (ptr), __err);			\
++	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
++	if (__err)							\
++		goto label;						\
++} while (0)
++
++#define unsafe_copy_loop(dst, src, len, type, op, label)		\
++	while (len >= sizeof(type)) {					\
++		op(*(type *)(src), (type __user *)(dst), label);	\
++		dst += sizeof(type);					\
++		src += sizeof(type);					\
++		len -= sizeof(type);					\
++	}
++
++#define unsafe_copy_to_user(_dst, _src, _len, label)			\
++do {									\
++	char __user *__ucu_dst = (_dst);				\
++	const char *__ucu_src = (_src);					\
++	size_t __ucu_len = (_len);					\
++	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u64, unsafe_put_user, label);	\
++	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u32, unsafe_put_user, label);	\
++	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u16, unsafe_put_user, label);	\
++	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u8, unsafe_put_user, label);	\
++} while (0)
++
++#define unsafe_copy_from_user(_dst, _src, _len, label)			\
++do {									\
++	char *__ucu_dst = (_dst);					\
++	const char __user *__ucu_src = (_src);				\
++	size_t __ucu_len = (_len);					\
++	unsafe_copy_loop(__ucu_src, __ucu_dst, __ucu_len, u64, unsafe_get_user, label);	\
++	unsafe_copy_loop(__ucu_src, __ucu_dst, __ucu_len, u32, unsafe_get_user, label);	\
++	unsafe_copy_loop(__ucu_src, __ucu_dst, __ucu_len, u16, unsafe_get_user, label);	\
++	unsafe_copy_loop(__ucu_src, __ucu_dst, __ucu_len, u8, unsafe_get_user, label);	\
++} while (0)
++
+ #else /* CONFIG_MMU */
+ #include <asm-generic/uaccess.h>
+ #endif /* CONFIG_MMU */
+-- 
+2.34.1
+
 
