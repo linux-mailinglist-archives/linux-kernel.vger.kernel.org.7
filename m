@@ -1,88 +1,111 @@
-Return-Path: <linux-kernel+bounces-597375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDFE7A838FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:12:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE326A83910
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 084587A5903
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:11:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A058D1B640C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294C6202989;
-	Thu, 10 Apr 2025 06:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3C0202989;
+	Thu, 10 Apr 2025 06:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fDepa1+h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="LTSqb0ts"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589E61BE251;
-	Thu, 10 Apr 2025 06:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A7A1BF37
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744265525; cv=none; b=nVhgay/lZN0lFVghDwBMuZKj11UBeDwdQAFMXhFFplQDzb6of3cbqt3+a4xZBIXk/iU/dpxN5HYpf6nrV2YkIp4YAKmjgO7V5i78ZD+NrWmAhnHqRin0BYVPrhiLnIgfbnNjnHr8h0GGLue5KSI05Kc/GqUJfIJ/jstXduWO/6I=
+	t=1744265957; cv=none; b=Sy4MTHWvAFomrWvaW2y1UM0Rf4agiKucFtobwHJafWFOPt130He1yTXIvGxg1CyPab8SqciEhT8CzDAOF65Mr4F4LmSfPfCf0r3xcaSucZUTCwG3Aum3xEGscmt6YzBX3eP9MO/xUJXpr7zcl7IL6XwdTjvregT60+y3CkdsQo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744265525; c=relaxed/simple;
-	bh=KHSVNzsI5/zU4ACY7+o1sFXmjI5zBaVysJ4fxcV9JeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r1RJTGlvuylHwpQf9qzCQoB8DzE2s/FLl5ELkaUF7IXVF3vVSpBNv6cYESC58LdlvBxiQ5dWrqfa7nj7zawloHoESacivRj9m00TjLX9So/w5fbcYBcZoSBdLvTiKS7wUd2vMMyEeFaGOt4TzDdQcNnjVxKKsWk2k4jcysRfMM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fDepa1+h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7895C4CEDD;
-	Thu, 10 Apr 2025 06:12:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744265524;
-	bh=KHSVNzsI5/zU4ACY7+o1sFXmjI5zBaVysJ4fxcV9JeU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fDepa1+hS2ku0AVfFWBp2tZHF3g+6ytQIsl0j3QWmeVIrhyfGTA8fyKoIx0e2CAV9
-	 RnkXG63FCfsi+3NR/jXDUiHsl5rUOfc4bM2N5BLboopQ3sXJc3peQMPsZ3GJxDXtaV
-	 D3s1esFh/UprIwBc68b32XE9DB7rxJByjSDf7I1o=
-Date: Thu, 10 Apr 2025 08:10:02 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-Cc: Petr Tesarik <ptesarik@suse.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] usb: core: warn if a GFP zone flag is passed to
- hcd_buffer_alloc()
-Message-ID: <2025041035-catchable-stopping-e345@gregkh>
-References: <20250320154733.392410-1-ptesarik@suse.com>
- <20250325134000.575794-1-ptesarik@suse.com>
- <20250409174036.7ee76248@meshulam.tesarici.cz>
+	s=arc-20240116; t=1744265957; c=relaxed/simple;
+	bh=GHk8Y+WJYHBXno6Zq2dTjJGVahR88buHcB//W+dfb4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FVJLY5KtGeI3eHIvfY7Uae49CuBW6AntL42U0WzCcY7cf9BsMlKWOI2x1YXuQLAf6hptx2Geq4Xo5dELzAw2cbDxSCWGv4JUcgoLjQznsg0uqrA5o6Pnoz7p/UZjOPaxh5HukMBW2PNJMGy1e7/QdUtJfVtvgezpbNV38Jo1gqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=LTSqb0ts; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [172.27.3.33] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53A6GPNl3943272
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 9 Apr 2025 23:16:27 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53A6GPNl3943272
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025032001; t=1744265790;
+	bh=7GWzQYcxM1qb4FyWY0v/8IQ3XCa4IBsPxSQ7EM3Uv1k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LTSqb0tsliwoVoETPYTJjF2eKcAv9gnoL3saUwC9r016YvncuX9grSAJYGACSCRcB
+	 dYBBQfdFgVN7quwyusn7GAFzo/LV1F0y7VPoJbmoagFK6KhycJY69kjvzKMbeMOYuv
+	 4ucO783q/X6Zb7azBLLO56o2E3DZ78ZeJbJ7dR2B3bAzrd25wpc1QuJI7UF09j80/Y
+	 d4eDaTrQzlpC4igx6PfGmizQanybIqjJCuhALvYeWpCPzKgOOymZfDpKE3buzHFZC0
+	 PVOvSvMy43mZhNkYfFS4c3e2mDXHTrkNHtHV5KoTx1h1T77vaztePczNlCnTsRw2Iv
+	 pSXyKg7Lo+nuw==
+Message-ID: <e3d8db6a-dfb9-49d5-8c7f-b4a1d2faf575@zytor.com>
+Date: Wed, 9 Apr 2025 23:14:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/20] x86/msr: Standardize on 'u32' MSR indices in
+ <asm/msr.h>
+To: Xin Li <xin@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org
+Cc: Juergen Gross <jgross@suse.com>, Dave Hansen <dave.hansen@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20250409202907.3419480-1-mingo@kernel.org>
+ <20250409202907.3419480-7-mingo@kernel.org>
+ <aed43a6a-aca9-4c81-af1a-775f5858ebe3@zytor.com>
+ <9c014962-d4cb-4e68-be15-efbe2ea26531@zytor.com>
+ <63ab3ea9-c55d-48d2-8344-fb4314baf240@zytor.com>
+ <3B57B3E5-47C9-4196-AD2B-44916E18B6D0@zytor.com>
+ <3e2a52c5-791a-4e96-a768-8579ec841dd1@zytor.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <3e2a52c5-791a-4e96-a768-8579ec841dd1@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250409174036.7ee76248@meshulam.tesarici.cz>
 
-On Wed, Apr 09, 2025 at 05:40:36PM +0200, Petr Tesařík wrote:
-> On Tue, 25 Mar 2025 14:40:00 +0100
-> Petr Tesarik <ptesarik@suse.com> wrote:
+On 4/9/25 20:53, Xin Li wrote:
+> On 4/9/2025 8:29 PM, H. Peter Anvin wrote:
+>> On April 9, 2025 8:18:12 PM PDT, Xin Li <xin@zytor.com> wrote:
+>>> A question NOT related to this patch set, the MSR write API prototype
+>>> defined in struct pv_cpu_ops as:
+>>>     void (*write_msr)(unsigned int msr, unsigned low, unsigned high);
+>>>
+>>> Will it be better to add "const" to its arguments?  I.e.,
+>>>     void (*write_msr)(const u32 msr, const u32 low, const u32 high);
+>>>
+>>
+>> No, that makes no sense (it would have absolutely no effect.)
+>>
 > 
-> > Remove a misleading comment and issue a warning if a zone modifier is
-> > specified when allocating a hcd buffer.
-> > 
-> > There is no valid use case for a GFP zone modifier in hcd_buffer_alloc():
-> > - PIO mode can use any kernel-addressable memory
-> > - dma_alloc_coherent() ignores memory zone bits
-> > 
-> > This function is called by usb_alloc_coherent() and indirectly by
-> > usb_submit_urb(). Despite the comment, no in-tree users currently pass
-> > GFP_DMA.
-> > 
-> > Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+> For the API definition, yes, it has no effect.
 > 
-> I know this was posted during the merge window, but that's now over.
-> Any comment on this patch?
+> While it makes the API definition more explicit, and its implementations
+> for native and Xen would be:
+> 
+> void {native,xen}_write_msr(const u32 msr, const u32 low, const u32 high)
+> {
+>      ....
+> }
+> 
+> not worth it at all?
+> 
 
-Please give me a chance to catch up, it's been non-stop conference
-travel during the merge window, and through this week :(
+No, and as you know, I'd like to get rid of the native_ and xen_ 
+functions entirely anyway.
 
-thanks,
+	-hpa
 
-greg k-h
 
