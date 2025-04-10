@@ -1,129 +1,94 @@
-Return-Path: <linux-kernel+bounces-598199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C602DA84349
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:38:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C465AA84370
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D196D7B2AC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:36:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BD21443120
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCED5204594;
-	Thu, 10 Apr 2025 12:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101E4284B5C;
+	Thu, 10 Apr 2025 12:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bPe4nNb8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zG0isVEb"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449091DDC0F;
-	Thu, 10 Apr 2025 12:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D004A284B22
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 12:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744288666; cv=none; b=g+0l3QZMv0RLiS3PDQNCkpvjv+h+A4xmshnVvvp17lgiU2PrfSiy3nse1qXdnaT2dFiLtF1RYFOqcMCqVknKLJR6WbV+TYdW23apsjrd2rDJLpFV6HUW8r9ChFMvCcwRawQK0YZPPVOCnGpOqVXJbgPrWU/WJTY6w1HJg279IOg=
+	t=1744288683; cv=none; b=DNzTP7Z1SArhgkD1ioab0z50FFkYesp4pKVsMPa9U6gr00yhR4IhOoS93BvkJgbQHHDzaXohel/p3iiylIU1LpdwuYUudKiqbY2zZOOkL+xAP600yHXbqZj3VHkjXr/K+JoiMrxHXyLnuuWGEeLHG5Zq0meBi7Cmmt4X+/j98js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744288666; c=relaxed/simple;
-	bh=sPKm1/Nz6ZhOYtb/EBIrtiQ37Zx68yFWZK7cGLk4dIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XFbKLjHDFYfqq6T8jbKr1sOsj8HwsnP/gx6auULloVn69Zpx0u/0pg1lW0LxRxA1XVijT2LqpmjkprLNq9zUjsHpczJEFhaaAB86dH/Wget9zuoA4X4yPlW4SIJehLKPss+Wj4cnA4VpohsbAUZ+y8sXUBL8/mzzXocfX532voE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bPe4nNb8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E857C4CEDD;
-	Thu, 10 Apr 2025 12:37:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744288664;
-	bh=sPKm1/Nz6ZhOYtb/EBIrtiQ37Zx68yFWZK7cGLk4dIM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bPe4nNb8Rj61smw7NSryO5eHHvcfvGZXPo7sfzrPFef+EufqQdBpgcc10lb7/l7Hv
-	 2OTZlHzAMbjjYiKnPGX2X77h4lH8D7qyRBToXyX64l8+Z9/ykI0bS+4owY1ZSM1Y+9
-	 D/qayDHpmxXH9a1dUkAREFQmMtPV7OI494avInjBqwRnxr1qksHuaBmhbhjUfc+DgG
-	 ukWlCK5lnFU2a5AJifYQlEkn9hcd+5wnzGe2Ba/fMwn/RP1/+FbcTnizxxzQ7KMrDK
-	 aRtgNjMoA5tUORBscXVM56MfHNUstljCEHfUDH73q+iRawMJWv8fGNuARKuf6ApNtX
-	 mrIaCBhFtKxyQ==
-Date: Thu, 10 Apr 2025 15:37:40 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Purva Yeshi <purvayeshi550@gmail.com>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] char: tpm: tpm-buf: Add sanity check fallback in read
- helpers
-Message-ID: <Z_e7jK00SZWSsWOg@kernel.org>
-References: <20250410103442.17746-1-purvayeshi550@gmail.com>
+	s=arc-20240116; t=1744288683; c=relaxed/simple;
+	bh=KDR1DTOJoPA5spgrGIsm6Y8dkDP/dvIskw+tyzOF4ss=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gXht4PTU0SCI7o9GRDe8WpQIP4DAys1Ers6ZCsPS4FRHsd4FPwvaHQK0nj12QcbK5QzCEkajX/vfyg7PZ0jKvVatvkXTHxTTxUBYC/CiPfSt6uR9t6pGnMS7+0k9DFYXGfq5c1dm33QWHjQK587NtzedIP+FWHatMHdXcpJIzuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zG0isVEb; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43cf3168b87so4274625e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 05:38:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744288680; x=1744893480; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ueJ9D/uWYLPcpSQZDS2W9kWTYeSr9KuH7P7A0rcqzzk=;
+        b=zG0isVEbQMfueieVCyBu2UOjnF7qhH0HPKoWPpvkggmfKofbgzG0aDWbq4qfikY7PX
+         B7RtyrLft+fVcWkJ5B5jgcY0TZ9dPmjYd1dKh1uR1Q1yhJF1uSveWqTlLbd0YDMAMehQ
+         fBsZ/9lrXPo9+tUHkwk8HhdtkybZYGz9IiMRNPnREoU7/TiMsH9lNrM8GwWTQrJ4E7C2
+         KaOrJAgjOvqasrp4RDgISxCD8uAayd4R1/Cd8xB40n/EBgxv/2fyBzynrCvKKBMz9lLY
+         55jAS0g2KqwE+GwNIUxy+KN/UK3BscccbsFRk9jbwposrqNTe/FZAd/Zi27wjNKAmp0+
+         JkQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744288680; x=1744893480;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ueJ9D/uWYLPcpSQZDS2W9kWTYeSr9KuH7P7A0rcqzzk=;
+        b=l7woUZlCGU705OaW1ytjsSCQ5HjTFtPMbsPIqIed5b3uYKEcb5A80g0jmPFtv77PSD
+         UB8o7TRpFVEQojCojz+NBP7CtDRU48iaP8tS54p+rgYq5yyGvwd6o0ZBmLr/5hRdtSDv
+         5BZPea+Ra6x1Pil3S+18BaHRa0SoqNXEtcv4d87uUZAAOzydOkzsm7H2QmFfaN+QTuFr
+         2fJSoeTq6Vx0pwjMRdkWnafsJZ1lQuh+MwWDKDVZ15Zp3EuszVETuEGcSw3AqND4r8od
+         KAcRwcctiwmzuC2BLhj4uBmvFmqioPjBz1x9GYXo6LdA30hJKbq7eR5yo5ULjW4wLq6o
+         HXug==
+X-Forwarded-Encrypted: i=1; AJvYcCWf2njdA3jXZB203CnGsozE87N4L26mV9od3BTk6+hVto0EMiZP6s2IwdMs53X4a18ximdOC3t5lVhO5jI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8plH9wMkfSSUSj71DEGRHo9F+G+zsIrluguZoNltH7To0pMB3
+	L157d+DJzWqyQ1IRA91OM1JY4QxTGbQDms7eHZyR7nxxQXwy7d4uGjrpHLw7x/3ZhClbmDHkcBK
+	FRKbj7QZPpg==
+X-Google-Smtp-Source: AGHT+IEg7mcjbdCYRVempPQhQObfFqsfDUHviFlES7EqAPGFgS+OQ2JKD1mbbO6MAY8vl/nP0uVJ3b1LYVUaZg==
+X-Received: from wrom6.prod.google.com ([2002:adf:f386:0:b0:391:831:4d82])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2282:b0:39c:30d8:3290 with SMTP id ffacd0b85a97d-39d8f276007mr2441096f8f.7.1744288680297;
+ Thu, 10 Apr 2025 05:38:00 -0700 (PDT)
+Date: Thu, 10 Apr 2025 12:37:58 +0000
+In-Reply-To: <20250410090021.72296-4-vbabka@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410103442.17746-1-purvayeshi550@gmail.com>
+Mime-Version: 1.0
+References: <20250410090021.72296-3-vbabka@suse.cz> <20250410090021.72296-4-vbabka@suse.cz>
+X-Mailer: aerc 0.20.0
+Message-ID: <D92YQCM785D0.OVHMVHQFWF2L@google.com>
+Subject: Re: [PATCH 2/2] MAINTAINERS: add MM subsection for the page allocator
+From: Brendan Jackman <jackmanb@google.com>
+To: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>
+Cc: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, 
+	<patches@lists.linux.dev>, Suren Baghdasaryan <surenb@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Apr 10, 2025 at 04:04:42PM +0530, Purva Yeshi wrote:
-> Fix Smatch-detected issue:
-> 
-> drivers/char/tpm/tpm-buf.c:208 tpm_buf_read_u8() error:
-> uninitialized symbol 'value'.
-> drivers/char/tpm/tpm-buf.c:225 tpm_buf_read_u16() error:
-> uninitialized symbol 'value'.
-> drivers/char/tpm/tpm-buf.c:242 tpm_buf_read_u32() error:
-> uninitialized symbol 'value'.
-> 
-> Zero-initialize the return values in tpm_buf_read_u8(),
-> tpm_buf_read_u16(), and tpm_buf_read_u32() to guard against
-> uninitialized data in case of a boundary overflow.
-> 
-> Add defensive initialization ensures the return values are
-> always defined, preventing undefined behavior if the unexpected
-> happens.
-> 
-> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
-> ---
-> V1 - https://lore.kernel.org/all/20250409205536.210202-1-purvayeshi550@gmail.com/
-> V2 - Update commit message to clarify patch adds a sanity check
-> 
->  drivers/char/tpm/tpm-buf.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
-> index e49a19fea3bd..dc882fc9fa9e 100644
-> --- a/drivers/char/tpm/tpm-buf.c
-> +++ b/drivers/char/tpm/tpm-buf.c
-> @@ -201,7 +201,7 @@ static void tpm_buf_read(struct tpm_buf *buf, off_t *offset, size_t count, void
->   */
->  u8 tpm_buf_read_u8(struct tpm_buf *buf, off_t *offset)
->  {
-> -	u8 value;
-> +	u8 value = 0;
->  
->  	tpm_buf_read(buf, offset, sizeof(value), &value);
->  
-> @@ -218,7 +218,7 @@ EXPORT_SYMBOL_GPL(tpm_buf_read_u8);
->   */
->  u16 tpm_buf_read_u16(struct tpm_buf *buf, off_t *offset)
->  {
-> -	u16 value;
-> +	u16 value = 0;
->  
->  	tpm_buf_read(buf, offset, sizeof(value), &value);
->  
-> @@ -235,7 +235,7 @@ EXPORT_SYMBOL_GPL(tpm_buf_read_u16);
->   */
->  u32 tpm_buf_read_u32(struct tpm_buf *buf, off_t *offset)
->  {
-> -	u32 value;
-> +	u32 value = 0;
->  
->  	tpm_buf_read(buf, offset, sizeof(value), &value);
->  
-> -- 
-> 2.34.1
-> 
-> 
+On Thu Apr 10, 2025 at 9:00 AM UTC, Vlastimil Babka wrote:
+> +MEMORY MANAGEMENT - PAGE ALLOCATOR
+> +M:	Andrew Morton <akpm@linux-foundation.org>
+> +R:	Vlastimil Babka <vbabka@suse.cz>
+> +R:	Suren Baghdasaryan <surenb@google.com>
+> +R:	Michal Hocko <mhocko@suse.com>
+> +R:	Brendan Jackman <jackmanb@google.com>
 
-It's good and I think this change is appropriate overall!
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-BR, Jarkko
+Acked-by: Brendan Jackman <jackmanb@google.com>
 
