@@ -1,116 +1,151 @@
-Return-Path: <linux-kernel+bounces-598187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53DF7A8433B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:36:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1587A84340
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BB518C5ED7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:34:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 518A08C621C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916E128A41D;
-	Thu, 10 Apr 2025 12:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41F92853ED;
+	Thu, 10 Apr 2025 12:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JYwnzj1z"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gD0IiSgG"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CCC2853EC;
-	Thu, 10 Apr 2025 12:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36DD204594;
+	Thu, 10 Apr 2025 12:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744288443; cv=none; b=df9IomnWl/Do4s188EUkeCWrIiqmOUCTHfNB9l9gA67FR5LEm67x4RIa9LoB1RHUGeW5/GgmySTxEmR9VKyuNy1koRhFXLP5GQuxTtpD4CV8gOLwwNLWlNGWA48bilxI6Wb1NciEwaDrnhpUqJ7TtRuv+Zrc9L+rTxEYLXFbUMk=
+	t=1744288462; cv=none; b=H+5c9bQfZLZfUWEnQTaaAijLYOuHTFA4+/HldgMaL3OI2TV3foKERQd1mlZ+H+4AcgvepDxhDfSB8RpUH0t1kH9IOH2HjVTzCcuPKUZ9L3JhVYvUV11pJdH1BhXXzC949mfaDnCau8nIPsD+3Sa4xlIowPp7gSsE0QZqQoUgB38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744288443; c=relaxed/simple;
-	bh=3I121XF2fMBchfmtwI8JGkIY0Sv+AhGwwxBQpzUsKSA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qxk32/BeBFXnJKkGBfRW9qi21eh2F4GyRz2/Me9Js17Nj2LirmEPY0ZOYgIjZnPEF0xuqfXOYomC8t78iiej3120FQFCSoIsSI2OdVyCiSRqP17O5TcWuesoFGViQVg0xQWac9PDj0CuD3soFP1ipAHz0WhDNQ3VGHfZsjzBv4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JYwnzj1z; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D97F14433A;
-	Thu, 10 Apr 2025 12:33:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744288438;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=836dXAW5BQEuD0IbtlpXEx1xy09kQKLZHvAT71eDZnY=;
-	b=JYwnzj1zI3aDS1cak+ToJdFssF7eO483/rRSeVqeCaEmF7c+l2CP51HP800fW0o2y9Yq3y
-	VwfQvJT3wAV1sjYbBE8TsUvp6sVSNvRvjzXlqRGbYVXVI+Ko7DRs68GSAXcoB5AtcesF3V
-	wCBaVbJLcgpxI8enQaSv12Ijl5HkAQV6Tzbmj9Rb/wvJgONNm9Wch4Bn5NsshEAXbFKaXm
-	OnoOtkcTZW4UOJ8fZd7H/3X7fObtZZwR+cj4D5nmdQ/mxryhnyUhlMDOBR/K7B4tYhKcrc
-	BPkBsLnxO26K0eLf+uVUBn5YweiEZFE8Jm9ULSVDveTkcXr24DU+oLrzZdiy6g==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
-Subject: [PATCH net-next v5 4/4] net: ethtool: pse-pd: Use per-PHY DUMP operations
-Date: Thu, 10 Apr 2025 14:33:49 +0200
-Message-ID: <20250410123350.174105-5-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250410123350.174105-1-maxime.chevallier@bootlin.com>
-References: <20250410123350.174105-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1744288462; c=relaxed/simple;
+	bh=aYnz96tviR6JkjQrvqHBO9WzzIuRSa6ZnA54LbzQIXI=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=sQgWKx00lZwrAHY8Ejn0H8hx+3N1S/+tyLZv0nbyGJxyqurre+Oiyg8WJwkTYBWOPfRCvWPkcMqx7TQBNRRIieSsgjsi+C6FnEQTyw7OglOsT7Gd1H3wXHbIDvxOvpgli79MijjwFUM3ljgwnmEJV/XymkizRj5y0Q7LiRvnaSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gD0IiSgG; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-736c277331eso1750751b3a.1;
+        Thu, 10 Apr 2025 05:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744288460; x=1744893260; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CYYB8xWXXp3NrY8EvpLd9vo2DOULWKf7nlbTH+Fs28E=;
+        b=gD0IiSgG0fx+2p8Agr0OL6E9soVb352FEEt2gE1zJxpM8TUiVPxSACRMz2sJDwojva
+         IUR9qpegUJWk2tgFnpnpG6LbUtDItpMbcjjZGtnxjwnILN2iQmuLjgW3YK/EleC6LLcQ
+         8nSqprwVzBkRVoCiaRjT5IpavzN7FPpMUPp5jKRMtWcD87SGXN7+zbPKFTzDWukLTsgU
+         RVewoRY6kAnxYhJyfDOmG0Tfmd+U0eI2hJ81H9KDJS+GvwNgxcw7tgKHGlfEupFdIMQf
+         OzPDtLRGM3aDZrdVt35/4BVfkmDB6YDxftvw1yh41lDn73ztW9XSMoIJLGNsiUHaE5Df
+         n30Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744288460; x=1744893260;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CYYB8xWXXp3NrY8EvpLd9vo2DOULWKf7nlbTH+Fs28E=;
+        b=tPT0IQDILhEY5NLuZr4GTL0flp7458xy/41k7mIaraz0ntn0Ldy6B5+Q53zMQpxZi4
+         1WBUkyVE8mw6O//Xn+QuWKOmYELKn9ECH+ryerSBqpgzSEodfI9ZEF/tPZ8WC8ztbN8p
+         Ks6xLA1mu3UikELfeizv2G4LSS2kfPw9R7Mev8bNJxOBPla+nDSsot5uZ9kPyLkHPsYo
+         LO0XczFxiKRLYsnK9SqDwpWfcnNn9qWoXYU3Jsyi7rpp5q/duxS7QLfJS9+MAp2nrUZ3
+         QzeWEFiS2U1gMCMtMPide2qFlfQl9tuYHzjzbtVmpxjAwOBbmtMTFHLnAw24d1bQeemd
+         ugxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULLZyDe3brA1gTuWPBbpaLRRp2yuNF7RL71IJdCAyXAqBlzexSML5c1Kwj6aRmRkrQkvjwVzXtMw/nVH0=@vger.kernel.org, AJvYcCVTYiWahOMOngEv8toejlkfMLJcaypa5rT3nm7hIjmqwJtL/Zh5HOuurCMg2sCrJqRy/DOYgVvjasYSNOOq4d0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUMVZzcQsmvq2TD23JSkZapY9WH0z/7W5i4bEw6MPY4BSz/Ksa
+	dyMqVKBp7xoR+zvKyQsaH90RnwFABlBHD5d3TKPJdIcVLkw3I+t3
+X-Gm-Gg: ASbGncsQe0tcS9ktW3JYKN91uYxLu/zl/SH0PHxnF/0EZ1odpJy/fMXQm2cBmHLgJy1
+	HHxgn26j/ZctX5YVWZaOLOFx/aelCbd2yEnSae3XRHoEvYiLqz1LWTJqdWmW4qSgy4CVBZ3a1ed
+	pFrGE+RmJ81I2TDLFn72nt+OcBlLami6AHqtrVlM4+Huu7GoUf6pjXIYGIpIDrVi/I6/Y/b43Q0
+	0tC7NYPMUBlAb2e5qfxCqKTMq88nTZN916cFb6IKyOysLvQPIF4Xehe2oLjRQu5Rr05yWFX2VZP
+	KS9ykXdVzWVIC7UAIQaOs3ybxx3mUZq6BU+EaKFpAy53qwv74E6uLCN4aU1CJYoYwSdHHUbQA7x
+	iKW4r4dsNudKYSH8xbLqV4u0=
+X-Google-Smtp-Source: AGHT+IGl2utS2unvYHRMdT2RP9ueZqQhdCzDP3jwZyYMjQoG9MrpSlL23CvVNg2kZbwezJItYp/l0w==
+X-Received: by 2002:a05:6a00:1487:b0:732:1ce5:4a4c with SMTP id d2e1a72fcca58-73bbf869048mr3236065b3a.1.1744288459852;
+        Thu, 10 Apr 2025 05:34:19 -0700 (PDT)
+Received: from localhost (p4204131-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.160.176.131])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1e69ae9sm3206479b3a.173.2025.04.10.05.34.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 05:34:19 -0700 (PDT)
+Date: Thu, 10 Apr 2025 21:34:02 +0900 (JST)
+Message-Id: <20250410.213402.1373597003035091247.fujita.tomonori@gmail.com>
+To: aliceryhl@google.com
+Cc: fujita.tomonori@gmail.com, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, x86@kernel.org,
+ linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, peterz@infradead.org,
+ hpa@zytor.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, catalin.marinas@arm.com, will@kernel.org,
+ chenhuacai@kernel.org, kernel@xen0n.name, tangyouling@loongson.cn,
+ hejinyang@loongson.cn, yangtiezhu@loongson.cn, ojeda@kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@kernel.org,
+ tmgross@umich.edu
+Subject: Re: [PATCH v5 4/4] rust: Add warn_on macro
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <Z_d1xAAptnfzqg1l@google.com>
+References: <20250409065802.136971-1-fujita.tomonori@gmail.com>
+	<20250409065802.136971-5-fujita.tomonori@gmail.com>
+	<Z_d1xAAptnfzqg1l@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdekledvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveegtdffleffleevueellefgjeefvedvjefhheegfefgffdvfeetgeevudetffdtnecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddupdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmr
- giivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-Leverage the per-phy ethnl DUMP helpers in case we have more that one
-PSE PHY on the link.
+On Thu, 10 Apr 2025 07:39:48 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- net/ethtool/netlink.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+>> diff --git a/rust/kernel/bug.rs b/rust/kernel/bug.rs
+>> new file mode 100644
+>> index 000000000000..761f0c49ae04
+>> --- /dev/null
+>> +++ b/rust/kernel/bug.rs
+>> @@ -0,0 +1,114 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +// Copyright (C) 2024, 2025 FUJITA Tomonori <fujita.tomonori@gmail.com>
+>> +
+>> +//! Support for BUG and WARN functionality.
+>> +//!
+>> +//! C header: [`include/asm-generic/bug.h`](srctree/include/asm-generic/bug.h)
+>> +
+>> +#[macro_export]
+>> +#[doc(hidden)]
+>> +#[cfg(all(CONFIG_BUG, not(CONFIG_UML), not(CONFIG_LOONGARCH), not(CONFIG_ARM)))]
+>> +#[cfg(CONFIG_DEBUG_BUGVERBOSE)]
+>> +macro_rules! warn_flags {
+>> +    ($flags:expr) => {
+>> +        const FLAGS: u32 = $crate::bindings::BUGFLAG_WARNING | $flags;
+>> +        const _FILE: &[u8] = file!().as_bytes();
+>> +        // Plus one for null-terminator.
+>> +        static FILE: [u8; _FILE.len() + 1] = {
+>> +            let mut bytes = [0; _FILE.len() + 1];
+>> +            let mut i = 0;
+>> +            while i < _FILE.len() {
+>> +                bytes[i] = _FILE[i];
+>> +                i += 1;
+>> +            }
+>> +            bytes
+>> +        };
+>> +        // SAFETY: Just an FFI call.
+> 
+> Safety comments could be improved. This being an FFI call is not the
+> reason why it's okay. Furthermore, it's not an FFI call.
+> 
+> Otherwise, this series LGTM.
 
-diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
-index dd4eaa77dd8c..7186c465f429 100644
---- a/net/ethtool/netlink.c
-+++ b/net/ethtool/netlink.c
-@@ -1361,9 +1361,9 @@ static const struct genl_ops ethtool_genl_ops[] = {
- 	{
- 		.cmd	= ETHTOOL_MSG_PSE_GET,
- 		.doit	= ethnl_default_doit,
--		.start	= ethnl_default_start,
--		.dumpit	= ethnl_default_dumpit,
--		.done	= ethnl_default_done,
-+		.start	= ethnl_perphy_start,
-+		.dumpit	= ethnl_perphy_dumpit,
-+		.done	= ethnl_perphy_done,
- 		.policy = ethnl_pse_get_policy,
- 		.maxattr = ARRAY_SIZE(ethnl_pse_get_policy) - 1,
- 	},
--- 
-2.49.0
+SAFETY: It's always safe to embed metadata such as the source file
+name, line number, and flags into the .bug_table ELF section.
 
+Looks good?
 
