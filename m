@@ -1,134 +1,137 @@
-Return-Path: <linux-kernel+bounces-598063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28799A841D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:36:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97574A841DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 305379E20B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:36:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70D9B4C48EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A221C2836AB;
-	Thu, 10 Apr 2025 11:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DCB2836A7;
+	Thu, 10 Apr 2025 11:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="opHvIk1+"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="M9MwfTiA"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809F41DF991;
-	Thu, 10 Apr 2025 11:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5928281523
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 11:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744285002; cv=none; b=VHuYJHCnjUOh81bHK7I2K++rSY/ZLgsMLSiONcdgplwlOOnEnw+0szNKfDdRbji/X50HncuPOQHPQikDKwbdwwgMALPGkfNgQgl589KLrLZXgvXAsoEve8pHHwCPo/KKCKUan1xpFFruanOWhkedeTwpDGZD88g0xBNeUOHzXn8=
+	t=1744285076; cv=none; b=o/v32FrosGD7UdpvzlQVJWPBk7lxyGzxa35EZ+0I08bySa3QIoR+UyIvjEod3F+UayT1mKdeJ+s6PEcB+bhEyfUDSeVbuYzQAl1Vs4TpRag54XBTl3NAujQLTee6CIEdItaLVFaR3wZjPIVxX8vOGxNzYdiZKWAqyI2z79xf39g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744285002; c=relaxed/simple;
-	bh=eHb/z5NaMzfi8/yCbXSBDQBs4OP5wqvRmitFyoJYM0I=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=abHbqxEmJE5E4fR1aidIPra/fpaVkBXf5ues306DJ31wjaal2cBzOuB6CeR0d9xBuUQQ6gvUrLtLKZNHfa387VwT3ruSiUtTKWpiM2caCAIdgu80BJrTyfwrY/aowT3nurxtndaDlFW4ucsx5e16Gp5dil5wOJUL5lY6z1TBswM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=opHvIk1+; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0827F44317;
-	Thu, 10 Apr 2025 11:36:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744284992;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SAuMrXd/Y4l0cy73R/YgMicuHRMArAQfIUMm8p2VFyk=;
-	b=opHvIk1+I05a7jvRdR/BdA1TVdtQN2MR8i5/67/6iika7wbO9a/DFnEbrlCYT7UULIsOhf
-	MgqqjLr4EXD94+qff35JyFvj6ABvRF7wgb0omj7uzXDG8B/8sihwloa5p8mgK5TKqNOOcX
-	l+Hbw9xsx3ZCE5b0pWzm9uFWp6YlyAeRqRaTx0+woFpjpXnTOf+zZmB+8bxmaRd4w/hU7t
-	sLKuT+GOJORnZLZYZzgqyDuI3pXqP+l8vt6P7injqa4bEtmTozdM7FBsfCNq2uVusBTANG
-	R3cCdBQlCuQLSDAKbGn5OocsXCkfAkg9RZUBeYOX+AcIN+MTxchBGpe+qgp1xA==
+	s=arc-20240116; t=1744285076; c=relaxed/simple;
+	bh=0Of5U4z8afXfK7Xi3Rsr1a6ex6vo7JrOynH81ykhVz4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dTksWHfpU0gVjvkpdc2RAV0+hdzZyrqElJmkl9Ytt4Deximr7HMhw+bLObwBSwIPrGzzqCZW5gBYH93FDvtf1aUimYc3q3Hrwvs6V2LTdlk7ok5IYIeTKUBG4wwNZ/QIz5M6hxHU1xQ6G69KXgDNqIoC7GEepO7EQ0B7PyL4Bvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=M9MwfTiA; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-af28bc68846so660461a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 04:37:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=futuring-girl.com; s=google; t=1744285074; x=1744889874; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0f9QEAX1CJe5R8QcJVmzqkTEC/iZNvG/J6WAAg8e6aU=;
+        b=M9MwfTiAP2Gw6YZ1GC482IM8gpnAnqd+4HCAiYpK2BuON0nJRSBO1okRRYiAnQJPuS
+         yGkieZIAOdTScdhtbUFGnscNT+hwA4BOwoAkkrTeD7JKQghT5WWstvTqI6ET/1dESJwP
+         An4fqDQ2TE4GhE/0lM5pcuDMWNQzdvlc4NfB6hrhr2Zo5RbpRa2Jrlu9p5vmOeaudImL
+         vgjtOtcVGw/gcPzxbN7qTdoTfWUDmTRsmX15FLmU2wa9t7veAgRpfFjXGZlK+kJWQ/vY
+         OxL18GltJL5vtPyvdag0Zfb+48Io7yFGtJzmIJuWCwxBiVxEWGEBWuZo0JsBb/TtH9Rj
+         JBLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744285074; x=1744889874;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0f9QEAX1CJe5R8QcJVmzqkTEC/iZNvG/J6WAAg8e6aU=;
+        b=uS6LJjs8pTRXOexv9RkhCnFAKORPVgOh8Khbw0aMLRu1zcM8rpaYUx/G4gDDtzN8YR
+         V8OlCdKaE+5gHsKp/hRRrRqlhsoOhX1wAUa9KhDNSRYlhrM0APOOOIwOCJ2O2j/lwYUS
+         1pX1ylbSPaMc+/2UuPvB5waNloIpoK3YPX2wsFd2WHqIB8EmxRkyWwvrBOZLN4o5oaOl
+         z1huikzufuUM1/LvFhdHBPPPsDoUQYhZRmRUyAiwQv72KAaoyKBxhlZuqXZYtlRPdpRT
+         XVtwjNfUtquVjBaRcn2J45wvLMblAyiuVKAYukJZo9pWMUWqoCtnfbvCRUaPq3aQkIbl
+         9zhw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9XNw9uOdneFgtfJMzk3CfL1287HjtJMhM8resL/IuTQQqaTUTOb3KAmPnHYvKtSzZcYzVjjTnAmdzKlA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwysPP55JChvttkbMkFxVq1H3WpCHc4edKPuf8DDfPCvUDPxW5w
+	UQE3jSMFFNMvD3OI6RBiUj4aqyzvjwo2XYZHhWtANHfa9NKFFEr1/FEmhaV3OGnqDQ/ly0ONr42
+	kJr4yo22lAVKbHP6qr3O9JsD3K+prvO77VuutaA==
+X-Gm-Gg: ASbGnct3KQzUz5l8qzIy6Rk1m+cU0BLhtPboRGjsiUitd9b5w2pSW0heBJ0V3A7QKux
+	WtgQek8EtF0zajlng2rDWsdUMOKrmg3O43g2dWwOwI7Su8lI9IBdKWl0/P8jXFwRd84rfKMHsIC
+	LSUyaGjzADNyqkZWWr6l3d8Q==
+X-Google-Smtp-Source: AGHT+IFf9b6rD0mshIXEsi9eKtMgmQeW8WAUbIpHUW9028hvz2quBzJ17jpTHpfufL5MoDKUhrB0LBxePV2EC/lvj7w=
+X-Received: by 2002:a17:90b:2d47:b0:2f6:be57:49d2 with SMTP id
+ 98e67ed59e1d1-307e59995eemr3269202a91.17.1744285073875; Thu, 10 Apr 2025
+ 04:37:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250409115934.968141886@linuxfoundation.org>
+In-Reply-To: <20250409115934.968141886@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Thu, 10 Apr 2025 20:37:36 +0900
+X-Gm-Features: ATxdqUGFfH4m7c8SppFhuEE7O4S7fKdsw8gN_V0ons2x8pr1JB25QeDueDaMLTA
+Message-ID: <CAKL4bV41OA2u8LnGk6WuC_5sO8moTSK-w-U2r0yqEQ+fbFsTGg@mail.gmail.com>
+Subject: Re: [PATCH 6.14 000/726] 6.14.2-rc4 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Apr 2025 13:36:30 +0200
-Message-Id: <D92XFAGJRKJR.2MTADDABV7OMK@bootlin.com>
-Subject: Re: [PATCH v6 11/12] input: misc: Add support for MAX7360 rotary
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
- <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
-X-Mailer: aerc 0.19.0-0-gadd9e15e475d
-References: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
- <20250409-mdb-max7360-support-v6-11-7a2535876e39@bootlin.com>
- <qszbvz7xr4jhpqnae7mqmnqfv6qzppxjpmbavdknhdnjausqtt@rbjjgc2ozbmq>
-In-Reply-To: <qszbvz7xr4jhpqnae7mqmnqfv6qzppxjpmbavdknhdnjausqtt@rbjjgc2ozbmq>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdekkeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekhfekieeftefhjeetveefudehuddvvdeuvddvudfgfffhveekffethfeuffdtudenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegumhhithhrhidrthhorhhokhhhohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhor
- hhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Wed Apr 9, 2025 at 9:17 PM CEST, Dmitry Torokhov wrote:
-> Hi Mathieu,
+Hi Greg
+
+On Wed, Apr 9, 2025 at 9:06=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> On Wed, Apr 09, 2025 at 04:55:58PM +0200, Mathieu Dubois-Briand wrote:
->> Add driver for Maxim Integrated MAX7360 rotary encoder controller,
->> supporting a single rotary switch.
+> This is the start of the stable review cycle for the 6.14.2 release.
+> There are 726 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> Largely same comments as for the keypad driver: use "int error" for erro
-> variable, selection of the device for logging. Also:
+> Responses should be made by Fri, 11 Apr 2025 11:58:08 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.14.2-rc4.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.14.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 >
 
-OK
+6.14.2-rc4 tested.
 
->> +
->> +	input =3D devm_input_allocate_device(dev);
->> +	if (!input)
->> +		return -ENOMEM;
->> +
->> +	max7360_rotary->input =3D input;
->> +
->> +	input->id.bustype =3D BUS_I2C;
->> +	input->name =3D pdev->name;
->> +	input->dev.parent =3D dev;
->
-> No need to be setting/overriding this, devm_input_allocate_device()
-> already sets this up.
->
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
 
-Ok, thanks!
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
 
->> +
->> +	input_set_capability(input, EV_REL, max7360_rotary->axis);
->
-> The event type should come from the DT data I believe. Could we use at
-> least parts of the regular rotary encoding bindings?
+[    0.000000] Linux version 6.14.2-rc4rv-g2cc38486a844
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20250207, GNU ld (GNU
+Binutils) 2.44) #1 SMP PREEMPT_DYNAMIC Thu Apr 10 19:57:30 JST 2025
 
-Ok, I should be able to add "rotary-encoder,relative-axis" property, as
-for rotary_encoder.c.
+Thanks
 
->
-> Thanks.
-
-Thanks for your review.
-Mathieu
-
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
