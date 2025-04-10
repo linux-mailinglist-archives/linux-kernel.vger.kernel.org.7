@@ -1,53 +1,63 @@
-Return-Path: <linux-kernel+bounces-597810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39871A83EE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:35:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6729A83EAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A80359E0E87
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:28:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9739817465C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801EB256C9C;
-	Thu, 10 Apr 2025 09:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354BC256C8A;
+	Thu, 10 Apr 2025 09:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zMFLvh3p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocSI26iM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B267D204F65;
-	Thu, 10 Apr 2025 09:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D7C204859;
+	Thu, 10 Apr 2025 09:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744277293; cv=none; b=IoLVRk9odHtxV+j0xR58je1Er57/ei+I4aNfHge7EVqoyPu0IIoHAId+ToJrZr0pjPdFIuUOS654wVjssoiadCd/A053gwGISEKW7tCX1+phA5s/dxDxxAg+8A6Qs87qj3nwz+Hq3NnpO81shqJBY3AhC8XOb8I5in3EkikxMH4=
+	t=1744277227; cv=none; b=CvcdGq72wFl6O5o9V+PkBoTMo8FFVtsnOix1d3sy8bArXlRuoCpSLmH4FNjciH4DRK3CjeyVkd9r7EqGnYn5Ll/8nSifSvHUqKVO2KjSPFkhffgy17WxM3X61MG3TNEiXMkSzuvZ/hXhTscCNd+UEiqNU9lPh5uhnid9sn/ln5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744277293; c=relaxed/simple;
-	bh=xE5QEOZfQokzP2MJO9ilKe4LwdE4G+yOiOX5zwVH6ms=;
+	s=arc-20240116; t=1744277227; c=relaxed/simple;
+	bh=KspGeLOPCiTHid+2kSxIjeK1u5cGf2Od+QXXtZqsIh4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GjhC7d6VkZ7/ObrxMe0YyXkNh/EvgVI+zQJoXlBi1xDxTpdcjP67BLFFxdHJKKrY2NDWPtGtiDBeYt0T6LR+FbqWtkk2nfIAUdhVNHW5Rppbbq6aNle0eV2G5tfFdDu142IJeDwlZE34Z7OJdaW/wmJIKPF6rmI4KTgLKYQNjVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zMFLvh3p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C36E2C4CEDD;
-	Thu, 10 Apr 2025 09:28:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744277293;
-	bh=xE5QEOZfQokzP2MJO9ilKe4LwdE4G+yOiOX5zwVH6ms=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=TSA8c+FBIH73PjWegCcVaEtqIlJhFrvwTO9R7fguhX0NYi0dTMpglr7CLCdJCES+u5FioYKQdZ3TeQzY7pPqWtCw8JQslma+gk1y6aqV7RdP3eB6a/ETvcq4azqajQQwWjnM49JTRYG4BFwBpMxA9AdhnXltdmCnYaCgqH7pnCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocSI26iM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B9EC4CEDD;
+	Thu, 10 Apr 2025 09:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744277226;
+	bh=KspGeLOPCiTHid+2kSxIjeK1u5cGf2Od+QXXtZqsIh4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=zMFLvh3pE8OwQ+F0RkFA6Np9d1guQML54ioB3Q+ClmcCD4Z9WGcff0WDR/bokxfsV
-	 vqaJ5kId6axn9AJ82kvl23Wyo/BpYyrt189+Tm1c217oBhwh4Cze9ZTosb89tCr+7g
-	 hMYf7lgkzbos4JJu3pBiuKr/9aPaN/xn0VtKsvWo=
-Date: Thu, 10 Apr 2025 11:26:38 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Pawel Laszczak <pawell@cadence.com>
-Cc: "peter.chen@kernel.org" <peter.chen@kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] usb: cdnsp: Fix issue with resuming from L1
-Message-ID: <2025041050-condition-stout-8168@gregkh>
-References: <20250410072333.2100511-1-pawell@cadence.com>
- <PH7PR07MB9538959C61B32EBCA33D1909DDB72@PH7PR07MB9538.namprd07.prod.outlook.com>
+	b=ocSI26iMU7FdNcrINygQcY7Lcn+vq/yI7C5/UVXKVcI7Q/btHJHf5E4cn/BHo4Yzo
+	 mlUjxMKeLTGtqhPFynDu16aJJi4NhBGY/Kz7FxMuEj9vnGVFdEOhkBAlowSKcgKe5I
+	 XmmbceVnFkaqjzbON6krUSN/KevxV8ZT4kg8pTzdyik8Ms8HSOTb5HpG5J8GCmcX2l
+	 gUw0GU+doh46JotLv+MgBhg7q3yiubjjoVcHBdSjS0Kt5wR36ugc0aKElSWr7CxY+9
+	 m+N1J1gUNkP6w8larc8lD2ZwSCMrEtsLWKcJ8GMGTv0zykk28eKsVWOinEbYaFC4ms
+	 to5vrzXbFKbig==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1u2oBh-000000006Sq-3JDM;
+	Thu, 10 Apr 2025 11:27:10 +0200
+Date: Thu, 10 Apr 2025 11:27:09 +0200
+From: Johan Hovold <johan@kernel.org>
+To: jens.glathe@oldschoolsolutions.biz
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] arm64: dts: qcom: x1e80100-hp-x14: remove PS8830
+ retimer 1 definitions
+Message-ID: <Z_eO7RUI4c7NXt22@hovoldconsulting.com>
+References: <20250410-hp-x14-v1-0-b4e5ca253ec9@oldschoolsolutions.biz>
+ <20250410-hp-x14-v1-2-b4e5ca253ec9@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,77 +66,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PH7PR07MB9538959C61B32EBCA33D1909DDB72@PH7PR07MB9538.namprd07.prod.outlook.com>
+In-Reply-To: <20250410-hp-x14-v1-2-b4e5ca253ec9@oldschoolsolutions.biz>
 
-On Thu, Apr 10, 2025 at 07:34:16AM +0000, Pawel Laszczak wrote:
-> Subject: [PATCH] usb: cdnsp: Fix issue with resuming from L1
-
-Why is the subject line duplicated here?  Can you fix up your git
-send-email process to not do that?
-
-> In very rare cases after resuming controller from L1 to L0 it reads
-> registers before the clock has been enabled and as the result driver
-> reads incorrect value.
-> To fix this issue driver increases APB timeout value.
+On Thu, Apr 10, 2025 at 11:13:23AM +0200, Jens Glathe via B4 Relay wrote:
+> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 > 
-> Probably this issue occurs only on Cadence platform but fix
-> should have no impact for other existing platforms.
-
-If this is the case, shouldn't you just handle this for Cadence-specific
-hardware and add the check for that to this change?
-
+> Clean-up of regulators, i2c definition, pinctrl
 > 
-> Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence USBSSP DRD Driver")
-> cc: stable@vger.kernel.org
-> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
-> ---
->  drivers/usb/cdns3/cdnsp-gadget.c | 22 ++++++++++++++++++++++
->  drivers/usb/cdns3/cdnsp-gadget.h |  4 ++++
->  2 files changed, 26 insertions(+)
-> 
-> diff --git a/drivers/usb/cdns3/cdnsp-gadget.c b/drivers/usb/cdns3/cdnsp-gadget.c
-> index 87f310841735..b12581b94567 100644
-> --- a/drivers/usb/cdns3/cdnsp-gadget.c
-> +++ b/drivers/usb/cdns3/cdnsp-gadget.c
-> @@ -139,6 +139,21 @@ static void cdnsp_clear_port_change_bit(struct cdnsp_device *pdev,
->  	       (portsc & PORT_CHANGE_BITS), port_regs);
->  }
->  
-> +static void cdnsp_set_apb_timeout_value(struct cdnsp_device *pdev)
-> +{
-> +	__le32 __iomem *reg;
-> +	void __iomem *base;
-> +	u32 offset = 0;
-> +	u32 val;
-> +
-> +	base = &pdev->cap_regs->hc_capbase;
-> +	offset = cdnsp_find_next_ext_cap(base, offset, D_XEC_PRE_REGS_CAP);
-> +	reg = base + offset + REG_CHICKEN_BITS_3_OFFSET;
-> +
-> +	val  = le32_to_cpu(readl(reg));
-> +	writel(cpu_to_le32(CHICKEN_APB_TIMEOUT_SET(val)), reg);
+> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 
-Do you need to do a read to ensure that the write is flushed to the
-device before continuing?
+I already sent a patch removing the bogus retimer here (you were CCed):
 
-> +}
-> +
->  static void cdnsp_set_chicken_bits_2(struct cdnsp_device *pdev, u32 bit)
->  {
->  	__le32 __iomem *reg;
-> @@ -1798,6 +1813,13 @@ static int cdnsp_gen_setup(struct cdnsp_device *pdev)
->  	pdev->hci_version = HC_VERSION(pdev->hcc_params);
->  	pdev->hcc_params = readl(&pdev->cap_regs->hcc_params);
->  
-> +	/* In very rare cases after resuming controller from L1 to L0 it reads
-> +	 * registers before the clock has been enabled and as the result driver
-> +	 * reads incorrect value.
-> +	 * To fix this issue driver increases APB timeout value.
-> +	 */
+	https://lore.kernel.org/lkml/20250328084154.16759-1-johan+linaro@kernel.org/
 
-Nit, please use the "normal" kernel comment style.
+I suggest you rebase this series on that one and mention the dependency
+in the cover letter.
 
-thanks,
+Similarly, Juerg already sent a patch enabling the repeaters here:
 
-greg k-h
+	https://lore.kernel.org/r/20250319160509.1812805-1-juerg.haefliger@canonical.com
+
+so you can drop your 5/5 as well.
+
+Johan
 
