@@ -1,201 +1,179 @@
-Return-Path: <linux-kernel+bounces-598276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2E29A84475
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:17:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F6B4A8447A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821E04E189C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:12:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF7B54E2402
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231C328A400;
-	Thu, 10 Apr 2025 13:10:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689663A8C1
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE82328A40F;
+	Thu, 10 Apr 2025 13:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X8K9YRJl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3896F2857F7
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744290609; cv=none; b=km65zYCUJz6zdFKryNGmpCJjeg5GeQZfABToMWC3sNhwD6VpJbOnwo4Hz86VXTao+bVQpjw51/1ybpY7ToG9S8ehCPwSne4/jlfk8vSpFPHF6HRW3lQg8UhYQsFRlUiLONseiVJIqRRpPEeADtqaXURu6LD1iBDrajLTFNwgmOA=
+	t=1744290660; cv=none; b=mn5i4e8quW0wsKqZsQMbLd3VZnvXYY47x/09PBJUwMG0Qi2q1OaRrmHNiG2itqKrwkvdZN67JYhglQQzrZrxLj9PoH2+jRw2H9+ygGRFg8TEQI04ssJwbJa/mR9hZk3vSsf4+sVuYKHqcOuPLCnFdcAZSlfepW1IIWVgtCjGkWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744290609; c=relaxed/simple;
-	bh=FSkj+qfWLz4GnJZojx15aNKRylJWPim4AQal2A35YX8=;
+	s=arc-20240116; t=1744290660; c=relaxed/simple;
+	bh=8rU9DPY5jhcNoVSZ4KXashjSIT2CntjHbzeh8vcOQP0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EpKGEurQ8uTVanMSyq1yY2UmOAI4S0dK5Jj9ijtTnjfj4XW01pGOlTeI0lyE9hynZCaUhv4XB5wC3Ue3SziQIZrQ9mpL48vcIwVfIPUB7DToNDZoQc9ckpi86JUzagKHz2qGOzv2vDfR1s7MVN4P6yhQpBZV9UsPCIPYsXx5nBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6DF81516
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:10:06 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 59B623F6A8
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:10:06 -0700 (PDT)
-Date: Thu, 10 Apr 2025 14:09:52 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	kernel@collabora.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v6 1/4] drm/panthor: Introduce BO labeling
-Message-ID: <Z_fDIECHzkJjpwDQ@e110455-lin.cambridge.arm.com>
-References: <20250409212233.2036154-1-adrian.larumbe@collabora.com>
- <20250409212233.2036154-2-adrian.larumbe@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HbBlPB+XwIWwFkscUk+Ua4d+3V2zwETtEUxgZy1djgt7TGVn3DOQ33WCZmsoi/XzowR6ozgcAdxBXgQQ1OVfFbjvhOSybGjTocza8XpFVJ1FbiCumZoZUKcOeCD43yvHZ0PYaVOsV8DojGdwv1UnTi3sD4P5yxowGSsdtBERF+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X8K9YRJl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744290657;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ABA2PhWP8M0Fi1ZJgXN0xWZdkHEUmH4kzeL6fYLfoOU=;
+	b=X8K9YRJlRi9gCd/bJLMef81mQpEzp1qkDu2SEZuiOb7cjlBk4s5XGglxd/voHxwaoJcMa/
+	Z/VgneBMzNV88NknHp5hwHCeci2dKqUcMQX5nS+8bEMhcUswxk5zzVsiY5k3DEYvgmEx6V
+	VaJS/OAdlbLPuBlW+iIxpSityhF7GLg=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-620-gOdnlTUuNkCU2g29Aj_LqA-1; Thu,
+ 10 Apr 2025 09:10:53 -0400
+X-MC-Unique: gOdnlTUuNkCU2g29Aj_LqA-1
+X-Mimecast-MFC-AGG-ID: gOdnlTUuNkCU2g29Aj_LqA_1744290652
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CE92C19030B5;
+	Thu, 10 Apr 2025 13:10:48 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.54])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8B84E1954B04;
+	Thu, 10 Apr 2025 13:10:45 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 10 Apr 2025 15:10:13 +0200 (CEST)
+Date: Thu, 10 Apr 2025 15:10:09 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Lennart Poettering <lennart@poettering.net>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org,
+	Peter Ziljstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH] pidfs: ensure consistent ENOENT/ESRCH reporting
+Message-ID: <20250410131008.GB15280@redhat.com>
+References: <20250409-sesshaft-absurd-35d97607142c@brauner>
+ <20250409-rohstoff-ungnade-d1afa571f32c@brauner>
+ <20250409184040.GF32748@redhat.com>
+ <20250410101801.GA15280@redhat.com>
+ <20250410-barhocker-weinhandel-8ed2f619899b@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250409212233.2036154-2-adrian.larumbe@collabora.com>
+In-Reply-To: <20250410-barhocker-weinhandel-8ed2f619899b@brauner>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Wed, Apr 09, 2025 at 10:22:19PM +0100, Adrián Larumbe wrote:
-> Add a new character string Panthor BO field, and a function that allows
-> setting it from within the driver.
-> 
-> Driver takes care of freeing the string when it's replaced or no longer
-> needed at object destruction time, but allocating it is the responsibility
-> of callers.
-> 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+On 04/10, Christian Brauner wrote:
+>
+> On Thu, Apr 10, 2025 at 12:18:01PM +0200, Oleg Nesterov wrote:
+> > On 04/09, Oleg Nesterov wrote:
+> > >
+> > > On 04/09, Christian Brauner wrote:
+> > > >
+> > > > The seqcounter might be
+> > > > useful independent of pidfs.
+> > >
+> > > Are you sure? ;) to me the new pid->pid_seq needs more justification...
+>
+> Yeah, pretty much. I'd make use of this in other cases where we need to
+> detect concurrent changes to struct pid without having to take any
+> locks. Multi-threaded exec in de_exec() comes to mind as well.
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+Perhaps you are right, but so far I am still not sure it makes sense.
+And we can always add it later if we have another (more convincing)
+use-case.
 
-Best regards,
-Liviu
+> > To remind, detach_pid(pid, PIDTYPE_PID) does wake_up_all(&pid->wait_pidfd) and
+> > takes pid->wait_pidfd->lock.
+> >
+> > So if pid_has_task(PIDTYPE_PID) succeeds, __unhash_process() -> detach_pid(TGID)
+> > is not possible until we drop pid->wait_pidfd->lock.
+> >
+> > If detach_pid(PIDTYPE_PID) was already called and have passed wake_up_all(),
+> > pid_has_task(PIDTYPE_PID) can't succeed.
+>
+> I know. I was trying to avoid having to take the lock and just make this
+> lockless. But if you think we should use this lock here instead I'm
+> willing to do this. I just find the sequence counter more elegant than
+> the spin_lock_irq().
 
-> ---
->  drivers/gpu/drm/panthor/panthor_gem.c | 39 +++++++++++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_gem.h | 17 ++++++++++++
->  2 files changed, 56 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/panthor/panthor_gem.c
-> index 8244a4e6c2a2..af0ac17f357f 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gem.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gem.c
-> @@ -2,6 +2,7 @@
->  /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
->  /* Copyright 2023 Collabora ltd. */
->  
-> +#include <linux/cleanup.h>
->  #include <linux/dma-buf.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/err.h>
-> @@ -18,6 +19,14 @@ static void panthor_gem_free_object(struct drm_gem_object *obj)
->  	struct panthor_gem_object *bo = to_panthor_bo(obj);
->  	struct drm_gem_object *vm_root_gem = bo->exclusive_vm_root_gem;
->  
-> +	/*
-> +	 * Label might have been allocated with kstrdup_const(),
-> +	 * we need to take that into account when freeing the memory
-> +	 */
-> +	kfree_const(bo->label.str);
-> +
-> +	mutex_destroy(&bo->label.lock);
-> +
->  	drm_gem_free_mmap_offset(&bo->base.base);
->  	mutex_destroy(&bo->gpuva_list_lock);
->  	drm_gem_shmem_free(&bo->base);
-> @@ -196,6 +205,7 @@ struct drm_gem_object *panthor_gem_create_object(struct drm_device *ddev, size_t
->  	obj->base.map_wc = !ptdev->coherent;
->  	mutex_init(&obj->gpuva_list_lock);
->  	drm_gem_gpuva_set_lock(&obj->base.base, &obj->gpuva_list_lock);
-> +	mutex_init(&obj->label.lock);
->  
->  	return &obj->base.base;
->  }
-> @@ -247,3 +257,32 @@ panthor_gem_create_with_handle(struct drm_file *file,
->  
->  	return ret;
->  }
-> +
-> +void
-> +panthor_gem_bo_set_label(struct drm_gem_object *obj, const char *label)
-> +{
-> +	struct panthor_gem_object *bo = to_panthor_bo(obj);
-> +	const char *old_label;
-> +
-> +	scoped_guard(mutex, &bo->label.lock) {
-> +		old_label = bo->label.str;
-> +		bo->label.str = label;
-> +	}
-> +
-> +	kfree(old_label);
-> +}
-> +
-> +void
-> +panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const char *label)
-> +{
-> +	const char *str;
-> +
-> +	str = kstrdup_const(label, GFP_KERNEL);
-> +	if (!str) {
-> +		/* Failing to allocate memory for a label isn't a fatal condition */
-> +		drm_warn(bo->obj->dev, "Not enough memory to allocate BO label");
-> +		return;
-> +	}
-> +
-> +	panthor_gem_bo_set_label(bo->obj, str);
-> +}
-> diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/panthor/panthor_gem.h
-> index 1a363bb814f4..af0d77338860 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gem.h
-> +++ b/drivers/gpu/drm/panthor/panthor_gem.h
-> @@ -46,6 +46,20 @@ struct panthor_gem_object {
->  
->  	/** @flags: Combination of drm_panthor_bo_flags flags. */
->  	u32 flags;
-> +
-> +	/**
-> +	 * @label: BO tagging fields. The label can be assigned within the
-> +	 * driver itself or through a specific IOCTL.
-> +	 */
-> +	struct {
-> +		/**
-> +		 * @label.str: Pointer to NULL-terminated string,
-> +		 */
-> +		const char *str;
-> +
-> +		/** @lock.str: Protects access to the @label.str field. */
-> +		struct mutex lock;
-> +	} label;
->  };
->  
->  /**
-> @@ -91,6 +105,9 @@ panthor_gem_create_with_handle(struct drm_file *file,
->  			       struct panthor_vm *exclusive_vm,
->  			       u64 *size, u32 flags, uint32_t *handle);
->  
-> +void panthor_gem_bo_set_label(struct drm_gem_object *obj, const char *label);
-> +void panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const char *label);
-> +
->  static inline u64
->  panthor_kernel_bo_gpuva(struct panthor_kernel_bo *bo)
->  {
-> -- 
-> 2.48.1
-> 
+This is subjective, and quite possibly I am wrong. But yes, I'd prefer
+to (ab)use pid->wait_pidfd->lock in pidfd_prepare() for now and not
+penalize __unhash_process(). Simply because this is simpler.
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+If you really dislike taking wait_pidfd->lock, we can add mb() into
+__unhash_process() or even smp_mb__after_spinlock() into __change_pid(),
+but this will need a lengthy comment...
+
+
+
+As for your patch... it doesn't apply on top of 3/4, but I guess it
+is clear what does it do, and (unfortunately ;) it looks correct, so
+I won't insist too much. See a couple of nits below.
+
+> this imho and it would give pidfds a reliable way to detect relevant
+> concurrent changes locklessly without penalizing other critical paths
+> (e.g., under tasklist_lock) in the kernel.
+
+Can't resist... Note that raw_seqcount_begin() in pidfd_prepare() will
+take/drop tasklist_lock if it races with __unhash_process() on PREEMPT_RT.
+Yes, this is unlikely case, but still...
+
+Now. Unless I misread your patch, pidfd_prepare() does "err = 0" only
+once before the main loop. And this is correct. But this means that
+we do not need the do/while loop.
+
+If read_seqcount_retry() returns true, we can safely return -ESRCH. So
+we can do
+
+	seq = raw_seqcount_begin(&pid->pid_seq);
+
+	if (!PIDFD_THREAD && !pid_has_task(PIDTYPE_TGID))
+		err = -ENOENT;
+
+	if (!pid_has_task(PIDTYPE_PID))
+		err = -ESRCH;
+
+	if (read_seqcount_retry(pid->pid_seq, seq))
+		err = -ESRCH;
+
+In fact we don't even need raw_seqcount_begin(), we could use
+raw_seqcount_try_begin().
+
+And why seqcount_rwlock_t? A plain seqcount_t can equally work.
+
+
+And, if we use seqcount_rwlock_t,
+
+	lockdep_assert_held_write(&tasklist_lock);
+	...
+	raw_write_seqcount_begin(pid->pid_seq);
+
+in __unhash_process() looks a bit strange. I'd suggest to use
+write_seqcount_begin() which does seqprop_assert() and kill
+lockdep_assert_held_write().
+
+Oleg.
+
 
