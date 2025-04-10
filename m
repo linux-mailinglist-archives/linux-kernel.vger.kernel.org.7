@@ -1,181 +1,100 @@
-Return-Path: <linux-kernel+bounces-598636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF43A84877
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:50:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB54A848C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 197C49A762B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94B8A4E5647
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E351F03C0;
-	Thu, 10 Apr 2025 15:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530C0290BC5;
+	Thu, 10 Apr 2025 15:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EO3eS51E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Wo19Ub8D"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C751EF381;
-	Thu, 10 Apr 2025 15:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FAE28FFE6
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 15:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744300069; cv=none; b=flGQo7kkf4um+GWbMiZ+DbzAAYjQUYofIxen5E9VEBnWSsiXMJVvizIrIespGWG6EdbRYASMhztG36C4wMLZpHTZ6ksL918XPsPG8V1IiFKl5xDkGJJGJ4TdFezsiN9KUM44EEC1LlbUFiQWy0ES8/VUFytRV2f3j2wyP1iMgZE=
+	t=1744300083; cv=none; b=r/Yg43lRkBcK0hbdCV9IZ19tcrIRZoLVHuoikFYA6gcknkmbWZfQP8+ZQ8eVOYBwajiB+I9AFmi/PssLRBT3YK2K7vypr0l6Q96LAilqzrXk6A2ifRqoBDqV8AIpumMPbGSquxrOwehlnY4qZLDe1xa2EOF8oOLabF/mRiwpbX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744300069; c=relaxed/simple;
-	bh=17E6AqFYyreXuXiCUMrel7kiiXcdT5b24ICEL4rFA+A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bp1E7gERqX1br4Y+l1zLCAb46x+Mb0Z8Vi690tn9j6QH9TWTSYl8er8MrDEShIYtZvDU9IcqhZ1cADHLIWWP/oc1VQF+ytBCA3AZMOU0p93xKKq3rsgAjpt3wPV07eHMXdD5LKGwWrXA2MACutbZBoYlXD0x1LN4A4I4Vjl6p0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EO3eS51E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33747C4CEE9;
-	Thu, 10 Apr 2025 15:47:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744300067;
-	bh=17E6AqFYyreXuXiCUMrel7kiiXcdT5b24ICEL4rFA+A=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=EO3eS51Ey9S8GJDcQAD6Rr1t3w6p6SAFWhoWkQ3W2bG6/AQW4FOhZwWpfKl+Wa2CX
-	 rjHhnrPIfNDzvsNPhaHlwKdZoeWSmw4nX1LiK+OVHzZwvwGzoEcL5T6BrmVVYaChhw
-	 P89evcQIT5K7fAHjnq9wbIjJ7jWx+ciBKRTcDqM2aZmRBv/n3LnYH+n9JuvVJQap9w
-	 3F9BCpDxC9gZjNGhRtDyqme2YIWauF1tC7B4P4JU0v2WqsTaDPyhu83pmJz++H32z/
-	 4GL746Vd9s/tc+V5Y4TK6nVcNQK/xh15HP+fsn0Oks0zVeOoxrV/b/vl3RxLG+kHyZ
-	 8GAJNzuFYqX6A==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Date: Thu, 10 Apr 2025 10:47:22 -0500
-Subject: [PATCH v2 01/17] arm64: dts: allwinner: h5/h6: Drop spurious
- 'clock-latency-ns' properties
+	s=arc-20240116; t=1744300083; c=relaxed/simple;
+	bh=+f1yjCXtyIw2axRjGihgJUT5IiSnyLaHMlnqSebeZtg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lceRcO9yoM68FLJ3eOALJkZ/n5pVHDr92y/rU5Q0sbD1wm+Kq+9e7zCMed/1dSqGce+qQBZDWla5OnU4mxYDF9NJM6ULodX/ZIOJs4eFPCrqFcDUPC1efYQ/VyKG2FepCv1RbX/w1SQMlZqHxGKRlBckL1JHv96hEaToQQPTxKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Wo19Ub8D; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744300078;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Sa+81DgxWNssyvdo2ddQJ4tBEe/hHHJeQcYjTNvrhp0=;
+	b=Wo19Ub8Dqw5M9Vmpn7FXEny7JO+nd4N7j4P4hLmiRnu5AWF18gfWElUlQZR8O75+IindC8
+	cpvASUI1NGXj0KYisLBCWbOHIHB+1CbMTcZ43vC3o2NpcL6FhGZQUbbc9W/gE5V3yUcOTQ
+	8goQk+x5aaOOgMn7SP8fpuqe7aKljv8=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Jens Axboe <axboe@kernel.dk>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	"Shin'ichiro Kawasaki" <shinichiro.kawasaki@wdc.com>,
+	Zhu Yanjun <yanjun.zhu@linux.dev>,
+	Zheng Qixing <zhengqixing@huawei.com>,
+	Yu Kuai <yukuai3@huawei.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] null_blk: Use strscpy() instead of strscpy_pad() in null_add_dev()
+Date: Thu, 10 Apr 2025 17:47:23 +0200
+Message-ID: <20250410154727.883207-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250410-dt-cpu-schema-v2-1-63d7dc9ddd0a@kernel.org>
-References: <20250410-dt-cpu-schema-v2-0-63d7dc9ddd0a@kernel.org>
-In-Reply-To: <20250410-dt-cpu-schema-v2-0-63d7dc9ddd0a@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Conor Dooley <conor@kernel.org>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Steen Hegelund <Steen.Hegelund@microchip.com>, 
- Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Heiko Stuebner <heiko@sntech.de>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Andy Gross <agross@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
- Stephen Boyd <sboyd@kernel.org>, zhouyanjie@wanyeetech.com, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, imx@lists.linux.dev, 
- linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-renesas-soc@vger.kernel.org, linux-mips@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- Andre Przywara <andre.przywara@arm.com>
-X-Mailer: b4 0.15-dev
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-'clock-latency-ns' is not a valid property for CPU nodes. It belongs in
-OPP table (which has it). Drop them from the CPU nodes.
+blk_mq_alloc_disk() already zero-initializes the destination buffer,
+making strscpy() sufficient for safely copying the disk's name. The
+additional NUL-padding performed by strscpy_pad() is unnecessary.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+If the destination buffer has a fixed length, strscpy() automatically
+determines its size using sizeof() when the argument is omitted. This
+makes the explicit size argument unnecessary.
+
+The source string is also NUL-terminated and meets the __must_be_cstr()
+requirement of strscpy().
+
+No functional changes intended.
+
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 4 ----
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 4 ----
- 2 files changed, 8 deletions(-)
+ drivers/block/null_blk/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-index d3caf27b6a55..48802bf02f3b 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-@@ -16,7 +16,6 @@ cpu0: cpu@0 {
- 			reg = <0>;
- 			enable-method = "psci";
- 			clocks = <&ccu CLK_CPUX>;
--			clock-latency-ns = <244144>; /* 8 32k periods */
- 			#cooling-cells = <2>;
- 		};
+diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+index 3bb9cee0a9b5..aa163ae9b2aa 100644
+--- a/drivers/block/null_blk/main.c
++++ b/drivers/block/null_blk/main.c
+@@ -2031,7 +2031,7 @@ static int null_add_dev(struct nullb_device *dev)
+ 	nullb->disk->minors = 1;
+ 	nullb->disk->fops = &null_ops;
+ 	nullb->disk->private_data = nullb;
+-	strscpy_pad(nullb->disk->disk_name, nullb->disk_name, DISK_NAME_LEN);
++	strscpy(nullb->disk->disk_name, nullb->disk_name);
  
-@@ -26,7 +25,6 @@ cpu1: cpu@1 {
- 			reg = <1>;
- 			enable-method = "psci";
- 			clocks = <&ccu CLK_CPUX>;
--			clock-latency-ns = <244144>; /* 8 32k periods */
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -36,7 +34,6 @@ cpu2: cpu@2 {
- 			reg = <2>;
- 			enable-method = "psci";
- 			clocks = <&ccu CLK_CPUX>;
--			clock-latency-ns = <244144>; /* 8 32k periods */
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -46,7 +43,6 @@ cpu3: cpu@3 {
- 			reg = <3>;
- 			enable-method = "psci";
- 			clocks = <&ccu CLK_CPUX>;
--			clock-latency-ns = <244144>; /* 8 32k periods */
- 			#cooling-cells = <2>;
- 		};
- 	};
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index 2301c59b41b1..73e8604315c5 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -27,7 +27,6 @@ cpu0: cpu@0 {
- 			reg = <0>;
- 			enable-method = "psci";
- 			clocks = <&ccu CLK_CPUX>;
--			clock-latency-ns = <244144>; /* 8 32k periods */
- 			#cooling-cells = <2>;
- 			i-cache-size = <0x8000>;
- 			i-cache-line-size = <64>;
-@@ -44,7 +43,6 @@ cpu1: cpu@1 {
- 			reg = <1>;
- 			enable-method = "psci";
- 			clocks = <&ccu CLK_CPUX>;
--			clock-latency-ns = <244144>; /* 8 32k periods */
- 			#cooling-cells = <2>;
- 			i-cache-size = <0x8000>;
- 			i-cache-line-size = <64>;
-@@ -61,7 +59,6 @@ cpu2: cpu@2 {
- 			reg = <2>;
- 			enable-method = "psci";
- 			clocks = <&ccu CLK_CPUX>;
--			clock-latency-ns = <244144>; /* 8 32k periods */
- 			#cooling-cells = <2>;
- 			i-cache-size = <0x8000>;
- 			i-cache-line-size = <64>;
-@@ -78,7 +75,6 @@ cpu3: cpu@3 {
- 			reg = <3>;
- 			enable-method = "psci";
- 			clocks = <&ccu CLK_CPUX>;
--			clock-latency-ns = <244144>; /* 8 32k periods */
- 			#cooling-cells = <2>;
- 			i-cache-size = <0x8000>;
- 			i-cache-line-size = <64>;
-
+ 	if (nullb->dev->zoned) {
+ 		rv = null_register_zoned_dev(nullb);
 -- 
-2.47.2
+2.49.0
 
 
