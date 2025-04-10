@@ -1,151 +1,331 @@
-Return-Path: <linux-kernel+bounces-598691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58889A8498D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C779A8499B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D98F462B43
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:25:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8334A4D72
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA7E1EE035;
-	Thu, 10 Apr 2025 16:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EBB1EE7B9;
+	Thu, 10 Apr 2025 16:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ineRWtWX"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mcI8l2aw"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F151D5CE8
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 16:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9AA1EE031;
+	Thu, 10 Apr 2025 16:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744302321; cv=none; b=W7Hz6GestWKc7xnT2NfR4rMW3ENaoDa053xLxNidS4ayrs/68/SXziN5/wTFuRoduTJXMWwFjBnRs8KJLB1WcCOSBKa5Bzl6s3YAbjNIbOcwyndhle9DXBU185p1iesxKC3u5mLvNCEC8JvDE9Xmj3CKl+JHev58agQPtcrtz5I=
+	t=1744302345; cv=none; b=YGg4m7HIAo9HvZgqMPx7zrjkkD3LQ5ffB49kvPjnJ5U4q1HSLiUpVM50flg+GkP2mCJlQOtX6OSZ67EU/FnsnAnsMcecgga9k85IxotWynY4zdbsTyWU8rjSq2pvW8eewJnKcrVliCaNKbqAceICLgQkLrjqP1kQI+ei0o+cBro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744302321; c=relaxed/simple;
-	bh=Xyqh31/up32k9QyjvOp1tbHBRtZxHnBYUmmh3lPeV3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Gs+EBk4F6t6aiQ6uAwPcG+lwD1fLvbxDlM9ng+Ho9sewcf2vCnsEB3rB2iFSb+ntcHustpQKfKBCiALoHvLCCDq25gpY+j6COuwAedVD/DywpLrq2ynGiv9xkpBSCnKsMVE6ez4GL1ea80SNR6Eb+Rl0oNsnU6hNxUdIKIxkSeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ineRWtWX; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39c266c1389so655222f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:25:19 -0700 (PDT)
+	s=arc-20240116; t=1744302345; c=relaxed/simple;
+	bh=x/bO77EEyI3OCt62DbSrYycKBhh5jpMg4E8TC+wQ+a8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bnKiHz/8rR+JvzCCh5i2O9M+FTuwRdyZKbYDarCq5wBPoa5qGHK/LxHKcCOy4k3sPJ+WpnhSX0YkkDI4lIj/0Cs80dN17GalL3zoaxBsAEonHm88XVwkFB3n0FhOH5hcL4mYA5nrJ8claPd1qwKFRQJKY4SZIh+51r+8LOQ2QXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mcI8l2aw; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-224100e9a5cso12064615ad.2;
+        Thu, 10 Apr 2025 09:25:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744302318; x=1744907118; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wB7GpXUjol0KQ/YbX53LBVb2Ev80ElCPLnkY+8Zk89U=;
-        b=ineRWtWXQW7mvtsTlMk6+UVf38cq23wMxvihzK7sCHY+qm6x6JJsG994OH4HzFeruY
-         P3IB5HIyR2d0DaKYeVZlYhJGqYSWN8JgK3m9UBSIyPFD8I+D7pZY9JVI8qeQ0pbrDhVu
-         LTZU3q9S9xD8zF5om89+oRB6cwYoyAbnh6QhwUNPPrjAz+L7kkcwmtVBJfJ1lpV8OW4Y
-         RV7+fdra4lWO0XVH8yG6CK9iWb18iHuUZNj3BaU1EjR7vFqH9lsuFNL2cZIsLNt1ha7F
-         1nzzOe5fw/gc15YvscoFdkO7twPQFYmp+0u77le3tUURLG9WNyuGn2kVGwlCXa74YjKQ
-         4bCw==
+        d=gmail.com; s=20230601; t=1744302342; x=1744907142; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DpU2k3vR3N9darrIRQy4VUCi59YBugQwxClUhu0eWlo=;
+        b=mcI8l2awE6sl4FPgnfoa79thHMkCJP8b3Dm50QL4Jf2Gl6ibxWbGw+cMQqXSLSJ7v0
+         H8rxx9BqMj8+VDgE3wLfCjl/8UkRQZQb8KNEzAk+SMSID6Fw/7QE0mj6ybf39SUNd9dr
+         fEZ1RvquzlgattzsdvHbsQ2guZ9YS3UT9BvkFRCXzMWV4P6TYd735u1BgRJxFP63sk5E
+         ktnGv88kDYHBAC+ev6bkAo8DnnxgqvMpmZvpwLyGTVt4Xnwh6vZpqFeP9RisiKvlUkJh
+         IowvlWxgHscd6qnIYjiBl20A1N/BtofWqUaS7dhAPuioVqqSXjLjePd+SE/N4eSS2mGl
+         XlEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744302318; x=1744907118;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wB7GpXUjol0KQ/YbX53LBVb2Ev80ElCPLnkY+8Zk89U=;
-        b=q/yu91NmgjQ4DnlhXuCC8ecGi8I9iuUDJNVFrsQSvo6hkZrozhuyJnx2HdsAsZmLK8
-         WYQpgTr6rLHyl83zbW8PxIVV3jdlVNYEZBVdop8m6TCpRi+QCqszxYkKI5uXDIgWHCrJ
-         WQWIObMqg7+vK0YhBcvjqqdMePBApubHbSG5ilCRZgbmIsQrelJQFMpmfXqDrpOx7h6f
-         u3o0fKB7iaIVvW2tpGUtUPJ5o9uMNxr7c3eBLU1b36z3FUf6xMLqmqQ+F7YEzSzuFly+
-         YAe37QUHvykTeornEKeSvxIkIWI/ZZGNrPB+rGRgEWVPsrgrk+Gb8XfvgHvCXolwBRId
-         Fs9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUBcvA0cBGjvjHrWkFmXhaADomRDvRR9MSxiUECmpvVRslV3h9+NzDF6iwNAkR5DbCOzAebaiJ1J2iorq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKh3qdjcIDAxrHmO6SmV/kCj25hmEftO/8/3v8MHv+00gTGonU
-	oRwA+8Aql1HuDM05B5Zovewxnicwliwcn4hEOemDVekzUZaqjNnkg+tIwzX3X6E=
-X-Gm-Gg: ASbGncsDZHw4W8tzCyzzD/tGwkp0koRv7WtZdAt56Ly0IDqtC/gCzb/C/6eLM7uO7f5
-	nL1FaLUZCOoaF0NxjnCpSfj/NyNtn+Y6iXeRq0IEiajLvtKekmRLG7WTXTvNO/Al97i1pmO+X62
-	3Ru2ojbdmJAECOiRjoVou/uChlYBWEbG2HKl6TljuVycF3fgDkwUJhLA2SOh7FWcKcLaFu1r/Lu
-	CXHofRBz2EeS84fU2ASe8d1Sza+kXYqSxaeY4UL+mNUzLMpiXJq1bhfa6IhSKaRp9iiiyZpWbBy
-	gT5xH8/MvENj/76FzR4o9LAg5QD8z5X5Oa5eMH6nUXsYaQ==
-X-Google-Smtp-Source: AGHT+IFeTZmUdQ2vt1x1tnJcXZclhQ5dTgbaFR30GmeNzwyzvcpuB5z3WB17x7rprpf4keTp6EzbIA==
-X-Received: by 2002:a05:6000:2903:b0:391:4999:778b with SMTP id ffacd0b85a97d-39d8fd522b7mr2970676f8f.28.1744302317763;
-        Thu, 10 Apr 2025 09:25:17 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39d89362fd6sm5398648f8f.16.2025.04.10.09.25.16
+        d=1e100.net; s=20230601; t=1744302342; x=1744907142;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DpU2k3vR3N9darrIRQy4VUCi59YBugQwxClUhu0eWlo=;
+        b=JeZlRy87c/ywjtsqsolTdSjPVEzYyctSIObkomQlwWMDYOwba9Lv18v+sTuIJJcgX6
+         2UOFI6BCWrQp6IPF9cRiQiXcJvmrBdONcigwgOUZeSvFyMzPcvhSDas+QmUUBICbwI6W
+         XCBEqh6VJ5Wow/xgso1IRQF0JuAOpcCefZqfWEsLs07lcuE5niRE1RGI+dWylBTixNfA
+         yMTlMMI1DrVN6oFFmbD0vLGHQ1i5usp3XHS9GkI19P9dn2NEH4DSXejKVjZ0EU5LPUxa
+         PVTEjjo2aEf8M75ibXO9vWVGGyLwgrHzE/5pfISFDm1UOb52PZUXALKrj2TNDgMB0kc6
+         rkOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU34s1h2g4/KaPQ9U9on3Hp4GskDrqzAeL2IxN/v7ywWQqJ38EidNyRzYypjU1CyGa1OWEH0cc9VGsiyQ==@vger.kernel.org, AJvYcCUc2VHsbqUDEceZfj0c8yCDnCUQAkJx/2ACA8B5lpPrPSr+m4JKZ1lUFkMHQxw4Frtm/k9mehxdicLewnIH@vger.kernel.org, AJvYcCVCX4e1YIpOug8wkfksrUn7onMzrt+idtwaB3gjC194+WJQQXuYnr+GXIr8BDZ+0DCklebyCDixmaZ/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm/7kEBDZROHnEmhEUnX0nf5J0/vhx4sShR6eiraQt8Jmwlsxe
+	7umTGnbO64Zv04tlBbUn3darDZu4icYAVdmV2wdZrdOETGRELcA3
+X-Gm-Gg: ASbGncv4/eMKObCW55bL215h83gZnovjJ36jIbu6B5lyAEHIVFdXbbWh2dzX622YI2I
+	6ruR+NH2bjM+hQAILCsgi213LMOPBxE9XWr2n0nanlIa95mnkFs3SfsJgZdZ1lH38GcjOmHh+A7
+	pAq083F63mK/2HuTuS50Ai42sXhKjTJVygKbApzg5VXAZvBwXxgZ/U7Y7H+/qhc4gE3+IU4RNTt
+	kiCFCaBD7V/sVUYrOVvR3s2PzmjYkyql+0cuICNen/LVlsNtnK6osoS7uxiYYKVr6mBUhIEJrOT
+	hSm4Zi4EnQuhK2tTcgIBKVtsi+h9sBQ39gt0W9I2q+uSNIiVYm8soZBxP0iMlfFi
+X-Google-Smtp-Source: AGHT+IF9Guim8/3coeLyjnCmE0Ple3bGkG9MUpXvj2ZI58J0waQlGLnDCVLUK79LBO5EQaK4P+eDYA==
+X-Received: by 2002:a17:903:186:b0:21f:988d:5758 with SMTP id d9443c01a7336-22be03902c8mr44157485ad.35.1744302342281;
+        Thu, 10 Apr 2025 09:25:42 -0700 (PDT)
+Received: from localhost.localdomain ([123.16.133.44])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccbf62sm32617685ad.244.2025.04.10.09.25.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 09:25:17 -0700 (PDT)
-Date: Thu, 10 Apr 2025 19:25:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dmitry Baryshkov <lumag@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Imre Deak <imre.deak@intel.com>, Lyude Paul <lyude@redhat.com>,
-	Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
-	Suraj Kandpal <suraj.kandpal@intel.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Abel Vesa <abel.vesa@linaro.org>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/display: dp: delete some dead code
-Message-ID: <de03fbc6-ca8d-4d3d-b80f-d1235b2b346f@stanley.mountain>
+        Thu, 10 Apr 2025 09:25:41 -0700 (PDT)
+From: Nam Tran <trannamatk@gmail.com>
+To: krzk+dt@kernel.org
+Cc: pavel@kernel.org,
+	lee@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	corbet@lwn.net,
+	devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/5] docs: ABI: Document LP5812 LED sysfs interfaces
+Date: Thu, 10 Apr 2025 23:25:17 +0700
+Message-Id: <20250410162517.10074-1-trannamatk@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <707dc912-12d2-4b50-b934-0c1d1f5efe6b@kernel.org>
+References: <707dc912-12d2-4b50-b934-0c1d1f5efe6b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-We re-worked this code a bit in commit af67978ee37e ("drm/display: dp:
-use new DCPD access helpers") but there was a little bit of stray
-dead code left over.  Clean it up.
+On Sun, 6 Apr 2025, Krzysztof Kozlowski wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpu/drm/display/drm_dp_helper.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+> On 05/04/2025 20:32, Nam Tran wrote:
+> > The LP5812 is a 4 × 3 matrix RGB LED driver
+> > with autonomous animation engine control.
+> > 
+> > The driver provides interfaces to configure
+> > LED modes manual/autonomous, set PWM/DC values,
+> > and manage autonomous animation engines.
+> > 
+> > Signed-off-by: Nam Tran <trannamatk@gmail.com>
+> > ---
+> >  .../ABI/testing/sysfs-bus-i2c-devices-lp5812  | 150 ++++++++++++++++++
+> >  MAINTAINERS                                   |   1 +
+> >  2 files changed, 151 insertions(+)
+> >  create mode 100644 Documentation/ABI/testing/sysfs-bus-i2c-devices-lp5812
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-bus-i2c-devices-lp5812 b/Documentation/ABI/testing/sysfs-bus-i2c-devices-lp5812
+> > new file mode 100644
+> > index 000000000000..e745f0f936c5
+> > --- /dev/null
+> > +++ b/Documentation/ABI/testing/sysfs-bus-i2c-devices-lp5812
+> > @@ -0,0 +1,150 @@
+> > +What:		/sys/bus/i2c/devices/.../lp5812_chip_setup/device_enable
+> 
+> I do not see reason for such ABI. If you want to disable, just unbind it.
 
-diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/display/drm_dp_helper.c
-index 57828f2b7b5a..f38b4dc14e1c 100644
---- a/drivers/gpu/drm/display/drm_dp_helper.c
-+++ b/drivers/gpu/drm/display/drm_dp_helper.c
-@@ -3570,7 +3570,6 @@ EXPORT_SYMBOL(drm_dp_pcon_frl_configure_1);
- int drm_dp_pcon_frl_configure_2(struct drm_dp_aux *aux, int max_frl_mask,
- 				u8 frl_type)
- {
--	int ret;
- 	u8 buf = max_frl_mask;
- 
- 	if (frl_type == DP_PCON_FRL_LINK_TRAIN_EXTENDED)
-@@ -3579,10 +3578,6 @@ int drm_dp_pcon_frl_configure_2(struct drm_dp_aux *aux, int max_frl_mask,
- 		buf &= ~DP_PCON_FRL_LINK_TRAIN_EXTENDED;
- 
- 	return drm_dp_dpcd_write_byte(aux, DP_PCON_HDMI_LINK_CONFIG_2, buf);
--	if (ret < 0)
--		return ret;
--
--	return 0;
- }
- EXPORT_SYMBOL(drm_dp_pcon_frl_configure_2);
- 
-@@ -4044,7 +4039,7 @@ int drm_edp_backlight_enable(struct drm_dp_aux *aux, const struct drm_edp_backli
- 	if (ret < 0) {
- 		drm_dbg_kms(aux->drm_dev, "%s: Failed to write aux backlight mode: %d\n",
- 			    aux->name, ret);
--		return ret < 0 ? ret : -EIO;
-+		return ret;
- 	}
- 
- 	ret = drm_edp_backlight_set_level(aux, bl, level);
-@@ -4192,7 +4187,7 @@ drm_edp_backlight_probe_state(struct drm_dp_aux *aux, struct drm_edp_backlight_i
- 	if (ret < 0) {
- 		drm_dbg_kms(aux->drm_dev, "%s: Failed to read backlight mode: %d\n",
- 			    aux->name, ret);
--		return ret < 0 ? ret : -EIO;
-+		return ret;
- 	}
- 
- 	*current_mode = (mode_reg & DP_EDP_BACKLIGHT_CONTROL_MODE_MASK);
--- 
-2.47.2
+I think the name is confusing, it is Chip_EN register. It is used to "enable the internal circuits".
+The hardware supports low power consumption.
+When we write 0 to the bit, it will save all configurations and go to save power mode.
+When we write 1, it will restore. Therefore, I support the end user in controlling this register.
 
+> > +Date:		April 2025
+> 
+> Not possible...
+
+Sorry, I understand now. Should I use the current date or the date when the patch is accepted?
+
+> > +KernelVersion:	6.14
+> 
+> You cannot go to the past. 6.14 was released. This will be v6.16 or later.
+
+It is my mistake. I will update the KernelVersion to v6.16 or later accordingly.
+
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        Enables or disables the LP5812 device. (RW)
+> > +        0 - Disable
+> > +        1 - Enable
+> > +
+> > +What:		/sys/bus/i2c/devices/.../lp5812_chip_setup/dev_config
+> 
+> Looks like wrong path here and everywhere else. I think other name it as
+> led driver, e.g.
+> Documentation/ABI/testing/sysfs-class-led-driver-lm3533
+
+The LP5812 driver is basically an I2C driver.
+It doesn't work as current common or multi-LEDs supported by the Kernel framework.
+However, the LP5812 driver still supports LED functions.
+
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        Configures drive mode and scan order. (RW)
+> > +        Some valid values: tcmscan:4:0:1:2:3 (default), tcmscan:3:0:1:2, mixscan:2:2:0:3, mixscan:3:0:1:2:3
+> > +
+> > +What:		/sys/bus/i2c/devices/.../lp5812_chip_setup/device_command
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        Issues device-level commands. (WO)
+> > +        Valid values: "update", "start", "stop", "pause", "continue"
+> > +
+> > +What:		/sys/bus/i2c/devices/.../lp5812_chip_setup/device_reset
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        Triggers a software reset of the device. (WO)
+> > +        1 - resets device
+> > +        0 - does not reset device
+> 
+> I do not see kernel exposing it for other devices, drop.
+
+This is sw_reset register of hardware. It is used to request the hardware reset.
+I think I will change the name to "sw_reset" to make it clearly.
+
+> > +
+> > +What:		/sys/bus/i2c/devices/.../lp5812_chip_setup/fault_clear
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        Clears fault status. (WO)
+> > +        1 - clears fault status
+> > +        0 - does not clear fault status
+> > +
+> > +What:		/sys/bus/i2c/devices/.../lp5812_chip_setup/tsd_config_status
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        Report the current thermal shutdown config status. (RO)
+> > +
+> > +What:		/sys/bus/i2c/devices/.../led_<id>/enable
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        Enables or disables the specified LED channel. (RW)
+> > +        1 - Enable
+> > +        0 - Disable
+> 
+> No, you already have standard ABI for this. I also already told you that
+> you cannot duplicate existing kernel interface.
+
+According to function of led and register, I will change it to "activate" interface.
+
+> > +
+> > +What:		/sys/bus/i2c/devices/.../led_<id>/mode
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        Selects LED operation mode. (RW)
+> > +        Valid values: "manual", "autonomous"
+> > +
+> > +What:		/sys/bus/i2c/devices/.../led_<id>/manual_dc
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        DC current level in manual mode. (RW)
+> > +        Valid values: 0 - 255
+> 
+> NAK, duplicating existing brightness.
+
+There are some brighness mode in this hardware. manual_dc is a interface to to control dc current in manual mode.
+
+> > +
+> > +What:		/sys/bus/i2c/devices/.../led_<id>/manual_pwm
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        PWM duty cycle in manual mode. (RW)
+> > +        Valid values: 0 - 255
+> > +> +What:		/sys/bus/i2c/devices/.../led_<id>/autonomous_dc
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        DC current level used in autonomous mode. (RW)
+> > +        Valid values: 0 - 255
+> > +
+> > +What:		/sys/bus/i2c/devices/.../led_<id>/autonomous_dc
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        DC current level used in autonomous mode. (RW)
+> > +        Valid values: 0 - 255
+> 
+> Also duplicating brigthness.
+
+It is not brightness only. It is another registers.
+It is used for autonomous_dc that mean the led will blink with several brighness levels automotically.
+
+> > +
+> > +What:		/sys/bus/i2c/devices/.../led_<id>/pwm_dimming_scale
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        PWM dimming scale type. (RW)
+> > +        Valid values: "linear", "exponential"
+> > +
+> > +What:		/sys/bus/i2c/devices/.../led_<id>/pwm_phase_align
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        Configures PWM phase alignment. (RW)
+> > +        Valid values: "forward", "middle", "backward"
+> > +
+> > +What:		/sys/bus/i2c/devices/.../led_<id>/autonomous_animation
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        Controls AEU configuration and playback. (RW)
+> > +        Format: (aeu number):(start pause time):(stop pause time):(playback time)
+> > +        with aeu number 1, 2, 3; playback time 0 - 15
+> > +
+> > +What:		/sys/bus/i2c/devices/.../led_<id>/aep_status
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        Shows current animation pattern status, value from 0 to 7. (RO)
+> > +
+> > +What:		/sys/bus/i2c/devices/.../led_<id>/auto_pwm_val
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        Shows the pwm value in autonomous mode when pause the animation, value from 0 to 255. (RO)
+> > +
+> > +What:		/sys/bus/i2c/devices/.../led_<id>/lod_lsd
+> > +Date:		April 2025
+> > +KernelVersion:	6.14
+> > +Contact:	Nam Tran <trannamatk@gmail.com>
+> > +Description:
+> > +        0 0 mean no lod and lsd fault detected, 1 1 mean lod and lsd fault detected (RO)
+> > +
+> > +
+> > +
+> > +
+> > +
+> > +
+> 
+> Why so many blank lines? Drop
+
+It's my mistake. I will remove the blank lines.
+
+Thanks for your detailed review.
+Appreciate your time and feedback!
+
+Best regards,
+Nam Tran
 
