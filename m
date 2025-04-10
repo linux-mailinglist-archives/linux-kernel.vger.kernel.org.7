@@ -1,110 +1,139 @@
-Return-Path: <linux-kernel+bounces-598431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3B4A84621
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:21:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58607A84612
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE3678A512B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:15:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DCC6189F293
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE4E28CF69;
-	Thu, 10 Apr 2025 14:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDA328C5D0;
+	Thu, 10 Apr 2025 14:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxii+48q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="MnUstkal"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B942853FA;
-	Thu, 10 Apr 2025 14:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916BF28136F
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 14:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744294506; cv=none; b=fjBRZlgSSdHcdgKTxTuzyyBdyEBLe8Sy44cUVj0ytwNc0KRyj7b1bkOxnVkMdDXG2l1jrqSS7o6UVQX7rMe7xRa76wUXgFzQizSEvlh20wr4CUQL8DSEsdPRN2zb4Kd3QguVqLkvl/M3uBLJtAprE/xUnIN52iUNI35QtSg0FmY=
+	t=1744294544; cv=none; b=VGtI0hE/ew90AGWk+tSDkHAQipgvIe9MHjcn7nOaBtqAIY+lUJqmsUPdEOyqcHWmNQtPBa6d7uTE63/a269OtTNDz8R1gjyLzdMo6NSAtTVqIg1fhROu5v0ry8ieGeGxPt3s1Auckfi941KAcXjAN0AQzYikgYKZXFGN75qhu20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744294506; c=relaxed/simple;
-	bh=dEJNfddFbQgqgZyZJMMbg8KFOtcsawhyLbrR4L0XzlI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A+qGAqDhCUEWhsDda0iy2xkpH7NoI1JHVmZVMEZTjfP0aVth/SDoYF24Qqn2nDa2zjdwRz/VZRjbGkzGRDvlNvXZmFt43ElGtrS+0395Jrl+0PAdyMXY1+MAUnnChxBUks9N5ZAj3gQ4lN1U1P3tl8qnMLddyPkdSkPYgc78xas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxii+48q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5643FC4AF0B;
-	Thu, 10 Apr 2025 14:15:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744294505;
-	bh=dEJNfddFbQgqgZyZJMMbg8KFOtcsawhyLbrR4L0XzlI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jxii+48qL50pjdA7yqa78xcRpLVZKm5MG303M4J57PrxoYaKv2uhKXslZyLpRdn2D
-	 s9Sv0b7pjKAomdPHquiYzoYa70yZ0/Ebgu6XrENWvfOhrkxdZvdApSz0IOXALevVdE
-	 zvIfIEuQLhPC/wboYB4n1LGvsTJ7jEVwvnmoxQ0JZH/anv5czFd2INi0HmmbYzo5oJ
-	 lPC5IcjIWbucKZmZ6YZW2MXP+d+JYFdnJqM6rRCnvCU7ECeNQOnzgEZ/zTXSusl5ag
-	 /YNqtCkozcdHsvO+gZIRaAOzgBX/kI0M4nL2HLbV8vX4KsK1YaHDXhFpwI7IAjxHwE
-	 29supMGICfJgg==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e5dce099f4so1180060a12.1;
-        Thu, 10 Apr 2025 07:15:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUL1igDAIQ0O+7upn41lfzkdytKIK01us1F74+2wUBEL5FOzoEM7qYPdU7UTkc/8K0xClU2ZARjJNfBwyWvLA==@vger.kernel.org, AJvYcCUkrdP/X0zQy+7rUrYtht5quAdMMWlPbBXy7WlovcqVS2DIc68A+Tc1rGSE6J2zavZE+T1X3XM20klbMKGZMG11fJY=@vger.kernel.org, AJvYcCVDkfPhZMwmJXgspcuzvy8lA6jqosoEvT9ZQNkt0QA+S2wnpHWcAno6IglvLSkrxHmyDMgQVVfSXbXFrw==@vger.kernel.org, AJvYcCVdovAHdlios3+b5h0sf2xHKItrj1IXMlh5DJeF4p3VT5QzdUB7Y2A8wZ1CgZpR8Rcr2WhriQYDRNU=@vger.kernel.org, AJvYcCVr6LQYfhW/1J8aNesH0qWtBPBpnwyTbVEDoP1HVG30GnIfzYBKqr343lgGrERXqehzU2/ONAzRaLA5fOJy@vger.kernel.org, AJvYcCWylW1bLeubWP6Sb2RNuhWgBr2C8EmauEat+blY0qGB/GzFbrE0swIxQ2xvHiGhj9YnohIBtWJ8FNE0@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU2zPjddFTi3CvuvY+2U1rztSZ3SOAOSqRBNMS1xYsbO1NiCdH
-	dmWDAGoG8Epkaoxd00j6ndNbR1TX3dto9iCclQ7cpJyn63Y5ryZN4t8YAiexJSdeeTay2sQoE5k
-	GeTQMXF5n74oAi9ulPgHHNHo4VA==
-X-Google-Smtp-Source: AGHT+IGl0fJE2v0I/oCPQTdxQfr3609BfC3sI9b3/3//9E+h8w2umLSUMiDkAMTe1571fUmkVBDDE3jtTLXPBwQHP+4=
-X-Received: by 2002:a05:6402:13ce:b0:5e5:dea5:3eb2 with SMTP id
- 4fb4d7f45d1cf-5f32c45032bmr2461434a12.11.1744294503824; Thu, 10 Apr 2025
- 07:15:03 -0700 (PDT)
+	s=arc-20240116; t=1744294544; c=relaxed/simple;
+	bh=WGrTOkWpO0sHWUslK1P+MDusc9W68dggbixV9wP52ZY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mU2kM3t3yNVL30A9SuLqs8y1vGJW0CFoLGigFAWzCgkbj60VNnDq3d8pwdkB9umL9T1upKSPtbfSJ3m/eAwu/DMWC0junDdC0xRuchszt6AdQKlvskA/5xv6r2JfZb+q/sDGZqNCSv+wAOG4D4v9AWNTiO1EGQhlS4Ds6OiCTTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=MnUstkal; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso6952955e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:15:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1744294540; x=1744899340; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Q4flrwFmi1xae9xLSDs3kNrmcK2M75jTbQEeJS0lPw=;
+        b=MnUstkalufEjVIF4cmtkVy3QVs10e7j6bT8Cpb+fjkfSDiaGRUG37y9ZlATmewOt3F
+         R5jOiGf/EQfGgVAKy00/UcXMrc2tIzcX7VAzAK06aHEYtbDtbfJznHgxLlEytyJLmANR
+         yWoqDwiUTsdWzDl6UmjKfx34SlfNzH3q/QY7qqdPDb8TOc5jheu9RxbCFLTOGWXX7jQ+
+         vwJjx3C7TU04Yg4l9qDQvthS84MvN8/fMdmgEXAQ3N8n5zGgahMK3o9dvuLRsaAkDvGr
+         DGce6rV5mHeBo0sKAqSNcq8dg59R5AqGzvkKjzhNiidE0hDtPqRozl4rgv0O5RE4WAMR
+         W7EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744294540; x=1744899340;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5Q4flrwFmi1xae9xLSDs3kNrmcK2M75jTbQEeJS0lPw=;
+        b=EtUaqJp82ww9BH/uoKDcaJGJM2+5HYZ2NV4jRTYwPN82nqVVZJ/rSlanMjwk+yFDOk
+         Eq0+VlVWaaJsbeyIB1YqqxcBt8L6EavOGYTJVVMbX0mH7fv6iOfSQKMt29p40TfXzAT7
+         0oOeTs85oxfMuiVp468NmR4Ucfo6PxNXckMcS0VtvHJNE8Ao7/LT2Mr+2+zkLZ4KUV+a
+         pbIDWoaCV1yES7JfSyd1inYO0Ajw2nDNZMKsIKk+vUZckYWZEmR/qfH+bHsAEyh1+qun
+         +HhrDKUF/3PDhnc0RLdPTggO9fnmz755fLzcw+nHtD5XDSuhb2fiUf/oOn+TZd+0ssLM
+         v+9w==
+X-Forwarded-Encrypted: i=1; AJvYcCX4u8OYCSKoDqveTmxztAYYhj6ETwjqkD2hLYX3KtEoY/5qYNwEfUQpxrY+cFiXtedyC3CW1/psWFfYw4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0hOSEmPzpSKBe1G5OwVtOlf3XryrNWSFTynaPttkSrXIbQgDM
+	xbuu2oNVZjAzMOWZo1Cov9Yu7/ob8zKN7xUa85ETC5CGfDiS+bILk3+vZCCZTR4=
+X-Gm-Gg: ASbGncuPeRIyoMDb9LBDAJ9adkACSPUtkvaLSQ5iNd8UliKJSvYBVTb94NHlDaxVkPw
+	QvBkbAH+AqflrFjCqGIM9aRwO0UsnLeEw1xOg7ayYt5QWqAB6mjOd4KAssxTA07Cw69XwlXcHYr
+	HY2XrWYcrsNu6//QLwIhJilB5rz0XBj2YMalziCRKvm8G6cBl3E+7ezHaobzoqBPrrTOgnkewnl
+	id2L1NfQm73divj9vmrSoSDUTgpxVlyevX4d2kZxWnddWhkyTnak8KG0dotoFEhldlODq71pXgI
+	Z0E8v/5Q09Y+MWFHOeAlLO6DhbqJF74ZwlWNDRvo9a4ozt4K42f9BUP0cz7UI/Jov8RGYw==
+X-Google-Smtp-Source: AGHT+IGOJrWtQiR/+aif2Q/6zHmp/n0I43XYjAwcFJCsTWbMwppiDvii7C8NCnUY+CCFFVo3ns+03Q==
+X-Received: by 2002:a05:6000:4022:b0:390:d796:b946 with SMTP id ffacd0b85a97d-39d8f4dcebfmr2487414f8f.44.1744294539831;
+        Thu, 10 Apr 2025 07:15:39 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f235a5b08sm54864275e9.33.2025.04.10.07.15.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 07:15:39 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-sound@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] ASoC: renesas: rz-ssi: Use NOIRQ_SYSTEM_SLEEP_PM_OPS()
+Date: Thu, 10 Apr 2025 17:15:25 +0300
+Message-ID: <20250410141525.4126502-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403-dt-cpu-schema-v1-0-076be7171a85@kernel.org> <20250408055718.4azlqljvo4qxhnu5@vireshk-i7>
-In-Reply-To: <20250408055718.4azlqljvo4qxhnu5@vireshk-i7>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 10 Apr 2025 09:14:52 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJyi=sR9jtEy9_U+RLVorvZRfby8vsWP6sXV+_4NP+Gug@mail.gmail.com>
-X-Gm-Features: ATxdqUHPmJEIuVKadhgZM7F7MHPh64iWIlM7zDUhgEaB8t8IKqn3FRU8YxuohGc
-Message-ID: <CAL_JsqJyi=sR9jtEy9_U+RLVorvZRfby8vsWP6sXV+_4NP+Gug@mail.gmail.com>
-Subject: Re: [PATCH 00/19] Arm cpu schema clean-ups
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Viresh Kumar <vireshk@kernel.org>, 
-	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, zhouyanjie@wanyeetech.com, 
-	Conor Dooley <conor@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-mips@vger.kernel.org, 
-	imx@lists.linux.dev, linux-rockchip@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 8, 2025 at 12:57=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> On 03-04-25, 21:59, Rob Herring (Arm) wrote:
-> >  .../bindings/cpufreq/cpufreq-mediatek.txt          | 250 -------------=
---------
-> >  Documentation/devicetree/bindings/opp/opp-v1.yaml  |  18 +-
->
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-In the future, please consider acking the 2 patches rather than the
-cover letter because 'b4 trailers' thinks you acked everything.
+In the latest kernel versions system crashes were noticed occasionally
+during suspend/resume. This occurs because the RZ SSI suspend trigger
+(called from snd_soc_suspend()) is executed after rz_ssi_pm_ops->suspend()
+and it accesses IP registers. After the rz_ssi_pm_ops->suspend() is
+executed the IP clocks are disabled and its reset line is asserted.
 
-Rob
+Since snd_soc_suspend() is invoked through snd_soc_pm_ops->suspend(),
+snd_soc_pm_ops is associated with soc_driver (defined in
+sound/soc/soc-core.c), and there is no parent-child relationship between
+soc_driver and rz_ssi_driver the power management subsystem does not
+enforce a specific suspend/resume order between the RZ SSI platform driver
+and soc_driver.
+
+To ensure that the suspend/resume function of rz-ssi is executed after
+snd_soc_suspend(), use NOIRQ_SYSTEM_SLEEP_PM_OPS().
+
+Fixes: 1fc778f7c833 ("ASoC: renesas: rz-ssi: Add suspend to RAM support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ sound/soc/renesas/rz-ssi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
+index 3a0af4ca7ab6..0f7458a43901 100644
+--- a/sound/soc/renesas/rz-ssi.c
++++ b/sound/soc/renesas/rz-ssi.c
+@@ -1244,7 +1244,7 @@ static int rz_ssi_runtime_resume(struct device *dev)
+ 
+ static const struct dev_pm_ops rz_ssi_pm_ops = {
+ 	RUNTIME_PM_OPS(rz_ssi_runtime_suspend, rz_ssi_runtime_resume, NULL)
+-	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
++	NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+ };
+ 
+ static struct platform_driver rz_ssi_driver = {
+-- 
+2.43.0
+
 
