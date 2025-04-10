@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-598972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CE4A84D58
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:43:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55FE2A84D63
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 955264485FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D2A8C398A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA8B296168;
-	Thu, 10 Apr 2025 19:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E02290BC6;
+	Thu, 10 Apr 2025 19:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="EqGHyRCl"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="LA+ztzZM"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7613290BB8;
-	Thu, 10 Apr 2025 19:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C299B2980A4;
+	Thu, 10 Apr 2025 19:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744314102; cv=pass; b=CehHigLX82KegcbGJ4749QuKGEzZMgYFIXo64tRTveNJPhlTHzVmqgwucxjnqxgPZkvvXKFhHWyX2ZZP7s6KXd9Q08LtJyy2EvsLHfMvwd5EpvlD4uAgfHYfLDKMMrDTvai/gHCeQqGcLYmsm54i4vbL5ECSu2cDHxKgZUHXVBc=
+	t=1744314109; cv=pass; b=F532ogrLKjLGuP2L5U3s31SaSelGHLaBjZ920nJG7sylrHZgo93viTz0Omd8scy/lKXRZhWEVbft+reEvN+zdpv151Ss9VtazZC0cqBvHj8Qyx0TRxBQmZzyniLCvp9uXiZJcf8/OQYHA3pLlcKU4TrcmGQ3vGE0OiE+Ce0o9Vo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744314102; c=relaxed/simple;
-	bh=Jb4JAOCWXNnzfq7QBGtZfgtF0X9Ee+WI4DK80WnnVnk=;
+	s=arc-20240116; t=1744314109; c=relaxed/simple;
+	bh=R1OEWQc82aEj2dgJQcUToroohClIvwQ79QPZXLUQSmE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BBE7dGIZe0c66ZY/AY038/27pbmFBGoPb5bnMxnbt33hhJ16m4RexkP5uwm5d//95dq62EFR1xUlecbOktfPGucz+XBsdI0YIxsqvHKKou6TlEmSy4VnNOaXlGwWV+0VdcDzPQqhemHptK1hEohWE5K90zVO2Z+nihqu5mA5D7o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=EqGHyRCl; arc=pass smtp.client-ip=136.143.188.112
+	 In-Reply-To:To:Cc; b=kWnh4eHit+k1k2uY6bEuEqW6xodQBrwEcCq1SCHwHRMoM47rZ6gpmJkp24vcCZyQSi6Sij79yyJsQxgdkiOfpniLigdhwGXwNxPtvoLF/KPjgR6QU/DZBc4Sq4hQWGcAYsd4Jfxw2JljCIZxvshMN6ITOHJ4Ocjxqavg9njX8vs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=LA+ztzZM; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1744314071; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1744314077; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=npW3t2QfyVKFR6PHamSs5iAoGNvnTpEDIUFaHfgHjrhK93bDt1hoyatt/fVm83Fihgmmj8YWOvx4uXYrr2sQ0es9cGRs9xXxX49+oMEuZUgBwW7LMMTkUKPALDuQgdeRhLkzIEOcCkBwltpuA8a8yXO+suUMfyvpRx0klhFgU7k=
+	b=PW2V7ubmD7SApc50+9soD97n+s4rw7uBDPMUGkRbOJXYJWTYGMHnYTJU0Gh7mNBXmFgDiYv4ibtxwmNb/ArkUMX2gaAwvusdgbqkt2Jg5BNcZfVeeZIYrKn7G+JZKni1z2B7IWgf1vPwme0DUGPHPCEbn2gSetbBZgIindSk3W8=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1744314071; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=P0cmV6UZVQw6LGqA8u7XzoRfDgQACF1SmL35zBKp97Q=; 
-	b=UxFrFWBta+1rMpAt1o1P3BvHk314sP+7pKveZ29fVTsjITILhHdUylfByeM5TevGU27ayWM5yt+NUTDiMdSIEsObv5DLeXHpPxQ4SoNhLiKKJ+3ZVidaCp/wTMnUn0b5OqzmS0qShQDDK/T9FL50PS2lK025aEHiEnKeb6UPtk8=
+	t=1744314077; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=QlmLIVs2PX6RAiZw67r46XTY/ZM209p1JSqO1Nx5peI=; 
+	b=kJx+HM+qKrQ+bNpJgtFaUqyXo9mA8UXVNqJARKNq+u8vQ6j+ejKbCK+enQhsUpT93kAkMeDHL2HCL9VfURw8c3NP/WrYJEMv43gW9NGiMqEHqjOzdCvbgjIs5IInSi88MxEButKUSqDdOoo8N31+zy4btPXBGwYs/n5K7OzTj/k=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
 	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744314071;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744314077;
 	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=P0cmV6UZVQw6LGqA8u7XzoRfDgQACF1SmL35zBKp97Q=;
-	b=EqGHyRClpjHhzE2crq3wyxq54zEggbGq8YcFa90BYnW3aNEfX6TIuHKoxPayJVuF
-	EuCMEB+myYCONIppsHGd9gRuTbPcDY/UhRWvP3HAnTeVuar24UUA25ivKN2joobs2Pa
-	3xW5+xel4/3uUdHIlCmiuSftuitEfh6IvUwR9Cqo=
-Received: by mx.zohomail.com with SMTPS id 1744314069853161.3440582389277;
-	Thu, 10 Apr 2025 12:41:09 -0700 (PDT)
+	bh=QlmLIVs2PX6RAiZw67r46XTY/ZM209p1JSqO1Nx5peI=;
+	b=LA+ztzZMgld9jbNmCSIXnqi0yrLibQqbP+2dN3SRQDAX3HS5SYa40ArY+g0aRKIM
+	5rNeIopHwzmtba6h9mTmVwq4cjm8mkHJsIpUia+I/ckZ/+qP5FJQ/DmqGvxFlrF+hQe
+	rbzwCGSkRrDRpTWyNDD+A1ls4WmxcoO5CWCP0DWw=
+Received: by mx.zohomail.com with SMTPS id 1744314075380251.2791003000325;
+	Thu, 10 Apr 2025 12:41:15 -0700 (PDT)
 From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Thu, 10 Apr 2025 21:40:02 +0200
-Subject: [PATCH v2 10/11] arm64: dts: rockchip: Enable HDMI audio on Sige5
+Date: Thu, 10 Apr 2025 21:40:03 +0200
+Subject: [PATCH v2 11/11] arm64: defconfig: Enable Rockchip SAI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250410-rk3576-sai-v2-10-c64608346be3@collabora.com>
+Message-Id: <20250410-rk3576-sai-v2-11-c64608346be3@collabora.com>
 References: <20250410-rk3576-sai-v2-0-c64608346be3@collabora.com>
 In-Reply-To: <20250410-rk3576-sai-v2-0-c64608346be3@collabora.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -81,42 +81,27 @@ Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
  Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 X-Mailer: b4 0.14.2
 
-With the hdmi_sound node added to the base RK3576 SoC tree, we can now
-enable it on the Sige5 SBC.
+The RK3576 uses Rockchip SAI for audio output.
 
-Do this, and also enable the corresponding SAI6 audio controller node.
+Enable it in the defconfig.
 
 Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-index 0979d1e0cee7a18a6bcbd08ed19cc835f2186960..de63b053a06c05e02bfcfa03b96e9fc61de8782d 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-@@ -269,6 +269,10 @@ hdmi_out_con: endpoint {
- 	};
- };
- 
-+&hdmi_sound {
-+	status = "okay";
-+};
-+
- &hdptxphy {
- 	status = "okay";
- };
-@@ -713,6 +717,10 @@ &sai1m0_sdi0
- 	status = "okay";
- };
- 
-+&sai6 {
-+	status = "okay";
-+};
-+
- &sdhci {
- 	bus-width = <8>;
- 	full-pwr-cycle-in-suspend;
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 5bb8f09422a22116781169611482179b10798c14..17cf29f066b793b47665088084e12d2762d3d832 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1005,6 +1005,7 @@ CONFIG_SND_SOC_SC7280=m
+ CONFIG_SND_SOC_X1E80100=m
+ CONFIG_SND_SOC_ROCKCHIP=m
+ CONFIG_SND_SOC_ROCKCHIP_I2S_TDM=m
++CONFIG_SND_SOC_ROCKCHIP_SAI=m
+ CONFIG_SND_SOC_ROCKCHIP_SPDIF=m
+ CONFIG_SND_SOC_ROCKCHIP_RT5645=m
+ CONFIG_SND_SOC_RK3399_GRU_SOUND=m
 
 -- 
 2.49.0
