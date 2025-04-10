@@ -1,187 +1,288 @@
-Return-Path: <linux-kernel+bounces-597570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26EE2A83B9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:48:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C5C9A83B7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C294A3BECD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:42:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A02E3A8AAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0A11CEACB;
-	Thu, 10 Apr 2025 07:42:14 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD9D20127A;
+	Thu, 10 Apr 2025 07:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9k1URoY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC361E3DED;
-	Thu, 10 Apr 2025 07:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CF61D90AD;
+	Thu, 10 Apr 2025 07:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744270934; cv=none; b=JDwJeGEHrdQolSS04/FEQCLqTX4Ruav2wg1HC++yoHsBWvcgixeNAsJNuKBJCoy8G/A3hY/2fegzYn41e8sGAuzmkHbF/kLdq6VoacmlWd5Tf0OWd6aHY0pVOM0FIudPBdJp++v92+SL5j9uwsAXi/I42YMmiGd2SZUB5rR2Hmc=
+	t=1744270581; cv=none; b=YSLjhXyn0/zc91fTqdwOsPbaibm0qh5+feNnNiCDqFuC3U1XHuWg5MBDsIFpNFsUSCfG3gEUzWE7MNLzKOTaDlZMqvFb6P+8FNXk1HUQVndSavFkWrwHFArcPLXbLjrB/DrzBlDXlOm0Xid5oByqmFWFza5A7RauhtxYOZ7MKng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744270934; c=relaxed/simple;
-	bh=LL98xKCN6BbyHGkK69YR/3hlThS2vvREo71YnuLBImA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D3kaG95KJHkNs3K9YTgoMp7+id5jIgVki1jS7laYAQz8vxepPGAvPbu+5eiko4MFCub9da51a2u7AQA279xpBO72pX3o6tp0Ta+toGBy/rdPHmgKKspnvX2wpLuwR7ROmUZO8z6hIx+FU5eXFnx0WGL0zVoi1ngRhRgafFGU4ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZYBZm4WwCz1d1K3;
-	Thu, 10 Apr 2025 15:41:20 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 87307180473;
-	Thu, 10 Apr 2025 15:42:02 +0800 (CST)
-Received: from huawei.com (10.175.104.67) by kwepemg500010.china.huawei.com
- (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Apr
- 2025 15:42:01 +0800
-From: Wang Zhaolong <wangzhaolong1@huawei.com>
-To: <trondmy@kernel.org>, <anna@kernel.org>, <rdunlap@infradead.org>
-CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<chengzhihao1@huawei.com>, <wangzhaolong1@huawei.com>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>
-Subject: [PATCH RFC] nfs: Fix shift-out-of-bounds UBSAN warning with negative retrans
-Date: Thu, 10 Apr 2025 15:35:25 +0800
-Message-ID: <20250410073525.1982010-1-wangzhaolong1@huawei.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1744270581; c=relaxed/simple;
+	bh=/NFqkxxxqXaQUxSCOyIdp5ab20f0TbRcKSw1DXoIYm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fcMTee2aJIsd5ZAoIVhG7WdC+GLWT3+HWNEUgbrKfCiTXoOIJJ9MmhooIPpwEJJeRhDYsNskdv9RYHmZyNm6UjVwHJ8J2lOZLsPNXafkVsRLK9vUJ1UNAosIrN5/04dP/RUbddcZEY8jpm/5TSMtT6FgbXukyGi792FNSiTGw20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9k1URoY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 168D5C4CEDD;
+	Thu, 10 Apr 2025 07:36:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744270580;
+	bh=/NFqkxxxqXaQUxSCOyIdp5ab20f0TbRcKSw1DXoIYm8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n9k1URoYtnKtpMy8mnGxEgMifeE86DAUptIfA9GB4IvU1HWlmNEsvu3kI9rdNDJZG
+	 iVOmZ6NZV4pajZXkSaz+efbKwONru8Fha5S/Hc34E9NLsdOaD0OjsWb7mrwJifksdh
+	 qW9AqfsabQuR8g7t7u6NPKdQmPWOXvSyDJSloLwDCVlSjQTmjByAedPQZiRrxYKjzP
+	 Jun0UoxLWfqzBZQoLii/CvTlimvujBvxl/CdlEU8snBoyx4i9LcpS9+1MnFju2ppNe
+	 cQWUsTbvkxrR9U5Il97R+sYb5AZMI/qE0TxKhY/VUdsmtXxciisjWH+o7WHbSeNIu5
+	 8DndnNPunyQJQ==
+Date: Thu, 10 Apr 2025 09:36:18 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Nipun Gupta <nipun.gupta@amd.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, krzk+dt@kernel.org, gregkh@linuxfoundation.org, robh@kernel.org, 
+	conor+dt@kernel.org, ogabbay@kernel.org, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	derek.kiernan@amd.com, dragan.cvetic@amd.com, arnd@arndb.de, praveen.jain@amd.com, 
+	harpreet.anand@amd.com, nikhil.agarwal@amd.com, srivatsa@csail.mit.edu, code@tyhicks.com, 
+	ptsm@linux.microsoft.com, herbert@gondor.apana.org.au, davem@davemloft.net, 
+	linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] accel/amdpk: add driver for AMD PKI accelerator
+Message-ID: <20250410-sly-inventive-squirrel-ddecbc@shite>
+References: <20250409173033.2261755-1-nipun.gupta@amd.com>
+ <20250409173033.2261755-2-nipun.gupta@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg500010.china.huawei.com (7.202.181.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250409173033.2261755-2-nipun.gupta@amd.com>
 
-The previous commit c09f11ef3595 ("NFS: fs_context: validate UDP retrans
-to prevent shift out-of-bounds") attempted to address UBSAN warnings by
-validating retrans values, but had two key limitations[1]:
+On Wed, Apr 09, 2025 at 11:00:32PM GMT, Nipun Gupta wrote:
+> The AMD PKI accelerator driver provides a accel interface to interact
+> with the device for offloading and accelerating asymmetric crypto
+> operations.
+> 
 
-1. It only handled binary mount options, not validating string options
-2. It failed to account for negative retrans values, which bypass the
-   check `data->retrans >= 64` but then get converted to large positive
-   numbers when assigned to unsigned context->retrans
+For me this is clearly a crypto driver and you are supposed to:
+1. Cc crypto maintaners,
+2. Put it actually into crypto and use crypto API.
 
-When these large numbers are later used as shift amounts in
-xprt_calc_majortimeo(), they trigger the UBSAN shift-out-of-bounds
-warning. This issue has existed since early kernel versions (2.6.x series)
-as the code historically lacks proper validation of retrans values from
-userspace.
 
-As the NFS maintainer has previously indicated that fixes to
-xprt_calc_majortimeo() wouldn't be accepted for this issue, this patch
-takes the approach of properly validating input parameters instead:
+Limited review follows.
 
-This patch:
-- Adds a proper validation check in nfs_validate_transport_protocol(),
-  which is a common code path for all mount methods (binary or string)
-- Defines a reasonable upper limit (15) that is still generous for
-  real-world requirements while preventing undefined behavior
-- Provides a clearer error message to users when rejecting values
-- Removes the incomplete check from the binary mount path
+> Signed-off-by: Nipun Gupta <nipun.gupta@amd.com>
+> ---
+> 
+> Changes RFC->v2:
+> - moved from misc to accel
+> - added architecture and compile test dependency in Kconfig
+> - removed sysfs (and added debugfs in new patch 3/3)
+> - fixed platform compat
+> - removed redundant resource index 1 configuration (which was there in
+>   RFC patch)
+> 
+>  MAINTAINERS                     |   2 +
+>  drivers/accel/Kconfig           |   1 +
+>  drivers/accel/Makefile          |   1 +
+>  drivers/accel/amdpk/Kconfig     |  18 +
+>  drivers/accel/amdpk/Makefile    |   8 +
+>  drivers/accel/amdpk/amdpk_drv.c | 736 ++++++++++++++++++++++++++++++++
+>  drivers/accel/amdpk/amdpk_drv.h | 271 ++++++++++++
+>  include/uapi/drm/amdpk.h        |  49 +++
+>  8 files changed, 1086 insertions(+)
+>  create mode 100644 drivers/accel/amdpk/Kconfig
+>  create mode 100644 drivers/accel/amdpk/Makefile
+>  create mode 100644 drivers/accel/amdpk/amdpk_drv.c
+>  create mode 100644 drivers/accel/amdpk/amdpk_drv.h
+>  create mode 100644 include/uapi/drm/amdpk.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 11f8815daa77..cdc305a206aa 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1161,6 +1161,8 @@ L:	dri-devel@lists.freedesktop.org
+>  S:	Maintained
+>  T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+>  F:	Documentation/devicetree/bindings/accel/amd,versal-net-pki.yaml
+> +F:	drivers/accel/amdpk/
+> +F:	include/uapi/drm/amdpk.h
+> 
+>  AMD PMC DRIVER
+>  M:	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> diff --git a/drivers/accel/Kconfig b/drivers/accel/Kconfig
+> index 5b9490367a39..5632c6c62c15 100644
+> --- a/drivers/accel/Kconfig
+> +++ b/drivers/accel/Kconfig
+> @@ -28,5 +28,6 @@ source "drivers/accel/amdxdna/Kconfig"
+>  source "drivers/accel/habanalabs/Kconfig"
+>  source "drivers/accel/ivpu/Kconfig"
+>  source "drivers/accel/qaic/Kconfig"
+> +source "drivers/accel/amdpk/Kconfig"
 
-By validating the retrans parameter in a common code path, we ensure
-all mount operations have consistent behavior regardless of how the
-mount options are provided to the kernel.
+Why placing at the end?
 
-[1] https://bugzilla.kernel.org/show_bug.cgi?id=219988
-[2] https://lore.kernel.org/all/5850f8a65c59436b607c9d1ac088402d14873577.camel@hammerspace.com/#t
+> 
+>  endif
+> diff --git a/drivers/accel/Makefile b/drivers/accel/Makefile
+> index a301fb6089d4..caea6d636ac8 100644
+> --- a/drivers/accel/Makefile
+> +++ b/drivers/accel/Makefile
+> @@ -4,3 +4,4 @@ obj-$(CONFIG_DRM_ACCEL_AMDXDNA)		+= amdxdna/
+>  obj-$(CONFIG_DRM_ACCEL_HABANALABS)	+= habanalabs/
+>  obj-$(CONFIG_DRM_ACCEL_IVPU)		+= ivpu/
+>  obj-$(CONFIG_DRM_ACCEL_QAIC)		+= qaic/
+> +obj-$(CONFIG_DRM_ACCEL_AMDPK)		+= amdpk/
 
-Fixes: c09f11ef3595 ("NFS: fs_context: validate UDP retrans to prevent shift out-of-bounds")
-Signed-off-by: Wang Zhaolong <wangzhaolong1@huawei.com>
----
- fs/nfs/fs_context.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+Did you just add it to the end breaking any ordering? Look, there is
+already AMD entry in the context.
 
-diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
-index 13f71ca8c974..cb3683d5d37f 100644
---- a/fs/nfs/fs_context.c
-+++ b/fs/nfs/fs_context.c
-@@ -33,10 +33,11 @@
- #else
- #define NFS_DEFAULT_VERSION 2
- #endif
- 
- #define NFS_MAX_CONNECTIONS 16
-+#define NFS_MAX_UDP_RETRANS 15
- 
- enum nfs_param {
- 	Opt_ac,
- 	Opt_acdirmax,
- 	Opt_acdirmin,
-@@ -358,10 +359,19 @@ static int nfs_validate_transport_protocol(struct fs_context *fc,
- {
- 	switch (ctx->nfs_server.protocol) {
- 	case XPRT_TRANSPORT_UDP:
- 		if (nfs_server_transport_udp_invalid(ctx))
- 			goto out_invalid_transport_udp;
-+		/*
-+		 * For UDP transport, retrans is used as a shift value in
-+		 * xprt_calc_majortimeo(). To prevent shift-out-of-bounds
-+		 * and overflow, limit it to 15 bits which is a reasonable
-+		 * upper limit for any real-world scenario (typical values
-+		 * are 3-5).
-+		 */
-+		if (ctx->retrans > NFS_MAX_UDP_RETRANS)
-+			goto out_invalid_udp_retrans;
- 		break;
- 	case XPRT_TRANSPORT_TCP:
- 	case XPRT_TRANSPORT_RDMA:
- 		break;
- 	default:
-@@ -378,10 +388,13 @@ static int nfs_validate_transport_protocol(struct fs_context *fc,
- 	}
- 
- 	return 0;
- out_invalid_transport_udp:
- 	return nfs_invalf(fc, "NFS: Unsupported transport protocol udp");
-+out_invalid_udp_retrans:
-+	return nfs_invalf(fc, "NFS: UDP protocol requires retrans <= %d (got %d)",
-+			  NFS_MAX_UDP_RETRANS, ctx->retrans);
- out_invalid_xprtsec_policy:
- 	return nfs_invalf(fc, "NFS: Transport does not support xprtsec");
- }
- 
- /*
-@@ -1155,19 +1168,10 @@ static int nfs23_parse_monolithic(struct fs_context *fc,
- 		memcpy(mntfh->data, data->root.data, mntfh->size);
- 		if (mntfh->size < sizeof(mntfh->data))
- 			memset(mntfh->data + mntfh->size, 0,
- 			       sizeof(mntfh->data) - mntfh->size);
- 
--		/*
--		 * for proto == XPRT_TRANSPORT_UDP, which is what uses
--		 * to_exponential, implying shift: limit the shift value
--		 * to BITS_PER_LONG (majortimeo is unsigned long)
--		 */
--		if (!(data->flags & NFS_MOUNT_TCP)) /* this will be UDP */
--			if (data->retrans >= 64) /* shift value is too large */
--				goto out_invalid_data;
--
- 		/*
- 		 * Translate to nfs_fs_context, which nfs_fill_super
- 		 * can deal with.
- 		 */
- 		ctx->flags	= data->flags & NFS_MOUNT_FLAGMASK;
-@@ -1270,13 +1274,10 @@ static int nfs23_parse_monolithic(struct fs_context *fc,
- out_no_address:
- 	return nfs_invalf(fc, "NFS: mount program didn't pass remote address");
- 
- out_invalid_fh:
- 	return nfs_invalf(fc, "NFS: invalid root filehandle");
--
--out_invalid_data:
--	return nfs_invalf(fc, "NFS: invalid binary mount data");
- }
- 
- #if IS_ENABLED(CONFIG_NFS_V4)
- struct compat_nfs_string {
- 	compat_uint_t len;
--- 
-2.39.2
+> diff --git a/drivers/accel/amdpk/Kconfig b/drivers/accel/amdpk/Kconfig
+> new file mode 100644
+> index 000000000000..c0b459bb66a7
+> --- /dev/null
+> +++ b/drivers/accel/amdpk/Kconfig
+> @@ -0,0 +1,18 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +# Makefile for AMD PKI accelerator for versal-net
+> +#
+> +
+> +config DRM_ACCEL_AMDPK
+> +	tristate "AMD PKI accelerator for versal-net"
+> +	depends on DRM_ACCEL
+> +	depends on ARM64 || COMPILE_TEST
+
+What do you need from arm64? I don't see it from the code at all.
+
+> +	help
+> +	  Enables platform driver for AMD PKI accelerator that are designed
+> +	  for high performance Public Key asymmetric crypto operations on AMD
+> +	  versal-net.
+> +
+> +	  If unsure, say N.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called amdpk.
+
+...
+
+> +static void amdpk_remove_device(struct amdpk_dev *pkdev)
+> +{
+> +	drm_dev_unplug(&pkdev->ddev);
+> +	pk_wrreg(pkdev->regs, REG_IRQ_ENABLE, 0);
+> +	ida_destroy(&pkdev->avail_queues);
+> +}
+> +
+> +static int amdpk_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct amdpk_dev *pkdev;
+> +	struct resource *memres;
+> +	int irq, ret;
+> +
+> +	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	pkdev = devm_drm_dev_alloc(dev, &amdpk_accel_driver, typeof(*pkdev), ddev);
+> +	if (IS_ERR(pkdev))
+> +		return PTR_ERR(pkdev);
+> +	pkdev->dev = dev;
+> +
+> +	memres = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	pkdev->regs = devm_ioremap_resource(dev, memres);
+
+Use wrapper for these two.
+
+> +	if (IS_ERR(pkdev->regs))
+> +		return PTR_ERR(pkdev->regs);
+> +	pkdev->regsphys = memres->start;
+> +	platform_set_drvdata(pdev, pkdev);
+> +
+> +	if (platform_irq_count(pdev) != 1)
+
+Drop, what's the benefit? DT schema ensures you have only one entry.
+
+> +		return -ENODEV;
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0)
+> +		return -ENODEV;
+> +
+> +	ret = drm_dev_register(&pkdev->ddev, 0);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "DRM register failed, ret %d", ret);
+> +		return ret;
+> +	}
+> +
+> +	return amdpk_create_device(pkdev, dev, irq);
+> +}
+> +
+> +static void amdpk_remove(struct platform_device *pdev)
+> +{
+> +	struct amdpk_dev *pkdev = platform_get_drvdata(pdev);
+> +
+> +	amdpk_remove_device(pkdev);
+> +}
+> +
+> +static void amdpk_shutdown(struct platform_device *pdev)
+> +{
+> +	amdpk_remove(pdev);
+
+I am not sure why this is necessary. Please provide comment WHY you
+need it. IOW, why do you need to disable IRQ manually here if the entire
+system is shutting down?
+
+> +}
+> +
+> +static const struct of_device_id amdpk_match_table[] = {
+> +	{ .compatible = "amd,versal-net-pki" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, amdpk_match_table);
+> +
+> +static struct platform_driver amdpk_pdrv = {
+> +	.probe = amdpk_probe,
+> +	.remove = amdpk_remove,
+> +	.shutdown = amdpk_shutdown,
+> +	.driver = {
+> +		.name = DRIVER_NAME,
+> +		.of_match_table = amdpk_match_table,
+> +	},
+> +};
+> +
+> +static int __init amdpk_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = platform_driver_register(&amdpk_pdrv);
+> +	if (ret) {
+> +		pr_err("can't register platform driver\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void __exit amdpk_exit(void)
+> +{
+> +	platform_driver_unregister(&amdpk_pdrv);
+> +}
+> +
+> +module_init(amdpk_init);
+> +module_exit(amdpk_exit);
+
+Why do you need to open code module_platform_driver?
+
+Best regards,
+Krzysztof
 
 
