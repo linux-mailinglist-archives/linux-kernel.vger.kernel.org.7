@@ -1,196 +1,269 @@
-Return-Path: <linux-kernel+bounces-598399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86413A845A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:06:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 581E7A845A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88525189F95F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:05:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 705F23AB183
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F5B28A3F2;
-	Thu, 10 Apr 2025 14:05:07 +0000 (UTC)
-Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFE828A3F2;
+	Thu, 10 Apr 2025 14:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hq7MFxXY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551E6284B21;
-	Thu, 10 Apr 2025 14:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9DE1E515;
+	Thu, 10 Apr 2025 14:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744293906; cv=none; b=hi0o/wAD+KFYeWpunboys49Lx+imsx2PXWBQEOrfoMTXCoG65s/KSgFUHpXrtZ/GHsS9yrNHUCJKRPgSqpmgzpiEsB/aAvO7kuB04bKPiMG/mV9Dgy9c92HVQxM1nyJA/QVb8dQfb8qwvBzIGsaPonwm/jJAqvZjdnRVhfhE5Ok=
+	t=1744293802; cv=none; b=C7dEyGt3yWlw1RSuvJtyfW8mjbHRfLHuJt/cdEWVKuPecp/b2U1UHGgI1v2+nDXjMbrrdYj89VHGqOiZiLf8aEgvcfnB1Ur+OWYA57nPJpXaGFIJcGW7Qp7mFGMp4jWGU7PWXb/MhLBfofy15nsBvykoRPvLEEA6euOZP+W6jJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744293906; c=relaxed/simple;
-	bh=/vVrlLgTBAnnRIWHpzc5T0Ee0v/HyVPxPh8/LZjzGis=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LWiEcBtgnMP3BuAq/Rz4BtC27ZpYjCPFH8EqCwXmjLFMiavcgFbsSLKvtIrmUlJLMouJn16uCrpqVuw2V5xHLTztaAza2qYIYzAMa3wbiLWK87dbIFPM5vJ7AvfwKaotvlIrIbxW0Wqo9UsTw2FbBr64BiicJOXoaFqERO+mQO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 2475410084D;
-	Thu, 10 Apr 2025 23:58:21 +1000 (AEST)
-X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
-Received: from smtp01.aussiebb.com.au ([127.0.0.1])
-	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id ye5TYnGA5GiS; Thu, 10 Apr 2025 23:58:21 +1000 (AEST)
-Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
-	id 07C18100265; Thu, 10 Apr 2025 23:58:20 +1000 (AEST)
-X-Spam-Level: 
-Received: from [192.168.0.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ian146@aussiebb.com.au)
-	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id 84608100265;
-	Thu, 10 Apr 2025 23:58:17 +1000 (AEST)
-Message-ID: <64fb3c80-96f9-4156-a085-516cbaa28376@themaw.net>
-Date: Thu, 10 Apr 2025 21:58:16 +0800
+	s=arc-20240116; t=1744293802; c=relaxed/simple;
+	bh=pBRvknAVUD0G3K153267322eDRSeCF9wcCoZODOKnYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQdWdBaKbjJzZKWan17p73FsD3G+Rwe63I3M9XIoIHEvoB436qKxlK2be4rX8UXn68aXDW3oH8PlNhMFQHnQQ+OcUFaTJrD8s3hptJexACMLw5PrHw8uq4Hc74wj9DcXiTrhB6rCY3c5v9jQKCkZGrBv2va15uWgSjfIsqrARBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hq7MFxXY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A21C4CEDD;
+	Thu, 10 Apr 2025 14:03:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744293801;
+	bh=pBRvknAVUD0G3K153267322eDRSeCF9wcCoZODOKnYs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hq7MFxXYBX66LGaM4VQN7NGb6kNqa1n5Z42SucADWQULAttYry1XLDJvVrpnocxqr
+	 PgG66SvVdsYDKPIQWCoxU7j3sxusEB5W5NSr+5228TNuU8Oqk7mj21ieMXRhY3F1F2
+	 ebqLRGAivO/uTEFdPuu6ReRQ/Ff6kO1LV7Ww7L1kMY1nM0fpC1VkP8pslvWNyWW+aC
+	 QBFO2LlvglWcXHgDdloimnGf8vwu4LAD9Nd2gEH3SVefTIRxF7kLujFKwJj+E++lE0
+	 Uiz9ZRwq9QEBnh1zeREBanPB11g3sP+VXTn+1iVlSkGko9ordx7KF1PdJBFvzhii2w
+	 qiD//jRAt7tbA==
+Date: Thu, 10 Apr 2025 11:03:18 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Howard Chu <howardchu95@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-perf-users@vger.kernel.org,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Fixes for perf build system and TUI browsers was Re: [perf top]
+ annotation doesn't work, libunwind doesn't seem to be working either
+Message-ID: <Z_fPpmHZu5ppip5V@x1>
+References: <Z_Rz10stoLzBocIO@x1>
+ <Z_TYux5fUg2pW-pF@gmail.com>
+ <Z_XaOp4TCBKe-M0o@x1>
+ <Z_ZltdaHx9XuKcd9@x1>
+ <Z_aY0fTs53id77CS@x1>
+ <Z_bHtD7umCsKeWJ6@x1>
+ <Z_bI7wK8mJYVOWDH@x1>
+ <Z_bl8tabAwfqKuy-@gmail.com>
+ <Z_chCGYb1_hMS1F9@x1>
+ <Z_dkNDj9EPFwPqq1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
-To: Christian Brauner <brauner@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, Eric Chanudet <echanude@redhat.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
- Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>
-References: <20250408210350.749901-12-echanude@redhat.com>
- <20250409-egalisieren-halbbitter-23bc252d3a38@brauner>
- <20250409131444.9K2lwziT@linutronix.de>
- <4qyflnhrml2gvnvtguj5ee7ewrz3ejhgdb2lfihifzjscc5orh@6ah6qxppgk5n>
- <20250409142510.PIlMaZhX@linutronix.de>
- <20250409-beulen-pumpwerk-43fd29a6801e@brauner>
-Content-Language: en-US
-From: Ian Kent <raven@themaw.net>
-Autocrypt: addr=raven@themaw.net; keydata=
- xsFNBE6c/ycBEADdYbAI5BKjE+yw+dOE+xucCEYiGyRhOI9JiZLUBh+PDz8cDnNxcCspH44o
- E7oTH0XPn9f7Zh0TkXWA8G6BZVCNifG7mM9K8Ecp3NheQYCk488ucSV/dz6DJ8BqX4psd4TI
- gpcs2iDQlg5CmuXDhc5z1ztNubv8hElSlFX/4l/U18OfrdTbbcjF/fivBkzkVobtltiL+msN
- bDq5S0K2KOxRxuXGaDShvfbz6DnajoVLEkNgEnGpSLxQNlJXdQBTE509MA30Q2aGk6oqHBQv
- zxjVyOu+WLGPSj7hF8SdYOjizVKIARGJzDy8qT4v/TLdVqPa2d0rx7DFvBRzOqYQL13/Zvie
- kuGbj3XvFibVt2ecS87WCJ/nlQxCa0KjGy0eb3i4XObtcU23fnd0ieZsQs4uDhZgzYB8LNud
- WXx9/Q0qsWfvZw7hEdPdPRBmwRmt2O1fbfk5CQN1EtNgS372PbOjQHaIV6n+QQP2ELIa3X5Z
- RnyaXyzwaCt6ETUHTslEaR9nOG6N3sIohIwlIywGK6WQmRBPyz5X1oF2Ld9E0crlaZYFPMRH
- hQtFxdycIBpTlc59g7uIXzwRx65HJcyBflj72YoTzwchN6Wf2rKq9xmtkV2Eihwo8WH3XkL9
- cjVKjg8rKRmqIMSRCpqFBWJpT1FzecQ8EMV0fk18Q5MLj441yQARAQABzRtJYW4gS2VudCA8
- cmF2ZW5AdGhlbWF3Lm5ldD7CwXsEEwECACUCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheA
- BQJOnjOcAhkBAAoJEOdnc4D1T9iphrYQALHK3J5rjzy4qPiLJ0EE9eJkyV1rqtzct5Ah9pu6
- LSkqxgQCfN3NmKOoj+TpbXGagg28qTGjkFvJSlpNY7zAj+fA11UVCxERgQBOJcPrbgaeYZua
- E4ST+w/inOdatNZRnNWGugqvez80QGuxFRQl1ttMaky7VxgwNTXcFNjClW3ifdD75gHlrU0V
- ZUULa1a0UVip0rNc7mFUKxhEUk+8NhowRZUk0nt1JUwezlyIYPysaN7ToVeYE4W0VgpWczmA
- tHtkRGIAgwL7DCNNJ6a+H50FEsyixmyr/pMuNswWbr3+d2MiJ1IYreZLhkGfNq9nG/+YK/0L
- Q2/OkIsz8bOrkYLTw8WwzfTz2RXV1N2NtsMKB/APMcuuodkSI5bzzgyu1cDrGLz43faFFmB9
- xAmKjibRLk6ChbmrZhuCYL0nn+RkL036jMLw5F1xiu2ltEgK2/gNJhm29iBhvScUKOqUnbPw
- DSMZ2NipMqj7Xy3hjw1CStEy3pCXp8/muaB8KRnf92VvjO79VEls29KuX6rz32bcBM4qxsVn
- cOqyghSE69H3q4SY7EbhdIfacUSEUV+m/pZK5gnJIl6n1Rh6u0MFXWttvu0j9JEl92Ayj8u8
- J/tYvFMpag3nTeC3I+arPSKpeWDX08oisrEp0Yw15r+6jbPjZNz7LvrYZ2fa3Am6KRn0zsFN
- BE6c/ycBEADZzcb88XlSiooYoEt3vuGkYoSkz7potX864MSNGekek1cwUrXeUdHUlw5zwPoC
- 4H5JF7D8q7lYoelBYJ+Mf0vdLzJLbbEtN5+v+s2UEbkDlnUQS1yRo1LxyNhJiXsQVr7WVA/c
- 8qcDWUYX7q/4Ckg77UO4l/eHCWNnHu7GkvKLVEgRjKPKroIEnjI0HMK3f6ABDReoc741RF5X
- X3qwmCgKZx0AkLjObXE3W769dtbNbWmW0lgFKe6dxlYrlZbq25Aubhcu2qTdQ/okx6uQ41+v
- QDxgYtocsT/CG1u0PpbtMeIm3mVQRXmjDFKjKAx9WOX/BHpk7VEtsNQUEp1lZo6hH7jeo5me
- CYFzgIbXdsMA9TjpzPpiWK9GetbD5KhnDId4ANMrWPNuGC/uPHDjtEJyf0cwknsRFLhL4/NJ
- KvqAuiXQ57x6qxrkuuinBQ3S9RR3JY7R7c3rqpWyaTuNNGPkIrRNyePky/ZTgTMA5of8Wioy
- z06XNhr6mG5xT+MHztKAQddV3xFy9f3Jrvtd6UvFbQPwG7Lv+/UztY5vPAzp7aJGz2pDbb0Q
- BC9u1mrHICB4awPlja/ljn+uuIb8Ow3jSy+Sx58VFEK7ctIOULdmnHXMFEihnOZO3NlNa6q+
- XZOK7J00Ne6y0IBAaNTM+xMF+JRc7Gx6bChES9vxMyMbXwARAQABwsFfBBgBAgAJBQJOnP8n
- AhsMAAoJEOdnc4D1T9iphf4QAJuR1jVyLLSkBDOPCa3ejvEqp4H5QUogl1ASkEboMiWcQJQd
- LaH6zHNySMnsN6g/UVhuviANBxtW2DFfANPiydox85CdH71gLkcOE1J7J6Fnxgjpc1Dq5kxh
- imBSqa2hlsKUt3MLXbjEYL5OTSV2RtNP04KwlGS/xMfNwQf2O2aJoC4mSs4OeZwsHJFVF8rK
- XDvL/NzMCnysWCwjVIDhHBBIOC3mecYtXrasv9nl77LgffyyaAAQZz7yZcvn8puj9jH9h+mr
- L02W+gd+Sh6Grvo5Kk4ngzfT/FtscVGv9zFWxfyoQHRyuhk0SOsoTNYN8XIWhosp9GViyDtE
- FXmrhiazz7XHc32u+o9+WugpTBZktYpORxLVwf9h1PY7CPDNX4EaIO64oyy9O3/huhOTOGha
- nVvqlYHyEYCFY7pIfaSNhgZs2aV0oP13XV6PGb5xir5ah+NW9gQk/obnvY5TAVtgTjAte5tZ
- +coCSBkOU1xMiW5Td7QwkNmtXKHyEF6dxCAMK1KHIqxrBaZO27PEDSHaIPHePi7y4KKq9C9U
- 8k5V5dFA0mqH/st9Sw6tFbqPkqjvvMLETDPVxOzinpU2VBGhce4wufSIoVLOjQnbIo1FIqWg
- Dx24eHv235mnNuGHrG+EapIh7g/67K0uAzwp17eyUYlE5BMcwRlaHMuKTil6
-In-Reply-To: <20250409-beulen-pumpwerk-43fd29a6801e@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z_dkNDj9EPFwPqq1@gmail.com>
 
+On Thu, Apr 10, 2025 at 08:24:52AM +0200, Ingo Molnar wrote:
+> * Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > On Wed, Apr 09, 2025 at 11:26:10PM +0200, Ingo Molnar wrote:
+> > > * Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > > > Anyway, back to the bug.
 
-On 10/4/25 00:04, Christian Brauner wrote:
-> On Wed, Apr 09, 2025 at 04:25:10PM +0200, Sebastian Andrzej Siewior wrote:
->> On 2025-04-09 16:02:29 [+0200], Mateusz Guzik wrote:
->>> On Wed, Apr 09, 2025 at 03:14:44PM +0200, Sebastian Andrzej Siewior wrote:
->>>> One question: Do we need this lazy/ MNT_DETACH case? Couldn't we handle
->>>> them all via queue_rcu_work()?
->>>> If so, couldn't we have make deferred_free_mounts global and have two
->>>> release_list, say release_list and release_list_next_gp? The first one
->>>> will be used if queue_rcu_work() returns true, otherwise the second.
->>>> Then once defer_free_mounts() is done and release_list_next_gp not
->>>> empty, it would move release_list_next_gp -> release_list and invoke
->>>> queue_rcu_work().
->>>> This would avoid the kmalloc, synchronize_rcu_expedited() and the
->>>> special-sauce.
->>>>
->>> To my understanding it was preferred for non-lazy unmount consumers to
->>> wait until the mntput before returning.
->>>
->>> That aside if I understood your approach it would de facto serialize all
->>> of these?
->>>
->>> As in with the posted patches you can have different worker threads
->>> progress in parallel as they all get a private list to iterate.
->>>
->>> With your proposal only one can do any work.
->>>
->>> One has to assume with sufficient mount/unmount traffic this can
->>> eventually get into trouble.
->> Right, it would serialize them within the same worker thread. With one
->> worker for each put you would schedule multiple worker from the RCU
->> callback. Given the system_wq you will schedule them all on the CPU
->> which invokes the RCU callback. This kind of serializes it, too.
->>
->> The mntput() callback uses spinlock_t for locking and then it frees
->> resources. It does not look like it waits for something nor takes ages.
->> So it might not be needed to split each put into its own worker on a
->> different CPU… One busy bee might be enough ;)
-> Unmounting can trigger very large number of mounts to be unmounted. If
-> you're on a container heavy system or services that all propagate to
-> each other in different mount namespaces mount propagation will generate
-> a ton of umounts. So this cannot be underestimated.
->
-> If a mount tree is wasted without MNT_DETACH it will pass UMOUNT_SYNC to
-> umount_tree(). That'll cause MNT_SYNC_UMOUNT to be raised on all mounts
-> during the unmount.
->
-> If a concurrent path lookup calls legitimize_mnt() on such a mount and
-> sees that MNT_SYNC_UMOUNT is set it will discount as it know that the
-> concurrent unmounter hold the last reference and it __legitimize_mnt()
-> can thus simply drop the reference count. The final mntput() will be
-> done by the umounter.
+> > > Thanks for having a look! :)
 
-In umount_tree() it looks like the unmounted mount remains hashed (ie.
+> > I guess I found it, another one-liner (well, two if you count removing a
+> > comment line) with a long explanation, see below.
 
-disconnect_mount() returns false) so can't it still race with an rcu-walk
+> > There is a tidy up patch before this, all is at:
 
-regardless of the sybcronsize_rcu().
+> > https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git perf-annotate+build
+ 
+> Wow, that's quite a lot!
 
+You reported various problems that accumulated thru over a decade, which
+shows how difficult is to regression test TUIs :-\
 
-Surely I'm missing something ...
+We have 'perf test' to test various aspects of the tools, with C ones
+testing APIs, shell ones running the tools and looking if they are
+generating expected results by grepping output and using other
+techniques, the perf test shell infrastructure is itself checked using
+ShellCheck, if installed:
 
+⬢ [acme@toolbox perf-tools-next]$ rpm -q --qf "%{description}\n" ShellCheck
+The goals of ShellCheck are:
 
-Ian
+* To point out and clarify typical beginner's syntax issues,
+  that causes a shell to give cryptic error messages.
 
->
-> The synchronize_rcu() call in namespace_unlock() takes care that the
-> last mntput() doesn't happen until path walking has dropped out of RCU
-> mode.
->
-> Without it it's possible that a non-MNT_DETACH umounter gets a spurious
-> EBUSY error because a concurrent lazy path walk will suddenly put the
-> last reference via mntput().
->
-> I'm unclear how that's handled in whatever it is you're proposing.
->
+* To point out and clarify typical intermediate level semantic problems,
+  that causes a shell to behave strangely and counter-intuitively.
+
+* To point out subtle caveats, corner cases and pitfalls, that may cause an
+  advanced user's otherwise working script to fail under future circumstances.
+⬢ [acme@toolbox perf-tools-next]$
+
+A big regression test suite that lived/lives inside Red Hat,
+created/maintained by Michael Petlan (and was continuosly used to test
+perf) is being merged with it over time.
+
+Ian did lots of work on making it parallel, with some tests needing to
+be run exclusively as it changes global state (perf probe adding stuff,
+etc).
+
+But one area we lack is to test things that interact with the user, like
+the TUI, something to improve!
+
+So I'm rather happy when someone that uses the TUI comes along and
+points out problems, as this isn't an area that we are automatically
+testing, it all depends on sheer code review, with corner case bugs
+living in the codebase for years, sometimes decades...
+ 
+> So, I can confirm that the build warning is gone - as the libunwind 
+> entry is gone:
+
+Great!
+ 
+>  Auto-detecting system features:
+>  ...                                   libdw: [ on  ]
+>  ...                                   glibc: [ on  ]
+>  ...                                  libelf: [ on  ]
+>  ...                                 libnuma: [ on  ]
+>  ...                  numa_num_possible_cpus: [ on  ]
+>  ...                                 libperl: [ on  ]
+>  ...                               libpython: [ on  ]
+>  ...                               libcrypto: [ on  ]
+>  ...                             libcapstone: [ on  ]
+>  ...                               llvm-perf: [ on  ]
+>  ...                                    zlib: [ on  ]
+>  ...                                    lzma: [ on  ]
+>  ...                               get_cpuid: [ on  ]
+>  ...                                     bpf: [ on  ]
+>  ...                                  libaio: [ on  ]
+>  ...                                 libzstd: [ on  ]
+> 
+> And there's this second round of auto-detection:
+ 
+>  Auto-detecting system features:
+>  ...                         clang-bpf-co-re: [ on  ]
+>  ...                                    llvm: [ on  ]
+>  ...                                  libcap: [ on  ]
+>  ...                                  libbfd: [ on  ]
+ 
+> which is all-green as well.
+ 
+> I still have these dependency warnings:
+ 
+>   Makefile.config:563: No elfutils/debuginfod.h found, no debuginfo server support, please install elfutils-debuginfod-client-devel or equivalent
+>   Makefile.config:1146: No openjdk development package found, please install JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
+>   Makefile.config:1191: libtracefs is missing. Please install libtracefs-dev/libtracefs-devel
+ 
+> The libtracefs one was resolved via 'apt install libtracefs-dev', 
+> leaving two:
+ 
+>  Makefile.config:563: No elfutils/debuginfod.h found, no debuginfo server support, please install elfutils-debuginfod-client-devel or equivalent
+>  Makefile.config:1146: No openjdk development package found, please install JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
+ 
+> I cannot resolve the openjdk dependency warning, despite installing a 
+> plethora of packages:
+
+This one is a sore spot, I'll try to take a look.
+ 
+> kepler:~/tip> dpkg -l | grep openjdk
+> rc  openjdk-14-jre-headless:amd64                               14.0.2+12-1                                         amd64        OpenJDK Java runtime, using Hotspot JIT (headless)
+> ii  openjdk-17-jre:amd64                                        17.0.14+7-1~24.10                                   amd64        OpenJDK Java runtime, using Hotspot JIT
+> ii  openjdk-17-jre-headless:amd64                               17.0.14+7-1~24.10                                   amd64        OpenJDK Java runtime, using Hotspot JIT (headless)
+> rc  openjdk-18-jre-headless:amd64                               18.0.2+9-2ubuntu1                                   amd64        OpenJDK Java runtime, using Hotspot JIT (headless)
+> ii  openjdk-21-jdk-headless:amd64                               21.0.6+7-1~24.10.1                                  amd64        OpenJDK Development Kit (JDK) (headless)
+> ii  openjdk-21-jre:amd64                                        21.0.6+7-1~24.10.1                                  amd64        OpenJDK Java runtime, using Hotspot JIT
+> ii  openjdk-21-jre-headless:amd64                               21.0.6+7-1~24.10.1                                  amd64        OpenJDK Java runtime, using Hotspot JIT (headless)
+> ii  openjdk-8-jdk:amd64                                         8u442-b06~us1-0ubuntu1~24.10                        amd64        OpenJDK Development Kit (JDK)
+> ii  openjdk-8-jdk-headless:amd64                                8u442-b06~us1-0ubuntu1~24.10                        amd64        OpenJDK Development Kit (JDK) (headless)
+> ii  openjdk-8-jre:amd64                                         8u442-b06~us1-0ubuntu1~24.10                        amd64        OpenJDK Java runtime, using Hotspot JIT
+> ii  openjdk-8-jre-headless:amd64                                8u442-b06~us1-0ubuntu1~24.10                        amd64        OpenJDK Java runtime, using Hotspot JIT (headless)
+
+> And I managed to resolve the elfutils/debuginfod.h warning via an 
+> apt-file search and installing the libdebuginfod-dev package, the 
+> warning message should probably be updated via the patch further below 
+> that gives a more specific package name to install.
+
+I've folded your patch in the patch I added in this series while
+addressing the other problems you pointed out with libunwind, ditto for
+libbfd.
+
+> With that resolved, I now have only a single dependency failure left:
+ 
+>   Makefile.config:1146: No openjdk development package found, please install JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
+
+I'll work on that.
+ 
+> On the UI front:
+> 
+>  - I can confirm that the left-arrow now works intuitively wrt. context 
+>    zooming, thanks for implementing that!
+
+Great! the good thing was that minor changes were needed.
+ 
+>  - Likewise, the Esc key suggested in the 'h' screen now works 
+>    intuitively as well.
+
+Right, I didn't even try to fix that one explicitely, it was that
+do_zoom_thread() (that does zoom in and out) not having act->thread set
+when handling the left arrow, that happens to also handle the ESC case.
+ 
+>  - When pressing an unbound key I now get a helpful message.
+
+Great.
+ 
+>     - One small detail with the unbound key warning I noticed: it now 
+>       says "'l' key not associated, use 'h'/'?'/F1 to see actions!", but 
+>       pressing 'h' will only work after dismissing this window. It might 
+>       be a nice little extra UI tweak to allow 'h/?/F1' to jump to the 
+>       help window straight away from warning windows, instead of 
+>       requiring two keys to be pressed?
+
+Sure, I'll add a patch on top of this series doing that.
+ 
+>  - I also see that 'P' now works in a broader context as well, saving 
+>    the perf.hist.0 file.
+
+I did nothing in this regard, a good fallout from the other changes then.
+ 
+>     - A small observation with the 'P' key too: maybe the status line 
+>       at the bottom should update with the action performed? I only see 
+>       a small flash and the "Press '?' for help on key bindings" 
+>       message is reprinted.
+
+Right, I think this is a case to use a popup window stating that the
+"screenshot" was produced and was saved in file xyz.bla
+ 
+> Anyway, I'd say that the large majority of my TUI complaints were 
+> resolved by your changes, and I had no new problems, so for the
+> changes so far:
+ 
+>   Tested-by: Ingo Molnar <mingo@kernel.org>
+
+Thanks, I added that to the patches and will use what I have right now
+to open the perf-tools-next.git tree, so that in addition to this work I
+start processing the many patches that are out there for 6.16!
+
+Please, if you have further comments, just send them my way but do not
+forget to CC perf's co-maintainer, reviewers and the mailing list, its
+not always that I can focus on something like this ;-)
+
+Cheers,
+
+- Arnaldo
 
