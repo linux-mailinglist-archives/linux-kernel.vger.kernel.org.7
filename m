@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-597965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2AB3A840BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:33:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD000A8408F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7FF83B00B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:27:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 678DA4C262A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FA92853E9;
-	Thu, 10 Apr 2025 10:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4651281366;
+	Thu, 10 Apr 2025 10:24:44 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF56D284B5B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC48281355
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744280716; cv=none; b=uC+6KOtozZYy/GWW7F+BrE6pkV6KFUTXIlfFVSKnyrGkRVx6xt8dp3oZVGmtuuExqD83UJ+sOsl7uL/aun8rEsBf8QfdXLhAQyYRA7FRKrp2ObUzqIBKkHccs7EHanu8zcnhwgKbNLuwGaAJc0X11zi/eqBVq6JFSbyjvsM8Tqk=
+	t=1744280684; cv=none; b=pSdtoPCKLnduHvj8BoGOWRsRy7Gc6m7rYum/STlmoSENi9mDUtMIfj9EbjWmDUk3il7NIM8S5ojTViJZJ9WxLZ46Bqq9+FXlKkd55G/8aBbtmE48rdI2BlxSda+usMh5Hw8COCZUXG9z8D9BVZ9J+88RVX4++JLMls3zTrj7dPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744280716; c=relaxed/simple;
-	bh=nt+RA2PEb1rBYOFg/KbiJGocixEt5bp9cJpa0Hka3K8=;
+	s=arc-20240116; t=1744280684; c=relaxed/simple;
+	bh=OCfonBvKN0BbaLPnvNjIOOnkihYh96k9ma6b5AkPwR0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KFJR4hsPmk65Kt04bzi3U3FJfz9P7vvNPzPxlUlYc/DwPXYYsb7P1kMbHZq/T1DZJDPQDcWf6MAFEOuBy0BUnb/xNGjDxiAmW5z2wcSRDHQT3wKh8D2K6g84an2UWFdWtd5t4QQCzZZVpOsYFx8CkwEYFq+irFMRPzCLCSB+jEU=
+	 In-Reply-To:To:Cc; b=gH8egqv2zFWv0loIuTR2M1eZP9vpIunxfe/cyeSQC2+hL6HUwSi0UeJl44rfBQS9kcaJHwrqQbMHAGr8j+mbv1SQS/V9wyqMrvqZWJA1lAVrYGqoh1HNlq3ujtKlUPVpxHCngCp0pJrMS7hQSMbchUFlhz7w343moH61UsIDJyE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,22 +32,21 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u2p5C-0002DG-5i; Thu, 10 Apr 2025 12:24:30 +0200
+	id 1u2p5C-0002DL-5h; Thu, 10 Apr 2025 12:24:30 +0200
 Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u2p5A-004Fmz-2r;
+	id 1u2p5A-004Fn0-2s;
 	Thu, 10 Apr 2025 12:24:28 +0200
 Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
 	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u2p5A-002ODU-2O;
+	id 1u2p5A-002ODU-2P;
 	Thu, 10 Apr 2025 12:24:28 +0200
 From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Thu, 10 Apr 2025 12:24:30 +0200
-Subject: [PATCH wireless-next v6 6/9] wifi: mwifiex: simplify
- mwifiex_setup_ht_caps()
+Date: Thu, 10 Apr 2025 12:24:31 +0200
+Subject: [PATCH wireless-next v6 7/9] wifi: mwifiex: fix indention
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,20 +55,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250410-mwifiex-cleanup-1-v6-6-a6bbd4ac4d37@pengutronix.de>
+Message-Id: <20250410-mwifiex-cleanup-1-v6-7-a6bbd4ac4d37@pengutronix.de>
 References: <20250410-mwifiex-cleanup-1-v6-0-a6bbd4ac4d37@pengutronix.de>
 In-Reply-To: <20250410-mwifiex-cleanup-1-v6-0-a6bbd4ac4d37@pengutronix.de>
 To: Brian Norris <briannorris@chromium.org>, 
  Francesco Dolcini <francesco@dolcini.it>
 Cc: Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, 
  linux-kernel@vger.kernel.org, David Lin <yu-hao.lin@nxp.com>, 
- kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
+ kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744280668; l=2419;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744280668; l=1301;
  i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=nt+RA2PEb1rBYOFg/KbiJGocixEt5bp9cJpa0Hka3K8=;
- b=PGGT8nVJMqbToJ/pQIyVmvysnIns+uBNtP3Xa3hbQHCTH7p3hp06BLob4oOS0PKhCcH9zx28K
- 5reydWOLU41DF12xz5n/pFI9qrXujO6rpkj5fQjJlPis2Tx5UftC8qJ
+ bh=OCfonBvKN0BbaLPnvNjIOOnkihYh96k9ma6b5AkPwR0=;
+ b=wEthxHJD3zHHExEO9voEBXwKpo3A1GxEEq6C693PH/DdJYP2ED08uwBVY10zU6Zl00BhwSqMK
+ hiPZQ0ulCGiC2QWVjqEc5j0T8QoF3ngJAJQxLSzwx1L9YJPFAi4IgpW
 X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
  pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -77,64 +77,39 @@ X-SA-Exim-Mail-From: s.hauer@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-In mwifiex_setup_ht_caps() first a local struct ieee80211_mcs_info
-is initialized and afterwards copied over &ht_info->mcs. Simplify
-this by initializing &ht_info->mcs directly.
+Align multiline if() under the opening brace.
 
-While at it call memset on the u8 rx_mask[] array instead of the struct
-which makes the intention clearer and we no longer have to assume the
-rx_mask array is the first member of struct ieee80211_mcs_info.
-
+Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 Acked-by: Brian Norris <briannorris@chromium.org>
 ---
- drivers/net/wireless/marvell/mwifiex/cfg80211.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/wmm.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-index 33bc5cd3ce960..1d9bc8f980c8d 100644
---- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-+++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-@@ -2906,16 +2906,12 @@ mwifiex_setup_ht_caps(struct ieee80211_sta_ht_cap *ht_info,
- 		      struct mwifiex_private *priv)
- {
- 	int rx_mcs_supp;
--	struct ieee80211_mcs_info mcs_set;
--	u8 *mcs = (u8 *)&mcs_set;
- 	struct mwifiex_adapter *adapter = priv->adapter;
+diff --git a/drivers/net/wireless/marvell/mwifiex/wmm.c b/drivers/net/wireless/marvell/mwifiex/wmm.c
+index bcb61dab7dc86..1b1222c73728f 100644
+--- a/drivers/net/wireless/marvell/mwifiex/wmm.c
++++ b/drivers/net/wireless/marvell/mwifiex/wmm.c
+@@ -1428,13 +1428,13 @@ mwifiex_dequeue_tx_packet(struct mwifiex_adapter *adapter)
+ 	}
  
- 	ht_info->ht_supported = true;
- 	ht_info->ampdu_factor = IEEE80211_HT_MAX_AMPDU_64K;
- 	ht_info->ampdu_density = IEEE80211_HT_MPDU_DENSITY_NONE;
- 
--	memset(&ht_info->mcs, 0, sizeof(ht_info->mcs));
--
- 	/* Fill HT capability information */
- 	if (ISSUPP_CHANWIDTH40(adapter->hw_dot_11n_dev_cap))
- 		ht_info->cap |= IEEE80211_HT_CAP_SUP_WIDTH_20_40;
-@@ -2961,17 +2957,15 @@ mwifiex_setup_ht_caps(struct ieee80211_sta_ht_cap *ht_info,
- 	ht_info->cap |= IEEE80211_HT_CAP_SM_PS;
- 
- 	rx_mcs_supp = GET_RXMCSSUPP(adapter->user_dev_mcs_support);
-+
-+	memset(&ht_info->mcs, 0, sizeof(ht_info->mcs));
- 	/* Set MCS for 1x1/2x2 */
--	memset(mcs, 0xff, rx_mcs_supp);
--	/* Clear all the other values */
--	memset(&mcs[rx_mcs_supp], 0,
--	       sizeof(struct ieee80211_mcs_info) - rx_mcs_supp);
-+	memset(ht_info->mcs.rx_mask, 0xff, rx_mcs_supp);
-+
- 	if (priv->bss_mode == NL80211_IFTYPE_STATION ||
- 	    ISSUPP_CHANWIDTH40(adapter->hw_dot_11n_dev_cap))
- 		/* Set MCS32 for infra mode or ad-hoc mode with 40MHz support */
--		SETHT_MCS32(mcs_set.rx_mask);
--
--	memcpy((u8 *) &ht_info->mcs, mcs, sizeof(struct ieee80211_mcs_info));
-+		SETHT_MCS32(ht_info->mcs.rx_mask);
- 
- 	ht_info->mcs.tx_params = IEEE80211_HT_MCS_TX_DEFINED;
- }
+ 	if (!ptr->is_11n_enabled ||
+-		ptr->ba_status ||
+-		priv->wps.session_enable) {
++	    ptr->ba_status ||
++	    priv->wps.session_enable) {
+ 		if (ptr->is_11n_enabled &&
+-			ptr->ba_status &&
+-			ptr->amsdu_in_ampdu &&
+-			mwifiex_is_amsdu_allowed(priv, tid) &&
+-			mwifiex_is_11n_aggragation_possible(priv, ptr,
++		    ptr->ba_status &&
++		    ptr->amsdu_in_ampdu &&
++		    mwifiex_is_amsdu_allowed(priv, tid) &&
++		    mwifiex_is_11n_aggragation_possible(priv, ptr,
+ 							adapter->tx_buf_size))
+ 			mwifiex_11n_aggregate_pkt(priv, ptr, ptr_index);
+ 			/* ra_list_spinlock has been freed in
 
 -- 
 2.39.5
