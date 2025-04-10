@@ -1,151 +1,134 @@
-Return-Path: <linux-kernel+bounces-597981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1215A840C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:35:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C46C8A840D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F19FF189CFD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:35:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54BBF1746BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDEA28134A;
-	Thu, 10 Apr 2025 10:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m487MtyL"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9067281356;
+	Thu, 10 Apr 2025 10:35:22 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1367280A53;
-	Thu, 10 Apr 2025 10:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F9D130A54
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744281298; cv=none; b=mJRwrkTRdObzuc0UvM8R1ZcemdK1ePh+cF6XXnQZPYDJ52KInKSW8dA6ewSo3S6k2UJ8jZP/a+TENbUeupQh91qfW234uFn6fcWSzWH4/3kjCB1Ql9OvGo7flgiouQktw6YkEObnrwEh18aa4NgxuHFsk84D/T8xuQy7ACZYiLY=
+	t=1744281322; cv=none; b=UBOMdT6HMS/GgFmiZ9qpKbsgbOT+VRN3xhg5xpYtG1tqLzLrVE27urLwFPM/9ymLMOdO4DvSyMLoO0WnRHU6z3grxpFbHgHBKMN2Qlh0Vm9BvJpPaAh/GA6TMvP4zTFQw5SKDvH0ig40h3cLrPAykHEnW8P60yNBm5oKWMwV04s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744281298; c=relaxed/simple;
-	bh=Usa5GY7gLd+h3dNhdsCfEGEE0m5r6uiwqcZ8ac0SqQA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pPL+S9ulmP/kYBe2ZUu4jjiVPp2b0lbeIzxEDouMazhWkm3b5qJlklG03OeduaUh+vq1fJAE+pM2pHzsc9XlK12J6U6E1J3MITW1kAztQQopsG45eM6I3rUl+h45iPyuyBGPGsFRxMUDaoO6FAxxV3xlPTyS06eSFMRu8lZlxBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m487MtyL; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3054ef26da3so489711a91.3;
-        Thu, 10 Apr 2025 03:34:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744281296; x=1744886096; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gKoRPjjF2o3edAKt6JuTrWZHCul5MYWhGghZITYn0O0=;
-        b=m487MtyLFmprLombHYrtFpyjP3n9Wo+Sdnb/TwL7msWWXh/5bRqVhKnkD4gVu0XTwc
-         NPY2wiMezbARs6bcfR4ANptpCx3fdGxuGZXACKMkQdNcl5aoAuo7xqpWm+aw54XasB3a
-         G/sfy4UJaPMmLD8T0O0YxQDBg+zn1GgZUugfoPjmUayVat36QnOs9/0jZAUvfnbZhJUI
-         WF0p4AKY8HLllBL6lK/ZLRgnrX3L3H8cqIN3LgJljdb1sY5ZdUgbZvpS+wjzwzqJpEqT
-         D4e0Qn9ogh1N85zw287nKyOa/nWJM5xN6b214c32vgzn60TVtm+/Dk9M4c2cT9kr1GWb
-         YekA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744281296; x=1744886096;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gKoRPjjF2o3edAKt6JuTrWZHCul5MYWhGghZITYn0O0=;
-        b=VdyneZGCGu4ipSarLhiLUZbnSNf0Q0nmYHW7RJ4jUJOt4bYaNGBIGYFLY/UEHCVvnG
-         4fzjBak+R/5Xv62oHnB1fADQXxFvH0vGk1jOZQ3MFDmJZ4xT8FdF8moqg9JfVpCajp+W
-         vhMQWISusWPIWZBo04EeEUp/UDwlz/QZcZZ7qhDHbUuTQk3MZhuY5pGA6DM8mbP3H6IB
-         0usp/9X6A0cTdYtDz76U7tzuA+Z9tyQpQG6wzUviACw3BXMXNEtY6zXO/Wx7syHU14ab
-         sx2wYpnl0G0CKbx70f5xUyzY5xNHRrtWHT6ofj3S+1nRlkaX5jXwlC72GGm8smx3QLtG
-         Uo/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW1xJaP1ModDTXptPZezmJhbrKw6XJoPOe2H0LiiK+ZFxEvnsvX0lHkcZEsOSqQ0rhHvvqR5evZBR5sSmCWGpE=@vger.kernel.org, AJvYcCX7HYANzBwqrOG3Lh/Z23qCUGYbkFa4XvFUMkr06vsohWmohnU3l6Ltw7iYhfWnYZnAnfcSi+2+575kbGsh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv6nQvTDwYkUOLf4xYutUpWRQOJrpMiDjFEakGBj3KO2VWotec
-	0jg6L02IDWSvXNgWsLbkM65FD1b+FbYY0RQJDyUPktyGCk3FqrOx
-X-Gm-Gg: ASbGncuOYcUNvHhtI+bMAExgi+AvWq9SpuPXDNEdNJsvmbViqRh8g2W+/WDrzjE0cul
-	SqNiNelq5hgKyweKNkWRNPT/lxEtIUQLMSTOvt0jEHwkPCN0HlMIzKfSsAvTIN6L93IX7cY+c3d
-	Cs2y5hUJ0uZ7u6eDmwu+TOjfKQHbYoqgGQxOADZkUNnG8yKPLRKvWbcN4+50GvNI/nh+oQpMKGo
-	L0COBOpCF34wsHBygMsVOWPpT54SkEeDaxWjut9PxHcrz/Tx1oWOY5i/eGYnKxkmgMc+gIxFX4m
-	Kquo/fFD1m1h3d0uKwJBewld5vitOhRL1AW2tlCRgFOkzTbo2BBdMZ5ZE2lTkYXUXHpjzMqSXA=
-	=
-X-Google-Smtp-Source: AGHT+IHM90ALESQ/hFbECm2wePfkPahQU+NMHam5UYKUXQtopaaaZm2Ej9hTWt6CgT+IFZM55oe2rQ==
-X-Received: by 2002:a17:90b:2d46:b0:2ee:6d08:7936 with SMTP id 98e67ed59e1d1-30718b82e49mr3438484a91.20.1744281296168;
-        Thu, 10 Apr 2025 03:34:56 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:4080:204:a537:5da0:ac0c:6934:f07])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306df4011f1sm3438980a91.41.2025.04.10.03.34.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 03:34:55 -0700 (PDT)
-From: Purva Yeshi <purvayeshi550@gmail.com>
-To: peterhuewe@gmx.de,
-	jarkko@kernel.org
-Cc: jgg@ziepe.ca,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Purva Yeshi <purvayeshi550@gmail.com>
-Subject: [PATCH v2] char: tpm: tpm-buf: Add sanity check fallback in read helpers
-Date: Thu, 10 Apr 2025 16:04:42 +0530
-Message-Id: <20250410103442.17746-1-purvayeshi550@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744281322; c=relaxed/simple;
+	bh=P6qo8qAHeJPS2kB9aX7XoqA5Cr9gFdS6Ku0Dtv4Opmo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=s1aguiewxz1cSA7Dg1AjD2d3RXylaZ5dG9BtRBSDb23pwl7HqsTAaW76y7b9cAGRi7JjeZswUW5iCZL24i92x/WJSoiz/AkyTtAuPrOHr5/Axb6ydYtsRH/8mm0SsMhCAHCsee/OqGH51Y7GixKY9LzwY4Lw95WNCrapUw+uNB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u2pFS-0004gX-AB; Thu, 10 Apr 2025 12:35:06 +0200
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u2pFR-004Fts-2i;
+	Thu, 10 Apr 2025 12:35:05 +0200
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u2pFR-002dX6-2R;
+	Thu, 10 Apr 2025 12:35:05 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH v3 0/3] clk: add support for TI CDCE6214
+Date: Thu, 10 Apr 2025 12:34:55 +0200
+Message-Id: <20250410-clk-cdce6214-v3-0-d73cf9ff3d80@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM+e92cC/3XMQQ6CMBCF4auQrq2ZDoWKK+9hXNB2gEYDpMUGQ
+ 7i7hZXRuPxf8r6FBfKOAjtnC/MUXXBDnyI/ZMx0dd8SdzY1Q8ACJJy4edy5sYZKFJKDURJkbg2
+ WiqXL6Klx885db6k7F6bBv3Y9im39A0XBgWsrSUGFdSWay0h9+5z80Lv5aIltWsRPofoSMAkSN
+ BZaIZLRP8K6rm+XZG+I7wAAAA==
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, kernel@pengutronix.de, 
+ =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
+ Sascha Hauer <s.hauer@pengutronix.de>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744281305; l=2029;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=P6qo8qAHeJPS2kB9aX7XoqA5Cr9gFdS6Ku0Dtv4Opmo=;
+ b=vu/q6ZvKaYA3RqE6e56y1bzkcwgb8VnZhbbrsRAIxkJ4OMuuBSC00Pb0b2uf04jdyL0AW6xsB
+ HkrUCF8HgMIChe/9s/p6sWgLckWfvBEWyMgTt7Jsgvs+JvlgwELMkkR
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Fix Smatch-detected issue:
+The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
+Differential Outputs, Two Inputs, and Internal EEPROM.
 
-drivers/char/tpm/tpm-buf.c:208 tpm_buf_read_u8() error:
-uninitialized symbol 'value'.
-drivers/char/tpm/tpm-buf.c:225 tpm_buf_read_u16() error:
-uninitialized symbol 'value'.
-drivers/char/tpm/tpm-buf.c:242 tpm_buf_read_u32() error:
-uninitialized symbol 'value'.
+This series adds a common clk framework driver for this chip along with
+the dt-bindings document and a small fix needed for the common clk
+framework.
 
-Zero-initialize the return values in tpm_buf_read_u8(),
-tpm_buf_read_u16(), and tpm_buf_read_u32() to guard against
-uninitialized data in case of a boundary overflow.
+Sascha
 
-Add defensive initialization ensures the return values are
-always defined, preventing undefined behavior if the unexpected
-happens.
-
-Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
-V1 - https://lore.kernel.org/all/20250409205536.210202-1-purvayeshi550@gmail.com/
-V2 - Update commit message to clarify patch adds a sanity check
+Changes in v3:
+- Use string properties instead of int for enums
+- Use units from property-units in dtschema
+- Link to v2: https://lore.kernel.org/r/20250409-clk-cdce6214-v2-0-40b25b722ecb@pengutronix.de
 
- drivers/char/tpm/tpm-buf.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Changes in v2:
+- Use consistent quotes in binding document
+- make clock-names an enum to make each clock fully optional
+- drop '|' in binding description where not needed
+- encode clock input mode into integer
+- encode clock output mode into integer
+- do not use defines for reg properties
+- support setting load capacity for the oscillator via device tree
+- support setting Bias current for the oscillator via device tree
+- support setting polarities of CMOS outputs via device tree
+- fix compatible string in driver
+- remove unused struct cdce6214_config
+- Link to v1: https://lore.kernel.org/r/20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de
 
-diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
-index e49a19fea3bd..dc882fc9fa9e 100644
---- a/drivers/char/tpm/tpm-buf.c
-+++ b/drivers/char/tpm/tpm-buf.c
-@@ -201,7 +201,7 @@ static void tpm_buf_read(struct tpm_buf *buf, off_t *offset, size_t count, void
-  */
- u8 tpm_buf_read_u8(struct tpm_buf *buf, off_t *offset)
- {
--	u8 value;
-+	u8 value = 0;
- 
- 	tpm_buf_read(buf, offset, sizeof(value), &value);
- 
-@@ -218,7 +218,7 @@ EXPORT_SYMBOL_GPL(tpm_buf_read_u8);
-  */
- u16 tpm_buf_read_u16(struct tpm_buf *buf, off_t *offset)
- {
--	u16 value;
-+	u16 value = 0;
- 
- 	tpm_buf_read(buf, offset, sizeof(value), &value);
- 
-@@ -235,7 +235,7 @@ EXPORT_SYMBOL_GPL(tpm_buf_read_u16);
-  */
- u32 tpm_buf_read_u32(struct tpm_buf *buf, off_t *offset)
- {
--	u32 value;
-+	u32 value = 0;
- 
- 	tpm_buf_read(buf, offset, sizeof(value), &value);
- 
+---
+Sascha Hauer (3):
+      clk: make determine_rate optional for non reparenting clocks
+      dt-bindings: clock: add TI CDCE6214 binding
+      clk: add TI CDCE6214 clock driver
+
+ .../devicetree/bindings/clock/ti,cdce6214.yaml     |  155 +++
+ drivers/clk/Kconfig                                |    7 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-cdce6214.c                         | 1311 ++++++++++++++++++++
+ drivers/clk/clk.c                                  |    3 +-
+ include/dt-bindings/clock/ti,cdce6214.h            |   24 +
+ 6 files changed, 1500 insertions(+), 1 deletion(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250408-clk-cdce6214-0c74043dc267
+
+Best regards,
 -- 
-2.34.1
+Sascha Hauer <s.hauer@pengutronix.de>
 
 
