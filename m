@@ -1,152 +1,159 @@
-Return-Path: <linux-kernel+bounces-597605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96B7A83BF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:02:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89BBAA83BDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57DB44A6D42
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:00:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C1E16BF10
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20491E47D9;
-	Thu, 10 Apr 2025 08:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D891C1E51E0;
+	Thu, 10 Apr 2025 07:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Hx0NLMPi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fcPV92j9"
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGY1RDiz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301021C5D7B;
-	Thu, 10 Apr 2025 08:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370651E32D5;
+	Thu, 10 Apr 2025 07:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744272021; cv=none; b=fYILRAOZgGP5y7UP9JZT7rnalxd22aTw2Xha4ZzDVNgftQ3oXmjh96eGUZG76AH1niNB3F27LdA640AgC95e5M8f6p3xue8a/2dC/LmGndH6NWNsl4dAVerAvxpAdzxjTT1mGczMBjzgZSuf1PQDyMtgStHUM3yyDytCMGwSp9U=
+	t=1744271902; cv=none; b=Z+HwTkFtVxKXvNoMMRsHjbuOPPUTaYwseFj3pVSDrvZ/CDZ56bfkevMFy4AzKE27K/jXdBMV9b0MnU7I6uF7bgugprK9+BnfQDqAeeumrZPMWzV9VxlHVuWNMTUJ5XoAPvRVuJa4lRoxGfW1KgR+rlBwwAGF6Xz6kz6qtwSx+hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744272021; c=relaxed/simple;
-	bh=BNs36cFblgpNUrlfgerskcnvl+4ODLGqjQaWjV2nbQk=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=mv/N0Iqw6tvPQ9qiWIGve4vOcN+G9LB9wLhsmmH6ct3zk0jOu/WYWTvF/1j0PUvXTsw2L3tWkW3d/ZDTrAuU1RCMQjPzH3asxjG4XWgWXFWTRfyld3uaq6HQBOS0Cv4ylfcKgXW2dskP4QqPOIEnldNMWOPacQ4WeSRdJre7C80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Hx0NLMPi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fcPV92j9; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id F114C2540229;
-	Thu, 10 Apr 2025 04:00:14 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-05.internal (MEProxy); Thu, 10 Apr 2025 04:00:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1744272014;
-	 x=1744358414; bh=vqd+an8KzXjGcgrrzFgvmuFuLXgqiHUn3jGJ2YEVl6E=; b=
-	Hx0NLMPiXyE1YQ86SebCLF3W12WY1IioWIfq1mWquoe68p3aw/Ctw2gyCO7J1y4Y
-	nf6BFz7qOTjShAo18ecvfoZ1/LCrV8ZEIbcOWWmcLqtkGOh8otNwVtBh+sN1iE65
-	+N42IEp9dDn2KBXKnjrUk3g5O9RV2QStfAZWxGU7Jo7pGRLWH7SJ/whlm4rgniCC
-	Yjp6PrzfU0MHV0+pYz52ED6/C1uR4EIQD0CX8KZC6ymcVnpKv4AHAO0NnVhSY5fF
-	g0elQktLD7Pn7r1X/9lN19CNyZ+BtDEphyuqMND51CGbkbxeiZAEdC9G/2/8ox6a
-	NgeizINB+ai+CNy67L9xaw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744272014; x=
-	1744358414; bh=vqd+an8KzXjGcgrrzFgvmuFuLXgqiHUn3jGJ2YEVl6E=; b=f
-	cPV92j92d5IZn4lx+B99WEghiDBqzEeOqel+uV1ReDor5TexLY6BaLzYNdKH0WGZ
-	v5frIPWBSghVBd26sdbvvri0TksPiQ1EA1MEgXVy/Tdfmvn7C+d+/S/EvI2JfAKy
-	bSYEWQua7yDglmWGQBq2lSN4tBXjK2ZTgARwOI99QK0MuDRcbdDOrERefAkU5u6g
-	qPWf8moNR1sM1z3SqOPXNxEV68elS6kwMupJv10xMX/5w0OXNo6KtMifJhMciRlP
-	xFZ8ASzCg1ZrdhEz+bYadV7Kx3IUydYWz23DQDdy+3thMVCctobus66QbYGzIVvM
-	7IdrnPBrRUk2hJGCmG7/Q==
-X-ME-Sender: <xms:jnr3ZxRGQ9hMYMU9hy4gqbC9vI885ZxMpYJRNU_h6DxvJLzhR7r2nw>
-    <xme:jnr3Z6zqAMBSavjnMhslQk92V6alM0_ij0lIvIODZkCJEXq8JnkUSFqkTbCKRWMBm
-    vfc7ub9nPnx6imxaYE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdekfeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhepvefgieeugfffleekjeeiledtueduledtveej
-    uedtkeevleffjefhfeehlefhfffhnecuffhomhgrihhnpehphhhrrggtkhdrohhrghenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
-    rghrnhgusgdruggvpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghk
-    sehgohhoghhlvgdrtghomhdprhgtphhtthhopegrrhgusgeskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgv
-    vghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugi
-    dqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqhhgrrhguvghn
-    ihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvg
-    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhs
-    vggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:jnr3Z23LKgl9hZ6QcREDgqwpMmhfLDt6lAALKbbCP_NoKIJCosyM-w>
-    <xmx:jnr3Z5D3W62L5bLVYc85RsVpiUQwOFJo2J_vLbJF9S1_XHi5k4SWLg>
-    <xmx:jnr3Z6iMl8WcJZv1cwMdAPotalW6C98EFI1qolSibGqvJc1TF1y8QQ>
-    <xmx:jnr3Z9pvrCW4jNtcNLIQICPw3jBIzR-q02jOyQYUSfID_ETX1mPU2g>
-    <xmx:jnr3Z-41hWrlmOzfeS929v4IhapaQuO_5TJksYkBKtYuUmpaadop9ZR6>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 3BF582220073; Thu, 10 Apr 2025 04:00:14 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1744271902; c=relaxed/simple;
+	bh=dTI/GJafdxJX+eMaocpLYLEZHuUOrvVBgaIIFIeZENA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VaEMzbvzh+Sdv+rrBm1WmLWctwioWG8pEMepWEMRwRVAVrFH0iz6EK4N1wXm8ARj6nXVnn2IfZSgng3YMVFhIiDdhkjkI7eWh4heCe+sdoIveBOUeXNNxQ2J5QYzTJ5R5PzDVWlM6SDYN0W343G1AQjhB3+umjlGqCqMEbDxEng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGY1RDiz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4FA8C4CEDD;
+	Thu, 10 Apr 2025 07:58:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744271901;
+	bh=dTI/GJafdxJX+eMaocpLYLEZHuUOrvVBgaIIFIeZENA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tGY1RDizMH74a20aC0HH4YRTcNFDxjEcutaJQ8EopWeICR7Ztvk/qdDtF+Sg10wEv
+	 bVbB8NbUyzt4EMB26euzSag2uxD8M3U63H3m58kjibUEZoD6/qtgy7Sj2lz5jnlzVn
+	 vsh0lWMzJeYZg75UHucvYBBo9HCQxh+EpmzLlEB+GXtV8v129YvS8dY58Y56aRfSb2
+	 Eb8Hrpu6DIa/EsS+FFbWHaWe+t3niHnrCfDv5KlmVP79Qal60s85Z1vy+UTLF1mUfu
+	 Mkkzomo0qhqMy+iKSq2/dm+ty62v45yxfm1eV0IeLRyNi2SunoQP4kpoCs/58aeAx1
+	 awPjxw6gugH6A==
+Date: Thu, 10 Apr 2025 08:58:17 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/14] Support ROHM Scalable PMIC family
+Message-ID: <20250410075817.GN372032@google.com>
+References: <cover.1744090658.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T00187b92ccd5616f
-Date: Thu, 10 Apr 2025 09:58:13 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Kees Cook" <kees@kernel.org>, "Mark Brown" <broonie@kernel.org>,
- "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, "Ard Biesheuvel" <ardb@kernel.org>
-Message-Id: <657fd022-4056-4f7f-aaf2-b4bf88fbcb38@app.fastmail.com>
-In-Reply-To: <482D3DA9-7336-4D36-8758-4F8DB48EA8B9@kernel.org>
-References: 
- <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
- <CAHk-=wjTbWiYwfj2wF9iP8SSVk2A_cZFDr5hu1bgU_PfxhyiiA@mail.gmail.com>
- <8cbe0cac-2952-47b6-9b0d-1400aec0bf25@sirena.org.uk>
- <08393aa3-05a3-4e3f-8004-f374a3ec4b7e@app.fastmail.com>
- <482D3DA9-7336-4D36-8758-4F8DB48EA8B9@kernel.org>
-Subject: Re: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1744090658.git.mazziesaccount@gmail.com>
 
-On Tue, Apr 8, 2025, at 22:37, Kees Cook wrote:
-> On April 8, 2025 2:22:52 AM PDT, Arnd Bergmann <arnd@arndb.de> wrote:
->>>
->>> indicates that Talos 1.9.1 uses latent_entropy (but we didn't check how
->>> accurate that survey is).
->
-> The early RNG for small machines remains pretty bad, so I can 
-> understand wanting to keep that around. For bigger machines it's not as 
-> much of a benefit.
+On Tue, 08 Apr 2025, Matti Vaittinen wrote:
 
-Does "small machines" still mean those without a cycle counter
-as in the 2009 article [https://phrack.org/issues/66/15#article]
-or are you thinking of those that may have a working
-random_get_entropy() but that remains too predictable for
-add_device_randomness() because of the low frequency (e.g.
-19.2 MHz on many ARMv7/v8)?
+> Support ROHM BD96802, BD96805 and BD96806 PMICs
+> 
+> The ROHM BD96801 [1] and BD96805 [2] are almost identical PMICs what comes
+> to the digital interface. Main difference is voltage tuning range.
+> Supporting BD96805 with BD96801 drivers is mostly just a matter of being
+> able to differentiate the PMICs (done based on the devicetree
+> compatible) and then providing separate voltage tables.
+> 
+> The ROHM BD96802 [3] is a companion PMIC which is intended to be used to
+> provide more capacity on systems where the BD96801 alone is not
+> sufficient. Startup sequence of these PMICs can be synchronized in
+> hardware level, and there seems to be some mechanisms which allow
+> delivering the companion PMIC (BD96802) status to the main PMIC
+> (BD96801/BD96805). This patch series does treat the companion PMIC(s) as
+> individual PMICs and allows using them from software point of view as a
+> stand alone ICs. From the digital point of view, the BD96802 is a subset
+> of BD96801, providing only buck1 and buck2 regulators. Please see the
+> data sheet
+> 
+> The ROHM BD96806 [4] is similar to the BD96802, except that it does also
+> provide different voltage tuning ranges.
+> 
+> This series adds basic voltage monitoring and control as well as a
+> watchdog support for these PMICs using the BD96801 drivers.
+> 
+> Similarly to the BD96801, these PMICs too have a few configurations
+> which can only be done when the PMIC is in STBY state. Similarly to the
+> BD96801, doing these configurations isn't supported by the driver. The
+> original BD96801 RFC [5] driver should be able to cover those
+> configurations, if modified to support these models.
+> 
+> [1]: ROHM BD96801 data sheet:
+> https://fscdn.rohm.com/en/products/databook/datasheet/ic/power/switching_regulator_system/product_brief_bd96801qxx-c-e.pdf
+> [2]: ROHM BD96805 data sheet:
+> https://fscdn.rohm.com/en/products/databook/datasheet/ic/power/switching_regulator_system/product_brief_bd96805qxx-c-e.pdf
+> [3]: ROHM BD96802 data sheet:
+> https://fscdn.rohm.com/en/products/databook/datasheet/ic/power/switching_regulator_system/product_brief_bd96802qxx-c-e.pdf
+> [4]: ROHM BD96806 data sheet:
+> https://fscdn.rohm.com/en/products/databook/datasheet/ic/power/switching_regulator_system/product_brief_bd96806qxx-c-e.pdf
+> [5]: Original BD96801 RFC:
+> https://lore.kernel.org/all/cover.1712058690.git.mazziesaccount@gmail.com/
+> 
+> Revision history:
+> v2 => v3:
+>  - Fix BD96806 voltages
+>  - Use defines for voltages to ease spotting (copy-paste) errors in
+>    regulator descs
+>  - Use lowercase node names in the BD96802 dt-binding
+> v1 => v2: MFD driver changes after review by Lee
+>  - Use enum for chip type instead of picking the data directly from the
+>    of_match_data.
+>  - rename "chip data" variable 'cd' to more widely used 'ddata'.
+>  link to v1:
+>   https://lore.kernel.org/all/cover.1741864404.git.mazziesaccount@gmail.com/
+> 
+> 
+> Matti Vaittinen (14):
+>   dt-bindings: regulator: Add ROHM BD96802 PMIC
+>   dt-bindings: mfd: Add ROHM BD96802 PMIC
+>   dt-bindings: mfd: bd96801: Add ROHM BD96805
+>   dt-bindings: mfd: bd96802: Add ROHM BD96806
+>   mfd: rohm-bd96801: Add chip info
+>   mfd: bd96801: Drop IC name from the regulator IRQ resources
+>   regulator: bd96801: Drop IC name from the IRQ resources
+>   mfd: rohm-bd96801: Support ROHM BD96802
+>   regulator: bd96801: Support ROHM BD96802
+>   mfd: bd96801: Support ROHM BD96805
+>   regulator: bd96801: Support ROHM BD96805 PMIC
+>   mfd: bd96801: Support ROHM BD96806
+>   regulator: bd96801: Support ROHM BD96806 PMIC
+>   MAINTAINERS: Add BD96802 specific header
+> 
+>  .../bindings/mfd/rohm,bd96801-pmic.yaml       |  10 +-
+>  .../bindings/mfd/rohm,bd96802-pmic.yaml       | 101 ++++
+>  .../regulator/rohm,bd96802-regulator.yaml     |  44 ++
+>  MAINTAINERS                                   |   1 +
+>  drivers/mfd/rohm-bd96801.c                    | 565 ++++++++++++++----
+>  drivers/regulator/bd96801-regulator.c         | 455 ++++++++++++--
+>  include/linux/mfd/rohm-bd96801.h              |   2 +
+>  include/linux/mfd/rohm-bd96802.h              |  74 +++
+>  include/linux/mfd/rohm-generic.h              |   3 +
+>  9 files changed, 1073 insertions(+), 182 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic.yaml
+>  create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd96802-regulator.yaml
+>  create mode 100644 include/linux/mfd/rohm-bd96802.h
 
-The former (ARMv5, AMD Elan, Xburst) were still common back then
-but are mostly extinct now, while the latter obviously remain
-in wide use.
+This set good to go now?
 
->>Talos also uses stackleak. I also see that alpine and qubes have the
->>same two gcc plugins enabled.
->
-> Yeah, stackleak has no viable alternative. It's effectively 
-> init_on_free for stack. It's be nice if there were a way to do this 
-> with upstream compilers (track call depth).
-
-I guess a simplified version could in theory be done in the kernel
-using _mcount without compiler help, but that would be much more
-expensive if every function entry has to call it, right?
-
-     Arnd
+-- 
+Lee Jones [李琼斯]
 
