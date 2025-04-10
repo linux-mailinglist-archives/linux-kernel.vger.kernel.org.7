@@ -1,96 +1,111 @@
-Return-Path: <linux-kernel+bounces-597678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BEA3A83CF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:31:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E135EA83D07
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A15E07AB8E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:30:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF3001B832A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8452E20B807;
-	Thu, 10 Apr 2025 08:31:05 +0000 (UTC)
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E0820B1F4;
+	Thu, 10 Apr 2025 08:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ddlbP/ht"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F0D1EF080
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 08:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B531DF97F;
+	Thu, 10 Apr 2025 08:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744273865; cv=none; b=nZhzUGRamMDToIDpwLViDlV9g2n7ZdsBs6RqmqRUq/+yRfOJ4MRgGwxaq68go2LykIzDBpbaNhZh/7D2/9n0KP7riKwo1ucgzSgejeOTgSZ9O2e00S2Sp/kAg7FaKFSjzkqMdGBsA5D2Ma5ueWuldEDysfHnE0d9RosieD3owPw=
+	t=1744273934; cv=none; b=nGkxAdobdPtCnM90mY72A74YIat/ziaxTsB2OJH7iOR2H/vJa2VRod68yBI4lb32d3ZzflNmim+FJ41Fq8gBZZpFijItSnvWka3f/lMrE8kwXmT5XpofgQ1jMNTHqhAX8TmMlXJ7UAVvT/tWHI0aXDqzvbjhaibPrzrI28+wjFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744273865; c=relaxed/simple;
-	bh=WNxzZulseYfokjA82gBJGgk0nI2uc03lGM7VmIHXjtA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I+8ZghALLxB7EOkqSYCRM8gMgjuKqQK1EFdhPRrHzYgAkXlYYMIIZBOrrdW4MXnj6TVNH6IZZVFZ0+C1tP10izdmRxUhGjPldcwQNflPI0Ugtq/JBhCbb5EUCWayYwWqq+gakrfi9VB/z60epHFuVsB7GBw/opodtvlUSSyPk7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1f1c:893d:f419:6517])
-	by xavier.telenet-ops.be with cmsmtp
-	id bLWz2E00N3xgA3j01LWz1B; Thu, 10 Apr 2025 10:31:00 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1u2nJK-00000000Gmy-2vB9;
-	Thu, 10 Apr 2025 10:30:59 +0200
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1u2nJL-00000009IPN-3MAN;
-	Thu, 10 Apr 2025 10:30:59 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Aditya Garg <gargaditya08@live.com>,
-	Kerem Karabay <kekrby@gmail.com>
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/2] HID: HID_APPLETB_BL should depend on X86
-Date: Thu, 10 Apr 2025 10:30:57 +0200
-Message-ID: <9f1fcef9094c62eea84872a5d4ba04eaf46f664e.1744273511.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1744273511.git.geert+renesas@glider.be>
-References: <cover.1744273511.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1744273934; c=relaxed/simple;
+	bh=lGmY4p1VRzYFACIa5FUQnatEVrtfwJ9hMuMP3qnvkpg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TQ2Sj5gqM3695JRAWGQXR3lPU7DeDALL20zv/o/mc4JgJsGPxHdKJgNKQL6n9LWqjIt/EAVRffqDHkUOE3RkEkIjfQPMsDTzuTeMf2UN7wHlWT/Xb9FIxQl88+xsQUOEhT06sVsN4t8xxlF1U4em5Bs6oixVgESf41l4ILLHE7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ddlbP/ht; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 28A0525C00;
+	Thu, 10 Apr 2025 10:32:03 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 42vApmXQL7iW; Thu, 10 Apr 2025 10:32:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1744273922; bh=lGmY4p1VRzYFACIa5FUQnatEVrtfwJ9hMuMP3qnvkpg=;
+	h=From:Subject:Date:To:Cc;
+	b=ddlbP/ht9FPdCFW5yrI6r+WfmjExvlpGOzUueTMpiwMhUWo/COHleqPJ5YAvK4uFz
+	 r7x95elhGJ8kTBvy1o59oZZJHWMQdg0Ta1SKiTxa1s0v99ORW8qzG/JzuEsaNCP782
+	 4Umv2tSNM9V7tAR3FijLEZGqTPqeksK5pdXbud4T/qztkSfd3bMLZ2v6huLIQI28C6
+	 SyJzqlPHQiRwHmihyInpKUZ48rqTQ06v86qWyhdxI8H2qYCPnfNswRhkqpOSiGM8xM
+	 ndQawIXmd5HBV/VU5fdXWfREUl7NImmNmTLw5BJEQicO0GIn5MyZMrc/7LuQWukkQu
+	 c8DTg7aeekhRQ==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH RESEND v2 0/3] Introduce USBDRD-PHY support for Exynos7870
+ SoC
+Date: Thu, 10 Apr 2025 14:01:11 +0530
+Message-Id: <20250410-exynos7870-usbphy-v2-0-2eb005987455@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744273913; l=1208;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=lGmY4p1VRzYFACIa5FUQnatEVrtfwJ9hMuMP3qnvkpg=;
+ b=+G9OHWZP6035gJvZmvayt6lvoP55fp/X+4NQwi/yUhYw7uO75Tr3CSRsxo/4aciRnT70/QRbk
+ 7NdfJ58nXlqBCeghauPts0VWnWuRXy8HXWCiZLfoe8vOsfTdIb+APOD
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-The Apple Touch Bar is only present on x86 MacBook Pros.  Hence add a
-dependency on X86, to prevent asking the user about this driver when
-configuring a kernel for a different architecture.
+Apart from introducing driver support and documentation, this patch series
+also introduces a masking fix and non-functional changes.
 
-Fixes: 1fd41e5e3d7cc556 ("HID: hid-appletb-bl: add driver for the backlight of Apple Touch Bars")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch series is a part of Exynos7870 upstreaming.
+
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
-This is v2 of "HID: HID_APPLETB_BL and HID_APPLETB_KBD should depend on
-X86".
+Changes in v2:
+- Do away with [PATCH 1/4] from v1 as it was sent separately.
+- Take over ownership of patches by the co-author, upon their request.
+- Link to v1: https://lore.kernel.org/r/20250204-exynos7870-usbphy-v1-0-f30a9857efeb@disroot.org
 
-v2:
-  - Split in two patches.
 ---
- drivers/hid/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Kaustabh Chakraborty (3):
+      phy: exynos5-usbdrd: use GENMASK and FIELD_PREP for Exynos5 PHY registers
+      dt-bindings: phy: samsung,usb3-drd-phy: add exynos7870-usbdrd-phy compatible
+      phy: exynos5-usbdrd: add exynos7870 USBDRD support
 
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index 119e5190a2df786e..43859fc757470caf 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -151,6 +151,7 @@ config HID_APPLEIR
- config HID_APPLETB_BL
- 	tristate "Apple Touch Bar Backlight"
- 	depends on BACKLIGHT_CLASS_DEVICE
-+	depends on X86 || COMPILE_TEST
- 	help
- 	  Say Y here if you want support for the backlight of Touch Bars on x86
- 	  MacBook Pros.
+ .../bindings/phy/samsung,usb3-drd-phy.yaml         |   2 +
+ drivers/phy/samsung/phy-exynos5-usbdrd.c           | 407 +++++++++++++++++----
+ include/linux/soc/samsung/exynos-regs-pmu.h        |   2 +
+ 3 files changed, 339 insertions(+), 72 deletions(-)
+---
+base-commit: e5d3fd687aac5eceb1721fa92b9f49afcf4c3717
+change-id: 20250203-exynos7870-usbphy-6b98936f441d
+
+Best regards,
 -- 
-2.43.0
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
 
