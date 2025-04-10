@@ -1,207 +1,130 @@
-Return-Path: <linux-kernel+bounces-597915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1FEA84042
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:13:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C4CA84041
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9806C3A245A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:07:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8029917F3A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B71926B959;
-	Thu, 10 Apr 2025 10:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7D526A0D4;
+	Thu, 10 Apr 2025 10:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="jz0UmgOx"
-Received: from mail-10699.protonmail.ch (mail-10699.protonmail.ch [79.135.106.99])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Yfl2XllW"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AACC26B2B5
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8C326F470
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744279555; cv=none; b=O4GkZBmHBl7WM6cXEBNgI87YSpXmi1clUs6fZOU8pN11gtdu16i78p1Qm/0VFyhnDO68MbXvo44/n3bwV3KiuWvPNgCGNBqOlan8rVfjAGdDSSK43G8xCL2HWPcFlLOIdEv8Cu3z/d89gpow8aPVbUy/06k6RvAPymzVwr0yh5Q=
+	t=1744279605; cv=none; b=VsGBlQf6CuwAv8xRl/9U17+fHG36NO2YJdS4CjYQIRtm5CCZ/OBkfjB1D+1Vv4W/cannWKUSCw56Zuuzyg/j+y07eUm0/30a7n6jwtjGRiq8Z1v1S9FsEWx+EsN+fxfefl+sU1LXtIK8pN3LzexO+3JiotDTMSusvQpm8cLusUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744279555; c=relaxed/simple;
-	bh=J3fb56fK1B3gbUj2pzfyp50//yjK+KnrcziWvaCJB6c=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TELy9S0Y8k8+OPKKO+PfZ/De9ofq2PED4qiZmJxolqw2d/gv3wpgxItAQW8+3+l/+w7vshVlOsURoK2V1iR+Xksa3tGQ2l82yS+ciQtROJfq1MmmN6TfNvI4BjVWNmc1pUjmvRlxnboS8PuHUd/mxdOrPK5tPI2VIlF2YFTxQGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=jz0UmgOx; arc=none smtp.client-ip=79.135.106.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=7giegmf7kjdlhnpqpulaenm6im.protonmail; t=1744279543; x=1744538743;
-	bh=LWZWX8CmYnjGqKew7oQ/owkId4RwazrHJ+HYjtd+24g=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=jz0UmgOxaJbA5Yf6bup/ILmwTZy1MJvqUwNYc/q87S6gb1e73rI3uVJnHfkZDxNJE
-	 7/TvtgZYT1RsOo2mmBWa0pb35zWJeVrjlDIizgsev1twmcIXumrVP82N74M0NaCtyW
-	 DEG1iBqrkGUsc80lPrP+TVD2jJk361SC2l3F8rMJIGyWPEvi4cDdeNQr2s8cX8AWzZ
-	 B+c75ocKFc6cHM7gl6qaDH0leM59hNSyR7BWTdO3dHmACdyO04VrKsZ8RjxIINxi8m
-	 OBcMT0ondHWbFVm2uFo6JWETuAsVGDhlGNK1UOgH8u24unoyAU9XaWEVm2epucf1Ho
-	 Wp1mHCu8nS0dA==
-Date: Thu, 10 Apr 2025 10:05:38 +0000
-To: Yan Zhao <yan.y.zhao@intel.com>
-From: Myrsky Lintu <myrskylintu@proton.me>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>, Vitaly Kuznetsov <vkuznets@redhat.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Tian <kevin.tian@intel.com>, Yiwei Zhang <zzyiwei@google.com>, Lai Jiangshan <jiangshanlai@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, Josh Triplett <josh@joshtriplett.org>, Gerd Hoffmann <kraxel@redhat.com>
-Subject: Re: [PATCH 5/5] KVM: VMX: Always honor guest PAT on CPUs that support self-snoop
-Message-ID: <e9f762bc-d158-4b5b-86f0-8ca0de024200@proton.me>
-In-Reply-To: <Z/dTIRE3NCsSM2fH@yzhao56-desk.sh.intel.com>
-References: <0f37f8e5-3cfe-4efb-bec9-b0882d85ead2@proton.me> <Z/dTIRE3NCsSM2fH@yzhao56-desk.sh.intel.com>
-Feedback-ID: 89599038:user:proton
-X-Pm-Message-ID: bc02de826c83081390a5cd0b61733ce60d7d43fb
+	s=arc-20240116; t=1744279605; c=relaxed/simple;
+	bh=S+wP/glav5bx+FDG4NQZpxZHuk/Mqp/a/ZhxJMHKm4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gGVJQ8jchP3XF5/imiCIQtmlXInnhVSUb2I0GdOzdIp82j1opU1x6qCkIB5FkOXyLs1cZFnHnBKtloIKWu7gpCmvx/6Ee5SIiDJLxecknay5Q3OJeBZoUl4qrb3U+uXDw/x9FyJ4PC/Rqoyis5wXLbY0UcIAtUZSYwBL0Kp5efk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Yfl2XllW; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1744279600;
+	bh=S+wP/glav5bx+FDG4NQZpxZHuk/Mqp/a/ZhxJMHKm4E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Yfl2XllWDQ1NgOKKux3x7BqvYS1IRxHPVjUUq/QI4UTseAi9xjxHNtW7WQa9NbMDX
+	 2Mokih5sTAg/jHuctMuFxOLfZ8SrZuwKt3C5gxTjMoudY53KqFZEoy1v8Np0cBY1oy
+	 a62dANRMWkHnpAsm443y5zHNI1lxa/G9O/rN9cdyETurkqNeneYNXAOZIEHXIeAwtL
+	 NOvQqjqNv0s9p7I+PB3xs477Aj+KfLc9hfUyGWgX6DSg6qszYgG9iuajXADTBgAmnE
+	 mGAqJhizK0vTOz29M56pGccUWLb4pWUmdP9PV2IrtJSaFxBe1qmBA6IUVwXmuaR8N2
+	 x3oSVnhWdltGw==
+Received: from [192.168.1.90] (unknown [82.79.138.25])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8956917E010B;
+	Thu, 10 Apr 2025 12:06:40 +0200 (CEST)
+Message-ID: <5e9dd905-6d58-49e5-a45f-2e95c8772d26@collabora.com>
+Date: Thu, 10 Apr 2025 13:06:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/15] drm/connector: hdmi: Factor out bpc and format
+ computation logic
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250326-hdmi-conn-yuv-v3-0-294d3ebbb4b2@collabora.com>
+ <20250326-hdmi-conn-yuv-v3-6-294d3ebbb4b2@collabora.com>
+ <20250409-funny-hopping-condor-cbc50c@houat>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <20250409-funny-hopping-condor-cbc50c@houat>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Thank you. I will try to bring this up with QEMU developers then.
+Hi Maxime,
 
-On 2025-04-10 05:12:01, Yan Zhao wrote:
+On 4/9/25 6:02 PM, Maxime Ripard wrote:
 > Hi,
->=20
-> AFAIK, the commit c9c1e20b4c7d ("KVM: x86: Introduce Intel specific quirk
-> KVM_X86_QUIRK_IGNORE_GUEST_PAT") which re-allows honoring guest PAT on In=
-tel's
-> platforms has been in kvm/queue now.
->=20
-> However, as the quirk is enabled by default, userspace(like QEMU) needs t=
-o turn
-> it off by code like "kvm_vm_enable_cap(kvm_state, KVM_CAP_DISABLE_QUIRKS2=
-, 0,
-> KVM_X86_QUIRK_IGNORE_GUEST_PAT)" to honor guest PAT, according to the doc=
-:
->=20
-> KVM_X86_QUIRK_IGNORE_GUEST_PAT   ...
->                                   Userspace can disable the quirk to hono=
-r
->                                   guest PAT if it knows that there is no =
-such
->                                   guest software, for example if it does =
-not
->                                   expose a bochs graphics device (which i=
-s
->                                   known to have had a buggy driver).
->=20
-> Thanks
-> Yan
->=20
-> On Thu, Apr 10, 2025 at 01:13:18AM +0000, Myrsky Lintu wrote:
->> Hello,
+> 
+> On Wed, Mar 26, 2025 at 12:19:55PM +0200, Cristian Ciocaltea wrote:
+>> In preparation to support fallback to an alternative output format, e.g.
+>> YUV420, when RGB cannot be used for any of the available color depths,
+>> move the bpc try loop out of hdmi_compute_config() and, instead, make it
+>> part of hdmi_compute_format_bpc().  Additionally, add a new parameter to
+>> the latter holding the output format to be checked and eventually set.
 >>
->> I am completely new to and uninformed about kernel development. I was
->> pointed here from Mesa documentation for Venus (Vulkan encapsulation for
->> KVM/QEMU): https://docs.mesa3d.org/drivers/venus.html
+>> This improves code reusability and further extensibility.
 >>
->> Based on my limited understanding of what has happened here, this patch
->> series was partially reverted due to an issue with the Bochs DRM driver.
->> A fix for that issue has been merged months ago according to the link
->> provided in an earlier message. Since then work on this detail of KVM
->> seems to have stalled.
->>
->> Is it reasonable to ask here for this patch series to be evaluated and
->> incorporated again?
->>
->> My layperson's attempt at applying the series against 6.14.1 source code
->> failed. In addition to the parts that appear to have already been
->> incorporated there are some parts of the patch series that are rejected.
->> I lack the knowledge to correct that.
->>
->> Distro kernels currently ship without it which limits the usability of
->> Venus on AMD and NVIDIA GPUs paired with Intel CPUs. Convincing
->> individual distro maintainers of the necessity of this patch series
->> without the specialized knowledge required for understanding what it
->> does and performing that evaluation is quite hard. If upstream (kernel)
->> would apply it now the distros would ship a kernel including the
->> required changes to users, including me, without that multiplicated effo=
-rt.
->>
->> Thank you for your time. If this request is out of place here please
->> forgive me for engaging this mailing list without a proper understanding
->> of the list's scope.
->>
->> On 2024-10-07 14:04:24, Linux regression tracking (Thorsten Leemhuis) wr=
-ote:
->>> On 07.10.24 15:38, Vitaly Kuznetsov wrote:
->>>> "Linux regression tracking (Thorsten Leemhuis)"
->>>> <regressions@leemhuis.info> writes:
->>>>
->>>>> On 30.08.24 11:35, Vitaly Kuznetsov wrote:
->>>>>> Sean Christopherson <seanjc@google.com> writes:
->>>>>>
->>>>>>> Unconditionally honor guest PAT on CPUs that support self-snoop, as
->>>>>>> Intel has confirmed that CPUs that support self-snoop always snoop =
-caches
->>>>>>> and store buffers.  I.e. CPUs with self-snoop maintain cache cohere=
-ncy
->>>>>>> even in the presence of aliased memtypes, thus there is no need to =
-trust
->>>>>>> the guest behaves and only honor PAT as a last resort, as KVM does =
-today.
->>>>>>>
->>>>>>> Honoring guest PAT is desirable for use cases where the guest has a=
-ccess
->>>>>>> to non-coherent DMA _without_ bouncing through VFIO, e.g. when a vi=
-rtual
->>>>>>> (mediated, for all intents and purposes) GPU is exposed to the gues=
-t, along
->>>>>>> with buffers that are consumed directly by the physical GPU, i.e. w=
-hich
->>>>>>> can't be proxied by the host to ensure writes from the guest are pe=
-rformed
->>>>>>> with the correct memory type for the GPU.
->>>>>>
->>>>>> Necroposting!
->>>>>>
->>>>>> Turns out that this change broke "bochs-display" driver in QEMU even
->>>>>> when the guest is modern (don't ask me 'who the hell uses bochs for
->>>>>> modern guests', it was basically a configuration error :-). E.g:
->>>>>> [...]
->>>>>
->>>>> This regression made it to the list of tracked regressions. It seems
->>>>> this thread stalled a while ago. Was this ever fixed? Does not look l=
-ike
->>>>> it, but I might have missed something. Or is this a regression I shou=
-ld
->>>>> just ignore for one reason or another?
->>>>>
->>>>
->>>> The regression was addressed in by reverting 377b2f359d1f in 6.11
->>>>
->>>> commit 9d70f3fec14421e793ffbc0ec2f739b24e534900
->>>> Author: Paolo Bonzini <pbonzini@redhat.com>
->>>> Date:   Sun Sep 15 02:49:33 2024 -0400
->>>>
->>>>       Revert "KVM: VMX: Always honor guest PAT on CPUs that support se=
-lf-snoop"
->>>
->>> Thx. Sorry, missed that, thx for pointing me towards it. I had looked
->>> for things like that, but seems I messed up my lore query. Apologies fo=
-r
->>> the noise!
->>>
->>>> Also, there's a (pending) DRM patch fixing it from the guest's side:
->>>> https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/9388ccf6992522=
-3223c87355a417ba39b13a5e8e
->>>
->>> Great!
->>>
->>> Ciao, Thorsten
->>>
->>> P.S.:
->>>
->>> #regzbot fix: 9d70f3fec14421e793ffbc0ec2f739b24e534900
->>>
->>>
->>>
->>
->>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> 
+> I think patch 5 could be squashed into this one.
 
+Ack.
 
+>> ---
+>>  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 50 ++++++++++++-------------
+>>  1 file changed, 23 insertions(+), 27 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+>> index 160964190d82ac233fdbe34ac54024a007a19872..6de0abb15ecb36fd4eb98725e2a3835e5e0db134 100644
+>> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+>> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+>> @@ -608,42 +608,19 @@ static int
+>>  hdmi_compute_format_bpc(const struct drm_connector *connector,
+>>  			struct drm_connector_state *conn_state,
+>>  			const struct drm_display_mode *mode,
+>> -			unsigned int bpc)
+>> +			unsigned int max_bpc, enum hdmi_colorspace fmt)
+>>  {
+>>  	struct drm_device *dev = connector->dev;
+>> -
+>> -	/*
+>> -	 * TODO: Add support for YCbCr420 output for HDMI 2.0 capable
+>> -	 * devices, for modes that only support YCbCr420.
+>> -	 */
+> 
+> And we should fix that comment for now.
+
+Sorry, I missed to move this hunk to the next patch.
+
+> 
+> Once fixed,
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+
+Thanks,
+Cristian
 
