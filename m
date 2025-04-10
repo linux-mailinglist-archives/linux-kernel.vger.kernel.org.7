@@ -1,121 +1,122 @@
-Return-Path: <linux-kernel+bounces-597933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C469A84052
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:14:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C54A84061
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7969018961B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:11:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C4CF9E4512
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEF227CB36;
-	Thu, 10 Apr 2025 10:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6EA26E16B;
+	Thu, 10 Apr 2025 10:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="l1NPcm49"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iiLnmJWf"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0D426B94F;
-	Thu, 10 Apr 2025 10:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0ADC20F082
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744279801; cv=none; b=lpDH/ZDLsn6Fn/fuDbTV3e3GNjBXnvoDPumNoxcCm8uLMaDyHYZG1EDAUsTjpZqIcxER4c5jumkMWOXU+XlSlPXz9yqpaY7lG0B5QvfoGlIVKmFTLbPoi1C6sj3Pz3szNPHCt5SiNvwzpOWVcuOqEyaMCcne2SONj3DCsqbgvtE=
+	t=1744279720; cv=none; b=PBFOH2e4i3y0ZtBwvOGQ3ENciEks5RgH8WcHkC807sdy3qnj374tcPVOoCQdWXlxULkxKbJFn+ZGyCOceG94zwWgbdIprPrfZlP/L+h5J8YLzi+QdWIBXFxXojKWale1BuxwKOxktJVxO9BZZpytYZNHlojOb0cMwNHuDULUyXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744279801; c=relaxed/simple;
-	bh=FavkXaD8BbTM3Cg1lZ+c/e97Bk343/IcpRzIBuZMIUA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YdVsRlHpdMPnkI5qBxiE9lQGUVVywclEIJ9J5wIogBRFSLs4HL9HtmXqUzD3w/P94oplpGv6Z4dT0xX/zhMFY+m0H04ts2T4LgmqSpzujq3oK/+LmVPckB+/fwJV/omGFedKW8gI/nMrEPXJs1FHd3jCofipzBk0wmpUjaMvoWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=l1NPcm49; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53A9VcmO026175;
-	Thu, 10 Apr 2025 12:09:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	sMgLHhcvDmNSAlUbxNmHnAElslMGmB4NTmJSnYTseDM=; b=l1NPcm49QgyMDRnD
-	Urf7P2fHyxrmcHQIumQVNtRglqRTixeKCgSMJC6RqUIniDx+P3QjniF+8CQ8TBeU
-	XwEUlSWDlZ63+XoGvp6vk8pelnY3y8ptnv1fom3GO4GUJz/EijIprveScipabev8
-	uW6DIdin/BjGznkxGxpmgJJFl7HUcPKLH7OiSPmyiq6N2fbAynhK+e4wYmx3gVhi
-	op05N1zwKTszNx89mNzkFkfbin9Wk52dNVFgnS00ACRNtR5nkU7ZvOKIMhJLTozI
-	XUojyzWuiYz0fclNB9/RYl7euETTvUCJFYTo0Ql8KtFaqSjduvMdEn1zqpnaYAv0
-	yelNvw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45tw2h74mr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Apr 2025 12:09:49 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9250E40046;
-	Thu, 10 Apr 2025 12:08:59 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9E4BE9BCED8;
-	Thu, 10 Apr 2025 12:08:21 +0200 (CEST)
-Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Apr
- 2025 12:08:21 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>
-CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <maz@kernel.org>, Christian Bruel <christian.bruel@foss.st.com>
-Subject: [PATCH v1 2/2] arm64: dts: st: Use 128kB size or aliased GIC400 register access
-Date: Thu, 10 Apr 2025 12:07:58 +0200
-Message-ID: <20250410100758.1057170-2-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250410100758.1057170-1-christian.bruel@foss.st.com>
-References: <20250410100758.1057170-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1744279720; c=relaxed/simple;
+	bh=ctmB/0viVsu6A6AJ/kxIi7kF9S1cadzfnL8wlYw22uc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SG7TiZMinmdI6sHLyh0GnbyCvLN7wKIMw97eitJyuWthb1gbtAeNV9NjHkgslt+3J+W74ZgiG7mGbugvOLNVhI4qL2ZKMVzKUFuEW6YIvYEgRUfGwFulJmaZuyhI2gUUJ++Zi8HiHIVW79uhs387r8sPHxCGdhokjaLMZ0xGHkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iiLnmJWf; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1744279716;
+	bh=ctmB/0viVsu6A6AJ/kxIi7kF9S1cadzfnL8wlYw22uc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iiLnmJWfU/BtoxaBATmE7+qwCr/CDhii6a6l12busYByECIWG1AwZoh2bzg0zaXl9
+	 7HEWFirgBgDPuYBhyKX30zNGUE+hksidynWhu32Jz0dG1vr+Mu5gp/RUCxhNu+hpmL
+	 3Y2jV3V4IZKgUQawQxmJWdy4G6ia+DX+YW3Iiu9Ek2LXw9gJlBKFgJ6uQoaLJdaQY4
+	 Stm+Y74CDQtjdyKm/aFnzk8nZCNW7u+EsiPhXsd/XK7nAE0uOM17QBjOk045DxlS7A
+	 9Py0jfypQiE86PhSWCVHWVgnNhB62XWDjob2/q1Lr6mEZFE1gPPn4jULXaeUE4NNIu
+	 vR/QIaD+tvvDA==
+Received: from [192.168.1.90] (unknown [82.79.138.25])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5EC4917E010B;
+	Thu, 10 Apr 2025 12:08:36 +0200 (CEST)
+Message-ID: <38e67224-d478-42c1-91d4-ba6cdd473227@collabora.com>
+Date: Thu, 10 Apr 2025 13:08:35 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-10_01,2025-04-08_04,2024-11-22_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/15] drm/connector: hdmi: Use YUV420 output format as
+ an RGB fallback
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250326-hdmi-conn-yuv-v3-0-294d3ebbb4b2@collabora.com>
+ <20250326-hdmi-conn-yuv-v3-7-294d3ebbb4b2@collabora.com>
+ <20250409-magnificent-skunk-of-art-689cf4@houat>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <20250409-magnificent-skunk-of-art-689cf4@houat>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Adjust the size of 8kB GIC regions to 128kB so that each 4kB is mapped 16 times
-over a 64kB region. The offset is then adjusted in the irq-gic driver.
+On 4/9/25 6:09 PM, Maxime Ripard wrote:
+> On Wed, Mar 26, 2025 at 12:19:56PM +0200, Cristian Ciocaltea wrote:
+>> Try to make use of YUV420 when computing the best output format and
+>> RGB cannot be supported for any of the available color depths.
+>>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>>  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+>> index 6de0abb15ecb36fd4eb98725e2a3835e5e0db134..3859600c6af4a79f30858adfc9f9a710dfe561a5 100644
+>> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+>> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+>> @@ -650,7 +650,17 @@ hdmi_compute_config(const struct drm_connector *connector,
+>>  
+>>  	ret = hdmi_compute_format_bpc(connector, conn_state, mode, max_bpc,
+>>  				      HDMI_COLORSPACE_RGB);
+>> +	if (!ret)
+>> +		return 0;
+>>  
+>> +	if (!connector->ycbcr_420_allowed) {
+>> +		drm_dbg_kms(connector->dev,
+>> +			    "YUV420 output format not allowed for connector.\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	ret = hdmi_compute_format_bpc(connector, conn_state, mode, max_bpc,
+>> +				      HDMI_COLORSPACE_YUV420);
+>>  	return ret;
+> 
+> I think I'd prefer to log a debug message there and return 0 if it
+> succeeds, something like
 
-see commit 12e14066f4835 ("irqchip/GIC: Add workaround for aliased GIC400")
+Sure, will do.
 
-Fixes: 5d30d03aaf785 ("arm64: dts: st: introduce stm32mp25 SoCs family")
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
-Suggested-by: Marc Zyngier <maz@kernel.org>
-Acked-by: Marc Zyngier <maz@kernel.org>
----
-v1: Fixed patch comment.
-
- arch/arm64/boot/dts/st/stm32mp251.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-index 379e290313dc..87110f91e489 100644
---- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-@@ -119,9 +119,9 @@ intc: interrupt-controller@4ac00000 {
- 		#interrupt-cells = <3>;
- 		interrupt-controller;
- 		reg = <0x0 0x4ac10000 0x0 0x1000>,
--		      <0x0 0x4ac20000 0x0 0x2000>,
--		      <0x0 0x4ac40000 0x0 0x2000>,
--		      <0x0 0x4ac60000 0x0 0x2000>;
-+		      <0x0 0x4ac20000 0x0 0x20000>,
-+		      <0x0 0x4ac40000 0x0 0x20000>,
-+		      <0x0 0x4ac60000 0x0 0x20000>;
- 	};
- 
- 	psci {
--- 
-2.34.1
+> ret = hdmi_compute_format_bpc(..)
+> if (ret) {
+>    drm_dbg("YUV420 doesn't work").
+>    return ret;
+> }
+> 
+> return 0;
 
 
