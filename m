@@ -1,218 +1,159 @@
-Return-Path: <linux-kernel+bounces-597444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7345A839EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:54:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E9FA839C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C788C7028
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:51:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F511B803A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE3B20B20B;
-	Thu, 10 Apr 2025 06:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E9B204859;
+	Thu, 10 Apr 2025 06:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UR+56h7r"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f80D4EnV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F84A20468C;
-	Thu, 10 Apr 2025 06:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA08E2046A4;
+	Thu, 10 Apr 2025 06:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744267811; cv=none; b=jgin0lyJXcQ7vadbZTy8rE19naolKSlapww26iqSGbmim0OsIwcIbnNOmjFsjIHdHntvMe74fa2E3OulDSon51p/tAxxqMCaXH0OhUQf6eld7+DQiGGFGTR0A8L69mFmYw4mJ57bXcyBQLKpq2F+Q2us3tZW/RHSDrlEEuIdxfQ=
+	t=1744267758; cv=none; b=usHig9c0HaVkzKtJiIOVicOjt30kiismR7fmuc42s2rH950QUPXj5hhVFUKV3exbwysBcQmIplAr+3WGE8FpG7m7T9H7GovAWuRfpiNfaJllkHICEWgtB7CMdbTekkv3mXZ51dpLfwknOmOUyZVfBjQWuzLoxpgCGYFguDoOzME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744267811; c=relaxed/simple;
-	bh=7CSFEhqIHstgVCRXuQHhQ+VWZRZj5jqLoBJkK2Okah8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nSEo+o0yBlrya6yd+im/gye4jk1bgS+kZdm2iVJ3s6sbbxBxUXRm/7Vr4/In1texQoPWy0zg3bsTfOH2XBIjDR4BhtgmQvJ9BaeKu9/smVAvjLrat/uTa06uD30RWdMJvyXiTiScDMrKekchNBxE+dqce7G5G/UvwpyACibGrQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UR+56h7r; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c68:389d:1fcb:c0f8:ff7c:208d])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 73C03EE4;
-	Thu, 10 Apr 2025 08:48:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1744267690;
-	bh=7CSFEhqIHstgVCRXuQHhQ+VWZRZj5jqLoBJkK2Okah8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=UR+56h7rhH8+fhJhEPkLqIODKYRxxYgW6SZb5IdZoPT/Kaj8CaRdbfwtB0crQqZZk
-	 qnAdYUBmDl5JO1L89QhvTlD1Uw7hWHVjlJ4l+SOiYjx0aF12ZpxmEju7ogV9Sufuo6
-	 L4e1Co/8SJI6d8PdiO4ZPWsHys5S3uegY3XxRRGc=
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Thu, 10 Apr 2025 12:19:04 +0530
-Subject: [PATCH v2 6/6] media: ti: j721e-csi2rx: Support multiple pixels
- per clock
+	s=arc-20240116; t=1744267758; c=relaxed/simple;
+	bh=nz4enF8Jz59Sf6Vavxspe3ycCjV1pMiLTmu1sO5NYe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AfClMY+6TadcEnH845XTkmeq/j4UE406IfsyTEijaGYXlb89Ei2xG4g6fAB/V6myV9IQ+oJOSolghGEnKRK8a694dXvpTIst3ofwHyFMyi4t/y7F4EJ2lmyrV6gVWdIqGD40F4aZyoc4QHxaTNcXFcvayja6TuKHVcPEYm3kmCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f80D4EnV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE25CC4CEED;
+	Thu, 10 Apr 2025 06:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744267758;
+	bh=nz4enF8Jz59Sf6Vavxspe3ycCjV1pMiLTmu1sO5NYe4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f80D4EnV36LeKziBuUUGIcnLVQ0ynTBEhcgG8uvQFGYq5tEQLCoBTuxKX3Xp/LJJR
+	 Y54H9W1vnUz4+lIzaIbkgsRq50P+dN8mfBdw0SPnJLwD+G+IgdpBlJ4R70BOY2LCEY
+	 ArjP7KX3DON9JpdbmcYygn4bnhE8KRm6w0sLt9xvXGIpHLXHZJMe6OYXqVSvV+VK4d
+	 3NLTCnvpk3pU3eO+gEAAdVE7e+YiywWXslDu0qOf4D6yqy3Cbj0zgJXJ6dPO9dEvF8
+	 HC7f44j8D+pShfpasgV4U5oKZhEZ3+d5D4ep8a+c0Dmn6jI9Vc5FYrPctFDastqj6C
+	 9E26wAi47imhA==
+Date: Wed, 9 Apr 2025 23:49:16 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/3] Metric related performance improvements
+Message-ID: <Z_dp7E2wtSek-KHo@z2>
+References: <20250410044532.52017-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250410-probe_fixes-v2-6-801bc6eebdea@ideasonboard.com>
-References: <20250410-probe_fixes-v2-0-801bc6eebdea@ideasonboard.com>
-In-Reply-To: <20250410-probe_fixes-v2-0-801bc6eebdea@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>
-Cc: Devarsh Thakkar <devarsht@ti.com>, 
- Rishikesh Donadkar <r-donadkar@ti.com>, Vaishnav Achath <vaishnav.a@ti.com>, 
- Changhuang Liang <changhuang.liang@starfivetech.com>, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jai Luthra <jai.luthra@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4663;
- i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=7CSFEhqIHstgVCRXuQHhQ+VWZRZj5jqLoBJkK2Okah8=;
- b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBn92n4e+A2woCaYzS+8DXrNCUMIX+adStKKofAU
- oOAZmp0AV2JAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZ/dp+AAKCRBD3pH5JJpx
- RRwID/9l5jxEg97SGAnZgGLD1cphoYNc7Jgsj5vOzmJ9bKAumn9sobr7Ty7cNttm6951TmeDDUf
- 5RSoZGpNNA+T+pV11VQWjVdRJYmUv3oXZ6jdhRNKsN/pkBZETrL+sncpFyV4a+9aMWdyBwR7CED
- CEfr+lbH2d+Q0oQIlNEYGZ9GrTGxTBcYIBJ9Kp7Y0nK28yZx9gire816DK1x1VKZL1Z5NjleWqo
- MbePTqwveWK1vYOwNgz7cQEcxaajQ90nvXVTgX6FVJ4Lk77tHBoaUVjLaQeHG0zO7jKAcXcN52o
- snQaxpQ8eoxlkASOsrqfG3fcBBW3JI6LWUco7at/rbawO3hw00MSd6HD/hCVeYaS3bAezYpNM8y
- KYjZjhEd2JJD6+RQS1vjPYSzXhvzBAvKuCEY0b094eNGIZWnCHPBIrmoI0swWavfFmXvYuknD04
- i5oaeYb0hyaWbkYpT3TmE8O82UENr4KfUMI1Vmc3pRFViAWVcAGvQBoVlq0epkYNtlATSyRCuLb
- HKetun0QD2UMrRSyOL6Mh+frMJ2tCBRJ6ZCFdI2uYJ8UQi7fuS9/qkPnmcgUYQrnArC4PkCKsR1
- NG2ZxeNEboj1HgHtn2seZ8EZCo4Z3YDd/IwwBm8D5IC/tIt15r/QN1E5BsZ65wgptg4mqh6A9WW
- IWuD5FUgKZZ5Vog==
-X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250410044532.52017-1-irogers@google.com>
 
-Add support for negotiating the highest possible pixel mode (from
-single, dual, quad) with the Cadence CSI2RX bridge. This is required to
-drain the Cadence stream FIFOs without overflowing when the source is
-operating at a high link-frequency [1].
+Hi Ian,
 
-Also, update the Kconfig as this introduces a hard build-time dependency
-on the Cadence CSI2RX driver, even for a COMPILE_TEST.
+On Wed, Apr 09, 2025 at 09:45:29PM -0700, Ian Rogers wrote:
+> The "PMU JSON event tests" have been running slowly, these changes
+> target improving them with an improvement of the test running 8 to 10
+> times faster.
+> 
+> The first patch changes from searching through all aliases by name in
+> a list to using a hashmap. Doing a fast hashmap__find means testing
+> for having an event needn't load from disk if an event is already
+> present.
+> 
+> The second patch switch the fncache to use a hashmap rather than its
+> own hashmap with a limited number of buckets. When there are many
+> filename queries, such as with a test, there are many collisions with
+> the previous fncache approach leading to linear searching of the
+> entries.
+> 
+> The final patch adds a find function for metrics. Normally metrics can
+> match by name and group, however, only name matching happens when one
+> metric refers to another. As we test every "id" in a metric to see if
+> it is a metric, the find function can dominate performance as it
+> linearly searches all metrics. Add a find function for the metrics
+> table so that a metric can be found by name with a binary search.
+> 
+> Before these changes:
+> ```
+> $ time perf test -v 10
+>  10: PMU JSON event tests                                            :
+>  10.1: PMU event table sanity                                        : Ok
+>  10.2: PMU event map aliases                                         : Ok
+>  10.3: Parsing of PMU event table metrics                            : Ok
+>  10.4: Parsing of PMU event table metrics with fake PMUs             : Ok
+>  10.5: Parsing of metric thresholds with fake PMUs                   : Ok
+> 
+> real    0m18.499s
+> user    0m18.150s
+> sys     0m3.273s
+> ```
+> 
+> After these changes:
+> ```
+> $ time perf test -v 10
+>  10: PMU JSON event tests                                            :
+>  10.1: PMU event table sanity                                        : Ok
+>  10.2: PMU event map aliases                                         : Ok
+>  10.3: Parsing of PMU event table metrics                            : Ok
+>  10.4: Parsing of PMU event table metrics with fake PMUs             : Ok
+>  10.5: Parsing of metric thresholds with fake PMUs                   : Ok
+> 
+> real    0m2.338s
+> user    0m1.797s
+> sys     0m2.186s
+> ```
 
-[1] Section 12.6.1.4.8.14 CSI_RX_IF Programming Restrictions of AM62 TRM
+Great, I also see the speedup on my machine from 32s to 3s.
 
-Link: https://www.ti.com/lit/pdf/spruj16
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
----
- drivers/media/platform/ti/Kconfig                  |  3 +-
- .../media/platform/ti/j721e-csi2rx/j721e-csi2rx.c  | 38 ++++++++++++++++++++--
- 2 files changed, 37 insertions(+), 4 deletions(-)
+Tested-by: Namhyung Kim <namhyung@kernel.org>
 
-diff --git a/drivers/media/platform/ti/Kconfig b/drivers/media/platform/ti/Kconfig
-index bab998c4179aca3b07372782b9be7de340cb8d45..3bc4aa35887e6edc9fa8749d9956a67714c59001 100644
---- a/drivers/media/platform/ti/Kconfig
-+++ b/drivers/media/platform/ti/Kconfig
-@@ -67,7 +67,8 @@ config VIDEO_TI_J721E_CSI2RX
- 	tristate "TI J721E CSI2RX wrapper layer driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2_SUBDEV_API
- 	depends on MEDIA_SUPPORT && MEDIA_CONTROLLER
--	depends on (PHY_CADENCE_DPHY_RX && VIDEO_CADENCE_CSI2RX) || COMPILE_TEST
-+	depends on VIDEO_CADENCE_CSI2RX
-+	depends on PHY_CADENCE_DPHY_RX || COMPILE_TEST
- 	depends on ARCH_K3 || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
-diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-index ad51d033b6725426550578bdac1bae8443458f13..425324c3d6802cfda79d116d3967b61a2e7a015a 100644
---- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-+++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-@@ -21,6 +21,8 @@
- #include <media/v4l2-mc.h>
- #include <media/videobuf2-dma-contig.h>
- 
-+#include "../../cadence/cdns-csi2rx.h"
-+
- #define TI_CSI2RX_MODULE_NAME		"j721e-csi2rx"
- 
- #define SHIM_CNTL			0x10
-@@ -29,6 +31,7 @@
- #define SHIM_DMACNTX			0x20
- #define SHIM_DMACNTX_EN			BIT(31)
- #define SHIM_DMACNTX_YUV422		GENMASK(27, 26)
-+#define SHIM_DMACNTX_DUAL_PCK_CFG	BIT(24)
- #define SHIM_DMACNTX_SIZE		GENMASK(21, 20)
- #define SHIM_DMACNTX_FMT		GENMASK(5, 0)
- #define SHIM_DMACNTX_YUV422_MODE_11	3
-@@ -40,6 +43,7 @@
- #define SHIM_PSI_CFG0_SRC_TAG		GENMASK(15, 0)
- #define SHIM_PSI_CFG0_DST_TAG		GENMASK(31, 16)
- 
-+#define TI_CSI2RX_MAX_PIX_PER_CLK	4
- #define PSIL_WORD_SIZE_BYTES		16
- /*
-  * There are no hard limits on the width or height. The DMA engine can handle
-@@ -110,6 +114,7 @@ struct ti_csi2rx_dev {
- 	struct v4l2_format		v_fmt;
- 	struct ti_csi2rx_dma		dma;
- 	u32				sequence;
-+	u8				pix_per_clk;
- };
- 
- static const struct ti_csi2rx_fmt ti_csi2rx_formats[] = {
-@@ -485,6 +490,26 @@ static int ti_csi2rx_notifier_register(struct ti_csi2rx_dev *csi)
- 	return 0;
- }
- 
-+/* Request maximum possible pixels per clock from the bridge */
-+static void ti_csi2rx_request_max_ppc(struct ti_csi2rx_dev *csi)
-+{
-+	struct media_pad *pad;
-+	int ret;
-+	u8 ppc = TI_CSI2RX_MAX_PIX_PER_CLK;
-+
-+	pad = media_entity_remote_source_pad_unique(&csi->vdev.entity);
-+	if (!pad)
-+		return;
-+
-+	ret = cdns_csi2rx_negotiate_ppc(csi->source, pad->index, &ppc);
-+	if (ret) {
-+		dev_warn(csi->dev, "NUM_PIXELS negotiation failed: %d\n", ret);
-+		csi->pix_per_clk = 1;
-+	} else {
-+		csi->pix_per_clk = ppc;
-+	}
-+}
-+
- static void ti_csi2rx_setup_shim(struct ti_csi2rx_dev *csi)
- {
- 	const struct ti_csi2rx_fmt *fmt;
-@@ -496,6 +521,9 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_dev *csi)
- 	reg = SHIM_CNTL_PIX_RST;
- 	writel(reg, csi->shim + SHIM_CNTL);
- 
-+	/* Negotiate pixel count from the source */
-+	ti_csi2rx_request_max_ppc(csi);
-+
- 	reg = SHIM_DMACNTX_EN;
- 	reg |= FIELD_PREP(SHIM_DMACNTX_FMT, fmt->csi_dt);
- 
-@@ -524,14 +552,18 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_dev *csi)
- 	case V4L2_PIX_FMT_YVYU:
- 		reg |= FIELD_PREP(SHIM_DMACNTX_YUV422,
- 				  SHIM_DMACNTX_YUV422_MODE_11);
-+		/* Multiple pixels are handled differently for packed YUV */
-+		if (csi->pix_per_clk == 2)
-+			reg |= SHIM_DMACNTX_DUAL_PCK_CFG;
-+		reg |= FIELD_PREP(SHIM_DMACNTX_SIZE, fmt->size);
- 		break;
- 	default:
--		/* Ignore if not YUV 4:2:2 */
-+		/* By default we change the shift size for multiple pixels */
-+		reg |= FIELD_PREP(SHIM_DMACNTX_SIZE,
-+				  fmt->size + (csi->pix_per_clk >> 1));
- 		break;
- 	}
- 
--	reg |= FIELD_PREP(SHIM_DMACNTX_SIZE, fmt->size);
--
- 	writel(reg, csi->shim + SHIM_DMACNTX);
- 
- 	reg = FIELD_PREP(SHIM_PSI_CFG0_SRC_TAG, 0) |
+Thanks,
+Namhyung
 
--- 
-2.49.0
-
+> 
+> Ian Rogers (3):
+>   perf pmu: Change aliases from list to hashmap
+>   perf fncache: Switch to using hashmap
+>   perf metricgroup: Binary search when resolving referred to metrics
+> 
+>  tools/perf/builtin-stat.c                |   6 +-
+>  tools/perf/pmu-events/empty-pmu-events.c |  66 ++++++++-
+>  tools/perf/pmu-events/jevents.py         |  66 ++++++++-
+>  tools/perf/pmu-events/pmu-events.h       |  23 +++-
+>  tools/perf/tests/pmu-events.c            | 129 +++++++++--------
+>  tools/perf/util/fncache.c                |  69 +++++-----
+>  tools/perf/util/fncache.h                |   1 -
+>  tools/perf/util/hwmon_pmu.c              |  43 +++---
+>  tools/perf/util/metricgroup.c            | 102 ++++++--------
+>  tools/perf/util/metricgroup.h            |   2 +-
+>  tools/perf/util/pmu.c                    | 167 +++++++++++++++--------
+>  tools/perf/util/pmu.h                    |   4 +-
+>  tools/perf/util/srccode.c                |   4 +-
+>  tools/perf/util/tool_pmu.c               |  17 +--
+>  14 files changed, 430 insertions(+), 269 deletions(-)
+> 
+> -- 
+> 2.49.0.504.g3bcea36a83-goog
+> 
 
