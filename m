@@ -1,114 +1,121 @@
-Return-Path: <linux-kernel+bounces-598115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F514A84256
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:00:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B5EA84242
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C2B8C22C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:56:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 144444E0857
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C38928EA65;
-	Thu, 10 Apr 2025 11:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258E528EA7E;
+	Thu, 10 Apr 2025 11:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="IBX6NJ3B"
-Received: from pv50p00im-ztdg10021201.me.com (pv50p00im-ztdg10021201.me.com [17.58.6.45])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KRmT10Xp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V3/qw1t7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C1128CF7A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 11:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A868E283CAA
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 11:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744286004; cv=none; b=S/nzYWOHSgAzR49retqqZe3Y+4a/VWzWHx89WTL2X7ljFjG4LApikAZIvnlcbYzLgNjZXPBeIWU+aI63ebV673nzprzqwiR+S4YfUX9MR4p33KNuY2jdYKdBoD5NkT0VIj7siT85efFJSaFzQuvpbXUSMjulCcCorCkVfvpk6Fw=
+	t=1744286009; cv=none; b=VLp4NDpw6vmGB1l5IsOQqXe3QIoBBMnoCOR/TFkcbvdl7bGT/ii/XFhwvcBZ38IpFRJY81phwMOWvnrKlSe6SOsPyHNcLk1enbZpplt3IQTob5SgwLxRoiMGZa5ZqrtFF/zg4/wigGh9OK1Zh03s2Wn6Eu55G0VFANrHZ0cyUKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744286004; c=relaxed/simple;
-	bh=xb4Djkq2XeMUN0/diW1Ny4gAAC+RdsV3KZBjNbiBEdA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cbODSz57Edv1UA/2hpojS0r06Tv/JXzyuXh50mV26s4z6FJ/ZWLRcor6FzDr40faBadWBFS5Or3a4XBOhb8DOMds6474Xs8yysLi8yWNVlG66xOLv9Lv2O9hPMDi3Ff6aMYgEJDgAeAIDt58yr8iByKgHDdbFNQofV/ZK5ujHgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=IBX6NJ3B; arc=none smtp.client-ip=17.58.6.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=9CNRZFMb+ZGZSnN0e7O2pQJfHsHDLKAcSkkbVrvrqsU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
-	b=IBX6NJ3BmU4yOtxmKur4FfF87pPiiGgFcw1UW9sndFBPQm+8TLTZK8eRnYWIgBYtC
-	 /lOrOUbX+9uA4pYe4Re+VlkFPhQtbyuxw2XXhpOjETOdFf3H5OlNP2vgEH1a9rjblA
-	 2fBrTcmzBwC7RaJ0GYIxHDdFR0XHx8mClg/rR8Ex4615pUlZiemR6m9P4z+2khENml
-	 iqLZDvY7B/AY+Jq16DJ31pmFeg33dqvq7jHDSzZOm2HdP7QYafxKgwA23zSeDBE3rw
-	 X0ROEHZxOU2PttDJcBpREtu7xAqG7RZU/0rQccmN7Y04dBv8ASiWb7le9Rl5jRX35n
-	 /M7Jq9L8MoT4Q==
-Received: from pv50p00im-ztdg10021201.me.com (pv50p00im-ztdg10021201.me.com [17.58.6.45])
-	by pv50p00im-ztdg10021201.me.com (Postfix) with ESMTPS id E70E53118A42;
-	Thu, 10 Apr 2025 11:53:19 +0000 (UTC)
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10021201.me.com (Postfix) with ESMTPSA id 78A433118934;
-	Thu, 10 Apr 2025 11:53:17 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Thu, 10 Apr 2025 19:53:03 +0800
-Subject: [PATCH RFC] fs/fs_context: Use KERN_INFO for
- infof()|info_plog()|infofc()
+	s=arc-20240116; t=1744286009; c=relaxed/simple;
+	bh=zqzlRnDUGYajT8xc8yCcNvDzHC278SgpwmXlWMaDc3Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kRk4KRwcX2AKwNjntXc60B3/MCMP0PO/aGNaPNMC5NTAqFcEshN0I9hOm7/5rJus3Oal4L8rOmF1psQC+YO22EEttLZ//WPo95fT+niJEvvKByObJiX98LFq7Qo0TnmmmlmwPHM3uYVnHkZXCxFf6Q8szAopElUhgTJgbap4Xa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KRmT10Xp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V3/qw1t7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744286005;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v2p1lbtp0QplDrWE/LzcgKEOQbnSsTNOvmjtUy+7EdQ=;
+	b=KRmT10Xpesr8slURmSb1iC8Isu3KPjiYVaW386hAIp2YJCQ79iWbOIvcAHhXb5/BJzGyYt
+	DfxgA4bK23sq9QaZJ2kpkxY4XcXJUgfvKyB8W8/gM31oJatbqrGQMiU9IKkmIgYQA2Sp3p
+	vi49PYYA6Xe7eSB+ParB9Dsj3W4FBeUYYYIVbaZ3bNqekwlB+GYSoGGfm/KcNTd3GUcti4
+	rTwtHC/PnSmDIWgoSWB5g6FjseBFVD1/iwFbQsLz9NqVcmFH74YERGsAZS0xDCRVxtsB09
+	x0TYNhKfdmwiL50IPFwJrm7x15z+rzLh4iSED1mZ8r+w3KGX//d2edyX49QTZQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744286005;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v2p1lbtp0QplDrWE/LzcgKEOQbnSsTNOvmjtUy+7EdQ=;
+	b=V3/qw1t7mPt9XfJKfBP+7TyR0yXq5xTFEe3RCw1YCh+Nk4P9MELcK0kQG0AfaULo3mP+pl
+	168aJrY+4aiEvTAg==
+To: Borislav Petkov <bp@alien8.de>, Kevin Koster <lkml@ombertech.com>
+Cc: Oerg866 <oerg866@googlemail.com>, linux-kernel@vger.kernel.org, Ingo
+ Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/microcode: Consolidate the loader enablement
+In-Reply-To: <20250408172250.GCZ_VbaqKsshMYTdaE@fat_crate.local>
+References: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com>
+ <20250405130306.ca9822c1f27db119cc973603@ombertech.com>
+ <20250405093127.GAZ_D4b6NdyTS-UW1J@fat_crate.local>
+ <20250406164049.c0666bc18073e3b88c92d1f1@ombertech.com>
+ <20250406174633.2c581923c145687476191753@ombertech.com>
+ <20250406190253.GAZ_LP3RPZInWKcHN7@fat_crate.local>
+ <20250407095848.7933a358c9f450fe03fb8234@ombertech.com>
+ <20250407102927.GAZ_OpBw5hJ2QTFsKz@fat_crate.local>
+ <20250408002150.8955343f4e2f2ac31b4663e8@ombertech.com>
+ <20250407135533.GDZ_PZVZ-2CKmhbt7d@fat_crate.local>
+ <20250408172250.GCZ_VbaqKsshMYTdaE@fat_crate.local>
+Date: Thu, 10 Apr 2025 13:53:25 +0200
+Message-ID: <875xjcteq2.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250410-rfc_fix_fs-v1-1-406e13b3608e@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAB6x92cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDE0MD3aK05Pi0zIr4tGLd5LREYzNLS2ODxKRUJaCGgqJUoAzYsGilIDd
- npdjaWgD3StL0YQAAAA==
-X-Change-ID: 20250410-rfc_fix_fs-cfa369930abe
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-GUID: Sls4o2toiBGoOtiR6gG470J5PXjQqsMV
-X-Proofpoint-ORIG-GUID: Sls4o2toiBGoOtiR6gG470J5PXjQqsMV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-10_02,2025-04-08_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- clxscore=1015 phishscore=0 spamscore=0 bulkscore=0 suspectscore=0
- mlxscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2504100087
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Type: text/plain
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Tue, Apr 08 2025 at 19:22, Borislav Petkov wrote:
+>  static struct microcode_ops	*microcode_ops;
+> -bool dis_ucode_ldr = true;
+> +static int dis_ucode_ldr = -1;
 
-Use KERN_INFO instead of default KERN_NOTICE for
-infof()|info_plog()|infofc() to printk informational messages.
+This tristate muck is disgusting.
+  
+>  bool force_minrev = IS_ENABLED(CONFIG_MICROCODE_LATE_FORCE_MINREV);
+>  module_param(force_minrev, bool, S_IRUSR | S_IWUSR);
+> @@ -95,11 +95,20 @@ static bool amd_check_current_patch_level(void)
+>  	return false;
+>  }
+>  
+> -static bool __init check_loader_disabled_bsp(void)
+> +bool __init microcode_loader_disabled(void)
+>  {
+> -	static const char *__dis_opt_str = "dis_ucode_ldr";
+> -	const char *cmdline = boot_command_line;
+> -	const char *option  = __dis_opt_str;
+> +	if (dis_ucode_ldr < 0) {
+> +		if (cmdline_find_option_bool(boot_command_line, "dis_ucode_ldr") <= 0)
+> +			dis_ucode_ldr = 0;
+> +		else
+> +			goto disable;
+> +	}
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- fs/fs_context.c | 4 ++++
- 1 file changed, 4 insertions(+)
+It just exists to make the above a one time operation. What's wrong with
+having:
 
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 582d33e8111739402d38dc9fc268e7d14ced3c49..2877d9dec0753a5f03e0a54fa7b8d25072ea7b4d 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -449,6 +449,10 @@ void logfc(struct fc_log *log, const char *prefix, char level, const char *fmt,
- 			printk(KERN_ERR "%s%s%pV\n", prefix ? prefix : "",
- 						prefix ? ": " : "", &vaf);
- 			break;
-+		case 'i':
-+			printk(KERN_INFO "%s%s%pV\n", prefix ? prefix : "",
-+						prefix ? ": " : "", &vaf);
-+			break;
- 		default:
- 			printk(KERN_NOTICE "%s%s%pV\n", prefix ? prefix : "",
- 						prefix ? ": " : "", &vaf);
+static void __init microcode_check_cmdline(void)
+{
+	if (cmdline_find_option_bool(boot_command_line, "dis_ucode_ldr") <= 0)
+		dis_ucode_ldr = false;
+}
 
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250410-rfc_fix_fs-cfa369930abe
+and call that once at the proper place?
 
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+Thanks,
 
+        tglx
 
