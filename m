@@ -1,223 +1,160 @@
-Return-Path: <linux-kernel+bounces-597669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881D8A83CF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:30:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D35A83CF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C798C9E59D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:26:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40E533AD1D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3652220B7E9;
-	Thu, 10 Apr 2025 08:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EA21E5204;
+	Thu, 10 Apr 2025 08:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="fh8hJmia"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2051.outbound.protection.outlook.com [40.107.241.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JHbPptnu"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD0D20AF73;
-	Thu, 10 Apr 2025 08:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744273564; cv=fail; b=ofiulAAKzaVAQXq1fTJr3USxy6SmGY6tLJX9+ZaUj9zSdOEFkDdvH6V/arAUznno19N3zfT3H5haag8A8PzYP5VOh5nvaHW7F+BYr0Q/Y4Iw9qKjSF1D2LXWVkhN0UX9UkBff8NSLQBpHIdyNd0xgNCxeVYpEMgC92B0OHZqaFM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744273564; c=relaxed/simple;
-	bh=rtDP+q3oSxJTACZ8X6P6hpNII6VRGTtDXEUS1KET+2Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OB3D6/IvqmfGxRWgmRwkRvhKnRhWG/HVuopc7bO5plM4G6jUZnNy5+cgMUnuVAVTRDZBqp4HzsQY4YwHrzZpt7K4wIOr343ASi3cZ3hSrKkXiknFN1OEXOij1+CWh8i4tiz+CHuP5SYITO3QH8CynB++ioHTl4pQD8Q/eov/Fow=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=fh8hJmia; arc=fail smtp.client-ip=40.107.241.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pZpitpfV/kCC3qhs/yygOgNr2B5wYUVSk4TBztczet4fyQN9CPb8YVjTB+oXC6TxirCKfoh4En1Ydg4q+2wMIK5nuvDmq2AUPQL9NzG5zHuh/xJ/w5pM4vVIIfAgf57SgD6/Prrbxfn4gxo8Lxye0bkJY9sZoig8go8zQEDEKRxzMuEt5BLkYUbC9SK+qZz6MYvxXadbAFHvyj9M6ezsuoDe/6pxCu4/7n4hRHN3ixjirbhIZ5cD6hT94t5EzUMNTlDp0MMim9ZSNXw1+Is04xKUTIX0Pat+SrACoZ9Ku85ntNjyVXgM3qfYl/f7mIfcME02P4Cw+sDilwgJ50rYNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3OVPQi7wRoh/sfZHT3FH56+4ubgbxw+Z+gdwDPTfhN0=;
- b=GETdwla73HkkbKfHL2A2/XP5AQOoMOXcXTVr11rbvQ2D0ET/6Z3H58sG98vsd9wuvfzLvaFGs7SSjdQwnhvTkMbWJ7DOBB4SGFkwcYFjRcMVMek76mrFa2taN4FiPB6aLXmiZejBFXbumgoMDCP7Co3YIHHRooOmCfXGK3OGD8BMruPZKoTl1QIWyJIG72rFE4jBzmAI29XT91Xw5GS/6AxFjPKJkmQGeY4hyjm/W/j1IEQ0Sbc8WSQruK7kpVTv9GmrHEyAkvB7RMT8rVSWsm6HZOW9rvf3S2wnvX1E8pqzkhMZ+M4otXgOfHj4xqlrb3kyo5rjHL1qyztZ4bUGqw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3OVPQi7wRoh/sfZHT3FH56+4ubgbxw+Z+gdwDPTfhN0=;
- b=fh8hJmiaILwEtlUDB3K5Ma6ztUD+WtmPfpsQ0RR/23UgR1iPbpPzKE45fnica3HD2NrqtWpTzzNdJRTlLtk3ve9hDtaDTtnp6Og1nxJg2/5YfVcwazB+JGtnwoLWh1v/rMegAmziIJMSLHAL824dUmVSrlHLbGRVmWGlQiwMzBEBfLgc2jny9iJREw8/O7Cu5WLK3r5S6wPkUIAo+uhV7Y8UcXt141Nag2Y6qQ90IAeAbu6rfeDVluHAs9YAjf1uDidDPjj0IJPYz6sl/f7iHHOJta3pEozYMGIBIkQr+ykXbhuAXAHRJQ59mI/c2h0MqQCgC+ad1e5yQHFI+S73Og==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
- by AM9PR04MB8858.eurprd04.prod.outlook.com (2603:10a6:20b:409::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.23; Thu, 10 Apr
- 2025 08:25:56 +0000
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd%4]) with mapi id 15.20.8606.033; Thu, 10 Apr 2025
- 08:25:56 +0000
-From: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B3E204C30
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 08:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744273608; cv=none; b=f98YLrjf+7CaUohRGxuU4xb2a02vnT2dEK5BLzT0Blj8cCjdwJ1iO73M/rltgtJj9BLB8ztWtv/33Fi6AjDGLWuSQx3GPfRUSb3EUX+Tjc0ycheuFSppHvVIsZ1vEYKpD35l8IzlaN+rMOAA18tYUlRQce+S2j4Hvd1YCcWBgNM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744273608; c=relaxed/simple;
+	bh=1MwayweBMCGI1FLlKVhQxmnVp9c11rxMnbmLOw/VEXY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a2xx+KlLnEcUVjeGQGBaX+++v59ZUp+7oVBMzXKy6f8NwSYagoeBqukF7XyAIhU1Dq2/3/EtWeHYX09wYa3riznD9+dBVmRfAt7DEHm9azJh4bFyFYSfpQewYMx/KbmMcdwv9NrMb8iWH08HCOimuBsK5UlntWNrZHaf7TUoeKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JHbPptnu; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf3192f3bso5485065e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 01:26:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744273605; x=1744878405; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=by0C3qcBJWPP2R5Tts84nwTn6pqrbnhx93UsShQdVNQ=;
+        b=JHbPptnuJMFxceSbvazDapKu5L+m0xCVYqqxx4PJC/hk4QM7H6uujswVXqWcG4x4qX
+         WJEDDP+7rsQDWT6w13Q26NjzQKEwZ2mjdTLkYdsBiitSvaiPUuLker7d0TWtTjpyhJJm
+         mHpxeAcqtHi7wcYEqYmAQEimg1ZaIz4RZM434lWv4H2BkHFZT1GQJjoL1U3td04deZRg
+         8CLfk+F9JMOkL+UBIX1ua9Z8MgbUeviEgpXzja4PnkHjxtrVINPbPdm2+BUt3TXEUg/m
+         FGdX1vNLss27fT71mVz+sY1G/2yW9TcCj93rNnTuaCD7kr4DRXmw6K5dzzXKHo7GXN4C
+         EwLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744273605; x=1744878405;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=by0C3qcBJWPP2R5Tts84nwTn6pqrbnhx93UsShQdVNQ=;
+        b=kMw5rFeqfqJFoiVruGGLrS2At9Mp+HQqOkZ9O51DDtK+VunvtKKgJZIe13pV6YgKsZ
+         2esjgsXKoBLkG6j1vC3j5uof/3Sk6OX710H5ale/0WFCGqS7Dw61QxZtB8tyYtJbeYWK
+         dAu688mPQoduO6agNfbe+aGutdLwzQOxjYyXCQS8+z+72CAs4ll5iuPGIXZifYn+oDRN
+         8+YhuI2TQYRv2wZ7Bmx60AOTKdenEYqDtraXos2un8QWF6/fTyBRtPzQS64BPeLoWPdm
+         ujCMeZ64YGE+cAY2IJXG4Bsz2pCcISUtp5BQ036tQVWXFeBsGQcGEL/nhEdrfQcTJSQw
+         0QRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuOP0Nka5rcx1dTtDhockve4mMEGy4xuewwzaHVPAgApIuvZK73q0GQcS2etpGQwhfsVqCC1cKSUjS/Kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHu2LQNn25+za8wd4fuGUKu0bscRoH+p5HSvEErxbNz1adLCYN
+	FIISfUPSZbkBCA3ORY6MwmmEhFJgmYarOdPTcoBr0Qj/CDCjyFO1P5ofw4FGHyM=
+X-Gm-Gg: ASbGncsCNOmOj89mimVyiyhYPR6eeh563/UXPj8tdrbE7ZAft6gtVFBwOw2AT0QoLJ/
+	TyGoKA8o2H8BCV1DWBIiqMatcHucDl4hykQIY08rrVJPAif76yJ18DnWGCI7dcX+Xls0fJQREjs
+	kxVpuAZ93PGtI5884iyLwcQhTSnAWIXzEDjfbpVHvD9znfCSrUmS/6r+7+80Tv/lWxoOp35Z8S5
+	fxgLmtw5rlMsNEbaIT+06zwV1unC1dW867VeGN58mdYa5/MWmicDHTbeclnhKs97JHVBkypbP3b
+	Qgcn+kBv7BWY2G8A0BYL7YL3XtM6eZNqWOB1SMiMCRVFKoaIqLgHojRdwRvORM05JjE=
+X-Google-Smtp-Source: AGHT+IFY9hRZTvaafYq2hL5p30TOnetIisE6/GIMeJNcOc0jS1+hW0A56uPnzu4Ixw/+IUcYhD8Lxg==
+X-Received: by 2002:a05:600c:1da4:b0:43c:f44c:72a6 with SMTP id 5b1f17b1804b1-43f2fdced9cmr13942095e9.2.1744273604558;
+        Thu, 10 Apr 2025 01:26:44 -0700 (PDT)
+Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233a2c84sm42884645e9.11.2025.04.10.01.26.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 01:26:44 -0700 (PDT)
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: wim@linux-watchdog.org
+Cc: linux@roeck-us.net,
+	linux-watchdog@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	s32@nxp.com,
-	imx@lists.linux.dev,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Eric Chanudet <echanude@redhat.com>,
-	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
-	Larisa Grigore <larisa.grigore@nxp.com>
-Subject: [PATCH 2/2] rtc: pcf85063: handle stopped oscillator at startup
-Date: Thu, 10 Apr 2025 11:25:48 +0300
-Message-ID: <20250410082548.3821228-3-ciprianmarian.costea@oss.nxp.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250410082548.3821228-1-ciprianmarian.costea@oss.nxp.com>
-References: <20250410082548.3821228-1-ciprianmarian.costea@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM0PR02CA0222.eurprd02.prod.outlook.com
- (2603:10a6:20b:28f::29) To DU0PR04MB9251.eurprd04.prod.outlook.com
- (2603:10a6:10:352::15)
+	S32@nxp.com,
+	ghennadi.procopciuc@nxp.com,
+	thomas.fossati@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	alexandru-catalin.ionita@nxp.com
+Subject: [PATCH v4 0/2] Add the NXP S32 Watchdog
+Date: Thu, 10 Apr 2025 10:26:12 +0200
+Message-ID: <20250410082616.1855860-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|AM9PR04MB8858:EE_
-X-MS-Office365-Filtering-Correlation-Id: eb335c31-39c0-4f09-f71b-08dd780950a1
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bTIyZVlWeGJud0ZkUklzMUs3SDRvOWVsWm5BWDBmLzZPOVUxVEM1Z1g2d3Fm?=
- =?utf-8?B?dk1VTlJoS3U2akZEUnV5Q3dCTDJTS1ZxaVFjSTA3UmdIcjVCMVNSZk02NnlJ?=
- =?utf-8?B?QTZPTitwd29DTERPdW02dmRJM3doekwzc1QxdnVqNk05Q3pMT2lCYU1WRTNQ?=
- =?utf-8?B?Rnh0UWNzdFE3c29ZTjBWN0lENjJZS0EvMlAra0tnUUN3ajhDRk5mUGdNK3M1?=
- =?utf-8?B?dXAxTWkzUVBXU0lxWDRUOXQrQWZVK1NmRytwMWNNYnpKbW9zVnpDU1ZheUlo?=
- =?utf-8?B?QzNFME12UVFFWE5HQzdPdkYrZWwreG5ZWWROa25KNjN5VVZJZ1IxODBaZVgz?=
- =?utf-8?B?TFJaVm5jeWliNlpSd1ErSVIrTnlPajNaa0R1WUlZaTdRNnJoaTFlWjltRmE4?=
- =?utf-8?B?YXNFTE9lbHhOanovRUlHazBldVFlZ2RFRWtDT29heEpzZWpzaE9ldXAwR2h6?=
- =?utf-8?B?dmJpcGF5ZDdwdGMxTksrN1RKbE1qcllHMUxCdENnUi9KSzFvcUplR3ZIbWFy?=
- =?utf-8?B?OW5GK3lybGFEaUtDWmluUkY0ZDExWDVPSEdzcm9kU2RnenRpbDlZWWtQMlBx?=
- =?utf-8?B?bThvYzlOaTl3RkdXWEY4aFpIczlSMHg2ZEV6c1hCOWl3dUVyYzQ5YkdvNWpF?=
- =?utf-8?B?TEdjQlJ4UjQzT0VDVVBOOXFNeWwrblJqMnBUSlJ6czZSNjExUUx0anZwZGpD?=
- =?utf-8?B?b09ibGVZQjQ4NVNmT3BhK282N2pZSDdJR0dPVmhENkU5aGlRT3Z4VEdkaGJV?=
- =?utf-8?B?K3JDT0RvYVBNKzZkSDVnZTZLVzRCOGxNcFg3QmFKdGxmRkQ4MEZnNXErZ0hs?=
- =?utf-8?B?bTJCMTVLZlVDc3Y1VDdnQUh3NjZieUYwdmpiME5hV3crY3oxQ0RVZE1EY1FZ?=
- =?utf-8?B?N2M2Y1ZvM2E5NitwUWQrbXI5ZG9wak5FajFhL2d4ditkSkwweHJKRzMwazNn?=
- =?utf-8?B?ZWkzY3VER3Zjc2xCUWhxYWFiWEYzT04wTndjdVhDbEZnWWx6NURxTXhtWWpO?=
- =?utf-8?B?b0xYV1piUHo3OGNaV0RRKzVxRStJemFHZXJJUzZsY2dCQ1U2b1pyVVg5TWwx?=
- =?utf-8?B?dnQ0NWJzeWovOWh5dFVvUDVpdFgyYjNYRXgzUG1ic1g3UHdqczNrdkI2N3RR?=
- =?utf-8?B?dFlidTlYRDF3Z2F0aG1aUHJoQkZyNUtYRG1ndHdSdXM2ckpKcXdJOUNOeVB4?=
- =?utf-8?B?anhkOGNEejZubWFqbVVFaGFiekF6OE8xYjd4SlNZNzdjcCtEaEtHNzRJWWpZ?=
- =?utf-8?B?YWU2ZGxjcXlsSkRSUUdrZC92b1VNT2haTzRhT0svZlp5QUpVeEM2dVcvNDk0?=
- =?utf-8?B?TTltMzVrdG1JNkM4WFBmZFpvVXQ2TGVycGZBWXRhUHJsWGlBc3J4UVEzNHZn?=
- =?utf-8?B?NHRtQzNTZTV0a3lsSnpxTFd1bTNmZzBHZVRGWVp2Umd4Q0hwU3E1TDVPSzFQ?=
- =?utf-8?B?V082ZG93aFdidEJzZnozdHNNZmIzTFdYVWhRSzgySHJwRGZiMEhpZGtKR1Nm?=
- =?utf-8?B?Z1Q5bEU5dnh4VkQ5NTV6dVhWbHpuRHJqaktKVVkvUkdBSzNzdEVQQWhoUGVx?=
- =?utf-8?B?aXBTK0paOTZVb2N5NmloNDE5b3NkYUtCaEZXY21WSlRVQXM5eGlsS0VMKzZl?=
- =?utf-8?B?c0pBYThZclVIcVk0cUt6QndMakhobFlrWkQrMXh4RDdEYzFjYk4yRHN0ZXlY?=
- =?utf-8?B?VHEzL0hCbElmOEM5b2ZiQ2V2WmlCZjdiRU9JR0tkc2tZK0c2Z1FnNXIyS1VP?=
- =?utf-8?B?dVhpS0hmVGk4RGptYXRjcDN3Qmx1NTVtWE1lZXdIMlE3d1pibHlyellNRDFu?=
- =?utf-8?B?aGhvVHFCYzFRdnJwYjBETHQzQWdNRXdIOEFhcEI2WXA5MitRR1pjQ1dOMHlz?=
- =?utf-8?Q?xAkk5KcLlW0pp?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UGNJM090T0VZY3ZiKytTMXZ6emllMUZ5V2Q4TTN0ay9zWXR2Uk9xTkdzMmxG?=
- =?utf-8?B?R05wcVpMVnBpUmI5NUVuMm5RdkR1YVF3VzhudklDSjNhV09MTDgxNDFUOXp6?=
- =?utf-8?B?M3hQbWZLcXl1TmwwVlVhUmNKQlRQbXhEUnBGalo1WVNoSTZBSzA0WGlYYzN1?=
- =?utf-8?B?dkQ1RHlIc0FhV0s1WWdvOFRaRG81U3pvQTBvVkN6SHh6NkttN2VmSmUyOTM2?=
- =?utf-8?B?T1hnTmZVcFJERWJaeTNhN3I5a2NGdHAxWVVWaktBTTlOTS9kbDhibGg1NjVy?=
- =?utf-8?B?bUYwTmJEMlQ2eC9uVkhuOEd1czJzVFZXbjRkaVVITWorMmhwSTM5aE94MW5q?=
- =?utf-8?B?ZW1VWERhaG85ajIvUUlmMkRBK09ReHpxYnFEaHpvaTB2SUVVWXFyT2lHalpx?=
- =?utf-8?B?Wlp6cnlxbkNuUGxqZ2pZdmhRWEEwcHgzVWdNZ1NpMHE0TVlPTnNKbm4rN2Nt?=
- =?utf-8?B?RktUL1lOMnNYalcyUklXMWpndVdSWEFMcWlCZlNjZjA5MHhXSGpidTdRZ2M5?=
- =?utf-8?B?WmppQU9ubTJKWW13UVc0bk5ORUhqVmxjSmZWQXlwOVdvdnJKRkJSQWowUi8r?=
- =?utf-8?B?T2E4OGRScHd5anFaVEw3YkNDb2dEOEhBRjIyN1hMNDNoRTVXQjUvbHBBZ2x4?=
- =?utf-8?B?UzJnZzMzbzVFQVVUZiszdHFLSm5ibnBDVndESm9oaWNJZGIybVBoTXFMbHUv?=
- =?utf-8?B?SnREM0JYUXV1eVhjUTljWFdtV2lPVnJRZHZBM1FPb3BFVzZQaEZJelNCWHdE?=
- =?utf-8?B?NEZ0RGJqVk1nQ1dFeS9uODBRQ1czaFV3c2VPZy9UWmZJZUt3dmNHdTlnNHVh?=
- =?utf-8?B?ZXNYMCtvSDYwMkZLSWJ5MVFTb2JDKzd3WE9Db1J1bDVLeFl4QjhXdThOTUxI?=
- =?utf-8?B?d1lrNnJ6Y0ZqYmZDTkhxSm54Nk9BOFd6dkg2M3ZPM3VPU2VNeXFFZzMrVzBL?=
- =?utf-8?B?VjBIeEcyZDczQjZVeG9iYU5ZeW9ERytPRVFLdXNIR3N5TU9mR0hsaFZTTWE0?=
- =?utf-8?B?R3Y1K2QrZ2JkTGsxOXh1ZW16MzEzckdvSzloejEwNnQwNFZ6RzE5cWFTdUFo?=
- =?utf-8?B?WXJUdytnU3FIb2NZQnpkQUNBV2hLbnh6cTBVTytZSFp0aW5Ma0hMTjBST3Fl?=
- =?utf-8?B?NWM1Tm81R0FNWC9XQk9aZjZ3eXRQSWdUWW5iWXB1aWZ5SXdaTXNOYStPM0NE?=
- =?utf-8?B?UXNGRGVxVUtTTGxaN3o3d0xMTTJURXpGUHBVOGpkTEM5MUFjZmx0MWxHMFVE?=
- =?utf-8?B?bnlac0tZdjBtQXNZdFN0N2s5eDV3cXVaOGZ1UjVqNFN1M01BWEQ1NVhaOWlZ?=
- =?utf-8?B?RHJJcE5zWk0zSDBFd0RTSTQ0dmV2SS83WFhuTWZUZ0xub1NUdUpPcGpyVm44?=
- =?utf-8?B?KzN4UERHREJnOGp1OWNsYnE0RFZSZkxMS3MwdE8yYzNkT1ljMm9yK0ZrMG9C?=
- =?utf-8?B?VzJKaXJ3TDYvbzJCdnZPNzMzQk5CRU9GdGdvUmtmUW5Fb0pHKzg5Yng2a3Zl?=
- =?utf-8?B?NTFtdDhOa2U0T0VsaHl3b3Y4Z2JIZURLWlZySStvUWRnN2RlckJYZ0hvMkJ2?=
- =?utf-8?B?Y3JCaDlZNkFuUlJ6ZnBMVzhpY1o4K2E4UU1UenNBdlc4V1hNc3ZTZm1uNS83?=
- =?utf-8?B?bWR6dU1SSDFDWldzVHI3YUpLRENqaUNyM0tIa0JsaVVSdmk4WXg3NFBmOW1m?=
- =?utf-8?B?T0puZWRWRlJCOHVUUmlUS1pYaHgvakZzamFpVlI2Q2FlOXQ2M0lxYnhvS0hp?=
- =?utf-8?B?Tlp2SHdndGdsdjhabnY4ZXJDQU1HNkhaN2RqelFRN1lXbkFwMGtLTzhEeWJw?=
- =?utf-8?B?MytWWExlS1NkYVhET0hJNmdXTDFFejFtdTAzL3hpSXk1WWFkTFh5bk5LdXl0?=
- =?utf-8?B?MmNYQ1JMdzZlem1GRDc1bUE4Qk5PcHhnNyt4eHV6bE5JYnVVVGdSWCs5b3p5?=
- =?utf-8?B?azNVY1FrUGo5M0lkY2JueGlBaHd6WnowQUhUUWJyc2ZQd1g2VjdVTDZnbGls?=
- =?utf-8?B?WWFyOGk0S1ZTZlZQSXh3M0FibTIwQS85OWlrc1hJYTJjODNYUEtHYll0RWo3?=
- =?utf-8?B?Ukd5M05EK0cvaVpUeGpUSXJXQURPZCtnemVYUnorRU1kaXNXOENiN1lFZGZS?=
- =?utf-8?B?Mld2Z2xFdHJ5YmlPY0wra3p3eUFMcVg3cmJWeVZITzlxRmlwVG5lSnVrVzVX?=
- =?utf-8?B?M0E9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb335c31-39c0-4f09-f71b-08dd780950a1
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 08:25:56.1153
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GXt4ULHjqTqjwPkrZXV4PZPfQ9Vp18x6HuhvCWWAJtyAMteO8+LAbsPn6HtDdnWlMmuFJlowVao6SnQqwRYaeT89vpkxpXmmXt9duvGMA3M=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8858
+Content-Transfer-Encoding: 8bit
 
-From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+The NXP S32 watchdog, referenced in the documentation as the Software
+Watchdog Timer is actually a hardware watchdog. The system has one
+watchdog per core but an assertation does not directly reset the
+system as this behavior relies on a particular setup and another
+component which is not part of these changes. However the first
+watchdog on the system, tied with the Cortex-M4 #0 is a particular
+case where it will reset the system directly. This is enough for the
+watchdog purpose on Linux.
 
-If the RTC is not linked to any battery, the oscillator is stopped at
-startup and a SW reset command is generated to the PCF85063 RTC.
-Manually start the oscillator in case the PCF85063 RTC is not battery
-backed.
+The watchdog relies on the default timeout described in the device
+tree but if another timeout is needed at boot time, it can be changed
+with the module parameter.
 
-Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
-Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
-Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
----
- drivers/rtc/rtc-pcf85063.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+If the kernel has to service the watchdog in place of the userspace,
+it can specify the 'early-enable' option at boot time.
 
-diff --git a/drivers/rtc/rtc-pcf85063.c b/drivers/rtc/rtc-pcf85063.c
-index 4fa5c4ecdd5a..6de7344d2469 100644
---- a/drivers/rtc/rtc-pcf85063.c
-+++ b/drivers/rtc/rtc-pcf85063.c
-@@ -590,6 +590,14 @@ static int pcf85063_probe(struct i2c_client *client)
- 
- 	i2c_set_clientdata(client, pcf85063);
- 
-+	if (of_property_read_bool(client->dev.of_node, "no-battery")) {
-+		err = regmap_update_bits(pcf85063->regmap, PCF85063_REG_SC,
-+					 PCF85063_REG_SC_OS, 0);
-+		if (err)
-+			return dev_err_probe(&client->dev, err,
-+					"Failed to start the oscillator\n");
-+	}
-+
- 	err = regmap_read(pcf85063->regmap, PCF85063_REG_SC, &tmp);
- 	if (err)
- 		return dev_err_probe(&client->dev, err, "RTC chip is not present\n");
+And finally, if starting the watchdog has no wayback then the option
+'nowayout' can be also specified in the boot option.
+
+Changelog:
+
+ - v4:
+    - Update the watchdog timeout when the callback is called (Alexandru-Catalin Ionita)
+    - Fix the clocks bindings to have all the clocks described (Krzysztof Kozlowski)
+
+ - v3:
+    - Add the clocks for the module and the register (Ghennadi Procopciuc)
+    - Use the clock name from the driver
+    - Removed Review-by tag from Krzysztof Kozlowski as the bindings changed
+
+ - v2:
+    - Removed debugfs code as considered pointless for a such simple
+      driver (Arnd Bergmann)
+    - Replaced __raw_readl / __raw_writel by readl and writel (Arnd Bergmann)
+    - Reordered alphabetically the headers (Guenter Roeck)
+    - Enclosed macro parameter into parenthesis (Guenter Roeck)
+    - Fixed checkpatch reported errors (Guenter Roeck)
+    - Clarified a ping on a stopped timer does not affect it (Guenter Roeck)
+    - Used wdt_is_running() to save an extra IO (Guenter Roeck)
+    - Fixed a misleading comment about starting the watchdog at boot time (Guenter Roeck)
+    - Replaced allocation size sizeof(struct ...) by sizeof(*var) (Krzysztof Kozlowski)
+    - Drop old way of describing the module and use table module device (Krzysztof Kozlowski)
+    - Replaced additionalProperties by unevaluatedProperties (Rob Herring)
+    - Removed the DT bindings description as it is obvious (Ghennadi Procopciuc)
+    - Fixed DT bindings compatible string (Krzysztof Kozlowski)
+
+ - v1: initial posting
+
+Daniel Lezcano (2):
+  dt-bindings: watchdog: Add NXP Software Watchdog Timer
+  watchdog: Add the Watchdog Timer for the NXP S32 platform
+
+ .../bindings/watchdog/nxp,s32g2-swt.yaml      |  54 +++
+ drivers/watchdog/Kconfig                      |   9 +
+ drivers/watchdog/Makefile                     |   1 +
+ drivers/watchdog/s32g_wdt.c                   | 315 ++++++++++++++++++
+ 4 files changed, 379 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/nxp,s32g2-swt.yaml
+ create mode 100644 drivers/watchdog/s32g_wdt.c
+
 -- 
-2.45.2
+2.43.0
 
 
