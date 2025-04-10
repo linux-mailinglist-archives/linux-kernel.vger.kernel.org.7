@@ -1,111 +1,106 @@
-Return-Path: <linux-kernel+bounces-598316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70689A844D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:33:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02FFA844D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B793BB203
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:27:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6165C1724E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17C92857CE;
-	Thu, 10 Apr 2025 13:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38D22857CE;
+	Thu, 10 Apr 2025 13:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJYwGj1D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V2YNvNtW"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301942853FA
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA8A42AA3;
+	Thu, 10 Apr 2025 13:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744291632; cv=none; b=WxZF4CymXaDNByydWlJ2/mN1IZ9Q+RTmTHcJvgvjV/6Pf5IEDlI9hYAQJ2t5h/hWBiF7fMXL/VQlSOYQmAmgxRX/HqgOLK9w1DtM4Y5FTEi8h3Y1NHhiC4YZUB+ZKghiOdEIR+P9cuM9Ls6bxPNDTKeVp4lS8ehV2YiA3q+Svjw=
+	t=1744291690; cv=none; b=SDLtcUBMn/Dzr3UD8vWBIls33M0rmKY+v4DRBpFlBOIw0TctATTxX+CfUQZXBnxetthWI/zkN07XbjDYoUEWdlr+UQ+6ce40usjK16Phu/MZTWL0S7Z8+8DqWGeroTIfMsfhyrxY0t/At+rixUGJp2pO3wdi96Rbb23NgLe9A68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744291632; c=relaxed/simple;
-	bh=3gPfsEXtcRb/g3NXNMRegFnbtp1ZB4qYMxP7JSx39YM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mGBL98goCxYfVBa6NafSMHJco2EfHcQAC2goBwPtHKZBkvqlxtbANwjyrNCoJqPnBhErYQSkX0ke9QX04dlboyFYcEg6M0YIy1D4+obzwkI3gd0+1F1rL3eR7naJs6pDQK9HSAyopFTl4UaetmZrk1vh9AcvgGXhagQY22REGRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJYwGj1D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43820C4CEDD;
-	Thu, 10 Apr 2025 13:27:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744291631;
-	bh=3gPfsEXtcRb/g3NXNMRegFnbtp1ZB4qYMxP7JSx39YM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bJYwGj1Dm3McX0ECCISJLFD1dSHF40isk5OWzxQOYfBlODk553AVJAna7I3h0YDoW
-	 L/pFMhyFSHm4FfprhT91HSttTHz//EU2HHHlFOF/mwluuAhCj8mWkfZxzsIqWUwZgB
-	 OskGCi7r2TI0e0awqdV8xLupCnq+qYgHUs/uTzPKfaejgKDUny8U34dRGFIxqoqK4p
-	 iuZlZApfKY3H+4723azGkpF/Q2XA5w9+F5xFcIYKQcJQ+AudGrqGgtVm+HfTnic525
-	 yaSX8QhcFtqulEkMkFR+4L6n+0QZetyknVLQ096MgVqtX/Vx0vtyvv1sHo1hwpDvQM
-	 hCpiSSspEyZ7A==
-Date: Thu, 10 Apr 2025 15:27:08 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH] timers: Exclude isolated cpus from timer migation
-Message-ID: <Z_fHLM4nWP5XVGBU@localhost.localdomain>
-References: <20250410065446.57304-2-gmonaco@redhat.com>
- <87ecy0tob1.ffs@tglx>
- <2c9d71fd79d7d1cec66e48bcb87b39a874858f01.camel@redhat.com>
- <Z_fBq2AQjzyg8m5w@localhost.localdomain>
- <87wmbsrwca.ffs@tglx>
+	s=arc-20240116; t=1744291690; c=relaxed/simple;
+	bh=VyvWwwz9p2R1aWMTYFuVexXQPTpwodf6/OAv7haJL2E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=exwX2DKRaPGrMu8epotaBeUHufKbwhjZTVaukzAxaK6raKMuE0HCZoIcN/uqWTi3IDh6KsjrsHrqr9SWDnqibwjhegu9GMjj/sjNcI8ORs1v/KKqw8XX0VFr1eiFci27nxNsTWZdfAUrK83sSAl+lVrutGdjk0MrKEK4rTa4nJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V2YNvNtW; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-af50aa04e07so93043a12.1;
+        Thu, 10 Apr 2025 06:28:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744291688; x=1744896488; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VyvWwwz9p2R1aWMTYFuVexXQPTpwodf6/OAv7haJL2E=;
+        b=V2YNvNtWFetx6aRhcxlle2M/3wqxZUI1e4kQdEAwWTDKOBOb6h9claDiogJRH9fgGT
+         nv3rNzprcQp2YYvyuk8f90q8MovdkTlPvoo0NBT/ghLrvet0jA3+ssXYXi9u4jhu1Uwp
+         04slLb4FfAiQLhrNjgi9dC9ZkI5v7c61ZcRpwwCbJqIPhqM2eTfbr986YcGYZdx9JhJb
+         OgxhpMIZYcPgXf7dUH9COMIgodmW8o5z6Fx14tw7/0U7ZtwImB01QgQR1qp5aUBxsTpR
+         D8BRabRDjENXYybKhY8c70R5kxmyyaugxS3PDaKODFv0PLZOrl8HXH6Nula+ub9LcBgP
+         AdFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744291688; x=1744896488;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VyvWwwz9p2R1aWMTYFuVexXQPTpwodf6/OAv7haJL2E=;
+        b=dyI8EIF/41AZQVR6hx/s+bXf4htgnXlvWOYW6Xssh1CCNaUtka3oZgKOL+X7DLZmgM
+         lkod6m8b5VNsQCrAjd3JRqG2n8GjbuH0kyWA4xbIHqVKMI8daiG90mIfOtVinCi47QBe
+         ZxlJPbTXihBrKEqI4lcuT19bTywdmBGYt2q22eEOi6gYKMoglrKaVnYqRJXNGxx8z5e/
+         YZZneWQcVxQmcGKJZCVq7CsDykNwETo5bQfAVghoKmpELKiKMwXKUKucdFEEa9GLOo5X
+         0dGr9E/Wh86pysTjcyL/55uP9RD86LaljE3fiHhYqupc6GR1AM9Un9PNXfWHWV8pBA6f
+         2XbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDaHf/8EaEzCLtLK7ez22V8dTNOXs4bfmHOTH7Ni4E0xBuUJSCVi9bbyy5QcCQf5bfiFTBg+qNmBUYIFEAVkw=@vger.kernel.org, AJvYcCXB5/QXtt7Dgy1NUl4y+0wqZEjb6VQkqAU02g5HrWER6LdFAMUt5+PeRLibxkzId4ysM2w8LvEwP+vicY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFDHsxlxsASK/lN+edn9670t/IOG3vH0asj4Mn5caiyx287Zj4
+	AMFJLwfZUFsS+6jj7fDvLG5nQTE7PZybLPLiqnZ5E/9wPPxhj+h86OYmr7fla3DAYPiax1PlBWx
+	qPnJrD0m3uTsLrtvxEEU1LGx0nbM=
+X-Gm-Gg: ASbGnctxvwON8pOuBByRu4hZ5D4WlN8llnFq37uLw6387v/FNh+RTt0z/BY4BHyK/rV
+	hV8GyGVC7/x+uNdDRlZZIWwqHeLu/3EqheUTXeOcVT4nTP+e+E6UZpI19cemuscyoF4VEwawUay
+	f2i3Jpfuu9osY6Gd5gBaJQPg==
+X-Google-Smtp-Source: AGHT+IEulN5R0q/qQJxK+GObYPtHhBGuK8BJ15EfgDoKv9QcjGyt4jgTghwbk2n/61iu6LVdMMBDRC/lvS2dCKHVedA=
+X-Received: by 2002:a17:90b:4b0f:b0:2ff:4b7a:f0a4 with SMTP id
+ 98e67ed59e1d1-306dbc1f301mr3695771a91.3.1744291688048; Thu, 10 Apr 2025
+ 06:28:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87wmbsrwca.ffs@tglx>
+References: <20250410115420.366349-1-panikiel@google.com> <20250410123602.GZ9833@noisy.programming.kicks-ass.net>
+ <20250410124526.GB9833@noisy.programming.kicks-ass.net> <20250410130944.GA9003@noisy.programming.kicks-ass.net>
+ <CANiq72=k+tZ3ACEB5k9qwJ8ZYu-dXkA3=Lisg1b8ze-2D0STog@mail.gmail.com> <20250410132649.GE9833@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250410132649.GE9833@noisy.programming.kicks-ass.net>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 10 Apr 2025 15:27:55 +0200
+X-Gm-Features: ATxdqUGuOKZzeCw6k9G5-shzqA6AEtAJdA4pITJMCpz_r7tSBJ254lpDC8iR48U
+Message-ID: <CANiq72=Q_Z8KfV+n4z9wWVJsZwVevag=Vh3URe71XkUuWuqEDg@mail.gmail.com>
+Subject: Re: [PATCH] x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: =?UTF-8?Q?Pawe=C5=82_Anikiel?= <panikiel@google.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Alice Ryhl <aliceryhl@google.com>, 
+	Nathan Chancellor <nathan@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Thu, Apr 10, 2025 at 03:15:49PM +0200, Thomas Gleixner a écrit :
-> On Thu, Apr 10 2025 at 15:03, Frederic Weisbecker wrote:
-> > Le Thu, Apr 10, 2025 at 12:38:25PM +0200, Gabriele Monaco a écrit :
-> > Speaking of, those are two different issues here:
-> >
-> > * nohz_full CPUs are handled just like idle CPUs. Once the tick is stopped,
-> >   the global timers are handled by other CPUs (housekeeping). There is always
-> >   one housekeeping CPU that never goes idle.
-> >   One subtle thing though: if the nohz_full CPU fires a tick, because there
-> >   is a local timer to be handled for example, it will also possibly handle
-> >   some global timers along the way. If it happens to be a problem, it should
-> >   be easy to resolve.
-> >
-> > * Domain isolated CPUs are treated just like other CPUs. But there is not
-> >   always a housekeeping CPU around. And no guarantee that there is always
-> >   a non-idle CPU to take care of global timers.
-> 
-> That's an insianity.
+On Thu, Apr 10, 2025 at 3:26=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> New compiler can't build old core?
 
-It works, but it doesn't make much sense arguably.
+No, that is not intended to work -- `core` is tied to the compiler.
 
-> 
-> >> Thinking about it now, since global timers /can/ start on isolated
-> >> cores, that makes them quite different from offline ones and probably
-> >> considering them the same is just not the right thing to do..
-> >> 
-> >> I'm going to have a deeper thought about this whole approach, perhaps
-> >> something simpler just preventing migration in that one direction would
-> >> suffice.
-> >
-> > I think we can use your solution, which involves isolating the CPU from tmigr
-> > hierarchy. And also always queue global timers to non-isolated targets.
-> 
-> Why do we have to inflict extra complexity into the timer enqueue path
-> instead of preventing the migration to, but not the migration from
-> isolated CPUs?
-
-But how do we handle global timers that have been initialized and queued from
-isolated CPUs?
-
-Thanks.
-
--- 
-Frederic Weisbecker
-SUSE Labs
+Cheers,
+Miguel
 
