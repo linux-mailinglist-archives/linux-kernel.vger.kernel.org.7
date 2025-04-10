@@ -1,72 +1,52 @@
-Return-Path: <linux-kernel+bounces-598114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4540A8421D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:54:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA25A84257
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 025217AF387
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:53:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35B51B860E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A332836AB;
-	Thu, 10 Apr 2025 11:53:21 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BC8283C92;
+	Thu, 10 Apr 2025 12:00:51 +0000 (UTC)
+Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACDE20766E
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 11:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE461EA7F4;
+	Thu, 10 Apr 2025 12:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744285998; cv=none; b=IFk/NbZ/xFaddI19FyJ7TMRICCfbTYFSbSknf/T+qcrlX2SmMoPXTOj7qkZJP/amtGm0E0WxcLRLU/03XquQP07l+PjFkjBPs+wcxxsVqaI0zcM7mUi+mcTbj+EvO0mttY7cu/mhHDSDMacp5jolXCpXPyfPIlmfyqe9kgW/Elo=
+	t=1744286451; cv=none; b=Bitwxp22dBrTy9QYsak5Jz+XumlY93AuGa+5VwJoZbOjRkh+uNFsPke/6OZ5BGbLx5GNYo9IWsqUz+VT+WPYEvi/U9a/T+BPWzfCmTD6ijikft1VTDoUeP2xPuFJLpYhM60px4D2VhM9UiRdK6k429PdXtLeENKskhGaddzW8tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744285998; c=relaxed/simple;
-	bh=UXELpa1UU70rhDlnJufWAH05ykovzyZtSXFEGrbnpxQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=b1wVxuuXW+wYqgjA6BcS4qbd+h7ilcMjIlS+N7W7gIPJcvPjGtmjN+PVAKzEZU13qkb9Pea0iTTk7Ts3hq+RrSHu9h9hSZl4CPQu9ijQRN0wZVJyhDEBR613MgUOhGjyFnU6XehGfrmyI5ejcpp7I6sx0mV+FaMLScnTfck3nLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u2qSz-0002y2-Im; Thu, 10 Apr 2025 13:53:09 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u2qSu-004GLH-0j;
-	Thu, 10 Apr 2025 13:53:04 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u2qSu-00AkgW-0E;
-	Thu, 10 Apr 2025 13:53:04 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
-	Rengarajan Sundararajan <Rengarajan.S@microchip.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	Phil Elwell <phil@raspberrypi.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Simon Horman <horms@kernel.org>
-Subject: [PATCH net-next v6 12/12] net: usb: lan78xx: remove unused struct members
-Date: Thu, 10 Apr 2025 13:53:02 +0200
-Message-Id: <20250410115302.2562562-13-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250410115302.2562562-1-o.rempel@pengutronix.de>
-References: <20250410115302.2562562-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1744286451; c=relaxed/simple;
+	bh=wcg7C+k1bcrv+bIk+uzHk4gA5FuzRRg0xdj/HxqQ+G0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uOonh6swmba4f2bDQcG5YLgEsDJm6sakjU5sTWFlriqoDCv9fZAAtqHUxVXBRjMB314QwXTXjpCIfkGtMDkYPNPa2xJGZS7ME4mMKJ0FHxG8Yb2jnt6nXWsaOE47Clr7PjCCzW4+sKcKbIKAHlsaFZwR/5hUz+GECPcAQz31MeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
+Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
+	by unicorn.mansr.com (Postfix) with ESMTPS id D4E3C15360;
+	Thu, 10 Apr 2025 12:53:34 +0100 (BST)
+Received: by raven.mansr.com (Postfix, from userid 51770)
+	id C35A421A3DC; Thu, 10 Apr 2025 12:53:34 +0100 (BST)
+From: Mans Rullgard <mans@mansr.com>
+To: Mark Brown <broonie@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: Pan Nan <pannan@allwinnertech.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	linux-spi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] spi: sun4i: add support for GPIO chip select lines
+Date: Thu, 10 Apr 2025 12:53:03 +0100
+Message-ID: <20250410115303.5150-1-mans@mansr.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,58 +54,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Remove unused members from struct lan78xx_net, including:
+Set use_gpio_descriptors to true so that GPIOs can be used for chip
+select in accordance with the DT binding.
 
-    driver_priv
-    suspend_count
-    mdix_ctrl
-
-These fields are no longer used in the driver and can be safely removed
-as part of a cleanup.
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Mans Rullgard <mans@mansr.com>
 ---
-changes v6:
-- drop only those fields not already removed in previous patches
-- align patch structure with review feedback from Russell King
----
- drivers/net/usb/lan78xx.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/spi/spi-sun4i.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 053c7a31d65c..8868f4a19760 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -414,7 +414,6 @@ struct lan78xx_net {
- 	struct net_device	*net;
- 	struct usb_device	*udev;
- 	struct usb_interface	*intf;
--	void			*driver_priv;
- 
- 	unsigned int		tx_pend_data_len;
- 	size_t			n_tx_urbs;
-@@ -449,15 +448,12 @@ struct lan78xx_net {
- 	unsigned long		flags;
- 
- 	wait_queue_head_t	*wait;
--	unsigned char		suspend_count;
- 
- 	unsigned int		maxpacket;
- 	struct timer_list	stat_monitor;
- 
- 	unsigned long		data[5];
- 
--	u8			mdix_ctrl;
--
- 	u32			chipid;
- 	u32			chiprev;
- 	struct mii_bus		*mdiobus;
+diff --git a/drivers/spi/spi-sun4i.c b/drivers/spi/spi-sun4i.c
+index 2ee6755b43f5..6645d218bcf3 100644
+--- a/drivers/spi/spi-sun4i.c
++++ b/drivers/spi/spi-sun4i.c
+@@ -462,6 +462,7 @@ static int sun4i_spi_probe(struct platform_device *pdev)
+ 	sspi->host = host;
+ 	host->max_speed_hz = 100 * 1000 * 1000;
+ 	host->min_speed_hz = 3 * 1000;
++	host->use_gpio_descriptors = true;
+ 	host->set_cs = sun4i_spi_set_cs;
+ 	host->transfer_one = sun4i_spi_transfer_one;
+ 	host->num_chipselect = 4;
 -- 
-2.39.5
+2.49.0
 
 
