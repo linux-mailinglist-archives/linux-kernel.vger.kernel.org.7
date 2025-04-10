@@ -1,141 +1,234 @@
-Return-Path: <linux-kernel+bounces-597367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 132E8A838D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:03:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCBCA838E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE9B817D811
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:03:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4CFC8C39FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC7D1F0E26;
-	Thu, 10 Apr 2025 06:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PCb9mMPo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969A2202977;
+	Thu, 10 Apr 2025 06:05:15 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE8217A309;
-	Thu, 10 Apr 2025 06:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9666A1A9B32
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744264990; cv=none; b=hSrDhRKAMBKkstT2j/CSoliSVxVMr852In2lF8tmYFdKrUUnvFwVO1OuQO89AC22ibjQRvAxyTUzFnt4tArnG0CQ71yXV9ke1yMVQ/isdsfp0xr+msQW4dw1ndnwvILjJtFKUJHlbXqvfBLUUVxE3iVhpgY5kidZ+iJufFeQMjI=
+	t=1744265115; cv=none; b=evG00igdOc+2SztQ7vrdY2QjqYsCyCc4wrjDfGXUd8F4rCvJPp90o2bYMiMqezSy64Y/YaJ3xnzIHL74uZ44WlRWcaj5qCdouryGkMjieVvMLW2AOwizRDnqOvx4Ls5F+b7XIekMiGCUjGnJjilx6YN5Tzl69q84XYoJWYfaGJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744264990; c=relaxed/simple;
-	bh=+JIaEozMlGyG70wwHQE8uZ5c8OFIO6Iqup59Ar5RRH0=;
+	s=arc-20240116; t=1744265115; c=relaxed/simple;
+	bh=q/kBApj8o1DODVLckuFXHWT1k9Qcxm273pF1C9ox4ro=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OtaQ469wOfUDmHeeQ1dxEP7sUv8Avvrtr46nj1C85jw9OjRVi1VX4HX260qsmpi98NI/FhwqzmDId/jIRvrSs5xJS81VS0v7eC+UbOXCJqIeAKL96kdvF/OPFAXh6Ulmma8yMDGMT3Y9g4kkwO1a2wZjTnGudqOasGLnVIeatBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PCb9mMPo; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744264988; x=1775800988;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+JIaEozMlGyG70wwHQE8uZ5c8OFIO6Iqup59Ar5RRH0=;
-  b=PCb9mMPoHr0njPaiQ85KdrHTNuJtoqwkLGlu+sgTXwzMxno8vEePyfoT
-   PYRsskhU6RrSJRivBRd2fwX3FDRy1K0Bi7RF2nY5idHjHcUwaXtZiVVwd
-   Eoqch+rmC6NrOG22Vk1p6mhhmLCAthFCGBejaoCuyQANGF5w5cdO2cDkg
-   KZESFd8/IQqoMJCnUswdVDvrNkqrtGy4paELHT3/ArqcYuIcXiJ1McuCS
-   Jdb3V81kuZQccIsHc3ZkJfvQPyTY/N8RZb/RVhZ8wGeA2XD0bJU9xBrCH
-   LUiZBoqgdUetjF7SfsvsDg/QfFNf9iKtw1e80ghNW4aVroYD8iMTDWwYS
-   w==;
-X-CSE-ConnectionGUID: 2RK/F/dASdmaR1YFLJorpQ==
-X-CSE-MsgGUID: /BnKZ5NtTdi3KUgVpYMTbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="49606441"
-X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
-   d="scan'208";a="49606441"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 23:03:03 -0700
-X-CSE-ConnectionGUID: ejyuXpPUQJiVBuqwcaZGwQ==
-X-CSE-MsgGUID: 6cJio8CqRYy/QqGgcu8zhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
-   d="scan'208";a="128779492"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 09 Apr 2025 23:02:59 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u2l03-0009el-2D;
-	Thu, 10 Apr 2025 06:02:55 +0000
-Date: Thu, 10 Apr 2025 14:02:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org,
-	bhelgaas@google.com
-Cc: oe-kbuild-all@lists.linux.dev, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, ilpo.jarvinen@linux.intel.com,
-	robh@kernel.org, jingoohan1@gmail.com, thomas.richard@bootlin.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: Re: [PATCH v9 4/6] PCI: dwc: Use common PCI host bridge APIs for
- finding the capabilities
-Message-ID: <202504101228.CX8tAgfW-lkp@intel.com>
-References: <20250409034156.92686-5-18255117159@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cRAKstnQgEvUShBCTRCo6wjoPgsqy9YDbXffwqkjXsy+pGAPRYXoE2nK7sWyLZFVq2KpnsziMF/MB4QX+129j0r6wtToreEfkuWirB40GLdZu0R8Rp+kT/68xsQvHdCeU+Q78xS28dZDmM9t1TmqHTTBpM1hX+hzRnf7v+WLuOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1u2l1d-0004XD-C7; Thu, 10 Apr 2025 08:04:33 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1u2l1Z-004Dlj-2z;
+	Thu, 10 Apr 2025 08:04:29 +0200
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 75A153F4AE6;
+	Thu, 10 Apr 2025 06:04:29 +0000 (UTC)
+Date: Thu, 10 Apr 2025 08:04:26 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ming Yu <a0282524688@gmail.com>
+Cc: lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
+	andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-usb@vger.kernel.org, Ming Yu <tmyu0@nuvoton.com>
+Subject: Re: [PATCH v9 4/7] can: Add Nuvoton NCT6694 CANFD support
+Message-ID: <20250410-artichoke-swan-of-abracadabra-33c1dc-mkl@pengutronix.de>
+References: <20250409082752.3697532-1-tmyu0@nuvoton.com>
+ <20250409082752.3697532-5-tmyu0@nuvoton.com>
+ <20250409-cooperative-elastic-pillbug-672a03-mkl@pengutronix.de>
+ <CAOoeyxULns52vAwzsLoXB+BwT+CN+VGBwqrg61pjKJH8bTD5bw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6ebpqmmsutfol6xr"
 Content-Disposition: inline
-In-Reply-To: <20250409034156.92686-5-18255117159@163.com>
-
-Hi Hans,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on a24588245776dafc227243a01bfbeb8a59bafba9]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Hans-Zhang/PCI-Introduce-generic-bus-config-read-helper-function/20250409-115839
-base:   a24588245776dafc227243a01bfbeb8a59bafba9
-patch link:    https://lore.kernel.org/r/20250409034156.92686-5-18255117159%40163.com
-patch subject: [PATCH v9 4/6] PCI: dwc: Use common PCI host bridge APIs for finding the capabilities
-config: arc-randconfig-001-20250410 (https://download.01.org/0day-ci/archive/20250410/202504101228.CX8tAgfW-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250410/202504101228.CX8tAgfW-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504101228.CX8tAgfW-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/pci/controller/dwc/pcie-designware.c: In function '__dw_pcie_find_vsec_capability':
->> drivers/pci/controller/dwc/pcie-designware.c:239:24: error: implicit declaration of function 'dw_pcie_find_next_ext_capability'; did you mean 'pci_find_next_ext_capability'? [-Wimplicit-function-declaration]
-     239 |         while ((vsec = dw_pcie_find_next_ext_capability(pci, vsec,
-         |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                        pci_find_next_ext_capability
+In-Reply-To: <CAOoeyxULns52vAwzsLoXB+BwT+CN+VGBwqrg61pjKJH8bTD5bw@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-vim +239 drivers/pci/controller/dwc/pcie-designware.c
+--6ebpqmmsutfol6xr
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v9 4/7] can: Add Nuvoton NCT6694 CANFD support
+MIME-Version: 1.0
 
-5b0841fa653f6c Vidya Sagar  2019-08-13  229  
-efaf16de43f599 Shradha Todi 2025-02-21  230  static u16 __dw_pcie_find_vsec_capability(struct dw_pcie *pci, u16 vendor_id,
-efaf16de43f599 Shradha Todi 2025-02-21  231  					  u16 vsec_id)
-efaf16de43f599 Shradha Todi 2025-02-21  232  {
-efaf16de43f599 Shradha Todi 2025-02-21  233  	u16 vsec = 0;
-efaf16de43f599 Shradha Todi 2025-02-21  234  	u32 header;
-efaf16de43f599 Shradha Todi 2025-02-21  235  
-efaf16de43f599 Shradha Todi 2025-02-21  236  	if (vendor_id != dw_pcie_readw_dbi(pci, PCI_VENDOR_ID))
-efaf16de43f599 Shradha Todi 2025-02-21  237  		return 0;
-efaf16de43f599 Shradha Todi 2025-02-21  238  
-efaf16de43f599 Shradha Todi 2025-02-21 @239  	while ((vsec = dw_pcie_find_next_ext_capability(pci, vsec,
-efaf16de43f599 Shradha Todi 2025-02-21  240  						       PCI_EXT_CAP_ID_VNDR))) {
-efaf16de43f599 Shradha Todi 2025-02-21  241  		header = dw_pcie_readl_dbi(pci, vsec + PCI_VNDR_HEADER);
-efaf16de43f599 Shradha Todi 2025-02-21  242  		if (PCI_VNDR_HEADER_ID(header) == vsec_id)
-efaf16de43f599 Shradha Todi 2025-02-21  243  			return vsec;
-efaf16de43f599 Shradha Todi 2025-02-21  244  	}
-efaf16de43f599 Shradha Todi 2025-02-21  245  
-efaf16de43f599 Shradha Todi 2025-02-21  246  	return 0;
-efaf16de43f599 Shradha Todi 2025-02-21  247  }
-efaf16de43f599 Shradha Todi 2025-02-21  248  
+On 10.04.2025 10:40:34, Ming Yu wrote:
+> Dear Marc,
+>=20
+> Thank you for reviewing.
+>=20
+> Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2025=E5=B9=B44=E6=9C=889=
+=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=886:21=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+> ...
+> > > +static void nct6694_canfd_handle_state_change(struct net_device *nde=
+v, u8 status)
+> > > +{
+> > > +     struct nct6694_canfd_priv *priv =3D netdev_priv(ndev);
+> > > +     enum can_state new_state, rx_state, tx_state;
+> > > +     struct can_berr_counter bec;
+> > > +     struct can_frame *cf;
+> > > +     struct sk_buff *skb;
+> > > +
+> > > +     nct6694_canfd_get_berr_counter(ndev, &bec);
+> > > +     can_state_get_by_berr_counter(ndev, &bec, &tx_state, &rx_state);
+> > > +
+> > > +     new_state =3D max(tx_state, rx_state);
+> > > +
+> > > +     /* state hasn't changed */
+> > > +     if (new_state =3D=3D priv->can.state)
+> > > +             return;
+> > > +
+> > > +     skb =3D alloc_can_err_skb(ndev, &cf);
+> > > +
+> > > +     can_change_state(ndev, cf, tx_state, rx_state);
+> > > +
+> > > +     if (new_state =3D=3D CAN_STATE_BUS_OFF) {
+> > > +             can_bus_off(ndev);
+> >
+> > What does your device do when it goes into bus off? Does it recover its=
+elf?
+> >
+>=20
+> No, the device does not support automatic bus-off recovery. It
+> requires an explicit CAN Setting and Initialization(CMD0) command to
+> re-initialize the controller after entering bus-off state.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Ok
+
+[...]
+
+> > > +static int nct6694_canfd_start(struct net_device *ndev)
+> > > +{
+> > > +     struct nct6694_canfd_priv *priv =3D netdev_priv(ndev);
+> > > +     const struct can_bittiming *d_bt =3D &priv->can.data_bittiming;
+> > > +     const struct can_bittiming *n_bt =3D &priv->can.bittiming;
+> > > +     struct nct6694_canfd_setting *setting __free(kfree) =3D NULL;
+> > > +     const struct nct6694_cmd_header cmd_hd =3D {
+> > > +             .mod =3D NCT6694_CANFD_MOD,
+> > > +             .cmd =3D NCT6694_CANFD_SETTING,
+> > > +             .sel =3D ndev->dev_port,
+> > > +             .len =3D cpu_to_le16(sizeof(*setting))
+> > > +     };
+> > > +     int ret;
+> > > +
+> > > +     setting =3D kzalloc(sizeof(*setting), GFP_KERNEL);
+> > > +     if (!setting)
+> > > +             return -ENOMEM;
+> > > +
+> > > +     setting->nbr =3D cpu_to_le32(n_bt->bitrate);
+> > > +     setting->dbr =3D cpu_to_le32(d_bt->bitrate);
+> > > +
+> > > +     if (priv->can.ctrlmode & CAN_CTRLMODE_LISTENONLY)
+> > > +             setting->ctrl1 |=3D cpu_to_le16(NCT6694_CANFD_SETTING_C=
+TRL1_MON);
+> > > +
+> > > +     if (priv->can.ctrlmode & CAN_CTRLMODE_FD_NON_ISO)
+> > > +             setting->ctrl1 |=3D cpu_to_le16(NCT6694_CANFD_SETTING_C=
+TRL1_NISO);
+> > > +
+> > > +     if (priv->can.ctrlmode & CAN_CTRLMODE_LOOPBACK)
+> > > +             setting->ctrl1 |=3D cpu_to_le16(NCT6694_CANFD_SETTING_C=
+TRL1_LBCK);
+> > > +
+> > > +     setting->nbtp =3D cpu_to_le32(FIELD_PREP(NCT6694_CANFD_SETTING_=
+NBTP_NSJW,
+> > > +                                            n_bt->sjw - 1) |
+> > > +                                 FIELD_PREP(NCT6694_CANFD_SETTING_NB=
+TP_NBRP,
+> > > +                                            n_bt->brp - 1) |
+> > > +                                 FIELD_PREP(NCT6694_CANFD_SETTING_NB=
+TP_NTSEG2,
+> > > +                                            n_bt->phase_seg2 - 1) |
+> > > +                                 FIELD_PREP(NCT6694_CANFD_SETTING_NB=
+TP_NTSEG1,
+> > > +                                            n_bt->prop_seg + n_bt->p=
+hase_seg1 - 1));
+> > > +
+> > > +     setting->dbtp =3D cpu_to_le32(FIELD_PREP(NCT6694_CANFD_SETTING_=
+DBTP_DSJW,
+> > > +                                            d_bt->sjw - 1) |
+> > > +                                 FIELD_PREP(NCT6694_CANFD_SETTING_DB=
+TP_DBRP,
+> > > +                                            d_bt->brp - 1) |
+> > > +                                 FIELD_PREP(NCT6694_CANFD_SETTING_DB=
+TP_DTSEG2,
+> > > +                                            d_bt->phase_seg2 - 1) |
+> > > +                                 FIELD_PREP(NCT6694_CANFD_SETTING_DB=
+TP_DTSEG1,
+> > > +                                            d_bt->prop_seg + d_bt->p=
+hase_seg1 - 1));
+> >
+> > What does your device do, if you set the bitrates _and_ the bit timing
+> > parameters? They are redundant.
+>=20
+> The firmware calculates the default bit timing parameters when it
+> receives the bitrates, and then overwrites them if it later receives
+> explicit bit timing parameters.
+>=20
+> To avoid confusion and ensure consistent behavior, I will remove the
+> bitrate setting logic in next patch. Instead, the bit timing will be
+> determined solely based on the provided bit timing parameters.
+
+Sounds good.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--6ebpqmmsutfol6xr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmf3X2cACgkQDHRl3/mQ
+kZy+Bwf/cD7PcXTrBFCGsudbvqhERiXg3j4fGxKlZVoNrTxY13w0WWxCpMBfL9lZ
+k+VJ+pxjPqL64WK5QAAem80jd8Pc+BqG+jdZIMEfTfYXvArLqzvnlfC16d6OoKmS
+cZCI+XAbNQMFCkOSLNa3tS6jA5/rwlsy+mV7CMLeOphSUl+sTbW2PlIiPJIQQXzG
+9Y1kcIlI1HLOTj2ilQ/8xgx+cNGh561Erou4H0fnNyoi4nuvlNcglfNm/m4B2DiQ
+oybJYK34/vHSiz361rkyU32z6TNcW5PaR7FwDGM/pMScYdQOnZSgOhuIBrl71etT
+/MLF7/H4MWskq7PZ97+8f+THFvhH2g==
+=67Py
+-----END PGP SIGNATURE-----
+
+--6ebpqmmsutfol6xr--
 
