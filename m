@@ -1,113 +1,144 @@
-Return-Path: <linux-kernel+bounces-598433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5427FA8461D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:21:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC7BA84627
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C117171867
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:15:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A199A1AB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029ED28C5D4;
-	Thu, 10 Apr 2025 14:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63FC2857E2;
+	Thu, 10 Apr 2025 14:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Dtq89Gfc"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D298C28A419;
-	Thu, 10 Apr 2025 14:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="n7LJlLUT"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174A3281369;
+	Thu, 10 Apr 2025 14:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744294544; cv=none; b=XH5M54IBVONm3Qq609nx8DYIv7HAWyQmShPI4XJo9dN3LqtoxkeUG7bOZ/LYb3Y1YFAJ6hva65ewDWfWFHEOWGdXQGgE2x2nN9YzYfG7rxXfLW5wHx1ho8Hor3tG0R6y9T8VVukljnzFTRLo5RGDTq/XJ9+bHqhriSy5O9ddh/A=
+	t=1744294559; cv=none; b=Y1cFNcnOeNSWX9LMbykr2W6hLAZYTgQdrUbllr11hy9gH5o34Wu4b/FdNGbUqdkrOuY1DNW09c1H4tFzFf8Ke77uIQmcl5fdrr5wmrt4JV/clMrRZROSbL14C4UxZ3203U4PavjDDNHHeNmE4AXP07VlhdOtA2lMvSpuB3j952s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744294544; c=relaxed/simple;
-	bh=RaMoWGFk03c3puhNHuxcFPKr4IRfqQwGIHBNnz1Cvss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MnT23s6qBbq7eykEmY0462YVuZWNEj8GgW6ClBI/U5uZBILpJbbbd1B/1XtsovLvNms9pwDBtCWHW4GCBoiH00ZhLd2wXpmDw3KSShhP2s0viuGfb2GYjOrzDtC5QGyJgY0lkyHnP5rL0SAFrGSmIL3pWA9pc9BvTtoCzAtYm/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Dtq89Gfc; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=IPaxMyrvmBEc8ZCZfoCnd8HYt5HVEPzhD/euEmF0jJ4=; b=Dtq89Gfcp80KjjXZr1iSc3xpad
-	TIyLcc7LtX0ppcZbxX0yzvqSpXooNUgsSvxlCvmpnPRpJAv/x1dbUl7rjMRNrGcucdRZlOz6HREBI
-	9E3B4noHqNEBoiJJlZIWKfxJMnJk7ekexF0Pha14QJjUymjE7kfvTJB2MMDaUnkYMCDk24JWneyw6
-	pXmrDvpV1XAqTAHiHismCVKgCeizAZtglRBmYmnAjFWZ5VGcwWUJaqE1Pv0nvNInGrz/ZXjs0yvM7
-	y0kZiM/nSsyWIgcXI9B3qAZwQHQtyi4UVL9GMtl+7YaMlrtkhwNzuwA3I/DVpc4jLyaOkzFdxyEvr
-	Lpo9DurQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u2sgo-00000002zQx-2wVg;
-	Thu, 10 Apr 2025 14:15:35 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id DF99B300717; Thu, 10 Apr 2025 16:15:34 +0200 (CEST)
-Date: Thu, 10 Apr 2025 16:15:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: =?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Kees Cook <kees@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Nathan Chancellor <nathan@kernel.org>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
-Message-ID: <20250410141534.GI9833@noisy.programming.kicks-ass.net>
-References: <20250410123602.GZ9833@noisy.programming.kicks-ass.net>
- <20250410124526.GB9833@noisy.programming.kicks-ass.net>
- <20250410130944.GA9003@noisy.programming.kicks-ass.net>
- <CANiq72=k+tZ3ACEB5k9qwJ8ZYu-dXkA3=Lisg1b8ze-2D0STog@mail.gmail.com>
- <20250410132649.GE9833@noisy.programming.kicks-ass.net>
- <CANiq72=Q_Z8KfV+n4z9wWVJsZwVevag=Vh3URe71XkUuWuqEDg@mail.gmail.com>
- <20250410133446.GF9833@noisy.programming.kicks-ass.net>
- <CANiq72neZj+ESvkxwXAQFnznwYBiQAcpW4OqXg1ckhxZj3fd4Q@mail.gmail.com>
- <20250410135713.GG9833@noisy.programming.kicks-ass.net>
- <CANiq72=uj3G8ibnzpuYzhY=7T5xrBBPoeuAX7X-iBKdN+crQUg@mail.gmail.com>
+	s=arc-20240116; t=1744294559; c=relaxed/simple;
+	bh=LEbTWlzpaihB6IQHTlbaA5Ot/ypsjb5J6qcme4C6YZE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pCMv71okVNUtXYK1cgajqCIt61UubtQFwOThimM5kT3hzXWMmelJ58wHeSoZJoNIb1Pn6zF2D0it1SVNnBUH+G6RrS9AkH5JFSE0rtfpOo81mJw11onGorbqZePioDro2y1I+70BARPL12xG018kSMc9NYGj0mBJ9weEIjvuCYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=n7LJlLUT; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.70.200.180] (unknown [172.200.70.13])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 680852113E88;
+	Thu, 10 Apr 2025 07:15:54 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 680852113E88
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1744294556;
+	bh=XmfJAaDZRcuR0IspL/CV2qpL+dgL7BxJ5z1ZXihUDxU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=n7LJlLUTIHoUKqUDPHHPpZzH1WJi5CQ8KlXno+uTZvwvdN8pM4Z+WPo2tZqF/BKwG
+	 0ktcd7KAKLp+gQVRrUeYUhJAPVHUk0l+0DtBVoLoHkF3BF8hLT8JYqFQ3Yui4nCDQg
+	 sKieQ7MXh4X0Af+AcESsv9OuyreI5id5K4RRqudY=
+Message-ID: <98c63e22-b9f7-40b9-90d0-aa67534f9107@linux.microsoft.com>
+Date: Thu, 10 Apr 2025 07:15:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 6/9] ima: kexec: move IMA log copy from kexec load to
+ execute
+To: Mimi Zohar <zohar@linux.ibm.com>, stefanb@linux.ibm.com,
+ roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+ eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+ code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+ kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+ James.Bottomley@HansenPartnership.com, bhe@redhat.com, vgoyal@redhat.com,
+ dyoung@redhat.com
+References: <20250402124725.5601-1-chenste@linux.microsoft.com>
+ <20250402124725.5601-7-chenste@linux.microsoft.com>
+ <96ae5a8efbcb894e096881f1dd7a4939ce0a9490.camel@linux.ibm.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <96ae5a8efbcb894e096881f1dd7a4939ce0a9490.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72=uj3G8ibnzpuYzhY=7T5xrBBPoeuAX7X-iBKdN+crQUg@mail.gmail.com>
 
-On Thu, Apr 10, 2025 at 04:05:54PM +0200, Miguel Ojeda wrote:
-> On Thu, Apr 10, 2025 at 3:57 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Remove the offending Rust code? Afaict from this github issue, it is
-> > just some formatting nonsense. Surely code can be adjusted to not use
-> > that?
-> 
-> If you mean not using the formatting machinery from our side, then
-> that is a major change -- we should just fix it upstream, really.
+On 4/8/2025 9:17 AM, Mimi Zohar wrote:
+> On Wed, 2025-04-02 at 05:47 -0700, steven chen wrote:
+>> ima_dump_measurement_list() is called during kexec 'load', which may
+>> result in loss of IMA measurements during kexec soft reboot. Due to
+>> missed measurements that only occurred after kexec 'load', this function
+>> needs to be called during kexec 'execute'.
+> Re-use the motivation from 5/9 (with tweak):
+>
+> The IMA log is currently copied to the new kernel during kexec 'load' using
+> ima_dump_measurement_list(). However, the IMA measurement list copied at kexec
+> 'load' may result in loss of IMA measurements records that only occurred after
+> the kexec 'load'.
+>
+> And finish the paragraph with:
+> Move the IMA measurement list log copy from kexec 'load' to 'execute'.
+>
+>> Make the kexec_segment_size variable a local static variable within the
+>> file, so it can be accessed during both kexec 'load' and 'execute'.
+>>   
+>> Implement the kexec_post_load() function to be invoked after the new kernel
+>> image has been loaded for kexec. Instead of calling machine_kexec_post_load()
+>> directly from the kexec_file_load() syscall, call kexec_post_load(), which in
+>> turn calls machine_kexec_post_load() to maintain the original image processing.
+> Define kexec_post_load() as a wrapper for calling ima_kexec_post_load() and
+> machine_kexec_post_load().  Replace the existing direct call to
+> machine_kexec_post_load() with kexec_post_load().
+>
+>>   
+>> Invoke ima_kexec_post_load() within the kexec_post_load() API only for kexec
+>> soft reboot scenarios, excluding KEXEC_FILE_ON_CRASH.
+> "Don't call ima_kexec_post_load() on KEXEC_FILE_ON_CRASH" would be listed in the
+> Changelog if it changed, not here in the patch description.  Please remove.
+>
+>>   
+>> Register a reboot notifier for the ima_update_kexec_buffer() API within
+>> ima_kexec_post_load() to ensure it is called upon receiving a reboot
+>> notification.
+> Registering the reboot notifier was done in "[PATCH v11 5/9] ima: kexec: define
+> functions to copy IMA log at soft boot", not here.  Please remove.
+>
+>>   
+>> Move the ima_dump_measurement_list() call from ima_add_kexec_buffer() to
+>> ima_update_kexec_buffer() to copy the IMA log at the kexec 'execute' stage.
+> This information was already stated in the first paragraph as part of the
+> motivation for the patch.  Please remove.
+>
+>>   
+>> When there is insufficient memory to copy all the measurement logs, copy as
+>> much of the measurement list as possible.
+> Is this comment still applicable to this patch?
+>
+> Please review your patch descriptions before posting, making sure that
+> everything is still applicable.
+>
+> thanks,
+>
+> Mimi
 
-That is what I mean, yeah. I've no idea what is or is not common in
-this rust code. It still looks like line noise to me :/
+Hi Mimi,
 
-But given that FineIBT isn't at all new, I was under the assumption that
-this was some shiny new rust driver that did something that hadn't been
-done before. And it could now not do that.
+Thanks for your comments. I will update in next version.
 
-> If you mean fixing it upstream, definitely, but we should still
-> prevent people from building an invalid kernel, i.e. when Alice's PR
-> or similar lands upstream, then we can relax the `depends on` based on
-> the Rust version (which is something we have done for other bits).
+Steven
 
-So why wasn't any of this a problem when Rust enabled kCFI? Surely the
-testing back then included FineIBT. That has been in longer than rust's
-kcfi support (integer type confusion etc.).
+>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> Cc: Eric Biederman <ebiederm@xmission.com>
+>> Cc: Baoquan He <bhe@redhat.com>
+>> Cc: Vivek Goyal <vgoyal@redhat.com>
+>> Cc: Dave Young <dyoung@redhat.com>
+>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+
+
 
