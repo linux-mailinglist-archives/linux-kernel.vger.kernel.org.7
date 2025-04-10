@@ -1,187 +1,142 @@
-Return-Path: <linux-kernel+bounces-598397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E801A845A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:06:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7855A845A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:07:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1421189A460
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:04:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A5341BA2C03
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6B728A406;
-	Thu, 10 Apr 2025 14:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D56628C5B1;
+	Thu, 10 Apr 2025 14:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="C+FJ+ww3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e621RUxM"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NDq0+EIz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18CA1BC5C;
-	Thu, 10 Apr 2025 14:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFF41C174A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 14:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744293846; cv=none; b=XfgUQa4aCi1DEYJdqmDIUCpawskCM60SmdwQFJ5MCndOZacAxEYjzYMMiXQ9B38P9aldMnZHsL5IkaI1yD1Fo5sipp0ad00HPdNMmbCkbb1fp4aQh8fiYnJISRtuFL/1/7fRHkgNNACaqw3azGcsy4iXZSDyxxlLL7+FZZns6jA=
+	t=1744293908; cv=none; b=QjPL30XeyGEhMZvSyBGhAjzDej9Yn/OFW455WUWqXmGP6PPVYtJOSWUl/eMKlAtl08ZOLPJBFwm8ilNBCAQdIcjXtyA8/r1bEjf0P6H9GQmfO1DpInEuXIUANwtXuFz6QlDiTnqc7D7+I/pbr2cbi2xt3CNoN0nPhEyysO/gxYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744293846; c=relaxed/simple;
-	bh=VZtNoCf3M0bCxDHC8D/FIk+anVcQU6h7SXrw27QGv1w=;
+	s=arc-20240116; t=1744293908; c=relaxed/simple;
+	bh=CnS2wbMMvP8BEycfQLoHnUik/B+c8egOMyHqz7ykxn0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZOED31+fwKtAPTErwO5oiSeL2Icboxvf739rpaPWJqWRph2EwgANE0ESci9oXicngvRwug+y/Cbqf7FOYvqbEqxbjuEUqa90W45D+WGzP+R6+VOuqvqIsj3CvuN51bkzERAft4X4TzL71fhGvZy+/CS5CBIaebn+hDA5KK6QAkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=C+FJ+ww3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e621RUxM; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id A87331380159;
-	Thu, 10 Apr 2025 10:04:01 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Thu, 10 Apr 2025 10:04:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1744293841; x=
-	1744380241; bh=kg+ncTFTY0e1tAlwafnt/dQr4xIAVAaQ5+ezMmfWoiQ=; b=C
-	+FJ+ww3czpNOXdQJJkVedN1q+7cFF9aQbuLmGlfSuxwJRlP5VYPYQwCJyTl36Pvv
-	lpkRSchCSZuovSWSoFJumyw6xfDGHSYyxZ9DhffmW9MkoXU2ileCa3XpIEACtv/F
-	hSeOOncxLogY93AIAu682Li1h7sgGnD5jZtUcyiJk3MzoTzjWFKjlns9/sDw5l0f
-	tEDR3UDHlzvW4+v2QP8bzyYXFb91KPuKvy6loPX0JJINzBdcH3C5J4abhCzZoiTZ
-	XLLSmD4Ev/bWT8icjN6fDk7mGMDSx7NnfYKnPSPfkjrZ+ARHJhaJit/hgcVI01fb
-	2uNKxCtJzBSsDb9E43oYA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1744293841; x=1744380241; bh=kg+ncTFTY0e1tAlwafnt/dQr4xIAVAaQ5+e
-	zMmfWoiQ=; b=e621RUxMIlhsFmxMUA002Kk5gJknqmUJKTyg90GG/o6n7NRTQb5
-	eJiWYIUZInraz1nYTOBGFi57GaqJPldTrg8OFhd+GU6I3Z+B3fouIrNBQKvCp2bX
-	LZ86W4b3GLq0Sdxbw3W+mdOKwEii4rLDJqlfFl8/wEZq03ynkRpkkp3fpFEnam/k
-	drt2fSLw7V5+ZXspwcegmvlTAC2BAYkb2YqiBDs01bI8xzwjcCzENa4Qhp8PvJBF
-	yyU5LBhF2dz1P7A5CeKz0s7U40NrECfRiX8Wm2kV+Lh13mbYMQLtPnetYyj0J7ja
-	D0TsOwn7TNoMhNHAg5rtotR43LnhT+/2PWw==
-X-ME-Sender: <xms:0M_3Z48v5qmD2qqc5pp7gNPBjHMEJPlQ104yt7tYvl1M_-rgO2bkjA>
-    <xme:0M_3ZwvWhkcJOLGGhu-O5NQSmnWI2SH5CLcTPmMylEc9oAbY9c4ovkeuN-kuIkFDX
-    s9svrucfPnbPG1RSag>
-X-ME-Received: <xmr:0M_3Z-BcO2xmeRLNQGCC4q538p3aepo6BXzKQP675ZDcMZwOsN_uEFtIXzL9>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdeludduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
-    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnheptddvhffhhfdugfegvdejfeetuddt
-    tdejteehfeejvdeugeffkefhgfffheeuudffnecuffhomhgrihhnpehgihhthhhusgdrtg
-    homhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehs
-    ugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghrtghpthhtohepudelpdhmohguvg
-    epshhmthhpohhuthdprhgtphhtthhopegrnhhtohhnihhosehophgvnhhvphhnrdhnvght
-    pdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrges
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
-    dprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhmpdhrtghp
-    thhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhihrgiirghnoh
-    hvrdhsrdgrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggv
-    vheslhhunhhnrdgthh
-X-ME-Proxy: <xmx:0M_3Z4c3G44RqWAjiT5kQ7RQfFTjIqT2zyYt0s7JMPJV-UwIOmRogg>
-    <xmx:0M_3Z9OyMXRkISBOi16SLG69oV9HGmw1_tof2MWU-GSSdm9CQOwU9A>
-    <xmx:0M_3ZylSPXWgTLxMLFVbChFBMKc7gzmRrIL_VtqYLWVQ775Cdbsdog>
-    <xmx:0M_3Z_tiVsE1CCKDNm-xcqPE5yLAxlm3K3My5fJPitpA773Mm2oNbw>
-    <xmx:0c_3Z-u76LlzOm866oCqvQpwP7PZK1m2tfZbqX7haTnflbdi8_2SKxzs>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 10 Apr 2025 10:04:00 -0400 (EDT)
-Date: Thu, 10 Apr 2025 16:03:57 +0200
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
-	steffen.klassert@secunet.com, antony.antony@secunet.com,
-	willemdebruijn.kernel@gmail.com, David Ahern <dsahern@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH net-next v25 00/23] Introducing OpenVPN Data Channel
- Offload
-Message-ID: <Z_fPzdq3PSw1efTW@krikkit>
-References: <20250407-b4-ovpn-v25-0-a04eae86e016@openvpn.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g/wI0PfAt7T14c3O+CVQ9GtMgGVFb0fAxlrKa+NYbSc9tOmKwD5bRE/2f/+2tCyJxlTWYNSB8RIyWosJd0FATLa6hiZ+6i71dg2tDQ2P0jgTMsMXXx5gMH6OB7SYWvyRDOH7a7cVQ9IYR5n0mZlXZWPrK7iaRg23gEKZOsAlblE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NDq0+EIz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744293905;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RsDQWTi2kQhu4s44bLJq1hHm6XUCRBgm1wmvO56Uxos=;
+	b=NDq0+EIzVQxOIxC6e1STbS58Uqt9/3FKW6J0eJSGu3gAsGRyLTIMbVDoj13/bvMUi7Ah5Q
+	0+AIgAuwxcr9KoZO1tgTfqxqjz1Ku+LDF/9jT1ATLAG4HyOG6QABHiGWGq7Y7Pi6qdHaF2
+	FZnatda9NSlWCOC+bFkMbOqUwQLJskE=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-665-wMlA-w90P2GQarsq0k7C1g-1; Thu,
+ 10 Apr 2025 10:05:00 -0400
+X-MC-Unique: wMlA-w90P2GQarsq0k7C1g-1
+X-Mimecast-MFC-AGG-ID: wMlA-w90P2GQarsq0k7C1g_1744293892
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 286E21955DC6;
+	Thu, 10 Apr 2025 14:04:51 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.222])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 50EFB180174E;
+	Thu, 10 Apr 2025 14:04:44 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 10 Apr 2025 16:04:15 +0200 (CEST)
+Date: Thu, 10 Apr 2025 16:04:08 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	Andy Lutomirski <luto@amacapital.net>, Dave Hansen <dave@sr71.net>,
+	Brian Gerst <brgerst@gmail.com>, Borislav Petkov <bp@alien8.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Chang S . Bae" <chang.seok.bae@intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Uros Bizjak <ubizjak@gmail.com>
+Subject: Re: [PATCH 4/8] x86/fpu: Remove the thread::fpu pointer
+Message-ID: <20250410140407.GC15280@redhat.com>
+References: <20250409211127.3544993-1-mingo@kernel.org>
+ <20250409211127.3544993-5-mingo@kernel.org>
+ <20250410073948.GT9833@noisy.programming.kicks-ass.net>
+ <Z_eZMN4PcOwFnskB@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250407-b4-ovpn-v25-0-a04eae86e016@openvpn.net>
+In-Reply-To: <Z_eZMN4PcOwFnskB@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-2025-04-07, 21:46:08 +0200, Antonio Quartulli wrote:
-> Notable changes since v24:
-> * disable TCP disconnections of attached sockets (tcp_disconnect()
->   returns -EBUSY) - similarly to kTLS.
-> * used rcu_replace_pointer instead of rcu_dereference_protected+rcu_assign_pointer
-> * dropped useless skb->ignore_df = 1
-> * dropped unneded EXPORT_SYMBOL_GPL(udpv6_prot)
-> * dropped obsolete comment for ovpn_crypto_key_slots_swap()
-> * dropped calls to kfree() in ovpn_aead_encrypt/decrypt() (release is
->   performed in ovpn_encrypt/decrypt_post())
-> * dropped NULL check before calling kfree() in
->   ovpn_encrypt/decrypt_done()
-> * converted seq_num from atomic64_t to atomic_t (IV exhaustion is now
->   detected in case of wrap around)
-> * call consume_skb() on skb when dropping keepalive message (it is not a
->   failure)
-> * made REMOTE_PORT mandatory when REMOTE_IPV4/6 is specified in
->   peer_new/set call
-> * ensured ovpn_nl_key_swap_notify() is called only once, even when
->   parsing a batch of received packets concurrently
-> 
-> Please note that some patches were already reviewed/tested by a few
-> people. These patches have retained the tags as they have hardly been
-> touched.
-> 
-> The latest code can also be found at:
-> 
-> https://github.com/OpenVPN/ovpn-net-next
-> 
-> Thanks a lot!
-> Best Regards,
-> 
-> Antonio Quartulli
-> OpenVPN Inc.
-> 
-> ---
-> Antonio Quartulli (23):
->       net: introduce OpenVPN Data Channel Offload (ovpn)
->       ovpn: add basic netlink support
->       ovpn: add basic interface creation/destruction/management routines
->       ovpn: keep carrier always on for MP interfaces
->       ovpn: introduce the ovpn_peer object
->       ovpn: introduce the ovpn_socket object
->       ovpn: implement basic TX path (UDP)
->       ovpn: implement basic RX path (UDP)
->       ovpn: implement packet processing
->       ovpn: store tunnel and transport statistics
->       ovpn: implement TCP transport
->       skb: implement skb_send_sock_locked_with_flags()
->       ovpn: add support for MSG_NOSIGNAL in tcp_sendmsg
->       ovpn: implement multi-peer support
->       ovpn: implement peer lookup logic
->       ovpn: implement keepalive mechanism
->       ovpn: add support for updating local or remote UDP endpoint
->       ovpn: implement peer add/get/dump/delete via netlink
->       ovpn: implement key add/get/del/swap via netlink
->       ovpn: kill key and notify userspace in case of IV exhaustion
->       ovpn: notify userspace when a peer is deleted
->       ovpn: add basic ethtool support
->       testing/selftests: add test tool and scripts for ovpn module
+On 04/10, Ingo Molnar wrote:
+>
+> * Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> > On Wed, Apr 09, 2025 at 11:11:23PM +0200, Ingo Molnar wrote:
+> >
+> > > -#define x86_task_fpu(task) ((task)->thread.fpu)
+> > > +#define x86_task_fpu(task)	((struct fpu *)((void *)(task) + sizeof(*(task))))
+> >
+> > Doesn't our FPU state need to be cacheline aligned?
+>
+> Yeah, and we do have a check for that:
+>
+> +       BUILD_BUG_ON(sizeof(*dst) % SMP_CACHE_BYTES != 0);
+>
+> And task_struct is allocated cache-aligned, which means when we do this
+> in fpu_clone():
+>
+> +       struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
+>
+> the FPU pointer is guaranteed to be cacheline aligned as well.
+>
+> 'dst' in that context is the new task_struct.
+>
+> BTW., Oleg suggested in a previous discussion for us to replace the
+> task->thread.fpu pointer with a build-time calculation - but I'm still
+> not sure it's a good idea.
 
-For the series:
-Reviewed-by: Sabrina Dubroca <sd@queasysnail.net>
+To be honest, I forgot everything we discussed before ;)
 
-Thanks again for your patience, Antonio.
+But I have found this email,
+https://lore.kernel.org/all/20240616105550.GA18292@redhat.com/
+Perhaps
 
--- 
-Sabrina
+	#define X86_TASK_SIZE	\
+		ALIGN(sizeof(struct task_struct), __alignof__(union fpregs_state))
+
+and
+	#define x86_task_fpu(task)	\
+		((struct fpu *)((void *)(task) + X86_TASK_SIZE))
+
+plus a bit more similar changes make more sense than
+__attribute__ ((aligned (64))) for struct task_struct?
+
+OK, even if yes, we can do this later on top of this series.
+
+I'll try to read it tomorrow.
+
+Oleg.
+
 
