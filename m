@@ -1,70 +1,55 @@
-Return-Path: <linux-kernel+bounces-598274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 492DFA84470
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:17:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E29A84475
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20AEE4C7774
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:12:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821E04E189C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781D7283C81;
-	Thu, 10 Apr 2025 13:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GjxtBYEf"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7ED2857FA;
-	Thu, 10 Apr 2025 13:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231C328A400;
+	Thu, 10 Apr 2025 13:10:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689663A8C1
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744290593; cv=none; b=DBxpQnTHr92DsEw/oeTFO1UdiugVTlZJ07QtFfBMS8X5c08IJbqrmTzgK7DnZbmhlI93kJLbQtyxul+sGMTGwi1ZUMHOkfsqKu2y+Le90HZ4XRZMEKUfRhA/OgQOxNCIFoha4+9hCNahrPXT4zDigGNFfUZ83Ua9S+xqNqzwIy0=
+	t=1744290609; cv=none; b=km65zYCUJz6zdFKryNGmpCJjeg5GeQZfABToMWC3sNhwD6VpJbOnwo4Hz86VXTao+bVQpjw51/1ybpY7ToG9S8ehCPwSne4/jlfk8vSpFPHF6HRW3lQg8UhYQsFRlUiLONseiVJIqRRpPEeADtqaXURu6LD1iBDrajLTFNwgmOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744290593; c=relaxed/simple;
-	bh=XpF5AzT2dy0cpthIZ5eqxi3p0HxdB3suZzndg1za8XA=;
+	s=arc-20240116; t=1744290609; c=relaxed/simple;
+	bh=FSkj+qfWLz4GnJZojx15aNKRylJWPim4AQal2A35YX8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HriPIvpMIvU8aiEacPogAC2s9GED7ouUIDDInN/P360NqrNxI1SV7JiKUMmHyWR6amaY0tEmKSTbvn3vTYKfCcSpgToXTbZaNjwxyItDo/S5TBwS/YDVW+lkkjIzjweu953+O2nmkdt4mN/iabCVyA3MX5UMzkIUEwIunu+B31Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GjxtBYEf; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=safJ4H6fBnn2c0duhP0nKLcIeCGsFeCk0AWhMrWuTu0=; b=GjxtBYEffrCUYvHvl9e7zOIFSa
-	MpNEbKpiHmqa4fRmkNvC2VR9229EFaXnX2ehw4OyIBXPpcescZI49zHgmr2lw/Q+zOmRX7mcQJaFb
-	jLDE3VS2yUDr4egKNqm0hbsX0ygtI2qUkZfefbJKi85u0u34fF3zajnSShgxXoiWDroJvG58616V+
-	g0IBj2ZZgU3AWngxtwHXfV2/Z4ZQ2qLXJZyIAFh/VVdzcPHwIRqpbYXsx6eSZ/VZgOBd0mF+SW3Xz
-	Ej2FuCxnVZYWh6iL5Ha3kFootlMTj0lCsf0vgW2Kq3SyanwAmJxQ9hdvqzOdxzDTn5z4kgDqzINd/
-	h0Z4pP2w==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u2rf7-00000008owm-2GiD;
-	Thu, 10 Apr 2025 13:09:45 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EA0C03003FA; Thu, 10 Apr 2025 15:09:44 +0200 (CEST)
-Date: Thu, 10 Apr 2025 15:09:44 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: =?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>
-Cc: Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Nathan Chancellor <nathan@kernel.org>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
-Message-ID: <20250410130944.GA9003@noisy.programming.kicks-ass.net>
-References: <20250410115420.366349-1-panikiel@google.com>
- <20250410123602.GZ9833@noisy.programming.kicks-ass.net>
- <20250410124526.GB9833@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EpKGEurQ8uTVanMSyq1yY2UmOAI4S0dK5Jj9ijtTnjfj4XW01pGOlTeI0lyE9hynZCaUhv4XB5wC3Ue3SziQIZrQ9mpL48vcIwVfIPUB7DToNDZoQc9ckpi86JUzagKHz2qGOzv2vDfR1s7MVN4P6yhQpBZV9UsPCIPYsXx5nBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6DF81516
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:10:06 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 59B623F6A8
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:10:06 -0700 (PDT)
+Date: Thu, 10 Apr 2025 14:09:52 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	kernel@collabora.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v6 1/4] drm/panthor: Introduce BO labeling
+Message-ID: <Z_fDIECHzkJjpwDQ@e110455-lin.cambridge.arm.com>
+References: <20250409212233.2036154-1-adrian.larumbe@collabora.com>
+ <20250409212233.2036154-2-adrian.larumbe@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,30 +59,143 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250410124526.GB9833@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250409212233.2036154-2-adrian.larumbe@collabora.com>
 
-On Thu, Apr 10, 2025 at 02:45:26PM +0200, Peter Zijlstra wrote:
-> On Thu, Apr 10, 2025 at 02:36:02PM +0200, Peter Zijlstra wrote:
-> > On Thu, Apr 10, 2025 at 11:54:20AM +0000, Paweł Anikiel wrote:
-> > > Calling core::fmt::write() from rust code while FineIBT is enabled
-> > > results in a kernel panic:
+On Wed, Apr 09, 2025 at 10:22:19PM +0100, Adrián Larumbe wrote:
+> Add a new character string Panthor BO field, and a function that allows
+> setting it from within the driver.
+> 
+> Driver takes care of freeing the string when it's replaced or no longer
+> needed at object destruction time, but allocating it is the responsibility
+> of callers.
+> 
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-> > > This happens because core::fmt::write() calls
-> > > core::fmt::rt::Argument::fmt(), which currently has CFI disabled:
-> > > 
-> > > library/core/src/fmt/rt.rs:
-> > > 171     // FIXME: Transmuting formatter in new and indirectly branching to/calling
-> > > 172     // it here is an explicit CFI violation.
-> > > 173     #[allow(inline_no_sanitize)]
-> > > 174     #[no_sanitize(cfi, kcfi)]
-> > > 175     #[inline]
-> > > 176     pub(super) unsafe fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-> > > 
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
-Miguel, I cannot find this code in the kernel tree. Is this again
-because Rust is not free-standing and relies on external code?
+Best regards,
+Liviu
 
-Can you please fix that. Building against external code that is not
-under our control is a problem.
+> ---
+>  drivers/gpu/drm/panthor/panthor_gem.c | 39 +++++++++++++++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_gem.h | 17 ++++++++++++
+>  2 files changed, 56 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/panthor/panthor_gem.c
+> index 8244a4e6c2a2..af0ac17f357f 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gem.c
+> +++ b/drivers/gpu/drm/panthor/panthor_gem.c
+> @@ -2,6 +2,7 @@
+>  /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
+>  /* Copyright 2023 Collabora ltd. */
+>  
+> +#include <linux/cleanup.h>
+>  #include <linux/dma-buf.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/err.h>
+> @@ -18,6 +19,14 @@ static void panthor_gem_free_object(struct drm_gem_object *obj)
+>  	struct panthor_gem_object *bo = to_panthor_bo(obj);
+>  	struct drm_gem_object *vm_root_gem = bo->exclusive_vm_root_gem;
+>  
+> +	/*
+> +	 * Label might have been allocated with kstrdup_const(),
+> +	 * we need to take that into account when freeing the memory
+> +	 */
+> +	kfree_const(bo->label.str);
+> +
+> +	mutex_destroy(&bo->label.lock);
+> +
+>  	drm_gem_free_mmap_offset(&bo->base.base);
+>  	mutex_destroy(&bo->gpuva_list_lock);
+>  	drm_gem_shmem_free(&bo->base);
+> @@ -196,6 +205,7 @@ struct drm_gem_object *panthor_gem_create_object(struct drm_device *ddev, size_t
+>  	obj->base.map_wc = !ptdev->coherent;
+>  	mutex_init(&obj->gpuva_list_lock);
+>  	drm_gem_gpuva_set_lock(&obj->base.base, &obj->gpuva_list_lock);
+> +	mutex_init(&obj->label.lock);
+>  
+>  	return &obj->base.base;
+>  }
+> @@ -247,3 +257,32 @@ panthor_gem_create_with_handle(struct drm_file *file,
+>  
+>  	return ret;
+>  }
+> +
+> +void
+> +panthor_gem_bo_set_label(struct drm_gem_object *obj, const char *label)
+> +{
+> +	struct panthor_gem_object *bo = to_panthor_bo(obj);
+> +	const char *old_label;
+> +
+> +	scoped_guard(mutex, &bo->label.lock) {
+> +		old_label = bo->label.str;
+> +		bo->label.str = label;
+> +	}
+> +
+> +	kfree(old_label);
+> +}
+> +
+> +void
+> +panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const char *label)
+> +{
+> +	const char *str;
+> +
+> +	str = kstrdup_const(label, GFP_KERNEL);
+> +	if (!str) {
+> +		/* Failing to allocate memory for a label isn't a fatal condition */
+> +		drm_warn(bo->obj->dev, "Not enough memory to allocate BO label");
+> +		return;
+> +	}
+> +
+> +	panthor_gem_bo_set_label(bo->obj, str);
+> +}
+> diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/panthor/panthor_gem.h
+> index 1a363bb814f4..af0d77338860 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gem.h
+> +++ b/drivers/gpu/drm/panthor/panthor_gem.h
+> @@ -46,6 +46,20 @@ struct panthor_gem_object {
+>  
+>  	/** @flags: Combination of drm_panthor_bo_flags flags. */
+>  	u32 flags;
+> +
+> +	/**
+> +	 * @label: BO tagging fields. The label can be assigned within the
+> +	 * driver itself or through a specific IOCTL.
+> +	 */
+> +	struct {
+> +		/**
+> +		 * @label.str: Pointer to NULL-terminated string,
+> +		 */
+> +		const char *str;
+> +
+> +		/** @lock.str: Protects access to the @label.str field. */
+> +		struct mutex lock;
+> +	} label;
+>  };
+>  
+>  /**
+> @@ -91,6 +105,9 @@ panthor_gem_create_with_handle(struct drm_file *file,
+>  			       struct panthor_vm *exclusive_vm,
+>  			       u64 *size, u32 flags, uint32_t *handle);
+>  
+> +void panthor_gem_bo_set_label(struct drm_gem_object *obj, const char *label);
+> +void panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const char *label);
+> +
+>  static inline u64
+>  panthor_kernel_bo_gpuva(struct panthor_kernel_bo *bo)
+>  {
+> -- 
+> 2.48.1
+> 
 
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
