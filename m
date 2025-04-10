@@ -1,125 +1,169 @@
-Return-Path: <linux-kernel+bounces-597149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1229DA83592
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:18:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C027A835AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368563BB6F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 01:18:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD111B80321
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 01:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC6118A6A9;
-	Thu, 10 Apr 2025 01:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84E41AA1FF;
+	Thu, 10 Apr 2025 01:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="v09QVbDC"
-Received: from pv50p00im-hyfv10021501.me.com (pv50p00im-hyfv10021501.me.com [17.58.6.48])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GAcXiJHG"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DF181ACA
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 01:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528EA1A7046
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 01:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744247888; cv=none; b=rgoBYhmMgG7WTpRo2l+NvhfgcrelbdW4OJ2/J6g/qzblSMOXnkCQQkOMHM782ZaClbUfo+/dHiE+345m9h1UdSPPP/Yzi/fy4OuwsC/mhIz/NYX9GHVvKWvexRyX06z6zPxiPt9a3ZklDyT+f3m9tfNYVwf/3SWru6puXaAmvYg=
+	t=1744247966; cv=none; b=XaD+xnmRVMDOxx3aK+b4Fw2M5sxZG5U/FpvwdQeB6gvSTX7yP61FqeL+aVlK25UXESZcCV2+JRNQo7qXkJyvgv00iTxXhybFAfvJ8mScA8n5HL9Ro41IC10cEmfDXu44vHK9PWdq7LIKnKYhagJRs0Jxvt+I/DlM9ULYV9QQLOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744247888; c=relaxed/simple;
-	bh=L0sLWjj/luVXtpTiBCBVPxJ1t4EFPXdlyg8sQAf/k0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FYgHKPDc7Skld71POaqkb0BXlpM56vNsU6r6LW7JaRJT4VCzRC2irAc62xLAAL2oUeFqVPkfjd77eu8ACKCqJaUFTAud5I8swZ6DxaBXQVDBPFf0uDWVeypZIdhoGr16ONgILQr3LSX+K9c1/NCOk0gfEM3xep4mr/xJrSDPkqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=v09QVbDC; arc=none smtp.client-ip=17.58.6.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=kBEyT3qDEPt8tYTpXkrYGSKfX4WjFrjtoXeB5/GCzVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
-	b=v09QVbDCLtVWFhV2mlOSkTWwOjHCbc9U+wux4BLXxw05nbsRVazQyqSp3hH2aMdCI
-	 +GmIcyVcnj9eEhsd85mLjQbtCqvjWzHKkxBtLKSlxdAlhtCuEUYxmzJ6/ZNlZx5fBb
-	 9Fd4ye2XAIrLUMjmyVlnpGGTLGubBE6Of5P1DV4UhcRo3JBU7svlIA/lMLc8vpWqqG
-	 HeFdtA28xVQBy7uESmmNnXPA4du/BN0F3s4xHTguOYfP4wPnHXuUsJBrbubG0uClP4
-	 xMRbyHSLddSf7OP0PGQ4sbQMN19cig81F/9GWhbRil6wKu+WM/VjpmJynx8YmeqOqa
-	 Eph22GTTvSuVw==
-Received: from pv50p00im-hyfv10021501.me.com (pv50p00im-hyfv10021501.me.com [17.58.6.48])
-	by pv50p00im-hyfv10021501.me.com (Postfix) with ESMTPS id 666042C02D7;
-	Thu, 10 Apr 2025 01:18:02 +0000 (UTC)
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-hyfv10021501.me.com (Postfix) with ESMTPSA id DB1E82C0304;
-	Thu, 10 Apr 2025 01:18:00 +0000 (UTC)
-Message-ID: <79206e66-f683-4733-894d-36e197cdde9a@icloud.com>
-Date: Thu, 10 Apr 2025 09:17:57 +0800
+	s=arc-20240116; t=1744247966; c=relaxed/simple;
+	bh=+695x7pXlPBW4JoEVk0G/GsLItaAy4Iw2gNHwnHxeKU=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=Ogn/y8Fo3sjQWd3O2+tRmNZfeFnzUx8PF5tSCCvL5MClArlgyy3eJvjrdIfYeiGElncAMJMp+ofZOJj5+9CFVe4YBYkbELU6rLD132q5JRy0hZsszDFa+8h3QGqe34X8H5G91d4w8sVBGRpBTNIb/lHIOddkQYvr7qMYahN3vQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GAcXiJHG; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] configfs: Correct condition for returning -EEXIST in
- configfs_symlink()
-To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
- Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
-References: <20250408-fix_configfs-v1-0-5a4c88805df7@quicinc.com>
- <20250408-fix_configfs-v1-4-5a4c88805df7@quicinc.com>
- <Z_Wn978o-kwscN29@google.com>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <Z_Wn978o-kwscN29@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: P540-XJaRz2ioCjGwMVRgiiLj6QpVStw
-X-Proofpoint-GUID: P540-XJaRz2ioCjGwMVRgiiLj6QpVStw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-09_06,2025-04-08_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 spamscore=0
- suspectscore=0 mlxlogscore=954 mlxscore=0 clxscore=1015 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2504100008
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744247952;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VwjIhL5eq5nuQH6KgO5e7NYXc2vM8c1wzFZaJmX6O2s=;
+	b=GAcXiJHGnyDBkayIqUeCiyu7aMXAjter9wJQKpd97FONtEJHyKqKoDubyMXwzB1eWQfFoL
+	/83eZu+U7YthXohR6oeZYn4FdhhjnTIS3NqIVs/NexOPxf24HlwtTMd73gYpb3NwLJPisK
+	IkrroqAAaGWUJnaEeTYmMIJqFKlOUGM=
+Date: Thu, 10 Apr 2025 01:19:09 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
+Message-ID: <b560604b7b97a58d13c60655747b30a5b9f27a4d@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH bpf-next v1] bpf, sockmap: Introduce tracing capability
+ for sockmap
+To: "Cong Wang" <xiyou.wangcong@gmail.com>
+Cc: bpf@vger.kernel.org, mrpre@163.com, "Alexei Starovoitov"
+ <ast@kernel.org>, "Daniel Borkmann" <daniel@iogearbox.net>, "John
+ Fastabend" <john.fastabend@gmail.com>, "Andrii Nakryiko"
+ <andrii@kernel.org>, "Martin KaFai Lau" <martin.lau@linux.dev>, "Eduard
+ Zingerman" <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>, "Yonghong
+ Song" <yonghong.song@linux.dev>, "KP Singh" <kpsingh@kernel.org>,
+ "Stanislav Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>,
+ "Jiri Olsa" <jolsa@kernel.org>, "Jakub Sitnicki" <jakub@cloudflare.com>,
+ "Steven Rostedt" <rostedt@goodmis.org>, "Masami Hiramatsu"
+ <mhiramat@kernel.org>, "Mathieu Desnoyers"
+ <mathieu.desnoyers@efficios.com>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Simon
+ Horman" <horms@kernel.org>, "Jesper Dangaard Brouer" <hawk@kernel.org>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+In-Reply-To: <Z/aosJ3uvzTZTEXS@pop-os.localdomain>
+References: <20250409102937.15632-1-jiayuan.chen@linux.dev>
+ <Z/aosJ3uvzTZTEXS@pop-os.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-On 2025/4/9 06:49, Joel Becker wrote:
->> configfs_symlink() returns -EEXIST under condition d_unhashed(), but the
->> condition often means the dentry does not exist.
->>
->> Fix by changing the condition to !d_unhashed().
-> I don't think this is quite right.
-> 
+April 10, 2025 at 01:04, "Cong Wang" <xiyou.wangcong@gmail.com> wrote:
+>=20
+>=20On Wed, Apr 09, 2025 at 06:29:33PM +0800, Jiayuan Chen wrote:
+>=20
+>=20>=20
+>=20> Sockmap has the same high-performance forwarding capability as XDP,=
+ but
+> >=20
+>=20>  operates at Layer 7.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  Introduce tracing capability for sockmap, similar to XDP, to trace=
+ the
+> >=20
+>=20>  execution results of BPF programs without modifying the programs
+> >=20
+>=20>  themselves, similar to the existing trace_xdp_redirect{_map}.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  It is crucial for debugging BPF programs, especially in production
+> >=20
+>=20>  environments.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  Additionally, a header file was added to bpf_trace.h to automatica=
+lly
+> >=20
+>=20>  generate tracepoints.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  Test results:
+> >=20
+>=20>  $ echo "1" > /sys/kernel/tracing/events/sockmap/enable
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  skb:
+> >=20
+>=20>  sockmap_redirect: sk=3D00000000d3266a8d, type=3Dskb, family=3D2, p=
+rotocol=3D6, \
+> >=20
+>=20>  prog_id=3D73, length=3D256, action=3DPASS
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  msg:
+> >=20
+>=20>  sockmap_redirect: sk=3D00000000528c7614, type=3Dmsg, family=3D2, p=
+rotocol=3D6, \
+> >=20
+>=20>  prog_id=3D185, length=3D5, action=3DREDIRECT
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  tls:
+> >=20
+>=20>  sockmap_redirect: sk=3D00000000d04d2224, type=3Dskb, family=3D2, p=
+rotocol=3D6, \
+> >=20
+>=20>  prog_id=3D143, length=3D35, action=3DPASS
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  strparser:
+> >=20
+>=20>  sockmap_skb_strp_parse: sk=3D00000000ecab0b30, family=3D2, protoco=
+l=3D6, \
+> >=20
+>=20>  prog_id=3D170, size=3D5
+> >=20
+>=20
+> Nice work!
+>=20
+>=20While you are on it, could we also trace skb->_sk_redir bits too? It =
+is
+>=20
+>=20very useful to distinguish, at least, ingress from egress redirection=
+.
+>=20
+>=20Thanks!
+>
 
-agree.
-
-> viro put this together in 351e5d869e5ac, which was a while ago.  Read
-> his comment on 351e5d869e5ac.  Because I unlock the parent directory to
-> look up the target, we can't trust our symlink dentry hasn't been
-> changed underneath us.
-> 
-> * If there is now dentry->d_inode, some other inode has been put here.
->   -EEXIST.
-> * If the dentry was unhashed, somehow the dentry we are creating was
->   removed from the dcache, and adding things to our dentry will at best
->   go nowhere, and at worst dangle in space.  I'm pretty sure viro
->   returns -EEXIST because if this dentry is unhashed, some *other*
->   dentry has entered the dcache in its place (another file type,
->   perhaps).
-> 
-> If you instead check for !d_unhashed(), you're discovering our candidate
-> dentry is still live in the dcache, which is what we expect and want.
-> 
-> How did you identify this as a problem?  Perhaps we need a more nuanced
-
-for current condition to return -EEXIST, if hit d_unhashed(dentry), that
-means that "if ((dentry->d_inode == NULL) && d_unhashed(dentry)) return
--EEXIST" which looks weird and not right as well.
-
-> check than d_unhashed() these days (for example, d_is_positive/negative
-> didn't exist back then).
-> 
-
-any suggestions about how to correct the condition to return -EEXIST ?
-
-> Thanks,
-> Joel
-> 
-> PS: I enjoyed the trip down memory lane to Al reaming me quite
->     thoroughly for this API.
-
+Thanks for your suggestion!
+The skb->_sk_redir contains a lot of important information about
+redirection, so it's definitely worth including.
 
