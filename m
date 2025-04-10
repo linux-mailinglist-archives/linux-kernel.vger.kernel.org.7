@@ -1,155 +1,103 @@
-Return-Path: <linux-kernel+bounces-597655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6484A83CC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:25:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBBE7A83CB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2C09E1631
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:22:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E943F4403CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9D820CCDA;
-	Thu, 10 Apr 2025 08:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577D820E012;
+	Thu, 10 Apr 2025 08:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NIXQOVlI"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpWvJqaK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177891E5B84;
-	Thu, 10 Apr 2025 08:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5AA1E5B97;
+	Thu, 10 Apr 2025 08:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744273186; cv=none; b=Hrw1vrp5HQKJHpcqUUWuEVPOJMdfCDKMOi13FOuRhgNEfg4fLBklbtAmcS1BMUCUuvxQhXIEh5BZkAFTw/qKNciQdXymj9Zv4a6q0z9+kJfHmsLNSzt6njg7qAwwVtbN+KJGppligi2p2FLE+MfIXFPixptGRSYU0+F8KHO2KMM=
+	t=1744273243; cv=none; b=e/30LSeMjdvHTOKpSuuuc7QKZXHqa4GsW33JleqNWYs12sz9IyTx1ghzVQxgK1Y3LFrG/DCrGERShr2Fb2aoyjMR+9m7/U88lsyTsnUvT39WtErjdRhz0sBlWal/jLFaxU6B4rDbvAH+ZoHk2H72y8bSnZh2N8f2HtXIVxhBal0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744273186; c=relaxed/simple;
-	bh=JH0ysD7QlUmh3YZt2NcU9owTunnHQH6W/wNghS58NQI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
-	 References:In-Reply-To; b=TwvqH5k0WxOJyrTf334vRYkKKI04Sb2ZVYJLraTUeN8KXKm1P7lkuLZc9dt001t0bDyzb8vJGhsn2+EZZSYpNr4fJ04IGF1yICRA1o0Tpt/zDbkzJwhalmD6BhqouwsnOmCnvorCO3VwzkFKqGhwrLxRdCzf97dZoRIl4Q/2cf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NIXQOVlI; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D63034327A;
-	Thu, 10 Apr 2025 08:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744273181;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/Y5h+5OSRWIwQZiitm22COKTZGTsAm6UEQXwd9f9Grk=;
-	b=NIXQOVlIrym6KHvZ8zKy+qyJJYRaB6rzZvV1l2dctN9BM7O9xMfH4KCGwQoUewtNavGD9l
-	UBub7ZB9EJXHeHkffmFMFZpKwduUBxFGmEmMbN9qUQzSzkj4n7OzJerLwlfXCb1+tkw32Y
-	Aa6lBxB574wk2kfDRXLmAgKci/NcV4jEznQXBH7Dex4YJQUHCYxjHgCvOqSrnOM4Fy9mGX
-	9I1/jses8ZD8ieH1QsKASBBG8m9TpkWw1LG0Ew2teQhH+cufhYIvyoMCuB2uFVFVVO01m0
-	LI6UNdBkzBHpDr7SqGszCBdIQ/Q4nVcla9E9kqu/AoSxP0nqVg7P3Uk1l6ZnNw==
+	s=arc-20240116; t=1744273243; c=relaxed/simple;
+	bh=YgQZI2+bS0r3KyGq34MBVFDhX4BUm2eJmrGkw/kgVT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rVqO4kuXpWS9HOREq0Yi4BpSe0ESUxS9gwFG2aRHuBxIuZhuDuhADOB9JWtH8Rh20Db8w5YCaBU/qTPaSRM3Czj7gb7WSmFxyU/GDgl9k5EPNogeplLiBnrL5u6aMTkRKKusL34JWZ7S+afjDktDS1j7gMMG54bucsTyhpFaWL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpWvJqaK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50ECCC4CEE3;
+	Thu, 10 Apr 2025 08:20:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744273243;
+	bh=YgQZI2+bS0r3KyGq34MBVFDhX4BUm2eJmrGkw/kgVT8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RpWvJqaKvTE/btMBJezY0+TzIVZFo6iMd3QE9E3IGJVCDFd2F76GVsz57hOknfpE5
+	 jZxllrJ3N3DbH3+uv9ZHHYrrfFgyRcK7QqSakVZiTg5lJs+o+nwwllB2G2g2ivYJ0f
+	 XZdHUzjN71la1YQ85wZ+ULJsoBZKXmxNkFFfI7zZILynyLL+8H34GHTgc8exE4YpLM
+	 Wv85WSPJn19pxfUXpjS18ukegqDYAleOgGZ/39ODRJvzIgCsFk2LqnmO6ok1NfZjTh
+	 p23jjdXQODTYtCQ9mESNPxKIFf4ZQAK9pzJunWbJgfcyy6XJVURM9aoh5Ev+5mz0DX
+	 Fm0HaSUcp0csw==
+Date: Thu, 10 Apr 2025 09:20:36 +0100
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu, djwong@kernel.org,
+	john.g.garry@oracle.com, bmarzins@redhat.com, chaitanyak@nvidia.com,
+	shinichiro.kawasaki@wdc.com, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [RFC PATCH -next v3 01/10] block: introduce
+ BLK_FEAT_WRITE_ZEROES_UNMAP to queue limits features
+Message-ID: <Z_d_VDvgBkgt4UhS@kbusch-mbp>
+References: <20250318073545.3518707-1-yi.zhang@huaweicloud.com>
+ <20250318073545.3518707-2-yi.zhang@huaweicloud.com>
+ <20250409103148.GA4950@lst.de>
+ <43a34aa8-3f2f-4d86-be53-8a832be8532f@huaweicloud.com>
+ <20250410071559.GA32420@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Apr 2025 10:19:39 +0200
-Message-Id: <D92T8KH7F8Q1.3MYEC6SZEEGNB@bootlin.com>
-To: "ALOK TIWARI" <alok.a.tiwari@oracle.com>, "Lee Jones" <lee@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Kamel Bouhara"
- <kamel.bouhara@bootlin.com>, "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>, "Dmitry Torokhov"
- <dmitry.torokhov@gmail.com>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, "Michael Walle" <mwalle@kernel.org>, "Mark Brown"
- <broonie@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, "Danilo Krummrich"
- <dakr@kernel.org>
-Subject: Re: [External] : [PATCH v6 01/12] dt-bindings: mfd: gpio: Add
- MAX7360
-Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-X-Mailer: aerc 0.19.0-0-gadd9e15e475d
-References: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
- <20250409-mdb-max7360-support-v6-1-7a2535876e39@bootlin.com>
- <a9d8ca30-3836-49b3-898c-c351b2c44a76@oracle.com>
-In-Reply-To: <a9d8ca30-3836-49b3-898c-c351b2c44a76@oracle.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdekgedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvffuvefhofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedvffdugeeiudevjedtteettefftefhvdeileekhffgleeiteeufeejvedvledtffenucffohhmrghinhepuhhrlhguvghfvghnshgvrdgtohhmpdguvghvihgtvghtrhgvvgdrohhrghdprghnrghlohhgrdgtohhmpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdefpdhrtghpthhtoheprghlohhkr
- dgrrdhtihifrghrihesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250410071559.GA32420@lst.de>
 
-On Wed Apr 9, 2025 at 5:22 PM CEST, ALOK TIWARI wrote:
->
->
-> On 09-04-2025 20:25, Mathieu Dubois-Briand wrote:
->> Add device tree bindings for Maxim Integrated MAX7360 device with
->> support for keypad, rotary, gpios and pwm functionalities.
->>=20
->> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
->> ---
->>   .../bindings/gpio/maxim,max7360-gpio.yaml          |  83 ++++++++++
->>   .../devicetree/bindings/mfd/maxim,max7360.yaml     | 171 +++++++++++++=
-++++++++
->>   2 files changed, 254 insertions(+)
->>=20
->> diff --git a/Documentation/devicetree/bindings/gpio/maxim,max7360-gpio.y=
-aml b/Documentation/devicetree/bindings/gpio/maxim,max7360-gpio.yaml
->> new file mode 100644
->> index 000000000000..21d603d9504c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpio/maxim,max7360-gpio.yaml
->> @@ -0,0 +1,83 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: https://urldefense.com/v3/__http://devicetree.org/schemas/gpio/max=
-im,max7360-gpio.yaml*__;Iw!!ACWV5N9M2RV99hQ!LySDuQZdU3DANTEmkRlntMCbFm69zp2=
-4O0wAwuujlnN1Zh9-xPEHZu7fj5d_O7vIxUHn9b6gqg9MHtd9ntPvXQvakCad_v0$
->> +$schema: https://urldefense.com/v3/__http://devicetree.org/meta-schemas=
-/core.yaml*__;Iw!!ACWV5N9M2RV99hQ!LySDuQZdU3DANTEmkRlntMCbFm69zp24O0wAwuujl=
-nN1Zh9-xPEHZu7fj5d_O7vIxUHn9b6gqg9MHtd9ntPvXQvacsB3d9k$
->> +
->> +title: Maxim MAX7360 GPIO controller
->> +
->> +maintainers:
->> +  - Kamel Bouhara <kamel.bouhara@bootlin.com>
->> +  - Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
->> +
->> +description: |
->> +  Maxim MAX7360 GPIO controller, in MAX7360 chipset
->> +  https://urldefense.com/v3/__https://www.analog.com/en/products/max736=
-0.html__;!!ACWV5N9M2RV99hQ!LySDuQZdU3DANTEmkRlntMCbFm69zp24O0wAwuujlnN1Zh9-=
-xPEHZu7fj5d_O7vIxUHn9b6gqg9MHtd9ntPvXQvavZnHZJk$
->> +
->> +  The device provide two series of GPIOs, referred here as GPIOs and GP=
-Os.
-> typo: The device provides two series of GPIOs,
->> +
->> +  PORT0 to PORT7 pins can be used as GPIOs, with support for interrupts=
- and
->> +  constant-current mode. These pins will also be used by the torary enc=
-oder and
-> typo: ie rotary encoder ?
->> +  PWM functionalities.
->> +
->> +  COL2 to COL7 pins can be used as GPOs, there is no input capability. =
-COL pins
->> +  will be partitionned, with the first pins being affected to the keypa=
-d
->> +  functionality and the last ones as GPOs.
->> +
-> typo: partitionned -> partitioned
+On Thu, Apr 10, 2025 at 09:15:59AM +0200, Christoph Hellwig wrote:
+> On Thu, Apr 10, 2025 at 11:52:17AM +0800, Zhang Yi wrote:
+> > 
+> > Thank you for your review and comments. However, I'm not sure I fully
+> > understand your points. Could you please provide more details?
+> > 
+> > AFAIK, the NVMe protocol has the following description in the latest
+> > NVM Command Set Specification Figure 82 and Figure 114:
+> > 
+> > ===
+> > Deallocate (DEAC): If this bit is set to `1´, then the host is
+> > requesting that the controller deallocate the specified logical blocks.
+> > If this bit is cleared to `0´, then the host is not requesting that
+> > the controller deallocate the specified logical blocks...
+> > 
+> > DLFEAT:
+> > Write Zeroes Deallocation Support (WZDS): If this bit is set to `1´,
+> > then the controller supports the Deallocate bit in the Write Zeroes
+> > command for this namespace...
+> 
+> Yes.  The host is requesting, not the controller shall.  It's not
+> guaranteed behavior and the controller might as well actually write
+> zeroes to the media.  That is rather stupid, but still.
 
-Thanks for your review, I fixed all 3 typos.
-
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+I guess some controllers _really_ want specific alignments to
+successfully do a proper discard. While still not guaranteed in spec, I
+think it is safe to assume a proper deallocation will occur if you align
+to NPDA and NPDG. Otherwise, the controller may do a read-modify-write
+to ensure zeroes are returned for the requested LBA range on anything
+that straddles an implementation specific boundary.
 
