@@ -1,132 +1,152 @@
-Return-Path: <linux-kernel+bounces-598170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29347A8430E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:25:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53587A842FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C35B47B140D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34BD31B8511C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E106284B57;
-	Thu, 10 Apr 2025 12:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D96284B52;
+	Thu, 10 Apr 2025 12:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Z2+VX8KW"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="emieav6m"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08767267F64;
-	Thu, 10 Apr 2025 12:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB88D283681;
+	Thu, 10 Apr 2025 12:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744287916; cv=none; b=XpjQTuWlaNMAhM57YbRf8Sk+s4tWmlZuo5n7CYHx7KXMiHRMh8XQ2iNDBlnmxf77mcX1g3YpIvTKkMQZN+Kanq4ITWugKo9ZS0XMpMlJl38BJXetP6NLL1KZs09VN2Zh15H+iLtDisqSebhnDq7Oe6uOq01C47O8Jvl2W3/SYHU=
+	t=1744287832; cv=none; b=fPCnA0GHHXKhpoerfJmETZRHMPg6p1qHbI5gd595dYQm5qmAQslTPIOVCQsBmY7PrOIct45AnTcnsoPq8fdW29zNpTjw43HfQnjldCUPN39fwzXG0zohb5C4q1d1NEpTIR8S1EZgtf3TekHGun7QMRJA3xuu2vX/XxiXhKKQBSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744287916; c=relaxed/simple;
-	bh=iYJFt+1IPlHzGtNX9AuRhPmwmrpFd5TRE57E6j7Db+c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Y0m89kkWAoQHTHoiONcK1ULinHU9RQqLNWI0SrX8LTeB5KqRK0GRg8wFgcVdSu7DPFV5EbP4+sUMjlaCh4SbKPtcbzxJfnUrw0hX9eoSUPRxz1zwz1MNijpMKUwnPBXnO9nksSs84swlGJdV5/T0FPpRy0AEGCYUny+bjxc3VYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Z2+VX8KW; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53A9Vcd9005154;
-	Thu, 10 Apr 2025 14:24:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	j3whygk/RlYZ76wCT9iuIKZGh9irSBykOVLGvkqBG2k=; b=Z2+VX8KWhkYoLhJ3
-	+WwT+RVMajJsw5ZympDzFiFPGYtx8inCj5BMPy8602sEWNSlY4wMtehVtCEa/ov3
-	nLj/tji8xO1U5/gPn4eKFu33+LX3xmfNofUthW2OmYS8zBqzmjEyF+CLuxo8jret
-	eFVZPcviTQcfEIuqIMeuC74N+Lv0mZQWS4l4NOV33hesNbmw3hFX1qJ2pGFwVZsp
-	2Ix/oEOjaB00GQh4oX7nzMAG1YvaNXaYop48YhYXRxrYx3R2aEI/9Eb/DsaWbLQ0
-	NpTqmGNYbqrnrCDeSFHfhdbhW+r05flFhI0cXoj20097/TI7Z1gqL2mbd9ubnzFF
-	hfwmGA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45uffmwdtk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Apr 2025 14:24:58 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A568240047;
-	Thu, 10 Apr 2025 14:24:00 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1D5AB958201;
-	Thu, 10 Apr 2025 14:23:47 +0200 (CEST)
-Received: from localhost (10.48.87.62) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Apr
- 2025 14:23:46 +0200
-From: Patrice Chotard <patrice.chotard@foss.st.com>
-Date: Thu, 10 Apr 2025 14:23:45 +0200
-Subject: [PATCH 2/2] spi: stm32-ospi: Make usage of
- reset_control_acquire/release() API
+	s=arc-20240116; t=1744287832; c=relaxed/simple;
+	bh=WQ/Zg5pbALkIDSUKET7wO/sepfxFHacC6w9xaLnf7Wk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CRqR3w9WhP0qqEOPtXWQWRYxovdIUZ6wX01Y3yx6VvBOEiWoUaadw92RrPBIbFEWHbBv4/+MtXomDaY8dIUMX4WsRUyVNskdh1arUKcLQAcWD0MCdYxOntqr82Vbb9+PiJDT1RHmnmGUqUSLcysvveLiGW56g8+V6O8jJV54ygo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=emieav6m; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cec5cd73bso5573635e9.3;
+        Thu, 10 Apr 2025 05:23:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744287829; x=1744892629; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PpGCun6OnLyj/iO45IrhWhjo8NHmRNo/yGae+dtnKsQ=;
+        b=emieav6msJEpYGCuYwiMJqWGLeHEUtdTayoDgQOu+NXneVuXH0fJ+3Fw56OKsjEuDk
+         NYgAVoUApd9F1D0BUac8v8kpQn3cdNeK8nDzdxSVnEM8EDlqiv2OgB72IwXPOwUrhmyk
+         I6+sspW2iVBl56XFSaMcln7XWRmkTjRMb4TzClfgCeghbF+hkyleOCW63cpIgw0VNfEz
+         THrH2Sx0uVuUEU9nwMJOO5bU+FBsvcLZEuf1DjAyjcXjyUkm0LnsNHPJ9gU7tkntkg3+
+         kZfcDrjFDg0zU6/JGIw7v6Mrzanr32RmaLNFTfkziLwm+ZdvG600VUV2kBMVY+gdGR8B
+         Ntrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744287829; x=1744892629;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PpGCun6OnLyj/iO45IrhWhjo8NHmRNo/yGae+dtnKsQ=;
+        b=O/XL0wgSYY3TCPobLU4K2yelraZRIjCxh1WeHVfEoIUTf36tPcdy0CSMc4k0UnhHUH
+         eMHgr5H+SxALIpbnwCGQUl4qbiwjwVXaKUAFbDhl0MDhsHQWfLBFf2v83kzXJVn8Tj57
+         t+S+MD5o0hqGYmQdWD0IkTwc2h9DPRl3PWBagdK4pr+1yx6w9QRTn6D/dJa34iFirxut
+         tJvHfygmEWubS2IK3Lwgkzy0wVn7NrsABL/m0dmr1TiLDNjY4DeErwZ9VwYFu1xxoeGZ
+         r/3oLrq+uA42vfxtOAf6brxNc076UUK/a26ZcpNQShpKrStk5Nb2Zv/Boji4hDox9Rjj
+         p5vA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1rseZdA4SeHcrBJFh964VxZYlUZ5W0kbgMFYNq6XEiDWDVcRypseUrv36jp/wNcuaai/rfW8EO6BN@vger.kernel.org, AJvYcCV8Tf9KdKywvhDuJG4T9g4o3zocCwp/YbgCrV/OtganwBHRZszBLQOd6wYPuprcs2KyLy5nGalIgkcdklUb@vger.kernel.org, AJvYcCVs69oqkfOvUHEu11hPoogZldAKCzyesvrPEwx4aZ9ZnLKP5znTYkfNW+s4dNUnAQsFRXngTTXFwTk3M021zfxWEA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw15+EbPgisTNgkY9vh1cflduYglngp4szVABhl5MYyAzyof/wH
+	2+HwncREu8iOSnkhhzb2wegT2OJvcn4UknZbFJczkdnpWd4igAKd
+X-Gm-Gg: ASbGncub/CV1L0sTQ/8qg1EZ1UIudDnuHJU9E95BZA6DbjTtcmyho2FsMIMza0AgH17
+	uwdsKcc6ZJwjFxM0lCwHevBofzvJc2zgu7mNEPXiD927yVX6+FABLuBeVJZS+8uh8mtAA0TNOVt
+	8mpIGRlim/iPi9a0BKjvYGOFgi3pG7p8OZCm+0Bk4NRqwVjO9bMWdjLUMSEHgr8fc/WwepXYFeV
+	BsxiPKJYM82ORtf5TwG1LYFFCA7aeUuXL5fAbNs9LhAmBe5lB/p40wkFD/nG70nUiXXgscltMYg
+	SRzyTWGK4eulmhy7YGIVWwhjJk4CoDTGPR84hbUkH2MSpkA3c1qudgof+c81xe4/LA9C1A==
+X-Google-Smtp-Source: AGHT+IHJYqLm2bNlTIV0OaPKSdoxtU3W2Hk6krFGdZj7Augauu5oSQ67P5k0PX48vM11HcU7mHRvqw==
+X-Received: by 2002:a05:600c:3c91:b0:43c:fab3:4fad with SMTP id 5b1f17b1804b1-43f2d7e932emr33093865e9.16.1744287828716;
+        Thu, 10 Apr 2025 05:23:48 -0700 (PDT)
+Received: from [192.168.1.132] ([82.79.237.110])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f206264a1sm54736005e9.9.2025.04.10.05.23.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Apr 2025 05:23:48 -0700 (PDT)
+Message-ID: <fb40d405-9f76-4117-88f9-423ea5fac3f0@gmail.com>
+Date: Thu, 10 Apr 2025 15:23:45 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250410-b4-upstream_ospi_reset_update-v1-2-74126a8ceb9c@foss.st.com>
-References: <20250410-b4-upstream_ospi_reset_update-v1-0-74126a8ceb9c@foss.st.com>
-In-Reply-To: <20250410-b4-upstream_ospi_reset_update-v1-0-74126a8ceb9c@foss.st.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>, Mark Brown <broonie@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Patrice Chotard
-	<patrice.chotard@foss.st.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-10_03,2025-04-08_04,2024-11-22_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/5] Configure imx8mp dsp node for rproc usage
+Content-Language: en-US
+To: Daniel Baluta <daniel.baluta@nxp.com>, shawnguo@kernel.org,
+ robh@kernel.org
+Cc: s.hauer@pengutronix.de, kernel@pengutronix.de, krzk+dt@kernel.org,
+ conor+dt@kernel.org, festevam@gmail.com, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, frank.li@nxp.com, aisheng.dong@nxp.com,
+ daniel.baluta@gmail.com, laurentiu.mihalcea@nxp.com, shengjiu.wang@nxp.com,
+ iuliana.prodan@nxp.com, a.fatoum@pengutronix.de, mathieu.poirier@linaro.org,
+ linux-remoteproc@vger.kernel.org
+References: <20250320121004.2542314-1-daniel.baluta@nxp.com>
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <20250320121004.2542314-1-daniel.baluta@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-As ospi reset is consumed by both OMM and OSPI drivers, use the reset
-acquire/release mechanism which ensure exclusive reset usage.
 
-This avoid to call reset_control_get/put() in OMM driver each time
-we need to reset OSPI children and guarantee the reset line stays
-deasserted.
 
-Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
----
- drivers/spi/spi-stm32-ospi.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On 3/20/2025 2:09 PM, Daniel Baluta wrote:
+> DSP found in i.MX8MP SOC can be used by multiple frameworks in order to
+> enable various applications:                                                                                                                                                            
+>         - rproc/rpmsg framework, used to load for example Zephyr samples
+>         - Sound Open Firmware, used to enable various audio processing
+>           pipelines.
+>
+> Current dsp node was configured with SOF in mind but it doesn't work
+> well with imx8mp-evk dts. SOF controls audio IPs from firmware side
+> while imx8mp-evk.dts preffers to control audio IPs from Linux side.
+>
+> So, configure 'dsp' node to be used with rproc scenario and later will
+> add a separate dts or an overlay to configure the node for SOF.
+>
+> This patch series configures and enables dsp node to be used with rproc.
+>
+> Changes since v6:
+> 	- addressed Alexander Stein comments
+> 	- enable mu2 separately in patch 5/5
+> 	- put "status" always as the last in node definition
+>
+> Changes since v5:
+>        - do not enable mu2 node by default
+>        - fix dt_bindings errors
+>
+> Changes since v4:
+> (https://lore.kernel.org/linux-arm-kernel/Z6zGLn3B6SVXhTV1@lizhi-Precision-Tower-5810/T/)·······························································································
+>        - after comments received on v4, we implemented the run/stall
+>          bits using reset controller API (changes merged ->
+> https://patchwork.kernel.org/project/linux-arm-kernel/cover/20250311085812.1296243-1-daniel.baluta@nxp.com/)
+>         - drop patches related to DSP run/stall/reset via syscon
+>        - picked up patch related to using run_stall via reset
+>          controller API.
+>
+>
+> Daniel Baluta (5):
+>   arm64: dts: imx8mp: Use resets property
+>   arm64: dts: imx8mp: Add mu2 root clock
+>   arm64: dts: imx8mp: Configure dsp node for rproc usage
+>   arm64: dts: imx8mp: Add DSP clocks
+>   arm64: dts: Enable DSP node for remoteproc usage
+>
+>  arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 14 +++++++++++++
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi    | 22 +++++++++++++-------
+>  2 files changed, 29 insertions(+), 7 deletions(-)
+>
 
-diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
-index 668022098b1eac3628f0677e6d786e5a267346be..96fa362432f13c19e4dde63d964a0db64c8ade95 100644
---- a/drivers/spi/spi-stm32-ospi.c
-+++ b/drivers/spi/spi-stm32-ospi.c
-@@ -804,7 +804,7 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ospi->rstc = devm_reset_control_array_get_optional_exclusive(dev);
-+	ospi->rstc = devm_reset_control_array_get_exclusive_released(dev);
- 	if (IS_ERR(ospi->rstc))
- 		return dev_err_probe(dev, PTR_ERR(ospi->rstc),
- 				     "Can't get reset\n");
-@@ -937,9 +937,11 @@ static int stm32_ospi_probe(struct platform_device *pdev)
- 		goto err_pm_enable;
- 
- 	if (ospi->rstc) {
-+		reset_control_acquire(ospi->rstc);
- 		reset_control_assert(ospi->rstc);
- 		udelay(2);
- 		reset_control_deassert(ospi->rstc);
-+		reset_control_release(ospi->rstc);
- 	}
- 
- 	ret = spi_register_controller(ctrl);
+For the whole series:
 
--- 
-2.25.1
-
+Reviewed-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
