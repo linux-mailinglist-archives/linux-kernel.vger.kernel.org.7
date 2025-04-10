@@ -1,93 +1,149 @@
-Return-Path: <linux-kernel+bounces-598797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E657A84B2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:38:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 501E8A84B42
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD334C775D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:38:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 553B3461EBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C44D28F938;
-	Thu, 10 Apr 2025 17:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C3B28CF5E;
+	Thu, 10 Apr 2025 17:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dpWrYRR9"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IkGIMLbt"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC2728EA50;
-	Thu, 10 Apr 2025 17:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B225280CFF;
+	Thu, 10 Apr 2025 17:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744306612; cv=none; b=A90J4muWuOW9Lk+k2Yl2RQ85Uc2sX+qMjzs7CLpAFsuS2nNuBrzNnWlblVeQbjKSUBB3O6C9vxTVDjwnrsV/yB1xXItbO+q2L8IWFOQpUoqcf5WzWWCKy63Q62I3t/SI6bAa3u4/X5kxIeqGncMUdnvka2503u6NSsHo6W+QmVU=
+	t=1744306671; cv=none; b=WZNnsWMxUikC1WXAe9WowAzfD4ahbOb7z8U4rT/csen2BJxSt2kPmn/4HMpRIoXp3D/DfmZluxJe7Ars/IqJiHuhttZNyFsIEy++goIzTEpFONH8hXmdG4XTbWpLmF74MZ3uEOsxLnFlD4XEF+3gvqhoNSbOVgUsZFAdiVvz36Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744306612; c=relaxed/simple;
-	bh=t7HKnATgmCsf3hGTnDANUpJF1Vs2UUV5sxwrpaZGqZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvNNRAUtA5tMr+N43TgYGT0249pc7UihMss5kY+4LYw+51DHvlFmWJHA49RM4E+7TCIWaP0I39CYJi1Bptr8cDDOLCZp2r1WVjINavMurN8btdL1t9+WNUwqMqgaKxvLqk8qaxBZobCVsNJN+m9zFxH9LohRFx2DNy6vOdNjRfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dpWrYRR9; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=bekYy2UKLDPJOi383/IFEmXjLc1ik86Fy2UFdlonMbA=; b=dpWrYRR9yUA+NgE9r8G+CzYkAe
-	KUpxJql71SsF2pILHM75BFUdI8lmtedbJ8coxAsPPs53US+gBqjKxm7/NjSMDIfYOoL0tgGF5qSXG
-	ndzU0R6jfAXplP6wL4vZP/XY33f5rlGMdBCr067cGmjrKC1cIHafG8BmPfnamuCrnrqk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u2vpO-008iGA-I5; Thu, 10 Apr 2025 19:36:38 +0200
-Date: Thu, 10 Apr 2025 19:36:38 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Prathosh.Satish@microchip.com
-Cc: ivecera@redhat.com, conor@kernel.org, krzk@kernel.org,
-	netdev@vger.kernel.org, vadim.fedorenko@linux.dev,
-	arkadiusz.kubalewski@intel.com, jiri@resnulli.us, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
-	kees@kernel.org, andy@kernel.org, akpm@linux-foundation.org,
-	mschmidt@redhat.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 02/14] dt-bindings: dpll: Add support for Microchip
- Azurite chip family
-Message-ID: <bd7d005b-c715-4fd9-9b0d-52956d28d272@lunn.ch>
-References: <20250409144250.206590-1-ivecera@redhat.com>
- <20250409144250.206590-3-ivecera@redhat.com>
- <20250410-skylark-of-silent-symmetry-afdec9@shite>
- <1a78fc71-fcf6-446e-9ada-c14420f9c5fe@redhat.com>
- <20250410-puritan-flatbed-00bf339297c0@spud>
- <6dc1fdac-81cc-4f2c-8d07-8f39b9605e04@redhat.com>
- <CY5PR11MB6462412A953AF5D93D97DCE5ECB72@CY5PR11MB6462.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1744306671; c=relaxed/simple;
+	bh=hvK+r8u4ehHwBGfvg9hXcYZ9N7mpdlPQnqx70AmnfdI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KgaBy86+UFDSf/4JisqNE6fp7r540MtbJBX9d2NahY/dPvsfMzyUR6T+ex3/JAbj2yO2p2nAujo/BR4OSES1lcOImUgkMRtImt3vfQmHAdnMBFkGIqckOKx0u/7/IIsUo3Vlz3mlCX8dH8XpIL++75DoOogE77S/fHYzqQqGrt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IkGIMLbt; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-301cda78d48so1047373a91.0;
+        Thu, 10 Apr 2025 10:37:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744306670; x=1744911470; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5fZUr611D9Y49mKKSbrF8pOMrUq9vV9e68fYVtbb3jk=;
+        b=IkGIMLbtpbSc4ssjssXGV+ROGZsegZucjQ//Ly+XahYHLNnqfbBTUXXIx1QKOephJG
+         o3roXxxr2B2OgG7L56VkAoPsc26MbCLGCxtWwDNvJjGvTP5vqn6rt9dNy0AxapHnaQvO
+         2wOY/LwhUqdS2ueJe95HJlvhOdSWAvmorAtQMR+LZkL30BAmyP2y8pR2WbosUzlSZodw
+         1EZHdv2ZLW3XK+naqgvd/eN6m79noq6+873mcmqchCLkoG0FK3dTpr+CxIGqo6AU9JDT
+         b+fg9hSNZaQ3bMeU5WtseHD/i3CXb55TcEst4DbMI1qxLGDohwHULsYiKiZvpYhNzEyD
+         qP2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744306670; x=1744911470;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5fZUr611D9Y49mKKSbrF8pOMrUq9vV9e68fYVtbb3jk=;
+        b=KYZfm858V2Cu5Zl5I1kRnBBAtVcHZamoxrPajlMz2MZts4TVYpRSgKazOBe/pJZPkU
+         iCp02nXPzZoMA84ECZ56JfDGhlPM7QLNMvv6FrEecfG9LPJI3N187up3mC4vmb2x6RHu
+         5UcaAT6HD3D4ab0B5OUdfDL1Xb1e5eoPKfICn9Z6EmnFJ6i9DCIjfxTAEn2iQlGvwyGr
+         X2PGbyRdoxnCoEkv5+OV6nnLBxZnwfT654CFkPQb9dlQKOBGMRet5msALhVxzjHJ+w99
+         Tzxq/DPlaFAGT4oRqn6Zfa7+N+P/7lvlPXduVM5hk2pJ9Wy7ECmKJ8umQUiz7omYLZWn
+         c0KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUK/bHmwqfTNuUeVsv4koYiVNWi1lK2C2xG07qjEwsuhqK7qPecMzVzt1TyKx+nTAmsVE3EYJATy1MZWoI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe0Hk3ivW+H9R+Ar7SYSIT7G/NBS6Z4hv0pICSRMDbpmSS3zgQ
+	UKA+R9f61x3QZ7sgAw4bl9CSPUuMX15zbbuvLCtUABTZ9IXbM0Yv
+X-Gm-Gg: ASbGncsM9+8zGgfOfH18+3bgvdmpMpoLaj/QPUZ7zl0Wy5zbRS21uwaWs4mOBeFylbp
+	CgNfUQbjmBD/JMrOzU9kRSExcK65tDdDBhW69Xivv/RRLjDlFqF/rFky6rPuvjK43WuRtY99D6N
+	bSHA3GfyF49SHn3yN5IOktrtcZ5Zmd85dhfa1NRFMHTBicOkAlXzfbGNELOBKKCxneQo/7M6c07
+	F+DaakWZrgOhpoQwCe3OCRdEjw+1N6w/G5ZVtne1+0M2DFqnM1cTcNGAeixlGw+8hnsoMDrFkTG
+	0zWFAU5VEmJrVGNUfcLH4HubKn7jLh/KwN8b0xiFKZHEsSAOefuUYeximpH+DehNimbFINlU/Nj
+	6sDahuUj2UmPXhRa+Pfj4Vc+/dqsC
+X-Google-Smtp-Source: AGHT+IGv33rsFxoqiNSW8pC79wnDRQXqI712F2DMj6QJ7tSmzJTZYH0sZUwUxDLIHUgjoGZIg55r1g==
+X-Received: by 2002:a17:90b:1ccb:b0:2ef:2f49:7d7f with SMTP id 98e67ed59e1d1-307e59996bfmr6069146a91.18.1744306669677;
+        Thu, 10 Apr 2025 10:37:49 -0700 (PDT)
+Received: from ?IPV6:2409:4080:204:a537:70f5:9c3d:61d0:62b9? ([2409:4080:204:a537:70f5:9c3d:61d0:62b9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b62973sm33616095ad.24.2025.04.10.10.37.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Apr 2025 10:37:49 -0700 (PDT)
+Message-ID: <b9add3a4-9ec8-489f-9390-29d6ed49ba14@gmail.com>
+Date: Thu, 10 Apr 2025 23:07:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY5PR11MB6462412A953AF5D93D97DCE5ECB72@CY5PR11MB6462.namprd11.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: addac: ad74115: Fix use of uninitialized variable
+ rate
+To: David Lechner <dlechner@baylibre.com>, cosmin.tanislav@analog.com,
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250409202945.205088-1-purvayeshi550@gmail.com>
+ <1254dfd7-e872-4c65-bd17-8015e1b2eba4@baylibre.com>
+Content-Language: en-US
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <1254dfd7-e872-4c65-bd17-8015e1b2eba4@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> Prathosh, could you please bring more light on this?
+On 10/04/25 20:21, David Lechner wrote:
+> On 4/9/25 3:29 PM, Purva Yeshi wrote:
+>> Fix Smatch-detected error:
+>> drivers/iio/addac/ad74115.c:823 _ad74115_get_adc_code() error:
+>> uninitialized symbol 'rate'.
+>>
+>> The variable rate was declared but not given any value before being used
+>> in a division. If the code reached that point without setting rate, it
+>> would cause unpredictable behavior.
+>>
+>> Declare and initialize 'rate' to zero inside the 'else' block where it is
+>> used. This ensures 'rate' is always initialized before being passed to
+>> DIV_ROUND_CLOSEST.
+>>
+>> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+>> ---
+>>   drivers/iio/addac/ad74115.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/iio/addac/ad74115.c b/drivers/iio/addac/ad74115.c
+>> index a7e480f2472d..26770c68e5fa 100644
+>> --- a/drivers/iio/addac/ad74115.c
+>> +++ b/drivers/iio/addac/ad74115.c
+>> @@ -814,7 +814,7 @@ static int _ad74115_get_adc_code(struct ad74115_state *st,
+>>   			return -ETIMEDOUT;
+>>   	} else {
+>>   		unsigned int regval, wait_time;
+>> -		int rate;
+>> +		int rate = 0;
+>>   
+>>   		ret = ad74115_get_adc_rate(st, channel, &rate);
+>>   		if (ret < 0)
 > 
-> > Just to clarify, the original driver was written specifically with 2-channel 
-> > chips in mind (ZL30732) with 10 input and 20 outputs, which led to some confusion of using zl3073x as compatible.
-> > However, the final version of the driver will support the entire ZL3073x family 
-> > ZL30731 to ZL30735 and some subset of ZL30732 like ZL80732 etc 
-> > ensuring compatibility across all variants.
+> I don't see how rate could be used uninitialized since we are
+> returning the error if ad74115_get_adc_rate() fails.
+> 
+> Also, initializing to 0 would then cause a divide by 0 error
+> if that value was actually used later in the code.
 
-Hi Prathosh
+Hi,
 
-Your email quoting is very odd, i nearly missed this reply.
+Thank you for the review and explanation.
 
-Does the device itself have an ID register? If you know you have
-something in the range ZL30731 to ZL30735, you can ask the hardware
-what it is, and the driver then does not need any additional
-information from DT, it can hard code it all based on the ID in the
-register?
+Understood — since there's a risk of misuse later (like divide-by-zero), 
+it's best to leave it as is.
 
-	Andrew
+Best regards,
+Purva
+
+> 
+> 
+
 
