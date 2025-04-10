@@ -1,120 +1,175 @@
-Return-Path: <linux-kernel+bounces-598084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8167BA841F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:44:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD1AA8420D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAA8E1B86BEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:44:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9946717B6DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C075F28A41E;
-	Thu, 10 Apr 2025 11:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZG7O4CX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BCC2580D3;
+	Thu, 10 Apr 2025 11:47:49 +0000 (UTC)
+Received: from mail-m49212.qiye.163.com (mail-m49212.qiye.163.com [45.254.49.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1E728A41A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 11:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7311372
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 11:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744285306; cv=none; b=CYuE+ZTYAD4nha0HpMwAHvGUeS1dOGW7+bK435VQdLmu5aF8Z07oWPqrcIfkXgprXdMX1t0C3SYPvelDY9WjS4KabOFT9W1877oaB1rORBttpnTcwJJRRTCWsEPH+7KO4lWosIvo/6tGziOBlHbXtCq//fMsMc5cBgcN0fmC1F4=
+	t=1744285669; cv=none; b=TcH5VlCwF2FRXd/D6mPYOs7InsEbfAAN1TzoHYSaXdfPGdrwR3O3DiRGQaN7CbIZWmFejAZ2/M2/q6JjZK0OWYzmQXWduRAsAWv2L2nQjd+g+61c5WVl20wt2rPaCcc6uGeKZYwwpUu67Ws9YmlXhlgx7k4jjqOFYTPFmH+cPYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744285306; c=relaxed/simple;
-	bh=/cLfvZPaGaKqTv5rGWJ2lfAMdaEHdJl7YqBZZkkNksw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=s00uIrdHy+4rCb+o43swh3D48TfSygSCbKWROrvtUhUfqrhUULrFvchB3JENQWroytRgbhrOYRIMXRsNSNqjKHSTU64KgyG5GZdateVfJexr6P1ZC81ISjrFqwm7gqNwM2w6M/lzEDpR1JTlWYRyeXiDklZzz1z9E1i6akcyj2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZG7O4CX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B400BC4CEEA;
-	Thu, 10 Apr 2025 11:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744285306;
-	bh=/cLfvZPaGaKqTv5rGWJ2lfAMdaEHdJl7YqBZZkkNksw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=cZG7O4CXmGL0MyfFfIjmuxA0yarKJ8L0fZF71b3Za1BdNbUR4WoW6fQr2tIqjOJua
-	 Lo6k2SnvJyP3yvMRD18WWaxSQGG6Fb/nINm+vGobEOwv7ltJKknJV+lH0EAlkcTDd2
-	 DQd4/PXo3SgVTG64u0sE4oXFTCPQABuy5+wfmY5JlBYsdhZ38x7QROXBDpBJdOuw8G
-	 S+/qlghzShEheGHiXj8INFLEjAQGwWfwFHpjb7+zix3qA6/uFyZykTqTc/BqOFAgTr
-	 Vee9LNRxs1W9lT6H3Fj1QGS3Y/Dwfouqx0zjZ6GXLCBo/of7Rx94kr/Yr8pnyPfzg6
-	 he+aVtzyio2gg==
-From: Daniel Wagner <wagi@kernel.org>
-Date: Thu, 10 Apr 2025 13:41:17 +0200
-Subject: [PATCH v4 14/14] nvme-fc: do not reference lsrsp after failure
+	s=arc-20240116; t=1744285669; c=relaxed/simple;
+	bh=HmDwf9qpGgeScX4/Nj4sprSsCc5AOfESV3gh/s+oOB0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SSQ02pRpEQ3uhMAUq33r49he159LPNmIy7qXnkwiL3ebTF8HntF3z0wh3DAYIMOvDxYwvzV8Mp5fNNoOPf/+qeCqGIPj/1EDrBP4z/cgWKkRf7jg1cmc9F4Wxm8q+YenmpUtOwvFq7EMv9ZiDzy/sLpUL9skh5FFfD+LyfaepOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com; spf=pass smtp.mailfrom=hj-micro.com; arc=none smtp.client-ip=45.254.49.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hj-micro.com
+Received: from localhost.localdomain (unknown [122.224.147.158])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 11665dc53;
+	Thu, 10 Apr 2025 19:42:27 +0800 (GMT+08:00)
+From: Shouping Wang <allen.wang@hj-micro.com>
+To: will@kernel.org
+Cc: robin.murphy@arm.com,
+	mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	allen.wang@hj-micro.com,
+	peter.du@hj-micro.com,
+	andy.xu@hj-micro.com
+Subject: [PATCH 1/2] perf: arm-ni: Unregister PMUs on probe failure
+Date: Thu, 10 Apr 2025 19:42:13 +0800
+Message-ID: <20250410114214.1599777-2-allen.wang@hj-micro.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250410114214.1599777-1-allen.wang@hj-micro.com>
+References: <20250410114214.1599777-1-allen.wang@hj-micro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250410-nvmet-fcloop-v4-14-7e5c42b7b2cb@kernel.org>
-References: <20250410-nvmet-fcloop-v4-0-7e5c42b7b2cb@kernel.org>
-In-Reply-To: <20250410-nvmet-fcloop-v4-0-7e5c42b7b2cb@kernel.org>
-To: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
- Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>
-Cc: Hannes Reinecke <hare@suse.de>, Keith Busch <kbusch@kernel.org>, 
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Daniel Wagner <wagi@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZS08fVhgaQx5LHxhPTEpMSVYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSUlVSUlPVUpPTFVKTkNZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
+	tLVUpCS0tZBg++
+X-HM-Tid: 0a961f822d6909d9kunm11665dc53
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MhA6MAw*QjIMQzcTEEgwTD86
+	NzUKCj5VSlVKTE9PSUNOSE9DSktDVTMWGhIXVRoXFx4VVQwaFRw7ExFWFhIYCRRVGBQWRVlXWRIL
+	WUFZSklJVUlJT1VKT0xVSk5DWVdZCAFZQU9KQ0I3Bg++
 
-The lsrsp object is maintained by the LLDD. The lifetime of the lsrsp
-object is implicit. Because there is no explicit cleanup/free call into
-the LLDD, it is not safe to assume after xml_rsp_fails, that the lsrsp
-is still valid. The LLDD could have freed the object already.
+From: Hongbo Yao <andy.xu@hj-micro.com>
 
-With the recent changes how fcloop tracks the resources, this is the
-case. Thus don't access lsrsp after xml_rsp_fails.
+When a resource allocation fails in one clock domain of an NI device,
+we need to properly roll back all previously registered perf PMUs in
+other clock domains of the same device.
 
-Signed-off-by: Daniel Wagner <wagi@kernel.org>
+Otherwise, it can lead to kernel panics.
+
+Calling arm_ni_init+0x0/0xff8 [arm_ni] @ 2374
+arm-ni ARMHCB70:00: Failed to request PMU region 0x1f3c13000
+arm-ni ARMHCB70:00: probe with driver arm-ni failed with error -16
+list_add corruption: next->prev should be prev (fffffd01e9698a18),
+but was 0000000000000000. (next=ffff10001a0decc8).
+pstate: 6340009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : list_add_valid_or_report+0x7c/0xb8
+lr : list_add_valid_or_report+0x7c/0xb8
+Call trace:
+ __list_add_valid_or_report+0x7c/0xb8
+ perf_pmu_register+0x22c/0x3a0
+ arm_ni_probe+0x554/0x70c [arm_ni]
+ platform_probe+0x70/0xe8
+ really_probe+0xc6/0x4d8
+ driver_probe_device+0x48/0x170
+ __driver_attach+0x8e/0x1c0
+ bus_for_each_dev+0x64/0xf0
+ driver_add+0x138/0x260
+ bus_add_driver+0x68/0x138
+ __platform_driver_register+0x2c/0x40
+ arm_ni_init+0x14/0x2a [arm_ni]
+ do_init_module+0x36/0x298
+---[ end trace 0000000000000000 ]---
+Kernel panic - not syncing: Oops - BUG: Fatal exception
+SMP: stopping secondary CPUs
+
+Fixes: 4d5a7680f2b4 ("perf: Add driver for Arm NI-700 interconnect PMU")
+Signed-off-by: Hongbo Yao <andy.xu@hj-micro.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/nvme/host/fc.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/perf/arm-ni.c | 39 +++++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
-index 2257c3c96dd2da11097d2d0d4a5bb8ece1bebc6a..fdafa3e9e66fa9b8954209efa14d3b207cb8653c 100644
---- a/drivers/nvme/host/fc.c
-+++ b/drivers/nvme/host/fc.c
-@@ -1410,9 +1410,8 @@ nvme_fc_xmt_disconnect_assoc(struct nvme_fc_ctrl *ctrl)
+diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
+index 90fcfe693439..3f3d2e0f91fa 100644
+--- a/drivers/perf/arm-ni.c
++++ b/drivers/perf/arm-ni.c
+@@ -576,6 +576,23 @@ static int arm_ni_init_cd(struct arm_ni *ni, struct arm_ni_node *node, u64 res_s
+ 	return err;
  }
  
- static void
--nvme_fc_xmt_ls_rsp_done(struct nvmefc_ls_rsp *lsrsp)
-+nvme_fc_xmt_ls_rsp_free(struct nvmefc_ls_rcv_op *lsop)
- {
--	struct nvmefc_ls_rcv_op *lsop = lsrsp->nvme_fc_private;
- 	struct nvme_fc_rport *rport = lsop->rport;
- 	struct nvme_fc_lport *lport = rport->lport;
- 	unsigned long flags;
-@@ -1433,6 +1432,14 @@ nvme_fc_xmt_ls_rsp_done(struct nvmefc_ls_rsp *lsrsp)
- 	nvme_fc_rport_put(rport);
- }
- 
-+static void
-+nvme_fc_xmt_ls_rsp_done(struct nvmefc_ls_rsp *lsrsp)
++static void arm_ni_remove(struct platform_device *pdev)
 +{
-+	struct nvmefc_ls_rcv_op *lsop = lsrsp->nvme_fc_private;
++	struct arm_ni *ni = platform_get_drvdata(pdev);
 +
-+	nvme_fc_xmt_ls_rsp_free(lsop);
++	for (int i = 0; i < ni->num_cds; i++) {
++		struct arm_ni_cd *cd = ni->cds + i;
++
++		if (!cd->pmu_base)
++			continue;
++
++		writel_relaxed(0, cd->pmu_base + NI_PMCR);
++		writel_relaxed(U32_MAX, cd->pmu_base + NI_PMINTENCLR);
++		perf_pmu_unregister(&cd->pmu);
++		cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &cd->cpuhp_node);
++	}
 +}
 +
- static void
- nvme_fc_xmt_ls_rsp(struct nvmefc_ls_rcv_op *lsop)
+ static void arm_ni_probe_domain(void __iomem *base, struct arm_ni_node *node)
  {
-@@ -1450,7 +1457,7 @@ nvme_fc_xmt_ls_rsp(struct nvmefc_ls_rcv_op *lsop)
- 		dev_warn(lport->dev,
- 			"LLDD rejected LS RSP xmt: LS %d status %d\n",
- 			w0->ls_cmd, ret);
--		nvme_fc_xmt_ls_rsp_done(lsop->lsrsp);
-+		nvme_fc_xmt_ls_rsp_free(lsop);
- 		return;
+ 	u32 reg = readl_relaxed(base + NI_NODE_TYPE);
+@@ -657,8 +674,11 @@ static int arm_ni_probe(struct platform_device *pdev)
+ 				reg = readl_relaxed(pd.base + NI_CHILD_PTR(c));
+ 				arm_ni_probe_domain(base + reg, &cd);
+ 				ret = arm_ni_init_cd(ni, &cd, res->start);
+-				if (ret)
++				if (ret) {
++					ni->cds[cd.id].pmu_base = NULL;
++					arm_ni_remove(pdev);
+ 					return ret;
++				}
+ 			}
+ 		}
  	}
+@@ -666,23 +686,6 @@ static int arm_ni_probe(struct platform_device *pdev)
+ 	return 0;
  }
-
+ 
+-static void arm_ni_remove(struct platform_device *pdev)
+-{
+-	struct arm_ni *ni = platform_get_drvdata(pdev);
+-
+-	for (int i = 0; i < ni->num_cds; i++) {
+-		struct arm_ni_cd *cd = ni->cds + i;
+-
+-		if (!cd->pmu_base)
+-			continue;
+-
+-		writel_relaxed(0, cd->pmu_base + NI_PMCR);
+-		writel_relaxed(U32_MAX, cd->pmu_base + NI_PMINTENCLR);
+-		perf_pmu_unregister(&cd->pmu);
+-		cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &cd->cpuhp_node);
+-	}
+-}
+-
+ #ifdef CONFIG_OF
+ static const struct of_device_id arm_ni_of_match[] = {
+ 	{ .compatible = "arm,ni-700" },
 -- 
-2.49.0
+2.43.0
 
 
