@@ -1,209 +1,126 @@
-Return-Path: <linux-kernel+bounces-598468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C10A84676
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E065A8467B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D7BC3A97DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:32:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 470253BF64E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0ADB28C5DD;
-	Thu, 10 Apr 2025 14:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D737928C5C7;
+	Thu, 10 Apr 2025 14:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ATbJczOw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S2QOvQlq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8185B14658C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 14:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F2B281358
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 14:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744295586; cv=none; b=mp0YYURIPDrHEvci+34hNBQzFe1b796ImrG9vg4yRdv6CTK5o4mysnW7+/aHBQrrIVTUJXBQr/FFNLTjUmteISSsa9tad9OQX4hW21+2qTl2doWJdAPzh3EoAmw11QEiXTeCz2tfz1DpaAdIFvrocFCyO5NWLO9lHDBbPwdyEDM=
+	t=1744295761; cv=none; b=oVoI6OdXBUwuPyca5LxyXqzSx29AV2gdGihlMmGZc7SAXSDKS1D/Z1M0UGJgKB6dd2lsRsF3+hQ7FcABeNu8puR0kya/LSHgrqS3qCHID/cBvSkxckhSPBHW25l9Uo11JOJkLpblFzNoNhNaPzvLwOj1/J8/g3aVm1roITZ+wME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744295586; c=relaxed/simple;
-	bh=96mZD7Hb5Cr/y2Om1FHnmlg+eCGOwFTtldbBBPskmfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O1z7RomCN6ENyj+uKos+Jzt4ZISuoOsCOvo6H9lbK4ysXLxVpC1FAQ4B4y/2hKgTmrsSDFfm7GK+CdrUPGCnZhgMagb0JB4KiC3udnJsZWyzWd2jkjvCc6eaNvQMGjMiIyMFV+hAG2um+TLHUq0iUqqM1f7kwTC1n06zzpYPw/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ATbJczOw; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1744295761; c=relaxed/simple;
+	bh=10LbntU7G6cSiJO95JZRsBQNWmis82LaIoeCO56r6Lk=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DbRyNT+VvQNyG2i6obrkNs2k4v1RSMpUW621oXnCSNAvbgw3WebQgU5zjdhcQzlX0AjWe4lXZQmAlRrYfi7kvwzTvWjSwu/BK7rcM+zzRfLJ6bnwqEsxsmDCcM52upAMlpRh2i8p+5aBLF0f91lnoa/O7S5eboXFt7Y3t78L3uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S2QOvQlq; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744295583;
+	s=mimecast20190719; t=1744295758;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/A1JjAmWXNOwxvY9+1uvauQoaYmfejNlLeKdPfCV5CU=;
-	b=ATbJczOwzDO7vucofwqxKslN7ZjaAyEBqM87rfgHWRg/brNvGjPdcQ88XAwtMDxtxgs3G2
-	LIePt4HWa0qmIdK5mo4N5donkR8EEzbAHqVuRFJQ7jOqz9DJ6OUUjYA87RSGGMUzfhyGca
-	m8B3ogoYEIsIL9gyfwln87PRbPlnwJY=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-171-PDFYeuplP66MG7qRxIZEow-1; Thu,
- 10 Apr 2025 10:32:22 -0400
-X-MC-Unique: PDFYeuplP66MG7qRxIZEow-1
-X-Mimecast-MFC-AGG-ID: PDFYeuplP66MG7qRxIZEow_1744295540
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 88AD4195605A;
-	Thu, 10 Apr 2025 14:32:19 +0000 (UTC)
-Received: from jbrnak-thinkpadx1carbongen9.tpbc.csb (unknown [10.44.34.6])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4518C1955BC1;
-	Thu, 10 Apr 2025 14:32:14 +0000 (UTC)
-Date: Thu, 10 Apr 2025 16:32:11 +0200
-From: Jakub Brnak <jbrnak@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
-	mpetlan@redhat.com, tglozar@redhat.com,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v3] perf test probe_vfs_getname: Skip if no suitable line
- detected
-Message-ID: <Z_fWa093x33Wcwrw@jbrnak-thinkpadx1carbongen9.tpbc.csb>
-References: <20250324144523.597557-1-jbrnak@redhat.com>
+	bh=/3SQB7rzhOVJ6Z2UjNgnVkSzmn6Ilrczcfrs8WunoxM=;
+	b=S2QOvQlqtlRnNNqDzsg5rO0tplKCso9Wks01o+00TL74w0rr32wpC+y4uj47HBLoeBo/HD
+	Tz/pPtkVbfHR39yeHimjmKrC+iAbV0X5xsUystqWVHHpG0QnHgsloVTN0u7j+s0jaJQQbD
+	myo6a+j7tBgrSkfwNurRkadpGCiLVYo=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-687--IeDanPXO1Wcs84R5Rsrog-1; Thu, 10 Apr 2025 10:35:57 -0400
+X-MC-Unique: -IeDanPXO1Wcs84R5Rsrog-1
+X-Mimecast-MFC-AGG-ID: -IeDanPXO1Wcs84R5Rsrog_1744295756
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-476623ba226so15101621cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:35:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744295756; x=1744900556;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/3SQB7rzhOVJ6Z2UjNgnVkSzmn6Ilrczcfrs8WunoxM=;
+        b=N64xzkvq7FJDWSynr9pUTHVpeSQUor9s4gBZC5/bxB8jVSAnYUUtVoLfkQsANw+dyq
+         jT6fS/4bspxwAEJH6pjrTvPdgPSeTopjjDsOg/nmR7+16jenYPQq8cx4e1semv/Dd+0I
+         rXioIovYnde1xqZR344VYijNvVQFJy8U1bBTBx+F7eFm+VkEyNp14UqYZJiNRJz9d7on
+         D3zU09zXVSMfsPT20QE5YyJFOmc0U/ABxh0LPes/Fq81s2okKm2Nw+VOfJzPCBG3GimG
+         g9J9HATtkESP2HIFY4gIg3+ldBOSH4sYgF3X807GAVITsqTLuyA/Atk8hQbWy9T42DPU
+         zmNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWeSi73ydXZeF0Q8I8/uMFnyiNai21t40pZkooF4zjDmjOe7nm+SEyYfuFLSJRjiEEdYw7JV0lF1U4xnLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW7OpcNbQlMEEJGbKTzVAYRa39urCX7Tu0GQ8LhMvnSM8+2qtS
+	YntAgVpBPHV70KDthH0oasLi2YttXBJ5Nz5FxhfG0kaIS42BDyn3QBADwWiYIrvb2meyn6LE4AE
+	0HIK3gVhMVOLsheW5qr7RyGZe+9Mcu0RUZKHvcMglQV+KHP+046GupPcuXgvCEQ==
+X-Gm-Gg: ASbGnctpOHHJ1X29fIIYlz+JaPccGG4KtA3LK+YPuhAj31bodP2lx2hFsYCVR5RQLLY
+	1cRBwQKxPiDm+CZo6uBhDtDCPmQnkQGJpOwILa/sqZNgIUjT9YEhw1V0JHhlRz0poYqOSASNolo
+	6/K67dJct+Q32Ivl/p3OgccH4Rdu1BDyg/RRxSPZtfFoHFBIYvJxYqcsgACHkTHx5g2x3cNzg/x
+	j0bldXbFiSK/5KutyuDl3TjfTPcjjs2F3ftdjh8YaaOeyFJNHSl8YTvyyB4avTAgeDzTi44sNyK
+	vqRuDgh9zkM2BHlM+b3In30wPTUyxdJvLoWSIA+GJ9IV9ICJRW1RD6oyXg==
+X-Received: by 2002:ac8:59d6:0:b0:476:9296:80a4 with SMTP id d75a77b69052e-4796cba04f5mr35843251cf.7.1744295756667;
+        Thu, 10 Apr 2025 07:35:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEremdcNTaA4L2CmylqIV9X/DkyVJEuDpRqUKmk8xOFlf/oJ1kTWqolvNqMaNcSRlNIGjyXzg==
+X-Received: by 2002:ac8:59d6:0:b0:476:9296:80a4 with SMTP id d75a77b69052e-4796cba04f5mr35843011cf.7.1744295756383;
+        Thu, 10 Apr 2025 07:35:56 -0700 (PDT)
+Received: from ?IPV6:2601:188:c100:5710:315f:57b3:b997:5fca? ([2601:188:c100:5710:315f:57b3:b997:5fca])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4796ed9bcc3sm9426491cf.63.2025.04.10.07.35.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Apr 2025 07:35:55 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <77988036-7550-4ee2-a738-9f9bd4417001@redhat.com>
+Date: Thu, 10 Apr 2025 10:35:55 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324144523.597557-1-jbrnak@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] timers: Exclude isolated cpus from timer migation
+To: Frederic Weisbecker <frederic@kernel.org>,
+ Gabriele Monaco <gmonaco@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+References: <20250410065446.57304-2-gmonaco@redhat.com> <87ecy0tob1.ffs@tglx>
+ <2c9d71fd79d7d1cec66e48bcb87b39a874858f01.camel@redhat.com>
+ <Z_fBq2AQjzyg8m5w@localhost.localdomain>
+Content-Language: en-US
+In-Reply-To: <Z_fBq2AQjzyg8m5w@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 24, 2025 at 03:45:23PM +0100, Jakub Brnak wrote:
-> In some cases when calling function add_probe_vfs_getname, line number
-> can't be detected by perf probe -L getname_flags:
-> 
->   78         atomic_set(&result->refcnt, 1);
-> 
-> 	     // one of the following lines should have line number
-> 	     // but sometimes it does not because of optimization
-> 	     result->uptr = filename;
->              result->aname = NULL;
-> 
->   81         audit_getname(result);
-> 
-> To prevent false failures, skip the affected tests
-> if no suitable line numbers can be detected.
-> 
-> Signed-off-by: Jakub Brnak <jbrnak@redhat.com>
-> ---
-> v3:
-> - ensure POSIX compliance
-> 
-> v2: 
-> https://lore.kernel.org/linux-perf-users/Z9tKat6vvC1XUj0U@google.com/
-> - check if return from add_vfs_getname equals to 1
-> sice it is only option in case of fail 
-> 
-> v1:
->  https://lore.kernel.org/linux-perf-users/Z8pAep0GJsMFTyEi@google.com/T/#t
-> ---
->  tools/perf/tests/shell/lib/probe_vfs_getname.sh          | 8 +++++++-
->  tools/perf/tests/shell/probe_vfs_getname.sh              | 8 +++++++-
->  .../perf/tests/shell/record+script_probe_vfs_getname.sh  | 8 +++++++-
->  tools/perf/tests/shell/trace+probe_vfs_getname.sh        | 9 +++++++--
->  4 files changed, 28 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-> index 5c33ec7a5a63..89f72a4c818c 100644
-> --- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-> +++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-> @@ -19,8 +19,14 @@ add_probe_vfs_getname() {
->  			result_aname_re="[[:space:]]+([[:digit:]]+)[[:space:]]+result->aname = NULL;"
->  			line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" | sed -r "s/$result_aname_re/\1/")
->  		fi
-> +
-> +		if [ -z "$line" ] ; then
-> +			echo "Could not find probeable line"
-> +			return 2
-> +		fi
-> +
->  		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
-> -		perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring"
-> +		perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring" || return 1
->  	fi
->  }
->  
-> diff --git a/tools/perf/tests/shell/probe_vfs_getname.sh b/tools/perf/tests/shell/probe_vfs_getname.sh
-> index c51a32931af6..0f52654c914a 100755
-> --- a/tools/perf/tests/shell/probe_vfs_getname.sh
-> +++ b/tools/perf/tests/shell/probe_vfs_getname.sh
-> @@ -13,7 +13,13 @@ skip_if_no_perf_probe || exit 2
->  # shellcheck source=lib/probe_vfs_getname.sh
->  . "$(dirname $0)"/lib/probe_vfs_getname.sh
->  
-> -add_probe_vfs_getname || skip_if_no_debuginfo
-> +add_probe_vfs_getname
->  err=$?
-> +
-> +if [ $err -eq 1 ] ; then
-> +	skip_if_no_debuginfo
-> +	err=$?
-> +fi
-> +
->  cleanup_probe_vfs_getname
->  exit $err
-> diff --git a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
-> index fd5b10d46915..1ad252f0d36e 100755
-> --- a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
-> +++ b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
-> @@ -35,8 +35,14 @@ perf_script_filenames() {
->  	grep -E " +touch +[0-9]+ +\[[0-9]+\] +[0-9]+\.[0-9]+: +probe:vfs_getname[_0-9]*: +\([[:xdigit:]]+\) +pathname=\"${file}\""
->  }
->  
-> -add_probe_vfs_getname || skip_if_no_debuginfo
-> +add_probe_vfs_getname
->  err=$?
-> +
-> +if [ $err -eq 1 ] ; then
-> +        skip_if_no_debuginfo
-> +        err=$?
-> +fi
-> +
->  if [ $err -ne 0 ] ; then
->  	exit $err
->  fi
-> diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-> index 60fccb62c540..5d5019988d61 100755
-> --- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-> +++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-> @@ -25,9 +25,14 @@ trace_open_vfs_getname() {
->  	grep -E " +[0-9]+\.[0-9]+ +\( +[0-9]+\.[0-9]+ ms\): +touch/[0-9]+ open(at)?\((dfd: +CWD, +)?filename: +\"?${file}\"?, +flags: CREAT\|NOCTTY\|NONBLOCK\|WRONLY, +mode: +IRUGO\|IWUGO\) += +[0-9]+$"
->  }
->  
-> -
-> -add_probe_vfs_getname || skip_if_no_debuginfo
-> +add_probe_vfs_getname
->  err=$?
-> +
-> +if [ $err -eq 1 ] ; then
-> +        skip_if_no_debuginfo
-> +        err=$?
-> +fi
-> +
->  if [ $err -ne 0 ] ; then
->  	exit $err
->  fi
-> -- 
-> 2.48.1
-> 
+On 4/10/25 9:03 AM, Frederic Weisbecker wrote:
+> Le Thu, Apr 10, 2025 at 12:38:25PM +0200, Gabriele Monaco a écrit :
+>> On Thu, 2025-04-10 at 10:26 +0200, Thomas Gleixner wrote:
+>>> How can that happen? There is always at least _ONE_ housekeeping,
+>>> non-isolated, CPU online, no?
+>>>
+>> In my understanding it shouldn't, but I'm not sure there's anything
+>> preventing the user from isolating everything via cpuset.
+>> Anyway that's something no one in their mind should do, so I guess I'd
+>> just opt for the cpumask_first (or actually cpumask_any, like before
+>> the change).
+> With "nohz_full=..." or "isolcpus=nohz,..." there is always at least one
+> housekeeping CPU. But with isolcpus=[domain] or cpusets equivalents
+> (v1 cpuset.sched_load_balance, v2 isolated partion) there is nothing that
+> prevents all CPUs from being isolated.
 
-Hi, anyone interested in this patch?
+Actually v2 won't allow users to isolate all the CPUs. Users can 
+probably do that with v1's cpuset.sched_load_balance.
 
-Thanks,
-Jakub
+Cheers,
+Longman
 
 
