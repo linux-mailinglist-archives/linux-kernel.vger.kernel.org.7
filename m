@@ -1,58 +1,67 @@
-Return-Path: <linux-kernel+bounces-597800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D41A83E97
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:28:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0934AA83EA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E06C16E8ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:25:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03D1F19E28F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64285256C7F;
-	Thu, 10 Apr 2025 09:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A868B2580FA;
+	Thu, 10 Apr 2025 09:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEflj/nA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G99ccvzB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42D1215F7F
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF063256C68;
+	Thu, 10 Apr 2025 09:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744277087; cv=none; b=FanSwNNLSKJvb1+MgV+NZYTJvb9aO7u7MeE61DYioooV8duZeuTOrPJwYW182Zzp2eSKTqoSOeHHsnY/GahAaxWpkagQGRQ3EuqaxCl7rAa6zdf8P5C3CYg6RmdigkdbKS5nw/Oiyx2X78XSVjyKDUHD2e8BtgkfA3GPd2gYhLc=
+	t=1744277094; cv=none; b=SEVZJE2jvRQZvzDsu5SYuJfW6XZGleMY7iz6jTt7J8BV5YT0ZcZqP8bcLDWuni3pES4ei42XGkBU1QVcHvww7maG0oWN39n6mbaJT2SHacMfAzBLci0E8QSRwFEkPKoIuyD/VtuuJ7PAA42blERD7WOADIAZjoO4ZrrRmG8HkQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744277087; c=relaxed/simple;
-	bh=PbDhGkzquJrqYI/6wUXbKMcD1qZhasVialAXVfJ/YPg=;
+	s=arc-20240116; t=1744277094; c=relaxed/simple;
+	bh=3P7s4nXmSskx7iFVqJGduWVlN7qiQQvgN5d+ysuJyiI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UkusR9zjcX9mgHTHOM1LbJEbAmHRf5EDFt65JTRJHu05eeVSw6RADkZJ4nfo2isbKNBfTSC0OlVnZmWYUtiXefT2YytuPqA0o8q8Qc1LUqyqJoCDRtaOlk/FoIAgZfQsNtXyNb5LIOp290JH4Y/CPxsRdFxcbftNhOdIj9vhgxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEflj/nA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49627C4CEE3;
-	Thu, 10 Apr 2025 09:24:44 +0000 (UTC)
+	 MIME-Version; b=c6WAKrGTQhobSbwfKVe+eojL5thobZYhWeDcK5DQNKAREktpqnOLqlab3q/14wjTcSbZEZRITWhy2SII7tED4n4154yKJLSwvTj9fyZcB78qjn5ppSEfhbspNTEUumN8QplueiXnIfOs6PCm55krSDaap1ekJV4+QUcO7eMV85w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G99ccvzB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DF2DC4CEE9;
+	Thu, 10 Apr 2025 09:24:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744277087;
-	bh=PbDhGkzquJrqYI/6wUXbKMcD1qZhasVialAXVfJ/YPg=;
+	s=k20201202; t=1744277093;
+	bh=3P7s4nXmSskx7iFVqJGduWVlN7qiQQvgN5d+ysuJyiI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FEflj/nAewXKCN/6QKq0FnGfuTI/Ruy3/WKcI3nV31yyN2I/9TXQ7MMXbtAa5MnSx
-	 MyR6tIWEeNpfMzZE8ofsrLsRkOURP+YF2NRRhizwpWRq/3n7KjxFm82+ZcDm2W8dx8
-	 DuT1ln7H3L6ThtNVc8pT1W1RMQxBhZwhA76NyCov+/PwjP36oTp2+OI/4beRzFohkA
-	 eNtWOh6EXlV8XjUVymtOfVrZZthqxcntVIwzXD/ZPjiNdw2Hx2JvGfZuTqjBU+oJdM
-	 CSTJ+IPH/r3j6tavU20XBuWuOwAvSgjHwQ+n2nPwB/XH7PqW4RIkSyTazgQpoPFsme
-	 MgaA+LdPQDsFQ==
-From: alexs@kernel.org
-To: 
-Cc: linux-kernel@vger.kernel.org,
-	Alex Shi <alexs@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 2/4] sched/isolation: clean up housekeeping_cpu
-Date: Thu, 10 Apr 2025 17:24:17 +0800
-Message-ID: <20250410092423.9831-2-alexs@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250410092423.9831-1-alexs@kernel.org>
-References: <20250410092423.9831-1-alexs@kernel.org>
+	b=G99ccvzBekwF9w28ZdrT3WI90UdaES2VHm6CttD7Z3rn10sY7nJBSVjBweaIBtSBz
+	 du7leLWJhVQRElmAZ+QWxL6MM1c9xjK9xurwfHmTWf4rBsj4SrqH2xgHTtlAWZyc8m
+	 R701q5aFobVxj/Mgn244Kus6EqysQ5ITd2sT8irG140N3vX3HC2pAOTTuWxHMfshsg
+	 mBlu5qQIy6UZ2fNtBOwi3YTUReLyAvIVmGzdC9LflXh5eVQxd5cgvDDFITTV54rUbS
+	 BJkuBdN6GqLzGBeGyrRlw1xTN/hy9hz7DywZyN0CAzHcpWBGAloL5P84pp2OYRwPf+
+	 jhIt5jr10fNmA==
+From: Philipp Stanner <phasta@kernel.org>
+To: Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org,
+	Philipp Stanner <phasta@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/3] drm/nouveau: Prevent signaled fences in pending list
+Date: Thu, 10 Apr 2025 11:24:17 +0200
+Message-ID: <20250410092418.135258-3-phasta@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250410092418.135258-2-phasta@kernel.org>
+References: <20250410092418.135258-2-phasta@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,38 +70,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Alex Shi <alexs@kernel.org>
+Nouveau currently relies on the assumption that dma_fences will only
+ever get signaled through nouveau_fence_signal(), which takes care of
+removing a signaled fence from the list nouveau_fence_chan.pending.
 
-housekeeping_test_cpu will check 'housekeeping_overridden' again in
-itself so we don't need do it again outside. just call
-housekeeping_test_cpu is fine.
+This self-imposed rule is violated in nouveau_fence_done(), where
+dma_fence_is_signaled() (somewhat surprisingly, considering its name)
+can signal the fence without removing it from the list. This enables
+accesses to already signaled fences through the list, which is a bug.
 
-Signed-off-by: Alex Shi <alexs@kernel.org>
-Cc: Peter Zijlstra  <peterz@infradead.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>
+In particular, it can race with nouveau_fence_context_kill(), which
+would then attempt to set an error code on an already signaled fence,
+which is illegal.
+
+In nouveau_fence_done(), the call to nouveau_fence_update() already
+ensures to signal all ready fences. Thus, the signaling potentially
+performed by dma_fence_is_signaled() is actually not necessary.
+
+Replace the call to dma_fence_is_signaled() with
+nouveau_fence_base_is_signaled().
+
+Cc: <stable@vger.kernel.org> # 4.10+, precise commit not to be determined
+Signed-off-by: Philipp Stanner <phasta@kernel.org>
 ---
- include/linux/sched/isolation.h | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_fence.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
-index d8501f4709b5..231bc5766f76 100644
---- a/include/linux/sched/isolation.h
-+++ b/include/linux/sched/isolation.h
-@@ -63,11 +63,7 @@ static inline void housekeeping_init(void) { }
- 
- static inline bool housekeeping_cpu(int cpu, enum hk_type type)
- {
--#ifdef CONFIG_CPU_ISOLATION
--	if (static_branch_unlikely(&housekeeping_overridden))
--		return housekeeping_test_cpu(cpu, type);
--#endif
--	return true;
-+	return housekeeping_test_cpu(cpu, type);
+diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/nouveau/nouveau_fence.c
+index 7cc84472cece..33535987d8ed 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_fence.c
++++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
+@@ -274,7 +274,7 @@ nouveau_fence_done(struct nouveau_fence *fence)
+ 			nvif_event_block(&fctx->event);
+ 		spin_unlock_irqrestore(&fctx->lock, flags);
+ 	}
+-	return dma_fence_is_signaled(&fence->base);
++	return test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->base.flags);
  }
  
- static inline bool cpu_is_isolated(int cpu)
+ static long
 -- 
-2.47.1
+2.48.1
 
 
