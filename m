@@ -1,114 +1,248 @@
-Return-Path: <linux-kernel+bounces-598630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C21A84861
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:48:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3141A84879
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F280E4E133F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:47:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDBA21BA6232
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878551EDA2F;
-	Thu, 10 Apr 2025 15:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681701EF36C;
+	Thu, 10 Apr 2025 15:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dp3/R0Gx"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5+nLP7p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929EB1EB9E3;
-	Thu, 10 Apr 2025 15:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AFE1EB9ED;
+	Thu, 10 Apr 2025 15:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744299990; cv=none; b=XGiTfu50zLOzlJ16txWwkkZ5J44eW1DKdvrFHmE0YWdGYEOWFmSKs2rXvm64mulB/x3p8VAQvutDs3H9C8VSzDTpNkJfbXNmZcTit+puSug3YuFaChhWY3Sql1Lra7yYZY6HbCPgjsaAeFwk0QXE3xUIZKgf4wTpV24MDtnf9BI=
+	t=1744300066; cv=none; b=AyYB8Wpl8smJpdPx4JTgeOz3xnu944LmxoQZXLzvLS35P0DgDxlaXVClkFL5PD9dmql/avLWzASmYpLBUAi8fAJ9y598gL8QbT5m14tzOZelzzqpYY0rHkBK/5+jtIj4sSFzhkY7bmS06VWAGLEwk+nJ/a/VRem6+l8xhk2/lf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744299990; c=relaxed/simple;
-	bh=RmV6uTkHYjl0L2+M97sxfGsXkm/FIRdM9b7RJRLTyUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mnx3Swlceo06MzAw4R/Rb3vw0xdZuGXIf6NuIMO9xsz28xY9aVEhMLozSlgDWVVXd6iuDga+kl+YYSCMr+FALQDayStOpX3P3c/xyPpX5/rliQA4LJI5g/sejZkrTNxzTWd3RkEqeipOr7qaTJhCaJNohxAw0QM3QAunrrlQpH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dp3/R0Gx; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-225df540edcso22413435ad.0;
-        Thu, 10 Apr 2025 08:46:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744299989; x=1744904789; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=85Qa3h9qEG3X96vnZ+9vMbiip7I0/QKNNiCH7bFxD5o=;
-        b=Dp3/R0Gx1cMzVXOc7tdgeRASyMDufkqoWWpuIDioYwd8FUVFbV6bVkMGStqWyfzxpn
-         PfyLqcPqk4sGniIWJmyqzMaBo3awaFB6HWEKfpbDbOqQqCKRvdu7OMxw/MSpup9kO1cE
-         DE0ylekuyExMTBwcyfMAykXkaxZRwyjGuT06/1uMucXGPfvwC7FYMWvQOAgkXtuY6b1A
-         x1QdxHHHTab7ng8nyldz/u96JiO1KqdCLGTOorIxpTIv8QRZWlLVdNnmboqWyqFVCSmI
-         UC+K7M1ru8tNFm1ndYSrOFhGsQYhd5UXtArdUyUod7AkQRIJENOER1NdiFeSNAYgYsOh
-         CCZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744299989; x=1744904789;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=85Qa3h9qEG3X96vnZ+9vMbiip7I0/QKNNiCH7bFxD5o=;
-        b=IfVbyRYxbfF5V03Umdlzyl+L47E7uhispV+SJ3ukaZYK15lGwwN1kI4qsDcGxVRc3n
-         mOTrHxd5sf8odB8/xVy0AAmvGO6ogu6uP4I6l/gZIByz7+31XF9OJYK1MRAqAe96dJIM
-         mhvFOtY/Smg2ERr6nHKB4SvbFkusReuBa7zx4mQNUzBTOaDZD09HQWqDOLsNjC9ELAUO
-         r6/H7ZIEnH6/zgSKpboxVmU0gvvufDUbmw3+CNLYYSjksACpgQwTa9zqSsKFMV7QJl+C
-         XcMA2hER8gLnAdgAwrWTQKj4t8i+dAINnWafLn5rKvuuaUX3BWDGNcDUtAYEfvJnUc7U
-         EYeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUESNTb+uSJ4lcJ7cTFHv74tgrmOPEPAjRLLbPkBefqPGlrOTQIIgnuyK+5N5fLKlA/SdTxCCq0@vger.kernel.org, AJvYcCVG5HP9jASR6UW/G//jGsCm6535Byj1ambaM3Gtnf42dH15wxVJ41moBO7iTHX692sFx+y114gy4mMFQOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhQ3G2j9deNqd8ijO9pRqS4XzS+IuyerYcr2f9KVED1za1qNVq
-	V+ijtXaaP1WTRS7nkBWYzE+9O+39Ncpq3ES0TtMUQRWFZ4MIM90=
-X-Gm-Gg: ASbGncvCqRTTiXT42h/xjSHhK+49Hy/INHLyvhmDHOYB+A4P2VjcutcGze9jPx8wVhv
-	EbOyDbdAEvHY48P/ekogSPWVDVa+/h0qdPx06QcR9420+BA3K+B8JwCq1UI+Vx7ql7dgRc3eV/g
-	TF0zfVHsxhP0rBAE0e5KO+ci3siEKoZA9dc/7m/pt3ssSCeHNbawdqLrl53D7FR0NdKZ+959T1c
-	KyJZMpWrZZuCkBkCq1KknfbqjIWz/P+O4OV5LScoJiieXKvtHwVMXhc0iTikGlOxQ3DmVa9aJwz
-	1g4mh6Tv3ZLIqjcYQrQJl89GfZGJM9vbLa4lL9wse9lOkciTU/k=
-X-Google-Smtp-Source: AGHT+IHphO5D10R1pCTA30+KCxPL1PNdYx/+O1+9BaELB8Q2xdd6d+foRyA51ibDx+91E8kAujQjZQ==
-X-Received: by 2002:a17:903:178b:b0:221:89e6:ccb6 with SMTP id d9443c01a7336-22b8fdb8994mr52476265ad.25.1744299988798;
-        Thu, 10 Apr 2025 08:46:28 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22ac7b63f1asm32268795ad.12.2025.04.10.08.46.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 08:46:28 -0700 (PDT)
-Date: Thu, 10 Apr 2025 08:46:27 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	jv@jvosburgh.net, andrew+netdev@lunn.ch,
-	linux-kernel@vger.kernel.org,
-	syzbot+48c14f61594bdfadb086@syzkaller.appspotmail.com
-Subject: Re: [PATCH net] bonding: hold ops lock around get_link
-Message-ID: <Z_fn0yCuj3BI31ie@mini-arch>
-References: <20250408171451.2278366-1-sdf@fomichev.me>
- <20250409174433.7b3d0f29@kernel.org>
+	s=arc-20240116; t=1744300066; c=relaxed/simple;
+	bh=2mdsfkUrMw7toePmD1v5/yrWX5YIRl5Nl5Vw/xMU/bw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ubemRr48INTGGAE4F2FvH8UfAtI/JtBrd4t8L3BvyjnmwrmLLQcE3G4o6tdnkRMnxByamuiyMJt+XiVMvvzVkgjvI2GFxUnvp/UUg9hXtF2UMwh51Jt6cag9vvoia4pZoiAi8ZKi3ADssqPyRc92p4X9JenYvfOrDlvQ5fSzy+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5+nLP7p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB0FEC4CEDD;
+	Thu, 10 Apr 2025 15:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744300065;
+	bh=2mdsfkUrMw7toePmD1v5/yrWX5YIRl5Nl5Vw/xMU/bw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=L5+nLP7pd0oYgpafFrGoh0LoKCQ7lZ4hWRGZn8JABxcQWp3JDeYtvBix05xdM46Zh
+	 XpnLYthUadlqId0gsGWKaxqhLe/29kANzcoWa+rQrClokZLIPB3QGnmMNjmDMO2iql
+	 ltjul4+3LYS+YE+T6+FAIEe6+CmxqlNXD/zCQ1ZarWRoln8g/OplEPGkzty5mR23AK
+	 u/l1eF6ElFcEFQf1jOnx73ArjmRIf/wmr/xqbAtIF/9m7RfrBF+Y4Z6RPxU9Ml3e4Q
+	 B2frUcAk9HQfXVGsc1xqTnTMcK3l7Re3GEafraAraVMynKyonxEgKoKm0+R+VwL4jE
+	 f5+7zRNE93dhg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Subject: [PATCH v2 00/17] Arm cpu schema clean-ups
+Date: Thu, 10 Apr 2025 10:47:21 -0500
+Message-Id: <20250410-dt-cpu-schema-v2-0-63d7dc9ddd0a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250409174433.7b3d0f29@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAro92cC/3XMQQ7CIBCF4as0s3YMYAu1K+9hukA6LUSFBmqja
+ bi72L3L/yXv2yBRdJSgqzaItLrkgi8hDhUYq/1E6IbSIJhoWM1OOCxo5hcmY+mpsW5JSqNGqc8
+ MymeONLr37l370talJcTPzq/8t/6TVo4MmZI3Ulxx3TaXO0VPj2OIE/Q55y8lONpOqwAAAA==
+X-Change-ID: 20250403-dt-cpu-schema-48e66c7f6a90
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Conor Dooley <conor@kernel.org>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Steen Hegelund <Steen.Hegelund@microchip.com>, 
+ Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Heiko Stuebner <heiko@sntech.de>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Andy Gross <agross@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+ Stephen Boyd <sboyd@kernel.org>, zhouyanjie@wanyeetech.com, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, imx@lists.linux.dev, 
+ linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, linux-mips@vger.kernel.org, 
+ linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ Andre Przywara <andre.przywara@arm.com>, 
+ =?utf-8?q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Sudeep Holla <sudeep.holla@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>
+X-Mailer: b4 0.15-dev
 
-On 04/09, Jakub Kicinski wrote:
-> On Tue,  8 Apr 2025 10:14:51 -0700 Stanislav Fomichev wrote:
-> > +		netdev_lock_ops(slave_dev);
-> > +		ret = slave_dev->ethtool_ops->get_link(slave_dev) ?
-> >  			BMSR_LSTATUS : 0;
-> > +		netdev_unlock_ops(slave_dev);
-> > +
-> > +		return ret;
-> 
-> Is it okay to nit pick? Since you have a temp now it's cleaner to move
-> the ternary operator later, avoid the line break:
-> 
-> 		netdev_lock_ops(slave_dev);
-> 		ret = slave_dev->ethtool_ops->get_link(slave_dev);
-> 		netdev_unlock_ops(slave_dev);
-> 
-> 		return ret ? BMSR_LSTATUS : 0;
+The Arm cpu.yaml schema fails to restrict allowed properties in 'cpu' 
+nodes. The result, not surprisely, is a number of additional properties 
+and errors in .dts files. This series resolves those issues.
 
-Nits are always welcome :-) Will repost shortly..
+There's still more properties in arm32 DTS files which I have not 
+documented. Mostly yet more supply names and "fsl,soc-operating-points". 
+What's a few more warnings on the 10000s of warnings...
+
+The .dts files can be taken by the respective SoC maintainers. I will 
+take the binding changes.
+
+---
+v2:
+ - Drop applied "arm64: dts: morello: Fix-up cache nodes"
+ - Rework enable-method schema
+ - Drop "arm: dts: qcom: msm8916: Move "qcom,acc" and "qcom,saw" to 32-bit .dtsi"
+ - Keep qcom,saw and qcom,acc properties on msm8939
+ - Fix qcom,saw2.yaml example
+ - Fix power-domain-names to be "perf" on qcom sdx55/65
+
+Link to v1: 
+https://lore.kernel.org/all/20250403-dt-cpu-schema-v1-0-076be7171a85@kernel.org/
+
+Signed-off-by: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+To: Samuel Holland <samuel@sholland.org>
+To: Conor Dooley <conor@kernel.org>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: Steen Hegelund <Steen.Hegelund@microchip.com>
+To: Daniel Machon <daniel.machon@microchip.com>
+To: UNGLinuxDriver@microchip.com
+To: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+To: Shawn Guo <shawnguo@kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+To: Pengutronix Kernel Team <kernel@pengutronix.de>
+To: Fabio Estevam <festevam@gmail.com>
+To: Heiko Stuebner <heiko@sntech.de>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+To: Kevin Hilman <khilman@baylibre.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Magnus Damm <magnus.damm@gmail.com>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Andy Gross <agross@kernel.org>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Viresh Kumar <vireshk@kernel.org>
+To: Nishanth Menon <nm@ti.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: zhouyanjie@wanyeetech.com
+To: Matthias Brugger <matthias.bgg@gmail.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> 
+To: Stephan Gerhold <stephan.gerhold@linaro.org> 
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-sunxi@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: imx@lists.linux.dev
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-amlogic@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-mediatek@lists.infradead.org
+
+---
+Rob Herring (Arm) (17):
+      arm64: dts: allwinner: h5/h6: Drop spurious 'clock-latency-ns' properties
+      arm64: dts: broadcom: bcm2712: Use "l2-cache" for L2 cache node names
+      arm64: dts: microchip: sparx5: Fix CPU node "enable-method" property dependencies
+      arm64: dts: qcom: qdu1000: Fix qcom,freq-domain
+      arm64: dts: qcom: msm8939: Fix CPU node "enable-method" property dependencies
+      arm64: dts: qcom: msm8992-lg-h815: Fix CPU node "enable-method" property dependencies
+      arm: dts: qcom: sdx55/sdx65: Fix CPU power-domain-names
+      arm/arm64: dts: imx: Drop redundant CPU "clock-latency"
+      arm: dts: qcom: ipq4019: Drop redundant CPU "clock-latency"
+      arm: dts: rockchip: Drop redundant CPU "clock-latency"
+      arm64: dts: amlogic: Drop redundant CPU "clock-latency"
+      dt-bindings: arm/cpus: Add schemas for "enable-method" dependencies
+      dt-bindings: arm/cpus: Re-wrap 'description' entries
+      dt-bindings: Reference opp-v1 schema in CPU schemas
+      dt-bindings: arm/cpus: Add missing properties
+      dt-bindings: arm/cpus: Add power-domains constraints
+      dt-bindings: cpufreq: Drop redundant Mediatek binding
+
+ Documentation/devicetree/bindings/arm/cpus.yaml    | 229 +++++++++++--------
+ .../bindings/cpufreq/cpufreq-mediatek.txt          | 250 ---------------------
+ Documentation/devicetree/bindings/mips/cpus.yaml   |   3 +-
+ Documentation/devicetree/bindings/opp/opp-v1.yaml  |  18 +-
+ .../devicetree/bindings/soc/qcom/qcom,saw2.yaml    |   3 +-
+ arch/arm/boot/dts/nxp/imx/imx7s.dtsi               |   1 -
+ arch/arm/boot/dts/qcom/qcom-ipq4019.dtsi           |   4 -
+ arch/arm/boot/dts/qcom/qcom-sdx55.dtsi             |   2 +-
+ arch/arm/boot/dts/qcom/qcom-sdx65.dtsi             |   2 +-
+ arch/arm/boot/dts/rockchip/rk3128.dtsi             |   8 +-
+ arch/arm/boot/dts/rockchip/rk3188.dtsi             |   1 -
+ arch/arm/boot/dts/rockchip/rk322x.dtsi             |   1 -
+ arch/arm/boot/dts/rockchip/rk3288.dtsi             |   5 +-
+ arch/arm/boot/dts/rockchip/rv1108.dtsi             |   1 -
+ arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       |   4 -
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi       |   4 -
+ arch/arm64/boot/dts/amlogic/meson-g12a-fbx8am.dts  |   4 -
+ .../boot/dts/amlogic/meson-g12a-radxa-zero.dts     |   4 -
+ arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts  |   4 -
+ arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts    |   4 -
+ arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts |   4 -
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi        |   1 +
+ .../dts/amlogic/meson-g12b-a311d-libretech-cc.dts  |   6 -
+ arch/arm64/boot/dts/amlogic/meson-g12b-a311d.dtsi  |   2 +
+ .../boot/dts/amlogic/meson-g12b-bananapi-cm4.dtsi  |   6 -
+ .../boot/dts/amlogic/meson-g12b-bananapi.dtsi      |   6 -
+ .../boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi   |   6 -
+ .../dts/amlogic/meson-g12b-odroid-go-ultra.dts     |   6 -
+ arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi |   6 -
+ .../boot/dts/amlogic/meson-g12b-radxa-zero2.dts    |   6 -
+ arch/arm64/boot/dts/amlogic/meson-g12b-s922x.dtsi  |   2 +
+ arch/arm64/boot/dts/amlogic/meson-g12b-w400.dtsi   |   6 -
+ arch/arm64/boot/dts/amlogic/meson-sm1-ac2xx.dtsi   |   4 -
+ .../arm64/boot/dts/amlogic/meson-sm1-bananapi.dtsi |   4 -
+ .../boot/dts/amlogic/meson-sm1-khadas-vim3l.dts    |   4 -
+ arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi  |   4 -
+ .../dts/amlogic/meson-sm1-s905d3-libretech-cc.dts  |   4 -
+ arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts   |   4 -
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi         |   1 +
+ arch/arm64/boot/dts/broadcom/bcm2712.dtsi          |   8 +-
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi          |   4 -
+ arch/arm64/boot/dts/freescale/imx8mn.dtsi          |   4 -
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi          |   4 -
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi          |   4 -
+ .../boot/dts/microchip/sparx5_pcb_common.dtsi      |   2 +
+ arch/arm64/boot/dts/qcom/msm8939.dtsi              |   8 +
+ arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts       |   6 +
+ arch/arm64/boot/dts/qcom/qdu1000.dtsi              |   8 +-
+ 48 files changed, 202 insertions(+), 480 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250403-dt-cpu-schema-48e66c7f6a90
+
+Best regards,
+-- 
+Rob Herring (Arm) <robh@kernel.org>
+
 
