@@ -1,132 +1,110 @@
-Return-Path: <linux-kernel+bounces-598754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CFD2A84AA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:05:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCCCAA84ACB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 836A97B5252
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:04:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BC6E4C829A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB25B1EF397;
-	Thu, 10 Apr 2025 17:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411E31F09BC;
+	Thu, 10 Apr 2025 17:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d16KlI5L"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="YhVO7C0V"
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE5C1EE00B;
-	Thu, 10 Apr 2025 17:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CE91F098E;
+	Thu, 10 Apr 2025 17:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744304734; cv=none; b=t/CdM0YsW5uuvAB18CbUf3HZB4Y54NVEQ2acNBUwS56yvft15JIiMblBcbZegATbUSkyrObu0jmTi80YXDY8+ylUJ++kg8QCG+0/DTdjtCbLYoWtjOsvd68dAGINLyYLHHVAZ4Lspy8faVf3FWpHSsM0Pft9w5JFtRtSkWB9JmQ=
+	t=1744305316; cv=none; b=q8SpQWrIr8Panl0/du2eSoLj/2AJb71KC195tBnJHvLn4S9jAT4NkPW2xSqKC8Kg7FPN2K5Y20sKqZSgq6QvVCLtiu/VEcAKAjuVYtre9lRz6h66yA1+Y6lypVN1hDNPBomsLVSQEq49KxQbBIuGuWZCo/4hnYevu2VGGZrom+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744304734; c=relaxed/simple;
-	bh=UKqAD+1b+uYTBCaerg8T4ADYWz9oQCPjqRNvCJOF7kE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mfS7+Lg8oSPHujQ07BfMU4sgAN72pZbNhZ30pBj3RlWHlgMu1dBn681T5a6KWIiZQbiupzcFIKKhFZKcb3XG00fmo7FPFYT6N4+kEa7uiV6OiKY19yBmCxjsTEt1pr+bHjy9V/ZE/n8peI6yMs+pXSIiV0cLtD6u145yW+LuNMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d16KlI5L; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-224341bbc1dso10567805ad.3;
-        Thu, 10 Apr 2025 10:05:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744304732; x=1744909532; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F3NYJscvaaIgL0Codhfj0KoDXXxj/ASiWbyMHaHDh8Y=;
-        b=d16KlI5Lo3QUAnGy7he0FHpSdM1xAWmaKu5OPsV0TevjdItgDxEZLJR0w8b6JS50wd
-         Wo4MwXRwZCdJOJtcz9B8OkiJtfJPlIKLQyylTPlHk4MPV9bUVYzCoiCFiPMuQpknI81T
-         NGAL59M5rAxNFjj/+OjZlf80vzW41pcIu8BmMpc35NjSGLdPCUxTZ8vpHb3b1YQqdk0F
-         kDXqu1IiaPjl04VJ+TF+JaxfgoHwxT2IfqIw/AMhCsWaG9/FNaoAxR+/xGnDxSLc35aQ
-         tohOwkyOM5rp9AABp8B+BcsG4y3MbLTP9jfpHUWDXgIsNXL8IzXSXvnzAk0S+mO7YMx+
-         aO2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744304732; x=1744909532;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F3NYJscvaaIgL0Codhfj0KoDXXxj/ASiWbyMHaHDh8Y=;
-        b=d3cVkQAS5o86GJTwYdMpovAxW8qwo3No2vgSNuIoyMtNgZR5Ijuw3PfKWsgJsvQkYm
-         77TO+44HkErKqXOY/ybfX8Bh6yih/tjeKx7xMm1CuysQyLanBWWbTADa0Vucmr2GIpaB
-         He5h7QQYCov2F9BAcbCLmDcy48yOh+ld+lQ8h1+XpysITa6uJbx+YaVUz3RI1UfWjgCH
-         BBvpjd7fszlglySrWIApfennX2ispQUHQO05xGzD+3C/SckSRURLnGBzmz70xkrFWiD6
-         mhmQrohRtiFWCqpp2g9i6DQ3rW3U2bShRF9lwrSe9YSGr7qwLQC//QVruzKMsLB/GsSj
-         lrGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEEWGtlLsYKz2eWKtKOETjk0i+zK2a6OtQsmQDhXtFvFkma8H1ZPuY+q0D9HM3tJU0RzenmVW1kBVmvRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjfWKSS3OxuTRVMfS61VQBU0OrGYtvIHWMHYc2PoxxQE6t4LHb
-	m+0jNyNVtm75SrEJGO6/KtVx93biW9Rkz2fwVVZfGGT6SJ3AxMxS
-X-Gm-Gg: ASbGncv77cIbp3CmaAdVD9wKzflwCcd6fnpIdCqgPkk0xzCQT5Fnpnfcp1nfLyiHD2d
-	Kk7uPVdDG4/1WeU4ftVf1/hEfwIrfE0C73I4n/aGQ5RuZdCm1smKJZ7YyuyyqVF8ZOcmEFWo1Ly
-	GF41OamEyolcTMY/rnTNfyMzV5Nm0YlzAZBOo5TDq8LTITwTsvYZZ6Y4yaj1Pa+8D4nqYjYtWf/
-	kbj+aCKb3qgaZ3BIuc31ZfL/QobOSueDxhFiJXGsF2wSlghT7LKfxDiRHC8E7tbeg11SiFK06UT
-	KG3Fz9T/v6rEY809EEox6/6R5UbAQrWBsxbn87sVSeY2hBTfRPak6uveiDCvK7Icd545XE8YStQ
-	=
-X-Google-Smtp-Source: AGHT+IGIgfnN+QEBNVAOETkhxfzYmuEyHXqTT8hN1gKBhfJ4DlciiBtFoaPj/ha5jHspXs3TjUWvMQ==
-X-Received: by 2002:a17:902:e743:b0:220:c066:94eb with SMTP id d9443c01a7336-22b2ede9536mr48603165ad.25.1744304731978;
-        Thu, 10 Apr 2025 10:05:31 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:4080:204:a537:70f5:9c3d:61d0:62b9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7c95cc6sm33106735ad.122.2025.04.10.10.05.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 10:05:31 -0700 (PDT)
-From: Purva Yeshi <purvayeshi550@gmail.com>
-To: lars@metafoo.de,
-	Michael.Hennerich@analog.com,
-	jic23@kernel.org
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Purva Yeshi <purvayeshi550@gmail.com>
-Subject: [PATCH v2] iio: adc: ad_sigma_delta: Fix use of uninitialized status_pos
-Date: Thu, 10 Apr 2025 22:34:08 +0530
-Message-Id: <20250410170408.8585-1-purvayeshi550@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744305316; c=relaxed/simple;
+	bh=5ALi35vEit4jVHRzo8LeambbTx8yrl8l/InF5c4WZFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EJpbnLiBzHeJUlhAf4bnLmUQQIAJ0+zS+Q+yw0BJ1ZXpgl87fjGACQYIckXOFT9DdHOMO5HG4y1SiyqKmm4Y7IG7xePxYUL2jAxZjUUD5Ci1rXSA7V05LFGaBTFhgqnY8PD2IcgLwkm+KmgrgN7pRzC++7y3NF33sRQrqjFFYPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=YhVO7C0V; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZYR5N2RkVzRrv;
+	Thu, 10 Apr 2025 19:05:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1744304712;
+	bh=99/RXn0MLXP28oZE7oH//4zXPYGjhypiJ2KEDAnW5jY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YhVO7C0VCVvGv88HbYg1tzpR68jC1nUpEH4nZu9RLIEdBnfWuR31wMGRNxygWgat4
+	 521h/Iqu0TWwGaapfFXgJiNZU9W9F+5fTN0LmIcreCktxLw4Za9Ioq/a8kv5C6Owyc
+	 LqfdaNEhYLjB63V/PuQNZzBabLv92RIpOgmvON5k=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZYR5L4hcJz8vc;
+	Thu, 10 Apr 2025 19:05:10 +0200 (CEST)
+Date: Thu, 10 Apr 2025 19:05:09 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: WangYuli <wangyuli@uniontech.com>, gnoack@google.com, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, kees@kernel.org, 
+	masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu, 
+	linux-security-module@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [Bug Report] A compilation failure occurs when landlock and
+ RANDSTRUCT are combined with GCC 14.2.0.
+Message-ID: <20250410.Ahkoo7ihae8a@digikod.net>
+References: <337D5D4887277B27+3c677db3-a8b9-47f0-93a4-7809355f1381@uniontech.com>
+ <20250410.926dbc57c00b@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250410.926dbc57c00b@gnoack.org>
+X-Infomaniak-Routing: alpha
 
-Fix Smatch-detected issue:
-drivers/iio/adc/ad_sigma_delta.c:604 ad_sd_trigger_handler() error:
-uninitialized symbol 'status_pos'.
+On Thu, Apr 10, 2025 at 05:33:21PM +0200, Günther Noack wrote:
+> Hello!
+> 
+> On Thu, Apr 10, 2025 at 04:11:15PM +0800, WangYuli wrote:
+> > [ Compilation failure log: ]
+> > 
+> > *** WARNING *** there are active plugins, do not report this as a bug unless
+> > you can reproduce it without enabling an
+> > y plugins.
+> > Event                            | Plugins
+> > PLUGIN_FINISH_TYPE               | randomize_layout_plugin
+> > PLUGIN_FINISH_DECL               | randomize_layout_plugin
+> > PLUGIN_ATTRIBUTES                | latent_entropy_plugin
+> > randomize_layout_plugin
+> > PLUGIN_START_UNIT                | latent_entropy_plugin stackleak_plugin
+> > PLUGIN_ALL_IPA_PASSES_START      | randomize_layout_plugin
+> > security/landlock/fs.c:In function ‘hook_file_ioctl_common’:
+> > security/landlock/fs.c:1745:61:internal compiler error: in
+> > count_type_elements, at expr.cc:7075
+> > 1745 |                         .u.op = &(struct lsm_ioctlop_audit) {
+> >      |                                                             ^
+> > 0x7f27fa6bdca7 __libc_start_call_main
+> >        ../sysdeps/nptl/libc_start_call_main.h:58
+> > 0x7f27fa6bdd64 __libc_start_main_impl
+> >        ../csu/libc-start.c:360
+> > Please submit a full bug report, with preprocessed source (by using
+> > -freport-bug).
+> > Please include the complete backtrace with any bug report.
+> > See <file:///usr/share/doc/gcc-14/README.Bugs> for instructions.
+> > make[4]: *** [scripts/Makefile.build:203: security/landlock/fs.o] Error 1
+> > make[3]: *** [scripts/Makefile.build:461: security/landlock] Error 2
+> > make[2]: *** [scripts/Makefile.build:461: security] Error 2
+> 
+> Thank you for the report!
+> 
+> This is in my understanding a duplicate of the discussion in
+> https://lore.kernel.org/all/20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org/
 
-The variable `status_pos` was only initialized in specific switch cases
-(1, 2, 3, 4), which could leave it uninitialized if `reg_size` had an
-unexpected value.
-
-Fix by adding a default case to the switch block to catch unexpected
-values of `reg_size`. Use `dev_err_ratelimited()` for error logging and
-`goto irq_handled` instead of returning early.
-
-Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
----
-V1 - https://lore.kernel.org/all/20250409200151.201327-1-purvayeshi550@gmail.com/
-V2 - Moved the reg_size validation inside the switch statement using a default case,
-replaced dev_err() with dev_err_ratelimited(), and replaced return IRQ_HANDLED
-with goto irq_handled;
-
- drivers/iio/adc/ad_sigma_delta.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/iio/adc/ad_sigma_delta.c b/drivers/iio/adc/ad_sigma_delta.c
-index 6c37f8e21120..4c5f8d29a559 100644
---- a/drivers/iio/adc/ad_sigma_delta.c
-+++ b/drivers/iio/adc/ad_sigma_delta.c
-@@ -587,6 +587,10 @@ static irqreturn_t ad_sd_trigger_handler(int irq, void *p)
- 		 * byte set to zero. */
- 		ad_sd_read_reg_raw(sigma_delta, data_reg, transfer_size, &data[1]);
- 		break;
-+
-+	default:
-+		dev_err_ratelimited(&indio_dev->dev, "Unsupported reg_size: %u\n", reg_size);
-+		goto irq_handled;
- 	}
- 
- 	/*
--- 
-2.34.1
-
+Yes, a new patch has been submitted:
+https://lore.kernel.org/all/20250409151154.work.872-kees@kernel.org/
 
