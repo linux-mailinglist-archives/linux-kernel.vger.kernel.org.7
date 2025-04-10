@@ -1,93 +1,233 @@
-Return-Path: <linux-kernel+bounces-597692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4983A83D4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:42:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4391A83D58
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFB947AAD2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:41:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CC2E1B82BBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C6C20C013;
-	Thu, 10 Apr 2025 08:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311F620D4FC;
+	Thu, 10 Apr 2025 08:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N3Ua8kfb"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K04/Cnv6"
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046E81EEA4B;
-	Thu, 10 Apr 2025 08:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25AE20C48B
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 08:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744274527; cv=none; b=a+EehgqNkTprEZe/EXMbodEbSwCudPuBwU9Ru0D+DhJVyJqCnRC8nYJtfRukL15zUxxUfbEahQljpXJP3+IeMrbKFNJx0LpbGLQSpnehP8eofBqdpNXX+6tUptwq1gT3GGqeYCfab4jtC8FTp/yN5/EWVQRfDHrPtbRLg+D+VTM=
+	t=1744274531; cv=none; b=PXbri68SnqmhVUU5KpBL/kJMP/P2N6hslgWygoaPN7KQg2zUU777oSIuQcFRNSBWQ/y+3ZCHhVhuqe1obxRftAiGxWAJ8m0eH8bykwLngh4KP/fwBnpTaiZhUPCCZBxLnCY3v6rIQd8A8ZF0yb7KyYlSZhhuubFAPR5XUsK80Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744274527; c=relaxed/simple;
-	bh=SjAHW1JL4xXBOApUK8nyaVu/Fsbko8w9kF/YjYqDoqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjNA+q9It/Z5zk+zIfEhFBKxJaxEokzZL2aB/BYWU5Ci1mSs/f7IXFd4uJc4xs+yMMvdo7jDRhWz/2D09yw0Lk4QVLpGQw3RIb91+OxGgRa7kbkoffBxz6uHK9KVnvdLN7k93stXGPKx2MgI/aFcu/5lCzjOSLg7lQl8ebPEoeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N3Ua8kfb; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CdU/+uF+1QwwmbOg7lgLdyQsB2ocHXgyQIfpYxGq9qI=; b=N3Ua8kfbKXQSsTiia3Fjjx8Se+
-	KvkXrtS7Yyu+JaDA+9J0jEqnfBSpI/VZGPeVPzX3rw3RUrNXjz8hu87tGc+Jzuah1GTKfd+n8AD+S
-	oNzYZWySn1r65SV+spNsSSDSnqRrrBnFKsdOGHIZOWn4nlZx/ucoOSYOOokHwpROZJ9nRT6SXiM75
-	m0cXSqASn9T9rvU8TB5N+V1uDPZpRwUcnBZ15CXIB3mjmOZwWIPwT8eB12zsKIFrJ0QcrSDTE33Xc
-	RDo2Ic/27KAibhFQWRofsYT1msrs5vtYVppIU6sCYeSNHdsg6wZKSawW94fASdAs3kRyH9mcEoNY9
-	g98HLiTA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u2nTu-00000009mmb-06hM;
-	Thu, 10 Apr 2025 08:41:54 +0000
-Date: Thu, 10 Apr 2025 01:41:54 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Shivank Garg <shivankg@amd.com>
-Cc: seanjc@google.com, david@redhat.com, vbabka@suse.cz,
-	willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
-	pbonzini@redhat.com, ackerleytng@google.com, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
-	bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
-	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
-	michael.day@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
-	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com,
-	jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-coco@lists.linux.dev
-Subject: Re: [PATCH RFC v7 3/8] security: Export
- security_inode_init_security_anon for KVM guest_memfd
-Message-ID: <Z_eEUrkyq1NApL1U@infradead.org>
-References: <20250408112402.181574-1-shivankg@amd.com>
- <20250408112402.181574-4-shivankg@amd.com>
+	s=arc-20240116; t=1744274531; c=relaxed/simple;
+	bh=XG6NxBHDCU8e6wWhYpT5+1tNDUysPx2K/UBmryuS2Mo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l5lK42bpTIcUMXf49rjpK9VNAxRnLYbP6XFU6v0tMUSUiIb6XNnTWnjiT1Ai610ttwBc24eCK2fhGlBFvcHrKY5YvrWxTLo6Fl37vXC842y5zDvP/9JVOQRYOqbnPuDW0cRjqI+WAFH7MM6BXEtE9zDqeIYFZ9YOx7OVlY/vAg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K04/Cnv6; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-86feb84877aso208865241.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 01:42:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744274528; x=1744879328; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GyIfJr2KsQTHGuBJx3uboxs4QfrzCXTKIx86BPgvMt4=;
+        b=K04/Cnv66rM0VshZousHPTQtsbYKEbOQRJ+2Qp7awQl9sYpEJqdESDNgs2auz0dSIQ
+         2Ny9g4o2LRdIdVzjI5VrCDXukcBn+Wm0AU+M1mFHwxoI0EUKQ2AChikADyC9z8+wB+8O
+         lDeN7CCc/aXYFuZ+KPILcXIzDELnzEMjA2dbiVeYVXToMJ9tBZUh/9wJjzFCN39t7cPL
+         +l4LZb7OM1Mzm6kWU56oo833hZS8WKwfQT1w/orvooHf5WN0zzpWJUbRljSB5nMUxuYW
+         Cg9AibkKK7qUSEkkJMRF+r0M9qJsX+Jf0LNdBVtgcWlYLV/KNLM2Gw1t8lNE4nDunW2C
+         Xrrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744274528; x=1744879328;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GyIfJr2KsQTHGuBJx3uboxs4QfrzCXTKIx86BPgvMt4=;
+        b=CRJAu8eGzwernH7BR2kUy6WG0D1ClkrO5MZGg2zu/pAjXvlkTL4viHFJdjqiFykxTC
+         SsrziO8LkCELci6TKu36rzLgrQnVgH8ekiuls3gJUdpWvHT9ykMsvz2X7pPARstjYueR
+         UNbp2ndWQn7xqqalYqUkG56HisCOXbMs4+ZMgFCUxKJPvnTgtIj5j3cGHY1lQvzGJvDh
+         0H1IMcQU4ugTYcaMxP45z0efbUgBYRG+yNXbYPYhkz7CqJthOnd6hogbP9gskBW0bKFS
+         RhxNweXGqf2uLNhP0RDd6JGwN9dNssNCvN82B/3QprpP6y3YiGst6eJ+kHCch/VXvrrO
+         wWFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxqlcC0/HrBx6gPmERhDzhavJDUIhzqC+ztu8b2gKQxy4jnhcSCoyPcDIHga9y2pANYWonNlxJ3Lu6nYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkcaPsBMNcd9OBq3PFykyu2abvIgVTPFfIfNDpT/Zjx/uR7G6M
+	xTTmGd7GAd5TGUjL+l7lwX/V3V20sgyiASFW7+zcUZMRemhSuBiuv3rGd0odxaYo6hMcWak5LMi
+	wxTyAHpssuR3S7KifeR4vu3459zVHYKuNobs3yg==
+X-Gm-Gg: ASbGncuS/YEjZ+y3K/YqfsVc9l81RN8STr2R8f5Oswd2mvn37oxKasjy1FaRvuui98n
+	jUUbl8Z0onYdK5Wm7QpKVTKG3aYbpIKKoeVEnw5grYZlBxSJezFw2SHecV5uXPKW5tCaG84KdZs
+	JwvBFnPiIx4lFMG82cBhnYH2zigBhhFYslqnOUgyyQEHgNry92ev6FA9A=
+X-Google-Smtp-Source: AGHT+IGEyduE75Oa5qN4VHLm8M3R7hj/JMCUjzegckuIY/DQaVT3G91+oV6FvbCTJnJFb7i4ArsCyl/2lP0i82WbZ9M=
+X-Received: by 2002:a05:6102:3c87:b0:4c1:774b:3f7a with SMTP id
+ ada2fe7eead31-4c9d35c57a3mr1052484137.16.1744274528525; Thu, 10 Apr 2025
+ 01:42:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408112402.181574-4-shivankg@amd.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20250409115832.538646489@linuxfoundation.org>
+In-Reply-To: <20250409115832.538646489@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 10 Apr 2025 14:11:57 +0530
+X-Gm-Features: ATxdqUHVxWyVTy2Pevd2zCaKDuF7x7M_hIPZ-bHH-56kzLv0RETgWUsQbJV9hsY
+Message-ID: <CA+G9fYt+bq=20FNgxqTXnEcj0mScu1d20kCnyeoF7NS6LJEi=A@mail.gmail.com>
+Subject: Re: [PATCH 5.15 000/281] 5.15.180-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 08, 2025 at 11:23:57AM +0000, Shivank Garg wrote:
-> KVM guest_memfd is implementing its own inodes to store metadata for
-> backing memory using a custom filesystem. This requires the ability to
-> initialize anonymous inode using security_inode_init_security_anon().
-> 
-> As guest_memfd currently resides in the KVM module, we need to export this
-> symbol for use outside the core kernel. In the future, guest_memfd might be
-> moved to core-mm, at which point the symbols no longer would have to be
-> exported. When/if that happens is still unclear.
+On Wed, 9 Apr 2025 at 17:34, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.15.180 release.
+> There are 281 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 11 Apr 2025 11:58:00 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.15.180-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-This really should be a EXPORT_SYMBOL_GPL, if at all.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-But you really should look into a new interface in anon_inode.c that
-can be reused instead of duplicating anonymouns inode logic in kvm.ko.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
+## Build
+* kernel: 5.15.180-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 20340c8f4f00f2248a63d0a83fa118e2894a8439
+* git describe: v5.15.179-282-g20340c8f4f00
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15=
+.179-282-g20340c8f4f00
+
+## Test Regressions (compared to v5.15.179-280-g0b4857306c61)
+
+## Metric Regressions (compared to v5.15.179-280-g0b4857306c61)
+
+## Test Fixes (compared to v5.15.179-280-g0b4857306c61)
+
+## Metric Fixes (compared to v5.15.179-280-g0b4857306c61)
+
+## Test result summary
+total: 51458, pass: 36401, fail: 2669, skip: 11981, xfail: 407
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 102 total, 102 passed, 0 failed
+* arm64: 30 total, 30 passed, 0 failed
+* i386: 22 total, 20 passed, 2 failed
+* mips: 22 total, 22 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 22 total, 22 passed, 0 failed
+* riscv: 8 total, 8 passed, 0 failed
+* s390: 9 total, 9 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 26 total, 26 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
