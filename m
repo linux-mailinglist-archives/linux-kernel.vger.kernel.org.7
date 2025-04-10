@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-598604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06DEBA8481F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:37:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B55A84821
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B9159A1EBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:36:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46CE316C036
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2531E9B3D;
-	Thu, 10 Apr 2025 15:36:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42686189913
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 15:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823BE156C62;
+	Thu, 10 Apr 2025 15:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jVlypefq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860501E990B;
+	Thu, 10 Apr 2025 15:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744299412; cv=none; b=bQguRmdlHySnYUwdswq/dGtkRJSU4uF0cLUJ4MwbdnMgxq8gSoHLVkuOQtb2IRustGI6aznefXaxLstnf5rA3NeaVnDxfmyiBuqgqiMBpPukiDAijJbbBQK25THpgej5v5Hw2xgQkmBdLk/jlf6B9m2IhRIhAReWRub8GE4moLs=
+	t=1744299477; cv=none; b=ugMuYpO6v/ZOiBKF3SGWu0t4zfZCGMR+uErBeGgs6re7EF22wpLE4HJ//gCWrmDg8t4WrYvuHK8qyagY5YNvgcY1hoUZmB/M5Lauc0C0lcUB5+QWuKa4mkfrLK3osItTSewwEoB/lanL+X1XyMAp7ILZ4ICccHHLbKAADxpjiMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744299412; c=relaxed/simple;
-	bh=bp3La4tdd0Vqc2VOtE3pFy/CoWCPj24LH+gddU13Rjg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AglYssEM09VwSMXg0WyWbgLtzSJ+3sQy9nsIcA18B1+WctKuuZ+r2lEkmvnRTVuy2GLFQ+uB/jwnUlUyMKCi8niVAjyl1oSMXCIUk8LOk1URjHuSdGxTLyfO8J4PUdb383uqH4248MhotqjflNeDUbBak62vrpal+T5fGd2hhHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 795A0106F;
-	Thu, 10 Apr 2025 08:36:48 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E9EDB3F6A8;
-	Thu, 10 Apr 2025 08:36:46 -0700 (PDT)
-Message-ID: <5a277d1d-c7b1-430c-a463-1e307a2823f6@arm.com>
-Date: Thu, 10 Apr 2025 16:36:45 +0100
+	s=arc-20240116; t=1744299477; c=relaxed/simple;
+	bh=EMYuLPJWM6t/QbvZf7ywpIWpg26tA/P0uWIEh8ao1Cg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mje5N2Z/eLhG3P/3dESZ8KuBLpirHEHMtd9QBG6GY821OKIQljNHF1DLo3fGlPM3u+EkHadHO5NkJ9ZGno6U189sSCW+cSnp79x7hU6eLoiWIFYakTJoVReaFvZF5huZ4ST6vMjmL/x34W11DzZvw3Y4oEOTHd0379z92waR5Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jVlypefq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53A75cjs018370;
+	Thu, 10 Apr 2025 15:37:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	F1tK8A5KiVjnbhi2rhR7y0Y7Tn8k6euzMRCiQt761SM=; b=jVlypefqgYPtx6II
+	034IxYHAeRxNa0PI0ZzPGVkY+Z5GMBC6uX9dCSp9+JUjNLXyMkwsyVXJatAhdL4H
+	6Ul5vy+esWyw58+pjsSppb8h+YcGuV6jj3ZekjC9KB69gr/1LM/h/VhORECqf9/9
+	tIWVeUMP3eDmYSSUfTK0MYhF/DjLUqZlrv9JBvVZzIx1kqCuFebSGkp64+5+QCWU
+	XuWsW4DRUkUeIonJUFyQ/PbTqL8F1747UtiTx2rGu4jywxCCERAmRXBI/epzlT4O
+	xW+a7Oj1K5bSADR835Al1Sc3puogwhwvqAId8AOe+hJabY25SYMTxzStX/dtspW+
+	9wLWug==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twtb7h4b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Apr 2025 15:37:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53AFbh3q017023
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Apr 2025 15:37:43 GMT
+Received: from [10.218.7.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 10 Apr
+ 2025 08:37:40 -0700
+Message-ID: <124fb13c-c41a-42b0-a521-158876b1b00c@quicinc.com>
+Date: Thu, 10 Apr 2025 21:07:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,302 +64,268 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: arm64: juno-r2: SSD detect failed on mainline and next
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, iommu@lists.linux.dev,
- open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
- Linux Regressions <regressions@lists.linux.dev>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>,
- Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Anders Roxell <anders.roxell@linaro.org>
-References: <CA+G9fYt0F_vR-zOV4P8m4HTv6AecT-eEnrL+t5wgAaKPodi0mQ@mail.gmail.com>
- <6e0ef5cc-b692-4d39-bec4-a75c1af3f0aa@arm.com>
- <CA+G9fYs_nUN2x8fFJ0cfudHWbCOLSJK=OhEK0Efd1ifcjq_LRg@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <CA+G9fYs_nUN2x8fFJ0cfudHWbCOLSJK=OhEK0Efd1ifcjq_LRg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH V2 3/6] phy: qcom-qmp-ufs: Refactor UFS PHY reset
+To: Bjorn Andersson <andersson@kernel.org>
+CC: <vkoul@kernel.org>, <kishon@kernel.org>,
+        <manivannan.sadhasivam@linaro.org>,
+        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+        <konrad.dybcio@oss.qualcomm.com>, <quic_rdwivedi@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
+References: <20250318144944.19749-1-quic_nitirawa@quicinc.com>
+ <20250318144944.19749-4-quic_nitirawa@quicinc.com>
+ <w3si5lpps5nzpyxjulxynl3fxwobtbnfsqwau6et5s2pkgehub@vcmkdaevbf5w>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <w3si5lpps5nzpyxjulxynl3fxwobtbnfsqwau6et5s2pkgehub@vcmkdaevbf5w>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cwJEHaUvcl9U1x2AlFUUBburphREsOXj
+X-Authority-Analysis: v=2.4 cv=LLlmQIW9 c=1 sm=1 tr=0 ts=67f7e5c8 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=WIYHiBWYbOpNOST8Gw0A:9
+ a=QEXdDO2ut3YA:10 a=-_B0kFfA75AA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: cwJEHaUvcl9U1x2AlFUUBburphREsOXj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-10_04,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ clxscore=1015 mlxlogscore=999 malwarescore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 spamscore=0 adultscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504100113
 
-On 09/04/2025 4:56 pm, Naresh Kamboju wrote:
-> On Wed, 2 Apr 2025 at 21:04, Robin Murphy <robin.murphy@arm.com> wrote:
->>
->> On 31/03/2025 5:03 am, Naresh Kamboju wrote:
->>> Regressions on arm64 Juno-r2 devices detect SSD tests failed on the
->>> Linux next and Linux mainline.
->>>
->>> First seen on the v6.14-7245-g5c2a430e8599
->>>    Good: v6.14
->>>    Bad: v6.14-7422-gacb4f33713b9
->>
->> Sorry, I can't seem to reproduce this on my end, both today's mainline
->> and acb4f33713b9 with my config, and even acb4f33713b9 with the linked
->> LKFT config, all work OK on my Juno r2 (using a SATA SSD and PCIe
->> networking). The only thing which stands out in your log is that PCI
->> seems to give up probing and assigning resources beyond the switch
->> downstream ports (so SATA and ethernet are never discovered), whereas on
->> mine it does[2]. However that all happens before the first IOMMU
->> instance probes (which conveniently is the PCIe one), so it's hard to
->> imagine how that could have an effect anyway...
->>
->> The only obvious difference is that I'm using EDK2 rather than U-Boot,
->> so that's done all the PCIe configuration once already, but it doesn't
->> seem like that's significant - looking back at a random older log[1],
->> the on-board endpoints were still being picked up right after
->> reconfiguring the switch, well before the IOMMU comes into the picture.
->>
-> 
-> Since it is a still issue on mainline and next,
-> 
-> Bisected and reverted patch ^ causing kernel warnings at boot time
-> but finding the SSD drive,
-> 
->    [bcb81ac6ae3c2ef95b44e7b54c3c9522364a245c]
->    iommu: Get DT/ACPI parsing into the proper probe path
-> 
-> pcieport 0000:00:00.0: late IOMMU probe at driver bind, something fishy here!
-> WARNING: at drivers/iommu/iommu.c:559 __iommu_probe_device
-> 
-> I see boot warnings [1]
-> I am happy to test debug patches if you have any.
 
-Seeing the warning after reverting the commit which introduced the 
-warning mostly just means the conflict resolution in the revert wasn't 
-right (there were some subsequent fixups...)
 
-Anyway, I have now managed to get my Juno booting with the same antique 
-version of U-Boot and finally reproduce the issue. It seems to be 
-somehow connected to bus->dma_configure() being called in the 
-device_add() notifier (even though the rest of the IOMMU setup doesn't 
-run at that point since the driver hasn't registered yet), but how and 
-why that prevents the buses behind the switch downstream ports being 
-probed, and why *that* only happens when the switch isn't already 
-configured, remains a mystery so far. I'm still digging...
+On 3/19/2025 1:16 AM, Bjorn Andersson wrote:
+> On Tue, Mar 18, 2025 at 08:19:41PM +0530, Nitin Rawat wrote:
+>> Refactor the UFS PHY reset handling to parse the reset logic only once
+>> during probe, instead of every resume.
+>>
+> 
+> This looks very reasonable! But it would be preferred to see the commit
+> messages following the what format outlines in
+> https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+> with a clear problem description followed by a description of the
+> technical solution.
+> 
+>> Move the UFS PHY reset parsing logic from qmp_phy_power_on to
+>> qmp_ufs_probe to avoid unnecessary parsing during resume.
+> 
+> Please add ()-suffix to function names in your commit messages.
+> 
+> Also, this series moves things around a lot, can you confirm that UFS is
+> working inbetween each one of this patches, so that the branch is
+> bisectable when this is being picked up?
+
+Hi Bjorn,
+
+Thanks for the review. I've addressed the bisectability compliance in my 
+latest patch set (patchset #3) that I posted today. I just realized I 
+missed your other comments about adding the ()-suffix to function names 
+in commit messages. Sorry about that. I'll make sure to include this in 
+my next patch set.
 
 Thanks,
-Robin.
+Nitin
+
 
 > 
-> [1] https://lkft.validation.linaro.org/scheduler/job/8212667#L1291
+>>
+>> Co-developed-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+>> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+>> ---
+>>   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 104 ++++++++++++------------
+>>   1 file changed, 50 insertions(+), 54 deletions(-)
+>>
+>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+>> index 0089ee80f852..3a80c2c110d2 100644
+>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+>> @@ -1757,32 +1757,6 @@ static void qmp_ufs_init_registers(struct qmp_ufs *qmp, const struct qmp_phy_cfg
+>>   	qmp_ufs_init_all(qmp, &cfg->tbls_hs_b);
+>>   }
+>>
+>> -static int qmp_ufs_com_init(struct qmp_ufs *qmp)
+>> -{
+>> -	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> -	void __iomem *pcs = qmp->pcs;
+>> -	int ret;
+>> -
+>> -	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
+>> -	if (ret) {
+>> -		dev_err(qmp->dev, "failed to enable regulators, err=%d\n", ret);
+>> -		return ret;
+>> -	}
+>> -
+>> -	ret = clk_bulk_prepare_enable(qmp->num_clks, qmp->clks);
+>> -	if (ret)
+>> -		goto err_disable_regulators;
+>> -
+>> -	qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL], SW_PWRDN);
+>> -
+>> -	return 0;
+>> -
+>> -err_disable_regulators:
+>> -	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
+>> -
+>> -	return ret;
+>> -}
+>> -
+>>   static int qmp_ufs_com_exit(struct qmp_ufs *qmp)
+>>   {
+>>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> @@ -1800,41 +1774,27 @@ static int qmp_ufs_power_on(struct phy *phy)
+>>   {
+>>   	struct qmp_ufs *qmp = phy_get_drvdata(phy);
+>>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> +	void __iomem *pcs = qmp->pcs;
 > 
-> - Naresh
+> This is only used once, perhaps not worth a local variable to save 5
+> characters on that line?
 > 
->> Thanks,
->> Robin.
+>>   	int ret;
+>> -	dev_vdbg(qmp->dev, "Initializing QMP phy\n");
+>> -
+>> -	if (cfg->no_pcs_sw_reset) {
+>> -		/*
+>> -		 * Get UFS reset, which is delayed until now to avoid a
+>> -		 * circular dependency where UFS needs its PHY, but the PHY
+>> -		 * needs this UFS reset.
+>> -		 */
+>> -		if (!qmp->ufs_reset) {
+>> -			qmp->ufs_reset =
+>> -				devm_reset_control_get_exclusive(qmp->dev,
+>> -								 "ufsphy");
+>> -
+>> -			if (IS_ERR(qmp->ufs_reset)) {
+>> -				ret = PTR_ERR(qmp->ufs_reset);
+>> -				dev_err(qmp->dev,
+>> -					"failed to get UFS reset: %d\n",
+>> -					ret);
+>> -
+>> -				qmp->ufs_reset = NULL;
+>> -				return ret;
+>> -			}
+>> -		}
+>>
+>> -		ret = reset_control_assert(qmp->ufs_reset);
+>> -		if (ret)
+>> -			return ret;
+>> +	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
+>> +	if (ret) {
+>> +		dev_err(qmp->dev, "failed to enable regulators, err=%d\n", ret);
+> 
+> regulator_bulk_enable() will already have printed a more useful error
+> message, letting you know which of the vregs[] it was that failed to
+> enable.
+> 
+>> +		return ret;
+>>   	}
+>>
+>> -	ret = qmp_ufs_com_init(qmp);
+>> +	ret = clk_bulk_prepare_enable(qmp->num_clks, qmp->clks);
+>>   	if (ret)
+>> -		return ret;
+>> +		goto err_disable_regulators;
+>> +
+>> +	qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL], SW_PWRDN);
+>>
+>>   	return 0;
+>> +
+>> +err_disable_regulators:
+>> +	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
+>> +
+>> +	return ret;
+>>   }
+>>
+>>   static int qmp_ufs_phy_calibrate(struct phy *phy)
+>> @@ -1846,6 +1806,10 @@ static int qmp_ufs_phy_calibrate(struct phy *phy)
+>>   	unsigned int val;
+>>   	int ret;
+>>
+>> +	ret = reset_control_assert(qmp->ufs_reset);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>>   	qmp_ufs_init_registers(qmp, cfg);
+>>
+>>   	ret = reset_control_deassert(qmp->ufs_reset);
+>> @@ -2088,6 +2052,34 @@ static int qmp_ufs_parse_dt(struct qmp_ufs *qmp)
+>>   	return 0;
+>>   }
+>>
+>> +static int qmp_ufs_get_phy_reset(struct qmp_ufs *qmp)
+>> +{
+>> +	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> +	int ret;
+>> +
+>> +	if (!cfg->no_pcs_sw_reset)
+>> +		return 0;
+>> +
+>> +	/*
+>> +	 * Get UFS reset, which is delayed until now to avoid a
+>> +	 * circular dependency where UFS needs its PHY, but the PHY
+>> +	 * needs this UFS reset.
+> 
+> This is invoked only once, from qcom_ufs_probe(), so it doesn't seem
+> accurate anymore. How come this is no longer needed? Please describe
+> what changed int he commit message.
+> 
+>> +	 */
+>> +	if (!qmp->ufs_reset) {
+>> +		qmp->ufs_reset =
+>> +		devm_reset_control_get_exclusive(qmp->dev, "ufsphy");
+> 
+> The line break here is really weird, are you sure checkpatch --strict
+> didn't complain about this one?
+> 
+>> +
+>> +		if (IS_ERR(qmp->ufs_reset)) {
+>> +			ret = PTR_ERR(qmp->ufs_reset);
+>> +			dev_err(qmp->dev, "failed to get PHY reset: %d\n", ret);
+> 
+> return dev_err_probe(qmp->dev, PTR_ERR(qmp->ufs_reset), "failed to...: %pe\n", qmp->ufs_reset);
+> 
+> While being more succinct, it also stores the reason for failing the
+> probe so that you can find it in /sys/kernel/debug/devices_deferred
+> 
+>> +			qmp->ufs_reset = NULL;
+> 
+> Use a local variable if you're worried about someone accessing the stale
+> error code after returning here.
+> 
+> Regards,
+> Bjorn
+> 
+>> +			return ret;
+>> +		}
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int qmp_ufs_probe(struct platform_device *pdev)
+>>   {
+>>   	struct device *dev = &pdev->dev;
+>> @@ -2114,6 +2106,10 @@ static int qmp_ufs_probe(struct platform_device *pdev)
+>>   	if (ret)
+>>   		return ret;
+>>
+>> +	ret = qmp_ufs_get_phy_reset(qmp);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>>   	/* Check for legacy binding with child node. */
+>>   	np = of_get_next_available_child(dev->of_node, NULL);
+>>   	if (np) {
+>> --
+>> 2.48.1
 >>
 >>
->> [1] https://lkft.validation.linaro.org/scheduler/job/8143082#L1283
->> [2]:
->>
->> [    1.741362] pci-host-generic 40000000.pcie: host bridge
->> /pcie@40000000 ranges:
->> [    1.748682] pci-host-generic 40000000.pcie:       IO
->> 0x005f800000..0x005fffffff -> 0x0000000000
->> [    1.757465] pci-host-generic 40000000.pcie:      MEM
->> 0x0050000000..0x0057ffffff -> 0x0050000000
->> [    1.766224] pci-host-generic 40000000.pcie:      MEM
->> 0x4000000000..0x40ffffffff -> 0x4000000000
->> [    1.775019] pci-host-generic 40000000.pcie:   IB MEM
->> 0x0080000000..0x00ffffffff -> 0x0080000000
->> [    1.783781] pci-host-generic 40000000.pcie:   IB MEM
->> 0x0800000000..0x09ffffffff -> 0x0800000000
->> [    1.792615] pci-host-generic 40000000.pcie: ECAM at [mem
->> 0x40000000-0x4fffffff] for [bus 00-ff]
->> [    1.801559] pci-host-generic 40000000.pcie: PCI host bridge to bus
->> 0000:00
->> [    1.808485] pci_bus 0000:00: root bus resource [bus 00-ff]
->> [    1.814022] pci_bus 0000:00: root bus resource [io  0x0000-0x7fffff]
->> [    1.820408] pci_bus 0000:00: root bus resource [mem
->> 0x50000000-0x57ffffff]
->> [    1.827314] pci_bus 0000:00: root bus resource [mem
->> 0x4000000000-0x40ffffffff pref]
->> [    1.835050] pci 0000:00:00.0: [1556:1100] type 01 class 0x060400 PCIe
->> Root Port
->> [    1.842444] pci 0000:00:00.0: BAR 0 [mem 0x4000000000-0x4000003fff
->> 64bit pref]
->> [    1.849717] pci 0000:00:00.0: PCI bridge to [bus 01-08]
->> [    1.854990] pci 0000:00:00.0:   bridge window [io  0x0000-0x1fff]
->> [    1.861125] pci 0000:00:00.0:   bridge window [mem 0x50000000-0x501fffff]
->> [    1.868099] pci 0000:00:00.0: supports D1 D2
->> [    1.872393] pci 0000:00:00.0: PME# supported from D0 D1 D2 D3hot D3cold
->> [    1.881014] pci 0000:01:00.0: [111d:8090] type 01 class 0x060400 PCIe
->> Switch Upstream Port
->> [    1.889407] pci 0000:01:00.0: PCI bridge to [bus 02-08]
->> [    1.894675] pci 0000:01:00.0:   bridge window [io  0x0000-0x1fff]
->> [    1.900812] pci 0000:01:00.0:   bridge window [mem 0x50000000-0x501fffff]
->> [    1.907690] pci 0000:01:00.0: enabling Extended Tags
->> [    1.912876] pci 0000:01:00.0: PME# supported from D0 D3hot D3cold
->> [    1.924459] pci 0000:02:01.0: [111d:8090] type 01 class 0x060400 PCIe
->> Switch Downstream Port
->> [    1.933037] pci 0000:02:01.0: PCI bridge to [bus 03]
->> [    1.938045] pci 0000:02:01.0:   bridge window [io  0x1000-0x1fff]
->> [    1.944179] pci 0000:02:01.0:   bridge window [mem 0x50100000-0x501fffff]
->> [    1.951060] pci 0000:02:01.0: enabling Extended Tags
->> [    1.956298] pci 0000:02:01.0: PME# supported from D0 D3hot D3cold
->> [    1.963053] pci 0000:02:02.0: [111d:8090] type 01 class 0x060400 PCIe
->> Switch Downstream Port
->> [    1.971621] pci 0000:02:02.0: PCI bridge to [bus 04]
->> [    1.976698] pci 0000:02:02.0: enabling Extended Tags
->> [    1.981924] pci 0000:02:02.0: PME# supported from D0 D3hot D3cold
->> [    1.988682] pci 0000:02:03.0: [111d:8090] type 01 class 0x060400 PCIe
->> Switch Downstream Port
->> [    1.997272] pci 0000:02:03.0: PCI bridge to [bus 05]
->> [    2.002352] pci 0000:02:03.0: enabling Extended Tags
->> [    2.007578] pci 0000:02:03.0: PME# supported from D0 D3hot D3cold
->> [    2.014713] pci 0000:02:0c.0: [111d:8090] type 01 class 0x060400 PCIe
->> Switch Downstream Port
->> [    2.023303] pci 0000:02:0c.0: PCI bridge to [bus 06]
->> [    2.028396] pci 0000:02:0c.0: enabling Extended Tags
->> [    2.033643] pci 0000:02:0c.0: PME# supported from D0 D3hot D3cold
->> [    2.040569] pci 0000:02:10.0: [111d:8090] type 01 class 0x060400 PCIe
->> Switch Downstream Port
->> [    2.049131] pci 0000:02:10.0: PCI bridge to [bus 07]
->> [    2.054220] pci 0000:02:10.0: enabling Extended Tags
->> [    2.059439] pci 0000:02:10.0: PME# supported from D0 D3hot D3cold
->> [    2.066798] pci 0000:02:1f.0: [111d:8090] type 01 class 0x060400 PCIe
->> Switch Downstream Port
->> [    2.075368] pci 0000:02:1f.0: PCI bridge to [bus 08]
->> [    2.080377] pci 0000:02:1f.0:   bridge window [io  0x0000-0x0fff]
->> [    2.086507] pci 0000:02:1f.0:   bridge window [mem 0x50000000-0x500fffff]
->> [    2.093397] pci 0000:02:1f.0: enabling Extended Tags
->> [    2.098625] pci 0000:02:1f.0: PME# supported from D0 D3hot D3cold
->> [    2.105519] pci 0000:03:00.0: [1095:3132] type 00 class 0x018000 PCIe
->> Legacy Endpoint
->> [    2.113532] pci 0000:03:00.0: BAR 0 [mem 0x50104000-0x5010407f 64bit]
->> [    2.120020] pci 0000:03:00.0: BAR 2 [mem 0x50100000-0x50103fff 64bit]
->> [    2.126520] pci 0000:03:00.0: BAR 4 [io  0x1000-0x107f]
->> [    2.131794] pci 0000:03:00.0: ROM [mem 0xfff80000-0xffffffff pref]
->> [    2.138189] pci 0000:03:00.0: supports D1 D2
->> [    2.142965] pci 0000:03:00.0: disabling ASPM on pre-1.1 PCIe device.
->> You can enable it with 'pcie_aspm=force'
->> [    2.154011] pci 0000:08:00.0: [11ab:4380] type 00 class 0x020000 PCIe
->> Legacy Endpoint
->> [    2.162015] pci 0000:08:00.0: BAR 0 [mem 0x50000000-0x50003fff 64bit]
->> [    2.168492] pci 0000:08:00.0: BAR 2 [io  0x0000-0x00ff]
->> [    2.173941] pci 0000:08:00.0: supports D1 D2
->> [    2.178260] pci 0000:08:00.0: PME# supported from D0 D1 D2 D3hot D3cold
->> [    2.185740] pci 0000:00:00.0: bridge window [mem
->> 0x50000000-0x501fffff]: assigned
->> [    2.193266] pci 0000:00:00.0: BAR 0 [mem 0x4000000000-0x4000003fff
->> 64bit pref]: assigned
->> [    2.201411] pci 0000:00:00.0: bridge window [io  0x1000-0x2fff]: assigned
->> [    2.208235] pci 0000:01:00.0: bridge window [mem
->> 0x50000000-0x501fffff]: assigned
->> [    2.215754] pci 0000:01:00.0: bridge window [io  0x1000-0x2fff]: assigned
->> [    2.222580] pci 0000:02:01.0: bridge window [mem
->> 0x50000000-0x500fffff]: assigned
->> [    2.230120] pci 0000:02:1f.0: bridge window [mem
->> 0x50100000-0x501fffff]: assigned
->> [    2.237648] pci 0000:02:01.0: bridge window [io  0x1000-0x1fff]: assigned
->> [    2.244470] pci 0000:02:1f.0: bridge window [io  0x2000-0x2fff]: assigned
->> [    2.251313] pci 0000:03:00.0: ROM [mem 0x50000000-0x5007ffff pref]:
->> assigned
->> [    2.258399] pci 0000:03:00.0: BAR 2 [mem 0x50080000-0x50083fff
->> 64bit]: assigned
->> [    2.265769] pci 0000:03:00.0: BAR 0 [mem 0x50084000-0x5008407f
->> 64bit]: assigned
->> [    2.273141] pci 0000:03:00.0: BAR 4 [io  0x1000-0x107f]: assigned
->> [    2.279286] pci 0000:02:01.0: PCI bridge to [bus 03]
->> [    2.284289] pci 0000:02:01.0:   bridge window [io  0x1000-0x1fff]
->> [    2.290425] pci 0000:02:01.0:   bridge window [mem 0x50000000-0x500fffff]
->> [    2.297275] pci 0000:02:02.0: PCI bridge to [bus 04]
->> [    2.302302] pci 0000:02:03.0: PCI bridge to [bus 05]
->> [    2.307327] pci 0000:02:0c.0: PCI bridge to [bus 06]
->> [    2.312353] pci 0000:02:10.0: PCI bridge to [bus 07]
->> [    2.317382] pci 0000:08:00.0: BAR 0 [mem 0x50100000-0x50103fff
->> 64bit]: assigned
->> [    2.324751] pci 0000:08:00.0: BAR 2 [io  0x2000-0x20ff]: assigned
->> [    2.330881] pci 0000:02:1f.0: PCI bridge to [bus 08]
->> [    2.335895] pci 0000:02:1f.0:   bridge window [io  0x2000-0x2fff]
->> [    2.342030] pci 0000:02:1f.0:   bridge window [mem 0x50100000-0x501fffff]
->> [    2.348874] pci 0000:01:00.0: PCI bridge to [bus 02-08]
->> [    2.354129] pci 0000:01:00.0:   bridge window [io  0x1000-0x2fff]
->> [    2.360270] pci 0000:01:00.0:   bridge window [mem 0x50000000-0x501fffff]
->> [    2.367113] pci 0000:00:00.0: PCI bridge to [bus 01-08]
->> [    2.372366] pci 0000:00:00.0:   bridge window [io  0x1000-0x2fff]
->> [    2.378494] pci 0000:00:00.0:   bridge window [mem 0x50000000-0x501fffff]
->> [    2.385325] pci_bus 0000:00: resource 4 [io  0x0000-0x7fffff]
->> [    2.391101] pci_bus 0000:00: resource 5 [mem 0x50000000-0x57ffffff]
->> [    2.397398] pci_bus 0000:00: resource 6 [mem
->> 0x4000000000-0x40ffffffff pref]
->> [    2.404478] pci_bus 0000:01: resource 0 [io  0x1000-0x2fff]
->> [    2.410078] pci_bus 0000:01: resource 1 [mem 0x50000000-0x501fffff]
->> [    2.416374] pci_bus 0000:02: resource 0 [io  0x1000-0x2fff]
->> [    2.421980] pci_bus 0000:02: resource 1 [mem 0x50000000-0x501fffff]
->> [    2.428277] pci_bus 0000:03: resource 0 [io  0x1000-0x1fff]
->> [    2.433877] pci_bus 0000:03: resource 1 [mem 0x50000000-0x500fffff]
->> [    2.440195] pci_bus 0000:08: resource 0 [io  0x2000-0x2fff]
->> [    2.445799] pci_bus 0000:08: resource 1 [mem 0x50100000-0x501fffff]
->> [    2.519972] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
->> [    2.532646] msm_serial: driver initialized
->> [    2.537422] SuperH (H)SCI(F) driver initialized
->> [    2.542220] STM32 USART driver initialized
->> [    2.551250] arm-smmu 2b500000.iommu: probing hardware configuration...
->> [    2.557832] arm-smmu 2b500000.iommu: SMMUv1 with:
->> [    2.562564] arm-smmu 2b500000.iommu:         stage 2 translation
->> [    2.568006] arm-smmu 2b500000.iommu:         coherent table walk
->> [    2.573449] arm-smmu 2b500000.iommu:         stream matching with 32
->> register groups
->> [    2.580643] arm-smmu 2b500000.iommu:         4 context banks (4 stage-2 only)
->> [    2.587205] arm-smmu 2b500000.iommu:         Supported page sizes: 0x60211000
->> [    2.593778] arm-smmu 2b500000.iommu:         Stage-2: 40-bit IPA -> 40-bit PA
->> [    2.600471] arm-smmu 2b500000.iommu:         preserved 0 boot mappings
->> [    2.607710] pci 0000:00:00.0: Adding to iommu group 0
->> [    2.613204] pci 0000:01:00.0: Adding to iommu group 0
->> [    2.618588] pci 0000:02:01.0: Adding to iommu group 0
->> [    2.623975] pci 0000:02:02.0: Adding to iommu group 0
->> [    2.629373] pci 0000:02:03.0: Adding to iommu group 0
->> [    2.634742] pci 0000:02:0c.0: Adding to iommu group 0
->> [    2.640127] pci 0000:02:10.0: Adding to iommu group 0
->> [    2.645531] pci 0000:02:1f.0: Adding to iommu group 0
->> [    2.650952] pci 0000:03:00.0: Adding to iommu group 0
->> [    2.656349] pci 0000:08:00.0: Adding to iommu group 0
->>
->>
->>>
->>> * Juno-r2,
->>>    - detect-ssd
->>>    - mkfs.ext4-ssd
->>>
->>> Regression Analysis:
->>>    - New regression? yes
->>>    - Reproducibility? Yes
->>>
->>> Test regression: arm64 Juno-r2 SSD detect failed
->>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->>>
->>> Anders bisected this to,
->>> # first bad commit:
->>>     [bcb81ac6ae3c2ef95b44e7b54c3c9522364a245c]
->>>     iommu: Get DT/ACPI parsing into the proper probe path
->>>
->>> ## Test log
->>>     mkfs.ext4 /dev/disk/by-id/ata-SanDisk_SSD_PLUS_240GB_223004A01292
->>>     mke2fs 1.47.2 (1-Jan-2025)
->>>     The file /dev/disk/by-id/ata-SanDisk_SSD_PLUS_240GB_223004A01292
->>> does not exist and no size was specified.
->>>
->>> ## Source
->>> * Kernel version: 6.14.0
->>> * Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->>> * Git sha: acb4f33713b9f6cadb6143f211714c343465411c
->>> * Git describe: v6.14-7422-gacb4f33713b9
->>> * Project details:
->>> https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.14-7422-gacb4f33713b9/
->>>
->>> ## Test
->>> * Test log: https://lkft.validation.linaro.org/scheduler/job/8188382#L1538
->>> * Test history:
->>> https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.14/testrun/27742015/suite/ltp-cve/test/cve-2017-2671/history/
->>> * Test details:
->>> https://lkft.validation.linaro.org/scheduler/job/8188382/definition
->>> * Test link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2uwduIsT14Pz3XEoUQQIS6ndlQK/
->>> * Kernel config:
->>> https://storage.tuxsuite.com/public/linaro/lkft/builds/2uwduIsT14Pz3XEoUQQIS6ndlQK/config
->>>
->>>
->>> --
->>> Linaro LKFT
->>> https://lkft.linaro.org
+
 
