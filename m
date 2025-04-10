@@ -1,150 +1,137 @@
-Return-Path: <linux-kernel+bounces-597284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B33DA8378C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 05:58:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4194BA8378B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 05:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A93511B65C73
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:58:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C4D54686B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A99202F89;
-	Thu, 10 Apr 2025 03:57:04 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613071F0998;
-	Thu, 10 Apr 2025 03:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8736A1F12F8;
+	Thu, 10 Apr 2025 03:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c+4S1w4h"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3D11F0E50
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 03:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744257423; cv=none; b=f8bg3wsIRmyNmV8CmKwc/ugWj7xBW+RN0AXXkjoUzxygZePzT15bdhpqfRLbiM62IP1tQkv+T32qf5gs+846U69orX3fN2VxBcCEX9C0iA79V8q57zKVgXWMPPtrvTbEbz5vS3TdZzbc3a2fxqVLXuFWTzl7H/lBXRxluwEQU6g=
+	t=1744257455; cv=none; b=Wk0zektqQ1cjXThBOBg26eauTPZVAZ0Mnhf+/GTKqdUz4NNssnGckvdt28WOJZ75nRT/XuGWpmCLH/ch0sZFtTa8F4SojBCgPdw+mGakjMQV2ZkYUOmWFmndq2MQaCbFNaSHb0I9d8cX5YeXhFTLNjKkOnmWI25zhkBDMwEGeZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744257423; c=relaxed/simple;
-	bh=BjAp374aSZZjMcZ2HJf3Qz6JlOzW03cKT3GvNtSjxxo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JJCIp4NbT4TyvF8v/UaYrMuIUDKEVEmTMx1b6mj2LEptWxmD8A4jWDIugLFQhSFXpvkxDBAoTYXUfLXwEv4Osjux3WAtpKdq/jwAaEEqxhbhLMLRBqZ3qI74RiE1kV3Tkgv4xenjsDQovQYD7IRSX+taeLxhLcMLw94dCo5eqXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8DxC3KFQfdn5JK2AA--.41740S3;
-	Thu, 10 Apr 2025 11:56:53 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowMBxHcV_QfdnQWl3AA--.27477S6;
-	Thu, 10 Apr 2025 11:56:50 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Shuah Khan <shuah@kernel.org>
-Cc: Sean Christopherson <seanjc@google.com>,
+	s=arc-20240116; t=1744257455; c=relaxed/simple;
+	bh=TcK/ayql5qsEQJrTT+bKZBARW/uQyunG9m296qUtNEs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=DASwnjU1dVsYlecmE8zM8Jb0xl1+gIOD8lDrHJF4L6vYMnGl3m5DsIfy62PIyXT+M7oLVeSnup7SaTq8g+MnAjj+qYvbLkXgziYydmAGnjzy6/LQJAoMUjw2M411DLdIDH9k4n6600VCmhgKiOI5OJLOxthubzQVOzzIPBw8+Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c+4S1w4h; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744257452;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CiT2WlYj/3fGyAtdbQzd4KFmS0fPVbTqImfcUooLUaU=;
+	b=c+4S1w4hzMb2hR5okMh9+AohTOzuoGdvTSH8f+fTkl91M/ne76pYA9R3tthRY25jffbQVF
+	1UzSvMZ7yr4g8ebuLVkJab+6r/mDLij2zMsOxUTq+LlQSs/g4u3V0nDdMk7WVAIikUVl82
+	QZPZOrXntXwzI4F/81KG7TZTcX88tT0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-599-vLY6ecL0NHSZsop-igExNw-1; Wed,
+ 09 Apr 2025 23:57:27 -0400
+X-MC-Unique: vLY6ecL0NHSZsop-igExNw-1
+X-Mimecast-MFC-AGG-ID: vLY6ecL0NHSZsop-igExNw_1744257446
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B711F1801A12;
+	Thu, 10 Apr 2025 03:57:25 +0000 (UTC)
+Received: from MiWiFi-R3L-srv.redhat.com (unknown [10.72.112.38])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3FDF519560AD;
+	Thu, 10 Apr 2025 03:57:20 +0000 (UTC)
+From: Baoquan He <bhe@redhat.com>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	david@redhat.com,
+	osalvador@suse.de,
+	yanjun.zhu@linux.dev,
 	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v8 4/4] KVM: selftests: Add test cases for LoongArch
-Date: Thu, 10 Apr 2025 11:56:47 +0800
-Message-Id: <20250410035647.3501139-5-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20250410035647.3501139-1-maobibo@loongson.cn>
-References: <20250410035647.3501139-1-maobibo@loongson.cn>
+	Baoquan He <bhe@redhat.com>
+Subject: [PATCH v4 0/4] mm/gup: Minor fix, cleanup and improvements
+Date: Thu, 10 Apr 2025 11:57:13 +0800
+Message-ID: <20250410035717.473207-1-bhe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-type: text/plain
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxHcV_QfdnQWl3AA--.27477S6
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Some common KVM testcases are supported on LoongArch now as following:
-  coalesced_io_test
-  demand_paging_test
-  dirty_log_perf_test
-  dirty_log_test
-  guest_print_test
-  hardware_disable_test
-  kvm_binary_stats_test
-  kvm_create_max_vcpus
-  kvm_page_table_test
-  memslot_modification_stress_test
-  memslot_perf_test
-  set_memory_region_test
-And other test cases are not supported by LoongArch such as rseq_test,
-since it is not supported on LoongArch physical machine neither.
+These were made from code inspection in mm/gup.c.
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- tools/testing/selftests/kvm/Makefile           |  2 +-
- tools/testing/selftests/kvm/Makefile.kvm       | 18 ++++++++++++++++++
- .../selftests/kvm/set_memory_region_test.c     |  2 +-
- 3 files changed, 20 insertions(+), 2 deletions(-)
+v3->v4:
+========
+- Make patch 1 to fix the code bug in fault_in_safe_writeable();
+- Add patch 4 to do the code optimization to make fault_in_xxx()
+  functions own the consistent code style;
+- Add reviewing tags from David and Oscar for patch 2;
 
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index 20af35a91d6f..d9fffe06d3ea 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -3,7 +3,7 @@ top_srcdir = ../../../..
- include $(top_srcdir)/scripts/subarch.include
- ARCH            ?= $(SUBARCH)
- 
--ifeq ($(ARCH),$(filter $(ARCH),arm64 s390 riscv x86 x86_64))
-+ifeq ($(ARCH),$(filter $(ARCH),arm64 s390 riscv x86 x86_64 loongarch))
- # Top-level selftests allows ARCH=x86_64 :-(
- ifeq ($(ARCH),x86_64)
- 	ARCH := x86
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index f773f8f99249..4704ab16f19f 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -47,6 +47,10 @@ LIBKVM_riscv += lib/riscv/handlers.S
- LIBKVM_riscv += lib/riscv/processor.c
- LIBKVM_riscv += lib/riscv/ucall.c
- 
-+LIBKVM_loongarch += lib/loongarch/processor.c
-+LIBKVM_loongarch += lib/loongarch/ucall.c
-+LIBKVM_loongarch += lib/loongarch/exception.S
-+
- # Non-compiled test targets
- TEST_PROGS_x86 += x86/nx_huge_pages_test.sh
- 
-@@ -205,6 +209,20 @@ TEST_GEN_PROGS_riscv += kvm_page_table_test
- TEST_GEN_PROGS_riscv += set_memory_region_test
- TEST_GEN_PROGS_riscv += steal_time
- 
-+TEST_GEN_PROGS_loongarch += coalesced_io_test
-+TEST_GEN_PROGS_loongarch += demand_paging_test
-+TEST_GEN_PROGS_loongarch += dirty_log_perf_test
-+TEST_GEN_PROGS_loongarch += dirty_log_test
-+TEST_GEN_PROGS_loongarch += demand_paging_test
-+TEST_GEN_PROGS_loongarch += guest_print_test
-+TEST_GEN_PROGS_loongarch += hardware_disable_test
-+TEST_GEN_PROGS_loongarch += kvm_binary_stats_test
-+TEST_GEN_PROGS_loongarch += kvm_create_max_vcpus
-+TEST_GEN_PROGS_loongarch += kvm_page_table_test
-+TEST_GEN_PROGS_loongarch += memslot_modification_stress_test
-+TEST_GEN_PROGS_loongarch += memslot_perf_test
-+TEST_GEN_PROGS_loongarch += set_memory_region_test
-+
- SPLIT_TESTS += arch_timer
- SPLIT_TESTS += get-reg-list
- 
-diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools/testing/selftests/kvm/set_memory_region_test.c
-index bc440d5aba57..ce3ac0fd6dfb 100644
---- a/tools/testing/selftests/kvm/set_memory_region_test.c
-+++ b/tools/testing/selftests/kvm/set_memory_region_test.c
-@@ -350,7 +350,7 @@ static void test_invalid_memory_region_flags(void)
- 	struct kvm_vm *vm;
- 	int r, i;
- 
--#if defined __aarch64__ || defined __riscv || defined __x86_64__
-+#if defined __aarch64__ || defined __riscv || defined __x86_64__ || defined __loongarch__
- 	supported_flags |= KVM_MEM_READONLY;
- #endif
- 
+v2->v3:
+=========
+- In patch 1, change to use local variable 'start' as a loop cursor
+  in fault_in_readable() and fault_in_writeable() so that they have the
+  consistent code style with fault_in_safe_writeable(). Doing this can
+  avoid ugly long line caused by kinds of type cast (const char __user *).
+  Thanks to David who suggested two ways including this one, I found this
+  is better when changing code.
+
+- In patch2, changes to add VM_WARN_ON_ONCE() for both below chekcing
+  because all external users of __get_user_pages() have done the
+  checking in is_valid_gup_args() before calling __get_user_pages().
+  Just adding these VM_WARN_ON_ONCE() in case, e.g internal setting
+  wrong flags in kernel code. Thanks to David for suggesting this.
+
+   - (gup_flags & (FOLL_PIN | FOLL_GET)) == (FOLL_PIN | FOLL_GET))
+   - !!pages != !!(gup_flags & (FOLL_GET | FOLL_PIN))
+
+- Drop
+      - the old patch 3 of v2 because it's from misunderstanding;
+      - the old patch 4, 5 of v2 because they have been merged into x86
+        tip tree by Ingo;
+      - the old patch 7 of v2 because it has been coverred in another
+        thread. Thanks to David for telling the thread link.
+
+- In patch 3, add reviewing tags from Oscar and David.
+
+v1->v2:
+==========
+- In patch 1, I carelessly copied the fault_in_readable() as
+  fault_in_writeable(). Thanks to Yanjun for pointing it out.
+
+- In patch 2, I copied the code in follow_page_pte() to
+  __get_user_pages() directly w/o adjustment which is done but not
+  merged to patch. That failed testing taken by lkp test robot, thanks
+  for reporting.
+
+Baoquan He (4):
+  mm/gup: fix wrongly calculated returned value in
+    fault_in_safe_writeable()
+  mm/gup: remove unneeded checking in follow_page_pte()
+  mm/gup: remove gup_fast_pgd_leaf() and clean up the relevant codes
+  mm/gup: clean up codes in fault_in_xxx() functions
+
+ mm/gup.c | 125 +++++++++++++++----------------------------------------
+ 1 file changed, 34 insertions(+), 91 deletions(-)
+
 -- 
-2.39.3
+2.41.0
 
 
