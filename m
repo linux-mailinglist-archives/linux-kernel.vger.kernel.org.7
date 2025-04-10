@@ -1,127 +1,106 @@
-Return-Path: <linux-kernel+bounces-599060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FAACA84E8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:51:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A86A84EA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052791BA7040
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:50:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C86F57B1C3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54920296159;
-	Thu, 10 Apr 2025 20:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC28B293B4D;
+	Thu, 10 Apr 2025 20:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1YIhwyE"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XWcaK/PO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDC3296143;
-	Thu, 10 Apr 2025 20:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8041EBFFD
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 20:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744318127; cv=none; b=YwONNWlegZ1fpPaFEh8ouB8NvmwQ22WGXyHYS+Ie78A7QYVk+5xEXvRVkSMmxNpr11140N7GKetkwOxaC5rWUp686tI6Fv++UXwbxLjtrvb/DszQ70jsoQ7SkVPDQDmWtpoNKUZJmHgIcnElnHRUxG8Ny5B1ckcHHzL2mNvQJkM=
+	t=1744318276; cv=none; b=dR0joQkFhhrWPDcj55wcwMb7Li46yiG/YyHDUvyqY/YJDQ41K2hVFevoGbS9jJ9XBz9xVyEwymAgcf99agI+P38Ycu/dtJ+csGWH4LUKU9ARofq+H2spAJJm51R/UcyRPRsEAiOOV1FW96jDIzl3m7kIBx8xW1dKaH/aryZapg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744318127; c=relaxed/simple;
-	bh=eG+6Ol7t6Jj0rmtAVTf0NWu+4c3ZvYZT4LmvW2k3t+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rh4lQk75nxNhnUrzesta1nZ7z8zN35pCsMdza7chQ+3nmc0H/6uAGly26YRR53zDOTBM8cqco7FrrK964RWYmLamR9vU0x7vvqlbSi3SHhO1Atm7K26OMvfoYb8F2ELfBnY9sjOMFPzU1CpRqTzLIi3BAU+6YipYIYxek4VoZoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1YIhwyE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9BB1C4CEE7;
-	Thu, 10 Apr 2025 20:48:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744318127;
-	bh=eG+6Ol7t6Jj0rmtAVTf0NWu+4c3ZvYZT4LmvW2k3t+M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k1YIhwyEzq71tlj7GHnadKh+rEg9ITWeOv8zeoZNsiU0nGaIob+u0Q2Jo8BE+TjkB
-	 prQ5Vdlv/gsCfYVrzjIZP8RQVzpASF8CQ/ONtjT2JY9yxLAfjvffjMj3TMhQNY2JzB
-	 nICPWXrNe+4kUK5Me79C/rcdmdF84K2CI4jTs336XzThQ/Qp/iVINPo3Kaiq21jQRR
-	 DlPRbD7Fh7mH0tzYrFss6IbV2hj32w3w4rX2qLIOz477Fbq02KuVpElNwX59tWQiPB
-	 QPPAje5HiyT3iyTPJvD4IndiDkQluWy6djxG2sQHEhHIOZv4K4Rh+uaMrKmB/TTS6I
-	 B74GPRvtmKlRw==
-Date: Thu, 10 Apr 2025 15:48:45 -0500
-From: Rob Herring <robh@kernel.org>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Aradhya Bhatia <a-bhatia1@ti.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Heiko Stuebner <heiko@sntech.de>, Junhao Xie <bigfoot@classfun.cn>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: PCI: rcar-gen4-pci-host: Document
- optional aux clock
-Message-ID: <20250410204845.GA1027003-robh@kernel.org>
-References: <20250406144822.21784-1-marek.vasut+renesas@mailbox.org>
- <20250406144822.21784-2-marek.vasut+renesas@mailbox.org>
+	s=arc-20240116; t=1744318276; c=relaxed/simple;
+	bh=xILzUXt1hKmNBNi7Lw/2+izI/47wwH9rJ9RW9DF57CA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=qNsy0uSSNtgNYbCQVNbJ3CsORmZMUot1xQy5fah1mDvqmb2T03YGjfuASE97LCDu0BrrquwpAhmavPaiqK7cqZuZj/uvDC8m4hZru8hwHdScd84w71en45dWy57IrH/fneZtSa+T4NWwHyUl9+wa2FIaJTXv8RRssSlLUvYO0ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XWcaK/PO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C4F9C4CEDD;
+	Thu, 10 Apr 2025 20:51:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1744318275;
+	bh=xILzUXt1hKmNBNi7Lw/2+izI/47wwH9rJ9RW9DF57CA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XWcaK/POYcAQu22kur1Bp0DXkxYcEjq6y30cmUpCOZw8sOVGxsuP47pLJ03DilLfR
+	 tfjWvAcTGA20KGa4ApL/hnPUQ3Vzj6jEACiUT6f6xHlx2LW5Tq71mXsFwo9JdZBNVd
+	 ovC2qxiinJjGTOsRxiASQO473SeTK7sKq2Wsv+mA=
+Date: Thu, 10 Apr 2025 13:51:14 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Akinobu Mita <akinobu.mita@gmail.com>, Peter
+ Zijlstra <peterz@infradead.org>, Petr Mladek <pmladek@suse.com>, Dmitry
+ Vyukov <dvyukov@google.com>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC][PATCH] panic: lib: Add TAINT for FAULT_INJECTION
+Message-Id: <20250410135114.1c8bc2987b9a968d92b3a55a@linux-foundation.org>
+In-Reply-To: <20250410144359.526476bc@gandalf.local.home>
+References: <20250410144359.526476bc@gandalf.local.home>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250406144822.21784-2-marek.vasut+renesas@mailbox.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Apr 06, 2025 at 04:45:21PM +0200, Marek Vasut wrote:
-> Document 'aux' clock which are used to supply the PCIe bus. This
-> is useful in case of a hardware setup, where the PCIe controller
-> input clock and the PCIe bus clock are supplied from the same
-> clock synthesiser, but from different differential clock outputs:
+On Thu, 10 Apr 2025 14:43:59 -0400 Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> From: Steven Rostedt <rostedt@goodmis.org>
 > 
->  ____________                    _____________
-> | R-Car PCIe |                  | PCIe device |
-> |            |                  |             |
-> |    PCIe RX<|==================|>PCIe TX     |
-> |    PCIe TX<|==================|>PCIe RX     |
-> |            |                  |             |
-> |   PCIe CLK<|======..  ..======|>PCIe CLK    |
-> '------------'      ||  ||      '-------------'
->                     ||  ||
->  ____________       ||  ||
-> |  9FGV0441  |      ||  ||
-> |            |      ||  ||
-> |   CLK DIF0<|======''  ||
-> |   CLK DIF1<|==========''
-> |   CLK DIF2<|
-> |   CLK DIF3<|
-> '------------'
+> There's been several times where syzbot reports a bug that was caused by a
+> fault injection, but it doesn't report this fact in its email reports.
+> The bug report could happen in code that wasn't involved with the fault
+> injection due to the code that faulted not cleaning up things properly,
+> leading to an unstable kernel, which in turn can trigger issues elsewhere
+> that doesn't have a bug (much like a proprietary module could do).
 > 
-> The clock are named 'aux' because those are one of the clock listed in
-> Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml which
-> fit closest to the PCIe bus clock. According to that binding document,
-> the 'aux' clock describe clock which supply the PMC domain, which is
-> likely PCIe Mezzanine Card domain.
-
-Pretty sure that PMC is "power management controller" given it talks 
-about low power states.
-
-
+> It would be very useful if the syzbot report notified the developer that
+> the test had injected faults into the kernel.
 > 
-> Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> ---
-> NOTE: Shall we patch Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
->       instead and add 'bus' clock outright ?
+> Introduce a new taint flag 'V' that gets set when a fault injection takes
+> place. (Note, there's not many taint flags left, so 'V' looked as good as
+> any other value).
+> 
+> This will let the syzbot see that the kernel had a fault injection during
+> the test and can report that it happened when sending out its emails.
+> 
+> It may also be useful for other bug reports.
 
-Based on the diagram, this has nothing to do with the specific 
-controller. It should also probably a root port property, not host 
-bridge.
+Seems sane.  Does any userspace tooling need an update for this?
 
-Rob
+> --- a/lib/fault-inject.c
+> +++ b/lib/fault-inject.c
+> @@ -176,6 +176,9 @@ bool should_fail_ex(struct fault_attr *attr, ssize_t size, int flags)
+>  	if (atomic_read(&attr->times) != -1)
+>  		atomic_dec_not_zero(&attr->times);
+>  
+> +	pr_notice_once("Tainting kernel with TAINT_FAULT_INJECTION\n");
+> +	add_taint(TAINT_FAULT_INJECTION, LOCKDEP_STILL_OK);
+
+	if (pr_notice_once("Tainting kernel with TAINT_FAULT_INJECTION\n"))
+		add_taint(TAINT_FAULT_INJECTION, LOCKDEP_STILL_OK);
+
+perhaps?
+
+>  	return true;
+>  }
+>  
+> -- 
+> 2.47.2
 
