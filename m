@@ -1,167 +1,140 @@
-Return-Path: <linux-kernel+bounces-599118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4D4A84F82
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 00:08:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A96A84F88
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 00:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E613189C335
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71E699A0A63
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6E020D4F9;
-	Thu, 10 Apr 2025 22:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0854420E708;
+	Thu, 10 Apr 2025 22:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2D93DAW"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="klVA0IxL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF8FEEB1;
-	Thu, 10 Apr 2025 22:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C906620C48A;
+	Thu, 10 Apr 2025 22:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744322803; cv=none; b=de/m4+zBrRAxMB4cmPRiXQMXSZIYF4k3lNDqIFFloJZgXd3OCkMCwUPDdQhgKmupKJG0N3FV2K6upATi4cXc2CmpAp8yPLMTe9rhP7wRarvvSmHvduAxhaW1ZWQ4T1UmqhNtI5lZsrcvX6Sys4+IBRZQ3wMvWRc0z7alFBaQ1DI=
+	t=1744323233; cv=none; b=W5mZCSFhF986sK+7KqJOoZI4oWFZEwdAgfYyGS+N6zSPD0tQXGbyw+SlmH/fvdBI9YBipG55/91TNmV+XM5kAk3Q5+lOhXQSsCF0PNEJHSNi8iWghcQfN6/pxQfFfes8EAqg8AkgDhKCovlOmGAQpN7MTMiqAedvK4v5Qahir5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744322803; c=relaxed/simple;
-	bh=Jg6gNx0r4xnCZfOCVulJh/x/Sje4lcCTJVNC7IIghvs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iBAp7M0im+qMEvjo2Vk92yPBf/pyKrt+2twepE/TfLaC/cQSOks24vv6O/u0syXNdkoDr6KGCfSld1eaMxQr66Mpvie7laG1DrdtXz6yHEg9SuThqmLVUJprKv16C5/u2SxysvjvLVqohfD+/pIiSPETHsu7LIzmKfnikk6qXqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a2D93DAW; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3cfc8772469so4875225ab.3;
-        Thu, 10 Apr 2025 15:06:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744322801; x=1744927601; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E7ICNZV18cZHr2vbkLA3GpRwRAJQKYpv6Yp1RF0PmOc=;
-        b=a2D93DAWH5ZUJ4GdDEveCrIRRFH1J/cagI9KLZVuzPVx9ZeAHdkoBpn6biPU/IpejA
-         tiZcjkf9CtsFRfRjNQAilzyyVuBtnYCkdDw3ChpI/CBSJXDjnV4x2f08uxTD8z1zcO8j
-         syAg447XrMmMAcrlQGNMYsfzzErIH8ONSZhMi77dUEw3MPEiGNpR4pmVsOqBuLbzd7Zn
-         W2I4z4RnWtJpWiud6peIki4jYI4BrXPvHwLNkizYyAVxvyFZgxJVbRlgTCNa4qBhfrxx
-         IOwPzH+osp3ahb/NWVnfqwo+6c+w7LwUIPFrZZX5qBqunhLNSkgv2KACMFEfs3GcTSyp
-         ZDmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744322801; x=1744927601;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E7ICNZV18cZHr2vbkLA3GpRwRAJQKYpv6Yp1RF0PmOc=;
-        b=mJxtg59x3BQiVLNAH3lh9hQGKEi+ZxzyuALWA1Ct19f9naXT8Tbq7nOGJQ3P/3NtBE
-         e1jVY2uMlCc5YwTRqvBYPxY8ouAnO5CPwsISDlAS8o4wUOdlk/YtM2MB/ErLGVtW3Q5P
-         q/URQUvQnlSlZfLa04YWHHC6g1TyH86nK0l6XEntpZfJI7bzSnhZJ6aaj+qNBEVxxLmX
-         Bix22/6iV/zAKaMVA80qa7nsTd3C02wPvEA4XGcNBezhr+RonwGORAH/0OXvbfiuqRLe
-         0tY/9NItfaTYdIlForMaKE0P/MoIL0oHPr3P1D8o3VpDSfL/QOXsxSYmnudyw5J+vWX1
-         q0yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKhEMN+oC34j1B//OgF3nJDzAfnZi/LhTWJlz2/cgvGMH2m6QgX4neNH2yeGp7/1sQWVyYter9oynel8LJrTg=@vger.kernel.org, AJvYcCXZP1b4MygSb/k3JCGCRcZ4nAbAtmhst8C19Snf7+VqkjB8/taB8L+wMoRaqvAPsD10ER9JhF8hz3hs5ZBU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5yO8CYGRd3rlgjdIlmxToTGD4C/cxTvdMe+fALUXUNN9EsRnD
-	VAn2pmncHZ3dK9v04+GR9EU3RaGxpAYTJvmp6fpvWQLrdZHshUY+mnNBrueXyg3BmAVXvwU+TMm
-	50Dtwa/o1oOf5kOLjW1ZmtV3alhg=
-X-Gm-Gg: ASbGncvXkR1YFlnzTMBoiNPbRouKGF6PHsrHpna4U8+1JumJiugaEQ7jVzQQq0X0wqQ
-	RbO9/zs/ho0gqk1sgs/SQnoXyMrDijFb42SE+5ICXS5vAgh0aEHtMueS/Ho/O22cfAXff7tpi2N
-	Z+t5OKfhwAU1kmaCIuB/HryBSIt22bkyFQdPgtg3rFkrStmcX81Z1MwKTu
-X-Google-Smtp-Source: AGHT+IEPRpH3UqQvP2ZHQTbc4I7CWqGnc1U/KINkDJ4Z6Yy1t8pFZOhHpeJPZSPZN4Ye+gf4xD7+v/NgFyUWDrafl80=
-X-Received: by 2002:a92:c261:0:b0:3d3:e284:afbb with SMTP id
- e9e14a558f8ab-3d7ec2276f9mr6044675ab.11.1744322801057; Thu, 10 Apr 2025
- 15:06:41 -0700 (PDT)
+	s=arc-20240116; t=1744323233; c=relaxed/simple;
+	bh=IBo89qHKQdv1YlyiUpkbXqVARTQ+YsXgrEGUhF/Pl7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PQQmGC3LqQMdHIEFIqj4o1lvXg+A4u/fifPOla/mlDotjoCpQrvCEwR19p35SNueV7CyvZ2MH3jK3MMgrjzVbbAXSKlyRlGnswmoyEjt0vfOC9/oOj+yxVx/SBiHAUHnOzGASgtm0DvPVYatboNpadQFbygVZh0aIsDGgQHlHrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=klVA0IxL; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744323232; x=1775859232;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IBo89qHKQdv1YlyiUpkbXqVARTQ+YsXgrEGUhF/Pl7Q=;
+  b=klVA0IxL1DtkCE45TnhIXALGOzUSR1KZG5VU5nNXfO/fv4n1sGGyzx3j
+   WmR9pWff6s134VLz8V50921FuYFyT1s87+lqsYF3v+9Ibzf6OOEIn5n9/
+   sxrqAMbzDrmMa+mC7RjDeg/AoOuKI4rxcetHnf5rU9Yjodx3fw1slUAN9
+   M2NCyiK9jzvxFOCE3efqToVFb2eRs2GqkXLjOuS2ex18uS2oJEOHYHiLC
+   x5jvhobGh89qILkVyNFX0GjxYCQOeFFtykvFHrENPzZOpaZKSBl2TQyL9
+   r0VxN0X5g9N405M05gDOMH1wP9SZvO2k1K72zlp6+PinYy+ym/knzqPQ0
+   A==;
+X-CSE-ConnectionGUID: ftmE/BIlRS2/esHW/+rUHA==
+X-CSE-MsgGUID: 4k6b17HvST6CRuNNzpVSyw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="45105407"
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="45105407"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 15:13:51 -0700
+X-CSE-ConnectionGUID: SDQvF7IAR3ujJGgrwS0qDQ==
+X-CSE-MsgGUID: 8/JxH8PtSo2nCyqO5LulaQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="129577555"
+Received: from dstill-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.218])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 15:13:50 -0700
+Date: Thu, 10 Apr 2025 15:13:45 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: Re: [PATCH] x86/bugs/mmio: Rename mmio_stale_data_clear to
+ cpu_buf_vm_clear
+Message-ID: <20250410221345.ewyagu7coscpr3l7@desk>
+References: <20250410-mmio-rename-v1-1-fd4b2e7fc04e@linux.intel.com>
+ <Z_gsgHzgGWqnNwKv@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c715ef30-9d91-46f3-8a0f-1039f3d25e7d@stanley.mountain>
-In-Reply-To: <c715ef30-9d91-46f3-8a0f-1039f3d25e7d@stanley.mountain>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 10 Apr 2025 15:06:28 -0700
-X-Gm-Features: ATxdqUGor6TYjFwFif4Nt2sCrEKfvSFfALNnIVB1JHLShlwtHgWuM9y-gnK_g3U
-Message-ID: <CAF6AEGshmGO0AAD3ndz-gN32r+xf2u=7gyf9aXbkZyb97AUXdA@mail.gmail.com>
-Subject: Re: [PATCH next] drm/syncobj: Fix leak in drm_syncobj_import_sync_file_fence()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Rob Clark <robdclark@chromium.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_gsgHzgGWqnNwKv@google.com>
 
-On Thu, Apr 10, 2025 at 9:33=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> We need to cleanup if the chain =3D dma_fence_chain_alloc() allocation
-> fails.  Now that we have multiple error returns in this function, switch
-> to using an unwind ladder for cleanup.
->
-> Fixes: c2d3a7300695 ("drm/syncobj: Extend EXPORT_SYNC_FILE for timeline s=
-yncobjs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/drm_syncobj.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.=
-c
-> index 636cd83ca29e..c136d0c772dc 100644
-> --- a/drivers/gpu/drm/drm_syncobj.c
-> +++ b/drivers/gpu/drm/drm_syncobj.c
-> @@ -745,21 +745,24 @@ static int drm_syncobj_import_sync_file_fence(struc=
-t drm_file *file_private,
->  {
->         struct dma_fence *fence =3D sync_file_get_fence(fd);
->         struct drm_syncobj *syncobj;
-> +       int ret;
->
->         if (!fence)
->                 return -EINVAL;
->
->         syncobj =3D drm_syncobj_find(file_private, handle);
->         if (!syncobj) {
-> -               dma_fence_put(fence);
-> -               return -ENOENT;
-> +               ret =3D -ENOENT;
-> +               goto err_put_fence;
->         }
->
->         if (point) {
->                 struct dma_fence_chain *chain =3D dma_fence_chain_alloc()=
-;
->
-> -               if (!chain)
-> -                       return -ENOMEM;
-> +               if (!chain) {
-> +                       ret =3D -ENOMEM;
-> +                       goto err_put_syncobj;
-> +               }
->
->                 drm_syncobj_add_point(syncobj, chain, fence, point);
->         } else {
-> @@ -769,6 +772,13 @@ static int drm_syncobj_import_sync_file_fence(struct=
- drm_file *file_private,
->         dma_fence_put(fence);
->         drm_syncobj_put(syncobj);
->         return 0;
-> +
-> +err_put_syncobj:
-> +       drm_syncobj_put(syncobj);
-> +err_put_fence:
-> +       dma_fence_put(fence);
-> +
-> +       return ret;
+On Thu, Apr 10, 2025 at 01:39:28PM -0700, Sean Christopherson wrote:
+> On Thu, Apr 10, 2025, Pawan Gupta wrote:
+> > The static key mmio_stale_data_clear controls the KVM-only mitigation for
+> > MMIO Stale Data vulnerability. Rename it to reflect its purpose.
+> > 
+> > No functional change.
+> > 
+> > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> > ---
+> >  arch/x86/include/asm/nospec-branch.h |  2 +-
+> >  arch/x86/kernel/cpu/bugs.c           | 16 ++++++++++------
+> >  arch/x86/kvm/vmx/vmx.c               |  2 +-
+> >  3 files changed, 12 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> > index 8a5cc8e70439e10aab4eeb5b0f5e116cf635b43d..c0474e2b741737dad129159adf3b5fc056b6097c 100644
+> > --- a/arch/x86/include/asm/nospec-branch.h
+> > +++ b/arch/x86/include/asm/nospec-branch.h
+> > @@ -561,7 +561,7 @@ DECLARE_STATIC_KEY_FALSE(mds_idle_clear);
+> >  
+> >  DECLARE_STATIC_KEY_FALSE(switch_mm_cond_l1d_flush);
+> >  
+> > -DECLARE_STATIC_KEY_FALSE(mmio_stale_data_clear);
+> > +DECLARE_STATIC_KEY_FALSE(cpu_buf_vm_clear);
+> 
+> Could we tack on "if_mmio" or something?  E.g. cpu_buf_vm_clear_if_mmio.  FWIW,
+> I don't love that name, so if anyone can come up with something better...
 
-I suppose you could just initialize ret to zero and collapse the two
-return paths?  Either way,
+Keeping it generic has an advantage that it plays nicely with "Attack vector
+controls" series:
 
-Reviewed-by: Rob Clark <robdclark@gmail.com>
+  https://lore.kernel.org/lkml/20250310164023.779191-1-david.kaplan@amd.com/
 
->  }
->
->  static int drm_syncobj_export_sync_file(struct drm_file *file_private,
-> --
-> 2.47.2
->
+The idea being to allow mitigations to be enabled/disabled based on
+user-defined threat model. MDS/TAA mitigations may be able to take
+advantage this KVM-only control.
+
+> I like the idea of tying the static key back to X86_FEATURE_CLEAR_CPU_BUF, but
+> when looking at just the usage in KVM, "cpu_buf_vm_clear" doesn't provide any
+> hints as to when/why KVM needs to clear buffers.
+
+Thats fair, can we cover that with a comment like below:
+
+---
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index c79720aad3df..cddad4a6eb46 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -7358,6 +7358,10 @@ static noinstr void vmx_vcpu_enter_exit(struct kvm_vcpu *vcpu,
+ 	 * mitigation for MDS is done late in VMentry and is still
+ 	 * executed in spite of L1D Flush. This is because an extra VERW
+ 	 * should not matter much after the big hammer L1D Flush.
++	 *
++	 * cpu_buf_vm_clear is used when system is not vulnerable to MDS/TAA,
++	 * but is affected by MMIO Stale Data that only needs mitigation
++	 * against a rogue guest.
+ 	 */
+ 	if (static_branch_unlikely(&vmx_l1d_should_flush))
+ 		vmx_l1d_flush(vcpu);
 
