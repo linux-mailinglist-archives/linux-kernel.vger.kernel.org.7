@@ -1,205 +1,116 @@
-Return-Path: <linux-kernel+bounces-599078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F383A84EE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:58:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C647A84F0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 23:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F8C21B63429
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:58:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46EFD1B83BF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AF329344A;
-	Thu, 10 Apr 2025 20:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E08E293475;
+	Thu, 10 Apr 2025 21:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjgiK6Cr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDa3e0zl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE101F8721;
-	Thu, 10 Apr 2025 20:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B544B283699;
+	Thu, 10 Apr 2025 21:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744318718; cv=none; b=Ehs4JzSeo59HrdS0HKnTpXjPhM62r5YEYZken69AKpuh9ZS0hluS4wz+K8qTLptzjxYnYFypOLPS+dv1jpGg+fOPdq6qRae4WPBdIv8y+jjX13lZW4ZM2QcYha1BnG6jjvUHrl2U10PWFCk7mY/MYuKTvZI3Dn0bCDXvBuz5KfQ=
+	t=1744319425; cv=none; b=iJe4p9AsM8euvsp5iZmN1yvoM7joKI35ZQlrSUVo4HWRo27sP2eKUiOU4FLcMSmw97Pt9o5haTN0CL8D7EaGRDMHnSsP/reeZ0/4tr0AdA+MLdAFTVNTQkTHNRm4HO7ccmm77MF7aILDFlcurYdsdhmYCHP9damSgepoL0rOGn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744318718; c=relaxed/simple;
-	bh=3AaCUynHyZgUbfT/x+PuBXtQ33kvzMSvNXxqvkzyius=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YLTS5TO1ueDz1ktb7sTZA0Jf3flzCTnOY8gWHXj4BWEKvPqbJAtsmlkyLi5Td0+7JIcRH6B44ug3/TdjOHE1UN6d12Ji9pSbTLzEdbkSxTX85KcGzQswkciLhlVh+EuMmS0veY4br+MPTAPuOaXqtJ3nScikJ992qFaEQ843IsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjgiK6Cr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05784C4CEDD;
-	Thu, 10 Apr 2025 20:58:36 +0000 (UTC)
+	s=arc-20240116; t=1744319425; c=relaxed/simple;
+	bh=LwjBjViQ0++5O1rnu8kLLZuctv/Nqm47sICzPz5fhgQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iQVA9SAlFpsiigjuknlwX6YWH3sct07gR/puYm9TmSmnVSGSZY1Od8fsr4Kc94qNncLbI51pycqfZmgOPkf6koh1A9K3JkdawUyCbbyYZSldTECx8qDHwfH8x7byf/UKXDR6rSS2DLYTB8dzGch1ccHV3cyEjFA5OBEl9JGDCjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDa3e0zl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F19B8C4CEDD;
+	Thu, 10 Apr 2025 21:10:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744318717;
-	bh=3AaCUynHyZgUbfT/x+PuBXtQ33kvzMSvNXxqvkzyius=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RjgiK6CrrhYXMZZj8KYq9ZLldhgcmqyoNxyb7lubC+dM6sihEsMXpulEf83f+MzKi
-	 JEWlE+k2ggvcJq5lx+df49VZ1rbJDE5XuJDXde7hhhMFOv48Iio37q0jztRlziqDCG
-	 T8ejJblh3SJjr3eL6TXktCbk7VY2qFPTV9GQtWmclQ9vGsFT1gWPkj+yCjBAqyagk7
-	 XWvE0pmv75fDIufAzptXZDhmEC8Kz1eAZKcSmwOjX1pHO6kwzL7Ff4b7ctSpN9cVpW
-	 vrEj9YFE3pJn+hQrrmUTl3ghBNYv6ExqkMqmLqsaBevHioZ0DPfuVG43PEy68QE4Yz
-	 Qhcp1BJj8L/HQ==
-Date: Thu, 10 Apr 2025 13:58:35 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Jakub Brnak <jbrnak@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
-	mpetlan@redhat.com, tglozar@redhat.com,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v3] perf test probe_vfs_getname: Skip if no suitable line
- detected
-Message-ID: <Z_gw-xw97c_IWdXw@google.com>
-References: <20250324144523.597557-1-jbrnak@redhat.com>
- <Z_fWa093x33Wcwrw@jbrnak-thinkpadx1carbongen9.tpbc.csb>
+	s=k20201202; t=1744319425;
+	bh=LwjBjViQ0++5O1rnu8kLLZuctv/Nqm47sICzPz5fhgQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=IDa3e0zlYEgzXHz42IcIxQzvqqk7dVIYY8gd6mBaotI259tOvG1xJrba54gMWty2a
+	 WjC1wxTKHYtzZy3h1yZ+6xb6tNfR6tw8FsKFimmvtU6VqUbEavwFRrCFj/0duz7Zz/
+	 siEYbDOuCuIDJXQxn7ljstRZNJaJ9hRksYehwGx8b7fmrLPuBGKaXTOVA9iIgNpPwZ
+	 IZk4l8aMnRv3sPESe2Z7lYKox4py8oA2l2yKhewB+KhZkBZvL67McvsPYm5bfxbniN
+	 0C8rXla/CWRT7RrqI+cOBz50C0UZb204qQjb3ubVRBZOpV2apdoYYm9XLCtDizW6Wu
+	 lh7qwla2/ivRg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E404AC3601E;
+	Thu, 10 Apr 2025 21:10:23 +0000 (UTC)
+From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
+Subject: [PATCH v2 0/2] clang-format: format short enums and macro
+ definitions correctly
+Date: Thu, 10 Apr 2025 22:58:52 +0200
+Message-Id: <20250210-clang-format-fixes-v2-0-37894413bbee@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z_fWa093x33Wcwrw@jbrnak-thinkpadx1carbongen9.tpbc.csb>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAwx+GcC/32Oyw7CIBBFf6WZtWMA0VhX/ofpgsdgSWppgKCm4
+ d/Fund57s19rJAoekpw6VaIVHzyYW4gdh2YUc13Qm8bg2DiyARnaKamogvxoTI6/6KEPZeWLKP
+ TWVhowSXSZrTcbWg8+pRDfG8bhX/Vv3WFI8NeGycPSmqpxfUZJve7tp8pw1Br/QBMSKKruQAAA
+ A==
+To: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
+Cc: Collabora Kernel Team <kernel@collabora.com>, 
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ Michael Riesch <michael.riesch@wolfvision.net>, 
+ Michael Riesch <michael.riesch@collabora.com>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744318739; l=854;
+ i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
+ bh=LwjBjViQ0++5O1rnu8kLLZuctv/Nqm47sICzPz5fhgQ=;
+ b=AxltgeguiGoVLirBm2lfFieJ2+Ym3S7GDtGCPVvTu0COqf4shBE8+SByAkyn8d/iMAzb/tSOd
+ 8ef+Vw0xqhaBaID5ULv19iDlKnM1KYUmU4H4aUExer89Tw/xfLUESuE
+X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
+ pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
+X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
+ with auth_id=371
+X-Original-From: Michael Riesch <michael.riesch@collabora.com>
+Reply-To: michael.riesch@collabora.com
 
-Hello,
+Habidere,
 
-On Thu, Apr 10, 2025 at 04:32:11PM +0200, Jakub Brnak wrote:
-> On Mon, Mar 24, 2025 at 03:45:23PM +0100, Jakub Brnak wrote:
-> > In some cases when calling function add_probe_vfs_getname, line number
-> > can't be detected by perf probe -L getname_flags:
-> > 
-> >   78         atomic_set(&result->refcnt, 1);
-> > 
-> > 	     // one of the following lines should have line number
-> > 	     // but sometimes it does not because of optimization
-> > 	     result->uptr = filename;
-> >              result->aname = NULL;
-> > 
-> >   81         audit_getname(result);
-> > 
-> > To prevent false failures, skip the affected tests
-> > if no suitable line numbers can be detected.
-> > 
-> > Signed-off-by: Jakub Brnak <jbrnak@redhat.com>
+These patches set two previously unset clang-format options to
+(hopefully) sane values.
 
-Sorry for the long delay.  It looks ok to me.
+Looking forward to your comments!
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+Best regards,
+Michael
 
-Thanks,
-Namhyung
+Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
+Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
+---
+Changes in v2:
+- collected Nathan's Reviewed-by
+- rebased onto v6.15-rc1
+- Link to v1: https://lore.kernel.org/r/20250210-clang-format-fixes-v1-0-9bcf43a4b4b2@wolfvision.net
 
-> > ---
-> > v3:
-> > - ensure POSIX compliance
-> > 
-> > v2: 
-> > https://lore.kernel.org/linux-perf-users/Z9tKat6vvC1XUj0U@google.com/
-> > - check if return from add_vfs_getname equals to 1
-> > sice it is only option in case of fail 
-> > 
-> > v1:
-> >  https://lore.kernel.org/linux-perf-users/Z8pAep0GJsMFTyEi@google.com/T/#t
-> > ---
-> >  tools/perf/tests/shell/lib/probe_vfs_getname.sh          | 8 +++++++-
-> >  tools/perf/tests/shell/probe_vfs_getname.sh              | 8 +++++++-
-> >  .../perf/tests/shell/record+script_probe_vfs_getname.sh  | 8 +++++++-
-> >  tools/perf/tests/shell/trace+probe_vfs_getname.sh        | 9 +++++++--
-> >  4 files changed, 28 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-> > index 5c33ec7a5a63..89f72a4c818c 100644
-> > --- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-> > +++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-> > @@ -19,8 +19,14 @@ add_probe_vfs_getname() {
-> >  			result_aname_re="[[:space:]]+([[:digit:]]+)[[:space:]]+result->aname = NULL;"
-> >  			line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" | sed -r "s/$result_aname_re/\1/")
-> >  		fi
-> > +
-> > +		if [ -z "$line" ] ; then
-> > +			echo "Could not find probeable line"
-> > +			return 2
-> > +		fi
-> > +
-> >  		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
-> > -		perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring"
-> > +		perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring" || return 1
-> >  	fi
-> >  }
-> >  
-> > diff --git a/tools/perf/tests/shell/probe_vfs_getname.sh b/tools/perf/tests/shell/probe_vfs_getname.sh
-> > index c51a32931af6..0f52654c914a 100755
-> > --- a/tools/perf/tests/shell/probe_vfs_getname.sh
-> > +++ b/tools/perf/tests/shell/probe_vfs_getname.sh
-> > @@ -13,7 +13,13 @@ skip_if_no_perf_probe || exit 2
-> >  # shellcheck source=lib/probe_vfs_getname.sh
-> >  . "$(dirname $0)"/lib/probe_vfs_getname.sh
-> >  
-> > -add_probe_vfs_getname || skip_if_no_debuginfo
-> > +add_probe_vfs_getname
-> >  err=$?
-> > +
-> > +if [ $err -eq 1 ] ; then
-> > +	skip_if_no_debuginfo
-> > +	err=$?
-> > +fi
-> > +
-> >  cleanup_probe_vfs_getname
-> >  exit $err
-> > diff --git a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
-> > index fd5b10d46915..1ad252f0d36e 100755
-> > --- a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
-> > +++ b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
-> > @@ -35,8 +35,14 @@ perf_script_filenames() {
-> >  	grep -E " +touch +[0-9]+ +\[[0-9]+\] +[0-9]+\.[0-9]+: +probe:vfs_getname[_0-9]*: +\([[:xdigit:]]+\) +pathname=\"${file}\""
-> >  }
-> >  
-> > -add_probe_vfs_getname || skip_if_no_debuginfo
-> > +add_probe_vfs_getname
-> >  err=$?
-> > +
-> > +if [ $err -eq 1 ] ; then
-> > +        skip_if_no_debuginfo
-> > +        err=$?
-> > +fi
-> > +
-> >  if [ $err -ne 0 ] ; then
-> >  	exit $err
-> >  fi
-> > diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-> > index 60fccb62c540..5d5019988d61 100755
-> > --- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-> > +++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-> > @@ -25,9 +25,14 @@ trace_open_vfs_getname() {
-> >  	grep -E " +[0-9]+\.[0-9]+ +\( +[0-9]+\.[0-9]+ ms\): +touch/[0-9]+ open(at)?\((dfd: +CWD, +)?filename: +\"?${file}\"?, +flags: CREAT\|NOCTTY\|NONBLOCK\|WRONLY, +mode: +IRUGO\|IWUGO\) += +[0-9]+$"
-> >  }
-> >  
-> > -
-> > -add_probe_vfs_getname || skip_if_no_debuginfo
-> > +add_probe_vfs_getname
-> >  err=$?
-> > +
-> > +if [ $err -eq 1 ] ; then
-> > +        skip_if_no_debuginfo
-> > +        err=$?
-> > +fi
-> > +
-> >  if [ $err -ne 0 ] ; then
-> >  	exit $err
-> >  fi
-> > -- 
-> > 2.48.1
-> > 
-> 
-> Hi, anyone interested in this patch?
-> 
-> Thanks,
-> Jakub
-> 
+---
+Michael Riesch (2):
+      clang-format: do not allow short enums on a single line
+      clang-format: align consecutive macros
+
+ .clang-format | 2 ++
+ 1 file changed, 2 insertions(+)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250210-clang-format-fixes-914ded0e682d
+
+Best regards,
+-- 
+Michael Riesch <michael.riesch@collabora.com>
+
+
 
