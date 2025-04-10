@@ -1,81 +1,114 @@
-Return-Path: <linux-kernel+bounces-598131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA25A84257
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:00:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F514A84256
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35B51B860E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:01:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C2B8C22C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BC8283C92;
-	Thu, 10 Apr 2025 12:00:51 +0000 (UTC)
-Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C38928EA65;
+	Thu, 10 Apr 2025 11:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="IBX6NJ3B"
+Received: from pv50p00im-ztdg10021201.me.com (pv50p00im-ztdg10021201.me.com [17.58.6.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE461EA7F4;
-	Thu, 10 Apr 2025 12:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C1128CF7A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 11:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744286451; cv=none; b=Bitwxp22dBrTy9QYsak5Jz+XumlY93AuGa+5VwJoZbOjRkh+uNFsPke/6OZ5BGbLx5GNYo9IWsqUz+VT+WPYEvi/U9a/T+BPWzfCmTD6ijikft1VTDoUeP2xPuFJLpYhM60px4D2VhM9UiRdK6k429PdXtLeENKskhGaddzW8tw=
+	t=1744286004; cv=none; b=S/nzYWOHSgAzR49retqqZe3Y+4a/VWzWHx89WTL2X7ljFjG4LApikAZIvnlcbYzLgNjZXPBeIWU+aI63ebV673nzprzqwiR+S4YfUX9MR4p33KNuY2jdYKdBoD5NkT0VIj7siT85efFJSaFzQuvpbXUSMjulCcCorCkVfvpk6Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744286451; c=relaxed/simple;
-	bh=wcg7C+k1bcrv+bIk+uzHk4gA5FuzRRg0xdj/HxqQ+G0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uOonh6swmba4f2bDQcG5YLgEsDJm6sakjU5sTWFlriqoDCv9fZAAtqHUxVXBRjMB314QwXTXjpCIfkGtMDkYPNPa2xJGZS7ME4mMKJ0FHxG8Yb2jnt6nXWsaOE47Clr7PjCCzW4+sKcKbIKAHlsaFZwR/5hUz+GECPcAQz31MeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
-Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
-	by unicorn.mansr.com (Postfix) with ESMTPS id D4E3C15360;
-	Thu, 10 Apr 2025 12:53:34 +0100 (BST)
-Received: by raven.mansr.com (Postfix, from userid 51770)
-	id C35A421A3DC; Thu, 10 Apr 2025 12:53:34 +0100 (BST)
-From: Mans Rullgard <mans@mansr.com>
-To: Mark Brown <broonie@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: Pan Nan <pannan@allwinnertech.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	linux-spi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: sun4i: add support for GPIO chip select lines
-Date: Thu, 10 Apr 2025 12:53:03 +0100
-Message-ID: <20250410115303.5150-1-mans@mansr.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744286004; c=relaxed/simple;
+	bh=xb4Djkq2XeMUN0/diW1Ny4gAAC+RdsV3KZBjNbiBEdA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cbODSz57Edv1UA/2hpojS0r06Tv/JXzyuXh50mV26s4z6FJ/ZWLRcor6FzDr40faBadWBFS5Or3a4XBOhb8DOMds6474Xs8yysLi8yWNVlG66xOLv9Lv2O9hPMDi3Ff6aMYgEJDgAeAIDt58yr8iByKgHDdbFNQofV/ZK5ujHgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=IBX6NJ3B; arc=none smtp.client-ip=17.58.6.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=9CNRZFMb+ZGZSnN0e7O2pQJfHsHDLKAcSkkbVrvrqsU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
+	b=IBX6NJ3BmU4yOtxmKur4FfF87pPiiGgFcw1UW9sndFBPQm+8TLTZK8eRnYWIgBYtC
+	 /lOrOUbX+9uA4pYe4Re+VlkFPhQtbyuxw2XXhpOjETOdFf3H5OlNP2vgEH1a9rjblA
+	 2fBrTcmzBwC7RaJ0GYIxHDdFR0XHx8mClg/rR8Ex4615pUlZiemR6m9P4z+2khENml
+	 iqLZDvY7B/AY+Jq16DJ31pmFeg33dqvq7jHDSzZOm2HdP7QYafxKgwA23zSeDBE3rw
+	 X0ROEHZxOU2PttDJcBpREtu7xAqG7RZU/0rQccmN7Y04dBv8ASiWb7le9Rl5jRX35n
+	 /M7Jq9L8MoT4Q==
+Received: from pv50p00im-ztdg10021201.me.com (pv50p00im-ztdg10021201.me.com [17.58.6.45])
+	by pv50p00im-ztdg10021201.me.com (Postfix) with ESMTPS id E70E53118A42;
+	Thu, 10 Apr 2025 11:53:19 +0000 (UTC)
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10021201.me.com (Postfix) with ESMTPSA id 78A433118934;
+	Thu, 10 Apr 2025 11:53:17 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Thu, 10 Apr 2025 19:53:03 +0800
+Subject: [PATCH RFC] fs/fs_context: Use KERN_INFO for
+ infof()|info_plog()|infofc()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250410-rfc_fix_fs-v1-1-406e13b3608e@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAB6x92cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDE0MD3aK05Pi0zIr4tGLd5LREYzNLS2ODxKRUJaCGgqJUoAzYsGilIDd
+ npdjaWgD3StL0YQAAAA==
+X-Change-ID: 20250410-rfc_fix_fs-cfa369930abe
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-GUID: Sls4o2toiBGoOtiR6gG470J5PXjQqsMV
+X-Proofpoint-ORIG-GUID: Sls4o2toiBGoOtiR6gG470J5PXjQqsMV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-10_02,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ clxscore=1015 phishscore=0 spamscore=0 bulkscore=0 suspectscore=0
+ mlxscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2504100087
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-Set use_gpio_descriptors to true so that GPIOs can be used for chip
-select in accordance with the DT binding.
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-Signed-off-by: Mans Rullgard <mans@mansr.com>
+Use KERN_INFO instead of default KERN_NOTICE for
+infof()|info_plog()|infofc() to printk informational messages.
+
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 ---
- drivers/spi/spi-sun4i.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/fs_context.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/spi/spi-sun4i.c b/drivers/spi/spi-sun4i.c
-index 2ee6755b43f5..6645d218bcf3 100644
---- a/drivers/spi/spi-sun4i.c
-+++ b/drivers/spi/spi-sun4i.c
-@@ -462,6 +462,7 @@ static int sun4i_spi_probe(struct platform_device *pdev)
- 	sspi->host = host;
- 	host->max_speed_hz = 100 * 1000 * 1000;
- 	host->min_speed_hz = 3 * 1000;
-+	host->use_gpio_descriptors = true;
- 	host->set_cs = sun4i_spi_set_cs;
- 	host->transfer_one = sun4i_spi_transfer_one;
- 	host->num_chipselect = 4;
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 582d33e8111739402d38dc9fc268e7d14ced3c49..2877d9dec0753a5f03e0a54fa7b8d25072ea7b4d 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -449,6 +449,10 @@ void logfc(struct fc_log *log, const char *prefix, char level, const char *fmt,
+ 			printk(KERN_ERR "%s%s%pV\n", prefix ? prefix : "",
+ 						prefix ? ": " : "", &vaf);
+ 			break;
++		case 'i':
++			printk(KERN_INFO "%s%s%pV\n", prefix ? prefix : "",
++						prefix ? ": " : "", &vaf);
++			break;
+ 		default:
+ 			printk(KERN_NOTICE "%s%s%pV\n", prefix ? prefix : "",
+ 						prefix ? ": " : "", &vaf);
+
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250410-rfc_fix_fs-cfa369930abe
+
+Best regards,
 -- 
-2.49.0
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
