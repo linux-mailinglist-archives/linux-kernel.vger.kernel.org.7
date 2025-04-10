@@ -1,318 +1,218 @@
-Return-Path: <linux-kernel+bounces-598899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5952A84C71
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2884A84C64
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 952F319E35F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:54:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 858BE18894A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2BC28CF4F;
-	Thu, 10 Apr 2025 18:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BA12036F4;
+	Thu, 10 Apr 2025 18:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=martijnvandeventer.nl header.i=@martijnvandeventer.nl header.b="ESQ/pJWI"
-Received: from mail.mvand.net (mail.mvand.net [185.229.52.35])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815D220127B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 18:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.229.52.35
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBL5wBMS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8001372;
+	Thu, 10 Apr 2025 18:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744311233; cv=none; b=L1tT7jDO313lDQlMU6lHUxU3LO5OJe8BrIRkXUVUTWNzzFs1FVFPllEKwjE/1I5meWZSPaCJkx5Y0Lxpbe2RWR9+N9KcZw4sRYs3TgJRJ6UnhfsCNsxwFn+U0QVlGKtwcE0nsyCDHX3HmcL0ki69C9bg+v8+GHZ36Ve3Pn9BQ+8=
+	t=1744310871; cv=none; b=TVOW5ifAqtJhhR5yzm0ft/5E8/WOKkZwzAkPOg3h1vKg2lmdoN5ItWlrQkxgVPrRqf4tBaeEv5AgsQOAFatXU12NiXAxp1HNqIwQpBc3k+TZzMJI6sGqnbqwainqyMTeRDzhQYt8n5D/sEjc9viQgc4ggXzI+c7E4nyi3zd0S6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744311233; c=relaxed/simple;
-	bh=35f6PssSUk82gUbtI8PktIZ3m65teiiSAGKD5LD8TgM=;
-	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
-	 Mime-Version:Content-Type; b=OtpmFnmQh+RLm+f0wLoXSO3lvqTVPsz7oUfAEpnwguB1Rk0jelVUQuhtlIwvXfuPUAtDLXPjKo9upLofguv1FyP9Cyz1/P2U8VHnQWTVNjnBQjnByN1CKGP1UoXo6T1wNbQVuFe68JoFiQHFzji/CQUXQl64HAp77oy83XdsxSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=martijnvandeventer.nl; spf=pass smtp.mailfrom=martijnvandeventer.nl; dkim=pass (2048-bit key) header.d=martijnvandeventer.nl header.i=@martijnvandeventer.nl header.b=ESQ/pJWI; arc=none smtp.client-ip=185.229.52.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=martijnvandeventer.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=martijnvandeventer.nl
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by mail.mvand.net (Postfix) with ESMTPSA id 34FEA1FFBE;
-	Thu, 10 Apr 2025 20:46:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=martijnvandeventer.nl; s=default; t=1744310809;
-	bh=35f6PssSUk82gUbtI8PktIZ3m65teiiSAGKD5LD8TgM=;
-	h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-	b=ESQ/pJWIaR4uTXdP/9KMB45vWyGoLXrT8WlK1orbSkbIqAHvcP9cblEE93RxWKMW7
-	 pDKCBk0Wonc4PdiqukPYmRaHs+VEC7yRcT5iBukWDuc2diig4ExCA+/w3lA0fPECDe
-	 1yh8FHyhEGyuXdVguaVK0FUI3A4++JsXiUn3ujriGcNL3eQEIy2N0773GJqnK8hgrb
-	 Iu6wh8XzKbBulaaIhbqokXsH2arfjT65kq4cPGm7AVIStExiJ9XpsJt4TYEwZSNTiW
-	 r34hjcKsvfVLa9G3vXHymZPksKs0ma0JYE4aYXhnEDeEGfwWDgg7p1k94++TC+8ygx
-	 qXSY54OVqzP8w==
-From: <linux@martijnvandeventer.nl>
-To: "'Martin Blumenstingl'" <martin.blumenstingl@googlemail.com>,
-	<linux-amlogic@lists.infradead.org>,
-	<dri-devel@lists.freedesktop.org>
-Cc: <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<jbrunet@baylibre.com>,
-	<neil.armstrong@linaro.org>,
-	"'Furkan Kardame'" <f.kardame@manjaro.org>
-References: <20250409214422.1751825-1-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20250409214422.1751825-1-martin.blumenstingl@googlemail.com>
-Subject: RE: [PATCH] drm/meson: fix resource cleanup in meson_drv_bind_master() on error
-Date: Thu, 10 Apr 2025 20:46:48 +0200
-Message-ID: <001d01dbaa48$ead66d10$c0834730$@martijnvandeventer.nl>
+	s=arc-20240116; t=1744310871; c=relaxed/simple;
+	bh=lh13D5eOjggZORnuqzGXKHELLhtB7BDv7goIzC46kyQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CY+ldRAujt+5m6MFolpndgEPUBJBG6INTrwVm/4Iop4F+PdJ0eexyaAzjoS+CV6b6vMuF1uc+GB5sz0dU69baLRh/6IojAiV4VKO/Tfa3G6cA2xid5xKGGft5pi5ADzZyOLu0+L+jdZtQDx2rsI4IIDMMEzqKG5J2e6SFQfvykw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBL5wBMS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53FD1C4CEEB;
+	Thu, 10 Apr 2025 18:47:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744310870;
+	bh=lh13D5eOjggZORnuqzGXKHELLhtB7BDv7goIzC46kyQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aBL5wBMSKzk5BURfTniOR58wQWl/XR91v0iIgJo7nGi66CrBr9MKbwZ2Pzv9pRtl3
+	 p8dkeli6Vio3/qi6+ZxfvMg8FZnko5FKrfcWmruZhND4/z1IlGb9cucWyW3EMPR40T
+	 B/zgdCuMAqPFsibu/tTNoa84Moq3wyqyad6NUyu8udehJiZsT3djNA7fju7TI5qDIg
+	 RFw751o0ucjYJNjJIhuVytS9Zjm9Ajqb7Q+P6EY+aaTf9VcmyeHwDsbQLA3/kqiOZu
+	 yEiPT3m0laF3NtSRkPANqDYigb7Q8ZS/rodh9sv61YxLKTf5Jx+iruIaKbt4e/QKvG
+	 45lJiY8TRw38w==
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-60288fd4169so547893eaf.3;
+        Thu, 10 Apr 2025 11:47:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVxZFaNCXE9LI2TH/RhW0FUGu7mvxqD0l5yd/61NyWNeIdXXIYSnYd8HbNOFf0/tI1nHo+5JHUFGAdNziY=@vger.kernel.org, AJvYcCWnQ/csNOx4FJWL9U2ixFI+8DyOqxaHd8eC3n8FeHHS8viEau5oyBlZBRtfjGcRYXM/kk1Dqc/A4vA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvP2x5QdEQNkMBV2xzO58unwN4YIKgSuH+qCDG5M61XHF9wqAI
+	isGCsA5gX6g9gw8LlAo6z+44pAsqPKmV4XWYIsaK85KpvCm2sE/mzTThyB+ycM+V2pXlu/S/c85
+	MxLw4aNBrfIodXOFYW570iKeV5Rk=
+X-Google-Smtp-Source: AGHT+IH7tMOhVjXKtvPXAnN/Jvi+jOM2HVGY76nBhlBkM2NcMAm9z+Bf6vtlLFLPDsKJlXEXb8mLBjoMt/aDOXyf0RY=
+X-Received: by 2002:a05:6871:a508:b0:2bc:7e72:2110 with SMTP id
+ 586e51a60fabf-2d0b3643e2emr2042826fac.13.1744310869560; Thu, 10 Apr 2025
+ 11:47:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
+MIME-Version: 1.0
+References: <20250410024439.20859-1-sultan@kerneltoast.com>
+ <CAJZ5v0jKyy-3cELyDQTynE3Dv29V15F5f+w0A-H_nu+4LuaaYw@mail.gmail.com> <Z_fru1i1OpAQ-hJq@sultan-box.localdomain>
+In-Reply-To: <Z_fru1i1OpAQ-hJq@sultan-box.localdomain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 10 Apr 2025 20:47:38 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iu_hMud6FRg6FiUVQ1cY6oYqrEmwpwPTeYJh5Yzh5Q8A@mail.gmail.com>
+X-Gm-Features: ATxdqUEtAldOeY9RkK0nivdkGKJjyMHucWXMo7LktKbOHwKacrjSjsGhTC-dwxk
+Message-ID: <CAJZ5v0iu_hMud6FRg6FiUVQ1cY6oYqrEmwpwPTeYJh5Yzh5Q8A@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: schedutil: Don't ignore limit changes when util
+ is unchanged
+To: Sultan Alsawaf <sultan@kerneltoast.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Stephan Gerhold <stephan.gerhold@linaro.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Christian Loehle <christian.loehle@arm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-us
-Thread-Index: AQHanRYIlb/sWKyzPMx9MZcpgEt53rOfTIcg
 
-Hi Martin,
+On Thu, Apr 10, 2025 at 6:03=E2=80=AFPM Sultan Alsawaf <sultan@kerneltoast.=
+com> wrote:
+>
+> On Thu, Apr 10, 2025 at 05:34:39PM +0200, Rafael J. Wysocki wrote:
+> > On Thu, Apr 10, 2025 at 4:45=E2=80=AFAM Sultan Alsawaf <sultan@kernelto=
+ast.com> wrote:
+> > >
+> > > From: Sultan Alsawaf <sultan@kerneltoast.com>
+> > >
+> > > When utilization is unchanged, a policy limits update is ignored unle=
+ss
+> > > CPUFREQ_NEED_UPDATE_LIMITS is set. This occurs because limits_changed
+> > > depends on the old broken behavior of need_freq_update to trigger a c=
+all
+> > > into cpufreq_driver_resolve_freq() to evaluate the changed policy lim=
+its.
+> > >
+> > > After fixing need_freq_update, limit changes are ignored without
+> > > CPUFREQ_NEED_UPDATE_LIMITS, at least until utilization changes enough=
+ to
+> > > make map_util_freq() return something different.
+> > >
+> > > Fix the ignored limit changes by preserving the value of limits_chang=
+ed
+> > > until get_next_freq() is called, so limits_changed can trigger a call=
+ to
+> > > cpufreq_driver_resolve_freq().
+> > >
+> > > Reported-and-tested-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> > > Link: https://lore.kernel.org/lkml/Z_Tlc6Qs-tYpxWYb@linaro.org
+> > > Fixes: 8e461a1cb43d6 ("cpufreq: schedutil: Fix superfluous updates ca=
+used by need_freq_update")
+> > > Signed-off-by: Sultan Alsawaf <sultan@kerneltoast.com>
+> > > ---
+> > >  kernel/sched/cpufreq_schedutil.c | 5 +++--
+> > >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_=
+schedutil.c
+> > > index 1a19d69b91ed3..f37b999854d52 100644
+> > > --- a/kernel/sched/cpufreq_schedutil.c
+> > > +++ b/kernel/sched/cpufreq_schedutil.c
+> > > @@ -82,7 +82,6 @@ static bool sugov_should_update_freq(struct sugov_p=
+olicy *sg_policy, u64 time)
+> > >                 return false;
+> > >
+> > >         if (unlikely(sg_policy->limits_changed)) {
+> > > -               sg_policy->limits_changed =3D false;
+> > >                 sg_policy->need_freq_update =3D cpufreq_driver_test_f=
+lags(CPUFREQ_NEED_UPDATE_LIMITS);
+> > >                 return true;
+> > >         }
+> > > @@ -171,9 +170,11 @@ static unsigned int get_next_freq(struct sugov_p=
+olicy *sg_policy,
+> > >         freq =3D get_capacity_ref_freq(policy);
+> > >         freq =3D map_util_freq(util, freq, max);
+> > >
+> > > -       if (freq =3D=3D sg_policy->cached_raw_freq && !sg_policy->nee=
+d_freq_update)
+> > > +       if (freq =3D=3D sg_policy->cached_raw_freq && !sg_policy->lim=
+its_changed &&
+> > > +           !sg_policy->need_freq_update)
+> > >                 return sg_policy->next_freq;
+> > >
+> > > +       sg_policy->limits_changed =3D false;
+> >
+> > AFAICS, after this code modification, a limit change may be missed due
+> > to a possible race with sugov_limits() which cannot happen if
+> > sg_policy->limits_changed is only cleared when it is set before
+> > updating sg_policy->need_freq_update.
+>
+> I don't think that's the case because sg_policy->limits_changed is cleare=
+d
+> before the new policy limits are evaluated in cpufreq_driver_resolve_freq=
+().
 
-Thank you for the patch.
+sugov_limits() may be triggered by a scaling_max_freq update, for
+instance, so it is asynchronous with respect to the usual governor
+flow.  It updates sg_policy->limits_changed and assumes that next time
+the governor runs, it will call into the driver, for example via
+cpufreq_driver_fast_switch(), so the new limits take effect.  This is
+not about cpufreq_driver_resolve_freq().
 
-I encountered this issue some time ago as well and had a possible fix in =
-my tree (see
-below).=20
-My apologies for not upstreaming it earlier.
+sugov_limits() runs after the driver's ->verify() callback has
+returned and it is conditional on that callback's return value, so the
+driver already knows the new limits when sugov_limits() runs, but it
+may still need to tell the hardware what the new limits are and that's
+why cpufreq_driver_fast_switch() may need to run.
 
-While my fix is not as symmetric as yours=E2=80=94I like =
-symmetry=E2=80=94it is somewhat simpler. It
-did make the assumption that only  calling component_unbind_all() was at =
-fault and the the rest of the=20
-code was correct. Therefore, calling one of the following functions:
-meson_encoder_dsi_remove()
-meson_encoder_hdmi_remove()
-meson_encoder_cvbs_remove()
-in case their counterpart was not called, should not result in any =
-issues.
+Now, if sugov_should_update_freq() sees sg_policy->limits_changed set,
+it will set sg_policy->need_freq_update which (for drivers with
+CPUFREQ_NEED_UPDATE_LIMITS set) guarantees that the driver will be
+invoked and so sg_policy->limits_changed can be cleared.
 
-I just verified, and, as far as I understand, all of these functions do =
-a check to confirm
-whether the encoder was initialized before proceeding with cleanup.
+If a new instance of sugov_limits() runs at this point, there are two
+possibilities.  Either it completes before the
+sg_policy->limits_changed update in sugov_should_update_freq(), in
+which case the driver already knows the new limits as per the above
+and so the subsequent invocation of cpufreq_driver_fast_switch() will
+pick them up, or it sets sg_policy->limits_changed again and the
+governor will see it set next time it runs.  In both cases the new
+limits will be picked up unless they are changed again in the
+meantime.
 
------------------------------------------------------
-diff --git a/drivers/gpu/drm/meson/meson_drv.c =
-b/drivers/gpu/drm/meson/meson_drv.c
-index 81d2ee37e773..4e2d45a271c2 100644
---- a/drivers/gpu/drm/meson/meson_drv.c
-+++ b/drivers/gpu/drm/meson/meson_drv.c
-@@ -184,6 +184,7 @@ static int meson_drv_bind_master(struct device *dev, =
-bool has_components)
-        const struct meson_drm_match_data *match;
-        struct meson_drm *priv;
-        struct drm_device *drm;
-+       bool do_unbind =3D false;
-        struct resource *res;
-        void __iomem *regs;
-        int ret, i;
-@@ -312,10 +313,9 @@ static int meson_drv_bind_master(struct device =
-*dev, bool has_components)
-                ret =3D component_bind_all(dev, drm);
-                if (ret) {
-                        dev_err(drm->dev, "Couldn't bind all =
-components\n");
--                       /* Do not try to unbind */
--                       has_components =3D false;
-                        goto exit_afbcd;
-                }
-+               do_unbind =3D true;
-        }
+After the above change, sg_policy->limits_changed may be cleared even
+if it has not been set before and that's problematic.  Namely, say it
+is unset when sugov_should_update_freq() runs, after being called by
+sugov_update_single_freq() via sugov_update_single_common(), and
+returns 'true' without setting sg_policy->need_freq_update.  Next,
+sugov_update_single_common() returns 'true' and get_next_freq() is
+called.  It sees that freq !=3D sg_policy->cached_raw_freq, so it clears
+sg_policy->limits_changed.  If sugov_limits() runs on a different CPU
+between the check and the sg_policy->limits_changed update in
+get_next_freq(), it may be missed and it is still not guaranteed that
+cpufreq_driver_fast_switch() will run because
+sg_policy->need_freq_update is unset and sugov_hold_freq() may return
+'true'.
 
-        ret =3D meson_encoder_hdmi_probe(priv);
-@@ -378,7 +378,7 @@ static int meson_drv_bind_master(struct device *dev, =
-bool has_components)
-        meson_encoder_hdmi_remove(priv);
-        meson_encoder_cvbs_remove(priv);
+For this to work, sg_policy->limits_changed needs to be cleared only
+when it is set and sg_policy->need_freq_update needs to be updated
+when sg_policy->limits_changed is cleared.
 
--       if (has_components)
-+       if (do_unbind)
-                component_unbind_all(dev, drm);
+It looks like you really want to set sg_policy->need_freq_update to
+'true' in sugov_should_update_freq() when sg_policy->limits_changed is
+set, but that would render CPUFREQ_NEED_UPDATE_LIMITS unnecessary.
 
-        return ret;
------------------------------
+> Granted, if we wanted to be really certain of this, we'd need release sem=
+antics.
 
-This patch has somewhat less code redundancy. I don=E2=80=99t have a =
-strong
-preference for either patch, so please feel free to choose whichever you =
+I don't think so, but feel free to prove me wrong.
 
-prefer.=20
+> Looking closer at cpufreq.c actually, isn't there already a race on the u=
+pdated
+> policy limits (policy->min and policy->max) since they can be updated aga=
+in
+> while schedutil reads them via cpufreq_driver_resolve_freq()?
 
-If you decide to go with yours, I=E2=80=99ve provided one minor comment =
-inline
-for your consideration.
-
-> -----Original Message-----
-> From: linux-amlogic <linux-amlogic-bounces@lists.infradead.org> On =
-Behalf
-> Of Martin Blumenstingl
-> Sent: Wednesday, April 9, 2025 11:44 PM
-> To: linux-amlogic@lists.infradead.org; dri-devel@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org; =
-linux-arm-kernel@lists.infradead.org;
-> jbrunet@baylibre.com; neil.armstrong@linaro.org; Martin Blumenstingl
-> <martin.blumenstingl@googlemail.com>; Furkan Kardame
-> <f.kardame@manjaro.org>
-> Subject: [PATCH] drm/meson: fix resource cleanup in
-> meson_drv_bind_master() on error
->=20
-> meson_drv_bind_master() does not free resources in the order they are
-> allocated. This can lead to crashes such as:
->     Unable to handle kernel NULL pointer dereference at virtual =
-address
-> 00000000000000c8
->     [...]
->     Hardware name: Beelink GT-King Pro (DT)
->     pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
->     pc : meson_dw_hdmi_unbind+0x10/0x24 [meson_dw_hdmi]
->     lr : component_unbind+0x38/0x60
->     [...]
->     Call trace:
->      meson_dw_hdmi_unbind+0x10/0x24 [meson_dw_hdmi]
->      component_unbind+0x38/0x60
->      component_unbind_all+0xb8/0xc4
->      meson_drv_bind_master+0x1ec/0x514 [meson_drm]
->      meson_drv_bind+0x14/0x20 [meson_drm]
->      try_to_bring_up_aggregate_device+0xa8/0x160
->      __component_add+0xb8/0x1a8
->      component_add+0x14/0x20
->      meson_dw_hdmi_probe+0x1c/0x28 [meson_dw_hdmi]
->      platform_probe+0x68/0xdc
->      really_probe+0xc0/0x39c
->      __driver_probe_device+0x7c/0x14c
->      driver_probe_device+0x3c/0x120
->      __driver_attach+0xc4/0x200
->      bus_for_each_dev+0x78/0xd8
->      driver_attach+0x24/0x30
->      bus_add_driver+0x110/0x240
->      driver_register+0x68/0x124
->      __platform_driver_register+0x24/0x30
->      meson_dw_hdmi_platform_driver_init+0x20/0x1000 [meson_dw_hdmi]
->      do_one_initcall+0x50/0x1bc
->      do_init_module+0x54/0x1fc
->      load_module+0x788/0x884
->      init_module_from_file+0x88/0xd4
->      __arm64_sys_finit_module+0x248/0x340
->      invoke_syscall+0x48/0x104
->      el0_svc_common.constprop.0+0x40/0xe0
->      do_el0_svc+0x1c/0x28
->      el0_svc+0x30/0xcc
->      el0t_64_sync_handler+0x120/0x12c
->      el0t_64_sync+0x190/0x194
->=20
-> Clean up resources in the error path in the same order and under the
-> same conditions as they were allocated to fix this.
->=20
-> Reported-by: Furkan Kardame <f.kardame@manjaro.org>
-> Signed-off-by: Martin Blumenstingl =
-<martin.blumenstingl@googlemail.com>
-> ---
-> This issue was reported off-list so I'm unable to provide a link to =
-the
-> report.
->=20
-> I'm not sure which Fixes tag fits best. My preference so far is
-> Fixes: 6a044642988b ("drm/meson: fix unbind path if HDMI fails to =
-bind")
-> but I'll happily take other suggestions as well.
->=20
->=20
->  drivers/gpu/drm/meson/meson_drv.c | 31 =
-+++++++++++++++++--------------
->  1 file changed, 17 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/meson/meson_drv.c
-> b/drivers/gpu/drm/meson/meson_drv.c
-> index 81d2ee37e773..031686fd4104 100644
-> --- a/drivers/gpu/drm/meson/meson_drv.c
-> +++ b/drivers/gpu/drm/meson/meson_drv.c
-> @@ -314,35 +314,35 @@ static int meson_drv_bind_master(struct device
-> *dev, bool has_components)
->  			dev_err(drm->dev, "Couldn't bind all
-> components\n");
->  			/* Do not try to unbind */
->  			has_components =3D false;
-
-Above two lines are no longer used, so can be removed.
-
-> -			goto exit_afbcd;
-> +			goto cvbs_encoder_remove;
->  		}
->  	}
->=20
->  	ret =3D meson_encoder_hdmi_probe(priv);
->  	if (ret)
-> -		goto exit_afbcd;
-> +		goto unbind_components;
->=20
->  	if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)) {
->  		ret =3D meson_encoder_dsi_probe(priv);
->  		if (ret)
-> -			goto exit_afbcd;
-> +			goto hdmi_encoder_remove;
->  	}
->=20
->  	ret =3D meson_plane_create(priv);
->  	if (ret)
-> -		goto exit_afbcd;
-> +		goto dsi_encoder_remove;
->=20
->  	ret =3D meson_overlay_create(priv);
->  	if (ret)
-> -		goto exit_afbcd;
-> +		goto dsi_encoder_remove;
->=20
->  	ret =3D meson_crtc_create(priv);
->  	if (ret)
-> -		goto exit_afbcd;
-> +		goto dsi_encoder_remove;
->=20
->  	ret =3D request_irq(priv->vsync_irq, meson_irq, 0, =
-drm->driver->name,
-> drm);
->  	if (ret)
-> -		goto exit_afbcd;
-> +		goto dsi_encoder_remove;
->=20
->  	drm_mode_config_reset(drm);
->=20
-> @@ -360,6 +360,16 @@ static int meson_drv_bind_master(struct device
-> *dev, bool has_components)
->=20
->  uninstall_irq:
->  	free_irq(priv->vsync_irq, drm);
-> +dsi_encoder_remove:
-> +	if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A))
-> +		meson_encoder_dsi_remove(priv);
-> +hdmi_encoder_remove:
-> +	meson_encoder_hdmi_remove(priv);
-> +unbind_components:
-> +	if (has_components)
-> +		component_unbind_all(dev, drm);
-> +cvbs_encoder_remove:
-> +	meson_encoder_cvbs_remove(priv);
->  exit_afbcd:
->  	if (priv->afbcd.ops)
->  		priv->afbcd.ops->exit(priv);
-> @@ -374,13 +384,6 @@ static int meson_drv_bind_master(struct device
-> *dev, bool has_components)
->  free_drm:
->  	drm_dev_put(drm);
->=20
-> -	meson_encoder_dsi_remove(priv);
-> -	meson_encoder_hdmi_remove(priv);
-> -	meson_encoder_cvbs_remove(priv);
-> -
-> -	if (has_components)
-> -		component_unbind_all(dev, drm);
-> -
->  	return ret;
->  }
->=20
- --
-Best regards,
-
-Martijn
-
-
+That can happen, but it is a different thing.
 
