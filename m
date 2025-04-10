@@ -1,63 +1,53 @@
-Return-Path: <linux-kernel+bounces-598830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B889AA84B99
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:49:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFAEFA84B9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D83F4A6F1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:47:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E73979C4C8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B8F28C5CE;
-	Thu, 10 Apr 2025 17:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488D628D823;
+	Thu, 10 Apr 2025 17:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uQR/Zt5Q"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="mQjAnV7+"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406161EF377;
-	Thu, 10 Apr 2025 17:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FD828CF71
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 17:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744307098; cv=none; b=bTL9VxYSCh3MIk/rM/VuMN7lLqb8sfXqkZIpYhcmLZw06k7JGvnGtU9Gi5Rz2PRJK1Zx/SgrIpNcXMClsITqtxLNjNe+eRsvzw+ITSaENnjsmV5MzxF9CH4yZmhXxEXv8+4SEOMeey07sXHCvD9DC4vV3EwzAM/VfM/JmHnX1M4=
+	t=1744307152; cv=none; b=HCYPOvel6+X8z+ic6ZNnhclNlsDLVX6VDeyApFZ5au7CL76ImTBKhHceKwU81Ksi6zzoLYfsMBhOVmla1uAr1D6t5HPJgZWn88XYfgPzEj50qFREPMhE+8wys9qNob6ayp3MUS48pLbyLhaNWwq+ZtCdGA1CEuBJ4CyxgWe8oYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744307098; c=relaxed/simple;
-	bh=6uOenMh5S1Og+Ekr+a2C+JZQrM/rXATPBSYrnhNdnzs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mdH9Bs823GeeYh8rmFeAdOjpojwCMoJAqPXhYp6g2BdHl2ZQhiH7kGO6wE72qKFXEENIZp8UoFUKvY3UjeOlDEiZQ9bQdHI2RIVHBtRIlkm0JJrcG8PNS+LiwAhrbMiTjMzXG373K9ylRc6PCsIvet8ICfmZdvn8kdqLaByZXaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uQR/Zt5Q; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53AHikBh1222574
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Apr 2025 12:44:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744307086;
-	bh=94xi9Bo5CmRSgLmyg0d2/0JDQ3NXv/QZQq3M2Xl5Q5w=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=uQR/Zt5Qagj7bzkRdGwqmDOIMa3NguuN2TDKehYotgspt3ahyNw1pXV8yTEARagC6
-	 4dwSeku7Am4zoFYOUvWsxQ2UQ5a8ZrrmXDZAoYlyu+okBS+GNMj+dZo/a1saS8b4rF
-	 vn4r06HjiQjIX128BFguQH47dpFWgotTptc2PiKU=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53AHik3U024406
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 10 Apr 2025 12:44:46 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 10
- Apr 2025 12:44:45 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 10 Apr 2025 12:44:45 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53AHijlU017859;
-	Thu, 10 Apr 2025 12:44:45 -0500
-Message-ID: <45e2c2bf-68af-4c78-8f85-e25f4e7ea3fd@ti.com>
-Date: Thu, 10 Apr 2025 12:44:45 -0500
+	s=arc-20240116; t=1744307152; c=relaxed/simple;
+	bh=cEZAu9tvl0UjsVKyxpW5HTp16L+klq+gUgLQuETOTGY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=COzio5Ql4dXtho43S1r1VvpXJymVjPi8Y8pm2lu2689YUkI5szWv6MNOMAbaQuE+2Au0QcK9bUdELHViuCmDJNa0/eIhohMHQkUyyO06hafW+xf1ySA05H/FIiyaarq7wJPapTo5SxBXi3lcMrn5azi1ujwij/zSH/NE+M+jsgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=mQjAnV7+; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53AHjJ7n028183
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 10 Apr 2025 10:45:19 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53AHjJ7n028183
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025032001; t=1744307120;
+	bh=/Y7ECVM/3qDzGWeUBCLMo/B6clqN9FVRsb1Jhfwi/+0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mQjAnV7+3HjL95j0BI/yHtPQpoFmi0yRgDFay4sRTNGroocLPOrPFaD4DhD1SxzwD
+	 DY6c58ZcWek7dlzfJ15AoeMO75wT1KoUh0oEnSuEGkRuc7k9/H9TkzbI2jaAO5ctxT
+	 f1csTbThEtBea3c8Eue2JwNCR3Ev2vMSc4sI4gSctk5XP5a5uz+vqa/FLGvNN/M0jk
+	 mlqghA0J4rMM37F2Z/ynAd3k6cP2SYITxsgJIQ3wVW4t7yRKn7E0lM34YnjKaX/uL8
+	 emFJ7xR7c/mTstr2NXcN5413BO2UDo4jossCElfA8apA90Jd0pKCi6MWqUt/oFOTc/
+	 kvjAWbmmxR7jw==
+Message-ID: <43203e47-7406-44cb-b783-3d71ff4d01ed@zytor.com>
+Date: Thu, 10 Apr 2025 10:45:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,294 +55,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 06/11] arm64: dts: ti: k3-am62a7-sk: Enable IPC with
- remote processors
-To: Beleswar Prasad Padhi <b-padhi@ti.com>,
-        Devarsh Thakkar
-	<devarsht@lewv0571a.ent.ti.com>,
-        Nishanth Menon <nm@ti.com>, Andrew Davis
-	<afd@ti.com>,
-        Hari Nagalla <hnagalla@ti.com>
-CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Markus
- Schneider-Pargmann <msp@baylibre.com>
-References: <20250405001518.1315273-1-jm@ti.com>
- <20250405001518.1315273-7-jm@ti.com>
- <6868f593-0728-4e92-a57b-87db6a0037f6@ti>
- <f42607f5-e39d-48a1-89c0-11d4982a2426@ti.com>
- <f8f1d877-3d13-4ba7-90e1-455923458c11@ti.com>
- <fe735242-4643-432a-adaf-27e29719948a@ti.com>
- <bffd8489-1556-425d-b3f9-8fde8a7d34a7@ti.com>
+Subject: Re: [PATCH 06/20] x86/msr: Standardize on 'u32' MSR indices in
+ <asm/msr.h>
+To: Peter Zijlstra <peterz@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Juergen Gross <jgross@suse.com>, Dave Hansen <dave.hansen@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>
+References: <20250409202907.3419480-1-mingo@kernel.org>
+ <20250409202907.3419480-7-mingo@kernel.org>
+ <aed43a6a-aca9-4c81-af1a-775f5858ebe3@zytor.com>
+ <9c014962-d4cb-4e68-be15-efbe2ea26531@zytor.com>
+ <63ab3ea9-c55d-48d2-8344-fb4314baf240@zytor.com>
+ <3B57B3E5-47C9-4196-AD2B-44916E18B6D0@zytor.com>
+ <3e2a52c5-791a-4e96-a768-8579ec841dd1@zytor.com>
+ <e3d8db6a-dfb9-49d5-8c7f-b4a1d2faf575@zytor.com>
+ <20250410074828.GU9833@noisy.programming.kicks-ass.net>
 Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <bffd8489-1556-425d-b3f9-8fde8a7d34a7@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20250410074828.GU9833@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Beleswar,
-
-On 4/10/25 3:55 AM, Beleswar Prasad Padhi wrote:
-> Hi Judith,
+On 4/10/2025 12:48 AM, Peter Zijlstra wrote:
+> I have vague memories of locations where we*have* to use native_{rd,wr}msr()
+> because the paravirt indirections cause problems.
 > 
-> On 10/04/25 04:02, Judith Mendez wrote:
->> Hi Beleswar,
->>
->> On 4/7/25 11:00 PM, Beleswar Prasad Padhi wrote:
->>> Hi Judith, Andrew,
->>>
->>> On 07/04/25 19:43, Judith Mendez wrote:
->>>> Hi Devarsh,
->>>>
->>>> On 4/7/25 8:54 AM, Devarsh Thakkar wrote:
->>>>> Hi Judith,
->>>>>
->>>>> On 05/04/25 05:45, Judith Mendez wrote:
->>>>>  > From: Devarsh Thakkar <devarsht@ti.com>
->>>>>>
->>>>>
->>>>> Thanks for the patch.
->>>>>
->>>>>> For each remote proc, reserve memory for IPC and bind the mailbox
->>>>>> assignments. Two memory regions are reserved for each remote 
->>>>>> processor.
->>>>>> The first region of 1MB of memory is used for Vring shared buffers
->>>>>> and the second region is used as external memory to the remote 
->>>>>> processor
->>>>>> for the resource table and for tracebuffer allocations.
->>>>>>
->>>>>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
->>>>>> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
->>>>>> Signed-off-by: Judith Mendez <jm@ti.com>
->>>>>> ---
->>>>>>   arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 96 
->>>>>> +++++++++++++++++++++++--
->>>>>>   1 file changed, 90 insertions(+), 6 deletions(-)
->>>>>>
->>>>>> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts 
->>>>>> b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->>>>>> index 1c9d95696c839..7d817b447c1d0 100644
->>>>>> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->>>>>> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->>>>>> @@ -52,6 +52,42 @@ linux,cma {
->>>>>>               linux,cma-default;
->>>>>>           };
->>>>>> +        c7x_0_dma_memory_region: c7x-dma-memory@99800000 {
->>>>>> +            compatible = "shared-dma-pool";
->>>>>> +            reg = <0x00 0x99800000 0x00 0x100000>;
->>>>>> +            no-map;
->>>>>> +        };
->>>>>> +
->>>>>> +        c7x_0_memory_region: c7x-memory@99900000 {
->>>>>> +            compatible = "shared-dma-pool";
->>>>>> +            reg = <0x00 0x99900000 0x00 0xf00000>;
->>>>>> +            no-map;
->>>>>> +        };
->>>>>> +
->>>>>> +        mcu_r5fss0_core0_dma_memory_region: 
->>>>>> r5f-dma-memory@9b800000 {
->>>>>> +            compatible = "shared-dma-pool";
->>>>>> +            reg = <0x00 0x9b800000 0x00 0x100000>;
->>>>>> +            no-map;
->>>>>> +        };
->>>>>> +
->>>>>> +        mcu_r5fss0_core0_memory_region: r5f-dma-memory@9b900000 {
->>>>>> +            compatible = "shared-dma-pool";
->>>>>> +            reg = <0x00 0x9b900000 0x00 0xf00000>;
->>>>>> +            no-map;
->>>>>> +        };
->>>>>> +
->>>>>> +        wkup_r5fss0_core0_dma_memory_region: 
->>>>>> r5f-dma-memory@9c800000 {
->>>>>> +            compatible = "shared-dma-pool";
->>>>>> +            reg = <0x00 0x9c800000 0x00 0x100000>;
->>>>>> +            no-map;
->>>>>> +        };
->>>>>> +
->>>>>> +        wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
->>>>>> +            compatible = "shared-dma-pool";
->>>>>> +            reg = <0x00 0x9c900000 0x00 0xf00000>;
->>>>>> +            no-map;
->>>>>> +        };
->>>>>> +
->>>>>>           secure_tfa_ddr: tfa@9e780000 {
->>>>>>               reg = <0x00 0x9e780000 0x00 0x80000>;
->>>>>>               alignment = <0x1000>;
->>>>>> @@ -63,12 +99,6 @@ secure_ddr: optee@9e800000 {
->>>>>>               alignment = <0x1000>;
->>>>>>               no-map;
->>>>>>           };
->>>>>> -
->>>>>> -        wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
->>>>>> -            compatible = "shared-dma-pool";
->>>>>> -            reg = <0x00 0x9c900000 0x00 0x01e00000>;
->>>>>> -            no-map;
->>>>>> -        };
->>>>>>       };
->>>>>
->>>>> This is missing the edgeAI specific remote-core carveouts and 
->>>>> RTOS-to-RTOS IPC memory regions [1] being used by edgeAI firmwares 
->>>>> which come as pre-packaged in the official SDK release for AM62A.
->>>>>
->>>>> There is only one official SDK release for AM62A (which is edgeAI 
->>>>> based) [2] which packages these edgeAI remoteproc firmwares and in 
->>>>> my view it is a fair expectation that remote core careveouts in 
->>>>> device-tree should align with firmwares released in SDK.
->>>>>
->>>>> This is because most developers (including me) and vendors download 
->>>>> this official SDK release and use it with latest upstream kernel 
->>>>> and modules (right now we are applying required patches locally) 
->>>>> and this patch won't suffice for this, in-fact it won't work since 
->>>>> the remoteproc firmwares are already using regions beyond the 
->>>>> reserved-regions from this patch.
->>>>
->>>> I understand your point, currently with this patch remoteproc loading
->>>> will not work for some cores. However, the goal here is to standardize
->>>> as much as possible the memory carveout sizes, push the "demo firmware"
->>>> to request resources the correct way from resource table, 
->>>
->>>
->>> It is indeed more suitable if the memory carveouts are called out in 
->>> the resource table of the firmware. But you will still need to 
->>> reserve that memory sections in the Device Tree so that Kernel does 
->>> not map that memory for anything else. So I am thinking how moving to 
->>> resource table will help solve this problem?
->>
->> The point is that our default FW is doing things incorrectly. We want to
->> push the existing FW to
->> 1. Request resources via resource table.
->> 2. Fix their memory requirements (recent offline discussion proved that
->> FW is requesting more than it needs)
->> 3. FW should adapt to Linux not Linux adapt to FW
-> 
-> 
-> Thanks. I also agree with you on all of the above points for a standard 
-> firmware.
-> 
-> However, I was referring to this problem:
-> Can we get rid of static reserved memory carveouts in DT?
-> People using a custom firmware will have to patch the Device Tree to 
-> reserve larger/different memory regions. Is there some way where the 
-> firmware can dictate the "reserved" memory carveouts at runtime? Memory 
-> carveouts can be announced through Resource Table, but there is no 
-> guarantee we will be able to allocate it (it could be mapped by the 
-> Kernel for some other alloc), unless its pre-reserved in DT.
-> 
+> I don't clearly recall the reasons, but it could be instrumentation
+> related. The paravirt muck has tracepoints and other crap included.
 
-Since we do not have an IOMMU for remote cores in K3, we cannot get rid
-of the static reserved memory carveouts, is my understanding. The linux
-driver would have programmed the IOMMU virtual and physical addresses
-and it would have been able to do the virtual to physical address
-translation on its own with only the requirement size from the FW
-resource table. Since we do not have this flexibility provided with
-IOMMU, we must have static reserved carveouts so that Linux will not
-touch these memory regions. The firmware virtual address to physical
-adress is atm a one to one mapping. So in summary, we must have these
-static reserved memory carveouts, but we should fix the default FW
-to use the "standardized" sizes and request SRAM via resource table.
+Hey, I was discussing this with hpa a few days ago ;)
 
-~ Judith
+Here is the existing code:
+
+#define native_wrmsr(msr, low, high)                    \
+         __wrmsr(msr, low, high)
+
+...
+
+static inline void notrace native_write_msr(unsigned int msr, u32 low, 
+u32 high)
+{
+         __wrmsr(msr, low, high);
+
+         if (tracepoint_enabled(write_msr))
+                 do_trace_write_msr(msr, ((u64)high << 32 | low), 0);
+}
 
 
-> Thanks,
-> Beleswar
-> 
->>
->> If not, then then we should try to move to Zephyr firmware or other/
->> better options.
->>
->> Hope I am able to explain myself better this time around.
->>
->> ~ Judith
->>
->>>
->>> Thanks,
->>> Beleswar
->>>
->>>> and move away
->>>> from this dependency and limitations that we have with our firmware. We
->>>> should soon be able to generate our own firmware using Zephyr, which
->>>> Andrew is pioneering, so with this firmware we should move to the
->>>> correct direction upstream. Downstream we are still using the memory
->>>> carveout sizes that the firmware folk want so desperately to keep, for
->>>> now..
->>>>
->>>> ~ Judith
->>>>
->>>>>
->>>>> [1]: 
->>>>> https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel/tree/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts?h=ti-linux-6.6.y-cicd#n103
->>>>> [2]: https://www.ti.com/tool/PROCESSOR-SDK-AM62A
->>>>>
->>>>> Regards
->>>>> Devarsh
->>>>>
->>>>>>       opp-table {
->>>>>> @@ -741,3 +771,57 @@ dpi1_out: endpoint {
->>>>>>           };
->>>>>>       };
->>>>>>   };
->>>>>> +
->>>>>> +&mailbox0_cluster0 {
->>>>>> +    status = "okay";
->>>>>> +
->>>>>> +    mbox_r5_0: mbox-r5-0 {
->>>>>> +        ti,mbox-rx = <0 0 0>;
->>>>>> +        ti,mbox-tx = <1 0 0>;
->>>>>> +    };
->>>>>> +};
->>>>>> +
->>>>>> +&mailbox0_cluster1 {
->>>>>> +    status = "okay";
->>>>>> +
->>>>>> +    mbox_c7x_0: mbox-c7x-0 {
->>>>>> +        ti,mbox-rx = <0 0 0>;
->>>>>> +        ti,mbox-tx = <1 0 0>;
->>>>>> +    };
->>>>>> +};
->>>>>> +
->>>>>> +&mailbox0_cluster2 {
->>>>>> +    status = "okay";
->>>>>> +
->>>>>> +    mbox_mcu_r5_0: mbox-mcu-r5-0 {
->>>>>> +        ti,mbox-rx = <0 0 0>;
->>>>>> +        ti,mbox-tx = <1 0 0>;
->>>>>> +    };
->>>>>> +};
->>>>>> +
->>>>>> +&wkup_r5fss0 {
->>>>>> +    status = "okay";
->>>>>> +};
->>>>>> +
->>>>>> +&wkup_r5fss0_core0 {
->>>>>> +    mboxes = <&mailbox0_cluster0>, <&mbox_r5_0>;
->>>>>> +    memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
->>>>>> +            <&wkup_r5fss0_core0_memory_region>;
->>>>>> +};
->>>>>> +
->>>>>> +&mcu_r5fss0 {
->>>>>> +    status = "okay";
->>>>>> +};
->>>>>> +
->>>>>> +&mcu_r5fss0_core0 {
->>>>>> +    mboxes = <&mailbox0_cluster2>, <&mbox_mcu_r5_0>;
->>>>>> +    memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
->>>>>> +            <&mcu_r5fss0_core0_memory_region>;
->>>>>> +};
->>>>>> +
->>>>>> +&c7x_0 {
->>>>>> +    mboxes = <&mailbox0_cluster1>, <&mbox_c7x_0>;
->>>>>> +    memory-region = <&c7x_0_dma_memory_region>,
->>>>>> +            <&c7x_0_memory_region>;
->>>>>> +    status = "okay";
->>>>>> +};
->>>>>
->>>>
->>
+So native_write_msr() is just native_wrmsr() + do_trace().
 
+native_wrmsr() is used only once in arch/x86/coco/sev/core.c, and Boris
+explained that in commit:
+
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f980f9c31a923e9040dee0bc679a5f5b09e61f40.
+
+     [ bp: Use the non-tracing rd/wrmsr variants because:
+       vmlinux.o: warning: objtool: __sev_es_nmi_complete()+0x11f: \
+               call to do_trace_write_msr() leaves .noinstr.text section
+       as __sev_es_nmi_complete() is noinstr due to being called from the
+       NMI handler exc_nmi(). ]
+
+
+It's confusing from the function names when to use native_write_msr()
+or native_wrmsr() after removing the paravirt MSR APIs.  And I want to 
+rename native_wrmsr() to native_wrmsr_no_trace(), and then
+native_write_msr() to native_wrmsr() to make their difference explicit.
+
+The same to native_wrmsrl(), which is used in VMX noinstr functions.
+
+There is only native_rdmsr(), but no native_rdmsrl().  And 
+native_rdmsr() is used in microcode code only.
+
+
+BTW, using the native_*() functions on Xen shouldn't be a problem,
+because they cause #GP and then Xen could:
+
+1) emulate the MSR instruction, and advance guest IP.
+
+2) inject #GP back into the guest, and the guest MSR instruction is
+skipped in guest #GP handler, with MSR access *_safe() APIs an error is
+returned to the MSR APIs.
+
+Thanks!
+     Xin
 
