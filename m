@@ -1,97 +1,60 @@
-Return-Path: <linux-kernel+bounces-598412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24539A845D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:12:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE79DA845D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60CA63B056D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:07:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35A444E72F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D3C28A413;
-	Thu, 10 Apr 2025 14:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC24328A40E;
+	Thu, 10 Apr 2025 14:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OMb2Fdrz"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghrmQREC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC2128D834
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 14:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54428285402;
+	Thu, 10 Apr 2025 14:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744294013; cv=none; b=p6Vm5Ghs79sy0v3v85J3u+EGK8TK+TtNWgec7x4aoshR4HwWm4tIAATf7I3KU/0pNwMcBf/xbyoUJ1zEaPjThNEHnjBVfbzTBpNYcK59Er72X8MDeR3TBPOvlUJqm5speWEKW2kusl+dKnd0o1SzHadePgrG/nidiJRiV6mGmnM=
+	t=1744294095; cv=none; b=cpJHLsmVuBFd7mOH/tQuGvd0VLGeru+BDG8wKvCRh9J/aEzAqBpyg8CFP72SvoepBDuo1UtCCadTZDAoTJuo0Fjj/GAVAFp0ndxR4KZbByHOPsPac3Q3qIDC2SZEYy9OSP6k1NyMA/13zQi5NfvX8C82k6PX6sMRuLpZxvl/Ac4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744294013; c=relaxed/simple;
-	bh=kPIosshDR5H6osac6wbdQDDN6UXpRpsRAyxz5no1LTQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SahTUtogiQNaaINAOGPbdlkj/grvgqHrytsZZs4Iv8hgjvWL3r8KA3SDgwyHyMebyYQxKnLZO9xMvwuA9Oc5tT9PziGKOsyo49AmozyFRLPtXdoRugicz2jGQQXHaxwW8omUWyC0lzHuibcXs7aQsGB1CSNh25HVBnXA+JgHeV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OMb2Fdrz; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso1411644f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:06:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1744294009; x=1744898809; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JHL5IPj5wQTERMMMmzAKWea18ujPZ58wyWG0cWKNHYQ=;
-        b=OMb2Fdrzsz7kC4peeIRq4jrA4SyhUqs4dnD/NqzwFaXLI3hmQpuoy1gtKyZbivYT6d
-         bq7wnfPv2UdGUxGNOfYxhWNuRCqDoAY+BFoqo4bUPi9oNiiHWxfFSeSHYjuDipQx0JXy
-         RNNni1oy+W7VCyBKY3AY+3eEJERnFPA6vB7PWeVVsuQ05PFPwE8R3XpgNY3GXpaiPUa1
-         3NTTMJS5futcrkxs1gdrGnm0MVEUe6mOP0bse00cgNuMDZAt55secVLjfe0brOONBbrq
-         K46Q+edukx2zwHk5/scqXjYEDW90NOJ+CDRH9w/0/dSvJ/zyYbEasw+pHeN0Aca6QA6a
-         7F/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744294009; x=1744898809;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JHL5IPj5wQTERMMMmzAKWea18ujPZ58wyWG0cWKNHYQ=;
-        b=WuGIqKObEkkpkGVDrYafeT0HDYmm3+QTr7CS1XOyTy41Y7IqGwzfWbEgFkSBDfdLrZ
-         LomjDhOlnQVdu7zQCidemaln/+40h1w4T3Gv44c04IJ7rV/JAC2F99RpcXDoQeDgxq2m
-         co/u6tFtCH5XTdXZQolg7pKD3sKCKWBAQuQWKcCl5on1BbetqXg8EYooLPPCwq40O2aA
-         2RGBs7+5kfIb+Ggnfp88cx8L1lycBEkztaIRe2Y+VZf4tVa+v78RK5zoPKRNCQmHhJYc
-         H+9DvI2xqqHgtXKvGTszs366R3p4iZODX5/cAcEM4FWw2CoQ9KF7BFt4ybf7UpxBNaqn
-         4QpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfsSlcoKwFzB9irNSm14tqu5+RIdYXKEG6PFTccKf2zhUy1q//vzaLh559eodW7x22XHoNrFJsRLRIzWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcIBJ5zjjwlRKsN8/hi1I5v/EuKdX2PfvmQURUSR9w9LqWYXfu
-	OadlnAM14fYgleSt74+je8tGmR31T80pOv718XcBT8zdfShE0ix5clv10qc8QSU=
-X-Gm-Gg: ASbGncvyokU1XPwAd847FttA3Ib5mLk2aLsouaRcoDNa8JWPV4AyBNwBfYlNjoFAXCK
-	5NMKd5Gnps74Km7ily8qBcvtF4VAd17TFgr1sY1z+ACnvcEw1LT/7DsJOebytrVX/oaRmo8uP9f
-	fNKb4DB67CFZod7L/u9TSMmbb7xlqL+csuB7baT85CHsH6oT++gyrhKCN+/Kus+pTwB8ptG9vpa
-	XiHMmy3nRpEnrdekh8E8HP157F3LOu5DUeNuVtlexXjTEAfdGFQZduvG/WbGvukf4NvLmfi2c5F
-	quJp025qhgqVqhOpgxOlV4SWm7uRta9mSM2/1YoT54mJOP7EwjXOU13CT2WMd0xlWO1IVg==
-X-Google-Smtp-Source: AGHT+IHOcPZ66SzEZvQYNSIfZ5gzgwZTGjRiYOAcMR0wqLzi2RpfoI/4+zomLnNdjGeNVHWvRUCJkg==
-X-Received: by 2002:a5d:5f4c:0:b0:39d:8e61:b6eb with SMTP id ffacd0b85a97d-39d8f26771fmr2971729f8f.1.1744294008896;
-        Thu, 10 Apr 2025 07:06:48 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39d8937f0d8sm4806913f8f.40.2025.04.10.07.06.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 07:06:48 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	magnus.damm@gmail.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 7/7] Revert "dt-bindings: clock: renesas,rzg2l-cpg: Update #power-domain-cells = <1> for RZ/G3S"
-Date: Thu, 10 Apr 2025 17:06:28 +0300
-Message-ID: <20250410140628.4124896-8-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1744294095; c=relaxed/simple;
+	bh=YiToJ8zRhpFzCd3F32alGJcpncYth2pup43Hko30jhI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bBjuuxOKrSGWVdoW4NY98N0m4+rV+3Xs911/IfB0fXSY+GE61a5pbasHsPoQGclDup4Pn0nCoxwhgHwkRTrwrkULVVXGrQxKfhrXSDYtHRvp7k5qzxPl2JhWSam/CyYCMuN9LsDnUdjwCJzvh32saR3GL07rB7Cp7dA8xSV3g9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghrmQREC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80AA2C4CEDD;
+	Thu, 10 Apr 2025 14:08:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744294094;
+	bh=YiToJ8zRhpFzCd3F32alGJcpncYth2pup43Hko30jhI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ghrmQRECmGVdHis5g98vNkXuio+b9CyMDBLf+Uh0iYJTBtt5A05UWUsgduZh8jx4L
+	 F9j98XPCKm1nXGiTUJmHeCiJTHLJLI4M530oC5PesKAzpblA3sBOC40U2TiqmkMH6o
+	 vvMZrCMH4Nngjj5i9dEth6Hj+96PVLp5VHqVbdx10vSwZzk51JqMkAcGEpFJAzZ7WA
+	 oY/bU+AulpSGlBx0KQWRoOGdycdf8Xs2AWcqvcX8IEsKAJ4U+gxa+8lN71/ceIJ9CY
+	 JL5hxbc0y/i7Y/OHcocxerAfGvha3gO51H3h8ZxxrZp0pBVzuiJaVGcoxA3NF+1fBQ
+	 S7FokBvVfEhbA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Mark Brown <broonie@kernel.org>,
+	Raju Rangoju <Raju.Rangoju@amd.com>,
+	Akshata MukundShetty <akshata.mukundshetty@amd.com>,
+	Krishnamoorthi M <krishnamoorthi.m@amd.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Nuno Sa <nuno.sa@analog.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	David Lechner <dlechner@baylibre.com>,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] spi: amd: add CONFIG_PCI dependency
+Date: Thu, 10 Apr 2025 16:07:49 +0200
+Message-Id: <20250410140809.812863-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,55 +63,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-This reverts commit f33dca9ed6f41c8acf2c17c402738deddb7d7c28.
-Since the configuration order between the individual MSTOP and CLKON bits
-cannot be preserved with the power domain abstraction, drop the
-Currently, there are no device tree users for #power-domain-cell = <1>.
+Without CONFIG_PCI, the module_pci_driver() macro is not defined:
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+drivers/spi/spi-amd-pci.c:67:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+   67 | module_pci_driver(amd_spi_pci_driver);
+
+Fixes: b644c2776652 ("spi: spi_amd: Add PCI-based driver for AMD HID2 SPI controller")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- .../bindings/clock/renesas,rzg2l-cpg.yaml      | 18 +-----------------
- 1 file changed, 1 insertion(+), 17 deletions(-)
+ drivers/spi/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-index 0440f23da059..8c18616e5c4d 100644
---- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-@@ -57,8 +57,7 @@ properties:
-       can be power-managed through Module Standby should refer to the CPG device
-       node in their "power-domains" property, as documented by the generic PM
-       Domain bindings in Documentation/devicetree/bindings/power/power-domain.yaml.
--      The power domain specifiers defined in <dt-bindings/clock/r9a0*-cpg.h> could
--      be used to reference individual CPG power domains.
-+    const: 0
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 52598f8e7848..b2f5b29980a2 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -1266,6 +1266,7 @@ config SPI_ZYNQMP_GQSPI
  
-   '#reset-cells':
-     description:
-@@ -77,21 +76,6 @@ required:
- 
- additionalProperties: false
- 
--allOf:
--  - if:
--      properties:
--        compatible:
--          contains:
--            const: renesas,r9a08g045-cpg
--    then:
--      properties:
--        '#power-domain-cells':
--          const: 1
--    else:
--      properties:
--        '#power-domain-cells':
--          const: 0
--
- examples:
-   - |
-     cpg: clock-controller@11010000 {
+ config SPI_AMD
+ 	tristate "AMD SPI controller"
++	depends on PCI
+ 	depends on SPI_MASTER || COMPILE_TEST
+ 	help
+ 	  Enables SPI controller driver for AMD SoC.
 -- 
-2.43.0
+2.39.5
 
 
