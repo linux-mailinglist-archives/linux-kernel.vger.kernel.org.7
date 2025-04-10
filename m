@@ -1,133 +1,255 @@
-Return-Path: <linux-kernel+bounces-598550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BBB0A8475B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:10:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 973C7A84758
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FFB5188E08B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:07:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01C75176BA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095891DE2DE;
-	Thu, 10 Apr 2025 15:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61181DE3C7;
+	Thu, 10 Apr 2025 15:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4fQScCd"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MviooNBH"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011036.outbound.protection.outlook.com [52.101.70.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D22F84039;
-	Thu, 10 Apr 2025 15:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744297643; cv=none; b=e3Ip/wn9+eTdPXx8xjGr8XiJL23okCk/sOS9kluPtavJMYqjvxL6GFAMDPvR1qk++WUJqtRvDxs6pPk1rzBaKudV2AyJhlEvs1oIxaAmUqu6MU0tnIb4urKMRu+dTzRYsg8eGQobFALBTtzkKRDSLrjRTM+LkR6ASpBqzRYPZZ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744297643; c=relaxed/simple;
-	bh=eboaS5c05OyvAb+NBPFm2wN3NGNx/XKe73+3Wz4fRNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gce9G60G8BWWqmbu1gvD6tBJabixUEaOJVKCIMxri5SsHbi46lFRu6ppVWakWuq2IHR4UlbGr6PGOP86k/LRtMpLxVT+xBVHhpBq2KDcGVyG8Yd7dTbgjro2uCcipcNlZfzngGPuNJODQqnVj/eF2PpBsw1YSDRcsHA1+Afosg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4fQScCd; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-af28bc68846so916266a12.1;
-        Thu, 10 Apr 2025 08:07:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744297641; x=1744902441; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=brD0jvjX625bzsG6fgbmQ6q3jKQyaVH5CAKGozygZW4=;
-        b=Y4fQScCdBm7TYTc2CO/GK2xHK2xFEykki0+FIk13PeMSfMZSbypl3klPQdjaHfqCNh
-         sdwHCz2ccdYIKyb1TjGx2lz8PaOfEfSJEsQBjzXX9PcIRIz/AGguNDB2R1Je5iOOlvAR
-         FexJxObppUR/dXUUtLT+XKzR5oJfVymXGux/qcz2hqxQFTvQD50axZ3Avtz+xAqWD9Tu
-         AdhDyc0osLPhQ6FSitAIQ7T83Bk+p6EJTgbM3Svuj+Pw3FsWqhr2WhK510mE4MRFybRq
-         7YgMVlzMoW1bCs2INXe7FIRn611na87jiyjZgz4Z+k6d56r+BRCjPgTk0DX/IQItCsOK
-         NSkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744297641; x=1744902441;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=brD0jvjX625bzsG6fgbmQ6q3jKQyaVH5CAKGozygZW4=;
-        b=m61RxGzGY7+4IvBJhEYepWHS1BB3sp4b0uNkGcsf9JWKchkUIpn0ZDdeuZf0ggv8Ji
-         ziO2fgJhR+kzPQw82gnKdh3dWG5/GyUk1tLVpghN7uk72xFdcRxhhsaXHPYjC5ABh3H5
-         +28xZOmU0zXQfVA6/+fBjG4IjsM4R3FvzuueZsOfgJnwGfFepZQoDB1j4NF5NgHLdHkA
-         Rl+v0DF8NR3ct6o607WSmBGI7SYKrHVB73vai8GGvnNc1SfUHPtMsPS+XI5m9hDPsEA3
-         FrE37v34ee9XCs5L5eHxa345EUOB56YMQKnUKm2n9vKSIc9R8l/zo1JTtvFj2eYhb9a4
-         lDQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkake7YC+Cx7FIZVy8aaheNTdbh1BxYIKq59S7C6DI8kKmG7rIFXwWHfroBPWaOQZYB+EIBr2U5EBJ@vger.kernel.org, AJvYcCWOoPTpuowzbexyL11ACVpltt2AHkZKD6WSp6CTWtrn0Q0yE2gLJqd6f8oOS9MK0TXj6/Dr0K1roco=@vger.kernel.org, AJvYcCXquWq+VjRxMtO3cAbC6gZrBs34MxRPNZuMaV64U8e3W5GKqK6lmehzVB0z9yMm0evJOejQnecN1yBcifW3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0RVEu3eY4oflf70ioG3l+DaYESkK5rSS19xeUrdIyH/7ejwyt
-	m8n61z2PKJ16ZTpZHOIANlDd7bzXOxOI4YCXQPlkMKiw+WDBJKjN
-X-Gm-Gg: ASbGncuOUce8+83DGyypqMzVm0ghJKr7dY9d/SuR5KY8hSOtcvRPjzG8vn1atrymToD
-	mtgFJuWHJhHnJyqqPuZi3UfXtnyERTNWeOfBInJsw9YLxu7rmBmtGg/npXnDs69LkO13RZTbXAc
-	aAHQvbgRrbraf7hTEXCVdBWEDI5upWdRT9HCBKehFB5/zy+b9Ri78BtWjuFF5bTHc3Jj797hhmq
-	LlxCtuUW+mBsdz+K4jdrMrkD/h6BwJE2Hp7YBBqIY0Xd0qmVwJ82Jtm8lLe/z/oPW1qOEfyjXjX
-	6BolBf9X2uCrwZNzdK1TGeZ/Qs6ef+rMzVx3lkcRVVxQueCSuA==
-X-Google-Smtp-Source: AGHT+IFipQ50ghFnCXKI8zRF8Bt+A/DpNB00DQaIIZ1RLRoPjkBbjJFwo/iHx851n7lTd+u7pGjTKA==
-X-Received: by 2002:a05:6a21:9214:b0:1f5:8153:9407 with SMTP id adf61e73a8af0-2016cd5ec22mr4138335637.20.1744297641304;
-        Thu, 10 Apr 2025 08:07:21 -0700 (PDT)
-Received: from localhost ([2804:30c:979:8400:d3a1:d5f7:94ea:b576])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73bb1d46586sm3471204b3a.64.2025.04.10.08.07.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 08:07:20 -0700 (PDT)
-Date: Thu, 10 Apr 2025 12:08:27 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
-	corbet@lwn.net
-Subject: Re: [PATCH v4 1/4] iio: adc: ad4000: Add support for SPI offload
-Message-ID: <Z_fe69bn90oVjPNk@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1743110188.git.marcelo.schmitt@analog.com>
- <386ce043a0e3fc9e8ff71f17aef8de128ce5869e.1743110188.git.marcelo.schmitt@analog.com>
- <97d0cc16-cdd4-449c-87f5-f62e0515de97@baylibre.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83141DC9B8;
+	Thu, 10 Apr 2025 15:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744297739; cv=fail; b=HAhzEAQIuSKTENmZ7LwTGeDAeBQictyhwfoLEYxiBBD+xoynSyzsbSasnnYPfllHIPym+QO0yHjNRvSc+q2MYaxbUCgFdMImW0pLUwDzbO7ahqCNBJ3ZCrO+SKZs8fXLBgf0SE+G+q7EAj0PXbmn8RoZ+K9ea0T6ey6b4vgZhSo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744297739; c=relaxed/simple;
+	bh=/9sYhsIL6FHc9b2ImmwvyZyTqPEeSWzF6pnBus6ujMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=d8CAl43rU613oOp1DuF8Fek2GyqPejvEzV/g1WgEPv4SUwXPiJKt1TcLS6e433ZJU2wTLXIOUDgKYJBj7fVIk3Rtjc2r0hjcHJY+kv3xdrGD8ymg3pk3dz7kHfOyhSYJ/f2P1EwlkCwigEWft3kOLRDOX/hjI3cR3r4Xaz0LKP8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MviooNBH; arc=fail smtp.client-ip=52.101.70.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QeFOQH1G7/oLuUELw7fB8fyXRxj0MLswzhPtr3lXvf9T5Yr7k8XD6gceWnP9mWdS9zkXm36J5nWrvP1MBXDmlBHBD0U1jDKijC7w9iy/Idqs8cyqn5pppRuHNrkFRjEOkkT39RiyjF6eSINAKctk5mc1VJJ+afV5ULY59dYtHjswiwV9uYwcCIl/RNYjCafU2xWLJXG9RMfqOCxyZLXxBpXuwZjNunuggTFq+KAP1RQE8dEfhRwuQXtjzElhbNc/TXxGbFV33n2Sfzp8Y1Qxycgkk1zn5MIvOQjCEC/g01e/H9YqwIKJk6teTLWZ/yQkKNGTOPpSx5t+zQRCWuxU2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xJEaH0m1HIjXtpRKEHfl8oXFOFDKTiMH/sGscVNEsZ8=;
+ b=K/5zTAdZJbz3cXSclY+EgO3/sBqI5qG860mPjKDKt4PXYkOjj8nj1bPv5CBaWexbyAZi3ZM3mAb1peCwOLQr0HruHCn+IkWkszyNDUxFUPHEZXaFr/AsrY8V7BtCp7B7Oasz9uEqiCY6TmH9CEtRRpvIHoso8snVfAO7vYIHHGTci+QXEI0hWLQKiqoxq9DrjRRoeFcxFCL3JIVOLdYJ0l5d4na3BdhaczbhiF9pCNmnkCy3kqieh9Qg724v/dEc8U308wNbXq8aoLyY0k1PWC/Ar7NGwQT3f87qlvqQ1YCMazS8Tn9/mWvOUNBA/2OEbJG8KaaN5LM7ANa/bct5Zw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xJEaH0m1HIjXtpRKEHfl8oXFOFDKTiMH/sGscVNEsZ8=;
+ b=MviooNBHmXtHSKZ0jJzHPL+Zd6ZgXA3di7Mm+Nhxj6Bb+Rvv6fWH3K99AJewCYEns6iQzxGuqyyw2Pm3TZmAB612lLA2HVcMHu37zSPx5D2Do0CH9Ee3bECU2kmTlLh6lduUDOJlbm+VKVCaiP0zkCYrcCsk9xcNLfpWnF/etvnbd6YRYMpPTLujiw0aIsXlsomouiKE81/jHO5AocP0LfyMLVSuvc/XbSTLCFbM8SrxmqzlaSmQ6tzKTvQDBkm035cLrWx744s4cGjpxsDlZKOfLD1AvOFS8Xl2nBrseYAvNYNrGksHYPH+7chYwOJlUsqfeEbiX7ubh3c8XtQSYg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB8436.eurprd04.prod.outlook.com (2603:10a6:20b:347::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Thu, 10 Apr
+ 2025 15:08:55 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8632.021; Thu, 10 Apr 2025
+ 15:08:55 +0000
+Date: Thu, 10 Apr 2025 11:08:48 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Primoz Fiser <primoz.fiser@norik.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
+Subject: Re: [PATCH 08/13] arm64: dts: freescale: imx93-phyboard-segin: Fix
+ SD-card pinctrl
+Message-ID: <Z/ffAARERkPI5brX@lizhi-Precision-Tower-5810>
+References: <20250410090251.1103979-1-primoz.fiser@norik.com>
+ <20250410090251.1103979-9-primoz.fiser@norik.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410090251.1103979-9-primoz.fiser@norik.com>
+X-ClientProxiedBy: PH0P220CA0005.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:d3::25) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <97d0cc16-cdd4-449c-87f5-f62e0515de97@baylibre.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8436:EE_
+X-MS-Office365-Filtering-Correlation-Id: 10dea9dc-3a7d-462d-4414-08dd78419c81
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Yz8YaodEjyLmWUsx7bD0Vut9CqlEJzTJji6jso3TiItPdsP+cbCa++6d7UDP?=
+ =?us-ascii?Q?58DUiuUVH+Ttuy6DBqMgArPsme5oVVE6RTzp0sEUzTcMCDEHJ2SuX1ln3u0h?=
+ =?us-ascii?Q?clNdVfPf13tRT9FI6Z/9Fgm7faQ5ZtjC6fZViLOKIbcP78G/H16kqhcuFLih?=
+ =?us-ascii?Q?gWrAbKyy14ZTIOLP5ahFz+qahpCVlrj6fkME2DGfbn/pjDGh4gJScOwJh1fO?=
+ =?us-ascii?Q?9554FP/cqBYRNYthgzKAFxWntgS4i8rpNHaXw1kfuKqjiYb014AtZRRcgEgo?=
+ =?us-ascii?Q?FeheH1LBhTFsFez+X8VRJRfqxXwvFQ/Ef6rd2nIHqcItgu583Av1QJ0dhEg5?=
+ =?us-ascii?Q?nMuVqeTgb30UFcpv7XTbFcnH3/bHRTD2aPhVEFoCoHROOO800u6iVKx9Z5vR?=
+ =?us-ascii?Q?fdgr8Rjnv+ZehB2Wmn8LBIQVj8e9a5BBEfVaqW2EDn/8c3wiW1XL8U1RkgSM?=
+ =?us-ascii?Q?XDtjpgzc/Fh7Es0tYiLu9d2s+Ki3DnUw013MSzPc5MyabVMa5v00JfplGemN?=
+ =?us-ascii?Q?TuJayheyE2KalLcI1jLAJCttv3HtpFx0Ha5itfUghiq49DCX//RTjLRCHGYz?=
+ =?us-ascii?Q?1nkhak5qwgJ6NCabb01Q6JhHIj7xB2qmNpfiWqeFXZ9dkWnkdimc0Oa0WDT+?=
+ =?us-ascii?Q?AnhTClAAF+OotbVRel5FJozags34uqzZNCl9YzjZ3HiDmx6HT21PW/XyaLot?=
+ =?us-ascii?Q?Fo6CEHYMehs3zgnmxExidw2JPKdthnjkbvvLB7boFMz4G37psIKLpIJafqbc?=
+ =?us-ascii?Q?qGnui8l3z/IqNlaJhHf+yBTctGQsYuxSqZTCS7pF3xDpL16uu5SFTnr595jW?=
+ =?us-ascii?Q?edjghZyLnjt78rjbHjjK3NkzQbbzAtTOk1SI4SzqRNInyQ9RMXqdNeyAGTVv?=
+ =?us-ascii?Q?BEjVGhfsKK6OtEAbzTOlGmaPCNa8mwoaNBqHQwRaU4VEi3V0n7UpsA35YEqw?=
+ =?us-ascii?Q?GdFgPQR3VfobWNXGmgRWvBohqG/WR06B1SK1r1Ouf/LZy7QWU3xWi5ufeIIN?=
+ =?us-ascii?Q?kObqjqiPi9qODihcB6fc28s2tjaOKyNr1lsVfGrcDm+Jx+LnvkoWjd3NK544?=
+ =?us-ascii?Q?be5HHFzo7HVum2RUwBK7Z276Ub/vlhKYS5qd8FFCi8EMmV0qmzBrHO/wdLL6?=
+ =?us-ascii?Q?ZEaCFehJKjW27kJDr3L9n13WNvGVLrffJMI9qPwwAd17V1nYnt5OL8Yt4lZl?=
+ =?us-ascii?Q?V3cNa0sAJhXnUpm0PZBXW8BsXAgoh+3+uvnujwMxEiY/3sO6AQfS4dSszJBm?=
+ =?us-ascii?Q?KPkN+Pvpa4qs4vbvXLOfuk87zn6xXai+h16GNfrEvIGCIpp57XPwnRwAtE8f?=
+ =?us-ascii?Q?yHS3LHNo+tqBpRcbn/ol7suS4aA01QbXz4FzkmVabGFAptVYrAcl9/KKLHMl?=
+ =?us-ascii?Q?lCxXnrOsqlxrIINiSzzMOW1P79VSjbmHUS5OrEk3Y0gYAuq8b57mV3cWNyVN?=
+ =?us-ascii?Q?sl8LO/CDP22jJwCggRjHM5HxSkUHib2U?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?0PTb2RxnA3xA77sEFF/ZuatV4fbcI1/gx8T2TTLZC3Xtf3HnZhM7vNBibz73?=
+ =?us-ascii?Q?wcJljfK5O5TyHE3FpehXsj0OAnN0p5DfvKPsY+0P5YHyn9WhbsXma5Eql3YB?=
+ =?us-ascii?Q?s5QckqUZldm1/4NFAsDa9fYzcm2J5Uz4BtgbghePD6QcWWWiAEryY2/tu6Vi?=
+ =?us-ascii?Q?6eTA6pfzmEhvqfT3apTgooALMT67qwLtm63Vvg4Kqn69zLmXxNOETIGQDkPZ?=
+ =?us-ascii?Q?hrdqLh4SP6OHwCUlQcQRb41gwALnBgpUkhmqglhKFCnhI4+vuePzCVAwNsdB?=
+ =?us-ascii?Q?9k+1PtEBn7WXcwzRr8gfVYa9Uahl+0NbmPCfr7DST4xBZHBMRjkpfICESH9d?=
+ =?us-ascii?Q?mdJ20VKBvRfXUaZTMq5ClYKB9dQ0trDdNP0zGmyOL+tdcjTs40ep+QpiBVWh?=
+ =?us-ascii?Q?na9q/isWRbJTdZxJVW1GDS5xWvmpxoKh8NVxKYH8D/wyhmJhxQK54o6NXt6S?=
+ =?us-ascii?Q?iQPGw5NK197QHTMBT+xId3jRMNnD52fnWR1FpV6ir8Dk1yHVEivrSHJ2FEtg?=
+ =?us-ascii?Q?NOgCUR/E+ZALYs8RHWG40Vj05u+Gu9t2O3Cs/nWCtE3+24qgUTeWydvTDjMW?=
+ =?us-ascii?Q?aALx2Ea+nJp7Gaiw6YzXauvPdWv76sBeHH/HWH20/1ZFsRZkg3eyQfxxcbMf?=
+ =?us-ascii?Q?aZazIqFMZZ5UyKByQwAuVghUDE3R9K0lZ6SW1FA7YTbC5qE/X9y0G8uyrc3g?=
+ =?us-ascii?Q?OpJ/5WvJ8Tkq2m8a9i+9AbmfjElJZEwV+WmG1kOK/FL3z4CRiQiKMrij2C2f?=
+ =?us-ascii?Q?hOXiyVyDH3ByRnZnWoCaEFNjfp2RR3b8uIH2JYjaHRHX7OdPpTvkdORKzt/m?=
+ =?us-ascii?Q?mOtuiccPKtEcY95DIHBt9rqPQkIrqZuvUAZ1iHBQst/0SsYVzrSAZBwT5d1A?=
+ =?us-ascii?Q?Lee7W+mKAm0VHJkIsP8SgkFCIxUFriuH+xqiQA6Y9Bk/xcLkrmvxNBziwcVk?=
+ =?us-ascii?Q?SJI5CYolqgbODiD9P/P5ccVxdedjC53kA27G5Wl7uw2R/wpvSEB7pJn0Cacj?=
+ =?us-ascii?Q?+/NRCKHEIBWhAsWlrQ27yTkkN1RhgRVKOkiJ0YVW0P8PHrW+Pxjr5a9rnjww?=
+ =?us-ascii?Q?afm5rnGSvueVAAsyoAljluz/rpn95rXmFLgJDUl4YyuN5rhU25vCWRLOra3b?=
+ =?us-ascii?Q?pclz4JL4mZTufKKzUaLiQHtsmQ7Fo8w9qIgEYKEMhU5x7FI0ImfjOpAbEQ+x?=
+ =?us-ascii?Q?dJdX1jHkQQKeZxNIGUbGfZkNe7aWI0MZVD0xlfwndhUiMhLoIBQY8QQ+fewl?=
+ =?us-ascii?Q?68OCFXFNZE68Qpm4ir4hQzv3iFcwL3YT+BHLNjnpJMH38/EsPyb1Zraco0Cs?=
+ =?us-ascii?Q?g9wt78TJk1huFgAR/grdq6DcpbiIlEcGGI0Q5DK1l39SroPiF09UyW1mHN20?=
+ =?us-ascii?Q?SMnc7lhtEbxhT9A80rrXShnG8aSMFlctsY6/8uQfQq7dDKA5R/Un5Rolc710?=
+ =?us-ascii?Q?azkYJCx9+18L7xae9iAu2S5JDx4sjC6uBShY2GCZ23cuui+vE2p/qgN/hBr3?=
+ =?us-ascii?Q?Je+iH7BVnyop6LXZsjM8jVP7ZdHWZuDprsrLI50Oqp12SlmQT/SEf1vy8r0f?=
+ =?us-ascii?Q?id/QaLtfHZ7kmO8XRNbLk+sQEDm1Okckrf4P4tEU?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10dea9dc-3a7d-462d-4414-08dd78419c81
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 15:08:55.3319
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ikNm3qX1x63cftaZkRBgdJqFlJgR7K9QcmwiwLEzuGUr+kWEiNgtmNDa4arJTS/jnjm0oR0+VPf9c4hfEGybyQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8436
 
-On 04/09, David Lechner wrote:
-> On 3/27/25 4:24 PM, Marcelo Schmitt wrote:
-> > FPGA HDL projects can include a PWM generator in addition to SPI-Engine.
-> > The PWM IP is used to trigger SPI-Engine offload modules that in turn set
-> > SPI-Engine to execute transfers to poll data from the ADC. That allows data
-> > to be read at the maximum sample rates. Also, it is possible to set a
-> > specific sample rate by setting the proper PWM duty cycle and related state
-> > parameters, thus allowing an adjustable ADC sample rate when a PWM (offload
-> > trigger) is used in combination with SPI-Engine.
-> > 
-> > Add support for SPI offload.
-> > 
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > ---
-> 
-> I think I spotted a bug. With that fixed...
-> 
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
-> 
-> > @@ -690,6 +942,15 @@ static int ad4000_prepare_3wire_mode_message(struct ad4000_state *st,
-> >  
-> >  	xfers[1].rx_buf = &st->scan.data;
-> >  	xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);
-> 
-> Now this needs to be:
-> 
-> 	xfer->len = chan->scan_type.realbits > 16 ? 4 : 2;
-> 
-> Otherwise when there is SPI offload, this could read 2 words because
-> storagebits is always == 32.
+On Thu, Apr 10, 2025 at 11:02:46AM +0200, Primoz Fiser wrote:
+> Until now, all usdhc2 (SD-card) pinctrl labels pointed to one pinctrl
+> group "usdhc2grp" which was overwritten twice by the 100 and 200 MHz
+> modes. Fix this by using unique pinctrl names.
+>
+> While at it, apply i.MX93 chip errata ERR052021 workaround and adjust
 
-I've just tested both versions with ADAQ4003 and with AD7687.
-There's no practical difference between the suggestion and what already is in
-IIO testing. I don't mind sending a patch with the change, but don't think it
-fixes anything.
+Errata link here!
 
-Thanks,
-Marcelo
+> pinctrl drive-strengths to improve signal integrity. Drive-strength
+> values come from the downstream PHYTEC kernel and were devised and
+> verified by the hardware department measurements.
+>
+> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+> ---
+>  .../dts/freescale/imx93-phyboard-segin.dts    | 47 ++++++++++---------
+>  1 file changed, 25 insertions(+), 22 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
+> index 3d5cd0561362..525f52789f8b 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
+> @@ -75,39 +75,42 @@ MX93_PAD_SD2_CD_B__GPIO3_IO00		0x31e
+>  		>;
+>  	};
+>
+> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
+
+errata's implement need seperate patch
+
+Frank
+>  	pinctrl_usdhc2_default: usdhc2grp {
+>  		fsl,pins = <
+> -			MX93_PAD_SD2_CLK__USDHC2_CLK		0x179e
+> -			MX93_PAD_SD2_CMD__USDHC2_CMD		0x139e
+> -			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x138e
+> -			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x138e
+> -			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x138e
+> -			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x139e
+> +			MX93_PAD_SD2_CLK__USDHC2_CLK		0x159e
+> +			MX93_PAD_SD2_CMD__USDHC2_CMD		0x4000139e
+> +			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x4000138e
+> +			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x4000138e
+> +			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x4000138e
+> +			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x4000139e
+>  			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
+>  		>;
+>  	};
+>
+> -	pinctrl_usdhc2_100mhz: usdhc2grp {
+> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
+> +	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
+>  		fsl,pins = <
+> -			MX93_PAD_SD2_CLK__USDHC2_CLK            0x179e
+> -			MX93_PAD_SD2_CMD__USDHC2_CMD            0x139e
+> -			MX93_PAD_SD2_DATA0__USDHC2_DATA0        0x138e
+> -			MX93_PAD_SD2_DATA1__USDHC2_DATA1        0x138e
+> -			MX93_PAD_SD2_DATA2__USDHC2_DATA2        0x139e
+> -			MX93_PAD_SD2_DATA3__USDHC2_DATA3        0x139e
+> -			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT    0x51e
+> +			MX93_PAD_SD2_CLK__USDHC2_CLK		0x159e
+> +			MX93_PAD_SD2_CMD__USDHC2_CMD		0x4000139e
+> +			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x4000138e
+> +			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x4000138e
+> +			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x4000139e
+> +			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x4000139e
+> +			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
+>  		>;
+>  	};
+>
+> -	pinctrl_usdhc2_200mhz: usdhc2grp {
+> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
+> +	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
+>  		fsl,pins = <
+> -			MX93_PAD_SD2_CLK__USDHC2_CLK            0x178e
+> -			MX93_PAD_SD2_CMD__USDHC2_CMD            0x139e
+> -			MX93_PAD_SD2_DATA0__USDHC2_DATA0        0x139e
+> -			MX93_PAD_SD2_DATA1__USDHC2_DATA1        0x139e
+> -			MX93_PAD_SD2_DATA2__USDHC2_DATA2        0x139e
+> -			MX93_PAD_SD2_DATA3__USDHC2_DATA3        0x139e
+> -			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT    0x51e
+> +			MX93_PAD_SD2_CLK__USDHC2_CLK		0x158e
+> +			MX93_PAD_SD2_CMD__USDHC2_CMD		0x4000139e
+> +			MX93_PAD_SD2_DATA0__USDHC2_DATA0	0x4000139e
+> +			MX93_PAD_SD2_DATA1__USDHC2_DATA1	0x4000139e
+> +			MX93_PAD_SD2_DATA2__USDHC2_DATA2	0x4000139e
+> +			MX93_PAD_SD2_DATA3__USDHC2_DATA3	0x4000139e
+> +			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
+>  		>;
+>  	};
+>  };
+> --
+> 2.34.1
+>
 
