@@ -1,182 +1,149 @@
-Return-Path: <linux-kernel+bounces-597855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C605DA83F3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:46:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1497AA83F63
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 245DA7B08E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:45:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4D609E3168
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7169426A1A3;
-	Thu, 10 Apr 2025 09:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E5F26B2DF;
+	Thu, 10 Apr 2025 09:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OT6SR8K5"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="oQLls0Yh"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9DC26A0D4;
-	Thu, 10 Apr 2025 09:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732D126AA9C
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744278370; cv=none; b=s9hcc5rDHAo6ig8X1hYWLup6b18z9+h0ful/8s7ph0Jihi8YxkQ9OEIQSXxlvRjIYOQNcY0JD/dzjrzahpC4JibyuIoJHnKKHOYE/alnxEftW+WcnzLHc3LdPYLBUcTIcJv5owILUJAoVdbEQE5roaua6lFc2gB3DM5Emrb5i8s=
+	t=1744278373; cv=none; b=Ryp8QyUe64MgO652sb+NBrfDZMpKO50ljxn/jrqr43ryVlBcvuX5MoCBrQGGx9dKzvLI/aKVptXuWM4/eFX4rAgxu3zhbnvtJK5wY0uQMchALWWmuzR6BjX8FaTz1edMCTIu2ginmwW4yttf8n4eWcwfem4bUdWx4XUwfyrI3kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744278370; c=relaxed/simple;
-	bh=4s3ZacDmF0acLH/4llQMYAZNHTv/D6yaEavN2T8m6+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uwZL2D8oNozCQUL03n0b1nhKGgnURl1WFZUL4v0EH0qS5UwjSyR1H3YUj2d/rWUF7nPH4WtsR4gkea+o/AuVKlzH6AggkvOavhgRqTaKsrOo5rI8sHv2wnyIvYtDTfS3kb3DR60BYUjoXKru4a8/RuJ71gZVcWqVjN0QqShIFh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OT6SR8K5; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7376dd56f60so369154b3a.3;
-        Thu, 10 Apr 2025 02:46:09 -0700 (PDT)
+	s=arc-20240116; t=1744278373; c=relaxed/simple;
+	bh=pI3vfIbLqPbWsDOQuTX/utAtCX0Ma5Hr4cLa843LCc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m8+w0xgnZcepz8+ilcQDQ/puUA0kSOl8+pK+zp9+mLPx2BRl3W3Z30B+d4KD3illGX9yKFVO4eN9uA3nwTHCPkuIww/d0D/xvIY7WuQv/8Rzps7naP/N/rfYNTsq+mZKHcVj6vxejkj+TNV/Qa+EUNM93RWRXyGi1t3cBd3c5Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=oQLls0Yh; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so6808465e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 02:46:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744278368; x=1744883168; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X/OI6E9F737xY7P25JwnmZaPm/Y8Wf+gvRZpSuTpy6E=;
-        b=OT6SR8K5twmenZmiGPtc5rp2i3q1k8aoQYIWf5Y9dHPXp3txA3BWCqOCLssQ3/br7Q
-         s8Jn7ZqN8/7kAd05XGpH/hUF4c1m3hl/GDtMlXb8c6Dejm47rGr5nDne1F5Bc7k3GeTW
-         K054+A6/fZ9c5V0+L3EmiXWIlkUUi7MjkRccKJMB+FbX2nauiWpqb1HhLOLGyafU3nl4
-         CTJ1lb+6oTBwTtZemZdkgjz+2dTRre0SwqudTs4UNArAMxc9e9hPztEPwDhQMdXmJgz6
-         thGFTGomyJG8HGd15dVgNydquU6LSEyME6A2GqzpHBHzVozFcLIdm8VcJYTrtBatUvzC
-         J/Xg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744278368; x=1744883168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AyPa6ldlaK56MEPUp6to8FxZZbTIhKB6rIkU4vhMvLs=;
+        b=oQLls0YhBKowCzaJDD9qfB3e6ic3+QdPpO2U8z+RfRjnG6CtR/LOfEVc4tYT6TR67I
+         qdl8I73vhCLlI6hR0vS+x9zN4co5XKwFgn08IBinhQs8JVaKEQzzzqHiTNOW7sB69EvS
+         +Z3UycOc4c8oMCVkzlMwxZMsN8d9bwjKgoYYCE5IMyQDaWfP8DIqxTXV4ujPKiahYpLV
+         sz0TyRwr3p9WbBN5pW2x3HyiM9EPwh+NTrsqhGYx6Q45qR6am3vieYdAXjQuU24N2VDO
+         Q62rp+r9r+aNeMYCGd0qoWUA2fgsmslCPZ7tqkVw6uoS0/0E79TvIU7BArgu+YrVQq8a
+         QSsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1744278368; x=1744883168;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X/OI6E9F737xY7P25JwnmZaPm/Y8Wf+gvRZpSuTpy6E=;
-        b=fVZmtHvy3SWgf9N/ogq5A8t1UBrLQPzAg6EYs5U7KQ4a9pPu2JZO0lmy1HCI8BvWsQ
-         aT/KR8DoMBMYpdKYN9anSX/+NWLgzZAu2bP/aztzNk2OgwCYheqR8bVkscdQu3GGB7/K
-         HLBKdhzSmgnafMF2Y0vH8HF+CpxJz89PBgwZFSWX0EuLdy5t9z5msEH6UBjdHTYliMMC
-         RKTAZF20irjrB+IVoGTUOhr80ApohKlHHG65z+ZVblcqmIkmI9VGEJCU5hqQxFCWXrZK
-         wVDmWh3wXGOw3ctO94AshIplxF0omhWviWfSTXo9pEQqNLw+IOMFSzsEguvc13xnt+re
-         qQeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCzsqaO+wXlZ5btUXgo+FdrnT88VlEbfibW8w8NxqIaObnUAvfCOeg+bAr83yq3u6I/mr1T5pN18D0NhCY@vger.kernel.org, AJvYcCW53aNvCgNKYxxCj+riRABWw1h2HXqJe4IfRyurHB/cMXKP6SIlc9Y6sn1xQnD6fGgJuP+hhXQeaJw3pWu+t78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMPYGNpIzcR38MFfBeWPClKwfCSGhF44dp3xlgTjEUv13xGGUP
-	cWN+WXJkdNyeDxx5ZuEKdLRn3jjPMZPOcdgZOzC0Fb/i1hEU+mlw
-X-Gm-Gg: ASbGncu4zER2uwxJNXMiogBwvxcQVxEPD/WyYE1R2Z9oanRzZRbnF2Tt5IL9/aoeXi/
-	Gw3QOeyz300stqWhj6TQfDTGEtTU9np92OKpNTzzEy/FNyDt+gk8uytWEfHesKp64UPoIMd5qjA
-	e3kCpOdd3eLtYN40o52b7RA0dEgcSGM7cyivxBQa2opTdI00N87k2laR/axR/+yHHHbFB3J2myC
-	WpdZmbZwbR9EPQdMQ/ssuSd+NSnocfAPLVOL1iZt0kz6/ikrVabu3hI0o8bRd8PZw7Ophs3iuov
-	DdZd1jTwWTggCqVw4JyDVtLiO9n5Eol58haZIl7Cpg3MdhuWyulqVVFf1nnpsv4Pw78VmDWkjsm
-	7fgiViZNf9BXmNww=
-X-Google-Smtp-Source: AGHT+IGxbykd1xi8RysmDEKp0xcBu26rSmEn29jOu9EKsE75TvAMZ2b+c2vZBXR06+5s39q7XPlTqg==
-X-Received: by 2002:a05:6a00:170b:b0:736:4110:5579 with SMTP id d2e1a72fcca58-73bc0a074eamr2649067b3a.2.1744278368431;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AyPa6ldlaK56MEPUp6to8FxZZbTIhKB6rIkU4vhMvLs=;
+        b=w2NA8NdZ+snemIqx9FKDRB14AGhYAF/kLZpYGABzCxpFnL9FkhWaMSFV92ion2X+xr
+         iEDwYu0IqxdhetF9fjdJPW9pyWbejpk2xfFIsTNkMhG9f9rQN7oXniw0Th7OWXqN/5X4
+         8huMJy60FZccshHAYJPJxugRtk76bqZCeQC2b1Flv1MPdPES3DJ++eQSzYE7drjK7KW8
+         G0cFxfkQocNx7a/LQF3QCqxuln2PspkdGaybWkiX+1IlV42tYJq8ofWyrihKiaAD+bwU
+         NXLrN5Y2ujh1S0WNKYUS5jD2ls0sWzzv6RRm/DUslLtDkGC9yhy0M2RzqNIOBTkjFYLT
+         5+Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzAmng/wAP+68GbwDntDL8MPEEvr57D/Puj13Ebgpt95G9B/kUEDnqa7TvapBaR7E5X0mJrRyIyoWIgd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHxL5fSZCJKmDCRict/oX/4um7KLc0ZV3Et4iNAVlFu5hbZC72
+	yUFla03JlAQSTyKyTLqWgghqLcKhyzKvRiVHJcMILRQY41+xTIdk9grRMQTGXPnileJeJUXJC/o
+	2NI8=
+X-Gm-Gg: ASbGncvopOovYEBbLFZEj40OS0phCVoqDyX92xcCykjsTmAwQd0sVZQU+7sem+4L0pD
+	76caiFKo2zZmgU+8VukQ/xTpewehxdsjPesU179QkoJ0diGe/T4tY/yOPb/eV+JkEoapk50P0pV
+	KCe/fNhBIW/Y3kc5SMGZ0RzVLflReCIcXRbniEVI5RfD0AsuU+vko72YDr+GoucCumZvkxNY2qu
+	wUZC2AwO6UFKdiHLVN+p/7GTrSimEnBSbBl9nuwUK2Md3dbMd1i4+c3AcL/PFM7faencrqn5qXb
+	XVwvMOvdnLpvv0888xQnh2vq4/ALHfevx+sRnC/l
+X-Google-Smtp-Source: AGHT+IHVdnD6pkQJ1mtCB+lyukhVO9gye/40iBh+MDKdPiJJHPaca88NCEFrQ3Hp/AwTWVnFHC9fGA==
+X-Received: by 2002:a05:600c:3ac4:b0:43c:f5fe:5c26 with SMTP id 5b1f17b1804b1-43f2fdcd138mr16185205e9.4.1744278368045;
         Thu, 10 Apr 2025 02:46:08 -0700 (PDT)
-Received: from ?IPV6:2409:4080:204:a537:5da0:ac0c:6934:f07? ([2409:4080:204:a537:5da0:ac0c:6934:f07])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1d2b34dsm2816398b3a.4.2025.04.10.02.46.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7c4f:f9d1:94e0:53f8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233a2a13sm44847075e9.10.2025.04.10.02.46.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 10 Apr 2025 02:46:07 -0700 (PDT)
-Message-ID: <70de56d3-1cdd-466b-b2b9-a4f69981d696@gmail.com>
-Date: Thu, 10 Apr 2025 15:16:03 +0530
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio fixes for v6.15-rc2
+Date: Thu, 10 Apr 2025 11:46:05 +0200
+Message-ID: <20250410094605.38665-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] char: tpm: tpm-buf: Fix uninitialized return values in
- read helpers
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Stefano Garzarella <sgarzare@redhat.com>, peterhuewe@gmx.de,
- jgg@ziepe.ca, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250409205536.210202-1-purvayeshi550@gmail.com>
- <Z_dh4tRIa6xxAWQ2@kernel.org>
- <t2ri7facyvtmt6rx6xwcjos7rgtyiln7cywl2gt4effgukeejc@f3ml4apdh4zs>
- <fab2bb2d-a78e-4130-a5fd-bf07430210c7@gmail.com>
- <Z_eHei1jT0YoPgki@kernel.org>
-Content-Language: en-US
-From: Purva Yeshi <purvayeshi550@gmail.com>
-In-Reply-To: <Z_eHei1jT0YoPgki@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/04/25 14:25, Jarkko Sakkinen wrote:
-> On Thu, Apr 10, 2025 at 02:12:07PM +0530, Purva Yeshi wrote:
->> On 10/04/25 13:21, Stefano Garzarella wrote:
->>> On Thu, Apr 10, 2025 at 09:14:58AM +0300, Jarkko Sakkinen wrote:
->>>> On Thu, Apr 10, 2025 at 02:25:36AM +0530, Purva Yeshi wrote:
->>>>> Fix Smatch-detected error:
->>>>> drivers/char/tpm/tpm-buf.c:208 tpm_buf_read_u8() error:
->>>>> uninitialized symbol 'value'.
->>>>> drivers/char/tpm/tpm-buf.c:225 tpm_buf_read_u16() error:
->>>>> uninitialized symbol 'value'.
->>>>> drivers/char/tpm/tpm-buf.c:242 tpm_buf_read_u32() error:
->>>>> uninitialized symbol 'value'.
->>>>>
->>>>> Call tpm_buf_read() to populate value but do not check its return
->>>>> status. If the read fails, value remains uninitialized, causing
->>>>> undefined behavior when returned or processed.
->>>>>
->>>>> Initialize value to zero to ensure a defined return even if
->>>>> tpm_buf_read() fails, avoiding undefined behavior from using
->>>>> an uninitialized variable.
->>>>
->>>> How does tpm_buf_read() fail?
->>>
->>> If TPM_BUF_BOUNDARY_ERROR is set (or we are setting it), we are
->>> effectively returning random stack bytes to the caller.
->>> Could this be a problem?
->>>
->>> If it is, maybe instead of this patch, we could set `*output` to zero in
->>> the error path of tpm_buf_read(). Or return an error from tpm_buf_read()
->>> so callers can return 0 or whatever they want.
->>>
->>> Thanks,
->>> Stefano
->>>
->>
->> Hi Jarkko, Stefano,
->> Thank you for the review.
->>
->> I've revisited the issue and updated the implementation of tpm_buf_read() to
->> zero out the *output buffer in the error paths, instead of initializing the
->> return value in each caller.
->>
->> static void tpm_buf_read(struct tpm_buf *buf, off_t *offset, size_t count,
->> void *output)
->> {
->> 	off_t next_offset;
->>
->> 	/* Return silently if overflow has already happened. */
->> 	if (buf->flags & TPM_BUF_BOUNDARY_ERROR) {
->> 		memset(output, 0, count);
->> 		return;
->> 	}
->>
->> 	next_offset = *offset + count;
->> 	if (next_offset > buf->length) {
->> 		WARN(1, "tpm_buf: read out of boundary\n");
->> 		buf->flags |= TPM_BUF_BOUNDARY_ERROR;
->> 		memset(output, 0, count);
->> 		return;
->> 	}
->>
->> 	memcpy(output, &buf->data[*offset], count);
->> 	*offset = next_offset;
->> }
-> 
-> Please don't touch this.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Got it, thanks!
+Linus,
 
-> 
->>
->> This approach ensures that output is always zeroed when the read fails,
->> which avoids returning uninitialized stack values from the helper functions
->> like tpm_buf_read_u8(), tpm_buf_read_u16(), and tpm_buf_read_u32().
->>
->> Does this solution look acceptable for the next version of the patch?
->>
->> Best regards,
->> Purva Yeshi
-> 
-> BR, Jarkko
+Please pull the following set of fixes from the GPIO tree for the next RC.
 
+Thanks,
+Bartosz
+
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.15-rc2
+
+for you to fetch changes up to b8c7a1ac884cc267d1031f8de07f1a689a69fbab:
+
+  gpiolib: of: Move Atmel HSMCI quirk up out of the regulator comment (2025-04-08 11:06:45 +0200)
+
+----------------------------------------------------------------
+gpio fixes for v6.15-rc2
+
+- fix resource handling in gpio-tegra186
+- fix wakeup source leaks in gpio-mpc8xxx and gpio-zynq
+- fix minor issues with some GPIO OF quirks
+- deprecate GPIOD_FLAGS_BIT_NONEXCLUSIVE and devm_gpiod_unhinge()
+  symbols and add a TODO task to track replacing them with a better
+  solution
+
+----------------------------------------------------------------
+Andy Shevchenko (2):
+      gpiolib: of: Fix the choice for Ingenic NAND quirk
+      gpiolib: of: Move Atmel HSMCI quirk up out of the regulator comment
+
+Bartosz Golaszewski (4):
+      gpio: deprecate the GPIOD_FLAGS_BIT_NONEXCLUSIVE flag
+      gpio: deprecate devm_gpiod_unhinge()
+      MAINTAINERS: add more keywords for the GPIO subsystem entry
+      gpio: TODO: track the removal of regulator-related workarounds
+
+Guixin Liu (1):
+      gpio: tegra186: fix resource handling in ACPI probe path
+
+Krzysztof Kozlowski (2):
+      gpio: mpc8xxx: Fix wakeup source leaks on device unbind
+      gpio: zynq: Fix wakeup source leaks on device unbind
+
+ MAINTAINERS                   |  2 ++
+ drivers/gpio/TODO             | 34 ++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-mpc8xxx.c   |  4 +++-
+ drivers/gpio/gpio-tegra186.c  | 25 +++++++++++++------------
+ drivers/gpio/gpio-zynq.c      |  1 +
+ drivers/gpio/gpiolib-devres.c |  6 +++++-
+ drivers/gpio/gpiolib-of.c     |  8 +++++---
+ include/linux/gpio/consumer.h |  1 +
+ 8 files changed, 64 insertions(+), 17 deletions(-)
 
