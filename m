@@ -1,88 +1,108 @@
-Return-Path: <linux-kernel+bounces-597488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09AD2A83A7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:14:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11988A83A69
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 010BD8C7A50
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:11:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE44D1742BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8D8204C3C;
-	Thu, 10 Apr 2025 07:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9575A204C03;
+	Thu, 10 Apr 2025 07:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NUBxNMQE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXBrCYqs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01D02036E6;
-	Thu, 10 Apr 2025 07:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F4D1DFDE;
+	Thu, 10 Apr 2025 07:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744269097; cv=none; b=JZCm+q4H+Nrkv5QSLAkoFnap6ZwMLRSLF/4bZ9nKHV22gNhIHY7Zn8llmvXuzawLwXS6HrWqdJKwqCJ3lzfWZGwhM0cjRKgPAuLEqR+bZpKQqgd92zrFgn1TI9MhOvK6c7PemB9WowCXTUA8084EK8ZX39q/M1CsrKuV/8oXNXY=
+	t=1744269022; cv=none; b=PVnFxvJazZ7nruNuK2wBVzbqyIR9jix0Pfdt09wCmyCJ7By8XQM5wIJYvmdIMb5MwYQ9dc9HYmju1MFfB6a61fDVGVRxVLHPHJM9zYLhwxYJu86SOqbfQjr1CffYervUpNANBPYIknBlIF0SHbcs1ufjOV/rwSmnnwuS+Rxygvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744269097; c=relaxed/simple;
-	bh=bPzeZgrP7PD3Md2w9w9dvWl898tFcB9NhFWNXwu0U2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tFGiba6PWbRmyntCeQSs333BfDNE0Ij3KtTXv7wK5j811C68C4jTs0KXlDqNx45M14WsA8jW7rRlFZ6+hBxkK30ar38xKj5Epc2xHXjl1j80Zw+amo7+vLs8FaQ9M6SEJfbbRa5jwTUh5CrFQuBndoVvuTsQoyTgXapLPYR/R2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NUBxNMQE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8EAAC4CEDD;
-	Thu, 10 Apr 2025 07:11:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744269097;
-	bh=bPzeZgrP7PD3Md2w9w9dvWl898tFcB9NhFWNXwu0U2c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NUBxNMQEaQS5a/bjuTtaryrBfraPSR8ULIOyeiTlDT6ymfmBkHo56NS+KeAD2k1fq
-	 bWbW/LhSa3QvBfS4dDQ4CN1yh8vvA89BIUoFYfKuNoxHJzU9UT2ZivgBiK21iJ0rBz
-	 xHnePbCD7Hf44XD717vA1ApB8xsiGaoFrGLSfBzw=
-Date: Thu, 10 Apr 2025 09:10:02 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: joswang <joswang1221@gmail.com>, Benson Leung <bleung@chromium.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jos Wang <joswang@lenovo.com>
-Subject: Re: [PATCH 1/1] usb: typec: displayport: Receive DP Status Update
- NAK request exit dp altmode
-Message-ID: <2025041054-landside-filtrate-17b0@gregkh>
-References: <20250209071926.69625-1-joswang1221@gmail.com>
- <Z635BJNnFAiIFXxM@kuha.fi.intel.com>
+	s=arc-20240116; t=1744269022; c=relaxed/simple;
+	bh=3UX8skoZo+ARQ7Okmvw9x6n8F1ITBsNwvbv3/HWmeUE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RJB7H5W8O9r0SlTyZHSW26K5Vyt343GIQuuQ8sLEKLnKLHGo5SKtwJpgjX5ymVyT8yMgPnP/H0/PA9sdQOvr5I+RZSUdBnj68Tmf5T1Fnxl9bGVaGh9vbvJzwGv+0OKO8c3fFuugYB0buhpU3wGO4hXmQJL1EswnHX3m+yet5yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXBrCYqs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 713CBC4CEDD;
+	Thu, 10 Apr 2025 07:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744269021;
+	bh=3UX8skoZo+ARQ7Okmvw9x6n8F1ITBsNwvbv3/HWmeUE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hXBrCYqsgMzQcbFrHiZ0JRsTgOX+ZPdPtfQT4q61CsRf9BzycR5I9/ejUG97HT4HX
+	 j+sskasFQoCGl1x5/YBT/RO4ZSPjBHHhYP6WdJyextCf0IOptgI34S1LQ8NPQ00jb/
+	 fjNw6rHqjzGfdPnEyGhaq5t+qWnNCoO7w5gcbzV0a9zlJfAyLevD9VEF5h+tBbXoWA
+	 tNcbvSw0+ToKHwSwCrrB+ecRphhZvRIwWPWKqeodA1+xcob/NqXHx0kHcznlLccfGb
+	 7wN3/SOLUc+OYFkCzhbyte3A391j7ccFs+22EXbCOdHlrkoN7eweKOd2O9kBiccvN0
+	 VWn8dcjDeMomw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1u2m3G-0046ri-IJ;
+	Thu, 10 Apr 2025 08:10:18 +0100
+Date: Thu, 10 Apr 2025 08:10:18 +0100
+Message-ID: <86o6x4lcf9.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Vijay Balakrishna <vijayb@linux.microsoft.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter
+ <rric@kernel.org>,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tyler Hicks <code@tyhicks.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH 2/2] dt-bindings: arm: cpus: Add edac-enabled property
+In-Reply-To: <319b7c65-3e2f-456b-a845-45f7a57ba2c5@kernel.org>
+References: <1744241785-20256-1-git-send-email-vijayb@linux.microsoft.com>
+	<1744241785-20256-3-git-send-email-vijayb@linux.microsoft.com>
+	<319b7c65-3e2f-456b-a845-45f7a57ba2c5@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z635BJNnFAiIFXxM@kuha.fi.intel.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: krzk@kernel.org, vijayb@linux.microsoft.com, bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org, rric@kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, code@tyhicks.com, s.hauer@pengutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Feb 13, 2025 at 03:52:04PM +0200, Heikki Krogerus wrote:
-> On Sun, Feb 09, 2025 at 03:19:26PM +0800, joswang wrote:
-> > From: Jos Wang <joswang@lenovo.com>
-> > 
-> > Although some Type-C DRD devices that do not support the DP Sink
-> > function (such as Huawei Mate 40Pro), the Source Port initiates
-> > Enter Mode CMD, but the device responds to Enter Mode ACK, the
-> > Source port then initiates DP Status Update CMD, and the device
-> > responds to DP Status Update NAK.
-> > 
-> > As PD2.0 spec ("6.4.4.3.4 Enter Mode Command")，A DR_Swap Message
-> > Shall Not be sent during Modal Operation between the Port Partners.
-> > At this time, the source port initiates DR_Swap message through the
-> > "echo device > /sys/class/typec/port0/data_role" command to switch
-> > the data role from host to device. The device will initiate a Hard
-> > Reset for recovery, resulting in the failure of data role swap.
-> > 
-> > Therefore, when DP Status Update NAK is received, Exit Mode CMD is
-> > initiated to exit the currently entered DP altmode.
-> > 
-> > Signed-off-by: Jos Wang <joswang@lenovo.com>
+On Thu, 10 Apr 2025 07:00:55 +0100,
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 > 
-> This looks okay to me, but Benson, can you take a look at this?
+> On 10/04/2025 01:36, Vijay Balakrishna wrote:
+> > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > 
+> > Some ARM Cortex CPUs like the A53, A57 and A72 have Error Detection And
+> > Correction (EDAC) support on their L1 and L2 caches. This is implemented
+> > in implementation defined registers, so usage of this functionality is
+> > not safe in virtualized environments or when EL3 already uses these
+> > registers. This patch adds a edac-enabled flag which can be explicitly
+> > set when EDAC can be used.
+> 
+> Can't hypervisor tell you that?
 
-What ever happened to this patch?
+No, it can't. This is not an architecture feature, and KVM will gladly
+inject an UNDEF exception if the guest tries to use this.
 
+Which is yet another reason why this whole exercise is futile.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
