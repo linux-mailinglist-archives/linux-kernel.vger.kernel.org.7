@@ -1,211 +1,344 @@
-Return-Path: <linux-kernel+bounces-598870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3737A84C14
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:28:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B234BA84C19
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2235C3B45E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:27:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DDBB441850
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D0928EA5C;
-	Thu, 10 Apr 2025 18:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7C528D846;
+	Thu, 10 Apr 2025 18:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rHgxW1Q7"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2088.outbound.protection.outlook.com [40.107.220.88])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="os5/H92M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30C128C5BE;
-	Thu, 10 Apr 2025 18:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744309670; cv=fail; b=H42oGlF2WiOaN6PzXnbrK6WwhpXOFBetoP6YJYuWZ+6MgxdB4EYF/Ma5XlQMPTHeaufgLMOGxlSUIVQuRqN851rg9HjAdK2vpO0h5VW3zPshNDrr5MCqat5aHsCl5HGExCgafqTzHhSjZdQ49DOPx4++mApgFeUGeUk/lAn+FZQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744309670; c=relaxed/simple;
-	bh=yLTBpYizmArkRX4w2miFi3ByvidQ2xmxZD4atTJ8BMg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=cNbuXD/+55QszCamRCM3UWTsjyH+QLpZCM+juTDUDiR3kynhgoDHDFXWm5R5VoiQiMgUS3M8moB6uWHPj0nhQnsAQ5/2eICYj5udZvJD3N9d4nRtQwHaFGUc2VnGbIhM5upagfbxhtHA/aIFnUCE4xNXw4ccSQS6sbVTvbXZL/I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rHgxW1Q7; arc=fail smtp.client-ip=40.107.220.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MD17GdkNsTDClL1vU+Krzp5rq6QkKcPDkPIbuJ2p2kgSUP5sVGIQX2goUYoqnPtcGhVcUyePKGp6gtuLe3zb0IGhlzFO23Tl+Ngb9+9bRPCmiHksl4A6wGg1Egz+4O+Q+VVOcyZ8XUuMMkWy1K3g6auIJ8bouKFyaflPF+aqEmms9yZvRrOitbzXBbzHoUaxOgO/uW/u0Y8kLbiA50PA0okCDWpQp9KhRZcniMPngQkp2FLfuvXtmsJB2esBL3OGFuPmXEJEJbehyVWvFM0lSSN3r2g2itK3nk+Fh+D6CHnG+o0rSLbo68ppnVuN3EH6qU2LDma9C8f5vhUZp1oFSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=poZqf9VCopl4ibeBi6fv7JHKZy3DookTjj12hLmyn1o=;
- b=MIPIMT+8Gdu0/vmjjp4UVw14uT2dzle+LeOqWBh0vJeRHVogwHtVo6n3potl7BGRLdx+boUYqdxjdEccQcqsQLjZ8DrRXyfLqm7WHwP4fR0YTf+4f5F+cAaFRBjFYi4j1GIma4g+4F1hhvVRyqXEQoWjYuAewSZG21rjufS6/nwdinWD4RnTBhudYTkffT0LFFYWBpOl7czAmsfX1oohgPmYIS41fabGTV+t7cmy7iT7xTrmsVk++7EBwBBBtO9ANr/Y0fXsjpQ0EqGGrfeIlDAX4VhFXVyNQ7OkadYvxpdqqDZFR8Ok45p49zBXGH6znuZdmuNo2Va3tdiaPK0kOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=poZqf9VCopl4ibeBi6fv7JHKZy3DookTjj12hLmyn1o=;
- b=rHgxW1Q7UAVV8CvZrNc51zmEKHsC4pytpeqIA0S64nA+YgKQTh4EZtvlwIyHuJtSacLQSs1W4fgeeqZ08oJCn3/QHHzb4FmPT246m4vTNPIb2B0bPqQwYy8BXPf1EGABMRW22DampWhmi/JTkX4wwx6HndMPEx71wkvaILb8eKI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- LV3PR12MB9356.namprd12.prod.outlook.com (2603:10b6:408:20c::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.21; Thu, 10 Apr
- 2025 18:27:46 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%5]) with mapi id 15.20.8606.033; Thu, 10 Apr 2025
- 18:27:46 +0000
-Message-ID: <8556d931-d2a9-4dd7-824a-a67317ddaa05@amd.com>
-Date: Thu, 10 Apr 2025 13:27:40 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] dax/mum: Save the dax mum platform device pointer
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: dave@stgolabs.net, dave.jiang@intel.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
- willy@infradead.org, jack@suse.cz, rafael@kernel.org, len.brown@intel.com,
- pavel@ucw.cz, ming.li@zohomail.com, nathan.fontenot@amd.com,
- Smita.KoralahalliChannabasappa@amd.com, huang.ying.caritas@gmail.com,
- yaoxt.fnst@fujitsu.com, peterz@infradead.org, gregkh@linuxfoundation.org,
- quic_jjohnson@quicinc.com, ilpo.jarvinen@linux.intel.com,
- bhelgaas@google.com, andriy.shevchenko@linux.intel.com,
- mika.westerberg@linux.intel.com, akpm@linux-foundation.org,
- gourry@gourry.net, linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-pm@vger.kernel.org, rrichter@amd.com, benjamin.cheatham@amd.com,
- PradeepVineshReddy.Kodamati@amd.com, lizhijian@fujitsu.com
-References: <20250403183315.286710-1-terry.bowman@amd.com>
- <20250403183315.286710-4-terry.bowman@amd.com>
- <20250404143409.00000961@huawei.com>
-Content-Language: en-US
-From: "Bowman, Terry" <terry.bowman@amd.com>
-In-Reply-To: <20250404143409.00000961@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9P223CA0029.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:806:26::34) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABBF28C5D4;
+	Thu, 10 Apr 2025 18:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744309745; cv=none; b=SEoFNOxipzmrZDJMcMwgJGpTbZQ7rQ7NyknRbLEX8reVKBQwK8v/++Ny1zeLAI/mb1gbeFzG6Zj4mbt87b0/nuxqWwbKC5W2FZUhM0OPUxY2CYNvTERmWl6/O/XKYyH/3DMlALYYmwCSr27vJOLRbRyTIQxrq/InHKzqt0r0pxk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744309745; c=relaxed/simple;
+	bh=ZepABpyn3AV1QCLlijKL/5EUv7okaxepn573DXE5+/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ggZJi0YMqIukjIixbkUZuXCzakveGtK9o4zy/X5/4mu3XMKDGAAIlLMG6Lc6+GkWqrGAS3vHRQ4+sGduuWosqSdDLkQtBdOXegUjDOCMrBxqFDTNhMKchR0AEe0UpCiWPYnLHl5Zq1d6sx/fsoK0bm00TYDp2NmhnDOV71dL5a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=os5/H92M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BF54C4CEDD;
+	Thu, 10 Apr 2025 18:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744309744;
+	bh=ZepABpyn3AV1QCLlijKL/5EUv7okaxepn573DXE5+/k=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=os5/H92Maxj5RUpg0niesZfc3C2HHRpKRAw+zj2+qD0vYhX973hsFLbSgtbKyV842
+	 nJtWiT2QziD7W5wPOb1FSJHW6+75tLZW5t2UF+OfM3PcdQrew06M9lrYANk/PlppMd
+	 sohq1helSK9jtx7cftZ+ZHmyFxQd41u3eVkMUWSaION7+XAq+g94Bi3jmkEHJtVhSF
+	 2nt5NamN3Uw0SiVAh/ckvOKKW49htgzQPDZoREE6Y29GBYk5Zqc8FGv+OzRTXUljBP
+	 1rAj3spaChdHPlVc6MKRa6UPNCLfsbY+Pfnp7P6krfEvWx9fpq0FllKCqASLV1PP+S
+	 /IxtwA2b7EEDg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id D32E4CE087D; Thu, 10 Apr 2025 11:29:03 -0700 (PDT)
+Date: Thu, 10 Apr 2025 11:29:03 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, rcu@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] rcutorture: Perform more frequent testing of
+ ->gpwrap
+Message-ID: <11caaa93-7acf-417c-9223-1b14a76310b2@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250410150329.3807285-1-joelagnelf@nvidia.com>
+ <20250410150329.3807285-2-joelagnelf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|LV3PR12MB9356:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a1e31b0-1904-4f2b-814d-08dd785d63b9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T0I0ZFZYWGVQZlpuNmgycGdGa3AxSEJFNW12K0F6YXV5cnN5Ujh5cXAvMlNE?=
- =?utf-8?B?NC9uMWhYWjVNeElxYnB0dkJ2ZXNBQjNjVnpuTVV2bDdwK3F2SDh2SWNPbUFL?=
- =?utf-8?B?Nk1rTDZXSXUrSmhHemZLRVRTRlA3ZTZnTmVaa3E5QUdGTHhtK0xxNGphQ29P?=
- =?utf-8?B?UVZSYnNaSUtIcnFRVFh6cTVKUWcySDk2aHh1MWZRalRJeDFWN1hRaUNIWlMv?=
- =?utf-8?B?bjJxSGtJZjcwaVRNYnd4VXVLY29YbnpXTFAwb0ZpdGVrSi9Sa3hEempnbmcr?=
- =?utf-8?B?dnhNUEd3V3FFa3lXSWxmcnVGWWJORkpYTjJyWVdKdDZyQmF6MXJNZkYvRktU?=
- =?utf-8?B?ai9DajgrcWZHN1Z1RVIyTEMvR1ZLNzRzTWJ6L29PanlwUDVBMjlHN0pYdEJy?=
- =?utf-8?B?TllscUV2WGRleDhweTJLNzJxbmVzME5vUW0vVnlUQ0NrN3psWlB6WFFpei9w?=
- =?utf-8?B?UWJrU24rR2RvQmFFOFFFa28rV0Fzck53dFZQcE11eVVMT1dON25QbVFJMXNP?=
- =?utf-8?B?bDdDVlcxdkgwT0Z2OGJKM0YxRGJHazFscHJ3bFlZTzNhRGJNY0lRRzFwb2ls?=
- =?utf-8?B?UysweW9iMWlXOHlOdEExT3Znb1U0djNESlFFWmxGTzBxNnB3cFJWNlZGN1NB?=
- =?utf-8?B?TFRETlphNHY0MkpBYTZTUjJvTHRPOXRpMHduUFhSVGFNK1dkTDJTdW9zUTk2?=
- =?utf-8?B?OUkwelhPekwrM3MrTWxiUW1QNlpURUhLeFpuUW1CQ2tUTjFzWTJHWTdDdksz?=
- =?utf-8?B?YUpZcVVZb0ZvWitickN1QnZodFFDcDM3ZmRmRHpKY3pEM2VnZVJCSEZvMG5F?=
- =?utf-8?B?d0FTTElEM3Iza3ZXZlpNL0JESkkxUFhBUTdqTUpJa3RMMWw2RldvcmxOeVIx?=
- =?utf-8?B?cVU4WVlNeWpDRzZiZFJjMk1DVklnQm9EWS9yenNQeTFONGpVWUpnODVEY09o?=
- =?utf-8?B?REp5QjB2MitsVzhDSUdZalRLemRtRk1DK0p3clZGVCt6MjdIQkl6V0k0UHEz?=
- =?utf-8?B?OVZBWUxXRkVGc1A0QytqQ3NhQTVyc2p2MXJFeDAwWENMYm1KZmJGWVBHNFQ5?=
- =?utf-8?B?T3Qwd1BYTmVMbWg1Q1JFR0pLSHVQMkdpenpFOWNjM2M5NVUzdmFGMzA4OXpX?=
- =?utf-8?B?S0pmbHhXRGIyS0xaODYrT3FoTmZRQmNEckcveFRDNWtFSDl2TlNNM1lmbUs4?=
- =?utf-8?B?b0xocG9BdXpLL0tUK2dyTkVzeGNRaXlKTS9DbkJmbDdRdkRNZHIrQ3BqSnhD?=
- =?utf-8?B?eWNPRWI0NyszY0drbnpZRnZBME5SWk1pRVRtWERRbDJqRTRUMnlSODNuNFFy?=
- =?utf-8?B?c0tZZU1oQlFERlJBRnErZmsrTTB0djBSMTVaZis2SUUvTFhxRXBxZDVITEVi?=
- =?utf-8?B?RDB6MGljUTRNeGdZVnc2aGNpWm93V0VzaVlxaVlUYXdBSXh5a1p3L01WaHlS?=
- =?utf-8?B?MGovVWx4V1ZiVzkzVXo4ZkNTK1Y3d0dadU9FWElvMFFSVTJSTzNUbm5VSjlV?=
- =?utf-8?B?dEtLTEJMMXhtaGpWbDArREJUNEJLbWFmcEZ5UFMwUjNobGt0V3hzeUdYeVRG?=
- =?utf-8?B?ZE9MU0cvRmc2QkI4TnNibUYxaWdJWUdleis5eXUweTZodnNxZmRQWXZKOGpu?=
- =?utf-8?B?T1ZHdEFsMlE2dkI1NHFwSkUxdHJ0ZXVtMStKVjh3N1VwT1cyYWNLL0tFekVx?=
- =?utf-8?B?ZVhBSjdKVXRQTlplenFoM2NGYURkeC9scWlFU0dCNXhBOHB6djZRZktPOTRz?=
- =?utf-8?B?YnJBS0N1a3h0ZkVFc1hRQlhMQU5jRFZkUVJySzg1Um15YTZEN1RwMW5RMDY2?=
- =?utf-8?B?N0RPWjVyUVNvUk1maVlWR3p0TnhjMzVMdVF5MU82VTZlVUIvZ1dETlU3eGE0?=
- =?utf-8?Q?cvMNcSpZ63L6N?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cXAzUGhIYVZiakFQSHZDS01BOE9EVVc5elJ2MDFveVp5NCtOS2hhcEZnQ1pV?=
- =?utf-8?B?SzN4Z3ZXTHVCU3RZY0FONmRjZGJUaldqN0Nwckl2dmxlaUVZS2hFSDg0OWRR?=
- =?utf-8?B?aUFuc2NxRWFxSXVUT3RqdElHUHNYaXJTTm9QZS9URXI0Q1pubXJVNUtIam5j?=
- =?utf-8?B?M1E4a05NQ3VUTkZqWHRzUjNGTy9vVWR0NzQvSHA2Mk9WczU3bWFyZnZkQURF?=
- =?utf-8?B?UFBTYzA5TDBpNHBxYVZTZHE4N2JQQzhuRGJibFVXeXg1ZFg2cE05Zyt1U2V5?=
- =?utf-8?B?WUU0L2t5L1VzVmdBcVd1QnVkNmFHUmdKRXdQbXpoaVRKS1NPeUMyQVh4SjBG?=
- =?utf-8?B?azZ4ZTEwemJpV1lQYWFXbnRRQzN2dUZOOG96VVhteGdzalM1NE5pL2VBcVJs?=
- =?utf-8?B?MUpxUmpEaUoySnBKZHZDdTFJUjRzc2V3T1pNdUg2ZkdwYzlaQjNUVjRCK2RH?=
- =?utf-8?B?MWxpdU42em8rUm5vUlY1aG1SNGZrUStXdnVpaFRhOFkyS0Zia1VrQ0dHVjVs?=
- =?utf-8?B?WGc4REQ3ZGlkZHhzQjg0WTZ0VEdwOGFpeVJXYytYWWhtYmU0cmhxbHNDdmhV?=
- =?utf-8?B?YlZJcUErQmE3aUdrUDRRbWpuOUpFWFZTRm1iRHNMcC9LYUdXVHRla1dUbGFy?=
- =?utf-8?B?RDF5VXREQnpRVUhqVGtjNHM5dzMxSnpXUURYcHhZaEFwY0ZnWVFucTN3bU83?=
- =?utf-8?B?bFk1L1FxL0g1emtUUXBZbVRJOGx6UEZ4REl1cVBVb2tBZGg1eG9sVDFRZlpa?=
- =?utf-8?B?bkc2Y01RVjRjTFE1ckRPLzlSdVR1VllhakR3ZkpDdHdmQ0hlVHJiOTJsNFNm?=
- =?utf-8?B?bGNwWDhYNUhPOU53OW95cS9ra1RHWkdtRk85aWpheXkxWUhaMjdmT3hqVWda?=
- =?utf-8?B?Qm12bkdCSnduL2g3S3FSNkk0YTF0TE5oQ2hLckRZNThxTXlHMi9zQktublFU?=
- =?utf-8?B?RkIxMmFzSHpwL0RheGN2OHhYRTF2Z2RJL2o3RUpORlI2OHdubzhWWitDeHlx?=
- =?utf-8?B?MHhaRzcxSWZyYmdpb3pPbnRMYVlWU1p3QzVCOENsMXR3NzdiSi80TEQxRFlx?=
- =?utf-8?B?dXkrUHRwbEp1RnVTWUllcGxtNUxuRnRWWE5LSm44ZHRhL3B6SjdqeDlUSzdR?=
- =?utf-8?B?LzNZZzhEKzBLb3NidFVqQmZxM0NIQTU3TldCd0lQL2RyVWxGenZISkxsd2FL?=
- =?utf-8?B?RnR4dTdiNUxuS3lnb0x5d2Y2cTBUTmN1U3pSZndMbDFzQmR4bUk4Nm9QUmpJ?=
- =?utf-8?B?c3dlSkFNdUtoWXRhUzFtZzFmY3ZIUFJralZ5NGRGLzRlaXRGeXM2eFlSSUh3?=
- =?utf-8?B?b01yQWJ5Rzh1cUtQalg5b2hzZi80NERKMGFzdzlwWGlhaXh6NC9aajdEaHhW?=
- =?utf-8?B?MzgrRHhOcm52d0sxRXAxSHNuVERDb05OcTFrV1cxMGE4c00wMGlFb09HTnEy?=
- =?utf-8?B?L2FFUDVzb3N3Z3FqNXg4VEk1TTN1NG5Pc3dEUmpKczVXSFZBWWZJcUx5MXh3?=
- =?utf-8?B?YnZ6cFFLZkUrRWFDNW9ldUh3bzNQdWVkOTc4bVNpRUxIK2xpNHZYcFJ5eit4?=
- =?utf-8?B?N2xzRnlESlRYZGNRemdaTW5LWGNuMXVLa3Q1VTRTL3o5d04wUXZtMXlobTFq?=
- =?utf-8?B?dUwrb04xME54U1ZGekY5UTRDQ1NUMTlSN1dFeU9CZU0zakVxZUhBbVV0SmZo?=
- =?utf-8?B?L3ZKQVdqdThpdndOQ1V6UlZJN3hQM3Y3NTJSWnZPRnM0SGlPYUJ3UjJUNGJI?=
- =?utf-8?B?VFBiVldMOS83Z0RXdTUwbmM4Y3ZCYjBJS3FzYS9xVEtGR1dVTUZzRmVIM3Zi?=
- =?utf-8?B?RFZPOE84NnVheE1Kc1prRExtNnExbEZVTmpZWHpCTFJZOXY5cnBHRjBLVy90?=
- =?utf-8?B?dUtFWHBLaFNlSTBZajF4bFBqTWhpRSttbS9sRUg0RndFSHR6cXcvRmR0Uzh1?=
- =?utf-8?B?T2FKRFNXSmVQMGh2cUNjMkZVYWRDTDJLUGhFVDBKZUpNUnk1YVZicVlqYUlr?=
- =?utf-8?B?VUZhbDYwRWY3ZFlqRG80WG1ianE0WE9QOW1SWVVaWW9MM3hxQm1BNUU3alVl?=
- =?utf-8?B?YmN3QWhObkplN2o1ZE1LV29adEp6eklzVnF1elVaSDJqZmFlSFJHWW5qcnZ5?=
- =?utf-8?Q?XUCiUS7NqzLIn/3mUGLSJ2H8X?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a1e31b0-1904-4f2b-814d-08dd785d63b9
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 18:27:45.9125
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BEhJ+I+Ro113Vm2VVoCk/Pm462es6BsEubURqelb0MnRR5ckUYksa2JsvO6lK1n4K7qC47zZov8C0A8Rdh8Ymg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9356
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410150329.3807285-2-joelagnelf@nvidia.com>
 
-On 4/4/2025 8:34 AM, Jonathan Cameron wrote:
-> On Thu, 3 Apr 2025 13:33:14 -0500
-> Terry Bowman <terry.bowman@amd.com> wrote:
-> 
->> From: Nathan Fontenot <nathan.fontenot@amd.com>
-> 
-> mum?
-> 
->>
->> In order to handle registering hmem devices for SOFT RESERVE
->> resources after the dax hmem device initialization occurs
->> we need to save a reference to the dax hmem platform device
->> that will be used in a following patch.
->>
->> Saving the platform device pointer also allows us to clean
->> up the walk_hmem_resources() routine to no require the
->> struct device argument.
->>
->> There should be no functional changes.
->>
->> Signed-off-by: Nathan Fontenot <nathan.fontenot@amd.com>
->> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> 
+On Thu, Apr 10, 2025 at 11:03:27AM -0400, Joel Fernandes wrote: >
+Currently, the ->gpwrap is not tested (at all per my testing) due to
+the > requirement of a large delta between a CPU's rdp->gp_seq and its
+node's > rnp->gpseq.  > > This results in no testing of ->gpwrap being
+set. This patch by default > adds 5 minutes of testing with ->gpwrap
+forced by lowering the delta > between rdp->gp_seq and rnp->gp_seq to
+just 8 GPs. All of this is > configurable, including the active time for
+the setting and a full > testing cycle.  > > By default, the first 25
+minutes of a test will have the _default_ > behavior there is right now
+(ULONG_MAX / 4) delta. Then for 5 minutes, > we switch to a smaller delta
+causing 1-2 wraps in 5 minutes. I believe > this is reasonable since we
+at least add a little bit of testing for > usecases where ->gpwrap is set.
+> > Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 
-Thanks. Updated to be hmem. 
+Much better, thank you!
 
--Terry
+One potential nit below.  I will run some tests on this version.
+
+						Thanx, Paul
+
+> ---
+>  kernel/rcu/rcu.h        |  4 +++
+>  kernel/rcu/rcutorture.c | 67 ++++++++++++++++++++++++++++++++++++++++-
+>  kernel/rcu/tree.c       | 34 +++++++++++++++++++--
+>  kernel/rcu/tree.h       |  1 +
+>  4 files changed, 103 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+> index eed2951a4962..516b26024a37 100644
+> --- a/kernel/rcu/rcu.h
+> +++ b/kernel/rcu/rcu.h
+> @@ -572,6 +572,8 @@ void do_trace_rcu_torture_read(const char *rcutorturename,
+>  			       unsigned long c_old,
+>  			       unsigned long c);
+>  void rcu_gp_set_torture_wait(int duration);
+> +void rcu_set_gpwrap_lag(unsigned long lag);
+> +int rcu_get_gpwrap_count(int cpu);
+>  #else
+>  static inline void rcutorture_get_gp_data(int *flags, unsigned long *gp_seq)
+>  {
+> @@ -589,6 +591,8 @@ void do_trace_rcu_torture_read(const char *rcutorturename,
+>  	do { } while (0)
+>  #endif
+>  static inline void rcu_gp_set_torture_wait(int duration) { }
+> +static inline void rcu_set_gpwrap_lag(unsigned long lag) { }
+> +static inline int rcu_get_gpwrap_count(int cpu) { return 0; }
+>  #endif
+>  unsigned long long rcutorture_gather_gp_seqs(void);
+>  void rcutorture_format_gp_seqs(unsigned long long seqs, char *cp, size_t len);
+> diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+> index 4fa7772be183..74de92c3a9ab 100644
+> --- a/kernel/rcu/rcutorture.c
+> +++ b/kernel/rcu/rcutorture.c
+> @@ -115,6 +115,9 @@ torture_param(int, nreaders, -1, "Number of RCU reader threads");
+>  torture_param(int, object_debug, 0, "Enable debug-object double call_rcu() testing");
+>  torture_param(int, onoff_holdoff, 0, "Time after boot before CPU hotplugs (s)");
+>  torture_param(int, onoff_interval, 0, "Time between CPU hotplugs (jiffies), 0=disable");
+> +torture_param(int, gpwrap_lag_cycle_mins, 30, "Total cycle duration for ovf lag testing (in minutes)");
+> +torture_param(int, gpwrap_lag_active_mins, 5, "Duration for which ovf lag is active within each cycle (in minutes)");
+> +torture_param(int, gpwrap_lag_gps, 8, "Value to set for set_gpwrap_lag during an active testing period.");
+>  torture_param(int, nocbs_nthreads, 0, "Number of NOCB toggle threads, 0 to disable");
+>  torture_param(int, nocbs_toggle, 1000, "Time between toggling nocb state (ms)");
+>  torture_param(int, preempt_duration, 0, "Preemption duration (ms), zero to disable");
+> @@ -413,6 +416,8 @@ struct rcu_torture_ops {
+>  	bool (*reader_blocked)(void);
+>  	unsigned long long (*gather_gp_seqs)(void);
+>  	void (*format_gp_seqs)(unsigned long long seqs, char *cp, size_t len);
+> +	void (*set_gpwrap_lag)(unsigned long lag);
+> +	int (*get_gpwrap_count)(int cpu);
+>  	long cbflood_max;
+>  	int irq_capable;
+>  	int can_boost;
+> @@ -619,6 +624,8 @@ static struct rcu_torture_ops rcu_ops = {
+>  				  : NULL,
+>  	.gather_gp_seqs		= rcutorture_gather_gp_seqs,
+>  	.format_gp_seqs		= rcutorture_format_gp_seqs,
+> +	.set_gpwrap_lag		= rcu_set_gpwrap_lag,
+> +	.get_gpwrap_count	= rcu_get_gpwrap_count,
+>  	.irq_capable		= 1,
+>  	.can_boost		= IS_ENABLED(CONFIG_RCU_BOOST),
+>  	.extendables		= RCUTORTURE_MAX_EXTEND,
+> @@ -2394,6 +2401,7 @@ rcu_torture_stats_print(void)
+>  	int i;
+>  	long pipesummary[RCU_TORTURE_PIPE_LEN + 1] = { 0 };
+>  	long batchsummary[RCU_TORTURE_PIPE_LEN + 1] = { 0 };
+> +	long n_gpwraps = 0;
+>  	struct rcu_torture *rtcp;
+>  	static unsigned long rtcv_snap = ULONG_MAX;
+>  	static bool splatted;
+> @@ -2404,6 +2412,7 @@ rcu_torture_stats_print(void)
+>  			pipesummary[i] += READ_ONCE(per_cpu(rcu_torture_count, cpu)[i]);
+>  			batchsummary[i] += READ_ONCE(per_cpu(rcu_torture_batch, cpu)[i]);
+>  		}
+> +		n_gpwraps += cur_ops->get_gpwrap_count(cpu);
+>  	}
+>  	for (i = RCU_TORTURE_PIPE_LEN; i >= 0; i--) {
+>  		if (pipesummary[i] != 0)
+> @@ -2435,8 +2444,9 @@ rcu_torture_stats_print(void)
+>  		data_race(n_barrier_attempts),
+>  		data_race(n_rcu_torture_barrier_error));
+>  	pr_cont("read-exits: %ld ", data_race(n_read_exits)); // Statistic.
+> -	pr_cont("nocb-toggles: %ld:%ld\n",
+> +	pr_cont("nocb-toggles: %ld:%ld ",
+>  		atomic_long_read(&n_nocb_offload), atomic_long_read(&n_nocb_deoffload));
+> +	pr_cont("gpwraps: %ld\n", n_gpwraps);
+>  
+>  	pr_alert("%s%s ", torture_type, TORTURE_FLAG);
+>  	if (atomic_read(&n_rcu_torture_mberror) ||
+> @@ -3607,6 +3617,54 @@ static int rcu_torture_preempt(void *unused)
+>  
+>  static enum cpuhp_state rcutor_hp;
+>  
+> +static struct hrtimer gpwrap_lag_timer;
+> +static bool gpwrap_lag_active;
+> +
+> +/* Timer handler for toggling RCU grace-period sequence overflow test lag value */
+> +static enum hrtimer_restart rcu_gpwrap_lag_timer(struct hrtimer *timer)
+> +{
+> +	ktime_t next_delay;
+> +
+> +	if (gpwrap_lag_active) {
+> +		pr_alert("rcu-torture: Disabling ovf lag (value=0)\n");
+> +		cur_ops->set_gpwrap_lag(0);
+> +		gpwrap_lag_active = false;
+> +		next_delay = ktime_set((gpwrap_lag_cycle_mins - gpwrap_lag_active_mins) * 60, 0);
+> +	} else {
+> +		pr_alert("rcu-torture: Enabling ovf lag (value=%d)\n", gpwrap_lag_gps);
+> +		cur_ops->set_gpwrap_lag(gpwrap_lag_gps);
+> +		gpwrap_lag_active = true;
+> +		next_delay = ktime_set(gpwrap_lag_active_mins * 60, 0);
+> +	}
+> +
+> +	if (torture_must_stop())
+> +		return HRTIMER_NORESTART;
+> +
+> +	hrtimer_forward_now(timer, next_delay);
+> +	return HRTIMER_RESTART;
+> +}
+> +
+> +static int rcu_gpwrap_lag_init(void)
+> +{
+> +	if (gpwrap_lag_cycle_mins <= 0 || gpwrap_lag_active_mins <= 0) {
+> +		pr_alert("rcu-torture: lag timing parameters must be positive\n");
+> +		return -EINVAL;
+
+When rcutorture is initiated by modprobe, this makes perfect sense.
+
+But if rcutorture is built in, we have other choices:  (1) Disable gpwrap
+testing and do other testing but splat so that the bogus scripting can
+be fixed, (2) Force default values and splat as before, (3) Splat and
+halt the system.
+
+The usual approach has been #1, but what makes sense in this case?
+
+> +	}
+> +
+> +	hrtimer_setup(&gpwrap_lag_timer, rcu_gpwrap_lag_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> +	gpwrap_lag_active = false;
+> +	hrtimer_start(&gpwrap_lag_timer,
+> +		      ktime_set((gpwrap_lag_cycle_mins - gpwrap_lag_active_mins) * 60, 0), HRTIMER_MODE_REL);
+> +
+> +	return 0;
+> +}
+> +
+> +static void rcu_gpwrap_lag_cleanup(void)
+> +{
+> +	hrtimer_cancel(&gpwrap_lag_timer);
+> +	cur_ops->set_gpwrap_lag(0);
+> +	gpwrap_lag_active = false;
+> +}
+>  static void
+>  rcu_torture_cleanup(void)
+>  {
+> @@ -3776,6 +3834,9 @@ rcu_torture_cleanup(void)
+>  	torture_cleanup_end();
+>  	if (cur_ops->gp_slow_unregister)
+>  		cur_ops->gp_slow_unregister(NULL);
+> +
+> +	if (cur_ops->set_gpwrap_lag)
+> +		rcu_gpwrap_lag_cleanup();
+>  }
+>  
+>  static void rcu_torture_leak_cb(struct rcu_head *rhp)
+> @@ -4275,6 +4336,10 @@ rcu_torture_init(void)
+>  	torture_init_end();
+>  	if (cur_ops->gp_slow_register && !WARN_ON_ONCE(!cur_ops->gp_slow_unregister))
+>  		cur_ops->gp_slow_register(&rcu_fwd_cb_nodelay);
+> +
+> +	if (cur_ops->set_gpwrap_lag && rcu_gpwrap_lag_init())
+> +		goto unwind;
+> +
+>  	return 0;
+>  
+>  unwind:
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 659f83e71048..6ec30d07759d 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -80,6 +80,15 @@ static void rcu_sr_normal_gp_cleanup_work(struct work_struct *);
+>  static DEFINE_PER_CPU_SHARED_ALIGNED(struct rcu_data, rcu_data) = {
+>  	.gpwrap = true,
+>  };
+> +
+> +int rcu_get_gpwrap_count(int cpu)
+> +{
+> +	struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
+> +
+> +	return READ_ONCE(rdp->gpwrap_count);
+> +}
+> +EXPORT_SYMBOL_GPL(rcu_get_gpwrap_count);
+> +
+>  static struct rcu_state rcu_state = {
+>  	.level = { &rcu_state.node[0] },
+>  	.gp_state = RCU_GP_IDLE,
+> @@ -757,6 +766,25 @@ void rcu_request_urgent_qs_task(struct task_struct *t)
+>  	smp_store_release(per_cpu_ptr(&rcu_data.rcu_urgent_qs, cpu), true);
+>  }
+>  
+> +/**
+> + * rcu_set_gpwrap_lag - Set RCU GP sequence overflow lag value.
+> + * @lag_gps: Set overflow lag to this many grace period worth of counters
+> + * which is used by rcutorture to quickly force a gpwrap situation.
+> + * @lag_gps = 0 means we reset it back to the boot-time value.
+> + */
+> +static unsigned long seq_gpwrap_lag = ULONG_MAX / 4;
+> +
+> +void rcu_set_gpwrap_lag(unsigned long lag_gps)
+> +{
+> +	unsigned long lag_seq_count;
+> +
+> +	lag_seq_count = (lag_gps == 0)
+> +			? ULONG_MAX / 4
+> +			: lag_gps << RCU_SEQ_CTR_SHIFT;
+> +	WRITE_ONCE(seq_gpwrap_lag, lag_seq_count);
+> +}
+> +EXPORT_SYMBOL_GPL(rcu_set_gpwrap_lag);
+> +
+>  /*
+>   * When trying to report a quiescent state on behalf of some other CPU,
+>   * it is our responsibility to check for and handle potential overflow
+> @@ -767,9 +795,11 @@ void rcu_request_urgent_qs_task(struct task_struct *t)
+>  static void rcu_gpnum_ovf(struct rcu_node *rnp, struct rcu_data *rdp)
+>  {
+>  	raw_lockdep_assert_held_rcu_node(rnp);
+> -	if (ULONG_CMP_LT(rcu_seq_current(&rdp->gp_seq) + ULONG_MAX / 4,
+> -			 rnp->gp_seq))
+> +	if (ULONG_CMP_LT(rcu_seq_current(&rdp->gp_seq) + seq_gpwrap_lag,
+> +			 rnp->gp_seq)) {
+>  		WRITE_ONCE(rdp->gpwrap, true);
+> +		WRITE_ONCE(rdp->gpwrap_count, READ_ONCE(rdp->gpwrap_count) + 1);
+> +	}
+>  	if (ULONG_CMP_LT(rdp->rcu_iw_gp_seq + ULONG_MAX / 4, rnp->gp_seq))
+>  		rdp->rcu_iw_gp_seq = rnp->gp_seq + ULONG_MAX / 4;
+>  }
+> diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+> index a9a811d9d7a3..63bea388c243 100644
+> --- a/kernel/rcu/tree.h
+> +++ b/kernel/rcu/tree.h
+> @@ -183,6 +183,7 @@ struct rcu_data {
+>  	bool		core_needs_qs;	/* Core waits for quiescent state. */
+>  	bool		beenonline;	/* CPU online at least once. */
+>  	bool		gpwrap;		/* Possible ->gp_seq wrap. */
+> +	unsigned int	gpwrap_count;	/* Count of GP sequence wrap. */
+>  	bool		cpu_started;	/* RCU watching this onlining CPU. */
+>  	struct rcu_node *mynode;	/* This CPU's leaf of hierarchy */
+>  	unsigned long grpmask;		/* Mask to apply to leaf qsmask. */
+> -- 
+> 2.43.0
+> 
 
