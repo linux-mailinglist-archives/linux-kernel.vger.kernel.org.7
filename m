@@ -1,90 +1,111 @@
-Return-Path: <linux-kernel+bounces-597713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8E6A83DA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:56:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52FD0A83D9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A18A8A2AE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:53:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859613B876D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C24820D505;
-	Thu, 10 Apr 2025 08:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1837F20C028;
+	Thu, 10 Apr 2025 08:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="LMOo6+IC"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="b06n9wo2"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3C320C49C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 08:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14041DF97F;
+	Thu, 10 Apr 2025 08:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744275226; cv=none; b=aZViiz2BFAPMHt+gcsdo4XPaPoAOzAvxiu/OSJfOd38mgIDDi4TCRObwtiPCEFIhUwbtJDPlaiLdK381m1K7HPXWBBbonWrz5/KSMuM6DbNFIKxZVmKd45BcCcEA2Co/Xw1UnkpeEEK2TPvnnouDktzEg6y1S4D8IHvhkN3nImU=
+	t=1744275215; cv=none; b=uT6XP6JRQ5RT1fekBWIocuLCkNqrm9pJbLZxPQs282nFSKW5hEl4QeZL0aGH5HI8e0kTbvCgzIAEbJDTBB63VHILKeW9Q4r11BeTMSGGiynDlChdONLGje9qZHiyIk+gtHkEgyxgDI07lcDleKXrwZuBi9uoxz0xPoEmyzJFxBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744275226; c=relaxed/simple;
-	bh=xm5a12pFhLIMry5y++hjuy83iJYSl+3cpW2pF+KSb0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IpIeoydhlWl12Vw5sV7HL6vhWvS9meT49LQ+DbtcnWnreon4DCFW8I1iKI1zxmpgiemANGSk3mYqgD9GBv0jXY9g0LOfk7o54BcQV/t27lsLFrFCoq1s4A1t6kvTLAOn21pVm6boNcCPV5z3u84MmXPYJiIzNCujspKzmnqZdn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=LMOo6+IC; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=ZXCoP5L2J4BtwaEH2n2GCfyW7YWDh/4SAhqwGfBIa/Q=; b=LMOo6+ICnSo9wd/0x+KdGHWkKq
-	UgRoQTSd6ftNQ2A3885oQ20jGkdFObG4rxEVQtA2/ql8+vxJsCjYsuq5C7VsleaICi/CHRrTgvz0o
-	F/J8eT0tGLFZa/REVQbL/ko/0ScVNyQi7eCydsEc29zJBUGjBuFu/Ou5NN8A2OxEY8/7iwe7oTCP1
-	PwLUH/PUkw/EcOskWbW83yCVv4iGmroK9jbUrFJwquqoY0WXHbWxrNyhDewufFLhy2kuI3C9WXO3a
-	minoMr0ucy2l9tO62kueLB8Yvq82UiDojWW+zajgua6aqtDGaGwPjPCrOX+lqK9+aYc1uCbJBuL0r
-	4YmpVI5A==;
-Received: from i53875b95.versanet.de ([83.135.91.149] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1u2nfH-00036h-1n; Thu, 10 Apr 2025 10:53:39 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Andy Yan <andyshrk@163.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	cristian.ciocaltea@collabora.com,
-	hjc@rock-chips.com,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: Re: [PATCH v2] drm/rockchip: dw_hdmi_qp: Fix io init for dw_hdmi_qp_rockchip_resume
-Date: Thu, 10 Apr 2025 10:53:28 +0200
-Message-ID: <174427520238.842175.9547277934386341429.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250317102757.565679-1-andyshrk@163.com>
-References: <20250317102757.565679-1-andyshrk@163.com>
+	s=arc-20240116; t=1744275215; c=relaxed/simple;
+	bh=fnPAtW9ros2AuQ37IXuTxDBXYzDuH2Jk8g/06VMm8hA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=Mtd7K+xmexqeMyKBD+RlhIajdGXWedW5r4q9VU0NC9OpQ0O+joULlVaTRyoZCJxiDbjxW8TLL7zmusB/RSB/aQAfOIp3GYdT+5l9lpZNOCF2zHFQpj+DOcv+9/4Jclss2Q61B4BPXICwA/ZsB2bo/X0VE/Lc64jKuYTI3NwNHjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=b06n9wo2; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2994B20489;
+	Thu, 10 Apr 2025 08:53:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744275211;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=85l6kpkM18BbKFXRzhx5EeB6eU166fdcXdEEOrGj75s=;
+	b=b06n9wo2UbKkRxGlpU46J1X1HzRhbnlGn9XCze+2ROaYygmipskhkm4jlTLuML3P9f8T/t
+	ntUELf3qwvvVN7Fvk2p6RohKtPTV+bICHJSzAx/gV9+8cCD38VKdwRtAJeYlmz6L4oXWnx
+	MbLff5dhP7u5ycHOForsygYTYf9DXW3bFhFYfnk1XMEyxmbwmm570owpe4BVBaekhG/k+F
+	rgqIZQzBnKAKWAHx3OBm4KhNGPQAxfyAzA83JjqYu3ZKXHgkBbYAsrYdYp4IkX+ZiCa/08
+	oSJX0VhQ1rseKid7NbfOZRn57unBAdOzyabop55mGJQJ4Bc8RrBG8F20Ytr8TA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 10 Apr 2025 10:53:29 +0200
+Message-Id: <D92TYH6VM6BM.2ZOYRI7CTX6O7@bootlin.com>
+Subject: Re: [PATCH v6 05/12] regmap: irq: Remove unreachable goto
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
+ <mwalle@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, "Danilo Krummrich"
+ <dakr@kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+ <linux-input@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+ <andriy.shevchenko@intel.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Mark Brown" <broonie@kernel.org>
+X-Mailer: aerc 0.19.0-0-gadd9e15e475d
+References: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
+ <20250409-mdb-max7360-support-v6-5-7a2535876e39@bootlin.com>
+ <1b280408-888e-48e1-8e6b-de4e7a913e74@sirena.org.uk>
+ <257e1b1f-f51a-4c6b-8569-ce203571f031@sirena.org.uk>
+In-Reply-To: <257e1b1f-f51a-4c6b-8569-ce203571f031@sirena.org.uk>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdekgeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekhfekieeftefhjeetveefudehuddvvdeuvddvudfgfffhveekffethfeuffdtudenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtt
+ hhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplh
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
+On Wed Apr 9, 2025 at 5:21 PM CEST, Mark Brown wrote:
+> On Wed, Apr 09, 2025 at 04:19:34PM +0100, Mark Brown wrote:
+>> On Wed, Apr 09, 2025 at 04:55:52PM +0200, Mathieu Dubois-Briand wrote:
+>> > BUG() never returns, so code after it is unreachable: remove it.
+>>=20
+>> BUG() can be compiled out, CONFIG_BUG.
+>
+> Also, please don't mix irrelevant patches into random serieses.  It just
+> makes everything noisier for everyone.
 
-On Mon, 17 Mar 2025 18:27:53 +0800, Andy Yan wrote:
-> Use cfg->ctrl_ops->io_init callback make it work for all platform.
-> And it's also gets rid of code duplication
-> 
-> 
+Hi Mark,
 
-Applied, thanks!
+Just to provide the context about why this change is part of this
+series: this goto, if left unmodified, would have to replaced by a
+return. This is how the topic of dropping it came in the previous
+iteration of this series.
 
-[1/1] drm/rockchip: dw_hdmi_qp: Fix io init for dw_hdmi_qp_rockchip_resume
-      commit: 1d34597a1e23004c7dd0ab5f58ba1ef95fd9ded5
+Thanks for your review.
+Mathieu
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
