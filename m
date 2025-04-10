@@ -1,181 +1,138 @@
-Return-Path: <linux-kernel+bounces-598050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C24A841B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:24:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 286C3A841B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB7631B6863B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:24:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DFC51B687E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5921F283C92;
-	Thu, 10 Apr 2025 11:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152AA283680;
+	Thu, 10 Apr 2025 11:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jpYt/8HD"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VCGMXqyP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997A728153D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 11:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5413281355
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 11:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744284239; cv=none; b=G9cwa9Cs6U5f73EAFp/JAv396PAV3DvmSrOHGjEizUuJUoPjRW4cq6gbtrUI3Ywqw7NDLBoOIpnhJvmGxP1BxQnldEs+c1/fCXKgz+RzBel0J9x6uqybXIy+Mf73es5p64WPgIcP1i8dVyqSvy5a6CbQyLCpHarNAXEF0qFJ9ZU=
+	t=1744284288; cv=none; b=fXnhZ8f5FySq5+AuO5C7ueUeCUgJU3UfmcLvDvkZMYgeY0nbX/+Fdhbydrh4rCjNpk3Ztkz7fbUbEB8t1eCnpeTlY/UmDK9SBbr7ZJBaT61V3WbpAXNqzpuNbxp7VHSIUaPpawfJmyz38RFEz7GszTCAbB3MoHO7CYTiogLOui4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744284239; c=relaxed/simple;
-	bh=H1MOL01bOC2XjD4KcBtXBweTCA9sLh6CPjez1MjmAig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pDQPrX6+DWPfwovqJzFRhV2j0HFmZpzpILXB7UMW8J6MuOHXvEllPkrmPjBEsSmvAsJdzmJ7bNILvPWwMGocdJSzQsKERnk9rrFQH9tRZ5Q03yBiFBbDoPpx/zN3j8pMfI+cE6MCvwOatD8NxOc8w/XLGqnH83f217ks0WkCAL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jpYt/8HD; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744284235;
-	bh=H1MOL01bOC2XjD4KcBtXBweTCA9sLh6CPjez1MjmAig=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jpYt/8HD2/WtWOcV0oU0Wb11l8Fv2FAQTVcngbdOaIGWPbIHRZo/hazauwrl2D3ib
-	 SexCDU6OQM6EtTtaM4s4/86NW6BOy4TLvTYRxKcYl7W+/gWD9keqemLv8K2jNwNoQJ
-	 UTwzS7kKKqevgQ/y+2KqbQ8dIoed2QoB5D7GicR21rCEw1rDaf4oUIuIdbALRsDxRn
-	 FaYGpULlCPf+aaXHPM7VqdZIzt7W/gsCnf86figZYmaSjYElE0VRmUAu+HKdFIq/+d
-	 8Heu11Hq5cjkawRTIJPAI277esX/OE6UKPtmz6mJb5IdRoL52Jb72Ky6oc3jIRcmLs
-	 /i7uh10znjs3A==
-Received: from [192.168.1.90] (unknown [82.79.138.25])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 229BF17E0B2D;
-	Thu, 10 Apr 2025 13:23:55 +0200 (CEST)
-Message-ID: <4df10482-2082-4542-912f-c9ebc3803b6f@collabora.com>
-Date: Thu, 10 Apr 2025 14:23:54 +0300
+	s=arc-20240116; t=1744284288; c=relaxed/simple;
+	bh=uxZG4n3nv8upFUF3AElIC34tkOtzKRJkS7sA0QWrrlc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Z8FsV8VexHX7CRVWnW1q2omahUj+tt1GXMKTG67qN62qotiSluSOQywYEsx1wHSCCaror62kct/0OThgCn14Tu2z3UOAOEE82DUmWVDpgAan38g4scF/p23EiKojir0YpCe9uaDZDqzD/4J7cltSYgWpw+jztuMVf8igfbmtu98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VCGMXqyP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744284285;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+bRUqjURXRfi5I4u/cU2aBmMRmmhkdr8UnK21YTbfjM=;
+	b=VCGMXqyPTSXeKbI8pdpIlA5o3i3ALJyCXVN9j9m9VGreemc5yaL4KC8KKjJaFaFe5gRmGH
+	nQWfxkqqjWLM7Fcg10NIuRGSazaDLMEWrowGv1ZPZHQZkGqo1DrdPJbpERY8vXQlkNJ5uu
+	wnLIxSa2wKKLuq7Te1Wg+sBRN6PW8SU=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-456-ZllAiCo_NPCsp9n9stmhWA-1; Thu, 10 Apr 2025 07:24:44 -0400
+X-MC-Unique: ZllAiCo_NPCsp9n9stmhWA-1
+X-Mimecast-MFC-AGG-ID: ZllAiCo_NPCsp9n9stmhWA_1744284283
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ac3e0c1336dso64705466b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 04:24:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744284283; x=1744889083;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+bRUqjURXRfi5I4u/cU2aBmMRmmhkdr8UnK21YTbfjM=;
+        b=a0PLp1oFgN4PXjZz0xvSk0Th5T1XuMFmM4CbVI9JJ6czXx76ZThdHiic+HnAE0AfCA
+         zYYqMFVieiqajbNg/7ubiRpwNX9kJyW4a+L+ohBUI53rMdZ/zHer0yfA9H07n7c0L/0R
+         Idg2askZZJ9jK3FRQkMBx8nv7T96p2QIa5eOKYMcOl+2/Rt9QQcerJlT/y+Ze6jhmL7r
+         +hWHJU3WCb5+q7IFew6u3snxIAKI8J+YsYGVFSczugwxi7hvNlyQbGgoKYyPv405uXIK
+         FvAzPv3RBvh/7NO0Mr5irhr3ggSclDXl6d4IFVVhPYI7P4tF1DABnavjSXnf9qw6I8Cf
+         6eNw==
+X-Gm-Message-State: AOJu0YzKSfH4/KjC9On/uloa2nMW9DeHbUmXmy7gyOKy1QjFPcR3J2MF
+	TJ4Rq6McHfKm7eFjd+9yJFQIS+a7HdAxrUtOC5pgNCKWbSpfgIoq1Tqrq2SK4frHlg+QeI3/f63
+	JYHRBSAHkvILNprmxn3yQi8IqBNxQTG+uIyn5AY4L2ZPrb4fVYneqChWqMiBQNg==
+X-Gm-Gg: ASbGncsIWOsQ9OvyrvZWH+SHTIIzSz56oqn9DAWdggKeNhMqLjHDRhf+ZIc8wJs+PHI
+	8M4CNpSh/SbZqPq325JfaFfXpIVVVOo1LzovHcBzKSTtjG4yb+5ONWXz3GcOmGzBZzaHN3eHFoR
+	Vw4Kr1Cod4qe8DOp8Oob13ZcUPSjMfIXjFZvvlaMJ/VN34c8li3O83HtaEhfyHi6Tyns4OpjmEU
+	jFEnjxNmzHjOY8WSi/cVbaJ8ImkraoAuHp7Pz0MqQ/FnnBNzsdwvGNEQQQWpb75Vb48KFZpvsUQ
+	/Reqm3Vy
+X-Received: by 2002:a17:907:2d22:b0:abf:6ebf:5500 with SMTP id a640c23a62f3a-acabd194daemr265371266b.16.1744284283060;
+        Thu, 10 Apr 2025 04:24:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFzYJr1mbcVFMmyOfUdrNowN0DoumFwjn6olFk+s/oECeaB2XhRLnSDLWVgdEThGtX1Z2TGXw==
+X-Received: by 2002:a17:907:2d22:b0:abf:6ebf:5500 with SMTP id a640c23a62f3a-acabd194daemr265369266b.16.1744284282695;
+        Thu, 10 Apr 2025 04:24:42 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1bb312bsm260985966b.15.2025.04.10.04.24.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 04:24:42 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 490101992292; Thu, 10 Apr 2025 13:24:41 +0200 (CEST)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Peter Seiderer <ps.report@gmx.net>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Peter
+ Seiderer <ps.report@gmx.net>
+Subject: Re: [PATCH net-next v1 00/11] net: pktgen: fix checkpatch code
+ style errors/warnings
+In-Reply-To: <20250410071749.30505-1-ps.report@gmx.net>
+References: <20250410071749.30505-1-ps.report@gmx.net>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Thu, 10 Apr 2025 13:24:41 +0200
+Message-ID: <87mscotg1y.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 13/15] drm/tests: hdmi: Add limited range tests for
- YUV420 mode
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250326-hdmi-conn-yuv-v3-0-294d3ebbb4b2@collabora.com>
- <20250326-hdmi-conn-yuv-v3-13-294d3ebbb4b2@collabora.com>
- <20250410-daffodil-toucanet-of-effort-b4dcbd@houat>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <20250410-daffodil-toucanet-of-effort-b4dcbd@houat>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 4/10/25 10:18 AM, Maxime Ripard wrote:
-> On Wed, Mar 26, 2025 at 12:20:02PM +0200, Cristian Ciocaltea wrote:
->> Provide tests to verify that drm_atomic_helper_connector_hdmi_check()
->> helper behaviour when using YUV420 output format is to always set the
->> limited RGB quantization range to 'limited', no matter what the value of
->> Broadcast RGB property is.
->>
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->>  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c |  89 +++++++++++++++-
->>  drivers/gpu/drm/tests/drm_kunit_edid.h             | 112 +++++++++++++++++++++
->>  2 files changed, 196 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
->> index 6897515189a0649a267196b246944efc92ace336..3fae7ccf65309a1d8a4acf12de961713b9163096 100644
->> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
->> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
->> @@ -731,6 +731,88 @@ static void drm_test_check_broadcast_rgb_limited_cea_mode_vic_1(struct kunit *te
->>  	drm_modeset_acquire_fini(&ctx);
->>  }
->>  
->> +/*
->> + * Test that for an HDMI connector, with an HDMI monitor, we will
->> + * get a limited RGB Quantization Range with a YUV420 mode, no
->> + * matter what the value of the Broadcast RGB property is set to.
->> + */
->> +static void drm_test_check_broadcast_rgb_cea_mode_yuv420(struct kunit *test)
->> +{
->> +	struct drm_atomic_helper_connector_hdmi_priv *priv;
->> +	enum drm_hdmi_broadcast_rgb broadcast_rgb;
->> +	struct drm_modeset_acquire_ctx ctx;
->> +	struct drm_connector_state *conn_state;
->> +	struct drm_atomic_state *state;
->> +	struct drm_display_mode *mode;
->> +	struct drm_connector *conn;
->> +	struct drm_device *drm;
->> +	struct drm_crtc *crtc;
->> +	int ret;
->> +
->> +	broadcast_rgb = *(enum drm_hdmi_broadcast_rgb *)test->param_value;
->> +
->> +	priv = drm_kunit_helper_connector_hdmi_init_with_edid(test,
->> +				BIT(HDMI_COLORSPACE_RGB) |
->> +				BIT(HDMI_COLORSPACE_YUV420),
->> +				8,
->> +				test_edid_hdmi_1080p_rgb_yuv_4k_yuv420_dc_max_200mhz);
->> +	KUNIT_ASSERT_NOT_NULL(test, priv);
->> +
->> +	drm = &priv->drm;
->> +	crtc = priv->crtc;
->> +	conn = &priv->connector;
->> +	KUNIT_ASSERT_TRUE(test, conn->display_info.is_hdmi);
->> +
->> +	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 95);
->> +	KUNIT_ASSERT_NOT_NULL(test, mode);
->> +
->> +	drm_modeset_acquire_init(&ctx, 0);
->> +
->> +	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
->> +						     crtc, conn,
->> +						     mode, &ctx);
->> +	KUNIT_ASSERT_EQ(test, ret, 0);
-> 
-> drm_kunit_helper_enable_crtc_connector() can return EDEADLK, so you need
-> to handle it and restart the sequence if it happens.
+Peter Seiderer <ps.report@gmx.net> writes:
 
-Right, there are actually many users of the helper since
+> Fix checkpatch detected code style errors/warnings detected in
+> the file net/core/pktgen.c (remaining checkpatch checks will be addressed
+> in a follow up patch set).
+>
+> Peter Seiderer (11):
+>   net: pktgen: fix code style (ERROR: "foo * bar" should be "foo *bar")
+>   net: pktgen: fix code style (ERROR: space prohibited after that '&')
+>   net: pktgen: fix code style (ERROR: else should follow close brace
+>     '}')
+>   net: pktgen: fix code style (WARNING: please, no space before tabs)
+>   net: pktgen: fix code style (WARNING: suspect code indent for
+>     conditional statements)
+>   net: pktgen: fix code style (WARNING: Block comments)
+>   net: pktgen: fix code style (WARNING: Missing a blank line after
+>     declarations)
+>   net: pktgen: fix code style (WARNING: macros should not use a trailing
+>     semicolon)
+>   net: pktgen: fix code style (WARNING: braces {} are not necessary for
+>     single statement blocks)
+>   net: pktgen: fix code style (WARNING: quoted string split across
+>     lines)
+>   net: pktgen: fix code style (WARNING: Prefer strscpy over strcpy)
+>
+>  net/core/pktgen.c | 111 ++++++++++++++++++++++++++--------------------
+>  1 file changed, 64 insertions(+), 47 deletions(-)
 
-6a5c0ad7e08e ("drm/tests: hdmi_state_helpers: Switch to new helper")
+Most of these are pretty marginal improvements, so I'm a little on the
+fence about whether they are worth it. But, well, they do improve things
+slightly, so if the maintainers are OK with the churn:
 
-Probably a stupid question, as I haven't checked which are the mandatory
-operations of the restart sequence, but I wonder if this could be
-handled inside the helper instead of trying to fix all test cases.
->> +	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
->> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
->> +
->> +	conn_state = drm_atomic_get_connector_state(state, conn);
->> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
-> 
-> Ditto.
-> 
->> +	conn_state->hdmi.broadcast_rgb = broadcast_rgb;
->> +
->> +	ret = drm_atomic_check_only(state);
->> +	KUNIT_ASSERT_EQ(test, ret, 0);
->> +
->> +	conn_state = drm_atomic_get_connector_state(state, conn);
->> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
-> 
-> Ditto, but I'm not sure you need drm_atomic_get_connector_state() here.
-> We know at this point that the state is there and we don't need to
-> allocate it anymore. drm_atomic_get_new_connector_state() will probably
-> be enough 
+Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
 
-Will check.
-
-> and that one can't return EDEADLK.
-
-Same question as above, could we handle EDEADLK at helper(s) level to
-avoid open coding the restart sequence?
-
-Thanks,
-Cristian
 
