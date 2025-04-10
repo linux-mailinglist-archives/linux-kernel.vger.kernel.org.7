@@ -1,199 +1,132 @@
-Return-Path: <linux-kernel+bounces-598437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E582A84603
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:17:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E427A8462D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F8DC7AA75F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:16:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD44A1708B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B90A28A402;
-	Thu, 10 Apr 2025 14:17:10 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6404828CF45;
+	Thu, 10 Apr 2025 14:18:53 +0000 (UTC)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23DA1519A1;
-	Thu, 10 Apr 2025 14:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E102857E2
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 14:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744294630; cv=none; b=K03kS0yBja1mi3DlYCl5iM3XBCM23nsz9Czj0hVOcoi3QBaLUMykkD42h13p/MZRbpRuah7uCLB3aGUsvBm2HXCxkJP3VcEE5qEzj/a2631tIUWouAZS4xQBrFRUjtFCS3FSpAjN2jwnpBtlLeVznqzalTgx7OVLfQHf8P2KmZU=
+	t=1744294733; cv=none; b=QOUWes/wroeuKQgjMmjRi6Z7smSbF9cDgfZO2vUiyR2ezLrb236HCBlWuZXrvcGb2XPwcBcZtWgDstVR+8qtl2AQBSTJZbAluFNTfrZPZV2qVbObfQ/5QftDkstmqfzcUr/Bz2TAIunTd3Gxw+fY80nV+rfmorDDZis/jlNKf1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744294630; c=relaxed/simple;
-	bh=J3pfcUF75sH/E2NsoPd/DbihyZAVE6hTt4Gbs5k9DEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fe1c2Nie+HY6oSSTsqj/FvAgSFd9qQ42FQm+vqO/irVLOoUtglSZ3JBfYN85WytpHrJf3pD+WlPn6jOkX7HkIg9LhktUXoJlDtw2e/AXokfUg9MKjhxhZLqx7eBRTMptgiIKQ2dWjuN/s2Zb3ydJe0KcN/03OGR5xRyO5bA5R4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1u2si7-0005OJ-FL; Thu, 10 Apr 2025 16:16:55 +0200
-Date: Thu, 10 Apr 2025 16:16:55 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Florian Westphal <fw@strlen.de>
-Cc: lvxiafei <xiafei_xupt@163.com>, coreteam@netfilter.org,
-	davem@davemloft.net, edumazet@google.com, horms@kernel.org,
-	kadlec@netfilter.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
-	lvxiafei@sensetime.com, netdev@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, pabeni@redhat.com,
-	pablo@netfilter.org
-Subject: Re: [PATCH V3] netfilter: netns nf_conntrack: per-netns
- net.netfilter.nf_conntrack_max sysctl
-Message-ID: <20250410141655.GA20644@breakpoint.cc>
-References: <20250409094206.GB17911@breakpoint.cc>
- <20250410130531.17824-1-xiafei_xupt@163.com>
- <20250410131717.GA14051@breakpoint.cc>
+	s=arc-20240116; t=1744294733; c=relaxed/simple;
+	bh=SWQ+PO07d5UqSiUZlr//Fs/ME3IAMb/DOUimXTj0cyQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qb5UrktFOdGm9tVYFxL/1WJSLrInRLjZg+bzCZPIWvnXxPe5aR+WI3mPqCU6tSunEJfIvxkH5USEZDL5no9v9hY+igvHxLZXR2nLd7fF9NlAF8kC82cCXRPqqqpiNO7RSPpUSQ5DEAn10PAwXYlpG10sz0S5kVjV+eLnA1YGg2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aaecf50578eso154695066b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:18:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744294727; x=1744899527;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GdSoTiFrBKyNtxOX3muUasy2YSOI6Sn7jCp2NmeOuXM=;
+        b=NGLtVvbGgKA6KDzCxXM8sJ2h1lGRdxAHf4NcdDd96FUEXax8E4fpqt2TDcwpw+ZKye
+         yJD1o/61bjcnvxKWFMDAiTnm6rIDjzkRSUw8TW52jMhZeuqo4VNgtpXh2IvJA8Cv+Gnx
+         ldIkeaaxBdcida8K1IaPoGiqGVUXnbtPHr6vBNjmXFI1BU3YqSwNn1Yf8DnMyFx482Nu
+         JLWhXg1i3Q/Wu/SqAzeWUH2pckT3CegeJYebXM+pGTTrvIBj6SzIMCaQiIK5Fky1rfVi
+         6MQH49LCAVV+57WOw9GJC+K/sVZQuvEY5tVrguuiWZpJifC6iFEuFvaiU1ws8Vznj6QH
+         mhDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTo7Gn9RVaiNhshrSQr/5xaFsCc3IOO0BOPm1UHXwVOYq8Rtw/+uVKVoQ71nTUNsaBLZRm7NPAzd/NbyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr68lvOn9DCf514AKI7LyCRlrB3yOn2BHmaDPBFqZCUBtVKgAv
+	fusPyUpiL40mR47J0J5ZgdCef0TLh38DIr9mNrwOdSJKttG3TPHlEmZ9PJLBjeE=
+X-Gm-Gg: ASbGnctYHtMFL17bl3osW933QvCrRXNNXHk7yPOTyn2hZGYebv1TwFSIFEIzYEvwRW7
+	CJKKraaK3Vzym6ypiLm6gSGL7sDPY25m2e1Ebf/SR+UlOr5vmpHUUuOx1T3+90IlPnGFVAibuW9
+	BLhOxOYiUgLAt+zBOuwwCwCuFJcNs7OWswMMPZxuqOmwfZuY8O1kFcgxFhY+qi+kPVM30PZ9Hgk
+	1N6F+o7RDWNyAVHwrBiB78BdRMySDbm8Sry/aezz2bB6IXKERFGgLrHROPjScR6RxlPY2Zzclg2
+	OiYwsBeZz+k6rjsSAPXQMks05ftVfWzkJmYSSvKbPPcpAEZJ10nhk/xLoZhmUzfeAMXryUDV6fV
+	aou5CTPNwZGgWvA==
+X-Google-Smtp-Source: AGHT+IHvIXoWOEJAFV3lyqgBCQOJHcXtSBhnnOdBt6HMvtpC+Tt/kkwfHs6YQPcxgJ3cj6OF3TBQUA==
+X-Received: by 2002:a17:907:1b0d:b0:aca:a161:f113 with SMTP id a640c23a62f3a-acabd20d1b6mr291567366b.33.1744294726336;
+        Thu, 10 Apr 2025 07:18:46 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ce711fsm278311266b.169.2025.04.10.07.18.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Apr 2025 07:18:44 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac2a81e41e3so156302566b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:18:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUqPS8JGrYoYqZUItuuAdOiq9l5eEHoQYtg3K3ebyraQs90j3Qbk7pQl0PeBI7RoEj/WXh17IzF5oKuSFU=@vger.kernel.org
+X-Received: by 2002:a17:907:7f0d:b0:ac7:3323:cfdc with SMTP id
+ a640c23a62f3a-acabd123a89mr274752666b.10.1744294724513; Thu, 10 Apr 2025
+ 07:18:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410131717.GA14051@breakpoint.cc>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20250409153650.84433-2-ajones@ventanamicro.com>
+In-Reply-To: <20250409153650.84433-2-ajones@ventanamicro.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Apr 2025 16:18:28 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVjxWais7O32zO-aX3tzVKA=aWUfttADn9OD+dxFp7HoA@mail.gmail.com>
+X-Gm-Features: ATxdqUF2BhrEGJtMhKie_nWpHtZyJHSNFLWdzfe8DuYkkq82db_rzyPZQc5ZMYc
+Message-ID: <CAMuHMdVjxWais7O32zO-aX3tzVKA=aWUfttADn9OD+dxFp7HoA@mail.gmail.com>
+Subject: Re: [PATCH] riscv: Fix unaligned access info messages
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, cleger@rivosinc.com, 
+	alexghiti@rivosinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-Florian Westphal <fw@strlen.de> wrote:
-> lvxiafei <xiafei_xupt@163.com> wrote:
-> > Florian Westphal <fw@strlen.de> wrote:
-> > > I suggest to remove nf_conntrack_max as a global variable,
-> > > make net.nf_conntrack_max use init_net.nf_conntrack_max too internally,
-> > > so in the init_net both sysctls remain the same.
-> > 
-> > The nf_conntrack_max global variable is a system calculated
-> > value and should not be removed.
-> > nf_conntrack_max = max_factor * nf_conntrack_htable_size;
-> 
-> Thats the default calculation for the initial sysctl value:
-> 
-> net/netfilter/nf_conntrack_standalone.c:                .data           = &nf_conntrack_max,
-> net/netfilter/nf_conntrack_standalone.c:                .data           = &nf_conntrack_max,
-> 
-> You can make an initial patch that replaces all occurences of
-> nf_conntrack_max with cnet->sysctl_conntrack_max
+Hi Andrew,
 
-Something like this:
+On Wed, 9 Apr 2025 at 17:36, Andrew Jones <ajones@ventanamicro.com> wrote:
+> Ensure we only print messages about command line parameters when
+> the parameters are actually in use. Also complain about the use
+> of the vector parameter when vector support isn't available.
+>
+> Fixes: aecb09e091dc ("riscv: Add parameter for skipping access speed tests")
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Closes: https://lore.kernel.org/all/CAMuHMdVEp2_ho51gkpLLJG2HimqZ1gZ0fa=JA4uNNZjFFqaPMg@mail.gmail.com/
+> Closes: https://lore.kernel.org/all/CAMuHMdWVMP0MYCLFq+b7H_uz-2omdFiDDUZq0t_gw0L9rrJtkQ@mail.gmail.com/
+> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
 
-diff --git a/include/net/netfilter/nf_conntrack.h b/include/net/netfilter/nf_conntrack.h
---- a/include/net/netfilter/nf_conntrack.h
-+++ b/include/net/netfilter/nf_conntrack.h
-@@ -320,7 +320,6 @@ int nf_conntrack_hash_resize(unsigned int hashsize);
- extern struct hlist_nulls_head *nf_conntrack_hash;
- extern unsigned int nf_conntrack_htable_size;
- extern seqcount_spinlock_t nf_conntrack_generation;
--extern unsigned int nf_conntrack_max;
- 
- /* must be called with rcu read lock held */
- static inline void
-@@ -360,6 +359,11 @@ static inline struct nf_conntrack_net *nf_ct_pernet(const struct net *net)
- 	return net_generic(net, nf_conntrack_net_id);
- }
- 
-+static inline unsigned int nf_conntrack_max(const struct net *net)
-+{
-+	return net->ct.sysctl_conntrack_max;
-+}
-+
- int nf_ct_skb_network_trim(struct sk_buff *skb, int family);
- int nf_ct_handle_fragments(struct net *net, struct sk_buff *skb,
- 			   u16 zone, u8 family, u8 *proto, u16 *mru);
-diff --git a/include/net/netns/conntrack.h b/include/net/netns/conntrack.h
---- a/include/net/netns/conntrack.h
-+++ b/include/net/netns/conntrack.h
-@@ -102,6 +102,7 @@ struct netns_ct {
- 	u8			sysctl_acct;
- 	u8			sysctl_tstamp;
- 	u8			sysctl_checksum;
-+	unsigned int		sysctl_conntrack_max;
- 
- 	struct ip_conntrack_stat __percpu *stat;
- 	struct nf_ct_event_notifier __rcu *nf_conntrack_event_cb;
-diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 7f8b245e287a..8ae9c22cfcb3 100644
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -202,8 +202,6 @@ static void nf_conntrack_all_unlock(void)
- unsigned int nf_conntrack_htable_size __read_mostly;
- EXPORT_SYMBOL_GPL(nf_conntrack_htable_size);
- 
--unsigned int nf_conntrack_max __read_mostly;
--EXPORT_SYMBOL_GPL(nf_conntrack_max);
- seqcount_spinlock_t nf_conntrack_generation __read_mostly;
- static siphash_aligned_key_t nf_conntrack_hash_rnd;
- 
-@@ -1509,8 +1507,7 @@ static void gc_worker(struct work_struct *work)
- 	gc_work = container_of(work, struct conntrack_gc_work, dwork.work);
- 
- 	i = gc_work->next_bucket;
--	if (gc_work->early_drop)
--		nf_conntrack_max95 = nf_conntrack_max / 100u * 95u;
-+		nf_conntrack_max95 = nf_conntrack_max(&init_net) / 100u * 95u;
- 
- 	if (i == 0) {
- 		gc_work->avg_timeout = GC_SCAN_INTERVAL_INIT;
-@@ -1648,13 +1645,14 @@ __nf_conntrack_alloc(struct net *net,
- 		     gfp_t gfp, u32 hash)
- {
- 	struct nf_conntrack_net *cnet = nf_ct_pernet(net);
--	unsigned int ct_count;
-+	unsigned int ct_max, ct_count;
- 	struct nf_conn *ct;
- 
- 	/* We don't want any race condition at early drop stage */
- 	ct_count = atomic_inc_return(&cnet->count);
-+	ct_max = nf_conntrack_max(&init_net);
- 
--	if (nf_conntrack_max && unlikely(ct_count > nf_conntrack_max)) {
-+	if (ct_max && unlikely(ct_count > ct_max)) {
- 		if (!early_drop(net, hash)) {
- 			if (!conntrack_gc_work.early_drop)
- 				conntrack_gc_work.early_drop = true;
-@@ -2650,7 +2648,7 @@ int nf_conntrack_init_start(void)
- 	if (!nf_conntrack_hash)
- 		return -ENOMEM;
- 
--	nf_conntrack_max = max_factor * nf_conntrack_htable_size;
-+	init_net.ct.sysctl_conntrack_max = max_factor * nf_conntrack_htable_size;
- 
- 	nf_conntrack_cachep = kmem_cache_create("nf_conntrack",
- 						sizeof(struct nf_conn),
-diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
-index db23876a6016..f1938204b827 100644
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -2608,7 +2608,7 @@ ctnetlink_stat_ct_fill_info(struct sk_buff *skb, u32 portid, u32 seq, u32 type,
- 	if (nla_put_be32(skb, CTA_STATS_GLOBAL_ENTRIES, htonl(nr_conntracks)))
- 		goto nla_put_failure;
- 
--	if (nla_put_be32(skb, CTA_STATS_GLOBAL_MAX_ENTRIES, htonl(nf_conntrack_max)))
-+	if (nla_put_be32(skb, CTA_STATS_GLOBAL_MAX_ENTRIES, htonl(nf_conntrack_max(net))))
- 		goto nla_put_failure;
- 
- 	nlmsg_end(skb, nlh);
-diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
-index 502cf10aab41..8a185dfd3261 100644
---- a/net/netfilter/nf_conntrack_standalone.c
-+++ b/net/netfilter/nf_conntrack_standalone.c
-@@ -615,7 +615,7 @@ enum nf_ct_sysctl_index {
- static struct ctl_table nf_ct_sysctl_table[] = {
- 	[NF_SYSCTL_CT_MAX] = {
- 		.procname	= "nf_conntrack_max",
--		.data		= &nf_conntrack_max,
-+		.data		= &init_net.ct.sysctl_conntrack_max,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
-@@ -944,7 +944,7 @@ static struct ctl_table nf_ct_sysctl_table[] = {
- static struct ctl_table nf_ct_netfilter_table[] = {
- 	{
- 		.procname	= "nf_conntrack_max",
--		.data		= &nf_conntrack_max,
-+		.data		= &init_net.ct.sysctl_conntrack_max,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
+Thanks, this gets rid of the bogus messages!
+
+Impact on SiPEED MAiX BiT:
+
+    -scalar unaligned access speed set to '(null)' by command line
+    -vector unaligned access speed set to 'unsupported' by command line
+
+BeagleV Beta Starlight:
+
+    -vector unaligned access speed set to 'unsupported' by command line
+
+Renesas RZ/Five:
+
+    -vector unaligned access speed set to 'unsupported' by command line
+
+MPFS Icicle:
+
+    -vector unaligned access speed set to 'unsupported' by command line
+
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
