@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-597382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE326A83910
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:19:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A75A838FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A058D1B640C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:19:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 831B4466047
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3C0202989;
-	Thu, 10 Apr 2025 06:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC167202977;
+	Thu, 10 Apr 2025 06:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="LTSqb0ts"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cRRV4ues";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xYJbFi7L"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A7A1BF37
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5381BE251;
+	Thu, 10 Apr 2025 06:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744265957; cv=none; b=Sy4MTHWvAFomrWvaW2y1UM0Rf4agiKucFtobwHJafWFOPt130He1yTXIvGxg1CyPab8SqciEhT8CzDAOF65Mr4F4LmSfPfCf0r3xcaSucZUTCwG3Aum3xEGscmt6YzBX3eP9MO/xUJXpr7zcl7IL6XwdTjvregT60+y3CkdsQo4=
+	t=1744265692; cv=none; b=A2n58mS/S2Wz5INkxl/7nOA/Z0C56Gv03PdDSGhMFekfK0b4DVoUsXNmETa+vwYL+7PwZQB8JKmgtLzBv5anqnHskt3YHDZnrLhymvBg+AnEsMqRT9QLYLWCO/i/16M0MiPes2jYR7qobY5lO+TOXx4dFcqoSCFxXj8GYol9vr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744265957; c=relaxed/simple;
-	bh=GHk8Y+WJYHBXno6Zq2dTjJGVahR88buHcB//W+dfb4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FVJLY5KtGeI3eHIvfY7Uae49CuBW6AntL42U0WzCcY7cf9BsMlKWOI2x1YXuQLAf6hptx2Geq4Xo5dELzAw2cbDxSCWGv4JUcgoLjQznsg0uqrA5o6Pnoz7p/UZjOPaxh5HukMBW2PNJMGy1e7/QdUtJfVtvgezpbNV38Jo1gqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=LTSqb0ts; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [172.27.3.33] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53A6GPNl3943272
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 9 Apr 2025 23:16:27 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53A6GPNl3943272
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025032001; t=1744265790;
-	bh=7GWzQYcxM1qb4FyWY0v/8IQ3XCa4IBsPxSQ7EM3Uv1k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LTSqb0tsliwoVoETPYTJjF2eKcAv9gnoL3saUwC9r016YvncuX9grSAJYGACSCRcB
-	 dYBBQfdFgVN7quwyusn7GAFzo/LV1F0y7VPoJbmoagFK6KhycJY69kjvzKMbeMOYuv
-	 4ucO783q/X6Zb7azBLLO56o2E3DZ78ZeJbJ7dR2B3bAzrd25wpc1QuJI7UF09j80/Y
-	 d4eDaTrQzlpC4igx6PfGmizQanybIqjJCuhALvYeWpCPzKgOOymZfDpKE3buzHFZC0
-	 PVOvSvMy43mZhNkYfFS4c3e2mDXHTrkNHtHV5KoTx1h1T77vaztePczNlCnTsRw2Iv
-	 pSXyKg7Lo+nuw==
-Message-ID: <e3d8db6a-dfb9-49d5-8c7f-b4a1d2faf575@zytor.com>
-Date: Wed, 9 Apr 2025 23:14:12 -0700
+	s=arc-20240116; t=1744265692; c=relaxed/simple;
+	bh=mbx6ITtNLYAzsr/l+UdnT2YEpJ5YQ1IPbyXfHpbGrY0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=j9RXSVw6aB2G3oyxj2Y2LTujrLSCeilYYAixiJgvELW77ypd3OZlmKqy1LkwufIgj6e/oJssQjT24/AxG9NKzOMt5qbZS0le21N6TKdidr/pTfp0+KDLnPyYOR5cBZcdZ1y1SzFFVMAZ4wzx+8VIksH4DaiWXA1FyubDB0MQ53o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cRRV4ues; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xYJbFi7L; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 10 Apr 2025 06:14:43 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744265688;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZisqoqMU1Q5gHyNLzO+YmukOBCpyJ06A9NlZLs6fanQ=;
+	b=cRRV4uesVI2uWj9a6yv2XbKTUY8Jb5CJsObcFWRxsiAYgWllgwPH9dwE5VzPC7IsSM/zhJ
+	2XvOuIzfqasumlP54EohE2aoMStq/yLoayLsW0UcpPDTWQDq5oOLc755PQZO+NalE0+nE1
+	JMU6kruvhd6Ne3lKMD/Dmv6lD1RR5Tf43KfT2pU8+kYw4ou1oirI29C7hGp8sv9HuIrWpa
+	0wJBdYv8W6LyqM+ZYdDGwy1QLDWi1vroNzcC+48bVtoYvGj0QbYn+rJD8beiTpgs1BV6hg
+	JQFkYi2Xy0hTjv5PXsuvfim2hShiS5E8TveIffbblRdIXDHqnj3lb8VTyRtLIA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744265688;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZisqoqMU1Q5gHyNLzO+YmukOBCpyJ06A9NlZLs6fanQ=;
+	b=xYJbFi7LPrnHXZEJUpGzGqLwA/txoenzRoVKmUKMtHDUoyLkerTfoqE2krTCyuAG+WIzU+
+	9VixP8OPE1g6m5BA==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: objtool/urgent] objtool: Fix false-positive "ignoring
+ unreachables" warning
+Cc: kernel test robot <lkp@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To:
+ <5eb28eeb6a724b7d945a961cfdcf8d41e6edf3dc.1744238814.git.jpoimboe@kernel.org>
+References:
+ <5eb28eeb6a724b7d945a961cfdcf8d41e6edf3dc.1744238814.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/20] x86/msr: Standardize on 'u32' MSR indices in
- <asm/msr.h>
-To: Xin Li <xin@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org
-Cc: Juergen Gross <jgross@suse.com>, Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20250409202907.3419480-1-mingo@kernel.org>
- <20250409202907.3419480-7-mingo@kernel.org>
- <aed43a6a-aca9-4c81-af1a-775f5858ebe3@zytor.com>
- <9c014962-d4cb-4e68-be15-efbe2ea26531@zytor.com>
- <63ab3ea9-c55d-48d2-8344-fb4314baf240@zytor.com>
- <3B57B3E5-47C9-4196-AD2B-44916E18B6D0@zytor.com>
- <3e2a52c5-791a-4e96-a768-8579ec841dd1@zytor.com>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <3e2a52c5-791a-4e96-a768-8579ec841dd1@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <174426568347.31282.17971680226674649784.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 4/9/25 20:53, Xin Li wrote:
-> On 4/9/2025 8:29 PM, H. Peter Anvin wrote:
->> On April 9, 2025 8:18:12 PM PDT, Xin Li <xin@zytor.com> wrote:
->>> A question NOT related to this patch set, the MSR write API prototype
->>> defined in struct pv_cpu_ops as:
->>>     void (*write_msr)(unsigned int msr, unsigned low, unsigned high);
->>>
->>> Will it be better to add "const" to its arguments?  I.e.,
->>>     void (*write_msr)(const u32 msr, const u32 low, const u32 high);
->>>
->>
->> No, that makes no sense (it would have absolutely no effect.)
->>
-> 
-> For the API definition, yes, it has no effect.
-> 
-> While it makes the API definition more explicit, and its implementations
-> for native and Xen would be:
-> 
-> void {native,xen}_write_msr(const u32 msr, const u32 low, const u32 high)
-> {
->      ....
-> }
-> 
-> not worth it at all?
-> 
+The following commit has been merged into the objtool/urgent branch of tip:
 
-No, and as you know, I'd like to get rid of the native_ and xen_ 
-functions entirely anyway.
+Commit-ID:     8af6f0fe9c4340ed97f0ba4f3f6cc7bb16558e87
+Gitweb:        https://git.kernel.org/tip/8af6f0fe9c4340ed97f0ba4f3f6cc7bb16558e87
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Wed, 09 Apr 2025 15:49:36 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 10 Apr 2025 08:03:05 +02:00
 
-	-hpa
+objtool: Fix false-positive "ignoring unreachables" warning
 
+There's no need to try to automatically disable unreachable warnings if
+they've already been manually disabled due to CONFIG_KCOV quirks.
+
+This avoids a spurious warning with a KCOV kernel:
+
+  fs/smb/client/cifs_unicode.o: warning: objtool: cifsConvertToUTF16.part.0+0xce5: ignoring unreachables due to jump table quirk
+
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/5eb28eeb6a724b7d945a961cfdcf8d41e6edf3dc.1744238814.git.jpoimboe@kernel.org
+
+Closes: https://lore.kernel.org/r/202504090910.QkvTAR36-lkp@intel.com/
+---
+ tools/objtool/arch/x86/special.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/objtool/arch/x86/special.c b/tools/objtool/arch/x86/special.c
+index 403e587..06ca4a2 100644
+--- a/tools/objtool/arch/x86/special.c
++++ b/tools/objtool/arch/x86/special.c
+@@ -126,7 +126,7 @@ struct reloc *arch_find_switch_table(struct objtool_file *file,
+ 	 * indicates a rare GCC quirk/bug which can leave dead
+ 	 * code behind.
+ 	 */
+-	if (reloc_type(text_reloc) == R_X86_64_PC32) {
++	if (!file->ignore_unreachables && reloc_type(text_reloc) == R_X86_64_PC32) {
+ 		WARN_INSN(insn, "ignoring unreachables due to jump table quirk");
+ 		file->ignore_unreachables = true;
+ 	}
 
