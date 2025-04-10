@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-599092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B345EA84F0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 23:10:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0BADA84F10
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 23:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2CE1B83CF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:10:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8D8C7B4B1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEC9293472;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E028293473;
 	Thu, 10 Apr 2025 21:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXnb9pCa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0t5e1Qh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53DC6EB79;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54AF28EA5C;
 	Thu, 10 Apr 2025 21:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744319425; cv=none; b=UeFWQzw+j5oqpHojEaWroXud0LOWDUcjNKVUq6l2q8CY4Vx7bT022SZTZ1D0hbI4nuSnIUrgkT+npZNv82Xr0L4iLv1b9xw6J1vhIvkT9JjFt77Xq46ZkrOAhe48HCR4sD9oa+2mO/3zzCxBpvj9V3Gtyk69xs8olNDk5zg8h/M=
+	t=1744319425; cv=none; b=pu29E3fhZUvG/oMikZXviObj2ZqfsLr4FKNTZ8QyCRc6nrcfOK5zApYOhbgHc1l/wrVxMnINqkk4WjaQ9RgBoPCcHM1JQlLyzdqVdmNOvn1w/x/+KyXXxKPvXLUed91XheCxZvag7m0xJ9etEGEMpI9iRKF5OtlXz08KNqopo4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744319425; c=relaxed/simple;
-	bh=HxR8i9KioPJ2kVY1Z/Bo5KCbFRvEVY4AlBuJ05HKATI=;
+	bh=nQlZdTU+lS/Y/JHfgCk5WHjlwHAdkn/xnnQCVl6khHM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=I9kn7GQMHbRDL2BkhdU1XHzg2Z8J4Ji66yfwgSJ4A0POAN6YFgyXfoN0wOygFsayTMxT9wFBoS5jOuXYNufABJjXZXqwF7FLDRIUC4XQY3Q5xHSQ8X7PshnRggcUCsB0YgpmJp7pSFsn4fPjSrD++l03Yq9FU0mb0azAdI7hUkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXnb9pCa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1D032C4CEE9;
+	 In-Reply-To:To:Cc; b=KBLb5kgZyhTudAIphSdy0Q7gpOGF9MSclK2wuemFIBKnlRWwW0Y3U9XMNpf3cixXznk/VQ/SkrMS+drbURmeG9apXwNnvH+TrKvYuS1dDVqnyqmMXA2zRV22ucnoi3ek7iEsnsfO5C1jgHAvxDF+7JDU3T7hqiMuA0JQjfcFut4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0t5e1Qh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 32426C4CEEA;
 	Thu, 10 Apr 2025 21:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1744319425;
-	bh=HxR8i9KioPJ2kVY1Z/Bo5KCbFRvEVY4AlBuJ05HKATI=;
+	bh=nQlZdTU+lS/Y/JHfgCk5WHjlwHAdkn/xnnQCVl6khHM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ZXnb9pCa/qiu1OqiOaqtfh14EKo7wdEIFd2XA6v2SSwCzzmTiqJE8Mw6igP27k0CG
-	 FU0dqWq9mxfuX2duBgJakG0h6VJkovu5na4tAIbwMZnafDuTdT+i2uKrCjgVoH848I
-	 po7MC+k9KKJxTFAPibc+onh8a5OY1/AH+KqQSq7pEoHLfFrcdSL4tD2WhnEKeCeUD6
-	 5i93sUwaFJGDVVA8qegNaHKjo3clU6ni2N6/Pl+QIvNTVx950iPVeHF6PZ9FQ2vKet
-	 OnCQ8ggD7tTyd6o3zQ3z94D+9QOToGjP9WFWX4rTEYg4t1HZYMl5TUiGpQnAwY+WaM
-	 XqJC+R+9HIiqQ==
+	b=W0t5e1QhLQu/pFuBZ3cngf7c3cuqKpcQ9FABlAuzqwrJnWZ/f9fbElrMgD0O0SRTW
+	 7YAkeXAhf0Z7/TfLX03tSuiQLkwoRJKH/NzdlkrO7rF13iwo4FFLfYXruULuG9qokw
+	 QMLm38S/jYCJL08i6Eq7VLc9fQ7hKiTw5gAwwfAmflS1KnODHbTBhzKb8pGPcEmFVN
+	 01tHx/gwz20jrws9i6e0l77ag0ZuvB3ZVly8qn7Fobr74aSCsq5UPzvKCtcE2TI1rQ
+	 CpKThSDd10+oJvObwfO17XhvTXdnEYhg7dkZVdF0v/b9FAglZRNxJVq+vxyu53EeET
+	 +LD/ccLhYjewg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00832C369A6;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0E4C369AA;
 	Thu, 10 Apr 2025 21:10:24 +0000 (UTC)
 From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
-Date: Thu, 10 Apr 2025 22:58:53 +0200
-Subject: [PATCH v2 1/2] clang-format: do not allow short enums on a single
- line
+Date: Thu, 10 Apr 2025 22:58:54 +0200
+Subject: [PATCH v2 2/2] clang-format: align consecutive macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250210-clang-format-fixes-v2-1-37894413bbee@collabora.com>
+Message-Id: <20250210-clang-format-fixes-v2-2-37894413bbee@collabora.com>
 References: <20250210-clang-format-fixes-v2-0-37894413bbee@collabora.com>
 In-Reply-To: <20250210-clang-format-fixes-v2-0-37894413bbee@collabora.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
@@ -66,11 +65,11 @@ Cc: Collabora Kernel Team <kernel@collabora.com>,
  Michael Riesch <michael.riesch@wolfvision.net>, 
  Michael Riesch <michael.riesch@collabora.com>
 X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744318739; l=1102;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744318740; l=1371;
  i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
- bh=2Vs71mWhfKOIVP32H7x/aEA2nZetyj4bgJc+AhIa5D8=;
- b=/C8t4Grf9AMtPycJW4PsRdu/pbt3F2HJFhPsBKHdfK+fQdOC0Ajc9AZiR6tERomdTwtV/l2o0
- R5UMxx2M7vVBkLyJOxUiOYwWe5btE08DwH0+rh/3jYgtJz6FY8P6wxT
+ bh=GCAcQLFrMA5v4a8RQ+v4hX/83CyGkOIzdbZt9W/iAMo=;
+ b=eQYqQ3YfPADGuVnklkfGZ8zn5fc1Ke7BHBl6FyFpdefybbJRw2NKRRgfdiT6BGn/jlXU6U0L/
+ 32RqDjGfhLxDmqi61M2ZhSnT4keDU3L/iW3teyy6fMOiOL7q/ex73wB
 X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
  pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
 X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
@@ -80,19 +79,28 @@ Reply-To: michael.riesch@collabora.com
 
 From: Michael Riesch <michael.riesch@wolfvision.net>
 
-clang-format 11 introduced the option "AllowShortEnumsOnASingleLine".
-Set it to "false" in order to avoid short enums of the form:
+clang-format 9 introduced the option "AlignConsecutiveMacros".
+Set it to "AcrossEmptyLinesAndComments" in order to avoid macro
+definitions of the form:
 
-    enum my_short_num { green, red };
+    #define MAGIC_REGISTER_1 0x42
+    #define MAGIC_REGISTER_BIT_FLIP BIT(2)
+    /* important comment */
+    #define MAGIC_REGISTER_BIT_ENABLE BIT(12)
 
-With the option set to "false", they will be converted to
+    #define MAGIC_REGISTER_2 0x43
 
-    enum my_short_num {
-            green,
-            red
-    };
+With the option set to "AcrossEmptyLinesAndComments", they will
+be converted to
 
-which is consistent with the definition of enums with more items.
+    #define MAGIC_REGISTER_1	      0x42
+    #define MAGIC_REGISTER_BIT_FLIP   BIT(2)
+    /* important comment */
+    #define MAGIC_REGISTER_BIT_ENABLE BIT(12)
+
+    #define MAGIC_REGISTER_2	      0x43
+
+which seems to be the convention in the kernel code base.
 
 Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
 Reviewed-by: Nathan Chancellor <nathan@kernel.org>
@@ -102,17 +110,17 @@ Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/.clang-format b/.clang-format
-index fe1aa1a30d40..8040b516185b 100644
+index 8040b516185b..30d09cb88170 100644
 --- a/.clang-format
 +++ b/.clang-format
-@@ -19,6 +19,7 @@ AlignTrailingComments: false
- AllowAllParametersOfDeclarationOnNextLine: false
- AllowShortBlocksOnASingleLine: false
- AllowShortCaseLabelsOnASingleLine: false
-+AllowShortEnumsOnASingleLine: false
- AllowShortFunctionsOnASingleLine: None
- AllowShortIfStatementsOnASingleLine: false
- AllowShortLoopsOnASingleLine: false
+@@ -13,6 +13,7 @@ AccessModifierOffset: -4
+ AlignAfterOpenBracket: Align
+ AlignConsecutiveAssignments: false
+ AlignConsecutiveDeclarations: false
++AlignConsecutiveMacros: AcrossEmptyLinesAndComments
+ AlignEscapedNewlines: Left
+ AlignOperands: true
+ AlignTrailingComments: false
 
 -- 
 2.39.5
