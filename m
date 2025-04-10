@@ -1,140 +1,155 @@
-Return-Path: <linux-kernel+bounces-598193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A12E9A8435C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE66A84362
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 325BC4C25F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:36:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0503C4E24FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B1B284B59;
-	Thu, 10 Apr 2025 12:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26C32857E3;
+	Thu, 10 Apr 2025 12:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ygoG7ksq"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wEi6qI4w"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F53283691
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 12:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D379285414;
+	Thu, 10 Apr 2025 12:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744288578; cv=none; b=Jxf0oGFahJEdJ9iRdzRwKeMTs22G/aBBqLQFGUIP4s66nMeZ0Rw0+hwbozQfALgBIZ0P3naU1aRUZYTEw7e0hb1eRln/IXSfGH1ZsurPUd1/mSZXtYYu34s/eexxsQ+KAgAC49vRYGsWKXHW7jH+ajZqtGMkbIRbmehtQOWNuGk=
+	t=1744288598; cv=none; b=FxZT1Hly8M6CdcYH4qKtaWveBsMRS5drywXcn6Bi1ag0ZzTX5lJkCR1A5u0Y7Bn+jwbAplcJYwxX3kHAEQ17dDdCkjAatjtuxzQEd+9Kgg8VX5iRx90aisw1tzM7xmVDEmJrGN8RxEMxfvbDTf+0PwV6YcKOLmzrH4swJSo62e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744288578; c=relaxed/simple;
-	bh=H2rAYnbGeFgX5saZ/b7X46QHeJfq5kinlY6BpgEnd3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y5ZeAs99Vme+ED8aKRFi2w7h6U+/tj2+Okijn/gRn8xhWAwNSqITSkW2wm6hWCnN3hpbwjTCM3hUBw7fVsais6N4HcDGkf/kgsDM/D1o6JxZ7v8wcebVE0jYJ9tfFEQNg0bK6y2M7WNcBPhq3EN8d1Kg86XSjr4vRWDt600vyK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ygoG7ksq; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so7088675e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 05:36:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744288574; x=1744893374; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iQ0j7wMSGTmXUuOHtflR052mxHlsC9aOf5SK3WIqsvY=;
-        b=ygoG7ksqWNg5LSepdZfB/g+GufHjgHmLbB8kRtXYFazeG1EQ3GAs58DYd41HbC4Msf
-         v1iNSbVmc5xO6lBOIWnTCRlJWkcgRpmt5QeV9BiPNPNsMtcYBgTYGsphaDyJfbmTlKYx
-         OMpfQRnGgVRDKAHzsMoyN25N7RLLB1ecXlr8g8Jg/ZhRGFzxpfsZCT/6bimq+2srOxzH
-         z0TYCHmGdssVtMlbzsZa96s1IzN5jZ9C8wrgW6wOmUqjg7bcAkgEqR1sakAYSyUOIdwD
-         nTeNLTql2k00gDCHDEwNOhrI4IDG2r/8HIMXola1w5WpOriOqWJ+Ym//XOVvxNzE/v0n
-         C6IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744288574; x=1744893374;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iQ0j7wMSGTmXUuOHtflR052mxHlsC9aOf5SK3WIqsvY=;
-        b=H70KvXn3WY3hKFAAjJ8v6tOWgr04A0Q/3daB9q4Q1hNNS4jf+qMFsSKdIQiscJcYiq
-         4DpdBUgxZrRhBaelMrbH4/v1heOr/SfgWke9vjBdSKR0wDz3ivIugR/Q6lcHAKCdrGI0
-         VvduFpKAhtoJ183R9doKlWTX7CytHsL5aDAIZ3q/sBq9LDWMbDbDR+ZfDqWajXXAKdqS
-         CMQ4xVhQVSiXDEb8IU29d80AZo3yUw+t1EXsHfMjRdyPk2i/oDVbTdpP90/JkkXxwmkf
-         LxYWEGRuyWeqrm68ZwKeY3kgjFLyN5RIdV0Ur3BRLSuttA94IonrWZiXXepqmuehMGZd
-         PkxA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8V7Lnzu5VB1rNvvtsXHh+m7+LBRVUIYh9AmeAZOwGe89FX678Js/JrYoviPioilmxhDafOdk9CfjVf34=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaTIFfh9qesJqTs6npqyQpcdiWVGsyiuSPzxY8c6aJxkDPeEvy
-	KrYAQpMRf6uF0Z2NDCAT0PcXhhHKOqvOgu5gs8a558sMQ/wlZOHPtNbNhviK4Ls=
-X-Gm-Gg: ASbGnct6oEz5aRfp9o5b2yd6KlbDaKSGUBAw6XxCD4m0+4uozwU8xoaBA/rpxo4Q5Vq
-	aD4zmzbwnTiVrUgarH6r7les+CqnWg2fJ1Y5PSNIxl5MxOHTjO51j3lCzQrFN28BM80PpFCDzxS
-	caTzCZ6UKgMY+kgt2utVbnTBPsuh3Fqdz03JPKUiXipMoByqhTdP1CyWkCWN9M7p7ZjAaB5yd1X
-	sWkjWZEZD0MpRiRHTwLPRR7kLJeF2WYKQ1Iu2GoYoxO9CVjU+l3OGJfOaAyfjR7X0mlTCgMvkzD
-	rFFEB/9M2Tll4A61/hrPP3SanCl7jimM04u2YCNId3LmZckJwTFtItPPuQRBjjQyfBde8xHU3ok
-	2PHnk4h/Fh9n3rA==
-X-Google-Smtp-Source: AGHT+IFetWy1yp/dwylC0fW3Xc3rkEsOkh6f7DWozfmMsr0xNplY7KcWpRd6urR6Mieq6r6/8yNM9w==
-X-Received: by 2002:a05:6000:4285:b0:39a:c80b:8283 with SMTP id ffacd0b85a97d-39d8f498980mr2285415f8f.31.1744288573720;
-        Thu, 10 Apr 2025 05:36:13 -0700 (PDT)
-Received: from [192.168.69.238] (88-187-86-199.subs.proxad.net. [88.187.86.199])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39d893fdf8fsm4624182f8f.91.2025.04.10.05.36.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 05:36:13 -0700 (PDT)
-Message-ID: <17b9ff87-899e-44ca-b902-ab965cff0879@linaro.org>
-Date: Thu, 10 Apr 2025 14:36:10 +0200
+	s=arc-20240116; t=1744288598; c=relaxed/simple;
+	bh=Axve0jiGvbbIsMkn4WSCs6R1ZOyKIjneErr6ing8AQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UCafNkqpofQehk3LB2N5k06Iar/KnZjNS465N5xmMM9XKLR4wqR9fwooGWnAqu23zRUpagTrjptytnqARri3P2pfsYM7P4XhjL8kAZqgxo/8bl9akPWKpqiWGhZ0nWExXufpWaVMxKvyx8VLLpFOB73WupdsLtB1568nYw4TAbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wEi6qI4w; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=5oq1WjVLXQxQtBKLB02vbt6Nr9HYhm9Q4TxypjuqpOM=; b=wEi6qI4wn7j/qN+3YBFE6U6Wm5
+	aqKQ/4N7St+Nowbxk6Huipm6SpBcEzxCcGTVfhnZMW0zxtzKSUpgit8BsSmDzDdR/JYFugTwZpBhj
+	u2xNHgTYehH5XbkQzRnBPQRnUQ316oMyXcTg7eGSEWDY0Als90166bWyvCpZP3uicWqE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u2r8s-008gA9-Nb; Thu, 10 Apr 2025 14:36:26 +0200
+Date: Thu, 10 Apr 2025 14:36:26 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] net: add debugfs files for showing netns refcount
+ tracking info
+Message-ID: <1e717326-8551-419e-b185-5cfb20573b4f@lunn.ch>
+References: <20250408-netns-debugfs-v2-0-ca267f51461e@kernel.org>
+ <20250408-netns-debugfs-v2-2-ca267f51461e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/19] arm64: dts: broadcom: bcm2712: Use "l2-cache" for
- L2 cache node names
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
- Stephen Boyd <sboyd@kernel.org>, zhouyanjie@wanyeetech.com,
- Conor Dooley <conor@kernel.org>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Steen Hegelund <Steen.Hegelund@microchip.com>,
- Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-mips@vger.kernel.org,
- imx@lists.linux.dev, linux-rockchip@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org
-References: <20250403-dt-cpu-schema-v1-0-076be7171a85@kernel.org>
- <20250403-dt-cpu-schema-v1-2-076be7171a85@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
-In-Reply-To: <20250403-dt-cpu-schema-v1-2-076be7171a85@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250408-netns-debugfs-v2-2-ca267f51461e@kernel.org>
 
-On 4/4/25 04:59, Rob Herring (Arm) wrote:
-> There's no need include the CPU number in the L2 cache node names as
-> the names are local to the CPU nodes. The documented node name is
-> also just "l2-cache".
+On Tue, Apr 08, 2025 at 09:36:38AM -0400, Jeff Layton wrote:
+> CONFIG_NET_NS_REFCNT_TRACKER currently has no convenient way to display
+> its tracking info. Add a new net_ns directory under the debugfs
+> ref_tracker directory. Create a directory in there for every netns, with
+> refcnt and notrefcnt files that show the currently tracked active and
+> passive references.
+
+I think most if not all of this should be moved into the tracker
+sources, there is very little which is netdev specific. 
+
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->   arch/arm64/boot/dts/broadcom/bcm2712.dtsi | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
+>  net/core/net_namespace.c | 151 +++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 151 insertions(+)
+> 
+> diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+> index 4303f2a4926243e2c0ff0c0387383cd8e0658019..7e9dc487f46d656ee4ae3d6d18d35bb2aba2b176 100644
+> --- a/net/core/net_namespace.c
+> +++ b/net/core/net_namespace.c
+> @@ -1512,3 +1512,154 @@ const struct proc_ns_operations netns_operations = {
+>  	.owner		= netns_owner,
+>  };
+>  #endif
+> +
+> +#ifdef CONFIG_DEBUG_FS
+> +#ifdef CONFIG_NET_NS_REFCNT_TRACKER
+> +
+> +#include <linux/debugfs.h>
+> +
+> +static struct dentry *ns_ref_tracker_dir;
+> +static unsigned int ns_debug_net_id;
+> +
+> +struct ns_debug_net {
+> +	struct dentry *netdir;
+> +	struct dentry *refcnt;
+> +	struct dentry *notrefcnt;
+> +};
+> +
+> +#define MAX_NS_DEBUG_BUFSIZE	(32 * PAGE_SIZE)
+> +
+> +static int
+> +ns_debug_tracker_show(struct seq_file *f, void *v)
+> +{
+> +	struct ref_tracker_dir *tracker = f->private;
+> +	int len, bufsize = PAGE_SIZE;
+> +	char *buf;
+> +
+> +	for (;;) {
+> +		buf = kvmalloc(bufsize, GFP_KERNEL);
+> +		if (!buf)
+> +			return -ENOMEM;
+> +
+> +		len = ref_tracker_dir_snprint(tracker, buf, bufsize);
+> +		if (len < bufsize)
+> +			break;
+> +
+> +		kvfree(buf);
+> +		bufsize *= 2;
+> +		if (bufsize > MAX_NS_DEBUG_BUFSIZE)
+> +			return -ENOBUFS;
 
-Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
+Maybe consider storing bufsize between calls to dump the tracker? I
+guess you then have about the correct size for most calls, and from
+looking at len, you can decide to downsize it if needed.
 
+> +static int
+> +ns_debug_init_net(struct net *net)
+> +{
+> +	struct ns_debug_net *dnet = net_generic(net, ns_debug_net_id);
+> +	char name[11]; /* 10 decimal digits + NULL term */
+> +	int len;
+> +
+> +	len = snprintf(name, sizeof(name), "%u", net->ns.inum);
+> +	if (len >= sizeof(name))
+> +		return -EOVERFLOW;
+> +
+> +	dnet->netdir = debugfs_create_dir(name, ns_ref_tracker_dir);
+> +	if (IS_ERR(dnet->netdir))
+> +		return PTR_ERR(dnet->netdir);
+
+As i pointed out before, the tracker already has a name. Is that name
+useless? Not specific enough? Rather than having two names, maybe
+change the name to make it useful. Once it has a usable name, you
+should be able to push more code into the core.
+
+       Andrew
 
