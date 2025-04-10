@@ -1,139 +1,148 @@
-Return-Path: <linux-kernel+bounces-598875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24526A84C29
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:36:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF15A84C32
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17CA54A651B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:36:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95371B816D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6070828CF67;
-	Thu, 10 Apr 2025 18:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E633B28EA61;
+	Thu, 10 Apr 2025 18:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ClrfYx0S"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BxIzZsXf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1C81EE7DD;
-	Thu, 10 Apr 2025 18:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C044028F946
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 18:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744310173; cv=none; b=Yz4QTK6rCWjlLcOxNWUfLgOaZ3tZMgjtsoEIVG/g8m8HRqojopGcpk91XE+sTZGCLCnXB/S5BkN7KPVdvZNipOYuXMcYlgCY9pkmA/lkEHZTDWIcsFVxqo4CKpxnVi9EzHgh464tTutWmbk4M4FcMBOg0hZQn3ivoWBmnmX1mrU=
+	t=1744310185; cv=none; b=d0kYz3S6I7xTgq2yNaDICe/YzxrK6Oo4CXt5tpWd+k5BKn2ghkfyWVth7WQ6dD1Vu+9XqnS0II0KyV9l9e+ZEvqX4nVi7FUncGTLk9AlRod6QT0j3GHhE4ux/mO1/v0V/Z/bq+tHMrX6xRujpOFi9Y1AMoOeXDWCKHXUZrgxYHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744310173; c=relaxed/simple;
-	bh=/YlGaJrDMtREG70oFyBmE+DbzuF9W9LpheI5IW5gcas=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SZKkHGt1ZqgpbystiMybYCxTrSB93e9u8lUrEkExpwp5JOL+1lvqzhg45tXB1YNccrEdGEPcnN5zKSwvEY31+XnFstY7PjzzdIfnb0v0LD5a66txmqUsLbO18edue6VAmPJTtpUNcaZF8Y9lXOB+bAqX2bSyOCMWywbR5YyqlxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ClrfYx0S; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22548a28d0cso17369955ad.3;
-        Thu, 10 Apr 2025 11:36:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744310171; x=1744914971; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oac5s7OjyGN5VS5VbkIAHn0ot4yH/f9rZZZ6VzOSKww=;
-        b=ClrfYx0SHuPcbGDME6tbNfBXtMem4P+PoNO0BccWMCBpe8adesXK+zJ9Uj8rZLu4P/
-         raEV3AMlQiCOz5SVPrmPNBlF4OcV/lzojG92v2BwQvkQLIEO3sUU3M8cw6h7+vupXo58
-         Qm6Opi4QMVyahRdKu4WYk9MByPeTX95k1Q97fHW4BYr3UPQp6JtgmBirBpQ4sVruhcZl
-         YWB+eBj7isuWTlAMmMlXVDLO8EqiEe7QUHGA622RXOXW7nybVOJmk4xc7RxDFzIOTdF5
-         5Cv7n3I0aKSNVMmTtEjYXQr88wR4QgUa/0gIXBZArNUcKkk0eiLLttT3KupHewNupIvI
-         LLzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744310171; x=1744914971;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oac5s7OjyGN5VS5VbkIAHn0ot4yH/f9rZZZ6VzOSKww=;
-        b=KJcBfwq9CMt/W7+PDFiLRw1BxvGN31ZErBJdrPZEFOi5DS2jkpr6/ZhobSVrzyOxCC
-         CKb3cGSOZDh8A+Uv3DSQAciiC8lAhyNGYTnJqhXFNF9Z0adexaHGsExpKfDoH7Q8wwTj
-         BixihVWLkGdCnjLE6yXjM2GbJ65vHak0eKZ6+77VN1UXN6RxUu98OYBEAKVhwM+umEsF
-         vsAxXLx3NJaRRiNHFCZvguqtq8JJXZsMKRKczQAPnp6597eUggkuxZ23bXkADfOpYauO
-         RbDLeIkfso2Eg8gX/78QivKpvVIVKcXpgsZkaaspadIOBbW1StsniGBSJlBDL24LcnnR
-         m5lA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmp8FddNICkwhdsQj1z7NwIlWxDutyFSvua9xrp0LIBY60p5SZtBx3JKjD41QTVmez2zfLpZxKFKJd3aM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlS6Xs3MR7Hd9cGRniTw0pQ5WdNU8QhVIdxDCRgayPVO1iV37i
-	WxfJoSoqQiwgS5ELGC00Ex+mJnfY9MaAw18XPoyYcULfuGhwgY6w
-X-Gm-Gg: ASbGnctOd+XyWSu6AgXvcNlmT0JLo/EqcPXei8UjeKsgNtOAo1fQIeL02pbwNp5nX7o
-	l7/Zi0437nKzkQmHsXrn+qFC8X2g+NoVToLRM/9wnm1jdSZLfRhVvGiFpEmO64l4wL2SHUCX7Ca
-	ffGHRCFYOOUtu559u9kJYt0kJ0Pj54zgnKk/9LZPN+6k8uYuC0BK0iG1NW/HVNEef2YkjINn7pY
-	J/GWA7nef0g5p9RmY2gumSOXtZhz5C1Ql8/nFQixCNyinlGY1g1lBqXGrTKRb+lUyQ3QQpidggk
-	PtPI9BsXQOushZ++PIetdZreSJVqoLh3QXrOPzgAiK0dPTbH8PNT9nH4Ojd74CqH9Ry7jYNSiCY
-	=
-X-Google-Smtp-Source: AGHT+IE7813f09Upk4N+t4KU/FISmjErr0pklWnn1shoTyren++hXOMRERD8bFxjlcaeHEq0hfPvUQ==
-X-Received: by 2002:a17:902:db06:b0:224:1074:63a2 with SMTP id d9443c01a7336-22be03edf37mr51007795ad.43.1744310171563;
-        Thu, 10 Apr 2025 11:36:11 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:4080:204:a537:70f5:9c3d:61d0:62b9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccb5ddsm34072825ad.230.2025.04.10.11.36.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 11:36:11 -0700 (PDT)
-From: Purva Yeshi <purvayeshi550@gmail.com>
-To: Luca Tettamanti <kronos.it@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Purva Yeshi <purvayeshi550@gmail.com>
-Subject: [PATCH] hwmon: asus_atk0110: NULL buf.pointer after free
-Date: Fri, 11 Apr 2025 00:04:50 +0530
-Message-Id: <20250410183450.15514-1-purvayeshi550@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744310185; c=relaxed/simple;
+	bh=gsiyVW1Yfc9WfkHC1jIRHBJ57fHkbOis5KzpQmYh00Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HmvRvJPym2SuPATFG+TqJm7o9i1pxT16tGCmCm9r9uh2RQ48kENavxFZihXkmqksnfSVjI+sZbzdT57z3t5EHhXxstdj2HKOXjv+cNGYD6OEu4JzY4FZLP+FCjIr24pnc8xCmZXHs0UfjE8zQQtoAR63f5ez32T/j+qfoadOs1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BxIzZsXf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744310182;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+HsepqT10Fw1azidHuJqn95zBBJbAVhEbnOFVc3njv4=;
+	b=BxIzZsXf041vy3zvwbRvyq4OVJz+JbFRnJam4jskoKJBtFj7McZ1ccIgsD47bDQUqMU9oh
+	KwCutl5y7LxhNHd+HvitX+pEqj8jn0sfzQuSQXUFuR372zmbSHb0Id9y8AjrchWP9dp7uP
+	q6VjFuCr7gECK3V20osSDIVAD4H//QA=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-57-3vOrbziwNDO9tpTboEmlrQ-1; Thu,
+ 10 Apr 2025 14:36:19 -0400
+X-MC-Unique: 3vOrbziwNDO9tpTboEmlrQ-1
+X-Mimecast-MFC-AGG-ID: 3vOrbziwNDO9tpTboEmlrQ_1744310173
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1E39C1955D57;
+	Thu, 10 Apr 2025 18:36:13 +0000 (UTC)
+Received: from [10.45.225.124] (unknown [10.45.225.124])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6AA0B1955BCB;
+	Thu, 10 Apr 2025 18:36:08 +0000 (UTC)
+Message-ID: <f6078f2b-4c40-4ede-8325-37a2f3e27565@redhat.com>
+Date: Thu, 10 Apr 2025 20:36:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/14] mfd: Add Microchip ZL3073x support
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+ netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Michal Schmidt <mschmidt@redhat.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250409144250.206590-1-ivecera@redhat.com>
+ <20250409144250.206590-4-ivecera@redhat.com>
+ <Z_aVlIiT07ZDE2Kf@smile.fi.intel.com>
+ <eecfb843-e9cd-4d07-bb72-15cf84a25706@kernel.org>
+ <e760caeb-5c7b-4014-810c-c2a97b3bda28@redhat.com>
+ <2b877823-a3d9-42bb-9b37-afc45180c404@lunn.ch>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <2b877823-a3d9-42bb-9b37-afc45180c404@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Fix Smatch-detected issue:
-drivers/hwmon/asus_atk0110.c:987 atk_enumerate_old_hwmon() error:
-double free of 'buf.pointer' (line 966)
-drivers/hwmon/asus_atk0110.c:1008 atk_enumerate_old_hwmon() error:
-double free of 'buf.pointer' (line 987)
 
-Smatch warns about double free of 'buf.pointer'.
-This happens because the same buffer struct is reused multiple times
-without resetting the pointer after free. Set buf.pointer = NULL
-after each ACPI_FREE to prevent possible use-after-free bugs.
 
-Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
----
- drivers/hwmon/asus_atk0110.c | 3 +++
- 1 file changed, 3 insertions(+)
+On 10. 04. 25 7:50 odp., Andrew Lunn wrote:
+> On Thu, Apr 10, 2025 at 09:52:39AM +0200, Ivan Vecera wrote:
+>>
+>>
+>> On 10. 04. 25 9:19 dop., Krzysztof Kozlowski wrote:
+>>> On 09/04/2025 17:43, Andy Shevchenko wrote:
+>>>>> +/*
+>>>>> + * Regmap range configuration
+>>>>> + *
+>>>>> + * The device uses 7-bit addressing and has 16 register pages with
+>>>>> + * range 0x00-0x7f. The register 0x7f in each page acts as page
+>>>>> + * selector where bits 0-3 contains currently selected page.
+>>>>> + */
+>>>>> +static const struct regmap_range_cfg zl3073x_regmap_ranges[] = {
+>>>>> +	{
+>>>>> +		.range_min	= 0,
+>>>>
+>>>> This still has the same issue, you haven't given a chance to me to reply
+>>>> in v1 thread. I'm not going to review this as it's not settled down yet.
+>>>> Let's first discuss the questions you have in v1.
+>>>>
+>>
+>> Sorry for that but I don't understand where the issue is... Many drivers
+>> uses this the same way.
+>> E.g.
+>> drivers/leds/leds-aw200xx.c
+>> drivers/mfd/rsmu_i2c.c
+>> sound/soc/codecs/tas2562.c
+>> ...and many others
+>>
+>> All of them uses selector register that is present on all pages, wide range
+>> for register access <0, num_pages*window_size> and window <0, window_size>
+>>
+>> Do they also do incorrectly or am I missing something?
+> 
+> The bigger point is, you should of asked this as part of the
+> discussion on the previous version. You should not post a new version
+> until all discussion has come to an end, you understand all the
+> comments, or you have persuaded the commentor that the code is in fact
+> correct.
+> 
+> Posting more versions without having that discussion just wastes
+> reviewers/Maintainers time, and that is not what you want to do if you
+> want to get your patch merged.
+> 
+> 	Andrew
 
-diff --git a/drivers/hwmon/asus_atk0110.c b/drivers/hwmon/asus_atk0110.c
-index c80350e499e9..83ee7f25bb8e 100644
---- a/drivers/hwmon/asus_atk0110.c
-+++ b/drivers/hwmon/asus_atk0110.c
-@@ -964,6 +964,7 @@ static int atk_enumerate_old_hwmon(struct atk_data *data)
- 			count++;
- 	}
- 	ACPI_FREE(buf.pointer);
-+	buf.pointer = NULL;
- 
- 	/* Temperatures */
- 	buf.length = ACPI_ALLOCATE_BUFFER;
-@@ -985,6 +986,7 @@ static int atk_enumerate_old_hwmon(struct atk_data *data)
- 			count++;
- 	}
- 	ACPI_FREE(buf.pointer);
-+	buf.pointer = NULL;
- 
- 	/* Fans */
- 	buf.length = ACPI_ALLOCATE_BUFFER;
-@@ -1006,6 +1008,7 @@ static int atk_enumerate_old_hwmon(struct atk_data *data)
- 			count++;
- 	}
- 	ACPI_FREE(buf.pointer);
-+	buf.pointer = NULL;
- 
- 	return count;
- }
--- 
-2.34.1
+Yeah, excuse me.
+
+I'm very sorry for this impatience.
+
+I.
 
 
