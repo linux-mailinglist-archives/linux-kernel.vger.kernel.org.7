@@ -1,228 +1,137 @@
-Return-Path: <linux-kernel+bounces-598445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA399A8463C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:25:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B91A84643
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4633F173283
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:21:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A66C3B8B98
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EB628C5A3;
-	Thu, 10 Apr 2025 14:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B5D28C5B9;
+	Thu, 10 Apr 2025 14:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DVV3XASq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UBZQN0EC"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE10281529
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 14:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601BA281529;
+	Thu, 10 Apr 2025 14:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744294873; cv=none; b=S56djLYA0PD9dIUXykkdCErNjCPtD1E+VdslBmz1DxlHyCkxainf18tUG0SvfPzENd2hWTr7cc9yGE0Ma1zk/ZOn6M8x7FYc4oFEDwfCo6QbR+47Dm1z+62vP8QByfV3nO7oEfYiA+Gx7Rh0J+x9wqE0SxRlgNXZrwlTfPjPHPU=
+	t=1744294992; cv=none; b=YjpDBFln5Iwy0c9cxknEFRYVlp30unNCyXkkYyBgAD4BHsNRp0rf0E7tm8zB+x0LwWSShmnKYQBnA8WHOPUklXp2WSqUl4OR+1ZKGAOwdPErn51+cmTMr5dhvikVq57Nig55ph9/pnkXYEkneeu7kKGWXwwAZ5zmw0A19sVnWlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744294873; c=relaxed/simple;
-	bh=k19zo6NgN1RtJdI2WGGkCm/U2LISnu98hMuh6FAH3wk=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:References:
-	 In-Reply-To:Content-Type; b=Or8mzStxYgUfRvhROh4eC+u4vZgMDh75bko79v9G78H8UlnW313kgO8SagL1ccUkwgaE1wo+08kkKXHQTzPmdjLRHgYUpv8it39+uOtcjb3JnIZJ2Lrogu2i5RFn9KCdjApy9zjrE5Ev6cN/y0U4ugftVdfQ4EuN6YMvhBKayGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DVV3XASq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744294869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bx7lIoicn5a+UucE6tR2RPS9aJDJFej1A4OLz4rnBRA=;
-	b=DVV3XASq3oG5lRztoSZq876s79LziCenzgfxC/Nk2eD9ZsQlhcDYqOdl+hN+6t4rWYrjC4
-	Ffz2KomzF7UH+rYh6UbIlWm/LJ0126MEp62ydbrHAYtm19j+aLPolA9g2sLXmtHoGixFo3
-	9S6KAoj8IGxdwwR5O7vhYmvVTBvIuOY=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-a0EsvDTZPtKEdlzqkk0HDw-1; Thu, 10 Apr 2025 10:21:08 -0400
-X-MC-Unique: a0EsvDTZPtKEdlzqkk0HDw-1
-X-Mimecast-MFC-AGG-ID: a0EsvDTZPtKEdlzqkk0HDw_1744294868
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85b4dc23f03so261484539f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:21:08 -0700 (PDT)
+	s=arc-20240116; t=1744294992; c=relaxed/simple;
+	bh=Cwh6grY8wxhGhDJNXlFA0QmEG6C//znuti9h9BtRBOA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BXFf4d85YJfxBFwgPBKagU293w5jKG4i8JypB+rhyorcphUFjs8estghMjQETo0vDU3URw5SyKfeOEESddgO4QQt0VD8B5dxRR4nl/hDkArjKZVsSgKhbSjxiE0AkBOhs5NScrdq+YBhmIfxG1zKwmfBudRdfrP2Iom5yFEWjw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UBZQN0EC; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7396f13b750so802096b3a.1;
+        Thu, 10 Apr 2025 07:23:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744294990; x=1744899790; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T1KzVOT+eZwRVkPvH/8cwKh4uQYPRiQGRGZVOEfjMOc=;
+        b=UBZQN0ECSg7/bra/zC8SloCdnRNkOFcmeCVtd2Fw2OJs00PlueO2YN+BT59yycmHwf
+         pA5hH/lfXXcmT0rtsPQq6+i+SPbG29amoTFFUEGA7+X9WVZYPVjrqbQO2tG+2KJadlSE
+         ZsoEvnKKGXn066hn75SnX9oyKaopXrleXkHKM/1YQ5UIPw+S7FiOT4ag+6DF3u6ST0vO
+         XGyK/QHPX6kprCp7N0i5wFnIicNoLOkjLXYDA8QZVV4OuBpd+XnTKv9vkfI0fl75C96m
+         rddP9JUtoqeblei2bTj24zW8p+64xXW88srI9xIAfASHv4PLqS8OcvtZHULGpz41u8ZX
+         eOBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744294868; x=1744899668;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bx7lIoicn5a+UucE6tR2RPS9aJDJFej1A4OLz4rnBRA=;
-        b=KO/cGooMBP8+InFiPFZ4oA7+HqV4f1nCGfPiQUXKCWEn7+RzLuHe4JnCEXXAr/Ra0L
-         9qUSpgu7DzMXtCfpSMiw00Y95jStXNHx/CX7jACOS05KhMe4m8QcEy8WEIjM7tgKcgZi
-         d+eTeYyC/KdNMbG0BTIRZ2CmqGgo/ZlVry0ddc9N1lggaTsM4nCWikW8dGMogO3Jml0l
-         Y+nmrtXi8SVTvJcZHr7Iwzs0Ie4vDjTIi5c3X+41F05Ct1Ge23YlyrInZ5Ms9z7toPcm
-         x89xrhuFvMALx3IXawee64mzna6v2aOTx+9FHewt3VohZ9h1LEoDcNnCQD8DG4T+KTjC
-         WERg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgP+ezpWUWIIMyuoN5ieCzdkAMqctJ4OY9LfG5C2oyM2chwaRsAiW/YV6UjpJKFSbXOKIJgcRRU2de5Xc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1KCZvma255j0M/4ZFCdvWHDOlV+y8BD/khzA4rcPmmjZ/IwLR
-	qBKO4mJBd3BBZwHaMQOxaESIuFLOMZPB7kTkw2B3T9e7zSlB5tr/pneiX1ql1nOjZ5fav1oxAtC
-	2hY3wYzfGS/sKj/E5l/hZQpCNEk5lUAg8GFWKfNfXaDw/o9lMw39fX+5tDxrWh/RSMDkc9A==
-X-Gm-Gg: ASbGncuwlgMtuJVqC1h2bWnldW8ezhpe1IsQrh5ZMmaURswpT974EGDrZJ/YgtIne9C
-	U5ZPAjZUbpKyi7zQWEHnp52DpiajafbVV/uv/XB1+TenzAIIR1WqWj7KGE6sEov4u8W5tMTck/a
-	VjCEbuLz9LTclLZ/7StRQDUNxq2CzlpLlfTjALpphbjg3yBJ3SoVzH2sqE+0egu8NljXInHz4XN
-	RkSJT+QtAhxbAn2BxEYohGfk2JTAa6G6PcQEiAFGvXCnzmqultT3+AnyumE2Sp1uvgyGYCllQg2
-	XdOhesml0LZsped/DpBLAqJd4J69vjo1+r9xkYI2nJUz9AE5UYZoFHFnNg==
-X-Received: by 2002:a05:6e02:1805:b0:3d6:cbc5:a102 with SMTP id e9e14a558f8ab-3d7e470e5b5mr29394115ab.13.1744294867532;
-        Thu, 10 Apr 2025 07:21:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE49InDiBLldEWuQzeORJqip5faN/utQ1tUNiX8ccWkeFNyddhUAWGUeh74VDTGP+JeR0Tvgw==
-X-Received: by 2002:a05:6e02:1805:b0:3d6:cbc5:a102 with SMTP id e9e14a558f8ab-3d7e470e5b5mr29393705ab.13.1744294867160;
-        Thu, 10 Apr 2025 07:21:07 -0700 (PDT)
-Received: from ?IPV6:2601:188:c100:5710:315f:57b3:b997:5fca? ([2601:188:c100:5710:315f:57b3:b997:5fca])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505e79504sm746516173.144.2025.04.10.07.21.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 07:21:06 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <b122fbf7-14b9-49a0-a727-97adcca9924b@redhat.com>
-Date: Thu, 10 Apr 2025 10:21:05 -0400
+        d=1e100.net; s=20230601; t=1744294990; x=1744899790;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T1KzVOT+eZwRVkPvH/8cwKh4uQYPRiQGRGZVOEfjMOc=;
+        b=Lg0qmAAKWX/q3EnTtZq9Kp1ztl2O185zLYkCKNzuWgl8TM/VinEeNxnIwosPILFGQc
+         Svb1yBOqZMS4sG3jKPwA9pRPqgr1ETzrNr9KpAZGkO1DzhZPyI9bO+yMkG4YVWVyvrL/
+         SKP5bPmuB32G3R6VHwu2vYb2l+H+EP0FqrcI1QrpmDWu2I833yEl8YY0Hq1eDrD9yxGN
+         0J0Ez2doeSodAgElsPHNJUGflg7VkXk420SHJGCjIA2QQZBOo005ptE9b99lBRAQIw2T
+         KZtF2jyQLyF7Ds7UAdM1g5rD+iB9ld8YfdGfw7/EW2ANFUolYu4Reb0U9UpfYJRkdfW8
+         ddYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWSN9ZDvLjfuQz2TP6iKDntOhOHR/zhHHCHHzBwAC8V20d7iJinAvBOZ873UW1+/lx+TMDfe01@vger.kernel.org, AJvYcCWsPaBHgA3G776/YhSG0tCWYRFDAgFSWUKkXZlgWLx8odMTGhyvxkpTWvxsIwFhStvape9uN6L3wcuyCol+@vger.kernel.org, AJvYcCWw2j2cJytXgRd0BXmKsRsKfu8QZAI+MtDSfmMS7kRcMzyTJU8x2I6bSQ/ddoSgImFVEwJyDcyz70VXHs4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqFOj9m9D7A+hQ++rNr4OfM/O1ZpsFTurCLpEKIaIIbyQvvXYF
+	ByRUFghLwW9PPK6O/fr7OKBSK6Qr2LFABztTaxZKLTZLhQ7yyq24
+X-Gm-Gg: ASbGnctxOG/ri/H+hiOvyW7tOI2bUvb5aDjVyGow7BTPEnIomaPLZBN5jtEvRrYyBUc
+	AxrdetVAxDMq4AAmAQkHL3pweV6LyPxUeELbT2RaC1+96GyfNAX/BH5Mcd6gLZPSU7BzRi5Qcqt
+	V4CocyAoaqd4Ej1Q4YsmPebSzpxWom5eZVQHQBq1UW6b7fE0WIvD1mv/xgnGWSWxcbBf8i0hj6Q
+	a3U3yAyTohl3AhFgMWF+UYinWRJp/O/vX+h/EM/Ig6tbJSsabys99x4EownXYR7Z10WJ4NLY0eg
+	e5lapkBCvT2bJfqOiNIKPgggqPPnI+32OuwbGHKEWddxp2r1fOS70KoOGG2H8rDToRdg09Vtb/R
+	tVQ1k6ZAxMbTY0a06ynnSeAmolgJW82iqZhySKg==
+X-Google-Smtp-Source: AGHT+IHYvKz4BNpqFgjqtK4NeKugSkNVTSb75ZAm5QQA7B1M0d8K2TV39Qrya9RbCeBmRX2vLXlgMA==
+X-Received: by 2002:a05:6a21:3298:b0:1f5:709d:e0cb with SMTP id adf61e73a8af0-20169603e52mr4577828637.39.1744294990477;
+        Thu, 10 Apr 2025 07:23:10 -0700 (PDT)
+Received: from DESKTOP-NBGHJ1C.flets-east.jp (p12284229-ipxg45101marunouchi.tokyo.ocn.ne.jp. [60.39.60.229])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b02a331b481sm3042268a12.75.2025.04.10.07.23.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 07:23:10 -0700 (PDT)
+From: Ryo Takakura <ryotkkr98@gmail.com>
+To: pmladek@suse.com
+Cc: alex@ghiti.fr,
+	aou@eecs.berkeley.edu,
+	bigeasy@linutronix.de,
+	conor.dooley@microchip.com,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	john.ogness@linutronix.de,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-serial@vger.kernel.org,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	ryotkkr98@gmail.com,
+	samuel.holland@sifive.com,
+	stable@vger.kernel.org,
+	u.kleine-koenig@baylibre.com
+Subject: Re: [PATCH v2] serial: sifive: lock port in startup()/shutdown() callbacks
+Date: Thu, 10 Apr 2025 23:23:03 +0900
+Message-Id: <20250410142303.5978-1-ryotkkr98@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <Z_erp2nLRKzLXuwF@pathway.suse.cz>
+References: <Z_erp2nLRKzLXuwF@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] timers: Exclude isolated cpus from timer migation
-To: Gabriele Monaco <gmonaco@redhat.com>, Thomas Gleixner
- <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- Frederic Weisbecker <frederic@kernel.org>
-References: <20250410065446.57304-2-gmonaco@redhat.com> <87ecy0tob1.ffs@tglx>
- <2c9d71fd79d7d1cec66e48bcb87b39a874858f01.camel@redhat.com>
-Content-Language: en-US
-In-Reply-To: <2c9d71fd79d7d1cec66e48bcb87b39a874858f01.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-On 4/10/25 6:38 AM, Gabriele Monaco wrote:
-> On Thu, 2025-04-10 at 10:26 +0200, Thomas Gleixner wrote:
->> On Thu, Apr 10 2025 at 08:54, Gabriele Monaco wrote:
->>>   
->>> +/*  cpumask excluded from migration */
->>> +static cpumask_var_t tmigr_unavailable_cpumask;
->> Why is this a negated mask instead of being the obvious and intuitive
->> available mask?
-> Well, the way I started writing the patch I found it easier to do the
-> double andnot in tmigr_isolated_exclude_cpumask to see what changed.
-> I see the way it evolved is just messier..
-> I'll apply your solution which seems much neater!
+On Thu, 10 Apr 2025 13:29:43 +0200, Petr Mladek wrote:
+>On Sat 2025-04-05 23:53:54, Ryo Takakura wrote:
+>> startup()/shutdown() callbacks access SIFIVE_SERIAL_IE_OFFS.
+>> The register is also accessed from write() callback.
+>> 
+>> If console were printing and startup()/shutdown() callback
+>> gets called, its access to the register could be overwritten.
+>> 
+>> Add port->lock to startup()/shutdown() callbacks to make sure
+>> their access to SIFIVE_SERIAL_IE_OFFS is synchronized against
+>> write() callback.
+>> 
+>> Fixes: 45c054d0815b ("tty: serial: add driver for the SiFive UART")
+>> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
+>> Cc: stable@vger.kernel.org
 >
->>>    if (firstexp != KTIME_MAX) {
->>> - migrator = cpumask_any_but(cpu_online_mask, cpu);
->>> + migrator = cpumask_nth_andnot(0, cpu_possible_mask,
->>> +       tmigr_unavailable_cpumask);
->> That's exactly what this negated mask causes: incomprehensible code.
->>
->>   cpumask_clear_cpu(cpu, available_mask);
->>          ...
->>   migrator = cpumask_first(available_mask);
->>
->> is too simple and obvious, right?
->>
->>> + /* Fall back to any online in case all are isolated. */
->> How can that happen? There is always at least _ONE_ housekeeping,
->> non-isolated, CPU online, no?
->>
-> In my understanding it shouldn't, but I'm not sure there's anything
-> preventing the user from isolating everything via cpuset.
-> Anyway that's something no one in their mind should do, so I guess I'd
-> just opt for the cpumask_first (or actually cpumask_any, like before
-> the change).
-
-No, cpuset is not allowed to take all the CPUs from the cgroup root 
-(housekeeping CPUs). So it can't happen.
-
-
->>> + if (migrator >= nr_cpu_ids)
->>> + migrator = cpumask_any_but(cpu_online_mask, cpu);
->>>    work_on_cpu(migrator, tmigr_trigger_active, NULL);
->>>    }
->>>   
->>>    return 0;
->>>   }
->>>   
->>> -static int tmigr_cpu_online(unsigned int cpu)
->>> +static int tmigr_cpu_available(unsigned int cpu)
->>>   {
->>> - struct tmigr_cpu *tmc = this_cpu_ptr(&tmigr_cpu);
->>> + struct tmigr_cpu *tmc = per_cpu_ptr(&tmigr_cpu, cpu);
->>>   
->>>    /* Check whether CPU data was successfully initialized */
->>>    if (WARN_ON_ONCE(!tmc->tmgroup))
->>>    return -EINVAL;
->>>   
->>> + /* Silently ignore online requests if isolated */
->> This comment makes no sense.
->>
->>       /* Isolated CPUs are not participating in timer migration */
->>
->> makes it entirely clear what this is about, no?
->>
->> That brings me to the general design decision here. Your changelog
->> explains at great length WHAT the change is doing, but completely
->> fails
->> to explain the consequences and the rationale why this is the right
->> thing to do.
->>
->> By excluding the isolated CPUs from migration completely, any
->> 'global'
->> timer, which is armed on such a CPU, has to be expired on that
->> isolated
->> CPU. That's fundamentaly different from e.g. RCU isolation.
->>
->> It might be the right thing to do and harmless, but without a proper
->> explanation it's a silent side effect of your changes, which leaves
->> people scratching their heads.
-> Mmh, essentially the idea is that global timer should not migrate from
-> housekeeping to isolated cores. I assumed the opposite never occurs (as
-> global timers /should/ not even start on isolated cores on a properly
-> isolated system), but you're right, that's not quite true.
+>I do not have the hardware around so I could not test it.
+>But the change make sense. It fixes a real race.
+>And the code looks reasonable:
 >
-> Thinking about it now, since global timers /can/ start on isolated
-> cores, that makes them quite different from offline ones and probably
-> considering them the same is just not the right thing to do..
->
-> I'm going to have a deeper thought about this whole approach, perhaps
-> something simpler just preventing migration in that one direction would
-> suffice.
->
->>> + if (cpu_is_isolated(cpu))
->>> + return 0;
->>>    raw_spin_lock_irq(&tmc->lock);
->>> - trace_tmigr_cpu_online(tmc);
->>> + trace_tmigr_cpu_available(tmc);
->>>    tmc->idle = timer_base_is_idle();
->>>    if (!tmc->idle)
->>>    __tmigr_cpu_activate(tmc);
->>> - tmc->online = true;
->>> + tmc->available = true;
->>> + tmc->idle = true;
->> How so?
->>
->>> + cpumask_clear_cpu(cpu, tmigr_unavailable_cpumask);
->>>    raw_spin_unlock_irq(&tmc->lock);
->>>    return 0;
->>>   }
->>>   
->>> +int tmigr_isolated_exclude_cpumask(cpumask_var_t exclude_cpumask)
->> cpumask_var_t is wrong here. 'const struct cpumask *' is what you
->> want.
-> You mean in the function argument? That's exactly how it is handled in
-> workqueue_unbound_exclude_cpumask. I get cpumask_var_t is not
-> necessarily a pointer, perhaps it's worth changing it there too..
-> Or am I missing your point?
+>Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-cpumask_var_t can be interchangeable with "struct cpumask *" as long as 
-the passed-in cpumask is not being modified.
+Thanks for reviewing this one as well!
+I'll send v3 with your Reviewed-by.
 
-Cheers,
-Longman
+Sincerely,
+Ryo Takakura
 
+>Best Regards,
+>Petr
 
