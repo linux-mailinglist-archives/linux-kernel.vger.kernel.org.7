@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-597894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68E8A83FE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:04:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EE0BA83FD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3EAD3BB85B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:01:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1E614C03CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FF720D4FF;
-	Thu, 10 Apr 2025 10:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07A31EBA03;
+	Thu, 10 Apr 2025 10:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="oHURpw0f"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="JYY1Sp/M"
 Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7C2267722;
-	Thu, 10 Apr 2025 10:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0976E26B94A;
+	Thu, 10 Apr 2025 10:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744279209; cv=none; b=WC8rdT796319QgCd92hyrO4j+QH0Vqnx/1CGHwQHG6TjbHfjgeBlEDmYuvqe9YhRaRO8oXaWUudnS3aQfO1xLNwWU80JD1t5nfLegszAcXN1pVPR288AYT3BTvANs7kRiDxwCMONpmGgGs/+p6tCuSwmUEnX5a+2LpnXkhT3tEM=
+	t=1744279205; cv=none; b=Kp/OOYCaLyzWo/x0ZaRRpRWuLzMgWk5ayaqKLvCvXsUgh7A4N1XreYmkfUCnr/jQwMU77oIgyR4QXrXalknN+6dcEiQcfwb2agJUaVJdlSB3/9NBrxKujimzbIe8ygeJMOYwLnAjYmrSj5Za6EtcH7Ohe3Qu6kI5Sg3z55td15s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744279209; c=relaxed/simple;
-	bh=r9Pr0jCedFHcpAOfYxWz0L4o7FbufjcHG/RGA0zIFfM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cScouuVgXjlAJIHlKzok/r+JN12BwVDs80MSrAeLRm1p+tfb74GHvvnZzxrDrG/O95YJWiENIvdA/nJ5gogt1jfcdAVl/jM8gU51yiMYxBmsYXK8kIPNJA/mj0Iei12o3tx67TTP6xlIBybrtcVtC3Wp6v1keLrJFZM5EDK2cu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=oHURpw0f; arc=none smtp.client-ip=46.19.9.99
+	s=arc-20240116; t=1744279205; c=relaxed/simple;
+	bh=/xVqE6KTM08KjuSLRPX6e0EvocZOj5iFDBuw0DD17Sc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DMDwp0MhY7jZosRyh2ea78XnOOYSblP1cq2W3nxB6mkbG159zMmMRagzIPvYcpzLb/WdQvSN40lKrEVzVgZqXjyT79D+I5qW+gi1xSvFMK7OBlLPj7wCABD6mr1VcLYZ9dAirjWEO79Bi//8WVc7UOgU0PtcLU0JRgvHuBXq7pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=JYY1Sp/M; arc=none smtp.client-ip=46.19.9.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=F0NwixqgaQxT9YX8prSEYJfkDwofGcLXvNKKo3/oxbU=; b=oHURpw0fxIFPHFAfhA+JEF62fg
-	3mQ/8bfJ+GX3bvbzkxRIR0Wh17sSyxdKUGjQ1GIr4nBU1B8tH+rBBLPcBaeJeoO6hCIQQx13OIJ9b
-	wWZKlByjxxzWYQotLBxrRa78S5eX83nxJ90s5Jz7Jf505hV+5kmSUV4LMkKhlXr90Y6ecVqUs9uPq
-	QFxVb4l7w4kjCFmjuOGN6Es8sUTPMJppXZazNVyBIDOre5RNKZZCQ/96KWailio4lupfXPrm8nU5Z
-	EW13JjCWu9ecTt6sj69N2d+eLCNmQJY5vWsJKb+0FXB3lTjvQS86mg9+qZsLfXCPENievWWwFk5+J
-	gNcurNDg==;
+	bh=PPW29SQXJzR0vrIgTW34aJ4jnnjbpwhhSIoTivBL8ag=; b=JYY1Sp/MOY/UGWBrv+0lzK1DPq
+	LiV6y05vgLz6iohBkgWOAwp80mv32I9lgDIIiaFH9ahmqC8VLWVXy5blBNLBN07pxd2v6kmkJC3GU
+	R+DKlKLQsxSl/LXFTYFrhqJ8BMXi7SSdbchNOLiuGRNIacEdS+4N+6Obezi5h14Jd7j4NNR3yhxCo
+	TJ1CXtRxDwVhA4PP2l7zshMSIOmIZk5Eqg3kls7iieabih/pI5D8xVRT3sXMqvSiKPAvF04pk6Ka7
+	7LnDlOQSdY52RyFFIaOYvSnCngEYB/W3jK6Tm7j4cQXtu48v3uC+Rjb3fDwqhmfC1ATd9LGU4v5oJ
+	kuiBRGyA==;
 Received: from [89.212.21.243] (port=41926 helo=localhost.localdomain)
 	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <primoz.fiser@norik.com>)
-	id 1u2noE-000Djj-2r;
+	id 1u2noE-000Djj-3C;
 	Thu, 10 Apr 2025 11:02:54 +0200
 From: Primoz Fiser <primoz.fiser@norik.com>
 To: Rob Herring <robh@kernel.org>,
@@ -60,10 +61,12 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de
-Subject: [PATCH 00/13] Update PHYTEC i.MX93 DTS 
-Date: Thu, 10 Apr 2025 11:02:38 +0200
-Message-Id: <20250410090251.1103979-1-primoz.fiser@norik.com>
+Subject: [PATCH 01/13] arm64: dts: freescale: imx93-phycore-som: Add PMIC support
+Date: Thu, 10 Apr 2025 11:02:39 +0200
+Message-Id: <20250410090251.1103979-2-primoz.fiser@norik.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250410090251.1103979-1-primoz.fiser@norik.com>
+References: <20250410090251.1103979-1-primoz.fiser@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,44 +85,130 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-Update i.MX93 device-tree sources in mainline for phyCORE-i.MX93 SoM and
-phyBOARD-Segin-i.MX93 board with changes from the downstream kernel.
+PMIC driver for PCA9451A used on phyCORE-i.MX93 SOM is available since
+commit 5edeb7d31262 ("regulator: pca9450: add pca9451a support"). Add
+support for it in the SOM device-tree.
 
-New SoM features:
- - PMIC support
- - EEPROM support
- - enhanced eMMC support
- - fix eMMC for ERR052021
+Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+---
+ .../boot/dts/freescale/imx93-phycore-som.dtsi | 97 +++++++++++++++++++
+ 1 file changed, 97 insertions(+)
 
-New board features:
- - RTC support
- - CAN support
- - USB support
- - I2S audio support
- - 2nd Ethernet (EQOS interface)
- - enhanced SD-card support
- - fix SD-card for ERR052021
-
-Primoz Fiser (13):
-  arm64: dts: freescale: imx93-phycore-som: Add PMIC support
-  arm64: dts: freescale: imx93-phycore-som: Add EEPROM support
-  arm64: dts: freescale: imx93-phycore-som: Disable LED pull-up
-  arm64: dts: freescale: imx93-phycore-som: Enhance eMMC pinctrl
-  arm64: dts: freescale: imx93-phycore-som: Add eMMC no-1-8-v by default
-  arm64: dts: freescale: imx93-phyboard-segin: Drop eMMC no-1-8-v flag
-  arm64: dts: freescale: imx93-phyboard-segin: Disable SD-card
-    write-protect
-  arm64: dts: freescale: imx93-phyboard-segin: Fix SD-card pinctrl
-  arm64: dts: freescale: imx93-phyboard-segin: Add RTC support
-  arm64: dts: freescale: imx93-phyboard-segin: Add CAN support
-  arm64: dts: freescale: imx93-phyboard-segin: Add USB support
-  arm64: dts: freescale: imx93-phyboard-segin: Add I2S audio
-  arm64: dts: freescale: imx93-phyboard-segin: Add EQOS Ethernet
-
- .../dts/freescale/imx93-phyboard-segin.dts    | 240 ++++++++++++++++--
- .../boot/dts/freescale/imx93-phycore-som.dtsi | 165 +++++++++++-
- 2 files changed, 369 insertions(+), 36 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
+index 88c2657b50e6..507a71f9294b 100644
+--- a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
+@@ -72,6 +72,90 @@ ethphy1: ethernet-phy@1 {
+ 	};
+ };
+ 
++/* I2C3 */
++&lpi2c3 {
++	clock-frequency = <400000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_lpi2c3>;
++	status = "okay";
++
++	pmic@25 {
++		compatible = "nxp,pca9451a";
++		reg = <0x25>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_pmic>;
++		interrupt-parent = <&gpio4>;
++		interrupts = <27 IRQ_TYPE_LEVEL_LOW>;
++
++		regulators {
++			buck1: BUCK1 {
++				regulator-name = "VDD_SOC";
++				regulator-min-microvolt = <610000>;
++				regulator-max-microvolt = <950000>;
++				regulator-boot-on;
++				regulator-always-on;
++				regulator-ramp-delay = <3125>;
++			};
++
++			buck2: BUCK2 {
++				regulator-name = "VDDQ_0V6";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <600000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			buck4: BUCK4 {
++				regulator-name = "VDD_3V3_BUCK";
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			buck5: BUCK5 {
++				regulator-name = "VDD_1V8";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			buck6: BUCK6 {
++				regulator-name = "VDD_1V1";
++				regulator-min-microvolt = <1100000>;
++				regulator-max-microvolt = <1100000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			ldo1: LDO1 {
++				regulator-name = "PMIC_SNVS_1V8";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			ldo4: LDO4 {
++				regulator-name = "VDD_0V8";
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <800000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			ldo5: LDO5 {
++				regulator-name = "NVCC_SD2";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++		};
++	};
++};
++
+ /* eMMC */
+ &usdhc1 {
+ 	pinctrl-names = "default";
+@@ -108,6 +192,19 @@ MX93_PAD_I2C1_SDA__GPIO1_IO01		0x31e
+ 		>;
+ 	};
+ 
++	pinctrl_lpi2c3: lpi2c3grp {
++		fsl,pins = <
++			MX93_PAD_GPIO_IO28__LPI2C3_SDA		0x40000b9e
++			MX93_PAD_GPIO_IO29__LPI2C3_SCL		0x40000b9e
++		>;
++	};
++
++	pinctrl_pmic: pmicgrp {
++		fsl,pins = <
++			MX93_PAD_ENET2_RD3__GPIO4_IO27		0x31e
++		>;
++	};
++
+ 	pinctrl_usdhc1: usdhc1grp {
+ 		fsl,pins = <
+ 			MX93_PAD_SD1_CLK__USDHC1_CLK		0x179e
 -- 
 2.34.1
 
