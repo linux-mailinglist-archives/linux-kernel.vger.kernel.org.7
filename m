@@ -1,165 +1,128 @@
-Return-Path: <linux-kernel+bounces-597830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DF2A83F0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:39:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0907FA83F0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D43CE8A1D24
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:34:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BA8519E235D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FD525E449;
-	Thu, 10 Apr 2025 09:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="osf3t8aK"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA0D267F7E;
+	Thu, 10 Apr 2025 09:35:55 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F1525D8E2;
-	Thu, 10 Apr 2025 09:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F135D25E45B;
+	Thu, 10 Apr 2025 09:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744277702; cv=none; b=TZwOluUPbfCDjqbPV9IcBTl9dHoOyvlc+Ok8wSgv0CRMxpBkq+QM4HEV6ALpNhrpSYZ8VNYKIV4eJivoiofWtc/J1XqYqrvqa4sHR3eYLjN1hYK/0Vb4od+BGIaOibr7urxEtJzgA9PFdF7cyMvakgRglrArBh2teRBwJBIGa98=
+	t=1744277755; cv=none; b=Zgdo0+HFBCcsHJbT8W5w+AhAQXLG0pODl6dXhc8s2Cl57PimUlaxoTRU2cms3W/n+IkNoFf8/hWjswkpyyuSoKIydVrFfXG9kp8axUfxSSCWXs06LGQGyFbpahHaBOCtiEGvMOUZ4y/fdVgRM9oFFV9E/QJ8jSBE8TiWy6EHxs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744277702; c=relaxed/simple;
-	bh=OF9yxO/u4XCow7Qu6hPl66FhWEUvw9jIiJeqXS3IfG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MmNELPNb+oioY6TfOQoOnpXSqifmr7AX0EkN48mzmIULRnVv7JAIIoN+BC2jHVxQgDHppvrfwfdeNwsyLksrqBlyMUkLYCg0ZWq4pSQTYx+pPzacbJxESZUU2rMIwt9PE9mXC15GAJJ1y4F1veRdHyDMJfCVfCs3N3jvXppF5lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=osf3t8aK; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=h/SiiwofwfmzPeG9zN86yMU2F7qnYsGrjKhis+7Q1QY=; b=osf3t8aKX3ptzlKd2Vh9VqbstC
-	7C1FbY/pkY1uYGZpDLqvzyceyrNkuE7JbT3kEchOtgH4lyfU4YPE117A76gtVLeuHkJ33LxCjQo16
-	AOVUxsY57xZlybeVK6nK51Yxfn/hhrPnfRbmJ6kWFY+LHiLyh06hnetuKq+2uvVmLofZ66qDh5xx2
-	OWZihhdwXYWFC2McNplshbmDyyeWOuNW3JaEW9yocsHRl3/DhRI6MRbVi0jtdWgDUF+eFChMbN8Un
-	Xm5wuxtLrpJ+UNyVBmZoWfn6kb8tte+lpA5Q3mzMNPQ9MfiaOMJAZ+5yl+4b38+M+zm7dMgwL5jaK
-	G+/iSwwA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u2oJF-00000008mul-0JuV;
-	Thu, 10 Apr 2025 09:34:57 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7760B3003C4; Thu, 10 Apr 2025 11:34:56 +0200 (CEST)
-Date: Thu, 10 Apr 2025 11:34:56 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>, x86@kernel.org
-Subject: Re: [tip: perf/core] perf: Simplify perf_event_free_task() wait
-Message-ID: <20250410093456.GA17321@noisy.programming.kicks-ass.net>
-References: <20250307193723.044499344@infradead.org>
- <174413910413.31282.5179470093314736126.tip-bot2@tip-bot2>
- <Z_ZvmEhjkAhplCBE@localhost.localdomain>
+	s=arc-20240116; t=1744277755; c=relaxed/simple;
+	bh=ivEwnUgWmXZxQZ46vxW33DSnaFX1TgTeaPOIVDxd0Cg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nMqOaSNyg7FEuZykT4mrtCODVI/ad0CdMaMrqbCsph6MIUHgZQwvNP3dqgn+ODq8I4uw5QUY+GbVtS5Qrp2J8ejrrQjvS7oOY8VyFMU09yfWKubQ4l28+RXKz1xv+tVHn2F1LDAl9disywwq8M7DeSv8Aymj1fXhfiwWS0yB5i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZYF6L69nHz4f3jXp;
+	Thu, 10 Apr 2025 17:35:22 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 51F761A1687;
+	Thu, 10 Apr 2025 17:35:46 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgBXvGDvkPdnWY46JA--.28764S3;
+	Thu, 10 Apr 2025 17:35:46 +0800 (CST)
+Message-ID: <db5bf241-0fb6-4009-963b-32b89d3c1648@huaweicloud.com>
+Date: Thu, 10 Apr 2025 17:35:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_ZvmEhjkAhplCBE@localhost.localdomain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH -next v3 01/10] block: introduce
+ BLK_FEAT_WRITE_ZEROES_UNMAP to queue limits features
+To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ djwong@kernel.org, john.g.garry@oracle.com, bmarzins@redhat.com,
+ chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250318073545.3518707-1-yi.zhang@huaweicloud.com>
+ <20250318073545.3518707-2-yi.zhang@huaweicloud.com>
+ <20250409103148.GA4950@lst.de>
+ <43a34aa8-3f2f-4d86-be53-8a832be8532f@huaweicloud.com>
+ <20250410071559.GA32420@lst.de> <Z_d_VDvgBkgt4UhS@kbusch-mbp>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <Z_d_VDvgBkgt4UhS@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXvGDvkPdnWY46JA--.28764S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFW5tw1kKw1ktFWkKFy3urg_yoW8Ar43pF
+	W3KFs7tFn7t3Waywn2vw18Wa4F93s3KFs8Wws0vry2yrnIgF1IgF1a93W09FyDur1Iqr1j
+	vayjqa4fJF1jva7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Wed, Apr 09, 2025 at 03:01:12PM +0200, Frederic Weisbecker wrote:
+On 2025/4/10 16:20, Keith Busch wrote:
+> On Thu, Apr 10, 2025 at 09:15:59AM +0200, Christoph Hellwig wrote:
+>> On Thu, Apr 10, 2025 at 11:52:17AM +0800, Zhang Yi wrote:
+>>>
+>>> Thank you for your review and comments. However, I'm not sure I fully
+>>> understand your points. Could you please provide more details?
+>>>
+>>> AFAIK, the NVMe protocol has the following description in the latest
+>>> NVM Command Set Specification Figure 82 and Figure 114:
+>>>
+>>> ===
+>>> Deallocate (DEAC): If this bit is set to `1´, then the host is
+>>> requesting that the controller deallocate the specified logical blocks.
+>>> If this bit is cleared to `0´, then the host is not requesting that
+>>> the controller deallocate the specified logical blocks...
+>>>
+>>> DLFEAT:
+>>> Write Zeroes Deallocation Support (WZDS): If this bit is set to `1´,
+>>> then the controller supports the Deallocate bit in the Write Zeroes
+>>> command for this namespace...
+>>
+>> Yes.  The host is requesting, not the controller shall.  It's not
+>> guaranteed behavior and the controller might as well actually write
+>> zeroes to the media.  That is rather stupid, but still.
+> 
+> I guess some controllers _really_ want specific alignments to
+> successfully do a proper discard. While still not guaranteed in spec, I
+> think it is safe to assume a proper deallocation will occur if you align
+> to NPDA and NPDG. Otherwise, the controller may do a read-modify-write
+> to ensure zeroes are returned for the requested LBA range on anything
+> that straddles an implementation specific boundary.
+> 
 
-> > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > index 3c92b75..fa6dab0 100644
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -1270,6 +1270,9 @@ static void put_ctx(struct perf_event_context *ctx)
-> >  		if (ctx->task && ctx->task != TASK_TOMBSTONE)
-> >  			put_task_struct(ctx->task);
-> >  		call_rcu(&ctx->rcu_head, free_ctx);
-> > +	} else if (ctx->task == TASK_TOMBSTONE) {
-> > +		smp_mb(); /* pairs with wait_var_event() */
-> > +		wake_up_var(&ctx->refcount);
-> 
-> So there are three situations:
-> 
-> * If perf_event_free_task() has removed all the children from the parent list
->   before perf_event_release_kernel() got a chance to even iterate them, then
->   it's all good as there is no get_ctx() pending.
-> 
-> * If perf_event_release_kernel() iterates a child event, but it gets freed
->   meanwhile by perf_event_free_task() while the mutexes are temporarily
->   unlocked, it's all good because while locking again the ctx mutex,
->   perf_event_release_kernel() observes TASK_TOMBSTONE.
-> 
-> * But if perf_event_release_kernel() frees the child event before
->   perf_event_free_task() got a chance, we may face this scenario:
-> 
->     perf_event_release_kernel()                                  perf_event_free_task()
->     --------------------------                                   ------------------------
->     mutex_lock(&event->child_mutex)
->     get_ctx(child->ctx)
->     mutex_unlock(&event->child_mutex)
-> 
->     mutex_lock(ctx->mutex)
->     mutex_lock(&event->child_mutex)
->     perf_remove_from_context(child)
->     mutex_unlock(&event->child_mutex)
->     mutex_unlock(ctx->mutex)
-> 
->                                                                  // This lock acquires ctx->refcount == 2
->                                                                  // visibility
->                                                                  mutex_lock(ctx->mutex)
->                                                                  ctx->task = TASK_TOMBSTONE
->                                                                  mutex_unlock(ctx->mutex)
->                                                                  
->                                                                  wait_var_event()
->                                                                      // enters prepare_to_wait() since
->                                                                      // ctx->refcount == 2
->                                                                      // is guaranteed to be seen
->                                                                      set_current_state(TASK_INTERRUPTIBLE)
->                                                                      smp_mb()
->                                                                      if (ctx->refcount != 1)
->                                                                          schedule()
->     put_ctx()
->        // NOT fully ordered! Only RELEASE semantics
->        refcount_dec_and_test()
->            atomic_fetch_sub_release()
->        // So TASK_TOMBSTONE is not guaranteed to be seen
->        if (ctx->task == TASK_TOMBSTONE)
->            wake_up_var()
-> 
-> Basically it's a broken store buffer:
-> 
->     perf_event_release_kernel()                                  perf_event_free_task()
->     --------------------------                                   ------------------------
->     ctx->task = TASK_TOMBSTONE                                   smp_store_release(&ctx->refcount, ctx->refcount - 1)
->     smp_mb()
->     READ_ONCE(ctx->refcount)                                     READ_ONCE(ctx->task)
-> 
-> 
-> So you need this:
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index fa6dab08be47..c4fbbe25361a 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -1270,9 +1270,10 @@ static void put_ctx(struct perf_event_context *ctx)
->  		if (ctx->task && ctx->task != TASK_TOMBSTONE)
->  			put_task_struct(ctx->task);
->  		call_rcu(&ctx->rcu_head, free_ctx);
-> -	} else if (ctx->task == TASK_TOMBSTONE) {
-> +	} else {
->  		smp_mb(); /* pairs with wait_var_event() */
-> -		wake_up_var(&ctx->refcount);
-> +		if (ctx->task == TASK_TOMBSTONE)
-> +			wake_up_var(&ctx->refcount);
->  	}
->  }
+I understand. A proper deallocation has certain constraints, but I
+guess it should be useful for most scenarios. Thank you for
+the explanation.
 
-Very good, thanks!
+Thanks,
+Yi.
 
-I'll make that smp_mb__after_atomic() instead, but yes, this barrier
-needs to move before the loading of ctx->task.
-
-I'll transform this into a patch and stuff on top.
 
