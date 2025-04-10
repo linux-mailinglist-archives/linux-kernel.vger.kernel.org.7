@@ -1,459 +1,293 @@
-Return-Path: <linux-kernel+bounces-597765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0937A83E20
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:15:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7625A83E2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34DD01BA15EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA46C189289B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0038A21ADB9;
-	Thu, 10 Apr 2025 09:08:31 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF56820DD7D;
+	Thu, 10 Apr 2025 09:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IgM3YHiw"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FEA20C48A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5338C1D5143;
+	Thu, 10 Apr 2025 09:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744276110; cv=none; b=cJVU03YTkmQtAUGZM1Fbn9TnuQSM1SpbcTGniy3A5K2MRq4yMcCoSzNahu/C7Or5IAb+qucVwrTVSiOOTMF2no4WDwlRIooZuDYqy7JpKy4kEQifWkSvWILBf0ry7+NCP9fjYBVQaw8Ujnb3CezWEhqhzy6MVjKXYH2IrRkeFBI=
+	t=1744276173; cv=none; b=VL6hwT4AGAnLSGMLm4oTsqDBG9NcRrdpazHkwbVUNBBhJ2vPFAN4o0b42fw9P6O/4VpTGER0G0+JqLGYxSMB54hiN9TodcY6NvFQryNBKpCZ47Ry0uH9WH9tiSZEaSn5JzU9RcBpaRwqu79t4ujdFMSQENKloZWUEDIQXdeSTSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744276110; c=relaxed/simple;
-	bh=zwED0C2xwZnEyGQrpzLm4qeCA408gSUNIeuI9Qr18Sw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cpfi5RhKrJg3vPfIwA/hnxOxI8Athv3hmIIKj4RwaCrACtEbykEGtSoQXbUxBhp4FGzzTbmA52r1/E6lKBGE9+TcfTQYf1b6+Mg1Xb9RY5p7leXW5ZRaV5u2Nak0f/iRO7Drn2FptdGhKdisfZ/AbxemOEcdYQZ5ZGzjLR8vgbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZYDRK0sCvz2Cdj5;
-	Thu, 10 Apr 2025 17:05:01 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id B21DD18001B;
-	Thu, 10 Apr 2025 17:08:24 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 10 Apr 2025 17:08:24 +0800
-From: Yicong Yang <yangyicong@huawei.com>
-To: <will@kernel.org>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <hejunhao3@huawei.com>, <jonathan.cameron@huawei.com>,
-	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>,
-	<yangyicong@hisilicon.com>, <wangyushan12@huawei.com>
-Subject: [PATCH v3 8/8] drivers/perf: hisi: Add support for HiSilicon MN PMU driver
-Date: Thu, 10 Apr 2025 17:08:25 +0800
-Message-ID: <20250410090825.13214-9-yangyicong@huawei.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20250410090825.13214-1-yangyicong@huawei.com>
-References: <20250410090825.13214-1-yangyicong@huawei.com>
+	s=arc-20240116; t=1744276173; c=relaxed/simple;
+	bh=QMHDGk8JHM/c9cUMZ+iN5yTzUEkn2lnbW5kQ986wbq4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Xp6m+ODgI1G3SmPbc8NXPuqT8yfyRyAoTpn7/+rIyBAhL+MnzOOWYVZQDfGFtgBrZ1n4QyNPIQuPNFb81E585kijgx0aNy7WR39plewPnaCnA2qwNPUz0gm+9TZ6VPJDuL3fPeL9xl38MzHYfznWlbrIsf5J07nX/WhibErVGl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IgM3YHiw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53A75NZT016340;
+	Thu, 10 Apr 2025 09:09:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8fxVd34HCVlbqhp+YxoQnEBVeBKAahRy/Oc+q7zRfq8=; b=IgM3YHiwnu0t0s9j
+	PoTA84LNP4I0Rh26mb6BJh7z9og7Gt//3MxcEk78xn8IYHm+qsijCnv4otW5aqTf
+	4b5TxAzypKZklsjqGhcpqL+Iup0x+d8XRgPDdzjis9nFJKYxcAoF5dzr6l2vgCMI
+	C42xxDyw4E7/X9ovwwJwj2/0G3yttHTz2TkMsdkG5txu8j7E9DPsUAcXkpAq5OvM
+	2nHmvYvqUX5+HDZvc7DAs6IQKHEiNBo6KcRhIQb79rpWpFqpb6wq/CbJ4KLEmHPm
+	/DzCLEkEx8+hmqBZnuNMP4o8yifb3IVNstru5gPFCUzKmjk01NAwEb5x9OSbxXeU
+	33OnlQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twc1p5au-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Apr 2025 09:09:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53A99KKV009799
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Apr 2025 09:09:20 GMT
+Received: from [10.218.7.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 10 Apr
+ 2025 02:09:15 -0700
+Message-ID: <6bcd4f78-b0d5-45d0-b023-452ce11dad17@quicinc.com>
+Date: Thu, 10 Apr 2025 14:39:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 3/6] phy: qcom-qmp-ufs: Refactor UFS PHY reset
+To: <neil.armstrong@linaro.org>, <vkoul@kernel.org>, <kishon@kernel.org>,
+        <manivannan.sadhasivam@linaro.org>,
+        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
+        <konrad.dybcio@oss.qualcomm.com>
+CC: <quic_rdwivedi@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>
+References: <20250318144944.19749-1-quic_nitirawa@quicinc.com>
+ <20250318144944.19749-4-quic_nitirawa@quicinc.com>
+ <c2d692a4-826e-4186-955a-41286c99de3f@linaro.org>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <c2d692a4-826e-4186-955a-41286c99de3f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ULsN_riN_epKF4ocxuNrvxU32fhP9cYs
+X-Authority-Analysis: v=2.4 cv=KtdN2XWN c=1 sm=1 tr=0 ts=67f78ac1 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=obqVeH_2SAdrduneaCUA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: ULsN_riN_epKF4ocxuNrvxU32fhP9cYs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-10_01,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0 spamscore=0
+ malwarescore=0 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504100068
 
-From: Junhao He <hejunhao3@huawei.com>
 
-MN (Miscellaneous Node) is a hybrid node in ARM CHI. It broadcasts the
-following two types of requests: DVM operations and PCIe configuration.
-MN PMU devices exist on both SCCL and SICL, so we named the MN pmu
-driver after SCL (Super cluster) ID.
-The MN PMU driver using the HiSilicon uncore PMU framework. And only
-the event parameter is supported.
 
-Signed-off-by: Junhao He <hejunhao3@huawei.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
----
- drivers/perf/hisilicon/Makefile             |   2 +-
- drivers/perf/hisilicon/hisi_uncore_mn_pmu.c | 355 ++++++++++++++++++++
- 2 files changed, 356 insertions(+), 1 deletion(-)
- create mode 100644 drivers/perf/hisilicon/hisi_uncore_mn_pmu.c
+On 3/18/2025 8:43 PM, neil.armstrong@linaro.org wrote:
+> On 18/03/2025 15:49, Nitin Rawat wrote:
+>> Refactor the UFS PHY reset handling to parse the reset logic only once
+>> during probe, instead of every resume.
+>>
+>> Move the UFS PHY reset parsing logic from qmp_phy_power_on to
+>> qmp_ufs_probe to avoid unnecessary parsing during resume.
+>>
+>> Co-developed-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+>> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+>> ---
+>>   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 104 ++++++++++++------------
+>>   1 file changed, 50 insertions(+), 54 deletions(-)
+>>
+>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/ 
+>> qualcomm/phy-qcom-qmp-ufs.c
+>> index 0089ee80f852..3a80c2c110d2 100644
+>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+>> @@ -1757,32 +1757,6 @@ static void qmp_ufs_init_registers(struct 
+>> qmp_ufs *qmp, const struct qmp_phy_cfg
+>>       qmp_ufs_init_all(qmp, &cfg->tbls_hs_b);
+>>   }
+>>
+>> -static int qmp_ufs_com_init(struct qmp_ufs *qmp)
+>> -{
+>> -    const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> -    void __iomem *pcs = qmp->pcs;
+>> -    int ret;
+>> -
+>> -    ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
+>> -    if (ret) {
+>> -        dev_err(qmp->dev, "failed to enable regulators, err=%d\n", ret);
+>> -        return ret;
+>> -    }
+>> -
+>> -    ret = clk_bulk_prepare_enable(qmp->num_clks, qmp->clks);
+>> -    if (ret)
+>> -        goto err_disable_regulators;
+>> -
+>> -    qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL], SW_PWRDN);
+>> -
+>> -    return 0;
+>> -
+>> -err_disable_regulators:
+>> -    regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
+>> -
+>> -    return ret;
+>> -}
+>> -
+>>   static int qmp_ufs_com_exit(struct qmp_ufs *qmp)
+>>   {
+>>       const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> @@ -1800,41 +1774,27 @@ static int qmp_ufs_power_on(struct phy *phy)
+>>   {
+>>       struct qmp_ufs *qmp = phy_get_drvdata(phy);
+>>       const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> +    void __iomem *pcs = qmp->pcs;
+>>       int ret;
+>> -    dev_vdbg(qmp->dev, "Initializing QMP phy\n");
+>> -
+>> -    if (cfg->no_pcs_sw_reset) {
+>> -        /*
+>> -         * Get UFS reset, which is delayed until now to avoid a
+>> -         * circular dependency where UFS needs its PHY, but the PHY
+>> -         * needs this UFS reset.
+>> -         */
+>> -        if (!qmp->ufs_reset) {
+>> -            qmp->ufs_reset =
+>> -                devm_reset_control_get_exclusive(qmp->dev,
+>> -                                 "ufsphy");
+>> -
+>> -            if (IS_ERR(qmp->ufs_reset)) {
+>> -                ret = PTR_ERR(qmp->ufs_reset);
+>> -                dev_err(qmp->dev,
+>> -                    "failed to get UFS reset: %d\n",
+>> -                    ret);
+>> -
+>> -                qmp->ufs_reset = NULL;
+>> -                return ret;
+>> -            }
+>> -        }
+>>
+>> -        ret = reset_control_assert(qmp->ufs_reset);
+>> -        if (ret)
+>> -            return ret;
+>> +    ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
+>> +    if (ret) {
+>> +        dev_err(qmp->dev, "failed to enable regulators, err=%d\n", ret);
+>> +        return ret;
+>>       }
+>>
+>> -    ret = qmp_ufs_com_init(qmp);
+>> +    ret = clk_bulk_prepare_enable(qmp->num_clks, qmp->clks);
+>>       if (ret)
+>> -        return ret;
+>> +        goto err_disable_regulators;
+>> +
+>> +    qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL], SW_PWRDN);
+>>
+>>       return 0;
+>> +
+>> +err_disable_regulators:
+>> +    regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
+>> +
+>> +    return ret;
+>>   }
+> 
+> This change is too fuzzy, please introduce qmp_ufs_get_phy_reset()
+> in a patch, move qmp_ufs_com_init() inline in qmp_ufs_power_on()
+> in a second time, and finally move reset_control_assert() to
+> calibrate in a third patch (and explain why).
 
-diff --git a/drivers/perf/hisilicon/Makefile b/drivers/perf/hisilicon/Makefile
-index dcec8f39719d..186be3d02238 100644
---- a/drivers/perf/hisilicon/Makefile
-+++ b/drivers/perf/hisilicon/Makefile
-@@ -2,7 +2,7 @@
- obj-$(CONFIG_HISI_PMU) += hisi_uncore_pmu.o hisi_uncore_l3c_pmu.o \
- 			  hisi_uncore_hha_pmu.o hisi_uncore_ddrc_pmu.o hisi_uncore_sllc_pmu.o \
- 			  hisi_uncore_pa_pmu.o hisi_uncore_cpa_pmu.o hisi_uncore_uc_pmu.o \
--			  hisi_uncore_noc_pmu.o
-+			  hisi_uncore_noc_pmu.o hisi_uncore_mn_pmu.o
- 
- obj-$(CONFIG_HISI_PCIE_PMU) += hisi_pcie_pmu.o
- obj-$(CONFIG_HNS3_PMU) += hns3_pmu.o
-diff --git a/drivers/perf/hisilicon/hisi_uncore_mn_pmu.c b/drivers/perf/hisilicon/hisi_uncore_mn_pmu.c
-new file mode 100644
-index 000000000000..bf9b326e40cf
---- /dev/null
-+++ b/drivers/perf/hisilicon/hisi_uncore_mn_pmu.c
-@@ -0,0 +1,355 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * HiSilicon SoC MN uncore Hardware event counters support
-+ *
-+ * Copyright (c) 2025 HiSilicon Technologies Co., Ltd.
-+ */
-+#include <linux/cpuhotplug.h>
-+#include <linux/interrupt.h>
-+#include <linux/iopoll.h>
-+#include <linux/irq.h>
-+#include <linux/list.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/property.h>
-+
-+#include "hisi_uncore_pmu.h"
-+
-+/* Dynamic CPU hotplug state used by MN PMU */
-+static enum cpuhp_state hisi_mn_pmu_online;
-+
-+/* MN register definition */
-+#define HISI_MN_DYNAMIC_CTRL		0x400
-+#define   HISI_MN_DYNAMIC_CTRL_EN	BIT(0)
-+#define HISI_MN_PERF_CTRL_REG		0x408
-+#define   HISI_MN_PERF_CTRL_EN		BIT(6)
-+#define HISI_MN_INT_MASK_REG		0x800
-+#define HISI_MN_INT_STATUS_REG		0x808
-+#define HISI_MN_INT_CLEAR_REG		0x80C
-+#define HISI_MN_EVENT_CTRL_REG		0x1C00
-+#define HISI_MN_VERSION_REG		0x1C04
-+#define HISI_MN_EVTYPE_REGn(n)		(0x1d00 + (n) * 4)
-+#define   HISI_MN_EVTYPE_MASK		GENMASK(7, 0)
-+#define HISI_MN_CNTR_REGn(n)		(0x1e00 + (n) * 8)
-+
-+#define HISI_MN_NR_COUNTERS		4
-+#define HISI_MN_COUNTER_BITS		48
-+#define HISI_MN_TIMEOUT_US		500U
-+
-+/*
-+ * Each event request takes a certain amount of time to complete. If
-+ * we counting the latency related event, we need to wait for the all
-+ * requests complete. Otherwise, the value of counter is slightly larger.
-+ */
-+static void hisi_mn_pmu_counter_flush(struct hisi_pmu *mn_pmu)
-+{
-+	int ret;
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + HISI_MN_DYNAMIC_CTRL);
-+	val |= HISI_MN_DYNAMIC_CTRL_EN;
-+	writel(val, mn_pmu->base + HISI_MN_DYNAMIC_CTRL);
-+
-+	ret = readl_poll_timeout_atomic(mn_pmu->base + HISI_MN_DYNAMIC_CTRL,
-+					val, !(val & HISI_MN_DYNAMIC_CTRL_EN),
-+					1, HISI_MN_TIMEOUT_US);
-+	if (ret)
-+		dev_warn(mn_pmu->dev, "Counter flush timeout\n");
-+}
-+
-+static u64 hisi_mn_pmu_read_counter(struct hisi_pmu *mn_pmu,
-+				    struct hw_perf_event *hwc)
-+{
-+	return readq(mn_pmu->base + HISI_MN_CNTR_REGn(hwc->idx));
-+}
-+
-+static void hisi_mn_pmu_write_counter(struct hisi_pmu *mn_pmu,
-+				      struct hw_perf_event *hwc, u64 val)
-+{
-+	writeq(val, mn_pmu->base + HISI_MN_CNTR_REGn(hwc->idx));
-+}
-+
-+static void hisi_mn_pmu_write_evtype(struct hisi_pmu *mn_pmu, int idx, u32 type)
-+{
-+	u32 val;
-+
-+	/*
-+	 * Select the appropriate event select register.
-+	 * There are 2 32-bit event select registers for the
-+	 * 8 hardware counters, each event code is 8-bit wide.
-+	 */
-+	val = readl(mn_pmu->base + HISI_MN_EVTYPE_REGn(idx / 4));
-+	val &= ~(HISI_MN_EVTYPE_MASK << HISI_PMU_EVTYPE_SHIFT(idx));
-+	val |= (type << HISI_PMU_EVTYPE_SHIFT(idx));
-+	writel(val, mn_pmu->base + HISI_MN_EVTYPE_REGn(idx / 4));
-+}
-+
-+static void hisi_mn_pmu_start_counters(struct hisi_pmu *mn_pmu)
-+{
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + HISI_MN_PERF_CTRL_REG);
-+	val |= HISI_MN_PERF_CTRL_EN;
-+	writel(val, mn_pmu->base + HISI_MN_PERF_CTRL_REG);
-+}
-+
-+static void hisi_mn_pmu_stop_counters(struct hisi_pmu *mn_pmu)
-+{
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + HISI_MN_PERF_CTRL_REG);
-+	val &= ~HISI_MN_PERF_CTRL_EN;
-+	writel(val, mn_pmu->base + HISI_MN_PERF_CTRL_REG);
-+
-+	hisi_mn_pmu_counter_flush(mn_pmu);
-+}
-+
-+static void hisi_mn_pmu_enable_counter(struct hisi_pmu *mn_pmu,
-+				       struct hw_perf_event *hwc)
-+{
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + HISI_MN_EVENT_CTRL_REG);
-+	val |= BIT(hwc->idx);
-+	writel(val, mn_pmu->base + HISI_MN_EVENT_CTRL_REG);
-+}
-+
-+static void hisi_mn_pmu_disable_counter(struct hisi_pmu *mn_pmu,
-+					struct hw_perf_event *hwc)
-+{
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + HISI_MN_EVENT_CTRL_REG);
-+	val &= ~BIT(hwc->idx);
-+	writel(val, mn_pmu->base + HISI_MN_EVENT_CTRL_REG);
-+}
-+
-+static void hisi_mn_pmu_enable_counter_int(struct hisi_pmu *mn_pmu,
-+					   struct hw_perf_event *hwc)
-+{
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + HISI_MN_INT_MASK_REG);
-+	val &= ~BIT(hwc->idx);
-+	writel(val, mn_pmu->base + HISI_MN_INT_MASK_REG);
-+}
-+
-+static void hisi_mn_pmu_disable_counter_int(struct hisi_pmu *mn_pmu,
-+					    struct hw_perf_event *hwc)
-+{
-+	u32 val;
-+
-+	val = readl(mn_pmu->base + HISI_MN_INT_MASK_REG);
-+	val |= BIT(hwc->idx);
-+	writel(val, mn_pmu->base + HISI_MN_INT_MASK_REG);
-+}
-+
-+static u32 hisi_mn_pmu_get_int_status(struct hisi_pmu *mn_pmu)
-+{
-+	return readl(mn_pmu->base + HISI_MN_INT_STATUS_REG);
-+}
-+
-+static void hisi_mn_pmu_clear_int_status(struct hisi_pmu *mn_pmu, int idx)
-+{
-+	writel(BIT(idx), mn_pmu->base + HISI_MN_INT_CLEAR_REG);
-+}
-+
-+static struct attribute *hisi_mn_pmu_format_attr[] = {
-+	HISI_PMU_FORMAT_ATTR(event, "config:0-7"),
-+	NULL
-+};
-+
-+static const struct attribute_group hisi_mn_pmu_format_group = {
-+	.name = "format",
-+	.attrs = hisi_mn_pmu_format_attr,
-+};
-+
-+static struct attribute *hisi_mn_pmu_events_attr[] = {
-+	HISI_PMU_EVENT_ATTR(req_eobarrier_num,		0x00),
-+	HISI_PMU_EVENT_ATTR(req_ecbarrier_num,		0x01),
-+	HISI_PMU_EVENT_ATTR(req_dvmop_num,		0x02),
-+	HISI_PMU_EVENT_ATTR(req_dvmsync_num,		0x03),
-+	HISI_PMU_EVENT_ATTR(req_retry_num,		0x04),
-+	HISI_PMU_EVENT_ATTR(req_writenosnp_num,		0x05),
-+	HISI_PMU_EVENT_ATTR(req_readnosnp_num,		0x06),
-+	HISI_PMU_EVENT_ATTR(snp_dvm_num,		0x07),
-+	HISI_PMU_EVENT_ATTR(snp_dvmsync_num,		0x08),
-+	HISI_PMU_EVENT_ATTR(l3t_req_dvm_num,		0x09),
-+	HISI_PMU_EVENT_ATTR(l3t_req_dvmsync_num,	0x0A),
-+	HISI_PMU_EVENT_ATTR(mn_req_dvm_num,		0x0B),
-+	HISI_PMU_EVENT_ATTR(mn_req_dvmsync_num,		0x0C),
-+	HISI_PMU_EVENT_ATTR(pa_req_dvm_num,		0x0D),
-+	HISI_PMU_EVENT_ATTR(pa_req_dvmsync_num,		0x0E),
-+	HISI_PMU_EVENT_ATTR(snp_dvm_latency,		0x80),
-+	HISI_PMU_EVENT_ATTR(snp_dvmsync_latency,	0x81),
-+	HISI_PMU_EVENT_ATTR(l3t_req_dvm_latency,	0x82),
-+	HISI_PMU_EVENT_ATTR(l3t_req_dvmsync_latency,	0x83),
-+	HISI_PMU_EVENT_ATTR(mn_req_dvm_latency,		0x84),
-+	HISI_PMU_EVENT_ATTR(mn_req_dvmsync_latency,	0x85),
-+	HISI_PMU_EVENT_ATTR(pa_req_dvm_latency,		0x86),
-+	HISI_PMU_EVENT_ATTR(pa_req_dvmsync_latency,	0x87),
-+	NULL
-+};
-+
-+static const struct attribute_group hisi_mn_pmu_events_group = {
-+	.name = "events",
-+	.attrs = hisi_mn_pmu_events_attr,
-+};
-+
-+static const struct attribute_group *hisi_mn_pmu_attr_groups[] = {
-+	&hisi_mn_pmu_format_group,
-+	&hisi_mn_pmu_events_group,
-+	&hisi_pmu_cpumask_attr_group,
-+	&hisi_pmu_identifier_group,
-+	NULL
-+};
-+
-+static const struct hisi_uncore_ops hisi_uncore_mn_ops = {
-+	.write_evtype		= hisi_mn_pmu_write_evtype,
-+	.get_event_idx		= hisi_uncore_pmu_get_event_idx,
-+	.start_counters		= hisi_mn_pmu_start_counters,
-+	.stop_counters		= hisi_mn_pmu_stop_counters,
-+	.enable_counter		= hisi_mn_pmu_enable_counter,
-+	.disable_counter	= hisi_mn_pmu_disable_counter,
-+	.enable_counter_int	= hisi_mn_pmu_enable_counter_int,
-+	.disable_counter_int	= hisi_mn_pmu_disable_counter_int,
-+	.write_counter		= hisi_mn_pmu_write_counter,
-+	.read_counter		= hisi_mn_pmu_read_counter,
-+	.get_int_status		= hisi_mn_pmu_get_int_status,
-+	.clear_int_status	= hisi_mn_pmu_clear_int_status,
-+};
-+
-+static int hisi_mn_pmu_dev_init(struct platform_device *pdev,
-+				struct hisi_pmu *mn_pmu)
-+{
-+	int ret;
-+
-+	hisi_uncore_pmu_init_topology(mn_pmu, &pdev->dev);
-+
-+	if (mn_pmu->topo.scl_id < 0)
-+		return dev_err_probe(&pdev->dev, -EINVAL,
-+				     "Failed to read MN scl id\n");
-+
-+	if (mn_pmu->topo.index_id < 0)
-+		return dev_err_probe(&pdev->dev, -EINVAL,
-+				     "Failed to read MN index id\n");
-+
-+	mn_pmu->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(mn_pmu->base))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(mn_pmu->base),
-+				     "Failed to ioremap resource\n");
-+
-+	ret = hisi_uncore_pmu_init_irq(mn_pmu, pdev);
-+	if (ret)
-+		return ret;
-+
-+	mn_pmu->on_cpu = -1;
-+	mn_pmu->dev = &pdev->dev;
-+	mn_pmu->ops = &hisi_uncore_mn_ops;
-+	mn_pmu->pmu_events.attr_groups = hisi_mn_pmu_attr_groups;
-+	mn_pmu->check_event = HISI_MN_EVTYPE_MASK;
-+	mn_pmu->num_counters = HISI_MN_NR_COUNTERS;
-+	mn_pmu->counter_bits = HISI_MN_COUNTER_BITS;
-+	mn_pmu->identifier = readl(mn_pmu->base + HISI_MN_VERSION_REG);
-+	return 0;
-+}
-+
-+static void hisi_mn_pmu_remove_cpuhp(void *hotplug_node)
-+{
-+	cpuhp_state_remove_instance_nocalls(hisi_mn_pmu_online, hotplug_node);
-+}
-+
-+static void hisi_mn_pmu_unregister(void *pmu)
-+{
-+	perf_pmu_unregister(pmu);
-+}
-+
-+static int hisi_mn_pmu_probe(struct platform_device *pdev)
-+{
-+	struct hisi_pmu *mn_pmu;
-+	char *name;
-+	int ret;
-+
-+	mn_pmu = devm_kzalloc(&pdev->dev, sizeof(*mn_pmu), GFP_KERNEL);
-+	if (!mn_pmu)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, mn_pmu);
-+
-+	ret = hisi_mn_pmu_dev_init(pdev, mn_pmu);
-+	if (ret)
-+		return ret;
-+
-+	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "hisi_scl%d_mn%d",
-+				mn_pmu->topo.scl_id, mn_pmu->topo.index_id);
-+	if (!name)
-+		return -ENOMEM;
-+
-+	ret = cpuhp_state_add_instance(hisi_mn_pmu_online, &mn_pmu->node);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to register cpu hotplug\n");
-+
-+	ret = devm_add_action_or_reset(&pdev->dev, hisi_mn_pmu_remove_cpuhp, &mn_pmu->node);
-+	if (ret)
-+		return ret;
-+
-+	hisi_pmu_init(mn_pmu, THIS_MODULE);
-+
-+	ret = perf_pmu_register(&mn_pmu->pmu, name, -1);
-+	if (ret)
-+		return dev_err_probe(mn_pmu->dev, ret, "Failed to register MN PMU\n");
-+
-+	return devm_add_action_or_reset(&pdev->dev, hisi_mn_pmu_unregister, &mn_pmu->pmu);
-+}
-+
-+static const struct acpi_device_id hisi_mn_pmu_acpi_match[] = {
-+	{ "HISI0222", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, hisi_mn_pmu_acpi_match);
-+
-+static struct platform_driver hisi_mn_pmu_driver = {
-+	.driver = {
-+		.name = "hisi_mn_pmu",
-+		.acpi_match_table = hisi_mn_pmu_acpi_match,
-+		/*
-+		 * We have not worked out a safe bind/unbind process,
-+		 * Forcefully unbinding during sampling will lead to a
-+		 * kernel panic, so this is not supported yet.
-+		 */
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe = hisi_mn_pmu_probe,
-+};
-+
-+static int __init hisi_mn_pmu_module_init(void)
-+{
-+	int ret;
-+
-+	ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN, "perf/hisi/mn:online",
-+				      hisi_uncore_pmu_online_cpu,
-+				      hisi_uncore_pmu_offline_cpu);
-+	if (ret < 0) {
-+		pr_err("hisi_mn_pmu: Failed to setup MN PMU hotplug: %d\n", ret);
-+		return ret;
-+	}
-+	hisi_mn_pmu_online = ret;
-+
-+	ret = platform_driver_register(&hisi_mn_pmu_driver);
-+	if (ret)
-+		cpuhp_remove_multi_state(hisi_mn_pmu_online);
-+
-+	return ret;
-+}
-+module_init(hisi_mn_pmu_module_init);
-+
-+static void __exit hisi_mn_pmu_module_exit(void)
-+{
-+	platform_driver_unregister(&hisi_mn_pmu_driver);
-+	cpuhp_remove_multi_state(hisi_mn_pmu_online);
-+}
-+module_exit(hisi_mn_pmu_module_exit);
-+
-+MODULE_IMPORT_NS("HISI_PMU");
-+MODULE_DESCRIPTION("HiSilicon SoC MN uncore PMU driver");
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Junhao He <hejunhao3@huawei.com>");
--- 
-2.24.0
+Thanks for the comment. I have taken care of this by separating 
+qmp_ufs_get_phy_reset and inlining qmp_ufs_com_init in 2 separate patches.
+
+Thanks,
+Nitin
+
+> 
+> Thanks,
+> Neil
+> 
+>>
+>>   static int qmp_ufs_phy_calibrate(struct phy *phy)
+>> @@ -1846,6 +1806,10 @@ static int qmp_ufs_phy_calibrate(struct phy *phy)
+>>       unsigned int val;
+>>       int ret;
+>>
+>> +    ret = reset_control_assert(qmp->ufs_reset);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>>       qmp_ufs_init_registers(qmp, cfg);
+>>
+>>       ret = reset_control_deassert(qmp->ufs_reset);
+>> @@ -2088,6 +2052,34 @@ static int qmp_ufs_parse_dt(struct qmp_ufs *qmp)
+>>       return 0;
+>>   }
+>>
+>> +static int qmp_ufs_get_phy_reset(struct qmp_ufs *qmp)
+>> +{
+>> +    const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> +    int ret;
+>> +
+>> +    if (!cfg->no_pcs_sw_reset)
+>> +        return 0;
+>> +
+>> +    /*
+>> +     * Get UFS reset, which is delayed until now to avoid a
+>> +     * circular dependency where UFS needs its PHY, but the PHY
+>> +     * needs this UFS reset.
+>> +     */
+>> +    if (!qmp->ufs_reset) {
+>> +        qmp->ufs_reset =
+>> +        devm_reset_control_get_exclusive(qmp->dev, "ufsphy");
+>> +
+>> +        if (IS_ERR(qmp->ufs_reset)) {
+>> +            ret = PTR_ERR(qmp->ufs_reset);
+>> +            dev_err(qmp->dev, "failed to get PHY reset: %d\n", ret);
+>> +            qmp->ufs_reset = NULL;
+>> +            return ret;
+>> +        }
+>> +    }
+>> +
+>> +    return 0;
+>> +}
+>> +
+>>   static int qmp_ufs_probe(struct platform_device *pdev)
+>>   {
+>>       struct device *dev = &pdev->dev;
+>> @@ -2114,6 +2106,10 @@ static int qmp_ufs_probe(struct platform_device 
+>> *pdev)
+>>       if (ret)
+>>           return ret;
+>>
+>> +    ret = qmp_ufs_get_phy_reset(qmp);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>>       /* Check for legacy binding with child node. */
+>>       np = of_get_next_available_child(dev->of_node, NULL);
+>>       if (np) {
+>> -- 
+>> 2.48.1
+>>
+>>
+> 
 
 
