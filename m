@@ -1,129 +1,250 @@
-Return-Path: <linux-kernel+bounces-599094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0BADA84F10
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 23:10:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41526A84EE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8D8C7B4B1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:09:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2926E173AF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E028293473;
-	Thu, 10 Apr 2025 21:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70597293466;
+	Thu, 10 Apr 2025 20:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0t5e1Qh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1/YGJY5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54AF28EA5C;
-	Thu, 10 Apr 2025 21:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA69290BA8;
+	Thu, 10 Apr 2025 20:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744319425; cv=none; b=pu29E3fhZUvG/oMikZXviObj2ZqfsLr4FKNTZ8QyCRc6nrcfOK5zApYOhbgHc1l/wrVxMnINqkk4WjaQ9RgBoPCcHM1JQlLyzdqVdmNOvn1w/x/+KyXXxKPvXLUed91XheCxZvag7m0xJ9etEGEMpI9iRKF5OtlXz08KNqopo4M=
+	t=1744318767; cv=none; b=Aldmg8EMXtnzxJYgJLvDP4lRjE3Vw2/SONx6Hq3YkjbQzsgmFEjT/k6SIVzHdLuD2tRkqg9OO2Wkw0Lj1oXeC+xf4GU33mJdb0SSQxUnrxmYKCil9OvBlnwTle7iPt6yNgbJEHbiLRzBixARo74ZKuCJInw3StejzU2WDIJQmtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744319425; c=relaxed/simple;
-	bh=nQlZdTU+lS/Y/JHfgCk5WHjlwHAdkn/xnnQCVl6khHM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KBLb5kgZyhTudAIphSdy0Q7gpOGF9MSclK2wuemFIBKnlRWwW0Y3U9XMNpf3cixXznk/VQ/SkrMS+drbURmeG9apXwNnvH+TrKvYuS1dDVqnyqmMXA2zRV22ucnoi3ek7iEsnsfO5C1jgHAvxDF+7JDU3T7hqiMuA0JQjfcFut4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0t5e1Qh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 32426C4CEEA;
-	Thu, 10 Apr 2025 21:10:24 +0000 (UTC)
+	s=arc-20240116; t=1744318767; c=relaxed/simple;
+	bh=ecHUf2Hpwk+1O+STcd+2A4XQmIHogrxTQ9Qfsd65yEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oUQlK+fqPzaJuiZViBB7zg0yFGjdzVmv9EL1LIoOnqXrAYHOAbFVpg/FKo+5yOMs3Di0Yt37UN5I3k+TJlTlwxv8GWrVSemXO/KKL8TfJrTA4qZe9mkoUM7D+vJ76YtjHW+SAEcRpXEx1E8YeA7ovmpP9++uLmy2ILpoIqIzNWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1/YGJY5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0591C4CEDD;
+	Thu, 10 Apr 2025 20:59:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744319425;
-	bh=nQlZdTU+lS/Y/JHfgCk5WHjlwHAdkn/xnnQCVl6khHM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=W0t5e1QhLQu/pFuBZ3cngf7c3cuqKpcQ9FABlAuzqwrJnWZ/f9fbElrMgD0O0SRTW
-	 7YAkeXAhf0Z7/TfLX03tSuiQLkwoRJKH/NzdlkrO7rF13iwo4FFLfYXruULuG9qokw
-	 QMLm38S/jYCJL08i6Eq7VLc9fQ7hKiTw5gAwwfAmflS1KnODHbTBhzKb8pGPcEmFVN
-	 01tHx/gwz20jrws9i6e0l77ag0ZuvB3ZVly8qn7Fobr74aSCsq5UPzvKCtcE2TI1rQ
-	 CpKThSDd10+oJvObwfO17XhvTXdnEYhg7dkZVdF0v/b9FAglZRNxJVq+vxyu53EeET
-	 +LD/ccLhYjewg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0E4C369AA;
-	Thu, 10 Apr 2025 21:10:24 +0000 (UTC)
-From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
-Date: Thu, 10 Apr 2025 22:58:54 +0200
-Subject: [PATCH v2 2/2] clang-format: align consecutive macros
+	s=k20201202; t=1744318767;
+	bh=ecHUf2Hpwk+1O+STcd+2A4XQmIHogrxTQ9Qfsd65yEg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N1/YGJY5o59GBadahGD1tR89MMuhoDVyWrfwPbWC2WmIFRfkO1I3q7C1ionfou5gQ
+	 qw31+65qNcKO1aO7auRqDAIqq980sBsJrHIQwj3suyRosRcCKeSsfig1FGlb3bQtNA
+	 67pQ9bInybrVNUa/bXoe0K6I/af3uzudSkAbXkKyY2srHwU8uSg7nc/Ta9puCNmxT0
+	 dEJtM///RfVWw0t26NJIHXUpkFKiPp+LzEi/RPs2fMKWx0mz+y/z5QwHqp8VatCP0T
+	 c/c7l7Z/kOzy3HlkDypmFNu4c1WIyHZc9tkX6kmcc+6J1+RPLA35+EclYWjNJR4LLa
+	 uXJoN82QRWu0w==
+Date: Thu, 10 Apr 2025 15:59:25 -0500
+From: Rob Herring <robh@kernel.org>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [net-next v4 1/5] dt-bindings: net: Add MTIP L2 switch
+ description
+Message-ID: <20250410205925.GA1041840-robh@kernel.org>
+References: <20250407145157.3626463-1-lukma@denx.de>
+ <20250407145157.3626463-2-lukma@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250210-clang-format-fixes-v2-2-37894413bbee@collabora.com>
-References: <20250210-clang-format-fixes-v2-0-37894413bbee@collabora.com>
-In-Reply-To: <20250210-clang-format-fixes-v2-0-37894413bbee@collabora.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
-Cc: Collabora Kernel Team <kernel@collabora.com>, 
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
- Michael Riesch <michael.riesch@wolfvision.net>, 
- Michael Riesch <michael.riesch@collabora.com>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744318740; l=1371;
- i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
- bh=GCAcQLFrMA5v4a8RQ+v4hX/83CyGkOIzdbZt9W/iAMo=;
- b=eQYqQ3YfPADGuVnklkfGZ8zn5fc1Ke7BHBl6FyFpdefybbJRw2NKRRgfdiT6BGn/jlXU6U0L/
- 32RqDjGfhLxDmqi61M2ZhSnT4keDU3L/iW3teyy6fMOiOL7q/ex73wB
-X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
- pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
-X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
- with auth_id=371
-X-Original-From: Michael Riesch <michael.riesch@collabora.com>
-Reply-To: michael.riesch@collabora.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407145157.3626463-2-lukma@denx.de>
 
-From: Michael Riesch <michael.riesch@wolfvision.net>
+On Mon, Apr 07, 2025 at 04:51:53PM +0200, Lukasz Majewski wrote:
+> This patch provides description of the MTIP L2 switch available in some
+> NXP's SOCs - e.g. imx287.
+> 
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> ---
+> Changes for v2:
+> - Rename the file to match exactly the compatible
+>   (nxp,imx287-mtip-switch)
+> 
+> Changes for v3:
+> - Remove '-' from const:'nxp,imx287-mtip-switch'
+> - Use '^port@[12]+$' for port patternProperties
+> - Drop status = "okay";
+> - Provide proper indentation for 'example' binding (replace 8
+>   spaces with 4 spaces)
+> - Remove smsc,disable-energy-detect; property
+> - Remove interrupt-parent and interrupts properties as not required
+> - Remove #address-cells and #size-cells from required properties check
+> - remove description from reg:
+> - Add $ref: ethernet-switch.yaml#
+> 
+> Changes for v4:
+> - Use $ref: ethernet-switch.yaml#/$defs/ethernet-ports and remove already
+>   referenced properties
+> - Rename file to nxp,imx28-mtip-switch.yaml
+> ---
+>  .../bindings/net/nxp,imx28-mtip-switch.yaml   | 126 ++++++++++++++++++
+>  1 file changed, 126 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.yaml b/Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.yaml
+> new file mode 100644
+> index 000000000000..1afaf8029725
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.yaml
+> @@ -0,0 +1,126 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/nxp,imx28-mtip-switch.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP SoC Ethernet Switch Controller (L2 MoreThanIP switch)
+> +
+> +maintainers:
+> +  - Lukasz Majewski <lukma@denx.de>
+> +
+> +description:
+> +  The 2-port switch ethernet subsystem provides ethernet packet (L2)
+> +  communication and can be configured as an ethernet switch. It provides the
+> +  reduced media independent interface (RMII), the management data input
+> +  output (MDIO) for physical layer device (PHY) management.
+> +
+> +$ref: ethernet-switch.yaml#/$defs/ethernet-ports
+> +
 
-clang-format 9 introduced the option "AlignConsecutiveMacros".
-Set it to "AcrossEmptyLinesAndComments" in order to avoid macro
-definitions of the form:
+> +patternProperties:
+> +  "^(ethernet-)?ports$":
 
-    #define MAGIC_REGISTER_1 0x42
-    #define MAGIC_REGISTER_BIT_FLIP BIT(2)
-    /* important comment */
-    #define MAGIC_REGISTER_BIT_ENABLE BIT(12)
+New bindings should only use 'ethernet-ports'.
 
-    #define MAGIC_REGISTER_2 0x43
+> +    type: object
+> +    additionalProperties: true
 
-With the option set to "AcrossEmptyLinesAndComments", they will
-be converted to
+But what's this for? I thought you had some constrants for phy-mode and 
+phy-handle?
 
-    #define MAGIC_REGISTER_1	      0x42
-    #define MAGIC_REGISTER_BIT_FLIP   BIT(2)
-    /* important comment */
-    #define MAGIC_REGISTER_BIT_ENABLE BIT(12)
+> +
+> +properties:
+> +  compatible:
+> +    const: nxp,imx28-mtip-switch
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  phy-supply:
+> +    description:
+> +      Regulator that powers Ethernet PHYs.
+> +
+> +  clocks:
+> +    items:
+> +      - description: Register accessing clock
+> +      - description: Bus access clock
+> +      - description: Output clock for external device - e.g. PHY source clock
+> +      - description: IEEE1588 timer clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ipg
+> +      - const: ahb
+> +      - const: enet_out
+> +      - const: ptp
+> +
+> +  interrupts:
+> +    items:
+> +      - description: Switch interrupt
+> +      - description: ENET0 interrupt
+> +      - description: ENET1 interrupt
+> +
+> +  pinctrl-names: true
+> +
+> +  mdio:
+> +    type: object
+> +    $ref: mdio.yaml#
+> +    unevaluatedProperties: false
+> +    description:
+> +      Specifies the mdio bus in the switch, used as a container for phy nodes.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - interrupts
+> +  - mdio
+> +  - ethernet-ports
+> +
+> +additionalProperties: false
 
-    #define MAGIC_REGISTER_2	      0x43
+unevaluatedProperties: false
 
-which seems to be the convention in the kernel code base.
-
-Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
----
- .clang-format | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/.clang-format b/.clang-format
-index 8040b516185b..30d09cb88170 100644
---- a/.clang-format
-+++ b/.clang-format
-@@ -13,6 +13,7 @@ AccessModifierOffset: -4
- AlignAfterOpenBracket: Align
- AlignConsecutiveAssignments: false
- AlignConsecutiveDeclarations: false
-+AlignConsecutiveMacros: AcrossEmptyLinesAndComments
- AlignEscapedNewlines: Left
- AlignOperands: true
- AlignTrailingComments: false
-
--- 
-2.39.5
-
-
+> +
+> +examples:
+> +  - |
+> +    #include<dt-bindings/interrupt-controller/irq.h>
+> +    switch@800f0000 {
+> +        compatible = "nxp,imx28-mtip-switch";
+> +        reg = <0x800f0000 0x20000>;
+> +        pinctrl-names = "default";
+> +        pinctrl-0 = <&mac0_pins_a>, <&mac1_pins_a>;
+> +        phy-supply = <&reg_fec_3v3>;
+> +        interrupts = <100>, <101>, <102>;
+> +        clocks = <&clks 57>, <&clks 57>, <&clks 64>, <&clks 35>;
+> +        clock-names = "ipg", "ahb", "enet_out", "ptp";
+> +
+> +        ethernet-ports {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            mtip_port1: ethernet-port@1 {
+> +                reg = <1>;
+> +                label = "lan0";
+> +                local-mac-address = [ 00 00 00 00 00 00 ];
+> +                phy-mode = "rmii";
+> +                phy-handle = <&ethphy0>;
+> +            };
+> +
+> +            mtip_port2: ethernet-port@2 {
+> +                reg = <2>;
+> +                label = "lan1";
+> +                local-mac-address = [ 00 00 00 00 00 00 ];
+> +                phy-mode = "rmii";
+> +                phy-handle = <&ethphy1>;
+> +            };
+> +        };
+> +
+> +        mdio_sw: mdio {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            reset-gpios = <&gpio2 13 0>;
+> +            reset-delay-us = <25000>;
+> +            reset-post-delay-us = <10000>;
+> +
+> +            ethphy0: ethernet-phy@0 {
+> +                reg = <0>;
+> +            };
+> +
+> +            ethphy1: ethernet-phy@1 {
+> +                reg = <1>;
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.39.5
+> 
 
