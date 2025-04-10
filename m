@@ -1,149 +1,146 @@
-Return-Path: <linux-kernel+bounces-597998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D8E1A84109
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:43:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD023A84113
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0BF37A8DF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:42:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247EB1B6126C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B40128136B;
-	Thu, 10 Apr 2025 10:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA7728151A;
+	Thu, 10 Apr 2025 10:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KDUKvJO9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AtAy2HqW"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EEB276057
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE06281358;
+	Thu, 10 Apr 2025 10:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744281812; cv=none; b=a2ybw0QGJKiU1m3tnOCN9gGO8LLSi8IyIRUIpiGMT4XkoXUNJzh+5dKXnHPPrQaNgdlv/EjIWEihkTF7YGRdOgnSbAAHZ+23r1W5L0zFVUMdHEQs6hGntdeBGUV4AoQNmeOpGkVRhcc5jADL59Bldzd8JopwKLL8pe99aVSObl8=
+	t=1744281898; cv=none; b=Yf5V480L7ogD55Z2/NGHvRWwz7jsSDpK7QxsmzSCuIneZNIBwF5SF0HPF6gPBWONHYfpezZQ2oDlm0X/YBc8OwBL5qOkGOyd6tR8aaKLCEWiZMMlbumG733Z45OHNqjpw9p4HC98ohkvzU4xygMggc6Z2eiI9uGiPFRoowplAx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744281812; c=relaxed/simple;
-	bh=pZ5bB8vFUMnyv3cCOmpIUQLd2O2QWg60MWTovyHf87Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j3BBpEmqkRwoAyGarFJXBUJZMHZsP34xGsloi1Oc2yqIuBGT6+VOUjAdVl02bOLB6rDwV/bfOvX2Vt0jJhR8q99vA5mZrBEQcMtECTaZcswng5AyYIAUhOu9A2vtVwGcVUnYpCdI5ETYMJotmADBhPC0ESlg5EaRwMvgyRXub+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KDUKvJO9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744281809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=o8NDC37k3QmU+NUsDCirFAdGiwD0pEhO0xSGio8XM74=;
-	b=KDUKvJO9V2F3pHWxnl9FHQjF2fYU7Uxw9qiTJd6lEdjZ7rfTPGcAJihdN0oYY4JTxFxOTo
-	TfrrUDMuLlo2ZWperFICrvwadPX/eMLNJ7ty6o6UecstoqJwoahwDq4qEhV46kC9RLp6mh
-	VgHHmtECdAalslv5ZfeGX4QMYJnGq0g=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-659-9JMJmrNRMWqRdHVjZpRkig-1; Thu, 10 Apr 2025 06:43:28 -0400
-X-MC-Unique: 9JMJmrNRMWqRdHVjZpRkig-1
-X-Mimecast-MFC-AGG-ID: 9JMJmrNRMWqRdHVjZpRkig_1744281807
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ac2db121f95so54381566b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 03:43:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744281807; x=1744886607;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o8NDC37k3QmU+NUsDCirFAdGiwD0pEhO0xSGio8XM74=;
-        b=Df23qIoYjq6/EB2EEQK/m8rkMkN0e6FFaPzY6XyiJQaCjTFrLprAr26x0BgSj7MFcX
-         LcZFtnzt9obNfuA99Wv+lMSU+ve6zPN2jai3ngKIMK18JSeW2t/fhpXfvhSmvWCd7P7L
-         NxJ2kqGaWne8979kPZ8it4p5Pqcb3T4HuMiYdBMcassMeKdJvcyq73GTs45odOYNoaLQ
-         Fy+Tl7pTe52GZb2M8yx6kw27Rei84Icfdjjl+e6qWTZZmAz3n3dzj+RpacJTLlPvgFJT
-         y9xi3448GFl9kuduX8icCUpU+6ATW83HG6pvtE0tFOvtJpwTHGrVoSwht7eDrp7fHhbK
-         a0BQ==
-X-Gm-Message-State: AOJu0Yxt6dcPQWsUcggCRq3BuvY2BcJuYFHTudkvNP9Qu8aZg8edUf0W
-	WYdh6ytHKotf+J/dAZCh6Ac6n3v8utejBetuUTm+4aE5IlMEo8/aNp52+c1vCEvbdZodQcmGt8F
-	zXjHBahpc9Sabxiw809PdwW0HfIKVLQ3aw6Dus84qGQpxE/XWdqj/K8SHgPzVBA==
-X-Gm-Gg: ASbGncv9t6por8rhUSW/fcWZFQJa3dZKbLvgaZjEDbUsp06B+leEWUvL4pdrYIkQ8FW
-	gXbRuNX+aCKloHkz9HjdR8+lVkJKt56OQiDZtJrJJ13c/FaiHJRVauTyHWwbdavyZrqT/JiX6Fk
-	o9kydUhz3J5aFEe0MixUUQd9oWfvYwpLNHq0WspJ+580mwrBfnOlY75FKSB3S2x7kMj9qvwKkhG
-	SoVt8Gf6yFzQQyEjVfu5/3HSpf6JpznYOThH0FAHSTuIVgdt9vdIa901Cf3YqYQJV8x/t1XIeRE
-	vsJGD3Yl
-X-Received: by 2002:a17:907:3e11:b0:ac7:ec6f:a7c with SMTP id a640c23a62f3a-acabd1ddb9amr205751866b.13.1744281807222;
-        Thu, 10 Apr 2025 03:43:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFtZjy9wlPfZmZBnYMu79NO3yotRmZU9d09bLGlKvvf77owRla0L/nGxvLBfyuq+ABs6xAk7w==
-X-Received: by 2002:a17:907:3e11:b0:ac7:ec6f:a7c with SMTP id a640c23a62f3a-acabd1ddb9amr205750266b.13.1744281806835;
-        Thu, 10 Apr 2025 03:43:26 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1bb3df5sm249424366b.26.2025.04.10.03.43.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 03:43:26 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 4D3D11992280; Thu, 10 Apr 2025 12:43:25 +0200 (CEST)
-From: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org
-Subject: [PATCH net v2] selftests/tc-testing: Add test for echo of big TC filters
-Date: Thu, 10 Apr 2025 12:43:21 +0200
-Message-ID: <20250410104322.214620-1-toke@redhat.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744281898; c=relaxed/simple;
+	bh=D9azXRd3whT0sZ/tEJGdHeUd6oPxzgT+qjSLkLxg+cM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WIVcbukTqYgoVrSlEAE0rM0FMwLewR1Ye0BiEWwK/BA1idXju94Hnq4EAHUEvp1y9kiYlrcoZnPfhsUHC5Ungt2JCdzPekpVBVT91Y8fztE+jGjyeoc7s0qCcHtp92BFUb7x5Kl0c57ioDayEvAyxLyTG7fNHRID0/WjVH899mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AtAy2HqW; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53AAiXbE1262907
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Apr 2025 05:44:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744281873;
+	bh=yBwjCE/ol9udunO14kPmHxK0DtgJno2/PYAg0Wha9Xo=;
+	h=From:To:CC:Subject:Date;
+	b=AtAy2HqWLz8qefBuGawfiptxV1cSHk5gL+zMPGPy7kElG1XcLhdftKlVfKncABt5G
+	 AuC7YMe8s21r7YN82e/ub1L7htCnLBjCjm1ESDasVzgdG/YOs8axofs8Rqzx17fp7n
+	 uZPefPGqob4EXfqKywMZKgM3RhfvBu6UQQwNsORA=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53AAiWLB109020
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 10 Apr 2025 05:44:32 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 10
+ Apr 2025 05:44:32 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 10 Apr 2025 05:44:32 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53AAiRfb029210;
+	Thu, 10 Apr 2025 05:44:27 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <vigneshr@ti.com>, <kishon@kernel.org>,
+        <18255117159@163.com>, <cassel@kernel.org>,
+        <wojciech.jasko-EXT@continental-corporation.com>,
+        <thomas.richard@bootlin.com>, <bwawrzyn@cisco.com>
+CC: <linux-pci@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, <s-vadapalli@ti.com>
+Subject: [PATCH v3 0/4] Loadable Module support for PCIe Cadence and J721E
+Date: Thu, 10 Apr 2025 16:14:22 +0530
+Message-ID: <20250410104426.463453-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add a selftest that checks whether the kernel can successfully echo a
-big tc filter, to test the fix introduced in commit:
+Hello,
 
-369609fc6272 ("tc: Ensure we have enough buffer space when sending filter netlink notifications")
+This series enables support to build the PCIe Cadence Controller drivers
+and the PCI J721E Application/Wrapper/Glue driver as Loadable Kernel
+Modules. The motivation for this series is that PCIe is not a necessity
+for booting the SoC, due to which it doesn't have to be a built-in
+module. Additionally, the defconfig doesn't enable the PCIe Cadence
+Controller drivers and the PCI J721E driver, due to which PCIe is not
+supported by default. Enabling the configs as of now (i.e. without this
+series) will result in built-in drivers i.e. a bloated Linux Image for
+everyone who doesn't have the PCIe Controller. Therefore, with this
+series, after enabling support for building the drivers as loadable
+modules, the driver configs can be enabled in the defconfig to build
+the drivers as loadable modules, thereby enabling PCIe.
 
-Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>
----
-v2:
-- Move to infra/actions.json
+Series is based on linux-next tagged next-20250410.
 
- .../tc-testing/tc-tests/infra/actions.json    | 22 +++++++++++++++++++
- 1 file changed, 22 insertions(+)
+v2 of this series is at:
+https://lore.kernel.org/r/20250330083914.529222-1-s-vadapalli@ti.com/
+Changes since v2:
+- Collected "Reviewed-by" tag from:
+  Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+  for the third patches in this series.
+- Dropped a delay before PERST assertion in the driver's remove callback
+  in the fourth patch of this series based on Mani's feedback at:
+  https://lore.kernel.org/r/zsxnx7biwogov5dw5yiafkgk6tsrtspac75bjbrca5uevweaim@ly67hwfyk7qh/
 
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/infra/actions.json b/tools/testing/selftests/tc-testing/tc-tests/infra/actions.json
-index 1ba96c467754..d9fc62ab476c 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/infra/actions.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/infra/actions.json
-@@ -412,5 +412,27 @@
-         "teardown": [
-             "$TC qdisc del dev $DUMMY ingress"
-         ]
-+    },
-+    {
-+        "id": "33f4",
-+        "name": "Check echo of big filter command",
-+        "category": [
-+            "infra",
-+            "u32"
-+        ],
-+        "plugins": {
-+            "requires": "nsPlugin"
-+        },
-+        "setup": [
-+            "$TC qdisc add dev $DUMMY parent root handle 10: fq_codel"
-+        ],
-+        "cmdUnderTest": "bash -c '$TC -echo filter add dev $DUMMY parent 10: u32 match u32 0 0 $(for i in $(seq 32); do echo action pedit munge ip dport set 22; done) | grep \"added filter\"'",
-+        "verifyCmd": "",
-+        "expExitCode": "0",
-+        "matchCount": "0",
-+        "matchPattern": "",
-+        "teardown": [
-+            "$TC qdisc del dev $DUMMY parent root fq_codel"
-+        ]
-     }
- ]
+v1 of this series is at:
+https://lore.kernel.org/r/20250307103128.3287497-1-s-vadapalli@ti.com/
+Changes since v1:
+- Collected "Reviewed-by" tags from:
+  Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+  for the first two patches in this series.
+- Based on feedback from Mani on the third patch of the v1 series at:
+  https://lore.kernel.org/r/20250318080304.jsmrxqil6pn74nzh@thinkpad/
+  pci_epc_deinit_notify() has been included in cdns_pcie_ep_disable().
+- Based on feedback from Thomas on the fourth patch of the v1 series at:
+  https://lore.kernel.org/r/88b3ecbe-32b6-4310-afb9-da19a2d0506a@bootlin.com/
+  the "check" for a non-NULL "pcie-refclk" in j721e_pcie_remove() has been
+  dropped.
+
+Regards,
+Siddharth.
+
+Kishon Vijay Abraham I (1):
+  PCI: cadence: Add support to build pcie-cadence library as a kernel
+    module
+
+Siddharth Vadapalli (3):
+  PCI: cadence-host: Introduce cdns_pcie_host_disable helper for cleanup
+  PCI: cadence-ep: Introduce cdns_pcie_ep_disable helper for cleanup
+  PCI: j721e: Add support to build as a loadable module
+
+ drivers/pci/controller/cadence/Kconfig        |  12 +-
+ drivers/pci/controller/cadence/pci-j721e.c    |  31 ++++-
+ .../pci/controller/cadence/pcie-cadence-ep.c  |  17 +++
+ .../controller/cadence/pcie-cadence-host.c    | 113 ++++++++++++++++++
+ drivers/pci/controller/cadence/pcie-cadence.c |  12 ++
+ drivers/pci/controller/cadence/pcie-cadence.h |  14 ++-
+ 6 files changed, 190 insertions(+), 9 deletions(-)
+
 -- 
-2.49.0
+2.34.1
 
 
