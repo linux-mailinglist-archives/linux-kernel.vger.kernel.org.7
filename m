@@ -1,392 +1,274 @@
-Return-Path: <linux-kernel+bounces-598301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E320A844B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:27:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07FD8A844B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 472824C499D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA5939A1F4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF247284B56;
-	Thu, 10 Apr 2025 13:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6DA284B48;
+	Thu, 10 Apr 2025 13:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Ixojrhgw";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Ixojrhgw"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013014.outbound.protection.outlook.com [40.107.162.14])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="qORvIrA3";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="muP45aCa"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F2242AA3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.14
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744291283; cv=fail; b=kLrJcF/UqfZThbHxaUOZ6cjFZDgcwGIVmADadJ1kjpusYHTKBVWFlTKZiKjiqetfzU+iXvkRawB20xEQkgtpU0n8buY6612EXgcyBfB0vWJKIfGuiTpMAkuOzEqcfnuOz8SQMJwbgafs9HdYlaN+RzYCViZSrrdz49YRUxwYO0Q=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744291283; c=relaxed/simple;
-	bh=aSsKFbqIuvjKAEp6tt9EwZZ+eI53HO6SXvH9uX2wqdo=;
-	h=Message-ID:Date:Subject:To:Cc:References:In-Reply-To:From:
-	 Content-Type:MIME-Version; b=ZxJMB/Z+ACLDmCrgrxVsCKcyjrgR1q42mseb5vo/V56h+km8IQgZ8OW3QIMtDOHDSUmnDvTa+ieQR4/wILKx3HVyfyhNT3w/e/AKnoFyUWFD7v81mm5jC9KuntzY4CIIX+SeDapVvV5xJktdXPFLBSdydhhBxRGHFS2c+WSlxVU=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Ixojrhgw; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Ixojrhgw; arc=fail smtp.client-ip=40.107.162.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=Fa0mzIjUsZzLok9mzHAzuK/bgwDuNSX7vojzQVW7/AD2w5cBNHLR10mm+Sbco3lRAxYfzcKIW8e/6w7JF4JW3e4jRDMvdNjiPfJWb+zAioHfbDh9qciTM9dYXc2ielvQwHJ5+nHhdLSSB1DSFoaKEAWEzRUJG1t4Xsgn91I5U5vEd7gR2GArEHrEB5apkEclbzGV/cwgHr9Y2F3coWvkT51uG1euUrbkpPkAIMD/ozuqVl4DtsCHxmh97w9AORHc0h/zvZ8tyVpBunVVnLdch5y5CNQMwQQIwcHmi0R7/fCv7RWq0r3qYzZPJbkdB4lzj8ozz4EYzu56wK1MNGgthQ==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q23B/bheZJWtXRLtVMYTBaN3MDcH2jtNdnPQmKwqLHU=;
- b=Kh74aQqouYh4yNGScXuEAP2Qo/H6wRopJzFuf5MygZIKbu0FwhwdJAp+o3bQ4n3hW8q/f/5YddwpvB8OXmTraidodaH+wU9xp4QAHldqTvn+x/X6Wh6sALvmjXlFE3J4iwlltjv6vb8emGXKKgsy3snPGM7avUkazEu4y4NWFERtuZrzpv7vQ6mHtr8JW9pVNsAWGVFBs7tzW84Dp1ar4HAHVP3e9vsXn4lf2nvPECavNPcJAPJE9Df1INh7HtRh6PzJo1Z9Ent625kSH14UruWWOiaghJeJrzw/PhW6QcjJWvD4k2I4k2BnQ01+Qx6x3svlm1QlJcSTnBd4mvS9NQ==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q23B/bheZJWtXRLtVMYTBaN3MDcH2jtNdnPQmKwqLHU=;
- b=IxojrhgwQU+m8B9di03cH+btfHghpIzNd/coG3biQxA3QBS2NQZ6GtY1k3Jg7HTmL0CvbJ0KXyk6lko2EjYscoK8r3KPGnHIb5ndi8gCYG7lLsyN8ms+1irPIZ6sTrn6/CtOG21XFZH71WqFZ8xtEceZ//4G9frBBQIVF8xKtfI=
-Received: from DUZPR01CA0072.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:3c2::10) by AS8PR08MB8248.eurprd08.prod.outlook.com
- (2603:10a6:20b:520::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Thu, 10 Apr
- 2025 13:21:12 +0000
-Received: from DU2PEPF00028D0E.eurprd03.prod.outlook.com
- (2603:10a6:10:3c2:cafe::76) by DUZPR01CA0072.outlook.office365.com
- (2603:10a6:10:3c2::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.23 via Frontend Transport; Thu,
- 10 Apr 2025 13:21:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
- pr=C
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DU2PEPF00028D0E.mail.protection.outlook.com (10.167.242.22) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.13
- via Frontend Transport; Thu, 10 Apr 2025 13:21:12 +0000
-Received: ("Tessian outbound f9fef7c7dc50:v605"); Thu, 10 Apr 2025 13:21:12 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 28cedc2feb26c060
-X-TessianGatewayMetadata: Zl/t4WJbABHbwSA6Yo2Nb1hZG6QPNwU22cSbG8OV+OZmpGGnGSQtaCxjm8nUTALmHQ04BXH4DNnGgkUad57i7bS6xhx7i1359GkDt6037b/7mHbe1pOjbx95wyBmKJcK3QcxLzelbEqwjh4cOL892f9yO7nTYYaWMqaUz2btiec=
-X-CR-MTA-TID: 64aa7808
-Received: from L179db3970da0.1
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 91C69F77-D902-4BBF-9B79-6AB8E584FE1B.1;
-	Thu, 10 Apr 2025 13:21:05 +0000
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L179db3970da0.1
-    (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-    Thu, 10 Apr 2025 13:21:05 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59782857F4;
+	Thu, 10 Apr 2025 13:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744291317; cv=fail; b=r+n52xWskWaLfGHr0NqBPZXg2frGAtDZe95x8czj46w+6ZVaT8nXgO4Mh/fuFh12zLwv74ZnmqCgGaBMNizK+k9hVzlfPBqW1IHfTFe76zh0hiZrQ3cPo2q1Cu1cRwc0LJQY5SWXRyiCpafw2OrrF/estsbiF2zEl+eQ/7Mp0e4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744291317; c=relaxed/simple;
+	bh=csdlxqAWeWk/Cu56CCyA7J+Mfthl8b40MZqy7N4mqJg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=kboklBIXfJhtHJnZ64MDa1x7bP1JzT1fm0KnOWiQM6/Y/l/h8PvGdm8rjSgYD8/eMwA5hbArMXLddOirTtAwY3Cg1cAaG7zwqRd42ffvEaEKW/cF6M2nx+y7gPTMXa334E8t3+LnxEzyIlcxfu9+1e6TUzTXyJW2km1Bnc5Ez18=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=qORvIrA3; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=muP45aCa; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53A82DSO001301;
+	Thu, 10 Apr 2025 08:21:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=4HAesXU10CaKm+f8
+	Sbl1hA/DhDYaB5XlC2RR/lYMMhk=; b=qORvIrA3S7nA5Mh085sPBTJ5LOf+mLO0
+	s1i6YA0fWlm6ODDz5nBuzlwclYWh1Ubmw/nEy1EppjNX480ogmwPz/+W0eht3625
+	ShoqR6L/cy9lixwJBrUGiMnJFOUnEIKs73alMMoPIrUvaWQgcIMUTYQWxuZDusDk
+	ccPcS4kpbthatWGPioaIc6AW2EnZ5QK4ZtWM5csME+AFxgMIV19s7u2a07qQMrDa
+	z9Yk3y199AOa5/ATCtBR8krw1lkXQSm8gZ1JCsB/sVhSkXqWqn4bonJseTwkdICa
+	SSJ/TrVvPN63nGaioEzqokccKVHF3ZiCfYwysf/a8jLDaaVdwz46Rg==
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2049.outbound.protection.outlook.com [104.47.66.49])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 45xa4bgbcv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Apr 2025 08:21:37 -0500 (CDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=urAFwHCv9AhX4cowfW3haF1hf+VLemcYsxMFo6FDzHlHBjOHKDW3dOhKnMI8988MAQgU9lF021hVt2fGFyj3YOyqpSHKLaNmi8fGtw1iCcHQ8e+d9YAVRQE8GWyp0uI9P+Jh3S2MzZ8xKqJJlbCLU+tjvHdOvnCM3KSXXM/8TxkIGkv4lcDJ/wsechXVARkEeekf/jRstJ8J33mgmpG8J8m2fsqJ+D2weLhEsc1PFbNq9jA0pibImJwogRQzPfu3tQoQQYGQO5AktKodz4Na2cGgulkxNZvVkvS/09Y50Ey+TE3zKlGFZXPoh76+3JDIytiAf82/SufbfNf+2BNQ1A==
+ b=ro9NEdLcBWCnI16OJ/luiOYzq/CwzmjZn/n5IgLclCjkOdhd2ENpGNqdBL/AxjMINKszoBSeYyWgzg5U4XBXqL+NigWK3nWE27B1jEipyWAAdU41EqRhcFnKygWfiBLPggObd38QC4k59LrE/GTBiYeFkb23F2HncbEGX8aB2iBXpwFJnrWokOuRH5CcakIcM/f7HXl33UKixer4EgGK632bbCyaATSgoKIRjCi/9ffvYXK1WQfyWiGzCRDAfFaPlgn7CxZCyYGIPGR8s1wd80Szv8EdgM5Em+ZU8WNp+u6nBjgcGsS8hbaTEomgSbPh7hV6EzKEsKfBBLMKJ0+B0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q23B/bheZJWtXRLtVMYTBaN3MDcH2jtNdnPQmKwqLHU=;
- b=DTrkxGDnC+ERBqvfOmPjW5RW1yOusb8irX92uXLSp/0guNGD5z0Xb1HtN0nT/AHuI93CLl8T5wDxqYuQ/G+b6EEgJ5yD1E69R/xLYf+P36CzVk0QtDYc8Y+yeys7Iix88jzR1FZ5YmYLHtWDH8L9UskwSHvHOuFKkA26282LwlYbVArlwoYj9BgzXuyHhzxuUsBw4/eYciEaSRCl921reZZuq/2GXujvCiXwsRZvbM5rdap++f2AG9JcyHfJR1lK3BgXPh5hF+ZQlbWBKEMZh7tGBbCfwlYwBooiiX2hhdkqVtV5AXRsHCEKUbPrr50JpRvh77F2UwsXVErd5tOaiQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ bh=4HAesXU10CaKm+f8Sbl1hA/DhDYaB5XlC2RR/lYMMhk=;
+ b=vGIW3u/qtCEQAuXVE+1qq/FCyaQ6KhE7eDj+7ncJsmzBp5rVBAJhfsy4TLBgyjulC6Srh3Z6SMAHp89C0nTATy+3/u2zlZQ2aSo5WYX+Daom23rRceFMdTfvdwvS1jLwApbQAUoyOb8cRjbrCtkl9ihxqy4d326uF8SxPr0MQDmJzqQJIqfR8BtVKiQxo70ZZBAZdLmqcMxDj6+/ROPlL3LgtJME5t35tyKjOEWukUP/plnGu9IZ3zwovgfuxqkGQYW5gOUSg8SBtluuTtSu/Y9/fsi6rLu7g3ZCpjsmn9EYBXYSnZA1gshHXnWgF9BsIpZqoM/AF3AXdHS9jnvYQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=cirrus.com smtp.mailfrom=cirrus.com;
+ dmarc=fail (p=reject sp=reject pct=100) action=oreject
+ header.from=opensource.cirrus.com; dkim=none (message not signed); arc=none
+ (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q23B/bheZJWtXRLtVMYTBaN3MDcH2jtNdnPQmKwqLHU=;
- b=IxojrhgwQU+m8B9di03cH+btfHghpIzNd/coG3biQxA3QBS2NQZ6GtY1k3Jg7HTmL0CvbJ0KXyk6lko2EjYscoK8r3KPGnHIb5ndi8gCYG7lLsyN8ms+1irPIZ6sTrn6/CtOG21XFZH71WqFZ8xtEceZ//4G9frBBQIVF8xKtfI=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18) by AM8PR08MB6595.eurprd08.prod.outlook.com
- (2603:10a6:20b:365::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.22; Thu, 10 Apr
- 2025 13:21:01 +0000
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74]) by VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74%5]) with mapi id 15.20.8606.033; Thu, 10 Apr 2025
- 13:21:01 +0000
-Message-ID: <a661ba42-9393-4070-9e52-dd19df2d6880@arm.com>
-Date: Thu, 10 Apr 2025 14:20:59 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/9] drm/panthor: Make getting GPU model name simple
- and extensible
-Content-Language: en-GB
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-References: <20250320111741.1937892-1-karunika.choo@arm.com>
- <20250320111741.1937892-6-karunika.choo@arm.com>
- <20250321090254.667a86cb@collabora.com>
-In-Reply-To: <20250321090254.667a86cb@collabora.com>
-From: Karunika Choo <karunika.choo@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P123CA0553.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:33b::7) To VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18)
+ bh=4HAesXU10CaKm+f8Sbl1hA/DhDYaB5XlC2RR/lYMMhk=;
+ b=muP45aCa2jYtU+wKaNsIePimL1uWqQ9LpUeEdt0LoseBtExLbRqOkRmIF+h+nF2kXqamM22ntcTHYJICUfUNHq98l6ADI7pjFENzOkbIVdF1wO4cvLhw0manlroXnaB+aOTSqgqa1MYFdUEmLQNUUJU5B/CXCil3oKX/XpHeIfg=
+Received: from CH5P223CA0012.NAMP223.PROD.OUTLOOK.COM (2603:10b6:610:1f3::26)
+ by CH3PR19MB8212.namprd19.prod.outlook.com (2603:10b6:610:198::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.23; Thu, 10 Apr
+ 2025 13:21:30 +0000
+Received: from CH1PEPF0000A34C.namprd04.prod.outlook.com
+ (2603:10b6:610:1f3:cafe::14) by CH5P223CA0012.outlook.office365.com
+ (2603:10b6:610:1f3::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.24 via Frontend Transport; Thu,
+ 10 Apr 2025 13:21:30 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of cirrus.com does not
+ designate 84.19.233.75 as permitted sender) receiver=protection.outlook.com;
+ client-ip=84.19.233.75; helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ CH1PEPF0000A34C.mail.protection.outlook.com (10.167.244.6) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.13
+ via Frontend Transport; Thu, 10 Apr 2025 13:21:30 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 20109406540;
+	Thu, 10 Apr 2025 13:21:29 +0000 (UTC)
+Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.23])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 11DD3820259;
+	Thu, 10 Apr 2025 13:21:29 +0000 (UTC)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: broonie@kernel.org
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com, kunit-dev@googlegroups.com,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH] firmware: cs_dsp: test_bin_error: Fix uninitialized data used as fw version
+Date: Thu, 10 Apr 2025 14:21:29 +0100
+Message-Id: <20250410132129.1312541-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	VI0PR08MB11200:EE_|AM8PR08MB6595:EE_|DU2PEPF00028D0E:EE_|AS8PR08MB8248:EE_
-X-MS-Office365-Filtering-Correlation-Id: 08aed526-817c-4b5c-bec4-08dd7832907b
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A34C:EE_|CH3PR19MB8212:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 4c3eab07-4545-453d-67fe-08dd78329b3f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?bXlrTzJLSGF2YXhnajMzWWs3MjNBa3VORHMyYkxLQmFkc1NaMC93cWJoUXZI?=
- =?utf-8?B?eGJDR1pHUWlkYk5zNXEyaGFSc1FJRThiT25sNzE5REJNSFh2OUVITlZVY1Zr?=
- =?utf-8?B?b3lLOFNYdVAvVzBSYmxsa0htRzlBZmxVcCtxMkhJWXVzRGpjZFZlb0p2YkZQ?=
- =?utf-8?B?N0VGQ2dQMnltQ09xTWlTc2pkQVZiUTZZeldpQXV5dFNZWjVjODRDRlNlUStT?=
- =?utf-8?B?anBadnVXeERoTzlyWHJxNlNMNURQSm5ROXRYWFBxWCtsdW1sUVVsVWtwMlN0?=
- =?utf-8?B?aEhtamxxaFpVV3ZmUnh1K09pcnYrRlo4SWMrRFRyODRJVnRxdldmZHR0WVZZ?=
- =?utf-8?B?ZHp3SG1yRCt4Q3BtOXBJTVlKaVB0dUhDbS8rZGx0Q0NLQ0hPbW5DM01SSDF3?=
- =?utf-8?B?dmFlRUF0MzZQL1B0N2lrRnZsV1NySysyWWVzcHlUenplVTVWWXNIOWF2Wmla?=
- =?utf-8?B?cXMyVlhxaFJnNjdweTZWMWVHM1hiSzVKa3ZHSHZSdjdoSkhiV0Vwbk5QeC92?=
- =?utf-8?B?d2JpaFVjUFBZK1FiRFNiL3VUY0ZEcy8vNXRnVUJRZE1sa3RsMnNPa0o2SW1N?=
- =?utf-8?B?NUZjOHZkdHNHWWJYc3R5blZFeFdPaVJQNXV2M1ZGcWpjNDdhZkNlanIwaUR5?=
- =?utf-8?B?OUc5dnNaNlAvcFJEZjN0YmkySHl6RTFNUE1yMVNXdmRlZ3ZwUGZQekprTVJ0?=
- =?utf-8?B?dnBMYk1OUlNYMU5aK210STJreUw5bjNxUG5ob3NCWFVrZGdJWXRoM0dpaEl6?=
- =?utf-8?B?VWxmREFxcThNT3oxSHdsQy9HWUVJRGdUVkQ5U3ZzeGpDNktja1dBVFk4alQz?=
- =?utf-8?B?YVN1T2pNY3RXVTZNTzZWY0FEZ2ZhU2tNbWFJQ0xhUzg1TUNzdU1Ucmhnd1Ax?=
- =?utf-8?B?VTZscFh1M2ZiOVptL3JOZ3JkZ1NTYmhyVXJQNmdYSUs1Q1I3elNudllWd3dP?=
- =?utf-8?B?Z3NHWTNWaUY3S2s3bVNWQVUvTEszU0lRZGNkWDNDODlCVXk0cEZ1OHhLakR6?=
- =?utf-8?B?WTNYbHVqSVJyQUUyOVlZVlNQREwwTlUrSGRLazllM0tLWnhvSENBZVJzc0Ey?=
- =?utf-8?B?REFpZ2FiTTdTaERLUWI2MmdxVWZUcmpNa1NBQ2dOanNPenNzNkg3VkJsQTM5?=
- =?utf-8?B?N28rWHkyME5JREZXS3FHNFlJMHBqNEgyMUM5ZCtWZEd3VHVFMGVab1FwK3RF?=
- =?utf-8?B?NTlBSmJsbDV2N1J5NXNjbjFyVEs2NVIrZVBXdWhtTUwxclRpNnNuREpPYVJN?=
- =?utf-8?B?NGc3WnVYMkZqWDVLZnB0ZXl1R1NXbWp6ZHUxSUhNb0dsUWpDTDd5VTg1MkpD?=
- =?utf-8?B?RVUwZS9memZzZis0MkNhdzMxbU1xR3M0OEkzNUV3elhKeEJyMUN0TjhvSENq?=
- =?utf-8?B?Vk8zeTRDQWxWaDM1Y2hHSlVBRkNQc1FaR3drVENmc0xua2ZBOG00bmdiTkR2?=
- =?utf-8?B?QThWMFVBRVhsZHdoRS8yeHdsNlJsNTAxb1ozOW5zVUNqYmlzSDAwdVRQeGZJ?=
- =?utf-8?B?UXd0ZW9JRTREd1dTTWF1QzlJc3FiYmpCSm85WnVYQmVZQjcwUHA4aloyVmxB?=
- =?utf-8?B?MmlZOWxuSU9ybE8vS0U3VkF5WlpnK2M4dnBSbGFSWkFkTnNGa2U3N1BGbDE2?=
- =?utf-8?B?RUNubEY4UWx2cUdNS1BkWEdXMktwVFZQTmRLMkc0V3gwRGNROXIrTEQ1WTVX?=
- =?utf-8?B?bk4xT0liNTJNb0JaYmUyMWs2RTVoZjgwOGlJNlFCMktiQk5qaVJVcHJFY0U1?=
- =?utf-8?B?NHVJVkpXU0ptaWxJRmx5dkl1cGVITkxLNHdrNjhETXJVWi9aSDN3eUZMVkk1?=
- =?utf-8?B?djVFQk5oWE1tSHRHb2QxSDQ1bjZyOXU4anZCS0pHdEw3eno1d3ppOXZWWTdP?=
- =?utf-8?B?NHgrL0UxTDBPZGxqakdLcUk1WE1SQ0g3T0k5aTY1U3dVRVFDYVR1U1dJMWgw?=
- =?utf-8?Q?eEnEWnpat18=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI0PR08MB11200.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR08MB6595
-Original-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-SkipListedInternetSender:
- ip=[2603:10a6:800:257::18];domain=VI0PR08MB11200.eurprd08.prod.outlook.com
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DU2PEPF00028D0E.eurprd03.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	5bdbb536-db4c-4a3c-19a8-08dd783289cd
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|35042699022|82310400026|376014|1800799024|14060799003;
+	BCL:0;ARA:13230040|82310400026|36860700013|61400799027|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QVgvNXpKb29kSzQ0NGhSL1BuSGRzcXJTR0dJcjlzNHZVVzFpTUN0U2hLVFNR?=
- =?utf-8?B?M211MTFEVGQ0VkxjN0RMbTJ0L2FCWVBKdnpHTkQ2NWd4bUNIVW8vbzl0Q3gy?=
- =?utf-8?B?YXQ4azFvM0w5WFEyb3lIVTZtbGhsMEhRbndTVjhHMzd0RTY2ditQQWhTenBF?=
- =?utf-8?B?bDQxOUROY0FKM0hCbmd3d1E5RjZYVXdNL3lpTlVnQm9LZEhVV3diY0FqWGNL?=
- =?utf-8?B?Z2hmUTR5aWFacHpIQ1BrZkhHSG5uSGkyNnkwcFJ6dEtWKzV6Z2Y1d0Y5dGJM?=
- =?utf-8?B?MEZ2bnFibFJpSnJCd1J2QytJMzFoUHd2VkMvTWZJNlhOVW41UHYxVUN1V2Uw?=
- =?utf-8?B?aC9yZ2k4cGtyZXdna1JoMmQzN2pLRVVkbWpxNUlEYTd5QVB0VEN2dWd2S0R3?=
- =?utf-8?B?VFVaMFRtS2FKTW1rSlYzOHJFWENYT21pL0tDUjZCcTRGZXREU0RhV3h3M2Vj?=
- =?utf-8?B?M2h6Q1V3dkM3a08wUnVpTTNmd1dNV3N2UVJsdStRaTZwcTUyMGNSMUFNb2Vm?=
- =?utf-8?B?czY4UVBGRE0vdkFKZmUrNkdBWEtvWTZSMUx1NmpsQXIweGtmM3VEOTZyWU9s?=
- =?utf-8?B?RURPYXlRcjJTR1BsOXovRzNtenEvTjBWVGFHWUV5bmZwamdDdHJoL3pLcC9X?=
- =?utf-8?B?Um9Pb3BtY1UvL1M0Y0NwSHhSOE5kTUhkOC8vZ1JhTi9PdzJjdmVyOWM2UWRC?=
- =?utf-8?B?TTVpQ3Uyakw5ZkxMT240YVNOZTUrMTltZDlzaklHb1lHUU9VRGRJR1JaTmor?=
- =?utf-8?B?YTZrWTNJVnR5TStrQk5oV2VIeC83cVVNQ0wwZnllNVh4dnd2RXpKbDAvQ214?=
- =?utf-8?B?TVRRUnVqMy80ellLd1B1bStxRXBXVW1YZ3lMWnlqQ0RHYkVBbml5S05pZmVy?=
- =?utf-8?B?V0ZLSGpmcXNqbXNDbWdoQVhtMnVlM1c5MzZaSS9XYko3dkQzWlozUEJHK0Fn?=
- =?utf-8?B?Ymk4T3RXTkxLclM4bmh5WStXQ2R2WWFhQ0Y3K3BFR1poRUg3OXRpelRkQ0FP?=
- =?utf-8?B?a01PbTQ5S2NFWEtDYTZhZGM5bjhrSjVJL3hXS1YrcmNQdUUzWEtGV3N6cDhu?=
- =?utf-8?B?RUsySnBPNzBSdjBUM1RuM2lGNWdZZWhqc2k3N3IrTis1SHE2RGJ6SWNBMThM?=
- =?utf-8?B?eWNtb2JBVWsvSCt6amZXMit5UFNaQ1pSaHFVYU5Mcnp5TmRpR2NSTlBVWndF?=
- =?utf-8?B?am9HVTkwNEU2aFJQckdqOGpIeXFRWlZKQk9NdTc4V3RBWGlZNnVHV2EwNHhy?=
- =?utf-8?B?dlp5N2dnb0dac3daZCtmRnJ6cG1uaTVXeTFvVlM2c2RnUWZOSVcvTFY3S0Qz?=
- =?utf-8?B?VkFhZWVLKzdLRFkxNHdMYnFEZlk0RFpvWmt0SXZUR0ZHelFpeUF6eHhhNmlL?=
- =?utf-8?B?aS9QS1VIVzhUWEI5QXRWUDBPZUlhTlk4aFMwd29FQm4xQloybkV1ZExTY2tX?=
- =?utf-8?B?Vk5iemxRVUhsYnBQUkdzcVVHaE1RNEJZdEI2VG8vc2cwT1RBVUVIRUdZQzd0?=
- =?utf-8?B?VXV1RU5Mc3NYVGEzN2J3elhSL0RYZ0RHbE1yMXc4ZVMvYkRQejRROXBia05w?=
- =?utf-8?B?dXRqamJJelRXUHRFQitYRkx1UnpFbFlqMFM5M3UrZTZVcm5PeDBGdTB1OGpK?=
- =?utf-8?B?WEx5OG5LMVFGeWFNaEppd3hJanZYSGozdEVmS01mSDVvaG5obE55UFpucEIy?=
- =?utf-8?B?UWtGNXF1ZDgzWm40UndmV3Nvald5Z3hSVXhuamtCNHRrbkMyeldnbmlWbkZv?=
- =?utf-8?B?MmhSMjlXMzhYM0N5ME1LVExLdk52cGx2bXV3bXJTU3hvK3FFdSswNnNGdFk5?=
- =?utf-8?B?SGFKL1NFU0twZWNzVXgzRTBHeHpZME5Pb0RYbkZSb3FuMUJTNmp1TFJURjF4?=
- =?utf-8?B?bDNvenFKVkEyMGVJRDFOYklDT1hscmVlZzdxRVg3aXNUOVpCcXhESnhZc1Y4?=
- =?utf-8?B?MFNSMEgyWUVqVWxMNnZrTWJ2Qjl0SGZjcXJhRG5jdDN4NVdTa1ZkWmd4RVJ5?=
- =?utf-8?Q?aEC//3KVvRsdpTa1IBBZDPmvk32/Co=3D?=
+	=?us-ascii?Q?vZkEJhMrlRElgzdczaMmvRa+m5Pc2smImmOj2NYyMmrJNgJh3ZeSBJ2EAdza?=
+ =?us-ascii?Q?NEJ3zSS3czIDLZ+RxoG6vzfu2aTGIdh2zT6zPvgRNl/MXZHrPE+cXvI0prG1?=
+ =?us-ascii?Q?zwTT2FStmLAmRPpu8AWsuwMll+Ygm6+BvlSdh1io1yHEx03KWD/o4ZcVvoqV?=
+ =?us-ascii?Q?CHDcxwJT2DUJmkxg86uvE86Sv/POJqdyw1nJ+5gHES0C4SsOB3l+gF/mzYrn?=
+ =?us-ascii?Q?6Oo/mNy2AfefRy/KaKK7TWQp2Ry9JdroqoNRGeFpb6ees6lFRJIMyAyWI6BX?=
+ =?us-ascii?Q?2czOsJxbA8trxy08sINAzlY6SJTZHHTm7r2Ps2n3OwsQbERsMJYYIbfUU9Pa?=
+ =?us-ascii?Q?9FSXOqGd371teJYS/A4RvXhDf29oramdRl7KSJoxflneUi9vaFS6YKFEUS5O?=
+ =?us-ascii?Q?VE1Ii1KlWc05/J3iN3cgtv5MorySn5GZ1dXFv7Bx0K9eHLQ8dF31Ehowri99?=
+ =?us-ascii?Q?edyH/x/ZIUfQSNe1/Tqi6dH0rJ1Hx20pVY8MUHQoVWS0/RpKo40maFHr+s20?=
+ =?us-ascii?Q?I/+BXUzW7NJuytRAc4R2C+ZZUAi5szL8E3F6ns5jqDuUG3x+L0rkJvTA7pEZ?=
+ =?us-ascii?Q?SWjbvvDJow6LuobLAGYNZYDilyGDs0VM9rm9TCY0blvNAnuPNxD+0NjSw1ny?=
+ =?us-ascii?Q?xxmxY0mlC/G7QIm5JIs5/lPUGXdNewdZZYFsUAM/HQkedzNqr2V5vziiOvLp?=
+ =?us-ascii?Q?PYkQ0tq+Lc8EcEwdd46J4e4oaRsO3qimORjetG7tNPG1ZLPie6z7WNht1NiQ?=
+ =?us-ascii?Q?jYiuZURyQfyJAaLRySMVDCM8neK421xNym6VfLI5Wj+gIhCD6UQDKUi4iznM?=
+ =?us-ascii?Q?3r+CFQwyT7UjbmvFPsMhp+5bie9wzbXQBtf514QcacuMSSp6aVMBqiB2DoA+?=
+ =?us-ascii?Q?Q2p7EUkKkEmnT722a2l2Yrm+y4OxiaVRTsXVozreTNkBkD0Uq9CB7DGxsLu6?=
+ =?us-ascii?Q?TlU6MyLLvmI+L9FCs28t56IpfJqi5g94fR1zfBtpBRa2OLVu6QZAIat3TfpM?=
+ =?us-ascii?Q?Xv5dM4bqaPRm+6It5fBJ4UedPwSKzvAzwgscGmv8hOi0wE3/uE39sbpgc05x?=
+ =?us-ascii?Q?xGNJitv5wVCetp9Qxs4v7NE6JUz7vUFJhXXxHN9eYPPSRKzIBU6p0j9N5j08?=
+ =?us-ascii?Q?TQScUPDp2WSmy2mCdXpuSJRFp8FcUbdzdWx3XhlzKlLSOqLhtEJUeXqFWDRd?=
+ =?us-ascii?Q?pRpV0nT3IVINPQZe+2JtyUfY6jyAKBzKdYpEZKL968K7SGBu1jkJ/Kuq+6cg?=
+ =?us-ascii?Q?iCwThhzMupOr6zC5Mn/8rl6RkMlSeEeD6qXbo+dA3+b18G+03dbxcLAzxfwt?=
+ =?us-ascii?Q?BBlgT/75BXE7VQoWW13ZsVClLgkXnxm56oyRuJJMCJ5NQzLoPjNLcXctQxYl?=
+ =?us-ascii?Q?jBkOhLkzuYCTSS3J2ChCvyA3tuiQxpL/CgGrAOgCrT04pCeyaUGCNQM3WrsK?=
+ =?us-ascii?Q?yLgy+cVVPLDlctEYZkoWwi89Um1GkHIbQlYg+ArMa5rNzbdKAF899g=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:64aa7808-outbound-1.mta.getcheckrecipient.com;CAT:NONE;SFS:(13230040)(36860700013)(35042699022)(82310400026)(376014)(1800799024)(14060799003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 13:21:12.2955
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(61400799027)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 13:21:30.2456
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08aed526-817c-4b5c-bec4-08dd7832907b
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c3eab07-4545-453d-67fe-08dd78329b3f
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DU2PEPF00028D0E.eurprd03.prod.outlook.com
+	CH1PEPF0000A34C.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB8248
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR19MB8212
+X-Proofpoint-ORIG-GUID: HIEUtyBORDqGN_Tfx6fxHC5Z9gTa-KwT
+X-Proofpoint-GUID: HIEUtyBORDqGN_Tfx6fxHC5Z9gTa-KwT
+X-Authority-Analysis: v=2.4 cv=B6W50PtM c=1 sm=1 tr=0 ts=67f7c5e2 cx=c_pps a=F7QtyTBSWJEVkVFduP+sHw==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=XR8D0OoHHMoA:10 a=s63m1ICgrNkA:10
+ a=RWc_ulEos4gA:10 a=w1d2syhTAAAA:8 a=6ixNexTgZF7qXEE2jtgA:9 a=BGLuxUZjE2igh1l4FkT-:22
+X-Proofpoint-Spam-Reason: safe
 
-On 21/03/2025 08:02, Boris Brezillon wrote:
-> On Thu, 20 Mar 2025 11:17:37 +0000
-> Karunika Choo <karunika.choo@arm.com> wrote:
-> 
->> This patch replaces the previous panthor_model structure with a simple
->> switch case based on the product_id, which is in the format of:
->>         ((arch_major << 24) | product_major)
->>
->> This not only simplifies the comparison, but also allows extending the
->> function to accommodate naming differences based on GPU features.
->>
->> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
->> ---
->>  drivers/gpu/drm/panthor/panthor_hw.c   | 63 +++++++-------------------
->>  drivers/gpu/drm/panthor/panthor_regs.h |  1 +
->>  2 files changed, 18 insertions(+), 46 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
->> index 4cc4b0d5382c..12183c04cd21 100644
->> --- a/drivers/gpu/drm/panthor/panthor_hw.c
->> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
->> @@ -5,40 +5,6 @@
->>  #include "panthor_hw.h"
->>  #include "panthor_regs.h"
->>  
->> -/**
->> - * struct panthor_model - GPU model description
->> - */
->> -struct panthor_model {
->> -	/** @name: Model name. */
->> -	const char *name;
->> -
->> -	/** @arch_major: Major version number of architecture. */
->> -	u8 arch_major;
->> -
->> -	/** @product_major: Major version number of product. */
->> -	u8 product_major;
->> -};
->> -
->> -/**
->> - * GPU_MODEL() - Define a GPU model. A GPU product can be uniquely identified
->> - * by a combination of the major architecture version and the major product
->> - * version.
->> - * @_name: Name for the GPU model.
->> - * @_arch_major: Architecture major.
->> - * @_product_major: Product major.
->> - */
->> -#define GPU_MODEL(_name, _arch_major, _product_major) \
->> -{\
->> -	.name = __stringify(_name),				\
->> -	.arch_major = _arch_major,				\
->> -	.product_major = _product_major,			\
->> -}
->> -
->> -static const struct panthor_model gpu_models[] = {
->> -	GPU_MODEL(g610, 10, 7),
->> -	{},
->> -};
->> -
->>  static void arch_10_8_gpu_info_init(struct panthor_device *ptdev)
->>  {
->>  	unsigned int i;
->> @@ -66,29 +32,34 @@ static void arch_10_8_gpu_info_init(struct panthor_device *ptdev)
->>  	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT_LO);
->>  }
->>  
->> +static char *get_gpu_model_name(struct panthor_device *ptdev)
->> +{
->> +	const u32 gpu_id = ptdev->gpu_info.gpu_id;
->> +	const u32 product_id = GPU_PROD_ID_MAKE(GPU_ARCH_MAJOR(gpu_id),
->> +						GPU_PROD_MAJOR(gpu_id));
->> +
->> +	switch (product_id) {
->> +	case GPU_PROD_ID_MAKE(10, 7):
->> +		return "Mali-G610";
->> +	}
-> 
-> I a big fan of these ever growing switch statements with nested
-> conditionals. Could we instead add an optional ::get_variant() callback
-> in panthor_model and have the following formatting:
-> 
-> 	"Mali-%s%s%s", model->name,
-> 		       model->get_variant ? "-" : "",
-> 		       model->get_variant ? model->get_variant() : ""
->
+Call cs_dsp_mock_xm_header_get_fw_version() to get the firmware version
+from the dummy XM header data in cs_dsp_bin_err_test_common_init().
 
-While that’s certainly an option, I wonder if it’s better to avoid
-additional string formatting when it’s not strictly necessary. The
-switch cases provide a straightforward GPU name without needing to
-handle conditional "-" separators or similar.
+Make the same change to cs_dsp_bin_test_common_init() and remove the
+cs_dsp_mock_xm_header_get_fw_version_from_regmap() function.
 
-Also, with the current approach, if a GPU is misconfigured with an
-incorrect product_major for its core count, the switch’s fallthrough
-helps ensure the correct name is still returned. A model->get_variant()
-callback wouldn’t give us that same flexibility to adjust the name based
-on such mismatches.
+The code in cs_dsp_test_bin.c was correctly calling
+cs_dsp_mock_xm_header_get_fw_version_from_regmap() to fetch the fw version
+from a dummy header it wrote to XM registers. However in
+cs_dsp_test_bin_error.c the test doesn't stuff a dummy header into XM, it
+populates it the normal way using a wmfw file. It should have called
+cs_dsp_mock_xm_header_get_fw_version() to get the data from its blob
+buffer, but was calling cs_dsp_mock_xm_header_get_fw_version_from_regmap().
+As nothing had been written to the registers this returned the value of
+uninitialized data.
 
-Kind regards,
-Karunika Choo
+The only other use of cs_dsp_mock_xm_header_get_fw_version_from_regmap()
+was cs_dsp_test_bin.c, but it doesn't need to use it. It already has a
+blob buffer containing the dummy XM header so it can use
+cs_dsp_mock_xm_header_get_fw_version() to read from that.
 
->> +
->> +	return "(Unknown Mali GPU)";
->> +}
->> +
->>  static void panthor_gpu_init_info(struct panthor_device *ptdev)
->>  {
->> -	const struct panthor_model *model;
->> -	u32 arch_major, product_major;
->> +	const char *gpu_model_name = get_gpu_model_name(ptdev);
->>  	u32 major, minor, status;
->>  
->>  	ptdev->hw->ops.gpu_info_init(ptdev);
->>  
->> -	arch_major = GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id);
->> -	product_major = GPU_PROD_MAJOR(ptdev->gpu_info.gpu_id);
->>  	major = GPU_VER_MAJOR(ptdev->gpu_info.gpu_id);
->>  	minor = GPU_VER_MINOR(ptdev->gpu_info.gpu_id);
->>  	status = GPU_VER_STATUS(ptdev->gpu_info.gpu_id);
->>  
->> -	for (model = gpu_models; model->name; model++) {
->> -		if (model->arch_major == arch_major &&
->> -		    model->product_major == product_major)
->> -			break;
->> -	}
->> -
->>  	drm_info(&ptdev->base,
->> -		 "mali-%s id 0x%x major 0x%x minor 0x%x status 0x%x",
->> -		 model->name ?: "unknown", ptdev->gpu_info.gpu_id >> 16,
->> +		 "%s id 0x%x major 0x%x minor 0x%x status 0x%x",
->> +		 gpu_model_name, ptdev->gpu_info.gpu_id >> 16,
->>  		 major, minor, status);
->>  
->>  	drm_info(&ptdev->base,
->> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
->> index ba452c1dd644..d9e0769d6f1a 100644
->> --- a/drivers/gpu/drm/panthor/panthor_regs.h
->> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
->> @@ -20,6 +20,7 @@
->>  #define   GPU_VER_STATUS(x)				((x) & GENMASK(3, 0))
->>  
->>  #define GPU_ARCH_ID_MAKE(major, minor, rev)		(((major) << 16) | ((minor) << 8) | (rev))
->> +#define GPU_PROD_ID_MAKE(arch_major, prod_major)	(((arch_major) << 24) | (prod_major))
->>  
->>  #define GPU_L2_FEATURES					0x4
->>  #define  GPU_L2_FEATURES_LINE_SIZE(x)			(1 << ((x) & GENMASK(7, 0)))
-> 
+Fixes: cd8c058499b6 ("firmware: cs_dsp: Add KUnit testing of bin error cases")
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+---
+ .../cirrus/test/cs_dsp_mock_mem_maps.c        | 30 -------------------
+ .../firmware/cirrus/test/cs_dsp_test_bin.c    |  2 +-
+ .../cirrus/test/cs_dsp_test_bin_error.c       |  2 +-
+ .../linux/firmware/cirrus/cs_dsp_test_utils.h |  1 -
+ 4 files changed, 2 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/firmware/cirrus/test/cs_dsp_mock_mem_maps.c b/drivers/firmware/cirrus/test/cs_dsp_mock_mem_maps.c
+index 161272e47bda..73412bcef50c 100644
+--- a/drivers/firmware/cirrus/test/cs_dsp_mock_mem_maps.c
++++ b/drivers/firmware/cirrus/test/cs_dsp_mock_mem_maps.c
+@@ -461,36 +461,6 @@ unsigned int cs_dsp_mock_xm_header_get_alg_base_in_words(struct cs_dsp_test *pri
+ }
+ EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_xm_header_get_alg_base_in_words, "FW_CS_DSP_KUNIT_TEST_UTILS");
+ 
+-/**
+- * cs_dsp_mock_xm_header_get_fw_version_from_regmap() - Firmware version.
+- *
+- * @priv:	Pointer to struct cs_dsp_test.
+- *
+- * Return: Firmware version word value.
+- */
+-unsigned int cs_dsp_mock_xm_header_get_fw_version_from_regmap(struct cs_dsp_test *priv)
+-{
+-	unsigned int xm = cs_dsp_mock_base_addr_for_mem(priv, WMFW_ADSP2_XM);
+-	union {
+-		struct wmfw_id_hdr adsp2;
+-		struct wmfw_v3_id_hdr halo;
+-	} hdr;
+-
+-	switch (priv->dsp->type) {
+-	case WMFW_ADSP2:
+-		regmap_raw_read(priv->dsp->regmap, xm, &hdr.adsp2, sizeof(hdr.adsp2));
+-		return be32_to_cpu(hdr.adsp2.ver);
+-	case WMFW_HALO:
+-		regmap_raw_read(priv->dsp->regmap, xm, &hdr.halo, sizeof(hdr.halo));
+-		return be32_to_cpu(hdr.halo.ver);
+-	default:
+-		KUNIT_FAIL(priv->test, NULL);
+-		return 0;
+-	}
+-}
+-EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_xm_header_get_fw_version_from_regmap,
+-		     "FW_CS_DSP_KUNIT_TEST_UTILS");
+-
+ /**
+  * cs_dsp_mock_xm_header_get_fw_version() - Firmware version.
+  *
+diff --git a/drivers/firmware/cirrus/test/cs_dsp_test_bin.c b/drivers/firmware/cirrus/test/cs_dsp_test_bin.c
+index 1e161bbc5b4a..163b7faecff4 100644
+--- a/drivers/firmware/cirrus/test/cs_dsp_test_bin.c
++++ b/drivers/firmware/cirrus/test/cs_dsp_test_bin.c
+@@ -2198,7 +2198,7 @@ static int cs_dsp_bin_test_common_init(struct kunit *test, struct cs_dsp *dsp)
+ 
+ 	priv->local->bin_builder =
+ 		cs_dsp_mock_bin_init(priv, 1,
+-				     cs_dsp_mock_xm_header_get_fw_version_from_regmap(priv));
++				     cs_dsp_mock_xm_header_get_fw_version(xm_hdr));
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv->local->bin_builder);
+ 
+ 	/* We must provide a dummy wmfw to load */
+diff --git a/drivers/firmware/cirrus/test/cs_dsp_test_bin_error.c b/drivers/firmware/cirrus/test/cs_dsp_test_bin_error.c
+index 8748874f0552..a7ec956d2724 100644
+--- a/drivers/firmware/cirrus/test/cs_dsp_test_bin_error.c
++++ b/drivers/firmware/cirrus/test/cs_dsp_test_bin_error.c
+@@ -451,7 +451,7 @@ static int cs_dsp_bin_err_test_common_init(struct kunit *test, struct cs_dsp *ds
+ 
+ 	local->bin_builder =
+ 		cs_dsp_mock_bin_init(priv, 1,
+-				     cs_dsp_mock_xm_header_get_fw_version_from_regmap(priv));
++				     cs_dsp_mock_xm_header_get_fw_version(local->xm_header));
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, local->bin_builder);
+ 
+ 	/* Init cs_dsp */
+diff --git a/include/linux/firmware/cirrus/cs_dsp_test_utils.h b/include/linux/firmware/cirrus/cs_dsp_test_utils.h
+index 4f87a908ab4f..ecd821ed8064 100644
+--- a/include/linux/firmware/cirrus/cs_dsp_test_utils.h
++++ b/include/linux/firmware/cirrus/cs_dsp_test_utils.h
+@@ -104,7 +104,6 @@ unsigned int cs_dsp_mock_num_dsp_words_to_num_packed_regs(unsigned int num_dsp_w
+ unsigned int cs_dsp_mock_xm_header_get_alg_base_in_words(struct cs_dsp_test *priv,
+ 							 unsigned int alg_id,
+ 							 int mem_type);
+-unsigned int cs_dsp_mock_xm_header_get_fw_version_from_regmap(struct cs_dsp_test *priv);
+ unsigned int cs_dsp_mock_xm_header_get_fw_version(struct cs_dsp_mock_xm_header *header);
+ void cs_dsp_mock_xm_header_drop_from_regmap_cache(struct cs_dsp_test *priv);
+ int cs_dsp_mock_xm_header_write_to_regmap(struct cs_dsp_mock_xm_header *header);
+-- 
+2.39.5
 
 
