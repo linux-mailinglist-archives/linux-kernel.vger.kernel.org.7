@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-598579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946BDA847CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:27:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D46EA847D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2611D4C6AD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:26:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 980964E218C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6673413AC1;
-	Thu, 10 Apr 2025 15:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEB328C5BE;
+	Thu, 10 Apr 2025 15:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=einfochips.com header.i=@einfochips.com header.b="cd1iDQ8d"
+	dkim=pass (2048-bit key) header.d=einfochips.com header.i=@einfochips.com header.b="ZQZ0i1dB"
 Received: from naesa06.arrow.com (naesa06.arrow.com [216.150.161.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCD01E9B0C;
-	Thu, 10 Apr 2025 15:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3661EB5D5;
+	Thu, 10 Apr 2025 15:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.150.161.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744298733; cv=none; b=Dw3kfonpMTa9xsEvBgPZt1qhvyAAJkzBcULLidu/FN9ggEsuuERYqrhudKfrXZDj9tFJrD4KAJEwE4b4LsZ6EkNlnYWmDorYk3Q4kva4BCYnedboBeB27yvwsJ+gxaHZopRzDEOR1ECxomGweoopNRA3V+LlKOZK/MG5GDFZk50=
+	t=1744298735; cv=none; b=mqv3zGUib1oCfdIjyi6NlX77pNMYaLOeudY7XL3N6BqIKt+wSq+/m7tt4cMRdZh8DeANEFaRJd+19pG6OQ9AXURp96yCnl0dYxThduF3uAJa6gE1SsOGgCA/1H2iaYcNvLxB7lFjPkQXxEpcr8ZvTRBhh1mdJjlpGdhlHLFpnG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744298733; c=relaxed/simple;
-	bh=0ALTharMqIir38+9/Eaz/083RGv8Pd04I92YF3XKwHA=;
+	s=arc-20240116; t=1744298735; c=relaxed/simple;
+	bh=vh3m/Tm8AbCSo/BAWGCeDF2Cu7RkHyCL06L+YfzGHK0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FpTU7zS/nrCx7ZNLN3lCEZ3zQBwKWDaLQKkHykwJJFfVhIhI2mbAFsvI5gQJXPnzlE9mbF0zIIMOWWgk0hNGgDC18ZHmUIU2SRU6BpYm99nvAspnUu/2OIsFZQqXQu+95ORetra7H0vv79QK+1jYbY22dAetQNrXmu+u/CQvMjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=einfochips.com; spf=pass smtp.mailfrom=einfochips.com; dkim=pass (2048-bit key) header.d=einfochips.com header.i=@einfochips.com header.b=cd1iDQ8d; arc=none smtp.client-ip=216.150.161.27
+	 MIME-Version; b=XM+H4+mE4juOLLbpZkfOpCQ8J6hUFREqEYiLb2M5Bk4WKt0fkKpvITnBm7v8dG6hZUcLzmv8LOT3lz1McvpypQGAfNwUWiJnLKYASGtVIY9kc5+URElfi/UayoZNx3J4SZo5sXKdjj0yLf1SXQGqfDXPLl0pdNp0sDKnZ4siTs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=einfochips.com; spf=pass smtp.mailfrom=einfochips.com; dkim=pass (2048-bit key) header.d=einfochips.com header.i=@einfochips.com header.b=ZQZ0i1dB; arc=none smtp.client-ip=216.150.161.27
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=einfochips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=einfochips.com
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=einfochips.com; i=@einfochips.com; l=1119; q=dns/txt;
-  s=NAESA-Selector1; t=1744298732; x=1775834732;
+  d=einfochips.com; i=@einfochips.com; l=1142; q=dns/txt;
+  s=NAESA-Selector1; t=1744298733; x=1775834733;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=0ALTharMqIir38+9/Eaz/083RGv8Pd04I92YF3XKwHA=;
-  b=cd1iDQ8dwhSooTdv7wiVgptC3Uxn8vmGoMDflFjTOkj1p8o/eeLoQZB+
-   c18eKnZ7rSmqDGDnvwHt403Bg9VpKlbfazRudpNslANY4QpVOIImA/X2M
-   AUYo0MJB9sv1TcX0yECv9ETO8ONJ74EqiJrNiW6wvyHHhTHkvRDbsF5Ga
-   MMaTvgKZ10MD8r25HdQVpNr02lv9FJ7a+lEUVGvW3hx8PH62tyoIlyMrU
-   jszZ9F4mpIrvIMpfVwGXQyYeWImMUGMRkBUZ/961CYfVXUR4llotYdqSa
-   D24lniyIlVLgIgt7gt6ycQMC46TBEkFvuYt5rCCfhAz70InTsL0WeATPR
-   A==;
-X-CSE-ConnectionGUID: bqY+UpqaSYKacwV9paOx1w==
-X-CSE-MsgGUID: XWGk9LVnT2ylhwBZv+kGUQ==
+  bh=vh3m/Tm8AbCSo/BAWGCeDF2Cu7RkHyCL06L+YfzGHK0=;
+  b=ZQZ0i1dB2l86KMKuDUgCMtFiZ/xeF1z9JbyujJBs8NZwMrt6EzP7OZeD
+   +3sQti6UuSToBQrWw1/CWtDTDvKGSmWFTf+RGTIE3Arx9ioIY0xCNMwnq
+   HOaaoM6Uf8BEY627+E4fHc/W1I+JYlOV1eDh90Up2sKgIb0U3VFDF4pWU
+   qAK6W+l64gJnzrYC0Q99ufe+zV7kHsXLddrLqvxnpGVKu+S72eubG7K1e
+   RBDBrk/VZTcnHKidjesVJpR/pA/YzG2n/BfEpxP/gSnEi4uEgVbnGfTnX
+   AF5uu/yogdVL37+4WnbW2lh8dcd9M5zwDsYjUC+ARdl3iGRt6ltmJZeIm
+   g==;
+X-CSE-ConnectionGUID: TP1tX4y6Rc+RpLPDRsZotA==
+X-CSE-MsgGUID: z/wtv3yKQi6K+P7tCzYvWA==
 X-IronPort-AV: E=Sophos;i="6.15,202,1739862000"; 
-   d="scan'208";a="22941718"
+   d="scan'208";a="22941723"
 Received: from unknown (HELO eicahmirelay01.einfochips.com) ([10.100.49.50])
-  by naesa06out.arrow.com with ESMTP; 10 Apr 2025 09:25:30 -0600
+  by naesa06out.arrow.com with ESMTP; 10 Apr 2025 09:25:31 -0600
 Received: from AHMCPU1888.ap.corp.arrow.com ([172.25.5.100]) by eicahmirelay01.einfochips.com with Microsoft SMTPSVC(10.0.14393.4169);
 	 Thu, 10 Apr 2025 20:55:20 +0530
 From: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
@@ -78,9 +78,9 @@ Cc: Paul Walmsley <paul.walmsley@sifive.com>,
 	devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 07/10] dt-bindings: interrupt-controller: Add ESWIN EIC7700 PLIC
-Date: Thu, 10 Apr 2025 20:55:16 +0530
-Message-Id: <20250410152519.1358964-8-pinkesh.vaghela@einfochips.com>
+Subject: [PATCH v3 08/10] dt-bindings: timer: Add ESWIN EIC7700 CLINT
+Date: Thu, 10 Apr 2025 20:55:17 +0530
+Message-Id: <20250410152519.1358964-9-pinkesh.vaghela@einfochips.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250410152519.1358964-1-pinkesh.vaghela@einfochips.com>
 References: <20250410152519.1358964-1-pinkesh.vaghela@einfochips.com>
@@ -91,32 +91,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 10 Apr 2025 15:25:20.0048 (UTC) FILETIME=[C5268300:01DBAA2C]
+X-OriginalArrivalTime: 10 Apr 2025 15:25:20.0132 (UTC) FILETIME=[C5335440:01DBAA2C]
 
 From: Darshan Prajapati <darshan.prajapati@einfochips.com>
 
-Add compatible string for ESWIN EIC7700 PLIC.
+Add compatible string for ESWIN EIC7700 CLINT.
 
 Signed-off-by: Darshan Prajapati <darshan.prajapati@einfochips.com>
 Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
 Signed-off-by: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml         | 1 +
+ Documentation/devicetree/bindings/timer/sifive,clint.yaml | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-index 3dfe425909d1..ea7093fde060 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-@@ -58,6 +58,7 @@ properties:
+diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+index 653e2e0ca878..d85a1a088b35 100644
+--- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
++++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+@@ -30,6 +30,7 @@ properties:
        - items:
            - enum:
-               - canaan,k210-plic
-+              - eswin,eic7700-plic
-               - sifive,fu540-c000-plic
-               - spacemit,k1-plic
-               - starfive,jh7100-plic
+               - canaan,k210-clint       # Canaan Kendryte K210
++              - eswin,eic7700-clint     # ESWIN EIC7700
+               - sifive,fu540-c000-clint # SiFive FU540
+               - spacemit,k1-clint       # SpacemiT K1
+               - starfive,jh7100-clint   # StarFive JH7100
 -- 
 2.25.1
 
