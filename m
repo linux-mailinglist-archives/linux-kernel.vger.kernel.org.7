@@ -1,55 +1,67 @@
-Return-Path: <linux-kernel+bounces-597481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED7EBA83A51
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:08:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B47A83A4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7832C4A40E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:08:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E9203A9CC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2B218FC75;
-	Thu, 10 Apr 2025 07:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B3B204C3F;
+	Thu, 10 Apr 2025 07:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KmX93ACy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKoKpYmU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D572036FB;
-	Thu, 10 Apr 2025 07:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B88418FC75;
+	Thu, 10 Apr 2025 07:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744268828; cv=none; b=bIPQUVfuTMWzeTfCNm1SDasKndlMS8O2Lgu8lPtKeCfdPQ38ovM9Jx8kwdrCLFCuUvZr5lLahrQgXB5+BCRjPWQXSR1NYRm0TLeIeyAzqHbb/9P3z+kdGSclC9U8YzhZvK8hrXdwSQ8M3DO/eV6aESqY3LND1NL7mPpnfOIpAJE=
+	t=1744268750; cv=none; b=o4pcyboJQJfyQ2uKIUJDOe0gxHJYB9l2ZMd7MMUvkhHW89RRpNRJCDD/uWMTWLKp+cPCdYsuIWO5wEac4YTY0P0XgkijHkBIY0ISB9nUdh6E+hbvUaWiiBag0rY1SX8ZkCVoR2VIfGBAZmTlVGGyKeONgBTQd31vbMdzXwgQPGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744268828; c=relaxed/simple;
-	bh=AvAy7N8OavCk5XHGcoZ5uf+rHWu0j7jl6cO4p2OZt1U=;
+	s=arc-20240116; t=1744268750; c=relaxed/simple;
+	bh=sQMGbE8iQy4khTyZej0KqZO749zfTOSan6078zVowmc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hTkPClThuJ9UUrxns1guH1Ikp9x1eZtMGJTgcl0VR4y47O9LZIv2QQtTmvG2uP0Ze3tWcV6obxnGqXehipP43a1mLFxCgyD6+NhjZI0dYQhQ1y/eIZ4oldVABrTsedyk1wOZz3LuaGpgBM3cNUIXLy9nXYyYfekKVaTzN3AC8pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KmX93ACy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC15FC4CEDD;
-	Thu, 10 Apr 2025 07:07:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744268827;
-	bh=AvAy7N8OavCk5XHGcoZ5uf+rHWu0j7jl6cO4p2OZt1U=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=hKA5DUizFtzZfI3ioaF4l6BkJza+myXOrGPmx14AKAFDRld3sjEm3JJs+2ItfKVx71w1lmY++hpvOI37NcW9E7ZJnJTkIMXtWyuU3M3HuwO6MWuk2NERkUgmG9pUUsh4ASWvrTHzhwdvfKPDfxOhx7FYnuvan8wHruQpED1pBtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKoKpYmU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7C09C4CEDD;
+	Thu, 10 Apr 2025 07:05:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744268750;
+	bh=sQMGbE8iQy4khTyZej0KqZO749zfTOSan6078zVowmc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KmX93ACyTc5fyq4RRm+kanfF4AR/XeS5oZN4WM1g/E5NwWGAo7vUIisHAFdJ2M9Lp
-	 /YfnsPu8vtKdYCvCXrywId2Ia270A3pDU9yWaTr+/vW8nMfuShk7xAKrLCrsOdR19d
-	 O/kNnFsgeuTRG6O9kLVy1sMtkVVtfO6CvopoBmbI=
-Date: Thu, 10 Apr 2025 09:05:32 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Gon Solo <gonsolo@gmail.com>
-Cc: Ricardo Ribalda <ribalda@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-spdx@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Subject: Re: [PATCH v2] scripts/spdxcheck: Limit the scope of git.Repo
-Message-ID: <2025041001-justify-snowless-5e3d@gregkh>
-References: <20250409-spx-v2-1-168115798db2@chromium.org>
- <Z_bbHP3JeRh2hLe2@pampelmuse>
- <CANiDSCvLartP0qB1WN0AaqJ3KP+aOhw0KcPGMK4oKx=QpjV-DA@mail.gmail.com>
- <Z_djVbSqYhKM1ZAO@pampelmuse>
+	b=lKoKpYmUk0EEyAIPiq+CRa6jMgDC8jb9pMHG3Btu+TRfkTy9FPheyinJIDxxfJaqd
+	 B1MePB9vOkouDxS+cDfRJXivWExkHeIOPbi/PRkUXKWz75RGkUwRx7oCK54RHvOey2
+	 B1Hpl01k4n0CNv6DFiTyzeiyQkZ//RA2mb9bQ6HUSfor7TvEpTsTcGKojU4pvyOk4E
+	 cKoE3hCErU9FRbFgwEqbAHhNKizOjUhV/6v1szWRBpSrPnV7S8E7kF0btkPC/einIW
+	 NfQLN/jxdqC4pW7KUA4d3lDhNPHPhgY5APWYDFk33QW9fTuOA7jp+99I8aZ1Q3tZ8H
+	 VWJfnMwcp6f8w==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1u2lyy-0000000039a-3wN6;
+	Thu, 10 Apr 2025 09:05:52 +0200
+Date: Thu, 10 Apr 2025 09:05:52 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+	Vinod Koul <vkoul@kernel.org>, kishon@kernel.org, lumag@kernel.org,
+	abel.vesa@linaro.org, neil.armstrong@linaro.org,
+	quic_qianyu@quicinc.com, quic_ziyuzhan@quicinc.com,
+	quic_devipriy@quicinc.com, quic_krichai@quicinc.com,
+	manivannan.sadhasivam@linaro.org, johan+linaro@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH AUTOSEL 6.14 08/31] phy: qcom: qmp-pcie: Add X1P42100
+ Gen4x4 PHY
+Message-ID: <Z_dt0F-XzGIJWhnz@hovoldconsulting.com>
+References: <20250407181054.3177479-1-sashal@kernel.org>
+ <20250407181054.3177479-8-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,25 +70,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z_djVbSqYhKM1ZAO@pampelmuse>
+In-Reply-To: <20250407181054.3177479-8-sashal@kernel.org>
 
-On Thu, Apr 10, 2025 at 08:21:09AM +0200, Gon Solo wrote:
-> > > This is not necessary as it was Python's fault and is fixed by 3.13.3
-> > > which came out yesterday. I just checked.
-> > 
-> > It will take some time before this reaches all distributions. This
-> > patch is relatively simple.
-> > 
-> > I might be biased, but I think the benefits outweigh the cons.
+On Mon, Apr 07, 2025 at 02:10:24PM -0400, Sasha Levin wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
-> 3.13.3 is in Arch core-testing and Debian unstable, Debian stable's 3.11
-> is not affected by this bug. But I agree, it's annoying to be hit by
-> it. :/
+> [ Upstream commit 0d8db251dd15d2e284f5a6a53bc2b869f3eca711 ]
+> 
+> Add a new, common configuration for Gen4x4 V6 PHYs without an init
+> sequence.
+> 
+> The bootloader configures the hardware once and the OS retains that
+> configuration by using the NOCSR reset line (which doesn't drop
+> register state on assert) in place of the "full reset" one.
+> 
+> Use this new configuration for X1P42100's Gen4x4 PHY.
+> 
+> Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Link: https://lore.kernel.org/r/20250203-topic-x1p4_dts-v2-3-72cd4cdc767b@oss.qualcomm.com
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-As this is a bug in python, let's not work around it in our scripts but
-rather rely on the proper fix in python instead.
+Support for this SoC is not even in mainline yet so there is really no
+need to backport this one.
 
-thanks,
+Please drop from all stable queues.
 
-greg k-h
+Johan
 
