@@ -1,201 +1,199 @@
-Return-Path: <linux-kernel+bounces-598631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64957A84863
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:48:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65ABDA84854
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A5944E2E4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:47:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 802DF3AD87B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647D11EFFB2;
-	Thu, 10 Apr 2025 15:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CF71EDA35;
+	Thu, 10 Apr 2025 15:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nPOsnJ5v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zqX1/xpU"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CFB1EFFB1;
-	Thu, 10 Apr 2025 15:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A018E1EB9E8
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 15:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744299995; cv=none; b=O4Jkiyk2XvxNS3+ewhpaNa+eVH5bPVIho/d9RDB2BSCcGb6WBShsQv/mOQMp16pdIIR5FFNBVnm8YYy69H9b+GTPqLoBMXHpTJg1xWYbcxJ0IabEEPqDQeAclaChujqc+Y1PveOwSLgbUK0K37xTV9zRcqV3+uG/4+ALqJ180kw=
+	t=1744299952; cv=none; b=J2M54IQtHN3Xe4B9eFL04U5Lq8R1zFEYlCyBO21KYbyMCbhzDaAcFvDNcWUD+vrsPpSHbft4v6bIWOVtczdIapTTISDdH7BdC2bmmyT4yhyzl0BPu1NdgGgUgpRU/FFE8Zp5BHp7jPmeP0/YynLg0EJN7CM2nZx2euV4ZknUFl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744299995; c=relaxed/simple;
-	bh=gBYgW5cjW4/+rgHV13XVM72Z4tpzZbhTmwNUizykIds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HFODqAMt3gE7/3TZB1V9ufD3w8iYnBPQDQ4UOe9cjtERFH4KzByboIDd7mMzu1PGLoagNZrs4heAf1w0bxXvzD8dVDaAaEtNxWbJXwwrOeMHE2+x82QKI95ENG460+PNvCo5Zwyrwr7dlxxtddfuYvRaaC4vZVKLwBCTnnIGItg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nPOsnJ5v; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744299994; x=1775835994;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gBYgW5cjW4/+rgHV13XVM72Z4tpzZbhTmwNUizykIds=;
-  b=nPOsnJ5voT+D8P/Y9PeDPPhh2zIjTZ+uDQ4sZS5jkXcI9gkAuKYGGUTX
-   vyoPhG/c9YWi8JdUCgmJcjdNpTPXagFpeS2arcAJgEG3H/5rvOiJg2K+T
-   IFZXwSo4j/66+XLWFKYttZJZLabHykR7/pLDhQ7PnHFH+OlAlHV+AEv52
-   cioEQpS82yPlKY2GK1q5iDJR9cFt1NjkT55BPJKj983TK0KMLSexZWI+K
-   3yu9XUv4ASz9Ko4o7+fBSjls3lmtnmQBzOaXZtJezIAr56Sy5OPpNHD7K
-   KRpcLUz4BNpO99rhFHgUXSmr6lbEiqRPb0XukzArHUszgXebHAwJm7lqK
-   g==;
-X-CSE-ConnectionGUID: 2r2U4AKSRQOSFxMjLSHEqw==
-X-CSE-MsgGUID: szWQKsBiR3KbCjHwnIg5dw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="49630160"
-X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
-   d="scan'208";a="49630160"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 08:46:33 -0700
-X-CSE-ConnectionGUID: LWyx47QMR0WxgM0pCz7OXg==
-X-CSE-MsgGUID: b3V+DafDQD+ER7MDfkTPqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
-   d="scan'208";a="129892851"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 10 Apr 2025 08:46:31 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u2u6m-000AEl-2e;
-	Thu, 10 Apr 2025 15:46:28 +0000
-Date: Thu, 10 Apr 2025 23:45:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] ftrace: Show subops in enabled_functions
-Message-ID: <202504102339.KxLwdUFJ-lkp@intel.com>
-References: <20250409094226.23f75293@gandalf.local.home>
+	s=arc-20240116; t=1744299952; c=relaxed/simple;
+	bh=hLbfVy6MGSyYSuQDq4K6wAOKO0lEFzAf3CuTzYRU6rY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=D7PYJwgyt9tNYjJOnyQKSbWFKkFWsVgheOXP8CVNuc8xqz7EUx40PhMw72Oee9DXErTiw15/QQrxaRshRirPEuC21qxXM5gXbuAKXerdeJCmox+rSZbip0xFzaRKzJ+QDLz4w/5p/h0AYIkrh1xFAknY2xfakLVZNOyAFalE608=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zqX1/xpU; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff605a7a43so1249615a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 08:45:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744299950; x=1744904750; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mJmeJjTQ0N1mLS0S8FtWMDsHRzNfkH/EIVPnKYJbkdE=;
+        b=zqX1/xpULW5UVpXrfLj1IJS6JNni5Mj1eLmhohcBQgL5bRSSKq8MoIwGvDxdSP/Vq2
+         K8rA+3sEpsOmoIh00b2Nb3l1k7LVsHLxGQ/bds9Fv/VGu8AexCvv5X3Vp0+2uDC8wX0c
+         0LDi03iF4HQRzij7U05pKyNkf3vnfKZDotSvjQ2Rx8sbaRQp11TaZoN3KQEShCYlis9R
+         Lbuim/k6XTFcReZJQKFGCFUZiJl04kG4nKc1W/NlHj+Fr5FZRxgBwK7SCiIiS5t3KtxF
+         0sjDgRyrzW73d4hhnZP9GL3xgr0bZZM9uhrnY4BPBugWuj87/OIhT4JJ+KFXc4sMB7Wl
+         3dmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744299950; x=1744904750;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mJmeJjTQ0N1mLS0S8FtWMDsHRzNfkH/EIVPnKYJbkdE=;
+        b=rm4nIU92CDmVJSoV2QtxguDsaOdy5jsnH56TvXLs9eJU50ibYUKCGF7N8Z5GWUkZ2m
+         J6CR4fT5m/UpoHsk5O8p0bXaMVRZwH2NeWsbjVuZ1q5dagJvlHpfREyrRnRj3xvFjzdA
+         O+4VkHDOAtHq7fTgBEePUKdHEof5Jw1liTXXtxcXwgQzlkMOq17jagezKwbMif7lRuFb
+         l4nV/CU3L5Rv4Au32Vp6VSe+aS20LGQXFNMWkW3QR1xRLWPtsrT98ryVWGiOlkir7x8Y
+         zzr/7O/zwbTfww43aEh0GzU5Z25OfyrOSBbwOXGaod0iunR3Vk4ZDM+vcyS/q511NYD5
+         MJdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSWx/j6oPY12Oz3Pa40IqCwsQcCNjGyLfrDouHD1ILqpQwCyAE1LdNkLV8Eh0wAxHe2kjrhF1DyzEkbIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPV6taHwHHsW/WqXSu4GEOAq+x20VA1Orvl6UmiF+PRkN6yljp
+	xv62bszdUsXUbFuHxNULCdnl718vSHRKEiQSdQn1PNPDUKNH1mP1PFA1MJnclrNprCHTMVV4LXa
+	aTA==
+X-Google-Smtp-Source: AGHT+IFZ8WC+GSwj6Q6htW5cg/5bqXMTsujFZ73t+Q6ijGyOQ52YfigVgDbVZDUVXqIuS8GOZzkMgi1gkXg=
+X-Received: from pjbta11.prod.google.com ([2002:a17:90b:4ecb:b0:2fc:c98:ea47])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:6c6:b0:2ee:7411:ca99
+ with SMTP id 98e67ed59e1d1-30718b64bb2mr4620267a91.1.1744299949966; Thu, 10
+ Apr 2025 08:45:49 -0700 (PDT)
+Date: Thu, 10 Apr 2025 08:45:48 -0700
+In-Reply-To: <9b7ceea3-8c47-4383-ad9c-1a9bbdc9044a@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409094226.23f75293@gandalf.local.home>
+Mime-Version: 1.0
+References: <20250404193923.1413163-1-seanjc@google.com> <20250404193923.1413163-65-seanjc@google.com>
+ <9b7ceea3-8c47-4383-ad9c-1a9bbdc9044a@oracle.com>
+Message-ID: <Z_fnrP4e77mKjdX9@google.com>
+Subject: Re: [PATCH 64/67] iommu/amd: KVM: SVM: Allow KVM to control need for
+ GA log interrupts
+From: Sean Christopherson <seanjc@google.com>
+To: Joao Martins <joao.m.martins@oracle.com>
+Cc: kvm@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Maxim Levitsky <mlevitsk@redhat.com>, David Matlack <dmatlack@google.com>, 
+	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, 
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, Vasant Hegde <vasant.hegde@amd.com>, 
+	Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>, 
+	Lu Baolu <baolu.lu@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Steven,
+On Wed, Apr 09, 2025, Joao Martins wrote:
+> On 04/04/2025 20:39, Sean Christopherson wrote:
+> I would suggest holding off on this and the next one, while progressing with
+> the rest of the series.
 
-kernel test robot noticed the following build errors:
+Agreed, though I think there's a "pure win" alternative that can be safely
+implemented (but it definitely should be done separately).
 
-[auto build test ERROR on trace/for-next]
-[also build test ERROR on linus/master v6.15-rc1 next-20250410]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+If HLT-exiting is disabled for the VM, and the VM doesn't have access to the
+various paravirtual features that can put it into a synthetic HLT state (PV async
+#PF and/or Xen support), then I'm pretty sure GALogIntr can be disabled entirely,
+i.e. disabled during the initial irq_set_vcpu_affinity() and never enabled.  KVM
+doesn't emulate HLT via its full emulator for AMD (just non-unrestricted Intel
+guests), so I'm pretty sure there would be no need for KVM to ever wake a vCPU in
+response to a device interrupt.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Rostedt/ftrace-Show-subops-in-enabled_functions/20250409-214345
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/20250409094226.23f75293%40gandalf.local.home
-patch subject: [PATCH] ftrace: Show subops in enabled_functions
-config: i386-buildonly-randconfig-001-20250410 (https://download.01.org/0day-ci/archive/20250410/202504102339.KxLwdUFJ-lkp@intel.com/config)
-compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250410/202504102339.KxLwdUFJ-lkp@intel.com/reproduce)
+> > diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
+> > index 2e016b98fa1b..27b03e718980 100644
+> > --- a/drivers/iommu/amd/iommu.c
+> > +++ b/drivers/iommu/amd/iommu.c
+> > -static void __amd_iommu_update_ga(struct irte_ga *entry, int cpu)
+> > +static void __amd_iommu_update_ga(struct irte_ga *entry, int cpu,
+> > +				  bool ga_log_intr)
+> >  {
+> >  	if (cpu >= 0) {
+> >  		entry->lo.fields_vapic.destination =
+> > @@ -3783,12 +3784,14 @@ static void __amd_iommu_update_ga(struct irte_ga *entry, int cpu)
+> >  		entry->hi.fields.destination =
+> >  					APICID_TO_IRTE_DEST_HI(cpu);
+> >  		entry->lo.fields_vapic.is_run = true;
+> > +		entry->lo.fields_vapic.ga_log_intr = false;
+> >  	} else {
+> >  		entry->lo.fields_vapic.is_run = false;
+> > +		entry->lo.fields_vapic.ga_log_intr = ga_log_intr;
+> >  	}
+> >  }
+> >
+> 
+> isRun, Destination and GATag are not cached. Quoting the update from a few years
+> back (page 93 of IOMMU spec dated Feb 2025):
+> 
+> | When virtual interrupts are enabled by setting MMIO Offset 0018h[GAEn] and
+> | IRTE[GuestMode=1], IRTE[IsRun], IRTE[Destination], and if present IRTE[GATag],
+> | are not cached by the IOMMU. Modifications to these fields do not require an
+> | invalidation of the Interrupt Remapping Table.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504102339.KxLwdUFJ-lkp@intel.com/
+Ooh, that's super helpful info.  Any objections to me adding verbose comments to
+explain the effective rules for amd_iommu_update_ga()?
 
-All errors (new ones prefixed by >>):
+> This is the reason we were able to get rid of the IOMMU invalidation in
+> amd_iommu_update_ga() ... which sped up vmexit/vmenter flow with iommu avic.
+> Besides the lock contention that was observed at the time, we were seeing stalls
+> in this path with enough vCPUs IIRC; CCing Alejandro to keep me honest.
+> 
+> Now this change above is incorrect as is and to make it correct: you will need
+> xor with the previous content of the IRTE::ga_log_intr and then if it changes
+> then you re-add back an invalidation command via
+> iommu_flush_irt_and_complete()). The latter is what I am worried will
+> reintroduce these above problem :(
 
->> kernel/trace/ftrace.c:4342:11: error: incomplete definition of type 'struct fgraph_ops'
-    4342 |                         gops = container_of(subops, struct fgraph_ops, ops);
-         |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/container_of.h:20:47: note: expanded from macro 'container_of'
-      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
-      21 |                       __same_type(*(ptr), void),                        \
-         |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      22 |                       "pointer type mismatch in container_of()");       \
-         |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:483:74: note: expanded from macro '__same_type'
-     483 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
-         |                                                                          ^
-   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/linux/ftrace.h:1158:8: note: forward declaration of 'struct fgraph_ops'
-    1158 | struct fgraph_ops;
-         |        ^
->> kernel/trace/ftrace.c:4342:11: error: offsetof of incomplete type 'struct fgraph_ops'
-    4342 |                         gops = container_of(subops, struct fgraph_ops, ops);
-         |                                ^                    ~~~~~~
-   include/linux/container_of.h:23:21: note: expanded from macro 'container_of'
-      23 |         ((type *)(__mptr - offsetof(type, member))); })
-         |                            ^        ~~~~
-   include/linux/stddef.h:16:32: note: expanded from macro 'offsetof'
-      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-         |                                 ^                  ~~~~
-   include/linux/ftrace.h:1158:8: note: forward declaration of 'struct fgraph_ops'
-    1158 | struct fgraph_ops;
-         |        ^
-   kernel/trace/ftrace.c:4344:20: error: incomplete definition of type 'struct fgraph_ops'
-    4344 |                                    (void *)gops->entryfunc,
-         |                                            ~~~~^
-   include/linux/ftrace.h:1158:8: note: forward declaration of 'struct fgraph_ops'
-    1158 | struct fgraph_ops;
-         |        ^
-   kernel/trace/ftrace.c:4345:20: error: incomplete definition of type 'struct fgraph_ops'
-    4345 |                                    (void *)gops->retfunc);
-         |                                            ~~~~^
-   include/linux/ftrace.h:1158:8: note: forward declaration of 'struct fgraph_ops'
-    1158 | struct fgraph_ops;
-         |        ^
-   4 errors generated.
+Ya, the need to flush definitely changes things.
 
+> The invalidation command (which has a completion barrier to serialize
+> invalidation execution) takes some time in h/w, and will make all your vcpus
+> content on the irq table lock (as is). Even assuming you somehow move the
+> invalidation outside the lock, you will content on the iommu lock (for the
+> command queue) or best case assuming no locks (which I am not sure it is
+> possible) you will need to wait for the command to complete until you can
+> progress forward with entering/exiting.
+> 
+> Unless the GALogIntr bit is somehow also not cached too which wouldn't need the
+> invalidation command (which would be good news!). Adding Suravee/Vasant here.
+> 
+> It's a nice trick how you would leverage this in SVM, but do you have
+> measurements that corroborate its introduction? How many unnecessary GALog
+> entries were you able to avoid with this trick say on a workload that would
+> exercise this (like netperf 1byte RR test that sleeps and wakes up a lot) ?
 
-vim +4342 kernel/trace/ftrace.c
+I didn't do any measurements; I assumed the opportunistic toggling of GALogIntr
+would be "free".
 
-  4325	
-  4326	static void print_subops(struct seq_file *m, struct ftrace_ops *ops, struct dyn_ftrace *rec)
-  4327	{
-  4328		struct ftrace_ops *subops;
-  4329		bool first = true;
-  4330	
-  4331		list_for_each_entry(subops, &ops->subop_list, list) {
-  4332			if (!((subops->flags & FTRACE_OPS_FL_ENABLED) &&
-  4333			      hash_contains_ip(rec->ip, subops->func_hash)))
-  4334				continue;
-  4335			if (first) {
-  4336				seq_printf(m, "\tsubops:");
-  4337				first = false;
-  4338			}
-  4339			if (subops->flags & FTRACE_OPS_FL_GRAPH) {
-  4340				struct fgraph_ops *gops;
-  4341	
-> 4342				gops = container_of(subops, struct fgraph_ops, ops);
-  4343				seq_printf(m, " {ent:%pS ret:%pS}",
-  4344					   (void *)gops->entryfunc,
-  4345					   (void *)gops->retfunc);
-  4346				continue;
-  4347			}
-  4348			if (subops->trampoline) {
-  4349				seq_printf(m, " {%pS (%pS)}",
-  4350					   (void *)subops->trampoline,
-  4351					   (void *)subops->func);
-  4352				add_trampoline_func(m, subops, rec);
-  4353			} else {
-  4354				seq_printf(m, " {%pS}",
-  4355					   (void *)subops->func);
-  4356			}
-  4357		}
-  4358	}
-  4359	
+There might be optimizations that could be done, but I think the better solution
+is to simply disable GALogIntr when it's not needed.  That'd limit the benefits
+to select setups, but trying to optimize IRQ bypass for VMs that are CPU-overcommited,
+i.e. can't do native HLT, seems rather pointless.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> I should also mention that there's a different logic that is alternative to
+> GALog (in Genoa or more recent), which is GAPPI support whereby an entry is
+> generated but a more rare condition. Quoting the an excerpts below:
+> 
+> | This mode is enabled by setting MMIO Offset 0018h[GAPPIEn]=1. Under this
+> | mode, guest interrupts (IRTE[GuestMode]=1) update the vAPIC backing page IRR
+> | status as normal.
+> 
+> | In GAPPI mode, a GAPPI interrupt is generated if all of the guest IRR bits
+> | were previously clear prior to the last IRR update. This indicates the new
+> | interrupt is the first pending interrupt to the
+> | vCPU. The GAPPI interrupt is used to signal Hypervisor software to schedule
+> | one or more vCPUs to execute pending interrupts.
+> 
+> | Implementations may not be able to perfectly determine if all of the IRR bits
+> | were previously clear prior to updating the vAPIC backing page to set IRR.
+> | Spurious interrupts may be generated as a
+> | result. Software must be designed to handle this possibility
+
+I saw this as well.  I'm curious if enabling GAPPI mode affects IOMMU interrupt
+delivery latency/throughput due to having to scrape the entire IRR.
+
+> Page 99, "2.2.5.5 Guest APIC Physical Processor Interrupt",
+> https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/specifications/48882_IOMMU.pdf
 
