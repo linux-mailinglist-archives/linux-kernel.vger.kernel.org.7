@@ -1,124 +1,145 @@
-Return-Path: <linux-kernel+bounces-598295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202C9A844A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:24:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE927A8449B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 154C93B5B51
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:19:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7EB189C00F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2B328A41D;
-	Thu, 10 Apr 2025 13:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hriHLBuE"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650EC28A3EF;
+	Thu, 10 Apr 2025 13:20:27 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5BF28A41A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C421372
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744291140; cv=none; b=e2AWyJJkwyvBIwcgAoLKuE7iiLbov97tgwjkS9u8dlTAa53vbtTONU1AH7W2m16f4uKhKWDQWzEAB8OEfmaatduYbt/9qsAGk/c4KXlTazE0nHDHcBbvT153PzQc7nWqpee4skn+i7svT1Gy7+6lsVbSuf338ono5J8FhL1aeWo=
+	t=1744291226; cv=none; b=Q7B58huTOXK6ESM3mdxSUjgzZRu6vVhwTrz0BkfxR4G0anI3fedLfE22Xat+qta2rSsoWl0Whc9i+QCQWxWJIiQDkCHO+6tpZLt9lUCUaVL9O0O4bMMMFhTjQIyr8pblkXvbFslT3j0vYrO7fc4hmJn+Ngj9PSMnRNX13lqZdyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744291140; c=relaxed/simple;
-	bh=TD2kAX8AWctnhkBdQqzlUwRnK2bi72fQwVcrm77fnoI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YS+3cUUJ/QxAisTD70Br7SMQINt6j8GvmQLxfFUOqEwD+94c8KbVf6k7z6KqMLGVOOY9rrRlp3ChFQt6RmjnztLTVgRrOkkZGkUbp/p06bboto/mjtHk5MaTd6pTX+LrR0N4m0pfVm3zJZ2p75e9VPqTcaMeSSnQF0DZTGJ0HKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hriHLBuE; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-476b4c9faa2so9327481cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:18:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744291138; x=1744895938; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RECTiMcC+557K/lJHY/XYRryOu8upKT/5f++KDdNV8E=;
-        b=hriHLBuE8Uwkj1TfPfgevSV1PhWgy/7u6Akm6nmio/c3GNtDeCLKvFOPfGWJsI+PO+
-         pbTA5S199iKpQJWyTCOY+Vm35qjuTdplcUpLDGtfMn2dABeeRUAR7l1UbwU5rBWf6UjM
-         r3gou9bXyLdKh+OFbtMV0nq1FyhSAJ5wu/NvZZK9mTLEq3Vt74LIpHlhkyNi9kEBOpIf
-         NZbVuasGDE/Wkrxr3ttQaZaF82K16PDJF/jVd7E9MfqIVdyEY3wdbg8K6geDi+qBUU11
-         QhcTfX+f9dq3qrbo8EwIbO/HHUKRQH6xSGAfW7fEdGwMK7R3NIArtrg+J91sZlYWEL5a
-         EsIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744291138; x=1744895938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RECTiMcC+557K/lJHY/XYRryOu8upKT/5f++KDdNV8E=;
-        b=QHokJc6U8G0jwaTFnn6KOgUSFOnmafD5DvsDIn3aDF3uzZKTLVdoZu9Qu0Q8DwzjKP
-         XuAqrgMtOIwx9upfIsp0Y2tJZPhxHhGyPh+I0EUaADnbjJaKicmjAO7l0Oj+tv0iFit/
-         ebtIXIgiKJ76ohpxgBrOduEw8zrhLXQvFiQcocvDG6xwSvB7LV0WakffoEI6FaezlMR+
-         2Tg7ZCp4jpU2X8kw/88TCp7hSynpXu9hNOfOMWjpyFiQ4mx2vr08w2Rum7+Z5123GQEU
-         WygU8TbG3uPARQxZSHufT/XncTXVnKIvBcgDTZTPeoGyNHBhgivyTp1K2GYuKw15aEJ1
-         HyQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXORf30i4s5QaCNgCISdQUCOwdbrJoBRhTdmH3bPDuqLsIT80RVSCTQF8/xDhXMAVM4b52Iius3kUxbsvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBt3KvtG4uYwDUDo0BZoIB+htmbokqkkDYvM8Zjkbhot2Ya8PI
-	UV065X5fdewCoN7B/RBAzGyaejih2zgNEk5q7TFxp+LvpQqDdv4Ebo27/HAcKSXFSHmiXmdk/tc
-	wI2qAc+RMbAwJvRET6b6qftoN3wLjaL8iodQ/
-X-Gm-Gg: ASbGncsrjNCLme5u3wjKzg1cilXbjFEac3aHX2nxr2ZpxQodibhCvjjpuA8SrJ6GEWI
-	g6Z/544fuRpItiyIo9o/hmUcNUUX8VVPc1ijH6ij+w5KcIV8obtBE8mIBoD3FiEojyg5q6wlkvA
-	yTMcZ9UknqtVLtBafTTrY1tHjNh96xDQ9UtdkKpWm7WsY9TVEtTA==
-X-Google-Smtp-Source: AGHT+IFM9R0KDrUDXvIWznyIlZNJeKPixRG3knas9UkUV/6uvxLmlq3y55CKGShhOWhmJlaf2KlaW0pxqXplB0I95nU=
-X-Received: by 2002:a05:622a:1350:b0:477:1f59:2876 with SMTP id
- d75a77b69052e-4796e30ed38mr28573481cf.28.1744291137916; Thu, 10 Apr 2025
- 06:18:57 -0700 (PDT)
+	s=arc-20240116; t=1744291226; c=relaxed/simple;
+	bh=2+5JJLnn1Ol2KyHL78eVGJpBjHlDREmN5fI8AJdAfow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=brmPrXBJvXuMRVqjslMBQmsKPzqhZG81othvqqkaz3a0FJ71pXn3CHYzP58fjQlbEe13zSbJVeY2m3nOOYxRw9XDJDGx6Gn4nox9/ddsbVuIpGzf+i+wzzCLR8lQ/wAzM7+NBLDVJwpFo7z354dYWlocEcmIvP43elIYOHgJjxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 02EE120481;
+	Thu, 10 Apr 2025 13:20:20 +0000 (UTC)
+Message-ID: <c546c4c6-a4a0-431e-9299-5477bedf6280@ghiti.fr>
+Date: Thu, 10 Apr 2025 15:20:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250410115420.366349-1-panikiel@google.com> <20250410123602.GZ9833@noisy.programming.kicks-ass.net>
- <20250410124526.GB9833@noisy.programming.kicks-ass.net> <20250410130944.GA9003@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250410130944.GA9003@noisy.programming.kicks-ass.net>
-From: =?UTF-8?Q?Pawe=C5=82_Anikiel?= <panikiel@google.com>
-Date: Thu, 10 Apr 2025 15:18:47 +0200
-X-Gm-Features: ATxdqUHOT9LJFv7kMp17OwoE5sfggBtIdydnpTG6jIbYvTM-zxq-kR9tYSU32DI
-Message-ID: <CAM5zL5r-oZXYKwctjTTtWAsTPHCWzAq9vRduZ1E1L-EDMv8Rmw@mail.gmail.com>
-Subject: Re: [PATCH] x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Alice Ryhl <aliceryhl@google.com>, 
-	Nathan Chancellor <nathan@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: Fix unaligned access info messages
+To: Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, cleger@rivosinc.com,
+ alexghiti@rivosinc.com, geert@linux-m68k.org
+References: <20250409153650.84433-2-ajones@ventanamicro.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250409153650.84433-2-ajones@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdeltdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpefhhfdutdevgeelgeegfeeltdduhfduledvteduhfegffffiefggfektefhjedujeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemledvfedvmegtfegrkeemugegsgegmedusggusgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemledvfedvmegtfegrkeemugegsgegmedusggusgdphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemledvfedvmegtfegrkeemugegsgegmedusggusggnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepkedprhgtphhtthhopegrjhhonhgvshesvhgvnhhtrghnrghmihgtrhhordgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdro
+ hhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegtlhgvghgvrhesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtoheprghlvgigghhhihhtihesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhg
+X-GND-Sasl: alex@ghiti.fr
 
-On Thu, Apr 10, 2025 at 3:09=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Thu, Apr 10, 2025 at 02:45:26PM +0200, Peter Zijlstra wrote:
-> > On Thu, Apr 10, 2025 at 02:36:02PM +0200, Peter Zijlstra wrote:
-> > > On Thu, Apr 10, 2025 at 11:54:20AM +0000, Pawe=C5=82 Anikiel wrote:
-> > > > Calling core::fmt::write() from rust code while FineIBT is enabled
-> > > > results in a kernel panic:
->
-> > > > This happens because core::fmt::write() calls
-> > > > core::fmt::rt::Argument::fmt(), which currently has CFI disabled:
-> > > >
-> > > > library/core/src/fmt/rt.rs:
-> > > > 171     // FIXME: Transmuting formatter in new and indirectly branc=
-hing to/calling
-> > > > 172     // it here is an explicit CFI violation.
-> > > > 173     #[allow(inline_no_sanitize)]
-> > > > 174     #[no_sanitize(cfi, kcfi)]
-> > > > 175     #[inline]
-> > > > 176     pub(super) unsafe fn fmt(&self, f: &mut Formatter<'_>) -> R=
-esult {
-> > > >
->
-> Miguel, I cannot find this code in the kernel tree. Is this again
-> because Rust is not free-standing and relies on external code?
+Hi Drew,
 
-The code I referenced is from here:
-https://github.com/rust-lang/rust/blob/master/library/core/src/fmt/rt.rs#L1=
-39
+On 09/04/2025 17:36, Andrew Jones wrote:
+> Ensure we only print messages about command line parameters when
+> the parameters are actually in use. Also complain about the use
+> of the vector parameter when vector support isn't available.
+>
+> Fixes: aecb09e091dc ("riscv: Add parameter for skipping access speed tests")
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Closes: https://lore.kernel.org/all/CAMuHMdVEp2_ho51gkpLLJG2HimqZ1gZ0fa=JA4uNNZjFFqaPMg@mail.gmail.com/
+> Closes: https://lore.kernel.org/all/CAMuHMdWVMP0MYCLFq+b7H_uz-2omdFiDDUZq0t_gw0L9rrJtkQ@mail.gmail.com/
+> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
+> ---
+>   arch/riscv/kernel/unaligned_access_speed.c | 35 +++++++++++++---------
+>   1 file changed, 21 insertions(+), 14 deletions(-)
+>
+> diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kernel/unaligned_access_speed.c
+> index 585d2dcf2dab..b8ba13819d05 100644
+> --- a/arch/riscv/kernel/unaligned_access_speed.c
+> +++ b/arch/riscv/kernel/unaligned_access_speed.c
+> @@ -439,29 +439,36 @@ static int __init check_unaligned_access_all_cpus(void)
+>   {
+>   	int cpu;
+>   
+> -	if (unaligned_scalar_speed_param == RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN &&
+> -	    !check_unaligned_access_emulated_all_cpus()) {
+> -		check_unaligned_access_speed_all_cpus();
+> -	} else {
+> -		pr_info("scalar unaligned access speed set to '%s' by command line\n",
+> -			speed_str[unaligned_scalar_speed_param]);
+> +	if (unaligned_scalar_speed_param != RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN) {
+> +		pr_info("scalar unaligned access speed set to '%s' (%lu) by command line\n",
+> +			speed_str[unaligned_scalar_speed_param], unaligned_scalar_speed_param);
+>   		for_each_online_cpu(cpu)
+>   			per_cpu(misaligned_access_speed, cpu) = unaligned_scalar_speed_param;
+> +	} else if (!check_unaligned_access_emulated_all_cpus()) {
+> +		check_unaligned_access_speed_all_cpus();
+> +	}
+> +
+> +	if (unaligned_vector_speed_param != RISCV_HWPROBE_MISALIGNED_VECTOR_UNKNOWN) {
+> +		if (!has_vector() &&
+> +		    unaligned_vector_speed_param != RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED) {
+> +			pr_warn("vector support is not available, ignoring unaligned_vector_speed=%s\n",
+> +				speed_str[unaligned_vector_speed_param]);
+> +		} else {
+> +			pr_info("vector unaligned access speed set to '%s' (%lu) by command line\n",
+> +				speed_str[unaligned_vector_speed_param], unaligned_vector_speed_param);
+> +		}
+>   	}
+>   
+>   	if (!has_vector())
+>   		unaligned_vector_speed_param = RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED;
+>   
+> -	if (unaligned_vector_speed_param == RISCV_HWPROBE_MISALIGNED_VECTOR_UNKNOWN &&
+> -	    !check_vector_unaligned_access_emulated_all_cpus() &&
+> -	    IS_ENABLED(CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS)) {
+> -		kthread_run(vec_check_unaligned_access_speed_all_cpus,
+> -			    NULL, "vec_check_unaligned_access_speed_all_cpus");
+> -	} else {
+> -		pr_info("vector unaligned access speed set to '%s' by command line\n",
+> -			speed_str[unaligned_vector_speed_param]);
+> +	if (unaligned_vector_speed_param != RISCV_HWPROBE_MISALIGNED_VECTOR_UNKNOWN) {
+>   		for_each_online_cpu(cpu)
+>   			per_cpu(vector_misaligned_access, cpu) = unaligned_vector_speed_param;
+> +	} else if (!check_vector_unaligned_access_emulated_all_cpus() &&
+> +		   IS_ENABLED(CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS)) {
+> +		kthread_run(vec_check_unaligned_access_speed_all_cpus,
+> +			    NULL, "vec_check_unaligned_access_speed_all_cpus");
+>   	}
+>   
+>   	/*
+
+
+Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+I'll wait for Geert feedback before picking it.
+
+Thanks,
+
+alex
+
+
+
+
 
