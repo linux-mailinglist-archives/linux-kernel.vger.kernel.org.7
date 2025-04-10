@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-597249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB78AA8371C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 05:17:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53842A836ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51F346354C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:17:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38386463A13
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F6D1EFFA4;
-	Thu, 10 Apr 2025 03:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFEE1E9B2A;
+	Thu, 10 Apr 2025 02:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="QxOAjVvY"
-Received: from mail.crpt.ru (mail.crpt.ru [91.236.205.1])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="P5Upj/0u"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BD127468
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 03:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0CD7083C
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 02:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744255024; cv=none; b=AV8QUv0eMBtUISmmmB5BEKqe8JSDu1VAV2uSSiU3i8HUH0JPMyKgEFs+r0P0pCk1S0thkei75srlzi0DIrZ5miXpOCa4DP2HlHBkme+BcPKbNkOp8+vq1OOX5CHQq1xEooc8nSi7QUx7sMI7BrRkDG2bLR5gR0+6V9sScZmddbo=
+	t=1744253902; cv=none; b=faeTOyRNd23T1RFvAUbHn3oqWjR7sW/4zAUmEzaKf695kSH8JWYgUIYmgiQ5NqHHcj6yIIOFvpHJkhafpiVZnGdRhPsE0hmy8hpOsWDLNVhaNFpeGU+mGsezV93K/fWWMKQE3svPo4VPqg081a1ZpvDWZSCjHEtUl1ZOghX2R9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744255024; c=relaxed/simple;
-	bh=N7JSajSZaHRzxfryUI2eAu/pVUJRXkAMGYEJy5kZUqk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EdlK9Oi7APXyjTsvyLutDncw74NLj+bYAUNspG7Jq27IviGwO3rTg3E1LfSiT50wElXW8QtVByRSPZ05ezis/kJEiPw+djUq4QZKCXkqC7q7m1LpsWrHuW+b5s959kEqHsGu0PUFqxP8lgtzZxvDytmi/kdK6HYQ+SJGIum8/TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=QxOAjVvY; arc=none smtp.client-ip=91.236.205.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
-Received: from ssp-soft.crpt.local ([10.200.60.21])
-	(user=ssp.nesin@crpt.ru mech=LOGIN bits=0)
-	by mail.crpt.ru  with ESMTP id 53A30vLN031928-53A30vLQ031928
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 10 Apr 2025 06:01:07 +0300
-From: Rostislav Nesin <ssp.nesin@crpt.ru>
-To: Austin Zheng <austin.zheng@amd.com>
-Cc: Rostislav Nesin <ssp.nesin@crpt.ru>,
-	Jun Lei <jun.lei@amd.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <siqueira@igalia.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1744253902; c=relaxed/simple;
+	bh=LuAq+qzEs7CyM6o872Ta+OyytP28QwvQVoFC/5Pxhxk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J0YzX82K8IH6DHzrGVhveOosfZB/QptWEj0AUwjYZFQPucfyzDqORQlgztpvEhX+hQ17J5tfQ5tX2UYyZNcTIsAN6BoYFrCApQ9gyK1Hl3CVAvyA3aaSL/R/RUu1TEIlvC5k4x6AdWsYU4nuM5VcTjzJHgYgAQFgRej+uIcq4Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=P5Upj/0u; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744253895;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QbwnSKjPedkNReipVXQJ7J5oJfAs+GWPD73Z0sp3QZA=;
+	b=P5Upj/0uvQZRUZafgO9lcJ2NRz0DwA+nO8En1S9CmnkdxbBvgNuqCDjYPwvkEC423PjYhi
+	6kVxfYYaVNduhMcCiCucKBdrQtW0G5oCJPD+5ljzbb2XQBsR+Fo0ffzeZQO3zENuL1YIuM
+	WYSldIjr4U05ywf2DYQ3zumAM2YXM6U=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	Waiman Long <llong@redhat.com>,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] drm/amd/display: drop unimplemented mode_422 code
-Date: Thu, 10 Apr 2025 09:56:15 +0700
-Message-Id: <20250410025615.466691-1-ssp.nesin@crpt.ru>
-X-Mailer: git-send-email 2.34.1
+	Meta kernel team <kernel-team@meta.com>
+Subject: [PATCH v2] memcg: optimize memcg_rstat_updated
+Date: Wed,  9 Apr 2025 19:57:52 -0700
+Message-ID: <20250410025752.92159-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,79 +61,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-FEAS-Auth-User: ssp.nesin@crpt.ru
-X-FEAS-Client-IP: 10.200.60.21
-X-FE-Envelope-From: ssp.nesin@crpt.ru
-X-FE-Policy-ID: 0:9:0:SYSTEM
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
- h=from:to:cc:subject:date:message-id:mime-version;
- bh=aJnlOc2MZbnzRaxt4YVojmTOsBIq3iMeqYiPZsFM6rI=;
- b=QxOAjVvYXCP4EwwFJEwlXGacWmrAlGiE17vYCMlETksgsSWS5sada96M6CplShrTRBahw0nX3Wv1
-	Y++Q3+nkofowN2tk4+KcmLIhNBDDpqgcPNStv0v45Ey7yyM4CW7AeGLB0v6ahDdKmGn1XiRMzCEN
-	aFtFUIVUp3DuHwIVUl0gpIPQMT39EDmEPFdQhXGnBAd9Q1yKNsD3jMqDBQVmH+q8mzqAGzjcGexj
-	dpy2jUdX+pLcVGJj1xkV3H2YOXBCwlys33DBDTkzctHJi9Uj4Eu+TmstZ6s0vzXp23as7PuCha6W
-	bitrHTnrgpIz8J3lU/pU+BbgiHQEYUJ9+xrsaA==
+X-Migadu-Flow: FLOW_OUT
 
-The variable mode_422 is initialized to zero, making if (mode_422)
-always false.
+Currently the kernel maintains the stats updates per-memcg which is
+needed to implement stats flushing threshold. On the update side, the
+update is added to the per-cpu per-memcg update of the given memcg and
+all of its ancestors. However when the given memcg has passed the
+flushing threshold, all of its ancestors should have passed the
+threshold as well. There is no need to traverse up the memcg tree to
+maintain the stats updates.
 
-Removing this unimplemented code and the redundant check simplifies
-the code without affecting functionality.
+Perf profile collected from our fleet shows that memcg_rstat_updated is
+one of the most expensive memcg function i.e. a lot of cumulative CPU
+is being spent on it. So, even small micro optimizations matter a lot.
+This patch is microbenchmarked with multiple instances of netperf on a
+single machine with locally running netserver and we see couple of
+percentage of improvement.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Signed-off-by: Rostislav Nesin <ssp.nesin@crpt.ru>
+Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 ---
- .../amd/display/dc/dml/dml1_display_rq_dlg_calc.c  | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+Changes since v1:
+- Fix the condition (Longman)
+- Ran netperf
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.c b/drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.c
-index 88dc2b97e7bf..0cfd931a3e6f 100644
---- a/drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml/dml1_display_rq_dlg_calc.c
-@@ -1027,7 +1027,6 @@ void dml1_rq_dlg_get_dlg_params(
- 	unsigned int dlg_vblank_start;
- 	bool dcc_en;
- 	bool dual_plane;
--	bool mode_422;
- 	unsigned int access_dir;
- 	unsigned int bytes_per_element_l;
- 	unsigned int bytes_per_element_c;
-@@ -1199,7 +1198,6 @@ void dml1_rq_dlg_get_dlg_params(
- 	dcc_en = e2e_pipe_param->pipe.src.dcc;
- 	dual_plane = is_dual_plane(
- 			(enum source_format_class) e2e_pipe_param->pipe.src.source_format);
--	mode_422 = 0; /* TODO */
- 	access_dir = (e2e_pipe_param->pipe.src.source_scan == dm_vert); /* vp access direction: horizontal or vertical accessed */
- 	bytes_per_element_l = get_bytes_per_element(
- 			(enum source_format_class) e2e_pipe_param->pipe.src.source_format,
-@@ -1548,8 +1546,8 @@ void dml1_rq_dlg_get_dlg_params(
- 	req_per_swath_ub_l = rq_dlg_param->rq_l.req_per_swath_ub;
- 	req_per_swath_ub_c = rq_dlg_param->rq_c.req_per_swath_ub;
- 	meta_row_height_l = rq_dlg_param->rq_l.meta_row_height;
--	swath_width_pixels_ub_l = 0;
--	swath_width_pixels_ub_c = 0;
-+	swath_width_pixels_ub_l = swath_width_ub_l;
-+	swath_width_pixels_ub_c = swath_width_ub_c;
- 	scaler_rec_in_width_l = 0;
- 	scaler_rec_in_width_c = 0;
- 	dpte_row_height_l = rq_dlg_param->rq_l.dpte_row_height;
-@@ -1587,14 +1585,6 @@ void dml1_rq_dlg_get_dlg_params(
- 	if (disp_dlg_regs->refcyc_per_meta_chunk_nom_l >= (unsigned int) dml_pow(2, 23))
- 		disp_dlg_regs->refcyc_per_meta_chunk_nom_l = dml_pow(2, 23) - 1;
+ mm/memcontrol.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 421740f1bcdc..3035c1595b32 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -585,18 +585,20 @@ static inline void memcg_rstat_updated(struct mem_cgroup *memcg, int val)
+ 	cgroup_rstat_updated(memcg->css.cgroup, cpu);
+ 	statc = this_cpu_ptr(memcg->vmstats_percpu);
+ 	for (; statc; statc = statc->parent) {
++		/*
++		 * If @memcg is already flushable then all its ancestors are
++		 * flushable as well and also there is no need to increase
++		 * stats_updates.
++		 */
++		if (memcg_vmstats_needs_flush(statc->vmstats))
++			break;
++
+ 		stats_updates = READ_ONCE(statc->stats_updates) + abs(val);
+ 		WRITE_ONCE(statc->stats_updates, stats_updates);
+ 		if (stats_updates < MEMCG_CHARGE_BATCH)
+ 			continue;
  
--	if (mode_422) {
--		swath_width_pixels_ub_l = swath_width_ub_l * 2; /* *2 for 2 pixel per element */
--		swath_width_pixels_ub_c = swath_width_ub_c * 2;
--	} else {
--		swath_width_pixels_ub_l = swath_width_ub_l * 1;
--		swath_width_pixels_ub_c = swath_width_ub_c * 1;
--	}
--
- 	if (htaps_l <= 1)
- 		min_hratio_fact_l = 2.0;
- 	else if (htaps_l <= 6) {
+-		/*
+-		 * If @memcg is already flush-able, increasing stats_updates is
+-		 * redundant. Avoid the overhead of the atomic update.
+-		 */
+-		if (!memcg_vmstats_needs_flush(statc->vmstats))
+-			atomic64_add(stats_updates,
+-				     &statc->vmstats->stats_updates);
++		atomic64_add(stats_updates, &statc->vmstats->stats_updates);
+ 		WRITE_ONCE(statc->stats_updates, 0);
+ 	}
+ }
 -- 
-2.34.1
+2.47.1
 
 
