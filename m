@@ -1,70 +1,117 @@
-Return-Path: <linux-kernel+bounces-597494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F294BA83A78
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:14:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B61A83A80
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC2731B8190F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:13:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E628C817E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9D8204C1E;
-	Thu, 10 Apr 2025 07:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCC9204F65;
+	Thu, 10 Apr 2025 07:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UdvuR5+0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUsiNP/o"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682431D5CFE;
-	Thu, 10 Apr 2025 07:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8924E204C1E
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744269199; cv=none; b=nKc+4R+ix9+bOn3lWOp51Vb0QrOzCtPSPdSZn9/gjaXgvPaGSHBm5y8nY3kGBfY2R3s52oREHNuLuKniKHJSxlSXFRFjE35mvo18bXQBVCPEIXVLHtnfCVxqw7XcdLw+JoK/xb+vgivjSXQ/lnjKN/GreQS+ZGezi/JWoJdOPRs=
+	t=1744269122; cv=none; b=DazHZOWzlB3aJnNtSF6R/OA5UaZU+PJYx8PR+JZTN+7uFcMUd4ng63C+WBBwzAAnLBYHV7G5POXMJ7vBNsaS8ISuiCIIm4vsrEnoDorMKUsp/gUg+O9A54GhfGx5ugqahxd3B23LugXo6R3soAS6fiCGj3+ctY+jBfk8UGhpCdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744269199; c=relaxed/simple;
-	bh=/Af35//dXZkHFZDl9CSvQBw8I9JeUaK4Yzg54bBJudY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PQQq/4fbVVhPmzfzyurzNN32kaZclNH0e63IvtkbVT+ctdzzClaGVA1BEf4hubU8etUiv94G6S1b9phSU7hz5CtJWEbv8oWsQYSZczXmKIP0XS8V68X22p/Ua/s9mTrie7t/wCOr5jyQSmAHZk/aWEre38VTJChphby1CoL7JZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UdvuR5+0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 111EFC4CEDD;
-	Thu, 10 Apr 2025 07:13:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744269196;
-	bh=/Af35//dXZkHFZDl9CSvQBw8I9JeUaK4Yzg54bBJudY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UdvuR5+0FOsO8XIYkduD5wzFV76+OiM+1q2RKjF0h8j+qszquiuzCbdbVYgqqHjTP
-	 YHU54KLMk6MccD9hUeR+tWEuC1iRZARsvOwa9C+Nsih6l8S4rVLZZh1/+GjeN0Gnt8
-	 4DbnUt4KivKOmnMmseNYebLK2A3sPY19rfyLbuKs=
-Date: Thu, 10 Apr 2025 09:11:42 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Wesley Cheng <quic_wcheng@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, mathias.nyman@intel.com, perex@perex.cz,
-	conor+dt@kernel.org, dmitry.torokhov@gmail.com, corbet@lwn.net,
-	broonie@kernel.org, lgirdwood@gmail.com, robh@kernel.org,
-	krzk+dt@kernel.org, pierre-louis.bossart@linux.intel.com,
-	Thinh.Nguyen@synopsys.com, tiwai@suse.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v38 00/31] Introduce QC USB SND audio offloading support
-Message-ID: <2025041029-oval-cavity-7896@gregkh>
-References: <20250409194804.3773260-1-quic_wcheng@quicinc.com>
+	s=arc-20240116; t=1744269122; c=relaxed/simple;
+	bh=qdUhPT6eGfT0vIbSxltjK0R9yFEXKwiQasxtehgDHDc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MKdkf3LmvL+3KP2XO8RbvK4XXdBRXo9tqJ5GC4ud531sMccdv/mf9l67o+R+u79QGSz9LuKYnyvOIyJvTI5eFKYDvaEpde5kJqmP9KchUYvwlUtzpxJkdBd77GT77Owysl86/fo77eo4Rl2c9w073zA8orAb2RnJoJvMoR188VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUsiNP/o; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43d0618746bso3227745e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 00:12:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744269119; x=1744873919; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+ondpv9wHHmTYRLHYVY0yID7V1+30O6BjyrfMe2qOvA=;
+        b=hUsiNP/owNFZV/LBdlmmeibOHow25HzPe1nitVJvo2LQyazztclZmEwd/i5xE1QTJd
+         3uZOeKqRocB7RV76LUv2Hz2UCqAu3M4YFJzmys4FrDKgzfKVX52fqn9xBQq4xQyYaikf
+         3z6NcERZxi1FRL0AW1NYJiHtCotek1wuvl87jhD7p8wkKeTeXiyXO4Duq0Q+JSkYY+8W
+         NlFukwFBVezIh3FbNeWuLfNgpcXaB+VS2wjnzb13xzYSJgpNgysb6Cm8dtdBVRD/CSr7
+         BQ1cFnL7WKryoeB50u185NEkiY55E+suUWyONVFXZm4OqcGckOxJQ1jHNI6H5DY63VIa
+         Ec4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744269119; x=1744873919;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+ondpv9wHHmTYRLHYVY0yID7V1+30O6BjyrfMe2qOvA=;
+        b=r+dQZDtsqnJQpcQnkH6o4il8SwTsILyezLSgBLPi3EsRs8xk2v1AsFqin62a6MhaSZ
+         bDiAAYObDFSownoFGIzZu2CjcD5Uosh7kPjFJDsAt4d5lYjbJtqA3+Znnx68PMaN1Whc
+         9wfv88L6GHXqJpYXHgnfaCRZEh7KqxxsI6N12R6CKFd3B1IwdNn6kr6SCRWBas9POHEt
+         d1DqdxPioBRa3rpMsliqyajVoqTQ6JtaOfhGAkS1mVYFJOIivH99P0QoS8AGS2IjW5PI
+         MhuZTtNWtz3Zh4JvClCoh86az/h8jwlj5gqPR6g49GKC+C8QpUqb8BGg/F/En8fRdDjO
+         nlLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVb4kY6vmknBeV0SMEh6bkdrblWjFWWEVy9FHqLw6dtm3uO9jloFmR7PBskDsUcqX9lpzwwLZHlKLQziq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh84Qat8gJMSU6DAzT0nVDVlW0ATcGc3em7sq85KgqAsnOxvTz
+	B3o0khymvDF7xfIHfjoEaQ9j1V6lqLgFKU3oY2j0UQxH+Z1fptnw
+X-Gm-Gg: ASbGncsia4yfs+8XPss+ZKgVDJ0y3OJhBiIkOEr0+oOFtZS0AM2U/NYIHkQTA+r68aW
+	wvn0BHw6C3vX4XoFSQ5q6uC6KCnKo5hqB3Vmr1A+GOV3bk64ETP8vDpQhAQxMb3LQV1u+HdeZLU
+	kAQu3NjbvbLV3Zb8k1+GJzOHctIUbQjGePEUrErIbIWYDSgTM2cMWHeznleaLftDpQFVaRmS8fx
+	H0hYHbQAmQsyalFm/JnvXKQTgmCh5HCCMgnNd/XCj4lYvplNk/+45lxMHhPJHPNqGPVm7cGQbBs
+	oD8CckJx9zntss8coyZIOiKsCy0uFHRNbVOYnw==
+X-Google-Smtp-Source: AGHT+IE2t23L8KCF9LY8XznMfXd0MrqX83Ivoh9mbFLU7queTYe+OxbqO5gxjP5+x7MP2C1m53hiLQ==
+X-Received: by 2002:a05:600c:3512:b0:43c:f689:dd with SMTP id 5b1f17b1804b1-43f2d7e9229mr12823845e9.19.1744269118691;
+        Thu, 10 Apr 2025 00:11:58 -0700 (PDT)
+Received: from pc.. ([197.155.71.138])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f235a5e90sm40831765e9.38.2025.04.10.00.11.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 00:11:58 -0700 (PDT)
+From: Erick Karanja <karanja99erick@gmail.com>
+To: gregkh@linuxfoundation.org,
+	outreachy@lists.linux.dev
+Cc: karanja99erick@gmail.com,
+	philipp.g.hortmann@gmail.com,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Improve code readability in rtl8723bs module
+Date: Thu, 10 Apr 2025 10:11:49 +0300
+Message-ID: <cover.1744268316.git.karanja99erick@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409194804.3773260-1-quic_wcheng@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 09, 2025 at 12:47:33PM -0700, Wesley Cheng wrote:
-> Requesting to see if we can get some Acked-By tags, and merge on usb-next.
+The patchset aims at improving code readability by initializing
+variables at declaration.Key consideration is made to ensure that the
+code is clean, maintainable and easy to debug.
 
-let me give it some 0-day bot testing to see how that goes...
+Changes since v2:
+Avoid refactoring the code in instances where comments are left dangling
+and in instances where refactoring introduces a checkpatch warning "line
+exceeds 100 columns"
+
+Changes since v1:
+Avoid mixing pre-initialized variables with not-initialized variables
+and handle an edge case where initialization is made to function call.
+
+Erick Karanja (2):
+  staging: rtl8723bs: Initialize variables at declaration in
+    rtl8723bs_xmit.c
+  staging: rtl8723bs: Initialize variables at declaration in
+    rtl8723b_hal_init.c
+
+ .../staging/rtl8723bs/hal/rtl8723b_hal_init.c | 81 ++++++-------------
+ .../staging/rtl8723bs/hal/rtl8723bs_xmit.c    | 33 +++-----
+ 2 files changed, 33 insertions(+), 81 deletions(-)
+
+-- 
+2.43.0
 
 
