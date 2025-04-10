@@ -1,207 +1,198 @@
-Return-Path: <linux-kernel+bounces-597670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2262A83CF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:31:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6847DA83CFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:32:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5749E5C9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:26:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AFBF3A9096
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFED02045B3;
-	Thu, 10 Apr 2025 08:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BF9204687;
+	Thu, 10 Apr 2025 08:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IrCY+a8Z";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K2lCdSzW"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yd6UoVMm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBCA1E1A17
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 08:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C421EEA5D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 08:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744273591; cv=none; b=Q0YwcwsTvUS3+LMLMuIm3YAAs62QF8dYVxTgazNgdYTlWKsA9RXBCEwcFyxqEbSZ48V0+kcZHdff9wSBMMIYM5lrCjjdO4bfnhMNoaP2HeHp4yMMuK3j/HOORdx5KJp5KQCjDe0temXHZ9+W7eeD2vhllZxLAkefdcu5+Rj4Us4=
+	t=1744273634; cv=none; b=KYQBZ1K1ojq2w2lai5zxJw92DjdG7vbFnWXyjkwMDQd/e+aHwSnytu+Zuloro3oBE2HmaETYdsb+GM4j8HjaTH6m45p9KOA8UgQJ0WlEUuQisq9D1VGBZXnWRILWzF4oXD4CtdE+qFULVazya3l+L7z2rwjJAjV9MqczvVqxsyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744273591; c=relaxed/simple;
-	bh=Zt5wT8BxHcC6U8kz+EOUAJtbJ0+dgEe+qtaubnwIykQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OIf6qXMcQ+XmIBX/azoRdvla6YbIDcwpIR9lUmRKj0rlIXhBEcwvqJq/CizQnHfJdcKXQURmyma06gToVzV59Y5Oa0ClgAX3WYuOWKfXw7q9FQRCs+cRIfAYSu8nvpB7sGJPxCm3Uyp2HTYbQ7ENoU556jdl7rpaIxRGkRmgyfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IrCY+a8Z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K2lCdSzW; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744273587;
+	s=arc-20240116; t=1744273634; c=relaxed/simple;
+	bh=7OgjP2r1y+H3C98mILy/OyuBEWsNZ4LMB1R3QgFCf1k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sf341PBVyiSXrvq9gxb1Gt45by7xmau6rMJI8Lqnzld+vpw0ynHGrIF+Ynh1wlHdwwh2tQLSwAVm1w593wsPGCiIWC7dPcv4hlA4PKDlSBeq7Wg9rhjn7kpn5SewbazVBqGQw1phbQg2g8ooFIJbRAYSkudkYcYjNgZA8Eso1kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yd6UoVMm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744273631;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GcP8bp/Bwxaz8iMlCvzBl968xjN5im+xVM+3YcYabbk=;
-	b=IrCY+a8ZKPOrJCYZ1CKJKGPAILCcmdHhY1saDz0LyEz8CfcKsTGo4O0zLliEddWX6NSJcw
-	N3rH/hNZn854OhQqeBK2O2wCyPajirHi2Tmu3N1mHEWJwNwWIpuyvUZ4wx+ojH2kzXbmGM
-	lz5RXL6iPiEXnOPNMxk84ruHmRtuokIcLqPWCmLy+8tAnyR+bqSJP1Iz3o2wXifp+Q3QyC
-	cUvBnx9NqkRAmXvN5bNlCKmOTfRytU4Q7EVgYXtFCHey5VRtmHOBhGynt4eXoKOwTuL5RP
-	WI4L+PSsfmYeJSslSMxZLCO38L3B9SrZ91svLdS2dfVyD2TsiNjEOjoN/h/pKw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744273587;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GcP8bp/Bwxaz8iMlCvzBl968xjN5im+xVM+3YcYabbk=;
-	b=K2lCdSzWG57FDviMSN5qmowD3D4yuX86cH4rzn/LSewWL3haeE75uBrXY8ZxzUX4eydR14
-	U+TuzdE1AN7HNyBw==
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
- Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, Waiman Long <longman@redhat.com>
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Subject: Re: [PATCH] timers: Exclude isolated cpus from timer migation
-In-Reply-To: <20250410065446.57304-2-gmonaco@redhat.com>
-References: <20250410065446.57304-2-gmonaco@redhat.com>
-Date: Thu, 10 Apr 2025 10:26:26 +0200
-Message-ID: <87ecy0tob1.ffs@tglx>
+	bh=OKzMCc0mBOI4figeschKj6q6v2G4wTIIAmTInqn3cTg=;
+	b=Yd6UoVMmOwcJadb73dYwNI9K01Gxk4Xh2UhLBbF9l/zCshuKMFEEqcBmVmL5yYf3dvjFYg
+	jIJkirLwFT1E72ZohXpXAPBY0aBVsIquqwihOIpsffIRm0xfY0ba3JKxLprY1e5hSoaM7u
+	0IYuqc6cSelny1QKv0RZNq5N4CmuWB4=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-455-eakRA7OoMYml2AecDjx9QQ-1; Thu,
+ 10 Apr 2025 04:27:07 -0400
+X-MC-Unique: eakRA7OoMYml2AecDjx9QQ-1
+X-Mimecast-MFC-AGG-ID: eakRA7OoMYml2AecDjx9QQ_1744273625
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C4D9D1800263;
+	Thu, 10 Apr 2025 08:27:04 +0000 (UTC)
+Received: from [10.44.33.222] (unknown [10.44.33.222])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1F9583001D0E;
+	Thu, 10 Apr 2025 08:26:59 +0000 (UTC)
+Message-ID: <c0ef6dad-ce7e-401c-9ae1-42105fcbf9c4@redhat.com>
+Date: Thu, 10 Apr 2025 10:26:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/14] mfd: zl3073x: Add components versions register
+ defs
+To: Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Michal Schmidt <mschmidt@redhat.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20250409144250.206590-1-ivecera@redhat.com>
+ <20250409144250.206590-8-ivecera@redhat.com>
+ <df6a57df-8916-4af2-9eee-10921f90ff93@kernel.org>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <df6a57df-8916-4af2-9eee-10921f90ff93@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Apr 10 2025 at 08:54, Gabriele Monaco wrote:
->  
-> +/*  cpumask excluded from migration */
-> +static cpumask_var_t tmigr_unavailable_cpumask;
+On 10. 04. 25 9:13 dop., Krzysztof Kozlowski wrote:
+> On 09/04/2025 16:42, Ivan Vecera wrote:
+>> Add register definitions for components versions and report them
+>> during probe.
+>>
+>> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+>> ---
+>>   drivers/mfd/zl3073x-core.c | 36 ++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 36 insertions(+)
+>>
+>> diff --git a/drivers/mfd/zl3073x-core.c b/drivers/mfd/zl3073x-core.c
+>> index f0d85f77a7a76..28f28d00da1cc 100644
+>> --- a/drivers/mfd/zl3073x-core.c
+>> +++ b/drivers/mfd/zl3073x-core.c
+>> @@ -1,7 +1,9 @@
+>>   // SPDX-License-Identifier: GPL-2.0-only
+>>   
+>>   #include <linux/array_size.h>
+>> +#include <linux/bitfield.h>
+>>   #include <linux/bits.h>
+>> +#include <linux/cleanup.h>
+>>   #include <linux/dev_printk.h>
+>>   #include <linux/device.h>
+>>   #include <linux/export.h>
+>> @@ -13,6 +15,14 @@
+>>   #include <net/devlink.h>
+>>   #include "zl3073x.h"
+>>   
+>> +/*
+>> + * Register Map Page 0, General
+>> + */
+>> +ZL3073X_REG16_DEF(id,			0x0001);
+>> +ZL3073X_REG16_DEF(revision,		0x0003);
+>> +ZL3073X_REG16_DEF(fw_ver,		0x0005);
+>> +ZL3073X_REG32_DEF(custom_config_ver,	0x0007);
+>> +
+>>   /*
+>>    * Regmap ranges
+>>    */
+>> @@ -196,7 +206,9 @@ static void zl3073x_devlink_unregister(void *ptr)
+>>    */
+>>   int zl3073x_dev_init(struct zl3073x_dev *zldev)
+>>   {
+>> +	u16 id, revision, fw_ver;
+>>   	struct devlink *devlink;
+>> +	u32 cfg_ver;
+>>   	int rc;
+>>   
+>>   	rc = devm_mutex_init(zldev->dev, &zldev->lock);
+>> @@ -205,6 +217,30 @@ int zl3073x_dev_init(struct zl3073x_dev *zldev)
+>>   		return rc;
+>>   	}
+>>   
+>> +	/* Take device lock */
+> 
+> What is a device lock? Why do you need to comment standard guards/mutexes?
 
-Why is this a negated mask instead of being the obvious and intuitive
-available mask?
+Just to inform code reader, this is a section that accesses device 
+registers that are protected by this zl3073x device lock.
 
->  	if (firstexp != KTIME_MAX) {
-> -		migrator = cpumask_any_but(cpu_online_mask, cpu);
-> +		migrator = cpumask_nth_andnot(0, cpu_possible_mask,
-> +					      tmigr_unavailable_cpumask);
+>> +	scoped_guard(zl3073x, zldev) {
+>> +		rc = zl3073x_read_id(zldev, &id);
+>> +		if (rc)
+>> +			return rc;
+>> +		rc = zl3073x_read_revision(zldev, &revision);
+>> +		if (rc)
+>> +			return rc;
+>> +		rc = zl3073x_read_fw_ver(zldev, &fw_ver);
+>> +		if (rc)
+>> +			return rc;
+>> +		rc = zl3073x_read_custom_config_ver(zldev, &cfg_ver);
+>> +		if (rc)
+>> +			return rc;
+>> +	}
+> 
+> Nothing improved here. Andrew comments are still valid and do not send
+> v3 before the discussion is resolved.
 
-That's exactly what this negated mask causes: incomprehensible code.
+I'm accessing device registers here and they are protected by the device 
+lock. I have to take the lock, register access functions expect this by 
+lockdep_assert.
 
-	cpumask_clear_cpu(cpu, available_mask);
-        ...               
-		migrator = cpumask_first(available_mask);
+>> +
+>> +	dev_info(zldev->dev, "ChipID(%X), ChipRev(%X), FwVer(%u)\n",
+>> +		 id, revision, fw_ver);
+>> +	dev_info(zldev->dev, "Custom config version: %lu.%lu.%lu.%lu\n",
+>> +		 FIELD_GET(GENMASK(31, 24), cfg_ver),
+>> +		 FIELD_GET(GENMASK(23, 16), cfg_ver),
+>> +		 FIELD_GET(GENMASK(15, 8), cfg_ver),
+>> +		 FIELD_GET(GENMASK(7, 0), cfg_ver));
+> 
+> 
+> Both should be dev_dbg. Your driver should be silent on success.
 
-is too simple and obvious, right?
++1
+will change.
 
-> +		/* Fall back to any online in case all are isolated. */
+>> +
+>>   	devlink = priv_to_devlink(zldev);
+>>   	devlink_register(devlink);
+>>   
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
-How can that happen? There is always at least _ONE_ housekeeping,
-non-isolated, CPU online, no?
-
-> +		if (migrator >= nr_cpu_ids)
-> +			migrator = cpumask_any_but(cpu_online_mask, cpu);
->  		work_on_cpu(migrator, tmigr_trigger_active, NULL);
->  	}
->  
->  	return 0;
->  }
->  
-> -static int tmigr_cpu_online(unsigned int cpu)
-> +static int tmigr_cpu_available(unsigned int cpu)
->  {
-> -	struct tmigr_cpu *tmc = this_cpu_ptr(&tmigr_cpu);
-> +	struct tmigr_cpu *tmc = per_cpu_ptr(&tmigr_cpu, cpu);
->  
->  	/* Check whether CPU data was successfully initialized */
->  	if (WARN_ON_ONCE(!tmc->tmgroup))
->  		return -EINVAL;
->  
-> +	/* Silently ignore online requests if isolated */
-
-This comment makes no sense.
-
-     /* Isolated CPUs are not participating in timer migration */
-
-makes it entirely clear what this is about, no?
-
-That brings me to the general design decision here. Your changelog
-explains at great length WHAT the change is doing, but completely fails
-to explain the consequences and the rationale why this is the right
-thing to do.
-
-By excluding the isolated CPUs from migration completely, any 'global'
-timer, which is armed on such a CPU, has to be expired on that isolated
-CPU. That's fundamentaly different from e.g. RCU isolation.
-
-It might be the right thing to do and harmless, but without a proper
-explanation it's a silent side effect of your changes, which leaves
-people scratching their heads.
-
-> +	if (cpu_is_isolated(cpu))
-> +		return 0;
->  	raw_spin_lock_irq(&tmc->lock);
-> -	trace_tmigr_cpu_online(tmc);
-> +	trace_tmigr_cpu_available(tmc);
->  	tmc->idle = timer_base_is_idle();
->  	if (!tmc->idle)
->  		__tmigr_cpu_activate(tmc);
-> -	tmc->online = true;
-> +	tmc->available = true;
-> +	tmc->idle = true;
-
-How so?
-
-> +	cpumask_clear_cpu(cpu, tmigr_unavailable_cpumask);
->  	raw_spin_unlock_irq(&tmc->lock);
->  	return 0;
->  }
->  
-> +int tmigr_isolated_exclude_cpumask(cpumask_var_t exclude_cpumask)
-
-cpumask_var_t is wrong here. 'const struct cpumask *' is what you want.
-
-> +{
-> +	int cpu;
-> +	cpumask_var_t cpumask;
-
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#coding-style-notes
-
-> +	if (!zalloc_cpumask_var(&cpumask, GFP_KERNEL))
-> +		return -ENOMEM;
-> +
-> +	cpumask_copy(cpumask, tmigr_unavailable_cpumask);
-
-What serializes this against concurrent CPU hotplug? I assume it's done
-by the caller, but then this code should have a lockdep assert to
-validate it. If it's not, then this is broken.
-
-As it is serialized it does not need a copy either, right?
-
-> +	/* Was not excluded but should be excluded now. */
-> +	for_each_cpu_andnot(cpu, exclude_cpumask, cpumask)
-> +		tmigr_cpu_unavailable(cpu);
-> +
-> +	/* Was excluded but should be included now */
-> +	for_each_cpu_andnot(cpu, cpumask, exclude_cpumask)
-> +		if (cpu_online(cpu))
-> +			tmigr_cpu_available(cpu);
-
-My brain hurts by now.
-
-         for_each_cpu_and(cpu, available_mask, exclude_mask)
-         	tmigr_cpu_unavailable(cpu);
-
-         for_each_cpu_andnot(cpu, cpu_online_mask, exclude_mask) {
-         	if (!cpumask_test_cpu(cpu, available_mask))
-                	tmigr_cpu_available(cpu);
-         }
-
-No?
-
-Also this patch is doing too many things at once. It want's to be split
-into:
-
-    Patch 1: Rename 'online' to 'available' (bit and function names)
-    Patch 2: Add the available mask logic
-    Patch 3: Add the isolation functionality
-
-Thanks,
-
-        tglx
 
