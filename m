@@ -1,56 +1,61 @@
-Return-Path: <linux-kernel+bounces-598361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E68AEA84557
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:51:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17576A84559
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 815753B9DDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:46:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADCF68A1E8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C5028A40E;
-	Thu, 10 Apr 2025 13:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9691728A41E;
+	Thu, 10 Apr 2025 13:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C78XOFZQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZPTVGwYG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1202228A3FA;
-	Thu, 10 Apr 2025 13:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86B528A3FB;
+	Thu, 10 Apr 2025 13:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744292821; cv=none; b=pRs0pTOBLFlgkLwqFn713rC/3DRKvuo/S6iEwLzj9T00Cs+VQGPnZfW4yNFlA5I6NSh9RmCLETROSMXdZoOzHy4LiEI5DQ+t6+mBTIDgdiOcwIstbUZPme5pI827XI/APXQM+pErFaqJicvIgogfUJL5T/gYy+lX+DiY+Pr2uRw=
+	t=1744292824; cv=none; b=TlIYzxo5zL1aX4IUMvy1smU/XpZCixuywaMCIOOfqVXowQ0Y43s3+9CfScey50FJNXrX/WUqGfgvtuFbblfI3UMDKgGl4gfpQKe2rr1oCmp+ADfFFreYZ3RIav0f8DzaCeemMFUnvH4YZdWhYc3Gz0A+dGB/dvjzeVumq0+lLSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744292821; c=relaxed/simple;
-	bh=ZaBDTF+iRh/90T1kltHyogYykF+sNGQx0AlcBcGZgYA=;
+	s=arc-20240116; t=1744292824; c=relaxed/simple;
+	bh=bl5IUQgJObOrUKEy2OIJfXeF4HSKpBmDsKV7Ih3rpQM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LnqJkcbpnnAmVIGRpoh2o5hmPVPrJ0CB8ECWFjiS5xCkMdvBWa9VzMIItXulbxSXPhnuvYLn8XN7j87CuUMsWy6CXxLqlM6PbFuAHxZ5creDSz41+/4uH28WtVKtVzgtQdbUSQg7YfBm4fCLNIUFOkNjlHoi/wH8eYdyT24I7JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C78XOFZQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B0BC4CEE8;
-	Thu, 10 Apr 2025 13:46:58 +0000 (UTC)
+	 MIME-Version:Content-Type; b=LW4RlqCvi0I5xzERUYeOcYh0MDc6On6uZ9fl04c399oIrTaq87ndDxplyEXNtNnXuKz+YzYNK4W+b6jI9zFZnb+XT72T0cw3HLxo5y4KaXxv5rIjoF3QKi2d+sHMWwLlwP6YWqXFPZBf0IA9ekGb2MB/pt3O40iDmxhGGI+t5TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZPTVGwYG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB4AC4CEE9;
+	Thu, 10 Apr 2025 13:47:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744292820;
-	bh=ZaBDTF+iRh/90T1kltHyogYykF+sNGQx0AlcBcGZgYA=;
+	s=k20201202; t=1744292823;
+	bh=bl5IUQgJObOrUKEy2OIJfXeF4HSKpBmDsKV7Ih3rpQM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=C78XOFZQm7P+OqJSbxbD7Qqr6cDKO/1W7yqHKq9btlAFf7Dxjj3AV4+3yPscm3EDQ
-	 x2kn1XngRBK4Huf6o1iS4cx+HoxOvgNxgvDBc/7LaZ5mfXjewnZiVq6HPCHfVGJ+7i
-	 F8sg8nCwqjwJ1iRG/gJylCp5C5491Jgoslwic68I4AoB/3RWTBiq5wlag4TZS3kvyU
-	 YbfxYRsArnKuSaWXEOIsIBvKt/H1wMzdJValU5xcT37Mhh6/wbhEXY3BvnbiKW4ftU
-	 pkBIiIsx3XtRgo09R5fOPCU5UIg55hFcwFAzl2txiN4Bh9sgZo1wJZ0+kfoNXAZ/cl
-	 WrF0OJf5Y9xqQ==
+	b=ZPTVGwYG3XvOQ8nkIrvVJsPmoAliY7pas/LyV6SFdvmPSeXLoG2xlmySlCdlryFNC
+	 wx1CXVOUTMydJJV4eklx3eabEo3ngJ9ES+iBW4K/4uKMASzI29I85jK2KrmIccUt2W
+	 AwsC6xBeOhzXaJY4E2kRmlR2k+NKX8exrbUwA9fnNFCxcNDBryxFt9iWQ/1suDvmgr
+	 xaMvEyWxIvnRP2IVVunf7NRiXsClIqwAto+yPWMnyA6iTWNJYudrUT6YnF5m+sanxK
+	 287Xr7KJd5CAI8a5t+V07oFTIwotf9dlI6Z7r67yU+MN4cs3X0nx8pwUomTx9Exz46
+	 z91FkNGPhW9TA==
 From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- yesanishhere@gmail.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, wangweidong.a@awinic.com
-Cc: yijiangtao@awinic.com
-In-Reply-To: <20250410024953.26565-1-wangweidong.a@awinic.com>
-References: <20250410024953.26565-1-wangweidong.a@awinic.com>
-Subject: Re: [PATCH V1] ASoC: codecs: Add of_match_table for aw888081
- driver
-Message-Id: <174429281889.80887.5322722403791899144.b4-ty@kernel.org>
-Date: Thu, 10 Apr 2025 14:46:58 +0100
+To: Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
+ Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Herve Codina <herve.codina@bootlin.com>
+Cc: linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-kernel@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, stable@vger.kernel.org
+In-Reply-To: <20250410091643.535627-1-herve.codina@bootlin.com>
+References: <20250410091643.535627-1-herve.codina@bootlin.com>
+Subject: Re: [PATCH] ASoC: fsl: fsl_qmc_audio: Reset audio data pointers on
+ TRIGGER_START event
+Message-Id: <174429282080.80887.6648935549042489213.b4-ty@kernel.org>
+Date: Thu, 10 Apr 2025 14:47:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,11 +66,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c25d1
 
-On Thu, 10 Apr 2025 10:49:53 +0800, wangweidong.a@awinic.com wrote:
-> Add of_match_table for aw88081 driver to make matching
-> between dts and driver more flexible
+On Thu, 10 Apr 2025 11:16:43 +0200, Herve Codina wrote:
+> On SNDRV_PCM_TRIGGER_START event, audio data pointers are not reset.
 > 
+> This leads to wrong data buffer usage when multiple TRIGGER_START are
+> received and ends to incorrect buffer usage between the user-space and
+> the driver. Indeed, the driver can read data that are not already set by
+> the user-space or the user-space and the driver are writing and reading
+> the same area.
 > 
+> [...]
 
 Applied to
 
@@ -73,8 +83,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: codecs: Add of_match_table for aw888081 driver
-      commit: 6bbb2b1286f437b45ccf4828a537429153cd1096
+[1/1] ASoC: fsl: fsl_qmc_audio: Reset audio data pointers on TRIGGER_START event
+      commit: 9aa33d5b4a53a1945dd2aee45c09282248d3c98b
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
