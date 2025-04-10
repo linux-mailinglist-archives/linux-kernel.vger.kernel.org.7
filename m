@@ -1,97 +1,178 @@
-Return-Path: <linux-kernel+bounces-598764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76597A84AC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:14:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90EF0A84AC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2FF87A81A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:12:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9A597A7E94
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0191F0991;
-	Thu, 10 Apr 2025 17:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EAD281529;
+	Thu, 10 Apr 2025 17:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Hk9ICbrI"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="hdHaDrMO"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209E51EFF8B;
-	Thu, 10 Apr 2025 17:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133F22036F3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 17:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744305232; cv=none; b=KLAozOl5G2nix+snVSAcPmxgE9Zes+jlD7JyBOpWSzlkTREmMCsXz1hZNxAE4bmUDH2bjyLgT6DDfU30olYdneQWVf5dXrirnofBIginF4KAlESoMUXx9pz9fWwe5Ml/UnbR2bQdJA9gcUa5FVpSNujcuxoSUaOaFkENaEvBqnE=
+	t=1744305236; cv=none; b=fl+cSNv7a8VJ3Pz5cOwdpoetwwKdq0RDyo7OAaN9J7nhWTWMyK6D5RA250vTwcCRQsipWEEYGYA8rnLmb7CXCXWv0vI+Qv/xik0O9LH6zQToUQlJQLyL9kVm1EjGrsiYahIbMAFsKlDh/T79NLHZoC4QyERe+ABpehCzuwkNGQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744305232; c=relaxed/simple;
-	bh=4Oj1yvMh0QB813Yn0QiRAoNK8Kh/5ucCp5QFvDHVrsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lv6Of4rQfBoA9MCA0FCkSvhqLx0Rg+sN35ZV1eZl4cZW+lUxzHmByfFjggdtsvV2QBoJpfztxEZO3FtYETvhZ6OQ0RB85pxpTlJztu+225PI6aeiw/1D85fMDzuePIDc8Gdfk4rGFSoEKHuTJlQT7gYuarrav+3dq7tbE8Wz6ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Hk9ICbrI; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=tBs+L7GljmdttspKTR74d3vYIsbQVwMVt7YqQ/pqWX0=; b=Hk9ICbrI9SgVJyivcCnzdyHVHc
-	Q0q2UyStUpC83uG9rxplPupBCIcfaP2HLLKSSgmlQNtmeiS6QWiSS67FEP319t+eCYrlonVtCbnt9
-	esQe/z183xp8bTVROvdWZdKzIHZRXfZGkdRlcwriydvm/UJv9KzrfsKAgaNmAwDsAdyI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u2vT4-008i5m-63; Thu, 10 Apr 2025 19:13:34 +0200
-Date: Thu, 10 Apr 2025 19:13:34 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>, Simon Horman <horms@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v14 06/16] net: mdio: regmap: prepare support
- for multiple valid addr
-Message-ID: <fc1ee916-c34f-4a73-bdf6-6344846d561b@lunn.ch>
-References: <20250408095139.51659-1-ansuelsmth@gmail.com>
- <20250408095139.51659-7-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1744305236; c=relaxed/simple;
+	bh=r/WPmzNSOG7DnhnmxRVyxjV8aisZ4YY9NJhFvRVaLr8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SJVhyWcsocB8Ma9taEdnJnJo1L+tXz8A/mTQNAPRhPYKzZ3a64aTdHC/jJelMlExnT6r7v+qNANEmckTgYREAg6cHy90+Ep0bgUoZdwBOLBvDokEPWmKQXYBwk4B8MNHlsig5qEvaG00gJ4jAo0O//elYqAgsDgSCYtmQcWMwWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=hdHaDrMO; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=smartx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=smartx.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22928d629faso11559095ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:13:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1744305233; x=1744910033; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hq/VSDygxUvqusiASIxz5VUwIaO2iFyZjJyGjGC2vUg=;
+        b=hdHaDrMO+AiifcN1/KxPIAliRtIrEHzWHa8s7TeUg2dnslsmryNr1Rj2wrWR+tYLek
+         KST35IUbRnFRyyhJdBwHTZoz+2NIQNjL12FehCVCc7AlF4IhBZ6lM/Hkr0yjuLd92nOT
+         1boaUgcUYNDc4/6xC2nhU22zSV6N6+qHeKWQzqRvShUc3W4afT4HccNjsUBMjFP6q7Lw
+         E8z8eHvWiMc5ig0/uWSw+WcBT/gLZzvWmABLpyK3n7ySpCb2WisB33sqf/nooGF2zUbQ
+         9wywyRnEdOMJCGZfWhcosOh2b9q4Bp0p84enjNpJ9Hs4Tvqa0GutvDygkfGi7JXfW6kl
+         iK3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744305233; x=1744910033;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hq/VSDygxUvqusiASIxz5VUwIaO2iFyZjJyGjGC2vUg=;
+        b=SEg27cyuAbSSNKCyKF9MZioD1KzkcU5WLxACQvy+Q+xYFujSLcuvgn/uBRDVBQp1an
+         aZIyGByK63RvEtgB8u61ungE7x8ymNp+B+XRwSKzR9LfVaTk39++SDoaJSCP4427+vti
+         Wrz0UP6ebotYOtupi3vpdQNzrnK/pv/3zw8Ak6WnfAkMctu/prIOsMvr/7Uxo+d6OSbK
+         9cR7futNVPs5EdVziFYEDGMjrSEY/prHk4Ixs6Cbq5QfeX6as8Y8/hDhy+6+4i+GJWFR
+         cckRfrJaMjoNKnKg/tKxQOmTdwW8/7fM6x7zaSoLlAxmP03o6HDdf/r0r1yaI6vz+0/8
+         sBNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFhhklcfc9Shen0NsnRMFZZHq6Q45D2+YTJmfC1OubFB3RUnCNO72p1Onl5w6xFqa6unLVhwh2eXKfVI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwreHSdz1U0ysaKqFKlCoqeX9xJSgUddLs1l4YKSud/JHuz92mE
+	9z2d1Fkiyz1va0CsJIQi5lJXbUBqQ25SufVR4OSZsWDoBNgrMCC03VxXsvv7G0A=
+X-Gm-Gg: ASbGncvBnEQLlmWiRNCxPFYB4PXKdx4Uq72xzwt5qL8+Meu5zPRAoYzSgokPSIvsPVH
+	PGb2Qy52tPluEdS4Y4Hl5GRAuPOcPW/6p9ym0x/WkMO0FNbBSHyUMMXB0Y27Pg3+yBo9Hv9PmkD
+	PImQW83NIdLSWcfvHocnhlysbsurd5xYuBsXDhowJvaOaklYJZn6s9yfye1WDRXsJUVSip3FVms
+	vZ5dC2ZqhBBsJtghW3OYivPyME2sV6CeX4kiVfT61/9azO2tRCCBdiFekDWIvbvOEvnXdSD3GRU
+	9J0LoCVQNp2WQPbYaHhmEbMTHA934aiJJz1JiE8/rwGfixULgBMsdw==
+X-Google-Smtp-Source: AGHT+IG7qAV0tWMqHzjYRRs/ciOYKMfjBxdBqsj5qeEnoYzZvY7nHBvNuiM4SI4rYfKRFkQl7QhunA==
+X-Received: by 2002:a17:903:1ab0:b0:220:c4e8:3b9d with SMTP id d9443c01a7336-22be03902bdmr44796655ad.37.1744305232795;
+        Thu, 10 Apr 2025 10:13:52 -0700 (PDT)
+Received: from localhost.localdomain.com ([103.85.74.92])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7caf838sm33169365ad.162.2025.04.10.10.13.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 10:13:52 -0700 (PDT)
+From: Jiewei Ke <jiewei@smartx.com>
+To: wagi@kernel.org
+Cc: hare@suse.de,
+	hch@lst.de,
+	jmeneghi@redhat.com,
+	kbusch@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	mkhalfella@purestorage.com,
+	randyj@purestorage.com,
+	sagi@grimberg.me
+Subject: Re: [PATCH RFC 3/3] nvme: delay failover by command quiesce timeout
+Date: Thu, 10 Apr 2025 13:13:44 -0400
+Message-ID: <20250410171344.2579478-1-jiewei@smartx.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250324-tp4129-v1-3-95a747b4c33b@kernel.org>
+References: <20250324-tp4129-v1-3-95a747b4c33b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408095139.51659-7-ansuelsmth@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 08, 2025 at 11:51:13AM +0200, Christian Marangi wrote:
-> Rework the valid_addr and convert it to a mask in preparation for mdio
-> regmap to support multiple valid addr in the case the regmap can support
-> it.
->  	mr = mii->priv;
->  	mr->regmap = config->regmap;
-> -	mr->valid_addr = config->valid_addr;
-> +	mr->valid_addr_mask = BIT(config->valid_addr);
+Hi Daniel,
 
-I don't see how this allows you to support multiple addresses. You
-still only have one bit set in mr->valid_addr_mask.
+I just noticed that your patchset addresses a similar issue to the one I'm
+trying to solve with my recently submitted patchset [1]. Compared to your
+approach, mine differs in a few key aspects:
 
-      Andrew
+1. Only aborted requests are delayed for retry. In the current implementation,
+nvmf_complete_timed_out_request and nvme_cancel_request set the request status
+to NVME_SC_HOST_ABORTED_CMD. These requests are usually already sent to the
+target, but may have timed out or been canceled before a response is received.
+Since the target may still be processing them, the host needs to delay retrying
+to ensure the target has completed or cleaned up the stale requests. On the
+other hand, requests that are not aborted - such as those that never got
+submitted due to no usable path (e.g., from nvme_ns_head_submit_bio), or those
+that already received an ANA error from the target - do not need delayed retry.
+
+2. The host explicitly disconnects and stops KeepAlive before delay scheduling
+retrying requests. This aligns with Section 9.6 "Communication Loss Handling"
+of the NVMe Base Specification 2.1. Once the host disconnects, the target may
+take up to the KATO interval to detect the lost connection and begin cleaning
+up any remaining requests.
+
+@@ -2178,6 +2180,7 @@ static void nvme_rdma_shutdown_ctrl(struct nvme_rdma_ctrl *ctrl, bool shutdown)
+ 	nvme_quiesce_admin_queue(&ctrl->ctrl);
+ 	nvme_disable_ctrl(&ctrl->ctrl, shutdown);
+ 	nvme_rdma_teardown_admin_queue(ctrl, shutdown);
++	nvme_delay_kick_retry_lists(&ctrl->ctrl); <<< delay kick retry after teardown all queues
+ }
+
+3. Delayed retry of aborted requests is supported across multiple scenarios,
+including error recovery work, controller reset, controller deletion, and
+controller reconnect failure handling. Here's the relevant code for reference.
+
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 9109d5476417..f07b3960df7c 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -2449,6 +2449,7 @@ static int nvme_tcp_setup_ctrl(struct nvme_ctrl *ctrl, bool new)
+ destroy_admin:
+ 	nvme_stop_keep_alive(ctrl);
+ 	nvme_tcp_teardown_admin_queue(ctrl, new);
++	nvme_delay_kick_retry_lists(ctrl); <<< requests may be timed out when ctrl reconnects
+ 	return ret;
+ }
+
+@@ -2494,6 +2495,7 @@ static void nvme_tcp_error_recovery_work(struct work_struct *work)
+ 	nvme_tcp_teardown_admin_queue(ctrl, false);
+ 	nvme_unquiesce_admin_queue(ctrl);
+ 	nvme_auth_stop(ctrl);
++	nvme_delay_kick_retry_lists(ctrl); <<< retry_lists may contain timed out or cancelled requests
+
+ 	if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_CONNECTING)) {
+ 		/* state change failure is ok if we started ctrl delete */
+
+@@ -2513,6 +2515,7 @@ static void nvme_tcp_teardown_ctrl(struct nvme_ctrl *ctrl, bool shutdown)
+ 	nvme_quiesce_admin_queue(ctrl);
+ 	nvme_disable_ctrl(ctrl, shutdown);
+ 	nvme_tcp_teardown_admin_queue(ctrl, shutdown);
++	nvme_delay_kick_retry_lists(ctrl); <<< retry_lists may contain timed out or cancelled requests when ctrl reset or delete
+ }
+
+Besides, in nvme_tcp_error_recovery_work, the delayed retry must occur after
+nvme_tcp_teardown_io_queues, because the teardown cancels requests that may need
+to be retried too.
+
+One limitation of my patchset is that it does not yet include full CQT support,
+and due to testing environment constraints, only nvme_tcp and nvme_rdma are
+currently covered.
+
+I'd be happy to discuss the pros and cons of both approaches - perhaps we can
+combine the best aspects.
+
+Looking forward to your thoughts.
+
+Thanks,
+Jiewei
+
+[1] https://lore.kernel.org/linux-nvme/20250410122054.2526358-1-jiewei@smartx.com/
+
 
