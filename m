@@ -1,152 +1,151 @@
-Return-Path: <linux-kernel+bounces-598693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA02A8498E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:26:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58889A8498D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A10FD1BA0CB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:26:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D98F462B43
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DCD1EFF92;
-	Thu, 10 Apr 2025 16:25:32 +0000 (UTC)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA7E1EE035;
+	Thu, 10 Apr 2025 16:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ineRWtWX"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443BB1EE031;
-	Thu, 10 Apr 2025 16:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F151D5CE8
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 16:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744302332; cv=none; b=jpylWSqJ9vjwt2jG5cAwBrjfmedsR6lm7PC9qSGcB5Jag107iBAwbEO+MhTNNAJpjDnxurpwjxSY+fX8GL+1qUK2xQjrkOYvXo+rA0095/ZYZe+OOoiN1yhowi+HxzDLy0qM8VSsruBAt8CHPrEMFQVrXYOzWYiu1SxYLdEFfdU=
+	t=1744302321; cv=none; b=W7Hz6GestWKc7xnT2NfR4rMW3ENaoDa053xLxNidS4ayrs/68/SXziN5/wTFuRoduTJXMWwFjBnRs8KJLB1WcCOSBKa5Bzl6s3YAbjNIbOcwyndhle9DXBU185p1iesxKC3u5mLvNCEC8JvDE9Xmj3CKl+JHev58agQPtcrtz5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744302332; c=relaxed/simple;
-	bh=lykLsCueFpXf3nA5FB3qabRR6p+XCyjF3DtVPfyIVz8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xffy+SgU8tHrIPQy7OjipGTAvTGWNsfr5EmbmZxvmx4vRP7kz55+CwUQVhiFt1F7URWxrPoLRYYPfJ8NvQp00UZXCssaPDPLSBkJKt2TNwhlJR5y0bI3mj9DISpYu4WbfpX9WdICSJA7Vmx/DCpQjT7WEnfbTpQQSPxc6Uy75CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-86feb848764so406374241.0;
-        Thu, 10 Apr 2025 09:25:29 -0700 (PDT)
+	s=arc-20240116; t=1744302321; c=relaxed/simple;
+	bh=Xyqh31/up32k9QyjvOp1tbHBRtZxHnBYUmmh3lPeV3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Gs+EBk4F6t6aiQ6uAwPcG+lwD1fLvbxDlM9ng+Ho9sewcf2vCnsEB3rB2iFSb+ntcHustpQKfKBCiALoHvLCCDq25gpY+j6COuwAedVD/DywpLrq2ynGiv9xkpBSCnKsMVE6ez4GL1ea80SNR6Eb+Rl0oNsnU6hNxUdIKIxkSeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ineRWtWX; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39c266c1389so655222f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:25:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744302318; x=1744907118; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wB7GpXUjol0KQ/YbX53LBVb2Ev80ElCPLnkY+8Zk89U=;
+        b=ineRWtWXQW7mvtsTlMk6+UVf38cq23wMxvihzK7sCHY+qm6x6JJsG994OH4HzFeruY
+         P3IB5HIyR2d0DaKYeVZlYhJGqYSWN8JgK3m9UBSIyPFD8I+D7pZY9JVI8qeQ0pbrDhVu
+         LTZU3q9S9xD8zF5om89+oRB6cwYoyAbnh6QhwUNPPrjAz+L7kkcwmtVBJfJ1lpV8OW4Y
+         RV7+fdra4lWO0XVH8yG6CK9iWb18iHuUZNj3BaU1EjR7vFqH9lsuFNL2cZIsLNt1ha7F
+         1nzzOe5fw/gc15YvscoFdkO7twPQFYmp+0u77le3tUURLG9WNyuGn2kVGwlCXa74YjKQ
+         4bCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744302327; x=1744907127;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=78W5qKZnlTfZQHkWBjobZ2XI6psT4APTbxKfnxPmKTg=;
-        b=YF/kyiE/XJ71egv2wmaPSFv56mRX4av9h4ssCrU/1T86eTViTyqVrWm9nHxU+IIBju
-         lAXhJhcui8+F2RVU0CjASJ4GfNgNl2HvUELdC7KfeCF0CZjWssRXdOj3KNCmZmXsRZw5
-         oP/+HYS/Rv0jQ3WqzLMgjYaNBxHw+aCHi+nk3k3AUW0LxYYopyEiqMRRIktwq/1e7Cq2
-         p1I55jCje/VNNQtS4yLj9g6l6gYN4C6QbQ26cD4fCmpMMT4KOjm3dnJM+V1kdTpmCRm+
-         8wHnmdN1SUS34h6rJDCSuLQPUIZxq68N8JCNhdFyJpfyb8lprknoB4S6t05JuQ4RR9OX
-         X6/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUNKGCGf83kYBaCjDiz4Y1/f/LmVnGMFcOF3XfrT/0bZAk3h8pihhU6tq7yoR7g1yGtxMazSgFFlPI+NyjT@vger.kernel.org, AJvYcCWmK//E5y0fw4dWVsQJ/jZpEYrvZTCsgAqoYZ49B/kgfOXZlmJd2PY0m1nvxSruTv0QyT5Ay2MDCeHd@vger.kernel.org, AJvYcCXDE0fpTlaYe31+f3CtBw7PcU61SiuAJu1RxfQTjfyPISoFMQFgl/IqPiH/RKqCQWYEAc/fTrcnjqun@vger.kernel.org, AJvYcCXnUQBWjAHs83bEt2G3B61qj/dQTNvDHo9Vc8let3iO6ouhOI++09HmT9vxndQb3Xea3iaPzI9YzARzP+chCcACHgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzgATcKdDbX1ZTFS8iXtEefLU+uTqy8w6LoL9MBnkFkX5FxH3n
-	v+C8samdB2KilEvC4yo3VHSv8PsatKTNJLyiJwY5Jjkc9lwQ53np4S8NVLnRXwA=
-X-Gm-Gg: ASbGncvExIYLK/1XkHbWXOpRFCLm//J81pbWEhPXp24SMgQ91H5ENvWyVJCaan5oQX2
-	iMGVkuESxNkGLKlRBMaD7dYWeifeDQXWfIRtluk+PJbbmOsYouVZZzWvduUBjC94hdyjLLafCBt
-	Z6rpRNC2mIPmYCD20rlLUjES69wo2/V3iZv4F7YqDvrQEfTbU2PzKI+Ji5A+am+Ar9HL4yenBnO
-	ZamqWlo/qbBHdCWu5YzZXxRENNLqEAlhTaq8mGF5lSucyLgYcxXdC/XdQ7vSVfs8CUNT3h0KykE
-	p/253vsAzTT0COCebgv3Ajtytc8/nK081dUMfIrAwd2Y3UjXShCGo/JkDJ8Y4penokuqwjw5vnG
-	B+VM=
-X-Google-Smtp-Source: AGHT+IE+UigPIYi2OHpeTgeGxruFKeQhlp3/ftbE22toZemUTKcKUJn3QdmBOx7KwWu43AASG1QWbw==
-X-Received: by 2002:a05:6102:4b0b:b0:4c1:9159:859c with SMTP id ada2fe7eead31-4c9d629a1c2mr2770331137.15.1744302327229;
-        Thu, 10 Apr 2025 09:25:27 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c9c9738859sm664436137.3.2025.04.10.09.25.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 09:25:26 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-86feb848764so406346241.0;
-        Thu, 10 Apr 2025 09:25:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU0NXYBbPemKC1+0zaGvVQkXHEpS8SywT9okI3gLc9X/Z1gYKimG+3lvidLiuUFL+8WiMGQalpPleD5@vger.kernel.org, AJvYcCVKqOwm/CIKcNTkWalrnegsCSqbGlzVl8lluoNtvpNfU6gMxh9uAw6rj+YZq4d8w8NbBYNwSowj2S1h@vger.kernel.org, AJvYcCVctAeC39ziWuPSYPYWplW1BgBslxYYHWKeWeg5zZBMqB4T8Y0KTkapXDUWUdeSG03hnAmLS+YWRtdTPzTm@vger.kernel.org, AJvYcCXPFXEX82yMVXU/9Qi1X29Gk3MVAEFPOy90R1CBSR4FzOYfKsOZsQzKh9vCSWxuomT4jujUQJ1trqYEi/7fdCjbeAU=@vger.kernel.org
-X-Received: by 2002:a05:6102:5690:b0:4c1:9738:820d with SMTP id
- ada2fe7eead31-4c9d6259cd8mr2433189137.6.1744302326277; Thu, 10 Apr 2025
- 09:25:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744302318; x=1744907118;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wB7GpXUjol0KQ/YbX53LBVb2Ev80ElCPLnkY+8Zk89U=;
+        b=q/yu91NmgjQ4DnlhXuCC8ecGi8I9iuUDJNVFrsQSvo6hkZrozhuyJnx2HdsAsZmLK8
+         WYQpgTr6rLHyl83zbW8PxIVV3jdlVNYEZBVdop8m6TCpRi+QCqszxYkKI5uXDIgWHCrJ
+         WQWIObMqg7+vK0YhBcvjqqdMePBApubHbSG5ilCRZgbmIsQrelJQFMpmfXqDrpOx7h6f
+         u3o0fKB7iaIVvW2tpGUtUPJ5o9uMNxr7c3eBLU1b36z3FUf6xMLqmqQ+F7YEzSzuFly+
+         YAe37QUHvykTeornEKeSvxIkIWI/ZZGNrPB+rGRgEWVPsrgrk+Gb8XfvgHvCXolwBRId
+         Fs9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUBcvA0cBGjvjHrWkFmXhaADomRDvRR9MSxiUECmpvVRslV3h9+NzDF6iwNAkR5DbCOzAebaiJ1J2iorq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKh3qdjcIDAxrHmO6SmV/kCj25hmEftO/8/3v8MHv+00gTGonU
+	oRwA+8Aql1HuDM05B5Zovewxnicwliwcn4hEOemDVekzUZaqjNnkg+tIwzX3X6E=
+X-Gm-Gg: ASbGncsDZHw4W8tzCyzzD/tGwkp0koRv7WtZdAt56Ly0IDqtC/gCzb/C/6eLM7uO7f5
+	nL1FaLUZCOoaF0NxjnCpSfj/NyNtn+Y6iXeRq0IEiajLvtKekmRLG7WTXTvNO/Al97i1pmO+X62
+	3Ru2ojbdmJAECOiRjoVou/uChlYBWEbG2HKl6TljuVycF3fgDkwUJhLA2SOh7FWcKcLaFu1r/Lu
+	CXHofRBz2EeS84fU2ASe8d1Sza+kXYqSxaeY4UL+mNUzLMpiXJq1bhfa6IhSKaRp9iiiyZpWbBy
+	gT5xH8/MvENj/76FzR4o9LAg5QD8z5X5Oa5eMH6nUXsYaQ==
+X-Google-Smtp-Source: AGHT+IFeTZmUdQ2vt1x1tnJcXZclhQ5dTgbaFR30GmeNzwyzvcpuB5z3WB17x7rprpf4keTp6EzbIA==
+X-Received: by 2002:a05:6000:2903:b0:391:4999:778b with SMTP id ffacd0b85a97d-39d8fd522b7mr2970676f8f.28.1744302317763;
+        Thu, 10 Apr 2025 09:25:17 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39d89362fd6sm5398648f8f.16.2025.04.10.09.25.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 09:25:17 -0700 (PDT)
+Date: Thu, 10 Apr 2025 19:25:14 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dmitry Baryshkov <lumag@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Imre Deak <imre.deak@intel.com>, Lyude Paul <lyude@redhat.com>,
+	Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
+	Suraj Kandpal <suraj.kandpal@intel.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Abel Vesa <abel.vesa@linaro.org>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/display: dp: delete some dead code
+Message-ID: <de03fbc6-ca8d-4d3d-b80f-d1235b2b346f@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317083213.371614-1-tommaso.merciai.xr@bp.renesas.com> <20250317083213.371614-4-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20250317083213.371614-4-tommaso.merciai.xr@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 10 Apr 2025 18:25:13 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVJqtLKBK6hf0iGGHcPaTdZm10GiiqcBpkPrJSq=KL-cw@mail.gmail.com>
-X-Gm-Features: ATxdqUFwVh-lZqZBAQbhJWNemTgyfpBfQYsBr5BBAUZXUYi1SFARuyVahDZ8WAE
-Message-ID: <CAMuHMdVJqtLKBK6hf0iGGHcPaTdZm10GiiqcBpkPrJSq=KL-cw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: renesas: rzv2h: Simplify rzv2h_cpg_assert()/rzv2h_cpg_deassert()
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, Pavel Machek <pavel@denx.de>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Hi Tommaso,
+We re-worked this code a bit in commit af67978ee37e ("drm/display: dp:
+use new DCPD access helpers") but there was a little bit of stray
+dead code left over.  Clean it up.
 
-On Mon, 17 Mar 2025 at 09:33, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> rzv2h_cpg_assert() and rzv2h_cpg_deassert() functions are similar. Share
-> this code via __rzv2h_cpg_assert(). This avoid code duplication.
->
-> Reported-by: Pavel Machek <pavel@denx.de>
-> Closes: https://lore.kernel.org/cip-dev/Z9QA9rwuXCuVbOXp@duo.ucw.cz/
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/display/drm_dp_helper.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-Thanks for your patch!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.16.
-
-> --- a/drivers/clk/renesas/rzv2h-cpg.c
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> @@ -652,16 +652,17 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
->                 mod->name, PTR_ERR(clk));
->  }
->
-> -static int rzv2h_cpg_assert(struct reset_controller_dev *rcdev,
-> -                           unsigned long id)
-> +static int __rzv2h_cpg_assert(struct reset_controller_dev *rcdev,
-> +                             unsigned long id, bool assert)
->  {
->         struct rzv2h_cpg_priv *priv = rcdev_to_priv(rcdev);
->         unsigned int reg = GET_RST_OFFSET(priv->resets[id].reset_index);
->         u32 mask = BIT(priv->resets[id].reset_bit);
->         u8 monbit = priv->resets[id].mon_bit;
-> -       u32 value = mask << 16;
-> +       u32 value = assert ? (mask << 16) : ((mask << 16) | mask);
-
-Do you mind if I change this to
-
-    u32 value = mask << 16;
-
-    if (!assert)
-            value |= mask;
-
-while applying?
-
->
-> -       dev_dbg(rcdev->dev, "assert id:%ld offset:0x%x\n", id, reg);
-> +       dev_dbg(rcdev->dev, "%s id:%ld offset:0x%x\n",
-> +               assert ? "assert" : "deassert", id, reg);
->
->         writel(value, priv->base + reg);
->
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/display/drm_dp_helper.c
+index 57828f2b7b5a..f38b4dc14e1c 100644
+--- a/drivers/gpu/drm/display/drm_dp_helper.c
++++ b/drivers/gpu/drm/display/drm_dp_helper.c
+@@ -3570,7 +3570,6 @@ EXPORT_SYMBOL(drm_dp_pcon_frl_configure_1);
+ int drm_dp_pcon_frl_configure_2(struct drm_dp_aux *aux, int max_frl_mask,
+ 				u8 frl_type)
+ {
+-	int ret;
+ 	u8 buf = max_frl_mask;
+ 
+ 	if (frl_type == DP_PCON_FRL_LINK_TRAIN_EXTENDED)
+@@ -3579,10 +3578,6 @@ int drm_dp_pcon_frl_configure_2(struct drm_dp_aux *aux, int max_frl_mask,
+ 		buf &= ~DP_PCON_FRL_LINK_TRAIN_EXTENDED;
+ 
+ 	return drm_dp_dpcd_write_byte(aux, DP_PCON_HDMI_LINK_CONFIG_2, buf);
+-	if (ret < 0)
+-		return ret;
+-
+-	return 0;
+ }
+ EXPORT_SYMBOL(drm_dp_pcon_frl_configure_2);
+ 
+@@ -4044,7 +4039,7 @@ int drm_edp_backlight_enable(struct drm_dp_aux *aux, const struct drm_edp_backli
+ 	if (ret < 0) {
+ 		drm_dbg_kms(aux->drm_dev, "%s: Failed to write aux backlight mode: %d\n",
+ 			    aux->name, ret);
+-		return ret < 0 ? ret : -EIO;
++		return ret;
+ 	}
+ 
+ 	ret = drm_edp_backlight_set_level(aux, bl, level);
+@@ -4192,7 +4187,7 @@ drm_edp_backlight_probe_state(struct drm_dp_aux *aux, struct drm_edp_backlight_i
+ 	if (ret < 0) {
+ 		drm_dbg_kms(aux->drm_dev, "%s: Failed to read backlight mode: %d\n",
+ 			    aux->name, ret);
+-		return ret < 0 ? ret : -EIO;
++		return ret;
+ 	}
+ 
+ 	*current_mode = (mode_reg & DP_EDP_BACKLIGHT_CONTROL_MODE_MASK);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.47.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
