@@ -1,136 +1,155 @@
-Return-Path: <linux-kernel+bounces-599108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9F9A84F43
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 23:47:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD779A84F4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 23:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84FC218901CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304B61BA266E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9079E1EEA4B;
-	Thu, 10 Apr 2025 21:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB1520E032;
+	Thu, 10 Apr 2025 21:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZXM0QZ82"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Hnujsjol"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC306FB9
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 21:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C66A20C473;
+	Thu, 10 Apr 2025 21:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744321603; cv=none; b=YJD8IuhuYor0IIH3xZvSKPN/uLXYr5YiLwHpYoCxVZilVa8Jaz8YuhfKpdDoxPe6rhA2uMGu52JJTbOEixJp7nTPEQX6fKh8pFmxsQfn7wOgdHwReany+90hgPSwgVkwSqT7AmoOxKMCtnfMV8scPMdg/3GYPwiZ8dsTk9e6ag8=
+	t=1744322075; cv=none; b=XN6L5lY5jcLXnYWw5dgZycce6xaSaLEb4jHH6ExGuSa1bZhlBqXZGb4S/8spkWGcwkbiiH8diVl0C/schK6XDII2ZrB/+VSdGDQnQCmBAHn+cWYXbM+jEPT0hWEtAvPdBCOPR0juMEVw19nC8y7j5wdAmAzbtwk1490fk/Zf4MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744321603; c=relaxed/simple;
-	bh=zOgV6cFWWME+6OMyPM6xZIj8Q5wf1bgIP4T5JxozyVU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=b0+ux7FpQ88pj7NsE48n/17VqNuzLsLLQJrCelBSc1YW4+iRz0zP9t2Voxyv/893P7HDrGhzuqWA5Y8C6z6swcsQ7oqwxRkQPgV1gRp6Xf8Ehgl2j6KJ5tTzedgccHk/bzlihl8lZ4FFksElRkaBpYK7f4WZ9JRJ1GbpJc+o60g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZXM0QZ82; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-af91ea9e885so1224524a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 14:46:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744321601; x=1744926401; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bePW1gPXhpZiNQfmRfdXBMgDPxsflce7ce13WuBvjOk=;
-        b=ZXM0QZ82CbYlOMBpZYdTmwawg4jfRc0bsm3rmw1cbV5qmxz1rtVqAU8JJiaxroZXoH
-         cbtkTiiiaHh8Uk8IPNY5Ad+wn3V7DX8Pj0Z2Sb+/Vm97xBuxDX/m9JSh2eUhw+SfOtgF
-         2LeUmTJKGc9Xn3y1itUrAG0nWi/0Jz+5TP+4CvQfbgG8OmK1HRPEdaVPLRKZYAEm2+HE
-         gJ9Wb15Wpu9Moe21ufsgYB7u4L13L4Mpv9EpwGJ7OAWuTtiEwg+r+FfcjgMq3GwFxX4I
-         b2OzPkJk1NUoIfE8gfJKbJ5+fpt/3YJw6V+10KOim8JV5Hmn9w8diCCgpN5YF7htN58u
-         3nvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744321601; x=1744926401;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bePW1gPXhpZiNQfmRfdXBMgDPxsflce7ce13WuBvjOk=;
-        b=c5Tr6dRcc9ndH6yMpUL42wIogp1o5hTFdQP/aqyMqv5lNwaRq1y/i6n1YNtot6UGJB
-         fAuG49u7nqfvsY0M2PXW06iUXbbtE2sQREy13MEpuCE++zTB9pwSWrAJVxv4YwrHZImN
-         YIpVbZYem6v0TDGjaJpt9OKreaun4W34CVkcR+YzfWFzYBexlG3B65Pajzq133NOfoyA
-         aNsYA/br7VooyaPx/4Q3Qi0RCtdW0MLZSUXg3RAc8/Hm6l3YlUPbbJgLiDK1YDvJS98e
-         CcRtXtjGPFguKCV47j4JWAbt/OO9fw4PGfjlImbxX7VK/AkLvODjUoSYtBizbhuhvn/+
-         xXOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQDRO9t6J6x8mAXWN04Nt+KZq5GDEJ+ApRDG2U017FeLZK9uIn2zjYTGsbgOUPuYcDPAct8K71k0pbp8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIzSevngfRWPApC3AVPodhFU6rI1X40xz1e5rCNYhkCBVk1sUr
-	sqaM0xw1TgkG3U4V9OqTXRRY8z2wURPwk53y9VX5ayhTpWAjAeDSmjOvXPVP9vD/Wuk4Ha+2FJb
-	BYA==
-X-Google-Smtp-Source: AGHT+IGWt+83fSC3c/N6JQbwOG/2CXc24wmCtoeKQKr6bofBcQejdMxPHdo+4k7C01b/9gYVsUy3Mw36Jn0=
-X-Received: from pfbhu1.prod.google.com ([2002:a05:6a00:6981:b0:737:30c9:fe46])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:cf82:b0:1f5:9431:46e7
- with SMTP id adf61e73a8af0-201799984fcmr644100637.42.1744321601003; Thu, 10
- Apr 2025 14:46:41 -0700 (PDT)
-Date: Thu, 10 Apr 2025 14:46:39 -0700
-In-Reply-To: <20250324160617.15379-1-bp@kernel.org>
+	s=arc-20240116; t=1744322075; c=relaxed/simple;
+	bh=eaQNmB6AuNlU+KBlHA0uSaualDavgEDCP9pPFGhTook=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TGC+uNQz/7FUxRU84SHKcUwPMgczlxTqL3JxyzkL2fqFWQnCeX9mNa2UPQ08jhTNWqaXNcodWArM2cQlv/e2qEB0RxyRJn/JQKXxBQ+zE9krd75G1P5rtSVsWKLqOJahBpNc7Ln2s3W+VVszfqwskqd/JalfWj0c0xcA+wrcsP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Hnujsjol; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+Tm4+Z7Aj1JN3MuOyJBY1dm5PY2Ga9gM+2/LN/4Z2DI=; b=HnujsjolCAGt25aSwbyuEhUDMi
+	HFYojurzRvmaVDoc1QRWtwX30V/hr9FE7NSwgt2NEdw/o/4fpwwcE/oLKSKEmWvpUFe0GFoq1wLqq
+	Zknr1M9G199OMM0et14gAHCzJJWvmWzM9PlxqOI3GzjCKfFIFYZbid3Tp6OX7GH7x2xc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u2zqi-008jRI-SZ; Thu, 10 Apr 2025 23:54:16 +0200
+Date: Thu, 10 Apr 2025 23:54:16 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Schmidt <mschmidt@redhat.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 07/14] mfd: zl3073x: Add components versions register
+ defs
+Message-ID: <8c5fb149-af25-4713-a9c8-f49b516edbff@lunn.ch>
+References: <20250409144250.206590-1-ivecera@redhat.com>
+ <20250409144250.206590-8-ivecera@redhat.com>
+ <df6a57df-8916-4af2-9eee-10921f90ff93@kernel.org>
+ <c0ef6dad-ce7e-401c-9ae1-42105fcbf9c4@redhat.com>
+ <098b0477-3367-4f96-906b-520fcd95befb@lunn.ch>
+ <003bfece-7487-4c65-b4f1-2de59207bd5d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250324160617.15379-1-bp@kernel.org>
-Message-ID: <Z_g8Py8Ow85Uj6RT@google.com>
-Subject: Re: [PATCH] KVM: x86: Sort CPUID_8000_0021_EAX leaf bits properly
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, X86 ML <x86@kernel.org>, KVM <kvm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, "Borislav Petkov (AMD)" <bp@alien8.de>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <003bfece-7487-4c65-b4f1-2de59207bd5d@redhat.com>
 
-On Mon, Mar 24, 2025, Borislav Petkov wrote:
-> From: "Borislav Petkov (AMD)" <bp@alien8.de>
+On Thu, Apr 10, 2025 at 08:44:43PM +0200, Ivan Vecera wrote:
 > 
-> WRMSR_XX_BASE_NS is bit 1 so put it there, add some new bits as
-> comments only.
 > 
-> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-> ---
->  arch/x86/kvm/cpuid.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> On 10. 04. 25 7:41 odp., Andrew Lunn wrote:
+> > > > > +	/* Take device lock */
+> > > > 
+> > > > What is a device lock? Why do you need to comment standard guards/mutexes?
+> > > 
+> > > Just to inform code reader, this is a section that accesses device registers
+> > > that are protected by this zl3073x device lock.
+> > 
+> > I didn't see a reply to my question about the big picture. Why is the
+> > regmap lock not sufficient. Why do you need a device lock.
+> > 
+> > > 
+> > > > > +	scoped_guard(zl3073x, zldev) {
+> > > > > +		rc = zl3073x_read_id(zldev, &id);
+> > > > > +		if (rc)
+> > > > > +			return rc;
+> > > > > +		rc = zl3073x_read_revision(zldev, &revision);
+> > > > > +		if (rc)
+> > > > > +			return rc;
+> > > > > +		rc = zl3073x_read_fw_ver(zldev, &fw_ver);
+> > > > > +		if (rc)
+> > > > > +			return rc;
+> > > > > +		rc = zl3073x_read_custom_config_ver(zldev, &cfg_ver);
+> > > > > +		if (rc)
+> > > > > +			return rc;
+> > > > > +	}
+> > > > 
+> > > > Nothing improved here. Andrew comments are still valid and do not send
+> > > > v3 before the discussion is resolved.
+> > > 
+> > > I'm accessing device registers here and they are protected by the device
+> > > lock. I have to take the lock, register access functions expect this by
+> > > lockdep_assert.
+> > 
+> > Because lockdep asserts is not a useful answer. Locks are there to
+> > protect you from something. What are you protecting yourself from? If
+> > you cannot answer that question, your locking scheme is built on sand
+> > and very probably broken.
+> > 
+> >      Andrew
 > 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 121edf1f2a79..e98ab18f784b 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -1160,6 +1160,7 @@ void kvm_set_cpu_caps(void)
->  
->  	kvm_cpu_cap_init(CPUID_8000_0021_EAX,
->  		F(NO_NESTED_DATA_BP),
-> +		F(WRMSR_XX_BASE_NS),
->  		/*
->  		 * Synthesize "LFENCE is serializing" into the AMD-defined entry
->  		 * in KVM's supported CPUID, i.e. if the feature is reported as
-> @@ -1173,10 +1174,14 @@ void kvm_set_cpu_caps(void)
->  		SYNTHESIZED_F(LFENCE_RDTSC),
->  		/* SmmPgCfgLock */
->  		F(NULL_SEL_CLR_BASE),
-> +		/* UpperAddressIgnore */
->  		F(AUTOIBRS),
->  		EMULATED_F(NO_SMM_CTL_MSR),
-> +		/* FSRS */
-> +		/* FSRC */
+> Hi Andrew,
+> I have described the locking requirements under different message [v1
+> 05/28]. Could you please take a look?
 
-I'm going to skip these, as they aren't yet publicly documented, and there are
-patches proposed to add actual support.  I wouldn't care all that much if these
-didn't collide with Intel's version (the proposed patches name them AMD_FSxx).
+So a small number of registers in the regmap need special locking. It
+was not clear to me what exactly those locking requirements are,
+because they don't appear to be described.
 
-https://lore.kernel.org/all/20241204134345.189041-2-davydov-max@yandex-team.ru
+But when i look at the code above, the scoped guard gives the
+impression that i have to read id, revision, fw_vr and cfg_ver all in
+one go without any other reads/writes happening. I strongly suspect
+that impression is wrong. The question then becomes, how can i tell
+apart reads/writes which do need to be made as one group, form others
+which can be arbitrarily ordered with other read/writes.
 
->  		/* PrefetchCtlMsr */
-> -		F(WRMSR_XX_BASE_NS),
-> +		/* GpOnUserCpuid */
-> +		/* EPSF */
+What i suggest you do is try to work out how to push the locking down
+as low as possible. Make the lock cover only what it needs to cover.
 
-FWIW, this one's also not in the APM (though the only APM I can find is a year old),
-though it's in tools/x86/kcpuid.
+Probably for 95% of the registers, the regmap lock is sufficient.
 
->  		SYNTHESIZED_F(SBPB),
->  		SYNTHESIZED_F(IBPB_BRTYPE),
->  		SYNTHESIZED_F(SRSO_NO),
-> -- 
-> 2.43.0
-> 
+Just throwing out ideas, i've no idea if they are good or not. Create
+two regmaps onto your i2c device, covering different register
+ranges. The 'normal' one uses standard regmap locking, the second
+'special' one has locking disabled. You additionally provide your own
+lock functions to the 'normal' one, so you have access to the
+lock. When you need to access the mailboxes, take the lock, so you
+know the 'normal' regmap cannot access anything, and then use the
+'special' regmap to do what you need to do. A structure like this
+should help explain what the special steps are for those special
+registers, while not scattering wrong ideas about what the locking
+scheme actually is all over the code.
+
+	Andrew
 
