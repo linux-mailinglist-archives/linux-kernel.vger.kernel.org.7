@@ -1,169 +1,150 @@
-Return-Path: <linux-kernel+bounces-597162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C027A835AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:22:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DEAA835B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD111B80321
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 01:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A7D1B8085D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 01:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84E41AA1FF;
-	Thu, 10 Apr 2025 01:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DF91C7007;
+	Thu, 10 Apr 2025 01:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GAcXiJHG"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QgwgjHFY"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528EA1A7046
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 01:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73731C7006;
+	Thu, 10 Apr 2025 01:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744247966; cv=none; b=XaD+xnmRVMDOxx3aK+b4Fw2M5sxZG5U/FpvwdQeB6gvSTX7yP61FqeL+aVlK25UXESZcCV2+JRNQo7qXkJyvgv00iTxXhybFAfvJ8mScA8n5HL9Ro41IC10cEmfDXu44vHK9PWdq7LIKnKYhagJRs0Jxvt+I/DlM9ULYV9QQLOQ=
+	t=1744248074; cv=none; b=lt1YnYBgOZ+aNOBNg0Li42q7Q2YnR6Iw8IzUDGixwbcXvKbmgzzObtS93Db9FG1rOW1h+j8rBa0PximKLMCj8Odd/RoKtR9b+SaQGKsk/P8H29/lDa6pMgdo45hbUwh0cf8b9WUPSJan+TpIqTt43WlPUWalzZAkjNtC9UvuQOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744247966; c=relaxed/simple;
-	bh=+695x7pXlPBW4JoEVk0G/GsLItaAy4Iw2gNHwnHxeKU=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=Ogn/y8Fo3sjQWd3O2+tRmNZfeFnzUx8PF5tSCCvL5MClArlgyy3eJvjrdIfYeiGElncAMJMp+ofZOJj5+9CFVe4YBYkbELU6rLD132q5JRy0hZsszDFa+8h3QGqe34X8H5G91d4w8sVBGRpBTNIb/lHIOddkQYvr7qMYahN3vQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GAcXiJHG; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1744248074; c=relaxed/simple;
+	bh=vvwNWBQOV68UD1wQ5GAz54lrRLCKIA0ppmjhWwL5XhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eomg0+6/RSuIzoR+vZA/av7h0wWkYeSAOe0rIxKHoYBvZoyV50V6dlXcTDOxHNjJVSZ7Ogu18Bst9xB4PyXYhenLxOrh0d6dYD8tiyDAmPOihUQExUo4WrcvI8MiRxe6+WwOAO/mDlx169SGgQGkOrnI9mwPIUJ4ZK15UAL1bgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QgwgjHFY; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-476b89782c3so2727701cf.1;
+        Wed, 09 Apr 2025 18:21:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744248071; x=1744852871; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pS6d3AN8lttz2UBagEPNT7oB3nkS/KEu1Jsz1U5vt+0=;
+        b=QgwgjHFYOvso3+V7r0xmH5bucvvhDoQN2LQQhtCvoyEGDCEqvLkr6x4l97pTz1oL1g
+         hQmP184sXZNif2Bo/KkJCPDKsPsuzc4MwfBetKqxjNln6q8XrRkaHgSweaIat1StKvRN
+         GatGfwJn9KdVOv6tOb4/9nxxSjRDWz8vSRTocGwFQOz94TBHYzz3re4J4QIuQOVESjAd
+         RsvX7GtfdrfHGeezsaB3zt0I9Gsc2xe0LyNYCd5Z9GiVxTXNgVqug1kokh12bWtvNUss
+         bWoZQzJVBZFgOv52OeBxwUJ/aquEdgAgXxHMvif8AD4HxT5fmqMkXKhYbUb7PfsnW1qw
+         E1Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744248071; x=1744852871;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pS6d3AN8lttz2UBagEPNT7oB3nkS/KEu1Jsz1U5vt+0=;
+        b=awOFepf5anycW23ZHFeQDKb7GTR+shiBnjIQpkmtjOQkNHEHryXVUKS1oAbd6SxQb2
+         mIX2hfZ9r7VfPTKm9HRZd2YvOHLZIhMVjD0c4vddZkCpfvilOtMgYX1+jBB7hBOMPBrw
+         5Qf3ExOpr1SrbVj5tFHU2/Wu84j95k48zPGsKb9ytPpSbDbA0ILMz3aQGa80Izj6pnzp
+         YshNUu7jVY999uDGJzVJmQoIuwRKRcwZlStJJhT5l9Mbqn0w34wuHuY74x7DuzD+pGNr
+         Z9T4vtj+z9WhYG5kgdy5OWvdE9uDTGJeNUKS3k8Cy8wu5KFpnN5EXbV8pAY+7/Fuf1b/
+         vp9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUdWLjctDNRDeldUnnlXyIE11W1jLMFFl8f+Toj7H5prBC4YDjyJt6zgs+UGaif+ZK8Mc4lkfd8RqGL@vger.kernel.org, AJvYcCWx4xOf5X+5RWrcx3uMMmSCHkEtp7NCBKltU9BrkG+l46vAR2YoTKt5gsHh8yBG9p66s0gJ98RIGRtnTK0l@vger.kernel.org, AJvYcCXWub/xkhCw4kRqq+q1ynhnEsTFKgTw45GoVaU6reaHQZGjI57dbvRiDXyc8v6ZJZ9hSevNWzChatef@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNrydtlIdO3mdTH3TC7xQVDljVyp6XyWE9EpMAjtZQM/LyDEQm
+	3jiHlh33vatNKq+pnFBh7yp+CLUN6zGoEbVfYeMmXZ/ng37WtjP2
+X-Gm-Gg: ASbGnct7euJskEOzcylCue+jlUgq2+KNbg2snjFUTF1xez4Ud6HtEAp8PDsnJxMtfmY
+	SgkOL8M+lIEt8+u1c1XurVsuG2oa9qEARPKZYAkw8sCHWVZ5r3rSYusFsIgsaDWvDKbTUxU04kZ
+	LaKy9y9aslGl2m5W0x7wm/KMYE+BGsPC7IhSZ45EWVytpljjIemNVRLjqpbh3SdorenZdBX5lCJ
+	ZfqKQ1c5lf8B5z7I7wGm6umlrzAFhf4t6EJHvHLEIOF6HynQPSg7BbW2+KBFTIyrjUOfN9grrnn
+	egqY+4OLu82aXV1oNwldUATzqHs=
+X-Google-Smtp-Source: AGHT+IG8syti+yUH9KMAV4gl0fZ6aSPAfqkjK2G+9Pu2agDv4XCz3CIBPgGk+tD7029TOWlX0vLivA==
+X-Received: by 2002:ac8:5e4e:0:b0:476:80ce:a614 with SMTP id d75a77b69052e-4796cbb6131mr12911801cf.19.1744248071267;
+        Wed, 09 Apr 2025 18:21:11 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4796ed9ccd0sm1065881cf.57.2025.04.09.18.21.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 18:21:10 -0700 (PDT)
+Date: Thu, 10 Apr 2025 09:20:33 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Alex Elder <elder@riscstar.com>, Inochi Amaoto <inochiama@gmail.com>, 
+	Yixun Lan <dlan@gentoo.org>
+Cc: Haylen Chu <heylenay@4d2.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Haylen Chu <heylenay@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, spacemit@lists.linux.dev, 
+	Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>, 
+	Jisheng Zhang <jszhang@kernel.org>, Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+Subject: Re: [PATCH v6 3/6] clk: spacemit: Add clock support for SpacemiT K1
+ SoC
+Message-ID: <sl752im2sn5sz6yzc23ctprh3rwryuhgtggsaauxixn3b267ag@6sf5fahu6b5i>
+References: <20250401172434.6774-1-heylenay@4d2.org>
+ <20250401172434.6774-4-heylenay@4d2.org>
+ <8fe0aaaa-b8e9-45dd-b792-c32be49cca1a@riscstar.com>
+ <20250410003756-GYA19359@gentoo>
+ <dm4lwnplwcxj3t3qx3a3bdxtziowjfoqdy4vrd3ahmzkhejrov@fa5rujatatew>
+ <z27ri5eue43ti6b2te2cbxiow66mtgbnyudoo5cs4quabgbx5r@uipzoxvfoysi>
+ <a8e5adca-8eff-4bbb-a7fa-ce4489b63fa5@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744247952;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VwjIhL5eq5nuQH6KgO5e7NYXc2vM8c1wzFZaJmX6O2s=;
-	b=GAcXiJHGnyDBkayIqUeCiyu7aMXAjter9wJQKpd97FONtEJHyKqKoDubyMXwzB1eWQfFoL
-	/83eZu+U7YthXohR6oeZYn4FdhhjnTIS3NqIVs/NexOPxf24HlwtTMd73gYpb3NwLJPisK
-	IkrroqAAaGWUJnaEeTYmMIJqFKlOUGM=
-Date: Thu, 10 Apr 2025 01:19:09 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
-Message-ID: <b560604b7b97a58d13c60655747b30a5b9f27a4d@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH bpf-next v1] bpf, sockmap: Introduce tracing capability
- for sockmap
-To: "Cong Wang" <xiyou.wangcong@gmail.com>
-Cc: bpf@vger.kernel.org, mrpre@163.com, "Alexei Starovoitov"
- <ast@kernel.org>, "Daniel Borkmann" <daniel@iogearbox.net>, "John
- Fastabend" <john.fastabend@gmail.com>, "Andrii Nakryiko"
- <andrii@kernel.org>, "Martin KaFai Lau" <martin.lau@linux.dev>, "Eduard
- Zingerman" <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>, "Yonghong
- Song" <yonghong.song@linux.dev>, "KP Singh" <kpsingh@kernel.org>,
- "Stanislav Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>,
- "Jiri Olsa" <jolsa@kernel.org>, "Jakub Sitnicki" <jakub@cloudflare.com>,
- "Steven Rostedt" <rostedt@goodmis.org>, "Masami Hiramatsu"
- <mhiramat@kernel.org>, "Mathieu Desnoyers"
- <mathieu.desnoyers@efficios.com>, "David S. Miller"
- <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Simon
- Horman" <horms@kernel.org>, "Jesper Dangaard Brouer" <hawk@kernel.org>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-In-Reply-To: <Z/aosJ3uvzTZTEXS@pop-os.localdomain>
-References: <20250409102937.15632-1-jiayuan.chen@linux.dev>
- <Z/aosJ3uvzTZTEXS@pop-os.localdomain>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a8e5adca-8eff-4bbb-a7fa-ce4489b63fa5@riscstar.com>
 
-April 10, 2025 at 01:04, "Cong Wang" <xiyou.wangcong@gmail.com> wrote:
->=20
->=20On Wed, Apr 09, 2025 at 06:29:33PM +0800, Jiayuan Chen wrote:
->=20
->=20>=20
->=20> Sockmap has the same high-performance forwarding capability as XDP,=
- but
-> >=20
->=20>  operates at Layer 7.
-> >=20
->=20>=20=20
->=20>=20
->=20>  Introduce tracing capability for sockmap, similar to XDP, to trace=
- the
-> >=20
->=20>  execution results of BPF programs without modifying the programs
-> >=20
->=20>  themselves, similar to the existing trace_xdp_redirect{_map}.
-> >=20
->=20>=20=20
->=20>=20
->=20>  It is crucial for debugging BPF programs, especially in production
-> >=20
->=20>  environments.
-> >=20
->=20>=20=20
->=20>=20
->=20>  Additionally, a header file was added to bpf_trace.h to automatica=
-lly
-> >=20
->=20>  generate tracepoints.
-> >=20
->=20>=20=20
->=20>=20
->=20>  Test results:
-> >=20
->=20>  $ echo "1" > /sys/kernel/tracing/events/sockmap/enable
-> >=20
->=20>=20=20
->=20>=20
->=20>  skb:
-> >=20
->=20>  sockmap_redirect: sk=3D00000000d3266a8d, type=3Dskb, family=3D2, p=
-rotocol=3D6, \
-> >=20
->=20>  prog_id=3D73, length=3D256, action=3DPASS
-> >=20
->=20>=20=20
->=20>=20
->=20>  msg:
-> >=20
->=20>  sockmap_redirect: sk=3D00000000528c7614, type=3Dmsg, family=3D2, p=
-rotocol=3D6, \
-> >=20
->=20>  prog_id=3D185, length=3D5, action=3DREDIRECT
-> >=20
->=20>=20=20
->=20>=20
->=20>  tls:
-> >=20
->=20>  sockmap_redirect: sk=3D00000000d04d2224, type=3Dskb, family=3D2, p=
-rotocol=3D6, \
-> >=20
->=20>  prog_id=3D143, length=3D35, action=3DPASS
-> >=20
->=20>=20=20
->=20>=20
->=20>  strparser:
-> >=20
->=20>  sockmap_skb_strp_parse: sk=3D00000000ecab0b30, family=3D2, protoco=
-l=3D6, \
-> >=20
->=20>  prog_id=3D170, size=3D5
-> >=20
->=20
-> Nice work!
->=20
->=20While you are on it, could we also trace skb->_sk_redir bits too? It =
-is
->=20
->=20very useful to distinguish, at least, ingress from egress redirection=
-.
->=20
->=20Thanks!
->
+On Wed, Apr 09, 2025 at 08:10:53PM -0500, Alex Elder wrote:
+> On 4/9/25 7:57 PM, Inochi Amaoto wrote:
+> > > > > > diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
+> > > > > > new file mode 100644
+> > > > > > index 000000000000..4c4df845b3cb
+> > > > > > --- /dev/null
+> > > > > > +++ b/drivers/clk/spacemit/Kconfig
+> > > > > > @@ -0,0 +1,18 @@
+> > > > > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > > > > +
+> > > > > > +config SPACEMIT_CCU
+> > > > > > +	tristate "Clock support for SpacemiT SoCs"
+> > > > > I don't know the answer to this, but...  Should this be a Boolean
+> > > > > rather than tristate?  Can a SpacemiT K1 SoC function without the
+> > > > > clock driver built in to the kernel?
+> > > > > 
+> > > > I agree to make it a Boolean, we've already made pinctrl driver Boolean
+> > > > and pinctrl depend on clk, besides, the SoC is unlikely functional
+> > > > without clock built in as it's such critical..
+> > > > 
+> > > I disagree. The kernel is only for spacemit only, and the pinctrl
+> > Sorry for a mistake, this first "only" should be "not".
+> 
+> This is a general problem.  You can't make a bootable
+> SpacemiT kernel unless you define this as built-in (at
+> least, that's what Yixun is saying). 
 
-Thanks for your suggestion!
-The skb->_sk_redir contains a lot of important information about
-redirection, so it's definitely worth including.
+Why not putting the module in the initramfs? I have tested
+this in quite a lot of boards (Allwinner, rockchip, sophgo,
+starfive and etc.), all of them work well.
+
+> But we'd really rather *only* build it in to the kernel
+> for SpacemiT builds. You clearly want to minimize what
+> must be built in, but what if this is indeed required?
+> What goes in defconfig?
+> 
+
+As defconfig is more like for a minimum example system. It
+is OK to put a y in the defconfig. But for a custom system,
+you do give a choice for the builder to remove your module
+in non spacemit system.
+
+Regards,
+Inochi
 
