@@ -1,83 +1,223 @@
-Return-Path: <linux-kernel+bounces-597649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50FAA83C8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:21:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 791EAA83C96
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:22:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 741AA1B802A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:20:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE497168C33
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DCA221551;
-	Thu, 10 Apr 2025 08:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDE020B1FD;
+	Thu, 10 Apr 2025 08:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="xQkbkOyX"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UsXoFCUJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AiYQtma9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UsXoFCUJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AiYQtma9"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309F71EF372;
-	Thu, 10 Apr 2025 08:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAC31EF371
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 08:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744272982; cv=none; b=R/sj+LVYwL+U1Dof9+n5GTr1Ts+C7rKHm654fQffKJLUHf8q8CuY7Hl87+yDo1Y31Hfmvwu+z0ja/99y9zmiO9ARmdzhPAni42rj2EyIe7AYCqBT0KvoJ9zR2zuKA+GPfGjoLt3jKMJG5OKJizczlJxGS/JWeqzpuPPskNR819M=
+	t=1744273011; cv=none; b=LLsu7gwMoRgsX8M2sowwUT0rqjN25xrGKa84GI9oMzSnvdEb+aKKxoktDp/grbxhadyVKHpKJTAb1l3OjhQoHOsG1PxCEfiuzamLKokMIHmC+ZMuvPsBiRVTqa6x+OO1eU+fYNR3NleLaZuiP1Zk+RVGnNyeG4ii1loTeY6U2vY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744272982; c=relaxed/simple;
-	bh=MzYU37628qQVk8rusO7w7hVbAH4WyjlSPuhSMH8ZHrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=am7S3SPMYe0l6Ggl7hxIJWrrW1Lio59H4fP9yMz66YtgXajwZ1BSszfDmT9i0sQMY1w1lMAl+NjKPs58OpbqjvmD1QESsadpUpmyWeRDYjhpo/kw6RKHtv05Waxyx1c28AKHOzPMXFIU2tufFa4j+hiIuOoR+yBMRUCOWrdciUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=xQkbkOyX; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=taziRnpP+R7rCwCs3/lun0EtTT6nmtMK6MYz17WL9Gw=; b=xQkbkOyXAhxPa9yYg9wtvKJVXN
-	Qsi1HGwWtcf5R8WuzuPdvtMUk5WKxEJ1nHGYPgECWBikVDNKZjOQuMTmcqzZ++RbChqMXFVy4uzon
-	PEy/jArkBcI/SF+hz3WKvPW4TbaFrIz/PN+WJVTw7pjHZpDEN3feBNrHzx1rWZsuusZyMSEk9wdRp
-	x5MAdciIQOL5eABfbP1q7oFx9Pj5YEJNzfikF6GH1Fp5nudZWR8BGWE/a7Z82Ibf0/Nqpmf3UuZTo
-	4Bj4mfSoyGhZQTGGBHW+h8M6mF2RpyOz8iOpFMjvgReQAiPDlylXwQQae/RqmntjUU4asEkiRZYqg
-	Ijo114Hw==;
-Date: Thu, 10 Apr 2025 10:16:06 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- linux-omap@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- linux-kernel@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
- devicetree@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v2 1/2] ARM: dts: omap4: panda: fix resources needed for
- Panda
-Message-ID: <20250410101512.5b4c12b2@kemnade.info>
-In-Reply-To: <7aefa588-9f64-4bb4-8782-05eb1ef9d5b2@kernel.org>
-References: <20250330151401.444956-1-andreas@kemnade.info>
-	<20250330151401.444956-2-andreas@kemnade.info>
-	<7aefa588-9f64-4bb4-8782-05eb1ef9d5b2@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1744273011; c=relaxed/simple;
+	bh=onvVqvfxWWw9bTMyAQ2MWRqkSh8vFba5v4X2ve4LnDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZRqMjFDrURXPW3ptckd2PqLd2KRQQ7lPUtkStP6J8b3NtYMHB9z8h/E/HgbYJuY50FSbDAv7/YviLLNLv1cRw0jsu4Pj+yeM0udxdVYeEDmB00rUAWOXrSVN878dXIdJYxW0p9Z+LrTbBl/JuEuM3/mpqI8+YSviFBj0S45raa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UsXoFCUJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AiYQtma9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UsXoFCUJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AiYQtma9; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0DE0B211B8;
+	Thu, 10 Apr 2025 08:16:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744273007; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BeO8trQ+ylG1pNIV4/iVJDVcKDxWDQzcb2h2bPQiHN0=;
+	b=UsXoFCUJdEBgJe9iqNIpBEPaj8Wfl1EZV6rZowH6EuovmucVhEijKv17hjsgQgBr0fzNdH
+	XfRt7qLL+6YJoiJdqn4FoktzquN4TDbmw8O/rgy/RIvzfvFgF/O/8sFVxFV8on+KDy3sMS
+	i8x1uYQVfMyVAXrKKz+yt3q/FfA0hww=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744273007;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BeO8trQ+ylG1pNIV4/iVJDVcKDxWDQzcb2h2bPQiHN0=;
+	b=AiYQtma9bQGr4MpMUQco6qvKp3RDiDCKYI/n0Om0gt5uAWEZk81x/I7xWpE3cbP+6oS+ci
+	f8+GKUTUMJfMILDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UsXoFCUJ;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=AiYQtma9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744273007; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BeO8trQ+ylG1pNIV4/iVJDVcKDxWDQzcb2h2bPQiHN0=;
+	b=UsXoFCUJdEBgJe9iqNIpBEPaj8Wfl1EZV6rZowH6EuovmucVhEijKv17hjsgQgBr0fzNdH
+	XfRt7qLL+6YJoiJdqn4FoktzquN4TDbmw8O/rgy/RIvzfvFgF/O/8sFVxFV8on+KDy3sMS
+	i8x1uYQVfMyVAXrKKz+yt3q/FfA0hww=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744273007;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BeO8trQ+ylG1pNIV4/iVJDVcKDxWDQzcb2h2bPQiHN0=;
+	b=AiYQtma9bQGr4MpMUQco6qvKp3RDiDCKYI/n0Om0gt5uAWEZk81x/I7xWpE3cbP+6oS+ci
+	f8+GKUTUMJfMILDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ECC68132D8;
+	Thu, 10 Apr 2025 08:16:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id N1NmOW5+92elBgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 10 Apr 2025 08:16:46 +0000
+Message-ID: <e8404cc5-b731-43ae-ab3d-d4e4e862dd9f@suse.cz>
+Date: Thu, 10 Apr 2025 10:16:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mm: page_alloc: speed up fallbacks in rmqueue_bulk()
+Content-Language: en-US
+To: Brendan Jackman <jackmanb@google.com>,
+ Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Mel Gorman <mgorman@techsingularity.net>, Carlos Song <carlos.song@nxp.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ kernel test robot <oliver.sang@intel.com>, stable@vger.kernel.org
+References: <20250407180154.63348-1-hannes@cmpxchg.org>
+ <D91FIQHR9GEK.3VMV7CAKW1BFO@google.com> <20250408185009.GF816@cmpxchg.org>
+ <D92AC0P9594X.3BML64MUKTF8Z@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <D92AC0P9594X.3BML64MUKTF8Z@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 0DE0B211B8
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Wed, 2 Apr 2025 15:11:47 +0300
-Roger Quadros <rogerq@kernel.org> wrote:
-
-> On 30/03/2025 18:14, Andreas Kemnade wrote:
-> > The Pandaboard needs a 32k clock in the TWL6030 to be enabled
-> > to work. With some luck, it is enabled by some U-Boot fork.
-> > Do not rely on it and properly specify the requirement.  
+On 4/9/25 19:30, Brendan Jackman wrote:
 > 
-> It would be nice to mention who exactly needs the 32K clock.
-> From your changes it looks like the wl12xx module needs it?
+> From 8ff20dbb52770d082e182482d2b47e521de028d1 Mon Sep 17 00:00:00 2001                                                                                                                                                                                                                    
+> From: Brendan Jackman <jackmanb@google.com>
+> Date: Wed, 9 Apr 2025 17:22:14 +000
+> Subject: [PATCH] page_alloc: speed up fallbacks in rmqueue_bulk() - comment updates
 > 
-correct, I will send a better descrption.
+> Tidy up some terminology and redistribute commentary.                                                                                                                                                                                                                                                                                            
+> Signed-off-by: Brendan Jackman <jackmanb@google.com>
 
-Regards,
-Andreas
+LGTM (assuming folding)
+
+> ---
+>  mm/page_alloc.c | 22 +++++++++-------------
+>  1 file changed, 9 insertions(+), 13 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index dfb2b3f508af4..220bd0bcc38c3 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -2183,21 +2183,13 @@ try_to_claim_block(struct zone *zone, struct page *page,
+>  }
+>   
+>  /*
+> - * Try finding a free buddy page on the fallback list.
+> - *
+> - * This will attempt to claim a whole pageblock for the requested type
+> - * to ensure grouping of such requests in the future.
+> - *
+> - * If a whole block cannot be claimed, steal an individual page, regressing to
+> - * __rmqueue_smallest() logic to at least break up as little contiguity as
+> - * possible.
+> + * Try to allocate from some fallback migratetype by claiming the entire block,
+> + * i.e. converting it to the allocation's start migratetype.
+>   *
+>   * The use of signed ints for order and current_order is a deliberate 
+>   * deviation from the rest of this file, to make the for loop
+>   * condition simpler.
+>   */
+> -
+> -/* Try to claim a whole foreign block, take a page, expand the remainder */
+>  static __always_inline struct page *
+>  __rmqueue_claim(struct zone *zone, int order, int start_migratetype,
+>                                                 unsigned int alloc_flags)
+> @@ -2247,7 +2239,10 @@ __rmqueue_claim(struct zone *zone, int order, int start_migratetype,
+>         return NULL;
+>  }
+>   
+> -/* Try to steal a single page from a foreign block */
+> +/*
+> + * Try to steal a single page from some fallback migratetype. Leave the rest of
+> + * the block as its current migratetype, potentially causing fragmentation.
+> + */
+>  static __always_inline struct page *
+>  __rmqueue_steal(struct zone *zone, int order, int start_migratetype)
+>  {
+> @@ -2307,7 +2302,8 @@ __rmqueue(struct zone *zone, unsigned int order, int migratetype,
+>         }
+>   
+>         /*
+> -        * Try the different freelists, native then foreign.
+> +        * First try the freelists of the requested migratetype, then try
+> +        * fallbacks modes with increasing levels of fragmentation risk.
+>          *
+>          * The fallback logic is expensive and rmqueue_bulk() calls in
+>          * a loop with the zone->lock held, meaning the freelists are
+> @@ -2332,7 +2328,7 @@ __rmqueue(struct zone *zone, unsigned int order, int migratetype,
+>         case RMQUEUE_CLAIM:
+>                 page = __rmqueue_claim(zone, order, migratetype, alloc_flags);
+>                 if (page) {
+> -                       /* Replenished native freelist, back to normal mode */
+> +                       /* Replenished preferred freelist, back to normal mode. */
+>                         *mode = RMQUEUE_NORMAL;
+>                         return page;
+>                 }
+> 
+> base-commit: aa42382db4e2a4ed1f4ba97ffc50e2ce45accb0c
+
 
