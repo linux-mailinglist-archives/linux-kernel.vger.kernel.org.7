@@ -1,78 +1,86 @@
-Return-Path: <linux-kernel+bounces-598099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59F0A84217
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:52:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BB0A8419B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A854B175CBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:52:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A3E14C3FE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F832836A5;
-	Thu, 10 Apr 2025 11:52:45 +0000 (UTC)
-Received: from baidu.com (mx22.baidu.com [220.181.50.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A0B281530;
+	Thu, 10 Apr 2025 11:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BnnmUQA2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7422165F3;
-	Thu, 10 Apr 2025 11:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23808267F7E;
+	Thu, 10 Apr 2025 11:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744285965; cv=none; b=KURaYEEShbnomO7Ww3z2l/4PLO61DJNLy40f86AjhomZGFB0TU3dCXgEpbrsYTwuYeDCae3Q70DJUnNBfn6/q0/fOkFJB6Sslhw6k9yM6iA2Z1Bj6kQuLwO1bSDmsYTQV6zKhVjeId7iI+UQV9uHtcX+G8W1M1RFuvN7wiPTZwY=
+	t=1744284124; cv=none; b=IHxySEZsWt2WIQ7FQJUvJVNFU2mgZKod5BbT/MduRikRABC8h5vUc4e5j/NQOJMGOcy9KZ9NG05yp1wm+8fPMplA7Y4OmMiot8PVufHaLobNt45TD56UJ3fTXCY04WP8eGAwMusnJbM3PkMG8NxVt9/OsEdqi4hcXyFNzUTwMUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744285965; c=relaxed/simple;
-	bh=JDkaw1wOk/UYnZY3BX0aROF5pCYw/LPE7tZYGSQHoms=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PE0Km2HtpE7BCenHyCa+2hn8eYeD7Z4ow8D7oMt8MDP1U8s5fRfcqFDnoihf5m7rhweamPubo6Ohhj0qgdhCLA7dEkY48hUbmZPsTE03TyrIjdlfSbWsurBemOZC7gImeiB/MwzJu9RBW6J8EJ5uTS4RAGGZJlsw/VH5UNArnt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: lirongqing <lirongqing@baidu.com>
-To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Li RongQing <lirongqing@baidu.com>
-Subject: [PATCH] fs: Make file-nr output the total allocated file handles
-Date: Thu, 10 Apr 2025 19:21:17 +0800
-Message-ID: <20250410112117.2851-1-lirongqing@baidu.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1744284124; c=relaxed/simple;
+	bh=PD5sRJPxkOujcV/3EkaBxNdeuNR1bNkNwh8G+5oS5rk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bQsIGyBdkaZ8aAO1VzlGSZOMhEjKEvQ/Vu1Yz/Nf3iEYLgh3FpShhgMcF7/YrVX6rrDcvuWoZrRSNgXqi7UC/pmH4s+uqA25MoZ3eP09hPRloVvFcX6SiyhF8RjdsUaSzlxAADn/E1DiIPHmgkWkp3S9eNuwjsVos+4gMUUByaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BnnmUQA2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5F48C4CEDD;
+	Thu, 10 Apr 2025 11:21:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744284123;
+	bh=PD5sRJPxkOujcV/3EkaBxNdeuNR1bNkNwh8G+5oS5rk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BnnmUQA239atAQco1TjH9RGPTqGZwl094/JlVnHJfymlP4TUNhwpWtwxW745D3s1r
+	 WFMAXhhS1Oo1QHw5HJxDLBXLQ7ljNwuOVqCT0W3PCr9JvW5cSvySfkDKF+/DPQoyBC
+	 feYYiFQCVPJOmORVGp2IUdd8QseZr5w3nlWgWehOCGWcpUpNmv1E7dZdmEmmXUi2OC
+	 6HpfaWK2mIh/gzOfKmtDFmcBq+neN4jtfBbx4y10Y+yzXbJzL9/GsAM+hM5bauRKf1
+	 1VO5IdOnBsn0w87ko24NRxoP2KEH8dnZOfxj1/i4l63p5lV5Reo/iUKqP6F3tptcu6
+	 wTLYpXNR3uvtg==
+Date: Thu, 10 Apr 2025 13:21:57 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Cc: a.hindborg@kernel.org, benno.lossin@proton.me,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v2 2/3] rust: dma: convert the read/write macros to
+ return Result
+Message-ID: <Z_ep1UNeZVsU9E8U@pollux>
+References: <20250410085916.546511-1-abdiel.janulgue@gmail.com>
+ <20250410085916.546511-3-abdiel.janulgue@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: BJHW-Mail-Ex11.internal.baidu.com (10.127.64.34) To
- BJHW-Mail-Ex15.internal.baidu.com (10.127.64.38)
-X-Baidu-BdMsfe-DateCheck: 1_BJHW-Mail-Ex15_2025-04-10 19:21:24:085
-X-Baidu-BdMsfe-DateCheck: 1_BJHW-Mail-Ex15_2025-04-10 19:21:24:085
-X-FEAS-Client-IP: 10.127.64.38
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410085916.546511-3-abdiel.janulgue@gmail.com>
 
-From: Li RongQing <lirongqing@baidu.com>
+On Thu, Apr 10, 2025 at 11:58:17AM +0300, Abdiel Janulgue wrote:
+> We could do better here by having the macros return `Result`,
+> so that we don't have to wrap these calls in a closure for
+> validation which is confusing.
+> 
+> Co-developed-by: Andreas Hindborg <a.hindborg@kernel.org>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> Suggested-by: Andreas Hindborg <a.hindborg@kernel.org>
+> Link: https://lore.kernel.org/rust-for-linux/87h63qhz4q.fsf@kernel.org/
+> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-Make file-nr output the total allocated file handles, not per-cpu
-cache number, it's more precise, and not in hot path
-
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
----
- fs/file_table.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/file_table.c b/fs/file_table.c
-index c04ed94..138114d 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -102,7 +102,7 @@ EXPORT_SYMBOL_GPL(get_max_files);
- static int proc_nr_files(const struct ctl_table *table, int write, void *buffer,
- 			 size_t *lenp, loff_t *ppos)
- {
--	files_stat.nr_files = get_nr_files();
-+	files_stat.nr_files = percpu_counter_sum_positive(&nr_files);
- 	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
- }
- 
--- 
-2.9.4
-
+I think you can drop this and the Suggested-by tag, since Andreas is also a
+co-author.
 
