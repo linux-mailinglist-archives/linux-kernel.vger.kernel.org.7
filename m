@@ -1,131 +1,130 @@
-Return-Path: <linux-kernel+bounces-598685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4A3A84974
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:22:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F97A84979
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC1447B3CF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:21:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3D63189E4A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26C71EE02F;
-	Thu, 10 Apr 2025 16:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397011EDA36;
+	Thu, 10 Apr 2025 16:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axey5ek3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9B0xgxT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458421D5CE8;
-	Thu, 10 Apr 2025 16:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970531D5CE8;
+	Thu, 10 Apr 2025 16:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744302119; cv=none; b=Wx2WN2VN4g/eyvWoqFDouDlvZERlWsm7SbN4w6cWMWZmTEVUjmJ2j4NycXTblRxXLOCpIGV4PwVIcCbjavVgjCMaoSxIuSh46a800foDg8lTCgPUyuHTi7TJsz1m6XJrZPRR90Tl0sVqxkqVdpzP1RlVBR4IKukRDTYwddEZm+w=
+	t=1744302209; cv=none; b=SwkKiyTuskV+dncWhLnCaPPCUHWpocn5rVrpT7q8bngy8imX+EmHZirtu5rZGQGE1MgfbU2TeYe2pidLkUGWuYhIbJbIxMbeqJC+hCBHQdS1b0ngWG420X7m/JDTxwjxPT3GeAGaMSuKgX0UMV5farD4RyegSGAEZlBLGvAoUfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744302119; c=relaxed/simple;
-	bh=xE5n6B+MNRMKtpObrYG84EMMt9mli5Pp21a1M9jmvY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=BXZia38I6JsvfJ2sy8WsoLfY0rYbEsfUISaAzSK4cOSsJ7pj0rAKVu5pfLQcP0cpJzjMvyZKWBezDYLDXF7XhJjCD572EjhsPpIIi1qR6mvkzmzs/pub76Ag9jxptCP+65tHt4gDrOZw1jSGgg9UPdGoflQKD0xTVjbHBUxy4So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axey5ek3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78860C4CEDD;
-	Thu, 10 Apr 2025 16:21:58 +0000 (UTC)
+	s=arc-20240116; t=1744302209; c=relaxed/simple;
+	bh=MIJHmLndng2qHd6AMjG45aj/Tigau0sdbPDDS+LPv04=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oCnNyBT1jcY85h4QpWRijWB3nBso6+DYogCo9xTClriedo4jGMX4aJgSwX7JnQU1mwDmY5d4LIOXLhwpsghFEzsOR4VZRR07nYbPk9riAVGTjryn7+BdgGSnLpdwY/PskYKlDxhotwbfLRzvs5Ub7PWm7vAaxh7wQIf7F4+T2Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9B0xgxT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69337C4CEDD;
+	Thu, 10 Apr 2025 16:23:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744302118;
-	bh=xE5n6B+MNRMKtpObrYG84EMMt9mli5Pp21a1M9jmvY8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=axey5ek338ZhZvIs+yMX5kJJ3aG2naqpdsmvWwGPjBGv+2dxL32lP+Vxln2MY+k3x
-	 MV4GVEcky/bUOisI26LOF/2Z/m1S3jF8g9b9MPn84WLS1zL+pdrtYZ5rTAQfKG9Vtn
-	 GqcA+Vh07HiUFEm+rXfyIMwmaUN9LKvcY1RhZswB/xfyJVWi0TgDN0Ydh0WhRWA24p
-	 4yUDO4dLScMrqsNpmS97PrnbyyqtdRYkD/x8dzkEiZAxyYC7aodlsk9NEIPBV6xHGA
-	 Mac99+oKtMf8TjP3Wjca6IE2hR74/rWcbHuf1Tr8ryKRm/nFzKE7kvZy0j0jfrug0s
-	 Y/Q2MzxToNdYQ==
-Date: Thu, 10 Apr 2025 11:21:57 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	Michael Chan <mchan@broadcom.com>,
-	Potnuri Bharat Teja <bharat@chelsio.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Leon Romanovsky <leon@kernel.org>
-Cc: netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: PCI VPD checksum ambiguity
-Message-ID: <20250410162157.GA328195@bhelgaas>
+	s=k20201202; t=1744302209;
+	bh=MIJHmLndng2qHd6AMjG45aj/Tigau0sdbPDDS+LPv04=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=e9B0xgxTWYrcFHkiVGBGJiHaFYVWKGZTUNNrXkTWimGY9SCcDGUgx9YBRI46PJhSb
+	 AVGgwpR0PxaS6YG0syWk1G7ANdk8a9CDHd8y/osqZYuslTbkMxZqwMAPwepHm0x1MU
+	 B9/MmJb/iZXqun7sge9kx68lNvHQxteIuDAbGGddcChKwKyRRe2LkOTEHztoOK9cCW
+	 zoraxTe36oFVBBaC3qWyauq0pENkJASB5TYyt7IfVAQOSN/JVWFRti9/41q2ErU8ky
+	 k7YE5GNIyRKEVXp5Bh5/JCb+3JO0tCiFD+LzaFs7Rio0EzDqTLY8yjkkx77A8YSEna
+	 8KB0fI+tYqy1g==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1u2ugZ-004I5l-37;
+	Thu, 10 Apr 2025 17:23:27 +0100
+Date: Thu, 10 Apr 2025 17:23:26 +0100
+Message-ID: <86frigkmtd.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: "Tyler Hicks (Microsoft)" <code@tyhicks.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Vijay Balakrishna <vijayb@linux.microsoft.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH 2/2] dt-bindings: arm: cpus: Add edac-enabled property
+In-Reply-To: <Z/fV+SP0z+slV9/1@redbud>
+References: <1744241785-20256-1-git-send-email-vijayb@linux.microsoft.com>
+	<1744241785-20256-3-git-send-email-vijayb@linux.microsoft.com>
+	<319b7c65-3e2f-456b-a845-45f7a57ba2c5@kernel.org>
+	<86o6x4lcf9.wl-maz@kernel.org>
+	<Z/fV+SP0z+slV9/1@redbud>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250401205544.GA1620308@bhelgaas>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: code@tyhicks.com, krzk@kernel.org, vijayb@linux.microsoft.com, bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org, rric@kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, s.hauer@pengutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Apr 01, 2025 at 03:55:44PM -0500, Bjorn Helgaas wrote:
-> Hi,
+On Thu, 10 Apr 2025 15:30:17 +0100,
+"Tyler Hicks (Microsoft)" <code@tyhicks.com> wrote:
 > 
-> The PCIe spec is ambiguous about how the VPD checksum should be
-> computed, and resolving this ambiguity might break drivers.
+> On 2025-04-10 08:10:18, Marc Zyngier wrote:
+> > On Thu, 10 Apr 2025 07:00:55 +0100,
+> > Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > 
+> > > On 10/04/2025 01:36, Vijay Balakrishna wrote:
+> > > > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > > > 
+> > > > Some ARM Cortex CPUs like the A53, A57 and A72 have Error Detection And
+> > > > Correction (EDAC) support on their L1 and L2 caches. This is implemented
+> > > > in implementation defined registers, so usage of this functionality is
+> > > > not safe in virtualized environments or when EL3 already uses these
+> > > > registers. This patch adds a edac-enabled flag which can be explicitly
+> > > > set when EDAC can be used.
+> > > 
+> > > Can't hypervisor tell you that?
+> > 
+> > No, it can't. This is not an architecture feature, and KVM will gladly
+> > inject an UNDEF exception if the guest tries to use this.
+> > 
+> > Which is yet another reason why this whole exercise is futile.
+> 
+> Hi Marc - could you clarify why this is futile for baremetal or were you just
+> referring to virtualized environments?
 
-Any more input on this?  It would be great to have more information
-about how vendors compute the checksum on their devices.
+This is futile in general. This sort of stuff only makes sense if you
+can take useful action upon detecting an error, such as cache
+scrubbing. Here, this is just telling you "bang, you're dead", without
+any other recourse. You are not even sure you'll be able to actually
+*run* this code. You cannot identify what the blast radius.
 
-There is a proposed PCIe spec change to resolve the ambiguity, and the
-intent is to make a change that reflects what vendors have actually
-implemented.
+We have some other EDAC implementation for arm64 CPUs (XGene,
+ThunderX), and they are all perfectly useless (I have them in my
+collection of horrors). I know you are familiar enough with the RAS
+architecture to appreciate the difference with a contemporary
+implementation that would actually do the right thing.
 
-The only concrete data I've seen so far is from Pavan at Broadcom
-(thank you very much for that), where the checksum starts at the
-beginning of VPD, not at the beginning of VPD-R.
+Thanks,
 
-If you can collect VPD data from devices, you can use something like
-this to compute the checksum from the beginning of VPD:
+	M.
 
-  addr=0; sum=0; xxd -r -c 32 vpd.txt | xxd -p -g1 -c1 x.bin | while read X; do sum=$(($sum + "0x$X")); printf "addr 0x%04x: 0x%02x sum 0x%02x\n" $addr "0x$X" $(($sum % 256)); addr=$(($addr + 1)); done
-
-(You still have to figure out manually where the RV item is so you
-don't include the writable VPD-W part.)
-
-> PCIe r6.0 sec 6.27 says only the VPD-R list should be included in the
-> checksum:
-> 
->   One VPD-R (10h) tag is used as a header for the read-only keywords.
->   The VPD-R list (including tag and length) must checksum to zero.
-> 
-> But sec 6.27.2.2 says "all bytes in VPD ... up to the checksum byte":
-> 
->   RV   The first byte of this item is a checksum byte. The checksum is
->        correct if the sum of all bytes in VPD (from VPD address 0 up
->        to and including this byte) is zero.
-> 
-> These are obviously different unless VPD-R happens to be the first
-> item in VPD.  But sec 6.27 and 6.27.2.1 suggest that the Identifier
-> String item should be the first item, preceding the VPD-R list:
-> 
->   The first VPD tag is the Identifier String (02h) and provides the
->   product name of the device. [6.27]
-> 
->   Large resource type Identifier String (02h)
-> 
->     This tag is the first item in the VPD storage component. It
->     contains the name of the add-in card in alphanumeric characters.
->     [6.27.2.1, Table 6-23]
-> 
-> I think pci_vpd_check_csum() follows sec 6.27.2.2: it sums all the
-> bytes in the buffer up to and including the checksum byte of the RV
-> keyword.  The range starts at 0, not at the beginning of the VPD-R
-> read-only list, so it likely includes the Identifier String.
-> 
-> As far as I can tell, only the broadcom/tg3 and chelsio/cxgb4/t4
-> drivers use pci_vpd_check_csum().  Of course, other drivers might
-> compute the checksum themselves.
-> 
-> Any thoughts on how this spec ambiguity should be resolved?
-> 
-> Any idea how devices in the field populate their VPD?
-> 
-> Can you share any VPD dumps from devices that include an RV keyword
-> item?
-> 
-> Bjorn
+-- 
+Without deviation from the norm, progress is not possible.
 
