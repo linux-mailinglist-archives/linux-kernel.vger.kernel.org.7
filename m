@@ -1,123 +1,136 @@
-Return-Path: <linux-kernel+bounces-597905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD48A83FFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:06:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E90A8400C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3C01B84748
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:05:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192261B83AA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC7727C85E;
-	Thu, 10 Apr 2025 10:01:46 +0000 (UTC)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A344827C850;
-	Thu, 10 Apr 2025 10:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5F626E16B;
+	Thu, 10 Apr 2025 10:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Uta5NtAj"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F773267F70;
+	Thu, 10 Apr 2025 10:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744279306; cv=none; b=Ps3jTr5dB28eUwdJkdX7son8mSvavpJAnHWa5Drbnx3iC5pYMKRVPZxZ1IrVLJG6XzfAdTzc2cZVi9HNELFE9XUdxcwE9+7S2EZLgZgRJq+6z6sOPYoLkaSZsyWuWlXWzip20PSyYCtN6rsJYCRQnootEbflgPebvY3Jkv10P3c=
+	t=1744279403; cv=none; b=Je9/2pIFLhU4EpxUGDHeI7L/+QxKBEdK7cGsgWQgJCpRrr4SSah4Qa38gXmu5cfritarHVElxdduTbNC/iV+i+uJ3MZs/ozm/g1nJo7fOgmLNg3OA9rMwGBgeDCVvYvuiMTrfRs8+sVfVFtQx2RSWK+EI0b1L7u388XqNt+Hymg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744279306; c=relaxed/simple;
-	bh=9b78sYMlgKV8xbhGsnnU6NEj0KRXsexk+EnRgrPV9zo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZmkpxOIxKWyFDEc8qKKD6WamPfHD927kELy485Z+rbSU/OUoy+rlPYSZG+BDRx30QtJtqyyVT5mwz3JvwCosnjV1ethaQcNkMn2P1iG6FDnml5Gem/rLMU0S7n739+d51fXsB0aPFvmMWwf1svS21z4ovSrCgd0mpMWcEZum7DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5f0c8448f99so1273884a12.1;
-        Thu, 10 Apr 2025 03:01:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744279302; x=1744884102;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3F2NKJ9dNLSl3ARkhxIkJK0rOGADequNLd0IXRv1ebs=;
-        b=XDk4WxN0Mx/M+BRmPQUkBRL5qry2AYccEa1FRETBKOrf5s5Dp3S06P1QDvp5eplpMn
-         OEGOFLJv36UHSB7jx1eZXHinrPtocdkKIni9Eb2nn1tWeoX7MBpIJUpbDmU8g0XfPjuW
-         Ngtacz+GpIdJPjKijY/+4XhuUpIYA5BxXxpKK1yVQ3K20PPXeT3kRipu3LHljzBtMoui
-         fX+UmSBafiOsTFIitHwCmzQ+ZgVbZCBDsTnqIgQOLBeQjYLHL0BJNODxlBJCJZIhGcBP
-         Fj7hwHKvKccnAYvx/o/4eBAO4Wy+mzoqgIjaVC4mxMsu84c9uwlbANBPa99raIcLenFQ
-         /ymA==
-X-Forwarded-Encrypted: i=1; AJvYcCVB9JgUrUKn1eOZcGh+DKIOhZtMaey+7+Dx0HRpd97wDlMLtWHmBCEIW9bh6DCkbFUOOc/flYA5HsdgFODu@vger.kernel.org, AJvYcCVBxMV/IIuyJbsd1+eyguA1lPSpjLltLjHVhWZs8lRY1PDQ5a6DSak6AvZ0c1/ozVSLcSAsQwDaD5GMl5Iz@vger.kernel.org, AJvYcCVgmJEH7j4/TAu9Rz6JG4VRgFVdu6dw4N8dY1pl23e62tGWFgNtki6ESSAbH1vznJjQuoM+XmUe1pejcg==@vger.kernel.org, AJvYcCW/xPyQJB6HrVsBhZwt0nKHbPUrkJR6PkacnpmqpWgJnLCIoq29e5Ydz0s0HBmIwfHbwJGX6UuxC6/b@vger.kernel.org, AJvYcCXW82NCKlqUo0pKSvDFq9kzSF8gGNKiY0dpA6EbPn01LLumxxT6IcxaIEMS5989FzMaN6Q7mXvMejeP1Yex9kT4FrM=@vger.kernel.org, AJvYcCXc/Luu+NMR2/jD2qsBaaEtA8QPEReuLUXDOCYKZPP36XuYykbD+qdDOoA8ozVYLu3YcG++5n5Uz2/0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0Fya05jVZxNQHvoMiqxa0wvz6Zzz1OWSHJVBm+WoVFrbSAhvH
-	ppczHXTdXdrOGix4s9hgBeFGqgigJamijmSCRVGEmGrj1q5UfX74Etk11Kdo1Oo=
-X-Gm-Gg: ASbGncuQLdf5D6zme7m0drbMsCApWBdvg4m0x+jXhBVnhZi/Im1JbNe1eQ8jlV6XFDn
-	ORiIQvExRJCvzi/3rexvMJ03kpKOveYRhCVheCN+f1Jg+1Mzg4K9KTHO5H8caB/tUcNFoHNCxmS
-	5PJKiTy85Q9oip7IDlg/E7xiJcQaItO2j55tIrJc865iXRnzCYjL1nkkdv9Z2liAgHGdI+MM5mg
-	w6u8d/hjRB2mt5MwgsKeDBzY0XMrivljrSbXcWfGPkc9Ejkm4yqD9lcvcIlxd0YdfZhR+Fw2GHN
-	VkNH2e1kyl/pAZ0ujRp4ojieRuZpv58oVC1BuP4j/+SBPm6+0rF0u8tE09sgYtENLjIMog3j4ma
-	Ndzw=
-X-Google-Smtp-Source: AGHT+IEFrTLNQPfXz1mp8f92xYtXrhIRRdb7ZcNLyKRlx2dfbTxo8MRLNtb6jNbIjIjkmXRlsSFgPw==
-X-Received: by 2002:a17:906:f585:b0:ac3:9587:f2ac with SMTP id a640c23a62f3a-acabd24cb50mr191576566b.33.1744279301862;
-        Thu, 10 Apr 2025 03:01:41 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1bb3513sm247952966b.11.2025.04.10.03.01.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 03:01:38 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e61da95244so1034688a12.2;
-        Thu, 10 Apr 2025 03:01:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU7mXlDrvRwvyguq0Kk1L8BtiqRpjWLIpd0yV87IuXrxOId1vneyr9IZpNizqN9K/FFg5sOvwnQetka@vger.kernel.org, AJvYcCUEKJIUTfQVW9E/J948HtHeh12sTUc1QAc92rDE4HVMKhHm1SLbVOI/Ti5yAoKDNxQ5c5/WqztLHfYmASjR@vger.kernel.org, AJvYcCUXqdIwdtccZvjpxWGyBdEKuMq1TWbXflCeYJ1lUmw/t1MVnHuS5Gcusr4jvYyhivfnTnh7NuVyYGl8@vger.kernel.org, AJvYcCX3JR4QhTBdydenr3//sbADmFcILTDBkW77wt+OXf2F6dL6fCGE0i+hzEVbr538Ks3ptVhqeJa4D1rurJRFTD3m9fg=@vger.kernel.org, AJvYcCXjLZI35mgOkp8GWeHWUZhRRDVDJnQlx56nEzN9h7tpTklYV5VlXL9PFW9S4A+o4CtZk98TdW+rRk+2BHXu@vger.kernel.org, AJvYcCXjrZm+cDJL0in2mHh1dgn3qsUzuC9dJnIOvPbrsTTSnTYBSR9YSmIoB/Yuci21XVsokHPMB0kVQL6sOQ==@vger.kernel.org
-X-Received: by 2002:a17:907:9692:b0:ac7:ecea:8472 with SMTP id
- a640c23a62f3a-acabd206311mr163848966b.26.1744279297800; Thu, 10 Apr 2025
- 03:01:37 -0700 (PDT)
+	s=arc-20240116; t=1744279403; c=relaxed/simple;
+	bh=lmppQfbdrQUGQjfQF8ivePB/2k4sgLFbvW5qYbiK03A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KN9ZkxiUANTnajhBDMpXjv+rVR5Ww+D5VBz5l19OFxpWqD1NCJTEsEdKOkg7upnRWCWfqZ3iWgz8YAf7M3LHDTQyH7fxn5VVamV9Y0JvaqLKBA+BO5dONFg/pCdmt3lxPeosaFykp8RyLDEoYdkjuDssHu7gstZrbJLZJV4v9Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Uta5NtAj; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Jo0rD
+	BCUe7dubutz5qYlyihW1Ld3IGN6iN2C5WAGgvg=; b=Uta5NtAjXZSSn6RDFkBTB
+	hlBqqHRksDOPTSeJ8PEE36y7YJ5NypKkHU2FU//kJlqIyj4hoPacbwgZN8g0gRj2
+	PJC9PhZDl+73TXoKZXE/0tgl1aFxBcpVjgDRls9isv6ZwKckcC/CoNfri9jQZK7k
+	ZoTxr8GG6F+LbcPgQu2ExI=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wAnhDEzl_dnH5BEFg--.53412S4;
+	Thu, 10 Apr 2025 18:02:28 +0800 (CST)
+From: lvxiafei <xiafei_xupt@163.com>
+To: fw@strlen.de
+Cc: coreteam@netfilter.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	kadlec@netfilter.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvxiafei@sensetime.com,
+	netdev@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	pabeni@redhat.com,
+	pablo@netfilter.org,
+	xiafei_xupt@163.com
+Subject: Re: [PATCH V3] netfilter: netns nf_conntrack: per-netns net.netfilter.nf_conntrack_max sysctl
+Date: Thu, 10 Apr 2025 18:02:27 +0800
+Message-Id: <20250410100227.83156-1-xiafei_xupt@163.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20250409094206.GB17911@breakpoint.cc>
+References: <20250409094206.GB17911@breakpoint.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250407191628.323613-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250407191628.323613-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 10 Apr 2025 12:01:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXTDMZvVieaTsuPYKjVaK5tFnT_5Pcx7zeRQ6j5vW=C2g@mail.gmail.com>
-X-Gm-Features: ATxdqUFnFS8ru0MA_-DyWlGEfk_lZ9qfaotati6OchDHxwVypNec4oWk2u6TNGc
-Message-ID: <CAMuHMdXTDMZvVieaTsuPYKjVaK5tFnT_5Pcx7zeRQ6j5vW=C2g@mail.gmail.com>
-Subject: Re: [PATCH v2 09/12] dt-bindings: pinctrl: renesas: Document RZ/V2N SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAnhDEzl_dnH5BEFg--.53412S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Kw4rKFyfZw1fGFWftw47Arb_yoW8tF4rpw
+	4rt39rJw1DJrs0y3WUX3sFyFsYv3yfAa1Y9Fn8GF95u3ZrKr15Cr45tFyfXryvkr1xKF1S
+	yw4j9ry5Aa10yFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUhF4_UUUUU=
+X-CM-SenderInfo: x0ldwvplb031rw6rljoofrz/1tbiKAwqU2f2zrGtbwACsz
 
-On Mon, 7 Apr 2025 at 21:16, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Florian Westphal <fw@strlen.de> wrote:
+> net.netfilter.nf_conntrack_max
+> is replaced by init_net.nf_conntrack_max in your patch.
 >
-> Add documentation for the pin controller found on the Renesas RZ/V2N
-> (R9A09G056) SoC. The RZ/V2N PFC differs slightly from the RZ/G2L family
-> and is almost identical to the RZ/V2H(P) SoC, except that the RZ/V2H(P) SoC
-> has an additional dedicated pin.
+> But not net.nf_conntrack_max, so they are now different and not
+> related at all anymore except that the latter overrides the former
+> even in init_net.
 >
-> To account for this, a SoC-specific compatible string,
-> 'renesas,r9a09g056-pinctrl', is introduced for the RZ/V2N SoC.
+> I'm not sure this is sane.  And it needs an update to
+> Documentation/networking/nf_conntrack-sysctl.rst
+
+Yes, it needs an update to
+Documentation/networking/nf_conntrack-sysctl.rst.
+
+in different netns,
+net.netfilter.nf_conntrack_max = init_net.ct.sysctl_max;
+the global (ancestral) limit,
+net.nf_conntrack_max = nf_conntrack_max = max_factor * nf_conntrack_htable_size;
+
+> in any case.
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2:
-> - Dropped `renesas,r9a09g056-pinctrl.h` header file.
+> Also:
+>
+> -       if (nf_conntrack_max && unlikely(ct_count > nf_conntrack_max)) {
+> +       if (net->ct.sysctl_max && unlikely(ct_count > min(nf_conntrack_max, net->ct.sysctl_max))) {
+>
+>
+> ... can't be right, this allows a 0 setting in the netns.
+> So, setting 0 in non-init-net must be disallowed.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.16.
+Yes, setting 0 in non-init-net must be disallowed.
 
-Gr{oetje,eeting}s,
+Should be used:
+unsigned int net_ct_sysctl_max = max(min(nf_conntrack_max, net->ct.sysctl_max), 0);
+if (nf_conntrack_max && unlikely(ct_count > net_ct_sysctl_max)) {
 
-                        Geert
+min(nf_conntrack_max, net->ct.sysctl_max) is the upper limit of ct_count
+At the same time, when net->ct.sysctl_max == 0, the original intention is no limit,
+but it can be limited by nf_conntrack_max in different netns.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> I suggest to remove nf_conntrack_max as a global variable,
+> make net.nf_conntrack_max use init_net.nf_conntrack_max too internally,
+> so in the init_net both sysctls remain the same.
+>
+> Then, change __nf_conntrack_alloc() to do:
+>
+> unsigned int nf_conntrack_max = min(net->ct.sysctl_max, &init_net.ct.sysctl_max);
+>
+> and leave the if-condition as is, i.e.:
+>
+> if (nf_conntrack_max && unlikely(ct_count > nf_conntrack_max)) { ...
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yes, each netns can pick an arbitrary value (but not 0, this ability needs to
+be removed).
+
+Should be used:
+unsigned int nf_conntrack_max = max(min(net->ct.sysctl_max, init_net.ct.sysctl_max, 0);
+
+This also needs an update to Documentation/networking/nf_conntrack-sysctl.rst
+to explain the restrictions.
+
 
