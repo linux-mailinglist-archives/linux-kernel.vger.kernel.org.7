@@ -1,287 +1,194 @@
-Return-Path: <linux-kernel+bounces-598068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87999A841E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:39:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A5F5A84195
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E50264C5828
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8ED09E44D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C00B2836AC;
-	Thu, 10 Apr 2025 11:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2C91DDC0F;
+	Thu, 10 Apr 2025 11:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oBTu+Ecr"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="K0aFFLSj"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2063.outbound.protection.outlook.com [40.107.255.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68352036F3;
-	Thu, 10 Apr 2025 11:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744285156; cv=none; b=GWFzwFVkCELWqC7KOf7H+jzy46emABt6B5NqJdUYRvojk7smMzKPss3beLYNhu0qseSHb4K3cVmuF2ElrFIuJzS0yMsEX/A/cRgVVqpwDobK6G5K7kNSqOH/djJmeK6RcLl0dK9EZckhDA4NMaBESfdtvR5+rE0V+woUunJW8Gk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744285156; c=relaxed/simple;
-	bh=7rc31dbAkmSoVmEuH2fQ0M0qVEHGMJLlfF9VNZAzxno=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=l9TZWA57rZcpL7T3TqSoqYIMgaf8lfYg80TRL42NQD8OHqKs5PKhzLQc4pvAXpQzdQ9n8taSY+eK9oIlMex73kapZHF42P6RNGiN5sGVsyj5CMJB1Bl777rCtiB0xlzZInpLjvNA3ftKmm52dxvUPVHrE4Q6uKot4P6jg4N8C/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oBTu+Ecr; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53ABd5bB1791201
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Apr 2025 06:39:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744285145;
-	bh=w6fV5bI1T6GN2zcix/2ZHOp8qdNscyjQU9GGmfz+CPs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=oBTu+EcrWlL3O/dOxm68A7YOJYb53FXxbzk21g5R3E2jQL0pBTydhzGoc3dbZNJeL
-	 XdfqiJja1XH21abud33uK4aTR+CjAB9ae60YN0T1VkVRYR2RMNyXIzErHyFrgMBitk
-	 j92DM/gQjK4QfTSACOCo5numOfzxun3BpeNdCT2I=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53ABd4kb041232
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 10 Apr 2025 06:39:04 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 10
- Apr 2025 06:39:04 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 10 Apr 2025 06:39:04 -0500
-Received: from [172.24.227.193] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.227.193])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53ABcvFD086503;
-	Thu, 10 Apr 2025 06:38:58 -0500
-Message-ID: <5969e1e8-0bb7-4334-a0c5-b4c396b8b6af@ti.com>
-Date: Thu, 10 Apr 2025 17:08:57 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F154425745C;
+	Thu, 10 Apr 2025 11:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744283970; cv=fail; b=Vk48AnNW01w0BmkHUa3JRSlheFfsjFBvs0IOItNxOqkhbSAese3bY+0DlZFjNQsbWdWqjZ5aPcieevYPJl6x9AhGM0f+IAjyn0EzbbOzGAQGKCvff8tcWW9MSpzJw0xxgnUr1xudQ4AUiSnA7nKDOY1W/cjstHHhXy12Umuk7kQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744283970; c=relaxed/simple;
+	bh=L3nznGZcwRdg2KSqQGqlZIkR07zURpdkXQ60znueU7Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=A01/2Mb3V+kHsQFcKtmr5E4FsA1paA6q3ZUuonpBo3Y6PGE6qCFrOnXT8mKn1fZsj9zZcRIXBUBP6C0RuwQJ8Yv+2Jb3dNdYZLia0vkLVHcqxkKotoRasgHkjpXrK4JUU/sTc6XatF9Z+Q3+OAWAZY/V7IZAzb+HIXYzq17cSh0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=K0aFFLSj; arc=fail smtp.client-ip=40.107.255.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R4soByxI3YajZFEyPxLqgTel0lnkQLHZDapDOINDmjQGXerJYZQg3ftGT2EcfKiM8OmuEauB1x5SfVl4S/EtG6nfM3L/pGTQBX/6vezwTZ2LV+xUZuyULfqfpMXiUgKIvTwanGtGSR/cAcCNFv+vy1uBi797etSSOWH8rn5DEYUcBDENi5STl0uZfcvkVV2B520z0lq/TTiooUxTkUEbK1p4d5iP0AxskVRSdVzkBdpg20PfJ/ZEPsDd8ZBJkJdI88drfaLFAzDIUiPPTx2KCCt7a0aHb030M2/w4J3MDge7PYzW3cePfAeFYCCggQw3PnZmc7sCXriNApFCWxmqtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=g3jc0xxz7J0F4UT80XqCKgJu7mrajwyfkVGIdto1Lhc=;
+ b=ffboMvUV104qdJ0hjCH9W2WyQZyGeQ1qYTXoJwjPwIQGBSG6hnIDOCg4V05VoiPh/ShF/FnZ/tFkmKsbZ4iW3XDd21+AXrK7TlJ5Wnn9RNqahp8gCtcdW3UZb/uNhHScyPNJoJANaLI5XdBVpB2qWi842MMnSlTb1B/R436RJnXsNo/6/Vaqurmd7BsL3dwpH3laN65UD314UX1TzjZouPRkWYBhcCtB4X/ZkF7WOtuRNE/7qya273DQP+ZP2Ksd9wKVZxb3aQ/n4pdEEHhzyyyBrWEojGDVbJxZIu+F49ZgkUJ5PU3ayCO0CUmG3J9Dtyb8W/0krwBhGvp63vEDwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g3jc0xxz7J0F4UT80XqCKgJu7mrajwyfkVGIdto1Lhc=;
+ b=K0aFFLSjTsDQw1yMv7b1ZTaCC2vHEbIaaQaH6uhc4Zchss3d4NoGJmHJRecsPNsYSN9nqPYnqh3s23VI5L8u4arPWjPbu2pOXSvWwuWngsd1I3a+v/+30E8aoDAU5UaJYz1+dMfya8ony0L2Mj8+Ul7FFP0LiN9q2L2gJmcMLjyAdu600hAAJtR0x2AVcG37b/b2YUVa+ZRM/TEA4EU7eCsX5vyQwUCvfD3Wgem6qZzxL9C6dgGGdiIr2azssfyUOwzD4HgSFUAaiyvJyJg1IEBUhfGHOXk6utqSI0Uam8rdPjtuCs6u/f0kusZNaQJ7+a8JvzBWRN1zNgEVesiAKQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by TYSPR06MB6751.apcprd06.prod.outlook.com (2603:1096:400:476::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.29; Thu, 10 Apr
+ 2025 11:19:24 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535%6]) with mapi id 15.20.8606.033; Thu, 10 Apr 2025
+ 11:19:24 +0000
+From: Yangtao Li <frank.li@vivo.com>
+To: clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yangtao Li <frank.li@vivo.com>
+Subject: [PATCH] btrfs: make error handling more appropriate in btrfs_delayed_ref_init()
+Date: Thu, 10 Apr 2025 05:38:58 -0600
+Message-Id: <20250410113858.149032-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0001.apcprd02.prod.outlook.com
+ (2603:1096:4:194::10) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Linux)
-Subject: Re: [PATCH v6 06/11] arm64: dts: ti: k3-am62a7-sk: Enable IPC with
- remote processors
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-CC: Andrew Davis <afd@ti.com>, Judith Mendez <jm@ti.com>,
-        Devarsh Thakkar
-	<devarsht@lewv0571a.ent.ti.com>,
-        Nishanth Menon <nm@ti.com>, Hari Nagalla
-	<hnagalla@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Beleswar Padhi
-	<b-padhi@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Markus
- Schneider-Pargmann <msp@baylibre.com>, <praneeth@ti.com>,
-        "Khasim, Syed
- Mohammed" <khasim@ti.com>,
-        <tomi.valkeinen@ideasonboard.com>, <v-krishnamoorthy@ti.com>,
-        <s-tripathy@ti.com>, <s-tripathi1@ti.com>, <c-shilwant@ti.com>,
-        <r-ravikumar@ti.com>
-References: <20250405001518.1315273-1-jm@ti.com>
- <20250405001518.1315273-7-jm@ti.com>
- <6868f593-0728-4e92-a57b-87db6a0037f6@ti>
- <f42607f5-e39d-48a1-89c0-11d4982a2426@ti.com>
- <e131298f-3713-482a-a740-ff89709270b4@ti.com>
- <091c0869-525b-4b40-b5fe-a5c1907ec606@ti.com>
- <czmir7yvss3oreveesyrjqfdcawyn2axtstomsj3yx5sntqwo2@r3udnsyrxvkp>
-Content-Language: en-US
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <czmir7yvss3oreveesyrjqfdcawyn2axtstomsj3yx5sntqwo2@r3udnsyrxvkp>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TYSPR06MB6751:EE_
+X-MS-Office365-Filtering-Correlation-Id: 91869863-37c7-41cc-c865-08dd78218c2b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/geWh1CG9EmTN/8Vd4Y+R8T0BvOuFeD1xHVKmmJKgVDCQ+ydpJLVmMehMC43?=
+ =?us-ascii?Q?AaTYo+TO1S7WNGmRA9xeAwSm3m/Ua2Azp4SoMrqzY0IFqwK8sYlCn6kLHHH4?=
+ =?us-ascii?Q?kcXoPnxnrCg2hVQGnve4o485csehfuGya13qLA3aTwAs5/aNEbKL/vpQtP88?=
+ =?us-ascii?Q?hrOLSXxdejE15qDTdyIg/EUwJKYNkKtlg1JnjDFSfAqC8fbkhq+6GRW8v2Ri?=
+ =?us-ascii?Q?FUcdbmkH2nZkHedDB5khA7eHkYWUWAWZYnguesfqzcErZ40NSk4/xCeJh+OX?=
+ =?us-ascii?Q?Yqk505IHkeLYRTvzy3pIOshD3mDQdRPkqZxRn3soKslWJdYLzJtj43jj59GF?=
+ =?us-ascii?Q?4iSbTFuGD7VxFxCq7u+YT89D/lCFpEYJXrdrIldpAEr8HszkopDlymdqxLQC?=
+ =?us-ascii?Q?N41Npbkm1gVXXolQftGPejZ3RWXDk6o2lxdi2Im567/jJoZMJ83mATVItDJ0?=
+ =?us-ascii?Q?XxoiYbriAErQ3gi0GE9nEC2hMfQVe7UH9M795fcroT8Rigwv8kpq4Knniyfg?=
+ =?us-ascii?Q?qJlr8Esu/kYiuvD5YukUHTrGZvbyg6+sC8LiqOJvd90xhXR433bRQVbCXeYn?=
+ =?us-ascii?Q?gdN7eYtJ6eegEtiB1aOUXQrX4sbFNO/a46DN8AQAwj1cFOfa+n46Zl6/9mXY?=
+ =?us-ascii?Q?hJujPcS6caHvZnYUBx56fqqmBqGuRtyXcW+MuUjp8sy8mTnOiPynfg7n40R0?=
+ =?us-ascii?Q?OESe2uZOMC1M/xrb4ATgeban2gQUqckloHC7Lm+TTOJ1yV8InKRBf7FLm3tD?=
+ =?us-ascii?Q?OLDzhvN8GwDEk6Fyqo8azue6fQ+lnsgY/WZgPwtJRW5hX5uyO+k6Ye76YAMT?=
+ =?us-ascii?Q?/wLTQwTUS32GdKakBtXELNlzymoqylkMDpETwY1lbNv9jONEf1QbcBDwtpRB?=
+ =?us-ascii?Q?1Ygo0svEovUQ8QHueO0Vs+tu5l59eSpr5XjybiW3JhftNtL8hsem5Oud8nYE?=
+ =?us-ascii?Q?d9OI82JMRpaVggCoiEOjd6rgPyjI2p6rg7oPBGsemkIy9h/Xe/TIoi0E/2DF?=
+ =?us-ascii?Q?sjuxka5q3dF+Vyura+JyFsvmU/962iQKGuleCvhMl8GKOsD+AAPh+frWe3g3?=
+ =?us-ascii?Q?Z3aZIF8+K4PBBdfgVWDDZkH7evvCQvsbEzHjaHzSe/BtLBLowyhYXv5yXdPc?=
+ =?us-ascii?Q?7PJdkNeWVaBHeo51D19Wo4ESG3IJ7XQfCZTFdn3jZ/PhThauJavQbRthjtWx?=
+ =?us-ascii?Q?OJ6a5tB84cUKZc8Eu1SebzvDjrBS56RRMRempNu4EIeI+v1L2fk/cMyWHh5D?=
+ =?us-ascii?Q?RlwyiHhXIxuaDcX9WXGe/AwFHfx6rW7CsNel31jFFe2R7V29pCXRBAn8hXYK?=
+ =?us-ascii?Q?nFT6U5dfOwRP2IG5N6ftPryq4xWjy0fwe7lHD6cLpUzNaxU3WfMtvJFJbdt5?=
+ =?us-ascii?Q?6Mi+SZ5kDSGscRfkCk42mip8hQtVs9mF9lHt3jk5NJtV6P5rn9DMcEDZccXT?=
+ =?us-ascii?Q?8pXC8VkRmJEfYJnFr7uuZ95l1zWG8o9M?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?9dT6otItdqHk2C0Ve0xaDxWIA723zZC97CtwLhjH8QRyxe2PNalZNfeiASzI?=
+ =?us-ascii?Q?Er6bOCpJIfTbtqcAbqLG0ri8s+Qf5QtEw7dd80NQ5Hmo7W1D2PE4XA6NQPbw?=
+ =?us-ascii?Q?pPBEogb5cFGMr4RwdRDiRte4HdLjIp0X89QUjsYxIDbUIKFALa6DOfG4t2Bl?=
+ =?us-ascii?Q?xzPMQsVZrx0HCgDFlePABs3k8uqWo9Rq/10zT+ECcb/pbBAKJ8uMRHf6ksa6?=
+ =?us-ascii?Q?TJHOMddM0yBI8LWdNoVakGkY0r7YriSc8CUlijAku6SswKwOUXLWZnfgNuUV?=
+ =?us-ascii?Q?ybFY85G8Mo7Y3Nhg2V7dRU5w/IOexY2OIeom+LGTtmSETDW8zuEXbhazCuER?=
+ =?us-ascii?Q?j3/FOBQYvHTmWrYr/K7zHYKpqAeCQFm/cVdXKiMJEeMez2hoDdlQwcmZPixY?=
+ =?us-ascii?Q?TVBSlU2UeVQ2aYLN/dHvEuEPH60iitgf1U/KlsfWXURZWcjSOUpQ8IU7rabo?=
+ =?us-ascii?Q?NqDsySqWBcB970oNaDfijtnGaWh9jdgSSenlRMsQ+DYyXz6uZz54Mx2Yk8RF?=
+ =?us-ascii?Q?E028nkX4n2jmSOd2RvWbR2AxeyqzsRXobHZHIDaAiTGIHs7EEhA+QnFGw62V?=
+ =?us-ascii?Q?8uzVf00nzGkSLoW9ospfNjODyo5jML5xLlcWN1KjT3a6iR1u4Owyzj1R29v6?=
+ =?us-ascii?Q?QBbLisb08D9j6rrv+EUnyF6P9021m7tUZeZH75gamchaS3JurXCyzC3jygwC?=
+ =?us-ascii?Q?0qu4d2SeEll/NL09sjTtsWoqckJLBAOMHcYCVLtOu78ROqvOg/ItDWMt6SPd?=
+ =?us-ascii?Q?qieUzE652zsnyylOsn8r/levkynAsZc8s28QQtZDx02U8y6CNpiSYSLAIced?=
+ =?us-ascii?Q?vXh06qpzoMhOG54l5gR83ezfonGbCvhMnRugIgZ62yebo0o+siw5em92U9Ds?=
+ =?us-ascii?Q?jZQJ8p8mL+yxEX9450gA1ESJvyxt+reHR79580iAvGIV6PImb5aQMJfx6N6e?=
+ =?us-ascii?Q?xgkaczxNG11UP3X1y3frkcy76vkGDV9l0P6CyGYJOCDm0NrQUkX/lBp/2dJf?=
+ =?us-ascii?Q?Cg/UA2bJZlgmdkaKRKIWVY30wLHZEcAoWsvQ4HTmrFtk4oczjaat/HBgbHd+?=
+ =?us-ascii?Q?+yT2CYoyaoz2xjJnLKZ2+3pfUCs5MAkwWz4geU/hXPs7VPDRqom/1UL1hTgH?=
+ =?us-ascii?Q?aKDDK1oepBZyuHxTdlh88epgzysw7uV+z0UmBKlBJJFoRJ1a0Ry9H+d/1LEB?=
+ =?us-ascii?Q?5b+eUYOIzlOGs2A99aOVDW8Gv+EJ3cJ2v0GrFYG7VV9xpF9GMrA2tcJ6fMFd?=
+ =?us-ascii?Q?aQf4Iulz9DTqdd95hecI9hhM2QB6p4FHtUs9UUf084N2E9TDLjVkCnbBe0gg?=
+ =?us-ascii?Q?rsfkBCNGuajGVbdWoHbpLaHSdhLAU1wHISB4G3c9NSxBv5Chs83XyxmvRGni?=
+ =?us-ascii?Q?z+qzUqJW0Is6NjtN9oM3kCzNm1YSas0ODPkdL8H9kD7KFMPgXIBb/PC0Q9cc?=
+ =?us-ascii?Q?AbH7qNz9tqlKfYUXhN/AESUY02Wgyhg/I5CquZ2Hrz+RzNKim073fHOg7yPK?=
+ =?us-ascii?Q?KcNoIZ80uPKvHLx1mYaBfOnyxa+oclpvF/5iEr7tyBxfDxt4kjsepjDzqvME?=
+ =?us-ascii?Q?8UzE1kvtmXrktFZjMa4me664DaKHaFMWiajqlW8p?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91869863-37c7-41cc-c865-08dd78218c2b
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 11:19:24.0372
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 558OYrNf7H/jeUimrJjU0xTh77wtuwL9S7wHz3Eb39a3OpLdENTBmnZZegpc1dbYkvZaZv0WQa9U/0U4kj+cfw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6751
 
-Hi Jai,
+1. Remove unnecessary goto
+2. Make the execution logic of the function jumped by goto more appropriate
 
-On 10/04/25 15:48, Jai Luthra wrote:
-> Hi Devarsh,
-> 
-> Thanks for the cc here.
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+---
+ fs/btrfs/delayed-ref.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Thanks for the quick comments.
-
-> 
-<snip>
-
-> On the basic camera + ISP usecase, afaiu the downstream edgeAI SDK uses
-> custom gstreamer elements that make calls to the aforementioned R5 core
-> that controls the ISP. On top of that there are additional gstreamer
-> patches that are not yet posted upstream for review from the community,
-> so the userspace design isn't really set in stone, or upstream-friendly
-> yet.
-> 
-
-I don't see much relation of carve-outs with Gstreamer or it's pending 
-downstream patches. The memory is mainly managed from firmwares (mainly 
-openvx layer being used underneath) and there are even non-gstreamer 
-pure openvx based use-cases/tests which use these carveouts. At the end 
-of the day, the firmwares from the only SDK which is released publicly 
-for AM62A uses all these carveouts.
-
-
-> IMO if that architecture is still under discussion, it might be better
-> to keep the edgeAI specific carveouts out of the upstream DTs.. just in
-> case the carevouts have to go away, or change significantly.
-> 
-> If you are sure that the regions and firmware architecture is set in
-> stone and won't be updated even if there is a complete redesign of the
-> userspace/application level stack for accessing the ISP (let's say u
-sing> libcamera), only then it makes sense to add the carveouts right now.
-
-
-Yes as I said if whole firmware arch is getting updated then better to 
-wait. I think probably the firmware team marked in cc can comment on 
-that. Moreover I don't see any point of adding only half the regions as 
-that would anyway not work with SDK supplied firmwares, for e.g. 
-RTOS-to-RTOS ipc test run by firmwares on bootup would fail, along with 
-other camera+ISP and AI use-cases.
-
-Regards
-Devarsh
-
->>>>
->>>> I understand your point, currently with this patch remoteproc loading
->>>> will not work for some cores. However, the goal here is to standardize
->>>> as much as possible the memory carveout sizes, push the "demo firmware"
->>>> to request resources the correct way from resource table, and move away
->>>> from this dependency and limitations that we have with our firmware.
->>
->> I understand this, but my view is that w.r.t firmware only goal should not
->> just be tp demonstrate correct way of requesting resources from
->> resource-tables, optimize the carve-outs etc but also to demonstrate the
->> primary use-cases (camera+ISP+edgeAI) which the device is capable of.
->>
->>>> should soon be able to generate our own firmware using Zephyr,  which
->>>> Andrew is pioneering, so with this firmware we should move to the
->>>> correct direction upstream. Downstream we are still using the memory
->>>> carveout sizes that the firmware folk want so desperately to keep, for
->>>> now..
->>>>
->>>
->>> +1
->>>
->>> I have this Zephyr based firmware for AM62A working and it uses the
->>> standard IPC regions as specified in this patch. I'll be posting the PR
->>> for it in Zephyr upstream by the end of week.
->>>
->>
->> I understand this, but will this zephyr based firmware support vision +
->> edgeAI analytics ? Does it demonstrate all the unique capabilities of AM62A
->> SoC ? If not, then what would be utility of such firmware on AM62A where
->> these are the primary use-cases w.r.t AM62A ?
->>
->> Why should upstream device-tree use carve-outs which match to this demo
->> zephyr based firmware (which apparently not many are using and is not going
->> into any official SDK release) instead of official firmwares going into SDK
->> ? SDK released firmwares are being used by so many customers and SDK
->> documentation maps to it, but zephyr firmware that is being pitched here,
->> who would be the potential users and what would be it's utility ?
->>
->> [1]: https://www.ti.com/tool/PROCESSOR-SDK-J721E
->>
->> Regards
->> Devarsh
->>
->>> For this patch as it is:
->>>
->>> Acked-by: Andrew Davis <afd@ti.com>
->>>
->>
->>
->>> Andrew
->>>
->>> [0] https://lore.kernel.org/lkml/20241011123922.23135-1-richard@nod.at/
->>> [1] https://git.ti.com/cgit/edgeai/meta-edgeai/tree/recipes-kernel/
->>> linux/linux-ti-staging/j721e-evm/0001-arm64-dts-ti-Add-DTB-overlays-for-
->>> vision-apps-and-ed.patch?h=kirkstone
->>>
->>>> ~ Judith
->>>>
->>>>>
->>>>> [1]:
->>>>> https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel/tree/
->>>>> arch/arm64/boot/dts/ti/k3-am62a7-sk.dts?h=ti-linux-6.6.y-cicd#n103
->>>>> [2]: https://www.ti.com/tool/PROCESSOR-SDK-AM62A
->>>>>
->>>>> Regards
->>>>> Devarsh
->>>>>
->>>>>>        opp-table {
->>>>>> @@ -741,3 +771,57 @@ dpi1_out: endpoint {
->>>>>>            };
->>>>>>        };
->>>>>>    };
->>>>>> +
->>>>>> +&mailbox0_cluster0 {
->>>>>> +    status = "okay";
->>>>>> +
->>>>>> +    mbox_r5_0: mbox-r5-0 {
->>>>>> +        ti,mbox-rx = <0 0 0>;
->>>>>> +        ti,mbox-tx = <1 0 0>;
->>>>>> +    };
->>>>>> +};
->>>>>> +
->>>>>> +&mailbox0_cluster1 {
->>>>>> +    status = "okay";
->>>>>> +
->>>>>> +    mbox_c7x_0: mbox-c7x-0 {
->>>>>> +        ti,mbox-rx = <0 0 0>;
->>>>>> +        ti,mbox-tx = <1 0 0>;
->>>>>> +    };
->>>>>> +};
->>>>>> +
->>>>>> +&mailbox0_cluster2 {
->>>>>> +    status = "okay";
->>>>>> +
->>>>>> +    mbox_mcu_r5_0: mbox-mcu-r5-0 {
->>>>>> +        ti,mbox-rx = <0 0 0>;
->>>>>> +        ti,mbox-tx = <1 0 0>;
->>>>>> +    };
->>>>>> +};
->>>>>> +
->>>>>> +&wkup_r5fss0 {
->>>>>> +    status = "okay";
->>>>>> +};
->>>>>> +
->>>>>> +&wkup_r5fss0_core0 {
->>>>>> +    mboxes = <&mailbox0_cluster0>, <&mbox_r5_0>;
->>>>>> +    memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
->>>>>> +            <&wkup_r5fss0_core0_memory_region>;
->>>>>> +};
->>>>>> +
->>>>>> +&mcu_r5fss0 {
->>>>>> +    status = "okay";
->>>>>> +};
->>>>>> +
->>>>>> +&mcu_r5fss0_core0 {
->>>>>> +    mboxes = <&mailbox0_cluster2>, <&mbox_mcu_r5_0>;
->>>>>> +    memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
->>>>>> +            <&mcu_r5fss0_core0_memory_region>;
->>>>>> +};
->>>>>> +
->>>>>> +&c7x_0 {
->>>>>> +    mboxes = <&mailbox0_cluster1>, <&mbox_c7x_0>;
->>>>>> +    memory-region = <&c7x_0_dma_memory_region>,
->>>>>> +            <&c7x_0_memory_region>;
->>>>>> +    status = "okay";
->>>>>> +};
->>>>>
->>>>
->>>
->>
->>
-> 
+diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
+index 98c5b61dabe8..e984f1761afa 100644
+--- a/fs/btrfs/delayed-ref.c
++++ b/fs/btrfs/delayed-ref.c
+@@ -1339,11 +1339,11 @@ int __init btrfs_delayed_ref_init(void)
+ {
+ 	btrfs_delayed_ref_head_cachep = KMEM_CACHE(btrfs_delayed_ref_head, 0);
+ 	if (!btrfs_delayed_ref_head_cachep)
+-		goto fail;
++		return -ENOMEM;
+ 
+ 	btrfs_delayed_ref_node_cachep = KMEM_CACHE(btrfs_delayed_ref_node, 0);
+ 	if (!btrfs_delayed_ref_node_cachep)
+-		goto fail;
++		goto out;
+ 
+ 	btrfs_delayed_extent_op_cachep = KMEM_CACHE(btrfs_delayed_extent_op, 0);
+ 	if (!btrfs_delayed_extent_op_cachep)
+@@ -1351,6 +1351,8 @@ int __init btrfs_delayed_ref_init(void)
+ 
+ 	return 0;
+ fail:
+-	btrfs_delayed_ref_exit();
++	kmem_cache_destroy(btrfs_delayed_ref_node_cachep);
++out:
++	kmem_cache_destroy(btrfs_delayed_ref_head_cachep);
+ 	return -ENOMEM;
+ }
+-- 
+2.39.0
 
 
