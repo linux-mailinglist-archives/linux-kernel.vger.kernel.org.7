@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-597186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7FAA83621
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:56:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 113B6A835D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEFF37A9893
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 01:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FB3419E6631
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 01:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79171C1F13;
-	Thu, 10 Apr 2025 01:55:57 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5741A2390;
+	Thu, 10 Apr 2025 01:37:49 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B5270800;
-	Thu, 10 Apr 2025 01:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B53BA33;
+	Thu, 10 Apr 2025 01:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744250157; cv=none; b=f3RHg2wkPMJQRQ0LncgmWpSLsF/4GIPl9LBphGZmk/rbJwzRfiBQgqO37r+AKCrPQCp+KmKHI2o+hKG7RMQFZh8xrmL+bcrUTp+C5X2+ezlgXDGKgRp3JYrE+mlRxsRY0eZdhTxX5tq3zphiPAgH0iwu36akOKDix8XxpJTd3HU=
+	t=1744249068; cv=none; b=TdlwD5gfo8s8Da1WTBc8cuNynJaF84wg3ZlQ3h6NrFVws2Oqcue0byTZHlWTbl5PXaDpjBBEPGBbK4zzfrR4IadzToA317rQ6+H+xPKk5r4YFhtykENgMVe8h0827ctUFpDv1kxsuRkJ0voeaM2Q4ZFVWm6Hz2LB5huB6QRV1DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744250157; c=relaxed/simple;
-	bh=XmaKd+S/DqswSqfYVPzLG9jI4c9YIGnYHhOZDkKiBnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eCNot3np1gYK50YJJnlMmCvgTo/OwEraqcWdrVYbqlICvku+kQEqk6MyWxrZA2DrbyZAjym6Bxgrb2x/PXs/d5KPvc6HQtZc90zdtFLJ0hIiNrlkZw/GMq3EiBScLLKLkFrApRou8o4YYGslhN0vnSxfgLopiW27141q6o8ngOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.27.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 3882934322C;
-	Thu, 10 Apr 2025 01:55:53 +0000 (UTC)
-Date: Thu, 10 Apr 2025 01:55:49 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	spacemit@lists.linux.dev, Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-Subject: Re: [PATCH v6 3/6] clk: spacemit: Add clock support for SpacemiT K1
- SoC
-Message-ID: <20250410015549-GYA19471@gentoo>
-References: <20250401172434.6774-1-heylenay@4d2.org>
- <20250401172434.6774-4-heylenay@4d2.org>
- <8fe0aaaa-b8e9-45dd-b792-c32be49cca1a@riscstar.com>
- <20250410003756-GYA19359@gentoo>
- <dm4lwnplwcxj3t3qx3a3bdxtziowjfoqdy4vrd3ahmzkhejrov@fa5rujatatew>
- <z27ri5eue43ti6b2te2cbxiow66mtgbnyudoo5cs4quabgbx5r@uipzoxvfoysi>
- <a8e5adca-8eff-4bbb-a7fa-ce4489b63fa5@riscstar.com>
- <sl752im2sn5sz6yzc23ctprh3rwryuhgtggsaauxixn3b267ag@6sf5fahu6b5i>
+	s=arc-20240116; t=1744249068; c=relaxed/simple;
+	bh=9QLvQNlILGnlNJGOTvPB3/LxlivKeJ4KaLOClwUo2SE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Gmm+361wRCoJZgcQNplhGGeIzEjPU87hKnJOjOyKlBbjujCx7iNC5XTGzghBPLEbaeq2rk/XT6RoeHYv2bzcj0HjJ8/kvbj4DyXmD7R9zobCfOIPHYNqbp4vXlmWB1Pbk4GDfaHPbIYWQUEZohbOb2ZYvUFA6DbTmezMxMIawG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZY2PM3V1Jz26gt0;
+	Thu, 10 Apr 2025 09:32:39 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5AC791A0188;
+	Thu, 10 Apr 2025 09:37:37 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
+ (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Apr
+ 2025 09:37:36 +0800
+From: Li Lingfeng <lilingfeng3@huawei.com>
+To: <chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
+	<lilingfeng3@huawei.com>
+Subject: [PATCH] nfsd: decrease sc_count directly if fail to queue dl_recall
+Date: Thu, 10 Apr 2025 09:57:08 +0800
+Message-ID: <20250410015708.2036236-1-lilingfeng3@huawei.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <sl752im2sn5sz6yzc23ctprh3rwryuhgtggsaauxixn3b267ag@6sf5fahu6b5i>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-Hi Inochi,
+A deadlock warning occurred when invoking nfs4_put_stid following a failed
+dl_recall queue operation:
+            T1                            T2
+                                nfs4_laundromat
+                                 nfs4_get_client_reaplist
+                                  nfs4_anylock_blockers
+__break_lease
+ spin_lock // ctx->flc_lock
+                                   spin_lock // clp->cl_lock
+                                   nfs4_lockowner_has_blockers
+                                    locks_owner_has_blockers
+                                     spin_lock // flctx->flc_lock
+ nfsd_break_deleg_cb
+  nfsd_break_one_deleg
+   nfs4_put_stid
+    refcount_dec_and_lock
+     spin_lock // clp->cl_lock
 
-On 09:20 Thu 10 Apr     , Inochi Amaoto wrote:
-> On Wed, Apr 09, 2025 at 08:10:53PM -0500, Alex Elder wrote:
-> > On 4/9/25 7:57 PM, Inochi Amaoto wrote:
-> > > > > > > diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
-> > > > > > > new file mode 100644
-> > > > > > > index 000000000000..4c4df845b3cb
-> > > > > > > --- /dev/null
-> > > > > > > +++ b/drivers/clk/spacemit/Kconfig
-> > > > > > > @@ -0,0 +1,18 @@
-> > > > > > > +# SPDX-License-Identifier: GPL-2.0-only
-> > > > > > > +
-> > > > > > > +config SPACEMIT_CCU
-> > > > > > > +	tristate "Clock support for SpacemiT SoCs"
-> > > > > > I don't know the answer to this, but...  Should this be a Boolean
-> > > > > > rather than tristate?  Can a SpacemiT K1 SoC function without the
-> > > > > > clock driver built in to the kernel?
-> > > > > > 
-> > > > > I agree to make it a Boolean, we've already made pinctrl driver Boolean
-> > > > > and pinctrl depend on clk, besides, the SoC is unlikely functional
-> > > > > without clock built in as it's such critical..
-> > > > > 
-> > > > I disagree. The kernel is only for spacemit only, and the pinctrl
-> > > Sorry for a mistake, this first "only" should be "not".
-> > 
-> > This is a general problem.  You can't make a bootable
-> > SpacemiT kernel unless you define this as built-in (at
-> > least, that's what Yixun is saying). 
-> 
-> Why not putting the module in the initramfs? I have tested
-> this in quite a lot of boards (Allwinner, rockchip, sophgo,
-> starfive and etc.), all of them work well.
-> 
-it works, but not optimal, why delay clk initialzation at modules load stage?
-IMO, it brings more overhead for using initramfs..
+When a file is opened, an nfs4_delegation is allocated with sc_count
+initialized to 1, and the file_lease holds a reference to the delegation.
+The file_lease is then associated with the file through kernel_setlease.
 
-but there is always tradeoff and bikeshedding..
+The disassociation is performed in nfsd4_delegreturn via the following
+call chain:
+nfsd4_delegreturn --> destroy_delegation --> destroy_unhashed_deleg -->
+nfs4_unlock_deleg_lease --> kernel_setlease --> generic_delete_lease
+The corresponding sc_count reference will be released after this
+disassociation.
 
-> > But we'd really rather *only* build it in to the kernel
-> > for SpacemiT builds. You clearly want to minimize what
-> > must be built in, but what if this is indeed required?
-> > What goes in defconfig?
-> > 
-> 
-> As defconfig is more like for a minimum example system. It
-> is OK to put a y in the defconfig. But for a custom system,
-> you do give a choice for the builder to remove your module
-> in non spacemit system.
+Since nfsd_break_one_deleg executes while holding the flc_lock, the
+disassociation process becomes blocked when attempting to acquire flc_lock
+in generic_delete_lease. This means:
+1) sc_count in nfsd_break_one_deleg will not be decremented to 0;
+2) The nfs4_put_stid called by nfsd_break_one_deleg will not attempt to
+acquire cl_lock;
+3) Consequently, no deadlock condition is created.
 
-I get your meaning here to remove/disable at run time stage, while
-we do provide compile time option, if don't want spacemit system
-just disable CONFIG_ARCH_SPACEMIT I mentioned, clk/pinctrl will be gone
+Given that sc_count in nfsd_break_one_deleg remains non-zero, we can
+safely perform refcount_dec on sc_count directly. This approach
+effectively avoids triggering deadlock warnings.
 
-anyway, I'm open for this, make it tristate do provide more choices,
-and it's probably better leave users to decide..
+Fixes: 230ca758453c ("nfsd: put dl_stid if fail to queue dl_recall")
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+---
+ fs/nfsd/nfs4state.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Ok, I'm fine with leave clk as tristate with proper default deconfig,
-but if people want to pursue more to make more driver(pinctrl) modulized
-feel free to test and send patches, I just won't put efforts myself.
-
-thanks
-
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 2041268b398a..59a693f22452 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -5430,7 +5430,7 @@ static void nfsd_break_one_deleg(struct nfs4_delegation *dp)
+ 	queued = nfsd4_run_cb(&dp->dl_recall);
+ 	WARN_ON_ONCE(!queued);
+ 	if (!queued)
+-		nfs4_put_stid(&dp->dl_stid);
++		refcount_dec(&dp->dl_stid.sc_count);
+ }
+ 
+ /* Called from break_lease() with flc_lock held. */
 -- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+2.31.1
+
 
