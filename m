@@ -1,65 +1,58 @@
-Return-Path: <linux-kernel+bounces-599074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FDC7A84ED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:54:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A72A84ED7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FF7C4E39D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:53:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA6754A159D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E704293B49;
-	Thu, 10 Apr 2025 20:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BCF290BD8;
+	Thu, 10 Apr 2025 20:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T8Vyz6cf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itUzQq6w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F63290BD1;
-	Thu, 10 Apr 2025 20:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF25328FFD6;
+	Thu, 10 Apr 2025 20:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744318405; cv=none; b=uI0lnaV6GzJ+V6d3oVRxyE0k4z2CVJ73q7QXqMAANepds1EG3p3BGnU+JbGzaiCjAB65ombPGNH9gn3RWXitPWvJ/5NcRmIAYQy4cGeQc3aEPgUMoJf/fZ3cxP3b4m/8+qwWC24KxIiA0ihlCqtVTeqS8og/ZbX5E97OyW3muDw=
+	t=1744318559; cv=none; b=mzqZxvLgjMHa1+UqEp8oThKxNSklgqg6miiclmqq2P8hktYIBHW2wzdmtBXTFUP9LlqBOk5evb1MMdSR3ZiF5QHrg7jufLh9wUIIO1l6G/W2KKqjcWgBbevJAVvLf++IX5FtNEROqIk3Z4kpBUdnaqiqfqGkFEFeMxwsErpmHkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744318405; c=relaxed/simple;
-	bh=BALhi4UrMbOHA37ho5uqHpYpjwN+INMK6vrW7q6TxLY=;
+	s=arc-20240116; t=1744318559; c=relaxed/simple;
+	bh=sIP4LMNjW981G+7sUprk0fjwVK1ccUGInZpZiAoDh+c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nd4fBGc8I23WBFe51gFmm+TV6sWc5guGKng0MqGTNVJpdyC7D01Po7os14ut1IDDfmTbtBKpuOAdyLxkDgjbAgyh6mdq4NlugVF4V2h51jqdXaWZhqmvqrap1VCWtfqkAhRsKe+Pm8HkpdvHMrnYkCOouDdxhIHG0W3tjPSEfNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T8Vyz6cf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9B6DC4CEE9;
-	Thu, 10 Apr 2025 20:53:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lipWWItFSGPcWVbrEte8leyqMjTr5sFuEhLG5Rk8Z/KTjIURkPUe3GdQJ7aQeg4B1T0a1Cr+Mi6F5qrmu832NBZ2IW8u6q1UgT3RdXwHEBIfEFjdv7RrfANIiyo/KEgxRNYbmM4tyeJgA8i73pjlZKqFl4MvArK9mV3hK5d04V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itUzQq6w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27E61C4CEE7;
+	Thu, 10 Apr 2025 20:55:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744318404;
-	bh=BALhi4UrMbOHA37ho5uqHpYpjwN+INMK6vrW7q6TxLY=;
+	s=k20201202; t=1744318558;
+	bh=sIP4LMNjW981G+7sUprk0fjwVK1ccUGInZpZiAoDh+c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T8Vyz6cfJb/zRX/vLBSm8X+PPVyWrHbSmVVfybfeJ25+JlQOaUtD0X9QKcHfOSUY4
-	 ejqEG36LkwZ0X1thU8D3+5KGySCJJ8OoPMp5rz7kuVNnZVIjl0HZbO5h3FvCpOLbuo
-	 ZjsGQNqEj8XqjX9icWiqTZlPyy5NOVoomW6aFXTar7Tv49ayJuvgef0UU6SNq1S2vI
-	 rKphEYb/zcsM2gzUVXGW1EwI9a+su8oreolWTPBWzhlDtBWeO11xFdmAGfP3Ivtz8L
-	 GgiKk8Bg3NmuHJSLAcD5HYi7qNOKhMbI1juoCitot4icgIVzohwjBbgLmW1f/kglbS
-	 +p8eQKJSg+/Bg==
-Date: Thu, 10 Apr 2025 15:53:23 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ze Huang <huangze@whut.edu.cn>
-Cc: Conor Dooley <conor+dt@kernel.org>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-usb@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Yixun Lan <dlan@gentoo.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, spacemit@lists.linux.dev,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-riscv@lists.infradead.org,
-	Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [PATCH 1/7] dt-bindings: phy: spacemit: add K1 USB2 PHY
-Message-ID: <174431840229.1041655.15249977458763916963.robh@kernel.org>
-References: <20250407-b4-k1-usb3-v3-2-v1-0-bf0bcc41c9ba@whut.edu.cn>
- <20250407-b4-k1-usb3-v3-2-v1-1-bf0bcc41c9ba@whut.edu.cn>
+	b=itUzQq6wRMVynRgOnqug4Eex6T3g3sgv8o2V0EH+ylqu0VsjfDK+svYy3v0n3IE8y
+	 kRItzCdpjnWkTot3qoPXzNi1PrqUr4EpZCrNtkXLvGOuNhjHE7oopxIzSG1quEqFKV
+	 mlVJ9M7hmvEdFPtyH3267R+Y6PRLX006c+TuGYNDha5xzlx1c7uKC56Uavzv5uIIVH
+	 x6enznqtFnAUj2Hdw2QDtX67y/d+P7TScQU/sg+8t8Z9S1ZKip4u5iHhzG/xycagxX
+	 14hU1iBmcmbG918YfE8RPGHuLLpCloRXWO3dXdr5C5cejU70DOV198ebORMmoMKZ4f
+	 Urat8QlSAZm6w==
+Date: Thu, 10 Apr 2025 22:55:54 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: tip-bot2 for Josh Poimboeuf <tip-bot2@linutronix.de>,
+	linux-tip-commits@vger.kernel.org,
+	kernel test robot <lkp@intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [tip: objtool/urgent] objtool: Fix false-positive "ignoring
+ unreachables" warning
+Message-ID: <Z_gwWnvENF6DY6h-@gmail.com>
+References: <5eb28eeb6a724b7d945a961cfdcf8d41e6edf3dc.1744238814.git.jpoimboe@kernel.org>
+ <174426568347.31282.17971680226674649784.tip-bot2@tip-bot2>
+ <jd2rsmxvbvawlwwaatx323pzh5on3tjt5cxx5m7icf3sgj6vao@kjmjgb252u3x>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,18 +61,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250407-b4-k1-usb3-v3-2-v1-1-bf0bcc41c9ba@whut.edu.cn>
+In-Reply-To: <jd2rsmxvbvawlwwaatx323pzh5on3tjt5cxx5m7icf3sgj6vao@kjmjgb252u3x>
 
 
-On Mon, 07 Apr 2025 20:38:46 +0800, Ze Huang wrote:
-> Add support for USB2 PHY found on SpacemiT K1 SoC.
+* Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+
+> On Thu, Apr 10, 2025 at 06:14:43AM +0000, tip-bot2 for Josh Poimboeuf wrote:
+> > The following commit has been merged into the objtool/urgent branch of tip:
+> > 
+> > Commit-ID:     8af6f0fe9c4340ed97f0ba4f3f6cc7bb16558e87
+> > Gitweb:        https://git.kernel.org/tip/8af6f0fe9c4340ed97f0ba4f3f6cc7bb16558e87
+> > Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+> > AuthorDate:    Wed, 09 Apr 2025 15:49:36 -07:00
+> > Committer:     Ingo Molnar <mingo@kernel.org>
+> > CommitterDate: Thu, 10 Apr 2025 08:03:05 +02:00
+> > 
+> > objtool: Fix false-positive "ignoring unreachables" warning
+> > 
+> > There's no need to try to automatically disable unreachable warnings if
+> > they've already been manually disabled due to CONFIG_KCOV quirks.
+> > 
+> > This avoids a spurious warning with a KCOV kernel:
+> > 
+> >   fs/smb/client/cifs_unicode.o: warning: objtool: cifsConvertToUTF16.part.0+0xce5: ignoring unreachables due to jump table quirk
+> > 
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> > Link: https://lore.kernel.org/r/5eb28eeb6a724b7d945a961cfdcf8d41e6edf3dc.1744238814.git.jpoimboe@kernel.org
+> > 
+> > Closes: https://lore.kernel.org/r/202504090910.QkvTAR36-lkp@intel.com/
 > 
-> Signed-off-by: Ze Huang <huangze@whut.edu.cn>
-> ---
->  .../devicetree/bindings/phy/spacemit,usb2-phy.yaml | 40 ++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
+> Superfluous newline there.
+
+Fixed. Not sure what happened there.
+
+> Also, this probably could use a fixes tag:
 > 
+> Fixes: eeff7ac61526 ("objtool: Warn when disabling unreachable warnings")
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Added that one too.
 
+Thanks!
+
+	Ingo
 
