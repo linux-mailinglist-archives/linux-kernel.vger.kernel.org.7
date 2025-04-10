@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-597865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63CCCA83F77
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:54:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BC6A83F69
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 534998A72E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C405445663
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013B12686AB;
-	Thu, 10 Apr 2025 09:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7C226B2BB;
+	Thu, 10 Apr 2025 09:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i3i5mgHN"
-Received: from mail-lj1-f193.google.com (mail-lj1-f193.google.com [209.85.208.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="uNJTSIAC"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38CA2571C2
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F07E26B0A2;
+	Thu, 10 Apr 2025 09:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744278700; cv=none; b=NsuYRQ2rHK/eOT+ez5YEWNEBVxVOn4TkO9hiFxjmKnblOCuqwdFndJbnbh03YKOIJhi4krptjOZ2zF2CuoI2CGO7YyRsXWcoCpxqv0NGV2GUPYuU+3ua9XLQ7fRgyZhHKPHKWTlNhZig0u2UoJVzRuDRKvQshAxTeh/3vYgq59I=
+	t=1744278715; cv=none; b=QMDsuzn04ya6bj7KaDO7/AagmDhhvgme8UrXcme7d0D7uQmsDP6u6UfwyjKim2k5U+2iu2eRpZQ5hI1w/SsY2K+5F8NXIwytsdJPMbv/NS7lApyXFIzUR4kbJ12k1dJHuEfvExItzLM00HanvR8exsPfzDxsz7lo1f5oLjExu4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744278700; c=relaxed/simple;
-	bh=V268JiYp1qgsriQME2p8Eu+S7bIZEYfIhtv1bRYTaQw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N7I6XywDCWU4+bpsVyxnNZeYa4qrIAkqyhHVtRElJQR+FXC4nbnmrpsy3cczf0q7dbkwRHObdVwMDY0M7J6OEE0kztatSYc8ugZODk/c2EMVRVJQ4pSaOrwT7KwoCxXcD0KTouuqL+7Np0hxns7hZMjkBzwkyKzRJoftZbvaRRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i3i5mgHN; arc=none smtp.client-ip=209.85.208.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f193.google.com with SMTP id 38308e7fff4ca-30f30200b51so5615031fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 02:51:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744278697; x=1744883497; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V268JiYp1qgsriQME2p8Eu+S7bIZEYfIhtv1bRYTaQw=;
-        b=i3i5mgHNvJSoKZerzWGBGMarUIhWym6E9IU0tTh+UrAcXmFjeqoh3Dgr6wxgtS2FLl
-         yx6wqqvQICgWCB3BpIZJWKd6ssU6XNcTJU9FQMrg4cdIGCnj+/eL5d73m4aavNX0+t84
-         XjUOSWFyvs+Re222yUhowfWa9ybydzVgFzF4jz7zCLSwKWIuBXRufTT6Bj5LvoRAmBqW
-         aWCQ/Xo2g+ENntjKKDMbw4IHiAHt58Cr99bowddIT5mOVn8WLBjwc8yu2yfLR768sJg6
-         IbeB1WfoXtd8EoUcz6TAbiFFI24rOtg4DYa38URma4laL12pZ6Yo2vU86kvJb8q9q+NO
-         tl+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744278697; x=1744883497;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V268JiYp1qgsriQME2p8Eu+S7bIZEYfIhtv1bRYTaQw=;
-        b=TMTbw5KIf6JWuusHkzUGkEJ+jC6Hd3KzMS8Ex0XrLVkFQkRpzKLoIcCSUVni6F9Ifs
-         EKftTKYbiQOtkzm8i1OjTfYzMjkS4OV3HxMW0JQ3ug0+C01lwc5WwblCrwbVl1wuJJ7P
-         SUJzkPKBvlk7eoklfaCBqf5Ae70jWpJsOhr2XPPJmrzD3vA1UsZWjkUiJGS/s66sHETT
-         0Al61YjueQBaYfIr4MtCVgG4aWauQ1KpHfTkX+6P5cPpgRRx2IvimSmBJ0uOMgY4LLes
-         KQeGi+LVF86GNxN3hbjQa3fg06Xs5lh5dxB56aQGrja3CgJt1Dy+KAyetbm0gkb9gcBb
-         /9ZQ==
-X-Gm-Message-State: AOJu0YyvUT4Jg2Flh7k1Z1HGTAE4l7DohdIhjLiUegzpGOaE3vl5+9qE
-	sL5XNzC4HVus6we0oOhjudHyDeezeQHOPOOVg5Io/DS+NOWLTtOVxZYdOaguduz0b73q5p41tLn
-	KIptW5hQf66mcgtxhDf+cfyiwsLs=
-X-Gm-Gg: ASbGncssHLLo4jviyXpCQqEry+Q8vZiVVXiHMnQOOVOSZ8TeFBfwfnKtINIWuuKAPri
-	tt5XlI0i9yXOM203CnIPXsm4o+qxLJpZaI6YaJuF2y9Ph1FaEBr/o0qIq+mtczlHwZLr4RAFKe7
-	XCEhki0U44Tc6hCbuoJeOiWKw=
-X-Google-Smtp-Source: AGHT+IGfOLXaLVfkBSOk7/R3b8gAPXiNTlMnDU6ZeIYNK/H+a3/WOqicm0j2YWp4/VZ5yBwLstwjvNzR0tbqWgM8OMw=
-X-Received: by 2002:a05:651c:199e:b0:30b:cacd:fd7b with SMTP id
- 38308e7fff4ca-3103ea9fe1bmr5195101fa.12.1744278696438; Thu, 10 Apr 2025
- 02:51:36 -0700 (PDT)
+	s=arc-20240116; t=1744278715; c=relaxed/simple;
+	bh=6PJaYm5P/NviqMk6kV3Jh7Ha7oefRv1KzDsI0FZwZBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O/1Xi28unImsCMBXOEVGVlE/h+FUNuXrPJHaK60UVu552qo1tlne0w2HqUaBiBAgLeKwcfnE9gtfIQRP6wWLvuua5uOVUUwjXiwf6PHWGLXbK2as+G1SHd4RijRGVzeVxE6uP6XUWyZ23sk8Kc2WsN2aM8RFr1TAKRaB7DasT6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=uNJTSIAC; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1744278701; x=1744883501; i=markus.elfring@web.de;
+	bh=vSPtDJBBCPKpz5rvbsYOOueaz2bMZDd9bsU+wbrmbcM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=uNJTSIACyASdjTcRckv2AYHUAAfql049+cxwSxa0bnxGRoSkp6C9mSuacBk292GN
+	 jns+fIlNpfhauKawNrKOHfDYH0fQ0liEGgg7TD4kVQYA3cgDwBKZrxOGSF2QpA67C
+	 zaevTXFNYDdN+ML9plVzFADlJYXYjxWgDyUOjoGWNYajIM/T9EpuqsQdb2ilAM1AJ
+	 7pgHztMeD7/mGSMQqiJKjnVEmGl+/XL5HgaGq/+BbbIrAkjOX8pisavOJJ9VunaHL
+	 Evmt2SGmALAiAhKFe1jeiN2+hDxpQlWiRZbUW7Vadwu/hGpsASPN3mJlaJ8CgYm3d
+	 +uKxXTKjEPTxtlOKjQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.83]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnX1L-1tJKrg2oKL-00aV4K; Thu, 10
+ Apr 2025 11:51:41 +0200
+Message-ID: <47681eb7-11b5-4a75-b100-93bc5ccc1c8b@web.de>
+Date: Thu, 10 Apr 2025 11:51:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407134712.93062-1-hupu.gm@gmail.com> <CANDhNCosvML9XKH8HV1QBXKzxt3zMWxzsPSUfYxoyPCORf6Krw@mail.gmail.com>
-In-Reply-To: <CANDhNCosvML9XKH8HV1QBXKzxt3zMWxzsPSUfYxoyPCORf6Krw@mail.gmail.com>
-From: hupu <hupu.gm@gmail.com>
-Date: Thu, 10 Apr 2025 17:51:24 +0800
-X-Gm-Features: ATxdqUFUuMeyf6c8vrhD4XS_XeHAA4NcbiphF5TdJMy3W3hG76Fx6y4Rr2ARr0E
-Message-ID: <CADHxFxS+qpmD8r1uxru+VWLj=K616=jLKbBgUR3Ed7ZBY1gidg@mail.gmail.com>
-Subject: Re: [RFC 1/1] sched: Skip redundant operations for proxy tasks
- needing return migration
-To: John Stultz <jstultz@google.com>
-Cc: linux-kernel@vger.kernel.org, juri.lelli@redhat.com, peterz@infradead.org, 
-	vschneid@redhat.com, mingo@redhat.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, hupu@transsion.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: crypto: sun8i-ce-hash - Refine exception handling in
+ sun8i_ce_hash_run()
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
+ Andre Przywara <andre.przywara@arm.com>, linux-sunxi@lists.linux.dev,
+ linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Chen-Yu Tsai <wens@csie.org>, Corentin Labbe <clabbe.montjoie@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Ovidiu Panait <ovidiu.panait.oss@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, LKML <linux-kernel@vger.kernel.org>,
+ Julia Lawall <julia.lawall@inria.fr>
+References: <3727de04-7993-4b81-80c0-adb40b847307@web.de>
+ <20250409133610.59d42bec@donnerap.manchester.arm.com>
+ <2774682.mvXUDI8C0e@jernej-laptop>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <2774682.mvXUDI8C0e@jernej-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:hwJLNn0l4SKDqj00GqpCYLwpSlnmBFbcsAzjdkoHdNAyDzfJjqA
+ cVOLLWsODyxVOnyi0U4Xp9SR14AQAiClqqwnvfEpYYplTw/vOLVgNt+GaDsUpmTqwTh5/11
+ yLUVrGoaXrE7440Iz+8ts0one8l2XSTFMi7/71GpPnvLiCl5pfyV1AsTDfMqhnJbmsh9JPX
+ L0vEEFPgulu/0pt0cwARA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:aPD+U6ytqzM=;3juoI7tli45UC7oVR/Bw81F+FNl
+ tIJSaD6SCDLINBFGIXvDu1w50HUXMTh3TiGWYgCk7NCXe2qf7Z7t/ygJQUryl/sTxmtak55md
+ CTGghy+uVZBiYKKfWxASqdMU6a1yJXaNX5E8Xvldg8zU02/hzaBuq1viJW0a0qoVCjgbpbTah
+ 9/gGwEsx0uaBxMu2Ryxvj87r3q5zyvbB0wfgv3KdrN8viH/vp1MVwmnAP02dfyHW7+MkU4LKN
+ kof9akYD1J6t4p4RlhtWtJaRodyDD62KNqvjkR6VaRwV3HznbsAQDHfRdxL1rbjX2Etg1H9HU
+ 8QgtRUJAimxbUf4+Vo7RtZAY/eIgw01wF5yaiOiH5w5KNYxUfVaHRdHUDjeSEhsVRTiFWggyv
+ agXyaj95ABVJors1a+vKTu/dvBhBAMMbWoUAnzMFBjQ55tTlEiq9TZq2Evc665Un7pTLT0FQA
+ WNtC0UahR6uQhe7dXmSeRslGAcWnoLk2+8PIgi/hgQhR7TUknT9LY/XMRvcTpwcCqXOSD9DYh
+ FT2C25b9tsAkItS4QNDrOijYtwXtxjQx5RM4wIpq8OmbpyFTkTxf53AvBVxdv1ZRipYSZrzHB
+ LoNybxR16nwI1oLQ/of4XN88FffJQA7d6yVPKsVtqp+GYGmERw2jEcSZ5UcaTNvSpWXjXfeox
+ 0oXE+l+vejVDNDdiBkYeVULRrVB+qsGTgdJd7ldA1hUvCS+JRArC0Li8+91H2P24bsRVIwSkX
+ ef+HYS95Vdfn52nMnU9ZOh1HiXpAeAN7deJPxC29q9lUENRfw76sYc0yW+pj5JPh9LsK+K1CS
+ CLNJBJk/1ClRIlO2G2k71iZsxbl7Xp0MCrB0bOUq+ucUZdG3D0kMFNc7Ax6+epzjv63XCYTKQ
+ 4BhTPP9eKaSVMd8sYkSdzVBarDhKcB6WEy1eTRA1W2XxxIchY7Se+YlNyi+dtQ6v1Syt7Gpb5
+ 6tScQYWIBxm/bLK3UApil8DWBOfhZPrGrUNEFbBZbaTb4EV3+0r6d1Z3Zm4z064Dmun+hTz+Z
+ rmSJa7TxHuHiWBt4KO3uiM9iOwhGjoSVsZv7IRGWvH26eMY9TpJbSon6DL0qU+HMeduDX+MAY
+ q66HNoBcYYx2iGcV+3ELyCmvtMB6+c2C/REJQQ2MxzjG0tPD+mGXxHF7hWX+Z6yN8uL7FN8a7
+ rwMnE8yuO1SMQuIq8V/VKd7QQldWvlBdW57dTCd/78w2eO4sMtlDi1RDxhJU9MAWHfpSiMw0M
+ VrrCW7xibXjchciMJdpBtAdDz8/rTdjzL7O6XMC9zukrYdf0H5EqW4dKyCIvGAcT/A2uxq1cl
+ 4AVO2Ry7xa2qKKvX8QqUmbX6mSHPaPzIf4Z5jseax91MsGpv5Jca7ptaJJ7pSrDI6Wos+RNe8
+ UgjPjvlp9Dm1C8HLBMGilbtB8zXkj9twzLu/1eKatcwdvZzsGioj7FKCR0IRPBlZNFGYq23iM
+ hyDrv6cZWetOiSGvZAy5HI9cjjO63DlUNF8j9tQAlUiE9lXBs
 
-Hi John:
-Thank you for your feedback.
+> I'm not a fan of this patch either. As Andre said, current code is easier to
+> read
 
-On Thu, Apr 10, 2025 at 10:41=E2=80=AFAM John Stultz <jstultz@google.com> w=
-rote:
->
-> Unfortunately this patch crashes pretty quickly in my testing. The
-> first issue was proxy_needs_return() calls deactivate_task() w/
-> DEQUEUE_NOCLOCK, which causes warnings when the update_rq_clock()
-> hasn't been called. Preserving the update_rq_clock() line before
-> checking proxy_needs_return() avoided that issue, but then I saw hangs
-> during bootup, which I suspect is due to us shortcutting over the
-> sched_delayed case.
->
-> Moving the proxy_needs_return above the if(task_on_cpu())
-> wakeup_preempt() logic booted ok, but I'm still a little hesitant of
-> what side-effects that might cause.
+I dare to propose a small source code adjustment according to another
+software design option.
 
-I=E2=80=99m sorry for the confusion caused by this patch. Here is the
-rationale behind my approach:
 
-To ensure that donor tasks can get a suitable CPU and avoid negative
-impacts from the Proxy-Execution on load balancing,
-`proxy_needs_return()` in `ttwu_runnable()` should return false for
-all donor tasks. This allows `try_to_wake_up()` to use `set_task_cpu`
-to reselect a CPU for the donor tasks, unless the donor is already
-running on a CPU.
+>      and such optimizations are more for compiler to make than us.
+Do you know any compiler versions which would support the presented
+transformation directly?
 
-This patch worked correctly on my QEMU-based test platform, it seems
-our testing methods might differ. Could you please share the details
-of your testing environment and methodology? I=E2=80=99ll try to replicate =
-the
-issue using the same approach.
-
-In the meantime, I will carefully revisit the logic in this patch to
-ensure its correctness and consistency. Once I=E2=80=99ve completed the
-review, I look forward to further discussing the details with you.
-
-Thank you again for your valuable feedback!
-
-Best regards,
-hupu
+Regards,
+Markus
 
