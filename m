@@ -1,134 +1,184 @@
-Return-Path: <linux-kernel+bounces-598622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B50A8484C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:44:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 316C3A84855
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 440CA9A2A7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:43:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 408C01B60749
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E481EB197;
-	Thu, 10 Apr 2025 15:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0E01E8824;
+	Thu, 10 Apr 2025 15:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EttXrDsf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3AD1D6DAA;
-	Thu, 10 Apr 2025 15:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CUckBeP4"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6011EB5CB
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 15:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744299820; cv=none; b=DpRr1vEDHj/kAA40IsHa1lG6WuqZQ5IENwXW3cjZwDRvHQhAVmSIeuDfHIgvSfipjXyAjlMfrgBqlzQg8mbul32CS+/tDmjPtE/5hY8WriOzwzXHjuSDlJvPGmO1bMHX7DDa+uh466XZ6R2eSGH0cmW+WqZnWB0mSRMmBw8JYJY=
+	t=1744299935; cv=none; b=ROSXfDKJ72uL3bwt2jGMjLdfOOy9qVRBmIiP9aAIv2BVrpL6RjWtRkecQjHdcm+4iY84Bc/EMxGwzEak+ItH5Chf9569KL11GA/v99P2wk6P30/+aNCMtztFPgkjCn06u4K02EBrrIXawuF2wl+871QSrJJPjv0clU4QtF1m9j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744299820; c=relaxed/simple;
-	bh=ervI1TJmsGtY0DgxChlWBEjJAWpFVRrPVvZnzvGcfmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pSFfSCWMT6dZ4G3URbqGQMU2QOdGRqBIKL1k+wn4HU+LFV5AqUH2Q0m8VZM4eFsX4FAK5PP6ZriFjNkVyKVtA0Meha11u+X+ilJg3smZE97s6JaAnJcypOqa4xCectUX+QTvPDjVRSPHFJA1Ua8qaF0AdOAJgvJ/BsxEQbD0kfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EttXrDsf; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744299817; x=1775835817;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ervI1TJmsGtY0DgxChlWBEjJAWpFVRrPVvZnzvGcfmw=;
-  b=EttXrDsf9f8sntQ9mu2Q8e15WC8hRwZuzEDeEq3olVrW+zMdHI5gmn7B
-   k5kw3Ay4h4eRFdYxj5MAGGD8GgxYE3QBtoIkw29davLRAjtbhGI0SHMjC
-   SOb4njFebtwzU1CfOajtza1MSA6mA2h3GTPQsp/3pioNW8g9Y/aMs254G
-   KLJjGJ4xNADzi72vis4G2qj/IyDCw4EpGXBv5bcd6diKnu7GkxnF42juj
-   OQBOE+KoeBsa/7bMW/Ez8mfiQnkD+/4qgMIUMp08y47hLG9mC4uGQI550
-   SnmQDtUVIFP1WC1n0F2+lUC6pliCtfL/JlR2Hkm+kcu6qmP8Alks93Tpp
-   Q==;
-X-CSE-ConnectionGUID: 418Cck4QQ7OqxpcYCmaU7w==
-X-CSE-MsgGUID: FnnNkd2eQ1yJfWfe8/JAPQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="45959133"
-X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
-   d="scan'208";a="45959133"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 08:43:37 -0700
-X-CSE-ConnectionGUID: LgsXyOJOQj+EvO00hwZZYg==
-X-CSE-MsgGUID: kHmXvw1dSZuF4uHbS1ZHiA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
-   d="scan'208";a="133668153"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.108.92]) ([10.125.108.92])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 08:43:35 -0700
-Message-ID: <079fd012-eba6-4772-91b9-d58b20bfe425@intel.com>
-Date: Thu, 10 Apr 2025 08:43:34 -0700
+	s=arc-20240116; t=1744299935; c=relaxed/simple;
+	bh=MFygQ21RGHFUCfZIewdn4nOoKvWfvo5JqpXAlO1uPAo=;
+	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=AwdX6+8Eb5rVwKIbohMRuWQge9BMw9whQqYnPqhQ0GvLkajGVIr+3YQnBKailHVDaF0HcIh/CVpnm9qnTNCGEl7+XIeGsRke6K0/+A9JOTXhB9U6NpL1CLZQMbTyfnzsycf/aP3zcqBObftaeTCYezR2J75R5sFbaGd4ky1REgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=CUckBeP4; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Content-Type:Mime-Version:Subject:Message-Id:
+	Date; bh=XmzJ0B3tkv+LYfXo4ZQdoshwYFl3CPuXjYiiwnEPV14=; b=CUckBeP
+	4xNz8ChkttGWTbXPxsN4Ud0GyNAfBqUTO0UlUGIsU16+2080AW5NJdUFr7XMJW0X
+	sothGBew2tXj/94Xx+WPfv1yuYfvPMfI6rwbHUNXHjD6z1xvkJ5FDl8/d4gf8vzp
+	vRdf4h9mtF9UZhJbdyb6z0HBH+k0LE04QdYE=
+Received: from smtpclient.apple (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgBXDp5X5_dnkCc5CA--.28716S3;
+	Thu, 10 Apr 2025 23:44:26 +0800 (CST)
+From: Jiewei Ke <jiewei_ke@163.com>
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] cxl/acpi: Verify CHBS length for CXL2.0
-To: Li Zhijian <lizhijian@fujitsu.com>, linux-cxl@vger.kernel.org
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>
-References: <20250410010545.99590-1-lizhijian@fujitsu.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250410010545.99590-1-lizhijian@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.300.61.1.2\))
+Subject: Re: [PATCH RFC 3/3] nvme: delay failover by command quiesce timeout
+Message-Id: <8F2489FD-1663-4A52-A50B-F15046AC2878@163.com>
+Date: Thu, 10 Apr 2025 23:44:13 +0800
+Cc: hare@suse.de,
+ hch@lst.de,
+ jmeneghi@redhat.com,
+ kbusch@kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org,
+ mkhalfella@purestorage.com,
+ randyj@purestorage.com,
+ sagi@grimberg.me
+To: wagi@kernel.org
+X-Mailer: Apple Mail (2.3774.300.61.1.2)
+X-CM-TRANSID:PygvCgBXDp5X5_dnkCc5CA--.28716S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGr1rKw45GFW5ZF4kCr17ZFb_yoWrGFW5pF
+	Z3WwsrCrZ2qFWUK34kAr17Xry5u3ykZry7J3WSk3y8Cws8J3yUZr4kKF1UZFW5urWvgFy3
+	CrWUtr97XFs29w7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UYJmUUUUUU=
+X-CM-SenderInfo: 5mlh4vplbnvqqrwthudrp/1tbiERcrlmf34jv1IgAAsl
 
+Hi Daniel,
 
+I just noticed that your patchset addresses a similar issue to the one I =
+=E2=80=99m
+trying to solve with my recently submitted patchset [1]. Compared to =
+your
+approach, mine differs in a few key aspects:
 
-On 4/9/25 6:05 PM, Li Zhijian wrote:
-> Per CXL Spec r3.1 Table 9-21, both CXL1.1 and CXL2.0 have defined their
-> own length, verify it to avoid an invalid CHBS.
-> 
-> Additionally, this patch also removes the redundant macro CXL_RCRB_SIZE,
-> favoring the use of `ACPI_CEDT_CHBS_LENGTH_CXL11`, which offers clearer
-> semantic meaning.
-> 
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+1. Only aborted requests are delayed for retry. In the current =
+implementation,
+nvmf_complete_timed_out_request and nvme_cancel_request set the request =
+status
+to NVME_SC_HOST_ABORTED_CMD. These requests are usually already sent to =
+the
+target, but may have timed out or been canceled before a response is =
+received.
+Since the target may still be processing them, the host needs to delay =
+retrying
+to ensure the target has completed or cleaned up the stale requests. On =
+the
+other hand, requests that are not aborted =E2=80=94 such as those that =
+never got
+submitted due to no usable path (e.g., from nvme_ns_head_submit_bio), or =
+those
+that already received an ANA error from the target =E2=80=94 do not need =
+delayed retry.
 
-Applied to cxl/next with Dan's suggestion.
+2. The host explicitly disconnects and stops KeepAlive before delay =
+scheduling
+retrying requests. This aligns with Section 9.6 "Communication Loss =
+Handling"
+of the NVMe Base Specification 2.1. Once the host disconnects, the =
+target may
+take up to the KATO interval to detect the lost connection and begin =
+cleaning
+up any remaining requests. Retrying too early may still lead to data =
+corruption issues.
 
-> ---
-> V3:
->  - say more words in removing CXL_RCRB_SIZE # Alison
->  - Collected Reviewed-by
-> V2: don't factor out, just validate # Dan
-> ---
->  drivers/cxl/acpi.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index cb14829bb9be..2e63e50b2c40 100644
-> --- a/drivers/cxl/acpi.c
-> +++ b/drivers/cxl/acpi.c
-> @@ -11,8 +11,6 @@
->  #include "cxlpci.h"
->  #include "cxl.h"
->  
-> -#define CXL_RCRB_SIZE	SZ_8K
-> -
->  struct cxl_cxims_data {
->  	int nr_maps;
->  	u64 xormaps[] __counted_by(nr_maps);
-> @@ -478,8 +476,10 @@ static int cxl_get_chbs_iter(union acpi_subtable_headers *header, void *arg,
->  
->  	chbs = (struct acpi_cedt_chbs *) header;
->  
-> -	if (chbs->cxl_version == ACPI_CEDT_CHBS_VERSION_CXL11 &&
-> -	    chbs->length != CXL_RCRB_SIZE)
-> +	if ((chbs->cxl_version == ACPI_CEDT_CHBS_VERSION_CXL11 &&
-> +	    chbs->length != ACPI_CEDT_CHBS_LENGTH_CXL11) ||
-> +	   (chbs->cxl_version == ACPI_CEDT_CHBS_VERSION_CXL20 &&
-> +	    chbs->length != ACPI_CEDT_CHBS_LENGTH_CXL20))
->  		return 0;
->  
->  	if (!chbs->base)
+@@ -2178,6 +2180,7 @@ static void nvme_rdma_shutdown_ctrl(struct =
+nvme_rdma_ctrl *ctrl, bool shutdown)
+ 	nvme_quiesce_admin_queue(&ctrl->ctrl);
+ 	nvme_disable_ctrl(&ctrl->ctrl, shutdown);
+ 	nvme_rdma_teardown_admin_queue(ctrl, shutdown);
++	nvme_delay_kick_retry_lists(&ctrl->ctrl); <<< delay kick retry =
+after teardown all queues
+ }
+
+3. Delayed retry of aborted requests is supported across multiple =
+scenarios,
+including error recovery work, controller reset, controller deletion, =
+and
+controller reconnect failure handling. Here's the relevant code for =
+reference.
+
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 9109d5476417..f07b3960df7c 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -2449,6 +2449,7 @@ static int nvme_tcp_setup_ctrl(struct nvme_ctrl =
+*ctrl, bool new)
+ destroy_admin:
+ 	nvme_stop_keep_alive(ctrl);
+ 	nvme_tcp_teardown_admin_queue(ctrl, new);
++	nvme_delay_kick_retry_lists(ctrl); <<< requests may be timed out =
+when ctrl reconnects
+ 	return ret;
+ }
+
+@@ -2494,6 +2495,7 @@ static void nvme_tcp_error_recovery_work(struct =
+work_struct *work)
+ 	nvme_tcp_teardown_admin_queue(ctrl, false);
+ 	nvme_unquiesce_admin_queue(ctrl);
+ 	nvme_auth_stop(ctrl);
++	nvme_delay_kick_retry_lists(ctrl); <<< retry_lists may contain =
+timed out or cancelled requests
+
+ 	if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_CONNECTING)) {
+ 		/* state change failure is ok if we started ctrl delete =
+*/
+
+@@ -2513,6 +2515,7 @@ static void nvme_tcp_teardown_ctrl(struct =
+nvme_ctrl *ctrl, bool shutdown)
+ 	nvme_quiesce_admin_queue(ctrl);
+ 	nvme_disable_ctrl(ctrl, shutdown);
+ 	nvme_tcp_teardown_admin_queue(ctrl, shutdown);
++	nvme_delay_kick_retry_lists(ctrl); <<< retry_lists may contain =
+timed out or cancelled requests when ctrl reset or delete
+ }
+
+Besides, in nvme_tcp_error_recovery_work, the delayed retry must occur =
+after
+nvme_tcp_teardown_io_queues, because the teardown cancels requests that =
+may need
+to be retried too.
+
+One limitation of my patchset is that it does not yet include full CQT =
+support,
+and due to testing environment constraints, only nvme_tcp and nvme_rdma =
+are
+currently covered.
+
+I=E2=80=99d be happy to discuss the pros and cons of both approaches -- =
+perhaps we can
+combine the best aspects.
+
+Looking forward to your thoughts.
+
+Thanks,
+Jiewei
+
+[1] =
+https://lore.kernel.org/linux-nvme/20250410122054.2526358-1-jiewei@smartx.=
+com/=
 
 
