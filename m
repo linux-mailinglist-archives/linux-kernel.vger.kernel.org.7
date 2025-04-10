@@ -1,123 +1,120 @@
-Return-Path: <linux-kernel+bounces-597238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6CAA836F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 05:03:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D66B8A836FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 05:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0D341B60DD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:03:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94E991B6188C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3257A1EA7CE;
-	Thu, 10 Apr 2025 03:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC671EB186;
+	Thu, 10 Apr 2025 03:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="STSa3Rgq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=quanta-corp-partner-google-com.20230601.gappssmtp.com header.i=@quanta-corp-partner-google-com.20230601.gappssmtp.com header.b="sCxS1NZb"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AEC84C9D;
-	Thu, 10 Apr 2025 03:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B710B1E5206
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 03:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744254208; cv=none; b=DyDacfrxV93PxV/jvJWSPEl2igMJVUiDntzBd5nIG9W+lBxyR152ZIiguVRSq3/Wcy3G+soN+HG8TudA0SfyvtGl+fmKBLB/LpmCOXete77k1J3WH2WicwqZhJCg0N98a2F1U+Xs89VqnW9XoRXP1kxUZBF8VpzM+D6jILrHzhc=
+	t=1744254274; cv=none; b=scJvCDJukfSO9pOvockmOBb1CttSzZ+7ZTEVsSD6IQXg4v653bM2/naSqXHhzK6G7LiWWSUQiRqzNYVeyMDQo6hNZzMoKeq3ommZ7TFyFkgyBLc4s7ZZhRwV1YV4PJEZaCgb1Et5GctWAa8rdYj3cQ2oqxzjDktx44QZz+PA4/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744254208; c=relaxed/simple;
-	bh=O9I0+J35A+cZCeUgQWA6kZXE8j9emV43n4j/o0l0jew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ge+e/qVNK+gKvaM59Pdfb+928nttJpqQRNYhqkkBn36qLsqgwjOnA1PVejvgHKqLIjmnILrDGStQ1X/k/6h57unSg4QgkXedHVfq88DC5xJGzWJweoUhHcGvTSVNDkG3s4xPPw+3nTAFegiuH1aP8sf86D5CKdkyDNOQTWqyDeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=STSa3Rgq; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744254206; x=1775790206;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=O9I0+J35A+cZCeUgQWA6kZXE8j9emV43n4j/o0l0jew=;
-  b=STSa3RgqVkK28RnDdbMjGR4z1CuOvAVSKdlSw1/k9/bpZfh8MHLszoCD
-   QWi9s/ChqOcbHeFMSWp706BcrST5bpIqY7RmAHrLkqOnZHhrfSSxeANii
-   o5izFyj6bofh03FaBDjfl5aJVHN7fSizTzIiqIUMrv6pgIc6VfhP2SRVT
-   9QrcnJwAJBgDsqQaDv2EFuj57pxqcdJWJI92N8odT5wc6i7IaqAkOyq3Z
-   krVjeWauxyP3iyz+xBSYns5xFM7qHKltsXDqQVCTGSAvWfnV5WdWTPoSF
-   ixxD/8KksQ3fWBrCNQItmwqHkozp480LRv10HepQS4BdD7dndezb+fdWV
-   A==;
-X-CSE-ConnectionGUID: pyU+lGkXSnCHcezq8PsrKA==
-X-CSE-MsgGUID: Y3Y/07IlR36p0rAg0uaovg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="56736309"
-X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
-   d="scan'208";a="56736309"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 20:03:26 -0700
-X-CSE-ConnectionGUID: l1lzOau0TkaMmIqROxFXzg==
-X-CSE-MsgGUID: HRIiJbvqTOWiDNn7i+TQTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,201,1739865600"; 
-   d="scan'208";a="165983640"
-Received: from yuntin1x-mobl1.ccr.corp.intel.com (HELO [10.238.11.203]) ([10.238.11.203])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 20:03:24 -0700
-Message-ID: <f1445168-3a14-45da-a39b-3009b69f7b8d@linux.intel.com>
-Date: Thu, 10 Apr 2025 11:03:21 +0800
+	s=arc-20240116; t=1744254274; c=relaxed/simple;
+	bh=n9QosFtSbeNeSbP34lrbIPOZ8CcsdXMCj9ufOqlVKmg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tfKCCsO2bTAwctseJtbieA9geWWN/Zc6ak1aix54J/nqVervx6sHzYp0zbH5VyFsgwzemGgKB76yoO5nKlRtRET8hwlTO/b9owZNtEG5+ujwfc+F1GW4/hWwx8RVm7IK80Oksn28N+5ucOPNDOHyMPezttOtZm6gECzMUYSdPT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=quanta.corp-partner.google.com; spf=pass smtp.mailfrom=quanta.corp-partner.google.com; dkim=pass (2048-bit key) header.d=quanta-corp-partner-google-com.20230601.gappssmtp.com header.i=@quanta-corp-partner-google-com.20230601.gappssmtp.com header.b=sCxS1NZb; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=quanta.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quanta.corp-partner.google.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-736aaeed234so202142b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 20:04:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=quanta-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1744254272; x=1744859072; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9GbPHC4XyIZwMLfb2UD9p5RCkxg4ygXrRY6FVcmk18c=;
+        b=sCxS1NZbqkZyKrXVuSbuNd/EjIrNUoJkbUL7XO4ImGLg608WsBrhAD+ln4Si3VoLyb
+         oUyquyYZf0heZFpG/ATDEFOAiKqvnSvpRAUeuKysMrxLSiAjAK2/1jL8DkJDUy0xakHy
+         RF/eUj3iSDULO9gkFN9hEI5zKCrqvAfvfS+OQOMzpuUNZoepNqNuz2zt7vfXw8UVHs3F
+         c/MEhA7qUOFVxUHquSMtMsz3YqVDQSd/w4UgvRrpWNpk+NKh4sChM23SHvPi3YAaNYPm
+         gpRoYfNZGrnAlUf3dkHYy09IrTceizDrSaTXYQU+1toAiRG2a2pluFijgZsdwcCR+Ejb
+         CubA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744254272; x=1744859072;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9GbPHC4XyIZwMLfb2UD9p5RCkxg4ygXrRY6FVcmk18c=;
+        b=rSHYsLAzkusVE0ZcPkJpg2aLVcdqcMkhzmcbDxqQ4LvrN2o35G60ohFyOg0CP88wPX
+         Xf7uSpGoJBjDYDRWaVzKaaPI23DXVsTCtTVju9itQKeWJz0xaNpUHXrvDiDEqVRyAzxT
+         LzaDWO4nytFvwnZyIB54R8rK2sCGWhHi3pYKp0TRMj+zqxYqizAsD6ccB9GUYswKIVkY
+         BHW/Dlt3UG7y5BWkP7Xjds0TA8kCT0CMjaK2KD72YA+2twIv0QBG6HeRDPYi6kzjdf+d
+         OFJy4n63S31Ox6hBfROjUXrDLq7BDIuZ+FBFhC6V4kDuHKuBK/qM80b2qNix9N0BvGqY
+         nyUQ==
+X-Gm-Message-State: AOJu0YwHf6/eN3PbErDF4VSm22Kq6+8+MHZxwxli5fl5nG0U/ldX+fwn
+	uHsBfLukBOQmYARr5LPOLTwPiiTLLtj2twfbPz2ox4uUZTONTvSh+XZausVvKzRYPz3cHnJXeGl
+	f
+X-Gm-Gg: ASbGncuYGzuo4SzZnTH4fLpxloRWnGiaw2dT41eJ3vZ0V1YGvT3qlfDzgy8qI9lU8Z9
+	GrSsE4mwrGmae7eEbQXWJXAruH0WwC60nas2anTJ/JPkAJFlYCee7eCK0c3q0HAJV384PYEzdqX
+	E8qYslUqvlBtu/WwW6W61P8JYeKGaNjMoip0EWAMeNrRypK+bj94dxs769eQSErjMQleqDRkQ0c
+	QLgoo1LKGX2cz5r96VxTo8tCQEhvSLPaMZtFLxS/AZsJg1mgELNMbjmHIhJIOZDr8F1lYkatXco
+	S2RtTHsbX8vWepc7KKykhMmz93QT4wz3YdfBK89CIjjvW5nSSO5LbC9RMjTIHE9YmX0P3KYw7Gx
+	BvJJqFny1x9jdmsYd2XtTJeLixKEsajxad/116YHaiuf35q6NB/9vsY+HiXzfj2At1rVNPpm1DC
+	jj
+X-Google-Smtp-Source: AGHT+IFxuMTEWXNHvY+DER3MAoYU6tYLKazUmZTcSJ+oZr5QmtLIkDa2HAYg6JAlPj0IBAYGmH0A5A==
+X-Received: by 2002:a05:6a00:4642:b0:736:d297:164 with SMTP id d2e1a72fcca58-73bc0a14eb2mr1091377b3a.1.1744254271685;
+        Wed, 09 Apr 2025 20:04:31 -0700 (PDT)
+Received: from localhost.localdomain (2001-b400-e356-f6aa-66f7-bbbc-393e-d9a6.emome-ip6.hinet.net. [2001:b400:e356:f6aa:66f7:bbbc:393e:d9a6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1e69700sm2233644b3a.172.2025.04.09.20.04.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 20:04:31 -0700 (PDT)
+From: Ken Lin <kenlin5@quanta.corp-partner.google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: groeck@chromium.org,
+	Benson Leung <bleung@chromium.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	chrome-platform@lists.linux.dev,
+	linux-media@vger.kernel.org
+Subject: [PATCH] media: platform: cros-ec: Add Moxie to the match table
+Date: Thu, 10 Apr 2025 11:03:59 +0800
+Message-Id: <20250410110352.1.I78118a7168f9021bb12e150111da31de39455c27@changeid>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation/virt/kvm: Fix TDX whitepaper footnote
- reference
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux KVM <kvm@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>, Isaku Yamahata <isaku.yamahata@intel.com>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20250410014057.14577-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250410014057.14577-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+The Google Moxie device uses the same approach as the Google Brask
+which enables the HDMI CEC via the cros-ec-cec driver.
 
+Signed-off-by: Ken Lin <kenlin5@quanta.corp-partner.google.com>
+---
 
-On 4/10/2025 9:40 AM, Bagas Sanjaya wrote:
-> Sphinx reports unreferenced footnote warning on TDX docs:
->
-> Documentation/virt/kvm/x86/intel-tdx.rst:255: WARNING: Footnote [1] is not referenced. [ref.footnote]
->
-> Fix footnote reference to the TDX docs on Intel website to squash away
-> the warning.
->
-> Fixes: 52f52ea79a4c ("Documentation/virt/kvm: Document on Trust Domain Extensions (TDX)")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/linux-next/20250409131356.48683f58@canb.auug.org.au/
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+ drivers/media/cec/platform/cros-ec/cros-ec-cec.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-
-And thanks for the fix.
-
-> ---
->   Documentation/virt/kvm/x86/intel-tdx.rst | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/virt/kvm/x86/intel-tdx.rst b/Documentation/virt/kvm/x86/intel-tdx.rst
-> index de41d4c01e5c68..2ab90131a6402a 100644
-> --- a/Documentation/virt/kvm/x86/intel-tdx.rst
-> +++ b/Documentation/virt/kvm/x86/intel-tdx.rst
-> @@ -11,7 +11,7 @@ host and physical attacks.  A CPU-attested software module called 'the TDX
->   module' runs inside a new CPU isolated range to provide the functionalities to
->   manage and run protected VMs, a.k.a, TDX guests or TDs.
->   
-> -Please refer to [1] for the whitepaper, specifications and other resources.
-> +Please refer to [1]_ for the whitepaper, specifications and other resources.
->   
->   This documentation describes TDX-specific KVM ABIs.  The TDX module needs to be
->   initialized before it can be used by KVM to run any TDX guests.  The host
->
-> base-commit: fd02aa45bda6d2f2fedcab70e828867332ef7e1c
+diff --git a/drivers/media/cec/platform/cros-ec/cros-ec-cec.c b/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
+index 12b73ea0f31d4..1de5799a05799 100644
+--- a/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
++++ b/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
+@@ -329,6 +329,8 @@ static const struct cec_dmi_match cec_dmi_match_table[] = {
+ 	{ "Google", "Dexi", "0000:00:02.0", port_db_conns },
+ 	/* Google Dita */
+ 	{ "Google", "Dita", "0000:00:02.0", port_db_conns },
++	/* Google Moxie */
++	{ "Google", "Moxie", "0000:00:02.0", port_b_conns },
+ };
+ 
+ static struct device *cros_ec_cec_find_hdmi_dev(struct device *dev,
+-- 
+2.25.1
 
 
