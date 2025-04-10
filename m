@@ -1,138 +1,107 @@
-Return-Path: <linux-kernel+bounces-597404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091D6A83966
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:36:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E4D9A83960
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 827113B5A53
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:32:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 640297A70D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FFA20DD49;
-	Thu, 10 Apr 2025 06:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FA12036F9;
+	Thu, 10 Apr 2025 06:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="KCVvYI3U"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuVKk1fr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89A920B812;
-	Thu, 10 Apr 2025 06:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51AD1D5AC2
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744266630; cv=none; b=CctlzLwxXeYgktIofrImuHbXkwyHCPvdeTvgaenqKTq6OpaMaeymnK6v4oELBZhlE0mZtHKvgnDKpQxmj7JX0Y1fXZKzMUy2vTm3y5UI+ZCnwP8FkHvYX6tUq8qYrFc4gDnypDJ5GHOG8aUC6yQHQ/rfl/m/NnaEqrCfJc9pg/0=
+	t=1744266709; cv=none; b=Wz6RWxcaYhCHcomI11Yq1PY/RhuUAN1ZyEIRfkRybQcEc40IxpMTGSGruKMXP/APE7OivsQ2Wrcy91gRIX0jL4f7IofiCZURz9xQSkKoJVdaBroc48rPBeLjrnfqUfCUguoW498Z514quT6wWEcaW6lREkJd8G/jfMJFSXYjyI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744266630; c=relaxed/simple;
-	bh=B8Q7YkNm6Asr9oSTcbrhXjY1Q304b9yShW46d6EX6KI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i1eze9wNMGCCov2f1yg1CQnV56LlwJhXQDu10n2tJ3n8EXUHmS1pETykm+GvbNOt2/r0zjKNA4kCaqUDGlRTnfnlryuscC7iuFtT9EMCAwfaOtwcWt0sb53+lXNc+zEC4XSHcDsaVlwrdhZAuRjLn6VKAMIsluqhBD82tCXUows=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=KCVvYI3U; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 482023b015d511f08eb9c36241bbb6fb-20250410
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=P9NDd20YzB0bwdZ1W4YGjAjkAqoGK6aOQubB/QLFnRU=;
-	b=KCVvYI3UTT+imhBxnKw5P8B5p5dAg35KKAtcKhl05uqwTWHJ/qUqWhfyszEuHoxgVpPO0wkhu30ublQZQYEnpW7fI3NqrMTvmMsJ6U2HtmRWXuW0xwxNsDmeWR2VCoZ/3CvKwVdX1s7iCjiwbRmjp1BCuvFeEpJ7POPXnkzxGKo=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:94877e6c-09b9-46c5-b63b-3f04721f19aa,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:bcc86f8d-f5b8-47d5-8cf3-b68fe7530c9a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 5,DFT|NGT
-X-CID-BAS: 5,DFT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 482023b015d511f08eb9c36241bbb6fb-20250410
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
-	(envelope-from <kyrie.wu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 398907331; Thu, 10 Apr 2025 14:30:23 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Thu, 10 Apr 2025 14:30:21 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Thu, 10 Apr 2025 14:30:21 +0800
-From: kyrie.wu <kyrie.wu@mediatek.com>
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, kyrie wu
-	<kyrie.wu@mediatek.corp-partner.google.com>, <linux-media@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-CC: kyrie.wu <kyrie.wu@mediatek.com>
-Subject: [PATCH v2 12/12] media: mediatek: jpeg: fix remove buffer operation for multi-core
-Date: Thu, 10 Apr 2025 14:30:05 +0800
-Message-ID: <20250410063006.5313-13-kyrie.wu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250410063006.5313-1-kyrie.wu@mediatek.com>
-References: <20250410063006.5313-1-kyrie.wu@mediatek.com>
+	s=arc-20240116; t=1744266709; c=relaxed/simple;
+	bh=zY7ObH+OLnFQN4bHOIh/YvqlK/4YngXqHZTmGQDgwOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HuctAgBPwjw2OEg24bsabCmtmQU7fNck+c+OPrEgkWx5ihgMXanQXn6yrG1MhF0oBCK2BOV2HMH+4ayugYRRuoLn5US3qPaJtdojbb4sAAARupUwuR+4SPm8/cmBkitBrMhHNKb7sPOX4rqYrCMTHAgaaB4/IzGyTZKr2r7T5d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuVKk1fr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38AD7C4CEDD;
+	Thu, 10 Apr 2025 06:31:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744266709;
+	bh=zY7ObH+OLnFQN4bHOIh/YvqlK/4YngXqHZTmGQDgwOs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TuVKk1frCVSoR6vvb8suAlArXraF3MIjWwCsqRmNEOILlxLwNZfC0rAalSIaacT7Q
+	 tny99fivJInELowKKVkENo/0jNYctznYow7i/XVzs9t/JblG25afosZS5BxIyN76UF
+	 DyY+/WWtipaWN0AL3RWymXhOTmf3k+2qT3w5b2wRvPahd8/v3tMj1ESHLrZqZrHuYW
+	 chBTRHjlDtuHZfwGgrGZwKAwDJK0Cpf8S3BmfjoATyoh/wdMOy4/RVZXHXhgYDepn/
+	 UluqVnQHguveLvveRZa98nFg4NgGwvAftJw/sFhBhhA50JEq7L3t50cnNfSKVwko/B
+	 FV8TupzXulyAg==
+Date: Thu, 10 Apr 2025 08:31:44 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org,
+	linux-kernel@vger.kernel.org, hpa@zytor.com
+Subject: Re: [PATCH] x86/Kconfig: Fix dependency for X86_DEBUG_FPU
+Message-ID: <Z_dl0HhwMOBkVTFH@gmail.com>
+References: <20250407231057.328010-1-skhan@linuxfoundation.org>
+ <Z_TIMh7UsWQiSkqg@gmail.com>
+ <f9642a9f-27d4-4f84-818c-390194b898bf@linuxfoundation.org>
+ <Z_bnzs3IPyhVIYaT@gmail.com>
+ <e0842dd0-71d3-4de0-a2ee-e83493df890b@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e0842dd0-71d3-4de0-a2ee-e83493df890b@linuxfoundation.org>
 
-move remove buffer code to spinlock protect area for multi-core
 
-Signed-off-by: kyrie.wu <kyrie.wu@mediatek.com>
----
- drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+* Shuah Khan <skhan@linuxfoundation.org> wrote:
 
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-index 0a4a503ecbd8..46debd754cd3 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-@@ -1681,9 +1681,6 @@ static void mtk_jpegenc_worker(struct work_struct *work)
- 		goto enc_end;
- 	}
- 
--	v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
--	v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
--
- 	schedule_delayed_work(&comp_jpeg[hw_id]->job_timeout_work,
- 			      msecs_to_jiffies(MTK_JPEG_HW_TIMEOUT_MSEC));
- 
-@@ -1705,6 +1702,8 @@ static void mtk_jpegenc_worker(struct work_struct *work)
- 			     &src_buf->vb2_buf);
- 	mtk_jpeg_set_enc_params(ctx, comp_jpeg[hw_id]->reg_base);
- 	mtk_jpeg_enc_start(comp_jpeg[hw_id]->reg_base);
-+	v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
-+	v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
- 	jpeg_buf_queue_inc(ctx);
- 	v4l2_m2m_job_finish(jpeg->m2m_dev, ctx->fh.m2m_ctx);
- 	spin_unlock_irqrestore(&comp_jpeg[hw_id]->hw_lock, flags);
-@@ -1799,9 +1798,6 @@ static void mtk_jpegdec_worker(struct work_struct *work)
- 		goto dec_end;
- 	}
- 
--	v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
--	v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
--
- 	mtk_jpeg_set_dec_src(ctx, &src_buf->vb2_buf, &bs);
- 	if (mtk_jpeg_set_dec_dst(ctx,
- 				 &jpeg_src_buf->dec_param,
-@@ -1830,6 +1826,8 @@ static void mtk_jpegdec_worker(struct work_struct *work)
- 				jpeg_src_buf->bs_size,
- 				&bs,
- 				&fb);
-+	v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
-+	v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
- 	mtk_jpeg_dec_start(comp_jpeg[hw_id]->reg_base);
- 	jpeg_buf_queue_inc(ctx);
- 	v4l2_m2m_job_finish(jpeg->m2m_dev, ctx->fh.m2m_ctx);
--- 
-2.46.0
+> Yes it is vanilla
 
+Thx.
+
+> > More importantly, X86_REQUIRED_FEATURE_FPU *does not exist* in the 
+> > vanilla v6.14 kernel, it's a new v6.15 feature. So this part of 
+> > your changelog totally doesn't apply to a v6.14 kernel:
+> 
+> I started with vanilla 6.14 kernel running oldconfig on it. In this 
+> case if X86_DEBUG_FPU is enabled in the oldconfig, should the config 
+> generated for 6.15 add X86_REQUIRED_FEATURE_FPU.
+> 
+> It appears there is a dependency between X86_DEBUG_FPU and the newly 
+> added X86_REQUIRED_FEATURE_FPU
+
+Could you send the v6.15-rc1 config that has this missing dependency?
+
+Because if I put the config you sent through 'make oldconfig' and 
+accept all default suggestions, the X86_REQUIRED_FEATURE_FPU dependency 
+is present:
+
+ starship:~/tip> grep _FPU .config
+ CONFIG_X86_REQUIRED_FEATURE_FPU=y
+ CONFIG_ARCH_HAS_KERNEL_FPU_SUPPORT=y
+ CONFIG_X86_DEBUG_FPU=y
+ # CONFIG_TEST_FPU is not set
+
+... and the build succeeds:
+
+    OBJCOPY arch/x86/boot/setup.bin
+    BUILD   arch/x86/boot/bzImage
+  Kernel: arch/x86/boot/bzImage is ready  (#4)
+
+Ie. I cannot reproduce the build failure with the config you provided.
+
+Thanks,
+
+	Ingo
 
