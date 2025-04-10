@@ -1,100 +1,100 @@
-Return-Path: <linux-kernel+bounces-598447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 576C6A8462C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:23:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C0AA84632
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C304F1890A2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:23:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFAA319E4F54
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597C128CF41;
-	Thu, 10 Apr 2025 14:23:14 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F42928CF4A;
+	Thu, 10 Apr 2025 14:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0CD1m9e0"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725322853FA
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 14:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983E3281529;
+	Thu, 10 Apr 2025 14:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744294994; cv=none; b=H9WqjfM2o0O/Y38OK243w5VITGJ/wCzrJDKCFuIS7MvigESqwt3Sxvt18mVAgSFtfLlfOlaOFZgiu5ogyXLHBncfD6kI5iIB3W2FVAYwFpGnyXVoqcKs+GnxjGM9ppMkSyGT2iD3osTyShgO6g1tR808nl13BwANVH7rqSXhhgI=
+	t=1744295014; cv=none; b=eqqlwhXAL8vCqGhZ5nd0YpZWdXi9pK8aNOajCOwdEXbrzRLtwN7pQW+bihXTDfTLi4UjBTq3GiGF1qLVM79LVVZ42dwM3PjKswg1JHevioQdf+GNvlBzKL7rfgcqcg6Z21ZDYsUr5cYvkYhlTrrp8ik+O4J2kGkxD7wDi0zkhFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744294994; c=relaxed/simple;
-	bh=cPd0HaZfcHI9ymCKPUFclwMiYTlolc/d7pNh2y7ziTI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=T3+ul9uP86tK8hKsMVx8dSpuqn8HcpY+LlOfAm77pTMd2cW4X7ZUQQlXIBkiHOjNdIWa9idDHVarv+efhLba9kAnEopxiawPkFdiT+Ir7DGspwo5VAUFvw7+bkHfHai9fOTTZTx5kpInIyufKQGBtAy19rNgvWguyov6UXhrrcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85dcaf42b61so209772039f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:23:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744294991; x=1744899791;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nBqy0nRRvbIayE8rNb1r8XGg12QZ/fnlUefD01PF8lw=;
-        b=V/M/StgDdAE8j70+5QXvdeufyYLLEJgOxLNCyISzm3lkwQTfcZlRBk7YjkoVAvslMV
-         T9uaTMMPY7GevbbDRS4Cqqo4ka0zQsuZbSUw7fRbJuEHCnOqbVuVyWkOMh3lI+qPlBYD
-         0jQPUH+1lpGWrDJPcaIUCyZIWrygPXtQYuZjer/248KyALJ1IJ38QAL04nOdmx+Bq6l0
-         7W6/x28kETwfdWdhvvH/jgqWeIk4uov0hHTI26N/C3A1GjwMPi9ferBKnVFn95itdv5H
-         UCmTdzncT9fuOU4SgMmjgdUhEVP4yn2tTYcEA7eQpgyHyx0w/0BXLrK0zQC5LI+D5Htv
-         yH2Q==
-X-Gm-Message-State: AOJu0YwVWzJHMCWqKKPpeHI64GHKdX+Fgcr0s2M6IGsIDtBYt9gCdJA7
-	LyrH3p3uQNELN5simzqdf2PKq1rWZEFS5IPKD5Bv+MxDB+vQ4bwHHZFOT9sn2TKrxUBgQ7B0R6x
-	8T2TITQI0gDHZ0PlE6NpAxxLiShKEtxqKzwA1bByxA3h63svB8Z4TlHY=
-X-Google-Smtp-Source: AGHT+IGiccCLLaQiruWWE+CPs/oQVNYUKc+YL7O7dds2nLAI7Z6OaRkjBlErZsdBVEuCxpOKx5nC5bR2blRz3MBcQMypDxDsQ/z0
+	s=arc-20240116; t=1744295014; c=relaxed/simple;
+	bh=F8eq5C2arq6nQ8is5jRPMuJ8H0Gg2faL+GzWh6CxsyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JLm+uCdJ8bChxFCnnqVBkP68X3RRBQ2aJxvOenuff3r+LAWu0hP5GJN/mQj6NsLmzO5GZ4oDY/96UF+CkBIjBcXC1lzc3IHaoIQlJNsMB0iyCE1yiHT3tYbxK7Q064Ru8HQCKa+uAmd1Y5cKfaq+/0BUVR/twdlKEjnhQvFRqIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0CD1m9e0; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Sje0mXCO8uUiowTlFETq7gVVR2y68OmKN7E7RZiwNSw=; b=0CD1m9e04quHGOpw8NHRSXbjD+
+	ThjnIJYoOyyFvb/yn27LI6/uJ5XxIl13/WyJQVD/xFCBnpt611XkipXZzfH8fnZK36MVkKtg67O5o
+	iQZ38Bj6MOEB/cqasGjSP1WF/wZDPZpkqLoK4eRuT3ejQc4c0EyWcUXD6ZRKm1O7RRqXefFBsT5JB
+	iKRtD3y9PxJqDL2zWSvps5l73BVvL+jIa5drSgn20dKKLIjuQW5RADSR4gBG53XeTd/8BqkCRpS3e
+	ChbqPUvdkLIymD5FRmHm11UlzJkVWBTQwdOOYqK321HEVrS5xhj0P8DgLwnsMt/TbOmnfeaZUsxN6
+	QZQzjGIA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u2soP-0000000Apj7-062H;
+	Thu, 10 Apr 2025 14:23:25 +0000
+Date: Thu, 10 Apr 2025 07:23:24 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Shivank Garg <shivankg@amd.com>,
+	seanjc@google.com, david@redhat.com, vbabka@suse.cz,
+	willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
+	pbonzini@redhat.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com,
+	tabba@google.com, vannapurve@google.com, chao.gao@intel.com,
+	bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
+	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
+	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com,
+	jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-coco@lists.linux.dev
+Subject: Re: [PATCH RFC v7 5/8] KVM: guest_memfd: Make guest mem use guest
+ mem inodes instead of anonymous inodes
+Message-ID: <Z_fUXKcvbbUTQO1n@infradead.org>
+References: <20250408112402.181574-1-shivankg@amd.com>
+ <20250408112402.181574-6-shivankg@amd.com>
+ <Z_eEfjrkspAt4ACP@infradead.org>
+ <diqz4iyw5dis.fsf@ackerleytng-ctop.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda7:0:b0:3d3:f4fc:a291 with SMTP id
- e9e14a558f8ab-3d7e4781c05mr36997205ab.19.1744294991485; Thu, 10 Apr 2025
- 07:23:11 -0700 (PDT)
-Date: Thu, 10 Apr 2025 07:23:11 -0700
-In-Reply-To: <67f26778.050a0220.0a13.0265.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67f7d44f.050a0220.355867.0004.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [acpi?] KASAN: slab-use-after-free Read in software_node_notify_remove
-From: syzbot <syzbot+2ff22910687ee0dfd48e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <diqz4iyw5dis.fsf@ackerleytng-ctop.c.googlers.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Thu, Apr 10, 2025 at 06:53:15AM -0700, Ackerley Tng wrote:
+> > So why do other alloc_anon_inode callers not need
+> > security_inode_init_security_anon?
+> 
+> Thanks for this tip!
+> 
+> When I did this refactoring, I was just refactoring
+> anon_inode_create_getfile(), to set up the guest_memfd inode and file in
+> separate stages, and anon_inode_create_getfile() was already using
+> security_inode_init_security_anon().
+> 
+> In the next revision I can remove this call.
+> 
+> Is it too late to remove the call to security_inode_init_security_anon()
+> though? IIUC it is used by LSMs, which means security modules may
+> already be assuming this call?
 
-***
-
-Subject: Re: [syzbot] [acpi?] KASAN: slab-use-after-free Read in software_node_notify_remove
-Author: lizhi.xu@windriver.com
-
-any link create fail will not get kobject
-
-#syz test
-
-diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-index b1726a3515f6..5c78fa6ae772 100644
---- a/drivers/base/swnode.c
-+++ b/drivers/base/swnode.c
-@@ -1080,6 +1080,7 @@ void software_node_notify(struct device *dev)
- 	if (!swnode)
- 		return;
- 
-+	kobject_get(&swnode->kobj);
- 	ret = sysfs_create_link(&dev->kobj, &swnode->kobj, "software_node");
- 	if (ret)
- 		return;
-@@ -1089,8 +1090,6 @@ void software_node_notify(struct device *dev)
- 		sysfs_remove_link(&dev->kobj, "software_node");
- 		return;
- 	}
--
--	kobject_get(&swnode->kobj);
- }
- 
- void software_node_notify_remove(struct device *dev)
+I'd really like to here from the security folks if we need it or not,
+both in this case and for other alloc_anon_inode callers.
 
