@@ -1,240 +1,164 @@
-Return-Path: <linux-kernel+bounces-597388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB4EA83925
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:25:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC73A83976
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F6794A0078
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:25:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 275DD3AEF5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C1C202F8B;
-	Thu, 10 Apr 2025 06:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fkP2VXxH"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86306203713;
+	Thu, 10 Apr 2025 06:36:42 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8CD202F61
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C611372
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744266339; cv=none; b=FHuwFksjz3Htb0aCGvxrI8TniYKnOmExfCqj0Oz9xf6Aq+znBywG0hJ4qgrOrmB536ntRwrfsk5jM+Xmjm4WPsTZ2FqQ58Bsc1/YTHrad9cBWQPo6bxxN0tW+nmXvSXhAuiZeUBh5qklWdWPOwghxGTnpK1ynhqEw0MjsQ3TswY=
+	t=1744267002; cv=none; b=QovVKQ8bRkAsPLmhxBxyPsKc99VLi2gaEwhEBk5nCibBaKQ+D/kyYw9Vj2gZa11hjPp/+/l6IudbJ2qKt0OqTN/bXGtdTATwC6WT7d5gkZfG3tRk/fSqq39EePMuNDe+wiOzZcIVK9W7BUk+ImK6lYVwybpf/PB7qjJ99BQuuq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744266339; c=relaxed/simple;
-	bh=aGpkY4O/3TbhmrBDujSrzkv1VCnxkOFYrMxit4qRUFw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nu82EBKW4n1HF8xrdfjIRqLjk23eohWbQtYfLZ2M1RzyU0mUYNWbEJoAhGXNyNjtT2qaVrD+hhYAyRTUrShTb50rSr89VE1bIVgWrXaHgcC3PAeV0ql4mjuqnC/vxnn0Ir64Z8RJ9ZXTK3dQ2v+YCVD/802mzZnz092T/YywyIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fkP2VXxH; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-86ba07fe7a4so406981241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 23:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744266336; x=1744871136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zyNWqPKOQ9/3oQt9wRtOOs4tLD3TZ787ZZ5Pjy8pmfA=;
-        b=fkP2VXxHMwWrp53nFCp5fb+U+XrjZTBpQbrhRs4ZTYkfyjKpei1JFRusgaSXQO7cKP
-         +ZsroYOgAFns1mu9Lvq8iCITkaOB5Pb555HeSrGqAWb0ogvyKtQURLBp7BODz9E9Wv9+
-         0tM1sxGqyFBhbPT9Dl4X3e38KuXdWJTCL9hn3fHGnsrEvwDrJCUamBxFNFxWpHrvYoEo
-         Nl6qHpc5ZGgOJRf89jrwi9BUdOLV1/h54adKjXJBrRSgx5D/fu/FdoXBlRMVVINIJ1XL
-         OQzxpIH2Ki5wzwSOsNKYeXYkD7/PMSqO277/wKbwD/gLEXk7Wys1BD7oPL02SgbNaMM2
-         SqJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744266336; x=1744871136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zyNWqPKOQ9/3oQt9wRtOOs4tLD3TZ787ZZ5Pjy8pmfA=;
-        b=pLVRX8vCxDLjbIxzp/UkHeXTwLxXlwNtRikNLbTiQ4OKHjvyYAwP8VLJsohELabnLI
-         QiiZOZhYkb/8/PYS/y9EUkJXZOMxi712A/dplTAUSHbXZKp9PUezIqdNfgVlnJBaq66v
-         WHbws61ZtzBb1nbmlQF8fCS0M+PPuE8CkfTk7XkLTqfWwgAgjwaBA0rKhBoTHVYF9wKz
-         AdDtdcTnQ88YxGBlkDE/Qr9sENESpccDTrkKkhQugET26OqiMoBtQKOqjd06fnMpGRQa
-         rnTVm2g/Y+ZhlC/bGOyq+w4/FXg8NXNNhWwUbHMnCz4R8YANIeRWpQSs3scSdLoFbCI+
-         iCnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTwkcE4DiYM9ahe+Cavsi/ZxXxZzL/SNXiT40mDiJAvI0MJTwuWPYHURO+uuV1pK1huY+yPRN2JLtBvuk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/kQ8ps5DOpUeleTtg5p/kZRBrn0OWPGErvUT4Wvl0Mwu+6hiv
-	VMIrGZasBr+S9U/ckWmG4P+n3s0H0erVNNffveyepxGqQkd02sW7S2g2LJFpwYMIQCMUFTnZhWI
-	4LwyBKJMtHBeLc4oydqOaUgbvCrh2qd3/CFP1UQ==
-X-Gm-Gg: ASbGncs0sHTu50WJ0AoUB/S6lvJHWBKStaa1ZDfWXVjtkm48yhyI+z0KMbm5Fmw0SKC
-	NLp3ZiE0m+r1e61gycV5G6Vr24gwbEJHLxCBveZDfBT+bDCGlP78pL7oQWY04L3RVfF/L05IywF
-	Wds+quV9nSh6k9Q8qMldtBCAT6Ki4ObQY5BNCjEpuDBARttqdR4DnsDjpSJR3U9/WsFQ==
-X-Google-Smtp-Source: AGHT+IG2aNdsOXAjNvzpg7zSgl4b9ctMJGLb+z8eiGPuyFdtc8URMDmcUMZ8aMiJWyf0izLJvmAFLXZo1jsBoBoZ+OI=
-X-Received: by 2002:a05:6102:5615:b0:4c1:83c4:8562 with SMTP id
- ada2fe7eead31-4c9d629409bmr371847137.13.1744266336159; Wed, 09 Apr 2025
- 23:25:36 -0700 (PDT)
+	s=arc-20240116; t=1744267002; c=relaxed/simple;
+	bh=VJXXc6yS61Zt3aKauy5XLMWk+Rcl7vqyHTDQlbGVC7M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eDQ+toZohYT12suf0QYqg9p302BeFUM71cBaJMFhYrwET0PibdJq/Zh2HMAO1IzuBhk/V6j4m/Qfvgok+Ksvbggp+fP0XKS7qn9g3JqZ0YGAobb/F5Jm46ePoq+sZlYQVRc/rFD/hG2JzeB9zFoTTIcYfzWj/XKIswWvZ6NUEzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZY9490GX2z2Cdmm;
+	Thu, 10 Apr 2025 14:33:13 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id 936D11A0188;
+	Thu, 10 Apr 2025 14:36:36 +0800 (CST)
+Received: from huawei.com (10.175.124.71) by kwepemg100017.china.huawei.com
+ (7.202.181.58) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Apr
+ 2025 14:36:35 +0800
+From: Wupeng Ma <mawupeng1@huawei.com>
+To: <akpm@linux-foundation.org>, <mike.kravetz@oracle.com>,
+	<david@redhat.com>, <joshua.hahnjy@gmail.com>
+CC: <muchun.song@linux.dev>, <mawupeng1@huawei.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] mm: hugetlb: Fix incorrect fallback for subpool
+Date: Thu, 10 Apr 2025 14:26:33 +0800
+Message-ID: <20250410062633.3102457-1-mawupeng1@huawei.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409115907.324928010@linuxfoundation.org>
-In-Reply-To: <20250409115907.324928010@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 10 Apr 2025 11:55:24 +0530
-X-Gm-Features: ATxdqUGwvc_wcV22L39WBJ0l-_5Wti_pClWG4Nk2KEj2x_9XnIDbIyGu4SQml3A
-Message-ID: <CA+G9fYt18c-W0d2aZOt3_=pryrmp211F-HFUdmHNb-Ew8DQjWg@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/502] 6.13.11-rc3 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
-On Wed, 9 Apr 2025 at 17:34, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.13.11 release.
-> There are 502 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 11 Apr 2025 11:58:07 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.13.11-rc3.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+During our testing with hugetlb subpool enabled, we observe that
+hstate->resv_huge_pages may underflow into negative values. Root cause
+analysis reveals a race condition in subpool reservation fallback handling
+as follow:
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+hugetlb_reserve_pages()
+    /* Attempt subpool reservation */
+    gbl_reserve = hugepage_subpool_get_pages(spool, chg);
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+    /* Global reservation may fail after subpool allocation */
+    if (hugetlb_acct_memory(h, gbl_reserve) < 0)
+        goto out_put_pages;
 
-## Build
-* kernel: 6.13.11-rc3
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: b51363104424dfb8b160270333b1af3057374b28
-* git describe: v6.13.10-503-gb51363104424
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13=
-.10-503-gb51363104424
+out_put_pages:
+    /* This incorrectly restores reservation to subpool */
+    hugepage_subpool_put_pages(spool, chg);
 
-## Test Regressions (compared to v6.13.7-385-g8cbfaadfa0ec)
+When hugetlb_acct_memory() fails after subpool allocation, the current
+implementation over-commits subpool reservations by returning the full
+'chg' value instead of the actual allocated 'gbl_reserve' amount. This
+discrepancy propagates to global reservations during subsequent releases,
+eventually causing resv_huge_pages underflow.
 
-## Metric Regressions (compared to v6.13.7-385-g8cbfaadfa0ec)
+This problem can be trigger easily with the following steps:
+1. reverse hugepage for hugeltb allocation
+2. mount hugetlbfs with min_size to enable hugetlb subpool
+3. alloc hugepages with two task(make sure the second will fail due to
+   insufficient amount of hugepages)
+4. with for a few seconds and repeat step 3 which will make
+   hstate->resv_huge_pages to go below zero.
 
-## Test Fixes (compared to v6.13.7-385-g8cbfaadfa0ec)
+To fix this problem, return corrent amount of pages to subpool during the
+fallback after hugepage_subpool_get_pages is called.
 
-## Metric Fixes (compared to v6.13.7-385-g8cbfaadfa0ec)
+Fixes: 1c5ecae3a93f ("hugetlbfs: add minimum size accounting to subpools")
+Signed-off-by: Wupeng Ma <mawupeng1@huawei.com>
+Tested-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+---
+ mm/hugetlb.c | 28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
-## Test result summary
-total: 130642, pass: 103832, fail: 6766, skip: 19617, xfail: 427
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 39f92aad7bd1e..50bd1fe3ab400 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3010,7 +3010,7 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+ 	struct hugepage_subpool *spool = subpool_vma(vma);
+ 	struct hstate *h = hstate_vma(vma);
+ 	struct folio *folio;
+-	long retval, gbl_chg;
++	long retval, gbl_chg, gbl_reserve;
+ 	map_chg_state map_chg;
+ 	int ret, idx;
+ 	struct hugetlb_cgroup *h_cg = NULL;
+@@ -3163,8 +3163,16 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+ 		hugetlb_cgroup_uncharge_cgroup_rsvd(idx, pages_per_huge_page(h),
+ 						    h_cg);
+ out_subpool_put:
+-	if (map_chg)
+-		hugepage_subpool_put_pages(spool, 1);
++	/*
++	 * put page to subpool iff the quota of subpool's rsv_hpages is used
++	 * during hugepage_subpool_get_pages.
++	 */
++	if (map_chg && !gbl_chg) {
++		gbl_reserve = hugepage_subpool_put_pages(spool, 1);
++		hugetlb_acct_memory(h, -gbl_reserve);
++	}
++
++
+ out_end_reservation:
+ 	if (map_chg != MAP_CHG_ENFORCED)
+ 		vma_end_reservation(h, vma, addr);
+@@ -7216,7 +7224,7 @@ bool hugetlb_reserve_pages(struct inode *inode,
+ 					struct vm_area_struct *vma,
+ 					vm_flags_t vm_flags)
+ {
+-	long chg = -1, add = -1;
++	long chg = -1, add = -1, spool_resv, gbl_resv;
+ 	struct hstate *h = hstate_inode(inode);
+ 	struct hugepage_subpool *spool = subpool_inode(inode);
+ 	struct resv_map *resv_map;
+@@ -7351,8 +7359,16 @@ bool hugetlb_reserve_pages(struct inode *inode,
+ 	return true;
+ 
+ out_put_pages:
+-	/* put back original number of pages, chg */
+-	(void)hugepage_subpool_put_pages(spool, chg);
++	spool_resv = chg - gbl_reserve;
++	if (spool_resv) {
++		/* put sub pool's reservation back, chg - gbl_reserve */
++		gbl_resv = hugepage_subpool_put_pages(spool, spool_resv);
++		/*
++		 * subpool's reserved pages can not be put back due to race,
++		 * return to hstate.
++		 */
++		hugetlb_acct_memory(h, -gbl_resv);
++	}
+ out_uncharge_cgroup:
+ 	hugetlb_cgroup_uncharge_cgroup_rsvd(hstate_index(h),
+ 					    chg * pages_per_huge_page(h), h_cg);
+-- 
+2.43.0
 
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 139 total, 136 passed, 3 failed
-* arm64: 57 total, 56 passed, 1 failed
-* i386: 18 total, 18 passed, 0 failed
-* mips: 34 total, 33 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 40 total, 35 passed, 5 failed
-* riscv: 25 total, 23 passed, 2 failed
-* s390: 22 total, 18 passed, 4 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 49 total, 48 passed, 1 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-* rt-tests-cyclicdeadline
-* rt-tests-pi-stress
-* rt-tests-pmqtest
-* rt-tests-rt-migrate-test
-* rt-tests-signaltest
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
