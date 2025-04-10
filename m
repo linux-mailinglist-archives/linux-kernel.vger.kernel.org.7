@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-598259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3134EA84419
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:07:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6E7A84423
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C6E47A9B2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:06:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E8BC7A7F73
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1995228CF65;
-	Thu, 10 Apr 2025 13:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEBA28C5D0;
+	Thu, 10 Apr 2025 13:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DKUfOygc"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mQoBHaao"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BDA2857E3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D10328D83A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744290384; cv=none; b=HTfqJFb9T451bKObqebLujUpo05UGn5txCgQZXvOw6frGxMTnMn1EvEB6vKg4t9tSGwyUIfUHDD11evbKdWWYzF1VpVoyesCaLP505+8P/Nv4cXxusAD9HTrINhHRQt5DEauk0lfKDJl+0iH9WmjXYr2cWGuvuLnqcL+5riIgIw=
+	t=1744290390; cv=none; b=OqSU2xAAxH/1by+3N+Y3xxCj7drBek1Ubh7yo6qZWjQArAjqrglgt94xs8TE8mGcr+OKl5yH6C43Yh1QWs/UxAquU1OklQ6LRtS8xgIYerHuwTS2QYAsxqyHB/xbJKuucinnTikRYPRjhlTWBbehe4T8IJvGdQtq3sPe4Sf4Ewo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744290384; c=relaxed/simple;
-	bh=UEBGq2hN5wuyKESgk2qgoOZe9WblBnLEGKHOMjBPOuA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ag2GwI8nfUqNQowkMxxG/Oy8MMRjuYaup/9Qn2BgfiHSJdCQscAc/ru5T3W8hun92Vt8NEu4ArLlYGUAkkSfHkbrNsxHG6s3lWNKREfiWXW5DrZX0kdy8znsGnDDAmDECYQyJaOFFg0QBnzg1sP9hm20Fk+YZKI7bp5jHLcZQ10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DKUfOygc; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1744290390; c=relaxed/simple;
+	bh=cnOuUiTe3Ho5T4fYaHsNPW7c89nIldGijKaXdVhE6n4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NNK4av/tEfoMER3DYBwtLRgcMP/4VITLw/PgCnOtnR4tr8kgUQv1BvLrJELSUBRb46agq/zVHeP2GFGEBEFvpcU+MKfosVDE4dC9DspMr7y6frnNxJ+D+Sl9E0GNPDm/LV6u/kE4+lyYY7j7aqBWbO9do/GWrWL03dfYjKRvqQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mQoBHaao; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3914a5def6bso408759f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:06:22 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso6015585e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:06:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744290381; x=1744895181; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yYrkXMhVp27P99Ekcj0WCJBHRLqLKPjr4SvWz6cnHC4=;
-        b=DKUfOygc0VqpNezyybXjSQ2PMao+rervOXS/C816hrRIKWQGIOrB6wdJqla+ofC8oH
-         i8JpZcK7KnuuHsXOoaZv8/rsawKHeSCa+J4hadpChDKmgBSiPB83MeUiqRjPXh+yNurA
-         XhMR55B9TeOq6DzTRKb7QXSLm/OzVIDuJwVRD+elSkQWo8IJHBA5U66ZH9N2CgHWnajj
-         wQU2ZIGYAKMcvAhQEDvwdM60qrDciQMyq6nti70nWVIBz3HdIWAvfWRq74vnPGgJ0ECa
-         cdmBxWjHJBDzLTSTgIVCuH0IMJK6LHINvwrC0Kzh3Ktok99F/ktEBbJLKr+wvQ+nn/yW
-         j97w==
+        d=gmail.com; s=20230601; t=1744290386; x=1744895186; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3KpF9SfZWwknZK9NjJkeKkgsOEETiClwbvQ0kGUScvk=;
+        b=mQoBHaaod9CbDYChlghlnu0pZpqmrayNpITKewTXioVNp9AaNWV2LjZqCkg7YYTT0w
+         2sYj4ytT9+BnntwQ/F84dcXjWVWHu9EFb3FmYi63Hypt4yqkhQg7vBTe52v49We5BQF1
+         4uvwJ5PluLQF6Cbidudd23Ax+xRljutWXfcgpTvr+sr904Q2bBkCDe80JEfkKWU2lvt8
+         2ir1fWrYa3/npLvNQrZLhQZrEKT1xw1F1JjqBkWgTp69b1M+UTh3FUaJX5ZEM1zN7Nv2
+         fN6atcc3XOUVs+H0SHxXmG9OH+6afi/07amz9TMMMc8uO5/dYzTro6JJQQruPHoxQOFw
+         uvOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744290381; x=1744895181;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yYrkXMhVp27P99Ekcj0WCJBHRLqLKPjr4SvWz6cnHC4=;
-        b=DKFRG+Mjp24S5r/RR4ub0HQwrYFmxl7IZ9ZQTR+U/GolrTBoAgKMZGNlCYHLM9LJ8S
-         94R889/PuLDQTGHWcjfn7MF6IXgPi1xmpRHvlHpI7IJ2ilcUjYUdKnI0poe1B7oHnikF
-         aIj8XKIQfz3dekv7KEg/QXnxDdqCbGHkABsPGFuPiXdHwZWAE5tfnO3E/nHV86yiBNIM
-         AxSrtL0Re9M6tF3BYHge5/rgZsE9T6oMjUwbV8W1+cK+H0Zq1gNCJ60xPY4m+LY7v00P
-         pVvfpwwTQI+PFAAbwigGz3VLNV14BILNJR/wJrt9sRp50LZjN5M99lPv6MDVEQByZIE1
-         Z/YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrn6lpodCX3M/58hCQdG355VaqgGWXtaHCf3J2WlJDsWlHmCrKdYeNPsky0k3FV9zqQaVHmBtMTxPMIPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/wqcAtQE8NLQhV32c09N1UoacztAjj0iztXEdJl0zl05jo/O/
-	Iz11Q9Sx7mzScccOsCYSTzQb1JObWJF2rCPQEuhRd26EOVENLzIX
-X-Gm-Gg: ASbGncun9N1hxG1xkL2goUno/lo2y+RnLc2nuhzgva4fZ3ojHbkMTqoYNWNpo8FWkut
-	z83XA7hUu9sS3HcqTuTe0rnV97TVFsZmjBciGntRKjHh29d22dteH6U0VXNEE+V2TfiO5U/AWWV
-	k14jGGiS/IwNPau5FrsefFqS5Mzil+cJPU0iJNb5Idqme135GwbWJK3hat9MwfoG1xT+Z/Z+WOy
-	Kwk4jv3sHL9CcAmvFrAcPR25KXIoMJTJ7gFjYXoO9PchTr2CK03zQEPzQJlAj14p5FLMzxbT4t+
-	qGMjzjfwNxoAuW0sQGSU45yiOiB3OJg4FOBRWPeScfTQQLQ3
-X-Google-Smtp-Source: AGHT+IFnxvs0neXn/HotI7cfUpQWPwUidvB7rcaPFjsSEOWbq0mwTAGjvs6LC5eBHoLyoc+WimQakg==
-X-Received: by 2002:a05:6000:381:b0:39c:2665:2ce7 with SMTP id ffacd0b85a97d-39d8f4f3461mr1949213f8f.53.1744290380290;
-        Thu, 10 Apr 2025 06:06:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744290386; x=1744895186;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3KpF9SfZWwknZK9NjJkeKkgsOEETiClwbvQ0kGUScvk=;
+        b=EWfVcmHB9Qi6Dwsw4wWFsV4NqbD7ieQdRbv3SHmp9oS5cKqOObDS+zmJkl0o4EUWJH
+         xv4jDGuYwhl6qrYnQ8kijkQgp+vwT5KDw49ddVgSgmnuoOugLrp4QooGQLizjnViFVEB
+         XWYQ9QxtSYGxjuzqNnXllyzwDqYKuxmq+gm3xaJdZOgJVDuhoctjsPPcb6cfPjr/aPR/
+         z7Vy69xZ/HLc6wxfXlLu0zrx26bmi3XnA84mPTfA9Rzfb/zZDsUdm3AaJ5mp6cC95uz5
+         eNOdkb1Ch8IlM69MecG29K+r8DoKcfaldrr53mPFcCCTKTf5UGyNxvGl16C+kcaGRytF
+         lEeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxzJr/WmZ0yuYr0Zx3UfooATCSOan50HwU10ZvOz9f1PHmfsLfVvpQJ0/QYD6+UlN1MJ65KC1MuJzqS2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYqginXsThibs26rF/GvZuyJ0FijgJUJHfNgTguRC2VE3pJNUG
+	icLYkqcUdg40Ipl6s2ktHNQyOp5rpUY9rbRe6h7pSWusBw8nkZk7
+X-Gm-Gg: ASbGncul1vvGijqcASTD1qfs+tcjQYbnoDlsiCm+BpK3vdsC4uh7liqWDWnlyU+jtUW
+	Ik70jTrBRdg3grRREfbAmSw3qip3Or47tjbximcyRtVwv1QLx+LqKo5BXUg2M9d/AnCVFGiZIuK
+	jPTQpKPJK8CSA6kx+nZJ4sy0uZcrXP0WL6wtAUyiKz0qCd9FA3A5mfMSiQUfsf+8W88UIYFDBeb
+	SHH6kF7g/t9a15V7RlvQcBALU1bYbO+Ys6uSkCNoW4RoCIENGrkfrNyYUAWoEJOwHKzmU7Rsr3c
+	B6u0s2ObI+UVOI+/5hOdetPOdtyzPtBbVLmbRw==
+X-Google-Smtp-Source: AGHT+IEXxWXeDdUFKg0JMdVhDar9E3Hqv/jvd/iAbcSOtIAVNlERHeywklQ8I5H/mrccs+8fJdXc+w==
+X-Received: by 2002:a05:600c:4e14:b0:43d:db5:7af8 with SMTP id 5b1f17b1804b1-43f2ff9af48mr18725805e9.21.1744290386034;
+        Thu, 10 Apr 2025 06:06:26 -0700 (PDT)
 Received: from pc.. ([197.155.71.138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f2075fc6dsm55013045e9.28.2025.04.10.06.06.17
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f2075fc6dsm55013045e9.28.2025.04.10.06.06.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 06:06:19 -0700 (PDT)
+        Thu, 10 Apr 2025 06:06:25 -0700 (PDT)
 From: Erick Karanja <karanja99erick@gmail.com>
 To: gregkh@linuxfoundation.org,
 	outreachy@lists.linux.dev
@@ -76,10 +78,12 @@ Cc: karanja99erick@gmail.com,
 	philipp.g.hortmann@gmail.com,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/6] Improve code readability in rtl8723bs module
-Date: Thu, 10 Apr 2025 16:06:05 +0300
-Message-ID: <cover.1744285781.git.karanja99erick@gmail.com>
+Subject: [PATCH 1/6] staging: rtl8723bs: Improve code readability in sdio_ops.c
+Date: Thu, 10 Apr 2025 16:06:06 +0300
+Message-ID: <9c8473662caa96a8d312415e9006f74f48098f98.1744285781.git.karanja99erick@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1744285781.git.karanja99erick@gmail.com>
+References: <cover.1744285781.git.karanja99erick@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,31 +92,200 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The patchset aims at improving code readability by initializing
-variables at declaration.
-The patches can be applied in any sequence.
-found by coccinelle.
+Make the code more readable by moving trivial
+initializations up with the declarations instead
+of wasting a line on that.
 
-Erick Karanja (6):
-  staging: rtl8723bs: Improve code readability in sdio_ops.c
-  staging: rtl8723bs: Initialize variables at declaration in
-    odm_HWConfig.c
-  staging: rtl8723bs: Initialize variables at declaration in hal_com.c
-  staging: rtl8723bs: Initialize variables at declaration in
-    sdio_halinit.c
-  staging: rtl8723bs: Initialize variables at declaration in
-    hal_btcoex.c
-  staging: rtl8723bs: Initialize variables at declaration in
-    rtl8723bs_recv.c
+Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+---
+ drivers/staging/rtl8723bs/hal/sdio_ops.c | 59 +++++++-----------------
+ 1 file changed, 17 insertions(+), 42 deletions(-)
 
- drivers/staging/rtl8723bs/hal/hal_btcoex.c    | 174 +++++-------------
- drivers/staging/rtl8723bs/hal/hal_com.c       |   6 +-
- drivers/staging/rtl8723bs/hal/odm_HWConfig.c  |   3 +-
- .../staging/rtl8723bs/hal/rtl8723bs_recv.c    |  11 +-
- drivers/staging/rtl8723bs/hal/sdio_halinit.c  |  11 +-
- drivers/staging/rtl8723bs/hal/sdio_ops.c      |  59 ++----
- 6 files changed, 71 insertions(+), 193 deletions(-)
-
+diff --git a/drivers/staging/rtl8723bs/hal/sdio_ops.c b/drivers/staging/rtl8723bs/hal/sdio_ops.c
+index 8736c124f857..1e03413e242c 100644
+--- a/drivers/staging/rtl8723bs/hal/sdio_ops.c
++++ b/drivers/staging/rtl8723bs/hal/sdio_ops.c
+@@ -53,9 +53,8 @@ static void hal_sdio_get_cmd_addr_8723b(
+ static u8 get_deviceid(u32 addr)
+ {
+ 	u8 devide_id;
+-	u16 pseudo_id;
++	u16 pseudo_id = (u16)(addr >> 16);
+ 
+-	pseudo_id = (u16)(addr >> 16);
+ 	switch (pseudo_id) {
+ 	case 0x1025:
+ 		devide_id = SDIO_LOCAL_DEVICE_ID;
+@@ -150,7 +149,7 @@ static u16 sdio_read16(struct intf_hdl *intfhdl, u32 addr)
+ 
+ static u32 sdio_read32(struct intf_hdl *intfhdl, u32 addr)
+ {
+-	struct adapter *adapter;
++	struct adapter *adapter = intfhdl->padapter;
+ 	u8 mac_pwr_ctrl_on;
+ 	u8 device_id;
+ 	u16 offset;
+@@ -160,7 +159,6 @@ static u32 sdio_read32(struct intf_hdl *intfhdl, u32 addr)
+ 	s32 __maybe_unused err;
+ 	__le32 le_tmp;
+ 
+-	adapter = intfhdl->padapter;
+ 	ftaddr = _cvrt2ftaddr(addr, &device_id, &offset);
+ 
+ 	rtw_hal_get_hwreg(adapter, HW_VAR_APFM_ON_MAC, &mac_pwr_ctrl_on);
+@@ -196,16 +194,13 @@ static u32 sdio_read32(struct intf_hdl *intfhdl, u32 addr)
+ 
+ static s32 sdio_readN(struct intf_hdl *intfhdl, u32 addr, u32 cnt, u8 *buf)
+ {
+-	struct adapter *adapter;
++	struct adapter *adapter = intfhdl->padapter;
+ 	u8 mac_pwr_ctrl_on;
+ 	u8 device_id;
+ 	u16 offset;
+ 	u32 ftaddr;
+ 	u8 shift;
+-	s32 err;
+-
+-	adapter = intfhdl->padapter;
+-	err = 0;
++	s32 err = 0;
+ 
+ 	ftaddr = _cvrt2ftaddr(addr, &device_id, &offset);
+ 
+@@ -262,18 +257,15 @@ static s32 sdio_write16(struct intf_hdl *intfhdl, u32 addr, u16 val)
+ 
+ static s32 sdio_write32(struct intf_hdl *intfhdl, u32 addr, u32 val)
+ {
+-	struct adapter *adapter;
++	struct adapter *adapter = intfhdl->padapter;
+ 	u8 mac_pwr_ctrl_on;
+ 	u8 device_id;
+ 	u16 offset;
+ 	u32 ftaddr;
+ 	u8 shift;
+-	s32 err;
++	s32 err = 0;
+ 	__le32 le_tmp;
+ 
+-	adapter = intfhdl->padapter;
+-	err = 0;
+-
+ 	ftaddr = _cvrt2ftaddr(addr, &device_id, &offset);
+ 
+ 	rtw_hal_get_hwreg(adapter, HW_VAR_APFM_ON_MAC, &mac_pwr_ctrl_on);
+@@ -300,16 +292,13 @@ static s32 sdio_write32(struct intf_hdl *intfhdl, u32 addr, u32 val)
+ 
+ static s32 sdio_writeN(struct intf_hdl *intfhdl, u32 addr, u32 cnt, u8 *buf)
+ {
+-	struct adapter *adapter;
++	struct adapter *adapter = intfhdl->padapter;
+ 	u8 mac_pwr_ctrl_on;
+ 	u8 device_id;
+ 	u16 offset;
+ 	u32 ftaddr;
+ 	u8 shift;
+-	s32 err;
+-
+-	adapter = intfhdl->padapter;
+-	err = 0;
++	s32 err = 0;
+ 
+ 	ftaddr = _cvrt2ftaddr(addr, &device_id, &offset);
+ 
+@@ -388,13 +377,11 @@ static u32 sdio_read_port(
+ 	u8 *mem
+ )
+ {
+-	struct adapter *adapter;
+-	struct sdio_data *psdio;
++	struct adapter *adapter = intfhdl->padapter;
++	struct sdio_data *psdio = &adapter_to_dvobj(adapter)->intf_data;
+ 	struct hal_com_data *hal;
+ 	s32 err;
+ 
+-	adapter = intfhdl->padapter;
+-	psdio = &adapter_to_dvobj(adapter)->intf_data;
+ 	hal = GET_HAL_DATA(adapter);
+ 
+ 	hal_sdio_get_cmd_addr_8723b(adapter, addr, hal->SdioRxFIFOCnt++, &addr);
+@@ -432,14 +419,11 @@ static u32 sdio_write_port(
+ 	u8 *mem
+ )
+ {
+-	struct adapter *adapter;
+-	struct sdio_data *psdio;
++	struct adapter *adapter = intfhdl->padapter;
++	struct sdio_data *psdio = &adapter_to_dvobj(adapter)->intf_data;
+ 	s32 err;
+ 	struct xmit_buf *xmitbuf = (struct xmit_buf *)mem;
+ 
+-	adapter = intfhdl->padapter;
+-	psdio = &adapter_to_dvobj(adapter)->intf_data;
+-
+ 	if (!adapter->hw_init_completed)
+ 		return _FAIL;
+ 
+@@ -487,14 +471,12 @@ static s32 _sdio_local_read(
+ 	u8 *buf
+ )
+ {
+-	struct intf_hdl *intfhdl;
++	struct intf_hdl *intfhdl = &adapter->iopriv.intf;
+ 	u8 mac_pwr_ctrl_on;
+ 	s32 err;
+ 	u8 *tmpbuf;
+ 	u32 n;
+ 
+-	intfhdl = &adapter->iopriv.intf;
+-
+ 	hal_sdio_get_cmd_addr_8723b(adapter, SDIO_LOCAL_DEVICE_ID, addr, &addr);
+ 
+ 	rtw_hal_get_hwreg(adapter, HW_VAR_APFM_ON_MAC, &mac_pwr_ctrl_on);
+@@ -525,14 +507,12 @@ s32 sdio_local_read(
+ 	u8 *buf
+ )
+ {
+-	struct intf_hdl *intfhdl;
++	struct intf_hdl *intfhdl = &adapter->iopriv.intf;
+ 	u8 mac_pwr_ctrl_on;
+ 	s32 err;
+ 	u8 *tmpbuf;
+ 	u32 n;
+ 
+-	intfhdl = &adapter->iopriv.intf;
+-
+ 	hal_sdio_get_cmd_addr_8723b(adapter, SDIO_LOCAL_DEVICE_ID, addr, &addr);
+ 
+ 	rtw_hal_get_hwreg(adapter, HW_VAR_APFM_ON_MAC, &mac_pwr_ctrl_on);
+@@ -566,13 +546,11 @@ s32 sdio_local_write(
+ 	u8 *buf
+ )
+ {
+-	struct intf_hdl *intfhdl;
++	struct intf_hdl *intfhdl = &adapter->iopriv.intf;
+ 	u8 mac_pwr_ctrl_on;
+ 	s32 err;
+ 	u8 *tmpbuf;
+ 
+-	intfhdl = &adapter->iopriv.intf;
+-
+ 	hal_sdio_get_cmd_addr_8723b(adapter, SDIO_LOCAL_DEVICE_ID, addr, &addr);
+ 
+ 	rtw_hal_get_hwreg(adapter, HW_VAR_APFM_ON_MAC, &mac_pwr_ctrl_on);
+@@ -839,11 +817,8 @@ static struct recv_buf *sd_recv_rxfifo(struct adapter *adapter, u32 size)
+ 
+ static void sd_rxhandler(struct adapter *adapter, struct recv_buf *recvbuf)
+ {
+-	struct recv_priv *recv_priv;
+-	struct __queue *pending_queue;
+-
+-	recv_priv = &adapter->recvpriv;
+-	pending_queue = &recv_priv->recv_buf_pending_queue;
++	struct recv_priv *recv_priv = &adapter->recvpriv;
++	struct __queue *pending_queue = &recv_priv->recv_buf_pending_queue;
+ 
+ 	/* 3 1. enqueue recvbuf */
+ 	rtw_enqueue_recvbuf(recvbuf, pending_queue);
 -- 
 2.43.0
 
