@@ -1,143 +1,182 @@
-Return-Path: <linux-kernel+bounces-597717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537F1A83D9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:56:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0CEA83DA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E88E1B83276
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:55:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697D11B84A74
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5FC204594;
-	Thu, 10 Apr 2025 08:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD8320C49C;
+	Thu, 10 Apr 2025 08:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqWEvgWI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FTZOJgzl"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8C51DF97F;
-	Thu, 10 Apr 2025 08:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692E120C472;
+	Thu, 10 Apr 2025 08:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744275327; cv=none; b=RNMcH6f6l2lz8pJBjYyQuny/OomLY3HM79pFcvxJDh5YT8jR1w1berbrTf0+QIpCZbg/t3TKPCiZrLG2SBa4pABkFPvQGDpbsQLqn+4BhN973AJ+lyjj66W1J8rYjqFQ/3GgWwrBvZE/SMs6ypSEK8A2LuBHsYb2M4WE1OV61dk=
+	t=1744275347; cv=none; b=vD4cbUYY3J4KT4T+0qUUp+0JgbeVugpabpjvOKL3IQDv1/eBvIVhAq3q5g7pNuv49AFggsVpH7x2/jNuJrq7AE0wDFTG+wPIxRj6tcu/0z8qtJ4lgS2/PfQg79AwohAH8bFTv6JsgU+pZWOQ7lrqhoH6i7UzXay3WjUDCbVbRUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744275327; c=relaxed/simple;
-	bh=EhMxPe8hnh5VvcDeuDZAxU1vq1abjs5GoHLLbLqj+c8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BP6HwNre2KR1Swrg+JO3PhkA6vd6cTze+GkQl5C3UpZNuPFm9daBNmx7omMz95/A8ibxuQMA9RZd5rnNVyyAZpMhQQM4/dpgUwzMgRyLl2/jUrFOTJwRT3C/6+6dqzA7eP9on16MK5wOh7CQd6hYC2gvUSEi2ZSkt71LvUnLtQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqWEvgWI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12DB5C4CEDD;
-	Thu, 10 Apr 2025 08:55:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744275326;
-	bh=EhMxPe8hnh5VvcDeuDZAxU1vq1abjs5GoHLLbLqj+c8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FqWEvgWI/XnLXFuYOLuajdLysIghAhqgtwM2lDY8VkijptZ6Jub5hI/sgkCyzB4AU
-	 7F4LHGGSICvkrzG87nO4V59OEMARsAZ3ivWLUaK3TYd6dZpucWevVOugw+ahQaYvd1
-	 Tuda5bDZCrROV4NzK/sR7KCwwUllVWDVmwHRN2KU50VQoB/6HxdZQ0z0ZAjJq7k9pW
-	 Xl3vjJEHcbZ0V8JCtsoGwgeOIPvv+ZMmUY6TIwXLOaGjEfW/kMoy7xc65kRkHFshy1
-	 uuag0t29M/ebinTHcUBB2Kd1udm0Sq80o8XxEqTPZWnKwFI4f830Nl5ntzjtXBHm71
-	 YGwos6QUwcvMA==
-Date: Thu, 10 Apr 2025 11:55:22 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Purva Yeshi <purvayeshi550@gmail.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>, peterhuewe@gmx.de,
-	jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] char: tpm: tpm-buf: Fix uninitialized return values in
- read helpers
-Message-ID: <Z_eHei1jT0YoPgki@kernel.org>
-References: <20250409205536.210202-1-purvayeshi550@gmail.com>
- <Z_dh4tRIa6xxAWQ2@kernel.org>
- <t2ri7facyvtmt6rx6xwcjos7rgtyiln7cywl2gt4effgukeejc@f3ml4apdh4zs>
- <fab2bb2d-a78e-4130-a5fd-bf07430210c7@gmail.com>
+	s=arc-20240116; t=1744275347; c=relaxed/simple;
+	bh=Z1lx0c1DKy5mQNqT6KE2lwDMPc9LmjPkKs+Fx0auDmA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AYIl5TI/59VABBjiwxKgNuCHNioKQmEb3EhY9xLmj4JRVmyBY+gQ511qT0sVKaWZVZb//hNepa8ONiH2GdxzYMrK4MyyShtrShaUULwkKQa2ZBfAVfZG9mWvL/yupLWuoxH35qK6MouKIUAeZ52D3W7moPxAq03R9hnFBqsZNBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FTZOJgzl; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53A6Ym42026369;
+	Thu, 10 Apr 2025 08:55:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=ftmgQ0hy9b7VESd2ry5NzRU/B9QR7Vu65vxMfgkf2
+	OY=; b=FTZOJgzlezNhMcLEvQ4BX6guds4aD2QOcUSS5irDnwoVs0MjJb2fz92S4
+	JddtjS7jynWmJBS4CV5EgXui47WRqvEBfP0Jt79ZwhsYUbVEM6FAxTIxTTAXFaVO
+	e5J66gamk8DI20jX7PeXXkNtcHB2m9qA3urcM39ipFWriB3iRcEsN55q2e6uBoaz
+	hLIvIUL2iw+aFWEtLGddkMx5euYNa+dsOiSDnxfmACQIlr3OJzhmnMVqjwPyc2AB
+	yNE3KeM1dO9woTOaSeSxrZDdRDdIClG7l/ymLgWybFKgIRDXZwVHNkfslykQCZOh
+	amiCRe9jZh1URT2iiK018LEqN7/Fw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45wtaq5wd0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Apr 2025 08:55:41 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53A8jvPL023330;
+	Thu, 10 Apr 2025 08:55:40 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45wtaq5wcv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Apr 2025 08:55:40 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53A69S3L025522;
+	Thu, 10 Apr 2025 08:55:39 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45ugbm56nr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Apr 2025 08:55:39 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53A8tZUA60490180
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Apr 2025 08:55:35 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B9DCE2004D;
+	Thu, 10 Apr 2025 08:55:35 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 53C7A2004E;
+	Thu, 10 Apr 2025 08:55:35 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 10 Apr 2025 08:55:35 +0000 (GMT)
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
+        ctshao@google.com, rogers@google.com
+Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com, Ian Rogers <irogers@google.com>,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH v3] perf test: Allow tolerance for leader sampling test
+Date: Thu, 10 Apr 2025 10:55:22 +0200
+Message-ID: <20250410085522.465401-1-tmricht@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fab2bb2d-a78e-4130-a5fd-bf07430210c7@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: vB2vORDWAwoH2u11gdTtliCe-PftC9hp
+X-Proofpoint-ORIG-GUID: Vrr_n4BZyw4iIP_S5CFYMsxTJDhxQbT4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-10_01,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=886 bulkscore=0 adultscore=0
+ spamscore=0 malwarescore=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502280000 definitions=main-2504100062
 
-On Thu, Apr 10, 2025 at 02:12:07PM +0530, Purva Yeshi wrote:
-> On 10/04/25 13:21, Stefano Garzarella wrote:
-> > On Thu, Apr 10, 2025 at 09:14:58AM +0300, Jarkko Sakkinen wrote:
-> > > On Thu, Apr 10, 2025 at 02:25:36AM +0530, Purva Yeshi wrote:
-> > > > Fix Smatch-detected error:
-> > > > drivers/char/tpm/tpm-buf.c:208 tpm_buf_read_u8() error:
-> > > > uninitialized symbol 'value'.
-> > > > drivers/char/tpm/tpm-buf.c:225 tpm_buf_read_u16() error:
-> > > > uninitialized symbol 'value'.
-> > > > drivers/char/tpm/tpm-buf.c:242 tpm_buf_read_u32() error:
-> > > > uninitialized symbol 'value'.
-> > > > 
-> > > > Call tpm_buf_read() to populate value but do not check its return
-> > > > status. If the read fails, value remains uninitialized, causing
-> > > > undefined behavior when returned or processed.
-> > > > 
-> > > > Initialize value to zero to ensure a defined return even if
-> > > > tpm_buf_read() fails, avoiding undefined behavior from using
-> > > > an uninitialized variable.
-> > > 
-> > > How does tpm_buf_read() fail?
-> > 
-> > If TPM_BUF_BOUNDARY_ERROR is set (or we are setting it), we are
-> > effectively returning random stack bytes to the caller.
-> > Could this be a problem?
-> > 
-> > If it is, maybe instead of this patch, we could set `*output` to zero in
-> > the error path of tpm_buf_read(). Or return an error from tpm_buf_read()
-> > so callers can return 0 or whatever they want.
-> > 
-> > Thanks,
-> > Stefano
-> > 
-> 
-> Hi Jarkko, Stefano,
-> Thank you for the review.
-> 
-> I've revisited the issue and updated the implementation of tpm_buf_read() to
-> zero out the *output buffer in the error paths, instead of initializing the
-> return value in each caller.
-> 
-> static void tpm_buf_read(struct tpm_buf *buf, off_t *offset, size_t count,
-> void *output)
-> {
-> 	off_t next_offset;
-> 
-> 	/* Return silently if overflow has already happened. */
-> 	if (buf->flags & TPM_BUF_BOUNDARY_ERROR) {
-> 		memset(output, 0, count);
-> 		return;
-> 	}
-> 
-> 	next_offset = *offset + count;
-> 	if (next_offset > buf->length) {
-> 		WARN(1, "tpm_buf: read out of boundary\n");
-> 		buf->flags |= TPM_BUF_BOUNDARY_ERROR;
-> 		memset(output, 0, count);
-> 		return;
-> 	}
-> 
-> 	memcpy(output, &buf->data[*offset], count);
-> 	*offset = next_offset;
-> }
+V3: Added check for missing samples as suggested by Chun-Tse.
+V2: Changed bc invocation to return 0 on success and 1 on error.
 
-Please don't touch this.
+There is a known issue that the leader sampling is inconsistent, since
+throttle only affect leader, not the slave. The detail is in [1]. To
+maintain test coverage, this patch sets a tolerance rate of 80% to
+accommodate the throttled samples and prevent test failures due to
+throttling.
 
-> 
-> This approach ensures that output is always zeroed when the read fails,
-> which avoids returning uninitialized stack values from the helper functions
-> like tpm_buf_read_u8(), tpm_buf_read_u16(), and tpm_buf_read_u32().
-> 
-> Does this solution look acceptable for the next version of the patch?
-> 
-> Best regards,
-> Purva Yeshi
+[1] lore.kernel.org/20250328182752.769662-1-ctshao@google.com
 
-BR, Jarkko
+Signed-off-by: Chun-Tse Shao <ctshao@google.com>
+Suggested-by: Ian Rogers <irogers@google.com>
+Suggested-by: Thomas Richter <tmricht@linux.ibm.com>
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+---
+ tools/perf/tests/shell/record.sh | 33 ++++++++++++++++++++++++++------
+ 1 file changed, 27 insertions(+), 6 deletions(-)
+
+diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
+index ba8d873d3ca7..0075ffe783ad 100755
+--- a/tools/perf/tests/shell/record.sh
++++ b/tools/perf/tests/shell/record.sh
+@@ -238,22 +238,43 @@ test_leader_sampling() {
+     err=1
+     return
+   fi
++  perf script -i "${perfdata}" | grep brstack > $script_output
++  # Check if the two instruction counts are equal in each record.
++  # However, the throttling code doesn't consider event grouping. During throttling, only the
++  # leader is stopped, causing the slave's counts significantly higher. To temporarily solve this,
++  # let's set the tolerance rate to 80%.
++  # TODO: Revert the code for tolerance once the throttling mechanism is fixed.
+   index=0
+-  perf script -i "${perfdata}" > $script_output
++  valid_counts=0
++  invalid_counts=0
++  tolerance_rate=0.8
+   while IFS= read -r line
+   do
+-    # Check if the two instruction counts are equal in each record
+     cycles=$(echo $line | awk '{for(i=1;i<=NF;i++) if($i=="cycles:") print $(i-1)}')
+     if [ $(($index%2)) -ne 0 ] && [ ${cycles}x != ${prev_cycles}x ]
+     then
+-      echo "Leader sampling [Failed inconsistent cycles count]"
+-      err=1
+-      return
++      invalid_counts=$(($invalid_counts+1))
++    else
++      valid_counts=$(($valid_counts+1))
+     fi
+     index=$(($index+1))
+     prev_cycles=$cycles
+   done < $script_output
+-  echo "Basic leader sampling test [Success]"
++  total_counts=$(bc <<< "$invalid_counts+$valid_counts")
++  if (( $(bc <<< "$total_counts <= 0") ))
++  then
++    echo "Leader sampling [No sample generated]"
++    err=1
++    return
++  fi
++  isok=$(bc <<< "scale=2; if (($invalid_counts/$total_counts) < (1-$tolerance_rate)) { 0 } else { 1 };")
++  if [ $isok -eq 1 ]
++  then
++     echo "Leader sampling [Failed inconsistent cycles count]"
++     err=1
++  else
++    echo "Basic leader sampling test [Success]"
++  fi
+ }
+ 
+ test_topdown_leader_sampling() {
+-- 
+2.49.0
+
 
