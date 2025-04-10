@@ -1,157 +1,122 @@
-Return-Path: <linux-kernel+bounces-597502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98C38A83AA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:17:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FCA4A83A9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82D5C188BFC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:16:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 931FE7AD3A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478D3208989;
-	Thu, 10 Apr 2025 07:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165AA20A5EE;
+	Thu, 10 Apr 2025 07:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eptIZUAl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q64sysY0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2788207A2C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA7A204C3C;
+	Thu, 10 Apr 2025 07:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744269389; cv=none; b=LDB63y9xbdgcBQNDkghO4yXh1yVIGJFCDB25z15AmkkVizNGT6tONKSiE8sXLjuRt1eS1TEW4KVIRXNzQADFuAYux95CpKMME3Pw4iS0fMHqsO4qm3r9jbnzdKsufYMw+FcnMCamWPqVKauBP7etHFMYOrYeWMKc0v6GrxCMHJE=
+	t=1744269415; cv=none; b=bRESvLya771BwN8UNHvukohxdhTqgxhITtRPYqC8A7CxEOEWJS6cgZPR56yB8guyy2Dy7BnHwoxWm0XfNDKnndHBW/NFpIg2XyMLjjmZpdgoHZH+xr3BdnlVuEF3rSm+lWlAUMIBZHoP5IOGSS2/sBFjkW4DrwuN2H70ghM2miA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744269389; c=relaxed/simple;
-	bh=R4kkkcVVHPzCslI6+XyVJA1Y1Bm2lhw2qswzN6HQ8vk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BNxt6nLj8fKQJmzHWJ8cnScCU8+KFHATuxxz1+PwrCarg3kZV/gZ84qIo5SvBPs1j0Xa639f2t57X1Q2xCdyyczy0w6wyrxMAnvplBbF+32DjZ4mPcf+ULdzXCGjFYhbj4fflQaEYWGdZmlX00SkuqRWbCAGL1dkijNVWrgARTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eptIZUAl; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744269388; x=1775805388;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=R4kkkcVVHPzCslI6+XyVJA1Y1Bm2lhw2qswzN6HQ8vk=;
-  b=eptIZUAlrf6iNQmTTJrhK+9Mu/42nkCCbjvXEQjRMhJdXFBpAXB3eTKo
-   J+EKcAWJ93jtYR5IrhbdjL5rMxjsEhFPGAh4LOdmO0XpXluzv4aBMPn6t
-   STfdhCPNImMS37NO5hkHoLaAxEWuKZJODxbC5sX/W3HQ7n7W2pHcKMdYl
-   kBVI+gT5V5ekafvF/vxHGpgGEYnM33DrrOcWpKyP+vR+rigS1OLNFi7WR
-   AP0TiYJWYzOsHTAMzE/YiP5Fn+SuqAJ7VJDCvtVtSimkWQjnXk8+N6GkH
-   PswJMcwhrj+drH7Uf6djr1c+X8lUcToCdoolTshrEO4Lmi0fg5tRBpPHv
-   Q==;
-X-CSE-ConnectionGUID: W6+aUR1ITUqX8APbZqAFZw==
-X-CSE-MsgGUID: 43silI2pSNqgd0ZjnIFCPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="49612962"
-X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
-   d="scan'208";a="49612962"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 00:16:27 -0700
-X-CSE-ConnectionGUID: AmHfHo1fRUGdHcMQwo/88g==
-X-CSE-MsgGUID: bnLX8qyeRGWb5DOIaJhyUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
-   d="scan'208";a="133788870"
-Received: from kwywiol-mobl1.ger.corp.intel.com (HELO [10.245.83.152]) ([10.245.83.152])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 00:16:25 -0700
-Message-ID: <2435f0f1-fef4-4c7c-8584-55d5480ca245@linux.intel.com>
-Date: Thu, 10 Apr 2025 09:16:22 +0200
+	s=arc-20240116; t=1744269415; c=relaxed/simple;
+	bh=zAbhoNegydtMza1MTmjhtIxxlGmk108gu/bUj1yPPio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W6aZa4I9kaZByBP0Q57ZRoOt6gQQPCLupoJWBdBvSlwHNt8CZSo2y9it1rzefId8kqziNFpXLYYSOvZXA7+lZcSqFiAehX1p4k0tpa+KTuJqQQoL6Z1DqWIEvfuV7CU9mTUxHw+itbQY1Aou3tfrV6GcLTfgiHYlcixJJcostRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q64sysY0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFD61C4CEDD;
+	Thu, 10 Apr 2025 07:16:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744269413;
+	bh=zAbhoNegydtMza1MTmjhtIxxlGmk108gu/bUj1yPPio=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q64sysY0jJCV8AJ30ycX/Fct5MUGX4cE5zzOnqgO9ZAvRE83rON1bkPpme1Yvrl+j
+	 dYoAppyJEasLAu7ypfN5Gf+pFAROF+E6HSKR/M+EDdo2/g7xAAjf7Ezu3V0auqGYdl
+	 yr0r0CvIfJoc6303l233YJewTdjECN7swxrapB/1CtfFk/c+RTGWa5bq7R/Mm5ggrq
+	 tIF7pE3mhGuhWexWSRHsMIHvm2NMBU+uCcP7/NeD92rzYQ0/+oAM8U1a9eMZF6qq4l
+	 LXUQ5OJTMrBMgqBaiw0KMhb3vNx8rM5MME6/IMkupKzYPtnhTwA1vJOP95YxnoAg1T
+	 4TK/2AcaTJjZw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1u2m9g-000000003T3-1Bqx;
+	Thu, 10 Apr 2025 09:16:57 +0200
+Date: Thu, 10 Apr 2025 09:16:56 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+	krzysztof.kozlowski@linaro.org, linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dmitry.baryshkov@linaro.org, johan+linaro@kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] ASoC: q6apm: add q6apm_get_hw_pointer helper
+Message-ID: <Z_dwaEMoavqsGOEw@hovoldconsulting.com>
+References: <20250314174800.10142-1-srinivas.kandagatla@linaro.org>
+ <20250314174800.10142-3-srinivas.kandagatla@linaro.org>
+ <Z_O2RhwYp6iy02cM@hovoldconsulting.com>
+ <7222bbbd-51f7-43b6-9755-29808833cf5f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1] accel/amdxdna: Fix incorrect size of ERT_START_NPU
- commands
-To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
- quic_jhugo@quicinc.com, dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, min.ma@amd.com, max.zhen@amd.com,
- sonal.santan@amd.com, king.tam@amd.com
-References: <20250409210013.10854-1-lizhi.hou@amd.com>
-Content-Language: en-US
-From: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
-Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
- Gdansk - KRS 101882 - NIP 957-07-52-316
-In-Reply-To: <20250409210013.10854-1-lizhi.hou@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7222bbbd-51f7-43b6-9755-29808833cf5f@linaro.org>
 
-Reviewed-by: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+On Tue, Apr 08, 2025 at 09:07:27AM +0100, Srinivas Kandagatla wrote:
+> On 07/04/2025 12:25, Johan Hovold wrote:
+> > On Fri, Mar 14, 2025 at 05:47:57PM +0000, Srinivas Kandagatla wrote:
+> >> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> >>
+> >> Implement an helper function in q6apm to be able to read the current
+> >> hardware pointer for both read and write buffers.
+> >>
+> >> This should help q6apm-dai to get the hardware pointer consistently
+> >> without it doing manual calculation, which could go wrong in some race
+> >> conditions.
 
-On 4/9/2025 11:00 PM, Lizhi Hou wrote:
-> When multiple ERT_START_NPU commands are combined in one buffer, the
-> buffer size calculation is incorrect. Also, the condition to make sure
-> the buffer size is not beyond 4K is also fixed.
-> 
-> Fixes: aac243092b70 ("accel/amdxdna: Add command execution")
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
-> ---
->  drivers/accel/amdxdna/aie2_message.c  |  6 +++---
->  drivers/accel/amdxdna/aie2_msg_priv.h | 10 ++++------
->  2 files changed, 7 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/accel/amdxdna/aie2_message.c b/drivers/accel/amdxdna/aie2_message.c
-> index bf4219e32cc1..82412eec9a4b 100644
-> --- a/drivers/accel/amdxdna/aie2_message.c
-> +++ b/drivers/accel/amdxdna/aie2_message.c
-> @@ -525,7 +525,7 @@ aie2_cmdlist_fill_one_slot_cf(void *cmd_buf, u32 offset,
->  	if (!payload)
->  		return -EINVAL;
->  
-> -	if (!slot_cf_has_space(offset, payload_len))
-> +	if (!slot_has_space(*buf, offset, payload_len))
->  		return -ENOSPC;
->  
->  	buf->cu_idx = cu_idx;
-> @@ -558,7 +558,7 @@ aie2_cmdlist_fill_one_slot_dpu(void *cmd_buf, u32 offset,
->  	if (payload_len < sizeof(*sn) || arg_sz > MAX_DPU_ARGS_SIZE)
->  		return -EINVAL;
->  
-> -	if (!slot_dpu_has_space(offset, arg_sz))
-> +	if (!slot_has_space(*buf, offset, arg_sz))
->  		return -ENOSPC;
->  
->  	buf->inst_buf_addr = sn->buffer;
-> @@ -569,7 +569,7 @@ aie2_cmdlist_fill_one_slot_dpu(void *cmd_buf, u32 offset,
->  	memcpy(buf->args, sn->prop_args, arg_sz);
->  
->  	/* Accurate buf size to hint firmware to do necessary copy */
-> -	*size += sizeof(*buf) + arg_sz;
-> +	*size = sizeof(*buf) + arg_sz;
->  	return 0;
->  }
->  
-> diff --git a/drivers/accel/amdxdna/aie2_msg_priv.h b/drivers/accel/amdxdna/aie2_msg_priv.h
-> index 4e02e744b470..6df9065b13f6 100644
-> --- a/drivers/accel/amdxdna/aie2_msg_priv.h
-> +++ b/drivers/accel/amdxdna/aie2_msg_priv.h
-> @@ -319,18 +319,16 @@ struct async_event_msg_resp {
->  } __packed;
->  
->  #define MAX_CHAIN_CMDBUF_SIZE SZ_4K
-> -#define slot_cf_has_space(offset, payload_size) \
-> -	(MAX_CHAIN_CMDBUF_SIZE - ((offset) + (payload_size)) > \
-> -	 offsetof(struct cmd_chain_slot_execbuf_cf, args[0]))
-> +#define slot_has_space(slot, offset, payload_size)		\
-> +	(MAX_CHAIN_CMDBUF_SIZE >= (offset) + (payload_size) +	\
-> +	 sizeof(typeof(slot)))
-> +
->  struct cmd_chain_slot_execbuf_cf {
->  	__u32 cu_idx;
->  	__u32 arg_cnt;
->  	__u32 args[] __counted_by(arg_cnt);
->  };
->  
-> -#define slot_dpu_has_space(offset, payload_size) \
-> -	(MAX_CHAIN_CMDBUF_SIZE - ((offset) + (payload_size)) > \
-> -	 offsetof(struct cmd_chain_slot_dpu, args[0]))
->  struct cmd_chain_slot_dpu {
->  	__u64 inst_buf_addr;
->  	__u32 inst_size;
+> >> @@ -553,6 +567,8 @@ static int graph_callback(struct gpr_resp_pkt *data, void *priv, int op)
+> >>   		rd_done = data->payload;
+> >>   		phys = graph->tx_data.buf[hdr->token].phys;
+> >>   		mutex_unlock(&graph->lock);
+> >> +		/* token numbering starts at 0 */
+> >> +		atomic_set(&graph->tx_data.hw_ptr, hdr->token + 1);
+> >>   
+> >>   		if (upper_32_bits(phys) == rd_done->buf_addr_msw &&
+> >>   		    lower_32_bits(phys) == rd_done->buf_addr_lsw) {
+> > 
+> > 			graph->result.opcode = hdr->opcode;
+> >                          graph->result.status = rd_done->status;
+> >                          if (graph->cb)
+> >                                  graph->cb(client_event, hdr->token, data->payload, graph->priv);
+> >                  } else {
+> >                          dev_err(dev, "RD BUFF Unexpected addr %08x-%08x\n", rd_done->buf_addr_lsw,
+> >                                  rd_done->buf_addr_msw);
+> >                  }
+> > 
+> > I just hit the following error on the T14s with 6.15-rc1 that I've never
+> > seen before and which looks like it could be related to this series:
 
+> Its unlikely, but the timings have changed here.
+> I have not seen it either, but I will try to reproduce this with 6.15-rc1.
+> > 
+> > 	q6apm-dai 6800000.remoteproc:glink-edge:gpr:service@1:dais: RD BUFF Unexpected addr ffe0d200-00000001
+> > 
+> > Any ideas about what may be causing this?
+
+> How easy is this to reproduce?
+
+I've only noticed this error once on the first boot of 6.15-rc1, and it
+does not seem to show up again now.
+
+I did a fair bit of testing with this series on 6.14-rcs, but did not
+check the logs while doing so (and there's nothing in the logs I still
+have).
+
+Johan
 
