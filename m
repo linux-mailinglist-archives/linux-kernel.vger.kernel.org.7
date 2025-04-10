@@ -1,122 +1,106 @@
-Return-Path: <linux-kernel+bounces-599136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 713F7A84FB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 00:36:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1374A84FB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 00:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C29D3BE9BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:32:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2E764C81AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4752147F5;
-	Thu, 10 Apr 2025 22:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34016202990;
+	Thu, 10 Apr 2025 22:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EtI3RCGe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jYqxCwHd"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F332320FA90;
-	Thu, 10 Apr 2025 22:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CF42905
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 22:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744324342; cv=none; b=Expc+wkJ6q+44Iw8CIByOUZekQPxtOH6lAXkio6SlEh6GdaaDVl9OgMk2CE+7OucVAH/obRuuWs1yXWp9qfaa2d6YnTfTvTCDRl8GkLY8/euF94zut3yAV1pz8XyMV01qur1KZoSKEn/qnDWtJ9doft2oHR6noycOioMpQtP5oE=
+	t=1744324482; cv=none; b=aLVJhrmJfh6EJX/Obc6fiBnqzZ/LwHug8m6YkNneLzmk/WHGhZmEI3shcW0L8Z5/fTc0AQ/mrnrZ8IZILfgUKo5oOvaISmEdUWMnTt4EWVlDPE2nsXh7wBysnmP20VlB5lPmIOfWAYZCH0n7TxmXObdv+k4/QnrL5HEzRf7s4CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744324342; c=relaxed/simple;
-	bh=Mzf4z3JjeUDeBLBOc9nbGSbBtSvIhz9Znl+rjIhT6PU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X0WnvHbe2uc5yE5q4bLGp/H3Y8aX+H8BeFDFWl4+toD9jLuKplMNP0+jNhimjerIN2N+uyP3JwIczPr5PUiNvIUVUBZuCigccyamihYQdKYnikVzsjwouOHTwFKYbKnUNj8G3REHlya+245ujWPB6/eC0TamXGF3egkz3MSxlYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EtI3RCGe; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744324341; x=1775860341;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Mzf4z3JjeUDeBLBOc9nbGSbBtSvIhz9Znl+rjIhT6PU=;
-  b=EtI3RCGet/fs3FICqRpUf5Qe3vFbvLErMH4thHkpfBQA+6+qkTlOsHwr
-   zLW/X+RJ8zyriF0jfopST50AnXHbI4u/qs/qsxYROj0ZQCV5tgYv1UxFd
-   ydnOrh5Jfti6zQQ45z8gegH87HI8DjoFVLZCWJRlCh21G6xhbPfDNa1tz
-   tMt9u4d4cT36sN7/z/cOGm9YowjsVHhfN2YktRMFdv8v4rMy98tDKQapI
-   0aMtOYe6ogJHYMlrmS/aktYrr5Esp/S1H4iqudZLbwhKEMVTBD4Xe2Yzs
-   nUm5BtUYbr+YDf6WfKerKsIokCSzmSRoR08yFz8lklhg3FGde5ch0swW3
-   g==;
-X-CSE-ConnectionGUID: DVNr+4zcSseG1Lotvv/kZA==
-X-CSE-MsgGUID: 8ojcstYsSFGRCSlQ6yKStA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="56845638"
-X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
-   d="scan'208";a="56845638"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 15:32:17 -0700
-X-CSE-ConnectionGUID: gl2gaP72QhigRiB89MR90g==
-X-CSE-MsgGUID: zaO7X4RmSwSvUMSd1VjGkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
-   d="scan'208";a="128988759"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 15:32:17 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: rafael.j.wysocki@intel.com
-Cc: lenb@kernel.org,
-	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v3 4/4] ACPI: Add documentation for exposing MRRM data
-Date: Thu, 10 Apr 2025 15:32:07 -0700
-Message-ID: <20250410223207.257722-5-tony.luck@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250410223207.257722-1-tony.luck@intel.com>
-References: <20250410223207.257722-1-tony.luck@intel.com>
+	s=arc-20240116; t=1744324482; c=relaxed/simple;
+	bh=Wxm965eZNAy9BW5/MykKmQUsmb3umX7nRNXwA9XN5e4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LUtk62oTj6Ibe3Htubcov8zsAOVSwnoWbwUFAx/xzd9BoCsiv9+PJXxGcwVoWDAMYm0WmWVYv7STjerjFbVFKk8qukzM4neauWc+ZmJEmlwpZjxWO+ztdGxojTgINjSySGGevA1Q1h+9vU13w7ajJDv+Xp5wdmy80/d1Mo65biM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jYqxCwHd; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bfc8faef9so12725731fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 15:34:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744324477; x=1744929277; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wxm965eZNAy9BW5/MykKmQUsmb3umX7nRNXwA9XN5e4=;
+        b=jYqxCwHdHnnqKhroxew6oXqaqFEI2JsfqqI/rdYg3v6VU/L85Hg337AbxJy3m4qhRp
+         JP+wPeyXYM2I9lK2hFZvsKRpGH8GlBv2K6zubBKnAMzJTx+IWUm8zcFRUV4HsMAyeAj5
+         qd28iTFS/qCksMWxft3xpUEyKfTLdY8hfHDKo0rpG+okX9pK2N1cIienzfwKARr/cbAn
+         J1s/Mo7Eez1JAF8Dffr5p0ELBkyHDOjNk8USgmyW1DHCauh53C+zFNY+breMxKq2uzPQ
+         SgTiOP8+wxzzsCF7lvGqkfk5kBCOzYxNEE3A698K04LX/d0ZTq9HnLwcfR6YVpDjdjzZ
+         H7PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744324477; x=1744929277;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wxm965eZNAy9BW5/MykKmQUsmb3umX7nRNXwA9XN5e4=;
+        b=wzDRpyyYC+JFYktKo82POWYDKlnm8LlNG3ZsQqxrelBFT7Fw/TD4DQiSjKAPOtQQKQ
+         H793IJaddxPNXu7TTvuRNuuDbwg3E3O9lPSoeog0b5jXWANBFKrcMKChsb0AUYsyl3ft
+         +A4i9sHrgURw3d/paAXCbad/Z9idl5DD8ZWcLk6Cca5TtaatsiiNiGgYi4sUzvLlvd9D
+         a6cnH7SuiRGTsAZqgoyZJ3Jhw0/7fRTNTMuIEio40407kJB/+389K/Kwfo7i9Bx4Ccxj
+         gG4ZPNhbXtraekshqvmA+P05dIGXM1dhZL2fiG3nAMYDK7OAOrULsqOdayFQjsrlfnFz
+         Vi0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVrvi5lttrHG/HBTUUcL6pC9tZrZEfNseOcUAPdzHiKNHasu9FN2a8ttTpDfb6bDry165/ij5jqPo8get0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCDhBqpTKG6VKpfIdaTZZA3AEMKcw9ehyD612ewHtkT+ze5tCr
+	nPKGXwctX9HAD4gcLZGy1qVgfzgkM51KkaU5Nxd9Zg2TuWi2LM1YsqqsqlrWrhObTFTdKKDt9gY
+	F0A/2+Sa4hDRNCrQEP06r2yXPreLVqmgjNqcQbw==
+X-Gm-Gg: ASbGncvBKgDU5Nhbh66Z8MDjzW1EGog/2/v0k7kwK3M4K7BNJmf7C+MsLFlHwdkje81
+	DtQGgkCUprM5zYPJElhlGIpBU8uenfvo2+fRg8JE5nNXWoeJyRldhSg2h9NQ1YQ1ziITnNiBLus
+	bZwT7qvYQpvK6mwKmVxB4=
+X-Google-Smtp-Source: AGHT+IFQ5X/At+JSFNbUE1xnp5LyBwwxt4xHNs/nHrO41KOgi6pNuGUXCpYt2H8bLi1d5Neb0s+pA/F8NRLAxfh8kDo=
+X-Received: by 2002:a2e:ad92:0:b0:30b:d63c:ad20 with SMTP id
+ 38308e7fff4ca-31049a25e74mr1251291fa.24.1744324477293; Thu, 10 Apr 2025
+ 15:34:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250318030717.781-1-vulab@iscas.ac.cn>
+In-Reply-To: <20250318030717.781-1-vulab@iscas.ac.cn>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 11 Apr 2025 00:34:26 +0200
+X-Gm-Features: ATxdqUFAOAmsanh_qMDDdICzYFdtcgmjMNVzfkr1X-a4RyLKP9cm2UhbygtlpGw
+Message-ID: <CACRpkdZ+VTCXudLC8L0zK6+Pwd+_NpFDfnR7nf16BXgEnXExeQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: at91: Add error handling for pinctrl_utils_add_map_mux()
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: ludovic.desroches@microchip.com, nicolas.ferre@microchip.com, 
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Initial implementation provides enumeration of the address ranges
-NUMA node numbers, and BIOS assigned region IDs for each range.
+On Tue, Mar 18, 2025 at 4:07=E2=80=AFAM Wentao Liang <vulab@iscas.ac.cn> wr=
+ote:
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- Documentation/ABI/testing/sysfs-firmware-acpi | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> In atmel_pctl_dt_subnode_to_map(), the return value of
+> pinctrl_utils_add_map_mux() needs to be checked, for the function
+> will fail to associate group when the group map is full. Add error
+> handling for pinctrl_utils_add_map_mux() to return immediately and
+> propagate the error code to caller function when the function fails.
+>
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 
-diff --git a/Documentation/ABI/testing/sysfs-firmware-acpi b/Documentation/ABI/testing/sysfs-firmware-acpi
-index 5249ad5a96d9..fffba38f9ce1 100644
---- a/Documentation/ABI/testing/sysfs-firmware-acpi
-+++ b/Documentation/ABI/testing/sysfs-firmware-acpi
-@@ -248,3 +248,24 @@ Description:
- 		  # cat ff_pwr_btn
- 		  7	enabled
- 
-+What:		/sys/firmware/acpi/memory_ranges/rangeX
-+Date:		February 2025
-+Contact:	Tony Luck <tony.luck@intel.com>
-+Description:
-+		On systems with the ACPI MRRM table reports the
-+		parameters for each range.
-+
-+		base: Starting system physical address.
-+
-+		length: Length of this range in bytes.
-+
-+		node: NUMA node that this range belongs to. Negative numbers
-+		indicate that the node number could not be determined (e.g
-+		for an address range that is reserved for future hot add of
-+		memory).
-+
-+		local_region_id: ID associated with access by agents
-+		local to this range of addresses.
-+
-+		remote_region_id: ID associated with access by agents
-+		non-local to this range of addresses.
--- 
-2.48.1
+Patch applied.
 
+Yours,
+Linus Walleij
 
