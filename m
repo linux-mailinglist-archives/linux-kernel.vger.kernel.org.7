@@ -1,119 +1,154 @@
-Return-Path: <linux-kernel+bounces-598355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D45DA84538
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:46:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A4BDA8453B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB0631BA2DEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 577C41884C3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F6D28C5B9;
-	Thu, 10 Apr 2025 13:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oRH7a5BX"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CECE28A405;
+	Thu, 10 Apr 2025 13:43:01 +0000 (UTC)
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7283228D85B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC8F28A408
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744292526; cv=none; b=dMM/U9qq2jZrm8mv+6cZ+ZKKJwjAcGUoA692tfDVElKjz/PqoFNkyMPTx1Qa+2MUgb1cypPbARyI2fsBNCncmpmutk+Qg8v1iIsRkhKwFtHPBW6/bPKzZYey+RcYyLyeXevtugl+WeHWO2Yid4wx7mEhie7Wp+uY5bGFr7n3LF4=
+	t=1744292581; cv=none; b=CpMPLltxLmZRmYzzcW/tNXTH2V5E4UH5EpQEJ2vXj052vMsz3WnGv7AI+ISRWg4aKxPZSUtT7zz1juJbvTBg0eUyqTlq1MOLbuNc+1n7x2eT607LKY9h2IWNrretCBWIhIUrdCodJ8zb7lmImpwOum4j+f5NpZTDeOKjjPw5PvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744292526; c=relaxed/simple;
-	bh=c7VVRQXrhzgfIlMjr+TpjXTvNCRF1v445ixvQETbT+A=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fG1hN8SLy6YAPN6PJx12qwbUa5p5Kxm04oBZ7enwdxC18MnymKUoPSGleUPlqyB0Kd/aPQJRB3x8UbzShW9yGNbYl2w4ABY2ow8v3Djzwn1fLh3S6m0fLCjSMqdP3Rs3ok5E1pE8XhGAvInuq/tPbsWr618Ht9vVgg/ChYfKYrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oRH7a5BX; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43d08915f61so4929035e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:42:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744292523; x=1744897323; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uOh+IRGczBamQjnnCYnCR7O3Qkx4ta7ti5u2qxCyexk=;
-        b=oRH7a5BXIVMl2WzWDgYkBvEIvoahMb1DbRXVYqg27ybI000V8qrjA7HBZTO2vQGPfi
-         +6rFgUaGJI14p1kjig/Zln3/HUD3eWDkI4ItRgrIIQlq1iXHYz8mrE2aqXs48fdZD4xt
-         aIziUcIlq27+PpdHced+nxi+p+f7XtpEZV64JXmtJl3jaaoDIoe/xezibebqD/x0iudR
-         0Wj8/ysrAZFaxKKaF/PfrmQ0/CzPgHDOEdi5x2cFWRm4b3jhxNDS4rKbshTCLIHFhKR3
-         jGM9sbNRor6R1GdA2LlNYMvrERuBO/yAy8jkofxjYsWr6RZhMeCCufkyfS5/0zARyDwt
-         32eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744292523; x=1744897323;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uOh+IRGczBamQjnnCYnCR7O3Qkx4ta7ti5u2qxCyexk=;
-        b=OWHJFp/6SM00SO/kgYaz9JCMQt1afLpMtQchTLEQdBy5E8Blt7ZCLNi4OzGwTtPXUu
-         MQdNsjAP1GwMaMKO+IO0rnpUsS8FK3C7CR2EgPtaJqOxBU0nWqj2I6yQNjoOZhlb6lG5
-         FayKL7Jm36qesPoZaVS/Vb7lpTCIKdZTpMvudNISci5SglIf4PKPb7vbcDJy1+pN7kTL
-         FAN21hh7bB8sef3D+OH7vLbfo8sUP/9A1+oNxSqijD/ipuJGmeiEU27JLySThSmsyMeN
-         vUr0J39Ab4epFufXtpuifNL9yaQCdIp77ws3kvbdl5ts+UrCPvt/SCZBXTdfHNYB80/l
-         1d7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVAsk8NzSfvuBU0272REGww98Jjlu1CPsbafInCWp4VcTszibPVucZ0um8gZkYC9a+JZhRZs5K7HwKz/m4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfPT+Q3iYo+Lho/t1u0eZog0tfiEgAHE9k+SvjcKi523EMqBRr
-	+salf8oZe6wuXqm2cmO3fQQyIvN2AXsA8dBL20ciNgYog3u6slnKJq8bIcse/NidVevgdQ==
-X-Google-Smtp-Source: AGHT+IHlh93oL9mKoWPZ8xOYA3DwDprouXIOHdb9NVnXRG5y9eYSfFLcWKwT5Rx6iE1dQlUAN4pF5K0M
-X-Received: from wmbeq5.prod.google.com ([2002:a05:600c:8485:b0:43c:eba5:f9b3])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:19d0:b0:43e:afca:808f
- with SMTP id 5b1f17b1804b1-43f2ffa2ee7mr26677755e9.31.1744292523066; Thu, 10
- Apr 2025 06:42:03 -0700 (PDT)
-Date: Thu, 10 Apr 2025 15:41:29 +0200
-In-Reply-To: <20250410134117.3713574-13-ardb+git@google.com>
+	s=arc-20240116; t=1744292581; c=relaxed/simple;
+	bh=+LXrRIcEu41AlQb5940bRqeST5vTt6XWbhMiXC8N1Q8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sPQQIiBbzKaakBzZSQfIH59z4gKzaZDWcwmskE4sYen2AER0g37/nhj/TEIafDE2NQM2cNaSggiVtWrJqSAH2dIaZhyc2UPAHh3wlwrNXAJfc2hCPDaMqakaWmL0y2midCfzk592W4LyEBaKYEDKWVbBLNHoDWrb59Z8hPvMQWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 372934431A;
+	Thu, 10 Apr 2025 13:42:46 +0000 (UTC)
+Message-ID: <ccc97669-a4dc-459f-a26f-1fdad8b4a334@ghiti.fr>
+Date: Thu, 10 Apr 2025 15:42:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250410134117.3713574-13-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=717; i=ardb@kernel.org;
- h=from:subject; bh=X3JfDQ3/BuCITBPYEHh2vS/KH9MRV7HSxm9OJYaOaHg=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIf37qQnnWN6GX+s0/hHHK/zwBN/KK5prDScuMDvg/Dz00
- afpPftdO0pZGMQ4GGTFFFkEZv99t/P0RKla51myMHNYmUCGMHBxCsBEtrQy/JUKWSp+5LqmLasU
- f9ZDuwAHRm4V4RT7x/6zRR/N/a/1XZ6R4eC8BdplW9cqCGc8D1q2+W7RbgOd5z8C3EUF1fb3fKm 7ywwA
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250410134117.3713574-24-ardb+git@google.com>
-Subject: [PATCH v4 11/11] x86/asm: Retire RIP_REL_REF()
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-efi@vger.kernel.org
-Cc: x86@kernel.org, mingo@kernel.org, linux-kernel@vger.kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Dionna Amalie Glaze <dionnaglaze@google.com>, Kevin Loughlin <kevinloughlin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] riscv: KGDB: Do not inline arch_kgdb_breakpoint()
+Content-Language: en-US
+To: WangYuli <wangyuli@uniontech.com>, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu
+Cc: chenhuacai@kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, vincent.chen@sifive.com,
+ palmerdabbelt@google.com, samuel.holland@sifive.com, zhanjun@uniontech.com,
+ niecheng1@uniontech.com, guanwentao@uniontech.com,
+ Huacai Chen <chenhuacai@loongson.cn>
+References: <C5DCACA951B6211D+20250408095454.67390-1-wangyuli@uniontech.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <C5DCACA951B6211D+20250408095454.67390-1-wangyuli@uniontech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdeltdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpefhhfdutdevgeelgeegfeeltdduhfduledvteduhfegffffiefggfektefhjedujeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemledvfedvmegtfegrkeemugegsgegmedusggusgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemledvfedvmegtfegrkeemugegsgegmedusggusgdphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemledvfedvmegtfegrkeemugegsgegmedusggusggnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepfigrnhhghihulhhisehunhhiohhnthgvtghhrdgtohhmpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpt
+ hhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopegthhgvnhhhuhgrtggriheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhntggvnhhtrdgthhgvnhesshhifhhivhgvrdgtohhm
+X-GND-Sasl: alex@ghiti.fr
 
-From: Ard Biesheuvel <ardb@kernel.org>
+Hi WangYuli,
 
-Now that all users have been moved into startup/ where PIC codegen is
-used, RIP_REL_REF() is no longer needed. Remove it.
+On 08/04/2025 11:54, WangYuli wrote:
+> The arch_kgdb_breakpoint() function defines the kgdb_compiled_break
+> symbol using inline assembly.
+>
+> There's a potential issue where the compiler might inline
+> arch_kgdb_breakpoint(), which would then define the kgdb_breakinst
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/x86/include/asm/asm.h | 5 -----
- 1 file changed, 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index a9f07799e337..eef0771512de 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -120,11 +120,6 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
- 
- 	return p;
- }
--#ifndef __pic__
--#define RIP_REL_REF(var)	(*(typeof(&(var)))rip_rel_ptr(&(var)))
--#else
--#define RIP_REL_REF(var)	(var)
--#endif
- #endif
- 
- /*
--- 
-2.49.0.504.g3bcea36a83-goog
+You forgot to replace kgdb_breakinst into kgdb_compiled_break.
 
+
+> symbol multiple times, leading to fail to link vmlinux.o.
+>
+> This isn't merely a potential compilation problem. The intent here
+> is to determine the global symbol address of kgdb_compiled_break,
+> and if this function is inlined multiple times, it would logically
+> be a grave error.
+>
+> Link: https://lore.kernel.org/all/4b4187c1-77e5-44b7-885f-d6826723dd9a@sifive.com/
+> Fixes: fe89bd2be866 ("riscv: Add KGDB support")
+> Co-developed-by: Huacai Chen <chenhuacai@loongson.cn>
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> ---
+> Changelog:
+>   *v1->v2:
+>      1. Add the missing __ASSEMBLY__ check and substitute
+> ".option rvc/norvc" with ".option push/pop".
+>    v2->v3:
+>      1. Remove "extern".
+>      2. Restore the inadvertently deleted .option norvc to prevent
+> a change in semantics.
+> ---
+>   arch/riscv/include/asm/kgdb.h | 9 +--------
+>   arch/riscv/kernel/kgdb.c      | 9 +++++++++
+>   2 files changed, 10 insertions(+), 8 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/kgdb.h b/arch/riscv/include/asm/kgdb.h
+> index 46677daf708b..cc11c4544cff 100644
+> --- a/arch/riscv/include/asm/kgdb.h
+> +++ b/arch/riscv/include/asm/kgdb.h
+> @@ -19,16 +19,9 @@
+>   
+>   #ifndef	__ASSEMBLY__
+>   
+> +void arch_kgdb_breakpoint(void);
+>   extern unsigned long kgdb_compiled_break;
+>   
+> -static inline void arch_kgdb_breakpoint(void)
+> -{
+> -	asm(".global kgdb_compiled_break\n"
+> -	    ".option norvc\n"
+> -	    "kgdb_compiled_break: ebreak\n"
+> -	    ".option rvc\n");
+> -}
+> -
+>   #endif /* !__ASSEMBLY__ */
+>   
+>   #define DBG_REG_ZERO "zero"
+> diff --git a/arch/riscv/kernel/kgdb.c b/arch/riscv/kernel/kgdb.c
+> index 2e0266ae6bd7..7f2d3d956167 100644
+> --- a/arch/riscv/kernel/kgdb.c
+> +++ b/arch/riscv/kernel/kgdb.c
+> @@ -254,6 +254,15 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long pc)
+>   	regs->epc = pc;
+>   }
+>   
+> +noinline void arch_kgdb_breakpoint(void)
+> +{
+> +	asm(".global kgdb_compiled_break\n"
+> +	    ".option push\n"
+> +	    ".option norvc\n"
+> +	    "kgdb_compiled_break: ebreak\n"
+> +	    ".option pop\n");
+> +}
+
+
+You are fixing 2 things here, you need to split this patch into 2. And 
+as noted by Palmer, we actually don't need norvc here, so you can remove 
+it instead.
+
+Thanks,
+
+Alex
+
+
+> +
+>   void kgdb_arch_handle_qxfer_pkt(char *remcom_in_buffer,
+>   				char *remcom_out_buffer)
+>   {
 
