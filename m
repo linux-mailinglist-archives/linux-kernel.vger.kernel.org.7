@@ -1,79 +1,54 @@
-Return-Path: <linux-kernel+bounces-597964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6904A8409E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:28:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E9B9A840BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:33:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E5D1B8418C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:27:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 883589E0155
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839A0284B4B;
-	Thu, 10 Apr 2025 10:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B260280CE8;
+	Thu, 10 Apr 2025 10:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgASZwpO"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OJZSN3kl"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A61280CEE;
-	Thu, 10 Apr 2025 10:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B6827E1AD
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744280712; cv=none; b=vC/wIrPSFYQrx6d+WWEcdM7b2vmPTkoIr5W+coN7nVngqU0JqtyzRYLsd1Lscyda+P/aLrj4vJVqR9t4n5D8rejulEs9rMDXj+LI3LrA3V8MD4zwHXa6g12lauEUfkMmNiLl/m7CjylgaaD51j6TxIz/iCp29c02vhNrbaAEaMo=
+	t=1744280845; cv=none; b=fzxUx+QBg1hN179MgZ47sOeJdsoUkLUcDJbDxrH6ERh1n73zx6NVVBtkxzWRt1L49RcWVgLI8G+cjf6yWQgYq1FXzaGrelfSloqqm6M/7du2jgIH8Bl15DUvRylhxpjCBsgiQFKMSaZEqdmLPMRD5MdC7f5g6I/3s6GLjaeSn+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744280712; c=relaxed/simple;
-	bh=ojvsqPJMH10Y8wTUS0jE9WvNAqr1SQfDTcZQoS3T2to=;
+	s=arc-20240116; t=1744280845; c=relaxed/simple;
+	bh=zXXMNPMlBd5Xr1/R5eNjns/e1Lpmk3psqxYqnNZU36g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DZql26yCqcKO+bUVylWOdbgclEbBqrt+/iqXwWZH8/A2Aj5bctf1yN0P6dva9863Rilvno+8L6QJesbisymJFA1h+fgxavdzZRbJLd2Ubk6nxdxABDmgISKHHXi+V6G02EiJDcfNvv0WwXKRL3U+UiGIFY4t/+EV6CPTger4gVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jgASZwpO; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-548409cd2a8so811512e87.3;
-        Thu, 10 Apr 2025 03:25:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744280709; x=1744885509; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a8auZmcSStHaFyZmeRyJlcHZ5L0m1cOxAuHCz1LgQ8A=;
-        b=jgASZwpOYg3+AF2/rUh8yq34zcClUSfC4QYELwU7t48hEJN0uwLoz66lmk2h2Ed6Gf
-         qbZXCVT65M2aAC8kVE0juYKfduKSVRQeGr2RnoL1qSOVyhEAcFZpKZvkhPyKPGoEy6EH
-         nGS/gen3+AQeMFO0+Yt7cwKVEGu9pL2ZX1FwaEPhcEUceaK6pqgrLbijO9jMgAyLTwhL
-         8Dk8mlVP7TDAA97isM7g4wiMBlJAK0wIYnICqyNGHRyMZM+EZFtxnMWgrAwd3WA38F2w
-         Dq531NLFtLOe81GvdVMonbApR2duTPveYAtclJCL4+/iEScjTrGes8/d+UCm18r+kNIG
-         MWiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744280709; x=1744885509;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a8auZmcSStHaFyZmeRyJlcHZ5L0m1cOxAuHCz1LgQ8A=;
-        b=GOgpw4JGsYwot4wnA4/eHTtZhvr62oJQOipnOXoEkx0ujLOiJi4m/HnUz/+sOMwqkn
-         8QVbX5SXRLswKSOKrsPYqtsbE5tN89wfs/zbtCoeGZZyg7t2IVQ/btepevvGIP6lNXi1
-         aQlY+iUx081rVoYp8lNuKNyAI21B37pK1D1YBtpm04F/2EgvwQL495AdGT0BPs9aR/tj
-         SkJn3Xwlw5NjsYn3ELW9Dgm/S0ubsCPMjVVVolyIwIHxN9fGaqp2PO2DZw0T0xDkdKda
-         BHGEYqq4lC6tNV+2V/cvLv3+Kcr6fKkF0yizWoTdz5lliL+/ap8XbtWVayHrfjt5f/Y5
-         tNTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYwBJ2Ja5h1CYSkfEUh1Vrc4PCFvmvFWj2CbvRTKE5OYx3WTX4YiCG7Tka5509narIeCkojNaRt2Sxe4A=@vger.kernel.org, AJvYcCW8tXFtE33wXVFZTL1Ds2mdk97uZNmeAOVVoxqw8n02DcuIW+GxAZdNahEYVf3qZv00OhKvfndq/9IjwWrf@vger.kernel.org, AJvYcCXqAFLVefcuesrwletIBsao9pAjYi6fLmdNfrmSR6evrHTFJBrMLL9o6Ud/zMWdEOcfvHVdANyo+reoOhi5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+gHjedeqvcXKkupRxwH/kUS6rfXxYSrQupmrC95ncoTQXxM0Z
-	3ertZmfW6eXjepBboqzq1akJPmnS0Us+r16sAq0WmwFa4aCi1/Jd
-X-Gm-Gg: ASbGncu7s7frlz6DE/8GgtvA30WyEdM3hOIO19jVnBuF7qDe7JcXbsPvu9cxDoIm93Z
-	TMIFexo74ITrcPyyUneLNLxAvk7u/F7/C0aCw3VxwcLcFGxJNfFGxpOcB8sbyiJCFqYMhUhLGId
-	Q1MGSRWClqk5DccpS68TIxEUieHLjvC8TC/PHy8elGcehmOvK9v+ukhkxuHxcPzeMr5uaOjLdfg
-	azHKPl4kLfLk6J5Md+h5KgMQ7stGGX5FIFWh0Jv5v2CQGCou2H+QXFcUiWfPKP6gmo+zPju3FDs
-	oFB8AH3e7JuVmPfkKd81qkhR3jCP0DIavwYN+aRDGnt7BMXmD+QYRUq+zH6zXKLL/NuMGOZLH/9
-	El26vAsI4DVc=
-X-Google-Smtp-Source: AGHT+IEwVGKKFkCzb+1V2/2bVJ3HFsoAUJbqQMpsvmmbIr3Uj/Py/Tz5fCl2Plbl8TB01lRqRr7nDg==
-X-Received: by 2002:a05:6512:4027:b0:54b:ed9:2cf6 with SMTP id 2adb3069b0e04-54cb6844d88mr702100e87.32.1744280709001;
-        Thu, 10 Apr 2025 03:25:09 -0700 (PDT)
-Received: from [192.168.1.19] (79-100-236-126.ip.btc-net.bg. [79.100.236.126])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d50f794sm105392e87.167.2025.04.10.03.25.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 03:25:08 -0700 (PDT)
-Message-ID: <9d89f87f-ff30-4ae9-9545-08d222e96561@gmail.com>
-Date: Thu, 10 Apr 2025 13:25:06 +0300
+	 In-Reply-To:Content-Type; b=oXIzB8YmSYAe7J9kGtdI8ivgCHqdLXVPPV10w9bnseJr/wDneXsndxaGqkAhd0iGr5bYchpbO7AV2TLavUhNFwJDQw+95ohDLW+RbBqD4dj6T1WVAjmUg/mscYYGYJ69HvXuFjts7kng4DBpccLoSPDg+izK9cx0/Kwvf98QHP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OJZSN3kl; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1744280841;
+	bh=zXXMNPMlBd5Xr1/R5eNjns/e1Lpmk3psqxYqnNZU36g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OJZSN3klTVfp3rPCfNWlYOfnomjqGGJfP0ESifLxmcSR/eUlPUhsFOhxTZ/Lcxi6d
+	 FizJmUxSe4LvSjXaMVZyz6nGJelCGM9gfuw2tVGozqhwM5MUAJWS24Ct3rRdY5EnwF
+	 J9SBPGF2qEgUWE3tnbTZe5wBk6EAnbRnjYUZVucYakg5+oljulU1UKASAawewhSHQA
+	 x2fpT9hFsLM4V4izD6nAVVnvsGjUKbEyzGW5knQNQrWtABv5UMyXpIX5+olkKGWBmr
+	 IcWj167NKd7EaEw7rq4VdQccnSlsNoLtD5I0/eBbnPlOJbZSV4klon9Ae+k4cIEuvZ
+	 AOD4rDBD0455Q==
+Received: from [192.168.1.90] (unknown [82.79.138.25])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5037017E001F;
+	Thu, 10 Apr 2025 12:27:21 +0200 (CEST)
+Message-ID: <e54840a9-d699-4ffd-b4a0-77dcf344c233@collabora.com>
+Date: Thu, 10 Apr 2025 13:27:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,61 +56,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] media: MAINTAINERS: Amend venus Maintainers and
- Reviewers
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, hverkuil@xs4all.nl,
- quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com, mchehab@kernel.org,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Neil Armstrong <neil.armstrong@linaro.org>
-References: <20250402-b4-25-03-29-media-committers-venus-iris-maintainers-v3-0-2b2434807ece@linaro.org>
- <20250402-b4-25-03-29-media-committers-venus-iris-maintainers-v3-1-2b2434807ece@linaro.org>
-Content-Language: en-US, bg-BG
-From: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
-In-Reply-To: <20250402-b4-25-03-29-media-committers-venus-iris-maintainers-v3-1-2b2434807ece@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3 10/15] drm/tests: hdmi: Replace open coded EDID setup
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250326-hdmi-conn-yuv-v3-0-294d3ebbb4b2@collabora.com>
+ <20250326-hdmi-conn-yuv-v3-10-294d3ebbb4b2@collabora.com>
+ <20250409-spectral-persimmon-gorilla-4827ad@houat>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <20250409-spectral-persimmon-gorilla-4827ad@houat>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 4/9/25 6:15 PM, Maxime Ripard wrote:
+> On Wed, Mar 26, 2025 at 12:19:59PM +0200, Cristian Ciocaltea wrote:
+>> Make use of the recently introduced macros to reduce boilerplate code
+>> around EDID setup. This also helps dropping the redundant calls to
+>> set_connector_edid().
+>>
+>> No functional changes intended.
+>>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>>  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 220 ++++++++-------------
+>>  1 file changed, 78 insertions(+), 142 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+>> index 284bd9b1418a454d05c4a38263519eb8ae450090..7b2aaee5009ce58e6edf2649e2182c43ba834523 100644
+>> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+>> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+>> @@ -751,19 +751,15 @@ static void drm_test_check_output_bpc_crtc_mode_changed(struct kunit *test)
+>>  	struct drm_crtc *crtc;
+>>  	int ret;
+>>  
+>> -	priv = drm_kunit_helper_connector_hdmi_init(test,
+>> -						    BIT(HDMI_COLORSPACE_RGB),
+>> -						    10);
+>> +	priv = drm_kunit_helper_connector_hdmi_init_with_edid(test,
+>> +				BIT(HDMI_COLORSPACE_RGB),
+>> +				10,
+>> +				test_edid_hdmi_1080p_rgb_yuv_dc_max_200mhz);
+>>  	KUNIT_ASSERT_NOT_NULL(test, priv);
+>>  
+>>  	drm = &priv->drm;
+>>  	crtc = priv->crtc;
+>>  	conn = &priv->connector;
+>> -	ret = set_connector_edid(test, conn,
+>> -				 test_edid_hdmi_1080p_rgb_yuv_dc_max_200mhz,
+>> -				 ARRAY_SIZE(test_edid_hdmi_1080p_rgb_yuv_dc_max_200mhz));
+>> -	KUNIT_ASSERT_GT(test, ret, 0);
+>> -
+> 
+> Yeah, ok, nvm what I said on the previous patch, it's needed.
+> 
+>>  	preferred = find_preferred_mode(conn);
+>>  	KUNIT_ASSERT_NOT_NULL(test, preferred);
+>>  
+>> @@ -830,19 +826,15 @@ static void drm_test_check_output_bpc_crtc_mode_not_changed(struct kunit *test)
+>>  	struct drm_crtc *crtc;
+>>  	int ret;
+>>  
+>> -	priv = drm_kunit_helper_connector_hdmi_init(test,
+>> -						    BIT(HDMI_COLORSPACE_RGB),
+>> -						    10);
+>> +	priv = drm_kunit_helper_connector_hdmi_init_with_edid(test,
+>> +				BIT(HDMI_COLORSPACE_RGB),
+>> +				10,
+>> +				test_edid_hdmi_1080p_rgb_yuv_dc_max_200mhz);
+> 
+> Alignment is off.
 
+Yeah, that's a compromise to get rid of a bunch of checkpatch complaints:
 
-On 2.04.25 г. 15:24 ч., Bryan O'Donoghue wrote:
-> Stan has stepped back from active venus development as a result I'd like to
-> volunteer my help in keeping venus maintained upstream.
-> 
-> Discussing with the qcom team on this we agreed
-> 
-> +M for Dikshita
-> +R for me
-> 
-> Many thanks to Stan for his hard work over the years from originating this
-> driver upstream to his many years of maintenance of it too.
-> 
-> Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->   MAINTAINERS | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 29b4471574982bf3f8d03158cd5edcb94bc9fab9..1d03530f3298703c5f3d025010511451f878f822 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19590,8 +19590,8 @@ F:	Documentation/devicetree/bindings/usb/qcom,pmic-*.yaml
->   F:	drivers/usb/typec/tcpm/qcom/
->   
->   QUALCOMM VENUS VIDEO ACCELERATOR DRIVER
-> -M:	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+  WARNING: line length of ... exceeds 100 columns
 
-Acked-by: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+So we ended up with the following instead:
 
->   M:	Vikash Garodia <quic_vgarodia@quicinc.com>
-> +M:	Dikshita Agarwal <quic_dikshita@quicinc.com>
->   R:	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->   L:	linux-media@vger.kernel.org
->   L:	linux-arm-msm@vger.kernel.org
-> 
+  CHECK: Alignment should match open parenthesis
 
--- 
-regards,
-Stan
+But at least it's not a warning anymore.
+
+Alternatively, we could maybe come up with a (very) short name for
+drm_kunit_helper_connector_hdmi_init_with_edid(), though I'm not what
+would that be :-(
 
