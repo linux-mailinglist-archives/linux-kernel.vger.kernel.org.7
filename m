@@ -1,106 +1,175 @@
-Return-Path: <linux-kernel+bounces-598656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AA6EA848EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:58:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2780A84929
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4ACF16379A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:53:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2746188BBC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4922F1EFFA5;
-	Thu, 10 Apr 2025 15:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E744C1EDA2C;
+	Thu, 10 Apr 2025 16:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="VoeivUXQ"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jk4L0VD2"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E5F1EB5D0;
-	Thu, 10 Apr 2025 15:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7CB1E98E0;
+	Thu, 10 Apr 2025 16:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744300309; cv=none; b=t1/y25AACGRS0Lgd6rZ2JAKKo2kVKB7p+OyINDmwnG0xHwOHVlaW1zGp/wekbGPwunHi9LBOikUBAfxAM2Ldth2/ugxbYXSJtXKRBlD+IuEYzqp3cEFKpP86yV1yNlkCuDroHzILUTVuEmYRy5MDEy9mRDmtVrpnGgnzGvxHJDQ=
+	t=1744300815; cv=none; b=TU1JlWctBIKmTUkDXc7EHGf7Oa7EQop6l8qBogiUWuFvm408Js7it35I8h5v4cgMVTFU3p6cyBC/MCZvyR8a02fNUrlE4EPaJRGmMiTJgHfGP29EJwFa8rXbX/yHInqIMOoYlCxGaLmyltFP6p7CrXvQTHh7oAsVnew8hInIi6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744300309; c=relaxed/simple;
-	bh=S8/1bc+SSt/Lx/Up/59n5c8Pu6woNGwVv1gsX+uXOMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jr2eYLrCgvZaMb8oAFeDKTMx9P31d0tFbiKT0GQjRAoc9XY7jL7D81I9ydx33C87be+1VOfYe3BdX09XJ5rQmJI4jY1GfX7mG3Q1xylOCWfbtWAtzlItENEqPIA5D9NMD/vU8uSppiBoxzrRdruyX+m81futt90SVCFaa4+65N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=VoeivUXQ; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4ZYPSc0mxGz9shl;
-	Thu, 10 Apr 2025 17:51:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1744300304;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S8/1bc+SSt/Lx/Up/59n5c8Pu6woNGwVv1gsX+uXOMw=;
-	b=VoeivUXQ7HdrLMa0PepurFK2LL+UJ3EIaqVSNiZtIopDYhg6x7+mRpAL/TJI4Ez0qU7pac
-	jfDAGctGweLk4yFrby03iwcyMX4g+s4Wl+K4gfbm3WCsiUkT86ZXOOQBD2S4ZV06VkF2wu
-	2ejAm8cihlNu+t5SO4oVxuz9T6N0iHOBh78P3qPUO6J6X+a9/n0Ui8VXho2NhR2ua+g2Ff
-	ObKc5TqgDtJyhjKDRbfcI5IB5g8nRvQJgZvdlPFgQUwFA9ivuhwMP1f3J0ASGHjTujI0jw
-	pGeRciSKR9W3ZB7Bncr9wPMZgGAG1a9/U+so/kw+v5ora64PUu5DXkDAcnuW7w==
-Date: Thu, 10 Apr 2025 17:51:38 +0200
-From: Anthony Ruhier <aruhier@mailbox.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Maya Matuszczyk <maccraft123mc@gmail.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 0/7] Support for GPU ACD feature on Adreno X1-85
-Message-ID: <dmzoooujjb4zojjlgovjt6lccxilnnc3yr4j24vj4hwpzf5ouf@e6qkdlekcsnm>
-References: <20250109-gpu-acd-v4-0-08a5efaf4a23@quicinc.com>
- <dj256lrkc4s5ylqkqdrak6a6p3v62ckkd3orsg7ykz2w6ugllg@rbfkojacklvx>
- <0d1aaba8-7736-497e-8424-84489c637914@oss.qualcomm.com>
+	s=arc-20240116; t=1744300815; c=relaxed/simple;
+	bh=pl9dJD0Qx8fdr7PO+1lN8nE809JuwSMSpc4t1wsrh24=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dazoVUfjpBjcalI7nqAArrVwWR5wy8niJNly/ZWkA5shO+qqbJe4O7L/X3Gz/FUKxMnHfTqcszbRBsxEVS3ZVyZ8uCENT+5mX5MC6/dvZqQsg61B+7GPo2kkFMVK030EcizHW+VtaWdT6TWkF1++LCdFzU+c8TVXpkpBLPtlFgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jk4L0VD2; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-224341bbc1dso9681085ad.3;
+        Thu, 10 Apr 2025 09:00:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744300813; x=1744905613; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qo3jtmdiLQ30YVjIBcjlK7lG5+Fo4/D/zRq2VtRejDA=;
+        b=jk4L0VD23zV1rd7SZg0tE0ezcJx/mew4fyO8ro2DgN0/w9SZypHr5HdrfoFAcQYOY7
+         GduPlAPXjAkV5q4CMtl2mlj+R/cEwJ2Wy2BWpkLHXAcFWNMe4c+f9qdmqFwbDKcMVQl4
+         0qcbKFyX9fi7DiDOuc99noaFuk+emeLPEACdJDMb18dCc0pc5oB9EAeS2hwQ6pGSjNPn
+         bJ/bloVifbWahp/81d3B11INgth92UPH0H+n5I6/Wwo2Nlyko+mR4nst2ucC3ROZnOzx
+         6CfqU/nGw8HJKbLPEYXBZkiG05gmEfk1XcpkgyMWxslG3UA73WFpdkomyvXBcwfeDpYw
+         L2Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744300813; x=1744905613;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qo3jtmdiLQ30YVjIBcjlK7lG5+Fo4/D/zRq2VtRejDA=;
+        b=m9vG4lLGXBH7JKSWxEf8geOEc4lQ1c55KUgIhAqHQOWqcnp5QSKrjyQkvSXPL2/2mR
+         19V8jrQbbLpB444uSGIFJ3JWf2A2NSEM2EfMUDdBisrNcZK8jh3urf0M2QY3pvdSnKx7
+         woGL9/i6VIC8RgTVUN+1ckiGpAhtpFuhIXQzH2deW/siPHC6a8wJm51AjuAxF4BJPjIC
+         FF9qdJiXpI+mJ42STrE2gTYEbQsv0iJ/ewedIQfKyn6SeirzlRrbvkIfIsn7HR8LIBQL
+         LBH8XoXZl9YYYOjElbf614BP+FxTTb6hhY+VYaIDPNSYlLCAD5da+Thnai8AQb5Bgfda
+         5VxA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+W0A7c4t1YvHvqSSHj/3hUGtRiBOLAB0zg6+gT2bkDEI+7NDeUWm7C14mDC20hYtKne8unWuSPwM=@vger.kernel.org, AJvYcCUi5vN3tM1958cSgB8ZsQ6+LT0tscNiQpIHvmAyHEeMQ6wyhAeQKkoueTjtBFfTMrigjJCBaNISm2wJem/4@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXtUF++8JJlp6fbYdNhKPR2R5TjrT95gd/IFbO0ksfjLlqNUVO
+	eP4O3t0c4N2C+SCBY4cXra3w699zku8eOvULQnO2Jpw9mnBc7q3T
+X-Gm-Gg: ASbGncv0zudFTAlZjAWvi7emnx8Ce4fPk43P+FuVMZMXiURzYZBftXNmrgP+3BGQoQ8
+	vjD5WRvtAOtS5Kz2Wk4sxnDCjXpKoj5DIh+pCWeJGcnlzwll8vxUYnFhnWDnnAoMUbEVqXQ/6eZ
+	oyGcZtoDQ4u7u9oN2uVXqbBkul8Yt8g+dOHYBJUQOiGAdGBXsNWSSD4/+vb/cvesSAxKRwEuznm
+	zRU8hEvffDK7orMEAFVLAixwXwLnPJv7OtoGGb4rqx2OBMKqWpD73wvUQbbbkmy9or6wtEjDOD7
+	s1mXIwJQf/BpGJITEdQOdx5tlhMx057OoxPuq1HYvcFuuZMsRxeerX4Vst/LTA==
+X-Google-Smtp-Source: AGHT+IGnJBJQib59YV2tKOPvVx8bjO1Oi1ZxGy4LlEUbUkj4ifQE6YltT6IlIPhorHZiQqXMnN4f1g==
+X-Received: by 2002:a17:903:2446:b0:224:249f:9723 with SMTP id d9443c01a7336-22b42c2e74fmr47652475ad.51.1744300812602;
+        Thu, 10 Apr 2025 09:00:12 -0700 (PDT)
+Received: from localhost.localdomain ([2409:40f2:1181:ecab:2ac2:19c7:32de:1c4d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7c95cd1sm32179355ad.150.2025.04.10.09.00.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 09:00:12 -0700 (PDT)
+From: saivishnu725@gmail.com
+To: mchehab@kernel.org
+Cc: corbet@lwn.net,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	saivishnu725 <saivishnu725@gmail.com>
+Subject: [PATCH] Add --interactive option to prompt for dependency installation if missing
+Date: Thu, 10 Apr 2025 21:24:15 +0530
+Message-Id: <20250410155414.47114-1-saivishnu725@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d1aaba8-7736-497e-8424-84489c637914@oss.qualcomm.com>
-X-MBO-RS-META: hnpqbkrht6pxthkfq3htpiw4uki4eng8
-X-MBO-RS-ID: 74da413a3d37fd97626
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: saivishnu725 <saivishnu725@gmail.com>
 
-Sorry I should have gave an update on this: I don't think the lockups are
-related to this patch series, the same problem happens without applying these
-patches. It seems to increase by a lot the chances that a GPU lockup happens at
-start, however, so I could use that to debug the real problem.
+Introduce the --interactive flag to enable user prompts before running commands to install missing dependencies.
+Asks if the user would like to run the distro appropriate commands if any dependency is not available.
 
-> What firmware files are you using? ZAP surely comes from the Windows
-> package, but what about GMU and SQE? Linux-firmware?
->
-> Specifically, please provide the GMU version which is printed to dmesg
-> on first GPU open
+Signed-off-by: saivishnu725 <saivishnu725@gmail.com>
+---
+ scripts/sphinx-pre-install | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
 
-I'm using the firmwares imported from Windows, the Yoga Slim 7x is not in
-linux-firmware. I understood that the firmware files used by the Slim 7x are
-quite old, maybe it could be the problem.
+diff --git a/scripts/sphinx-pre-install b/scripts/sphinx-pre-install
+index ad9945ccb0cf..581d694eb0fd 100755
+--- a/scripts/sphinx-pre-install
++++ b/scripts/sphinx-pre-install
+@@ -42,6 +42,7 @@ my $latest_avail_ver;
+ my $pdf = 1;
+ my $virtualenv = 1;
+ my $version_check = 0;
++my $interactive = 0;
+ 
+ #
+ # List of required texlive packages on Fedora and OpenSuse
+@@ -338,6 +339,21 @@ sub which($)
+ 	return undef;
+ }
+ 
++sub run_if_interactive($)
++{
++	my $command = shift;
++
++	if ($interactive) {
++		printf("Do you want to run the command now [Y/n]: ");
++		my $user_input = <STDIN>;
++		chomp $user_input;
++		if ($user_input =~ /Y|y/) {
++			printf("\$ $command\n");
++			system($command);
++		}
++	}
++}
++
+ #
+ # Subroutines that check distro-specific hints
+ #
+@@ -374,7 +390,9 @@ sub give_debian_hints()
+ 
+ 	return if (!$need && !$optional);
+ 	printf("You should run:\n") if ($verbose_warn_install);
+-	printf("\n\tsudo apt-get install $install\n");
++	my $command = "sudo apt-get install $install";
++	printf("\n\t$command\n");
++	run_if_interactive($command);
+ }
+ 
+ sub give_redhat_hints()
+@@ -1002,12 +1020,15 @@ while (@ARGV) {
+ 		$pdf = 0;
+ 	} elsif ($arg eq "--version-check"){
+ 		$version_check = 1;
++	} elsif ($arg eq "--interactive") {
++		$interactive = 1;
+ 	} else {
+-		print "Usage:\n\t$0 <--no-virtualenv> <--no-pdf> <--version-check>\n\n";
++		print "Usage:\n\t$0 <--no-virtualenv> <--no-pdf> <--version-check> <--interactive>\n\n";
+ 		print "Where:\n";
+ 		print "\t--no-virtualenv\t- Recommend installing Sphinx instead of using a virtualenv\n";
+ 		print "\t--version-check\t- if version is compatible, don't check for missing dependencies\n";
+-		print "\t--no-pdf\t- don't check for dependencies required to build PDF docs\n\n";
++		print "\t--no-pdf\t- don't check for dependencies required to build PDF docs\n";
++		print "\t--interactive\t- Ask to install missing dependencies\n\n";
+ 		exit -1;
+ 	}
+ }
+-- 
 
-The GMU version:
+This is not the complete patch - I'm sending this to get early feedback before I go further. If this looks good, I plan to follow up with additional patches that will:
+1. use the run_if_interactive on the hints for every distro
+2. add more quality-to-life features to make the script more useful
 
-> [drm] Loaded GMU firmware v4.3.17
+Any form of feedback would be helpful! If there is a reason why none of the scripts are interactable, please let me know why.
 
-Thanks
+Sai Vishnu
 
---
-Anthony Ruhier
+2.34.1
+
 
