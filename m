@@ -1,129 +1,155 @@
-Return-Path: <linux-kernel+bounces-599122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630F7A84F8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 00:17:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E681A84F96
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 00:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B45A61B81BD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:17:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43BBE3BED75
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1A220E00C;
-	Thu, 10 Apr 2025 22:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E967520DD63;
+	Thu, 10 Apr 2025 22:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fsCz9ImP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eQtbWuA7"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F951D7E35
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 22:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7501EB9F9
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 22:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744323419; cv=none; b=Tb6JguYazp3U2Fc3er40zyCdG2O2OVY5lgTB8ptqLBNE7MqXXWUvgu0DYuTYYkzKpuiKKtNiw0+5PcrNaqCEWhlLTQ6vBANYjgndss7485zjacD9Puh0WYq7I8ns6rnZoR2f/b4rTcYwwe4WUrBw1P9s4gnfpPHDPnhAqucUnxA=
+	t=1744323644; cv=none; b=p9zhnOgZpZjWtnoHMFCCP0ORwIUyGFsPcylZrGVosM32C7OR3KVf6joghHR2HiXTUUQwrZ6cDK3qpwo9M3d+aFCmw6h9tzajeoBCgs4do1kig+b3X0Wgl0tipgszryE/bC8PJok6kXvMje8LwouigovKKM9lYjB9x5x2Rb9jhMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744323419; c=relaxed/simple;
-	bh=HFP9qPj8dyOE3lqE3Pe0T3S7rWACXve/V2CTd1pqhCc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rwxuyZ2IeaHzSLadcYbh5V9Q7Pz1VPb1nd01pQ7ojvV2DmQB9MU+B9IxOBPWYN230Ws3OjSbHpMWMRQkvZ8oV4w5TC9GIv25eog3ftGCMAOgNudj0jwOD05d2tK6u7/RSCzRKRzejsMH9MmQfcXNPLlvNZiqeERQ4nI+4uDA36k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fsCz9ImP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53AD2jA1006870
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 22:16:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SlD2Zoqck4pcF7VZMBOHU/52fauKubtGQptlE1KvI3Y=; b=fsCz9ImP98FsJt01
-	ASFcaidgTI8xN0WzSjLgQk2ozYggU+2fa2BXmRSCgo3b9J67QXlm03nEChTMn6mK
-	Bo3cpQIsU4gwA+Ls23trtcC0TGgdrDoQ0r1fC18gAqpfHejLjXu5l9LI0kpKX/di
-	lxWxmnHK6r7PZrYLv5Ro6WZTZ7Pp1VddGk3CVqqG8w7L0380ZxgcJfclQlaadTRx
-	guB/S+VXx5JlGHgUB8gjSjlPqPz7BKcgTAS/9rznOWIQMk+fFwKXXFN3moMrYKLd
-	jyoJcrY3hHioBBLdDczXT8iPgMW2iFfM/qxB46DYQWU2yoXmPdZHt1MTe6LcnkeB
-	sM5JnA==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45xeh3hg1k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 22:16:56 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ff52e1c56fso1540582a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 15:16:56 -0700 (PDT)
+	s=arc-20240116; t=1744323644; c=relaxed/simple;
+	bh=zm3b8qqfkYLU75+NylqWtZmrmbY2NBuk778fP40n8Kw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tMJaPTcc8RbE+iiCloLMAiNtFbIx2NvXtJOvJuTloip7UNLepwSKGiBagVTzIGCqG98VeNW7Yk/Gns22Z3CNu1M7LSa5wL5X/kOZPK9oxTt1lqLL03iSQPWUYPwF4/1vBRqJquqjVlqLfaku904HJY1rbQ6Wc7NKc/4GrA6/w0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eQtbWuA7; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4769e30af66so64281cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 15:20:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744323641; x=1744928441; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YqV2ZMlryT3fPt4/zyn0rx+eu8iE116L2QZwsGoNxHQ=;
+        b=eQtbWuA7pPIzv7bQ3VZK+Pq99xGBUK5DXRunuWO5yOfWK5kzBEg5Ya25BfL+8Si+60
+         zXieSWS8pH+/u+aiHEVdHiOrC0xBqMsOnbikkmQDzfABOx/v7i8gdE4NmqUrhRDqlpUU
+         iv5Lc7Uhs+XGOBn1AE7uumyS3eRSKofgze73aZA1xR/5//jbKnagqMjek2AJn7++i/dy
+         5is8/D6AAY8nChY9fOHev9JR+e2M9sAnfVZNKi3ol9+v+XeE92cxz2UfKZ4pYBg0on19
+         h+JY3gY+koLQ/Rk7dXJkVuet+lt25/2aOckc2y+EIVEKgLFDR0XbmTaE8OTfG3LNX91Z
+         fpsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744323415; x=1744928215;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SlD2Zoqck4pcF7VZMBOHU/52fauKubtGQptlE1KvI3Y=;
-        b=dItko2g/nnBMpaLZIbUQeWbHYjEOp7NkpY3LfBdi2bq30EP5P/uR+XpaCCTIZeOO5H
-         Ig+0mynXXK6SplLpOGwn/Tanv/BA7q23WDoPB8KMMX23wEEONOYIkJT2/o4ikTlj1ka0
-         rD3DAC/y4MGEvY4EG2ZE1StxuhksBmwvdAUPNrRayORKaYsudsZWIqxEBCKbOUgRM9K8
-         8AljKIJpFMol9tu66TGt+aIX4a/Qcwi+0YK3L8UyvtI6fLHKwls9gUyHrptyMpACkhXI
-         5RWsEvrOUVlSnxdD2i1LRVAlY9e57Ntk9WQCCTW/RoaS0Vs8oXqgllAR1AJ+T4Cx/pQl
-         OE2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWW4j1jsoLODcckM6UzQrT8e2KyNqchf039/lWh3XiF3k2+CAh/qREYquHucOa7lNYIEF6cb8QCm5JrHK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQKwzMZeDRbW0UAd7jSVuj9CzyjRNfcwFdeBSrf8pbwyvI8Omd
-	ZKWZcAPTICpF9jFQruwX4SGrK9wQ6pHS7d1mtimGDcKaDm403zPjmIt72bLIGfVFMi/5cqTq1gV
-	NWtVsmTob2mJHY8OAvbjicwQJvZlSOfEQeFFLkVVBOhdyAYlI7gLH/PTgLV/63nc=
-X-Gm-Gg: ASbGncsQOGKibmdpX1R2UuZlOVhxLBSx6vak/awqRAcyFhq/YYFv8FWpw/dA/qsiPIj
-	Sy/EEKMXJNr1dxfISe7k3n30MfH3MD5hjG3+Jeg1LjQj+kGuemfMQ2HaWSinoqjZ71teAHItbe1
-	+nPQNbY8F6Y8l479lWqwwXzXOkiH6nfksTUQ1eCMTbDb4a10/UoLtFlM8x8d/BtL9nv8JV4BcCZ
-	f1HXYPo5THrOebfN8gqtJSL9mUcZguA+koJxdC/dk18tNfKQv1AFmWRyp+3lbCYK4ZRJyZZH0cV
-	YGSfLt50lQ6MRpKPzuVOfsRYYCrs35SrKrJ/BJLBDPHwac/HuWwfiMYRYLVPZ9fYVLMv1Gnq874
-	7Ch2f
-X-Received: by 2002:a17:90b:2743:b0:2fe:b174:31fe with SMTP id 98e67ed59e1d1-30823624700mr846385a91.2.1744323415422;
-        Thu, 10 Apr 2025 15:16:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF3q3badw0zIeHRu251yR5zxmnm+DYdPJGS2wgnmZo8bCO06H0BLiRjTFsUKI1g39u/REbl2w==
-X-Received: by 2002:a17:90b:2743:b0:2fe:b174:31fe with SMTP id 98e67ed59e1d1-30823624700mr846343a91.2.1744323414953;
-        Thu, 10 Apr 2025 15:16:54 -0700 (PDT)
-Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd1859e9sm4265767a91.43.2025.04.10.15.16.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 15:16:54 -0700 (PDT)
-Message-ID: <23e31f9f-4465-45c1-8919-c5d43034d33e@oss.qualcomm.com>
-Date: Thu, 10 Apr 2025 15:16:53 -0700
+        d=1e100.net; s=20230601; t=1744323641; x=1744928441;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YqV2ZMlryT3fPt4/zyn0rx+eu8iE116L2QZwsGoNxHQ=;
+        b=AjmreA1vriGvmAPoM2GR/nGmtU+puIgdPd6MGJiFrEAOAPWGHfVG0mg9lwlSu2/Yrb
+         s0dwouD8sBikuJKIuAOfGnFswdJ7GRNwDQR1DAmU67Z2UlXdC5YcMG5/AL9uej1S8qi9
+         L+RieFRqA2Vq1eYMEzsds6nyh1aK7Iw1/YvLhRy7Ej38a3gUilhoVY4Pq4jQfjj4DfvS
+         12uLP5EMAlLvL56KA5oexMlTht/ixHiELdh+9EoJBj3RoWFT4MXrZFSDqQqrBH8GQFGK
+         DsRNrEpohhE8UEV9kcTp2XgRWTeR8K8+6EgV/AbgepBqhjxlNpupKJMmD+YaHCSRWFvu
+         a36w==
+X-Forwarded-Encrypted: i=1; AJvYcCWQkGTB6Z8o24/U61g1AHpTYU7bCrKFbiUEbycHWTmfwKBICXFtHMQYUYJGR9IvZt4VfgIqvCNNmNztLqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhEvPM4dvaqn80YKVpQvR/Nn1oLA6xq7vipR/B7VyliwKac/I+
+	E07Wz0EagM2IwUH1vCjWF/k86nQmDecLpqXWRUJ97B6tWJrahsdGe6TrB/GZwenjj3/eNuuSS8C
+	+FlJlv1HHFSuMd6eFaMPS+PoX81B0ZnSp7Wxt
+X-Gm-Gg: ASbGncs6btvDbqQBDxsncww/bpF/5ZAWvsyvN/Il0o/Z9xWX3zefPWpBOHelY27IoXI
+	ToCT2djhR2fn86c4Z6FhIOpzwBni1cIT1pBBAS8yud2foB0MtX+v5OoyO+kb3Q5P7TYRRRuJIlO
+	F5gcNXrvx+mds9/Q9e1VM5
+X-Google-Smtp-Source: AGHT+IHwADXMs6qQ3nDUgcJ0NYP2Vl4CNhd7gecjcysD9CcCEf1z+TL8Zl+UcA/rAZmsRQ3BtXfCEXiYkQ54ngVEBaI=
+X-Received: by 2002:ac8:7c4f:0:b0:476:77bb:687a with SMTP id
+ d75a77b69052e-47977894b4cmr511231cf.21.1744323641024; Thu, 10 Apr 2025
+ 15:20:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath12k: Fix buffer overflow in debugfs
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Dinesh Karthikeyan <quic_dinek@quicinc.com>
-Cc: Jeff Johnson <jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        Ramya Gnanasekar <quic_rgnanase@quicinc.com>,
-        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <35daefbd-d493-41d9-b192-96177d521b40@stanley.mountain>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <35daefbd-d493-41d9-b192-96177d521b40@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=VbH3PEp9 c=1 sm=1 tr=0 ts=67f84358 cx=c_pps a=0uOsjrqzRL749jD1oC5vDA==:117 a=e70TP3dOR9hTogukJ0528Q==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=eavArjg6gjGuu_xFX0IA:9 a=QEXdDO2ut3YA:10
- a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-GUID: dA1Bb6OJ6yjniGDEj4IgsnrtdPE7pz75
-X-Proofpoint-ORIG-GUID: dA1Bb6OJ6yjniGDEj4IgsnrtdPE7pz75
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-10_07,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 impostorscore=0 suspectscore=0 adultscore=0 spamscore=0
- clxscore=1015 malwarescore=0 priorityscore=1501 bulkscore=0 mlxscore=0
- mlxlogscore=762 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504100162
+References: <20250409225111.3770347-1-tjmercier@google.com>
+ <20250409171238.494fd49979b4607bff9791b7@linux-foundation.org>
+ <CAJuCfpHaocOVHf673X1nn_R0cpz=GtDZEZ+ceo+5OptRcBUjcw@mail.gmail.com> <04f4cff4-be7c-48d8-b24e-535ccc67d908@huawei.com>
+In-Reply-To: <04f4cff4-be7c-48d8-b24e-535ccc67d908@huawei.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 10 Apr 2025 15:20:30 -0700
+X-Gm-Features: ATxdqUHfHaEyJNVqpBNRufpxneK936qhnpUHUFniBD_AS_aYP6_DNoLrort5z0E
+Message-ID: <CAJuCfpFcE0tGnWYwkfCr20MyEHSruz+nnJ=uj1RdCtkiBrvHZQ@mail.gmail.com>
+Subject: Re: [PATCH v2] alloc_tag: handle incomplete bulk allocations in vm_module_tags_populate
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "T.J. Mercier" <tjmercier@google.com>, 
+	kent.overstreet@linux.dev, janghyuck.kim@samsung.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/9/2025 4:01 AM, Dan Carpenter wrote:
-> If the user tries to write more than 32 bytes then it results in memory
-> corruption.  Fortunately, this is debugfs so it's limitted to root users.
+On Wed, Apr 9, 2025 at 7:52=E2=80=AFPM Yunsheng Lin <linyunsheng@huawei.com=
+> wrote:
+>
+> On 2025/4/10 9:44, Suren Baghdasaryan wrote:
+> > On Thu, Apr 10, 2025 at 12:12=E2=80=AFAM Andrew Morton
+> > <akpm@linux-foundation.org> wrote:
+> >>
+> >> On Wed,  9 Apr 2025 22:51:11 +0000 "T.J. Mercier" <tjmercier@google.co=
+m> wrote:
+> >>
+> >>> alloc_pages_bulk_node may partially succeed and allocate fewer than t=
+he
+> >>> requested nr_pages. There are several conditions under which this can
+> >>> occur, but we have encountered the case where CONFIG_PAGE_OWNER is
+> >>> enabled causing all bulk allocations to always fallback to single pag=
+e
+> >>> allocations due to commit 187ad460b841 ("mm/page_alloc: avoid page
+> >>> allocator recursion with pagesets.lock held").
+> >>>
+> >>> Currently vm_module_tags_populate immediately fails when
+> >>> alloc_pages_bulk_node returns fewer than the requested number of page=
+s.
+> >>> When this happens memory allocation profiling gets disabled, for exam=
+ple
+> >>>
+> >>> [   14.297583] [9:       modprobe:  465] Failed to allocate memory fo=
+r allocation tags in the module scsc_wlan. Memory allocation profiling is d=
+isabled!
+> >>> [   14.299339] [9:       modprobe:  465] modprobe: Failed to insmod '=
+/vendor/lib/modules/scsc_wlan.ko' with args '': Out of memory
+> >>>
+> >>> This patch causes vm_module_tags_populate to retry bulk allocations f=
+or
+> >>> the remaining memory instead of failing immediately which will avoid =
+the
+> >>> disablement of memory allocation profiling.
+> >>>
+> >>
+> >> Thanks.  I'm assuming we want cc:stable on this?
+> >>
+> >> btw, it looks like the "Clean up and error out" code in
+> >> vm_module_tags_populate() could use release_pages().
+>
+> For the 'Clean up and error out' part:
+> next_page[] array might need to be reset to NULL if user is able to
+> reenable the memory allocation profiling when the above happens as the
+> current page bulk alloc API are only populating NULL elements.
 
-I've fixed this in the 'pending' branch:
-WARNING:TYPO_SPELLING: 'limitted' may be misspelled - perhaps 'limited'?
+We shouldn't be able to re-enable memory allocation profiling once
+vm_module_tags_populate() fails. In that case shutdown_mem_profiling()
+call disables memory allocation profiling and sets
+mem_profiling_support=3Dfalse. I might have to modify
+memory_allocation_profiling_sysctls to prevent users from trying to
+re-enable profiling via sysfs if mem_profiling_support is set to
+false. Will take a closer look at that but regarding your comment,
+re-enabling profiling once it's shut down is not a valid usecase.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git/commit/?h=pending&id=b49ee0380e07efa34bdc4b012df22842b7fe2825
-
-/jeff
+>
+> >
+> > True. I'll add that into my TODO list. Thanks!
+> >
+> >>
+> >
 
