@@ -1,153 +1,224 @@
-Return-Path: <linux-kernel+bounces-597465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7430BA83A24
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:02:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1B1A83A3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79630467C97
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:02:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A9E8A48A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2110E204C0A;
-	Thu, 10 Apr 2025 07:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288C1204C19;
+	Thu, 10 Apr 2025 07:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=beldev.am header.i=@beldev.am header.b="PM2B6bWS"
-Received: from server4.hayhost.am (server4.hayhost.am [2.56.206.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A922036ED
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=2.56.206.6
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="V1clprFc"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90E51DFDE;
+	Thu, 10 Apr 2025 07:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744268549; cv=none; b=dspt5yYBmT/lzfNT2xsOnYVfjmvJpnbdh63NkbLsq8ePFz8Wrm6uGZzRBzneuGZh0xaCshsJHyUui1lYRzXJ/waJ2o4zZlmDZMki8qArdMAjuEcSpWIjIIWHTTbjl5YZfYX1guhW8TzzNGbQy5D4kUzybqvam8TCX1bdKZy70uk=
+	t=1744268628; cv=none; b=Rf3n5j25zTZWVar0KZ7Dzctw86ls8OHq8bSSIr58VLOJhgFC53ocYcj2OWHzlY5SJ/OTTL2jDnB5pKiGU4gIl2eiAktfrexHSzDVcN4GCBYtRQcmSQgEhxz/vkxLotQJjm/ZJ39HadbpyPo/59RY+oydSwEEW2fJ+hLmUd5Vhh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744268549; c=relaxed/simple;
-	bh=Ty3wfbkYGid/c8LJyC7C9XKcQvbGvUAoykWgPvfRXS0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=VWF/+Lus5I8QePwYOUNpa43vwF/5c9yluJcFEaTSdvmkIfLFtfW1Xe4HuNY7NsBhTn/nZoXFW8MgBWb4CKdfVepeHBR5kU7vIFJPytY5BwkFjPncsancG3USx6/+2xjch7nscXXQ1X80cpiGBaV51LNbFf+FdBqXJ0Fq/YNkSeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=beldev.am; spf=pass smtp.mailfrom=beldev.am; dkim=pass (2048-bit key) header.d=beldev.am header.i=@beldev.am header.b=PM2B6bWS; arc=none smtp.client-ip=2.56.206.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=beldev.am
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=beldev.am
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=beldev.am;
-	s=default; h=Content-Transfer-Encoding:Content-Type:Message-ID:References:
-	In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=DWL82tPIOM6tWzfIcLAFHYbFC9Hsnba5uU2kE1Kr1Jw=; b=PM2B6bWS971oxZKQ9UzRyHAxKW
-	MO/d4O00gCyQr/ts0I6+D55yytt5BNEbPAA29vYe2lBhv71AEjF3EGkNAMxriqMkrkVxZyXCKt8c0
-	pfRsw0y2cea25Zol6g3e3s4FdmgaRuH6jzu5lai1tUF6paCeBIxqg4gzmBrj/S3gelsRQuWyi1bEV
-	JPd5QIsMR48uVAbie/Iwu1hlEUkt/0dEeYHKDQ/B1IVzm3x27yPmfxTXMSAcjsm93KtTno9vBeQui
-	prYW8hNWU11MT1nfAEGxq06UjK0OfHGEJ6TEDTArFtMr5mbSXyb5AKaNTrtSn5cBT0G2NxDAMGSW2
-	NOTD/3pg==;
-Received: from [::1] (port=39210 helo=server4.hayhost.am)
-	by server4.hayhost.am with esmtpa (Exim 4.98.1)
-	(envelope-from <igor.b@beldev.am>)
-	id 1u2lvl-00000000CQ2-2CCd;
-	Thu, 10 Apr 2025 11:02:33 +0400
+	s=arc-20240116; t=1744268628; c=relaxed/simple;
+	bh=bZLY15UrVGK7p97LG2OmtwjcZajPk3Fv1tuBhvNIjMg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QkuSt4iwjVmdbLnWVpHywQkFks8Am0XmioKGvVbebAJebf1+4NindtuLH3iB5IBgEh3MhaBVxt1/U4mI1YS6f29vP1Tuk4/udUR6vRUq53gz9m7pww0Yl0OrE68wSqOPx7CxvC2+3VegD01C0yB3I6TtM/z0bhg4Mxa34VXJQjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=V1clprFc; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=CnPiI
+	i+40Nq8IcPg6K0qCX4b4qsQqX8RZrW3I0ARU+w=; b=V1clprFcSYL5hj6EdrKA/
+	ZvKFdBpjr6yT9+dg7+1YdX+thh8ahiBMaJT4MVUdw/U7dpVGGafHBkkfCB3VWhvf
+	iTo3Ic8iK1g6yaC1qQOTeF+l84ndxcoEIZ2HkP/wu6O1RH2sJdkjRqj/O4IrCCS/
+	xio5MB4R5GF2TMerhFUzJE=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3f7EibfdnHOEjFg--.20679S2;
+	Thu, 10 Apr 2025 15:02:59 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mattbobrowski@google.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v3] bpf: Remove redundant checks
+Date: Thu, 10 Apr 2025 15:02:58 +0800
+Message-Id: <20250410070258.276759-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 10 Apr 2025 11:02:31 +0400
-From: Igor Belousov <igor.b@beldev.am>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Nhat Pham <nphamcs@gmail.com>, vitaly.wool@konsulko.se,
- linux-mm@kvack.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- Shakeel Butt <shakeel.butt@linux.dev>, Yosry Ahmed <yosryahmed@google.com>
-Subject: Re: [PATCH v2] mm: add zblock allocator
-In-Reply-To: <6e1c6b20481c2cb41930d37da4fe8aeb@beldev.am>
-References: <1743810988579.7.125720@webmail-backend-production-7b88b644bb-5mmj8>
- <0dbbbe9d17ed489d4a7dbe12026fc6fd@beldev.am>
- <f8063d3fa7e148fecdda82e40b36e10a@beldev.am>
- <CAKEwX=NMjfC1bKTVsB+C7eq3y=O0x3v8MW7KxUfhpg6UUr23rw@mail.gmail.com>
- <f023ba8341f9b44610cc4ac00cf0ee33@beldev.am>
- <CAKEwX=MXD9EB242WkB50ZBmZgV-CwrAHp=_oE+e=7yHDfrMHtg@mail.gmail.com>
- <3f013184c80e254585b56c5f16b7e778@beldev.am>
- <20250408195533.GA99052@cmpxchg.org>
- <6e1c6b20481c2cb41930d37da4fe8aeb@beldev.am>
-User-Agent: Roundcube Webmail/1.6.9
-Message-ID: <019035e5ecae12390048b73c042ec54d@beldev.am>
-X-Sender: igor.b@beldev.am
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server4.hayhost.am
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - beldev.am
-X-Get-Message-Sender-Via: server4.hayhost.am: authenticated_id: igor.b@beldev.am
-X-Authenticated-Sender: server4.hayhost.am: igor.b@beldev.am
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3f7EibfdnHOEjFg--.20679S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKr4kJFy8XF15Zr1rWw13twb_yoW7tF1rpF
+	sxtrZxCrs2vw42qFy7Jr1fZa4Yy3srX3y5WaykKw18ur4UZr47tF12kF42gF1rAr98G347
+	u3yvvFZ0kFyI93JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jerWrUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiwgMreGf3aJu3wAAAsG
 
-> Hi Johannes,
-> 
->>> Sure. zstd/8 cores/make -j32:
->>> 
->>> zsmalloc:
->>> real	7m36.413s
->>> user	38m0.481s
->>> sys	7m19.108s
->>> Zswap:            211028 kB
->>> Zswapped:         925904 kB
->>> zswpin 397851
->>> zswpout 1625707
->>> zswpwb 5126
->>> 
->>> zblock:
->>> real	7m55.009s
->>> user	39m23.147s
->>> sys	7m44.004s
->>> Zswap:            253068 kB
->>> Zswapped:         919956 kB
->>> zswpin 456843
->>> zswpout 2058963
->>> zswpwb 3921
->> 
->> So zstd results in nearly double the compression ratio, which in turn
->> cuts total execution time *almost in half*.
->> 
->> The numbers speak for themselves. Compression efficiency >>> allocator
->> speed, because compression efficiency ultimately drives the continuous
->> *rate* at which allocations need to occur. You're trying to optimize a
->> constant coefficient at the expense of a higher-order one, which is a
->> losing proposition.
-> 
-> Actually there's a slight bug in zblock code for 4K page case which 
-> caused storage inefficiency for small (== well compressed) memory 
-> blocks. With that one fixed, the results look a lot brighter for 
-> zblock:
-> 
-> 1. zblock/zstd/8 cores/make -j32 bzImage
-> real	7m28.290s
-> user	37m27.055s
-> sys	7m18.629s
-> Zswap:            221516 kB
-> Zswapped:         904104 kB
-> zswpin 425424
-> zswpout 2011503
-> zswpwb 4111
+From: Feng Yang <yangfeng@kylinos.cn>
 
-For the sake of completeness I re-ran that test with the bugfix and LZ4 
-(so, zblock/lz4/8 cores/make -j32 bzImage) and I got:
-real	7m44.154s
-user	38m26.645s
-sys	7m38.302s
-zswpin 648108
-zswpout 2490449
-zswpwb 9499
+Many conditional checks in switch-case are redundant
+with bpf_base_func_proto and should be removed.
 
-So there's *no* significant cut with zstd in execution time, even on a 
-Ryzen 9 and that invalidates your point. Sorry for the past confusion, 
-it was an honest mistake from our side. If zsmalloc didn't OOM with lz4 
-we probably would have seen the discrepancy and found the bug earlier.
+Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+Acked-by: Song Liu <song@kernel.org>
+---
+Changes in v3:
+- Only modify patch description information.
+- Link to v2: https://lore.kernel.org/all/20250408071151.229329-1-yangfeng59949@163.com/
 
-And on ARM64 and RISC-V targets we have run the tests on, zstd is slower 
-than lz4.
+Changes in v2:
+- Only modify patch description information.
+- Link to v1: https://lore.kernel.org/all/20250320032258.116156-1-yangfeng59949@163.com/
+---
+ kernel/trace/bpf_trace.c | 72 ----------------------------------------
+ 1 file changed, 72 deletions(-)
 
-/Igor
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 6b07fa7081d9..c89b25344422 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1443,56 +1443,14 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 	const struct bpf_func_proto *func_proto;
+ 
+ 	switch (func_id) {
+-	case BPF_FUNC_map_lookup_elem:
+-		return &bpf_map_lookup_elem_proto;
+-	case BPF_FUNC_map_update_elem:
+-		return &bpf_map_update_elem_proto;
+-	case BPF_FUNC_map_delete_elem:
+-		return &bpf_map_delete_elem_proto;
+-	case BPF_FUNC_map_push_elem:
+-		return &bpf_map_push_elem_proto;
+-	case BPF_FUNC_map_pop_elem:
+-		return &bpf_map_pop_elem_proto;
+-	case BPF_FUNC_map_peek_elem:
+-		return &bpf_map_peek_elem_proto;
+-	case BPF_FUNC_map_lookup_percpu_elem:
+-		return &bpf_map_lookup_percpu_elem_proto;
+-	case BPF_FUNC_ktime_get_ns:
+-		return &bpf_ktime_get_ns_proto;
+-	case BPF_FUNC_ktime_get_boot_ns:
+-		return &bpf_ktime_get_boot_ns_proto;
+-	case BPF_FUNC_tail_call:
+-		return &bpf_tail_call_proto;
+-	case BPF_FUNC_get_current_task:
+-		return &bpf_get_current_task_proto;
+-	case BPF_FUNC_get_current_task_btf:
+-		return &bpf_get_current_task_btf_proto;
+-	case BPF_FUNC_task_pt_regs:
+-		return &bpf_task_pt_regs_proto;
+ 	case BPF_FUNC_get_current_uid_gid:
+ 		return &bpf_get_current_uid_gid_proto;
+ 	case BPF_FUNC_get_current_comm:
+ 		return &bpf_get_current_comm_proto;
+-	case BPF_FUNC_trace_printk:
+-		return bpf_get_trace_printk_proto();
+ 	case BPF_FUNC_get_smp_processor_id:
+ 		return &bpf_get_smp_processor_id_proto;
+-	case BPF_FUNC_get_numa_node_id:
+-		return &bpf_get_numa_node_id_proto;
+ 	case BPF_FUNC_perf_event_read:
+ 		return &bpf_perf_event_read_proto;
+-	case BPF_FUNC_get_prandom_u32:
+-		return &bpf_get_prandom_u32_proto;
+-	case BPF_FUNC_probe_read_user:
+-		return &bpf_probe_read_user_proto;
+-	case BPF_FUNC_probe_read_kernel:
+-		return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ?
+-		       NULL : &bpf_probe_read_kernel_proto;
+-	case BPF_FUNC_probe_read_user_str:
+-		return &bpf_probe_read_user_str_proto;
+-	case BPF_FUNC_probe_read_kernel_str:
+-		return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ?
+-		       NULL : &bpf_probe_read_kernel_str_proto;
+ #ifdef CONFIG_ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
+ 	case BPF_FUNC_probe_read:
+ 		return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ?
+@@ -1502,10 +1460,6 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 		       NULL : &bpf_probe_read_compat_str_proto;
+ #endif
+ #ifdef CONFIG_CGROUPS
+-	case BPF_FUNC_cgrp_storage_get:
+-		return &bpf_cgrp_storage_get_proto;
+-	case BPF_FUNC_cgrp_storage_delete:
+-		return &bpf_cgrp_storage_delete_proto;
+ 	case BPF_FUNC_current_task_under_cgroup:
+ 		return &bpf_current_task_under_cgroup_proto;
+ #endif
+@@ -1513,20 +1467,6 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 		return &bpf_send_signal_proto;
+ 	case BPF_FUNC_send_signal_thread:
+ 		return &bpf_send_signal_thread_proto;
+-	case BPF_FUNC_perf_event_read_value:
+-		return &bpf_perf_event_read_value_proto;
+-	case BPF_FUNC_ringbuf_output:
+-		return &bpf_ringbuf_output_proto;
+-	case BPF_FUNC_ringbuf_reserve:
+-		return &bpf_ringbuf_reserve_proto;
+-	case BPF_FUNC_ringbuf_submit:
+-		return &bpf_ringbuf_submit_proto;
+-	case BPF_FUNC_ringbuf_discard:
+-		return &bpf_ringbuf_discard_proto;
+-	case BPF_FUNC_ringbuf_query:
+-		return &bpf_ringbuf_query_proto;
+-	case BPF_FUNC_jiffies64:
+-		return &bpf_jiffies64_proto;
+ 	case BPF_FUNC_get_task_stack:
+ 		return prog->sleepable ? &bpf_get_task_stack_sleepable_proto
+ 				       : &bpf_get_task_stack_proto;
+@@ -1534,12 +1474,6 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 		return &bpf_copy_from_user_proto;
+ 	case BPF_FUNC_copy_from_user_task:
+ 		return &bpf_copy_from_user_task_proto;
+-	case BPF_FUNC_snprintf_btf:
+-		return &bpf_snprintf_btf_proto;
+-	case BPF_FUNC_per_cpu_ptr:
+-		return &bpf_per_cpu_ptr_proto;
+-	case BPF_FUNC_this_cpu_ptr:
+-		return &bpf_this_cpu_ptr_proto;
+ 	case BPF_FUNC_task_storage_get:
+ 		if (bpf_prog_check_recur(prog))
+ 			return &bpf_task_storage_get_recur_proto;
+@@ -1548,18 +1482,12 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 		if (bpf_prog_check_recur(prog))
+ 			return &bpf_task_storage_delete_recur_proto;
+ 		return &bpf_task_storage_delete_proto;
+-	case BPF_FUNC_for_each_map_elem:
+-		return &bpf_for_each_map_elem_proto;
+-	case BPF_FUNC_snprintf:
+-		return &bpf_snprintf_proto;
+ 	case BPF_FUNC_get_func_ip:
+ 		return &bpf_get_func_ip_proto_tracing;
+ 	case BPF_FUNC_get_branch_snapshot:
+ 		return &bpf_get_branch_snapshot_proto;
+ 	case BPF_FUNC_find_vma:
+ 		return &bpf_find_vma_proto;
+-	case BPF_FUNC_trace_vprintk:
+-		return bpf_get_trace_vprintk_proto();
+ 	default:
+ 		break;
+ 	}
+-- 
+2.43.0
+
 
