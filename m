@@ -1,108 +1,108 @@
-Return-Path: <linux-kernel+bounces-597231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B578BA836E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:55:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78D7A836DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D52E463B30
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:54:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFEB9189E1A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08C11E9B29;
-	Thu, 10 Apr 2025 02:54:44 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CAA1E9B1D;
+	Thu, 10 Apr 2025 02:52:29 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD3918A6C4;
-	Thu, 10 Apr 2025 02:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489E31CA84
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 02:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744253684; cv=none; b=bQRfGn0B8499MAKDLO5lYajBXn5bynwHdDlX4DpCDVJKNkVcC9CxmqZ32VUcKZ9VR2PK8kF3S86dU1W633UBvbDXZjemEeF1m02OgbTSK2S7eI+z06UzbEApnAgL/cDRkKqwoU2LN90mZVZU0KGTswC23/xeDgMZV4jhZjVJbzE=
+	t=1744253549; cv=none; b=fXIkpv3BEXlNm2GEpYqqEO1Z6P1TYcLWY+/TEsy/9pMLCTXMVOlUnvzLTc7sIiE1qQBdZcWaUu1blZE8vStD0VIWcaojCzPFMkejHigULE8V3NjrsATxBcifNfryiO0o8kpKwuHrA1O8K+YdcSYFpPclXPAse4hktKmkyujhJYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744253684; c=relaxed/simple;
-	bh=D8Gt7U14f7E5akNQWxL4TI1DqEtJhC1ZuLgq1Pq2ipM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Oh54XlkKY6Ffk328vmxPIphR0HS7u57Po/Qt7zNkAXAd9Emh7NDMahlTaSfG2dk6az9rL7fb+iSlztHORWHZdTYsFx4NYytRJokuCe+Llv3GS4p+nUn7kQ/DvLScKCU3pHBhmJ4c3BFAokfseJw19YXbbrOH4Lm8pdqTY4lEpJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowABnDf7fMvdnNSHDBw--.25448S2;
-	Thu, 10 Apr 2025 10:54:25 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: robdclark@gmail.com,
-	sean@poorly.run,
-	konradybcio@kernel.org,
-	quic_abhinavk@quicinc.com,
-	lumag@kernel.org,
-	marijn.suijten@somainline.org,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] drm/msm: Convert comma to semicolon
-Date: Thu, 10 Apr 2025 10:52:21 +0800
-Message-Id: <20250410025221.3358387-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744253549; c=relaxed/simple;
+	bh=3GMKJMyO6XbTppXxJ4t5YNnNmyH44h7Kci21jGO8V5g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HOHCyKCPcOwijTIJrpbXzcz2iuaq0LW84pX6Hih6fp9b8D4/ZnaCiKw+wa7IRxFQYDQicrYhzKPMc1ls7G1PqA0gUiOB2rgIg7l/xjvjDzvyzfVn49wxRjcmr6jYNevwtXqeZ6hjPBU1iNUfKnANNIGS866ZhTd6ij2YSC/uINc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZY44h41zSzvX2s;
+	Thu, 10 Apr 2025 10:48:20 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id D3FE6180468;
+	Thu, 10 Apr 2025 10:52:23 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 10 Apr 2025 10:52:23 +0800
+Message-ID: <04f4cff4-be7c-48d8-b24e-535ccc67d908@huawei.com>
+Date: Thu, 10 Apr 2025 10:52:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] alloc_tag: handle incomplete bulk allocations in
+ vm_module_tags_populate
+To: Suren Baghdasaryan <surenb@google.com>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: "T.J. Mercier" <tjmercier@google.com>, <kent.overstreet@linux.dev>,
+	<janghyuck.kim@samsung.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250409225111.3770347-1-tjmercier@google.com>
+ <20250409171238.494fd49979b4607bff9791b7@linux-foundation.org>
+ <CAJuCfpHaocOVHf673X1nn_R0cpz=GtDZEZ+ceo+5OptRcBUjcw@mail.gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAJuCfpHaocOVHf673X1nn_R0cpz=GtDZEZ+ceo+5OptRcBUjcw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABnDf7fMvdnNSHDBw--.25448S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gr4rCw4kuw4kuw1xGrW3ZFb_yoWDWFbEk3
-	9YgwsrCF47KFnYkFn3ArWSvFyakw1YkFW8Wr12q3yYyr1qkFs5ur9IqFyDXw1UZF4jvFyD
-	ZayrXF45AF9xWjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-	0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8JwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUHyIUUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Replace comma between expressions with semicolons.
+On 2025/4/10 9:44, Suren Baghdasaryan wrote:
+> On Thu, Apr 10, 2025 at 12:12 AM Andrew Morton
+> <akpm@linux-foundation.org> wrote:
+>>
+>> On Wed,  9 Apr 2025 22:51:11 +0000 "T.J. Mercier" <tjmercier@google.com> wrote:
+>>
+>>> alloc_pages_bulk_node may partially succeed and allocate fewer than the
+>>> requested nr_pages. There are several conditions under which this can
+>>> occur, but we have encountered the case where CONFIG_PAGE_OWNER is
+>>> enabled causing all bulk allocations to always fallback to single page
+>>> allocations due to commit 187ad460b841 ("mm/page_alloc: avoid page
+>>> allocator recursion with pagesets.lock held").
+>>>
+>>> Currently vm_module_tags_populate immediately fails when
+>>> alloc_pages_bulk_node returns fewer than the requested number of pages.
+>>> When this happens memory allocation profiling gets disabled, for example
+>>>
+>>> [   14.297583] [9:       modprobe:  465] Failed to allocate memory for allocation tags in the module scsc_wlan. Memory allocation profiling is disabled!
+>>> [   14.299339] [9:       modprobe:  465] modprobe: Failed to insmod '/vendor/lib/modules/scsc_wlan.ko' with args '': Out of memory
+>>>
+>>> This patch causes vm_module_tags_populate to retry bulk allocations for
+>>> the remaining memory instead of failing immediately which will avoid the
+>>> disablement of memory allocation profiling.
+>>>
+>>
+>> Thanks.  I'm assuming we want cc:stable on this?
+>>
+>> btw, it looks like the "Clean up and error out" code in
+>> vm_module_tags_populate() could use release_pages().
 
-Using a ',' in place of a ';' can have unintended side effects.
-Although that is not the case here, it is seems best to use ';'
-unless ',' is intended.
+For the 'Clean up and error out' part:
+next_page[] array might need to be reset to NULL if user is able to
+reenable the memory allocation profiling when the above happens as the
+current page bulk alloc API are only populating NULL elements.
 
-Found by inspection.
-No functional change intended.
-Compile tested only.
-
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/gpu/drm/msm/msm_ringbuffer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/msm/msm_ringbuffer.c b/drivers/gpu/drm/msm/msm_ringbuffer.c
-index c5651c39ac2a..89dce15eed3b 100644
---- a/drivers/gpu/drm/msm/msm_ringbuffer.c
-+++ b/drivers/gpu/drm/msm/msm_ringbuffer.c
-@@ -93,7 +93,7 @@ struct msm_ringbuffer *msm_ringbuffer_new(struct msm_gpu *gpu, int id,
- 	}
- 
- 	msm_gem_object_set_name(ring->bo, "ring%d", id);
--	args.name = to_msm_bo(ring->bo)->name,
-+	args.name = to_msm_bo(ring->bo)->name;
- 
- 	ring->end   = ring->start + (MSM_GPU_RINGBUFFER_SZ >> 2);
- 	ring->next  = ring->start;
--- 
-2.25.1
-
+> 
+> True. I'll add that into my TODO list. Thanks!
+> 
+>>
+> 
 
