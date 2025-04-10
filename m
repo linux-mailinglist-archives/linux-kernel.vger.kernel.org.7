@@ -1,109 +1,146 @@
-Return-Path: <linux-kernel+bounces-598973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55FE2A84D63
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:44:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6059A84D34
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D2A8C398A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:43:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BFF9447E69
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E02290BC6;
-	Thu, 10 Apr 2025 19:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6012A28F947;
+	Thu, 10 Apr 2025 19:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="LA+ztzZM"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="1pQ8c14I"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C299B2980A4;
-	Thu, 10 Apr 2025 19:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744314109; cv=pass; b=F532ogrLKjLGuP2L5U3s31SaSelGHLaBjZ920nJG7sylrHZgo93viTz0Omd8scy/lKXRZhWEVbft+reEvN+zdpv151Ss9VtazZC0cqBvHj8Qyx0TRxBQmZzyniLCvp9uXiZJcf8/OQYHA3pLlcKU4TrcmGQ3vGE0OiE+Ce0o9Vo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744314109; c=relaxed/simple;
-	bh=R1OEWQc82aEj2dgJQcUToroohClIvwQ79QPZXLUQSmE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kWnh4eHit+k1k2uY6bEuEqW6xodQBrwEcCq1SCHwHRMoM47rZ6gpmJkp24vcCZyQSi6Sij79yyJsQxgdkiOfpniLigdhwGXwNxPtvoLF/KPjgR6QU/DZBc4Sq4hQWGcAYsd4Jfxw2JljCIZxvshMN6ITOHJ4Ocjxqavg9njX8vs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=LA+ztzZM; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1744314077; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=PW2V7ubmD7SApc50+9soD97n+s4rw7uBDPMUGkRbOJXYJWTYGMHnYTJU0Gh7mNBXmFgDiYv4ibtxwmNb/ArkUMX2gaAwvusdgbqkt2Jg5BNcZfVeeZIYrKn7G+JZKni1z2B7IWgf1vPwme0DUGPHPCEbn2gSetbBZgIindSk3W8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1744314077; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QlmLIVs2PX6RAiZw67r46XTY/ZM209p1JSqO1Nx5peI=; 
-	b=kJx+HM+qKrQ+bNpJgtFaUqyXo9mA8UXVNqJARKNq+u8vQ6j+ejKbCK+enQhsUpT93kAkMeDHL2HCL9VfURw8c3NP/WrYJEMv43gW9NGiMqEHqjOzdCvbgjIs5IInSi88MxEButKUSqDdOoo8N31+zy4btPXBGwYs/n5K7OzTj/k=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744314077;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=QlmLIVs2PX6RAiZw67r46XTY/ZM209p1JSqO1Nx5peI=;
-	b=LA+ztzZMgld9jbNmCSIXnqi0yrLibQqbP+2dN3SRQDAX3HS5SYa40ArY+g0aRKIM
-	5rNeIopHwzmtba6h9mTmVwq4cjm8mkHJsIpUia+I/ckZ/+qP5FJQ/DmqGvxFlrF+hQe
-	rbzwCGSkRrDRpTWyNDD+A1ls4WmxcoO5CWCP0DWw=
-Received: by mx.zohomail.com with SMTPS id 1744314075380251.2791003000325;
-	Thu, 10 Apr 2025 12:41:15 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Thu, 10 Apr 2025 21:40:03 +0200
-Subject: [PATCH v2 11/11] arm64: defconfig: Enable Rockchip SAI
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747581E5206;
+	Thu, 10 Apr 2025 19:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744314030; cv=none; b=Hw9FBsednrTx/UKvn17vkA9xisu7/IgDUEUI9Hl6R2lACH5w2BDQT+6vAa6VPeqfFw//C9fTsMpy/OJFxFLkDQvCh/366bcONd2rzM5ZtdGyMeZ9zHiO8AwhSodCNEXxXtMkwcpMS/Q+fDntYXOAynAmpgwH0UfujhJzT/PZrwM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744314030; c=relaxed/simple;
+	bh=EqG6bV9uu1+OS9htLQk+Lmb3SAcKfz+RCqu+acDYM0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tptWjvdvH7NrKMrXjQKFshPJYbBCVE40UuW88YRiAKcJBFSmMxArAIt2GeRPSvl+iipOS0N5MK8AtrOLzGF+aGVFWCpxHUEu2MZRZ1BbEJjxJyAG+2tIDJl/t+yu45Vc4KzQQAnxmbLdq5vebrFArPv940RgLkSfiOoVbQGfaOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=1pQ8c14I; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=hXIB3Hcfuug+kNve3lPpJgg9CdyzHNxaIStHc89+43c=; b=1pQ8c14IaovuGU/AE+akUVZwWN
+	wmeOAhVVxROopAX1/XwGnNjrOaWviJnSS4TrOq+rKuPL0BuDaLXmaZhUoLf81CYtHONLDW70iH8ob
+	selguFVe3QclQWYh0pQc8VSbU2W+N+4gF+/M3AHce+z/dUUuM9ncUjO3aWsSjOHVqr8z3Oy8yx0lq
+	mmloSqSLYjhsaCqz5ZmlddaTU3Ao6NVUcGq9PYniLhfFBromc6tHrz+bljDTAknjKJc6iR6Q7RlIu
+	BqSLtFGcztXk1NZbBBk0ofYjyBZ0XpR5p+WsPeikqCOT9K84+1zHBwSIPQvFayrV0RarygA2toRAY
+	Uio8g5vg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60700)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1u2xl2-0002NX-1v;
+	Thu, 10 Apr 2025 20:40:16 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1u2xkz-0003qV-0C;
+	Thu, 10 Apr 2025 20:40:13 +0100
+Date: Thu, 10 Apr 2025 20:40:12 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Simon Horman <horms@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/2] net: phy: Add Marvell PHY PTP support
+Message-ID: <Z/genHfvbvll09XT@shell.armlinux.org.uk>
+References: <Z_ZlDLzvu_Y2JWM8@shell.armlinux.org.uk>
+ <20250409143820.51078d31@kmaincent-XPS-13-7390>
+ <Z_Z3lchknUpZS1UP@shell.armlinux.org.uk>
+ <20250409180414.19e535e5@kmaincent-XPS-13-7390>
+ <Z_avqyOX2bi44sO9@shell.armlinux.org.uk>
+ <Z/b2yKMXNwjqTKy4@shell.armlinux.org.uk>
+ <20250410111754.136a5ad1@kmaincent-XPS-13-7390>
+ <Z_fmkuPhqMqWBL2M@shell.armlinux.org.uk>
+ <20250410180205.455d8488@kmaincent-XPS-13-7390>
+ <Z_gLD8XFlyG32D6L@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250410-rk3576-sai-v2-11-c64608346be3@collabora.com>
-References: <20250410-rk3576-sai-v2-0-c64608346be3@collabora.com>
-In-Reply-To: <20250410-rk3576-sai-v2-0-c64608346be3@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Sugar Zhang <sugar.zhang@rock-chips.com>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_gLD8XFlyG32D6L@shell.armlinux.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-The RK3576 uses Rockchip SAI for audio output.
+On Thu, Apr 10, 2025 at 07:16:47PM +0100, Russell King (Oracle) wrote:
+> On Thu, Apr 10, 2025 at 06:02:05PM +0200, Kory Maincent wrote:
+> > On Thu, 10 Apr 2025 16:41:06 +0100
+> > "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+> > 
+> > > On Thu, Apr 10, 2025 at 11:17:54AM +0200, Kory Maincent wrote:
+> > > > On Wed, 9 Apr 2025 23:38:00 +0100
+> > > > "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:  
+> > > > > On Wed, Apr 09, 2025 at 06:34:35PM +0100, Russell King (Oracle) wrote:  
+> > 
+> > > > > 
+> > > > > With that fixed, ptp4l's output looks very similar to that with mvpp2 -
+> > > > > which doesn't inspire much confidence that the ptp stack is operating
+> > > > > properly with the offset and frequency varying all over the place, and
+> > > > > the "delay timeout" messages spamming frequently. I'm also getting
+> > > > > ptp4l going into fault mode - so PHY PTP is proving to be way more
+> > > > > unreliable than mvpp2 PTP. :(  
+> > > > 
+> > > > That's really weird. On my board the Marvell PHY PTP is more reliable than
+> > > > MACB. Even by disabling the interrupt.
+> > > > What is the state of the driver you are using?   
+> > > 
+> > > Right, it seems that some of the problems were using linuxptp v3.0
+> > > rather than v4.4, which seems to work better (in that it doesn't
+> > > seem to time out and drop into fault mode.)
+> > > 
+> > > With v4.4, if I try:
+> > > 
+> > > # ./ptp4l -i eth2 -m -s -2
+> > > ptp4l[322.396]: selected /dev/ptp0 as PTP clock
+> > > ptp4l[322.453]: port 1 (eth2): INITIALIZING to LISTENING on INIT_COMPLETE
+> > > ptp4l[322.454]: port 0 (/var/run/ptp4l): INITIALIZING to LISTENING on
+> > > INIT_COMPLETE ptp4l[322.455]: port 0 (/var/run/ptp4lro): INITIALIZING to
+> > > LISTENING on INIT_COMPLETE ptp4l[328.797]: selected local clock
+> > > 005182.fffe.113302 as best master
+> > > 
+> > > that's all I see. If I drop the -2, then:
+> > 
+> > It seems you are still using your Marvell PHY drivers without my change.
+> > PTP L2 was broken on your first patch and I fixed it.
+> > I have the same result without the -2 which mean ptp4l uses UDP IPV4.
+> 
+> I'm not sure what you're referring to.
 
-Enable it in the defconfig.
+Okay, turns out to be nothing to do with any fixes in my code or not
+(even though I still don't know what the claimed brokenness you
+refer to actually was.)
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5bb8f09422a22116781169611482179b10798c14..17cf29f066b793b47665088084e12d2762d3d832 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1005,6 +1005,7 @@ CONFIG_SND_SOC_SC7280=m
- CONFIG_SND_SOC_X1E80100=m
- CONFIG_SND_SOC_ROCKCHIP=m
- CONFIG_SND_SOC_ROCKCHIP_I2S_TDM=m
-+CONFIG_SND_SOC_ROCKCHIP_SAI=m
- CONFIG_SND_SOC_ROCKCHIP_SPDIF=m
- CONFIG_SND_SOC_ROCKCHIP_RT5645=m
- CONFIG_SND_SOC_RK3399_GRU_SOUND=m
+It turns out to be that ptpdv2 sends PTP packets using IPv4 UDP *or*
+L2, and was using IPv4 UDP. Adding "ptpengine:transport=ethernet" to
+the ptpdv2 configuration allows ptp4l -2 to then work.
 
 -- 
-2.49.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
