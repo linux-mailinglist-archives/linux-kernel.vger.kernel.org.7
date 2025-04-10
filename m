@@ -1,190 +1,162 @@
-Return-Path: <linux-kernel+bounces-598272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C253EA84464
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:16:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55166A8444D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BF0F177065
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:11:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AF2C7A980C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC65028D859;
-	Thu, 10 Apr 2025 13:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF7228D855;
+	Thu, 10 Apr 2025 13:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ltdp53VW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NDnNRhO6";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ltdp53VW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NDnNRhO6"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="JLIa0Hqu"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E07B28A408
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A6F2857F8;
+	Thu, 10 Apr 2025 13:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744290520; cv=none; b=hKzWJ7Jpir18ZMj6AypaZf5j4BQeQ9szCh5rrvumOryX1oAAUMWlJNBZtcxjjIeJ436l+VuQ7tK6Cw7soZCFZRjXzXiKEYLkXK23ZB1ozQfMZ3LJZwEzelHQoU3rvCWUzuJZKlN+o53ZcGe3nP7WiedcHjb1BoquS6H/9tJG9l8=
+	t=1744290595; cv=none; b=NgSu++5krTQNvodkP4s1GLwdznBsT9Ac27/o3UGTekjc7VW6wli0xD0DWQLUWpV321b0Zfm2d7KcAYfm3bMxZWI+KLq7LLdqK/X3RBatlwPWOHp2iwwki+Z12xBDfLnU/7e8d3lp/qii9hn3vb1W60iRU8sikcRfB5lDHOnOqKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744290520; c=relaxed/simple;
-	bh=5mubNZKqQrSu5S0oinweDg4SnDUbFvLRMCDLD1QiRIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iWXC7Dn7Uc19yQuSOf4iBsi+oditS+X4m9G9oOKSNtnIqo0zWt1NEyxpSXe16JRHv4C+Vkp4I5+mgFUniZo5FxCPM2bjXNisEI+WcirWfvesSPmO1KTLnTD2wZQ6SPL5+tp8BSiv7D4y2R/8b8h0ezagZPodqdXCXYK8YBJsM7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ltdp53VW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NDnNRhO6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ltdp53VW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NDnNRhO6; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1744290595; c=relaxed/simple;
+	bh=ohKKNYP3dMZzy/Op3vn2DOLq02k/up894FUlQhaKHxQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FM0kkmAkmNQcGgjq0ghdoY58BEFH3khYcJEoBX6JAhbG+A472l6BHht0UalAOWIYzaJRnLTxSZRM7/Q3WGW+MowRf5RaGPwthsp1p1JKOxZLi7w3ETZzonQdA7aMAEnDwcXsh84+MSHaZrHH8x8sbCG3QabP1iXYy5LcwrjdqG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=JLIa0Hqu; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 152DE21166;
-	Thu, 10 Apr 2025 13:08:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744290515; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ZYKsh20Kcz9sFb;
+	Thu, 10 Apr 2025 15:09:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1744290584; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JQ+GE9TVlMaXc0U/j9vFk5uI5XCKPbbp9Ak9w+zgA3g=;
-	b=ltdp53VWtTufTRvgtyHpInvkWOHVNfCdEJSJkoDc0uokyeq7zckk6u0acA0YcMta/h2dN3
-	1FS9+ww4Kvt2wCuRwOEQXZJCJxQGyxYOh+D2/9cgxXUHb2U62AvdWiMS+ulGuR6StIakuU
-	XpsvUk9Ef595xroZIj/eGVzYr1si0jU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744290515;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JQ+GE9TVlMaXc0U/j9vFk5uI5XCKPbbp9Ak9w+zgA3g=;
-	b=NDnNRhO6/DlVDH1EQDP1rhKf40t017jcRX1jfIkEHAjGR3vWHD2pYhAQiiGIq8BMlSDxB9
-	qh1MCfj3aLVnZKAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ltdp53VW;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=NDnNRhO6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744290515; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JQ+GE9TVlMaXc0U/j9vFk5uI5XCKPbbp9Ak9w+zgA3g=;
-	b=ltdp53VWtTufTRvgtyHpInvkWOHVNfCdEJSJkoDc0uokyeq7zckk6u0acA0YcMta/h2dN3
-	1FS9+ww4Kvt2wCuRwOEQXZJCJxQGyxYOh+D2/9cgxXUHb2U62AvdWiMS+ulGuR6StIakuU
-	XpsvUk9Ef595xroZIj/eGVzYr1si0jU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744290515;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JQ+GE9TVlMaXc0U/j9vFk5uI5XCKPbbp9Ak9w+zgA3g=;
-	b=NDnNRhO6/DlVDH1EQDP1rhKf40t017jcRX1jfIkEHAjGR3vWHD2pYhAQiiGIq8BMlSDxB9
-	qh1MCfj3aLVnZKAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6925513886;
-	Thu, 10 Apr 2025 13:08:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cQhhFNLC92eRYQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 10 Apr 2025 13:08:34 +0000
-Date: Thu, 10 Apr 2025 15:08:32 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Gavin Shan <gshan@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, adityag@linux.ibm.com,
-	donettom@linux.ibm.com, david@redhat.com,
-	gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
-	akpm@linux-foundation.org, shan.gavin@gmail.com
-Subject: Re: [PATCH] drivers/base/memory: Avoid overhead from
- for_each_present_section_nr()
-Message-ID: <Z_fC0M94iwDcoOla@localhost.localdomain>
-References: <20250410125110.1232329-1-gshan@redhat.com>
+	bh=tNo4RWbN6OOQmatSWnTpJ3Sh3OCGI8DiobFht1mvBP4=;
+	b=JLIa0HquJgjRKsl6VGI2sxxfZVuwKrlEnzrtHs2vUWdYskSAy4m8cWSpMDpMheH5h2Skgi
+	NlwbeHPHoHvO1XAT+3TBkM0DbFgEy4JPwFTVa/IVeHaLXUSdyJgTj4rKjzAOB01rmEvo/Q
+	5q+I26dMY3DK2iGsGaZM54MpPsnfj9WlPBcWukDoF2RC3WD25x4JZW8Zs1VGF5m5BSGTdo
+	QU+DL6NjbZk43TGAtKlQbIJO6q8pDuB7C5MJqGGqZzuSvW6qt+F8eblUpKQwDlEmGqpuey
+	/1E0zRPYbKgYOehnQNlPRH0XFt5yoOCEgiLppCE931Rq9Ml+Jf2cPEGgIV7kcA==
+Message-ID: <c737c89c7ce9174e349c61ab4e5712eee8946f13.camel@mailbox.org>
+Subject: Re: [PATCH 1/3] drm/nouveau: Prevent signaled fences in pending list
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Philipp
+ Stanner <phasta@kernel.org>, Lyude Paul <lyude@redhat.com>, Danilo
+ Krummrich <dakr@kernel.org>,  David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>, Sabrina Dubroca <sd@queasysnail.net>,  Sumit
+ Semwal <sumit.semwal@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
+	stable@vger.kernel.org
+Date: Thu, 10 Apr 2025 15:09:39 +0200
+In-Reply-To: <8583665a-6886-4245-be49-fd8839cfe212@amd.com>
+References: <20250410092418.135258-2-phasta@kernel.org>
+	 <20250410092418.135258-3-phasta@kernel.org>
+	 <8583665a-6886-4245-be49-fd8839cfe212@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410125110.1232329-1-gshan@redhat.com>
-X-Rspamd-Queue-Id: 152DE21166
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[kvack.org,vger.kernel.org,linux.ibm.com,redhat.com,linuxfoundation.org,kernel.org,linux-foundation.org,gmail.com];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-MBO-RS-META: w17gddazuhiderzamj37mege4ojzpn7m
+X-MBO-RS-ID: d885f1ea80fc186b76b
 
-On Thu, Apr 10, 2025 at 10:51:10PM +1000, Gavin Shan wrote:
-> for_each_present_section_nr() was introduced to add_boot_memory_block()
-> by commit 61659efdb35c ("drivers/base/memory: improve add_boot_memory_block()").
-> It causes unnecessary overhead when the present sections are really
-> sparse. next_present_section_nr() called by the macro to find the next
-> present section, which is far away from the spanning sections in the
-> specified block. Too much time consumed by next_present_section_nr()
-> in this case, which can lead to softlockup as observed by Aditya Gupta
-> on IBM Power10 machine.
-> 
->   watchdog: BUG: soft lockup - CPU#248 stuck for 22s! [swapper/248:1]
->   Modules linked in:
->   CPU: 248 UID: 0 PID: 1 Comm: swapper/248 Not tainted 6.15.0-rc1-next-20250408 #1 VOLUNTARY
->   Hardware name: 9105-22A POWER10 (raw) 0x800200 opal:v7.1-107-gfda75d121942 PowerNV
->   NIP:  c00000000209218c LR: c000000002092204 CTR: 0000000000000000
->   REGS: c00040000418fa30 TRAP: 0900   Not tainted  (6.15.0-rc1-next-20250408)
->   MSR:  9000000002009033 <SF,HV,VEC,EE,ME,IR,DR,RI,LE>  CR: 28000428  XER: 00000000
->   CFAR: 0000000000000000 IRQMASK: 0
->   GPR00: c000000002092204 c00040000418fcd0 c000000001b08100 0000000000000040
->   GPR04: 0000000000013e00 c000c03ffebabb00 0000000000c03fff c000400fff587f80
->   GPR08: 0000000000000000 00000000001196f7 0000000000000000 0000000028000428
->   GPR12: 0000000000000000 c000000002e80000 c00000000001007c 0000000000000000
->   GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
->   GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
->   GPR24: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
->   GPR28: c000000002df7f70 0000000000013dc0 c0000000011dd898 0000000008000000
->   NIP [c00000000209218c] memory_dev_init+0x114/0x1e0
->   LR [c000000002092204] memory_dev_init+0x18c/0x1e0
->   Call Trace:
->   [c00040000418fcd0] [c000000002092204] memory_dev_init+0x18c/0x1e0 (unreliable)
->   [c00040000418fd50] [c000000002091348] driver_init+0x78/0xa4
->   [c00040000418fd70] [c0000000020063ac] kernel_init_freeable+0x22c/0x370
->   [c00040000418fde0] [c0000000000100a8] kernel_init+0x34/0x25c
->   [c00040000418fe50] [c00000000000cd94] ret_from_kernel_user_thread+0x14/0x1c
-> 
-> Avoid the overhead by folding for_each_present_section_nr() to the outer
-> loop. add_boot_memory_block() is dropped after that.
-> 
-> Fixes: 61659efdb35c ("drivers/base/memory: improve add_boot_memory_block()")
-> Closes: https://lore.kernel.org/linux-mm/20250409180344.477916-1-adityag@linux.ibm.com
-> Reported-by: Aditya Gupta <adityag@linux.ibm.com>
-> Signed-off-by: Gavin Shan <gshan@redhat.com>
+On Thu, 2025-04-10 at 14:58 +0200, Christian K=C3=B6nig wrote:
+> Am 10.04.25 um 11:24 schrieb Philipp Stanner:
+> > Nouveau currently relies on the assumption that dma_fences will
+> > only
+> > ever get signaled through nouveau_fence_signal(), which takes care
+> > of
+> > removing a signaled fence from the list nouveau_fence_chan.pending.
+> >=20
+> > This self-imposed rule is violated in nouveau_fence_done(), where
+> > dma_fence_is_signaled() (somewhat surprisingly, considering its
+> > name)
+> > can signal the fence without removing it from the list. This
+> > enables
+> > accesses to already signaled fences through the list, which is a
+> > bug.
+> >=20
+> > In particular, it can race with nouveau_fence_context_kill(), which
+> > would then attempt to set an error code on an already signaled
+> > fence,
+> > which is illegal.
+> >=20
+> > In nouveau_fence_done(), the call to nouveau_fence_update() already
+> > ensures to signal all ready fences. Thus, the signaling potentially
+> > performed by dma_fence_is_signaled() is actually not necessary.
+>=20
+> Ah, I now got what you are trying to do here! But that won't help.
+>=20
+> The problem is it is perfectly valid for somebody external (e.g.
+> other driver, TTM etc...) to call dma_fence_is_signaled() on a
+> nouveau fence.
+>=20
+> This will then in turn still signal the fence and leave it on the
+> pending list and creating the problem you have.
 
-Acked-by: Oscar Salvador <osalvador@suse.de>
+Good to hear =E2=80=93 precisely that then is the use case for a dma_fence
+callback! ^_^ It guarantees that, no matter who signals a fence, no
+matter at what place, a certain action will always be performed.
+
+I can't think of any other mechanism which could guarantee that a
+signaled fence immediately gets removed from nouveau's pending list,
+other than the callbacks.
+
+But seriously, I don't think that anyone does this currently, nor do I
+think that anyone could get away with doing it without the entire
+computer burning down.
+
+P.
 
 
--- 
-Oscar Salvador
-SUSE Labs
+
+>=20
+> Regards,
+> Christian.
+>=20
+> >=20
+> > Replace the call to dma_fence_is_signaled() with
+> > nouveau_fence_base_is_signaled().
+> >=20
+> > Cc: <stable@vger.kernel.org> # 4.10+, precise commit not to be
+> > determined
+> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> > ---
+> > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.c | 2 +-
+> > =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > b/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > index 7cc84472cece..33535987d8ed 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > @@ -274,7 +274,7 @@ nouveau_fence_done(struct nouveau_fence *fence)
+> > =C2=A0			nvif_event_block(&fctx->event);
+> > =C2=A0		spin_unlock_irqrestore(&fctx->lock, flags);
+> > =C2=A0	}
+> > -	return dma_fence_is_signaled(&fence->base);
+> > +	return test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence-
+> > >base.flags);
+> > =C2=A0}
+> > =C2=A0
+> > =C2=A0static long
+>=20
+
 
