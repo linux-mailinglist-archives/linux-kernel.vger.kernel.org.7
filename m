@@ -1,270 +1,125 @@
-Return-Path: <linux-kernel+bounces-597611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7156A83C1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 530EDA83C20
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E08913B7D37
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FF693A9A1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FEC1E833F;
-	Thu, 10 Apr 2025 08:06:36 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE18938F80;
-	Thu, 10 Apr 2025 08:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3371A1E5B65;
+	Thu, 10 Apr 2025 08:07:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA62381A3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 08:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744272396; cv=none; b=A2iKXBA8+t+pc9A/oMNAQTPZg9b/2SX7VM/a9/raPtTKmksRCbp7o5W4HCZVDKBoYHSF5EYL7j8GCxrrLS/nlLAGHJWCp/WVEuMMjeFnPkeUPVe0fuSSwi6R1NmfkV4sJsZ4aHBFlG99PJ9KNptvrHWU3xkpXaeLRR0XThtTa9Q=
+	t=1744272451; cv=none; b=PbwjhFe9rlAl0XqQFdHImjembhJQmA1zvx9MbwE6w3xBHy5ohTfF/T4e/XoC9Ovx00KZehIP19F2v4QHE4sMFo4M5Vei6LXIVWEhKsBoB7OU5OPfBJejBJYA4LbZZAfHDoq6yIiCxzhTmT7I3y676TlzFSdKl4/b7BNPRYgjMrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744272396; c=relaxed/simple;
-	bh=1Pn+UNZD5wmywn8Y3Wm5SqEvf+30u57D0FX8q3S5eWk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oxyyhRsK7m+8b3PPDmXA0edq7EkF6e2D9g+hfL6Fv+K+c5otexpiNqT2AtlR3BeQ7yjuCWu0/A+CqbfB2AGnaNkqT4w+hFtnCisXsmZcuW7w5ks7wv0MvQ7OS1POGzxdodZJejTRP0FuQaQ7EI1YC2WPaJg3TQCBRkdUB6Pi/MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZYC6B58NQznfYw;
-	Thu, 10 Apr 2025 16:05:06 +0800 (CST)
-Received: from kwepemo200002.china.huawei.com (unknown [7.202.195.209])
-	by mail.maildlp.com (Postfix) with ESMTPS id 52F131402EB;
-	Thu, 10 Apr 2025 16:06:30 +0800 (CST)
-Received: from [10.174.179.13] (10.174.179.13) by
- kwepemo200002.china.huawei.com (7.202.195.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 10 Apr 2025 16:06:29 +0800
-Message-ID: <2699b9d3-595e-2640-6b53-298ba835f929@huawei.com>
-Date: Thu, 10 Apr 2025 16:06:28 +0800
+	s=arc-20240116; t=1744272451; c=relaxed/simple;
+	bh=mkLm0BKF7/zvsej2Gbgj/eFY/QKzpohFK6IqkaReCZE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Egc6Wqb9dsg6WKcO8KBdvlOTVrxx1OhizgOCx388zQBKfbQpaOH/xKFzXgFzP6LzDVaHXW1cTlIXYEF4IqeYtw5dTc+HrsBy6Epntvo7ae+uVMqT7pNSLjhaMdQGJbmVNPB/Rn+wn+n4Bj8iy9N1dNjDEDJUru3l0yG39tBd/Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EEC41007;
+	Thu, 10 Apr 2025 01:07:29 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AC7493F694;
+	Thu, 10 Apr 2025 01:07:25 -0700 (PDT)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	broonie@kernel.org,
+	anshuman.khandual@arm.com,
+	joey.gouly@arm.com,
+	maz@kernel.org,
+	oliver.upton@linux.dev,
+	frederic@kernel.org,
+	james.morse@arm.com,
+	hardevsinh.palaniya@siliconsignals.io,
+	shameerali.kolothum.thodi@huawei.com,
+	huangxiaojia2@huawei.com,
+	mark.rutland@arm.com,
+	samuel.holland@sifive.com,
+	palmer@rivosinc.com,
+	charlie@rivosinc.com,
+	thiago.bauermann@linaro.org,
+	bgray@linux.ibm.com,
+	tglx@linutronix.de,
+	puranjay@kernel.org,
+	david@redhat.com,
+	yang@os.amperecomputing.com,
+	mbenes@suse.cz,
+	joel.granados@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	nd@arm.com,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v3 0/4] support FEAT_MTE_STORE_ONLY feature
+Date: Thu, 10 Apr 2025 09:07:19 +0100
+Message-Id: <20250410080723.953525-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH V4] mm/gup: Clear the LRU flag of a page before adding to
- LRU batch
-To: David Hildenbrand <david@redhat.com>, <yangge1116@126.com>,
-	<akpm@linux-foundation.org>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>, <21cnbao@gmail.com>,
-	<baolin.wang@linux.alibaba.com>, <aneesh.kumar@linux.ibm.com>,
-	<liuzixing@hygon.cn>, Kefeng Wang <wangkefeng.wang@huawei.com>
-References: <1720075944-27201-1-git-send-email-yangge1116@126.com>
- <4119c1d0-5010-b2e7-3f1c-edd37f16f1f2@huawei.com>
- <91ac638d-b2d6-4683-ab29-fb647f58af63@redhat.com>
- <076babae-9fc6-13f5-36a3-95dde0115f77@huawei.com>
- <26870d6f-8bb9-44de-9d1f-dcb1b5a93eae@redhat.com>
- <5d0cb178-6436-d98b-3abf-3bcf8710eb6f@huawei.com>
- <207a00a2-0895-4086-97ae-d31ead423cf8@redhat.com>
-From: Jinjiang Tu <tujinjiang@huawei.com>
-In-Reply-To: <207a00a2-0895-4086-97ae-d31ead423cf8@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemo200002.china.huawei.com (7.202.195.209)
 
+ARMv8.5 based processors introduce the Memory Tagging Extension (MTE) feature.
+MTE is built on top of the ARMv8.0 virtual address tagging TBI
+(Top Byte Ignore) feature and allows software to access a 4-bit
+allocation tag for each 16-byte granule in the physical address space.
+A logical tag is derived from bits 59-56 of the virtual
+address used for the memory access. A CPU with MTE enabled will compare
+the logical tag against the allocation tag and potentially raise an
+tag check fault on mismatch, subject to system registers configuration.
 
-在 2025/4/8 18:04, David Hildenbrand 写道:
-> On 08.04.25 10:47, Jinjiang Tu wrote:
->>
->> 在 2025/4/1 22:33, David Hildenbrand 写道:
->>> On 27.03.25 12:16, Jinjiang Tu wrote:
->>>>
->>>> 在 2025/3/26 20:46, David Hildenbrand 写道:
->>>>> On 26.03.25 13:42, Jinjiang Tu wrote:
->>>>>> Hi,
->>>>>>
->>>>>
->>>>> Hi!
->>>>>
->>>>>> We notiched a 12.3% performance regression for LibMicro pwrite
->>>>>> testcase due to
->>>>>> commit 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before
->>>>>> adding to LRU batch").
->>>>>>
->>>>>> The testcase is executed as follows, and the file is tmpfs file.
->>>>>>        pwrite -E -C 200 -L -S -W -N "pwrite_t1k" -s 1k -I 500 -f 
->>>>>> $TFILE
->>>>>
->>>>> Do we know how much that reflects real workloads? (IOW, how much
->>>>> should we care)
->>>>
->>>> No, it's hard to say.
->>>>
->>>>>
->>>>>>
->>>>>> this testcase writes 1KB (only one page) to the tmpfs and repeats
->>>>>> this step for many times. The Flame
->>>>>> graph shows the performance regression comes from
->>>>>> folio_mark_accessed() and workingset_activation().
->>>>>>
->>>>>> folio_mark_accessed() is called for the same page for many times.
->>>>>> Before this patch, each call will
->>>>>> add the page to cpu_fbatches.activate. When the fbatch is full, the
->>>>>> fbatch is drained and the page
->>>>>> is promoted to active list. And then, folio_mark_accessed() does
->>>>>> nothing in later calls.
->>>>>>
->>>>>> But after this patch, the folio clear lru flags after it is added to
->>>>>> cpu_fbatches.activate. After then,
->>>>>> folio_mark_accessed will never call folio_activate() again due to 
->>>>>> the
->>>>>> page is without lru flag, and
->>>>>> the fbatch will not be full and the folio will not be marked active,
->>>>>> later folio_mark_accessed()
->>>>>> calls will always call workingset_activation(), leading to
->>>>>> performance regression.
->>>>>
->>>>> Would there be a good place to drain the LRU to effectively get that
->>>>> processed? (we can always try draining if the LRU flag is not set)
->>>>
->>>> Maybe we could drain the search the cpu_fbatches.activate of the
->>>> local cpu in __lru_cache_activate_folio()? Drain other fbatches is
->>>> meaningless .
->>>
->>> So the current behavior is that folio_mark_accessed() will end up
->>> calling folio_activate()
->>> once, and then __lru_cache_activate_folio() until the LRU was drained
->>> (which can
->>> take a looong time).
->>>
->>> The old behavior was that folio_mark_accessed() would keep calling
->>> folio_activate() until
->>> the LRU was drained simply because it was full of "all the same pages"
->>> ?. Only *after*
->>> the LRU was drained, folio_mark_accessed() would actually not do
->>> anything (desired behavior).
->>>
->>> So the overhead comes primarily from __lru_cache_activate_folio()
->>> searching through
->>> the list "more" repeatedly because the LRU does get drained less
->>> frequently; and
->>> it would never find it in there in this case.
->>>
->>> So ... it used to be suboptimal before, now it's more suboptimal I
->>> guess?! :)
->>>
->>> We'd need a way to better identify "this folio is already queued for
->>> activation". Searching
->>> that list as well would be one option, but the hole "search the list"
->>> is nasty.
->>>
->>> Maybe we can simply set the folio as active when staging it for
->>> activation, after having
->>> cleared the LRU flag? We already do that during folio_add.
->>>
->>> As the LRU flag was cleared, nobody should be messing with that folio
->>> until the cache was
->>> drained and the move was successful.
->>>
->>>
->>> Pretty sure this doesn't work, but just to throw out an idea:
->>>
->>>  From c26e1c0ceda6c818826e5b89dc7c7c9279138f80 Mon Sep 17 00:00:00 2001
->>> From: David Hildenbrand <david@redhat.com>
->>> Date: Tue, 1 Apr 2025 16:31:56 +0200
->>> Subject: [PATCH] test
->>>
->>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>> ---
->>>   mm/swap.c | 21 ++++++++++++++++-----
->>>   1 file changed, 16 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/mm/swap.c b/mm/swap.c
->>> index fc8281ef42415..bbf9aa76db87f 100644
->>> --- a/mm/swap.c
->>> +++ b/mm/swap.c
->>> @@ -175,6 +175,8 @@ static void folio_batch_move_lru(struct
->>> folio_batch *fbatch, move_fn_t move_fn)
->>>       folios_put(fbatch);
->>>   }
->>>
->>> +static void lru_activate(struct lruvec *lruvec, struct folio *folio);
->>> +
->>>   static void __folio_batch_add_and_move(struct folio_batch __percpu
->>> *fbatch,
->>>           struct folio *folio, move_fn_t move_fn,
->>>           bool on_lru, bool disable_irq)
->>> @@ -191,6 +193,10 @@ static void __folio_batch_add_and_move(struct
->>> folio_batch __percpu *fbatch,
->>>       else
->>>           local_lock(&cpu_fbatches.lock);
->>>
->>> +    /* We'll only perform the actual list move deferred. */
->>> +    if (move_fn == lru_activate)
->>> +        folio_set_active(folio);
->>> +
->>>       if (!folio_batch_add(this_cpu_ptr(fbatch), folio) ||
->>> folio_test_large(folio) ||
->>>           lru_cache_disabled())
->>>           folio_batch_move_lru(this_cpu_ptr(fbatch), move_fn);
->>> @@ -299,12 +305,14 @@ static void lru_activate(struct lruvec *lruvec,
->>> struct folio *folio)
->>>   {
->>>       long nr_pages = folio_nr_pages(folio);
->>>
->>> -    if (folio_test_active(folio) || folio_test_unevictable(folio))
->>> -        return;
->>> -
->>> +    /*
->>> +     * We set the folio active after clearing the LRU flag, and set 
->>> the
->>> +     * LRU flag only after moving it to the right list.
->>> +     */
->>> +    VM_WARN_ON_ONCE(!folio_test_active(folio));
->>> +    VM_WARN_ON_ONCE(folio_test_unevictable(folio));
->>>
->>>       lruvec_del_folio(lruvec, folio);
->>> -    folio_set_active(folio);
->>>       lruvec_add_folio(lruvec, folio);
->>>       trace_mm_lru_activate(folio);
->>>
->>> @@ -342,7 +350,10 @@ void folio_activate(struct folio *folio)
->>>           return;
->>>
->>>       lruvec = folio_lruvec_lock_irq(folio);
->>> -    lru_activate(lruvec, folio);
->>> +    if (!folio_test_unevictable(folio)) {
->>> +        folio_set_active(folio);
->>> +        lru_activate(lruvec, folio);
->>> +    }
->>>       unlock_page_lruvec_irq(lruvec);
->>>       folio_set_lru(folio);
->>>   }
->>
->> I test with the patch, and the performance regression disappears.
->>
->> By the way, I find folio_test_unevictable() is called in 
->> lru_deactivate, lru_lazyfree, etc.
->> unevictable flag is set when the caller clears lru flag. IIUC, since 
->> commit 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before
->> adding to LRU batch"), folios in fbatch can't be set unevictable 
->> flag, so there is no need to check unevictable flag in 
->> lru_deactivate, lru_lazyfree, etc?
->
-> I was asking myself the exact same question when crafting this patch. 
-> Sounds like a cleanup worth investigating! :)
+Since ARMv8.9, FEAT_MTE_STORE_ONLY can be used to restrict raise of tag
+check fault on store operation only.
+For this, application can use PR_MTE_STORE_ONLY flag
+when it sets the MTE setting with prctl().
 
-folio_activate                 __mlock_folio
-   folio_test_unevictable
-                                      folio_test_clear_lru
-                                      folio_set_unevictable
-                                      folio_set_lru
-   folio_batch_add_and_move
-     folio_test_clear_lru
+This feature omits tag check for fetch/read operation.
+So it might be used not only debugging purpose but also be used
+by application requiring strong memory safty in normal env.
 
-In the above case, unevictable flag will be set before lru flag is cleared in folio_activate(). So folio may still be
-unevictable in lru_activate().
+Since v1:
+  - add doc to elf_hwcaps.rst
+  - add MTE_STORE_ONLY hwcap test
 
->
-> Do you have capacity to look into that, and to turn my proposal into a 
-> proper patch? It might take me a bit until I get to it.
->
+Since v2:
+  - Rebase to 6.15.-rc1
+
+NOTE:
+  This patches based on https://lore.kernel.org/all/20250410074721.947380-1-yeoreum.yun@arm.com/
+
+Yeoreum Yun (4):
+  arm64/feature: add MTE_STORE_ONLY feature
+  prtcl: introduce PR_MTE_STORE_ONLY
+  arm64/kernel: support store-only mte tag check
+  tools/kselftest: add MTE_STORE_ONLY feature hwcap test
+
+ Documentation/arch/arm64/elf_hwcaps.rst   |  3 +++
+ arch/arm64/include/asm/hwcap.h            |  1 +
+ arch/arm64/include/asm/processor.h        |  2 ++
+ arch/arm64/include/uapi/asm/hwcap.h       |  1 +
+ arch/arm64/kernel/cpufeature.c            |  9 +++++++++
+ arch/arm64/kernel/cpuinfo.c               |  1 +
+ arch/arm64/kernel/mte.c                   | 11 ++++++++++-
+ arch/arm64/kernel/process.c               |  6 +++++-
+ arch/arm64/tools/cpucaps                  |  1 +
+ include/uapi/linux/prctl.h                |  2 ++
+ tools/testing/selftests/arm64/abi/hwcap.c |  6 ++++++
+ 11 files changed, 41 insertions(+), 2 deletions(-)
+
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+
 
