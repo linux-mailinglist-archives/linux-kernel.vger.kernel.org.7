@@ -1,125 +1,240 @@
-Return-Path: <linux-kernel+bounces-599087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B4DA84EFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 23:05:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E259A84F00
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 23:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 435ED9A0338
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8374A189D57C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F4B20CCDC;
-	Thu, 10 Apr 2025 21:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97789293479;
+	Thu, 10 Apr 2025 21:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BsOsWgZW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ozW3Yx1c"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QkwK4E3m"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04441C5D63;
-	Thu, 10 Apr 2025 21:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD0E290BD6
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 21:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744319101; cv=none; b=LkUoxBMfpzzsVrj97le7W2SMUXPqV4HKMCqJfmH6hvXjTnEal/VNSMXmx/055MbLFTxLIeM7dKWUPjSQuPGr5TV0MHV0y+BM1u3P2Q8qjgoChYKB7kJ2JhsrAilEZMuW6s3946sTPwI9tEdviFjvmTwB4XHtNK9kLpg7JTFomEI=
+	t=1744319159; cv=none; b=FxaKNAZ0w92Jn5JQ53L78t8zJRZk3OtcU6P09r0wnMAN+n4jHsJpWyAdKR0IEBQiGlOosDbVTX8I/CJcvSz4FcYwacnLsvdfXqVVYbZqlvXYpcSjYjJcVL9FVKaXb36uTwkzlZwW1vs2TJo3QTgFl6LmK/XZkoOlt86N0syBlsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744319101; c=relaxed/simple;
-	bh=yzmFfgSb6xct0UVBNlIPbqnCeOW2Oii6tsLkiXI/GlA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=YlXj/9AOQ7DNqlqz9lsfOOBJ+YOVWqeaqtkRI/xvwT96JTQzZiqFFEOE5ghhOG4AhJ0meXlsHNgA3dDyFXOsG94oxnjkvN96vzw7kkoKIQ/t2rJ7R4wA2+RYtYco5esCIpvreX9lVLMx0WdS2EVtxnlT0i8eUY6X0c7+3j0dZQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BsOsWgZW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ozW3Yx1c; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 10 Apr 2025 21:04:45 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744319091;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1744319159; c=relaxed/simple;
+	bh=dfqrlavjRBBoEpvvJjdHErh3nAIsfft7eccKYA7N/7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G8fiQcj8LAiCFCbstBcAooecO9jyqrE8g/PnF+ioWQ3KQ3BLyP3Di/lH0OE5t/xR8Tcu+Jt0cpN4ntZpdfWXhreKk31I5pDzVTsxOqb/BL1jBVgTWMeCugycklhCC0KISsSZj/sx8yMOw7nbaCHlju3juK88Y4ngXeoScpVqSd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QkwK4E3m; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744319156;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3wSMrn6LW5x02/8PXlrgGfoFJUwuSquEFU0IkIcpUo4=;
-	b=BsOsWgZW2mKQzJbTbXWc9JT1TEmunbcelPdd9VpJJx6SYmWjpelFRupQe+wn5mLunNaHm/
-	P+41xVUU0qC6uDZHGAGfnruHgdW1mZVnWU+8EBWFAMdTInC5tKRlk1TKyR1UlNA/w66S33
-	K09ZdvdyjbPAOdQNlW4H6k8H7VSXe3BM0JIpr9URG4O7F8NuVMNtbwiKm+qt7d1Crl0r57
-	TtqibXYTLzpzduDcO1IpcKJm0eoBI4SE31A2BvD12HhxA5G1wGWZ6ebh9BHYQuE1b/fWIC
-	WNDl9F5q4KjM1FMhGIDW8fDkRRCo0t+U623VZmB1BnZk28v3LOUluT8jOmwbRw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744319091;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3wSMrn6LW5x02/8PXlrgGfoFJUwuSquEFU0IkIcpUo4=;
-	b=ozW3Yx1cS6i4hgqG17dooZ51Ho7/yElf8jxnL+zWW2EQ19Qr1U6e4pk/4dx2djDePQKWrZ
-	+nunC3SIaq8pSmBA==
-From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/urgent] objtool: Fix false-positive "ignoring
- unreachables" warning
-Cc: kernel test robot <lkp@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To:
- <5eb28eeb6a724b7d945a961cfdcf8d41e6edf3dc.1744238814.git.jpoimboe@kernel.org>
-References:
- <5eb28eeb6a724b7d945a961cfdcf8d41e6edf3dc.1744238814.git.jpoimboe@kernel.org>
+	bh=U52MJDfr1VFwPO3KAXZBFK9yxe8xszZGGIt3c7v7YB8=;
+	b=QkwK4E3mX6l1E6aaoSo6w8yBvusZ1Sl+SNDO/davSJl3TWjENG0Dyi7VqV56FQi3c8BJHH
+	qNY31oYKKGBLndKUep1gcBbQnyxTodsGNh9mV7xyiEYh/ns1dOFww+ClpIEra58c1Ug67v
+	4AARaMawufMOGZQd+ETLm5bdmp5Sjew=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-459-hRG8wmIcNaC82wSzyayK5A-1; Thu,
+ 10 Apr 2025 17:05:51 -0400
+X-MC-Unique: hRG8wmIcNaC82wSzyayK5A-1
+X-Mimecast-MFC-AGG-ID: hRG8wmIcNaC82wSzyayK5A_1744319149
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 695BF1800361;
+	Thu, 10 Apr 2025 21:05:48 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.222])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A74C819560AD;
+	Thu, 10 Apr 2025 21:05:44 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 10 Apr 2025 23:05:12 +0200 (CEST)
+Date: Thu, 10 Apr 2025 23:05:08 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	wsd_upstream@mediatek.com, bobule.chang@mediatek.com,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	chenqiwu <chenqiwu@xiaomi.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [RFC PATCH] exit: Skip panic in do_exit() during poweroff
+Message-ID: <20250410210507.GD15280@redhat.com>
+References: <20250410143937.1829272-1-Tze-nan.Wu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174431908613.31282.16929702486246710776.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410143937.1829272-1-Tze-nan.Wu@mediatek.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-The following commit has been merged into the objtool/urgent branch of tip:
+Well...
 
-Commit-ID:     87cb582d2f55d379ce95b5bcc4ec596e29b0a65e
-Gitweb:        https://git.kernel.org/tip/87cb582d2f55d379ce95b5bcc4ec596e29b0a65e
-Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Wed, 09 Apr 2025 15:49:36 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 10 Apr 2025 22:55:00 +02:00
+Let me repeat. I don't understand the kernel/reboot.c paths, you can
+safely ignore me.
 
-objtool: Fix false-positive "ignoring unreachables" warning
+But I still think that you target the wrong goal. Quite possibly I am
+wrong.
 
-There's no need to try to automatically disable unreachable warnings if
-they've already been manually disabled due to CONFIG_KCOV quirks.
+On 04/10, Tze-nan Wu wrote:
+>
+> If PID 1 exits due to the unreliable userspace after kernel_power_off()
+> invoked,
 
-This avoids a spurious warning with a KCOV kernel:
+Why. Why the global init does do_exit()? It should not, that is all.
+It doesn't matter if it is single threaded or not.
 
-  fs/smb/client/cifs_unicode.o: warning: objtool: cifsConvertToUTF16.part.0+0xce5: ignoring unreachables due to jump table quirk
+As for sys_reboot(), I think that kernel_power_off() must be __noreturn,
+and sys_reboot() should use BUG() after LINUX_REBOOT_CMD_POWER_OFF/_HALT
+instead of do_exit().
 
-Fixes: eeff7ac61526 ("objtool: Warn when disabling unreachable warnings")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/5eb28eeb6a724b7d945a961cfdcf8d41e6edf3dc.1744238814.git.jpoimboe@kernel.org
-Closes: https://lore.kernel.org/r/202504090910.QkvTAR36-lkp@intel.com/
----
- tools/objtool/arch/x86/special.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If nothing else. do_exit() also does debug_check_no_locks_held() and
+sys_reboot() calls do_exit() with system_transition_mutex held.
 
-diff --git a/tools/objtool/arch/x86/special.c b/tools/objtool/arch/x86/special.c
-index 403e587..06ca4a2 100644
---- a/tools/objtool/arch/x86/special.c
-+++ b/tools/objtool/arch/x86/special.c
-@@ -126,7 +126,7 @@ struct reloc *arch_find_switch_table(struct objtool_file *file,
- 	 * indicates a rare GCC quirk/bug which can leave dead
- 	 * code behind.
- 	 */
--	if (reloc_type(text_reloc) == R_X86_64_PC32) {
-+	if (!file->ignore_unreachables && reloc_type(text_reloc) == R_X86_64_PC32) {
- 		WARN_INSN(insn, "ignoring unreachables due to jump table quirk");
- 		file->ignore_unreachables = true;
- 	}
+IOW. IMO, it is not that do_exit() needs some changes. The very fact
+that the global init does do_exit() is wrong, this should be fixed.
+
+But again, again, I can't really comment.
+
+Oleg.
+
+> the panic follow by the last thread of global init exited in
+> do_exit() will stop the kernel_power_off() procedure, turn a shutdown
+> behavior into panic flow(reboot).
+>
+> Add a condition check to ensure that the panic triggered by the last
+> thread of the global init exiting, only occurs while:
+> ( system_state != SYSTEM_POWER_OFF and system_state != SYSTEM_RESTART).
+> Otherwise, WARN() instead.
+>
+> [On Android 16 with arm64 arch]
+> Here's a scenario where the global init exits during kernel_power_off:
+> If PID 1 encounters a page fault after kernel_power_off() has been
+> invoked, the kernel will fail to handle the page fault because the
+> disk(UFS) has already shut down.
+> Consequently, the kernel will send a SIGBUS to PID 1 to indicate the
+> page fault failure, and ultimately, the panic will occur after PID 1
+> exits due to receiving the SIGBUS.
+>
+>             cpu1                           cpu2
+>           ----------                     ----------
+>     kernel_power_off() start
+>         UFS shutdown
+>             ...                	       PID 1 page fault
+>             ...                    page fault handle failure
+>             ...			             PID 1 received SIGBUS
+>             ...                             panic
+>    kernel_power_off() not done
+>
+> Backtrace while PID 1 received signal 7:
+>    init-1 [007] d..1 41239.922385: \
+>       signal_generate: sig=7 errno=0 code=2 comm=init pid=1 grp=0 res=0
+>    init-1 [007] d..1 41239.922389: kernel_stack: <stack trace>
+>    => __send_signal_locked
+>    => send_signal_locked
+>    => force_sig_info_to_task
+>    => force_sig_fault
+>    => arm64_force_sig_fault
+>    => do_page_fault
+>    => do_translation_fault
+>    => do_mem_abort
+>    => el0_ia
+>    => el0t_64_sync_handler
+>
+> Simplified kernel log:
+> kernel_power_off() invoked by pt_notify_thread.
+> [41239.526109] pt_notify_threa: reboot set flag, old value 0x********,
+> *.
+> [41239.526114] pt_notify_threa: reboot set flag new value 0x********.
+> UFS reject I/O after kerenl_power_off.
+> [41239.686411]  scsi +scsi******** apexd: sd* ******** rejecting I/O to
+> offline device.
+> Lots of I/O error & erofs error happened after kernel_power_off().
+> [41239.690312] apexd: I/O error, dev sdc, sector ******* op ***:(READ)
+> flags 0x**** phys_seg ** prio class 0.
+> [41239.690465] apexd: I/O error, dev sdc, sector ******* op ***:(READ)
+> flags 0x**** phys_seg ** prio class 0.
+> ...
+> ...
+> [41239.922265] init: erofs: (device ****): z_erofs_read_folio: read
+> error * @ *** of nid ********.
+> [41239.922341] init: erofs: (device ****): z_erofs_read_folio: read
+> error * @ *** of nid ********.
+> Finally device panic due to PID 1 received SIGBUS.
+> [41239.923789] init: Kernel panic - not syncing: Attempted to kill init!
+> exitcode=0x00000007
+>
+> Fixes: 43cf75d96409 ("exit: panic before exit_mm() on global init exit")
+> Link: https://lore.kernel.org/all/20191219104223.xvk6ppfogoxrgmw6@wittgenstein/
+> Signed-off-by: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
+> ---
+>
+> I am also wondering if this patch is reasonable?
+>
+> From my perspective, there are two reasons not to trigger such panic
+> during kernel_power_off() or kernel_restart():
+>   1. It is not worthwhile to interrupt kernel_power_off() by a panic
+>      resulted from userspace instability.
+>   2. The panic in do_exit() was originally designed to ensure a usable
+>      coredump if the last thread of the global init process exited.
+> 	 However, capture a coredump triggered by userspace crash after
+>      kernel_power_off() seems not particularly useful, in my opinion.
+>
+> In certain scenarios, a kernel module may need to directly power off
+> from kernel space to protect hardware (e.g., thermal protection).
+> In my opinion, rather than causing a panic during kernel_power_off(),
+> it sounds better to allow the device to complete its power-off process.
+>
+> Appreciate for any comment on this, if there's any better way to
+> handle this panic, please point me out.
+>
+> ---
+>  kernel/exit.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/exit.c b/kernel/exit.c
+> index 1dcddfe537ee..23cb6b42a1f1 100644
+> --- a/kernel/exit.c
+> +++ b/kernel/exit.c
+> @@ -901,11 +901,17 @@ void __noreturn do_exit(long code)
+>  	if (group_dead) {
+>  		/*
+>  		 * If the last thread of global init has exited, panic
+> -		 * immediately to get a useable coredump.
+> +		 * immediately to get a usable coredump, except when the
+> +		 * device is currently powering off or restarting.
+>  		 */
+> -		if (unlikely(is_global_init(tsk)))
+> -			panic("Attempted to kill init! exitcode=0x%08x\n",
+> -				tsk->signal->group_exit_code ?: (int)code);
+> +		if (unlikely(is_global_init(tsk))) {
+> +			if (system_state != SYSTEM_POWER_OFF &&
+> +			    system_state != SYSTEM_RESTART)
+> +				panic("Attempted to kill init! exitcode=0x%08x\n",
+> +				      tsk->signal->group_exit_code ?: (int)code);
+> +			WARN(1, "Attempted to kill init! exitcode=0x%08x\n",
+> +			     tsk->signal->group_exit_code ?: (int)code);
+> +		}
+>
+>  #ifdef CONFIG_POSIX_TIMERS
+>  		hrtimer_cancel(&tsk->signal->real_timer);
+> --
+> 2.45.2
+>
+
 
