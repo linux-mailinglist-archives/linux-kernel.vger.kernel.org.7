@@ -1,89 +1,104 @@
-Return-Path: <linux-kernel+bounces-598469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A13A8467A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:35:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C983EA8466D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 081CB188F531
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:36:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3604F3ADDF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A5A28C5CD;
-	Thu, 10 Apr 2025 14:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8EC28CF55;
+	Thu, 10 Apr 2025 14:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="f2XwiKYR"
-Received: from out203-205-221-191.mail.qq.com (out203-205-221-191.mail.qq.com [203.205.221.191])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="naz1anVW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17E3202F71
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 14:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DEE28CF50;
+	Thu, 10 Apr 2025 14:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744295750; cv=none; b=VkfeDPgV78E3RlOlSNY9PPLjvDkPz+Qbz3MKswEuyxX5rxDE11E5A/ZapHTDg6MmvHjX3KhLgMHau3whfw8MGYONMLs1RKRainHGPr11pNdzOeWZM1kYq3+SD5NSSygwj8Q8TFgFxlaGxgMs1OeH3Mer2SM46DndnWy3035jqgY=
+	t=1744295414; cv=none; b=PKrWw9ducsUisujq0dtQnpiYj8hMQX6hFsAqS0cPLHfxScb3lhBOuBPlfYvknLjcrWZotC6YsWRticDxZiy8J8jJZVHwPni5V5SEnR+0GvysQhysp9yuHINfI4aGkeuMJvkwmtgW3ZGC7HIJr/bqTnTTGvEGIpCkYHTVnD4E+Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744295750; c=relaxed/simple;
-	bh=5Lo+Vglkm2FGkcLQ+qTblsfPpRfa/Tay5nWPlRyfHOg=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Z5JkBxnHTSDaGm4XYRrIMQLElOiGQ39+ngr7Xq36g0c+S+6RiC6huMm23nMz2FnSm8+BwCQAATEOj5D7DcCm2lhv4IvcnVMP1taue0pgT0IvADtipKEFaxjN1eFlpxJSl56oj5pipMkHPfribxThu5+TJP3O5bfouJ6lTCswKWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=f2XwiKYR; arc=none smtp.client-ip=203.205.221.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1744295742;
-	bh=AluOD4KVtuKP0nqamRGPQWCvAYc040K52Ft7d8NDiX0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=f2XwiKYR1pyMdCJVD+FHV8Dff6tEXUE3q+7DXnyWIWoy5wmE2Qe+t2H1+2/rrio2q
-	 TVWbpCdjun7Rpv4ewUffkISgKJV6LtZxpEukn7DPQAxeLRW19ZKK/ufOn8sEf9x62p
-	 MxlQxQEeZdSj9WFysmqSF0NBCCK+8VnkHfS4lC0s=
-Received: from localhost.localdomain ([116.148.99.229])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 76427025; Thu, 10 Apr 2025 22:29:36 +0800
-X-QQ-mid: xmsmtpt1744295376tdnj8yrxk
-Message-ID: <tencent_74B69C9282D6317927B4FB0C982725A51306@qq.com>
-X-QQ-XMAILINFO: NsLYjltVP0elGU9WiQJU6oqv+PNImoitGsxFWrVEJPaF1aTHMULgBf0RTtLTfh
-	 i0UPOB3QnHmIU7T26ZeQ/7/ZaqYtmd0RsrZl+1lLqBDT+0JR/DGJs5wcxoYfEFpoz6vL4mVUAdkt
-	 Mot2zDoVQ336IX8NzTeDXqGJOKhaaldkhyfIBPKvVgbLTu5zd1y5p4myB3c51GFpejc7ML374bYF
-	 eeDwSSvb//v88QnMyG7GrGyGaLTEm5um/JNidAxFldV8k3+Nnq+RwMrttahge5MC9VnA+AZ8z0AP
-	 rM12rpe929qDk/Pgn1Xh58LKG8HZhd8K3d3g4CVCJkBsdzIIarG1qA4WE3+Ks/z9rkiEvuRJNn4X
-	 GjVLxqShayPxOGYNG9R+WT01T6m4Sk32GHTkL0HJwsLqOjBehI33gXbnJ0UYx+dcW8XxyV4o/Fuu
-	 AIJxEzjxwuhm0nBBfbuZIigS/fJRPUxMYG8T1i4rdWIWNOOz7YkSdA+MmuNPAEMUvW9cyHrDMNsg
-	 7OakwJatQv8efLIuq9RCA1vWY6hSShlGgYx8XEj5codJ1URLsOP+1SwMnguBu7dnvGVQHAVzPKdA
-	 J7P6t76gTFRPGADCdB9P9wsaQ2q1LlZhWQNv08n1v0+q2jsQ7D2LFqXEMU9i2KZaDGhpEpUnVi/A
-	 Gl3ipzfmF3Nvx40PkOL+tbcu4PPuKB6Z+qpSCWUhbnZXIUkPFz5DU3LSsAAJiQjDFU3XZZJHY3QS
-	 E0qmFaew7KperJre535kgDhaWlMs2ziMrCvtvfb3Nei3BMPsOsn/CYkVgKlOyuTTEpo/JEfVEjRA
-	 PMb0Vb6odofefHQIsEUzFJgrynCWjkveQQUPzSZ0A6mnt7Lft/8aEPj+AolRuZW+2IWOkNC+S9oq
-	 r1oxIEpOSB4v7hjIoZCLyGfZxNZ+KnRcNK2A9/Knsx8gYGu0AQbX5kR5IfeDqovZYNZBLX0bWVqF
-	 hthzYMEofXtWjODPiyYpyCRPN3cuOFwwJ/BUtyWbPoO7YqMhgTCdy44pre6gUm6gVO7FLmXLpOQK
-	 U+Wd+sHw==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: zhoumin <teczm@foxmail.com>
-To: hirofumi@mail.parknet.co.jp
-Cc: linux-kernel@vger.kernel.org,
-	teczm@foxmail.com
-Subject: Re: [PATCH] fat: Optimized FAT bad char check
-Date: Thu, 10 Apr 2025 22:28:40 +0800
-X-OQ-MSGID: <20250410142840.964080-1-teczm@foxmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <874iyw6shi.fsf@mail.parknet.co.jp>
-References: <874iyw6shi.fsf@mail.parknet.co.jp>
+	s=arc-20240116; t=1744295414; c=relaxed/simple;
+	bh=j/AQnvVQF+q4DRTfwVD8GyFNToLS8aNgxm6x8L78Myc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=geSxtO8+aqIvGMXsXI/MuXPq5+bgO8zrvCLGxYXu4czzOXemIbqP/cGRtyQ5DVbCjGI285Fn+7rEcAi9NI4tvgru8MdwlPOtUriYHaYppt3OYzTizwwGYnO+4prJmdC7sEjqqOr8nGOpNVsH3rRNBbYh0CF1htR8dLbkPGDjiko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=naz1anVW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0854C4CEDD;
+	Thu, 10 Apr 2025 14:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744295414;
+	bh=j/AQnvVQF+q4DRTfwVD8GyFNToLS8aNgxm6x8L78Myc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=naz1anVWOzUgUm+ykoHNe8H/cpW/VSy0kDgPQuJaxQ0HAuOFWWrBWw8esDHgtuxQK
+	 MvbLXiekM+K4wXtwuutcH129Sak2wVXvqL0LtEtn8DhsUtcXEm4ussvzoEsnyNMvMG
+	 ip/J96QgzgTvEoKri7AfNwtTEh3R9y+q2AZlN4TJZBHi0Ra+kZmS9amm6fChZwIfww
+	 ccISLVPpHPIUW+iKxdIOi0qViNhSOGpkcp1Wx8PBJT0L07p2c3f7a2Mz0225XMrQaM
+	 tbAL1bb1KwUmITpaxIy3Y9IBjF5j66pO8TxOBe8rP4QHJn8Za7DnocEvGLCP2Ofz7c
+	 V1uIfG8bNi7YA==
+From: cel@kernel.org
+To: jlayton@kernel.org,
+	neilb@suse.de,
+	okorniev@redhat.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Lingfeng <lilingfeng3@huawei.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	yukuai1@huaweicloud.com,
+	houtao1@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	lilingfeng@huaweicloud.com
+Subject: Re: [PATCH] nfsd: decrease sc_count directly if fail to queue dl_recall
+Date: Thu, 10 Apr 2025 10:30:10 -0400
+Message-ID: <174429540114.22824.14246125911839557664.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250410015708.2036236-1-lilingfeng3@huawei.com>
+References: <20250410015708.2036236-1-lilingfeng3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Hi Hirofumi
+From: Chuck Lever <chuck.lever@oracle.com>
 
-You are right, thank you for pointing that out. 
-This is not a check but a creation, and we definitely should not allow such
-behavior.
+On Thu, 10 Apr 2025 09:57:08 +0800, Li Lingfeng wrote:
+> A deadlock warning occurred when invoking nfs4_put_stid following a failed
+> dl_recall queue operation:
+>             T1                            T2
+>                                 nfs4_laundromat
+>                                  nfs4_get_client_reaplist
+>                                   nfs4_anylock_blockers
+> __break_lease
+>  spin_lock // ctx->flc_lock
+>                                    spin_lock // clp->cl_lock
+>                                    nfs4_lockowner_has_blockers
+>                                     locks_owner_has_blockers
+>                                      spin_lock // flctx->flc_lock
+>  nfsd_break_deleg_cb
+>   nfsd_break_one_deleg
+>    nfs4_put_stid
+>     refcount_dec_and_lock
+>      spin_lock // clp->cl_lock
+> 
+> [...]
 
-Thanks,
+Applied to nfsd-testing, thanks!
 
-zhoumin
+[1/1] nfsd: decrease sc_count directly if fail to queue dl_recall
+      commit: e8f1e5f463b88ce923eefac447abc2079075f921
+
+--
+Chuck Lever
 
 
