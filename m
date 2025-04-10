@@ -1,82 +1,107 @@
-Return-Path: <linux-kernel+bounces-597610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E7CA83C0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:06:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18BA4A83C07
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45CE14A6055
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:05:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FA26462F82
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB641E98EA;
-	Thu, 10 Apr 2025 08:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191A91E833F;
+	Thu, 10 Apr 2025 08:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fVTjOMDJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XRtgeq4R"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E2F1E5B65;
-	Thu, 10 Apr 2025 08:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9D91E47BA
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 08:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744272331; cv=none; b=DEoxdqDsovtXtfx5R8m0e6YjSfYx/vGozCgdGMK/mEHWsk1xkMtx1LDuhXXW7AHoqRxGS3qYsx3FfZWLC7xHwWeiaoCeOdfnFJ2OQ5flKJIsoTImS9BmCiImIhCE0Qhz9RHAQ5gt40IDzBCWbT39f7YYsu+WqLqAK5pyIYTL+uQ=
+	t=1744272298; cv=none; b=Nv7IjwN8HaVzEG0DhNnzHA8ZL8g7fCpwWMOuGjkGa1d/SHtJk/vLGOpDbp3QSTbT9amF2a5rtbELkNoBOfZpXcq9U+MmmjE2DHVsp9qCpr56F2CzspvbAtFyP1OSOXC4Y4RVCRfMc89B9LOH/1gzhIHMmjrGpL1ZltnJLHQ9w0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744272331; c=relaxed/simple;
-	bh=HACMz5TOu/NPUCoPtSJRRuRpnxSmXN3RFRqhqk0Xhtk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HcCH99CcjbaQfre/490bv18r0MI03zrylugSyV5Pm/wRuz6NyKhYukYydM0u4aAU2CnTn8WDSOSONJscuuKnGTXM4vEUF4v5RJKWOyngz3ygju5MXnTBBBmX91lB2cXVG4+dYE7DMY1IlsM8DHnb8z6Uf1aZ9I2A8s2lfW5J3Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fVTjOMDJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98006C4AF0B;
-	Thu, 10 Apr 2025 08:05:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744272331;
-	bh=HACMz5TOu/NPUCoPtSJRRuRpnxSmXN3RFRqhqk0Xhtk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fVTjOMDJ1DumnuYNlupjd14s4hzm5gOyR6L7bkyzHKmockcd/bbmNkZN9G1BpCA6j
-	 DWgJq0OX8c3ectu3P+rRUEWPNwvkl6Dl6ea3rCBsCojB5V1I6gE4qQhaYtHq9LrFdC
-	 otN3VU75R8lrU+syIePdhCJLcJf5fMmjAEGh1ISg=
-Date: Thu, 10 Apr 2025 10:03:56 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Karol Wachowski <karol.wachowski@intel.com>
-Subject: Re: [PATCH] accel/ivpu: Add handling of
- VPU_JSM_STATUS_MVNCI_CONTEXT_VIOLATION_HW
-Message-ID: <2025041011-borrowing-shrug-781e@gregkh>
-References: <20250408095711.635185-1-jacek.lawrynowicz@linux.intel.com>
- <8d96c75d-e8fb-446b-a85c-803a2b5212ed@linux.intel.com>
+	s=arc-20240116; t=1744272298; c=relaxed/simple;
+	bh=meSSP8a70ro5KR6XsGtVh/XPLlTjZJaf5Hv6He5tEls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ur+OxTY5TOwNTk6VH44ad6IZFruNhBE90iTMkc+k+/lgqSuvhnbbSwLM4zEeJdou/Nz72/CznqET2XXDodhn+0qm18C4sX+r9cFW5IVrDxkIPjzuWhy1w94czYhfe1WNr/E9iW2m6HMqK/VO2pWh8SNgpnLgLWgtOqvSfhxQAaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XRtgeq4R; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c54f67db99so162760485a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 01:04:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744272296; x=1744877096; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=meSSP8a70ro5KR6XsGtVh/XPLlTjZJaf5Hv6He5tEls=;
+        b=XRtgeq4RKH4LV9kVH3sSEl0m3vMEKdt2NbToZyyJ3JpgxQEXtaqIVFA82M0ZZYX1zs
+         M77fOwOk1pjIuqk3K/ZRViC2/j/Hb7eZb0nppfuL71yqkn+E+wCqpxH1dPjWWheRlYyg
+         b95V7H/7LWkG6IoyCgcGx83+soWgdEuhed8gKN0P3FTCgMyanHMujREll+dAg/AfjbAY
+         J1epYTQjFtrF3KFYTDNvWzTLNlcWu9NT+O6RP2FM2HZuqjkGGARnzkinWRDbWVPEtIq0
+         BQE0RhOcU2MqYQOPdwRoipWvxm8ESudZH8zkNZyYdD7PVNFuobiifV7j2MTsZWVFEluY
+         FX5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744272296; x=1744877096;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=meSSP8a70ro5KR6XsGtVh/XPLlTjZJaf5Hv6He5tEls=;
+        b=LVTbu4l5Nd+VVxzN++bq5eIm3boXRCx/Uh2MamTrbhUrmNVU+UnPs15Jt3Jw7emtDo
+         u/NY77MiHt7RDixbch6/WpUUcveaxMgh2pZNbx1O1rwdJlsnj91teT1FumUPB7ao7NFQ
+         T1kWM2fgIO4u27VytljsS9Y97fjTKauJ4IYmPg4raQv9TvidRJnTQEMqL3GhL3j6+uNU
+         2QiWckpUH2hHW9Li3o2OKiBUUSJbPovhaDj1am7JILs8CT8sBxgJClyfVTYtqBNiI2nF
+         6LliUL4C5ySOX91jYHgarhRweS04eopk9yb6ifBxPdiDhpsS5cWXxMRcAvKqmo4htRg9
+         mBvg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7mo5lUldwBeH4HVzAOyvya99g2Rbp0zkKMZWOfzNXZI8jI2apmfRjgj2bhiMF1zFRkDevcJGPNgVjhCw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4MeZKXNaqdUuLbExguO0fTRA8oEYuT2Zb89FJjCBwS1RD5nkJ
+	8j/AUhVVfs7nkY1sVPAi2XPj04HlxNq6vK6MMCXLfYtUJseuzloBIrminBtwLvcG7FrW6yo4gNb
+	R/bycc8SsI1thXlRn8NZmmAZ2PYo5HV8hsuoB
+X-Gm-Gg: ASbGnctbd6WLm/uwjLD59Xfwor6Y7mbeBuoNPMos1YYBT6M4oLkPbndILo03Qkbdcac
+	HjQgZgC/ns/O3coHuzMH4ZuRvxJ8OV85euE2h1HmgDuRXbrfwR0CUWlMt7n8WrcBLlUkIHjSTR9
+	OSZ7H5s976xkCFixl3j70ywg==
+X-Google-Smtp-Source: AGHT+IHnRoD7AjtOsJpc2K3JrlbTQWZaQjx3IprtXz+uXHZfGGRJtSOFutrwzuUQicc+jUPnlbCkJ5k6h2a3aQNQnsw=
+X-Received: by 2002:a05:620a:4094:b0:7b6:cb3c:cb81 with SMTP id
+ af79cd13be357-7c7a76b9749mr250640485a.18.1744272295691; Thu, 10 Apr 2025
+ 01:04:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d96c75d-e8fb-446b-a85c-803a2b5212ed@linux.intel.com>
+References: <20250410-fix_net-v2-1-d69e7c5739a4@quicinc.com> <20250410035328.23034-1-kuniyu@amazon.com>
+In-Reply-To: <20250410035328.23034-1-kuniyu@amazon.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 10 Apr 2025 10:04:44 +0200
+X-Gm-Features: ATxdqUGT0OfB2mWkqNiahR6P-89QRZDY9kNVpov5Ci1k3NZwNDvCbVoDxpoCgdU
+Message-ID: <CANn89i+-V5G7XTDEd01gH_+efCDMGA4hdF7uRjYv6bsEqkoQOw@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] sock: Correct error checking condition for (assign|release)_proto_idx()
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: zijun_hu@icloud.com, dada1@cosmosbay.com, davem@davemloft.net, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, quic_zijuhu@quicinc.com, 
+	willemb@google.com, xemul@openvz.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 10, 2025 at 09:49:37AM +0200, Jacek Lawrynowicz wrote:
-> Hi,
-> 
-> This is an important patch for the Intel NPU.
-> Is there anything it is missing to be included in stable?
+On Thu, Apr 10, 2025 at 5:53=E2=80=AFAM Kuniyuki Iwashima <kuniyu@amazon.co=
+m> wrote:
+>
+> > [PATCH net-next v2] sock: Correct error checking condition for (assign|=
+release)_proto_idx()
+>
+> Maybe net instead of net-next ?
+>
 
-Patience, you only sent this:
+I think this is a minor change, I would not add a Fixes: tag and risk
+another CVE for such a case that is never reached.
 
-> On 4/8/2025 11:57 AM, Jacek Lawrynowicz wrote:
+We do not have 63 protocols, getting to 64 limit is moot.
 
-2 days ago, AFTER the latest of -rc releases was sent out for review,
-and those kernels have NOT even been released yet!
-
-[rant about how you all know this process works deleted as it was
- just snarky on my side, although quite cathartic, thanks for letting me
- vent...]
-
-Relax, it will get handled when we can get to it.  To help out, please
-take the time to review pending stable backported patches that have been
-submitted to the mailing list ahead of yours.
-
-greg k-h
+As a matter of fact, release_proto_idx(struct proto *prot) should
+never hit the condition.
 
