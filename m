@@ -1,59 +1,62 @@
-Return-Path: <linux-kernel+bounces-597618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031F9A83C2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:13:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D80F5A83C2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37DFD8A21DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:08:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 866E98A7916
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBC81D416E;
-	Thu, 10 Apr 2025 08:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA311EB18D;
+	Thu, 10 Apr 2025 08:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCMZi2RI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="etC/ghh+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB06202F62
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 08:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AD41E572F;
+	Thu, 10 Apr 2025 08:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744272470; cv=none; b=rNvrT86OX59+EopopLwiVmXH64aW8E9cAStkN6r7UcgOKkwwJ7A1z2PE9+9EzIkUgQmPre6iOKuaPmwNksFqOaoRcgsTu1UC7+p4K3phJN2NNQyzqmYxY/2+lyoUvZBQT7uPU+F0T99akM8kUYSeTPPN92P8HPUWbv1Qp1wzfPM=
+	t=1744272499; cv=none; b=Xt6HAiJAjKusiDRxDVxZs3+HMEk6SUasReD6hPN4crk9QuZfFiJjO3TSBjn0dvXiVLzB8BxrTLsaKU5GxF3a2jXAMcGIfeoT9Pmx4t90KqxMby9zYBWdnb+sgKAZEetaKzPgOiVC38ceCubFuFAMZwA9dkA4tdsMCOWYwcPGpbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744272470; c=relaxed/simple;
-	bh=H7Rr6CifLf6QgJhumDAIt1E3qwzpwA0TrV+uAgCK1VU=;
+	s=arc-20240116; t=1744272499; c=relaxed/simple;
+	bh=8ND6dqJylzytwK8QGY61NBtBW3bbGF9AnqUq6PCX2cA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QQkIq9ww9McYQyxCosIyelPBBGTxrYcjVlrMl6KkFm6hRulnPf8FU4Rl3d52J+Q1oiDiIbK1TdisrhdvVqdvwYR/f25UjlVPYxGE9A8ODEXNVp9fdNOYoSdo/mU0xszdC8yBwD8CxxkGfYTxZtQSlge6lp4AjcJRR33IXNMxIEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sCMZi2RI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37BD0C4CEEB;
-	Thu, 10 Apr 2025 08:07:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oQOXj4TC4SSmixLxhrsuxNFivRY0UFiH/IpFQAB5PHzBQhCC42kq0jQcnTShHI/DUeDrQR7YdPTp+rziFZWjzGk1tSyIav2YToLZ6QPsmdvEEmMK4G6hz990xIAwZnf2HwDQY+I62TvAgN8nnscC6dUySWyiiPJQlKT6Rd/MWBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=etC/ghh+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 355EFC4CEDD;
+	Thu, 10 Apr 2025 08:08:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744272470;
-	bh=H7Rr6CifLf6QgJhumDAIt1E3qwzpwA0TrV+uAgCK1VU=;
+	s=k20201202; t=1744272499;
+	bh=8ND6dqJylzytwK8QGY61NBtBW3bbGF9AnqUq6PCX2cA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sCMZi2RIQ6T607JQU0kvnz/SfZhePCZ9j3K2fWu174vju//7Xvbw1VryurqK2fWMY
-	 1FPAHjmV/L7SvqNqp5XPe+CNdpsUlN1T2srtBX+kkJTg3Bmhpc4pX7pTCjgERo8Nyg
-	 Ajjsu9rYwr+Nlm3k5nV61nMHVxtx1YrjjahCRyZSAKkIEdFzECRCHYpX4t8BSZhp53
-	 YCLDYaugP8YIUkWwFrjPX/6EodDuyNyEBBZlrJgB25MPmeOMKzyWUC6/WATI3enia/
-	 WcfWcZorvfnUYQBaOxhfD5wCsNmgcMLAgLIy1JLFHYKhT1Wgp5VAEHFsVhzH4Y4Y2s
-	 da4qpnUgk2m3A==
-Date: Thu, 10 Apr 2025 11:07:43 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Donet Tom <donettom@linux.ibm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	Ritesh Harjani <ritesh.list@gmail.com>, rafael@kernel.org,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH 2/2] base/node: Use
- curr_node_memblock_intersect_memory_block to Get Memory Block NID if
- CONFIG_DEFERRED_STRUCT_PAGE_INIT is Set
-Message-ID: <Z_d8T3QtnZVeH3HF@kernel.org>
-References: <50142a29010463f436dc5c4feb540e5de3bb09df.1744175097.git.donettom@linux.ibm.com>
- <d10d1a9f11e9f8752c7ec5ff5bb262b3f6c6bb85.1744175097.git.donettom@linux.ibm.com>
+	b=etC/ghh+hxK8w7jbzUsZMabc6XyIzS5CT4Mg7Fa7JrIL5CyE1k2PVwADgAFE9Vean
+	 /0aYjyCiEReq33iNmBth8wdQ2Nh5tYasEmVOc6J07KJ+LzQkWTqUyZs9Rl0TLenf2o
+	 riSY3QobJLrHdYdAGrHu8KJivKEY6d5RZfDXb7yzEC8GbDZVy1znKo4POOMqT+69gW
+	 rTR843N8sbkhlXfRYMPovrzBekXMQA+E3bajLciYq6oa8idjQRxqJK0DSNEDbSeW4S
+	 5blEih3PumxcILI8AMhng0P5Z/d7bzOb6KXm1VBfxZawaNRApNjonNqMHmcA7EhlaQ
+	 YuimoL7vdE6zA==
+Date: Thu, 10 Apr 2025 10:08:12 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 22/24] irqchip/gic-v5: Add GICv5 ITS support
+Message-ID: <Z/d8bP9GceSVpJAU@lpieralisi>
+References: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
+ <20250408-gicv5-host-v1-22-1f26db465f8d@kernel.org>
+ <87jz7ttb7l.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,111 +65,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d10d1a9f11e9f8752c7ec5ff5bb262b3f6c6bb85.1744175097.git.donettom@linux.ibm.com>
+In-Reply-To: <87jz7ttb7l.ffs@tglx>
 
-On Wed, Apr 09, 2025 at 10:57:57AM +0530, Donet Tom wrote:
-> In the current implementation, when CONFIG_DEFERRED_STRUCT_PAGE_INIT is
-> set, we iterate over all PFNs in the memory block and use
-> early_pfn_to_nid to find the NID until a match is found.
+On Wed, Apr 09, 2025 at 08:57:02PM +0200, Thomas Gleixner wrote:
+> On Tue, Apr 08 2025 at 12:50, Lorenzo Pieralisi wrote:
+> > +	guard(mutex)(&its->dev_alloc_lock);
+> > +
+> > +	its_dev = gicv5_its_find_device(its, device_id);
+> > +	if (IS_ERR(its_dev))
+> > +		return PTR_ERR(its_dev);
+> > +
+> > +	ret = gicv5_its_alloc_eventid(its_dev, nr_irqs, &event_id_base);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = iommu_dma_prepare_msi(info->desc,
+> > +				    its->its_trans_phys_base);
+> > +	if (ret)
+> > +		goto out_eventid;
 > 
-> This patch we are using curr_node_memblock_intersect_memory_block() to
-> check if the current node's memblock intersects with the memory block
-> passed when CONFIG_DEFERRED_STRUCT_PAGE_INIT is set. If an intersection
-> is found, the memory block is added to the current node.
+> As 0-day already complained, guard() and goto does not mix. the simple
+> solution is to do
 > 
-> If CONFIG_DEFERRED_STRUCT_PAGE_INIT is not set, the existing mechanism
-> for finding the NID will continue to be used.
-
-I don't think we really need different mechanisms for different settings of
-CONFIG_DEFERRED_STRUCT_PAGE_INIT. 
-
-node_dev_init() runs after all struct pages are already initialized and can
-always use pfn_to_nid().
-
-kernel_init_freeable() ->
-	page_alloc_init_late(); /* completes initialization of deferred pages */
-	...
-	do_basic_setup() ->
-		driver_init() ->
-			node_dev_init();
-
-The next step could be refactoring register_mem_block_under_node_early() to
-loop over memblock regions rather than over pfns.
- 
-> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
-> ---
->  drivers/base/node.c | 37 +++++++++++++++++++++++++++++--------
->  1 file changed, 29 insertions(+), 8 deletions(-)
+> foo()
+>         guard()
+>         return __foo();
 > 
-> diff --git a/drivers/base/node.c b/drivers/base/node.c
-> index cd13ef287011..5c5dd02b8bdd 100644
-> --- a/drivers/base/node.c
-> +++ b/drivers/base/node.c
-> @@ -20,6 +20,8 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/swap.h>
->  #include <linux/slab.h>
-> +#include <linux/memblock.h>
-> +
->  
->  static const struct bus_type node_subsys = {
->  	.name = "node",
-> @@ -782,16 +784,19 @@ static void do_register_memory_block_under_node(int nid,
->  				    ret);
->  }
->  
-> -/* register memory section under specified node if it spans that node */
-> -static int register_mem_block_under_node_early(struct memory_block *mem_blk,
-> -					       void *arg)
-> +static int register_mem_block_early_if_dfer_page_init(struct memory_block *mem_blk,
-> +				unsigned long start_pfn, unsigned long end_pfn, int nid)
->  {
-> -	unsigned long memory_block_pfns = memory_block_size_bytes() / PAGE_SIZE;
-> -	unsigned long start_pfn = section_nr_to_pfn(mem_blk->start_section_nr);
-> -	unsigned long end_pfn = start_pfn + memory_block_pfns - 1;
-> -	int nid = *(int *)arg;
-> -	unsigned long pfn;
->  
-> +	if (curr_node_memblock_intersect_memory_block(start_pfn, end_pfn, nid))
-> +		do_register_memory_block_under_node(nid, mem_blk, MEMINIT_EARLY);
-> +	return 0;
-> +}
-> +
-> +static int register_mem_block_early__normal(struct memory_block *mem_blk,
-> +				unsigned long start_pfn, unsigned long end_pfn, int nid)
-> +{
-> +	unsigned long pfn;
->  	for (pfn = start_pfn; pfn <= end_pfn; pfn++) {
->  		int page_nid;
->  
-> @@ -821,6 +826,22 @@ static int register_mem_block_under_node_early(struct memory_block *mem_blk,
->  	/* mem section does not span the specified node */
->  	return 0;
->  }
-> +/* register memory section under specified node if it spans that node */
-> +static int register_mem_block_under_node_early(struct memory_block *mem_blk,
-> +					       void *arg)
-> +{
-> +	unsigned long memory_block_pfns = memory_block_size_bytes() / PAGE_SIZE;
-> +	unsigned long start_pfn = section_nr_to_pfn(mem_blk->start_section_nr);
-> +	unsigned long end_pfn = start_pfn + memory_block_pfns - 1;
-> +	int nid = *(int *)arg;
-> +
-> +#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-> +	if (system_state < SYSTEM_RUNNING)
-> +		return register_mem_block_early_if_dfer_page_init(mem_blk, start_pfn, end_pfn, nid);
-> +#endif
-> +	return register_mem_block_early__normal(mem_blk, start_pfn, end_pfn, nid);
-> +
-> +}
->  
->  /*
->   * During hotplug we know that all pages in the memory block belong to the same
-> -- 
-> 2.48.1
-> 
+> Then you can put the gotos into __foo()
 
--- 
-Sincerely yours,
-Mike.
+Yes even though its usage in this function IIUC is technically fine,
+there are other kernel functions where the guard(mutex) is at the
+function entry with gotos that follow.
+
+Regardless, bad idea to mix them, as documented, thanks.
+
+Side note: the bug the bot caught is because I moved the guard(mutex)
+lower in the function and incidentally got past gotos (and gcc did not
+catch it, it has to go up to W=2 to barf).
+
+Anyway - as I mentioned in the cover letter, the current IWB driver
+design, (patch 23 - where the guard(mutex) bug is and more readl_poll_*
+boilerplate :), sorry), is a bit of a question (should I move it to
+DOMAIN_BUS_WIRED_TO_MSI with the fixed eventid caveat to solve somehow),
+or is it OK "as-is", treating it basically as an ITS hardcoded plugin ?
+
+Thank you very much for having a look.
+
+Lorenzo
 
