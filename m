@@ -1,142 +1,171 @@
-Return-Path: <linux-kernel+bounces-598358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E65A8454D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:50:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC96A84553
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C85C117BD3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3758D3BD26F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C17B28A414;
-	Thu, 10 Apr 2025 13:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A64B285402;
+	Thu, 10 Apr 2025 13:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWFnvSEr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="khGkSeOE"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA212857FA;
-	Thu, 10 Apr 2025 13:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC92283C98
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744292691; cv=none; b=gsXWqdWBDD1u+QDa/7UwbC+LZq6oj9Jf/PifRpubRfgIBzx0Uub7OeeURi+4EnVXcir/yHwS+JUDIGMXJq9jsdSZ+fh2r7tXdtWOHSMM2KzfAAHzp4Cuk1cXS71iwvuOPGCO451grG0QvdPlEVGNgmOf/Tio9rfeHJf1gD07xy8=
+	t=1744292797; cv=none; b=D6kPd67ZQSXa8qEGxPhbvGflAMDRiy9W3dgtEQJ36s8RMEvay51DzpLoBhXc7GZ8JhQZ5nrpV/uxLI+I7Q5lXNbGBOC1rIslNJAiGjLjpHqoWhYjubNNmGDXNZJ2Rp71nqLrv/Zq8iaCNOuTDoE+a3orRExyJw0jf8KBTTF97Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744292691; c=relaxed/simple;
-	bh=zIuv99jR6/DvhIj/ezFd7gDXDCcqNb+1BR6FZTmkWrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VaLPSk4WfSpZ4yvNBThlrE3Md7vZH1X3QchXS4mvpbSwS8riXxEfvO7JnI3yCsUBFbvIbBIcP/GBNU5Upqh5PBMC4CVwqcBS5mD54ye60mX4Pjz+CDsV2ZJEV5xpV8seVHuElfaJhjf6jFp73qZ4pjIQ5QobEPJ5uthTXIvTWu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WWFnvSEr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C278C4CEE9;
-	Thu, 10 Apr 2025 13:44:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744292690;
-	bh=zIuv99jR6/DvhIj/ezFd7gDXDCcqNb+1BR6FZTmkWrc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WWFnvSErJGHoAFL49fO2hww9SHO0/RHs5AH/HqVziawMjh9vkYSNexmYM9V1qao//
-	 Uh5m0IBGBkSMOyIl6LkSlHlAzZ8YKtLENE/p8M8TUsEKyGyM9YU4yx4VNGvR+vZpeJ
-	 myK2knY44CdZhmM1cF4cFbU8prSB9k9gCLko941gW1mDLOBdONOpcnJXQkkw0Nuzng
-	 SOBwpUziCkn/UNnqzHR0tQdkzSkfGkkBfztnfEcXBSOrSxMfFsR97hoDLizOpcrsJY
-	 nBHLyuWvuLHh2P7ENrjNiNabOB/jqF0W7PDRh3p6iblYP0qF5q//7SvENLREFz9+8M
-	 sxOCOcCxwnQcQ==
-Date: Thu, 10 Apr 2025 16:44:43 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Larysa Zaremba <larysa.zaremba@intel.com>,
-	intel-wired-lan@lists.osuosl.org,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Lee Trager <lee@trager.us>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Sridhar Samudrala <sridhar.samudrala@intel.com>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Karlsson, Magnus" <magnus.karlsson@intel.com>,
-	Emil Tantilov <emil.s.tantilov@intel.com>,
-	Madhu Chittim <madhu.chittim@intel.com>,
-	Josh Hay <joshua.a.hay@intel.com>,
-	Milena Olech <milena.olech@intel.com>, pavan.kumar.linga@intel.com,
-	"Singhai, Anjali" <anjali.singhai@intel.com>,
-	Phani R Burra <phani.r.burra@intel.com>
-Subject: Re: [PATCH iwl-next 05/14] libeth: add control queue support
-Message-ID: <20250410134443.GS199604@unreal>
-References: <20250408124816.11584-1-larysa.zaremba@intel.com>
- <20250408124816.11584-6-larysa.zaremba@intel.com>
- <20250410082137.GO199604@unreal>
- <Z_ehEXmlEBREQWQM@soc-5CG4396X81.clients.intel.com>
- <20250410112349.GP199604@unreal>
- <c1ff0342-4fe9-44ec-a212-9f547e333a5e@intel.com>
+	s=arc-20240116; t=1744292797; c=relaxed/simple;
+	bh=HdLFcexM6+DbkK0ftxP2gkcuJbYxhvAwlG3Qm09g5PQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DGqDv+zPoM7lGJc4cwfw5kne9bJXK4Nj3ExXlaeZwTNjA4B03bQNWPUgn8XD4dOVxtEnypqnbLo2h/L0W8x/sUjP67aJyVra4iIelhW4tHy/8VSv0Tl2TUxegLtG1rxFaiY198wYNLjzB2vLG2EQ5DlESPVdbNgfgDwtotMqV68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=khGkSeOE; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9eb1eso1561168a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:46:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744292793; x=1744897593; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=s3Tv77bW0aU9RBMscUYQTaZLK3cWTZ2jDWR8IUulQ9A=;
+        b=khGkSeOEYRaUpOhwSoKLpkv0pffQVPHJD+AMQhFTDcLlTbD4fH43Fh54jo5fq4qSRF
+         G+QE9rLnWDdsfVu4PzU6A1ROouG/3eioU0AlM0M9la/mYn+tRlWbeP/Q+QcfyDOOpr+D
+         qorptV/SPcDlTP4u03oyMUZaA2nIMwxNe7W4iE1m8MAr/+h8+NxRYyqMMYj5OsEXi/SV
+         6a7k84IR1gBAlOshj5b/0RTgeYnNMEpoVJ9R/YStEpbB9LUnXDUDtswXFXtjy4VlZSmK
+         fNkolaTmUzVe2cgQb+svYd4RR8DgbrycH/aUAX+8jjJ3fgs5QwvsB5P2Jo5/7zqkG2X4
+         Mz7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744292793; x=1744897593;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s3Tv77bW0aU9RBMscUYQTaZLK3cWTZ2jDWR8IUulQ9A=;
+        b=Jqsl7gSAiLmeB5eBlXy1Nue0K7bhFa3hEzj8Db/biHkLKYEc0PhXH/ziEjNaWIFRAP
+         4t99p4ynyaHi9WDwUDVd59+BSID4tKW1NY5Ss0m7ZoVWYLQpVtbr6kb58f2l0vLr50Bh
+         Nt3AxEwqufSNOiUx81cWdeFe6efIGgVZFBnI/EFWGYxaxWDFWnHe5oU6sl+h5yN91tF0
+         eyhcyEi4B5t6UsteaWPGScyn64fFmsRwMbMBeHPQ4o0mhSIR88B4OrdpsDQaaMXiygbJ
+         KKR4IIl8TcJF7zPBLf1BHtrEPC1vHl/JYUaIWW81mxJ7pSTx+xqoY+OywVJwNEN6qe7n
+         OghA==
+X-Forwarded-Encrypted: i=1; AJvYcCUamfFM6IM29Oqqo3yWjH0vgFEVIX2DssmHmch/XiOkWEH4J162G2WAt9Z+1aas6GRFYVsxN7itDPBb2VM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWX//uyBI1bnUD0sTjtRRCfXLd0giP2ynQSHdH4pmTk8QSbzBr
+	NIK+3zWhN1ZN1e6j3UCPtVsz8hzt+WhErZrMUaqyOiXHhNoXzHFqEnlmH0wEzpuDYw5Ss0JvjqB
+	vA9+Eg8ff9EgzWlMUj0CmzgmFNtk=
+X-Gm-Gg: ASbGncsjz9FMZJMH/EoBUXKfbIFCmkUq0bwU58Sn9EmUoqfpbx5u2ZabeSWEhGBImQq
+	5UOOdhOEL6O7pEhqck8cR/cEY91NSMvxAsGuIRC18yU3WatRFltb2zy/gJ4UjRw6qwyNdaPxggW
+	JZHxwrG0KEP52/059ZWpv3uw==
+X-Google-Smtp-Source: AGHT+IHiZFDgujiOG3UnHGeTx0KUPl+GHBXPb9fdrtmfKTuXg91n647EErsdZP3zN0Q/Y37TV62Z4t7VfBh5GpvARCI=
+X-Received: by 2002:a05:6402:268b:b0:5e5:334e:86d9 with SMTP id
+ 4fb4d7f45d1cf-5f32a138efdmr2440544a12.13.1744292793246; Thu, 10 Apr 2025
+ 06:46:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c1ff0342-4fe9-44ec-a212-9f547e333a5e@intel.com>
+References: <20250409214422.1751825-1-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20250409214422.1751825-1-martin.blumenstingl@googlemail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Thu, 10 Apr 2025 19:16:16 +0530
+X-Gm-Features: ATxdqUEdXHiyPPzlQQzx8sGDVrj8q4dzBzZE7dD5ZZvqIMWxRPwWGuOzBSchz3Y
+Message-ID: <CANAwSgTp26r-xeiSDkdX21Sp3RQtfh42JV4fCgirLkHZYuGD-Q@mail.gmail.com>
+Subject: Re: [PATCH] drm/meson: fix resource cleanup in meson_drv_bind_master()
+ on error
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	jbrunet@baylibre.com, neil.armstrong@linaro.org, 
+	Furkan Kardame <f.kardame@manjaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Apr 10, 2025 at 03:05:19PM +0200, Alexander Lobakin wrote:
-> From: Leon Romanovsky <leon@kernel.org>
-> Date: Thu, 10 Apr 2025 14:23:49 +0300
-> 
-> > On Thu, Apr 10, 2025 at 12:44:33PM +0200, Larysa Zaremba wrote:
-> >> On Thu, Apr 10, 2025 at 11:21:37AM +0300, Leon Romanovsky wrote:
-> >>> On Tue, Apr 08, 2025 at 02:47:51PM +0200, Larysa Zaremba wrote:
-> >>>> From: Phani R Burra <phani.r.burra@intel.com>
-> >>>>
-> >>>> Libeth will now support control queue setup and configuration APIs.
-> >>>> These are mainly used for mailbox communication between drivers and
-> >>>> control plane.
-> >>>>
-> >>>> Make use of the page pool support for managing controlq buffers.
+Hi Martin,
 
-<...>
+On Thu, 10 Apr 2025 at 03:30, Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
+>
+> meson_drv_bind_master() does not free resources in the order they are
+> allocated. This can lead to crashes such as:
+>     Unable to handle kernel NULL pointer dereference at virtual address 00000000000000c8
+>     [...]
+>     Hardware name: Beelink GT-King Pro (DT)
+>     pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>     pc : meson_dw_hdmi_unbind+0x10/0x24 [meson_dw_hdmi]
+>     lr : component_unbind+0x38/0x60
+>     [...]
+>     Call trace:
+>      meson_dw_hdmi_unbind+0x10/0x24 [meson_dw_hdmi]
+>      component_unbind+0x38/0x60
+>      component_unbind_all+0xb8/0xc4
+>      meson_drv_bind_master+0x1ec/0x514 [meson_drm]
+>      meson_drv_bind+0x14/0x20 [meson_drm]
+>      try_to_bring_up_aggregate_device+0xa8/0x160
+>      __component_add+0xb8/0x1a8
+>      component_add+0x14/0x20
+>      meson_dw_hdmi_probe+0x1c/0x28 [meson_dw_hdmi]
+>      platform_probe+0x68/0xdc
+>      really_probe+0xc0/0x39c
+>      __driver_probe_device+0x7c/0x14c
+>      driver_probe_device+0x3c/0x120
+>      __driver_attach+0xc4/0x200
+>      bus_for_each_dev+0x78/0xd8
+>      driver_attach+0x24/0x30
+>      bus_add_driver+0x110/0x240
+>      driver_register+0x68/0x124
+>      __platform_driver_register+0x24/0x30
+>      meson_dw_hdmi_platform_driver_init+0x20/0x1000 [meson_dw_hdmi]
+>      do_one_initcall+0x50/0x1bc
+>      do_init_module+0x54/0x1fc
+>      load_module+0x788/0x884
+>      init_module_from_file+0x88/0xd4
+>      __arm64_sys_finit_module+0x248/0x340
+>      invoke_syscall+0x48/0x104
+>      el0_svc_common.constprop.0+0x40/0xe0
+>      do_el0_svc+0x1c/0x28
+>      el0_svc+0x30/0xcc
+>      el0t_64_sync_handler+0x120/0x12c
+>      el0t_64_sync+0x190/0x194
+>
+> Clean up resources in the error path in the same order and under the
+> same conditions as they were allocated to fix this.
+>
+> Reported-by: Furkan Kardame <f.kardame@manjaro.org>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+> This issue was reported off-list so I'm unable to provide a link to the
+> report.
+>
+> I'm not sure which Fixes tag fits best. My preference so far is
+> Fixes: 6a044642988b ("drm/meson: fix unbind path if HDMI fails to bind")
+> but I'll happily take other suggestions as well.
+>
+Thanks for this Fix.
 
-> >> Module dependencies are as follows:
-> >>
-> >> libeth_rx and libeth_pci do not depend on other modules.
-> >> libeth_cp depends on both libeth_rx and libeth_pci.
-> >> idpf directly uses libeth_pci, libeth_rx and libeth_cp.
-> >> ixd directly uses libeth_cp and libeth_pci.
-> > 
-> > You can do whatever module architecture for netdev devices, but if you
-> > plan to expose it to RDMA devices, I will vote against any deep layered
-> > module architecture for the drivers.
-> 
-> No plans for RDMA there.
-> 
-> Maybe link the whole kernel to one vmlinux then?
+Reviewed-by: Anand Moon <linux.amoon@gmail.com>
+Tested-by: Anand Moon <linux.amoon@gmail.com>
 
-It seems that you didn't understand at all about what we are talking
-here. Please use the opportunity that you are working for the same
-company with Larysa and ask her offline. She understood perfectly about
-which modules we are talking.
+I have tested with the following script on AML-S905X-CC
+---------
+#! /bin/bash
+set +x
 
-> 
-> > 
-> > BTW, please add some Intel prefix to the modules names, they shouldn't
-> > be called in generic names like libeth, e.t.c
-> 
-> Two modules with the same name can't exist within the kernel. libeth was
-> available and I haven't seen anyone wanting to take it. It's not common
-> at all to name a module starting with "lib".
-
-Again, please talk with Larysa. ETH part is problematic in libeth name
-and not LIB.
+cd /sys/bus/platform/drivers/meson-drm/
+for i in $(seq 1 10); do
+        echo "========================" $i
+        echo d0100000.vpu > unbind
+        /usr/bin/sleep 1
+        echo d0100000.vpu > bind
+        /usr/bin/sleep 1
+done
 
 Thanks
+-Anand
 
