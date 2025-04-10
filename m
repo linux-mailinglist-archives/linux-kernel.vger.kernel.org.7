@@ -1,142 +1,119 @@
-Return-Path: <linux-kernel+bounces-597903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58DCA84015
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:08:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE40AA84009
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 892343AA713
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:03:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFDDD3B1E49
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FF827BF75;
-	Thu, 10 Apr 2025 10:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C6+W8b+b"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C39726FA79;
+	Thu, 10 Apr 2025 10:01:11 +0000 (UTC)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B19B26F457;
-	Thu, 10 Apr 2025 10:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B692144B7;
+	Thu, 10 Apr 2025 10:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744279298; cv=none; b=JeJY6q7tABqYs/Bu1iENw9YuLuZj8QnDJmWd/hmu3G0bUHngLkR0/BzKA2R2jQ85rXwsmJnFoLIH2gnYIp19eTD9GGsP3kQX1hAof41sWnlok/2ALHSsl+9zV/4NisSQcGHnUGDpU677rynKNAdFf+QNd+TixS/Xk0XlpAkoeJw=
+	t=1744279271; cv=none; b=UHDMsostb57ku5XrPjPzhRnpK56etmKR7cL8gXPeHUFlpZWSeI5+bJc5S8iMt7ayQgTYb8SFYqpOPtuvWn3ycwE9xXiYacOceEcxRATnW+F9WXIOWSe/UDQr8pjMSmcmlwam6MWpskpn3Nzh8zDPbpUYza+yvTIXLYlAoKyKUv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744279298; c=relaxed/simple;
-	bh=FoyK/E6QKZbKN9+2slMu8A2NwgBg1QLs03UpcQ1DPG4=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WJ2qpPyZXYM3jz9l6+UE0XG4jo+KbU3Mr6aCNka6IWxj2eDYfIx81KuMpJPKbF3qjf4+WJJ+3nBxcpz433SHGLU4YRLstWym5QfdCRqgkT/dHJxZl/E8tqteTaSnhWC96AcwiJfwGHcwvtGAczvefeUrfTnRFpJJJzGWjjIR9tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C6+W8b+b; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53A75loi029741;
-	Thu, 10 Apr 2025 10:00:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uKO+HlAXxErI7sk+sbykpCRcZS4cY7JSKuHRHinNxkk=; b=C6+W8b+bXfQ3VVWj
-	yT4DknN48OtMJ2smV+nqGdNgGMzPTbmu72pCkbL8yRL86UB22XcsH5xA0Ej0u5U6
-	bhU3lVrPdIslvaJay2h2zagZxx40fNa5grdt2VmoR5Kft+Lkdl5bRyYQIRVBcc5u
-	TMwGe1cquMHSotYE6FlmwHAcAHdTAsqueEBuMA0JQgiksZOHsdGwXsexm4jxVBvN
-	WDmfVtIrGX2qkvaNimfnOrMmcnCfdbsdgTRVZ61OeDmZbB38+keU6eTolvBhoMTc
-	CXwn4D1p422GMJn/ctJw89rKQMs7v1joLkt+vd6N40HnohviOn48y54ZIxKzfEGP
-	5aDEKg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twbupgnc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Apr 2025 10:00:53 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53AA0rFl019944
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Apr 2025 10:00:53 GMT
-Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 10 Apr 2025 03:00:48 -0700
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-To: <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
-        <manivannan.sadhasivam@linaro.org>, <broonie@kernel.org>,
-        <absahu@codeaurora.org>, <bbrezillon@kernel.org>,
-        <architt@codeaurora.org>, <quic_srichara@quicinc.com>,
-        <quic_mdalam@quicinc.com>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>
-Subject: [PATCH v4 3/3] mtd: rawnand: qcom: Fix read len for onfi param page
-Date: Thu, 10 Apr 2025 15:30:19 +0530
-Message-ID: <20250410100019.2872271-4-quic_mdalam@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250410100019.2872271-1-quic_mdalam@quicinc.com>
-References: <20250410100019.2872271-1-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1744279271; c=relaxed/simple;
+	bh=3YSzOSGFRoQFmlz4nC8WtFJRhSSU/q2S/7XqD3/o5s4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RAQ1NDO54Adorvjp30E8yINa4mtbz/B7ydnDn/GpU+5w0OrmnWrHznp6ip/mrL1v/E7VEPzxi7crABeogvnggvCfgEdw9gcv+zjkBqnvWULpiCXYVRRlT0M760KP5XITGxfBWX6ibMO7CcH9Gpm21dlmNQQCvR1HUoSphokF7V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e6194e9d2cso1215288a12.2;
+        Thu, 10 Apr 2025 03:01:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744279265; x=1744884065;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JKiCw7u8Hk3XYzuXQXEMVJps7P3FaweDg+0KQf7Z8zk=;
+        b=mIDMervAWYWoAeJTMWo2CiZKU5yR+XRMPEU9VQH2LOuL1F7rYDO9Qn5xHp5yKaJsm6
+         ip26dQFlS6N2+CaAYVZp40dWZIQj4b0bJw9pr97+irVavd2HvoiM150Ok9afxyxddN6z
+         4iEpCyNZ16DRq5HyoO7UcrJ3gkXU0X28Mw81mBSb1nHqf7GfpYNJqAulrYX6Tm79hX0m
+         xde+MskWMEq8B090e2xRgc61+2WvGWfbon7veO4JX5AT6rON8WWDqmCd0EkILeo7VUoL
+         X0czg/HHI3HHHExLJc+gKcDxVoHXNPoR1nI3uxvZOBQKY0AlRdShUSWOne7imAmsNoBg
+         Vu1A==
+X-Forwarded-Encrypted: i=1; AJvYcCU6+KO9BiulHbdiMfaUMI2WSZStIruJqfFvinD/DAFM86tZKuqDKp0IahYEkIQB4FwZZJ6pyzOnIj+w@vger.kernel.org, AJvYcCUjYtZrTqubbj72P3mGeL2thPr89SnWuDy/K6h0S9K/NygKrkd7rLZlDCIY5odivBbuH2ZDSoH0TOlChQ==@vger.kernel.org, AJvYcCW+EZSJhaJo21WY7HkGgSk7MJPvWPs3iAQnOk4w9FjK2GIc2Wb+GFfXQAgV20rAxKaUiFRBAn6MjO/ktrlm@vger.kernel.org, AJvYcCWy2Gn4Gm2BX34uI/WxIGKLanMEj8MHaunOtz+aZ/tbEwM5ZYCo+jC+TV0yrZSd1tOp7jTdPgmMlSZO@vger.kernel.org, AJvYcCX2kSB4i5gk+azqcB006HHfUr6GVA+OP9ALvsMuwdq2oI6QAJuHy4CJP7ZiHSZnNTMwpOKxTdT2GkBgJ1F2l/sM0Nk=@vger.kernel.org, AJvYcCXl66JIMm8Ssz/1bsrTBnoDZ5umr+leVsfd1RqvNVnGu5O1mGnCv7K7lmF1eN7VGBgpwtkL0uB6+lh9zhBh@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjEosmCifWAcIWnu2DEP4re3i7yeMjnCcEOwv+vBt75SlQxjbJ
+	zgZa6FLixMgIzdb7JHfkeu3OoHEtjLWlcIkCGNcJ9WkW/4/+RHFmqFtto5x9VK4=
+X-Gm-Gg: ASbGnctwvVSwABcV/dc/EODjCe5UEnTor0g9lUmc1rNRmw+Ioem9M++br8X9UBvt8Wl
+	H3T5QO5/+7xndIbR106rHmhTYHd0nPflrhOC2dvEN3p03A+D/gXIYV3/HsOgfXYFojPq0aew4r2
+	DmCDUa3AwZEwQYp42LoB76xjOO/HU3enLzIOkU+fbcqdgsFyk/mne90ZANrymAc2bCVqEc6+jb7
+	NCfzngfxfXWhOfIbAVg+rVQ+bc6ofK44x8X+rYFAGgpbPSzhRzLiH5oPFT3RSDPNkQ0FNIFwQH3
+	SyFhmLlCjhAX1BZRXejVvwgef3l66wwnqOKqhnS8V3F1G/B/QLu8STqvicxpmH7ebvv0m6zvGon
+	NOEY=
+X-Google-Smtp-Source: AGHT+IEuZ5RvKuFQKafeOnV/iU1rR8BECSnP3FouxBQzmkQdAGCMmlh9H0f5bOLZLa2l8x8sHXP/qA==
+X-Received: by 2002:a05:6402:5c9:b0:5eb:ca9b:523a with SMTP id 4fb4d7f45d1cf-5f3292946a2mr1687307a12.20.1744279265044;
+        Thu, 10 Apr 2025 03:01:05 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f2fbc2e1ebsm2070348a12.41.2025.04.10.03.01.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Apr 2025 03:01:01 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5eb5ecf3217so1196178a12.3;
+        Thu, 10 Apr 2025 03:01:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU8ovPtS18n8FyBvitUfFBNRwTVOCxAlqQjQY9XFngmgaS+87QIc7zRvhVDshR/VmdsYjMVjeT6lUl02DLcxv5/Udg=@vger.kernel.org, AJvYcCUk0VsleRaVwr00iFIWlgGHBdmLjYLvDe+BjtEt161cqSPhCEhqdpBCBS5a9aSLGiCAkq85jD+gHINN@vger.kernel.org, AJvYcCUvR9aCM06HSA2dNdyZY+PjyDoEyTEJc23tb/VU63xUBQwZmj+9QXzxi+BmQNvCrO0GvYP9RneJHLhFi/hO@vger.kernel.org, AJvYcCV2sKaWaM86dKe4mIOgqMtEuW9v0tG/wc/FGqe05LheqhYS+Rq5eCTCFPXNeP7i4vxLE8hx8a5UUcamcA==@vger.kernel.org, AJvYcCVE8GMifMBhT+82cY2VSJDg6yundyynbz4B00UxvjxO6Z7F3o6SY/AlR8A02j2kj+a5ZW4q77s6+Eh7@vger.kernel.org, AJvYcCXx3ekcxXtIe6ULWEY7xUXoim9vh6wouyd/cp+b6j9kMJtQU5F4B7AI3dQWO+IL9CPin83yqsZwZH0XArwO@vger.kernel.org
+X-Received: by 2002:a05:6402:3490:b0:5e6:17db:898d with SMTP id
+ 4fb4d7f45d1cf-5f329244ab0mr1708385a12.2.1744279261452; Thu, 10 Apr 2025
+ 03:01:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 1zclfYbNV_PQh7RVWAUQ7kr9q6MRRPCX
-X-Proofpoint-ORIG-GUID: 1zclfYbNV_PQh7RVWAUQ7kr9q6MRRPCX
-X-Authority-Analysis: v=2.4 cv=dbeA3WXe c=1 sm=1 tr=0 ts=67f796d5 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=TL38SSn-kruOQBs3kxwA:9
- a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-10_01,2025-04-08_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 mlxlogscore=999 phishscore=0 mlxscore=0 spamscore=0
- malwarescore=0 clxscore=1011 adultscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504100075
+References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250407191628.323613-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250407191628.323613-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Apr 2025 12:00:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUwnQyR+RFe6k6ywOe+Raib--pkznhZ3ECw_qJ9VFOcAQ@mail.gmail.com>
+X-Gm-Features: ATxdqUGeKhSrvS6PJEJf__skUFDUoBreynUF4B-R_BDEFpM3UJ2E9HaDJJ3viRA
+Message-ID: <CAMuHMdUwnQyR+RFe6k6ywOe+Raib--pkznhZ3ECw_qJ9VFOcAQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/12] clk: renesas: rzv2h: Add support for RZ/V2N SoC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The minimum size to fetch the data from device to QPIC buffer
-is 512-bytes. If size is less than 512-bytes the data will not be
-protected by ECC as per QPIC standard. So while reading onfi parameter
-page from NAND device set nandc->buf_count = 512.
+On Mon, 7 Apr 2025 at 21:16, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> The clock structure for RZ/V2N is almost identical to RZ/V2H(P) SoC
+> with less IP blocks compared to RZ/V2H(P). For eg: CRU2/3 are present
+> only on the RZ/V2H(P) SoC.
+>
+> Add minimal clock and reset entries required to boot the Renesas
+> RZ/V2N EVK and binds it with the RZ/V2H CPG family driver.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Cc: stable@vger.kernel.org
-Fixes: 89550beb098e ("mtd: rawnand: qcom: Implement exec_op()")
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Tested-by: Lakshmi Sowjanya D <quic_laksd@quicinc.com>
-Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
----
-Change in [v4]
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.16.
 
-* Added Reviewed-by tag
+Gr{oetje,eeting}s,
 
-Change in [v3]
+                        Geert
 
-* No change
-
-Change in [v2]
-
-* Set buf_count to 512 in the parameter page read
-
-Change in [v1]
-
- drivers/mtd/nand/raw/qcom_nandc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-index a73bb154353f..1003cf118c01 100644
---- a/drivers/mtd/nand/raw/qcom_nandc.c
-+++ b/drivers/mtd/nand/raw/qcom_nandc.c
-@@ -1930,7 +1930,7 @@ static int qcom_param_page_type_exec(struct nand_chip *chip,  const struct nand_
- 		qcom_write_reg_dma(nandc, &nandc->regs->cmd1, NAND_DEV_CMD1, 1, NAND_BAM_NEXT_SGL);
- 	}
- 
--	nandc->buf_count = len;
-+	nandc->buf_count = 512;
- 	memset(nandc->data_buffer, 0xff, nandc->buf_count);
- 
- 	config_nand_single_cw_page_read(chip, false, 0);
 -- 
-2.34.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
