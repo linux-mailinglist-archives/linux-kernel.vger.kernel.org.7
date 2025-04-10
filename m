@@ -1,119 +1,88 @@
-Return-Path: <linux-kernel+bounces-597373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FFF5A838F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:09:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDFE7A838FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3572846260C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:09:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 084587A5903
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C121FA262;
-	Thu, 10 Apr 2025 06:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294C6202989;
+	Thu, 10 Apr 2025 06:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="X5sh2WPh"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBD01DE8BF;
-	Thu, 10 Apr 2025 06:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fDepa1+h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589E61BE251;
+	Thu, 10 Apr 2025 06:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744265342; cv=none; b=nR5BrkBYO+NliyOAIpV13CyDlLcN03I+l5lZQ7ACng95/TLRRl8jTnHtypzzBm8PLzXgBb1x8/5cLShGgnlzcgK1LozpxnlUJ42w8HXwe3ll2o2PhMl8KYrzN8nUjDyEFvb+LdXwnGoqH7OYTXYfwUHRAZ/R0c5PvESJlgzlbTA=
+	t=1744265525; cv=none; b=nVhgay/lZN0lFVghDwBMuZKj11UBeDwdQAFMXhFFplQDzb6of3cbqt3+a4xZBIXk/iU/dpxN5HYpf6nrV2YkIp4YAKmjgO7V5i78ZD+NrWmAhnHqRin0BYVPrhiLnIgfbnNjnHr8h0GGLue5KSI05Kc/GqUJfIJ/jstXduWO/6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744265342; c=relaxed/simple;
-	bh=iEnz87p9jiJqM8ldDHqp1iiLYm1wFZ0SmPihFwK4bjI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iPAMOOVJCsCaGAS+tcM4lYQOs4auh9YEsXLAYcwQlKxOoepT9/uTJ1ifwofkvzIr/7GFqOb2F75BRyLyx8jW/CSs8prmtj8Lb1kwBMo7Brvd25aNUCxOzPr3h6OIWFOCaQ+HBvxV3tP2CTzTJ4dqkZ7PNx/T7h00YHwvRaqVIcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=X5sh2WPh; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from DESKTOP-RSFL4TU.corp.microsoft.com (unknown [167.220.238.203])
-	by linux.microsoft.com (Postfix) with ESMTPSA id B532D2114D9C;
-	Wed,  9 Apr 2025 23:08:57 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B532D2114D9C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1744265340;
-	bh=HioKhu/DG0UhW1UkIeNOikgiTMcLB+zmLCq1ChIRWtM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=X5sh2WPhSVvYwYbwjCdDlPmz26Bab+Cz6v7JTsi2VPWgI+Hlu23HbnehIR4c7750i
-	 V4Vay8bBYpDpDtwZ6+wJK1iUEIxKL/SiNPrTnUAeUcj0ueTIgGfxPuBJDzYRhEZQ90
-	 r9U4VSb9pHnToe8wsubHoLKohiI0Z0yBt8G39zrw=
-From: Naman Jain <namjain@linux.microsoft.com>
-To: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Stephen Hemminger <stephen@networkplumber.org>
-Cc: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@kernel.org,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Naman Jain <namjain@linux.microsoft.com>
-Subject: [PATCH v4 2/2] Drivers: hv: Make the sysfs node size for the ring buffer dynamic
-Date: Thu, 10 Apr 2025 11:38:47 +0530
-Message-Id: <20250410060847.82407-3-namjain@linux.microsoft.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250410060847.82407-1-namjain@linux.microsoft.com>
-References: <20250410060847.82407-1-namjain@linux.microsoft.com>
+	s=arc-20240116; t=1744265525; c=relaxed/simple;
+	bh=KHSVNzsI5/zU4ACY7+o1sFXmjI5zBaVysJ4fxcV9JeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r1RJTGlvuylHwpQf9qzCQoB8DzE2s/FLl5ELkaUF7IXVF3vVSpBNv6cYESC58LdlvBxiQ5dWrqfa7nj7zawloHoESacivRj9m00TjLX9So/w5fbcYBcZoSBdLvTiKS7wUd2vMMyEeFaGOt4TzDdQcNnjVxKKsWk2k4jcysRfMM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fDepa1+h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7895C4CEDD;
+	Thu, 10 Apr 2025 06:12:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744265524;
+	bh=KHSVNzsI5/zU4ACY7+o1sFXmjI5zBaVysJ4fxcV9JeU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fDepa1+hS2ku0AVfFWBp2tZHF3g+6ytQIsl0j3QWmeVIrhyfGTA8fyKoIx0e2CAV9
+	 RnkXG63FCfsi+3NR/jXDUiHsl5rUOfc4bM2N5BLboopQ3sXJc3peQMPsZ3GJxDXtaV
+	 D3s1esFh/UprIwBc68b32XE9DB7rxJByjSDf7I1o=
+Date: Thu, 10 Apr 2025 08:10:02 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+Cc: Petr Tesarik <ptesarik@suse.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] usb: core: warn if a GFP zone flag is passed to
+ hcd_buffer_alloc()
+Message-ID: <2025041035-catchable-stopping-e345@gregkh>
+References: <20250320154733.392410-1-ptesarik@suse.com>
+ <20250325134000.575794-1-ptesarik@suse.com>
+ <20250409174036.7ee76248@meshulam.tesarici.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250409174036.7ee76248@meshulam.tesarici.cz>
 
-The ring buffer size varies across VMBus channels. The size of sysfs
-node for the ring buffer is currently hardcoded to 4 MB. Userspace
-clients either use fstat() or hardcode this size for doing mmap().
-To address this, make the sysfs node size dynamic to reflect the
-actual ring buffer size for each channel. This will ensure that
-fstat() on ring sysfs node always return the correct size of
-ring buffer.
+On Wed, Apr 09, 2025 at 05:40:36PM +0200, Petr Tesařík wrote:
+> On Tue, 25 Mar 2025 14:40:00 +0100
+> Petr Tesarik <ptesarik@suse.com> wrote:
+> 
+> > Remove a misleading comment and issue a warning if a zone modifier is
+> > specified when allocating a hcd buffer.
+> > 
+> > There is no valid use case for a GFP zone modifier in hcd_buffer_alloc():
+> > - PIO mode can use any kernel-addressable memory
+> > - dma_alloc_coherent() ignores memory zone bits
+> > 
+> > This function is called by usb_alloc_coherent() and indirectly by
+> > usb_submit_urb(). Despite the comment, no in-tree users currently pass
+> > GFP_DMA.
+> > 
+> > Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+> 
+> I know this was posted during the merge window, but that's now over.
+> Any comment on this patch?
 
-Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
----
- drivers/hv/vmbus_drv.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Please give me a chance to catch up, it's been non-stop conference
+travel during the merge window, and through this week :(
 
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 66f1c21050d4..c7be85606031 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -1820,7 +1820,6 @@ static struct bin_attribute chan_attr_ring_buffer = {
- 		.name = "ring",
- 		.mode = 0600,
- 	},
--	.size = 2 * SZ_2M,
- 	.mmap = hv_mmap_ring_buffer_wrapper,
- };
- static struct attribute *vmbus_chan_attrs[] = {
-@@ -1880,11 +1879,21 @@ static umode_t vmbus_chan_bin_attr_is_visible(struct kobject *kobj,
- 	return attr->attr.mode;
- }
- 
-+static size_t vmbus_chan_bin_size(struct kobject *kobj,
-+				  const struct bin_attribute *bin_attr, int a)
-+{
-+	const struct vmbus_channel *channel =
-+		container_of(kobj, struct vmbus_channel, kobj);
-+
-+	return channel->ringbuffer_pagecount << PAGE_SHIFT;
-+}
-+
- static const struct attribute_group vmbus_chan_group = {
- 	.attrs = vmbus_chan_attrs,
- 	.bin_attrs = vmbus_chan_bin_attrs,
- 	.is_visible = vmbus_chan_attr_is_visible,
- 	.is_bin_visible = vmbus_chan_bin_attr_is_visible,
-+	.bin_size = vmbus_chan_bin_size,
- };
- 
- static const struct kobj_type vmbus_chan_ktype = {
--- 
-2.43.0
+thanks,
 
+greg k-h
 
