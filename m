@@ -1,115 +1,96 @@
-Return-Path: <linux-kernel+bounces-598015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 510B6A84138
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:52:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E8BDA84142
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BA7B17DCFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:52:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B05533A45B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D1028134D;
-	Thu, 10 Apr 2025 10:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E9A281368;
+	Thu, 10 Apr 2025 10:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HvZlJF5F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sEIITVji"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF46326A1D0;
-	Thu, 10 Apr 2025 10:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0332256C75;
+	Thu, 10 Apr 2025 10:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744282324; cv=none; b=BNJMy7MPbYRylQKh2kiiXKXAntZXQSolqS/SwTsZKLgE6xDlJLPE2XjWbHRL+aXHTnG6K36TQwOBoJVsxHeti6IOk9ZAngybOG9BvKOmuG/jwV4EFN7kDZNu/t+vMOnsG9FRC8viTSqpbKHSkbL5fOHt80ON8G8KBYQ/ENSl4cM=
+	t=1744282360; cv=none; b=hXHmew3kaEkWwgf6s6wQukUZR2jDHKxDazuH1gsBTBOPqr6duTpSA7yClxtFW5B04jkBIID+wE17lNQ4oVc1NOU0ztq6X6Bnpu805WGq2UD+Y7cbqsrepwLAs+oynMACKn7yRXg3CJjp06tkEK6j8hEGQGGUhl+JRwuIxHkq9Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744282324; c=relaxed/simple;
-	bh=hlovCCmgEdamdT8EztlgaIRBSh8lo89vsjhIHctmVUo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LXAOfjzH4ADEfz/SBde0fLN2dBvb24rklOhYVsZlTnkjk+0QhM27sSBem/7uw1MYn+Szx4DOVnf9FTyez8ZxZRUJGjshf7GwM5ZAKf8hcttZFfBLj9eCThVTe+qN7hR+SVLyASfjp0BouMhDXD11f55LcRNQ8VrZfD2Sv2wCYWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HvZlJF5F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2842DC4CEDD;
-	Thu, 10 Apr 2025 10:52:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744282324;
-	bh=hlovCCmgEdamdT8EztlgaIRBSh8lo89vsjhIHctmVUo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HvZlJF5FsoBTWQN8RX/rjzTGvuLCmCB9WtTN6b5aR+OSHLP1UUvn6+puJt2Io5a+s
-	 QmfrbvD0eGcJNsuhUtqyKNtt4ofeqLiTu1hvr7RHN7lxB5Ifx23SG499XfND52AAb3
-	 X1ETe8UexSH6l7Sfh4rfHIHIxDnfo74/vIsn7WtfKddvUdnfH5Qp8WOpSF5ywnaSGN
-	 H71D4VA4zbRJH9Eivac8Z90Nu1PvgwSgJ76OR8NM0D3T5wkZMN+k6plK8XCQACnmW+
-	 Ymr0rmZI0/syf6cl+1Q3triaS7KgV72dK98ykoRvHileuHL21SHRg7o2YLR5wOJ6p5
-	 JYFTge5LhpUNg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1u2pVp-004Bdn-Ee;
-	Thu, 10 Apr 2025 11:52:01 +0100
-Date: Thu, 10 Apr 2025 11:52:00 +0100
-Message-ID: <86jz7sl25r.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
+	s=arc-20240116; t=1744282360; c=relaxed/simple;
+	bh=7wBrrTzsBst25ssilXMw28kvSf5Er6C0Dk03FWz+HXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GmuB/SwXZpMTi0MIa7TlfHBY55eiz5CVC6lDNC7WflMN1o2bZCj0sBHl6FXAZq9vtvvvuGoy4W+3nHlSr2eqCnLoKqFnhUGtkjW/QV946ow+1eZtFaI3rNfMi89WjGCxsdgNr57sM9z+qxxWWusMdWLF6cLglpwkmiA4aQCE7zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sEIITVji; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oKSUbsgAB3mRyb0GnkDkQig+o1YJFRaynD1xrmGVCo4=; b=sEIITVjixbiNYSW2H2MdnpCltD
+	+Ut5StqPYsNgQpqKhE9yE4NZHmky+/PntwXYQbPYQz73fKppPVad0pgW+gQJmDVoJl/Hy+N0FQxFR
+	lyPuFB3pBMo7TwFstDVzVov2wMBegl1Z8U6zO5vOCddDbM8lyLkTuAjmDS8VLCVBlsxUasbAbwMQW
+	Mwix8RnK1KcYI5MpbvT3D+k5k+lQFGhR83o6sUyW4Rs4d2zb3QqluYp9WwlCVusnmrna29axMSpa3
+	j0zOSK8E7trz3d7Amdk9ZN16c/o8Cj6ZK3T+d+aS8FyjnlzRyiK6nOK+tDtEwO/BQZo+nABGLg7/M
+	YquEn8zA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u2pWJ-00000002mNu-0nYK;
+	Thu, 10 Apr 2025 10:52:31 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5A84A3003C4; Thu, 10 Apr 2025 12:52:31 +0200 (CEST)
+Date: Thu, 10 Apr 2025 12:52:31 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	darren@os.amperecomputing.com
-Subject: Re: [PATCH] KVM: arm64: nv: Forward hvc traps if originated from nested VM
-In-Reply-To: <4d1bdea5-43c3-4ca9-9275-feadf158e86e@os.amperecomputing.com>
-References: <20250410070743.1072583-1-gankulkarni@os.amperecomputing.com>
-	<86mscolc0b.wl-maz@kernel.org>
-	<4d1bdea5-43c3-4ca9-9275-feadf158e86e@os.amperecomputing.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <llong@redhat.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+	Huang Rui <ray.huang@amd.com>, Perry Yuan <perry.yuan@amd.com>
+Subject: Re: [PATCH v2 0/4] sched/fair: Dynamic asym priority support
+Message-ID: <20250410105231.GF30687@noisy.programming.kicks-ass.net>
+References: <20250409053446.23367-1-kprateek.nayak@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: gankulkarni@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, darren@os.amperecomputing.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250409053446.23367-1-kprateek.nayak@amd.com>
 
-On Thu, 10 Apr 2025 11:20:24 +0100,
-Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
+On Wed, Apr 09, 2025 at 05:34:42AM +0000, K Prateek Nayak wrote:
+> K Prateek Nayak (4):
+>   sched/fair: Use READ_ONCE() to read sg->asym_prefer_cpu
+>   sched/topology: Introduce sched_update_asym_prefer_cpu()
+>   cpufreq/amd-pstate: Update asym_prefer_cpu when core rankings change
+>   sched/debug: Print the local group's asym_prefer_cpu
 > 
-> 
-> 
-> On 10-04-2025 12:49 pm, Marc Zyngier wrote:
-> > On Thu, 10 Apr 2025 08:07:43 +0100,
-> > Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
-> >> 
-> >> It was discovered while trying selftest(smccc_filter) that the
-> >> hvc trap is getting forwarded to guest hypervisor even if it is
-> >> originated from itself.
-> >> 
-> >> HVC traps from guest hypervisor should be handled by the host
-> >> hypervisor and traps originating from nested VM should be
-> >> forwarded. Adding check to forward only if the hvc is trapped
-> >> from the nested VM.
-> > 
-> > I disagree. HVC from EL2 must be routed to the same EL2. HVC from EL1
-> > must be routed to the EL2 controlling EL1.
-> 
-> Thanks, Understood, In NV case, hvc has to be forwarded to L1
-> irrespective of it origin (L1 or L2). Need to add hvc handler in the
-> smccc_filter.c for the vm (when run as L1), so that it is handled and
-> returns with required args set.
+>  drivers/cpufreq/amd-pstate.c   |  4 ++-
+>  include/linux/sched/topology.h |  6 ++++
+>  kernel/sched/debug.c           |  4 +++
+>  kernel/sched/fair.c            |  5 +--
+>  kernel/sched/topology.c        | 58 ++++++++++++++++++++++++++++++++++
+>  5 files changed, 74 insertions(+), 3 deletions(-)
 
-Why? This test checks under which conditions an HVC/SMC gets routed to
-userspace. What does it even mean to test HVC if it doesn't make it
-outside of the guest itself?
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+This seems reasonable. I'll queue it up, and unless someone (robot or
+real person) objects, we'll get it merged :-)
 
