@@ -1,124 +1,220 @@
-Return-Path: <linux-kernel+bounces-598844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 118D4A84BB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:55:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 550C5A84BC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5F429C0E47
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:54:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5778B19E6858
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA1E28CF4F;
-	Thu, 10 Apr 2025 17:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF0828C5D8;
+	Thu, 10 Apr 2025 18:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F466lyYW"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BNRfKsb/"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7C11E9B38;
-	Thu, 10 Apr 2025 17:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B454503B;
+	Thu, 10 Apr 2025 18:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744307672; cv=none; b=TgE0Ybt8VB3BwycCKdR9d1k3TOKF5VXOy6WqreCLEPgXKrODnA3zcBFZSHMBuXP+jWapLGL7bsQvs1Dl9wIXfRgfLmaAlqOMhv4uKbVmH3tKbh4EuupZQP6ynar6EpOPRkdrelIB82FD/ypPVNU0TNXWVLgcTNX6L9hgJRQ+m+Y=
+	t=1744308212; cv=none; b=Ap3w6yPr3ss+8bN6rSYU9aV9sB8mgRSLdO9T562B1lXCfFltVGMO5LQB4EboFPe/ZrV+GATst7YR60+omtL6rQlVpF38pPf3Fdz8yTUA/dOC6ToFbkjoYllgMuIqzi+cnGWcTC0ZG3btP18Zn6yczLuJtIqYu0gVr7A3luHDyDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744307672; c=relaxed/simple;
-	bh=Pw/dJ+4Y5FkoPfIBpwwqEtEWe8AU90hgV2bIMaMLP00=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CATnG6Fg72M/EmYZOs6HCrWd9d88/o6AZFwovx2R5viq4Ee0XLYdSmty/JN56Z6Vj0P3sBko4fe6fZQkJ/OOKfXMAl70yxb7PoYZkHzmRy3gVjVXxOuq+cV6gw3rDI9IoC28wuWa2fSCvB6+vBQ+lYCroHIbEhxJr3V1VEfbO9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F466lyYW; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1744308212; c=relaxed/simple;
+	bh=4aWbed7EtQgLSXk51YT4NxpZ+Qur5bbbpTCLnW+5LHA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IvASCZ3wiLgexbpZK2UiBd18iuLqQXRy6YWvRU1ngx0QoNHuva8hfNOtrHHG6hb78t47NPha+OnrGiYF2kW4rMn13elAnwWWN0AMky0T4iaIAeLylRbHzCykYL/Ojav5D3T/pHV1t7isT1KEtyKY3vPGtjGLHYUTJ1n34Np8WWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BNRfKsb/; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac2a9a74d9cso208007066b.1;
-        Thu, 10 Apr 2025 10:54:30 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-739525d4e12so1096027b3a.3;
+        Thu, 10 Apr 2025 11:03:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744307669; x=1744912469; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Q5k58HJPb9pkGfYBHMl8erz1pohoAN5Zh0An/lVPHk=;
-        b=F466lyYWBPmzIRgHdzUs2+IKV5uab5E8lPSvjwqz70mCGZt2FOm9ShMGzJJ6gZhmYd
-         TsmM/1p68/wY+KO2IDteEKOwS1IEF1B2ejqJqswkjtdFxCYdPfhZsASyyaXVIQg4gK8Y
-         fWGjH9IA8N29Gi3N/ofyTlKF4jQO5oesPmePzsF19u0+B18ng+J8rIFft8ZLRhIWoxMD
-         y0NziFOLHbJ1yArpOoZffcW67kInKimpC6TMwsk477K8KrN3aTCyGlqmm6XS4NbIxwJb
-         wd8M92jPcA6XMC7eMRkA/kMkYlgeMjlXzH+0XZYbpl4cpBK9t6sqI3KbnfLYTcIWz4ZU
-         mzUA==
+        d=gmail.com; s=20230601; t=1744308210; x=1744913010; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9KspzWYWRsyEbnP31/SlUBhB9lF2Qj2qHmHRt0zLbBU=;
+        b=BNRfKsb/graCk44+65PCeq1i05nBDS1W/KIdENTNueJA7omymlELaURHJgjM2UDhkd
+         nAXkGmrqcTVILBcET1iKCoFpyifGAp/T6t+0p3JllV8XJGdfIx2KSHZ1qC3TOfV+WpT7
+         cQrsTFS12V/9iE15DO/LJZ5RNJJdOxm6EW9MmFOY0NjoPFQ9PU18ZTIrc5+4PWG5O0l7
+         VZFM4PNG5x4mMVuFd94OuUG9+pe0oVMRHNgdWHer/Z1I5ceDkzJ9uzesFQqFtK3OVGvG
+         m5sWRpqnxQ4SwJAhsXCn7QLrpqzY50Ds1P4w5ul0tr/cyVksVzXF0sh3ImSOPRrGON07
+         AL5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744307669; x=1744912469;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5Q5k58HJPb9pkGfYBHMl8erz1pohoAN5Zh0An/lVPHk=;
-        b=aphzToihHDmn8SLvmiOArAy6u/9as78KeJWKBajc2fuTIwBquRsGmN4AcCUfMEqJ3b
-         PrK/CO258MYbFqtFlXGU+J+9QRzYnxUJylDEpQPHAH/HjZuwYHacQxVVM3qEEWuUJLWa
-         hM0TwzaENucc8WX/cvYHw4mOvJKsESvCsWI1zE/htBzlSLDfa89R/snxsoloaUFsA8FO
-         Tth0uqaHCIrY/ZRDpQIBin8u1gikAYGAh7Pfw+Z2HJeUzyFq2Rn3C8wwHmT6ovj9qLvl
-         YBLu1SzA5G/jByMDtmv1+bch9weQCk/MSRLrAsWjd4vXeq80xTXxKXpmP6eNrVl6o1o2
-         BaHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVByLFNCXFbPuaqPn6beRy7tk5/Na5SMjor6a/0f8dn+QR0PSMwO9MjurrKbHG5BikvdI0Zz9SK@vger.kernel.org, AJvYcCWrON+/17lpkoCk7h0n+3HL2ObQYcPyVMI2c+XF3ckhuiL5suywsWsQhwfyrqJoKu/tn5WGUGebRh/Y@vger.kernel.org, AJvYcCX6D/i7g+1BXF6VWzJbxtDTConvl4E6yUusePfK1J0r0y7eZ1w8f/KAWyL9mtkF+xr7Z1vyOP4pibqeaaHW@vger.kernel.org, AJvYcCXmvoFyK468r//piqFDus8d8Ud5qNDT/AxhlT58ydK3buGd/zVdRnfH1sQBHug9vPgYU0z6bPEtL+/Q4t8JMezw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxSOV4Z8rPo7IFpkSrC4z6ppRz3VxH/EjDt0EJfrKlIvuMdhYa
-	SbkZkfF0zSSbLgKiMeGnFFr4XwrYzFpXjfYf/88QQxjcZnCPKi6EoX5omXmhtkwNEXvkH+CdVTS
-	NdiNaM3KsS/EYrinuVQpRu9N9J0Y=
-X-Gm-Gg: ASbGncuwd+hgtah1yVb11YQwD+HJgwg2XvCiGieQMtWAVvduepJxB7RDXB06ueSzRLt
-	Qho5ZZF+4TCEvE80q5RHnF5eSmD3gtKUJx6IapiaC+QOjKHjXyFywWWFwbVb1a0x07UCuAC20F8
-	KP7IcmlQLb80KIEeC3ObI+1w==
-X-Google-Smtp-Source: AGHT+IFk57BaGI8RexVkNm+rOx5JzRlSl388aEL8hPkRZ3mtB/W+jjolkJ5nyPy44lQVI1rq5r2tU030TeCa7PM2WVs=
-X-Received: by 2002:a17:906:c156:b0:ac6:f4c1:b797 with SMTP id
- a640c23a62f3a-acabd195902mr425726166b.19.1744307669164; Thu, 10 Apr 2025
- 10:54:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744308210; x=1744913010;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9KspzWYWRsyEbnP31/SlUBhB9lF2Qj2qHmHRt0zLbBU=;
+        b=sU9J+6gO3Fz4dinvFJuR5u1yN2gp4f+855FmLcXAyRPhXzkF6yncTzoM5V91yNA8hH
+         HwMvtMnFUtCJqKXvfNvomtktNxRPgw84i/9dOP0Vpt+Ia65Bd9Z1zn9LY8roH3Feb5ko
+         5K7oWwvJlcrFS5r5vHDeIipSx/AGNLn/oIqRBitM7Cs5eOxuCQjH/Al6Fc74MIcwcDBh
+         UUVStwYczUgmym5GJcOEVebvp/ZLfUVxW0+XoXnGaehbMgaxoit4ja5mSwUokvdDRnup
+         fup2ztYHSIbS9ifX5Q7zq6XN3F+PB8G7ElNISnsD2HpBWlwkL4G+D1tNTWByYsDdlRuG
+         dtXg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/kyKrOEgaqnIwJMf4MzQgOjs+FRxGI+rO25sUGiBU2jngaQ2Y+0vW+c9HVvsZ52bDTHnSJ7YtsnAScg==@vger.kernel.org, AJvYcCWO4VZtoLY9t1kVELc6TBifKXkE4GTpbNPcizquFFAId0aGJxpiJKgLsiAZOMDQvE48d1suAxvy+0MZpR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcZezSEMFJZdbgk683mNm3fL0+NWXhmlOL6c/PBc2T7ZezMFzs
+	WKDOjPjkeaOPl3jPd99RCitud3V6Ah414lUk7XRwUa3DQpuCIBKZ
+X-Gm-Gg: ASbGncsldj8PvjNBoqsn9VhYIYLCbWhVKH5/V8B5ZPPuPxnnYSQCz/dwgqfQgWE+w7f
+	A8SMUh0VM2ZSsZNx0H8Gf4/7iz9SImOh7A5BAQr+yNv5cBBPieSgEYkPEsZ8TYJeRFSxVphQ7Rs
+	fj4UCBhEOVNEJiHO/ejU4n8NA8N7VrLngPNFBpEryYIyUfLWhxsXS7BbPx818YajS6Y+BFZ1Eo/
+	r6r1h/SnHa3Obs9AU2sLhiBxI9LfD6glBYQbXfm6Zw/S07y0Tzc7pO3RNqQwR1u6CZIOKyQgJF0
+	YXjvXIkSC/Vv7+HksjmTNlQNrlGj3GIWwWSMIjk6YDC75JPv78AIHZ0G
+X-Google-Smtp-Source: AGHT+IGo7HacaL/bCpYlsLvZ/r0cXH+aP5UU2jDrusuLV2kneGlhMHN7AVzvwnv/xHVzRUqpukB9ig==
+X-Received: by 2002:a05:6a00:801:b0:736:a82a:58ad with SMTP id d2e1a72fcca58-73bbefa623bmr4027239b3a.15.1744308210343;
+        Thu, 10 Apr 2025 11:03:30 -0700 (PDT)
+Received: from localhost.localdomain ([2601:646:8f03:9fee:5e33:e006:dcd5:852d])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1d2b940sm3609697b3a.8.2025.04.10.11.03.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 11:03:29 -0700 (PDT)
+From: nifan.cxl@gmail.com
+To: willy@infradead.org
+Cc: mcgrof@kernel.org,
+	a.manzanares@samsung.com,
+	dave@stgolabs.net,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	will@kernel.org,
+	aneesh.kumar@kernel.org,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	linux-s390@vger.kernel.org,
+	ziy@nvidia.com,
+	Fan Ni <fan.ni@samsung.com>
+Subject: [PATCH] mm: Introduce free_folio_and_swap_cache() to replace free_page_and_swap_cache()
+Date: Thu, 10 Apr 2025 11:00:31 -0700
+Message-ID: <20250410180254.164118-1-nifan.cxl@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409144250.206590-1-ivecera@redhat.com> <20250409144250.206590-7-ivecera@redhat.com>
- <3e12b213-db36-4a76-9a58-c62dc8b1b2ce@kernel.org> <b73e1103-a670-43da-8f1a-b9c99cd1a90d@redhat.com>
-In-Reply-To: <b73e1103-a670-43da-8f1a-b9c99cd1a90d@redhat.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 10 Apr 2025 20:53:51 +0300
-X-Gm-Features: ATxdqUEHCMWU8odrtfeCV4-CCxyAM1De6Fsa0no8YCkrp_fO_UC5x5S5KURglVQ
-Message-ID: <CAHp75VfR_6gQdcBU6YDTvtX0A2NDjto4LXyjTteGLmp-u1t2qA@mail.gmail.com>
-Subject: Re: [PATCH v2 06/14] mfd: zl3073x: Add macros for device registers access
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Prathosh Satish <Prathosh.Satish@microchip.com>, Lee Jones <lee@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Michal Schmidt <mschmidt@redhat.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 10, 2025 at 11:21=E2=80=AFAM Ivan Vecera <ivecera@redhat.com> w=
-rote:
-> On 10. 04. 25 9:17 dop., Krzysztof Kozlowski wrote:
-> > On 09/04/2025 16:42, Ivan Vecera wrote:
+From: Fan Ni <fan.ni@samsung.com>
 
-...
+The function free_page_and_swap_cache() takes a struct page pointer as
+input parameter, but it will immediately convert it to folio and all
+operations following within use folio instead of page.  It makes more
+sense to pass in folio directly.
 
-> >> +    WARN_ON(idx >=3D (_num));                                        =
- \
-> >
-> > No need to cause panic reboots. Either review your code so this does no=
-t
-> > happen or properly handle.
->
-> Ack, will replace by
->
-> if (idx >=3D (_num))
->         return -EINVAL
+Introduce free_folio_and_swap_cache(), which takes folio as input to
+replace free_page_and_swap_cache().  And apply it to all occurrences
+where free_page_and_swap_cache() was used.
 
-If these functions are called under regmap_read() / regmap_write() the
-above is a dead code. Otherwise you need to configure regmap correctly
-(in accordance with the HW registers layout and their abilities to be
-written or read or reserved or special combinations).
+Signed-off-by: Fan Ni <fan.ni@samsung.com>
+---
+ arch/s390/include/asm/tlb.h |  4 ++--
+ include/linux/swap.h        | 10 +++++++---
+ mm/huge_memory.c            |  2 +-
+ mm/khugepaged.c             |  2 +-
+ mm/swap_state.c             |  8 +++-----
+ 5 files changed, 14 insertions(+), 12 deletions(-)
 
---=20
-With Best Regards,
-Andy Shevchenko
+diff --git a/arch/s390/include/asm/tlb.h b/arch/s390/include/asm/tlb.h
+index f20601995bb0..e5103e8e697d 100644
+--- a/arch/s390/include/asm/tlb.h
++++ b/arch/s390/include/asm/tlb.h
+@@ -40,7 +40,7 @@ static inline bool __tlb_remove_folio_pages(struct mmu_gather *tlb,
+ /*
+  * Release the page cache reference for a pte removed by
+  * tlb_ptep_clear_flush. In both flush modes the tlb for a page cache page
+- * has already been freed, so just do free_page_and_swap_cache.
++ * has already been freed, so just do free_folio_and_swap_cache.
+  *
+  * s390 doesn't delay rmap removal.
+  */
+@@ -49,7 +49,7 @@ static inline bool __tlb_remove_page_size(struct mmu_gather *tlb,
+ {
+ 	VM_WARN_ON_ONCE(delay_rmap);
+ 
+-	free_page_and_swap_cache(page);
++	free_folio_and_swap_cache(page_folio(page));
+ 	return false;
+ }
+ 
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index db46b25a65ae..9fc8856eeed9 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -450,7 +450,7 @@ static inline unsigned long total_swapcache_pages(void)
+ }
+ 
+ void free_swap_cache(struct folio *folio);
+-void free_page_and_swap_cache(struct page *);
++void free_folio_and_swap_cache(struct folio *folio);
+ void free_pages_and_swap_cache(struct encoded_page **, int);
+ /* linux/mm/swapfile.c */
+ extern atomic_long_t nr_swap_pages;
+@@ -522,8 +522,12 @@ static inline void put_swap_device(struct swap_info_struct *si)
+ 	do { (val)->freeswap = (val)->totalswap = 0; } while (0)
+ /* only sparc can not include linux/pagemap.h in this file
+  * so leave put_page and release_pages undeclared... */
+-#define free_page_and_swap_cache(page) \
+-	put_page(page)
++#define free_folio_and_swap_cache(folio)	\
++	do {					\
++		if (!folio_test_slab(folio))	\
++			folio_put(folio);	\
++	} while (0)
++
+ #define free_pages_and_swap_cache(pages, nr) \
+ 	release_pages((pages), (nr));
+ 
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 28c87e0e036f..65a5ddf60ec7 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3640,7 +3640,7 @@ static int __split_unmapped_folio(struct folio *folio, int new_order,
+ 		 * requires taking the lru_lock so we do the put_page
+ 		 * of the tail pages after the split is complete.
+ 		 */
+-		free_page_and_swap_cache(&new_folio->page);
++		free_folio_and_swap_cache(new_folio);
+ 	}
+ 	return ret;
+ }
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index b8838ba8207a..5cf204ab6af0 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -746,7 +746,7 @@ static void __collapse_huge_page_copy_succeeded(pte_t *pte,
+ 			ptep_clear(vma->vm_mm, address, _pte);
+ 			folio_remove_rmap_pte(src, src_page, vma);
+ 			spin_unlock(ptl);
+-			free_page_and_swap_cache(src_page);
++			free_folio_and_swap_cache(src);
+ 		}
+ 	}
+ 
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index 68fd981b514f..ac4e0994931c 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -232,13 +232,11 @@ void free_swap_cache(struct folio *folio)
+ }
+ 
+ /*
+- * Perform a free_page(), also freeing any swap cache associated with
+- * this page if it is the last user of the page.
++ * Freeing a folio and also freeing any swap cache associated with
++ * this folio if it is the last user.
+  */
+-void free_page_and_swap_cache(struct page *page)
++void free_folio_and_swap_cache(struct folio *folio)
+ {
+-	struct folio *folio = page_folio(page);
+-
+ 	free_swap_cache(folio);
+ 	if (!is_huge_zero_folio(folio))
+ 		folio_put(folio);
+-- 
+2.47.2
+
 
