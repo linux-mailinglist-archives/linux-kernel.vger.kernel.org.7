@@ -1,69 +1,55 @@
-Return-Path: <linux-kernel+bounces-598288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5A2A84476
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:17:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11228A84472
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1D281893A33
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FDEA7A6C0D
 	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793D228153C;
-	Thu, 10 Apr 2025 13:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4SclhWrP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6iAlA4pj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E9F19343B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214D328A3F5;
+	Thu, 10 Apr 2025 13:16:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975BA2857F5
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744290952; cv=none; b=sVkUcQApQ9/pSJXQZ1tBw9cqG2PqrIgNU1jtJnWP2qyWrL9Pd7YPWyGocdGQdEoAFysOASGSlH5FEZDDsvY9+abe+oqaJWxUOjrgx0MR8f7dLmn0vSSHXb6EziPSqFXI6ehCdw65lmJlN7qzeSkfhfJP+nWi+eMGpMyFZdo3q5I=
+	t=1744291013; cv=none; b=i80xcMnHh23ZY4Pt1kpMVeISEy9qjukxoY321+xHNrOCDrYCMlzPnE6bhN/GWRqTKi1zzOavU22UyWzVqEVloNN9+xRMkycuWhs4vJKxVGr6szBpb5HP9UrDgdlvqTYt0WV21EaS+r7Z7NZEBa7o9RHg5a20Z78MhQOHDA27vpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744290952; c=relaxed/simple;
-	bh=RfpFwOtcA1qvw8C28siFaHxStABFOSOiQ6DwUgxTZvU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=O7gTr5vWMyJEdNtCHmKzzH0EnpSiLoto64p4rBcqFip0Haib9may4GZMYfIZZcpVjZXF7LZXk0r1l2ZGt3DuuTGl4njWSOqODEDwzS74Dj59cNNcGf63inmt7rA0hk7cClHuyXdXy5a3rXhcm0wLGrPhSOJA0Nm2soFJOOnxLX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4SclhWrP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6iAlA4pj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744290949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ysS/RpeiUdnIEsB3iIUSjM3Nu+3C80KYWTrvERpIetw=;
-	b=4SclhWrP7zdqUExWGDWfG23Kamky0qJ3kFl+DhPmQzzjXqYWjdYvidCoL0SDtc2gwZFNGY
-	3k5e8hQeIU0zyn9QSuVOjIZQRlbXfj4iLvyCGxGDoxTpBE+4JoUCR6I2fUNCI5Bsb921hU
-	4RGy2p5JuLcqpQlOzMEkwnHG+834E8momrX/rmMTu1ARmOk1Hu3uk5woqoBqQZeVeG+IW6
-	bc45NSy8LVJuLOSMmn9XK0l9cyAhQ720X90nOB8lz9IhrV6U77JmWdM0qP31lcyiMXsPMk
-	a8bil6tQoGCqYLidTl0mxa0gaYR/BMYY+iqW29Oi9zluY8/Ws/DbFCRzfWJ/gg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744290949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ysS/RpeiUdnIEsB3iIUSjM3Nu+3C80KYWTrvERpIetw=;
-	b=6iAlA4pjfAbMVbaphpHgEboAYlcEgffLRcUl2QErxIgHDz5jMYAhvjM/ZmDRqyExNwJkKA
-	Futr70QLHwJEeDCg==
-To: Frederic Weisbecker <frederic@kernel.org>, Gabriele Monaco
- <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH] timers: Exclude isolated cpus from timer migation
-In-Reply-To: <Z_fBq2AQjzyg8m5w@localhost.localdomain>
-References: <20250410065446.57304-2-gmonaco@redhat.com>
- <87ecy0tob1.ffs@tglx>
- <2c9d71fd79d7d1cec66e48bcb87b39a874858f01.camel@redhat.com>
- <Z_fBq2AQjzyg8m5w@localhost.localdomain>
-Date: Thu, 10 Apr 2025 15:15:49 +0200
-Message-ID: <87wmbsrwca.ffs@tglx>
+	s=arc-20240116; t=1744291013; c=relaxed/simple;
+	bh=1NoJ683GLLJbBYcyIP6UXOTVYSovRv9AzlpBIYgIDD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tz5YerKXm4MqkNPefoSiX2XkNC2KMafCZBoepIiko9GM0IsgJnsRcc9oxuqKGqLwfWtvO0UgD0N3wx9rTkp7nkjcbT5kJlaG+xU77x8D+CujFKLdH6a35zjbug6jXLEjpqGV6hH28Ep1O+La5X+F3O9ueebfFdiOMHu5YgflIRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0BF7E1063
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:16:51 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B31253F6A8
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:16:50 -0700 (PDT)
+Date: Thu, 10 Apr 2025 14:16:35 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	kernel@collabora.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v6 3/4] drm/panthor: Label all kernel BO's
+Message-ID: <Z_fEs1hMv0Dc4qYE@e110455-lin.cambridge.arm.com>
+References: <20250409212233.2036154-1-adrian.larumbe@collabora.com>
+ <20250409212233.2036154-4-adrian.larumbe@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,47 +57,177 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250409212233.2036154-4-adrian.larumbe@collabora.com>
 
-On Thu, Apr 10 2025 at 15:03, Frederic Weisbecker wrote:
-> Le Thu, Apr 10, 2025 at 12:38:25PM +0200, Gabriele Monaco a =C3=A9crit :
-> Speaking of, those are two different issues here:
->
-> * nohz_full CPUs are handled just like idle CPUs. Once the tick is stoppe=
-d,
->   the global timers are handled by other CPUs (housekeeping). There is al=
-ways
->   one housekeeping CPU that never goes idle.
->   One subtle thing though: if the nohz_full CPU fires a tick, because the=
-re
->   is a local timer to be handled for example, it will also possibly handle
->   some global timers along the way. If it happens to be a problem, it sho=
-uld
->   be easy to resolve.
->
-> * Domain isolated CPUs are treated just like other CPUs. But there is not
->   always a housekeeping CPU around. And no guarantee that there is always
->   a non-idle CPU to take care of global timers.
+On Wed, Apr 09, 2025 at 10:22:21PM +0100, Adrián Larumbe wrote:
+> Kernel BO's aren't exposed to UM, so labelling them is the responsibility
+> of the driver itself. This kind of tagging will prove useful in further
+> commits when want to expose these objects through DebugFS.
+> 
+> Expand panthor_kernel_bo_create() interface to take a NULL-terminated
+> string. No bounds checking is done because all label strings are given
+> as statically-allocated literals, but if a more complex kernel BO naming
+> scheme with explicit memory allocation and formatting was desired in the
+> future, this would have to change.
+> 
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_fw.c    | 8 +++++---
+>  drivers/gpu/drm/panthor/panthor_gem.c   | 4 +++-
+>  drivers/gpu/drm/panthor/panthor_gem.h   | 2 +-
+>  drivers/gpu/drm/panthor/panthor_heap.c  | 6 ++++--
+>  drivers/gpu/drm/panthor/panthor_sched.c | 9 ++++++---
+>  5 files changed, 19 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+> index 0f52766a3120..a7fdc4d8020d 100644
+> --- a/drivers/gpu/drm/panthor/panthor_fw.c
+> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
+> @@ -449,7 +449,8 @@ panthor_fw_alloc_queue_iface_mem(struct panthor_device *ptdev,
+>  				       DRM_PANTHOR_BO_NO_MMAP,
+>  				       DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
+>  				       DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
+> -				       PANTHOR_VM_KERNEL_AUTO_VA);
+> +				       PANTHOR_VM_KERNEL_AUTO_VA,
+> +				       "Queue FW interface");
+>  	if (IS_ERR(mem))
+>  		return mem;
+>  
+> @@ -481,7 +482,8 @@ panthor_fw_alloc_suspend_buf_mem(struct panthor_device *ptdev, size_t size)
+>  	return panthor_kernel_bo_create(ptdev, panthor_fw_vm(ptdev), size,
+>  					DRM_PANTHOR_BO_NO_MMAP,
+>  					DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC,
+> -					PANTHOR_VM_KERNEL_AUTO_VA);
+> +					PANTHOR_VM_KERNEL_AUTO_VA,
+> +					"FW suspend buffer");
+>  }
+>  
+>  static int panthor_fw_load_section_entry(struct panthor_device *ptdev,
+> @@ -601,7 +603,7 @@ static int panthor_fw_load_section_entry(struct panthor_device *ptdev,
+>  		section->mem = panthor_kernel_bo_create(ptdev, panthor_fw_vm(ptdev),
+>  							section_size,
+>  							DRM_PANTHOR_BO_NO_MMAP,
+> -							vm_map_flags, va);
+> +							vm_map_flags, va, "FW section");
 
-That's an insianity.
+Nit: we could add the section->name if available and if we want a more detailed label, but
+it is not critical.
 
->> Thinking about it now, since global timers /can/ start on isolated
->> cores, that makes them quite different from offline ones and probably
->> considering them the same is just not the right thing to do..
->>=20
->> I'm going to have a deeper thought about this whole approach, perhaps
->> something simpler just preventing migration in that one direction would
->> suffice.
->
-> I think we can use your solution, which involves isolating the CPU from t=
-migr
-> hierarchy. And also always queue global timers to non-isolated targets.
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
-Why do we have to inflict extra complexity into the timer enqueue path
-instead of preventing the migration to, but not the migration from
-isolated CPUs?
+Best regards,
+Liviu
 
-Thanks,
+>  		if (IS_ERR(section->mem))
+>  			return PTR_ERR(section->mem);
+>  
+> diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/panthor/panthor_gem.c
+> index af0ac17f357f..3c5fc854356e 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gem.c
+> +++ b/drivers/gpu/drm/panthor/panthor_gem.c
+> @@ -82,7 +82,7 @@ void panthor_kernel_bo_destroy(struct panthor_kernel_bo *bo)
+>  struct panthor_kernel_bo *
+>  panthor_kernel_bo_create(struct panthor_device *ptdev, struct panthor_vm *vm,
+>  			 size_t size, u32 bo_flags, u32 vm_map_flags,
+> -			 u64 gpu_va)
+> +			 u64 gpu_va, const char *name)
+>  {
+>  	struct drm_gem_shmem_object *obj;
+>  	struct panthor_kernel_bo *kbo;
+> @@ -106,6 +106,8 @@ panthor_kernel_bo_create(struct panthor_device *ptdev, struct panthor_vm *vm,
+>  	kbo->obj = &obj->base;
+>  	bo->flags = bo_flags;
+>  
+> +	panthor_gem_kernel_bo_set_label(kbo, name);
+> +
+>  	/* The system and GPU MMU page size might differ, which becomes a
+>  	 * problem for FW sections that need to be mapped at explicit address
+>  	 * since our PAGE_SIZE alignment might cover a VA range that's
+> diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/panthor/panthor_gem.h
+> index beba066b4974..62aea06dbc6d 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gem.h
+> +++ b/drivers/gpu/drm/panthor/panthor_gem.h
+> @@ -153,7 +153,7 @@ panthor_kernel_bo_vunmap(struct panthor_kernel_bo *bo)
+>  struct panthor_kernel_bo *
+>  panthor_kernel_bo_create(struct panthor_device *ptdev, struct panthor_vm *vm,
+>  			 size_t size, u32 bo_flags, u32 vm_map_flags,
+> -			 u64 gpu_va);
+> +			 u64 gpu_va, const char *name);
+>  
+>  void panthor_kernel_bo_destroy(struct panthor_kernel_bo *bo);
+>  
+> diff --git a/drivers/gpu/drm/panthor/panthor_heap.c b/drivers/gpu/drm/panthor/panthor_heap.c
+> index 3bdf61c14264..d236e9ceade4 100644
+> --- a/drivers/gpu/drm/panthor/panthor_heap.c
+> +++ b/drivers/gpu/drm/panthor/panthor_heap.c
+> @@ -151,7 +151,8 @@ static int panthor_alloc_heap_chunk(struct panthor_heap_pool *pool,
+>  	chunk->bo = panthor_kernel_bo_create(pool->ptdev, pool->vm, heap->chunk_size,
+>  					     DRM_PANTHOR_BO_NO_MMAP,
+>  					     DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC,
+> -					     PANTHOR_VM_KERNEL_AUTO_VA);
+> +					     PANTHOR_VM_KERNEL_AUTO_VA,
+> +					     "Tiler heap chunk");
+>  	if (IS_ERR(chunk->bo)) {
+>  		ret = PTR_ERR(chunk->bo);
+>  		goto err_free_chunk;
+> @@ -555,7 +556,8 @@ panthor_heap_pool_create(struct panthor_device *ptdev, struct panthor_vm *vm)
+>  	pool->gpu_contexts = panthor_kernel_bo_create(ptdev, vm, bosize,
+>  						      DRM_PANTHOR_BO_NO_MMAP,
+>  						      DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC,
+> -						      PANTHOR_VM_KERNEL_AUTO_VA);
+> +						      PANTHOR_VM_KERNEL_AUTO_VA,
+> +						      "Heap pool");
+>  	if (IS_ERR(pool->gpu_contexts)) {
+>  		ret = PTR_ERR(pool->gpu_contexts);
+>  		goto err_destroy_pool;
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index 446ec780eb4a..43ee57728de5 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -3332,7 +3332,8 @@ group_create_queue(struct panthor_group *group,
+>  						  DRM_PANTHOR_BO_NO_MMAP,
+>  						  DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
+>  						  DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
+> -						  PANTHOR_VM_KERNEL_AUTO_VA);
+> +						  PANTHOR_VM_KERNEL_AUTO_VA,
+> +						  "CS ring buffer");
+>  	if (IS_ERR(queue->ringbuf)) {
+>  		ret = PTR_ERR(queue->ringbuf);
+>  		goto err_free_queue;
+> @@ -3362,7 +3363,8 @@ group_create_queue(struct panthor_group *group,
+>  					 DRM_PANTHOR_BO_NO_MMAP,
+>  					 DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
+>  					 DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
+> -					 PANTHOR_VM_KERNEL_AUTO_VA);
+> +					 PANTHOR_VM_KERNEL_AUTO_VA,
+> +					 "Group job stats");
+>  
+>  	if (IS_ERR(queue->profiling.slots)) {
+>  		ret = PTR_ERR(queue->profiling.slots);
+> @@ -3493,7 +3495,8 @@ int panthor_group_create(struct panthor_file *pfile,
+>  						   DRM_PANTHOR_BO_NO_MMAP,
+>  						   DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
+>  						   DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
+> -						   PANTHOR_VM_KERNEL_AUTO_VA);
+> +						   PANTHOR_VM_KERNEL_AUTO_VA,
+> +						   "Group sync objects");
+>  	if (IS_ERR(group->syncobjs)) {
+>  		ret = PTR_ERR(group->syncobjs);
+>  		goto err_put_group;
+> -- 
+> 2.48.1
+> 
 
-        tglx
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
