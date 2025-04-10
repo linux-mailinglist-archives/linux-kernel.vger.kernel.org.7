@@ -1,310 +1,290 @@
-Return-Path: <linux-kernel+bounces-597111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165ECA8353D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:59:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16474A83546
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC503AE34F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 00:57:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97E708C0AD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 00:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C42D15382E;
-	Thu, 10 Apr 2025 00:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2170D84039;
+	Thu, 10 Apr 2025 00:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="RrAQ2uBm"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZCnB1SEG"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2074.outbound.protection.outlook.com [40.107.223.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D4F7FBA2;
-	Thu, 10 Apr 2025 00:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744246658; cv=none; b=LD2ZkAL84S+X+DC7Lxp6sH1b+ap/QSYXTpjt4f8ncy5wYbTpksHt//eXmeJWRH2sbLWNEHuCROeVugEGShkAA9t8d0twQee98JZitW7I3Fda5OTUIevgwy8eSjkHyf1jewWSIN0qRJkduJhbfvLcVHafRODjk/o4tBuuKFlKPSI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744246658; c=relaxed/simple;
-	bh=jsRmgAe2t+MxVZJSS+HV/F3n5Gw0WYnO0MwsfyNft8E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fSt2SYmQJ61Rf6CAON3EV8nERr1/TGLFrKyAXLQTuBxsvAbFdP635JmJO6bmemvooJKRg75nLE8td0HdUKiW/dyoy55EWTf8EQrLr8yy4lPL+a7z2EwlezYlhHuL+guDapQitP7nbPb55qMJyL6DigRccsFi4PUC8XaT/EQDgiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=RrAQ2uBm; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1744246647;
-	bh=A+7RJcI16tG9MtFLyrjqbZGmBwKN1YcqzXMKUfpEqHM=; l=7133;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=RrAQ2uBmuItIU6xdLveEM2QrXC94kT+3hVXWlR0GaxAl2QO3Y39wlcqzAwRcCKJK7
-	 O55a4CAoDOCx6WNKGz0+gLi0kBdVq1Wwa9RphNkfZk0dbOBzZWZvnw85sa6so+GEZm
-	 ++vfu1VDesUUkXqBGyV2APuJDZ3NpcK40vXIQlKFArwwT6rxJSygUssyaSLHzZaLpf
-	 elPxB0HoBHCRDb+pPCdMD0qX6LamDdOkdJIWHER94QDUYRJkBs4tM58mJKAezrzPef
-	 u8DudDt6KMTAFxLbUlH8XE2ZsQ9+tJkSDRR3n8LcO7WgLEa6ffsse/7wMjdBroqxBe
-	 F9HdhLjthZjAA==
-Received: from 192.168.10.46
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(2132266:0:AUTH_RELAY)
-	(envelope-from <cy_huang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Thu, 10 Apr 2025 08:56:57 +0800 (CST)
-Received: from ex3.rt.l (192.168.10.46) by ex3.rt.l (192.168.10.46) with
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2590F1754B;
+	Thu, 10 Apr 2025 00:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744246732; cv=fail; b=gvjMq+hyHmrgGw6OKmd8mW4v2bv9EhHsqbsrc4cFRy0PHmsqqKlgVDp1Sbf6qJGl1I0X2kvMzcsVTadn2QiTp0XxR+PSGl3aU2jRsJRIinbRJWUTCta2VD0XMTuFTzNAWKT/RTMB2c72Ow0rgGS61HS3lX6s25DZ1PNFTx7xYjs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744246732; c=relaxed/simple;
+	bh=MXdExGWoMjNFwbe5fkOn66FWfGwLbb3vL9lPpAIYb4E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=uQywqGTJhlJsHNvFTJMAxDr9ttKWWESypp8bWYCaOHuo6euYtLmzeOVMk07BM7Uy6J1mlTrGEc6sw992F7NOwDwVzN5NvO/tV/zs0Eh9O8jBeoCWUYDRaaUkxAk/DkT0MpwRQ+epga+4nLigBUjHt3OabMS+C12ALjyMfYXwWyI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZCnB1SEG; arc=fail smtp.client-ip=40.107.223.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xPjGhCzfkrASLw+KMVFAz0CFj3QZznYYwJhW+mIQKzrfV5hu4UxUaiKyl+vOhLdFD82Pffj3rGnBqXp6tJL+3Cvr/0BpSlXl10WifthrhvDzKglKOYpjMy61qOW0pTFunDC9h7j0JXndDqNzXEtXz/d180CGVu8EVkLfZGEsg7P3ClI8K8a9TBQaC4v8i9M82Tu2c9mRnwjTG4ie6Zal4X4DP2xEpBC4a9y7t3bOVT4NsLd4/8MsNE30zADvWoEG8HolcYZjCy9gDCBJWZG/SWlUcg251khVJCXZnpC16QjFny/tWEr8ocPmrVete+vbT45U7xbdTcjPemc5KA96fw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YOquSQ7Eqwj/nAcirJKoiU4pNV4GZ2XCjfjogdRGR3M=;
+ b=vjmMJrM7Qu6SXroRGYoeNOX05JeGJRBQiacGFCOGmJYRfSmFRqMXVQmbaGu2qWlE6WTowRexjyFYH7D/CAnmCAh8FLHIgwdQT/jpnhRCIgxyalCI3s3egsxQBauhcE2PJF/xQRpUIY0HCVi0mVjmOr6JLf1UnyAhYB+pwSqDIreXnTN6bx5kNYNh4uBOAFsb/wogkjfRGhelrYqE7wGpWHFu5gAmVqByAdV9drKIXzSjtSpnT/SBLiNR3wdgUUIgid5lV6ktpfqfWkRfOjs0Wu9GkYKOY8AY6HKjpFvOcJv9HAN2ciWak7J0wftL9ya7O3L2xFe91I2z259ixNclYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YOquSQ7Eqwj/nAcirJKoiU4pNV4GZ2XCjfjogdRGR3M=;
+ b=ZCnB1SEGjRU7n1av3wFQsJ58VhX52x0xvpdcupsJTGsSBl6HXaU7LRvSWPxkFH4svCnc27twnDgZrBpp8mSvu1NCdY3SxlVlZFORHe5l9dqjhcBJX0NfPhoX1E80+pEpmXQTaLWJCg/R5MPTYGBn6bylcbRAme+6vwlnac/Dx0o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by BN7PPF48E601ED5.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6ce) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Apr
- 2025 08:56:57 +0800
-Received: from git-send.richtek.com (192.168.10.154) by ex3.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Thu, 10 Apr 2025 08:56:57 +0800
-From: <cy_huang@richtek.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, ChiYuan Huang <cy_huang@richtek.com>, Otto lin
-	<otto_lin@richtek.com>, Allen Lin <allen_lin@richtek.com>,
-	<devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 4/4] ASoC: codecs: Add support for Richtek rt9123p
-Date: Thu, 10 Apr 2025 08:58:13 +0800
-Message-ID: <d10c08abb3e92598ce7ff3663db7dd70ec2d3c65.1744245663.git.cy_huang@richtek.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1744245663.git.cy_huang@richtek.com>
-References: <cover.1744245663.git.cy_huang@richtek.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.21; Thu, 10 Apr
+ 2025 00:58:47 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%4]) with mapi id 15.20.8606.033; Thu, 10 Apr 2025
+ 00:58:47 +0000
+Message-ID: <f16697d8-be6b-4dd2-b0dc-3c628fc4eec6@amd.com>
+Date: Wed, 9 Apr 2025 19:58:42 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/7] Support L3 Smart Data Cache Injection Allocation
+ Enforcement (SDCIAE)
+To: Reinette Chatre <reinette.chatre@intel.com>, babu.moger@amd.com,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, akpm@linux-foundation.org,
+ paulmck@kernel.org, thuth@redhat.com, rostedt@goodmis.org,
+ xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com,
+ jpoimboe@kernel.org, daniel.sneddon@linux.intel.com,
+ thomas.lendacky@amd.com, perry.yuan@amd.com, sandipan.das@amd.com,
+ kai.huang@intel.com, seanjc@google.com, xin3.li@intel.com,
+ ebiggers@google.com, andrew.cooper3@citrix.com, mario.limonciello@amd.com,
+ tan.shaopeng@fujitsu.com, james.morse@arm.com, tony.luck@intel.com,
+ peternewman@google.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eranian@google.com, corbet@lwn.net
+References: <cover.1738272037.git.babu.moger@amd.com>
+ <7c135464-d859-459b-b86d-e8c18f106fc4@intel.com>
+ <251c8fe1-603f-4993-a822-afb35b49cdfa@amd.com>
+ <4a98eccf-4d31-40ac-8112-c89cde7a1c6e@intel.com>
+ <46e40771-c73c-4ceb-acc3-812693f98f19@amd.com>
+ <5ece1b6b-a225-4fab-be74-b48037986686@intel.com>
+Content-Language: en-US
+From: "Moger, Babu" <bmoger@amd.com>
+In-Reply-To: <5ece1b6b-a225-4fab-be74-b48037986686@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN7P222CA0002.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:124::14) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|BN7PPF48E601ED5:EE_
+X-MS-Office365-Filtering-Correlation-Id: c298e45d-44ab-4e22-9c97-08dd77cad944
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q0Y3ZER0QkNTZ01yZ2gzcVJuR0U2MkhqYVJYdGI0Q1IvT1VDRlJZYmQyTWJs?=
+ =?utf-8?B?aDdmaUQ3VktqYVFGWHEzREMxN2dQcnlHQm9nWVNWRk9MdWZMNWVGblJJSi8r?=
+ =?utf-8?B?TDZ5QTZ4d200L1BIMjl6bWVVSnFyRUtMWlEyeEFLbFp3ZXdQS0RCbzNWYTRa?=
+ =?utf-8?B?RUNVdDRpSTJmVlU5RUprWE9RZWJldnMxSnZtTko5T0lPeHdDMUtDbmhrYkU1?=
+ =?utf-8?B?T1ZHMmsrNVA3N05sQnV3OTFESE85VnI5aXo3TXJJUXJDOVNpdUVTV1hDU0VT?=
+ =?utf-8?B?UGpnQXp5US9yRktrTU9hQkpoaWc1Q3pLTGlpT0Z5S2VienNZUGZFWnlXM0ZD?=
+ =?utf-8?B?OFZSckRoSnFlWjBwNWorcUNHcnVUcFpZVDVZN2NQdHZTU3FhRVZyOWdQaFJu?=
+ =?utf-8?B?eDh2d3FQZWllb2lFS21rRnYzSFJzWGNRcDNtejU0V3YzSC9IaEZrMk5IZVZY?=
+ =?utf-8?B?T1IybXNrbTdnWnJmTHlDemlwWEJlVCszMWlCVWxFV1ZRVXVvVjFRNG5XUEV3?=
+ =?utf-8?B?OW5FWmdlb3d1Qm45VERMajRHT2poRlQyWnRCTCtUK3FoTXBkRTU4aVlyYWo1?=
+ =?utf-8?B?cHMvbXowbDB3RXVmbnJBYjNQbmxGMTV3eTd1NVpZc3ZURGpWRnRxL2ZWS3Bt?=
+ =?utf-8?B?cGZDT0tCaGsxREs2YkRoUGhYNVYwUWhRempRVk52cWs4Um9NckVWR2VESXVC?=
+ =?utf-8?B?aE8ydG5WZ2tiZC9JbnpDVjBLRUVENGNoeDJSVm14N25oNjNPNjZ4UTI2M3pS?=
+ =?utf-8?B?ZW42VzRFakttcGM5UVhnQ3RrMlBPaGo2N3NMOWhWbU5UdVJnNlI5YlRzb2Q3?=
+ =?utf-8?B?QnBQdHRNdTNLS2tQd3drUVF2Y0VMZ2owR3FIQVgyU1pVdDV6VUxpdTRpQUZ5?=
+ =?utf-8?B?R296R1JhNFFSZ0RNUlVyTit0ci9waWxETzRJT1RtZzFENWxFK01lUFRpRlMz?=
+ =?utf-8?B?c1VjUnI5WmRWQjBFRVR1RkRhbHFCcGV2Szl3THUxK1RNT1lza1g0SmNkZ3V0?=
+ =?utf-8?B?TE50ZElSWHk3QVVTem1BS1E1dzNjUGVtSVl1d1F5YzJQNHRWQUJKNFc0VXN6?=
+ =?utf-8?B?TlJwY3Ryb1krRHNrMzcyNnZHTjZWR2xpMlN0THRIS05MOHpsYkxucGE5b0NY?=
+ =?utf-8?B?WGlqd1NsQ0FlSGRpQjNCYVc4dis5WmhxM0dEa3QwcDczNkIzKzl1R1B6TGpk?=
+ =?utf-8?B?TExhdUdoZEJwcmtIV3Rlb1dvTWhBNjIrdVNsNDBiSjRvaktvWFNYOElnWis2?=
+ =?utf-8?B?S2w2SVJpNFljeFBKQ0JvR0dyVWYzcGh6QytGWVU5YkUzVVY4dUFTSWZ2MW5k?=
+ =?utf-8?B?QjVOa2YwSFNXRmE4N0pvTjRPbGJ0cnlqc2thN003bEQycXN3c1JVVXJ4d1hD?=
+ =?utf-8?B?L1pHOTJ6ZktkaS80OWNYNE1PNzA1d2NVK25TeGhHQ3pMVmtnUEgxSHRubDRm?=
+ =?utf-8?B?YklJdUp5MHFNMzNpT2lKaXRlOWtHWVU1aTNlNmJpN2hrcUFuaFY0SVAxTlJP?=
+ =?utf-8?B?eUZJN3pVN0FvUXdhbTZ4WDRWL1k3eDg4c0NTUncwVGJVYkFudytlSGFxLzRT?=
+ =?utf-8?B?V0ZneDV6R0hCdGd3UnFFUFlVQXNBYzZnNTlhZTR1M3hRSFM5SnVQckFYcE9T?=
+ =?utf-8?B?TkNHTmtLU0d3WENNUzdrR3h4UzR2Q3ppRXVET1lyV3UzQkZJR0crN2ZVV3BD?=
+ =?utf-8?B?dU83Zzc0Rk00QitYcWptamV3MkJqMmViMmVIcXM0eFk4WWlDRUw5VDdmeUNz?=
+ =?utf-8?B?WjRTSTZzc3FZekMra3pYYVVGUXBUZW45WGErb3BCSHMvVjIrQ1BUc294dHJD?=
+ =?utf-8?B?RnJHbHJ5QzZ1MUxEVDE3WTNXaGR6VC9KMUJ4VldnTS9Id1NRb3BNNHoreHFm?=
+ =?utf-8?Q?gy4NohhRPWIgx?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UmZ0NWxFUW84bnp3OE9ycVVYQnM2emgvMkszL2g1aVlEM0xRcVR0U0hVdXJa?=
+ =?utf-8?B?c0I5cjJsYnc4ZlpxMy9xUHJSWGpOSWJNeDJnUzlFR3JETHNQV2wyTkw3SFV1?=
+ =?utf-8?B?alZsRXQzZndRM1J5aXM3Vk1pUVlRQTRkQkMyQ21Ud2Nmd2ZMWE9ZMGlnc3kr?=
+ =?utf-8?B?aVdabUg4RlpUdzEweVM3VU9pM2M2ejNWK0w4TG5SUTZUTFZVYTRGeEswWUd6?=
+ =?utf-8?B?WHRKdWZsWFJKcmdwdnNqNXE1N3UxaDVodUtIc3RjM2RSVnY0STBPTFcveGNy?=
+ =?utf-8?B?bTcwaERaa0R0aGE5QW9jM1dJcWIvcXRKbUtwMW5Ib1ZYRW14RDh2ZHVidVU0?=
+ =?utf-8?B?alVLQlp4WWNWVFpwalVmTmpJb0JCN2gyR0UzSExRMjJXQ2dDYTl6SXpFeGtM?=
+ =?utf-8?B?a1ZGeERmZEdhZFVMdGlYUmhwUWVkUC94c3puaTB1eHdOOFMyK01FaG9UUjE0?=
+ =?utf-8?B?eVRXTnJOOHZoSDlzWGN6Q2FUVWhPVmJzUVp2UE9GT242cVNHMWJTaE96NDUz?=
+ =?utf-8?B?dVZLdWJVMEhMNEh3SlBkaWQ1b3Fxb1hHRng3ZlN0TXhBZHUzRVhSTmJZSnZm?=
+ =?utf-8?B?YTZvazliQWJ3TlB1YUxVdkJObGFkRGpPckRYWnRHSG5iKzYwZWRRdnZxa0x5?=
+ =?utf-8?B?SkFaUnQ3THB0SmZmZHpJMzBTU0JEOTlTMzVOYmw2SXZEbGdyTlcwRlMvWkNH?=
+ =?utf-8?B?c1F4VU11bjIvVTBIbjFLcmtRYWxDcjhLcTIzVFNxVFA0UUdvT3VCZ2pERHFX?=
+ =?utf-8?B?bkJRbkhBaDhZREs2NWcva3QxRDhQSzN2Y2lMTjRIamNHa0VTd1lEWjl2MTMz?=
+ =?utf-8?B?c3IzNEljd291cEN1WSt2N1ZmMjcrRTlrUkZoZmI4TW9RLzkyTTk2Tys1T3pv?=
+ =?utf-8?B?eldOWmZUeVZGYXM3dDZCQmhYRWNoeTkvYTk5Z3JqTHBaYXZRUWFkc0xzQ3Y5?=
+ =?utf-8?B?NmhTSTJwV1JJejJYeTJXUW9nSmNmbUVDcUpMUlhNM0l3bFVVajdnYXBLaGkv?=
+ =?utf-8?B?M1VDR3FDUEd4WDJHRTgwVEQwdXBuWlZrbUgrRlVvNWM1ZEJnQWQ2azg1djNP?=
+ =?utf-8?B?YnovSi8rZzlYVU9Nc1REWHlVNFI2dW10cHNvcnBySzdwTXBJYTB3WnJqYk14?=
+ =?utf-8?B?OXFnL0xuOVUxcjNPL0p5eTF2WG53ektSWEJtcmZSOXJpSENFMXBtZGFNT3N2?=
+ =?utf-8?B?bStIN0Y0bHJLVjJZSnBVdFdjTGQwY25RRHQ4aEZobWxBdHBhVmtnRDdTbTA2?=
+ =?utf-8?B?S09iNTFMaTFidUlhaUxSZmFFYlM2azFqcVBsK3l1SDZIWFY0VW1pV09FanFD?=
+ =?utf-8?B?Q2NWMzV4a3BmKy82WUVsQjhWakh0bTdEUEkxcWF2dmFrU3RRUkJtcHQ5WTZF?=
+ =?utf-8?B?aUxFK1Q1MDFoVi9iV09YZjlNSGhLSDhPbG9pUHM3Z2wySHE4ekhUZTUwVDcx?=
+ =?utf-8?B?VTJrek1DcjhvVTliTUcvaDNOSnNXTEdnQ250QlF1MEU5Tzd2Z3FtRXVXYWE1?=
+ =?utf-8?B?SlBIZndVc1cyUnVPbjVrWjAvRHhKNlZvMkRvZUd4MG1yWHRsWGEvVzRUTFFC?=
+ =?utf-8?B?YlZPUlhXQm9mNWlLTWVLSjZRUEJDWGRmR0FKL1FyM1Z4SmkwTUdOTDJwbGNv?=
+ =?utf-8?B?VWxHa1V6dFloSk9YS25DUDlTMGhqbHI2T0s0K1RWeWUwaldWOXg2Vk9nSG5O?=
+ =?utf-8?B?NUF0S2FwckNvY2xDZm9iUEpMb1JoSHNaR3doWmVqbG5JMzdZKzhvLzlQbkJP?=
+ =?utf-8?B?VjIyQVdudTdZdElDRlNmTWIwcTE5TGdLY0V5UmdJM0Y3STNJSisrZytVSDNB?=
+ =?utf-8?B?WWFxcVNQNGNJVWl3cXB5M3dVMUY1OWRJQ2p3SEhQOFk0dVJQSmcwd0lSM0JF?=
+ =?utf-8?B?R29kSDBBK1NkWDRPcDVpK3kyR0dFWUptRGU0TnBtaE1tenRxeElRbTd1U3B5?=
+ =?utf-8?B?SVNFMjdQS085L2xlZXMzN3JqbVBzdHBEOE5ldTJROUdEMjc1U0FCV2o2Q0Ex?=
+ =?utf-8?B?R2xKTllZU3hkMlEvci9nWHFCeVBtVUdWWFFyWm5TR21neWQ1dzJLdXIzOEpj?=
+ =?utf-8?B?dmEzWFh1bjhQcGJISlhNWnkzNmF2OVRlYTZONDNLbFdzUk5nWk00ZldKMGUz?=
+ =?utf-8?Q?dvxc=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c298e45d-44ab-4e22-9c97-08dd77cad944
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 00:58:47.0426
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cy2CY1nArY1DTGIMTAMJGdYExKRYhSEJn7u4YDRSgpyFzQCotVVue0UP+/TMMV0R
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF48E601ED5
 
-From: ChiYuan Huang <cy_huang@richtek.com>
+Hi Reinette,
 
-Add codec driver for Richtek rt9123p.
+On 4/8/2025 8:41 PM, Reinette Chatre wrote:
+> Hi Babu,
+> 
+> On 4/8/25 5:41 PM, Moger, Babu wrote:
+>> Hi Reinette,
+>>
+>> On 4/8/2025 4:44 PM, Reinette Chatre wrote:
+>>> Hi Babu,
+>>>
+>>> On 4/7/25 1:12 PM, Moger, Babu wrote:
+>>>> On 3/21/25 17:50, Reinette Chatre wrote:
+>>>>> On 1/30/25 1:20 PM, Babu Moger wrote:
+>>>
+>>>
+>>>>>>
+>>>>>
+>>>>> AMD also supports what is exposed to user space as "shareable_bits". According
+>>>>> to APM:
+>>>>>      Depending on the implementation, some portions of the L3 Cache may be
+>>>>>      shared by other system functions or used for some other purpose not
+>>>>>      under the control of the PQOS feature set. The L3 Cache Allocation
+>>>>>      Sharing Mask returned by CPUID Fn0000_0010_EBX_x1[L3ShareAllocMask] is a
+>>>>>      bitmask that represents portions of the L3 that may be shared by those
+>>>>>      functions.
+>>>>
+>>>> Here is the complete text.
+>>>>
+>>>> The L3 Cache allocation sharing mask (L3ShareAllocMask) returned in EBX by
+>>>> CPUID Fn0000_0010 with ECX=1 is a bit vector which represents portions of
+>>>> the cache which may be shared with other system entities or used for some
+>>>> other purpose not under the control of the QOS feature set. When software
+>>>> sets a bit in one of the L3_MASK_n registers at the same bit positions a
+>>>> bit in the L3ShareAllocMask, processors executing with the corresponding
+>>>> COS will competitively share that portion of the cache with the other
+>>>> function. If this mask is all 0’s, then there is no other entity in the
+>>>> system competing with the processors for use of the L3 cache.
+>>>>
+>>>> The "L3ShareAllocMask" is always reported as 0 on AMD systems.
+>>>>
+>>>>> Could you please include what (if any) the relationship is between the CBM
+>>>>> discoverable via Fn0000_0010_EBX_x1[L3ShareAllocMask] and the CBM of
+>>>>> "highest-supported L3_MASK_n register" when SDCIAE is enabled?
+>>>>
+>>>> No. There is no relationship in here.
+>>>>
+>>>>>
+>>>>> On the resctrl interface side the documentation currently states:
+>>>>>
+>>>>>      "shareable_bits":
+>>>>>          Bitmask of shareable resource with other executing
+>>>>>          entities (e.g. I/O). User can use this when
+>>>>>          setting up exclusive cache partitions. Note that
+>>>>>          some platforms support devices that have their
+>>>>>          own settings for cache use which can over-ride
+>>>>>          these bits.
+>>>>>
+>>>>> Even though this was originally used to expose the content of
+>>>>> Fn0000_0010_EBX_x1[L3ShareAllocMask] the intent of the content does
+>>>>> seem to also apply to the "io_alloc" CBM also.
+>>>>
+>>>> It says "shared by other system functions or used for some other purpose
+>>>> not under the control of the PQOS feature set".
+>>>
+>>> This is a quote from the AMD spec, not the resctrl user interface documentation.
+>>>
+>>> Please consider this from resctrl user interface perspective.
+>>>
+>>>>
+>>>> "io_alloc" is PQOS feature set. I feel it should not affect "shareable_bits".
+>>>
+>>> When I read the resctrl user interface documentation for "shareable_bits" it
+>>> sounds relevant to io_alloc. The "shareable_bits" contains a bitmask "of
+>>> shareable resource with other executing entities (e.g. I/O)" ... is this
+>>> not exactly io_alloc?
+>>
+>> I agree the text is pretty generic. Actually, the whole bit mask (0xfffF) is shareable with io_alloc.
+> 
+> I think the value of "shareable_bits" presented to user space could be the
+> actual io_alloc_cbm value. Thus, not the "possible IO bitmask" but the actual
 
-Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
----
-v2
-- Update the property parsing from 'enable-delay' to 'enable-delay-ms'
----
- sound/soc/codecs/Kconfig   |   6 ++
- sound/soc/codecs/Makefile  |   2 +
- sound/soc/codecs/rt9123p.c | 171 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 179 insertions(+)
- create mode 100644 sound/soc/codecs/rt9123p.c
+Confused little bit here. The shareable_bits is resource property.
+io_alloc_cbm is domain specific value. Not sure how to display it.
 
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index c61b2d3cf284..b0fa935846c0 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -1832,6 +1832,12 @@ config SND_SOC_RT9123
- 	  Enable support for the I2C control mode of Richtek RT9123 3.2W mono
- 	  Class-D audio amplifier.
- 
-+config SND_SOC_RT9123P
-+	tristate "Richtek RT9123P Mono Class-D Amplifier"
-+	help
-+	  Enable support for the HW control mode of Richtek RT9123P 3.2W mono
-+	  Class-D audio amplifier.
-+
- config SND_SOC_RTQ9128
- 	tristate "Richtek RTQ9128 45W Digital Input Amplifier"
- 	depends on I2C
-diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-index d8d0bc367af8..fba699701804 100644
---- a/sound/soc/codecs/Makefile
-+++ b/sound/soc/codecs/Makefile
-@@ -271,6 +271,7 @@ snd-soc-rt721-sdca-y := rt721-sdca.o rt721-sdca-sdw.o
- snd-soc-rt722-sdca-y := rt722-sdca.o rt722-sdca-sdw.o
- snd-soc-rt9120-y := rt9120.o
- snd-soc-rt9123-y := rt9123.o
-+snd-soc-rt9123p-y := rt9123p.o
- snd-soc-rtq9128-y := rtq9128.o
- snd-soc-sdw-mockup-y := sdw-mockup.o
- snd-soc-sgtl5000-y := sgtl5000.o
-@@ -686,6 +687,7 @@ obj-$(CONFIG_SND_SOC_RT721_SDCA_SDW)     += snd-soc-rt721-sdca.o
- obj-$(CONFIG_SND_SOC_RT722_SDCA_SDW)     += snd-soc-rt722-sdca.o
- obj-$(CONFIG_SND_SOC_RT9120)	+= snd-soc-rt9120.o
- obj-$(CONFIG_SND_SOC_RT9123)	+= snd-soc-rt9123.o
-+obj-$(CONFIG_SND_SOC_RT9123P)	+= snd-soc-rt9123p.o
- obj-$(CONFIG_SND_SOC_RTQ9128)	+= snd-soc-rtq9128.o
- obj-$(CONFIG_SND_SOC_SDW_MOCKUP)     += snd-soc-sdw-mockup.o
- obj-$(CONFIG_SND_SOC_SGTL5000)  += snd-soc-sgtl5000.o
-diff --git a/sound/soc/codecs/rt9123p.c b/sound/soc/codecs/rt9123p.c
-new file mode 100644
-index 000000000000..d509659e735b
---- /dev/null
-+++ b/sound/soc/codecs/rt9123p.c
-@@ -0,0 +1,171 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+//
-+// rt9123p.c -- RT9123 (HW Mode) ALSA SoC Codec driver
-+//
-+// Author: ChiYuan Huang <cy_huang@richtek.com>
-+
-+#include <linux/acpi.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/kernel.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <sound/pcm.h>
-+#include <sound/soc.h>
-+#include <sound/soc-dai.h>
-+#include <sound/soc-dapm.h>
-+
-+struct rt9123p_priv {
-+	struct gpio_desc *enable;
-+	unsigned int enable_delay;
-+	int enable_switch;
-+};
-+
-+static int rt9123p_daiops_trigger(struct snd_pcm_substream *substream, int cmd,
-+				  struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_component *comp = dai->component;
-+	struct rt9123p_priv *rt9123p = snd_soc_component_get_drvdata(comp);
-+
-+	if (!rt9123p->enable)
-+		return 0;
-+
-+	switch (cmd) {
-+	case SNDRV_PCM_TRIGGER_START:
-+	case SNDRV_PCM_TRIGGER_RESUME:
-+	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-+		mdelay(rt9123p->enable_delay);
-+		if (rt9123p->enable_switch) {
-+			gpiod_set_value(rt9123p->enable, 1);
-+			dev_dbg(comp->dev, "set enable to 1");
-+		}
-+		break;
-+	case SNDRV_PCM_TRIGGER_STOP:
-+	case SNDRV_PCM_TRIGGER_SUSPEND:
-+	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-+		gpiod_set_value(rt9123p->enable, 0);
-+		dev_dbg(comp->dev, "set enable to 0");
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static int rt9123p_enable_event(struct snd_soc_dapm_widget *w, struct snd_kcontrol *kcontrol,
-+				int event)
-+{
-+	struct snd_soc_component *comp = snd_soc_dapm_to_component(w->dapm);
-+	struct rt9123p_priv *rt9123p = snd_soc_component_get_drvdata(comp);
-+
-+	if (event & SND_SOC_DAPM_POST_PMU)
-+		rt9123p->enable_switch = 1;
-+	else if (event & SND_SOC_DAPM_POST_PMD)
-+		rt9123p->enable_switch = 0;
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_dapm_widget rt9123p_dapm_widgets[] = {
-+	SND_SOC_DAPM_OUTPUT("SPK"),
-+	SND_SOC_DAPM_OUT_DRV_E("Amp Drv", SND_SOC_NOPM, 0, 0, NULL, 0, rt9123p_enable_event,
-+			       SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_POST_PMD),
-+};
-+
-+static const struct snd_soc_dapm_route rt9123p_dapm_routes[] = {
-+	{"Amp Drv", NULL, "HiFi Playback"},
-+	{"SPK", NULL, "Amp Drv"},
-+};
-+
-+static const struct snd_soc_component_driver rt9123p_comp_driver = {
-+	.dapm_widgets		= rt9123p_dapm_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(rt9123p_dapm_widgets),
-+	.dapm_routes		= rt9123p_dapm_routes,
-+	.num_dapm_routes	= ARRAY_SIZE(rt9123p_dapm_routes),
-+	.idle_bias_on		= 1,
-+	.use_pmdown_time	= 1,
-+	.endianness		= 1,
-+};
-+
-+static const struct snd_soc_dai_ops rt9123p_dai_ops = {
-+	.trigger        = rt9123p_daiops_trigger,
-+};
-+
-+static struct snd_soc_dai_driver rt9123p_dai_driver = {
-+	.name = "HiFi",
-+	.playback = {
-+		.stream_name	= "HiFi Playback",
-+		.formats	= SNDRV_PCM_FMTBIT_S16 | SNDRV_PCM_FMTBIT_S24 |
-+				  SNDRV_PCM_FMTBIT_S32,
-+		.rates		= SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |
-+				  SNDRV_PCM_RATE_22050 | SNDRV_PCM_RATE_24000 |
-+				  SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_44100 |
-+				  SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_88200 |
-+				  SNDRV_PCM_RATE_96000,
-+		.rate_min	= 8000,
-+		.rate_max	= 96000,
-+		.channels_min	= 1,
-+		.channels_max	= 2,
-+	},
-+	.ops    = &rt9123p_dai_ops,
-+};
-+
-+static int rt9123p_platform_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rt9123p_priv *rt9123p;
-+	int ret;
-+
-+	rt9123p = devm_kzalloc(dev, sizeof(*rt9123p), GFP_KERNEL);
-+	if (!rt9123p)
-+		return -ENOMEM;
-+
-+	rt9123p->enable = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_LOW);
-+	if (IS_ERR(rt9123p->enable))
-+		return PTR_ERR(rt9123p->enable);
-+
-+	ret = device_property_read_u32(dev, "enable-delay-ms", &rt9123p->enable_delay);
-+	if (ret) {
-+		rt9123p->enable_delay = 0;
-+		dev_dbg(dev, "no optional property 'enable-delay-ms' found, default: no delay\n");
-+	}
-+
-+	platform_set_drvdata(pdev, rt9123p);
-+
-+	return devm_snd_soc_register_component(dev, &rt9123p_comp_driver, &rt9123p_dai_driver, 1);
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id rt9123p_device_id[] = {
-+	{ .compatible = "richtek,rt9123p" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, rt9123p_device_id);
-+#endif
-+
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id rt9123p_acpi_match[] = {
-+	{ "RT9123P", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(acpi, rt9123p_acpi_match);
-+#endif
-+
-+static struct platform_driver rt9123p_platform_driver = {
-+	.driver = {
-+		.name = "rt9123p",
-+		.of_match_table = of_match_ptr(rt9123p_device_id),
-+		.acpi_match_table = ACPI_PTR(rt9123p_acpi_match),
-+	},
-+	.probe	= rt9123p_platform_probe,
-+};
-+module_platform_driver(rt9123p_platform_driver);
-+
-+MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
-+MODULE_DESCRIPTION("ASoC rt9123p Driver");
-+MODULE_LICENSE("GPL");
--- 
-2.34.1
+> value. This seems to be the best match of what "shareable_bits" represents, which
+> is the region currently used by IO devices. This partners well with the "bit_usage"
+> output, for example, "X" can be used to show which portions of cache are currently
+> used by both software (via schemata of resource groups) and hardware (via io_alloc_cbm).
 
+Haven't looked at this code much. Will look into it.
+  >>
+>> The 'shareable_bits' is coming from CPUID Fn0000_0010_EBX_x1[L3ShareAllocMask] which is always 0 on AMD systems.
+>> It will be bit odd to manipulate these value. Not sure if we have to do it.
+> 
+> It is not clear to me what you mean with "manipulate". "shareable_bits" does currently
+> come from the existing register but AMD now provides more interfaces with which this data
+> can be obtained and it seems appropriate to use it.
+
+Ok.
+
+Thanks
+Babu
 
