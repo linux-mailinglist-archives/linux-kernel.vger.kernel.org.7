@@ -1,100 +1,82 @@
-Return-Path: <linux-kernel+bounces-598042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B92FA84194
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:19:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC884A84198
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782889E4510
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:19:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 993114C4CC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BF4281521;
-	Thu, 10 Apr 2025 11:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDJ/YYu1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DEF1DDC0F;
-	Thu, 10 Apr 2025 11:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AF82836AB;
+	Thu, 10 Apr 2025 11:19:34 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 6ACF8210F53;
+	Thu, 10 Apr 2025 11:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744283951; cv=none; b=q9BFfgo+MBPqv6hMflawqBFcyTt0+cBRuMMX3z1T63/VFnnNN9GZNWflOUS/cQCSr+Wohj+9AOFD8OLa1h/37aWJ50GDMquBBrBzrlJu2h/fZcMPbg2yTVnroreuw0R94YgT60J53U4zhtmlsUGuSIwhtOmcRhicKEsqk+90zgQ=
+	t=1744283974; cv=none; b=k+ChDi6TkB3wTtKYS6H6IQLLFn3mtbNEtQ61Xmug/6D5hbOz3+rLICBh6IAM4Mfo62TID/X/fIwfZf04M1NB/kFiLiNYz8Uhq+9bX/M2o9blZe12GmHADqe03m6Gwolbp63FOydZNRUW4YxGQYc3F/kR+9ka8hwxQ/aEx4/EOno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744283951; c=relaxed/simple;
-	bh=gAFvWpcAGBkegBSikm87MrNHJtZam8cHZvJScZa1YO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mukuBIonDJVSDJBU/4zpCM+/dEhXL1sdKSBvn66AOvzucdZA0onWeuLPlKg1pr21uEL6RcfilRWyNy6djl9wJaAsS46gosU8D8VxVr2lH3jdnvBBOQ4oee5IjaEfdDPbb1Rc7bRmtC11BCJWL24rjrLj5lGYPGKb1YVen5hJBdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDJ/YYu1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5194AC4CEE3;
-	Thu, 10 Apr 2025 11:19:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744283951;
-	bh=gAFvWpcAGBkegBSikm87MrNHJtZam8cHZvJScZa1YO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nDJ/YYu1BZTH/wCI43Y6qFG2VpBm778RH4Ahe5Lc/hjvbh1mPHOR+bvIjtIPJjYgJ
-	 v76zeBUcAzeaobXpwpPB7F7N0ALkeKNOaFnrhpk6sh66f9Qq5EB3MlOqdwPKagcXVR
-	 qESJGDXIsbKlwIZEcvsjR9TJHMy91PyntBiKbuwosnfvlBOiCpyaX6CEbo+QYYZdQo
-	 989+V2m7iEwdmFqFModMA/SB7YnDKCkRP0j3+pIwbbXK833s0X/Mj41iX3O1OhOXiw
-	 EGkOzcjwYaS1KffEtbBp/kiovBdomvAga1HaEZ7a6AukOUsLLIF4iCovZVhtRDb3i8
-	 Ly1tWWkexHEjQ==
-Date: Thu, 10 Apr 2025 12:19:05 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	manivannan.sadhasivam@linaro.org, absahu@codeaurora.org,
-	bbrezillon@kernel.org, architt@codeaurora.org,
-	quic_srichara@quicinc.com, linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-spi@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] mtd: rawnand: qcom: Pass 18 bit offset from NANDc
- base to BAM base
-Message-ID: <79349446-2e87-4f3a-9644-9262a4ccb12a@sirena.org.uk>
-References: <20250410100019.2872271-1-quic_mdalam@quicinc.com>
- <20250410100019.2872271-2-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1744283974; c=relaxed/simple;
+	bh=OqmBd5UpR5yv56v4G7LNpC/RAu44u1ax067TpUGFo/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=CgqoLFM9N/lQItbvjSvm5juN2HqNiigxLE32hqCZgwv9DxWsbM868Crld9p0sUSAZb1Xqtu0cL++jhbe0WuGhNHaK9C4keBtEJ2HlfS82YxR5+RA6c9iS1mzRKKmQ5bVru9Bt+59C8s7fWkDHXwygD68+3C6C+YZbMnjrLlyXy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 1E3E8604DE322;
+	Thu, 10 Apr 2025 19:19:18 +0800 (CST)
+Message-ID: <4a967093-97e2-401f-a0ea-9d7447d518c4@nfschina.com>
+Date: Thu, 10 Apr 2025 19:19:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BHGlqQ/YgKipM5ku"
-Content-Disposition: inline
-In-Reply-To: <20250410100019.2872271-2-quic_mdalam@quicinc.com>
-X-Cookie: You will be awarded some great honor.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Revert "PCI: Fix reference leak in
+ pci_register_host_bridge()"
+Content-Language: en-US
+To: Xiangwei Li <liwei728@huawei.com>
+Cc: linux-kernel@vger.kernel.org, make24@iscas.ac.cn, bhelgaas@google.com,
+ linux-pci@vger.kernel.org, bobo.shaobowang@huawei.com,
+ wangxiongfeng2@huawei.com
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <20250410032842.246396-1-liwei728@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 2025/4/10 11:28, Xiangwei Li wrote:
+> This reverts commit 804443c1f27883926de94c849d91f5b7d7d696e9.
+>
+> The newly added logic incorrectly sets bus_registered to true even when
+> device_register returns an error, this is incorrect.
+>
+> When device_register fails, there is no need to release the reference count,
+I think you missed some thing about device_register(). This patch is wrong.
 
---BHGlqQ/YgKipM5ku
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+device_register()
+     -> device_initialize()
+               -> kobject_init()
+                     -> kobject_init_internal()
+                         -> kref_init(&kobj->kref);  //set 
+kref->refcount to 1
+                            ^^^^^^^^^^^^^^^^^^^^^
 
-On Thu, Apr 10, 2025 at 03:30:17PM +0530, Md Sadre Alam wrote:
-> The BAM command descriptor provides only 18 bits to specify the NAND
-> register offset. Additionally, in the BAM command descriptor, the NAND
-> register offset is supposed to be specified as "(NANDc base - BAM base)
-> + reg_off". Since, the BAM controller expecting the value in the form of
-> "NANDc base - BAM base", so that added a new field 'bam_offset' in the NAND
-> properties structure and use it while preparing the command descriptor.
-
-Acked-by: Mark Brown <broonie@kernel.org>
-
---BHGlqQ/YgKipM5ku
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf3qSgACgkQJNaLcl1U
-h9A8LQf/Qdes70/Rw94WVFtMtWkzp5YAtG82yLUA5LOSLIt8DTuvKh/B7Q216lDc
-DeHth7xNLhU0NKwpmVt0ESrPHrcLcMYMdq59924cs3EY5/HN4hk7YStIIX3OJxVM
-qcLdtHyiWGvQBAKptqbjM997MTKHzNMtPSb0ZZWNXjLe/x/rizeTgOQ7loGdgxFv
-bpDvk3Fy4TDZmBQ6ZcolMTFBV+B0S8ZIjv8bDbaN/hbbsuoayf1erKpP0tSW9Wvm
-Ag+/0fS0Lp/aD4ZaRPMLNH9e5ZtgFfDWSSAf88NypR3se0QgelmM9Vi45JEdK0ML
-fiTlbY3OQXlRIFO/WkjvS4GBx2t2sA==
-=JRjg
------END PGP SIGNATURE-----
-
---BHGlqQ/YgKipM5ku--
+device_register() only  fails when device_add() fails, and 
+kerf->refcount can be 1
+at this time ,  so we need to call put_deivce() to release  memory.
+> and there are no direct error-handling operations following its execution.
+>
+> Therefore, this patch is meaningless and should be reverted.
+>
+> Fixes: 804443c1f278 ("PCI: Fix reference leak in pci_register_host_bridge()")
+> Signed-off-by: Xiangwei Li <liwei728@huawei.com>
+> Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
 
