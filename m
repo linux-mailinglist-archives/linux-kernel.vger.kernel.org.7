@@ -1,275 +1,636 @@
-Return-Path: <linux-kernel+bounces-599022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DAE0A84DED
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:10:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B640A84DF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43E964A725E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:09:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2A657A571E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E1529008C;
-	Thu, 10 Apr 2025 20:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E972A290081;
+	Thu, 10 Apr 2025 20:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BN0IVSA3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ewfTJCvY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FD41DF965;
-	Thu, 10 Apr 2025 20:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F151F1DF965;
+	Thu, 10 Apr 2025 20:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744315787; cv=none; b=HH6HMUvhmd+54aQSc3A/wy3ehF/o7Ya+cZzqEygZBNLRJjqthK29zC30gjSI/RSJo3SaVQONQf4zV7RVEOKEMnC6wXhTly1NjUlvgygPWKaRx7W+tsVRjfcZtBRu2hly8pul/JOQ8PKJTjQi6cumDSOsgWayBP6yZJYqve7sD2g=
+	t=1744316013; cv=none; b=Hj/8S35r9lamOYwiJhoucVFKA9HJJaVv20TxckIdqN+nehpgeJt9pmInhKP7SMWv0MhoRaGLVV6C7D9ZAc/r0olfCw5/3HmZGWok9SOPlWWNrz4L8qPmw4XoaBlpjO4452kaX+B1ubNj5LRa/WJ2fzeFtDR4n1mU0P2vLcQFngI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744315787; c=relaxed/simple;
-	bh=VCLSk9fBslPdp1dUYtYC1hn/7AWRL+qOOaiAOMAVPe8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aUmQr+qOCLiimb2L21x2/WW/hTMCNJyKnot35slcC/f/3+3nooyXBrJ6itTG9t8tMmkc84BnaRQcgHlD+s11xpCBFIXGw95WgadYIef+ijCY/RP4xM1raXalAe6aZTYZC2k9oUFP+W+pIyAoen/nqsihkqpCnRYXDP+CwyhthrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BN0IVSA3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21FF8C4CEDD;
-	Thu, 10 Apr 2025 20:09:47 +0000 (UTC)
+	s=arc-20240116; t=1744316013; c=relaxed/simple;
+	bh=xEhwAu3xgUU6Amb1UWoZGEieAQxg5xwmELZOlHI/s3A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hZ12LtfdKzOqn+wmq35jc8C+dajplGnbZXstN+fRJa/AqPqPJuLkPF/2CavS3C2BZl6M9EfR7ysEZRS39h2bRJkGWoI8Thb8pAqyLcRIdjULKdZ/Lqb1wADNJGNDd1Q6x4P32yMAW0OV86xihMQw7/Z90xbDgU0xpCuqdk8Eqwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ewfTJCvY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2701BC4CEDD;
+	Thu, 10 Apr 2025 20:13:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744315787;
-	bh=VCLSk9fBslPdp1dUYtYC1hn/7AWRL+qOOaiAOMAVPe8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BN0IVSA37HbLCrfSKl/Cp7zcTABYsHdvuglZZ3EVFIzI3UOPsmDDJ5I3l5GxwisaS
-	 vPCW2/KxNdRVzYsi5jPMw/pEVubL2oBM1USZn/fzAUrFPV2/6TSaWgyrRAq/ydcNcU
-	 4QmZkcsdD648WXN15wJBlgPDrDL1V04ApP14yXRjVZ6TWk7MxlgMmqwKn9z+8lHG1b
-	 w5oCNiq0kXzu5DbkTrwhxUeRcvcLDeUws/gh1j9vgrP4yXzznmKiqEKedcgTwG6IMb
-	 AqbArnWzFzpVePn9JNaddQEsgFVt6LMxXhVk4cbsyCRds97x5VENAdrWQazOcSJYvW
-	 avC6paggLvw2w==
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-72a0a9cb29fso767292a34.0;
-        Thu, 10 Apr 2025 13:09:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW3BmUXCfrMw9Usu+YM8JGBu5u4gj2GkuAmlDaN7UjHLYH8ITM6d/knERQB+z6b2A28qY8NgEmeS74=@vger.kernel.org, AJvYcCWqqPSppATTTFZ7fhf29XbNHsd4AdXy8LFE3nKOJLp2mQNUPsgnSlyUdPTFpu/joo2eLGkSMpt12mr8f/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4HWe1f7aGkHxXQMPeQLgLbHNCqKGsa24/HDCUr9xScAxPY8Oe
-	FnJIi5QDYiTl+RVmJj2UbGjpf0SOl/2FcerXzUHBxn04bM6FchG7hDGTPD0bk9zxmbg3kJJaYOv
-	l0VOh433MkvIhMk8Q4+UtQ+yhxts=
-X-Google-Smtp-Source: AGHT+IGpl09bG3hSDi7YiAND88W++ptwDhL1paNDcaoRQmKfpuVt5OiQgwrWQ2Vhkn/AtgQqshWkpcrb7JiSMSxEKYQ=
-X-Received: by 2002:a05:6830:6713:b0:72b:9bb3:67cd with SMTP id
- 46e09a7af769-72e863da72emr193893a34.12.1744315786405; Thu, 10 Apr 2025
- 13:09:46 -0700 (PDT)
+	s=k20201202; t=1744316012;
+	bh=xEhwAu3xgUU6Amb1UWoZGEieAQxg5xwmELZOlHI/s3A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ewfTJCvYanYdjM+nFu+OJtK3cQ8yKjegiqAu+GsVEPtTWWU5729dsgTcpL64TQRLm
+	 jKE20+Yote16/j4bzaNMWZa2m0FpZibSrweiW31f59MHRXpZto0QoKWLbnMQ0Gh6Jk
+	 Q1Fa90HuV9FL7T/VcaMLIMLotv8mxOcTJoH7gKyHL3QZobGXaAgBL5MHH+nzNPPU0+
+	 /OImbeR9rj3pEDnpZD34oNa3eRBjfm7WASFGp+MAj2m6dyNJ24+yfecufCiHZLieN1
+	 L5FLaXoJDL7l/lCRe1bq9g2sFU5ZTmd3YRfgFIqwmmahnO25qSQy1F5YSGGWDcZt3S
+	 0r2QOGuyTpwLg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Samuel Holland <samuel.holland@sifive.com>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH 1/2] dt-bindings: Remove obsolete cpu-topology.txt
+Date: Thu, 10 Apr 2025 15:13:22 -0500
+Message-ID: <20250410201325.962203-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250410024439.20859-1-sultan@kerneltoast.com>
- <CAJZ5v0jKyy-3cELyDQTynE3Dv29V15F5f+w0A-H_nu+4LuaaYw@mail.gmail.com>
- <Z_fru1i1OpAQ-hJq@sultan-box.localdomain> <CAJZ5v0iu_hMud6FRg6FiUVQ1cY6oYqrEmwpwPTeYJh5Yzh5Q8A@mail.gmail.com>
- <Z_gbXSeo6kjOXhwE@sultan-box.localdomain> <CAJZ5v0h7dsL+tQAEtJ_t-_p2Uxkaz=Kf-fUCKTvs7F7BLgqCiw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0h7dsL+tQAEtJ_t-_p2Uxkaz=Kf-fUCKTvs7F7BLgqCiw@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 10 Apr 2025 22:09:34 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gZX55=VncNSk6xfar5t4bTF0b=kOi6AGuNvbg1HRB+DA@mail.gmail.com>
-X-Gm-Features: ATxdqUH7FPA2r2zjKsKfz4e8mx22A83lNWkvTRhIlWsk6-nQ1fONHCRDmxWt1oE
-Message-ID: <CAJZ5v0gZX55=VncNSk6xfar5t4bTF0b=kOi6AGuNvbg1HRB+DA@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: schedutil: Don't ignore limit changes when util
- is unchanged
-To: Sultan Alsawaf <sultan@kerneltoast.com>
-Cc: Stephan Gerhold <stephan.gerhold@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Christian Loehle <christian.loehle@arm.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 10, 2025 at 9:50=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Thu, Apr 10, 2025 at 9:26=E2=80=AFPM Sultan Alsawaf <sultan@kerneltoas=
-t.com> wrote:
-> >
-> > On Thu, Apr 10, 2025 at 08:47:38PM +0200, Rafael J. Wysocki wrote:
-> > > On Thu, Apr 10, 2025 at 6:03=E2=80=AFPM Sultan Alsawaf <sultan@kernel=
-toast.com> wrote:
-> > > >
-> > > > On Thu, Apr 10, 2025 at 05:34:39PM +0200, Rafael J. Wysocki wrote:
-> > > > > On Thu, Apr 10, 2025 at 4:45=E2=80=AFAM Sultan Alsawaf <sultan@ke=
-rneltoast.com> wrote:
-> > > > > >
-> > > > > > From: Sultan Alsawaf <sultan@kerneltoast.com>
-> > > > > >
-> > > > > > When utilization is unchanged, a policy limits update is ignore=
-d unless
-> > > > > > CPUFREQ_NEED_UPDATE_LIMITS is set. This occurs because limits_c=
-hanged
-> > > > > > depends on the old broken behavior of need_freq_update to trigg=
-er a call
-> > > > > > into cpufreq_driver_resolve_freq() to evaluate the changed poli=
-cy limits.
-> > > > > >
-> > > > > > After fixing need_freq_update, limit changes are ignored withou=
-t
-> > > > > > CPUFREQ_NEED_UPDATE_LIMITS, at least until utilization changes =
-enough to
-> > > > > > make map_util_freq() return something different.
-> > > > > >
-> > > > > > Fix the ignored limit changes by preserving the value of limits=
-_changed
-> > > > > > until get_next_freq() is called, so limits_changed can trigger =
-a call to
-> > > > > > cpufreq_driver_resolve_freq().
-> > > > > >
-> > > > > > Reported-and-tested-by: Stephan Gerhold <stephan.gerhold@linaro=
-.org>
-> > > > > > Link: https://lore.kernel.org/lkml/Z_Tlc6Qs-tYpxWYb@linaro.org
-> > > > > > Fixes: 8e461a1cb43d6 ("cpufreq: schedutil: Fix superfluous upda=
-tes caused by need_freq_update")
-> > > > > > Signed-off-by: Sultan Alsawaf <sultan@kerneltoast.com>
-> > > > > > ---
-> > > > > >  kernel/sched/cpufreq_schedutil.c | 5 +++--
-> > > > > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > > > > >
-> > > > > > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cp=
-ufreq_schedutil.c
-> > > > > > index 1a19d69b91ed3..f37b999854d52 100644
-> > > > > > --- a/kernel/sched/cpufreq_schedutil.c
-> > > > > > +++ b/kernel/sched/cpufreq_schedutil.c
-> > > > > > @@ -82,7 +82,6 @@ static bool sugov_should_update_freq(struct s=
-ugov_policy *sg_policy, u64 time)
-> > > > > >                 return false;
-> > > > > >
-> > > > > >         if (unlikely(sg_policy->limits_changed)) {
-> > > > > > -               sg_policy->limits_changed =3D false;
-> > > > > >                 sg_policy->need_freq_update =3D cpufreq_driver_=
-test_flags(CPUFREQ_NEED_UPDATE_LIMITS);
-> > > > > >                 return true;
-> > > > > >         }
-> > > > > > @@ -171,9 +170,11 @@ static unsigned int get_next_freq(struct s=
-ugov_policy *sg_policy,
-> > > > > >         freq =3D get_capacity_ref_freq(policy);
-> > > > > >         freq =3D map_util_freq(util, freq, max);
-> > > > > >
-> > > > > > -       if (freq =3D=3D sg_policy->cached_raw_freq && !sg_polic=
-y->need_freq_update)
-> > > > > > +       if (freq =3D=3D sg_policy->cached_raw_freq && !sg_polic=
-y->limits_changed &&
-> > > > > > +           !sg_policy->need_freq_update)
-> > > > > >                 return sg_policy->next_freq;
-> > > > > >
-> > > > > > +       sg_policy->limits_changed =3D false;
-> > > > >
-> > > > > AFAICS, after this code modification, a limit change may be misse=
-d due
-> > > > > to a possible race with sugov_limits() which cannot happen if
-> > > > > sg_policy->limits_changed is only cleared when it is set before
-> > > > > updating sg_policy->need_freq_update.
-> > > >
-> > > > I don't think that's the case because sg_policy->limits_changed is =
-cleared
-> > > > before the new policy limits are evaluated in cpufreq_driver_resolv=
-e_freq().
-> > >
-> > > sugov_limits() may be triggered by a scaling_max_freq update, for
-> > > instance, so it is asynchronous with respect to the usual governor
-> > > flow.  It updates sg_policy->limits_changed and assumes that next tim=
-e
-> > > the governor runs, it will call into the driver, for example via
-> > > cpufreq_driver_fast_switch(), so the new limits take effect.  This is
-> > > not about cpufreq_driver_resolve_freq().
-> >
-> > OK, though I think there's still a race in cpufreq_driver_resolve_freq(=
-).
-> >
-> > > sugov_limits() runs after the driver's ->verify() callback has
-> > > returned and it is conditional on that callback's return value, so th=
-e
-> > > driver already knows the new limits when sugov_limits() runs, but it
-> > > may still need to tell the hardware what the new limits are and that'=
-s
-> > > why cpufreq_driver_fast_switch() may need to run.
-> >
-> > Which is why CPUFREQ_NEED_UPDATE_LIMITS exists, right.
-> >
-> > > Now, if sugov_should_update_freq() sees sg_policy->limits_changed set=
-,
-> > > it will set sg_policy->need_freq_update which (for drivers with
-> > > CPUFREQ_NEED_UPDATE_LIMITS set) guarantees that the driver will be
-> > > invoked and so sg_policy->limits_changed can be cleared.
-> > >
-> > > If a new instance of sugov_limits() runs at this point, there are two
-> > > possibilities.  Either it completes before the
-> > > sg_policy->limits_changed update in sugov_should_update_freq(), in
-> > > which case the driver already knows the new limits as per the above
-> > > and so the subsequent invocation of cpufreq_driver_fast_switch() will
-> > > pick them up, or it sets sg_policy->limits_changed again and the
-> > > governor will see it set next time it runs.  In both cases the new
-> > > limits will be picked up unless they are changed again in the
-> > > meantime.
-> > >
-> > > After the above change, sg_policy->limits_changed may be cleared even
-> > > if it has not been set before and that's problematic.  Namely, say it
-> > > is unset when sugov_should_update_freq() runs, after being called by
-> > > sugov_update_single_freq() via sugov_update_single_common(), and
-> > > returns 'true' without setting sg_policy->need_freq_update.  Next,
-> > > sugov_update_single_common() returns 'true' and get_next_freq() is
-> > > called.  It sees that freq !=3D sg_policy->cached_raw_freq, so it cle=
-ars
-> > > sg_policy->limits_changed.  If sugov_limits() runs on a different CPU
-> > > between the check and the sg_policy->limits_changed update in
-> > > get_next_freq(), it may be missed and it is still not guaranteed that
-> > > cpufreq_driver_fast_switch() will run because
-> > > sg_policy->need_freq_update is unset and sugov_hold_freq() may return
-> > > 'true'.
-> > >
-> > > For this to work, sg_policy->limits_changed needs to be cleared only
-> > > when it is set and sg_policy->need_freq_update needs to be updated
-> > > when sg_policy->limits_changed is cleared.
-> >
-> > Ah I see, thank you for the detailed explanation. So if I am understand=
-ing it
-> > correctly: the problem with my patch is that CPUFREQ_NEED_UPDATE_LIMITS=
- might
-> > not be honored after a limits change, because CPUFREQ_NEED_UPDATE_LIMIT=
-S is only
-> > honored when sg_policy->limits_changed is set. So there is the followin=
-g race:
-> >
-> >            CPU-A                    CPU-B
-> >   sugov_should_update_freq()                    // sg_policy->limits_ch=
-anged =3D=3D false, sg_policy->need_freq_update =3D=3D false
-> >                                 sugov_limits()  // sg_policy->limits_ch=
-anged =3D=3D true,  sg_policy->need_freq_update =3D=3D false
-> >   get_next_freq()                               // sg_policy->limits_ch=
-anged =3D=3D false, sg_policy->need_freq_update =3D=3D false
-> >
-> >   // cpufreq driver won't be invoked for the limits change if:
-> >   // next_f =3D=3D sg_policy->next_freq || (sugov_hold_freq() =3D=3D tr=
-ue && next_f < sg_policy->next_freq)
-> >
-> > Does that look right?
->
-> Yes, it does.
->
-> > > It looks like you really want to set sg_policy->need_freq_update to
-> > > 'true' in sugov_should_update_freq() when sg_policy->limits_changed i=
-s
-> > > set, but that would render CPUFREQ_NEED_UPDATE_LIMITS unnecessary.
-> > >
-> > > > Granted, if we wanted to be really certain of this, we'd need relea=
-se semantics.
-> > >
-> > > I don't think so, but feel free to prove me wrong.
-> >
-> > Well, it appears that there really is synchronization missing between
-> > cpufreq_set_policy() and schedutil, since cpufreq_set_policy() changes =
-the live
-> > policy->min and policy->max, and schedutil may observe either the old v=
-alues in
-> > there or garbage values due to load/store tearing.
->
-> schedutil itself doesn't really read policy->min and policy->max.
-> cpufreq_driver_resolve_freq() does this and drivers do, but since
-> policy->min and policy->max are integers, no garbage values will be
-> observed AFAICS.
+The cpu topology binding is now covered by the dtschema cpu-map.yaml
+schema with all the relevant descriptions moved to it.
 
-Well, I've just realized that this is not exactly the case because of
-the way in which __resolve_freq() is used in cpufreq_set_policy().
-That needs to be fixed.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../devicetree/bindings/cpu/cpu-topology.txt  | 553 ------------------
+ 1 file changed, 553 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/cpu/cpu-topology.txt
+
+diff --git a/Documentation/devicetree/bindings/cpu/cpu-topology.txt b/Documentation/devicetree/bindings/cpu/cpu-topology.txt
+deleted file mode 100644
+index 9bd530a35d14..000000000000
+--- a/Documentation/devicetree/bindings/cpu/cpu-topology.txt
++++ /dev/null
+@@ -1,553 +0,0 @@
+-===========================================
+-CPU topology binding description
+-===========================================
+-
+-===========================================
+-1 - Introduction
+-===========================================
+-
+-In a SMP system, the hierarchy of CPUs is defined through three entities that
+-are used to describe the layout of physical CPUs in the system:
+-
+-- socket
+-- cluster
+-- core
+-- thread
+-
+-The bottom hierarchy level sits at core or thread level depending on whether
+-symmetric multi-threading (SMT) is supported or not.
+-
+-For instance in a system where CPUs support SMT, "cpu" nodes represent all
+-threads existing in the system and map to the hierarchy level "thread" above.
+-In systems where SMT is not supported "cpu" nodes represent all cores present
+-in the system and map to the hierarchy level "core" above.
+-
+-CPU topology bindings allow one to associate cpu nodes with hierarchical groups
+-corresponding to the system hierarchy; syntactically they are defined as device
+-tree nodes.
+-
+-Currently, only ARM/RISC-V intend to use this cpu topology binding but it may be
+-used for any other architecture as well.
+-
+-The cpu nodes, as per bindings defined in [4], represent the devices that
+-correspond to physical CPUs and are to be mapped to the hierarchy levels.
+-
+-A topology description containing phandles to cpu nodes that are not compliant
+-with bindings standardized in [4] is therefore considered invalid.
+-
+-===========================================
+-2 - cpu-map node
+-===========================================
+-
+-The ARM/RISC-V CPU topology is defined within the cpu-map node, which is a direct
+-child of the cpus node and provides a container where the actual topology
+-nodes are listed.
+-
+-- cpu-map node
+-
+-	Usage: Optional - On SMP systems provide CPUs topology to the OS.
+-			  Uniprocessor systems do not require a topology
+-			  description and therefore should not define a
+-			  cpu-map node.
+-
+-	Description: The cpu-map node is just a container node where its
+-		     subnodes describe the CPU topology.
+-
+-	Node name must be "cpu-map".
+-
+-	The cpu-map node's parent node must be the cpus node.
+-
+-	The cpu-map node's child nodes can be:
+-
+-	- one or more cluster nodes or
+-	- one or more socket nodes in a multi-socket system
+-
+-	Any other configuration is considered invalid.
+-
+-The cpu-map node can only contain 4 types of child nodes:
+-
+-- socket node
+-- cluster node
+-- core node
+-- thread node
+-
+-whose bindings are described in paragraph 3.
+-
+-The nodes describing the CPU topology (socket/cluster/core/thread) can
+-only be defined within the cpu-map node and every core/thread in the
+-system must be defined within the topology.  Any other configuration is
+-invalid and therefore must be ignored.
+-
+-===========================================
+-2.1 - cpu-map child nodes naming convention
+-===========================================
+-
+-cpu-map child nodes must follow a naming convention where the node name
+-must be "socketN", "clusterN", "coreN", "threadN" depending on the node type
+-(ie socket/cluster/core/thread) (where N = {0, 1, ...} is the node number; nodes
+-which are siblings within a single common parent node must be given a unique and
+-sequential N value, starting from 0).
+-cpu-map child nodes which do not share a common parent node can have the same
+-name (ie same number N as other cpu-map child nodes at different device tree
+-levels) since name uniqueness will be guaranteed by the device tree hierarchy.
+-
+-===========================================
+-3 - socket/cluster/core/thread node bindings
+-===========================================
+-
+-Bindings for socket/cluster/cpu/thread nodes are defined as follows:
+-
+-- socket node
+-
+-	 Description: must be declared within a cpu-map node, one node
+-		      per physical socket in the system. A system can
+-		      contain single or multiple physical socket.
+-		      The association of sockets and NUMA nodes is beyond
+-		      the scope of this bindings, please refer [2] for
+-		      NUMA bindings.
+-
+-	This node is optional for a single socket system.
+-
+-	The socket node name must be "socketN" as described in 2.1 above.
+-	A socket node can not be a leaf node.
+-
+-	A socket node's child nodes must be one or more cluster nodes.
+-
+-	Any other configuration is considered invalid.
+-
+-- cluster node
+-
+-	 Description: must be declared within a cpu-map node, one node
+-		      per cluster. A system can contain several layers of
+-		      clustering within a single physical socket and cluster
+-		      nodes can be contained in parent cluster nodes.
+-
+-	The cluster node name must be "clusterN" as described in 2.1 above.
+-	A cluster node can not be a leaf node.
+-
+-	A cluster node's child nodes must be:
+-
+-	- one or more cluster nodes; or
+-	- one or more core nodes
+-
+-	Any other configuration is considered invalid.
+-
+-- core node
+-
+-	Description: must be declared in a cluster node, one node per core in
+-		     the cluster. If the system does not support SMT, core
+-		     nodes are leaf nodes, otherwise they become containers of
+-		     thread nodes.
+-
+-	The core node name must be "coreN" as described in 2.1 above.
+-
+-	A core node must be a leaf node if SMT is not supported.
+-
+-	Properties for core nodes that are leaf nodes:
+-
+-	- cpu
+-		Usage: required
+-		Value type: <phandle>
+-		Definition: a phandle to the cpu node that corresponds to the
+-			    core node.
+-
+-	If a core node is not a leaf node (CPUs supporting SMT) a core node's
+-	child nodes can be:
+-
+-	- one or more thread nodes
+-
+-	Any other configuration is considered invalid.
+-
+-- thread node
+-
+-	Description: must be declared in a core node, one node per thread
+-		     in the core if the system supports SMT. Thread nodes are
+-		     always leaf nodes in the device tree.
+-
+-	The thread node name must be "threadN" as described in 2.1 above.
+-
+-	A thread node must be a leaf node.
+-
+-	A thread node must contain the following property:
+-
+-	- cpu
+-		Usage: required
+-		Value type: <phandle>
+-		Definition: a phandle to the cpu node that corresponds to
+-			    the thread node.
+-
+-===========================================
+-4 - Example dts
+-===========================================
+-
+-Example 1 (ARM 64-bit, 16-cpu system, two clusters of clusters in a single
+-physical socket):
+-
+-cpus {
+-	#size-cells = <0>;
+-	#address-cells = <2>;
+-
+-	cpu-map {
+-		socket0 {
+-			cluster0 {
+-				cluster0 {
+-					core0 {
+-						thread0 {
+-							cpu = <&CPU0>;
+-						};
+-						thread1 {
+-							cpu = <&CPU1>;
+-						};
+-					};
+-
+-					core1 {
+-						thread0 {
+-							cpu = <&CPU2>;
+-						};
+-						thread1 {
+-							cpu = <&CPU3>;
+-						};
+-					};
+-				};
+-
+-				cluster1 {
+-					core0 {
+-						thread0 {
+-							cpu = <&CPU4>;
+-						};
+-						thread1 {
+-							cpu = <&CPU5>;
+-						};
+-					};
+-
+-					core1 {
+-						thread0 {
+-							cpu = <&CPU6>;
+-						};
+-						thread1 {
+-							cpu = <&CPU7>;
+-						};
+-					};
+-				};
+-			};
+-
+-			cluster1 {
+-				cluster0 {
+-					core0 {
+-						thread0 {
+-							cpu = <&CPU8>;
+-						};
+-						thread1 {
+-							cpu = <&CPU9>;
+-						};
+-					};
+-					core1 {
+-						thread0 {
+-							cpu = <&CPU10>;
+-						};
+-						thread1 {
+-							cpu = <&CPU11>;
+-						};
+-					};
+-				};
+-
+-				cluster1 {
+-					core0 {
+-						thread0 {
+-							cpu = <&CPU12>;
+-						};
+-						thread1 {
+-							cpu = <&CPU13>;
+-						};
+-					};
+-					core1 {
+-						thread0 {
+-							cpu = <&CPU14>;
+-						};
+-						thread1 {
+-							cpu = <&CPU15>;
+-						};
+-					};
+-				};
+-			};
+-		};
+-	};
+-
+-	CPU0: cpu@0 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x0>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU1: cpu@1 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x1>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU2: cpu@100 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x100>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU3: cpu@101 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x101>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU4: cpu@10000 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x10000>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU5: cpu@10001 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x10001>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU6: cpu@10100 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x10100>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU7: cpu@10101 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x0 0x10101>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU8: cpu@100000000 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x0>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU9: cpu@100000001 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x1>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU10: cpu@100000100 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x100>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU11: cpu@100000101 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x101>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU12: cpu@100010000 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x10000>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU13: cpu@100010001 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x10001>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU14: cpu@100010100 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x10100>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-
+-	CPU15: cpu@100010101 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a57";
+-		reg = <0x1 0x10101>;
+-		enable-method = "spin-table";
+-		cpu-release-addr = <0 0x20000000>;
+-	};
+-};
+-
+-Example 2 (ARM 32-bit, dual-cluster, 8-cpu system, no SMT):
+-
+-cpus {
+-	#size-cells = <0>;
+-	#address-cells = <1>;
+-
+-	cpu-map {
+-		cluster0 {
+-			core0 {
+-				cpu = <&CPU0>;
+-			};
+-			core1 {
+-				cpu = <&CPU1>;
+-			};
+-			core2 {
+-				cpu = <&CPU2>;
+-			};
+-			core3 {
+-				cpu = <&CPU3>;
+-			};
+-		};
+-
+-		cluster1 {
+-			core0 {
+-				cpu = <&CPU4>;
+-			};
+-			core1 {
+-				cpu = <&CPU5>;
+-			};
+-			core2 {
+-				cpu = <&CPU6>;
+-			};
+-			core3 {
+-				cpu = <&CPU7>;
+-			};
+-		};
+-	};
+-
+-	CPU0: cpu@0 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a15";
+-		reg = <0x0>;
+-	};
+-
+-	CPU1: cpu@1 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a15";
+-		reg = <0x1>;
+-	};
+-
+-	CPU2: cpu@2 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a15";
+-		reg = <0x2>;
+-	};
+-
+-	CPU3: cpu@3 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a15";
+-		reg = <0x3>;
+-	};
+-
+-	CPU4: cpu@100 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a7";
+-		reg = <0x100>;
+-	};
+-
+-	CPU5: cpu@101 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a7";
+-		reg = <0x101>;
+-	};
+-
+-	CPU6: cpu@102 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a7";
+-		reg = <0x102>;
+-	};
+-
+-	CPU7: cpu@103 {
+-		device_type = "cpu";
+-		compatible = "arm,cortex-a7";
+-		reg = <0x103>;
+-	};
+-};
+-
+-Example 3: HiFive Unleashed (RISC-V 64 bit, 4 core system)
+-
+-{
+-	#address-cells = <2>;
+-	#size-cells = <2>;
+-	compatible = "sifive,fu540g", "sifive,fu500";
+-	model = "sifive,hifive-unleashed-a00";
+-
+-	...
+-	cpus {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		cpu-map {
+-			socket0 {
+-				cluster0 {
+-					core0 {
+-						cpu = <&CPU1>;
+-					};
+-					core1 {
+-						cpu = <&CPU2>;
+-					};
+-					core2 {
+-						cpu0 = <&CPU2>;
+-					};
+-					core3 {
+-						cpu0 = <&CPU3>;
+-					};
+-				};
+-			};
+-		};
+-
+-		CPU1: cpu@1 {
+-			device_type = "cpu";
+-			compatible = "sifive,rocket0", "riscv";
+-			reg = <0x1>;
+-		}
+-
+-		CPU2: cpu@2 {
+-			device_type = "cpu";
+-			compatible = "sifive,rocket0", "riscv";
+-			reg = <0x2>;
+-		}
+-		CPU3: cpu@3 {
+-			device_type = "cpu";
+-			compatible = "sifive,rocket0", "riscv";
+-			reg = <0x3>;
+-		}
+-		CPU4: cpu@4 {
+-			device_type = "cpu";
+-			compatible = "sifive,rocket0", "riscv";
+-			reg = <0x4>;
+-		}
+-	}
+-};
+-===============================================================================
+-[1] ARM Linux kernel documentation
+-    Documentation/devicetree/bindings/arm/cpus.yaml
+-[2] Devicetree NUMA binding description
+-    Documentation/devicetree/bindings/numa.txt
+-[3] RISC-V Linux kernel documentation
+-    Documentation/devicetree/bindings/riscv/cpus.yaml
+-[4] https://www.devicetree.org/specifications/
+-- 
+2.47.2
+
 
