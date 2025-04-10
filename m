@@ -1,89 +1,122 @@
-Return-Path: <linux-kernel+bounces-598013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 791AAA84133
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:51:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DFC9A8413B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 686F9171408
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:51:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 146A11B6673F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010C3276057;
-	Thu, 10 Apr 2025 10:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB85267F7E;
+	Thu, 10 Apr 2025 10:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GALSyyg9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvabugO/"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633F5267F7E
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B654281344
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744282297; cv=none; b=SgxAC9PZb4JctmA8NfJiJfZ/bFnAVstGsZC/1O9zcQHKASt/MLfx3VL57JhYIge58GqawVA5b3OFpSgkz/no/NF0RWu040u4lmzgjbvDJR3xrcZnVkr6P5f6IJHqZqTmMhuRMlokl3m8bJzms46KgZGuy+RRh54jSA2ByxG3VI0=
+	t=1744282341; cv=none; b=r+b/fi5I60n6+UEgyWR4E2T6yJj2UyW5M+hPNdPb42qo59uQglgZ3erJcc+0H7SR26fjk4reMuDMlRxEUm2ZzuJFyqp9RtTHYsM0U6tYxhXfRpnBNr9/6RTGTzCcmbOwBu5bYBjp1dZ0k5fC21a1zpy9eELtqbnBLvCgxzShpRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744282297; c=relaxed/simple;
-	bh=cV/IuJuyobXK5kMrKi7lQuLAWisaQPLN5V2EQPAIr/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MaRd+JY6V28u/0N8ThmKYc7wsf6Ym886zLI6xucFljcxlwU/xJHYU+gdqKQOVfi8wlPb4b6/65UsracPUM9Fsnj4mix2OPHiuZio2S7kaZfL5z+o2oJzX1y6YbF5Dnz5tc5ytaZMw3PA/Zl99mCtOwa5cq8Nkh9IPRWf7risGS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GALSyyg9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CF22C4CEE9;
-	Thu, 10 Apr 2025 10:51:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744282296;
-	bh=cV/IuJuyobXK5kMrKi7lQuLAWisaQPLN5V2EQPAIr/U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GALSyyg9rTQYC9iHKaNuaF6SDWR2TIgS1NHtqxlqL+xLfI5IhyLaH0mz6fDbxm3ri
-	 6F2bUj7AXuUfBlKYw3OQ7Y2PY9Nw7FHc7Zt61qmsLYTfTP93RkXELgJ0E82ISvg5RY
-	 dPFHhYDbGGxgDiyNXFgbJsVfds4CuoC+1Vn0cWYoYO3zq5WzSs8JnMKqVKZ7c05V+T
-	 YNzw56fkodt/3AkvaFBwg/AEzGL5jIPWvm5/vfjyxJjc45IkSNsholrR66gdZC17HH
-	 faOnJsMlIl80XK+Cw3A/3Z1ut+EQFdP2t2p9Rb0QJ9nlcOX/a7j17BdxuFvzUUjzZ5
-	 0+6/eAmDVMy+Q==
-Date: Thu, 10 Apr 2025 12:51:31 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
-	Dave Hansen <dave@sr71.net>, Brian Gerst <brgerst@gmail.com>,
-	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Chang S . Bae" <chang.seok.bae@intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Uros Bizjak <ubizjak@gmail.com>
-Subject: Re: [PATCH 4/8] x86/fpu: Remove the thread::fpu pointer
-Message-ID: <Z_eis4nbGK6-SPjP@gmail.com>
-References: <20250409211127.3544993-1-mingo@kernel.org>
- <20250409211127.3544993-5-mingo@kernel.org>
- <20250410073948.GT9833@noisy.programming.kicks-ass.net>
- <Z_eZMN4PcOwFnskB@gmail.com>
+	s=arc-20240116; t=1744282341; c=relaxed/simple;
+	bh=1jL98FxzSf4s5tHDEZgWQVWhqUhDWULIaZUepIR7WWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lvRdWvF/zwRbgHIFizcTaFxdWrEpELESHOIEnrSE63mpXR+XELio4gXBkJDd3LHcH2W3E/xGeZ/a/XYYGA/3bOJOQ4kxluz4GhRkNkKSVHkjDJmwNK+x1KkW/hoRoyi9UvxhbWdS8G9IdzZLeAFz0NlEFtEEdyYgKoQClYIR5Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvabugO/; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-af579e46b5dso514903a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 03:52:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744282339; x=1744887139; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LFjJEsl0KPwTjl343CDDvY9GIcYnXS0XMMT/i0ap3iE=;
+        b=CvabugO/HoviUSL0iwuv4yVi5L1mJdSGCSGBX7L6Cyc9QhI/R5WDXZMSgxhjM4KDHO
+         W3P2dtxRu8J5cRcJH2rzQk1ECl6KVkV1KFnTfcjbqFqSQCYhn0Wljs9eeJncKEopt1Ty
+         yEeIe7ml1lfmY7vp5nlW3LBa4U1/Rgrgk2AVWu0/jzNxFutd+SYSy5iWot6rg86NOkmC
+         8bjN85kABuCl636adgO2AVaiDe1U6I7nybURDWhPrZqOU25AqWPpYFW2RDlHmPzcyXk2
+         hLJdDlCBXglXyQAdpnjV9O1UhoHOFOONiPWJTPdShKy3K9RI9bajWUMqKMdibxUUjKHT
+         t9Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744282339; x=1744887139;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LFjJEsl0KPwTjl343CDDvY9GIcYnXS0XMMT/i0ap3iE=;
+        b=LhjWGhHC/+d8Pg2NKzndZwhfnb2eRr3pEjX/m6oTzuix/6QMa4kFAV6wu8KrBixIgl
+         OkaoCUUrimaDJKPbXUnIM5yB2FwK8xQv3iUMRqF72V+Q7rHLbuqgx4Y0w4tp3QPiMIXo
+         KoZo6Xz7XSFoFwkgyAbUrxv7SURl4VsUt37dIJXmPWaNZgQrZ52vifgkCstcMvURV0i4
+         mf7TBhyblBd8xzhxRTfss47BDNLbEGWEFpjB8r5hEpiybTLj500cJrQvVJk6w1W+Wvp6
+         vBhzYsxA2l//EbrYKFg+bz7GEj7twCVR/h3XHoRL6UrlMhpEYZT0BwgAT2VJLO30aRZz
+         JzOQ==
+X-Gm-Message-State: AOJu0YxcdrBsV7RoyzYwquACanq5iT5D1iMQhLcQf8WvaEnthHDwAJct
+	dpP1Do3nKwRMFqB0mfBbwxs6sdnv+trj1qR3/PKjd5nIMT6MkJQ+vsi5MP1jxgIqoA==
+X-Gm-Gg: ASbGnctVjbmwL6kB8PDkyz98jLEZAVCiqdsjgNpcC7gS+4LnOg2puKkM8nMj1iN1KaG
+	WWhrxdg1FPxsELMIL3uqLsVdQgUVpmNUSzXbRj4FF80lSrvKK/I9f1bycMBq6hgEpze1omlhJNv
+	jhksh7bEQjllh+CGMpvdcshTWHKoX9mNn2pMRa+iNFMkKS7SLfn4MtLFkvW1r5lcyn3Ep4vtcJo
+	92l+HrRsAyk7ZmXqDfw4uId4T9YRGmctQt+8uwQ50Da27zHaqPFseyYL7sWmE9fC7eE+cLigVvh
+	i5bwbTZiWvbT+Y5S+ZtRBfjHTfs3OLSZ075HuoWrup5ACQnEJSdTpidPhjf7PYVTm35K7YgeKds
+	3mwG3Mw==
+X-Google-Smtp-Source: AGHT+IG7zOSlcJqePm3JnMECI3YLLUHsnDD0zhMw+P4vDzQjOkFRq6ETsmdoaORwjWeHynHpZfAkvA==
+X-Received: by 2002:a05:6a21:6d81:b0:1f5:706b:5410 with SMTP id adf61e73a8af0-2016ce19a25mr2571669637.38.1744282338696;
+        Thu, 10 Apr 2025 03:52:18 -0700 (PDT)
+Received: from ubuntu24.. (36-225-108-143.dynamic-ip.hinet.net. [36.225.108.143])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b02a11d2c1dsm2665568a12.38.2025.04.10.03.52.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 03:52:18 -0700 (PDT)
+From: Cheng-Yang Chou <yphbchou0911@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de,
+	corbet@lwn.net,
+	jserv@ccns.ncku.edu.tw,
+	mingo@elte.hu,
+	peterz@infradead.org,
+	Cheng-Yang Chou <yphbchou0911@gmail.com>
+Subject: [PATCH v2] genirq: Fix typo in IRQ_NOTCONNECTED comment
+Date: Thu, 10 Apr 2025 18:51:43 +0800
+Message-ID: <20250410105144.214849-1-yphbchou0911@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <87bjt4tnjz.ffs@tglx>
+References: <87bjt4tnjz.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_eZMN4PcOwFnskB@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Fix a minor typo in the comment for IRQ_NOTCONNECTED definition:
+"distingiush" is corrected to "distinguish".
 
-* Ingo Molnar <mingo@kernel.org> wrote:
+Signed-off-by: Cheng-Yang Chou <yphbchou0911@gmail.com>
+---
+ include/linux/interrupt.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> BTW., Oleg suggested in a previous discussion for us to replace the 
-> task->thread.fpu pointer with a build-time calculation - but I'm 
-> still not sure it's a good idea.
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index c782a74d2a30..51b6484c0493 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -140,7 +140,7 @@ extern irqreturn_t no_action(int cpl, void *dev_id);
+ /*
+  * If a (PCI) device interrupt is not connected we set dev->irq to
+  * IRQ_NOTCONNECTED. This causes request_irq() to fail with -ENOTCONN, so we
+- * can distingiush that case from other error returns.
++ * can distinguish that case from other error returns.
+  *
+  * 0x80000000 is guaranteed to be outside the available range of interrupts
+  * and easy to distinguish from other possible incorrect values.
 
-Actually, I've implemented that already:
+base-commit: 92b71befc349587d58fdbbe6cdd68fb67f4933a8
+-- 
+2.43.0
 
-  arch/x86/include/asm/processor.h:# define x86_task_fpu(task)    ((struct fpu *)((void *)(task) + sizeof(*(task))))
-
-... then promptly forgot about it. So never mind me. :-)
-
-Thanks,
-
-	Ingo
 
