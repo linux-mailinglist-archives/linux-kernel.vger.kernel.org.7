@@ -1,165 +1,207 @@
-Return-Path: <linux-kernel+bounces-598803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C06B4A84B3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:41:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38009A84B21
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3BF54E35AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:39:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 627B619E779E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407C329345E;
-	Thu, 10 Apr 2025 17:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0882857F5;
+	Thu, 10 Apr 2025 17:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h3fKEn+P"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JroUve5a"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16275290BC3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 17:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BD028A40E
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 17:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744306623; cv=none; b=qZMMpkQQepa2StCDiGLlg9uc2TNIZA3nmyMBoMtVDxABtKvL/VgDq+hyKvYQSuGxR5aojd8YNJghhKj1fWNlKhwBrtKSQHrtBITnp1nB996ZMhv/WiK+dBl8hEkyVblhsqEbpREvuulP7/lnj8LPzKMKHhavczMzG0GFjOCkYzg=
+	t=1744306607; cv=none; b=TOW8w2wl4rdC6Gcrk0k/xeaX//M/ibblLWe5nZ0M4+LMhb9qw/q4yV9oN/hMeVvCfJP7PelNLSvgfEXHiXhz/DUaERhQGRKCzNZSh2I6UldpQkoOrB23/FJdHtCnrbpmUVBvvfVOaII0H6KSDcVMagLZm8qvZFm1O9wAwlG/ND8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744306623; c=relaxed/simple;
-	bh=pwnF8n7mqD7yk9oNBMquJdU4/lh8MdFnDzv/GA7kVio=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=e6G0X6EVKQ/GODO2108HDrKdPixe7vmAH/X/pbfU04jWFNmNkHpSLjFGbOb96v2R0cNPRZfZ9FYC68eXK6mkUKH8IA/qh99BQGlAHoviUT/Svm2Rkcz2J0JPZlOmhciAYe5qFcB1ug/VDUtJQJDm2rh4MtBHrwbPTD6dCArwq3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h3fKEn+P; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-225107fbdc7so9605705ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744306621; x=1744911421; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XpiUUvwlwp9tVCnJZ3TZUgEjsv1IVM8EEnnesVuXazs=;
-        b=h3fKEn+Pz6OSFVCpDOszljZHfQXr0dLfzJkdBcKvgw+KCKrIsC8oXNEnmAsSqd9rEf
-         JsmxFNiaOJRHgiYwgxRXodaSSnIs1hr5cDAri1SxncQ/BpUsvBqXNtW3IrExpseTdSz3
-         QmNbeiQ+bw2+aRuD1TAt/k4m89qeFxvhZLSHgrzKwq6zPlOEMzPHk68PBwMjpPjTmoO9
-         Mek7uXnINWAXZspY8ey7YOW+xQtODVaeCKzoEe07KFsCU2XTCuX7Nl8/gFGGCmDcRGpR
-         T8HgJiYrvAlRIfhKkvcoqm4N3JLm7jiQbv1O7jENLfE7pvjmp/BhVIFiBT+RJ3PbpnAj
-         wg2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744306621; x=1744911421;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XpiUUvwlwp9tVCnJZ3TZUgEjsv1IVM8EEnnesVuXazs=;
-        b=p96swArIuufV57kteHhaG7jGHs2kCL+8bqbXZOwzC5E4WK1jTr3/HVQn1fpi+kOr0W
-         ZkTncK/TfqXBMuwDhwAeI8/1AOl2w94P8NfS1eEP46oP8QE+u7jo/23KzoMHhtEJ54/r
-         iSazgj5th3sVtrvOsKxmONZsKJGNntPaudrgeGTuFNpqQkMPx7Kn1LLzjgdkASPVVPB9
-         CG2IVuvjKoD/UjtOzDcF1Tdj/UIE9Xte35VDnZkEKL+d2IobAYYMkbOV5rjMtdyaNALl
-         cAXoslxA5Nu+wuGQ3NlQ74enrDzdCMyALPwNn9NXW/utqhqO0RBtC1n8N1CjA8AuI2A5
-         dm7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW2Wpb3EcFVoZSjmeP8orqe9HlfsTb7sJsnVTqki5Wki5mvYele4cSRsmGjO15vQVSVSbmUf4aPYbMcQNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBciAWc2LVqVfR6GeNBXVLrXMj5+Xl6KRh/eYGvOC206Dp4LnD
-	POKDVJgAE37/gmc8gQyGSTQWl80iI3SKGiU1WzUqWIL4Qv921ulMvCcpUM4OXwkVU2hAMII6ekH
-	RWEe2rQ==
-X-Google-Smtp-Source: AGHT+IFwaCb2cDgkGC1n4/9Wz8pIMyxoLX83dVD19SJR7ZPEQ36S8XM3cNeUAEqdxlEjEYtd+dxtn/hNSjdL
-X-Received: from plbml15.prod.google.com ([2002:a17:903:34cf:b0:227:b826:af9e])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:120a:b0:216:2bd7:1c2f
- with SMTP id d9443c01a7336-22be02f73bamr41067965ad.18.1744306621413; Thu, 10
- Apr 2025 10:37:01 -0700 (PDT)
-Date: Thu, 10 Apr 2025 10:36:28 -0700
-In-Reply-To: <20250410173631.1713627-1-irogers@google.com>
+	s=arc-20240116; t=1744306607; c=relaxed/simple;
+	bh=aIqRiPJkeBNJZ2nrGcOImZWCaryBj+bGa1evPPogC6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KYIaaHOfOsFrhnWWHU+1GcJFoFanpixoMr4vQEhi3rKykbRnUOxbB1LjxAqZzQkkBkh8UFWz+LWLF2xzdSTbEWH0dmsN+SR9132up5BQScFqXik1XByPLVDYcARJ6uI+mr6saBYpokRjyKNma/9Pov+pOOW+m00qqVzOoaZ2mE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JroUve5a; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744306604;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NiN7dJ3m76P3AfIAhVC2mtIUN5C4W6S+EN7YkuF0Xws=;
+	b=JroUve5aJ5bPEYnVcrHjgx0BeoH74A6dv/X+ECrADDTrE5bEigk+jimAoObXM+/ALhxiKK
+	NxN1FtFUbUkk47fUz9cZz80n+XOKs9hezWqWlzUEsqIBB4nflUluJM0Hn0a/BucT7EFnaM
+	J4IcsZJc4Ul3+OThtk6DKmfDK8wyVdE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-681-HJZRTcrYNR2wQUOzY8zPUg-1; Thu,
+ 10 Apr 2025 13:36:38 -0400
+X-MC-Unique: HJZRTcrYNR2wQUOzY8zPUg-1
+X-Mimecast-MFC-AGG-ID: HJZRTcrYNR2wQUOzY8zPUg_1744306596
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A93E91800257;
+	Thu, 10 Apr 2025 17:36:35 +0000 (UTC)
+Received: from [10.45.225.124] (unknown [10.45.225.124])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 004CA1955DCE;
+	Thu, 10 Apr 2025 17:36:30 +0000 (UTC)
+Message-ID: <7f24f249-f49a-4365-930f-f4ebe502c6bf@redhat.com>
+Date: Thu, 10 Apr 2025 19:36:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250410173631.1713627-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
-Message-ID: <20250410173631.1713627-10-irogers@google.com>
-Subject: [PATCH v2 09/12] perf trace: Switch user option to use BPF filter
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Veronika Molnarova <vmolnaro@redhat.com>, Hao Ge <gehao@kylinos.cn>, 
-	Howard Chu <howardchu95@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Levi Yun <yeoreum.yun@arm.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	Tengda Wu <wutengda@huaweicloud.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/14] dt-bindings: dpll: Add support for Microchip
+ Azurite chip family
+To: Prathosh.Satish@microchip.com, conor@kernel.org
+Cc: krzk@kernel.org, netdev@vger.kernel.org, vadim.fedorenko@linux.dev,
+ arkadiusz.kubalewski@intel.com, jiri@resnulli.us, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org, kees@kernel.org,
+ andy@kernel.org, akpm@linux-foundation.org, mschmidt@redhat.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20250409144250.206590-1-ivecera@redhat.com>
+ <20250409144250.206590-3-ivecera@redhat.com>
+ <20250410-skylark-of-silent-symmetry-afdec9@shite>
+ <1a78fc71-fcf6-446e-9ada-c14420f9c5fe@redhat.com>
+ <20250410-puritan-flatbed-00bf339297c0@spud>
+ <6dc1fdac-81cc-4f2c-8d07-8f39b9605e04@redhat.com>
+ <CY5PR11MB6462412A953AF5D93D97DCE5ECB72@CY5PR11MB6462.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <CY5PR11MB6462412A953AF5D93D97DCE5ECB72@CY5PR11MB6462.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Finding user processes by scanning /proc is inherently racy and
-results in perf_event_open failures. Use a BPF filter to drop samples
-where the uid doesn't match. Ensure adding the BPF filter forces
-system-wide.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/builtin-trace.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 6ac51925ea42..1f7d2b3d8b3d 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -240,6 +240,7 @@ struct trace {
- 		struct ordered_events	data;
- 		u64			last;
- 	} oe;
-+	const char		*uid_str;
- };
- 
- static void trace__load_vmlinux_btf(struct trace *trace __maybe_unused)
-@@ -4401,8 +4402,8 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
- 		evlist__add(evlist, pgfault_min);
- 	}
- 
--	/* Enable ignoring missing threads when -u/-p option is defined. */
--	trace->opts.ignore_missing_thread = trace->opts.target.uid != UINT_MAX || trace->opts.target.pid;
-+	/* Enable ignoring missing threads when -p option is defined. */
-+	trace->opts.ignore_missing_thread = trace->opts.target.pid;
- 
- 	if (trace->sched &&
- 	    evlist__add_newtp(evlist, "sched", "sched_stat_runtime", trace__sched_stat_runtime))
-@@ -5420,8 +5421,7 @@ int cmd_trace(int argc, const char **argv)
- 		    "child tasks do not inherit counters"),
- 	OPT_CALLBACK('m', "mmap-pages", &trace.opts.mmap_pages, "pages",
- 		     "number of mmap data pages", evlist__parse_mmap_pages),
--	OPT_STRING('u', "uid", &trace.opts.target.uid_str, "user",
--		   "user to profile"),
-+	OPT_STRING('u', "uid", &trace.uid_str, "user", "user to profile"),
- 	OPT_CALLBACK(0, "duration", &trace, "float",
- 		     "show only events with duration > N.M ms",
- 		     trace__set_duration),
-@@ -5762,11 +5762,19 @@ int cmd_trace(int argc, const char **argv)
- 		goto out_close;
- 	}
- 
--	err = target__parse_uid(&trace.opts.target);
--	if (err) {
--		target__strerror(&trace.opts.target, err, bf, sizeof(bf));
--		fprintf(trace.output, "%s", bf);
--		goto out_close;
-+	if (trace.uid_str) {
-+		uid_t uid = parse_uid(trace.uid_str);
-+
-+		if (uid == UINT_MAX) {
-+			ui__error("Invalid User: %s", trace.uid_str);
-+			err = -EINVAL;
-+			goto out_close;
-+		}
-+		err = parse_uid_filter(trace.evlist, uid);
-+		if (err)
-+			goto out_close;
-+
-+		trace.opts.target.system_wide = true;
- 	}
- 
- 	if (!argc && target__none(&trace.opts.target))
--- 
-2.49.0.604.gff1f9ca942-goog
+On 10. 04. 25 7:07 odp., Prathosh.Satish@microchip.com wrote:
+> -----Original Message-----
+> From: Ivan Vecera <ivecera@redhat.com>
+> Sent: Thursday 10 April 2025 14:36
+> To: Conor Dooley <conor@kernel.org>; Prathosh Satish - M66066 <Prathosh.Satish@microchip.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>; netdev@vger.kernel.org; Vadim Fedorenko <vadim.fedorenko@linux.dev>; Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>; Jiri Pirko <jiri@resnulli.us>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Prathosh Satish - M66066 <Prathosh.Satish@microchip.com>; Lee Jones <lee@kernel.org>; Kees Cook <kees@kernel.org>; Andy Shevchenko <andy@kernel.org>; Andrew Morton <akpm@linux-foundation.org>; Michal Schmidt <mschmidt@redhat.com>; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-hardening@vger.kernel.org
+> Subject: Re: [PATCH v2 02/14] dt-bindings: dpll: Add support for Microchip Azurite chip family
+> 
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> 
+> On 10. 04. 25 3:18 odp., Conor Dooley wrote:
+>> On Thu, Apr 10, 2025 at 09:45:47AM +0200, Ivan Vecera wrote:
+>>>
+>>>
+>>> On 10. 04. 25 9:06 dop., Krzysztof Kozlowski wrote:
+>>>> On Wed, Apr 09, 2025 at 04:42:38PM GMT, Ivan Vecera wrote:
+>>>>> Add DT bindings for Microchip Azurite DPLL chip family. These chips
+>>>>> provides 2 independent DPLL channels, up to 10 differential or
+>>>>> single-ended inputs and up to 20 differential or 20 single-ended outputs.
+>>>>> It can be connected via I2C or SPI busses.
+>>>>>
+>>>>> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+>>>>> ---
+>>>>>     .../bindings/dpll/microchip,zl3073x-i2c.yaml  | 74 ++++++++++++++++++
+>>>>>     .../bindings/dpll/microchip,zl3073x-spi.yaml  | 77
+>>>>> +++++++++++++++++++
+>>>>
+>>>> No, you do not get two files. No such bindings were accepted since
+>>>> some years.
+>>>>
+>>>>>     2 files changed, 151 insertions(+)
+>>>>>     create mode 100644 Documentation/devicetree/bindings/dpll/microchip,zl3073x-i2c.yaml
+>>>>>     create mode 100644
+>>>>> Documentation/devicetree/bindings/dpll/microchip,zl3073x-spi.yaml
+>>>>>
+>>>>> diff --git
+>>>>> a/Documentation/devicetree/bindings/dpll/microchip,zl3073x-i2c.yaml
+>>>>> b/Documentation/devicetree/bindings/dpll/microchip,zl3073x-i2c.yaml
+>>>>> new file mode 100644
+>>>>> index 0000000000000..d9280988f9eb7
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/devicetree/bindings/dpll/microchip,zl3073x-i2c.
+>>>>> +++ yaml
+>>>>> @@ -0,0 +1,74 @@
+>>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) %YAML 1.2
+>>>>> +---
+>>>>> +$id:
+>>>>> +http://devicetree.org/schemas/dpll/microchip,zl3073x-i2c.yaml#
+>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>>> +
+>>>>> +title: I2C-attached Microchip Azurite DPLL device
+>>>>> +
+>>>>> +maintainers:
+>>>>> +  - Ivan Vecera <ivecera@redhat.com>
+>>>>> +
+>>>>> +description:
+>>>>> +  Microchip Azurite DPLL (ZL3073x) is a family of DPLL devices
+>>>>> +that
+>>>>> +  provides 2 independent DPLL channels, up to 10 differential or
+>>>>> +  single-ended inputs and up to 20 differential or 20 single-ended outputs.
+>>>>> +  It can be connected via multiple busses, one of them being I2C.
+>>>>> +
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    enum:
+>>>>> +      - microchip,zl3073x-i2c
+>>>>
+>>>> I already said: you have one compatible, not two. One.
+>>>
+>>> Ah, you mean something like:
+>>> iio/accel/adi,adxl313.yaml
+>>>
+>>> Do you?
+>>>
+>>>> Also, still wildcard, so still a no.
+>>>
+>>> This is not wildcard, Microchip uses this to designate DPLL devices
+>>> with the same characteristics.
+>>
+>> That's the very definition of a wildcard, no? The x is matching
+>> against several different devices. There's like 14 different parts
+>> matching zl3073x, with varying numbers of outputs and channels. One
+>> compatible for all of that hardly seems suitable.
+> 
+> Prathosh, could you please bring more light on this?
+> 
+> Just to clarify, the original driver was written specifically with 2-channel
+> chips in mind (ZL30732) with 10 input and 20 outputs, which led to some confusion of using zl3073x as compatible.
+> However, the final version of the driver will support the entire ZL3073x family
+> ZL30731 to ZL30735 and some subset of ZL30732 like ZL80732 etc
+> ensuring compatibility across all variants.
+
+Huh, then ok... We should specify zl30731-5 compatibles and they differs 
+only by number of channels (1-5) ?
+
+The number of input and output pins are the same (10 and 20), right?
+
+If so, I have to update the whole driver to accommodate dynamic number 
+of channels according chip type.
+
+Btw. Conor, Krzystof if we use microchip,zl30731, ..., 
+microchip,zl30735... What should be the filename for the yaml file?
+
+Thanks,
+Ivan
+
+> Thanks.
+>>
+>>>
+>>> But I can use microchip,azurite, is it more appropriate?
+>>
+>> No, I think that is worse actually.
+> 
 
 
