@@ -1,70 +1,49 @@
-Return-Path: <linux-kernel+bounces-597301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6852CA837BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:14:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40088A837B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9188E3BF1F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:14:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C56347A1766
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD601F1517;
-	Thu, 10 Apr 2025 04:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717FF1F0E56;
+	Thu, 10 Apr 2025 04:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zDdspdWO"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MC9IKyH7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074571BB6BA;
-	Thu, 10 Apr 2025 04:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF301F09BC
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 04:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744258457; cv=none; b=ZoG8ms0YloXGU3/pNgRlx1NJz5aZ973WQyuNeyQ7klQKcGFSGmOlt38CB3SL+CIBLVPKBLLAVRF0iCRBZOQb1bKMmOS3w4ELT669fa6kfZ/Kys/cRmz2lEJl31CrFqYwjSw+e0fLgsSs0quAP+k0og7NhvMfSUsDtsRnZJKPHk4=
+	t=1744258197; cv=none; b=t6uQbPdqgebBijF53wzK33dtpzaaQZ6b9zoBBlYOvUyuY9oKrs1fzJJrS+YnzIl9mWH47wyoKezR8V3thlCxLlxD6N4jhvIdeF/VS4NR9odHbos6BOgptSz3PRpQMfknNY0cAoxz/7zdW/ayDAAqqRwI1h029rz7dtPUx8E869g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744258457; c=relaxed/simple;
-	bh=0eD9VL33YeCoJeo1RYLS81d+ryBC2kaugHJfF+ygWN8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TSx+poYzfazwcqsv8yACLexZBqxrzBnU6IbZpUCCAj1bE6fBBJGWxscwkdwlQzvWVFVER5kV4f2fwvjabkNYobtOA3aaoU6jE2iGp/6ot/P3D9ZvVvVJ2RlmMQkGwXW3F4qivUoTmX/lFNL/ZrQz7dRSYDS9bb8Zlr/kUHnMEuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=zDdspdWO; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1744258456; x=1775794456;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=0eD9VL33YeCoJeo1RYLS81d+ryBC2kaugHJfF+ygWN8=;
-  b=zDdspdWOKIwDimAqKgnXa/u2KsdCvT5BPRoTNydAuWiJYEx8vzuGBggq
-   UB5XhofGrsMhRGtLz6FCF9JAnYOBC8eohTuE1em0BRfZ8cIyIl4QK3FH/
-   Pus6UGODxbEbrlRhF0TorUUbkIzndd1+XuJLdoKI3EQKpYP1VX9isr6ie
-   4PgiRgj4qnkdC80OLiQRKR2dMWX4ibh9sqsGDHef1MWw52UYENhqvHJKo
-   pdjf2JQMiFqu8/AJbBcfFzGRzQrzvd2jDNe+YY8JH7lUtkfDu8e3o+0fU
-   y3z94XIcMRD70SMk09X/st6pO+34Oo/IHlbTkmiO7FolAEdUG4kCBYVg2
-   Q==;
-X-CSE-ConnectionGUID: rOlfZuRETmefZMrPijj2jQ==
-X-CSE-MsgGUID: YL4bVxb2TBKs0/Ock90PPA==
-X-IronPort-AV: E=Sophos;i="6.15,202,1739862000"; 
-   d="scan'208";a="40766564"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Apr 2025 21:14:09 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 9 Apr 2025 21:13:43 -0700
-Received: from che-ld-unglab06.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Wed, 9 Apr 2025 21:13:40 -0700
-From: Thangaraj Samynathan <thangaraj.s@microchip.com>
-To: <netdev@vger.kernel.org>
-CC: <bryan.whitehead@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next v2] net: ethernet: microchip: lan743x: Fix memory allocation failure
-Date: Thu, 10 Apr 2025 09:40:34 +0530
-Message-ID: <20250410041034.17423-1-thangaraj.s@microchip.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744258197; c=relaxed/simple;
+	bh=MxQmQXDfASm1KPFqYDhl4v/yAuddVzhL0fvjTL/VhLg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=W18nLlzUOAZsVD+hllDb0HJYwjlLYebNE5XS9tBU/uAOy9cEuKTzTdcFPN2yIioVMHWmSE6VZUPrPlUzF7RZDQT4zfWl9z7rCQMGczw5JPaZvfN5C7+Zf8nE9LmV2cmc7B/9cM49Ck9LfJo8vaWhmNKgWQK6EDGPnt5Pi0NF6qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MC9IKyH7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A4CC4CEDD;
+	Thu, 10 Apr 2025 04:09:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744258197;
+	bh=MxQmQXDfASm1KPFqYDhl4v/yAuddVzhL0fvjTL/VhLg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=MC9IKyH7lcBJHzGnhihmdhiDdv5Qk07pwV9DcbVBoZjJ8nCz9NCDesx6JOXTJfA/r
+	 tXyWBC146+9RliIlo139bIdeAlMuFZCXstaQfoLyIRRELjGoJ/HBIKt8yHn51tO2UR
+	 YwWCSz593lnWF1Ji0IK+fKexD/Wkj83bJWueByBI6QAgzzC0TXIzdSmPWlpPS0dVf4
+	 Eeywo7CObmJUkAfMEBoFgVRpJ5DmG2bxY2tape4Kd7bHJiJ7PMSTjGG7O/YVMTBZ2p
+	 WYKoe4HP5RVUh2N+6QAYjNvALAzxMRNB8z7wmn0LfyYipUKCK9gfXlwkvu8l5CyWuv
+	 XkUMIagvmgi5Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB5F0380CEF9;
+	Thu, 10 Apr 2025 04:10:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,43 +51,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: add a proc entry show inject stats
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <174425823476.3146257.16619631062841973924.git-patchwork-notify@kernel.org>
+Date: Thu, 10 Apr 2025 04:10:34 +0000
+References: <20250320022230.1938110-1-chao@kernel.org>
+In-Reply-To: <20250320022230.1938110-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 
-The driver allocates ring elements using GFP_DMA flags. There is
-no dependency from LAN743x hardware on memory allocation should be
-in DMA_ZONE. Hence modifying the flags to use only GFP_ATOMIC
+Hello:
 
-Signed-off-by: Thangaraj Samynathan <thangaraj.s@microchip.com>
----
-v0
--Initial Commit
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-v1
--Modified GFP flags from GFP_KERNEL to GFP_ATOMIC
--added fixes tag
+On Thu, 20 Mar 2025 10:22:29 +0800 you wrote:
+> This patch adds a proc entry named inject_stats to show total injected
+> count for each fault type.
+> 
+> cat /proc/fs/f2fs/<dev>/inject_stats
+> fault_type              injected_count
+> kmalloc                 0
+> kvmalloc                0
+> page alloc              0
+> page get                0
+> alloc bio(obsolete)     0
+> alloc nid               0
+> orphan                  0
+> no more block           0
+> too big dir depth       0
+> evict_inode fail        0
+> truncate fail           0
+> read IO error           0
+> checkpoint error        0
+> discard error           0
+> write IO error          0
+> slab alloc              0
+> dquot initialize        0
+> lock_op                 0
+> invalid blkaddr         0
+> inconsistent blkaddr    0
+> no free segment         0
+> inconsistent footer     0
+> 
+> [...]
 
-v2
--Resubmit net-next instead of net
+Here is the summary with links:
+  - [f2fs-dev,v2,1/2] f2fs: add a proc entry show inject stats
+    https://git.kernel.org/jaegeuk/f2fs/c/e073e9278983
+  - [f2fs-dev,v2,2/2] f2fs: fix to update injection attrs according to fault_option
+    https://git.kernel.org/jaegeuk/f2fs/c/2be96c2147e2
 
----
- drivers/net/ethernet/microchip/lan743x_main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
-index 23760b613d3e..8b6b9b6efe18 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.c
-+++ b/drivers/net/ethernet/microchip/lan743x_main.c
-@@ -2495,8 +2495,7 @@ static int lan743x_rx_process_buffer(struct lan743x_rx *rx)
- 
- 	/* save existing skb, allocate new skb and map to dma */
- 	skb = buffer_info->skb;
--	if (lan743x_rx_init_ring_element(rx, rx->last_head,
--					 GFP_ATOMIC | GFP_DMA)) {
-+	if (lan743x_rx_init_ring_element(rx, rx->last_head, GFP_ATOMIC)) {
- 		/* failed to allocate next skb.
- 		 * Memory is very low.
- 		 * Drop this packet and reuse buffer.
+You are awesome, thank you!
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
