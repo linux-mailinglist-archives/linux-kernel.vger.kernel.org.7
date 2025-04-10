@@ -1,150 +1,96 @@
-Return-Path: <linux-kernel+bounces-597568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7625A83B7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:41:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DA00A83B88
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FEBA4A0EF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:41:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A13519E3FDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB582080EE;
-	Thu, 10 Apr 2025 07:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aot9COST"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D4920459E;
+	Thu, 10 Apr 2025 07:42:36 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7A81CEACB;
-	Thu, 10 Apr 2025 07:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB0C1E3DED;
+	Thu, 10 Apr 2025 07:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744270881; cv=none; b=gJngUTo6S9sf/6uvI0MS3lSVLNhqX0H2Kbu9bzyCkx5z3LeazwlW69EdJIcML5+leTzDujmrcssDH2xFKEtLZG220Nd7mXWt/eS4rYonLQr+tGjbCS6c9y9HgGOyvTZzuRm5f6nnJb2zwbwKJe/5P5XdeLek08DVlnt82JsG2rE=
+	t=1744270955; cv=none; b=Iv1FoNEMjsCmwlo2ahdtz0MfekrTLU7jrxN7BBdqew7nzgM99jKCIIiZ/9vKYNsFpBBbEzDpIF66qKso4exJjIZOO5deZZv1myyT3Gm/4rNPz1h3ZyGgTkW/4A9Hf3J/fhdye3B9uAWx1ogdCjkBgI9uAtVR9v75bii/5A3Cmto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744270881; c=relaxed/simple;
-	bh=T0rl6mtqXz5LmV5LLiBAssGxQHXvEWWXL3EDzwmnWEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JzDsGH4fRkTucNY/ThFz7wHlI7n6/ruM4PvOdodt5FczjwVYAG+TyEZkU+ikbHDFk97hhwsED6/+J81Q123QEWIvAWwlPmfFVtGjXALl5rLdM2ythuuvla2ksHtR1zC93w+csGntkc0MMCOt0vuwzaskazzxTbGetLcwyUe2YDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aot9COST; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744270877;
-	bh=T0rl6mtqXz5LmV5LLiBAssGxQHXvEWWXL3EDzwmnWEk=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=aot9COSTnnKvgbGAq80PH5OkL2BX7fTgqBgoPPT/KOmtsS0JQ3I5AnxJ2kkahytDZ
-	 RMauBQEs4WXQ/fG7+K7cGkem33n5Afdt7mMk2Z3tQBcxJdlFLLdbTUO5xgN1I85hyL
-	 AIUiTLipV5O01P4BySbn1VtLc+LOJFa+/qrPh/OkaN3DE5U5Y6ySrwh5nM3/4QHcR7
-	 al3BIoEy24HMwNHPcIYwwHGTTMZsVpVWxlPq8HYjOi+LycGoj+BuWGykl3AB3Haem0
-	 jt6Om8U14QSdNDNd9ADCaxME29oX/M67NRdEOcbR6F4FvC1LUKphUd1T86EmUifUX3
-	 /XxVPg5vq0Z6Q==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C03ED17E0904;
-	Thu, 10 Apr 2025 09:41:16 +0200 (CEST)
-Message-ID: <58b3bbe7-c036-45c6-b6e9-e2fc150a9256@collabora.com>
-Date: Thu, 10 Apr 2025 09:41:16 +0200
+	s=arc-20240116; t=1744270955; c=relaxed/simple;
+	bh=85QpR9oFRrRsEnFw64qHfKu5TEkleorKdhp2VUyvkYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IakfVveOTAWScM44giqyf69nrpyrdBN3hbiszSplaVpYnWwJ4kQfQWs8JYVL2LohcqPc6R94wGXJxZCugZ5V93cvdz/SBsq8lbvPj2lRKNyxYXuD/q1qJJbst3Yx68zYn/nv8Afn2DNYFSyHByhGjX8Gco/HQq7zPO4yjU37Blc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id EE92D68B05; Thu, 10 Apr 2025 09:42:28 +0200 (CEST)
+Date: Thu, 10 Apr 2025 09:42:28 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	"jayalk@intworks.biz" <jayalk@intworks.biz>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	"deller@gmx.de" <deller@gmx.de>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"kys@microsoft.com" <kys@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"weh@microsoft.com" <weh@microsoft.com>,
+	"tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH 1/3] mm: Export vmf_insert_mixed_mkwrite()
+Message-ID: <20250410074228.GA680@lst.de>
+References: <20250408183646.1410-1-mhklinux@outlook.com> <20250408183646.1410-2-mhklinux@outlook.com> <20250409104942.GA5572@lst.de> <BN7PR02MB4148597D0495C631F6E3F8C0D4B42@BN7PR02MB4148.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: pinctrl: mediatek: Correct indentation
- and style in DTS example
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Andy Teng <andy.teng@mediatek.com>,
- linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250324125105.81774-1-krzysztof.kozlowski@linaro.org>
- <20250324125105.81774-2-krzysztof.kozlowski@linaro.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250324125105.81774-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN7PR02MB4148597D0495C631F6E3F8C0D4B42@BN7PR02MB4148.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Il 24/03/25 13:51, Krzysztof Kozlowski ha scritto:
-> DTS example in the bindings should be indented with 2- or 4-spaces and
-> aligned with opening '- |', so correct any differences like 3-spaces or
-> mixtures 2- and 4-spaces in one binding.
+On Wed, Apr 09, 2025 at 02:10:26PM +0000, Michael Kelley wrote:
+> Hmmm. What's the reference to "as told last time"? I don't think I've had
+> this conversation before.
+
+Hmm, there was a conversation about deferred I/O, and I remember the
+drm folks even defending their abuse of vmalloc_to_page on dma coherent
+memory against the documentation in the most silly way.  Maybe that was
+a different discussion of the same thing.
+
 > 
-> No functional changes here, but saves some comments during reviews of
-> new patches built on existing code.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   .../pinctrl/mediatek,mt65xx-pinctrl.yaml      | 83 +++++++------------
->   .../pinctrl/mediatek,mt7622-pinctrl.yaml      | 48 +++++------
->   .../pinctrl/mediatek,mt8183-pinctrl.yaml      | 68 +++++++--------
->   .../pinctrl/mediatek,mt8192-pinctrl.yaml      | 76 ++++++++---------
->   4 files changed, 127 insertions(+), 148 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-> index 5f2808212f39..b9680b896f12 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-> @@ -137,64 +137,43 @@ examples:
->           #size-cells = <2>;
->   
->           pinctrl@1c20800 {
-> -          compatible = "mediatek,mt8135-pinctrl";
-> -          reg = <0 0x1000B000 0 0x1000>;
-> -          mediatek,pctl-regmap = <&syscfg_pctl_a>, <&syscfg_pctl_b>;
-> -          gpio-controller;
-> -          #gpio-cells = <2>;
-> -          interrupt-controller;
-> -          #interrupt-cells = <2>;
-> -          interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-> -              <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-> -              <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-> +            compatible = "mediatek,mt8135-pinctrl";
-> +            reg = <0 0x1000B000 0 0x1000>;
-> +            mediatek,pctl-regmap = <&syscfg_pctl_a>, <&syscfg_pctl_b>;
-> +            gpio-controller;
-> +            #gpio-cells = <2>;
-> +            interrupt-controller;
-> +            #interrupt-cells = <2>;
-> +            interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
->   
-> -          i2c0_pins_a: i2c0-pins {
-> -            pins1 {
-> -              pinmux = <MT8135_PIN_100_SDA0__FUNC_SDA0>,
-> -                <MT8135_PIN_101_SCL0__FUNC_SCL0>;
-> -              bias-disable;
-> -            };
-> -          };
-> -
-> -          i2c1_pins_a: i2c1-pins {
-> -            pins {
-> -              pinmux = <MT8135_PIN_195_SDA1__FUNC_SDA1>,
-> -                <MT8135_PIN_196_SCL1__FUNC_SCL1>;
-> -              bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
-> -            };
-> -          };
-> -
-> -          i2c2_pins_a: i2c2-pins {
-> -            pins1 {
-> -              pinmux = <MT8135_PIN_193_SDA2__FUNC_SDA2>;
-> -              bias-pull-down;
-> +            i2c0_pins_a: i2c0-pins {
+> For the hyperv_fb driver, the memory in question is allocated with a direct call
+> to alloc_pages(), not via dma_alloc_coherent(). There's no DMA in this scenario.
+> The memory is shared with the Hyper-V host and designated as the memory
+> for the virtual framebuffer device. It is then mapped into user space using the
+> mmap() system call against /dev/fb0. User space writes to the memory are
+> eventually (and I omit the details) picked up by the Hyper-V host and displayed.
 
-Agreeing with Rob - if you can please also remove the labels while at it,
-that'd be great, but regardless of that...
+Oh, great.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Is your point that memory dma_alloc_coherent() memory must be treated as
+> a black box, and can't be deconstructed into individual pages? If so, that makes
+> sense to me.
 
+Yes.
+
+> But must the same treatment be applied to memory from
+> alloc_pages()? This is where I need some education.
+
+No, that's just fine.
 
 
