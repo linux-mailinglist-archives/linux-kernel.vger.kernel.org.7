@@ -1,126 +1,131 @@
-Return-Path: <linux-kernel+bounces-598414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E273CA845DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:13:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71632A845E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76E2116EEBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:09:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B3359A3A3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F212E28A401;
-	Thu, 10 Apr 2025 14:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4300628C5A0;
+	Thu, 10 Apr 2025 14:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VUfsNwVE"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqaubKMc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF852857C7;
-	Thu, 10 Apr 2025 14:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7E928A404;
+	Thu, 10 Apr 2025 14:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744294139; cv=none; b=DS0isx1oA1MMWxph/t46GpivyFgkIwS7JZfjhRknCmpddmCKkhWEOAKc71IeA8eifAyBTh6yHrxTQnohBNmYPQD2iHBsNAjJRYe6B+CLvhs9FlQ9rY7ctxrGvGIEudgczhnsB7igYebZQell0kNIqivZnM0/jk2/07CV7e7qf5o=
+	t=1744294173; cv=none; b=Qwa1F00bAXdy33dYZ/EbuGTZhUvXVweZQO9vyL+kQZPHiQaQDvpkcFXsYrqABgseYNgmUCNlvbTfw555ULjJ77eYOCKUgno3tuRM8YKclc39RpCyOP1ja/rZWzy1EoP/v/6x3LBeBFLLn+2hGX8mF7Pi07qpHBtaBOGG99RJTow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744294139; c=relaxed/simple;
-	bh=VTLvHKuTmbWi8p5/jt+YLvLtFZ+xMYkTT5BFHTA9bNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gaXG07GjNxHGvacwW8TY2BWwMZi3d5wRPpHDBdQvYSFh2SkDSMNg8Th2vx6hZwVS9NVbG72YWOX1dmN9q0acMTTJ3yuTVh1/UvOLIhlc/r6WShUh/MU02Q/a9MLS9+/ZV5cb7ynEU0DPl74rSBO9dodJaT0IV5gjXMigv4qK5yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VUfsNwVE; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=QxgtQ5JKfKOHEwtSfyG+Wonf2mElgCsFlIe7Wt1b7Xc=; b=VUfsNwVEayjni0UTOGtDBCi+hc
-	sL5R3AhZnLiqq+LJmQCgXLXVDMwm2L/+SSxlffDhKP3K0fJPaSROelzj92I3Pz9Xi8HLIXVgUph2A
-	pU8qnDJtVOuXTl11b8REdeHHKX7d7egwZJdLBfzy/u52tTTyrqX0u5MiL37thiztEcetW+6WpXnf4
-	sforPo937HDfCbWgQD+jbcoIm8tGONGaPb+BaigEY2qpNZEBQBPz7Q1JcwRPLZkYneZM/OJ9C40uf
-	Dux+3LzREw9fnJ2bj5AycmtieDToEPzdztoVQPASqthIwex3hkGTweYGAHoTcDu7dVDatp5aG5SNo
-	uaRAf6sw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u2saI-00000002yqV-35tA;
-	Thu, 10 Apr 2025 14:08:51 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id BEC143003FA; Thu, 10 Apr 2025 16:08:50 +0200 (CEST)
-Date: Thu, 10 Apr 2025 16:08:50 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Kees Cook <kees@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Nathan Chancellor <nathan@kernel.org>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Matthew Maurer <mmaurer@google.com>,
-	Ramon de C Valle <rcvalle@google.com>
-Subject: Re: [PATCH] x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
-Message-ID: <20250410140850.GH9833@noisy.programming.kicks-ass.net>
-References: <20250410115420.366349-1-panikiel@google.com>
- <20250410123602.GZ9833@noisy.programming.kicks-ass.net>
- <20250410124526.GB9833@noisy.programming.kicks-ass.net>
- <20250410130944.GA9003@noisy.programming.kicks-ass.net>
- <CANiq72=k+tZ3ACEB5k9qwJ8ZYu-dXkA3=Lisg1b8ze-2D0STog@mail.gmail.com>
- <20250410132649.GE9833@noisy.programming.kicks-ass.net>
- <CANiq72=Q_Z8KfV+n4z9wWVJsZwVevag=Vh3URe71XkUuWuqEDg@mail.gmail.com>
- <20250410133446.GF9833@noisy.programming.kicks-ass.net>
- <CAH5fLghrcqSYwkqbC4SSp6oYCny0riMRGA6W+oqQ69aA=NwYWw@mail.gmail.com>
+	s=arc-20240116; t=1744294173; c=relaxed/simple;
+	bh=DpSjE5BAz8kF66zp70q0y2bFTSB7iHjZZeJN5OuVsKY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WhPrRW5rh0YJtGKPy91VQdhR4Iv9C9i1XpZP97mkyFj4QVxMJg0Ro6me57GKCrzNTwMM3WYnWCggevOfZ+TIF5L10kh1GgysKwsGjWTiArS5jDFxRr8XvL4kF2ZPly6VXxrBnKCRpKNZhNct33EO4o2Dd5Epnh7W+KHJV/ZjAgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VqaubKMc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20CC0C4CEDD;
+	Thu, 10 Apr 2025 14:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744294173;
+	bh=DpSjE5BAz8kF66zp70q0y2bFTSB7iHjZZeJN5OuVsKY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VqaubKMc5kARpMjjWo1wDPI9VjxMOBQUAhNCaQP+CR8mp9GLF2PS4yclHoikGneRT
+	 2G4WdRdQ1Gm9r5L5GMrphcctR0FMWJJ0OPdRFnfNdlkd9UNArITduEj0Db7IMGUtCF
+	 DZn7AqK0DOL+swc54mWskPcRsL0qPJGBmrgju98dE8605WTShXo7SojVtKLY5GIeSj
+	 7diWgGieg53v7f1t+HNZ5WyeNLNfNmZ0EMp4Af64BF0YaHlOSEsEfKGGYNrnvwPfOn
+	 98s0BlPQZ22AtNtKwh6tCcA/YBVESjWjFkrgJ3QZN5pmeCoaADhuRe+tQ1qc9arZJ2
+	 J713FGcAf4llg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Adrian Hunter <adrian.hunter@intel.com>,
+	Haibo Chen <haibo.chen@nxp.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Luke Wang <ziniu.wang_1@nxp.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Josua Mayer <josua@solid-run.com>,
+	imx@lists.linux.dev,
+	linux-mmc@vger.kernel.org,
+	s32@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mmc: esdhc-imx: convert to modern PM_OPS
+Date: Thu, 10 Apr 2025 16:09:07 +0200
+Message-Id: <20250410140921.849213-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLghrcqSYwkqbC4SSp6oYCny0riMRGA6W+oqQ69aA=NwYWw@mail.gmail.com>
 
-On Thu, Apr 10, 2025 at 03:59:53PM +0200, Alice Ryhl wrote:
-> On Thu, Apr 10, 2025 at 3:34 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Thu, Apr 10, 2025 at 03:27:55PM +0200, Miguel Ojeda wrote:
-> > > On Thu, Apr 10, 2025 at 3:26 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > >
-> > > > New compiler can't build old core?
-> > >
-> > > No, that is not intended to work -- `core` is tied to the compiler.
-> >
-> > OMFG, you just gave me another reason to hate on this rust-bucket of a
-> > language :-/ What language can't even build an old version of its own
-> > runtime :-(
-> 
-> I don't think there's anything unreasonable about having a place to
-> put logic that depends on compiler internals.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Having compiler internals exposed to such an extend that programs can
-make use of them _is_ weird. It creates the whole problem of where to
-put it.
+Two newly added functions are unused in configurations without
+power management support:
 
-C++ doesn't have anything like this afaik. Esp. if you disable rtti and
-exception muck, you get a very minimal runtime. And even if you don't,
-it certainly doesn't break every 6 weeks. ABIs and all that.
+drivers/mmc/host/sdhci-esdhc-imx.c:1586:13: error: unused function 'sdhc_esdhc_tuning_save' [-Werror,-Wunused-function]
+ 1586 | static void sdhc_esdhc_tuning_save(struct sdhci_host *host)
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+drivers/mmc/host/sdhci-esdhc-imx.c:1608:13: error: unused function 'sdhc_esdhc_tuning_restore' [-Werror,-Wunused-function]
+ 1608 | static void sdhc_esdhc_tuning_restore(struct sdhci_host *host)
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
 
-Maybe I've been living in C/C++ land for too long, but you either expose
-a full language feature and then everybody can use it, runtime,
-libraries and user code alike, or you don't.
+Remove the #ifdef checks and instead use the better macros that
+silently drop the unused functions when PM is disabled.
 
-> > Anyway, given this core nonsense is now CFI unsound, it is no longer
-> > suitable to build the kernel. So either refrain from using part of the
-> > core that trips this, or get it fixed asap.
-> 
-> I submitted a PR that I believe should fix it:
-> https://github.com/rust-lang/rust/pull/139632
+Fixes: 3d1eea493894 ("mmc: sdhci-esdhc-imx: Save tuning value when card stays powered in suspend")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/mmc/host/sdhci-esdhc-imx.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-Thanks!
+diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
+index 7e8addaed697..8742622da55a 100644
+--- a/drivers/mmc/host/sdhci-esdhc-imx.c
++++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+@@ -1942,7 +1942,6 @@ static void sdhci_esdhc_imx_remove(struct platform_device *pdev)
+ 	sdhci_pltfm_free(pdev);
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+ static int sdhci_esdhc_suspend(struct device *dev)
+ {
+ 	struct sdhci_host *host = dev_get_drvdata(dev);
+@@ -2021,9 +2020,7 @@ static int sdhci_esdhc_resume(struct device *dev)
+ 
+ 	return ret;
+ }
+-#endif
+ 
+-#ifdef CONFIG_PM
+ static int sdhci_esdhc_runtime_suspend(struct device *dev)
+ {
+ 	struct sdhci_host *host = dev_get_drvdata(dev);
+@@ -2103,11 +2100,10 @@ static int sdhci_esdhc_runtime_resume(struct device *dev)
+ 		cpu_latency_qos_remove_request(&imx_data->pm_qos_req);
+ 	return err;
+ }
+-#endif
+ 
+ static const struct dev_pm_ops sdhci_esdhc_pmops = {
+-	SET_SYSTEM_SLEEP_PM_OPS(sdhci_esdhc_suspend, sdhci_esdhc_resume)
+-	SET_RUNTIME_PM_OPS(sdhci_esdhc_runtime_suspend,
++	SYSTEM_SLEEP_PM_OPS(sdhci_esdhc_suspend, sdhci_esdhc_resume)
++	RUNTIME_PM_OPS(sdhci_esdhc_runtime_suspend,
+ 				sdhci_esdhc_runtime_resume, NULL)
+ };
+ 
+-- 
+2.39.5
+
 
