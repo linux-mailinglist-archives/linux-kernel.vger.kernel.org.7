@@ -1,193 +1,179 @@
-Return-Path: <linux-kernel+bounces-597195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8620A8363D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:11:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB10A83641
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:13:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 354858C266C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:09:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA6181B63753
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5541B21AD;
-	Thu, 10 Apr 2025 02:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198231C6FE8;
+	Thu, 10 Apr 2025 02:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="f/bxq3xo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eRR0x8yB"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4028D2AD21
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 02:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55C718A6A9;
+	Thu, 10 Apr 2025 02:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744250981; cv=none; b=jPxDYm/xoiQC41Bm2XTXheWymlPUhKtjafyO4NBhSMZa6SHecPOZ5/8RAULF+spOxk/d4J1LQQ3FffXhMJzChvm5J+gvZOcLrkr4l+yFhFSecE/XIDbki5qnLwMFP7VeBmsqY4H7ZNj4POe8iw4Npg9IV/944clYY+0Qt36C/8I=
+	t=1744251198; cv=none; b=MRek7LU5uZd1fcRHP8vD4pwc66mXU8nzvWHb6kUgIIxgRziJNF6AonVKATwu8vJU0F6z7m1jUf5gqI5RY3W2taD0BAcGayvRjIxF3h/XA8peaaAa9YLdNSt5QOXhPFR+qQ8xXg2sdi5mJjvClu72M7hV054rDbpCkXcHkp3v2Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744250981; c=relaxed/simple;
-	bh=5WAZIPN/EyEP4Yvj8qfVcq+vQ3y8dvMh/Wpf8md2JD8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=MZraJKEKkWKatubz74gv9shCwa6OIpwHUC7qviids7JyMyjdFHdLxkT5Ne1LSBwXQBTHAFI6QdngL7VGvesU3CywfnKFXA87xKRJ9BZAcmoCD8QN6MM0fZl5fyxxMT6uLRNPOrt5zfVJ8TjEea8u8FE/31iRJM1wuVZHJsFTHKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=f/bxq3xo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75E0BC4CEE2;
-	Thu, 10 Apr 2025 02:09:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1744250979;
-	bh=5WAZIPN/EyEP4Yvj8qfVcq+vQ3y8dvMh/Wpf8md2JD8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f/bxq3xooKH2KD17rgbjqplyz2lCOlegYIHe9RY2N2BGCV7XFuLEzpe3+FfCcX3OQ
-	 xRlzKOGOFCozENPuywXyNF2Ra+MXFezgzsV43XoYUD9+N2mZVRfJQPs4D+7gOEMcC+
-	 9LQbbsX98fjRqRNus5xL5k3zNkrvMqYifdr7WT64=
-Date: Wed, 9 Apr 2025 19:09:38 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Cc: hannes@cmpxchg.org, mhocko@suse.com, yosry.ahmed@linux.dev,
- muchun.song@linux.dev, yuzhao@google.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 2/3] mm: add max swappiness arg to lru_gen for
- anonymous memory only
-Message-Id: <20250409190938.f6befeeb9e86ad72f46503a5@linux-foundation.org>
-In-Reply-To: <b3af3747daefa00177b48f4666780da58177f7c0.1744169302.git.hezhongkun.hzk@bytedance.com>
-References: <cover.1744169302.git.hezhongkun.hzk@bytedance.com>
-	<b3af3747daefa00177b48f4666780da58177f7c0.1744169302.git.hezhongkun.hzk@bytedance.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744251198; c=relaxed/simple;
+	bh=9vAUrxAjKyHJDzRWa1qjDyDCIBOGq8ba6734aYNaDFw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X9SzC0//nJvRmsCXOu9fUufoQceos8rlQM2WL9BJ3RpoBxM27Ebz9wCyup0a4x+TWthw+Hug7PhSB3gsIEfhp6dL+rhwONB8Rxh0GN+p4DTs91LavowEqIi0oEwg2HOvitiJNNKUcChnQ8auxc0fISumdzN+3rdHWe3pmwVnM0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eRR0x8yB; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4766cb762b6so4007091cf.0;
+        Wed, 09 Apr 2025 19:13:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744251196; x=1744855996; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SVf9MwoCNxP+/cpn16doeRfq5MCUWo9WG7NPQ6gzoE0=;
+        b=eRR0x8yBm76xfey7CH659h6ZZdeLpBLTKQFZ5SH1y8hANcHGksm0njs9M+3Q3C6vJn
+         AtChtUkmP7hCTgD9WR4nBbgxibKH4B2xCn8Z24cOYNezwpPZ5eMm9FCvsc8mzLEszirm
+         FtXI4Dd+VZs9SEQj/aAOW75Tuepb3K/MjTK/6iEc5oItX1g2MVbimcOQwVZia27EAlN5
+         wCXwxH7js8f09TLYJf2x+MObEkuChcSPYSLufHFVs2FJLutijpg5LNk5NCxoxChEQJN3
+         ioJLxH8JY7rRrSl2xX8gRgieUrgDZH0Zt66Qj51Yw0a5QxqcCfnLz3tS9HRrVB14xl01
+         OBvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744251196; x=1744855996;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SVf9MwoCNxP+/cpn16doeRfq5MCUWo9WG7NPQ6gzoE0=;
+        b=tlLv/HSq+CrObXVjgHzKZJr0qBGq8cODoIkRbQjYGengshvs1V0h2VY95uRUMTen2A
+         +YUCH1zV/wYp1933mlEPHvDKfbKc8YbB8GBUtaldH7QgezuoF99dLPEDqq9+PrEVg4eF
+         PMvm1tG7Y/zLP4YznqfSIwR074uGrJ1vaKKE/xhpqz2VA7dl2rJBAC4c2m0CCzRlHjCc
+         6LmSF3vnrqp/nZXFGFrX3E00eT7PUvYHualVRcoqjDzgE3Y4xJPDH1RUqJPlMobVurRQ
+         9TnYreSW7tYL5XKx3VCs5LSW/D854PzH//A+pbnRMCS2HJR8ekRKeHtNVtb4DvxcUqhu
+         jfIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJSFlH+tArxXXZA3R6DNL7ZXzMX8yJnfHclKj1H3zyJ7sGbYDcCGjtLYcgb2em0tTgmss2hN5z3CU=@vger.kernel.org, AJvYcCXtB4bHI734lDn0EkzLYhjUfRaZfT3xoXgCr6o89ZulZrABnCSaknRn00pvOQRtDGzNZQF02mYNzXycaeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc8hpsO4YWT6hG7TuMG770tQX/6NYd8BAeEVJKNuZ4eOtqxNEt
+	HNitKJowjkCXdTUFdkPQP8XrdxylG6nJrXPN2vf6MIxyAK5WsPjon0x60R9niMQ/lvNEZwVza7O
+	oAL+1fZD17a6EVBLHH72S0+koKHA=
+X-Gm-Gg: ASbGncvh3KZh/iQkvUYSNB+q6z4zUXfbkhjrT1jPICSfR1NHLYr+zAF+mwot3kbyClf
+	Fs/DEpxw2UZE3lr7kAMLy+5qijR9xecHhs7qjsQNfT9PIdDpn8lFX1lOYRMct0fkNL0qbK/QvtD
+	+LvNOLepLB6WeDlih3+Clayv4=
+X-Google-Smtp-Source: AGHT+IFJvzycvA5vUmXv5irTcljyr+BVoSet8VToDY4cRxKU3iryBsHi2s0tUv1NJpc+zXaqMfk14OdXqDOQhzDLmPE=
+X-Received: by 2002:a05:622a:20a:b0:475:19cc:a81a with SMTP id
+ d75a77b69052e-4796cf08fcdmr17056041cf.21.1744251195738; Wed, 09 Apr 2025
+ 19:13:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20241212015734.41241-1-sultan@kerneltoast.com>
+ <20241212015734.41241-2-sultan@kerneltoast.com> <Z_Tlc6Qs-tYpxWYb@linaro.org>
+ <Z_U_LN0AtH_n4YtE@sultan-box.localdomain> <Z_VTRspvmOUfrawh@linaro.org>
+ <CAB8ipk8ARRdR8UPgLqJ3EcAzuE4KNEO=cmLNJLk6thTxdBSHWw@mail.gmail.com>
+ <CAB8ipk_Ayqmh=Ch2aH2c+i-q+qdiQ317VBH1kOHYN=R9dt6LOw@mail.gmail.com>
+ <Z_cjv0EJ45NShYOp@sultan-box.localdomain> <CAB8ipk8WOh5_XvRYJrPi6b6wf8G4=zjoFRWpXk3viv3gkHCn1g@mail.gmail.com>
+ <Z_coNmh-CabcfIWD@sultan-box.localdomain>
+In-Reply-To: <Z_coNmh-CabcfIWD@sultan-box.localdomain>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Thu, 10 Apr 2025 10:13:04 +0800
+X-Gm-Features: ATxdqUGiOybZ38qHE7UOBf3S7FIMeI6dQZvOR5vocfUu62Ttg_9QZjGSl_fRVik
+Message-ID: <CAB8ipk8AAFFtV3OA4S=g9X9AXsC4Ntr911DLLRkhgQtvMvXAvg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] cpufreq: schedutil: Fix superfluous updates caused by need_freq_update
+To: Sultan Alsawaf <sultan@kerneltoast.com>
+Cc: Stephan Gerhold <stephan.gerhold@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
+	Johan Hovold <johan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed,  9 Apr 2025 15:06:19 +0800 Zhongkun He <hezhongkun.hzk@bytedance.com> wrote:
+On Thu, Apr 10, 2025 at 10:09=E2=80=AFAM Sultan Alsawaf <sultan@kerneltoast=
+.com> wrote:
+>
+> On Thu, Apr 10, 2025 at 10:06:41AM +0800, Xuewen Yan wrote:
+> > On Thu, Apr 10, 2025 at 9:49=E2=80=AFAM Sultan Alsawaf <sultan@kernelto=
+ast.com> wrote:
+> > >
+> > > On Wed, Apr 09, 2025 at 07:48:05PM +0800, Xuewen Yan wrote:
+> > > > Or can we modify it as follows?
+> > > >
+> > > > -->8--
+> > > >
+> > > > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufre=
+q_schedutil.c
+> > > > index 1a19d69b91ed..0e8d3b92ffe7 100644
+> > > > --- a/kernel/sched/cpufreq_schedutil.c
+> > > > +++ b/kernel/sched/cpufreq_schedutil.c
+> > > > @@ -83,7 +83,7 @@ static bool sugov_should_update_freq(struct
+> > > > sugov_policy *sg_policy, u64 time)
+> > > >
+> > > >         if (unlikely(sg_policy->limits_changed)) {
+> > > >                 sg_policy->limits_changed =3D false;
+> > > > -               sg_policy->need_freq_update =3D
+> > > > cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);
+> > > > +               sg_policy->need_freq_update =3D true;
+> > > >                 return true;
+> > > >         }
+> > > >
+> > > > @@ -95,11 +95,15 @@ static bool sugov_should_update_freq(struct
+> > > > sugov_policy *sg_policy, u64 time)
+> > > >  static bool sugov_update_next_freq(struct sugov_policy *sg_policy,=
+ u64 time,
+> > > >                                    unsigned int next_freq)
+> > > >  {
+> > > > -       if (sg_policy->need_freq_update)
+> > > > +       if (sg_policy->need_freq_update) {
+> > > >                 sg_policy->need_freq_update =3D false;
+> > > > -       else if (sg_policy->next_freq =3D=3D next_freq)
+> > > > -               return false;
+> > > > +               if (cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_L=
+IMITS))
+> > > > +                       goto change;
+> > > > +       }
+> > > >
+> > > > +       if (sg_policy->next_freq =3D=3D next_freq)
+> > > > +               return false;
+> > > > +change:
+> > > >         sg_policy->next_freq =3D next_freq;
+> > > >         sg_policy->last_freq_update_time =3D time;
+> > >
+> > > If CPUFREQ_NEED_UPDATE_LIMITS isn't specified, then there's no need t=
+o request a
+> > > frequency switch from the driver when the current frequency is exactl=
+y the same
+> > > as the next frequency.
+> >
+> > Yes, the following check would return false:
+> >
+> >  +       if (sg_policy->next_freq =3D=3D next_freq)
+> >  +               return false;
+>
+> But what does that change fix? In fact, that change causes a limits updat=
+e to
+> trigger a frequency switch request to the driver even when the new freque=
+ncy is
+> the same as the current one.
 
-> The MGLRU
+We set the sg_policy->need_freq_update =3D false instead of
+sg_policy->need_freq_update =3D
+cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS),
+to fix the original issue, and then add the
++               if (cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS))
++                       goto change;
 
-paging yuzhao?
+to allow cpufreq to update when CPUFREQ_NEED_UPDATE_LIMITS is set.
 
-> already supports reclaiming only from anonymous memory
-> via the /sys/kernel/debug/lru_gen interface. Now, memory.reclaim
-> also supports the swappiness=max parameter to enable reclaiming
-> solely from anonymous memory. To unify the semantics of proactive
-> reclaiming from anonymous folios, the max parameter is introduced.
-> 
-> Additionally, the use of SWAPPINESS_ANON_ONLY in place of
-> 'MAX_SWAPPINESS + 1' improves code clarity and makes the intention
-> more explicit.
-> 
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -2697,8 +2697,11 @@ static bool should_clear_pmd_young(void)
->  		READ_ONCE((lruvec)->lrugen.min_seq[LRU_GEN_FILE]),	\
->  	}
->  
-> +#define max_evictable_type(swappiness)						\
-> +	((swappiness) != SWAPPINESS_ANON_ONLY)
-> +
->  #define evictable_min_seq(min_seq, swappiness)				\
-> -	min((min_seq)[!(swappiness)], (min_seq)[(swappiness) <= MAX_SWAPPINESS])
-> +	min((min_seq)[!(swappiness)], (min_seq)[max_evictable_type(swappiness)])
-
-Why oh why did we implement these in cpp?
-
->  
-> @@ -3857,7 +3860,7 @@ static bool inc_min_seq(struct lruvec *lruvec, int type, int swappiness)
->  	int hist = lru_hist_from_seq(lrugen->min_seq[type]);
->  	int new_gen, old_gen = lru_gen_from_seq(lrugen->min_seq[type]);
->  
-> -	if (type ? swappiness > MAX_SWAPPINESS : !swappiness)
-> +	if (type ? (swappiness == SWAPPINESS_ANON_ONLY) : !swappiness)
-
-This expression makes my brain bleed.
-
-	if (type) {
-		if (swappiness == SWAPPINESS_ANON_ONLY) {
-			/*
-			 * Nice comment explaining why we're doing this
-			 */
-			goto done;;
-		}
-	} else {
-		if (!swappiness) {
-			/*
-			 * Nice comment explaining why we're doing this
-			 */
-			goto done;
-		}
-	}
-
-or
-
-	if (type && (swappiness == SWAPPINESS_ANON_ONLY)) {
-		/*
-		 * Nice comment explaining why we're doing this
-		 */
-		goto done;
-	}
-
-	if (!type && !swappiness) {
-		/*
-		 * Nice comment explaining why we're doing this
-		 */
-		goto done;
-	}
-
-It's much more verbose, but it has the huge advantage that it creates
-locations where we can add comments which tell readers what's going on.
-Which is pretty important, no?
-	
->  		goto done;
->  
->  	/* prevent cold/hot inversion if the type is evictable */
-> @@ -5523,7 +5526,7 @@ static int run_cmd(char cmd, int memcg_id, int nid, unsigned long seq,
->  
->  	if (swappiness < MIN_SWAPPINESS)
->  		swappiness = get_swappiness(lruvec, sc);
-> -	else if (swappiness > MAX_SWAPPINESS + 1)
-> +	else if (swappiness > SWAPPINESS_ANON_ONLY)
->  		goto done;
->  
->  	switch (cmd) {
-> @@ -5580,7 +5583,7 @@ static ssize_t lru_gen_seq_write(struct file *file, const char __user *src,
->  	while ((cur = strsep(&next, ",;\n"))) {
->  		int n;
->  		int end;
-> -		char cmd;
-> +		char cmd, swap_string[5];
->  		unsigned int memcg_id;
->  		unsigned int nid;
->  		unsigned long seq;
-> @@ -5591,13 +5594,22 @@ static ssize_t lru_gen_seq_write(struct file *file, const char __user *src,
->  		if (!*cur)
->  			continue;
->  
-> -		n = sscanf(cur, "%c %u %u %lu %n %u %n %lu %n", &cmd, &memcg_id, &nid,
-> -			   &seq, &end, &swappiness, &end, &opt, &end);
-> +		n = sscanf(cur, "%c %u %u %lu %n %4s %n %lu %n", &cmd, &memcg_id, &nid,
-> +			   &seq, &end, swap_string, &end, &opt, &end);
-
-Permits userspace to easily overrun swap_string[].  OK, it's root-only,
-but still, why permit this?
-
->  		if (n < 4 || cur[end]) {
->  			err = -EINVAL;
->  			break;
->  		}
->  
-> +		/* set by userspace for anonymous memory only */
-> +		if (!strncmp("max", swap_string, sizeof("max"))) {
-
-Can sscanf() give us a non null-terminated string?
-
-> +			swappiness = SWAPPINESS_ANON_ONLY;
-> +		} else {
-> +			err = kstrtouint(swap_string, 0, &swappiness);
-> +			if (err)
-> +				break;
-> +		}
-> +
->  		err = run_cmd(cmd, memcg_id, nid, seq, &sc, swappiness, opt);
->  		if (err)
->  			break;
-
+>
+> Sultan
 
