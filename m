@@ -1,159 +1,231 @@
-Return-Path: <linux-kernel+bounces-597437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E9FA839C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:50:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF45DA839CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F511B803A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:49:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBACC18993CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E9B204859;
-	Thu, 10 Apr 2025 06:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9AC20468A;
+	Thu, 10 Apr 2025 06:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f80D4EnV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YdTw5jaV"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA08E2046A4;
-	Thu, 10 Apr 2025 06:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2745E204C3E
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744267758; cv=none; b=usHig9c0HaVkzKtJiIOVicOjt30kiismR7fmuc42s2rH950QUPXj5hhVFUKV3exbwysBcQmIplAr+3WGE8FpG7m7T9H7GovAWuRfpiNfaJllkHICEWgtB7CMdbTekkv3mXZ51dpLfwknOmOUyZVfBjQWuzLoxpgCGYFguDoOzME=
+	t=1744267793; cv=none; b=QFxO5fCWMJpOIsItdenkBWi5JHgO71hz/l9vjJq/H8CcmBwroS8X2chAsAiiBb5Hc6wiT99mf/viRIOPUqHct76ohX3/ZNmRC2RZnR74raRwh75tt2aAqyf4WJ+n8yV/vFP1EIZKxUIJqdeIOleCv09aOt7gvLIHp/QRRqUeCzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744267758; c=relaxed/simple;
-	bh=nz4enF8Jz59Sf6Vavxspe3ycCjV1pMiLTmu1sO5NYe4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AfClMY+6TadcEnH845XTkmeq/j4UE406IfsyTEijaGYXlb89Ei2xG4g6fAB/V6myV9IQ+oJOSolghGEnKRK8a694dXvpTIst3ofwHyFMyi4t/y7F4EJ2lmyrV6gVWdIqGD40F4aZyoc4QHxaTNcXFcvayja6TuKHVcPEYm3kmCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f80D4EnV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE25CC4CEED;
-	Thu, 10 Apr 2025 06:49:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744267758;
-	bh=nz4enF8Jz59Sf6Vavxspe3ycCjV1pMiLTmu1sO5NYe4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f80D4EnV36LeKziBuUUGIcnLVQ0ynTBEhcgG8uvQFGYq5tEQLCoBTuxKX3Xp/LJJR
-	 Y54H9W1vnUz4+lIzaIbkgsRq50P+dN8mfBdw0SPnJLwD+G+IgdpBlJ4R70BOY2LCEY
-	 ArjP7KX3DON9JpdbmcYygn4bnhE8KRm6w0sLt9xvXGIpHLXHZJMe6OYXqVSvV+VK4d
-	 3NLTCnvpk3pU3eO+gEAAdVE7e+YiywWXslDu0qOf4D6yqy3Cbj0zgJXJ6dPO9dEvF8
-	 HC7f44j8D+pShfpasgV4U5oKZhEZ3+d5D4ep8a+c0Dmn6jI9Vc5FYrPctFDastqj6C
-	 9E26wAi47imhA==
-Date: Wed, 9 Apr 2025 23:49:16 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] Metric related performance improvements
-Message-ID: <Z_dp7E2wtSek-KHo@z2>
-References: <20250410044532.52017-1-irogers@google.com>
+	s=arc-20240116; t=1744267793; c=relaxed/simple;
+	bh=qKsDk9EZ2dacQJ71qnkeU1d5QGUNiU0xLXDxuP55mBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qyrtslNFuo0ITvbe83c/SoQ7ciTdX+ZQ6bDN3OP/GQhqtdDaS6cKE0pb6Z05MtGdjefDgoOu8dYNX8bYKIMUjbWgs4sibHqPZ/m/UC/XXCgqY2I9l34LDpMYZBraZYf7Qsf284+6ACppYjvRDev3ehWEXnNNsdZSRdAGJkgNDZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YdTw5jaV; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2d0a742df27so441280fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 23:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744267791; x=1744872591; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FpF7wEE+1cJWx9zAtKf9QlygCmnNGJM9CNsxuBDedRk=;
+        b=YdTw5jaVbVvFDS+IIkiX5jXkIPFo9OSWKYMWyeu6FGDMlZO3wR/C3EkZmLkGpI4sAF
+         cMaONnpmZiqZzp+v6Ck+pFBivMkJX3+gr5/x+0oLtyl6F2nKAmU+QKdPUqNWo8WQOwm+
+         FBB0C8hMTOMdQz1lKqlnz0sethzBRjW1TBKI65ydbdTEtH9/le2M0iHBX2Ft6OrnsKHo
+         L+Rc2C4OkaVaYiAa8b6qMNPvV2CLT/iuGjBv5u+Mb2ea2REKDLFFdmh8kWAd5p0Nov7f
+         ZP3/Tk/6WiNifD16eKQM3qfkHJtL00CFl1OdWaViDMKzlx7rI4uumbPHFCoxwAx8mA4D
+         U6kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744267791; x=1744872591;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FpF7wEE+1cJWx9zAtKf9QlygCmnNGJM9CNsxuBDedRk=;
+        b=lOA5fHm+RTEmCEGlexuktUjH/eOGpZCadRVpuGFI6Qn7Gwv8LoBjZf+rpcPBwc4yEH
+         6WaZ8vlRhZvq/m+uOq2oiH6ga35t8tHysYfvwyMHPFLOL2H4h1kdmAiJamotJZDc0exg
+         G8/Ka9xwWmvt2UOu1xZT0H28EiVKZOtifAdDo4PjqG97/LRC+/+pzDyMi1IWzT8JtUEv
+         46VpXEAxIvRbyXMo/vfUi4tTI0r2sI0AQuS/His1+8Dl9aR5MQcP49GywVafnLH4awAI
+         aQv3Q1JWPerJzBgAip3rPzBbw1BLUc06eZ5LEAQnnnR3w6+YEEubbMasrQ/f4P1lZxAF
+         8J8Q==
+X-Gm-Message-State: AOJu0YwEfgHh4o2vPlf0Bl4+FJwBe24MrUntYnS6Bewq55VppTPCmxAo
+	pGjg/8V8Frz6jJsaBsxX6qyOUz0Ldl3feC28xt3180OcgGD1vkjCQKwS/eiEpmHVvmbtNBC2f9l
+	p60NJ9c9ikDmo9FIo3zjVVyXki3mkDp0apEF2WA==
+X-Gm-Gg: ASbGncvW7ZTpP2VsqYPaAdH1pFc/XI/YVa1btCPbhfVXQmLSsOf1VIJ/BbGwbJoY2ys
+	dBxavvr0W2hV3M/P9mkCe7Q8pFTTAHHeGPim4yrbIZAt5eSeOlfMyKxtSFWVzb3CN2OdZGKkSp8
+	DYVJipFPcP0uDfvsc539DHBp4=
+X-Google-Smtp-Source: AGHT+IHI4FgOoH6eOg0ztL2Lx7hiXdosqXiiUD+d8J9IOEiCubchzZoLqMtVD0Mmvo3sJz+QQ7r84CVnm0uFw++DJDA=
+X-Received: by 2002:a05:6871:4009:b0:2c4:1b1c:42c3 with SMTP id
+ 586e51a60fabf-2d0b3a2a298mr929589fac.9.1744267791101; Wed, 09 Apr 2025
+ 23:49:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250410044532.52017-1-irogers@google.com>
+References: <20250305130634.1850178-1-jens.wiklander@linaro.org>
+ <20250305130634.1850178-6-jens.wiklander@linaro.org> <Z-JOPgcWlpTlskgd@sumit-X1>
+ <CAHUa44GjpHT5Nqo+Ar5jNYNPV-YJQYpLTCf=7oJ1o0VjP-t0nA@mail.gmail.com>
+ <Z-ucuPzwz4IqVTgb@sumit-X1> <CAHUa44FpsCVrbwj1=nsJVJFVJSF1kzKdWAkAMXRu6EdLrLvh8g@mail.gmail.com>
+ <Z_To9V-JOKZ7ChhE@sumit-X1> <CAHUa44EGWuVPjoxpG-S66he=6dkvkwzxNewaGKVKXUxrO41ztg@mail.gmail.com>
+ <Z_ZtDQQY4eouqBh8@sumit-X1>
+In-Reply-To: <Z_ZtDQQY4eouqBh8@sumit-X1>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Thu, 10 Apr 2025 08:49:39 +0200
+X-Gm-Features: ATxdqUEvXiuy3pdj5yJylN_i-qNjZAR_HHoPy2N2W57yI_8PinKhMCxfS6kRFGI
+Message-ID: <CAHUa44GFzG8dr1Kbapbjy77c-wJb4gQVVom24eLLueOK=gCq=A@mail.gmail.com>
+Subject: Re: [PATCH v6 05/10] tee: implement restricted DMA-heap
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Simona Vetter <simona.vetter@ffwll.ch>, Daniel Stone <daniel@fooishbar.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ian,
+On Wed, Apr 9, 2025 at 2:50=E2=80=AFPM Sumit Garg <sumit.garg@kernel.org> w=
+rote:
+>
+> On Tue, Apr 08, 2025 at 03:28:45PM +0200, Jens Wiklander wrote:
+> > On Tue, Apr 8, 2025 at 11:14=E2=80=AFAM Sumit Garg <sumit.garg@kernel.o=
+rg> wrote:
+> > >
+> > > On Tue, Apr 01, 2025 at 10:33:04AM +0200, Jens Wiklander wrote:
+> > > > On Tue, Apr 1, 2025 at 9:58=E2=80=AFAM Sumit Garg <sumit.garg@kerne=
+l.org> wrote:
+> > > > >
+> > > > > On Tue, Mar 25, 2025 at 11:55:46AM +0100, Jens Wiklander wrote:
+> > > > > > Hi Sumit,
+> > > > > >
+> > > > >
+> > > > > <snip>
+> > > > >
+> > > > > >
+> > > > > > >
+> > > > > > > > +
+> > > > > > > > +#include "tee_private.h"
+> > > > > > > > +
+> > > > > > > > +struct tee_dma_heap {
+> > > > > > > > +     struct dma_heap *heap;
+> > > > > > > > +     enum tee_dma_heap_id id;
+> > > > > > > > +     struct tee_rstmem_pool *pool;
+> > > > > > > > +     struct tee_device *teedev;
+> > > > > > > > +     /* Protects pool and teedev above */
+> > > > > > > > +     struct mutex mu;
+> > > > > > > > +};
+> > > > > > > > +
+> > > > > > > > +struct tee_heap_buffer {
+> > > > > > > > +     struct tee_rstmem_pool *pool;
+> > > > > > > > +     struct tee_device *teedev;
+> > > > > > > > +     size_t size;
+> > > > > > > > +     size_t offs;
+> > > > > > > > +     struct sg_table table;
+> > > > > > > > +};
+> > > > > > > > +
+> > > > > > > > +struct tee_heap_attachment {
+> > > > > > > > +     struct sg_table table;
+> > > > > > > > +     struct device *dev;
+> > > > > > > > +};
+> > > > > > > > +
+> > > > > > > > +struct tee_rstmem_static_pool {
+> > > > > > > > +     struct tee_rstmem_pool pool;
+> > > > > > > > +     struct gen_pool *gen_pool;
+> > > > > > > > +     phys_addr_t pa_base;
+> > > > > > > > +};
+> > > > > > > > +
+> > > > > > > > +#if !IS_MODULE(CONFIG_TEE) && IS_ENABLED(CONFIG_DMABUF_HEA=
+PS)
+> > > > > > >
+> > > > > > > Can this dependency rather be better managed via Kconfig?
+> > > > > >
+> > > > > > This was the easiest yet somewhat flexible solution I could fin=
+d. If
+> > > > > > you have something better, let's use that instead.
+> > > > > >
+> > > > >
+> > > > > --- a/drivers/tee/optee/Kconfig
+> > > > > +++ b/drivers/tee/optee/Kconfig
+> > > > > @@ -5,6 +5,7 @@ config OPTEE
+> > > > >         depends on HAVE_ARM_SMCCC
+> > > > >         depends on MMU
+> > > > >         depends on RPMB || !RPMB
+> > > > > +       select DMABUF_HEAPS
+> > > > >         help
+> > > > >           This implements the OP-TEE Trusted Execution Environmen=
+t (TEE)
+> > > > >           driver.
+> > > >
+> > > > I wanted to avoid that since there are plenty of use cases where
+> > > > DMABUF_HEAPS aren't needed.
+> > >
+> > > Yeah, but how the users will figure out the dependency to enable DMA
+> > > heaps with TEE subsystem.
+> >
+> > I hope, without too much difficulty. They are after all looking for a
+> > way to allocate memory from a DMA heap.
+> >
+> > > So it's better we provide a generic kernel
+> > > Kconfig which enables all the default features.
+> >
+> > I disagree, it should be possible to configure without DMABUF_HEAPS if =
+desired.
+>
+> It's hard to see a use-case for that additional compile time option. If
+> you are worried about kernel size then those can be built as modules. On
+> the other hand the benifit is that we avoid ifdefery and providing sane
+> TEE defaults where features can be detected and enabled at runtime
+> instead.
 
-On Wed, Apr 09, 2025 at 09:45:29PM -0700, Ian Rogers wrote:
-> The "PMU JSON event tests" have been running slowly, these changes
-> target improving them with an improvement of the test running 8 to 10
-> times faster.
-> 
-> The first patch changes from searching through all aliases by name in
-> a list to using a hashmap. Doing a fast hashmap__find means testing
-> for having an event needn't load from disk if an event is already
-> present.
-> 
-> The second patch switch the fncache to use a hashmap rather than its
-> own hashmap with a limited number of buckets. When there are many
-> filename queries, such as with a test, there are many collisions with
-> the previous fncache approach leading to linear searching of the
-> entries.
-> 
-> The final patch adds a find function for metrics. Normally metrics can
-> match by name and group, however, only name matching happens when one
-> metric refers to another. As we test every "id" in a metric to see if
-> it is a metric, the find function can dominate performance as it
-> linearly searches all metrics. Add a find function for the metrics
-> table so that a metric can be found by name with a binary search.
-> 
-> Before these changes:
-> ```
-> $ time perf test -v 10
->  10: PMU JSON event tests                                            :
->  10.1: PMU event table sanity                                        : Ok
->  10.2: PMU event map aliases                                         : Ok
->  10.3: Parsing of PMU event table metrics                            : Ok
->  10.4: Parsing of PMU event table metrics with fake PMUs             : Ok
->  10.5: Parsing of metric thresholds with fake PMUs                   : Ok
-> 
-> real    0m18.499s
-> user    0m18.150s
-> sys     0m3.273s
-> ```
-> 
-> After these changes:
-> ```
-> $ time perf test -v 10
->  10: PMU JSON event tests                                            :
->  10.1: PMU event table sanity                                        : Ok
->  10.2: PMU event map aliases                                         : Ok
->  10.3: Parsing of PMU event table metrics                            : Ok
->  10.4: Parsing of PMU event table metrics with fake PMUs             : Ok
->  10.5: Parsing of metric thresholds with fake PMUs                   : Ok
-> 
-> real    0m2.338s
-> user    0m1.797s
-> sys     0m2.186s
-> ```
+My primary concern isn't kernel size, even if it shouldn't be
+irrelevant. It doesn't seem right to enable features that are not
+asked for casually. In this case, it's not unreasonable or unexpected
+that DMABUF_HEAPS must be explicitly enabled in the config if a heap
+interface is needed. It's the same as before this patch set.
 
-Great, I also see the speedup on my machine from 32s to 3s.
+>
+> >
+> > >
+> > > > This seems to do the job:
+> > > > +config TEE_DMABUF_HEAP
+> > > > + bool
+> > > > + depends on TEE =3D y && DMABUF_HEAPS
+> > > >
+> > > > We can only use DMABUF_HEAPS if the TEE subsystem is compiled into =
+the kernel.
+> > >
+> > > Ah, I see. So we aren't exporting the DMA heaps APIs for TEE subsyste=
+m
+> > > to use. We should do that such that there isn't a hard dependency to
+> > > compile them into the kernel.
+> >
+> > I was saving that for a later patch set as a later problem. We may
+> > save some time by not doing it now.
+> >
+>
+> But I think it's not a correct way to just reuse internal APIs from DMA
+> heaps subsystem without exporting them. It can be seen as a inter
+> subsystem API contract breach. I hope it won't be an issue with DMA heap
+> maintainers regarding export of those APIs.
 
-Tested-by: Namhyung Kim <namhyung@kernel.org>
+Fair enough. I'll add a patch in the next patch set for that. I guess
+the same goes for CMA.
 
-Thanks,
-Namhyung
-
-> 
-> Ian Rogers (3):
->   perf pmu: Change aliases from list to hashmap
->   perf fncache: Switch to using hashmap
->   perf metricgroup: Binary search when resolving referred to metrics
-> 
->  tools/perf/builtin-stat.c                |   6 +-
->  tools/perf/pmu-events/empty-pmu-events.c |  66 ++++++++-
->  tools/perf/pmu-events/jevents.py         |  66 ++++++++-
->  tools/perf/pmu-events/pmu-events.h       |  23 +++-
->  tools/perf/tests/pmu-events.c            | 129 +++++++++--------
->  tools/perf/util/fncache.c                |  69 +++++-----
->  tools/perf/util/fncache.h                |   1 -
->  tools/perf/util/hwmon_pmu.c              |  43 +++---
->  tools/perf/util/metricgroup.c            | 102 ++++++--------
->  tools/perf/util/metricgroup.h            |   2 +-
->  tools/perf/util/pmu.c                    | 167 +++++++++++++++--------
->  tools/perf/util/pmu.h                    |   4 +-
->  tools/perf/util/srccode.c                |   4 +-
->  tools/perf/util/tool_pmu.c               |  17 +--
->  14 files changed, 430 insertions(+), 269 deletions(-)
-> 
-> -- 
-> 2.49.0.504.g3bcea36a83-goog
-> 
+Cheers,
+Jens
 
