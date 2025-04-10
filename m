@@ -1,113 +1,125 @@
-Return-Path: <linux-kernel+bounces-598135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D25A84264
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B7DA8420F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D18219E64B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:04:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC471B60A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E343B283C98;
-	Thu, 10 Apr 2025 12:03:56 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0651281537;
+	Thu, 10 Apr 2025 11:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aETAk7Cx"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EC21E25E3;
-	Thu, 10 Apr 2025 12:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A121520766E
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 11:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744286636; cv=none; b=mQXMDPQtdl6p9GbAqn/PB8x8Db7d6QDlPmnYIaTf/y28crANqAkwJ0fsQVZVe41Y3ELMzKImyXdm7EPRPD1JLdPtGWx0kl8IUaszR/3hb3m87/NLtAGpLsTAOY+ftNhWYypYcV/ZJXKbAG2bTf/iqa2X9P4F3UQwMi7hGbrfOmg=
+	t=1744285784; cv=none; b=FEdWfWbhsb7NTIJTF67JJKkCZFnli6yNf7+9NoVi0gHXzU2H1tYfb1shT6WHPD0gt8DoKPmhe4ZicpN2JeBXYwoiUiE3I84PJTu+O44oCoJpWWx//Aj4MLr1qS6ejA6Bo7/YAGhB5LIy7Qfu/V6aZwOyUHmvzKIDaH9++RjRN4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744286636; c=relaxed/simple;
-	bh=6JRMMXKfVq+zPqoypSPNjKKxb+VJ2BadUFQRCRNAAIs=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=pFfgMQJ4FLrAUs+dw0VEUhqyNU1+pKDK8Fb5gp42MhSWfdg/ft4v5hxJu/cbfgUOMCvXaqzB5WwCy3Ru0fAr9sfv56Fsn0RvACwu3sFjEzxPsPxIKh1vJbd6CKt3JbXSNOcAt1X2NS3/flEFP28RDyLdkgbRDPHK24kSnfLM8k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ZYJ2B5G8jzsRxd;
-	Thu, 10 Apr 2025 19:46:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 8BDFF1402F5;
-	Thu, 10 Apr 2025 19:47:20 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAXzd++r_dnszPFBQ--.30447S2;
-	Thu, 10 Apr 2025 12:47:20 +0100 (CET)
-Message-ID: <fb9f7900d411a3ab752759d818c3da78e2f8f0f1.camel@huaweicloud.com>
-Subject: Credentials not fully initialized before bprm_check LSM hook
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
-	 <brauner@kernel.org>, Kees Cook <kees@kernel.org>, Paul Moore
-	 <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
-	 <serge@hallyn.com>, "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, zohar@linux.ibm.com
-Date: Thu, 10 Apr 2025 13:47:07 +0200
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1744285784; c=relaxed/simple;
+	bh=CyX2dkyDy2TN3OuSCMBhy3trR7Q2dHlQ8ESZVuYmIvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r8+V48JPeMstZuaWdPHr722HftuY9+dVLr10G7DoINezR92dQswIOSfTa1OeIBFJCICw6Cboq6oWri/uTrm51AO0cjeGcKcPJKPLpK3Pi4ujoxYdWxOBmvvnalhYqgBaWZRnm2iiVuVB2JUkqeFgfC/k5PbhXHlHgxll35LrAH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aETAk7Cx; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53A8IfdJ025839;
+	Thu, 10 Apr 2025 11:49:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=YycHY8LXypsniPbyo7Jy/mpsvEN/74
+	51F4aByubUeHU=; b=aETAk7CxebMy70E0bg+qwnZ4DG43urQ3ygCh39/euNKuj0
+	e+QwxSynbCl5K99Oe0X0WXB8EME+BHUfW76Gw4GmIHhIeQuNYa0C3cBOBu6gJRzH
+	DYHMjpBILNjd8cdc2EhhWaem+BbIybne7quui+B6VPwGVx/za9bgXm+pDGxN5Or7
+	onKLt8MMuww8GHBr3Jmt3HdPPfznDuWVtHAQZfA2hJcMGEHmqEV8szh7DpcaaET3
+	CorEAuCzDGSko2Mte3GbmaVE9PENWJf3KI3PLDgJzTSfk+wohelEHiprYrkbSSKV
+	EFh/D0H+7u8vewwjI7ZRGZdLQFmjPVnx+xTuZ65A==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ww2xdekq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Apr 2025 11:49:32 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53A8jEoP025537;
+	Thu, 10 Apr 2025 11:49:32 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45ugbm5sfu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Apr 2025 11:49:32 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53ABnS1O34407126
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Apr 2025 11:49:28 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 558D120040;
+	Thu, 10 Apr 2025 11:49:28 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 81CE020043;
+	Thu, 10 Apr 2025 11:49:25 +0000 (GMT)
+Received: from li-3c92a0cc-27cf-11b2-a85c-b804d9ca68fa.ibm.com (unknown [9.39.22.212])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 10 Apr 2025 11:49:25 +0000 (GMT)
+Date: Thu, 10 Apr 2025 17:19:23 +0530
+From: Aditya Gupta <adityag@linux.ibm.com>
+To: Gavin Shan <gshan@redhat.com>
+Cc: Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Danilo Krummrich <dakr@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sourabh Jain <sourabhjain@linux.ibm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [REPORT] Softlockups on PowerNV with upstream
+Message-ID: <eyy6fqvthcafbkt54e6ihydwuvnmo7xcaoprcmghziwz4thtju@m7kkfamzyksc>
+References: <20250409180344.477916-1-adityag@linux.ibm.com>
+ <Z_dWTU8UsvCHFMpN@localhost.localdomain>
+ <dc4c0d4e-a9a5-4fa5-b39d-4248fba26043@redhat.com>
+ <Z_d_8fyQzGuwzbIv@localhost.localdomain>
+ <675d6580-814f-4fae-9dc5-9470645adc07@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwAXzd++r_dnszPFBQ--.30447S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xw18ZFykZF18ZFW8XFWxCrg_yoWkAFg_CF
-	Z8GrWjkw1qqrZ3Jay5Ar1Yva9rXF40g3s8Za4Fqr9xW3y8Jws7Wa4qgryavry8Gr4kArnF
-	9Fnxta9xZw1fWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbx8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AK
-	xVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
-	DUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAOBGf3bdwDzAABsn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <675d6580-814f-4fae-9dc5-9470645adc07@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 5CQ-Zl-R9tsj6QqgOZRJVhOUi4mDhqWO
+X-Proofpoint-ORIG-GUID: 5CQ-Zl-R9tsj6QqgOZRJVhOUi4mDhqWO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-10_02,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=476 bulkscore=0
+ impostorscore=0 mlxscore=0 suspectscore=0 clxscore=1015 priorityscore=1501
+ spamscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504100086
 
-Hi everyone
+Hi Gavin,
 
-recently I discovered a problem in the implementation of our IMA
-bprm_check hook, in particular when the policy is matched against the
-bprm credentials (to be committed later during execve().
+On 25/04/10 07:44PM, Gavin Shan wrote:
+> > <...snip...>
+>
+> Aditya, please have a try when you get a chance, thanks! I verified it on Power9
+> machine where the issue exists and on one of my ARM64 machine.
 
-Before commit 56305aa9b6fab ("exec: Compute file based creds only
-once"), bprm_fill_uid() was called in prepare_binprm() and filled the
-euid/egid before calling security_bprm_check(), which in turns calls
-IMA.
+Yes Gavin, will try the patch and then reply.
 
-After that commit, bprm_fill_uid() was moved to begin_new_exec(), which
-is when the last interpreter is found.
+Thanks,
+- Aditya G
 
-The consequence is that IMA still sees the not yet ready credentials
-and an IMA rule like:
-
-measure func=3DCREDS_CHECK euid=3D0
-
-will not be matched for sudo-like applications.
-
-It does work however with SELinux, because it computes the transition
-before IMA in the bprm_creds_for_exec hook.
-
-Since IMA needs to be involved for each execution in the chain of
-interpreters, we cannot move to the bprm_creds_from_file hook.
-
-How do we solve this problem? The commit mentioned that it is an
-optimization, so probably would not be too hard to partially revert it
-(and keeping what is good).
-
-Thanks
-
-Roberto
-
+> 
+> Thanks,
+> Gavin
+> 
 
