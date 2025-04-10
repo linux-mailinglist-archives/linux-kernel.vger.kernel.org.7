@@ -1,78 +1,154 @@
-Return-Path: <linux-kernel+bounces-597525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98C41A83AEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:24:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D9CA83B09
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A98657A5574
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:22:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E2CD4A2557
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D144320E6E2;
-	Thu, 10 Apr 2025 07:21:59 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F93720CCC3;
+	Thu, 10 Apr 2025 07:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EHLwIe/8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31A520AF6C;
-	Thu, 10 Apr 2025 07:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B203220B819;
+	Thu, 10 Apr 2025 07:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744269719; cv=none; b=ftLa43k+GLi1A5Hs2EBNm/FrD62Jzvu515dz3EjQDPxOmyk0ejvQNknuLANX5a/dTis39T6AVws+1mIKcC38DRy0d5o9t8pPF4fc4Qv+5ik3xcTDJGaAgFz88lNo9UtRmQ69N0WYiUZFUxp2LOM9mb/H5lWqoxcul+193E2etWI=
+	t=1744269801; cv=none; b=f6p4GB3b0fwYIFXGhQJYufMccdyLPcOcnmJzeDuiy9/Mq5lBLrDpVcFkp1WrU/901GjCefAGxsXme5qK5+AqIW0+GQ5/OrdLojF8nwjO8/Wi6Q/D6TsP3TToaodr0zQXwFpscY5iQljizuDsQCWBv8w3eHuEk+/LpMztSJGp59s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744269719; c=relaxed/simple;
-	bh=dorXJXTWIWIP6/iW2KT5hpaWe+xzufigP/RnUc3Y5bs=;
+	s=arc-20240116; t=1744269801; c=relaxed/simple;
+	bh=pgPaGfdMAcLGht6GtgzTu7mpWhBpyFIPuLeMl1fltug=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t+E5m+9xU+0T2jKYhJ2bDqHKJ3dVLULoUR483oSY8RK99pHggATmstprlsh9FI2Squ9lvcfbjcRIlC+1gaXpOArtKPYfOVNBxjP00dFVYJMG9aiEeebMEjYDitSN2laGiieoLD2vIBkna5K9yEJU+07crakpVJh6OxAw2bYIZow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id BD93D68BFE; Thu, 10 Apr 2025 09:21:50 +0200 (CEST)
-Date: Thu, 10 Apr 2025 09:21:50 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, aleksander.lobakin@intel.com,
-	andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-	catalin.marinas@arm.com, corbet@lwn.net, dakr@kernel.org,
-	dan.j.williams@intel.com, dave.hansen@linux.intel.com,
-	decui@microsoft.com, gregkh@linuxfoundation.org,
-	haiyangz@microsoft.com, hch@lst.de, hpa@zytor.com,
-	James.Bottomley@HansenPartnership.com, Jonathan.Cameron@huawei.com,
-	kys@microsoft.com, leon@kernel.org, lukas@wunner.de,
-	luto@kernel.org, m.szyprowski@samsung.com,
-	martin.petersen@oracle.com, mingo@redhat.com, peterz@infradead.org,
-	quic_zijuhu@quicinc.com, tglx@linutronix.de, wei.liu@kernel.org,
-	will@kernel.org, iommu@lists.linux.dev, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-scsi@vger.kernel.org, x86@kernel.org, apais@microsoft.com,
-	benhill@microsoft.com, bperkins@microsoft.com,
-	sunilmut@microsoft.com, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: Re: [PATCH hyperv-next 5/6] arch, drivers: Add device struct
- bitfield to not bounce-buffer
-Message-ID: <20250410072150.GA32563@lst.de>
-References: <20250409000835.285105-1-romank@linux.microsoft.com> <20250409000835.285105-6-romank@linux.microsoft.com> <0eb87302-fae8-4708-aaf8-d16e836e727f@arm.com> <0ab2849a-5c03-4a8c-891e-3cb89b20b0e4@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tl+5LRamAqRUZrfET9GXi3mxZWD+6bOHoBeGnwCcMVc6wjwRHk10dG+MCmxeQ86GlW+BH+/umzodwTCnW5xYCoU/CSn1IKa7UskWGXz+QskmbmkxxWSUocypvGBlBiYHCC419/g8F3WulmYQ80FgCKrs3Cg2zxczKZcXlgU1sa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EHLwIe/8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DF78C4CEDD;
+	Thu, 10 Apr 2025 07:23:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744269801;
+	bh=pgPaGfdMAcLGht6GtgzTu7mpWhBpyFIPuLeMl1fltug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EHLwIe/8o7C43t3oFomCRXYTP5PnnDIjMva4j6gHEd4HpvZKZJXBczjkv3nuHmpYS
+	 V5leEjkS7hTyA1/jeRaVpj+oGT/OerV0Z4oZyzz19Bk051vdCDjFX2wcMvCryyg8Df
+	 3M0FHHZbyQCE9nFkbgKwh5cJ9TyHX0me19edDZyM1gduL134vIGesliZoeOSLOHNpX
+	 se2xwQtnhicpnAEsFJ19PCiZ0/nuQRQOLktdxf/kS36rR//1E0Tm1wQP8hI5URclmR
+	 Qm7HyLBNuiWP8GZ6/3/Y57jKoqnmI8tfRYAFe1LlRl4mkP4gVh0yj+fAdvCjQEo85/
+	 89o2nINIlqH8g==
+Date: Thu, 10 Apr 2025 09:23:18 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Antoni Pokusinski <apokusinski01@gmail.com>
+Cc: alexandre.belloni@bootlin.com, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	robh@kernel.org, alexander.stein@ew.tq-group.com, linux-rtc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] dt-bindings: rtc: pcf85063: add binding for RV8063
+Message-ID: <20250410-enchanted-uber-finch-c60afb@shite>
+References: <20250409170916.47224-1-apokusinski01@gmail.com>
+ <20250409170916.47224-4-apokusinski01@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0ab2849a-5c03-4a8c-891e-3cb89b20b0e4@linux.microsoft.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20250409170916.47224-4-apokusinski01@gmail.com>
 
-On Wed, Apr 09, 2025 at 09:44:03AM -0700, Roman Kisel wrote:
-> Do you feel this is shoehorned in `struct device`? I couldn't find an
-> appropriate private (== opaque pointer) part in the structure to store
-> that bit (`struct device_private` wouldn't fit the bill) and looked like
-> adding it to the struct itself would do no harm. However, my read of the
-> room is that folks see that as dubious :)
+On Wed, Apr 09, 2025 at 07:09:16PM GMT, Antoni Pokusinski wrote:
+> Microcrystal RV8063 is a real-time clock module with SPI interface.
+> 
+> Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
+> ---
+>  .../devicetree/bindings/rtc/nxp,pcf85063.yaml | 33 ++++++++++++++++++-
+>  1 file changed, 32 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf85063.yaml b/Documentation/devicetree/bindings/rtc/nxp,pcf85063.yaml
+> index 2f892f8640d1..cb31c7619d66 100644
+> --- a/Documentation/devicetree/bindings/rtc/nxp,pcf85063.yaml
+> +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf85063.yaml
+> @@ -12,6 +12,7 @@ maintainers:
+>  properties:
+>    compatible:
+>      enum:
+> +      - microcrystal,rv8063
 
-We'll need per-device information.  But it is much higher level than a
-need bounce buffer flag.
+Bindings are before the users, so this cannot be patch 3/3.
+
+>        - microcrystal,rv8263
+>        - nxp,pcf85063
+>        - nxp,pcf85063a
+> @@ -44,7 +45,12 @@ properties:
+>  
+>    wakeup-source: true
+>  
+> +  spi-cs-high: true
+> +
+> +  spi-3wire: true
+> +
+>  allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+>    - $ref: rtc.yaml#
+>    - if:
+>        properties:
+> @@ -52,6 +58,7 @@ allOf:
+>            contains:
+>              enum:
+>                - microcrystal,rv8263
+> +              - microcrystal,rv8063
+
+Keep the order.
+
+>      then:
+>        properties:
+>          quartz-load-femtofarads: false
+> @@ -65,12 +72,23 @@ allOf:
+>        properties:
+>          quartz-load-femtofarads:
+>            const: 7000
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          not:
+> +            contains:
+> +              enum:
+> +                - microcrystal,rv8063
+> +    then:
+> +      properties:
+> +        spi-cs-high: false
+> +        spi-3wire: false
+>  
+>  required:
+>    - compatible
+>    - reg
+>  
+> -additionalProperties: false
+> +unevaluatedProperties: false
+>  
+>  examples:
+>    - |
+> @@ -90,3 +108,16 @@ examples:
+>            };
+>          };
+>        };
+> +
+> +  - |
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        rtc@0 {
+> +          compatible = "microcrystal,rv8063";
+
+Messed indentation. Look at rest of the examples here and use the same
+indentation.
+
+Best regards,
+Krzysztof
 
 
