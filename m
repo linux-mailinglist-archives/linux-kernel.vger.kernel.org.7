@@ -1,116 +1,106 @@
-Return-Path: <linux-kernel+bounces-597302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70877A837BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:16:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB6F1A837C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 075A6170362
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:16:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4839461B04
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703C31F12F8;
-	Thu, 10 Apr 2025 04:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IeRFFuo/"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456B91F0E56;
+	Thu, 10 Apr 2025 04:22:58 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4B55234;
-	Thu, 10 Apr 2025 04:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEE5A47
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 04:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744258584; cv=none; b=T8XdjMGB6qY3B18k4gVRmATWDDMiU+Nne5oQeM8a1sIAthFE5+ZARCUqrjWMWjJZF3N+nYWBE1mqInFOEoUQuXxSRUntK9/A1vo9deiyNcyiopWHdbEyP9tvIsWUnbnT1xuS+bbZyBK8YoVnsqbMKwnJUIzOeI9s6z/+IqiSjdk=
+	t=1744258977; cv=none; b=kGlXbhtLLxZt/QMZ++VOf+qdwjOVJsU9eL8Nb/B+Z5be6ZJq7mfMaviF76SGtdMPibrc+iNKrwxQ9SYynphT7wQvbdw8os5WZK6zSJZb8qcJPaHdqK1vXz+xcOrI9cJrrIPc5z8As0N37KBAmznorg6XrhWQdW0EHmxARZ7KkLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744258584; c=relaxed/simple;
-	bh=eCqBNdrDzJ3x9QKNmY/h6+yCoYHsWVoQX1qTJ7S7hoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E2fSlkeCBsZEulLXSI2kS0se8uAmYYCZ2SkN33RmDBREJCZWOwlVPgis2NcUrwGs5vuaQ1nD3AN1bhEEufsDTUneulGttQ/vzW4GYVjykuLdE9IAQgQhQs+Gn5o4LLhfDzoNCnKZ2y6nyJEDch4Hpj6LOtUUsduVye11SIWUhfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IeRFFuo/; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-af19b9f4c8cso267547a12.2;
-        Wed, 09 Apr 2025 21:16:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744258583; x=1744863383; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QlmynTgByf4Kwa5VfoEnK8EdQwb5yKMa+V4z66nhhcU=;
-        b=IeRFFuo/oACl0vlTf3jejZ6ACTStrmU07nbxgMRJ6SBALKGMHFsjM81e4t+WLPKRy7
-         kc7CEIZDRha79zxZSoEbQbKOWlGbkmZIBVCT+HqA9JN3ylN39ME+8gNEvGrWCHvXmhk1
-         D/POxzpOwDqDVtPLiQy12m4o1W3Kgo/YxFmisqwMk8kxnX28jPmrLBN0Hoz0fQkPRwY/
-         O6/e3xmTfAXZEHaXVUyZ1YrHtnD9BO8eO2OdBlzapy6FyshJTxGZy6cncwmeOu7U6rph
-         JbxhbBDqAYorLnM29Lwf2IHGJ5v8Z2IN7W24dQxpOJiu2y8UfnUriXI57++uJ1Ktfv2D
-         WVDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744258583; x=1744863383;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QlmynTgByf4Kwa5VfoEnK8EdQwb5yKMa+V4z66nhhcU=;
-        b=u99vCc5FxISLUE3/hYuvmmHDpcjW3sFZeUPIS4v/UHO2YJ+5NjZAUDEgjJJv6z1GhG
-         qp+7hYVd//RZTupsYWA/JIAY35ogkrQBgiahzwh2VqQUwwmc+xrkFeGYb7QWlcGP3TFs
-         vACvNHMOQUCKA04EZ/VyG8WgDeCYOMsOcnEBr4aod+eBspcpIFYeDveFHL6IpTaFeoGB
-         ylTqa3TTapoP6fTvA1kB1NtC8agb4sywFdSydv7z89BHWHmB6LfukawEdP/WQbrnvqdH
-         8cJVngKy/umc2qbpCrjhccLJPuFcvcM8DjiO3uwOYUH/W0W/jBWWEXclZj1jfh3BFD9C
-         Zs0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXOFxppcM/DrHLIPE7uugc5I62pyLLrFmxHEEK9Q7Nt8ZiYDeyYwk3qEAv4AKBd8mVn9yHD4KC/@vger.kernel.org, AJvYcCXy6DkV8XNQ1skUqhhdoPYAc+nrwNT8PgZJrbCxqY4WUf3m4KK2Ii8eWYu4KOVQQWBKKMHKLW/hJdFbXaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCA3soDpcRPHlGqgZoErht4+Dq7DdOMjs9RBGh9B8kWo7EUu01
-	WvnheNKiEvDbgK0/HL2KTMRWndbStog5oq2gsf+8v7AJ4AHslA4J
-X-Gm-Gg: ASbGncudvOaOfmbewHOe15BanlGbYCQOxrgDLmnXuhx5a5ySCDl6ZnVjQmsJQFF4uz2
-	uny9pQlU3Lk3utX4PlYrDj4PxoURVjd31HSP8qVe21ctc7sJSjmvMyiGB0IFUv++ok3U9vc9jpD
-	ahGeoTvOtog4TjeohO2Dmp5bzCxL24ek8QABt4Ck32o09I4XonxXlUkBBE6jcXlgc4rG3BUDQ5E
-	VEOlMpvK9F+hd3oWrzLXsg+u9deCRj/vBBW668I3iPXwJViBYpKKvVUXacWm+dN2MRiD8Hrss4K
-	R9ZaYmmnGaPrPnzMnyiEAm42xA1/DhqsyVK9QB5G1D7lS5NgHgJBQM+ts+hB
-X-Google-Smtp-Source: AGHT+IFyjAQxZ/eBlALI7viUkwJoBudRUhuwEX5LYGJwRYb5anXvvc7BgZKTecl5Hqufy14LpTF3Fw==
-X-Received: by 2002:a05:6a20:d70f:b0:1f6:6539:e026 with SMTP id adf61e73a8af0-2016ccc42d7mr1278051637.15.1744258582590;
-        Wed, 09 Apr 2025 21:16:22 -0700 (PDT)
-Received: from hoboy.vegasvil.org ([2600:1700:2430:6f6f:e2d5:5eff:fea5:802f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b02a321f082sm2090380a12.68.2025.04.09.21.16.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 21:16:22 -0700 (PDT)
-Date: Wed, 9 Apr 2025 21:16:19 -0700
-From: Richard Cochran <richardcochran@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Kory Maincent <kory.maincent@bootlin.com>,
-	Simon Horman <horms@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/2] net: phy: Add Marvell PHY PTP support
-Message-ID: <Z_dGE4ZwjTgLMTju@hoboy.vegasvil.org>
-References: <Z_VdlGVJjdtQuIW0@shell.armlinux.org.uk>
- <20250409101808.43d5a17d@kmaincent-XPS-13-7390>
- <Z_YwxYZc7IHkTx_C@shell.armlinux.org.uk>
- <20250409104858.2758e68e@kmaincent-XPS-13-7390>
- <Z_ZlDLzvu_Y2JWM8@shell.armlinux.org.uk>
- <20250409143820.51078d31@kmaincent-XPS-13-7390>
- <Z_Z3lchknUpZS1UP@shell.armlinux.org.uk>
- <20250409180414.19e535e5@kmaincent-XPS-13-7390>
- <Z_avqyOX2bi44sO9@shell.armlinux.org.uk>
- <Z/b2yKMXNwjqTKy4@shell.armlinux.org.uk>
+	s=arc-20240116; t=1744258977; c=relaxed/simple;
+	bh=u2g++OlvdPtqQWi380MO3vZi9vdTWJjl2lDtMfKiV/I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=itHQ3r1FeMtRQNFnhQTVr0sJeTCx0GpenuJi55dkYmQsKJ7Z5lo8u6xBTq3NNiKjX2PRgWc9K9I5XPxodkVpGtOvN0i8vAIXTvES7q7cKqa40zDs0fu2JTMxJVoL6Nc6WwcXMsGf1g9DfAq9pNtqvVjUOeryiUFPVDqTaqSTJpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201622.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202504101222467137;
+        Thu, 10 Apr 2025 12:22:46 +0800
+Received: from localhost.localdomain (10.94.13.146) by
+ jtjnmail201622.home.langchao.com (10.100.2.22) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 10 Apr 2025 12:22:46 +0800
+From: Bo Liu <liubo03@inspur.com>
+To: <xiang@kernel.org>, <chao@kernel.org>
+CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, Bo Liu
+	<liubo03@inspur.com>
+Subject: [PATCH 0/2] erofs: support deflate decompress by using Intel QAT
+Date: Thu, 10 Apr 2025 00:20:46 -0400
+Message-ID: <20250410042048.3044-1-liubo03@inspur.com>
+X-Mailer: git-send-email 2.18.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z/b2yKMXNwjqTKy4@shell.armlinux.org.uk>
+Content-Type: text/plain
+X-ClientProxiedBy: Jtjnmail201613.home.langchao.com (10.100.2.13) To
+ jtjnmail201622.home.langchao.com (10.100.2.22)
+tUid: 2025410122246b0df1532b0f6c621da8f7d37d98b692f
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Wed, Apr 09, 2025 at 11:38:00PM +0100, Russell King (Oracle) wrote:
+This patch introdueces the use of the Intel QAT to decompress compressed
+data in the EROFS filesystem, aiming to improve the decompression speed
+of compressed datea.
 
-> Right, got to the bottom of it at last. I hate linuxptp / ptp4l.
+We created a 285MiB compressed file and then used the following command to
+create EROFS images with different cluster size.
+     # mkfs.erofs -zdeflate,level=9 -C16384
 
-So don't use it.  Nobody is forcing you.
+fio command was used to test random read and small random read(~5%) and
+sequential read performance.
+     # fio -filename=testfile  -bs=4k -rw=read -name=job1
+     # fio -filename=testfile  -bs=4k -rw=randread -name=job1
+     # fio -filename=testfile  -bs=4k -rw=randread --io_size=14m -name=job1
 
-Thanks,
-Richard
+Here are some performance numbers for reference:
+
+Processors: Intel(R) Xeon(R) 6766E(144 core)
+Memory:     521 GiB
+
+|-----------------------------------------------------------------------------|
+|           | Cluster size | sequential read | randread  | small randread(5%) |
+|-----------|--------------|-----------------|-----------|--------------------|
+| Intel QAT |    4096      |    538  MiB/s   | 112 MiB/s |     20.76 MiB/s    |
+| Intel QAT |    16384     |    699  MiB/s   | 158 MiB/s |     21.02 MiB/s    |
+| Intel QAT |    65536     |    917  MiB/s   | 278 MiB/s |     20.90 MiB/s    |
+| Intel QAT |    131072    |    1056 MiB/s   | 351 MiB/s |     23.36 MiB/s    |
+| Intel QAT |    262144    |    1145 MiB/s   | 431 MiB/s |     26.66 MiB/s    |
+| deflate   |    4096      |    499  MiB/s   | 108 MiB/s |     21.50 MiB/s    |
+| deflate   |    16384     |    422  MiB/s   | 125 MiB/s |     18.94 MiB/s    |
+| deflate   |    65536     |    452  MiB/s   | 159 MiB/s |     13.02 MiB/s    |
+| deflate   |    65536     |    452  MiB/s   | 177 MiB/s |     11.44 MiB/s    |
+| deflate   |    262144    |    466  MiB/s   | 194 MiB/s |     10.60 MiB/s    |
+
+Bo Liu (2):
+  erofs: remove duplicate code
+  erofs: support deflate decompress by using Intel QAT
+
+ fs/erofs/decompressor_deflate.c | 145 +++++++++++++++++++++++++++++++-
+ fs/erofs/internal.h             |   1 +
+ fs/erofs/sysfs.c                |  30 +++++++
+ fs/erofs/zdata.c                |   1 -
+ 4 files changed, 175 insertions(+), 2 deletions(-)
+
+-- 
+2.31.1
+
 
