@@ -1,160 +1,71 @@
-Return-Path: <linux-kernel+bounces-598029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C313A8416F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:05:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 916E3A84173
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E07BF4C3C99
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:05:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 801E24C39B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC14281518;
-	Thu, 10 Apr 2025 11:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AA328150A;
+	Thu, 10 Apr 2025 11:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkwCWKo0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="MoW5F/pN"
+Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916D620371E;
-	Thu, 10 Apr 2025 11:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7580A1DF991;
+	Thu, 10 Apr 2025 11:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744283117; cv=none; b=ZzlRLNKK+MmTW7ZfrLqWIGf06yNDBdKBRbb7LThxjw4cxu7+7wjgSbd15gOd71jmntIGzhcvgakyvirm8h2glrdquAEtnYPKDl2Em9g79NXeqVKge47LBRdtWnVFoTZ5nO6BhkSvXt8uH1alIG3WggdaE1dSwkgn0iLVkMgfwHI=
+	t=1744283181; cv=none; b=mD+6iqTVT9uyvUFuAmOQrbFTYp45kLgTJ8NXkuFBfPXY0l8YRBbMfBW7nTxKHk7ET/NkfycEiPLPCmzN/vguvMVe8DRinONFj21VIiKvbh40YStrq8pMh9R0BAVVnP1lB7/N+8G/7OnGL3nfjtBgtSLMm2+RIx+NDY8oyve5Ay4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744283117; c=relaxed/simple;
-	bh=nzGayYDyLzYbhMvnDs6xEo9akuBZ4O+f7CN91yJ3GGg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LAJj8dNSCBpefWtLcO7xVYuslMa1+LFmH5qOjn2A6SGiE25B87F06909FZ8pN00ZWr7/l0+EdT2I9WikwcUUnFEBQiOxSAgz9S5xpvsxMLRGLDZk/OR+q5AR02xRluaU8XM327WAmuHaWwAX38D50bXWUMP2KLJ6dJzshEBgf7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XkwCWKo0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08A2FC4CEDD;
-	Thu, 10 Apr 2025 11:05:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744283116;
-	bh=nzGayYDyLzYbhMvnDs6xEo9akuBZ4O+f7CN91yJ3GGg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XkwCWKo0pCdp6ohclIrNjSTFyg73PmPZtpbGSXUJn5/DxktDO9xgE/TgZ0AgQjnIj
-	 ynRTwgru934Z8PDHCOJdQ66Wmjdy1pORkqxddkgytPYPL4Wl3dCyPzj0MbV/ALFcAe
-	 oy+7l0TPXRrhwIbRI9WuHMoE4eHbl1IKJFx8SHc8kA9wsK6z8oFv0FfJIwjnOa9CKQ
-	 jkAmWXHIvgGf8mCnGpt52kBZTG2f0WB9LCzdfR0W3Igq33zDnbNsNBcfw2lhWHGiVu
-	 ZTQsYiuVtGG2Ho9hV7tIXgXJ2IVjF3z0KAH4TudG7cWBddRFl0kcJ+KbT7e9qtcGFz
-	 qGshBnAwpucRg==
-Message-ID: <efca2379-0474-4a02-8b3e-b4611f56bfcb@kernel.org>
-Date: Thu, 10 Apr 2025 13:05:11 +0200
+	s=arc-20240116; t=1744283181; c=relaxed/simple;
+	bh=AwuYDhxevKB+JgmDNskH6m+IaqfRvSBXWyZej42Fs/k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=noGgQO36tl40ZVtmGM4Ey54ViHfBgzubwXJp2bkZP3fhGSOaXSM8VpOJCLINz+UVgwfOeYWdSpA3H/1HrraPb+IfzvxXPRHmaX/5Gi34CjuH9AapNpygVRSce0f3Cyv8fdjsLsKVm1uW/nbKxPU51kNqTrXZ/J2a07LkzItpmxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=MoW5F/pN; arc=none smtp.client-ip=45.145.95.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
+	t=1744283165; bh=AwuYDhxevKB+JgmDNskH6m+IaqfRvSBXWyZej42Fs/k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=MoW5F/pNORr0VSzalNiRIh57Vzyn2rXf6oLbcBLryLS0Kjd7k5zVgJW6U1MGAcEdW
+	 LaleM5OmbYJBWtiGZELMKH+osEVMdSNr++HDLjKH0GF69sQSNUNHoRHkW/+ZsuZiJv
+	 8maAoU1HzOCdn2u4zlMG3uqq/X0XKqlu+0YQChXUfGduzQ4QMEW4J45KodE7xRwkHH
+	 xjR3SW+J3oetlt2wdZFLJNJ6EF7wm24nYo1dgYvi1kyXOQlM97rxdEFXD2ct0c6fzA
+	 JdNwjJ+MUpxw5e2R105zS6cCgUI/mRmleUK98UMu5u9fn8wIZAJqiyZwb49V3s4shI
+	 PQkSdTTJWxhzg==
+To: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org
+Cc: open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] wifi: ath9k: use devm for irq and ioremap
+ resource
+In-Reply-To: <20250410004130.49620-1-rosenp@gmail.com>
+References: <20250410004130.49620-1-rosenp@gmail.com>
+Date: Thu, 10 Apr 2025 13:06:05 +0200
+X-Clacks-Overhead: GNU Terry Pratchett
+Message-ID: <87plhktgwy.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH AUTOSEL 6.14 20/54] mptcp: move the whole rx path under
- msk socket lock protection
-Content-Language: en-GB, fr-BE
-To: Sasha Levin <sashal@kernel.org>, Mat Martineau <martineau@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- davem@davemloft.net, edumazet@google.com, netdev@vger.kernel.org,
- mptcp@lists.linux.dev, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250403190209.2675485-1-sashal@kernel.org>
- <20250403190209.2675485-20-sashal@kernel.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20250403190209.2675485-20-sashal@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sasha,
+Rosen Penev <rosenp@gmail.com> writes:
 
-Thank you for having suggested this patch.
+> Avoids having to manually free. Both of these get called and removed in
+> probe only and are safe to convert.
 
-On 03/04/2025 21:01, Sasha Levin wrote:
-> From: Paolo Abeni <pabeni@redhat.com>
-> 
-> [ Upstream commit bc68b0efa1bf923cef1294a631d8e7416c7e06e4 ]
-> 
-> After commit c2e6048fa1cf ("mptcp: fix race in release_cb") we can
-> move the whole MPTCP rx path under the socket lock leveraging the
-> release_cb.
-> 
-> We can drop a bunch of spin_lock pairs in the receive functions, use
-> a single receive queue and invoke __mptcp_move_skbs only when subflows
-> ask for it.
-> 
-> This will allow more cleanup in the next patch.
-> 
-> Some changes are worth specific mention:
-> 
-> The msk rcvbuf update now always happens under both the msk and the
-> subflow socket lock: we can drop a bunch of ONCE annotation and
-> consolidate the checks.
-> 
-> When the skbs move is delayed at msk release callback time, even the
-> msk rcvbuf update is delayed; additionally take care of such action in
-> __mptcp_move_skbs().
-> 
-> Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-> Reviewed-by: Mat Martineau <martineau@kernel.org>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> Link: https://patch.msgid.link/20250218-net-next-mptcp-rx-path-refactor-v1-3-4a47d90d7998@kernel.org
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+Erm, huh? The request_irq() change in ath_ahb_probe() is literally the
+same change that you sent once and that we had to revert. Not taking any
+more of these, sorry.
 
-With Mat, we are unsure why this patch has been selected to be
-backported up to v6.6. An AUTOSEL patch has been sent for v6.6, v6.12,
-v6.13 and v6.14. We think it would be better not to backport this patch:
-this is linked to a new feature, and it changes the way the MPTCP socket
-locks are handled.
-
-Could it then please be possible not to queue this patch to the stable
-queues?
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+Nacked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
 
