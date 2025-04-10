@@ -1,128 +1,126 @@
-Return-Path: <linux-kernel+bounces-597924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDA2FA84044
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:13:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8998A8402B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0FA2463339
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:09:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83FF27A82E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24CB27BF6C;
-	Thu, 10 Apr 2025 10:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A38027C17B;
+	Thu, 10 Apr 2025 10:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IoRHfRzw"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIDnKzJ3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAA7267722
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60539267722;
+	Thu, 10 Apr 2025 10:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744279656; cv=none; b=if1a1rfTn6xSpSHbrtW+HBwv/9QkVtL7NglTRbtU4MOd2dOdp4lSiHnCUZieckEnkltODhDfPzsS6kRUHZuPOUm6pX5HKLJ1LrYJdYtxWg7wW+hDqX9Zp9daJutQaz2cgZrtxI+MMOZe2shO3G3kGc1tVMOCjY3dZ6YOBhAxI4U=
+	t=1744279683; cv=none; b=JjeRdbxMuhs3rnSPBnNwPVf3d0W7W2d7O2G2zI/m9RUsJ78M0X3zMuaLry0h06anTzy97AshVr70weCTmE0D13FXi1SMV5cp0rby4lSZjqbMC3AwA1dSvUHUGirQy1NzrU5i+5Nej9WAgVP+UbZX9hCqSIlXzFPjLYbb6AH8v2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744279656; c=relaxed/simple;
-	bh=mJ9mgnz35xplAMqQgZX2OUtTggk0i/lvDwINJmbhB30=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=o7XrmuUrs3/dN6MSgoPk9FBMYLZNXxqrhI5AMVJFjUqZwoqk4x276sSoIYgPXHp5A4hAkC9hFO0qxLynVkcfZKeioFeESEBI2FkJfYsuL/uWqqZL2C+nZY+p+m/lI1H6Kf0ZBLNIYEEJRQTGjGfz3I4ezTfiFWMwPs4zRZES5dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IoRHfRzw; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <454072e0-9fd8-4deb-a97e-b454d5e3fd5f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744279641;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kq87Xuc97EJxv+6e/++Vx+LXIntDeg9NNkpI4Ptxm3I=;
-	b=IoRHfRzweTtYP3S55dHcfGkJ1Ca23meplZC7fbQQJI2FZDOtE5CRJDTBj7nPx8URg38nLE
-	RiqBB3YGRw5J9gKBzHxRjqSlVdUbRstAFHpy27g3ejSijmOO35flXDgaos5ODl0/aWTaeX
-	UBX+b6BZq2EwY6h1vXAJ8ryXo5070dY=
-Date: Thu, 10 Apr 2025 11:07:16 +0100
+	s=arc-20240116; t=1744279683; c=relaxed/simple;
+	bh=63Q2CP1BjWPMJIsb/dxHjtnUbcBupGKBm9IiQVKWr7o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=adWq9SMhpwd9cACOzBR8Q5avMWK4demVmZOFlPU042EWzhAxd7316p6321A5SE8gJrQRSD5PWo4GRnhV2ksc7foTkqWZk4Od+aa+SrXw+DHZrOy75IX9wbvD2anNRQBnNOawHt7ElN3zGTrWIBvFQbRYE9MCVyvtBxuLSjyKR7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIDnKzJ3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D038EC4CEDD;
+	Thu, 10 Apr 2025 10:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744279682;
+	bh=63Q2CP1BjWPMJIsb/dxHjtnUbcBupGKBm9IiQVKWr7o=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=fIDnKzJ3wWuyN+D28ZX3a75/K6ZAmTj7z1ReQ73W4dFXNVSjospzUtCngaaXJ+m45
+	 gT7rFPGKpoDlNeAbuZsdl9S04vKYEuU7pApb6K4+ebRxSCDRKOKWvyDA4hoHPnBepJ
+	 s4ZL65se4D/y1L1DwIgSu3+IKvZTlR2n0KP1DrM0lRjkcGwScJ5qQjZEedfTbxrr1W
+	 GP3X2/W+lqiyhUMDkqCe9MM7TsPYZa+wbMf1D+bwfLXUu9BUKuBgO+00ORsisocloY
+	 iXoemd8h2fY/vsDOXVfFBCsZY/o6BaT6pPw7Z+/dn+YedK5LvTJB8LGjCMUIF8egeN
+	 UwBFJQ/Rl5nTQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B578BC3601E;
+	Thu, 10 Apr 2025 10:08:02 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH v2 0/3] arm64: dts: qcom: x1e80100-hp-x14: add
+ usb-1-ss1-sbu-mux
+Date: Thu, 10 Apr 2025 12:07:27 +0200
+Message-Id: <20250410-hp-x14-v2-0-d36414704a0a@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Subject: Re: [PATCH net-next 0/2] net: ptp: driver opt-in for supported PTP
- ioctl flags
-To: Jacob Keller <jacob.e.keller@intel.com>, Andrew Lunn <andrew@lunn.ch>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>,
- Bryan Whitehead <bryan.whitehead@microchip.com>,
- UNGLinuxDriver@microchip.com, Horatiu Vultur <horatiu.vultur@microchip.com>,
- Paul Barker <paul.barker.ct@bp.renesas.com>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Richard Cochran <richardcochran@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Andrei Botila <andrei.botila@oss.nxp.com>,
- Claudiu Manoil <claudiu.manoil@nxp.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-References: <20250408-jk-supported-perout-flags-v1-0-d2f8e3df64f3@intel.com>
-Content-Language: en-US
-In-Reply-To: <20250408-jk-supported-perout-flags-v1-0-d2f8e3df64f3@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-B4-Tracking: v=1; b=H4sIAF+Y92cC/zXOQQ6CMBCF4auQWVvTViDWFfcwLGgZ7CSEkg4Sl
+ PTuVqLL/2XyZXZgjIQMt2KHiCsxhSmHPhXgfDc9UFCfG7TUlSylEX4WmyqFHFR/ra2ztTGQj+e
+ IA20HdG9ze+IlxNfhruq7/ggl/8SqhBS2xMp1urqgM00Ye3Y+hJHD+FzyJ3y29IY2pfQBG99Ut
+ 6kAAAA=
+X-Change-ID: 20250409-hp-x14-0f1d86bcb699
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744279681; l=1464;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=63Q2CP1BjWPMJIsb/dxHjtnUbcBupGKBm9IiQVKWr7o=;
+ b=tuqFUauzJa7LaauxOGCboKN4tSuMaOgeQubZN0kK0oeSGsOJFIel2tA1kTb4gywWqDDSUfRFw
+ V4xOSZ+9scmDW5Od13VRx9SUYjG3VbroHfZ+7DLgFiIsCimIbrouG90
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-On 08/04/2025 21:55, Jacob Keller wrote:
-> Both the PTP_EXTTS_REQUEST(2) and PTP_PEROUT_REQUEST(2) ioctls take flags
-> from userspace to modify their behavior. Drivers are supposed to check
-> these flags, rejecting requests for flags they do not support.
-> 
-> Many drivers today do not check these flags, despite many attempts to
-> squash individual drivers as these mistakes are discovered. Additionally,
-> any new flags added can require updating every driver if their validation
-> checks are poorly implemented.
-> 
-> It is clear that driver authors will not reliably check for unsupported
-> flags. The root of the issue is that drivers must essentially opt out of
-> every flag, rather than opt in to the ones they support.
-> 
-> Instead, lets introduce .supported_perout_flags and .supported_extts_flags
-> to the ptp_clock_info structure. This is a pattern taken from several
-> ethtool ioctls which enabled validation to move out of the drivers and into
-> the shared ioctl handlers. This pattern has worked quite well and makes it
-> much more difficult for drivers to accidentally accept flags they do not
-> support.
-> 
-> With this approach, drivers which do not set the supported fields will have
-> the core automatically reject any request which has flags. Drivers must opt
-> in to each flag they support by adding it to the list, with the sole
-> exception being the PTP_ENABLE_FEATURE flag of the PTP_EXTTS_REQUEST ioctl
-> since it is entirely handled by the ptp_chardev.c file.
-> 
-> This change will ensure that all current and future drivers are safe for
-> extension when we need to extend these ioctls.
-> 
-> I opted to keep all the driver changes into one patch per ioctl type. The
-> changes are relatively small and straight forward. Splitting it per-driver
-> would make the series large, and also break flags between the introduction
-> of the supported field and setting it in each driver.
-> 
-> The non-Intel drivers are compile-tested only, and I would appreciate
-> confirmation and testing from their respective maintainers. (It is also
-> likely that I missed some of the driver authors especially for drivers
-> which didn't make any checks at all and do not set either of the supported
-> flags yet)
-> 
-> Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+The usb_1_1 port doesn't have the PS8830 repeater, but apparently some
+MUX for DP altmode control. After a suggestion from sgerhold on
+'#aarch64-laptops' I added gpio-sbu-mux nodes from the x1e80100-QCP
+tree, and this appears to work well. It is still guesswork, but
+working guesswork.
 
-For the series:
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Added and rewired for usb_1_1
+
+Also, did some more changes as tested here:
+
+- remove unused i2c buses
+- amend order of nodes.
+
+The series is based on [1] from Johan.
+
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+---
+Changes in v2:
+- removed overlapping patches with [1] and [2] - thanks Johan
+- EDITME: use bulletpoints and terse descriptions.
+- Link to v1: https://lore.kernel.org/r/20250410-hp-x14-v1-0-b4e5ca253ec9@oldschoolsolutions.biz
+
+[1] https://lore.kernel.org/lkml/20250328084154.16759-1-johan+linaro@kernel.org/
+[2] https://lore.kernel.org/r/20250319160509.1812805-1-juerg.haefliger@canonical.com
+
+---
+Jens Glathe (3):
+      arm64: dts: qcom: x1e80100-hp-x14: add usb-1-ss1-sbu-mux
+      arm64: dts: qcom: x1e80100-hp-x14: remove unused i2c buses
+      arm64: dts: qcom: x1e80100-hp-x14: amend order of nodes
+
+ .../boot/dts/qcom/x1e80100-hp-omnibook-x14.dts     | 98 ++++++++++++++--------
+ 1 file changed, 62 insertions(+), 36 deletions(-)
+---
+base-commit: 2791023c72489c91f59cfe818776fc6cd164ddad
+change-id: 20250409-hp-x14-0f1d86bcb699
+
+Best regards,
+-- 
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
 
 
