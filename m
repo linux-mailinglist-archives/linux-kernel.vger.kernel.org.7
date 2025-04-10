@@ -1,195 +1,207 @@
-Return-Path: <linux-kernel+bounces-597487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C651A83A63
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:11:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF8CA83A6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5EDE18988F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:11:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E27C19E6FF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009DC204C03;
-	Thu, 10 Apr 2025 07:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D302046BF;
+	Thu, 10 Apr 2025 07:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tIdOdnh5"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXFmO6Cl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2001C20468B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57DB206F36;
+	Thu, 10 Apr 2025 07:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744269068; cv=none; b=B0y+1oD0QanuTTVK01OUQlftIsI84FUtoV3TL/UNPzFjTxmd8zlEpukUZqDaqlr2lNWmdAkWL15mv6Jkz8zY/q0aJp+DZo8uBX3JqHWn4KfipVAtaAIetZRSA7mQDpfO6KqpEFIo4HC2jRx9tPHjSfRbagbjDsknRgAOaiLUkI4=
+	t=1744269102; cv=none; b=iJABAcM9ZkBct3mHjwl1vhl8ocWPvb+qV6DZgSjG678iDHJObC2Z6vI4/m0YmfHMEXULkQmPAkr0NtLUIRxxc/WuKQGnNcjAgZlFNb6HglD4Y66cz6zT4zFw+ROn0SyPFgO13Yenqv1isq5VlQSfDGY+2sYgRd0Vkbn+iNOvIjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744269068; c=relaxed/simple;
-	bh=dvCmIESeU+0C8gMiKn7xzTjU+gOvecKI17trA15juLg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+55n6xRTOYt2AWH74e5ark6Dn1YlJ+dwluuo96l15iIDvOupSbIwaLWsCNU6sOxcKVGmGdXjxqfLe64iN3BouCV/BKOZt6WjQytLZRAEY9791vvekS4CJ9uBet41usrgbguevDsmA/nG5SZVtND6QT9n2+1uPHteNoaWa5Ne8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tIdOdnh5; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so93861066b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 00:11:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744269064; x=1744873864; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3OcYzRuci4DVDvTV5wL2NFanwr7+BVH3bP+rdckE45M=;
-        b=tIdOdnh5oAZhGDM7uWD7RpFi4PXKOpQH6bh/n6RPVExFaUig3IrrpAlmLffcoAUVEU
-         MX014UXDe4T40u/EftWo4s5x7Tfbl6ddorAyUyFoojwWXHNZPXzCUVvJ0BKuLt2Zln56
-         a9ZaXziLlH5zb79VpOa4J9zfhPBr5SL1YX7Gq/Nb66faCX0wibrTNMCRCeDleyom/yMp
-         MeUi6X82iteHze09A2ldUfnKq+mbSGsEF/6uHwsfp3dBGY+oM0HYZ5aGwa5pOHDHc8Ay
-         CK11lSEjbcHMJzrXDAILKdg1PmRsd1ujsrGNBAswtbvAcRded3p4H/9/qzWLloQS36HJ
-         Kqug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744269064; x=1744873864;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3OcYzRuci4DVDvTV5wL2NFanwr7+BVH3bP+rdckE45M=;
-        b=BtNLQ6yNl2bIExzHi4fLahhz3AFdWJ9+UgkeuQFHMhpT14nHkn4/dwg5lgqTRRlilL
-         xqddgcFRgtr/ALcn50DxBmDnBdutYapLU8GnQgDq8x3F0qHqgqn08magxXMwuWbCk+jD
-         BRNws95kjj5wKWjQ8NhtLoCuAxHH3a4TG79OrGKJClkaJcFIBHV+QEnJENDfNOR0Z7Ci
-         KrYkiqTDcupEOYJAfaphfMIT8yi49V11SgjL9cOpNyVr3krXYQgMtDIAWiz9cFCC7Di2
-         sW+FazJ5AJPnDxmgAyEVp+skp6kjMKE01tTJONORRpjnuAc3mg0qHvZZOYd850H6bNp4
-         7cQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCViFC7L8UWMVoHSajcduIH9FfL/V4rZ8Gyutcd8JKhDNl8qprdOmkRJducXc4IGc10kU1b9YotvigVTR3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY91dGQdARVjTcm9y74AF1DImq+jaXFWHsHmRMEL9I6rp2KoBA
-	IwseCwZPdxeHgd2vdJ3C+swciBdZKoytxwINcpDGUdsvzRvrydwFPzoxsqzW384=
-X-Gm-Gg: ASbGncv+doqvTMrCyYGWQC7GS5thN2boV0/6tM/o4Vs7EYhfdxsOmzHo33/gygh02hb
-	+4talXskQ++YboemlS4HjDhRg0z+XU41otLdBZcgQCEeBrfBX3A+TgXaec6reCptWTeDnMebvlL
-	OLc0o+69/Q3gP2DTkt9456vPCpAxM6bDDDnggwEeeoBEE82cMgBZ+LptoUVK0oJ26QfdxixsX0Z
-	DB4ooBtszThnNXjiNjKSWW8oj1t1xPsEds4RfAK3Eb6VsKJ3VHuzVeNZi4kwD4l/idu6epIia2i
-	zYzPK3PTQJIuuxnm/paCrzo0SOjFRWxd6SuoxbhQHPdWIaps2gw=
-X-Google-Smtp-Source: AGHT+IETfspJRi9jQhAHy7G+NAIq/HN8GQhfewV/oWn/J+Tx4X7F7gfIyNI7Jkc9sjEejt3cHqWuJA==
-X-Received: by 2002:a17:907:da0:b0:aca:a1d7:a830 with SMTP id a640c23a62f3a-acabd185e69mr120878666b.13.1744269064280;
-        Thu, 10 Apr 2025 00:11:04 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef30:ae8a:4fb8:9c71:6be])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1cb3fcdsm219989266b.107.2025.04.10.00.11.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 00:11:03 -0700 (PDT)
-Date: Thu, 10 Apr 2025 09:10:57 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, zhouyanjie@wanyeetech.com,
-	Conor Dooley <conor@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-mips@vger.kernel.org, imx@lists.linux.dev,
-	linux-rockchip@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH 09/19] arm: dts: qcom: sdx55/sdx65: Fix CPU
- power-domain-names
-Message-ID: <Z_dvAT7LdR7xbH45@linaro.org>
-References: <20250403-dt-cpu-schema-v1-0-076be7171a85@kernel.org>
- <20250403-dt-cpu-schema-v1-9-076be7171a85@kernel.org>
- <03011a33-174b-4027-bdd2-043aa685380b@oss.qualcomm.com>
- <CAPDyKFoZ7NfN+pkCPnusvTOEaxbQhr=1FJqzdDGrLcKAzBpGyQ@mail.gmail.com>
- <66f8d957-f7a5-4aec-b8e7-5bcc7ff7f569@oss.qualcomm.com>
+	s=arc-20240116; t=1744269102; c=relaxed/simple;
+	bh=lOL/KYAQsMuPcvnLTzDBF0wRTP6K0klZk+sB5D8LC8Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T0vjj4gt3a6lvzQ/hg4yKYQY2TL+DsZgp5wiLyEUlCfE8wraTGVW8ioO/RPNF9Z7dYHewukaYzgxPHpjDUSHnfUTYOUXJBJIV3uKrOdtdQvW9kuI788VZPfFovKD93tHG0jVY9YM471KjYVbWT1dzg2zV/SWlJnRS4VJJPgQynQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VXFmO6Cl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E11AC4CEE3;
+	Thu, 10 Apr 2025 07:11:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744269102;
+	bh=lOL/KYAQsMuPcvnLTzDBF0wRTP6K0klZk+sB5D8LC8Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VXFmO6Cll4GUdcWnsU6Vv9AjQGRoxVByRnHC3VmCoQy7gNY7D7NlKB/djhC7vjLJB
+	 3fMlAjLc+4rvScaHJu75gnx+pd/MCluP3ivbSYk5FEDrpPYlXa3jNqvMzPL9wuX5qk
+	 6jqbldMa/f27U0ASlhHkpKMkCXIQFMqhX/i7uFCE1papumh3q8tG8kVDW3oDNn+XhA
+	 t21zKo3T6YCdFgqUc1oibuQqL/+p3LZbX+efMW82va6i92f8CQpuPMMx09wWCHeqma
+	 BIC2W7h7Bm0R6CHCaGTHGtXCr7KS0UlZbNWSV1unx6FBQt1bKQHLpZvQc29uU3ViKC
+	 C40g3WKq9PNzA==
+Message-ID: <5af77349-5a76-4557-839b-d9ac643f5368@kernel.org>
+Date: Thu, 10 Apr 2025 09:11:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66f8d957-f7a5-4aec-b8e7-5bcc7ff7f569@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/28] mfd: zl3073x: Add components versions register defs
+To: Ivan Vecera <ivecera@redhat.com>, Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250407172836.1009461-1-ivecera@redhat.com>
+ <20250407172836.1009461-6-ivecera@redhat.com>
+ <a5d2e1eb-7b98-4909-9505-ec93fe0c3aac@lunn.ch>
+ <22b9f197-2f98-43c7-9cc9-c748e80078b0@redhat.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <22b9f197-2f98-43c7-9cc9-c748e80078b0@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 09, 2025 at 08:35:29PM +0200, Konrad Dybcio wrote:
-> On 4/7/25 6:27 PM, Ulf Hansson wrote:
-> > On Fri, 4 Apr 2025 at 22:41, Konrad Dybcio
-> > <konrad.dybcio@oss.qualcomm.com> wrote:
-> >>
-> >> On 4/4/25 4:59 AM, Rob Herring (Arm) wrote:
-> >>> "rpmhpd" is not documented nor used anywhere. As the enable-method is
-> >>> "psci" use "psci" for the power-domain name.
-> >>>
-> >>> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> >>> ---
-> >>
-> >> "psci" is what we want here, but these platforms require some more
-> >> massaging..
-> > 
-> > So this isn't for CPU performance scaling?
+On 09/04/2025 08:44, Ivan Vecera wrote:
+> On 07. 04. 25 11:09 odp., Andrew Lunn wrote:
+>> On Mon, Apr 07, 2025 at 07:28:32PM +0200, Ivan Vecera wrote:
+>>> Add register definitions for components versions and report them
+>>> during probe.
+>>>
+>>> Reviewed-by: Michal Schmidt <mschmidt@redhat.com>
+>>> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+>>> ---
+>>>   drivers/mfd/zl3073x-core.c | 35 +++++++++++++++++++++++++++++++++++
+>>>   1 file changed, 35 insertions(+)
+>>>
+>>> diff --git a/drivers/mfd/zl3073x-core.c b/drivers/mfd/zl3073x-core.c
+>>> index 39d4c8608a740..b3091b00cffa8 100644
+>>> --- a/drivers/mfd/zl3073x-core.c
+>>> +++ b/drivers/mfd/zl3073x-core.c
+>>> @@ -1,10 +1,19 @@
+>>>   // SPDX-License-Identifier: GPL-2.0-only
+>>>   
+>>> +#include <linux/bitfield.h>
+>>>   #include <linux/module.h>
+>>>   #include <linux/unaligned.h>
+>>>   #include <net/devlink.h>
+>>>   #include "zl3073x.h"
+>>>   
+>>> +/*
+>>> + * Register Map Page 0, General
+>>> + */
+>>> +ZL3073X_REG16_DEF(id,			0x0001);
+>>> +ZL3073X_REG16_DEF(revision,		0x0003);
+>>> +ZL3073X_REG16_DEF(fw_ver,		0x0005);
+>>> +ZL3073X_REG32_DEF(custom_config_ver,	0x0007);
+>>> +
+>>>   /*
+>>>    * Regmap ranges
+>>>    */
+>>> @@ -159,10 +168,36 @@ EXPORT_SYMBOL_NS_GPL(zl3073x_dev_alloc, "ZL3073X");
+>>>   
+>>>   int zl3073x_dev_init(struct zl3073x_dev *zldev)
+>>>   {
+>>> +	u16 id, revision, fw_ver;
+>>>   	struct devlink *devlink;
+>>> +	u32 cfg_ver;
+>>> +	int rc;
+>>>   
+>>>   	devm_mutex_init(zldev->dev, &zldev->lock);
+>>>   
+>>> +	scoped_guard(zl3073x, zldev) {
+>>
+>> Why the scoped_guard? The locking scheme you have seems very opaque.
 > 
-> Nope!
+> We are read the HW registers in this block and the access is protected 
+> by this device lock. Regmap locking will be disabled in v2 as this is 
+
+Reading ID must be protected by mutex? Why and how?
+
+What is a "device lock"?
+
+> not sufficient.
 > 
+>>> +		rc = zl3073x_read_id(zldev, &id);
+>>> +		if (rc)
+>>> +			return rc;
+>>> +		rc = zl3073x_read_revision(zldev, &revision);
+>>> +		if (rc)
+>>> +			return rc;
+>>> +		rc = zl3073x_read_fw_ver(zldev, &fw_ver);
+>>> +		if (rc)
+>>> +			return rc;
+>>> +		rc = zl3073x_read_custom_config_ver(zldev, &cfg_ver);
+>>> +		if (rc)
+>>> +			return rc;
+>>
+>> Could a parallel operation change the ID? Upgrade the firmware
+>> version?
+>>
+>> 	Andrew
+> 
+> No, but register access functions require the device lock to be held. 
+> See above.
 
-Huh, this is definitely "perf" (= cpufreq) and not "psci" (= cpuidle).
-If you run blame on this line you get to:
+Andrew comments stay valid here. This is weird need of locking and your
+explanation is very vague.
 
-commit 0ec7bde7b590f8efa5823df3b52b32dd373060ff
-Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date:   Thu Apr 8 22:34:45 2021 +0530
+BTW, do not send v2 before people respond to your comments in reasonable
+time. You just send 28 patchset and expect people to finish review after
+one day.
 
-    ARM: dts: qcom: sdx55: Add CPUFreq support
-
-    Add CPUFreq support to SDX55 platform using the cpufreq-dt driver.
-    There is no dedicated hardware block available on this platform to
-    carry on the CPUFreq duties. Hence, it is accomplished using the CPU
-    clock and regulators tied together by the operating points table.
-
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0ec7bde7b590f8efa5823df3b52b32dd373060ff
-
-The OPP table looks like it's supposed to set SDX55_CX performance
-states according to the chosen CPU frequency. MSM8909 has a similar
-setup where the CPU is supplied directly by VDDCX and we describe that
-with "perf" too [1].
-
-What I don't understand is why the name "rpmhpd" does not appear
-in any driver. The MSM8909 setup goes via qcom-cpufreq-nvmem, where
-"perf" is directly assigned for cpufreq scaling. I can only think of two
-possible reasons:
-
- - The power domain is implicitly attached to the OPP table(?), because
-   there is just a single power domain defined on the CPU, or
-
- - This was never working correctly.
-
-For both cases, I think it would be best to change the power domain name
-to "perf" like Uffe suggested.
-
-Thanks,
-Stephan
-
-[1]: https://lore.kernel.org/linux-pm/20231018-msm8909-cpufreq-v2-0-0962df95f654@kernkonzept.com/
+Best regards,
+Krzysztof
 
