@@ -1,176 +1,179 @@
-Return-Path: <linux-kernel+bounces-598975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B22A84D69
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:45:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8FCBA84D6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:46:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADC671BA1888
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:44:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43F7619E2FB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8593A1E7C0E;
-	Thu, 10 Apr 2025 19:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBF429009B;
+	Thu, 10 Apr 2025 19:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="psVvYNxz"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HkDkSnj3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C93284B5A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 19:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6FD290097
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 19:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744314222; cv=none; b=eulNJCcuVbNa1abwrKLAaHpsJokvyEjDbAWHONkNs9/vsaxJ+EwS+Kt+K9EB0uzc0Cj8jHzQGHauw+lE2bV3P3hJ8hnYqQxzXPtBIJtbaTIzZr8/YUi/0htMrqp52CgBquRChhKARw/lT+4mOhlwffl5IDT74qtiUPBUjotBbGE=
+	t=1744314255; cv=none; b=hb3w0MeFQGuC6CEDnmAxreGoAerOOP17rDYOCqzRtWpgvMtMr6SmGnIs4P2FgF9OIigAaPwf7eOor7yNfYht/AGCYz7qWgTn7xEbWcQeDea4gJU4QvbF9a0wInxnWKHBE+cRv3poSZElHnKGV660ucKHHwTpydbC3q27k9157yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744314222; c=relaxed/simple;
-	bh=mNAX33oXLE17IXsgRf2ZBqnaUHbAcZtO3oJiLgtufRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ww79lK/KjDCCfuS6C1NDH0yCEGN1TA5u0Rg+qCuT02VIcevkBWb3rgZTl5hwjYb9mPKxqS05mMEYDg+Pd8w9XGPeVMu5dlEAz51M7S4mFx3ZaIKssbyebHeAK4wzfDXL5dViwxh6w7hepHizeHoEgGTCuGw8+SVJ5tT/ppbn5Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=psVvYNxz; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2264c9d0295so41495ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 12:43:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744314220; x=1744919020; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ED7Dxab6qGrw40q2OBGqgpglrY35NRELKm5U/HmEFYc=;
-        b=psVvYNxzBXXxUqn9Nly4jkBAjnBURIfhgxYcl9gUZ9anVWHCaSPIKh7aOqeLPclSVT
-         umbaBb3W4mMSMGLTRPLiVErWzOV2ccBielK3ghn18fipFk+0pE2cRKDs+cUHxCTY5Dad
-         IBkyM0kwWxTJM1Iko5UVNM+0K4C7hA97HgDW93quDpmcUQSsfb6mG6YTeOQXlJdzigwM
-         SYtuDRWmEdv8qKWUZ7xyBgyYHpSzTyuzmK31MJJBI8ySuBsHebDNbQii+pl4k6bb9Ug3
-         /LDfhAAyrRNzd2pEupfoZZp9F0sSxnjgmqgPX58BMukHHRWmBvM84wNFX9RpIqye46qy
-         R8Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744314220; x=1744919020;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ED7Dxab6qGrw40q2OBGqgpglrY35NRELKm5U/HmEFYc=;
-        b=oxkmueofy1OenwTnSWoW6QpTAPvKvSGyRR/Sv1hETDX5gRHXDjmwiDKd/z8iZjGncx
-         JqGj7djQ8UWy7e0CE/QgzHqUPm6BSr4m4v/+R84a7yhZjNxyzlTQM7JHz+trPJunQqqQ
-         TsE+aDv11mCHMPYt/ucB7rhCvmD+m4wHvaW2j5I2aQMzwHV1CtXAebaocCsB59Tw9ry6
-         ER/ec6TvjtbbFpvEEhWaJdhwvuXkJy5OZG/iaY6VT8aPqqX1HmRAYVPK7gcYgJETf8Nt
-         J3Ek8j5VOWJ5mKVUSwY6jqdf+0uVsDc+PuTuPpAK65U3Pcejx7pFJkSjlc+cf/g6qxhe
-         NAdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnOHGUsH4ClSiR8dE4cOEAjbN2huu5QpLbdNqNpiKct3MIpCQA9tk3YSP4pr8bp9sqn6aHYQKf8ehfWYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9xxd5kWNTQ4nPKyR3wn77I6TCqertUa5KhPNeWvTL3ik58W6C
-	UZAXKk+mNfWGm4hXqyjzC3IvzHBS65m6LnsAyMlhT+eRrsOvLvV9L+FtoY+Yyg==
-X-Gm-Gg: ASbGncuNS0qoNCCl6w4t43u/ypy70OUylI2tA9X9l3v7vb2XJA08GTyW+QuKwJ2dMmC
-	Ni1qTBe/PrTMIbV9RB5+c7jvJLUG9rOSd5zIB36epFH5xS5tRwSlbNMM4zUOZ9t6Rp2qage0eEU
-	lvVUzfldMGPMG6lL3/Jz1upuYvvE8bdut4qv1b7xFGm/LLcwc0X7mAkSImu+gN0RTGE25rMq2eH
-	Z7+d5FAgicqzHJ2SG6c911sDoA8f7kYHkftcBzKO4pCskobz70pld/hkctRf0tSxMVfs3df5zXg
-	r3D5StGoHeW4U6CyivL0B3wqectL0GnVDjkKuqhe9fjAOduPsGzk1H7xRIziPJoOsVRPhfCmcis
-	rJpsbFnpU
-X-Google-Smtp-Source: AGHT+IGu2dtDm1AMq/3WnkzaLXFSXm4uaGVeeMEHiTWo7rWwRyUUdX5IpaYykOLqEwbtJBQit7pyAw==
-X-Received: by 2002:a17:903:908:b0:21f:3f5c:d24c with SMTP id d9443c01a7336-22be982230bmr804405ad.0.1744314219997;
-        Thu, 10 Apr 2025 12:43:39 -0700 (PDT)
-Received: from google.com (242.67.247.35.bc.googleusercontent.com. [35.247.67.242])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd10dc4bsm4115509a91.1.2025.04.10.12.43.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 12:43:39 -0700 (PDT)
-Date: Thu, 10 Apr 2025 19:43:34 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: =?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
-	Kees Cook <kees@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Nathan Chancellor <nathan@kernel.org>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH] objtool: Detect __nocfi calls
-Message-ID: <20250410194334.GA3248459@google.com>
-References: <20250410115420.366349-1-panikiel@google.com>
- <20250410123602.GZ9833@noisy.programming.kicks-ass.net>
- <20250410124526.GB9833@noisy.programming.kicks-ass.net>
- <CAM5zL5okN67bsTs6ZodcJd45zQ_BP+ruUwOkPMY97Snma0ugzQ@mail.gmail.com>
- <20250410132522.GD9833@noisy.programming.kicks-ass.net>
- <20250410154556.GB9003@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1744314255; c=relaxed/simple;
+	bh=F6w4fWy7bXFF1rI5X778iPQ0mWc+q8hNPiYToeJGI5c=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Af9qMp/I7Diue6srMHVMCFNPnuu+cfbfVrr6V26gdUzsWR8Xi51tb1h9hliq1Ey1q7Ce23z16hNSgUYqAxUncMGXyrIFivGyJ1WZySstvg2tNMrYw7FS+GKXAf3u+IIAtRBxUBHug1q7ZJZcuUITcrLaPM3k8rXZ18R+M2bhF4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HkDkSnj3; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744314253; x=1775850253;
+  h=date:from:to:cc:subject:message-id;
+  bh=F6w4fWy7bXFF1rI5X778iPQ0mWc+q8hNPiYToeJGI5c=;
+  b=HkDkSnj396u2hDLPMf7pjC/rykAnCTizqLDNDHHsC4KISUDzmCZIgNB1
+   yZYer7a7B23JfzvtCOxmkNPcGxM1bjBDCH43vGpgeEZUg/pSm8ttpT5+1
+   Rau89x/W7Y/6+vpIIhMigJ9cIoi7RaSX51UKy5yJ+xKiQTJ5V/wqYs5bH
+   DQJBs9EQ8t1p7fnAbEfk4a8oPlnAG6BDnOw/ej7++BnAnla+mBEyiUbfY
+   pa7m5pbYXBHEPNbYQqHleRSVDQZxD21MpnJWem2+lgregMD9Yu24XLFLl
+   64wn77NnSuOQaza89V3yIK4MHFMYN8rrJNGN3NZVs8wl7lMDq90OouPdE
+   w==;
+X-CSE-ConnectionGUID: RazZ3lE2SXexaG/mAKDlGQ==
+X-CSE-MsgGUID: Bc8J3XY7TiuiSXdwVo5dFQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="45993611"
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="45993611"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 12:44:12 -0700
+X-CSE-ConnectionGUID: 06BFrVL9Rl6QKgWsNIJFRg==
+X-CSE-MsgGUID: SYcEZSfmTUakLaqVSREsVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="134167028"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 10 Apr 2025 12:44:12 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u2xon-000ATl-0f;
+	Thu, 10 Apr 2025 19:44:09 +0000
+Date: Fri, 11 Apr 2025 03:43:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/msi] BUILD SUCCESS
+ 9357e329cdeb6f2d27b431a22d4965700bec478a
+Message-ID: <202504110346.gCHA8tHb-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410154556.GB9003@noisy.programming.kicks-ass.net>
 
-Hi Peter,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/msi
+branch HEAD: 9357e329cdeb6f2d27b431a22d4965700bec478a  genirq/msi: Rename msi_[un]lock_descs()
 
-On Thu, Apr 10, 2025 at 05:45:56PM +0200, Peter Zijlstra wrote:
-> On Thu, Apr 10, 2025 at 03:25:22PM +0200, Peter Zijlstra wrote:
-> 
-> > I should get objtool to warn about those. They undermine the point of
-> > CFI.
-> 
-> ---
-> Subject: objtool: Detect __nocfi calls
-> 
-> Detect and WARN about no_sanitize(kcfi) indirect calls.
-> 
-> Apparently there were a few in some Rust 'core' that got included in the
-> kernel and things went *bang*.
-> 
-> This is not a supported form for kernel code. So detect and warn about
-> it.
+elapsed time: 1451m
 
-Cool, this looks useful!
+configs tested: 87
+configs skipped: 1
 
-> Adds an annotation for the two cases where we have to live with them:
-> 
->  - EFI stubs;
->  - kexec handover.
-> 
-> Notably, EFI calls fully disable IBT, as such using runtime EFI services
-> is a significant security issue. If you can exploit the kexec handover,
-> you get to keep it.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-OK, with this applied I now see a warning about the __nocfi call in
-Rust code:
+tested configs:
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-14.2.0
+arc                              allyesconfig    gcc-14.2.0
+arc                   randconfig-001-20250410    gcc-14.2.0
+arc                   randconfig-002-20250410    gcc-12.4.0
+arm                   randconfig-001-20250410    clang-21
+arm                   randconfig-002-20250410    clang-18
+arm                   randconfig-003-20250410    gcc-7.5.0
+arm                   randconfig-004-20250410    gcc-8.5.0
+arm64                 randconfig-001-20250410    clang-21
+arm64                 randconfig-002-20250410    clang-21
+arm64                 randconfig-003-20250410    gcc-6.5.0
+arm64                 randconfig-004-20250410    gcc-8.5.0
+csky                  randconfig-001-20250410    gcc-14.2.0
+csky                  randconfig-002-20250410    gcc-14.2.0
+hexagon                          allmodconfig    clang-19
+hexagon                          allyesconfig    clang-19
+hexagon               randconfig-001-20250410    clang-21
+hexagon               randconfig-002-20250410    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250410    clang-20
+i386        buildonly-randconfig-002-20250410    clang-20
+i386        buildonly-randconfig-003-20250410    clang-20
+i386        buildonly-randconfig-004-20250410    gcc-11
+i386        buildonly-randconfig-005-20250410    clang-20
+i386        buildonly-randconfig-006-20250410    clang-20
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch             randconfig-001-20250410    gcc-12.4.0
+loongarch             randconfig-002-20250410    gcc-12.4.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250410    gcc-14.2.0
+nios2                 randconfig-002-20250410    gcc-10.5.0
+openrisc                          allnoconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                randconfig-001-20250410    gcc-5.5.0
+parisc                randconfig-002-20250410    gcc-11.5.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc               randconfig-001-20250410    gcc-6.5.0
+powerpc               randconfig-002-20250410    gcc-6.5.0
+powerpc               randconfig-003-20250410    clang-21
+powerpc64             randconfig-001-20250410    clang-21
+powerpc64             randconfig-002-20250410    clang-21
+powerpc64             randconfig-003-20250410    clang-21
+riscv                             allnoconfig    gcc-14.2.0
+riscv                 randconfig-001-20250410    clang-21
+riscv                 randconfig-002-20250410    gcc-8.5.0
+s390                             allmodconfig    clang-18
+s390                             allyesconfig    gcc-14.2.0
+s390                  randconfig-001-20250410    clang-17
+s390                  randconfig-002-20250410    gcc-6.5.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                    randconfig-001-20250410    gcc-12.4.0
+sh                    randconfig-002-20250410    gcc-10.5.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250410    gcc-10.3.0
+sparc                 randconfig-002-20250410    gcc-7.5.0
+sparc64               randconfig-001-20250410    gcc-7.5.0
+sparc64               randconfig-002-20250410    gcc-5.5.0
+um                               allmodconfig    clang-19
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250410    clang-21
+um                    randconfig-002-20250410    gcc-12
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250410    clang-20
+x86_64      buildonly-randconfig-002-20250410    gcc-12
+x86_64      buildonly-randconfig-003-20250410    clang-20
+x86_64      buildonly-randconfig-004-20250410    clang-20
+x86_64      buildonly-randconfig-005-20250410    clang-20
+x86_64      buildonly-randconfig-006-20250410    clang-20
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250410    gcc-14.2.0
+xtensa                randconfig-002-20250410    gcc-7.5.0
 
-vmlinux.o: warning: objtool: _RNvNtCsjWi3sh0wSlE_4core3fmt5write+0x170: no-cfi indirect call!
-
-But an allmodconfig build reveals a few more warnings:
-
-arch/x86/kvm/kvm.o: warning: objtool: x86_emulate_insn+0xaf7: no-cfi indirect call!
-arch/x86/kvm/kvm.o: warning: objtool: em_das+0x290: no-cfi indirect call!
-arch/x86/kvm/kvm.o: warning: objtool: em_imul_3op+0x15f: no-cfi indirect call!
-arch/x86/kvm/kvm.o: warning: objtool: em_aam+0x21c: no-cfi indirect call!
-arch/x86/kvm/kvm.o: warning: objtool: em_aad+0x1dc: no-cfi indirect call!
-arch/x86/kvm/kvm.o: warning: objtool: em_loop+0x312: no-cfi indirect call!
-arch/x86/kvm/kvm.o: warning: objtool: em_cmpxchg+0x329: no-cfi indirect call!
-arch/x86/kvm/kvm.o: warning: objtool: em_bsf_c+0x1b7: no-cfi indirect call!
-arch/x86/kvm/kvm.o: warning: objtool: em_bsr_c+0x1b7: no-cfi indirect call!
-arch/x86/kvm/kvm-intel.o: warning: objtool: vmx_do_interrupt_irqoff+0xe: no-cfi indirect call!
-drivers/misc/lkdtm/lkdtm.o: warning: objtool: execute_location+0x5a: no-cfi indirect call!
-drivers/pci/controller/pci-hyperv.o: warning: objtool: hv_do_hypercall+0x150: no-cfi indirect call!
-drivers/hv/hv_balloon.o: warning: objtool: hv_free_page_report+0x5da: no-cfi indirect call!
-drivers/hv/hv_vmbus.o: warning: objtool: hv_post_message+0x457: no-cfi indirect call!
-drivers/hv/hv_vmbus.o: warning: objtool: vmbus_set_event+0x2a2: no-cfi indirect call!
-vmlinux.o: warning: objtool: hyperv_flush_tlb_multi+0xe96: no-cfi indirect call!
-vmlinux.o: warning: objtool: hv_do_hypercall+0x12b: no-cfi indirect call!
-vmlinux.o: warning: objtool: hyperv_flush_guest_mapping+0x2e3: no-cfi indirect call!
-vmlinux.o: warning: objtool: hyperv_flush_guest_mapping_range+0x36a: no-cfi indirect call!
-vmlinux.o: warning: objtool: hv_do_hypercall+0x150: no-cfi indirect call!
-vmlinux.o: warning: objtool: hv_snp_boot_ap+0xb08: no-cfi indirect call!
-vmlinux.o: warning: objtool: hv_vtom_set_host_visibility+0x54a: no-cfi indirect call!
-vmlinux.o: warning: objtool: __send_ipi_one+0x362: no-cfi indirect call!
-vmlinux.o: warning: objtool: __send_ipi_mask_ex+0x655: no-cfi indirect call!
-vmlinux.o: warning: objtool: __send_ipi_mask+0x635: no-cfi indirect call!
-vmlinux.o: warning: objtool: hv_do_hypercall+0x150: no-cfi indirect call!
-vmlinux.o: warning: objtool: hv_query_ext_cap+0x175: no-cfi indirect call!
-vmlinux.o: warning: objtool: get_vtl+0x38c: no-cfi indirect call!
-vmlinux.o: warning: objtool: hv_get_partition_id+0x224: no-cfi indirect call!
-
-Sami
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
