@@ -1,150 +1,112 @@
-Return-Path: <linux-kernel+bounces-598374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C849AA84565
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:54:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B89D6A84572
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 150C1177292
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:53:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9F38A0E26
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C70028C5AF;
-	Thu, 10 Apr 2025 13:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDCC28C5C4;
+	Thu, 10 Apr 2025 13:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HDd0cqKH"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T3Op28PW"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8AA2857E0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598E726ACB;
+	Thu, 10 Apr 2025 13:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744293199; cv=none; b=ti2aOwKRvGlF6jYoLvynDTI6BDCstW1NT/Ufatt6zbb49p1lsvYHByz+dCO9uj9SG17vtynnAAbZRyshfV+5NA46077Tcd50+WkfvPCUj1fojErczJ88OByoe16lVlmDeMkcg/aO69L/o3v1eRpPm0NbliydnWTu1lWLOUcUVBk=
+	t=1744293288; cv=none; b=FH4DMMwmuBFa8937MYYCHu+s5CiYYtbRiwDHaxUYxs7Tkt4cHtEaGZEDedFncKaYVl4v5pEpcwspqaS5A+M7yRfZxf+KyIlH62Mi25ejrFDBXcidgWYEdxbs8xNGhBfy6VxF3ozmGiNUVGGyCFPpuG1eMPhm11T2XRrTRObqJRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744293199; c=relaxed/simple;
-	bh=6EzNCLAlf1iloxVtrXjGElQcW7269jazRrghVzl9gM8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EsQEXUBhQR/AOFm9681j12kHWKAoV8y/2+FZqLb48PH6WcaBs0e15wayWRuR+5TmoT9EWTjEn0pT35+EOoQWjm2+R6hMKhACyH2zt7bpUuGQucaHkATGRidNF/rRUfJ+tb4jpsX33X85N0pP+txkWxLHTFcwYUvqb088VA7TtLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HDd0cqKH; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff8340d547so793406a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:53:17 -0700 (PDT)
+	s=arc-20240116; t=1744293288; c=relaxed/simple;
+	bh=6GrO3r+mzqdQXwa8PNCYTT0tF9roIIDLcW4jwywxARI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bKsid14UOkvuIeGWX9zLTPI25zO1yHMQzrPFkbVkNPwNnpgAlTI4AXrgc+C973pdzZNSyzI6xzcX6EQoJuwBsauBFADssV3cmV1L/BP4O+aPCLelwuPMOYp3UJwIub+Dl/v0zs/6XJdz5xmERH1zyt08oVclpGh5RNZrl+9a7F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T3Op28PW; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3054e2d13a7so152153a91.2;
+        Thu, 10 Apr 2025 06:54:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744293196; x=1744897996; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y4wxcHUnCCezh6nWr6RFH2iv1Y8IeCzojzwMbdNb4Do=;
-        b=HDd0cqKHGtPrIPrD3zaBYMCfjaq0/jDRlkSiDB73JzjB0UBHODNk9a3ToIcIcWqe7W
-         fv0+pYJUjE9TAiXXhDVSySGegZUoKXhfjljrlVuSruuOJc0pq6kffB7El9RfXwtMDP7J
-         gf2MRN5X1xzPMUmrWBNH7tiTsdhbj7wIHRtFnLu9CInE5QZnyAh4z8INRoxpeG+tkMjV
-         QsrMN45AKpwqQazIHPuCshcCx4XBDQ/mmxOdtRRas9iE38FKpeRMGEXel6aFCd/91cMh
-         UU6Yz70trLPM9SMB/Tnr5+AyDoxot2o9cxPh9zdjUXBd5lyBi8XTScMlfCH24mC8ZLiu
-         Kv9w==
+        d=gmail.com; s=20230601; t=1744293285; x=1744898085; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6GrO3r+mzqdQXwa8PNCYTT0tF9roIIDLcW4jwywxARI=;
+        b=T3Op28PW/Lyxx/OpkB0f7O8kq6irEkhzZk4UOGWjkwr7Yhl5AObayYPSwkw6OfpdpR
+         JKxn1yE6YjB+EIBjZib+LXdmH29Jy+KCqRZThOjTSzEFaefMb72yDAlgVTrwpV9/qg3F
+         G9WoVYD/lYmEvub5fwDvQr0/CTIo3FkgfIxMkgWCs898zxDdp8jgQID4mNjY8FImLg2r
+         Xv+1UTpmCr+ba7m/Bt4QmcKIcgHIlxzSdst3fKCgAvMzhZgjpYqY2cUCga8fDDy/yXJQ
+         4cZ/m2Og680g2sALWJbHwWS8CC0RKLRAmvfpBfn5gLhrK3auhjMUdFhLlRGxXATVhZGH
+         EeVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744293196; x=1744897996;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y4wxcHUnCCezh6nWr6RFH2iv1Y8IeCzojzwMbdNb4Do=;
-        b=dziRq1SJHciEeDEjPiWUwlhEqnFQIza9lhNbwlVsKHsIolh5N565W7SW7pPMoI9+Ys
-         PvkF6DzpDCNxwSyW0q/YEMgjIsM18q4W5awx2BF6JCz0QnNLXjj2E28kAQUMnKZBFgu+
-         dySBPRVyb+GMZAtVI92lJuqxYefKwUwPbgJPe01jYraf661CoyZ/dUxvrWHTiibXMTjg
-         yuJnhUeZucCPusxn6LHRRjHMB07hau/3IEQoxwDNNrYX69UCWyDfjdvf8LXAAYMkJKHx
-         ZAupnpZXclsKA9yYsM+V37vD95OvmvX2GauzJQSIEajneRMHlznUlCwxpcdUAhtk5TrS
-         9zqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwB2+RyP5aS/9iZCXEcAAZ0Cxbg0DvEXNEDEmPIHHUSEnqD6E1iffSRFAF84Ta7jax2PBLkEtp+ONGY2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUMdDEKplHjsdrEDpDZhzTg4JD+NXwr92ofDXbPoCNZtO/wQeM
-	+ZeAMUkaSX0cxFPa33e10WreQE9G5XLzoniGUlBEn/pc1B64NpO3A1nwQBPmzaSvIptFXHg89xd
-	klkj6hQubMngnnkyqNpAYfA==
-X-Google-Smtp-Source: AGHT+IGEOFVmeMKiNYyGdVgVnjUwRuQMOBh3p67Kck++ZyIayxkYnmKh+TTYDv35m8GZuGIZaSBy6hjI9GDfCfcztg==
-X-Received: from pjbtb11.prod.google.com ([2002:a17:90b:53cb:b0:301:1ea9:63b0])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90a:d2ce:b0:2ee:f440:53ed with SMTP id 98e67ed59e1d1-3072ba1f6e0mr4252531a91.31.1744293196650;
- Thu, 10 Apr 2025 06:53:16 -0700 (PDT)
-Date: Thu, 10 Apr 2025 06:53:15 -0700
-In-Reply-To: <Z_eEfjrkspAt4ACP@infradead.org>
+        d=1e100.net; s=20230601; t=1744293285; x=1744898085;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6GrO3r+mzqdQXwa8PNCYTT0tF9roIIDLcW4jwywxARI=;
+        b=ZF5VmBHQDkef6FwJZbPfanHH2hNWgi7iRF84Vg5S4Iu4LtMhkTklqXERHkpqqZhWNr
+         8oQyLH3P30JbJkGgDn52Bbgd9Nx44cZH0CwPpXzZOy1A/Gqek25CLvAQyoElqZqiyz0h
+         sdlQJYPXdaSyz19TKB1//HQ5JDTne3rMzCjssJD9FccbTr5848ZsDoUYC9YVTw51M2HS
+         UjQL9YiUk+xztsbHBcp2OlXIK05c2tpWpUM7+dQUUPS2f7k5JtniQP9Ca2/j0Lihb+os
+         xwMXspzp/d8cYPbL1zk5otp7jmNS4h4MyR4fs63AmOsx73KroHUTyDyxJNtYQ1GZ3U0O
+         2DXA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9V8qRLYmYapiOBy6ZS9Kh5aXb+JPv1CXkBTZXNpikQsrRDWwvX5J6RebOYMJ9yVRgkvjInzmVCRscZAA=@vger.kernel.org, AJvYcCWPtIOxGILfmISy1K42JT9WcmCjbfbAlJvDXoAeFI99o2Xqxi4jK6J91adBvZ06mhjhmdok1nwz1pHsRaribFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsiCMhywyU/VOjR8jP1hEYSVZgRxqqj5BnDRQGzSuI1OXdgmGo
+	oj4l4Cy0pm90lU/K2rsu4i64geqDkKaBJ5dashzvgi9kYXy60cuEjHBX4m8hZ9pa51QF1W5COgV
+	HrJFDX7n8vg8EYvO6xopZJC65qdM=
+X-Gm-Gg: ASbGncuEeGWcCGLPQ18xR4auv+wkMyoTmFrLj2coL2p2CLS65cxA1e5ffJbEcie/QGl
+	uFps6gcjJKJzTSzqTbVGkN3pVVQU3fXL5yefDUUz8cFZmUS+xir9PIKpbFlQlAWwmZW4+UmnuFs
+	wRMTkhEcEoIdfRSJoEfBhq9Q==
+X-Google-Smtp-Source: AGHT+IG7d3qL1AVWHrofGMKEeBa+OEXMZ0HJbqrYuWYwIFpqEZACPYYqtewx4VnIFETVW4FswqHqR9tCSANed6+9hlY=
+X-Received: by 2002:a17:90b:33c9:b0:2ff:7b41:c3cf with SMTP id
+ 98e67ed59e1d1-306dbc09cb3mr3879295a91.4.1744293285580; Thu, 10 Apr 2025
+ 06:54:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250408112402.181574-1-shivankg@amd.com> <20250408112402.181574-6-shivankg@amd.com>
- <Z_eEfjrkspAt4ACP@infradead.org>
-Message-ID: <diqz4iyw5dis.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [PATCH RFC v7 5/8] KVM: guest_memfd: Make guest mem use guest mem
- inodes instead of anonymous inodes
-From: Ackerley Tng <ackerleytng@google.com>
-To: Christoph Hellwig <hch@infradead.org>, Shivank Garg <shivankg@amd.com>
-Cc: seanjc@google.com, david@redhat.com, vbabka@suse.cz, willy@infradead.org, 
-	akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, 
-	bfoster@redhat.com, tabba@google.com, vannapurve@google.com, 
-	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
-	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, 
-	michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, 
-	peterx@redhat.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-coco@lists.linux.dev
+MIME-Version: 1.0
+References: <20250410115420.366349-1-panikiel@google.com> <20250410123602.GZ9833@noisy.programming.kicks-ass.net>
+ <20250410124526.GB9833@noisy.programming.kicks-ass.net> <20250410130944.GA9003@noisy.programming.kicks-ass.net>
+ <CANiq72=k+tZ3ACEB5k9qwJ8ZYu-dXkA3=Lisg1b8ze-2D0STog@mail.gmail.com>
+ <20250410132649.GE9833@noisy.programming.kicks-ass.net> <CANiq72=Q_Z8KfV+n4z9wWVJsZwVevag=Vh3URe71XkUuWuqEDg@mail.gmail.com>
+ <20250410133446.GF9833@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250410133446.GF9833@noisy.programming.kicks-ass.net>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 10 Apr 2025 15:54:32 +0200
+X-Gm-Features: ATxdqUGnulLPyImGzszq5Vc9mxRdWiusXFMngbv3ViWDlKUA1C4kMWpCGFNqMo4
+Message-ID: <CANiq72neZj+ESvkxwXAQFnznwYBiQAcpW4OqXg1ckhxZj3fd4Q@mail.gmail.com>
+Subject: Re: [PATCH] x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: =?UTF-8?Q?Pawe=C5=82_Anikiel?= <panikiel@google.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Alice Ryhl <aliceryhl@google.com>, 
+	Nathan Chancellor <nathan@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Christoph Hellwig <hch@infradead.org> writes:
-
-> On Tue, Apr 08, 2025 at 11:23:59AM +0000, Shivank Garg wrote:
->> From: Ackerley Tng <ackerleytng@google.com>
->> 
->> Using guest mem inodes allows us to store metadata for the backing
->> memory on the inode. Metadata will be added in a later patch to support
->> HugeTLB pages.
->> 
->> Metadata about backing memory should not be stored on the file, since
->> the file represents a guest_memfd's binding with a struct kvm, and
->> metadata about backing memory is not unique to a specific binding and
->> struct kvm.
->> 
->> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
->> Signed-off-by: Fuad Tabba <tabba@google.com>
->> Signed-off-by: Shivank Garg <shivankg@amd.com>
->> ---
->>  include/uapi/linux/magic.h |   1 +
->>  virt/kvm/guest_memfd.c     | 133 +++++++++++++++++++++++++++++++------
->>  2 files changed, 113 insertions(+), 21 deletions(-)
->> 
->> <snip>
->>  
->> +static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
->> +						      loff_t size, u64 flags)
->> +{
->> +	const struct qstr qname = QSTR_INIT(name, strlen(name));
->> +	struct inode *inode;
->> +	int err;
->> +
->> +	inode = alloc_anon_inode(kvm_gmem_mnt->mnt_sb);
->> +	if (IS_ERR(inode))
->> +		return inode;
->> +
->> +	err = security_inode_init_security_anon(inode, &qname, NULL);
->> +	if (err) {
->> +		iput(inode);
->> +		return ERR_PTR(err);
->> +	}
+On Thu, Apr 10, 2025 at 3:34=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
 >
-> So why do other alloc_anon_inode callers not need
-> security_inode_init_security_anon?
+> Anyway, given this core nonsense is now CFI unsound, it is no longer
+> suitable to build the kernel. So either refrain from using part of the
+> core that trips this, or get it fixed asap.
 
-Thanks for this tip!
+We discussed it a bit yesterday. Still, until it gets resolved one way
+or another, we should be avoiding people to build the kernel like
+that, no?
 
-When I did this refactoring, I was just refactoring
-anon_inode_create_getfile(), to set up the guest_memfd inode and file in
-separate stages, and anon_inode_create_getfile() was already using
-security_inode_init_security_anon().
-
-In the next revision I can remove this call.
-
-Is it too late to remove the call to security_inode_init_security_anon()
-though? IIUC it is used by LSMs, which means security modules may
-already be assuming this call?
+Cheers,
+Miguel
 
