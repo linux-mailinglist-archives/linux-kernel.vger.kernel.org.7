@@ -1,74 +1,62 @@
-Return-Path: <linux-kernel+bounces-597323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A741A83806
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:51:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6939CA8380F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54EB67AF8E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:50:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E07A19E7E2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 05:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58B81F237D;
-	Thu, 10 Apr 2025 04:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CEC1F150F;
+	Thu, 10 Apr 2025 05:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jCaulmfZ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RNrCv7kh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBB533F6;
-	Thu, 10 Apr 2025 04:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B951F1A3150;
+	Thu, 10 Apr 2025 05:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744260682; cv=none; b=Hf1XbFS880by/CfDnxvJYenxImJo0a0u/gLsj1I/Uft0Nz4tRjGmscZTn9o2VLJYeDlqjpnhD2k7k8Ce+G3V3wy3HbLWRu01R4fAEOafd8TpujUqJSeeObqzx2xy2wkHr5XYrJSBe2k/WLdT3u/PjyRldHqixeE1PeKs2Y6jKGs=
+	t=1744261527; cv=none; b=RmtO9eNeLvzL3fg2ttKIYEXiwIVScda8QzAaVwTpYHx7qHurVsYtbWNqODn6vNtqDVqYMKrGOS9wde11e2XX8EdPNo+74awUQRmnvxLYAAEc29N71Bdddy84LM4CrNTICImhMpYWvOR2/h2y6VDvO/1uCNHWQtMGKyU4QVU7ak0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744260682; c=relaxed/simple;
-	bh=PC9EXhe8ZVuduQJq69exAB2rYhGl50SGulzgRDZVhME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=I0WE6bJJTrdR0Q4MDk6T5UikEDsjGX8jRVIREcnZx5IXQZJDfYdIdGqSOOxKOmQDDjQJp2b2YX5rFB6fh6giFTpRLnK90TqQzjjJ82vh+dFuNPQ7xqcs6MY3V1ykE6EHU3rPpWHp24a8mXcKn9T2eM/NY9M7XhTqvKH/ltQ2pSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jCaulmfZ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 539MLChb027048;
-	Thu, 10 Apr 2025 04:51:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=njyM77
-	t/t2FHJ/+tup28jrS0jo+WSZKAYYA3LMxt7gs=; b=jCaulmfZfvUhq5xgFcMAnR
-	B7lvZYBJfdbTjXKdzIC9t+U4PDo0T7oJk9zWpBJnsomzZ0DKOS7rcgzi3Z8BkXki
-	6T8pjhWdiiYZd2KJJ2uxUAZZYxPR2G0s+n1zz4+VhWr3yBScNZrXI871Flfl5nnX
-	Kx83yC/QAuimb8XLhvE5yyVKg4eHeb/d7qux7gEyD4ZS57gpdWcELIeJ4L930gGt
-	8xph9JgNcxn8PqABEz+0OefFVMK8KhDZgblXUrgsNysogX9gZYF3eI3X10qeIbHz
-	WnRTBgp0r1VG0lPQeAs2SfhhiiDK8L9hCOPbW6sgJBgK8jUEoAuqF0LEyMSfresw
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45wtaq4ffv-1
+	s=arc-20240116; t=1744261527; c=relaxed/simple;
+	bh=d0SRzgkJEPXktHw5+f25WSWmg8vczFM8sM8a8WNUVLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LwNbhuhOP1Oma5Nte6dxMkOrnCbVnwLtJeowNaxvxUmLnyWVVmTJkPxcsa5CDetAux9XA14RLrljwSohyxewD8XHvAZxuFyy60f9k0LWB07PNAcj3ov6ReEih0ZR75oPYlZXxL6bbCrmBUA2xmxfsiYxW4R38COgHwmcANYfoTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RNrCv7kh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53A503Fc008413;
+	Thu, 10 Apr 2025 05:05:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Nn8VvEvF4/BbQTPCcCGrRvvmAwnomHKMg9nJ6YFqGlQ=; b=RNrCv7khH2+lnwEk
+	1Hyo6hYbuZyHSiagxe6xcPMHdcMvtjf/HbuxDf1tIlsFz5xtZCIf3tHaKT5OXgwz
+	9KW0IEnQxs3ibMpt/ui/lRImdIlzAGKwHWfK1kPEAzbngPJboisODjnEKWXfxstT
+	6heFKZkA9o1XlENXlpOhcuBIyeSJ+8jKcnaOl5YGYf5AM0bKG2w+TZu2/K/Q/P5P
+	FtYZdj5t7vBUJw7vJsc5o1Y2yhnS69qH6qh4lyG2xk8MF3iLgXORgYW2j/jr+CPw
+	Ys6i/tKZnIY1Ia66CuELCHhawhRETW5AJsYjzNoDK6Cuu6gYVkTUPY9roT6kETLA
+	UVV/DQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twdgnrq0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Apr 2025 04:51:18 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53A38IUm013932;
-	Thu, 10 Apr 2025 04:51:17 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45ufunv0h0-1
+	Thu, 10 Apr 2025 05:05:01 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53A550gv001919
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Apr 2025 04:51:17 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53A4pG8419268126
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Apr 2025 04:51:16 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D9F8C58059;
-	Thu, 10 Apr 2025 04:51:15 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 69A8258058;
-	Thu, 10 Apr 2025 04:51:13 +0000 (GMT)
-Received: from [9.61.249.145] (unknown [9.61.249.145])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 10 Apr 2025 04:51:13 +0000 (GMT)
-Message-ID: <d79d19b3-8dc5-4d2c-900e-a273ce317e24@linux.ibm.com>
-Date: Thu, 10 Apr 2025 10:21:12 +0530
+	Thu, 10 Apr 2025 05:05:00 GMT
+Received: from [10.204.66.137] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 9 Apr 2025
+ 22:04:52 -0700
+Message-ID: <d6771074-00b9-449d-997e-7eff50f01193@quicinc.com>
+Date: Thu, 10 Apr 2025 10:34:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,151 +64,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [mainline]Kernel Warnings at kernel/bpf/syscall.c:3374
-Content-Language: en-GB
-To: bpf <bpf@vger.kernel.org>, Saket Kumar Bhaskar <skb99@linux.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        linux-next@vger.kernel.org
-References: <c9816983-7162-47e6-8758-2daaa8c8ccc3@linux.ibm.com>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <c9816983-7162-47e6-8758-2daaa8c8ccc3@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 7Y67UAI6k2Km9_zIY-g42CxIXc8_JUKs
-X-Proofpoint-ORIG-GUID: 7Y67UAI6k2Km9_zIY-g42CxIXc8_JUKs
+Subject: Re: [PATCH v3 07/10] arm64: dts: qcom: sa8775p-ride: add anx7625 DSI
+ to DP bridge nodes
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
+        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
+        <marijn.suijten@somainline.org>, <andersson@kernel.org>,
+        <robh@kernel.org>, <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
+        <konradybcio@kernel.org>, <conor+dt@kernel.org>,
+        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
+        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <quic_abhinavk@quicinc.com>, <quic_rajeevny@quicinc.com>,
+        <quic_vproddut@quicinc.com>, <quic_jesszhan@quicinc.com>
+References: <20250404115539.1151201-1-quic_amakhija@quicinc.com>
+ <20250404115539.1151201-8-quic_amakhija@quicinc.com>
+ <nxnqwh2mzvnxv5ytwjsyulxr6ct6mhv3z3v6q4ojrjhhclwv2i@55nb56hnwi3y>
+Content-Language: en-US
+From: Ayushi Makhija <quic_amakhija@quicinc.com>
+In-Reply-To: <nxnqwh2mzvnxv5ytwjsyulxr6ct6mhv3z3v6q4ojrjhhclwv2i@55nb56hnwi3y>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=PJgP+eqC c=1 sm=1 tr=0 ts=67f7517d cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=0Abo7YVxcx67k3rTUHcA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 9eyw89_tYBSM11787j0PjXzrTwj3gyGB
+X-Proofpoint-GUID: 9eyw89_tYBSM11787j0PjXzrTwj3gyGB
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-09_06,2025-04-08_04,2024-11-22_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=999 bulkscore=0 adultscore=0
- spamscore=0 malwarescore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502280000 definitions=main-2504100032
+ lowpriorityscore=0 clxscore=1015 adultscore=0 malwarescore=0 spamscore=0
+ impostorscore=0 suspectscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504100037
 
-+ LKML, netdev
+On 4/7/2025 1:42 AM, Dmitry Baryshkov wrote:
+> On Fri, Apr 04, 2025 at 05:25:36PM +0530, Ayushi Makhija wrote:
+>> Add anx7625 DSI to DP bridge device nodes.
+>>
+>> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 208 ++++++++++++++++++++-
+>>  1 file changed, 207 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+>> index 175f8b1e3b2d..8e784ccf4138 100644
+>> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+>> @@ -28,6 +28,13 @@ chosen {
+>>  		stdout-path = "serial0:115200n8";
+>>  	};
+>>  
+>> +	vph_pwr: vph-pwr-regulator {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "vph_pwr";
+>> +		regulator-always-on;
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>>  	vreg_conn_1p8: vreg_conn_1p8 {
+>>  		compatible = "regulator-fixed";
+>>  		regulator-name = "vreg_conn_1p8";
+>> @@ -128,6 +135,30 @@ dp1_connector_in: endpoint {
+>>  			};
+>>  		};
+>>  	};
+>> +
+>> +	dp-dsi0-connector {
+>> +		compatible = "dp-connector";
+>> +		label = "DSI0";
+>> +		type = "full-size";
+>> +
+>> +		port {
+>> +			dp_dsi0_connector_in: endpoint {
+>> +				remote-endpoint = <&dsi2dp_bridge0_out>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	dp-dsi1-connector {
+>> +		compatible = "dp-connector";
+>> +		label = "DSI1";
+>> +		type = "full-size";
+>> +
+>> +		port {
+>> +			dp_dsi1_connector_in: endpoint {
+>> +				remote-endpoint = <&dsi2dp_bridge1_out>;
+>> +			};
+>> +		};
+>> +	};
+>>  };
+>>  
+>>  &apps_rsc {
+>> @@ -517,9 +548,135 @@ &i2c11 {
+>>  
+>>  &i2c18 {
+>>  	clock-frequency = <400000>;
+>> -	pinctrl-0 = <&qup_i2c18_default>;
+>> +	pinctrl-0 = <&qup_i2c18_default>,
+>> +		    <&io_expander_intr_active>,
+>> +		    <&io_expander_reset_active>;
+> 
+> These pinctrl entries should go to the IO expander itself.
 
-On 10/04/25 10:17 am, Venkat Rao Bagalkote wrote:
-> Hello!!
->
->
-> I am observing below kernel warnings on IBM Power9 server, while 
-> running bpf selftest on mainline kernel.
->
-> This issue never seen before good commit[1], and seen intermetently 
-> after bad commit[2], and this is not reproducible everytime.
->
-> So likely issue got introduced b/w these two commits.
->
-> [1]GoodCommit: 7f2ff7b6261742ed52aa973ccdf99151b7cc3a50
-> [2]Bad Commit: 08733088b566b58283f0f12fb73f5db6a9a9de30
->
->
-> Traces:
->
->
-> [34208.591723] ------------[ cut here ]------------
-> [34208.591738] WARNING: CPU: 9 PID: 375502 at 
-> kernel/bpf/syscall.c:3374 bpf_tracing_link_release+0x90/0xa0
-> [34208.591750] Modules linked in: bpf_testmod(OE) 8021q(E) garp(E) 
-> mrp(E) vrf(E) tun(E) rpadlpar_io(E) rpaphp(E) vfat(E) fat(E) isofs(E) 
-> ext4(E) crc16(E) mbcache(E) jbd2(E) nft_masq(E) veth(E) bridge(E) 
-> stp(E) llc(E) overlay(E) bonding(E) nft_fib_inet(E) nft_fib_ipv4(E) 
-> nft_fib_ipv6(E) nft_fib(E) nft_reject_inet(E) nf_reject_ipv4(E) 
-> nf_reject_ipv6(E) nft_reject(E) nft_ct(E) nft_chain_nat(E) rfkill(E) 
-> ip_set(E) mlx5_ib(E) ib_uverbs(E) ib_core(E) mlx5_core(E) mlxfw(E) 
-> psample(E) tls(E) ibmveth(E) pseries_rng(E) sg(E) vmx_crypto(E) drm(E) 
-> fuse(E) dm_mod(E) drm_panel_orientation_quirks(E) xfs(E) lpfc(E) 
-> nvmet_fc(E) nvmet(E) sr_mod(E) sd_mod(E) cdrom(E) nvme_fc(E) 
-> nvme_fabrics(E) ibmvscsi(E) nvme_core(E) scsi_transport_srp(E) 
-> scsi_transport_fc(E) [last unloaded: bpf_test_modorder_x(OE)]
-> [34208.591838] CPU: 9 UID: 0 PID: 375502 Comm: test_progs-no_a 
-> Tainted: G        W  OE       6.15.0-rc1-ga24588245776 #1 VOLUNTARY
-> [34208.591848] Tainted: [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-> [34208.591852] Hardware name: IBM,8375-42A POWER9 (architected) 
-> 0x4e0202 0xf000005 of:IBM,FW950.80 (VL950_131) hv:phyp pSeries
-> [34208.591857] NIP:  c00000000049c830 LR: c00000000049c7cc CTR: 
-> 0000000000000070
-> [34208.591863] REGS: c00000000eb07a60 TRAP: 0700   Tainted: G        
-> W  OE        (6.15.0-rc1-ga24588245776)
-> [34208.591869] MSR:  8000000000029033 <SF,EE,ME,IR,DR,RI,LE>  CR: 
-> 84002482  XER: 00000000
-> [34208.591882] CFAR: c00000000049c7d4 IRQMASK: 0
-> [34208.591882] GPR00: c00000000049c7cc c00000000eb07d00 
-> c000000001da8100 fffffffffffffff2
-> [34208.591882] GPR04: 0000000000014ed8 c00000103965d480 
-> c0000003415ca800 c0000000b247c900
-> [34208.591882] GPR08: 0000000000000000 0000000000000000 
-> c0000000b247c900 0000000000002000
-> [34208.591882] GPR12: c00000000eb078a8 c000000017ff5300 
-> 0000000000000000 0000000000000000
-> [34208.591882] GPR16: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000000
-> [34208.591882] GPR20: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000000
-> [34208.591882] GPR24: 0000000000000000 0000000000000000 
-> 0000000000000000 c0000003893d6780
-> [34208.591882] GPR28: c00000000369a6a0 0000000000000fa4 
-> c00000000135d988 c0000000c224bf00
-> [34208.591945] NIP [c00000000049c830] bpf_tracing_link_release+0x90/0xa0
-> [34208.591953] LR [c00000000049c7cc] bpf_tracing_link_release+0x2c/0xa0
-> [34208.591960] Call Trace:
-> [34208.591963] [c00000000eb07d00] [c00000000049c7cc] 
-> bpf_tracing_link_release+0x2c/0xa0 (unreliable)
-> [34208.591973] [c00000000eb07d30] [c00000000049c614] 
-> bpf_link_free+0x94/0x160
-> [34208.591981] [c00000000eb07d70] [c00000000049c780] 
-> bpf_link_release+0x50/0x70
-> [34208.591989] [c00000000eb07d90] [c0000000006ee75c] __fput+0x11c/0x3c0
-> [34208.591997] [c00000000eb07de0] [c0000000006e46bc] sys_close+0x4c/0xa0
-> [34208.592003] [c00000000eb07e10] [c0000000000325a4] 
-> system_call_exception+0x114/0x300
-> [34208.592012] [c00000000eb07e50] [c00000000000d05c] 
-> system_call_vectored_common+0x15c/0x2ec
-> [34208.592020] --- interrupt: 3000 at 0x7fff9c40d8a4
-> [34208.592030] NIP:  00007fff9c40d8a4 LR: 00007fff9c40d8a4 CTR: 
-> 0000000000000000
-> [34208.592035] REGS: c00000000eb07e80 TRAP: 3000   Tainted: G        
-> W  OE        (6.15.0-rc1-ga24588245776)
-> [34208.592041] MSR:  800000000280f033 
-> <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 48002886  XER: 00000000
-> [34208.592057] IRQMASK: 0
-> [34208.592057] GPR00: 0000000000000006 00007fffcce2d650 
-> 00007fff9c527100 0000000000000066
-> [34208.592057] GPR04: 0000000000000000 0000000000000007 
-> 0000000000000004 00007fff9ce5efc0
-> [34208.592057] GPR08: 00007fff9ce57908 0000000000000000 
-> 0000000000000000 0000000000000000
-> [34208.592057] GPR12: 0000000000000000 00007fff9ce5efc0 
-> 0000000000000000 0000000000000000
-> [34208.592057] GPR16: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000000
-> [34208.592057] GPR20: 0000000000000000 0000000000000000 
-> 0000000000000000 00007fff9ce4f470
-> [34208.592057] GPR24: 0000000010610b6c 00007fff9ce50000 
-> 00007fffcce2e098 0000000000000001
-> [34208.592057] GPR28: 00007fffcce2e250 00007fffcce2e088 
-> 0000000000000000 0000000000000066
-> [34208.592118] NIP [00007fff9c40d8a4] 0x7fff9c40d8a4
-> [34208.592122] LR [00007fff9c40d8a4] 0x7fff9c40d8a4
-> [34208.592127] --- interrupt: 3000
-> [34208.592130] Code: 4bfffc28 60000000 60000000 60000000 38210030 
-> e8010010 ebe1fff8 7c0803a6 4e800020 60000000 60000000 60000000 
-> <0fe00000> 4bffffa4 60000000 60000000
-> [34208.592152] ---[ end trace 0000000000000000 ]---
->
->
-> If you happen to fix this issue, please add below tag.
->
->
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
->
->
-> Regards,
->
-> Venkat.
->
+Will move these pinctrl entries in IO expander in next patchset.
+
+Thanks,
+Ayushi
 
