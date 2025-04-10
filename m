@@ -1,101 +1,83 @@
-Return-Path: <linux-kernel+bounces-597907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58699A8400F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADDE6A84011
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 611BE4C0484
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:05:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 327DD4C1FFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2689C26B092;
-	Thu, 10 Apr 2025 10:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7655326B944;
+	Thu, 10 Apr 2025 10:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Wz5VcyTU"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oubSXj0z"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F46F204F81;
-	Thu, 10 Apr 2025 10:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3666526B970
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744279390; cv=none; b=WSW/Qk6IWjyBSoCld/ob+FBy8yDonURFWZzqMy3dB+Cz4+1FPXfSQ2HucLVqa1ED+m0Bb2HaVJ/GZWbLt5kjPzZw6Xpqzmkt2ZEBMIgx0C8QSXDwdW3Gq6LTBu5bO5kSiYdcWttOrpOYUNgnlXLccyecvpKUP+6ufQ2jKGyLeBA=
+	t=1744279396; cv=none; b=mDWxFN3Rh0KjALy6a2Y6HMB9UWDdhUE7g3LuMvqLatk2Xs2y4um2kDKQsYtcauBowVlQlWOCdnWNm8DX4417Dnfjj9hIruRG1+lxQ5vF+gaB5VKfWLdQjHFpOPsBV+88Q6hSdvfLs72/pqMnAIRPSKKuWRqFbM1nxXNzn8hDoOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744279390; c=relaxed/simple;
-	bh=zzkWYDpn+23fCcKLMPw7bx48mHu4Ffd5Q9D2vpVXdv0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=bpQCYqNwi7mdGPCfEcKRq5zLbZKpYN2kz4O8k4CHV7DujjlbmXxFdFG4khZLz96YcBSgMa9ZwJJQ2N5W1tZD6I29MAz49SbEfojAYNhjw3Qwnckh81QUXBaTaVkMdzr/JOBs+GeeNEKmC9nIjLbQB3Wbi2R8RFzllU3eHDTWNu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Wz5VcyTU; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9F0E843194;
-	Thu, 10 Apr 2025 10:03:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744279385;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zzkWYDpn+23fCcKLMPw7bx48mHu4Ffd5Q9D2vpVXdv0=;
-	b=Wz5VcyTUL2vv1SJiLcwxwpvVxBYB0gqKATzmZnp382KfPlU8FqoM13A7LMG/Sf9o2QH+zn
-	pehf3PQZjEMzZeEKPkzZvX9jF5nXlNn9kKEmwMy1f03WyqEKyrrDrzZgcsp7SgQpcIp/bX
-	V6+0r4TUSDp43pzu8rlJiJTMfNSiPL6IzVG9rQ/HoaT8o7Urdulwungk0fDtng8twacJAU
-	092UqdbIbAaEMnnAUl0r5qUFwaVweBeiykO262Oz5pY3/u4hpwFfqq9jqXEU4cN59gt9ND
-	ZCAm9KX1VnNsG2vAG7zVaigKavVPtEpywhvJz1cY/0uP/FEx9Itdb829iAQKJA==
+	s=arc-20240116; t=1744279396; c=relaxed/simple;
+	bh=60kJslvnsJA31a1Vm6cxQ8IZBe70jj4DAo5HbYEex9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GkWS0bZF2Ur20nk5vn3FSd4YEvchLqIgL0zo8Fn9Wwpneg4ojfh+VNcVfaCYSIR8C7GhMe2erXRMdFn9V7ZsxmL97HAni5h0fDZd8A1hfxTMNM0kRkQ4QKj6kpmDD1Itaf0zebxRl0u1fKhpZrE+zLGr7774/JWIEieaxtgzSOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oubSXj0z; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=60kJslvnsJA31a1Vm6cxQ8IZBe70jj4DAo5HbYEex9M=; b=oubSXj0zMmrg7e0M5hLU6egTBl
+	x9XXLxq+Ke04wqgKxB/ZUwdm7iNO/VNZJdvIKAyu7WIvu1iYj8dxHRi90iJn55dGyd1EsnSbRhBoU
+	jAk39Q2ny+96s41GJNW2ullPezvuVZEdsy3IrMVYNEjtFQu7g+2asg6HVovNtROhyCwGvzlfKTt+w
+	oxUfmQ4W5tN4tlx3Bk9iJEX9mG12TdDHG7TuJfF9gWcLcvO3z6Ene++LL7niEF8eQmBudNbISmuAH
+	belCRfLv/l30BzDDvaTH4N9SvYYsalDwEo+PulXje6ws/lO29h3WGn0eRmjWq5kT5kmBGl8vkuJ/Q
+	2BfbGgUw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u2okY-00000008nDz-0i4n;
+	Thu, 10 Apr 2025 10:03:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BAB4130017D; Thu, 10 Apr 2025 12:03:09 +0200 (CEST)
+Date: Thu, 10 Apr 2025 12:03:09 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>
+Subject: Re: [RFC PATCH 2/5] sched/fair: Introduce overloaded_mask in
+ sched_domain_shared
+Message-ID: <20250410100309.GB30687@noisy.programming.kicks-ass.net>
+References: <20250409111539.23791-1-kprateek.nayak@amd.com>
+ <20250409111539.23791-3-kprateek.nayak@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Apr 2025 12:03:04 +0200
-Message-Id: <D92VFQTK31ZN.36IFOLK0JGHWK@bootlin.com>
-Subject: Re: [PATCH v6 08/12] gpio: regmap: Allow to provide init_valid_mask
- callback
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
- <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-X-Mailer: aerc 0.19.0-0-gadd9e15e475d
-References: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
- <20250409-mdb-max7360-support-v6-8-7a2535876e39@bootlin.com>
- <Z_aoI2n5v0TyJhb3@smile.fi.intel.com>
-In-Reply-To: <Z_aoI2n5v0TyJhb3@smile.fi.intel.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdekieduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekhfekieeftefhjeetveefudehuddvvdeuvddvudfgfffhveekffethfeuffdtudenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheplhgvvgesk
- hgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250409111539.23791-3-kprateek.nayak@amd.com>
 
-On Wed Apr 9, 2025 at 7:02 PM CEST, Andy Shevchenko wrote:
-> On Wed, Apr 09, 2025 at 04:55:55PM +0200, Mathieu Dubois-Briand wrote:
->> Allows to populate the gpio_regmap_config structure with
->> init_valid_mask() callback to set on the final gpio_chip structure.
->
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Wed, Apr 09, 2025 at 11:15:36AM +0000, K Prateek Nayak wrote:
+> Introduce a new cpumask member "overloaded_mask" in sched_domain_shared.
+> This mask will be used to keep track of overloaded CPUs with pushable
+> tasks on them and will be later used by newidle balance to only scan
+> through the overloaded CPUs to pull a task to it.
 
-Thanks for the tag!
-
-
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+'to pull a task from it.' ?
 
