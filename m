@@ -1,257 +1,321 @@
-Return-Path: <linux-kernel+bounces-597243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2D6A83705
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 05:06:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8ABA83714
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 05:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B3E61B613E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:07:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E36D4467CCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4981EE01F;
-	Thu, 10 Apr 2025 03:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F0A1EEA54;
+	Thu, 10 Apr 2025 03:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SE5Wemep"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kcbAblSl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE931EE006
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 03:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2651519B9
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 03:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744254404; cv=none; b=CFWcmgzC+OVm7U0IukDNuAM0tSo3ihrHGc8zfo5HGYI5K4gDEEg5MU2y1JNXB/F9ZsK0Md8BKN6+PYRJbF6NCuLAYeYqT6buldGsJXrLbaykZIEykCeqFkcTxM0gHpdbx0tVaar37wgVUN5TXKGSLK2c9Pe7tYTIUTYQk8APRE8=
+	t=1744254630; cv=none; b=BKC6DtusjcvgURPgxDAVjPQToqbgFPkZxGWqdeRpqQlPisXE6Z/CePAaAFfMlQkF5+BN9qdw6hAPgTWXwC1x4l1J2CK/iVnzxSALCBDlZAsMqbReoKrzFQEQJqqNWN/ivJAHZwR4WbS57a2mYWcBYS/TdcrjF1MdzCI2mrT+Uf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744254404; c=relaxed/simple;
-	bh=tksNHgHRCsEVxjpDPPHElpCkWFpoa1+G8XyxUdBsxXY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n61N/oMP/U0nlJPMzPelxDbwGjisUpkeiZlzs8Socshcy39RiQryFfuhsVqTdEGVqkxvVjXJLVlx2uOaLJFWiDB3tk/hU4dGLfFhnw6oqK1Xnzb1PgND7RdfJnaXJq9/Ug/K5TK5d0+LmHr/8kbZYvWCNr3rodnhS0iz9VoY3KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SE5Wemep; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744254402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9XMr/eO0DdnkcMTouhh5uGqjIuVE+H+9lNMnsptGCrs=;
-	b=SE5Wemepkq767cKZxrxC6mQBflshzA+XVbnI7Y8exDS9gMTVA1aVzwBez536UaZ9g3cQCU
-	Va9kuALwIt5cD1dwXd/YP4psNlgOX1GiKqRDskfN9kxMrJuYr0Eu0yuD3N1sfV1VtR5/GE
-	wZru7VGK33QTL8ppwSpGw2fV3OGrSEs=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-625-blAt_6_vMJ-xTAML0MktEw-1; Wed, 09 Apr 2025 23:06:41 -0400
-X-MC-Unique: blAt_6_vMJ-xTAML0MktEw-1
-X-Mimecast-MFC-AGG-ID: blAt_6_vMJ-xTAML0MktEw_1744254400
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-af5310c1ac1so260116a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 20:06:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744254398; x=1744859198;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9XMr/eO0DdnkcMTouhh5uGqjIuVE+H+9lNMnsptGCrs=;
-        b=W2y0+bDW6SHOSEHeHbVx2/zB2dcPOgwY4PBpURcazhTvfOEYQ3gyVLcrW1qXh3SHBY
-         T1KLezt6Io+xMEatHCZnr4JQaI7mDxfM2MvSoJ4L7Re60lmCf1w4DmHHJzTUtzsTvKx1
-         7Ai0pKOzcWZCqlpzGp4uYS78Sl7zEe0184xhmxLuzVJUjPyBDXRfo5edrZKd/A2Uzwcw
-         2jcm/AI0u3IlqJonRjOptbXcS/tHs6dovSiH0ARPGxR2+FIfvRByvNFSJlQnlPPRo8Vt
-         yuJv867eUaPjDbIkBkKvTtmbxMr5j4apJiL2awlBYpfsl9XZEs+YdflEe7JSEWD/4kBT
-         N0uw==
-X-Forwarded-Encrypted: i=1; AJvYcCWVqOznlN7b5AquYcSJdMr/TlVFCC6npy3nYzfFCxsxcsh7wxC2UucqCo65xWHcZM759F25P6kjmxT26zM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrrJsYF/byLMFGIajqnwzUHClC8AYRZj6uZ1Wx7tjILYBvoP0s
-	x0dRksNslHXbfiGMy7lf2CxbxvV/8rjbxB3oW6MiPN8kqHZjdsl3eKk1EEQX1L+jpdLLTyTRW/x
-	+FwbEyerL6HL/JhSdFZM7VeGWkfWu8tu59UH+IshcG6M63GAtzbjiOX16HtsZzBBKlhuf3w==
-X-Gm-Gg: ASbGnctgaKbbmXRKS+OD+j2Lx5TR7YUjJZtenJXpuQR4kJiDDYb+/IDwuiH1R7tH7wv
-	S4TM8I1WR2Di4DT5TOyThLJ6G1NPUWPezubzc3G0yw1moi6nvjyagX0ujsvJXL561ZfQpsMbwik
-	awy6VgPYKKbYa5kbLMnKqIgp0ujg++4NRE7YVvXWLmIH+f6JJt1bkCyD9XQVYsECoghpU48iDTB
-	vjd10qgUf974zbtlRH12am28xnHSYM5vVGE2l7IHZ6hlH3psBHG6DWMjv95//2VfWyOJPW8GXu8
-	omUGMwcq765h
-X-Received: by 2002:a17:902:d4ca:b0:223:2630:6b82 with SMTP id d9443c01a7336-22b2edad4damr17421965ad.10.1744254398099;
-        Wed, 09 Apr 2025 20:06:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHzlBkyEQFpu9vtQ/YjmuNT9je8xNQcOB1fjPDsW03Tq7GevZn8h8JQCXraYTcFA36FNyc+tA==
-X-Received: by 2002:a17:902:d4ca:b0:223:2630:6b82 with SMTP id d9443c01a7336-22b2edad4damr17421675ad.10.1744254397748;
-        Wed, 09 Apr 2025 20:06:37 -0700 (PDT)
-Received: from [192.168.68.55] ([180.233.125.65])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccb57fsm19847395ad.229.2025.04.09.20.06.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 20:06:37 -0700 (PDT)
-Message-ID: <343c26b4-285d-404b-a397-2b5785cfe18e@redhat.com>
-Date: Thu, 10 Apr 2025 13:06:31 +1000
+	s=arc-20240116; t=1744254630; c=relaxed/simple;
+	bh=+J75QHBXcU3Bha8r5xCA67xjXi8wazgBRry/Hwdd3mg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KsH8hG+Kbs2HIzzbz9QKBodjZ6uu9cDeX9xyjZ86rhirojV+yVaAq3BzNQ8BXdSlABscMhLUROpHXXPBsYkzBmTbBV2zJcIajHI8D9HLklgK3zZGt0x3aEac7i/gZnRZjiZhW7cK8rh6SLM+9aJBdBHn5RLnV3OxS+H7VQRw3Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kcbAblSl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 961E0C4CEE2;
+	Thu, 10 Apr 2025 03:10:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744254630;
+	bh=+J75QHBXcU3Bha8r5xCA67xjXi8wazgBRry/Hwdd3mg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kcbAblSl39f4TSNnstH8UqMbKpJJuGOPZnFFLuTcyjLQi/C4CytF3MyyO2TseHBSb
+	 tcA7zErGxopXLv15FwAW75XJXgFlVIMtnDxz0ngt4R3C7oFO7kcvGIoNErbv6axvHM
+	 5XwZAIQn/svFn++eB5wGfeZr4gmZPXwcNtSJWiDxpK2XE8mUHvg9CJAIoODNpLBARj
+	 J9T11ZXd7/P74tqvCXVgfS9IbzgO4+MUnjjTHVqpCl7JXv9V1Nsy5NzsT5HX75aUOH
+	 imT/ZCeGVkuwBPQtG9RbIzJ8Nztpzl+13QZy7IhWjxoe5JyWloD+AAatqTuCOIiXVI
+	 LU3775kaBNyXw==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH v3 1/2] f2fs: zone: fix to calculate first_zoned_segno correctly
+Date: Thu, 10 Apr 2025 11:10:19 +0800
+Message-ID: <20250410031019.2884852-1-chao@kernel.org>
+X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] mm/contpte: Optimize loop to reduce redundant
- operations
-To: Xavier <xavier_qy@163.com>
-Cc: dev.jain@arm.com, akpm@linux-foundation.org, baohua@kernel.org,
- ryan.roberts@arm.com, catalin.marinas@arm.com, ioworker0@gmail.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- will@kernel.org
-References: <027cc666-a562-46fa-bca5-1122ea00ec0e@arm.com>
- <20250408085809.2217618-1-xavier_qy@163.com>
- <20250408085809.2217618-2-xavier_qy@163.com>
- <34a4bf01-6324-482b-a011-32974d68e02f@redhat.com>
- <711cf430.b25d.1961b1a1b0e.Coremail.xavier_qy@163.com>
- <3a9c1db1-7598-4f71-be62-f6005e3fec72@redhat.com>
- <32828be7.3220.1961d9e3cc3.Coremail.xavier_qy@163.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <32828be7.3220.1961d9e3cc3.Coremail.xavier_qy@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Xavier,
+A zoned device can has both conventional zones and sequential zones,
+so we should not treat first segment of zoned device as first_zoned_segno,
+instead, we need to check zone type for each zone during traversing zoned
+device to find first_zoned_segno.
 
-On 4/10/25 12:53 PM, Xavier wrote:
-> At 2025-04-10 08:58:46, "Gavin Shan" <gshan@redhat.com> wrote:
->>
->> On 4/10/25 1:10 AM, Xavier wrote:
->>>
->>> Thank you for carefully reviewing this patch and raising your questions.
->>> I'll try to explain and answer them below.
->>>
->>
->> Not a problem :)
->>
->>>
->>> At 2025-04-09 12:09:48, "Gavin Shan" <gshan@redhat.com> wrote:
->>>> Hi Xavier,
->>>>
->>>> On 4/8/25 6:58 PM, Xavier wrote:
->>>>> This commit optimizes the contpte_ptep_get function by adding early
->>>>>     termination logic. It checks if the dirty and young bits of orig_pte
->>>>>     are already set and skips redundant bit-setting operations during
->>>>>     the loop. This reduces unnecessary iterations and improves performance.
->>>>>
->>>>> Signed-off-by: Xavier <xavier_qy@163.com>
->>>>> ---
->>>>>     arch/arm64/mm/contpte.c | 22 ++++++++++++++++++++--
->>>>>     1 file changed, 20 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
->>>>> index bcac4f55f9c1..034d153d7d19 100644
->>>>> --- a/arch/arm64/mm/contpte.c
->>>>> +++ b/arch/arm64/mm/contpte.c
->>>>> @@ -152,6 +152,18 @@ void __contpte_try_unfold(struct mm_struct *mm, unsigned long addr,
->>>>>     }
->>>>>     EXPORT_SYMBOL_GPL(__contpte_try_unfold);
->>>>>     
->>>>
->>>> I'm wandering how it can work. More details are given below.
->>>>
->>>>> +#define CHECK_CONTPTE_FLAG(start, ptep, orig_pte, flag) \
->>>>> +	do { \
->>>>> +		int _start = start; \
->>>>> +		pte_t *_ptep = ptep; \
->>>>> +		while (_start++ < CONT_PTES) { \
->>>>> +			if (pte_##flag(__ptep_get(_ptep++))) { \
->>>>> +				orig_pte = pte_mk##flag(orig_pte); \
->>>>> +				break; \
->>>>> +			} \
->>>>> +		} \
->>>>> +	} while (0)
->>>>> +
->>
->> nit: the variable _start and _ptep can be dropped since the caller is going to
->> bail after CHECK_CONTPTE_FLAG(). However, I'm wandering it's going to introduce
->> burden to contpte_ptep_get() for its readability, much more complex than I
->> thought.
-> 
-> Not adding these two variables in the current code has no impact. The main purpose
-> of adding them is to improve maintainability and prevent the external code from
-> continuing operations unknowingly after the macro has modified the variables.
-> 
->>
->>>>
->>>> CONT_PTES is 16 with the assumption of 4KB base page size. CHECK_CONTPTE_FLAG()
->>>> collects the flag for ptep[start, CONT_PTES].
->>>>
->>>>>     pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
->>>>>     {
->>>>>     	/*
->>>>> @@ -169,11 +181,17 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
->>>>>     	for (i = 0; i < CONT_PTES; i++, ptep++) {
->>>>>     		pte = __ptep_get(ptep);
->>>>>     
->>>>> -		if (pte_dirty(pte))
->>>>> +		if (pte_dirty(pte)) {
->>>>>     			orig_pte = pte_mkdirty(orig_pte);
->>>>> +			CHECK_CONTPTE_FLAG(i, ptep, orig_pte, young);
->>>>> +			break;
->>>>> +		}
->>>>>     
->>>>> -		if (pte_young(pte))
->>>>> +		if (pte_young(pte)) {
->>>>>     			orig_pte = pte_mkyoung(orig_pte);
->>>>> +			CHECK_CONTPTE_FLAG(i, ptep, orig_pte, dirty);
->>>>> +			break;
->>>>> +		}
->>>>>     	}
->>>>>     
->>>>>     	return orig_pte;
->>>>
->>>> There are two issues as I can see: (1) The loop stops on any dirty or young flag. Another
->>>> flag can be missed when one flag is seen. For example, when ptep[0] has both dirty/young
->>>> flag, only the dirty flag is collected. (2) CHECK_CONTPTE_FLAG() iterates ptep[i, CONT_PTES],
->>>> conflicting to the outer loop, which iterates ptep[0, CONT_PTES].
->>>
->>> No flags will be missed. The outer loop is used to check for the first flag,
->>> which could be either the dirty or young flag.
->>> Once this flag (let's assume it's the dirty flag) is found in the i-th PTE,
->>> the dirty flag of orig_pte will be set, and the code will immediately enter
->>> the inner loop, namely CHECK_CONTPTE_FLAG. This inner loop will continue
->>> to check only for the young flag starting from the i-th position, and we needn't
->>> concern about the dirty flag anymore.
->>> If CHECK_CONTPTE_FLAG finds the young flag in the j-th PTE, the young flag
->>> of orig_pte will be set. At this point, both the young and dirty flags of
->>> orig_pte have been set, and there's no need for further loop judgments, so
->>> the both the inner and outer loops can be exited directly. This approach
->>> reduces unnecessary repeated traversals and judgments.
->>>
->>
->> Thanks for the explanation. I missed that the subsequent young bit is collected
->> on pte_dirty(). Similarly, the subsequent dirty bit is collected on pte_young().
->> Now I can see all (dirty | young) bits are collected with a lost.
->>
->>>>
->>>> Besides, I also doubt how much performance can be gained by bailing early on (dirty | young).
->>>> However, it's avoided to cross the L1D cache line boundary if possible. With 4KB base page
->>>> size, 128 bytes are needed for ptep[CONT_PTES], equal to two cache lines. If we can bail
->>>> early with luck, we don't have to step into another cache line. Note that extra checks needs
->>>> more CPU cycles.
->>>
->>> Compared to the previous function, this code doesn't add any extra checks.
->>> Even in the worst-case scenario, where neither a dirty nor a young flag is
->>> found among the 16 PTEs, the number of checks is the same as in the original
->>> function. If any flag is found earlier, the optimized patch will reduce the
->>> number of subsequent checks for that flag compared to the original code.
->>>
->>
->> There are 32 checks in the original code (assuming we have 4kb base page size
->> and CONT_PTES == 16) and the number of checks is fixed. With your patch applied,
->> the number becomes 32 + (number from CHECK_CONTPTE_FLAG) if all PTEs have
->> pte_dirty() and none of them has pte_young(), if I don't miss anything here.
->>
-> 
-> If all PTEs are dirty and none are young, the code will enter CHECK_CONTPTE_FLAG
-> when it encounters the first dirty PTE. Inside CHECK_CONTPTE_FLAG, it only checks
-> for the young bit (16 - 0) times and then exits all loops. In this case, the total number
-> of checks is 1 + 16, which is less than the original 32.
-> 
+Otherwise, for below case, first_zoned_segno will be 0, which could be
+wrong.
 
-You're correct. The outer loop is going to stop on pte_dirty() or pte_young(). Well,
-you can see the code becomes hard to be understood, at least to me :)
+create_null_blk 512 2 1024 1024
+mkfs.f2fs -m /dev/nullb0
 
-[...]
+Testcase:
 
-Thanks,
-Gavin
+export SCRIPTS_PATH=/share/git/scripts
+
+test multiple devices w/ zoned device
+for ((i=0;i<8;i++)) do {
+	zonesize=$((2<<$i))
+	conzone=$((4096/$zonesize))
+	seqzone=$((4096/$zonesize))
+	$SCRIPTS_PATH/nullblk_create.sh 512 $zonesize $conzone $seqzone
+	mkfs.f2fs -f -m /dev/vdb -c /dev/nullb0
+	mount /dev/vdb /mnt/f2fs
+	touch /mnt/f2fs/file
+	f2fs_io pinfile set /mnt/f2fs/file $((8589934592*2))
+	stat /mnt/f2fs/file
+	df
+	cat /proc/fs/f2fs/vdb/segment_info
+	umount /mnt/f2fs
+	$SCRIPTS_PATH/nullblk_remove.sh 0
+} done
+
+test single zoned device
+for ((i=0;i<8;i++)) do {
+	zonesize=$((2<<$i))
+	conzone=$((4096/$zonesize))
+	seqzone=$((4096/$zonesize))
+	$SCRIPTS_PATH/nullblk_create.sh 512 $zonesize $conzone $seqzone
+	mkfs.f2fs -f -m /dev/nullb0
+	mount /dev/nullb0 /mnt/f2fs
+	touch /mnt/f2fs/file
+	f2fs_io pinfile set /mnt/f2fs/file $((8589934592*2))
+	stat /mnt/f2fs/file
+	df
+	cat /proc/fs/f2fs/nullb0/segment_info
+	umount /mnt/f2fs
+	$SCRIPTS_PATH/nullblk_remove.sh 0
+} done
+
+Fixes: 9703d69d9d15 ("f2fs: support file pinning for zoned devices")
+Cc: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v2:
+- rename f2fs_valid_pinned_area() to f2fs_is_sequential_zone_area()
+- rename sbi->first_zone_segno to sbi->first_seq_zone_segno
+- fix logic in f2fs_is_sequential_zone_area()
+- add testcase in commit message
+ fs/f2fs/data.c    |  2 +-
+ fs/f2fs/f2fs.h    | 36 ++++++++++++++++++++++++++++--------
+ fs/f2fs/segment.c | 10 +++++-----
+ fs/f2fs/super.c   | 41 +++++++++++++++++++++++++++++++++++------
+ 4 files changed, 69 insertions(+), 20 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 23e37207ed90..1a90aca499f6 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3967,7 +3967,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
+ 
+ 		if ((pblock - SM_I(sbi)->main_blkaddr) % blks_per_sec ||
+ 				nr_pblocks % blks_per_sec ||
+-				!f2fs_valid_pinned_area(sbi, pblock)) {
++				f2fs_is_sequential_zone_area(sbi, pblock)) {
+ 			bool last_extent = false;
+ 
+ 			not_aligned++;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9915f31ee2d1..06aaaed9ca44 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1787,7 +1787,7 @@ struct f2fs_sb_info {
+ 	unsigned int dirty_device;		/* for checkpoint data flush */
+ 	spinlock_t dev_lock;			/* protect dirty_device */
+ 	bool aligned_blksize;			/* all devices has the same logical blksize */
+-	unsigned int first_zoned_segno;		/* first zoned segno */
++	unsigned int first_seq_zone_segno;	/* first segno in sequential zone */
+ 
+ 	/* For write statistics */
+ 	u64 sectors_written_start;
+@@ -4647,12 +4647,16 @@ F2FS_FEATURE_FUNCS(readonly, RO);
+ F2FS_FEATURE_FUNCS(device_alias, DEVICE_ALIAS);
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+-static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
+-				    block_t blkaddr)
++static inline bool f2fs_zone_is_seq(struct f2fs_sb_info *sbi, int devi,
++							unsigned int zone)
+ {
+-	unsigned int zno = blkaddr / sbi->blocks_per_blkz;
++	return test_bit(zone, FDEV(devi).blkz_seq);
++}
+ 
+-	return test_bit(zno, FDEV(devi).blkz_seq);
++static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
++								block_t blkaddr)
++{
++	return f2fs_zone_is_seq(sbi, devi, blkaddr / sbi->blocks_per_blkz);
+ }
+ #endif
+ 
+@@ -4724,15 +4728,31 @@ static inline bool f2fs_lfs_mode(struct f2fs_sb_info *sbi)
+ 	return F2FS_OPTION(sbi).fs_mode == FS_MODE_LFS;
+ }
+ 
+-static inline bool f2fs_valid_pinned_area(struct f2fs_sb_info *sbi,
++static inline bool f2fs_is_sequential_zone_area(struct f2fs_sb_info *sbi,
+ 					  block_t blkaddr)
+ {
+ 	if (f2fs_sb_has_blkzoned(sbi)) {
++#ifdef CONFIG_BLK_DEV_ZONED
+ 		int devi = f2fs_target_device_index(sbi, blkaddr);
+ 
+-		return !bdev_is_zoned(FDEV(devi).bdev);
++		if (!bdev_is_zoned(FDEV(devi).bdev))
++			return false;
++
++		if (f2fs_is_multi_device(sbi)) {
++			if (blkaddr < FDEV(devi).start_blk ||
++				blkaddr > FDEV(devi).end_blk) {
++				f2fs_err(sbi, "Invalid block %x", blkaddr);
++				return false;
++			}
++			blkaddr -= FDEV(devi).start_blk;
++		}
++
++		return f2fs_blkz_is_seq(sbi, devi, blkaddr);
++#else
++		return false;
++#endif
+ 	}
+-	return true;
++	return false;
+ }
+ 
+ static inline bool f2fs_low_mem_mode(struct f2fs_sb_info *sbi)
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 76e6fce82fa1..3da98c5bf51a 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2783,7 +2783,7 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 		if (sbi->blkzone_alloc_policy == BLKZONE_ALLOC_PRIOR_CONV || pinning)
+ 			segno = 0;
+ 		else
+-			segno = max(sbi->first_zoned_segno, *newseg);
++			segno = max(sbi->first_seq_zone_segno, *newseg);
+ 		hint = GET_SEC_FROM_SEG(sbi, segno);
+ 	}
+ #endif
+@@ -2795,7 +2795,7 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 	if (secno >= MAIN_SECS(sbi) && f2fs_sb_has_blkzoned(sbi)) {
+ 		/* Write only to sequential zones */
+ 		if (sbi->blkzone_alloc_policy == BLKZONE_ALLOC_ONLY_SEQ) {
+-			hint = GET_SEC_FROM_SEG(sbi, sbi->first_zoned_segno);
++			hint = GET_SEC_FROM_SEG(sbi, sbi->first_seq_zone_segno);
+ 			secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
+ 		} else
+ 			secno = find_first_zero_bit(free_i->free_secmap,
+@@ -2844,9 +2844,9 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 	/* set it as dirty segment in free segmap */
+ 	f2fs_bug_on(sbi, test_bit(segno, free_i->free_segmap));
+ 
+-	/* no free section in conventional zone */
++	/* no free section in conventional device or conventional zone */
+ 	if (new_sec && pinning &&
+-		!f2fs_valid_pinned_area(sbi, START_BLOCK(sbi, segno))) {
++		f2fs_is_sequential_zone_area(sbi, START_BLOCK(sbi, segno))) {
+ 		ret = -EAGAIN;
+ 		goto out_unlock;
+ 	}
+@@ -3317,7 +3317,7 @@ int f2fs_allocate_pinning_section(struct f2fs_sb_info *sbi)
+ 
+ 	if (f2fs_sb_has_blkzoned(sbi) && err == -EAGAIN && gc_required) {
+ 		f2fs_down_write(&sbi->gc_lock);
+-		err = f2fs_gc_range(sbi, 0, GET_SEGNO(sbi, FDEV(0).end_blk),
++		err = f2fs_gc_range(sbi, 0, sbi->first_seq_zone_segno - 1,
+ 				true, ZONED_PIN_SEC_REQUIRED_COUNT);
+ 		f2fs_up_write(&sbi->gc_lock);
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 8315016914e8..eb1275616d8c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4303,14 +4303,35 @@ static void f2fs_record_error_work(struct work_struct *work)
+ 	f2fs_record_stop_reason(sbi);
+ }
+ 
+-static inline unsigned int get_first_zoned_segno(struct f2fs_sb_info *sbi)
++static inline unsigned int get_first_seq_zone_segno(struct f2fs_sb_info *sbi)
+ {
++#ifdef CONFIG_BLK_DEV_ZONED
++	unsigned int zoneno, total_zones;
+ 	int devi;
+ 
+-	for (devi = 0; devi < sbi->s_ndevs; devi++)
+-		if (bdev_is_zoned(FDEV(devi).bdev))
+-			return GET_SEGNO(sbi, FDEV(devi).start_blk);
+-	return 0;
++	if (!f2fs_sb_has_blkzoned(sbi))
++		return NULL_SEGNO;
++
++	for (devi = 0; devi < sbi->s_ndevs; devi++) {
++		if (!bdev_is_zoned(FDEV(devi).bdev))
++			continue;
++
++		total_zones = GET_ZONE_FROM_SEG(sbi, FDEV(devi).total_segments);
++
++		for (zoneno = 0; zoneno < total_zones; zoneno++) {
++			unsigned int segs, blks;
++
++			if (!f2fs_zone_is_seq(sbi, devi, zoneno))
++				continue;
++
++			segs = GET_SEG_FROM_SEC(sbi,
++					zoneno * sbi->secs_per_zone);
++			blks = SEGS_TO_BLKS(sbi, segs);
++			return GET_SEGNO(sbi, FDEV(devi).start_blk + blks);
++		}
++	}
++#endif
++	return NULL_SEGNO;
+ }
+ 
+ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+@@ -4347,6 +4368,14 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+ #endif
+ 
+ 	for (i = 0; i < max_devices; i++) {
++		if (max_devices == 1) {
++			FDEV(i).total_segments =
++				le32_to_cpu(raw_super->segment_count_main);
++			FDEV(i).start_blk = 0;
++			FDEV(i).end_blk = FDEV(i).total_segments *
++						BLKS_PER_SEG(sbi);
++		}
++
+ 		if (i == 0)
+ 			FDEV(0).bdev_file = sbi->sb->s_bdev_file;
+ 		else if (!RDEV(i).path[0])
+@@ -4717,7 +4746,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sbi->sectors_written_start = f2fs_get_sectors_written(sbi);
+ 
+ 	/* get segno of first zoned block device */
+-	sbi->first_zoned_segno = get_first_zoned_segno(sbi);
++	sbi->first_seq_zone_segno = get_first_seq_zone_segno(sbi);
+ 
+ 	/* Read accumulated write IO statistics if exists */
+ 	seg_i = CURSEG_I(sbi, CURSEG_HOT_NODE);
+-- 
+2.49.0
 
 
