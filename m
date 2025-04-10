@@ -1,164 +1,123 @@
-Return-Path: <linux-kernel+bounces-597410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BC73A83976
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:37:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC444A8392E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 275DD3AEF5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:36:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB0484A00D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86306203713;
-	Thu, 10 Apr 2025 06:36:42 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF01202F8C;
+	Thu, 10 Apr 2025 06:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="diOq5bPQ"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C611372
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3DD202F71
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744267002; cv=none; b=QovVKQ8bRkAsPLmhxBxyPsKc99VLi2gaEwhEBk5nCibBaKQ+D/kyYw9Vj2gZa11hjPp/+/l6IudbJ2qKt0OqTN/bXGtdTATwC6WT7d5gkZfG3tRk/fSqq39EePMuNDe+wiOzZcIVK9W7BUk+ImK6lYVwybpf/PB7qjJ99BQuuq8=
+	t=1744266442; cv=none; b=GWuR8kOgxp6hZnMMTW34LdLuV02p2KD++4gEaH9tIBAd6Kpv+XUFi6fVBK500GL86uaJslEWMbLGHyDM70lT2C8bo3H6cEfNB2J1l+n85KeWCxJ1L7ApZV8Uoen/otTTj34q+j6aM1Xx5DELxEfw5wgDzIqUuKZXFujEY6zBtsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744267002; c=relaxed/simple;
-	bh=VJXXc6yS61Zt3aKauy5XLMWk+Rcl7vqyHTDQlbGVC7M=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eDQ+toZohYT12suf0QYqg9p302BeFUM71cBaJMFhYrwET0PibdJq/Zh2HMAO1IzuBhk/V6j4m/Qfvgok+Ksvbggp+fP0XKS7qn9g3JqZ0YGAobb/F5Jm46ePoq+sZlYQVRc/rFD/hG2JzeB9zFoTTIcYfzWj/XKIswWvZ6NUEzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZY9490GX2z2Cdmm;
-	Thu, 10 Apr 2025 14:33:13 +0800 (CST)
-Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
-	by mail.maildlp.com (Postfix) with ESMTPS id 936D11A0188;
-	Thu, 10 Apr 2025 14:36:36 +0800 (CST)
-Received: from huawei.com (10.175.124.71) by kwepemg100017.china.huawei.com
- (7.202.181.58) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Apr
- 2025 14:36:35 +0800
-From: Wupeng Ma <mawupeng1@huawei.com>
-To: <akpm@linux-foundation.org>, <mike.kravetz@oracle.com>,
-	<david@redhat.com>, <joshua.hahnjy@gmail.com>
-CC: <muchun.song@linux.dev>, <mawupeng1@huawei.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] mm: hugetlb: Fix incorrect fallback for subpool
-Date: Thu, 10 Apr 2025 14:26:33 +0800
-Message-ID: <20250410062633.3102457-1-mawupeng1@huawei.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744266442; c=relaxed/simple;
+	bh=DbAUYbu5Va2xJQiy7VvKkV4e/4jPiHlqCkXhEFbYoL0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=GjqmV9vTb/UbrH7+BExcoCJTS1+OCaUEhMxAbK31bFuvPebsfazWCLEJ+E0+DvMxJnEyBHL98+vtwHAnU28upDof4NIhMAXND3PHVzLiQF/3NMCEFV1nW7aGwtMZrr5qJS1B9xwWQNqFZJbylmz0cifnx3b6PngW3rHplYlnr9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=diOq5bPQ; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43e9ccaa1ebso490205e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 23:27:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744266438; x=1744871238; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VvT2Gppf3uxd/yxNywWCnYiGlORidfrwioHAQ0OTxgU=;
+        b=diOq5bPQ41tWsiC7hQG9OTkhh5pHHEMaAnADGSF/ewK7twX/K/8M4iV+MSyqXKM7fd
+         UESkRuyOxvcKWybN6KtU9tR309fUL53knl4hJ5oDUrpdKr8JWPLqIj3iSL/ChhbV13Xl
+         vFoFpj4m+sut8p8h6HmV+EYnnS5nDvuSp+iRZpHPUog0pooI/ZJdfgcwW4HCud+y5q6x
+         Vv0/3Iz6/gZoO87oUhU1eUd14DfdSRcEup/Sj67qpeEDbI8B/W599isJosvoAgul0wqm
+         ksRfFe9iNLvGKGUg3pYFCJoLqws7QFpIjz0bFfqT7Q2vyYtKv66Qgz1CvfozWqHYL5WF
+         V3vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744266438; x=1744871238;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VvT2Gppf3uxd/yxNywWCnYiGlORidfrwioHAQ0OTxgU=;
+        b=m+WBhfj4X9U0jOh3wdLSehbvKqmCNeav/fh9n6obCIGHxPs2N+sgZT2sWjWSvwlBlT
+         yIVwFqJPIGNJhBgpJ1cT6rNfOYJybe2+sUZLGw4LwQPk9cD0Qynu2BXvridFkJyjZtCT
+         KYWDmLuMMgSz4w0ioWxR2u/cujyew6DDAnpduDyLU+ZXFni1CLHsSUrSEAWuJtyaP+Gm
+         9lp2Yb+x3W/hBHxIahs0/u18O50k4CE/nulQuagn6JzH12cO9ykKfDSLzbZzgsR8Tmdq
+         jGBC9JHw+W9+D1anmztt/Ub0Ye8cX7Lv6F6JkZPBz5ZaPEXgzs7b6N6LmJglBYIepyHK
+         jMew==
+X-Forwarded-Encrypted: i=1; AJvYcCWZhSY5RX3nzs+KzogxRBL7EZVEUiuTQeF+StuPTy6Ph5qgDO8lddspgbi6LKjvrciVPCY/db9rya12My0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/g2y6SWPdSIqTKIZkVsWNKqTjbLTBoBfy/WrB5nO13hhmPlwJ
+	Qu9ift1Pr75PAO/Pizl0FxEstOF5M5LYzwRyRrEwYgLdIMNqskzx6BlxqNlr6Tg=
+X-Gm-Gg: ASbGncuWmanJN7n/p+7ldB16g5rdFBaiMxQ7MDyDyAJgSzNxQaRSBL/Ijb18mabT0N0
+	Sri7vKFLHk2hQZz0e+m9HXuZ2TdzW1dNkX1tHLf4yUbkn4vVpDd//tZHJKqAbGNW3w0O5f0LI2j
+	bWsHBmYsWuK/OAe6//0/QmgpohvQo8kGibCxYoLzuy4WstVH+YfJnKyGTIA60haTHpnv9ZSBzaF
+	o57341O8Qb+Ul23rvaZch3uC46nU+p9VE0+biZGW11UTM9WVf7zohu/n3/DZZJsvMAzvNGh3WEb
+	J87jX2EcdkaV1zotTGJDlwl1fbOCRRMR95D9zp0VnoTxTNrR7zrKl/7XjMg=
+X-Google-Smtp-Source: AGHT+IFVRI+eHYzRePN86bPROJmtppmFeI/4qAEBjgxUHImff0Q+A3BjR9d8MWHmWJZEinQXV/yX6g==
+X-Received: by 2002:a05:600c:c87:b0:439:94f8:fc7b with SMTP id 5b1f17b1804b1-43f1eae40f4mr18061085e9.0.1744266437939;
+        Wed, 09 Apr 2025 23:27:17 -0700 (PDT)
+Received: from [192.168.1.26] ([178.197.198.86])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233c8219sm39520695e9.21.2025.04.09.23.27.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 23:27:17 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+In-Reply-To: <20250409-s2mpg10-v4-3-d66d5f39b6bf@linaro.org>
+References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
+ <20250409-s2mpg10-v4-3-d66d5f39b6bf@linaro.org>
+Subject: Re: (subset) [PATCH v4 03/32] dt-bindings: firmware:
+ google,gs101-acpm-ipc: add PMIC child node
+Message-Id: <174426643614.15856.3555538804191184531.b4-ty@linaro.org>
+Date: Thu, 10 Apr 2025 08:27:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg100017.china.huawei.com (7.202.181.58)
+X-Mailer: b4 0.14.2
 
-During our testing with hugetlb subpool enabled, we observe that
-hstate->resv_huge_pages may underflow into negative values. Root cause
-analysis reveals a race condition in subpool reservation fallback handling
-as follow:
 
-hugetlb_reserve_pages()
-    /* Attempt subpool reservation */
-    gbl_reserve = hugepage_subpool_get_pages(spool, chg);
+On Wed, 09 Apr 2025 21:37:24 +0100, André Draszik wrote:
+> The PMIC is supposed to be a child of ACPM, add it here to describe the
+> connection.
+> 
+> 
 
-    /* Global reservation may fail after subpool allocation */
-    if (hugetlb_acct_memory(h, gbl_reserve) < 0)
-        goto out_put_pages;
+Applied, thanks!
 
-out_put_pages:
-    /* This incorrectly restores reservation to subpool */
-    hugepage_subpool_put_pages(spool, chg);
+[03/32] dt-bindings: firmware: google,gs101-acpm-ipc: add PMIC child node
+        https://git.kernel.org/krzk/linux/c/935e5bd95df2c79404630a691caf42c3d7bc3a93
 
-When hugetlb_acct_memory() fails after subpool allocation, the current
-implementation over-commits subpool reservations by returning the full
-'chg' value instead of the actual allocated 'gbl_reserve' amount. This
-discrepancy propagates to global reservations during subsequent releases,
-eventually causing resv_huge_pages underflow.
-
-This problem can be trigger easily with the following steps:
-1. reverse hugepage for hugeltb allocation
-2. mount hugetlbfs with min_size to enable hugetlb subpool
-3. alloc hugepages with two task(make sure the second will fail due to
-   insufficient amount of hugepages)
-4. with for a few seconds and repeat step 3 which will make
-   hstate->resv_huge_pages to go below zero.
-
-To fix this problem, return corrent amount of pages to subpool during the
-fallback after hugepage_subpool_get_pages is called.
-
-Fixes: 1c5ecae3a93f ("hugetlbfs: add minimum size accounting to subpools")
-Signed-off-by: Wupeng Ma <mawupeng1@huawei.com>
-Tested-by: Joshua Hahn <joshua.hahnjy@gmail.com>
----
- mm/hugetlb.c | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 39f92aad7bd1e..50bd1fe3ab400 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3010,7 +3010,7 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
- 	struct hugepage_subpool *spool = subpool_vma(vma);
- 	struct hstate *h = hstate_vma(vma);
- 	struct folio *folio;
--	long retval, gbl_chg;
-+	long retval, gbl_chg, gbl_reserve;
- 	map_chg_state map_chg;
- 	int ret, idx;
- 	struct hugetlb_cgroup *h_cg = NULL;
-@@ -3163,8 +3163,16 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
- 		hugetlb_cgroup_uncharge_cgroup_rsvd(idx, pages_per_huge_page(h),
- 						    h_cg);
- out_subpool_put:
--	if (map_chg)
--		hugepage_subpool_put_pages(spool, 1);
-+	/*
-+	 * put page to subpool iff the quota of subpool's rsv_hpages is used
-+	 * during hugepage_subpool_get_pages.
-+	 */
-+	if (map_chg && !gbl_chg) {
-+		gbl_reserve = hugepage_subpool_put_pages(spool, 1);
-+		hugetlb_acct_memory(h, -gbl_reserve);
-+	}
-+
-+
- out_end_reservation:
- 	if (map_chg != MAP_CHG_ENFORCED)
- 		vma_end_reservation(h, vma, addr);
-@@ -7216,7 +7224,7 @@ bool hugetlb_reserve_pages(struct inode *inode,
- 					struct vm_area_struct *vma,
- 					vm_flags_t vm_flags)
- {
--	long chg = -1, add = -1;
-+	long chg = -1, add = -1, spool_resv, gbl_resv;
- 	struct hstate *h = hstate_inode(inode);
- 	struct hugepage_subpool *spool = subpool_inode(inode);
- 	struct resv_map *resv_map;
-@@ -7351,8 +7359,16 @@ bool hugetlb_reserve_pages(struct inode *inode,
- 	return true;
- 
- out_put_pages:
--	/* put back original number of pages, chg */
--	(void)hugepage_subpool_put_pages(spool, chg);
-+	spool_resv = chg - gbl_reserve;
-+	if (spool_resv) {
-+		/* put sub pool's reservation back, chg - gbl_reserve */
-+		gbl_resv = hugepage_subpool_put_pages(spool, spool_resv);
-+		/*
-+		 * subpool's reserved pages can not be put back due to race,
-+		 * return to hstate.
-+		 */
-+		hugetlb_acct_memory(h, -gbl_resv);
-+	}
- out_uncharge_cgroup:
- 	hugetlb_cgroup_uncharge_cgroup_rsvd(hstate_index(h),
- 					    chg * pages_per_huge_page(h), h_cg);
+Best regards,
 -- 
-2.43.0
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
