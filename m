@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-597712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC4EA83D9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:56:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD8E6A83DA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AD488A18EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:53:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A18A8A2AE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0859F20CCDC;
-	Thu, 10 Apr 2025 08:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C24820D505;
+	Thu, 10 Apr 2025 08:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="yhL4ITJt"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="LMOo6+IC"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C901DF97F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3C320C49C
 	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 08:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744275225; cv=none; b=so8d5Qi4Bb/UjLKdoMP+PVWlEU6a/zRgslQkk9M5NGZoB4aSmhBrWN3ACcwXJWrVbq346Trd2lpLtmwqMR3jZc9hJg4uFe8mgepfbsFPzbA+Fbdv2bDK+5BxoZx6M7ckw1sq3RcCSd2oWdBLG80hgoFXDHUva4aPrT8vAtN35wE=
+	t=1744275226; cv=none; b=aZViiz2BFAPMHt+gcsdo4XPaPoAOzAvxiu/OSJfOd38mgIDDi4TCRObwtiPCEFIhUwbtJDPlaiLdK381m1K7HPXWBBbonWrz5/KSMuM6DbNFIKxZVmKd45BcCcEA2Co/Xw1UnkpeEEK2TPvnnouDktzEg6y1S4D8IHvhkN3nImU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744275225; c=relaxed/simple;
-	bh=rMvXVYQgqE0m47BFrzOL9SSfENYdk43ArcdqbWGqeSc=;
+	s=arc-20240116; t=1744275226; c=relaxed/simple;
+	bh=xm5a12pFhLIMry5y++hjuy83iJYSl+3cpW2pF+KSb0U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yv7FsiPYmtcrsTeMruvMIYT1NRLwvt8bT28mge32Vso2skkXfr6dSSNmDm4eG+WSuEGv5nV7M4q/gHZuh9041HOxfzkTj6IOMqRTKJlU8XVuULMyllUKpLrbJEvf+OgeFuzHranxaB6T/EfTwuDyJIWPnzvr80p4ISL/DMwXJaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=yhL4ITJt; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=IpIeoydhlWl12Vw5sV7HL6vhWvS9meT49LQ+DbtcnWnreon4DCFW8I1iKI1zxmpgiemANGSk3mYqgD9GBv0jXY9g0LOfk7o54BcQV/t27lsLFrFCoq1s4A1t6kvTLAOn21pVm6boNcCPV5z3u84MmXPYJiIzNCujspKzmnqZdn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=LMOo6+IC; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,33 +35,34 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=2uSi0rBX6HJS7l/ixoRnzj1B4Bl35/AdR7/AHqL8734=; b=yhL4ITJtDKiM/Z08hJ0g582CaA
-	V+aKPaaMX1AnJ55IN0fFECPh00KiNKjAF5C6nQgmTj+tQhpIIoOdHghXd3/OgtwLe3GoBWjvB+hla
-	p80iVC7P1YIqpXgs5OGqBccorpN+pxG8gfk9bAWia0x/XU6HlkjWCh/sW6Zk+m1HP7pAU4R1t1MPV
-	nX1kRRcWSCnvTK6fsUMc3Oj4m1BI2p52eaepV/MspllkQvmh1GtkJj0Qqs0pmTzhexnTdAhjrW35q
-	loU9ioxkHLEQ9qf+x0RzqldZzmMeiXuZyVP/09SvPOV2in7RJkjo6mqpYFKGXhrEDYTp25w9gJELt
-	MkbVFR5w==;
+	bh=ZXCoP5L2J4BtwaEH2n2GCfyW7YWDh/4SAhqwGfBIa/Q=; b=LMOo6+ICnSo9wd/0x+KdGHWkKq
+	UgRoQTSd6ftNQ2A3885oQ20jGkdFObG4rxEVQtA2/ql8+vxJsCjYsuq5C7VsleaICi/CHRrTgvz0o
+	F/J8eT0tGLFZa/REVQbL/ko/0ScVNyQi7eCydsEc29zJBUGjBuFu/Ou5NN8A2OxEY8/7iwe7oTCP1
+	PwLUH/PUkw/EcOskWbW83yCVv4iGmroK9jbUrFJwquqoY0WXHbWxrNyhDewufFLhy2kuI3C9WXO3a
+	minoMr0ucy2l9tO62kueLB8Yvq82UiDojWW+zajgua6aqtDGaGwPjPCrOX+lqK9+aYc1uCbJBuL0r
+	4YmpVI5A==;
 Received: from i53875b95.versanet.de ([83.135.91.149] helo=localhost.localdomain)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1u2nfG-00036h-JV; Thu, 10 Apr 2025 10:53:38 +0200
+	id 1u2nfH-00036h-1n; Thu, 10 Apr 2025 10:53:39 +0200
 From: Heiko Stuebner <heiko@sntech.de>
 To: Andy Yan <andyshrk@163.com>
 Cc: Heiko Stuebner <heiko@sntech.de>,
+	cristian.ciocaltea@collabora.com,
 	hjc@rock-chips.com,
 	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
-	piotr.oniszczuk@gmail.com,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: Re: [PATCH] drm/rockchip: vop2: Fix interface enable/mux setting of DP1 on rk3588
-Date: Thu, 10 Apr 2025 10:53:27 +0200
-Message-ID: <174427520239.842175.8681778427919130994.b4-ty@sntech.de>
+	Andy Yan <andy.yan@rock-chips.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH v2] drm/rockchip: dw_hdmi_qp: Fix io init for dw_hdmi_qp_rockchip_resume
+Date: Thu, 10 Apr 2025 10:53:28 +0200
+Message-ID: <174427520238.842175.9547277934386341429.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250312064218.524143-1-andyshrk@163.com>
-References: <20250312064218.524143-1-andyshrk@163.com>
+In-Reply-To: <20250317102757.565679-1-andyshrk@163.com>
+References: <20250317102757.565679-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,15 +73,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 12 Mar 2025 14:42:10 +0800, Andy Yan wrote:
-> This is a copy-paste error, which affects DP1 usage.
+On Mon, 17 Mar 2025 18:27:53 +0800, Andy Yan wrote:
+> Use cfg->ctrl_ops->io_init callback make it work for all platform.
+> And it's also gets rid of code duplication
 > 
 > 
 
 Applied, thanks!
 
-[1/1] drm/rockchip: vop2: Fix interface enable/mux setting of DP1 on rk3588
-      commit: 210db264cf87da8908c395b44170f04469009035
+[1/1] drm/rockchip: dw_hdmi_qp: Fix io init for dw_hdmi_qp_rockchip_resume
+      commit: 1d34597a1e23004c7dd0ab5f58ba1ef95fd9ded5
 
 Best regards,
 -- 
