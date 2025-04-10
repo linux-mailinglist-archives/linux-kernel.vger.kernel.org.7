@@ -1,61 +1,67 @@
-Return-Path: <linux-kernel+bounces-597891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380FEA83FC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:00:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01460A83FDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A75FE189D20B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:01:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FFD14A5B13
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96F926B0A1;
-	Thu, 10 Apr 2025 09:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2E726F47C;
+	Thu, 10 Apr 2025 10:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOfvEmJa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e1vNa4Qw"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077AD26A0C1;
-	Thu, 10 Apr 2025 09:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530D226AA9C
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744279178; cv=none; b=J/Ecou+C4S3vXIG9IwGEsery1x06yNPRuW0ZGrfNITRTcLY6jbyH+Lv7GZ9qtutNoo1nInXHeSOZbz4AIf6UJf+BJjJmOeKqzPBWyNHhpa149tFw1p5CtHgvPvpieyjVnv36xSmboKwhl3SegeSwKOz0/j6EJyuCkurbDjXkiS0=
+	t=1744279232; cv=none; b=oOjgbU4V9wVFx8STq/TM2bNXAaR04alysT2KzlmtbyUcrXPFiHg88fcMdDczLmUWmHLuFu9bZEwaqtLe4RXMKePILNA7JTPHFlTma5qKNJD5SbVK9irbBFIQ3FTEYMxB2BfjLQvsrIkmhoikzfGCIaKWl+ZtEHWHTKnmlfQaR5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744279178; c=relaxed/simple;
-	bh=OLoyISjxtlYxrHqthuPpR+LH054SYc7FyhmF4e900cQ=;
+	s=arc-20240116; t=1744279232; c=relaxed/simple;
+	bh=RLj279jJJT9HZsucpSNecZkvR1nrExHomeDx+UCVREA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YPc9jUaEMIZwioBew0zr+1M3amUqvOjdMmJcQC0SH3wMeZ8ydlKb+oUxwyZZ/VIPckMpXNQttptWbuQ4UvQwQVRW4gzm1bPF4VQPpbuAslhyg4zsuJ6lQzU2qh4WDsESWBfupMCI6lSG3rh1zofxrJY0Da2YF4ryaBeKFxUiE98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOfvEmJa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84C7CC4CEDD;
-	Thu, 10 Apr 2025 09:59:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744279177;
-	bh=OLoyISjxtlYxrHqthuPpR+LH054SYc7FyhmF4e900cQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WOfvEmJag8Vqyu1E9yS32WtIWyEe3n9B8jzdmtGpzArg0CajdiER8vtqFZ8yQpe5/
-	 mG2CCmwGGaT8IcnyBoYyTg2nyltCOIXy86eVtlDOatwsaeZ72FzYuDxdzgitpqslaC
-	 eO53wDmLfdSopU/m6K51IySHfavbwx1r+Hgw6Fbd8sub14si//0GjMOl5KlEG1pzxY
-	 +o11R7EwY5v4sNUL7uDiiZ/cJMW7y6l40B/DgGyvalKtsa4IYsheuShaIBfLA3MXVG
-	 OfIbQfTcCj2LSLf7ZyvdEhPpFM64dgoaKmA/b+vaUuX2u31Md3R8K8zp2298+Phe8Z
-	 lHtEbvJBa+0uQ==
-Date: Thu, 10 Apr 2025 11:59:31 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	dmitry.baryshkov@linaro.org, Tsai Sung-Fu <danielsftsai@google.com>
-Subject: Re: [RFC] PCI: pwrctrl and link-up dependencies
-Message-ID: <Z_eWg9Zvc3bQho5S@ryzen>
-References: <Z_WAKDjIeOjlghVs@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ah86K2NRHelpO+Ti2xr1VfaUA5rPymCNiQYD/cKmw4rNgYVvkUEHqIjR/rjM0F5hsJFGyyjecq99OoxOL5MNnLYNK3zdkRhU8a9XOisMgqPM1fSHw0+JY2FGW8m/QUu+p/y2DjlNpyGgloM+wDIaG38rqqCUeO//Sg7zDvPOyD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e1vNa4Qw; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EvFhqf/mhVMaP+Q9S4A45KX8OaxnFjIub6xLUUqOdAI=; b=e1vNa4QwCPg8nSc1exhDSrw6/1
+	3rPv8TIucIXVqhCKB+GOJR+WYTgrJvVAHqhRvTeH489Y9x+pVzSodwWmNbpKnG3k0t7rql16J5mBV
+	0DZVlbpEftbpef9U11zIZHzamBUD5ubku9tmPUtkaXRa4aLlfjKaG8q7VCpn5ngU06kUPGwlk901g
+	OhpVUvXIfGwD3k0MTX8+xml+PvimnXTY5CFqHNHday44u2CMJ0TuZwuqbQfGUvEY/qJb3ktpmmp0w
+	JJeY2YBKC8U6KSyqn065xu5rckUkudBt3EhRV5jbK5p4u4II9hqaq9MmStieAmU9yvGzLbMnZF9QK
+	nEdM3EWg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u2ohr-00000008nCK-0pGs;
+	Thu, 10 Apr 2025 10:00:23 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C239A3003C4; Thu, 10 Apr 2025 12:00:22 +0200 (CEST)
+Date: Thu, 10 Apr 2025 12:00:22 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>
+Subject: Re: [RFC PATCH 1/5] sched/fair: Add push task framework
+Message-ID: <20250410100022.GA30687@noisy.programming.kicks-ass.net>
+References: <20250409111539.23791-1-kprateek.nayak@amd.com>
+ <20250409111539.23791-2-kprateek.nayak@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,19 +70,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z_WAKDjIeOjlghVs@google.com>
+In-Reply-To: <20250409111539.23791-2-kprateek.nayak@amd.com>
 
-On Tue, Apr 08, 2025 at 12:59:36PM -0700, Brian Norris wrote:
-> I also see that Manivannan has a proposal out [2] to add semi-generic
-> link-down + retraining support to core code. It treads somewhat similar
-> ground, and I could even imagine that its pci_ops::retrain_link()
-> callback could even be reimplemented in terms of the aforementioned
-> pci_ops::{start,stop}_link(), or possibly vice versa.
+On Wed, Apr 09, 2025 at 11:15:35AM +0000, K Prateek Nayak wrote:
 
-Just want to point out that there is a newer version of this series here:
-https://lore.kernel.org/linux-pci/20250404-pcie-reset-slot-v1-0-98952918bf90@linaro.org/T/#t
+> +static void fair_add_pushable_task(struct rq *rq, struct task_struct *p)
+> +{
+> +	if (fair_push_task(p)) {
+> +		plist_del(&p->pushable_tasks, &rq->cfs.pushable_tasks);
+> +		plist_node_init(&p->pushable_tasks, p->prio);
 
+I gotta aks, why do we care about ordering the push list on p->prio for
+fair?
 
-Kind regards,
-Niklas
+> +		plist_add(&p->pushable_tasks, &rq->cfs.pushable_tasks);
+> +	}
+> +}
+> +
+>  /*
+>   * select_task_rq_fair: Select target runqueue for the waking task in domains
+>   * that have the relevant SD flag set. In practice, this is SD_BALANCE_WAKE,
+
+> @@ -8914,6 +8978,12 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
+>  		put_prev_entity(cfs_rq, pse);
+>  		set_next_entity(cfs_rq, se);
+>  
+> +		/*
+> +		 * The previous task might be eligible for being pushed on
+> +		 * another cpu if it is still active.
+> +		 */
+> +		fair_add_pushable_task(rq, prev);
+> +
+>  		__set_next_task_fair(rq, p, true);
+>  	}
+>  
+> @@ -8986,6 +9056,13 @@ static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct t
+>  		cfs_rq = cfs_rq_of(se);
+>  		put_prev_entity(cfs_rq, se);
+>  	}
+> +
+> +	/*
+> +	 * The previous task might be eligible for being pushed on another cpu
+> +	 * if it is still active.
+> +	 */
+> +	fair_add_pushable_task(rq, prev);
+> +
+>  }
+
+These two are tricky; while they will work with a push balance callback,
+they will cause some pain with pulling from the push lists; a-la
+newidle.
+
+Notably, we must be sure to check ->on_cpu.
+
+Perhaps later patches add this, let me continue reading...
 
