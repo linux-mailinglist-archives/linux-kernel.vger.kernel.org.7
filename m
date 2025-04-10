@@ -1,97 +1,69 @@
-Return-Path: <linux-kernel+bounces-597221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA7DA836C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:45:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6098FA836CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A00D19E53C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:45:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DFE3447CE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC331E9B1F;
-	Thu, 10 Apr 2025 02:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A2B1E9B27;
+	Thu, 10 Apr 2025 02:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hY5KKEMt"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="MwiHJKyH"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B796437160;
-	Thu, 10 Apr 2025 02:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744253141; cv=none; b=c65Ya+6OtMTVuVUiCMwYvzaaV7tnj8OlfH94oW6eMfV0sAju0JjiqtHxR4lq6YH7zVNoNBsdb07OLntcVHzrI8icHfdU7Na1C244rRAqq+p1DRz6RmcggBzotFKznHQP8YO4qAZGj10F8/egUfy4hPuCQp9oO3CLgzn/GX3No48=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744253141; c=relaxed/simple;
-	bh=Q8AXcXVSVMznwFw+vmhKbYQYPCxaMf2KKKekPLOUUI4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ML137JdT5jl1OlqzhMckX9OFzi+VXO5oR3N1wJv/FG6nUPEb5HfkQlWqtD6LTef0M+y8JDw8DT59BVkm4zP6gj9MiCqFfUXU1RkjLxiqUw57FUypHit0VNWgpfZC4uW2tdyABg9tDOnfddBGKP30S5K3xCHOzatFUr6CRUZ2kHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hY5KKEMt; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-af908bb32fdso301891a12.1;
-        Wed, 09 Apr 2025 19:45:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744253139; x=1744857939; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=mgEaQVzQ9xUZw5+9pb2jzPcanvYUFUW9ZgEc7iF3zJc=;
-        b=hY5KKEMtqptrZUPiJ5tIdONgOhD8im0sM9pWOx0YCcuQpN4bgBvFbxrRQtd6tdccaF
-         wkdaVzCeoSawLPFtln3/+0/+Eh5XBopN+xT5ytU3DDjRFObm5om9ZD4bahW47AxiCeFG
-         LThOoKffBSraYPJIyk5ZZtagZTQLdxrmtlndJXNS1dTi+t/UPAlNhiXT+ytWQyyYcKOW
-         TlZyEEyl4TwyZF3RGup5geW9ZOzRa6lGydm1S6ng59COP4l7HPbzDBovyYcUzzG1/DMC
-         QggxjHqXfO2CG4C62FMryEVHY1OCIv+bdrqPeN+odQOn4eLVZ4DFQqEm7iiXVPLpEW4C
-         o+RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744253139; x=1744857939;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mgEaQVzQ9xUZw5+9pb2jzPcanvYUFUW9ZgEc7iF3zJc=;
-        b=mM1OCOCKipkrihZBB3rGcPMX3Ziit179c/ah6C+g7p4mp51YfCQwFQy6cTr5kX/PvZ
-         GumUnNp/+7xwWi8KzJ5nCclUIhVr6mRbXF5b2JaZdW9Im4CM/FqY8VA+K76zArGbEYMs
-         skGArLLoEwTU8IXVLKEKbvseVw9VW4lDIJaGiPM4SPAZWhuE8gFklPeo2U3/uTG+bcnT
-         p1QGrspiiSUB8cIgwOYfyK+VKKD3LOLKK2Uv/sy0QffORCODheDBAV7y9oPj3w1UWtwG
-         q026CQWcXkCZhqjAmYaqs71duBwWTNYjFL41PfHAftSyaWnACc5oVhs7Oz/1mrfwbUlB
-         pYEA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Kp/H5nUDnP6SGr+ZphFsfg04bGpoxcCFTEp4sCj9Le69rHg2Ho4eYe8pphim1n7WU5saGD50vms=@vger.kernel.org, AJvYcCVQZ35vLYVKHxkue/iR+AiBXjkH6y81Fa9MWQs9GTaYxCvgKHvHEOTBleKfJN9mloxS1HXWQsfSEhfO/BI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/NIrE/A1Xd/o4wgb3OW8IjNgC+NP5UY3ed6RrkFQ4BjFcGSFm
-	b/XrMYZ6kJPk6gpQv4NfN4s7106RdfnK/trNsAbzB7Xh/IBpvEFI
-X-Gm-Gg: ASbGnctnRdmYdWmPSQS53pEeM04LSCTSVWODsFNb0Wn4Wel5wWLQfs9R7NXOw7MLC21
-	Iv2KmgwSq/bNs13CWzYv717YGIGUogoHlh8bsAJG2chNUwQq81g3SXMBjV0BHUUvIObzg12VvTt
-	k/rus6XETBEDKiyg8etSUNsHbmaDLn3v+OVQ0Siot3gkq/7qjjVL474XkfFSkCDxzcpgAdfkBgA
-	I2HaXYK9Ofh/rZrxCoVoT9x6Uq+0vzQwZ4fguRBSpyTIm6JJkHalUJKS+X32yBg2Xo99n3XjAYV
-	EWZhjmDm9iWJjxfiw4E=
-X-Google-Smtp-Source: AGHT+IHLhI98ioM5QSvFbUz3p9lheGgiIL9i5F9PoF5eRULqoR2vYB871TKWwgvhth+s4htE2suL2Q==
-X-Received: by 2002:a17:90a:dfcf:b0:2fa:1d9f:c80 with SMTP id 98e67ed59e1d1-30784d58f25mr1703698a91.17.1744253138741;
-        Wed, 09 Apr 2025 19:45:38 -0700 (PDT)
-Received: from sultan-box.lan ([142.147.89.201])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd2fe717sm1283682a91.0.2025.04.09.19.45.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 19:45:38 -0700 (PDT)
-Sender: Sultan Alsawaf <sultan.kerneltoast@gmail.com>
-From: Sultan Alsawaf <sultan@kerneltoast.com>
-X-Google-Original-From: Sultan Alsawaf
-To: 
-Cc: Stephan Gerhold <stephan.gerhold@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: schedutil: Don't ignore limit changes when util is unchanged
-Date: Wed,  9 Apr 2025 19:44:37 -0700
-Message-ID: <20250410024439.20859-1-sultan@kerneltoast.com>
-X-Mailer: git-send-email 2.49.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1D81E9B12;
+	Thu, 10 Apr 2025 02:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744253150; cv=pass; b=ikF9rTv2svop+MsO12ehk2HBLc6Dyu35C3lFSUZUZqNG7SbOwxp/qtT40Fm0194cCbUa0rdAfvpDGI9V86EX0IHORBC3y6uz3Yd+yLaqZRDD7QkUEjf1bV33/LrO8atB024Ue0bqTzP6/aYO2oBlB5KB6OELqPcFsdU8TvacqwE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744253150; c=relaxed/simple;
+	bh=59zn4Z/QXSsn/dYi20BvJ7x27wAjnpmuU3q4TnCEGng=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m5F34N/+lItwoFU2mWvTdO06l45S1iVmCUxWc+RDwEPdIa4GrlPDS3cKTI8vb20pJ4/uxYNgF/CWNQLOgwRVSCjBjH4xeYdsG8j4DcTzviG/UGVqu2QOnjZXfCwp3GP679TPVRBi+sWnkcIJbQxnxVC3GnlrsSeCV8FA1pkzmLs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=MwiHJKyH; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744253134; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=f7rDPeX4Wg2pvS+wb/OMD7ysgOaabppR1eMZq9QFROaoof25dL1uctZR6ZyKekuIdo/zlcvUQxtGsxdBEUFIG7gxmcsM52rrTqc0w9DUqWT1K6tcAi4MiZGy08/poDZ5SrlqsSuQdOMq/jBMnbdFjRl41quy2gJWtsf7Jm0mcXA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744253134; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=PvYx+06KT98XpC+VIeWlEcOZ4YTHAdkft+Uf6Lb4JAA=; 
+	b=g/VNhVLXoDXUcnq0Ia8rZGn6UvmhyX5NJU1u7V+vv36DIu6poiBp1IcGJWjozZZoqgAHA6MH/NYEWOWeZ2oUMhsI+seeXN6BamJtoVOvxPbA+iL+AzqLEvlvs+rExToWyQFzLpB+LsrIDKmeSxCjhZXye9yMHWPbgQsEIflgmlU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744253134;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
+	bh=PvYx+06KT98XpC+VIeWlEcOZ4YTHAdkft+Uf6Lb4JAA=;
+	b=MwiHJKyHFiAbJk6ByaUI+GEUlnkcPqrQzT6CHsJDvjSEDW1ahL39pl3xuVtYJrP5
+	puImXh7BVj4Vf1SETHd+sHRvE9iKHJ5d1M+PGVuWkoc7zcWkBWJnKFmYeDpyIezHnwa
+	qVCfw2uESFgxnpyfSFCFEEHUWcDkMICHuq6D+aog=
+Received: by mx.zohomail.com with SMTPS id 1744253131792555.9205806172549;
+	Wed, 9 Apr 2025 19:45:31 -0700 (PDT)
+From: Li Ming <ming.li@zohomail.com>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Ming <ming.li@zohomail.com>
+Subject: [PATCH v3 1/1] cxl/feature: Update out_len in set feature failure case
+Date: Thu, 10 Apr 2025 10:45:21 +0800
+Message-Id: <20250410024521.514095-1-ming.li@zohomail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,56 +71,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Feedback-ID: rr0801122785b0d5d72241a49bb2e2d90b0000283464bf916e889d80afd5b572eec254ed94be97dfd563d589:zu08011227a06a218e70415aed63e64db600007cd3f6c80826e03cfb7d1f700209bfb414b9abcd1837877724:rf0801122ddab797f8fb3e2743c6c270b700003ff0b1a4516e6d008df40bc07a72612bf283d2bdcc730a1a3a591fe714cdd9:ZohoMail
+X-ZohoMailClient: External
 
-From: Sultan Alsawaf <sultan@kerneltoast.com>
+CXL subsystem supports userspace to configure features via fwctl
+interface, it will configure features by using Set Feature command.
+Whatever Set Feature succeeds or fails, CXL driver always needs to
+return a structure fwctl_rpc_cxl_out to caller, and returned size is
+updated in a out_len parameter. The out_len should be updated not only
+when the set feature succeeds, but also when the set feature fails.
 
-When utilization is unchanged, a policy limits update is ignored unless
-CPUFREQ_NEED_UPDATE_LIMITS is set. This occurs because limits_changed
-depends on the old broken behavior of need_freq_update to trigger a call
-into cpufreq_driver_resolve_freq() to evaluate the changed policy limits.
-
-After fixing need_freq_update, limit changes are ignored without
-CPUFREQ_NEED_UPDATE_LIMITS, at least until utilization changes enough to
-make map_util_freq() return something different.
-
-Fix the ignored limit changes by preserving the value of limits_changed
-until get_next_freq() is called, so limits_changed can trigger a call to
-cpufreq_driver_resolve_freq().
-
-Reported-and-tested-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-Link: https://lore.kernel.org/lkml/Z_Tlc6Qs-tYpxWYb@linaro.org
-Fixes: 8e461a1cb43d6 ("cpufreq: schedutil: Fix superfluous updates caused by need_freq_update")
-Signed-off-by: Sultan Alsawaf <sultan@kerneltoast.com>
+Fixes: eb5dfcb9e36d ("cxl: Add support to handle user feature commands for set feature")
+Signed-off-by: Li Ming <ming.li@zohomail.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 ---
- kernel/sched/cpufreq_schedutil.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8 v6.15-rc1
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 1a19d69b91ed3..f37b999854d52 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -82,7 +82,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
- 		return false;
- 
- 	if (unlikely(sg_policy->limits_changed)) {
--		sg_policy->limits_changed = false;
- 		sg_policy->need_freq_update = cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);
- 		return true;
+v3:
+- Add fixes tag
+v2:
+- Adjust changelog
+---
+ drivers/cxl/core/features.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/cxl/core/features.c b/drivers/cxl/core/features.c
+index fcc624cefe89..63f24f032209 100644
+--- a/drivers/cxl/core/features.c
++++ b/drivers/cxl/core/features.c
+@@ -540,13 +540,13 @@ static void *cxlctl_set_feature(struct cxl_features_state *cxlfs,
+ 	rc = cxl_set_feature(cxl_mbox, &feat_in->uuid,
+ 			     feat_in->version, feat_in->feat_data,
+ 			     data_size, flags, offset, &return_code);
++	*out_len = sizeof(*rpc_out);
+ 	if (rc) {
+ 		rpc_out->retval = return_code;
+ 		return no_free_ptr(rpc_out);
  	}
-@@ -171,9 +170,11 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
- 	freq = get_capacity_ref_freq(policy);
- 	freq = map_util_freq(util, freq, max);
  
--	if (freq == sg_policy->cached_raw_freq && !sg_policy->need_freq_update)
-+	if (freq == sg_policy->cached_raw_freq && !sg_policy->limits_changed &&
-+	    !sg_policy->need_freq_update)
- 		return sg_policy->next_freq;
+ 	rpc_out->retval = CXL_MBOX_CMD_RC_SUCCESS;
+-	*out_len = sizeof(*rpc_out);
  
-+	sg_policy->limits_changed = false;
- 	sg_policy->cached_raw_freq = freq;
- 	return cpufreq_driver_resolve_freq(policy, freq);
+ 	return no_free_ptr(rpc_out);
  }
 -- 
-2.49.0
+2.34.1
 
 
