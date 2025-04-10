@@ -1,80 +1,82 @@
-Return-Path: <linux-kernel+bounces-597468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88E5A83A3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:06:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE2EA83A34
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A2373BA421
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:03:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA02C1B64B3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A405A204C0A;
-	Thu, 10 Apr 2025 07:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272232045B0;
+	Thu, 10 Apr 2025 07:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D96wDNDD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yo8iUjkk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B35013C695;
-	Thu, 10 Apr 2025 07:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73EB2036FB
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744268610; cv=none; b=VmbXjWpEH1FF9QvE4BqRtd66lQqPn1FHbMHqfyL7FitsEUbuUW80sjOc+xGleuChoaYE2FNbIm9xhiuSaV+fD95tSXD1Z7UPvM+k0Nuq+e8dt4vXjXaxbvN1V2b2WrMcsqY2n5hNFdOwk41Gsberj2pOaZMKgmPpurnJ/fyYXZg=
+	t=1744268658; cv=none; b=HRWIxNq1UW/NFRmH+KXuJNhfaZ4t4iSXvstgO7Rz181HBwMaJDU4UGX2u2rSvVfrr56rgmHGl8CIzMgojHYt2438Atl2aH8g+RXVK5gUzrrprrvnwqRHbL5JzdBHFbGeSBUZFYgpFpHKDxgBYMwL0Su4UyMAqjyWpdNSTFOME/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744268610; c=relaxed/simple;
-	bh=FVby0+BSV/HJscXR64y9WYo8HylnPf4XR+uLKGaVPnw=;
+	s=arc-20240116; t=1744268658; c=relaxed/simple;
+	bh=a+gKW0Py71TalASop7ZxdQ6rsdM207Gm+oHvKtY/2NU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kAVe28n5Z4CJ4JO7t+HTIrSE85X7opxFwSBzXHZc/YvtnFnGZhAXHLbL2ptawXGJmWasZLgHfgnJrqAvS0bcjdk+fC69oJMrklmTDZrTOujrMvDKhb/uIx6+yn2BQwf1ECH5fcByzLhvVH/QJzqSljTsdMfNiOXsKX5wwEZOuAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D96wDNDD; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Urcysv7EI7Ylf3V50SyVI+BRWWf3Mk1U1mAIUu6hpAdBgCCMKzc1O3XjuN1AwxG14bejmJnhfXPPtA9Jyip4ZTZ8qHVDNrqwDiFT9+YnRLktW2YHkVMS6okABr4iCdKU3J++kqvXHAlulGQtXzP4Adyz26NZIOIqj24Vv3FzS2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yo8iUjkk; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744268608; x=1775804608;
+  t=1744268657; x=1775804657;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=FVby0+BSV/HJscXR64y9WYo8HylnPf4XR+uLKGaVPnw=;
-  b=D96wDNDDYAOCOACjZYszoHvBwZeL1DQsDdKchmkgvLSIwVkjyA7qzSmz
-   yx8GuNoIHWeGNfIAsLdfUsKJSa6c95ju3zku6slcGAXcDon71SDbYjS24
-   MhnmSTPPS0fD37EbWzIQVogOFe4WVu9sXHX7Rvl1HuSVnRSTp/HlJz7b+
-   O2JOHfMCPVHY3wsz3jcyBnJaJ/4g03kBDricef/wsXeaXqkZZqbzT1G+v
-   xzXX6R3yUHo0/9R7h549wbSlkbSwtecxO8w9nJ2AP0NhIgVRKp/G7HFMS
-   kxt45b/0FXnzaoaX+KRkKq6eZrd7MuR4zb/7jChv/NKWErnX+uoMywipl
-   Q==;
-X-CSE-ConnectionGUID: 40BINLxoTLq8htQ3uGazUA==
-X-CSE-MsgGUID: ngHBJuJ+RqiZMtmcVd+Ybw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="45012248"
+  bh=a+gKW0Py71TalASop7ZxdQ6rsdM207Gm+oHvKtY/2NU=;
+  b=Yo8iUjkk5vA9po4GQJe8cpZJefkrfPnPL2rrxg5kA42Di70U21oyuIdD
+   EfWjZO/Ei15rdVyXQMHyhmH9PdQtD52meDiSn4vB6oce7L+KDF94gc9ce
+   eanMVuK13HhorfwPgsoRqTczwbBSKdky+VEtp9U/M/lzSc74x2/DbMJxn
+   vydCNMBPNW06zQ7BvU7qTMqVlJjDTkl2UKX/Fzm08VEZU08EvXnPcqi9G
+   80wKPdgv/GUzGhA6XdwGTQJ2P9OjOjDdeCpI0RLt9SUxnUuupztzZr83H
+   UOll2DfZifHMUJBql5vjVgfhlJjG4dxPZHdBTGkxnhdOntDHDJRg6j1TS
+   w==;
+X-CSE-ConnectionGUID: yNfx2+tMSfCsMLKTDObrpQ==
+X-CSE-MsgGUID: JkP0fYh/TtWh7f1gWTFT2g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="57148363"
 X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
-   d="scan'208";a="45012248"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 00:03:27 -0700
-X-CSE-ConnectionGUID: b/X7YN5qTi6ENUZFHt1/xQ==
-X-CSE-MsgGUID: htCv+A0lTeKYqT6ow3V3Iw==
+   d="scan'208";a="57148363"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 00:04:16 -0700
+X-CSE-ConnectionGUID: QW5AF7cFTy6leIoI2btU1Q==
+X-CSE-MsgGUID: k29QXuKITxe/4SVEciXV2Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
-   d="scan'208";a="128674393"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa006.fm.intel.com with SMTP; 10 Apr 2025 00:03:23 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 10 Apr 2025 10:03:22 +0300
-Date: Thu, 10 Apr 2025 10:03:22 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Andrei Kuchynski <akuchynski@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jameson Thies <jthies@google.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Benson Leung <bleung@chromium.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	Pooja Katiyar <pooja.katiyar@intel.com>,
-	Madhu M <madhu.m@intel.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] usb: typec: ucsi: displayport: Fix NULL pointer
- access
-Message-ID: <Z_dtOnM0wCOeXxZC@kuha.fi.intel.com>
-References: <20250409140221.654892-1-akuchynski@chromium.org>
- <20250409140221.654892-3-akuchynski@chromium.org>
+   d="scan'208";a="133677191"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 10 Apr 2025 00:04:13 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u2lxK-0009jx-22;
+	Thu, 10 Apr 2025 07:04:10 +0000
+Date: Thu, 10 Apr 2025 15:03:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Donet Tom <donettom@linux.ibm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Ritesh Harjani <ritesh.list@gmail.com>, rafael@kernel.org,
+	Danilo Krummrich <dakr@kernel.org>,
+	Donet Tom <donettom@linux.ibm.com>
+Subject: Re: [PATCH 1/2] mm/memblock: Added a New Memblock Function to Check
+ if the Current Node's Memblock Region Intersects with a Memory Block
+Message-ID: <202504101459.iFHlVGBA-lkp@intel.com>
+References: <50142a29010463f436dc5c4feb540e5de3bb09df.1744175097.git.donettom@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,39 +85,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250409140221.654892-3-akuchynski@chromium.org>
+In-Reply-To: <50142a29010463f436dc5c4feb540e5de3bb09df.1744175097.git.donettom@linux.ibm.com>
 
-On Wed, Apr 09, 2025 at 02:02:21PM +0000, Andrei Kuchynski wrote:
-> This patch ensures that the UCSI driver waits for all pending tasks in the
-> ucsi_displayport_work workqueue to finish executing before proceeding with
-> the partner removal.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: af8622f6a585 ("usb: typec: ucsi: Support for DisplayPort alt mode")
-> Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
+Hi Donet,
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+kernel test robot noticed the following build errors:
 
-> ---
->  drivers/usb/typec/ucsi/displayport.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/usb/typec/ucsi/displayport.c b/drivers/usb/typec/ucsi/displayport.c
-> index acd053d4e38c..8aae80b457d7 100644
-> --- a/drivers/usb/typec/ucsi/displayport.c
-> +++ b/drivers/usb/typec/ucsi/displayport.c
-> @@ -299,6 +299,8 @@ void ucsi_displayport_remove_partner(struct typec_altmode *alt)
->  	if (!dp)
->  		return;
->  
-> +	cancel_work_sync(&dp->work);
-> +
->  	dp->data.conf = 0;
->  	dp->data.status = 0;
->  	dp->initialized = false;
-> -- 
-> 2.49.0.504.g3bcea36a83-goog
+[auto build test ERROR on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Donet-Tom/base-node-Use-curr_node_memblock_intersect_memory_block-to-Get-Memory-Block-NID-if-CONFIG_DEFERRED_STRUCT_PAGE_INIT-is-S/20250409-132924
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/50142a29010463f436dc5c4feb540e5de3bb09df.1744175097.git.donettom%40linux.ibm.com
+patch subject: [PATCH 1/2] mm/memblock: Added a New Memblock Function to Check if the Current Node's Memblock Region Intersects with a Memory Block
+config: csky-randconfig-001-20250410 (https://download.01.org/0day-ci/archive/20250410/202504101459.iFHlVGBA-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250410/202504101459.iFHlVGBA-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504101459.iFHlVGBA-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   mm/memblock.c: In function 'curr_node_memblock_intersect_memory_block':
+>> mm/memblock.c:1943:22: error: 'struct memblock_region' has no member named 'nid'
+    1943 |                 if (r->nid == curr_nid) {
+         |                      ^~
+
+
+vim +1943 mm/memblock.c
+
+  1913	
+  1914	/**
+  1915	 * curr_node_memblock_intersect_memory_block:  checks if the current node's memblock
+  1916	 * region intersects with the memory block.
+  1917	 * @start_pfn: memory block start pfn
+  1918	 * @end_pfn: memory block end_pfn
+  1919	 * @curr_nid: Current node
+  1920	 *
+  1921	 * This function takes the start and end PFN of a memory block, as well as the node ID
+  1922	 * that is being registered. It then finds the memblock region of the current node and
+  1923	 * checks if the passed memory block intersects with the memblock. If there is an
+  1924	 * intersection, the function returns true; otherwise, it returns false.
+  1925	 *
+  1926	 * Return:
+  1927	 * If the current node's memblock region intersects with the memory block, it returns
+  1928	 * true; otherwise, it returns false.
+  1929	 */
+  1930	bool __init_memblock curr_node_memblock_intersect_memory_block(unsigned long start_pfn,
+  1931							unsigned long end_pfn, int curr_nid)
+  1932	{
+  1933		struct memblock_region *r;
+  1934		unsigned long r_start, r_end;
+  1935		unsigned long size = end_pfn - start_pfn;
+  1936		unsigned long r_size = 0;
+  1937	
+  1938		for_each_mem_region(r) {
+  1939			r_start = PFN_DOWN(r->base);
+  1940			r_end = PFN_DOWN(r->base + r->size);
+  1941			r_size = r_end - r_start;
+  1942	
+> 1943			if (r->nid == curr_nid) {
+  1944				if (size > r_size) {
+  1945					/*
+  1946					 * The memory block size is greater than the memblock
+  1947					 * region size, meaning multiple memblocks can be present
+  1948					 * within a single memory block. If the memblock's start
+  1949					 * or end is within the memory block's start and end, It
+  1950					 * indicates that the memblock is part of this memory block.
+  1951					 * Therefore, the memory block can be added to the node
+  1952					 * where the memblock resides.
+  1953					 */
+  1954					if (in_range(r_start, start_pfn, size) ||
+  1955							in_range(r_end, start_pfn, size))
+  1956						return true;
+  1957				} else {
+  1958					/*
+  1959					 * The memory block size is less than or equal to the
+  1960					 * memblock size, meaning multiple memory blocks can
+  1961					 * be part of a single memblock region. If the memory
+  1962					 * block's start or end is within the memblock's start
+  1963					 * and end, it indicates that the memory block is part of
+  1964					 * the memblock. Therefore, the memory block can be added
+  1965					 * to the node where the memblock resides.
+  1966					 */
+  1967					if (in_range(start_pfn, r_start, r_size) ||
+  1968							in_range(end_pfn, r_start, r_size))
+  1969						return true;
+  1970				}
+  1971			}
+  1972		}
+  1973		return false;
+  1974	}
+  1975	
 
 -- 
-heikki
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
