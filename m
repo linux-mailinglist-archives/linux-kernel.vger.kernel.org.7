@@ -1,151 +1,106 @@
-Return-Path: <linux-kernel+bounces-597599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B81E2A83BE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:59:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D0AEA83BF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29CD218981B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:59:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D98284A6BCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193F41EF080;
-	Thu, 10 Apr 2025 07:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB4D1E5B9D;
+	Thu, 10 Apr 2025 07:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKl+WEqE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWEIc/rX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD0F1E32A3;
-	Thu, 10 Apr 2025 07:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D1B1E32A3;
+	Thu, 10 Apr 2025 07:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744271927; cv=none; b=cPmajS6yxbfPk9upiPk+FsG8UmMT+QqOY7L4hKT9JTf+e0isS/Lw/S1N2F0dt9C2e4ovEInQw3p6b5lrQXpUaG0cHqWYatVKZSw76G9swCNoDHmN18zjirqmlotjqyqCRQ5cBDDxBBQudJgTjemgpjcf3jlg8QgAAau8wc9cWIA=
+	t=1744271976; cv=none; b=SXEHF9keqtCHEw4/GSzOaVIuryxQDrN8K/WNwoPnTUXWqLTYhB+9xxFI2rX2Z95ToKUqq1TQQPzsmadBqphqi57KRLNByTywAyWRjL3EQYLCdSd1ybC4YExpn/W8APIKi1L5PzIFuJyy4jM02p2VR3CjA5ehnhN/3zRoCDNGzqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744271927; c=relaxed/simple;
-	bh=71Rfgf2yRqlfiS9p2925TC7yG6tm0ZpKyipflmSA2d0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RuFsAwjlywZ6jBLzkCLrhNw8W6U0Ot8UANYq/U1n3+e7VChqu/J60pyBVVCMV8yzPU7j4hLUKr0Harw+JGUXQ3FsOADqIMIucTkQBJ0BQLVgJZEv6A9cneXVcsxv39wsjgsMHGbVrMVMbJzL2S5NOvcCWLaenHtADAtz1MOeg3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKl+WEqE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8835C4CEE9;
-	Thu, 10 Apr 2025 07:58:38 +0000 (UTC)
+	s=arc-20240116; t=1744271976; c=relaxed/simple;
+	bh=UiSeec8bgOQw16nTOooUF8MdvjIJ33hXBd2rH5yhSCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=abDF0E6WcfwK7Zv6awIDvA4ouT5Mek1PNEEGsn4usxOMRHEQVMSCSYADRcZtUTLZmFlqBx0kbOFIvbcrfbeJXO5pNC1AHQs85KewF9437r0Ej039biHpaa7DIka2JkLDlpmnwC1Ms0+QqFcCr2uMB8iR+whpy7xzpWPh+n6UzEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SWEIc/rX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36842C4CEDD;
+	Thu, 10 Apr 2025 07:59:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744271925;
-	bh=71Rfgf2yRqlfiS9p2925TC7yG6tm0ZpKyipflmSA2d0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IKl+WEqEoEOyurj+PuJ0zeklluNjrmMu21SCPdSthnjOPwuYOQxiMC90ApTmjpyaY
-	 hpW411fYLc/wbiD0bDsjjB6AofuCLUR8d+YjmyTwwHCZYAdH9jqt0ZvuCjJvHu5DHe
-	 9MwgqlIhDBQb4UBrfCLK1LNpfn4FVg6Kaot1dbmFly/2xnGbhmKIuzCVoPRRnzmoao
-	 l9aoC+zJ2R1NdrPMih55JDwfdHIu0fUGNkd97riWWUVlgQ7u8XnH3IbmkjEYuxJlDJ
-	 9eJoDsLyBK8/IBwHiQ6NbiLfo2Edi0+sco1KAtDtDfJgNXskPdrnkxndC0MDSsoOR5
-	 5CZL1KdOqOILQ==
-Message-ID: <e369a368-6729-4f67-9bb0-28bfd833356f@kernel.org>
-Date: Thu, 10 Apr 2025 09:58:37 +0200
+	s=k20201202; t=1744271976;
+	bh=UiSeec8bgOQw16nTOooUF8MdvjIJ33hXBd2rH5yhSCU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SWEIc/rX/KxApXAtDmJfJ55hJ00ScI52B8dPy00YaUEhWl7b6YeJK5+n+uSuWPWkL
+	 QBC76xoUicSo3qCD42e89bWhRzl4iPw0eN7pSlFjz43l5OYcj8fkS9aF0xw7NgaLgX
+	 KBG9QOUmtc3wFsGq/9x+4D4/p2Uwy1CBFw2s8JZ1m82o2OWcpUvGbJuXxWd2SxRDhT
+	 JRRoLND1ivpuU3OrOUgySVUBYvFmK8doxbEDflMlUmgnOWuQM8/uhWilR/nRztPFiT
+	 sQP0kkZ+NGj9lBcH+R1XI7zd6oKHrSWnTXYmPj5sHx7iEE8zeVEClEwWvFzLDZQkaI
+	 HttyTZWdQt65g==
+Date: Thu, 10 Apr 2025 10:59:28 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@kernel.org>,
+	Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux <linux@treblig.org>, Maher Sanalla <msanalla@nvidia.com>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RDMA/hfi1: use a struct group to avoid warning
+Message-ID: <20250410075928.GN199604@unreal>
+References: <20250403144801.3779379-1-arnd@kernel.org>
+ <20250407182750.GA1727154@ziepe.ca>
+ <e477f8c0-5478-43b5-9d59-297efc32d20e@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 7/7] rtc: Add Nuvoton NCT6694 RTC support
-To: a0282524688@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
- brgl@bgdev.pl, andi.shyti@kernel.org, mkl@pengutronix.de,
- mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com,
- alexandre.belloni@bootlin.com
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
- netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-usb@vger.kernel.org, Ming Yu <tmyu0@nuvoton.com>
-References: <20250409082752.3697532-1-tmyu0@nuvoton.com>
- <20250409082752.3697532-8-tmyu0@nuvoton.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250409082752.3697532-8-tmyu0@nuvoton.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e477f8c0-5478-43b5-9d59-297efc32d20e@app.fastmail.com>
 
-On 09/04/2025 10:27, a0282524688@gmail.com wrote:
-> +	data->irq = irq;
-> +	data->nct6694 = nct6694;
-> +	data->rtc->ops = &nct6694_rtc_ops;
-> +	data->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-> +	data->rtc->range_max = RTC_TIMESTAMP_END_2099;
-> +
-> +	platform_set_drvdata(pdev, data);
-> +
-> +	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
-> +					nct6694_irq, IRQF_ONESHOT,
-> +					"rtc-nct6694", data);
-> +	if (ret < 0) {
-> +		dev_err_probe(&pdev->dev, ret, "Failed to request irq\n");
-> +		goto dispose_irq;
-> +	}
-> +
-> +	ret = devm_rtc_register_device(data->rtc);
-> +	if (ret)
-> +		goto dispose_irq;
-> +
-> +	device_init_wakeup(&pdev->dev, true);
+On Tue, Apr 08, 2025 at 02:40:38PM +0200, Arnd Bergmann wrote:
+> On Mon, Apr 7, 2025, at 20:27, Jason Gunthorpe wrote:
+> > On Thu, Apr 03, 2025 at 04:47:53PM +0200, Arnd Bergmann wrote:
+> >> From: Arnd Bergmann <arnd@arndb.de>
+> >> 
+> >> On gcc-11 and earlier, the driver sometimes produces a warning
+> >> for memset:
+> >> 
+> >> In file included from include/linux/string.h:392,
+> >>                  from drivers/infiniband/hw/hfi1/mad.c:6:
+> >> In function 'fortify_memset_chk',
+> >>     inlined from '__subn_get_opa_hfi1_cong_log' at drivers/infiniband/hw/hfi1/mad.c:3873:2,
+> >>     inlined from 'subn_get_opa_sma' at drivers/infiniband/hw/hfi1/mad.c:4114:9:
+> >> include/linux/fortify-string.h:480:4: error: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror]
+> >>     __write_overflow_field(p_size_field, size);
+> >>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >> 
+> >> This seems to be a false positive, and I found no nice way to rewrite
+> >> the code to avoid the warning, but adding a a struct group works.
+> >
+> > Er.. so do we really want to fix it or just ignore this on gcc-11? Or
+> > is there really a compile bug here and it is mis-generating the code?
+> >
+> > The unneeded struct group seems ugly to me?
+> 
+> Having a clean build would be nice though. Do you think a patch
+> that just turns off the warning locally would be better?
 
-devm_device_init_wakeup
+I don't think so, as you will need to disable warning for specific
+compiler, which won't be nice.
 
-Let's save us from one more patch...
+My preference is to have a fix.
 
-As pointed out in other patch by Bartosz, you have messed cleanups. Use
-only devm, because currently your cleanup looks like this:
-1. dispose mapping
-2. free IRQ
+Thanks
 
-and this should be reversed.
-
-Best regards,
-Krzysztof
+> 
+>       Arnd
 
