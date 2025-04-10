@@ -1,118 +1,79 @@
-Return-Path: <linux-kernel+bounces-598957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58121A84D19
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:32:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB61FA84D16
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D27B446528
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:32:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7666189C42F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067E228F945;
-	Thu, 10 Apr 2025 19:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gaz1yM+V"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863A728F945;
+	Thu, 10 Apr 2025 19:31:24 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD55204849;
-	Thu, 10 Apr 2025 19:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0FB1F09BF;
+	Thu, 10 Apr 2025 19:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744313569; cv=none; b=Mb4UUKrkRTQn1/3DHh1vWjgzrXhiQeQlvUG69BGiEKxxh3ZZnZ6n3mTUA0F5LVseXRkttjTL61EQs5VhXhPphbee5CTSV6+vn5/VxjBxsjr9HOujbKD6EB+jhRQQ7q1EO/NMP5wqXvURZ9xYg/qe5IXlDoPHMN9jJDweZ/3v+vQ=
+	t=1744313484; cv=none; b=rh8JwbUSPtI7EJ7Pbuo3L7HYAW9KrpmiNyNGrLsB5elv1vQDa/ARr9qqcxvBK9s6BhE2XS2ydTYQe9EOUgzeh1lSZW/pjdMUnTgZbnH6Jtdt0HW3Y3BD8gRIWaVgVPwspIwIowRUithNXrXMXt5aX3Nstbcv5od75M0BksseOe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744313569; c=relaxed/simple;
-	bh=SeQf4Ekar68aJz2lLkiDfxXINl+MdYF4NtdTyGq0ndI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ckMyc0affVHKdBRB8DsRzdITFRyJXmEdsvkKA1KdcH3q9N5LnCEZEG/NRNFTAu6Yqm3Wf/MNhTClDS58ax0w32XDn/rumNlMDlsGciHbpxJnKOC5LsAJ+dJkBXf8pVw8fZCEfZkFNDDrDDPgwvCh+2hqVkWAtY45cl5+Dlf/GSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gaz1yM+V; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ff5544af03so316273a91.1;
-        Thu, 10 Apr 2025 12:32:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744313567; x=1744918367; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LeqY15aAyimA99ymII4lyCTC8S630lknHY0ZYFJUm3U=;
-        b=gaz1yM+V1aqjbfm+H3uQI/gKAFKWk9b1xYb+G6VfpGaFluCRrDtcg0cO9T+beSoajK
-         cSnkmkUdr+JQsTTa5if98Qn9MFfOAUSH4u4pPDw5ioOWsFFBNPXvHYdIMHtUc8VhTO/y
-         IiVqIkPsE1qr0obs0lAPRmrnOMYjiwip46VBo0GOmJDygmle3h/4UHGxGvi2N9fnhcwO
-         SoaxDDms2VQ/RFwfi8tCzEhKSTkuuf153T+8Abe4xcfvNNeft50IdYeQf26mRovVH0j2
-         waLoNJKtBrPg/qxdCoKS/qNoJVbqby8VfwMaFz7CP3bQV+pzyVk3y9FHA3cRkSmou9o1
-         uIWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744313567; x=1744918367;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LeqY15aAyimA99ymII4lyCTC8S630lknHY0ZYFJUm3U=;
-        b=aaHMdL0ZrXl2su9yVGJvlQV3eqY9bD+D7aceWNnhqsJIGSWSvsj7WRztjPjKUbgew8
-         yFSIKOJ6Y0MB1nixPrKSwwkacBKEiCA4yylTFNi0sOrut8IuCZ3VCSPvAP/QPdNbxGEg
-         Q3KKsJW8ugEtbExCKfNkOj1WskGRVLM0bfYjbcAalS/vnSjxZ/MbBFGS9v0Uv/YXY4hx
-         gXgBmZ5zzTu2Ky4vMh+nSWKboLFO+LBXrfz9ClIGPHzuAQ9l/dNYMJ4K6zgQwWoIhe0o
-         xBMiUpf39g1Ds8xI+7L3434Y6TkDt5Vyt+Rqm1sfbyFrP6n/PguM0k+SwhGRVATHLzqA
-         qlkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUknisilyyJ55ortMjXiq0dHVTyEZaxWsVc0e8mC/q8g5pz0L0KzZ1hUAuclVfeZ4/dPFHiwOYf6zy13mSVHXU=@vger.kernel.org, AJvYcCXWT8wFUz7KHuLteLPFdvoaOH+IUyWtQ29NtgM2kT01IKTqhoCYwwcFPCO9N2unx1W5saF7BuCAuGqF6sk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyclB5XbLJe+kQSC5XMzfsV0Ep56isBVnvFP75FR/Z4IPAwJ/8B
-	vdjs+mRCUdS4/CJ4u7nO1lfQJCOMlnPj4LdlQY3TXKkLyS/AM7MWe2/NRFxSQZLYtjBaaoqFsc1
-	/6yPLYtj7vfkxlxt7aAHX4ZUlsKc=
-X-Gm-Gg: ASbGncvbgjX02seX8YlmgNT4qp1PEPB0F19+q3oROxfkvLZ8rhbKZWsUHVnWC++UgXK
-	mxMYR3PKQkcf5hIMGtw7AgpqfZ/adMoR5D3qk10hgXUojoNf+6M4xMoiBKTww0Q79yfHQONHBvR
-	EYA6z3KHcP0gkC64H9YB4+VQ==
-X-Google-Smtp-Source: AGHT+IFnU2ZUwuiyWhkRsLS0PT1QXn5dmyassrZ3+vhu10jNVWGMQL5v0QKXhkDgDM1HqwH+gsFMEOlwmMINJxdFRIY=
-X-Received: by 2002:a17:90b:3ece:b0:2fa:6055:17e7 with SMTP id
- 98e67ed59e1d1-3082378c79bmr81605a91.8.1744313567288; Thu, 10 Apr 2025
- 12:32:47 -0700 (PDT)
+	s=arc-20240116; t=1744313484; c=relaxed/simple;
+	bh=g9LeOhgeIAjh9ZIYPDVm5W33By15UrvShk6kiMyR5tI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aQsNWFlC+mwQj5OjAEbjGi1VL2IeQaouG5wexf6dI280pzvyCVGDTQSswI3a4g+lN11EFrU0IwuhYOA5I+qtlJANaTBJs0Ny0zqThNHhe7JyB+v3Eex6s7WZo/+s+IMWlFNCGkI20I4FrjRPxzylEkfUDdj1pQDBb2sG6aHOkm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C30ACC4CEDD;
+	Thu, 10 Apr 2025 19:31:22 +0000 (UTC)
+Date: Thu, 10 Apr 2025 15:32:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Junxuan Liao <ljx@cs.wisc.edu>, Frederic Weisbecker
+ <frederic@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: Interface for enabling context tracking
+Message-ID: <20250410153244.6b20e328@gandalf.local.home>
+In-Reply-To: <a9d1144e-0f75-4594-b85f-d66b1de623a0@paulmck-laptop>
+References: <9e2ac1e3-d07d-4f17-970e-6b7a5248a5bb@cs.wisc.edu>
+	<a9d1144e-0f75-4594-b85f-d66b1de623a0@paulmck-laptop>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250410115420.366349-1-panikiel@google.com> <20250410123602.GZ9833@noisy.programming.kicks-ass.net>
- <20250410124526.GB9833@noisy.programming.kicks-ass.net> <CAM5zL5okN67bsTs6ZodcJd45zQ_BP+ruUwOkPMY97Snma0ugzQ@mail.gmail.com>
- <20250410132522.GD9833@noisy.programming.kicks-ass.net> <20250410154556.GB9003@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250410154556.GB9003@noisy.programming.kicks-ass.net>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 10 Apr 2025 21:32:35 +0200
-X-Gm-Features: ATxdqUHMXzgP8f9dLLQH8Z9Yxc2FXsl6vpG4FakDn0KsQ3tBiBxX5Hm0rcmcEro
-Message-ID: <CANiq72=gBYbyGG9Ty_QmA4nadG9COM+hZpvxVq5t5bBvtwva4Q@mail.gmail.com>
-Subject: Re: [PATCH] objtool: Detect __nocfi calls
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: =?UTF-8?Q?Pawe=C5=82_Anikiel?= <panikiel@google.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Alice Ryhl <aliceryhl@google.com>, 
-	Nathan Chancellor <nathan@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 10, 2025 at 5:46=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> Detect and WARN about no_sanitize(kcfi) indirect calls.
->
-> Apparently there were a few in some Rust 'core' that got included in the
-> kernel and things went *bang*.
->
-> This is not a supported form for kernel code. So detect and warn about
-> it.
+On Thu, 10 Apr 2025 12:10:19 -0700
+"Paul E. McKenney" <paulmck@kernel.org> wrote:
 
-That was quick!
+> There is some in-kernel support for turning the rcu_nocbs portion
+> of nohz_full on and off on a per-CPU basis, but a given CPU must be
+> offline in order to do this transition.  Last I heard, there are still
+> issues preventing this support from being generalized to cover all of
+> the nohz_full functionality, and I doubt that it would be exposed to
+> user level until all of nohz_full is supported.
+> 
+> The rcu_nocbs in-kernel functionality is tested regularly.
+> 
+> Are you interested in working on joining the noble quest of getting the
+> rest of the nohz_full support in place?  (Full disclosure: This stuff
+> is non-trivial.)
 
-It seems to work -- I got:
+I believe the request is more of just tracing entry and exit from the
+kernel, which just needs a simple trace event at the border crossings.
 
-      LD      vmlinux.o
-    vmlinux.o: warning: objtool:
-_RNvNtCs8DPF7ip8WBQ_4core3fmt5write+0x170: no-cfi indirect call!
+NOHZ_FULL is to allow the kernel infrastructure to know that a CPU has
+transitioned states (no need to do RCU or have a tick on that CPU). That's
+a much harder task as you not only need to know the border crossings, you
+also need to make sure nothing happens from the locations you mark and the
+crossing takes place. That's a much more difficult task.
 
-Cheers,
-Miguel
+-- Steve
 
