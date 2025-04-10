@@ -1,155 +1,114 @@
-Return-Path: <linux-kernel+bounces-597378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7601A83905
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:18:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53279A8390B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3071B63255
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:18:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DA04165014
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBC6202997;
-	Thu, 10 Apr 2025 06:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7010202C56;
+	Thu, 10 Apr 2025 06:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XYrE7tlm"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgzaIHlH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34331BF37
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258861D9A54;
+	Thu, 10 Apr 2025 06:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744265868; cv=none; b=NdO3SNezZV62T5dgDhoKiAP0wr8Lrb1HUBAyJcqCNlTV0MEReuEOrE9qiw/bqI7Ts53Og5n1l39XWeTNMGAgH96XX+aRwxbS1f907at+8+BEem9u/IF4iWoULz5MzmDrKtKSJEahINVYpE4TGma/tJCGBj/Tf8Fdfw2kahtAjr8=
+	t=1744265916; cv=none; b=QDADwOVoYL26Ih6f2ygIqjST0CDlSxUsrCZS/JTpJO/07EgOhBiVe8oVH0Uf2b808VkW+4lPH+RDfwLVVoYOU2GORC7QOSyZKiy+dvhfFr8Ozolc5pSrUFMPL7M6Kqcfz0pRQKahgHRxe9jWvwZwN2CeKKltGKIdwkBi5WjxMNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744265868; c=relaxed/simple;
-	bh=RuJkx0SME0u7KQoXNcdSFo1kg/bczJSkO6Gfd1eD3s4=;
+	s=arc-20240116; t=1744265916; c=relaxed/simple;
+	bh=N/Eq3oO6cAKqd4CF4xM3K5jQF+XUdMLxEdRDr+rjO6Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GUzUuMaFl3WoDNl2GAgfmfRVWTQJi4CrED8qEtKH8iCPZZm07vJb1WZMy+V8v1w+dUD0Rbw3CDOuyy8Rf/aQ72e2qs3M4SnbU5tuBqGmtEs3GaWbignG8lWsMpl8XGF9glgKv4CU4ORkg1UAJ2H/1PpMF8Ge5N5/TDJ9g4iTHac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XYrE7tlm; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3914aba1ce4so262592f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 23:17:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744265864; x=1744870664; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jYStztFya2y5gjqP02BNpybAW9yRhWvY1XlPanf+Ykc=;
-        b=XYrE7tlm6lG/Qzu/17ww0gE1PiK3v9bUCi3qviV4EXV/+J7oehIVgOVUu+0I9iJd3u
-         g2RHdU4HwaL39OM3HjqeZLmydpz/Kkxw6maFRwNVRHetlDmd7gLFM1ok6qBnrKvH/viR
-         Amiky4lARgT1imbK+v4lJw3Rr2VIdM08fYsA/9esNG/Yjz15mVUir+gw0zbbRbQ5Rjmd
-         9wo7tIOeO2nnueSSyX04CDkpc72hv9L7RsMt/xlZEY717lG4OgLdxFNl6TXxPP8ENih6
-         rIq2JhowNMaZBM64vdo++5MgjxTkLrMSfxs2s/0wbTqM+srsld6/x6s74IV4SZ65I70Z
-         d34Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744265864; x=1744870664;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jYStztFya2y5gjqP02BNpybAW9yRhWvY1XlPanf+Ykc=;
-        b=JlN2OCHRbj/HtvIzW2cbJSUE9+p8rFQxWnlQXbHqjgKsK6+DmZqhuNBQlKEpyV2laq
-         CcDiU+NIqbcIov1ZhsZQ71WzHP7dnVrXS3c5Su0OwdcfxHiG/G2pZaYFoAfcJv79xvgk
-         T+nyUKRD5V4vw0htRW0TMUAAh8PvLWDe3G5pV6lY6aFORuJc81BjLTrKfkdbsovnTjQ/
-         rIKTnhewO5Q2JCf9V4FIF5QmgtKtNxQFi4WaPZUFiA7HLJMnG3/+eH8ceT8yPM0jxVvi
-         aEmKjXvcZr2EGtY6g/CZjRsE2o19c/Wl1ovjQo5mvl4D8UbmjQEPYzsIemze7+FjooWo
-         RoFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAWhIYVLGkzKadycIHo1+SY2H6wgqNIr7uwSwwWxSsQ70wL8MvXJrwPONyO17FRNifbmue6hFLvaeGzSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD6QeJLxRFN3uyb0p1glpZg2GA28ZsCsCzyoDJIItwTDngs7q+
-	L3cbodCuo3mefiVNEMGlEruTHY1aeGHM8IGFHVPnFhbNFY8zsGDzWUbMUVWh5Yc=
-X-Gm-Gg: ASbGncvS+L/3t3YbzjgfIbPIoe1y+KxVX+LxGuS86x3zWYNomt2o4PqLGMnF72e+/ox
-	6IcP25RUl1DOPJ1GSAlf66chFbGHKFxCmpZvTEocP1Mb8vXfzs0atSh+FOHKQDNjfiS6pS/bkhK
-	/iGElJR75ZdqCBsGgb4i9LyllcSnGgXy80iiGDCE7QqDYOjXtJ9MzhMolBqvHf4OzxsIvgFobnq
-	RCClhCF+wdD+hIKd8FGdghla7/tC2ET1Cf2oqy0ILFQO37yEL9Q2OF5WIuv5K6N+esTMQzvs8x1
-	9XfJDEjjhRD01ZR7pploOB4X05Ubu+v4tiq+oFdgIKHk/T2VFyXuJ6GZ
-X-Google-Smtp-Source: AGHT+IGPf0mN33Z8VXMC6vHoEgIYPUGu+ettg097AataOUXjxz6bSk1dsUcrvcjBIRQZplQw7qTkLw==
-X-Received: by 2002:a05:6000:18ae:b0:39c:2692:425a with SMTP id ffacd0b85a97d-39d8fd63d92mr746462f8f.6.1744265864279;
-        Wed, 09 Apr 2025 23:17:44 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39d893611d0sm3664353f8f.6.2025.04.09.23.17.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 23:17:43 -0700 (PDT)
-Date: Thu, 10 Apr 2025 09:17:40 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Siddarth G <siddarthsgml@gmail.com>
-Cc: slongerbeam@gmail.com, p.zabel@pengutronix.de, mchehab@kernel.org,
-	gregkh@linuxfoundation.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-Subject: Re: [PATCH] staging/media/imx: fix null pointer dereference
-Message-ID: <0d496695-ce20-4774-8e86-4d5c98dc220b@stanley.mountain>
-References: <20250409211727.62710-1-siddarthsgml@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kkm8Ishd46sm9PWR4xCcpvK6FCtu3w3j7/yMQ6crfavA7uv5JmRe6oHR7rrVulR/y3IniyEUnGMFg3wVve/OvwIV9EbkOcrMOewv4PK7T3Vmqu2tVDuofHCFO2XVE7Eu6DrP3mC+14BDZq3VBtZt0XL/HTXQAjVcWGftehRcqAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgzaIHlH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF988C4CEDD;
+	Thu, 10 Apr 2025 06:18:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744265914;
+	bh=N/Eq3oO6cAKqd4CF4xM3K5jQF+XUdMLxEdRDr+rjO6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OgzaIHlHHtE0k8XMPIzNNeKxfWMEWFu7Fb7zdKLcQserP3WkyzcrpRmhCueuk2Rlv
+	 M7RQlkWqOlBxJl/Okb0KGD1CfZyFjcANp0maFk15EgzE94lmCUe8QW6syR9i6rP/fs
+	 19IBb8kqDrFCAE4RnLNRegJp45caw01cAbwgibsXB8BlIEfE4i8QAmr/Pisxur8TqH
+	 c6ct+7hdJVB7RhLaqvRTePLViGfRT44QLIAY0bCnSGkedQ0vjy9MNTGiFeFWVkNZfD
+	 jCMG+6SVA/KaBUrW41KOowuiwPqc8AamB4drQgT1T2I0rnBUEY9YFuh68hERIRpzbt
+	 d9I4YXgKYqkkg==
+Date: Thu, 10 Apr 2025 08:18:31 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based drivers
+Message-ID: <20250410-dancing-free-peacock-536c24@shite>
+References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250409211727.62710-1-siddarthsgml@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
 
-On Thu, Apr 10, 2025 at 02:47:27AM +0530, Siddarth G wrote:
-> Cppcheck warnings:
-> 
-> drivers/staging/media/imx/imx-media-fim.c:79:6:
-> error: Null pointer dereference: fi [ctunullpointer]
->   if (fi->denominator == 0) {
-> 
-> drivers/staging/media/imx/imx-media-csi.c:795:27:
-> note: Calling function imx_media_fim_set_stream, 2nd argument is null
->   imx_media_fim_set_stream(priv->fim, NULL, false);
-                                              ^^^^^
-This is a false positive.  The false means that we don't call
-update_fim_nominal().  Btw, Smatch parses this one correctly.
+On Wed, Apr 09, 2025 at 09:37:21PM GMT, Andr=C3=A9 Draszik wrote:
+> This series adds initial support for the Samsung S2MPG10 PMIC using the
+> MFD framework. This is a PMIC for mobile applications and is used on
+> the Google Pixel 6 and 6 Pro (oriole / raven).
+>=20
+> *** dependency note ***
+>=20
+> To compile, this depends on the Samsung ACPM driver in Linux next with
 
-> 
-> drivers/staging/media/imx/imx-media-fim.c:388:3:
-> note: Calling function update_fim_nominal, 2nd argument is null
->   update_fim_nominal(fim, fi);
-> 
-> drivers/staging/media/imx/imx-media-fim.c:79:6:
-> note: Dereferencing argument fi that is null
->   if (fi->denominator == 0) {
-> 
-> To fix the issue, add a check to validate that the 'fi' is not
-> null before accessing its members.
-> 
-> Signed-off-by: Siddarth G <siddarthsgml@gmail.com>
+Are you sure these are build time dependencies? Do not look like. Also,
+if they are, the patchset will wait for quite some time.
 
-Don't resend because we just ignore false positives instead of
-trying to silence them.  But if this were a real bug then it
-would need a Fixes tag.
+> the following additional patches:
+> https://lore.kernel.org/all/20250324-acpm-atomic-v2-0-7d87746e1765@linaro=
+=2Eorg/
+> https://lore.kernel.org/all/20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.=
+org/
+> https://lore.kernel.org/all/20250327-acpm-children-v1-0-0afe15ee2ff7@lina=
+ro.org/
+>=20
+> *** dependency note end ***
+>=20
+> +++ Kconfig update +++
+>=20
+> There is a Kconfig symbol update in this series, because the existing
+> Samsung S2M driver has been split into core and transport (I2C & ACPM)
+> parts. CONFIG_MFD_SEC_CORE is now truly a core driver, and
+> the I2C code that was part of it is now enabled via CONFIG_MFD_SEC_I2C.
+>=20
+> This was necessary because unlike the other S2M PMICs, S2MPG10 doesn't
+> talk via I2C, but via the Samsung ACPM firmware.
+>=20
+> +++ Kconfig update end +++
+>=20
+> This series must be applied in-order, due to interdependencies of some
+> of the patches. There are also various cleanup patches to the S2M
+> drivers. I've kept them ordered as:
 
-> ---
->  drivers/staging/media/imx/imx-media-fim.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/staging/media/imx/imx-media-fim.c b/drivers/staging/media/imx/imx-media-fim.c
-> index ccbc0371fba2..25f79d0f87b9 100644
-> --- a/drivers/staging/media/imx/imx-media-fim.c
-> +++ b/drivers/staging/media/imx/imx-media-fim.c
-> @@ -76,6 +76,9 @@ static bool icap_enabled(struct imx_media_fim *fim)
->  static void update_fim_nominal(struct imx_media_fim *fim,
->  			       const struct v4l2_fract *fi)
->  {
-> +	if (!fi)
-> +		return;
+They should not depend... although actually not my trees, except the
+firmware.
 
-If this were a real bug, then probably the NULL check would be better in
-the caller.
+Best regards,
+Krzysztof
 
-regards,
-dan carpenter
-
-> +
->  	if (fi->denominator == 0) {
->  		dev_dbg(fim->sd->dev, "no frame interval, FIM disabled\n");
->  		fim->enabled = false;
-> -- 
-> 2.43.0
-> 
 
