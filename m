@@ -1,160 +1,165 @@
-Return-Path: <linux-kernel+bounces-597837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87DB2A83EF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:37:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23DF2A83F0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBC0216F727
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:36:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D43CE8A1D24
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8499526B96D;
-	Thu, 10 Apr 2025 09:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FD525E449;
+	Thu, 10 Apr 2025 09:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="COQDoNwG"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="osf3t8aK"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B290D26A1BB
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F1525D8E2;
+	Thu, 10 Apr 2025 09:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744277710; cv=none; b=Lf7vo1lIrTrgoU7MOtSXzQ8KUdOrUnYAv8Z2JAPNTk84/hFoMcH07gRiyzIoIcm1pFoGLoUj3nis1lZ7rhvZIccqFk1W/AnB3DpME5fCyfWacZBGpBXbyIKffD1IcOghJ22t7j05PP7ogD/FF5NtSoc4bCLElm13j8gmerKCC6c=
+	t=1744277702; cv=none; b=TZwOluUPbfCDjqbPV9IcBTl9dHoOyvlc+Ok8wSgv0CRMxpBkq+QM4HEV6ALpNhrpSYZ8VNYKIV4eJivoiofWtc/J1XqYqrvqa4sHR3eYLjN1hYK/0Vb4od+BGIaOibr7urxEtJzgA9PFdF7cyMvakgRglrArBh2teRBwJBIGa98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744277710; c=relaxed/simple;
-	bh=eVo2TmgtlN2R2X3Zf9Lol8n9FuUHnBY+y4wdcdE50E0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c/fZOi3+AqbRlHyTuyfCpztad0q6bQpTFsbmZVKbHOzJY20Fkxhx3lNv5lBSWJCqfnOlNIpDPD7TZei/LlegPxJRkdoFm2OTZ6Ioy6+KV/ifD9tu0t9jZmZn5RormSvuWx3dkxJnrd/HS4vTwsuVhxDxVZC6d3exzXLbl8oDCxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=COQDoNwG; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so4922885e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 02:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744277707; x=1744882507; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9wnrmZrdHGq/Ptu9FCMC7eVlEpQiRVau7cfrJW7kOec=;
-        b=COQDoNwGdlffzA3xauBKXcvWNWKHAmwSy/n5dICwNAj4Zu+S7Yh6sGF/Nv1zwsVoji
-         iWLbfw6sdMb0kuBPgwlEfunA89MJ3wm3xFbw9p5pzpMMQy3/uRtA4R/5tPYfdbogU/fL
-         0wzBg50cIfBTwGqegKbG8H+5qoUhk0bIzDQ0f1FLUbmO0NOK5HNUXPftrUH6ZMNUz9ns
-         NfLgMJI16TjTB+g5MCCaKtKq/kASz8g4rdaLkyMBz1vNJipE9hfO5fB4Ax8+GNB/wQUO
-         SaoUK0mpqOC6taPkkbc/NOKpChKBOb3JCPlfNvQuvWFAKxSNDTB5Nwr9U/GBhx1lEImD
-         Z2Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744277707; x=1744882507;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9wnrmZrdHGq/Ptu9FCMC7eVlEpQiRVau7cfrJW7kOec=;
-        b=TnsngFr4dXZ4feXNof9PymO1mKMRHE3+CM1q7oLvV/5VNPD9C9bGMyuj0ZUfcpccm6
-         Zz7VQEiaHi1UIytTzQYOIMmkIo7h8A4+F3ADOG6/k86bCJSKUMlRG9MvtiTwe7dqnuaw
-         LyuqWZE5BNfP5lD8cInnQtQQvqpe1WNjdaWdALFs5SoAOnwRoBAYT3OhLEnQHAxeuiPL
-         WTdP+1GOF04zkwQnKtlkky0MRl+Y25a0EON5Y3RceGCq3zilXtht1ebgAU928AodDx6z
-         EPfAjzHDEsSqTFfVtWf8GCYdwz/lkzGOJSSslGak3TfXdT+05U1qTXe7kes622UVRvfh
-         sG8g==
-X-Forwarded-Encrypted: i=1; AJvYcCURetK3Q3bxvTfveqF10Fw4zeT/BfJVKyA0VbBlJvBrCA8c2Edi+xQ5rKvKqZvb7QacqeIBHgKRa6dJoTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2UCl+6JZCy99Ylfi3EyeixWiGNOEoNIEl0mtIUf7oAe0gnBX+
-	cw1AyMIeemNyjUpnvDLwrgZ71yjp8CYXHDbbuWP3Ylq/6h9t+rprZiBzUAtt0Qo=
-X-Gm-Gg: ASbGncs4lUaHBD2k8Nj4ZsFA4g0zkJfgkBo2lajvAAOr8R2rSSwTXBQprAqcV+8OOuq
-	BGe5+3WdF1flKSXuraP4giO94dvB0mj36pfRNhT6ovd/wmNQlbu/8gWILdkM5lM9/bPtjqHKhux
-	wA/yXfYXksO5lCHgvkP8GmafT+/aUtnliVz0Nb2KAd8IIqq8zjdnMcDrD/LfMgUmVhap44UumMX
-	bed+rlF23axxHyOTQzPRJGK7Ah8tb2WbN5pu3wRKbqXtSTenrAdU1fJd4pk3YDCsuBNHdfQ2v8s
-	y2VvbIQlsl3n3cm87tWLbDNHbMys91i3xA==
-X-Google-Smtp-Source: AGHT+IGakQPRYAPoJeyW7V5nBHKcFb/A/w0K9tmVzuwevmUfE7eHObjlPjw7A8Ij+9x62tILpo5Brg==
-X-Received: by 2002:a05:600c:138a:b0:43d:4e9:27ff with SMTP id 5b1f17b1804b1-43f2d7af1cdmr21099305e9.7.1744277706886;
-        Thu, 10 Apr 2025 02:35:06 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:7c4f:f9d1:94e0:53f8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f206264a1sm49698435e9.9.2025.04.10.02.35.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 02:35:06 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 10 Apr 2025 11:34:48 +0200
-Subject: [PATCH 6/6] pinctrl: qcom: ssbi-mpp: use new GPIO line value
- setter callbacks
+	s=arc-20240116; t=1744277702; c=relaxed/simple;
+	bh=OF9yxO/u4XCow7Qu6hPl66FhWEUvw9jIiJeqXS3IfG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MmNELPNb+oioY6TfOQoOnpXSqifmr7AX0EkN48mzmIULRnVv7JAIIoN+BC2jHVxQgDHppvrfwfdeNwsyLksrqBlyMUkLYCg0ZWq4pSQTYx+pPzacbJxESZUU2rMIwt9PE9mXC15GAJJ1y4F1veRdHyDMJfCVfCs3N3jvXppF5lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=osf3t8aK; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=h/SiiwofwfmzPeG9zN86yMU2F7qnYsGrjKhis+7Q1QY=; b=osf3t8aKX3ptzlKd2Vh9VqbstC
+	7C1FbY/pkY1uYGZpDLqvzyceyrNkuE7JbT3kEchOtgH4lyfU4YPE117A76gtVLeuHkJ33LxCjQo16
+	AOVUxsY57xZlybeVK6nK51Yxfn/hhrPnfRbmJ6kWFY+LHiLyh06hnetuKq+2uvVmLofZ66qDh5xx2
+	OWZihhdwXYWFC2McNplshbmDyyeWOuNW3JaEW9yocsHRl3/DhRI6MRbVi0jtdWgDUF+eFChMbN8Un
+	Xm5wuxtLrpJ+UNyVBmZoWfn6kb8tte+lpA5Q3mzMNPQ9MfiaOMJAZ+5yl+4b38+M+zm7dMgwL5jaK
+	G+/iSwwA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u2oJF-00000008mul-0JuV;
+	Thu, 10 Apr 2025 09:34:57 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7760B3003C4; Thu, 10 Apr 2025 11:34:56 +0200 (CEST)
+Date: Thu, 10 Apr 2025 11:34:56 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	Ravi Bangoria <ravi.bangoria@amd.com>, x86@kernel.org
+Subject: Re: [tip: perf/core] perf: Simplify perf_event_free_task() wait
+Message-ID: <20250410093456.GA17321@noisy.programming.kicks-ass.net>
+References: <20250307193723.044499344@infradead.org>
+ <174413910413.31282.5179470093314736126.tip-bot2@tip-bot2>
+ <Z_ZvmEhjkAhplCBE@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250410-gpiochip-set-rv-pinctrl-qcom-v1-6-6a6891338aae@linaro.org>
-References: <20250410-gpiochip-set-rv-pinctrl-qcom-v1-0-6a6891338aae@linaro.org>
-In-Reply-To: <20250410-gpiochip-set-rv-pinctrl-qcom-v1-0-6a6891338aae@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1522;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=tLV0wE3qzspwnGpVRf4xL5olQ7zvo+pba8sfw+/Sleg=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn95DEzBrkMLJs75LETQ44j8nkxaxMY86Ykysn0
- smsHuuKeWyJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/eQxAAKCRARpy6gFHHX
- cqkMEADblPn6aOx+OrtpJrETH6MXqe+xcAyk6YzC7QkHT1ed7muXekwa5z/ns4vdBg+vjdYe5cA
- nI6MYeBI00QuCAulcPLG1PaDhiWlQVGCoKo72gVtvrQ7WWX3KYEO2h3KolApV6VO9vBzxRmlNNp
- oXeEVu4yntXxVjgQW9IwqNNdA9yby+74CIgFnZW3oPm80l40U+u2KrmkPG6WI0l27I4CaBm7wvj
- 6upPOcO7XcL3U2AHw2W6oiy1NBYz1pdVBA0xnaZOp+jwG4GbC51HZDq/xZXA1/0UgAckLRIHBsS
- YDwKFv+kmvXMkik7EFFktVOnfHlpTsl6/pZvru5GoW6RW3DEX4wcdHxTAIBIe071BtRqUzbvdGd
- hSpEteSq3knJDiqMuizmpSIPpHkHjNJrT5uqTABHeWDWYMC1rlO9AvxoDA6/Q/eZkGzDhx006YE
- gfTwRTW2CAL4hZ9ZftY8v6DMu+WVoJyw8aBf2ICV5BetJDvlOoIHWJ/bF9GGAgpGddTRz9AMpJY
- VBkvNZQTn+iztj94eQY8Il+YZUpeQ764BhVBFOjBGfrowahfLBn5DRwThWHV0ZK6/Y7+Uh9zgFp
- XgWwQcDrFTpcHyvNfHR7eaL93gK1K/L3Iohr3pHj1bnBK+aGxihS3zWsWOoEcg/ENxTZZeA3dxR
- O06WXteu3SoaDMg==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_ZvmEhjkAhplCBE@localhost.localdomain>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Wed, Apr 09, 2025 at 03:01:12PM +0200, Frederic Weisbecker wrote:
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
+> > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > index 3c92b75..fa6dab0 100644
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -1270,6 +1270,9 @@ static void put_ctx(struct perf_event_context *ctx)
+> >  		if (ctx->task && ctx->task != TASK_TOMBSTONE)
+> >  			put_task_struct(ctx->task);
+> >  		call_rcu(&ctx->rcu_head, free_ctx);
+> > +	} else if (ctx->task == TASK_TOMBSTONE) {
+> > +		smp_mb(); /* pairs with wait_var_event() */
+> > +		wake_up_var(&ctx->refcount);
+> 
+> So there are three situations:
+> 
+> * If perf_event_free_task() has removed all the children from the parent list
+>   before perf_event_release_kernel() got a chance to even iterate them, then
+>   it's all good as there is no get_ctx() pending.
+> 
+> * If perf_event_release_kernel() iterates a child event, but it gets freed
+>   meanwhile by perf_event_free_task() while the mutexes are temporarily
+>   unlocked, it's all good because while locking again the ctx mutex,
+>   perf_event_release_kernel() observes TASK_TOMBSTONE.
+> 
+> * But if perf_event_release_kernel() frees the child event before
+>   perf_event_free_task() got a chance, we may face this scenario:
+> 
+>     perf_event_release_kernel()                                  perf_event_free_task()
+>     --------------------------                                   ------------------------
+>     mutex_lock(&event->child_mutex)
+>     get_ctx(child->ctx)
+>     mutex_unlock(&event->child_mutex)
+> 
+>     mutex_lock(ctx->mutex)
+>     mutex_lock(&event->child_mutex)
+>     perf_remove_from_context(child)
+>     mutex_unlock(&event->child_mutex)
+>     mutex_unlock(ctx->mutex)
+> 
+>                                                                  // This lock acquires ctx->refcount == 2
+>                                                                  // visibility
+>                                                                  mutex_lock(ctx->mutex)
+>                                                                  ctx->task = TASK_TOMBSTONE
+>                                                                  mutex_unlock(ctx->mutex)
+>                                                                  
+>                                                                  wait_var_event()
+>                                                                      // enters prepare_to_wait() since
+>                                                                      // ctx->refcount == 2
+>                                                                      // is guaranteed to be seen
+>                                                                      set_current_state(TASK_INTERRUPTIBLE)
+>                                                                      smp_mb()
+>                                                                      if (ctx->refcount != 1)
+>                                                                          schedule()
+>     put_ctx()
+>        // NOT fully ordered! Only RELEASE semantics
+>        refcount_dec_and_test()
+>            atomic_fetch_sub_release()
+>        // So TASK_TOMBSTONE is not guaranteed to be seen
+>        if (ctx->task == TASK_TOMBSTONE)
+>            wake_up_var()
+> 
+> Basically it's a broken store buffer:
+> 
+>     perf_event_release_kernel()                                  perf_event_free_task()
+>     --------------------------                                   ------------------------
+>     ctx->task = TASK_TOMBSTONE                                   smp_store_release(&ctx->refcount, ctx->refcount - 1)
+>     smp_mb()
+>     READ_ONCE(ctx->refcount)                                     READ_ONCE(ctx->task)
+> 
+> 
+> So you need this:
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index fa6dab08be47..c4fbbe25361a 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -1270,9 +1270,10 @@ static void put_ctx(struct perf_event_context *ctx)
+>  		if (ctx->task && ctx->task != TASK_TOMBSTONE)
+>  			put_task_struct(ctx->task);
+>  		call_rcu(&ctx->rcu_head, free_ctx);
+> -	} else if (ctx->task == TASK_TOMBSTONE) {
+> +	} else {
+>  		smp_mb(); /* pairs with wait_var_event() */
+> -		wake_up_var(&ctx->refcount);
+> +		if (ctx->task == TASK_TOMBSTONE)
+> +			wake_up_var(&ctx->refcount);
+>  	}
+>  }
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Very good, thanks!
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-index 4841bbfe4864..087c37d304fc 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-@@ -511,14 +511,15 @@ static int pm8xxx_mpp_get(struct gpio_chip *chip, unsigned offset)
- 	return ret;
- }
- 
--static void pm8xxx_mpp_set(struct gpio_chip *chip, unsigned offset, int value)
-+static int pm8xxx_mpp_set(struct gpio_chip *chip, unsigned int offset,
-+			  int value)
- {
- 	struct pm8xxx_mpp *pctrl = gpiochip_get_data(chip);
- 	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
- 
- 	pin->output_value = !!value;
- 
--	pm8xxx_mpp_update(pctrl, pin);
-+	return pm8xxx_mpp_update(pctrl, pin);
- }
- 
- static int pm8xxx_mpp_of_xlate(struct gpio_chip *chip,
-@@ -633,7 +634,7 @@ static const struct gpio_chip pm8xxx_mpp_template = {
- 	.direction_input = pm8xxx_mpp_direction_input,
- 	.direction_output = pm8xxx_mpp_direction_output,
- 	.get = pm8xxx_mpp_get,
--	.set = pm8xxx_mpp_set,
-+	.set_rv = pm8xxx_mpp_set,
- 	.of_xlate = pm8xxx_mpp_of_xlate,
- 	.dbg_show = pm8xxx_mpp_dbg_show,
- 	.owner = THIS_MODULE,
+I'll make that smp_mb__after_atomic() instead, but yes, this barrier
+needs to move before the loading of ctx->task.
 
--- 
-2.45.2
-
+I'll transform this into a patch and stuff on top.
 
