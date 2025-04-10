@@ -1,74 +1,69 @@
-Return-Path: <linux-kernel+bounces-598482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB893A8469D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:43:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52153A8469C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD87B8A52D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:41:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A5317BCD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB9328F94F;
-	Thu, 10 Apr 2025 14:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695F928FFDF;
+	Thu, 10 Apr 2025 14:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="k/gO+SYu"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RJY4WSI7"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F294028F94E;
-	Thu, 10 Apr 2025 14:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2294A28D83D;
+	Thu, 10 Apr 2025 14:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744296020; cv=none; b=tQKRo/dYK9/UoX1upU/mQctkQzUoojOT1EqiyVRPN0+xEB/vTyBKKo8IE3m2s94Tb75HixC8kEu0QJRGOLMadXLHkZQ63Puqf/T31gcbvNnvCGXWFWPVP366+owE50lRAMi3lUlq52roJm+vD0h64MAPBu7Uq4VGwMJbnsloJJM=
+	t=1744296026; cv=none; b=NOmtHqdTE5YKnjlMTGBcmIUZSBkpHfxgoinxnyY0UWty2YLQ41wD9ams1lm2xzmYeYBzn0K7vqtZ6Aq5zhkXAXU2KwoVN0LSkYU4GYy/KuHqcMJVt9CP5zEEMLaTxiLiNr9ijOQY0zRx9rUbyr7PpJ0P0w6uZh4E5kYLizRe+9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744296020; c=relaxed/simple;
-	bh=jSRPeeUZbUFnm5JrrBKlIB+n5RJQ2oyK+3O1pN6pJEc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WlHJoydmWx4abvU5o/XgTcq8vpoqTbVkpMgyRA2jIMOvD79nop3yul9+tpdTPm1/xVMLghLZ/GNXYRubNCiLlvvfa4wXKa3L/IZ+Msos00/P0uEs+OMxawcxDNm/jrx0PVOVylNw9nuff+I+9XqIkwArUbTBdpvMeeLCirPZJbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=k/gO+SYu; arc=none smtp.client-ip=148.251.105.195
+	s=arc-20240116; t=1744296026; c=relaxed/simple;
+	bh=zjLdve0wYngdIB6TlmLYleobJZB6mp1H4Ri9xgypsOU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dh1Pfs19fzWfN2Yf8XWcnXs+QJUiro/pSU9ZRf8l3PkCTwv9Y1sWQ04SI4tFIGJWIh77pOW99iIynQSqmGVpXHo3816UXfYZ3L51h03DCQ1K/AJD/b18DCDrOEZtZ4RDniRwax2GBaUX8euhbykgzytwmaTIs7JPMVud2AjJcCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RJY4WSI7; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744296017;
-	bh=jSRPeeUZbUFnm5JrrBKlIB+n5RJQ2oyK+3O1pN6pJEc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=k/gO+SYu3J9DkVlez6NwJPIYIZ8meW6VHagV0LOHYwrPbtD2H2w6xoYAwUahzh0c/
-	 9p7uYPwPT65ZNb1IqP7FQ2SLLg0O/rMz9mDMFxbMRQsUmAWDPgmtDua79TL0TGArv8
-	 vds+WpELTbRpJwE8CjPyFwcGa7PxZUCQQ/YCvfktymiJuo0sy+H23f/6HzLrXoQYUN
-	 2kHhFnfLFkvEPMjMpBTpO7evGt7PRArwGXC1N06tRz5QpAlQthqzC5Z7mMwS4YwWGi
-	 34H0MDBhzlOPXzUeRdW1MSu7f3HiXXpIeUjuuLSmDbwzguWOsTYhGd3yvehcWHRZdL
-	 +8dsoZqRwlC7Q==
+	s=mail; t=1744296023;
+	bh=zjLdve0wYngdIB6TlmLYleobJZB6mp1H4Ri9xgypsOU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RJY4WSI7XaFd+bkFE9JNc7FvrcJuPXSVOUP4dj9ot1AUdgW6NDiLEwrCsYe19Jdqg
+	 bVbIfwWdFt8beUq0SPA93tVCtCLuF06iV0h2L+d0HZfMOL7d2PL5O4bxw8RbFfQLeL
+	 KAjr28/qsBVi/u/L/PL2mLB3fUdhaOnqKtegN9IK5tReiJZZtXeDpvTzwUeaNTp1Fu
+	 5AGDOuCZJJ6vGrgsak4/hyyfl6/Efx9ny/4XShI0vSqw2MAWRHEnrDUrFJg3brdwXQ
+	 UGUOoZBonZ4Tt6ovFgvGkQ8dAB2IWD58TM23BIgCT50yzOE4ee02uGYXxVjBbKrul0
+	 8PjMysNdnSwzQ==
 Received: from IcarusMOD.eternityproject.eu (fi-19-199-243.service.infuturo.it [151.19.199.243])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 00F9D17E0EB8;
-	Thu, 10 Apr 2025 16:40:14 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 195E217E0CA7;
+	Thu, 10 Apr 2025 16:40:22 +0200 (CEST)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: yong.wu@mediatek.com
-Cc: joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com,
+To: linux-mediatek@lists.infradead.org
+Cc: lgirdwood@gmail.com,
+	broonie@kernel.org,
 	robh@kernel.org,
 	krzk+dt@kernel.org,
 	conor+dt@kernel.org,
 	matthias.bgg@gmail.com,
 	angelogioacchino.delregno@collabora.com,
-	iommu@lists.linux.dev,
-	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
+	henryc.chen@mediatek.com,
 	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	kernel@collabora.com
-Subject: [PATCH v1 2/2] iommu/mediatek: Add support for Dimensity 1200 MT6893 MM IOMMU
-Date: Thu, 10 Apr 2025 16:40:08 +0200
-Message-ID: <20250410144008.475888-3-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v1 0/5] MediaTek Dimensity 1200 - Add DVFSRC support
+Date: Thu, 10 Apr 2025 16:40:14 +0200
+Message-ID: <20250410144019.475930-1-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250410144008.475888-1-angelogioacchino.delregno@collabora.com>
-References: <20250410144008.475888-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,83 +72,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for the two MM IOMMUs found in the MediaTek Dimensity
-1200 (MT6893) SoC, used for display, camera, imgsys and vpu.
+In preparation for adding basic support for the OnePlus Nord 2 5G
+DN2103 smartphone, this series adds support for the DVFSRC regulators
+and prepares the DVFSRC driver to also set bandwidth limits for the
+DVFSRC EMI Interconnect found in the MediaTek Dimensity 1200 (MT6893)
+SoC.
 
-Since the MT6893 SoC is almost fully compatible with MT8192, also
-move the mt8192_larb_region_msk before the newly introduced mt6893
-platform data, as the larb regions from mt8192 are fully reused.
+The interconnect driver wasn't touched at all because the intended
+change here was to enable support for the DVFSRC regulators but, as
+those anyway required new platform data, laying the groundwork for
+the interconnect came natural and would've been unreasonable to just
+skip that as it anyway consists in one small struct and nothing else.
 
-Note that the only difference with MT8192 is that MT6893 needs the
-SHARE_PGTABLE flag.
+AngeloGioacchino Del Regno (5):
+  dt-bindings: soc: mediatek: dvfsrc: Add support for MT6893
+  dt-bindings: regulator: mediatek-dvfsrc: Add MT6893 support
+  regulator: mtk-dvfsrc: Add support for Dimensity 1200 MT6893
+  soc: mediatek: mtk-dvfsrc: Rename and move bw constraints data
+  soc: mediatek: mtk-dvfsrc: Add support for Dimensity 1200 MT6893
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/iommu/mtk_iommu.c | 37 ++++++++++++++++++++++++++-----------
- 1 file changed, 26 insertions(+), 11 deletions(-)
+ .../mediatek,mt6873-dvfsrc-regulator.yaml     |  1 +
+ .../soc/mediatek/mediatek,mt8183-dvfsrc.yaml  |  1 +
+ drivers/regulator/mtk-dvfsrc-regulator.c      | 19 +++++++
+ drivers/soc/mediatek/mtk-dvfsrc.c             | 53 +++++++++++++++++--
+ 4 files changed, 70 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index df98d0c65f54..0a54c6521bf5 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -1550,6 +1550,31 @@ static const struct mtk_iommu_plat_data mt6795_data = {
- 	.larbid_remap = {{0}, {1}, {2}, {3}, {4}}, /* Linear mapping. */
- };
- 
-+static const unsigned int mt8192_larb_region_msk[MT8192_MULTI_REGION_NR_MAX][MTK_LARB_NR_MAX] = {
-+	[0] = {~0, ~0},				/* Region0: larb0/1 */
-+	[1] = {0, 0, 0, 0, ~0, ~0, 0, ~0},	/* Region1: larb4/5/7 */
-+	[2] = {0, 0, ~0, 0, 0, 0, 0, 0,		/* Region2: larb2/9/11/13/14/16/17/18/19/20 */
-+	       0, ~0, 0, ~0, 0, ~(u32)(BIT(9) | BIT(10)), ~(u32)(BIT(4) | BIT(5)), 0,
-+	       ~0, ~0, ~0, ~0, ~0},
-+	[3] = {0},
-+	[4] = {[13] = BIT(9) | BIT(10)},	/* larb13 port9/10 */
-+	[5] = {[14] = BIT(4) | BIT(5)},		/* larb14 port4/5 */
-+};
-+
-+static const struct mtk_iommu_plat_data mt6893_data = {
-+	.m4u_plat     = M4U_MT8192,
-+	.flags        = HAS_BCLK | OUT_ORDER_WR_EN | HAS_SUB_COMM_2BITS |
-+			WR_THROT_EN | IOVA_34_EN | SHARE_PGTABLE | MTK_IOMMU_TYPE_MM,
-+	.inv_sel_reg  = REG_MMU_INV_SEL_GEN2,
-+	.banks_num    = 1,
-+	.banks_enable = {true},
-+	.iova_region  = mt8192_multi_dom,
-+	.iova_region_nr = ARRAY_SIZE(mt8192_multi_dom),
-+	.iova_region_larb_msk = mt8192_larb_region_msk,
-+	.larbid_remap    = {{0}, {1}, {4, 5}, {7}, {2}, {9, 11, 19, 20},
-+			    {0, 14, 16}, {0, 13, 18, 17}},
-+};
-+
- static const struct mtk_iommu_plat_data mt8167_data = {
- 	.m4u_plat     = M4U_MT8167,
- 	.flags        = RESET_AXI | HAS_LEGACY_IVRP_PADDR | MTK_IOMMU_TYPE_MM,
-@@ -1673,17 +1698,6 @@ static const struct mtk_iommu_plat_data mt8188_data_vpp = {
- 			   27, 28 /* ccu0 */, MTK_INVALID_LARBID}, {4, 6}},
- };
- 
--static const unsigned int mt8192_larb_region_msk[MT8192_MULTI_REGION_NR_MAX][MTK_LARB_NR_MAX] = {
--	[0] = {~0, ~0},				/* Region0: larb0/1 */
--	[1] = {0, 0, 0, 0, ~0, ~0, 0, ~0},	/* Region1: larb4/5/7 */
--	[2] = {0, 0, ~0, 0, 0, 0, 0, 0,		/* Region2: larb2/9/11/13/14/16/17/18/19/20 */
--	       0, ~0, 0, ~0, 0, ~(u32)(BIT(9) | BIT(10)), ~(u32)(BIT(4) | BIT(5)), 0,
--	       ~0, ~0, ~0, ~0, ~0},
--	[3] = {0},
--	[4] = {[13] = BIT(9) | BIT(10)},	/* larb13 port9/10 */
--	[5] = {[14] = BIT(4) | BIT(5)},		/* larb14 port4/5 */
--};
--
- static const struct mtk_iommu_plat_data mt8192_data = {
- 	.m4u_plat       = M4U_MT8192,
- 	.flags          = HAS_BCLK | HAS_SUB_COMM_2BITS | OUT_ORDER_WR_EN |
-@@ -1777,6 +1791,7 @@ static const struct of_device_id mtk_iommu_of_ids[] = {
- 	{ .compatible = "mediatek,mt2712-m4u", .data = &mt2712_data},
- 	{ .compatible = "mediatek,mt6779-m4u", .data = &mt6779_data},
- 	{ .compatible = "mediatek,mt6795-m4u", .data = &mt6795_data},
-+	{ .compatible = "mediatek.mt6893-iommu-mm", .data = &mt6893_data},
- 	{ .compatible = "mediatek,mt8167-m4u", .data = &mt8167_data},
- 	{ .compatible = "mediatek,mt8173-m4u", .data = &mt8173_data},
- 	{ .compatible = "mediatek,mt8183-m4u", .data = &mt8183_data},
 -- 
 2.49.0
 
