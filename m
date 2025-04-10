@@ -1,167 +1,181 @@
-Return-Path: <linux-kernel+bounces-597515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C7FA83B01
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:26:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E211BA83ACF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DEC18C7B2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:20:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8361C1B82714
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400F221128D;
-	Thu, 10 Apr 2025 07:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA1820AF63;
+	Thu, 10 Apr 2025 07:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b="SPsPSUQe"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3W3xpkB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D7D20E316;
-	Thu, 10 Apr 2025 07:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C1D202C4A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744269499; cv=none; b=QcV/N7145EylGrgFKmDQD5L49fcDOVEL43OzLoTwkQkBngoAkildw0//uYQ5AabuzuyQ6SiC57/N41CyGH6brIE7IUT+k/i767zd9tQtiNg4WVjQhx5P9hRPdSrZkRt45Gp/U/xIVZcDZClf6H6C8OWdHl5tk3yo8BeIY/UI/oY=
+	t=1744269487; cv=none; b=W+NjL1ofjODb6PRQZNDrUhVzfcHX/dL4OdeV2TFmE2QggP7lSFNUTKHRPtCGecdNYyjQyaEuVgZB6pWk2MmJj7zEHjhsXeAifpJAZJHMF2FFZOtEeHS+WED4OXs95bfIpW7W1xRd+fUiinUoyL2v/qXd9y0jKbazkKIegtgS34s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744269499; c=relaxed/simple;
-	bh=QHFMGT7825aLf9CCNjJ13QgmK6RJ8FFKkBaM863mKyk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qM4dbjNUtawyJtpjeX4tuxPLTop1Vm+Luwpcfqg7+8HjdN4jBh7F50FZX5AP/XGF2uPLmf0NfNvGzLSGy3Xodsy11k+wmazK9aNSkAUHvoCm9JChdkcGy8wYmzPvECbJ1boCO72pz+3anTB5Gj+YE6EH2b6jmuTESsbwZc5fJAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b=SPsPSUQe; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1744269484; x=1744874284; i=ps.report@gmx.net;
-	bh=QHFMGT7825aLf9CCNjJ13QgmK6RJ8FFKkBaM863mKyk=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=SPsPSUQe7J69mO4qvsV5jGcZQeDcF0LCydFPE+NWw+1zszmy2rClVkMwaCEa+J3c
-	 s+pAL/JpwfpDEKzukMpUOkfZqBP3sxQl5VKnaiIM3ZY1U4VFd75WYZq/PHVU8eFyJ
-	 yw5+GsAwqfHEV5BKIalfk9lFntA9cQE84C+M9/Z1NI6/WWBtUBGaUC8yJ0NqIhDU0
-	 tPLsKdNU3Jsb8lqJb4Roh8zRSovpNRRBmqH64Rhp0C4Fls2QBZL3W6/2ThcPNyaXu
-	 MNDpFC4W6auvvxDOTtiI5lRptaBB9pBULVwQci6Ggr7cExrnHRhrSoSjB9hNgDCkH
-	 bgWMwyYVtKp99+KrjQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from localhost.fritz.box ([82.135.81.74]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MxDkm-1t9q6e1XQG-00xQNG; Thu, 10
- Apr 2025 09:18:04 +0200
-From: Peter Seiderer <ps.report@gmx.net>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Peter Seiderer <ps.report@gmx.net>
-Subject: [PATCH net-next v1 11/11] net: pktgen: fix code style (WARNING: Prefer strscpy over strcpy)
-Date: Thu, 10 Apr 2025 09:17:48 +0200
-Message-ID: <20250410071749.30505-12-ps.report@gmx.net>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250410071749.30505-1-ps.report@gmx.net>
-References: <20250410071749.30505-1-ps.report@gmx.net>
+	s=arc-20240116; t=1744269487; c=relaxed/simple;
+	bh=RPqTnJ/QuU6c7Vz94rJS5I2gE1lvGYBFuCtJfdTNPUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OpLaPM4/3JWnaRolUIP8/3t1E23G+LErOhQGwtSHNUi6232Sq+QwTfUJKX0WaGnkAQiO7Qo7H/drDCvYTtwzbNdkMreGrvnTJVmVgjT+Q6UKOjCJkptwuICU8uf3J3t6bSZb704ilw8yhTZCgsuw7cak48kKeq0uDnzFbjy0JD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3W3xpkB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A43DFC4CEDD;
+	Thu, 10 Apr 2025 07:18:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744269487;
+	bh=RPqTnJ/QuU6c7Vz94rJS5I2gE1lvGYBFuCtJfdTNPUY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V3W3xpkBgSMundI1nubCYRb8AJ1P3+3K7anjt2FEl2zGc6GLhDLivFOwuBlu2ZT9K
+	 yvQVFxLYvyRC9bfYMzyvQdSpSRCnggFqjNidP/6giJhlycRtIvcRUESnqPXNazES0x
+	 6PgazKW8pEfbioBXbPwekhAD5jjqargS3ERa+GnOdof4kAa+4qBvIczAPKvm6rCZqM
+	 cqEXghd/caoVElNrgx72mJq5Fk3/sMhZ9qNuXprAEaOTE7mp79ExNzQkpXkQzUBOz2
+	 YlM6EWOB16fDdfpvb0mnbkkvhT3MJSZ/XoUH4AHFbGJnrCpqjMAYxo6yoQrLTCSt4H
+	 xArG1GcxFunqg==
+Date: Thu, 10 Apr 2025 09:18:04 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	kernel@collabora.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 13/15] drm/tests: hdmi: Add limited range tests for
+ YUV420 mode
+Message-ID: <20250410-daffodil-toucanet-of-effort-b4dcbd@houat>
+References: <20250326-hdmi-conn-yuv-v3-0-294d3ebbb4b2@collabora.com>
+ <20250326-hdmi-conn-yuv-v3-13-294d3ebbb4b2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:ndIQyKXD72T7ZtrQT18eDtqgwfyCjLsquOJhoZkuZs0nCfo/ToB
- nlebgxxesCvHrvUA3kw0WhY2oDDyHjI/tzl350KAzOMbxp8XSz8qb7yn06bdWg5qYhdHFuT
- qoPDo0EpLYJH23i36rCZAH8pNyzcc7MRmVA2q8rcV99g2RQRBUo3FEI7O2L245QYAqHqfif
- TR4uqTuNQO6sWjNesmsQA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VqfOQYDHX/4=;dkZZXsXi1ra7wYudIvAVEDmeSas
- XTAmOHYf8quG/HY0kyRphV74+djWeDPE2FCFRZa9qmfZu+09UOmSMvOnKhlygbsK4/L8pVt2L
- M8StHIaVdCmRUYiZgZCEZ/78XoQ+87MdmBvrs2Q9GUfru6czt1Q3lJGfFQ/kYxoxVHUNq2fCg
- qp2USA1C6d+yt0bR6YxsyWOBWueCABwt4+s/p3XSbHYtRkYQIdI7ZPX9tz2CinrS1PLNuhLCP
- u9d1RWYACgTzIG+hU7tkOrSzvZyfJwsU2aYvhOqdiNSs0qsJftdI3PVDvnENhSrl+3zpWW7lK
- jmZXHoQsYOxRLGB2pdAIVNd54hajK0zkLp4TrGYhIr6oOwO+CSoWGZ1VkcABCWB3n4E9ev2tw
- jLHa7rHu7Y65i0TtzRQJfckbkVH9iklBtSXK3AoMvOpHUoc2W9SVP4QgHl/acaZEajeidbZcp
- wvZ9kmwRceXOzbvEkRcghZfHEDgnD6xIJitryDAfgnuP4ZHwSytg7LutVEzDFmQfH706zCvFU
- 5hxENTo1Ul0GMV8Kna4eNVDzshgaYy4HqAdFqFgM4zK9VRlJNUCfoNB6uSknZ/QL2pKgpcMyc
- ABg1K6Qh2sGctdjzTgmSH19s6wUvcLoTClo+guaKPPm9TYfRgNqgGlNpCJD6elmWgqcoOrr1M
- BjBaXsBUHidRFOVD1kOT39aKMrvuVaiBy/i120zIggIHJ1VlujjELptt0giK0O1lbZ0KHD5v3
- WkcBSzZPp/knsmsut2daBuIpDLDGFP8Kj768044QiPTJ8L2gcQmWUR7dQ/63xf110CjZvHHd6
- NFnLzExyrnAf8qbgBc8Oln8Ofitls8q+RN9kkctVuL+q9//7TqklmjPzPEfRBpqxv53pHNqIo
- WMpdyh1u+LjLakUm2PZFsS81nrKnCTXUz1IIGTexUp3vi04/OB6D/CGhoXZlCNs/u5ikz+Pvs
- uCaiObywkeX1lTGo/I21FkobbDcKplSiy2VmaIfKNUVevUDGwvhWWHUaC3ljL8zPZIht1eZEK
- HO9/dC+yVqZuB14vkIyHmXcoKF4sJdzbg8VIxLJy7bDLSNj5z/WBe6HIb9ThZF4CjubSCfZmQ
- FABmAaq1tWhdVb4KQ4D41z4/P+A1tHk/7JQytLsiS8Ed1JX6LVWdjQ9ky6X6btS2HyYDmQEqB
- Ia7L3SVseAde6kHGTSy0Ecazui0fRglnJUnI3shGR5jvy2+xpJvZ4hrZWHZir7+GWcth33wTh
- UeT0c9Dbk1Pio/vcVzA5lnP2yfIDkkXobBiKLbnMD3X/A/er18LPP57DGuOAlGNdgYuYt8VMp
- GlFWOhoe/vMMvOEbnxshfMQzoVKSYXXt+iUge/8R+lOGamRZwaYQ+kYIpuH5YZrhjCJHrhfXx
- fI3Vd/ke/s5zI1mvQtuxdtRMEb9daDkalpKv8MzC8xLBJ4lj2CQOQ/o21dh44LIgwVaufA0vU
- J1TXYhSqQvj+bBhU2dLt1WMKaavwOVTrBAosUVIqxelslbovCmp49S/Zb+9EhsPjWgOPy9w==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iacvktpbodag7b3c"
+Content-Disposition: inline
+In-Reply-To: <20250326-hdmi-conn-yuv-v3-13-294d3ebbb4b2@collabora.com>
 
-Rml4IGNoZWNrcGF0Y2ggY29kZSBzdHlsZSB3YXJuaW5nczoKCiAgV0FSTklORzogUHJlZmVyIHN0
-cnNjcHkgb3ZlciBzdHJjcHkgLSBzZWU6IGh0dHBzOi8vZ2l0aHViLmNvbS9LU1BQL2xpbnV4L2lz
-c3Vlcy84OAogICMxNDIyOiBGSUxFOiBuZXQvY29yZS9wa3RnZW4uYzoxNDIyOgogICsgICAgICAg
-ICAgICAgICAgICAgICAgIHN0cmNweShwa3RfZGV2LT5kc3RfbWluLCBidWYpOwoKICBXQVJOSU5H
-OiBQcmVmZXIgc3Ryc2NweSBvdmVyIHN0cmNweSAtIHNlZTogaHR0cHM6Ly9naXRodWIuY29tL0tT
-UFAvbGludXgvaXNzdWVzLzg4CiAgIzE0NDM6IEZJTEU6IG5ldC9jb3JlL3BrdGdlbi5jOjE0NDM6
-CiAgKyAgICAgICAgICAgICAgICAgICAgICAgc3RyY3B5KHBrdF9kZXYtPmRzdF9tYXgsIGJ1Zik7
-CgogIFdBUk5JTkc6IFByZWZlciBzdHJzY3B5IG92ZXIgc3RyY3B5IC0gc2VlOiBodHRwczovL2dp
-dGh1Yi5jb20vS1NQUC9saW51eC9pc3N1ZXMvODgKICAjMTU1MzogRklMRTogbmV0L2NvcmUvcGt0
-Z2VuLmM6MTU1MzoKICArICAgICAgICAgICAgICAgICAgICAgICBzdHJjcHkocGt0X2Rldi0+c3Jj
-X21pbiwgYnVmKTsKCiAgV0FSTklORzogUHJlZmVyIHN0cnNjcHkgb3ZlciBzdHJjcHkgLSBzZWU6
-IGh0dHBzOi8vZ2l0aHViLmNvbS9LU1BQL2xpbnV4L2lzc3Vlcy84OAogICMxNTc0OiBGSUxFOiBu
-ZXQvY29yZS9wa3RnZW4uYzoxNTc0OgogICsgICAgICAgICAgICAgICAgICAgICAgIHN0cmNweShw
-a3RfZGV2LT5zcmNfbWF4LCBidWYpOwoKICBXQVJOSU5HOiBQcmVmZXIgc3Ryc2NweSBvdmVyIHN0
-cmNweSAtIHNlZTogaHR0cHM6Ly9naXRodWIuY29tL0tTUFAvbGludXgvaXNzdWVzLzg4CiAgIzMy
-Mjc6IEZJTEU6IG5ldC9jb3JlL3BrdGdlbi5jOjMyMjc6CiAgKyAgICAgICAgICAgICAgICAgICAg
-ICAgc3RyY3B5KHBrdF9kZXYtPnJlc3VsdCwgIlN0YXJ0aW5nIik7CgogIFdBUk5JTkc6IFByZWZl
-ciBzdHJzY3B5IG92ZXIgc3RyY3B5IC0gc2VlOiBodHRwczovL2dpdGh1Yi5jb20vS1NQUC9saW51
-eC9pc3N1ZXMvODgKICAjMzIzMTogRklMRTogbmV0L2NvcmUvcGt0Z2VuLmM6MzIzMToKICArICAg
-ICAgICAgICAgICAgICAgICAgICBzdHJjcHkocGt0X2Rldi0+cmVzdWx0LCAiRXJyb3Igc3RhcnRp
-bmciKTsKCiAgV0FSTklORzogUHJlZmVyIHN0cnNjcHkgb3ZlciBzdHJjcHkgLSBzZWU6IGh0dHBz
-Oi8vZ2l0aHViLmNvbS9LU1BQL2xpbnV4L2lzc3Vlcy84OAogICMzODQ1OiBGSUxFOiBuZXQvY29y
-ZS9wa3RnZW4uYzozODQ1OgogICsgICAgICAgc3RyY3B5KHBrdF9kZXYtPm9kZXZuYW1lLCBpZm5h
-bWUpOwoKU2lnbmVkLW9mZi1ieTogUGV0ZXIgU2VpZGVyZXIgPHBzLnJlcG9ydEBnbXgubmV0Pgot
-LS0KIG5ldC9jb3JlL3BrdGdlbi5jIHwgMTQgKysrKysrKy0tLS0tLS0KIDEgZmlsZSBjaGFuZ2Vk
-LCA3IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvbmV0L2NvcmUv
-cGt0Z2VuLmMgYi9uZXQvY29yZS9wa3RnZW4uYwppbmRleCAwZDE4ZmQ5MzJlZDkuLjNmNzZjYWU5
-Y2Y1NyAxMDA2NDQKLS0tIGEvbmV0L2NvcmUvcGt0Z2VuLmMKKysrIGIvbmV0L2NvcmUvcGt0Z2Vu
-LmMKQEAgLTE0MTksNyArMTQxOSw3IEBAIHN0YXRpYyBzc2l6ZV90IHBrdGdlbl9pZl93cml0ZShz
-dHJ1Y3QgZmlsZSAqZmlsZSwKIAkJYnVmW2xlbl0gPSAwOwogCQlpZiAoc3RyY21wKGJ1ZiwgcGt0
-X2Rldi0+ZHN0X21pbikgIT0gMCkgewogCQkJbWVtc2V0KHBrdF9kZXYtPmRzdF9taW4sIDAsIHNp
-emVvZihwa3RfZGV2LT5kc3RfbWluKSk7Ci0JCQlzdHJjcHkocGt0X2Rldi0+ZHN0X21pbiwgYnVm
-KTsKKwkJCXN0cnNjcHkocGt0X2Rldi0+ZHN0X21pbiwgYnVmKTsKIAkJCXBrdF9kZXYtPmRhZGRy
-X21pbiA9IGluX2F0b24ocGt0X2Rldi0+ZHN0X21pbik7CiAJCQlwa3RfZGV2LT5jdXJfZGFkZHIg
-PSBwa3RfZGV2LT5kYWRkcl9taW47CiAJCX0KQEAgLTE0NDAsNyArMTQ0MCw3IEBAIHN0YXRpYyBz
-c2l6ZV90IHBrdGdlbl9pZl93cml0ZShzdHJ1Y3QgZmlsZSAqZmlsZSwKIAkJYnVmW2xlbl0gPSAw
-OwogCQlpZiAoc3RyY21wKGJ1ZiwgcGt0X2Rldi0+ZHN0X21heCkgIT0gMCkgewogCQkJbWVtc2V0
-KHBrdF9kZXYtPmRzdF9tYXgsIDAsIHNpemVvZihwa3RfZGV2LT5kc3RfbWF4KSk7Ci0JCQlzdHJj
-cHkocGt0X2Rldi0+ZHN0X21heCwgYnVmKTsKKwkJCXN0cnNjcHkocGt0X2Rldi0+ZHN0X21heCwg
-YnVmKTsKIAkJCXBrdF9kZXYtPmRhZGRyX21heCA9IGluX2F0b24ocGt0X2Rldi0+ZHN0X21heCk7
-CiAJCQlwa3RfZGV2LT5jdXJfZGFkZHIgPSBwa3RfZGV2LT5kYWRkcl9tYXg7CiAJCX0KQEAgLTE1
-NTAsNyArMTU1MCw3IEBAIHN0YXRpYyBzc2l6ZV90IHBrdGdlbl9pZl93cml0ZShzdHJ1Y3QgZmls
-ZSAqZmlsZSwKIAkJYnVmW2xlbl0gPSAwOwogCQlpZiAoc3RyY21wKGJ1ZiwgcGt0X2Rldi0+c3Jj
-X21pbikgIT0gMCkgewogCQkJbWVtc2V0KHBrdF9kZXYtPnNyY19taW4sIDAsIHNpemVvZihwa3Rf
-ZGV2LT5zcmNfbWluKSk7Ci0JCQlzdHJjcHkocGt0X2Rldi0+c3JjX21pbiwgYnVmKTsKKwkJCXN0
-cnNjcHkocGt0X2Rldi0+c3JjX21pbiwgYnVmKTsKIAkJCXBrdF9kZXYtPnNhZGRyX21pbiA9IGlu
-X2F0b24ocGt0X2Rldi0+c3JjX21pbik7CiAJCQlwa3RfZGV2LT5jdXJfc2FkZHIgPSBwa3RfZGV2
-LT5zYWRkcl9taW47CiAJCX0KQEAgLTE1NzEsNyArMTU3MSw3IEBAIHN0YXRpYyBzc2l6ZV90IHBr
-dGdlbl9pZl93cml0ZShzdHJ1Y3QgZmlsZSAqZmlsZSwKIAkJYnVmW2xlbl0gPSAwOwogCQlpZiAo
-c3RyY21wKGJ1ZiwgcGt0X2Rldi0+c3JjX21heCkgIT0gMCkgewogCQkJbWVtc2V0KHBrdF9kZXYt
-PnNyY19tYXgsIDAsIHNpemVvZihwa3RfZGV2LT5zcmNfbWF4KSk7Ci0JCQlzdHJjcHkocGt0X2Rl
-di0+c3JjX21heCwgYnVmKTsKKwkJCXN0cnNjcHkocGt0X2Rldi0+c3JjX21heCwgYnVmKTsKIAkJ
-CXBrdF9kZXYtPnNhZGRyX21heCA9IGluX2F0b24ocGt0X2Rldi0+c3JjX21heCk7CiAJCQlwa3Rf
-ZGV2LT5jdXJfc2FkZHIgPSBwa3RfZGV2LT5zYWRkcl9tYXg7CiAJCX0KQEAgLTMyMjQsMTEgKzMy
-MjQsMTEgQEAgc3RhdGljIHZvaWQgcGt0Z2VuX3J1bihzdHJ1Y3QgcGt0Z2VuX3RocmVhZCAqdCkK
-IAogCQkJc2V0X3BrdF9vdmVyaGVhZChwa3RfZGV2KTsKIAotCQkJc3RyY3B5KHBrdF9kZXYtPnJl
-c3VsdCwgIlN0YXJ0aW5nIik7CisJCQlzdHJzY3B5KHBrdF9kZXYtPnJlc3VsdCwgIlN0YXJ0aW5n
-Iik7CiAJCQlwa3RfZGV2LT5ydW5uaW5nID0gMTsJLyogQ3JhbmtlIHllc2VsZiEgKi8KIAkJCXN0
-YXJ0ZWQrKzsKIAkJfSBlbHNlCi0JCQlzdHJjcHkocGt0X2Rldi0+cmVzdWx0LCAiRXJyb3Igc3Rh
-cnRpbmciKTsKKwkJCXN0cnNjcHkocGt0X2Rldi0+cmVzdWx0LCAiRXJyb3Igc3RhcnRpbmciKTsK
-IAl9CiAJcmN1X3JlYWRfdW5sb2NrKCk7CiAJaWYgKHN0YXJ0ZWQpCkBAIC0zODQyLDcgKzM4NDIs
-NyBAQCBzdGF0aWMgaW50IHBrdGdlbl9hZGRfZGV2aWNlKHN0cnVjdCBwa3RnZW5fdGhyZWFkICp0
-LCBjb25zdCBjaGFyICppZm5hbWUpCiAJaWYgKCFwa3RfZGV2KQogCQlyZXR1cm4gLUVOT01FTTsK
-IAotCXN0cmNweShwa3RfZGV2LT5vZGV2bmFtZSwgaWZuYW1lKTsKKwlzdHJzY3B5KHBrdF9kZXYt
-Pm9kZXZuYW1lLCBpZm5hbWUpOwogCXBrdF9kZXYtPmZsb3dzID0gdnphbGxvY19ub2RlKGFycmF5
-X3NpemUoTUFYX0NGTE9XUywKIAkJCQkJCSBzaXplb2Yoc3RydWN0IGZsb3dfc3RhdGUpKSwKIAkJ
-CQkgICAgICBub2RlKTsKLS0gCjIuNDkuMAoK
+
+--iacvktpbodag7b3c
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 13/15] drm/tests: hdmi: Add limited range tests for
+ YUV420 mode
+MIME-Version: 1.0
+
+On Wed, Mar 26, 2025 at 12:20:02PM +0200, Cristian Ciocaltea wrote:
+> Provide tests to verify that drm_atomic_helper_connector_hdmi_check()
+> helper behaviour when using YUV420 output format is to always set the
+> limited RGB quantization range to 'limited', no matter what the value of
+> Broadcast RGB property is.
+>=20
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c |  89 +++++++++++++++-
+>  drivers/gpu/drm/tests/drm_kunit_edid.h             | 112 +++++++++++++++=
+++++++
+>  2 files changed, 196 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers=
+/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> index 6897515189a0649a267196b246944efc92ace336..3fae7ccf65309a1d8a4acf12d=
+e961713b9163096 100644
+> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> @@ -731,6 +731,88 @@ static void drm_test_check_broadcast_rgb_limited_cea=
+_mode_vic_1(struct kunit *te
+>  	drm_modeset_acquire_fini(&ctx);
+>  }
+> =20
+> +/*
+> + * Test that for an HDMI connector, with an HDMI monitor, we will
+> + * get a limited RGB Quantization Range with a YUV420 mode, no
+> + * matter what the value of the Broadcast RGB property is set to.
+> + */
+> +static void drm_test_check_broadcast_rgb_cea_mode_yuv420(struct kunit *t=
+est)
+> +{
+> +	struct drm_atomic_helper_connector_hdmi_priv *priv;
+> +	enum drm_hdmi_broadcast_rgb broadcast_rgb;
+> +	struct drm_modeset_acquire_ctx ctx;
+> +	struct drm_connector_state *conn_state;
+> +	struct drm_atomic_state *state;
+> +	struct drm_display_mode *mode;
+> +	struct drm_connector *conn;
+> +	struct drm_device *drm;
+> +	struct drm_crtc *crtc;
+> +	int ret;
+> +
+> +	broadcast_rgb =3D *(enum drm_hdmi_broadcast_rgb *)test->param_value;
+> +
+> +	priv =3D drm_kunit_helper_connector_hdmi_init_with_edid(test,
+> +				BIT(HDMI_COLORSPACE_RGB) |
+> +				BIT(HDMI_COLORSPACE_YUV420),
+> +				8,
+> +				test_edid_hdmi_1080p_rgb_yuv_4k_yuv420_dc_max_200mhz);
+> +	KUNIT_ASSERT_NOT_NULL(test, priv);
+> +
+> +	drm =3D &priv->drm;
+> +	crtc =3D priv->crtc;
+> +	conn =3D &priv->connector;
+> +	KUNIT_ASSERT_TRUE(test, conn->display_info.is_hdmi);
+> +
+> +	mode =3D drm_kunit_display_mode_from_cea_vic(test, drm, 95);
+> +	KUNIT_ASSERT_NOT_NULL(test, mode);
+> +
+> +	drm_modeset_acquire_init(&ctx, 0);
+> +
+> +	ret =3D drm_kunit_helper_enable_crtc_connector(test, drm,
+> +						     crtc, conn,
+> +						     mode, &ctx);
+> +	KUNIT_ASSERT_EQ(test, ret, 0);
+
+drm_kunit_helper_enable_crtc_connector() can return EDEADLK, so you need
+to handle it and restart the sequence if it happens.
+
+> +	state =3D drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+> +
+> +	conn_state =3D drm_atomic_get_connector_state(state, conn);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
+
+Ditto.
+
+> +	conn_state->hdmi.broadcast_rgb =3D broadcast_rgb;
+> +
+> +	ret =3D drm_atomic_check_only(state);
+> +	KUNIT_ASSERT_EQ(test, ret, 0);
+> +
+> +	conn_state =3D drm_atomic_get_connector_state(state, conn);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
+
+Ditto, but I'm not sure you need drm_atomic_get_connector_state() here.
+We know at this point that the state is there and we don't need to
+allocate it anymore. drm_atomic_get_new_connector_state() will probably
+be enough, and that one can't return EDEADLK.
+
+Maxime
+
+--iacvktpbodag7b3c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ/dwqwAKCRDj7w1vZxhR
+xUVkAQDPHdzs1uf4gAreGMyea33yc+4ArZelLLVNJA9bDTX2HwD9HVrFce52lhG9
+9u/HrTLFeDQND27IlE2UDAnyjOWbfAs=
+=eWAt
+-----END PGP SIGNATURE-----
+
+--iacvktpbodag7b3c--
 
