@@ -1,149 +1,115 @@
-Return-Path: <linux-kernel+bounces-598302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 957DDA844B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:26:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D15A8449C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258653BC07C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:21:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5CB97B0251
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62902853EB;
-	Thu, 10 Apr 2025 13:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBF616DC28;
+	Thu, 10 Apr 2025 13:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qSMQ3goO"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JNhJX/Ct"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA50D1372
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3B328A406;
+	Thu, 10 Apr 2025 13:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744291313; cv=none; b=i52y6/PbWr+nhL/FpqTvD9lb26h1Z4/ExyvbpG2yPfZcxq1yb/Wvwd6iPjZEhoVA4Lp4B47q2gamuO/S3vnXgtSZ5nNREgT8qQDmtmUPYDK/L0hp2GIUHBZpfUlItixthZHICtT01gY0/t4hOoiLEkojRY5Q1599WT/N76h1PSI=
+	t=1744291320; cv=none; b=WAhV5+9LtoVY/yQHe9Bq0bm1Rd9X/5UPm6FWc2GSqVtDxo9oo4I/C+k4Jf5STXRpU55Fb+EXdQW6CGIPELLwZDQ8k4EbM31Y1ZHbSUAXt2OUfoVBSlBX48bTabnDQIFz8JyB5X6xjeI4iMVhq0oiOLT7eggl/UjbYu9+51QGoeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744291313; c=relaxed/simple;
-	bh=ogTvjHX1p157xvYG9ocJpAirXQE+XgMwDKIwl3lLYks=;
+	s=arc-20240116; t=1744291320; c=relaxed/simple;
+	bh=y0uvInJ0Ircvi1mTWNsCTtISA6yDiSLZ78+UAneohH8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EhdpzaJnJ1O7xofwAgBdyIl7efZlIezmuBK8dBxJj5WEq/qFgrQd8xi3swzyy3b2l0WHEEaCnKAfLwbw7oBjkNXWZi7YZKfQOGBi+UEKzc9VFl5LzGB15cK3RqJ8bgjWpfJtO6oHL262Wb6A9l6/swEKIwqh0/+9BRqglodz97c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qSMQ3goO; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7370a2d1981so555971b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:21:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=b/SSqusnTt/hEW+e5QPxvxs/wVoLG0vxsNdOCaXVv62P6EF5KzYueK7O8amRWfNe1MEBaJ/EkU4xA/ksF4cv6+p4e5oxqyEc6Ofk892vcScCiS3ij7fWiCUDS8dcIaS7Emme5CxvP7Q3vVz0iORT0TQj/hx/fJsnMCnI8uCQeUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JNhJX/Ct; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ff6b9a7f91so138808a91.3;
+        Thu, 10 Apr 2025 06:21:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744291310; x=1744896110; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wMQZClxt/r11IMD+9AiWAlz3lBENpTb7OT4Ug6+9SZk=;
-        b=qSMQ3goOp7JzS4TECw9V0iq98Xy2uEKj9uSA5vdxcpdm9O3RuygoRpY6r61t8Y4v3O
-         iVDa4BJg7MvEvaM1SwuIOkk0qUNacCIYp7lXl+VRipAgts93+h7KLggkhwSjBPckb1X1
-         Qx5znPLGIFHMqWZOHQpdw3Z58LWdEX40LwZ9rqiHVHaxutcOedh/2N0EwnM98ktuCHD3
-         CUBvPqx8PsQj2KluAWyFTWLsassXw/oBNYK1xorRzd9Umw0PIE6Mg25KUV0cElc1RAGq
-         bYqQ74DX+AAPNYje0j/3qTLRdcUtUpvcGgh8lM8VQ5d6QPKTfNau2R8qBy2GaY/R7Rtm
-         Jpfw==
+        d=gmail.com; s=20230601; t=1744291317; x=1744896117; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y0uvInJ0Ircvi1mTWNsCTtISA6yDiSLZ78+UAneohH8=;
+        b=JNhJX/CtiEVtq6awb28tCJaYanzEZLSDVcGbA9r15mR4YeeZdfQhcBnuiRavSJsDYW
+         ahTTQNDxI4cKxsEA4kY/a9vxnbz+ABh93/WimHbxU8oCC7aA3jsTZrtMiJOZtYCTXB0P
+         CUIBCmdQHeKxCNpTowRN+Eb1vbqI58JYPfg42lSB61ceCxijOCk3+ZdyvOdwQ9b2ZdtQ
+         lDCIs385hYgfgcYfVZqlLe/H/Sv/bxVqE7qay5JqzZxvmfisBhZJGMZHSMfHRrm0z/Tm
+         pxPpCuaa7sKO2UAmwOeH4chgB8IWQ+a/VjZ6lJ73MbRAgl0XICez368D0wvomffGZlkE
+         XGAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744291310; x=1744896110;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wMQZClxt/r11IMD+9AiWAlz3lBENpTb7OT4Ug6+9SZk=;
-        b=XI5FWcyscsVdvmGsntHk+Q/76wxRBPjROo0w5LCMy6xsfZweykwj3PO4L54RkfEitD
-         fcNdPDkW8mAIVAsUC5SJ49vI++Mx3JqzJP/+suAK5l3KPzMIVRfaVeK/tuikPTdNZNuU
-         l/8uAJ5/gm5vRa4BaRtFCgBQ2z2jl6+hZa5vsPvqWDLtv4ospetFkjFw2t4xe52knwBr
-         9ml4r2P4V3lVYRF+n6o6fQv+At+WAd+QS7BorucK1EYQHh1GP9TBa84BFMfpek5Ph2PQ
-         g/8z3bRmkEoRHavK45nebnYFKFYzPkuuL0uwGICRd5Ws+9SUhONDYCaynAHYAvAIqepN
-         LOtA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6jjeS4ow+ib9adb+5V9++YQYKZmU425B+/VXc5/PaY+gHAXxooM9+PBL7kLSdQDN2o8m2fiWBKAHPJaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRrpxL0Ce0oQzFBnPd6iwQiO7U0hPSr6KlS7soaA0oBx7JVJC/
-	5Ap0XXNPIFxPj7/oVgzpSf0sCAqAeMikaE64mLwLvNewmW4JSzdrO16LMvPk7N63wH8e/6KSMqW
-	3DImufJR050EyMtlJHEs4Xn6H8ADyoa2YlXeE/g==
-X-Gm-Gg: ASbGnctNTRnBaAQ1ckUR3Mk718tBPXMEMOWoNKf+OlJVugeuxZpX2xSdm/Kg1DD+SLO
-	UyKTLfOGdgxzO8/mwE898iUjov0S1EG3uve16j9cTA0G4WzgF6XvlYWaa1VR4qewhMtwerNcayw
-	3Y0NrsIOKJEu82gmrT+UpYD08=
-X-Google-Smtp-Source: AGHT+IEL3aq17l9YVyu03lvnUk5C6k7qYVWUuIutjM7+77MtfedWhhLez/73fsO+lOMiT2oK1ZOolvmazkYHCs2MYjA=
-X-Received: by 2002:a05:6a20:d48d:b0:1fe:90c5:7ceb with SMTP id
- adf61e73a8af0-201695d9c45mr5523489637.40.1744291310083; Thu, 10 Apr 2025
- 06:21:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744291317; x=1744896117;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y0uvInJ0Ircvi1mTWNsCTtISA6yDiSLZ78+UAneohH8=;
+        b=cZUrjyFpLQNhMpqh9mjqA6a+iTMWD2v6rgwnRb4dqXJPikwez9cLs3gn60eHxu8R8g
+         Nb2v6xcmELqfS6rpIO3MWLwEE8shwoWblK6tEO32mwJTTMTcxyJGchhL/n2Sp2s6eoyA
+         +HIJGSXOfPg6IQhVvsRAm/yki0rzHvACBY2JdrdF7dinULXFO6ojXgTr2LmCgrVN1DM5
+         KXAFN8rQF/20je2mlgKOs+cdUptV/f428Ku2P3K3i18gCn5kp9IS/XjkQeZFrRIEduYf
+         2/W/dPfaaGGXoAqf3HBZnNFmZuAkR2BXJ+1liFJP5gr/T3Lw/gts4rwML8jpK0lwe+lC
+         AdjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKaz5hy7AvSriP5KhYEI7ntXCIP/fgh/g78BMVLuKAel8tFYvu3B9+AC3O2nOrMpHspvPDkU+P1m+QUhY=@vger.kernel.org, AJvYcCXlPf9vOKOQvLUqeShRxhU/dgltfD4GhuleFd3xkk/IU+l9Rwe8vEjV6Z4h+QqSrTwut4XOuonMQofilFJIR40=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKvKJuYtRCkGTG6bthnbeX2c4ZQnO3zDFLGA8EUYxND8pw3DpQ
+	e27DfweJrZEMddKXyukJXPANd7BsNsfpD+Vm0/LG8SFO1o2xyDXef4La8YbR4NzqFDzmrokxzqv
+	HziD6ZnYH3iFK5Seu1JZwT6Y3+Vk=
+X-Gm-Gg: ASbGncv5n3Echg/c/4Jz+Fp7qrYMx/0rkY9QV4nL+df/JAarteY7yOMCKt19+iGd4/r
+	uHSrvzNGM7+GjP7XMhH/i/mKzmDGAPHSfed2Zx3BFm+rDo78eO0cFOKxLxFSs2w/libjdGwUEpo
+	54VbXxQF7qN7ZW63re7i9n0b41e2Qdf6Zz
+X-Google-Smtp-Source: AGHT+IGUYK877F5L4jTU+jDoFj+iZxSFuzmu0z5Y5iBsg0CN0HUE2LQHhewv7hT1hDtWWFh47H9Wv8i9NpORf98sC0k=
+X-Received: by 2002:a17:90b:180d:b0:2ee:f59a:94d3 with SMTP id
+ 98e67ed59e1d1-306dd172cd6mr3201908a91.0.1744291317192; Thu, 10 Apr 2025
+ 06:21:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409032917.7580-1-yiru.zhang@mediatek.com> <20250410095158.8966-1-yiru.zhang@mediatek.com>
-In-Reply-To: <20250410095158.8966-1-yiru.zhang@mediatek.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Thu, 10 Apr 2025 14:21:39 +0100
-X-Gm-Features: ATxdqUF3Uhi02-Atot1ZYsCo3BPZFPm0ByTzdzbrh7QkbsgdDvRRnbSTXsdXDf4
-Message-ID: <CAJ9a7Vjr+O7wueNc1kmFt-Up2qzFXcSabgoBeb5e+rW8Z3_3Qw@mail.gmail.com>
-Subject: Re: [PATCH] [Patch v3]Add ETE devarch condition in etm4_init_iomem_access
-To: yiru zhang <yiru.zhang@mediatek.com>
-Cc: alexander.shishkin@linux.intel.com, 
-	angelogioacchino.delregno@collabora.com, coresight@lists.linaro.org, 
-	james.clark@linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	matthias.bgg@gmail.com, suzuki.poulose@arm.com, 
-	kernel test robot <lkp@intel.com>
+References: <20250410115420.366349-1-panikiel@google.com> <20250410123602.GZ9833@noisy.programming.kicks-ass.net>
+ <20250410124526.GB9833@noisy.programming.kicks-ass.net> <20250410130944.GA9003@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250410130944.GA9003@noisy.programming.kicks-ass.net>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 10 Apr 2025 15:21:44 +0200
+X-Gm-Features: ATxdqUHgm_h4136CFPMuwFbkWHlOQC9TQwtDDJs6vHX2n1HxR6E4S11HaW5Uj7k
+Message-ID: <CANiq72=k+tZ3ACEB5k9qwJ8ZYu-dXkA3=Lisg1b8ze-2D0STog@mail.gmail.com>
+Subject: Re: [PATCH] x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: =?UTF-8?Q?Pawe=C5=82_Anikiel?= <panikiel@google.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Alice Ryhl <aliceryhl@google.com>, 
+	Nathan Chancellor <nathan@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-Please stop using the unusual title format of [PATCH}[Patch v3] - use
-the git command line options to ensure the format is e.g. [PATCH v3]
-
-What is the reason that your device cannot use the system instructions
-to access the ETE? Using a memory interface, if implemented, is only
-recommended for external debuggers, or on systems where the
-implementation of system register access is not working.
-
-On Thu, 10 Apr 2025 at 10:52, yiru zhang <yiru.zhang@mediatek.com> wrote:
+On Thu, Apr 10, 2025 at 3:09=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
 >
-> Due to ETE supported, so add ETE devarch condition in etm4_init_iomem_access.
->
-> Signed-off-by: yiru zhang <yiru.zhang@mediatek.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202504101759.7Ls0Uy4o-lkp@intel.com/
->
-> v1->v2: use switch case way
-> v2->v3: clean build warning
-> ---
->  drivers/hwtracing/coresight/coresight-etm4x-core.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index 2b8f10463840..4002a2823fd0 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -1135,11 +1135,15 @@ static bool etm4_init_iomem_access(struct etmv4_drvdata *drvdata,
->          * with MMIO. But we cannot touch the OSLK until we are
->          * sure this is an ETM. So rely only on the TRCDEVARCH.
->          */
-> -       if ((devarch & ETM_DEVARCH_ID_MASK) != ETM_DEVARCH_ETMv4x_ARCH) {
-> -               pr_warn_once("TRCDEVARCH doesn't match ETMv4 architecture\n");
-> +       switch (devarch & ETM_DEVARCH_ID_MASK) {
-> +       case ETM_DEVARCH_ETMv4x_ARCH:
-> +       case ETM_DEVARCH_ETE_ARCH:
-> +               break;
-> +       default:
-> +               pr_warn_once("Unknown ETM architecture: 0x%lx\n",
-> +                            devarch & ETM_DEVARCH_ID_MASK);
->                 return false;
->         }
-> -
->         drvdata->arch = etm_devarch_to_arch(devarch);
->         *csa = CSDEV_ACCESS_IOMEM(drvdata->base);
->         return true;
-> --
-> 2.46.0
->
+> Miguel, I cannot find this code in the kernel tree. Is this again
+> because Rust is not free-standing and relies on external code?
 
-Otherwise -
+Yes, this comes from the `core` standard library. If it requires a
+change, then it needs to be fixed upstream.
 
-Reviewed-by: Mike Leach <mike.leach@linaro.org>
--- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+> Can you please fix that. Building against external code that is not
+> under our control is a problem.
+
+The only way to fix it would be to vendor the standard library, for
+each Rust compiler version -- and there is one new every 6 weeks.
+Thus, quite a few copies of it. Or keep patches (one per version) that
+we apply on the fly.
+
+Cheers,
+Miguel
 
