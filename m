@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-598537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3048FA84728
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:00:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3CD0A84734
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:02:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 713E2460007
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:57:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C46816C39C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C231E22E9;
-	Thu, 10 Apr 2025 14:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2D92857E5;
+	Thu, 10 Apr 2025 14:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ubU1X742";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Io+k2/OP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I9v855hf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DCC1581E0;
-	Thu, 10 Apr 2025 14:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910371581E0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 14:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744297069; cv=none; b=M+LPM3o0s5Q3pkCSsiXj27qhYHlnlaR24Z4slX8or0ICcIbm/PEHuP0XmxjneNuov79JkazFPDQDc5NWjoKBcKZzbCXlC+jDwG+wSk4dRYPdFRF7n6EyOxV1QHE+ZVbJcjfz/604HJg86z28KUTtIfCXNSyE+Buzn9Xkaig9XXM=
+	t=1744297155; cv=none; b=V71ML2u1IsEfoe5F94PNuNrF0qw0Ek1XQqHCOBhMJH6zK6JC56pLzTlrQDGDAxLYL9o34HM/LjJ/cuG1MCSb4uPxwsiiCfLrNfjwGObkwd+CuCpNRXcNa1kCkQ0Z/Wti4TXt/ZDUJs7D9ApGYKiQCBNzYaCwSzkLIRtvuexMAIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744297069; c=relaxed/simple;
-	bh=3eVNknEvMc0grzW+AbgfAUrPDeZV5fj+H41d0IF3b54=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=a4cE2nCUMBYXRbF04qNL7pdw1TCOStPTHEhePeaiTQs3fc9osAur33ymIUNaUL0a6rvOXC2FlyO93GLQkRXZ11+oyBLrVSR+iu/cfUJ9oAbghZbMQQzUMNOBeRJOehDqgCh5KcZIgce1yQ85qY3+KwF/gv+lgnDPBughRlV5j1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ubU1X742; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Io+k2/OP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 10 Apr 2025 14:57:39 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744297064;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jozy5XY4hH1Y0FEwRg8ha4gBDVFMFA7xclkeqVWkI7k=;
-	b=ubU1X742VBBqO/E3dXKapkgR79kC9vg4TzYuDPVvm8aMa5YXpHLFjecaJhX3RMQwUbTm4e
-	LOdegQdGxu/IwK9D35RIx55p0+V1okz81/z2YcgGekWfYTTTd/pNOnlS0gfwYvcIhQbyAm
-	aZEejYrgVLdvOzyZJEMESeEdRaP6fW/6DfHaTMkBQOyCuolZxOelA3FmQ8yyvhMrltTYYh
-	zzLynhNWEoVowYeaBLCp92nKziUr1JORdV0tuLHRyhz1SLOYDYXISH80jXrL+KH3DHrDXv
-	j7gcpk46dtbMLN9sO+em1u7JSITqx1TdgGLCK/Rmd2G7fYUa09IyT311eaiirA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744297064;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jozy5XY4hH1Y0FEwRg8ha4gBDVFMFA7xclkeqVWkI7k=;
-	b=Io+k2/OPv3JqN2IF0+2YKpgFJASDb7nyzHsP/2u+JyoLaSEYJfybLIcvSXQb6KhUKmhM6/
-	WvehNz2pgDqwXiCw==
-From: "tip-bot2 for Cheng-Yang Chou" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] genirq: Fix typo in IRQ_NOTCONNECTED comment
-Cc: "Cheng-Yang Chou" <yphbchou0911@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250410105144.214849-1-yphbchou0911@gmail.com>
-References: <20250410105144.214849-1-yphbchou0911@gmail.com>
+	s=arc-20240116; t=1744297155; c=relaxed/simple;
+	bh=HRf0Pc1Z3xBthCPSZUcjN1HfvQ/bbryl1Drb/lcqk0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kwKlNuoshDkbDXKusv632YHPlV6epy2+LHN2K4kvQrr8OyHB5VCHKpCfoXi9EDX6VHAJZY1U1aT6VPX5wvhrhHkd/IjRE+JY8JE1w/QvGKaxy55aTEBWm4bJBr/tv8XUckKyxKtxiUQkMj/fbdEq4NDL3DodHew9nQ2wONTymL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I9v855hf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1E61C4CEE9;
+	Thu, 10 Apr 2025 14:59:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744297154;
+	bh=HRf0Pc1Z3xBthCPSZUcjN1HfvQ/bbryl1Drb/lcqk0Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I9v855hfQdr5H36V36cGa9PxRPrNOq9QpfEbUs2Zh9ox+VB54zWTGzFybYPmWNTmX
+	 SoWcuNQUh5/5RPbg5jF+LfyX+zflJOkokESvzl3QB7CKyEuiro6ju8jKaZjpfHQy96
+	 dKdJ94AIECsm/oN3LgRXUQzgmYC0VMEb9RN+lYcfg187U2GnoQ42eLLct/7AOb6SQV
+	 Q1xmPhmzF7Hh0k7jdTRtKJRRaDV4pAri4exIXpWRkVMmpPVh8/sKGKPt5Pnvdznjxz
+	 5kv7OhD2Dcz35V5acU85BkY3RtlvED/u26zyZdVvtovEEXUMZN6jkxVpTQgWbXfT+p
+	 Z35johRp7pyvQ==
+Date: Thu, 10 Apr 2025 16:59:11 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH] timers: Exclude isolated cpus from timer migation
+Message-ID: <Z_fcv6CrHk0Qa9HV@localhost.localdomain>
+References: <20250410065446.57304-2-gmonaco@redhat.com>
+ <87ecy0tob1.ffs@tglx>
+ <2c9d71fd79d7d1cec66e48bcb87b39a874858f01.camel@redhat.com>
+ <Z_fBq2AQjzyg8m5w@localhost.localdomain>
+ <87wmbsrwca.ffs@tglx>
+ <Z_fHLM4nWP5XVGBU@localhost.localdomain>
+ <4fdc6582c828fbcd8c6ad202ed7ab560134d1fc3.camel@redhat.com>
+ <Z_fTmzdvLEmrAth6@localhost.localdomain>
+ <56eae8396c5531b7a92a8e9e329ad68628e53729.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174429705955.31282.9757976364935333931.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <56eae8396c5531b7a92a8e9e329ad68628e53729.camel@redhat.com>
 
-The following commit has been merged into the timers/core branch of tip:
+Le Thu, Apr 10, 2025 at 04:46:10PM +0200, Gabriele Monaco a écrit :
+> 
+> 
+> On Thu, 2025-04-10 at 16:20 +0200, Frederic Weisbecker wrote:
+> > Le Thu, Apr 10, 2025 at 03:56:02PM +0200, Gabriele Monaco a écrit :
+> > > On Thu, 2025-04-10 at 15:27 +0200, Frederic Weisbecker wrote:
+> > > > But how do we handle global timers that have been initialized and
+> > > > queued from
+> > > > isolated CPUs?
+> > > 
+> > > I need to sketch a bit more the solution but the rough idea is:
+> > > 1. isolated CPUs don't pull remote timers
+> > 
+> > That's the "easy" part.
+> > 
+> > > 2. isolated CPUs ignore their global timers and let others pull
+> > > them
+> > >   perhaps with some more logic to avoid it expiring
+> > 
+> > This will always involve added overhead because you may need to wake
+> > up
+> > a CPU upon enqueueing a global timer to make sure it will be handled.
+> > At least when all other CPUs are idle.
+> > 
+> > > Wouldn't that be sufficient?
+> > > 
+> > > Also, I would definitely do 1. for any kind of isolation, but I'm
+> > > not
+> > > sure about 2.
+> > > Strictly speaking domain isolated cores don't claim to be free of
+> > > kernel noise, even if they initiate it (but nohz_full ones do).
+> > > What would be the expectation there?
+> > 
+> > I don't know, I haven't heard complains about isolcpus handling
+> > global
+> > timers so far...
+> > 
+> > I wouldn't pay much attention to 2) until anybody complains. Does 1)
+> > even
+> > matter to anybody outside nohz_full ?
+> > 
+> 
+> Makes sense..
+> In our case, 2. is not a big issue because it can usually be solved by
+> other configurations, but 1. is an issue.
+> Most people indeed use nohz_full in that scenario, but some users may
+> not want its overhead.
+> 
+> I find it misleading at best for global timers to migrate from
+> housekeeping to isolcpus cores and since it's "easy", I'd definitely
+> change that.
 
-Commit-ID:     1732e45b79bbb38cccc336ae1c2a5101e7c9e876
-Gitweb:        https://git.kernel.org/tip/1732e45b79bbb38cccc336ae1c2a5101e7c9e876
-Author:        Cheng-Yang Chou <yphbchou0911@gmail.com>
-AuthorDate:    Thu, 10 Apr 2025 18:51:43 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 10 Apr 2025 16:49:10 +02:00
+Easy but still a bit invasive so:
 
-genirq: Fix typo in IRQ_NOTCONNECTED comment
+> Does it make sense?
 
-Fix a minor typo in the comment for IRQ_NOTCONNECTED:
-"distingiush" is corrected to "distinguish".
+It makes sense but is there a real need for that? Have people
+complained about that?
 
-Signed-off-by: Cheng-Yang Chou <yphbchou0911@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250410105144.214849-1-yphbchou0911@gmail.com
+Thanks.
 
----
- include/linux/interrupt.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Thanks,
+> Gabriele
+> 
 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index c782a74..51b6484 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -140,7 +140,7 @@ extern irqreturn_t no_action(int cpl, void *dev_id);
- /*
-  * If a (PCI) device interrupt is not connected we set dev->irq to
-  * IRQ_NOTCONNECTED. This causes request_irq() to fail with -ENOTCONN, so we
-- * can distingiush that case from other error returns.
-+ * can distinguish that case from other error returns.
-  *
-  * 0x80000000 is guaranteed to be outside the available range of interrupts
-  * and easy to distinguish from other possible incorrect values.
+-- 
+Frederic Weisbecker
+SUSE Labs
 
