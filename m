@@ -1,100 +1,84 @@
-Return-Path: <linux-kernel+bounces-598853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EF49A84BD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:06:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EB7A84BD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6283F19E776C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:06:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DAF37B3F7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0923328D845;
-	Thu, 10 Apr 2025 18:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B5228CF67;
+	Thu, 10 Apr 2025 18:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Leso7VYv"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RKe35nLl"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2111EE033
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 18:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A7E1EE004;
+	Thu, 10 Apr 2025 18:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744308371; cv=none; b=LnTK1yz2XQhHLdmaLRiSM4Ni8B7P/HY1YEASW0ygHbTMmX7FJkoXv9H3qw6SyodPRUPWhyvxqAB6kYD5wob4Ptd8Q92d7zPSuGlxBJmYapvmPEAMUOhgagGigrX6wMD+DjT+5uaAmghMrai9BbqtorsdUrjNAeq6DeVPT5TLNRs=
+	t=1744308692; cv=none; b=WBL0iXqH/sD0h7kalzoUPAf1OAim4QMOtuVrb0DKQ20moOBEnfupeTF4BunRQ23SSDZgHyBmSTvaGvW6x5bHbrpMf9n6kYviYBukHIXSvB185I/P3v2tJyVBfMsdFo0o6hAhERxv8wKZ9TQLtLm4Qf/hBMNUSMTbquL4KRunAS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744308371; c=relaxed/simple;
-	bh=97CLy7ScUb7KjJNq5FyADwEg7x7LCJlR+XeniAehrnU=;
+	s=arc-20240116; t=1744308692; c=relaxed/simple;
+	bh=XaELMhMPffpadeqwtJNrzE0tHmrKYF5+77sC/YzWm7s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rp+NS+hJv5O3NwyamSgBLDorGyhnS55WQxyZitPr8NVO9nFLYt7vUbHuZQpu02mMhCEqz0jmhegad35Pp+fODty0l1Qi2bqKOCSy2JXTrkMTDjrSU/5vxPG5EW8/7rQE4h94aNy6auNtt+jLxSp2OowRMlx1J8vYvVQk36XT4bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Leso7VYv; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0D18340E0246;
-	Thu, 10 Apr 2025 18:06:07 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id d2T57S0RvkDH; Thu, 10 Apr 2025 18:06:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1744308361; bh=EOfVUfdNXb8ddmvTFAygk4eBRRo1P24EGYmuNdA69uw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Leso7VYve/3oOFxP0UYQi+TtRIyVjHOQr0hSeEqltsKVVYkMUck3spnDz7ItjL6mv
-	 b9uS4qEcJp+FxYX3LUsMx0m3k7m0ZZTJ6Ce64hOXKsvYRqc9oRIM4NFlLhxzglX2VE
-	 LOiK7W6prhlV7Stpq95jlwzZQpTl9qIsCZzHBel8dFdW44rmWigmQFwMBVxDoeFHqK
-	 dEUsMMvztCNVtlT+fOjr0UpzbZrv8w3yrEFk9oJeI04/u8pw0XGaJZytcnZAhePmkz
-	 RTKPNLlkoRcrrGw4JUE2lvfnYVqvxVarvebdwJwM24iX0SvocpA6gwSdL4Y29m+iiG
-	 IV2pdZ89jtqNrzAUv0Sjx0GYV9KInNaW/bu867xVzCHHggA6ta18Sa7wg8DiDY9Y/5
-	 ElNDxrhhLBjUiUJBHoUmHgWnCdkB9aeCsF++R2aPUq+1xMy7A/fmXXqv8LVwYkqrS4
-	 EZsP5rM9858pbwfVhLForQZmIFFhQ0Fa8mjsNDk2A/EaCVyejInqmd3hQm3XDor6vy
-	 Akil/KkqukvBJeKdqniYzV0Fe87A3sPTAi4lzQKW7GAqaN8Qjow2E+fpJo71P0Nw0p
-	 5ptL8Yld2hZr6BhcJrxviobpstbXv/CBus5IjBCHGgpe0vUGJkCseu99d/CkSIqKpI
-	 hEG4dwDqrsR9tE3oB4/XxVvc=
-Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5F6CC40E0242;
-	Thu, 10 Apr 2025 18:05:57 +0000 (UTC)
-Date: Thu, 10 Apr 2025 20:05:56 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Xin Li <xin@zytor.com>
-Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/cpufeatures: Clean up formatting
-Message-ID: <20250410180556.GHZ_gIhKb431qGH5Ja@fat_crate.local>
-References: <20250410165434.20648-1-bp@kernel.org>
- <a8782d3a-9c22-48c3-916f-29babc58db5f@zytor.com>
- <20250410172514.GFZ_f--kaKKxF-Y6WZ@fat_crate.local>
- <4dc7b54a-463c-4801-9c68-a6ff6edf9ad2@zytor.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u2K7Yh3wS5+JBpTiM+IvkPO7W0kj8pMS/Ea/Ia9kmtEYshVYSMT/OFYXsv4ErFNAh/jf7fI4L5fCZ5oPxDmO/QdCRFdEO0g7BJqxx149bdv0Mi5OEDl+TTwdGgWpvCcurGfearaqf+qX6Spm3rJRIeggeH3zSSjFR/kbVkhiA8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RKe35nLl; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=yyuMpWN1TzmvBH3elyBl05iozN5VhyzZZE5A2u1FTkI=; b=RKe35nLld+M1O+UUdR42XC0y9h
+	E0/JYpSjH4ruxAAQqlFDX8GG83afIQumInqD4LOKIYSyXjemx1WXUqvmtujL6xHW0GWDyuTUfvNgd
+	BmBUpwQuRd1EcLsRuUK2336CNMhcWAk+en4DK2L/mH4oej5b4sBhyNrjf3skJIVoSnsojKJ37Cefe
+	8owOATtmm4QxN6EvvY7Mm1mL+34MwQTc+j809hDrfgoytJy87W2CxuXNdqEtN6sg24QJMkU5bU069
+	SlLmWMtp33c9seSGf33gnRCRM5ioI9zBA/pfNQTLWFo251a4sijHZXNV1leCFqLaq/3Ac51zVGSwW
+	ldi/O7Qg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u2wN1-00000003ERs-3FBV;
+	Thu, 10 Apr 2025 18:11:23 +0000
+Date: Thu, 10 Apr 2025 19:11:23 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: nifan.cxl@gmail.com
+Cc: mcgrof@kernel.org, a.manzanares@samsung.com, dave@stgolabs.net,
+	akpm@linux-foundation.org, david@redhat.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, will@kernel.org,
+	aneesh.kumar@kernel.org, hca@linux.ibm.com, gor@linux.ibm.com,
+	linux-s390@vger.kernel.org, ziy@nvidia.com,
+	Fan Ni <fan.ni@samsung.com>
+Subject: Re: [PATCH] mm: Introduce free_folio_and_swap_cache() to replace
+ free_page_and_swap_cache()
+Message-ID: <Z_gJy1h-IoRP0JDO@casper.infradead.org>
+References: <20250410180254.164118-1-nifan.cxl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4dc7b54a-463c-4801-9c68-a6ff6edf9ad2@zytor.com>
+In-Reply-To: <20250410180254.164118-1-nifan.cxl@gmail.com>
 
-On Thu, Apr 10, 2025 at 10:52:56AM -0700, Xin Li wrote:
-> I ever had a patch in which the last column of the same type macros are
-> not aligned and tglx asked me to make them aligned.  But that didn't
-> need any name shortened.
+On Thu, Apr 10, 2025 at 11:00:31AM -0700, nifan.cxl@gmail.com wrote:
+> @@ -522,8 +522,12 @@ static inline void put_swap_device(struct swap_info_struct *si)
+>  	do { (val)->freeswap = (val)->totalswap = 0; } while (0)
+>  /* only sparc can not include linux/pagemap.h in this file
+>   * so leave put_page and release_pages undeclared... */
+> -#define free_page_and_swap_cache(page) \
+> -	put_page(page)
+> +#define free_folio_and_swap_cache(folio)	\
+> +	do {					\
+> +		if (!folio_test_slab(folio))	\
+> +			folio_put(folio);	\
+> +	} while (0)
 
-If you wanna, You can take mine, and then do two more patches ontop,
-shortening one name in each one.
-
-:-)
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+We don't need to test for slab.  Unlike put_page(), we know that slab
+cannot be passed this way.
 
