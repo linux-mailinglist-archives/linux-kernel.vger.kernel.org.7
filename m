@@ -1,139 +1,237 @@
-Return-Path: <linux-kernel+bounces-598513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 833CCA846F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:54:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488DCA846FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DF93189BED9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:51:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98D76189205A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4E421CC6A;
-	Thu, 10 Apr 2025 14:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6527728CF6F;
+	Thu, 10 Apr 2025 14:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bgZdegMi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="H1BlZ+Ha"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2069.outbound.protection.outlook.com [40.107.21.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890D416FF44
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 14:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744296647; cv=none; b=DePShcp5Z1p1cWylC3ASiB5bADMPmy/mXtc8+Hs3S4pQszM1UVjvQ4tjwMZ7BDytTDg6pDEwX7pRJ/x8hcYvcbDWae6O47HvvptZ6mI4GaODWj58W8lyHpJ5SrEDKqR964PXxfd/cXgTwyuY87TKzESnp1DQ5t+qq5G9WEVymtE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744296647; c=relaxed/simple;
-	bh=68ODpyPpeUavUH0aVpwC1OsK+oojrXZM/EEzBNWEbTI=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=s+xwVIwz55QVtYG0V+/+8O5aVvIz70f2ugn3LMZXkRgxk7rxWHuHt+zKLUdYegWmcFfOS9wS8KxtoDfhJuSQm2rZs4dL03/s9JLndzxJ2pfmzVkqy9Y1M/RlY1HMVirLY4A1R3Jzg3qDvXYLQgnqMZCLudFmI7me06pJE0qGZcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bgZdegMi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744296643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EeMtIO8B5kYF8BvgfwbClULPfr2L3LVch9JRVHbKge0=;
-	b=bgZdegMiyqWUfZpMkaH6gkyla+iHyDodBLkrju+KeI9+8lOq06plFy6MBetM1XmYgjaFep
-	NzKnrsE8ZlaVpK9RqvXQSsSDa4Ki0lCmD+G5y0Ji25ueJQrEMH/b7CC+iNAPj2k79t7wJv
-	qdNp1LTH5KazmMOwhpR1IS3aE9TiSnM=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-22-m133qv5JMMi_7FchOU1I5w-1; Thu, 10 Apr 2025 10:50:42 -0400
-X-MC-Unique: m133qv5JMMi_7FchOU1I5w-1
-X-Mimecast-MFC-AGG-ID: m133qv5JMMi_7FchOU1I5w_1744296642
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e8f4367446so9188506d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:50:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744296641; x=1744901441;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EeMtIO8B5kYF8BvgfwbClULPfr2L3LVch9JRVHbKge0=;
-        b=oS5x3SG/dh7sS9RTBkraesZqIl1hkO5/xBNdd7xhPQN3GiMBPF+zvPp834/Aulm03c
-         lpFsDyWrn5xVUC8lq69Hf062yRfzAIUu5v3Nav7eI1AQavftJYdyvOgDhknNGOz+MKK4
-         UcjScr714SmFTbHrlz5+1hX0OZ425WmsMuEkLC2rsW+IgvlUlJsKkoCi4vSdUMg2yHiO
-         V5XQLE+JF/C2H3u+l/7+h0fuqSe8v3nl5L8y1Cjj8u6h1ScQeUkxsVl3SWuZD8aj7F5o
-         b2kUlUa7OABLcyb0HxKYE0daVpkhqMPvKOeo8vYwEL5LGckThqmpjhFUAvjc6l5U5cwf
-         wEFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSbggtvwzCo1znz/u2wHHyBaGiXYSG4IiHE2+HxUHps9PjQylzX4h9qQtuIMo8bYjzfJzf+k14Bdh1IAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2pSABZPX3bs4ZaJY84AtPIldEB251NSboWIGDKhgwfqC7QuO9
-	DqUrmqvrohO8xLUymCaH5usC2etUCsF/YjFKkR+QdxjWpOU/Ko7TG04DLp7EvXmHGGPwJN5wloK
-	SMxGKfOIN4ZcZh8w/twPtFUOmHK0tLBUmt7DVyeCM0/KXI1n/giObwSiDexBGyk2VaEQrqg==
-X-Gm-Gg: ASbGnct8oZHnkz0JnMWMv1m5OcMxETHoXNE6io5WXOUBH+osDJYTyZgFkauYrSQRWHo
-	lMF5kGXB9SZWDjR4UVsiRicORse6ui2FLgLtIdNV5BR1VYuDnpP7nFAGae07WCl/ZwCqF9MBiZY
-	fn5L6wv6nH6R7yx1zEaB8lBjpoE62581vh6XQ6zQpulQnrAzG8WO3f5xvDDZP7YWoIOCwKjVeVh
-	+3kgResLU5rPQ4x4my86JlMgZREOnsdsxQTS+onEajgHqEI3PHTOiCB5dDK7QHUspCLTV3p0wYv
-	p3bGvhCYqMeJDDFaDBXnDK6xw4x/1C2bAktCvcwdOXcv/ucowCSuic0ksw==
-X-Received: by 2002:ad4:5c8c:0:b0:6e6:6c7f:111a with SMTP id 6a1803df08f44-6f0e77c1ea5mr31925846d6.40.1744296641291;
-        Thu, 10 Apr 2025 07:50:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGYCHJaRRelUsjHecM7kFULtH6jx2CCV3cVzNWjrXk4A/aCl0aCValzVi72H1vO3OBv1qZbFw==
-X-Received: by 2002:ad4:5c8c:0:b0:6e6:6c7f:111a with SMTP id 6a1803df08f44-6f0e77c1ea5mr31925636d6.40.1744296640980;
-        Thu, 10 Apr 2025 07:50:40 -0700 (PDT)
-Received: from ?IPV6:2601:188:c100:5710:315f:57b3:b997:5fca? ([2601:188:c100:5710:315f:57b3:b997:5fca])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f0de95f701sm22144476d6.9.2025.04.10.07.50.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 07:50:40 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <a2d6f50e-8f65-4586-b7df-20609bdc111e@redhat.com>
-Date: Thu, 10 Apr 2025 10:50:39 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB5D283CAF;
+	Thu, 10 Apr 2025 14:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744296676; cv=fail; b=YVA6ZfMrxSbp4/68yaOHy4rP9ztPhlgfjVconeIisNgexMiuVbepjtAPGfqVKR/xGtgg73/zXNrlnXfsosDyimvY5eUt8XUQ4z55bjPPUGy5+HBRvugi/2o5D18Ph3UCgIw+D5W6p8I9YqLkCGKBejRj7/FaBjXc8bR1N8l1OEE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744296676; c=relaxed/simple;
+	bh=tMM9YBF3S7iefeNAkt4gRGF+YAi+Su0esCO/YLtL2tI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UV+g2PORWptf+vlOQImE87DvXgh5tkXidG0rew1udGzTe70mSYdsHX+OA8Sh61SgMfBhM1y68sFAa4sEPp8m6kH/xSh3aTM0I2fPlYm8Dx4uzABe5xcT6L9Cy/M8KXVrLJaBS7GdCUt8pnRdnp22eqbuZexhmqVjwE4Ob2K1fGU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=H1BlZ+Ha; arc=fail smtp.client-ip=40.107.21.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bqxPWXhZbSa9otXHxEUV3NPoi4XcgpHroKkUEgywUlmCplrX4Y6KVaRh3q7IeIJlh9GelMsfI6orhCvoRPzu3s48AuASRg1Dbqv5piYAebB1N1b7PLUusrAcCQAxIxajG5zTRyND8QXSDUaF1SDzfGd1M+VxyNwn3ET9iuMUdbpTX+BWqcvaXKDST9KauRMrG1pIub9wDFnX9isK37e62elz1BSwcJm0/4+XvIE3ehdFm88xIfyTGmMNRC8pk4guImBcDB82WeglKn5s9yChKCJau86xWh8OjBuG/wtSOAONrAZ5pg+rgNnmP22VVdJUmOLBFiwQBLPM02CJLjJq+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tBcOcZq6nvwAUFOhGPFgTVMrk2YbR1K0/NVCkSNcEmg=;
+ b=KmNsQxGmkErDbp3mkzb/vd2276NLCKUCYJ4iROt5jL0Fi/OcWfYWI+Xn29Hgz/HfLn3evNWffYHRRgnJ4/q5goRvy/zvwDCBhOaygzagibgaQ5Dhl9atGBDdYDwPpYJ1eLNPoglIF/B1yyMntV2jqME1PrnM4KmPNlxtyCEDUxMhUPFiYxETkcGpSP+XGj9a5wSQJnIMwRsSM+QXtYPmTE2l4isRszD1FZjw3iLZ/SQDHBi8MqMTUOVO5emXsuDxNbmb/dZpJ7WyGmweFNdG2UAV3wOiiRJLQa2I+m8qcC0xre6SaMnlnijiGYyjAxj/qd4LSzsN93vODDroNypdQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tBcOcZq6nvwAUFOhGPFgTVMrk2YbR1K0/NVCkSNcEmg=;
+ b=H1BlZ+HaLqWiZggq99wZbkHbZo+23IgZCrhgqREZ/+9S1r49H0fuSjoQNk0XRyYd94LrFhEjobUhg1d34qpn9G+lByBjCu14L5TEbDoVqigpazq0HGwXA14PR6jjRpT0eWo/Bo+jz+n8/fFopkf/rx/gnTAjNVaBt7p/WCwUa0oy1r2FL13fbGMq1HXo4nvzklfUB8Mkh/s4JRP+k26mfqxmrt0BiwMOwaVD1t2cUTDPsG9kRH79dtUZVy8RKfbDG8x0RJwLyYiCU3S4o/BM6+V59IMsazNuPtcOXr3HypltG/xn5eGGdBaaSGQk6n8hgpBFroBjOf022yMZV/bxlA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
+ by GV1PR04MB10752.eurprd04.prod.outlook.com (2603:10a6:150:203::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.23; Thu, 10 Apr
+ 2025 14:51:10 +0000
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd%4]) with mapi id 15.20.8606.033; Thu, 10 Apr 2025
+ 14:51:10 +0000
+Message-ID: <652aa23b-ba12-42c3-94b7-8d0bbe548aec@oss.nxp.com>
+Date: Thu, 10 Apr 2025 17:51:06 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: rtc: nxp,pcf85063: add 'no-battery'
+ property
+To: Frank Li <Frank.li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, s32@nxp.com, imx@lists.linux.dev,
+ Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
+ Enric Balletbo <eballetb@redhat.com>, Eric Chanudet <echanude@redhat.com>,
+ Larisa Grigore <larisa.grigore@nxp.com>
+References: <20250410082548.3821228-1-ciprianmarian.costea@oss.nxp.com>
+ <20250410082548.3821228-2-ciprianmarian.costea@oss.nxp.com>
+ <Z/fZww9TDLhm66O3@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+In-Reply-To: <Z/fZww9TDLhm66O3@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS4P190CA0022.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d0::14) To DU0PR04MB9251.eurprd04.prod.outlook.com
+ (2603:10a6:10:352::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] timers: Exclude isolated cpus from timer migation
-To: Frederic Weisbecker <frederic@kernel.org>, Waiman Long <llong@redhat.com>
-Cc: Gabriele Monaco <gmonaco@redhat.com>, Thomas Gleixner
- <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-References: <20250410065446.57304-2-gmonaco@redhat.com> <87ecy0tob1.ffs@tglx>
- <2c9d71fd79d7d1cec66e48bcb87b39a874858f01.camel@redhat.com>
- <Z_fBq2AQjzyg8m5w@localhost.localdomain>
- <77988036-7550-4ee2-a738-9f9bd4417001@redhat.com>
- <Z_fZJfgwzpz_ccny@localhost.localdomain>
-Content-Language: en-US
-In-Reply-To: <Z_fZJfgwzpz_ccny@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|GV1PR04MB10752:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a9dac1b-683d-46eb-f13b-08dd783f21a9
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S1QzRWNQd003cjI4SlViZmNqRytQVDJxUTF5Q1JUdnpVbFpIc3o3emRtVzZU?=
+ =?utf-8?B?S3FkYm5GRllqQjVYQzFtVE9vRnNiNmxqNENKQlZGV1M0cFZqc0gxKzRTL3Ir?=
+ =?utf-8?B?MHZUcTVzNGs2alNmeDRHV21rM3lFRkFRUE9YNlM2K2RLS2FkU09ZWHhaRUZG?=
+ =?utf-8?B?aE9vQWtsS2liWnVVVlVIT3hsZ2FwN1Y5bXM2QThqblVkalBzSmpmQlpyQ0Yz?=
+ =?utf-8?B?TzR1bzhocXphUGpuTDlRUk1UN0FCMmxsNDVIQWRGcDhhNDcyVWViUEdTS3dr?=
+ =?utf-8?B?ZytLaVc1ZjBYd3pIZk1BL1h4blVTL0FZbmhEcVFINHBvR3kzTlZDMGVpMkV3?=
+ =?utf-8?B?bmg5OUhFbkNWUnVXVTRQVUQ5Y0RkUGlWT08va2UyWXZkc3FRN2ZhL1RYM1BR?=
+ =?utf-8?B?S1FYMENXR2I0eGlmUGNTdjJoU2txaVY0STJpanJuemcvREFKV2paT3lGcTU0?=
+ =?utf-8?B?bWFRM0F1VWY0MHo0OCt2Zm0yKzdvVVl0dGdIZzEzSTNyOW5xR1I4Um1uQXE1?=
+ =?utf-8?B?aGRBcU9wV0taVldqVjhqWDFnSnZSak8yckI5M2dOUTVZTEN3MVo5dnNDRnY2?=
+ =?utf-8?B?RW5WK01HQnhXRmFiYVFlNVdBYXFWRHY3bWozQnBmVWpQUU9sQnZHQWhaR0p5?=
+ =?utf-8?B?djdRYkNzVm43RHI5cm52T0NpZkRFanI3OWhQbHZkWlRZNlhISW85dnAxWnVE?=
+ =?utf-8?B?a0ZVQVIwckk4bm02TmxONE81RFpWaHFtcmYwVXQ5cVBQdklMa3EyWHNYWTd1?=
+ =?utf-8?B?QVlhbHpockNBZHJvamlxSm1tQk85SFFBeWRoMkdxamRvRWpzNnBmU2ZGeW1Z?=
+ =?utf-8?B?b1BVUVBPMGFVQ2xHTVZxZ0ZBNUpJUGI1VE5yNEtGd0JON3N3NG5VeDFrc0hx?=
+ =?utf-8?B?UXd2cmJLdDBSYVptZ0RoZ2grNE0xcnV4Tzc0REZRL293dWw0eVFuUHV2Mm9T?=
+ =?utf-8?B?aTNkMmRhU1d4cnhHeCtyLzZHNEpWREhrMW8vSkNJbWNnTkkwVW5KN1BOYXZj?=
+ =?utf-8?B?T3dkdU1TY29rYzZRRG9CQ0tldlAza250d2JtTUZtQmJpdzdlTGQyZFRzUnZ0?=
+ =?utf-8?B?ZmNqT21Ubm5kOW84dnQrcjY4SVJpM1FDMjBhem9mWk9FRUFnOEhIV25zNDBZ?=
+ =?utf-8?B?Q1JmLy9rY3FNUlRoU1B5ZnF2ODF5UktZUnZzQS85akhUdi9tYWlIZWgwZ3hO?=
+ =?utf-8?B?cFBUMmJoV0s2emxROGc1QXlJT1hOcU5KNVFDTVl5a09KMnBqcWlmZU9uYlZB?=
+ =?utf-8?B?aENpQVBGTm9HMGZ5ZDI2RDhYWTZNNEdsZUNxNzlrQ2M3NS9OYXRUaHk1MnFW?=
+ =?utf-8?B?am12ZnZTNWdNdVI4UkZ3b3JPcnhVRS9HaUxpcThyODU0bEdqZFh2dkdZcFdm?=
+ =?utf-8?B?R09IM2dKRklNQTh1S2FpWVdDVUdoNlppQXRsdjdGOXNrZC9MMnJrbWs3SS9U?=
+ =?utf-8?B?aTJ0QURhLzlBcG1RczBPbU4rRUswOHNtQktaNURTQ0JiUVhEUUpZU0RkTXU2?=
+ =?utf-8?B?Q25rRUx6VlhCR1ZXUDZFeDJNaVF6Y1NMZjN0UndHY3J2TkllWlo4QncycUd1?=
+ =?utf-8?B?QWZzQlMzZUhUTkNqNTBJR0Y3cDdBdXZCSDBheTBsaHVqbkVib0dKaS9jeHJU?=
+ =?utf-8?B?T2tSMkY2dEE1QVRHazlwbVlCRnVqZnRoMXc1c2RBQ0NiMkcwdG91ZEVnVlRu?=
+ =?utf-8?B?RnNRSm5XRVFsaVVxcUFhd1JFeVNra3RnM2s2b04rWUZTWlRKZnB6VDhjUzc5?=
+ =?utf-8?B?M0dMZVd1L2d3Tjl1MzQvUWxNcXJDWTJBeDNJQmRsaXQzVldzbGl1RlV1Tjk1?=
+ =?utf-8?B?Um5MQmdyQXRWWUVIS3hYS2daYzlGUzhiWkROT2JQZXoxOUJPZ3hqY01jVllh?=
+ =?utf-8?Q?hdHFORhwHh5p0?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YmhWUDlxNTF0T0FUOXQ5aThuQjdnVGMySEpVMERVdmd5dTZXV0g4by9QYk0w?=
+ =?utf-8?B?WmZ1bit3QmlMeEFvSU4wZnVEb2hLajZVZmlSNU96Mm1XNkg0dXFWY2VoUzhx?=
+ =?utf-8?B?UmZacWsrYUYyRU5EcTYrZ0ZNL0lVb3BTTXFMeGF2MmFRc3RHYnZESnhFc2M5?=
+ =?utf-8?B?ZTFqL3hNdVJ3dThObEpBaUEzZWdRUGRsU3BpdDlyWDZUbFgxUXJHdHBTMVVD?=
+ =?utf-8?B?TXczcW4xUFpqOXJUV244V3RkZStWZVNnemNiZTFyN2o0S1N6dHlzd0IwdTZL?=
+ =?utf-8?B?aWNHc3NmUlBkTGNXUnluUWpkK0FBT1IrK1lCQ2pFU0U2bmlTY1RTTkZ2Vngz?=
+ =?utf-8?B?amlkUGpZemlYdUxqbGxtUm1INGRVbnd2aDFvaG0xQzMzWjJ3a3huMHVnOXhS?=
+ =?utf-8?B?S2lHL3dqODgvR3Q0cFRrMXFmUEFrTlIra1FVNUI1emJvRDVFR2VRS3M0SC9S?=
+ =?utf-8?B?SjB5TjV0MnA0MUVueHlBWGV4dzdaQk9kTGhFYm1VSDhKRmVOMkVxZjNVVndC?=
+ =?utf-8?B?TXFwZk9EdUtLRFlWNXNQV2h3aXJhK0xsb2tSZzdBdlRLUFExMDhEdWxSaWhy?=
+ =?utf-8?B?Y3RYQVY4MlhSSVp0OG9GU2ZCNnRVL2FXbVh1SjFUS0dneitaKzBDUjhMdldl?=
+ =?utf-8?B?aS92cHZHNUZWanNQWFg5bk1zNmt1VzN1bm5wTlkyUVdyVEVaa1NnZk5iT041?=
+ =?utf-8?B?Qjg3UzZHNkp5aG9YUVpQbzJBci9LZXdUaHEvV1ZWemlnM2U5aWZXKzYzb0k2?=
+ =?utf-8?B?YnU4bHV5bE0rd3BhdzhVNDE3RjJFRjJ4MmZCNmxTQzJ3OE9jaDJ3TDdHVHBu?=
+ =?utf-8?B?UVJEd0ZpK0lJdm56UVp5L3VTWWtHUllwQ0hzbEZ5SWs2b0x0cmZiaE1jZDdR?=
+ =?utf-8?B?ZHFIKzBnYUhGM2pmeDJCdW9XZi9VUWhObDluaFBmY2ZXRlp6RG5TWWFmVlR6?=
+ =?utf-8?B?QzFpNWhxQklpZEErNDYraytNVHcveDdzR1lnUFppR2I2U25LRDhaMkE5TzJ0?=
+ =?utf-8?B?UHROdzZZTkE1eG11Qnp2akFQRmVPUEJFeVEzSWNhdWl1Y3VQNm5GZjZuWmhM?=
+ =?utf-8?B?eS90dng3NVU3SDdhRk10SGhxRXpIUlpCeUdSaFdodkNKTFRBWnVEQW1mSTkx?=
+ =?utf-8?B?SjBEb2hvek5ZZjFXdis1bUNZcnVwcU1pSTNYdnJSTEw3UmxrTm1JOFFFZDZi?=
+ =?utf-8?B?ekp1cU1NenBzSG5uU0VPaStmMUNaUmlqVTVaYTVkM3NkK2NyblBaRTFPUHJB?=
+ =?utf-8?B?a1lGc2lTN0lLYUtWd1VrU093V2JLeTcydUV5L0ZUYU5XTlVlS29MSTVSUTBi?=
+ =?utf-8?B?MDhOT3pSNmh0UVFrbnhtYWVYU1IrZGwxQ2lRQjZFNm91T0ZzdWlMdllGNlE0?=
+ =?utf-8?B?WFJGejg5SjVvSDRQQU5wNWdHenZHYUZKM2RIQ0gvMFNLQVRZM3RJQlNGakRj?=
+ =?utf-8?B?cmhaZkVTMW16amJ6eDhQZTVPRllqbjFvZmxwcFpLZkhOcHdSelBUOEJJbi9x?=
+ =?utf-8?B?aUg1LzQ5Tis4TFZuMjZzWXRvdmhLTUFqSkg0Ym9hU3pGbFdVbW00YW45R0NV?=
+ =?utf-8?B?Q0RYcVlJcGNYc082Yk14ME4yci9iOTJlS3lBMFNrcjdmcVpndmJOYlFmWUlu?=
+ =?utf-8?B?SWxzWnRUQWUrRXAySlYrVHBxejZ1K0o0YXNaS1FrVTFkVE1pd0E5ZDJiajdY?=
+ =?utf-8?B?RWVVN3FlVnlQSng1U3FpSmhNeUFidFJPTGY1d1d2bVN3Rnl4SlBrUEVjMmNr?=
+ =?utf-8?B?aTBWMmV0cHdNaE9JaHlZN3lPNmdxbWthSDA0RFVGeTNDd0tKUEROcXl1WVBS?=
+ =?utf-8?B?Ujh5S0VUckRDRHNLYlpXZzFQREE5a0RycFRyeGVCSUNsN3NzUDFvR05mMGoy?=
+ =?utf-8?B?bmVGOXlzU0tYWU1QQ3RRc015ZHg4TU4wdmpXTHF3VXkySEhaYUhsSklBZUZC?=
+ =?utf-8?B?bFlVMVRQUS9DMjhnSnVFeGk4U2cyaVUxYUpVZ1g0WXJlV1ZJK0grRGx5Um1H?=
+ =?utf-8?B?SEZZcm1rcWxITDhaSlhjY2FGWW84L2dhNHI5ejQ5MStFdWxQN1NLNmZwaHlo?=
+ =?utf-8?B?YUdXOGJtZlF2amM2ekw5eFB3THV2N1lEWkR3by9pT1hRTmNBL00yZXQ3bnQr?=
+ =?utf-8?B?WFc3ZnlNVG5wTjlaUzl0QUN6K2swUEtFbmZFZ09ZVSs1eEhtblNXR2QyeXhW?=
+ =?utf-8?Q?dRBmkNj366uJmAb2qdsfcnc=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a9dac1b-683d-46eb-f13b-08dd783f21a9
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 14:51:10.1237
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gGZ0HLP1geVBumMddaEXUe1uEiNlXaV1uxOTGl8YQmD5QxkPNPawuhsQFYaOW6O2R1/ToG03raziuQKyRZFDYZiD5BUJfLY5clMOA6LBGdM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10752
 
+On 4/10/2025 5:46 PM, Frank Li wrote:
+> On Thu, Apr 10, 2025 at 11:25:47AM +0300, Ciprian Costea wrote:
+>> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+>>
+>> In case the RTC is not linked to any battery, the oscillator will
+>> be stopped at startup, triggering a SW reset command for the PCF85063 RTC.
+>> For this setup, introduce 'no-battery' property which can be used to
+>> manually start the oscillator.
+>>
+>> Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
+>> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
+>> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+>> ---
+>>   Documentation/devicetree/bindings/rtc/nxp,pcf85063.yaml | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf85063.yaml b/Documentation/devicetree/bindings/rtc/nxp,pcf85063.yaml
+>> index 2f892f8640d1..b342eb13fb2e 100644
+>> --- a/Documentation/devicetree/bindings/rtc/nxp,pcf85063.yaml
+>> +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf85063.yaml
+>> @@ -36,6 +36,11 @@ properties:
+>>       enum: [7000, 12500]
+>>       default: 7000
+>>
+>> +  no-battery:
+>> +    description: Used in case the RTC is not linked to any battery so the
+>> +      oscillator is stopped at startup.
+>> +    type: boolean
+> 
+> Can you use optional regulator such as, vbat-supply?
+> 
+> Frank
+> 
 
-On 4/10/25 10:43 AM, Frederic Weisbecker wrote:
-> Le Thu, Apr 10, 2025 at 10:35:55AM -0400, Waiman Long a écrit :
->> On 4/10/25 9:03 AM, Frederic Weisbecker wrote:
->>> Le Thu, Apr 10, 2025 at 12:38:25PM +0200, Gabriele Monaco a écrit :
->>>> On Thu, 2025-04-10 at 10:26 +0200, Thomas Gleixner wrote:
->>>>> How can that happen? There is always at least _ONE_ housekeeping,
->>>>> non-isolated, CPU online, no?
->>>>>
->>>> In my understanding it shouldn't, but I'm not sure there's anything
->>>> preventing the user from isolating everything via cpuset.
->>>> Anyway that's something no one in their mind should do, so I guess I'd
->>>> just opt for the cpumask_first (or actually cpumask_any, like before
->>>> the change).
->>> With "nohz_full=..." or "isolcpus=nohz,..." there is always at least one
->>> housekeeping CPU. But with isolcpus=[domain] or cpusets equivalents
->>> (v1 cpuset.sched_load_balance, v2 isolated partion) there is nothing that
->>> prevents all CPUs from being isolated.
->> Actually v2 won't allow users to isolate all the CPUs. Users can probably do
->> that with v1's cpuset.sched_load_balance.
-> Perhaps, and I think isolcpus= can too.
+Hello Frank,
 
-No, I don't think so. The following code is in kernel/sched/isolation.c:
+Please disregard this patchset, as stated in the next patch review [1]
 
-first_cpu = cpumask_first_and(cpu_present_mask, housekeeping_staging); 
-if (first_cpu >= nr_cpu_ids || first_cpu >= setup_max_cpus) { 
-__cpumask_set_cpu(smp_processor_id(), housekeeping_staging); 
-__cpumask_clear_cpu(smp_processor_id(), non_housekeeping_mask); if 
-(!housekeeping.flags) { pr_warn("Housekeeping: must include one present 
-CPU, " "using boot CPU:%d\n", smp_processor_id()); } }
+[1] 
+https://lore.kernel.org/all/e64083ee-3374-4bdf-92a3-ce91e1402b13@oss.nxp.com/
 
-Cheers, Longman
+Regards,
+Ciprian
+
+>> +
+>>     clock:
+>>       $ref: /schemas/clock/fixed-clock.yaml
+>>       description:
+>> --
+>> 2.45.2
+>>
 
 
