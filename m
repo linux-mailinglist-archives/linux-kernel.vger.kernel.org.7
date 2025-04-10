@@ -1,114 +1,223 @@
-Return-Path: <linux-kernel+bounces-598357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F842A8454B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:49:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D2DA8454F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B169A7BE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:44:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 838A23B3B3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3913C188006;
-	Thu, 10 Apr 2025 13:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDAF28A401;
+	Thu, 10 Apr 2025 13:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="6LaYvP1i";
-	dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="2hgdRPvs"
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wSOXgyJL"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3965C156677
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDBD19004A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744292689; cv=none; b=P8hksXjHmhGnhpV++jApTPkPIbFcYM7KEzTjA3NmT+vhX8uOH3K5YeM6hc6d9BpFDc/J4f1Bk4wMc9Y9lxDZ+MdK04P6ep2MPqVM9ujuklVVdPNGdfuDExNVyE/FW4bGv9Wt37K+6R3SVjeoB10fL5XrBQrDcOLfOGAgLACqpRE=
+	t=1744292721; cv=none; b=EnmZM1XQHuhgIjPHsUDa4+MjRzJmbRgzN6GnXzxqKPo8w5ZXvDoWxpirCGuuYVIohxVXJTESNEsdMV9u/TXl0LHhxK8Z9JYPh1MbtHSVkGbLsyQifY0NtgEfa8Qn9C9to2eqgdrH/ZUZkJwPUDSRBCguIUCQqGfpzDY+BtR8t7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744292689; c=relaxed/simple;
-	bh=0o32D+mJgEwqn7CLnCXF76Z69iTOivOpf3nyI9ee4LU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PJZyv130m71JRtGrdSmk4JIIXFuNUSu0HiUHvrOvaPp/mA7qdl8Xl75yahcL5KHdSe/hYS8EsVTu/Whuy9VEbZQvT2xd5fFA/mY+1pQbDHXL1SXv07bpZMN7lHjCaC7QYO9/NKvE9qoKwtGpERFi2yEtQyEFUfrLfAKDNFW6awI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=6LaYvP1i; dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=2hgdRPvs; arc=none smtp.client-ip=210.171.160.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-	by mail.parknet.co.jp (Postfix) with ESMTPSA id CE4C120A0179;
-	Thu, 10 Apr 2025 22:44:42 +0900 (JST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=parknet.co.jp;
-	s=20250114; t=1744292683;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7bpeTNNt9TO4DEeF8FNsRjjxlVf0cuSk9NjS8Ny8n8s=;
-	b=6LaYvP1iKdIM6h/7cu80lTKzoWsvsgG0wsfHGpxrtFv8AbdIRoJ6WG9IVZZHejenhhl2HM
-	euwDGzhCEzu5Qyiu7e0hLalSHpeCkFk4szR1R9YjLTe49A8ptJU0Q+YiLu7ABjUb9SRV6B
-	RKI1ZEsN8g4F26Ym/77w96DiXw/b6wMC4ORhYJWSjpwKrPM+O8Ef2VC9CuRKhpvR63CzGX
-	x0OyXEPOuMG3Py3NkrJCrTnlasMMz4t1JmNzGZMIulexdo6NEKT5DOPSMmkU6WnVguCRJC
-	LaADuM5GeMSOrnhCLafp0XgeCac4abpV3PcrUKi8QILevWq9QLwcU33tPP0/Mg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=parknet.co.jp;
-	s=20250114-ed25519; t=1744292683;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7bpeTNNt9TO4DEeF8FNsRjjxlVf0cuSk9NjS8Ny8n8s=;
-	b=2hgdRPvssMzswKC3qI6ss6Hrb1k03ofA9Lw5l0oV+iJ3KMO7/YV4EvkLXQTKipAmgs/hBa
-	Vvk0KdtRijtU7aBA==
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 53ADifKf568463
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 10 Apr 2025 22:44:42 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 53ADif4b1480534
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 10 Apr 2025 22:44:41 +0900
-Received: (from hirofumi@localhost)
-	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 53ADifuw1480533;
-	Thu, 10 Apr 2025 22:44:41 +0900
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To: zhoumin <teczm@foxmail.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fat: Optimized FAT bad char check
-In-Reply-To: <tencent_4E3BCCDC793A514260932AA16BC5910F400A@qq.com>
-References: <87ecy16ub9.fsf@mail.parknet.co.jp>
-	<tencent_4E3BCCDC793A514260932AA16BC5910F400A@qq.com>
-Date: Thu, 10 Apr 2025 22:44:41 +0900
-Message-ID: <874iyw6shi.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1744292721; c=relaxed/simple;
+	bh=Qy4A44c/RUvu7fFmy6yUlwQUkMFAn0x5PmE7E9huMpk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t6XUg3jAnSIYhxShfC1pVwETpaZ84LQShxUoUqxJnQ3Hqpy5BGIpRVXXHjpQ3UgmPqnk8jraMff283xrHAPLG/zKmPn6ItiAL720x/qrkRsNb3m9b+61gdr/W1dbojZxh8dl2shCwEOuh+FYhOqutA+fS4B/HWVeCBN2iJ7myM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wSOXgyJL; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6f768e9be1aso21711567b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:45:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744292718; x=1744897518; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=K+ML5+lZkclfARYXwoJaLLimWYhbRg0TFmxZrKOY/4A=;
+        b=wSOXgyJLD8DeFcpCJ7O/GkemrQ+ymByDbF0VdSsbQZlp+9syoogW/RsK16pGhgEh+q
+         l4WShOVOzWbR2abM0Tb51RjyYMdyQ6Juzt/NC5/ttuI/M56NgjWbie6WGG/IuklQqBE0
+         iavP6pQQS32zKtCRo1GSdbmHGN2v/YPksjilIKsLRyHxxA7agcIfOilq7LLSyWw6DhL7
+         IJvcMOLgpHqHWl2IeSSGrnbscKzeOmwq4/43+5qc1Dq1kbGpgj5870KMK+mbMQEOMRnM
+         pbSRKZDaonO6gxQCGIfhH9ZzpNT53eii3CtIZBIKDl8ajcLQ/a+TAZdCtO73e/fA8ZHV
+         LGEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744292718; x=1744897518;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K+ML5+lZkclfARYXwoJaLLimWYhbRg0TFmxZrKOY/4A=;
+        b=sySX4m6E1x8eacOxHtL3MNEUOQq9e9gNwc1O24Ipi7eVqYPkaEh/X+lD1JuCaTRgp9
+         Dy9IuI0Si10Fo06fOetUMSNOnUbnLE7FzUGARPsbmxdgOW60XTWfwun6lLLe9ycdX6cC
+         TpG0tqj2DhGyhJwnaf9bVR0Ti3cW7JiY4OfXabg5wsY5gdsSTNPSQxCSDK85aQnYYziz
+         gKntdOBZdEiMrLFzfdn9+Ulnn6zdc5SqbTKMcnvwGrWnoFGUiSKMe1sJ9vwWnoD/06mQ
+         TnDJZrhbbXmA4Dvp5kT67TsKyhz7WvWW66NzH/ErQlDm30QWTTCDJY+iHXEXIBudi377
+         OPGQ==
+X-Gm-Message-State: AOJu0YyYYDpFf2ZBCnYMP4yznQpnHE8kCik4XG5dlhv4/0/MkdadzDUQ
+	3Ob0RWvE3Bfq2GK0q3j5RLozU33ZdkbAShf7l3m+MxjVSB3xYorkWxhA5y/pZ071KooTBdi1Qwh
+	tVrRKXyKRhw0JIueyiJeYB39nrzKPRhtUMOZeYw==
+X-Gm-Gg: ASbGncsxHJre5HvFZwTHTbKeNCL+mEt8HZP6ndleIPJNSep5n+Y4WgzF70yCTRDjt5e
+	mc2gpSVQZgBjz0NhsrdPNpuzQUsDCjB871Jr171Ts0TApy6BUFiFZHiCx5miVnEa9GPz1LsXBv8
+	QTfECopSinJML915yilyPHoGo=
+X-Google-Smtp-Source: AGHT+IE2qGO+aWnlhjPQiT/O43/hZDTamK5QL+DvU9HYVV80mmAiaWCo3u69VnRe4rEoCDGKj9VAlvn74x4/vc9IqS0=
+X-Received: by 2002:a05:690c:7485:b0:702:66cd:10be with SMTP id
+ 00721157ae682-7054a13ca7dmr46930657b3.14.1744292718557; Thu, 10 Apr 2025
+ 06:45:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-2022-jp
+References: <20250401025123.895307-1-ricky_wu@realtek.com> <CAPDyKFpn5xB50eTomNM=4LbFDX4r154iY2Qk8GBiYb+vor0kbA@mail.gmail.com>
+ <1fde0217fa544560888c3e6f4f5963f9@realtek.com>
+In-Reply-To: <1fde0217fa544560888c3e6f4f5963f9@realtek.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 10 Apr 2025 15:44:42 +0200
+X-Gm-Features: ATxdqUF1Zp1od8RzcSBLFqjvlDhawwyc1n6aNdWRiQDIFPeeRIziDeAyT0ztL2c
+Message-ID: <CAPDyKFogPwixHGdmUy_z_udrUpU36mi_9cqdo1bPdM88OL1Erw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: rtsx: usb add 74 clocks in poweron flow
+To: Ricky WU <ricky_wu@realtek.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 
-zhoumin <teczm@foxmail.com> writes:
-
-> Hi Hirofumi
+On Thu, 10 Apr 2025 at 08:37, Ricky WU <ricky_wu@realtek.com> wrote:
 >
->> Why do you need this change?
+> > >
+> > > SD spec definition:
+> > > "Host provides at least 74 Clocks before issuing first command"
+> > > After 1ms for the voltage stable then start issuing the Clock signals
+> > >
+> > > add if statement to issue/stop the clock signal to card:
+> > > The power state from POWER_OFF to POWER_UP issue the signal to card,
+> > > POWER_UP to POWER_ON stop the signal
+> > >
+> > > add 100ms delay in power_on to make sure the power cycle complete
+> >
+> > Why 100ms? That sounds a lot to me?
+> >
+> Hi Ulf,
 >
-> I encountered an issue while working on our own bootloader. The problem
-> occurs when short file names start with `0`. In this case, our bootloader
-> mistakenly interprets it as the end of the directory entry, causing all
-> subsequent files in the directory to become invisible.
+> This 100ms delay is to ensure the voltage is below 0.5V before power on during a power cycle,
+> The delays in the mmc core is not sufficient for the rtsx usb device.
+> Because during the card recognition process, the card power will be toggled once in 1ms.
+> If the card power is not fully discharged within that 1ms before being turned on again,
+> It may affect the card recognition
 
-It is normal behavior of Windows.
+Okay, I see. So 1ms isn't sufficient for your case.
 
-> While comparing our bootloader with the kernel, I found this bad char check
-> function. Treating the `0x05` deleted flag as a bad character may
-> potentially disrupt the parsing chain for subsequent files.
+Is there a regulator described somewhere? Could this delay be part of
+the regulator enable/disable instead?
+
 >
-> In my opinion, adding this judgment aligns with the spec and should not
-> introduce any negative side effects, even though I haven’t encountered this
-> situation in practice.
+> > Is this fixing a real problem or is just trying to better follow the spec?
+> >
+>
+> We found some cards not be recognized if not issue this 74 clocks
 
-What specific case are you saying?  This path is checking the user
-input, isn't it? Why do you allow to create that filename includes 0 or 5?
+That still doesn't explain why you picked exactly 100ms as the delay.
+Assuming we are running at lowest initialization frequency for SD/eMMC
+at 100kHz, then 74 clocks are:
 
-Looks like you are overlooking something.
+74/100000 = 0,00074s.
 
-Thanks.
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Kind regards
+Uffe
+
+>
+> > >
+> > > Signed-off-by: Ricky Wu <ricky_wu@realtek.com>
+> > > ---
+> > >  drivers/mmc/host/rtsx_usb_sdmmc.c | 28
+> > +++++++++++++++++++++++++---
+> > >  1 file changed, 25 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c
+> > > b/drivers/mmc/host/rtsx_usb_sdmmc.c
+> > > index d229c2b83ea9..e5820b2bb380 100644
+> > > --- a/drivers/mmc/host/rtsx_usb_sdmmc.c
+> > > +++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
+> > > @@ -48,7 +48,7 @@ struct rtsx_usb_sdmmc {
+> > >         bool                    ddr_mode;
+> > >
+> > >         unsigned char           power_mode;
+> > > -
+> > > +       unsigned char           prev_power_mode;
+> > >  #ifdef RTSX_USB_USE_LEDS_CLASS
+> > >         struct led_classdev     led;
+> > >         char                    led_name[32];
+> > > @@ -952,6 +952,8 @@ static int sd_power_on(struct rtsx_usb_sdmmc
+> > *host)
+> > >         struct rtsx_ucr *ucr = host->ucr;
+> > >         int err;
+> > >
+> > > +       msleep(100);
+> > > +
+> > >         dev_dbg(sdmmc_dev(host), "%s\n", __func__);
+> > >         rtsx_usb_init_cmd(ucr);
+> > >         rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_SELECT, 0x07,
+> > > SD_MOD_SEL); @@ -1014,6 +1016,16 @@ static int
+> > sd_set_power_mode(struct rtsx_usb_sdmmc *host,
+> > >                 unsigned char power_mode)  {
+> > >         int err;
+> > > +       int power_mode_temp;
+> > > +       struct rtsx_ucr *ucr = host->ucr;
+> > > +
+> > > +       power_mode_temp = power_mode;
+> > > +
+> > > +       if ((power_mode == MMC_POWER_ON) && (host->power_mode
+> > == MMC_POWER_ON) &&
+> > > +                       (host->prev_power_mode ==
+> > MMC_POWER_UP)) {
+> > > +               host->prev_power_mode = MMC_POWER_ON;
+> > > +               rtsx_usb_write_register(ucr, SD_BUS_STAT,
+> > SD_CLK_TOGGLE_EN, 0x00);
+> > > +       }
+> > >
+> > >         if (power_mode != MMC_POWER_OFF)
+> > >                 power_mode = MMC_POWER_ON; @@ -1029,9
+> > +1041,18 @@
+> > > static int sd_set_power_mode(struct rtsx_usb_sdmmc *host,
+> > >                 err = sd_power_on(host);
+> > >         }
+> > >
+> > > -       if (!err)
+> > > -               host->power_mode = power_mode;
+> > > +       if (!err) {
+> > > +               if ((power_mode_temp == MMC_POWER_UP) &&
+> > (host->power_mode == MMC_POWER_OFF)) {
+> > > +                       host->prev_power_mode = MMC_POWER_UP;
+> > > +                       rtsx_usb_write_register(ucr, SD_BUS_STAT,
+> > SD_CLK_TOGGLE_EN,
+> > > +                                       SD_CLK_TOGGLE_EN);
+> > > +               }
+> > > +
+> > > +               if ((power_mode_temp == MMC_POWER_OFF) &&
+> > (host->power_mode == MMC_POWER_ON))
+> > > +                       host->prev_power_mode = MMC_POWER_OFF;
+> > >
+> > > +               host->power_mode = power_mode;
+> > > +       }
+> > >         return err;
+> > >  }
+> > >
+> > > @@ -1316,6 +1337,7 @@ static void rtsx_usb_init_host(struct
+> > rtsx_usb_sdmmc *host)
+> > >         mmc->max_req_size = 524288;
+> > >
+> > >         host->power_mode = MMC_POWER_OFF;
+> > > +       host->prev_power_mode = MMC_POWER_OFF;
+> > >  }
+> > >
+> > >  static int rtsx_usb_sdmmc_drv_probe(struct platform_device *pdev)
+> > > --
+> > > 2.25.1
+> > >
+> >
+> > Kind regards
+> > Uffe
 
