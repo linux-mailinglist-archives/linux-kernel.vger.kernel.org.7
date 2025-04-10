@@ -1,178 +1,107 @@
-Return-Path: <linux-kernel+bounces-598672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B7CA84947
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:09:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50093A8494C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AB911BA58B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:08:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F294D3B0C55
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D091EB9E1;
-	Thu, 10 Apr 2025 16:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C681EDA02;
+	Thu, 10 Apr 2025 16:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="nxO9olZ0"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i6Ti3+rN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884721E9B14
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 16:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650AF1DA62E;
+	Thu, 10 Apr 2025 16:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744301292; cv=none; b=D/opfNDqgcmuNupbdXFX4Eggn+9V5VksA1HkdMoAkebYS9dp4SsJ9sjP/NQ/q/lxG5/kUMX7unTXCHhrOYqprYZPN1vfhL7GAoWjI+VaZqiLii4SjombvmEy6cCt0SBrRcy8cyd5FNty0BWXazlNdPowMinwr02XFu5KusuaQB4=
+	t=1744301390; cv=none; b=Sm6enoNX54zA1UYJF+Ja9Z5WhHoCMqgZI0xC+7Tc9nEPev7uazma/EHVfsyss2hxUN6bcu1x9+5Avia14iBkH6qcAKsJJlun5U2iy0oCtgJXtrxbeG88NMRgHA5dZ+2hB5pFI0CkTnqP0HPSm9EXQBeCIuWULT/KBMn7egidyRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744301292; c=relaxed/simple;
-	bh=r/WPmzNSOG7DnhnmxRVyxjV8aisZ4YY9NJhFvRVaLr8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KJSdPkS+AYkuIPkntHi0acbTHqCXMuOLGjdVgpGKThbmxVflaQKFzgiHSCelDtvtv9FHFk3e04r2HrPz83XXS2lTmC+3o98n36QdY6Ui7ljLwhx9+hPZXpR/hT/skyoiY6+nU1HJWvAfrzipkToiZYdndMycRizDzvbY2d1MEPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com; spf=pass smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=nxO9olZ0; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smartx.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-227914acd20so18029395ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:08:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1744301288; x=1744906088; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hq/VSDygxUvqusiASIxz5VUwIaO2iFyZjJyGjGC2vUg=;
-        b=nxO9olZ0dHoU3lG40XetiovtiLgMlTDg6dCyWY0drGL53FO3yil94xKpC5q4IHxl+w
-         AxWJ+vnf0PDU8a/1SVWhOQECIs1zHQiDP+NC9LKP/DaU6PIyn5WEL7rgga1B355jdRcK
-         Mo+EyWwLUXq6SznWd7PJKxUXeZ2vT33t748I5w5L/d9bF83pvWVemBVY/8vk4Z5aT3rl
-         tJMEpf9gY8diJZoX+ISjIBi1jxZIqbKbGW6/1CEmjqpDb+EIympw0TESytT83NMybzeV
-         iKi/9AAuxq2BAOXtdXG6SvtYodLcJX2XpIb1z8n6gVHYHNAhNX4fAmPJWVbGoljP+cmt
-         EWEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744301288; x=1744906088;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hq/VSDygxUvqusiASIxz5VUwIaO2iFyZjJyGjGC2vUg=;
-        b=phguNFyn0c2xVtNfdBgkz3eveSjmE1+ks4lLr5pvpyjQSgriZdSooEy+byZ/7DfnaC
-         hbHr5kXAoZPQCbSM3YyVVr6cIDqhPjnicZVL5MREnToW01ahGSGWCTqzWeVFzqEEuCxH
-         55zPxtGhITh9bv/Uv2/cIuEIX6S/Z7ONatCF1TKRCAncnT93n9M+PhPrD5mkIaa7sEED
-         rAb2ugX1c1HO2PomVcZjmYVdjblPPaEqVCEhRBeMu2rLC+gP/lwcxvc+tnHTBGIQpOSw
-         7H9BvXp4MqXr330Ml+WecfjDupkUeb99twUZOtVaOHpcmWBGgyV46GYd6ONW2NAeT+L+
-         ID+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUCtk63drvv+UrhNKP3kV0hOdC7auHiRm0AhQIHngoXQk+JPjlW3E/5YtrGMGV0K4Xvx0eLGy3MP5M9dho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymqGa9G5OjD1NT8kH1Mmm5ioDiKP6f3ydCk7br7dLklGwQaEsf
-	9kZKRNoerN3qiFHkN94AP+oaereOHAtRkg2byc7GcMPRzLHQrT0E9UUgsrj3PWU=
-X-Gm-Gg: ASbGncuMn1NIa8uzmm2ufxuXtVaxsYuR3lrfBGRejxt9kQKaEkd1V34uzMLNxcmVnsO
-	x2vPftKOl7C4JVJR4ieROwhFVcSR2avEItusv1Oy+UVfgCYMS4lfLqwcITObK77kkCAgQlhQLsz
-	QVkYkaTqbFIslRVhJQdrQEqeG+iWIsamF+ltdHfs8ngCNXvGrZvlYpN6fm5qU4qpVHjt352j5Ev
-	b6WkmlbeBqb2WutJeoTHQhKQZjVqi/mu6V1nuGertN83VMAWa3KNJN9MC+v8Z+wwre1yRu8H6KP
-	TUuF1W66pZh9D959Sh6Boy8fBBqBB8L/Wvln7SXUbZOE75qwKsarjA==
-X-Google-Smtp-Source: AGHT+IGPEFfzuYGsKFWjoyUUk7FN1CYFyByM7i9vyd1ThL+ecYguA91ljiuUWfeE5IQtgQhbj5/kRg==
-X-Received: by 2002:a17:902:ef02:b0:215:58be:3349 with SMTP id d9443c01a7336-22b8fd48490mr54741595ad.14.1744301288183;
-        Thu, 10 Apr 2025 09:08:08 -0700 (PDT)
-Received: from localhost.localdomain.com ([103.85.74.92])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccb5afsm32488185ad.226.2025.04.10.09.08.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 09:08:07 -0700 (PDT)
-From: Jiewei Ke <jiewei@smartx.com>
-To: wagi@kernel.org
-Cc: hare@suse.de,
-	hch@lst.de,
-	jmeneghi@redhat.com,
-	kbusch@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	mkhalfella@purestorage.com,
-	randyj@purestorage.com,
-	sagi@grimberg.me
-Subject: Re: [PATCH RFC 3/3] nvme: delay failover by command quiesce timeout
-Date: Thu, 10 Apr 2025 12:07:57 -0400
-Message-ID: <20250410160757.2567493-1-jiewei@smartx.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250324-tp4129-v1-3-95a747b4c33b@kernel.org>
-References: <20250324-tp4129-v1-3-95a747b4c33b@kernel.org>
+	s=arc-20240116; t=1744301390; c=relaxed/simple;
+	bh=NFpQUkvyGO0CSiFWwpzKCXGX2UCXDnX2F1Av82SBDcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NaLeoOzMMpVpFow+0Akm0sHYsYkgujRnTHRBgnj35omAblR/i8An7nZm1i/1tdQl4jisM61zO6HOtHmUWz/a0OQ41DcnHqJ9J/Ej5r3/5YGKFZnqFgccQU4FLC6nZb467bFZYopKsxxQDIybUuu35ISYnCE5YSS9NHRCoYK8pyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i6Ti3+rN; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744301389; x=1775837389;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NFpQUkvyGO0CSiFWwpzKCXGX2UCXDnX2F1Av82SBDcI=;
+  b=i6Ti3+rN8bFAf7+c8T1NKCxi28CVnCVhchCqc7S4YB4Keklk71RS8eZJ
+   bsMUnA1m2XDd/eTPzbqO6FEeRUdowQ+ed0MdOVKhh+xAuWh0JK7bTnRsK
+   Tm86MfAlAMswcFL5oZYBzCrcf7FzmzmufBLKaNixfXm7XYZCltFitn6sX
+   eiJMfM23ltuHjupyaZ5dgz64qJHpTA8sUKz8nevBhv3+AfetbWJM64Ty9
+   kZAro8lfiq8WMniM4WAc+zzCzP/hDiDqHqH4KzmYGq0WiF0CobIBqAnPm
+   TJ33O8doGEiiWrADmh0Jnb9liWYdsdImmt9LIMS5MHjKmC5U+/iqNpytK
+   Q==;
+X-CSE-ConnectionGUID: jdu2XIfmTmCDRq8RzcquOQ==
+X-CSE-MsgGUID: OgpuN0/1Sg6v6Jpf9FNptw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="45732754"
+X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
+   d="scan'208";a="45732754"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 09:09:47 -0700
+X-CSE-ConnectionGUID: hSaDRAm1TxWzjMAwBymNNg==
+X-CSE-MsgGUID: GfBz++65Ty+MoZ+DiYYdfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
+   d="scan'208";a="129486754"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 09:09:44 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 6F12B11F74E;
+	Thu, 10 Apr 2025 19:09:41 +0300 (EEST)
+Date: Thu, 10 Apr 2025 16:09:41 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] property: Use tidy for_each_named_* macros
+Message-ID: <Z_ftRZ98X6nYNvlK@kekkonen.localdomain>
+References: <Z_ew4DN0z71nCX3C@mva-rohm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_ew4DN0z71nCX3C@mva-rohm>
 
-Hi Daniel,
+On Thu, Apr 10, 2025 at 02:52:00PM +0300, Matti Vaittinen wrote:
+> Implementing if-conditions inside for_each_x() macros requires some
+> thinking to avoid side effects in the calling code. Resulting code
+> may look somewhat awkward, and there are couple of different ways it is
+> usually done.
+> 
+> Standardizing this to one way can help making it more obvious for a code
+> reader and writer. The newly added for_each_if() is a way to achieve this.
+> 
+> Use for_each_if() to make these macros look like many others which
+> should in the long run help reading the code.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-I just noticed that your patchset addresses a similar issue to the one I'm
-trying to solve with my recently submitted patchset [1]. Compared to your
-approach, mine differs in a few key aspects:
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-1. Only aborted requests are delayed for retry. In the current implementation,
-nvmf_complete_timed_out_request and nvme_cancel_request set the request status
-to NVME_SC_HOST_ABORTED_CMD. These requests are usually already sent to the
-target, but may have timed out or been canceled before a response is received.
-Since the target may still be processing them, the host needs to delay retrying
-to ensure the target has completed or cleaned up the stale requests. On the
-other hand, requests that are not aborted - such as those that never got
-submitted due to no usable path (e.g., from nvme_ns_head_submit_bio), or those
-that already received an ANA error from the target - do not need delayed retry.
-
-2. The host explicitly disconnects and stops KeepAlive before delay scheduling
-retrying requests. This aligns with Section 9.6 "Communication Loss Handling"
-of the NVMe Base Specification 2.1. Once the host disconnects, the target may
-take up to the KATO interval to detect the lost connection and begin cleaning
-up any remaining requests.
-
-@@ -2178,6 +2180,7 @@ static void nvme_rdma_shutdown_ctrl(struct nvme_rdma_ctrl *ctrl, bool shutdown)
- 	nvme_quiesce_admin_queue(&ctrl->ctrl);
- 	nvme_disable_ctrl(&ctrl->ctrl, shutdown);
- 	nvme_rdma_teardown_admin_queue(ctrl, shutdown);
-+	nvme_delay_kick_retry_lists(&ctrl->ctrl); <<< delay kick retry after teardown all queues
- }
-
-3. Delayed retry of aborted requests is supported across multiple scenarios,
-including error recovery work, controller reset, controller deletion, and
-controller reconnect failure handling. Here's the relevant code for reference.
-
-diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-index 9109d5476417..f07b3960df7c 100644
---- a/drivers/nvme/host/tcp.c
-+++ b/drivers/nvme/host/tcp.c
-@@ -2449,6 +2449,7 @@ static int nvme_tcp_setup_ctrl(struct nvme_ctrl *ctrl, bool new)
- destroy_admin:
- 	nvme_stop_keep_alive(ctrl);
- 	nvme_tcp_teardown_admin_queue(ctrl, new);
-+	nvme_delay_kick_retry_lists(ctrl); <<< requests may be timed out when ctrl reconnects
- 	return ret;
- }
-
-@@ -2494,6 +2495,7 @@ static void nvme_tcp_error_recovery_work(struct work_struct *work)
- 	nvme_tcp_teardown_admin_queue(ctrl, false);
- 	nvme_unquiesce_admin_queue(ctrl);
- 	nvme_auth_stop(ctrl);
-+	nvme_delay_kick_retry_lists(ctrl); <<< retry_lists may contain timed out or cancelled requests
-
- 	if (!nvme_change_ctrl_state(ctrl, NVME_CTRL_CONNECTING)) {
- 		/* state change failure is ok if we started ctrl delete */
-
-@@ -2513,6 +2515,7 @@ static void nvme_tcp_teardown_ctrl(struct nvme_ctrl *ctrl, bool shutdown)
- 	nvme_quiesce_admin_queue(ctrl);
- 	nvme_disable_ctrl(ctrl, shutdown);
- 	nvme_tcp_teardown_admin_queue(ctrl, shutdown);
-+	nvme_delay_kick_retry_lists(ctrl); <<< retry_lists may contain timed out or cancelled requests when ctrl reset or delete
- }
-
-Besides, in nvme_tcp_error_recovery_work, the delayed retry must occur after
-nvme_tcp_teardown_io_queues, because the teardown cancels requests that may need
-to be retried too.
-
-One limitation of my patchset is that it does not yet include full CQT support,
-and due to testing environment constraints, only nvme_tcp and nvme_rdma are
-currently covered.
-
-I'd be happy to discuss the pros and cons of both approaches - perhaps we can
-combine the best aspects.
-
-Looking forward to your thoughts.
-
-Thanks,
-Jiewei
-
-[1] https://lore.kernel.org/linux-nvme/20250410122054.2526358-1-jiewei@smartx.com/
-
+-- 
+Sakari Ailus
 
