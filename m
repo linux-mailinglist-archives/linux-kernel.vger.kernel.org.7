@@ -1,129 +1,144 @@
-Return-Path: <linux-kernel+bounces-597596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED71AA83BD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:56:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABCBA83BA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21B8B16FC82
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:56:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E82219E5647
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE961E3793;
-	Thu, 10 Apr 2025 07:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665051E1DF8;
+	Thu, 10 Apr 2025 07:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="cMTbaFvZ"
-Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aM5njTKT"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9062D1E32C3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.74.137.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A14D1DF985;
+	Thu, 10 Apr 2025 07:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744271780; cv=none; b=aim/nfAUYS2tVlMhMpc6OwK0uFgKwmEGIzAER+HU7/Pqx1lVXR0uc2vWxLFM2ilAz7A5NqYl4qo/+HxOjWie4TvsO7SYqkppI4zzVp/06wKN5AB8Hr2ifZmTFoagVcHS6YrjihoexDwZRtleT5NAa7XRHStJ8Nt8ceMzsJ3xUuI=
+	t=1744271424; cv=none; b=NByYmpxeY50vOGaF51hCBr2w9QapMhr3kOi0OzAc0gE8WN9OB2uwJEN1T/RUauQI/+N1UQ1KUAcB+PU0PNYsox+7ipkbWa3NokuKVhA9Azr99IISDsGQYrnI3a7VErjDdcXHLUmdQREsKtPLoje7VsXJ5OuupGdldnyOoWEVb7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744271780; c=relaxed/simple;
-	bh=QPVmfG85Pv08ENb66VI1j5/mFALeXl3IRPP/u81nJD4=;
+	s=arc-20240116; t=1744271424; c=relaxed/simple;
+	bh=XJ8C56dpgh7I3PapWIvW5bS5auRCwUc0h+lB9fhDO6I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M+BH1lObg5FUAsT++Q20zqq1wV2iwvnHVp/gJpD6I3RTvG5i6inefXi6AvhGCTuKwiKUn9mvhAH3RpaQIyZjoYWQTI3N1++JlyjHq9gnom0NrRK9q9RZmjct4wJ7ofQ3PoUHpwu6a8jkIztRzYg2UBfZiIkdX/BrrGgKqXditqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com; spf=pass smtp.mailfrom=atmark-techno.com; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=cMTbaFvZ; arc=none smtp.client-ip=35.74.137.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atmark-techno.com
-Authentication-Results: gw2.atmark-techno.com;
-	dkim=pass (2048-bit key; unprotected) header.d=atmark-techno.com header.i=@atmark-techno.com header.a=rsa-sha256 header.s=google header.b=cMTbaFvZ;
-	dkim-atps=neutral
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by gw2.atmark-techno.com (Postfix) with ESMTPS id 2430298
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 16:50:23 +0900 (JST)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-736cd36189bso703175b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 00:50:23 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=q+kocV7dCxOzgt/AZbfkBORACp5H3f/HxhVlijItuZE2O1ZROpD9F9AFfledfT0OOmXWwR2Mf3fS1JTxIjHSd5zbNL1j9PoQL3FBxMudHCqOnWy/+AFagkTFOgtXeoqvrXIeoP8lBoaSe6UPXS64bGbAK4nlR2P1M2V+xcDzb7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aM5njTKT; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso90267266b.1;
+        Thu, 10 Apr 2025 00:50:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=atmark-techno.com; s=google; t=1744271422; x=1744876222; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744271421; x=1744876221; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zI8FWvqkWPehqKj4Irm/YiRMxVqaxvlH7ZzjRgOa/ao=;
-        b=cMTbaFvZiDwoxUzoTcEgBzdiMj2TakwvA5TiZBqsqUmlNSFMn23u7qdLKV4huEDqIg
-         O8LQvkmaeF7G+51CrKtscZwguItmKH1oi09Q3vYOBd77DmCD4WA7MpbcRt58LXvHG5rP
-         PNedAtP5scdxX3wexjk8d8QUPrpjYr+8fURT9qy0M4+GPFXVoyvOJLYHQH0bvj4njkyN
-         Pv9adb2y6pVQjh76ABIoFZF0PbbsH7tD3e5w/OX4LSGkUFzn7XsTTzFnDZwkc1ScS1UA
-         osqSiaRrK8v2UOswW4FmrawerQfkL37dqJ1rWSIOapVqcCxbp6AUrLrShG96rmDoD0Gj
-         Rwjg==
+        bh=mex8Z9dzfxz3hW33N8AMNQUPFzwP3mz+qG8H/RfxWWU=;
+        b=aM5njTKTrKaULscH0EIBdfsIrXKoMQjOmP3U+vrFtj9S8f90ZpL3MNWnwlDqW8Gg4o
+         UibWIQ63o1STs4AjXbNOgG8JL/0NHySeJwMhWrI0tu09BotsbtQ99Xn3cYcFErj5S8fL
+         YWXNnBA4ahD2+pKHdLfdOAEr+q5wdDOotPz4i4RWD5Dcf3nQCJKmcmeolrTChhGoDJJy
+         QnV/FGNFPiV3gjS/Bqn5yHbYaYF2aY6AfBFazEiBHEzQXJazyH7oJ5abdxqVx8vrw/N/
+         dhXZUJQROoW9QeNVCULSvCV3LsBcTGtiKIgynVsWu7t8c6V+dFFJVnyMbqFvefZDnmSa
+         S8aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744271422; x=1744876222;
+        d=1e100.net; s=20230601; t=1744271421; x=1744876221;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zI8FWvqkWPehqKj4Irm/YiRMxVqaxvlH7ZzjRgOa/ao=;
-        b=eTexMhy/FEihNJeL1G2sXXHhReuMF7/S7gya/zgRhJ0Yh21McF45OvfIih5+T/eMNC
-         BgvQin2aGWqflh25Brj2sEsQ5iv2ZtOOEC1izhnU5JVfVIHvHWfQPWs3IRbgQoAatS2t
-         56IKnm/FoKUNpWOh1cQqAzSQAvQ9T3B8Q8qKxF+esRXnstdz+xeG2SCY5IxE0QFj7QJ4
-         Vb8s4G0/wpKIVwyhOQlWbZ/gXQjcpjOBkIC2sze3O4DSc6Fwe+xhMjswhDTYpG5emiKP
-         HIb1yv+U7//oYoXFPzIqwE9gEXXJuEY5OsNn1Jry+TZh4RSffy3xyRgP+k4K2mb0PR+h
-         4wWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlnR3BqhwnBLWkjwl82C06uvoJtekpf4YjOrB0U4dVQQYCLd3OMwqdzstYvg5u/bKiOJfs6Eab4s9iDHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfdFNpw6EAAvPqXjPw2LHF0c+I0Lwktq8ERN/ObQfWet9awfQU
-	aPlOamx9yG2opkqhc1i5lVB32WPpSxqmD8/J8+AjVHJ1DzhDnZ1IdoYpzNLcKsJBx387PnPEYHF
-	x7obsrjBxcbYHkr34Gf7+4enljuTxn7F02Cmjcd342L6l47vLg0PhlsUcPjx5z1o=
-X-Gm-Gg: ASbGncsU7BjubSs06Fp2jlpjFmJn+WHNrdQwSvFNL/dMP7sAtq3LEeWQx04TTJFQAl6
-	/yjNzk/yaljfRriBoWu0o6ymbocBZ5JOwef4W1MzGTfFNVp92gER+/APDglaiTSx0Zdmm7We2Wm
-	9jd3RTWWmkRj9MPZL5uVFJmqWxC9I+62mMF+m9bWk2bO7yCgRmKCl+P7hLu1nJmhNuzAO+vvmYx
-	f/Yso9m/xjnP0WMmGx+2Mk/MFe6LrT/4oKkWE/8APtfLWLYe4L34rGl2xFHEQKz93xMMQYy6qLU
-	/8EHIfV0c8ATR+jwDerQ6/9li7ut+OVgMdKJezYQE5LnLWLixLAOiaWzISihJXEljEk2XyI=
-X-Received: by 2002:a05:6a00:3a0b:b0:736:2a73:6756 with SMTP id d2e1a72fcca58-73bbf01e01cmr2458039b3a.21.1744271422086;
-        Thu, 10 Apr 2025 00:50:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHG4WTCFiCZzKFbEqwBIEaL7Fn0aSCHk9N1v/EMTUYYQLaZr2byejL0KAEY4tDGPPOiIxiYdw==
-X-Received: by 2002:a05:6a00:3a0b:b0:736:2a73:6756 with SMTP id d2e1a72fcca58-73bbf01e01cmr2458005b3a.21.1744271421600;
+        bh=mex8Z9dzfxz3hW33N8AMNQUPFzwP3mz+qG8H/RfxWWU=;
+        b=j5CtgmeSNeKA/14rmn6BUud6NdzM3nxMa6bmNmOAk6+nf5GGsQw6Azdvc72a5WN9Pf
+         DZns+JKWxzAJEPTBsN+2GNOq+MkR4kqadnXvUP/WlbjO8pOquU0OlUnD0D0S6xP2vCj6
+         TBkaApi3BHIByduCCWUeUjeODYeZ6lqQEQB38byFBEqXuPEOWh4mRlwvsVgD2jwvp9XV
+         s1cFgbCNJXkw8pe9kO5blHRWIp8mmnfOKq2mScmDSe6FPpV3wZULPZ/DxlylTPmTnWed
+         GSeXSbpR68QCQvbwsXlsywW4qoP2zi0lAJea3Zf9PYOxTLDlNHjLJpBrLhaPMSDLrFqX
+         eYEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEC/qiRQBnOyqloAUuHQWS6WBASUWwsiZFWyZsF6eQlZWTYd8mEaiOjiAAredTVJG1A5yiA+eLIauo@vger.kernel.org, AJvYcCUVTnOHot1EjKjyEecC22tq39ZyA3V7JkNdMhejDqMwqbfQOeCsCPPIIHVYYEQPRZDBdAC8e3llK+KA@vger.kernel.org, AJvYcCWA8iJVlnQo9jMnnF7I+jARuPjxsuC62lPiJ4Pnfgkd6NIjm5jh+dRYmDM1Z6dXHocE1rDG+UVDXSwse2Ou@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR6R31w5cGaTjQONCf4l+yxHaWEaakTuLdGOh692EN1JcNGTNi
+	Pp/R+ZQ/xJqV1uExQTQsZUicFLHEy+QaG5BPS+im9g2hZePVVIjn
+X-Gm-Gg: ASbGncu6y/0C8aQpQNZxc07seBizQfK4ZZqm7o4GUQxE/8KNpQh10Pt4v+PMfVhDneJ
+	fJ2uF7Zm0PsTikLRrkTPjnP/vp7QjuM9dcbz/sRBA0f1SPW/2ywBdNNkbn91o7321ve53hhO4mK
+	ql3Q+LtcNWNctLhsx0HfDEZ0KsQ8hqZE6/sWywUnz5ZJQkw0mEVoElAK7aEC8o56VJ4ppLriJDV
+	xzDCywuq4zksi76R2YIJW1/mfiKKj3/hrQbipK57wLKe4oWxiyKiuDKWsxGrh/ylMqZvYyfI/6B
+	i2mqHW0hYtmtw+fWEL5IPT10OAebntgpNrnsfU47EAME4KI2vxjFXgKpOZPHNYJg9JWDLAIH1vy
+	NngEXOV4h+OJcE3IFWA2acig/u2VGhRWkKH00a+4=
+X-Google-Smtp-Source: AGHT+IEUKtIECQHfvCCQHEULrOOyIkJYLflU4RweKbQ5LyEXFJ2aLZNpy2NRTB84slWGKlTEWqpvyA==
+X-Received: by 2002:a17:906:7310:b0:ac6:edd3:e466 with SMTP id a640c23a62f3a-acac008e44dmr102214566b.19.1744271421157;
         Thu, 10 Apr 2025 00:50:21 -0700 (PDT)
-Received: from localhost (162.198.187.35.bc.googleusercontent.com. [35.187.198.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1e51ed7sm2592923b3a.155.2025.04.10.00.50.20
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Apr 2025 00:50:21 -0700 (PDT)
-Date: Thu, 10 Apr 2025 16:50:09 +0900
-From: Dominique MARTINET <dominique.martinet@atmark-techno.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 5.10 000/228] 5.10.236-rc2 review
-Message-ID: <Z_d4MQP8_WJXxtzs@atmark-techno.com>
-References: <20250409115831.755826974@linuxfoundation.org>
+Received: from alb3rt0-ThinkPad-P15-Gen-1 (host-79-37-123-173.retail.telecomitalia.it. [79.37.123.173])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ccd195sm225096366b.130.2025.04.10.00.50.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 00:50:20 -0700 (PDT)
+Date: Thu, 10 Apr 2025 09:50:18 +0200
+From: Alberto Merciai <alb3rt0.m3rciai@gmail.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
+	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Joy Zou <joy.zou@nxp.com>
+Subject: Re: [PATCH v2 3/3] arm64: dtsi: imx93: add edma error interrupt
+ support
+Message-ID: <Z/d4OlTG6uDXtl49@alb3rt0-ThinkPad-P15-Gen-1>
+References: <20250407-edma_err-v2-0-9d7e5b77fcc4@nxp.com>
+ <20250407-edma_err-v2-3-9d7e5b77fcc4@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250409115831.755826974@linuxfoundation.org>
+In-Reply-To: <20250407-edma_err-v2-3-9d7e5b77fcc4@nxp.com>
 
-Greg Kroah-Hartman wrote on Wed, Apr 09, 2025 at 02:02:11PM +0200:
-> This is the start of the stable review cycle for the 5.10.236 release.
-> There are 228 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Apr 07, 2025 at 12:46:37PM -0400, Frank Li wrote:
+> From: Joy Zou <joy.zou@nxp.com>
 > 
-> Responses should be made by Fri, 11 Apr 2025 11:57:56 +0000.
-> Anything received after that time might be too late.
+> Add edma error irq for imx93.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.236-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-
-Tested 5b68aafded4a ("Linux 5.10.236-rc2") on:
-- arm i.MX6ULL (Armadillo 640)
-- arm64 i.MX8MP (Armadillo G4)
-
-No obvious regression in dmesg or basic tests:
-Tested-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
-
--- 
-Dominique Martinet
+> Signed-off-by: Joy Zou <joy.zou@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx93.dtsi | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx93.dtsi b/arch/arm64/boot/dts/freescale/imx93.dtsi
+> index 64cd0776b43d3..9f6ac3c8f9455 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx93.dtsi
+> @@ -297,7 +297,8 @@ edma1: dma-controller@44000000 {
+>  					     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>, // 27: TMP2 CH1/CH3
+>  					     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>, // 28: TMP2 Overflow
+>  					     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>, // 29: PDM
+> -					     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>; // 30: ADC1
+> +					     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>, // 30: ADC1
+> +					     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;  // err
+>  				clocks = <&clk IMX93_CLK_EDMA1_GATE>;
+>  				clock-names = "dma";
+>  			};
+> @@ -667,7 +668,8 @@ edma2: dma-controller@42000000 {
+>  					     <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
+>  					     <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
+>  					     <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>,
+> -					     <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
+> +					     <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>,
+> +					     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
+>  				clocks = <&clk IMX93_CLK_EDMA2_GATE>;
+>  				clock-names = "dma";
+>  			};
+> 
+> -- 
+> 2.34.1
+> 
+> 
+Reviewed-by: Alberto Merciai <alb3rt0.m3rciai@gmail.com>
+Tested-by: Alberto Merciai <alb3rt0.m3rciai@gmail.com>
 
