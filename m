@@ -1,94 +1,66 @@
-Return-Path: <linux-kernel+bounces-597597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C1FA83BDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:57:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F764A83BF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815B71893477
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:57:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3510F1B60DF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E791E32DB;
-	Thu, 10 Apr 2025 07:57:11 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D9F204596;
+	Thu, 10 Apr 2025 07:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pCrf2TZx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5D31E32C3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 07:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178D91552FA;
+	Thu, 10 Apr 2025 07:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744271831; cv=none; b=D4VkoZI/uaUh8Q3Ml6Wdi6q2/HZCRxUfkNdvXwFjT8BKmCUssXfWxWlKoNFwoxirj0NMPziehKGmL2Nv8NlMkn/seBGuWi1VTEXH+vHc6zB5fborCq06XADwj9zjCFis8LCNAFilQcv+aNT3d6a6hwuLF1SsNeYGsfYL1Mbz1cw=
+	t=1744271960; cv=none; b=BXSLCvMGf3tC2cbL0Oz8jaScBJh6YbVVSi09G1VHFu/FxCe4Iw+mt+hX0jbv2asP7rTi5ZhhY/gU+wNTJlr5vRtFLNvgzxVvSNEasRuT7M9d/LBGWUGq0+eksLQs9b1JJjcKMuBjOprgifgwnHZWnoWqE71LtR7xdQbrQq93tNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744271831; c=relaxed/simple;
-	bh=qFfvB2rsue/WusNoGRjgVtox6CxU1YzCZbivxFrW/9s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q5UWtMe0/328xOLhD3uTLjPb5S5nl5QdjraD/nAPNIkFAfr6LzRf/h8trfjPRxRpsDFeVnxQTdmsFr/amzi8wUFUPOZM/kAxRIuDau5DK2Ywv4OvsgCoQ5CZCJLi4qbkXGa/SqoFGL5FZD0Vwm4lOqIh0tZpIQN5kBR+BXP3wns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowADHbf7NefdnZCDVBw--.12380S2;
-	Thu, 10 Apr 2025 15:57:02 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: jens.wiklander@linaro.org,
-	sumit.garg@kernel.org
-Cc: op-tee@lists.trustedfirmware.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] tee: optee: smc: remove unnecessary NULL check before release_firmware()
-Date: Thu, 10 Apr 2025 15:56:35 +0800
-Message-Id: <20250410075635.3558712-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744271960; c=relaxed/simple;
+	bh=b1PN+I/M0/lIShuUTza3W983gyrPy404n6n3jDGAWBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xld9ZQXEQkHurI6VUsh2Q4OAF3qeXpqZHSfsc1fJr7Ryb3RO61pKNREfLcUDSSb7QZMkO0RUBvVkZEhQpvM6/hsr3WTTdSmYaQ1n8Ec9pJ5Ur1RHH4YYJsNgsWW5NeXEIvw5eBfDmnTYAclAqQTo+8eZEEhH3z8browutK7e1NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pCrf2TZx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3764FC4CEDD;
+	Thu, 10 Apr 2025 07:59:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744271959;
+	bh=b1PN+I/M0/lIShuUTza3W983gyrPy404n6n3jDGAWBs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pCrf2TZx28Eg0mxOMXCDWkWDnzwMbwubPBlqFJn8wQczA+ZgMijtgByzoqCsPrKaX
+	 oV3Rjxy+gFD8uHIL+Rib/tMiHkt/LkDe5uLpeXd6AHnK3or8g7YA4nJkPaO1zppDti
+	 qx6zbSN00Da2pp6IFztz0bUuc9LuLK7rI2c+2o6M=
+Date: Thu, 10 Apr 2025 09:57:44 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Denis OSTERLAND-HEIM <denis.osterland@diehl.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	Rodolfo Giometti <giometti@enneenne.com>
+Subject: Re: Re: [PATCH] pps: fix poll support
+Message-ID: <2025041031-agreement-hardener-0f9f@gregkh>
+References: <0231dfc22dd34a5aaee09a6a19074de1@diehl.com>
+ <636c5ad9-25ad-44f7-9454-a7787de7a6aa@enneenne.com>
+ <df3dd18b292941a1aaf3bd04f3df6bf3@diehl.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowADHbf7NefdnZCDVBw--.12380S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtw18ZF4ktr4xXry8CF17KFg_yoWxurg_Cr
-	4kC3Z7Wr1rZrW8tw17AayfZryqgas8Zr4kZ3ZFyFW3KanrA3yY9FyjvFsxZas3Z39rKF90
-	yr4UJr4UAas8ujkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbsAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
-	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1lc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-	67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7VUjyE_tUUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df3dd18b292941a1aaf3bd04f3df6bf3@diehl.com>
 
-release_firmware() checks for NULL pointers internally.
-Remove unneeded NULL check for fmw here.
+On Thu, Apr 10, 2025 at 07:42:32AM +0000, Denis OSTERLAND-HEIM wrote:
+> Before printing, think about environmental responsibility.This message may contain confidential information. If you are not authorized to receive this information please advise the sender immediately by reply e-mail and delete this message without making any copies. Any form of unauthorized use, publication, reproduction, copying or disclosure of the e-mail is not permitted. Information about data protection can be found on our homepage<https://www.diehl.com/metering/en/data-protection/>.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/tee/optee/smc_abi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/optee/smc_abi.c
-index f0c3ac1103bb..26f8f7bbbe56 100644
---- a/drivers/tee/optee/smc_abi.c
-+++ b/drivers/tee/optee/smc_abi.c
-@@ -1551,8 +1551,7 @@ static int optee_load_fw(struct platform_device *pdev,
- 		  data_pa_high, data_pa_low, 0, 0, 0, &res);
- 	if (!rc)
- 		rc = res.a0;
--	if (fw)
--		release_firmware(fw);
-+	release_firmware(fw);
- 	kfree(data_buf);
- 
- 	if (!rc) {
--- 
-2.25.1
-
+Now deleted.
 
