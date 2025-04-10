@@ -1,121 +1,132 @@
-Return-Path: <linux-kernel+bounces-598546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05EA1A8473D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:05:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8166AA8476B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE0C77AD2FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:03:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7264D1886A2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FD21DD866;
-	Thu, 10 Apr 2025 15:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2032F1DF26B;
+	Thu, 10 Apr 2025 15:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ojDME/Kq"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SF4z6TWp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEB51D7E35
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 15:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEA31DC9B8
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 15:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744297466; cv=none; b=VLssUrTYhl68rkWeujF9M++IJ1ekPEJY8iC0pL/cPrmDS6GUjKNWzwSs0RbKq/a/Ktl9oLiTy5kzQYNonzHFkp5Dgqe/JU+8nS4iulI949F8ZAm4CxBqEvUE4XECfnALMdBeZhYz2is0FN10fIm/U1ov13OXlc4VEnWPTY81bPg=
+	t=1744297687; cv=none; b=BHU52Tchi8V63GIlYzNhT1xFRG/2gGBZiawyiKLKzhVXGj6mvJt5uF749bj90Ya+hIp/PteBebx3K6APTCKQ7KAQZYqguG1MAegCmej1tlG6agsnjPelneRp9ZTQAGpNQvMj5CsJxb14/2ULp5zu8jUE0sYSvJLb9+Vp+bH6V08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744297466; c=relaxed/simple;
-	bh=E8idAwS5ka05vFYRVoPPGjqaHrB01vGTJ0ZnmvLeqQk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n+MbU2bP+nU/uaU0FmLyIA+YFaWlP5fmdnuUVP8+f3KFwKu2LGTDlQ06KN5k6LeUv4X0dFS4geS4FXOiImYBbTLUHm+ZM1bkFW8sPK+BLK+VYTsGZsEyR26rX7+vbaw60FModYcHRLWVhS7gHcxwSynMmSvBXiRa/jQ878xm90g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ojDME/Kq; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39727fe912cso436930f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 08:04:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744297463; x=1744902263; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E8idAwS5ka05vFYRVoPPGjqaHrB01vGTJ0ZnmvLeqQk=;
-        b=ojDME/KqAXd8ILoH19b2TqSu9mKyJ3/cUKW+tTdEx0iXSAxfqumbOiVhJiTsaopTN5
-         ddcPMoIpepKnv01uZe7dW/couDKwUMhQDI4wFjIwyL4oH82rAk4tIAgtrwWlr8gAS4aO
-         ce7fbmipuL8/ZzZXlU3Ffr0DxCz5S8YqGFLTTsmFCq+jzK5hZeuWyTL3nEaTofkhIFrd
-         k7GlPvG3fsE4Q7lsLkMNM+p9LGReRb99Bej4EkYcnc48CUVaPXhPEhdEG/mbPNHZQPyf
-         /HhfRB7XBrckphWlTyWdzRcKlfpa5BnOS0S0AewR7wUTcQibX5cGpIBp+3vyVq48F2Rh
-         Py2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744297463; x=1744902263;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E8idAwS5ka05vFYRVoPPGjqaHrB01vGTJ0ZnmvLeqQk=;
-        b=cCFqqB3vxny/vdfnsOARPBELfVZMDo5VZdeGuZIis6V6S/v9tgGdeLpqMTdMivAoQR
-         azvj0AiXVhJP00NP17oyqEYYTp+1lQak5TCbz74ytHVlbyAZm3RuL9GSgJ3OqwDeVNSU
-         fMiwz98Rlmt//ayZv9M43RQXEUgd0B+y4aKzhFKy8ABFzCu/KNboJ3Xr+H6QPfT0+Kcc
-         cp9eRsgkUPu7uJ5nCVU5ea8mgWGlWYyaidPF6ZuiDCCKrmfGOYqMakm9ToGsEYKNL6ep
-         KQLHfi2okQanU8eQ8ossCc8gaUZKjbsA/jB5HtrSpX6yqM/4KeiPM5r6MpLs1Z3i8Z0k
-         WMvA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7YWWi2cswjXXztgKz2ST7ZG2ub6GfkaT5+98pPqazkevEeLmDo3km/hnTadmLQ3ZyVR9+pvGq/OQr0cw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0NZ5tZrKEYZucoxgKnUAioOVhBXA8QU1Kng11vGans4clMzN/
-	LbUrOBOyzuS0ZOltd61/ghlzkygOy6mPpIif0lyamnib/q9C+534PKSXEgfRqObdvWQgaK1HAUk
-	skT2ll9y0Tt8LYjKiGDPNgNsZD5EozJgBf9JQ
-X-Gm-Gg: ASbGnct5iS4bant1i5vTdiigEcS9DuVpF5dtxAuwgG/lIJ4VmeL4Cu916OWSgpxkrnB
-	UTrHU2uHKpvgoLwpsinO35Kbw4iUJSEJbt4StWr46UhOmbrPOPhN81cUqmaSyn8iHijnbq1tODY
-	7ZRCH+ebzJOm+ohSux9Frk+gJ9GKJ/7o2xzj5IH6TBqj9RDkl1zUWj
-X-Google-Smtp-Source: AGHT+IHvGrA6pL9xJC71Rglk+R8UnCNP8/PG6RbzhnJl4qgAtYC6oJwdw7O77fLIUePEg2xGL7SeJfKv96Td6xiTjfY=
-X-Received: by 2002:a05:6000:40c9:b0:39c:1258:2dc8 with SMTP id
- ffacd0b85a97d-39d8f4fac26mr2743346f8f.57.1744297463073; Thu, 10 Apr 2025
- 08:04:23 -0700 (PDT)
+	s=arc-20240116; t=1744297687; c=relaxed/simple;
+	bh=ZAmSVhLWEOnCfOSz5SAqLbjsOCi3cBCWsfNIKHCnGhE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=mm4RejWM1vWrDfFMTFbJTxXVIVQ+3cSnH0YBGgwVGTjWe/AZu0VSkW1hIffb1UGoCfoTw5sz71ihgmgIwxdlp7Nk1ari+i72+M5sz041eyLJzTleVUfGXff8bBSoaMXZpNieHISXfhMrp81taY3Jqd78iC/uIPdHA9CkvbtY08s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SF4z6TWp; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744297684;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dTxv5YMVOx/xNNCzCuT62I5Fum6OWhDgWlsYhJf9AlU=;
+	b=SF4z6TWpKOfVnbS8qWsu5TqJZNPhQN7jjFnRp9E/g86fbFksawP89IeIvp4Xz1j9H33MUh
+	iWFgNhvv/lh86xxDSN+ftAiZ5HOqim2iqB31nH28NZnTn8zuiIZS56IyNvQ9P60pZV3+jc
+	apKBFHM0yOJhkX3J2wwSchw1EckfRr0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-88-EU-XR6RbOGuX7Diq62IdwA-1; Thu,
+ 10 Apr 2025 11:08:01 -0400
+X-MC-Unique: EU-XR6RbOGuX7Diq62IdwA-1
+X-Mimecast-MFC-AGG-ID: EU-XR6RbOGuX7Diq62IdwA_1744297679
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B60461944D28;
+	Thu, 10 Apr 2025 15:07:58 +0000 (UTC)
+Received: from t14s.redhat.com (unknown [10.44.32.241])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 440EF19560AD;
+	Thu, 10 Apr 2025 15:07:55 +0000 (UTC)
+From: Jan Stancek <jstancek@redhat.com>
+To: brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	jstancek@redhat.com
+Subject: [PATCH] fs: use namespace_{lock,unlock} in dissolve_on_fput()
+Date: Thu, 10 Apr 2025 17:05:42 +0200
+Message-ID: <cad2f042b886bf0ced3d8e3aff120ec5e0125d61.1744297468.git.jstancek@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250410123602.GZ9833@noisy.programming.kicks-ass.net>
- <20250410124526.GB9833@noisy.programming.kicks-ass.net> <20250410130944.GA9003@noisy.programming.kicks-ass.net>
- <CANiq72=k+tZ3ACEB5k9qwJ8ZYu-dXkA3=Lisg1b8ze-2D0STog@mail.gmail.com>
- <20250410132649.GE9833@noisy.programming.kicks-ass.net> <CANiq72=Q_Z8KfV+n4z9wWVJsZwVevag=Vh3URe71XkUuWuqEDg@mail.gmail.com>
- <20250410133446.GF9833@noisy.programming.kicks-ass.net> <CANiq72neZj+ESvkxwXAQFnznwYBiQAcpW4OqXg1ckhxZj3fd4Q@mail.gmail.com>
- <20250410135713.GG9833@noisy.programming.kicks-ass.net> <CANiq72=uj3G8ibnzpuYzhY=7T5xrBBPoeuAX7X-iBKdN+crQUg@mail.gmail.com>
- <20250410141534.GI9833@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250410141534.GI9833@noisy.programming.kicks-ass.net>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 10 Apr 2025 17:04:07 +0200
-X-Gm-Features: ATxdqUEvyW1qop9m9a6mIi5Di6pLCP0HihCzqQQdekJ9tTTteZk6cuZ_FEbf5WA
-Message-ID: <CAH5fLggm0Q_EGMHXG6Vu2_7mUPdHd46HC=5dPALRAAOXE8yHSA@mail.gmail.com>
-Subject: Re: [PATCH] x86/Kconfig: make CFI_AUTO_DEFAULT depend on !RUST
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, =?UTF-8?Q?Pawe=C5=82_Anikiel?= <panikiel@google.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Nathan Chancellor <nathan@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, Apr 10, 2025 at 4:15=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Thu, Apr 10, 2025 at 04:05:54PM +0200, Miguel Ojeda wrote:
-> > On Thu, Apr 10, 2025 at 3:57=E2=80=AFPM Peter Zijlstra <peterz@infradea=
-d.org> wrote:
-> > If you mean fixing it upstream, definitely, but we should still
-> > prevent people from building an invalid kernel, i.e. when Alice's PR
-> > or similar lands upstream, then we can relax the `depends on` based on
-> > the Rust version (which is something we have done for other bits).
->
-> So why wasn't any of this a problem when Rust enabled kCFI? Surely the
-> testing back then included FineIBT. That has been in longer than rust's
-> kcfi support (integer type confusion etc.).
+In commit b73ec10a4587 ("fs: add fastpath for dissolve_on_fput()"),
+the namespace_{lock,unlock} has been replaced with scoped_guard
+using the namespace_sem. This however now also skips processing of
+'unmounted' list in namespace_unlock(), and mount is not (immediately)
+cleaned up.
 
-I assume this has been a problem for a while. The testing we did with
-FineIBT must not have triggered this codepath. But Rust drivers have
-used the codepath for a long time.
+For example, this causes LTP move_mount02 fail:
+    ...
+    move_mount02.c:80: TPASS: invalid-from-fd: move_mount() failed as expected: EBADF (9)
+    move_mount02.c:80: TPASS: invalid-from-path: move_mount() failed as expected: ENOENT (2)
+    move_mount02.c:80: TPASS: invalid-to-fd: move_mount() failed as expected: EBADF (9)
+    move_mount02.c:80: TPASS: invalid-to-path: move_mount() failed as expected: ENOENT (2)
+    move_mount02.c:80: TPASS: invalid-flags: move_mount() failed as expected: EINVAL (22)
+    tst_test.c:1833: TINFO: === Testing on ext3 ===
+    tst_test.c:1170: TINFO: Formatting /dev/loop0 with ext3 opts='' extra opts=''
+    mke2fs 1.47.2 (1-Jan-2025)
+    /dev/loop0 is apparently in use by the system; will not make a filesystem here!
+    tst_test.c:1170: TBROK: mkfs.ext3 failed with exit code 1
 
-Alice
+The test makes number of move_mount() calls but these are all designed to fail
+with specific errno. Even after test, 'losetup -d' can't detach loop device.
+
+Define a new guard for dissolve_on_fput, that will use namespace_{lock,unlock}.
+
+Fixes: b73ec10a4587 ("fs: add fastpath for dissolve_on_fput()")
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ fs/namespace.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 14935a0500a2..ee1fdb3baee0 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1830,6 +1830,8 @@ static inline void namespace_lock(void)
+ 	down_write(&namespace_sem);
+ }
+ 
++DEFINE_GUARD(namespace_locked, struct rw_semaphore *, namespace_lock(), namespace_unlock())
++
+ enum umount_tree_flags {
+ 	UMOUNT_SYNC = 1,
+ 	UMOUNT_PROPAGATE = 2,
+@@ -2383,7 +2385,7 @@ void dissolve_on_fput(struct vfsmount *mnt)
+ 			return;
+ 	}
+ 
+-	scoped_guard(rwsem_write, &namespace_sem) {
++	scoped_guard(namespace_locked, &namespace_sem) {
+ 		ns = m->mnt_ns;
+ 		if (!must_dissolve(ns))
+ 			return;
+-- 
+2.43.5
+
 
