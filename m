@@ -1,187 +1,193 @@
-Return-Path: <linux-kernel+bounces-598921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 761CAA84CAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:15:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5298FA84CB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4C253B40D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:15:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CED109A2951
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C396928FFFC;
-	Thu, 10 Apr 2025 19:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fj9P3Wg7"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2AF28F953;
+	Thu, 10 Apr 2025 19:15:34 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F71828FFCC
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 19:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D1228CF66
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 19:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744312510; cv=none; b=tfZsUuwNQmtfrHgNlNi4MrRCqUmEEH1wVM4enFXw1JQRfSB+2zOjr7uOSriK45mRmC4fTTQBdt1003lx4AVzNn1JSsaO5iNW/3MiUAIfHzDtIVKFLx2b5sWJk4vW3yCnfWkprU7bpB/tP/JjrBurx4cA7sAoWQHFJfXisOiHH7Q=
+	t=1744312534; cv=none; b=CR/5PhKd1UHAIbGFtIayCol7uDDP4B67oEVN2P4ME8N2UDBxHq1nw7qsIDj7Dn7fxceqtJfm5wzyit1DwgCHKGkL51OzlMEc5T/ODLeyj9xqMJmVkw/Y2vECHzqaFVdIC+FDASKHOgrWmyLNZ5lvKmoDTQmHOqRG0Mcmcn3V/YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744312510; c=relaxed/simple;
-	bh=jaBwtcIvdXOI214Lt+jj3N7iNSjZP2AHKebTyoAaGvU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Gj9D9AihxFAp2Lql7iesplBAq5MancjxvacUTfdQvBwwRHJQBld8zfuS/rUnpKDZTQDQSLx36Mqj/hvQhnFxbeINLoLlo7rfuBrcWe5ZR1P4TPdP/HEcWe/j/bv812VK+h3D1mV+se7/FAOIfk6o48ejHAMYnEc1SPlV3y2YDTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fj9P3Wg7; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53AJ71BN029309;
-	Thu, 10 Apr 2025 19:14:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2023-11-20; bh=zWlQ0
-	xIqmwybEu+J7v33mBZJCqNRUP8L6NFstG34c08=; b=fj9P3Wg7WQF9LKYDJwqO1
-	Um0VyKZvueVYbtKgCajE2cIuBVTzk+J57OFgSaVWeKjcmWmnicVCeWwLMo2dOpmZ
-	R9xxiW4hlactsgtxbqyM7aTaWDaedAvBuOYZYRq+2xAfW5Dui6SwOcCGERTYUlsH
-	+V28WGh69JztY/cSzzJvCoM0P4TUVvFNOq+ryjWH1W+dq6hQsH+j2b86F4ARWJZ7
-	eTb6VPUi/B8rGGH8TS0zqxR+HoBDIRKeP3eO3nMYsaD1MwDOw5WNNcUKQbYxKo6r
-	mz0ivu4ERPoB6H7s9kqFHuyfE50GoFQHGVlmcvzkSV43rDlHTIDpgA4XXzxYUkWE
-	w==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45xkuy00h9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Apr 2025 19:14:57 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53AHe4Fc023813;
-	Thu, 10 Apr 2025 19:14:56 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45ttyk1gkc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Apr 2025 19:14:56 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 53AJEn98040606;
-	Thu, 10 Apr 2025 19:14:56 GMT
-Received: from sidhakum-ubuntu.osdevelopmeniad.oraclevcn.com (sidhakum-ubuntu.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.250.108])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 45ttyk1gg6-7;
-	Thu, 10 Apr 2025 19:14:56 +0000
-From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-To: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, liam.howlett@oracle.com,
-        willy@infradead.org, Sidhartha Kumar <sidhartha.kumar@oracle.com>,
-        "Liam R . Howlett" <Liam.Howlett@Oracle.com>
-Subject: [PATCH v5 6/6] maple_tree: reorder mas->store_type case statements
-Date: Thu, 10 Apr 2025 19:14:46 +0000
-Message-ID: <20250410191446.2474640-7-sidhartha.kumar@oracle.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250410191446.2474640-1-sidhartha.kumar@oracle.com>
-References: <20250410191446.2474640-1-sidhartha.kumar@oracle.com>
+	s=arc-20240116; t=1744312534; c=relaxed/simple;
+	bh=74aBZ4a4VNWHvVTFPsKTue0UzsC2AKEi7fwRQlSMJqI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LhWrLr4AItkaXa0X69o+ZusfRFVVUPI57yBvjtyetk/IxC22tmETtGEYx9OarTdX1n167nIPxA2Kbnve9yomMM2g929+FQLEntTwfxi1si3akIHtZH0PesWS2mHJoH7XaSjx2OplBzpKaxt5liHLzUNtzFwjRev0NM8foiG0y0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d4578fbaf4so24788795ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 12:15:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744312532; x=1744917332;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H3W/HXh4at+evJCFCR9VU7dl/bIzh/ksaAyPG3mgaJQ=;
+        b=Z6W5fsOt5yxbBr3vvwtr9g4Fk0Ng2LMzBkPU4LAqSXssPTC8xRPqpppRO4MI7HFNfZ
+         FieCdU7ucV3502jIF3YNRiEbPWDDAkjJWSVNNbl7YHi45D/yWc1pk3SL5VnP8TLm3jQc
+         3AISvB0zOLc9C1fxbpW6MNm+M+L++CJZSxU+aaBveWx55vXk61Uud4YT4qwU37bbhOE7
+         vsyeR4CgVkAwiITffDiDy/hwsZ6Q8BxglTcqY+b7GJmcSvh5FXEnvIXq4fKmzD+JIS8D
+         eRirmIpRPf+HRQIFsP+yTQuTspJrEzOMOsjc+NnuBF70r2qrWwNsLS7Ri5aa+j//1guy
+         YOqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5ediGFj+A5Ja3lpYXk37DrM4MsouGABaGqazC/54ztHzdS8eFOH7kV2LGVHtcxwidZ9Z5fTeawgfvp8I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjOCuwAW2rQE8OXbnK7tibuMeD8B29TFOIsWXy8/OPC1Zle3jx
+	H12KcVSRTee1qo+Pl+yxYhh9L96YFf0GJhkFHjQ2VdJewDOHh20xHu8EWis7TA9WfSQMZnqIHIF
+	+JZYuPH1lPssoi4eMc3Wb16Dw+e6d19q9HV4jzILiiP4HKNZ82UJEUu4=
+X-Google-Smtp-Source: AGHT+IFirUMHr5M57+X2TQvOLvce76l5z8wP3l4mZu2gp6knq0i0FJMFLwIYkwCdy/OTW9jEau/QkG5Iwp+585UrV3ta522OKJqx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-10_05,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 mlxscore=0
- mlxlogscore=999 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
- definitions=main-2504100139
-X-Proofpoint-GUID: AuQSBcultmD_cCUSWfwdXLuB5k9yBpJM
-X-Proofpoint-ORIG-GUID: AuQSBcultmD_cCUSWfwdXLuB5k9yBpJM
+X-Received: by 2002:a05:6e02:2603:b0:3d3:d067:73f8 with SMTP id
+ e9e14a558f8ab-3d7ec227bacmr505285ab.11.1744312531778; Thu, 10 Apr 2025
+ 12:15:31 -0700 (PDT)
+Date: Thu, 10 Apr 2025 12:15:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67f818d3.050a0220.355867.000d.GAE@google.com>
+Subject: [syzbot] [ntfs3?] BUG: unable to handle kernel NULL pointer
+ dereference in generic_file_read_iter
+From: syzbot <syzbot+e36cc3297bd3afd25e19@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-Move the unlikely case that mas->store_type is invalid to be the last
-evaluated case and put liklier cases higher up.
+Hello,
 
-Suggested-by: Liam R. Howlett <liam.howlett@oracle.com>
-Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+syzbot found the following issue on:
+
+HEAD commit:    0af2f6be1b42 Linux 6.15-rc1
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=145dc7e4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bae073f4634b7fd
+dashboard link: https://syzkaller.appspot.com/bug?extid=e36cc3297bd3afd25e19
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1441eb4c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=161b0c04580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f359042635eb/disk-0af2f6be.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bd095707eff2/vmlinux-0af2f6be.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9257d0cc2f0f/bzImage-0af2f6be.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/93de6f4d2865/mount_0.gz
+
+The issue was bisected to:
+
+commit b432163ebd15a0fb74051949cb61456d6c55ccbd
+Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Date:   Thu Jan 30 14:03:41 2025 +0000
+
+    fs/ntfs3: Update inode->i_mapping->a_ops on compression state
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1351523f980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10d1523f980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1751523f980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e36cc3297bd3afd25e19@syzkaller.appspotmail.com
+Fixes: b432163ebd15 ("fs/ntfs3: Update inode->i_mapping->a_ops on compression state")
+
+loop0: detected capacity change from 0 to 4096
+ntfs3(loop0): Different NTFS sector size (4096) and media sector size (512).
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+#PF: supervisor instruction fetch in kernel mode
+#PF: error_code(0x0010) - not-present page
+PGD 0 P4D 0 
+Oops: Oops: 0010 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 5858 Comm: syz-executor328 Not tainted 6.15.0-rc1-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:0x0
+Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+RSP: 0018:ffffc90003f1f880 EFLAGS: 00010246
+RAX: 1ffffffff18fac93 RBX: 0000000000000000 RCX: ffff8880312cda00
+RDX: 0000000000000000 RSI: ffffc90003f1f980 RDI: ffffc90003f1f9d0
+RBP: ffffffff8c7d6498 R08: ffffffff82450731 R09: 1ffff1100ee119e1
+R10: dffffc0000000000 R11: 0000000000000000 R12: 1ffff920007e3f33
+R13: ffffc90003f1f980 R14: dffffc0000000000 R15: ffffc90003f1f9d0
+FS:  00007efd457ef6c0(0000) GS:ffff888124fc9000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 0000000034abc000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ generic_file_read_iter+0x343/0x550 mm/filemap.c:2870
+ copy_splice_read+0x63f/0xb50 fs/splice.c:363
+ do_splice_read fs/splice.c:978 [inline]
+ splice_direct_to_actor+0x4f0/0xc90 fs/splice.c:1083
+ do_splice_direct_actor fs/splice.c:1201 [inline]
+ do_splice_direct+0x281/0x3d0 fs/splice.c:1227
+ do_sendfile+0x582/0x8c0 fs/read_write.c:1368
+ __do_sys_sendfile64 fs/read_write.c:1429 [inline]
+ __se_sys_sendfile64+0x17e/0x1e0 fs/read_write.c:1415
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7efd4583d069
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 91 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007efd457ef168 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007efd458e3708 RCX: 00007efd4583d069
+RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000004
+RBP: 00007efd458e3700 R08: 00007efd457ef6c0 R09: 0000000000000000
+R10: 0001000000201005 R11: 0000000000000246 R12: 00007efd458e370c
+R13: 000000000000000b R14: 00007ffdcf3e22c0 R15: 00007ffdcf3e23a8
+ </TASK>
+Modules linked in:
+CR2: 0000000000000000
+---[ end trace 0000000000000000 ]---
+RIP: 0010:0x0
+Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+RSP: 0018:ffffc90003f1f880 EFLAGS: 00010246
+RAX: 1ffffffff18fac93 RBX: 0000000000000000 RCX: ffff8880312cda00
+RDX: 0000000000000000 RSI: ffffc90003f1f980 RDI: ffffc90003f1f9d0
+RBP: ffffffff8c7d6498 R08: ffffffff82450731 R09: 1ffff1100ee119e1
+R10: dffffc0000000000 R11: 0000000000000000 R12: 1ffff920007e3f33
+R13: ffffc90003f1f980 R14: dffffc0000000000 R15: ffffc90003f1f9d0
+FS:  00007efd457ef6c0(0000) GS:ffff888124fc9000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 0000000034abc000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- lib/maple_tree.c | 51 ++++++++++++++++++++++++------------------------
- 1 file changed, 25 insertions(+), 26 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index aa139668bcae..affe979bd14d 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -4083,15 +4083,6 @@ static inline void mas_wr_store_entry(struct ma_wr_state *wr_mas)
- 	unsigned char new_end = mas_wr_new_end(wr_mas);
- 
- 	switch (mas->store_type) {
--	case wr_invalid:
--		MT_BUG_ON(mas->tree, 1);
--		return;
--	case wr_new_root:
--		mas_new_root(mas, wr_mas->entry);
--		break;
--	case wr_store_root:
--		mas_store_root(mas, wr_mas->entry);
--		break;
- 	case wr_exact_fit:
- 		rcu_assign_pointer(wr_mas->slots[mas->offset], wr_mas->entry);
- 		if (!!wr_mas->entry ^ !!wr_mas->content)
-@@ -4113,6 +4104,14 @@ static inline void mas_wr_store_entry(struct ma_wr_state *wr_mas)
- 	case wr_rebalance:
- 		mas_wr_bnode(wr_mas);
- 		break;
-+	case wr_new_root:
-+		mas_new_root(mas, wr_mas->entry);
-+		break;
-+	case wr_store_root:
-+		mas_store_root(mas, wr_mas->entry);
-+		break;
-+	case wr_invalid:
-+		MT_BUG_ON(mas->tree, 1);
- 	}
- 
- 	return;
-@@ -4177,19 +4176,10 @@ static inline int mas_prealloc_calc(struct ma_wr_state *wr_mas, void *entry)
- 	unsigned char delta = height - wr_mas->vacant_height;
- 
- 	switch (mas->store_type) {
--	case wr_invalid:
--		WARN_ON_ONCE(1);
--		break;
--	case wr_new_root:
--		ret = 1;
--		break;
--	case wr_store_root:
--		if (likely((mas->last != 0) || (mas->index != 0)))
--			ret = 1;
--		else if (((unsigned long) (entry) & 3) == 2)
--			ret = 1;
--		else
--			ret = 0;
-+	case wr_exact_fit:
-+	case wr_append:
-+	case wr_slot_store:
-+		ret = 0;
- 		break;
- 	case wr_spanning_store:
- 		if (wr_mas->sufficient_height < wr_mas->vacant_height)
-@@ -4209,10 +4199,19 @@ static inline int mas_prealloc_calc(struct ma_wr_state *wr_mas, void *entry)
- 	case wr_node_store:
- 		ret = mt_in_rcu(mas->tree) ? 1 : 0;
- 		break;
--	case wr_append:
--	case wr_exact_fit:
--	case wr_slot_store:
--		ret = 0;
-+	case wr_new_root:
-+		ret = 1;
-+		break;
-+	case wr_store_root:
-+		if (likely((mas->last != 0) || (mas->index != 0)))
-+			ret = 1;
-+		else if (((unsigned long) (entry) & 3) == 2)
-+			ret = 1;
-+		else
-+			ret = 0;
-+		break;
-+	case wr_invalid:
-+		WARN_ON_ONCE(1);
- 	}
- 
- 	return ret;
--- 
-2.43.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
