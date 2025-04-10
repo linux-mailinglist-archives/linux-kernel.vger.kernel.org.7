@@ -1,137 +1,151 @@
-Return-Path: <linux-kernel+bounces-597818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79A9A83EB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:31:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E67A83EC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 966177B5B46
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:30:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9A2F19E28F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C2D25DAF3;
-	Thu, 10 Apr 2025 09:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8589267706;
+	Thu, 10 Apr 2025 09:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U4qt6Arr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Byc2DOiu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F1225D54A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03921266B72
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744277449; cv=none; b=sHd/lmaL6ssFuXPDQOaniYltTkqTSQ2aVfM7HxRwbsStm7JZsyjaDyaTRGaboDoIWI2IREEMfpmYuKE4fJdQPrKMDc1uJLhb61Tkuh1c0R91fWFfWVl8hTu/ANYBpKwyHtCDXMUpHLFV6cxrk6z5vGoQyCg5iyRgqA4bf/MT2N4=
+	t=1744277466; cv=none; b=AGcEOqpnnTDd4O7NvqYtPyakLcJleT5GKOQ7BZF8x/x9llZCw2UmTHFjCgQDgUzvmp3pEnFrn46OX7btA/OZSA/TjA0cs5eGkpMjHwIxMKd1eyGDJAu/60rxt/T/ZWaZrRpI9Nqk6MvMuHHsvzfVCnCNqYnSrZppOcxZNhBKUFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744277449; c=relaxed/simple;
-	bh=8G2dqMzY6Qb4Uq+M4SKnCGInMPsDcBYzXptNMx5MsJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SjT4CkTvpgnJBShW0u/hd6sEJ1Hr6zjupj8DD9Xw7DjJ/Y1ZKyzzpR2X40yOLD1eeHoyH8TQclcMMdKLTfx/HWr9hIrZSfhgZ9DVm9X/YwkoNJjOwsXMSHCRGoTfBdH7fg6zKwYF7CJG28MBQ9INhHd+1Fpmzdu55bvtDdYhWNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U4qt6Arr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53A75Jq2028838
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:30:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ZqtW7bMzYMRTd98Pj3PG0q2g
-	Dn33XGbZdcTOcs859xA=; b=U4qt6Arrts/3s5R7WCtPT72fdEBKMGz0cgUJspjF
-	yIMtE5/F01t55ETOsLgVxUrPyAn17+4r8EHp3634HwO4WCBRD+mWpiQsZEsfZ0cs
-	f/sF1dvg/hYTuhESxL6Okg7UTm896P7eDtlKWNBi2anNT9p4CUeFsoNFsUn3M3C5
-	JxuLp9Kki9+dHEHhE8+26uwpYCtAqrAXOL/egYYZ8YtdAMpMKEkMG8Q2ae4RYt7H
-	AIzfNzxZTLIFlvtsdO7iCKdrkvUNuBRqeopiuorW5GByHzk9tB6F2Fq96OiBleib
-	C1bT+I6nYmPSPTVCsx4D45bGfX/g7D0xq5qQivEQ3sOxSg==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twbupdgy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:30:46 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c09f73873fso98731285a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 02:30:46 -0700 (PDT)
+	s=arc-20240116; t=1744277466; c=relaxed/simple;
+	bh=p8WnN1jop2bnv+TBKh5ZzVW7Loud1RsCr86Lhw1nSC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N3/9vVP0U+onJc0dYCmvtmpz39HFn2OwBXAYKUqeAKxrp5nTydcFuXwililE76a2GQzBlze2Sn7bDbIdFGMQJllPiwq5OFF1mwDm/W4mHYwU+t5WvsQ6ZVHutx5HyeCnuZqGIOKmOToDclP6QQ+qMHIJVdmOxw1KtoG7W5HXhfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Byc2DOiu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744277462;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mVfmgRn9b+MKfQINqgY7O8gFSVgjcr0dyC/SYpb7QXA=;
+	b=Byc2DOiuIxr7B13Vco52L1NfV4xSYlr3ZGmr+QZ0Agv6vYRssPP30qkOSYBYX4E4p0kkkN
+	WnRcN6MPAL5tEZ5dQYrUIQiHvAu6QdoKf8zrEJMWTKv/Abe1G7vahN5cB94RYf4SqFTFlY
+	RCVp0vmUZ58ziO//7685pV/AccIREbo=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-657-eHl-dKk7P66KDw-LPENLvg-1; Thu, 10 Apr 2025 05:31:01 -0400
+X-MC-Unique: eHl-dKk7P66KDw-LPENLvg-1
+X-Mimecast-MFC-AGG-ID: eHl-dKk7P66KDw-LPENLvg_1744277460
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-39ac9b0cb6aso363368f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 02:31:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744277445; x=1744882245;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZqtW7bMzYMRTd98Pj3PG0q2gDn33XGbZdcTOcs859xA=;
-        b=ku+Ia5CPOg9Y9HL5/YoOTwfjXas8AYn6S9ohgI1fkGsOYkuO7pKSkG5k+XpYZzkdx3
-         vN9HvZ4exRRz0ttA9PGPMcUNwR8DBH7vTQFegs0mcRrxwSJjz7mXYBHSHL9A5ynY18F7
-         1Ob2xkeQimliQZ8X8f5wZXEM1IKG/td96SIF4v31J3+lgx7QGcS/CNmUq8bCEuYAh1D5
-         CS9yWNWYvPdF87/J/kFpGzbV/4X5q/GZYjn/wKBvFW79T/7NqtsRo0i1lBRvs19K6+/2
-         fGrigWKXoJetAag4AQXzts+J5EAJHRXWE+vaiSdhD0eNKtYl3kq2dq+zRKvNFGG3LH6X
-         PbsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPKsPMwmGydnrcdtcZ9a362rD+/7qhNjBvSxBVzjGNrbfVQHxJUk6bd57jFE3+hDwMtbh5wJkvt8FvdvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIlCnVLHNZo6wGAibpuv9tTDzh8jRU2DIE4iUqH8OACQBph1Vz
-	Tp85B9OOum1Lk/znJycVrpEdtW5KIiJdIzGrSLVIYzTmkVv6kA9iXs9L+84r4ydkJFSrx6ePywE
-	awma4qYq/rWEaTNInvHJgVJcXmtPQBCmnpHa8Kim2loCmAQk0VRVdXHZGhHAUHVA=
-X-Gm-Gg: ASbGncum12sLmcgmYutFWYKyU26DJHD+Jyqky0cG6jNHyZT6/BJFfrcSM8Re+zSb2M2
-	fYyxmWufvhRjdQUVrDpwjh1QURbvVLPbd0tjfzLQFcsXJwgie34yQSIUG2zFT6stSpKlF9Ws4Wj
-	G5Q+xo5RXthH9j1H+tyCJMXuG+c+egCY/E6v38ePjD/BXJieKVhz/kOBZVVD5xp8/jj6SVyODmh
-	xsO6HAYuHcn/u3elRWGTQYj1lXK5eMCNyo8feKabfXv/EAdyHUPdcPDvVel4V2OYWg/vHuvYj0p
-	TX3x3iQE2eWMRizzoYFtPEIs4nK/OwhQnV+osWuLY0fM2jCb04/nhreftmMMlKETYMHdwu+gD9o
-	=
-X-Received: by 2002:a05:620a:258e:b0:7c5:a230:30ff with SMTP id af79cd13be357-7c7a76cf8f5mr251332385a.47.1744277445630;
-        Thu, 10 Apr 2025 02:30:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFVltL3h1Caq1HEBhiLFJIRZ3Hi1sFgkDZeWmfTeKtna2kWsYnZwqyGx+FPDMlvJ3YI1hI9Zw==
-X-Received: by 2002:a05:620a:258e:b0:7c5:a230:30ff with SMTP id af79cd13be357-7c7a76cf8f5mr251329485a.47.1744277445295;
-        Thu, 10 Apr 2025 02:30:45 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d23880dsm91875e87.79.2025.04.10.02.30.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 02:30:44 -0700 (PDT)
-Date: Thu, 10 Apr 2025 12:30:42 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/bridge: anx7625: Use devm_pm_runtime_enable()
-Message-ID: <wdxowk32hratizv6xr3gqa5nab2zprgtfua2rpyupr7frd7ojh@3q7crhry46wt>
-References: <20250409093814.3977025-1-wenst@chromium.org>
+        d=1e100.net; s=20230601; t=1744277460; x=1744882260;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mVfmgRn9b+MKfQINqgY7O8gFSVgjcr0dyC/SYpb7QXA=;
+        b=lc5UHZIY1lkBzSWwYKx1hh9HBMvcqpfbHqSewAh5e6th3xqIjSspmzWXMMOoSd87Pk
+         FtLeWO1DF02PynCYglQbv5asG/HtB+ovj3tPWw2MEwvs/+H9YOICEZf0lsb2UeEIco+a
+         JlgDYTWWmAWOW9MVZrHrZULJygKOng+osRTNl9rNgOnLG3ld/r3hXwH7q0+Icg5wRVBm
+         SmDwzj73zvMMw0SiYdnO9FOTbxvuDOReOw9ey2lA5TdERL8Em7b5Av469HewmWQzWSWP
+         kJ8iCqfmO81iuNwrvvhXgzdshVSPDojU/3OlbTmDzSabT2TzL1TmFc+26vWzLz9TwHEF
+         EsQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfjCrlUptYepI6Rw1Hn6WL8Kxm4ZCZ9Tgv8kbwixaLIKcnbB3TDcBVNWsbHydpRjzT+UQeBLYmvUs9u7w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmpYbuKrnIhQSLKjT+Bloqz4RsAhF1I0uHp12m99Ef04viXouT
+	z5cK8sE2iw2XeSf2cO+BPJIY4hKsh8uXo75mPnNrqIle2CbQ63oSafeiljV7Hx6BwoVII1hNhIp
+	YeWlg8KQNrFBpPD9z/4vApKDSS4Hlu5TwIdpya/6lsl9XNYxNV9uOI/kOX4AGyA==
+X-Gm-Gg: ASbGncvLvFp9fmABmGNIHsHGkXmGF70BCxOZY14Ev94ysX/N6FuwaOlDr53+xih6nCI
+	Hw9u9dA8pBrfR9sHreo6gtFGjyeGWI7v1zSzVpb2xinBbhTC1cxHToCDpQNhFC5D6CDvoynnnOM
+	kqhWIfMIo6jRrmWU8fUK7mUN9NKlzZC7feM1wB3RRF9k2eou9FKGa/roa1Ko4dDjTbXWy2Vf/gR
+	wajl3F3T6LDLXLaqNOvraRRpgTOi/Q/KGZQNZD11tRSsag8NKg42hM8Ce1yIfD4QcctIgD/A626
+	1yPdZTy2OEQN45qvVd18IVVULCYT57ImD7ehvzM=
+X-Received: by 2002:a05:6000:4202:b0:391:487f:2828 with SMTP id ffacd0b85a97d-39d8f4657abmr1372765f8f.10.1744277460113;
+        Thu, 10 Apr 2025 02:31:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFsq3LGvvA3jJ5Ac8MsDzHgTZ2+T6jVK8OnBPioVOk7F1bhAo8k8hGKF874SxsPTxBYjyatKA==
+X-Received: by 2002:a05:6000:4202:b0:391:487f:2828 with SMTP id ffacd0b85a97d-39d8f4657abmr1372740f8f.10.1744277459756;
+        Thu, 10 Apr 2025 02:30:59 -0700 (PDT)
+Received: from [192.168.88.253] (146-241-84-24.dyn.eolo.it. [146.241.84.24])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f23572c4esm45760155e9.26.2025.04.10.02.30.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Apr 2025 02:30:58 -0700 (PDT)
+Message-ID: <09aeed01-405d-4eb7-9a12-297203f1edcc@redhat.com>
+Date: Thu, 10 Apr 2025 11:30:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409093814.3977025-1-wenst@chromium.org>
-X-Proofpoint-GUID: 3mFXuwvlwb5780L0KYxFISKBe8GWsTnp
-X-Proofpoint-ORIG-GUID: 3mFXuwvlwb5780L0KYxFISKBe8GWsTnp
-X-Authority-Analysis: v=2.4 cv=dbeA3WXe c=1 sm=1 tr=0 ts=67f78fc6 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=cm27Pg_UAAAA:8 a=EUspDBNiAAAA:8 a=Kv9FL6QeMsydgTWXVFcA:9 a=CjuIK1q_8ugA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-10_01,2025-04-08_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 mlxlogscore=683 phishscore=0 mlxscore=0 spamscore=0
- malwarescore=0 clxscore=1015 adultscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504100070
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net: ppp: Add bound checking for skb d on
+ ppp_sync_txmung
+To: Arnaud Lecomte <contact@arnaud-lcm.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: linux-ppp@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
+References: <20250408-bound-checking-ppp_txmung-v2-1-94bb6e1b92d0@arnaud-lcm.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250408-bound-checking-ppp_txmung-v2-1-94bb6e1b92d0@arnaud-lcm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 09, 2025 at 05:38:13PM +0800, Chen-Yu Tsai wrote:
-> The anx7625 driver is open coding what devm_pm_runtime_enable() does.
+On 4/8/25 5:55 PM, Arnaud Lecomte wrote:
+> Ensure we have enough data in linear buffer from skb before accessing
+> initial bytes. This prevents potential out-of-bounds accesses
+> when processing short packets.
 > 
-> Switch to the common helper instead.
+> When ppp_sync_txmung receives an incoming package with an empty
+> payload:
+> (remote) gef➤  p *(struct pppoe_hdr *) (skb->head + skb->network_header)
+> $18 = {
+> 	type = 0x1,
+> 	ver = 0x1,
+> 	code = 0x0,
+> 	sid = 0x2,
+>         length = 0x0,
+> 	tag = 0xffff8880371cdb96
+> }
 > 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
->  drivers/gpu/drm/bridge/analogix/anx7625.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
+> from the skb struct (trimmed)
+>       tail = 0x16,
+>       end = 0x140,
+>       head = 0xffff88803346f400 "4",
+>       data = 0xffff88803346f416 ":\377",
+>       truesize = 0x380,
+>       len = 0x0,
+>       data_len = 0x0,
+>       mac_len = 0xe,
+>       hdr_len = 0x0,
 > 
+> it is not safe to access data[2].
+> 
+> Reported-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=29fc8991b0ecb186cf40
+> Tested-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+A couple of notes for future submission: you should have included the
+target tree in the subj prefix (in this case: "[PATCH net v2]..."), and
+there is a small typo in the subjected (skb d -> skb data). The patch
+looks good I'm applying it.
 
--- 
-With best wishes
-Dmitry
+Thanks,
+
+Paolo
+
 
