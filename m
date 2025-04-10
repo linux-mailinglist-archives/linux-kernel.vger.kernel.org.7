@@ -1,154 +1,123 @@
-Return-Path: <linux-kernel+bounces-597232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81881A836E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:55:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A374A836D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FF241B60C37
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:55:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4C8E7B005F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2581E9B2D;
-	Thu, 10 Apr 2025 02:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6769D1E9B22;
+	Thu, 10 Apr 2025 02:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="LNeURRFM"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="AS7/sY4O"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CFC8BEA;
-	Thu, 10 Apr 2025 02:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6181E573B;
+	Thu, 10 Apr 2025 02:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744253709; cv=none; b=glrkLVvwLMG4J4HC7jaV476bbtKRXIAb4KQejb733QdsVYCMlDs1YjH7nQy2lAlPv8EDeT9wSxQzEloe+OHvTIqWsXW5c0sbHxG9eiNpYigqF4NNkH1lfzradCRmVYmfb0riLkpLt+3Gw62aHkD/kZC/Twwk/g4PqviRO4fJk0Q=
+	t=1744253212; cv=none; b=p60qevsWLlkhmStClD/M8Izmjfe0Mb1/jR2dIMvEqpaLamQss1cHyrzfPjWe3tVKuCLVVyjs6EaqH/MhO5F1OtBuxeAEUkvPk4xQgtVMmXMZhUX6+mJkdpevULZtlGd5650iwz63W46m5Y/PpXhs2qaOJKcLTEieHlEkfdcIpYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744253709; c=relaxed/simple;
-	bh=ntJDYlFgj9fz/wJJAGnGgdBadWpsnZOLS8ysbhL8i3Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Kk6abV9civcKe2rkLJTyu6aP7X+hGF2zPu5QMlB1yzBDsPck43DIz2Gm4GG3Vhv4rIl8K8r0q/knNRcqVSHMb2XdhQ2Z7AmnuEMoGK5rU6oBv3xoiTLg2xagjNSRaL3EUSHAoza4kC75TmNpzEnzR7dg2YkZVMQBqoZ0l7e8gHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=LNeURRFM; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from canonical.com (118-163-61-247.hinet-ip.hinet.net [118.163.61.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 38FDA3F10A;
-	Thu, 10 Apr 2025 02:46:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1744253190;
-	bh=Tn+OooYTtNSV3ykkQzsFSQ8UTaiB3yu7GZAh112kkm0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-	b=LNeURRFMFkUfySNzGo257C6TakvvNYZqKVASj1swinz6sC5cz1AC08KWWjMa3+3E1
-	 +yM2463DZG4ZoGwVWbzCA1I+iL0DCJBW8In9/UP7+VjZrKhm5eOjYu+xrfPl39GjDa
-	 GcOPb1+AxGZLw1qayfPT7WkKQCFSa+MMeiMNFkCTAzFjvvqCAYi3H4eBx35Y/DhmTv
-	 HYB+X2G8FSftvgkI4hCdrG5UYvSD7pfvUp7x2Kr7GZU9lG9yPhIQhZ7Ba9LH3XIL4t
-	 e0jAc+gxWPuBRcOo2j+XiatLzG4OKLh1P/TG73DSF26IlKX+5uvoV6QvJd8dH68y6Y
-	 9xVt8+9UuyKNQ==
-From: Ivan Hu <ivan.hu@canonical.com>
-To: gregkh@linuxfoundation.org,
-	krzysztof.kozlowski@linaro.org,
-	limiao@kylinos.cn,
-	wangyuli@uniontech.com,
-	jinxiaobo@uniontech.com,
-	huanglei@kylinos.cn,
-	mathias.nyman@linux.intel.com
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: quirks: Add quirk to prefer vendor-specific configuration
-Date: Thu, 10 Apr 2025 10:46:26 +0800
-Message-Id: <20250410024626.981215-1-ivan.hu@canonical.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744253212; c=relaxed/simple;
+	bh=QOZQEHQyBXXxcPrT6oX3nR5O2Rhae5MEEUplAr+tytI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pb+k8T82P0Sr+IskxZjsTmeY5zKfBJ/L2ZVA8HEs/UDJsZHMwrMoesjajkRdN5TwVt5Qbaarz4wBe/83FuIXVT91j0pbq39+4FFpmVbxDZpf1++wsKvUrr3d8SMKga3oHHUwGAILQOlI9TSRRqltGu4bPayiPDPeUQaLK9IRcd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=AS7/sY4O; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39bf44be22fso112241f8f.0;
+        Wed, 09 Apr 2025 19:46:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1744253209; x=1744858009; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4Ph0sMnCNGa5VTSi5U0q7oZGDLT8fbaCzu7xWDmfDqw=;
+        b=AS7/sY4OX0R/rkXbtOcl33kO7nbq2RlBfNey/rmXr+qUjotIH3qMO7sEr0GodFktR5
+         DzRjiJq+nOjXraaZoBp6xjIU65/mtjKKv0Sl8ge2CbzTdcr24jl01CAt9SpRtyGz22qP
+         F8hUDLahym2qSS06MmcyzMeqV13kCEe5D5sp+M6eMzclez6gj2jnOBmMO9P4jwd0W0pS
+         v09gECzn/aA2JXdAzFvFvyuqntV7RlNtqSTQfYqir8WU0+ZoCVWXfKSJMJm40r7BFS8L
+         FKN2UiCJO3KOg/3hTlfD1tADUqRdKhQvT9PedjzLCAj6pBQ351HkI3dF5Q54LorHooUa
+         0rGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744253209; x=1744858009;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Ph0sMnCNGa5VTSi5U0q7oZGDLT8fbaCzu7xWDmfDqw=;
+        b=kf4Cal9XfZlvrabgYcbfz2cnpLosCbFoAd6jWe/1QAOR/zl38ZEJ+96IrIejc85tkz
+         TGSUDOH90aFmN7twEF3JUjU5BApy/e7Hi8xBRDEZYcsWByMySy1JN6aupAvY/K7wEHrr
+         1AL7N5FTgtAQ8/zLzkKs4aWH+w/raUT41osa7PNxIbjIZFi8OzPXZrNKOT82ncsMB9q7
+         yUl/hoL8HN1wrej5j/16eUPObzSRpjuXRedPYpyBQXRpO9/orymc0fyJt51aZvbqBu/X
+         qznffPj1JA2zkC5E3vpfUj3KDE3y0KK+ii3ibqTSblbGKTAK9DzsAnDqDlvwGaN6hwyK
+         pVLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFKOga0ywX/23IDiRgNpZDj3mgxz90C3Ha+08UG3xSTo98zU5Tmke3KBRCSsa8AYHOX+1CPyG7IOjMIFk=@vger.kernel.org, AJvYcCVhQw/zxeBEvTlGtsbUr82+3YTJbBnghpHYvErFip6jduEH8B4Hl+okR93rn44dH2W1ai7ATR8/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0KPmMGYLMUyF3Gj5bm/7sJRg3jfjVu5pjpvVdWwt93I+JaShT
+	DDEuN1EzrmSh5KxH6zxfyayHl1TTku5uEZTKqqI3ArMqWfpX61s=
+X-Gm-Gg: ASbGncvd5wXxcO9GTqMu40wfdOHIGT4ZD72A+aKeExsOuZ9Ix+umjU8JA8kJtNHQCpG
+	mzmH2zc4ojDweaVx8sPNk/b0Gr2mcZrmuxQsPn0O+5EPbeAVMff05Ki1lhuNCKboxjYT7mHslu1
+	3WlB+QEc2Ld3FUZR+/cJUvwN471w+JhYWDmtxNIVbYu2eYeis9clPpISYkSjiiQDsgC91Fh1uA8
+	Snz+HwGygYADmEi2ql1nDha51xrv9TT0cNOeooyc125cfl84la9KcEX4afMBWG8GTRC+RWwEvgP
+	sUN7Tq1EFy4dXFncJ6oH0pP/xKlsuzKvuQZXGUMEnx4gQNzvRbxRPoJgEwWBajI1aYZM6J4YnbJ
+	pvMOfCx0vdy0yT2/q
+X-Google-Smtp-Source: AGHT+IHOE7jiEy7hV+dNeZEvjMEJVqKsUfhz2BDR1aM/BcXoA5fDODP+FoIOTe8FppaftAyDPrucgA==
+X-Received: by 2002:adf:b643:0:b0:391:3094:d696 with SMTP id ffacd0b85a97d-39d8f4fa19cmr511308f8f.54.1744253209347;
+        Wed, 09 Apr 2025 19:46:49 -0700 (PDT)
+Received: from [192.168.1.3] (p5b057414.dip0.t-ipconnect.de. [91.5.116.20])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39d89377785sm3229950f8f.28.2025.04.09.19.46.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Apr 2025 19:46:48 -0700 (PDT)
+Message-ID: <b0b3c83a-862c-488d-bb05-67b9d3a5019b@googlemail.com>
+Date: Thu, 10 Apr 2025 04:46:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.1 000/205] 6.1.134-rc2 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250409115832.610030955@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250409115832.610030955@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Some USB devices with multiple configurations expose a vendor-specific
-interface class that should be preferred by default. However, the generic
-usb_choose_configuration() logic selects the first configuration whose
-first interface uses a non-vendor-specific class, which can lead to
-incomplete or limited functionality.
+Am 09.04.2025 um 14:02 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.1.134 release.
+> There are 205 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Introduce a new quirk, USB_QUIRK_CHOOSE_VENDOR_SPEC_CFG, which
-instructs the USB core to prefer a configuration that contains a
-vendor-specific interface class when multiple configurations are present.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-Apply this quirk to the ASIX AX88179 USB Ethernet adapter
-(0x0b95:0x1790), which requires selecting its vendor-specific
-configuration for full functionality, instead of falling back to
-cdc_ncm.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-Signed-off-by: Ivan Hu <ivan.hu@canonical.com>
----
- drivers/usb/core/generic.c | 15 +++++++++++++++
- drivers/usb/core/quirks.c  |  3 +++
- include/linux/usb/quirks.h |  3 +++
- 3 files changed, 21 insertions(+)
 
-diff --git a/drivers/usb/core/generic.c b/drivers/usb/core/generic.c
-index 9c6ae5e1198b..19bf35ede5a0 100644
---- a/drivers/usb/core/generic.c
-+++ b/drivers/usb/core/generic.c
-@@ -23,6 +23,7 @@
- #include <linux/usb/hcd.h>
- #include <linux/string_choices.h>
- #include <uapi/linux/usb/audio.h>
-+#include <linux/usb/quirks.h>
- #include "usb.h"
- 
- static int is_rndis(struct usb_interface_descriptor *desc)
-@@ -155,6 +156,20 @@ int usb_choose_configuration(struct usb_device *udev)
- 			continue;
- 		}
- 
-+		/* This quirk forces the selection of a vendor-specific
-+		 * interface class configuration when multiple configurations
-+		 * are present.
-+		 */
-+		if (num_configs > 1 &&
-+			udev->descriptor.bDeviceClass ==
-+						USB_CLASS_PER_INTERFACE &&
-+				udev->quirks & USB_QUIRK_CHOOSE_VENDOR_SPEC_CFG
-+				&& (desc && desc->bInterfaceClass ==
-+						USB_CLASS_VENDOR_SPEC)) {
-+			best = c;
-+			break;
-+		}
-+
- 		/* When the first config's first interface is one of Microsoft's
- 		 * pet nonstandard Ethernet-over-USB protocols, ignore it unless
- 		 * this kernel has enabled the necessary host side driver.
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index 8efbacc5bc34..1e0e05cb29df 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -565,6 +565,9 @@ static const struct usb_device_id usb_quirk_list[] = {
- 	/* INTEL VALUE SSD */
- 	{ USB_DEVICE(0x8086, 0xf1a5), .driver_info = USB_QUIRK_RESET_RESUME },
- 
-+	/* ASIX AS88179 */
-+	{ USB_DEVICE(0x0b95, 0x1790), .driver_info = USB_QUIRK_CHOOSE_VENDOR_SPEC_CFG },
-+
- 	{ }  /* terminating entry must be last */
- };
- 
-diff --git a/include/linux/usb/quirks.h b/include/linux/usb/quirks.h
-index 59409c1fc3de..1f73bfc191f0 100644
---- a/include/linux/usb/quirks.h
-+++ b/include/linux/usb/quirks.h
-@@ -75,4 +75,7 @@
- /* short SET_ADDRESS request timeout */
- #define USB_QUIRK_SHORT_SET_ADDRESS_REQ_TIMEOUT	BIT(16)
- 
-+/* force selection of vendor-specific configuration*/
-+#define USB_QUIRK_CHOOSE_VENDOR_SPEC_CFG	BIT(17)
-+
- #endif /* __LINUX_USB_QUIRKS_H */
+Beste Grüße,
+Peter Schneider
+
 -- 
-2.34.1
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
