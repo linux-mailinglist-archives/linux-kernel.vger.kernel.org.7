@@ -1,118 +1,139 @@
-Return-Path: <linux-kernel+bounces-597992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 369AEA84103
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:43:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6CD8A840C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54E833BC756
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:38:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13E09189D107
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A13281353;
-	Thu, 10 Apr 2025 10:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91396281345;
+	Thu, 10 Apr 2025 10:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="z7kV0aTq"
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.75])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="mHBP0RAB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ovFQjNzg"
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3758BBA33;
-	Thu, 10 Apr 2025 10:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E5420FA96;
+	Thu, 10 Apr 2025 10:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744281531; cv=none; b=GXeZFo+EyaRsVoq1mSN4lBk12/J+ltEYyAiHTEcHQRW26IRYKClmoGqDkBimygxcQW6LEQhmIzxG9K8jH+f2TI6YYfkT+Kd+rvI+uBFV0imC4R4ArLD7ZPH8mOzvz2c4l2p8qS4KYRigVBDm84b4Fwsql+DAJEXW80FX5hLgTm0=
+	t=1744281234; cv=none; b=NRYm1W944yuRzv0Bh92SwRo/qwRwntl2rxQYAr9FVrnmZLMl9Df78WfMd8+EUCsraBeiY0sSHAyJzH5BoRxpWg1+SmtBhaGWOW4mYsupqZqAZhYuFx41QJKcZSWWfARlUqVs3CP7EUgP8HGJ/J07lyX4MtuJGbo0gGKsD6jZNJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744281531; c=relaxed/simple;
-	bh=c5XTT4qEHGgCMYa1z33NO+JggFBj56sKwgHQpQ/tYR4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lN3mQAGlsu3Fv03SkJnviIwPPS61DccVDS/Op56PtZvPdQEZ0phbQ7hiymV6p2y60MI7BXhJe8FLxFcqF9cxUmupEbJ5vZG8NRJdaykAZb/W3QI2vNjWBmMRZjyTIKpz6AhJqkuVxC/vGQMJU6CwUpU4F+SvKqoYw0716fiqUZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=z7kV0aTq; arc=none smtp.client-ip=217.72.192.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1744281526; x=1744886326;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=c5XTT4qEHGgCMYa1z33NO+JggFBj56sKwgHQpQ/tYR4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=z7kV0aTqBMLaRHnzg2mM92FPkV4FNBMKb62vbyE6Cspsm574APLbsyqLL0U5Ivb9
-	 m82aWivXCGDYf59p/jKmZ0Af5ZE0aXBlm/g/n8/axMT1Ee2V+6FVOL08jUJouSsnF
-	 gl/42DwYUSP2tqhGQx7Qdlm9bWg1yu4PZuXfuMlFlCklr15iVkeU3VD0gv4Gjri71
-	 4BxT+pgE3bY51/z+zoqh0eKSlZhKjJbcckLlW8pFHYYW5DN1KIBPQx6vigg5NlTLN
-	 ahlWlci2oyKOc1o3yVrBV3I4g/5ci7BdatOqTLN4WpXQv0RD8CqFSdZEA/VI0gbDV
-	 AZCnjKiMPJBMtv8YUg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.152] ([91.64.229.215]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MDPuq-1tsP5J1QW6-006gvS; Thu, 10 Apr 2025 12:33:15 +0200
-Message-ID: <44eb1bf8-55b2-4185-a4ac-fe41bfdb71eb@oldschoolsolutions.biz>
-Date: Thu, 10 Apr 2025 12:33:14 +0200
+	s=arc-20240116; t=1744281234; c=relaxed/simple;
+	bh=6vCuOw2AeDWeVIVYtKX4ef9E4C/7BOqizkflg20ZiBg=;
+	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=f9wBT1xmTJaWsPOoTF2H94mdeD5PPldvruEwC8xd1SIzFFflcm6s9LKecWmc2X5am75ekTtbUDF9JkPJY0jZ0qdaA6dfhnc9LNRVFHciqPuy34FrJ9P5V1CYZtTvy0mXHvip1dW6+cz8FmteOjGFdvbUR0bXoqDmIt0Sy4X17Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=mHBP0RAB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ovFQjNzg; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 89650114011B;
+	Thu, 10 Apr 2025 06:33:51 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-05.internal (MEProxy); Thu, 10 Apr 2025 06:33:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1744281231;
+	 x=1744367631; bh=9ZVsy+u8Fm3uzDsHWAx5pSIoB+hcG1H+DFlE95sUZDk=; b=
+	mHBP0RABN5/evqVdcLDafmhl/eBw+M8nMrynhaOcdKy/1G4/dJ8ZIvWZPQtZwrqR
+	wEQ/rEyZwjZeU21ivpR/clvDqcMawCfeZZ+uqwwT286xP9mF0sD/Lx8ZI5Yn7+hf
+	gCFHRwXiG1eRn0FqhwQY5hH81vXPnl7edxk+3lIlI3wnL9ls4hb1FceIW4GKcJrD
+	O4IeZzzfx4NKHucUoC3TFWEkpSqwC2j2MrN9MZVEeZ2LQCP1Dx551p3trneK16WU
+	0uj4Dfr7UBQWH2Wokc9dfJUW9bU2cE+/4OeOzaI90wO5i9VkhuXQjix9vcChGQYs
+	jHr+osC4ZTq/BmbVooU/OQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm2; t=1744281231; x=1744367631; bh=9
+	ZVsy+u8Fm3uzDsHWAx5pSIoB+hcG1H+DFlE95sUZDk=; b=ovFQjNzgb8yOF8q9w
+	d7yGWos9r4QP2XSEvKfAjMPCm5ZFSh2JOG68wzQnmjIGo63fR83ZMJf2JTgWVkzX
+	gUX5c/zZOKyxiFqUuWV/XMc6ovhDf2U8aGC6gxZCx3aw9GGsslb6+rx1RQjaZHdV
+	CKGdl3LDlA1rF8+HoDE3Wt2VoasKDIqfedhcHc7dt3tcHwjUinDTAdl9lr7oUGqB
+	MO1mi8iqHK93pZdc6SoACgcWhx95SnJQGp57wgx/g/6rrPa+1odEdA8cHSuBJnP9
+	YGPSCS2G19vZQ8Rni0h6Xh7h2tKEhosUwRriGvGU50rQ7JTFrjeRQrCY+b9flpE0
+	wiYyA==
+X-ME-Sender: <xms:jp73Zzr5u-2-yT9r7klL04Sd2xqNZznM6aocr4Xa-aEr86MyGEgo3Q>
+    <xme:jp73Z9pVYXBIAs2spukj08uR50buHfrv_G3MiZsb4RiVGISI3QLsVbLMmPpfGASNh
+    IHeczReCFie6Lci8ZU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdekieelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvffkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhkeeltdfffefhgffhteetheeuhffgteeghfdt
+    ueefudeuleetgfehtdejieffhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    ledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuh
+    igrdhorhhgrdhukhdprhgtphhtthhopegrnhhgvghlohhgihhorggttghhihhnohdruggv
+    lhhrvghgnhhosegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepuggrvhgvmhesug
+    grvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhhsuhgvlhhsmhhthhesghhmrghi
+    lhdrtghomhdprhgtphhtthhopeguqhhfvgigthesghhmrghilhdrtghomhdprhgtphhtth
+    hopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehmrghtthhh
+    ihgrshdrsghgghesghhmrghilhdrtghomhdprhgtphhtthhopegvughumhgriigvthesgh
+    hoohhglhgvrdgtohhmpdhrtghpthhtoheprhguuhhnlhgrphesihhnfhhrrgguvggrugdr
+    ohhrgh
+X-ME-Proxy: <xmx:jp73ZwPC63QEjRg65RleGg8mfcepyNDhKYQUe8Selt8Jrx69I0ccHg>
+    <xmx:jp73Z265V1Lf2vQ8Us6g9e3cQCqXCm0Kky-VebrGT9lSbSU4r40RGg>
+    <xmx:jp73Zy6MnnFR-j5t26EMKK9WpKZpPqs-_Y5MlKMfLQzMes8_NEF0_w>
+    <xmx:jp73Z-ifwXGMhy6al8aPiEPEIycQWjnMdDJ_1eNT7CtWWx0vSJuTvA>
+    <xmx:j573Z7yro9JETGk1AI_wDdM2v3NkVIDK4BCsdAKzbp2Qqqy9ZsQG4NyS>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 7851E2220074; Thu, 10 Apr 2025 06:33:50 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-hp-x14: drop bogus USB retimer
-To: Johan Hovold <johan+linaro@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
- Stephan Gerhold <stephan.gerhold@linaro.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250328084154.16759-1-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <20250328084154.16759-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:OX0UsNunnMDxxZSh+PkinXtYyho1+HXrTSk+9RMAUdAjx/nHiEC
- UqRycI/xgkYM5PhtkuXYCuobxG5NAUBBue5B7RvHIOtwHw9lJdXlLrzNdewJGCU/5vnSpM+
- jK+venid9CwFSWmKqj2e9+xMa+D0kP2S6AIEELcawyKnELjs0ndjCI4p6DOpKOwhl1u03pO
- JxO1X/luQTE7MKtpi0q+g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:juvZSYytPOo=;qG+OOdNGQz1TG4KehHdJa/h/jOf
- jqyPDcMUrUVjXgnlOW7/gaxqxtRKnV/f4qZWWeS5B7EYSorcJvM2ckgQj1nlp2Ua6PjneiifP
- 7qT7DHeP3w9ov3VzRc+YTGJJoBy5sUH32IYsdNTVTnn857E37E991SrEM8Q/lw/oQL+ZL4eoq
- h4cmBSi8VkaoaYzCzw2YH4+rpw8FUX++m/WKJSaXqQRR5oF5hII1BP+go+m3wdtdkObWzO1g4
- 3/TbpNcLkY8gfq6+Y3ZjiEtC8/Mus6cClyUey4/V72vJBmNJ3B0j31oQpLkL8h5h4wB4mhM3i
- z/e+CV8E+kdT+7NojTd+A1Dh2PAWPbepF05IqH3EG+WvqLcN4P73QslPJh6btOjE66Qi4+cpp
- TPyWLxcl5/TLAVgOGZFIgrDnDdQjfOYjgDIzT60z0/2P/YC4blEIf0i6h8pvb3dlFRqTJ5/F2
- BtdOZjppUz+GmIgKUWWHeXefqxFICzGDEUVuPSnRwOnBCNNfI6DdvVh7+WvzHBRb5q8RAATnt
- WyFTyQW91ZjPYSTcUrm+6cQCJbNzJvQN7JMfy6p9j0NPYGtU8cxTfMbmVhrhyyshhUSXM+aRB
- 3wD5L3+XEU7/DbGtwhabq6Ym0bNb3mr/jCQ8JWFf34vgDOyzpgMc/otdVYSEmcNMJmquiwYua
- eBHvJkgTygRacNor6gogkFaHozkR16XMDU69e5zwUpIIPwlJW2ToVIBFmStBt58+M70zpDLgj
- efM3h24os/WNjXGtNvM1ULvb5b5zMlXdgr1CbvlO+o9jn6WYGG0iVtxX33vG0sBhkmODx3ptD
- hMRVTtmcNhl4s2l7AEypSX7YqehoyYVVvaH/UfiiFwAV0VEMwd6ZRy0NiR4+pP4A0PioLuSen
- CaCDjUFwCuaIxbF0/TDjTZJV5DS4+KAAYRTVMzrxrq6HSrrTaZTcOHuZBgnjmB0Zya2+oEdUp
- 5i2UcGnGZbySnSOhRIT9Tsf08aCXodzDfSoE20cVTmHFcrM9wt5iZX/7BWPgaydKdFWthVtCD
- 2J+vQMw0JWEPtl9cIH+pAN7cIjhyxqcgoTgLejevJoCVcBLB9KekI/sysLyfTd54TMmvVMdMi
- /g76TpzEpu6Qy92MSS4vXrT+rQ9ifcEUkhcMcYfMvPZ5/dvBW+dIL3y8Dai7EKyfy0a+zqYPn
- DA3aZJQiLAVMyOGlkdIYkDH41k98xRjxAIXdTr/hSlCmtrcIUAkaPQRTAzmRt1Pcc114Bhc4a
- 63T+DjhUFq4rLmxvEMq+HgXNUUrvUYBJnOlQRQjNHVYc077v+D6HO8KmwLMV2GIDbRkEsEl7T
- yHSOhhz7p/YaPd/vYhMD+9K38ABamoYWXvijKo60WcmCTqq989arsHRYnYGCMzM98dzGiDNHj
- 86tXJhJZAgYuCWLMkmBIBRsaEgqjJuQj4dvIQ=
+X-ThreadId: T36728e73d2ba2577
+Date: Thu, 10 Apr 2025 12:33:27 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christian Marangi" <ansuelsmth@gmail.com>,
+ "Andrew Lunn" <andrew@lunn.ch>, "Heiner Kallweit" <hkallweit1@gmail.com>,
+ "Russell King" <linux@armlinux.org.uk>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Daniel Golle" <daniel@makrotopia.org>,
+ "Qingfang Deng" <dqfext@gmail.com>,
+ "SkyLake Huang" <SkyLake.Huang@mediatek.com>,
+ "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Randy Dunlap" <rdunlap@infradead.org>, "Simon Horman" <horms@kernel.org>,
+ Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Message-Id: <11698ed8-e607-4c21-bfa7-a0b7731d0d1e@app.fastmail.com>
+In-Reply-To: <20250410100410.348-2-ansuelsmth@gmail.com>
+References: <20250410100410.348-1-ansuelsmth@gmail.com>
+ <20250410100410.348-2-ansuelsmth@gmail.com>
+Subject: Re: [net-next PATCH v2 2/2] net: phy: mediatek: add Airoha PHY ID to SoC
+ driver
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On 28.03.25 09:41, Johan Hovold wrote:
-> Note that the SBU mux can be added later when/if someone figures out how
-> it is connected.
+On Thu, Apr 10, 2025, at 12:04, Christian Marangi wrote:
+> 
+>  config MEDIATEK_GE_SOC_PHY
+>  	tristate "MediaTek SoC Ethernet PHYs"
+> -	depends on (ARM64 && ARCH_MEDIATEK && NVMEM_MTK_EFUSE) || COMPILE_TEST
+> +	depends on ARM64 || COMPILE_TEST
+> +	depends on ARCH_AIROHA || (ARCH_MEDIATEK && NVMEM_MTK_EFUSE) || \
+> +		   COMPILE_TEST
+>  	select MTK_NET_PHYLIB
+>  	help
+>  	  Supports MediaTek SoC built-in Gigabit Ethernet PHYs.
 
-Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+This now also fails for non-compile-test builds with
+NVMEM=m, ARCH_MEDIATEK=n, ARCH_AIROHA=y and MEDIATEK_GE_SOC_PHY=y.
 
-I have added a patch for the gpio-sbu-mux on the 10Gbps connector. [1].
-
-[1]:
-https://lore.kernel.org/lkml/20250410-hp-x14-v2-0-d36414704a0a@oldschoolso=
-lutions.biz/
-
-with best regards,
-
-Jens
-
+     Arnd
 
