@@ -1,153 +1,176 @@
-Return-Path: <linux-kernel+bounces-597749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5175A83DF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:09:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40092A83DD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB73617037C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:06:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D73F7B4F46
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A54226CF6;
-	Thu, 10 Apr 2025 09:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE72B21A451;
+	Thu, 10 Apr 2025 09:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="iLAOBNDK"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dTA9pZNc"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A05A217709;
-	Thu, 10 Apr 2025 09:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ADE20C03F;
+	Thu, 10 Apr 2025 09:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744275793; cv=none; b=bALx483BWj+q6QhntoTIEupYSIe9X0lSKJlxq8jVTG3caU/ldgXZwBQMF+YA3gNfl0cEynmUWN9Tx/FTZ/PvmcKgpKgMzZOgJSsSnsSX1hK31QC1I3GI/XGL7hvpyoqSn77nrdldXUdkxINimxk/vT+Jax29qRWIutNWBkEcxvk=
+	t=1744275832; cv=none; b=dMmNUKM0nfB/YTgJoeQ0s3qD129Nkuyzvq3msHFJeyaht7BZA8pFMsaU+1JaCSnbL8Igiq3wy/blPAk7Ybpvz38JD2AVVN99u8++xb3rxdy23ECaQ3lBTAZpibBQdBfudUT3wV2kFVn6WD1czCqGBfLREYe3bV+6ok3aNMaPyTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744275793; c=relaxed/simple;
-	bh=WGcuhW+KAcLLBYOhGyFQSkJmUZPVKbn6gP0aZz5do50=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=doD1Jxg+sEWQVzvNW4VrujJ3fyHTHWJrGY+78utVl6CO203QJVVwH8tyBwYJPL9Rg+SwvJXXgnsz7zI2UMUMMgdgiwEp6o/ZEqmNjalM5ipDal67rd0SEYPmGq1pmIWxLYa/mBvIHHssrZxNewy3HCKvXpui9zXH6lVhZauaUoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=iLAOBNDK; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=nKmaXQ3UFu+nSFWbeJhZzch8svzvXdM2x6AWlzQyZ1s=; b=iLAOBNDKuCAZ4fSOF87pM46hHx
-	AKlMfpAF8YT1TKll0/ZqfRUClyyn6faAxaNk+EakbsPEzxG9C9RXdIds4Uo+xlSq4EYN6Y+yWtlJn
-	ztUG+Ln629m4+0T4zl3ZZ4TK0eCltdIiLMc2BLdfH3AysbTVoUrA6P6EHvfH+NwzU+bW0oIOnjlEI
-	pPR0LPQ46CyY8Oc5TGr44AbErU06VT6oRIOIa05wv/kFfQDbMeYD5uefMB/xsnn440DgGw/F55d+p
-	ebOMKPqdjM6if9EjPxVqjang77xfq5E8u+YbQi0S5Dmaw9BQwqbsA6LuYwnJXGmVpJKn5KFyumROK
-	fKnKtLZA==;
-Received: from [89.212.21.243] (port=41926 helo=localhost.localdomain)
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <primoz.fiser@norik.com>)
-	id 1u2noV-000Djj-2B;
-	Thu, 10 Apr 2025 11:03:10 +0200
-From: Primoz Fiser <primoz.fiser@norik.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	upstream@lists.phytec.de
-Subject: [PATCH 13/13] arm64: dts: freescale: imx93-phyboard-segin: Add EQOS Ethernet
-Date: Thu, 10 Apr 2025 11:02:51 +0200
-Message-Id: <20250410090251.1103979-14-primoz.fiser@norik.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250410090251.1103979-1-primoz.fiser@norik.com>
-References: <20250410090251.1103979-1-primoz.fiser@norik.com>
+	s=arc-20240116; t=1744275832; c=relaxed/simple;
+	bh=ppKrKnV9+vX8mOGUnGEaL5bFCF0QWlj/y8uSyBVvFy8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=kjsdGRk6Py7brAGmd3wZb+w7pBi1NNjOm5TwuU1S4MpJISQUp/7k0vMvTujiUsIpArIMwtRIJmvBifLV18PCTcHSHse0QzHpK+tN1Yk7fd/TOrtQ02HCQQQ8jiovqbOz3L3V44UgiW5yB4LwNgH8/qq9+9peJK2QrwbYSiwtlJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dTA9pZNc; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EFC5720452;
+	Thu, 10 Apr 2025 09:03:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744275827;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9W47A03v/jaDinmYX8Ic5nO3KToJ83CC7MwvmAZCXYc=;
+	b=dTA9pZNc+QUadR65S4fti1u2xJ3SvwiKAPBbWTB6SVSt07wWimcvPvJs8q7Fm69/089dd0
+	FNu+gF4BiMDHyS9SSJ4VZSrCgRuwRk/YBV7jdjpw5w6+jfzhYy1UID0b/EAomZbjN1pwTx
+	Mmt3B1Od1d9n5ePkwVdO3u4hztT62JC+oB6Yah3uXtaANP2f/DP7HmlX5hS48tOUyNKksN
+	yu6QsX+wAIFB+u+IBZ+gQIat/xWilWheLzMJftn5fwco6lWhH+nigC3ZLP/aJwjoDX7sAU
+	Rg/eXgCTs7xOE424fn6fMB48D8Fk4Wd46wpXgu4AHOdR9szuZRE+v2TPxubjBQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
-X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 10 Apr 2025 11:03:46 +0200
+Message-Id: <D92U6CMH9WWM.3JLM1KLZF4WF8@bootlin.com>
+Subject: Re: [PATCH v6 07/12] gpio: regmap: Allow to allocate regmap-irq
+ device
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
+X-Mailer: aerc 0.19.0-0-gadd9e15e475d
+References: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
+ <20250409-mdb-max7360-support-v6-7-7a2535876e39@bootlin.com>
+ <Z_aiubEgXLaDpsoq@smile.fi.intel.com>
+In-Reply-To: <Z_aiubEgXLaDpsoq@smile.fi.intel.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdekgeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekhfekieeftefhjeetveefudehuddvvdeuvddvudfgfffhveekffethfeuffdtudenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlr
+ dhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-Add support for the carrier-board Micrel KSZ8081 Ethernet PHY. This is a
-10/100Mbit PHY connected to the EQOS interface and shares MDIO bus with
-the Ethernet PHY located on the SoM (FEC interface).
+On Wed Apr 9, 2025 at 6:39 PM CEST, Andy Shevchenko wrote:
+> On Wed, Apr 09, 2025 at 04:55:54PM +0200, Mathieu Dubois-Briand wrote:
+>> GPIO controller often have support for IRQ: allow to easily allocate
+>> both gpio-regmap and regmap-irq in one operation.
+>
+>> =20
+>> -		memcpy(d->prev_status_buf, d->status_buf, array_size(d->prev_status_b=
+uf));
+>> +		memcpy(d->prev_status_buf, d->status_buf,
+>> +		       array_size(d->chip->num_regs, sizeof(d->prev_status_buf[0])));
+>
+> ...
+>
+>> +#ifdef CONFIG_REGMAP_IRQ
+>> +	if (config->regmap_irq_chip) {
+>> +		struct regmap_irq_chip_data *irq_chip_data;
+>> +
+>> +		ret =3D devm_regmap_add_irq_chip_fwnode(config->parent, dev_fwnode(co=
+nfig->parent),
+>> +						      config->regmap, config->regmap_irq_irqno,
+>> +						      config->regmap_irq_flags, 0,
+>> +						      config->regmap_irq_chip, &irq_chip_data);
+>> +		if (ret)
+>> +			goto err_free_gpio;
+>> +
+>> +		irq_domain =3D regmap_irq_get_domain(irq_chip_data);
+>> +	} else
+>> +#endif
+>> +	irq_domain =3D config->irq_domain;
+>
+>> +
+>
+> This is blank line is not needed, but I not mind either way.
+>
 
-Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
----
- .../dts/freescale/imx93-phyboard-segin.dts    | 35 +++++++++++++++++++
- 1 file changed, 35 insertions(+)
+I can remove it, but as the line above is potentially part of the
+"else", I have a small preference for keeping it.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
-index 08574b146400..92f0cb6eca26 100644
---- a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
-+++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
-@@ -91,6 +91,28 @@ dailink_master: simple-audio-card,codec {
- 	};
- };
- 
-+/* Ethernet */
-+&eqos {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_eqos>;
-+	phy-mode = "rmii";
-+	phy-handle = <&ethphy2>;
-+	assigned-clock-parents = <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>,
-+				 <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>;
-+	assigned-clock-rates = <100000000>, <50000000>;
-+	status = "okay";
-+};
-+
-+&mdio {
-+	ethphy2: ethernet-phy@2 {
-+		compatible = "ethernet-phy-id0022.1561";
-+		reg = <2>;
-+		clocks = <&clk IMX93_CLK_ENET_REF_PHY>;
-+		clock-names = "rmii-ref";
-+		micrel,led-mode = <1>;
-+	};
-+};
-+
- /* CAN */
- &flexcan1 {
- 	pinctrl-names = "default";
-@@ -176,6 +198,19 @@ &usdhc2 {
- };
- 
- &iomuxc {
-+	pinctrl_eqos: eqosgrp {
-+		fsl,pins = <
-+			MX93_PAD_ENET1_TD2__CCM_ENET_QOS_CLOCK_GENERATE_REF_CLK	0x4000050e
-+			MX93_PAD_ENET1_RD0__ENET_QOS_RGMII_RD0		0x57e
-+			MX93_PAD_ENET1_RD1__ENET_QOS_RGMII_RD1		0x57e
-+			MX93_PAD_ENET1_TD0__ENET_QOS_RGMII_TD0		0x50e
-+			MX93_PAD_ENET1_TD1__ENET_QOS_RGMII_TD1		0x50e
-+			MX93_PAD_ENET1_RX_CTL__ENET_QOS_RGMII_RX_CTL	0x57e
-+			MX93_PAD_ENET1_TX_CTL__ENET_QOS_RGMII_TX_CTL	0x50e
-+			MX93_PAD_ENET1_RXC__ENET_QOS_RX_ER		0x57e
-+		>;
-+	};
-+
- 	pinctrl_flexcan1: flexcan1grp {
- 		fsl,pins = <
- 			MX93_PAD_PDM_BIT_STREAM0__CAN1_RX	0x139e
--- 
-2.34.1
+>> +	if (irq_domain) {
+>> +		ret =3D gpiochip_irqchip_add_domain(chip, irq_domain);
+>>  		if (ret)
+>>  			goto err_remove_gpiochip;
+>>  	}
+>
+> ...
+>
+>> + * @regmap_irq_chip:	(Optional) Pointer on an regmap_irq_chip structure=
+. If
+>> + *			set, a regmap-irq device will be created and the IRQ
+>> + *			domain will be set accordingly.
+>
+>> + * @regmap_irq_chip_data: (Optional) Pointer on an regmap_irq_chip_data
+>> + *                      structure pointer. If set, it will be populated=
+ with a
+>> + *                      pointer on allocated regmap_irq data.
+>
+> Leftover?
+
+Yes, sorry...
+
+>
+>> + * @regmap_irq_irqno	(Optional) The IRQ the device uses to signal inter=
+rupts.
+>> + * @regmap_irq_flags	(Optional) The IRQF_ flags to use for the interrup=
+t.
+>
+> ...
+>
+>> +#ifdef CONFIG_REGMAP_IRQ
+>> +	struct regmap_irq_chip *regmap_irq_chip;
+>> +	int regmap_irq_irqno;
+>
+> Perhaps call it line?
+>
+> 	int regmap_irq_line;
+>
+
+Makes sense, thanks.
+
+>> +	unsigned long regmap_irq_flags;
+>> +#endif
+
+Thanks for your review.
+Mathieu
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
