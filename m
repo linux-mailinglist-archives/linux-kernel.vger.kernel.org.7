@@ -1,136 +1,126 @@
-Return-Path: <linux-kernel+bounces-598180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD915A8432B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:33:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50193A84331
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0DC3BAD20
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:32:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56AFD8C58F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46225284B53;
-	Thu, 10 Apr 2025 12:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18B6284B59;
+	Thu, 10 Apr 2025 12:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="wAcr0Kz7"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZa10pSB"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3C0283691
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 12:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127723A8C1;
+	Thu, 10 Apr 2025 12:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744288361; cv=none; b=n4rUHhKqU7MZpZDgzJBwduYF7XKdX3uL3ei/XQ3U2fq9SQcKyn7zZVofE5hPgA2mHnkAopuRXJK+C9l+YjS0FyS2hyUPkKr+u0nUJSfzxm++u+Qt1SZ8UYoOKZ4CU8IjUlBB+oEBbsE16sU1XDETrI+HelyFb3PVxsK6aJ7vZ6w=
+	t=1744288437; cv=none; b=SAzbLzuN/a6TAi+gdlmq5cGXctMxd8xY9DblZb22R6iu9Ll8pouhlWRLyoIiNJEtvBUY9NzC9LKX5p9NF2txJUuVQpgsbrO7xuvBhBLF4WUuhc0vTby26P6ie0hKf54wtWE+v/C5paFe4sUwaxM1XMJmaRrM0FJrQ3S1146aSGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744288361; c=relaxed/simple;
-	bh=vaduyXSktTjHWIM6mMUVuzB/JU/7o9Vgbb4ojf5mTUE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LMbhJ2WjPQ4k4k2W1G3XO/7RdR1q2IpKaaCOvAco9wgeK0lrG330rU7MdggwKgiPvxOOLftad9OmsQRYdApjQsxLxzNr9Xf82VRTyNA8UteVfArRyOjiH7+nWfluJaKx913L/MtR1BMliuU1Rjc47gH4qGDacNONEpCAqYRQILI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=wAcr0Kz7; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3fbaa18b810so188633b6e.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 05:32:39 -0700 (PDT)
+	s=arc-20240116; t=1744288437; c=relaxed/simple;
+	bh=/WszoMIP6EQYuRW+MTr7n2B9CJYeHTdfrFM3mSvNScE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DsO23tLAqRvj50nFEl3Wjp1L8NgTgYz12BVACj8ho7eKUmgl/1mFZovxv2vYiSeSwJZgnWsPt6SCx8sM6v4ck83hXAsfh8b7FbF3Yom5cEdAIVR3XXRXBxrOUcq4OV/tkhwmn6gAavC15R6+rKLZ4T+pa5uIibvjoMYdJDc62gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EZa10pSB; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-227d6b530d8so6333785ad.3;
+        Thu, 10 Apr 2025 05:33:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744288359; x=1744893159; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GvSNTACO1SZCY31F0gRrZZq+wvkmlB8UFBxIZ9DVjtE=;
-        b=wAcr0Kz7P6zFsFwt5BfIPOsSF+2tNShxV8aRC1lu6GJ4Og3+aB0bcFOUrzv/M3dhKv
-         FIebYKdLbbqWlwVw8ZejZFvl15rw2avJp2inoI7GNJAGz+iGp9Y++3ZWu3yqGmpB0Itk
-         FPYHH7KjpeZ3jx0R+tVjcTJushdG4J4JpDy0yUEGNvMS/JAZQabieAIVeKExMqqt3WkO
-         nVO3vw2anuWnBVpq591W/UqcgkpGisHHFiRi5prN9Gk8PbeNpCkjvuNgcisQKMYT7uH2
-         /FYTnyTIMLfyipjnKmdZM2sGCjyJKEK+ParzF+zONIfNGoDuDVJCri61PuOZv+SQRF9z
-         QZnw==
+        d=gmail.com; s=20230601; t=1744288435; x=1744893235; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fdhtisb7ONya5sQCeSv1FXg5FKXsjOsuUWxLEyWVkBw=;
+        b=EZa10pSBU0QcNprpeYYnInrIBAwozpsx6sqGpsNJJ4Z0lbwW286ZD5xCqeQcXtjzPM
+         1EQ+bXLWLfWA84lqYBUq2DmyCPdQSbHrXn8gf8PEyjNNxnEUyvhJtYgP6pmfpVCrYNq5
+         f98kzlg+7YP98Eacpv8u/sg4AA11yBORGnHUgXF/jnVVchDEKMJx+S+sZB+rmX10Qhqa
+         GNNGRKox/8HFIxGwowLzc81Vcd5kDHA9vCUvQPVr5coGU/gZ+CGdWLfLOqCbXuwpq1As
+         W76veBqK6UvBhQjD0l6RJBLldJcK8arPzSCqM7SVlKxGGZf3dvdyGnrRh6syXsT1pPAj
+         1JTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744288359; x=1744893159;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GvSNTACO1SZCY31F0gRrZZq+wvkmlB8UFBxIZ9DVjtE=;
-        b=BgfnYvibZCgbddJNuzKjoqJYyReN+h+emP4AB5l4Z2AnzN1bwbqFq+Fl87L6VFkzTr
-         8mAWdEafGQWiz9DJd8DJzYxLXCcGSQj29saG6rJeiP+sZERt9dcpaZC1Ar4d0CQrNM39
-         YmBRuqc7TIMag9jK1eI8EMxR7Grl82gTboOSVI3erokfs5rhw6/XGB+3uiXf9PCfcT1d
-         7w9BFaOxGMq8I2W5i8eY/55bsTviCLduPg+g3uBCLc2qHmlWjd35KcXpWveT6YMse7Ft
-         6PSPdItMiP+bXPeDXYTm4jPEGfHc4afNMAGZPToPJyoCbcdQAM7ueBe7XLy7KlIPACne
-         d/Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCVmz0KOxf9vM889eT6ivRiG8ck2BFv7t7lvCCVgDRgIrJ2ZxWVN/YhKCraKhuZv+CBwv1XAu/VWxlkRnic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjVMGGWMkzvNKCNe1d5gTPfEKJJJKzT10OkroWtWjeJ6B0triH
-	jmTo3zlcTwYLE73q5yz+f1CqlLfqjotMFvizcheQUS4WnguioR9ciWxCqpDZFGM=
-X-Gm-Gg: ASbGnct0ik3uE/YPheF2iLKxZ3tXhr8PzdgAJVI0yUZL144FArjDszGd+h95c/6iB4e
-	q4zoiuVzw1n8qTToZwFEUFm6tmXOgy14esvbjNU2+pOzCBmJjiQhkrik0gqncPwFbUP0ACWO/I4
-	h6HWAzXxoPX082TSXWV2Ug0Ot2Yeiq2/qEOyosX2ADANUgXvLpE39tOk7zQpKomcdQsfZWN0nnW
-	kFTVXDNy3JOVFtfEme4YJFkzA0jxRdOumsI9RjhxVz+ZMupeHBtiBJO6p4Zvwr9ciGfH0nuUV8m
-	d7EBV5f0YDnXTnI3Y8mgcKPwLanyH8+J1CD+Kc4kh9ZdIaGYY3gL+ZT3xKlE50PR9HXnlk4mWmQ
-	lB528
-X-Google-Smtp-Source: AGHT+IEJuAZEVXhBtSWrNjlEQvBiq7KT4K1Km9MSzZyjIkHUjkvVril1VSVFFBGM/J31v9xCTSVpWA==
-X-Received: by 2002:a05:6808:7004:b0:3f7:f7b7:88b with SMTP id 5614622812f47-4007bcdc348mr1582330b6e.21.1744288358751;
-        Thu, 10 Apr 2025 05:32:38 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6045f5b28basm505694eaf.36.2025.04.10.05.32.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 05:32:38 -0700 (PDT)
-Message-ID: <0ed3ce4c-9be0-485b-a1ea-6a34931179db@riscstar.com>
-Date: Thu, 10 Apr 2025 07:32:36 -0500
+        d=1e100.net; s=20230601; t=1744288435; x=1744893235;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fdhtisb7ONya5sQCeSv1FXg5FKXsjOsuUWxLEyWVkBw=;
+        b=fq7R2vcOxoas5Up57JYLjja+AvN5pCDlN7ZUGyflMQuz4Tmf7AQ64PIi7C2qGcNEP2
+         wTfNzlZSG2X6ABFJga6OcTHRps7NOLn+1iRL9DOhvDe3vM8vczlTbYXaWZXy25PaJI0m
+         1lk1AldJX+2VqzhcZLgzRCI5/vy2mLdLT9FeSED039/FKmFL95GZNCuxhGA8f14luAI2
+         n/Qez2bX92SxMKJgGlpcOYMtJqBULDSWSvqO3BOseklT2dz2G2+VfQoX460oCRTA0FSM
+         opr39GBD7xyfumVLWT6z5Rza7L1BBbDfJWwTMBm5uvzNb7WZkit9bTOtrA4KpGaE95wZ
+         blyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVf2HjYo7FgSRTkY4XA9geB/ryAd/envRfPcbeXJ28h3F6eUkv/oLc2uajDeypl5aNSJlKEC7S9A1j0Q8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOa76UdrUWptOIgwG3cz75Nomy5zQSGuGyvYhtJVcIlCJHSzYM
+	0YkXaXMIK5T2Q7FZ8CZlOh+mE9Ub91YqY5dqXyQXhWRKI30r4J8U
+X-Gm-Gg: ASbGncuD1DHz5haciWCz8bj6XhgSQ1uVvXDHX0jbhKziQzD1kcqAuphTK4MJYn1wu4w
+	QV9vXf0U4pT5F5UrdiQKsNeCKN8ZUequyo2XIzqsNmyeIQ2SWZmvc5bfdGmng5z+pWWYcxheP1j
+	YpUGsL1CHVc2IVe+zhISa4+p0UyU1Cp8jfpjNZHtmvnrGRQOQf4aXG6k8fDdy/29jX/aH4qMj9M
+	hCMHg/f9PctnHHCt9JAko6gdJPb6s/ki2G2N51nMDo1dd9NtrUUUti3w49lc7XN8+MSVyxZpTTj
+	QkvH0Fg65bUyvgI9qgoleTQ58fxSOKLh59XGre8bdyJQ0k1dBo3U1xHNj5Ic
+X-Google-Smtp-Source: AGHT+IGWopa21TT5kCKlAgfcD/hVkByLHUMsaams5ryy0ih3QUKrE5F4Zs5cycX2GkjUTWzdwFtfAw==
+X-Received: by 2002:a17:903:32c9:b0:224:1af1:87f4 with SMTP id d9443c01a7336-22b2ededeafmr47866165ad.22.1744288435078;
+        Thu, 10 Apr 2025 05:33:55 -0700 (PDT)
+Received: from localhost.localdomain ([2401:4900:4e2c:2a27:3898:b58d:494:6c50])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1d2b913sm3214645b3a.12.2025.04.10.05.33.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 05:33:54 -0700 (PDT)
+From: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+To: jmaloy@redhat.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org
+Cc: netdev@vger.kernel.org,
+	tipc-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+Subject: [PATCH] Removing deprecated strncpy()
+Date: Thu, 10 Apr 2025 18:02:50 +0530
+Message-Id: <20250410123250.64993-1-kevinpaul468@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/6] clk: spacemit: Add clock support for SpacemiT K1
- SoC
-From: Alex Elder <elder@riscstar.com>
-To: Inochi Amaoto <inochiama@gmail.com>, Yixun Lan <dlan@gentoo.org>
-Cc: Haylen Chu <heylenay@4d2.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
- Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>,
- Jisheng Zhang <jszhang@kernel.org>,
- Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-References: <20250401172434.6774-1-heylenay@4d2.org>
- <20250401172434.6774-4-heylenay@4d2.org>
- <8fe0aaaa-b8e9-45dd-b792-c32be49cca1a@riscstar.com>
- <20250410003756-GYA19359@gentoo>
- <dm4lwnplwcxj3t3qx3a3bdxtziowjfoqdy4vrd3ahmzkhejrov@fa5rujatatew>
- <z27ri5eue43ti6b2te2cbxiow66mtgbnyudoo5cs4quabgbx5r@uipzoxvfoysi>
- <a8e5adca-8eff-4bbb-a7fa-ce4489b63fa5@riscstar.com>
- <sl752im2sn5sz6yzc23ctprh3rwryuhgtggsaauxixn3b267ag@6sf5fahu6b5i>
- <20250410015549-GYA19471@gentoo>
- <f7cun6vh6lv7q2qdgba4a55wjv3v2pldl22xnrqxnurj3jlyk7@mvafnye3wv7m>
- <cb13c955-3994-4950-9c28-37703f749b0e@riscstar.com>
-Content-Language: en-US
-In-Reply-To: <cb13c955-3994-4950-9c28-37703f749b0e@riscstar.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 4/10/25 7:30 AM, Alex Elder wrote:
-> 
-> I'd like to see that be the only thing there, and have
-> various SpacemiT modules define default values that
-> depend on ARCH_SPACEMIT (or _K1) in their Kconfig
-> file.  Like:
-> 
->      config SPACEMIT_K1_CCU
->          tristate "Support for SpacemiT K1 SoC"
->          depends on ARCH_SPACEMIT || COMPILE_TEST
->          default m if ARCH_SPACEMIT
-> 
-> I *think* Haylen said that's what he's going to do.  You
-> could make it "default ARCH_SPACEMIT" too, though that
-> builds it in to the kernel.
+This patch suggests the replacement of strncpy with strscpy
+as per Documentation/process/deprecated.
+The strncpy() fails to guarntee NULL termination,
+The function adds zero pads which isn't really convenient for short strings
+as it may cause performce issues
 
-Nope, I just reread what he said, and I'm mistaken.  Go
-with what's preferred by the clock maintainers.
+strscpy() is a preffered replacement because
+it overcomes the limitations of strncpy mentioned above
 
-					-Alex
+Compile Tested
+Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+---
+ net/tipc/link.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/tipc/link.c b/net/tipc/link.c
+index 50c2e0846ea4..4859b3ccc094 100644
+--- a/net/tipc/link.c
++++ b/net/tipc/link.c
+@@ -2227,7 +2227,7 @@ static int tipc_link_proto_rcv(struct tipc_link *l, struct sk_buff *skb,
+ 			break;
+ 		if (msg_data_sz(hdr) < TIPC_MAX_IF_NAME)
+ 			break;
+-		strncpy(if_name, data, TIPC_MAX_IF_NAME);
++		strscpy(if_name, data, TIPC_MAX_IF_NAME);
+ 
+ 		/* Update own tolerance if peer indicates a non-zero value */
+ 		if (tipc_in_range(peers_tol, TIPC_MIN_LINK_TOL, TIPC_MAX_LINK_TOL)) {
+-- 
+2.39.5
+
 
