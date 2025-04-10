@@ -1,84 +1,104 @@
-Return-Path: <linux-kernel+bounces-597200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A59A83659
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:21:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23BB9A83664
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6167F3B216A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:19:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 773221B64D9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933451C8632;
-	Thu, 10 Apr 2025 02:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148F71E9B34;
+	Thu, 10 Apr 2025 02:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="C2ZwX9AG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QE00JUtz"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D2A1AF0BB
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 02:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA53F1E32CD;
+	Thu, 10 Apr 2025 02:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744251601; cv=none; b=PgXXuQPuVjjelD+9X8NEQo+/7tp0Ko8oWS6FlkmOmuaOLDrfitLHYStMR8QapWQs03zcIAcr6Gw9kDhk2RUTBPAcQTZMcOwXjZoAb3BgyWHoGAOZ8ugszZMDxXqJrzh4hxZ7KEzHdsXxINxhevj8Sz3xCHjiytj3MgfWYcXRclg=
+	t=1744251611; cv=none; b=nElu2ViK3A0WEcBy4HG9EZcE2rvXfg1V1gNlj8nbQhN+WDrAC725Q8CIElmIDf8u6uqgbcH2kXCYG9hCGmce0jipwcdGNcnHbBFxYEONQMyb5gwsFnja8e9gD6PcYn8KzmOdj2aRkmKTQ+QVya4PH7EIBq+jYJ/ws8cDfsElHMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744251601; c=relaxed/simple;
-	bh=UUekSxE+tk+VwekK5jEZCtmL2RwRMomvGMlVVMnw82c=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=nTSuugYUsZfCqsWsAMfNiq5jGKyImOM2cmvi1Z7TiJXt3ui+8sqIRVYXFkfqOoZa94nFcFeSLZM8GTfNU9Hy44887H5QXJmy5FxV/Lvm2Jv0MWhGcl3aGWogNH2G5TzjzjehQwTSnhmA4KZtgi/fDdsjHfFiW4mpFFPWKSz8SXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=C2ZwX9AG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE021C4CEE2;
-	Thu, 10 Apr 2025 02:20:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1744251601;
-	bh=UUekSxE+tk+VwekK5jEZCtmL2RwRMomvGMlVVMnw82c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=C2ZwX9AGrh50LpzrQVm4+LSlDAH5fOQv+fimtEKv8OCHb1+QMkUkmSDDf42tUlPzx
-	 SyzQm0+G3EcJUNb3IkqOrO0brdWKmBPWP8PVGAHYLc7gVcSlICcckHDrBwmq+1Z94g
-	 F2buw12O1+roYa5yCIamZbkLzHPY8CBsuTqKP1Sw=
-Date: Wed, 9 Apr 2025 19:20:00 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Donet Tom <donettom@linux.ibm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
- linux-mm@kvack.org, Mike Rapoport <rppt@kernel.org>, Ritesh Harjani
- <ritesh.list@gmail.com>, rafael@kernel.org, Danilo Krummrich
- <dakr@kernel.org>
-Subject: Re: [PATCH 1/2] mm/memblock: Added a New Memblock Function to Check
- if the Current Node's Memblock Region Intersects with a Memory Block
-Message-Id: <20250409192000.d8a630d2c10e902bcdf80973@linux-foundation.org>
-In-Reply-To: <50142a29010463f436dc5c4feb540e5de3bb09df.1744175097.git.donettom@linux.ibm.com>
-References: <50142a29010463f436dc5c4feb540e5de3bb09df.1744175097.git.donettom@linux.ibm.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744251611; c=relaxed/simple;
+	bh=bUkqiLfAP/k+IFyaQBzohFul3Uad4pjwsVFoXvMIUm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AxKiRsCCIA0fna3aPezJ5p2GNp0Ju4RdlBd9kVPF8m6VeUeFyiXx8bePcUiGEnXNgeua1KcHfFovOgH/j8+pRcgFHx+tErLWqdL7LxhDyfl6/0hGfi7E5YstHMmmQO5C/p1Jk8WXhftwSIoADp2mG90su8RPirUyAO/UwrtvIaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QE00JUtz; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1744251604;
+	bh=EIGh7xVw9mJe7tfwQcjcshSTNY9R4WoIrtEq0zhtpyw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QE00JUtzwc7pCrVRYXnz3qL0SUGpvba8+G/fLI1FGVzOP6B4VJM26IYfbcrFnFlP3
+	 FUku062M/dtXAWCeIEpnaTz+UQspGmgei4HxYLUwgvOrgzvon1q3CbtNuWWz02ykET
+	 gouKvKt1dZ343BQbZuchZmx6I8GEICHkovOy2iIXIAo+6NJpOiaqzYhOhcRzmQfIE3
+	 qU2qK4jx1IvaUIpDiiFXvVLPaE8ZLnsYI/PVFerMTErbccvb64742GKyx8+kYzVTTA
+	 RCpOoZs65iPUF2aoMCw8r3FHM0mCs/hSaHlejPLst7Etm57JITtixzLVPB2egJTdly
+	 fXB6YSH+a6LaQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZY3S404f4z4x2c;
+	Thu, 10 Apr 2025 12:20:03 +1000 (AEST)
+Date: Thu, 10 Apr 2025 12:20:03 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>
+Cc: LongPing Wei <weilongping@oppo.com>, Mikulas Patocka
+ <mpatocka@redhat.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the device-mapper tree
+Message-ID: <20250410122003.5434159b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/551n4GLkAtAk0HXFkm7t2tx";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/551n4GLkAtAk0HXFkm7t2tx
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Wed,  9 Apr 2025 10:57:56 +0530 Donet Tom <donettom@linux.ibm.com> wrote:
+Hi all,
 
-> A new function, curr_node_memblock_intersect_memory_block, has been
+After merging the device-mapper tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-"intersects".
+ERROR: modpost: "__blk_flush_plug" [drivers/md/dm-bufio.ko] undefined!
 
-Because the name is too short ;)
+Caused by commit
 
-> With this function, the boot time is reduced.
-> 
-> Boot time without this function - 32TB RAM
-> ==========================================
-> Startup finished in 1min 12.413s (kernel)
-> 
-> Boot time with this function -  32TB RAM
-> ========================================
-> Startup finished in 18.031s (kernel)
+  713ff5c782f5 ("dm-bufio: improve the performance of __dm_bufio_prefetch")
 
-Impressive.  I'll assume this is rppt material.
+I have used the device-mapper tree from next-20250409 for today.
 
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/551n4GLkAtAk0HXFkm7t2tx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmf3KtMACgkQAVBC80lX
+0Gz8kAgAmXlyLAHb1KrPCiDS46XMuZGwYuYnZaLoFLxJWcroDDEANRP6LKvKDYmp
+gBS6ru/ATiz+CjidNpUG3Gv8ikCC8am3X58QSW+sw+x5Eub/ssjC+iYzIVNtrqvc
+VYfasmv8MvI7hy55n6MAD78aotli2rcpUF/BivXlaWKb92fmQV87owoVdiJO0O4o
+rW6zbpoG6UX7R+FiYqnOVHsU0K6GF/1bVqfLPoOsf+mAIDZNQBReU2vgQGagtgKE
+OuOJya+Oofqg60omWdXe90HBvGmhp4u4L0GwOdonmxxSzQ8YrCiWH7MCo2oYiS4u
+hclG5AtE4NW2aHn25Y2vaI+P/P6geA==
+=8YGT
+-----END PGP SIGNATURE-----
+
+--Sig_/551n4GLkAtAk0HXFkm7t2tx--
 
