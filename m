@@ -1,171 +1,176 @@
-Return-Path: <linux-kernel+bounces-597270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 934F3A83753
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 05:47:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC29A83758
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 05:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7638A4A01F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F05A41B626FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0671F0E3E;
-	Thu, 10 Apr 2025 03:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D3E1F0998;
+	Thu, 10 Apr 2025 03:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ekBLXc1X"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="GjyVnmiu"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACA513F434;
-	Thu, 10 Apr 2025 03:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACAA1E5B6F
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 03:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744256869; cv=none; b=lRnvQ1LtAL1y1AfK8rRrr8wpwy32RJqGnZJqLnifnHJvpuIbJFQ6fxh5CkgekP8OZzwMERB0GqLEMRbsrtXXtHRHcuvfarsDPavC8c5TQqZPt5etYOFwOx7X8vVljq6Kt+xssaYT2QH2aCEqXzHbN3ajxFWN0as9PdE7XVO/6eU=
+	t=1744256935; cv=none; b=aJsl7yBzucfSs+Jl3RgAcZKWI0woCBNuos2WDxWCdZy1BhsnMBvkHrp8GBLfp2gSQrHJcmBFQkupF/6/GHMahPuCcgj4QTIEZLK9nqYvcLBtv/qgpQ1ghVWmXW45XkJrLeurLYhI+lntcOEe31mTw884mvEtg6JOiPfQ2q1TV+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744256869; c=relaxed/simple;
-	bh=8BXdnXUZJhaBm/iK86CU2W0BqVu6Jkde/ochweChcTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KglYvWpNdieDVjBcOB57fPxPRMG4OABN2xAVxjUIU5knGLZb8EDl3dYdlUF8YO/qgNMxlgAJBiKiTJs2w6nsUtj86zZhJQ42bIW1dlMvVdhIFgsCQ7rs4GgqCiqmZlTuAhU2ggCW5VPWk0poydaae6Me0DF+RapXJVepdNGmPsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ekBLXc1X; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7c5ba363f1aso55886285a.0;
-        Wed, 09 Apr 2025 20:47:47 -0700 (PDT)
+	s=arc-20240116; t=1744256935; c=relaxed/simple;
+	bh=UOzs+SDADQYEqwd+BcYaNVD7rk0Cb4BIbIh102bT6QM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=izC9prxR7y7Qr1/XgWubWYKR4XsBm1A8B82/aFX6VvqvOhvJ++h/J8yocKD7seTirVRFnCBtp3jtfuWBpxPbFujAgZN4FHeJ1stH3AjqtSXJThVziH+VyhbjD9sx29/Jr9xIjC4tWFQbJYAIrrR/EmDBoxMMHK0JOLNLUdT5juM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=GjyVnmiu; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54c0fa6d455so443727e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 20:48:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744256867; x=1744861667; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nl2Sw4bxxEHiJQNxloPaBGado/8eDTdeu7twZOJULCU=;
-        b=ekBLXc1XIkqkuJ4wJje8blmRG0Z8JENjpWP6rDCenCbezc2mD0voMdbZJ2fDHYj4Oz
-         4slCYAVFjgOELNgc9OZ89XiPShdCz8tIrSE53aXRs6nhxOVYtnXu93w3ry3ANI0DjNCI
-         Pcx5SVY4p2sLn9+y4JHNHvgBwI46Eb4a+XdShxStwXqDm5UbEU5KmYYkK/RMv3LuInhA
-         FHE0agfnSiHBJKkKRO2jg25iesllx3IUyL+3p+4Ez5BD0vez6MlXlQqVgNgnrZx7A8rT
-         oWs/2LYCTwB+NiBimDk//gxjWNrV8UuPFuUwouivahejjxquNOJsGXFy1LUpjt9wTlLs
-         /e/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744256867; x=1744861667;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=bytedance.com; s=google; t=1744256931; x=1744861731; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Nl2Sw4bxxEHiJQNxloPaBGado/8eDTdeu7twZOJULCU=;
-        b=La4HbMHVViYYx3tqwWYWge3tQrASE1lIo/19eJHufVsAGKLmZdWGpfQBA+MtuzC4lx
-         jCPWvaLKm/ncLFR1HdlhPVlCr0+QDMQX9kpSk+C11rHhfYn/y7XC+tRtoA7aFf6eT4dw
-         7aL05Y3KgN17NG8NOKjeLfDgj87jxLlC4nX5hdXzbUJs5BFDmRPNLFfmJPIurgKziln+
-         7uzpqeFgzYp+tHd7ZTVKIUUklqF5p2P4hAGCWoYMkygQBz32W5l26c1L/paI+TB80W0D
-         pjogMiepHat3Y3JF0xBCLaX1POsgpoDhZ6dgargh2U/r4pIf3yQViZigL2Fvel8czpvN
-         d5zA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7SP1bcAZiCrSlE3XCtzjamJW3Nfwda19Sh7M6qqke9YgO0uorkQciO6+x4UcjWddAIviW6rIabQ/O@vger.kernel.org, AJvYcCV8QzU1EVa4LySvHqgpOEqFR3emvsJ0PBqETE67cS9qpAdM0QF3L36EQP6Zj+7zRROFUI7MPupbgH1JwTB6@vger.kernel.org, AJvYcCXeb/V/K5rk4HXBlgW+WCZNTdxYuv69aG7VB81QV9/w0liaXJEtiIpwPq4CoJbIiRknhd9AnxpMe7rh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCkMsy4CJW6GmkSWZcmS5OnBzhBCsBrqa3r20g/iiC9bK4uCmO
-	SI+Q2kr+U/p2+wnvVpXeqXh+wR1WlvqA0ea/TbsEYiH3Mu2q4MfY
-X-Gm-Gg: ASbGncui8dzi3SauqbOCyogctD4FjMLeF3gX5enAKVlSHDWhPy2czGT1UBCK9C2PVi/
-	aYwe7/f5s3OtZLWG5/GrS9KmeDU9eg6noEhsJqtWUE5oACGTa15XWgxYNntZmTMUMIvoq4E7GXN
-	eqpTjh8WR2jySEI5XXM9jvU9FC/YqBc7qUHbVn+6hf8/L092fz7Pm2Gp0/9lAK5ps9M0y2Pt11V
-	EOhlSNYDe0Sta4+cH73hBHI1KMux1f2xKryqJDUXL91iyItkHNBEacTGBcWiTWWztRj5hGr/nqX
-	59Duqn+jP2DMM9lp
-X-Google-Smtp-Source: AGHT+IHFC2Rk9C/yn6FcOPV21K6GfuBdCrrACTPvQR733CaBYV/6ZYW0J+2NXRDP1n9a2LO4HgQDkg==
-X-Received: by 2002:a05:620a:2943:b0:7c7:a555:4a11 with SMTP id af79cd13be357-7c7a76c22dcmr202020785a.44.1744256867149;
-        Wed, 09 Apr 2025 20:47:47 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c7a8942eecsm27221785a.17.2025.04.09.20.47.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 20:47:46 -0700 (PDT)
-Date: Thu, 10 Apr 2025 11:47:07 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Yixun Lan <dlan@gentoo.org>, Inochi Amaoto <inochiama@gmail.com>
-Cc: Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Haylen Chu <heylenay@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, spacemit@lists.linux.dev, 
-	Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>, 
-	Jisheng Zhang <jszhang@kernel.org>, Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-Subject: Re: [PATCH v6 3/6] clk: spacemit: Add clock support for SpacemiT K1
- SoC
-Message-ID: <f7cun6vh6lv7q2qdgba4a55wjv3v2pldl22xnrqxnurj3jlyk7@mvafnye3wv7m>
-References: <20250401172434.6774-1-heylenay@4d2.org>
- <20250401172434.6774-4-heylenay@4d2.org>
- <8fe0aaaa-b8e9-45dd-b792-c32be49cca1a@riscstar.com>
- <20250410003756-GYA19359@gentoo>
- <dm4lwnplwcxj3t3qx3a3bdxtziowjfoqdy4vrd3ahmzkhejrov@fa5rujatatew>
- <z27ri5eue43ti6b2te2cbxiow66mtgbnyudoo5cs4quabgbx5r@uipzoxvfoysi>
- <a8e5adca-8eff-4bbb-a7fa-ce4489b63fa5@riscstar.com>
- <sl752im2sn5sz6yzc23ctprh3rwryuhgtggsaauxixn3b267ag@6sf5fahu6b5i>
- <20250410015549-GYA19471@gentoo>
+        bh=lFEobiF77Xtm1NLYLUKziWY3dV021WSRPxibCoOdOTA=;
+        b=GjyVnmiupzeveAMC/R5dFSJ1Zb67EG9cfFldrpQsUbsZJ032ZD2wfGQpjKOioYq0IH
+         nTeydiAiy/7lWGbBRffiOmFEaYev7BPfrUlT0psFJkPINsybyF+141ZykF4BDx6D/xFl
+         MOMHpErhDs24wELR4GNKCuLlA3GnsQCk1J7f0gO/B4zDX0X8JZ2bvrhw0NCnnYu6hbtw
+         p4d0M9t84eMkumjgbLqFv240X7REJyQJp5NV8cJUje95osGS6hGNwXS0xPapVDwejOk5
+         WUWpAu3VNXwWopuqkqMFFcQCHAOIIl4Yn8rQVuiSSGBA5AMkEEVPTLyldDsyRaCDk+Ks
+         RTxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744256931; x=1744861731;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lFEobiF77Xtm1NLYLUKziWY3dV021WSRPxibCoOdOTA=;
+        b=aNo0JnTWbhKf8Ptimgq2Ey/Jwloa2tB4Xa9cCxDSsFp9SeB35gcujQ1uX/MJ0O4545
+         T9tyHmrURzULYKNu6P2MHjsBBf9FjukazJWFTl7QeMyFCPEl8rhohBQVkntomnS7QJ2m
+         g+V9ha1i9mTrP6rLjRoCzq0Apb3wDF4nD086+5eQvZ1yAyLhPwbXabOCiMYQ25URrjNH
+         ljcyA3v/mdUvZVBZw6XXazoUDPMnjIzUTRMphLlRMKEY4fdjImLgL9IjxhtJlj36sST2
+         /QfIa0drUbjI+POaqz7f/aaaewIt0yoQdpPJpXIIWRGqsjt8OUaAqLYgVoKCpPlY6Cj5
+         n1rA==
+X-Forwarded-Encrypted: i=1; AJvYcCWa/VAdpVNbqfYp0wVbxqHFgIf1VrzDfyelswh5h2Q4HK87/DNOiB8El3Im3aSjPUALUVI+grBH8bTqGrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpZdwiiLEGJW+IUbI5V6lT7DyXd7aFR1QMs67MJWNWQvM94wMq
+	KN6uCMjJ9i7yC5yzKKQv9ALq7anr8omyOxFY59YEU67N0CX+OUJW2DGvKHmK2MfA5i9mF2lcft0
+	U6iN+xx1pdkK3++cuJbvtEIHGFW0RKpHrDnj3ew==
+X-Gm-Gg: ASbGnctl+L2O4AlyCBtXPVlzk/OZq4FoVNiDX8gYq9srOi0VhHMQWgBVsc1WSRXMIUo
+	K/eohhVHyGbWStHTmAWLtgU9tx/N6W1D7lF7S/HupjEs0HxSaQMKecL5IEODTpYlOVotQ3FSWVp
+	HiSAQx8Aw1b/2+kRgferWqv9EJaHjkXqyt49M=
+X-Google-Smtp-Source: AGHT+IHCd0S/mKr+zDeztx1oYbkZsJ8x25MQK6iXPpSdtWnmpNJ+LDqPjn53QebjIJrvsB8DTFlH6p+yOIdlj2BpZ88=
+X-Received: by 2002:a05:6512:1325:b0:545:441:52d2 with SMTP id
+ 2adb3069b0e04-54caf5b03e5mr282819e87.23.1744256931011; Wed, 09 Apr 2025
+ 20:48:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410015549-GYA19471@gentoo>
+References: <cover.1744169302.git.hezhongkun.hzk@bytedance.com>
+ <720e8e2c5b84efed5cf9980567794e7c799d179a.1744169302.git.hezhongkun.hzk@bytedance.com>
+ <20250409190933.3f08db6d6c1f13bc14a170f9@linux-foundation.org>
+In-Reply-To: <20250409190933.3f08db6d6c1f13bc14a170f9@linux-foundation.org>
+From: Zhongkun He <hezhongkun.hzk@bytedance.com>
+Date: Thu, 10 Apr 2025 11:48:14 +0800
+X-Gm-Features: ATxdqUHXv7zHPa7GukApUvtnAIBtUVDgzl9cvrMAx0TDyFwNsSc2s0IF1qkRrso
+Message-ID: <CACSyD1NbZag42VQ0kdyjnDPU2cJimF9K51d7k__pXi-4joJa9Q@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH V3 1/3] mm: add swappiness=max arg to
+ memory.reclaim for only anon reclaim
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: hannes@cmpxchg.org, mhocko@suse.com, yosry.ahmed@linux.dev, 
+	muchun.song@linux.dev, yuzhao@google.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 10, 2025 at 01:55:49AM +0000, Yixun Lan wrote:
-> Hi Inochi,
-> 
-> On 09:20 Thu 10 Apr     , Inochi Amaoto wrote:
-> > On Wed, Apr 09, 2025 at 08:10:53PM -0500, Alex Elder wrote:
-> > > On 4/9/25 7:57 PM, Inochi Amaoto wrote:
-> > > > > > > > diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
-> > > > > > > > new file mode 100644
-> > > > > > > > index 000000000000..4c4df845b3cb
-> > > > > > > > --- /dev/null
-> > > > > > > > +++ b/drivers/clk/spacemit/Kconfig
-> > > > > > > > @@ -0,0 +1,18 @@
-> > > > > > > > +# SPDX-License-Identifier: GPL-2.0-only
-> > > > > > > > +
-> > > > > > > > +config SPACEMIT_CCU
-> > > > > > > > +	tristate "Clock support for SpacemiT SoCs"
-> > > > > > > I don't know the answer to this, but...  Should this be a Boolean
-> > > > > > > rather than tristate?  Can a SpacemiT K1 SoC function without the
-> > > > > > > clock driver built in to the kernel?
-> > > > > > > 
-> > > > > > I agree to make it a Boolean, we've already made pinctrl driver Boolean
-> > > > > > and pinctrl depend on clk, besides, the SoC is unlikely functional
-> > > > > > without clock built in as it's such critical..
-> > > > > > 
-> > > > > I disagree. The kernel is only for spacemit only, and the pinctrl
-> > > > Sorry for a mistake, this first "only" should be "not".
-> > > 
-> > > This is a general problem.  You can't make a bootable
-> > > SpacemiT kernel unless you define this as built-in (at
-> > > least, that's what Yixun is saying). 
-> > 
-> > Why not putting the module in the initramfs? I have tested
-> > this in quite a lot of boards (Allwinner, rockchip, sophgo,
-> > starfive and etc.), all of them work well.
-> > 
-> it works, but not optimal, why delay clk initialzation at modules load stage?
-> IMO, it brings more overhead for using initramfs..
-> 
-> but there is always tradeoff and bikeshedding..
-> 
-> > > But we'd really rather *only* build it in to the kernel
-> > > for SpacemiT builds. You clearly want to minimize what
-> > > must be built in, but what if this is indeed required?
-> > > What goes in defconfig?
-> > > 
-> > 
-> > As defconfig is more like for a minimum example system. It
-> > is OK to put a y in the defconfig. But for a custom system,
-> > you do give a choice for the builder to remove your module
-> > in non spacemit system.
-> 
-> I get your meaning here to remove/disable at run time stage, while
-> we do provide compile time option, if don't want spacemit system
-> just disable CONFIG_ARCH_SPACEMIT I mentioned, clk/pinctrl will be gone
-> 
+On Thu, Apr 10, 2025 at 10:09=E2=80=AFAM Andrew Morton
+<akpm@linux-foundation.org> wrote:
+>
+> On Wed,  9 Apr 2025 15:06:18 +0800 Zhongkun He <hezhongkun.hzk@bytedance.=
+com> wrote:
+>
+> > With this patch 'commit <68cd9050d871> ("mm: add swappiness=3D arg to
+> > memory.reclaim")', we can submit an additional swappiness=3D<val> argum=
+ent
+> > to memory.reclaim. It is very useful because we can dynamically adjust
+> > the reclamation ratio based on the anonymous folios and file folios of
+> > each cgroup. For example,when swappiness is set to 0, we only reclaim
+> > from file folios.
+> >
+> > However,we have also encountered a new issue: when swappiness is set to
+> > the MAX_SWAPPINESS, it may still only reclaim file folios.
+> >
+> > So, we hope to add a new arg 'swappiness=3Dmax' in memory.reclaim where
+> > proactive memory reclaim only reclaims from anonymous folios when
+> > swappiness is set to max. The swappiness semantics from a user
+> > perspective remain unchanged.
+> >
+> > For example, something like this:
+> >
+> > echo "2M swappiness=3Dmax" > /sys/fs/cgroup/memory.reclaim
+> >
+> > will perform reclaim on the rootcg with a swappiness setting of 'max' (=
+a
+> > new mode) regardless of the file folios. Users have a more comprehensiv=
+e
+> > view of the application's memory distribution because there are many
+> > metrics available. For example, if we find that a certain cgroup has a
+> > large number of inactive anon folios, we can reclaim only those and ski=
+p
+> > file folios, because with the zram/zswap, the IO tradeoff that
+> > cache_trim_mode or other file first logic is making doesn't hold -
+> > file refaults will cause IO, whereas anon decompression will not.
+> >
+> > With this patch, the swappiness argument of memory.reclaim has a new
+> > mode 'max', means reclaiming just from anonymous folios both in traditi=
+onal
+> > LRU and MGLRU.
+> >
+> > ...
+> >
+> > --- a/Documentation/admin-guide/cgroup-v2.rst
+> > +++ b/Documentation/admin-guide/cgroup-v2.rst
+> > @@ -1348,6 +1348,9 @@ The following nested keys are defined.
+> >       same semantics as vm.swappiness applied to memcg reclaim with
+> >       all the existing limitations and potential future extensions.
+> >
+> > +     The valid range for swappiness is [0-200, max], setting
+> > +     swappiness=3Dmax exclusively reclaims anonymous memory.
+>
+> Being able to assign either a number or a string feels a bit weird.
+> Usually we use something like "-1" for a hack like this.  eg,
+> NUMA_NO_NODE.
+>
+> Perhaps we just shouldn't overload swappiness like this.  Add a new
+> tunable (swappiness_mode?) which can override the swappiness setting.
+>
+> I guess it doesn't matter much.  We're used to adding messy interfaces ;)
+>
 
-I think this is not suitable for the most generic case, Especially
-for distribution kernel. They prefer to set almost everything as
-module, and load necessary module in initramfs, but the thing is as
-you said, it is a tradeoff. So I will wait and see whether there
-is any new voice for it.
+Hi Andrew, thanks for your review.
 
-Regards,
-Inochi
+In the initial patch, I used 200 (the maximum value of swappiness) to repre=
+sent
+the semantics of reclaiming only from anonymous pages. However, someone
+pointed out that the current usage needs some fine-tuning. Later discussion=
+s
+suggested using max(swappiness=3D201) to represent this specific
+semantic explicitly
+in the code. It was then discovered that MGLRU already includes this logic(=
+201),
+so it's only necessary to make the intention of the code clearer.
+
+So we can add the max to memory.reclaim and lru_gen.
+
+More info please see:
+https://lore.kernel.org/all/Z9Rs8ZtgkupXpFYn@google.com/
+
+>
 
