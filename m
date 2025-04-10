@@ -1,79 +1,75 @@
-Return-Path: <linux-kernel+bounces-598879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA417A84C38
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:40:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44791A84BCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5C159C1F42
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:40:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C4E44C2D1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B0C28EA63;
-	Thu, 10 Apr 2025 18:40:39 +0000 (UTC)
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2103.outbound.protection.partner.outlook.cn [139.219.17.103])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3353C4503B;
+	Thu, 10 Apr 2025 18:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b="qZQj7TI1"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11021091.outbound.protection.outlook.com [40.93.194.91])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C674503B;
-	Thu, 10 Apr 2025 18:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6646B1EFF88;
+	Thu, 10 Apr 2025 18:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.91
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744310439; cv=fail; b=l2DmvWAmNl3CSZTEY5HOzqvwqK+KPWnBCG7dd6i1fk0+RRQqY2IrReLuuUhpZrvmbxpgHph6bZeBmOPVjfRsU8Tuh7aBb/kF0dx5qE0vWphZNf48eRVlc/+Uld5OFiqNKHwmS69CeTTYy41S/TdIxuWdyZUv0QiDfzOqaNIsxPY=
+	t=1744308310; cv=fail; b=ZrvG5ekctWPJrpTvWZz8hkzejhGSOq+WnRWJ6wsfyhU3g7pkb1hXJzszaCX0SpCSF5u4QMDou36YIslrIA5KWYeuDfsGGsv1Y9TOsh9zDdpK718EIcm0tbb+VyfBgGpY0mL/xyZsIOYY00u9Xx8puG0hpFDkrP+4htaLzHIfSnI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744310439; c=relaxed/simple;
-	bh=Sz2NHEYnskgo8oe1qCOgtTnJy2X6miTX0GujlLDblhs=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=KHcZlxmL9L2Pz6BcUC0GO2IlVhsbtnKMvtuNsKvFZngnpNrGTI3eJFmekoqUdXf3lBBiLnWwmIUiOCwRIx0F8xwXeynkSxSctDx+RJ6MB+6HUSzC5dAdz14Inv0kpuv5TOddil1PZbElje1PwtcyYYMxxf3F34U2K0YJQInsiYs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-Received: from SHXPR01MB0637.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:1d::15) by BJSPR01MB0625.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c211:e::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.24; Thu, 10 Apr
- 2025 18:08:28 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XJRLwtZvaC9muYtMgLrcTDAPXSKZPlM76hc+sV+FD2Ohrvd1eZGHzV08KLPf1HAnOBO70X8sw3xRjef1ChmSp6B14Un3ZYR94g4It72DvgfgfUD7vJ51V3RJgbHf9QYIYgUPlVSsln5wZRhPe2w+hzBtFmI0F010XSQYWnXWBN1OGoraZo8TGHPF79mP5mlp3K1T1dAVlKGnMXB1zBlq1RmiJRwkpy58oM84aGFP0WsQkYk7hcQBzWbXdyJ7oGwm6Wr62K5A1Iehm4fNqjb9aOYnPrUv7aDpZw26+7tFzL8tfzEjbnQK01XCO2DOMMYTB6CS9L0E0XBC5FaeCCVQuQ==
+	s=arc-20240116; t=1744308310; c=relaxed/simple;
+	bh=pNWM3RpE+IZFqx44v3IdQjFaAp9cvQ4+2j7yYHtXqY4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=jmWFKPueLD8ecza1UZuzrsXcLwcu4CB1wPPQWHll+evAnEU55yw/GHRa/OpLUivthFRiDv8cZRS0gXWD/+Bbtn/maFIcEc08MYEUr1aO2HKsKrmppLSAXJxEaJANb9jtxLqOFz7XxX5J9zCjSHu/Y1AtuVM9c0R9Thsxl+1qnGQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com; spf=pass smtp.mailfrom=inmusicbrands.com; dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b=qZQj7TI1; arc=fail smtp.client-ip=40.93.194.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inmusicbrands.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kGi7ldCAybXT4y1/XE8q8SL6HiihbRhHg6dtYO8or6Bx1NnBxK9TeFRyCQjD6BH6GbAxVBaslQdD5GQM7VTsrlWFhzq88QwPBUtlUAG6Z51Wy1qBloPxlGXW+5cl4C3JZL0aMCE27wD3vSe+aiY7fyglI6tJYVls6eKF8Gi/Yr86940KyXKg0FjPdIwyC7LAMFabgMYca1/ft9g/WE7VNCtU0uMgBI5oWGvifZ+bXzRxeQgoK7ZoU+qSKwFmvSr50FY2hPBN67vzBfY588vZAqCW4n5VHWRIIiUopmIbHB2HSlIpIaUp7oC5N+1X5AWJQNE6Hm3OFXacfNFSGaIpTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
+ s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rolDulr1iNlIPf0jBVjAa0V7GWrnZ+bUIlQe5KPSFsI=;
- b=D/xXu4fDvvQ0A91/ifums92huKi+JPLSn1SRrtJ0Oy05dWd6ZQAjOdDMTojYFJzw83dOHl0dq9A9BBEEuOQOdYYU/18MDjI6d+akBx5Oi+Iy3dXf835htQP93SoOyFJX18pGU3BvJd4/8TpJOsbSAPusHBYDNujHq9exC7iIp+nz/SkyNCrR0IsKVsUKr5L+Wzqow5feP5mcznfP2HybMlmc7WE16QQR3bX2nIHUOM7LYZ1Tpqo3qea2ESBfbBCL5cz8Go1Xtx8MmF5ATGaAOwyCPcjmYDmPIwYdpL3LXEHHwz0TLwKCBcOTN6bICNq5PYXjDnYaZxiV5Gxw3yLCpw==
+ bh=oPszzi0Bdt/pye+yPTFbJBijSeM6Rz3jQKxvpow5WNY=;
+ b=FEdnxdFR/WQwvYZCaKY6ub08tg41ODvuebYhMTVK+ByKloaKBE3qUhbR+Y0mHd8m92qNasL2AumoOilK7XXcUL487fVnDx7+rkpO8pX1gHcwJcN0+lTPXBjIPjX4egOdYTo99lYABpcFjf88+BGQbzic/ibjgsFwwhCIvIkhacGBFFxsP69RwHOESO5hDCwAK1OrSW+Is2FGTXWzxYyxSAxOb+eeVMMnrg1FkjJtquVO33xgbghbfZcwHbcDvT4A9FSH6wqKi4IsO/0tFxQ0/ExIzS38R9uJg/scF2pr18jqUrIih29fEgl5hruIVrQ71lpt/4aWkiVC3kQeNxkNqQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+ smtp.mailfrom=inmusicbrands.com; dmarc=pass action=none
+ header.from=inmusicbrands.com; dkim=pass header.d=inmusicbrands.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=inmusicbrands.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oPszzi0Bdt/pye+yPTFbJBijSeM6Rz3jQKxvpow5WNY=;
+ b=qZQj7TI1/sbu9HZa8yHKJgCxeoXIJIzp0+bBTOg+EBtBeDPevqFAl8KB/6OrnEJGuf7/lwyUu5LcKB9tbK6ya+ir8Wx9HPqcMlxozr5wxL3fhj+zrBqSda7n1KJpyomS3RpPm6UxWGgIPK2x9+RP5lWSYnSK+tRE3kT7moxDva8=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:25::15) by SHXPR01MB0637.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:1d::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.23; Thu, 10 Apr
- 2025 07:05:03 +0000
-Received: from SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
- ([fe80::3f35:8db2:7fdf:9ffb]) by
- SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn ([fe80::3f35:8db2:7fdf:9ffb%6])
- with mapi id 15.20.8632.021; Thu, 10 Apr 2025 07:05:03 +0000
-From: Minda Chen <minda.chen@starfivetech.com>
-To: Emil Renner Berthing <kernel@esmil.dk>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Minda Chen <minda.chen@starfivetech.com>
-Subject: [net-next v1] net: stmmac: starfive: Add serdes PHY init/deinit function
-Date: Thu, 10 Apr 2025 15:04:53 +0800
-Message-Id: <20250410070453.61178-1-minda.chen@starfivetech.com>
-X-Mailer: git-send-email 2.17.1
+ header.d=none;dmarc=none action=none header.from=inmusicbrands.com;
+Received: from MW4PR08MB8282.namprd08.prod.outlook.com (2603:10b6:303:1bd::18)
+ by IA3PR08MB10430.namprd08.prod.outlook.com (2603:10b6:208:505::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.24; Thu, 10 Apr
+ 2025 18:05:04 +0000
+Received: from MW4PR08MB8282.namprd08.prod.outlook.com
+ ([fe80::55b3:31f1:11c0:4401]) by MW4PR08MB8282.namprd08.prod.outlook.com
+ ([fe80::55b3:31f1:11c0:4401%7]) with mapi id 15.20.8606.029; Thu, 10 Apr 2025
+ 18:05:03 +0000
+From: John Keeping <jkeeping@inmusicbrands.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: John Keeping <jkeeping@inmusicbrands.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hwmon: (pwm-fan) disable threaded interrupts
+Date: Thu, 10 Apr 2025 19:03:57 +0100
+Message-ID: <20250410180357.2258822-1-jkeeping@inmusicbrands.com>
+X-Mailer: git-send-email 2.49.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: NT0PR01CA0034.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:c::11) To SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:25::15)
+X-ClientProxiedBy: LO2P265CA0294.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a5::18) To MW4PR08MB8282.namprd08.prod.outlook.com
+ (2603:10b6:303:1bd::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,139 +77,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic:
-	SHXPR01MB0863:EE_|SHXPR01MB0637:EE_|BJSPR01MB0625:EE_
-X-MS-Office365-Filtering-Correlation-Id: 91611e45-5b39-4563-0f60-08dd77fe03fa
+X-MS-TrafficTypeDiagnostic: MW4PR08MB8282:EE_|IA3PR08MB10430:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c5f29f1-0524-4bf9-9407-08dd785a37d1
 X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|7416014|52116014|366016|41320700013|38350700014;
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
- UvmIHG/DFABKe10ZvULLK1NDn6iGro1MQyTMw19qXPkF4QYno8MjokWlgRoyLx/tiznfiY5YAtGmrbhbXQW2fTjHak/4aysYyI8RK9Xjb5SVkYidqZ57CPwk/+ILO8/rMMx41VBQcsQb8h3tEWhyYOcplw5wI74lPwyji+iO+lUpDrbN1H9i738qIpjlF578BFdwquEisbO1it4+lniPN7JWiyBQNb6jMJoM8rEqVlefRCA6lY1koGU1cw1L4e29jLal6gX8SnryEuRnKn96xZxSS3LLoH45FLM5gGJnkMTWdQUApmVuGdP5x4M2A9DwiDNbcVezuMLkLNVc0hr8j6/TqFbRDopuWahRWDZwsML5yt2mI+4IzPXtPH3aFnCJocaRkrjHFZXoF4R5m1tGnPnac+5dWYd7gpbYbXeKNSRywMG0EPo1CE/G6zWjpq3L3aqldOJHc/eMw/8F3sYCHldwqOq+HDUEjM+BV+qcOkevbLozqK+GzKJ6N0FpgmMky/gNDuc7n4MK1Vz8e00ZUP26bneHfnOFsxiMg8y5LeP89RUEf+5TUlLNsyBrLz8/2g3uJp2/TICBk7SWaYCY5Hinoo0mswLudFCqjmvruvA=
+	=?us-ascii?Q?H3MsuIEl1FIM1DIqUO6GjCyOBrWg7j0HGzP5smaRn0zAqHeeMIf+HtdP0cOI?=
+ =?us-ascii?Q?0P7m/kiYfZFyF5R1VagqXypVdBbajTqKk1XuoaQKepSFlJhyj+Lz6AQznoSD?=
+ =?us-ascii?Q?f6X1cBUDqRQCwEMVKusZB9YrvDi/Vw6oEMqu8Umc4zzJpI7Up5Yy5I0grHTx?=
+ =?us-ascii?Q?SkyMIx1LI8la6w1VTOWjSPDJoAFaRuRb+pSH2qTVO67XYM3N6yTTMDU3Sday?=
+ =?us-ascii?Q?EksAGo6l9RCDb94CriwIyRV2OKqTswIA1vWemf4aos2x3/X5Q3NPdhwmavWf?=
+ =?us-ascii?Q?lRG/ulyBPspreRc+QzlEmSAhydBY9zq8uxZbevmARXcAp3GaLCUWjKTs4WrK?=
+ =?us-ascii?Q?WqmiS2qI48Se9FdaB3hn4ZYNItZBtDPdhQQy5C2jHRXXrzp3jQueXPAzxCvl?=
+ =?us-ascii?Q?Dh/B70X4KVTbuqRp0LE2bz2GWwHPLWklbj1zJ4JNcHJhOlUtPiZ4RZlL4xJM?=
+ =?us-ascii?Q?zOUZhOuScTKz1y2wO6EVqLetZUuPQ+GXvnzxFb20jPWEQnqPBHUDF3MgUFal?=
+ =?us-ascii?Q?GY2KsnWuVEKwHfwOoAjGDv2o7zz6AegdqdoGGVpgWcE6dGxoSg04jdhmWNiB?=
+ =?us-ascii?Q?8yRSqQrD/fvayiKwagYOV01FRfxw7znNVFO+VsrmmanGAMCTjGiBQx++ePul?=
+ =?us-ascii?Q?/WjUOe/4NodjPeoDEFytje/FPD0AiwERGGMGWl7h7xykakx3U+YFpUk0VAQc?=
+ =?us-ascii?Q?NScGzViSodBycEX9iZi+glZKTj70Dds0qKYM6rFtGp03ODw2QacCrCaY1zKd?=
+ =?us-ascii?Q?NNvvQK1sqSe1OUlcL16k7BIDpaT7q/cGwPiY4qJlOj/h15E1ORecfqNKFj7q?=
+ =?us-ascii?Q?RhxbXemNiBNwRtvAy3NMDWY3hI2zK6N03s39BVemz+TiAEiBoabai3u4prPq?=
+ =?us-ascii?Q?LVLIZ+4hNQQ/aOa/PO+eUf+UJYJKA19rW0LK++7+uENMGyLEWDDXN6w9eGQF?=
+ =?us-ascii?Q?DreO8OYoLChLIns4F5GZAxx13mZ8mcthC3JkkkgEZ++RrSksEUqtzCqWEMZR?=
+ =?us-ascii?Q?c7Xe/6fS86unblrIF3tMWyx6ymW1wSvQioweGsEUj67+ZrwIKDrsjkdDsHIK?=
+ =?us-ascii?Q?wyksnV62t42/sSOiZhNoXKzDxNC7oI7AwqwYFkD5jshxUySr/6FqgpuNy17A?=
+ =?us-ascii?Q?vPW+NBz9qwls1rWCT2tKrZzGasub1prvAMlCFqNzMH/Bc8/4Ag63yLFsbH3m?=
+ =?us-ascii?Q?n1mL1vAkQAfCgTV7CWfVDBmT03cVZ52AeG/8TC5C0A711Z6o6wVAp8k3FEUC?=
+ =?us-ascii?Q?GvtZX/QxRI9CYpXcXKozpJBf8a6UsCEwiVN4OU9Kd6moApQbkiOq95mzXF7/?=
+ =?us-ascii?Q?8dDYC6W7D1O9ER5UQPzyRvH7MhlgOhQNVt17nNOhUvWalms0ob4eFqHeeaa0?=
+ =?us-ascii?Q?X9x4CLWHEVBLzwWs8TmqnxdqpiwhQiWO4/8un5O1gH2xub1aG66hwJD8duQx?=
+ =?us-ascii?Q?Z/NFcNRfdtyHpyyyApRN2TnX0AhWTENg?=
 X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(366016)(41320700013)(38350700014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR08MB8282.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?rZNSx6W73C6Nl4Ngs79CCf+wXHOsGwupaDhDOSbk8uI4YojZ/CmS9IYRZs83?=
- =?us-ascii?Q?P6yhVGdM0X3HmRDMOLL0ymK3kBUXxlmKb9Kr161QTO/2LbigjDHUn7U+NcJ/?=
- =?us-ascii?Q?mcHPwVgeeIXL6pt3kxw54Vmy33wTyaS1yMvgsPCsMjURKInAnSNrx3w7Zwy5?=
- =?us-ascii?Q?Zbru49+NhRWbsJ1IuLtyiYmw6RZur4alRR5f2yGLltXr7VsfcLyHn0n90Nab?=
- =?us-ascii?Q?u2v/lUun/x/c8iYNTg1J3TVMWDf3EXECKE+mYyvnjBhRrvuSZVYUpJFWVH7i?=
- =?us-ascii?Q?RmVaKjbC/mU/qZbOsuEdaOb5z3Aebj2ofugyfgGPTKUkElF2Drz07wF5uPA0?=
- =?us-ascii?Q?0z3YXYJ+Wey388GzeEmnAAcO+WFNQRWwSLGy8oUKSxLIoAGyyFOoXH70/VMn?=
- =?us-ascii?Q?2VecAKYwLm1JpaDQiqE6TML7k/4vZVUWJ3sE/nYLJhHI5y7Ye9m87tCLC/JB?=
- =?us-ascii?Q?qcQ7n/c2OcuXg//0/n4W2T7aVInshO+fRUf4QxU6xahVKm9BTMLhaP5a9y4Y?=
- =?us-ascii?Q?SKE/oqdg6UNt7M3B8+aGfycNSTb3c5TFwbnJ+vKstrN66AxsqVnoGpgFz/GL?=
- =?us-ascii?Q?BGacB5K5fF6vsvtvjHBQ2AC9WQGBJfb5DNBx0d2C+nJ/xbcQPV0yfqKANNx7?=
- =?us-ascii?Q?zweRSrtg6Tvrc/3KdEGHx2ptfAoLI0fI3BIpbTejiZNe7481ZZBRW3z716Wk?=
- =?us-ascii?Q?B6Db4po7c8ZD7M/p3Q+ovuFfqvK+TD7dHyccFQ/JOqkcnip/zjws4CrhAgRN?=
- =?us-ascii?Q?yokMKnVbPvcj5yw0swfgBfg4x9oPpreg8i1Ts4ABUwEcE7oDII0EiEsrcVR5?=
- =?us-ascii?Q?2nJHzKqDkwA6H8bCUQhyUk5xsWirlMTJbzyiJk8oKhLp43QPP0/RWpDbSaMo?=
- =?us-ascii?Q?u6YQiqpIpKONNrQPQ+ObwvJV11YvNoEVXi0D5se9EpFJ1Is1WoBFY+kwhcdW?=
- =?us-ascii?Q?G9bYWr4eamUJb8Z8dGTqIicYz/2yGRPoFWt06dusB1Lv1cgP0IteqEvKSkD9?=
- =?us-ascii?Q?Acn1uPBA8cj0+uG/7hI6fmDQAnAOEq184fUcrQ0D3oimxc+H+Ymo9pxZvFud?=
- =?us-ascii?Q?JUec2VqgkuTNMi8XRkF+vS3KFt8tFN6I9HXU1Ib6tkcEBr8A+DM9bGxwN0Tt?=
- =?us-ascii?Q?b2DXc65qlDBvQ7E6n38r/bRstXnm3Hip1Ngr+qtnelWhLFKowJGrt9hg0isC?=
- =?us-ascii?Q?InHBAvZAkpdYfBEvaKZRpdl9+D0zZmLSztBixQB21nrX7wgFn11q0VWGEnPP?=
- =?us-ascii?Q?x3aW9j909uTZPr6fUvQphDQ2jkV5tPC4IW/w7ncxIiFObi80fhUpniVO77/r?=
- =?us-ascii?Q?ciTEuHmLxYamoAhGVdqtp5Y6SIT2c70PkYeE4G1shB6bPtXZ2yY15NbJBCqz?=
- =?us-ascii?Q?iQ5vowpJuziS0F1/sjE1dJ5e9EJCFf2NmaW0l1HO4s+IV3CCcGBm5YrQt8B2?=
- =?us-ascii?Q?Mfc6Et4lIFHl9yyNnVOPe7732r7Whl99wmbCedXunxKAAEUq3mlqKYPG0k2N?=
- =?us-ascii?Q?qhnNA/id8uZRp4n6P7PIpA+328xz+rWEYC4FMo+WdWBtTZOGCas5S/gJTKvl?=
- =?us-ascii?Q?ZNlgA2J/4P+bVCXkHm+m5F1Rp0WGuFzdjT5uBVzlzNi9x3eEL96jBddr6yYE?=
- =?us-ascii?Q?IQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91611e45-5b39-4563-0f60-08dd77fe03fa
-X-MS-Exchange-CrossTenant-AuthSource: SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+	=?us-ascii?Q?7ib45xYkANDBl5WMnRY0kFlH4vxUEVMpjWGpPQNOV99RhRU7p5682CzdPRyB?=
+ =?us-ascii?Q?0PIeHZblRizXVUsVaYhZORDCwsdlPIwcmVvf9bJ13XPmvlYK4G4LYPDYA7c2?=
+ =?us-ascii?Q?eldJFtW5MfMrd5BXuiqUoIBce1pt4tktWVWO6uyHXP+LzNPTRQpHF15M1MxE?=
+ =?us-ascii?Q?lRN8ZGs95miZVWn7VRifHtJ1PqOq9I9FOG+elly4yRgCE1K7CJWDZ557M9Tm?=
+ =?us-ascii?Q?QsFsCQMx79Kq12GLpPxlFMJRJG4JxNDtWr0+8MZ6c4w9gSxZa0qtRI7qErSw?=
+ =?us-ascii?Q?CX5Jyh9c3bU/JK2YJbzVPiuvdxukMmCRuM73+gwelCUTrfZ87mM+MBmAiEhS?=
+ =?us-ascii?Q?aV5gSyUD8HuqngbZ+ROuZfZGEDpM7IQU/baCJgy0HtidQESAyxngOMYuhAaC?=
+ =?us-ascii?Q?UtR1dgbvz9g2xWpDYg0eCxdsRs5wbdhd9RsUN+M5o4dgzX+8afsS14Ohl0bq?=
+ =?us-ascii?Q?RbfjdzRMexO70kqnmuByGXa0PkpZc2YPisbyhAmCv2L2F+7WRWvYUXuurwK5?=
+ =?us-ascii?Q?LhcEE4kAC+CG3GJ4PEYXGsuSqvdwQBpKZvDuVgOrFoHBAFpE9bE96P/1x+oa?=
+ =?us-ascii?Q?l1gknK+ayAZugUJ4fNe8EiisKAOOeg0fY/h7bcfHwZF74evZNQ8LMJCDchBO?=
+ =?us-ascii?Q?YafoQi2a+i0L7GZII2WSmAOIuwXn8K4zdMpml3EYFd5/apUjUbabUmKjQYpt?=
+ =?us-ascii?Q?VMshRCGny3OlHXvoCXLBOwzPpBAL4mYps2OpT+ksQiKu+LWLC5Bs8U4DAfAl?=
+ =?us-ascii?Q?4rs+oVt24LVhmeTEOLgyI/OFoNeJ8azij9jvq+HFJHX1ws6cWDi1MfKrUUry?=
+ =?us-ascii?Q?KN49pNEX0VvmF0zHLCKpwcvwGQOdIS7Suu5GSU1CeQPjlfOhlB+CoP/5mZ+i?=
+ =?us-ascii?Q?8CLJ/XbUtQNCOq3Q0av+taE4pI7GLj2AMyKliRX3gN0X+PJb30nwnEfRIIT+?=
+ =?us-ascii?Q?uyt/dKuCwVITh/517MiZXEoilcq3XF72wNv0vSrPHrB4iVLfLYG2FhMOkqjX?=
+ =?us-ascii?Q?cTB8RKhaSzz3EA8DWnnWcmY1lU9cLx5WloweWDVD9CZMnlPfLiWgcwhgeOZN?=
+ =?us-ascii?Q?nfiydiNxf5ITcNDTWunmBCsKOtzXgqeqsIhIvbogpDvWurSp8HlJhMaP5SNy?=
+ =?us-ascii?Q?lIcqjp18aHwBDbK5glI13OiokgXeo4MB4Z2cI/0oCXAeBlLWmhexlcsh8V7U?=
+ =?us-ascii?Q?UVKBRQykfPEI2t9p/gGS3dcc3DhrpzWdVOEY8LdXXuTNYS93VKPCTqqWSyIn?=
+ =?us-ascii?Q?9IdNQ24/Bg+stHkqX7tg47d5pZKFMb/IEquw9BhCYlxLftdJcTCRoqFe18+L?=
+ =?us-ascii?Q?yU77N/SgVNAjFKsgC81AhB4ZU0Z/LCdU33CSzFdZo2Btyn7dE00WpG9lSXuJ?=
+ =?us-ascii?Q?r6uizvnLCO6dm5g0Fo8Kw0hP+Xv+NFW3bYAVYI4LlPwZ2wE+RFO1yHZ+gJUB?=
+ =?us-ascii?Q?jVtsNeVqQBTqJesD2weJy4nKSZCzV/xmUShWVegSJCzvr4sSo39ubxKgUB6U?=
+ =?us-ascii?Q?Xj01YFncvuaZk3kjAUnOCql1z5AwVz2ebDZw81XAlDn5PCtf+QLSymvPRV8W?=
+ =?us-ascii?Q?DySnrkElYdmW6vtXzexad4U9M+JfmcjDKQwxMnMy0jjKb/+uiNg0jvUadQys?=
+ =?us-ascii?Q?RQ=3D=3D?=
+X-OriginatorOrg: inmusicbrands.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c5f29f1-0524-4bf9-9407-08dd785a37d1
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR08MB8282.namprd08.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 07:05:02.9642
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 18:05:03.8768
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-Id: 24507e43-fb7c-4b60-ab03-f78fafaf0a65
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8lFKZCnb52DnKm3x5lc8BAhS1N5LOQKKHpgEj3TqTQlxO93wqJLEjBix7OotTJUIRc1VpdSOHX+VsMblh5uSXV8RvliZPH2nhE5WaxiKDhA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SHXPR01MB0637
-X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: MfaCjyuzRXS7HECofby/4c9P2t2HSFI8/h30NfADzvMe/n+looIPt6yd4f7LCNwLDhyve3R6e83o46ossEIkDPJCWUx02IGtKZIFYy0olJY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR08MB10430
 
-To support SGMII interface, add internal serdes PHY powerup/
-powerdown function.
+The interrupt handler here just increments an atomic counter, jumping to
+a threaded handler risks missing tachometer pulses and is likely to be
+more expensive than the simple atomic increment.
 
-Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
+Signed-off-by: John Keeping <jkeeping@inmusicbrands.com>
 ---
- .../ethernet/stmicro/stmmac/dwmac-starfive.c  | 33 +++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/hwmon/pwm-fan.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
-index 2013d7477eb7..f5923f847100 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
-@@ -9,6 +9,8 @@
- 
- #include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
-+#include <linux/phy.h>
-+#include <linux/phy/phy.h>
- #include <linux/property.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
-@@ -28,6 +30,7 @@ struct starfive_dwmac_data {
- struct starfive_dwmac {
- 	struct device *dev;
- 	const struct starfive_dwmac_data *data;
-+	struct phy *serdes_phy;
- };
- 
- static int starfive_dwmac_set_mode(struct plat_stmmacenet_data *plat_dat)
-@@ -80,6 +83,26 @@ static int starfive_dwmac_set_mode(struct plat_stmmacenet_data *plat_dat)
- 	return 0;
- }
- 
-+static int starfive_dwmac_serdes_powerup(struct net_device *ndev, void *priv)
-+{
-+	struct starfive_dwmac *dwmac = priv;
-+	int ret;
-+
-+	ret = phy_init(dwmac->serdes_phy);
-+	if (ret)
-+		return ret;
-+
-+	return phy_power_on(dwmac->serdes_phy);
-+}
-+
-+static void starfive_dwmac_serdes_powerdown(struct net_device *ndev, void *priv)
-+{
-+	struct starfive_dwmac *dwmac = priv;
-+
-+	phy_power_off(dwmac->serdes_phy);
-+	phy_exit(dwmac->serdes_phy);
-+}
-+
- static int starfive_dwmac_probe(struct platform_device *pdev)
- {
- 	struct plat_stmmacenet_data *plat_dat;
-@@ -102,6 +125,11 @@ static int starfive_dwmac_probe(struct platform_device *pdev)
- 	if (!dwmac)
- 		return -ENOMEM;
- 
-+	dwmac->serdes_phy = devm_phy_optional_get(&pdev->dev, NULL);
-+	if (IS_ERR(dwmac->serdes_phy))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(dwmac->serdes_phy),
-+				     "Failed to get serdes phy\n");
-+
- 	dwmac->data = device_get_match_data(&pdev->dev);
- 
- 	plat_dat->clk_tx_i = devm_clk_get_enabled(&pdev->dev, "tx");
-@@ -132,6 +160,11 @@ static int starfive_dwmac_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
- 
-+	if (dwmac->serdes_phy) {
-+		plat_dat->serdes_powerup = starfive_dwmac_serdes_powerup;
-+		plat_dat->serdes_powerdown  = starfive_dwmac_serdes_powerdown;
-+	}
-+
- 	return stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
- }
- 
+diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+index d506a5e7e033d..2df294793f6ee 100644
+--- a/drivers/hwmon/pwm-fan.c
++++ b/drivers/hwmon/pwm-fan.c
+@@ -620,8 +620,8 @@ static int pwm_fan_probe(struct platform_device *pdev)
+ 		if (tach->irq == -EPROBE_DEFER)
+ 			return tach->irq;
+ 		if (tach->irq > 0) {
+-			ret = devm_request_irq(dev, tach->irq, pulse_handler, 0,
+-					       pdev->name, tach);
++			ret = devm_request_irq(dev, tach->irq, pulse_handler,
++					       IRQF_NO_THREAD, pdev->name, tach);
+ 			if (ret) {
+ 				dev_err(dev,
+ 					"Failed to request interrupt: %d\n",
 -- 
-2.17.1
+2.49.0
 
 
