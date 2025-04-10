@@ -1,178 +1,86 @@
-Return-Path: <linux-kernel+bounces-597089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF972A83500
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:13:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E36A83506
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 02:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00A357AFF08
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 00:12:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72F881B66FE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 00:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86D21C6FFB;
-	Thu, 10 Apr 2025 00:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719EC134AB;
+	Thu, 10 Apr 2025 00:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJZZ0T9k"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="caEs1Kh4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3726D1A5BA9;
-	Thu, 10 Apr 2025 00:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2F863B9
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 00:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744243893; cv=none; b=uwgmC2LZ7j/LuVPI+ryn/OhCd7enXwdi83/Ams3eEtQs7a9fZS+Wb1ADHovGHj64Ymj92krMuFheBJmqeY8n0EafnutrqAcIJZVHx+JI9EgK2sY5ktgHYGlWcXslQ24p+9RRRXXLDjLo0uu+Dvaj3FHWPGA1K8C7NYmf3AaxbGM=
+	t=1744243959; cv=none; b=avmppBv4+2zzt7j9rrhwcHXOnWsux/6d8v9zuBHM6nU9lFr3p+NdoL0TPNVW3tV+IM6A57qzTcLsHC8PtvsKBdjR/i12rcHtX/DknYGO7wFU7NTdOuxdNVuXncHWT/z3Df3Kioy8kqRrNqTX//7TncqgHWCTF8cDNn2/5ii/br0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744243893; c=relaxed/simple;
-	bh=T20OlLQN6t8NjiZOs1TLZ6/pvAdfjxkFgUg0j9VVE5A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qsbO6M72hViWzSsDMtOmnif9vxh+bi0heXgq3zkOQTjDaCyW2Q8s9oLl91ekHNwQanpypKqO9f4yDQwtUSjZetfprpDSQGPHrTpSdZIBysAE1gAyRkslGwEnSqQHtwOv867lO9JNZo9Pjdu2RpJvi/2EzcK3G7gUGuEpn92UfFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJZZ0T9k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BE7FC4CEE9;
-	Thu, 10 Apr 2025 00:11:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744243892;
-	bh=T20OlLQN6t8NjiZOs1TLZ6/pvAdfjxkFgUg0j9VVE5A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HJZZ0T9kWDDhzcxxLMi/YSws1E6k+9grd87wjHAw5SOJAypp52zS0vPRWfHBqSdLY
-	 GFeGIskvein8Gi9gWmX7w5TemRF66AwmUdjhIzKHywkv17VvwEY+WQn0+Zc7KJfvO6
-	 Zy3cpoRIVRWDwh/3/vWlY2ovhBRMFdqFO3j8qNGmiGuxKONjHSogZWYYFVta7irv/L
-	 wtk7WlL7PG9tSf053Pdc85osJt+atRtjLg8y+dVkaK7jBFkpLL0pxM4t3nc7ahy82J
-	 si85RUpVoiCq50v2XppQBSwOuuwF9QLWpqeCSvoFMsyDwRjS19VxExQliwJOpiz7Gw
-	 zrzZI2lXhYCtA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	x86@kernel.org
-Subject: [PATCH 10/10] tools headers: Update the arch/x86/lib/memset_64.S copy with the kernel sources
-Date: Wed,  9 Apr 2025 17:11:25 -0700
-Message-ID: <20250410001125.391820-11-namhyung@kernel.org>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-In-Reply-To: <20250410001125.391820-1-namhyung@kernel.org>
-References: <20250410001125.391820-1-namhyung@kernel.org>
+	s=arc-20240116; t=1744243959; c=relaxed/simple;
+	bh=nLOWCvHZoWzgjEvppluyiSsl07wM63eUSZJ6MazbjHs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ANQo3BDMTp5CEQBBbNqNfC3AL6JiJ5jZHmOX/by96PkRzGZG45S6qs2C4h52TLl4hL4/GiS86OAvFFGD/Xg8chCIc2ChrxYObjsUffA/zGATz2fGl8XflGo5Zm5yDCZMQIhrc7wGM2oeVQyAR8A/SZLesyZSYGIBLRvJPRiwUyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=caEs1Kh4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A132C4CEE2;
+	Thu, 10 Apr 2025 00:12:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1744243959;
+	bh=nLOWCvHZoWzgjEvppluyiSsl07wM63eUSZJ6MazbjHs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=caEs1Kh44EGMrsFutHyQ9jQiTL10e5+gsdtXRaNIWovIRFFssom0XQy6MKwxC2h0C
+	 bUCjx9+KZQtIMqPH5Gz5FabtElII5CJcAXDgz5CNv9Dbev9ABZVxBtHq8VU+QbwJmP
+	 3NTbIhfFTFuC8KykCxltiT0IM5E4j5NrFZfEYcwc=
+Date: Wed, 9 Apr 2025 17:12:38 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "T.J. Mercier" <tjmercier@google.com>
+Cc: surenb@google.com, kent.overstreet@linux.dev, janghyuck.kim@samsung.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] alloc_tag: handle incomplete bulk allocations in
+ vm_module_tags_populate
+Message-Id: <20250409171238.494fd49979b4607bff9791b7@linux-foundation.org>
+In-Reply-To: <20250409225111.3770347-1-tjmercier@google.com>
+References: <20250409225111.3770347-1-tjmercier@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-To pick up the changes in:
+On Wed,  9 Apr 2025 22:51:11 +0000 "T.J. Mercier" <tjmercier@google.com> wrote:
 
-  2981557cb0408e14 x86,kcfi: Fix EXPORT_SYMBOL vs kCFI
+> alloc_pages_bulk_node may partially succeed and allocate fewer than the
+> requested nr_pages. There are several conditions under which this can
+> occur, but we have encountered the case where CONFIG_PAGE_OWNER is
+> enabled causing all bulk allocations to always fallback to single page
+> allocations due to commit 187ad460b841 ("mm/page_alloc: avoid page
+> allocator recursion with pagesets.lock held").
+> 
+> Currently vm_module_tags_populate immediately fails when
+> alloc_pages_bulk_node returns fewer than the requested number of pages.
+> When this happens memory allocation profiling gets disabled, for example
+> 
+> [   14.297583] [9:       modprobe:  465] Failed to allocate memory for allocation tags in the module scsc_wlan. Memory allocation profiling is disabled!
+> [   14.299339] [9:       modprobe:  465] modprobe: Failed to insmod '/vendor/lib/modules/scsc_wlan.ko' with args '': Out of memory
+> 
+> This patch causes vm_module_tags_populate to retry bulk allocations for
+> the remaining memory instead of failing immediately which will avoid the
+> disablement of memory allocation profiling.
+> 
 
-That required adding a copy of include/linux/cfi_types.h and its checking
-in tools/perf/check-headers.h.
+Thanks.  I'm assuming we want cc:stable on this?
 
-Addressing this perf tools build warning:
-
-  Warning: Kernel ABI header differences:
-    diff -u tools/arch/x86/lib/memset_64.S arch/x86/lib/memset_64.S
-
-Please see tools/include/uapi/README for further details.
-
-Cc: x86@kernel.org
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/arch/x86/lib/memset_64.S  |  3 ++-
- tools/include/linux/cfi_types.h | 45 +++++++++++++++++++++++++++++++++
- tools/perf/check-headers.sh     |  1 +
- 3 files changed, 48 insertions(+), 1 deletion(-)
- create mode 100644 tools/include/linux/cfi_types.h
-
-diff --git a/tools/arch/x86/lib/memset_64.S b/tools/arch/x86/lib/memset_64.S
-index 0199d56cb479d88c..d66b710d628f8865 100644
---- a/tools/arch/x86/lib/memset_64.S
-+++ b/tools/arch/x86/lib/memset_64.S
-@@ -3,6 +3,7 @@
- 
- #include <linux/export.h>
- #include <linux/linkage.h>
-+#include <linux/cfi_types.h>
- #include <asm/cpufeatures.h>
- #include <asm/alternative.h>
- 
-@@ -28,7 +29,7 @@
-  * only for the return value that is the same as the source input,
-  * which the compiler could/should do much better anyway.
-  */
--SYM_FUNC_START(__memset)
-+SYM_TYPED_FUNC_START(__memset)
- 	ALTERNATIVE "jmp memset_orig", "", X86_FEATURE_FSRS
- 
- 	movq %rdi,%r9
-diff --git a/tools/include/linux/cfi_types.h b/tools/include/linux/cfi_types.h
-new file mode 100644
-index 0000000000000000..6b87136757655c05
---- /dev/null
-+++ b/tools/include/linux/cfi_types.h
-@@ -0,0 +1,45 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Clang Control Flow Integrity (CFI) type definitions.
-+ */
-+#ifndef _LINUX_CFI_TYPES_H
-+#define _LINUX_CFI_TYPES_H
-+
-+#ifdef __ASSEMBLY__
-+#include <linux/linkage.h>
-+
-+#ifdef CONFIG_CFI_CLANG
-+/*
-+ * Use the __kcfi_typeid_<function> type identifier symbol to
-+ * annotate indirectly called assembly functions. The compiler emits
-+ * these symbols for all address-taken function declarations in C
-+ * code.
-+ */
-+#ifndef __CFI_TYPE
-+#define __CFI_TYPE(name)				\
-+	.4byte __kcfi_typeid_##name
-+#endif
-+
-+#define SYM_TYPED_ENTRY(name, linkage, align...)	\
-+	linkage(name) ASM_NL				\
-+	align ASM_NL					\
-+	__CFI_TYPE(name) ASM_NL				\
-+	name:
-+
-+#define SYM_TYPED_START(name, linkage, align...)	\
-+	SYM_TYPED_ENTRY(name, linkage, align)
-+
-+#else /* CONFIG_CFI_CLANG */
-+
-+#define SYM_TYPED_START(name, linkage, align...)	\
-+	SYM_START(name, linkage, align)
-+
-+#endif /* CONFIG_CFI_CLANG */
-+
-+#ifndef SYM_TYPED_FUNC_START
-+#define SYM_TYPED_FUNC_START(name) 			\
-+	SYM_TYPED_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)
-+#endif
-+
-+#endif /* __ASSEMBLY__ */
-+#endif /* _LINUX_CFI_TYPES_H */
-diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-index a4499e5a6f9cb00c..857f6646cc23e949 100755
---- a/tools/perf/check-headers.sh
-+++ b/tools/perf/check-headers.sh
-@@ -20,6 +20,7 @@ FILES=(
-   "include/uapi/linux/stat.h"
-   "include/linux/bits.h"
-   "include/vdso/bits.h"
-+  "include/linux/cfi_types.h"
-   "include/linux/const.h"
-   "include/vdso/const.h"
-   "include/vdso/unaligned.h"
--- 
-2.49.0.504.g3bcea36a83-goog
+btw, it looks like the "Clean up and error out" code in
+vm_module_tags_populate() could use release_pages().
 
 
