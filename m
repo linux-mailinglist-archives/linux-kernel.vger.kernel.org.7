@@ -1,56 +1,53 @@
-Return-Path: <linux-kernel+bounces-597802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362FFA83E9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:28:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39871A83EE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAB7C1B61373
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:25:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A80359E0E87
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677DF257450;
-	Thu, 10 Apr 2025 09:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801EB256C9C;
+	Thu, 10 Apr 2025 09:28:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ss6Y/uvn"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zMFLvh3p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8E02571C4;
-	Thu, 10 Apr 2025 09:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B267D204F65;
+	Thu, 10 Apr 2025 09:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744277090; cv=none; b=NHpgym3B+nS36uFYsxeym2pkbicx7oE8oamQgeKKLJGus0B3CraRnBBIGe8v2fsWcYMOQ4oVuho5N4J88TB3X1io9HGJOoKItCDUUew925Hqf38sr0SangEY4IEpw7xx4eUiOhszzepVfUrXtmz7iA7RDuI8f0Z7/0jTtdH+t/I=
+	t=1744277293; cv=none; b=IoLVRk9odHtxV+j0xR58je1Er57/ei+I4aNfHge7EVqoyPu0IIoHAId+ToJrZr0pjPdFIuUOS654wVjssoiadCd/A053gwGISEKW7tCX1+phA5s/dxDxxAg+8A6Qs87qj3nwz+Hq3NnpO81shqJBY3AhC8XOb8I5in3EkikxMH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744277090; c=relaxed/simple;
-	bh=Fau/kAiTbyGwGpO+NIYPda5JvoXJAT5WKGkFJ0250vI=;
+	s=arc-20240116; t=1744277293; c=relaxed/simple;
+	bh=xE5QEOZfQokzP2MJO9ilKe4LwdE4G+yOiOX5zwVH6ms=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=li5pOPtZmKHwqferkeeamTLwF74w63GSIuRa0KxlKUFCc3TKu3TvP6E8ztzmHwwFgc8wiVipOQMh/QlkgBFmKAI7r4r+IPPUmTfuq3LChGzyEpFt1QF2oB3bv91jW2lcqo5gv+cpHxAcaoNjI5wybIxxVzUqLYqQcCOWjy49EaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ss6Y/uvn; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YCyam3MeYKSW2wRMpKixBoxFry3Jmba2LiJsdJTIL88=; b=Ss6Y/uvnSSk45Oqy0FCg60u+cc
-	ea8FD+2dhy0s23DRtx7Gp/YI+CKHmAqVb62kS4N0arOUHu94fI6yrpDyR3tPyGWqdaV5dTSi1wRTk
-	GidBobISVOtDOmtNShNptY9TMS0Fc0qGhgzrd5/5JZm155SVWuSky/AXSLPnlHXrMNF5+eFOtB/o4
-	1trfjOAl7SpM3JNHo0ZfgxfiibYl+5kqiCpreWpAqRmKI7vPvHBk3oWLYmrTrUkmo0fmyHEF+A3SL
-	2GORQuDKRrtIw0oe7+k48hc4X90eduJkK/OjZ3KziEp1Fa9nj1lT1o9pZQG8ogVkhZItgSrfc9K+F
-	ONIQpL/w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u2o9P-00000009vm9-45pJ;
-	Thu, 10 Apr 2025 09:24:47 +0000
-Date: Thu, 10 Apr 2025 02:24:47 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ublk: skip blk_mq_tag_to_rq() bounds check
-Message-ID: <Z_eOX-8QHxsq21Rz@infradead.org>
-References: <20250409024955.3626275-1-csander@purestorage.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GjhC7d6VkZ7/ObrxMe0YyXkNh/EvgVI+zQJoXlBi1xDxTpdcjP67BLFFxdHJKKrY2NDWPtGtiDBeYt0T6LR+FbqWtkk2nfIAUdhVNHW5Rppbbq6aNle0eV2G5tfFdDu142IJeDwlZE34Z7OJdaW/wmJIKPF6rmI4KTgLKYQNjVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zMFLvh3p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C36E2C4CEDD;
+	Thu, 10 Apr 2025 09:28:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744277293;
+	bh=xE5QEOZfQokzP2MJO9ilKe4LwdE4G+yOiOX5zwVH6ms=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zMFLvh3pE8OwQ+F0RkFA6Np9d1guQML54ioB3Q+ClmcCD4Z9WGcff0WDR/bokxfsV
+	 vqaJ5kId6axn9AJ82kvl23Wyo/BpYyrt189+Tm1c217oBhwh4Cze9ZTosb89tCr+7g
+	 hMYf7lgkzbos4JJu3pBiuKr/9aPaN/xn0VtKsvWo=
+Date: Thu, 10 Apr 2025 11:26:38 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Pawel Laszczak <pawell@cadence.com>
+Cc: "peter.chen@kernel.org" <peter.chen@kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] usb: cdnsp: Fix issue with resuming from L1
+Message-ID: <2025041050-condition-stout-8168@gregkh>
+References: <20250410072333.2100511-1-pawell@cadence.com>
+ <PH7PR07MB9538959C61B32EBCA33D1909DDB72@PH7PR07MB9538.namprd07.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,28 +56,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250409024955.3626275-1-csander@purestorage.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <PH7PR07MB9538959C61B32EBCA33D1909DDB72@PH7PR07MB9538.namprd07.prod.outlook.com>
 
-On Tue, Apr 08, 2025 at 08:49:54PM -0600, Caleb Sander Mateos wrote:
-> The ublk driver calls blk_mq_tag_to_rq() in several places.
-> blk_mq_tag_to_rq() tolerates an invalid tag for the tagset, checking it
-> against the number of tags and returning NULL if it is out of bounds.
-> But all the calls from the ublk driver have already verified the tag
-> against the ublk queue's queue depth. In ublk_commit_completion(),
-> ublk_handle_need_get_data(), and case UBLK_IO_COMMIT_AND_FETCH_REQ, the
-> tag has already been checked in __ublk_ch_uring_cmd(). In
-> ublk_abort_queue(), the loop bounds the tag by the queue depth. In
-> __ublk_check_and_get_req(), the tag has already been checked in
-> __ublk_ch_uring_cmd(), in the case of ublk_register_io_buf(), or in
-> ublk_check_and_get_req().
+On Thu, Apr 10, 2025 at 07:34:16AM +0000, Pawel Laszczak wrote:
+> Subject: [PATCH] usb: cdnsp: Fix issue with resuming from L1
+
+Why is the subject line duplicated here?  Can you fix up your git
+send-email process to not do that?
+
+> In very rare cases after resuming controller from L1 to L0 it reads
+> registers before the clock has been enabled and as the result driver
+> reads incorrect value.
+> To fix this issue driver increases APB timeout value.
 > 
-> So just index the tagset's rqs array directly in the ublk driver.
-> Convert the tags to unsigned, as blk_mq_tag_to_rq() does.
+> Probably this issue occurs only on Cadence platform but fix
+> should have no impact for other existing platforms.
 
-Poking directly into block layer internals feels like a really bad
-idea.  If this is important enough we'll need a non-checking helper
-in the core code, but as with all these kinds of micro-optimizations
-it better have a really good justification.
+If this is the case, shouldn't you just handle this for Cadence-specific
+hardware and add the check for that to this change?
 
+> 
+> Fixes: 3d82904559f4 ("usb: cdnsp: cdns3 Add main part of Cadence USBSSP DRD Driver")
+> cc: stable@vger.kernel.org
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+> ---
+>  drivers/usb/cdns3/cdnsp-gadget.c | 22 ++++++++++++++++++++++
+>  drivers/usb/cdns3/cdnsp-gadget.h |  4 ++++
+>  2 files changed, 26 insertions(+)
+> 
+> diff --git a/drivers/usb/cdns3/cdnsp-gadget.c b/drivers/usb/cdns3/cdnsp-gadget.c
+> index 87f310841735..b12581b94567 100644
+> --- a/drivers/usb/cdns3/cdnsp-gadget.c
+> +++ b/drivers/usb/cdns3/cdnsp-gadget.c
+> @@ -139,6 +139,21 @@ static void cdnsp_clear_port_change_bit(struct cdnsp_device *pdev,
+>  	       (portsc & PORT_CHANGE_BITS), port_regs);
+>  }
+>  
+> +static void cdnsp_set_apb_timeout_value(struct cdnsp_device *pdev)
+> +{
+> +	__le32 __iomem *reg;
+> +	void __iomem *base;
+> +	u32 offset = 0;
+> +	u32 val;
+> +
+> +	base = &pdev->cap_regs->hc_capbase;
+> +	offset = cdnsp_find_next_ext_cap(base, offset, D_XEC_PRE_REGS_CAP);
+> +	reg = base + offset + REG_CHICKEN_BITS_3_OFFSET;
+> +
+> +	val  = le32_to_cpu(readl(reg));
+> +	writel(cpu_to_le32(CHICKEN_APB_TIMEOUT_SET(val)), reg);
+
+Do you need to do a read to ensure that the write is flushed to the
+device before continuing?
+
+> +}
+> +
+>  static void cdnsp_set_chicken_bits_2(struct cdnsp_device *pdev, u32 bit)
+>  {
+>  	__le32 __iomem *reg;
+> @@ -1798,6 +1813,13 @@ static int cdnsp_gen_setup(struct cdnsp_device *pdev)
+>  	pdev->hci_version = HC_VERSION(pdev->hcc_params);
+>  	pdev->hcc_params = readl(&pdev->cap_regs->hcc_params);
+>  
+> +	/* In very rare cases after resuming controller from L1 to L0 it reads
+> +	 * registers before the clock has been enabled and as the result driver
+> +	 * reads incorrect value.
+> +	 * To fix this issue driver increases APB timeout value.
+> +	 */
+
+Nit, please use the "normal" kernel comment style.
+
+thanks,
+
+greg k-h
 
