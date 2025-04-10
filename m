@@ -1,214 +1,169 @@
-Return-Path: <linux-kernel+bounces-598206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA6EA8437E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:44:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4155A8437B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42CFB4A0475
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:39:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08CAD8A4EAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506BC28541D;
-	Thu, 10 Apr 2025 12:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D87B2853E6;
+	Thu, 10 Apr 2025 12:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dxNqze0v"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="jth3yJzn"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9EF2853E5;
-	Thu, 10 Apr 2025 12:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941BA2836A2
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 12:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744288767; cv=none; b=cxbD0A6j3xULqVbRAytajtnpwrks7a9d6UI8YgHFkrCo9pOIvQRQlvx7BW6aIpZcKxSii7Y/BXyiCqincM02GVvq2JKI4lYZr8Auun+JLq9E20C6N19/fgda3Jy8GZsyjUSwN9LQuG1gE/BEu0mNlknVmzDexsAcd5Q6L9H1V/s=
+	t=1744288884; cv=none; b=Cvab3TxWcqmpi+eUCy0h8sOzjFv60gJr9I32bvKD9Qkx4bynQ8QzNd/DxwNliDnVFkezZ7FzxGLS4QDf5aZc78acSmC/RTK1fY8PFFTm3eXFf0ZHWtxQLEP/TLy0b94HBxy/fcqdwStPIFcp8P6qfrnultGaTUnoxlZGckY2Iuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744288767; c=relaxed/simple;
-	bh=/eNrs1XYBAEtkRLVC7n9Um+XZ0niyf8go02McgTE+cs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dO0WoVC1DwSK8CudRvE9WsPrJaqQZKa5aHwstUIVeHyD7IBYeQjRonj2jsef8WhwzHMKBmRziQ940ayGHGAWEn8etBDN7N8sxKkZ2O/wnxcsQtUxlIv7mQXapiHWcFs3FreSuEm/JvqSqI0kgmblA0zNleM1KDldbp2/UaXdRtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dxNqze0v; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744288763;
-	bh=/eNrs1XYBAEtkRLVC7n9Um+XZ0niyf8go02McgTE+cs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=dxNqze0vhbx4/g/IgvWvfCjjZKpGBxlJ3Me6+CtgtZbVSUtxLLYODrZ+i16CXu2uW
-	 lMRVpwKGBC2xn+BFhiKRBkFz29leFB6+mlCUGmry9F76rNJ0p3fPqhIL9r5jNRf2XY
-	 kaqnDZJC+4iH+Wqw2izF3gj89ZDVd3N7ipPu+LdJ2egyFUvmGOAzbX+trniyGcx7TK
-	 EURJPj1bq0XBkeerJ0QMlabOwe5vXcSiv6Cb8URI7rFjjwugIB0/sT5St9LXUREBCx
-	 UN+wP6bK8I+mdtPKE1/WwrRVeZDA6tdR45oGsomlKVQMMi1fnQOBdPmIGDxFk4tH0L
-	 ifSd9r5arOwmw==
-Received: from [IPv6:2606:6d00:11:e976::5ac] (unknown [IPv6:2606:6d00:11:e976::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1118717E017D;
-	Thu, 10 Apr 2025 14:39:21 +0200 (CEST)
-Message-ID: <cb2266a3ff0cf9d57bdfdf3e88dc82c211d18e83.camel@collabora.com>
-Subject: Re: [RESEND PATCH v1 0/7] Performance improvement of decoder
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: "Jackson.lee" <jackson.lee@chipsnmedia.com>, mchehab@kernel.org, 
-	hverkuil-cisco@xs4all.nl, sebastian.fricke@collabora.com, 
-	bob.beckett@collabora.com, dafna.hirschfeld@collabora.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lafley.kim@chipsnmedia.com, b-brnich@ti.com, hverkuil@xs4all.nl, 
-	nas.chung@chipsnmedia.com
-Date: Thu, 10 Apr 2025 08:39:20 -0400
-In-Reply-To: <20250410034002.88-1-jackson.lee@chipsnmedia.com>
-References: <20250410034002.88-1-jackson.lee@chipsnmedia.com>
-Organization: Collabora Canada
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.0 (3.56.0-1.fc42) 
+	s=arc-20240116; t=1744288884; c=relaxed/simple;
+	bh=vXo5SCRGvexplMvukNA1r/KMPn+5HrNJhleiCwCZ4Bc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jaSJOmz1Xz/oQI6ufWEPGu80gNEfO+IZXwRuSVSTjvJNJMEgk3TSGEDkEiY/NyG/MiBpKRbq3uhRPnI42olUartW39/AuorikLBGuQQREnyPlnU4oBeuycnMOp/k/Zqabe1neeaW7PAMEF517CuKNjC4tnRRso+866eZtEVrCfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=jth3yJzn; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=qB4lpthXKMSgJMw0P+6qUIV90NCE2Pz6tBeYRSKcISc=; b=jth3yJzn1/mR6XgSKCon5hJeLL
+	wyOn/x+v+tJw5lqtXGOOU0+af+/e2Q0xN2RCGzZBAg7OnctNRAoj3BMJD69HDgxx//fcrytxxHUaK
+	OC7WE2En/XcXD9KmHH7ZbBQbk6bi/0+KRyJvoGYFcu6GxK0GzMvvD/vIvIlYz3F80QSp3wd7/Zjmk
+	VAg8I2RQxgyXfb44D0zzZa7eHCe1E0izaoeYg1XbYlnfkUhzdGpOGgQeHuUOqAY9jy9+AunpHbvSE
+	sDY2IAc46mmTVKN6pMMyLqE77PY5dGV9z9XlmQi+4NEgEQY9UzuEhjB5gPAjue9fiEsUy5DtpY4j8
+	P5N0lUkw==;
+Received: from [189.7.87.174] (helo=[192.168.0.224])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1u2rDO-00EfkZ-Mb; Thu, 10 Apr 2025 14:41:06 +0200
+Message-ID: <efbd7d18-1cd2-4eb9-b504-c4a75370843a@igalia.com>
+Date: Thu, 10 Apr 2025 09:40:45 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drm/v3d: client ranges from axi_ids are different
+ with V3D 7.1
+To: Jose Maria Casanova Crespo <jmcasanova@igalia.com>,
+ Melissa Wen <mwen@igalia.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250409155504.1093400-2-jmcasanova@igalia.com>
+ <20250409155504.1093400-3-jmcasanova@igalia.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <20250409155504.1093400-3-jmcasanova@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Hi Chema,
 
-Le jeudi 10 avril 2025 à 12:39 +0900, Jackson.lee a écrit :
-> From: Jackson Lee <jackson.lee@chipsnmedia.com>
-> 
-> v4l2-compliance results:
-> ========================
+On 09/04/25 12:55, Jose Maria Casanova Crespo wrote:
+> The client mask has been reduced from 8 bits on V3D 4.1 to 7 bits
+> on V3d 7.1, so the ranges for each client are not compatible.
 
-What there reason for a resend within 3h ?
-
-Nicolas
+s/V3d/V3D
 
 > 
-> v4l2-compliance 1.28.1-5233, 64 bits, 64-bit time_t
-> 
-> Buffer ioctls:
->                 warn: v4l2-test-buffers.cpp(693): VIDIOC_CREATE_BUFS
-> not supported
->                 warn: v4l2-test-buffers.cpp(693): VIDIOC_CREATE_BUFS
-> not supported
->         test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
->         test CREATE_BUFS maximum buffers: OK
->         test VIDIOC_EXPBUF: OK
->         test Requests: OK (Not Supported)
-> 
-> Total for wave5-dec device /dev/video0: 46, Succeeded: 46, Failed: 0,
-> Warnings: 2
-> Total for wave5-enc device /dev/video1: 46, Succeeded: 46, Failed: 0,
-> Warnings: 0
-> 
-> Fluster test results:
-> =====================
-> 
-> Running test suite JCT-VC-HEVC_V1 with decoder GStreamer-H.265-V4L2-
-> Gst1.0
-> Using 3 parallel job(s)
-> Ran 133/147 tests successfully               in 41.629 secs
-> 
-> (1 test fails because of not supporting to parse multi frames, 1 test
-> fails because of a missing frame and slight corruption,
->  2 tests fail because of sizes which are incompatible with the IP, 11
-> tests fail because of unsupported 10 bit format)
-> 
-> 
-> Running test suite JVT-AVC_V1 with decoder GStreamer-H.264-V4L2-
-> Gst1.0
-> Using 3 parallel job(s)
-> Ran 78/135 tests successfully               in 44.578 secs
-> 
-> (57 fail because the hardware is unable to decode  MBAFF / FMO /
-> Field / Extended profile streams.)
-> 
-> Seek test
-> =====================
-> 1. gst-play-1.0 seek.264
-> 2. this will use waylandsink since gst-play-1.0 uses playbin.
->    if you don't want to hook up display,
->    you can run gst-play-1.0 seek.264 --videosink=fakevideosink
-> instead
-> 3. Let pipeline run for 2-3 seconds
-> 4. press SPACE key to pause
-> 5. press 0 to reset
-> press SPACE to start again
-> 
-> gst-play-1.0 seek.264 --videosink=fakevideosink
-> Press 'k' to see a list of keyboard shortcuts.
-> Now playing /root/seek.264
-> Redistribute latency...
-> Redistribute latency...
-> Redistribute latency...
-> Redistribute latency...
-> Redistribute latency...aused
-> 0:00:09.9 / 0:00:09.7
-> Reached end of play list.
-> 
-> Sequence Change test
-> =====================
-> gst-launch-1.0 filesrc location=./switch_1080p_720p_240frames.h264 !
-> h264parse ! v4l2h264dec ! filesink location=./h264_output_420.yuv
-> Setting pipeline to PAUSED ...
-> Pipeline is PREROLLING ...
-> Redistribute latency...
-> Redistribute latency...
-> Pipeline is PREROLLED ...
-> Setting pipeline to PLAYING ...
-> Redistribute latency...
-> New clock: GstSystemClock
-> Got EOS from element "pipeline0".
-> Execution ended after 0:00:05.772414400
-> Setting pipeline to NULL ...
-> Freeing pipeline ...
-> 
-> Change since v0:
-> ===================
-> * For [PATCH v1 2/7] media: chips-media: wave5: Improve performance
-> of decoder
->  - separates the previous patch to a few patches
-> 
-> * For [PATCH v1 3/7] media: chips-media: wave5: Fix not to be closed
->  - separated from the previous patch of performance improvement of
->    decoder
-> 
-> * For [PATCH v1 4/7] media: chips-media: wave5: Use spinlock whenever
-> state is changed
->  - separated from the previous patch of performance improvement of
->    decoder
-> 
-> * For [PATCH v1 5/7] media: chips-media: wave5: Fix not to free
-> resources normally when
->     instance was destroyed
->  - separated from the previous patch of performance improvement of
->    decoder
-> 
-> * For [PATCH v1 7/7] media: chips-media: wave5: Fix SError of kernel
-> panic when closed
->  - separated from the previous patch of performance improvement of
->    decoder
-> 
-> Jackson Lee (7):
->   media: chips-media: wave5: Fix Null reference while testing fluster
->   media: chips-media: wave5: Improve performance of decoder
->   media: chips-media: wave5: Fix not to be closed
->   media: chips-media: wave5: Use spinlock whenever state is changed
->   media: chips-media: wave5: Fix not to free resources normally when
->     instance was destroyed
->   media: chips-media: wave5: Reduce high CPU load
->   media: chips-media: wave5: Fix SError of kernel panic when closed
-> 
->  .../platform/chips-media/wave5/wave5-helper.c |  10 +-
->  .../chips-media/wave5/wave5-vpu-dec.c         | 116 +++++++++++-----
-> --
->  .../chips-media/wave5/wave5-vpu-enc.c         |   8 +-
->  .../platform/chips-media/wave5/wave5-vpu.c    |  70 +++++++++--
->  .../platform/chips-media/wave5/wave5-vpuapi.c |  36 +++---
->  .../platform/chips-media/wave5/wave5-vpuapi.h |  10 ++
->  .../chips-media/wave5/wave5-vpuconfig.h       |   1 +
->  7 files changed, 179 insertions(+), 72 deletions(-)
+> A new CSD client can now report MMU errors on 7.1
 
--- 
-Nicolas Dufresne
-Principal Engineer at Collabora
+How about "On V3D 7.1, the CSD client can also report MMU errors.
+Therefore, add its AXI ID to the IDs list."?
+
+Note that a commit message should use the imperative mood:
+
+"Describe your changes in imperative mood, e.g. “make xyzzy do frotz”
+instead of “[This patch] makes xyzzy do frotz” or “[I] changed xyzzy to
+do frotz”, as if you are giving orders to the codebase to change its
+behaviour." [1]
+
+I miss such imperative description in this commit message.
+
+Also, you could add a "Fixes:" tag pointing to the commit that
+introduced V3D 7.1. This will allow this commit to go to the stable
+trees.
+
+[1] https://docs.kernel.org/process/submitting-patches.html
+
+> 
+> Signed-off-by: Jose Maria Casanova Crespo <jmcasanova@igalia.com>
+> ---
+>   drivers/gpu/drm/v3d/v3d_irq.c | 21 ++++++++++++++++++++-
+>   1 file changed, 20 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/v3d/v3d_irq.c b/drivers/gpu/drm/v3d/v3d_irq.c
+> index 1810743ea7b8..0cc1c7e5b412 100644
+> --- a/drivers/gpu/drm/v3d/v3d_irq.c
+> +++ b/drivers/gpu/drm/v3d/v3d_irq.c
+> @@ -199,12 +199,31 @@ v3d_hub_irq(int irq, void *arg)
+>   			{0xA0, 0xA1, "TFU"},
+>   			{0xC0, 0xE0, "MMU"},
+>   			{0xE0, 0xE1, "GMP"},
+> +		}, v3d71_axi_ids[] = {
+> +			{0x00, 0x30, "L2T"},
+> +			{0x30, 0x38, "CLE"},
+> +			{0x38, 0x39, "PTB"},
+> +			{0x39, 0x3A, "PSE"},
+> +			{0x3A, 0x3B, "CSD"},
+> +			{0x40, 0x60, "TLB"},
+> +			{0x60, 0x70, "MMU"},
+> +			{0x7C, 0x7E, "TFU"},
+> +			{0x7F, 0x80, "GMP"},
+>   		};
+>   		const char *client = "?";
+>   
+>   		V3D_WRITE(V3D_MMU_CTL, V3D_READ(V3D_MMU_CTL));
+>   
+> -		if (v3d->ver >= V3D_GEN_41) {
+> +		if (v3d->ver >= V3D_GEN_71) {
+> +			axi_id = axi_id & 0x7F;
+> +			for (size_t i = 0; i < ARRAY_SIZE(v3d71_axi_ids); i++) {
+> +				if (axi_id >= v3d71_axi_ids[i].begin &&
+> +				    axi_id < v3d71_axi_ids[i].end) {
+> +					client = v3d71_axi_ids[i].client;
+> +					break;
+> +				}
+> +			}
+
+What do you think about assigning v3d71_axi_ids or v3d41_axi_ids to an 
+temporary variable and move this loop below? Something like,
+
+if (v3d->ver >= V3D_GEN_71) {
+	axi_id = axi_id & 0x7F;
+	v3d_axi_ids = v3d71_axi_ids;
+} else if ... {
+	...
+}
+
+for (size_t i = 0; i < ARRAY_SIZE(v3d_axi_ids); i++) {
+	if (axi_id >= v3d_axi_ids[i].begin
+	    && axi_id < v3d_axi_ids[i].end) {
+		client = v3d_axi_ids[i].client;
+		break;
+	}
+}
+
+Best Regards,
+- Maíra
+
+> +		} else if (v3d->ver >= V3D_GEN_41) {
+>   			axi_id = axi_id & 0xFF;
+>   			for (size_t i = 0; i < ARRAY_SIZE(v3d41_axi_ids); i++) {
+>   				if (axi_id >= v3d41_axi_ids[i].begin &&
+
 
