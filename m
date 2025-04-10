@@ -1,98 +1,130 @@
-Return-Path: <linux-kernel+bounces-597940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB1BA84063
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:18:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB04A8406F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA6BA16FC81
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:16:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EF07189D2BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E45927934C;
-	Thu, 10 Apr 2025 10:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6511A28135C;
+	Thu, 10 Apr 2025 10:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="b3T0Szcm"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A2LVBxa9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8B320C021
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A944281343
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744280214; cv=none; b=iyTSTEyCRSSyzY9p8PFvLUkG4ST11vxzocrigjg0kJkZ+5FBR5F61UkbJEiWW9gX8PkhQTF4ldjS5Hneaar+p0RoUgyaqpYO+OPFGgYB9cfG6DxRn4qM+jQj/Sk2q+MbCXb9Lq68q/fCQLpTqfrqciQlAMZwVAezsNkY3mgBWFM=
+	t=1744280328; cv=none; b=Mhm2TzZ+q1qTFsA1ABKHlLvC5cBpVwpo3QHJicpNN/RSw9IWXWpZIXLkbWNxzASY4HfzD8gmeNJlIBIobT46iWjijdBiHpwfyY8z41WIQZNaLgxH4Pgak8H38taFKwDIyYr9SyT9pdK+UdclnBSteSmtQpepkKeVv7c8JpqF928=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744280214; c=relaxed/simple;
-	bh=m+wYMRgZtRrAYN02mEsXVuCunbL24R0MwjP+cjQKIYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gf1hqpSLVdVrG8ABSb8C1KGMEEQVCizkvzrNSKfskGnRRSnLdXmFkF8wcPPzzM+rn03/2VsXJxlsOOxeFn4ZGAC3ZA/W2DusfcKdoYxU6zOVxViUpvPDPOWqF96zkDotC+jZwgwACHvOiM+RI1Z51lrAyRPd/FFL+oJVi2zpWEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=b3T0Szcm; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744280210;
-	bh=m+wYMRgZtRrAYN02mEsXVuCunbL24R0MwjP+cjQKIYo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b3T0Szcmj51npxxLqLqo0Xly1DKbYLoYwKjn4eDPhReGElZ3sHRLOIRrBsSPjxERK
-	 a99jeSZAEylvrPvgM5/mZKBlPxHWXPQZpfqbqFuEpTSynvFg6u3tb/Li3zhf3bQCpR
-	 k5e9ePa0tuYbYpTCZ9I8l41VhbEbOHxFhwBkRWmG+RQB2t92efC+f7mr5Zr3EWp1wD
-	 8D4REgCPcjzhWs+NUyikbeE3QteFUdQoEAjTQnX/PoI5N4dONRIcD/JT9ediN9EbXk
-	 tbcxR1L5eUh2VEgwy+sVwa9QKTlImy4Iyy0tvCIscqRokq0dcScqlCF7thJFeIElbg
-	 HfVJwzlmvWqYw==
-Received: from [192.168.1.90] (unknown [82.79.138.25])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1744280328; c=relaxed/simple;
+	bh=jndh+/z2HYP9QEo+udB/3zkY+16/NOtoIm2dOXwTGYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HEdpkoUxw0P/LhdTg3WSR7gE5YG/nc/zZxmJRDzoG0I6a1T3cKMrg6Z+fEsqckjGmaKti4MstgMqelj2YB7prVpiMsXTlQwBvcAHbWEtltRMqyq4ue1iciAMVN/4j/6GwYkfTkBZgEXNyqcIdWcHYVxf4Mt8wQXg2mLiwX0jLII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A2LVBxa9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744280326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zvld6hg6NLmUVocdtsPZa6n4aYUdhPwJV0lCT2PJ1AY=;
+	b=A2LVBxa918ocMN19C6l6a/7wPLM4sjsDvHhsN7omtpYP9Q8cB094X40CB89KJIijzRLlvc
+	y9l2PlGKEpCcyC1xIOOOs/3ns8TkvH36YAXVXNaTUlaeAnPkB66xl/2Tx5BrlMv4ywDrJh
+	WK5CITubCgKWPM/NjHXeJNETdIILb9o=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-646-__dLQ8UxNYOK4UjUaC858w-1; Thu,
+ 10 Apr 2025 06:18:42 -0400
+X-MC-Unique: __dLQ8UxNYOK4UjUaC858w-1
+X-Mimecast-MFC-AGG-ID: __dLQ8UxNYOK4UjUaC858w_1744280321
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B2ACC17E0173;
-	Thu, 10 Apr 2025 12:16:49 +0200 (CEST)
-Message-ID: <89108670-c48b-4713-9bbb-98ab966f2197@collabora.com>
-Date: Thu, 10 Apr 2025 13:16:49 +0300
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 17790180034D;
+	Thu, 10 Apr 2025 10:18:41 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.54])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id DE0881808882;
+	Thu, 10 Apr 2025 10:18:37 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 10 Apr 2025 12:18:06 +0200 (CEST)
+Date: Thu, 10 Apr 2025 12:18:01 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Lennart Poettering <lennart@poettering.net>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org,
+	Peter Ziljstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH] pidfs: ensure consistent ENOENT/ESRCH reporting
+Message-ID: <20250410101801.GA15280@redhat.com>
+References: <20250409-sesshaft-absurd-35d97607142c@brauner>
+ <20250409-rohstoff-ungnade-d1afa571f32c@brauner>
+ <20250409184040.GF32748@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/15] drm/tests: hdmi: Fixup CamelCase warning
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250326-hdmi-conn-yuv-v3-0-294d3ebbb4b2@collabora.com>
- <20250326-hdmi-conn-yuv-v3-9-294d3ebbb4b2@collabora.com>
- <20250409-accomplished-vivacious-ant-3c03c3@houat>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <20250409-accomplished-vivacious-ant-3c03c3@houat>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250409184040.GF32748@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 4/9/25 6:13 PM, Maxime Ripard wrote:
-> On Wed, Mar 26, 2025 at 12:19:58PM +0200, Cristian Ciocaltea wrote:
->> Rename the reject_100_MHz_connector_hdmi_funcs variable to make
->> checkpatch.pl happy:
->>
->>   CHECK: Avoid CamelCase: <reject_100_MHz_connector_hdmi_funcs>
->>
->> While at it, also rename reject_100MHz_connector_tmds_char_rate_valid()
->> for consistency.
->>
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> 
-> In this case, checkpatch is wrong. mhz != MHz.
-> 
-> And since it's not a warning, I'd just ignore it.
+On 04/09, Oleg Nesterov wrote:
+>
+> Christian,
+>
+> I will actually read your patch tomorrow, but at first glance
+>
+> On 04/09, Christian Brauner wrote:
+> >
+> > The seqcounter might be
+> > useful independent of pidfs.
+>
+> Are you sure? ;) to me the new pid->pid_seq needs more justification...
+>
+> Again, can't we use pid->wait_pidfd->lock if we want to avoid the
+> (minor) problem with the wrong ENOENT?
 
-I think it also improves consistency a bit, as this is actually the only
-place where "[_]MHz" is being used in the file, everywhere else we have
-"mhz", without '_' prefix.
+I mean
 
-But I can still drop the patch if you prefer.
+	int pidfd_prepare(struct pid *pid, unsigned int flags, struct file **ret)
+	{
+		int err = 0;
+
+		spin_lock_irq(&pid->wait_pidfd->lock);
+
+		if (!pid_has_task(pid, PIDTYPE_PID))
+			err = -ESRCH;
+		else if (!(flags & PIDFD_THREAD) && !pid_has_task(pid, PIDTYPE_TGID))
+			err = -ENOENT;
+
+		spin_lock_irq(&pid->wait_pidfd->lock);
+
+		return err ?: __pidfd_prepare(pid, flags, ret);
+	}
+
+To remind, detach_pid(pid, PIDTYPE_PID) does wake_up_all(&pid->wait_pidfd) and
+takes pid->wait_pidfd->lock.
+
+So if pid_has_task(PIDTYPE_PID) succeeds, __unhash_process() -> detach_pid(TGID)
+is not possible until we drop pid->wait_pidfd->lock.
+
+If detach_pid(PIDTYPE_PID) was already called and have passed wake_up_all(),
+pid_has_task(PIDTYPE_PID) can't succeed.
+
+Oleg.
+
 
