@@ -1,150 +1,219 @@
-Return-Path: <linux-kernel+bounces-597171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F30A835CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:35:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01004A835D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 03:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AAB18C1096
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 01:34:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D03C8C0216
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 01:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B4A1D88A6;
-	Thu, 10 Apr 2025 01:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA381A3150;
+	Thu, 10 Apr 2025 01:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="paeU4x0r"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZNeVAd0/"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53051BD9DD
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 01:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788141684B4;
+	Thu, 10 Apr 2025 01:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744248852; cv=none; b=Khn+aOiIGi22VqmUtwaLV1+CryHsYvaqvovcdVRM2xmsJenKbx2GPUhqdZrl1jKjzMq8DEQcRNEI7VmtsrDPc4tDdow1S8zPjG0mxvGxG6o1Lk12kf2Ou3Is3d+ZFdviHB5nBCXnq6sn19i6yDWbMDTTQGcMs0qKrBRLXWjyLE8=
+	t=1744248967; cv=none; b=l6s2+4DA+MnUZtLdhJnCcAoNf6Aie5M0a61XPpSD65cc3rf7sjnSgn5vh/1QRuoarQg00fMfHVpd1qt7kuTpFtf4KBDr385OPOCtT5RExcDreHwN/zQNo+pX47yLseEILym9k63+/6wJr/mRH060nZOr6XgsIELeZgrLcq04V7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744248852; c=relaxed/simple;
-	bh=+EADU4VGExLgeSXK4lwo+fjfE4pV2JIAzUIFT8TnNTw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PT8iDJQiVhf/22L5/kOiYbxYZCUb+OVpOyV/799hlUhHcHunh0fONVHNd5dGpxyIiUbhyJRDA4AxwY8+Y2Nt6Bnky0MKsUk70Lcao3Sd+KAVFKHjc+BLRx+EX3iEePcvG8CR/A6rfrO0e+YFEoCICkOFxvCVAJzH+baGgyyhp/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=paeU4x0r; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 539HDG1g010444
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 01:34:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=Y+3FfrSNBC0
-	rnW/pbZ1shOcvb9E0aupV7QcxaMUAHKc=; b=paeU4x0rLxrFhPoGJrczRk4OJ2y
-	Pkw0tFRnIMmEg5h/98A/+VlOhzFrX52SRBH18x5nchp3RFQ2B6ceiKBxxrkBq3bv
-	mBNbC/10Fbx6Y57QLE6fggGW7O3fEZVrunIUVkCI8+H/VIOTaKGrRv0Eq5W8JVqt
-	ifqzInGkFFmSsVlArb3+7HNHrH7NlDrN4EzoquEdTTSonuwXqeARbbP7+yC6kQKW
-	zuk6e/EsrtRLEx1Kf1ZnntZAF54mag1bU0er2pGZXcXPHDqiWWVlM5AXkinFuts0
-	hvRMU8amlUKkS/qs/G6ZByeg5ax9+DBHa21vRRCLcnU02boa0P7HvJtWOOQ==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twftn2e7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 01:34:10 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-af972dd0cd6so197935a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 18:34:09 -0700 (PDT)
+	s=arc-20240116; t=1744248967; c=relaxed/simple;
+	bh=WfWVNKFhuyMXuKAZwzpdGkYOiQAtyEHVdr/tazfGwgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ge820sZI3cQ0jIwidf3YH6QlRfsgpDY78FsO7aUpjHmt1TvtaiytpAQZL44r0q1mtXtJeGSvY5n+UtamNcwMTRMDE+1u9B/4eBpDgOXjpTbVB49GgXdMYd5t5gxCWQJ55R6BS4AWB6i7Klee84KrveFIxBif3GT47YGpIk6KEpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZNeVAd0/; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c592764e54so42777585a.3;
+        Wed, 09 Apr 2025 18:36:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744248964; x=1744853764; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mn77HHPqYcQPNS+D6QKMYch27BNofJCne2UJ+gPfHFk=;
+        b=ZNeVAd0/6bTg/WEpQ5DTXbUdAycp6iAGnDzh21wtupTlvN6XOihSi0qlN4J9uWLOy3
+         5iJV0XlErdxR66ELn5YnKszbxr7SNig+ej5WYiUWaQXDYsOMgv05ytj7zoaMGA1RGBzO
+         hz9yQm/b2sNhl6xu0gEkm0rIFDK/p+XPPGTiPkjHDsH4toka1bcupMVeJC5/LhrhoBAa
+         S/Xh+TjArf14bR/EsU6L77n/bA8AgMHy+nX8/89kIRQIlb7OW1rcnJictkyESQ6NAJ3F
+         YBCt8dgDz9lVYVkYoxtkJL/TZrCR0SsNYnic0ifjSjQfbghOzB4j6NiT31Ws3MQrwnVJ
+         55gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744248849; x=1744853649;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y+3FfrSNBC0rnW/pbZ1shOcvb9E0aupV7QcxaMUAHKc=;
-        b=kzM53HjYMWVOtfe6olP8P4Zf1wcKl0YS2bzmTaeE5v4EzvTFMaxtWXgeZBjAT3T7X6
-         2Tox9JfXQZ6RoXnQj+4kqimSO8SYtqTh+FZ7uuSl1DzxKdZr1O/f54BRKDJGBpayo5sh
-         NfRQTsS9zuPei82jj0ixFJNMuYgsM4QfJReO5pFOjIsYnAsDg7yfi8vSg+iFZfKyMuGG
-         DQic2HBJaZFVnef2bR8YqlilLEFsZ4mrlRurdMEgV6McAliW+mMah+CjBLHfi4QMx8KU
-         q/T5z8pxU2Y19hGanFF4HJlRQDOPypHPK3VSs0Y0po/0naSJj7mtFV+xwMI5iJNFpvR5
-         VqXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPH9BF3N7yaqT3vQFJVyp+J21/TnP53yDWq8sXdDxb7Z8kA2/6DkVTsMApCJ2x+qMIK+/IPCKxp5QTuSw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Kb+gxSOevOAXsgE09OVGNr38lW/ObXEqJh2D5gx14p5VAe8e
-	xgnagaSEa+iagFtnUsYqcGWzqK/5871rgR+WPuKH+KPkx4LlyMdVLRfYGkhaddtLQLaxft33NDV
-	n3uzPu0tBHVS/r/2PgpBUQJaktAOcA1KlOWevtTSZkNM3ZDZNttk25OGizdk8QTc=
-X-Gm-Gg: ASbGncsQ0qxPE+Ri9sAm6+CqrpiUSqjVw2MinTLI7ieWWxycBn2SH+vhf5v3fjutlI9
-	QEUl4YIhpDSpTTuR7QVjfM1EB1ommgZoAq0GLyObQvijka+2CaC9WtVuHs3fDbbtvBbc8SwUD+K
-	gu8oMDs9GRY8XyIEA7kOO58yRhLcz5zOGfMPN0gw/m6UJoO5RXX2FG4cILmQa+2JqkwjqYYvFR+
-	Cq/TdX7MMoeN9KozuYJD4mxamQvxCZg9TYBg5yOYG7HueW+oY5jIiXzI1g3Ub21j91ISyqLS+mx
-	FA9O6dBF4ezW6khLKbL7mvkU57EDt+ruaeB2Xv8W5T3IAxIDVJkRNvDbwQq1V1dbbCzShEM=
-X-Received: by 2002:a17:90b:270b:b0:2ee:d7d3:3019 with SMTP id 98e67ed59e1d1-307e5972f0fmr1174659a91.12.1744248849120;
-        Wed, 09 Apr 2025 18:34:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE7MCKoesf/io0c1ClAVPtM1es5MKBzBPeISdJZK2T+emvkEbwBgOvPufDeyPNVn4pVjc0MKg==
-X-Received: by 2002:a17:90b:270b:b0:2ee:d7d3:3019 with SMTP id 98e67ed59e1d1-307e5972f0fmr1174618a91.12.1744248848735;
-        Wed, 09 Apr 2025 18:34:08 -0700 (PDT)
-Received: from jiegan-gv.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccb596sm18801815ad.220.2025.04.09.18.34.03
+        d=1e100.net; s=20230601; t=1744248964; x=1744853764;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mn77HHPqYcQPNS+D6QKMYch27BNofJCne2UJ+gPfHFk=;
+        b=m8EPENYUsJ+DYc1VQUd8yZWKsw5BsZd0ADfqImMPDunzfS0ZAIvtWMWhz/o/H/YXjV
+         2hLOtLrIrcv2BNkahl8IDgkiH/B++n19dn+EYdgV7zPRQz7BfIzDp4MD/syq90K6JLsU
+         2FoQ1234OiyL/xmwY9C/IQpI+lxTwsq8w+Zk24JEQF+SlQ4SeISDgcioMw++3ZQJxbRQ
+         66Ja+7cPuJZtchdZkcSlDf27c9dIxT/rhEtd3V/gsphptU/5vw7jU4aGAOSTalIwZNY6
+         eScHMhHyR+WP0oZDHOoO1iFH9hCYZcH5Nnis++Bx5MHlbLlgFji4wuRG1mYQMTbEzrED
+         0W1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUAWVvbn5q/D+1K+pSB7QnKpAqtzkUYYZmijgryks76AcVqFFbs0EjnbHtA+Jtyo110Qnkrs3J3LRO1@vger.kernel.org, AJvYcCUVf86CoImsN73vcO0H1/Uq7GHmoWBAIooLL5B7bOQCL7Sp9y9XFCYPUmbMotLGef89jGL6lql+l1iPd5ot@vger.kernel.org, AJvYcCXm2jeCBfawvNkdX9fsA1+SQMOwC4axpg1mvYNEO5RYvf67LN3RVCEHQrVP/6tcqObLjH5Ud552KGpE@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGqEVUiVnaI1ik31snWc/v8zFCrCbfOwDH1yV3ndgASHBYK665
+	+0iVOEgLmNP8xc8s3xkGpfCHAmOoz6uePQokd7epspk0tcJworKy
+X-Gm-Gg: ASbGncs3hVTwrfx/IPdtAvl1Gn5GDPQsfyWwhL8UxPlWe/Nn8VTxbh1F3wyQbHjGhhA
+	tOxVPvwOHkxcsHq3z5WL4a/Doev0KL5eq7TAfeavMsTBEM/U03EyanWdtXcqs5g3A84S5cQNlDe
+	ueKJcJPI17kz81LBpULEo0r4PTal1TKdLC0jtHZ8YFRWPheGePgQVcm6qd5EImwgL+3tZGWjw1x
+	abZ0V1Mr1jFELA/m6aqMReO9Y4guEb6OBjvUSTctyFfCmtgimT8ioCjxNy1xdj8pjEimx73pRSk
+	cw8h+58bZHu6fxQ9wScc0ghhDmk=
+X-Google-Smtp-Source: AGHT+IEcWmffQfvCuChtXQXpnroPXYRrhJX1q2n+tT6bZYpbzl+MegNQoZB3XFLgQsUM9dwmK7XvZA==
+X-Received: by 2002:a05:620a:3941:b0:7c5:5a51:d2d1 with SMTP id af79cd13be357-7c7a81c7994mr96263385a.55.1744248964263;
+        Wed, 09 Apr 2025 18:36:04 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c7a8969e5bsm13726985a.53.2025.04.09.18.36.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 18:34:08 -0700 (PDT)
-From: Jie Gan <jie.gan@oss.qualcomm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v2 5/5] arm64: dts: qcom: sa8775p: Add interrupts to CTCU device
-Date: Thu, 10 Apr 2025 09:33:30 +0800
-Message-Id: <20250410013330.3609482-6-jie.gan@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250410013330.3609482-1-jie.gan@oss.qualcomm.com>
-References: <20250410013330.3609482-1-jie.gan@oss.qualcomm.com>
+        Wed, 09 Apr 2025 18:36:03 -0700 (PDT)
+Date: Thu, 10 Apr 2025 09:35:25 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Yixun Lan <dlan@gentoo.org>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Haylen Chu <heylenay@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, spacemit@lists.linux.dev, 
+	Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>, 
+	Jisheng Zhang <jszhang@kernel.org>, Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+Subject: Re: [PATCH v6 3/6] clk: spacemit: Add clock support for SpacemiT K1
+ SoC
+Message-ID: <mnkjxqswewyr7agadnv7rprckqafpryotmmi64ckmocwily2yy@mzjwc2qp2wdd>
+References: <20250401172434.6774-1-heylenay@4d2.org>
+ <20250401172434.6774-4-heylenay@4d2.org>
+ <8fe0aaaa-b8e9-45dd-b792-c32be49cca1a@riscstar.com>
+ <20250410003756-GYA19359@gentoo>
+ <dm4lwnplwcxj3t3qx3a3bdxtziowjfoqdy4vrd3ahmzkhejrov@fa5rujatatew>
+ <z27ri5eue43ti6b2te2cbxiow66mtgbnyudoo5cs4quabgbx5r@uipzoxvfoysi>
+ <20250410011611-GYC19359@gentoo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=B5+50PtM c=1 sm=1 tr=0 ts=67f72012 cx=c_pps a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=wB5yJZRArZ6K3lEFQq8A:9 a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-GUID: z5yOKdrbsFRVuLL8S-S-JRheOJ7hWmTz
-X-Proofpoint-ORIG-GUID: z5yOKdrbsFRVuLL8S-S-JRheOJ7hWmTz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-09_06,2025-04-08_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=754
- suspectscore=0 malwarescore=0 bulkscore=0 phishscore=0 spamscore=0
- priorityscore=1501 adultscore=0 impostorscore=0 lowpriorityscore=0
- mlxscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504100010
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410011611-GYC19359@gentoo>
 
-Add interrupts to enable byte-cntr function for TMC ETR devices.
+On Thu, Apr 10, 2025 at 01:16:11AM +0000, Yixun Lan wrote:
+> Hi Inochi,
+> 
+> On 08:57 Thu 10 Apr     , Inochi Amaoto wrote:
+> > On Thu, Apr 10, 2025 at 08:54:51AM +0800, Inochi Amaoto wrote:
+> > > On Thu, Apr 10, 2025 at 12:37:56AM +0000, Yixun Lan wrote:
+> > > > On 14:37 Tue 08 Apr     , Alex Elder wrote:
+> > > > > On 4/1/25 12:24 PM, Haylen Chu wrote:
+> > > > > > The clock tree of K1 SoC contains three main types of clock hardware
+> > > > > > (PLL/DDN/MIX) and has control registers split into several multifunction
+> > > > > > devices: APBS (PLLs), MPMU, APBC and APMU.
+> > > > > > 
+> > > > > > All register operations are done through regmap to ensure atomiciy
+> > > > > > between concurrent operations of clock driver and reset,
+> > > > > > power-domain driver that will be introduced in the future.
+> > > > > > 
+> > > > > > Signed-off-by: Haylen Chu <heylenay@4d2.org>
+> > > > > 
+> > > > > I have a few more comments here but I think this is getting very
+> > > > > close to ready.  You addressed pretty much everything I mentioned.
+> > > > > 
+> > > > > > ---
+> > > > > >   drivers/clk/Kconfig               |    1 +
+> > > > > >   drivers/clk/Makefile              |    1 +
+> > > > > >   drivers/clk/spacemit/Kconfig      |   18 +
+> > > > > >   drivers/clk/spacemit/Makefile     |    5 +
+> > > > > >   drivers/clk/spacemit/apbc_clks    |  100 +++
+> > > > > >   drivers/clk/spacemit/ccu-k1.c     | 1316 +++++++++++++++++++++++++++++
+> > > > > >   drivers/clk/spacemit/ccu_common.h |   48 ++
+> > > > > >   drivers/clk/spacemit/ccu_ddn.c    |   83 ++
+> > > > > >   drivers/clk/spacemit/ccu_ddn.h    |   47 ++
+> > > > > >   drivers/clk/spacemit/ccu_mix.c    |  268 ++++++
+> > > > > >   drivers/clk/spacemit/ccu_mix.h    |  218 +++++
+> > > > > >   drivers/clk/spacemit/ccu_pll.c    |  157 ++++
+> > > > > >   drivers/clk/spacemit/ccu_pll.h    |   86 ++
+> > > > > >   13 files changed, 2348 insertions(+)
+> > > > > >   create mode 100644 drivers/clk/spacemit/Kconfig
+> > > > > >   create mode 100644 drivers/clk/spacemit/Makefile
+> > > > > >   create mode 100644 drivers/clk/spacemit/apbc_clks
+> > > > > >   create mode 100644 drivers/clk/spacemit/ccu-k1.c
+> > > > > >   create mode 100644 drivers/clk/spacemit/ccu_common.h
+> > > > > >   create mode 100644 drivers/clk/spacemit/ccu_ddn.c
+> > > > > >   create mode 100644 drivers/clk/spacemit/ccu_ddn.h
+> > > > > >   create mode 100644 drivers/clk/spacemit/ccu_mix.c
+> > > > > >   create mode 100644 drivers/clk/spacemit/ccu_mix.h
+> > > > > >   create mode 100644 drivers/clk/spacemit/ccu_pll.c
+> > > > > >   create mode 100644 drivers/clk/spacemit/ccu_pll.h
+> > > > > > 
+> > > > > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > > > > > index 713573b6c86c..19c1ed280fd7 100644
+> > > > > > --- a/drivers/clk/Kconfig
+> > > > > > +++ b/drivers/clk/Kconfig
+> > > > > > @@ -517,6 +517,7 @@ source "drivers/clk/samsung/Kconfig"
+> > > > > >   source "drivers/clk/sifive/Kconfig"
+> > > > > >   source "drivers/clk/socfpga/Kconfig"
+> > > > > >   source "drivers/clk/sophgo/Kconfig"
+> > > > > > +source "drivers/clk/spacemit/Kconfig"
+> > > > > >   source "drivers/clk/sprd/Kconfig"
+> > > > > >   source "drivers/clk/starfive/Kconfig"
+> > > > > >   source "drivers/clk/sunxi/Kconfig"
+> > > > > > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > > > > > index bf4bd45adc3a..42867cd37c33 100644
+> > > > > > --- a/drivers/clk/Makefile
+> > > > > > +++ b/drivers/clk/Makefile
+> > > > > > @@ -145,6 +145,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+> > > > > >   obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
+> > > > > >   obj-y					+= socfpga/
+> > > > > >   obj-y					+= sophgo/
+> > > > > > +obj-y					+= spacemit/
+> > > > > >   obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+> > > > > >   obj-y					+= sprd/
+> > > > > >   obj-$(CONFIG_ARCH_STI)			+= st/
+> > > > > > diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
+> > > > > > new file mode 100644
+> > > > > > index 000000000000..4c4df845b3cb
+> > > > > > --- /dev/null
+> > > > > > +++ b/drivers/clk/spacemit/Kconfig
+> > > > > > @@ -0,0 +1,18 @@
+> > > > > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > > > > +
+> > > > > > +config SPACEMIT_CCU
+> > > > > > +	tristate "Clock support for SpacemiT SoCs"
+> > > > > 
+> > > > > I don't know the answer to this, but...  Should this be a Boolean
+> > > > > rather than tristate?  Can a SpacemiT K1 SoC function without the
+> > > > > clock driver built in to the kernel?
+> > > > > 
+> > > > I agree to make it a Boolean, we've already made pinctrl driver Boolean
+> > > > and pinctrl depend on clk, besides, the SoC is unlikely functional
+> > > > without clock built in as it's such critical..
+> > > > 
+> > > 
+> > > I disagree. The kernel is only for spacemit only, and the pinctrl
+> > 
+> > Sorry for a mistake, this first "only" should be "not".
+> > 
+> > > should also be a module. It is the builder's right to decide whether
+> > > the driver is builtin or a module. In this view, you should always
+> > > allow the driver to be built as a module if possible.
+> > > 
+> No, we've already made pinctrl as Boolean (still depend on ARCH_SPACEMIT)
+> if people don't want this feature, he/she can disable CONFIG_ARCH_SPACEMIT
+> 
+> https://github.com/torvalds/linux/blob/master/drivers/pinctrl/spacemit/Kconfig#L7
 
-Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+I have a question for this. Does the minimum system can boot without
+pinctrl (I mean purge the pinctrl node in dts and use uart only)? If
+so, why you treat it a must? In some cases, probe fail without pinctrl
+driver is a expected behavior. And if the pin config can be optional,
+it will be better to fix the driver and the pinctrl framework, but
+not to just convert the module as built-in. It is a waste of space.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index a904960359d7..b091e941aa21 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -2427,6 +2427,11 @@ ctcu@4001000 {
- 			clocks = <&aoss_qmp>;
- 			clock-names = "apb";
- 
-+			interrupts = <GIC_SPI 270 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 262 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "etr0",
-+					  "etr1";
-+
- 			in-ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
--- 
-2.34.1
-
+Regards,
+Inochi
 
