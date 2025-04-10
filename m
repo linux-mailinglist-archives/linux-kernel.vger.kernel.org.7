@@ -1,187 +1,144 @@
-Return-Path: <linux-kernel+bounces-597391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A56FA83936
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:28:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5498A83947
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E78804A0248
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:28:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFE3B8C3B4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F619202F8C;
-	Thu, 10 Apr 2025 06:28:32 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58C9204699;
+	Thu, 10 Apr 2025 06:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="bKcE2V3K"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63039EAD0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C742036F9;
+	Thu, 10 Apr 2025 06:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744266511; cv=none; b=rnc2EhT+7LZ+A/flfM7GujVCn3qErXwIVoASAeCvCd4cC4RgvV1oYWwcuu6G0wv+t6s+CGLSMrVa/bV4tSpS6aeB8a6HiwsOIhIIR3m8oRw0kttXrLzkeGFv2CCsqR8Rg0IV9sfZ6OaOfR8ggsubauulHT4WOMQ4Jh4DIm3ldI8=
+	t=1744266624; cv=none; b=Y4v1ZSIFtZcdxxzDmqmmTXMM7OOoinzdIXBf3dYiwMx7eyl4fgPoIBbZ8JHzduOI582Kmi0IExQfctX1Dti3ZG+SuKm8UXc2K8MFHmjnHOYbIP5c71EqQ+e/TtQXy40ODrHY5zHrBUaF4DtuH+pCsKwDRLo91XJHpxj1eqZVZ60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744266511; c=relaxed/simple;
-	bh=wu/5OuYPREY9BZRVqMZP9wpH3SajxVHHMxqej2cdKfo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qI/wJmIz5x2waFa3Cc4UhDkRc/AGrgya5D95dnyoID0qC/cD3EMq+YH6OcHvVj3tmleFknz88m1HXtXq6vSqAnjij60RGosJIpYTpq7RtJ/wWGMJVHIt8le0Kyrlr2bUzAKWkvHRd2n7Avo1KkbWa9hmWua0lQnu/4grEet1esU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4ZY8rt4Mr8z1f1vX;
-	Thu, 10 Apr 2025 14:23:26 +0800 (CST)
-Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7F9E5140109;
-	Thu, 10 Apr 2025 14:28:25 +0800 (CST)
-Received: from [10.174.177.186] (10.174.177.186) by
- kwepemg500008.china.huawei.com (7.202.181.45) with Microsoft SMTP Server
+	s=arc-20240116; t=1744266624; c=relaxed/simple;
+	bh=Z6hF1SrtlgxWuml0yFb+sRiUvm6d7mVPfH6rZPSEC/4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Wp0VvC6/WibxzHl3vi3Fh3K9KYya9LkbbEALWInOsK6ipoNv2qw8Yt5NtZqn9ZDIjZNTIcgRp3IjVv3hrijDFhq16ONHNvzcJg7EFforgIQYQYJxMoes/OSMe7Fezq5+DF4u9l54cpBOiOqk3Ce/UbgFSy8d5bbboHpPO9AcROk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=bKcE2V3K; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 41f40efc15d511f08eb9c36241bbb6fb-20250410
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=ulVM59ZeQ8rXPZCTFkVp7wxXjbIZ6rNqXUAn/FbeXy4=;
+	b=bKcE2V3KK2iFZeV81s9h3aE2MP+CMK7IZW1EUn77Cra9AgLghfuL8zxksneHUgePfj9njbo8CDCL7yRkpBh23v74nlBjf8gsT7z/OykYycDGiRkwsDOGpcjKxwvgMaeNYzX0L066C3i0ffD4uLWZPF3guKUTiVyP7zXguBEpfRM=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:3968d3a2-77a9-419f-896d-d0810f9165df,IP:0,UR
+	L:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-30
+X-CID-META: VersionHash:0ef645f,CLOUDID:3cc86f8d-f5b8-47d5-8cf3-b68fe7530c9a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:2,IP:nil
+	,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 5,DFT
+X-CID-BAS: 5,DFT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 41f40efc15d511f08eb9c36241bbb6fb-20250410
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
+	(envelope-from <kyrie.wu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2102496725; Thu, 10 Apr 2025 14:30:12 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 10 Apr 2025 14:28:24 +0800
-Message-ID: <75e5f32d-a824-44de-b9b0-a2d58dc2c45b@huawei.com>
-Date: Thu, 10 Apr 2025 14:28:23 +0800
+ 15.2.1258.39; Thu, 10 Apr 2025 14:30:11 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Thu, 10 Apr 2025 14:30:10 +0800
+From: kyrie.wu <kyrie.wu@mediatek.com>
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, kyrie wu
+	<kyrie.wu@mediatek.corp-partner.google.com>, <linux-media@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+CC: kyrie.wu <kyrie.wu@mediatek.com>
+Subject: [PATCH v2 00/12] Enable jpeg enc & dec multi-hardwares for MT8196
+Date: Thu, 10 Apr 2025 14:29:53 +0800
+Message-ID: <20250410063006.5313-1-kyrie.wu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm/damon: add full LPAE support for memory monitoring
- above 4GB
-To: SeongJae Park <sj@kernel.org>
-CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<wangkefeng.wang@huawei.com>
-References: <20250409173639.52133-1-sj@kernel.org>
-From: zuoze <zuoze1@huawei.com>
-In-Reply-To: <20250409173639.52133-1-sj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemg500008.china.huawei.com (7.202.181.45)
+Content-Type: text/plain
+X-MTK: N
 
+This series adds support for mt8196 multi-hardwares jpeg enc & dec,
+by first adding mt8196 jpegdec and jpegenc compatible to install
+kernel driver. Add smmu setting to support smmu and iommu at the
+same time.
+Secondly refactor buffer and clock setting to support multi-hw jpeg
+working.
+Lastly, fix some bugs, including resolution change handleing, stop
+streaming sw flow and others.
 
+This series has been tested with MT8196 tast test.
+Encoding and decoding worked for this chip.
 
-在 2025/4/10 1:36, SeongJae Park 写道:
-> On Wed, 9 Apr 2025 15:01:39 +0800 zuoze <zuoze1@huawei.com> wrote:
-> 
->>
->>
->> 在 2025/4/9 10:50, SeongJae Park 写道:
->>> Hi Ze,
->>>
->>> On Tue, 8 Apr 2025 15:55:53 +0800 Ze Zuo <zuoze1@huawei.com> wrote:
->>>
->>>> Previously, DAMON's physical address space monitoring only supported
->>>> memory ranges below 4GB on LPAE-enabled systems. This was due to
->>>> the use of 'unsigned long' in 'struct damon_addr_range', which is
->>>> 32-bit on ARM32 even with LPAE enabled.
->>>
->>> Nice finding!
->>
->> Thank you for the kind words!
->>
->>>
->>>>
->>>> This patch modifies the data types to properly support >4GB physical
->>>> address spaces:
->>>> 1. Changes 'start' and 'end' in 'struct damon_addr_range' from
->>>>      'unsigned long' to 'unsigned long long' (u64)
->>>> 2. Updates all related arithmetic operations and comparisons
->>>> 3. Adjusts print formats from %lu to %llu where needed
->>>> 4. Maintains backward compatibility for non-LPAE systems
-> [...]
->>>
->>> But, this doesn't seem like a very small and simple change.  I think we can
->>> find the best approach together, by understanding impact of this change for
->>> short term and long term.  For that, could you please also share how prevalent
->>> 32-bit ARM machines with LPAE are, and what would be your expected usage of
->>> physical address space monitoring on such machines, in both short term and long
->>> term?
->>>
->>
->> Thank you for your feedback. I agree this isn’t a simple change, and
->> the current approach might not be optimal. Let’s work together to find
->> the best solution.
->>
->> As for the prevalence of 32-bit ARM machines with LPAE, these devices
->> are still widely used in our product application. The main goal for
->> enabling DAMON on these devices is to optimize memory usage. During
->> usage, we identified this optimization point, as well as overflow issues
->> with bytes* and other reclaim statistics interfaces.
->>
->> These devices are still in frequent use, and given their large installed
->> base, they are unlikely to be replaced in the short term.
-> 
-> Thank you for kindly sharing these!  And I agree the devices could still be
-> actively used and wouldn't be replaced in the short term.  I believe making
-> DAMON supports those devices is really important.
->
-> DAMON aims to support multiple address spaces that not limited to only virtual
-> address spaces and physical address space but any imaginable case.  I hence
-> prefer keeping DAMON core layer independent of the underlying hardware as much
-> as possible.  I therefore still hope to continue using 'unsigned long'.
-> 
-> Of course, 'unsigned long' wouldn't fit all cases.  32-bit ARM with LPAE is a
-> great real example, and there might be crazy future use case.  In other words,
-> this could be identified as an issue of the operations set layer, which
-> directly deals with the given address space.
-> 
-> I think another approach for this issue is adding a DAMON parameter, say,
-> address_unit.  It will represent the factor value that need to be multiplied to
-> DAMON-address to get real address on the given address space.  For example, if
-> address_unit is 10 and the user sets DAMON monitoring target address range as
-> 200-300, it means user wants DAMON to monitor address range 2000-3000 of the
-> given address space.  The default value of the parameter would be 1, so that
-> old users show no change.  32bit ARM with LPAE users would need to explicitly
-> set the parameter but I believe that shouldn't be a big issue?
+Patches 1-3 Adds jpeg encoder and decoder compatible.
+Patches 4 add jpeg smmu sid setting.
+Patches 5 fix jpeg hw count setting to support different chips.
+Patches 6 refactor jpeg buffer payload setting to handle buffer
+size bug while resolution changed.
+Patches 7 reconstruct jpeg dst buffer layout.
+Patches 8 fix multi-core stop streaming flow
+Patches 9 refactor multi-core clk suspend/resume setting
+Patches 10 fix decoding buffer number setting timing issue
+Patches 11 refactor decoding resolution change operation
+Patches 12 fix remove buffer operation
 
-Regarding the address_unit approach, I have some concerns after checking
-the code:
+---
+This series patches dependent on:
+[1]
+https://patchwork.kernel.org/project/linux-mediatek/patch/20240808092555.12999-1-jianhua.lin@mediatek.com/
 
-1. Scaling Factor Limitations - While the scaling factor resolves the
-damon_addr_range storage issue, actual physical addresses (PAs) would
-still require unsigned long long temporaries in many cases.  Different
-system with varying iomem regions may require different scaling
-factors, making deployment harder than a fixed maximum range.
+Changes compared with v1:
+--refine jpeg dt-bindings for MT8196
+--optimize software code to manage jpeg HW count
+--refactor smmu sid setting function interface
+--Some modifications for patch v1's review comments.
 
-2. Significant Code Impact & Overhead - Implementing this would require
-significant changes with every PA traversal needing rescaling, which
-introduces computational overhead. That said, there remains a necessity
-to use unsigned long long to store certain variables in structures, such
-as sampling_addr in the damon_region structure and sz_tried in the
-damos_stat structure.
+kyrie.wu (12):
+  dt-bindings: mediatek: Add mediatek, mt8196-jpgdec compatible
+  dt-bindings: mediatek: Add mediatek, mt8196-jpgenc compatible
+  media: mediatek: jpeg: add jpeg compatible
+  media: mediatek: jpeg: add jpeg smmu sid setting
+  media: mediatek: jpeg: fix jpeg hw count setting
+  media: mediatek: jpeg: refactor jpeg buffer payload setting
+  media: mediatek: jpeg: refactor jpeg dst buffer layout
+  media: mediatek: jpeg: fix stop streaming flow for multi-core
+  media: mediatek: jpeg: refactor multi-core clk suspend and resume
+    setting
+  media: mediatek: jpeg: fix decoding buffer number setting timing issue
+  media: mediatek: jpeg: refactor decoding resolution change operation
+  media: mediatek: jpeg: fix remove buffer operation for multi-core
 
-If I'm misunderstanding any points, please correct me, and feel free to
-add any additional concerns.
+ .../media/mediatek,mt8195-jpegdec.yaml        |   8 +-
+ .../media/mediatek,mt8195-jpegenc.yaml        |   8 +-
+ .../platform/mediatek/jpeg/mtk_jpeg_core.c    | 166 +++++++++++++-----
+ .../platform/mediatek/jpeg/mtk_jpeg_core.h    |  25 ++-
+ .../platform/mediatek/jpeg/mtk_jpeg_dec_hw.c  | 113 +++++++++++-
+ .../platform/mediatek/jpeg/mtk_jpeg_enc_hw.c  | 114 +++++++++++-
+ 6 files changed, 381 insertions(+), 53 deletions(-)
 
-As an alternative, we could adopt a pattern similar to other subsystems
-(e.g., memblock, CMA, resource), which define their own address types.
-For example:
+-- 
+2.46.0
 
-  #ifdef CONFIG_PHYS_ADDR_T_64BIT
-	typedef unsigned long long damon_addr_t;
-  #else
-	typedef unsigned long damon_addr_t;
-  #endif
-
-This approach would avoid scaling complexity while maintaining
-consistency with existing mm code.
-
-What do you think? SJ, I'm happy to help test any approach or discuss
-further.
-
-> 
-> What do you think about the rough idea, Ze?  If you don't mind, I could
-> implement the idea on my own and get your review/tests, or help you
-> implementing it on your own.  I don't care who implements it but eagerly want
-> to make DAMON supports the real use case well.
-> 
-> 
-> Thanks,
-> SJ
-> 
-> [...]
-> 
 
