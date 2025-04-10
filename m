@@ -1,224 +1,135 @@
-Return-Path: <linux-kernel+bounces-597436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F037DA839C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:50:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 899E1A83A02
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A4DE16E018
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:49:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9B773A74B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA3A204698;
-	Thu, 10 Apr 2025 06:49:18 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B88D2046B5;
+	Thu, 10 Apr 2025 06:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="B7WavQWr"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851001D5143;
-	Thu, 10 Apr 2025 06:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A08520409F;
+	Thu, 10 Apr 2025 06:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744267757; cv=none; b=eq93B6etqlwDy1OVqx8LotVBpxnYZhWAHgjeio1BtZAzNkZLcXX5iFkXw43MEFA9qwNx+oa0jBqsGdEnhWsc+VQiclUqVLKR0KmsFcSsYzIpkkSVOmQDvE2DIuD5QtSqaarv/625ieXi4ceC4m84yCs7igqVDXGIsc4Ems8EZlo=
+	t=1744268229; cv=none; b=Yb1kJt/eHRO3X6CNDj3Aty9f9MEIsXAuPk5ANaPrWBLQnG5GMwK0unalS1uQ0GIYK50Ca+DnKv8DEAKRljVxGkodgJRk1x7LLsle5JfPodVGc+6MpKNBS2WcBfyg5A3TAviGkFxlqBrufPwSCaauqXAT+2Tt2MR9El/07KZ1PlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744267757; c=relaxed/simple;
-	bh=k+a2QW6F+/jdpGG/jLmL3WIvZZGQdPahmizjCXGP7+k=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tQ5UxUuyWCzrY3B4Je+wDQqP5+4RRl+ssqxfyqbyR5XvJ6+9WCuN/oGWDuLdBYRh23++9PwANt8OLGC5YILR6+APsQk4U4v8kcKjVhLu4nJ8DO4VbIPUq2zbbBucpWH3f0eWOoaVBRRllyJWOCJFyFZT8CcLEQxIopca64ShsME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af743.dynamic.kabel-deutschland.de [95.90.247.67])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id EECB161E64783;
-	Thu, 10 Apr 2025 08:48:46 +0200 (CEST)
-Message-ID: <754b8493-f6e9-4af5-9fb6-eaabccb5ded2@molgen.mpg.de>
-Date: Thu, 10 Apr 2025 08:48:46 +0200
+	s=arc-20240116; t=1744268229; c=relaxed/simple;
+	bh=nfZ/qaCPBRBC+1jXUho0dbH11syiIaVwTmwsgMbqKN4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=G3FtJk+92ElaV2WqM2kIayN/PjcCQkPVZD4IQj7XWIVeesz21U0xJFcbr4xq4yRX20bz1e7SzwHFT6pnU77B2xh3J1/VSJyq10Rf4Jkfegda6oPdAemCHW8pKpMDuRTP2viapvPBOVxvm1wDdetwzryrYbroebrRvTi8kRUZtio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=B7WavQWr; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c68:389d:1fcb:c0f8:ff7c:208d])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5D3BF352;
+	Thu, 10 Apr 2025 08:47:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1744267654;
+	bh=nfZ/qaCPBRBC+1jXUho0dbH11syiIaVwTmwsgMbqKN4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=B7WavQWry6UOc91+kOpcy0Jex2kmF8oQYe4gwHn1e50RhqLKl6lMyj1k7nemN5aTL
+	 G2Ey4Gc4w8lrSbDXip3e6RcG02tD9XxHfDlhIjkrot+a+0DQm73OBrIqZd1CX6lbLV
+	 Nto8GO06wcVoEH2ZxFs4XSuR8J22IAw+0ZKui160=
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: [PATCH v2 0/6] media: ti, cdns: Multiple pixel support and misc
+ fixes
+Date: Thu, 10 Apr 2025 12:18:58 +0530
+Message-Id: <20250410-probe_fixes-v2-0-801bc6eebdea@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Kernel WARNING (RCU) with btnxpuart on TI AM62 platform
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>,
- Amitkumar Karwar <amitkumar.karwar@nxp.com>,
- Neeraj Kale <neeraj.sanjaykale@nxp.com>, Nishanth Menon <nm@ti.com>,
- Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
- linux-serial@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>
-References: <20250408083512.GA26035@francesco-nb>
- <24b28bda-e294-4680-bed5-c44efcb6c455@ti.com>
- <20250410062006.GA7506@francesco-nb>
- <4107dda8-25fe-4f30-a0e6-906441f9b4c9@molgen.mpg.de>
-Content-Language: en-US
-In-Reply-To: <4107dda8-25fe-4f30-a0e6-906441f9b4c9@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANpp92cC/1WMQQ6CMBREr0L+2pq2SIiuvAchpvwO8hdS0hqiI
+ b27lbhx+Wby3kYJUZDoUm0UsUqSMBewh4p4cvMdSnxhsto2ujYntcQw4DbKC0m10OC65nYEqBh
+ LxH4UoesLT5KeIb73+Gq+669j/zurUVo17JvhDMOj46t4uBTmIbjojxwe1OecP+BadtatAAAA
+X-Change-ID: 20250314-probe_fixes-7e0ec33c7fee
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Hans Verkuil <hverkuil@xs4all.nl>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>
+Cc: Devarsh Thakkar <devarsht@ti.com>, 
+ Rishikesh Donadkar <r-donadkar@ti.com>, Vaishnav Achath <vaishnav.a@ti.com>, 
+ Changhuang Liang <changhuang.liang@starfivetech.com>, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jai Luthra <jai.luthra@ideasonboard.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1935;
+ i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
+ bh=nfZ/qaCPBRBC+1jXUho0dbH11syiIaVwTmwsgMbqKN4=;
+ b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBn92n3h1WpxYc5U+5o8ZhWdDvQsy/67YALCVx+Q
+ LKcf5r7SrOJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZ/dp9wAKCRBD3pH5JJpx
+ RedBEADMoVa6NazGysA+dKxVB4RPurD9DkKRcUp7xqEWs3YyTp1DtvP3blvpD7rdZz+YAQQeyOL
+ 4BFroN+n9O8Y5pDEnheys4FxlGz9ct21Z5Kc0Tq7eDGSnGGyihkxW96qZP6K5XcBjVyc8JvPb5u
+ pYHJyEDGefZsoCoTjZahgO74VFf1XzqvxM888C0Rv3pnv2RkHNXdksxaw9/0LLMpC9tVEj8iE/N
+ r+X4IpUufMkIkzxzcDxaMdRUO+f0ntj07LLmj3jkWcl8ejq+A7kOhg3/d8pE0bvvtjBv/Key/M3
+ GYJU5Vzgq6TjzvFkGqSAHcrqIETdpytMAUBNUgkFBGE3jaSXO8TT2n2TqK10doWZB0PLyltMGh8
+ CkRJvKXDne8j//bgajYiFDltgoeTq9Z2kp4/SzIsCK6lgt4gbahHpS0i8yLvWLop9zokV7QoJwZ
+ 4IbZGfCv94oaD7boTem5yImIvK6DuGUxHlXX6NAThzvJXbHboXFKWbl8hkwXfY/WAMZT/75yqQP
+ yAdBjMSBMCdyPbb/K/zSELcsxpLoyE22mgKgG1dB24ymebd04TfyD0QT3Q4dkneKAZoQayiRNYD
+ 4xul3H9s/E6xHbtvgBtkWbFCXg5VM0vhNalziO1EcouRsbpKWvjcgO1+Zr9qVnzvXDGjOgcXLO0
+ NE3DJdQRpY7cm4A==
+X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
-Am 10.04.25 um 08:34 schrieb Paul Menzel:
-> [Cc: +Marcel]
+Hi,
 
-[Remove, as email is not valid anymore.]
+The first four patches in this series are miscellaneous fixes and
+improvements in the Cadence and TI CSI-RX drivers around probing, fwnode
+and link creation.
 
-> Dear Francesco,
-> 
-> 
-> Am 10.04.25 um 08:20 schrieb Francesco Dolcini:
-> 
->> On Tue, Apr 08, 2025 at 09:15:26PM +0530, Vignesh Raghavendra wrote:
->>> On 08/04/25 14:05, Francesco Dolcini wrote:
->>>> I do have the following kernel warning with 6.15-rc1, on a TI AM62
->>>> platform (arm64), single CPU core, using btnxpuart driver, any idea?
->>>> PREEMPT_RT is enabled, if it matters.
->>>>
->>>> Either the issue is not systematic, or multi cores SoCs are not 
->>>> affected
->>>> (no error on the exact same image on a dual nor on quad core TI AM62).
->>>>
->>>> [   23.139080] Voluntary context switch within RCU read-side critical section!
->>>> [   23.139119] WARNING: CPU: 0 PID: 61 at /kernel/rcu/tree_plugin.h:332 rcu_note_context_switch+0x3c4/0x430
->>>> [   23.139172] Modules linked in: uas onboard_usb_dev optee_rng dwc3 evdev btnxpuart spidev aes_ce_blk aes_ce_cipher ghash_ce gf128mul sha2_ce sha256_arm64 sha1_ce snd_soc_simple_card snd_soc_simple_card_utils optee spi_cadence_quadspi tee gpio_keys usb_conn_gpio display_connector roles dwc3_am62 mwifiex_sdio k3_j72xx_bandgap mwifiex rtc_ti_k3 cfg80211 tidss sa2ul sha512_generic snd_soc_davinci_mcasp authenc drm_display_helper snd_soc_ti_udma crypto_null snd_soc_ti_edma sha1_generic snd_soc_ti_sdma omap_hwspinlock lontium_lt8912b ina2xx snd_soc_wm8904 ti_ads1015 industrialio_triggered_buffer kfifo_buf lm75 tpm_tis_i2c tps65219_pwrbutton crc_ccitt tpm_tis_core tpm rng_core tc358768 m_can_platform pwm_tiehrpwm m_can spi_omap2_mcspi can_dev bluetooth ecdh_generic ecc rfkill libaes loop fuse ipv6 autofs4
->>>> [   23.139459] CPU: 0 UID: 0 PID: 61 Comm: kworker/u5:0 Not tainted 6.15.0-rc1-0.0.0-devel #1 PREEMPT_RT
->>>> [   23.139471] Hardware name: Toradex Verdin AM62 WB on Dahlia Board (DT)
->>>> [   23.139478] Workqueue: hci0 hci_power_off [bluetooth]
->>>> [   23.139615] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>>> [   23.139625] pc : rcu_note_context_switch+0x3c4/0x430
->>>> [   23.139647] lr : rcu_note_context_switch+0x3c4/0x430
->>>> [   23.139658] sp : ffff8000819fb740
->>>> [   23.139661] x29: ffff8000819fb740 x28: 0000000000000000 x27: ffff0000079d2010
->>>> [   23.139673] x26: ffff0000011e7810 x25: ffff000001c2c200 x24: 0000000000000000
->>>> [   23.139688] x23: 0000000000000000 x22: ffff000001c2c200 x21: ffff000001c2c200
->>>> [   23.139700] x20: ffff800081083ec0 x19: ffff00001da9fec0 x18: fffffffffffe7e78
->>>> [   23.139712] x17: ffff7fff9ca1c000 x16: ffff800080000000 x15: ffff00001da9f8c0
->>>> [   23.139726] x14: fffffffffffc7e77 x13: 216e6f6974636573 x12: 206c616369746972
->>>> [   23.139738] x11: 6320656469732d64 x10: 6165722055435220 x9 : 206e696874697720
->>>> [   23.139750] x8 : ffff80008113f040 x7 : ffff8000819fb4e0 x6 : 000000000000000c
->>>> [   23.139761] x5 : ffff00001da95888 x4 : 0000000000000000 x3 : 0000000000000027
->>>> [   23.139775] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000001c2c200
->>>> [   23.139788] Call trace:
->>>> [   23.139793]  rcu_note_context_switch+0x3c4/0x430 (P)
->>>> [   23.139813]  __schedule+0xa0/0x7dc
->>>> [   23.139830]  schedule+0x34/0x11c
->>>> [   23.139841]  schedule_timeout+0x8c/0x110
->>>> [   23.139861]  wait_for_completion_timeout+0x78/0x14c
->>>> [   23.139873]  ti_sci_set_device_state+0x120/0x1fc
->>>> [   23.139886]  ti_sci_cmd_get_device_exclusive+0x18/0x30
->>>> [   23.139899]  ti_sci_pd_power_on+0x28/0x54
->>>> [   23.139916]  _genpd_power_on+0x98/0x188
->>>> [   23.139927]  genpd_power_on+0xa8/0x168
->>>> [   23.139940]  genpd_runtime_resume+0xc0/0x298
->>>> [   23.139957]  __rpm_callback+0x48/0x1a4
->>>> [   23.139974]  rpm_callback+0x74/0x80
->>>> [   23.139987]  rpm_resume+0x3b0/0x698
->>>> [   23.140000]  __pm_runtime_resume+0x48/0x88
->>>> [   23.140012]  omap8250_set_mctrl+0x2c/0xbc
->>>> [   23.140030]  serial8250_set_mctrl+0x20/0x40
->>>> [   23.140046]  uart_update_mctrl+0x80/0x110
->>>
->>> I think issue is that uart_update_mctrl() holds a spinlock:
->>>
->>>     uart_port_lock_irqsave(port, &flags);
->>>
->>> and then omap8250_set_mctrl() calls pm_runtime APIs which on K3 SoC
->>> needs to talk to a Firmware to enable pd. This IPC call is a sleeping
->>> call leading to scheduling with IRQs disabled.
->>>
->>> I guess this is what RT linux is complaining? I dont have a solution
->>> though, maybe serdev delays pm_runtime_put till the port is closed?
->>
->> Our CI reproduced what looks like the same issue also on current
->> torvalds/master (6.15-rc1+) branch, without PREEMPT_RT.
->>
->> The call trace seems just the same, but attaching it here for
->> completeness.
->>
->>
->> [   20.931923] BUG: scheduling while atomic: kworker/u5:0/42/0x00000002
->> [   20.938429] Modules linked in: sd_mod uas onboard_usb_dev btnxpuart optee_rng dwc3 evdev spidev aes_ce_blk aes_ce_cipher ghash_ce gf128mul sha2_ce sha256_arm64 sha1_ce snd_soc_simple_card 
->> snd_soc_simple_card_utils mwifiex_sdio mwifiex display_connector spi_cadence_quadspi optee usb_conn_gpio tee gpio_keys roles k3_j72xx_bandgap cfg80211 rtc_ti_k3 dwc3_am62 bluetooth ecdh_generic ecc sa2ul sha512_generic rfkill authenc tidss crypto_null libaes snd_soc_davinci_mcasp sha1_generic drm_display_helper snd_soc_ti_udma snd_soc_ti_edma snd_soc_ti_sdma omap_hwspinlock lontium_lt8912b ina2xx ti_ads1015 snd_soc_wm8904 industrialio_triggered_buffer kfifo_buf lm75 tpm_tis_i2c crc_ccitt tps65219_pwrbutton tpm_tis_core tpm m_can_platform m_can rng_core tc358768 can_dev pwm_tiehrpwm spi_omap2_mcspi loop fuse ipv6 autofs4
->> [   20.938865] CPU: 0 UID: 0 PID: 42 Comm: kworker/u5:0 Not tainted 6.15.0-rc1-0.0.0-devel #1 PREEMPT
->> [   20.938878] Hardware name: Toradex Verdin AM62 WB on Dahlia Board (DT)
->> [   20.938895] Workqueue: hci0 hci_power_off [bluetooth]
->> [   20.939032] Call trace:
->> [   20.939037]  show_stack+0x2c/0x84 (C)
->> [   20.939063]  dump_stack_lvl+0x60/0x80
->> [   20.939084]  dump_stack+0x18/0x24
->> [   20.939096]  __schedule_bug+0x54/0x70
->> [   20.939116]  __schedule+0x628/0x7dc
->> [   20.939129]  schedule+0x34/0x11c
->> [   20.939138]  rpm_resume+0x17c/0x6a0
->> [   20.939155]  __pm_runtime_resume+0x50/0x9c
->> [   20.939168]  omap8250_set_mctrl+0x2c/0xc0
->> [   20.939183]  serial8250_set_mctrl+0x20/0x40
->> [   20.939193]  uart_update_mctrl+0x88/0x11c
->> [   20.939215]  uart_dtr_rts+0x104/0x120
->> [   20.939226]  tty_port_shutdown+0xd4/0xdc
->> [   20.939236]  tty_port_close+0x40/0xc0
->> [   20.939248]  uart_close+0x34/0x9c
->> [   20.939259]  ttyport_close+0x50/0xa0
->> [   20.939272]  serdev_device_close+0x40/0x5c
->> [   20.939283]  btnxpuart_close+0x1c/0xa0 [btnxpuart]
->> [   20.939309]  hci_dev_close_sync+0x304/0x7cc [bluetooth]
->> [   20.939376]  hci_dev_do_close+0x2c/0x70 [bluetooth]
->> [   20.939441]  hci_power_off+0x20/0x64 [bluetooth]
->> [   20.939508]  process_one_work+0x148/0x290
->> [   20.939528]  worker_thread+0x2c8/0x3e4
->> [   20.939541]  kthread+0x12c/0x204
->> [   20.939554]  ret_from_fork+0x10/0x20
->> [   20.943567] BUG: scheduling while atomic: kworker/u5:0/42/0x00000000
->> [   20.950126] Modules linked in: sd_mod uas onboard_usb_dev btnxpuart optee_rng dwc3 evdev spidev aes_ce_blk aes_ce_cipher ghash_ce gf128mul sha2_ce sha256_arm64 sha1_ce snd_soc_simple_card 
->> snd_soc_simple_card_utils mwifiex_sdio mwifiex display_connector spi_cadence_quadspi optee usb_conn_gpio tee gpio_keys roles k3_j72xx_bandgap cfg80211 rtc_ti_k3 dwc3_am62 bluetooth ecdh_generic ecc sa2ul sha512_generic rfkill authenc tidss crypto_null libaes snd_soc_davinci_mcasp sha1_generic drm_display_helper snd_soc_ti_udma snd_soc_ti_edma snd_soc_ti_sdma omap_hwspinlock lontium_lt8912b ina2xx ti_ads1015 snd_soc_wm8904 industrialio_triggered_buffer kfifo_buf lm75 tpm_tis_i2c crc_ccitt tps65219_pwrbutton tpm_tis_core tpm m_can_platform m_can rng_core tc358768 can_dev pwm_tiehrpwm spi_omap2_mcspi loop fuse ipv6 autofs4
->> [   20.950550] CPU: 0 UID: 0 PID: 42 Comm: kworker/u5:0 Tainted: G        W           6.15.0-rc1-0.0.0-devel #1 PREEMPT
->> [   20.950566] Tainted: [W]=WARN
->> [   20.950570] Hardware name: Toradex Verdin AM62 WB on Dahlia Board (DT)
->> [   20.950584] Workqueue: hci0 hci_power_off [bluetooth]
->> [   20.950721] Call trace:
->> [   20.950726]  show_stack+0x2c/0x84 (C)
->> [   20.950747]  dump_stack_lvl+0x60/0x80
->> [   20.950771]  dump_stack+0x18/0x24
->> [   20.950783]  __schedule_bug+0x54/0x70
->> [   20.950798]  __schedule+0x628/0x7dc
->> [   20.950815]  schedule+0x34/0x11c
->> [   20.950824]  schedule_timeout+0xd4/0x110
->> [   20.950838]  wait_for_completion+0x78/0x140
->> [   20.950853]  __flush_work+0x250/0x340
->> [   20.950868]  flush_work+0x14/0x20
->> [   20.950879]  omap_8250_shutdown+0x2c/0x1a4
->> [   20.950903]  serial8250_shutdown+0x18/0x40
->> [   20.950913]  uart_port_shutdown+0x40/0x58
->> [   20.950926]  uart_tty_port_shutdown+0x5c/0x178
->> [   20.950940]  tty_port_shutdown+0x84/0xdc
->> [   20.950950]  tty_port_close+0x40/0xc0
->> [   20.950958]  uart_close+0x34/0x9c
->> [   20.950969]  ttyport_close+0x50/0xa0
->> [   20.950990]  serdev_device_close+0x40/0x5c
->> [   20.951001]  btnxpuart_close+0x1c/0xa0 [btnxpuart]
->> [   20.951017]  hci_dev_close_sync+0x304/0x7cc [bluetooth]
->> [   20.951082]  hci_dev_do_close+0x2c/0x70 [bluetooth]
->> [   20.951149]  hci_power_off+0x20/0x64 [bluetooth]
->> [   20.951214]  process_one_work+0x148/0x290
->> [   20.951227]  worker_thread+0x2c8/0x3e4
->> [   20.951242]  kthread+0x12c/0x204
->> [   20.951258]  ret_from_fork+0x10/0x20
-> 
-> CVE-2024-26959 [1] has the same trace, and supposedly was fixed by 
-> Marcel’s commit 664130c0b030 (Bluetooth: btnxpuart: Fix btnxpuart_close) 
-> present since v6.9-rc1, that is also signed off by you.
-> 
-> 
-> Kind regards,
-> 
-> Paul
-> 
-> 
-> [1]: https://nvd.nist.gov/vuln/detail/cve-2024-26959
-> [2]: https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=664130c0b0309b360bc5bdd40a30604a9387bde8
+The last two patches add support for transmitting multiple pixels per
+clock on the internal bus between Cadence CSI-RX bridge and TI CSI-RX
+wrapper. As this internal bus is 32-bit wide, the maximum number of
+pixels that can be transmitted per cycle depend upon the format's bit
+width. Secondly, the downstream element must support unpacking of
+multiple pixels.
+
+Thus we export a module function that can be used by the downstream
+driver to negotiate the pixels per cycle on the output pixel stream of
+the Cadence bridge.
+
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+---
+Changes in v2:
+- Rebase on v6.15-rc1
+- Fix lkp warnings in PATCH 5/6 missing header for FIELD_PREP
+- Add R-By tags from Devarsh and Changhuang
+- Link to v1: https://lore.kernel.org/r/20250324-probe_fixes-v1-0-5cd5b9e1cfac@ideasonboard.com
+
+---
+Jai Luthra (6):
+      media: ti: j721e-csi2rx: Use devm_of_platform_populate
+      media: ti: j721e-csi2rx: Use fwnode_get_named_child_node
+      media: ti: j721e-csi2rx: Fix source subdev link creation
+      media: cadence: csi2rx: Implement get_fwnode_pad op
+      media: cadence: cdns-csi2rx: Support multiple pixels per clock cycle
+      media: ti: j721e-csi2rx: Support multiple pixels per clock
+
+ drivers/media/platform/cadence/cdns-csi2rx.c       | 76 +++++++++++++++++-----
+ drivers/media/platform/cadence/cdns-csi2rx.h       | 19 ++++++
+ drivers/media/platform/ti/Kconfig                  |  3 +-
+ .../media/platform/ti/j721e-csi2rx/j721e-csi2rx.c  | 66 ++++++++++++++-----
+ 4 files changed, 129 insertions(+), 35 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250314-probe_fixes-7e0ec33c7fee
+
+Best regards,
+-- 
+Jai Luthra <jai.luthra@ideasonboard.com>
+
 
