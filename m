@@ -1,280 +1,151 @@
-Return-Path: <linux-kernel+bounces-598307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51276A844C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:28:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 992D3A844C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 659C81639D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:24:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54DBD8A0B7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E6C28541E;
-	Thu, 10 Apr 2025 13:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3465E28A3EF;
+	Thu, 10 Apr 2025 13:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rRxghqiG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fEoGPYfb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46891EB5F7;
-	Thu, 10 Apr 2025 13:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D08626A1C3;
+	Thu, 10 Apr 2025 13:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744291436; cv=none; b=DzQtkL9D12BH+w1mDWUe9ys9pWiYhdnh/gmW8rFeNw2nkoMLd/FYEMpSPsu4hZc7uRYUfpGnH1it7livQTHBj6Q/Du012J9Fe6FgdG3fCQRmx0Kxfxb7xnUN+kx0KMKinJV6sn3hcEXgiOkyMKd1N63CnQD4JB3nexZua2GH+AM=
+	t=1744291451; cv=none; b=ZWlgh6sa4uyDLBXevcZ/Kx4eF1z2ud9SULr8ahH1XTm3f57q8SZnOdUBPJJs0peP2TgevY6vO5dxuBkHqvskJzJnKMDQVFWoczY87/6/YLmo1Twsuc+aTTGPhccogcsgMSxm+3H8kSPbF+Z+pWIBHcM8/PjI3a/XvqkkZEIfdso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744291436; c=relaxed/simple;
-	bh=35bowL8nZeAUEMUkTdGIDht/faXw5WqatgtW/CTRsXg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ic9Q2ZUl05f7559YdorxM0lw7GoJJxMvISyqp5FMS0Q1QIq0TF8igc60dTxkpphWT/pOnqA4sMaA1qiJYgymSv88I4F/3/gkTGMUD9SVS8nKvvSygW/AAOMyYNifjdkIGvtfuXPKKKEhHpUqyT4W2g6ZDMLLZKZbJYLpVN1E6UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rRxghqiG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96923C4CEE8;
-	Thu, 10 Apr 2025 13:23:53 +0000 (UTC)
+	s=arc-20240116; t=1744291451; c=relaxed/simple;
+	bh=PjNnYyU7svnG4Jb+MSeLk+eCfOL5ztj8PIv/APnVBKk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ePETkNLEVreV7ThqQ+zFDa9ui6ZMMlcJ0qkPwVLYXcAdNQ3s2g2y7zIPWohEgylONr5oroA+UpA1Q6RDRxQCR7zSJ+vyKbN7TtLADNY/8UVUwdg0xmRRhxGu4rb0c3Cf1+Oq1LKfA8pvo9uAmhpNQ+JPKmS1AncNb1UxB9jD+p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fEoGPYfb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B57C4CEE9;
+	Thu, 10 Apr 2025 13:24:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744291434;
-	bh=35bowL8nZeAUEMUkTdGIDht/faXw5WqatgtW/CTRsXg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=rRxghqiGdl1XAF4NVWbknHnG5h9cvz3NGkhgXsD2JgppigdbzqAkBLipqN0oiagEQ
-	 D6JWwn1p9M3kfz/GJtFp2c6T7LrsjuVKMFwylsDXn+oB2nBFYZXR2Y0Sl84mdHM4LG
-	 NBj3A0stiagGhOyQ1IK8WzyWqNKeDrmrjv/JgM9Qz/v98dM0xdJV6Apcv+BxCgeK18
-	 G7cLIRoDWQprKHby3OWBXtvhfPtUhXz2N8qP2GMlpZ/XbXectqVw73LPgBuXvOZ6cc
-	 rToSWkv3Cq6M6DPa7YBsBIIYLjgdVq9/U2djrmt9Pnw5TbqFy27phjxPULZL7LRml0
-	 AWMhr6E4Ev0xQ==
-Message-ID: <ff2b7cfb7657a185469747d930b834dbdfdf6eac.camel@kernel.org>
-Subject: Re: [PATCH v2 2/2] net: add debugfs files for showing netns
- refcount tracking info
-From: Jeff Layton <jlayton@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>,  Jakub Kicinski	 <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman	 <horms@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, 	netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Thu, 10 Apr 2025 09:23:52 -0400
-In-Reply-To: <91d6d3c60ef5d4ed90418f8a06228767be8a5b1b.camel@kernel.org>
-References: <20250408-netns-debugfs-v2-0-ca267f51461e@kernel.org>
-		 <20250408-netns-debugfs-v2-2-ca267f51461e@kernel.org>
-		 <1e717326-8551-419e-b185-5cfb20573b4f@lunn.ch>
-	 <91d6d3c60ef5d4ed90418f8a06228767be8a5b1b.camel@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=k20201202; t=1744291451;
+	bh=PjNnYyU7svnG4Jb+MSeLk+eCfOL5ztj8PIv/APnVBKk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fEoGPYfbsH3FHAVy1oEB4KLltybzVT3xkDV1DQCj26L95+FJb7v2aV/c0i6o1OcU1
+	 hLbNuD2+qEH1k9IS739Hlb5U7C5Cjgp27sGGFcg1X3K01flVsJ/TGZIgryEKS2sU+L
+	 v9dMY82uZIL/7p8k1u5O5QRF+9V/LG6pwNmOoh7jdI8doJloHt+OnUD/pavoCVbgdn
+	 hSomcUIOhUu2LRZO6p49WDhnKgz2LEbK5uE+cksCR01W8zq0b9fJK4CyJvq2DpG5wO
+	 CwM7AZ1ajKCCLAUrdGq726lbNRqFjhcyhWcH4iY7JzthFejy3J6CuKu9vbsW+ufGyI
+	 pOoM+/VMFe3SA==
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2c76a1b574cso266465fac.2;
+        Thu, 10 Apr 2025 06:24:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVYoUdIWiTj6QFsBacejbvJiWgmfEHRCXlnBufXDqu8x6Z6dFuYdP2Ssp2b2II/4+5nPfYTGnyXJxg=@vger.kernel.org, AJvYcCVkH1JuqUktGadbxX9LWYwf2parDZSLGG5/FmotX+rW4EGKmmSky4vRkcb7+TJqYjQXTP/PUOpT4QTxbUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxNh82SOSeBzymAaRMOIN3CEBX4G7a+uXp+MCneT/2jzASx+TP
+	z2uxbY0NmfebwcAWpb2rCCR673dvkhZT5m2lA2Hr3nj0yMPtc/0PeyYmhNz3XwCS1Z2u80WrPgC
+	jF+0Eu55b7a0umaw33tNOc7HJ3Xg=
+X-Google-Smtp-Source: AGHT+IGnrjgpZpg9n2Ziq3OF/5GTRm4gYLzeqI8ltqxf1OdwbonWUqdZsxQ/g2yJei3J5HaWR/tty6qVcp/p6wYkA50=
+X-Received: by 2002:a05:6870:888b:b0:29e:766d:e969 with SMTP id
+ 586e51a60fabf-2d0b3611dd9mr1593089fac.10.1744291450278; Thu, 10 Apr 2025
+ 06:24:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <tencent_8478BF8F2549630842D323E7394CB6F49D08@qq.com>
+In-Reply-To: <tencent_8478BF8F2549630842D323E7394CB6F49D08@qq.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 10 Apr 2025 15:23:59 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jfAdBbKXBg7k0og6MucptJc9G=RTzFPd=N3Q0VdfToFQ@mail.gmail.com>
+X-Gm-Features: ATxdqUFCwlbj0go7vNzpWyH9o9Srm-eULI9a3R27FKSSz_G2gBxWttNvIfXFkBs
+Message-ID: <CAJZ5v0jfAdBbKXBg7k0og6MucptJc9G=RTzFPd=N3Q0VdfToFQ@mail.gmail.com>
+Subject: Re: [PATCH] PM: EM: Fix potential division-by-zero error in em_compute_costs()
+To: Yaxiong Tian <iambestgod@qq.com>
+Cc: lukasz.luba@arm.com, rafael@kernel.org, len.brown@intel.com, 
+	pavel@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yaxiong Tian <tianyaxiong@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-04-10 at 09:08 -0400, Jeff Layton wrote:
-> On Thu, 2025-04-10 at 14:36 +0200, Andrew Lunn wrote:
-> > On Tue, Apr 08, 2025 at 09:36:38AM -0400, Jeff Layton wrote:
-> > > CONFIG_NET_NS_REFCNT_TRACKER currently has no convenient way to displ=
-ay
-> > > its tracking info. Add a new net_ns directory under the debugfs
-> > > ref_tracker directory. Create a directory in there for every netns, w=
-ith
-> > > refcnt and notrefcnt files that show the currently tracked active and
-> > > passive references.
-> >=20
-> > I think most if not all of this should be moved into the tracker
-> > sources, there is very little which is netdev specific.=20
-> >=20
->=20
-> Fair enough. I can move most of this into helpers in ref_tracker.c.
->=20
-> > >=20
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  net/core/net_namespace.c | 151 +++++++++++++++++++++++++++++++++++++=
-++++++++++
-> > >  1 file changed, 151 insertions(+)
-> > >=20
-> > > diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-> > > index 4303f2a4926243e2c0ff0c0387383cd8e0658019..7e9dc487f46d656ee4ae3=
-d6d18d35bb2aba2b176 100644
-> > > --- a/net/core/net_namespace.c
-> > > +++ b/net/core/net_namespace.c
-> > > @@ -1512,3 +1512,154 @@ const struct proc_ns_operations netns_operati=
-ons =3D {
-> > >  	.owner		=3D netns_owner,
-> > >  };
-> > >  #endif
-> > > +
-> > > +#ifdef CONFIG_DEBUG_FS
-> > > +#ifdef CONFIG_NET_NS_REFCNT_TRACKER
-> > > +
-> > > +#include <linux/debugfs.h>
-> > > +
-> > > +static struct dentry *ns_ref_tracker_dir;
-> > > +static unsigned int ns_debug_net_id;
-> > > +
-> > > +struct ns_debug_net {
-> > > +	struct dentry *netdir;
-> > > +	struct dentry *refcnt;
-> > > +	struct dentry *notrefcnt;
-> > > +};
-> > > +
-> > > +#define MAX_NS_DEBUG_BUFSIZE	(32 * PAGE_SIZE)
-> > > +
-> > > +static int
-> > > +ns_debug_tracker_show(struct seq_file *f, void *v)
-> > > +{
-> > > +	struct ref_tracker_dir *tracker =3D f->private;
-> > > +	int len, bufsize =3D PAGE_SIZE;
-> > > +	char *buf;
-> > > +
-> > > +	for (;;) {
-> > > +		buf =3D kvmalloc(bufsize, GFP_KERNEL);
-> > > +		if (!buf)
-> > > +			return -ENOMEM;
-> > > +
-> > > +		len =3D ref_tracker_dir_snprint(tracker, buf, bufsize);
-> > > +		if (len < bufsize)
-> > > +			break;
-> > > +
-> > > +		kvfree(buf);
-> > > +		bufsize *=3D 2;
-> > > +		if (bufsize > MAX_NS_DEBUG_BUFSIZE)
-> > > +			return -ENOBUFS;
-> >=20
-> > Maybe consider storing bufsize between calls to dump the tracker? I
-> > guess you then have about the correct size for most calls, and from
-> > looking at len, you can decide to downsize it if needed.
-> >=20
->=20
-> Eric had a proposed change to make ref_tracker_dir_snprint() not sit
-> with hard IRQs disabled for so long. That involved passing back a
-> needed size, so I might rather integrate this into that change.
->=20
-> > > +static int
-> > > +ns_debug_init_net(struct net *net)
-> > > +{
-> > > +	struct ns_debug_net *dnet =3D net_generic(net, ns_debug_net_id);
-> > > +	char name[11]; /* 10 decimal digits + NULL term */
-> > > +	int len;
-> > > +
-> > > +	len =3D snprintf(name, sizeof(name), "%u", net->ns.inum);
-> > > +	if (len >=3D sizeof(name))
-> > > +		return -EOVERFLOW;
-> > > +
-> > > +	dnet->netdir =3D debugfs_create_dir(name, ns_ref_tracker_dir);
-> > > +	if (IS_ERR(dnet->netdir))
-> > > +		return PTR_ERR(dnet->netdir);
-> >=20
-> > As i pointed out before, the tracker already has a name. Is that name
-> > useless? Not specific enough? Rather than having two names, maybe
-> > change the name to make it useful. Once it has a usable name, you
-> > should be able to push more code into the core.
-> >=20
->=20
-> I don't understand which name you mean.
->=20
-> This patch creates a ref_tracker/net_ns dir and then creates
-> directories under that that have names that match the net namespace
-> inode numbers as displayed in /proc/<pid>/ns/net symlink. Those
-> directories hold two files "refcnt" and "notrefcnt" that display the
-> different trackers.
->=20
-> It's not clear to me what you'd like to see changed in that scheme.
+On Thu, Apr 10, 2025 at 7:39=E2=80=AFAM Yaxiong Tian <iambestgod@qq.com> wr=
+ote:
+>
+> From: Yaxiong Tian <tianyaxiong@kylinos.cn>
+>
+> When the device is of a non-CPU type, table[i].performance won't be
+> initialized in the previous em_init_performance(), resulting in division
+>  by zero when calculating costs in em_compute_costs().
+>
+> Considering that the performance field in struct em_perf_state is defined
+> as "CPU performance (capacity) at a given frequency", the original
+> calculation method should be maintained when the device is of a non-CPU
+> type.
+>
+> Fixes: <1b600da51073> ("PM: EM: Optimize em_cpu_energy() and remove divis=
+ion")
+>
+> Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
+> ---
+>  kernel/power/energy_model.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+> index d9b7e2b38c7a..bbd95573d91e 100644
+> --- a/kernel/power/energy_model.c
+> +++ b/kernel/power/energy_model.c
+> @@ -231,9 +231,11 @@ static int em_compute_costs(struct device *dev, stru=
+ct em_perf_state *table,
+>                             unsigned long flags)
+>  {
+>         unsigned long prev_cost =3D ULONG_MAX;
+> +       u64 fmax;
 
-Oh, ok. I guess you mean these names?
+Why not initialize it here?  Also please retain the reverse x-mas tree
+ordering of declarations.
 
-        ref_tracker_dir_init(&net->refcnt_tracker, 128, "net refcnt");
-        ref_tracker_dir_init(&net->notrefcnt_tracker, 128, "net notrefcnt")=
+>         int i, ret;
+>
+>         /* Compute the cost of each performance state. */
+> +       fmax =3D (u64) table[nr_states - 1].frequency;
+
+No need to cast to u64 explicitly (it will be cast anyway).
+
+>         for (i =3D nr_states - 1; i >=3D 0; i--) {
+>                 unsigned long power_res, cost;
+>
+> @@ -245,9 +247,15 @@ static int em_compute_costs(struct device *dev, stru=
+ct em_perf_state *table,
+>                                 return -EINVAL;
+>                         }
+>                 } else {
+> -                       /* increase resolution of 'cost' precision */
+> -                       power_res =3D table[i].power * 10;
+> -                       cost =3D power_res / table[i].performance;
+> +                       if (_is_cpu_device(dev)) {
+> +                               /* increase resolution of 'cost' precisio=
+n */
+> +                               power_res =3D table[i].power * 10;
+> +                               cost =3D power_res / table[i].performance=
 ;
+> +                       } else {
+> +                               power_res =3D table[i].power;
+> +                               cost =3D div64_u64(fmax * power_res, tabl=
+e[i].frequency);
 
-Two problems there:
+Why is it necessary to compute the "cost" field value for non-CPU
+devices at all?
 
-1/ they have an embedded space in the name which is just painful. Maybe we =
-can replace those with underscores?
-2/ they aren't named in a per-net namespace way
+> +
 
-I guess we could do something like these nested dirs:
+An excess empty line.
 
-debug
-    ref_tracker
-	net_refcnt
-	net_notrefcnt
-
-...and then create files under the net_* directories that match the
-netns ID's. That's what I was trying to ask when I asked about the
-directory structure in the last set. How do you want the directory
-structure laid out?
---=20
-Jeff Layton <jlayton@kernel.org>
+> +                       }
+>                 }
+>
+>                 table[i].cost =3D cost;
+> --
 
