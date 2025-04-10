@@ -1,263 +1,199 @@
-Return-Path: <linux-kernel+bounces-598888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295DEA84C4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:44:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B51BA84C54
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 275ED7ADF3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:43:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 109067B28C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF3B28F927;
-	Thu, 10 Apr 2025 18:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFE328F94F;
+	Thu, 10 Apr 2025 18:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dVNN++vn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="CH9xY+BA"
+Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011033.outbound.protection.outlook.com [52.103.68.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C3628EA5D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 18:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744310653; cv=none; b=csAmwAGd1fxAFITL56yc0kI0BN6Ra2PpfnZHNvYhc34L1jAnUlfZFa2Ue+b2Dx1Raftv2IMGfvjgX6VyWcWYaZF7gbYKv7pPx/nnHIdL0pVl/JHUlHA0ifLZBq0plVFPOl+jsgxGrN5GW8BaUouRXscVMoiiBt+n/sDuqbPkrEE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744310653; c=relaxed/simple;
-	bh=sKywq7H/4Et9741fqSvhin/moVoNQTVDF+h4YhYybJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VViaKbFsTXdchbUKkUdGPVRZ8Ogd3M4L3LwrIh/kM72Uso67nstGGut2KpdsQ3k1+3xUp6YHEnjwOKaaOa+6sx3bfDYWWxAxpJAZFYCncd8mdFBiZv2sUB6a85rxjivCqRBe4J/I6GjwleUbW1UA2VtNoxKf0aYNmrDR8h7KG1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dVNN++vn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744310650;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Jxve4+H/G8iIVYp4eWG2z8bp0IS92tto2aBEElfrg50=;
-	b=dVNN++vnDW4mxjyu86EieWNBeB0dw/sAvYVmHGg8atvVIQy7w3wN/ZzfbOwch3ZvuFbHln
-	nHkh+HiELXuWILa3MXs2rAOKqAG2mr/QJuEwxlcgX684eAjw0yZ2EwXA3sqf3JfZ5wDYAE
-	kiO/iAY9M+uCkzYwPQyOgvUMjiTjX7U=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-691-moTSZsP9PSmz6VBJBpAp3g-1; Thu, 10 Apr 2025 14:44:09 -0400
-X-MC-Unique: moTSZsP9PSmz6VBJBpAp3g-1
-X-Mimecast-MFC-AGG-ID: moTSZsP9PSmz6VBJBpAp3g_1744310648
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-39135d31ca4so708293f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 11:44:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744310648; x=1744915448;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Jxve4+H/G8iIVYp4eWG2z8bp0IS92tto2aBEElfrg50=;
-        b=jcIXCcKxhyy05i2A3JA55XhmSpvGCINQCeGU5tVqHdk245OFRKrnay/MdYOptfR7Hr
-         AJYHowF/ScXdmGQ4Fo3aKG74dqP5BMUUpHnEWvfPpxxDECRPcpeGAqKTohD0FU/RZ1E6
-         duUtLV4KD8ywlfM97XdQ5+bC67aEFSIs4uRYl3iH08teCNIf0TPmY1F6r5EJCIGHJ7n+
-         Bkt/DcmggrHCpOMldIVV9zcWRu5gBLYKf8M7vNFeoK0ZW/NV/NJHOzBlWmOkE3cLbDmW
-         FOqvc1zalf07c+lEWid/jHYX7Wl5kZcIgnEE5G55CBj9OjQuvXYyUCJe2pMIV0iahAuz
-         uJPw==
-X-Gm-Message-State: AOJu0YzdlzRDHK8yGul/VVYOcbDgfVdNfPngXXH7S59veWahGFuWtdyj
-	p/dBikJ6gqa5R7Bdy+MVr/DN9MApsA/xUWLAsn/k8zzpwXWBsToOJHE4t6rU8r+vnzHqFfcMq6b
-	0oVv64FW7OUkGPAKpNLHqSks6iH15g3j+R+QLPk3COR2vuxG9/VaPAH2UPEUjwiVQzYMobqdCpg
-	T3G4d9up/9/Zcidw93xjB/dUEvn9/1L2WWZ5qFEAdMK/VT
-X-Gm-Gg: ASbGncv8vCUZD51cfAGcnFgIxVVEoxmL0hGT5YboHOJRrA6asG/rXc7HD29bcN5DSkp
-	dEWYZ6QcJ/Ra5o0BJ1mPtnPSOfA9iDBJwdYw9P9zM1qrgO23+QoNLn5v976Ud9afb+GDLBR6He9
-	UPEWmLal1UHT/aGgtR5A9Bp24B4x3ZLUIQ7MJ8Bz6xTJudt0SvoGpq9GEbELm/gW1VW+AEgNNOp
-	mJcGQd3kM8q81v4lF5Sj6q7tZ+d3zOTCM1Xa1VZKayCEfVHoT72CtkV97MANhS0yEqT07C+MuJ/
-	dEuYXOSFSyUDdABOiQ/Qp8i2vzzSgKAfFrfSWaD14durgZklPa3sJqHvSUUnZcMcbxxb5JcLc9Z
-	/Z3LgzW9ajY/ldG3Xgt8wog7wv/zc3MjDV01kNQU=
-X-Received: by 2002:a05:6000:2910:b0:39c:1efb:eec9 with SMTP id ffacd0b85a97d-39e6e49f471mr38123f8f.13.1744310648229;
-        Thu, 10 Apr 2025 11:44:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEvQUNgBzNubFZ9s+T+LLIrqym+NXcc1LkzcRdHUvQ0wzpouOUTK9qcrtz+IuiYAIXOqtXDw==
-X-Received: by 2002:a05:6000:2910:b0:39c:1efb:eec9 with SMTP id ffacd0b85a97d-39e6e49f471mr38093f8f.13.1744310647685;
-        Thu, 10 Apr 2025 11:44:07 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c71a:5900:d106:4706:528a:7cd5? (p200300cbc71a5900d1064706528a7cd5.dip0.t-ipconnect.de. [2003:cb:c71a:5900:d106:4706:528a:7cd5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39d893773b6sm5555224f8f.27.2025.04.10.11.44.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 11:44:06 -0700 (PDT)
-Message-ID: <065d46ba-83c1-473a-9cbe-d5388237d1ea@redhat.com>
-Date: Thu, 10 Apr 2025 20:44:04 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9335828EA63;
+	Thu, 10 Apr 2025 18:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744310687; cv=fail; b=blKxBoW/zH1f+kAcUceMbbf/K+tO3ylepmqngBrvb9zS/C1Agy8BDdp5I15CBX2rj266zcZDYwvUSp70004nZltwmAyFSdQAEu1GfTJISc91r6THcRF25pQjVVIlIwYo+dcXv5TTKj6mJjyrI6YRRUtj0OgzRncunh79875PNbQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744310687; c=relaxed/simple;
+	bh=bXlLctPeVGlGJrqa34Jka5xzX/KIYnzZYX8+ZQ+432A=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BWIi8qKw9gvB9t/oUmLYEPVXxzueCOro7EZfJi8XMAAWqAG+LCmGOxMTCOO2H8l58kbgjjusMmkHmDKl5UDb2GGfDdR5QSRBdK3/Vl4yYl0xBMK57rH6DT5h4Xej5aWVkAWIpzlkEtYHxBBDZB/eyV2DaJAf/9QUJurJeSnws6I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=CH9xY+BA; arc=fail smtp.client-ip=52.103.68.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oVyf0mMFKWFQrkbgwBMpRpAKDqUUr6UpZqoTOKybf0jzhGahQPpJ9h2Z9HRUr1mLwBmwSkRkeBx87LLfDQSNIX1L7Y7D0wvl0xog/6lJN3+X90dEYKvZXexDW/BnQ9LILjHClGRxE88HfEIpjDYnhSVt4SzpQAiEmnstcAhjOR4Wzf5/qnqLky7Fic3bmYcS7tiPP0TxZ7jcgIajBnCjDCfqAJgUJdPHLNs8EmD5vVCEW7w7vHjriaSlYGjHoZ7Qyshq6HTYbKV68kKFHTTZiGlimCr0ADRFfj5liAg+8mEukSCYbeKN/Le3hy03+0VeWcqc6VWGxvMEi4xyLAQi9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z/Te0v4hGtRNcdSngXiTjjPe8iuK5NM3az5ug1NQwmw=;
+ b=kE/ozNmhtAdZDK4/ygVawCiNSMJUJCtoBegp8VIbBXztR/smOaX8nzrbSnOE0/caUazWYa8WMepFLZ7tUHrGrZn3A1xE7hLEo9Bp8G0Ga0t5fYd5dWwryEuWHDcjpvPB40cF93IhsxgrFKpHjxqEBNm0sBhxyXYRoG01XrmoiwvzjYp2Nzlpn/z89jND2Mh8gKw2ZtZqmH/kSC7I42nGiagfAgbE6Y2tWOF9lQPwniIYYO5/oan6ccuLe1Yj4tsahmgcaY+yVH03BX07wawJ3vQs8wm2HM4rR6izfpgSSed9NiLX4E8nZnhFxMzTTeZ/uGnk4sfpdRhacm1LtkhLVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z/Te0v4hGtRNcdSngXiTjjPe8iuK5NM3az5ug1NQwmw=;
+ b=CH9xY+BADlsJfEU22+TlbwSrgB/HX7228qvvCJ/TVJrCJxHIfh0/NyhuB/N5bIbE5099RhKRKfndCi+TmRUpTJPdNi7v9vaUkbtQV0Xecog3rCjavjHkKm5SxUm95zrFIoTDmlx26EczXmA/TxxpcDxG70F2+INxSy4jLq7hO7FJTvLZjpL0vxN0RNRJ1xeVpa+14ucDRCW7IUECy2f4GJbctzLA4VjZd73D6/jTQlWXze3M+7QlgiJswyVOeB0HpWGRWaqxtwMfKBLFv/OkFVaZgusnYWJDKGNjFf4il/HVmr5oNEiUUeQ3TWx6u4Zq9gpbGKuk3ntMHnAjksU8GQ==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by PN0PR01MB8880.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:11d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.23; Thu, 10 Apr
+ 2025 18:44:41 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%5]) with mapi id 15.20.8632.021; Thu, 10 Apr 2025
+ 18:44:41 +0000
+Message-ID:
+ <PN3PR01MB9597D3CBB1148FD4C74EA551B8B72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Date: Fri, 11 Apr 2025 00:14:37 +0530
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH RESEND v2 4/5] HID: multitouch: specify that Apple Touch Bar
+ is direct
+From: Aditya Garg <gargaditya08@live.com>
+To: Jiri Kosina <jikos@kernel.org>, Jiri Kosina <jkosina@suse.com>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Kerem Karabay <kekrby@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+References: <PN3PR01MB95973D930911AF73E262F299B8B72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Content-Language: en-US
+In-Reply-To: <PN3PR01MB95973D930911AF73E262F299B8B72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0036.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:97::15) To PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:f7::14)
+X-Microsoft-Original-Message-ID:
+ <79f9f637-4c34-46ae-9223-b4ca94eb4882@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] s390/virtio_ccw: don't allocate/assign airqs for
- non-existing queues
-To: linux-kernel@vger.kernel.org
-Cc: linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
- kvm@vger.kernel.org, Chandra Merla <cmerla@redhat.com>,
- Stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
- Thomas Huth <thuth@redhat.com>, Halil Pasic <pasic@linux.ibm.com>,
- Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Wei Wang <wei.w.wang@intel.com>
-References: <20250402203621.940090-1-david@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250402203621.940090-1-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN3PR01MB9597:EE_|PN0PR01MB8880:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4efb4f5-303b-4d79-0c52-08dd785fc0a8
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799006|7092599003|6090799003|5072599009|19110799003|461199028|8060799006|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MkozUHRFQnhHdkhsaTBSVkZBekxmQ2hhY1B6ekdIaEVhdzBaREJQaXYyeGhz?=
+ =?utf-8?B?aFVLakk2Szh4bG5kTEtJdGdKWU9xRFhvNWVTMnZtM1RtL2dOUTNabEUzMEhh?=
+ =?utf-8?B?UVUxaFdxNy90ZzJQV0c4cTdPK2FUYk9WVU1tMlVIdkVoMnkvN3E0ZVgrRGk4?=
+ =?utf-8?B?Mjk4MHA2Ty9OMEJpR2I3emJvcHExdGlvaitGL00wMS9mc25SQnhoYlZ2Y1Ux?=
+ =?utf-8?B?MFdvbjdiTjNzSDZuMElLRGJkTzlBNDlGQkVpZktzOG4ra3lxL0djVDhJbGVF?=
+ =?utf-8?B?YXZ6SG82UFhESERXNzJ4ZjhsUTlzUDFscFNSOTNhT1UwK0pLQlljT2lnMExy?=
+ =?utf-8?B?YTMzQUJreUc4L1BOcWx4MXMwOTJ1aFptSTdnTmRTbzcrT3Z6dUtpcnVzbWQy?=
+ =?utf-8?B?VnJyb1lYSzJPZVFKTjArN1JNdkdVdUxhTkZWNlcwLzVFZVNTZEZXL3VwUm5y?=
+ =?utf-8?B?RXN6dlFLb2tscnlCdng3cmlHT2lNejlYK3dTVkVMNWEzRy9NcDJMRUNUeGpB?=
+ =?utf-8?B?eTg3RDNEcytGUURUak1CTmx6UXlKS2RnSitXZURWVm84RXdrd3VzQTFoQWV5?=
+ =?utf-8?B?VVI1aU5vQ29DTnprQlBtREtXbWRqY25FMVd1UTYzTVVMazVTNHBSc0Zlb3ZW?=
+ =?utf-8?B?a1p3aWU1NnFvNW5hU294eU9NdXh4ajFHU0p2RWdNc21aWDZRcFRQTXowbS9S?=
+ =?utf-8?B?M0hyV1loQ0VSRGZnb084eVV1dEZPeHZCMGh6Y3ZzY2N5WEV4QnFsMnhUOXdN?=
+ =?utf-8?B?VVpJVmtvSW9uaEdDTVpuM0VCUS85K1ZPeTVXZU5XSmoyZk5YeDZQbWljZnk4?=
+ =?utf-8?B?ZW03TC9nNHRGbU5iejNnV2NtbjdjcGNVaWRoOTY1Y1hudjVseXUyUmRPaElX?=
+ =?utf-8?B?QUxBcENPNnRYcmVGMmZBS0JNbnM2amdadUFoVWJ5MVorM3ozRUo4N0xpRmMr?=
+ =?utf-8?B?MVpCSlVxcjlmRk1leUpQUnBEMkJNdEd4TFBUcFhJV2ZBUHNsMFc0Rk9uaThu?=
+ =?utf-8?B?THpBcXB0NzRWd2w3K3lJQzFCRVV2Z2J0Z214TzBrczdwamFkVjRUNU02RG0x?=
+ =?utf-8?B?MmRYYi9mc0RuY2l1cU1GTW5VTzhxVEpaM3dZcnBJdzdVSTFaREpoZDhIMm1N?=
+ =?utf-8?B?bEFOajVOczV3VkJoWWRrYWlUSlhOV1dTYi85WlM0VFNVazUwd2Y0b2JoZytz?=
+ =?utf-8?B?Zkd3Zk5DNkxKRkpEUDhBSEIreGpTc1d3M25td3pWVFlvenVWcExwNlZnQTNh?=
+ =?utf-8?B?RTZyN1lSeERxbUdBODdqWFpwWlBnRnhqdmc1MVB2dWZPcFYzWHhBbDdPWTA5?=
+ =?utf-8?B?aFFaaDFGRU5wV0hZeVhydUE5KzZ5V3U3TDVRcHhZaEV5aGVzY09rYWVUbGhV?=
+ =?utf-8?B?WUpJdEdVTnpOUVg2YlVqSHFsQXhFZlIvQkZQS3I3ME9Kb21jN0xMU1lqaFZI?=
+ =?utf-8?B?TWllWGJjQjUyZTNJT0xqTmN1Y1BycUtJRWhnSkIvRXpOcUowcG56UERoM1pC?=
+ =?utf-8?B?QUFVV293cU9IZWRqS0dEYjU4RTh5OEVmMnJNdUR1Mlo0NVM4emJZVFM5RjRk?=
+ =?utf-8?B?a21aUT09?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a3ZjSXhSWk9FcEwyY2VOdWJLYmYxZlE3bVNmenM1bkE1SGNVcUNaOS81U1VS?=
+ =?utf-8?B?emI2b1g3TWg4Y3dSUFd0dWRwZG00NU42MnBUWkpsWFcvZExZRElGcURWQ05Q?=
+ =?utf-8?B?TmdoZ2N5dHRSNGQ0QXFHSzE5V2Y3enB5ZEhKeWo1ekJRS3hibFMxNmxwdnJq?=
+ =?utf-8?B?bHZpSkovUVF5OXdUdHBMZWF2SkdjTm5MajBhRTRvOE10UndqQVdkZG5YdHJK?=
+ =?utf-8?B?OTZscGt2dVNWUzQvaUVqZU5Gb1VMdmJ6UWhlbmYzVkRMNWM4MlFDSjRtd0E5?=
+ =?utf-8?B?enZEMkZHa3QzdGtQdXlPb2N3UDlpTlp1L2VnUE9aTWdPN2s3SVFCcjdkdlpE?=
+ =?utf-8?B?QUNueURiWWFhVXl4cGVsMlpDaEp1eUM3dGhSYlBVWTgxV2xtaGlwaEdtM1hT?=
+ =?utf-8?B?aVVNMU00Z2U3aExNWTY4UjdSRUhSYWtaTkg1eEd1K1Q2OGlyM0k1UEJmQjZF?=
+ =?utf-8?B?NGdKTEo1Z3Vyd1JnaDc2VUpzMWtqOVhLSThnNzQ3MklOdUhkT2tOb1M2Tk5n?=
+ =?utf-8?B?UTUvMHM0dHFtOU9YeHBmQVhHN2xqOTVqd3FQb0w0dzgzNm9kYXd5TlJ1cUEx?=
+ =?utf-8?B?c1RCeXZ6bnBPSnZtN3orbldiVFFER0hFZmxWTnFXN1lJT2ZZQzVCOTZQSERX?=
+ =?utf-8?B?Mm9oVEhpMHRvUEZ2eXBFaE9CQUoxOVlmcERzeGowak1jR3lvT3hTRjZvck5i?=
+ =?utf-8?B?a0ZNdnpOaGhhVW13RXZZOGFCYzZuakVJV05Rdi9yUTlyOVpRblhKaEszQzd1?=
+ =?utf-8?B?Z2w5Q0JkR0tGZUQvUEdzUmFhZFVtNTM5OHJLY1hYOGVnUjE2OE9iWUhQcGdS?=
+ =?utf-8?B?dmFLQ0UwbWFJU053VjhQa2dZVFloaU1zUUpDOFVWd3l4OXBXNGtLdm1xaUdm?=
+ =?utf-8?B?SFJnS1BHZlN3akFldG5FYlZKWmcxcEJVemJ4Y1BQUEhvczdVRlRqZWc4WTQx?=
+ =?utf-8?B?SDA4aE9ERjlXQlM0NzVDTTRVT1Jha0NaS1FhZnFDK1F0ejBzN0VlT1oyZytv?=
+ =?utf-8?B?b2JtRGlJMWkzVTkrWWp3ZVhwU2xvUmpDVDlXWURnODhJK2o4bzMxY0hld2tG?=
+ =?utf-8?B?YXlPOEgrTHhvZm5FU0kybktsd1kwb2RjVmVObFNnTC9EN2RrTVNtM2RQM2t4?=
+ =?utf-8?B?M2pnbWpaUTE3UTBmZWsyNE5SUkw3Vm9XV2U2U1BhVXZONVdqUlB2U0wrMlQ5?=
+ =?utf-8?B?SVkvTXpXdlJJM0R1Y2NoSVBxTXlwOUo5V05PWTVtdjRJVi9iMVNyUThDb0py?=
+ =?utf-8?B?TFo0dEZyajdWS0diVHlEcmE0NmN3QlJyZW9GajhVbGpSeklzVWlGK1gxWUpU?=
+ =?utf-8?B?UHB6b2dmdTNaVUYvSW5zQk84NTd1eEhObFF3ajJjSHRaTFlxbk9lMmJoUWVE?=
+ =?utf-8?B?ODF5Tjc3RG5jK25XbTdKTUlKT3Exd0Q2SWZTZmtjK2hQRGFMam4zaGd1bmpj?=
+ =?utf-8?B?S1I1WXY1Qitvdjdwc2x5SU5JMjRIbEt1Z3M5WlJJK1hCbmU3NEYzZXp0ay9u?=
+ =?utf-8?B?cHJ4MWRneDMzNjBjUS9iMVJsR3NPSEx5SnlhT1hzYUVIUU5iRm5ybmIzc0Fm?=
+ =?utf-8?B?QmpSODlYRHhrWVhqcnhuQUZaVkZLUitUZXRsZENBcnVoNnM1NUg5K0pWclZn?=
+ =?utf-8?B?Y3VjaGtiSnBoWnhOMnptU3ErUDJONWtGSzkrYXdrL3ppck1rR2pSc1kvcHVB?=
+ =?utf-8?B?eTB1bzlUOUFKY2ZWdmNkOFNTek1veHEyTnF2QW80MXVSSFJ2OVhncFFCOWUx?=
+ =?utf-8?Q?dKM9LhOw8WXilJtvqEtyV4AaBxCZYjqSRE2sHFc?=
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4efb4f5-303b-4d79-0c52-08dd785fc0a8
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 18:44:41.0067
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB8880
 
-On 02.04.25 22:36, David Hildenbrand wrote:
-> If we finds a vq without a name in our input array in
-> virtio_ccw_find_vqs(), we treat it as "non-existing" and set the vq pointer
-> to NULL; we will not call virtio_ccw_setup_vq() to allocate/setup a vq.
-> 
-> Consequently, we create only a queue if it actually exists (name != NULL)
-> and assign an incremental queue index to each such existing queue.
-> 
-> However, in virtio_ccw_register_adapter_ind()->get_airq_indicator() we
-> will not ignore these "non-existing queues", but instead assign an airq
-> indicator to them.
-> 
-> Besides never releasing them in virtio_ccw_drop_indicators() (because
-> there is no virtqueue), the bigger issue seems to be that there will be a
-> disagreement between the device and the Linux guest about the airq
-> indicator to be used for notifying a queue, because the indicator bit
-> for adapter I/O interrupt is derived from the queue index.
-> 
-> The virtio spec states under "Setting Up Two-Stage Queue Indicators":
-> 
-> 	... indicator contains the guest address of an area wherein the
-> 	indicators for the devices are contained, starting at bit_nr, one
-> 	bit per virtqueue of the device.
-> 
-> And further in "Notification via Adapter I/O Interrupts":
-> 
-> 	For notifying the driver of virtqueue buffers, the device sets the
-> 	bit in the guest-provided indicator area at the corresponding
-> 	offset.
-> 
-> For example, QEMU uses in virtio_ccw_notify() the queue index (passed as
-> "vector") to select the relevant indicator bit. If a queue does not exist,
-> it does not have a corresponding indicator bit assigned, because it
-> effectively doesn't have a queue index.
-> 
-> Using a virtio-balloon-ccw device under QEMU with free-page-hinting
-> disabled ("free-page-hint=off") but free-page-reporting enabled
-> ("free-page-reporting=on") will result in free page reporting
-> not working as expected: in the virtio_balloon driver, we'll be stuck
-> forever in virtballoon_free_page_report()->wait_event(), because the
-> waitqueue will not be woken up as the notification from the device is
-> lost: it would use the wrong indicator bit.
-> 
-> Free page reporting stops working and we get splats (when configured to
-> detect hung wqs) like:
-> 
->   INFO: task kworker/1:3:463 blocked for more than 61 seconds.
->         Not tainted 6.14.0 #4
->   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->   task:kworker/1:3 [...]
->   Workqueue: events page_reporting_process
->   Call Trace:
->    [<000002f404e6dfb2>] __schedule+0x402/0x1640
->    [<000002f404e6f22e>] schedule+0x3e/0xe0
->    [<000002f3846a88fa>] virtballoon_free_page_report+0xaa/0x110 [virtio_balloon]
->    [<000002f40435c8a4>] page_reporting_process+0x2e4/0x740
->    [<000002f403fd3ee2>] process_one_work+0x1c2/0x400
->    [<000002f403fd4b96>] worker_thread+0x296/0x420
->    [<000002f403fe10b4>] kthread+0x124/0x290
->    [<000002f403f4e0dc>] __ret_from_fork+0x3c/0x60
->    [<000002f404e77272>] ret_from_fork+0xa/0x38
-> 
-> There was recently a discussion [1] whether the "holes" should be
-> treated differently again, effectively assigning also non-existing
-> queues a queue index: that should also fix the issue, but requires other
-> workarounds to not break existing setups.
-> 
-> Let's fix it without affecting existing setups for now by properly ignoring
-> the non-existing queues, so the indicator bits will match the queue
-> indexes.
-> 
-> [1] https://lore.kernel.org/all/cover.1720611677.git.mst@redhat.com/
-> 
-> Fixes: a229989d975e ("virtio: don't allocate vqs when names[i] = NULL")
-> Reported-by: Chandra Merla <cmerla@redhat.com>
-> Cc: <Stable@vger.kernel.org>
-> Cc: Cornelia Huck <cohuck@redhat.com>
-> Cc: Thomas Huth <thuth@redhat.com>
-> Cc: Halil Pasic <pasic@linux.ibm.com>
-> Cc: Eric Farman <farman@linux.ibm.com>
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> Cc: Sven Schnelle <svens@linux.ibm.com>
-> Cc: "Michael S. Tsirkin" <mst@redhat.com>
-> Cc: Wei Wang <wei.w.wang@intel.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
+From: Kerem Karabay <kekrby@gmail.com>
 
-So, given that
+Currently the driver determines the device type based on the
+application, but this value is not reliable on Apple Touch Bar, where
+the application is HID_DG_TOUCHPAD even though this device is direct,
+so add a quirk for the same.
 
-(a) people are actively running into this
-(b) we'll have to backport this quite a lot
-(c) the spec issue is not a s390x-only issue
-(d) it's still unclear how to best deal with the spec issue
+Acked-by: Benjamin Tissoires <bentiss@kernel.org>
+Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+Co-developed-by: Aditya Garg <gargaditya08@live.com>
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
+---
+ drivers/hid/hid-multitouch.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-I suggest getting this fix here upstream asap. It will neither making 
-sorting out the spec issue easier nor harder :)
-
-I can spot it in the s390 fixes tree already.
-
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index f7fe6aab8..66e33a482 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -1349,6 +1349,13 @@ static int mt_touch_input_configured(struct hid_device *hdev,
+ 	if (td->serial_maybe)
+ 		mt_post_parse_default_settings(td, app);
+ 
++	/*
++	 * The application for Apple Touch Bars is HID_DG_TOUCHPAD,
++	 * but these devices are direct.
++	 */
++	if (cls->quirks & MT_QUIRK_APPLE_TOUCHBAR)
++		app->mt_flags |= INPUT_MT_DIRECT;
++
+ 	if (cls->is_indirect)
+ 		app->mt_flags |= INPUT_MT_POINTER;
+ 
 -- 
-Cheers,
+2.49.0
 
-David / dhildenb
 
 
