@@ -1,47 +1,86 @@
-Return-Path: <linux-kernel+bounces-597368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81C74A838DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:05:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D43C5A838EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B6638C2F26
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFE938C10BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E189A202C2F;
-	Thu, 10 Apr 2025 06:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAFD202998;
+	Thu, 10 Apr 2025 06:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pE6bNzha"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L0b60taz"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D7417A309;
-	Thu, 10 Apr 2025 06:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9B2200132
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744265094; cv=none; b=K7UkSybUxqXo5+BsySUIjEH2Xewo5xz7VwerWgasqNCCRlO4fBXxFf7b9goCc8ATaY65rPEglbsQv6IcV30wzGpLj1rAY16roLcbIu8N1+6dahDpEPzgsha9Y7E7Rh5/oKk2N2pZIF+kN7CKcCxH9n4ek0ZeN0fUfEAJdfCmrqk=
+	t=1744265293; cv=none; b=S9bvOEDZIzlgZWO18ywBZcnLuXbUf6y8DQgI6iOv3d5+GcldDrukzA+nRCAYKYROOdsjjoKqpkgu69RgGshrYvSnf5a8xJnovr3dT13tiqYFEdNngscX36UkH4R37lUm3CuQaw0rCUl7PBYQGAL0LmzKsNB7YybKrh9U0WjdZio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744265094; c=relaxed/simple;
-	bh=FYrBWSCKFVtEQ8dqrWonuh8PblTo1bjrFXM916oA1Z8=;
+	s=arc-20240116; t=1744265293; c=relaxed/simple;
+	bh=rcFPXd+PyG2j8YKXDK5TE8WokieFvBLw4xHGkuYL270=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HKtiSsZ7q+JTHiudKcdNxJOWOjo6CXzAez8xJ+IrfQvewV06WJU+g4aPQxRW8GWwECj5ueg+jvIAEKMhqlnzogGyTy2VeOE/VntdzYsIdlrCYTKL32bpeGW4AV+h9w3zBibsEy90C5lwK+2s2tHq/1+9c9xb3V1bJ4TDSSckal0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pE6bNzha; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C720EC4CEE8;
-	Thu, 10 Apr 2025 06:04:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744265093;
-	bh=FYrBWSCKFVtEQ8dqrWonuh8PblTo1bjrFXM916oA1Z8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pE6bNzhaXcXOVCREnHA9o+CvitfxrvKq4sQ8deVGbMdDCLRhGoX/LalA91CeAbe24
-	 9X3bAWjtstpdxGKLt3vxoGsjQj7oM/WM7Xo4778mqYlrztV9TOz9PVAhooXj35XDZV
-	 6k/SlLjwchM7YQjuusm1VP+UC9o+5R6U62fVaaLCVNI+Cx2qQ+JVxEZgp/HiarRnLu
-	 pJqYY5blC7Zr1sCy5uerI3dXcdekHYjBzbZhzpbv9E7s9FEgV0WdG+62Im2dlAySfb
-	 ySMiUXnuQNVO3akeP3JoKh31HY6WOGig4Va/c0PA8eA2sPpUcpkURLrayFoVt3PyBi
-	 oSjLCjHLVXWwA==
-Message-ID: <11d2541e-580b-4060-ad92-ed721e98793e@kernel.org>
-Date: Thu, 10 Apr 2025 08:04:45 +0200
+	 In-Reply-To:Content-Type; b=LlQJxvC2+jnYda5WzrRvE8vY+IgEVwkQe/x1bPOtndW1DlhczS7hU2eAzUfaLDbsypv+o9y20/LR15G4RB9cVWo7YnHT06o+hl5GpNynjE9ywlt7ZhfqFVgfzLlO1B3IgH9LmepHACJzH/LqzcH+pvpwAk7z8uyIVfJCHs1p5R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L0b60taz; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53A5Usrw029403
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:08:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	c65/dq03YDlqT69lZS9YUG+UsJpEZoVLdFL5ZINuezA=; b=L0b60tazFeD6iY8e
+	4HvYZ3rPKlDtfZ1vhQ3PjYoqb5QdO5pZl/rVYtVwLra416K1qW8T6jZErjQZ52SG
+	HxjyDXf4vQnAaIab9A2ErIOtRn7AZQziogDFh4PEQypEY9YQQcey38UJyYb7gp/+
+	kqRK68Ky2Z+DooRtH5dB4j1oujH8ukqQ/MviepQK4QVojRGCHYtfkpmnPzLTL+KX
+	ebPtBzchQtKIUkiBIuY2PCt9iIXbSTQYSWN2wGFuu57abxSt6lujV757rK4ZnZQ9
+	S8ArPYoNd9YjYA2oTaI5UwH7qZgNuEW6ua91jOedfl9fjjU6jSV6AD24uLNMvWi+
+	Dj2AwQ==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twbedvdx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:08:11 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b00cd79a5e6so535251a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 23:08:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744265290; x=1744870090;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c65/dq03YDlqT69lZS9YUG+UsJpEZoVLdFL5ZINuezA=;
+        b=NCkZMaMpmytjK79kSHThkmVqenhcWYcKAkCOVk743qDRKfaRmlmkN9djPsM3dW+bf2
+         j/YLFtTkGC2kMnnyCwZvPWiUCPhiUFkKcZkw/5BbMk5fhb5BfBRflJMKQkymxEym8eLk
+         zxwxmSQjgZZHUIk6hs9wOwQNFHqFAPEcvePJzFCEGpE1tHxcNyt9/T0nEy5XLkoOJ/yT
+         OHmM+3IxW8dWe6518eG/wufXEwm+iLz3g6TuDl5J8xXZv12ILC3+9uNjIIT4f+HeKjWo
+         n+pFb66fCX46kr92alYTFXyOBLgBRNijZJZmXMzEwut3aMUQkVYElWPPoPjBh0dMlOAn
+         Cnvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaVuw1TCI9ulNag405mhXRXdZIZ9MtNsgFfreF7EfA9jawOELJcYBC8NRzj0xnYIVvaK9SAmleo0AEt+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrRBjbP4GGua+9mKKkAHL07bK9yVVNr2w3rfDnkcIBCKh1hFDs
+	a7IMJXikQjyFs3MdZghTkDvcqLXI8PwnxBKbGGPlo2pVCtvXRkv0clycy9pTHcRp/7ssaNfuc5N
+	PGdPpcOTGtajV0DPqMdHiNYDQ+S+pAQjnIqGGtrVCyqUhMBCHTBbUlYEEd1zgt9o=
+X-Gm-Gg: ASbGncs94OeV6B0zCqg8b2rg/vU+H2mzz7wy978XsCiXuzB1R4ATS5pV26OBW0ESblG
+	mAS0D0d3wIcWNCFc8VLzNhM7Iss3riQKxKiKKpdWVtri0ABOPEuSYvVRZXp60Lj/Coq+AZPXLI1
+	yqUzoab8jeq4a1dVfUNVHvf+byT98GVouuMfpbeOfZSItnq35/+WhMHgst8XLuzzMjw05rI+kz/
+	iwDuITlie1cn8PAPfb2vbbRYHEuISMRqDtcHAes+Kw/bsGKmOecA7nCZNasMlCqVeKs/A8G2UEI
+	e55fdG3NsTgQulE/VkVF6zTgkhAjoPFVgZxZ
+X-Received: by 2002:a05:6a20:6f06:b0:1f5:8b9b:ab54 with SMTP id adf61e73a8af0-201694cb037mr2907498637.23.1744265290184;
+        Wed, 09 Apr 2025 23:08:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8MricBGPJy7z5KTQxmuVxXADC6pI74ej+8CixhRowybv6WzBxlmKULawmIeaSnOpfeJ/ubQ==
+X-Received: by 2002:a05:6a20:6f06:b0:1f5:8b9b:ab54 with SMTP id adf61e73a8af0-201694cb037mr2907470637.23.1744265289757;
+        Wed, 09 Apr 2025 23:08:09 -0700 (PDT)
+Received: from [192.168.29.15] ([49.37.108.21])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1e6972fsm2488523b3a.171.2025.04.09.23.08.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Apr 2025 23:08:09 -0700 (PDT)
+Message-ID: <2cc61d5d-656b-49d6-9d09-98c4368b1fc8@oss.qualcomm.com>
+Date: Thu, 10 Apr 2025 11:38:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,189 +88,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/7] mfd: Add core driver for Nuvoton NCT6694
-To: a0282524688@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
- brgl@bgdev.pl, andi.shyti@kernel.org, mkl@pengutronix.de,
- mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com,
- alexandre.belloni@bootlin.com
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
- netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-usb@vger.kernel.org, Ming Yu <tmyu0@nuvoton.com>
-References: <20250409082752.3697532-1-tmyu0@nuvoton.com>
- <20250409082752.3697532-2-tmyu0@nuvoton.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v1 2/3] usb: gadget: Use get_status callback to set remote
+ wakeup capability
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Bakker <kees@ijzerbout.nl>,
+        William McVicker <willmcvicker@google.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@kernel.org" <stable@kernel.org>
+References: <20250403110805.865311-1-prashanth.k@oss.qualcomm.com>
+ <20250403110805.865311-3-prashanth.k@oss.qualcomm.com>
+ <20250408011758.qfdflgrrmahwmfqi@synopsys.com>
+ <4d68cb04-377f-4ebf-99c7-c63b68aebf60@oss.qualcomm.com>
+ <20250409005524.fbehw2gonv3p7j2v@synopsys.com>
+ <a4cc6d1b-4925-4b57-ae23-fc1e23c5efde@oss.qualcomm.com>
+ <20250409220510.eynefm7fesydagpz@synopsys.com>
+ <20250409221158.n5duanv2gmctrr64@synopsys.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250409082752.3697532-2-tmyu0@nuvoton.com>
+From: Prashanth K <prashanth.k@oss.qualcomm.com>
+In-Reply-To: <20250409221158.n5duanv2gmctrr64@synopsys.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: L_ugItQEPDDaoIKXinaWPawgWtyw6jRK
+X-Authority-Analysis: v=2.4 cv=T7OMT+KQ c=1 sm=1 tr=0 ts=67f7604b cx=c_pps a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=cNzNqdwVgqoaoh8yHwe9gA==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=JHkCR1Z1QDo9LWSbiEIA:9 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-ORIG-GUID: L_ugItQEPDDaoIKXinaWPawgWtyw6jRK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-09_06,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=881 lowpriorityscore=0 adultscore=0 phishscore=0 bulkscore=0
+ mlxscore=0 malwarescore=0 suspectscore=0 priorityscore=1501 spamscore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504100044
 
-On 09/04/2025 10:27, a0282524688@gmail.com wrote:
-> +
-> +static int nct6694_response_err_handling(struct nct6694 *nct6694,
-> +					 unsigned char err_status)
-> +{
-> +	switch (err_status) {
-> +	case NCT6694_NO_ERROR:
-> +		return 0;
-> +	case NCT6694_NOT_SUPPORT_ERROR:
-> +		dev_err(nct6694->dev, "Command is not supported!\n");
-> +		break;
-> +	case NCT6694_NO_RESPONSE_ERROR:
-> +		dev_warn(nct6694->dev, "Command received no response!\n");
-> +		break;
-> +	case NCT6694_TIMEOUT_ERROR:
-> +		dev_warn(nct6694->dev, "Command timed out!\n");
-> +		break;
-> +	case NCT6694_PENDING:
-> +		dev_err(nct6694->dev, "Command is pending!\n");
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return -EIO;
-> +}
-> +
 
-Missing Kconfig. Exported functions are supposed to have it.
 
-> +int nct6694_read_msg(struct nct6694 *nct6694, const struct nct6694_cmd_header *cmd_hd, void *buf)
-> +{
-> +	union nct6694_usb_msg *msg = nct6694->usb_msg;
-> +	struct usb_device *udev = nct6694->udev;
-> +	int tx_len, rx_len, ret;
-> +
-> +	guard(mutex)(&nct6694->access_lock);
-> +
-> +	memcpy(&msg->cmd_header, cmd_hd, sizeof(*cmd_hd));
-> +	msg->cmd_header.hctrl = NCT6694_HCTRL_GET;
-> +
-> +	/* Send command packet to USB device */
-> +	ret = usb_bulk_msg(udev, usb_sndbulkpipe(udev, NCT6694_BULK_OUT_EP), &msg->cmd_header,
-> +			   sizeof(*msg), &tx_len, NCT6694_URB_TIMEOUT);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Receive response packet from USB device */
-> +	ret = usb_bulk_msg(udev, usb_rcvbulkpipe(udev, NCT6694_BULK_IN_EP), &msg->response_header,
-> +			   sizeof(*msg), &rx_len, NCT6694_URB_TIMEOUT);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Receive data packet from USB device */
-> +	ret = usb_bulk_msg(udev, usb_rcvbulkpipe(udev, NCT6694_BULK_IN_EP), buf,
-> +			   le16_to_cpu(cmd_hd->len), &rx_len, NCT6694_URB_TIMEOUT);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (rx_len != le16_to_cpu(cmd_hd->len)) {
-> +		dev_err(nct6694->dev, "Expected received length %d, but got %d\n",
-> +			le16_to_cpu(cmd_hd->len), rx_len);
-> +		return -EIO;
-> +	}
-> +
-> +	return nct6694_response_err_handling(nct6694, msg->response_header.sts);
-> +}
-> +EXPORT_SYMBOL(nct6694_read_msg);
+On 10-04-25 03:42 am, Thinh Nguyen wrote:
+> On Wed, Apr 09, 2025, Thinh Nguyen wrote:
+>> On Wed, Apr 09, 2025, Prashanth K wrote:
+>>>
+>>>
+>>> On 09-04-25 06:25 am, Thinh Nguyen wrote:
+>>>>
+>>>> Not at the gadget level, I mean to create a configfs attribute common
+>>>> across different functions to allow the user to enable/disable the
+>>>> function wakeup capability via the configfs when you setup the function.
+>>>>
+>>>> What do you think?
+>>>>
+>>>> Thanks,
+>>>> Thinh
+>>>
+>>> Thats a good idea, in fact I had the same thought. But thought of doing
+>>> it later since its beyond the scope of this patch/series.
+>>
+>> The way you have it done now forces a usb3x function driver to implement
+>> f->get_status to be able to respond with function wakeup capable.
+>> Previously, we automatically enable function wakeup capability for all
+>> functions if the USB_CONFIG_ATT_WAKEUP is set.
 
-GPL
+Currently function wakeup is implemented only on f_ecm and others don't
+have the capability, so the expectation is functions should add add the
+get_status callbacks while implementing remote/func wakeup and mark
+itself and RW/FW capable. And if get_status callback is not there, then
+func is not FW capable.
 
-> +
-> +int nct6694_write_msg(struct nct6694 *nct6694, const struct nct6694_cmd_header *cmd_hd, void *buf)
-> +{
-> +	union nct6694_usb_msg *msg = nct6694->usb_msg;
-> +	struct usb_device *udev = nct6694->udev;
-> +	int tx_len, rx_len, ret;
-> +
-> +	guard(mutex)(&nct6694->access_lock);
-> +
-> +	memcpy(&msg->cmd_header, cmd_hd, sizeof(*cmd_hd));
-> +	msg->cmd_header.hctrl = NCT6694_HCTRL_SET;
-> +
-> +	/* Send command packet to USB device */
-> +	ret = usb_bulk_msg(udev, usb_sndbulkpipe(udev, NCT6694_BULK_OUT_EP), &msg->cmd_header,
-> +			   sizeof(*msg), &tx_len, NCT6694_URB_TIMEOUT);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Send data packet to USB device */
-> +	ret = usb_bulk_msg(udev, usb_sndbulkpipe(udev, NCT6694_BULK_OUT_EP), buf,
-> +			   le16_to_cpu(cmd_hd->len), &tx_len, NCT6694_URB_TIMEOUT);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Receive response packet from USB device */
-> +	ret = usb_bulk_msg(udev, usb_rcvbulkpipe(udev, NCT6694_BULK_IN_EP), &msg->response_header,
-> +			   sizeof(*msg), &rx_len, NCT6694_URB_TIMEOUT);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Receive data packet from USB device */
-> +	ret = usb_bulk_msg(udev, usb_rcvbulkpipe(udev, NCT6694_BULK_IN_EP), buf,
-> +			   le16_to_cpu(cmd_hd->len), &rx_len, NCT6694_URB_TIMEOUT);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (rx_len != le16_to_cpu(cmd_hd->len)) {
-> +		dev_err(nct6694->dev, "Expected transmitted length %d, but got %d\n",
-> +			le16_to_cpu(cmd_hd->len), rx_len);
-> +		return -EIO;
-> +	}
-> +
-> +	return nct6694_response_err_handling(nct6694, msg->response_header.sts);
-> +}
-> +EXPORT_SYMBOL(nct6694_write_msg);
-> +
+Current implementation sets RW/FW capability to all interfaces if
+USB_CONFIG_ATT_WAKEUP is set (which is not right). I have provided an
+example in the commit text where we incorrectly set FW capability.
+>>
+>> Arguably, this can cause a regression for remote capable devices to
+>> operate in usb3 speeds.
+> 
+> Sorry typos: I mean arguably, this can cause a regression for remote
+> wake capable devices to perform remote wakeup in usb3 speed.
+> 
+> BR,
+> Thinh
+> 
+>>
+>>>
+>>> We can add a configfs attribute to enable/disable FUNC_RW_CAP, and
+>>> functions can return get_status() based on the attribute.
+>>>
+>>
+>> That would be great! This would fit this series perfectly. Let me know
+>> if there's an issue.
+>>
+I seriously think we can take it out of this series and do that
+separately. The intention of this series was to fix the wakeup
+operations. And enable/disable func_wakeup from function driver would be
+a new implementation. Ill take it up after this.
 
-Same comments.
+Regards,
+Prashanth K
 
-Best regards,
-Krzysztof
 
