@@ -1,171 +1,209 @@
-Return-Path: <linux-kernel+bounces-597695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85B7CA83D56
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:43:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A87A83D5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12F1C3B107E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:42:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFE583B72CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 08:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AF920E018;
-	Thu, 10 Apr 2025 08:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA56120D4F4;
+	Thu, 10 Apr 2025 08:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fq4mEubL"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FRyNJ6g0"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BA820B801;
-	Thu, 10 Apr 2025 08:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEAA1EEA4B;
+	Thu, 10 Apr 2025 08:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744274535; cv=none; b=PMV3UGq+gzk6WvSjYjOWq9qACi7J3gW+eSCJm9MolrHauLAG761ElJ0zzCrgYYhKooS2fPZ0fLhFlPYG00xthDA7nwhVKscKVhVH4s0RKo2jGDU2eHwziugEwI3Ov/0SIMaFFeB7MKR45i+BUdw6V6PKydpzPtYjuobzg8Sv5NY=
+	t=1744274565; cv=none; b=t1dYfIhxqPGsYtSelUwuonuO9+/d8xb1S6rHX+Yiuec33ASVbUwVLA3L2aDKWHJgy6NZoGECkaQRz+DfoWwY8eGLgnCQnfgstfIOz52mGEER1dS26jVeccOv4v+d+mu+vBlYMUT4ktnwnl3WMtNtLAFtWtiNjFzrUcBsPvQTYSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744274535; c=relaxed/simple;
-	bh=eaLHh1x7Yl188r+cUHnieuu+ulS+no2KAZSk41ryLSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AcazrKNSc18zUxWbLied5KGovvcHeQFZbcAVd3iHLGT9WicgxDvyx0m0jOflIlsQSCCKw2AeEQGTFqHwNU62mcuxTWkKPA6c8C0mwxeG7E1E28uH5OhnPXWN3/6yCRoCQkJ2JTLMY86Y4+4F8Jal+JNhRrXzC1suis9RtUXa1hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fq4mEubL; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22403cbb47fso5263975ad.0;
-        Thu, 10 Apr 2025 01:42:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744274533; x=1744879333; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+d4uPjgKpIDnR13P+mL9ZfGYIBtaMP2k/aupNTCMmKQ=;
-        b=fq4mEubLPerqpy4x1d0rsJl4Rh+drQwCemv+kBSJhhSF7chcEGCUWY6JlGxx0mKsKw
-         c2B2Ck+diQM33ayX5+QAQcIa8PLwZD4lz70Iq3gA2QUmpQLeIpoM42FyCDCgZXlqy5t3
-         CaPkPDIEidjDFjn4DeJQ4ygQZdEb17FTxAxBezcEoafkzBfzpcGoZ+YCrIRYuGxsKRoG
-         dA2qH9L+MMborZpImx0c4lmWfvdgS7lhXKR3txx/bxhtyFvHx3CLYO56909jjv9iGKoR
-         kn/KmaKm4RzJ8ByA0jbs2QpG/dhfOhvxlm8acPMW9Mqp7v97dkRNhXEEiyW1WGsIbijD
-         BxyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744274533; x=1744879333;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+d4uPjgKpIDnR13P+mL9ZfGYIBtaMP2k/aupNTCMmKQ=;
-        b=a15xFVuath13vQY7mmttI8W4kcIYrfPKE9U/A6Gti9PfVPlXCrXJByytF1QIJ8+TXu
-         Oj3R3hnXkk5DAOjB/FjhS0vRlw1YnT+w4JBZoDtMEIyw4zxsXCkAY/uCtPgoqRFy43Ss
-         vriQVu1PV7h1qmh5u9pzyZBavhoewUeGyANrcrp09UUBx7CvK0LpyPIGCI7mnhNiuHxK
-         Ss/MioG+tp1NlG3lRZ1e9xmLRCOeFVtNwU5296nP5SvUYVhw80K/BPi88Vr9auTaAXMx
-         RzJwkyxWKwTbmcdd0PjeUSdJQmoL0sFF+U1uBZGnjPWqH92TRAhAOWPREqXmPBv1z//f
-         3voQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAPol8Jt+nz6w0/qC3/xQvNX2Uy3Ilb5WMBXhnMPtMlM7YjUKGrt9Ymofu6JRP9ai3N69HfCWS8RwSqgdt@vger.kernel.org, AJvYcCW/xo98bq6DLoc3+TGrEwqhM8rvEqlnTqJ7m0IdUC1b1FxRX39p3aCvox1uwvHA1VQNxCj8ndymWvESxVzWPyw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ3ADXFIEa06rDMHfBx0nihDXXhV3zBd62j0VtjWf0n/s9JCgN
-	PNEbTAye/+jnkNqtIdt7Wt2fxgbNdin6feLqWweuX1ZnhKbvkdHc
-X-Gm-Gg: ASbGncvkSKManZtvccGhQ+1A5Dt40vhEX5qIM+7RmnBS0EYypLdegR/ABTdTyJXALZX
-	fDBi5To4cOIgsgP1PsTD65w3OtffJRIuGPuCt3vbCYB40TCoEFP0rtD6gmrfAKkSFiQXZngn2Oj
-	wmzqQqk0ryCYRlOx45+eat91HNO26feOiChJQPKQM82T6Akh+T7iX5y0o+TSdRv3E7By1OG35P6
-	5VunCOeZySe9OyAiGozwi0+3uB5fG4y0qKiBEiAoVlLoKDo+NJPTrvOkbh2RDJDanqHjTghTdNv
-	pWfA8+YkTVZpLQ7wNvbjgWt15B9XKYQkQ1eLSQRSbE5joPiTciaa+G75yJzqDRFK/BnYzVHvrkV
-	QD1dP/wOz9oPZMnVtcw==
-X-Google-Smtp-Source: AGHT+IEeYuhxPKJdioM1LCwerEuXFkm58pHCB6lB+BBwDEBibh3mSzv4PkY6k2vRvZujF//8AFFoEA==
-X-Received: by 2002:a17:903:230b:b0:215:acb3:3786 with SMTP id d9443c01a7336-22be02f77fdmr19616235ad.19.1744274532595;
-        Thu, 10 Apr 2025 01:42:12 -0700 (PDT)
-Received: from ?IPV6:2409:4080:204:a537:d266:673b:c35c:83a8? ([2409:4080:204:a537:d266:673b:c35c:83a8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b8b29esm25111595ad.81.2025.04.10.01.42.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 01:42:12 -0700 (PDT)
-Message-ID: <fab2bb2d-a78e-4130-a5fd-bf07430210c7@gmail.com>
-Date: Thu, 10 Apr 2025 14:12:07 +0530
+	s=arc-20240116; t=1744274565; c=relaxed/simple;
+	bh=YSmAOLgssT6PQvheoyK0ouFbkX6lGlFzsxSSLWhx52U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r4/VuDQ871OUiLkue89BIcY6jRoU58y/E5ZEElxpQ8tlgswp5zUZ6td4n/uHsLjmczwKH2e6JvTMCvYxkOmbHzb7zf4Wn9TWKygbOrXRq6Fy3jzxrivLx/xp3sXuxJhSsgcTAtLSz8WEHkKsls0EfCHn7TIFi94JXbmFDRDYBTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FRyNJ6g0; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=apfyLXFp4mpz8/dTquQGt331FyDN8GShWvECUqUQnXk=; b=FRyNJ6g0TgK3lFVFJDAty4Vx+p
+	2GcIpX8aKtInetRLFajhT2MuxsfmdrzK67aUwOV9vSE+Yz4dBDmlhgRDLppTAuV8JQhVKje7BUCqA
+	hGTO7t7XISNyoKPEPiH3DJ0WXN6VEgzN5oBFS6faIcwmNj/7yYXy1rRF43TD7n+jOb95oZWLtLBoS
+	gDmgjhtKkfTxeiM9NUTtd6xrQyAMa1b67WdDTvbB8k3orQmxjG438aeY1h1A68CedZ64W1K+3q89j
+	M4mSlBRNYhjTelrdyhg5ALuuo+uQ9Ltb0u32W92KPAFXuzTk21vifJIW0tTxmGRzDRM+KlajnjheL
+	uZHFTJEw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u2nUc-00000009n15-09rJ;
+	Thu, 10 Apr 2025 08:42:38 +0000
+Date: Thu, 10 Apr 2025 01:42:38 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Shivank Garg <shivankg@amd.com>
+Cc: seanjc@google.com, david@redhat.com, vbabka@suse.cz,
+	willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
+	pbonzini@redhat.com, ackerleytng@google.com, paul@paul-moore.com,
+	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
+	bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
+	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
+	michael.day@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
+	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com,
+	jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-coco@lists.linux.dev
+Subject: Re: [PATCH RFC v7 5/8] KVM: guest_memfd: Make guest mem use guest
+ mem inodes instead of anonymous inodes
+Message-ID: <Z_eEfjrkspAt4ACP@infradead.org>
+References: <20250408112402.181574-1-shivankg@amd.com>
+ <20250408112402.181574-6-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] char: tpm: tpm-buf: Fix uninitialized return values in
- read helpers
-To: Stefano Garzarella <sgarzare@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250409205536.210202-1-purvayeshi550@gmail.com>
- <Z_dh4tRIa6xxAWQ2@kernel.org>
- <t2ri7facyvtmt6rx6xwcjos7rgtyiln7cywl2gt4effgukeejc@f3ml4apdh4zs>
-Content-Language: en-US
-From: Purva Yeshi <purvayeshi550@gmail.com>
-In-Reply-To: <t2ri7facyvtmt6rx6xwcjos7rgtyiln7cywl2gt4effgukeejc@f3ml4apdh4zs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250408112402.181574-6-shivankg@amd.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 10/04/25 13:21, Stefano Garzarella wrote:
-> On Thu, Apr 10, 2025 at 09:14:58AM +0300, Jarkko Sakkinen wrote:
->> On Thu, Apr 10, 2025 at 02:25:36AM +0530, Purva Yeshi wrote:
->>> Fix Smatch-detected error:
->>> drivers/char/tpm/tpm-buf.c:208 tpm_buf_read_u8() error:
->>> uninitialized symbol 'value'.
->>> drivers/char/tpm/tpm-buf.c:225 tpm_buf_read_u16() error:
->>> uninitialized symbol 'value'.
->>> drivers/char/tpm/tpm-buf.c:242 tpm_buf_read_u32() error:
->>> uninitialized symbol 'value'.
->>>
->>> Call tpm_buf_read() to populate value but do not check its return
->>> status. If the read fails, value remains uninitialized, causing
->>> undefined behavior when returned or processed.
->>>
->>> Initialize value to zero to ensure a defined return even if
->>> tpm_buf_read() fails, avoiding undefined behavior from using
->>> an uninitialized variable.
->>
->> How does tpm_buf_read() fail?
+On Tue, Apr 08, 2025 at 11:23:59AM +0000, Shivank Garg wrote:
+> From: Ackerley Tng <ackerleytng@google.com>
 > 
-> If TPM_BUF_BOUNDARY_ERROR is set (or we are setting it), we are 
-> effectively returning random stack bytes to the caller.
-> Could this be a problem?
+> Using guest mem inodes allows us to store metadata for the backing
+> memory on the inode. Metadata will be added in a later patch to support
+> HugeTLB pages.
 > 
-> If it is, maybe instead of this patch, we could set `*output` to zero in 
-> the error path of tpm_buf_read(). Or return an error from tpm_buf_read() 
-> so callers can return 0 or whatever they want.
+> Metadata about backing memory should not be stored on the file, since
+> the file represents a guest_memfd's binding with a struct kvm, and
+> metadata about backing memory is not unique to a specific binding and
+> struct kvm.
 > 
-> Thanks,
-> Stefano
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> Signed-off-by: Fuad Tabba <tabba@google.com>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> ---
+>  include/uapi/linux/magic.h |   1 +
+>  virt/kvm/guest_memfd.c     | 133 +++++++++++++++++++++++++++++++------
+>  2 files changed, 113 insertions(+), 21 deletions(-)
 > 
+> diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+> index bb575f3ab45e..169dba2a6920 100644
+> --- a/include/uapi/linux/magic.h
+> +++ b/include/uapi/linux/magic.h
+> @@ -103,5 +103,6 @@
+>  #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
+>  #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
+>  #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
+> +#define GUEST_MEMORY_MAGIC	0x474d454d	/* "GMEM" */
+>  
+>  #endif /* __LINUX_MAGIC_H__ */
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 88453b040926..002328569c9e 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -1,12 +1,17 @@
+>  // SPDX-License-Identifier: GPL-2.0
+> +#include <linux/fs.h>
+> +#include <linux/mount.h>
+>  #include <linux/backing-dev.h>
+>  #include <linux/falloc.h>
+>  #include <linux/kvm_host.h>
+> +#include <linux/pseudo_fs.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/anon_inodes.h>
+>  
+>  #include "kvm_mm.h"
+>  
+> +static struct vfsmount *kvm_gmem_mnt;
+> +
+>  struct kvm_gmem {
+>  	struct kvm *kvm;
+>  	struct xarray bindings;
+> @@ -312,6 +317,38 @@ static pgoff_t kvm_gmem_get_index(struct kvm_memory_slot *slot, gfn_t gfn)
+>  	return gfn - slot->base_gfn + slot->gmem.pgoff;
+>  }
+>  
+> +static const struct super_operations kvm_gmem_super_operations = {
+> +	.statfs		= simple_statfs,
+> +};
+> +
+> +static int kvm_gmem_init_fs_context(struct fs_context *fc)
+> +{
+> +	struct pseudo_fs_context *ctx;
+> +
+> +	if (!init_pseudo(fc, GUEST_MEMORY_MAGIC))
+> +		return -ENOMEM;
+> +
+> +	ctx = fc->fs_private;
+> +	ctx->ops = &kvm_gmem_super_operations;
+> +
+> +	return 0;
+> +}
+> +
+> +static struct file_system_type kvm_gmem_fs = {
+> +	.name		 = "kvm_guest_memory",
+> +	.init_fs_context = kvm_gmem_init_fs_context,
+> +	.kill_sb	 = kill_anon_super,
+> +};
+> +
+> +static void kvm_gmem_init_mount(void)
+> +{
+> +	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs);
+> +	BUG_ON(IS_ERR(kvm_gmem_mnt));
+> +
+> +	/* For giggles. Userspace can never map this anyways. */
+> +	kvm_gmem_mnt->mnt_flags |= MNT_NOEXEC;
+> +}
+> +
+>  static struct file_operations kvm_gmem_fops = {
+>  	.open		= generic_file_open,
+>  	.release	= kvm_gmem_release,
+> @@ -321,11 +358,13 @@ static struct file_operations kvm_gmem_fops = {
+>  void kvm_gmem_init(struct module *module)
+>  {
+>  	kvm_gmem_fops.owner = module;
+> +
+> +	kvm_gmem_init_mount();
+>  }
+>  
+>  void kvm_gmem_exit(void)
+>  {
+> -
+> +	kern_unmount(kvm_gmem_mnt);
+>  }
+>  
+>  static int kvm_gmem_migrate_folio(struct address_space *mapping,
+> @@ -407,11 +446,79 @@ static const struct inode_operations kvm_gmem_iops = {
+>  	.setattr	= kvm_gmem_setattr,
+>  };
+>  
+> +static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
+> +						      loff_t size, u64 flags)
+> +{
+> +	const struct qstr qname = QSTR_INIT(name, strlen(name));
+> +	struct inode *inode;
+> +	int err;
+> +
+> +	inode = alloc_anon_inode(kvm_gmem_mnt->mnt_sb);
+> +	if (IS_ERR(inode))
+> +		return inode;
+> +
+> +	err = security_inode_init_security_anon(inode, &qname, NULL);
+> +	if (err) {
+> +		iput(inode);
+> +		return ERR_PTR(err);
+> +	}
 
-Hi Jarkko, Stefano,
-Thank you for the review.
+So why do other alloc_anon_inode callers not need
+security_inode_init_security_anon?
 
-I've revisited the issue and updated the implementation of 
-tpm_buf_read() to zero out the *output buffer in the error paths, 
-instead of initializing the return value in each caller.
-
-static void tpm_buf_read(struct tpm_buf *buf, off_t *offset, size_t 
-count, void *output)
-{
-	off_t next_offset;
-
-	/* Return silently if overflow has already happened. */
-	if (buf->flags & TPM_BUF_BOUNDARY_ERROR) {
-		memset(output, 0, count);
-		return;
-	}
-
-	next_offset = *offset + count;
-	if (next_offset > buf->length) {
-		WARN(1, "tpm_buf: read out of boundary\n");
-		buf->flags |= TPM_BUF_BOUNDARY_ERROR;
-		memset(output, 0, count);
-		return;
-	}
-
-	memcpy(output, &buf->data[*offset], count);
-	*offset = next_offset;
-}
-
-This approach ensures that output is always zeroed when the read fails, 
-which avoids returning uninitialized stack values from the helper 
-functions like tpm_buf_read_u8(), tpm_buf_read_u16(), and 
-tpm_buf_read_u32().
-
-Does this solution look acceptable for the next version of the patch?
-
-Best regards,
-Purva Yeshi
 
