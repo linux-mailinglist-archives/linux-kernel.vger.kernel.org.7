@@ -1,121 +1,318 @@
-Return-Path: <linux-kernel+bounces-598939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DACFEA84CD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:23:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5952A84C71
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 753649C549C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 952F319E35F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22D42900A1;
-	Thu, 10 Apr 2025 19:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2BC28CF4F;
+	Thu, 10 Apr 2025 18:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="m23B2k/w"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03F42980C3;
-	Thu, 10 Apr 2025 19:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	dkim=pass (2048-bit key) header.d=martijnvandeventer.nl header.i=@martijnvandeventer.nl header.b="ESQ/pJWI"
+Received: from mail.mvand.net (mail.mvand.net [185.229.52.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815D220127B
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 18:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.229.52.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744312767; cv=none; b=S45VCcTStQHffq9ZBhybMqsYF9b7QjUQ+COWO9djaDZddtVgtPjEmejgSoqJf/1oi2kCZWFUvSXTwdmS1QsP8YznHWh5Od08NSrlw+ykFOcZW0QDyDUy2pk6VExiYOfVEjFonlufudhaf1V3qy/T3RXjGUTRmPew0ZIBM0SpBlE=
+	t=1744311233; cv=none; b=L1tT7jDO313lDQlMU6lHUxU3LO5OJe8BrIRkXUVUTWNzzFs1FVFPllEKwjE/1I5meWZSPaCJkx5Y0Lxpbe2RWR9+N9KcZw4sRYs3TgJRJ6UnhfsCNsxwFn+U0QVlGKtwcE0nsyCDHX3HmcL0ki69C9bg+v8+GHZ36Ve3Pn9BQ+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744312767; c=relaxed/simple;
-	bh=bJsgrB3grlJVSN/jnkMp1mQnB8pPJ8qGsqsE5IvGtXo=;
-	h=From:To:Cc:Date:Message-Id:MIME-Version:Subject; b=R2KA/EVCzZqOsadn2bbtJcTcEpxW23GzhOfpUNB5eNYn8xnsEGTMfQYMllKLuxkFvD5JcAA+Tl94Je7ptlhnUFeD3qXGOJvUU0EybIvpMqCt2nX7a0/JUqbLah8HzfQE0LuaFQLmah08TbO1SnBPcpKZ81pwHEYGE67HG8+ckfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=m23B2k/w; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
-	:From:subject:date:message-id:reply-to;
-	bh=9Ku3fsH6MRem2t90YQw/GQmkA5AL+TBtNZiCWwXXhH8=; b=m23B2k/wVR3NkVT2hvmsS2MoKE
-	ae6+FlyCZQofwyuOIv7irjmqWMJRmxv5YMjf3zRNKi6CdJ/3F/uAS4UbFCjvGLJ+YP9rKWVBzMdJc
-	yKK73qc+CV7PBgpnkZDSB1KCf+2NJhRPUBsCBcVO0+z4Il3f5tbqDJ9VU9LqzyEV5qbg=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:55534 helo=pettiford.lan)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1u2wv6-0005sc-Jq; Thu, 10 Apr 2025 14:46:37 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	=?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Alistair Francis <alistair@alistair23.me>
-Cc: hugo@hugovil.com,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	stable@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Date: Thu, 10 Apr 2025 14:46:32 -0400
-Message-Id: <20250410184633.1164837-1-hugo@hugovil.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1744311233; c=relaxed/simple;
+	bh=35f6PssSUk82gUbtI8PktIZ3m65teiiSAGKD5LD8TgM=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
+	 Mime-Version:Content-Type; b=OtpmFnmQh+RLm+f0wLoXSO3lvqTVPsz7oUfAEpnwguB1Rk0jelVUQuhtlIwvXfuPUAtDLXPjKo9upLofguv1FyP9Cyz1/P2U8VHnQWTVNjnBQjnByN1CKGP1UoXo6T1wNbQVuFe68JoFiQHFzji/CQUXQl64HAp77oy83XdsxSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=martijnvandeventer.nl; spf=pass smtp.mailfrom=martijnvandeventer.nl; dkim=pass (2048-bit key) header.d=martijnvandeventer.nl header.i=@martijnvandeventer.nl header.b=ESQ/pJWI; arc=none smtp.client-ip=185.229.52.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=martijnvandeventer.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=martijnvandeventer.nl
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by mail.mvand.net (Postfix) with ESMTPSA id 34FEA1FFBE;
+	Thu, 10 Apr 2025 20:46:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=martijnvandeventer.nl; s=default; t=1744310809;
+	bh=35f6PssSUk82gUbtI8PktIZ3m65teiiSAGKD5LD8TgM=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+	b=ESQ/pJWIaR4uTXdP/9KMB45vWyGoLXrT8WlK1orbSkbIqAHvcP9cblEE93RxWKMW7
+	 pDKCBk0Wonc4PdiqukPYmRaHs+VEC7yRcT5iBukWDuc2diig4ExCA+/w3lA0fPECDe
+	 1yh8FHyhEGyuXdVguaVK0FUI3A4++JsXiUn3ujriGcNL3eQEIy2N0773GJqnK8hgrb
+	 Iu6wh8XzKbBulaaIhbqokXsH2arfjT65kq4cPGm7AVIStExiJ9XpsJt4TYEwZSNTiW
+	 r34hjcKsvfVLa9G3vXHymZPksKs0ma0JYE4aYXhnEDeEGfwWDgg7p1k94++TC+8ygx
+	 qXSY54OVqzP8w==
+From: <linux@martijnvandeventer.nl>
+To: "'Martin Blumenstingl'" <martin.blumenstingl@googlemail.com>,
+	<linux-amlogic@lists.infradead.org>,
+	<dri-devel@lists.freedesktop.org>
+Cc: <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<jbrunet@baylibre.com>,
+	<neil.armstrong@linaro.org>,
+	"'Furkan Kardame'" <f.kardame@manjaro.org>
+References: <20250409214422.1751825-1-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20250409214422.1751825-1-martin.blumenstingl@googlemail.com>
+Subject: RE: [PATCH] drm/meson: fix resource cleanup in meson_drv_bind_master() on error
+Date: Thu, 10 Apr 2025 20:46:48 +0200
+Message-ID: <001d01dbaa48$ead66d10$c0834730$@martijnvandeventer.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-Subject: [PATCH v2] Input: cyttsp5 - ensure minimum reset pulse width
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-us
+Thread-Index: AQHanRYIlb/sWKyzPMx9MZcpgEt53rOfTIcg
 
-From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Hi Martin,
 
-The current reset pulse width is measured to be 5us on a
-Renesas RZ/G2L SOM. The manufacturer's minimum reset pulse width is
-specified as 10us.
+Thank you for the patch.
 
-Extend reset pulse width to make sure it is long enough on all platforms.
+I encountered this issue some time ago as well and had a possible fix in =
+my tree (see
+below).=20
+My apologies for not upstreaming it earlier.
 
-Also reword confusing comments about reset pin assertion.
+While my fix is not as symmetric as yours=E2=80=94I like =
+symmetry=E2=80=94it is somewhat simpler. It
+did make the assumption that only  calling component_unbind_all() was at =
+fault and the the rest of the=20
+code was correct. Therefore, calling one of the following functions:
+meson_encoder_dsi_remove()
+meson_encoder_hdmi_remove()
+meson_encoder_cvbs_remove()
+in case their counterpart was not called, should not result in any =
+issues.
 
-Fixes: 5b0c03e24a06 ("Input: Add driver for Cypress Generation 5 touchscreen")
-Cc: <stable@vger.kernel.org>
-Acked-by: Alistair Francis <alistair@alistair23.me>
-Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
----
-Changes for v2:
-  - change delay from 1000us to 10us, to eliminate confusion
-  - Add Alistair acked-by tag
----
- drivers/input/touchscreen/cyttsp5.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+I just verified, and, as far as I understand, all of these functions do =
+a check to confirm
+whether the encoder was initialized before proceeding with cleanup.
 
-diff --git a/drivers/input/touchscreen/cyttsp5.c b/drivers/input/touchscreen/cyttsp5.c
-index eafe5a9b89648..14c43f0a6c217 100644
---- a/drivers/input/touchscreen/cyttsp5.c
-+++ b/drivers/input/touchscreen/cyttsp5.c
-@@ -870,13 +870,16 @@ static int cyttsp5_probe(struct device *dev, struct regmap *regmap, int irq,
- 	ts->input->phys = ts->phys;
- 	input_set_drvdata(ts->input, ts);
- 
--	/* Reset the gpio to be in a reset state */
-+	/* Assert gpio to be in a reset state */
- 	ts->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
- 	if (IS_ERR(ts->reset_gpio)) {
- 		error = PTR_ERR(ts->reset_gpio);
- 		dev_err(dev, "Failed to request reset gpio, error %d\n", error);
- 		return error;
- 	}
-+
-+	fsleep(10); /* Ensure long-enough reset pulse (minimum 10us). */
-+
- 	gpiod_set_value_cansleep(ts->reset_gpio, 0);
- 
- 	/* Need a delay to have device up */
+-----------------------------------------------------
+diff --git a/drivers/gpu/drm/meson/meson_drv.c =
+b/drivers/gpu/drm/meson/meson_drv.c
+index 81d2ee37e773..4e2d45a271c2 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -184,6 +184,7 @@ static int meson_drv_bind_master(struct device *dev, =
+bool has_components)
+        const struct meson_drm_match_data *match;
+        struct meson_drm *priv;
+        struct drm_device *drm;
++       bool do_unbind =3D false;
+        struct resource *res;
+        void __iomem *regs;
+        int ret, i;
+@@ -312,10 +313,9 @@ static int meson_drv_bind_master(struct device =
+*dev, bool has_components)
+                ret =3D component_bind_all(dev, drm);
+                if (ret) {
+                        dev_err(drm->dev, "Couldn't bind all =
+components\n");
+-                       /* Do not try to unbind */
+-                       has_components =3D false;
+                        goto exit_afbcd;
+                }
++               do_unbind =3D true;
+        }
 
-base-commit: 3b07108ada81a8ebcebf1fe61367b4e436c895bd
--- 
-2.39.5
+        ret =3D meson_encoder_hdmi_probe(priv);
+@@ -378,7 +378,7 @@ static int meson_drv_bind_master(struct device *dev, =
+bool has_components)
+        meson_encoder_hdmi_remove(priv);
+        meson_encoder_cvbs_remove(priv);
+
+-       if (has_components)
++       if (do_unbind)
+                component_unbind_all(dev, drm);
+
+        return ret;
+-----------------------------
+
+This patch has somewhat less code redundancy. I don=E2=80=99t have a =
+strong
+preference for either patch, so please feel free to choose whichever you =
+
+prefer.=20
+
+If you decide to go with yours, I=E2=80=99ve provided one minor comment =
+inline
+for your consideration.
+
+> -----Original Message-----
+> From: linux-amlogic <linux-amlogic-bounces@lists.infradead.org> On =
+Behalf
+> Of Martin Blumenstingl
+> Sent: Wednesday, April 9, 2025 11:44 PM
+> To: linux-amlogic@lists.infradead.org; dri-devel@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org; =
+linux-arm-kernel@lists.infradead.org;
+> jbrunet@baylibre.com; neil.armstrong@linaro.org; Martin Blumenstingl
+> <martin.blumenstingl@googlemail.com>; Furkan Kardame
+> <f.kardame@manjaro.org>
+> Subject: [PATCH] drm/meson: fix resource cleanup in
+> meson_drv_bind_master() on error
+>=20
+> meson_drv_bind_master() does not free resources in the order they are
+> allocated. This can lead to crashes such as:
+>     Unable to handle kernel NULL pointer dereference at virtual =
+address
+> 00000000000000c8
+>     [...]
+>     Hardware name: Beelink GT-King Pro (DT)
+>     pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
+>     pc : meson_dw_hdmi_unbind+0x10/0x24 [meson_dw_hdmi]
+>     lr : component_unbind+0x38/0x60
+>     [...]
+>     Call trace:
+>      meson_dw_hdmi_unbind+0x10/0x24 [meson_dw_hdmi]
+>      component_unbind+0x38/0x60
+>      component_unbind_all+0xb8/0xc4
+>      meson_drv_bind_master+0x1ec/0x514 [meson_drm]
+>      meson_drv_bind+0x14/0x20 [meson_drm]
+>      try_to_bring_up_aggregate_device+0xa8/0x160
+>      __component_add+0xb8/0x1a8
+>      component_add+0x14/0x20
+>      meson_dw_hdmi_probe+0x1c/0x28 [meson_dw_hdmi]
+>      platform_probe+0x68/0xdc
+>      really_probe+0xc0/0x39c
+>      __driver_probe_device+0x7c/0x14c
+>      driver_probe_device+0x3c/0x120
+>      __driver_attach+0xc4/0x200
+>      bus_for_each_dev+0x78/0xd8
+>      driver_attach+0x24/0x30
+>      bus_add_driver+0x110/0x240
+>      driver_register+0x68/0x124
+>      __platform_driver_register+0x24/0x30
+>      meson_dw_hdmi_platform_driver_init+0x20/0x1000 [meson_dw_hdmi]
+>      do_one_initcall+0x50/0x1bc
+>      do_init_module+0x54/0x1fc
+>      load_module+0x788/0x884
+>      init_module_from_file+0x88/0xd4
+>      __arm64_sys_finit_module+0x248/0x340
+>      invoke_syscall+0x48/0x104
+>      el0_svc_common.constprop.0+0x40/0xe0
+>      do_el0_svc+0x1c/0x28
+>      el0_svc+0x30/0xcc
+>      el0t_64_sync_handler+0x120/0x12c
+>      el0t_64_sync+0x190/0x194
+>=20
+> Clean up resources in the error path in the same order and under the
+> same conditions as they were allocated to fix this.
+>=20
+> Reported-by: Furkan Kardame <f.kardame@manjaro.org>
+> Signed-off-by: Martin Blumenstingl =
+<martin.blumenstingl@googlemail.com>
+> ---
+> This issue was reported off-list so I'm unable to provide a link to =
+the
+> report.
+>=20
+> I'm not sure which Fixes tag fits best. My preference so far is
+> Fixes: 6a044642988b ("drm/meson: fix unbind path if HDMI fails to =
+bind")
+> but I'll happily take other suggestions as well.
+>=20
+>=20
+>  drivers/gpu/drm/meson/meson_drv.c | 31 =
++++++++++++++++++--------------
+>  1 file changed, 17 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/meson/meson_drv.c
+> b/drivers/gpu/drm/meson/meson_drv.c
+> index 81d2ee37e773..031686fd4104 100644
+> --- a/drivers/gpu/drm/meson/meson_drv.c
+> +++ b/drivers/gpu/drm/meson/meson_drv.c
+> @@ -314,35 +314,35 @@ static int meson_drv_bind_master(struct device
+> *dev, bool has_components)
+>  			dev_err(drm->dev, "Couldn't bind all
+> components\n");
+>  			/* Do not try to unbind */
+>  			has_components =3D false;
+
+Above two lines are no longer used, so can be removed.
+
+> -			goto exit_afbcd;
+> +			goto cvbs_encoder_remove;
+>  		}
+>  	}
+>=20
+>  	ret =3D meson_encoder_hdmi_probe(priv);
+>  	if (ret)
+> -		goto exit_afbcd;
+> +		goto unbind_components;
+>=20
+>  	if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)) {
+>  		ret =3D meson_encoder_dsi_probe(priv);
+>  		if (ret)
+> -			goto exit_afbcd;
+> +			goto hdmi_encoder_remove;
+>  	}
+>=20
+>  	ret =3D meson_plane_create(priv);
+>  	if (ret)
+> -		goto exit_afbcd;
+> +		goto dsi_encoder_remove;
+>=20
+>  	ret =3D meson_overlay_create(priv);
+>  	if (ret)
+> -		goto exit_afbcd;
+> +		goto dsi_encoder_remove;
+>=20
+>  	ret =3D meson_crtc_create(priv);
+>  	if (ret)
+> -		goto exit_afbcd;
+> +		goto dsi_encoder_remove;
+>=20
+>  	ret =3D request_irq(priv->vsync_irq, meson_irq, 0, =
+drm->driver->name,
+> drm);
+>  	if (ret)
+> -		goto exit_afbcd;
+> +		goto dsi_encoder_remove;
+>=20
+>  	drm_mode_config_reset(drm);
+>=20
+> @@ -360,6 +360,16 @@ static int meson_drv_bind_master(struct device
+> *dev, bool has_components)
+>=20
+>  uninstall_irq:
+>  	free_irq(priv->vsync_irq, drm);
+> +dsi_encoder_remove:
+> +	if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A))
+> +		meson_encoder_dsi_remove(priv);
+> +hdmi_encoder_remove:
+> +	meson_encoder_hdmi_remove(priv);
+> +unbind_components:
+> +	if (has_components)
+> +		component_unbind_all(dev, drm);
+> +cvbs_encoder_remove:
+> +	meson_encoder_cvbs_remove(priv);
+>  exit_afbcd:
+>  	if (priv->afbcd.ops)
+>  		priv->afbcd.ops->exit(priv);
+> @@ -374,13 +384,6 @@ static int meson_drv_bind_master(struct device
+> *dev, bool has_components)
+>  free_drm:
+>  	drm_dev_put(drm);
+>=20
+> -	meson_encoder_dsi_remove(priv);
+> -	meson_encoder_hdmi_remove(priv);
+> -	meson_encoder_cvbs_remove(priv);
+> -
+> -	if (has_components)
+> -		component_unbind_all(dev, drm);
+> -
+>  	return ret;
+>  }
+>=20
+ --
+Best regards,
+
+Martijn
+
 
 
