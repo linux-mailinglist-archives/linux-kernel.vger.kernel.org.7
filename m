@@ -1,188 +1,131 @@
-Return-Path: <linux-kernel+bounces-598098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A9ECA84214
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:52:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7987A84223
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4224819E62C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:52:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF8028A2A19
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AC32836AB;
-	Thu, 10 Apr 2025 11:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553A3283CBE;
+	Thu, 10 Apr 2025 11:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Exyy5lWN"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kzIQN42V"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264EB1F0E39;
-	Thu, 10 Apr 2025 11:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11778283C8D;
+	Thu, 10 Apr 2025 11:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744285933; cv=none; b=ehPbvULHupVJxTk6B40zF2JaqFs8I9bE+4GAChCKm2wwLH6AMLIcf/b5dslS71wYzl4D1T4UHIlYgfcVqJoBXs7zD16WYEzLxv32o1zN6WA8B2ZUGhyG/WtUzclR+J1xmAN1RLPrkjyuR6xytOCy32sXVZbPpPA05l7GaZfeQ74=
+	t=1744285967; cv=none; b=Y4xrcOI39f9/rOgdLF66OLaAJ/jhlKaBC+8rc/onEnf9lXGN7jqiu2yEYJFfQBOnk2Y48aUZ9zlxNFHuvEzhuTN0eEnLcoUvynvXGImSLoC/ujVvC+/j6k5/FgaqxCXddvHHOHL64BwpL3WwBw/6b9os+TF/KHwi5LFSp561LLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744285933; c=relaxed/simple;
-	bh=DxVcMRML2H41J7R4wgbVQO/G4dfCUcZYQKdJ+mRomt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mwwUhnPQTBReUmz57JOR9PkDNeghjW+1S6TpDtjhD69TGQx3r5qkyOC25qwhCoeeZ24wMXTHmaTzLunmKxFybUbuCDM8cwi6+bNisKELvlMmc3aOZS8dbfUbO3/mZG72Di6hcjbh4D8zFDNP020TjEvVySvM3GXAPzicyA7cAUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Exyy5lWN; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54af20849adso767824e87.1;
-        Thu, 10 Apr 2025 04:52:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744285929; x=1744890729; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Gz8iDaKPJnnJFHqBn+767ICwsMBT3pbftU1Ov0aGJv4=;
-        b=Exyy5lWNIQPLMgCfCGGecqvHjwtx061YaemeYmQnk7TW0GonVUmMzctzmjWVyym+vo
-         Ue+SljNBwOdVhh37MyHRxmo4qfWnY/U+W1ufEWBA0UAoV5UpwcNsFHuOIO/TlgxCiqOi
-         Vf4SWSQD+tteMIdQFOUZOZML2f4dgU/8SFvJidoEQ9sDVZ5plJw1NPH/5HW+21eIoxfa
-         O4C9wqSKvBGKL01czkp0zSmd2R1BGuYkdPNaiSIaLMIe9vIYNjYxFkuGTv+2TaF6oFYN
-         JiQn4rYsXH8jFuSxJIf5mkOYFa1prZBwr/oOA+JcnsrV69uWCPCcrA1Fwrn7YjluCbGS
-         OmFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744285929; x=1744890729;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gz8iDaKPJnnJFHqBn+767ICwsMBT3pbftU1Ov0aGJv4=;
-        b=stBokGu3U7jjvX2zHyTLD/ACVbOaiokSQBkk5UXP+8U56VigTNjbkfkhr+zJHZKzb9
-         0qBXE81qTSkiB7BNJ6pn4ygfMVillPXzE2kvRSOUGKfmrqxs79XQzKt/X/K+3gT3XLnL
-         ze/tnB0WManZuxLVGP4Ble+FKpBHwzd12DIUYZYKCiKHFECfeWJriw6yA3/MXjQxOvzd
-         PviGi1BP9Hz7pA44qM78AfE43cTwXUg4wAzi6pnJgx3gKv6Y9/0j+NdT6O88MVyia125
-         KUtUB73lcmV3Yz6obBhWY2nfqkqYdPSPuZf9H5pZZpbdDcb0eBJMOp/shVzbE5svYbV6
-         z6Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCXClKrh8HdUylSndT83aXMV220Q3Qb0tyaExYQNQvssE8HZCiGeP427f0QuRc0B3pR4UnTbKZsPmrfD@vger.kernel.org, AJvYcCXMqMaQ2p80rZVyZSlUqrd/iteoO85Q5ZSGWBKoeF5LXAwyNpTUGHCeJMCwrom0Ku7J32gbew+jnVr3aQEH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz37nmTyR0juKfsJC/MctXoSmiH3U7MWZDsunA8U8GpGYRWmaXX
-	HmcS3nlKWT/I4S4kbwSgpmXIdMfxk1EdhNncmg/XG2hBgwHOZo2e
-X-Gm-Gg: ASbGnct/CNVI3QpjIKLhwyphsc5/P0kT5lwhQRiY1WyBw3PVUYTsMTMUgz/PW0rGW4x
-	D4JAUj9HIKVn6DmbuE2AX0g7oKm3QSe6Xf5itOwcAYs/CDQwTl4T07FrI4hyydq5LYk25gsBQnb
-	XkLHtkdYwkW/Yqr0eNEhnhTCTJ1pVHgaxbhiSQna7Z23HTQdTqrTUsLfsfwF/4KYPOf/eb393lj
-	J0JfXq1ssMUWvDjAoChiQoROx4E5pW4XR5cVdHIoK+DOBCc7PCm5h8xsIoQmgLiejz27S54YEB8
-	ltjbWvoYiM/+LDAo0+KW86vDtd+tSlIa6CSfvuYfEK5o+Fs=
-X-Google-Smtp-Source: AGHT+IGOfbC9H3oM7GGaxbYZr8AyLgjLFjnYONagnIhbPpWt8QpO9xZbx5cMSJ0EqzgRE2HXq2uP7w==
-X-Received: by 2002:a05:6512:b22:b0:549:744c:fffb with SMTP id 2adb3069b0e04-54ce8a5919amr816604e87.23.1744285928908;
-        Thu, 10 Apr 2025 04:52:08 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d510b43sm129897e87.201.2025.04.10.04.52.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 04:52:07 -0700 (PDT)
-Date: Thu, 10 Apr 2025 14:52:00 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-acpi@vger.kernel.org,
+	s=arc-20240116; t=1744285967; c=relaxed/simple;
+	bh=XFQzoxeqsD9v2JOgNHZGxnrAw6ddmJkdJnpFrk0ivkc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jjKjC+dCocSVqUAzbymmLTmcZulW+dzxlVh4F5sGuYaLDubB9km0w7/my2X8SEJy1eJV0OLcIODIO2yjmCR1t6NuT12ndaZK2gj3HG6jZvyR4xT4XdvzLnJvSxi5Il5lyLFPq9uDO0pmZnebdZzQHdJ/oWnc+zTbbnd+ZFYTmls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kzIQN42V; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744285966; x=1775821966;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=XFQzoxeqsD9v2JOgNHZGxnrAw6ddmJkdJnpFrk0ivkc=;
+  b=kzIQN42VhE/Xi1pJ6obatowS7swlN1klI34zELPWlrQiop9JKhMr938R
+   e5KMlYWGpRpuM0cmy2GX4q9sfKO1Ok1wGJFOu5QAFFblETgBezGGVPqCY
+   hGglyNUhF1JAaHpfimgczG+ZDTwvPjUJwHzXz6Lw+qAWuV9vnByQir6Mk
+   0SzplkFR4dxjpOFN9seqEQweBkCJk2GjHlffWP49ACbufVsJWDAyyHQP0
+   ZVSmDG7NdyuUEq+NACaIRC040LtxOP7FvvCPwJpByxY3LRXW3f+4cJNHx
+   t6xFXwzGlW5hHXe5/LeIycPyBy/3dJCe3QsDj+Zx2ZFCN2COwlzdg82MN
+   w==;
+X-CSE-ConnectionGUID: wDmMDZ9qSjetr6XI3mmoyg==
+X-CSE-MsgGUID: Luch5LP9R3iBu76uXtxXZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="44939952"
+X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
+   d="scan'208";a="44939952"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 04:52:42 -0700
+X-CSE-ConnectionGUID: YHA03Bs4SNi8jD6bPNuJYQ==
+X-CSE-MsgGUID: q617/JOcRmiqox68+dv2oQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
+   d="scan'208";a="129731691"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa009.fm.intel.com with ESMTP; 10 Apr 2025 04:52:39 -0700
+Received: from mglak.igk.intel.com (mglak.igk.intel.com [10.237.112.146])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id DD87C34312;
+	Thu, 10 Apr 2025 12:52:37 +0100 (IST)
+From: Larysa Zaremba <larysa.zaremba@intel.com>
+To: intel-wired-lan@lists.osuosl.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>
+Cc: Larysa Zaremba <larysa.zaremba@intel.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Emil Tantilov <emil.s.tantilov@intel.com>,
+	Madhu Chittim <madhu.chittim@intel.com>,
+	Josh Hay <joshua.a.hay@intel.com>,
+	Michal Kubiak <michal.kubiak@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] property: Use tidy for_each_named_* macros
-Message-ID: <Z_ew4DN0z71nCX3C@mva-rohm>
+Subject: [PATCH iwl-net] idpf: protect shutdown from reset
+Date: Thu, 10 Apr 2025 13:52:23 +0200
+Message-ID: <20250410115225.59462-1-larysa.zaremba@intel.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zeEDt/v4zh7Xzd52"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+Before the referenced commit, the shutdown just called idpf_remove(),
+this way IDPF_REMOVE_IN_PROG was protecting us from the serv_task
+rescheduling reset. Without this flag set the shutdown process is
+vulnerable to HW reset or any other triggering conditions (such as
+default mailbox being destroyed).
 
---zeEDt/v4zh7Xzd52
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When one of conditions checked in idpf_service_task becomes true,
+vc_event_task can be rescheduled during shutdown, this leads to accessing
+freed memory e.g. idpf_req_rel_vector_indexes() trying to read
+vport->q_vector_idxs. This in turn causes the system to become defunct
+during e.g. systemctl kexec.
 
-Implementing if-conditions inside for_each_x() macros requires some
-thinking to avoid side effects in the calling code. Resulting code
-may look somewhat awkward, and there are couple of different ways it is
-usually done.
+Considering using IDPF_REMOVE_IN_PROG would lead to more heavy shutdown
+process, instead just cancel the serv_task before cancelling
+adapter->serv_task before cancelling adapter->vc_event_task to ensure that
+reset will not be scheduled while we are doing a shutdown.
 
-Standardizing this to one way can help making it more obvious for a code
-reader and writer. The newly added for_each_if() is a way to achieve this.
-
-Use for_each_if() to make these macros look like many others which
-should in the long run help reading the code.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Fixes: 4c9106f4906a ("idpf: fix adapter NULL pointer dereference on reboot")
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
 ---
-The patch was crafted against the IIO/testing branch, and it depends on
-the 76125d7801e5 ("property: Add functions to iterate named child").
-Hence I'd suggest taking this via IIO tree (if this gets accepted).
+ drivers/net/ethernet/intel/idpf/idpf_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- include/linux/property.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+diff --git a/drivers/net/ethernet/intel/idpf/idpf_main.c b/drivers/net/ethernet/intel/idpf/idpf_main.c
+index bec4a02c5373..b35713036a54 100644
+--- a/drivers/net/ethernet/intel/idpf/idpf_main.c
++++ b/drivers/net/ethernet/intel/idpf/idpf_main.c
+@@ -89,6 +89,7 @@ static void idpf_shutdown(struct pci_dev *pdev)
+ {
+ 	struct idpf_adapter *adapter = pci_get_drvdata(pdev);
+ 
++	cancel_delayed_work_sync(&adapter->serv_task);
+ 	cancel_delayed_work_sync(&adapter->vc_event_task);
+ 	idpf_vc_core_deinit(adapter);
+ 	idpf_deinit_dflt_mbx(adapter);
+-- 
+2.47.0
 
-diff --git a/include/linux/property.h b/include/linux/property.h
-index 3e83babac0b0..d937502a22d6 100644
---- a/include/linux/property.h
-+++ b/include/linux/property.h
-@@ -17,6 +17,7 @@
- #include <linux/fwnode.h>
- #include <linux/stddef.h>
- #include <linux/types.h>
-+#include <linux/util_macros.h>
-=20
- struct device;
-=20
-@@ -169,7 +170,7 @@ struct fwnode_handle *fwnode_get_next_available_child_n=
-ode(
-=20
- #define fwnode_for_each_named_child_node(fwnode, child, name)		\
- 	fwnode_for_each_child_node(fwnode, child)			\
--		if (!fwnode_name_eq(child, name)) { } else
-+		for_each_if(fwnode_name_eq(child, name))
-=20
- #define fwnode_for_each_available_child_node(fwnode, child)		       \
- 	for (child =3D fwnode_get_next_available_child_node(fwnode, NULL); child;\
-@@ -184,7 +185,7 @@ struct fwnode_handle *device_get_next_child_node(const =
-struct device *dev,
-=20
- #define device_for_each_named_child_node(dev, child, name)		\
- 	device_for_each_child_node(dev, child)				\
--		if (!fwnode_name_eq(child, name)) { } else
-+		for_each_if(fwnode_name_eq(child, name))
-=20
- #define device_for_each_child_node_scoped(dev, child)			\
- 	for (struct fwnode_handle *child __free(fwnode_handle) =3D	\
-@@ -193,7 +194,7 @@ struct fwnode_handle *device_get_next_child_node(const =
-struct device *dev,
-=20
- #define device_for_each_named_child_node_scoped(dev, child, name)	\
- 	device_for_each_child_node_scoped(dev, child)			\
--		if (!fwnode_name_eq(child, name)) { } else
-+		for_each_if(fwnode_name_eq(child, name))
-=20
- struct fwnode_handle *fwnode_get_named_child_node(const struct fwnode_hand=
-le *fwnode,
- 						  const char *childname);
-
-base-commit: 1c2409fe38d5c19015d69851d15ba543d1911932
---=20
-2.49.0
-
-
---zeEDt/v4zh7Xzd52
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmf3sNwACgkQeFA3/03a
-ocVs8gf9HNLhPeFbElbIIkLElgK2I3M7WUg3zsSnfgZyaMfze2uIi9gRqv7EyVXU
-SyJhQU0FXuou+lx+irbLsMGqxctNXi4gWwu4VzmxsKGJvhM1MaDnrVrqk4IRXgy9
-heLW+dFsvEM5wGrOcSweDpFqHvBgbLRKqXcg2QadqPs+ZI2H46GMg3F5m4hhrTtM
-1RFs1X1PnJAg/P8SkylDjiicpuACXRmr4ajqrGa0sCALgP0yW0uDIhJFAkebjD+w
-yX1AR4Zkqhq08um8LCbW/sVuId3KzmK88yd1Liiv2UesS83YEGyKV9gbaHms3nuM
-vG2QPBv1DiRLLYfUMu/8EgzBBvQcow==
-=Tg3R
------END PGP SIGNATURE-----
-
---zeEDt/v4zh7Xzd52--
 
