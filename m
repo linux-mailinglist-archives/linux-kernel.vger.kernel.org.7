@@ -1,189 +1,209 @@
-Return-Path: <linux-kernel+bounces-598684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12781A8496A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:18:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD3F4A84978
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 18:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E90987A8524
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:17:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 847AE1B608CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 16:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C5F1EB9E3;
-	Thu, 10 Apr 2025 16:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32F21EE02F;
+	Thu, 10 Apr 2025 16:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hB4tIacb"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="x6CFAcwx"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2971D5CE8
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 16:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FB61D5CE8;
+	Thu, 10 Apr 2025 16:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744301902; cv=none; b=KsZ/GxsSyzz/H8RlQYCF3uRm07WyMiu1GlzqfCc7J5pTddoQS+8RSDVJfhZ1Mde8VVxPcfp4QMS+HnGtWZ2Eo6AQJLo8wFus7fx7i+PMp22QAup+U6sQkCiX0Eku8nG5jQjJzMDZGRLmtFayNpv2it1xIr+hLdUM0mBixr9d2sg=
+	t=1744302149; cv=none; b=SD6XoC6gjxLgxRZGTKmGBONBVuues9luNS8HNf/FIELU001M4DcmfpOFT8NKPyBSojYwKBn4D1bA/OIRmcUih5U+Tap2A7LsATRROIXAuGl3gsP0AxTRGJkiCBwLEIHOTaIrB0B088ls+WUW2u0q8H3x5y98IA/40cXwW4LrvOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744301902; c=relaxed/simple;
-	bh=I3IzFVDnPwMOs+ga47BqJzQr4y137kBGBBEWnXzGMQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SNdG+Kpg4BPoFpRC72lEvnm4VFi2avQeKevTE/ppFvkdS7h7qjTTK/KzYRAQz0NYoxr62xRbiDG9ZIHJ9ztm6A0KZfPaan7jxAp3HxqormvsvA1gEuJC+dBmqnMSaLjXktqHFPkgNl4dIXSsMoo+1X2yZK+x90H/6UElZyoR/Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hB4tIacb; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7376e311086so1324545b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:18:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744301900; x=1744906700; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lCxhZYl4fk0TDqFgId2sJ/AGdUrHHzyamRopa5XEYgE=;
-        b=hB4tIacbsA9+7Pqo9LttGRvu94jL+63ZknejhIzudX3lEYY+3KYjBjTVXfRD1Wxg2O
-         xJkuE8mKoFRIcctqBffHWytdAVCBPQ9Z01DNMX+tl0VSBj51JBE4pjnD4cNX9QgkkywO
-         f5o/im29gTd7Gu/lhzbl01WbnH6vomUX5B1LHpv/mDbId1+cYtfXmuicMYDhJ1rW6I4D
-         HYxPeQgGQf6Wb8WY9DfVkRP4T+VKKIBF0l42GKsQ4IlG0vig3tXJUCO/u5Cw2QYOOsf0
-         7f2bh5bVfGmYgK8Iu5LqY2rD/po+FoqVKolwOgx5e8FjpA3Djfk+t6r9sRNK4S9MrZSH
-         qaYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744301900; x=1744906700;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lCxhZYl4fk0TDqFgId2sJ/AGdUrHHzyamRopa5XEYgE=;
-        b=XrjSpXgsdVJQlrUzhSfwltuV1k/xK93WiIaD75v4jzYksIjOm09fY0+8gTmnp5kNuf
-         G0WJf2NuXUPbGFviIBCdFHMjd5b4qkXxxZ20qYLZYhNYeQZq4K+U6720SnR0jRyv79YO
-         4+ovWAYtc2mfInctE6HEj51wOZdwD1rUBWpsYpa+lO39oZmH5GKVJI9dgcA9/kwx0rU2
-         VjRqSZ9wNf4nhCI59z+PCMM753glqfp1FLMcFeJ8ta2R8N36p3SLJyAW2LmPTv0DXvo5
-         5kSantNy39H8VUiFw3Ras8WVYQhBGVHiz7ycSLfDYVYG7xE9y2SQK+HTyYQKjMjRrdqN
-         BZSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNM41xOLULbPN5EvmLzJiJtyWRGtxUDgmGpbAHhnBiUh/OU5vBHCNrXsBtdkevaxH5ungZSskSsBHXm8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL+HaspXy+6uxLI9CPWsQwHVtFAziKtnqPxqwpaRswps7FBrpQ
-	WOEklh7uMsYaKJoSIp+uTabD/OY6jQ8QtDVaTlOrHy2k8RNvb4Rxi4cKpQ==
-X-Gm-Gg: ASbGnctSPjeybzdJBiTRr7NfZidyjBYGNYnBweLjxFMC1t+vMgcbMZtClEWIiB3D58A
-	2zgXRryRJ/E5Y4Fcqbg+fSSujhcoAvoriBNE5/xEPCBNiHwuk7rkBgg9pPYcVtPrN9Iswjbywge
-	L3JPZSkFJKF6c38uzQcs+cUpOTa6ugHTqcIyRGOZwRGvZiwTkqJ/9nX69YJDMXD3dUeAsi5KQSX
-	YouHPW2Pxls5HVda05WkowttmtjNNiyPuH+AzqEAHAH1cjF2k3LB67w6EosniwQgF2ucd+KUJp/
-	IRDYiSz1w2vJeC9WDggzI33OGjSZ9v25p/gCAwLf0ES0aXoe7zE=
-X-Google-Smtp-Source: AGHT+IH+bbDcNOprRKJ+JUoxvfJNTeENfKw01S5fx2tdPjkbSG6iW3e/eZZQfC0anRG266kMk/eAlQ==
-X-Received: by 2002:a05:6a20:6f07:b0:1ee:63d7:1d32 with SMTP id adf61e73a8af0-2016c9242f4mr5446990637.0.1744301899736;
-        Thu, 10 Apr 2025 09:18:19 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1e38404sm3459461b3a.113.2025.04.10.09.18.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 09:18:19 -0700 (PDT)
-Date: Thu, 10 Apr 2025 12:18:16 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: linux@rasmusvillemoes.dk, linux-kernel@vger.kernel.org, andrew@lunn.ch,
-	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
-	quic_leiwei@quicinc.com, quic_suruchia@quicinc.com,
-	quic_pavir@quicinc.com
-Subject: Re: [PATCH v2] bitfield: Add FIELD_MODIFY() helper
-Message-ID: <Z_fvPOn1-v9WAnxJ@yury>
-References: <20250410131048.2054791-1-quic_luoj@quicinc.com>
+	s=arc-20240116; t=1744302149; c=relaxed/simple;
+	bh=Xoy2UXN+13eDn3d9NbGQJzjAXldLD+QfeSGSQ2Ee+wU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=utM77tN1Wm9f/rLCP0Ve7HqQ/SUYYHKX4NH2iM0NxgY3UDD/roXEaKEqG1+x8z6Jw/UC7wlBL7RKlEDA71yoTUO7ruWtSVk1rF+Dgt3lVaf7gQINoM9PA8GZ0q37fxM3dzl1j9mtA2QlQmXFLIvfTjYnmuLcUNFfviT98wNDYPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=x6CFAcwx; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53ADlLVw001665;
+	Thu, 10 Apr 2025 18:22:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	HMGtnLk9M2H509FvgAtICrK2wNS2Az56Eo03rGYmFeY=; b=x6CFAcwxG8UnUI2H
+	TuaNAuR8Ypm1IcmTovy8U4tg6zbMQxa5pQB88pyjWWe8xi6hhWf9TWfcRRUawVWw
+	qvKSC7QNQ0Mo5qFoe/ZZubdmOJvopfYSFOvFkqUT7TjJyiDpH2toNEs2TdCKKsV2
+	JT3WaclKNglz0lCh7hCTd3N5+dNhYi35Rlw4/7yaHMTK/MMw7c9GtViQ5BM4mOtm
+	0JXC8mClI6VEUJ8vjDQdh+DavUzubUvT2kW5cZZBJY5DVUMuRsbmRqTyE3i8+DM4
+	0CAH2mGMReAyn+hNN+vWMDB6wQsZXYJ0F5GPfyJJw7rGpetot79n69wF2qsslFF0
+	GfjLOw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45tw5ghh7h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Apr 2025 18:22:11 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C33E440044;
+	Thu, 10 Apr 2025 18:21:13 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AA72298CE8C;
+	Thu, 10 Apr 2025 18:20:29 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Apr
+ 2025 18:20:28 +0200
+Message-ID: <81d04bf3-8a7e-4287-afd0-d6a0464bb995@foss.st.com>
+Date: Thu, 10 Apr 2025 18:20:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410131048.2054791-1-quic_luoj@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] spi: stm32-ospi: Make usage of
+ reset_control_acquire/release() API
+To: Philipp Zabel <p.zabel@pengutronix.de>, Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250410-b4-upstream_ospi_reset_update-v1-0-74126a8ceb9c@foss.st.com>
+ <20250410-b4-upstream_ospi_reset_update-v1-2-74126a8ceb9c@foss.st.com>
+ <2bb410e34babc4c66895e8e74cf014f89127914d.camel@pengutronix.de>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <2bb410e34babc4c66895e8e74cf014f89127914d.camel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-10_04,2025-04-10_01,2024-11-22_01
 
-On Thu, Apr 10, 2025 at 09:10:48PM +0800, Luo Jie wrote:
-> Add a helper for replacing the contents of bitfield in memory
-> with the specified value.
-> 
-> Even though a helper xxx_replace_bits() is available, it is not
-> well documented, and only reports errors at the run time, which
-> will not be helpful to catch possible overflow errors due to
-> incorrect parameter types used.
-> 
-> Add the helper FIELD_MODIFY() to the FIELD_XXX family of bitfield
-> macros. It is functionally similar as xxx_replace_bits(), and in
-> addition adds the compile time type checking.
-> 
-> FIELD_MODIFY(&reg, REG_FIELD_C, c) is the wrapper of the code below.
-> reg &= ~REG_FIELD_C;
-> reg |= FIELD_PREP(REG_FIELD_C, c);
-> 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
-> 
-> The new added macro FIELD_MODIFY() is expected to be used by the
-> following Ethernet PPE driver as link.
-> https://lore.kernel.org/linux-arm-msm/20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com/
-> 
-> Changes in v2:
-> - Update the documented example for FIELD_MODIFY().
-> - Improve the commit message to describe the need for the change.
-> 
->  include/linux/bitfield.h | 23 ++++++++++++++++++++---
->  1 file changed, 20 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
-> index 63928f173223..421c7701a18d 100644
-> --- a/include/linux/bitfield.h
-> +++ b/include/linux/bitfield.h
-> @@ -7,8 +7,9 @@
->  #ifndef _LINUX_BITFIELD_H
->  #define _LINUX_BITFIELD_H
->  
-> -#include <linux/build_bug.h>
->  #include <asm/byteorder.h>
-> +#include <linux/build_bug.h>
-> +#include <linux/typecheck.h>
 
-Don't change the headers order: linux first, asm next.
 
->  
->  /*
->   * Bitfield access macros
-> @@ -38,8 +39,7 @@
->   *	  FIELD_PREP(REG_FIELD_D, 0x40);
->   *
->   * Modify:
-> - *  reg &= ~REG_FIELD_C;
-> - *  reg |= FIELD_PREP(REG_FIELD_C, c);
-> + *  FIELD_MODIFY(REG_FIELD_C, &reg, c);
->   */
->  
->  #define __bf_shf(x) (__builtin_ffsll(x) - 1)
-> @@ -156,6 +156,23 @@
->  		(typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));	\
->  	})
->  
-> +/**
-> + * FIELD_MODIFY() - modify a bitfield element
-> + * @_mask: shifted mask defining the field's length and position
-> + * @_reg_p: pointer to the memory that should be updated
-> + * @_val: value to store in the bitfield
-> + *
-> + * FIELD_MODIFY() modifies the set of bits in @_reg_p specified by @_mask,
-> + * by replacing them with the bitfield value passed in as @_val.
-> + */
+On 4/10/25 14:48, Philipp Zabel wrote:
+> On Do, 2025-04-10 at 14:23 +0200, Patrice Chotard wrote:
+>> As ospi reset is consumed by both OMM and OSPI drivers, use the reset
+>> acquire/release mechanism which ensure exclusive reset usage.
+>>
+>> This avoid to call reset_control_get/put() in OMM driver each time
+>> we need to reset OSPI children and guarantee the reset line stays
+>> deasserted.
+>>
+>> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+>> ---
+>>  drivers/spi/spi-stm32-ospi.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
+>> index 668022098b1eac3628f0677e6d786e5a267346be..96fa362432f13c19e4dde63d964a0db64c8ade95 100644
+>> --- a/drivers/spi/spi-stm32-ospi.c
+>> +++ b/drivers/spi/spi-stm32-ospi.c
+>> @@ -804,7 +804,7 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
+>>  		return ret;
+>>  	}
+>>  
+>> -	ospi->rstc = devm_reset_control_array_get_optional_exclusive(dev);
+>> +	ospi->rstc = devm_reset_control_array_get_exclusive_released(dev);
+> 
+> Why does this drop _optional?
 
-Please inspect the codebase and convert existing opencoded FIELD_MODIFY()s.
-I don't ask you to convert every driver out there, but core kernel files
-should be clear.
+Hi Philip
 
-The first good candidate for you is __tlbi_level() in arm64. You may want
-to use Coccinelle to automate the search.
+I wrongly based this patchset on the reset/next branch instead of the spi/for-next which include this ospi fix [1].
+which make resets a required property. I will rebased it on last spi/for-next.
 
-Thanks,
-Yury
+> 
+> Also, since _acquire() is right below in the same function, I see no
+> benefit in requesting the reset control in released state.
 
-> +#define FIELD_MODIFY(_mask, _reg_p, _val)				\
-> +	({								\
-> +		typecheck_pointer(_reg_p);				\
-> +		__BF_FIELD_CHECK(_mask, *(_reg_p), _val, "FIELD_MODIFY: "); \
-> +		*(_reg_p) &= ~(_mask);					\
-> +		*(_reg_p) |= ((_val) << __bf_shf(_mask)) & (_mask);	\
-> +	})
-> +
->  extern void __compiletime_error("value doesn't fit into mask")
->  __field_overflow(void);
->  extern void __compiletime_error("bad bitfield mask")
-> -- 
-> 2.34.1
+As explained in commit message, OSPI reset are also used by OMM driver which is parent of OSPI.
+
+If i use devm_reset_control_array_get_exclusive() instead of devm_reset_control_array_get_exclusive_released()
+here, i got the following kernel warning:
+
+[    8.654378] ------------[ cut here ]------------
+[    8.656524] WARNING: CPU: 1 PID: 385 at drivers/reset/core.c:799 __reset_control_get_internal+0x70/0x1d0
+[    8.665999] Modules linked in: spi_stm32_ospi(+) hantro_vpu v4l2_vp9 dwmac_stm32(+) stmmac_platform v4l2_h264 v4l2_jpeg v4l2_mem2mem stmmac videobu6
+emon.
+[    8.691282] CPU: 1 UID: 0 PID: 385 Comm: (udev-worker) Not tainted 6.15.0-rc1-next-20250408-00018-g0f9105d08519 #22 PREEMPT 
+[    8.691301] Hardware name: STMicroelectronics STM32MP257F-EV1 Evaluation Board (DT)
+[    8.691307] pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    8.691317] pc : __reset_control_get_internal+0x70/0x1d0
+[    8.691336] lr : __of_reset_control_get+0x1a4/0x270
+[    8.691348] sp : ffff80008359b5f0
+[    8.691352] x29: ffff80008359b5f0 x28: 0000000000000000 x27: ffff80007b06c100
+[    8.691371] x26: ffff80007b06c118 x25: 0000000000000001 x24: 0000000000000000
+[    8.691385] x23: 0000000000000004 x22: ffff000082ecc780 x21: 0000000000000005
+[    8.691399] x20: ffff000082ecc7a0 x19: ffff000083898d00 x18: 00000000ffffffff
+[    8.691414] x17: ffff000082ff9a00 x16: ffff0000802d6800 x15: ffff80008359b4c0
+[    8.691429] x14: 0000000000000001 x13: 007473696c5f7974 x12: 0000000000000001
+[    8.691444] x11: 0000000000000003 x10: ffff80008257ec4f x9 : 0000000000000028
+[    8.691459] x8 : 0101010101010101 x7 : 00000000736c6c65 x6 : 000000000080f2e5
+[    8.691473] x5 : ffff80008359b698 x4 : 0000000000000000 x3 : 0000000000000005
+[    8.691487] x2 : 0000000000000004 x1 : 0000000000000005 x0 : 0000000000000005
+[    8.691501] Call trace:
+[    8.691506]  __reset_control_get_internal+0x70/0x1d0 (P)
+[    8.691522]  __of_reset_control_get+0x1a4/0x270
+[    8.691535]  of_reset_control_array_get+0x9c/0x174
+[    8.691549]  devm_reset_control_array_get+0x50/0xb0
+[    8.691563]  stm32_ospi_get_resources+0xd4/0x344 [spi_stm32_ospi]
+[    8.691584]  stm32_ospi_probe+0xf8/0x3d0 [spi_stm32_ospi]
+
+Which means that bool acquired is set.
+
+This is due to usage of devm_reset_control_array_get_exclusive() which sets flags to RESET_CONTROL_EXCLUSIVE
+on an already controlled reset line.
+
+
+> 
+>>  	if (IS_ERR(ospi->rstc))
+>>  		return dev_err_probe(dev, PTR_ERR(ospi->rstc),
+>>  				     "Can't get reset\n");
+>> @@ -937,9 +937,11 @@ static int stm32_ospi_probe(struct platform_device *pdev)
+>>  		goto err_pm_enable;
+>>  
+>>  	if (ospi->rstc) {
+> 
+> This check only makes sense if the reset control (array) is optional,
+> otherwise ospi->rstc can never be NULL.
+
+Right, i will remove this check.
+
+> 
+>> +		reset_control_acquire(ospi->rstc);
+> 
+> This is missing error handling. Alternatively, you could just use the
+> normal request function to get an already-acquired reset control.
+
+Ok, i will add a check.
+
+
+[1] https://patches.linaro.org/project/linux-spi/patch/20250324-upstream_ospi_required_resets-v2-2-85a48afcedec@foss.st.com/
+
+Thanks
+Patrice
+
+> 
+>>  		reset_control_assert(ospi->rstc);
+>>  		udelay(2);
+>>  		reset_control_deassert(ospi->rstc);
+>> +		reset_control_release(ospi->rstc);
+>>  	}
+>>  
+>>  	ret = spi_register_controller(ctrl);
+> 
+> regards
+> Philipp
+> 
 
