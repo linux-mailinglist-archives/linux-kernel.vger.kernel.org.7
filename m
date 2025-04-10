@@ -1,362 +1,280 @@
-Return-Path: <linux-kernel+bounces-597306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 198E2A837CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:25:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADBD6A837D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 06:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 356D38A5E62
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:23:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 653578A42AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 04:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A37F1F0E56;
-	Thu, 10 Apr 2025 04:23:06 +0000 (UTC)
-Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7D31F3B97;
+	Thu, 10 Apr 2025 04:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="tbpBpfhc"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D821C8609
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 04:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C67F1F1538;
+	Thu, 10 Apr 2025 04:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744258985; cv=none; b=MIaDNl6QGt1gI7EjaxX08yBR/YVOgu41bxLx8PxlzcbUQGa+VglzQUiYon+O7jAoHYLzuhmARK/1BogHtrsh5fLMsIM64YLJi7ze1WolAHI9SFqjq59waL3VITLTU6TY0AHhSA1tBzbOisZuDW91sbV146Wev2bszHPEBSWCQfU=
+	t=1744259179; cv=none; b=IeSTFUGu7GClOoKR3MuLKwxJlpgXL3V8w+bw3awryJ1iOOgwEHbfTcsCJ9R4DwWNOvHXvG7s5ivedvwly9+k3n+KWUyeCKSO6A8srmxbt1x0Nx3OB0lXMZVbLi1k8drhUm+phbxmoarD+siPEcqMqVjZGD0AdM2uOB5NZ50cWjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744258985; c=relaxed/simple;
-	bh=j0OUherja7S6Pq1kGSUjYII5H7TVXpIkLVrGY520/pU=;
+	s=arc-20240116; t=1744259179; c=relaxed/simple;
+	bh=i2rsA0GJ5JL9p9YLnj53F8I4XkKH+f57A+JCAXPDoxg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DoNpJJwFWldTtKbQIJEftEsnLoGM7BCYGyAb1oiaWa2aTyPgXIJ5UDR5FwmHxFyGun2LoKUK34vzW3MvWT+ZEEejaeTYOVRyopqBnKxChfP+caN0feISxr8W9FyOjWVR+uvetmk1bapJusjd2nCOE0VSHRccTbAUZAE6qyEupdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201622.home.langchao.com
-        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202504101222497180;
-        Thu, 10 Apr 2025 12:22:49 +0800
-Received: from localhost.localdomain (10.94.13.146) by
- jtjnmail201622.home.langchao.com (10.100.2.22) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 10 Apr 2025 12:22:50 +0800
-From: Bo Liu <liubo03@inspur.com>
-To: <xiang@kernel.org>, <chao@kernel.org>
-CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, Bo Liu
-	<liubo03@inspur.com>
-Subject: [PATCH 2/2] erofs: support deflate decompress by using Intel QAT
-Date: Thu, 10 Apr 2025 00:20:48 -0400
-Message-ID: <20250410042048.3044-3-liubo03@inspur.com>
-X-Mailer: git-send-email 2.18.2
-In-Reply-To: <20250410042048.3044-1-liubo03@inspur.com>
-References: <20250410042048.3044-1-liubo03@inspur.com>
+	 MIME-Version:Content-Type; b=f7KEhziSV0A91lsExP5k/vViGIT9+hNbrph+3x7yrO4h/R0nTDAebJg6sAhTQceZ0p5qk1o70RCzscGguEQfJxkio4WJZDmKaqBjs1vV3lyuYckd+RUm0mcUsDa2+ANi/TM5eg//h0J40TkBWi08Tn3G7L2cjFCgRcSCJ5foWZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=tbpBpfhc; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1744259178; x=1775795178;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=jWrgfCuyAlswd5qJJIv7RiCXg6fDzAQOV2joMZ360dQ=;
+  b=tbpBpfhcyP8iLDQQ5pLhtobUroCv317SzMct4RQ7F15yCKIfPMPsLTik
+   9mZF4/pxvWpnQdhPDw4Jfo/kEKMDztIyw+MRt05I1mgKrTK7zqWEAWxYO
+   SnScg/N1vGeBwAZWXAQG/RLl+4Nlpf6dD+KNuIk7YsdcRQwURix7bKVQy
+   4=;
+X-IronPort-AV: E=Sophos;i="6.15,202,1739836800"; 
+   d="scan'208";a="481854576"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 04:26:14 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.7.35:55004]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.21.195:2525] with esmtp (Farcaster)
+ id 5eb5ee46-9dd5-4e4c-9964-7a70054ce6e7; Thu, 10 Apr 2025 04:26:13 +0000 (UTC)
+X-Farcaster-Flow-ID: 5eb5ee46-9dd5-4e4c-9964-7a70054ce6e7
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 10 Apr 2025 04:26:12 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.170.41) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 10 Apr 2025 04:26:09 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <jlayton@kernel.org>
+CC: <akpm@linux-foundation.org>, <andrew@lunn.ch>, <davem@davemloft.net>,
+	<edumazet@google.com>, <horms@kernel.org>, <kuba@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <kuniyu@amazon.com>
+Subject: Re: [PATCH v2 2/2] net: add debugfs files for showing netns refcount tracking info
+Date: Wed, 9 Apr 2025 21:24:59 -0700
+Message-ID: <20250410042602.27471-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250408-netns-debugfs-v2-2-ca267f51461e@kernel.org>
+References: <20250408-netns-debugfs-v2-2-ca267f51461e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201613.home.langchao.com (10.100.2.13) To
- jtjnmail201622.home.langchao.com (10.100.2.22)
-tUid: 20254101222494575475f9e853de47923a998131f5f9a
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+X-ClientProxiedBy: EX19D033UWC003.ant.amazon.com (10.13.139.217) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-This patch introdueces the use of the Intel QAT to decompress compressed
-data in the EROFS filesystem, aiming to improve the decompression speed
-of compressed datea.
+From: Jeff Layton <jlayton@kernel.org>
+Date: Tue, 08 Apr 2025 09:36:38 -0400
+> CONFIG_NET_NS_REFCNT_TRACKER currently has no convenient way to display
+> its tracking info. Add a new net_ns directory under the debugfs
+> ref_tracker directory. Create a directory in there for every netns, with
+> refcnt and notrefcnt files that show the currently tracked active and
+> passive references.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  net/core/net_namespace.c | 151 +++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 151 insertions(+)
+> 
+> diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+> index 4303f2a4926243e2c0ff0c0387383cd8e0658019..7e9dc487f46d656ee4ae3d6d18d35bb2aba2b176 100644
+> --- a/net/core/net_namespace.c
+> +++ b/net/core/net_namespace.c
+> @@ -1512,3 +1512,154 @@ const struct proc_ns_operations netns_operations = {
+>  	.owner		= netns_owner,
+>  };
+>  #endif
+> +
+> +#ifdef CONFIG_DEBUG_FS
+> +#ifdef CONFIG_NET_NS_REFCNT_TRACKER
+> +
+> +#include <linux/debugfs.h>
+> +
+> +static struct dentry *ns_ref_tracker_dir;
+> +static unsigned int ns_debug_net_id;
+> +
+> +struct ns_debug_net {
+> +	struct dentry *netdir;
+> +	struct dentry *refcnt;
+> +	struct dentry *notrefcnt;
+> +};
+> +
+> +#define MAX_NS_DEBUG_BUFSIZE	(32 * PAGE_SIZE)
+> +
+> +static int
+> +ns_debug_tracker_show(struct seq_file *f, void *v)
 
-We created a 285MiB compressed file and then used the following command to
-create EROFS images with different cluster size.
-     # mkfs.erofs -zdeflate,level=9 -C16384
+I think there is no clear rule about where to break, but could you
+remove \n after int so that it will match with other functions in
+this file ?
 
-fio command was used to test random read and small random read(~5%) and
-sequential read performance.
-     # fio -filename=testfile  -bs=4k -rw=read -name=job1
-     # fio -filename=testfile  -bs=4k -rw=randread -name=job1
-     # fio -filename=testfile  -bs=4k -rw=randread --io_size=14m -name=job1
+Same for other new functions, looks like none of them go over 80 columns.
 
-Here are some performance numbers for reference:
+> +{
+> +	struct ref_tracker_dir *tracker = f->private;
+> +	int len, bufsize = PAGE_SIZE;
+> +	char *buf;
+> +
+> +	for (;;) {
+> +		buf = kvmalloc(bufsize, GFP_KERNEL);
+> +		if (!buf)
+> +			return -ENOMEM;
+> +
+> +		len = ref_tracker_dir_snprint(tracker, buf, bufsize);
+> +		if (len < bufsize)
+> +			break;
+> +
+> +		kvfree(buf);
+> +		bufsize *= 2;
+> +		if (bufsize > MAX_NS_DEBUG_BUFSIZE)
+> +			return -ENOBUFS;
+> +	}
+> +	seq_write(f, buf, len);
+> +	kvfree(buf);
+> +	return 0;
+> +}
+> +
+> +static int
+> +ns_debug_ref_open(struct inode *inode, struct file *filp)
+> +{
+> +	int ret;
+> +	struct net *net = inode->i_private;
 
-Processors: Intel(R) Xeon(R) 6766E(144 core)
-Memory:     521 GiB
+nit: Please sort in the reverse xmas order.
 
-|-----------------------------------------------------------------------------|
-|           | Cluster size | sequential read | randread  | small randread(5%) |
-|-----------|--------------|-----------------|-----------|--------------------|
-| Intel QAT |    4096      |    538  MiB/s   | 112 MiB/s |     20.76 MiB/s    |
-| Intel QAT |    16384     |    699  MiB/s   | 158 MiB/s |     21.02 MiB/s    |
-| Intel QAT |    65536     |    917  MiB/s   | 278 MiB/s |     20.90 MiB/s    |
-| Intel QAT |    131072    |    1056 MiB/s   | 351 MiB/s |     23.36 MiB/s    |
-| Intel QAT |    262144    |    1145 MiB/s   | 431 MiB/s |     26.66 MiB/s    |
-| deflate   |    4096      |    499  MiB/s   | 108 MiB/s |     21.50 MiB/s    |
-| deflate   |    16384     |    422  MiB/s   | 125 MiB/s |     18.94 MiB/s    |
-| deflate   |    65536     |    452  MiB/s   | 159 MiB/s |     13.02 MiB/s    |
-| deflate   |    65536     |    452  MiB/s   | 177 MiB/s |     11.44 MiB/s    |
-| deflate   |    262144    |    466  MiB/s   | 194 MiB/s |     10.60 MiB/s    |
+https://docs.kernel.org/process/maintainer-netdev.html#local-variable-ordering-reverse-xmas-tree-rcs
 
-Signed-off-by: Bo Liu <liubo03@inspur.com>
----
- fs/erofs/decompressor_deflate.c | 145 +++++++++++++++++++++++++++++++-
- fs/erofs/internal.h             |   1 +
- fs/erofs/sysfs.c                |  30 +++++++
- 3 files changed, 175 insertions(+), 1 deletion(-)
+> +
+> +	ret = single_open(filp, ns_debug_tracker_show, &net->refcnt_tracker);
+> +	if (!ret)
+> +		net_passive_inc(net);
+> +	return ret;
+> +}
+> +
+> +static int
+> +ns_debug_notref_open(struct inode *inode, struct file *filp)
+> +{
+> +	int ret;
+> +	struct net *net = inode->i_private;
 
-diff --git a/fs/erofs/decompressor_deflate.c b/fs/erofs/decompressor_deflate.c
-index c6908a487054..a293c44e86d2 100644
---- a/fs/erofs/decompressor_deflate.c
-+++ b/fs/erofs/decompressor_deflate.c
-@@ -1,5 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- #include <linux/zlib.h>
-+#include <linux/scatterlist.h>
-+#include <crypto/acompress.h>
-+
- #include "compress.h"
- 
- struct z_erofs_deflate {
-@@ -97,7 +100,7 @@ static int z_erofs_load_deflate_config(struct super_block *sb,
- 	return -ENOMEM;
- }
- 
--static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
-+static int __z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
- 				      struct page **pgpl)
- {
- 	struct super_block *sb = rq->sb;
-@@ -178,6 +181,146 @@ static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
- 	return err;
- }
- 
-+static int z_erofs_crypto_decompress_mem(struct z_erofs_decompress_req *rq)
-+{
-+	struct erofs_sb_info *sbi = EROFS_SB(rq->sb);
-+	unsigned int nrpages_out =
-+				PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
-+	unsigned int nrpages_in = PAGE_ALIGN(rq->inputsize) >> PAGE_SHIFT;
-+	struct sg_table st_src, st_dst;
-+	struct scatterlist *sg_src, *sg_dst;
-+	struct acomp_req *req;
-+	struct crypto_wait wait;
-+	u8 *headpage;
-+	int ret, i;
-+
-+	WARN_ON(!*rq->in);
-+	headpage = kmap_local_page(*rq->in);
-+
-+	ret = z_erofs_fixup_insize(rq, headpage + rq->pageofs_in,
-+				min_t(unsigned int, rq->inputsize,
-+							rq->sb->s_blocksize - rq->pageofs_in));
-+
-+	kunmap_local(headpage);
-+	if (ret) {
-+		return ret;
-+	}
-+
-+	req = acomp_request_alloc(sbi->erofs_tfm);
-+	if (!req) {
-+		erofs_err(rq->sb, "failed to alloc decompress request");
-+		return -ENOMEM;
-+	}
-+
-+	if (sg_alloc_table(&st_src, nrpages_in, GFP_KERNEL)) {
-+		acomp_request_free(req);
-+		return -ENOMEM;
-+	}
-+
-+	if (sg_alloc_table(&st_dst, nrpages_out, GFP_KERNEL)) {
-+		acomp_request_free(req);
-+		sg_free_table(&st_src);
-+		return -ENOMEM;
-+	}
-+
-+	for_each_sg(st_src.sgl, sg_src, nrpages_in, i) {
-+		if (i == 0)
-+			sg_set_page(sg_src, rq->in[0],
-+					PAGE_SIZE - rq->pageofs_in, rq->pageofs_in);
-+		else
-+			sg_set_page(sg_src, rq->in[i], PAGE_SIZE, 0);
-+	}
-+
-+	i = 0;
-+	for_each_sg(st_dst.sgl, sg_dst, nrpages_out, i) {
-+		if (i == 0)
-+			sg_set_page(sg_dst, rq->out[0],
-+					PAGE_SIZE - rq->pageofs_out, rq->pageofs_out);
-+		 else
-+			sg_set_page(sg_dst, rq->out[i], PAGE_SIZE, 0);
-+	}
-+
-+	acomp_request_set_params(req, st_src.sgl,
-+				st_dst.sgl, rq->inputsize, rq->outputsize);
-+
-+	crypto_init_wait(&wait);
-+	acomp_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
-+						crypto_req_done, &wait);
-+
-+	ret = crypto_wait_req(crypto_acomp_decompress(req), &wait);
-+	if (ret < 0) {
-+		if (ret == -EBADMSG && rq->partial_decoding) {
-+			ret = 0;
-+		} else {
-+			erofs_err(rq->sb, "failed to decompress %d in[%u, %u] out[%u]",
-+					ret, rq->inputsize, rq->pageofs_in, rq->outputsize);
-+			ret = -EIO;
-+		}
-+	} else {
-+		ret = 0;
-+	}
-+
-+	acomp_request_free(req);
-+	sg_free_table(&st_src);
-+	sg_free_table(&st_dst);
-+	return ret;
-+}
-+
-+static int z_erofs_crypto_prepare_dstpages(struct z_erofs_decompress_req *rq,
-+							struct page **pagepool)
-+{
-+	const unsigned int nr =
-+				PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
-+	unsigned int i;
-+
-+	for (i = 0; i < nr; ++i) {
-+		struct page *const page = rq->out[i];
-+		struct page *victim;
-+
-+		if (!page) {
-+			victim = __erofs_allocpage(pagepool, rq->gfp, true);
-+			if (!victim)
-+				return -ENOMEM;
-+			set_page_private(victim, Z_EROFS_SHORTLIVED_PAGE);
-+			rq->out[i] = victim;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static int __z_erofs_deflate_crypto_decompress(struct z_erofs_decompress_req *rq,
-+									 struct page **pgpl)
-+{
-+	const unsigned int nrpages_out =
-+			PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
-+	int ret;
-+
-+	/* one optimized fast path only for non bigpcluster cases yet */
-+	if (rq->inputsize <= PAGE_SIZE && nrpages_out == 1 && !rq->inplace_io) {
-+		WARN_ON(!*rq->out);
-+		goto dstmap_out;
-+	}
-+
-+	ret = z_erofs_crypto_prepare_dstpages(rq, pgpl);
-+	if (ret < 0)
-+		return ret;
-+
-+dstmap_out:
-+	return z_erofs_crypto_decompress_mem(rq);
-+}
-+
-+static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
-+				struct page **pgpl)
-+{
-+	struct super_block *sb = rq->sb;
-+	struct erofs_sb_info *sbi = EROFS_SB(sb);
-+
-+	if (sbi->erofs_tfm)
-+		return __z_erofs_deflate_crypto_decompress(rq, pgpl);
-+	else
-+		return __z_erofs_deflate_decompress(rq, pgpl);
-+}
-+
- const struct z_erofs_decompressor z_erofs_deflate_decomp = {
- 	.config = z_erofs_load_deflate_config,
- 	.decompress = z_erofs_deflate_decompress,
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 4ac188d5d894..96fcee07d353 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -122,6 +122,7 @@ struct erofs_sb_info {
- 	/* pseudo inode to manage cached pages */
- 	struct inode *managed_cache;
- 
-+	struct crypto_acomp *erofs_tfm;
- 	struct erofs_sb_lz4_info lz4;
- #endif	/* CONFIG_EROFS_FS_ZIP */
- 	struct inode *packed_inode;
-diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
-index dad4e6c6c155..d4630697dafd 100644
---- a/fs/erofs/sysfs.c
-+++ b/fs/erofs/sysfs.c
-@@ -5,6 +5,7 @@
-  */
- #include <linux/sysfs.h>
- #include <linux/kobject.h>
-+#include <crypto/acompress.h>
- 
- #include "internal.h"
- 
-@@ -13,6 +14,7 @@ enum {
- 	attr_drop_caches,
- 	attr_pointer_ui,
- 	attr_pointer_bool,
-+	attr_comp_crypto,
- };
- 
- enum {
-@@ -59,12 +61,14 @@ static struct erofs_attr erofs_attr_##_name = {			\
- #ifdef CONFIG_EROFS_FS_ZIP
- EROFS_ATTR_RW_UI(sync_decompress, erofs_mount_opts);
- EROFS_ATTR_FUNC(drop_caches, 0200);
-+EROFS_ATTR_FUNC(comp_crypto, 0644);
- #endif
- 
- static struct attribute *erofs_attrs[] = {
- #ifdef CONFIG_EROFS_FS_ZIP
- 	ATTR_LIST(sync_decompress),
- 	ATTR_LIST(drop_caches),
-+	ATTR_LIST(comp_crypto),
- #endif
- 	NULL,
- };
-@@ -128,6 +132,12 @@ static ssize_t erofs_attr_show(struct kobject *kobj,
- 		if (!ptr)
- 			return 0;
- 		return sysfs_emit(buf, "%d\n", *(bool *)ptr);
-+	case attr_comp_crypto:
-+		if (sbi->erofs_tfm)
-+			return sysfs_emit(buf, "%s\n",
-+				crypto_comp_alg_common(sbi->erofs_tfm)->base.cra_driver_name);
-+		else
-+			return sysfs_emit(buf, "NONE\n");
- 	}
- 	return 0;
- }
-@@ -181,6 +191,26 @@ static ssize_t erofs_attr_store(struct kobject *kobj, struct attribute *attr,
- 		if (t & 1)
- 			invalidate_mapping_pages(MNGD_MAPPING(sbi), 0, -1);
- 		return len;
-+	case attr_comp_crypto:
-+		buf = skip_spaces(buf);
-+		if (!strncmp(buf, "none", 4)) {
-+			if (sbi->erofs_tfm)
-+				crypto_free_acomp(sbi->erofs_tfm);
-+			sbi->erofs_tfm = NULL;
-+			return len;
-+		}
-+
-+		if (!strncmp(buf, "qat_deflate", 11)) {
-+			if (sbi->erofs_tfm)
-+				crypto_free_acomp(sbi->erofs_tfm);
-+			sbi->erofs_tfm = crypto_alloc_acomp("qat_deflate", 0, 0);
-+			if (IS_ERR(sbi->erofs_tfm)) {
-+				sbi->erofs_tfm = NULL;
-+				return -ENODEV;
-+			}
-+			return len;
-+		}
-+		return -EINVAL;
- #endif
- 	}
- 	return 0;
--- 
-2.31.1
+Same here.
 
+
+> +
+> +	ret = single_open(filp, ns_debug_tracker_show, &net->notrefcnt_tracker);
+> +	if (!ret)
+> +		net_passive_inc(net);
+> +	return ret;
+> +}
+> +
+> +static int
+> +ns_debug_ref_release(struct inode *inode, struct file *filp)
+> +{
+> +	struct net *net = inode->i_private;
+> +
+> +	net_passive_dec(net);
+> +	return single_release(inode, filp);
+> +}
+> +
+> +static const struct file_operations ns_debug_ref_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.open		= ns_debug_ref_open,
+> +	.read		= seq_read,
+> +	.llseek		= seq_lseek,
+> +	.release	= ns_debug_ref_release,
+> +};
+> +
+> +static const struct file_operations ns_debug_notref_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.open		= ns_debug_notref_open,
+> +	.read		= seq_read,
+> +	.llseek		= seq_lseek,
+> +	.release	= ns_debug_ref_release,
+> +};
+> +
+> +static int
+> +ns_debug_init_net(struct net *net)
+> +{
+> +	struct ns_debug_net *dnet = net_generic(net, ns_debug_net_id);
+> +	char name[11]; /* 10 decimal digits + NULL term */
+> +	int len;
+> +
+> +	len = snprintf(name, sizeof(name), "%u", net->ns.inum);
+> +	if (len >= sizeof(name))
+> +		return -EOVERFLOW;
+> +
+> +	dnet->netdir = debugfs_create_dir(name, ns_ref_tracker_dir);
+> +	if (IS_ERR(dnet->netdir))
+> +		return PTR_ERR(dnet->netdir);
+> +
+> +	dnet->refcnt = debugfs_create_file("refcnt", S_IFREG | 0400, dnet->netdir,
+> +					   net, &ns_debug_ref_fops);
+> +	if (IS_ERR(dnet->refcnt)) {
+> +		debugfs_remove(dnet->netdir);
+> +		return PTR_ERR(dnet->refcnt);
+> +	}
+> +
+> +	dnet->notrefcnt = debugfs_create_file("notrefcnt", S_IFREG | 0400, dnet->netdir,
+> +					      net, &ns_debug_notref_fops);
+> +	if (IS_ERR(dnet->notrefcnt)) {
+> +		debugfs_remove_recursive(dnet->netdir);
+> +		return PTR_ERR(dnet->notrefcnt);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void
+> +ns_debug_exit_net(struct net *net)
+> +{
+> +	struct ns_debug_net *dnet = net_generic(net, ns_debug_net_id);
+> +
+> +	debugfs_remove_recursive(dnet->netdir);
+> +}
+> +
+> +static struct pernet_operations ns_debug_net_ops = {
+> +	.init = ns_debug_init_net,
+> +	.exit = ns_debug_exit_net,
+> +	.id = &ns_debug_net_id,
+> +	.size = sizeof(struct ns_debug_net),
+> +};
+> +
+> +static int __init ns_debug_init(void)
+> +{
+> +	ns_ref_tracker_dir = debugfs_create_dir("net_ns", ref_tracker_debug_dir);
+> +	if (IS_ERR(ns_ref_tracker_dir))
+> +		return PTR_ERR(ns_ref_tracker_dir);
+> +
+> +	register_pernet_subsys(&ns_debug_net_ops);
+> +	return 0;
+
+register_pernet_subsys() could fail, so
+
+	return register_pernet_subsys(&ns_debug_net_ops);
+
+
+> +}
+> +late_initcall(ns_debug_init);
+> +#endif /* CONFIG_NET_NS_REFCNT_TRACKER */
+> +#endif /* CONFIG_DEBUG_FS */
+> 
+> -- 
+> 2.49.0
+> 
 
