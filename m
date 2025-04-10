@@ -1,54 +1,63 @@
-Return-Path: <linux-kernel+bounces-598130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 820ECA8425C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64BA9A8425E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D1FA4C7E16
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:00:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16C9316E96B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4060E15665C;
-	Thu, 10 Apr 2025 12:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79BF283C82;
+	Thu, 10 Apr 2025 12:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="h04eL3i7"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iL7nbcUu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CBE1EA7F4
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 12:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A31281509
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 12:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744286440; cv=none; b=JJPbr8zYxe0sbECKmY6EAX/l/U86ZkPG2/ZKqrqf82HtgmGKSyuxQclLiFNRZf7Uh18fJVQ9gMnqyqOxhCnUZkmkU7QTCh+GLSrWhEY286cmKLyg+7q2GSD3o3zFPEu5/EqCjZ3rSuIMxpvrQZXCUtnuN9nFGfqbqpAy+2XIxmQ=
+	t=1744286489; cv=none; b=rGC39YhT/a6U7ssUcEeGp4MP+PKdlyhjXRaTBNjhYbqwUFwfPpQGx85vA2PSD0rLYYB4pbVNn3VXbxJs1c5ClL275XUv59YAMm0HT5A2yY67XjYEYOX4TKqaUYKdKjvl+pRMHctqY6Xv+GRZnH1EjfAVAKvYfBN04QfMnfSvQ+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744286440; c=relaxed/simple;
-	bh=KgypfoACOuD9xYQPK0dUJ2M7WGpHbH1s3oc8ogE1pOU=;
+	s=arc-20240116; t=1744286489; c=relaxed/simple;
+	bh=8aKH3DYFXObiPNEfF4VluDyh0rfCmk2SNK5Buc2hyeo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KNqyt/oY7wuM672tdQ5f0IwsIqdDMZ9FsCRGZ1OVpcMUYaKSQ9w94ahqAeRRtY5ULiIN/qaMN3E34ICWa8EyIWhIbJj/oHoZUteR18uH62370W5GP6oLhvk6LAS89ZsJKRWBP50wmRNcu5rJiW2JEii/cRsmVt2WEOpZhpGEtiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=h04eL3i7; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744286435;
-	bh=KgypfoACOuD9xYQPK0dUJ2M7WGpHbH1s3oc8ogE1pOU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h04eL3i7BdMl3SldCVQ4cjZNK9C46fTfkNJk3kXvXZcai8Zldn1+xPCRO/WNl41oX
-	 Pdp4Vswz5W7TT95HYhw3QjOiuoM9MmZi9ImlqpOhGHQaSIPpF16pX0BFfexFGaUCD6
-	 p6yyOkArcEQPyIVtI/o1ObwHCTKhsoaTttmemhnLaWUa5aTH2G62LxNt0/LbVVM4yf
-	 FgGBI+k3Mnf3TnmMPZAhaZWedqXkxk1qCfNVhmwzBPm7C5nEO/4BLoTAi+n8k7MbUj
-	 BrC46C33J6AeqFPJ0W2U6BfwoQeJtJjeRMsuP9lXir6fEeu2IxUW7jXPYRUAK48mmU
-	 7FNsGb3cyDmdA==
-Received: from [192.168.1.90] (unknown [82.79.138.25])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	 In-Reply-To:Content-Type; b=SwPE4Vg7b8L6GMbSYOf2K5KKpjUJLeHCdiL8z8JZRspKYfX41kDnfxxNeyA9YNtaQAukNs7zz26xJUBUWquTAjgwwfwnst+B7bleVlSOP9yde2Lfx53z6slCiqpzkM05hWxyR6RVx88xkWYpLVee1es/iXpvw1BqKLJX5TF/SoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iL7nbcUu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744286486;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w9wD4CHs9nQd9+31B+aaGfzekonlDYHicg/bIUqSeTk=;
+	b=iL7nbcUuVSgi/mYCCNcAu+Vaqnv4NJ7xbMnLW7IDnk/XIMNnotJ3tvnkt55xhcsMCr3XAg
+	73YVNPOqPTH5aCEsZ0iah/iO7vELAYLPN0b1ExMpxe+dvCCP09LcjwSI3tGnzfeg3eAq8L
+	IksKQbp8NKfJvJRCAegenCO4ZA/ElAw=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-319-aX7JGYKDM--MYmheBJ358Q-1; Thu,
+ 10 Apr 2025 08:01:20 -0400
+X-MC-Unique: aX7JGYKDM--MYmheBJ358Q-1
+X-Mimecast-MFC-AGG-ID: aX7JGYKDM--MYmheBJ358Q_1744286478
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 00C3B17E0904;
-	Thu, 10 Apr 2025 14:00:34 +0200 (CEST)
-Message-ID: <8b0a8a7a-456a-487f-853e-5ec3e11129d7@collabora.com>
-Date: Thu, 10 Apr 2025 15:00:34 +0300
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B9A33180034D;
+	Thu, 10 Apr 2025 12:01:17 +0000 (UTC)
+Received: from [10.44.33.222] (unknown [10.44.33.222])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E45883001D0E;
+	Thu, 10 Apr 2025 12:01:12 +0000 (UTC)
+Message-ID: <6facfb1d-eafa-432c-9896-321ea9cd9a88@redhat.com>
+Date: Thu, 10 Apr 2025 14:01:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,397 +65,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 14/15] drm/tests: hdmi: Add max TMDS rate fallback
- tests for YUV420 mode
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250326-hdmi-conn-yuv-v3-0-294d3ebbb4b2@collabora.com>
- <20250326-hdmi-conn-yuv-v3-14-294d3ebbb4b2@collabora.com>
- <20250410-cyan-smilodon-of-courtesy-38766c@houat>
+Subject: Re: [PATCH 05/28] mfd: zl3073x: Add components versions register defs
+To: Krzysztof Kozlowski <krzk@kernel.org>, Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250407172836.1009461-1-ivecera@redhat.com>
+ <20250407172836.1009461-6-ivecera@redhat.com>
+ <a5d2e1eb-7b98-4909-9505-ec93fe0c3aac@lunn.ch>
+ <22b9f197-2f98-43c7-9cc9-c748e80078b0@redhat.com>
+ <5af77349-5a76-4557-839b-d9ac643f5368@kernel.org>
+ <40239de9-7552-41d1-9ee4-152ece6f33bc@redhat.com>
+ <138d0e3c-ccab-48e2-b437-aec063d1d2dc@kernel.org>
 Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <20250410-cyan-smilodon-of-courtesy-38766c@houat>
-Content-Type: text/plain; charset=UTF-8
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <138d0e3c-ccab-48e2-b437-aec063d1d2dc@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 4/10/25 11:35 AM, Maxime Ripard wrote:
-> On Wed, Mar 26, 2025 at 12:20:03PM +0200, Cristian Ciocaltea wrote:
->> Provide tests to verify drm_atomic_helper_connector_hdmi_check() helper
->> fallback behavior when using YUV420 output.
+
+
+On 10. 04. 25 12:42 odp., Krzysztof Kozlowski wrote:
+> On 10/04/2025 12:23, Ivan Vecera wrote:
 >>
->> Also rename drm_test_check_max_tmds_rate_{bpc|format}_fallback() to
->> better differentiate from the newly introduced *_yuv420() variants.
 >>
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->>  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 152 ++++++++++++++++++++-
->>  drivers/gpu/drm/tests/drm_kunit_edid.h             | 110 +++++++++++++++
->>  2 files changed, 258 insertions(+), 4 deletions(-)
+>> On 10. 04. 25 9:11 dop., Krzysztof Kozlowski wrote:
+>>> On 09/04/2025 08:44, Ivan Vecera wrote:
+>>>> On 07. 04. 25 11:09 odp., Andrew Lunn wrote:
+>>>>> On Mon, Apr 07, 2025 at 07:28:32PM +0200, Ivan Vecera wrote:
+>>>>>> Add register definitions for components versions and report them
+>>>>>> during probe.
+>>>>>>
+>>>>>> Reviewed-by: Michal Schmidt <mschmidt@redhat.com>
+>>>>>> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+>>>>>> ---
+>>>>>>     drivers/mfd/zl3073x-core.c | 35 +++++++++++++++++++++++++++++++++++
+>>>>>>     1 file changed, 35 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/mfd/zl3073x-core.c b/drivers/mfd/zl3073x-core.c
+>>>>>> index 39d4c8608a740..b3091b00cffa8 100644
+>>>>>> --- a/drivers/mfd/zl3073x-core.c
+>>>>>> +++ b/drivers/mfd/zl3073x-core.c
+>>>>>> @@ -1,10 +1,19 @@
+>>>>>>     // SPDX-License-Identifier: GPL-2.0-only
+>>>>>>     
+>>>>>> +#include <linux/bitfield.h>
+>>>>>>     #include <linux/module.h>
+>>>>>>     #include <linux/unaligned.h>
+>>>>>>     #include <net/devlink.h>
+>>>>>>     #include "zl3073x.h"
+>>>>>>     
+>>>>>> +/*
+>>>>>> + * Register Map Page 0, General
+>>>>>> + */
+>>>>>> +ZL3073X_REG16_DEF(id,			0x0001);
+>>>>>> +ZL3073X_REG16_DEF(revision,		0x0003);
+>>>>>> +ZL3073X_REG16_DEF(fw_ver,		0x0005);
+>>>>>> +ZL3073X_REG32_DEF(custom_config_ver,	0x0007);
+>>>>>> +
+>>>>>>     /*
+>>>>>>      * Regmap ranges
+>>>>>>      */
+>>>>>> @@ -159,10 +168,36 @@ EXPORT_SYMBOL_NS_GPL(zl3073x_dev_alloc, "ZL3073X");
+>>>>>>     
+>>>>>>     int zl3073x_dev_init(struct zl3073x_dev *zldev)
+>>>>>>     {
+>>>>>> +	u16 id, revision, fw_ver;
+>>>>>>     	struct devlink *devlink;
+>>>>>> +	u32 cfg_ver;
+>>>>>> +	int rc;
+>>>>>>     
+>>>>>>     	devm_mutex_init(zldev->dev, &zldev->lock);
+>>>>>>     
+>>>>>> +	scoped_guard(zl3073x, zldev) {
+>>>>>
+>>>>> Why the scoped_guard? The locking scheme you have seems very opaque.
+>>>>
+>>>> We are read the HW registers in this block and the access is protected
+>>>> by this device lock. Regmap locking will be disabled in v2 as this is
+>>>
+>>> Reading ID must be protected by mutex? Why and how?
 >>
->> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
->> index 3fae7ccf65309a1d8a4acf12de961713b9163096..99bedb2d6f555b3b140256000dfa7491d2a8f515 100644
->> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
->> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
->> @@ -1224,7 +1224,7 @@ static void drm_test_check_hdmi_funcs_reject_rate(struct kunit *test)
->>   * Then we will pick the latter, and the computed TMDS character rate
->>   * will be equal to 1.25 times the mode pixel clock.
->>   */
->> -static void drm_test_check_max_tmds_rate_bpc_fallback(struct kunit *test)
->> +static void drm_test_check_max_tmds_rate_bpc_fallback_rgb(struct kunit *test)
->>  {
->>  	struct drm_atomic_helper_connector_hdmi_priv *priv;
->>  	struct drm_modeset_acquire_ctx ctx;
->> @@ -1279,6 +1279,75 @@ static void drm_test_check_max_tmds_rate_bpc_fallback(struct kunit *test)
->>  	drm_modeset_acquire_fini(&ctx);
->>  }
->>  
->> +/*
->> + * Test that if:
->> + * - We have an HDMI connector supporting both RGB and YUV420
+>> Yes, the ID is read from the hardware register and HW access functions
+>> are protected by zl3073x_dev->lock. The access is not protected by
 > 
-> I assume the monitor also supports both?
-
-Yes, I will improve the comment a bit.
-
->> + * - The chosen mode can be supported in YUV420 output format only
->> + * - The chosen mode has a TMDS character rate higher than the display
->> + *   supports in YUV420/12bpc
->> + * - The chosen mode has a TMDS character rate lower than the display
->> + *   supports in YUV420/10bpc.
->> + *
->> + * Then we will pick the latter, and the computed TMDS character rate
->> + * will be equal to 1.25 * 0.5 times the mode pixel clock.
->> + */
->> +static void drm_test_check_max_tmds_rate_bpc_fallback_yuv420(struct kunit *test)
->> +{
->> +	struct drm_atomic_helper_connector_hdmi_priv *priv;
->> +	struct drm_modeset_acquire_ctx ctx;
->> +	struct drm_connector_state *conn_state;
->> +	struct drm_display_info *info;
->> +	struct drm_display_mode *yuv420_only_mode;
->> +	unsigned long long rate;
->> +	struct drm_connector *conn;
->> +	struct drm_device *drm;
->> +	struct drm_crtc *crtc;
->> +	int ret;
->> +
->> +	priv = drm_kunit_helper_connector_hdmi_init_with_edid(test,
->> +				BIT(HDMI_COLORSPACE_RGB) |
->> +				BIT(HDMI_COLORSPACE_YUV420),
->> +				12,
->> +				test_edid_hdmi_1080p_rgb_yuv_4k_yuv420_dc_max_200mhz);
->> +	KUNIT_ASSERT_NOT_NULL(test, priv);
->> +
->> +	drm = &priv->drm;
->> +	crtc = priv->crtc;
->> +	conn = &priv->connector;
->> +	info = &conn->display_info;
->> +	KUNIT_ASSERT_TRUE(test, info->is_hdmi);
->> +	KUNIT_ASSERT_GT(test, info->max_tmds_clock, 0);
->> +	KUNIT_ASSERT_TRUE(test, conn->ycbcr_420_allowed);
->> +
->> +	yuv420_only_mode = drm_kunit_display_mode_from_cea_vic(test, drm, 95);
->> +	KUNIT_ASSERT_NOT_NULL(test, yuv420_only_mode);
->> +	KUNIT_ASSERT_TRUE(test, drm_mode_is_420_only(info, yuv420_only_mode));
->> +
->> +	rate = drm_hdmi_compute_mode_clock(yuv420_only_mode, 12, HDMI_COLORSPACE_YUV420);
->> +	KUNIT_ASSERT_GT(test, rate, info->max_tmds_clock * 1000);
->> +
->> +	rate = drm_hdmi_compute_mode_clock(yuv420_only_mode, 10, HDMI_COLORSPACE_YUV420);
->> +	KUNIT_ASSERT_LT(test, rate, info->max_tmds_clock * 1000);
->> +
->> +	drm_modeset_acquire_init(&ctx, 0);
->> +
->> +	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
->> +						     crtc, conn,
->> +						     yuv420_only_mode,
->> +						     &ctx);
->> +	KUNIT_EXPECT_EQ(test, ret, 0);
+> Please do not keep repeating the same. You again describe the code. We
+> ask why do you implement that way?
 > 
-> We need to handle EDEADLK
-
-Yeah, that's the open disscussion in the previous patch.
-
->> +
->> +	conn_state = conn->state;
->> +	KUNIT_ASSERT_NOT_NULL(test, conn_state);
->> +
->> +	KUNIT_EXPECT_EQ(test, conn_state->hdmi.output_bpc, 10);
->> +	KUNIT_EXPECT_EQ(test, conn_state->hdmi.output_format, HDMI_COLORSPACE_YUV420);
->> +	KUNIT_EXPECT_EQ(test, conn_state->hdmi.tmds_char_rate, yuv420_only_mode->clock * 625);
->> +
->> +	drm_modeset_drop_locks(&ctx);
->> +	drm_modeset_acquire_fini(&ctx);
->> +}
->> +
->>  /*
->>   * Test that if:
->>   * - We have an HDMI connector supporting both RGB and YUV422 and up to
->> @@ -1292,7 +1361,7 @@ static void drm_test_check_max_tmds_rate_bpc_fallback(struct kunit *test)
->>   * Then we will prefer to keep the RGB format with a lower bpc over
->>   * picking YUV422.
->>   */
->> -static void drm_test_check_max_tmds_rate_format_fallback(struct kunit *test)
->> +static void drm_test_check_max_tmds_rate_format_fallback_yuv422(struct kunit *test)
->>  {
->>  	struct drm_atomic_helper_connector_hdmi_priv *priv;
->>  	struct drm_modeset_acquire_ctx ctx;
->> @@ -1351,6 +1420,79 @@ static void drm_test_check_max_tmds_rate_format_fallback(struct kunit *test)
->>  	drm_modeset_acquire_fini(&ctx);
->>  }
->>  
->> +/*
->> + * Test that if:
->> + * - We have an HDMI connector supporting both RGB and YUV420 and up to
->> + *   12 bpc
->> + * - The chosen mode has a TMDS character rate higher than the display
->> + *   supports in RGB/10bpc but lower than the display supports in
->> + *   RGB/8bpc
->> + * - The chosen mode has a TMDS character rate lower than the display
->> + *   supports in YUV420/12bpc.
->> + *
->> + * Then we will prefer to keep the RGB format with a lower bpc over
->> + * picking YUV420.
->> + */
->> +static void drm_test_check_max_tmds_rate_format_fallback_yuv420(struct kunit *test)
+>> regmap locking schema. Set of registers are indirect and are accessed by
+>> mailboxes where multiple register accesses need to be done atomically.
 > 
-> Are you sure about the name here? It looks like we're not testing the
-> YUV420 fallback at all?
+> regmap handles that, but anyway, how multiple register access to ID
+> registers happen? From what module? Which code does it? So they write
+> here something in the middle and reading would be unsynced?
 
-The name is indead missleading, the '_yuv420' suffix is mainly used to
-differentiate this test case from the above using '_yuv422' - both keep
-RGB format eventually.
+OK, I'm going to try to explain in detail...
 
-What about replacing '_format_fallback_' with '_bpc_fallback_ignore_' in
-both cases?  E.g.:
+The device have 16 register pages where each of them has 128 registers 
+and register 0x7f on each page is a page selector.
 
-  drm_test_check_max_tmds_rate_bpc_fallback_ignore_yuv422()
-  drm_test_check_max_tmds_rate_bpc_fallback_ignore_yuv420()
+Pages 0..9 contain direct registers that can be arbitrary read or 
+written in any order. For these registers implicit regmap locking is 
+sufficient.
 
-> 
->> +{
->> +	struct drm_atomic_helper_connector_hdmi_priv *priv;
->> +	struct drm_modeset_acquire_ctx ctx;
->> +	struct drm_connector_state *conn_state;
->> +	struct drm_display_info *info;
->> +	struct drm_display_mode *preferred;
->> +	unsigned long long rate;
->> +	struct drm_connector *conn;
->> +	struct drm_device *drm;
->> +	struct drm_crtc *crtc;
->> +	int ret;
->> +
->> +	priv = drm_kunit_helper_connector_hdmi_init_with_edid(test,
->> +				BIT(HDMI_COLORSPACE_RGB) |
->> +				BIT(HDMI_COLORSPACE_YUV420),
->> +				12,
->> +				test_edid_hdmi_4k_rgb_yuv420_dc_max_340mhz);
->> +	KUNIT_ASSERT_NOT_NULL(test, priv);
->> +
->> +	drm = &priv->drm;
->> +	crtc = priv->crtc;
->> +	conn = &priv->connector;
->> +	info = &conn->display_info;
->> +	KUNIT_ASSERT_TRUE(test, info->is_hdmi);
->> +	KUNIT_ASSERT_GT(test, info->max_tmds_clock, 0);
->> +	KUNIT_ASSERT_TRUE(test, conn->ycbcr_420_allowed);
->> +
->> +	preferred = find_preferred_mode(conn);
->> +	KUNIT_ASSERT_NOT_NULL(test, preferred);
->> +	KUNIT_ASSERT_FALSE(test, preferred->flags & DRM_MODE_FLAG_DBLCLK);
->> +	KUNIT_ASSERT_TRUE(test, drm_mode_is_420_also(info, preferred));
->> +
->> +	rate = drm_hdmi_compute_mode_clock(preferred, 8, HDMI_COLORSPACE_RGB);
->> +	KUNIT_ASSERT_LT(test, rate, info->max_tmds_clock * 1000);
->> +
->> +	rate = drm_hdmi_compute_mode_clock(preferred, 10, HDMI_COLORSPACE_RGB);
->> +	KUNIT_ASSERT_GT(test, rate, info->max_tmds_clock * 1000);
->> +
->> +	rate = drm_hdmi_compute_mode_clock(preferred, 12, HDMI_COLORSPACE_YUV420);
->> +	KUNIT_ASSERT_LT(test, rate, info->max_tmds_clock * 1000);
->> +
->> +	drm_modeset_acquire_init(&ctx, 0);
->> +
->> +	ret = drm_kunit_helper_enable_crtc_connector(test, drm,
->> +						     crtc, conn,
->> +						     preferred,
->> +						     &ctx);
->> +	KUNIT_EXPECT_EQ(test, ret, 0);
->> +
->> +	conn_state = conn->state;
->> +	KUNIT_ASSERT_NOT_NULL(test, conn_state);
->> +
->> +	KUNIT_EXPECT_EQ(test, conn_state->hdmi.output_bpc, 8);
->> +	KUNIT_EXPECT_EQ(test, conn_state->hdmi.output_format, HDMI_COLORSPACE_RGB);
->> +
->> +	drm_modeset_drop_locks(&ctx);
->> +	drm_modeset_acquire_fini(&ctx);
->> +}
-> 
->>  /*
->>   * Test that if a driver and screen supports RGB and YUV formats, and we
->>   * try to set the VIC 1 mode, we end up with 8bpc RGB even if we could
->> @@ -1738,8 +1880,10 @@ static struct kunit_case drm_atomic_helper_connector_hdmi_check_tests[] = {
->>  	KUNIT_CASE(drm_test_check_broadcast_rgb_crtc_mode_not_changed),
->>  	KUNIT_CASE(drm_test_check_disable_connector),
->>  	KUNIT_CASE(drm_test_check_hdmi_funcs_reject_rate),
->> -	KUNIT_CASE(drm_test_check_max_tmds_rate_bpc_fallback),
->> -	KUNIT_CASE(drm_test_check_max_tmds_rate_format_fallback),
-> 
-> These name changes belong in a separate patch
+Pages 10..16 contain indirect registers and these pages are called 
+mailboxes. Each mailbox cover specific part of hardware (synth, DPLL 
+channel, input ref, output...) and each of them contain mailbox_mask 
+register and mailbox_sem register. The rest of registers in the 
+particular page (mailbox) are latch registers.
 
-Ack.
+Read operation (described in patch 8 in this v1 series):
+E.g. driver needs to read frequency of input pin 4:
+1) it set value of mailbox_mask (in input mailbox/page) to 4
+2) it set mailbox_sem register (--"--) to read operation
+3) it polls mailbox_sem to be cleared (firmware fills latch registers)
+4) it reads frequency latch register (--"--) filled by FW
 
->> +	KUNIT_CASE(drm_test_check_max_tmds_rate_bpc_fallback_rgb),
->> +	KUNIT_CASE(drm_test_check_max_tmds_rate_bpc_fallback_yuv420),
->> +	KUNIT_CASE(drm_test_check_max_tmds_rate_format_fallback_yuv422),
->> +	KUNIT_CASE(drm_test_check_max_tmds_rate_format_fallback_yuv420),
-> 
-> We should also test what happens when the monitor or connector doesn't
-> support YUV420, and we'd still need to fallback. In such a case, we
-> should return an error.
+Write is similar but opposite:
+1) it writes frequency to freq latch register (in input mb)
+2) it set value of mailbox_mask
+3) it set mailbox_sem to write operation
+4) it polls mailbox_sem to be cleared (write was finished)
 
-Ack.
+Steps 1-4 for both cases have to be done atomically - other reader 
+cannot modify mailbox_sem prior step 4 is finished and other writer 
+cannot touch latch registers prior step 4 is finished.
 
->>  	KUNIT_CASE(drm_test_check_output_bpc_crtc_mode_changed),
->>  	KUNIT_CASE(drm_test_check_output_bpc_crtc_mode_not_changed),
->>  	KUNIT_CASE(drm_test_check_output_bpc_dvi),
->> diff --git a/drivers/gpu/drm/tests/drm_kunit_edid.h b/drivers/gpu/drm/tests/drm_kunit_edid.h
->> index ff316e6114d65c96b1338cd83bc0d8d9e6e143e9..8e9086df20c690f34623d7858c716032d77d0c26 100644
->> --- a/drivers/gpu/drm/tests/drm_kunit_edid.h
->> +++ b/drivers/gpu/drm/tests/drm_kunit_edid.h
->> @@ -695,4 +695,114 @@ static const unsigned char test_edid_hdmi_1080p_rgb_yuv_4k_yuv420_dc_max_200mhz[
->>  	0x00, 0x00, 0x00, 0xca
->>  };
->>  
->> +/*
->> + * edid-decode (hex):
->> + *
->> + * 00 ff ff ff ff ff ff 00 31 d8 34 00 00 00 00 00
->> + * ff 23 01 03 80 60 36 78 0f ee 91 a3 54 4c 99 26
->> + * 0f 50 54 20 00 00 01 01 01 01 01 01 01 01 01 01
->> + * 01 01 01 01 01 01 04 74 00 30 f2 70 5a 80 b0 58
->> + * 8a 00 40 84 63 00 00 1e 00 00 00 fc 00 54 65 73
->> + * 74 20 45 44 49 44 0a 20 20 20 00 00 00 fd 00 18
->> + * 55 18 5e 22 00 0a 20 20 20 20 20 20 00 00 00 10
->> + * 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 ce
->> + *
->> + * 02 03 27 31 41 5f 6c 03 0c 00 10 00 78 44 20 00
->> + * 00 01 03 6d d8 5d c4 01 44 80 07 00 00 00 00 00
->> + * 00 e3 0f 01 00 e1 0e 00 00 00 00 00 00 00 00 00
->> + * 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> + * 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> + * 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> + * 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> + * 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 84
->> + *
->> + * ----------------
->> + *
->> + * Block 0, Base EDID:
->> + *   EDID Structure Version & Revision: 1.3
->> + *   Vendor & Product Identification:
->> + *     Manufacturer: LNX
->> + *     Model: 52
->> + *     Model year: 2025
->> + *   Basic Display Parameters & Features:
->> + *     Digital display
->> + *     Maximum image size: 96 cm x 54 cm
->> + *     Gamma: 2.20
->> + *     RGB color display
->> + *     Default (sRGB) color space is primary color space
->> + *     First detailed timing is the preferred timing
->> + *     Supports GTF timings within operating range
->> + *   Color Characteristics:
->> + *     Red  : 0.6396, 0.3300
->> + *     Green: 0.2998, 0.5996
->> + *     Blue : 0.1503, 0.0595
->> + *     White: 0.3125, 0.3291
->> + *   Established Timings I & II:
->> + *     DMT 0x04:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
->> + *   Standard Timings: none
->> + *   Detailed Timing Descriptors:
->> + *     DTD 1:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz (1600 mm x 900 mm)
->> + *                  Hfront  176 Hsync  88 Hback  296 Hpol P
->> + *                  Vfront    8 Vsync  10 Vback   72 Vpol P
->> + *     Display Product Name: 'Test EDID'
->> + *     Display Range Limits:
->> + *       Monitor ranges (GTF): 24-85 Hz V, 24-94 kHz H, max dotclock 340 MHz
->> + *     Dummy Descriptor:
->> + *   Extension blocks: 1
->> + * Checksum: 0xce
->> + *
->> + * ----------------
->> + *
->> + * Block 1, CTA-861 Extension Block:
->> + *   Revision: 3
->> + *   Supports YCbCr 4:4:4
->> + *   Supports YCbCr 4:2:2
->> + *   Native detailed modes: 1
->> + *   Video Data Block:
->> + *     VIC  95:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
->> + *   Vendor-Specific Data Block (HDMI), OUI 00-0C-03:
->> + *     Source physical address: 1.0.0.0
->> + *     DC_48bit
->> + *     DC_36bit
->> + *     DC_30bit
->> + *     DC_Y444
->> + *     Maximum TMDS clock: 340 MHz
->> + *     Extended HDMI video details:
->> + *   Vendor-Specific Data Block (HDMI Forum), OUI C4-5D-D8:
->> + *     Version: 1
->> + *     Maximum TMDS Character Rate: 340 MHz
->> + *     SCDC Present
->> + *     Supports 16-bits/component Deep Color 4:2:0 Pixel Encoding
->> + *     Supports 12-bits/component Deep Color 4:2:0 Pixel Encoding
->> + *     Supports 10-bits/component Deep Color 4:2:0 Pixel Encoding
->> + *   YCbCr 4:2:0 Capability Map Data Block:
->> + *     VIC  95:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
->> + *   YCbCr 4:2:0 Video Data Block:
->> + * Checksum: 0x84
->> + */
->> +static const unsigned char test_edid_hdmi_4k_rgb_yuv420_dc_max_340mhz[] = {
->> +	0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x31, 0xd8, 0x34, 0x00,
->> +	0x00, 0x00, 0x00, 0x00, 0xff, 0x23, 0x01, 0x03, 0x80, 0x60, 0x36, 0x78,
->> +	0x0f, 0xee, 0x91, 0xa3, 0x54, 0x4c, 0x99, 0x26, 0x0f, 0x50, 0x54, 0x20,
->> +	0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
->> +	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x04, 0x74, 0x00, 0x30, 0xf2, 0x70,
->> +	0x5a, 0x80, 0xb0, 0x58, 0x8a, 0x00, 0x40, 0x84, 0x63, 0x00, 0x00, 0x1e,
->> +	0x00, 0x00, 0x00, 0xfc, 0x00, 0x54, 0x65, 0x73, 0x74, 0x20, 0x45, 0x44,
->> +	0x49, 0x44, 0x0a, 0x20, 0x20, 0x20, 0x00, 0x00, 0x00, 0xfd, 0x00, 0x18,
->> +	0x55, 0x18, 0x5e, 0x22, 0x00, 0x0a, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
->> +	0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
->> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xce, 0x02, 0x03, 0x27, 0x31,
->> +	0x41, 0x5f, 0x6c, 0x03, 0x0c, 0x00, 0x10, 0x00, 0x78, 0x44, 0x20, 0x00,
->> +	0x00, 0x01, 0x03, 0x6d, 0xd8, 0x5d, 0xc4, 0x01, 0x44, 0x80, 0x07, 0x00,
->> +	0x00, 0x00, 0x00, 0x00, 0x00, 0xe3, 0x0f, 0x01, 0x00, 0xe1, 0x0e, 0x00,
->> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
->> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
->> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
->> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
->> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
->> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
->> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
->> +	0x00, 0x00, 0x00, 0x84
->> +};
-> 
-> This should be a separate patch as well, but most importantly it's
-> pretty hard to know the difference with the one you introduced in a
-> previous patch. We should document it better than just with edid-decode.
+The module dpll_zl3073x (later in this series) and ptp_zl3073x (will be 
+posted later) use this intensively from multiple contexts (DPLL core 
+callbacks and monitoring threads).
 
-Ack.
+So I have decided to use the custom locking scheme for accessing 
+registers instead of regmap locking that cannot guarantee this atomicity.
 
-> Also, how did you generate it?
+Would it be better to leave implicit regmap locking scheme for direct 
+registers and to have extra locking for mailboxes? If so, single mutex 
+for all mailboxes or separate mutex for each mailbox type?
 
-Oh, that was a quite painful experience :-(.  Started from a full
-feature EDID (grabbed from real HW), then used wxedid to drop unneeded
-stuff up to the bare minimum (while also trying to deal with some
-crashes or unexpected behavior of the tool).  And finally raw editing
-the hex data since wxedid is currently not able to handle
-'Vendor-Specific Data Block (HDMI Forum), OUI C4-5D-D8'.
+Thanks,
+Ivan
+
 
