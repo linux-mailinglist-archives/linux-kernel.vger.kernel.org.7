@@ -1,92 +1,119 @@
-Return-Path: <linux-kernel+bounces-597808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6729A83EAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:30:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C34C7A83EE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9739817465C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:27:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E699E1D66
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354BC256C8A;
-	Thu, 10 Apr 2025 09:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB002571C5;
+	Thu, 10 Apr 2025 09:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocSI26iM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DH9bbBxr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D7C204859;
-	Thu, 10 Apr 2025 09:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91EB256C90;
+	Thu, 10 Apr 2025 09:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744277227; cv=none; b=CvcdGq72wFl6O5o9V+PkBoTMo8FFVtsnOix1d3sy8bArXlRuoCpSLmH4FNjciH4DRK3CjeyVkd9r7EqGnYn5Ll/8nSifSvHUqKVO2KjSPFkhffgy17WxM3X61MG3TNEiXMkSzuvZ/hXhTscCNd+UEiqNU9lPh5uhnid9sn/ln5Y=
+	t=1744277318; cv=none; b=p1nfwjvi/FheLGrGB4e1PHZv5CXFUZp60iO+tHdqascNkBVWV03nCt+eRwGQJrBvXeb+zRdIhlidtEZ9wf26/qos997NW6sWYQ6YRuEmHxUOh4wBT64ABa0auBqGjY8AzIY1+YKvhGwdB4sQCWc/qLg1pFyg3xVosvIa4cEM7Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744277227; c=relaxed/simple;
-	bh=KspGeLOPCiTHid+2kSxIjeK1u5cGf2Od+QXXtZqsIh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TSA8c+FBIH73PjWegCcVaEtqIlJhFrvwTO9R7fguhX0NYi0dTMpglr7CLCdJCES+u5FioYKQdZ3TeQzY7pPqWtCw8JQslma+gk1y6aqV7RdP3eB6a/ETvcq4azqajQQwWjnM49JTRYG4BFwBpMxA9AdhnXltdmCnYaCgqH7pnCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocSI26iM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B9EC4CEDD;
-	Thu, 10 Apr 2025 09:27:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744277226;
-	bh=KspGeLOPCiTHid+2kSxIjeK1u5cGf2Od+QXXtZqsIh4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ocSI26iMU7FdNcrINygQcY7Lcn+vq/yI7C5/UVXKVcI7Q/btHJHf5E4cn/BHo4Yzo
-	 mlUjxMKeLTGtqhPFynDu16aJJi4NhBGY/Kz7FxMuEj9vnGVFdEOhkBAlowSKcgKe5I
-	 XmmbceVnFkaqjzbON6krUSN/KevxV8ZT4kg8pTzdyik8Ms8HSOTb5HpG5J8GCmcX2l
-	 gUw0GU+doh46JotLv+MgBhg7q3yiubjjoVcHBdSjS0Kt5wR36ugc0aKElSWr7CxY+9
-	 m+N1J1gUNkP6w8larc8lD2ZwSCMrEtsLWKcJ8GMGTv0zykk28eKsVWOinEbYaFC4ms
-	 to5vrzXbFKbig==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u2oBh-000000006Sq-3JDM;
-	Thu, 10 Apr 2025 11:27:10 +0200
-Date: Thu, 10 Apr 2025 11:27:09 +0200
-From: Johan Hovold <johan@kernel.org>
-To: jens.glathe@oldschoolsolutions.biz
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] arm64: dts: qcom: x1e80100-hp-x14: remove PS8830
- retimer 1 definitions
-Message-ID: <Z_eO7RUI4c7NXt22@hovoldconsulting.com>
-References: <20250410-hp-x14-v1-0-b4e5ca253ec9@oldschoolsolutions.biz>
- <20250410-hp-x14-v1-2-b4e5ca253ec9@oldschoolsolutions.biz>
+	s=arc-20240116; t=1744277318; c=relaxed/simple;
+	bh=SPlSdN2gYFFkaeYx3wI2cVeA5iCWnjK1bIIn+mR/MWs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fq6BF2XjqPaDFnEMFlqR1gFVEJt24QD4JjQI2jNked5LAtSJ8msK48OnGLb31b3Dhk9KyTa27yB1Qi8fHFRkXfmRGcmGiMhi1UfZGOAXXj0FJGjf8cnTb0+xEcr20GgOtEYfu4bcJ7b2G+v+0w2rm4WqMXEw/mwSHeSMw3W10os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DH9bbBxr; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744277316; x=1775813316;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=SPlSdN2gYFFkaeYx3wI2cVeA5iCWnjK1bIIn+mR/MWs=;
+  b=DH9bbBxrhu4YfD9QXnB16xVae48SaTOCueuULcedC1BYHCYwEAak+JWh
+   Hu4DcZBzq7FI8jW/iIAInYP3kLZ5k+s0W1P4cjwVNEgKsovsfXBYPzjwW
+   jJ64KyBhChZEebSWknQ8AktAtPKLtzC+WflF5f24te9ZEHevZ79Mmn8j2
+   TWg9P4w+94GQ+Z7Ztpx0oTAmYHCQZAVrunG/bEIjEUhWZu0ukM3bM/sh0
+   I5LjZQbXCLTJGkNFov8Ozd1mca0elUrZxldaiqMHp8AjN2WZgox3cp95k
+   p0iXLc6NDHqiiazRd+Uli8hyu9JkQSf8TyqgcGtNhcSbKK2H7xJJROvDG
+   Q==;
+X-CSE-ConnectionGUID: jli9ZyHaQN607HngNpFeiQ==
+X-CSE-MsgGUID: lZ8NmSLiQNWQdE8CKy1PYw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11399"; a="57168207"
+X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
+   d="scan'208";a="57168207"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 02:27:37 -0700
+X-CSE-ConnectionGUID: abz7UXdRS6W2DsU4AlI4/A==
+X-CSE-MsgGUID: 6CE/erL6SNGiu35pCr4KCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
+   d="scan'208";a="152025459"
+Received: from kwywiol-mobl1.ger.corp.intel.com (HELO [10.245.83.152]) ([10.245.83.152])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 02:27:36 -0700
+Message-ID: <bd5308eb-57a3-4484-8be6-b41ee30233ae@linux.intel.com>
+Date: Thu, 10 Apr 2025 11:27:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410-hp-x14-v1-2-b4e5ca253ec9@oldschoolsolutions.biz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] accel/ivpu: Add handling of
+ VPU_JSM_STATUS_MVNCI_CONTEXT_VIOLATION_HW
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ Karol Wachowski <karol.wachowski@intel.com>
+References: <20250408095711.635185-1-jacek.lawrynowicz@linux.intel.com>
+ <8d96c75d-e8fb-446b-a85c-803a2b5212ed@linux.intel.com>
+ <2025041011-borrowing-shrug-781e@gregkh>
+Content-Language: en-US
+From: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
+ Gdansk - KRS 101882 - NIP 957-07-52-316
+In-Reply-To: <2025041011-borrowing-shrug-781e@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 10, 2025 at 11:13:23AM +0200, Jens Glathe via B4 Relay wrote:
-> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Hi,
+
+On 4/10/2025 10:03 AM, Greg Kroah-Hartman wrote:
+> On Thu, Apr 10, 2025 at 09:49:37AM +0200, Jacek Lawrynowicz wrote:
+>> Hi,
+>>
+>> This is an important patch for the Intel NPU.
+>> Is there anything it is missing to be included in stable?
 > 
-> Clean-up of regulators, i2c definition, pinctrl
+> Patience, you only sent this:
 > 
-> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>> On 4/8/2025 11:57 AM, Jacek Lawrynowicz wrote:
+> 
+> 2 days ago, AFTER the latest of -rc releases was sent out for review,
+> and those kernels have NOT even been released yet!
+> 
+> [rant about how you all know this process works deleted as it was
+>  just snarky on my side, although quite cathartic, thanks for letting me
+>  vent...]
+> 
+> Relax, it will get handled when we can get to it.  To help out, please
+> take the time to review pending stable backported patches that have been
+> submitted to the mailing list ahead of yours.
 
-I already sent a patch removing the bogus retimer here (you were CCed):
+Yeah, sorry about that. It seems I'm still learning the art of patience in the kernel processes.
+I didn't mean to rush anything. I was just worried my patch might have been overlooked due to a typo or a wrong commit message tag.
 
-	https://lore.kernel.org/lkml/20250328084154.16759-1-johan+linaro@kernel.org/
+I'll make sure to review the backported patches in the meantime.
 
-I suggest you rebase this series on that one and mention the dependency
-in the cover letter.
+And thanks for holding back on the rant. I really think that the standard set by Linus is not healthy.
 
-Similarly, Juerg already sent a patch enabling the repeaters here:
+Regards,
+Jacek
 
-	https://lore.kernel.org/r/20250319160509.1812805-1-juerg.haefliger@canonical.com
-
-so you can drop your 5/5 as well.
-
-Johan
 
