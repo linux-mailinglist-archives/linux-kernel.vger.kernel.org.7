@@ -1,109 +1,86 @@
-Return-Path: <linux-kernel+bounces-597806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0202EA83EC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:33:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362FFA83E9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67EDD8A53FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:26:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAB7C1B61373
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A126D258CFB;
-	Thu, 10 Apr 2025 09:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677DF257450;
+	Thu, 10 Apr 2025 09:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LUDB+o5S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ss6Y/uvn"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAC7258CE5
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 09:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8E02571C4;
+	Thu, 10 Apr 2025 09:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744277098; cv=none; b=Hg/0n/1TMTyyL9Vnfvyy6YUfHugXUTRutbH1TGai2uHsm+9izj4e2KiRaArD2UaRlVwru8ZYQlxc7pfxi8XVcQewALcIScBBHWssUirh/gP3NRkqybbzHoJ3PVDAIPrzQO/u1isC6Ww61j6SUEri4pPQsKSDDhEkj5H7HkXHbPE=
+	t=1744277090; cv=none; b=NHpgym3B+nS36uFYsxeym2pkbicx7oE8oamQgeKKLJGus0B3CraRnBBIGe8v2fsWcYMOQ4oVuho5N4J88TB3X1io9HGJOoKItCDUUew925Hqf38sr0SangEY4IEpw7xx4eUiOhszzepVfUrXtmz7iA7RDuI8f0Z7/0jTtdH+t/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744277098; c=relaxed/simple;
-	bh=sRgGEEUvN7WDn/uIL41kT3ggZ+XEuuqACqV8BYZ001U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t/p6+dC6ytk2cLcX+0XTbjZf1DPxl+sn23HkHI+DxCW3+lsECTnTG8WEfz55xiN5x90dPoxZC56y60xG/Xtq8i8FzFb9gE7l/4yfJLlX2U89/Di/+YciIBEdzxw3YG/DNFcXoOrtVEkGy+4OW1acI+9j1dCqKd2GOgL7UOpOcH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LUDB+o5S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E63C4CEE3;
-	Thu, 10 Apr 2025 09:24:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744277097;
-	bh=sRgGEEUvN7WDn/uIL41kT3ggZ+XEuuqACqV8BYZ001U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LUDB+o5S34YvwaLF9uRuzsFRTkiwhxrIuuGAGvyBb7gtv3bfckx2kI+nESQZTngGu
-	 J1+huw2I4Fzuge2W+Pou8I5UwdHVxlSoij2uRD91jt4F819T9zAWVnfVfre+/shGkk
-	 k4lr30gaq3uDJyMh5INSQfEYZ8ICMOzOa40CEGcDVVij2c/le85Kq3laAt9CPC0pvP
-	 VNF0Ibylt5tmhdOBOIu4hqz2BQk4gkyZ15OsUGegdyWTscrj5yb+J/Q2/lPwaQA8nx
-	 VA41jEeyrVddAE7JKvc+jkX20ne7JQIWHMJpByE6nMAYjXSOS1bZpeL8RALv7K1h8F
-	 ssIXEIx4ZjNWQ==
-From: alexs@kernel.org
-To: 
-Cc: linux-kernel@vger.kernel.org,
-	Alex Shi <alexs@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH 4/4] sched/isolation: don't alloc twice for housekeeping.cpumasks
-Date: Thu, 10 Apr 2025 17:24:19 +0800
-Message-ID: <20250410092423.9831-4-alexs@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250410092423.9831-1-alexs@kernel.org>
-References: <20250410092423.9831-1-alexs@kernel.org>
+	s=arc-20240116; t=1744277090; c=relaxed/simple;
+	bh=Fau/kAiTbyGwGpO+NIYPda5JvoXJAT5WKGkFJ0250vI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=li5pOPtZmKHwqferkeeamTLwF74w63GSIuRa0KxlKUFCc3TKu3TvP6E8ztzmHwwFgc8wiVipOQMh/QlkgBFmKAI7r4r+IPPUmTfuq3LChGzyEpFt1QF2oB3bv91jW2lcqo5gv+cpHxAcaoNjI5wybIxxVzUqLYqQcCOWjy49EaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ss6Y/uvn; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YCyam3MeYKSW2wRMpKixBoxFry3Jmba2LiJsdJTIL88=; b=Ss6Y/uvnSSk45Oqy0FCg60u+cc
+	ea8FD+2dhy0s23DRtx7Gp/YI+CKHmAqVb62kS4N0arOUHu94fI6yrpDyR3tPyGWqdaV5dTSi1wRTk
+	GidBobISVOtDOmtNShNptY9TMS0Fc0qGhgzrd5/5JZm155SVWuSky/AXSLPnlHXrMNF5+eFOtB/o4
+	1trfjOAl7SpM3JNHo0ZfgxfiibYl+5kqiCpreWpAqRmKI7vPvHBk3oWLYmrTrUkmo0fmyHEF+A3SL
+	2GORQuDKRrtIw0oe7+k48hc4X90eduJkK/OjZ3KziEp1Fa9nj1lT1o9pZQG8ogVkhZItgSrfc9K+F
+	ONIQpL/w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u2o9P-00000009vm9-45pJ;
+	Thu, 10 Apr 2025 09:24:47 +0000
+Date: Thu, 10 Apr 2025 02:24:47 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ublk: skip blk_mq_tag_to_rq() bounds check
+Message-ID: <Z_eOX-8QHxsq21Rz@infradead.org>
+References: <20250409024955.3626275-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250409024955.3626275-1-csander@purestorage.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-From: Alex Shi <alexs@kernel.org>
+On Tue, Apr 08, 2025 at 08:49:54PM -0600, Caleb Sander Mateos wrote:
+> The ublk driver calls blk_mq_tag_to_rq() in several places.
+> blk_mq_tag_to_rq() tolerates an invalid tag for the tagset, checking it
+> against the number of tags and returning NULL if it is out of bounds.
+> But all the calls from the ublk driver have already verified the tag
+> against the ublk queue's queue depth. In ublk_commit_completion(),
+> ublk_handle_need_get_data(), and case UBLK_IO_COMMIT_AND_FETCH_REQ, the
+> tag has already been checked in __ublk_ch_uring_cmd(). In
+> ublk_abort_queue(), the loop bounds the tag by the queue depth. In
+> __ublk_check_and_get_req(), the tag has already been checked in
+> __ublk_ch_uring_cmd(), in the case of ublk_register_io_buf(), or in
+> ublk_check_and_get_req().
+> 
+> So just index the tagset's rqs array directly in the ublk driver.
+> Convert the tags to unsigned, as blk_mq_tag_to_rq() does.
 
-The variable housekeeping.cpumasks[type] will be alloced twice if
-nohz_full and isolcpus are both setup in cmdline, that shouldn't to do
-so. Just alloc once is enough and save a bit memory.
-
-Signed-off-by: Alex Shi <alexs@kernel.org>
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
----
- kernel/sched/isolation.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-index e93776740725..44ab46b31f6b 100644
---- a/kernel/sched/isolation.c
-+++ b/kernel/sched/isolation.c
-@@ -103,10 +103,10 @@ void __init housekeeping_init(void)
- static void __init housekeeping_setup_type(enum hk_type type,
- 					   cpumask_var_t housekeeping_staging)
- {
-+	if (cpumask_empty(housekeeping.cpumasks[type]))
-+		alloc_bootmem_cpumask_var(&housekeeping.cpumasks[type]);
- 
--	alloc_bootmem_cpumask_var(&housekeeping.cpumasks[type]);
--	cpumask_copy(housekeeping.cpumasks[type],
--		     housekeeping_staging);
-+	cpumask_copy(housekeeping.cpumasks[type], housekeeping_staging);
- }
- 
- static int __init housekeeping_setup(char *str, unsigned long flags)
--- 
-2.47.1
+Poking directly into block layer internals feels like a really bad
+idea.  If this is important enough we'll need a non-checking helper
+in the core code, but as with all these kinds of micro-optimizations
+it better have a really good justification.
 
 
