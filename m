@@ -1,141 +1,318 @@
-Return-Path: <linux-kernel+bounces-598332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83AFA84502
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:38:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856BEA84503
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 15:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B213219E0330
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:35:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10BC318889E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65124213E61;
-	Thu, 10 Apr 2025 13:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D414C28A3EF;
+	Thu, 10 Apr 2025 13:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DU6gh5rU"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z7B34her"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCF828C5D8
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 13:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744292062; cv=none; b=QmQm2O5ihvA41UrNStOz4sZlA9BU76VD58pJobM0QOe9jQhMX42arrjhw+XUX/OIwLpZRHscbtrJSVhb/Y4pSPM3uZyV3vXc/r7hIiTkxCqTHJ27oN9VKiRl0AKOU+NL66SResE4Ewkdur7aorcJDjZi1GeamAKM1IstlrEVReQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744292062; c=relaxed/simple;
-	bh=H2/UX7n+Kzz47tTU6RvNuKVCWo3ZBMBdtcTOcUn9WSM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mYUKhjR67zuWv+IgWW2+Wf4Uc23mXYGjwz8uJwuTEAFZueWWEJoLTPy8lfYwk+GWZwaJqM3rvtVKCOJjca969TIVCpuTbdGRarS5JVHZy7IVrr5A57WD5BE3NvX4A2gnOfM0TTWFanpjXAF8n3V1PS8EoryNFSC3PCqpA4FTe00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DU6gh5rU; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22409077c06so10880575ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 06:34:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744292061; x=1744896861; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=snDm+R9HSu34qLr874FxLnOvyHahTzryBYCxyI70mec=;
-        b=DU6gh5rU5lG9r/QDIdiLanZDdMBbO3W9iStDKbojfhCuxnfI3rH2Tq49rum9j6rSWo
-         3npQbaTqbpiwhPNYgf8gakf9OCIh9Hr0d/ASAOz2Ou3La6qp7ygH2aWSwT1whEMJbgmc
-         ernraw/jND0enOPe/SQa/VVzW4DeTB9Mn8hUrVTmGxMQTnquTn2XaWA4WWX8pkV83tiS
-         kdGHPkATVRn3HhlflOYMOCwsss1tNN947sbvNfN6iHbODH7rRlas8pX0L9f+vTPDFQ6k
-         gpJSA6vQ6XKNR1PMc0SYfDCvwU41+Zx79y8kkLa162uCaaI+H1KnDO7uTtaVqN1bNHJC
-         FloA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744292061; x=1744896861;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=snDm+R9HSu34qLr874FxLnOvyHahTzryBYCxyI70mec=;
-        b=BAEVwYyRVKocI4iXxdNYnQTljkSS4oC0bz/MaYDm0GjPdU+mtHiwml/W3CPjXhYP8M
-         K+lTKeMIugtYA19KreICaon+kWVZ7uSfIV/rIB7e0pVngrIUGVJX+/JTNN8iXiTAx4Kv
-         4ek+Bg/RCWzjBBzEnbTLE46cZDYNAlTEf50syqkfNhptxT4n5b86WOGaAWSKOy5Xt8jh
-         46OpdNZwJ8lRRp9IrCcvy1DzEfSQa68sekfVPTiHv8u8X495SYbAMtCNKHfDCM2fxkha
-         avYP/viEmTHaRe3M4rn31ti/4a903H6q/T1YwE7HB4uAVXF4qixiJ4hVNiSBYqn+N7Q1
-         d1XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpGp1n6YuH8x7DIUUubW/GaSSwVJOhvF9jUeJDfpfsNa/fZnYoF1i/Ys8KiH1uIbAmwKUo0geT/AtJO9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtx+0Y8DBmUnD63SJV+MCj900vM2gyNaOrfQXE0cx4D//b3bfP
-	+oqyNS3inGOG9MhmLcZ2RjvIvAnUUJYwzBBzG5ETaShLBeW9oP/d
-X-Gm-Gg: ASbGnctZUy7I+oUB0bjmXx0QmGayMQh5t3s77/Fby5gh+rIOBdEUfshNCsDMi8vtQGQ
-	p4LNMVodk/L7ly/gsSczF0POnhON0Yc0cpyAZqMl/K+vlwg3A1bNzYGYg7lyC/0COdsmWiKT2CP
-	KQHBXTRxIRBTUOTwVEyab1no8zwA99hcQkgHdflldSBdeHlfByQ7+326gf/ksFkPnHKRf57qftu
-	MDhp6FdTrIh0G8dpd8WWcjZu5ILN0UqLedSMId+jiwS/MRCPdls2XlAv00MJZN0yfo0RbD1Yxt8
-	hLMhokH3ouovoF575o9FiaAjbOt0lnfawi0uG95IVbJrfUtNCv07OZc=
-X-Google-Smtp-Source: AGHT+IG8FTT4kfyWPBOyAb7OIrEAVZZGG4LdxWb3S85G2ZZGHkha/cC8RTwaJM0VFBFY0ZFSfbmjFw==
-X-Received: by 2002:a17:902:e748:b0:229:1cef:4c83 with SMTP id d9443c01a7336-22be02d9318mr30954625ad.4.1744292060733;
-        Thu, 10 Apr 2025 06:34:20 -0700 (PDT)
-Received: from localhost.localdomain ([103.221.69.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7cb0400sm30121475ad.160.2025.04.10.06.34.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 06:34:20 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-phy@lists.infradead.org (open list:GENERIC PHY FRAMEWORK),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Amlogic Meson SoC support),
-	linux-amlogic@lists.infradead.org (open list:ARM/Amlogic Meson SoC support),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v1 6/6] phy: amlogic: phy-meson-axg-pcie: Fix PHY creation order in axg-pcie probe
-Date: Thu, 10 Apr 2025 19:03:21 +0530
-Message-ID: <20250410133332.294556-7-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250410133332.294556-1-linux.amoon@gmail.com>
-References: <20250410133332.294556-1-linux.amoon@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB78213E61;
+	Thu, 10 Apr 2025 13:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744292134; cv=fail; b=W5OePzFppBZSZPC59rIIvH8F7383anrnG0k5gkRewbKYFTTo3KVxePMFE9xVShzyfnD/E6YkAGH6i0Vvlu1LUks8nWaocKfRdetu6Bs4PuE/y+GxEjwtAMhfRd0LNMReiJldTXXEiDmW+ZNeD3PgeidJLUasYoleF7nGYD5hyy0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744292134; c=relaxed/simple;
+	bh=DGCbKXZZuNND5DXbRRgAcN50XCxCDtwXFXkQHGZcR9Y=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jgStTemrq/UUrkB0OYfxSpdN4wCoINTmOzrZ20nJaRgdNFsPZW/4iYCtlNfLXa4tUX8OcceraOpHHBFemiOWJvG7wwNLTh+cTeGwWLCFaOgKfUfszNtQJMPYWaZE8UHpOIYa/GVaHYBbitjBwHIRRdcjpj4gcUMzgPATl4/+0ag=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z7B34her; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744292133; x=1775828133;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=DGCbKXZZuNND5DXbRRgAcN50XCxCDtwXFXkQHGZcR9Y=;
+  b=Z7B34herbBORwG8NVVj4rZI5GZXUkuVNlFoxdx41wmrWQOZTrieRKQky
+   PT92vQ+NW5IpW5ecn8JQQpf0MNq945DsS7Lsx2ocr3t1a7XEN72lBcYZG
+   IVkgY/UFnaC/aOEG8GAKgoc5CLokTblaMsnUUVa1sKJntpVvx9aT+aopS
+   VIifDhlI/3zimv3S2TdBK+S1LbLRVmAwD+iegBTMpVAOtbtumopiWFxue
+   advYOmkMDV6B5DjVI3dqZ0/KHzDoLN+o1kkFQSOtAzV0NDllPRc+9N7/1
+   3roEDJwyjCfTiIzJOySL0t43aUF0oyNJOpZgjaun9U/1/xdd7p7NEytpG
+   A==;
+X-CSE-ConnectionGUID: EXhuXnvBRPC7/ye1vRyxWw==
+X-CSE-MsgGUID: O9bEzLrVSrCSUFGJr6WabQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="45950235"
+X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
+   d="scan'208";a="45950235"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 06:35:31 -0700
+X-CSE-ConnectionGUID: Ovc3Hr5hQN+A5MByPyvavQ==
+X-CSE-MsgGUID: fKkI8F7NQH+u3DMntaWYmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
+   d="scan'208";a="128879457"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 06:35:29 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 10 Apr 2025 06:35:03 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 10 Apr 2025 06:35:03 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.40) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 10 Apr 2025 06:34:19 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VdoxAO40+ii1CZwcPRuk11qVerOlPb7B+UefyuSJhTADdXq7PxusQ88QAo+bVbUuJ5LxO+xmDD63PDgMzyWbYfW6kkUAN7AC4kbVGLRgE3KLS55MY6Vs1nrBwi6mgN2ramoF7A5fFH2peGh+mnqSrXFxFEKHLX9MugfWZnO9Cti7RNN2A3jsr3aQdi5n2dspg3iSVog9mp35oOrMxVtwm1KkQ/b7+LMS+qxEcEFlx7XYSsavb7vBgxoPV3ss2TFUywzkdB8qcUCQGPwoYi8rFtn1rSXzMgtpKbws9DPqt46VDe4UjiDUb7TRteHLjdQ3nWE/cmHXHK/fTWLn+lZTEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mSS8F9Bt7O420R69GdizR9GtTUkHYIPCcRgAGBO/GKM=;
+ b=wTMQhOWGws/hevicoElOihk5qKNGtJUHta4qGZTg5jp4Fw4Uinecp/5PHD3+pJBKQNW0yE3kGkqp2DCat6csjxsHYBxpP4YSrX4DVEZy1crret345szyUiw9GcPK+TZmi97rRfPPB/GUjffjOqMdBOJYJ16B35mJGo2NCnIqkUPfcMbF2ayvlu4ABOzZqQpnjN2ejVGYPhiUaV2q4zvldUmhJy0l45tlX/UjzRGkvJ+2KWNZAOfy96v2j+1OaDC4Sx+s3iLkErU3osW+NWlnNf9Syb2DAiJ/KFhtYpTlAdPlxin3ablq1lkEFvfTw6N38yCXU8dkHeR1tEPfom5/FQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by PH7PR11MB8059.namprd11.prod.outlook.com (2603:10b6:510:24e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.23; Thu, 10 Apr
+ 2025 13:33:50 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%5]) with mapi id 15.20.8632.017; Thu, 10 Apr 2025
+ 13:33:50 +0000
+Message-ID: <7e3f2eb8-b668-4ac5-8b49-43eebff2b3e0@intel.com>
+Date: Thu, 10 Apr 2025 15:33:40 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-next 05/14] libeth: add control queue support
+To: Leon Romanovsky <leon@kernel.org>, Larysa Zaremba
+	<larysa.zaremba@intel.com>
+CC: <intel-wired-lan@lists.osuosl.org>, Tony Nguyen
+	<anthony.l.nguyen@intel.com>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet
+	<corbet@lwn.net>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, Jiri Pirko
+	<jiri@resnulli.us>, Tatyana Nikolova <tatyana.e.nikolova@intel.com>, "Andrew
+ Lunn" <andrew+netdev@lunn.ch>, Michael Ellerman <mpe@ellerman.id.au>, "Maciej
+ Fijalkowski" <maciej.fijalkowski@intel.com>, Lee Trager <lee@trager.us>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Sridhar Samudrala
+	<sridhar.samudrala@intel.com>, Jacob Keller <jacob.e.keller@intel.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>, Mateusz Polchlopek
+	<mateusz.polchlopek@intel.com>, Ahmed Zaki <ahmed.zaki@intel.com>,
+	<netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, "Karlsson, Magnus"
+	<magnus.karlsson@intel.com>, Emil Tantilov <emil.s.tantilov@intel.com>,
+	"Madhu Chittim" <madhu.chittim@intel.com>, Josh Hay <joshua.a.hay@intel.com>,
+	"Milena Olech" <milena.olech@intel.com>, <pavan.kumar.linga@intel.com>,
+	"Singhai, Anjali" <anjali.singhai@intel.com>, Phani R Burra
+	<phani.r.burra@intel.com>
+References: <20250408124816.11584-1-larysa.zaremba@intel.com>
+ <20250408124816.11584-6-larysa.zaremba@intel.com>
+ <20250410082137.GO199604@unreal>
+ <Z_ehEXmlEBREQWQM@soc-5CG4396X81.clients.intel.com>
+ <20250410112349.GP199604@unreal>
+ <Z_fAdLJ4quuP2lip@soc-5CG4396X81.clients.intel.com>
+ <20250410132706.GR199604@unreal>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250410132706.GR199604@unreal>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR2P278CA0053.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:53::11) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|PH7PR11MB8059:EE_
+X-MS-Office365-Filtering-Correlation-Id: 099892ef-d49c-4d79-25c1-08dd783453cb
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?YzZKYkhJT3R2c1VoaldFd1Zja2JaS1ZwNXdmUVFjOEI5bU5uODkyOFlWeld0?=
+ =?utf-8?B?Wkl6V0hsZ2lIZHozd2VyeXhleThRaUE2T296RzFzOXFPcmNpSEcrV1ZqVThz?=
+ =?utf-8?B?YTRQdlBpNWtOYisxa0IyM2VqWUIxRExaUURaOWZvSU9zT09CSUV4RWs0Q3Jr?=
+ =?utf-8?B?bElrclBxc0pKK3ZheWhReVhjNnEwL2UzZEdlZmdua01SdTErN09WYis5RHM0?=
+ =?utf-8?B?Q0g1bksrYS9aUEFCQTZCL2dUR21LbTJXYVM0clppd2dWSktoeXR1Zjc1SHBs?=
+ =?utf-8?B?djdEdVk0Mlk2Q2gxMkRQRkNNMDNOeVY1dnV2WmZjYVMvNzdLc0tSYjhTWnJ1?=
+ =?utf-8?B?enQveU16d2liRktQWVZrUDhDaGtqVWRWSG1DNVJxcGhkaDRPQmgzN291Z240?=
+ =?utf-8?B?L0VmK0ZsdWs4ZTg4SDVPaE9pR3kyUk94MzUrbG12enJsSnNFRkdXRkplemU5?=
+ =?utf-8?B?NTRwWG5lMldGTktRZFFkbE1mTU1LMkFEOWpZQ3gxTk9rcjhydmNxcEtFZGdV?=
+ =?utf-8?B?WWYyaXJSV2pVTTRtZnlrTHQwSEh0OUFGZXUzc1cxNlRTVlZTWndQUDVtS0Z5?=
+ =?utf-8?B?Y0JlSmpBZWZJL29SZnV5YVEzUWpLNDJWYnY4ZWNXbDZmZjMwTFlzZU1kYS9u?=
+ =?utf-8?B?ZUgyRUt5cDhsYTQvcVB0ZVhUckNTYjk5Z2NzUmVJbGltYlZvZUJGY0Q4K1hp?=
+ =?utf-8?B?Y2g5dFNLK0lRNU9PT3hQK1dUaUMrNFVxKzQwemlCbCs2Rm41b1p1b0ttUHBu?=
+ =?utf-8?B?cEV2cFlWYStqMGRMWXdRUENuR1N6RHlheHFuZlpyeUxxTVJFbCszUmtnemdL?=
+ =?utf-8?B?b21tU29uVThCK0tiRjdsK1dEam9LSE0wbzlXd0kwZ0IwWXZPdEthYVA3RU1X?=
+ =?utf-8?B?TEtoT1czYlJWME1IbUpVakVYNXQ0aFVNNVJHd2o1blFBTnA1UEpHU0JRa05x?=
+ =?utf-8?B?eXJMVUhBRVpiMldad2tlQ2lVODVWb2lOblNoaHAwcEJDaUMxVE1nS2M5RU1J?=
+ =?utf-8?B?Y0JlTUNVRWF2OWZHYUl4d0tzaWV0ek5sNmdzS25rREVOR2hZdkp0U3pia01q?=
+ =?utf-8?B?eDBJL0d3RmIvd1VwZHRaRVp4TVE4KzhBSjJRTWMrdFROMkhXUzFsek5IZVFH?=
+ =?utf-8?B?dHNDcWJDZ0Njak9MMkp3YUZTUWNQM3NIRHhVQmlRNS94bGt1YUZ3cUdSUWFT?=
+ =?utf-8?B?RS9hYysyL3F0Z1YrN1RvNUJvOVVBY1ZKYVR0WlhTV2pZbURWdUY0YlFsQlhZ?=
+ =?utf-8?B?RGdWQ1pZZ2VmSjFQcUxQUjB2WVk3VDFwY056VTQ3RUQrVmI4RkljNE80VlEv?=
+ =?utf-8?B?dUNwVzZwMXU0bDluWVZBSk9HMWtCQnFLbkw2M1Blb09sbmttYzI3eXJLRDFL?=
+ =?utf-8?B?NFlLU21LREtkM3J4RmNCeitmcmpxb2k0YnFpQTlTdW5BTU9BV3BRUERuOGRL?=
+ =?utf-8?B?NlpEQkk3VHRPSnBGenpORVRBeHVVRU16bk1ManlMelM0S0d4YVhTWHBNK2Js?=
+ =?utf-8?B?UC9uaG1iWGptOXdLL3ZBS3hRY1Q3VmFUTzg1cFBaWmFaUE91c0VraWN6UlZP?=
+ =?utf-8?B?VHRld3FBZFUrWFVIOXNVZTBPNVlPRmg4eVNYMEdSSktxemE1dWVoMU9VSkwv?=
+ =?utf-8?B?bDBOQVJnaTdwc1RHTkVPUDROTXYwUTQ3dEN1alJ0WlBiV3ZoNjFkaWlhSFhY?=
+ =?utf-8?B?UXBnMDFqQ2ZYTXBpWHF2UlRaRFdXOWNOZVIvZUFpSldtZ2NaOStUUFBYYU1C?=
+ =?utf-8?B?QnM4WURHQ1BWdzFYRUdTclpiRnJCWnArOFNiU09VaEFScnV6S3loT1R5T3RO?=
+ =?utf-8?B?UGd5M1RHOUpIUERGb2lzUT09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?M3ZUcy90dTVoc3JEdE9LMWhhZmhyYi9KMUJ4bzhnRnlZWkFUTFBObndPRVpF?=
+ =?utf-8?B?SDMxVWhsWGtTRGhQeE9BQXQ0enZXaHBoY1BMNUlUbzBVbVRtT3Z4WE9BbkZu?=
+ =?utf-8?B?MDE0aGJxS0JOYkdtRVpXaDB1RnltRXR4TXNaV045ZVh6dFdFSnZyM0F1NWRr?=
+ =?utf-8?B?aFp0eTNuWmZPRkJpZkppa1A3ek05eWhQOExPZ2FENERiWjdUTnpnTFJQSXVa?=
+ =?utf-8?B?SnBHOWg1TnVxaXE4WkpxVFNGYTNDN1lzd1VIbnZxRCtVMFZnU09weEU4aXZB?=
+ =?utf-8?B?dHoxbE9Sa1JndEhFSm9oNFhPbEZsZ1hBWUhneU9qSUZyMlRBRGgxeEx3ZE1N?=
+ =?utf-8?B?UnZ0aUFaWXI3K0RuaEF2T3ZvWnhvVWhxNW1MaUxGUXhtSXVxa3R3THphS3pa?=
+ =?utf-8?B?NUxYR1pLa0wvRXc3SCtwVjhIZkhDTlYvcGQ5RSt0QTBnQXRXNkVXVTk5QmxN?=
+ =?utf-8?B?RDhCcTJzbSsxLzh4MkU5SkJ1RFJuWW9sa3BEa1d2SzVFUnVYUW93eXZHMkdn?=
+ =?utf-8?B?K3lzMkFLTFRBUDE5RS9kVDZWOHg5RWFsaW9rY2xOQktNUEt1NHF4ZS9zd3Bx?=
+ =?utf-8?B?bUsrb1RZYlB3K2pWSWJpUkxyclBJSGw3TE1GNVRGdW5CcjJQay9LM3RqR1FQ?=
+ =?utf-8?B?am85L3JEaElxUVp5YWpPb1Z0MUxvL09KQjVoUFFpQWNlVDNGQmFRemxzSGZ3?=
+ =?utf-8?B?OWJvejdnWWFET2lHRWF6QmNvMFo5RmJ3dlc5Nlp3Z2lDQlBoWjVvdGQvU3VF?=
+ =?utf-8?B?Sy9qTExCNU9Hd3J0QVUzNHErKzI0azVLUnhuT1VJTm1SNHBQRm5hSEswYUUv?=
+ =?utf-8?B?SVVON0tzSytUUDVScmtvaVVIbURWZU4rY25CaWNZYVkrcU93T25ydWNlL0s5?=
+ =?utf-8?B?WkVMdFc4WDZYTGovQWkxMzFXQnlNeDdFU1pweGZWT0tPbnFiN1NSNnMxYWZl?=
+ =?utf-8?B?VzdjdVVBNEFqR05aYU5tVEZRV1FRd3hrRmJHOTJwQUlPWXYyL1gvd3REMHFI?=
+ =?utf-8?B?cUowbmgyZkNiTVoxTEQ3TXpmKzVEMFdFT25RdXBiVzF1ZU5uZVNDRGVxOVhi?=
+ =?utf-8?B?bCtieXM3UVRoWGEwT3dWY2ZnQ0RLcFBvekhGVWlNbW5peFNNbWttTlYwYmE4?=
+ =?utf-8?B?bFE3WUdaTklBTFZlR1ZGOWVmODhldWoyMFBYZUxsbFBJN3huTm5vQWZUMG9Z?=
+ =?utf-8?B?TXlRTWtDUHpsbmlrMjhJR0I1VXQwUW5hTHo2eUdqRTVuSnFGMXVLdW1QZVdw?=
+ =?utf-8?B?QzNNc3gvYjJSYWtRRk05cmxPN3JVZ2dyRjM0SHR3blhieXZZT0pLN1BTMjEv?=
+ =?utf-8?B?cHd4ZS9kQkhpeTczYnE2VjBwWVVOOU1vRTNyNWQxWk50SUFoMGszZW1QQzg5?=
+ =?utf-8?B?YUtrL1hpNnNlNEFxZDd4WHh5QVhPaHZuOEVRTkFDRzlvalk4L2srMDE0VTY2?=
+ =?utf-8?B?R1h4TVp1bDJMZk9hVWNkT29jNkRVcWRTZ2tIWEZpeFpMQlJpQ1ZMRVAwSFFC?=
+ =?utf-8?B?WGQ5QllzSERHSld0WlNxVjRCaHA0SU1XM2xJZ211MEFiR0JOOFpscXVNQjh5?=
+ =?utf-8?B?cjlXTllaSVhXYU9tQTdNcHNDdW55NFB3QWJ2K2NTNStXaGcxeVVzUkVTUkJZ?=
+ =?utf-8?B?aTZIUDN0Z2MxWVJyYy9PeG85M0cralpOZDc0TjF4SGUvTnN3Q21DZWtrTVlT?=
+ =?utf-8?B?SE9mMDZWaHVZdjluUnU2eFhsOWt4blVxWWpIUURZUFZyMk4zdjQxdzVjTWw2?=
+ =?utf-8?B?OUhzMnZHaFcxeTBvTWJSMmticW5Ba2F2R0YrM2RSUlFobFlZUjJiMzBkVnVs?=
+ =?utf-8?B?dnFFRElWVFJvdG8zZVhITWFYdVU1SjROajJyT0hPNHByeThXUmVPcE41dnFF?=
+ =?utf-8?B?c2pGaGpoVFRFNkxXMEZJaEIyVDR6OFhCRURBakw1bE1TQ0ZWM3h6M015Ky84?=
+ =?utf-8?B?SWx4OXBtTC9MYmpLbk0zWUM3RzdnS1EwZ1JhcnN5S0NCN2dnUGt0ZFNLQThx?=
+ =?utf-8?B?VFZnWSsxRlJydUlDSUJlc1hDaDIrL09EZit0cWxRTFFMZWpscU16NzhiV1Yr?=
+ =?utf-8?B?clBxdXV1T25BSkhnMlpUQnRFcklyN1U4d1JtcXprM0ZrdzJVMHNPSFhQdERI?=
+ =?utf-8?B?eWh1Y0dHcVRiU29ROWUrbHFCa1NQYzIxWHdaM0QweHVxWFFqbWFpTk52YTBS?=
+ =?utf-8?B?OXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 099892ef-d49c-4d79-25c1-08dd783453cb
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 13:33:49.8896
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nfZD+FLd1zscJNE6HjTYqKc3dp8cXyz3yV4jXcwDfxagum2vnTTOQGXOvt8xsYhHledeQ4ph9NkbfLX99/rfSxH9E+SQ1HAN7QHvoeLzbKk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8059
+X-OriginatorOrg: intel.com
 
-Reorder the PHY creation in the axg-pcie probe function to ensure all
-the resource is mapped before creating the PHY. This change addresses
-the issue where the PHY creation was attempted before
-mapping the necessary resources, potentially causing failures.
+From: Leon Romanovsky <leon@kernel.org>
+Date: Thu, 10 Apr 2025 16:27:06 +0300
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
- drivers/phy/amlogic/phy-meson-axg-pcie.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> On Thu, Apr 10, 2025 at 02:58:28PM +0200, Larysa Zaremba wrote:
+>> On Thu, Apr 10, 2025 at 02:23:49PM +0300, Leon Romanovsky wrote:
+>>> On Thu, Apr 10, 2025 at 12:44:33PM +0200, Larysa Zaremba wrote:
+>>>> On Thu, Apr 10, 2025 at 11:21:37AM +0300, Leon Romanovsky wrote:
+>>>>> On Tue, Apr 08, 2025 at 02:47:51PM +0200, Larysa Zaremba wrote:
+>>>>>> From: Phani R Burra <phani.r.burra@intel.com>
+>>>>>>
+>>>>>> Libeth will now support control queue setup and configuration APIs.
+>>>>>> These are mainly used for mailbox communication between drivers and
+>>>>>> control plane.
+>>>>>>
+>>>>>> Make use of the page pool support for managing controlq buffers.
+>>>>>
+>>>>> <...>
+>>>>>
+>>>>>>  libeth-y			:= rx.o
+>>>>>>  
+>>>>>> +obj-$(CONFIG_LIBETH_CP)		+= libeth_cp.o
+>>>>>> +
+>>>>>> +libeth_cp-y			:= controlq.o
+>>>>>
+>>>>> So why did you create separate module for it?
+>>>>> Now you have pci -> libeth -> libeth_cp -> ixd, with the potential races between ixd and libeth, am I right?
+>>>>>
+>>>>
+>>>> I am not sure what kind of races do you mean, all libeth modules themselves are 
+>>>> stateless and will stay this way [0], all used data is owned by drivers.
+>>>
+>>> Somehow such separation doesn't truly work. There are multiple syzkaller
+>>> reports per-cycle where module A tries to access module C, which already
+>>> doesn't exist because it was proxied through module B.
+>>
+>> Are there similar reports for libeth and libie modules when iavf is enabled?
+> 
+> To get such report, syzkaller should run on physical iavf, it looks like it doesn't.
+> Did I miss it here?
+> https://syzkaller.appspot.com/upstream/s/net
+> 
+>> It is basically the same hierarchy. (iavf uses both libeth and libie, libie 
+>> depends on libeth).
+>>
+>> I am just trying to understand, is this a regular situation or did I just mess 
+>> smth up?
+> 
+> My review comment was general one. It is almost impossible to review
+> this newly proposed architecture split for correctness.
+> 
+>>
+>>>
+>>>>
+>>>> As for the module separation, I think there is no harm in keeping it modular. 
+>>>
+>>> Syzkaller reports disagree with you. 
+>>>
+>>
+>> Could you please share them?
+> 
+> It is not an easy question to answer, because all these reports are complaining
+> about some wrong locking order or NULL-pointer access. You will never know if
+> it is because of programming or design error.
+> 
+> As an approximate example, see commits a27c6f46dcec ("RDMA/bnxt_re: Fix an issue in bnxt_re_async_notifier")
+> and f0df225d12fc ("RDMA/bnxt_re: Add sanity checks on rdev validity").
+> At the first glance, they look unrelated to our discussion, however
+> they can serve as an example or races between deinit/disable paths in
+> parent module vs. child.
 
-diff --git a/drivers/phy/amlogic/phy-meson-axg-pcie.c b/drivers/phy/amlogic/phy-meson-axg-pcie.c
-index 54baf7b8930e1..14dee73f9cb57 100644
---- a/drivers/phy/amlogic/phy-meson-axg-pcie.c
-+++ b/drivers/phy/amlogic/phy-meson-axg-pcie.c
-@@ -136,11 +136,6 @@ static int phy_axg_pcie_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	priv->phy = devm_phy_create(dev, np, &phy_axg_pcie_ops);
--	if (IS_ERR(priv->phy))
--		return dev_err_probe(dev, PTR_ERR(priv->phy),
--				     "failed to create PHY\n");
--
- 	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
-@@ -158,6 +153,11 @@ static int phy_axg_pcie_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->analog))
- 		return PTR_ERR(priv->analog);
- 
-+	priv->phy = devm_phy_create(dev, np, &phy_axg_pcie_ops);
-+	if (IS_ERR(priv->phy))
-+		return dev_err_probe(dev, PTR_ERR(priv->phy),
-+				     "failed to create PHY\n");
-+
- 	phy_set_drvdata(priv->phy, priv);
- 	dev_set_drvdata(dev, priv);
- 	pphy = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
--- 
-2.49.0
+Unrelated. At first, you were talking about module dependencies, now
+you're talking about struct device etc dependencies, which is a
+completely different thing.
 
+As already said, libeth is stateless, so the latter one can't happen.
+The former one is impossible at all. As long as at least 1 child module
+is loaded, you can't unload the parent. And load/unload is serialized,
+see module core code.
+
+[...]
+
+>> We did not think this would be a problem, intel has a tradition of calling the 
+>> modules pretty ambiguously.
+> 
+> I know and it is worth to be changed.
+
+Out of scope of this series.
+
+Thanks,
+Olek
 
