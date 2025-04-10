@@ -1,103 +1,118 @@
-Return-Path: <linux-kernel+bounces-599077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098A4A84EDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:57:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2EAA84EE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 22:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F8D77B4E20
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:56:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A44B4A26AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 20:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F8E293462;
-	Thu, 10 Apr 2025 20:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18597290BDB;
+	Thu, 10 Apr 2025 20:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="icN/Z1BF"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CoRCVCUv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF92290BD5;
-	Thu, 10 Apr 2025 20:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775781F8721
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 20:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744318619; cv=none; b=aM4hMCYe9EDcsCvpk6ufaIPgOIhRvdbWR3alzCdLlRbdpOOp+oDXoAbJCQy+WNNLArgODYtPFuh5Nd6xn/4g/akoooGSde6jm9NmrngWErwaqTB42tKLjfhO+5HF6e6SQzmdJMX3j8No82RmqQbcW246Sjjusq7ZbsfwbyxqbYM=
+	t=1744318739; cv=none; b=UvHMGfxTxISVQYEQmnlXVkARVI0aIzaRhASPrK8ue53IjBRiD/4D2OUZtURv+ECLT3sPEkA6P+suSwjEp6yBaq3STdSUganXDC868vUiN2h4xai7lZii5hPwjZaN82Nb1t5mI55rNqwU4mDn+0lUItT3OflEI22haccIlBGNQe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744318619; c=relaxed/simple;
-	bh=gjRlPSDk+HP4s4FGm5gbcf/CmugeuOqJPfC/yVVpyyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HcZoCHHbD1KlaVpQRRM0zxtW1G1KOKh8izeBJC2O6fKHvS/Eijwvj9hT/21NcuqjA0gZYsTSsnlECtPF5ZnzevqgvqEKokhNEiG+C/KJJRDR23TIIS9/IC5dm06atYk90U1VsVgoZUTnayTSffUwXNp7ukMYxmRl6iKiYQ/aS+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=icN/Z1BF; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=OpP8724RjBuTtHqPoOQEYb+UxkeI+0f3hSg/HwAnRco=; b=icN/Z1BFMHxh7eIZg8j2CW4tVW
-	hHIGaaBjnmXtwawWDpVZLt1mP/C20pZ3xlQkC948V6q2MhQSSSK7Tru1fr0GAbOlCQSK7+Z4DfRQm
-	nWs1pZ21+QvE3vOvDVz97G4MfajtZDrGmk5nOCpaXAqwNOwo4BNWzW3ORkg97kBvJPww=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u2ywq-008jEk-I3; Thu, 10 Apr 2025 22:56:32 +0200
-Date: Thu, 10 Apr 2025 22:56:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>, Simon Horman <horms@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v14 07/16] net: mdio: regmap: add support for
- C45 read/write
-Message-ID: <5472c608-df78-4433-a086-6ac9323d9d35@lunn.ch>
-References: <20250408095139.51659-1-ansuelsmth@gmail.com>
- <20250408095139.51659-8-ansuelsmth@gmail.com>
- <50c7328d-b8f7-4b07-9e34-6d7c34923335@lunn.ch>
- <67f80275.df0a0220.39b09a.dd38@mx.google.com>
+	s=arc-20240116; t=1744318739; c=relaxed/simple;
+	bh=tVc7TLj1ZbQsJPBIjhKOIdCuVtGQ4lCfdRS5WfWJg5o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kK+LnNKPONK4+kC0rU7hoiEaXlq9Y5IDBQtArLaPKOW5AKkg0aP7/1r8WsufeCv+GAXXC4qUWGut1a4Lfuxz1zPesmHg8UuDZnFNZGjvZQRDTTwyD1U3wK6objLWFMrKsJuyCrmMHy3INq+P9uAqJGM+y9e19m5tQR/66QxK/bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CoRCVCUv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B524BC4CEDD;
+	Thu, 10 Apr 2025 20:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744318738;
+	bh=tVc7TLj1ZbQsJPBIjhKOIdCuVtGQ4lCfdRS5WfWJg5o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CoRCVCUveS5x1NzTLDWLrRko/++/vdOsntxiC1fVMafL0MvuFMdpuRc6eiTK8K5DK
+	 dAGjKlxU5zuPnTpCSnhQCqgLAzbEdt1AGhTxB/Uc7ZtSoatO+pwJAIINaC6RfAErVw
+	 s5u7NLs63auVSbAPvCkE2FxoZjMJyqbAw4Vl7pxGz6r8zNazlYMdOj/pn7hJN0cO+7
+	 Yrl/14ovBCf8pApxiN91LUgFDsqjSYwWVg9YiT67XEK0f6Gc9w+zhyo4xqoLPmRH8X
+	 kaDWOLDTkrr9YO5KvjUFpBaFJ2NV5SiabVdQLaHW4VNs5/lZO/kWnSsoipt/LjX5jC
+	 nT6u5lE4Np6YA==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH v2] objtool, x86/hweight: Remove ANNOTATE_IGNORE_ALTERNATIVE
+Date: Thu, 10 Apr 2025 13:58:35 -0700
+Message-ID: <e7070dba3278c90f1a836b16157dcd34ccd21e21.1744318586.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67f80275.df0a0220.39b09a.dd38@mx.google.com>
+Content-Transfer-Encoding: 8bit
 
-> Hope you can give some guidance about this! Happy to split this once we
-> find a common point on how to proceed with this.
+Since objtool's inception, frame pointer warnings have been manually
+silenced for __arch_hweight*() to allow those functions' inline asm to
+avoid using ASM_CALL_CONSTRAINT.
 
-One thing i'm failing to understand is, why use a regmap at all. For a
-single C22 device it make sense. 32 linear registers, nice and
-simple. They could be memory mapped, I2C addresses, SPI addresses,
-etc. The regmap implementer probably just adds a constant offset and
-does a hardware access.
+The potentially dubious reasoning for that decision over nine years ago
+was that since !X86_FEATURE_POPCNT is exceedingly rare, it's not worth
+hurting the code layout for a function call that will never happen on
+the vast majority of systems.
 
-Multiple C22 devices gets us into a two dimensional problem. Multiple
-C45 devices gives us a three dimensional problem. Mixing multiple C22
-and C45 gets us a four dimensional problem. This is a long way from
-regmaps nice simple model of linear registers.
+However, those functions actually started using ASM_CALL_CONSTRAINT with
+the following commit:
 
-What does regmap bring here?
+  194a613088a8 ("x86/hweight: Use ASM_CALL_CONSTRAINT in inline asm()")
 
-	Andrew
+And rightfully so, as it makes the code correct.  ASM_CALL_CONSTRAINT
+will soon have no effect for non-FP configs anyway.
+
+With ASM_CALL_CONSTRAINT in place, ANNOTATE_IGNORE_ALTERNATIVE no longer
+has a purpose for the hweight functions.  Remove it.
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+---
+
+This was originally posted with the RFC series:
+
+  https://lore.kernel.org/cover.1744098446.git.jpoimboe@kernel.org
+
+But it's actually a standalone patch which can be merged independently.
+
+ arch/x86/include/asm/arch_hweight.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/include/asm/arch_hweight.h b/arch/x86/include/asm/arch_hweight.h
+index cbc6157f0b4b..b5982b94bdba 100644
+--- a/arch/x86/include/asm/arch_hweight.h
++++ b/arch/x86/include/asm/arch_hweight.h
+@@ -16,8 +16,7 @@ static __always_inline unsigned int __arch_hweight32(unsigned int w)
+ {
+ 	unsigned int res;
+ 
+-	asm_inline (ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE
+-				"call __sw_hweight32",
++	asm_inline (ALTERNATIVE("call __sw_hweight32",
+ 				"popcntl %[val], %[cnt]", X86_FEATURE_POPCNT)
+ 			 : [cnt] "=" REG_OUT (res), ASM_CALL_CONSTRAINT
+ 			 : [val] REG_IN (w));
+@@ -46,8 +45,7 @@ static __always_inline unsigned long __arch_hweight64(__u64 w)
+ {
+ 	unsigned long res;
+ 
+-	asm_inline (ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE
+-				"call __sw_hweight64",
++	asm_inline (ALTERNATIVE("call __sw_hweight64",
+ 				"popcntq %[val], %[cnt]", X86_FEATURE_POPCNT)
+ 			 : [cnt] "=" REG_OUT (res), ASM_CALL_CONSTRAINT
+ 			 : [val] REG_IN (w));
+-- 
+2.49.0
+
 
