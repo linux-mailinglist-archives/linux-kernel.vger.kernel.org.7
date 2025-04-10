@@ -1,102 +1,87 @@
-Return-Path: <linux-kernel+bounces-598124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD69A84266
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 14:04:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A32FA8424A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 13:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4DA29E2C25
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:58:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E13431B86CAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 11:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0112F28368E;
-	Thu, 10 Apr 2025 11:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="duSWxbak"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB003284B46;
+	Thu, 10 Apr 2025 11:58:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA8E202C2A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 11:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA07E284B40
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 11:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744286219; cv=none; b=hD3uNUFOD+pfaQ/lR804vWt06+NMcTsy7tDQV+tIZK0j5OCTIpWJ/oMyDN2v3RH2RL/wgeXgTdyXyUXr3CM1lNeCS5MfpX2VGFTP+8Jed9JXt31EJ43w2opTGqZGqy4hD9U0sK1ngjEwjFGLV4jdGeLfNibaVymhOBxV5y4JZ+0=
+	t=1744286286; cv=none; b=SKkxAGlFtwzOxsc13SAoHKDRGpt6h/kZv438YQqDHS49BN/d5YzfTsj5sHpSkk1ofClPgGfPpDmw7UPI5oCSq65wusHAjgv2uBTXG+wJG7gViN9PXESxDPsLW5uM0/4GpkptQXPGSzT1b2it8GCF0JpgHhW5jSjVguhXHw5Xp8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744286219; c=relaxed/simple;
-	bh=CKmXBG/PEPzPtlg0BOUFBWyPS0pYatTRE4/PLiHDvaY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nlGgleOpyc4vJi5GASRIbtOXC7fXoMfEUozTxlMVGDKTSFo7kmKkfHmWlYVCR0NLoIukLl3DASmXAsYChoi6LKozY63xkU5G8abHAFw1EYklifRWSfKshsWFwA3sb1bo57Ia8ZI0XxVLz5nPpXxUouneoBWH4YJecth/MPZFm20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=duSWxbak; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744286218; x=1775822218;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=CKmXBG/PEPzPtlg0BOUFBWyPS0pYatTRE4/PLiHDvaY=;
-  b=duSWxbakaDCPhy7Euesu6Bp9N1WQCxmyNT75fRfsBiW31dRXU6RypSFY
-   P+XJtGmdNLfWm9lPNdpjt8G+Zp99LhMcBp4yf4qkLNIR0Dt/uFB6zV/Zm
-   eYJfEm+rGHOdEYvM7JAFb3WT6p7ncFLyzlPAZzoyK1/fkv5YY6ucCMff4
-   PF2Lmv/TkvB9CltZIeEqv7queBYU/9xbHOD8C0h8hOzxbpUXMpQK+58oq
-   tmGUanZqHl3AZdUMoVEw46Gg87b+Llk+PGOxqSQdQ5Au75ndM+GQR/3MT
-   4LykKXO8q8XwUm2rGQl+5k0fAYDS0zJZe4f+LFhr/eVxySLkDnr3P2K1R
-   w==;
-X-CSE-ConnectionGUID: DE2JAZtlRzSRFYjuqOiDeg==
-X-CSE-MsgGUID: JHvLhODyRPmIuMeCdvR9Mw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="56779812"
-X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
-   d="scan'208";a="56779812"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 04:56:57 -0700
-X-CSE-ConnectionGUID: sVWlgKpJSbOVORIwhWAQ8g==
-X-CSE-MsgGUID: QxMeLRLzQAK46/UYuAbt1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,202,1739865600"; 
-   d="scan'208";a="129427726"
-Received: from unknown (HELO localhost) ([10.237.66.160])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 04:56:52 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Matt Coster <Matt.Coster@imgtec.com>, Arnd Bergmann <arnd@kernel.org>
-Cc: Frank Binns <Frank.Binns@imgtec.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Alex Deucher
- <alexander.deucher@amd.com>, Alessio Belle <Alessio.Belle@imgtec.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/10] drm/imagination: avoid unused-const-variable warning
-In-Reply-To: <7ae4be5c-b115-405e-aa57-caeaa206775b@imgtec.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250409122131.2766719-1-arnd@kernel.org>
- <20250409122314.2848028-1-arnd@kernel.org>
- <7ae4be5c-b115-405e-aa57-caeaa206775b@imgtec.com>
-Date: Thu, 10 Apr 2025 14:56:48 +0300
-Message-ID: <87mscout4v.fsf@intel.com>
+	s=arc-20240116; t=1744286286; c=relaxed/simple;
+	bh=DpRip3gvlpgG8hN176PDmj8168+JN45TJIGo/SFJxJg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TA+UUzr/HVZHuznwQudaf0lF42oh9SpdE+k6Q2GBQKV136+0rEoI0Jqt/qai1A3k/V6I61IT2ZfG4b4N4Teb/jzEyGFGE2nMBhpPndi5idvBjYZtkkMd/HLUiMETdFF8yPqUGbwPKOxxaohwg33kUUxPFAOffrv/FU/ybgxvC7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d43b460962so15785425ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 04:58:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744286283; x=1744891083;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ZniSmQ07FkLprDS7ZC6+TvSFkkLzvgBlGo7Lo/djZk=;
+        b=o8AJnGYhD3MQY5EB1VcsfJyXOD4FAaHPW+yccFPWn9b4IQiTD7xmV2c3/sivAxyy5w
+         Ef8pn1VET4HiUhTSyFIXk0U59sqx0UC6T5wkcJ8pjDqiIhN4OX8C9VxxIfmlx2ioPfBO
+         xs1LAXOLWXYxRSl/28oTPxP+x+VyIDtB+t2rb5XGARNfVV3hvIFcw3e6/zwOSyGxJIlZ
+         zaxQKAJc66pw7tIFPHi0JV1eMkG66RVqMSPNOjTqFhmhYpLmQKWn2oC8XoADRixW+Ldg
+         /rWGq24P5ApaKpnaE5xiJRDy1TlH8ntM+zXOQCdYzrLxRatznBhwUw9eaXRce+MsCEH7
+         r1+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXXgXt2oFLulBAQfzyh+5f2FYOBA7cJng7Twr1+8AU/197gWZNq6KsuNX1nL3fCVt4CHQvZZXmcfmfUxFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxos8qpCSLnjCr8GOd9kBH3ICnGZNOAZE5mr8PLnzh05DsU1QhU
+	1lVrr9UpRp+8s8MGoXXlqBQwt+9vJ6F5TIfdfuAqoaFwEQla8X6put8tkaoIIljQ4LOxvW2YHDj
+	Sbsa8qLdUJPEaiPB4c2WRxPtUmM7F/R4+L4BFbz3aVe3qX4Uo7a2EbLk=
+X-Google-Smtp-Source: AGHT+IG7HOf+HV/mfpYn5jG2v6bwLiZaOT2MqLvvouVvC0hm46XF+RlOx2dgPrZkhoPeFhJKTSesAwiOWsrkktjg+H26FyHn248C
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6e02:1a4c:b0:3d5:8923:faa5 with SMTP id
+ e9e14a558f8ab-3d7e46fc93amr23744675ab.10.1744286283722; Thu, 10 Apr 2025
+ 04:58:03 -0700 (PDT)
+Date: Thu, 10 Apr 2025 04:58:03 -0700
+In-Reply-To: <20250410111546.3939-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67f7b24b.050a0220.258fea.0037.GAE@google.com>
+Subject: Re: [syzbot] [acpi?] KASAN: slab-use-after-free Read in software_node_notify_remove
+From: syzbot <syzbot+2ff22910687ee0dfd48e@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 10 Apr 2025, Matt Coster <Matt.Coster@imgtec.com> wrote:
-> Having said that, surely it makes sense to keep at least
-> *_debugfs_init() gated behind CONFIG_DEBUG_FS?
+Hello,
 
-If they're basically just calls to debugfs_create_{dir,file}, the
-compiler pretty much turns them into nops, and you'll get better build
-coverage.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+unregister_netdevice: waiting for DEV to become free
 
-BR,
-Jani.
+unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
 
 
--- 
-Jani Nikula, Intel
+Tested on:
+
+commit:         3b07108a Merge tag 'linux_kselftest-fixes-6.15-rc2' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12786c04580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=eecd7902e39d7933
+dashboard link: https://syzkaller.appspot.com/bug?extid=2ff22910687ee0dfd48e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12a337e4580000
+
 
