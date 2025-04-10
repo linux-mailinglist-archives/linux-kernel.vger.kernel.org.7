@@ -1,190 +1,143 @@
-Return-Path: <linux-kernel+bounces-597548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097EFA83B3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:32:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBEAA83B42
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 09:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E75601B84D3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:30:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D3FC18901A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC9920AF9A;
-	Thu, 10 Apr 2025 07:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fp+Sj79S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2341DDC15;
+	Thu, 10 Apr 2025 07:30:32 +0000 (UTC)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9E120AF77;
-	Thu, 10 Apr 2025 07:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FEF1D61BB;
+	Thu, 10 Apr 2025 07:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744270172; cv=none; b=ogJ2CbSWRURZoL1KkeME7vjV098ZYYCd3AtdP9+ZjT66/qqGjE+5WlmQ0FhKk83U+I56hJLfykdFkNCaSXeXDtnie8d10Br6IFvJOI+/bCmO9/DONhVBeLyoF56728BhzwWCwn4kQ4vt2V4ogAW0IEuGs+7Zg05BQHOXYpDZA74=
+	t=1744270231; cv=none; b=e86nee5k5MNDbbmSbG33NQZmzLBF9so6/TEpctkixLhKCSHjV/zUJxf5Oe3IOWsxOs7kmb8qlZOnlxqVVyAAySs5McDTCrF16a86VMlInitqAChDJUAK0PSg1wYAUnRPcHobDPTJBehkM+mK5KNQ1pld4gjJqFT0EE9glkBsfP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744270172; c=relaxed/simple;
-	bh=OGYNRgQopSq7MTnNOOCJV0HUeFVtR+nQ/5cCkY8zlEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M4S3yXYcCMwGiVr2BH4RXSA10rAoChW26Q1cPZBt0ja0/PyGB/e86OeP9luKhLRpNVc1aiCmng66xKBTjUn4ZVaJLI7YlB4CSZuCCP8EUzGP/ko0N45GfXIpUcF//GFH2RuZirFrVszev9ZbPSecGfDmrt5mr3DTtV03EaGB1bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fp+Sj79S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45765C4CEEA;
-	Thu, 10 Apr 2025 07:29:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744270170;
-	bh=OGYNRgQopSq7MTnNOOCJV0HUeFVtR+nQ/5cCkY8zlEg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fp+Sj79S4PEoDdHd6SL77A77I9x4L+/H97awloSYzSb+qwGjS24WULW21oAyEHdqt
-	 Y/Vn3YBpduLwtwnj/TQlwBerBpkFp8FEhxIQT9ff1wOZxRcO/nO0jWVwa47Q2QoCV3
-	 frDGz/4bVhWMLdQQEchkiC14TgOUdeQ5LNi5wZG/KDmB5GSPY9kg04+5LySqFNH59r
-	 imdd3x3+ttQKh4BN7uYs+vbhbdiIlw6hFlJFnYfMYZNAYFsUqZthXzJrERV7ptk4uI
-	 rXcn1ONdmlnesAWGhy00P30R8Imhv9luMalQ2zbhgRG/B+ryBd9YqgxJPifImfh+U5
-	 RTPHZ2CpaqHFA==
-Date: Thu, 10 Apr 2025 09:29:28 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nipun Gupta <nipun.gupta@amd.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, krzk+dt@kernel.org, gregkh@linuxfoundation.org, robh@kernel.org, 
-	conor+dt@kernel.org, ogabbay@kernel.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	derek.kiernan@amd.com, dragan.cvetic@amd.com, arnd@arndb.de, praveen.jain@amd.com, 
-	harpreet.anand@amd.com, nikhil.agarwal@amd.com, srivatsa@csail.mit.edu, code@tyhicks.com, 
-	ptsm@linux.microsoft.com
-Subject: Re: [PATCH v2 1/3] dt-bindings: accel: add device tree for AMD PKI
- accelerator
-Message-ID: <20250410-flat-violet-bull-a2a0b7@shite>
-References: <20250409173033.2261755-1-nipun.gupta@amd.com>
+	s=arc-20240116; t=1744270231; c=relaxed/simple;
+	bh=iFW+QfyIwEbGD+j1q5thV7kMOb3+F5ptBk/zfUifQ5I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KWTVwvClIiXeHKz2izooH1o6mI4lU0e2Je90DmNhn7XpOQG9i6j/hiuGVw+/At8PKTzg7BcJn7FAHt9sgLNQkCpAYyf6TKaoZ83RLMpZV9Whxn4EhKXIQqK3Km+BmMHZYkSRx/2OFCwZN7knfJ/SMCJo7SbWKGRM7fQ1+qM0ERU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523fa0df55dso1537482e0c.1;
+        Thu, 10 Apr 2025 00:30:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744270228; x=1744875028;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9o1fBfdX3QCvvMjGP9Bb3+iIudc9m8AmMEftLcu43No=;
+        b=BiC0slc7q6cMyUMFEiBHhvs/68vibZA2bTv7SvDgR+pg02qOQzu+LFkm49W8HNHoPz
+         oKS0qoyIlnNEYyceOA+UIY04anMh4X0ZD7w9LfNeJOyyPCpF9m8ZffmW143JiqhbSQEM
+         whvbx1ZuXn/ZUAk1VE662a+A+vvXGRQUAkjng8e9hoM6NztJPGyq7bKsXMQjqiUVU3SC
+         FanLMVZg8sXqAJE/6Eq0zCDzP9ekFTecGcA4hrPiTnn0kxAfFDM6t8n7lg4c3temX2ZJ
+         jAHweZcCyBZTaz9clz6h3HbgmkK99DbxXt/upxdp0msvqpjoDtEZUeHmPWlvRRwMlVVZ
+         v+Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSiUg+vBC6J4Uuj8QqNQ9euW0fr+aBNVAawI9I54UehftYMlFN4HG9uo0Egx5ZfiIRz6XXe/JZfMghLTu0GUI=@vger.kernel.org, AJvYcCX8fvHIxgJlQPeY+71uppnTYy+WJ85lG6abE9Coc7nGiPZY2acRHSrF1rEhKF5qb/dNwtJqPQp/O2DSBJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmGCH4Ilr8BVIvUFxzrObj+7N6wsM0cW+38+VGozvSqYpEws1M
+	lsMVegiejN/uVox0MkkKDbCyVx+2aLbUk2SK1FSinM/laoZRn/zMNvdC061IEgg=
+X-Gm-Gg: ASbGncvgF35mXmj57ZSZregf56TGxoVp63dJ6A3CLVpAnjUx/v1IMTKnn6gK9PQHfvt
+	1HI7lieTNCVFuiuJJ9FHWSZFcBETTaXYlUsgWx3oeeYGdUw+KbJ2DEyTLkARNkVReSz1hWxPQuT
+	M2dY+YR5ut0URr35mO8TAcSCgPZwhocIkuXQVadhtf7rKFNXtNFRtE7e0PX/fPvOgfuw8yO7l05
+	Dscp0/c5zoIzQLxtMeTowXZwH/xnzwPY6RUGrKrnQCwohynGpcE5/yIzgnK24AhM97WODfsImZe
+	ZgTmsDzdeBA93wiSqM/VN6r2RNwhIECswqFAcO0IroEqvo5b03/vcZ4EAcy9c20IoUInaleGcxX
+	CTGWldyJzNj1rKA==
+X-Google-Smtp-Source: AGHT+IEU3c+ZXC9asy7zunAQLhEms0N8OOIiZxDv5KYjW91SpzndoqVlpeU34scyZLcCXrM9e8Hpow==
+X-Received: by 2002:a05:6102:5548:b0:4b2:9eee:666e with SMTP id ada2fe7eead31-4c9d4246c31mr840038137.4.1744270227911;
+        Thu, 10 Apr 2025 00:30:27 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c9c98afd43sm487261137.20.2025.04.10.00.30.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Apr 2025 00:30:27 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86dc3482b3dso1581657241.0;
+        Thu, 10 Apr 2025 00:30:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDyzqS+SZVzpGKdc4WgLTHbdKFIs1PrY3SnwOjywJBvL9FbNgGuXYoLMt4YXKQbrc4tFwnI8HvDxaWNbQ=@vger.kernel.org, AJvYcCVfJHB1GPx78fqB6w9z2wWNrszqOt/qJCqwSOkEFtbTXSgljuW13MK8giagBaj+ABbFzQbImL1dWc+t/gb0YaM=@vger.kernel.org
+X-Received: by 2002:a67:f5c7:0:b0:4c3:b75:16e6 with SMTP id
+ ada2fe7eead31-4c9d3fc4c38mr837750137.10.1744270227560; Thu, 10 Apr 2025
+ 00:30:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250409173033.2261755-1-nipun.gupta@amd.com>
+References: <20250409061129.136788-1-fujita.tomonori@gmail.com>
+ <CANiq72mbci8kxEx5jrq=HVc6WKuJqq8NCLzNsjH1wFcJNoHm+w@mail.gmail.com>
+ <CAMuHMdWtgSjxeGYJVNzeWPOCd9nUWeKQnCtFQaROQ1o=r_-QwQ@mail.gmail.com> <ab0490cc-ce86-4492-a088-fd2ae03f1475@app.fastmail.com>
+In-Reply-To: <ab0490cc-ce86-4492-a088-fd2ae03f1475@app.fastmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Apr 2025 09:30:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXk+MfwPtm_whA2nWde0t_Ft=n=4xCO9hqAm-yuS+He5w@mail.gmail.com>
+X-Gm-Features: ATxdqUEn3DKP5E0KW6CdNHS_yejpIaRbcErnLPFBtAL1D8Oqr0CTfb75MAhqP40
+Message-ID: <CAMuHMdXk+MfwPtm_whA2nWde0t_Ft=n=4xCO9hqAm-yuS+He5w@mail.gmail.com>
+Subject: Re: [PATCH v1] um: fix incompatible argument type in iounmap()
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>, 
+	Stephen Bates <sbates@raithlin.com>, Danilo Krummrich <dakr@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 09, 2025 at 11:00:31PM GMT, Nipun Gupta wrote:
-> Add binding documentation for AMD PKI accelerator supported for AMD
-> versal-net SoC.
+Hi Arnd,
+
+On Wed, 9 Apr 2025 at 21:07, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wed, Apr 9, 2025, at 19:07, Geert Uytterhoeven wrote:
+> > On Wed, 9 Apr 2025 at 16:48, Miguel Ojeda
+> > <miguel.ojeda.sandonis@gmail.com> wrote:
+> >> On Wed, Apr 9, 2025 at 8:16=E2=80=AFAM FUJITA Tomonori
+> >> <fujita.tomonori@gmail.com> wrote:
+> >> >
+> >> > Align iounmap() signature with other architectures.
+> >>
+> >> Most indeed have `volatile`, but nios2 and m68k don't -- Cc'ing them
+> >> just in case.
+> >
+> > Indeed. Apparently the volatile keyword has not always been there...
+> > Why does iounmap() need the volatile keyword?
+> > Why does pci_iounmap() not have the volatile keyword?
 >
+> In the old days, a lot of drivers marked MMIO pointers
+> as 'volatile void *' rather than 'void __iomem *', so iounmap()
+> and the readl() family of accessors need to be compatible
+> with that type to avoid a warning.
+>
+> By the time we introduced pci_iomap()/pci_iounmap(), this was
+> no longer common, so they never needed it.
 
-A nit, subject: drop second/last, redundant "device tree for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+IC.
 
-You already got this comment...
+> In theory we could go through all the old drivers and
+> also remove the 'volatile' markers from struct members that
+> store __iomem pointers, but there is no practical benefit to
+> that.
 
-> AMD PKI accelerator is a device on AMD versa-net SoC to execute public key
-> asymmetric crypto operations like ECDSA, ECDH, RSA etc. with high performance.
-> The driver provides accel interface to applications for configuring the device
-> and performing the required operations. AMD PKI device comprises of multiple
-> Barco Silex ba414 PKI engines bundled together, and providing a queue based
-> interface to interact with the device.
+Most drivers must have been fixed already, as m68k allmodconfig
+does not complain.  Still, I guess I should update m68k to match the
+others, right? (FTR, that also builds fine)
 
-...
+Gr{oetje,eeting}s,
 
-> 
->  .../bindings/accel/amd,versal-net-pki.yaml    | 58 +++++++++++++++++++
->  MAINTAINERS                                   |  8 +++
->  2 files changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/accel/amd,versal-net-pki.yaml
+                        Geert
 
-That's a crypto device, so goes to 'crypto' directory.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> 
-> diff --git a/Documentation/devicetree/bindings/accel/amd,versal-net-pki.yaml b/Documentation/devicetree/bindings/accel/amd,versal-net-pki.yaml
-> new file mode 100644
-> index 000000000000..2dca7458f845
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/accel/amd,versal-net-pki.yaml
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/accel/amd,versal-net-pki.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: AMD PKI accelerator device
-> +
-> +maintainers:
-> +  - Nipun Gupta <nipun.gupta@amd.com>
-> +  - Praveen Jain <praveen.jain@amd.com>
-> +
-> +description: |
-> +  AMD PKI accelerator handles the public key asymmetric crypto operations.
-> +  The driver provides accel interface to the application for configuring the
-> +  device and performing the required operations. AMD PKI device comprises of
-> +  multiple Barco Silex ba414 PKI engines bundled together, and providing a
-> +  queue based interface to interact with these devices on AMD versal-net SoC.
-> +
-> +  Link to ba414 datasheet:
-> +  https://datasheet.datasheetarchive.com/originals/crawler/barco-silex.com/34b540b9dc5db40c5bc01999401cf1e4.pdf
-> +
-> +properties:
-> +  compatible:
-> +    const: amd,versal-net-pki
-> +
-> +  reg:
-> +    description: AMD PKI register space
-
-Drop description, obvious.
-
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-
-And the resets? I understand from previous email that there is a reset controller.
-
-> +  iommus: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - iommus
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    bus {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        amdpk@20400000000 {
-
-crypto@
-
-> +            compatible = "amd,versal-net-pki";
-> +            interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-> +            reg = <0x204 0x00000000 0x0 0x10000>;
-> +            iommus = <&smmu 0x25b>;
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 96b827049501..11f8815daa77 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1154,6 +1154,14 @@ F:	Documentation/networking/device_drivers/ethernet/amd/pds_core.rst
->  F:	drivers/net/ethernet/amd/pds_core/
->  F:	include/linux/pds/
-> 
-> +AMD PKI DRIVER
-> +M:	Nipun Gupta <nipun.gupta@amd.com>
-> +M:	Praveen Jain <praveen.jain@amd.com>
-> +L:	dri-devel@lists.freedesktop.org
-> +S:	Maintained
-> +T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
-
-Are you going to apply patches to this tree?
-
-Best regards,
-Krzysztof
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
