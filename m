@@ -1,342 +1,240 @@
-Return-Path: <linux-kernel+bounces-598838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726DCA84BAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:52:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55364A84BB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 810079C4805
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:51:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6908C4E5E09
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 17:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E8328C5D0;
-	Thu, 10 Apr 2025 17:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CACA28CF65;
+	Thu, 10 Apr 2025 17:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="d9lLXinc"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XcYTiKhn";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rsu7YLIZ"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303962857CB;
-	Thu, 10 Apr 2025 17:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744307467; cv=none; b=o2xiQ68bx96I065fz8YlRmiSkSkVveGm5AOOzsVsNZ19BxH7PsLeSipQBKn6wnS2vV71YKBz6CfYU/3i1UKH9cybUI53f9eTm0Wij24T2/wPwybsY66QTxGBMCxuf8oOxuZV9q9z6Zjr1W18hQnftJc6KMyy38ru+tx4O/9ptg8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744307467; c=relaxed/simple;
-	bh=zilCL1e3bUYuIqps8W52vNmjjRHZdj8cpG0KBHOiXt0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QHsD37n5ou+pChPZr7U3CRG6IEvg+Su80yEeesMPe4b+R2WuAX02mBpC01B9W2bnuoPg0o9yOaVzn6CbNdRRUAYY7JTTyDp8dU6W2rFUdyE1pdnenrjkbWEmGdsQzYxdcgCBqgum2vokk9SmMMjqvu9HbA561vvET1iLkcDOE+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=d9lLXinc; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53AHov5G1223564
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Apr 2025 12:50:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744307457;
-	bh=VnCuiAJDXuMTmSJHi5/PkXpgN05VqTzRwvzm8iIJ+tE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=d9lLXincOLRlAV6I8IOMdKZkWBWPhPRbT2x9u4LyLr65EBciNj39PRG+ZCtNDZXmH
-	 p5y/uXLYPD0YZia/FJIQYIPHGYHi2qk8o0jqCw81goSqlicgwdB5YYTYVAuWxmvXvq
-	 rKSoqZyAAS5uDPQY4GQtYPkHrzNRagc2ty77R3Wc=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53AHov5v027764
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 10 Apr 2025 12:50:57 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 10
- Apr 2025 12:50:56 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 10 Apr 2025 12:50:56 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53AHou49004588;
-	Thu, 10 Apr 2025 12:50:56 -0500
-Message-ID: <b97c1eaa-f34c-4731-8e9e-b51faa4619c4@ti.com>
-Date: Thu, 10 Apr 2025 12:50:56 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E077B28541F;
+	Thu, 10 Apr 2025 17:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744307533; cv=fail; b=mOGUPRH/7NZEvkhMCcKdYxyPtXWFBWdEZfDuDyceAHnN4RGusNssG+m+Al8oUFy8lRA6jDKLKDmPZ1o0fA+KKkJlD/wbnn83egymzpMF9d9Z/+8U1f8Iosa9hg2RKrnjQjlsOliv9lG+rZTWFoznEwLdvY3FYqjgcwJfNKPEv/k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744307533; c=relaxed/simple;
+	bh=uBAtWGS524KwwaXCFkN+skHZKp5qlWVAHIO3oRnkfGg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=T1pBTwp7YESxcJJZScU705eb6Kqq3qrmvQuyxUK7Qyh2F0jp5zXCoWf05wBUCVTGxvR3LHPqORO2DJuLLwZZp+FIGrJ3NzcV3lo8B6fLzBVDksgR8iP5BjSi9DJN3Y5ogm6ofvGPkfgUOTgDNI5411StMc/FnaeQe7tA78Ne3qo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XcYTiKhn; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rsu7YLIZ; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53AHC2GL002960;
+	Thu, 10 Apr 2025 17:51:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=dwYMmYBGcRdrsU5XQ+hAL+JBZw/kI8UKZxF4m6ObHrs=; b=
+	XcYTiKhni323uJRl6rUShi7o8aDPhb0yGMijmwh3QlFh7t9TJIKw6wlzI3w12Icd
+	qeE71wD1m+CbNsAQkqqsHMw85bu2LCHvvPNI1RRlfjd+aNuDKahYMPKbtrc3zlql
+	SzKynnaUKM5ezG50WTm5hxTJqbz50xBgh9cBM9dXGdyn0D1NgAxjScp09HW5NuLe
+	hUdfZzkN684h4pY+LxpEaZa8HYp0laVm3CQoqN3epRGEk/tgj9jurWdcJJP/8/Ct
+	wRuRhfnyFFmlWizMgsUfiSIIP5/rYa9Nf1RK3WuLXem14o0qK1htVkeRAyKZQoZ6
+	GFW4yqRx/sszpshvLuML6Q==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45xj6402we-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Apr 2025 17:51:57 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53AGxfbp023915;
+	Thu, 10 Apr 2025 17:51:55 GMT
+Received: from ch5pr02cu005.outbound.protection.outlook.com (mail-northcentralusazlp17012051.outbound.protection.outlook.com [40.93.20.51])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45ttyjx9kp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Apr 2025 17:51:55 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WPaOl2Yhh0OgseYDOlviaHaR1hHYuFUlzfTuE2IXXre/5w8iFJ+8Q3l6hWzgr8h3gQvUiripRMJhV2QZYXXHl9A0tqlVwQlw4upmdmP6t/rIUNZE+MbHaEH5awS3TAFmFvJtD0ckxs3dy1dPDzYRmvCL09EsrSeafaAEgUetV5WAyKzWe8Lp3C2j5+cTEuFYVZAjWFM2QdSHRK/ErqLFBByvjKaeoxPf4JG/hYdcKtU4hZoXRDsV4DSGZ5ssQF3jgLzZ3GNNwFouuDDA8bmZYIs1lTBdXmESCMKt0UXDaCQGXw6r7bLuCOP7AiMPTqRI+rVsrz4NTBohjw113ecS+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dwYMmYBGcRdrsU5XQ+hAL+JBZw/kI8UKZxF4m6ObHrs=;
+ b=tG8EFDMC70W6OqQiJC19Xq6qLczEaJ0Acx5zL/7dn3AWAZK5FqXLSAdQZ5Aa2KAQhJjddZAEHHR5N9xOgWpJiu26AOBi7CcZcgDj4bPOg2Dl6zZ9f5y2Q2av5JgKeyYYyaJpgQputo8dpa051DcaqZNiEYzNMWx2ChErkYdx458WchlAGMVH5H3qgWq8Yj5cWpVaoH/EpSMbR7ngLRgjabFLIY9kqcJQ5G4nIm0nXKoTZ/3RwI5OvrPVyzsv9ZmciKp9JiXGBQPleQXLkZcLMmaJotEXA5jALg1QHxP20GDAatdTfvlnscmnfjHxjC285vnw8LoR+qb13GuY658Exg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dwYMmYBGcRdrsU5XQ+hAL+JBZw/kI8UKZxF4m6ObHrs=;
+ b=rsu7YLIZz2e2n7iBG1f7UergJjmxsBaD5VKX52V85cIa1qn1Iffg6+/c3j4HGVryLSuVr3jeo9yJiHXxPnnoIy4I67iXmXJ20v1oeOYj6pqVupO05e4mxGTow+k8M90EDZTXRAMhYDAUiqnEVCKjlb/z5g+4299ZFCz+l4hUHYA=
+Received: from DS7PR10MB5328.namprd10.prod.outlook.com (2603:10b6:5:3a6::12)
+ by IA0PR10MB7181.namprd10.prod.outlook.com (2603:10b6:208:400::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.24; Thu, 10 Apr
+ 2025 17:51:52 +0000
+Received: from DS7PR10MB5328.namprd10.prod.outlook.com
+ ([fe80::ea13:c6c1:9956:b29c]) by DS7PR10MB5328.namprd10.prod.outlook.com
+ ([fe80::ea13:c6c1:9956:b29c%6]) with mapi id 15.20.8632.017; Thu, 10 Apr 2025
+ 17:51:52 +0000
+Message-ID: <7bffe8a8-56f6-40e1-90cb-d9589fd41bee@oracle.com>
+Date: Thu, 10 Apr 2025 23:21:44 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v25 01/23] net: introduce OpenVPN Data Channel
+ Offload (ovpn)
+To: Antonio Quartulli <antonio@openvpn.net>, netdev@vger.kernel.org,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+        sd@queasysnail.net, ryazanov.s.a@gmail.com,
+        Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
+        steffen.klassert@secunet.com, antony.antony@secunet.com
+References: <20250407-b4-ovpn-v25-0-a04eae86e016@openvpn.net>
+ <20250407-b4-ovpn-v25-1-a04eae86e016@openvpn.net>
+Content-Language: en-US
+From: ALOK TIWARI <alok.a.tiwari@oracle.com>
+In-Reply-To: <20250407-b4-ovpn-v25-1-a04eae86e016@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR01CA0009.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::18) To DS7PR10MB5328.namprd10.prod.outlook.com
+ (2603:10b6:5:3a6::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 06/11] arm64: dts: ti: k3-am62a7-sk: Enable IPC with
- remote processors
-To: Beleswar Prasad Padhi <b-padhi@ti.com>, Judith Mendez <jm@ti.com>,
-        Devarsh
- Thakkar <devarsht@lewv0571a.ent.ti.com>,
-        Nishanth Menon <nm@ti.com>, Hari
- Nagalla <hnagalla@ti.com>
-CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Markus
- Schneider-Pargmann <msp@baylibre.com>
-References: <20250405001518.1315273-1-jm@ti.com>
- <20250405001518.1315273-7-jm@ti.com>
- <6868f593-0728-4e92-a57b-87db6a0037f6@ti>
- <f42607f5-e39d-48a1-89c0-11d4982a2426@ti.com>
- <f8f1d877-3d13-4ba7-90e1-455923458c11@ti.com>
- <fe735242-4643-432a-adaf-27e29719948a@ti.com>
- <bffd8489-1556-425d-b3f9-8fde8a7d34a7@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <bffd8489-1556-425d-b3f9-8fde8a7d34a7@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR10MB5328:EE_|IA0PR10MB7181:EE_
+X-MS-Office365-Filtering-Correlation-Id: da6ae527-d631-4514-2d66-08dd7858606a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V29tVmhsZkhYd05CZnhEYWg5VnlQTWxqejY2WUNTTmRBT1ljRGV0SVpRRU5I?=
+ =?utf-8?B?SmVxNi9GRzBMWnZ1cFEzZW5rZWdlYnd5R2g5bGEvWG5mR0pSQU5jYTQybVZX?=
+ =?utf-8?B?U3IvSXFNa1UveHRQejY2b0Jqd2hBd3RHUjFDK0lyYkpIZlpRZ1RWeVJPdFpm?=
+ =?utf-8?B?bGNHbjBnbmpWQjlBcEZ0OEErYlZnNEx3V2pzY1pWVkJEUkl6Wi9wRXgrUmc3?=
+ =?utf-8?B?RkdZVlR6cUdEbVN0VWs3M3RuWHZyVDdTZFVibThJcS9LNms2T1Y1R0xHMXRS?=
+ =?utf-8?B?RE4vaCt3TUVXdE55K2M4U3NhU01MMjZMWVg1aXcrTDJoYlU1VXVuQ09xdUxw?=
+ =?utf-8?B?Nmg3Uml4YkhudmFuOWJPbUFMMitYR29JQnRyTm1mT0xPOWpWZEF2aDY1bjRJ?=
+ =?utf-8?B?d3FzdEZUT3R1Q04vM2JnQU1nN3k5MjlVc2RGNms0a21tWDA0OE0vT2sxbUtD?=
+ =?utf-8?B?TjB3ejBDWkxid0huVktld2xReEZLN2FnTThubHBzSk9rM2NrTWxrbTNrUTNo?=
+ =?utf-8?B?bEgyTEM4b2VQSTJYb0xzUVV2QWYrNytuUVdrT1ZyeVJmVWg3V3ZzQU8yWGQr?=
+ =?utf-8?B?dktEWTlIa0U4V0xmTWx4NWZjMUVQQmc4cFhFQmNKOThLK21DL1ZzRWp6SXJp?=
+ =?utf-8?B?THZTRnVyTkpsbk45bWNadnRQT1RZZ3lqbU5rU0k1Tyt2V21jN3YvdE16czND?=
+ =?utf-8?B?M1hFcWlJMHJwWkJ0aU5ia1hzN25TeC96Y2RuMThna3ZnTndmRHFHSHpMS3JM?=
+ =?utf-8?B?UnNjeFFZMzVyRjFWb0w3NmUvRGRYNGx2aEI3NzlmMUJscmpjVjE2eG1ON1pW?=
+ =?utf-8?B?QjFWekpvaE5FNVpZK3JkWXMyRkhONjNKVkh6TkRjK1d5enltdVpOYWdCdUpG?=
+ =?utf-8?B?MzQwUlJZU2x2UzFhMjFBQW12M21HU016TU01ZnU2YkcvdUdKSEo4Snp0c0tB?=
+ =?utf-8?B?anJLN1NtQVZUSnZ1dXlCdTR4Qk10bHFTcWI2OE1FZ3l3b2hWV2NIU1JGdzll?=
+ =?utf-8?B?Q24yUFp6RXYxbkxVQy9XNU8rSTVGc1FoczZQRFllekkrSnZ0eTBCMEtObTRC?=
+ =?utf-8?B?TlF3ZXdUVTdoWnNaREtOOTA5R2twM0NRTVJYeERJV2FYby81YUMvMnIzVDVr?=
+ =?utf-8?B?eXp2SEllMC8vZU1mOFJBUDNwWklWVmhDUjFXZWh1Sy84NHJFbEV6MEpoajNV?=
+ =?utf-8?B?M1NXaTR5RmdHN2Z2em5PODdjMG5yRXZncWVGbktTQ2h1N3hDN3p5SGFKc2hJ?=
+ =?utf-8?B?MmNPQVAyQXcrV0FVWFlEUUNHeFBiM0t2cHk3UGFJaU1hMVZzY3NzR2lFOWhI?=
+ =?utf-8?B?Wm5Yd3lSdkRHbGdBOUNzOWY1RmRQR2dDbHd1eElBN3Z2elF4MzA0WEFpSGJa?=
+ =?utf-8?B?VUtKemVFbGoyZHdVcjUxbjVTVXJpVXhEbmRPb1V2YklzNWFtWlVHSzdQQkxn?=
+ =?utf-8?B?STRoZ0dOekJQamFQUnpkVXNycHgzVlZ1SldQMjlnSjJ0cW9Ddys5aUZLVzhp?=
+ =?utf-8?B?L3JrMDlVQmJHUGROei95V0o1OGVrNFlMSFQxTFVReCtQNS9NdHdaanJYeXRT?=
+ =?utf-8?B?ZTkvT2FIZlhNV1EraU5xSFRZMkVVV3dUNU1MbTVmdUNOL0NZTmszazc0cVNT?=
+ =?utf-8?B?aHhNYk5lMTRGYms2bldiQTBlOHlUdnZVY3NpVWRoRWFCMFN0SHFqZXg1VGFD?=
+ =?utf-8?B?WlI5Z0xRZ1FTQllQN0t2L1B1TlphbnJvRHlWYllEZHJHLzVUZEVkZklEdlFL?=
+ =?utf-8?B?L3N1UEU4c1pQcXR6cEYzUDJuZUM3R3p6UFJkcXJwZVhaR21IS3FOWGgyMGpw?=
+ =?utf-8?B?V3pqYnFuUFpXbE9LZndFc1J1MmtzYXdacXRtUzZGaFNvME1LQ3FPbjd5MjJD?=
+ =?utf-8?B?UHl2ekRiSW1NUnNaUFhOVG9oWUpOSkZ0eS9WR3NBa2JYdGR1czh5NGxab0hz?=
+ =?utf-8?B?cmZtdzBycENqb0pUQ1dIV0ZGTlJkSUZ2b1hBVjJjWHlyN2tJVTlkY0xXaTZu?=
+ =?utf-8?B?NVFMKzJZc3F3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR10MB5328.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZjVqVU51MnRLMDlLS3BBSW00V3lqd0hVZEtsUmlwdm1zd0tSNFk3K2dkQnlF?=
+ =?utf-8?B?Y3ZjdmNUSnY0TmNwMFJ5dGRFZ2U3RFg5cHNGNHlIZ013UlordjR0S2ZyOThE?=
+ =?utf-8?B?dmpYUnJXdHhpRWxxVXUzcURjN1pPeDRKWWRmMGg3NHo5RVBsTzlybWx1MER4?=
+ =?utf-8?B?QjBHanBRMmdHL0xyRVpBaTVYbXhRS1FOZ1lWWk9nZi9KT2xCcGNIbVhLeEh5?=
+ =?utf-8?B?WXkzZmdPdHluZ3RVSElJd2M0NU53MitDUjJXUEp5MHR2RWxzNTd1RUJQWHRp?=
+ =?utf-8?B?aGFFUGRDYTVmUHdCRnRWTEExQWpGQ1NpMFpwMEJrSysraGRkWDFwNkJFT3FK?=
+ =?utf-8?B?NWVvUEJqQ1REZmtvcm4vdGROMHBDRURPVzV4TDVqYTl1eUdYV2srcE5JWGpG?=
+ =?utf-8?B?b2dQQzhtd25IcXpYU0NqQUJaczZxSHhZN1hXNTl2NGp1OGlRTys0Sk1DUjI0?=
+ =?utf-8?B?OHpaYngzVVcxTG45V0daamd1aHk2bm9OZDBBem9WQWJyWm5PUlBQSlBLWktz?=
+ =?utf-8?B?UVNya2tMSFAyeVJaVDNYZVNvVUdyNFlzaDJsWVRTSTRxSGpDaFBMSGlZQlg5?=
+ =?utf-8?B?bUZja2RUMXppNmdNb2FjWXM0ZDNiYlQwWXozbU50cW5XU3ZmTzZWbGlKMnNL?=
+ =?utf-8?B?b1ZlaFpqbnJ3eVVuY0t4c0hiMGErSnYwRGFCeGg2OTQ4TVRoZktNMWkySHAz?=
+ =?utf-8?B?dHlSTEkwVzFQV2IzU3pJQkJaNmNyY1g2RzZyaDdrbXNYMmJmUUFSbkNQdytX?=
+ =?utf-8?B?cW1sL0ZsSkVST1BYSG1BejYyREdiUnlveVV6TytsRGdYNVRlVmxuTEVUZCt0?=
+ =?utf-8?B?OUJBR0FDdE1Ia0I3MittZDJJWXN6RG5RWE1uS09kSEJ3TnR2d2w0ZGhIRmE2?=
+ =?utf-8?B?a1c0dXRRbDhPb1ZWcVZIMlIrUXpybmdvSFVBR05QT3V1amlVMVo5N3B6Mm8y?=
+ =?utf-8?B?bHFoL2FTbXI5ajloVXZoLzh5Sm5IOXBKa1BxaDIzRlQzdlp4UjY3NzFrNk55?=
+ =?utf-8?B?Sy9CeHRuZDFNVzVrN3BKU3pEeEN3NnlHemo5WXV2QkNtb3hrQW82bUQ4OXN5?=
+ =?utf-8?B?MkViODhSeUVkbHVnR01LVlhEVTVtSjJFeGkyaEVkbndTcjJnMHNzNWpWb21W?=
+ =?utf-8?B?Um1KTjRIRmhxMmlSMktwSlJBV1p0b3VkcGZla2JZV0ozc0FFWTRmMldPK2hY?=
+ =?utf-8?B?NnpCWW9rZGE2Ny83WmNXVjU5WGYzY1kxdXhEYnp3d0pucXRjR25xV3BRTGtD?=
+ =?utf-8?B?S0hoRmo0Y0VDU0pBaTNyNE40TFdEU1NEa0M0dnRMQkNqZ3lJSm8xb3hoYy96?=
+ =?utf-8?B?Sk1nUjZMK1Q0Q0Y2L2FlYWRKRDRCOWlzcng1OU5ZbWZ1aXhIWkh4NmMvY0lN?=
+ =?utf-8?B?aHJiaTZ5OUpFT0hlT3h2YUlQMmV6KzJyVzhPREJ1M1V4clhNUjJIYUNLaXRC?=
+ =?utf-8?B?enA5bHVETjBORysvRlZZTnFyditJZlNWamsxZWtCcjV5OGdyR01WcGpCWlN6?=
+ =?utf-8?B?NS9zN25UMkI4WlBhVk1HMWJ3NVVvYmZXMVlSSlRHQjhTS0Jjc1BpUzlkZjRY?=
+ =?utf-8?B?YUtOdjBmekpTdVhjRDRLbmk3N2g0SHZUcDNONnpMcVRVZWo1ekZlZTQ3SU5k?=
+ =?utf-8?B?OEpscDd3OEhEbWo0cTNRamFlUTlKL3VLNGgvU1NHME84aHFrSXRnRU14d2Iv?=
+ =?utf-8?B?UUFiTVUxZHNYYlRCVUlYNXZHOGR4T3VhTmxMVHMycHl2ckZ3bmZ6ZlU4Zk84?=
+ =?utf-8?B?SkFlYlQ4WCtaZ2tqQkg2WnhNMjVCOWZDVjFkQjVLSERlMElHaXF5SHZjTE9T?=
+ =?utf-8?B?NURNVDJSeTV6TnVNTEt0SWRPcWFhS05aLzNqRjlJR0x4RlVON01BVWIyZmU1?=
+ =?utf-8?B?RVNhOXRaUENiNmUvZTB5Q08rcG56Y1VCb0pNWDM5K1NsbVZSVEE4UkFRTXVh?=
+ =?utf-8?B?VnFIOS8wcWdRYlEvcWpNRlZIWVhNUlArMmV6NTE1cUd4NHJjM3FGOVNIalN0?=
+ =?utf-8?B?NzdWditqbjBUaWkxdi9vZlhrek1TRjdMTXFxNW9zK3VCWGdXZG5XUlhDRkZY?=
+ =?utf-8?B?MWlJTGNndFNZTEpEOHBEL2JXdTBlVHZvNWNmTGNQVWpYMEYvTGlMZEFsZEJ1?=
+ =?utf-8?B?MGIxSFZ5dzVsNXRBOU9pZ1REOE5LZDIzUy83MXhvSXJKQUtnN0ZDb1dtN2M1?=
+ =?utf-8?B?Vnc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	KhTl2cDqUFWcExN0SMlYV5rnsEAhi3jUSxHIIPa64QSUjK6CNgQis6mce5u+Lkwt2KZts08xfFkdKAqckv0CicW51PY9KszObtHiHCE3x/WJ3SvW9mXzDUJkJR//WEXdSmQzGxlK1DsaqGrpeGRzyiNbACccU7jpLykbfR+2lvf9iZ9x4bAMOdrFw+m2HvfqxkeY+1rq8OX7yP33b+9DDml5MFzb1tPYtqg9U040/v7kV3/8DfQTWT1Kfb2cIL2yAJoi2jIMjedQPpH0Ed3sKsvt4vixQuGZGeZ5bRv9EUExbNF6ZMEgeiPwGGQIIH2JOrM0vD12X7B+7RrfTnrzj4DzPPNCfPr9P3uJ8GMGyhInj+OYnPldXRnJWQX+xzDPC1TlzKkLuo8IPtFaTaXdw4+RByIIsWvnY1Pd9Ry8ZlhRpNyd7swk5QekT04UnOc5EBOYdfRIzuLuvs6Jrjcg5+EbvFQvQvyH99D/WKMfcv44c7RCtc94DPNxCQi7g65bpRNKo2IVyG1eAN1b99zX8Fu6yNeR+ziWkgmMepCzkkcBzJaBAJW+W2pyEtBetCttY40Aor7xLOm+VyPZkO6P82zTEefUzdp+3/p3D4UGqsQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: da6ae527-d631-4514-2d66-08dd7858606a
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR10MB5328.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2025 17:51:52.7794
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /GdkO4M2DKt0FEg5328jZRH52rKM1TDDw5QVLd45HEDvBOpq0jo/FcKfE8hPnzm0h00/R7TxkhAB+/y4N6Md26+I2jwmXNClc2nzu7+gSuQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7181
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-10_05,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 mlxscore=0
+ mlxlogscore=999 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
+ definitions=main-2504100128
+X-Proofpoint-GUID: Xeh0tIoFKHXW5bjKx8Ln_a2fyJmQpjRK
+X-Proofpoint-ORIG-GUID: Xeh0tIoFKHXW5bjKx8Ln_a2fyJmQpjRK
 
-On 4/10/25 3:55 AM, Beleswar Prasad Padhi wrote:
-> Hi Judith,
+
+
+On 08-04-2025 01:16, Antonio Quartulli wrote:
+> Although it wasn't easy to convince the community, `ovpn` implements
+> only a limited number of the data-channel features supported by the
+> userspace program.
 > 
-> On 10/04/25 04:02, Judith Mendez wrote:
->> Hi Beleswar,
->>
->> On 4/7/25 11:00 PM, Beleswar Prasad Padhi wrote:
->>> Hi Judith, Andrew,
->>>
->>> On 07/04/25 19:43, Judith Mendez wrote:
->>>> Hi Devarsh,
->>>>
->>>> On 4/7/25 8:54 AM, Devarsh Thakkar wrote:
->>>>> Hi Judith,
->>>>>
->>>>> On 05/04/25 05:45, Judith Mendez wrote:
->>>>>  > From: Devarsh Thakkar <devarsht@ti.com>
->>>>>>
->>>>>
->>>>> Thanks for the patch.
->>>>>
->>>>>> For each remote proc, reserve memory for IPC and bind the mailbox
->>>>>> assignments. Two memory regions are reserved for each remote processor.
->>>>>> The first region of 1MB of memory is used for Vring shared buffers
->>>>>> and the second region is used as external memory to the remote processor
->>>>>> for the resource table and for tracebuffer allocations.
->>>>>>
->>>>>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
->>>>>> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
->>>>>> Signed-off-by: Judith Mendez <jm@ti.com>
->>>>>> ---
->>>>>>   arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 96 +++++++++++++++++++++++--
->>>>>>   1 file changed, 90 insertions(+), 6 deletions(-)
->>>>>>
->>>>>> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->>>>>> index 1c9d95696c839..7d817b447c1d0 100644
->>>>>> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->>>>>> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->>>>>> @@ -52,6 +52,42 @@ linux,cma {
->>>>>>               linux,cma-default;
->>>>>>           };
->>>>>> +        c7x_0_dma_memory_region: c7x-dma-memory@99800000 {
->>>>>> +            compatible = "shared-dma-pool";
->>>>>> +            reg = <0x00 0x99800000 0x00 0x100000>;
->>>>>> +            no-map;
->>>>>> +        };
->>>>>> +
->>>>>> +        c7x_0_memory_region: c7x-memory@99900000 {
->>>>>> +            compatible = "shared-dma-pool";
->>>>>> +            reg = <0x00 0x99900000 0x00 0xf00000>;
->>>>>> +            no-map;
->>>>>> +        };
->>>>>> +
->>>>>> +        mcu_r5fss0_core0_dma_memory_region: r5f-dma-memory@9b800000 {
->>>>>> +            compatible = "shared-dma-pool";
->>>>>> +            reg = <0x00 0x9b800000 0x00 0x100000>;
->>>>>> +            no-map;
->>>>>> +        };
->>>>>> +
->>>>>> +        mcu_r5fss0_core0_memory_region: r5f-dma-memory@9b900000 {
->>>>>> +            compatible = "shared-dma-pool";
->>>>>> +            reg = <0x00 0x9b900000 0x00 0xf00000>;
->>>>>> +            no-map;
->>>>>> +        };
->>>>>> +
->>>>>> +        wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
->>>>>> +            compatible = "shared-dma-pool";
->>>>>> +            reg = <0x00 0x9c800000 0x00 0x100000>;
->>>>>> +            no-map;
->>>>>> +        };
->>>>>> +
->>>>>> +        wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
->>>>>> +            compatible = "shared-dma-pool";
->>>>>> +            reg = <0x00 0x9c900000 0x00 0xf00000>;
->>>>>> +            no-map;
->>>>>> +        };
->>>>>> +
->>>>>>           secure_tfa_ddr: tfa@9e780000 {
->>>>>>               reg = <0x00 0x9e780000 0x00 0x80000>;
->>>>>>               alignment = <0x1000>;
->>>>>> @@ -63,12 +99,6 @@ secure_ddr: optee@9e800000 {
->>>>>>               alignment = <0x1000>;
->>>>>>               no-map;
->>>>>>           };
->>>>>> -
->>>>>> -        wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
->>>>>> -            compatible = "shared-dma-pool";
->>>>>> -            reg = <0x00 0x9c900000 0x00 0x01e00000>;
->>>>>> -            no-map;
->>>>>> -        };
->>>>>>       };
->>>>>
->>>>> This is missing the edgeAI specific remote-core carveouts and RTOS-to-RTOS IPC memory regions [1] being used by edgeAI firmwares which come as pre-packaged in the official SDK release for AM62A.
->>>>>
->>>>> There is only one official SDK release for AM62A (which is edgeAI based) [2] which packages these edgeAI remoteproc firmwares and in my view it is a fair expectation that remote core careveouts in device-tree should align with firmwares released in SDK.
->>>>>
->>>>> This is because most developers (including me) and vendors download this official SDK release and use it with latest upstream kernel and modules (right now we are applying required patches locally) and this patch won't suffice for this, in-fact it won't work since the remoteproc firmwares are already using regions beyond the reserved-regions from this patch.
->>>>
->>>> I understand your point, currently with this patch remoteproc loading
->>>> will not work for some cores. However, the goal here is to standardize
->>>> as much as possible the memory carveout sizes, push the "demo firmware"
->>>> to request resources the correct way from resource table, 
->>>
->>>
->>> It is indeed more suitable if the memory carveouts are called out in the resource table of the firmware. But you will still need to reserve that memory sections in the Device Tree so that Kernel does not map that memory for anything else. So I am thinking how moving to resource table will help solve this problem?
->>
->> The point is that our default FW is doing things incorrectly. We want to
->> push the existing FW to
->> 1. Request resources via resource table.
->> 2. Fix their memory requirements (recent offline discussion proved that
->> FW is requesting more than it needs)
->> 3. FW should adapt to Linux not Linux adapt to FW
+> Each feature that made it to `ovpn` was attentively vetted to
+> avoid carrying too much legacy along with us (and to give a clear cut to
+> old and probalby-not-so-useful features).
 > 
-> 
-> Thanks. I also agree with you on all of the above points for a standard firmware.
-> 
-> However, I was referring to this problem:
-> Can we get rid of static reserved memory carveouts in DT?
-> People using a custom firmware will have to patch the Device Tree to reserve larger/different memory regions. Is there some way where the firmware can dictate the "reserved" memory carveouts at runtime? Memory carveouts can be announced through Resource Table, but there is no guarantee we will be able to allocate it (it could be mapped by the Kernel for some other alloc), unless its pre-reserved in DT.
 
-That's the neat thing about the RSC_CARVEOUT item in the resource table,
-it works both ways. The firmware can request a static address, or it can
-use FW_RSC_ADDR_ANY for the address and Linux will go and dynamically
-allocate it a region. Then it passes this info back to the firmware by
-updating the resource table in memory. Firmware can then simply read this
-carveout address from its resource table and start using it.
+typo - probably
 
-The only time we need a static addresses would be for code sections as
-they are not relocatable (yet). And that is the reason we have the
-minimal carveouts we are adding in this patch. Code goes here. And
-these carveouts are 15MB! No firmware I know of has 15MB of *code*
-section.
+> Notably, only encryption using AEAD ciphers (specifically
+> ChaCha20Poly1305 and AES-GCM) was implemented. Supporting any other
+> cipher out there was not deemed useful.
 
-As we found in the offline discussion, even our largest firmware
-doesn't use near that much space. What that firmware is doing is picking
-some spots in DRAM for its heap and buffer areas, and without coordinating
-with Linux, just starts using that memory. We have to then go into DT and
-carveout all these ranges to avoid stepping on the firmware heaps from
-Linux.
 
-With these firmware heap/buffer memory static carveouts we have to account
-for the worst case and statically carve out enough memory for the largest
-possible amount of memory a firmware could ever use. In some firmware
-we ship today this is +2GB! So why should every user of this board lose
-all this memory when they might happen to be using a more sane firmware
-that doesn't use so much (like my Zephyr firmware), or if their firmware
-doesn't need any heap at all (like some other firmware we have).
-
-Andrew
-
-> 
-> Thanks,
-> Beleswar
-> 
->>
->> If not, then then we should try to move to Zephyr firmware or other/
->> better options.
->>
->> Hope I am able to explain myself better this time around.
->>
->> ~ Judith
->>
->>>
->>> Thanks,
->>> Beleswar
->>>
->>>> and move away
->>>> from this dependency and limitations that we have with our firmware. We
->>>> should soon be able to generate our own firmware using Zephyr, which
->>>> Andrew is pioneering, so with this firmware we should move to the
->>>> correct direction upstream. Downstream we are still using the memory
->>>> carveout sizes that the firmware folk want so desperately to keep, for
->>>> now..
->>>>
->>>> ~ Judith
->>>>
->>>>>
->>>>> [1]: https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel/tree/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts?h=ti-linux-6.6.y-cicd#n103
->>>>> [2]: https://www.ti.com/tool/PROCESSOR-SDK-AM62A
->>>>>
->>>>> Regards
->>>>> Devarsh
->>>>>
->>>>>>       opp-table {
->>>>>> @@ -741,3 +771,57 @@ dpi1_out: endpoint {
->>>>>>           };
->>>>>>       };
->>>>>>   };
->>>>>> +
->>>>>> +&mailbox0_cluster0 {
->>>>>> +    status = "okay";
->>>>>> +
->>>>>> +    mbox_r5_0: mbox-r5-0 {
->>>>>> +        ti,mbox-rx = <0 0 0>;
->>>>>> +        ti,mbox-tx = <1 0 0>;
->>>>>> +    };
->>>>>> +};
->>>>>> +
->>>>>> +&mailbox0_cluster1 {
->>>>>> +    status = "okay";
->>>>>> +
->>>>>> +    mbox_c7x_0: mbox-c7x-0 {
->>>>>> +        ti,mbox-rx = <0 0 0>;
->>>>>> +        ti,mbox-tx = <1 0 0>;
->>>>>> +    };
->>>>>> +};
->>>>>> +
->>>>>> +&mailbox0_cluster2 {
->>>>>> +    status = "okay";
->>>>>> +
->>>>>> +    mbox_mcu_r5_0: mbox-mcu-r5-0 {
->>>>>> +        ti,mbox-rx = <0 0 0>;
->>>>>> +        ti,mbox-tx = <1 0 0>;
->>>>>> +    };
->>>>>> +};
->>>>>> +
->>>>>> +&wkup_r5fss0 {
->>>>>> +    status = "okay";
->>>>>> +};
->>>>>> +
->>>>>> +&wkup_r5fss0_core0 {
->>>>>> +    mboxes = <&mailbox0_cluster0>, <&mbox_r5_0>;
->>>>>> +    memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
->>>>>> +            <&wkup_r5fss0_core0_memory_region>;
->>>>>> +};
->>>>>> +
->>>>>> +&mcu_r5fss0 {
->>>>>> +    status = "okay";
->>>>>> +};
->>>>>> +
->>>>>> +&mcu_r5fss0_core0 {
->>>>>> +    mboxes = <&mailbox0_cluster2>, <&mbox_mcu_r5_0>;
->>>>>> +    memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
->>>>>> +            <&mcu_r5fss0_core0_memory_region>;
->>>>>> +};
->>>>>> +
->>>>>> +&c7x_0 {
->>>>>> +    mboxes = <&mailbox0_cluster1>, <&mbox_c7x_0>;
->>>>>> +    memory-region = <&c7x_0_dma_memory_region>,
->>>>>> +            <&c7x_0_memory_region>;
->>>>>> +    status = "okay";
->>>>>> +};
->>>>>
->>>>
->>
+Thanks,
+Alok
 
