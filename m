@@ -1,172 +1,218 @@
-Return-Path: <linux-kernel+bounces-598958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-598978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A5ADA84D1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:37:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 720D6A84D6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 21:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9339E9A2B6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:37:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4F208C313C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 19:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147C128EA6A;
-	Thu, 10 Apr 2025 19:37:10 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC73290083;
+	Thu, 10 Apr 2025 19:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="P7XuaM/z"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3B81E5206;
-	Thu, 10 Apr 2025 19:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2A81F12FB;
+	Thu, 10 Apr 2025 19:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744313829; cv=none; b=iRcbnW+W3xXOU+lGxT1x5bx3NqJNc4S0vboa4mL8DmpTbjeUExqBgeXq0UGtG+kVOx1ef0+gYTKWGdHB6VOkjDQni59pl3DJRknW7qqo8h+EuSdkuiW6pegu4DIjbijGSz7WEJY0ym6J+9IDdSA7I6aTWngcda1WPSXz7q5Cz/g=
+	t=1744314313; cv=none; b=nInk7Lny3SZG9bFikScBi21wLTk4o4osR5KFgLsTrXOwAQ5gry32Y/h+Pre3IMS6PQMsM+O0tmv+kRGpg54tWyfx/z3ep2eFWB1yPxnwI4JYgsZsv6Q/dOAnzSlXYsL04Me1lQXVwMWeT0yb8uYZI7r4ljJWmHNvwBrxgwvz6/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744313829; c=relaxed/simple;
-	bh=PsrRmtB6rb5wsQdcYNCO6uXYurnlxcfevu2ImOBXy1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=h0YCQ6RwqZV4XvpSVW84TMzNIEpF7sqHgW4pEQkctBoznWZxdoXMPpUaXcfOKd3y/7reNst8prlxYYoVEDeTp7N7oreclB/30s8Hor8rOy+oNW8AuJyewDBpHWalJTUuCht60V+2Sl+znaO1Vd5mO+bvIgCx4V9oT29SlR49KmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D371C4CEDD;
-	Thu, 10 Apr 2025 19:37:08 +0000 (UTC)
-Date: Thu, 10 Apr 2025 15:38:30 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH v2] ftrace: Show subops in enabled_functions
-Message-ID: <20250410153830.5d97f108@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744314313; c=relaxed/simple;
+	bh=nYuYtFWEsen9f2D7ItDfNNjWzV+yKZLxUypDQA+DWlk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B2S59ISvGr/658nCKLgNqoSkWTeiRGOu8+vE3wJcdNJPbS71nxImX26rjH/tR6yMFyduL3mNWo9wYqw+wtnQKNIGMNPskHEit9Q6U8cAmmKcdKGbRlx0Hm+GlQX2UYFHHbPyEBSV6P8uzMwRGoM+uPPV5/fuvi291qSKw/P0h8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=P7XuaM/z; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id A25F12E09463;
+	Thu, 10 Apr 2025 22:39:22 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1744313963;
+	bh=FOGdZqRgrRfjCXzxKmtyNviIBZYCEd5J8vC9FJL0iik=;
+	h=Received:From:Subject:To;
+	b=P7XuaM/zM6DP0rEWAXZcH2n1hCr3kvjNBcEgCE6nnOntDxpAE4leGK0lFuNfOeI/p
+	 Yjuh/Uc/8BM5v1U8GMGwtHdhJ2rpEttLlhBlGHXg84vtKRb4KrXT5N3Im3OxbmYj6O
+	 CCTTE4Rto/aVkjzNR41ZSyk6pLPunrQTSXO8Z8SA=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.178) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f178.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f178.google.com with SMTP id
+ 38308e7fff4ca-30effbfaf4aso11471611fa.3;
+        Thu, 10 Apr 2025 12:39:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCU88GyfGnBKRBYviP7AWW10zoib5yT5F9OdTWm1TV6CEaCf+pfW2+yOPfqLGQY+z7uT94ksrxmBaQ5tCaNv@vger.kernel.org,
+ AJvYcCXxp7K8KvuyELcnGgL3oEqp5lSoWMzSGUZIeo0m2BGHJkvx5tFzBOlAwi/4/QCQAhaHvob2Gekqn94d4A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGjpOb4PSvU6ayMLI0RWoQA63Bc3nrc18hHdigx7O8vkbc8NGD
+	OS28ys2volO8Ybb4uBKd3kHiOEUWtRQQxeNoeU1WDS0iyGReRnXg1+jY2hi+dWg7EYJU24QtUyd
+	UywPUst5W9zYqLMI3qN2WXVf8C2c=
+X-Google-Smtp-Source: 
+ AGHT+IEepTHsF241IzEilHxJsf/PKafP8ocYWw9ljd0ITH+/epE0kwn561dq9fLGrkwW9h8DsARHPA4q+CGzK5B2XLI=
+X-Received: by 2002:a05:651c:12ca:b0:30b:9813:b00e with SMTP id
+ 38308e7fff4ca-30facc202a3mr12439491fa.24.1744313961756; Thu, 10 Apr 2025
+ 12:39:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250325184601.10990-1-lkml@antheas.dev>
+ <20250325184601.10990-11-lkml@antheas.dev>
+ <648a1d1f-a222-480a-aec9-ab3e0cf790a1@ljones.dev>
+ <CAGwozwFrbspt+OfzaCR1B98Z=1GFS6nTdnVpWFeb71aLJLBUxQ@mail.gmail.com>
+In-Reply-To: 
+ <CAGwozwFrbspt+OfzaCR1B98Z=1GFS6nTdnVpWFeb71aLJLBUxQ@mail.gmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Thu, 10 Apr 2025 21:39:08 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwGqy344a_hr=2sKOiB3zUN36M12nOKp4_JpUuhW-pYBXA@mail.gmail.com>
+X-Gm-Features: ATxdqUHqeB-knh3wXRj4IY16EpcxPgWnylWSLpRJ0qODGgQdGYA57RGvwYyQHxk
+Message-ID: 
+ <CAGwozwGqy344a_hr=2sKOiB3zUN36M12nOKp4_JpUuhW-pYBXA@mail.gmail.com>
+Subject: Re: [PATCH v5 10/11] HID: asus: add RGB support to the ROG Ally units
+To: "Luke D. Jones" <luke@ljones.dev>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <174431396302.30498.17323684915039915382@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Mon, 31 Mar 2025 at 09:52, Antheas Kapenekakis <lkml@antheas.dev> wrote:
+>
+> On Mon, 31 Mar 2025 at 00:11, Luke D. Jones <luke@ljones.dev> wrote:
+> >
+> > On 26/03/25 07:45, Antheas Kapenekakis wrote:
+> > > Apply the RGB quirk to the QOG Ally units to enable basic RGB support.
+> > >
+> > > Reviewed-by: Luke D. Jones <luke@ljones.dev>
+> > > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > > ---
+> > >   drivers/hid/hid-asus.c | 4 ++--
+> > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> > > index c135c9ff87b74..fa8ec237efe26 100644
+> > > --- a/drivers/hid/hid-asus.c
+> > > +++ b/drivers/hid/hid-asus.c
+> > > @@ -1424,10 +1424,10 @@ static const struct hid_device_id asus_devices[] = {
+> > >         QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
+> > >       { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+> > >           USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY),
+> > > -       QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+> > > +       QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
+> > >       { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+> > >           USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X),
+> > > -       QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+> > > +       QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
+> > >       { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+> > >           USB_DEVICE_ID_ASUSTEK_ROG_CLAYMORE_II_KEYBOARD),
+> > >         QUIRK_ROG_CLAYMORE_II_KEYBOARD },
+> >
+> > Hi Antheas,
+> >
+> > I have some good news for you, ASUS got back to me, there *is* a way to
+> > get the feature level of a keyboard.
+> >
+> > ## 2.2. Configuration command
+> >
+> > In order to confirm what functions are the USB device supported, host
+> > retrieves the
+> > configuration information by feature report method. Therefore, the
+> > firmware has to
+> > return the data (byte 0x06~) to the host.
+> >
+> > ### 2.2.1. Set feature
+> >
+> > | Byte 0    | Byte 1    | Byte 2   | Byte 3   | Byte 4     | Byte 5  |
+> > |-----------|-----------|----------|----------|------------|---------|
+> > | Report ID | OP code   | Addr_L   | Addr_H   | Read ROM   | Length  |
+> > | Report ID | 0x05      | 0x20     | 0x31     | 0x00       | 0x08    |
+> >
+> > ### 2.2.2. Get feature
+> >
+> > | Byte 0    | Byte 1    | Byte 2   | Byte 3   | Byte 4     | Byte 5  |
+> > |-----------|-----------|----------|----------|------------|---------|
+> > | Report ID | 0x05      | 0x20     | 0x31     | 0x00       | 0x08    |
+> >
+> > **Byte 6**
+> > - 0x00: KB, 1-zone with single color
+>
+> Nice find. The asus-hid driver already implements this and checks for
+> 0x00 to bail the backlight.
+>
+> So that check should be removed as it does not work with single color
+> keyboards and instead checked for 2,3,4 to enable RGB.
+>
+> This also means removing the RGB check and getting global support in one go.
+>
+> Antheas
+>
+> > - 0x01: KB, QWERASD-partition
+> > - 0x02: KB, 4-zone with RGB
+> > - 0x03: KB, Per-key with RGB
+> > - 0x04: KB, 1-zone with RGB
+> > - Other: reserved
+> >
+> > **Byte 7(keyboard language)**
+> > - 0x01: US
+> > - 0x02: UK
+> > - 0x03: JP
+> > - Other: reserved
+> >
+> > I've not done anything with this myself yet, circumstances last week
+> > weren't great for me. If you implement this in driver I will ensure I
+> > get it tested as I have both single colour and rgb laptops.
+> >
+> > What i *do* know is:
+> >
+> > - 0x00: KB, 1-zone with single color
+> > - 0x01: KB, QWERASD-partition
+> > These can be standard kb_backlight
+> >
+> > - 0x02: KB, 4-zone with RGB
+> > - 0x03: KB, Per-key with RGB
+> > - 0x04: KB, 1-zone with RGB
+> > These work with the regular EC-mode RGB command for static/solid colour
+> > and you don't need to worry about zone/per-key. It would be good to
+> > document those as defines or enum or something for future.
 
-The function graph infrastructure uses subops of the function tracer.
-These are not shown in enabled_functions. Add a "subops:" section to the
-enabled_functions line to show what functions are attached via subops. If
-the subops is from the function_graph infrastructure, then show the entry
-and return callbacks that are attached.
+Let's start slowly getting back into this.
 
-Here's an example of the output:
+Ok, the lightbar of the Z13 returns:
+5a05203100080100010423000100060214020000000000000153550000000000
 
-schedule_on_each_cpu (1)                tramp: 0xffffffffc03ef000 (ftrace_graph_func+0x0/0x60) ->ftrace_graph_func+0x0/0x60     subops: {ent:trace_graph_entry+0x0/0x20 ret:trace_graph_return+0x0/0x150}
+And the keyboard returns:
+5a052031000801000004250501002e0000000000000000000000000000000000
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
-Changes since v1: https://lore.kernel.org/20250409094226.23f75293@gandalf.local.home
+That is 01 for both the lightbar and keyboard when it comes to zone
+(QWERASD) and 00/undefined when it comes to keyboard?
 
-- Add #ifdef CONFIG_FUNCTION_GRAPH_TRACER around the graph ops.
-  The graph_ops isn't defined without that config and it fails
-  the build. (Reported-by: kernel test robot <lkp@intel.com>)
+Now, if they meant byte 6 _after_ the header:
+5a0520310008 01 00 01 04 23 00 01 00060214020000000000000153550000000000
+5a0520310008 01 00 00 04 25 05 01 002e0000000000000000000000000000000000
 
- include/linux/ftrace.h |  2 ++
- kernel/trace/fgraph.c  |  2 ++
- kernel/trace/ftrace.c  | 38 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 42 insertions(+)
+It is still inconclusive
 
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index fbabc3d848b3..fc939ca2ff66 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -328,6 +328,7 @@ ftrace_func_t ftrace_ops_get_func(struct ftrace_ops *ops);
-  * DIRECT - Used by the direct ftrace_ops helper for direct functions
-  *            (internal ftrace only, should not be used by others)
-  * SUBOP  - Is controlled by another op in field managed.
-+ * GRAPH  - Is a component of the fgraph_ops structure
-  */
- enum {
- 	FTRACE_OPS_FL_ENABLED			= BIT(0),
-@@ -349,6 +350,7 @@ enum {
- 	FTRACE_OPS_FL_PERMANENT                 = BIT(16),
- 	FTRACE_OPS_FL_DIRECT			= BIT(17),
- 	FTRACE_OPS_FL_SUBOP			= BIT(18),
-+	FTRACE_OPS_FL_GRAPH			= BIT(19),
- };
- 
- #ifndef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 8d925cbdce3a..c5b207992fb4 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -1382,6 +1382,8 @@ int register_ftrace_graph(struct fgraph_ops *gops)
- 	/* Always save the function, and reset at unregistering */
- 	gops->saved_func = gops->entryfunc;
- 
-+	gops->ops.flags |= FTRACE_OPS_FL_GRAPH;
-+
- 	ret = ftrace_startup_subops(&graph_ops, &gops->ops, command);
- 	if (!ret)
- 		fgraph_array[i] = gops;
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 1a48aedb5255..b0e8d95312e4 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -4323,6 +4323,42 @@ static inline int print_rec(struct seq_file *m, unsigned long ip)
- }
- #endif
- 
-+static void print_subops(struct seq_file *m, struct ftrace_ops *ops, struct dyn_ftrace *rec)
-+{
-+	struct ftrace_ops *subops;
-+	bool first = true;
-+
-+	list_for_each_entry(subops, &ops->subop_list, list) {
-+		if (!((subops->flags & FTRACE_OPS_FL_ENABLED) &&
-+		      hash_contains_ip(rec->ip, subops->func_hash)))
-+			continue;
-+		if (first) {
-+			seq_printf(m, "\tsubops:");
-+			first = false;
-+		}
-+#ifdef CONFIG_FUNCTION_GRAPH_TRACER
-+		if (subops->flags & FTRACE_OPS_FL_GRAPH) {
-+			struct fgraph_ops *gops;
-+
-+			gops = container_of(subops, struct fgraph_ops, ops);
-+			seq_printf(m, " {ent:%pS ret:%pS}",
-+				   (void *)gops->entryfunc,
-+				   (void *)gops->retfunc);
-+			continue;
-+		}
-+#endif
-+		if (subops->trampoline) {
-+			seq_printf(m, " {%pS (%pS)}",
-+				   (void *)subops->trampoline,
-+				   (void *)subops->func);
-+			add_trampoline_func(m, subops, rec);
-+		} else {
-+			seq_printf(m, " {%pS}",
-+				   (void *)subops->func);
-+		}
-+	}
-+}
-+
- static int t_show(struct seq_file *m, void *v)
- {
- 	struct ftrace_iterator *iter = m->private;
-@@ -4375,6 +4411,7 @@ static int t_show(struct seq_file *m, void *v)
- 						   (void *)ops->trampoline,
- 						   (void *)ops->func);
- 					add_trampoline_func(m, ops, rec);
-+					print_subops(m, ops, rec);
- 					ops = ftrace_find_tramp_ops_next(rec, ops);
- 				} while (ops);
- 			} else
-@@ -4387,6 +4424,7 @@ static int t_show(struct seq_file *m, void *v)
- 			if (ops) {
- 				seq_printf(m, "\tops: %pS (%pS)",
- 					   ops, ops->func);
-+				print_subops(m, ops, rec);
- 			} else {
- 				seq_puts(m, "\tops: ERROR!");
- 			}
--- 
-2.47.2
+So I am unsure what to make of this
 
+Antheas
+
+> > Hope this helps.
+> >
+> > Cheers,
+> > Luke.
 
