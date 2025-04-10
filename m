@@ -1,449 +1,134 @@
-Return-Path: <linux-kernel+bounces-597341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B92DA8386D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:33:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0836FA83885
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 07:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84641B65969
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 05:33:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10D4F1B61B03
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 05:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA851F0E3A;
-	Thu, 10 Apr 2025 05:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED181F237D;
+	Thu, 10 Apr 2025 05:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KpG+JvBj"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="IKZXONR3"
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377731372
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 05:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830701372;
+	Thu, 10 Apr 2025 05:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744263174; cv=none; b=oHBWXHBnZ7qVSsCf87zAkmxlYqaNBnK07pq9L4twaGCnn4mPzfEgFfiZi4yFg9mqfbcP8I7sD8zOLZmRJeTzTz3apmEXXwbRh67tski9KccY4QoXNZ2t23mfeDzWPD1jdyAPQbOUeTDnaszEG3n4lNF3twbuZPw+RTO+qod7eUM=
+	t=1744263596; cv=none; b=jBlVBaYjDU2j9EjDbUCi5vAlY8I0FAH+t5uDwJC6dQzf56G91oTveTMt1leQ6nX9JRZs62oGY1B0ImtoPrcYhwSS+xYNB26wcWpGyDTqLuh5UKo2JHW/9HH24IRYa6WzH3XkO+mplyxsZRUXlE3E+qN6Q2x+DwQvi79dKYe1Xbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744263174; c=relaxed/simple;
-	bh=h1iEqcIjiw8HhH7Dlk7Go1flrDhb2a5O2DcOz8VeJRk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ORvFugRnb58R2elfUpguno5C/7yzCnfToGxBivMnwjRumBU6kQnkXCuXFK88b3yTRw9nX2JBSix/4pf5G3ty6/FFksCgXyKGj0gxKT2RFLte+ZwXJCOaGZ/zD1iiy43YbScSI43qRZv3uMikPrCvac3BxG1sfVC/NPrFEcJuS6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KpG+JvBj; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54b09cb06b0so422273e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 22:32:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1744263170; x=1744867970; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=z9OX3r+yBzejAZgNta+HZPc9/5U5WPp5oTAU4MXQYR8=;
-        b=KpG+JvBjzdYj/lbkC1CBOwAZzun3Y61UNtQofPHDcJRCDoRi9WFSfvcleV1FrVix2u
-         icnjc3mPpSxtybrUp2skZyjRNNZG/6rQYYntdZ6j2A7lZ7vuO4LwvZbGVTivGayahLmE
-         Y7BtBasUCn/uzX7aaZHN76zw6MvT4ivHsLy80=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744263170; x=1744867970;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z9OX3r+yBzejAZgNta+HZPc9/5U5WPp5oTAU4MXQYR8=;
-        b=MEyVqXPYGOg0vRrTAJnGgNz7swmCc8Nd+sbeP8Zh6bb2SUJh9+gGH/TINXsvKYgOFF
-         ejFZAsPOvVISBX2QpWzi0H9uYiNC/XzlZZn6YaEiU2XVTFN5wTOtLXdZ7eIQdgdhhJMM
-         qlsmFS9anGfDE70XwP/hIWbQfehTNChtiZOzXdmzhIitHeX0YZYpSboT0+BwjNlGDzAv
-         rSiBZZA7JjfhxGrkDbrZYsvyCuGsNRynH2kgSJagLsVH2kJkiZj+JYvv1XG+zcBPPg/g
-         z8k5UwxL0/0TmDNCT3jSF3GjpXeya4X9lxOokIOVl/eBzzrPgFrfI8evt4h/Hwvtcjz+
-         5p9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXkrKgPycwygQPvVYNXwHsGeAAfi6YISyIYlEYmNFtnRS/sh51GEkDEKSpjQaK2+aMVK+k6R3kfc5AcGhA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxshRGkXnOjS4mY8RtEE7E/rdISmJvATG6Z2l0zkjbOC2tKPW3P
-	vxMG1IQStfT4zxm4hAvHsTWEis2SapscOAmxXlOAa8WIBfxcZ3/KHwdA+la61MFbb4ky3y8Ygsr
-	AVQ==
-X-Gm-Gg: ASbGncslaIRYu3nPtl0jUuJLUfSuu5jD6MXgza4Diwyig7sJKEXuLHUkgyZqs996G7L
-	gHyc2EtRLcFDOuDpxPIX/134VxU/h9+jIigeVAQUYrCAonn+rkJErMkH8vybC7PQjzzl+k7+fiL
-	7tqShSp5Q4yo7zjeJtHkzN6F9RATUpWrDXCPDvK7ke5l6sh+uTwIwQ+EH0ZdUQbVuvsZM3cligq
-	18HiN80YiyFlLAYJQrot+OHE05nJVl4Ni/5tVm4pC4lFOi17FxyxL3FvIEXl6H75Y73WouD+BHY
-	yoN1UTjTQJ5qLcgOG+DSrqOeidQS5vCRspo/KDTEzZ0WYbKETRhq3gvTlHw3I0fVUeR7d2cRzjf
-	RmQQ=
-X-Google-Smtp-Source: AGHT+IH0iEWLdHYsyru6sB74OEFVXnqgoOd0DjQxfEsHisi8SYvXgQ3MR2l2a2yK4EdRy2u9japvuQ==
-X-Received: by 2002:a05:6512:2209:b0:545:2a7f:8f79 with SMTP id 2adb3069b0e04-54d3c5a3d43mr314997e87.16.1744263169997;
-        Wed, 09 Apr 2025 22:32:49 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d234204sm44403e87.54.2025.04.09.22.32.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 22:32:48 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-549967c72bcso537736e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Apr 2025 22:32:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJ614aWSQHA9W0Ex01xTIf/unVCb/IKComCL9LnUF5UU2q8rYHrbTSHwBq8tYX7Jl/z6vJCuXelCJ0jEM=@vger.kernel.org
-X-Received: by 2002:a05:6512:104f:b0:544:1093:ee3a with SMTP id
- 2adb3069b0e04-54d3c5a467dmr270168e87.24.1744263167379; Wed, 09 Apr 2025
- 22:32:47 -0700 (PDT)
+	s=arc-20240116; t=1744263596; c=relaxed/simple;
+	bh=x4lkIIUIDEuAdWkJfhkx8KGb8d40e+13jkCF+F8er2Y=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=bbfMErwrv+q0kFLkjJx5WxesmK/n/ANUn/fWp0ZPou2qQEsvPdRhc7DCQl2PLGGEeU2KDoo6ArLQ4c+tPhPdKW5rdKut1ehzsvBJk8usx01M5fi1ss/OJXF04cEixkvVRWhwHrRYCVK24EHFebU+AYEf+Z5wZeBfTC7PHqRl5j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=IKZXONR3; arc=none smtp.client-ip=162.62.57.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1744263581; bh=KAYunzAnh8IZTAn3POQE3m6686i8Sy0Rg+4ZJW/YE54=;
+	h=From:To:Cc:Subject:Date;
+	b=IKZXONR3REfObL0+SzsmJeV1JybqAtDsRbIR2isltAvaxUdV6nzntotfBU2La32xK
+	 uM7gbu7aidWFYurs/qTvZljhdlLeDa6sIFhaqXfRRJEgVxyWRk2+KW2A/tUNopN4l8
+	 vVkweNxe2J/KEiLHy5cYpY7FLJ1iEv+JufHEkfB8=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
+	id 852A5C45; Thu, 10 Apr 2025 13:33:18 +0800
+X-QQ-mid: xmsmtpt1744263198tgazjg59j
+Message-ID: <tencent_8478BF8F2549630842D323E7394CB6F49D08@qq.com>
+X-QQ-XMAILINFO: M7dxyDFn9MPm8KexzQHLy+mPN014pmGhGhqTGFvLq0cVE5KL4yznIo+9R0/9T9
+	 kOzu/OuwUeAJc6tikPhGzbQDOFu14bVztGwBzIsOEjJBJ8/OT54vniOjEMSsrcNS4neJYsqc5KNk
+	 PvjjbR4kOBWHJsekOvpZJYA+l94auXEf2fZGaJaBCIghXcgTKCl6KVIobjc0kiBUd/5aVUohJ0O6
+	 8Mg+gQWw4ROOJN70/2xdsJSYbZCYwLZJVd+ipoIzjNsZsadJ6vUzxspMF095a1UfnUkISam8AO4j
+	 FWmb7OCyHSSK+vAU8vABqyhWi3bBMvsB1yc1T+2l/WwoexOg0SYl0VNAjeHAc6ITvUh2hkGpf0a6
+	 H8zBb6no811pwIWJTCAZ+2wU5laYQPmRw78v1QEIuDqpWXrJ+SC0tTX8GBCXTqGogplTRZJSXwP5
+	 6KRtWd0GThe3vQMHQwUuvz1Ft/uIy5ujCjq2ErH+3/G5qYCV4GNXdzN7zN+dM5avyXbciW3IXSRA
+	 0fllEcrKMZhsF4Is7Jeu+Y877hrolpCl0sD6KS6a4ZaPPHmEP5gfKz9UfExJXgaZDVvc05oG4TvJ
+	 8pJAHADlY6C69nGOBWr1gitpclvWkqTZ7PL1pnRBwj3/JTJbEgHsRjosiZjMt6cU+aVin38sfepO
+	 m7mntQG4PUQ2wMH7MTggJXntTJPeh2tAjOSlTweAxk3wjuxlVw1h/71LGzDRB9Vn+CN4zi9+qyhy
+	 kIqFw8NkP1t4Oe1UT/gdwI+9BObrMZPD5/6wjzwxB735Fr27+ELChFm0AfCgGh0AZ4Iw3BM2nEam
+	 L1ZhN7yWn3vuuoepY5Pbi/wkFCJDKFRHw6/Vy2gyx9y0FIUzIBqd/6/8mcInhxxVwqGfjsxo+N8H
+	 LDMZpBTmXQXW8V/xgHBfMXOm80frN7FjbgKOTMQ4RYic1o1eWcxXxc9jJWfsYnwcR0sndHWxwnai
+	 pvz11RBjw=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Yaxiong Tian <iambestgod@qq.com>
+To: lukasz.luba@arm.com,
+	rafael@kernel.org,
+	len.brown@intel.com,
+	pavel@kernel.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yaxiong Tian <tianyaxiong@kylinos.cn>
+Subject: [PATCH] PM: EM: Fix potential division-by-zero error in em_compute_costs()
+Date: Thu, 10 Apr 2025 13:33:17 +0800
+X-OQ-MSGID: <20250410053317.890254-1-iambestgod@qq.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324022120.216923-1-ccc194101@163.com> <20250410020715.GA15367@pendragon.ideasonboard.com>
-In-Reply-To: <20250410020715.GA15367@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 10 Apr 2025 07:32:34 +0200
-X-Gmail-Original-Message-ID: <CANiDSCuGT=Yw9QeBQmWwa5hk6DULhwd557t-=HRQN+nPQq5b0w@mail.gmail.com>
-X-Gm-Features: ATxdqUGmkrPdeJzGVN2-vBDIHu780QnMm0M59X6sA0kEyW-KVNOAUaFxt9Cr8IA
-Message-ID: <CANiDSCuGT=Yw9QeBQmWwa5hk6DULhwd557t-=HRQN+nPQq5b0w@mail.gmail.com>
-Subject: Re: [PATCH v6] media: uvcvideo: Fix bandwidth issue for Alcor camera
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: chenchangcheng <ccc194101@163.com>, hdegoede@redhat.com, mchehab@kernel.org, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	chenchangcheng <chenchangcheng@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Laurent
+From: Yaxiong Tian <tianyaxiong@kylinos.cn>
 
-On Thu, 10 Apr 2025 at 04:07, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Mon, Mar 24, 2025 at 10:21:20AM +0800, chenchangcheng wrote:
-> > From: chenchangcheng <chenchangcheng@kylinos.cn>
-> >
-> > Some broken device return wrong dwMaxPayloadTransferSize fields,
-> > as follows:
-> > [  218.632537] [pid:20427,cpu6,guvcview,8]uvcvideo: Device requested 2752512 B/frame bandwidth.
-> > [  218.632598] [pid:20427,cpu6,guvcview,9]uvcvideo: No fast enough alt setting for requested bandwidth.
-> >
-> > The maximum packet size of the device is 3 * 1024, according to the
-> > logs above, the device needs to apply for a bandwidth of 0x2a0000.
-> >
-> > Bus 001 Device 008: ID 1b17:6684 Alcor Corp. Slave camera
-> > Device Descriptor:
-> >   bLength                18
-> >   bDescriptorType         1
-> >   bcdUSB               2.00
-> >   bDeviceClass          239 Miscellaneous Device
-> >   bDeviceSubClass         2
-> >   bDeviceProtocol         1 Interface Association
-> >   bMaxPacketSize0        64
-> >   idVendor           0x1b17
-> >   idProduct          0x6684
-> >   bcdDevice            1.05
-> >   iManufacturer           1 Alcor Corp.
-> >   iProduct                2 Slave camera
-> >   iSerial                 0
-> >   bNumConfigurations      1
-> >   Configuration Descriptor:
-> >     bLength                 9
-> >     bDescriptorType         2
-> >     wTotalLength       0x02ad
-> >     bNumInterfaces          2
-> >     bConfigurationValue     1
-> >     iConfiguration          0
-> >     bmAttributes         0x80
-> >       (Bus Powered)
-> >     MaxPower              200mA
-> >     Interface Association:
-> >       bLength                 8
-> >       bDescriptorType        11
-> >       bFirstInterface         0
-> >       bInterfaceCount         2
-> >       bFunctionClass         14 Video
-> >       bFunctionSubClass       3 Video Interface Collection
-> >       bFunctionProtocol       0
-> >       iFunction               4 Slave camera
-> >     Interface Descriptor:
-> >       bLength                 9
-> >       bDescriptorType         4
-> >       bInterfaceNumber        0
-> >       bAlternateSetting       0
-> >       bNumEndpoints           1
-> >       bInterfaceClass        14 Video
-> >       bInterfaceSubClass      1 Video Control
-> >       bInterfaceProtocol      0
-> >       iInterface              4 Slave camera
-> >       VideoControl Interface Descriptor:
-> >
-> >       ....
-> >
-> >       Endpoint Descriptor:
-> >         bLength                 7
-> >         bDescriptorType         5
-> >         bEndpointAddress     0x81  EP 1 IN
-> >         bmAttributes            3
-> >           Transfer Type            Interrupt
-> >           Synch Type               None
-> >           Usage Type               Data
-> >         wMaxPacketSize     0x0010  1x 16 bytes
-> >         bInterval               7
-> >     Interface Descriptor:
-> >       bLength                 9
-> >       bDescriptorType         4
-> >       bInterfaceNumber        1
-> >       bAlternateSetting       0
-> >       bNumEndpoints           0
-> >       bInterfaceClass        14 Video
-> >       bInterfaceSubClass      2 Video Streaming
-> >       bInterfaceProtocol      0
-> >       iInterface              0
-> >       VideoStreaming Interface Descriptor:
-> >         bLength                            14
-> >         bDescriptorType                    36
-> >         bDescriptorSubtype                  1 (INPUT_HEADER)
-> >         bNumFormats                         1
-> >         wTotalLength                   0x01ef
-> >         bEndPointAddress                  130
-> >         bmInfo                              0
-> >         bTerminalLink                       3
-> >         bStillCaptureMethod                 2
-> >         bTriggerSupport                     1
-> >         bTriggerUsage                       0
-> >         bControlSize                        1
-> >         bmaControls( 0)                     0
-> >       VideoStreaming Interface Descriptor:
-> >         bLength                            11
-> >         bDescriptorType                    36
-> >         bDescriptorSubtype                  6 (FORMAT_MJPEG)
-> >         bFormatIndex                        1
-> >         bNumFrameDescriptors                9
-> >         bFlags                              1
-> >           Fixed-size samples: Yes
-> >         bDefaultFrameIndex                  1
-> >         bAspectRatioX                       0
-> >         bAspectRatioY                       0
-> >         bmInterlaceFlags                 0x00
-> >           Interlaced stream or variable: No
-> >           Fields per frame: 1 fields
-> >           Field 1 first: No
-> >           Field pattern: Field 1 only
-> >         bCopyProtect                        0
-> >       VideoStreaming Interface Descriptor:
-> >         bLength                            50
-> >         bDescriptorType                    36
-> >         bDescriptorSubtype                  7 (FRAME_MJPEG)
-> >         bFrameIndex                         1
-> >         bmCapabilities                   0x00
-> >           Still image unsupported
-> >         wWidth                           1920
-> >         wHeight                          1080
-> >         dwMinBitRate                248832000
-> >         dwMaxBitRate                1492992000
-> >         dwMaxVideoFrameBufferSize     6220800
-> >         dwDefaultFrameInterval         333333
-> >         bFrameIntervalType                  6
-> >         dwFrameInterval( 0)            333333
-> >         dwFrameInterval( 1)            400000
-> >         dwFrameInterval( 2)            500000
-> >         dwFrameInterval( 3)            666666
-> >         dwFrameInterval( 4)           1000000
-> >         dwFrameInterval( 5)           2000000
-> >
-> >       ......
-> >
-> >       VideoStreaming Interface Descriptor:
-> >         bLength                            42
-> >         bDescriptorType                    36
-> >         bDescriptorSubtype                  3 (STILL_IMAGE_FRAME)
-> >         bEndpointAddress                    0
-> >         bNumImageSizePatterns               9
-> >         wWidth( 0)                       1920
-> >         wHeight( 0)                      1080
-> >         wWidth( 1)                       2048
-> >         wHeight( 1)                      1536
-> >         wWidth( 2)                       1280
-> >         wHeight( 2)                       720
-> >         wWidth( 3)                       2592
-> >         wHeight( 3)                      1944
-> >         wWidth( 4)                       1280
-> >         wHeight( 4)                      1024
-> >         wWidth( 5)                       1280
-> >         wHeight( 5)                       960
-> >         wWidth( 6)                       1600
-> >         wHeight( 6)                      1200
-> >         wWidth( 7)                        800
-> >         wHeight( 7)                       600
-> >         wWidth( 8)                        640
-> >         wHeight( 8)                       480
-> >         bNumCompressionPatterns             0
-> >       VideoStreaming Interface Descriptor:
-> >         bLength                             6
-> >         bDescriptorType                    36
-> >         bDescriptorSubtype                 13 (COLORFORMAT)
-> >         bColorPrimaries                     1 (BT.709,sRGB)
-> >         bTransferCharacteristics            1 (BT.709)
-> >         bMatrixCoefficients                 4 (SMPTE 170M (BT.601))
-> >     Interface Descriptor:
-> >       bLength                 9
-> >       bDescriptorType         4
-> >       bInterfaceNumber        1
-> >       bAlternateSetting       1
-> >       bNumEndpoints           1
-> >       bInterfaceClass        14 Video
-> >       bInterfaceSubClass      2 Video Streaming
-> >       bInterfaceProtocol      0
-> >       iInterface              0
-> >       Endpoint Descriptor:
-> >         bLength                 7
-> >         bDescriptorType         5
-> >         bEndpointAddress     0x82  EP 2 IN
-> >         bmAttributes            5
-> >           Transfer Type            Isochronous
-> >           Synch Type               Asynchronous
-> >           Usage Type               Data
-> >         wMaxPacketSize     0x1400  3x 1024 bytes
-> >         bInterval               1
-> >     Interface Descriptor:
-> >       bLength                 9
-> >       bDescriptorType         4
-> >       bInterfaceNumber        1
-> >       bAlternateSetting       2
-> >       bNumEndpoints           1
-> >       bInterfaceClass        14 Video
-> >       bInterfaceSubClass      2 Video Streaming
-> >       bInterfaceProtocol      0
-> >       iInterface              0
-> >       Endpoint Descriptor:
-> >         bLength                 7
-> >         bDescriptorType         5
-> >         bEndpointAddress     0x82  EP 2 IN
-> >         bmAttributes            5
-> >           Transfer Type            Isochronous
-> >           Synch Type               Asynchronous
-> >           Usage Type               Data
-> >         wMaxPacketSize     0x0b84  2x 900 bytes
-> >         bInterval               1
-> >     Interface Descriptor:
-> >       bLength                 9
-> >       bDescriptorType         4
-> >       bInterfaceNumber        1
-> >       bAlternateSetting       3
-> >       bNumEndpoints           1
-> >       bInterfaceClass        14 Video
-> >       bInterfaceSubClass      2 Video Streaming
-> >       bInterfaceProtocol      0
-> >       iInterface              0
-> >       Endpoint Descriptor:
-> >         bLength                 7
-> >         bDescriptorType         5
-> >         bEndpointAddress     0x82  EP 2 IN
-> >         bmAttributes            5
-> >           Transfer Type            Isochronous
-> >           Synch Type               Asynchronous
-> >           Usage Type               Data
-> >         wMaxPacketSize     0x0c00  2x 1024 bytes
-> >         bInterval               1
-> >     Interface Descriptor:
-> >       bLength                 9
-> >       bDescriptorType         4
-> >       bInterfaceNumber        1
-> >       bAlternateSetting       4
-> >       bNumEndpoints           1
-> >       bInterfaceClass        14 Video
-> >       bInterfaceSubClass      2 Video Streaming
-> >       bInterfaceProtocol      0
-> >       iInterface              0
-> >       Endpoint Descriptor:
-> >         bLength                 7
-> >         bDescriptorType         5
-> >         bEndpointAddress     0x82  EP 2 IN
-> >         bmAttributes            5
-> >           Transfer Type            Isochronous
-> >           Synch Type               Asynchronous
-> >           Usage Type               Data
-> >         wMaxPacketSize     0x0c00  2x 1024 bytes
-> >         bInterval               1
-> > Device Qualifier (for other device speed):
-> >   bLength                10
-> >   bDescriptorType         6
-> >   bcdUSB               2.00
-> >   bDeviceClass          239 Miscellaneous Device
-> >   bDeviceSubClass         2
-> >   bDeviceProtocol         1 Interface Association
-> >   bMaxPacketSize0        64
-> >   bNumConfigurations      1
-> > Device Status:     0x0000
-> >   (Bus Powered)
-> >
-> > Signed-off-by: chenchangcheng <chenchangcheng@kylinos.cn>
-> > ---
-> >  drivers/media/usb/uvc/uvc_driver.c |  9 +++++++++
-> >  drivers/media/usb/uvc/uvc_video.c  | 10 ++++++++++
-> >  drivers/media/usb/uvc/uvcvideo.h   |  1 +
-> >  3 files changed, 20 insertions(+)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > index deadbcea5e22..9b1dedf9773b 100644
-> > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > @@ -3023,6 +3023,15 @@ static const struct usb_device_id uvc_ids[] = {
-> >         .bInterfaceSubClass   = 1,
-> >         .bInterfaceProtocol   = 0,
-> >         .driver_info          = UVC_INFO_QUIRK(UVC_QUIRK_STATUS_INTERVAL) },
-> > +     /* Alcor Corp. Slave camera */
-> > +     { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
-> > +                             | USB_DEVICE_ID_MATCH_INT_INFO,
-> > +       .idVendor             = 0x1b17,
-> > +       .idProduct            = 0x6684,
-> > +       .bInterfaceClass      = USB_CLASS_VIDEO,
-> > +       .bInterfaceSubClass   = 1,
-> > +       .bInterfaceProtocol   = 0,
-> > +       .driver_info          = UVC_INFO_QUIRK(UVC_QUIRK_OVERFLOW_BANDWIDTH) },
-> >       /* MSI StarCam 370i */
-> >       { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
-> >                               | USB_DEVICE_ID_MATCH_INT_INFO,
-> > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> > index e3567aeb0007..56f23c363870 100644
-> > --- a/drivers/media/usb/uvc/uvc_video.c
-> > +++ b/drivers/media/usb/uvc/uvc_video.c
-> > @@ -262,6 +262,16 @@ static void uvc_fixup_video_ctrl(struct uvc_streaming *stream,
-> >
-> >               ctrl->dwMaxPayloadTransferSize = bandwidth;
-> >       }
-> > +
-> > +     if (stream->intf->num_altsetting > 1 &&
-> > +         ctrl->dwMaxPayloadTransferSize > stream->maxpsize &&
-> > +         stream->dev->quirks & UVC_QUIRK_OVERFLOW_BANDWIDTH) {
-> > +             dev_warn(&stream->intf->dev,
-> > +                      "the max payload transmission size (%d) exceededs the size of the ep max packet (%d). Using the max size.\n",
-> > +                      ctrl->dwMaxPayloadTransferSize,
-> > +                      stream->maxpsize);
-> > +             ctrl->dwMaxPayloadTransferSize = stream->maxpsize;
->
-> If the requested bandwidth exceed the maximum the device can use, it's
-> clearly a firmware bug. Why do we need a quirk for this, can't we use
-> the maximum usable bandwidth in that case, regardless of the particular
-> device ?
+When the device is of a non-CPU type, table[i].performance won't be
+initialized in the previous em_init_performance(), resulting in division
+ by zero when calculating costs in em_compute_costs().
 
-Wouldn't that break devices with invalid max_bpi (maxp, maxp_mult,
-wBytesPerInterval)?
+Considering that the performance field in struct em_perf_state is defined
+as "CPU performance (capacity) at a given frequency", the original
+calculation method should be maintained when the device is of a non-CPU
+type.
 
-I think the approach taken by this patch is the most conservative one.
-If we get a good number of devices using this quirk we can implement
-an heuristic using the info from multiple descriptors.
+Fixes: <1b600da51073> ("PM: EM: Optimize em_cpu_energy() and remove division")
 
+Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
+---
+ kernel/power/energy_model.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
->
-> > +     }
-> >  }
-> >
-> >  static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
-> > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> > index 5e388f05f3fc..8b43d725c259 100644
-> > --- a/drivers/media/usb/uvc/uvcvideo.h
-> > +++ b/drivers/media/usb/uvc/uvcvideo.h
-> > @@ -77,6 +77,7 @@
-> >  #define UVC_QUIRK_DISABLE_AUTOSUSPEND        0x00008000
-> >  #define UVC_QUIRK_INVALID_DEVICE_SOF 0x00010000
-> >  #define UVC_QUIRK_MJPEG_NO_EOF               0x00020000
-> > +#define UVC_QUIRK_OVERFLOW_BANDWIDTH 0x00040000
-> >
-> >  /* Format flags */
-> >  #define UVC_FMT_FLAG_COMPRESSED              0x00000001
-> >
-> > base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
-
-
+diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+index d9b7e2b38c7a..bbd95573d91e 100644
+--- a/kernel/power/energy_model.c
++++ b/kernel/power/energy_model.c
+@@ -231,9 +231,11 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
+ 			    unsigned long flags)
+ {
+ 	unsigned long prev_cost = ULONG_MAX;
++	u64 fmax;
+ 	int i, ret;
+ 
+ 	/* Compute the cost of each performance state. */
++	fmax = (u64) table[nr_states - 1].frequency;
+ 	for (i = nr_states - 1; i >= 0; i--) {
+ 		unsigned long power_res, cost;
+ 
+@@ -245,9 +247,15 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
+ 				return -EINVAL;
+ 			}
+ 		} else {
+-			/* increase resolution of 'cost' precision */
+-			power_res = table[i].power * 10;
+-			cost = power_res / table[i].performance;
++			if (_is_cpu_device(dev)) {
++				/* increase resolution of 'cost' precision */
++				power_res = table[i].power * 10;
++				cost = power_res / table[i].performance;
++			} else {
++				power_res = table[i].power;
++				cost = div64_u64(fmax * power_res, table[i].frequency);
++
++			}
+ 		}
+ 
+ 		table[i].cost = cost;
 -- 
-Ricardo Ribalda
+2.25.1
+
 
