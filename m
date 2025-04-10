@@ -1,112 +1,141 @@
-Return-Path: <linux-kernel+bounces-597954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-597964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63B8FA8408D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:26:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6904A8409E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 12:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8924C4C07FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:24:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E5D1B8418C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Apr 2025 10:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3DB26FDB3;
-	Thu, 10 Apr 2025 10:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839A0284B4B;
+	Thu, 10 Apr 2025 10:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z0PPNX7o"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgASZwpO"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D185A280CCD
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 10:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A61280CEE;
+	Thu, 10 Apr 2025 10:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744280678; cv=none; b=D67cutGFKZiyE+PZnNcJPDnYytHdQ0D2Cf1eB4Bzdl9OX2qSTwEEK8pGLvYVau2VpBDMEjs7Gkw1l72MHL3CK3cYvZXBo5yP3pJh+4OzAhJnDa+ZuYvieuKuxOuIl5xpL02Sdv500QylyG8ZOKRg0viPsWDpusFyjlsDAgdEF9U=
+	t=1744280712; cv=none; b=vC/wIrPSFYQrx6d+WWEcdM7b2vmPTkoIr5W+coN7nVngqU0JqtyzRYLsd1Lscyda+P/aLrj4vJVqR9t4n5D8rejulEs9rMDXj+LI3LrA3V8MD4zwHXa6g12lauEUfkMmNiLl/m7CjylgaaD51j6TxIz/iCp29c02vhNrbaAEaMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744280678; c=relaxed/simple;
-	bh=4XYqEvw3pO3aeYAiEFs0J+jvt5iPOecIwEe31S/Ndpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V4AwdvaRI2jWSIu49CD42N9NJAA8zjLM7CqFsEsN2eT81gKaK/oQLCHp67VmSJuFNAqZSoErluD5mqpcNeI7Csh6QmgMXnG7TZU3FLrvMqE+/LYVKh6zMnel2JgFk6f0VK9AG8UA08Ka0wgiABAr0JfUN5uMGh0/zwEkQu6EoCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z0PPNX7o; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-730517040a9so682236b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 03:24:36 -0700 (PDT)
+	s=arc-20240116; t=1744280712; c=relaxed/simple;
+	bh=ojvsqPJMH10Y8wTUS0jE9WvNAqr1SQfDTcZQoS3T2to=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DZql26yCqcKO+bUVylWOdbgclEbBqrt+/iqXwWZH8/A2Aj5bctf1yN0P6dva9863Rilvno+8L6QJesbisymJFA1h+fgxavdzZRbJLd2Ubk6nxdxABDmgISKHHXi+V6G02EiJDcfNvv0WwXKRL3U+UiGIFY4t/+EV6CPTger4gVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jgASZwpO; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-548409cd2a8so811512e87.3;
+        Thu, 10 Apr 2025 03:25:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744280676; x=1744885476; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GX68swA9HrxO+eJnfk16Z9K7ND9yYGB3bnUXxmarCAA=;
-        b=Z0PPNX7o9993BtdNkIE1oujzCdBR6E2UFw9tovVN9RzM9QP6EzvuA2jcOFUVOhcx1Y
-         gTP5N7UW+bBbcBw26uY45aldIgyTsgCr3AYeSgAW/mXUUSc/AcyTHYRmTU16oQaBvgVg
-         6zdrDxXc9ohVksYgN01HhKfzoljdUuGDEln2iImsjnMoBreoRlkmak5Mu2hFJaKa1sMQ
-         PUZM3Uy1HgVvxRSKYdPMebiGQngIfkTg5s/xLBd/sNL5ClcMfhU37kmNbkkw+xh3953G
-         geWz1wskxJRZpuUY6AQruUky6iFzkOGueByiWBaVwPt/f5p7mwQ0OylI2Q1wu7xb2u2u
-         n+Vg==
+        d=gmail.com; s=20230601; t=1744280709; x=1744885509; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a8auZmcSStHaFyZmeRyJlcHZ5L0m1cOxAuHCz1LgQ8A=;
+        b=jgASZwpOYg3+AF2/rUh8yq34zcClUSfC4QYELwU7t48hEJN0uwLoz66lmk2h2Ed6Gf
+         qbZXCVT65M2aAC8kVE0juYKfduKSVRQeGr2RnoL1qSOVyhEAcFZpKZvkhPyKPGoEy6EH
+         nGS/gen3+AQeMFO0+Yt7cwKVEGu9pL2ZX1FwaEPhcEUceaK6pqgrLbijO9jMgAyLTwhL
+         8Dk8mlVP7TDAA97isM7g4wiMBlJAK0wIYnICqyNGHRyMZM+EZFtxnMWgrAwd3WA38F2w
+         Dq531NLFtLOe81GvdVMonbApR2duTPveYAtclJCL4+/iEScjTrGes8/d+UCm18r+kNIG
+         MWiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744280676; x=1744885476;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GX68swA9HrxO+eJnfk16Z9K7ND9yYGB3bnUXxmarCAA=;
-        b=SjsAqpwoFaCgVBY9mGrgx3s+/bogwwPRdoEE2jso1qiRFSkmKQ93DBxdq7zCoS+Mxc
-         kosBldXpiWA14sERETOX4DC8v9ixxlrbwG09cg5OPcPc2eF5UNpJ+ukjVUAavyYZ8j5/
-         C4U9y0ZOka3CE+opeMxViezW3r+Suw4AOjHN4XPmKzhMgy6u3Ukiktry3N1WaaBW0899
-         1V1kD8+6pWChtvrLvPqnla8tVoHwJGvDYZ+cX1diwwU2odVa0gCkDspyu8N5eOIX8X15
-         bkEUGqilxPFgLb3AIOXkg4h+SDund/2TwQ8MRZm7XWBB3D1ZXInYxq6v0gBpHt3qM7lH
-         GOqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAht6WSR6ULyB6+Dmn81z9glhXoyYusLI0J/iEfZZ7s8/9uUFLUxfd9SvK2nzJRrWkDMjQH9sM1BGoQvg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzpW9My9ZdYpqsp5Ftc5RaoibIEn2gfLmd6u+HWp42kD/DcUjh
-	5N0nV6Bagh9G/bnM4EQGyCX2mOZ//S4afo2n6eBD4z3PfVvt/8Gn4gy0ey04KnY=
-X-Gm-Gg: ASbGncseyPNpRDuATNjeyuvWpHq+jqQoi+kog30BWcALkFvc4sKGNMEmjumUOVCFrau
-	Eqg9VOAXwbZqJI8lQAKWqTPYSBjEnbdZeekmVEzNPBIc8heWaJBiG2xNrbQbGgkB49tyv/LRM9Z
-	lmgSfrylm4i6e3nGOzeIszi4gY8koHj3thAm9KrGU2TqebI/Wc4pDP2s1OcUeu/OfC05BsaHq8+
-	fq+zvdqYkkhMFMWE7T9T4DusdFcT5byRbc941r2gDlks6VlWP/HwMQh6ct8Y9ahIX4arQGXftJP
-	GpUk9Y53iSkuhlard4qBQAleTNfgqdo+dPBetro6pw==
-X-Google-Smtp-Source: AGHT+IG2sLEZsm/PLhGsSjVJrT/g86UCeqGu2+t3DsfzOYJpMkwBlq4ZwTimT+XjrTeI9HudHDhEDg==
-X-Received: by 2002:a05:6a21:329b:b0:1f5:7eb5:72dc with SMTP id adf61e73a8af0-2016944d22cmr3592752637.3.1744280675957;
-        Thu, 10 Apr 2025 03:24:35 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1d2b256sm2984539b3a.14.2025.04.10.03.24.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 03:24:35 -0700 (PDT)
-Date: Thu, 10 Apr 2025 15:54:33 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH v1] cpufreq: Drop unused cpufreq_get_policy()
-Message-ID: <20250410102433.fro7cwxri2kitwck@vireshk-i7>
-References: <2802770.mvXUDI8C0e@rjwysocki.net>
+        d=1e100.net; s=20230601; t=1744280709; x=1744885509;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a8auZmcSStHaFyZmeRyJlcHZ5L0m1cOxAuHCz1LgQ8A=;
+        b=GOgpw4JGsYwot4wnA4/eHTtZhvr62oJQOipnOXoEkx0ujLOiJi4m/HnUz/+sOMwqkn
+         8QVbX5SXRLswKSOKrsPYqtsbE5tN89wfs/zbtCoeGZZyg7t2IVQ/btepevvGIP6lNXi1
+         aQlY+iUx081rVoYp8lNuKNyAI21B37pK1D1YBtpm04F/2EgvwQL495AdGT0BPs9aR/tj
+         SkJn3Xwlw5NjsYn3ELW9Dgm/S0ubsCPMjVVVolyIwIHxN9fGaqp2PO2DZw0T0xDkdKda
+         BHGEYqq4lC6tNV+2V/cvLv3+Kcr6fKkF0yizWoTdz5lliL+/ap8XbtWVayHrfjt5f/Y5
+         tNTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYwBJ2Ja5h1CYSkfEUh1Vrc4PCFvmvFWj2CbvRTKE5OYx3WTX4YiCG7Tka5509narIeCkojNaRt2Sxe4A=@vger.kernel.org, AJvYcCW8tXFtE33wXVFZTL1Ds2mdk97uZNmeAOVVoxqw8n02DcuIW+GxAZdNahEYVf3qZv00OhKvfndq/9IjwWrf@vger.kernel.org, AJvYcCXqAFLVefcuesrwletIBsao9pAjYi6fLmdNfrmSR6evrHTFJBrMLL9o6Ud/zMWdEOcfvHVdANyo+reoOhi5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+gHjedeqvcXKkupRxwH/kUS6rfXxYSrQupmrC95ncoTQXxM0Z
+	3ertZmfW6eXjepBboqzq1akJPmnS0Us+r16sAq0WmwFa4aCi1/Jd
+X-Gm-Gg: ASbGncu7s7frlz6DE/8GgtvA30WyEdM3hOIO19jVnBuF7qDe7JcXbsPvu9cxDoIm93Z
+	TMIFexo74ITrcPyyUneLNLxAvk7u/F7/C0aCw3VxwcLcFGxJNfFGxpOcB8sbyiJCFqYMhUhLGId
+	Q1MGSRWClqk5DccpS68TIxEUieHLjvC8TC/PHy8elGcehmOvK9v+ukhkxuHxcPzeMr5uaOjLdfg
+	azHKPl4kLfLk6J5Md+h5KgMQ7stGGX5FIFWh0Jv5v2CQGCou2H+QXFcUiWfPKP6gmo+zPju3FDs
+	oFB8AH3e7JuVmPfkKd81qkhR3jCP0DIavwYN+aRDGnt7BMXmD+QYRUq+zH6zXKLL/NuMGOZLH/9
+	El26vAsI4DVc=
+X-Google-Smtp-Source: AGHT+IEwVGKKFkCzb+1V2/2bVJ3HFsoAUJbqQMpsvmmbIr3Uj/Py/Tz5fCl2Plbl8TB01lRqRr7nDg==
+X-Received: by 2002:a05:6512:4027:b0:54b:ed9:2cf6 with SMTP id 2adb3069b0e04-54cb6844d88mr702100e87.32.1744280709001;
+        Thu, 10 Apr 2025 03:25:09 -0700 (PDT)
+Received: from [192.168.1.19] (79-100-236-126.ip.btc-net.bg. [79.100.236.126])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d50f794sm105392e87.167.2025.04.10.03.25.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Apr 2025 03:25:08 -0700 (PDT)
+Message-ID: <9d89f87f-ff30-4ae9-9545-08d222e96561@gmail.com>
+Date: Thu, 10 Apr 2025 13:25:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2802770.mvXUDI8C0e@rjwysocki.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] media: MAINTAINERS: Amend venus Maintainers and
+ Reviewers
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, hverkuil@xs4all.nl,
+ quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com, mchehab@kernel.org,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Neil Armstrong <neil.armstrong@linaro.org>
+References: <20250402-b4-25-03-29-media-committers-venus-iris-maintainers-v3-0-2b2434807ece@linaro.org>
+ <20250402-b4-25-03-29-media-committers-venus-iris-maintainers-v3-1-2b2434807ece@linaro.org>
+Content-Language: en-US, bg-BG
+From: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+In-Reply-To: <20250402-b4-25-03-29-media-committers-venus-iris-maintainers-v3-1-2b2434807ece@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 10-04-25, 12:20, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+
+On 2.04.25 г. 15:24 ч., Bryan O'Donoghue wrote:
+> Stan has stepped back from active venus development as a result I'd like to
+> volunteer my help in keeping venus maintained upstream.
 > 
-> A recent change has introduced a bug into cpufreq_get_policy(), but this
-> function is not used, so it's better to drop it altogether.
+> Discussing with the qcom team on this we agreed
 > 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> +M for Dikshita
+> +R for me
+> 
+> Many thanks to Stan for his hard work over the years from originating this
+> driver upstream to his many years of maintenance of it too.
+> 
+> Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 > ---
->  drivers/cpufreq/cpufreq.c |   25 -------------------------
->  include/linux/cpufreq.h   |    1 -
->  2 files changed, 26 deletions(-)
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 29b4471574982bf3f8d03158cd5edcb94bc9fab9..1d03530f3298703c5f3d025010511451f878f822 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19590,8 +19590,8 @@ F:	Documentation/devicetree/bindings/usb/qcom,pmic-*.yaml
+>   F:	drivers/usb/typec/tcpm/qcom/
+>   
+>   QUALCOMM VENUS VIDEO ACCELERATOR DRIVER
+> -M:	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+
+>   M:	Vikash Garodia <quic_vgarodia@quicinc.com>
+> +M:	Dikshita Agarwal <quic_dikshita@quicinc.com>
+>   R:	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>   L:	linux-media@vger.kernel.org
+>   L:	linux-arm-msm@vger.kernel.org
+> 
 
 -- 
-viresh
+regards,
+Stan
 
