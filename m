@@ -1,81 +1,64 @@
-Return-Path: <linux-kernel+bounces-600082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D042AA85B9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:29:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5075A85B9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C9E19E104B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:27:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58FE4188BB9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD51D29614B;
-	Fri, 11 Apr 2025 11:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13E1238C37;
+	Fri, 11 Apr 2025 11:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X0ZwWI//"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQncZjRG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0EF290BA9
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 11:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C5421146C;
+	Fri, 11 Apr 2025 11:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744370781; cv=none; b=suA0adC5q593gbrGk6M+AR9M9dCwFZYIeRdQHbznC8ZvYB4Ms4UaRrOyBIEhwrFPYtoLAnyfIZe3huKWARRaCC+IMGQUEij/VDqZI/034tXw8UF6jK3/p+Xaz+l4yhvDzqAS3Ecz6wtgAUw0zNW7RSNHbY1S+5xnrkkZGLiG1IU=
+	t=1744370736; cv=none; b=ImyqEZZ8quJUW2f+/iIkYURbdjLTmxnXZ4oz3zYJJzZ58IYjy2FY4aSl6nIpH+Lj9bOPQcqcJ94t0s6X700Gsk/8CKC+PXMeWQPfRI3UxPzloIGOHfcJXIXwTMDPpXBkHgiQcsrMZkH91uCCa5n8W63j4WRjQWIu7MdJtnBgQvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744370781; c=relaxed/simple;
-	bh=87Ltzq6HKLjkX/uQWLKCQyBirwpvzhofRwmX2yjH3y8=;
+	s=arc-20240116; t=1744370736; c=relaxed/simple;
+	bh=5l3bqjZl+ty/hdXtbzKmsUlfDUP//EXNCWO3BwwnVQY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rSjKwVRmSj08kK2T4PH+DJT3eszTm//7A2axwT2MqbTiSY/5ubKD61SuiKjjuT0Qk+hLA2AOITpwLefij8Mz9Y88+hbAxn7D775pNBCINJwCqQ0k5lgR8ZayDlpPkxRQq+XnvBNzyLs7ek0apWL/KYF7gwMvpv+ve5rxRNOB43k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X0ZwWI//; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744370778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KDIVaeNm8vxnC2JSluEZFM54sMrWsv29to6xjnlSMEE=;
-	b=X0ZwWI//t18AeYw5nctnTnpAuYnM2S9DwPt7JiOhK4a/udY+Doy0zD9qR7l70mS8kuZrSy
-	kywFPDLIr8RulF7IcbJdzPQXGOhFBCrP4miMt+dcqQp5OBh/WZVYn34EhHQpDBWhX2XQCc
-	HfTvYmNjIRjFANnuXRu0bRizEw/35oc=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-nxWyZ_p4O3SVzGtqGdu_Gg-1; Fri,
- 11 Apr 2025 07:26:15 -0400
-X-MC-Unique: nxWyZ_p4O3SVzGtqGdu_Gg-1
-X-Mimecast-MFC-AGG-ID: nxWyZ_p4O3SVzGtqGdu_Gg_1744370773
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 46CAB18007E1;
-	Fri, 11 Apr 2025 11:26:13 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.222])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id F239A1808882;
-	Fri, 11 Apr 2025 11:26:09 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 11 Apr 2025 13:25:37 +0200 (CEST)
-Date: Fri, 11 Apr 2025 13:25:33 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org,
-	Peter Ziljstra <peterz@infradead.org>
-Subject: Re: [RFC PATCH] pidfs: ensure consistent ENOENT/ESRCH reporting
-Message-ID: <20250411112532.GC5322@redhat.com>
-References: <20250409-sesshaft-absurd-35d97607142c@brauner>
- <20250409-rohstoff-ungnade-d1afa571f32c@brauner>
- <20250409184040.GF32748@redhat.com>
- <20250410101801.GA15280@redhat.com>
- <20250410-barhocker-weinhandel-8ed2f619899b@brauner>
- <20250410131008.GB15280@redhat.com>
- <20250410-inklusive-kehren-e817ba060a34@brauner>
- <20250410-akademie-skaten-75bd4686ad6b@brauner>
- <20250411-tagwerk-server-313ff9395188@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lgwymuv6AdKZ01miUvIWFZNRtluOiCqHMI6vGnCB1SiQtA782hMyWW+zAzMuga4AGSLeIYM1Vfwv4Y+B1HjLzBn8oGKAOYPl4cPCo0C4fMJxJcrHUBKX4dmKxpP8MzZdX118j6Msj5ILlRju6K5J1FSC8pMSoR4fw5mPncXSvYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQncZjRG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DB1EC4CEE2;
+	Fri, 11 Apr 2025 11:25:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744370735;
+	bh=5l3bqjZl+ty/hdXtbzKmsUlfDUP//EXNCWO3BwwnVQY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PQncZjRG98uxDMN44XqlPZgt2NTT1cJrmCzifzTQ06fCVUeVrzZO+mlHhzEzZTook
+	 40DFfj0FeXvdmtQvAqyO/jwcDP87tWUZW/h6Q2O4m6WxsxICdWfn4wS8aFeMKeuEf6
+	 OLojEheGa/9fonpiJPwxbKsdWX012NMXe2SkCDtvjQUXW4v7FKe7HAkaQxpb73gi5H
+	 Nb5gUb/lbzggKqlmLktJovekl56AkBz4hrHgoyVoXVhBu/I67rdCCf2GuyOIA5omEx
+	 mq3pDblo5+6DAQyOeTUJFGWMgunPGqJznLdeoOs6yJhAw+0seM00HF4yeoMhvXFjBp
+	 1Vg6AV4KtiZow==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1u3CVv-000000008SK-29OY;
+	Fri, 11 Apr 2025 13:25:39 +0200
+Date: Fri, 11 Apr 2025 13:25:39 +0200
+From: Johan Hovold <johan@kernel.org>
+To: jens.glathe@oldschoolsolutions.biz,
+	Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] arm64: dts: qcom: x1e80100-hp-x14: add
+ usb-1-ss1-sbu-mux
+Message-ID: <Z_j8M2Q0J3LuANAF@hovoldconsulting.com>
+References: <20250410-hp-x14-v2-0-d36414704a0a@oldschoolsolutions.biz>
+ <20250410-hp-x14-v2-1-d36414704a0a@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,33 +67,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250411-tagwerk-server-313ff9395188@brauner>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20250410-hp-x14-v2-1-d36414704a0a@oldschoolsolutions.biz>
 
-On 04/11, Christian Brauner wrote:
->
-> > Looking close at this. Why is:
-> >
-> >         if (type == PIDTYPE_PID) {
-> >                 WARN_ON_ONCE(pid_has_task(pid, PIDTYPE_PID));
-> >                 wake_up_all(&pid->wait_pidfd);
-> >         }
-> >
-> > located in __change_pid()? The only valid call to __change_pid() with a NULL
-> > argument and PIDTYPE_PID is from __unhash_process(), no?
->
-> We used to perform free_pid() directly from __change_pid() so prior to
-> v6.15 changes it wasn't possible.
+[ +CC: Stephan ]
 
-Yes, exactly ;)
+On Thu, Apr 10, 2025 at 12:07:28PM +0200, Jens Glathe via B4 Relay wrote:
+> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> 
+> The usb_1_1 port doesn't have the PS8830 repeater, but apparently some
+> MUX for DP altmode control. After a suggestion from sgerhold on
+> '#aarch64-laptops' I added gpio-sbu-mux nodes from the x1e80100-QCP
+> tree, and this appears to work well. It is still guesswork, but
+> working guesswork.
 
-> Now that we free the pids separately let's
-> just move the notification into __unhash_process(). I have a patch ready
-> for this.
+Did you confirm the three GPIOs experimentally, for example, by making
+sure that inverting the enable signal polarity breaks USB?
 
-Agreed,
+> +	usb-1-ss1-sbu-mux {
+> +		compatible = "onnn,fsusb42", "gpio-sbu-mux";
+> +
+> +		enable-gpios = <&tlmm 179 GPIO_ACTIVE_LOW>;
+> +		select-gpios = <&tlmm 178 GPIO_ACTIVE_HIGH>;
+> +
+> +		pinctrl-0 = <&usb_1_ss1_sbu_default>;
+> +		pinctrl-names = "default";
 
-Acked-by: Oleg Nesterov <oleg@redhat.com>
+>  };
+>  
+>  &apps_rsc {
+> @@ -1424,6 +1451,30 @@ reset-n-pins {
+>  		};
+>  	};
+>  
+> +	usb_1_ss1_sbu_default: usb-1-ss1-sbu-state {
+> +		mode-pins {
+> +			pins = "gpio177";
+> +			function = "gpio";
+> +			bias-disable;
+> +			drive-strength = <2>;
+> +			output-high;
+> +		};
 
+This is more of a question for Stephan who added this to QCP [1], but
+why is this mode pin here and what does it do?
+
+It's not part of the binding for the mux (which indeed only has two
+control signals according to the datasheet) so it looks like something
+is not modelled correctly.
+
+> +
+> +		oe-n-pins {
+> +			pins = "gpio179";
+> +			function = "gpio";
+> +			bias-disable;
+> +			drive-strength = <2>;
+> +		};
+> +
+> +		sel-pins {
+> +			pins = "gpio178";
+> +			function = "gpio";
+> +			bias-disable;
+> +			drive-strength = <2>;
+> +		};
+> +	};
+
+Johan
+
+[1] https://lore.kernel.org/all/20241212-x1e80100-qcp-dp-v1-2-37cb362a0dfe@linaro.org/
 
