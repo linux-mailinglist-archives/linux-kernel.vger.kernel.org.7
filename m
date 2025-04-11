@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-599787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C72A857D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:20:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA53BA857E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E7474A7118
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C279C3C52
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E879529CB41;
-	Fri, 11 Apr 2025 09:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EA729DB7E;
+	Fri, 11 Apr 2025 09:17:57 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF2B293B4C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 09:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FB329DB6F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 09:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744363072; cv=none; b=RNWfkQoahH52QngyRVHzpoZ9PlJfhlqm/9ANbM/r+dnafcMKUXZZv+3u6cewmKZfxIW6N0VQX+/1gj5O/MTk+/KqYYQSnV5zyF5pzEzJxzE02KPvF77libSICqDRx06EEbZdx81EbZNsmOH7vdFffYEPTy0C0xyPUUT9eLK0mIE=
+	t=1744363077; cv=none; b=Cu3rXfK+gfSSqlXZwM/k/TxPON5Eld8t2voQAN9f8UR69KHMOIkKlgj8sQYPbt/hDOH/3yAJZOgj+IBeAKRDbXeBOH5xbovgh3Z13szO2P7Nuq8tL0i3+TbRW7m4OqNs9jbtc/5cD+ANpQt1aF4+7f9Y7c+HQQ+VR4EkgjvgzA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744363072; c=relaxed/simple;
-	bh=/G8IG1xZPxtDHV7DySv4e/zsqlpmhImnBbQtUfTIgE0=;
+	s=arc-20240116; t=1744363077; c=relaxed/simple;
+	bh=Pp53llZfJy7BQH6YugsN1HLR+mGCMps3QxoJJ+hk3i4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Nmdzl7ZTB06By8E8+RbzWcJaYH2skAEV+Hn97V1wn0UKqbwnKFMHg22tRKxj730G6yGOa2URkQqa+7dTXY2WiOTAihrk5lJaYZLezzzqVa+QEPeA2l+yJNQVs+IZNjPf1bqE73eGRRIZI54o9TinBZtnNquJsWivLT0TES4bIUA=
+	 MIME-Version; b=IyU5EJANr1gYrC6y2PjlghKQFfaRlH541qmZDo6Tf9f0ibx90R8Lg5ob3LqYzcepl2JSlIeUsRebS0NWB1WCKub49BPqgF7NpRo/ZpdOIpsUMTgX8V5HTi+NIMvkLBEcd4A9UTV/38W0fsiet+hk8E8bhBAXaVdBdIDTEDwuYJE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44125106F;
-	Fri, 11 Apr 2025 02:17:50 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5604C1692;
+	Fri, 11 Apr 2025 02:17:54 -0700 (PDT)
 Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B0DF23F6A8;
-	Fri, 11 Apr 2025 02:17:46 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C41DE3F6A8;
+	Fri, 11 Apr 2025 02:17:50 -0700 (PDT)
 From: Kevin Brodsky <kevin.brodsky@arm.com>
 To: linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org,
@@ -61,9 +61,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Qi Zheng <zhengqi.arch@bytedance.com>,
 	linux-arm-kernel@lists.infradead.org,
 	x86@kernel.org
-Subject: [RFC PATCH v4 13/18] mm: Map page tables with privileged pkey
-Date: Fri, 11 Apr 2025 10:16:26 +0100
-Message-ID: <20250411091631.954228-14-kevin.brodsky@arm.com>
+Subject: [RFC PATCH v4 14/18] arm64: kpkeys: Support KPKEYS_LVL_PGTABLES
+Date: Fri, 11 Apr 2025 10:16:27 +0100
+Message-ID: <20250411091631.954228-15-kevin.brodsky@arm.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20250411091631.954228-1-kevin.brodsky@arm.com>
 References: <20250411091631.954228-1-kevin.brodsky@arm.com>
@@ -75,47 +75,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If CONFIG_KPKEYS_HARDENED_PGTABLES is enabled, map allocated page
-table pages using a privileged pkey (KPKEYS_PKEY_PGTABLES), so that
-page tables can only be written under guard(kpkeys_hardened_pgtables).
-
-This patch is a no-op if CONFIG_KPKEYS_HARDENED_PGTABLES is disabled
-(default).
+Enable RW access to KPKEYS_PKEY_PGTABLES (used to map page table
+pages) if switching to KPKEYS_LVL_PGTABLES, otherwise only grant RO
+access.
 
 Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 ---
- include/linux/mm.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/include/asm/kpkeys.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 43e35d41b850..411707dabe65 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -33,6 +33,7 @@
- #include <linux/slab.h>
- #include <linux/cacheinfo.h>
- #include <linux/rcuwait.h>
-+#include <linux/kpkeys.h>
+diff --git a/arch/arm64/include/asm/kpkeys.h b/arch/arm64/include/asm/kpkeys.h
+index 79ae33388088..64d6e22740ec 100644
+--- a/arch/arm64/include/asm/kpkeys.h
++++ b/arch/arm64/include/asm/kpkeys.h
+@@ -12,7 +12,8 @@
+  * Equivalent to por_set_kpkeys_level(0, KPKEYS_LVL_DEFAULT), but can also be
+  * used in assembly.
+  */
+-#define POR_EL1_INIT	POR_ELx_PERM_PREP(KPKEYS_PKEY_DEFAULT, POE_RWX)
++#define POR_EL1_INIT	(POR_ELx_PERM_PREP(KPKEYS_PKEY_DEFAULT, POE_RWX) | \
++			 POR_ELx_PERM_PREP(KPKEYS_PKEY_PGTABLES, POE_R))
  
- struct mempolicy;
- struct anon_vma;
-@@ -3083,6 +3084,8 @@ static inline bool __pagetable_ctor(struct ptdesc *ptdesc)
+ #ifndef __ASSEMBLY__
  
- 	__folio_set_pgtable(folio);
- 	lruvec_stat_add_folio(folio, NR_PAGETABLE);
-+	if (kpkeys_protect_pgtable_memory(folio))
-+		return false;
- 	return true;
+@@ -26,6 +27,8 @@ static inline bool arch_kpkeys_enabled(void)
+ static inline u64 por_set_kpkeys_level(u64 por, int level)
+ {
+ 	por = por_elx_set_pkey_perms(por, KPKEYS_PKEY_DEFAULT, POE_RWX);
++	por = por_elx_set_pkey_perms(por, KPKEYS_PKEY_PGTABLES,
++				     level == KPKEYS_LVL_PGTABLES ? POE_RW : POE_R);
+ 
+ 	return por;
  }
- 
-@@ -3093,6 +3096,7 @@ static inline void pagetable_dtor(struct ptdesc *ptdesc)
- 	ptlock_free(ptdesc);
- 	__folio_clear_pgtable(folio);
- 	lruvec_stat_sub_folio(folio, NR_PAGETABLE);
-+	kpkeys_unprotect_pgtable_memory(folio);
- }
- 
- static inline void pagetable_dtor_free(struct ptdesc *ptdesc)
 -- 
 2.47.0
 
