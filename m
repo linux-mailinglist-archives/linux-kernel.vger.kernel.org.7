@@ -1,110 +1,118 @@
-Return-Path: <linux-kernel+bounces-599825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66BB8A8584B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:47:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979D4A8584A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 410427B6FE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:43:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BF5E1B82BD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4630B29614F;
-	Fri, 11 Apr 2025 09:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A65C290BCB;
+	Fri, 11 Apr 2025 09:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vGgINeP/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="H6Bl+6Yn"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A577F1EFF93
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 09:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968076125;
+	Fri, 11 Apr 2025 09:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744364653; cv=none; b=fczz+LJ8AD+OxgLNhl7u9e6ahPeB1wkAs0jBPUVd6O6pqGlQtYjTGdy3j2Y3Dq4p+S1WF/iyiY6PNoj2eVt4lGvb3prx5LuouWd9VNOw+ssIqXDvIsBlSctk5G2BSVdgCL776RhFS83gQ+XCFfg8LibRv2Mo0xcY7VLwVhWJ2eA=
+	t=1744364768; cv=none; b=uCi6dYrUjgygyK7j3rC8fBv4nJQflQZS32yu8Q2oh8thJMG1rbIgiBEoNUjzfLvlP8uk4MOiRqe5lydVAjf11ogt2onDtOvNEnsq11DBiH2lYLJCktqTsebrtRkvJOayrYO0h25sl/NlJ32VWBH1RXk4d961fuNlV3THnaxup8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744364653; c=relaxed/simple;
-	bh=cQlJQWMR1vpM4VqDeSr2vhN4E6SlND+oqKZ9malEpBo=;
+	s=arc-20240116; t=1744364768; c=relaxed/simple;
+	bh=1RVik0NlfQSByh+MVGU2m8fVn3PKpjEfUQ8PK51vI3E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hDqEpzW5LBAHmYM0xAMej4898p8KVeu4LNEJaIV7LT0vpiGbMgG/UjjV3nOgOKq2u45Wrt/ObZEGKfwwjdjVs/B+0lFuGCsdJa/ZXiUBcctPkct20ofWFHnmU4JOKfS9LOTgcToleLosoHNok2Onmv0Fakppvt02AdmxwcAy0+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vGgINeP/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48808C4CEE2;
-	Fri, 11 Apr 2025 09:44:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744364653;
-	bh=cQlJQWMR1vpM4VqDeSr2vhN4E6SlND+oqKZ9malEpBo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=F5OXgwUaLqtZj6vlEYDO1l1jOMLAunFGGs6CzMRMdKqW0eGCeuXsLRDIoSsIjjZyVTmJacAMSb+nHpHcdjotq/MAbrnVLSymL57p19Il353ZJYPxw6IsY5zhzkId7cGtLfwW4omsMZjDxtADl/caFc7tcCJhfMrsSpduXC38LXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=H6Bl+6Yn; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7961640E0244;
+	Fri, 11 Apr 2025 09:46:04 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id r5D8zoiJXQKE; Fri, 11 Apr 2025 09:46:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1744364759; bh=ayElILbyVh8//B/ihafKwcK06o8pVHIZiL8+eeH1q1c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vGgINeP/Iroy+Euc1kql8/6jR3BdcNgJ1T5VquxKF918ZjjBEw0Im09GA2r6OkzAM
-	 NkHvG0FrMFcrHIS3+ImuLCigg7VkY6V1E0N8PVvk4iJin55XreYuwnh2QdrePL/v3P
-	 Q8VMP9K+bPV7dWE6isttzEUR1gxmDYJqiPpsnvykf4mv0MtrKg2EB5Z4pugaJGYkaC
-	 kHHfU2qEzwMBRqS+4HQtc9xxXqGs1ZnHUrbuUjIDnlvJF+D/CbU0vQa3iAW7QjgI+A
-	 hpBKUKpFeXYM99vtcrVanAlI6D+bXl5D/7j1JwaeMVrI/IOh/9SaPly7pXe3iSJfKH
-	 QbVsY+mUrQUhA==
-Date: Fri, 11 Apr 2025 11:44:07 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
-Cc: Jason Andryuk <jason.andryuk@amd.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, "Xin Li (Intel)" <xin@zytor.com>,
-	xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/xen: Fix __xen_hypercall_setfunc
-Message-ID: <Z_jkZw58Ew5Iwj5K@gmail.com>
-References: <20250410193106.16353-1-jason.andryuk@amd.com>
- <3c3115a6-f516-4f5f-8998-dafc343c829e@suse.com>
- <Z_jgauFyTTKgVnJy@gmail.com>
- <ff39455a-7fa8-48c1-ba43-33ea4992f6e1@suse.com>
+	b=H6Bl+6YnOZ7oHDpjjH9I6xLEYfdi7fyVTrPlZPxWTGM6We8DXdvABPJ71+M4Xk+9u
+	 LK12I1A+ZP3QAjFQyil6tFEAc66x8kQAUCjyu6oL/5RUftjBtwEHYoivaJL10bp988
+	 IztDKABslaY3i4hus+2chG486EgFJZ0ZCXxmVNO42hTVLwcH7TYuw27k5awsJDeq+h
+	 stbhRxUi95giNWd47hdlW6jb/uGjxrpnsxV+N4r0L6mrhRoKndPK6d65EB88EB9tR7
+	 nGgAhZNWS9iMqEtaLWX2MxB4PwrVd60yrbPUTUIehnwehfVY27zGHfBLxcagamqEhQ
+	 c2zJsH7zr/JEJRJ+lhhRaCkNOqhy24v0ynlDDs6LRWnEYkb5jlJ54By2/kkTxPkyar
+	 CRFbY79Bht/75kb4b/+dTepW/hA0S8ZXy/ThOjFClww6Pv6f5UuMlzzvupc5VbU+3E
+	 DSUlXUFvw+UvOdwbUG4eT8ZraAZ07WSvJc9kM9+zehjh6BjF1Zwu4XZ8oKwwGALFYj
+	 6deRmuW1kK49j3AAiI0/+GaP727CCXwBYlVwzAKrN6Rcu74Wq9rJ4tXQRg2nrkxreo
+	 a8d7Ag9MjzTdUCbnNn7NUm6UXxJekhUKhltJur3GPaHvpzlxwpAZKKpjgrcsetgfYk
+	 Rqy2mYyfCmJOq7PtjVYBuWQM=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1258740E0243;
+	Fri, 11 Apr 2025 09:45:53 +0000 (UTC)
+Date: Fri, 11 Apr 2025 11:45:51 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Borislav Petkov <bp@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+	X86 ML <x86@kernel.org>, KVM <kvm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] KVM: x86: Sort CPUID_8000_0021_EAX leaf bits properly
+Message-ID: <20250411094551.GAZ_jkz8N2zDkkPbTt@fat_crate.local>
+References: <20250324160617.15379-1-bp@kernel.org>
+ <Z_g8Py8Ow85Uj6RT@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ff39455a-7fa8-48c1-ba43-33ea4992f6e1@suse.com>
+In-Reply-To: <Z_g8Py8Ow85Uj6RT@google.com>
 
+On Thu, Apr 10, 2025 at 02:46:39PM -0700, Sean Christopherson wrote:
+> I'm going to skip these, as they aren't yet publicly documented,
 
-* Jürgen Groß <jgross@suse.com> wrote:
+https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/programmer-references/57238.zip
 
-> On 11.04.25 11:27, Ingo Molnar wrote:
-> > 
-> > * Juergen Gross <jgross@suse.com> wrote:
-> > 
-> > > On 10.04.25 21:31, Jason Andryuk wrote:
-> > > > Hypercall detection is failing with xen_hypercall_intel() chosen even on
-> > > > an AMD processor.  Looking at the disassembly, the call to
-> > > > xen_get_vendor() was removed.
-> > > > 
-> > > > The check for boot_cpu_has(X86_FEATURE_CPUID) was used as a proxy for
-> > > > the x86_vendor having been set.  When
-> > > > CONFIG_X86_REQUIRED_FEATURE_CPUID=y (the default value), DCE eliminates
-> > > > the call to xen_get_vendor().  An uninitialized value 0 means
-> > > > X86_VENDOR_INTEL, so the Intel function is always returned.
-> > > > 
-> > > > Remove the if and always call xen_get_vendor() to avoid this issue.
-> > > > 
-> > > > Fixes: 3d37d9396eb3 ("x86/cpufeatures: Add {REQUIRED,DISABLED} feature configs")
-> > > > Suggested-by: Juergen Gross <jgross@suse.com>
-> > > > Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
-> > > 
-> > > Reviewed-by: Juergen Gross <jgross@suse.com>
-> > 
-> > Wanna merge this via the Xen tree, or should it go to x86/urgent?
-> > 
-> > The bug was *caused* by the x86 tree so we'd be glad to merge,
-> > but your call.
+> and there are patches proposed to add actual support.  I wouldn't care all
+> that much if these didn't collide with Intel's version (the proposed patches
+> name them AMD_FSxx).
+>
+> https://lore.kernel.org/all/20241204134345.189041-2-davydov-max@yandex-team.ru
+
+Pff, I think the right thing to do is to detect those and when set, set the
+Intel flags because they're basically the same.
+
+Lemme go reply there.
+
+... goes and replies...
+
 > 
-> x86/urgent is fine for me.
+> >  		/* PrefetchCtlMsr */
+> > -		F(WRMSR_XX_BASE_NS),
+> > +		/* GpOnUserCpuid */
+> > +		/* EPSF */
+> 
+> FWIW, this one's also not in the APM (though the only APM I can find is a year old),
+> though it's in tools/x86/kcpuid.
 
-Applied, thanks!
+See above. Yeah, the PPRs have them earlier than the APM.
 
-	Ingo
+Thx.
 
+-- 
+Regards/Gruss,
+    Boris.
 
-
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
