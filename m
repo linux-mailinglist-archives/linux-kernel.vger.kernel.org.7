@@ -1,173 +1,139 @@
-Return-Path: <linux-kernel+bounces-600608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0A0A8620E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:38:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78141A8621C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBC70189EE5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC97D3B0317
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE239213236;
-	Fri, 11 Apr 2025 15:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D64A20E33F;
+	Fri, 11 Apr 2025 15:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MwTXJXH9"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gE7rDCAA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B02438FAD;
-	Fri, 11 Apr 2025 15:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59A31F2367
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 15:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744385851; cv=none; b=Sfvx4uxF3LEfWnGC3G7fYceUtO2pCRUVerBokye0KtlPbrSALEiHHayxiPQo6z/x2hptmeLRLNYwLCM2AXmi5b85pVRXfOP4BmdXia/mmw1YvHaavSb/9d/J+QQdvK/6CtTpYWtNgatx5FP34alwx09nrZ/IPC4dsqJr7nMYE6Y=
+	t=1744385911; cv=none; b=N9Le9bJ3oGy5KIaHjARLgDyTjvJMoE3fI1MBQ+d7EQc7PA3GRkExfsfNNRFuqLUTw/RU0TlbFPHSMrVBtStTB8UCV4aBxavelEh1zpZShbj3lvwilkQW8hmnxI+5X0MbCP69Z0HpYjA7D1a2H6s8peQGHRqVbGi4jR0ARrLeAC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744385851; c=relaxed/simple;
-	bh=fDRRe0Vo8MsJlmXmjA8331kCKEUcsy/Mwqle2vPH27A=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O3qGj23XZvor+a8hlxWmCrMV+V29CjFg2OShNt9S7/dUxpa+qE4tLjGFh0eYMwXc2ds1SjaFATw3qEMeWhN56o6FY7M/6aB0eWB+Eo/qDGcrFHCE0PMQJfOoaoQYX6z8nTWJmvO/Q+aILGw9VPk5aSPxxE6It+7FtxYbO7XwJGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MwTXJXH9; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso14971275e9.0;
-        Fri, 11 Apr 2025 08:37:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744385848; x=1744990648; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NtHELzGhuW6IkR/SmUv1y38cOrSHAmRqhP7AdXLw9DY=;
-        b=MwTXJXH9BJoZK9VYudkwUjFlmgj2b9eods4y5kyfC4OIdaJRGyqcNAY9z8jCQaOGsg
-         OSgm9rgNa9liohkr27Imc7VhkgqJEnEW9UdLpY7SFaFmwDxBaXjx6R/Rc+eOh+583i8i
-         sZbESCwmWlIr13eqkjdiAzMrZmbxTBW1ES9sge65i17Z8j9hvHvPmo7csQoRFgFYyNLl
-         dSJayIIfh+Fv6JetONNbN2RXTdAUaSom0N/zJymkOR07NUZA70tBa2fuUnc+YRETBm6z
-         ANY5vxG/zVJXSJ/RCX1hd3jB24/h5u8bWIMTkZDZ4/8suSEFop5adTnf7ESNW5IhX+V8
-         blow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744385848; x=1744990648;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=NtHELzGhuW6IkR/SmUv1y38cOrSHAmRqhP7AdXLw9DY=;
-        b=SqchQjueKhoU8Q5vcmCawkx5JV86jehZyWGFOfsmekNKGGwGNKRVxS8Xbz6xwEQOon
-         4z+DIHf8q9FyNhwuddMjUWkO5AvW3uTleW+P7zS39nhXGVBCJ76azxaA0tl6IDeA2qRy
-         hDdGrImq+jiG1qsVI9zFExL+k7ZMjsrCARLKF60AHw93yNw8b+paJuOUrRHJ0HplcBLG
-         PCnrdCBh0IA0A1+kcwVlggq77FNsvhyFY/OECz0P++N0OE8/zhyPLcPy2/ngRwL7KHs/
-         u65dldO0HF4z5le4wHuIyElaOULnfVute5E36gRmehtA2JuLPS/lltQpO2cTQ0WMDFT8
-         WWoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnmBYIADdd3wYw1weSJNxb7loCK1fEK4K1CfRC8hqberMKZdgz5M6WX8fDiqy6WrZc/wmgHoOGZKZT@vger.kernel.org, AJvYcCW6uiNennPZIBJtMsr59Km16xJl1WBYrNxoNvs2HauCRuhD90QpH4mwiniNGtNz5LYUidaxy1ZtNk0T5oaa@vger.kernel.org, AJvYcCWI8itfHdisOVs8oQBBLDTP+m+o94vJUJRpN0t6FD5GLolQCr+SGZ08jb73nSVFg4H0z58+YvvS16l3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfY927X7BLvB4oPmJgHKx1OGDUtnB6q4hK0fhaATwQ1pm8H4BH
-	9rGzp3COKQEJSHTz6bfvqjJ7ooICVGxa6GkTaVtVndM0gsUHePwfB+pqlHThtfUW0w==
-X-Gm-Gg: ASbGncuLhu6JIaS6qIn65etA4rmLssmWsoD2IE8m6kkxGxRzP/J+Mr9bNGizKRGgA99
-	vUwKEoa8MbJONtqa1H+6lVIaR7p6+EVDmmkQS1Qho52cSlvq54r7rV7YtN4wiMoWhtTvyG9obyE
-	w8TQWF47eQQTA0xGJvfUpTgCnxGCpYXDjbyIZCtyFNJXeNxeceMwVVj4i+tEkuF7BR0JvlB9BPE
-	K876hZFLFHgWDXnvo/APinW5SLbVStsumkfYXx++Lhp/QfAzfFWYGkEA6Q6kvFfFwLRSO/+66YB
-	yYVGZkKcUOAnXSYeoLyHlLntQa3gCTY7Y6TwyzqcTUC+uPbu0Umisqrqh4z+1CJuwbpGaFxz+il
-	T3DL6L0+X9K8R
-X-Google-Smtp-Source: AGHT+IGWFccAgv+5F837HqeaOX+7V6jFIxHpLZX6I3O2n7dkRELlFksUoypsTSa/82r3riMQSkeIiw==
-X-Received: by 2002:a05:600c:54ed:b0:43c:f680:5c2e with SMTP id 5b1f17b1804b1-43f2eb960b7mr56574855e9.13.1744385847472;
-        Fri, 11 Apr 2025 08:37:27 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f235a5ec3sm88152935e9.39.2025.04.11.08.37.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 08:37:27 -0700 (PDT)
-Message-ID: <c352c000a9d2c855dc4e5b01e16682a239e8cae7.camel@gmail.com>
-Subject: Re: [PATCH v2 01/13] iio: backend: add support for filter config
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org, 
-	robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 11 Apr 2025 16:37:28 +0100
-In-Reply-To: <20250411123627.6114-2-antoniu.miclaus@analog.com>
-References: <20250411123627.6114-1-antoniu.miclaus@analog.com>
-	 <20250411123627.6114-2-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0 
+	s=arc-20240116; t=1744385911; c=relaxed/simple;
+	bh=pkTZW9XYlyOYB2j7FarBvvMasW31VotRzO6lhbSNgjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G/jZHpy74yD9n0pKtF16Mk54iLfJpixCO6lTuQ9rOe2VUrI7CXjfNckk8njbsCJkFs8cuH0tS/S+sB8NN8jSk0cuMbI5RWGzfx2syAaIBSf246Va7wyj1ZedNEq+Sr3ZGd4cVDVM7ZXbKpCMheqy0JP3bPpygqMgcTwgHYkqNlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gE7rDCAA; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744385910; x=1775921910;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=pkTZW9XYlyOYB2j7FarBvvMasW31VotRzO6lhbSNgjI=;
+  b=gE7rDCAAAeV+eLWmLpEp5KinUuuBlSb7qGixGPu8A9O+RhcMgNh5ho6P
+   kfVMtdvd7LlFzsdwit6etGlykiny0COj/hybVZWSm4F6P1IS5ou1+YKbK
+   kDhS9YphH9PTA0Zdy4qSoR1hp+ULiojmJ5If+ZCF2Pqsz2YISCndpbBf8
+   SDgDp7kZOO/V9XdiKqT0W+bjY321ArO1gHE4gu1EhXZaNuyTR7slqoP5q
+   /+dTjZstCDqsSuERRdl0Bbm5MsCXLkaIYd4Mt+mFjmG34LPOhm3qB9yKD
+   OJcOmYRl+unshGaT7gsHOSbYl5ibKEsTtSnpmgQvCG4I/Bw6U9dB4zB2O
+   w==;
+X-CSE-ConnectionGUID: P1mSCCMaSei7lxQUppNlqw==
+X-CSE-MsgGUID: v13BFKcHTqCeNOTg+6va9g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11401"; a="48649055"
+X-IronPort-AV: E=Sophos;i="6.15,205,1739865600"; 
+   d="scan'208";a="48649055"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 08:38:29 -0700
+X-CSE-ConnectionGUID: HDMm3ijxSPyaGiN0A/c56A==
+X-CSE-MsgGUID: gq9y3QADRom6nNMx44SA/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,205,1739865600"; 
+   d="scan'208";a="129207118"
+Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO [10.124.221.159]) ([10.124.221.159])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 08:38:28 -0700
+Message-ID: <bf63b3e3-afdd-424c-87dc-f5488e770315@intel.com>
+Date: Fri, 11 Apr 2025 08:38:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] devmem: Block mmap access when read/write access
+ is restricted
+To: Dan Williams <dan.j.williams@intel.com>, Kees Cook <kees@kernel.org>
+Cc: dave.hansen@linux.intel.com, Nikolay Borisov <nik.borisov@suse.com>,
+ linux-kernel@vger.kernel.org
+References: <174433453526.924142.15494575917593543330.stgit@dwillia2-xfh.jf.intel.com>
+ <174433455090.924142.10859114556652046264.stgit@dwillia2-xfh.jf.intel.com>
+ <202504101926.0F8FB73@keescook>
+ <67f8a1a15cc29_7205294d7@dwillia2-xfh.jf.intel.com.notmuch>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <67f8a1a15cc29_7205294d7@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Antoniu,
+On 4/10/25 21:59, Dan Williams wrote:
+>> I don't think we can just fail the mmap. 🙁
+> For the TVM case the havoc of failing mmap for DMI info is smaller and
+> the recommended fallback for /dev/mem being in accessible is
+> /sys/firmware/dmi/tables. So I feel ok making TVMs take the modern
+> replacement path which is what they would need to do anyway in the
+> lockdown_kernel case. Tom, Dave, what do you think?
 
-I do not have time today for going through all the series but I'll already =
-leave
-my comment on this on..
+Yeah, doing the same as lockdown should be fine.
 
-On Fri, 2025-04-11 at 15:36 +0300, Antoniu Miclaus wrote:
-> Add backend support for digital filter enable/disable.
->=20
-> This setting can be adjusted within the IP cores interfacing devices.
->=20
-> The IP core can be configured based on the state of the actual
-> digital filter configuration of the part.
->=20
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-> changes in v2:
-> =C2=A0- improve commit description
-> =C2=A0drivers/iio/industrialio-backend.c | 26 ++++++++++++++++++++++++++
-> =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 6 ++++++
-> =C2=A02 files changed, 32 insertions(+)
->=20
-> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industriali=
-o-
-> backend.c
-> index d4ad36f54090..ffafe7c73508 100644
-> --- a/drivers/iio/industrialio-backend.c
-> +++ b/drivers/iio/industrialio-backend.c
-> @@ -778,6 +778,32 @@ static int __devm_iio_backend_get(struct device *dev=
-,
-> struct iio_backend *back)
-> =C2=A0	return 0;
-> =C2=A0}
-> =C2=A0
-> +/**
-> + * iio_backend_filter_enable - Enable filter
-> + * @back: Backend device
-> + *
-> + * RETURNS:
-> + * 0 on success, negative error number on failure.
-> + */
-> +int iio_backend_filter_enable(struct iio_backend *back)
-> +{
-> +	return iio_backend_op_call(back, filter_enable);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(iio_backend_filter_enable, "IIO_BACKEND");
-> +
-> +/**
-> + * iio_backend_filter_disable - Disable filter
-> + * @back: Backend device
-> + *
-> + * RETURNS:
-> + * 0 on success, negative error number on failure.
-> + */
-> +int iio_backend_filter_disable(struct iio_backend *back)
-> +{
-> +	return iio_backend_op_call(back, filter_disable);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(iio_backend_filter_disable, "IIO_BACKEND");
-
-This seems to resemble the filter_type IIO attr so I would likely be more
-explicit in the API naming. Like 'iio_backend_filter_type_set()'. And that =
-also
-takes me into the more important point. I would consider having this API ta=
-king
-an unsigned int filter_type (or an enum with the same possibilities as defi=
-ned
-in the ABI) argument rather than an enable vs disable thing. Like this, we'=
-re
-just thinking about this particular usecase but it can very well happen tha=
-t in
-the future some backends might need to know the specific filter being
-configured. Sure we could change things later on but doing it now is pretty
-straight so why not :)?
-
-- Nuno S=C3=A1
-
+The other alternative to failing all mmap()s is to allow mmap(PROT_READ)
+to succeed and then just map the zero page.
 
