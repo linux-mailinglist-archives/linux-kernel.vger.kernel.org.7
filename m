@@ -1,120 +1,141 @@
-Return-Path: <linux-kernel+bounces-600078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5936A85B8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:26:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDCEEA85B7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899291B625E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 490C1189DB3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BDE2BD58D;
-	Fri, 11 Apr 2025 11:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7822980CE;
+	Fri, 11 Apr 2025 11:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yfFas8St"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGRo+LKC"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AAD27C169
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 11:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C705238C08;
+	Fri, 11 Apr 2025 11:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744370601; cv=none; b=Ctwv6itybUmEoWvwFBt/GzUq7y/THfiw7/oxXpIp6fbKGKIOl6gbdNlaR3nivzWcfXDRK8g3fcB94CKVOEpCYN8c3vbG7ENBjAkxvY/qPzvJZ2LpbfiJfQT/n2bJzjU6NNb/Z12kNHEN1vXnFpygWu9MmFCkUsmlDssoI7v9TkY=
+	t=1744370587; cv=none; b=TWcahHpqsgLBQhHrXUwjywal64Pm3sNOTm9d5cIovAbww7HPMxXxjWM6NRGke87pmCnvS3a1Id/Vbf72zOBHoy+dR4Cia0aoXNcUS/mk0LaCXy0G7vgez/ywRj56dRGFb9YgIIK7NrlytUGu8YVuw6zYIJg8I9fEGt9t65Q8q7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744370601; c=relaxed/simple;
-	bh=ybxTvRpd4kO2zs6zw9WFj8Wii5NFzbC0WuWOhetK+9w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Dmm9/QUO93A5G/wyb/GfSpGFCga0hlzr3c+KUtFekYgeJfshCqtg9ONvP4rjoEcP8gxQ7jRs1YqfOpgfvo9hMAg4Tu4zL3E0WXfVqXgtt8Rmzp37+GYJX7PZgBr06cGBGowb6XFLydz85iAKn9CB3CVWVdjENFitqIeImtEQ/Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yfFas8St; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so13909935e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 04:23:19 -0700 (PDT)
+	s=arc-20240116; t=1744370587; c=relaxed/simple;
+	bh=cLaRCpsuY1Y9GibZumfX7daXsbuLN+zkYfh+d2mvyUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bSCsrOX8uxMx5I5faYmbCSPsbiqNPusMvN9yTr2RNgJNJefTlJh4DDOO+ZveB29MzHQ98pFymVuWVESWWunyw5dheKgDeWI6rjAI6kcBQU1bsRV1RIqGqsggEP0ss4F5tkFOOyJNPlpsXhxFY2/aI/KZZUTzxlce9oHPAoDDOjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OGRo+LKC; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54acc0cd458so2097384e87.0;
+        Fri, 11 Apr 2025 04:23:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744370598; x=1744975398; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zofAE/MmL+K+bf5Y8iHtvKsWsqHj4tjabm2BNgmObl0=;
-        b=yfFas8St6hTJljk/EGzIcHrRhjqu2X9Y6nN6JjF3z+fTKEcmUkRg1Hc8RvuvW+l/KK
-         MRz4icFYIChJEaPVLp5b5FOTq36iTfVt+630rDXqfJ/QZ0HrltUrx10wMCuOH5G8YwjN
-         zKZ7yevBnYOmUmfBjOopYT5HC7x2yL6U9t3khlHeRbFrYRvzzW73iFTH5Tc4W3k0ba5s
-         SMLpL7hxObEb/OS/1Ecz5mUViCWts1aZHNKgbAq1GcebJjx0ZPthTFxikc8oLREWY5Bn
-         QHgcAQEXrr0dBE4hGc2B+tODYd9zdpR+ACT3Gc4ZM9ej9SEfHcYQfVdKEpAcZcLK2MLl
-         wgng==
+        d=gmail.com; s=20230601; t=1744370583; x=1744975383; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HT7r3fDuEL1KH751TSC5LDiGn90lVSNqfi4tD94lhmw=;
+        b=OGRo+LKCool8TVJzf6DyiMzR8OuevxHhF13CBdfLlKH+pnw70269xYoie5GzKzWQCq
+         3OjtfJl8ZVpcE/9OsDQAXcaXKqXS85bbhyd7ExU2WpkKsKFWTN1wg3QHYuN8UxIcVKDr
+         /9lbDgY3RuY41MEfqKqrTYgxVl5PUM+57jPFcZVp2GbgqpMSWXMkhU6m3u5ZHXbEGVDc
+         xWHAVlMP6DhHlZreOeUBCxcRyyPbDlC4o68eZN3uqcsAD2jPP6d9WQ11DBxgniAA2KDS
+         qTPHFiSOCYISMEpSjpyfz2LIx7d2Etwh9VFQLBrb/oMXthD8vopGB3szZNxeUn/IGe27
+         DsFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744370598; x=1744975398;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zofAE/MmL+K+bf5Y8iHtvKsWsqHj4tjabm2BNgmObl0=;
-        b=rjqdEGW9E4knXWAlOHjX4l4RMoUu/DYigOVxW8XR/qYmKYYs6V40rS1ZIEHyu6I5rt
-         b0zU/9NoDDHj2K+SowICR8KLYT1kv5qTIqY+JHq6d8EqqQC8HMbM+h2bWleg4uGSvxeI
-         7LrrGyHjSA3JBHbamXjn45grwpEmx6ydB8PUiOfjlgpAiie5OjHfc5Tev0vQw5JL3wjR
-         nufcPEHde04b8nlM2IREiz+IVN9RXU2Kw8kZhdcotyDUzHHA63IKBT9eUmFRput2M1pf
-         n0SX0KDwH2+1j2hy3jaGUYLcG18aSsi4bpexlbDB/6Rf4U/vs0dzXwx7RWZmpwwfHDS0
-         namQ==
-X-Gm-Message-State: AOJu0YxFFYlIqAScs+L6UzUnAg+NV8tA6wWGOi2KIxhXK+vmGuambDuV
-	711SCbNxBHSbS70JgEbNUzpx0eT763toMeoRSfp3p1YcYaGuVou2hHEBsUmWXG8=
-X-Gm-Gg: ASbGnctqB+uGM+dLlE08sVMLBgT7OhwyYfyHSFmoJ6i/sZ9S2cuhHMnss1Omx7DuIL/
-	pUQQWEujvi1Me1DLduXSxPDPmaK+Ejbfd/926ywW/JuhcTOcEjRsMHjlWGqtu9WnZ/876ggGD3M
-	ePT1GX5lWxjp1GYikz8dEjgodkJcVWyTqRvguYyZ/V1snxcgxR7CUJ6R4kSTn6WsG0Yni43k2md
-	zk/YT3YHxzee4KyI2Oyx5rMFlu2kBo3J7H32oA0/74BIGH8x1mu4N+WoIXwEm+j2/A7K1ddfr3V
-	K6CNSmkMutaaud2QZxtpnuLANd2XOLwtkeFWDi8y6uMR4D6cmDMFHdlhIhL9TQk5hA==
-X-Google-Smtp-Source: AGHT+IGfHiXWGnshyAfpjAm+tW2i79tpgHT5G8fC087kVhtu13VTr02cY1k71fRuQTMpc39v63xumQ==
-X-Received: by 2002:a05:600c:1c8e:b0:43c:f85d:1245 with SMTP id 5b1f17b1804b1-43f3a958fe5mr17042925e9.17.1744370598396;
-        Fri, 11 Apr 2025 04:23:18 -0700 (PDT)
-Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f2075fc8esm85171445e9.30.2025.04.11.04.23.17
+        d=1e100.net; s=20230601; t=1744370583; x=1744975383;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HT7r3fDuEL1KH751TSC5LDiGn90lVSNqfi4tD94lhmw=;
+        b=MfoIjbaLhlEbDEcmBXZId+1+5Ny+4xx6HyfMJXQJ1eydT204FG+EvB3yRo49BqjhBR
+         4tO1x0HpnVDpIif6i+vqbw4+AR9dHNFVK8SpVZo4W/nVOHw72bvMFRJgW8Kl4XcC6dxx
+         jw+U6ulasK0GNpcn2/stD7LeANODI1JtrMAhqyXcGp0Uaz0WtzyOh65AXbiXU3lzXZ7S
+         yf5dbZWAT5DO6fo5yNd9KuFaoFo+6jMXmMkGYP0slpnjfIxoD0Qi+knsXp2tDQFqsZ/s
+         MFlH/5yeeeI/fjgiY06QkYb6GhKndJl+8WVy0tlF3PwuB0s/6ySnF7bNgF9JYNd+qzuT
+         1RhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKsZ9LwnD4ocrZdD9WigOePz2Sp3YEe4C/c9Vc9agdsapXRh8wMaju8wZViC6HKxZSF4yFQHeu7lseopo=@vger.kernel.org, AJvYcCXd+5exI22wiO+pT+IUFJzKVd7J9EEMcbst//m3ZDnOznhKQcUA45nSQ9mvmX5ObsAx2SlXbht3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA9PyHSAsYsO5wSbtMvC31a3bWBY4Ab5hsruTMwzOuu1Lgzutd
+	ZPk0KTFwP+i95kbtzWdDWDlwBRU/V/91+c7uCH4yl6ARnU86907Q
+X-Gm-Gg: ASbGncvn1A1ULJgCTt7SSFyY/81ebbRySWY7nEG62akvNDGoc4PU/b7NqdpBsFlskXO
+	ZXj+Z951AcRuHrexDRwWihhoQ+bxs419FcJzp+Qx6BZn8vqVRPiLDhpaYeGbQKjB1wFqG6ww32G
+	WpGSHJONGV5E0306eYcFBwuvAtVmrLfJipk80NZL39TVQSGguBaQzMFGlAp3nrBs3H1FxGxz0zq
+	kWGdmI1fTuwXLNcNH6fMUxNsDhK59KHt1dCSEOD8by6bOGKmPyoE3nOmTFYOqvY//J4vZlLtw3I
+	RPYSutr7JlwK8c/7pC7N+liK2DpEjntFm1e02PzgYM2WICB5BHvR1lY=
+X-Google-Smtp-Source: AGHT+IGYU2dQ+mYo0a/xjnGmMYdyBFO3HCLYch5FmyWp7AJ0fIZL0TPs0HDRDiXOqnfVRTNveTGXrg==
+X-Received: by 2002:a05:6512:4006:b0:549:59d2:9ac0 with SMTP id 2adb3069b0e04-54d452e13d9mr759462e87.47.1744370582988;
+        Fri, 11 Apr 2025 04:23:02 -0700 (PDT)
+Received: from home.paul.comp (paulfertser.info. [2001:470:26:54b:226:9eff:fe70:80c2])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d123469sm407200e87.24.2025.04.11.04.23.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 04:23:17 -0700 (PDT)
-From: srinivas.kandagatla@linaro.org
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	srini@kernel.org,
-	Rudraksha Gupta <guptarud@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [RESEND PATCH v3 13/13] dt-bindings: nvmem: Add compatible for MSM8960
-Date: Fri, 11 Apr 2025 12:22:51 +0100
-Message-Id: <20250411112251.68002-14-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250411112251.68002-1-srinivas.kandagatla@linaro.org>
-References: <20250411112251.68002-1-srinivas.kandagatla@linaro.org>
+        Fri, 11 Apr 2025 04:23:02 -0700 (PDT)
+Received: from home.paul.comp (home.paul.comp [IPv6:0:0:0:0:0:0:0:1])
+	by home.paul.comp (8.15.2/8.15.2/Debian-22+deb11u3) with ESMTP id 53BBMx6g006990;
+	Fri, 11 Apr 2025 14:23:00 +0300
+Received: (from paul@localhost)
+	by home.paul.comp (8.15.2/8.15.2/Submit) id 53BBMvM3006989;
+	Fri, 11 Apr 2025 14:22:57 +0300
+Date: Fri, 11 Apr 2025 14:22:57 +0300
+From: Paul Fertser <fercerpav@gmail.com>
+To: kalavakunta.hari.prasad@gmail.com
+Cc: sam@mendozajonas.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        npeacock@meta.com, akozlov@meta.com, hkalavakunta@meta.com
+Subject: Re: [PATCH net-next v3] net: ncsi: Fix GCPS 64-bit member variables
+Message-ID: <Z/j7kdhvMTIt2jgt@home.paul.comp>
+References: <20250410172247.1932-1-kalavakunta.hari.prasad@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410172247.1932-1-kalavakunta.hari.prasad@gmail.com>
 
-From: Rudraksha Gupta <guptarud@gmail.com>
+Hello Hari,
 
-Document the QFPROM on MSM8960.
+On Thu, Apr 10, 2025 at 10:22:47AM -0700, kalavakunta.hari.prasad@gmail.com wrote:
+> From: Hari Kalavakunta <kalavakunta.hari.prasad@gmail.com>
+> 
+> Correct Get Controller Packet Statistics (GCPS) 64-bit wide member
+> variables, as per DSP0222 v1.0.0 and forward specs. The Driver currently
+> collects these stats, but they are yet to be exposed to the user.
+> Therefore, no user impact.
+> 
+> Statistics fixes:
+> Total Bytes Received (byte range 28..35)
+> Total Bytes Transmitted (byte range 36..43)
+> Total Unicast Packets Received (byte range 44..51)
+> Total Multicast Packets Received (byte range 52..59)
+> Total Broadcast Packets Received (byte range 60..67)
+> Total Unicast Packets Transmitted (byte range 68..75)
+> Total Multicast Packets Transmitted (byte range 76..83)
+> Total Broadcast Packets Transmitted (byte range 84..91)
+> Valid Bytes Received (byte range 204..11)
+> 
+> v2:
+> - __be64 for all 64 bit GCPS counters
+> 
+> v3:
+> - be64_to_cpup() instead of be64_to_cpu()
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Usually the changelog should go after --- so it's not included in the
+final commit message when merged. I hope in this case the maintainers
+will take care of this manually so no need to resend unless they ask
+to.
 
-diff --git a/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml b/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
-index 2b39d27da57b..3f6dc6a3a9f1 100644
---- a/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
-@@ -30,6 +30,7 @@ properties:
-           - qcom,msm8916-qfprom
-           - qcom,msm8917-qfprom
-           - qcom,msm8937-qfprom
-+          - qcom,msm8960-qfprom
-           - qcom,msm8974-qfprom
-           - qcom,msm8976-qfprom
-           - qcom,msm8996-qfprom
--- 
-2.25.1
+Other than that,
 
+Reviewed-by: Paul Fertser <fercerpav@gmail.com>
+
+Thank you for working on this. I'll be looking forward to your next
+patch where response validation is added.
+
+BTW, have you already discussed how exactly you plan to expose the
+statistics to the userspace, is that something that should end up
+visible via e.g. `ethtool -S eth0 --groups nc-si` ?
 
