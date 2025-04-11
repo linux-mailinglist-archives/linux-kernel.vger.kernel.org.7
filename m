@@ -1,200 +1,119 @@
-Return-Path: <linux-kernel+bounces-600250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30D2A85D87
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:46:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 444B8A85DB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6577F1BC0B9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:43:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8FAD9C2327
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D43221FA2;
-	Fri, 11 Apr 2025 12:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF2F2367D1;
+	Fri, 11 Apr 2025 12:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JYRgJhfF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="UqoyPyu2"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D4A221FA4
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 12:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989D82367A2;
+	Fri, 11 Apr 2025 12:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744375272; cv=none; b=sNMEozu2MWd7B/mNSq9b80CM3fO1hMsAKSPfF6upgaogFvCOjFSzDmCDnK/eXTyKpWJBPiF2jQHZXyg6wuLaovXc/AKeWpsFe6BqmUADLy2ckzIWD3hfkrEZWddK4+RD8JNdsvz3gY/bZZUFmol+q77JmbPSJmwAT+gz7rLidPg=
+	t=1744375476; cv=none; b=PWtWzz1vujsXBWPC6uYFDiscGNaxmDzOjjeqlX8LNKJ1Rcd6pIF/StcDffneMn3967UR+gJRC+PxB70+xDYKDJ0DmUHKtzYEDeLGH0P8YePwUxf3KOx4CHcrKJEn4OPrrRustFpCnrdUoK8QpJa24ove4gPCWhGazRU4IkKziWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744375272; c=relaxed/simple;
-	bh=TvQF61JySWNmCGg6hn44ulWgP3Wy96QL8eH90+jGnlc=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=WA1xcdTaONUWAzxj3DlS2QI+zP86AtidMc3COOz56R6SrNUPkZu6ye1rj6mzfUPfvWtpsSmpMbKpDcJEfqCvi+slsKAFNHk5LADfHzNxhVtQJONbzXIXwq3h8K73SrgHeDtuGxFWqKWO6fhCrri32IFAMqze5RyrF4dFlhdblI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JYRgJhfF; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744375271; x=1775911271;
-  h=date:from:to:cc:subject:message-id;
-  bh=TvQF61JySWNmCGg6hn44ulWgP3Wy96QL8eH90+jGnlc=;
-  b=JYRgJhfFC1hJWTLjPZxcxfWzsUwyoS1ciaKpREUwestchYqfn1nc9iY/
-   mpQE7AKzErgAI83m66MNoWDyliTIyvSEf4z2Ke/0wbrSqj3NV8/Q28uKc
-   kOHOnmb2XUghAqDv0fdK1LIIlCBnf++/1HRaFNFr2jlpNEnpr1PVTAEgE
-   Z46gaBZV/fUn3KV5al7R0zK9ajIkdIRHwRpzR7F3pW1AjfcOZsFbYB2xm
-   PDKZZZcajO1VAxLwD6Jw4nVWZmTagpAqmLcD/oXTvSfTuE6OieQBksxRV
-   INgp8poGtfx56d5tFZekFPk3KTCm0/okPXwNb2VWU/4Aq9O/Z+XlKlcFT
-   Q==;
-X-CSE-ConnectionGUID: ljQ65PX8TIKUk+lY7Bs91A==
-X-CSE-MsgGUID: PoByh8ULSFCwr7N3r77XiA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11401"; a="71311982"
-X-IronPort-AV: E=Sophos;i="6.15,205,1739865600"; 
-   d="scan'208";a="71311982"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 05:41:11 -0700
-X-CSE-ConnectionGUID: Q5hA1CXfTESYsA7/JAcrYQ==
-X-CSE-MsgGUID: miaQjgL4Ti6Byqg8vnZhUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,205,1739865600"; 
-   d="scan'208";a="152370128"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 11 Apr 2025 05:41:09 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u3Dgx-000B66-2n;
-	Fri, 11 Apr 2025 12:41:07 +0000
-Date: Fri, 11 Apr 2025 20:40:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/asm] BUILD SUCCESS
- 7615b94b6371dab5d7d8c1ca4f95ed3f866e1c51
-Message-ID: <202504112010.ajqD07XV-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1744375476; c=relaxed/simple;
+	bh=cnr2ofPU/+fv3m90a/O9lvyNPKaplyiDfTBmUcQLxeQ=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=cpMxi5dtSNeuXLAUniJQFglpvdDz+snw/DBPVhf/rMZTMwzxd1n1gUfCsnkLfU4ZvgFkd71xQCOYK82p2eHWSyGghvKjwtMO0l75FaUfu9oBk7YIYvZEgZ4U0udIt+omcejX3U42hakiirixF2KIpFEVuVmEUuY9kNCn0GrRxXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=UqoyPyu2; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B9W3go002131;
+	Fri, 11 Apr 2025 14:43:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=j/lAi5eaVA+wpovEOgd7NZ
+	L+lXloOZBsudzotdqZPWU=; b=UqoyPyu2cZP4mweG/lilyfuugIK7/mbywr3lMd
+	AgfwdAyouFafno9I0oD9rQsb/gIFq3dAYA/YbKGgEKmL8uQbpaZH9N+Qm6MRZkOm
+	KgXO9cd3Xdp8PFwqK30hPEsphF3xBi/9wbNIVUFhaQpbsTLOtf+P4ajc0TyggAfU
+	YQg0k3PsF4dbmlq7lvObAPaQU3p9wfIXgX34pWgQdLmcQQGfCFpzEeiCrLOtD6EK
+	vNRUbvRvd1qWUyeIRrq/m6qtKSTt50cJtupz2GIFDzqJIfyEuEO0Z/oR2OzTIyH1
+	OlCyQnIwKhu8VMS151okJ0buvtJfEQ55rNPOzh7lqORSlEfQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45tw8pwnc4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 14:43:53 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 58FDA400D4;
+	Fri, 11 Apr 2025 14:42:43 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 30E629EC282;
+	Fri, 11 Apr 2025 14:41:12 +0200 (CEST)
+Received: from localhost (10.252.25.37) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Apr
+ 2025 14:41:11 +0200
+From: Patrice Chotard <patrice.chotard@foss.st.com>
+Subject: [PATCH v2 0/2] reset: Add
+ devm_reset_control_array_get_exclusive_released()
+Date: Fri, 11 Apr 2025 14:41:09 +0200
+Message-ID: <20250411-b4-upstream_ospi_reset_update-v2-0-4de7f5dd2a91@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOUN+WcC/x3MQQrCMBAF0KuUWRtoQiLoVUTC2Hx1FrZhJi1C6
+ d0NLt/m7WRQgdF12Emxickyd4TTQNOb5xeclG4KY0hj9N49olurNQV/8mJVssLQ8loLN7h0OU8
+ IMXFhT/2oiqd8///tfhw/o5oPsG8AAAA=
+X-Change-ID: 20250411-b4-upstream_ospi_reset_update-596ce245ada1
+To: Philipp Zabel <p.zabel@pengutronix.de>, Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Patrice Chotard
+	<patrice.chotard@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_04,2025-04-10_01,2024-11-22_01
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/asm
-branch HEAD: 7615b94b6371dab5d7d8c1ca4f95ed3f866e1c51  selftests/kexec: Add x86_64 selftest for kexec-jump and exception handling
+Add the released variant of devm_reset_control_array_get_exclusive().
+Needed by spi-smt32-ospi driver as same reset line is also used also
+by stm32-omm driver.
 
-elapsed time: 1467m
+Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
 
-configs tested: 108
-configs skipped: 1
+Changes in v2:
+  - Rebased on spi/for-next (7a978d8fcf57).
+  - Remove useless check on reset.
+  - Add error handling on reset_control_acquire().
+  - Link to v1: https://lore.kernel.org/all/20250410-b4-upstream_ospi_reset_update-v1-0-74126a8ceb9c@foss.st.com/
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+---
+Patrice Chotard (2):
+      reset: Add devm_reset_control_array_get_exclusive_released()
+      spi: stm32-ospi: Make usage of reset_control_acquire/release() API
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-14.2.0
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    gcc-14.2.0
-arc                   randconfig-001-20250410    gcc-14.2.0
-arc                   randconfig-002-20250410    gcc-12.4.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    gcc-14.2.0
-arm                            hisi_defconfig    gcc-14.2.0
-arm                   randconfig-001-20250410    clang-21
-arm                   randconfig-002-20250410    clang-18
-arm                   randconfig-003-20250410    gcc-7.5.0
-arm                   randconfig-004-20250410    gcc-8.5.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250410    clang-21
-arm64                 randconfig-002-20250410    clang-21
-arm64                 randconfig-003-20250410    gcc-6.5.0
-arm64                 randconfig-004-20250410    gcc-8.5.0
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250410    gcc-14.2.0
-csky                  randconfig-002-20250410    gcc-14.2.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250410    clang-21
-hexagon               randconfig-002-20250410    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250410    clang-20
-i386        buildonly-randconfig-002-20250410    clang-20
-i386        buildonly-randconfig-003-20250410    clang-20
-i386        buildonly-randconfig-004-20250410    gcc-11
-i386        buildonly-randconfig-005-20250410    clang-20
-i386        buildonly-randconfig-006-20250410    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250410    gcc-12.4.0
-loongarch             randconfig-002-20250410    gcc-12.4.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-microblaze                      mmu_defconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                       rbtx49xx_defconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250410    gcc-14.2.0
-nios2                 randconfig-002-20250410    gcc-10.5.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                randconfig-001-20250410    gcc-5.5.0
-parisc                randconfig-002-20250410    gcc-11.5.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                 mpc836x_rdk_defconfig    clang-21
-powerpc               randconfig-001-20250410    gcc-6.5.0
-powerpc               randconfig-002-20250410    gcc-6.5.0
-powerpc               randconfig-003-20250410    clang-21
-powerpc                 xes_mpc85xx_defconfig    gcc-14.2.0
-powerpc64             randconfig-001-20250410    clang-21
-powerpc64             randconfig-002-20250410    clang-21
-powerpc64             randconfig-003-20250410    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                 randconfig-001-20250410    clang-21
-riscv                 randconfig-002-20250410    gcc-8.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250410    clang-17
-s390                  randconfig-002-20250410    gcc-6.5.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250410    gcc-12.4.0
-sh                    randconfig-002-20250410    gcc-10.5.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250410    gcc-10.3.0
-sparc                 randconfig-002-20250410    gcc-7.5.0
-sparc64               randconfig-001-20250410    gcc-7.5.0
-sparc64               randconfig-002-20250410    gcc-5.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250410    clang-21
-um                    randconfig-002-20250410    gcc-12
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250410    clang-20
-x86_64      buildonly-randconfig-002-20250410    gcc-12
-x86_64      buildonly-randconfig-003-20250410    clang-20
-x86_64      buildonly-randconfig-004-20250410    clang-20
-x86_64      buildonly-randconfig-005-20250410    clang-20
-x86_64      buildonly-randconfig-006-20250410    clang-20
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250410    gcc-14.2.0
-xtensa                randconfig-002-20250410    gcc-7.5.0
+ drivers/spi/spi-stm32-ospi.c | 15 +++++++++------
+ include/linux/reset.h        |  6 ++++++
+ 2 files changed, 15 insertions(+), 6 deletions(-)
+---
+base-commit: 7a978d8fcf57b283cb8c88dd4c9431502bd36ea8
+change-id: 20250411-b4-upstream_ospi_reset_update-596ce245ada1
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+-- 
+Patrice Chotard <patrice.chotard@foss.st.com>
+
 
