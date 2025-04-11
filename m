@@ -1,200 +1,209 @@
-Return-Path: <linux-kernel+bounces-600642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC11CA86281
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:58:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3360A86295
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8B094C217D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:58:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D9351BC208D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7C821B909;
-	Fri, 11 Apr 2025 15:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3250218E97;
+	Fri, 11 Apr 2025 15:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="VMn6NZh8"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nYDW/8fr"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4E5211A15;
-	Fri, 11 Apr 2025 15:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889BD218E92
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 15:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744387082; cv=none; b=YUfHhEO7Aj7R7lNlvIQY11vdZOTvCV1pTV0C1R3oBlMy4hPYkaOayO5JZ8wR5EBTgkWqCuYy+nZX68CmT3ft7sLIyZou//dr+zh4WSAA09F8k7K9rbO4tTLogeNmp0vGSpasyxlCZWv6b0WpLLbyNWHAFXIPvh7pPk4m+oyPGdE=
+	t=1744387064; cv=none; b=OW8+NBbhjbtwft4Y09QSNz87qGH7LffNPc08tYSQeQ1SuD0vpCm2HeCKhWWjNNIcOvoLUM+Fn/L/VRFL3sXRtP2gWKXxheb0gMdO0vmVkAN3rtPQ6hasSxF3mEZcHofPFOKYMG6b5SWOw5Mhi5nuUhBjIK5/q+AnP8cDmER8ywI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744387082; c=relaxed/simple;
-	bh=nyEkozhjfcZa5PRocazay7Uf8cQv5RSqC5XQAn7WlBc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kM8w+hsBp7Btn9RyM1OZEr4/YT/INSVoYAL2lY3E4jRYEeOWKhUUeOIK6EfrezrsU3KbsE1aWYzG5qkPhrYveaswb0hLIkLezxBauRsp18AdGJ9cE1rUbsWKdfVyLxLlBOTpxQUN2X2jpLK4Kq4zBs/yd4UXImMbBOTWfbag504=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=VMn6NZh8; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53BDePY7015243;
-	Fri, 11 Apr 2025 11:57:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=E9qMM
-	oH6bhaj7QRhYtQMQfRp+qfxAP6mJTdN8IQn1DU=; b=VMn6NZh8zf3D6/08YUorB
-	hPKyHWj4BsFdPrp1Gzna0Lp/uLpzg8ozEKVhQU1b7mLQvD4PY4GpABdGGW5ANbX9
-	HG1+kKuhhe053BnKcXBVCQwMANqC7houZbMp84/Ph/MQx0GoLGZqivxAgzzeidhY
-	/Y3aa0RnsQFZpDK65Hp4ijqd0EHaZt4aarpxJbf0k+ncJ8FVAmfeO49+pb39HxvQ
-	H1m84bApjGV0ozhlITDD+LL+KCjy6qeNQqWhbJzI/rlV3NdM0f14fheYmD0NWcI2
-	9XfUQPBfXU0rFcodmLKGIC0lLQiR1dE2bDNxkxUsOwtKySCnrOPk0anhoFj65vkv
-	g==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 45u1e6uymc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 11:57:43 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 53BFvgvg022293
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 11 Apr 2025 11:57:42 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 11 Apr
- 2025 11:57:42 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Fri, 11 Apr 2025 11:57:42 -0400
-Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 53BFvN6f015621;
-	Fri, 11 Apr 2025 11:57:26 -0400
-From: Jonathan Santos <Jonathan.Santos@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-CC: Sergiu Cuciurean <sergiu.cuciurean@analog.com>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
-        <jic23@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <marcelo.schmitt1@gmail.com>,
-        <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <jonath4nns@gmail.com>, <dlechner@baylibre.com>,
-        Jonathan Santos <Jonathan.Santos@analog.com>
-Subject: [PATCH v5 07/14] iio: adc: ad7768-1: Move buffer allocation to a separate function
-Date: Fri, 11 Apr 2025 12:57:23 -0300
-Message-ID: <11c1777b406875ce1a7216dc4b094ff99af8da7f.1744325346.git.Jonathan.Santos@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1744325346.git.Jonathan.Santos@analog.com>
-References: <cover.1744325346.git.Jonathan.Santos@analog.com>
+	s=arc-20240116; t=1744387064; c=relaxed/simple;
+	bh=npM/TbC23+xHj51HQkRW1uXdvHzzkHafACwhOVQReqQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GwC1D+abARVnZWbTXiZVler8EOPDGRetGKmZytbi50u2XMHr7R2XYHS3vnKcqFA6SMHBeeFGOOIIKTJ33lcsmqmLLD5jBFl5Ic8Ns6ncc6xN4wFUX1ojyddvDxWk+eY/ub6hs1Gzkk/9sXSOU4eyLMUS2pgT0XAH4j8JnQw+Nhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nYDW/8fr; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-73009f59215so2422309b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:57:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744387062; x=1744991862; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=si/ODKsIgSnFCrMZKVLRE2VeNMFSAifIuNRwgoBaMzk=;
+        b=nYDW/8frVb1cqbQf8dOAaDhW875F5hZjU/fJYMqaWFl3MIw8Oltdd4IuKhxYVoacch
+         /gnVMQEVDnBJaW1tzevLbrhG8c4ygEqCumP1KzgxewxV5my5vvKaQRnEG21PxA0DZbNu
+         k1N2tb7zYzwjxbjP812PG7grwSaLKo/zkJdcPSQNSl8zXlytq5Un+SWZlLOEpnefwL2e
+         9ebN2U1Y550vbZhkoCdDpyTeuob5NN+GIu49j0lcL+kdTtwIutZxqYmtuUTKWhbClPM8
+         fkandLDguDMq0/dbdKmsDsBP5j4yVCFpP4/yjY2J4rbOXvU/0TfEvOXZaU362Rjsgcg8
+         68Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744387062; x=1744991862;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=si/ODKsIgSnFCrMZKVLRE2VeNMFSAifIuNRwgoBaMzk=;
+        b=inglHxTAZOMHT0I7I+qKBS+ulRNSEqhv+50B4+MtX+bmXHMfh/qj+aSZD+HEw8YEpY
+         LnU8vPLG6FdmjGMsqi2Wb2uUkeZEKs2w8t6f8NFF84sXiuL9ZAOWw8/nJgkkY8pqe4uc
+         IH8xhVb8hwKS0K7LfVkkvGZZSE1BugVXZT0HA6qCIyD/sAWayexpj5AavvU/YmF23Jc5
+         diC6Kpj1tPKmFEaG10reKwpHeqBHuohY4mt3VpBAJe+MKKgy6KklPiMQ5mHrhHpXRLFi
+         0ILACcqXJsddGC8WZbkz2OgiftzbdBBh9w0kehygnXBJU/ZjJTtg94fB1nR1IV2WM0XF
+         JfWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNTX2VkL6p80p1jO+pm9Y0j5OpcZjnMC3JEWkFNweD3zNjQwMe5O5STBbAn4DvtqVGy0UdX7ml2OyaZbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKcZYtNeeHwswb5EjznP6GoGlPLA2a3eA8fhiPRcfsRJDSWC65
+	zo1mpTdQbc0r11cVaeEzCwQjEVdZNZBwlXTQDyxRhPjUzkN7j4zoD3/mXYiDx+jOlI0Y4+x7uhA
+	zJA==
+X-Google-Smtp-Source: AGHT+IGPhiDG665jmCtI8Z/xmd6YocD3zoHPB57rQLSCtKj7lwREKLtXJqckz4MHs54UXej/TG1WEUL0y7I=
+X-Received: from pjtu11.prod.google.com ([2002:a17:90a:c88b:b0:305:2d2a:dfaa])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:f944:b0:2f2:ab09:c256
+ with SMTP id 98e67ed59e1d1-308237cf269mr5677237a91.33.1744387061767; Fri, 11
+ Apr 2025 08:57:41 -0700 (PDT)
+Date: Fri, 11 Apr 2025 08:57:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: 4AY1pLk9pZNJ_4BXlX_AM8tdMQod3vLH
-X-Authority-Analysis: v=2.4 cv=cdjSrmDM c=1 sm=1 tr=0 ts=67f93bf7 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=XR8D0OoHHMoA:10 a=gAnH3GRIAAAA:8 a=IpJZQVW2AAAA:8 a=l9GLs7LQBT_n29Jb_ZMA:9 a=IawgGOuG5U0WyFbmm1f5:22
-X-Proofpoint-GUID: 4AY1pLk9pZNJ_4BXlX_AM8tdMQod3vLH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-11_06,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 impostorscore=0 spamscore=0 malwarescore=0
- priorityscore=1501 adultscore=0 mlxscore=0 clxscore=1015 mlxlogscore=999
- phishscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504110101
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
+Message-ID: <20250411155737.1360746-1-surenb@google.com>
+Subject: [PATCH 1/1] slab: ensure slab->obj_exts is clear in a newly allocated
+ slab page
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: kent.overstreet@linux.dev, vbabka@suse.cz, roman.gushchin@linux.dev, 
+	cl@linux.com, rientjes@google.com, harry.yoo@oracle.com, 
+	souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Suren Baghdasaryan <surenb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+ktest recently reported crashes while running several buffered io tests
+with __alloc_tagging_slab_alloc_hook() at the top of the crash call stack.
+The signature indicates an invalid address dereference with low bits of
+slab->obj_exts being set. The bits were outside of the range used by
+page_memcg_data_flags and objext_flags and hence were not masked out
+by slab_obj_exts() when obtaining the pointer stored in slab->obj_exts.
+The typical crash log looks like this:
 
-This change moves the buffer allocation and related trigger allocation
-in a separate function, making space for adding another type of iio
-buffer if needed.
+00510 Unable to handle kernel NULL pointer dereference at virtual address 0000000000000010
+00510 Mem abort info:
+00510   ESR = 0x0000000096000045
+00510   EC = 0x25: DABT (current EL), IL = 32 bits
+00510   SET = 0, FnV = 0
+00510   EA = 0, S1PTW = 0
+00510   FSC = 0x05: level 1 translation fault
+00510 Data abort info:
+00510   ISV = 0, ISS = 0x00000045, ISS2 = 0x00000000
+00510   CM = 0, WnR = 1, TnD = 0, TagAccess = 0
+00510   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+00510 user pgtable: 4k pages, 39-bit VAs, pgdp=0000000104175000
+00510 [0000000000000010] pgd=0000000000000000, p4d=0000000000000000, pud=0000000000000000
+00510 Internal error: Oops: 0000000096000045 [#1]  SMP
+00510 Modules linked in:
+00510 CPU: 10 UID: 0 PID: 7692 Comm: cat Not tainted 6.15.0-rc1-ktest-g189e17946605 #19327 NONE
+00510 Hardware name: linux,dummy-virt (DT)
+00510 pstate: 20001005 (nzCv daif -PAN -UAO -TCO -DIT +SSBS BTYPE=--)
+00510 pc : __alloc_tagging_slab_alloc_hook+0xe0/0x190
+00510 lr : __kmalloc_noprof+0x150/0x310
+00510 sp : ffffff80c87df6c0
+00510 x29: ffffff80c87df6c0 x28: 000000000013d1ff x27: 000000000013d200
+00510 x26: ffffff80c87df9e0 x25: 0000000000000000 x24: 0000000000000001
+00510 x23: ffffffc08041953c x22: 000000000000004c x21: ffffff80c0002180
+00510 x20: fffffffec3120840 x19: ffffff80c4821000 x18: 0000000000000000
+00510 x17: fffffffec3d02f00 x16: fffffffec3d02e00 x15: fffffffec3d00700
+00510 x14: fffffffec3d00600 x13: 0000000000000200 x12: 0000000000000006
+00510 x11: ffffffc080bb86c0 x10: 0000000000000000 x9 : ffffffc080201e58
+00510 x8 : ffffff80c4821060 x7 : 0000000000000000 x6 : 0000000055555556
+00510 x5 : 0000000000000001 x4 : 0000000000000010 x3 : 0000000000000060
+00510 x2 : 0000000000000000 x1 : ffffffc080f50cf8 x0 : ffffff80d801d000
+00510 Call trace:
+00510  __alloc_tagging_slab_alloc_hook+0xe0/0x190 (P)
+00510  __kmalloc_noprof+0x150/0x310
+00510  __bch2_folio_create+0x5c/0xf8
+00510  bch2_folio_create+0x2c/0x40
+00510  bch2_readahead+0xc0/0x460
+00510  read_pages+0x7c/0x230
+00510  page_cache_ra_order+0x244/0x3a8
+00510  page_cache_async_ra+0x124/0x170
+00510  filemap_readahead.isra.0+0x58/0xa0
+00510  filemap_get_pages+0x454/0x7b0
+00510  filemap_read+0xdc/0x418
+00510  bch2_read_iter+0x100/0x1b0
+00510  vfs_read+0x214/0x300
+00510  ksys_read+0x6c/0x108
+00510  __arm64_sys_read+0x20/0x30
+00510  invoke_syscall.constprop.0+0x54/0xe8
+00510  do_el0_svc+0x44/0xc8
+00510  el0_svc+0x18/0x58
+00510  el0t_64_sync_handler+0x104/0x130
+00510  el0t_64_sync+0x154/0x158
+00510 Code: d5384100 f9401c01 b9401aa3 b40002e1 (f8227881)
+00510 ---[ end trace 0000000000000000 ]---
+00510 Kernel panic - not syncing: Oops: Fatal exception
+00510 SMP: stopping secondary CPUs
+00510 Kernel Offset: disabled
+00510 CPU features: 0x0000,000000e0,00000410,8240500b
+00510 Memory Limit: none
 
-Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+Investigation indicates that these bits are already set when we allocate
+slab page and are not zeroed out after allocation. We are not yet sure
+why these crashes start happening only recently but regardless of the
+reason, not initializing a field that gets used later is wrong. Fix it
+by initializing slab->obj_exts during slab page allocation.
+
+Fixes: 21c690a349ba ("mm: introduce slabobj_ext to support slab object extensions")
+Reported-by: Kent Overstreet <kent.overstreet@linux.dev>
+Tested-by: Kent Overstreet <kent.overstreet@linux.dev>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Acked-by: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: <stable@vger.kernel.org>
 ---
-v5 Changes:
-* mentioned trigger allocation in the commit message.
+ mm/slub.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-v4 Changes:
-* None.
-
-v3 Changes:
-* Added missing SoB.
-
-v2 Changes:
-* Interrupt and completion moved out from ad7768_triggered_buffer_alloc(). 
----
- drivers/iio/adc/ad7768-1.c | 44 ++++++++++++++++++++++----------------
- 1 file changed, 26 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-index 34712d3756e2..66087fabe181 100644
---- a/drivers/iio/adc/ad7768-1.c
-+++ b/drivers/iio/adc/ad7768-1.c
-@@ -619,6 +619,31 @@ static int ad7768_set_channel_label(struct iio_dev *indio_dev,
- 	return 0;
- }
+diff --git a/mm/slub.c b/mm/slub.c
+index b46f87662e71..dc9e729e1d26 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1973,6 +1973,11 @@ static inline void handle_failed_objexts_alloc(unsigned long obj_exts,
+ #define OBJCGS_CLEAR_MASK	(__GFP_DMA | __GFP_RECLAIMABLE | \
+ 				__GFP_ACCOUNT | __GFP_NOFAIL)
  
-+static int ad7768_triggered_buffer_alloc(struct iio_dev *indio_dev)
++static inline void init_slab_obj_exts(struct slab *slab)
 +{
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+	int ret;
-+
-+	st->trig = devm_iio_trigger_alloc(indio_dev->dev.parent, "%s-dev%d",
-+					  indio_dev->name,
-+					  iio_device_id(indio_dev));
-+	if (!st->trig)
-+		return -ENOMEM;
-+
-+	st->trig->ops = &ad7768_trigger_ops;
-+	iio_trigger_set_drvdata(st->trig, indio_dev);
-+	ret = devm_iio_trigger_register(indio_dev->dev.parent, st->trig);
-+	if (ret)
-+		return ret;
-+
-+	indio_dev->trig = iio_trigger_get(st->trig);
-+
-+	return devm_iio_triggered_buffer_setup(indio_dev->dev.parent, indio_dev,
-+					       &iio_pollfunc_store_time,
-+					       &ad7768_trigger_handler,
-+					       &ad7768_buffer_ops);
++	slab->obj_exts = 0;
 +}
 +
- static int ad7768_probe(struct spi_device *spi)
+ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
+ 		        gfp_t gfp, bool new_slab)
  {
- 	struct ad7768_state *st;
-@@ -689,20 +714,6 @@ static int ad7768_probe(struct spi_device *spi)
- 		return ret;
- 	}
+@@ -2058,6 +2063,10 @@ static inline bool need_slab_obj_ext(void)
  
--	st->trig = devm_iio_trigger_alloc(&spi->dev, "%s-dev%d",
--					  indio_dev->name,
--					  iio_device_id(indio_dev));
--	if (!st->trig)
--		return -ENOMEM;
--
--	st->trig->ops = &ad7768_trigger_ops;
--	iio_trigger_set_drvdata(st->trig, indio_dev);
--	ret = devm_iio_trigger_register(&spi->dev, st->trig);
--	if (ret)
--		return ret;
--
--	indio_dev->trig = iio_trigger_get(st->trig);
--
- 	init_completion(&st->completion);
+ #else /* CONFIG_SLAB_OBJ_EXT */
  
- 	ret = ad7768_set_channel_label(indio_dev, ARRAY_SIZE(ad7768_channels));
-@@ -716,10 +727,7 @@ static int ad7768_probe(struct spi_device *spi)
- 	if (ret)
- 		return ret;
++static inline void init_slab_obj_exts(struct slab *slab)
++{
++}
++
+ static int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
+ 			       gfp_t gfp, bool new_slab)
+ {
+@@ -2637,6 +2646,7 @@ static struct slab *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
+ 	slab->objects = oo_objects(oo);
+ 	slab->inuse = 0;
+ 	slab->frozen = 0;
++	init_slab_obj_exts(slab);
  
--	ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev,
--					      &iio_pollfunc_store_time,
--					      &ad7768_trigger_handler,
--					      &ad7768_buffer_ops);
-+	ret = ad7768_triggered_buffer_alloc(indio_dev);
- 	if (ret)
- 		return ret;
+ 	account_slab(slab, oo_order(oo), s, flags);
  
+
+base-commit: c496b37f9061db039b413c03ccd33506175fe6ec
 -- 
-2.34.1
+2.49.0.604.gff1f9ca942-goog
 
 
