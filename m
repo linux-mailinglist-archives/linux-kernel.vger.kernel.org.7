@@ -1,164 +1,164 @@
-Return-Path: <linux-kernel+bounces-600388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 649DFA85F48
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:41:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3FC3A85F46
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95ED99C00AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:35:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAEFF4E190C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7741F4C96;
-	Fri, 11 Apr 2025 13:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3261F1536;
+	Fri, 11 Apr 2025 13:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T9kC21xw"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LM0H+poP"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DBA1F4616
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 13:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648E51A23AF;
+	Fri, 11 Apr 2025 13:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744378433; cv=none; b=Xt9D0Hrj00cqktwcFqn9Am4eBmPT6iBa5GoW4AwFu06ugkfmgazO5oRokEVd/lwvRMO75gKP0P2bdQlIlhAngUiViAeDx9TAsGZBvEnak2DIYdaiV6iEu4XA14qrMoqp19sL2Cm5FifY++CRKzj87/EQJgwkoGnVzPphs5CJZhg=
+	t=1744378517; cv=none; b=boulvqzUxHP7z/D7VhNPcIKkhVRARTGZom++DDDBcGazg4PvLWziUUzFOwOd+2F2UkXAdiqfcZYr2OLtwhJ6eAcaE8PSXOBhQtpfev9JI7WfJcov5dgp0EhdtsCWwi4+e8Vd+JrQAO/rSxxUT6CgLJAaIZIgnMQdqejep7rCH/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744378433; c=relaxed/simple;
-	bh=ldPo19FYLkdC9LtTNfMtFSNkiI0cDGvCEhUtivH/b38=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Z6aDSwww2eTThvHwR5YQcRj7E7Q3kYZ+dfRN/zhgHqb/KLKe0jUWwmzka2yu+BL8IOZ5+/I98Se6q77+Kn3jQC6BLTqgPag0oaEXLPj7UeRwvfYb61Bb6PlPHp+6NH+oIF/RnAmAw/zxsf62wDRv5mm3BL8iOVs76pimzx4rwes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--chharry.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T9kC21xw; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--chharry.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-af96cdd7f5bso1410194a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 06:33:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744378431; x=1744983231; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4g2/yGXEKl1OCoyKSP0aAd6iujvLtuHh//72VEdm0hA=;
-        b=T9kC21xwj33s3J7B1YXGx9x32xOEXFXccer0LUsrjI6xd+WV5+z+sP5+dzWQqDi0Av
-         JKVAgxsAUGqRMNgbrXOLVB8zQWRU9ZmNb3IXkGRh51ywHmUqFr24BSOT36GsHoNcKa+I
-         X9C/FIyrSCZnYg/FA7URi0qu602THQMN+06n93HiDOMZ2AFhlSvM081c/pxdW/6TPJix
-         ekE81dAmP1VYHxYvcDydhQKzzRIElVsubfNIAUrXuh5MXIq9uB0gJ9AWP1mu8ESyBgBE
-         Ix3uT0tre3CCa3besMbPefmkDdNsahdDlLNH2vcdjVFBl1XpuCXPKnNivceYz5MNuhNw
-         nWIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744378431; x=1744983231;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4g2/yGXEKl1OCoyKSP0aAd6iujvLtuHh//72VEdm0hA=;
-        b=OtVmbBf+TZMs3euAlI4OTY/ne1FgFERvZdKTYUv3CsHAF8XUO5z21JTHgnel+V8pwg
-         0n4tH9/hh3cS8DtOQqeG3fVTGzIEfOtGtqo24cM9Vjj98VOej0vNHkxrFyi06EcXZYtn
-         oagaRwUcp+z1NkmeOdwjNdjqDBcs1hFP8RnuKJl92PC9Kg07cd1gbXKaKATjf/+oa9Id
-         7Ymv0/K3JZmfryi61VAaeiz1VJml69mf3NPFOvnqhOLW6jsCZuOlihevVk7/9a7LRpb1
-         +y02LdVOk/qtCX2C1v0eSMeCYM2Ze58MSrs1ZaS+qC+p1svxsjrlkD7N1C/OA0zpGHQA
-         hAOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnthTD4DKke+prGcOSaZWL/SFgIw1c12ldr6kepjf8Wacqx7ieqfND7a0efU1uzRysDtd+DeY9Ay+sLxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjAxTjYbfSqNUhbmw49Z4ZoLZbR74cNvDuBPmhGmGacw+1Wk1e
-	ukBJ9pjCZkduuM054lu0FNwjQMpEHYrF07TxbYvLNWGSpDtON0C4G+tdlswRXWHZ3VVaVUTpF+c
-	HnFsMFw==
-X-Google-Smtp-Source: AGHT+IE6SnW+E2UcTarv9RF0JjGVhIc1w/GHbS5+IUmBSxMiMg0FWAXESXXjo+IWqcn9srZlCgeM+oH2+leB
-X-Received: from pgux9.prod.google.com ([2002:a65:6aa9:0:b0:af2:48c3:360f])
- (user=chharry job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:2d0a:b0:1f3:36f7:c0d2
- with SMTP id adf61e73a8af0-20179990733mr5205499637.41.1744378430727; Fri, 11
- Apr 2025 06:33:50 -0700 (PDT)
-Date: Fri, 11 Apr 2025 21:33:08 +0800
-In-Reply-To: <20250411133330.171563-1-chharry@google.com>
+	s=arc-20240116; t=1744378517; c=relaxed/simple;
+	bh=/VrBix4KFX+LkLZ2ADdTS7rrKcZR25v02dDex2UPKy0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f+2rW598UqZkujbd/9yh5/HUico00xvdZ2pHbCUTpobKkOr01zb1V7fOCjSJ2pvi3TCNxLZcONjvQnKKc0qrzOIVNL4HGCN4kIpiznKykqKTL3I+DlclZ1zBJ5x6pd8XVDQVV61GBcJmHK+zIwJr0PlZ9PDXW36xvwshTBUufWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LM0H+poP; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53BDYgPT2086377
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Apr 2025 08:34:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744378482;
+	bh=vq5qWpYQwtAn+8K0fBlNkwMKc2ZES2aYbbqGIKGkRWw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=LM0H+poPMU7hM+cfUkNMeLijFODEYYO0coGabaLfjrtAZ4NLl45vnP/M3Z7tghlzj
+	 yKrGfqAnaQKVs0zMEWWDFVF0mEtR1RxFsjH3mVY4aRYLVrGfn3KbWdlybreA174xUP
+	 a/Lzd8N/0j09AsZFmQuBLZSO6WKIBIf0GqDNdBe4=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53BDYgMw047723
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 11 Apr 2025 08:34:42 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
+ Apr 2025 08:34:41 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 11 Apr 2025 08:34:42 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53BDYbPA110090;
+	Fri, 11 Apr 2025 08:34:38 -0500
+Message-ID: <44c3ec3d-2fa3-4a61-8c93-5ef4791fcf8a@ti.com>
+Date: Fri, 11 Apr 2025 19:04:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250411133330.171563-1-chharry@google.com>
-X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
-Message-ID: <20250411133330.171563-4-chharry@google.com>
-Subject: [PATCH 4/4] Revert "Bluetooth: btusb: add sysfs attribute to control
- USB alt setting"
-From: Hsin-chen Chuang <chharry@google.com>
-To: luiz.dentz@gmail.com
-Cc: Hsin-chen Chuang <chharry@chromium.org>, chromeos-bluetooth-upstreaming@chromium.org, 
-	Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] arm64: dts: ti: j721e-sk: Add DT nodes for power
+ regulators
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <vaishnav.a@ti.com>, <jai.luthra@linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <imx@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, <u-kumar1@ti.com>
+References: <20250409134128.2098195-1-y-abhilashchandra@ti.com>
+ <20250409134128.2098195-2-y-abhilashchandra@ti.com>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20250409134128.2098195-2-y-abhilashchandra@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Hsin-chen Chuang <chharry@chromium.org>
 
-This reverts commit b16b327edb4d030fb4c8fe38c7d299074d47ee3f.
+On 4/9/2025 7:11 PM, Yemike Abhilash Chandra wrote:
+> Add device tree nodes for two power regulators on the J721E SK board.
+> vsys_5v0: A fixed regulator representing the 5V supply output from the
+> LM61460 and vdd_sd_dv: A GPIO-controlled TLV71033 regulator.
+>
+> J721E-SK schematics: https://www.ti.com/lit/zip/sprr438
+> Fixes: 1bfda92a3a36 ("arm64: dts: ti: Add support for J721E SK")
 
-The sysfs node introduced by this patch could potentially race with user
-space. The original motivation - Support configuring altsetting from the
-user space will be added by another series.
+For me does not looks like a fix, you can adding missing nodes
 
-Cc: chromeos-bluetooth-upstreaming@chromium.org
-Signed-off-by: Hsin-chen Chuang <chharry@chromium.org>
----
 
- drivers/bluetooth/btusb.c | 34 +---------------------------------
- 1 file changed, 1 insertion(+), 33 deletions(-)
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> ---
+>   arch/arm64/boot/dts/ti/k3-j721e-sk.dts | 31 ++++++++++++++++++++++++++
+>   1 file changed, 31 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
+> index 440ef57be294..4965957e6545 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
+> @@ -184,6 +184,17 @@ vsys_3v3: fixedregulator-vsys3v3 {
+>   		regulator-boot-on;
+>   	};
+>   
+> +	vsys_5v0: fixedregulator-vsys5v0 {
+> +		/* Output of LM61460 */
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vsys_5v0";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		vin-supply = <&vusb_main>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +	};
+> +
+>   	vdd_mmc1: fixedregulator-sd {
+>   		compatible = "regulator-fixed";
+>   		pinctrl-names = "default";
+> @@ -211,6 +222,20 @@ vdd_sd_dv_alt: gpio-regulator-tps659411 {
+>   			 <3300000 0x1>;
+>   	};
+>   
+> +	vdd_sd_dv: gpio-regulator-TLV71033 {
+> +		compatible = "regulator-gpio";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vdd_sd_dv_pins_default>;
+> +		regulator-name = "tlv71033";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-boot-on;
+> +		vin-supply = <&vsys_5v0>;
+> +		gpios = <&main_gpio0 118 GPIO_ACTIVE_HIGH>;
+> +		states = <1800000 0x0>,
+> +			 <3300000 0x1>;
+> +	};
+> +
+>   	transceiver1: can-phy1 {
+>   		compatible = "ti,tcan1042";
+>   		#phy-cells = <0>;
+> @@ -613,6 +638,12 @@ J721E_WKUP_IOPAD(0xd4, PIN_OUTPUT, 7) /* (G26) WKUP_GPIO0_9 */
+>   		>;
+>   	};
+>   
+> +	vdd_sd_dv_pins_default: vdd-sd-dv-default-pins {
+> +		pinctrl-single,pins = <
+> +			J721E_IOPAD(0x1dc, PIN_INPUT, 7) /* (Y1) SPI1_CLK.GPIO0_118 */
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index b7040747b890..304ec6f830f1 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -3688,32 +3688,6 @@ static const struct file_operations force_poll_sync_fops = {
- 	.llseek		= default_llseek,
- };
- 
--static ssize_t isoc_alt_show(struct device *dev,
--			     struct device_attribute *attr,
--			     char *buf)
--{
--	struct btusb_data *data = dev_get_drvdata(dev);
--
--	return sysfs_emit(buf, "%d\n", data->isoc_altsetting);
--}
--
--static ssize_t isoc_alt_store(struct device *dev,
--			      struct device_attribute *attr,
--			      const char *buf, size_t count)
--{
--	struct btusb_data *data = dev_get_drvdata(dev);
--	int alt;
--	int ret;
--
--	if (kstrtoint(buf, 10, &alt))
--		return -EINVAL;
--
--	ret = btusb_switch_alt_setting(data->hdev, alt);
--	return ret < 0 ? ret : count;
--}
--
--static DEVICE_ATTR_RW(isoc_alt);
--
- #define BTUSB_HCI_DRV_OP_SUPPORTED_ALTSETTINGS   HCI_DRV_OP_DRIVER_SPECIFIC_BASE
- #define BTUSB_HCI_DRV_SUPPORTED_ALTSETTINGS_SIZE 0
- struct btusb_hci_drv_rp_supported_altsettings {
-@@ -4197,10 +4171,6 @@ static int btusb_probe(struct usb_interface *intf,
- 						 data->isoc, data);
- 		if (err < 0)
- 			goto out_free_dev;
--
--		err = device_create_file(&intf->dev, &dev_attr_isoc_alt);
--		if (err)
--			goto out_free_dev;
- 	}
- 
- 	if (IS_ENABLED(CONFIG_BT_HCIBTUSB_BCM) && data->diag) {
-@@ -4247,10 +4217,8 @@ static void btusb_disconnect(struct usb_interface *intf)
- 	hdev = data->hdev;
- 	usb_set_intfdata(data->intf, NULL);
- 
--	if (data->isoc) {
--		device_remove_file(&intf->dev, &dev_attr_isoc_alt);
-+	if (data->isoc)
- 		usb_set_intfdata(data->isoc, NULL);
--	}
- 
- 	if (data->diag)
- 		usb_set_intfdata(data->diag, NULL);
--- 
-2.49.0.604.gff1f9ca942-goog
+Shouldn't be this pin be output to control regulator ?
 
+
+> +		>;
+> +	};
+> +
+>   	wkup_uart0_pins_default: wkup-uart0-default-pins {
+>   		pinctrl-single,pins = <
+>   			J721E_WKUP_IOPAD(0xa0, PIN_INPUT, 0) /* (J29) WKUP_UART0_RXD */
 
