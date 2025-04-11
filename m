@@ -1,221 +1,151 @@
-Return-Path: <linux-kernel+bounces-600857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6B4A86562
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:22:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6130FA8656B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE4DD189A4F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:22:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75DE94E268E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BDD258CF7;
-	Fri, 11 Apr 2025 18:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E80259C9B;
+	Fri, 11 Apr 2025 18:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="pc9pudzY"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SGfkznTQ"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5446523236D
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 18:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22141259C89;
+	Fri, 11 Apr 2025 18:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744395722; cv=none; b=kLcVD2qh/WKmbO5jcpv1ofwM+EgjC+jlNnxAymeZSrAbkLXq6PRjDO1z/eH1voLI9uOA2BBVbGP3nqHSxWLf6e6dCLBatKIakcEtxsT0S3sdRI+LMtpK3nrjniybEsa5VWAFdEdubVXOj8gO/Mwvv7gpLaytYnreCeo4pSKARtY=
+	t=1744395751; cv=none; b=G33xte22i5dmcAXfJvJS5zHRE0teV0nqBYMeA5nyVKQfbj8k32dQYq/aVRNK2/oapynuxwGuAJUThen1LGViQcQQgPZPiv24maLR2kRQvL9q89YVMLZBc/UxSJ5CprdyO5btZRYeE/DN6k2ThFoxWvflVoZ4sC+M6Jm9FTXfcjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744395722; c=relaxed/simple;
-	bh=M9CFvCcbsx9+0Tzu3qhRdd8Urm02rDrsZiYEXJdnSrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c3/RDgfwkt1TSDJQiqKZiRpccIXo+syK3lEmvO8DLjcvVSI29bh330OYg3bt97NCml0vCUt+jcXjbNXF1Q0JqecK03zhoNhKJIPKug0aHuICvQDYOVCgAwZUyPDPmlAxp7fpfS1W+E+O4w5SQ/2TLRhNYsfHoSjfbycutYhYdK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=pc9pudzY; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c5a88b34a6so228442785a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 11:21:58 -0700 (PDT)
+	s=arc-20240116; t=1744395751; c=relaxed/simple;
+	bh=0aVsKpoxDCZEM5foVfloI5xLHyqmA3+Bmu/Ors5sibI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=U157HODrXmZRX6LJ4HFaN1LuyMnw3Wea5UFZF9u0I1JBnCu5srGnhZ2Fxr23i1Ze+hKGwJ1snjWEThWO6XKXc+VG0bvIiy1wVDQCI/8EzwOZ0T2S2MJHgrDGMZEpJWo7xb4Yk153sV0JHo2uMelj9QGBqcIuJotO/oo8OpIHPBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SGfkznTQ; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30db1bd3bddso20992321fa.3;
+        Fri, 11 Apr 2025 11:22:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1744395718; x=1745000518; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tKqiMrQYuUOQJDIH+t14CV1L3h37l2QDGVazr53LeIY=;
-        b=pc9pudzYOk4LQa8J3FzDzLLvSN3lRCj0wiI74cM+UQcUFMm5dooxTmXnfZ8eqJWjSr
-         X5oVk9vOa9zmvguRHwxUFihdg0QKiKnh8fwmDLwC+jyINsH32VlYW1bspqdVloLQSVU8
-         dXjIxdY8B05sezSxfxhpxJi2NydHHtXWK5MAosexqD4CIhtPbjzk7PW0MXsoWNvkLS32
-         8AaCtyoVNrT8dMCsusYOC6GbccisDzkvqUuJh71NWtheGzpXZS1eMzBeuSx+6eVG+lW7
-         GdbegjtBp6hTbV2I4sZUZsonaF3DI8a+eKJunkJUBo9LW5QSuGN4Ccmdr+T6nNZn2F/s
-         1m0A==
+        d=gmail.com; s=20230601; t=1744395748; x=1745000548; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XeW7hlyZxMJKSBIyEyesFMLc+3fEM39C3enTDpu2k/8=;
+        b=SGfkznTQ8g+xmMZ+fmfzpzzC8AozpxHIvUvngS2WmfcbcTDOzAHsKGFovlrQW8iTPt
+         rBnKb70Q/5+Vss7Aho3MBLtF/txzmfifuF4sSCK1b0qfkjQfShdc3B7+PNM5mekieRdC
+         CJajLGy2Ew3YMBt7tAmCVosoHZLdnbhElBtO3EOMl4Z4Ql66cDFOctUU8f9gMBtL3Hjc
+         QlkY9nykcRVYL343MNuHYDV9orV0Yp6JB4tHWvLJz1Ygpqxt8P800J1vlj5CWyFN8agI
+         Bm8JL818LLQei89vrKlWBRSJiOPDu0gsIi9k24vbLAbVEhFJizA2GOsCoUGzSLUaZP+K
+         FMDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744395718; x=1745000518;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tKqiMrQYuUOQJDIH+t14CV1L3h37l2QDGVazr53LeIY=;
-        b=p3aP8kfguveCEctw79XxyIn0jE+huD0UVgPpkbh/wCFMUGsoDpacHQ3SwPx9St3DYP
-         L3O55z56jkknJwGB0e6ORf/Yfh2zGsUf92p1op8lCllGVo5mrYq+eHzphNlxt/s7YYkx
-         t+o1r/OkFfc/EsSE6ksAlW0DT+jBUfmhu5jKaDV7nTEKvU6H0h9pmF9ozgmKNeeRRDmh
-         Bm7DQZKF0/39AGWoVaTMbNnVJeXUG+jEJ2b3FbcqPqhSJHe2PD6FfW8HOW/g5rZ3B+9w
-         4Ncc3yqGRQZEdLPXUvtBuZMtuJCuBzvIdSSgeMh/UbJzoM39GH2eFQfRj0C6QTvRzqaw
-         LIIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYZ1bVqGxL/Ai7JFsJW/FcFoJnReFbgu9afDaym7M8uFi18KlRcd/K2NNmB6j4GVhUk8ZKXQolYgPyGxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHBx1KkpRb2TDWPdoJ8AIbb/CRha8wIbA9yacSp0J8Hzbv+Vzf
-	h0cmGE0S4jHgovUsf1RZv54ZCVf9tYeQwQms1gsPO6BcHaat2FJq7yRr823VNmA=
-X-Gm-Gg: ASbGnctNTPZRMCgtW7iNJdD51WS9Eap4NfTEZHpsWcFEcmlAi+BIJ0LikSygLI7gVaT
-	ECNmHO+I/EL4znKj6+hhgeKkMeITqB13Tk5cztXiUnXXjqwN1kmcWrhu0kncW0Y/TB9tybppMbA
-	ra56yPLWwh/m0zSZBZs14RlowHMKi9iKXpqtF4g8y/8LvUutnZEwbXb4ktAGkgfathxpKcv73Kv
-	MC+whvmk07pmPNn4CbS8polSqK3Ndp6+dD5kUhSHz/Yxw3G0ezLbnUrdStceUZP7LKbhtDVVedB
-	DlQW/1+0TvdWv2a+AZn3f4l1NBM54A9cRPoLLMk=
-X-Google-Smtp-Source: AGHT+IFP5i8asMphTbO//EcXhT7tEAdDoywkvdhj4bCFryDnvhvpiDrafe5VTkjrjelyP+Ckao5TYg==
-X-Received: by 2002:a05:620a:4001:b0:7c5:4278:d15e with SMTP id af79cd13be357-7c7af15287dmr519282685a.33.1744395717985;
-        Fri, 11 Apr 2025 11:21:57 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c7a8969e26sm294494585a.64.2025.04.11.11.21.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 11:21:57 -0700 (PDT)
-Date: Fri, 11 Apr 2025 14:21:56 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Mel Gorman <mgorman@techsingularity.net>, Zi Yan <ziy@nvidia.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] mm: page_alloc: defrag_mode kswapd/kcompactd
- watermarks
-Message-ID: <20250411182156.GE366747@cmpxchg.org>
-References: <20250313210647.1314586-1-hannes@cmpxchg.org>
- <20250313210647.1314586-6-hannes@cmpxchg.org>
- <46f1b2ab-2903-4cde-9e68-e334a0d0df22@suse.cz>
- <20250411153906.GC366747@cmpxchg.org>
- <efa6eb69-cff3-421d-94c7-e37a9a1e26f8@suse.cz>
+        d=1e100.net; s=20230601; t=1744395748; x=1745000548;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XeW7hlyZxMJKSBIyEyesFMLc+3fEM39C3enTDpu2k/8=;
+        b=aixT1wACWaPEB6HeYP28vR+keKgwDFikZNwq+3tlg169jWmBhOO07xDrSG9UeTiLCw
+         Vjur/E6azA/wY2JH+dcClg1Goom7V0rnWcmZuLSQKz3xs5/3/c6QcnzvIHtfvuNu/728
+         a0nfgEMoiQtlUJY3E6hwQDu57sSIMp+eYKCCpb5ThPgpD3rEJ6YSNeROgXtz7b5F3aHV
+         /KReQ4UmIZi/ZNkq/GWtcxbmr69sYcbR4VO7jmBaqxg+1DSn4MZ4hTFJxycGg3cSqUmY
+         VZ2193CanED6D+gYdmeD6VGypDRj+31i9bKhnVnVQVASMy92hNVPvMtG1eWaWywChGvQ
+         Eryg==
+X-Forwarded-Encrypted: i=1; AJvYcCXISemwcarvOnyQwvsmc8FQ3dnPOA0YLPZlzRdMY0XPBsTw8Ue0iiTnlpxA4sP+DBWxWt55OBY5linyMI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE+yTN7Y5wpwHP56Sw/98/pATIp6e0bAzspc5864syhOolJkFs
+	hohGKQLTl1aUr89w76VxX2TRdXggkHSWv8ptp3MFxYdTAMTPkdOnYRY3nKoWkJ+hPZArV5+zD/O
+	4+HURMZ1QGw7hIy9OYUTuCY12AmgzzbEJ
+X-Gm-Gg: ASbGncvmQsToC7qbNwg75LLVylwuKjYXXVhF9DQ6ioNfJcqTCAvm8z4ITAQ58o31ofS
+	dL7wrIU6GAFDZBASs6x+gnnQ5XBeRmSEfmuFK6JtwrN37nCfdFjULeD5u2dWuI+C+bXZGOGwu+n
+	OFkbmHHZWf9LHjPyNQLIwpj5jgLFroj7/pYwwA7HOm7BvovqQc7AnNjgk=
+X-Google-Smtp-Source: AGHT+IGkgUc+FUWwSvhlSUCCf/WHhHkZZi+0GHVG+rtMmrS04/by7xP3X3TDVgvsJz5oj2NXB8I0w6e2J98ZF/8QTuk=
+X-Received: by 2002:a05:651c:2103:b0:30d:e104:a495 with SMTP id
+ 38308e7fff4ca-31049a8d431mr12975411fa.39.1744395747864; Fri, 11 Apr 2025
+ 11:22:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <efa6eb69-cff3-421d-94c7-e37a9a1e26f8@suse.cz>
+From: Steve French <smfrench@gmail.com>
+Date: Fri, 11 Apr 2025 13:22:15 -0500
+X-Gm-Features: ATxdqUEmWaeZmX4NtJh-6MQgiXMqQcJfhu3zk89v0ROZnNogICWYXAMNxnDcnq4
+Message-ID: <CAH2r5mt3CCXVEwdsrqPe1VE+xebPSh2k4Wg5Zqqp_OCm+m7cPQ@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 11, 2025 at 06:51:51PM +0200, Vlastimil Babka wrote:
-> On 4/11/25 17:39, Johannes Weiner wrote:
-> > On Fri, Apr 11, 2025 at 10:19:58AM +0200, Vlastimil Babka wrote:
-> >> On 3/13/25 22:05, Johannes Weiner wrote:
-> >> > @@ -2329,6 +2329,22 @@ static enum compact_result __compact_finished(struct compact_control *cc)
-> >> >  	if (!pageblock_aligned(cc->migrate_pfn))
-> >> >  		return COMPACT_CONTINUE;
-> >> >  
-> >> > +	/*
-> >> > +	 * When defrag_mode is enabled, make kcompactd target
-> >> > +	 * watermarks in whole pageblocks. Because they can be stolen
-> >> > +	 * without polluting, no further fallback checks are needed.
-> >> > +	 */
-> >> > +	if (defrag_mode && !cc->direct_compaction) {
-> >> > +		if (__zone_watermark_ok(cc->zone, cc->order,
-> >> > +					high_wmark_pages(cc->zone),
-> >> > +					cc->highest_zoneidx, cc->alloc_flags,
-> >> > +					zone_page_state(cc->zone,
-> >> > +							NR_FREE_PAGES_BLOCKS)))
-> >> > +			return COMPACT_SUCCESS;
-> >> > +
-> >> > +		return COMPACT_CONTINUE;
-> >> > +	}
-> >> 
-> >> Wonder if this ever succeds in practice. Is high_wmark_pages() even aligned
-> >> to pageblock size? If not, and it's X pageblocks and a half, we will rarely
-> >> have NR_FREE_PAGES_BLOCKS cover all of that? Also concurrent allocations can
-> >> put us below high wmark quickly and then we never satisfy this?
-> > 
-> > The high watermark is not aligned, but why does it have to be? It's a
-> > binary condition: met or not met. Compaction continues until it's met.
-> 
-> What I mean is, kswapd will reclaim until the high watermark, which would be
-> 32.7 blocks, wake up kcompactd [*] but that can only create up to 32 blocks
-> of NR_FREE_PAGES_BLOCKS so it has already lost at that point? (unless
-> there's concurrent freeing pushing it above the high wmark)
+Please pull the following changes since commit
+0af2f6be1b4281385b618cb86ad946eded089ac8:
 
-Ah, but kswapd also uses the (rounded up) NR_FREE_PAGES_BLOCKS check.
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
 
-Buckle up...
+are available in the Git repository at:
 
-> > Of course, similar to kswapd, it might not reach the watermarks and
-> > keep running if there is a continuous stream of allocations consuming
-> > the blocks it's making. Hence the ratio between wakeups & continues.
-> > 
-> > But when demand stops, it'll balance the high mark and quit.
-> 
-> Again, since kcompactd can only defragment free space and not create it, it
-> may be trying in vain?
-> 
-> [*] now when checking the code between kswapd and kcompactd handover, I
-> think I found a another problem?
-> 
-> we have:
-> kswapd_try_to_sleep()
->   prepare_kswapd_sleep() - needs to succeed for wakeup_kcompactd()
->    pgdat_balanced() - needs to be true for prepare_kswapd_sleep() to be true
->     - with defrag_mode we want high watermark of NR_FREE_PAGES_BLOCKS, but
->       we were only reclaiming until now and didn't wake up kcompactd and
->       this actually prevents the wake up?
+  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.15-rc1-smb3-client-fixes
 
-Correct, so as per above, kswapd also does the NR_FREE_PAGES_BLOCKS
-check. At first, at least. So it continues to produce adequate scratch
-space and won't leave compaction high and dry on a watermark it cannot
-meet. They are indeed coordinated in this aspect.
+for you to fetch changes up to 56c283b9e001098362c76547cfaae022d48549c8:
 
-As far as the *handoff* to kcompactd goes, I've been pulling my hair
-over this for a very long time. You're correct about the graph
-above. And actually, this is the case before defrag_mode too: if you
-wake kswapd with, say, an order-8, it will do pgdat_balanced() checks
-against that, seemingly reclaim until the request can succeed, *then*
-wake kcompactd and sleep. WTF?
+  smb3: Add defines for two new FileSystemAttributes (2025-04-09 23:42:16 -=
+0500)
 
-But kswapd has this:
+----------------------------------------------------------------
+10 smb3/cifs client fixes
+- FIx multichannel decryption UAF
+- Fix regression mounting to onedrive shares
+- Fix missing mount option check for posix vs. noposix
+- Fix version field in WSL symlinks
+- Three minor cleanup to reparse point handling
+- SMB1 fix for WSL special files
+- SMB1 Kerberos fix
+- Add SMB3 defines for two new FS attributes
 
-	/*
-	 * Fragmentation may mean that the system cannot be rebalanced for
-	 * high-order allocations. If twice the allocation size has been
-	 * reclaimed then recheck watermarks only at order-0 to prevent
-	 * excessive reclaim. Assume that a process requested a high-order
-	 * can direct reclaim/compact.
-	 */
-	if (sc->order && sc->nr_reclaimed >= compact_gap(sc->order))
-		sc->order = 0;
+----------------------------------------------------------------
+Pali Roh=C3=A1r (7):
+      cifs: Ensure that all non-client-specific reparse points are
+processed by the server
+      cifs: Fix support for WSL-style symlinks
+      cifs: Fix encoding of SMB1 Session Setup Kerberos Request in
+non-UNICODE mode
+      cifs: Remove explicit handling of IO_REPARSE_TAG_MOUNT_POINT in inode=
+.c
+      cifs: Improve handling of name surrogate reparse points in reparse.c
+      cifs: Split parse_reparse_point callback to functions: get
+buffer and parse buffer
+      cifs: Fix querying of WSL CHR and BLK reparse points over SMB1
 
-Ignore the comment and just consider the code. What it does for higher
-orders (whether defrag_mode is enabled or not), is reclaim a gap for
-the order, ensure order-0 is met (but most likely it is), then enter
-the sleep path - wake kcompactd and wait for more work.
+Paulo Alcantara (1):
+      smb: client: fix UAF in decryption with multichannel
 
-Effectively, as long as there are pending higher-order requests
-looping in the allocator, kswapd does this:
+Steve French (2):
+      smb311 client: fix missing tcon check when mounting with
+linux/posix extensions
+      smb3: Add defines for two new FileSystemAttributes
 
-1) reclaim a compaction gap delta
-2) wake kcompactd
-3) goto 1
+ fs/smb/client/cifsencrypt.c | 16 ++++-------
+ fs/smb/client/cifsglob.h    |  6 ++---
+ fs/smb/client/cifspdu.h     |  2 ++
+ fs/smb/client/connect.c     |  2 ++
+ fs/smb/client/inode.c       | 25 ++++++++++++------
+ fs/smb/client/reparse.c     | 63 ++++++++++++++++++++---------------------=
+---
+ fs/smb/client/reparse.h     |  5 +---
+ fs/smb/client/sess.c        | 60 +++++++++++++++++++++++++++--------------
+ fs/smb/client/smb1ops.c     | 53 +++++++++++++++++++++++++++++--------
+ fs/smb/client/smb2ops.c     | 14 +++++-----
+ fs/smb/client/smb2pdu.c     | 11 ++------
+ fs/smb/common/smb2pdu.h     |  6 ++---
+ fs/smb/server/smb_common.h  |  2 ++
+ 13 files changed, 154 insertions(+), 111 deletions(-)
 
-This pipelining seems to work *very* well in practice, especially when
-there is a large number of concurrent requests.
+--=20
+Thanks,
 
-In the huge allocator original series, I tried to convert kswapd to
-use compaction_suitable() to hand over quicker. However, this ran into
-scaling issues with higher allocation concurrency: maintaining just a
-single, static compact gap when there could be hundreds of allocation
-requests waiting for compaction results falls apart fast.
-
-The current code has it right. The comments might be a bit dated and
-maybe it could use some fine tuning. But generally, as long as there
-are incoming wakeups from the allocator, it makes sense to keep making
-more space for compaction as well.
-
-I think Mel was playing 4d chess with this stuff.
-
-[ I kept direct reclaim/compaction out of this defrag_mode series, but
-  testing suggests the same is likely true for the direct path.
-
-  Direct reclaim bails from compaction_ready() if there is a static
-  compaction gap for that order. But once the gap for a given order is
-  there, you can get a thundering herd of direct compactors storming
-  on this gap, most of which will then fail compaction_suitable().
-
-  A pipeline of "reclaim gap delta, direct compact, retry" seems to
-  make more sense there as well. With adequate checks to prevent
-  excessive reclaim in corner cases of course... ]
+Steve
 
