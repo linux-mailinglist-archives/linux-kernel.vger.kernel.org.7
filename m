@@ -1,39 +1,79 @@
-Return-Path: <linux-kernel+bounces-600174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CCB6A85CAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:14:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53FB5A85CA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF8D67B27FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:12:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D6CE8C4B47
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70AF52BF3F4;
-	Fri, 11 Apr 2025 12:11:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAECB29DB7F
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 12:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DA42BD5A9;
+	Fri, 11 Apr 2025 12:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lz+qo4Gn"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B355F29B211
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 12:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744373477; cv=none; b=sc0TmwxpsmNwy+YI2uDSLeBaKyUFvEXPsdNlIDwCpyGcA39+qSU2Ha+ftf3WMRupmJv9iG1DNEsDvr4XXHCqHozSbuIsYHVkPtVTtHoePWEjnQ/tAksSzwfm+yFTPZxdliESp4puNjRuyY6Hr6oxe2t6L6UsjURt/FyLZ13HOpY=
+	t=1744373445; cv=none; b=XcYUEqkq6QiVn4uYhslFyjP1BuFzF7YnjXqji8DCNSlh6JCCLr1T2igiDc/A/c1U2P/0EjfrUlcT5CsiSlKkJLqZkxIBF8FbdcGgjOTh4bz5w+Rv7TtkDvb7BoDoTvZFYiVguLYJcYKQcdykijeg97VsKNNEk925P2rpiCyn95k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744373477; c=relaxed/simple;
-	bh=X+DN+3mbXF2eSdl3gYrRAxrQHeBLbRe3zMRKj7ZCiW8=;
+	s=arc-20240116; t=1744373445; c=relaxed/simple;
+	bh=dGHld92vUVbOFD/u6AtKaP9uEUe1RGPsRpaLDsrOO/w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jNQEINVEotxVIboXKc2dlDDgUbwbuaXPXahL96kqfCBnozcStPq/janM990iD3c2lt6Yifs1fZk/SFJhQJUBfDXhIjPnwbhTffC3zlkLl1I4kGnp9X5hV5TPNm7iWGZV+6qawQmcV3CNEfGYmh6U2O5+iKSu8Frwb4fVKGilOqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D0550106F;
-	Fri, 11 Apr 2025 05:11:13 -0700 (PDT)
-Received: from [10.57.71.210] (unknown [10.57.71.210])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D9EC3F694;
-	Fri, 11 Apr 2025 05:11:12 -0700 (PDT)
-Message-ID: <b62f5ea3-99cd-4e9e-a2a8-cb325308ed34@arm.com>
-Date: Fri, 11 Apr 2025 13:10:29 +0100
+	 In-Reply-To:Content-Type; b=qrM4/fR6/w6tPAqd56dSIeGzH7lPITVMZO2hbAmDNA5OSSuMGs2gf+3XZ96ZDJLenPwh2qTyg0lgUvy2xzjHTiFVphFdCowKKk3jdQXIRFMMBA3aru7b02T37ywVeKFPB/XghOmn85wniIVGx7wU7TLpyyrTxe0XpmgKGUztHlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lz+qo4Gn; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso13103125e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 05:10:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744373441; x=1744978241; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/5LlnegqhXWYoYcLoLagqAZu+k870W60Ciw5agd+TQE=;
+        b=lz+qo4Gn3kxsri5qolrG9V6egeFebKxqHNRtcxRp6fWCmzfW4FAoajq3UGpmgRgng/
+         2DLUO1O+zTnXVHC9JjkzCEeQpRhlYw3itR8bft4dkKpWMmAz5AaFF5xIg/zdGdLYyO/+
+         IXKIZY9G0XYS8Gvkn7uXeWkGRY+2c11haossZo4tfkwEACVhjFgOZFgclUCwDf/aKERp
+         bXTwwmq+Ivnhqj0vk7BWK8q6NuQqxglmoQdel0fvH24TrKVUDpN7/5oV0ejnadY/thc2
+         eFxrf9dgSXSui6Jnu1CCSVm6YB+dzUf/oJbMsaYtwga/yjf8dBWU0qdS7X8KY1t7r5ZU
+         I+Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744373441; x=1744978241;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/5LlnegqhXWYoYcLoLagqAZu+k870W60Ciw5agd+TQE=;
+        b=tPei6qi8IUAyaViZ5lON2mREuQr7GtkGsiatmSqXE5JDgNVE/267A4c+r/7+9Ij5PZ
+         iVdYDMn6JQRKbTHsZY3BQ4LrfbFSpE66KJb9On1ywBsrIwNN++0q1zIWtmg64I1fyCtm
+         gqueYdjLytPJTQS9z86wFY7svDC1gB+16iw6jS0sdmobt1A8p3v0jFRM3A2BJ4HSYK4a
+         0HBmsVyFjmKc1/d2WqzW8BJe8+dDHsfDikBwWr3jjYgbK3W3A7XzFidx0fabrQQrcniR
+         Bs8KkO65VDPnN1AAItlRyR8i4FgLKLa2rVYnD/w+LWuErlJ2X1uAoOTWzApNOHPuIF4R
+         WA3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWaRWVYeSdBEpEMYx6lj/g3GKY3AxBXrCw8nlPAts2wHhnwrMVBavTJOtJkTuUtIZ4Frkei0sTavckJ/64=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGtoZAI4mKAAcR7+IiSxPTdyG4qhgA4vj7+XlN14CbcH+EXpXI
+	ZLEStZVewOi+LDQ8Fn/rNAF5EyaoxFJ98kLglu6lf3iH+viWC6YvWa4WxyPdCxI=
+X-Gm-Gg: ASbGnct1dyNNsGocOm801TdQOMFkFxW9d3AJR1OJO8qhvSVDh+Q+mxMxZCsJxGA22gL
+	5k1Kcg6VVMaamVMghRD4EAL5an67GeC9xGI5NjlPt+QfZ5NQffSSCudbQQtvoy1/krNpRQzetw2
+	OCg5ywVFfaDC6BvfyPzWxOzIhqGIqOVP/jPRoFlz+7HhvsOc22IQjvRUN/mDO5C8p+6jBvBOU7x
+	3dYW1/sV5Zjwl5/smg7CzEuOYx1zh/KgYsSuMO3EtEYPfbs5g1YWSH9YylRKDk42zCOQkJ72NIl
+	cnncMFS1j+oFvTlZudI3qRI07zyVgTeSxxT+fpNKMRHe/TY4FifyODvgh0jha+Evbywdg/j8vIs
+	7HsHlZg==
+X-Google-Smtp-Source: AGHT+IHlOq8/ca5REmCpBpkFoqbdN5SzfkW5Ay4uvrR7nOsyWNcTGKb621SxyZxe+WjLiuuz2iXeFA==
+X-Received: by 2002:a05:600c:4f50:b0:43c:ed33:a500 with SMTP id 5b1f17b1804b1-43f2eb51034mr62138375e9.10.1744373441065;
+        Fri, 11 Apr 2025 05:10:41 -0700 (PDT)
+Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233c817dsm80436805e9.23.2025.04.11.05.10.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Apr 2025 05:10:40 -0700 (PDT)
+Message-ID: <811cd70e-dc27-4ce0-b7da-296fa5926f90@linaro.org>
+Date: Fri, 11 Apr 2025 13:10:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,184 +81,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/arm-smmu-v3: Allow stream table to have nodes with
- the same ID
-To: Nicolin Chen <nicolinc@nvidia.com>, will@kernel.org
-Cc: joro@8bytes.org, jgg@nvidia.com, jsnitsel@redhat.com, praan@google.com,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250411044706.356395-1-nicolinc@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250411044706.356395-1-nicolinc@nvidia.com>
+Subject: Re: [PATCH 01/20] media: iris: Skip destroying internal buffer if not
+ dequeued
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Stefan Schmidt <stefan.schmidt@linaro.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, stable@vger.kernel.org
+References: <20250408-iris-dec-hevc-vp9-v1-0-acd258778bd6@quicinc.com>
+ <20250408-iris-dec-hevc-vp9-v1-1-acd258778bd6@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20250408-iris-dec-hevc-vp9-v1-1-acd258778bd6@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2025-04-11 5:47 am, Nicolin Chen wrote:
-> From: Jason Gunthorpe <jgg@nvidia.com>
+On 08/04/2025 16:54, Dikshita Agarwal wrote:
+> Firmware might hold the DPB buffers for reference in case of sequence
+> change, so skip destroying buffers for which QUEUED flag is not removed.
 > 
-> ASPEED VGA card has two built-in devices:
->   0008:06:00.0 PCI bridge: ASPEED Technology, Inc. AST1150 PCI-to-PCI Bridge (rev 06)
->   0008:07:00.0 VGA compatible controller: ASPEED Technology, Inc. ASPEED Graphics Family (rev 52)
-> 
-> Its toplogy looks like this:
->   +-[0008:00]---00.0-[01-09]--+-00.0-[02-09]--+-00.0-[03]----00.0  Sandisk Corp Device 5017
->                               |               +-01.0-[04]--
->                               |               +-02.0-[05]----00.0  NVIDIA Corporation Device
->                               |               +-03.0-[06-07]----00.0-[07]----00.0  ASPEED Technology, Inc. ASPEED Graphics Family
->                               |               +-04.0-[08]----00.0  Renesas Technology Corp. uPD720201 USB 3.0 Host Controller
->                               |               \-05.0-[09]----00.0  Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller
->                               \-00.1  PMC-Sierra Inc. Device 4028
-> 
-> Being a legacy PCI device that does not have RID on the wire, the system
-> does not preserve a RID for that PCI bridge (0008:06), so the IORT code
-> has to dma alias for iort_pci_iommu_init() via pci_for_each_dma_alias(),
-> resulting in both of them getting the same Stream ID.
-> 
-> On a kernel prior to v6.15-rc1, there has been an overlooked warning:
->    pci 0008:07:00.0: vgaarb: setting as boot VGA device
->    pci 0008:07:00.0: vgaarb: bridge control possible
->    pci 0008:07:00.0: vgaarb: VGA device added: decodes=io+mem,owns=none,locks=none
->    pcieport 0008:06:00.0: Adding to iommu group 14
->    ast 0008:07:00.0: stream 67328 already in tree   <===== WARNING
->    ast 0008:07:00.0: enabling device (0002 -> 0003)
->    ast 0008:07:00.0: Using default configuration
->    ast 0008:07:00.0: AST 2600 detected
->    ast 0008:07:00.0: [drm] Using analog VGA
->    ast 0008:07:00.0: [drm] dram MCLK=396 Mhz type=1 bus_width=16
->    [drm] Initialized ast 0.1.0 for 0008:07:00.0 on minor 0
->    ast 0008:07:00.0: [drm] fb0: astdrmfb frame buffer device
-> 
-> As such a legacy system might not use DMA at all, an iommu_probe_device()
-> failure didn't actually break it, except that warning that does not block
-> the system boot flow.
-> 
-> With v6.15-rc, since the commit bcb81ac6ae3c ("iommu: Get DT/ACPI parsing
-> into the proper probe path"), the error returned with the warning is moved
-> to the IOMMU device probe flow, e.g. call trace with SMMUv3:
->    arm_smmu_probe_device+0x15c/0x4c0
->    __iommu_probe_device+0x150/0x4f8
->    probe_iommu_group+0x44/0x80
->    bus_for_each_dev+0x7c/0x100
->    bus_iommu_probe+0x48/0x1a8
->    iommu_device_register+0xb8/0x178
->    arm_smmu_device_probe+0x1350/0x1db0
-> 
-> This then fails the entire SMMU driver probe:
->    arm-smmu-v3 arm-smmu-v3.9.auto: found companion CMDQV device: NVDA200C:04
->    arm-smmu-v3 arm-smmu-v3.9.auto: option mask 0x10
->    arm-smmu-v3 arm-smmu-v3.9.auto: ias 48-bit, oas 48-bit (features 0x001e1fbf)
->    arm-smmu-v3 arm-smmu-v3.9.auto: allocated 524288 entries for cmdq
->    arm-smmu-v3 arm-smmu-v3.9.auto: allocated 524288 entries for evtq
->    arm-smmu-v3 arm-smmu-v3.9.auto: allocated 524288 entries for priq
->    arm-smmu-v3 arm-smmu-v3.9.auto: allocated 524288 entries for vcmdq0
->    arm-smmu-v3 arm-smmu-v3.9.auto: allocated 524288 entries for vcmdq1
->    arm-smmu-v3 arm-smmu-v3.9.auto: msi_domain absent - falling back to wired irqs
->    arm-smmu-v3 arm-smmu-v3.9.auto: no priq irq - PRI will be broken
->    pci 0008:00:00.0: Adding to iommu group 10
->    pci 0008:01:00.0: Adding to iommu group 11
->    pci 0008:01:00.1: Adding to iommu group 12
->    pci 0008:02:00.0: Adding to iommu group 13
->    pci 0008:02:01.0: Adding to iommu group 14
->    pci 0008:02:02.0: Adding to iommu group 15
->    pci 0008:02:03.0: Adding to iommu group 16
->    pci 0008:02:04.0: Adding to iommu group 17
->    pci 0008:02:05.0: Adding to iommu group 18
->    pci 0008:03:00.0: Adding to iommu group 19
->    pci 0008:05:00.0: Adding to iommu group 20
->    pci 0008:06:00.0: Adding to iommu group 21
->    pci 0008:07:00.0: stream 67328 already in tree
->    arm-smmu-v3 arm-smmu-v3.9.auto: Failed to register iommu
->    arm-smmu-v3 arm-smmu-v3.9.auto: probe with driver arm-smmu-v3 failed with error -22
-> 
-> Given that a device bundled with a legacy PCI bridge could have duplicated
-> Stream IDs, the concept of a stream_id tree with unique node in the SMMUv3
-> driver doesn't work any more.
-> 
-> Change the arm_smmu_streams_cmp_node() to allow the stream table to hold
-> multiple nodes with the same Stream ID. Meanwhile, the reverse lookup from
-> the Stream ID to a device pointer will have to be broken, i.e. the eventq
-> handler will no longer find the device with a Stream ID in such cases.
-
-Heh, I was about to start looking at this one myself once I finished 
-making sense of the Juno issue...
-
-This is adding support for StreamID aliasing between devices, and as 
-such it is incomplete. It's not OK to just allow devices to arbitrarily 
-rewrite each other's STEs, that's the whole reason this uniqueness check 
-exists in the first place! Aliases can only be permitted within a group, 
-which means arm_smmu_device_group() also has to check and account for 
-them in the first place - note that that applies to PCI devices as well, 
-because as soon as we allow StreamID aliasing at all then we're 
-inherently allowing RID->SID mappings to alias outside the PCI hierarchy 
-in ways that pci_device_group() can't know about. It should work out 
-basically the same as SMMUv2, just with the streams tree in place of the 
-S2CR array.
-
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> Tested-by: Nicolin Chen <nicolinc@nvidia.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> Cc: stable@vger.kernel.org
+> Fixes: 73702f45db81 ("media: iris: allocate, initialize and queue internal buffers")
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
 > ---
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 31 +++++++++++++++++++--
->   1 file changed, 29 insertions(+), 2 deletions(-)
+>   drivers/media/platform/qcom/iris/iris_buffer.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
 > 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index b4c21aaed126..5ce64dc78e12 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -1762,8 +1762,25 @@ static int arm_smmu_streams_cmp_key(const void *lhs, const struct rb_node *rhs)
->   static int arm_smmu_streams_cmp_node(struct rb_node *lhs,
->   				     const struct rb_node *rhs)
->   {
-> -	return arm_smmu_streams_cmp_key(
-> -		&rb_entry(lhs, struct arm_smmu_stream, node)->id, rhs);
-> +	struct arm_smmu_stream *stream_lhs =
-> +		rb_entry(lhs, struct arm_smmu_stream, node);
-> +	struct arm_smmu_stream *stream_rhs =
-> +		rb_entry(rhs, struct arm_smmu_stream, node);
+> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
+> index e5c5a564fcb8..75fe63cc2327 100644
+> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
+> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
+> @@ -396,6 +396,13 @@ int iris_destroy_internal_buffers(struct iris_inst *inst, u32 plane)
+>   	for (i = 0; i < len; i++) {
+>   		buffers = &inst->buffers[internal_buf_type[i]];
+>   		list_for_each_entry_safe(buf, next, &buffers->list, list) {
+> +			/*
+> +			 * skip destroying internal(DPB) buffer if firmware
+> +			 * did not return it.
+> +			 */
+> +			if (buf->attr & BUF_ATTR_QUEUED)
+> +				continue;
 > +
-> +	if (stream_lhs->id < stream_rhs->id)
-> +		return -1;
-> +	if (stream_lhs->id > stream_rhs->id)
-> +		return 1;
-> +
-> +	/*
-> +	 * The stream table can have multiple nodes with the same ID if there
-> +	 * are DMA aliases.
-> +	 */
-> +	if (stream_lhs < stream_rhs)
-> +		return -1;
-> +	if (stream_lhs > stream_rhs)
-> +		return 1;
-> +	return 0;
->   }
->   
->   static struct arm_smmu_master *
-> @@ -1776,6 +1793,16 @@ arm_smmu_find_master(struct arm_smmu_device *smmu, u32 sid)
->   	node = rb_find(&sid, &smmu->streams, arm_smmu_streams_cmp_key);
->   	if (!node)
->   		return NULL;
-> +	/*
-> +	 * If there are DMA alises then there are multiple devices with the same
-> +	 * stream ID and we cannot reliably convert from SID to master.
-> +	 */
-> +	if (node->rb_left &&
-> +	    rb_entry(node->rb_left, struct arm_smmu_stream, node)->id == sid)
-> +		return NULL;
-> +	if (node->rb_right &&
-> +	    rb_entry(node->rb_right, struct arm_smmu_stream, node)->id == sid)
-> +		return NULL;
+>   			ret = iris_destroy_internal_buffer(inst, buf);
+>   			if (ret)
+>   				return ret;
+> 
 
-This doesn't really work - the whole mechanism needs to fundamentally 
-change to mapping StreamIDs to groups rather than to devices. Then it's 
-really up to individual callers what they want to do if the group has 
-more than one device.
+iris_destroy_internal_buffers() is called from
 
-Thanks,
-Robin.
+- iris_vdec_streamon_output
+- iris_venc_streamon_output
+- iris_close
 
->   	return rb_entry(node, struct arm_smmu_stream, node)->master;
->   }
->   
+So if we skip releasing the buffer here, when will the memory be released ?
 
+Particularly the kfree() in iris_destroy_internal_buffer() ?
+
+iris_close -> iris_destroy_internal_buffers ! -> iris_destroy_buffer
+
+Is a leak right ?
+
+---
+bod
 
