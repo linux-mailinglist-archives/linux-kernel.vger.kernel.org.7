@@ -1,199 +1,153 @@
-Return-Path: <linux-kernel+bounces-599482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E6DA85427
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:31:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF1BA8542A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9954A3383
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:31:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9109F18867E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E24227D771;
-	Fri, 11 Apr 2025 06:30:47 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EB027CCF6;
+	Fri, 11 Apr 2025 06:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fTRj6Biy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1431F03F4
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 06:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85F227CCD0
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 06:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744353047; cv=none; b=ciZWWBY6I0Gmm56DFSXbAauU0seJu86H7hgHnhry2ApBiILvLdFvXzXswk0fSfzT2jq5K2hNpTxUh1f0XQ0x9BLoVSz0bDWNBnDpyGrDsBkBoViNKoD0h+F95Dw2Ra1IL0V9590Rlh6eWLJgwzIzfglMPiWLDGpA87LKHPtm084=
+	t=1744353100; cv=none; b=qsEuZNUywjGARtBVu20Zw/ZoZeCJ19rhIY/c6bFSrwjMUQH2m0KJEZ3YdNHNPuwOtn8tThvRO1QDsmdSD2S8iTR+3S/b6Aa4NP8EmIPwCwUdqweOGHnjTonuvPlQpsSnL5FMlW5zQT1vHNmtJWzKwPzQiGU/1Rlw3on/w75hoJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744353047; c=relaxed/simple;
-	bh=br543M2/Kkr8Q0pkNJEFCwZRRP621m11fua0HpagYuM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WbM62GHjreESvSsB6fu6JktU3v0vHsBObMcy8tpO84XUFlS7noWTLDCZiUMwUjLmyQC3ow91ukgPoZnTGt9D2IGP3yBPO7QsyqwXiPRrIbJTJVWjbnvEjNxhLQnl0L50kDNm6yDONHMtJBjzUv8d2olPakglK5mOVaDcC15SXJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZYmxy3Q8yz1d0sk;
-	Fri, 11 Apr 2025 14:29:58 +0800 (CST)
-Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
-	by mail.maildlp.com (Postfix) with ESMTPS id 97D291800FE;
-	Fri, 11 Apr 2025 14:30:41 +0800 (CST)
-Received: from [10.174.177.186] (10.174.177.186) by
- kwepemg500008.china.huawei.com (7.202.181.45) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 11 Apr 2025 14:30:40 +0800
-Message-ID: <b937014a-66ef-4648-a61d-87c61dcdb836@huawei.com>
-Date: Fri, 11 Apr 2025 14:30:40 +0800
+	s=arc-20240116; t=1744353100; c=relaxed/simple;
+	bh=gPbW4hxtFr5Vb/hEwyhC++dCtSsKBgR/5ZNQcAMJ4IQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LV9Xl9qNNb54DG+2hUAikPVsPjra/S83rlnoA0WFxYYHXrVhpahDnpR/BB/0/G/8j6sa5Qqz54G3BAJMGGmVhQMcnpoopFiF23P+ilD5UGDQwrJzVM5dUsI4c5rTE7P1+zduTUbx3EeGDpbRsZw17+Uo56yCDFI2EY+lGx40q3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fTRj6Biy; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744353099; x=1775889099;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gPbW4hxtFr5Vb/hEwyhC++dCtSsKBgR/5ZNQcAMJ4IQ=;
+  b=fTRj6Biy3JZHbBJ3XEYDtX9IXKaxtnon9P9o10uFG6UpNlBP2ft7IhTp
+   4g/UAfTKreCCxU2iK3Wi+67JrNF4LiwcHmSLjY5GDVe8L9A1vtG4tMYgi
+   90dwijRIMUysD1S+VlOepz1Iy6crsWmjhX9LKmJnlE9sGjsxl29zct3L6
+   +eQ+pIw6nt4yVEgPYXbDFaGvs6wJZ/OLfb31qVl71dq/O+l6Ik0V5+erM
+   6XpuScDrQsKrL0IbsHNBZE9utCKzSjh0KeYh/IefJKha8gF3PN/0sJ1Pk
+   HVn0rYckCaWDk1RIVg0p+UOe650dQu+r4eh2Bc6CUPN5ZvVezoOigZeso
+   g==;
+X-CSE-ConnectionGUID: E/vbdaPsSlmQ0ERONx99vQ==
+X-CSE-MsgGUID: J/hEKRybQtefACwyeg9tSw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="68380988"
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="68380988"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 23:31:38 -0700
+X-CSE-ConnectionGUID: wMz7CBueRzm/tXRadmdZxg==
+X-CSE-MsgGUID: P495+6TITKaP+RPdOXk7hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="134272881"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 10 Apr 2025 23:31:36 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u37vK-000Ati-0N;
+	Fri, 11 Apr 2025 06:31:34 +0000
+Date: Fri, 11 Apr 2025 14:30:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bo Liu <liubo03@inspur.com>, xiang@kernel.org, chao@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, Bo Liu <liubo03@inspur.com>
+Subject: Re: [PATCH 2/2] erofs: support deflate decompress by using Intel QAT
+Message-ID: <202504111440.2DIupC2G-lkp@intel.com>
+References: <20250410042048.3044-3-liubo03@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm/damon: add full LPAE support for memory monitoring
- above 4GB
-To: SeongJae Park <sj@kernel.org>
-CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<wangkefeng.wang@huawei.com>
-References: <20250410222507.56911-1-sj@kernel.org>
-From: zuoze <zuoze1@huawei.com>
-In-Reply-To: <20250410222507.56911-1-sj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg500008.china.huawei.com (7.202.181.45)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410042048.3044-3-liubo03@inspur.com>
+
+Hi Bo,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on xiang-erofs/dev-test]
+[also build test ERROR on xiang-erofs/dev linus/master v6.15-rc1 next-20250410]
+[cannot apply to xiang-erofs/fixes]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Bo-Liu/erofs-remove-duplicate-code/20250410-122442
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev-test
+patch link:    https://lore.kernel.org/r/20250410042048.3044-3-liubo03%40inspur.com
+patch subject: [PATCH 2/2] erofs: support deflate decompress by using Intel QAT
+config: arc-randconfig-001-20250411 (https://download.01.org/0day-ci/archive/20250411/202504111440.2DIupC2G-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250411/202504111440.2DIupC2G-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504111440.2DIupC2G-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   fs/erofs/sysfs.c: In function 'erofs_attr_show':
+>> fs/erofs/sysfs.c:136:24: error: 'struct erofs_sb_info' has no member named 'erofs_tfm'
+     136 |                 if (sbi->erofs_tfm)
+         |                        ^~
+   fs/erofs/sysfs.c:138:59: error: 'struct erofs_sb_info' has no member named 'erofs_tfm'
+     138 |                                 crypto_comp_alg_common(sbi->erofs_tfm)->base.cra_driver_name);
+         |                                                           ^~
 
 
+vim +136 fs/erofs/sysfs.c
 
-在 2025/4/11 6:25, SeongJae Park 写道:
-> On Thu, 10 Apr 2025 14:28:23 +0800 zuoze <zuoze1@huawei.com> wrote:
-> 
->>
->>
->> 在 2025/4/10 1:36, SeongJae Park 写道:
->>> On Wed, 9 Apr 2025 15:01:39 +0800 zuoze <zuoze1@huawei.com> wrote:
->>>
->>>>
->>>>
->>>> 在 2025/4/9 10:50, SeongJae Park 写道:
->>>>> Hi Ze,
->>>>>
->>>>> On Tue, 8 Apr 2025 15:55:53 +0800 Ze Zuo <zuoze1@huawei.com> wrote:
->>>>>
->>>>>> Previously, DAMON's physical address space monitoring only supported
->>>>>> memory ranges below 4GB on LPAE-enabled systems. This was due to
->>>>>> the use of 'unsigned long' in 'struct damon_addr_range', which is
->>>>>> 32-bit on ARM32 even with LPAE enabled.
-> [...]
->>> I think another approach for this issue is adding a DAMON parameter, say,
->>> address_unit.  It will represent the factor value that need to be multiplied to
->>> DAMON-address to get real address on the given address space.  For example, if
->>> address_unit is 10 and the user sets DAMON monitoring target address range as
->>> 200-300, it means user wants DAMON to monitor address range 2000-3000 of the
->>> given address space.  The default value of the parameter would be 1, so that
->>> old users show no change.  32bit ARM with LPAE users would need to explicitly
->>> set the parameter but I believe that shouldn't be a big issue?
->>
->> Regarding the address_unit approach, I have some concerns after checking
->> the code:
->>
->> 1. Scaling Factor Limitations - While the scaling factor resolves the
->> damon_addr_range storage issue, actual physical addresses (PAs) would
->> still require unsigned long long temporaries in many cases.
-> 
-> The current behavior, which is using 'unsigned long' as the type of the real
-> address on DAMON operations set for physical address space (paddr), was just a
-> wrong approach.  'paddr' operations set should use proper type for physical
-> address, namely phys_addr_t.
->
+   115	
+   116	static ssize_t erofs_attr_show(struct kobject *kobj,
+   117					struct attribute *attr, char *buf)
+   118	{
+   119		struct erofs_sb_info *sbi = container_of(kobj, struct erofs_sb_info,
+   120							s_kobj);
+   121		struct erofs_attr *a = container_of(attr, struct erofs_attr, attr);
+   122		unsigned char *ptr = __struct_ptr(sbi, a->struct_type, a->offset);
+   123	
+   124		switch (a->attr_id) {
+   125		case attr_feature:
+   126			return sysfs_emit(buf, "supported\n");
+   127		case attr_pointer_ui:
+   128			if (!ptr)
+   129				return 0;
+   130			return sysfs_emit(buf, "%u\n", *(unsigned int *)ptr);
+   131		case attr_pointer_bool:
+   132			if (!ptr)
+   133				return 0;
+   134			return sysfs_emit(buf, "%d\n", *(bool *)ptr);
+   135		case attr_comp_crypto:
+ > 136			if (sbi->erofs_tfm)
+   137				return sysfs_emit(buf, "%s\n",
+   138					crypto_comp_alg_common(sbi->erofs_tfm)->base.cra_driver_name);
+   139			else
+   140				return sysfs_emit(buf, "NONE\n");
+   141		}
+   142		return 0;
+   143	}
+   144	
 
-Agreed. Using phys_addr_t for paddr is the right approach—unsigned long
-was incorrect for physical addresses.
-
->> Different
->> system with varying iomem regions may require different scaling
->> factors, making deployment harder than a fixed maximum range.
-> 
-> I was thinking the user space could set the proper scaling factor.  Would it be
-> challenging?
-> 
-
-Since memory ranges vary across systems, different scaling factors would
-be needed. This could increase maintenance complexity.
-
-
->>
->> 2. Significant Code Impact & Overhead - Implementing this would require
->> significant changes with every PA traversal needing rescaling, which
->> introduces computational overhead.
-> 
-> Right, no small amount of code change will be required.  But those will be
-> mostly isolated in operations set layer.
-> 
-> For the computational overhead, I don't expect it woudl be significant, given
-> region-based controlled and minimum overhead design.
-> 
-> But, obviously doing some prototyping and testing first woudl give us a better
-> picture >
-
-Agreed. Some prototype testing would be helpful to evaluate overhead,
-especially in extreme cases with large numbers of regions.
-
->> That said, there remains a necessity
->> to use unsigned long long to store certain variables in structures, such
->> as sampling_addr in the damon_region structure and sz_tried in the
->> damos_stat structure.
-> 
-> I want the core layer to continue using its own concpetual address type
-> (unsigned long).  sampling_addr and sz_tried are core layer's concepts, so
-> should continu using 'unsigned long', while operations set should convert those
-> appropriately.
->  >>
->> If I'm misunderstanding any points, please correct me, and feel free to
->> add any additional concerns.
->>
->> As an alternative, we could adopt a pattern similar to other subsystems
->> (e.g., memblock, CMA, resource), which define their own address types.
-> 
-> The example cases directly deal with the specific address space, so their
-> approaches make sense to me.  Also DAMON's operations set layer implmentation
-> should also learn from them.
-> 
-
-Glad you found them helpful!
-
->> For example:
->>
->>    #ifdef CONFIG_PHYS_ADDR_T_64BIT
->> 	typedef unsigned long long damon_addr_t;
->>    #else
->> 	typedef unsigned long damon_addr_t;
->>    #endif
-> 
-> But in case of DAMON's core layer, it should deal with arbitrary address
-> spaces, so I feel that might not necessarily be the only approach that we
-> should use.
->
-
-You're right, this method is not the only option.
-
->>
->> This approach would avoid scaling complexity while maintaining
->> consistency with existing mm code.
->>
->> What do you think? SJ, I'm happy to help test any approach or discuss
->> further.
-> 
-> So I still don't anticipate big problems with my proposed approach.  But only
-> prototyping and testing would let us know more truth.  If you don't mind, I
-> will quickly write and share a prototype of my idea so that you could test.
-> 
-
-Sounds good! Please share the prototype when ready - happy to test and
-help improve it.
-
-> 
-> Thanks,
-> SJ
-> 
-> [...]
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
