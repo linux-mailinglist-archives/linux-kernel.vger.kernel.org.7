@@ -1,93 +1,128 @@
-Return-Path: <linux-kernel+bounces-599718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA141A8572D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:00:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB2AA85748
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87321B62C8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:01:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73E654A24D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D2629617A;
-	Fri, 11 Apr 2025 09:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9AD29B221;
+	Fri, 11 Apr 2025 09:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RnMub+sY"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w8ephqr4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uwXooJ/b"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4054C1EFFB0
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 09:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A52298CCA;
+	Fri, 11 Apr 2025 09:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744362050; cv=none; b=ICfxrILYg+ahY3ZKgxngsQskfeFt4aK9KlVtILAQJOLtR51yHIwrJ6Hxzg794anAY96sq9uo9IvEFdUj+2/mGzrHBnEadgtcGAfUcFFQ6atmBePuAgXSvyn5Ua5SmbfSCCbu3tHeSvOoNMSugVUepmZR9WJqmg1fgiILaV8Q8T8=
+	t=1744362114; cv=none; b=oZ3YBtKBpd85WOTn2mO8rRD3GCLLUXVw2sx0tq1BfK/07gyrlt/jGHsBkbMARlwXToYrFekJkMPaccL/NYGktbO7m8zACQngANUbpaKtKjZDltiujZqmKzhMjcfhSa8QYSLbkfXAfVwhBW0cnJl5ahD2FphnfTHRKIZ7V7lAXEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744362050; c=relaxed/simple;
-	bh=AuFbb9Im5wZZ7hywLyUl0mj64HOD1UiDMpJHPP5JD0g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F4yjbD3Ef5pa7Ikr+tkEj/5i+EHwJUBnRwsRxKEAB8+04RIKG6r8mrtl2MeEsd9bucBCmoxijopJpISIi5CrTckoalsnumcJagxufGcoDZEhrFoodw0312TrYT5RIlub2itWHvWmtryiZOLt6kfY4zWa/o5dNiLobGFf+5OfDys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RnMub+sY; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744362046;
+	s=arc-20240116; t=1744362114; c=relaxed/simple;
+	bh=BVT171KPOVJVjfzTPXmBhG+I/rvwg4GYgQn0y8XhdF0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=HZpwUK+DKcQspX+8cGG53LZZzFeuln3FYVeAez3MxNzTsPLMydiWY10qtyP95BXFwCXWnMgW2NmE5aO/bfDSnoAUCkQJm0k9tS7VUnqIxXVwS8rijwTSsCuKzNgi15FCNDo4TUsdBOmZE+D7pr5/OedF0WUMY6nNymMreJyRbvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w8ephqr4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uwXooJ/b; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744362110;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RjKO2M3p+Cll4XnVzn0mEDiJxphotJjwp94db8HB+CY=;
-	b=RnMub+sYvLcT+leWxjHL66XzWbidJYObTw74cPurm/KeECv9+RYGTf9EXXBi3o42SV2WFg
-	SLPNNyCEm/wsfw/gyprA4m916Whnx5+13SaPINS5eoFTTO6OnT5rY7Ddc0XmOr11WY21lx
-	Getas07m6yRScE+9T0LLstyxRGsIS8Q=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Oleg Nesterov <oleg@redhat.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] MIPS: Remove unnecessary zero-length struct member
-Date: Fri, 11 Apr 2025 11:00:32 +0200
-Message-ID: <20250411090032.7844-1-thorsten.blum@linux.dev>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PfHP6lDLf5mEBPgKe6QaxYDp7DWXdQcn3ptsh2iol5E=;
+	b=w8ephqr44jeknOTrmQuSC0azDs+LLpv03987OQuDvtYlekDrfbE1JMuQfw1V0YkxEoykvk
+	ldx9BZ6FWUBDSCJ2Rn4h+Mhs5LGelH8piTXz+vvFOg8mDquxFnmyq+8FlPTCRfMFtielss
+	7Efx5SYyIcHkKr6Neeufsh0gfBEAO0e23PQUHP/fCHDfVrDON07GXcPbjsLADsFqkhOIrF
+	BPbu5X7Nqf2qTiGmY0OrIjGVSYd1f1tVbSCttEhfnZ8GNkHrcp406eVzRnyRhqzSgy97lj
+	sM8ruVCUJeZRFNMX+y9ZqyMWIQaDFrzuR0yljb64Bl/y712d+jVeEeulohZobg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744362110;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PfHP6lDLf5mEBPgKe6QaxYDp7DWXdQcn3ptsh2iol5E=;
+	b=uwXooJ/bkze83Ndkth12mXwO6CddYWvLD88efqB0B/RkCAfsmL19afvepVhtMTJqiihJ69
+	I3WltRHHtfcbM2CQ==
+Date: Fri, 11 Apr 2025 11:00:33 +0200
+Subject: [PATCH v3 09/32] selftests: harness: Always provide "self" and
+ "variant"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Message-Id: <20250411-nolibc-kselftest-harness-v3-9-4d9c0295893f@linutronix.de>
+References: <20250411-nolibc-kselftest-harness-v3-0-4d9c0295893f@linutronix.de>
+In-Reply-To: <20250411-nolibc-kselftest-harness-v3-0-4d9c0295893f@linutronix.de>
+To: Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, 
+ Willy Tarreau <w@1wt.eu>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Kees Cook <kees@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744362103; l=1726;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=BVT171KPOVJVjfzTPXmBhG+I/rvwg4GYgQn0y8XhdF0=;
+ b=aE1YqloT5sq4xow8ECRqaLDPl36mLdTU8dQGj0XC555BvnmnlRrQDIhbo7rtJXZe1fqDzafs8
+ YA3d26AOHXxBKzYxHVj47cdKMAL4gJEdzmkGy1B85V+T3eZjo4zzcUA
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Remove the zero-length struct member '__last' and use sizeof() to
-calculate the value for MAX_REG_OFFSET.
+Some upcoming changes to the assertion macros need those two symbols
+also to be available for tests without fixtures.
+Provide them with a NULL value.
 
-No functional changes intended.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- arch/mips/include/asm/ptrace.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ tools/testing/selftests/kselftest_harness.h | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/arch/mips/include/asm/ptrace.h b/arch/mips/include/asm/ptrace.h
-index 85fa9962266a..1bb10ee8c2ce 100644
---- a/arch/mips/include/asm/ptrace.h
-+++ b/arch/mips/include/asm/ptrace.h
-@@ -48,7 +48,6 @@ struct pt_regs {
- 	unsigned long long mpl[6];        /* MTM{0-5} */
- 	unsigned long long mtp[6];        /* MTP{0-5} */
- #endif
--	unsigned long __last[0];
- } __aligned(8);
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index 905986debbfb0ce8c9659dbd52b6c67c6759cae7..4038ceeb42a870a2b77c6888df8a7bb4c4a258ba 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -173,13 +173,13 @@
+ #define TEST_SIGNAL(test_name, signal) __TEST_IMPL(test_name, signal)
  
- static inline unsigned long kernel_stack_pointer(struct pt_regs *regs)
-@@ -65,7 +64,7 @@ static inline void instruction_pointer_set(struct pt_regs *regs,
- 
- /* Query offset/name of register from its name/offset */
- extern int regs_query_register_offset(const char *name);
--#define MAX_REG_OFFSET (offsetof(struct pt_regs, __last))
-+#define MAX_REG_OFFSET (sizeof(struct pt_regs))
+ #define __TEST_IMPL(test_name, _signal) \
+-	static void test_name(struct __test_metadata *_metadata); \
++	static void test_name(struct __test_metadata *_metadata, void *self, const void *variant); \
+ 	static void wrapper_##test_name( \
+ 		struct __test_metadata *_metadata, \
+ 		struct __fixture_variant_metadata __attribute__((unused)) *variant) \
+ 	{ \
+ 		if (setjmp(_metadata->env) == 0) \
+-			test_name(_metadata); \
++			test_name(_metadata, NULL, NULL); \
+ 		__test_check_assert(_metadata); \
+ 	} \
+ 	static struct __test_metadata _##test_name##_object = \
+@@ -193,7 +193,9 @@
+ 		__register_test(&_##test_name##_object); \
+ 	} \
+ 	static void test_name( \
+-		struct __test_metadata __attribute__((unused)) *_metadata)
++		struct __test_metadata __attribute__((unused)) *_metadata, \
++		void __attribute__((unused)) *self, \
++		const void __attribute__((unused)) *variant)
  
  /**
-  * regs_get_register() - get register value from its offset
+  * FIXTURE_DATA() - Wraps the struct name so we have one less
+
 -- 
 2.49.0
 
