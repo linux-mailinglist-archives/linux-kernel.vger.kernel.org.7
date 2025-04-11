@@ -1,87 +1,113 @@
-Return-Path: <linux-kernel+bounces-600025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A953A85B27
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:11:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2CAA85B39
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E0C89C1981
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:05:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90E3E19E3CC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57441221295;
-	Fri, 11 Apr 2025 11:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B061F211A1E;
+	Fri, 11 Apr 2025 11:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRN0Dvm3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="Srs+ghrJ"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFB82A1BA;
-	Fri, 11 Apr 2025 11:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E012F278E71
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 11:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744369507; cv=none; b=fInrrByyanvx9GQpsg0KGr5hglTKDdszMnB12N6KvSullFmh/Po2fmFzsUm6jfSWnl60tdmBzCqT/O3CuopoVXyOhpucAbyGfSxnwxz/CIVxHMSIje+5oV5ctQ9WMfGdBmxoMCVGWkUQ/Bya1h61fRUZ2Y6BUutiT4JIxaAgBnY=
+	t=1744369666; cv=none; b=kt7t6yfjNEZgbTMNGlQTwkwp9OVYMT+wA//jKKJFdTNaJeSAsmFEgQT3t46g/ZcMDZ+w3TjSuQebeg4FHQVHoRF2c025Vs01JdrhSijHhYeErhlcT8pMuvpzvkd/VDK2YZ3tvdUaUHJh8UkRF+kHMKl6rzeQKMxA1f6YcHYS/4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744369507; c=relaxed/simple;
-	bh=H44p8gRHelU9byn5fJeWl2n/DCnS2gWjjtXzYL/NVSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ilDc7Nx3yBU1MfTICZ+aE+uT3pktqsq2//xb6Ew2oLiJIHRKJNC3zZ4fwe0ZfCUeCNdEIUYCai7EGlLNwkIi/MatU50XNBseSl5/CVOZxfc8tSJ5w29haHkZnjfPco3VsI5SuQbmO3pmgBWiYsRNjV8BUiovJRwlZ9IApDgp1YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRN0Dvm3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29E51C4CEE2;
-	Fri, 11 Apr 2025 11:05:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744369506;
-	bh=H44p8gRHelU9byn5fJeWl2n/DCnS2gWjjtXzYL/NVSo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VRN0Dvm3TPO8h4c8ozWXBkg4KkvkGM3sR8OHYHSm0KnxkuVg+bS7OsYSRxVrfoKVJ
-	 5q3mDgwa469TPi7zcTuWvvE/0Ocm2BEFfoHykW0FtFo7+MA1sPtMCkY/J82BjdS/3O
-	 By+ZW9PEycuibs/CWEJPuiy9hVz1MmggM/rxrtaqW7A7WFI7Ot5MIkIRyjecuAtZ9h
-	 gangZxWai4/87eh95XzZHuNvo1YFBh0HOyghhPSoOwsQQyjwGRaq92xG9UC0P1UiT7
-	 4tcI0KJsy7OSpu74dQo7dMxkzlOFvfqYpS1H4IfHNFCjdy7zQVZb6V+xLOUwndMwsv
-	 ahOWtFqunBKUw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u3CC6-000000007wN-0863;
-	Fri, 11 Apr 2025 13:05:10 +0200
-Date: Fri, 11 Apr 2025 13:05:10 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Maud Spierings <maud_spierings@hotmail.com>,
-	juerg.haefliger@canonical.com, andersson@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	konradybcio@kernel.org, krzk+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	robh@kernel.org
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom:
- x1e80100-hp-elitebook-ultra-g1q: DT for HP EliteBook Ultra G1q
-Message-ID: <Z_j3Zq52WZFjTgWc@hovoldconsulting.com>
-References: <20250408145252.581060-4-juerg.haefliger@canonical.com>
- <AM7P189MB100977CCFD602396E8F01FCBE3B72@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
- <9db38911-4bb3-42c9-90be-51cbd6e523fc@oss.qualcomm.com>
+	s=arc-20240116; t=1744369666; c=relaxed/simple;
+	bh=NVCdGWx2oZcWulAlSe9BTNwujDKzfiKzn7HY/Yoerqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U7/HepLB7ZjRuza76o4CmLdvIY2f4+JVYfLQsZTNvoa9I302N2oCgDJxlP9rLjhmffTbDaZlMn6vahfbacnWGEb0ZmfE08wPaMfTF1in5Mz0EaY/TfhAi1TbTdw/qjdHujA4HWeXTRvhtS2Bo41Vfpus/PJah1N0XSTr0JRAA28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=Srs+ghrJ; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-739525d4e12so1685855b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 04:07:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1744369663; x=1744974463; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9XLG9LyOBwh9wClGUHHGD4bGh+PDIqzBXkT2KKCmZgk=;
+        b=Srs+ghrJDkWQkymHwNVvqlJCI/TCPLFmYIxN8j8MVBUIlbL4IPQZgIFhrEHflYO0uc
+         TwwG7VU2Ircshb1Vt8qYyVDO3KapcAE6DY5eAM77jd5JPoXX0tMYiGhCfz/P7llePaEr
+         NqgEZw3eBX4FRBpUtQKUufE7FEGV+De+/9iN99dgD9wESO04B4ETc/kIMDxs0Z6/ucor
+         Pzh/BnS2r2Zd9sMpPI9s/S8u5tEktazdfTsO3+J0nbxWMvL+WOSB88bpW3HuEP2mIois
+         gHTOCpKve2Lt6LTmLhmLnz+Sr4jZfFwPxpdfAtD02J6gWAokAk57qpHRDTSKSdQqdn3l
+         D4fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744369663; x=1744974463;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9XLG9LyOBwh9wClGUHHGD4bGh+PDIqzBXkT2KKCmZgk=;
+        b=aclMUy7Ux2NTDM9+3M39SVJ/nbFtqheLHl1+xD/MtaL/bdlUDS9rb4DDaKrOS9w4az
+         QHI0cBaGZ55XvsBGoI7gr78dI4yXTzDLKNaaXHK/SPfUfWHvV135K8lBWLNR9UL4aaK+
+         F7yE7FYl2eZPkh6dJSQ+VG+ZNEMIkhDncjUUaw1AQT0pHgPpfhjx26hVoACcxcmZkPs1
+         sWugF0YW+7E1aSxegWsMQo8NQH2ukxePUO0jXxPYDYC+MVXPDv8rB20sAFrIoJ50qylK
+         QjeJq7P1jd8Fr+bUg9QGnwwsUQ8w6VJ3J5VjqR1AtkOSrWUKCfZkyf/curyx4sEJ/UyK
+         mifw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqfMk6gfFrqC4jwNoduRhRVz6Z5p3gp0cyH3ugjx58bC5TF+EmotQ/B03/A87Ek5hRfmejuwGyE1z4nLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwV7R/ebf+MJyPZOx5IZnjIdi9Znng28NAQWuYp3uusV/qe0ZB
+	jv4d3PWplwTqOnn4m4UZF7JXyTFSZQcM2y/VDwu8gvaD7RLCxtStDaczd4oeaA==
+X-Gm-Gg: ASbGncthq39bwlD6VUcXA8fjyGQWqU7WpYUnfzjIENu3EDGces+w6jYvtcY2N+U3q1C
+	yLPSd8JjzvRhSWwbgBDh1FmAu1MvUBDORPM/BK/+ZcSm0HUzjtqqV5zzOcZYDudYmVdoUQXofMC
+	5g/+DqSFPqSGMJh/f+El2RqW3MvGHmPhtuZPyy9xv6yEFWTunRAxwWGyz3F7D7B+FdCloGBmsxs
+	pjjTHl/liXzxeu5a1L42h6TohtyhSuRWIw6NuqE9uod97TjjlBw3naa0rXfp/4Xq/Kl1Eb2e9Gr
+	NZ1gmNyiMiY4sNGq8kb65tvxJiqFzxQy5N5PmFDyRQ5dNSmprnx8XlODmjV1BkFyVxeQg0ytVxy
+	0NRZG/gGnK0M=
+X-Google-Smtp-Source: AGHT+IFm7A0VgFpeL1lolsIebnz1iD2c6GvvmnzywiHF9zm6AzHf0EpYuc4cmENBCcGaza8M8Vc0Wg==
+X-Received: by 2002:a05:6a00:4608:b0:736:b101:aed3 with SMTP id d2e1a72fcca58-73bd11aa506mr3032337b3a.1.1744369663061;
+        Fri, 11 Apr 2025 04:07:43 -0700 (PDT)
+Received: from ?IPV6:2804:7f1:e2c3:b109:bcd7:b61f:e265:af16? ([2804:7f1:e2c3:b109:bcd7:b61f:e265:af16])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21c5eaesm1207682b3a.44.2025.04.11.04.07.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Apr 2025 04:07:42 -0700 (PDT)
+Message-ID: <c6bd1363-df93-4757-8fcc-96af2f9293de@mojatatu.com>
+Date: Fri, 11 Apr 2025 08:07:38 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9db38911-4bb3-42c9-90be-51cbd6e523fc@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] selftests/tc-testing: Add test for echo of big TC
+ filters
+To: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+ linux-kernel@vger.kernel.org
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang
+ <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+ Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org
+References: <20250410104322.214620-1-toke@redhat.com>
+Content-Language: en-US
+From: Victor Nogueira <victor@mojatatu.com>
+In-Reply-To: <20250410104322.214620-1-toke@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 10, 2025 at 06:41:17PM +0200, Konrad Dybcio wrote:
-> On 4/10/25 7:34 AM, Maud Spierings wrote:
-> > Sorry I messed up and replied to the wrong patch somehow, this comment was meant for this patch.
-> > 
-> >> Introduce a device tree for the HP EliteBook Ultra G1q 14" AI laptop. It
-> >> seems to be using the same baseboard as the HP OmniBook X 14 so just use
-> >> that for now.
+On 4/10/25 07:43, Toke HÃ¸iland-JÃ¸rgensen wrote:
+> Add a selftest that checks whether the kernel can successfully echo a
+> big tc filter, to test the fix introduced in commit:
 > 
-> https://lore.kernel.org/lkml/20230510183423.never.877-kees@kernel.org/
+> 369609fc6272 ("tc: Ensure we have enough buffer space when sending filter netlink notifications")
+> 
+> Signed-off-by: Toke Høiland-Jørgensen <toke@redhat.com>
+> ---
+> v2:
+> - Move to infra/actions.json
+> 
+>   .../tc-testing/tc-tests/infra/actions.json    | 22 +++++++++++++++++++
+>   1 file changed, 22 insertions(+)
 
-It seems you missed Maud's inline comments:
-
-	https://lore.kernel.org/lkml/AM7P189MB100977CCFD602396E8F01FCBE3B72@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM/
-
-Johan
+Tested-by: Victor Nogueira <victor@mojatatu.com>
 
