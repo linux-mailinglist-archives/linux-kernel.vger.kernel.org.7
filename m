@@ -1,86 +1,202 @@
-Return-Path: <linux-kernel+bounces-599972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBAEAA85A55
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:42:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77FD0A85A61
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D2BE189C7AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:41:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B47D117E3CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4329822127B;
-	Fri, 11 Apr 2025 10:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867FD221286;
+	Fri, 11 Apr 2025 10:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="DWi5QG7e"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA2F204581
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744368087; cv=none; b=aZdVRdtRiHL8nHNdZpXmRs1LDbf2T6w0oqcQqA//zqzqzmn4tyZHYXjG/J0FTEnl30MvV5lUYnZbU2nCiLUEhcRSON6qDsbSz1X0C8KOPnjUudXayQiIcipjOMnNc7mmqA6DGhBcBMB6Pb/MDLvbvKNOKGxGDe65Bw9StxfARnY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744368087; c=relaxed/simple;
-	bh=70nnKZkKDKtDgnl0C06+b7gMrrVZkXvMJyhTaYQG0kQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GfFwJUnmU2T0tqbKvZWwvKIHiq53tKHPJ9+fCgRnk8cVl7epiO78Ujz1QXg3Q2PpLJtUVKEtGnN0v6YgygVyIPf8w4AC4RQKcilow470GTDlc+29T9xudbagDRuI3TM01m5AKA7UQp1eIECjRdzs2rpjXxwHmi75BFeG+CC9+O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=DWi5QG7e; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ar3TdOu3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 8F47F47AD4;
-	Fri, 11 Apr 2025 12:41:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1744368084;
-	bh=70nnKZkKDKtDgnl0C06+b7gMrrVZkXvMJyhTaYQG0kQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DWi5QG7ej+qLvmgNEz+7skZ+UgpGFhKZo4QUJHJR47RLZtnYRe2KX8rah5lHuGl75
-	 eKjc8TR17twq+klB7ik3z6QbgHXqDHIEulq1gMzYDoDFAxJ1hwapmpI70mg0CX3atL
-	 /G4Kr4jc79mTq8dqsYJmmaKoQRjKkRnH10zJosJ3groxjVukSgQfd2X/5/ZJLbPdL1
-	 6zBP7nBgKfH/+cKfgmYzelDSF98eefKtzWq5vU+oBB0rYyljIw8Dyn1XvPm+e7u3WJ
-	 KLiDw4yZGDLhdA5Tqwt4piV5+nXFmvgDYWFTaxHmphu9j30+oMOlr7E43fEfqSFvqP
-	 4Ojaodk6vvonQ==
-Date: Fri, 11 Apr 2025 12:41:23 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: Yong Wu <yong.wu@mediatek.com>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	"Rob Herring (Arm)" <robh@kernel.org>, kernel@collabora.com,
-	Joerg Roedel <jroedel@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	iommu@lists.linux.dev, linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH v2] iommu/mediatek: Fix NULL pointer deference in
- mtk_iommu_device_group
-Message-ID: <Z_jx07MlkOf8E2zj@8bytes.org>
-References: <20250403-fix-mtk-iommu-error-v2-1-fe8b18f8b0a8@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D1C278E64;
+	Fri, 11 Apr 2025 10:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744368241; cv=none; b=BNOFyOkE6k1WU9QcawFnDqTpn21/iMKdEEVwQmLt4f+6Rtc33NHhK3ZpRLnu6VnViEj8uax7jaDMrH/IVFYJTuWr/4pAV9HCyzPTk/xoJGWkj+tG5XLJqY1SStJ2oTlY+MMfrzsnP6byGBHj/L7NwZksvcXK/annVX2N6ULn1nM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744368241; c=relaxed/simple;
+	bh=OsXt5ZPtUU5DFPKX6r887eK6MnX6m56G1O2IKPgYPww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bT6BY6shL0Rb+5VjEWhVKCQL6emJbQkkUwGIxDsUh6NYeCoI/ffND94BwKW7OxRs4kzW2UPdTgyWeDliIK249NZyEg7+xI73cmfyNFIIwhsue1KIuSc6qE9BwcfplROtwyc0v02FucXnCARO5t7V/VByy+dkbWlBn/IXnkqXs6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ar3TdOu3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B1p6wh007171;
+	Fri, 11 Apr 2025 10:42:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hQuBRqFocG/a44HT7fAMnSaMW1L1udKoeyTx7hSUX1g=; b=ar3TdOu3kbmtIEb6
+	nXa6cwwMtcTaA9KBMYMToettNYU1i0TpOYzYob6YEMF8/gpHtyqLPM3fux5PI+m2
+	9oZNR5LUJ+129eO2v5VX2XZebjKDGejsQ35YqQTLqhUaXEuc3a0iH/jMEbsXS1sp
+	7hOd4t8wGndj+h9RA+qI4is7iV6hTOagERTQTTKCU6MZTAZ/DPVZeAHDfeTOmR4i
+	VfDJyelroNxHqGKKhgUggV09N9DC/aIWTFUUsv+9cKiJz2B4IhcPK4MMimhQ4LOF
+	9FComdGOMsqATH01YvEiuOaFSCF9jVpndb7XWSnePvN5/s1KiTUg5SGQr7dhiD5J
+	C+pq0A==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45xeh3k435-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 10:42:56 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53BAgsxe023310
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 10:42:54 GMT
+Received: from [10.218.7.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 11 Apr
+ 2025 03:42:49 -0700
+Message-ID: <4557abf9-bcd2-4a06-8161-43ad5047b277@quicinc.com>
+Date: Fri, 11 Apr 2025 16:12:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250403-fix-mtk-iommu-error-v2-1-fe8b18f8b0a8@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 5/9] phy: qcom-qmp-ufs: Remove qmp_ufs_com_init()
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <vkoul@kernel.org>, <kishon@kernel.org>,
+        <manivannan.sadhasivam@linaro.org>,
+        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+        <bvanassche@acm.org>, <bjorande@quicinc.com>,
+        <neil.armstrong@linaro.org>, <konrad.dybcio@oss.qualcomm.com>,
+        <quic_rdwivedi@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>
+References: <20250410090102.20781-1-quic_nitirawa@quicinc.com>
+ <20250410090102.20781-6-quic_nitirawa@quicinc.com>
+ <zvc3gf7mek7u46wlcrjak3j2hihj4vfgdwpdzjhvnxxowuyvsr@hlra5bmz5ign>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <zvc3gf7mek7u46wlcrjak3j2hihj4vfgdwpdzjhvnxxowuyvsr@hlra5bmz5ign>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=VbH3PEp9 c=1 sm=1 tr=0 ts=67f8f230 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=zrGcixpFwRRgDh-WtYsA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: we9ozuFQS9tgll9GJNrL-apAvrxpPXbM
+X-Proofpoint-ORIG-GUID: we9ozuFQS9tgll9GJNrL-apAvrxpPXbM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_04,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 impostorscore=0 suspectscore=0 adultscore=0 spamscore=0
+ clxscore=1015 malwarescore=0 priorityscore=1501 bulkscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504110067
 
-On Thu, Apr 03, 2025 at 12:22:12PM +0200, Louis-Alexis Eyraud wrote:
-> ---
-> Changes in v2:
-> - Fix goto label usage in device registration error case
-> - Add review and test trailers
-> - Link to v1: https://lore.kernel.org/r/20250327-fix-mtk-iommu-error-v1-1-df969158e752@collabora.com
-> ---
->  drivers/iommu/mtk_iommu.c | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
 
-Replaced the previously applied patch with this one.
+
+On 4/11/2025 1:39 AM, Dmitry Baryshkov wrote:
+> On Thu, Apr 10, 2025 at 02:30:58PM +0530, Nitin Rawat wrote:
+>> Simplify the qcom ufs phy driver by inlining qmp_ufs_com_init() into
+>> qmp_ufs_power_on(). This change removes unnecessary function calls and
+>> ensures that the initialization logic is directly within the power-on
+>> routine, maintaining the same functionality.
+> 
+> Which problem is this patch trying to solve?
+
+Hi Dmitry,
+
+As part of the patch, I simplified the code by moving qmp_ufs_com_init 
+inline to qmp_ufs_power_on, since qmp_ufs_power_on was merely calling 
+qmp_ufs_com_init. This change eliminates unnecessary function call.
+
+Regards,
+Nitin
+
+
+
+> 
+>>
+>> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+>> ---
+>>   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 44 ++++++++++---------------
+>>   1 file changed, 18 insertions(+), 26 deletions(-)
+>>
+>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+>> index 12dad28cc1bd..2cc819089d71 100644
+>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+>> @@ -1757,31 +1757,6 @@ static void qmp_ufs_init_registers(struct qmp_ufs *qmp, const struct qmp_phy_cfg
+>>   	qmp_ufs_init_all(qmp, &cfg->tbls_hs_b);
+>>   }
+>>
+>> -static int qmp_ufs_com_init(struct qmp_ufs *qmp)
+>> -{
+>> -	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> -	void __iomem *pcs = qmp->pcs;
+>> -	int ret;
+>> -
+>> -	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
+>> -	if (ret) {
+>> -		dev_err(qmp->dev, "failed to enable regulators, err=%d\n", ret);
+>> -		return ret;
+>> -	}
+>> -
+>> -	ret = clk_bulk_prepare_enable(qmp->num_clks, qmp->clks);
+>> -	if (ret)
+>> -		goto err_disable_regulators;
+>> -
+>> -	qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL], SW_PWRDN);
+>> -
+>> -	return 0;
+>> -
+>> -err_disable_regulators:
+>> -	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
+>> -
+>> -	return ret;
+>> -}
+>>
+>>   static int qmp_ufs_com_exit(struct qmp_ufs *qmp)
+>>   {
+>> @@ -1799,10 +1774,27 @@ static int qmp_ufs_com_exit(struct qmp_ufs *qmp)
+>>   static int qmp_ufs_power_on(struct phy *phy)
+>>   {
+>>   	struct qmp_ufs *qmp = phy_get_drvdata(phy);
+>> +	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> +	void __iomem *pcs = qmp->pcs;
+>>   	int ret;
+>> +
+>>   	dev_vdbg(qmp->dev, "Initializing QMP phy\n");
+>>
+>> -	ret = qmp_ufs_com_init(qmp);
+>> +	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
+>> +	if (ret) {
+>> +		dev_err(qmp->dev, "failed to enable regulators, err=%d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = clk_bulk_prepare_enable(qmp->num_clks, qmp->clks);
+>> +	if (ret)
+>> +		goto err_disable_regulators;
+>> +
+>> +	qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL], SW_PWRDN);
+>> +	return 0;
+>> +
+>> +err_disable_regulators:
+>> +	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
+>>   	return ret;
+>>   }
+>>
+>> --
+>> 2.48.1
+>>
+> 
+
 
