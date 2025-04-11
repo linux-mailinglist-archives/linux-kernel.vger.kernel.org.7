@@ -1,321 +1,313 @@
-Return-Path: <linux-kernel+bounces-600572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93550A86180
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:15:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33CFFA8618D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7359416D366
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:15:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD3E616D3B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939D020F063;
-	Fri, 11 Apr 2025 15:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCB220D4E1;
+	Fri, 11 Apr 2025 15:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cern.ch header.i=@cern.ch header.b="IaBtFCed";
-	dkim=pass (1024-bit key) header.d=cern.ch header.i=@cern.ch header.b="IaBtFCed"
-Received: from GVAP278CU002.outbound.protection.outlook.com (mail-switzerlandwestazon11020075.outbound.protection.outlook.com [52.101.188.75])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kb1VQrOI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E304320C009;
-	Fri, 11 Apr 2025 15:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.188.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744384489; cv=fail; b=Ab51222xcWn6NS1ek1h2x8ByPRUez/HqSLcX+wAAhWxHc6MJv6bz2bcoulQ6+a1Ms9jurRopjQHH+P/bJCYW4NjhO8GcwX1WIAcCP5H3P8mUit/lIuMtJqkZMAUfNcq2hBp4HkSxc0m5Kf6JDOrC3O9ntGVVJ/V2M1YH/GuS99U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744384489; c=relaxed/simple;
-	bh=63GBqObIlK1rxBgjOxIxr4B2n3tBMDJ09U307h5tkYE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rp9fnpX7xTAILi/zfS0BEMipNuEv5MKdG4409ahrQHpsIbWwUukEMJNgiPvnnZ0cuXOWS9O5kmq8AA6toO6Ox3CgeHmS9aUqO9yTw34Kd9CjbCZesDQe5jEiFYVoevRcuUSlbPRmkNY3jxqlQXfO1FG3K1tEjolrjWS3HZeX+M8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cern.ch; spf=pass smtp.mailfrom=cern.ch; dkim=pass (1024-bit key) header.d=cern.ch header.i=@cern.ch header.b=IaBtFCed; dkim=pass (1024-bit key) header.d=cern.ch header.i=@cern.ch header.b=IaBtFCed; arc=fail smtp.client-ip=52.101.188.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cern.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cern.ch
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yHW3iu6LC1EZuDLNvPwgO75AlncPjTeOEZlwY0tSnlbC4byJPWWRL3hLcptFNzhP14K70RZdy1/RHKhduM9kgh+PWtNK3tA0FA2KqwGH8hXGLfeLUOy+2fsUq6WFC++kzpnA92yYJsxNyUz7gPMKtAHVfX0oLVVjmbt1s9oI4IaebSVLGDGgd6X5yGYnBjJBiUU/vlxOOspeB6dij5Q2RI7zpm6mQOMz/Oh9MXCUJK2QjiEoYsybThTPc6MxJ86FcPg4Oc/TTxPPQ6F8Be5pm3YGuAtL+1kQ5duXE8Cpg0m0pYwtwk4kjg5YDwUSwmVJ0CAM2EzTHo45lQ1Ut42Mvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=63GBqObIlK1rxBgjOxIxr4B2n3tBMDJ09U307h5tkYE=;
- b=U+HWNEayztwZuPIDW8pus9UgSvZFC9wQXm1deTCKJT7mD7TbtXusm+Uh2lYgzbevaExzbOy5vb1JKUZCBuMow20asgMoGL8o6BhrYU8+P9YoL0oiluCXbGHt/8nRzpxLaJBtEShc4EafC+Wui3Qu/isPVsOymUdhv9BXSRnh9pwAQiekGJOPQfv/KY+Rcykjl9TFCNPnyPbNclAKIsQoWHQpyUBEFvojWb/hLS5g1wl8oKiLeAftV5lhTH2IbcZKyKu34z+husR80euv4njKnOxkFBdzQO0Splf7yQqzG5o5bjyohJ2EUOSio5bf7nZO3yYJjk6r1uhifZJ4gTSkug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 20.208.138.155) smtp.rcpttodomain=ddn.com smtp.mailfrom=cern.ch; dmarc=pass
- (p=quarantine sp=none pct=100) action=none header.from=cern.ch; dkim=pass
- (signature was verified) header.d=cern.ch; arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.ch; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=63GBqObIlK1rxBgjOxIxr4B2n3tBMDJ09U307h5tkYE=;
- b=IaBtFCed9A4CuJobiXEnmbga/+M0scoDuZSTEok3gwE1IfEshL6/Q7Peo+FWx2rEwBBgyHQjlLl3V7C31zRDifXfuXvDw6JwKT+SaSsX/GdJCop7CCiD1oyrQRHTU/zCkYv0gS6jqXrKilZfwK1fLv5sw6BBVkIF0KQXwBVwdb0=
-Received: from PA7P264CA0528.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:3db::13)
- by GV0P278MB0768.CHEP278.PROD.OUTLOOK.COM (2603:10a6:710:53::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.27; Fri, 11 Apr
- 2025 15:14:42 +0000
-Received: from AMS0EPF00000199.eurprd05.prod.outlook.com
- (2603:10a6:102:3db:cafe::39) by PA7P264CA0528.outlook.office365.com
- (2603:10a6:102:3db::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.26 via Frontend Transport; Fri,
- 11 Apr 2025 15:14:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 20.208.138.155)
- smtp.mailfrom=cern.ch; dkim=pass (signature was verified)
- header.d=cern.ch;dmarc=pass action=none header.from=cern.ch;
-Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
- 20.208.138.155 as permitted sender) receiver=protection.outlook.com;
- client-ip=20.208.138.155; helo=mx3.crn.activeguard.cloud; pr=C
-Received: from mx3.crn.activeguard.cloud (20.208.138.155) by
- AMS0EPF00000199.mail.protection.outlook.com (10.167.16.245) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.12
- via Frontend Transport; Fri, 11 Apr 2025 15:14:42 +0000
-Authentication-Results-Original: auth.opendkim.xorlab.com;	dkim=pass (1024-bit
- key; unprotected) header.d=cern.ch header.i=@cern.ch header.a=rsa-sha256
- header.s=selector1 header.b=IaBtFCed
-Received: from ZR1P278CU001.outbound.protection.outlook.com (mail-switzerlandnorthazlp17012048.outbound.protection.outlook.com [40.93.85.48])
-	by mx3.crn.activeguard.cloud (Postfix) with ESMTPS id 5C8477FC88;
-	Fri, 11 Apr 2025 17:14:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.ch; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=63GBqObIlK1rxBgjOxIxr4B2n3tBMDJ09U307h5tkYE=;
- b=IaBtFCed9A4CuJobiXEnmbga/+M0scoDuZSTEok3gwE1IfEshL6/Q7Peo+FWx2rEwBBgyHQjlLl3V7C31zRDifXfuXvDw6JwKT+SaSsX/GdJCop7CCiD1oyrQRHTU/zCkYv0gS6jqXrKilZfwK1fLv5sw6BBVkIF0KQXwBVwdb0=
-Received: from GV0P278MB0718.CHEP278.PROD.OUTLOOK.COM (2603:10a6:710:42::7) by
- ZR2P278MB1148.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:60::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8632.28; Fri, 11 Apr 2025 15:14:39 +0000
-Received: from GV0P278MB0718.CHEP278.PROD.OUTLOOK.COM
- ([fe80::4336:6bd9:d554:87f1]) by GV0P278MB0718.CHEP278.PROD.OUTLOOK.COM
- ([fe80::4336:6bd9:d554:87f1%4]) with mapi id 15.20.8632.025; Fri, 11 Apr 2025
- 15:14:39 +0000
-From: Laura Promberger <laura.promberger@cern.ch>
-To: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>
-CC: Bernd Schubert <bschubert@ddn.com>, Dave Chinner <david@fromorbit.com>,
-	Matt Harvey <mharvey@jumptrading.com>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8] fuse: add more control over cache invalidation
- behaviour
-Thread-Topic: [PATCH v8] fuse: add more control over cache invalidation
- behaviour
-Thread-Index: AQHbiC78vz1B7dg/NUOfn0lxItJH+rNn26CXgATK8YCACqiPWoAniS0P
-Date: Fri, 11 Apr 2025 15:14:39 +0000
-Message-ID:
- <GV0P278MB0718DC3A40975C51918E967685B62@GV0P278MB0718.CHEP278.PROD.OUTLOOK.COM>
-References: <20250226091451.11899-1-luis@igalia.com>
-	<87msdwrh72.fsf@igalia.com>
-	<CAJfpegvcEgJtmRkvHm+WuPQgdyeCQZggyExayc5J9bdxWwOm4w@mail.gmail.com>
- <875xk7zyjm.fsf@igalia.com>
-In-Reply-To: <875xk7zyjm.fsf@igalia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cern.ch;
-x-ms-traffictypediagnostic:
-	GV0P278MB0718:EE_|ZR2P278MB1148:EE_|AMS0EPF00000199:EE_|GV0P278MB0768:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9c14ed41-1513-4626-a928-08dd790b95df
-x-ld-processed: c80d3499-4a40-4a8c-986e-abce017d6b19,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|366016|376014|10070799003|38070700018;
-X-Microsoft-Antispam-Message-Info-Original:
- =?iso-8859-1?Q?fXxAqoA5A0U5rVuB56hKMmWVVN2A0ikiZbeyq4/sJ8kLkum0N8FNjvgfkF?=
- =?iso-8859-1?Q?8zpOB8t2+4/CR75wYG+d75JWEQy9k5ObrXLMu1DsFOAvkRnheCC9HtBc0T?=
- =?iso-8859-1?Q?tkvVxh9KtQUKQpWGOt1o3FBoIRGFM18jGXMiEEVD8Sr2TCwtvRLZKiCaTo?=
- =?iso-8859-1?Q?dZMNDavTtyqT3Wwu5Fssvlxc7EDQ7kJuGK9pH03bgP4alISQxgr6X0uMsC?=
- =?iso-8859-1?Q?pcNLddJhGzc+Gh97xpj5rclOfsr2z0FHHttvAxf4OomriSBOFaaj4GuR0T?=
- =?iso-8859-1?Q?KZtCIDbPWQ4b8Eo/qeInT2A1eGppDLNdXE95vLbhdYL8z74Ks84xt72vXy?=
- =?iso-8859-1?Q?v0IKUeluerktTKMKxB0Ko0Xw6gLu+lGWyibTQDGsZAFRPfMph+wPH7vxfr?=
- =?iso-8859-1?Q?QytFEyQaVMzBhUeXpPgHhntf1uA6EQrW8zKLYA1u/qWQev3EIns8GO1rab?=
- =?iso-8859-1?Q?dZTr9EEPIs4HIlL19uQUBQ2EL6GxXuYQ/m8zhG0NNMWHeyd1uP5DWuq2A1?=
- =?iso-8859-1?Q?A6Y/rY5UWjltYbUsm8RswHJv61QDN+ZTMYTGHtJnNF1n5bFUGJ2v/MJjxU?=
- =?iso-8859-1?Q?KDZL0dEHk3pgcbCUBZ/EM/qxs9UPGyM/aWzl6Okrs5w8o0WGNrJdz+kRne?=
- =?iso-8859-1?Q?MViehLQgHti24dKPC0ElOJLYAGvZMfaXkpItlsF/LbfiErq23CgrdTPLiP?=
- =?iso-8859-1?Q?lEskUwlX6mDy+8a2VuLpTxAZGCD8Udmx8QdPI07+m147LoXs1K/jLm7mT9?=
- =?iso-8859-1?Q?N2522mJwgNrdrCmcDNjQAvqTVziHH4zxcLIhlCUAOPYZYF0kDVdbRbuaxu?=
- =?iso-8859-1?Q?tpiNUnXGV5dsS5wO96edld+cChnn4cXOw+9YH40Srw2xDiDhMZw2HZhCgb?=
- =?iso-8859-1?Q?n7lmRkiF9okmIWwpFmzm2w+eEVRYIJFYSi7FB/3usnyfzkuOdLGWCdMjIj?=
- =?iso-8859-1?Q?HAG+yBGtp4R5vADzDizNekDlEWvovLSWfrOuqpa81LiPlhbifQsEkcgsXh?=
- =?iso-8859-1?Q?ETMyUvTqb8Ac9R9f+5kgpOhCapDLrIambUxVvfwCeAVEhnYu2Wn4anZmg2?=
- =?iso-8859-1?Q?O9Fk2t71nQtv6BZnRU8qZu7KhJ2tS6RFhcDpKPzMtHlDViDLuDt+J4K5aw?=
- =?iso-8859-1?Q?eZuzKSyG2+Dbqk1e0rIUcEnpH9jZDuNk+piK1Jf88kbKWgyNOgvkSdoS5k?=
- =?iso-8859-1?Q?pcYJWbPrebGsJV7FEDAtai/Cl6vvasXXu5Jni4Nrd3TYOn0V/4TgBPjbMI?=
- =?iso-8859-1?Q?Js+cqul9dssgu+Lj/tNu/niIamgciKKOr7f0c91YBHo2NkNTA5d0/u7E7M?=
- =?iso-8859-1?Q?XA6kl5hayyCzL+h48g4NfpFy7d9NaLWyGvQhfHnyhclZenBhyRybCkAQrE?=
- =?iso-8859-1?Q?c39EA7Qh88T2qythl++vf3FvJutkV5Ep6o56E974Xx0Yxh4Avcqu68ImAn?=
- =?iso-8859-1?Q?2Edg5NIU2GWY5U8QCMw5jujfepXstMFd2Bg4tKI4n26xsvZro/IUbxTNfx?=
- =?iso-8859-1?Q?5Sv5ZNna40e7vi1KK86Bw02eYRgEHfCX40SdBjudUEI1QK7IxucrXKkDe9?=
- =?iso-8859-1?Q?+Xv7jQc=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV0P278MB0718.CHEP278.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(10070799003)(38070700018);DIR:OUT;SFP:1102;
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA27310A1E;
+	Fri, 11 Apr 2025 15:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744384564; cv=none; b=CVV+H+Fv6C2WuK5Ub6G2rdpmVGY7HizPdfLAPdB+7YGV5wPSmYVLLKdncv2jb4UaYu8FSiEUxYf0Htydhkxur8xEstxKSt01i1pWQwrrTJqxsyKE9w768AfU57uQXwVCQf4Ds6ds/Lu/M/DYJifhdNw4jCTeggJ6Z3qUc+XaOaQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744384564; c=relaxed/simple;
+	bh=U6OoqkNqz6S6tODC5IKLn/+wZf0r4dCyIk6KgClnSDQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=MZU8MufOhtKDDuUkFTm1orYkEqJV+6CDHK6OvGJGuuP/hgleKb76PgtWiMkAVX+1AeTJd7/SrpsY66HBDN4m7HXbSdkjXEl+Wx3AaDqE6EChZy2iuUo4JkMrT7T8FvdguENqQ/Xt7A07ZzF47OwnhMQ3+UngTVXQDDU6v1k0nZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kb1VQrOI; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744384563; x=1775920563;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=U6OoqkNqz6S6tODC5IKLn/+wZf0r4dCyIk6KgClnSDQ=;
+  b=Kb1VQrOIFYHq5472vbgfNaz/tjE/n04Nu9AqJAsh/mYrT3hMlYoiC1rf
+   kHn5GrBtrT9YAza17aDluA4lzSULtASwtcOtw45PzdpgLmH7TBg8c0+kN
+   ROSO8VtQD36uT65EPwaGfC//9cIfbNl1JIQcNOqsoV9DIGn3gEmawNOLy
+   DnC/GVj9YebC5ICTdG+5AYssgiE8sefsR9oDRwwUKYwipo2IGmzgfoGpD
+   9ynC7u/KY7PBafC/obiJ56YBb0VfEBpv/2CAv4oW165aD7ucNrYHniLH0
+   FyKEB+ouBTAoyT8LiVr9+db0nzSjyseVm9Q7zUnJ41oDOupUNOS5abtvx
+   A==;
+X-CSE-ConnectionGUID: wyEusCv2Ru+LDregJr9vHw==
+X-CSE-MsgGUID: n/e94ocdSTyvYOqhbmZzFw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11401"; a="56924653"
+X-IronPort-AV: E=Sophos;i="6.15,205,1739865600"; 
+   d="scan'208";a="56924653"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 08:16:00 -0700
+X-CSE-ConnectionGUID: uBHWmv1vTjSyrkivvcgF0Q==
+X-CSE-MsgGUID: vN2aYTqTROmVlf9MaFXDgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,205,1739865600"; 
+   d="scan'208";a="166412811"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.51])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 08:15:54 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 11 Apr 2025 18:15:49 +0300 (EEST)
+To: Antheas Kapenekakis <lkml@antheas.dev>
+cc: platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+    linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, 
+    Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, 
+    Jonathan Corbet <corbet@lwn.net>, 
+    Joaquin Ignacio Aramendia <samsagax@gmail.com>, 
+    Derek J Clark <derekjohn.clark@gmail.com>, 
+    Kevin Greenberg <kdgreenberg234@protonmail.com>, 
+    Joshua Tam <csinaction@pm.me>, Parth Menon <parthasarathymenon@gmail.com>, 
+    Eileen <eileen@one-netbook.com>, LKML <linux-kernel@vger.kernel.org>, 
+    sre@kernel.org, linux@weissschuh.net, Hans de Goede <hdegoede@redhat.com>, 
+    mario.limonciello@amd.com
+Subject: Re: [PATCH v8 09/14] platform/x86: oxpec: Move pwm value read/write
+ to separate functions
+In-Reply-To: <20250322103606.680401-10-lkml@antheas.dev>
+Message-ID: <9356d39d-f23f-2d7b-5593-0b8004e40a61@linux.intel.com>
+References: <20250322103606.680401-1-lkml@antheas.dev> <20250322103606.680401-10-lkml@antheas.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZR2P278MB1148
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AMS0EPF00000199.eurprd05.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	cbd73ecb-4914-472f-634b-08dd790b9464
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|35042699022|376014|82310400026|14060799003|36860700013|1800799024|13003099007|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?ri7yIdWTwW7o/8v6VKd0krrNowvUrnhhrJhK8KkwjeCnmQMZxdzHNpSKst?=
- =?iso-8859-1?Q?lK/xxUB2Yz3cUqPg6pFjXjFB5Hx8v49RjYc4BU0jf0kcNlduiQ7BorUsXW?=
- =?iso-8859-1?Q?uj4gJToTymjaz4CWX/Mb+uxzOLXDduzxs62BC3clqWe7rH5MxpM2ddtJTM?=
- =?iso-8859-1?Q?h84NZ7QBwmzag3ciBkTBKZkr85h6SEOuUbt9NPeNIYAWEeTj1XjqW0gJrn?=
- =?iso-8859-1?Q?gfF8+BINXg2cWDHzmc3UPTwXi5ahF7qfcH8YopLljCRH0ctm38NGZ9ShrH?=
- =?iso-8859-1?Q?Kg3ZzaqihkVPh9rqYmbW+uJ4j5jUb4fLmAz0tuc1LDNv7xCapBzecoQTuf?=
- =?iso-8859-1?Q?4d3jRU85lOekge05NIcMBFrFj65NEQ9Pw4Kp8bW3nxuEvqurstDaMvFFM2?=
- =?iso-8859-1?Q?x9OjEmaQyd3T12NdXxUbO1L/DiaADn8C4Ex4vMs5rHtYllM/UljhonEhxO?=
- =?iso-8859-1?Q?UrpvyH90YC4tnTqlNKn75HWt6yTeZ1Jw8faGDbJtYX1WCLVHnZFN36g7GO?=
- =?iso-8859-1?Q?EXt61VAvM226y9lZjfKoXFGEf4AE8n3Hubm+BxmwFbbPuPTEF9CKF/pf69?=
- =?iso-8859-1?Q?I9Rm4Jn8ZTjL2/+RkwT3ONJDgn4tzWFgNLW9maDjokCYrK6B+ear/QCkJd?=
- =?iso-8859-1?Q?t6exqWLRN2lRGpXNLFLGLZyRTKHVxBVI0vXM4g5jsJTNntlPykYUgqnEUD?=
- =?iso-8859-1?Q?jYM8h4quxYnucbq9CgMPf9Cfz/l53s9JRYbwBvDz78aaqmDzIzBgIe5gtk?=
- =?iso-8859-1?Q?k2DIrAAd5Kt7r1SBrdtmQsNAn9xPziSrtfkStuZujJIfhvByZBDztgPBmn?=
- =?iso-8859-1?Q?YwsZ6eo+OTp2wMxWUf0MRCAameOAbTjngzzHHPJS10OsExQwsCD51C7s8A?=
- =?iso-8859-1?Q?mClptU9I+KrOJ95WU8zI3mZT6MKwYwx6uQv9HHq5fyIRpvnWsIFoDYQCXu?=
- =?iso-8859-1?Q?mHs+fKvNLlOXGPWmzW6UxhndQu49HvMkPYR1pY/egdQxsf7E6k2uE4abED?=
- =?iso-8859-1?Q?4hRpbWFrkt/pL16bpUE4z5DPiA7bf7f61fftFDEzi3aJsf3snts8WMFlWx?=
- =?iso-8859-1?Q?loJH0OkSK5V9eDX+j4BzB5m97HMU4Sg96MrZChUVDbY0ZhRs/o00UglG7x?=
- =?iso-8859-1?Q?8kXODb4Tvyvf3W5dTFfilLswNGd4sHt1TERh3nTjirt/inoxx9gJM6kHzA?=
- =?iso-8859-1?Q?F/pAHwINzbKQiIBzc6VM5p0Ua7+i7s0psVPfuk2/+RWPmoPRMQ64LMPqpr?=
- =?iso-8859-1?Q?el6kMBQi2/XM1AAAur0xqqgh2Jh84IUSPNOmJmaLLpwFB17sGYmCXE1mIN?=
- =?iso-8859-1?Q?AP6F3rcNTlpv7J5GdFcIsS+fh3k2AtbFFEzfTlbHmChE93vzm0N4AtAjiV?=
- =?iso-8859-1?Q?PGzVCaZy/dAAgvCa5LRhSXeluUiwoz3CjLj2xv2FpeFTGy2Nr6Uot2tzDL?=
- =?iso-8859-1?Q?gKkb00LDcp4j/SSavhv+9EXxzQzKpopANrWirBGYVykg2EyeNNwa07rUeK?=
- =?iso-8859-1?Q?d7SSHbFxsboqXlsq+DdswLkzmpEgQEVst/hjbki6Mf/TSdZEU5jNr+tquI?=
- =?iso-8859-1?Q?5nF4eCr4oc4YlJoKEVldy6uherzmGItWO6Lzfe8s5oiOxjkOAg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:20.208.138.155;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mx3.crn.activeguard.cloud;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(35042699022)(376014)(82310400026)(14060799003)(36860700013)(1800799024)(13003099007)(7053199007);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cern.ch
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 15:14:42.1917
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c14ed41-1513-4626-a928-08dd790b95df
-X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[20.208.138.155];Helo=[mx3.crn.activeguard.cloud]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF00000199.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV0P278MB0768
+Content-Type: multipart/mixed; boundary="8323328-936839061-1744384549=:944"
 
-Hello Miklos, Luis,=0A=
-=0A=
-I tested Luis NOTIFY_INC_EPOCH patch (kernel, libfuse, cvmfs) on RHEL9 and =
-can confirm that in combination with your fix to the symlink truncate it so=
-lves all the problem we had with cvmfs when applying a new revision and at =
-the same time hammering a symlink with readlink() that would change its tar=
-get. ( https://github.com/cvmfs/cvmfs/issues/3626 )=0A=
-=0A=
-With those two patches we no longer end up with corrupted symlinks or get s=
-tuck on an old revision.=0A=
-(old revision was possible because the kernel started caching the old one a=
-gain during the update due to the high access rate and the asynchronous evi=
-ct of inodes)=0A=
-=0A=
-As such we would be very happy if this patch could be accepted.=0A=
-=0A=
-Have a nice weekend=0A=
-Laura=0A=
-=0A=
-=0A=
-________________________________________=0A=
-From:=A0Luis Henriques <luis@igalia.com>=0A=
-Sent:=A0Monday, March 17, 2025 12:28=0A=
-To:=A0Miklos Szeredi <miklos@szeredi.hu>=0A=
-Cc:=A0Laura Promberger <laura.promberger@cern.ch>; Bernd Schubert <bschuber=
-t@ddn.com>; Dave Chinner <david@fromorbit.com>; Matt Harvey <mharvey@jumptr=
-ading.com>; linux-fsdevel@vger.kernel.org <linux-fsdevel@vger.kernel.org>; =
-linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>=0A=
-Subject:=A0Re: [PATCH v8] fuse: add more control over cache invalidation be=
-haviour=0A=
-=A0=0A=
-Hi Miklos,=0A=
-=0A=
-[ adding Laura to CC, something I should have done before ]=0A=
-=0A=
-On Mon, Mar 10 2025, Miklos Szeredi wrote:=0A=
-=0A=
-> On Fri, 7 Mar 2025 at 16:31, Luis Henriques <luis@igalia.com> wrote:=0A=
->=0A=
->> Any further feedback on this patch, or is it already OK for being merged=
-?=0A=
->=0A=
-> The patch looks okay.=A0 I have ideas about improving the name, but that =
-can wait.=0A=
->=0A=
-> What I think is still needed is an actual use case with performance numbe=
-rs.=0A=
-=0A=
-As requested, I've run some tests on CVMFS using this kernel patch[1].=0A=
-For reference, I'm also sharing the changes I've done to libfuse[2] and=0A=
-CVMFS[3] in order to use this new FUSE operation.=A0 The changes to these=
-=0A=
-two repositories are in a branch named 'wip-notify-inc-epoch'.=0A=
-=0A=
-As for the details, basically what I've done was to hack the CVMFS loop in=
-=0A=
-FuseInvalidator::MainInvalidator() so that it would do a single call to=0A=
-the libfuse operation fuse_lowlevel_notify_increment_epoch() instead of=0A=
-cycling through the inodes list.=A0 The CVMFS patch is ugly, it just=0A=
-short-circuiting the loop, but I didn't want to spend any more time with=0A=
-it at this stage.=A0 The real patch will be slightly more complex in order=
-=0A=
-to deal with both approaches, in case the NOTIFY_INC_EPOCH isn't=0A=
-available.=0A=
-=0A=
-Anyway, my test environment was a small VM, where I have two scenarios: a=
-=0A=
-small file-system with just a few inodes, and a larger one with around=0A=
-8000 inodes.=A0 The test approach was to simply mount the filesystem, load=
-=0A=
-the caches with 'find /mnt' and force a flush using the cvmfs_swissknife=0A=
-tool, with the 'ingest' command.=0A=
-=0A=
-[ Disclosure: my test environment actually uses a fork of upstream cvmfs,=
-=0A=
-=A0 but for the purposes of these tests that shouldn't really make any=0A=
-=A0 difference. ]=0A=
-=0A=
-The numbers in the table below represent the average time (tests were run=
-=0A=
-100 times) it takes to run the MainInvalidator() function.=A0 As expected,=
-=0A=
-using the NOTIFY_INC_EPOCH is much faster, as it's a single operation, a=0A=
-single call into FUSE.=A0 Using the NOTIFY_INVAL_* is much more expensive -=
--=0A=
-it requires calling into the kernel several times, depending on the number=
-=0A=
-of inodes on the list.=0A=
-=0A=
-|------------------+------------------+----------------|=0A=
-|=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 | small filesystem | "=
-big" fs=A0=A0=A0=A0=A0=A0 |=0A=
-|=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 | (~20 inodes)=A0=A0=
-=A0=A0 | (~8000 inodes) |=0A=
-|------------------+------------------+----------------|=0A=
-| NOTIFY_INVAL_*=A0=A0 | 330 us=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 | 4300 us=A0=
-=A0=A0=A0=A0=A0=A0 |=0A=
-| NOTIFY_INC_EPOCH | 40 us=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 | 45 us=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0 |=0A=
-|------------------+------------------+----------------|=0A=
-=0A=
-Hopefully these results help answering Miklos questions regarding the=0A=
-cvmfs use-case.=0A=
-=0A=
-[1] https://lore.kernel.org/all/20250226091451.11899-1-luis@igalia.com/=0A=
-[2] https://github.com/luis-henrix/libfuse=0A=
-[3] https://github.com/luis-henrix/cvmfs=0A=
-=0A=
-Cheers,=0A=
---=0A=
-Lu=EDs=
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-936839061-1744384549=:944
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Sat, 22 Mar 2025, Antheas Kapenekakis wrote:
+
+> Currently, this driver breaks hwmon ABI by using auto as 0 and manual
+> as 1. However, for pwm_enable, 0 is full speed, 1 is manual, and 2 is
+> auto. For the correction to be possible, this means that the pwm_enable
+> endpoint will need access to both pwm enable and value (as for
+> the 0th value, the fan needs to be set to full power).
+>=20
+> Therefore, move the pwm value read/write to separate functions.
+>=20
+> Reviewed-by: Derek J. Clark <derekjohn.clark@gmail.com>
+> Reviewed-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>  drivers/platform/x86/oxpec.c | 162 +++++++++++++++++++----------------
+>  1 file changed, 87 insertions(+), 75 deletions(-)
+>=20
+> diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.c
+> index 2f31490fde64c..67bfd397802d1 100644
+> --- a/drivers/platform/x86/oxpec.c
+> +++ b/drivers/platform/x86/oxpec.c
+> @@ -599,6 +599,91 @@ static umode_t oxp_ec_hwmon_is_visible(const void *d=
+rvdata,
+>  =09}
+>  }
+> =20
+> +/* PWM input read/write functions */
+> +static int oxp_pwm_input_write(long val)
+> +{
+> +=09if (val < 0 || val > 255)
+> +=09=09return -EINVAL;
+
+Please add an empty line here.
+
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+
+> +=09switch (board) {
+> +=09case orange_pi_neo:
+> +=09=09/* scale to range [1-244] */
+> +=09=09val =3D ((val - 1) * 243 / 254) + 1;
+> +=09=09return write_to_ec(ORANGEPI_SENSOR_PWM_REG, val);
+> +=09case oxp_2:
+> +=09case oxp_x1:
+> +=09=09/* scale to range [0-184] */
+> +=09=09val =3D (val * 184) / 255;
+> +=09=09return write_to_ec(OXP_SENSOR_PWM_REG, val);
+> +=09case aya_neo_2:
+> +=09case aya_neo_air:
+> +=09case aya_neo_air_1s:
+> +=09case aya_neo_air_plus_mendo:
+> +=09case aya_neo_air_pro:
+> +=09case aya_neo_flip:
+> +=09case aya_neo_geek:
+> +=09case aya_neo_kun:
+> +=09case oxp_mini_amd:
+> +=09case oxp_mini_amd_a07:
+> +=09=09/* scale to range [0-100] */
+> +=09=09val =3D (val * 100) / 255;
+> +=09=09return write_to_ec(OXP_SENSOR_PWM_REG, val);
+> +=09case aok_zoe_a1:
+> +=09case oxp_fly:
+> +=09case oxp_mini_amd_pro:
+> +=09=09return write_to_ec(OXP_SENSOR_PWM_REG, val);
+> +=09default:
+> +=09=09return -EOPNOTSUPP;
+> +=09}
+> +}
+> +
+> +static int oxp_pwm_input_read(long *val)
+> +{
+> +=09int ret;
+> +
+> +=09switch (board) {
+> +=09case orange_pi_neo:
+> +=09=09ret =3D read_from_ec(ORANGEPI_SENSOR_PWM_REG, 1, val);
+> +=09=09if (ret)
+> +=09=09=09return ret;
+> +=09=09/* scale from range [1-244] */
+> +=09=09*val =3D ((*val - 1) * 254 / 243) + 1;
+> +=09=09break;
+> +=09case oxp_2:
+> +=09case oxp_x1:
+> +=09=09ret =3D read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
+> +=09=09if (ret)
+> +=09=09=09return ret;
+> +=09=09/* scale from range [0-184] */
+> +=09=09*val =3D (*val * 255) / 184;
+> +=09=09break;
+> +=09case aya_neo_2:
+> +=09case aya_neo_air:
+> +=09case aya_neo_air_1s:
+> +=09case aya_neo_air_plus_mendo:
+> +=09case aya_neo_air_pro:
+> +=09case aya_neo_flip:
+> +=09case aya_neo_geek:
+> +=09case aya_neo_kun:
+> +=09case oxp_mini_amd:
+> +=09case oxp_mini_amd_a07:
+> +=09=09ret =3D read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
+> +=09=09if (ret)
+> +=09=09=09return ret;
+> +=09=09/* scale from range [0-100] */
+> +=09=09*val =3D (*val * 255) / 100;
+> +=09=09break;
+> +=09case aok_zoe_a1:
+> +=09case oxp_fly:
+> +=09case oxp_mini_amd_pro:
+> +=09default:
+> +=09=09ret =3D read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
+> +=09=09if (ret)
+> +=09=09=09return ret;
+> +=09=09break;
+> +=09}
+> +=09return 0;
+> +}
+> +
+>  static int oxp_platform_read(struct device *dev, enum hwmon_sensor_types=
+ type,
+>  =09=09=09     u32 attr, int channel, long *val)
+>  {
+> @@ -639,48 +724,7 @@ static int oxp_platform_read(struct device *dev, enu=
+m hwmon_sensor_types type,
+>  =09case hwmon_pwm:
+>  =09=09switch (attr) {
+>  =09=09case hwmon_pwm_input:
+> -=09=09=09switch (board) {
+> -=09=09=09case orange_pi_neo:
+> -=09=09=09=09ret =3D read_from_ec(ORANGEPI_SENSOR_PWM_REG, 1, val);
+> -=09=09=09=09if (ret)
+> -=09=09=09=09=09return ret;
+> -=09=09=09=09/* scale from range [1-244] */
+> -=09=09=09=09*val =3D ((*val - 1) * 254 / 243) + 1;
+> -=09=09=09=09break;
+> -=09=09=09case oxp_2:
+> -=09=09=09case oxp_x1:
+> -=09=09=09=09ret =3D read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
+> -=09=09=09=09if (ret)
+> -=09=09=09=09=09return ret;
+> -=09=09=09=09/* scale from range [0-184] */
+> -=09=09=09=09*val =3D (*val * 255) / 184;
+> -=09=09=09=09break;
+> -=09=09=09case aya_neo_2:
+> -=09=09=09case aya_neo_air:
+> -=09=09=09case aya_neo_air_1s:
+> -=09=09=09case aya_neo_air_plus_mendo:
+> -=09=09=09case aya_neo_air_pro:
+> -=09=09=09case aya_neo_flip:
+> -=09=09=09case aya_neo_geek:
+> -=09=09=09case aya_neo_kun:
+> -=09=09=09case oxp_mini_amd:
+> -=09=09=09case oxp_mini_amd_a07:
+> -=09=09=09=09ret =3D read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
+> -=09=09=09=09if (ret)
+> -=09=09=09=09=09return ret;
+> -=09=09=09=09/* scale from range [0-100] */
+> -=09=09=09=09*val =3D (*val * 255) / 100;
+> -=09=09=09=09break;
+> -=09=09=09case aok_zoe_a1:
+> -=09=09=09case oxp_fly:
+> -=09=09=09case oxp_mini_amd_pro:
+> -=09=09=09default:
+> -=09=09=09=09ret =3D read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
+> -=09=09=09=09if (ret)
+> -=09=09=09=09=09return ret;
+> -=09=09=09=09break;
+> -=09=09=09}
+> -=09=09=09return 0;
+> +=09=09=09return oxp_pwm_input_read(val);
+>  =09=09case hwmon_pwm_enable:
+>  =09=09=09return oxp_pwm_read(val);
+>  =09=09default:
+> @@ -706,39 +750,7 @@ static int oxp_platform_write(struct device *dev, en=
+um hwmon_sensor_types type,
+>  =09=09=09=09return oxp_pwm_disable();
+>  =09=09=09return -EINVAL;
+>  =09=09case hwmon_pwm_input:
+> -=09=09=09if (val < 0 || val > 255)
+> -=09=09=09=09return -EINVAL;
+> -=09=09=09switch (board) {
+> -=09=09=09case orange_pi_neo:
+> -=09=09=09=09/* scale to range [1-244] */
+> -=09=09=09=09val =3D ((val - 1) * 243 / 254) + 1;
+> -=09=09=09=09return write_to_ec(ORANGEPI_SENSOR_PWM_REG, val);
+> -=09=09=09case oxp_2:
+> -=09=09=09case oxp_x1:
+> -=09=09=09=09/* scale to range [0-184] */
+> -=09=09=09=09val =3D (val * 184) / 255;
+> -=09=09=09=09return write_to_ec(OXP_SENSOR_PWM_REG, val);
+> -=09=09=09case aya_neo_2:
+> -=09=09=09case aya_neo_air:
+> -=09=09=09case aya_neo_air_1s:
+> -=09=09=09case aya_neo_air_plus_mendo:
+> -=09=09=09case aya_neo_air_pro:
+> -=09=09=09case aya_neo_flip:
+> -=09=09=09case aya_neo_geek:
+> -=09=09=09case aya_neo_kun:
+> -=09=09=09case oxp_mini_amd:
+> -=09=09=09case oxp_mini_amd_a07:
+> -=09=09=09=09/* scale to range [0-100] */
+> -=09=09=09=09val =3D (val * 100) / 255;
+> -=09=09=09=09return write_to_ec(OXP_SENSOR_PWM_REG, val);
+> -=09=09=09case aok_zoe_a1:
+> -=09=09=09case oxp_fly:
+> -=09=09=09case oxp_mini_amd_pro:
+> -=09=09=09=09return write_to_ec(OXP_SENSOR_PWM_REG, val);
+> -=09=09=09default:
+> -=09=09=09=09break;
+> -=09=09=09}
+> -=09=09=09break;
+> +=09=09=09return oxp_pwm_input_write(val);
+>  =09=09default:
+>  =09=09=09break;
+>  =09=09}
+>=20
+
+--=20
+ i.
+
+--8323328-936839061-1744384549=:944--
 
