@@ -1,87 +1,55 @@
-Return-Path: <linux-kernel+bounces-599967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0170FA85A3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:39:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21198A85A4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ADCB1BA563E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:38:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 946F29C1263
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFED1298CDF;
-	Fri, 11 Apr 2025 10:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAD7221299;
+	Fri, 11 Apr 2025 10:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eenrg+aW"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnO4fYmI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D738D238C3B
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C7C22126F;
+	Fri, 11 Apr 2025 10:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744367833; cv=none; b=cBy9JC7O2txzBafENAg0nJCiF405vP1+uQT8FnVAXfkPWH/iZOhYTR55pwF7p/TmbswA4JBhsuBec5QodO/bt88jbebwx0HZ6+eqZGEMNsl9qQ8/b/Zbc0k345hZTAqB113UwaC7aXanmOWIaNWSYkIJVLjPJtiktmcOXobPda4=
+	t=1744367856; cv=none; b=Mca85cRD1+c7prsQ0meOQI87R8nhVA0Uc4hyfKlM7A5XCiv4TOgBvQdgdb+z8eWGh2IHvD8xtYzZdWn1NMPZ84jP3xndnXKXZYCMLIx+MmP6yB41BeaWvt4As9qilMDsRZTTaiu0YkodM5PFiLqMmLjVB4xPE7ItmJP0F7YkUF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744367833; c=relaxed/simple;
-	bh=sLgEhosIiClkmN38ByDrkKMD8MCsL8n4/9O2uH1NbTE=;
+	s=arc-20240116; t=1744367856; c=relaxed/simple;
+	bh=CpLL6t19QUpzwuQ8jKApV5Z2lDYMZzmlkYr11mNxyIw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mDZM6I5vwH094zcgDJjskUS6J9EaoY9O28NMLVNsm9cYljrciRUglhyXqlPPk+DdheSjHesWYSIPEEanZMkw/M9NRQIHRd3UpIygUtU4rlqbpyAR1HAhrdvMx5dYuUTxJ0FQWKJ4W1NYdgLE8eoORnpf5kvJniR+p/N/6a9ncfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eenrg+aW; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39ac56756f6so1485337f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 03:37:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744367829; x=1744972629; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dQWjyQgcrnSXNH4I07TDBPfUgXp/t8CB8smCTP5VOok=;
-        b=eenrg+aWv3otnRHWSas1f1tob5PMx2b1JKqEn/XkDZiE5f/IpW/lVEjDls34Cze7Ti
-         lgPencyn2aYWwtzFfV0SIlrK+B1Cm7/zLsmR5vJqFCwJnpgjgk3eMVWvxNRkUZ6XQHE/
-         IC7sDR9jmRi39FtdefK4VDorghYk/G2gV5xNRRYGyZBnqtZhXJBiulOYp4oYTCloAevH
-         eVzer/TOvY7pnoro1kVsQGurZUD5iI3ZUPSjeyb93qAFVbvtp1pSW40ZcizIk9tJCh45
-         v0snRKldS1nE8v06bWdcGzQjFNvJxHp9xP+2SeYP3IL73UtQbC/GTnDgeVrY3NgzayRj
-         jJCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744367829; x=1744972629;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dQWjyQgcrnSXNH4I07TDBPfUgXp/t8CB8smCTP5VOok=;
-        b=L+Q+4uo8tmyr1a5J+g6tnMRd+lfGX+siXFoj/mvJT4Yt6NYuQUv55I9nia5QcXtbwL
-         tHkrnKTnrinuHVtsp1W7x2GcFCRCTC/xZL7TQfazdtp92fUAQ0HSmq0I9x+7JA2hc9zh
-         ILO6K7M7nBmWPOHGQpdC5ypRQwUHZ3ahblzkEQroz4Dz3af9JOJxGQkqdRXVDwa3Iqrr
-         GWhSSINUZ6aX10FOL8MDJrwbpuhIBvkif5GdYgO/gfCelh/9ZOHvRPZ0O4hdZZmfpFHI
-         jhYXpu0C9acLyPK1opZlud4mLaNh6rcSi5VxMlzVZqOmp3exZ9NkCGf4YbDXyxPldNhQ
-         HVXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKbRsH39nB4QyBi7oJDSdFe0vnaAK8xsmYQafPmAjBTAb3cWkRbidLIJ4Van+AQSsdm8DF/FdybUKoicY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJwHJx+CIx10hrNB3jBqMEfsIxT0MQcNfZ2koTRtbgDrf4JJ6I
-	OUOrY4r0isqXF1LSPKnjMdoAPM/WchwyubUhcW69a7jvE7hNleC1j5yPY4Z8s7k=
-X-Gm-Gg: ASbGnctbDXt75DuBX5as2swmWK0uuG4ZOKncJg0xx+4L9Nbf48w2+UV7SariMG1kJf/
-	3OvAUB8C34RM31L3G43oQP7cG3gzsDnnoWpRGw3mN/0xnTp7E/Zq5bYXGaMv8ZZU20nv47EBxBc
-	WI3lCEG61/4DiQeWvIoyowCZNM5xjx+DA9pu+7BIo9Erey5soA2LA/Z5MUuDVCNj5Y2l7VALJQU
-	BYzlpxq546VCmghOi4NnRVusSPJIL3m/ntyLBTzI6Re5xkK9l6/TDq7MWFfjQx5bnPKC4tsyAYp
-	FKfEkqHc7BKZaS44KxXsyDvpmuY5x+5LORg4x6JjNBEGoA==
-X-Google-Smtp-Source: AGHT+IFIi/9zGRs3AClAo2EJWnN7AIzxihbTuvReSRFjk5w23zf+QxRBAsm62BO5WW6Htp4AsQx40w==
-X-Received: by 2002:a05:6000:186e:b0:391:158f:3d59 with SMTP id ffacd0b85a97d-39ea5206fb0mr1660915f8f.15.1744367829113;
-        Fri, 11 Apr 2025 03:37:09 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39eae979637sm1636544f8f.53.2025.04.11.03.37.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 03:37:08 -0700 (PDT)
-Date: Fri, 11 Apr 2025 13:37:05 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>,
-	outreachy@lists.linux.dev, julia.lawall@inria.fr,
-	gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, david.laight.linux@gmail.com,
-	andy@kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: Replace `& 0xfff` with `% 4096u`
-Message-ID: <b4904b21-0a41-43f6-b386-dea4e27c7a27@stanley.mountain>
-References: <Z/bA4tMF5uKLe55p@ubuntu>
- <CAHp75Vd0PUFv_tigmKp7MEiOOuHpFhB_i8u42jZdQ1jajjq0rw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qTUqJQpXXN8KBS7m8PK5X6Aq/znyWJeVxItnqWz3cHSLdw7zGNIoWHDVisQL0znItRktOq+qLVNMmUhimwrhnzqKKzJ8/5AAkDyZJB9cOeVcDcJS+go3rsv1D8ME7/19n2TnQiOuLGEDp63Qt7VoOqmF9ZmCWM5hc3LYhd8JVIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnO4fYmI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35FEC4CEE2;
+	Fri, 11 Apr 2025 10:37:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744367856;
+	bh=CpLL6t19QUpzwuQ8jKApV5Z2lDYMZzmlkYr11mNxyIw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fnO4fYmIect0GDZXg0/NRfyaLoz95pbAnmIplc68nfAZ3sZPnoqE6J6Zm4dz5cwpj
+	 +DReqKDSKbipsfaOXH8z5hQC3ZQA+xcnqBMMpMb1KfF/rgEsupWEjIfqu49uPnFqNl
+	 +JSK6tFhGEYJngfnEbkdUDdDM27nNd1QWz4sPSzdbLTfAPj8FxCNjg5yLDgRQGC1Uy
+	 yhlHY6WwEYcZ0tuVEc9GsVqhQsdAAWz7pEay6Iz+loXyggQf+v2uyW4fN7DznxLPdA
+	 qm6yryWLd0knssritOXZYz3c8yzwo/kBk+Vu8RPZmjmadwNurhebeboL/009/SHN8+
+	 mHACV/8hgKGtQ==
+Date: Fri, 11 Apr 2025 13:37:31 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: peterhuewe@gmx.de, jgg@ziepe.ca, sudeep.holla@arm.com,
+	stuart.yoder@arm.com, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tpm_ffa_crb: access tpm service over FF-A direct
+ message request v2
+Message-ID: <Z_jw6z_2k0vzqyK_@kernel.org>
+References: <20250411090856.1417021-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,26 +58,124 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75Vd0PUFv_tigmKp7MEiOOuHpFhB_i8u42jZdQ1jajjq0rw@mail.gmail.com>
+In-Reply-To: <20250411090856.1417021-1-yeoreum.yun@arm.com>
 
-On Thu, Apr 10, 2025 at 08:43:53PM +0300, Andy Shevchenko wrote:
+On Fri, Apr 11, 2025 at 10:08:56AM +0100, Yeoreum Yun wrote:
+> For secure partition with multi service, tpm_ffa_crb can access tpm
+> service with direct message request v2 interface according to chapter 3.3,
+> TPM Service Command Response Buffer Interface Over FF-A specification [0].
 > 
-> > $ make drivers/staging/rtl8723bs/core/rtw_xmit.o
-> > $ cmp rtw_xmit_before.o rtw_xmit_after.o
+> This patch reflects this spec to access tpm service over
+> FF-A direct message request v2 ABI.
 > 
-> cmp is good but not good enough in general. Here it shows the 1:1
-> binary, but in some cases code can be the same, while binaries are
-> different. To make sure the code is the same use the bloat-o-meter
-> tool instead.
+> Link: https://developer.arm.com/documentation/den0138/latest/ [0]
+
+Sorry, did not notice in the first round:
+
+1. Does not have "[0]" postfix.
+2. Only for lore links:
+   https://www.kernel.org/doc/html/v6.12/maintainer/configure-git.html#creating-commit-links-to-lore-kernel-org 
+
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> ---
+> Since v1:
+>     - Fix indentation.
+>     - https://lore.kernel.org/all/20250410110701.1244965-1-yeoreum.yun@arm.com/
+> ---
+>  drivers/char/tpm/tpm_crb_ffa.c | 55 ++++++++++++++++++++++++----------
+>  1 file changed, 40 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+> index 3169a87a56b6..fed775cf53ab 100644
+> --- a/drivers/char/tpm/tpm_crb_ffa.c
+> +++ b/drivers/char/tpm/tpm_crb_ffa.c
+> @@ -105,7 +105,10 @@ struct tpm_crb_ffa {
+>  	u16 minor_version;
+>  	/* lock to protect sending of FF-A messages: */
+>  	struct mutex msg_data_lock;
+> -	struct ffa_send_direct_data direct_msg_data;
+> +	union {
+> +		struct ffa_send_direct_data direct_msg_data;
+> +		struct ffa_send_direct_data2 direct_msg_data2;
+> +	};
+>  };
+> 
+>  static struct tpm_crb_ffa *tpm_crb_ffa;
+> @@ -185,18 +188,34 @@ static int __tpm_crb_ffa_send_recieve(unsigned long func_id,
+> 
+>  	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
+> 
+> -	memset(&tpm_crb_ffa->direct_msg_data, 0x00,
+> -	       sizeof(struct ffa_send_direct_data));
+> -
+> -	tpm_crb_ffa->direct_msg_data.data1 = func_id;
+> -	tpm_crb_ffa->direct_msg_data.data2 = a0;
+> -	tpm_crb_ffa->direct_msg_data.data3 = a1;
+> -	tpm_crb_ffa->direct_msg_data.data4 = a2;
+> +	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
+> +		memset(&tpm_crb_ffa->direct_msg_data2, 0x00,
+> +		       sizeof(struct ffa_send_direct_data2));
+> +
+> +		tpm_crb_ffa->direct_msg_data2.data[0] = func_id;
+> +		tpm_crb_ffa->direct_msg_data2.data[1] = a0;
+> +		tpm_crb_ffa->direct_msg_data2.data[2] = a1;
+> +		tpm_crb_ffa->direct_msg_data2.data[3] = a2;
+> +
+> +		ret = msg_ops->sync_send_receive2(tpm_crb_ffa->ffa_dev,
+> +				&tpm_crb_ffa->direct_msg_data2);
+> +		if (!ret)
+> +			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data2.data[0]);
+> +	} else {
+> +		memset(&tpm_crb_ffa->direct_msg_data, 0x00,
+> +		       sizeof(struct ffa_send_direct_data));
+> +
+> +		tpm_crb_ffa->direct_msg_data.data1 = func_id;
+> +		tpm_crb_ffa->direct_msg_data.data2 = a0;
+> +		tpm_crb_ffa->direct_msg_data.data3 = a1;
+> +		tpm_crb_ffa->direct_msg_data.data4 = a2;
+> +
+> +		ret = msg_ops->sync_send_receive(tpm_crb_ffa->ffa_dev,
+> +				&tpm_crb_ffa->direct_msg_data);
+> +		if (!ret)
+> +			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
+> +	}
+> 
+> -	ret = msg_ops->sync_send_receive(tpm_crb_ffa->ffa_dev,
+> -			&tpm_crb_ffa->direct_msg_data);
+> -	if (!ret)
+> -		ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
+> 
+>  	return ret;
+>  }
+> @@ -231,8 +250,13 @@ int tpm_crb_ffa_get_interface_version(u16 *major, u16 *minor)
+> 
+>  	rc = __tpm_crb_ffa_send_recieve(CRB_FFA_GET_INTERFACE_VERSION, 0x00, 0x00, 0x00);
+>  	if (!rc) {
+> -		*major = CRB_FFA_MAJOR_VERSION(tpm_crb_ffa->direct_msg_data.data2);
+> -		*minor = CRB_FFA_MINOR_VERSION(tpm_crb_ffa->direct_msg_data.data2);
+> +		if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
+> +			*major = CRB_FFA_MAJOR_VERSION(tpm_crb_ffa->direct_msg_data2.data[1]);
+> +			*minor = CRB_FFA_MINOR_VERSION(tpm_crb_ffa->direct_msg_data2.data[1]);
+> +		} else {
+> +			*major = CRB_FFA_MAJOR_VERSION(tpm_crb_ffa->direct_msg_data.data2);
+> +			*minor = CRB_FFA_MINOR_VERSION(tpm_crb_ffa->direct_msg_data.data2);
+> +		}
+>  	}
+> 
+>  	return rc;
+> @@ -277,7 +301,8 @@ static int tpm_crb_ffa_probe(struct ffa_device *ffa_dev)
+> 
+>  	tpm_crb_ffa = ERR_PTR(-ENODEV); // set tpm_crb_ffa so we can detect probe failure
+> 
+> -	if (!ffa_partition_supports_direct_recv(ffa_dev)) {
+> +	if (!ffa_partition_supports_direct_recv(ffa_dev) &&
+> +	    !ffa_partition_supports_direct_req2_recv(ffa_dev)) {
+>  		pr_err("TPM partition doesn't support direct message receive.\n");
+>  		return -EINVAL;
+>  	}
+> --
+> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 > 
 
-I don't understand what you're saying at all.  cmp shows that the compiler
-was automaticall tanslating the "& 0xfff" into "% 04096u" so the resulting
-object files are exactly the same.
-
-./scripts/bloat-o-meter just looks at the sizes so it's less useful in
-this case.
-
-regards,
-dan carpenter
+BR, Jarkko
 
