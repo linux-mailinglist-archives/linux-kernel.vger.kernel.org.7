@@ -1,349 +1,157 @@
-Return-Path: <linux-kernel+bounces-599483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D3B6A85428
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:31:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F624A8542B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:31:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D1221B6893D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:31:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A9FB9A4874
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C6827CCFF;
-	Fri, 11 Apr 2025 06:31:07 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBDE27D763;
+	Fri, 11 Apr 2025 06:31:43 +0000 (UTC)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9C81EA7C6;
-	Fri, 11 Apr 2025 06:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A00627CCFA
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 06:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744353067; cv=none; b=rth7KgTsX+i8fv4D889chFzCByYUxxxIWlEFq/hPBylyDXTrfswGdQG94VolBimHK/E7d29NoDw7kBhm2efwlP7voVWHZGwmQUQ0/Q985GpHA4KUjnFIXe4nXI+KJ4OAaugfyKeFHWlS8ezvbXHfX6LE93AAZIOpQKKAJY+9+I0=
+	t=1744353103; cv=none; b=KZUQYZ52Etj8nPcMTs3FEIqhDku7YNVMYV1E4MSiE3KsnPZOF3/z6QYnPsuGlYnmKb1g6BKS3tK+eCBcxFI9TWsxzIOQISOk9pggRnMhMeQt01sFHFgpJHZBYb8BwSO6D+p8ow1R86w2JX36YHaWVa5+H74ypo6JDimFwFVoNMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744353067; c=relaxed/simple;
-	bh=YDbjwQDJ6rZqk6LDKJQGg2hDkx1p66ZxgwlvbVINwbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E/W9DOvpNGe5ddK/OxwVT5JTZgRVYvpo9n4XeZrU13IPDQz0NNlVcmyFLQVsgAsaQ+Iu2aoHQSxDp1Ok2qkDLqg69XvV3jMsDqwaPiy6aVSDK47qs7J67sXJOtTDaCSQTOgdu4DzEAUhx7U3XpUBRPfnwYmbRFU+Xv3r9SxJOlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE51C4CEE5;
-	Fri, 11 Apr 2025 06:31:03 +0000 (UTC)
-Message-ID: <95cc14a7-bfcb-446b-869c-1a14edf01032@xs4all.nl>
-Date: Fri, 11 Apr 2025 08:31:01 +0200
+	s=arc-20240116; t=1744353103; c=relaxed/simple;
+	bh=9A7DwqByXRMCKVIdkYcVcQ2WDj1fbv8iIBH5EpQdQYE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QsoDHZKCk/N7XjVM/9BlB5oR2d73AYrQLFArwS7t5z+OOJ8Fx8DMUlml+XiHuOywptAjUuhhNGv3dnWIwVafxT/2jdCBhZgF1SHaZFtmr5UhibTozUlJNIfUP46oWnbMrm39XrZToAeDn//LYHhDvsW4v1xZADgsmZ33UthdwPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-527b70bd90dso777473e0c.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 23:31:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744353098; x=1744957898;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wEO0P/4McgPJ7BP0yxbjT3/h2+Tl9EqmI0luXhkXNF0=;
+        b=a2DcRUts9cx7t/WmG4qGehMr5Of9TMvZbayBtCm+75jrSZO/JDtKzKTwRMFkfnq2hU
+         QwzJb0Hjx5zXKjXOGTajboSHsfRfbRX8vmoWypJuPMTPCiI2eoqX5+fMs+UygqJEqIIF
+         4MiEmy6lpq1IpU6uhkNvfNfo7fBWrjkfWCQsO+gAKs2Fo4kcxvtVV1nR97tZcINWkhra
+         5zQlOxOOTyF1l1gRx3n7YLyYJEf4lo+aYpwY7BUdbXQmhbZPJ3BCryDjoCu2H20gfZBv
+         8kBw+uliSN/KWi1QW18Wf6WkR7UqAT8YU7YI7hIt1mGyvjXQnrSKAjvynzWOIwa4K95T
+         MWJw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1E4jRz5h3fGwef9IlAR8RmZpN3jE5Xcxv5GUyquYuQFTKlzuykbNaG1m+PpAoIyekwu2GOxnnjeStQoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ/IPTxTjS8oos/HwbTnHkaA3a4LFMEz5lXAMjeHXl7h7PzFYk
+	UzegGUDy8j+N1LDSlHGPs4bH4lAbeSUbGlwlbLxoGYZvTjKpHYhwh7I3bCUfkv0=
+X-Gm-Gg: ASbGnctIIhfRNZfNJ+H8VrxBcuZeEbXWtaP72MSg5dbulf7g9vHW4JqLdHtUoXY2qci
+	vU/evFUpLcc0XxUX2Gipr1P60KDcuXKHIAh9tkwUBawexEfkOjf7kjObiRpA9CrJFsWwlmNTKep
+	l5ZyH9144agoGnMb9VQhAfoU3bfNU03mQmQQ5Rwao2yVUUqos6R0wTO95ZFlXS6LA1Mi2vnqcOm
+	6D/YSjiE+oGIEKQvXT7kXRwQdOuCyRdnuelfsiXx+yHORXDqrBflTHB6nlUTN48myWqW/DTRnnH
+	hIVYtZ1M5YPdYIqUhoE8ZgMBpQxIiQeWXFKP8J3PAe8ohDUnfVPiTVyGceIVFSKUy5RpE9vjkmg
+	MV08=
+X-Google-Smtp-Source: AGHT+IGBbXiRf9m/J1RjkG7SglTN72AYn0GHXdPWi51OWYq7GNSwgajZ2Mrif3J7sE8BJEEwi7y2ZA==
+X-Received: by 2002:a05:6122:168e:b0:520:42d3:91aa with SMTP id 71dfb90a1353d-527c347f3c2mr904742e0c.2.1744353098489;
+        Thu, 10 Apr 2025 23:31:38 -0700 (PDT)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87557136a61sm972505241.8.2025.04.10.23.31.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Apr 2025 23:31:38 -0700 (PDT)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-86d3907524cso665494241.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 23:31:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCURCr0Ccm6aoAur+14X00CBzwbvrTNm2wTQ1Edtezjf5JpyYmn5ZX69aAVLmHZfTWgdfy/a3iT4GiCU+T8=@vger.kernel.org
+X-Received: by 2002:a05:6102:b02:b0:4bb:e8c5:b164 with SMTP id
+ ada2fe7eead31-4c9e4ee720bmr793116137.7.1744353097831; Thu, 10 Apr 2025
+ 23:31:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] media: mc: add manual request completion
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Tiffany Lin <tiffany.lin@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com,
- linux-media@vger.kernel.org,
- Sebastian Fricke <sebastian.fricke@collabora.com>
-References: <20250410-sebastianfricke-vcodec_manual_request_completion_with_state_machine-v2-0-5b99ec0450e6@collabora.com>
- <20250410-sebastianfricke-vcodec_manual_request_completion_with_state_machine-v2-1-5b99ec0450e6@collabora.com>
- <20250410175010.GF27870@pendragon.ideasonboard.com>
- <bb1f8d1581169bdf2e04be67883ee3ae03488680.camel@collabora.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- xsFNBFQ84W0BEAC7EF1iL4s3tY8cRTVkJT/297h0Hz0ypA+ByVM4CdU9sN6ua/YoFlr9k0K4
- BFUlg7JzJoUuRbKxkYb8mmqOe722j7N3HO8+ofnio5cAP5W0WwDpM0kM84BeHU0aPSTsWiGR
- yw55SOK2JBSq7hueotWLfJLobMWhQii0Zd83hGT9SIt9uHaHjgwmtTH7MSTIiaY6N14nw2Ud
- C6Uykc1va0Wqqc2ov5ihgk/2k2SKa02ookQI3e79laOrbZl5BOXNKR9LguuOZdX4XYR3Zi6/
- BsJ7pVCK9xkiVf8svlEl94IHb+sa1KrlgGv3fn5xgzDw8Z222TfFceDL/2EzUyTdWc4GaPMC
- E/c1B4UOle6ZHg02+I8tZicjzj5+yffv1lB5A1btG+AmoZrgf0X2O1B96fqgHx8w9PIpVERN
- YsmkfxvhfP3MO3oHh8UY1OLKdlKamMneCLk2up1Zlli347KMjHAVjBAiy8qOguKF9k7HOjif
- JCLYTkggrRiEiE1xg4tblBNj8WGyKH+u/hwwwBqCd/Px2HvhAsJQ7DwuuB3vBAp845BJYUU3
- 06kRihFqbO0vEt4QmcQDcbWINeZ2zX5TK7QQ91ldHdqJn6MhXulPKcM8tCkdD8YNXXKyKqNl
- UVqXnarz8m2JCbHgjEkUlAJCNd6m3pfESLZwSWsLYL49R5yxIwARAQABzSFIYW5zIFZlcmt1
- aWwgPGh2ZXJrdWlsQHhzNGFsbC5ubD7CwZUEEwEKAD8CGwMGCwkIBwMCBhUIAgkKCwQWAgMB
- Ah4BAheAFiEEBSzee8IVBTtonxvKvS1hSGYUO0wFAmaU3GkFCRf7lXsACgkQvS1hSGYUO0wZ
- cw//cLMiaV+p2rCyzdpDjWon2XD6M646THYvqXLb9eVWicFlVG78kNtHrHyEWKPhN3OdWWjn
- kOzXseVR/nS6vZvqCaT3rwgh3ZMb0GvOQk1/7V8UbcIERy036AjQoZmKo5tEDIv48MSvqxjj
- H6wbKXbCyvnIwpGICLyb0xAwvvpTaJkwZjvGqeo5EL0Z+cQ8fCelfKNO5CFFP3FNd3dH8wU6
- CHRtdZE03iIVEWpgCTjsG2zwsX/CKfPx0EKcrQajW3Tc50Jm0uuRUEKCVphlYORAPtFAF1dj
- Ly8zpN1bEXH+0FDXe/SHhzbvgS4sL0J4KQCCZ/GcbKh/vsDC1VLsGS5C7fKOhAtOkUPWRjF+
- kOEEcTOROMMvSUVokO+gCdb9nA/e3WMgiTwWRumWy5eCEnCpM9+rfI2HzTeACrVgGEDkOTHW
- eaGHEy8nS9a25ejQzsBhi+T7MW53ZTIjklR7dFl/uuK+EJ6DLbDpVbwyYo2oeiwP+sf8/Rgv
- WfJv4wzfUo/JABwrsbfWfycVZwFWBzqq+TaKFkMPm017dkLdg4MzxvvTMP7nKfJxU1bQ2OOr
- xkPk5KDcz+aRYBvTqEXgYZ6OZtnOUFKD+uPlbWf68vuz/1iFbQYnNJkTxwWhiIMN7BULK74d
- Ek89MU7JlbYNSv0v21lRF+uDo0J6zyoTt0ZxSPzOwU0EVDzhbQEQANzLiI6gHkIhBQKeQaYs
- p2SSqF9c++9LOy5x6nbQ4s0X3oTKaMGfBZuiKkkU6NnHCSa0Az5ScRWLaRGu1PzjgcVwzl5O
- sDawR1BtOG/XoPRNB2351PRp++W8TWo2viYYY0uJHKFHML+ku9q0P+NkdTzFGJLP+hn7x0RT
- DMbhKTHO3H2xJz5TXNE9zTJuIfGAz3ShDpijvzYieY330BzZYfpgvCllDVM5E4XgfF4F/N90
- wWKu50fMA01ufwu+99GEwTFVG2az5T9SXd7vfSgRSkzXy7hcnxj4IhOfM6Ts85/BjMeIpeqy
- TDdsuetBgX9DMMWxMWl7BLeiMzMGrfkJ4tvlof0sVjurXibTibZyfyGR2ricg8iTbHyFaAzX
- 2uFVoZaPxrp7udDfQ96sfz0hesF9Zi8d7NnNnMYbUmUtaS083L/l2EDKvCIkhSjd48XF+aO8
- VhrCfbXWpGRaLcY/gxi2TXRYG9xCa7PINgz9SyO34sL6TeFPSZn4bPQV5O1j85Dj4jBecB1k
- z2arzwlWWKMZUbR04HTeAuuvYvCKEMnfW3ABzdonh70QdqJbpQGfAF2p4/iCETKWuqefiOYn
- pR8PqoQA1DYv3t7y9DIN5Jw/8Oj5wOeEybw6vTMB0rrnx+JaXvxeHSlFzHiD6il/ChDDkJ9J
- /ejCHUQIl40wLSDRABEBAAHCwXwEGAEKACYCGwwWIQQFLN57whUFO2ifG8q9LWFIZhQ7TAUC
- ZpTcxwUJF/uV2gAKCRC9LWFIZhQ7TMlPD/9ppgrN4Z9gXta9IdS8a+0E7lj/dc0LnF9T6MMq
- aUC+CFffTiOoNDnfXh8sfsqTjAT50TsVpdlH6YyPlbU5FR8bC8wntrJ6ZRWDdHJiCDLqNA/l
- GVtIKP1YW8fA01thMcVUyQCdVUqnByMJiJQDzZYrX+E/YKUTh2RL5Ye0foAGE7SGzfZagI0D
- OZN92w59e1Jg3zBhYXQIjzBbhGIy7usBfvE882GdUbP29bKfTpcOKkJIgO6K+w82D/1d5TON
- SD146+UySmEnjYxHI8kBYaZJ4ubyYrDGgXT3jIBPq8i9iZP3JSeZ/0F9UIlX4KeMSG8ymgCR
- SqL1y9pl9R2ewCepCahEkTT7IieGUzJZz7fGUaxrSyexPE1+qNosfrUIu3yhRA6AIjhwPisl
- aSwDxLI6qWDEQeeWNQaYUSEIFQ5XkZxd/VN8JeMwGIAq17Hlym+JzjBkgkm1LV9LXw9D8MQL
- e8tSeEXX8BZIen6y/y+U2CedzEsMKGjy5WNmufiPOzB3q2JwFQCw8AoNic7soPN9CVCEgd2r
- XS+OUZb8VvEDVRSK5Yf79RveqHvmhAdNOVh70f5CvwR/bfX/Ei2Szxz47KhZXpn1lxmcds6b
- LYjTAZF0anym44vsvOEuQg3rqxj/7Hiz4A3HIkrpTWclV6ru1tuGp/ZJ7aY8bdvztP2KTw==
-In-Reply-To: <bb1f8d1581169bdf2e04be67883ee3ae03488680.camel@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250410200606.20318-1-dylanbhatch@google.com> <20250410200606.20318-3-dylanbhatch@google.com>
+In-Reply-To: <20250410200606.20318-3-dylanbhatch@google.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 11 Apr 2025 08:31:25 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU-1f3_ufKzHxg7KP-oQOTUR=P3e36W9X=+nkA4SH1F_Q@mail.gmail.com>
+X-Gm-Features: ATxdqUG8wphQEVB9r3YF2jmxCQ7GDshhzzkv5uNWZN8ycvFadPAv3ateJjFVJyg
+Message-ID: <CAMuHMdU-1f3_ufKzHxg7KP-oQOTUR=P3e36W9X=+nkA4SH1F_Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64/module: Use text-poke API for late relocations.
+To: Dylan Hatch <dylanbhatch@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Song Liu <song@kernel.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Roman Gushchin <kfree@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/04/2025 22:31, Nicolas Dufresne wrote:
-> Replying on the code comment, sorry for missing some bit earlier ...
-> 
-> Le jeudi 10 avril 2025 à 20:50 +0300, Laurent Pinchart a écrit :
->> Hi Nicolas,
->>
->> Thank you for the patch.
->>
->> On Thu, Apr 10, 2025 at 11:39:56AM -0400, Nicolas Dufresne wrote:
->>> From: Hans Verkuil <hverkuil@xs4all.nl>
->>>
->>> By default when the last request object is completed, the whole
->>> request completes as well.
->>>
->>> But sometimes you want to manually complete a request in a driver,
->>> so add a manual complete mode for this.
->>
->> I didn't immediately understand this was about delaying completion of
->> the request. It would be nice to make that more explicit in the commit
->> message and in the documentation of
->> media_request_mark_manual_completion(). A sample use case would also
->> help.
->>
->>> In req_queue the driver marks the request for manual completion by
->>> calling media_request_mark_manual_completion, and when the driver
->>> wants to manually complete the request it calls
->>> media_request_manual_complete().
->>>
->>> Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
->>> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
->>> ---
->>>  drivers/media/mc/mc-request.c | 38 ++++++++++++++++++++++++++++++++++++--
->>>  include/media/media-request.h | 36 +++++++++++++++++++++++++++++++++++-
->>>  2 files changed, 71 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/media/mc/mc-request.c b/drivers/media/mc/mc-request.c
->>> index 5edfc2791ce7c7485def5db675bbf53ee223d837..398d0806d1d274eb8c454fc5c37b77476abe1e74 100644
->>> --- a/drivers/media/mc/mc-request.c
->>> +++ b/drivers/media/mc/mc-request.c
->>> @@ -54,6 +54,7 @@ static void media_request_clean(struct media_request *req)
->>>  	req->access_count = 0;
->>>  	WARN_ON(req->num_incomplete_objects);
->>>  	req->num_incomplete_objects = 0;
->>> +	req->manual_completion = false;
->>>  	wake_up_interruptible_all(&req->poll_wait);
->>>  }
->>>  
->>> @@ -313,6 +314,7 @@ int media_request_alloc(struct media_device *mdev, int *alloc_fd)
->>>  	req->mdev = mdev;
->>>  	req->state = MEDIA_REQUEST_STATE_IDLE;
->>>  	req->num_incomplete_objects = 0;
->>> +	req->manual_completion = false;
->>>  	kref_init(&req->kref);
->>>  	INIT_LIST_HEAD(&req->objects);
->>>  	spin_lock_init(&req->lock);
->>> @@ -459,7 +461,7 @@ void media_request_object_unbind(struct media_request_object *obj)
->>>  
->>>  	req->num_incomplete_objects--;
->>>  	if (req->state == MEDIA_REQUEST_STATE_QUEUED &&
->>> -	    !req->num_incomplete_objects) {
->>> +	    !req->num_incomplete_objects && !req->manual_completion) {
->>>  		req->state = MEDIA_REQUEST_STATE_COMPLETE;
->>>  		completed = true;
->>>  		wake_up_interruptible_all(&req->poll_wait);
->>> @@ -488,7 +490,7 @@ void media_request_object_complete(struct media_request_object *obj)
->>>  	    WARN_ON(req->state != MEDIA_REQUEST_STATE_QUEUED))
->>>  		goto unlock;
->>>  
->>> -	if (!--req->num_incomplete_objects) {
->>> +	if (!--req->num_incomplete_objects && !req->manual_completion) {
->>>  		req->state = MEDIA_REQUEST_STATE_COMPLETE;
->>>  		wake_up_interruptible_all(&req->poll_wait);
->>>  		completed = true;
->>> @@ -499,3 +501,35 @@ void media_request_object_complete(struct media_request_object *obj)
->>>  		media_request_put(req);
->>>  }
->>>  EXPORT_SYMBOL_GPL(media_request_object_complete);
->>> +
->>> +void media_request_manual_complete(struct media_request *req)
->>> +{
->>> +	unsigned long flags;
->>> +	bool completed = false;
->>> +
->>> +	if (WARN_ON(!req))
->>> +		return;
->>> +	if (WARN_ON(!req->manual_completion))
->>> +		return;
->>> +
->>> +	spin_lock_irqsave(&req->lock, flags);
->>> +	if (WARN_ON(req->state != MEDIA_REQUEST_STATE_QUEUED))
->>> +		goto unlock;
->>> +
->>> +	req->manual_completion = false;
->>> +	/*
->>> +	 * It is expected that all other objects in this request are
->>> +	 * completed when this function is called. WARN if that is
->>> +	 * not the case.
->>> +	 */
->>> +	if (!WARN_ON(req->num_incomplete_objects)) {
->>> +		req->state = MEDIA_REQUEST_STATE_COMPLETE;
->>> +		wake_up_interruptible_all(&req->poll_wait);
->>> +		completed = true;
->>> +	}
->>> +unlock:
->>> +	spin_unlock_irqrestore(&req->lock, flags);
->>> +	if (completed)
->>> +		media_request_put(req);
->>> +}
->>> +EXPORT_SYMBOL_GPL(media_request_manual_complete);
->>> diff --git a/include/media/media-request.h b/include/media/media-request.h
->>> index d4ac557678a78372222704400c8c96cf3150b9d9..645d18907be7148ca50dcc9248ff06bd8ccdf953 100644
->>> --- a/include/media/media-request.h
->>> +++ b/include/media/media-request.h
->>> @@ -56,6 +56,10 @@ struct media_request_object;
->>>   * @access_count: count the number of request accesses that are in progress
->>>   * @objects: List of @struct media_request_object request objects
->>>   * @num_incomplete_objects: The number of incomplete objects in the request
->>> + * @manual_completion: if true, then the request won't be marked as completed
->>> + * when @num_incomplete_objects reaches 0. Call media_request_manual_complete()
->>> + * to set this field to false and complete the request
->>
->> I'd drop "set this field to false and " here.
-> 
-> I agree, it sounds like an invitation to write it directly, we don't
-> really want this. If Hans is fine I'll drop it.
+Hi Dylan,
 
-Yes, that's better. Just drop that part.
+Thanks for your patch!
 
-> 
->>
->>> + * if @num_incomplete_objects == 0.
->>
->>  * after @num_incomplete_objects reaches 0.
->>
->>>   * @poll_wait: Wait queue for poll
->>>   * @lock: Serializes access to this struct
->>>   */
->>> @@ -68,6 +72,7 @@ struct media_request {
->>>  	unsigned int access_count;
->>>  	struct list_head objects;
->>>  	unsigned int num_incomplete_objects;
->>> +	bool manual_completion;
->>>  	wait_queue_head_t poll_wait;
->>>  	spinlock_t lock;
->>>  };
->>> @@ -218,6 +223,35 @@ media_request_get_by_fd(struct media_device *mdev, int request_fd);
->>>  int media_request_alloc(struct media_device *mdev,
->>>  			int *alloc_fd);
->>>  
->>> +/**
->>> + * media_request_mark_manual_completion - Set manual_completion to true
->>> + *
->>> + * @req: The request
->>> + *
->>> + * Mark that the request has to be manually completed by calling
->>> + * media_request_manual_complete().
->>> + *
->>> + * This function should be called in the req_queue callback.
->>
->> s/should/shall/ unless it's not a hard requirement. Any way to catch
->> incorrect call patterns ?
-> 
-> I think we should be more strict, I can edit to shall.
+On Thu, 10 Apr 2025 at 22:06, Dylan Hatch <dylanbhatch@google.com> wrote:
+> To enable late module patching, livepatch modules need to be able to
+> apply some of their relocations well after being loaded. In this
+> scenario, use the text-poking API to allow this, even with
+> STRICT_MODULE_RWX.
 
-Yes, that should be 'shall'.
+Wouldn't using the text-poking API involve calling text_poke()?
 
-> 
-> About ways to check, perhaps I can add a lockdep_assert_held() on the
-> mdev->req_queue_mutex along with checking that the state is QUEUED. The
-> state check would catch trying to do so in req_validate().
+> This patch is largely based off commit 88fc078a7a8f6 ("x86/module: Use
+> text_poke() for late relocations").
+>
+> Signed-off-by: Dylan Hatch <dylanbhatch@google.com>
 
-A WARN_ON doesn't hurt.
+> --- a/arch/arm64/kernel/module.c
+> +++ b/arch/arm64/kernel/module.c
 
-> 
->>
->>> + */
->>> +static inline void
->>> +media_request_mark_manual_completion(struct media_request *req)
->>> +{
->>> +	req->manual_completion = true;
->>> +}
->>> +
->>> +/**
->>> + * media_request_manual_complete - Set manual_completion to false
->>
->> The main purpose of the function is to complete the request, not setting
->> manual_completion to false.
-> 
-> Indeed, that's documenting an implementation detail.
+> @@ -431,6 +444,30 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
+>         return -ENOEXEC;
+>  }
+>
+> +int apply_relocate_add(Elf64_Shdr *sechdrs,
+> +                      const char *strtab,
+> +                      unsigned int symindex,
+> +                      unsigned int relsec,
+> +                      struct module *me)
+> +{
+> +       int ret;
+> +       bool early = me->state == MODULE_STATE_UNFORMED;
+> +       void *(*write)(void *, const void *, size_t) = memcpy;
+> +
+> +       if (!early) {
+> +               write = aarch64_insn_copy;
 
-Change to: "Enable manual completion"
+Perhaps aarch64_insn_copy() should be renamed to text_poke(),  as it
+is a wrapper around __text_poke(), just like the x86 implementation?
 
-> 
->>
->>> + *
->>> + * @req: The request
->>> + *
->>> + * Set @manual_completion to false, and if @num_incomplete_objects
->>> + * is 0, then mark the request as completed.
->>> + *
->>> + * If there are still incomplete objects in the request, then
->>> + * WARN for that since that suggests a driver error.
->>
->> If that's an error then I'd document it more explicitly, as the first
->> sentence makes it sound that both cases are valid. Maybe
-> 
-> Its a programming error, I should rephrase this in the next version.
+> +               mutex_lock(&text_mutex);
+> +       }
+> +
+> +       ret = __apply_relocate_add(sechdrs, strtab, symindex, relsec, me,
+> +                                  write);
+> +
+> +       if (!early)
+> +               mutex_unlock(&text_mutex);
+> +
+> +       return ret;
+> +}
+> +
+>  static inline void __init_plt(struct plt_entry *plt, unsigned long addr)
+>  {
+>         *plt = get_plt_entry(addr, plt);
 
-suggests -> is
+Gr{oetje,eeting}s,
 
-> 
->>
->>  * This function completes a request that was marked for manual completion by an
->>  * earlier call to media_request_mark_manual_completion(). The request's
->>  * @manual_completion flag is reset to false.
->>  *
->>  * All objects contained in the request must have been completed previously. It
->>  * is an error to call this function otherwise. The request will not be
->>  * completed in that case, and the function will WARN.
->>
->>> + */
->>> +void media_request_manual_complete(struct media_request *req);
->>> +
->>>  #else
->>>  
->>>  static inline void media_request_get(struct media_request *req)
->>> @@ -336,7 +370,7 @@ void media_request_object_init(struct media_request_object *obj);
->>>   * @req: The media request
->>>   * @ops: The object ops for this object
->>>   * @priv: A driver-specific priv pointer associated with this object
->>> - * @is_buffer: Set to true if the object a buffer object.
->>> + * @is_buffer: Set to true if the object is a buffer object.
->>>   * @obj: The object
->>>   *
->>>   * Bind this object to the request and set the ops and priv values of
-> 
-> thanks a lot for the review,
-> 
+                        Geert
 
-Regards,
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-	Hans
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
