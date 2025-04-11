@@ -1,155 +1,112 @@
-Return-Path: <linux-kernel+bounces-599266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F78A8519E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 04:34:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DFAA85195
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 04:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 673A17A6DFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 02:32:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 555654A44F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 02:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA739279339;
-	Fri, 11 Apr 2025 02:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AAB27C143;
+	Fri, 11 Apr 2025 02:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VJzcRa70"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPVAE8VZ"
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C9B1F0990
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 02:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA41F157E88;
+	Fri, 11 Apr 2025 02:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744338840; cv=none; b=r93raeetQFCW5NZGZttnyr9i8MBMjxhYXizKcetFFPHB8jNfums2nZ48hW72O6lX++E7E2dj1h800/eceYebCcPHMmzS8f8YfAIaxFqKK41+3P47kfI/KAIzS+q6EvRnCJnsbRCDPOmDJIw2I14oQT+Env/U1JIfIzfNU3q3aAY=
+	t=1744338576; cv=none; b=NRJ6Mhm6/i8pfqi7qs7s90Y6wb2+jhO7eyw1VsZ7qiK3ZLSw9qixr8h33zenjNCb7IZEQAA6XKShc/ybDXOqJ5NjhipUR//aacuTf8lRmMCxYpLmRMZlxkkFtfZegRBxNF0AqQBzHOWC63AAARvlzvegIyE1rKuFU860jzG0+GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744338840; c=relaxed/simple;
-	bh=tZp/nWpeL3IjPih7amkifGty8bjxnO64DSgmN83xU/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u5PYinQF/7AokbP5KQ35KkzFdZ/0LNJsTBycgac7mwPafa8P5UOGCAbyO7++T1IM93N8a34pVtvwy9idR4GOKNCbrX/jdxUnv3xsTrKavdFEnVpxUszCl0RnfZirY/L7VZ2Ny2LO+G2L91iGYYgIJzoQIqxFRR5v8R9IT8lgak4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VJzcRa70; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1744338834; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=E9bGGUreuEr9WcQwyHdCJYupubC8PqSvroGU5lP73V0=;
-	b=VJzcRa70n7ZGccrp2rhtDhj0p/UFDo7WHJYue1Zra1Oqsy8xehin038BlATyTdbpSYiYSPLP0Nb3/r7deEKO6RdbLHWV9kM3Nb1rBtF8efRWR3dYzMztUR8G6Go7lfkoZFYRGwclZsI7zYAHZSQWBwRaObyf/3Qyf1KbQx7wMqI=
-Received: from 30.74.129.90(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WWRQjjz_1744338516 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 11 Apr 2025 10:28:36 +0800
-Message-ID: <3f901a84-9157-4f93-86a4-b56f5c240f78@linux.alibaba.com>
-Date: Fri, 11 Apr 2025 10:28:35 +0800
+	s=arc-20240116; t=1744338576; c=relaxed/simple;
+	bh=bNVYi1SQYbbz/w0th5xJapjjWB9VlDV/aSvSKGKw108=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ABaSwF2LxpQV8z6w8g99LqQpo42jVb77MmeCEcD29hiSo2X9eTI+rYMrB9ahvfp4hN++/g/edzGGoWDudMJMjRiV5iVktOcnIeQyW5Stjc1eIAK2/VHxm/yoFz4Mr2B0mZbufvBFjwvTFvRkrUgCdgmsqyl7Crvk2Q0svSxHmNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WPVAE8VZ; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-2295d78b433so16321035ad.2;
+        Thu, 10 Apr 2025 19:29:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744338574; x=1744943374; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gXoi19SV1w4efRvxspNJpUWNECbXvbnmGNIAl2BgeRQ=;
+        b=WPVAE8VZtnVa6JeAeV6eowciugJUXJBceXjQ+14OH6Q0mpJVfL35px7LN+t6Zt+mmq
+         Fg2VTIezUopxsbKJCO/WKq2qoMhYSnTzOhUVvQnna6mGyGmzheMs3UCHD3Ua+kOrRXYn
+         319nlXr5xac3/fbfzHdjr53Q9hhx0kMEKxJjri/Ep7BRXXWh0CUBtMLdugsMXpQiNeH6
+         lKz083QoSbISOqvRo6v3dCc6FMaPo19xWlCv8j31X3Sj21ZNFwi8+cdFDu2W+OlcdGB9
+         m5eF+f4rBXPm+b7uKpcopIgVIimJ6wPWdYxCpy8u+cmsDSycImgxm9r1z8Qm4ix6n1VV
+         aBcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744338574; x=1744943374;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gXoi19SV1w4efRvxspNJpUWNECbXvbnmGNIAl2BgeRQ=;
+        b=T72WRpoHKAxUh12BByVQAgJx8VSde3tIb3YgeDI0Fq8t4U/FLD39Jxr60CHsnUJwtF
+         JOk8Syf3S+IjlQm3TO1J0GI5TEL9snxn8XCwt6Ly1QSoojao7JQhzX7HVyQNRbf8nlwS
+         zVSTj/SCDHzqU1LwounJhVky2XDFyJp5zNSxLxWWBXMRqbyJfuNjQ6QVPpQ+kA9e91WC
+         cAx917hFZRPeHotJbfH2d6RACOIfyMaAjwXNlBijwEdjypOAwN6PAKMSuerVpHOMiRQm
+         Eo+RRVxbYiX2LigWWT9Fs3s/NRJOswZNKYInASkNbM6rnKb/GlATXBqPsJHDJYNUW8Bd
+         t5mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOxJpEkJmAC+RXUL/iR52QbuV6voRL4pA9X0p/1o5qTbJN9Kdn1J9U7jeD9mc+SZVmU/X73j48@vger.kernel.org, AJvYcCVj5CntP/v3EVdpy2rGKKPezTljBReYi7o5wSjBK5MqDwaGPVAoAwfDErmJraJglDNss+Es/da/7One7Q==@vger.kernel.org, AJvYcCWNMYJDM9vLgWjZRQOH88MeuaDlr/g+YbBkEfFNyDS4QcN6GjP+Mth0wjbb9zwNcC/VCl+YDgRP7nB30O8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvcaLU7Eb9x0nsNfDscpcUnttoVL3iUFirRTTm9MvuBmujQROy
+	/hZYd3Aup0gA9Rjzr5Y11sMdGtw7zy//srK8ScIMkJW9VAf0ND9R
+X-Gm-Gg: ASbGncvHYn6MmDLUQFacjqxQgxKMO4wULcN8S5kG4YDMugSNbYg0hlhEbbJDfWYrI2D
+	9TR84JstCeACW/i8RzcmcGQBDUPPRQpVOKRKyP0JLyYWCL308heMJIBHWbhWpTE63HOyNEfCRZu
+	ERiGZDmtUgTC3qT5JTgKlP8Afe9fSGAZ/3igYLqxypTP0NFfccVktloSGMxze546tLoMjy0kJ1N
+	Sun1b1LQq88xv3Zq4IltySCMyDqt+E3sX1KVXTTg6zu0EEX9o3lgQUftSTGlTu1vOzZqtISJe6m
+	DehdEwkjrHZW3hd5AkDoVRNxe5dQ/xdLOMj5aX8Mkt+3T37XIEUZqlxwbKuheFipUVk=
+X-Google-Smtp-Source: AGHT+IEWc2MJH9CyX0FvTFVkivEIs/MKnHkpXrOfxfiEe4yDKAwHAyTkIvcr2l3cQMWpXkZXMT4/RA==
+X-Received: by 2002:a17:903:4290:b0:224:1c95:451e with SMTP id d9443c01a7336-22bea4f665emr9611695ad.33.1744338573872;
+        Thu, 10 Apr 2025 19:29:33 -0700 (PDT)
+Received: from henry.localdomain ([111.202.148.133])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd230e34asm319168b3a.137.2025.04.10.19.29.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 19:29:33 -0700 (PDT)
+From: Henry Martin <bsdhenrymartin@gmail.com>
+To: saeedm@nvidia.com,
+	leon@kernel.org,
+	tariqt@nvidia.com,
+	netdev@vger.kernel.org
+Cc: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	amirtz@nvidia.com,
+	ayal@nvidia.com,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Henry Martin <bsdhenrymartin@gmail.com>
+Subject: [PATCH v3 0/1] net/mlx5: Fix null-ptr-deref in TTC table creation
+Date: Fri, 11 Apr 2025 10:29:15 +0800
+Message-Id: <20250411022916.44698-1-bsdhenrymartin@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] erofs: add __packed annotation to union(__le16..)
-To: David Laight <david.laight.linux@gmail.com>
-Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
- kernel test robot <lkp@intel.com>
-References: <20250408114448.4040220-1-hsiangkao@linux.alibaba.com>
- <20250409195222.4cadc368@pumpkin>
- <7af3e868-04cb-47b1-a81b-651be3756ec5@linux.alibaba.com>
- <20250410215305.0c919e78@pumpkin>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20250410215305.0c919e78@pumpkin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+This patch fixes a NULL pointer dereference in
+mlx5_create_{inner_,}ttc_table() by adding NULL checks for
+mlx5_get_flow_namespace() return values.
 
+Henry Martin (1):
+  net/mlx5: Fix null-ptr-deref in mlx5_create_{inner_,}ttc_table()
 
-On 2025/4/11 04:53, David Laight wrote:
-> On Thu, 10 Apr 2025 07:56:45 +0800
-> Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
-> 
->> Hi David,
->>
->> On 2025/4/10 02:52, David Laight wrote:
->>> On Tue,  8 Apr 2025 19:44:47 +0800
->>> Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
->>>    
->>>> I'm unsure why they aren't 2 bytes in size only in arm-linux-gnueabi.
->>>
->>> IIRC one of the arm ABI aligns structures on 32 bit boundaries.
->>
->> Thanks for your reply, but I'm not sure if it's the issue.
-> 
-> Twas a guess, the fragment in the patch doesn't look as though it
-> will add padding.
-> 
-> All tests I've tried generate a 2 byte union.
-> But there might be something odd about the definition of __le16.
-> 
-> Or the compiler is actually broken!
+ drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Sigh, I'm not sure, it's really a mess but I don't have
-more time to look into that.
+-- 
+2.34.1
 
-> 
->>
->>>    
->>>>
-
-
-..
-
->>
->> I doesn't work and will report
->>
->> In file included from <command-line>:
->> In function 'erofs_check_ondisk_layout_definitions',
->>       inlined from 'erofs_module_init' at ../fs/erofs/super.c:817:2:
->> ./../include/linux/compiler_types.h:542:38: error: call to '__compiletime_assert_332' declared with attribute error: BUILD_BUG_ON failed: sizeof(struct erofs_inode_compact) != 32
->>     542 |  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->>         |
-> 
-> Try with just __packed __aligned(2) on the union definition.
-> That should overcome whatever brain-damage is causing the larger alignment,
-
-Currently it works fine with `__packed` on the union definition,
-
-do you suggest adding both `__packed` and `__aligned(2)`, may
-I ask what's the benefit of `__aligned(2)`?
-
-> 
->>
->>>
->>> I'd add a compile assert (of some form) on the size of the structure.
->>
->> you mean
->>
->> @@ -435,6 +435,7 @@ static inline void erofs_check_ondisk_layout_definitions(void)
->>           };
->>
->>           BUILD_BUG_ON(sizeof(struct erofs_super_block) != 128);
->> +       BUILD_BUG_ON(sizeof(union erofs_inode_i_nb) != 2);
->>           BUILD_BUG_ON(sizeof(struct erofs_inode_compact) != 32);
-> 
-> I'm sure there is one that you can put in the .h file itself.
-> Might have to be Static_assert().
-> 
->>
->> ?
->>
->>
->> ./../include/linux/compiler_types.h:542:38: error: call to '__compiletime_assert_332' declared with attribute error: BUILD_BUG_ON failed: sizeof(union erofs_inode_i_nb) != 2
->>     542 |  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->>         |                                      ^
->>
->> That doesn't work too.
-> 
-> That it the root of the problem.
-> I'd check with just a 'short' rather than the __le16.
-
-.. sigh.. I have no more interest on this now due to lack
-of time (my current employer doesn't allow me), I think
-if there is no better ideas, let's keep the original patch
-way to resolve arm compile issues...
-
-Thanks,
-Gao Xiang
 
