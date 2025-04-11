@@ -1,60 +1,74 @@
-Return-Path: <linux-kernel+bounces-599392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B25CA85367
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0531BA8536A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D4371890F6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:44:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3371BA7FBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E3427CCCF;
-	Fri, 11 Apr 2025 05:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932B128369F;
+	Fri, 11 Apr 2025 05:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dj6+N2Yu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ZGSORI51"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D107280CF9
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 05:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA4828137E;
+	Fri, 11 Apr 2025 05:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744350101; cv=none; b=I2M9CeZuo0/0hpmRTJtQkjewe7sKa/H7rMR2mt4vP/UsOt70THFH6+G+uvE9hC1vf0KGT0peMy0zZjef3eoUY7DX0Qfne5MCEYEG91W0ySFOEjfNzTdLz4QiVFJXvOU9zhS2SKbzbzVk7HZ3qAjDZFafYwJxmgmA+XK8SfvXH9E=
+	t=1744350106; cv=none; b=RXxPeP666eWV/suQXT+RG67ggUlgSek2F02kJW9xMJyiB1o79RM7G8zAnSVpS7cj/YvVBlRB/StA3GUJndmlN5Y6TrAiA1XbrvWN8h1/h38dsV5JVNcTSlU63++BJjYLd7j4hU8JrIrFvISucA2QfOOw7MIZGnwoCNuw5JK8PmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744350101; c=relaxed/simple;
-	bh=vUDBtPg+Mh3+eH/O9J1+/SzTJ1auFi1dBubNFPEun/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C8QaWMWEm9MzMlW8DeAnDhT7JIqYJQVGjrOQEuEZg6tlQBbJ1BoVtE9H6su7HFEeK0NbA++AtldJ+v6QmZAxlt3TpEOPg9HIjs2e11hObbMInQdxh3kodCgJPgOhpo+SNuFhRsKcwaXtfVtNtPnTosw8KqJzexRka2e3TA3kneo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dj6+N2Yu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CE98C4CEE2;
-	Fri, 11 Apr 2025 05:41:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744350101;
-	bh=vUDBtPg+Mh3+eH/O9J1+/SzTJ1auFi1dBubNFPEun/k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dj6+N2YuXyexDlgZtHIGregTb0OZ46WJ8escvBVgHZ5Q+CWcGWhILs2Rr0NVtY9Z/
-	 BwNaWa0DWVkseb/NmlxQcQD2i/Duj6GIrHrkNunyuHLZUrCykynyc/LoWFedinblnY
-	 /FQuMjVe+p+57EdYcXMdRNb1SNT8ceo82ULY/hCbramDVBsTR3TQ7mvSMPqfdk2U9X
-	 wWT0gk3z0bBs38eZaitLQHA8qFA7iFF18MHIyuamd5J3X8jsvr9bu3atJTZtxc6/Tc
-	 h8OVWqPS/dV0oUxkyo8JgB81ssMA5EVwLI9iC6XjXJjWwp1FFZDiTHFT5vCV1tsHrp
-	 WOfv1MXqEhNuA==
-From: Ingo Molnar <mingo@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 12/53] x86/alternatives: Update comments in int3_emulate_push()
-Date: Fri, 11 Apr 2025 07:40:24 +0200
-Message-ID: <20250411054105.2341982-13-mingo@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250411054105.2341982-1-mingo@kernel.org>
-References: <20250411054105.2341982-1-mingo@kernel.org>
+	s=arc-20240116; t=1744350106; c=relaxed/simple;
+	bh=qriyPMO1ibC8ioDySsSvLU5ijXvqtxPCpFVSERXUKaU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=taJc2ja/b6SgWrrZNfphoeYQXu/mrmNzFEQ2Yu7Pm8GzbaBHI6NSutC67gKKD6em4imuhlAE1JISukd9VkKjYIsY/iRnj5g8M4gqhaCUleNF9Xt6m6ng6J/PYBpDte1NntIPzWvGC/no+KalOWVXDbAY/13PVTGWvqc4KANcWOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ZGSORI51; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: a42a5622169711f08eb9c36241bbb6fb-20250411
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=B5tqHLMKf7g8Wxc9Q71D/XsmV0B59emr8eOs+ci5NQI=;
+	b=ZGSORI51ENGs8HTKctwhcJLU9SjYQXPhMCKsU0P5/Dp9cS32kGG1T0AKhZNeskanlGGicOVSESf9z9DJViPw3ROYboFuRqEYJ6qvWUxkGCImhqVR8WJG6d+6YBxW3fxPu7ixwrXQ1JCk3kX8HQ1ux5YmSgVmFbmfxrzzweaaVWY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:1ea20e90-0b09-4886-920f-3304685c8918,IP:0,UR
+	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-25
+X-CID-META: VersionHash:0ef645f,CLOUDID:84397b8d-f5b8-47d5-8cf3-b68fe7530c9a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: a42a5622169711f08eb9c36241bbb6fb-20250411
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <axe.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 903616265; Fri, 11 Apr 2025 13:41:39 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Fri, 11 Apr 2025 13:41:38 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Fri, 11 Apr 2025 13:41:37 +0800
+From: Axe Yang <axe.yang@mediatek.com>
+To: Chaotian Jing <chaotian.jing@mediatek.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	<yong.mao@mediatek.com>, <qingliang.li@mediatek.com>,
+	<andy-ld.lu@mediatek.com>, Wenbin Mei <wenbin.mei@mediatek.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Axe Yang <axe.yang@mediatek.com>
+Subject: [RESEND v2] mmc: mtk-sd: Add condition to enable 'single' burst type
+Date: Fri, 11 Apr 2025 13:40:25 +0800
+Message-ID: <20250411054134.31822-1-axe.yang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,41 +76,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-The idtentry macro in entry_64.S hasn't had a create_gap
-option for 5 years - update the comment.
+This change add a condition for 'single' burst type selection.
 
-(Also clean up the entire comment block while at it.)
+Read AXI_LEN field from EMMC50_CFG2(AHB2AXI wrapper) register, if the
+value is not 0, it means the HWIP is using AXI as AMBA bus, which do
+not support 'single' burst type.
 
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Axe Yang <axe.yang@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- arch/x86/include/asm/text-patching.h | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+This change dependents on 'mmc: mtk-sd: Cleanups for register R/W':
 
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index c8eac8cf4737..7e3527385708 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -142,13 +142,14 @@ static __always_inline
- void int3_emulate_push(struct pt_regs *regs, unsigned long val)
- {
- 	/*
--	 * The int3 handler in entry_64.S adds a gap between the
-+	 * The INT3 handler in entry_64.S adds a gap between the
- 	 * stack where the break point happened, and the saving of
- 	 * pt_regs. We can extend the original stack because of
--	 * this gap. See the idtentry macro's create_gap option.
-+	 * this gap. See the idtentry macro's X86_TRAP_BP logic.
- 	 *
--	 * Similarly entry_32.S will have a gap on the stack for (any) hardware
--	 * exception and pt_regs; see FIXUP_FRAME.
-+	 * Similarly, entry_32.S will have a gap on the stack for
-+	 * (any) hardware exception and pt_regs; see the
-+	 * FIXUP_FRAME macro.
- 	 */
- 	regs->sp -= sizeof(unsigned long);
- 	*(unsigned long *)regs->sp = val;
+https://patchwork.kernel.org/project/linux-mediatek/cover/20250325110701.52623-1-angelogioacchino.delregno@collabora.com/
+---
+ drivers/mmc/host/mtk-sd.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index ceeae1aeac94..2e4bd5166c17 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -84,6 +84,7 @@
+ #define EMMC51_CFG0	 0x204
+ #define EMMC50_CFG0      0x208
+ #define EMMC50_CFG1      0x20c
++#define EMMC50_CFG2      0x21c
+ #define EMMC50_CFG3      0x220
+ #define SDC_FIFO_CFG     0x228
+ #define CQHCI_SETTING	 0x7fc
+@@ -306,7 +307,10 @@
+ /* EMMC50_CFG1 mask */
+ #define EMMC50_CFG1_DS_CFG        BIT(28)  /* RW */
+ 
+-#define EMMC50_CFG3_OUTS_WR       GENMASK(4, 0)  /* RW */
++/* EMMC50_CFG2 mask */
++#define EMMC50_CFG2_AXI_SET_LEN   GENMASK(27, 24) /* RW */
++
++#define EMMC50_CFG3_OUTS_WR       GENMASK(4, 0)   /* RW */
+ 
+ #define SDC_FIFO_CFG_WRVALIDSEL   BIT(24)  /* RW */
+ #define SDC_FIFO_CFG_RDVALIDSEL   BIT(25)  /* RW */
+@@ -1917,9 +1921,13 @@ static void msdc_init_hw(struct msdc_host *host)
+ 	pb1_val |= FIELD_PREP(MSDC_PATCH_BIT1_CMDTA, 1);
+ 	pb1_val |= MSDC_PB1_DDR_CMD_FIX_SEL;
+ 
+-	/* Set single burst mode, auto sync state clear, block gap stop clk */
+-	pb1_val |= MSDC_PB1_SINGLE_BURST | MSDC_PB1_RSVD20 |
+-		   MSDC_PB1_AUTO_SYNCST_CLR | MSDC_PB1_MARK_POP_WATER;
++	/* Support 'single' burst type only when AXI_LEN is 0 */
++	sdr_get_field(host->base + EMMC50_CFG2, EMMC50_CFG2_AXI_SET_LEN, &val);
++	if (!val)
++		pb1_val |= MSDC_PB1_SINGLE_BURST;
++
++	/* Set auto sync state clear, block gap stop clk */
++	pb1_val |= MSDC_PB1_RSVD20 | MSDC_PB1_AUTO_SYNCST_CLR | MSDC_PB1_MARK_POP_WATER;
+ 
+ 	/* Set low power DCM, use HCLK for GDMA, use MSDC CLK for everything else */
+ 	pb1_val |= MSDC_PB1_LP_DCM_EN | MSDC_PB1_RSVD3 |
 -- 
-2.45.2
+2.46.0
 
 
