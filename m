@@ -1,106 +1,108 @@
-Return-Path: <linux-kernel+bounces-600144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03C15A85C59
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:58:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 231B6A85C64
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8392A161642
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:58:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE03B7B29FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F03298CCF;
-	Fri, 11 Apr 2025 11:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D007E221269;
+	Fri, 11 Apr 2025 12:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQ9rPBm6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EA31DE3C7;
-	Fri, 11 Apr 2025 11:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="cwaBQPxu"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AF2278E5E
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 12:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744372716; cv=none; b=FqpnaIJa7qLYFxAY4CyBkkd0LQYVlZ1MGtXfBi5pvwbQhln6fkrXWQY9EB+s6wbuRdvv63By8u4ncaW2ehoSxugAMwMy5jfXIDdpUHOLcmdV20LKHWLTuCozrY0loM0v5mX5TqzyToJp75SVVQdhVzgmiMoD89csMWYTtkcyk58=
+	t=1744372858; cv=none; b=D/S8PTg/dFhqopgxbajal3t66ahLekCw7iEfco41I8QxtxoGDxTAnFbW7xmynNKLNjKthkFxxZdADGeotgEUeKefl/pWEZ7CwK46TVlNiI6UDYTzco1LLfDaTP7oBN2TPwHY5i0sZJy//MYGIwzZkfV1Ws1lZtLzCKySK9MbKXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744372716; c=relaxed/simple;
-	bh=1SoWvdTHhDsps5p1Ia5cr7bCYvRyvBzxp3ueudtHSQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ONLmaBcp5KVU25t/vokl8ZxrWYZ3e6cuWQg+WQEv/KPeX038RMyVzpRrEF+KK8Rmj0ExpzYo9ndhlSY6kPu3ddf8QsxoV5IEOBGGgdSOU+tDW2a/W1QwXWcsDRyU5biQ9xYeTPpDvdvEMzePlf/3twsbm/QhGk1MU8HZxFC2Hn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQ9rPBm6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FFBBC4CEE7;
-	Fri, 11 Apr 2025 11:58:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744372715;
-	bh=1SoWvdTHhDsps5p1Ia5cr7bCYvRyvBzxp3ueudtHSQM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WQ9rPBm6MatRuA9DkJmuGNqY9cqC7cTngLeLeYIlVM6CukN4EJFDvcl6MFIB7uvUF
-	 yMZwPISFSDAH+Qh6uk1q/tgPkNqF+laRlM5cNIjeTlCIJODf9MaGC3iZOZrw3oUJMX
-	 1ZfGHKP8w+gmUt0fQXBHJFbmZlt39Qq/X7hRtRkMeqYyrp2lIHUpCMInGrDrIQQ/l+
-	 rKxNJB1GH9G07G7QagNuccQ4ynaYy2htA3POnq+8SUd+Si6eanb+2QNMlbDojqFycA
-	 4X56Znfxhk8SHhVlLoTCLFctam8bKNxezzGCK3dKZ+t68D0tMtG3x3MJmy59wC53kv
-	 O5jk62PuHXR6g==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u3D1s-00000000103-02SD;
-	Fri, 11 Apr 2025 13:58:40 +0200
-Date: Fri, 11 Apr 2025 13:58:40 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Abel Vesa <abel.vesa@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e001de-devkit: Fix pin config
- for USB0 retimer vregs
-Message-ID: <Z_kD8DJCPCJSu9-F@hovoldconsulting.com>
-References: <20250318-x1e001de-devkit-dts-fix-retimer-gpios-v1-0-1c092f630b0c@linaro.org>
- <20250318-x1e001de-devkit-dts-fix-retimer-gpios-v1-2-1c092f630b0c@linaro.org>
- <abcf5f26-930a-4ce8-89ff-fc5405fe7b19@oss.qualcomm.com>
+	s=arc-20240116; t=1744372858; c=relaxed/simple;
+	bh=p+KBJg/q0VC4AxurC0CaLJgxb/Q+KI0fay4d3RSnrro=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fYbTJbfYUcTO1rEttnqn7P4+FqFmwtQdlDfqHoPYMkwBr4YXq+wP9BkF3yc0+CBWLhHGy8YERUpN8NUgz0TqQ9Pa9Ffd8+3Jue3mGGD+WzDJP2IRZ8PYY2+9xWH2yz+zLCIxtpiw4JNQUDoCsEKTnjL4+6NdMRQLHdFlLlgbny0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=cwaBQPxu; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=Ai6KO
+	rDYRhXJ9lvg8B6jho/hJgKPY3oes6sm6uHCIVQ=; b=cwaBQPxugXqPHMuN975Hd
+	UFQNFOVGGuJZ/NgXaZ3/WIGz95Z4k5nKjTV5hGLeSjYUjHyPufr2Rwr44+3EQcEa
+	NniugkIkdMqlMREKpKmfxsig58eLbcW48Mq6Mv3iSR+8k55tMWYKRAvHDyDWPJ0O
+	zFbkzzGAhUciPngSeO79Vg=
+Received: from ProDesk.. (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgDXnwMuBPlnWR0nAA--.27850S2;
+	Fri, 11 Apr 2025 19:59:46 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: lumag@kernel.org
+Cc: cristian.ciocaltea@collabora.com,
+	mripard@kernel.org,
+	neil.armstrong@linaro.org,
+	andrzej.hajda@intel.com,
+	dianders@chromium.org,
+	jernej.skrabec@gmail.com,
+	Laurent.pinchart@ideasonboard.com,
+	maarten.lankhorst@linux.intel.com,
+	rfoss@kernel.org,
+	simona@ffwll.ch,
+	tzimmermann@suse.de,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	heiko@sntech.de,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v2] drm/bridge: dw-hdmi: Avoid including uapi headers
+Date: Fri, 11 Apr 2025 19:59:37 +0800
+Message-ID: <20250411115941.318558-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <abcf5f26-930a-4ce8-89ff-fc5405fe7b19@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PSgvCgDXnwMuBPlnWR0nAA--.27850S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKr15ZFy8WF1rur1xZF48Xrb_yoWftwb_C3
+	WSvrW5JrWUCr1qyF17ZrsxZ3sF9a1UuFWxWFn5tr9xAF4kZr4YgwnrZFyUJwn8uF15KFZr
+	Wa45WFW2vrnxWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1_Ma5UUUUU==
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkAosXmf5AzIMjwACsG
 
-On Sat, Apr 05, 2025 at 01:08:46AM +0200, Konrad Dybcio wrote:
-> On 3/18/25 4:50 PM, Abel Vesa wrote:
-> > Describe the missing power source, bias and direction for each of the USB0
-> > retimer gpio-controlled voltage regulators related pin configuration.
-> > 
-> > Fixes: 019e1ee32fec ("arm64: dts: qcom: x1e001de-devkit: Enable external DP support")
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/x1e001de-devkit.dts | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-> > index 902335396c586a991c4a2de19906b039d887780f..8e88e00c335a05d0d36b4b08b85df82f38ef4355 100644
-> > --- a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-> > +++ b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-> > @@ -1039,6 +1039,10 @@ rtmr0_default: rtmr0-reset-n-active-state {
-> >  	usb0_3p3_reg_en: usb0-3p3-reg-en-state {
-> >  		pins = "gpio11";
-> >  		function = "normal";
-> > +		power-source = <1>; /* 1.8V */
-> 
-> Not sure if I'm a fan of these comments but sure
+From: Andy Yan <andy.yan@rock-chips.com>
 
-How come? 
+It is not recommended for drivers to include UAPI header
+directly.
 
-Due to the incomplete bindings for these PMICs this is currently the
-only way we have to document this information. And AFAIU the voltage
-mapping can even differ from pin to pin on the same device.
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-I would prefer to see a space before the SI unit though.
+---
 
-Johan
+Changes in v2:
+- Collect R-b from Heiko.
+
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index b1cdf806b3c40..deaba3b6f9978 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -22,8 +22,8 @@
+ 
+ #include <media/cec-notifier.h>
+ 
+-#include <uapi/linux/media-bus-format.h>
+-#include <uapi/linux/videodev2.h>
++#include <linux/media-bus-format.h>
++#include <linux/videodev2.h>
+ 
+ #include <drm/bridge/dw_hdmi.h>
+ #include <drm/display/drm_hdmi_helper.h>
+-- 
+2.43.0
+
 
