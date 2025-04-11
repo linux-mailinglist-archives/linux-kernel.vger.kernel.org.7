@@ -1,58 +1,51 @@
-Return-Path: <linux-kernel+bounces-600305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7DA1A85E35
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:08:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2781A85E3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 980687B8ECA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:06:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 343F91894E3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAE27DA6A;
-	Fri, 11 Apr 2025 13:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0097213959D;
+	Fri, 11 Apr 2025 13:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WBTw0Qfn"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354BC2367A7;
-	Fri, 11 Apr 2025 13:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oCHB33EI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7BE7DA6A;
+	Fri, 11 Apr 2025 13:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744376877; cv=none; b=MyjHinhaGqBUqAj3Vo+c8DdvCL+k4FZ7EFlb0cmhyQdswp4LzXVFyUAbTFrt4iksxt3nxluV9cZzLOsEFQY6+dKiIfGZsUcnFgIUSXkJhSN8mgl6NkfzL1AbHdUjo/V+z2KLsJDVWxckaUjI5+5KPwLpUciCrMXcxjRay4Gt334=
+	t=1744376798; cv=none; b=mbnkXvxywrPe2uRfqC+TB+KvtVLOP9AeRm08QabRzkKMla5GiEGh2o2R1WgYokRy3LTqEYxyoAAKTLFE2Uinxj+nY/u46/TfRRrBhfirMSGFvMxtac1f6loM26QJZcVb05EN3uKG6sPxlmYXqy+1cUYut68+LHw0M/7i17sTyy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744376877; c=relaxed/simple;
-	bh=I8a9dN6aHQZms/YtghSSJ1hw1q/pOboZ1oI3gg8yojA=;
+	s=arc-20240116; t=1744376798; c=relaxed/simple;
+	bh=5O79GdJMUP1u1auDATSqpr2gGJykXZlL0f4n5WLQaS8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OWceN87XBmUlE36cgX3gvBiZ2YjLOSr3opdDKxe+SUWhVIFnUy1JpNd1+XncHAxfT1rfUlR19BnDs4Dgsnf8rGTEqXCdXqxNsh9XAglgPbOXQU29ubGnNlRC2mO9KFRYa5+9KdKVMFeqzm0lMwbstJ7P0jGAtpnj9mf+AAUk8hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WBTw0Qfn; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=lyZXs2Zi6ekjJ4FW1SSFkba/dKS2ypdHY1EDXydc9FY=;
-	b=WBTw0QfnbMMZ5lGVGzxWAKb6PenYP1x8fkL2XRfhbE5DseqQ2A8jmcACuffw2a
-	KWe0OO/sZ0UcO6XF7fmbU0ynBLC9sV1XW2LoCw25b0c9L6s5k2MKqe8lSPi8Ol4O
-	309F2KhpoJVXGzulzJHcm9COUBJjV5XY3PsX/DYKa/WDo=
-Received: from iZj6c3ewsy61ybpk7hrb16Z (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wC3t1nPE_lncFMNFg--.46424S2;
-	Fri, 11 Apr 2025 21:06:26 +0800 (CST)
-Date: Fri, 11 Apr 2025 21:06:23 +0800
-From: Jiayuan Chen <mrpre@163.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Jakub Sitnicki <jakub@cloudflare.com>
-Subject: Re: [PATCH bpf-next v2 0/9] selftests/bpf: Test sockmap/sockhash
- redirection
-Message-ID: <sgdbbkc2nzbnvkchrs23nss4c7cohebn2qwbfdxtyupbmxunqu@afosvfyylrdg>
-References: <20250411-selftests-sockmap-redir-v2-0-5f9b018d6704@rbox.co>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XZVZ10UCx6SPk+3uZTh5b2Jn45NHBGIlvwgjEv1MZTZd2k6Xp+EwHDs20JkfXLgn/7JaJtobiudqE4yfAwd9a6CG6i/W/vpXL/EfdOuysxrwknZ1dAJgQdrS/LucHVVYJuP38I3X/o/cFXJGKeAGkYagoods1sLICGkVGWP8+Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oCHB33EI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 506F3C4CEE2;
+	Fri, 11 Apr 2025 13:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744376797;
+	bh=5O79GdJMUP1u1auDATSqpr2gGJykXZlL0f4n5WLQaS8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oCHB33EIcwBAAJPW7SO/vLL7mLGzXBClQFxfPq7Pgaq4qkNo00L4MAAaaVSAl5pBX
+	 DJFRwHCd9ksWW1uOxVAsehLtq31xgQ1QykeaPmW3bkqaRv2Lb+R9tGQi9GUpUJKs7G
+	 VvvXPitxaU4AHjFjlBLbtnqMzVAC89ik78+Jrdf0=
+Date: Fri, 11 Apr 2025 15:06:34 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Henry Martin <bsdhenrymartin@gmail.com>
+Cc: joel@jms.id.au, andrew@codeconstruct.com.au, linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] usb/gadget: Add NULL check in ast_vhub_init_dev()
+Message-ID: <2025041119-debit-cosmic-f41c@gregkh>
+References: <20250405113020.80387-1-bsdhenrymartin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,84 +54,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250411-selftests-sockmap-redir-v2-0-5f9b018d6704@rbox.co>
-X-CM-TRANSID:_____wC3t1nPE_lncFMNFg--.46424S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxuF47tF1DAr43tw18tF4DCFg_yoW5Xr1fpa
-	93A3W3KFWxJFWIgw43WFWI9F4rKF48Jw15G3Wjgw1rZwnFkryxtr1Sg3yrW3Z8JrW5ZF15
-	u3y7KF93Gw1UCaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UcTmhUUUUU=
-X-CM-SenderInfo: xpus2vi6rwjhhfrp/1tbiWxcsp2f5DlK-YAAAsa
+In-Reply-To: <20250405113020.80387-1-bsdhenrymartin@gmail.com>
 
-On Fri, Apr 11, 2025 at 01:32:36PM +0200, Michal Luczaj wrote:
-> The idea behind this series is to comprehensively test the BPF redirection:
+On Sat, Apr 05, 2025 at 07:30:20PM +0800, Henry Martin wrote:
+> devm_kasprintf() returns NULL when memory allocation fails. Currently,
+> ast_vhub_init_dev() does not check for this case, which results in a
+> NULL pointer dereference.
 > 
-> BPF_MAP_TYPE_SOCKMAP,
-> BPF_MAP_TYPE_SOCKHASH
-> 	x
-> sk_msg-to-egress,
-> sk_msg-to-ingress,
-> sk_skb-to-egress,
-> sk_skb-to-ingress
-> 	x
-> AF_INET, SOCK_STREAM,
-> AF_INET6, SOCK_STREAM,
-> AF_INET, SOCK_DGRAM,
-> AF_INET6, SOCK_DGRAM,
-> AF_UNIX, SOCK_STREAM,
-> AF_UNIX, SOCK_DGRAM,
-> AF_VSOCK, SOCK_STREAM,
-> AF_VSOCK, SOCK_SEQPACKET
+> Add NULL check after devm_kasprintf() to prevent this issue.
 > 
-> New module is introduced, sockmap_redir: all supported and unsupported
-> redirect combinations are tested for success and failure respectively. Code
-> is pretty much stolen/adapted from Jakub Sitnicki's sockmap_redir_matrix.c
-> [1].
-> 
-> Usage:
-> $ cd tools/testing/selftests/bpf
-> $ make
-> $ sudo ./test_progs -t sockmap_redir
-> ...
-> Summary: 1/576 PASSED, 0 SKIPPED, 0 FAILED
-> 
-> [1]: https://github.com/jsitnicki/sockmap-redir-matrix/blob/main/sockmap_redir_matrix.c
-
-This is exactly what we need, thanks.
-> 
-> Changes in v2:
-> - Verify that the unsupported redirect combos do fail [Jakub]
-> - Dedup tests in sockmap_listen
-> - Cosmetic changes and code reordering
-> - Link to v1: https://lore.kernel.org/bpf/42939687-20f9-4a45-b7c2-342a0e11a014@rbox.co/
-> 
-> Suggested-by: Jakub Sitnicki <jakub@cloudflare.com>
-> Signed-off-by: Michal Luczaj <mhal@rbox.co>
+> Cc: stable@vger.kernel.org	# v4.18
+> Fixes: 7ecca2a4080c ("usb/gadget: Add driver for Aspeed SoC virtual hub")
+> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
 > ---
-> Michal Luczaj (9):
->       selftests/bpf: Support af_unix SOCK_DGRAM socket pair creation
->       selftests/bpf: Add socket_kind_to_str() to socket_helpers
->       selftests/bpf: Add u32()/u64() to sockmap_helpers
->       selftests/bpf: Allow setting BPF_F_INGRESS in prog_msg_verdict()
->       selftests/bpf: Add selftest for sockmap/hashmap redirection
->       selftests/bpf: sockmap_listen cleanup: Drop af_vsock redir tests
->       selftests/bpf: sockmap_listen cleanup: Drop af_unix redir tests
->       selftests/bpf: sockmap_listen cleanup: Drop af_inet SOCK_DGRAM redir tests
->       docs/bpf: sockmap: Add a missing comma
+> V1 -> V2: Add Cc: stable label and correct commit message.
 > 
->  Documentation/bpf/map_sockmap.rst                  |   2 +-
->  .../selftests/bpf/prog_tests/socket_helpers.h      |  84 +++-
->  .../selftests/bpf/prog_tests/sockmap_helpers.h     |  25 +-
->  .../selftests/bpf/prog_tests/sockmap_listen.c      | 459 +-------------------
->  .../selftests/bpf/prog_tests/sockmap_redir.c       | 461 +++++++++++++++++++++
->  .../selftests/bpf/progs/test_sockmap_listen.c      |   6 +-
->  6 files changed, 558 insertions(+), 479 deletions(-)
-> ---
-> base-commit: a27a97f713947b20ba91b23a3ef77fa92d74171b
-> change-id: 20240922-selftests-sockmap-redir-5d839396c75e
+>  drivers/usb/gadget/udc/aspeed-vhub/dev.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> Best regards,
+> diff --git a/drivers/usb/gadget/udc/aspeed-vhub/dev.c b/drivers/usb/gadget/udc/aspeed-vhub/dev.c
+> index 573109ca5b79..5b7d41a990d7 100644
+> --- a/drivers/usb/gadget/udc/aspeed-vhub/dev.c
+> +++ b/drivers/usb/gadget/udc/aspeed-vhub/dev.c
+> @@ -548,6 +548,8 @@ int ast_vhub_init_dev(struct ast_vhub *vhub, unsigned int idx)
+>  	d->vhub = vhub;
+>  	d->index = idx;
+>  	d->name = devm_kasprintf(parent, GFP_KERNEL, "port%d", idx+1);
+> +	if (!d->name)
+> +		return -ENOMEM;
+>  	d->regs = vhub->regs + 0x100 + 0x10 * idx;
+>  
+>  	ast_vhub_init_ep0(vhub, &d->ep0, d);
 > -- 
-> Michal Luczaj <mhal@rbox.co>
+> 2.34.1
 > 
 
+What kernel version did you make this against?  It does not apply to
+6.15-rc1 for me :(
+
+thanks,
+
+greg k-h
 
