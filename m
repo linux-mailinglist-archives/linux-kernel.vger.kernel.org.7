@@ -1,172 +1,280 @@
-Return-Path: <linux-kernel+bounces-599538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329C3A8552D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:13:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9891A85539
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F06223A33C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:12:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B08508A7889
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A044E283C8F;
-	Fri, 11 Apr 2025 07:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0577A284B52;
+	Fri, 11 Apr 2025 07:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GTW0m84Z"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oC2Acu1I"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BA927D760;
-	Fri, 11 Apr 2025 07:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F751283C8B;
+	Fri, 11 Apr 2025 07:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744355558; cv=none; b=ADjacDwh1eeNNrkrRU6jEVbZHxT1PI09Qn5om2cadJ8b6l5bM/b2ZJzkTkmHeCNvOmDjwJdkrlqYC4nY7XCCMfGBif9EiZooo7S05JAY2nv4mJxrLKTfZDZnlKUyJASRd4zCaBPG4D3dc5GC57PfTE/e6Vi8NNMWk/BL0CUhCwo=
+	t=1744355637; cv=none; b=f8Ejou5UqprlTuE0yqRUCzdL6ZL0T50NueGk/cHwb56dLRgf6/tTS3I6hSGMzyKieVsLJHwXCls6Bk+W0MaqfSkUAudRRcWVgrto4dlzXHvk4cXF9lRSz0xQw8ZS6avdWbiKnhfRIr7CJWuRdVpA4PzcEesH2EjA2u7MXz49P4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744355558; c=relaxed/simple;
-	bh=mZ5yZ/RRH5jPH/YqF59ciQA4yPAyUYG2Z7W2fOiCoww=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=XLhcK6tN/RtQ6oWf3Vr3qkeC87rFcS25SBZZ/htThiz3f54ZwBES8nTtzqS17r4B/2fnlxMbOAjc19yiY05rnfw8T/XKVs+fmbEogW1IVkXTTQdDvLzC+be1N6FPTcCkPtP8M++Sxk+4YsaKwawX3uqPTzInjHREn7MQ59JRIvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GTW0m84Z; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-879d2e419b9so1472838a12.2;
-        Fri, 11 Apr 2025 00:12:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744355555; x=1744960355; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KzShCwppEme7OMOnT5z5FD+rJw9aaKOfx1ISsPkjuh4=;
-        b=GTW0m84ZCjUe97nVIDfVEFewCEv/JL9SfDQXndJoTQfYt5h0PQNGAjsLTvQwH1sMfC
-         /9Ed3iPQFio3xY8t2gxEFxhlgc099oepFFTYSkTpLFJNvRA2pmiqtHJeBGGGM4XWHWYW
-         OsVdGo3Aqo/fWnjnB6BbBvUI2GksOcfNrhXtVZBhduK3x/OxgD7Y7bEuKtDEKDfqr0zI
-         wOc0FIgrUlul2Nejy4hYi70jFoDaNovyjZhusQPaplXOfX0Ki7LaQLZZuBkvpuochkjo
-         poKjs+661eFXfJK9YfDmNHvI/Img3YSvVvnMui+lkroHH23EnZ+BLPkLoauDkT8B4JLK
-         XdlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744355555; x=1744960355;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KzShCwppEme7OMOnT5z5FD+rJw9aaKOfx1ISsPkjuh4=;
-        b=oesXQ/Zo0ocHJUFXHCnGih2yHNkp7OCLCkDIb5US6cyc+sXxnvXjM5bRzXBVad97/D
-         NUCITSwylTvusPMGI6jC2gXf5OWVN7wtuffBXtlhT67ZPLFhUF0lhvaj2ue8oLnXUsKg
-         MDP3NoqI926IV5dMOOPSczmaBFQ+AhIxgSdNgy/lzguvayYbBVlDXq+QddOyrUX3vX9B
-         QU5KivGPoUTNbFodpq+98zb1ukkw0+Tph8ggLm/NQPMbkhNSYPCUWj9kGst3G4F0+yp7
-         eRaeYpf0z0UuPdNijxTznMuyOD1FyGFPfr+9lAza5llWOiQDSBnssWVxxmDeoimb8QxE
-         r6sw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6kLmmMo/iugTBda3rExPVhWoFMIkGeyyYU2awBdKrWzdXK2EXy5OcJZg81mtpd6sbTGOHHdR7xvm7fg==@vger.kernel.org, AJvYcCWNU3LJ1TAWr1zTt3aCojcu8o1LMBGP0FfV6hOaxgAbi8zys3jmRENhlvOz2u51QCEzE3pYEaVitv3Xd/s=@vger.kernel.org, AJvYcCXnP2eBT2dnoAfvdyc9JzAjhZYMR2b1pKrgT5q/RXZOF0Uh5DTeTvJ85kWOh6sJAtrKmvFMCjMEO1EbVg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKKM7XqkUSfSfVlP04WAu4Hj50cGxtTFCH2khK6jxWkvRm392A
-	d4CZxFxICxI5emXFQt+fa6oaESyxHRzUtfYPZ0YclkI77hboGO22
-X-Gm-Gg: ASbGnctlYEferU/hFw1OUAgpN1t6CMN4v69xWkKTww/DJe7IHHPKTUzAmbl/iqW6iae
-	BdBpKEj3CiXJdU4Np9MTzXQ+r2sk3K6F5mVzlfKHy+k6d5WQEpmulSvOm+UKn8uN9o2LSFH0mAR
-	hqe6GsfMu8WxePqYXv7OXwZZ4a1Ww0jeJq58+39FewyQDrGGDprHU4CqqXRBVz5KPn6XRak3he6
-	kMJhLc6ikP2Vj1t6SSYjC55dm02vANml8G3+ejAMxb0gOus9RS5snPYA82e3Ey1miNPpu3oSfzc
-	oNohYoUm1yWbn2Z/S/T5lQVeYrzZwiZoZw==
-X-Google-Smtp-Source: AGHT+IHpSOk8rGIiMZXty/hbuCSKlXyveZLgB4pNTJ04Shha/BPkKtAvaM61qadHeDDYt8o+ld2JZA==
-X-Received: by 2002:a17:90b:5245:b0:2ff:784b:ffe with SMTP id 98e67ed59e1d1-3082377c271mr2980340a91.11.1744355555591;
-        Fri, 11 Apr 2025 00:12:35 -0700 (PDT)
-Received: from localhost ([220.253.99.94])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd171942sm4948139a91.33.2025.04.11.00.12.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 00:12:35 -0700 (PDT)
+	s=arc-20240116; t=1744355637; c=relaxed/simple;
+	bh=azv0aOtySUpuNbzIBRsPhvGNvDucVhkCDkQJmhuMSI0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=a6gjoCvRPAGeV2O3wa+6Qri0OhyiSnZITmRfHWEm1pGPEduQUJT9oLxumdfu09jtSaMJeWfehTy/Wxe0Qt3xnZDkFjYKoQ+nvwyjmv3R4t1CPJMApw35W/iDyI1K2wJhZ7e8rCX1RRzcYmqT90amEJWB0eB3mwqszE9Fd/rQmGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oC2Acu1I; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B5KZYG008265;
+	Fri, 11 Apr 2025 07:13:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2KUBEMT++R8AyuIZKKBKSwUbsPbRbmz5FXqeoOw0R+o=; b=oC2Acu1IKUc7t7nO
+	J4HrxIJc8uVOkjR5nvLojcTi3eclDzlLBLQ2pi68wIvs7k7UlWVJhmJoi17Ho6iO
+	45eHAITLzzW0LBIQNmQ9kqjEx1QYaw7A5OMbUmYlBYSCdgzYhopNGKAfMw0JLdXv
+	427EebsPLwohgFcGv/SP9VmSiyG2ie0SEmeJkWvQ22IBrTYsZ/VYJaJGC4U0yJCz
+	zo/BxO84GzDDOLj5OaUw0Ydaec39UajKRyJ/r/LpviuYPjdvGdVvnGTv91g/DRWA
+	OCqVYT7q/NHtLhXQkSZ6LDpO7Qe1/oy9zrSPtVHcgAXYFis0YVXpLcE+lzsQ09OA
+	BAgchA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twd09pbs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 07:13:50 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53B7DnUj001858
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 07:13:49 GMT
+Received: from [10.218.22.7] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 11 Apr
+ 2025 00:13:42 -0700
+Message-ID: <958877e3-3e14-4259-af7d-697c87b141ee@quicinc.com>
+Date: Fri, 11 Apr 2025 12:43:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 11 Apr 2025 17:12:28 +1000
-Message-Id: <D93MFO5IGN4M.2FWKFWQ9G807P@gmail.com>
-Cc: "Hugh Dickins" <hughd@google.com>, "Guenter Roeck" <linux@roeck-us.net>,
- "Juergen Gross" <jgross@suse.com>, "Jeremy Fitzhardinge" <jeremy@goop.org>,
- <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
- <kasan-dev@googlegroups.com>, <sparclinux@vger.kernel.org>,
- <xen-devel@lists.xenproject.org>, <linuxppc-dev@lists.ozlabs.org>,
- <linux-s390@vger.kernel.org>
-Subject: Re: [PATCH v1 0/4] mm: Fix apply_to_pte_range() vs lazy MMU mode
-From: "Nicholas Piggin" <npiggin@gmail.com>
-To: "Alexander Gordeev" <agordeev@linux.ibm.com>, "Andrew Morton"
- <akpm@linux-foundation.org>, "Andrey Ryabinin" <ryabinin.a.a@gmail.com>
-X-Mailer: aerc 0.19.0
-References: <cover.1744037648.git.agordeev@linux.ibm.com>
-In-Reply-To: <cover.1744037648.git.agordeev@linux.ibm.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/18] clk: qcom: clk-alpha-pll: Add support for common
+ PLL configuration function
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Vladimir
+ Zapolskiy" <vladimir.zapolskiy@linaro.org>,
+        Dmitry Baryshkov
+	<lumag@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+References: <20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com>
+ <20250327-videocc-pll-multi-pd-voting-v3-4-895fafd62627@quicinc.com>
+ <ddcaa5e5-b5c5-4d78-b44a-4cea75ec6a77@linaro.org>
+ <zyfr7dd3dwfbcyztiaajr6tac7shn6ecrvy5277bfk2uwh3txp@gt4tbxh6xx54>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <zyfr7dd3dwfbcyztiaajr6tac7shn6ecrvy5277bfk2uwh3txp@gt4tbxh6xx54>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _HG16u9yCd5gw9pzUcnkDm1YvcLs7h34
+X-Authority-Analysis: v=2.4 cv=Q4vS452a c=1 sm=1 tr=0 ts=67f8c12e cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=a71U0AYrpCg4a1nRiTEA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: _HG16u9yCd5gw9pzUcnkDm1YvcLs7h34
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_02,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 phishscore=0
+ bulkscore=0 adultscore=0 malwarescore=0 mlxscore=0 suspectscore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504110049
 
-On Tue Apr 8, 2025 at 1:11 AM AEST, Alexander Gordeev wrote:
-> Hi All,
->
-> This series is an attempt to fix the violation of lazy MMU mode context
-> requirement as described for arch_enter_lazy_mmu_mode():
->
->     This mode can only be entered and left under the protection of
->     the page table locks for all page tables which may be modified.
->
-> On s390 if I make arch_enter_lazy_mmu_mode() -> preempt_enable() and
-> arch_leave_lazy_mmu_mode() -> preempt_disable() I am getting this:
->
->     [  553.332108] preempt_count: 1, expected: 0
->     [  553.332117] no locks held by multipathd/2116.
->     [  553.332128] CPU: 24 PID: 2116 Comm: multipathd Kdump: loaded Taint=
-ed:
->     [  553.332139] Hardware name: IBM 3931 A01 701 (LPAR)
->     [  553.332146] Call Trace:
->     [  553.332152]  [<00000000158de23a>] dump_stack_lvl+0xfa/0x150
->     [  553.332167]  [<0000000013e10d12>] __might_resched+0x57a/0x5e8
->     [  553.332178]  [<00000000144eb6c2>] __alloc_pages+0x2ba/0x7c0
->     [  553.332189]  [<00000000144d5cdc>] __get_free_pages+0x2c/0x88
->     [  553.332198]  [<00000000145663f6>] kasan_populate_vmalloc_pte+0x4e/=
-0x110
->     [  553.332207]  [<000000001447625c>] apply_to_pte_range+0x164/0x3c8
->     [  553.332218]  [<000000001448125a>] apply_to_pmd_range+0xda/0x318
->     [  553.332226]  [<000000001448181c>] __apply_to_page_range+0x384/0x76=
-8
->     [  553.332233]  [<0000000014481c28>] apply_to_page_range+0x28/0x38
->     [  553.332241]  [<00000000145665da>] kasan_populate_vmalloc+0x82/0x98
->     [  553.332249]  [<00000000144c88d0>] alloc_vmap_area+0x590/0x1c90
->     [  553.332257]  [<00000000144ca108>] __get_vm_area_node.constprop.0+0=
-x138/0x260
->     [  553.332265]  [<00000000144d17fc>] __vmalloc_node_range+0x134/0x360
->     [  553.332274]  [<0000000013d5dbf2>] alloc_thread_stack_node+0x112/0x=
-378
->     [  553.332284]  [<0000000013d62726>] dup_task_struct+0x66/0x430
->     [  553.332293]  [<0000000013d63962>] copy_process+0x432/0x4b80
->     [  553.332302]  [<0000000013d68300>] kernel_clone+0xf0/0x7d0
->     [  553.332311]  [<0000000013d68bd6>] __do_sys_clone+0xae/0xc8
->     [  553.332400]  [<0000000013d68dee>] __s390x_sys_clone+0xd6/0x118
->     [  553.332410]  [<0000000013c9d34c>] do_syscall+0x22c/0x328
->     [  553.332419]  [<00000000158e7366>] __do_syscall+0xce/0xf0
->     [  553.332428]  [<0000000015913260>] system_call+0x70/0x98
->
-> This exposes a KASAN issue fixed with patch 1 and apply_to_pte_range()
-> issue fixed with patches 2-3. Patch 4 is a debug improvement on top,
-> that could have helped to notice the issue.
->
-> Commit b9ef323ea168 ("powerpc/64s: Disable preemption in hash lazy mmu
-> mode") looks like powerpc-only fix, yet not entirely conforming to the
-> above provided requirement (page tables itself are still not protected).
-> If I am not mistaken, xen and sparc are alike.
 
-Huh. powerpc actually has some crazy code in __switch_to() that is
-supposed to handle preemption while in lazy mmu mode. So we probably
-don't even need to disable preemption, just use the raw per-cpu
-accessors (or keep disabling preemption and remove the now dead code
-from context switch).
 
-IIRC all this got built up over a long time with some TLB flush
-rules changing at the same time, we could probably stay in lazy mmu
-mode for a longer time until it was discovered we really need to
-flush before dropping the PTL.
+On 3/27/2025 11:50 PM, Dmitry Baryshkov wrote:
+> On Thu, Mar 27, 2025 at 03:51:33PM +0000, Bryan O'Donoghue wrote:
+>> On 27/03/2025 09:52, Jagadeesh Kona wrote:
+>>> From: Taniya Das <quic_tdas@quicinc.com>
+>>>
+>>> To properly configure the PLLs on recent chipsets, it often requires more
+>>> than one power domain to be kept ON. The support to enable multiple power
+>>> domains is being added in qcom_cc_really_probe() and PLLs should be
+>>> configured post all the required power domains are enabled.
+>>>
+>>> Hence integrate PLL configuration into clk_alpha_pll structure and add
+>>> support for qcom_clk_alpha_pll_configure() function which can be called
+>>> from qcom_cc_really_probe() to configure the clock controller PLLs after
+>>> all required power domains are enabled.
+>>>
+>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>> ---
+>>>   drivers/clk/qcom/clk-alpha-pll.c | 63 ++++++++++++++++++++++++++++++++++++++++
+>>>   drivers/clk/qcom/clk-alpha-pll.h |  3 ++
+>>>   2 files changed, 66 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+>>> index cec0afea8e446010f0d4140d4ef63121706dde47..8ee842254e6690e24469053cdbd99a9953987e40 100644
+>>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>>> @@ -63,6 +63,8 @@
+>>>   #define PLL_OPMODE(p)		((p)->offset + (p)->regs[PLL_OFF_OPMODE])
+>>>   #define PLL_FRAC(p)		((p)->offset + (p)->regs[PLL_OFF_FRAC])
+>>> +#define GET_PLL_TYPE(pll)	(((pll)->regs - clk_alpha_pll_regs[0]) / PLL_OFF_MAX_REGS)
+>>> +
+>>>   const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+>>>   	[CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
+>>>   		[PLL_OFF_L_VAL] = 0x04,
+>>> @@ -2960,3 +2962,64 @@ const struct clk_ops clk_alpha_pll_regera_ops = {
+>>>   	.set_rate = clk_zonda_pll_set_rate,
+>>>   };
+>>>   EXPORT_SYMBOL_GPL(clk_alpha_pll_regera_ops);
+>>> +
+>>> +void qcom_clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap)
+>>> +{
+>>> +	const struct clk_init_data *init = pll->clkr.hw.init;
+>>> +	const char *name = init->name;
+>>> +
+>>> +	if (!pll->config || !pll->regs) {
+>>> +		pr_err("%s: missing pll config or regs\n", name);
+>>> +		return;
+>>> +	}
+>>
+>> Seems like a strange check - you are calling this function in a loop which
+>> looks like
+>>
+>> for (i = 0; i < desc->num_alpha_plls; i++)
+>> 	qcom_clk_alpha_pll_configure(desc->alpha_plls[i], regmap);
+>>
+>> Can num_alpha_plls be true but alpha_plls be NULL and why is regmap
+>> considered valid ?
+>>
+>> I think you can drop this check.
+>
 
-ppc64 and sparc I think don't even need lazy mmu mode for kasan (TLBs
-do not require flushing) and will function just fine if not in lazy
-mode (they just flush one TLB at a time), not sure about xen. We could
-actually go the other way and require that archs operate properly when
-not in lazy mode (at least for kernel page tables) and avoid it for
-apply_to_page_range()?
+The regmap check is already performed in qcom_cc_map() before we reach this
+point.
+
+It is not possible for num_alpha_plls to be true when alpha_plls is NULL, as
+num_alpha_plls is derived using SIZE_OF(alpha_plls).
+
+Including the above check is beneficial to catch any errors in case we missed
+adding the necessary config/regs fields to the PLL structure in the CC code.
+ 
+> I think pll->config should be moved to a calling code.
+>
+Yes, I can move above checks to calling code in next series. 
 
 Thanks,
-Nick
+Jagadeesh
+
+>>
+>>> +
+>>> +	switch (GET_PLL_TYPE(pll)) {
+>>> +	case CLK_ALPHA_PLL_TYPE_LUCID_OLE:
+>>> +		clk_lucid_ole_pll_configure(pll, regmap, pll->config);
+>>> +		break;
+>>> +	case CLK_ALPHA_PLL_TYPE_LUCID_EVO:
+>>> +		clk_lucid_evo_pll_configure(pll, regmap, pll->config);
+>>> +		break;
+>>> +	case CLK_ALPHA_PLL_TYPE_TAYCAN_ELU:
+>>> +		clk_taycan_elu_pll_configure(pll, regmap, pll->config);
+>>> +		break;
+>>> +	case CLK_ALPHA_PLL_TYPE_RIVIAN_EVO:
+>>> +		clk_rivian_evo_pll_configure(pll, regmap, pll->config);
+>>> +		break;
+>>> +	case CLK_ALPHA_PLL_TYPE_TRION:
+>>> +		clk_trion_pll_configure(pll, regmap, pll->config);
+>>> +		break;
+>>> +	case CLK_ALPHA_PLL_TYPE_HUAYRA_2290:
+>>> +		clk_huayra_2290_pll_configure(pll, regmap, pll->config);
+>>> +		break;
+>>> +	case CLK_ALPHA_PLL_TYPE_FABIA:
+>>> +		clk_fabia_pll_configure(pll, regmap, pll->config);
+>>> +		break;
+>>> +	case CLK_ALPHA_PLL_TYPE_AGERA:
+>>> +		clk_agera_pll_configure(pll, regmap, pll->config);
+>>> +		break;
+>>> +	case CLK_ALPHA_PLL_TYPE_PONGO_ELU:
+>>> +		clk_pongo_elu_pll_configure(pll, regmap, pll->config);
+>>> +		break;
+>>> +	case CLK_ALPHA_PLL_TYPE_ZONDA:
+>>> +	case CLK_ALPHA_PLL_TYPE_ZONDA_OLE:
+>>> +		clk_zonda_pll_configure(pll, regmap, pll->config);
+>>> +		break;
+>>> +	case CLK_ALPHA_PLL_TYPE_STROMER:
+>>> +	case CLK_ALPHA_PLL_TYPE_STROMER_PLUS:
+>>> +		clk_stromer_pll_configure(pll, regmap, pll->config);
+>>> +		break;
+>>> +	case CLK_ALPHA_PLL_TYPE_DEFAULT:
+>>> +	case CLK_ALPHA_PLL_TYPE_DEFAULT_EVO:
+>>> +	case CLK_ALPHA_PLL_TYPE_HUAYRA:
+>>> +	case CLK_ALPHA_PLL_TYPE_HUAYRA_APSS:
+>>> +	case CLK_ALPHA_PLL_TYPE_BRAMMO:
+>>> +	case CLK_ALPHA_PLL_TYPE_BRAMMO_EVO:
+>>> +		clk_alpha_pll_configure(pll, regmap, pll->config);
+>>> +		break;
+>>> +	default:
+>>> +		WARN(1, "%s: invalid pll type\n", name);
+>>> +		break;
+>>> +	}
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(qcom_clk_alpha_pll_configure);
+>>> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+>>> index 79aca8525262211ae5295245427d4540abf1e09a..7f35aaa7a35d88411beb11fd2be5d5dd5bfbe066 100644
+>>> --- a/drivers/clk/qcom/clk-alpha-pll.h
+>>> +++ b/drivers/clk/qcom/clk-alpha-pll.h
+>>> @@ -81,6 +81,7 @@ struct pll_vco {
+>>>    * struct clk_alpha_pll - phase locked loop (PLL)
+>>>    * @offset: base address of registers
+>>>    * @regs: alpha pll register map (see @clk_alpha_pll_regs)
+>>> + * @config: array of pll settings
+>>>    * @vco_table: array of VCO settings
+>>>    * @num_vco: number of VCO settings in @vco_table
+>>>    * @flags: bitmask to indicate features supported by the hardware
+>>> @@ -90,6 +91,7 @@ struct clk_alpha_pll {
+>>>   	u32 offset;
+>>>   	const u8 *regs;
+>>> +	const struct alpha_pll_config *config;
+>>>   	const struct pll_vco *vco_table;
+>>>   	size_t num_vco;
+>>>   #define SUPPORTS_OFFLINE_REQ		BIT(0)
+>>> @@ -237,5 +239,6 @@ void clk_stromer_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>>>   			       const struct alpha_pll_config *config);
+>>>   void clk_regera_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>>>   			     const struct alpha_pll_config *config);
+>>> +void qcom_clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap);
+>>>   #endif
+>>>
+> 
 
