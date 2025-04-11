@@ -1,154 +1,123 @@
-Return-Path: <linux-kernel+bounces-599836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 435D4A8586B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:54:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6EA7A85891
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE9E48A7467
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:53:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD9344E1B6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A3529899C;
-	Fri, 11 Apr 2025 09:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB1B29AAFB;
+	Fri, 11 Apr 2025 09:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="hj1BlvFC"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lldZTB8a";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K/Gh8U4C"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FDAEEB1
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 09:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B912989A6;
+	Fri, 11 Apr 2025 09:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744365195; cv=none; b=M5DdqhrSOx1pIgiFv3YlMBdm+k3ny+Q9bY12dkhFWPINOKjrEgITCCXkwaRBAkdUzJBHDsmvT4iCLINQ6Q17+dd4BxndpEF1JAh45Ppi1E/d2aFYber7kLur6JpACmItTFxPEBQasa85EgNlbWWYoAFDS7zV6I5rWWSDoDsZAJ4=
+	t=1744365326; cv=none; b=eEgxdoYs3SX4V1DNoxGBk1Pw76JtZ/uovplFXt8JEWYut8rv14HxGleql+dpWDmZObLEUB5heEDferW4Cpe/v44e+nBtmkLbAd94VJGrrDHUOZhk2ur/0caIifcEWl1cA/XgH/JTczs0So7xAL1o2T+QO4uhxlidB+iIWtE3O+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744365195; c=relaxed/simple;
-	bh=bYz4VWYXRVMZMzO/WeiodKWmw1L7VQDJw8uSANjmYZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AS8mfio+MOB/yCGzrBRYqWFgm8uA4hJk+i7WtgX33g74ASFBBjrPSO5rq0wQs43NWcGspfEwpN9Dk2l/KKZSmOw/CzmzKl8e/U0cLzReea1iBg2aiAls5ZwBEPLiv+/9FDk2zu3JHTKg4kvA4mf/f++FqOX2yzI8m0k9LkjShio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=hj1BlvFC; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=v5Ml
-	bzfy/UYtcdXL3mkK2vLrVgQkVRSUpZGGQs7rGuU=; b=hj1BlvFCT8dW5Iu9XbxD
-	yDptYRJWrwOidK2/AR/7UnLCIYNA2L8GKb3bqXdAMuEssiYjNOM6xS7OliOXDI0w
-	Maut5TKDfTEyfXSimJXq6DaB5IIc91ZKKYCD1Ht+NCzwa9nkQOA7QM0RgP97nDzd
-	8FOEka8rbYUVTTgL25HXjm+V6s6KBOo1e8hANEha9vrCiztBfK+g8/u5Da0f6nww
-	y8tWYElrfCCfehVwgjiBpywsjmnC3YMZLREpqpIKZCWSBtVE6TwG1fuJWjVRpClj
-	9Odje1lqwq0+CImlgyGq1WJ04NO0JOQ5FBm5sqLZVOEy93fW4MIBlWFRyEyP3XE9
-	1A==
-Received: (qmail 1242354 invoked from network); 11 Apr 2025 11:53:02 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Apr 2025 11:53:02 +0200
-X-UD-Smtp-Session: l3s3148p1@AHYSq30y8pMujnsS
-Date: Fri, 11 Apr 2025 11:53:02 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH v4] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb board
- device-tree
-Message-ID: <Z_jmflS03VHFOE3d@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-References: <20250324-rzn1d400-eb-v4-1-d7ebbbad1918@bootlin.com>
- <CAMuHMdVM66ni0opbUopt6mCPshoQzO5GPEUZDji39CxtkoFLSA@mail.gmail.com>
+	s=arc-20240116; t=1744365326; c=relaxed/simple;
+	bh=fzuHk7gnHpykNso93QwYWcqCbfx9xm7veKnjadys5ak=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=q8TvjIWZC0QtIDUB6Spe9C8Az31vMJXtwQ6qmkx7lhit0riBIFPvmbDE4azxLU0XeLEh0Z0kK6Vp1Uo83/FHcmadbK7tDtZjCHyrb0gxZHRRADWgH1UxRqqhswM3iOZI9uTOrZrK12IBZRQHj+tGoWy6ibOL2LnuK5f2EPKBS0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lldZTB8a; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K/Gh8U4C; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744365322;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IFilB1CWtJRNPPBhabQDjIrMR//U86n9XWn9p+phq6s=;
+	b=lldZTB8aa3KylyrLGpWT3q3PIdaWlu4BkIKbhmi0Vwqtf5DpEsfRYbG0LTyUr8+UgMqsaH
+	92IE8hVzpaQ7jIFVvXotuqddCs4ueHRNSSA6AyTt0QCzL+hZ/Jl7FpwyGA+0lqMHB8FnYk
+	2ZgN331Fp2lWsN9GaB9sn4KSR857ErFolh8FNe/CPpOuIk2Kq27+9vbRagUYNHAISi/T01
+	yrAl0oBah/SlbViI/yxNkYS8aAk92ZxuyTKzMPaQvoBmkzLGp6OkGZXXKLUcNVgRR2NyBD
+	0xM+1NGeJGFLPwrVbbp1P73nRYoDlcdaYxT1hchYih7EoHKH316WSu9KeA1L4A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744365322;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IFilB1CWtJRNPPBhabQDjIrMR//U86n9XWn9p+phq6s=;
+	b=K/Gh8U4CXj+l1NLqONuUhEP+NCa3T+gi/I84He2UrtbFNxqfACmP8QJbhrqX8/KZ7DBdSC
+	bhnQPg63Dk/LunCA==
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>, Marc Zyngier
+ <maz@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Sascha Bischoff <sascha.bischoff@arm.com>, Timothy Hayes
+ <timothy.hayes@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Liam.Howlett@oracle.com, ast@kernel.org
+Subject: Re: [PATCH 20/24] irqchip/gic-v5: Add GICv5 LPI/IPI support
+In-Reply-To: <Z/jgL52ZVdcxTEkP@lpieralisi>
+References: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
+ <20250408-gicv5-host-v1-20-1f26db465f8d@kernel.org>
+ <Z/jgL52ZVdcxTEkP@lpieralisi>
+Date: Fri, 11 Apr 2025 11:55:22 +0200
+Message-ID: <87plhjrpit.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5meMjSjKXGTajXvg"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVM66ni0opbUopt6mCPshoQzO5GPEUZDji39CxtkoFLSA@mail.gmail.com>
+Content-Type: text/plain
+
+On Fri, Apr 11 2025 at 11:26, Lorenzo Pieralisi wrote:
+> On Tue, Apr 08, 2025 at 12:50:19PM +0200, Lorenzo Pieralisi wrote:
+>> Maple tree entries are not used by the driver, only the range tracking
+>> is required - therefore the driver first finds an empty area large
+>> enough to contain the required number of LPIs then checks the
+>> adjacent (and possibly occupied) LPI ranges and try to merge them
+>> together, reducing maple tree slots usage.
+>
+> The maple tree usage for this purpose is an RFC at this stage.
+>
+> Added Alexei because I know BPF arena used the maple tree in
+> a similar way in the past and moved to a range tree because
+> the BPF arena requires a special purpose mem allocator.
+>
+> As Thomas already pointed out a plain bitmap could do even though
+> it requires preallocating memory up to 2MB (or we can grow it
+> dynamically).
+>
+> We could allocate IDs using an IDA as well, though that's 1 by 1,
+> we allocate LPI INTIDs 1 by 1 - mostly, upon MSI allocation, so
+> using an IDA could do (AFAIU it works for 0..INT_MAX we need
+> 0..2^24 worst case).
+
+The point is that you really only need a 1-bit storage per entry,
+i.e. used/unused. You won't use any of the storage functions of maple
+tree, idr or whatever.
+
+So the obvious choice is a bitmap and as you said, it's trivial to start
+with a reasonably sized one and reallocate during runtime if the need
+arises.
+
+The reallocation happens in domain::ops::alloc() which is fully
+preemptible context, i.e. no restrictions vs. allocations.
+
+For the top-most domain, the callers hold domain::mutex, which excludes
+concurrency vs. ops::alloc/free(). If the bitmap is in a domain further
+down the hierarchy then you need your own mutex there.
+
+Thanks,
+
+       tglx
 
 
---5meMjSjKXGTajXvg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 
-> > +       pinctrl-0 =3D <&pins_eth1>, <&pins_eth2>, <&pins_eth3>, <&pins_=
-eth4>,
-> > +                   <&pins_mdio1>;
-> > +
-> > +       mdio {
-> > +               /* CN15 and CN16 switches must be configured in MDIO2 m=
-ode */
-> > +               switch0phy1: ethernet-phy@1 {
-> > +                       reg =3D <1>;
-> > +                       leds {
-> > +                               #address-cells =3D <1>;
-> > +                               #size-cells =3D <0>;
-> > +
-> > +                               led@0 {
-> > +                                       reg =3D <0>;
->=20
-> color =3D <LED_COLOR_ID_GREEN>;
->=20
-> > +                               };
-> > +                               led@1 {
-> > +                                       reg =3D <1>;
->=20
-> color =3D <LED_COLOR_ID_ORANGE>;
->=20
-> > +                               };
->=20
-> The above should also have one of:
->=20
->     function =3D LED_FUNCTION_LAN;
->     function =3D LED_FUNCTION_SPEED_LAN;
->=20
-> I don't know the LED function mapping.
 
-I have an incremental fix for the LEDs to this patch. Thomas cannot
-really do it because he doesn't have the board. I was waiting with my
-patch until this patch is upstream, but I better send it out now, so you
-can squash it into this one?
-
-
---5meMjSjKXGTajXvg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmf45noACgkQFA3kzBSg
-KbbhBQ//SA3eCGX0eMFXQS4vM9SjlKaSOc8Sv9fxFOcUPfIOzFQ2in7V5MSsS86y
-qLykrEEz0ddawdAm1v4Ll97vvODHsLJ+Zb7JTcuv3xltq2MddsxOxEldllAXS5dd
-wmAP+krIqhWTZO7l1hOx42rY7lfrw12WM1fZFDXIlwRshciS/6VKBvDdcKrWub5M
-/H3ffK/6jHSUrXmP+2YnqZ/R1KsTnDU8OI72ib/4Tpy6yonmMVJhLwQQFxtXo4YM
-KsDO8oaYhhDqjdMms9juwMiDaObkxXc1Q/Ex27OnQKVQe5Ns7Zxw/Io2r6qMYiZn
-6c4QXDrHZaHsxifc5KdL37R1+CfBJX5/cK6/KpSDYoz9WwiBCaWccjf3tsizxTZL
-FanpqH+9Ddbg8XSSPpJ2HutmK8MQYsYoCtw+paoHUVmBzOR2F9pePbxQxZ1SM0rH
-TnuuureYZje+nAOlQNoLRkqbD2bUfmTlqS3SI/SHDaihesPs2ETWTgyn4LLM0XGI
-JejAOCbYhtXG7CzHcuzRs6dNKmr7OFsuvJcnY4iVshsUvQIgeOqL9YgP9LUeql0x
-mb2eiIfLUswA3m+qvrVbb2QSnq1zUyYkYGNtlDFKv5XRUrP1KY2iGEYxaNL9FmRg
-pgjVrSpKCxlON7Q+2QhIAJfycNG8GPMJbpLsIo4xMq8feKqXYQU=
-=KXkU
------END PGP SIGNATURE-----
-
---5meMjSjKXGTajXvg--
 
