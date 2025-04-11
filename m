@@ -1,87 +1,101 @@
-Return-Path: <linux-kernel+bounces-599346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27717A852DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:08:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6497A852DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C075189BF95
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:06:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0C417AB264
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3667527CB3E;
-	Fri, 11 Apr 2025 05:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4A227CCC6;
+	Fri, 11 Apr 2025 05:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="udd7Vot1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sKtzwDT1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616732F5A;
-	Fri, 11 Apr 2025 05:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EEF27BF9B;
+	Fri, 11 Apr 2025 05:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744347981; cv=none; b=LA64FcG4s+8zTP+OmhCGGVmqwX0OHCeyEn9AH2MnefPItTaU3gUbKCPHBuDXpFDj92scTKuGG5raOlWC2mrpHcSn75xXc1063p5Nsw96xcpByKRM19hxll9NMgZcH/zJ2fuk3KpywWN9AURL9ItRhlUCXOayx6ZahEzkPCOrSkw=
+	t=1744348009; cv=none; b=Lf+i+t2dG7gyh7fO3aTw0OdWBO4hPawjRAHWiWUAon88SFwKMD2yjbgfVyeP4PmfCkv/lxLKcbSk4CErquUqZ+Hp6kU1p7YInHVrYKXqZgHLHGivT1Yfn/czlYmk9a0TBrYVVVrEgiiJm8YiQnDThZFJ+7MvQ0MgaD4KWMSmRUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744347981; c=relaxed/simple;
-	bh=vJDg156xDbHiFBc2HkJHcAvsBnrz0LlE9fmMNpCgXuk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=JDxAViKa3Y3HNRsS3461IX4l7CCwvo6LoUIf2o9dLqebTAVwHfBbimuMQgrDiQ9bcOW12J3G5/VykUC+XLCtx9GMxL+Al5pnL+6ByGkVW+/pSNeWzPORq8N8KcWvJp1nottHJG/wze516ylY26if12Ee26RhFDX4Cb6sp3v5EAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=udd7Vot1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57CA6C4CEE2;
-	Fri, 11 Apr 2025 05:06:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1744347979;
-	bh=vJDg156xDbHiFBc2HkJHcAvsBnrz0LlE9fmMNpCgXuk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=udd7Vot1d91cmE9l1YiWBC4Dpwq9GRa3cyguds5yLksbeH+ka4qJiHtlZPcV7dxiz
-	 PTqsv4jKvTF24ekQUZuli8taGYj+db6x4dVwLr2JectjKgKm5IHXr7co+cVzpUzR0V
-	 U8uct76BUcBbAnEmI9p0CAYRJmya6upqIFP5rUQY=
-Date: Thu, 10 Apr 2025 22:06:18 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song
- <muchun.song@linux.dev>, Yosry Ahmed <yosry.ahmed@linux.dev>, Waiman Long
- <llong@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, Meta kernel team
- <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: decouple memcg_hotplug_cpu_dead from stock_lock
-Message-Id: <20250410220618.405d00875ca61043c4ffa6e1@linux-foundation.org>
-In-Reply-To: <20250410210623.1016767-1-shakeel.butt@linux.dev>
-References: <20250410210623.1016767-1-shakeel.butt@linux.dev>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744348009; c=relaxed/simple;
+	bh=JN+0oLpNZwh8pYt/gMxB6bOiwor/JbjH+Git7qIT4ds=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=I/ON3lRUMVnSMlqo6/v3r4cY4E5ogxhOseeZaHXh4DhtEhW6f1meA5EejCWBiCzn/bwyzVeGkG3/aQD7S2AqjeeRbvSFia0cEhDXzLhJ56WzrNFqxfHddJnqesWywgBRrVN7eT1citrlgpigQk9I8BIkZ6CvHb0+vuwXA/2E8yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sKtzwDT1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BBBFC4CEE2;
+	Fri, 11 Apr 2025 05:06:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744348009;
+	bh=JN+0oLpNZwh8pYt/gMxB6bOiwor/JbjH+Git7qIT4ds=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=sKtzwDT1F5mJV823npkyRutuya0rd+ZkY/y1G2+bXUNYNm/W5JohHjXkJZINZ5BQi
+	 OG8a0yNE1nYuzKYsYLXqisjynwJEsHbp/xi9Z2OUIGH6xR818mhhZD0fwTZmbLN7sV
+	 Sk2cUJb/fRd+1PPG0wuKldwj90UBgM5vCleL/ZS+RE5hwgf5iZkS8Q7PKxSWKQOY3b
+	 xaobiQ0dePZokLwnv9KWDIJiS4e0INiZxFO31TSk6Ki8rJ59kvK7cjx+1guy6ak3zZ
+	 kKkMSN9E6k5i0fBN+S4cfO05A9N7IbEvMkhZBVUGDln6qNmGb5cG3JkPJ757J22tfW
+	 EvDztvJQLSxBQ==
+From: Mark Brown <broonie@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ patches@opensource.cirrus.com
+In-Reply-To: <20250410101812.1180539-1-rf@opensource.cirrus.com>
+References: <20250410101812.1180539-1-rf@opensource.cirrus.com>
+Subject: Re: [PATCH] ASoC: wm_adsp: Use vmemdup_user() instead of
+ open-coding
+Message-Id: <174434800810.1298095.3518873899579787248.b4-ty@kernel.org>
+Date: Fri, 11 Apr 2025 06:06:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-On Thu, 10 Apr 2025 14:06:23 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
-
-> The function memcg_hotplug_cpu_dead works on the stock of a remote dead
-> CPU and drain_obj_stock works on the given stock instead of local stock,
-> so there is no need to take local stock_lock anymore.
+On Thu, 10 Apr 2025 11:18:12 +0100, Richard Fitzgerald wrote:
+> Use vmemdup_user() to get a copy of the user buffer in wm_coeff_tlv_put().
 > 
-> @@ -1964,10 +1964,10 @@ static int memcg_hotplug_cpu_dead(unsigned int cpu)
->  
->  	stock = &per_cpu(memcg_stock, cpu);
->  
-> -	/* drain_obj_stock requires stock_lock */
-> -	local_lock_irqsave(&memcg_stock.stock_lock, flags);
-> -	drain_obj_stock(stock);
-> -	local_unlock_irqrestore(&memcg_stock.stock_lock, flags);
-> +	local_irq_save(flag);
-> +	/* stock of a remote dead cpu, no need for stock_lock. */
-> +	__drain_obj_stock(stock);
-> +	local_irq_restore(flag);
->  
+> Apart from simplifying the code and avoiding open-coding, it means we
+> also automatically benefit from any security enhancements in the code
+> behind vmemdup_user().
+> 
+> 
+> [...]
 
-s/flag/flags/
+Applied to
 
-Obviously what-i-got isn't what-you-tested.  Please check what happened
-here,
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: wm_adsp: Use vmemdup_user() instead of open-coding
+      commit: b5d057a86e2086af0b1e6d0ca8b306be1c73a627
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
