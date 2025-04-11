@@ -1,195 +1,155 @@
-Return-Path: <linux-kernel+bounces-599605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6EA4A855CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:48:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6D2A855D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D9994A0EE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:47:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF1E73BEF1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E50428CF64;
-	Fri, 11 Apr 2025 07:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EA827E1AF;
+	Fri, 11 Apr 2025 07:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3AzJ3xPt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y3PEkJOF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3AzJ3xPt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y3PEkJOF"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="HauYklEs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pfvfCZZA"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22AC527E1AF
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D1C293473;
+	Fri, 11 Apr 2025 07:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744357644; cv=none; b=XS2T4WXLplyC/7opnF0PFwZ8t+r2mBc7dTCuU8nAWZfcM6mfFWKxqGES1GS1RyzKwnw9hP7iMf0qhnuNcgUduOxi6doQrBLYbB4QzKRwVBtgK6fyiBTvv5T9HW02I3xCB/j8TnjGD6KxQmpzqWnvtTqjXGoG+/W8znIfpeIhax8=
+	t=1744357701; cv=none; b=gV5K/Qk123wp1ZIkZiSRq7Su5BJEX0CgdgtTfwuVGFpJFxtpK23J9O91UmdVvmdr4Vkr2EmLtYz3q2GQtPIqzlb8SxawmkJNYlRkzQOae14Xpw7bWFHZekC6CVQiXeaDlBx2n5y+53OjbaydNImckS9WSZa3iEHEvdf57zOJ7bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744357644; c=relaxed/simple;
-	bh=EAz6BYyegX9HsUVlO2LvtyL+bKqfENHOMQini843ORE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eO1+W/Ic3w16+FKLkJkPoUS9/JN9DMY/sh8vcInK/Vk9jFAXI9DN2F5qY/WPV2OsJfI1Qr72V8PadidboEKE5HM2T3NNWCH1y1SDkVUwe/sajE0+6iNO1XHuAyCqoJbH0k1E/N3jWI8vH//TRsA/9qk84YJfZQGu0oVvnWuTN+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3AzJ3xPt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y3PEkJOF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3AzJ3xPt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y3PEkJOF; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3C0A821125;
-	Fri, 11 Apr 2025 07:47:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744357641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G6aNx8roFs3brDqtJz4qS5Ktvp9IrPY2jgp3xIHvb3U=;
-	b=3AzJ3xPtXM9xl6A9NBybWV0Z+mdnzcsHM3ymLxCOl0O1rFgI1boQ3Vfk3y81515olX/b9Z
-	GJBdnvEpB3+a3m0kDO3vuJdQE5DA2jzsbgtkvpVGdiDc4PlhNPKpsMAtYWbMeOov+guYmH
-	f5rcCkufQ00ZcUrV+uQwWihxKDm1axY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744357641;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G6aNx8roFs3brDqtJz4qS5Ktvp9IrPY2jgp3xIHvb3U=;
-	b=Y3PEkJOFMDbn2b/M6sYqxko+XqKRr4dhrdZkciCJqVDGy7i2TKbC4ulkk5BifBd82OpI+G
-	WYDY7knV6nr0p2Dg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=3AzJ3xPt;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Y3PEkJOF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744357641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G6aNx8roFs3brDqtJz4qS5Ktvp9IrPY2jgp3xIHvb3U=;
-	b=3AzJ3xPtXM9xl6A9NBybWV0Z+mdnzcsHM3ymLxCOl0O1rFgI1boQ3Vfk3y81515olX/b9Z
-	GJBdnvEpB3+a3m0kDO3vuJdQE5DA2jzsbgtkvpVGdiDc4PlhNPKpsMAtYWbMeOov+guYmH
-	f5rcCkufQ00ZcUrV+uQwWihxKDm1axY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744357641;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G6aNx8roFs3brDqtJz4qS5Ktvp9IrPY2jgp3xIHvb3U=;
-	b=Y3PEkJOFMDbn2b/M6sYqxko+XqKRr4dhrdZkciCJqVDGy7i2TKbC4ulkk5BifBd82OpI+G
-	WYDY7knV6nr0p2Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 013AB13886;
-	Fri, 11 Apr 2025 07:47:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Vax0OwjJ+GcJCAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 11 Apr 2025 07:47:20 +0000
-Message-ID: <472508e5-2b96-403b-9284-274c5bf587c9@suse.cz>
-Date: Fri, 11 Apr 2025 09:47:16 +0200
+	s=arc-20240116; t=1744357701; c=relaxed/simple;
+	bh=hiZDW/wltbaeVUflk1SbUDv/+7af9kZO5nsD9Vb9I9w=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=FrMg+E+gZcY/HQfLhL3BXhIb6OObnKlDnObRwPiNcPyX2nH5WtVNzYfZgQu3XD0CNhjYs5jvKA0b/WCsYAOE8pTBmSubpSd9Y0Sq41QnM2R6wYXb4kA6Ere7CRl1tWvOWPlcvRELiQXUaPzjJ0V5Put9xN7PYPyEiCrXpAQS41o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=HauYklEs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pfvfCZZA; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id DFD091380233;
+	Fri, 11 Apr 2025 03:48:15 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-05.internal (MEProxy); Fri, 11 Apr 2025 03:48:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1744357695;
+	 x=1744444095; bh=C8qu2/USiUBNgma963cXFWLigmWdQNWUtuAfEatWw0I=; b=
+	HauYklEsZ9hrL1e3fm9iPKdqWoVA1FvunJ30bfP6OfcBuWZyDudpzWS/znRQ+lVH
+	QC0AkSJ2jK5RjasHh+MwXX4tloI4xxBbIw6uYjto8oEsatmN+2qwpQalDXFw7h/P
+	6KKS4FrgjuLtI+SXrcA15ejduEbvb8I2XOCmfCIgLVNqd7Ap7BSmZisrF4h0Bo3U
+	W2rsPLzgqGr9H4Nurwyt/GPtCySuwzLMQMBTCktDGJIbrj/is59KSNx3//YluPkN
+	21QWRjj24COVXTAsTuzr4dCDtUPuzEolR5lVyB+kHjwrcyxWV9yayYccG3FClACf
+	zrIVMUdho/QT3xA21E8qXA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744357695; x=
+	1744444095; bh=C8qu2/USiUBNgma963cXFWLigmWdQNWUtuAfEatWw0I=; b=p
+	fvfCZZArAJv7MOKq1wBMQZi+CqNWPQdPBe10NDTHoDYYE5cOpaC7f1otoqlvbytg
+	Lr+iUrp/Fl+fGsmrNlMQHNcpc1u4TPuilzLT096Ya/rIz4CREjV4hqBYCAZIh29Z
+	rqJbcri7EvXQbMb1YjfjWXhu6hvOUoic1u49qXOerJPEeW/zor0fewFI9MeLbxY2
+	dvN2MBTh7TboCJxllDyKsq9EGX/Sqq2UVw15cmrzKcJdz/8EB10tXwyJbkDudLgG
+	nDCWrAiiOO5Dc2JavRYbSmeVlY+ceKLV73UQtSijQMvWU1IAo9bHlmPuq3Di3Lv4
+	r/NG5BLfOKu3HguXOrvWg==
+X-ME-Sender: <xms:P8n4ZyjOr6qqMB2Ezs-vUXYVm2xqP3Vq5HW5dGpjwui2spyPVGKOsg>
+    <xme:P8n4ZzDT6KQyFa1S-ENJgbKSphwBo_skiwvshBUSZe5Hz9H-3F8dkhUiOF8QxGNE7
+    STONWECAoPA25BB7Ag>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvudduvdehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    udefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsvghrghhiohdrtgholhhlrg
+    guohesghhmrghilhdrtghomhdprhgtphhtthhopegurghvihgughhofiesghhoohhglhgv
+    rdgtohhmpdhrtghpthhtoheprhhmohgrrhesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
+    epshhmohhsthgrfhgrsehgohhoghhlvgdrtghomhdprhgtphhtthhopehpvghtvghriies
+    ihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtohepjhhpohhimhgsohgvsehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehmrghsrghhihhrohihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnrghthhgrnh
+    eskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:P8n4Z6Fjf6wx4q2gTRIQ8AW4uRhfNP0sMaNU0J6TkcPOiav34hlWJA>
+    <xmx:P8n4Z7R9D6GcxQX_PlZmPCAB_StZEol_ldDPRV6QqBvjMPss0HvxVQ>
+    <xmx:P8n4Z_wBvLQzChsF4rjtD5RMBjbQs-kfm2V_o6VNfCzcGnYPzY2Rcw>
+    <xmx:P8n4Z57cC7uUJfDPlzx07Hj_EWLLXt2kSp5SJZaShB2PWCNRIZlzrw>
+    <xmx:P8n4Z5AAVl4teAB79TKtwOprOqGBFyjfqYALVOALeX0NxA_nXjlbE0pJ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 463372220073; Fri, 11 Apr 2025 03:48:15 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slab: Decouple slab_debug and no_hash_pointers
-Content-Language: en-US
-To: Kees Cook <kees@kernel.org>, Petr Mladek <pmladek@suse.com>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: Sergio Perez Gonzalez <sperezglz@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
- Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- "Paul E. McKenney" <paulmck@kernel.org>, Randy Dunlap
- <rdunlap@infradead.org>, Tamir Duberstein <tamird@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- linux-doc@vger.kernel.org, linux-mm@kvack.org, Thomas Huth
- <thuth@redhat.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Ard Biesheuvel <ardb@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Stephen Boyd
- <swboyd@chromium.org>, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20250410174428.work.488-kees@kernel.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20250410174428.work.488-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+X-ThreadId: Td3151a787cba798d
+Date: Fri, 11 Apr 2025 09:47:51 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Peter Zijlstra" <peterz@infradead.org>,
+ "Josh Poimboeuf" <jpoimboe@kernel.org>
+Cc: "Arnd Bergmann" <arnd@kernel.org>,
+ "Masahiro Yamada" <masahiroy@kernel.org>, "Rae Moar" <rmoar@google.com>,
+ "Shuah Khan" <skhan@linuxfoundation.org>,
+ =?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>,
+ "David Gow" <davidgow@google.com>, "Nathan Chancellor" <nathan@kernel.org>,
+ "Nicolas Schier" <nicolas.schier@linux.dev>,
+ "Mostafa Saleh" <smostafa@google.com>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <0073e739-e3aa-4743-ad2d-29d7c969f454@app.fastmail.com>
+In-Reply-To: <20250411065054.GM9833@noisy.programming.kicks-ass.net>
+References: <20250328112156.2614513-1-arnd@kernel.org>
+ <ycgbf7jcq7nc62ndqiynogt6hkabgl3hld4uyelgo7rksylf32@oysq7jpchtp4>
+ <20250411065054.GM9833@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH] scripts/mksysmap: skip objtool __pfx_ symbols
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 3C0A821125
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[30];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[gmail.com,lwn.net,linux.intel.com,rasmusvillemoes.dk,chromium.org,linux-foundation.org,linux.com,kernel.org,google.com,lge.com,linux.dev,oracle.com,infradead.org,vger.kernel.org,kvack.org,redhat.com,alien8.de,linuxfoundation.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLisu716frudqkg98kczdd9eac)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On 4/10/25 19:44, Kees Cook wrote:
-> Some system owners use slab_debug=FPZ (or similar) as a hardening option,
-> but do not want to be forced into having kernel addresses exposed due
-> to the implicit "no_hash_pointers" boot param setting.[1]
-> 
-> Introduce the "hash_pointers" boot param, which defaults to "auto"
-> (the current behavior), but also includes "always" (forcing on hashing
-> even when "slab_debug=..." is defined), and "never". The existing
-> "no_hash_pointers" boot param becomes an alias for "hash_pointers=never".
-> 
-> This makes it possible to boot with "slab_debug=FPZ hash_pointers=always".
-> 
-> Link: https://github.com/KSPP/linux/issues/368 [1]
-> Fixes: 792702911f58 ("slub: force on no_hash_pointers when slub_debug is enabled")
-> Co-developed-by: Sergio Perez Gonzalez <sperezglz@gmail.com>
-> Signed-off-by: Sergio Perez Gonzalez <sperezglz@gmail.com>
-> Signed-off-by: Kees Cook <kees@kernel.org>
+On Fri, Apr 11, 2025, at 08:50, Peter Zijlstra wrote:
+> On Tue, Apr 08, 2025 at 06:58:49PM -0700, Josh Poimboeuf wrote:
+>> On Fri, Mar 28, 2025 at 11:48:19AM +0100, Arnd Bergmann wrote:
+>> 
+>> For example, FineIBT writes code in the __pfx area which can trigger an
+>> #UD.  And we'd want a sane backtrace for that.
+>
+> On top of that, clang kcfi builds do a similar thing, they will generate
+> __cfi_ prefixed symbols.
+>
+> And yes, those symbols exist for a reason, there is code there under
+> various circumstances and backtraces look really weird without these
+> symbols on -- notably the code in the prefix will be attributed to
+> whatever symbol comes before, most confusing.
+>
+> So yeah, don't remove these symbols, and fix the kunit test.
 
-I like how this makes things more generic. Perhaps there are more debug
-boot/config options that could tie into the hash_pointers=auto and are even
-more obvious than slab_debug in the sense that you would really only enable
-them in debugging/CI runs when you do not care about the info leaks but want
-as much useful debug info as possible (KASAN etc?).
+kallsyms already removes some CFI symbol names based on regular
+expressions:
 
-Given how this changes mostly printk code and is in fact only a small change
-to slab, I'll wait first if printk maintainers want to take this patch. In
-that case please add
+# CFI type identifiers
+/ __kcfi_typeid_/d
+/ __kvm_nvhe___kcfi_typeid_/d
+/ __pi___kcfi_typeid_/d
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Do you think it should not remove some of them?
 
-Thanks!
+I ran into another problem with generated symbols that I don't
+understand yet, and added this line to avoid the build failures:
 
+/ _GLOBAL__sub_/d
+
+This one is 534 characters long:
+_GLOBAL__sub_I_65535_1_snnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7n
+
+      Arnd
 
