@@ -1,140 +1,105 @@
-Return-Path: <linux-kernel+bounces-600266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0095A85DC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:53:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD99A85D8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3CF74E16F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:46:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8F61BC14C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072E429B23D;
-	Fri, 11 Apr 2025 12:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33412367AC;
+	Fri, 11 Apr 2025 12:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ylW+4u6y"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="E3btRzli"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02B5221FCC;
-	Fri, 11 Apr 2025 12:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB7E2367A0;
+	Fri, 11 Apr 2025 12:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744375480; cv=none; b=kSFMO0JzGpws6S11kvkWo/54W6sSa9J39rbUnHw/LoFB4nrmbMp0mF0+8pRrAltY8NZmkqrSpz6cu8eWLLvLRpnvl2+p+bUw1zAc886Sp47/jYMGjWFyzNso1wf/wDnxz74pF2xuJ9hYnMqSXxZbyhPmXh0Ol0pdWYun8hDaU+8=
+	t=1744375300; cv=none; b=c4IH/TWGWy4nCT87RZkx4LmPHD6y7BGyjjCBhlfiVpsBOK+dj8cfTq+OITv4oj4K5GDeGMl7jzCXjyKY3vxsHtWV5mSoHlqSTD/45leiGhNFJNGFPQxlWxQoZTqW3Jq6IOfBRPz5nXoA0IdwmUUygLtuWvHQlcpFaSloDuu58UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744375480; c=relaxed/simple;
-	bh=yaUO2wL2QZRtPLq/CI2DMbiztG8WerJslPzyJ0YUv5I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Dm6C0CLjNwzLL8M1VzVE0FIdw7aCY6qQcxmDJ5KnpQd8GrM3/Q8XETBn7D+5aNICEYUIW2aoUIuCTCFWb49ETPAbU0GNHLEN8UYgsFHwWdYkhF45u5MWY45N9Ol7Yxb0UDOOM0PUj/7jyeeaEDlwjROQSnwsRHlATSPWOqEBPLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ylW+4u6y; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B9hCOH001911;
-	Fri, 11 Apr 2025 14:43:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	f9ssr1sIFT0/yy99wQbn3SekrD91xN1Xl5jyop03qFk=; b=ylW+4u6yodi3J3bf
-	y4h/jTBAgNeNgADFMk3x76TMxNcNT0p985nrubnJXPq9XQXLM4Ob1Klv6lDEL/Vw
-	r59CbXTSot4w0fCEcPYWWewAD+ZK6xkHGWkPheO//qB1WelWGnkZSfqoatU3CASt
-	wRdjhoGZslaCa/2PGk73C9NkgGS7fkFt10NesnzJJx1ddJX9/1asHduU+Qc2SP/z
-	gr/CpHjhnFilXBKBPaAaL0bxHnadwXG2cSkee3h2ZMg29Qoh2xVfOCGd8wT+3aBW
-	T3yDgnhE5RCi+d5Z49QZDvzPsbvmKgkA88eYpe7wzNvbKM4bRyweoDIcbrQJbO07
-	zcJfrA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45tw8pwnbx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 14:43:52 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 138EA40046;
-	Fri, 11 Apr 2025 14:42:59 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CAA0A9EC297;
-	Fri, 11 Apr 2025 14:41:13 +0200 (CEST)
-Received: from localhost (10.252.25.37) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Apr
- 2025 14:41:13 +0200
-From: Patrice Chotard <patrice.chotard@foss.st.com>
-Date: Fri, 11 Apr 2025 14:41:11 +0200
-Subject: [PATCH v2 2/2] spi: stm32-ospi: Make usage of
- reset_control_acquire/release() API
+	s=arc-20240116; t=1744375300; c=relaxed/simple;
+	bh=zDL/ObZQj8eM62TAxARSjoBDC8yqTO1LrkfozSlxMZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ifOu0dLN/1agWjCjyajmmWUV22uw2Ke0By8j0blqlhIjTbVihOCFGcwzbPb+kg7bdaWTEjcpT6TiSC5t3AwFG6BwQgkVlgiMUAV4bXLH3WCofuXvBwbGxrxGtjnMmxASoihWZzArzmPipgnap0WAJHCBLmJCkPDkViu+WIFjwvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=E3btRzli; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 2D7CA1FEC1;
+	Fri, 11 Apr 2025 14:41:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1744375294;
+	bh=EOH8CIdz65AlaprFUzkJc8PL6lMT1kHFZ8SCjFlHZ9c=; h=From:To:Subject;
+	b=E3btRzlir8gNK+aXDl3vPeVu4yeZ/AEtyTxwgKCsw8IULkGr+8Wid5/IKqHV6MMhs
+	 coudJUidzaoGjnYB/rZMq/WPqLgms0I7TMW2KyPmoLu2RIvwbQssuA8exOmAGPGCq1
+	 zTbZfp708FVTHIDztLVGSehqjJHi2fRFWoKhJ+tVPh/7wAhAfPIaMxlbUUg5URzSNv
+	 4+1SZhkjzFgr0hLM8bIbZL3R1TMtnpC4XHpegMk/T9rVWg2IrZhGSCdneamI2OvcER
+	 tNLxDjAF1Z8xMtxEKdaed9CxUIIL21V1OVYaWCODqs49g8HwRU8xQ4/AA6JkoUJn7n
+	 qklDoVJJhmGnw==
+Date: Fri, 11 Apr 2025 14:41:29 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Carlos Song <carlos.song@nxp.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Aisheng Dong <aisheng.dong@nxp.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v1] i2c: lpi2c: implement master_xfer_atomic callback
+Message-ID: <20250411124129.GA48732@francesco-nb>
+References: <20250319145114.50771-1-francesco@dolcini.it>
+ <20250411114738.GA43965@francesco-nb>
+ <FRWPR04MB11150B555044300A70102DAF5E8B62@FRWPR04MB11150.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250411-b4-upstream_ospi_reset_update-v2-2-4de7f5dd2a91@foss.st.com>
-References: <20250411-b4-upstream_ospi_reset_update-v2-0-4de7f5dd2a91@foss.st.com>
-In-Reply-To: <20250411-b4-upstream_ospi_reset_update-v2-0-4de7f5dd2a91@foss.st.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>, Mark Brown <broonie@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Patrice Chotard
-	<patrice.chotard@foss.st.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-11_04,2025-04-10_01,2024-11-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <FRWPR04MB11150B555044300A70102DAF5E8B62@FRWPR04MB11150.eurprd04.prod.outlook.com>
 
-As ospi reset is consumed by both OMM and OSPI drivers, use the reset
-acquire/release mechanism which ensure exclusive reset usage.
+Hello,
 
-This avoid to call reset_control_get/put() in OMM driver each time
-we need to reset OSPI children and guarantee the reset line stays
-deasserted.
+On Fri, Apr 11, 2025 at 11:55:31AM +0000, Carlos Song wrote:
+> > On Wed, Mar 19, 2025 at 03:51:14PM +0100, Francesco Dolcini wrote:
+> > > From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+> > >
+> > > Rework the read and write code paths in the driver to support
+> > > operation in atomic contexts. To achieve this, the driver must not
+> > > rely on IRQs or perform any scheduling, e.g., via a sleep or schedule
+> > > routine. Even jiffies do not advance in atomic contexts, so timeouts
+> > > based on them are substituted with delays.
+> > >
+> > > Implement atomic, sleep-free, and IRQ-less operation. This increases
+> > > complexity but is necessary for atomic I2C transfers required by some
+> > > hardware configurations, e.g., to trigger reboots on an external PMIC chip.
+> > >
+> > > Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+> > > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > 
+> > Any comment on this?
+> Looks good. Thank you for your work!
+> Do you test it at some board? How can we test simply?
 
-Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
----
- drivers/spi/spi-stm32-ospi.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+It was tested on Toradex SMARC iMX95, there to power-off/reset the board
+we have some I2C communication required [1].
 
-diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
-index d002b9c16714684e4e4623f9255a7f2660c46fd1..ef840f377459891b559be6d6c0435408fb58a1e9 100644
---- a/drivers/spi/spi-stm32-ospi.c
-+++ b/drivers/spi/spi-stm32-ospi.c
-@@ -804,7 +804,7 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ospi->rstc = devm_reset_control_array_get_exclusive(dev);
-+	ospi->rstc = devm_reset_control_array_get_exclusive_released(dev);
- 	if (IS_ERR(ospi->rstc))
- 		return dev_err_probe(dev, PTR_ERR(ospi->rstc),
- 				     "Can't get reset\n");
-@@ -936,11 +936,14 @@ static int stm32_ospi_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_pm_enable;
- 
--	if (ospi->rstc) {
--		reset_control_assert(ospi->rstc);
--		udelay(2);
--		reset_control_deassert(ospi->rstc);
--	}
-+	ret = reset_control_acquire(ospi->rstc);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Can not acquire reset %d\n", ret);
-+
-+	reset_control_assert(ospi->rstc);
-+	udelay(2);
-+	reset_control_deassert(ospi->rstc);
-+	reset_control_release(ospi->rstc);
- 
- 	ret = spi_register_controller(ctrl);
- 	if (ret) {
+[1] https://lore.kernel.org/all/20250407114947.41421-3-francesco@dolcini.it/
 
--- 
-2.25.1
+Francesco
 
 
