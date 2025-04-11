@@ -1,282 +1,582 @@
-Return-Path: <linux-kernel+bounces-600306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B30A85E50
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:12:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B6DA85E53
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AF2316C1BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:09:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68CA77B24E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80435537FF;
-	Fri, 11 Apr 2025 13:09:23 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D5C2E630
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 13:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE86A14AD20;
+	Fri, 11 Apr 2025 13:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EfolVmcg"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E946DDC3;
+	Fri, 11 Apr 2025 13:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744376962; cv=none; b=SBa+Bv6JNqEL59vKxVeqExyE+RR+rYbVi08+qxGScC5nuWNzKlTFooDz64G3DvZ3xjP/IZhhDCV1zFuzn38v5lXfsZXV6AyRD8H9yVNvZYAHh4wi4ZgHA7x1YDAqZfnHtptE101pXkx6twWsDvxXS4dt1UyEZ7SCfjCq7x5ERWw=
+	t=1744377086; cv=none; b=P9XnoYoXhoO7K3enuglSzlfVUb7Mb3ujjLT82F6dGxcV8mZE/hKFEvlRqjWZqjym6SFaxscMJSPl4cCv034azGjoPsafCO7HgSeafW0NE29Y8q7ERgjY3WtLkZI8xUXN4VYgz54mA9I51kJ9cwIqvMMIIeaGjYJW4p0CeU4cw5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744376962; c=relaxed/simple;
-	bh=kiGJQf1QsUySTeLczyn9mh2DyID2PtPL9PGDwvMWZiA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=unb0wfA6Y2wdJELJGXGGhARsn8a6iAcBlUslLV4wRnMoT2nmWAYbA1Wfm5moGeACgbGejd3uP/qtj5X2cRFgnEgPlugy3nUnBTFUmTXqpS6kWRFnCo0dGj4Q83kwdsAOYCsPaRixDTqqYSOpHGBNYPTTZR9gLRspGAkQZVTYKRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-851a991cf8bso255342939f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 06:09:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744376960; x=1744981760;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CEowMupmN8dmOPdvTeu2PF4PfXyiIU0FZgd8XCp/9so=;
-        b=Rk+2pcuS6wbzLTJtuXaKj0dFC/NxX0BKBGhkvrPegTKSeOqq3kSyZfxPcMyZlAP0lN
-         G5/zq11XDUXiJY8yycPBEVATeQ4M4CtSDAKuXeAtPYyDvI6B2GrfpcAp6jt6STyx9Qnz
-         zWucHKfJoMftNfBXDf7IB5DFM1t0DgwkP8a/CJ8c62EjsyCOLuEye3oqOSTdewgREL5A
-         uJ4SVt777A+6+v3FwEuf7J7dyLz4/4LlvMTxo8+4u0/rQaCFY97bgLazjLWvNMPnd/YX
-         h2HDq3nauGcCzHvuESDxIm5xt5RKZdJqJcVpUtdlvP+AQkBGoYSjfWkagljNJg5LxAuG
-         UOxg==
-X-Gm-Message-State: AOJu0Yyi3Pi5IYMiHuHPMht6pn1l3CdPHQuPafwgblaiFYO5pmudS+xy
-	UGt19iEuzWEzYSqpt4A0OWiJ5X8PJifsFUl3V1s12gZ3wsu2oQRjym0TIRJfT8EQOL4nr+moYg/
-	1x2GTNcQDyPKK5ZKsTwDkSAy/TlTna/n9OHGnyF+CfglK+DiGSB846H3y+w==
-X-Google-Smtp-Source: AGHT+IFHp7JGno+WCtE3VbIAyUwbaJ+dSV8ZIVuEDMIkMKAh//JyQcKbky7snEK//hUFQD3K7SxS2VfT77cDoFg8FlMkrDQua9O+
+	s=arc-20240116; t=1744377086; c=relaxed/simple;
+	bh=zZKgJMja8KLTG4PHtuZartZzVEbQ7KWEvwiBwjx0mS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=czBtGjtQOBLOWmJrx34ceTbGSP7hHx56vQ5sfCaynHm70+fxTtlVIt/1HJLp+dAThv9YxMmdPRLDKB8j1h0Bmzf2c5mPBfXU/vbtYREEm6KRLRpe8Xd0YCx1ODOqo728V2zRNl7gKK6DqpgtCXEeCvaEpYc2hoJzYKMExCRKd1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EfolVmcg; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=5vXVVyNwcqy/Pc/YHwZ4BPhYrvVFa7Iehsyl43qYaIo=;
+	b=EfolVmcg2OlRLDOVa6SeaC97kpX41Jwr64ilrWSgtBTnB5ibZdljN7D7PF5sQf
+	n3q4IYCANQL3EblNGTKQaX50Y2axQOQBa1IkPZQ7YoXDVyimVaum6lYwWfuSCFPP
+	b5a9AbsfYaxWN74PDztJWuYxv//ySfcZBYyVku5KAPde0=
+Received: from iZj6c3ewsy61ybpk7hrb16Z (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wCXb3yhFPlnG0PsFg--.20613S2;
+	Fri, 11 Apr 2025 21:09:55 +0800 (CST)
+Date: Fri, 11 Apr 2025 21:09:53 +0800
+From: Jiayuan Chen <mrpre@163.com>
+To: Michal Luczaj <mhal@rbox.co>
+Cc: Andrii Nakryiko <andrii@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Jakub Sitnicki <jakub@cloudflare.com>
+Subject: Re: [PATCH bpf-next v2 5/9] selftests/bpf: Add selftest for
+ sockmap/hashmap redirection
+Message-ID: <fnsy7wey4vaewoyur5363w2q2nb7dvljmaroijflgq2hfqbumo@gqdged7tly47>
+References: <20250411-selftests-sockmap-redir-v2-0-5f9b018d6704@rbox.co>
+ <20250411-selftests-sockmap-redir-v2-5-5f9b018d6704@rbox.co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:360a:b0:3d3:f15e:8e23 with SMTP id
- e9e14a558f8ab-3d7ec00411emr27979685ab.10.1744376960220; Fri, 11 Apr 2025
- 06:09:20 -0700 (PDT)
-Date: Fri, 11 Apr 2025 06:09:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67f91480.050a0220.355867.0026.GAE@google.com>
-Subject: [syzbot] [kernel?] KASAN: stack-out-of-bounds Write in preempt_schedule_irq
-From: syzbot <syzbot+dce69a6cda0826710f0e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, luto@kernel.org, peterz@infradead.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250411-selftests-sockmap-redir-v2-5-5f9b018d6704@rbox.co>
+X-CM-TRANSID:_____wCXb3yhFPlnG0PsFg--.20613S2
+X-Coremail-Antispam: 1Uf129KBjvAXoW3tw48Xw1xKFyxuw1DXr4ruFg_yoW8Xr1UXo
+	Z3GFnakr4fGrnrArWrW3s7Zw4F9a18Jay5Ja98XrW5XFnFvay5ur4DGws7XFyxur4SqF4D
+	JayIvr48Ga1Dt3yfn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUFID7DUUUU
+X-CM-SenderInfo: xpus2vi6rwjhhfrp/xtbBDwwsp2f5DjHk6AAAsl
 
-Hello,
+On Fri, Apr 11, 2025 at 01:32:41PM +0200, Michal Luczaj wrote:
+> Test redirection logic. All supported and unsupported redirect combinations
+> are tested for success and failure respectively.
+> 
+> BPF_MAP_TYPE_SOCKMAP
+> BPF_MAP_TYPE_SOCKHASH
+> 	x
+> sk_msg-to-egress
+> sk_msg-to-ingress
+> sk_skb-to-egress
+> sk_skb-to-ingress
 
-syzbot found the following issue on:
+Could we also add test cases for SK_PASS (and even SK_DROP)?
+Previously, we encountered deadlocks and incorrect sequence issues when
+the program returned SK_PASS, so explicit testing for these cases would
+be helpful.
 
-HEAD commit:    a4cda136f021 Add linux-next specific files for 20250404
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1433db4c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8a257c454bb1afb7
-dashboard link: https://syzkaller.appspot.com/bug?extid=dce69a6cda0826710f0e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+If implemented, this test would fully exercise all code paths and
+demonstrate a complete example that covers every aspect of
+sockmap's packet steering and connection management capabilities.
+> 	x
+> AF_INET, SOCK_STREAM
+> AF_INET6, SOCK_STREAM
+> AF_INET, SOCK_DGRAM
+> AF_INET6, SOCK_DGRAM
+> AF_UNIX, SOCK_STREAM
+> AF_UNIX, SOCK_DGRAM
+> AF_VSOCK, SOCK_STREAM
+> AF_VSOCK, SOCK_SEQPACKET
+> 
+> Suggested-by: Jakub Sitnicki <jakub@cloudflare.com>
+> Signed-off-by: Michal Luczaj <mhal@rbox.co>
+> ---
+>  .../selftests/bpf/prog_tests/sockmap_redir.c       | 461 +++++++++++++++++++++
+>  1 file changed, 461 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c b/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..df550759c7e50d248322be3655b02b3a21267b4a
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
+> @@ -0,0 +1,461 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Test for sockmap/sockhash redirection.
+> + *
+> + * BPF_MAP_TYPE_SOCKMAP
+> + * BPF_MAP_TYPE_SOCKHASH
+> + *	x
+> + * sk_msg-to-egress
+> + * sk_msg-to-ingress
+> + * sk_skb-to-egress
+> + * sk_skb-to-ingress
+> + *	x
+> + * AF_INET, SOCK_STREAM
+> + * AF_INET6, SOCK_STREAM
+> + * AF_INET, SOCK_DGRAM
+> + * AF_INET6, SOCK_DGRAM
+> + * AF_UNIX, SOCK_STREAM
+> + * AF_UNIX, SOCK_DGRAM
+> + * AF_VSOCK, SOCK_STREAM
+> + * AF_VSOCK, SOCK_SEQPACKET
+> + */
+> +
+> +#include <errno.h>
+> +#include <error.h>
+> +#include <sched.h>
+> +#include <stdio.h>
+> +#include <unistd.h>
+> +
+> +#include <netinet/in.h>
+> +#include <sys/socket.h>
+> +#include <sys/types.h>
+> +#include <sys/un.h>
+> +#include <linux/string.h>
+> +#include <linux/vm_sockets.h>
+> +
+> +#include <bpf/bpf.h>
+> +#include <bpf/libbpf.h>
+> +
+> +#include "linux/const.h"
+> +#include "test_progs.h"
+> +#include "sockmap_helpers.h"
+> +#include "test_sockmap_listen.skel.h"
+> +
+> +/* The meaning of SUPPORTED is "will redirect packet as expected".
+> + */
+> +#define SUPPORTED		_BITUL(0)
+> +
+> +/* Note on sk_skb-to-ingress ->af_vsock:
+> + *
+> + * Peer socket may receive the packet some time after the return from sendmsg().
+> + * In a typical usage scenario, recvmsg() will block until the redirected packet
+> + * appears in the destination queue, or timeout if the packet was dropped. By
+> + * that point, the verdict map has already been updated to reflect what has
+> + * happened.
+> + *
+> + * But sk_skb-to-ingress/af_vsock is an unsupported combination, so no recvmsg()
+> + * takes place. Which means we may race the execution of the verdict logic and
+> + * read map_verd before it has been updated, i.e. we might observe
+> + * map_verd[SK_DROP]=0 instead of map_verd[SK_DROP]=1.
+> + *
+> + * This confuses the selftest logic: if there was no packet dropped, where's the
+> + * packet? So here's a heuristic: on map_verd[SK_DROP]=map_verd[SK_PASS]=0
+> + * (which implies the verdict program has not been ran) just re-read the verdict
+> + * map again.
+> + */
+> +#define UNSUPPORTED_RACY_VERD	_BITUL(1)
+> +
+> +enum prog_type {
+> +	SK_MSG_EGRESS,
+> +	SK_MSG_INGRESS,
+> +	SK_SKB_EGRESS,
+> +	SK_SKB_INGRESS,
+> +};
+> +
+> +enum {
+> +	SEND_INNER = 0,
+> +	SEND_OUTER,
+> +};
+> +
+> +enum {
+> +	RECV_INNER = 0,
+> +	RECV_OUTER,
+> +};
+> +
+> +struct maps {
+> +	int in;
+> +	int out;
+> +	int verd;
+> +};
+> +
+> +struct combo_spec {
+> +	enum prog_type prog_type;
+> +	const char *in, *out;
+> +};
+> +
+> +struct redir_spec {
+> +	const char *name;
+> +	int idx_send;
+> +	int idx_recv;
+> +	enum prog_type prog_type;
+> +};
+> +
+> +struct socket_spec {
+> +	int family;
+> +	int sotype;
+> +	int send_flags;
+> +	int in[2];
+> +	int out[2];
+> +};
+> +
+> +static int socket_spec_pairs(struct socket_spec *s)
+> +{
+> +	return create_socket_pairs(s->family, s->sotype,
+> +				   &s->in[0], &s->out[0],
+> +				   &s->in[1], &s->out[1]);
+> +}
+> +
+> +static void socket_spec_close(struct socket_spec *s)
+> +{
+> +	xclose(s->in[0]);
+> +	xclose(s->in[1]);
+> +	xclose(s->out[0]);
+> +	xclose(s->out[1]);
+> +}
+> +
+> +static void get_redir_params(struct redir_spec *redir,
+> +			     struct test_sockmap_listen *skel,
+> +			     int *prog_fd, enum bpf_attach_type *attach_type,
+> +			     bool *ingress_flag)
+> +{
+> +	enum prog_type type = redir->prog_type;
+> +	struct bpf_program *prog;
+> +	bool sk_msg;
+> +
+> +	sk_msg = type == SK_MSG_INGRESS || type == SK_MSG_EGRESS;
+> +	prog = sk_msg ? skel->progs.prog_msg_verdict : skel->progs.prog_skb_verdict;
+> +
+> +	*prog_fd = bpf_program__fd(prog);
+> +	*attach_type = sk_msg ? BPF_SK_MSG_VERDICT : BPF_SK_SKB_VERDICT;
+> +	*ingress_flag = type == SK_MSG_INGRESS || type == SK_SKB_INGRESS;
+> +}
+> +
+> +static void try_recv(const char *prefix, int fd, int flags, bool expect_success)
+> +{
+> +	ssize_t n;
+> +	char buf;
+> +
+> +	errno = 0;
+> +	n = recv(fd, &buf, 1, flags);
+> +	if (n < 0 && expect_success)
+> +		FAIL_ERRNO("%s: unexpected failure: retval=%zd", prefix, n);
+> +	if (!n && !expect_success)
+> +		FAIL("%s: expected failure: retval=%zd", prefix, n);
+> +}
+> +
+> +static void handle_unsupported(int sd_send, int sd_peer, int sd_in, int sd_out,
+> +			       int sd_recv, int map_verd, int status)
+> +{
+> +	unsigned int drop, pass;
+> +	char recv_buf;
+> +	ssize_t n;
+> +
+> +get_verdict:
+> +	if (xbpf_map_lookup_elem(map_verd, &u32(SK_DROP), &drop) ||
+> +	    xbpf_map_lookup_elem(map_verd, &u32(SK_PASS), &pass))
+> +		return;
+> +
+> +	if (pass == 0 && drop == 0 && (status & UNSUPPORTED_RACY_VERD)) {
+> +		sched_yield();
+> +		goto get_verdict;
+> +	}
+> +
+> +	if (pass != 0) {
+> +		FAIL("unsupported: wanted verdict pass 0, have %u", pass);
+> +		return;
+> +	}
+> +
+> +	/* If nothing was dropped, packet should have reached the peer */
+> +	if (drop == 0) {
+> +		errno = 0;
+> +		n = recv_timeout(sd_peer, &recv_buf, 1, 0, IO_TIMEOUT_SEC);
+> +		if (n != 1)
+> +			FAIL_ERRNO("unsupported: packet missing, retval=%zd", n);
+> +	}
+> +
+> +	/* Ensure queues are empty */
+> +	try_recv("bpf.recv(sd_send)", sd_send, MSG_DONTWAIT, false);
+> +	if (sd_in != sd_send)
+> +		try_recv("bpf.recv(sd_in)", sd_in, MSG_DONTWAIT, false);
+> +
+> +	try_recv("bpf.recv(sd_out)", sd_out, MSG_DONTWAIT, false);
+> +	if (sd_recv != sd_out)
+> +		try_recv("bpf.recv(sd_recv)", sd_recv, MSG_DONTWAIT, false);
+> +}
+> +
+> +static void test_send_redir_recv(int sd_send, int send_flags, int sd_peer,
+> +				 int sd_in, int sd_out, int sd_recv,
+> +				 struct maps *maps, int status)
+> +{
+> +	unsigned int drop, pass;
+> +	char *send_buf = "ab";
+> +	char recv_buf = '\0';
+> +	ssize_t n, len = 1;
+> +
+> +	/* Zero out the verdict map */
+> +	if (xbpf_map_update_elem(maps->verd, &u32(SK_DROP), &u32(0), BPF_ANY) ||
+> +	    xbpf_map_update_elem(maps->verd, &u32(SK_PASS), &u32(0), BPF_ANY))
+> +		return;
+> +
+> +	if (xbpf_map_update_elem(maps->in, &u32(0), &u64(sd_in), BPF_NOEXIST))
+> +		return;
+> +
+> +	if (xbpf_map_update_elem(maps->out, &u32(0), &u64(sd_out), BPF_NOEXIST))
+> +		goto del_in;
+> +
+> +	/* Last byte is OOB data when send_flags has MSG_OOB bit set */
+> +	if (send_flags & MSG_OOB)
+> +		len++;
+> +	n = send(sd_send, send_buf, len, send_flags);
+> +	if (n >= 0 && n < len)
+> +		FAIL("incomplete send");
+> +	if (n < 0) {
+> +		/* sk_msg redirect combo not supported? */
+> +		if (status & SUPPORTED || errno != EACCES)
+> +			FAIL_ERRNO("send");
+> +		goto out;
+> +	}
+> +
+> +	if (!(status & SUPPORTED)) {
+> +		handle_unsupported(sd_send, sd_peer, sd_in, sd_out, sd_recv,
+> +				   maps->verd, status);
+> +		goto out;
+> +	}
+> +
+> +	errno = 0;
+> +	n = recv_timeout(sd_recv, &recv_buf, 1, 0, IO_TIMEOUT_SEC);
+> +	if (n != 1) {
+> +		FAIL_ERRNO("recv_timeout()");
+> +		goto out;
+> +	}
+> +
+> +	/* Check verdict _after_ recv(); af_vsock may need time to catch up */
+> +	if (xbpf_map_lookup_elem(maps->verd, &u32(SK_DROP), &drop) ||
+> +	    xbpf_map_lookup_elem(maps->verd, &u32(SK_PASS), &pass))
+> +		goto out;
+> +
+> +	if (drop != 0 || pass != 1)
+> +		FAIL("unexpected verdict drop/pass: wanted 0/1, have %u/%u",
+> +		     drop, pass);
+> +
+> +	if (recv_buf != send_buf[0])
+> +		FAIL("recv(): payload check, %02x != %02x", recv_buf, send_buf[0]);
+> +
+> +	if (send_flags & MSG_OOB) {
+> +		/* Fail reading OOB while in sockmap */
+> +		try_recv("bpf.recv(sd_out, MSG_OOB)", sd_out,
+> +			 MSG_OOB | MSG_DONTWAIT, false);
+> +
+> +		/* Remove sd_out from sockmap */
+> +		xbpf_map_delete_elem(maps->out, &u32(0));
+> +
+> +		/* Check that OOB was dropped on redirect */
+> +		try_recv("recv(sd_out, MSG_OOB)", sd_out,
+> +			 MSG_OOB | MSG_DONTWAIT, false);
+> +
+> +		goto del_in;
+> +	}
+> +out:
+> +	xbpf_map_delete_elem(maps->out, &u32(0));
+> +del_in:
+> +	xbpf_map_delete_elem(maps->in, &u32(0));
+> +}
+> +
+> +static int is_redir_supported(enum prog_type type, const char *in,
+> +			      const char *out)
+> +{
+> +	/* Matching based on strings returned by socket_kind_to_str():
+> +	 * tcp4, udp4, tcp6, udp6, u_str, u_dgr, v_str, v_seq
+> +	 * Plus a wildcard: any
+> +	 * Not in use: u_seq, v_dgr
+> +	 */
+> +	struct combo_spec *c, combos[] = {
+> +		/* Send to local: TCP -> any, but vsock */
+> +		{ SK_MSG_INGRESS,	"tcp",	"tcp"	},
+> +		{ SK_MSG_INGRESS,	"tcp",	"udp"	},
+> +		{ SK_MSG_INGRESS,	"tcp",	"u_str"	},
+> +		{ SK_MSG_INGRESS,	"tcp",	"u_dgr"	},
+> +
+> +		/* Send to egress: TCP -> TCP */
+> +		{ SK_MSG_EGRESS,	"tcp",	"tcp"	},
+> +
+> +		/* Ingress to egress: any -> any */
+> +		{ SK_SKB_EGRESS,	"any",	"any"	},
+> +
+> +		/* Ingress to local: any -> any, but vsock */
+> +		{ SK_SKB_INGRESS,	"any",	"tcp"	},
+> +		{ SK_SKB_INGRESS,	"any",	"udp"	},
+> +		{ SK_SKB_INGRESS,	"any",	"u_str"	},
+> +		{ SK_SKB_INGRESS,	"any",	"u_dgr"	},
+> +	};
+> +
+> +	for (c = combos; c < combos + ARRAY_SIZE(combos); c++) {
+> +		if (c->prog_type == type &&
+> +		    (!strcmp(c->in, "any") || strstarts(in, c->in)) &&
+> +		    (!strcmp(c->out, "any") || strstarts(out, c->out)))
+> +			return SUPPORTED;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int get_support_status(enum prog_type type, const char *in,
+> +			      const char *out)
+> +{
+> +	int status = is_redir_supported(type, in, out);
+> +
+> +	if (type == SK_SKB_INGRESS && strstarts(out, "v_"))
+> +		status |= UNSUPPORTED_RACY_VERD;
+> +
+> +	return status;
+> +}
+> +
+> +static void test_socket(enum bpf_map_type type, struct redir_spec *redir,
+> +			struct maps *maps, struct socket_spec *s_in,
+> +			struct socket_spec *s_out)
+> +{
+> +	int fd_in, fd_out, fd_send, fd_peer, fd_recv, flags, status;
+> +	const char *in_str, *out_str;
+> +	char s[MAX_TEST_NAME];
+> +
+> +	fd_in = s_in->in[0];
+> +	fd_out = s_out->out[0];
+> +	fd_send = s_in->in[redir->idx_send];
+> +	fd_peer = s_in->in[redir->idx_send ^ 1];
+> +	fd_recv = s_out->out[redir->idx_recv];
+> +	flags = s_in->send_flags;
+> +
+> +	in_str = socket_kind_to_str(fd_in);
+> +	out_str = socket_kind_to_str(fd_out);
+> +	status = get_support_status(redir->prog_type, in_str, out_str);
+> +
+> +	snprintf(s, sizeof(s),
+> +		 "%-4s %-17s %-5s %s %-5s%6s",
+> +		 /* hash sk_skb-to-ingress u_str → v_str (OOB) */
+> +		 type == BPF_MAP_TYPE_SOCKMAP ? "map" : "hash",
+> +		 redir->name,
+> +		 in_str,
+> +		 status & SUPPORTED ? "→" : " ",
+> +		 out_str,
+> +		 (flags & MSG_OOB) ? "(OOB)" : "");
+> +
+> +	if (!test__start_subtest(s))
+> +		return;
+> +
+> +	test_send_redir_recv(fd_send, flags, fd_peer, fd_in, fd_out, fd_recv,
+> +			     maps, status);
+> +}
+> +
+> +static void test_redir(enum bpf_map_type type, struct redir_spec *redir,
+> +		       struct maps *maps)
+> +{
+> +	struct socket_spec *s, sockets[] = {
+> +		{ AF_INET, SOCK_STREAM },
+> +		// { AF_INET, SOCK_STREAM, MSG_OOB }, /* Known to be broken */
+> +		{ AF_INET6, SOCK_STREAM },
+> +		{ AF_INET, SOCK_DGRAM },
+> +		{ AF_INET6, SOCK_DGRAM },
+> +		{ AF_UNIX, SOCK_STREAM },
+> +		{ AF_UNIX, SOCK_STREAM, MSG_OOB },
+> +		{ AF_UNIX, SOCK_DGRAM },
+> +		// { AF_UNIX, SOCK_SEQPACKET},	/* Unsupported BPF_MAP_UPDATE_ELEM */
+> +		{ AF_VSOCK, SOCK_STREAM },
+> +		// { AF_VSOCK, SOCK_DGRAM },	/* Unsupported socket() */
+> +		{ AF_VSOCK, SOCK_SEQPACKET },
+> +	};
+> +
+> +	for (s = sockets; s < sockets + ARRAY_SIZE(sockets); s++)
+> +		if (socket_spec_pairs(s))
+> +			goto out;
+> +
+> +	/* Intra-proto */
+> +	for (s = sockets; s < sockets + ARRAY_SIZE(sockets); s++)
+> +		test_socket(type, redir, maps, s, s);
+> +
+> +	/* Cross-proto */
+> +	for (int i = 0; i < ARRAY_SIZE(sockets); i++) {
+> +		for (int j = 0; j < ARRAY_SIZE(sockets); j++) {
+> +			struct socket_spec *out = &sockets[j];
+> +			struct socket_spec *in = &sockets[i];
+> +
+> +			/* Skip intra-proto and between variants */
+> +			if (out->send_flags ||
+> +			    (in->family == out->family &&
+> +			     in->sotype == out->sotype))
+> +				continue;
+> +
+> +			test_socket(type, redir, maps, in, out);
+> +		}
+> +	}
+> +out:
+> +	while (--s >= sockets)
+> +		socket_spec_close(s);
+> +}
+> +
+> +static void test_map(enum bpf_map_type type)
+> +{
+> +	struct redir_spec *r, redirs[] = {
+> +		{ "sk_msg-to-ingress", SEND_INNER, RECV_INNER, SK_MSG_INGRESS },
+> +		{ "sk_msg-to-egress", SEND_INNER, RECV_OUTER, SK_MSG_EGRESS },
+> +		{ "sk_skb-to-egress", SEND_OUTER, RECV_OUTER, SK_SKB_EGRESS },
+> +		{ "sk_skb-to-ingress", SEND_OUTER, RECV_INNER, SK_SKB_INGRESS },
+> +	};
+> +
+> +	for (r = redirs; r < redirs + ARRAY_SIZE(redirs); r++) {
+> +		enum bpf_attach_type attach_type;
+> +		struct test_sockmap_listen *skel;
+> +		struct maps maps;
+> +		int prog_fd;
+> +
+> +		skel = test_sockmap_listen__open_and_load();
+> +		if (!skel) {
+> +			FAIL("open_and_load");
+> +			return;
+> +		}
+> +
+> +		switch (type) {
+> +		case BPF_MAP_TYPE_SOCKMAP:
+> +			skel->bss->test_sockmap = true;
+> +			maps.out = bpf_map__fd(skel->maps.sock_map);
+> +			break;
+> +		case BPF_MAP_TYPE_SOCKHASH:
+> +			skel->bss->test_sockmap = false;
+> +			maps.out = bpf_map__fd(skel->maps.sock_hash);
+> +			break;
+> +		default:
+> +			FAIL("Unsupported bpf_map_type");
+> +			return;
+> +		}
+> +
+> +		maps.in = bpf_map__fd(skel->maps.nop_map);
+> +		maps.verd = bpf_map__fd(skel->maps.verdict_map);
+> +		get_redir_params(r, skel, &prog_fd, &attach_type,
+> +				 &skel->bss->test_ingress);
+> +
+> +		if (xbpf_prog_attach(prog_fd, maps.in, attach_type, 0))
+> +			return;
+> +
+> +		test_redir(type, r, &maps);
+> +
+> +		if (xbpf_prog_detach2(prog_fd, maps.in, attach_type))
+> +			return;
+> +
+> +		test_sockmap_listen__destroy(skel);
+> +	}
+> +}
+> +
+> +void serial_test_sockmap_redir(void)
+> +{
+> +	test_map(BPF_MAP_TYPE_SOCKMAP);
+> +	test_map(BPF_MAP_TYPE_SOCKHASH);
+> +}
+> 
+> -- 
+> 2.49.0
+> 
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/59048bc9c206/disk-a4cda136.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ad2ba7306f20/vmlinux-a4cda136.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b3bef7acbf10/bzImage-a4cda136.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+dce69a6cda0826710f0e@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: stack-out-of-bounds in native_save_fl arch/x86/include/asm/irqflags.h:19 [inline]
-BUG: KASAN: stack-out-of-bounds in arch_local_save_flags arch/x86/include/asm/irqflags.h:109 [inline]
-BUG: KASAN: stack-out-of-bounds in arch_irqs_disabled arch/x86/include/asm/irqflags.h:151 [inline]
-BUG: KASAN: stack-out-of-bounds in preempt_schedule_irq+0x10d/0x1c0 kernel/sched/core.c:7091
-Write of size 8 at addr ffffc90004db6380 by task syz.3.172/6997
-
-CPU: 1 UID: 0 PID: 6997 Comm: syz.3.172 Not tainted 6.14.0-next-20250404-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0x16e/0x5b0 mm/kasan/report.c:521
- kasan_report+0x143/0x180 mm/kasan/report.c:634
- native_save_fl arch/x86/include/asm/irqflags.h:19 [inline]
- arch_local_save_flags arch/x86/include/asm/irqflags.h:109 [inline]
- arch_irqs_disabled arch/x86/include/asm/irqflags.h:151 [inline]
- preempt_schedule_irq+0x10d/0x1c0 kernel/sched/core.c:7091
- irqentry_exit+0x5e/0x90 kernel/entry/common.c:354
- asm_sysvec_reschedule_ipi+0x1a/0x20 arch/x86/include/asm/idtentry.h:707
-RIP: 0010:xas_load+0xd/0x5c0 lib/xarray.c:238
-Code: 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 55 41 57 41 56 41 55 41 54 <53> 48 83 ec 48 49 89 fc 48 bd 00 00 00 00 00 fc ff df e8 cc a1 94
-RSP: 0018:ffffc90004db64d0 EFLAGS: 00000287
-RAX: ffffffff81fedbf2 RBX: ffffc90004db6580 RCX: 0000000000080000
-RDX: ffffc9000d5ae000 RSI: 0000000000001020 RDI: ffffc90004db6580
-RBP: ffffc90004db6630 R08: ffffffff81fedbd6 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: dffffc0000000000
-R13: ffffc90004db6580 R14: 1ffff920009b6cac R15: ffffffff81fedba5
- filemap_get_read_batch+0x242/0x960 mm/filemap.c:2361
- filemap_get_pages+0x60c/0x1fc0 mm/filemap.c:2593
- filemap_read+0x466/0x1260 mm/filemap.c:2701
- __kernel_read+0x532/0xa10 fs/read_write.c:528
- integrity_kernel_read+0xb2/0x100 security/integrity/iint.c:28
- ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
- ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
- ima_calc_file_hash+0xb22/0x1c10 security/integrity/ima/ima_crypto.c:568
- ima_collect_measurement+0x52b/0xb20 security/integrity/ima/ima_api.c:293
- process_measurement+0x13a3/0x1fe0 security/integrity/ima/ima_main.c:383
- ima_file_check+0xdb/0x130 security/integrity/ima/ima_main.c:611
- security_file_post_open+0xb9/0x280 security/security.c:3130
- do_open fs/namei.c:3847 [inline]
- path_openat+0x2cf7/0x35d0 fs/namei.c:4004
- do_filp_open+0x284/0x4e0 fs/namei.c:4031
- do_sys_openat2+0x12b/0x1d0 fs/open.c:1429
- do_sys_open fs/open.c:1444 [inline]
- __do_sys_openat fs/open.c:1460 [inline]
- __se_sys_openat fs/open.c:1455 [inline]
- __x64_sys_openat+0x249/0x2a0 fs/open.c:1455
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbf8ad8d169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fbf88bd5038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007fbf8afa6080 RCX: 00007fbf8ad8d169
-RDX: 0000000000000042 RSI: 0000200000000040 RDI: ffffffffffffff9c
-RBP: 00007fbf8ae0e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fbf8afa6080 R15: 00007ffe61db2558
- </TASK>
-
-The buggy address belongs to stack of task syz.3.172/6997
- and is located at offset 32 in frame:
- preempt_schedule_irq+0x0/0x1c0 arch/x86/include/asm/bitops.h:-1
-
-This frame has 2 objects:
- [32, 40) 'flags.i.i.i'
- [64, 72) 'flags.i.i'
-
-The buggy address belongs to the virtual mapping at
- [ffffc90004db0000, ffffc90004db9000) created by:
- copy_process+0x5dc/0x3d10 kernel/fork.c:2259
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x36 pfn:0x51784
-memcg:ffff88802f1c8e02
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
-raw: 0000000000000036 0000000000000000 00000001ffffffff ffff88802f1c8e02
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2dc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_ZERO|__GFP_NOWARN), pid 6870, tgid 6870 (dhcpcd-run-hook), ts 184650699844, free_ts 184571613308
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f4/0x240 mm/page_alloc.c:1718
- prep_new_page mm/page_alloc.c:1726 [inline]
- get_page_from_freelist+0x356d/0x3700 mm/page_alloc.c:3655
- __alloc_frozen_pages_noprof+0x211/0x5b0 mm/page_alloc.c:4937
- alloc_pages_mpol+0x339/0x690 mm/mempolicy.c:2302
- alloc_frozen_pages_noprof mm/mempolicy.c:2373 [inline]
- alloc_pages_noprof+0x121/0x190 mm/mempolicy.c:2393
- vm_area_alloc_pages mm/vmalloc.c:3591 [inline]
- __vmalloc_area_node mm/vmalloc.c:3669 [inline]
- __vmalloc_node_range_noprof+0x9cb/0x1390 mm/vmalloc.c:3844
- __vmalloc_node_noprof+0x80/0xa0 mm/vmalloc.c:3907
- alloc_thread_stack_node kernel/fork.c:314 [inline]
- dup_task_struct+0x3f7/0x870 kernel/fork.c:1136
- copy_process+0x5dc/0x3d10 kernel/fork.c:2259
- kernel_clone+0x242/0x930 kernel/fork.c:2844
- __do_sys_clone kernel/fork.c:2987 [inline]
- __se_sys_clone kernel/fork.c:2971 [inline]
- __x64_sys_clone+0x268/0x2e0 kernel/fork.c:2971
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 6790 tgid 6789 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1262 [inline]
- free_unref_folios+0xe0e/0x17f0 mm/page_alloc.c:2739
- folios_put_refs+0x70a/0x800 mm/swap.c:992
- folio_batch_release include/linux/pagevec.h:101 [inline]
- truncate_inode_pages_range+0x462/0x10e0 mm/truncate.c:379
- kill_bdev block/bdev.c:91 [inline]
- blkdev_flush_mapping+0x108/0x270 block/bdev.c:674
- blkdev_put_whole block/bdev.c:681 [inline]
- bdev_release+0x460/0x700 block/bdev.c:1106
- blkdev_release+0x15/0x20 block/fops.c:660
- __fput+0x3e9/0x9f0 fs/file_table.c:465
- task_work_run+0x251/0x310 kernel/task_work.c:227
- get_signal+0x15db/0x1730 kernel/signal.c:2807
- arch_do_signal_or_restart+0x98/0x840 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xce/0x340 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffffc90004db6280: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffffc90004db6300: 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
->ffffc90004db6380: 00 f2 f2 f2 00 f3 f3 f3 00 00 00 00 00 00 00 00
-                      ^
- ffffc90004db6400: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffffc90004db6480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-----------------
-Code disassembly (best guess):
-   0:	2e 0f 1f 84 00 00 00 	cs nopl 0x0(%rax,%rax,1)
-   7:	00 00
-   9:	0f 1f 40 00          	nopl   0x0(%rax)
-   d:	90                   	nop
-   e:	90                   	nop
-   f:	90                   	nop
-  10:	90                   	nop
-  11:	90                   	nop
-  12:	90                   	nop
-  13:	90                   	nop
-  14:	90                   	nop
-  15:	90                   	nop
-  16:	90                   	nop
-  17:	90                   	nop
-  18:	90                   	nop
-  19:	90                   	nop
-  1a:	90                   	nop
-  1b:	90                   	nop
-  1c:	90                   	nop
-  1d:	f3 0f 1e fa          	endbr64
-  21:	55                   	push   %rbp
-  22:	41 57                	push   %r15
-  24:	41 56                	push   %r14
-  26:	41 55                	push   %r13
-  28:	41 54                	push   %r12
-* 2a:	53                   	push   %rbx <-- trapping instruction
-  2b:	48 83 ec 48          	sub    $0x48,%rsp
-  2f:	49 89 fc             	mov    %rdi,%r12
-  32:	48 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%rbp
-  39:	fc ff df
-  3c:	e8                   	.byte 0xe8
-  3d:	cc                   	int3
-  3e:	a1                   	.byte 0xa1
-  3f:	94                   	xchg   %eax,%esp
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
