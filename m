@@ -1,93 +1,129 @@
-Return-Path: <linux-kernel+bounces-601027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58005A8681D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 23:22:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E73A86825
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 23:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C9187A4547
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 21:21:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A46848A5A06
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 21:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C90C29AAF2;
-	Fri, 11 Apr 2025 21:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27402298CC3;
+	Fri, 11 Apr 2025 21:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="vrj+g3UF"
-Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F0lCBHcK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A74D2900B5;
-	Fri, 11 Apr 2025 21:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70BB26F44A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 21:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744406539; cv=none; b=TJJn86VaRiv8tD/rnw4YWYmK9hGutkhT9g1hlOJmOJl2FKP9T8m5Z+XLCvkwOZD0frodqGgS4ERx5c796rVV1VOMfgkV1q1Y00S4mvVl77neThlODCwQjStCWspUs4t3t+EDm1nKsIFPfzHc+U0r7rQ+mKp8mFrPql2o4CQ2MbY=
+	t=1744406611; cv=none; b=Y9Rz8eYsjBf1pEkfdy7pUDZ1ZLl5kANG0DtW6ZGVS+2M3vc5NAmQYJd3rsoNFtiZj7S6ZDYVog1rdnnu7T3LNAnPZdeymNl+nuvS6hcZOisUX7/GZB9W0CIYJYz++IoDWRQC9c9WqzIa04mmePHABlxNysXDIArjk/xPpmti1I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744406539; c=relaxed/simple;
-	bh=ePCmxxtBAD+3oU9ozdDlC9rhlhORzN41yd5Nj7ytW/Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cxmm2goXEKe7mEtS/rnASO0P8qI/bU7XzRH8pTZxpG3L6FglH8PqUusZg/XUecZN0XBjKj2UwPwn/kATA7TYJHT4JX4S4DfeJ8r3AeGrtYR5m94WHPfN1Kw0PQf/B6tG5lw+buM1FxWiJ6fQsZ2SbffmTpIipqURRS6k6KlFnzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=vrj+g3UF; arc=none smtp.client-ip=99.78.197.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1744406538; x=1775942538;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7e0SLfRq2Ba9KBj40Jessiml3hk/TB2pnnWqM89Gg9o=;
-  b=vrj+g3UFhMB+vKG1s0VgLPWge1PxIxQy1Bi5gR5wiyRHNXjOHpFk+0nz
-   XR1dZHvWmNXuGNDmAqa3dxY+zm7BTk6VXLDP1YZScxX+5mNo2rfz4lI/0
-   F4G+lc6i5HCCsnRswZ+Cl6vgWEpIC3VowcMSpxdOSicwsxWHIuw0jlgqP
-   o=;
-X-IronPort-AV: E=Sophos;i="6.15,206,1739836800"; 
-   d="scan'208";a="39952625"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 21:22:18 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:63936]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.43.57:2525] with esmtp (Farcaster)
- id 2a254558-e4fe-4af1-a523-66a61b6e120f; Fri, 11 Apr 2025 21:22:17 +0000 (UTC)
-X-Farcaster-Flow-ID: 2a254558-e4fe-4af1-a523-66a61b6e120f
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 11 Apr 2025 21:22:16 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.119.240.29) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 11 Apr 2025 21:22:14 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <leitao@debian.org>
-CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<horms@kernel.org>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, Kuniyuki Iwashima
-	<kuniyu@amazon.com>
-Subject: Re: [PATCH net-next 3/9] neighbour: Use nlmsg_payload in neigh_valid_get_req
-Date: Fri, 11 Apr 2025 14:22:01 -0700
-Message-ID: <20250411212204.67458-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250411-nlmsg-v1-3-ddd4e065cb15@debian.org>
-References: <20250411-nlmsg-v1-3-ddd4e065cb15@debian.org>
+	s=arc-20240116; t=1744406611; c=relaxed/simple;
+	bh=cT/cquOiK5kJbCKhWNDsa/HD2qOKMLcuuMPbjMzKudQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m1FQ7E9I7fnP/bQ0kdSxKtPtGHKMwvm1bM7qofLYaFKkaIHhwXnjMhr3mmfSQkXlbtTZbw52X1ZtCb7JKEw2T55dgpF6LmchCjb8O9ED+LV5kmtV0gd2Mxvtubq0dhCGzD/OblPm7385nX6ZS0cN6XuugEgIs7rnHX1chkTLpOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F0lCBHcK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744406608;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+8LHwnmfwnlUW2PNBPXgiSju2q0/JsD2x4Yxk0rIXgs=;
+	b=F0lCBHcKvf6MAKC8S8lqfLIXS3zJ7g8VQJg/dnjhFBghcLvIetvZl1aBaeuzByzDU6S5gy
+	+GHcBx2fHM6hxPjtNuBneEUQWqXkR5tgYQyVVbdgENlBFjn80HmBVTq/FHrQQq3trGEOXX
+	+ujMALbMGPMorHuAgv5wsBjI7be+yy0=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-620-R2JoGHHMPrii-x6bjEouvQ-1; Fri,
+ 11 Apr 2025 17:23:25 -0400
+X-MC-Unique: R2JoGHHMPrii-x6bjEouvQ-1
+X-Mimecast-MFC-AGG-ID: R2JoGHHMPrii-x6bjEouvQ_1744406603
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8DBA819560B3;
+	Fri, 11 Apr 2025 21:23:23 +0000 (UTC)
+Received: from f39 (unknown [10.22.65.78])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 78F8E180B486;
+	Fri, 11 Apr 2025 21:23:21 +0000 (UTC)
+Date: Fri, 11 Apr 2025 23:23:18 +0200
+From: Eder Zulian <ezulian@redhat.com>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: Basavaraj.Natikar@amd.com, vkoul@kernel.org, dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jsnitsel@redhat.com,
+	ddutile@redhat.com
+Subject: Re: [PATCH RFC 1/1] dmaengine: ptdma: use SLAB_TYPESAFE_BY_RCU for
+ the DMA descriptor slab
+Message-ID: <Z_mIRn6G1wBH5jfP@f39>
+References: <20250411194148.247361-1-ezulian@redhat.com>
+ <20250411194148.247361-2-ezulian@redhat.com>
+ <41a120c8-e5ad-4a0f-96cf-1159d5d1b4e1@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D041UWA001.ant.amazon.com (10.13.139.124) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <41a120c8-e5ad-4a0f-96cf-1159d5d1b4e1@intel.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 11 Apr 2025 10:00:50 -0700
-> Update neigh_valid_get_req function to utilize the new nlmsg_payload()
-> helper function.
-> 
-> This change improves code clarity and safety by ensuring that the
-> Netlink message payload is properly validated before accessing its data.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+Hello Dave,
 
-Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+On Fri, Apr 11, 2025 at 01:34:28PM -0700, Dave Jiang wrote:
+> 
+> 
+> On 4/11/25 12:41 PM, Eder Zulian wrote:
+> > The SLAB_TYPESAFE_BY_RCU flag prevents a change of type for objects
+> > allocated from the slab cache (although the memory may be reallocated to
+> > a completetly different object of the same type.) Moreover, when the
+> > last reference to an object is dropped the finalization code must not
+> > run until all __rcu pointers referencing the object have been updated,
+> > and then a grace period has passed.
+> 
+> I would pull some of the explanation on why and how from your cover. Also, a fixes tag may be needed?
+
+Sure. Thanks for your suggestion. I will add both the explanation and a
+fixes tag. Right now I think the fixes tag would point to the initial
+commit, but let me double check that on Monday. Maybe I should wait a bit
+more and integrate feedback from others as well in a v2.
+
+> 
+> DJ
+>  
+> > 
+> > Signed-off-by: Eder Zulian <ezulian@redhat.com>
+> > ---
+> >  drivers/dma/amd/ptdma/ptdma-dmaengine.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/dma/amd/ptdma/ptdma-dmaengine.c b/drivers/dma/amd/ptdma/ptdma-dmaengine.c
+> > index 715ac3ae067b..b70dd1b0b9fb 100644
+> > --- a/drivers/dma/amd/ptdma/ptdma-dmaengine.c
+> > +++ b/drivers/dma/amd/ptdma/ptdma-dmaengine.c
+> > @@ -597,7 +597,8 @@ int pt_dmaengine_register(struct pt_device *pt)
+> >  
+> >  	pt->dma_desc_cache = kmem_cache_create(desc_cache_name,
+> >  					       sizeof(struct pt_dma_desc), 0,
+> > -					       SLAB_HWCACHE_ALIGN, NULL);
+> > +					       SLAB_HWCACHE_ALIGN |
+> > +					       SLAB_TYPESAFE_BY_RCU, NULL);
+> >  	if (!pt->dma_desc_cache) {
+> >  		ret = -ENOMEM;
+> >  		goto err_cache;
+> 
+
+Thank you,
+Eder
+
 
