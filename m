@@ -1,230 +1,259 @@
-Return-Path: <linux-kernel+bounces-599378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F103FA85347
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 453A7A8534B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B2DE9A50FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:41:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73FDD9A608A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C9C28153E;
-	Fri, 11 Apr 2025 05:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733CA27D761;
+	Fri, 11 Apr 2025 05:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4j4sdiQs"
-Received: from mail-oa1-f74.google.com (mail-oa1-f74.google.com [209.85.160.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNDH19+h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD07727D779
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 05:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9205E1E835B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 05:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744349929; cv=none; b=oLnKLtH5YFZUfAmGB0B7sfeEGYs1Lmfq2+HqSBu+aBVEF47DsrkYjBQKFvV7sySbWrC778YKlBAIs4yktsOvgkTaL/naz8eQXDzI5W9M+34gMboHyk4esUrINXUMjD5GKYGxn8+KajqXDxVNhdjXGcMHTHVfHl8prmV3yEJweuo=
+	t=1744350071; cv=none; b=UZ9yBw4oF3mPqeXJSfd91uYOrefwoR9B3BmGBMGN3BnYNiQ6KrNOqKeqUQwF4BaL/RziG3rU4xxauKPXPt9og1MsPzZSXWcUzY9nSgewWLMGpnSRqLd3VRm6Jr8TRFFn/aVelbWaCxYx5sRAHiI3n3eDqzL/DqvKkp4QFjQWkOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744349929; c=relaxed/simple;
-	bh=4kHfpKk1VoSUqf1iEbD0lJaQGhASEC7+kfKMWqTLH74=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bb7HnV8jiD/fCDFbuq/bLtQ1S9xdaxbJqMAk0n/lPMGO4sjSUF/Jtf5muPqlLnc/wPdYIpiU4hEn8ZrENw2emCPQrx56jrgDErPQuyVB8SnN6EqPiCJ67qP6KJ51Z4PJzOFDTYw77e98ZZkrgpGkK7rwqvuPdKLYwruvvCTlRLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4j4sdiQs; arc=none smtp.client-ip=209.85.160.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com
-Received: by mail-oa1-f74.google.com with SMTP id 586e51a60fabf-2c2bb3bed7cso480978fac.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 22:38:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744349927; x=1744954727; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J3pOG049tN04I3gAeVWk6hcyObwRwUDj/yys8nKxPg8=;
-        b=4j4sdiQsjMrAVecorbSp2t6WxCS/b7mByaAlyFRwc01z7PMBOxwOxpAGuskp8GoY+e
-         hNHQhwgfz4vE1D84F62+MgAxI/4kKZLvr0lgkOCFDfB51zS9L3OT4rJGV7xRD5GD2PjI
-         aT80h7LLNCY2X5Dao2xqBHzFScujvs2HUfpXT97skbi0o+afwamQsDDgDgOM69DdxPRa
-         l1RYZl3Mlpk+0n7bAxX++nkCyjtaGYeVQbWSO8llCiyT+mgAazMeRwyu0s3z+y005iSX
-         oxtPJVutAD/UUxnf9H7iy9fXHfqnpT3CBtV4FhdnOM7I2ZC7iKOhG7pHUoz9A3xc00he
-         pp3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744349927; x=1744954727;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J3pOG049tN04I3gAeVWk6hcyObwRwUDj/yys8nKxPg8=;
-        b=B4c2wxUTYx2StGpCPMnPXUvnetB+PaRBdOLYtdXhxYUuLV4ereD+YUprecmwpL9v0u
-         9Gl4TfFY+ap0dtnKOpgwz45GAd1NiJmAjxqahSV1Vw1G1bFYJfjw94YdxyYxlgHXYiVa
-         lRGp7sCnauT5vL3mNIqK7ZsLqzrR3O1oVlIWhJK57vUzDGoZGscgxhjJR5aZzASIjJaz
-         0R2KzMmqmWSZRf+WSSHqp4R+FvNvHg878uXOuQaPzTiIG6G3IbiX8V/xA83xaQClCj/k
-         +NxVafk9x+G+hRe2rswFdXL89aFRRJ1iI8CaVV9XGdL3KlDeNr2tBPodwOyJez2Irw7o
-         9V6A==
-X-Gm-Message-State: AOJu0YzUo2IvfPRYGUyRykI4MVhVeCBF3Jm9qVKZUFL8qR/q+qKkp2ca
-	iztT/p5dDGxSDIHuPK5E1VI/8y2J9g8UN1uQ3sMJHjiR1HgS4B66WyaV3OLHBiWQ0vYSEf8gEYU
-	cef8DQd+SeApI6jl7sYvwEBA4dt0BQQATp/pKyA8krhgEq8KkJn+GBQlJ/KMGJvhGyNn8bBrDmW
-	+zdUWfN5kFVVUPw5ya5D+HJbraOFlabTuSHk3bVVIhfMvb75kl4sE67MCd2ImxMA==
-X-Google-Smtp-Source: AGHT+IEJNpRI4+8yaXJk8414f64tfdUZ+FcyahilW3BlIEGi90JnnJd1CB5TgY9EhsFB2ykTGHq1Hj397rCuMwxE
-X-Received: from oabvp10.prod.google.com ([2002:a05:6871:a00a:b0:2c1:5f7a:eba8])
- (user=changyuanl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6871:4006:b0:29e:671b:6003 with SMTP id 586e51a60fabf-2d0d5f55d6emr854516fac.32.1744349926748;
- Thu, 10 Apr 2025 22:38:46 -0700 (PDT)
-Date: Thu, 10 Apr 2025 22:37:45 -0700
-In-Reply-To: <20250411053745.1817356-1-changyuanl@google.com>
+	s=arc-20240116; t=1744350071; c=relaxed/simple;
+	bh=oGxswkkC7eZnNSbPQaNqTnx3m9Tm+aXTjNJjB7KZHOw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z9jF+DGWanBAMuK0gtvQ/r+ICHBeiZ+FiyZr1EQ2pOepqrDY0eQvI8TbpcxGoHIO/J0AL2EzG+4+e83pGAGaw69jZjRkuF0/MsFIHwnSdEAqT6kJXuhLMAVIcfltgzrHCmtS4821GuF/PVtJrYa//n5CpzLDb+HafgkBkgPOiMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNDH19+h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20C00C4CEE2;
+	Fri, 11 Apr 2025 05:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744350071;
+	bh=oGxswkkC7eZnNSbPQaNqTnx3m9Tm+aXTjNJjB7KZHOw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lNDH19+heiTG9mq0VRMPjecNLEf9ZXfZh4rLhxg7fY8/A7kLQm/otGUV35D8WSmAt
+	 WUZezf13MH1CZO+PJrl+ib3GVJvBWsbeIcV/5Ymtdf4Zz3CAW0JZvEiFc/tM+o6k10
+	 F2Sw4Ptqyy/Mm5uVPoOng79/+maoL8UQtK1HQofv2dOIRbhjQR+aApaFY0Nrwpfa7t
+	 hDVXLSvsJUi4y27CFNbhSk56/LkBVb3j6LjOSVBvNBInhhFKJkyNaeFXh9ydYi3HGx
+	 xII07lCL8FDI41QhwyOfO+9cmlqEStH2nJOkwVib5hGOcVHnmX88OuZP/VOb4B+ZJo
+	 dB2zJFZ450SqA==
+From: Ingo Molnar <mingo@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH -v3 00/53] Simplify, reorganize and clean up the x86 text-patching code (alternative.c)
+Date: Fri, 11 Apr 2025 07:40:12 +0200
+Message-ID: <20250411054105.2341982-1-mingo@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250411053745.1817356-1-changyuanl@google.com>
-X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
-Message-ID: <20250411053745.1817356-15-changyuanl@google.com>
-Subject: [PATCH v6 14/14] Documentation: KHO: Add memblock bindings
-From: Changyuan Lyu <changyuanl@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, anthony.yznaga@oracle.com, arnd@arndb.de, 
-	ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
-	catalin.marinas@arm.com, corbet@lwn.net, dave.hansen@linux.intel.com, 
-	devicetree@vger.kernel.org, dwmw2@infradead.org, ebiederm@xmission.com, 
-	graf@amazon.com, hpa@zytor.com, jgowans@amazon.com, kexec@lists.infradead.org, 
-	krzk@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org, 
-	mark.rutland@arm.com, mingo@redhat.com, pasha.tatashin@soleen.com, 
-	pbonzini@redhat.com, peterz@infradead.org, ptyadav@amazon.de, robh@kernel.org, 
-	rostedt@goodmis.org, rppt@kernel.org, saravanak@google.com, 
-	skinsburskii@linux.microsoft.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	will@kernel.org, x86@kernel.org, Changyuan Lyu <changyuanl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+This series has 3 major parts after pending x86.alternatives commits such as the
+scalability improvement by Eric Dumazet:
 
-We introduced KHO into Linux: A framework that allows Linux to pass
-metadata and memory across kexec from Linux to Linux. KHO reuses fdt
-as file format and shares a lot of the same properties of firmware-to-
-Linux boot formats: It needs a stable, documented ABI that allows for
-forward and backward compatibility as well as versioning.
+(1)
 
-As first user of KHO, we introduced memblock which can now preserve
-memory ranges reserved with reserve_mem command line options contents
-across kexec, so you can use the post-kexec kernel to read traces from
-the pre-kexec kernel.
+The first major part of this series performs a thorough text-patching API namespace
+cleanup discussed with Linus for the -v1 series:
 
-This patch adds memblock schemas similar to "device" device tree ones to
-a new kho bindings directory. This allows us to force contributors to
-document the data that moves across KHO kexecs and catch breaking change
-during review.
+	# boot/UP APIs & single-thread helpers:
 
-Co-developed-by: Alexander Graf <graf@amazon.com>
-Signed-off-by: Alexander Graf <graf@amazon.com>
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-Signed-off-by: Changyuan Lyu <changyuanl@google.com>
----
- .../kho/bindings/memblock/memblock.yaml       | 39 ++++++++++++++++++
- .../kho/bindings/memblock/reserve-mem.yaml    | 40 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 3 files changed, 80 insertions(+)
- create mode 100644 Documentation/core-api/kho/bindings/memblock/memblock.yaml
- create mode 100644 Documentation/core-api/kho/bindings/memblock/reserve-mem.yaml
+						text_poke()
+						text_poke_kgdb()
+	[ unchanged APIs: ]			text_poke_copy()
+						text_poke_copy_locked()
+						text_poke_set()
 
-diff --git a/Documentation/core-api/kho/bindings/memblock/memblock.yaml b/Documentation/core-api/kho/bindings/memblock/memblock.yaml
-new file mode 100644
-index 0000000000000..d388c28eb91d1
---- /dev/null
-+++ b/Documentation/core-api/kho/bindings/memblock/memblock.yaml
-@@ -0,0 +1,39 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+title: Memblock reserved memory
-+
-+maintainers:
-+  - Mike Rapoport <rppt@kernel.org>
-+
-+description: |
-+  Memblock can serialize its current memory reservations created with
-+  reserve_mem command line option across kexec through KHO.
-+  The post-KHO kernel can then consume these reservations and they are
-+  guaranteed to have the same physical address.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - reserve-mem-v1
-+
-+patternProperties:
-+  "$[0-9a-f_]+^":
-+    $ref: reserve-mem.yaml#
-+    description: reserved memory regions
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    memblock {
-+      compatible = "memblock-v1";
-+      n1 {
-+        compatible = "reserve-mem-v1";
-+        start = <0xc06b 0x4000000>;
-+        size = <0x04 0x00>;
-+      };
-+    };
-diff --git a/Documentation/core-api/kho/bindings/memblock/reserve-mem.yaml b/Documentation/core-api/kho/bindings/memblock/reserve-mem.yaml
-new file mode 100644
-index 0000000000000..10282d3d1bcdc
---- /dev/null
-+++ b/Documentation/core-api/kho/bindings/memblock/reserve-mem.yaml
-@@ -0,0 +1,40 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+title: Memblock reserved memory regions
-+
-+maintainers:
-+  - Mike Rapoport <rppt@kernel.org>
-+
-+description: |
-+  Memblock can serialize its current memory reservations created with
-+  reserve_mem command line option across kexec through KHO.
-+  This object describes each such region.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - reserve-mem-v1
-+
-+  start:
-+    description: |
-+      physical address (u64) of the reserved memory region.
-+
-+  size:
-+    description: |
-+      size (u64) of the reserved memory region.
-+
-+required:
-+  - compatible
-+  - start
-+  - size
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    n1 {
-+      compatible = "reserve-mem-v1";
-+      start = <0xc06b 0x4000000>;
-+      size = <0x04 0x00>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b3be800e5ea46..60e4093042e1b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15425,6 +15425,7 @@ M:	Mike Rapoport <rppt@kernel.org>
- L:	linux-mm@kvack.org
- S:	Maintained
- F:	Documentation/core-api/boot-time-mm.rst
-+F:	Documentation/core-api/kho/bindings/memblock/*
- F:	include/linux/memblock.h
- F:	mm/memblock.c
- F:	mm/mm_init.c
+						text_poke_addr()
+
+	# SMP API & helpers namespace:
+
+	text_poke_bp()			=>	smp_text_poke_single()
+	text_poke_loc_init()		=>	__smp_text_poke_batch_add()
+	text_poke_queue()		=>	smp_text_poke_batch_add()
+	text_poke_finish()		=>	smp_text_poke_batch_finish()
+
+	text_poke_flush()		=>	[removed]
+
+	text_poke_bp_batch()		=>	smp_text_poke_batch_process()
+	poke_int3_handler()		=>	smp_text_poke_int3_handler()
+        text_poke_sync()		=>	smp_text_poke_sync_each_cpu()
+
+
+(2)
+
+The second part of the series simplifies and standardizes the SMP batch-patching
+data & types & accessors namespace, around the new text_poke_array* namespace:
+
+	int3_patching_desc		=	[removed]
+	temp_mm_state_t			=>	[removed]
+
+	try_get_desc()			=>	try_get_text_poke_array()
+	put_desc()			=>	put_text_poke_array()
+
+	tp_vec,tp_vec_nr		=>	text_poke_array
+	int3_refs			=>	text_poke_array_refs
+
+	- All constants got moved into the TEXT_POKE_* namespace
+
+	- All local variables and function parameters got standardized around
+	  the 'tpl' naming scheme. No more toilet paper references. ;-)
+
+(3)
+
+The third part of the series contains additional patches, that
+together with the data-namespace simplification changes remove
+about 3 layers of unnecessary indirections and simplify/streamline
+various aspects of the code:
+
+	x86/alternatives: Remove duplicate 'text_poke_early()' prototype
+	x86/alternatives: Update comments in int3_emulate_push()
+	x86/alternatives: Remove the confusing, inaccurate & unnecessary 'temp_mm_state_t' abstraction
+	x86/alternatives: Add text_mutex) assert to smp_text_poke_batch_flush()
+	x86/alternatives: Use non-inverted logic instead of 'tp_order_fail()'
+	x86/alternatives: Remove the 'addr == NULL means forced-flush' hack from smp_text_poke_batch_finish()/smp_text_poke_batch_flush()/text_poke_addr_ordered()
+	x86/alternatives: Simplify smp_text_poke_single() by using tp_vec and existing APIs
+	x86/alternatives: Introduce 'struct smp_text_poke_array' and move tp_vec and tp_vec_nr to it
+	x86/alternatives: Remove the tp_vec indirection
+	x86/alternatives: Simplify try_get_text_poke_array()
+	x86/alternatives: Simplify smp_text_poke_int3_trap_handler()
+	x86/alternatives: Simplify smp_text_poke_batch_process()
+	x86/alternatives: Move the text_poke_array manipulation into text_poke_int3_loc_init() and rename it to __smp_text_poke_batch_add()
+	x86/alternatives: Remove the mixed-patching restriction on smp_text_poke_single()
+	x86/alternatives: Document 'smp_text_poke_single()'
+	x86/alternatives: Add documentation for smp_text_poke_batch_add()
+	x86/alternatives: Move text_poke_array completion from smp_text_poke_batch_finish() and smp_text_poke_batch_flush() to smp_text_poke_batch_process()
+	x86/alternatives: Simplify text_poke_addr_ordered()
+	x86/alternatives: Constify text_poke_addr()
+	x86/alternatives: Simplify and clean up patch_cmp()
+	x86/alternatives: Standardize on 'tpl' local variable names for 'struct smp_text_poke_loc *'
+	x86/alternatives: Simplify the #include section
+	x86/alternatives: Move declarations of vmlinux.lds.S defined section symbols to <asm/alternative.h>
+	x86/alternatives: Remove 'smp_text_poke_batch_flush()'
+	x86/alternatives: Update the comments in smp_text_poke_batch_process()
+        x86/alternatives: Rename 'apply_relocation()' to 'text_poke_apply_relocation()'
+        x86/alternatives: Add comment about noinstr expectations
+        x86/alternatives: Make smp_text_poke_batch_process() subsume smp_text_poke_batch_finish()
+
+Various APIs also had their names clarified, as part of the renames.
+I also added comments where justified.
+
+There's almost no functional changes in the end, other than
+mixed smp_text_poke_single() & smp_text_poke_batch_add() calls
+are now probably working better than before - although I'm not
+aware of such in-tree usage at the moment.
+
+After these changes there's a reduction of about ~20 lines of
+code if we exclude comments, and some reduction in text size:
+
+   text       data        bss        dec        hex    filename
+  13637       1009       4112      18758       4946    arch/x86/kernel/alternative.o.before
+  13549       1009       4156      18714       491a    arch/x86/kernel/alternative.o.after
+
+But the main goal was to perform a thorough round of source code TLC,
+to make the code easier to read & maintain, and to remove a chunk
+of technical debt accumulated incrementally over 20 years, which
+improvements are only partly reflected in line count and code size decreases.
+
+This tree can be found at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip WIP.x86/alternatives
+
+Thanks,
+
+    Ingo
+
+================>
+
+Eric Dumazet (1):
+  x86/alternatives: Improve code-patching scalability by removing false sharing in poke_int3_handler()
+
+Ingo Molnar (50):
+  x86/alternatives: Rename 'struct bp_patching_desc' to 'struct int3_patching_desc'
+  x86/alternatives: Rename 'bp_refs' to 'int3_refs'
+  x86/alternatives: Rename 'text_poke_bp_batch()' to 'smp_text_poke_batch_process()'
+  x86/alternatives: Rename 'text_poke_bp()' to 'smp_text_poke_single()'
+  x86/alternatives: Rename 'poke_int3_handler()' to 'smp_text_poke_int3_handler()'
+  x86/alternatives: Rename 'poking_mm' to 'text_poke_mm'
+  x86/alternatives: Rename 'poking_addr' to 'text_poke_mm_addr'
+  x86/alternatives: Rename 'bp_desc' to 'int3_desc'
+  x86/alternatives: Remove duplicate 'text_poke_early()' prototype
+  x86/alternatives: Update comments in int3_emulate_push()
+  x86/alternatives: Remove the confusing, inaccurate & unnecessary 'temp_mm_state_t' abstraction
+  x86/alternatives: Rename 'text_poke_flush()' to 'smp_text_poke_batch_flush()'
+  x86/alternatives: Rename 'text_poke_finish()' to 'smp_text_poke_batch_finish()'
+  x86/alternatives: Rename 'text_poke_queue()' to 'smp_text_poke_batch_add()'
+  x86/alternatives: Rename 'text_poke_loc_init()' to 'text_poke_int3_loc_init()'
+  x86/alternatives: Rename 'struct text_poke_loc' to 'struct smp_text_poke_loc'
+  x86/alternatives: Rename 'struct int3_patching_desc' to 'struct text_poke_int3_vec'
+  x86/alternatives: Rename 'int3_desc' to 'int3_vec'
+  x86/alternatives: Add text_mutex) assert to smp_text_poke_batch_flush()
+  x86/alternatives: Use non-inverted logic instead of 'tp_order_fail()'
+  x86/alternatives: Remove the 'addr == NULL means forced-flush' hack from smp_text_poke_batch_finish()/smp_text_poke_batch_flush()/text_poke_addr_ordered()
+  x86/alternatives: Simplify smp_text_poke_single() by using tp_vec and existing APIs
+  x86/alternatives: Assert that smp_text_poke_int3_handler() can only ever handle 'tp_vec[]' based requests
+  x86/alternatives: Assert input parameters in smp_text_poke_batch_process()
+  x86/alternatives: Introduce 'struct smp_text_poke_array' and move tp_vec and tp_vec_nr to it
+  x86/alternatives: Remove the tp_vec indirection
+  x86/alternatives: Rename 'try_get_desc()' to 'try_get_text_poke_array()'
+  x86/alternatives: Rename 'put_desc()' to 'put_text_poke_array()'
+  x86/alternatives: Simplify try_get_text_poke_array()
+  x86/alternatives: Simplify smp_text_poke_int3_handler()
+  x86/alternatives: Simplify smp_text_poke_batch_process()
+  x86/alternatives: Rename 'int3_refs' to 'text_poke_array_refs'
+  x86/alternatives: Move the text_poke_array manipulation into text_poke_int3_loc_init() and rename it to __smp_text_poke_batch_add()
+  x86/alternatives: Remove the mixed-patching restriction on smp_text_poke_single()
+  x86/alternatives: Document 'smp_text_poke_single()'
+  x86/alternatives: Add documentation for smp_text_poke_batch_add()
+  x86/alternatives: Move text_poke_array completion from smp_text_poke_batch_finish() and smp_text_poke_batch_flush() to smp_text_poke_batch_process()
+  x86/alternatives: Rename 'text_poke_sync()' to 'smp_text_poke_sync_each_cpu()'
+  x86/alternatives: Simplify text_poke_addr_ordered()
+  x86/alternatives: Constify text_poke_addr()
+  x86/alternatives: Simplify and clean up patch_cmp()
+  x86/alternatives: Standardize on 'tpl' local variable names for 'struct smp_text_poke_loc *'
+  x86/alternatives: Rename 'TP_ARRAY_NR_ENTRIES_MAX' to 'TEXT_POKE_ARRAY_MAX'
+  x86/alternatives: Rename 'POKE_MAX_OPCODE_SIZE' to 'TEXT_POKE_MAX_OPCODE_SIZE'
+  x86/alternatives: Simplify the #include section
+  x86/alternatives: Move declarations of vmlinux.lds.S defined section symbols to <asm/alternative.h>
+  x86/alternatives: Remove 'smp_text_poke_batch_flush()'
+  x86/alternatives: Update the comments in smp_text_poke_batch_process()
+  x86/alternatives: Rename 'apply_relocation()' to 'text_poke_apply_relocation()'
+  x86/alternatives: Add comment about noinstr expectations
+
+Nikolay Borisov (1):
+  x86/alternatives: Make smp_text_poke_batch_process() subsume smp_text_poke_batch_finish()
+
+Peter Zijlstra (1):
+  x86/alternatives: Document the text_poke_bp_batch() synchronization rules a bit more
+
+ arch/x86/include/asm/alternative.h   |   6 +
+ arch/x86/include/asm/text-patching.h |  29 +--
+ arch/x86/kernel/alternative.c        | 391 +++++++++++++++++------------------
+ arch/x86/kernel/callthunks.c         |   6 +-
+ arch/x86/kernel/ftrace.c             |  18 +-
+ arch/x86/kernel/jump_label.c         |   6 +-
+ arch/x86/kernel/kprobes/core.c       |   4 +-
+ arch/x86/kernel/kprobes/opt.c        |   6 +-
+ arch/x86/kernel/module.c             |   2 +-
+ arch/x86/kernel/static_call.c        |   2 +-
+ arch/x86/kernel/traps.c              |   6 +-
+ arch/x86/mm/init.c                   |  16 +-
+ arch/x86/net/bpf_jit_comp.c          |   2 +-
+ 13 files changed, 241 insertions(+), 253 deletions(-)
+
 -- 
-2.49.0.604.gff1f9ca942-goog
+2.45.2
 
 
