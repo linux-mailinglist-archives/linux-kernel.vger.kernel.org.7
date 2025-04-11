@@ -1,109 +1,135 @@
-Return-Path: <linux-kernel+bounces-600953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F407BA866EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:16:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6C8A866F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AEDE445D20
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:16:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C4587A9A76
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DAD27E1BA;
-	Fri, 11 Apr 2025 20:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDC827BF7B;
+	Fri, 11 Apr 2025 20:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="izTNSBcc"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WunhPQTp"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9079C1CEACB;
-	Fri, 11 Apr 2025 20:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB49487BF
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 20:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744402566; cv=none; b=S2PchL7IvRvAO2TKia3pZWbeSUOENb4q4fnM2gPcriRLzofMlmR0bJi7BH9ZUhMumiZVfev0RKcEkrJA4SqSO+4WfbEJe/Sas5fqTm8ff/8qHijIKZ3NJpptWTCZYplhflzqwTDtwq880lZy5C+vZTq75CeRcM6b0ZilD3rEVYc=
+	t=1744402712; cv=none; b=HObwtW1sDwmkOXGuZ3ep7tIV8hhj3dLjE88zFUB/ONDV/tznQ+RH338JdYktTObXoFBEJbxP+tFa3/9ek/dprcfSYTt34QYcYZ46ow/SRK8ZIv0XXKHi1ml0u2L9LXtELCBVLMx2SC8kWsgi3RXvqttq/d+f0qsMFK4t1ivBZlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744402566; c=relaxed/simple;
-	bh=+XRrdLQjbVC+DwwNqBKs9alqnaihfnHPxzvcydtyUiA=;
+	s=arc-20240116; t=1744402712; c=relaxed/simple;
+	bh=KGXGKs6WjUiPf5BLiw0Cl2y01NYX2kuZyspFWEsMXho=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U2jBK3T1ur73DH2HcNR+RZ6qIaw0Pun4c3s5OlntWOWIDDuXTjsOFlq6d7nCiZ3+hQo5tiveaCuMi1ruSnAHUsDmH1PZmRduA0uvV5KXOUih/mpyQ6lcO3rrj2T4bXMjjnQv4LR5ac96jt3CuuGGtu+i16fZ00YafRgEAyaLQro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=izTNSBcc; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac2963dc379so393531966b.2;
-        Fri, 11 Apr 2025 13:16:04 -0700 (PDT)
+	 To:Cc:Content-Type; b=DgO0C/xmBRidwF8TG/QlbZtUwhX4ChcVrskuBoeWkgorI9rKAu1AKu9ld9LSwEtwJ/AwdYymP5heYqw8K9lXz9VJ2ThREoBj6fYCUsXA6PnTt2JbRgkvFw8GDgKYsL9UFu9qsHumzQwwpa9tGuhoJG/D+bqOjx/aKVkQI8MnJXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WunhPQTp; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54b166fa41bso2827596e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 13:18:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744402563; x=1745007363; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1744402709; x=1745007509; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+XRrdLQjbVC+DwwNqBKs9alqnaihfnHPxzvcydtyUiA=;
-        b=izTNSBcc2EnqWy6ukmb2C6xrHJze8U4bjyaKEP+aK1ZQcWJMyWs3or4gmJsxi3IGPD
-         yVlA3MKCesBPUdypdHQHwqEI2xF37EuVc21k3c/IGbamv5YeHPKRYb6dqklm7S8aE23w
-         ZlTvJoGU8g1gmTZCWBjx4XZOK0fOgcAraPdgGe7arTsErbJc2r4qnfvSdS/ka/J4doSs
-         5Q1p4V3zTaS6tiZ1P4kKCngMny3dfCyG5578o5yoRxL2UVVPI9ws10eRpHUC/l3kHbEY
-         HyERRqSKSo9DFpfqYvH4/BMdO/NlQmELKhQXDeaTMBWnlTw00UW0y78Nn4BuPNAYldlt
-         /7iA==
+        bh=/98QhGk6oF5yN8HKJAQvtUik5njgFHrZm0F3Omrg+2Q=;
+        b=WunhPQTpJaeyUNrw+FCN6IZ/11Nzyc0v5FiBaK2TvqvC5JAfeg+fydY8hqWcGEdEne
+         /iiyAb+P/5CSgs3T2OUXEiOWhkWjzgkRXI7Y8n5Yu5fYCIcvxkO3BVmo0Hb23K6X8GEb
+         tPqOAuZ6JPzgM/JH+OLztVQPg+YAwbM9DQQqCgB+Hdf3CMLq+s6HiUWc5KVNjKPD1lRx
+         WRhO74ShmoQ8bawgq6NjFX/pGdVoDnYUgOX2n760Olt84kfEzCcPYWd/0ve9L3JMVVIo
+         4Az9fvulCeXSET/dxK5P6g+CnBZzr4PR4TmwUutfnE8/XgsbadjVBVns6sqvJXvIlmc9
+         Bqig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744402563; x=1745007363;
+        d=1e100.net; s=20230601; t=1744402709; x=1745007509;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+XRrdLQjbVC+DwwNqBKs9alqnaihfnHPxzvcydtyUiA=;
-        b=RFLBMXvSKFgtqZWV8vLYw031cpY5JNVn9mJ98cH+9rifO2PZ1OlF4Jfgd//Oh1cuPc
-         5fa4eMOGfR3C5OQ5kvT7A/Vpr7wyFMD5JQDdAo2bru3mzo73xd3WbqBo5/84gVKZ9RJD
-         /Q6ZmIDUUaLK5YxM+oU2rzb6HOC9Tk2cr1eVjyWGnQ64viqKnnPwkJQOzYEXKJr9nFtH
-         +zW3R2tvTk0fab5R6rNAGpRxE/YlL6Nve7oX9CbH7drwmWA4SV6YPoJrBN6w8X1xb4F+
-         EjLR922k+7dCiSpMQN48i5uXqrtt8xE6DNu1P/QK69ajCnjhbeQUi2hOMFzkt2UPfddq
-         i8YA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKDbipfPnu56PAwCn0TktA7eX3+igl49okSG0HZJHPbIO8bsQgjNntYMlMKJ+VI/ibqIR4MTsY1UhS74uQ@vger.kernel.org, AJvYcCWMWiQw8GqbXMnEd8h5F9iIKSxmDOMDhOX/+Hhlqn45ZyWZGakYRa3vh/dh6F/pMPf/c/Q3i9qCNAPJblwd@vger.kernel.org, AJvYcCWS3SN7CMlZk5K6J5eZYiM6BdQeoz1hybdSBMmYaiQsjUGI+t3QT0Olc9KLrrM0mHe4aCXK9ByW15nC@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV2eiPqD6+TThY3Hb32+f/RKJom8SQoTHrX3ftyoeoU70jCRMF
-	zp7hou525Ho83ZRjT0S7OPLGqizL3878c/VIrrIm1LLy5citfkSF2LJmVZaKs8+1u0St+BHcHwQ
-	IEFbRi3bMeV1pOQE4aV0psTsuWK3Cfsq+lrs=
-X-Gm-Gg: ASbGncsDawjcLK58bsie5oG2jkkYY0tN8BO3JxlCpPDasMp1MiQbiSEgyeCIs9e6tc9
-	h/vDMHdIpbN3D31hNrP88h2YHtd3u8ILGfmhQrsCdkfOHLYIR4i12KOAJWISMOsagXCpHa9quIb
-	M6jdKl+YPWS00S0o2XvtkZHA==
-X-Google-Smtp-Source: AGHT+IEZaZAWkd4kV8I3YpLTjYmCJWDI/4A+MRh05C4NiDzsXUA03h3kae5kQ4a316zTbon+mczO7k+6BBDiH5VtnPA=
-X-Received: by 2002:a17:907:2ce5:b0:ac6:ba91:ca4d with SMTP id
- a640c23a62f3a-acad34c9a32mr343863066b.31.1744402562545; Fri, 11 Apr 2025
- 13:16:02 -0700 (PDT)
+        bh=/98QhGk6oF5yN8HKJAQvtUik5njgFHrZm0F3Omrg+2Q=;
+        b=GyyzO0ea+L+nalWlcLBmNGUGJXfOzSRx5Xk9jjlkn2NugeaCz9t/znKw9F8VaMNzXm
+         DUrtjwUhyz8UVldu14IURzDvX0qWx33TxmQf1+htzEvn2GrkmVcZTFvS2U7wLJocInfB
+         /u+uAC/H9UZDgvna32PZwqIfrBPQ/Mh62EuLHslJSG4rsPeb0D/gxyt+/g9XX3ubK76e
+         hJjO7280hJEozvt5qI5AwNuV0zh2pZ7bRCBlHCYB01hekFjS2nvkM7uYolnkshrPxLZA
+         EjmRg+80jEBQ+Zv7gE5J3kXDlW5tkuwk5IWfTyMEjZhPeuyf7l9xJSCjrMA15NyTuxcS
+         O8pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvmsZu1/94IzpBXF3bfnVTxL0C7PIrav7ZU9nmOByM3pRjiqlnhwsHmFiIJan9Lyd1OmEalQksPFC4axE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0xVelJ6S17AOjDjHeMOwQu+CsIZk2fjmW94pixmHE6I8EIV0J
+	C0TOpBkx9ykEppHXuy6VP3bbYOagfW6OV29WgHw/07xUkIgqSYmZ1kAzxp2xi9Pcj8dbUYVmQ80
+	zYTP646ezZPrDEsN7CJTeCsTKVeg3+DRBVJl6
+X-Gm-Gg: ASbGncu1PYhrGMS1bwv/4k4u/uTeEeefpzppBtvIe6bHQaTXud9xYv9gX3Czyl0yJa2
+	gW8KKnnw5ry54CKwXLExH/iBFwr6AoNfmDed+COCO9/sApx46zVMPNZ9AEo2+lLomQ94EnweMwd
+	RZTryzupXWolN6RkCXEPtu
+X-Google-Smtp-Source: AGHT+IFlJC821wTqP2WwR/tilXJz8qD1hUUoo5RXpB0KO2H327NvOJmwrhwlVUCIodiyfR5gb5lbP2hnRh9U7dwQ3CI=
+X-Received: by 2002:a05:6512:1396:b0:54b:e70:365c with SMTP id
+ 2adb3069b0e04-54d4528c267mr1213283e87.1.1744402708839; Fri, 11 Apr 2025
+ 13:18:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250411154419.1379529-1-elder@riscstar.com> <20250411154419.1379529-4-elder@riscstar.com>
- <Z_ltyAO-OBzl0adV@surfacebook.localdomain> <a3b2d0cc-c055-4cf0-9e03-3ea73041642a@riscstar.com>
- <CAHp75VchEcpP67oPC8xD+tYrY_A0BGSJqK=1au939-W60_qQoQ@mail.gmail.com> <925ea396-fd60-460e-a3c2-968d0d837a61@riscstar.com>
-In-Reply-To: <925ea396-fd60-460e-a3c2-968d0d837a61@riscstar.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 11 Apr 2025 23:15:26 +0300
-X-Gm-Features: ATxdqUFiElisjjk-BrvNvfHnahnRHi3i4WdHUyY93YRJhwdS1w4TdJrF0zeP38I
-Message-ID: <CAHp75VdA4VPf90NQAqMLNejmugHCiAxhXwrH14+238KWiPvfgg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] serial: 8250_of: manage bus clock in suspend/resume
-To: Alex Elder <elder@riscstar.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, dlan@gentoo.org, 
-	benjamin.larsson@genexis.eu, bastien.curutchet@bootlin.com, 
-	andriy.shevchenko@linux.intel.com, u.kleine-koenig@baylibre.com, 
-	lkundrak@v3.sk, devicetree@vger.kernel.org, linux-serial@vger.kernel.org, 
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250411120915.3864437-1-mwalle@kernel.org> <20250411120915.3864437-2-mwalle@kernel.org>
+In-Reply-To: <20250411120915.3864437-2-mwalle@kernel.org>
+From: Saravana Kannan <saravanak@google.com>
+Date: Fri, 11 Apr 2025 13:17:51 -0700
+X-Gm-Features: ATxdqUGL2hPJPgzX75deLoXy9b5V60iBCtma_pWDavgIgVpilY3XEtn4wdmnbO8
+Message-ID: <CAGETcx8UGF3hmDgCbUaUhEjiJtwL4ay3jHa6tedV4U0hC0ioug@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/2] net: ethernet: ti: am65-cpsw: set fwnode for ports
+To: Michael Walle <mwalle@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 11, 2025 at 10:56=E2=80=AFPM Alex Elder <elder@riscstar.com> wr=
-ote:
-> On 4/11/25 2:44 PM, Andy Shevchenko wrote:
+On Fri, Apr 11, 2025 at 5:09=E2=80=AFAM Michael Walle <mwalle@kernel.org> w=
+rote:
+>
+> fwnode needs to be set for a device for fw_devlink to be able to
+> track/enforce its dependencies correctly. Without this, you'll see error
+> messages like this when the supplier has probed and tries to make sure
+> all its fwnode consumers are linked to it using device links:
+>
+> am65-cpsw-nuss 8000000.ethernet: Failed to create device link (0x180) wit=
+h supplier ..
+>
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
+> ---
+>  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ether=
+net/ti/am65-cpsw-nuss.c
+> index c9fd34787c99..af7d0f761597 100644
+> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> @@ -2749,7 +2749,8 @@ am65_cpsw_nuss_init_port_ndev(struct am65_cpsw_comm=
+on *common, u32 port_idx)
+>         mutex_init(&ndev_priv->mm_lock);
+>         port->qos.link_speed =3D SPEED_UNKNOWN;
+>         SET_NETDEV_DEV(port->ndev, dev);
+> -       port->ndev->dev.of_node =3D port->slave.port_np;
+> +       device_set_node(&port->ndev->dev,
+> +                       of_fwnode_handle(of_node_get(port->slave.port_np)=
+));
 
-...
+Why are you doing of_node_get()? If that's a bug fix, can you do that
+as a separate patch?
 
-> when Greg informed me
-> he had already accepted the first two patches.
+After you address that:
+Reviewed-by: Saravana Kannan <saravanak@google.com>
 
-Indeed. Just send a last patch in a simplified form as I suggested here.
+-Saravana
 
---=20
-With Best Regards,
-Andy Shevchenko
+>
+>         eth_hw_addr_set(port->ndev, port->slave.mac_addr);
+>
+> --
+> 2.39.5
+>
 
