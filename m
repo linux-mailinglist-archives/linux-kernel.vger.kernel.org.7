@@ -1,195 +1,145 @@
-Return-Path: <linux-kernel+bounces-600035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA9D4A85B2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:11:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC9AA85B2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EC3C17B40F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:08:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 252059C1E9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC6D238C37;
-	Fri, 11 Apr 2025 11:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE9C238C1D;
+	Fri, 11 Apr 2025 11:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="muCjlfpL"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GK47s3BL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0950D238C39
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 11:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD14278E7C;
+	Fri, 11 Apr 2025 11:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744369549; cv=none; b=tN/eOO0V3g1OAHhvQLf4BoTHmWNIN8oEtJ9sp+phKB+6agJJ8c1KpZvDVLAO5OF5oDh7qPddT2JGCd6NtVbvhO6vToEOLShcgI80v9+T0WDciAyaefVuR5ncxrud1Ae/7aCMmXkJEOHcQku1wNuzrJOvFO+eycL/4D466Vw5JyQ=
+	t=1744369513; cv=none; b=d+26oj/eKGmPKMzyNH/jTAHy/NT7p0xgAJnp0hY2NYNaqe2YVIu/HlNcpgB9QucOTKVK2oUcXpNKcfvwi8hC3zvrhrLpB+jUMLjXMMS/pKv5pEv6A86IWgL8KFI6u6iw3GeHIrE/J/QyQBzs2Ihu1KV8VGVPPqc4rRoA+l41ll4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744369549; c=relaxed/simple;
-	bh=GIKA8AMXlX9X+0M9iGrvgLxqvYzYRa/cFuvb8elcc1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LaZrzibc60Sic0JyL8IzJpH8HOZjCINGNXUfiSoOEew/m/iRvVwtbrqaELZTuBanSYvcSQ4FnjUoIBf5MnpvIcIXe+wB7nlr3DGYdi10A1G04PD/TVPopOuUcYqhMkqweNu7ql+eh4Kb1FN6DEP/Y9MmRclFxBD7EgNBQ/HNoAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=muCjlfpL; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53BB4jYZ2106336
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Apr 2025 06:04:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744369486;
-	bh=i+gloN32aTctMyYVY8o5DLDdWWJ4UCqYZXXvoBTDYI8=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=muCjlfpLevMlxfx1lzbBdxLjtIXk9wZy688HJhcvvW7+MfRN7EZehMeoPVzRYUemZ
-	 fOblX2MEKavuBlu8mjdyOARu+XcNdyRHRtVGEBxLqAqQ3PcxJFMJ/xeJMRlNN1s2CC
-	 4ca9wNPoBZtpV94lW8UkiaDMJa0JfIgYP3WSxz2c=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53BB4j5S118132
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 11 Apr 2025 06:04:45 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
- Apr 2025 06:04:45 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 11 Apr 2025 06:04:45 -0500
-Received: from [10.24.72.182] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.72.182])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53BB4de0063402;
-	Fri, 11 Apr 2025 06:04:40 -0500
-Message-ID: <eb4729f4-2f1b-49ca-ab01-4afca321e4a1@ti.com>
-Date: Fri, 11 Apr 2025 16:34:38 +0530
+	s=arc-20240116; t=1744369513; c=relaxed/simple;
+	bh=VtWB41B6yR9gWpr/0ENOCffQUwmUd+NKMGYJW0viGuI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IBw1iVMMbJ6J/tPyBlFZCfboI5yMiqCeeFVYY4NJasw/QIRuZDirupiJeq0nn7wbpukXS1cnhve2Q4CLnuEhm717nzMFpzujEHESjF1UsgyQh8C9buPmSXKcErMqbaujRB70c7gepTm1oniGcnmEer4NvIubrx8xWX09qg+1d+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GK47s3BL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE49EC4CEE7;
+	Fri, 11 Apr 2025 11:05:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744369512;
+	bh=VtWB41B6yR9gWpr/0ENOCffQUwmUd+NKMGYJW0viGuI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=GK47s3BL6TO6eSZI3cYIgxhZoPvS7Wma1lrZ+A08QkDZyqVeZZn8Rnw6hklmi6byZ
+	 0+4iFZIJFX13ewBtGomzr8auNxI2/VtjIPCLXGkH0XG+EB4elfnqL5PNTf7HJa4Pzh
+	 pmuyPeh/F9P0KG6StG6tivI7R7XVdv3MpOPtcg9cPcl2oAJ2VK0I2gp4lnL0jRqNpR
+	 JLVtGnVrfSkiO+3dkI8VHHpvGkmIiwxkLE/3go95Rgq7e0mSRXYOffjWV1DXyAgEPa
+	 DVY7cG0e5rIpSCdM3qxhLBP/qzZvFEE2nyfzurE1Qz/obzDDFQpWqWxKWOprIqTHyq
+	 S2nZdxGJxvYKA==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net-next 0/8] mptcp: various small and unrelated
+ improvements
+Date: Fri, 11 Apr 2025 13:04:46 +0200
+Message-Id: <20250411-net-next-mptcp-sched-mib-sft-misc-v1-0-85ac8c6654c3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/18] drm/bridge: cdns-dsi: Fix event mode
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Jyri Sarha
-	<jyri.sarha@iki.fi>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Vinod Koul
-	<vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Andrzej Hajda
-	<andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert
- Foss <rfoss@kernel.org>,
-        Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej
- Skrabec <jernej.skrabec@gmail.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>,
-        Francesco Dolcini <francesco@dolcini.it>,
-        Aradhya Bhatia <aradhya.bhatia@linux.dev>,
-        Devarsh Thakkar <devarsht@ti.com>
-References: <20250402-cdns-dsi-impro-v2-0-4a093eaa5e27@ideasonboard.com>
- <20250402-cdns-dsi-impro-v2-10-4a093eaa5e27@ideasonboard.com>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <20250402-cdns-dsi-impro-v2-10-4a093eaa5e27@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-B4-Tracking: v=1; b=H4sIAE73+GcC/zWNwQqEMAxEf0VyNmCLFdlfEQ/appqD3dIUEcR/N
+ yzsYQ5v4M3cIFSYBD7NDYVOFv4mBdM24PclbYQclMF21nW9MZioaq6KR64+o/idAh68okTtWDx
+ aF90yWDPGMILu5EKRr9/HBH8d5ud5Af7aO8x9AAAA
+X-Change-ID: 20250411-net-next-mptcp-sched-mib-sft-misc-25f5a6218fd8
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
+ Thorsten Blum <thorsten.blum@linux.dev>, 
+ zhenwei pi <pizhenwei@bytedance.com>, Geliang Tang <geliang@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2280; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=VtWB41B6yR9gWpr/0ENOCffQUwmUd+NKMGYJW0viGuI=;
+ b=owEBbQKS/ZANAwAKAfa3gk9CaaBzAcsmYgBn+Pdb5U2bpBiBfEBZ3e2fhQE9xAp9KPrNpHv4k
+ o5YsQkT/+SJAjMEAAEKAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ/j3WwAKCRD2t4JPQmmg
+ cxdbEACNQF5NuntG/ICbN52UfBKTLU7VYnvCPK3Z/k1NcInemjL1RrKTFm5nzPkou12IQr85Usz
+ 8HJrxerrj64vW/gGxy2r7mC+TfgrEPULzWCibUJ1/Tge9DoBZHvYdFtxQqGEnHztuxg1R/K2FSR
+ NYv+Hyjie8D413PIJrFgrj2qEdVWsbR3pwATd1Ee66EwmEA9I/8vbaCunsmnRM00hkBTN9rjKpD
+ xkntUZiNJsszsP8Y+XyNlunwgZQ+zGhiknl+A3vVC/mE6Zlxggax4jG7zRZHVYYPRtR1tWIA153
+ izmwsN5QWIbtVySDOjhJDchBrXx2KL1hu1nOdKU9L3rAtZ/6KMXeD/OwbF2O+QsJG/ZFN4/RHVw
+ i8zoEHr0rqzSMq0rj1D6eh31feTfHXXnmpY+u5FdHUQhCyIb61L1gLW21IT6XwCZFaOEZutrWZU
+ xfkDNWaoLC7watL1+b59Y1MzARyZDiKXGVPlrDVBesdfFtJhVg3lrvjylx5QnnJ5szH9xw6QFUj
+ jF5IZA/YIhIPiWpsbTMmKdnmPqf1Zst79yKZNBTKhUc54Yb6O0LSUXlFA+NTX4N/OLK5v1ajQ4c
+ 2gYhQcfOxF9aKqFZHnHoIinzAT5DJnCcvabiBvZ1hYPhWi246d3RCbY8OBaE672dGhRIKilo9Kb
+ xlJ2YFfge6RupIQ==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-Hello Tomi,
+Here are various unrelated patches:
 
-On 02/04/25 19:00, Tomi Valkeinen wrote:
-> The timings calculation gets it wrong for DSI event mode, resulting in
-> too large hbp value. Fix the issue by taking into account the
-> pulse/event mode difference.
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+- Patch 1: sched: remove unused structure.
 
-Reviewed-by: Jayesh Choudhary <j-choudhary@ti.com>
+- Patch 2: sched: split the validation part, a preparation for later.
 
-> ---
->   drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 33 ++++++++++++++++++--------
->   1 file changed, 23 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-> index 62811631341b..9797e6faa29d 100644
-> --- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-> +++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-> @@ -417,7 +417,8 @@
->   #define DSI_OUTPUT_PORT			0
->   #define DSI_INPUT_PORT(inputid)		(1 + (inputid))
->   
-> -#define DSI_HBP_FRAME_OVERHEAD		12
-> +#define DSI_HBP_FRAME_PULSE_OVERHEAD	12
-> +#define DSI_HBP_FRAME_EVENT_OVERHEAD	16
+- Patch 3: pm: clarify code, not to think there is a possible UaF.
+  Note: a previous version has already been sent individually to Netdev.
 
+- Patch 4: subflow: simplify subflow_hmac_valid by passing subflow_req.
 
-I have also observed this 4B discrepancy for event-mode after comparing
-the dsi packet sizes for each line type as per the dsi specifications.
+- Patch 5: mib: add counter for MPJoin rejected by the PM.
 
->   #define DSI_HSA_FRAME_OVERHEAD		14
->   #define DSI_HFP_FRAME_OVERHEAD		6
->   #define DSI_HSS_VSS_VSE_FRAME_OVERHEAD	4
-> @@ -503,12 +504,18 @@ static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
->   
->   	bpp = mipi_dsi_pixel_format_to_bpp(output->dev->format);
->   
-> -	dsi_cfg->hbp = dpi_to_dsi_timing(dpi_hbp + (sync_pulse ? 0 : dpi_hsa),
-> -					 bpp, DSI_HBP_FRAME_OVERHEAD);
-> +	if (sync_pulse) {
-> +		dsi_cfg->hbp = dpi_to_dsi_timing(dpi_hbp, bpp,
-> +						 DSI_HBP_FRAME_PULSE_OVERHEAD);
->   
-> -	if (sync_pulse)
-> -		dsi_cfg->hsa =
-> -			dpi_to_dsi_timing(dpi_hsa, bpp, DSI_HSA_FRAME_OVERHEAD);
-> +		dsi_cfg->hsa = dpi_to_dsi_timing(dpi_hsa, bpp,
-> +						 DSI_HSA_FRAME_OVERHEAD);
-> +	} else {
-> +		dsi_cfg->hbp = dpi_to_dsi_timing(dpi_hbp + dpi_hsa, bpp,
-> +						 DSI_HBP_FRAME_EVENT_OVERHEAD);
-> +
-> +		dsi_cfg->hsa = 0;
-> +	}
->   
->   	dsi_cfg->hact = dpi_to_dsi_timing(dpi_hact, bpp, 0);
->   
-> @@ -532,9 +539,12 @@ static int cdns_dsi_adjust_phy_config(struct cdns_dsi *dsi,
->   	unsigned int dsi_hfp_ext;
->   	unsigned int lanes = output->dev->lanes;
->   
-> -	dsi_htotal = dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
-> -	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
-> +	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE) {
-> +		dsi_htotal = dsi_cfg->hbp + DSI_HBP_FRAME_PULSE_OVERHEAD;
->   		dsi_htotal += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
-> +	} else {
-> +		dsi_htotal = dsi_cfg->hbp + DSI_HBP_FRAME_EVENT_OVERHEAD;
-> +	}
->   
->   	dsi_htotal += dsi_cfg->hact;
->   	dsi_htotal += dsi_cfg->hfp + DSI_HFP_FRAME_OVERHEAD;
-> @@ -607,9 +617,12 @@ static int cdns_dsi_check_conf(struct cdns_dsi *dsi,
->   		return -EINVAL;
->   	}
->   
-> -	dsi_hss_hsa_hse_hbp = dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
-> -	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
-> +	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE) {
-> +		dsi_hss_hsa_hse_hbp = dsi_cfg->hbp + DSI_HBP_FRAME_PULSE_OVERHEAD;
->   		dsi_hss_hsa_hse_hbp += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
-> +	} else {
-> +		dsi_hss_hsa_hse_hbp = dsi_cfg->hbp + DSI_HBP_FRAME_EVENT_OVERHEAD;
-> +	}
->   
->   	/*
->   	 * Make sure DPI(HFP) > DSI(HSS+HSA+HSE+HBP) to guarantee that the FIFO
-> 
+- Patch 6: selftests: validate this new MPJoinRejected counter.
 
-Thanks,
-Jayesh
+- Patch 7: selftests: define nlh variable only where needed.
+
+- Patch 8: selftests: show how to use IPPROTO_MPTCP with getaddrinfo.
+  Note: a previous version has already been sent individually to Netdev.
+
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Geliang Tang (2):
+      mptcp: sched: split validation part
+      selftests: mptcp: diag: drop nlh parameter of recv_nlmsg
+
+Matthieu Baerts (NGI0) (4):
+      mptcp: sched: remove mptcp_sched_data
+      mptcp: pass right struct to subflow_hmac_valid
+      mptcp: add MPJoinRejected MIB counter
+      selftests: mptcp: validate MPJoinRejected counter
+
+Thorsten Blum (1):
+      mptcp: pm: Return local variable instead of freed pointer
+
+zhenwei pi (1):
+      selftests: mptcp: use IPPROTO_MPTCP for getaddrinfo
+
+ include/net/mptcp.h                               | 13 ++-------
+ net/mptcp/mib.c                                   |  1 +
+ net/mptcp/mib.h                                   |  1 +
+ net/mptcp/pm.c                                    |  5 +++-
+ net/mptcp/protocol.c                              |  4 ++-
+ net/mptcp/protocol.h                              |  1 +
+ net/mptcp/sched.c                                 | 35 ++++++++++++++---------
+ net/mptcp/subflow.c                               | 12 ++++----
+ tools/testing/selftests/net/mptcp/mptcp_connect.c | 21 +++++++++++---
+ tools/testing/selftests/net/mptcp/mptcp_diag.c    |  7 ++---
+ tools/testing/selftests/net/mptcp/mptcp_join.sh   | 26 +++++++++++++----
+ 11 files changed, 80 insertions(+), 46 deletions(-)
+---
+base-commit: 61499764e5cc5918c9f63026d3b7a34c8668d4b8
+change-id: 20250411-net-next-mptcp-sched-mib-sft-misc-25f5a6218fd8
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
