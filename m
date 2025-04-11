@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-599680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 852C0A856CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:40:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7764DA856C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84CF71BC0517
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:39:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992C51BA75AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7C42980D2;
-	Fri, 11 Apr 2025 08:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7036629614A;
+	Fri, 11 Apr 2025 08:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="qzMeZlWI"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="B0yCSpsF"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45272980CF
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC73C27E1CD
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744360712; cv=none; b=CwiyvvD0pkDyZ3w8Z6gJBMIL8nwR91Gni7W/pn3oiTCvex57QLKbVxGybbosEwZXZL01FoYqKe/DvbTB/UV2pQmEzaGL7V5AgrZgx9lOrqLzaNS9kzztj4MdElW4ShEXxV6ayZfbAcffGdQIKP+mOTt8XY47BL1POF1wuypDHZw=
+	t=1744360705; cv=none; b=io/xAMftKI6xJ5asrbu6OlpHXzYVYgTOr63+JR6sZM65T62s346bHG4q6Fu3cAKMB29UnGa6ZRO3ybpUEEbZWoxWNIYZq1AQSE+iinDj8zdWYYoz+ZUVzHr/3EoNXH5MJ5f7k8yrFKon6acxKG4+oNyMl6xhKN1mFSfqJqdRTCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744360712; c=relaxed/simple;
-	bh=iQegmjPNvgyXMQhA6K2uIdTy01dFmeDwep8uKg4p18M=;
+	s=arc-20240116; t=1744360705; c=relaxed/simple;
+	bh=Epr+eQBTBU+1ATMEcOYwgYpBi+5oAELlBmkst6805Y8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NYaCTNbvfOGnYC7edZ8WuwBi5bQLotHiJE/AcJHX9xFX38fWJ1kHVABhkePyl072TGxSzDX2wLTb043SxJp4BwK82elyGTVAhBv5qJRttqqFByc5ME66lbXkzePE5vg28uIrtfWgORTpAmJnmIsAITrab2tnf8nTrNE8PTjjdqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=qzMeZlWI; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7370a2d1981so1339263b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 01:38:29 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=TahLN5iNBRPmJEPRAXCGMr06gHHI1rRrXpyCn79WIxUviEDdVAsARFm++wrydEVoQnjA8y1HNnwERjyqOaRp0E4eg+BX8m4icioHZFZe0/i4ovFTfHK0vcphlNoyc4Wn4xQ3cccYy+865sAmWzQ2iGaBWxjy4Nnwp9BNgJ/PImw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=B0yCSpsF; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cf257158fso12795625e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 01:38:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1744360709; x=1744965509; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aAL/6p83YpXkd2lWxaTuipFX1SLH+v+iTkrYyMI4qJI=;
-        b=qzMeZlWI0Aka9nW1WQ4SWfM75zJD5Q+NsJ5igDsZm3GYTeqXzKmZaWXuNbIHI8WtS1
-         CByH333Y8qjtawK8Gl9pYq9HptnkhEUMVuTfdl49TVI0nCli+2D6oa405YWC7OxidIvM
-         Xc9vtok8vze4iUEfZ9oAnmmeyjovsSfIz77lw4EU9XtI4iD2++OU9uLrqAJBogFR79o8
-         l+wgLaTEyy8bSL5m3x/HjwiCps1k9uOO+DIyo9NnNd0qF+XzUd48MSFtcHxwgcF7RHo7
-         oFRCw0TmYZ5cpHM+4AB3i+rbgECwVAk2mfQSQ4XjZ6ToDscD6nbyTCXcaXUCEC0Fn25H
-         ZQTA==
+        d=openvpn.net; s=google; t=1744360702; x=1744965502; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=sLffW0MYcqM/kbItIhY6HvWZCj3KnwBnjUOkirxLQ30=;
+        b=B0yCSpsFauabFeSmpImWI91WIartpOH5alEONnCw1kOBegi3hhoCX4iuib2tiFKlSP
+         BalEWX9Fca/n2N0EWEimJYTzkkAOHI98o8kwImMG9BmPbgCZrrlbBSbQmiIj86ognehR
+         Pj453DEfbiOmbqNeD1sRPCHkc+tWpaM3U6dU4jzon+xADOfFZYSb2LLedbPzZGxpsncr
+         KNz73O4lK6rGsgOkdKgxZBocN0EtWzKxbrZ23dOqodX6PZxDmuK56P7eN45P0BQWCsRw
+         mp4oswBW7RL6JjZ9YWs3FvaIldFA9aUyfeGbvTB/5cFPawKb99CCu/ESbGDVwTS3vW8M
+         bzGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744360709; x=1744965509;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aAL/6p83YpXkd2lWxaTuipFX1SLH+v+iTkrYyMI4qJI=;
-        b=e446iHIcdr80WNWJa/PTRAuZvzrDYXPqXDc+xswZMauM/GyEu6jB5lint3UHQxcVxL
-         tt7YPFO9LAl89c1S0zxZ6aQTP0ZGQRXzGNOHJV0g3I69LUm6pygPf20hAyIxxSfaAOe7
-         /ew6cJtcGHgMYLKHXqjTUwbKS9Km+boaTeFXqFP4+xkZiOEwBU9NmKHRLU4eh/VBNAZo
-         7p3nLawFpRnfT/nFRU2JwAHIeWovLTh79qY+++t84s9bRoLmFfSDkO7ZwW1QsSwIpAE0
-         VougXule61+nwvXTk+hLuNapjM1rIvtNwWp4hk9bg7IjjG27wwRjqv9q13JR3/iX+QWp
-         Zdig==
-X-Forwarded-Encrypted: i=1; AJvYcCURlh29LXTRdk55UTKG1XXVANyOjsWhvaacOKl99SpYyS5/gqwRQ8jQmtK8FV018k5lVY/bX0Q+XoXm/70=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3Fqz09cUd/Q3mPqiUuUq5ZZONsZBO7TT0AsLheeIXYV+YpcSu
-	JR6lV2e4A4lajFjFXiUqMxEpXla0kDZhlLoBKos7ecQ6Oqxj9gH/SusiPqIJk2s=
-X-Gm-Gg: ASbGncvp7ZDpLlvDtgY9BvIKfUnPhhXqEeBokhEvr4nwX4Ucl9iBx5xnytju+3shmAE
-	7efA4btY8biDJ5JWQVvLLEyrfxoSCSwI4Br24GJ6MO+HOPbwptGd896v1AuxMsH1lMvVnUZU2kk
-	QJruONNWYx0MSlDjO/VCIJoUIBLXRN6yBmrc3nsIfGZzUjqSgy7q1SjQg944by+g/ZxfqVnPkRB
-	kUN74UoGxZM2SKabxuoIYyAjhGWhifVNFYnqybq95Nc+bXXhRb9kwn9UfniqyPPxEZR18RBMPPf
-	IbNrEEavBq3cQah5pxjZuCHLjUIIjrPdzgmbHNkPiGASk8i0g6wBed8FRsgzs3F/V2IIwFFiN6E
-	lv9pK6HTJpA==
-X-Google-Smtp-Source: AGHT+IEc1zf/fjqiNF1HMx499nzROimsFdgb4amqFTVGVHXlXwhSyAjiyD+tanp9f2f2sNWK6e9KZA==
-X-Received: by 2002:a05:6a00:1147:b0:732:5276:4ac9 with SMTP id d2e1a72fcca58-73bd11dd516mr2510411b3a.9.1744360708569;
-        Fri, 11 Apr 2025 01:38:28 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21c65c9sm964123b3a.61.2025.04.11.01.38.21
+        d=1e100.net; s=20230601; t=1744360702; x=1744965502;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sLffW0MYcqM/kbItIhY6HvWZCj3KnwBnjUOkirxLQ30=;
+        b=qFw9bXu5Z9QV3dwRbauuSH+bMEFfbQ8sUkDaS05aK86OnZcln5Cvb6s5nMC/SuAQQY
+         pjtN/wrqfx5RSErxdjlsjFGUyPr30Zt0Rvq1vuK+0dzYSqIDx7MfqgsaQZUz5JDWzlWN
+         8QpwswWs8Ax/oNjPx3gt1lqRHSRsA/eicHuVVDywjKggERBX9h2sfJl7/QY1qZ92vFRm
+         ROwR0S4NCJN0qs74/rYZub+XXaIZEC21c+fdCvyx+V21pwUUfviIp2W+/4DLtWwthbg3
+         CkeQImyNQUYd2BpQHg1VyYElKsgmV5Zax4J2C4bWe521w+bAPF1nfkKYhVkKgbaQ5FKv
+         S5yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwKS27plCq4iFv53fjP4eTjNqzV3q+23cE28dzWnOMU80TkDssao+imUlIzBvdWEYXN4XbzjkWszdyLlc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqC8fWbMBY9pUb+S5p142MG+mC2ypvtRUf1m4+pfCZBgnuZdRa
+	rUAAHlA06CopUUSLwV5PCy6dfUNa4J7P0nX+3+ftFTT61/vD2qkLVNvOLhBFTVq4wqaZ+xvOUHH
+	QyN+jyxBgNzzDQJrZdFMs7nqJXsqqdM9V+sIq4UjpZnwnfydeeDj8fiA=
+X-Gm-Gg: ASbGncufDWNXPod0DHFBprUHyVE4iK52uzq7rXJGlg8t1R+kg+OoforAszAjsVQVSPB
+	IrOPn+oc3GR43W/bYGRGfOFVWzQiYovXeOZtY0fOvbVoNJ0jsfa92R8kDr670O1nX5W2NVlw5c7
+	LVXwadQTElMoTD7aGo8MQ3lE0OFnD3ELNl8phV2QWsRMiqZNio8DkBRGgQ3zw0xCP247xIl5Glr
+	PUr+hQE0uePoxT0ZWlDLOF1hbDikEfNBOzW4623HdQZQKuASULJYJEA+p14VET5xOzeflhnc49p
+	c5aA+Vy5FQ2C9uagD11bwWtXh5MMHcnXA1Q2yIwDidS2JN1v5tbh4V6zLJEB+b5qauFm/ifH8Ot
+	QuL9mbyhMmlXqgg==
+X-Google-Smtp-Source: AGHT+IF99oxdyDqfyn57Lonv1kNPOlFA9HMh6oBiEUe+C+vJOJbIHsy3y4iVXg2sytLFO2/obYxOuQ==
+X-Received: by 2002:a05:600c:a08e:b0:43c:eeee:b706 with SMTP id 5b1f17b1804b1-43f3a9aa66dmr13977265e9.24.1744360702027;
+        Fri, 11 Apr 2025 01:38:22 -0700 (PDT)
+Received: from ?IPV6:2001:67c:2fbc:1:e8be:40be:972d:7ee4? ([2001:67c:2fbc:1:e8be:40be:972d:7ee4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f207aed49sm78101205e9.34.2025.04.11.01.38.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 01:38:27 -0700 (PDT)
-Message-ID: <f4be063b-f321-45d4-9891-b50f30beb1ef@rivosinc.com>
-Date: Fri, 11 Apr 2025 10:38:17 +0200
+        Fri, 11 Apr 2025 01:38:21 -0700 (PDT)
+Message-ID: <af1a5da4-12dc-47bd-8836-9b7bda0281fd@openvpn.net>
+Date: Fri, 11 Apr 2025 10:38:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,125 +83,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] riscv: misaligned: fix sleeping function called
- during misaligned access handling
-To: Alexandre Ghiti <alex@ghiti.fr>, Nylon Chen <nylon.chen@sifive.com>,
- linux-kernel@vger.kernel.org
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, charlie@rivosinc.com,
- jesse@rivosinc.com, evan@rivosinc.com, zhangchunyan@iscas.ac.cn,
- samuel.holland@sifive.com, zong.li@sifive.com
-References: <20250411073850.3699180-1-nylon.chen@sifive.com>
- <20250411073850.3699180-3-nylon.chen@sifive.com>
- <992e3135-0c55-403c-9f71-d76c59cec75b@rivosinc.com>
- <22a2c734-b446-4b1e-a2bc-a0080656fe29@ghiti.fr>
+Subject: Re: [PATCH net-next v25 04/23] ovpn: keep carrier always on for MP
+ interfaces
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, ryazanov.s.a@gmail.com,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Xiao Liang <shaw.leon@gmail.com>
+References: <20250407-b4-ovpn-v25-0-a04eae86e016@openvpn.net>
+ <20250407-b4-ovpn-v25-4-a04eae86e016@openvpn.net>
+ <20250410200325.5621a4f5@kernel.org>
 Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <22a2c734-b446-4b1e-a2bc-a0080656fe29@ghiti.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <20250410200325.5621a4f5@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 11/04/2025 10:35, Alexandre Ghiti wrote:
-> Hi Clément,
+On 11/04/2025 05:03, Jakub Kicinski wrote:
+> On Mon, 07 Apr 2025 21:46:12 +0200 Antonio Quartulli wrote:
+>> +	/* carrier for P2P interfaces is switched on and off when
+>> +	 * the peer is added or deleted.
+>> +	 *
+>> +	 * in case of P2MP interfaces we just keep the carrier always on
+>> +	 */
+>> +	if (ovpn->mode == OVPN_MODE_MP)
+>> +		netif_carrier_on(dev);
 > 
-> On 11/04/2025 09:36, Clément Léger wrote:
->> Hi Nylon,
->>
->> I already have a pending fix for that bug which is to reenable
->> interrupts while handling misaligned faults. Please see:
->> https://lore.kernel.org/linux-riscv/20250317170625.1142870-12-
->> cleger@rivosinc.com/
-> 
-> 
-> Can you extract this fix from the series so that it can be merged in 6.15?
+> Any reason why you turn it during open rather than leaving it be before
+> registration? Now the link is down until first open, then it stays up
+> even if user closes?
 
-Hi Alex,
+Mh your concern makes sense.
+Originally Andrew suggested adding the carrier_on() to _probe(), which I 
+interpreted as _open() (I don't think virtual drivers have any _probe() 
+hook).
 
-Yes sure, I can send a small series as well. However, I'd like the
-associated kselftest to be reviewed since it would allow to catch such
-behavior (there is no test for misaligned delegation yet).
+Being the goal to keep the carrier always on for MP ifaces, I'd say I 
+should move the carrier_on() call to newlink().
+There I can set the carrier on if MP or off if P2P.
 
-Thanks,
+Regards,
 
-Clément
-
-> 
-> Thanks,
-> 
-> Alex
-> 
-> 
->>
->> Thanks,
->>
->> Clément
->>
->> On 11/04/2025 09:38, Nylon Chen wrote:
->>> Use copy_from_user_nofault() and copy_to_user_nofault() instead of
->>> copy_from/to_user functions in the misaligned access trap handlers.
->>>
->>> The following bug report was found when executing misaligned memory
->>> accesses:
->>>
->>> BUG: sleeping function called from invalid context at ./include/
->>> linux/uaccess.h:162
->>> in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 115, name: two
->>> preempt_count: 0, expected: 0
->>> CPU: 0 UID: 0 PID: 115 Comm: two Not tainted 6.14.0-rc5 #24
->>> Hardware name: riscv-virtio,qemu (DT)
->>> Call Trace:
->>>   [<ffffffff800160ea>] dump_backtrace+0x1c/0x24
->>>   [<ffffffff80002304>] show_stack+0x28/0x34
->>>   [<ffffffff80010fae>] dump_stack_lvl+0x4a/0x68
->>>   [<ffffffff80010fe0>] dump_stack+0x14/0x1c
->>>   [<ffffffff8004e44e>] __might_resched+0xfa/0x104
->>>   [<ffffffff8004e496>] __might_sleep+0x3e/0x62
->>>   [<ffffffff801963c4>] __might_fault+0x1c/0x24
->>>   [<ffffffff80425352>] _copy_from_user+0x28/0xaa
->>>   [<ffffffff8000296c>] handle_misaligned_store+0x204/0x254
->>>   [<ffffffff809eae82>] do_trap_store_misaligned+0x24/0xee
->>>   [<ffffffff809f4f1a>] handle_exception+0x146/0x152
->>>
->>> Fixes: b686ecdeacf6 ("riscv: misaligned: Restrict user access to
->>> kernel memory")
->>> Fixes: 441381506ba7 ("riscv: misaligned: remove CONFIG_RISCV_M_MODE
->>> specific code")
->>>
->>> Signed-off-by: Zong Li <zong.li@sifive.com>
->>> Signed-off-by: Nylon Chen <nylon.chen@sifive.com>
->>> ---
->>>   arch/riscv/kernel/traps_misaligned.c | 4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/
->>> kernel/traps_misaligned.c
->>> index d7275dfb6b7e..563f73f88fa8 100644
->>> --- a/arch/riscv/kernel/traps_misaligned.c
->>> +++ b/arch/riscv/kernel/traps_misaligned.c
->>> @@ -455,7 +455,7 @@ static int handle_scalar_misaligned_load(struct
->>> pt_regs *regs)
->>>         val.data_u64 = 0;
->>>       if (user_mode(regs)) {
->>> -        if (copy_from_user(&val, (u8 __user *)addr, len))
->>> +        if (copy_from_user_nofault(&val, (u8 __user *)addr, len))
->>>               return -1;
->>>       } else {
->>>           memcpy(&val, (u8 *)addr, len);
->>> @@ -556,7 +556,7 @@ static int handle_scalar_misaligned_store(struct
->>> pt_regs *regs)
->>>           return -EOPNOTSUPP;
->>>         if (user_mode(regs)) {
->>> -        if (copy_to_user((u8 __user *)addr, &val, len))
->>> +        if (copy_to_user_nofault((u8 __user *)addr, &val, len))
->>>               return -1;
->>>       } else {
->>>           memcpy((u8 *)addr, &val, len);
->>
->> _______________________________________________
->> linux-riscv mailing list
->> linux-riscv@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-riscv
+-- 
+Antonio Quartulli
+OpenVPN Inc.
 
 
