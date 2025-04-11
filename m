@@ -1,133 +1,172 @@
-Return-Path: <linux-kernel+bounces-600280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2982CA85DF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:59:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5ADA85DEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EE98167C8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:54:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1367A1BA2342
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27472367BA;
-	Fri, 11 Apr 2025 12:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEDA2367D6;
+	Fri, 11 Apr 2025 12:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdPxPKev"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ORXkI7Ty"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5BB2367A9;
-	Fri, 11 Apr 2025 12:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBB72367B7;
+	Fri, 11 Apr 2025 12:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744376069; cv=none; b=N7MAP7q2DMco7XPgbcbOTCN03+7sQf2gkmXyoGZnv88KaF5NHfPAawThZk3Wx/Ywj0MlWPPDkYVgQ8f29L1kfC2P+eoP0GSZMq+DSf0b/o8w0K1EOPTvv6tEM7+Ur/cK/X3WhHIoFPlSKEuhtqndMbIcULLH8UhJ1c0KJw2+aeI=
+	t=1744376081; cv=none; b=bV7y6pPPRNoMpYQS8d6fdmToPdy0BwyXedfJBER8UjPaRbo/2fto1DJhsWM0wD9xeTmsaY49LQ3RrkRUnyFzhHhmnd39FOXGldK2TRvVkEReZJzLZNUY87QtJaNOS/zwUPht2YILydiIA7h6zwRzx9puwgSRHmmfLV9gk5kaFb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744376069; c=relaxed/simple;
-	bh=lr+VhLf3eXJXBu37NmhSosbRGBfKF2EPlcRShgMJRbA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sSB7mLG1nPsKEXPEAE8h7zPjmmWHJzfsTok0RHga/+9kV/cbMHV0MSY2g+S8ChfytYNPrb7LAFfcVqY5dnTHk2dfJwQ6Z4U8IgpJ+JkHVsBHWhilUBSj0497XPXalKbsFa3hk3F0KV+p8yM78MM74hUECYNBVWjsTdIh1i5ZxMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdPxPKev; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 873B7C4CEE2;
-	Fri, 11 Apr 2025 12:54:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744376068;
-	bh=lr+VhLf3eXJXBu37NmhSosbRGBfKF2EPlcRShgMJRbA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TdPxPKev03UUFySrQxT/GFeKWB+7u5ocABW13IchDRYBUzEp6eeDdTAvl/yId1hjN
-	 LjOe6EafD6mB2dmf1r0ShO0aXU4lYlOlnEwMxPJQiw+J9yiH1VcywfFEE27RNg94pK
-	 raYsx2DIaa+vKq0BjWx8OLfnrZx1cS1crT/Ug8Lzporamz5UOnflqv5RgTIHJwBtBk
-	 E0Wy3g37/Izdj8/ZuT7yQCCuAcKgS44nW72bx/rWqVcRnNq4Irwej7+4N9gvQY9x7n
-	 Y54gAWBWwDmXyYPFRkWoR/KMNYu24g5xtKHIE4FmC7cxzSmgIzjXMj4eHa6zdlHK7m
-	 fOk7PWDK+KxeQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Will Deacon <will@kernel.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Robin Murphy <robin.murphy@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Mostafa Saleh <smostafa@google.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Rob Clark <robdclark@chromium.org>,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iommu/io-pgtable-arm: dynamically allocate selftest device struct
-Date: Fri, 11 Apr 2025 14:54:11 +0200
-Message-Id: <20250411125423.1411061-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1744376081; c=relaxed/simple;
+	bh=Q4jxB9ZrVGxAJUQQh1yJ586UOZiG9G2p9tGKu+B+EwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gum/IXR8Tmc57ROXN1MNtIBceGZPApSIEivYlZCjLB5kkXnQPFvGPumkX+j8bna9O2QPPIvrx09iYnT9Fth4yVFYVqK58gCB4R84xpEnCczjZYNX8/VK7Olvy6PF1wce5ZouSb3d4TLEiFsYTORi505NsBww/DrU//JFnWMmj1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ORXkI7Ty; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B916C102E4621;
+	Fri, 11 Apr 2025 14:54:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1744376076; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=hAJSv9h5wRcXrptqovOOWtspStxTbyq+MpU6paZIMew=;
+	b=ORXkI7Tys/+aHAwaPzH3zrM4L5cGkNhSVzUbIDX0YfMWN2nmpnVIdNGWdw1/8legxzCPD1
+	wtxw+ELgb18/QG6eSReH1fXjuApQuStP+GTgStG2YHP2bngukJjBylJWSNlGZnVTHVDxUC
+	RrGPy0ilcuVPtmar0YlqFU1otWHJv3I8NLc3CN8bq8J+9JV1x3q6S+yGHvI9GjcISdlgwT
+	SoA3YKJFln0pH9iS36F/46RRRzRKIxuzOrXxN7x1xISn4EM4ZRQ8cCSysEFxMeHI1TFoN5
+	o5Sno3HBfomj0RLS+u1bhaQIAtaxERGudlso5SFwuuZq/u59w/0Jbe/vftu0vw==
+Date: Fri, 11 Apr 2025 14:54:30 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Simon Horman <horms@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
+ <wahrenst@gmx.net>
+Subject: Re: [net-next v4 4/5] net: mtip: The L2 switch driver for imx287
+Message-ID: <20250411145430.3001f1db@wsk>
+In-Reply-To: <20250409162854.069abe88@wsk>
+References: <20250407145157.3626463-1-lukma@denx.de>
+	<20250407145157.3626463-5-lukma@denx.de>
+	<20250408151447.GX395307@horms.kernel.org>
+	<20250409162854.069abe88@wsk>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/EDd9PYuJ_JPMOcH6VsFq/w0";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Arnd Bergmann <arnd@arndb.de>
+--Sig_/EDd9PYuJ_JPMOcH6VsFq/w0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-In general a 'struct device' is way too large to be put on the kernel
-stack. Apparently something just caused it to grow a slightly larger,
-which pushed the arm_lpae_do_selftests() function over the warning
-limit in some configurations:
+Hi Simon,
 
-drivers/iommu/io-pgtable-arm.c:1423:19: error: stack frame size (1032) exceeds limit (1024) in 'arm_lpae_do_selftests' [-Werror,-Wframe-larger-than]
- 1423 | static int __init arm_lpae_do_selftests(void)
-      |                   ^
+> > It is unclear why hwentry, which is a pointer, is being cast to an
+> > integer and then back to a pointer. I see pointer arithmetic, but
+> > that can operate on pointers just as well as integers, without
+> > making assumptions about how wide pointers are with respect to
+> > longs.
+> >=20
+> > And in any case, can't the types be used to directly access the
+> > offsets needed like this?
+> >=20
+> > 	atable =3D fep->hwentry.mtip_table64b_entry;
+> >=20
+> > 	*read_lo =3D readl(&atable[index].lo);
+> > 	*read_hi =3D readl(&atable[index].hi);
+> >  =20
+>=20
+> The code as is seems to be OK.
+>=20
+> The (atable) memory structure is as follows:
+>=20
+> 1. You can store 2048 MAC addresses (2x32 bit each).
+>=20
+> 2. Memory from point 1 is addressed as follows:
+> 	2.1 -> from MAC address the CRC8 is calculated (0x00 - 0xFF).
+> 	This is the 'index' in the original code.
+> 	2.2 -> as it may happen that for two different MAC address the
+> 	same CRC8 is calculated (i.e. 'index' is the same), each
+> 	'index' can store 8 entries for MAC addresses (and it is
+> 	searched in a linear way if needed).
+>=20
+> IMHO, the index above shall be multiplied by 8.
 
-Change the function to use a dynamically allocated platform_device
-instead of the on-stack device structure. The device is not actually
-registered with the system, but is initialized enough to be used here.
+I've double check it and it turned out that you were right :-)
 
-Fixes: ca25ec247aad ("iommu/io-pgtable-arm: Remove iommu_dev==NULL special case")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/iommu/io-pgtable-arm.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+The following code:
 
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index 7632c80edea6..9f3bf0b5e8da 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -13,6 +13,7 @@
- #include <linux/bitops.h>
- #include <linux/io-pgtable.h>
- #include <linux/kernel.h>
-+#include <linux/platform_device.h>
- #include <linux/sizes.h>
- #include <linux/slab.h>
- #include <linux/types.h>
-@@ -1433,15 +1434,17 @@ static int __init arm_lpae_do_selftests(void)
- 	};
- 
- 	int i, j, k, pass = 0, fail = 0;
--	struct device dev;
-+	struct platform_device *pdev;
- 	struct io_pgtable_cfg cfg = {
- 		.tlb = &dummy_tlb_ops,
- 		.coherent_walk = true,
--		.iommu_dev = &dev,
- 	};
- 
--	/* __arm_lpae_alloc_pages() merely needs dev_to_node() to work */
--	set_dev_node(&dev, NUMA_NO_NODE);
-+	pdev = platform_device_alloc("io-pgtable-test", 0);
-+	if (!pdev)
-+		return -ENOMEM;
-+
-+	cfg.iommu_dev = &pdev->dev;
- 
- 	for (i = 0; i < ARRAY_SIZE(pgsize); ++i) {
- 		for (j = 0; j < ARRAY_SIZE(address_size); ++j) {
-@@ -1461,6 +1464,8 @@ static int __init arm_lpae_do_selftests(void)
- 	}
- 
- 	pr_info("selftest: completed with %d PASS %d FAIL\n", pass, fail);
-+	platform_device_put(pdev);
-+
- 	return fail ? -EFAULT : 0;
- }
- subsys_initcall(arm_lpae_do_selftests);
--- 
-2.39.5
+struct addr_table64b_entry *atable_base =3D
+fep->hwentry->mtip_table64b_entry;
 
+*read_lo =3D readl(&atable_base[index].lo);
+*read_hi =3D readl(&atable_base[index].hi);
+
+Is more readable than the current code.
+
+The same would be used for atable_write()
+
+I will change it for v5.
+
+>=20
+> > Also, and perhaps more importantly, readl expects to be passed
+> > a pointer to __iomem. But the appropriate annotations seem
+> > to be missing (forcing them with a cast is not advisable here IMHO).
+> >  =20
+>=20
+> I think that the code below:
+> unsigned long atable_base =3D (unsigned long)fep->hwentry;
+>=20
+> could be replaced with
+> void __iomem *atable_base =3D fep->hwentry;
+>=20
+> and the (index << 3) with (index * ATABLE_ENTRY_PER_SLOT)
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/EDd9PYuJ_JPMOcH6VsFq/w0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmf5EQYACgkQAR8vZIA0
+zr3A6Qf9GXE29Y/XpPCVSfPKZ01QAhFm6OWDn29Hd19Xc5zaiBO3NFgCJzxJpCM/
+hv949OWXQbxs2glV9RSPxw1OJAIUL+Kub2pt23XEMkkobCV0XzuAW/VqPfjjv8in
+Za9ur5L7E840u1z8uu24NbWBDdoRJBCxLy7Z9YSSxPA9UDMytwLWDwelSQADb1lj
+FhdpA0swhuzHJsTUfu0NL9NZcbQbVapyKUsNZ+OzZJV682VIOSw7DGrwazG9NWYX
+KpHcwfAMp2iiEbVVjjjl5n0VXMXO/Lth4LuGGJaAUd+4ZyZk7n8qoTRldy/PjdJZ
+WPYNyrpUjZEEzphLwmzo6N/RRxxp3Q==
+=QEuc
+-----END PGP SIGNATURE-----
+
+--Sig_/EDd9PYuJ_JPMOcH6VsFq/w0--
 
