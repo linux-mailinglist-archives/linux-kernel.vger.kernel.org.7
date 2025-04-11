@@ -1,228 +1,120 @@
-Return-Path: <linux-kernel+bounces-599707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD86A8570C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:54:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E70A8570E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65A8A7A831D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:53:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E10C47A93BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EBC293460;
-	Fri, 11 Apr 2025 08:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321A02980BA;
+	Fri, 11 Apr 2025 08:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S6hP7Cp+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JQAaC1bg"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACB21FBCB1
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38C31FBCB1
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744361657; cv=none; b=UVMYVdoh3Na8vjN18ql6DW6M+fAKsRUnEdk0EUoVWGUZRC024bFZkB3ttXPOh4jPFuriNtwktV9cbL/fgp7B0ay7vVfI2P+DhnqapRAnYgmndlhtZMcnY9ZlxAOc2UARG5/0jsqB9uQ6wVRv8aoBtbNsYoPlsq5JKk2iWswHx+Q=
+	t=1744361692; cv=none; b=qP+DERl2s89bzIAQpb5p/4hYaYdN8HPv+sVuo+5RNcbw/SLzzUK37QWwVYqFtaRQTYQ/dC1xausm9xC8RGrFzAWFb4grxzbUnsPvKV06s2iyXMEAqX27pHlwLPpd7YHWHCo0ueRYv/FRP6y9h9c29p6BkRelckCBP/wK6MGmxdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744361657; c=relaxed/simple;
-	bh=qjO090hnYvSO7+q5RyTsNvTDWzwLtjmFLi7+QUNA+Nk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O5DBeZU22NukDvyoMPyX1U+EuLKcQa6NrBGSrxmVtLefcoBKehbINAw+rAAg/LLUFAt+KkecWlz+y6XnJWF5Qkh3auVh3gL5McXM6a86JJD+gA0Ia8rBhfEv80Htiwr8eO9AEfKaMSyN5XeRBz5keBCxdWVaK1dgjKySlAgnkMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S6hP7Cp+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744361653;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lUHjzYBwpvrIsKo7sSrLS26Mz4GzgpGjSzm2tB0vXgE=;
-	b=S6hP7Cp+WyRsb2Dgvmj3G/DueLVsKXK0F1JwmOTYxbB0VpJSKzY6TF/gpdkqIb5PJaKQot
-	RicthfSVyk57MFfhx6T5mQNEwLnH9579I1aKhku45Cr/s1UiEtosUB5dD+6+vQP/9DDRPO
-	5/udBl1rXz9i/lF/ATxMPwUQqp+mHfc=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-577-EZ31ElFaOSy9HmkjXtHYag-1; Fri, 11 Apr 2025 04:54:11 -0400
-X-MC-Unique: EZ31ElFaOSy9HmkjXtHYag-1
-X-Mimecast-MFC-AGG-ID: EZ31ElFaOSy9HmkjXtHYag_1744361651
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-39ac9b0cb6aso1105912f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 01:54:11 -0700 (PDT)
+	s=arc-20240116; t=1744361692; c=relaxed/simple;
+	bh=KyprIQ1opyL0FHE3sPCvabhtO9sp9Wx9Bf3O/mgmCHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UnNsl+JmygiId3+2zTOMScd6138jaZ3QJExeYare6aMjEoWWjUaK0oYqpUYoN3YjF/GYDQEgfe+SIq/MFBm/GloQUG61uylST+aeCsdAvButpEK/Igy4DLxDBybKu2oQNr0KajQJEhTa9ISVsSPUzTRndOq0CXZviOXig+AvtXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JQAaC1bg; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39bf44be22fso986872f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 01:54:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744361689; x=1744966489; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vz/eRrE6itGPGVxaacR7mXYGhUWJFoHHWj/Si1MrSR8=;
+        b=JQAaC1bgiQhjxH/27ytI7k42AIig1mptviwi2C8Nw8b4rGsIDJavdjn1oW995J1PfX
+         8qYTp4R2vihWZmhE99LQSJfNPoo2pVH6ePyDMGa/FLbYEWOXCgfgoNgy9hKHwO1pRg16
+         o7t3sX3d2s0T/XLfuqkr1K8XCFe1GNXthTzouXtTKys2CBDozjc1ts1Jr/yJSLGEbGv4
+         3oOYlb8Jn46pTbdn2FBJKn8kFFKx3OxyxpybPwxTVlj3J+BxdMCq6yREv9PXIE9D2Ugy
+         2lkGeP0yB/HW5Fl9fVe2j2124R4CDzj6qFHE1H9CcnnRYPhH/CjS/XP3C77ZWNnWOVzT
+         4QsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744361651; x=1744966451;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lUHjzYBwpvrIsKo7sSrLS26Mz4GzgpGjSzm2tB0vXgE=;
-        b=CA/bOLIFhsDy00rpSp4DQfRGAbH923n/fveiJywyVMKe5gc8QVNj1ZE/l6JP4Qoev2
-         nHENRAZaIW2m9mSQ2o1E/Uc4vbpbKg+1HqO4SqLBkAdjkSFxv6BkTVV1qbY0HULsW4lC
-         4Jq4IvJuo2KfXJnz4HvTuO46G1cdgh9+K5c6QeT//B2mizGug+Yjt4poCUAl0fJOEvrw
-         QGVu+XTWY0WarRWxEVRCja8V2skCd7O++WSvBjnSojNgLsyPZBbPBmrZRGopiNI7Xdv1
-         1DCegk7ieVdjOfWCk5z+pxlETYWgWmSPrax75b7m7eF74mR7IbVXNFogkEqNx8LjUnUZ
-         zWKA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+rLTFsiAiDeD4i84Iki/zYjlamFgx0FDwhikXx5U8mWQwz4C9vNoT9qayld9BJxp/Oakf/1U80iaAYeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYbLQilumPOmZkdGhpgU8GHRheY1Z+Jb+FUpCSONY1iOO5Chqf
-	pv9Rf1j181ICs4XYkIKW00B/T66qJSsd3Hf1/a8Ht31Kpe3CUXPBmACTes+QgPlU+iQ/kBnXGnI
-	UIiTgHY+3CZb3KpSE0+6MCpxdQbD0lZLYOZG7JSaIIhp9SEmi5wRvuHRdCO0g8Q==
-X-Gm-Gg: ASbGncsnsxabHNN08Jl8s3glOmwofREXWiwM9jakzwY5M77GDnUmTNxDhezs+zFihoV
-	a4CX/xW3sAf+ny/9othlf50PVXITd8+4yjDCrdjmdA6MMonM9ohOTH6X8FqQt8hJc80cigqCnOd
-	z5KuErBtZQ/G8v3bIjkT8FDBKIX79bQGgoqJx351HDLxNqy+t3dUInJe9Zf0Sx8kPwSh1NAmZkw
-	/KJZ5fhFAxB5v1HVYfgir4aujn5EAduMSkGJKxh1uITW/oIPHhenYoNPlv4Oi1d94eTobxRaHID
-	SDm7T3mC4sjBq+rpXHhp7wvGlvL7IjCtIAaHvLf4IRZavTJQmtnAJQfmM9ub48YHtKoQfTsrfa0
-	jn3ecJj5iCCUFR60z+snTB80VqvoKtcR8xza5
-X-Received: by 2002:a05:6000:22c1:b0:38f:6287:6474 with SMTP id ffacd0b85a97d-39ea51f45bemr1272186f8f.15.1744361650772;
-        Fri, 11 Apr 2025 01:54:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH33DDjaZp2a66XGNnz3i3XKByjcm2LRqZFjma/j5OURalaa1m61K6BdzZVPlt2Z7fND7LBjQ==
-X-Received: by 2002:a05:6000:22c1:b0:38f:6287:6474 with SMTP id ffacd0b85a97d-39ea51f45bemr1272177f8f.15.1744361650431;
-        Fri, 11 Apr 2025 01:54:10 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c726:6800:7ddf:5fc:2ee5:f08a? (p200300cbc72668007ddf05fc2ee5f08a.dip0.t-ipconnect.de. [2003:cb:c726:6800:7ddf:5fc:2ee5:f08a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae977a7fsm1367091f8f.45.2025.04.11.01.54.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 01:54:10 -0700 (PDT)
-Message-ID: <f03f7e13-3d37-4d4a-87a6-61731744f476@redhat.com>
-Date: Fri, 11 Apr 2025 10:54:09 +0200
+        d=1e100.net; s=20230601; t=1744361689; x=1744966489;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vz/eRrE6itGPGVxaacR7mXYGhUWJFoHHWj/Si1MrSR8=;
+        b=nww6gzQuvatIHaLZJhBcwGnBo5onva+nZOrueWp1SIv/OKk8+hgpRznn5pryMW+V/A
+         T1jv7Ciq6CN8XwLzNMxVKGTP9faRlZ++JoRhiIL0/Zb5rIOtAxlaN/aTAWfkyngndthY
+         H0ehM6t5BJAKIQxtDwWU+nG0TMERe1i3omU9iG8DomTNRCm5zCWsawKRl6N5GXEggNDr
+         vvBtV0tQw3zmoHuDnxUtG63LdQoydb1s8JD0u05WjWA8G95KNRPVuQffFWCLk2fuJ+Nn
+         T3maU6rBpVfGwVFPOtQJLDTbpWskSD9mApK7Vvq2Uy+0kHUeL27fylGIpKiZMbr2OvdV
+         Lwaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCo55Cl9bIyJKUN1BiGkYW+TLJV2TwGW5cenvk+GSS/S57BVH6h+g1bAUsfKp8zqeJ5y06KSsviqm6cgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysY+lfWCSneaHJKhv+KJ2TOXDGTbo/pmkR177D4i/cWRTT5sxC
+	qFGitBc3Ft76aRUH1u0JCepzEKVXayJpayeHQ4m35z62kGlg4NWt
+X-Gm-Gg: ASbGncvyTM3YRrQveroUwAZN3wUwJwH/3Z6xdab91ta2cACE63j0USoX89x62E690W3
+	170rzcCjEbX/RDdnlnQVj3XPfyHU2i+IBvIYU/DMsWR9oNedcM/I5kTjCujDPmJLGo/ElYFDiJN
+	w/7KyOSAOD14JBrfjx5jrAHy7K1CeIynO6pDXVm3S7l4ssmuZsP74PQtdvdH7YctDyNHlUGvCkr
+	O3qqO8PYH1Hog8iqqeFhXvcbS/8xi1/RoZmtzDcBBbok+P7J+rKpkabwpwVyRaE/SNiB8cLnO1W
+	vk7CP6SG2zEG9duq6MQvuhZ5PfDZSxgYFQlMgQ==
+X-Google-Smtp-Source: AGHT+IGQ1mfH6C1lv6nPAfeEQxxFNgqLIGSJ8pGCODJSkV+yOQ2XrVh0Z4UA497MoeC2lYlZFxEDvA==
+X-Received: by 2002:a05:6000:4024:b0:399:71d4:b8 with SMTP id ffacd0b85a97d-39ea51f56a4mr1364349f8f.23.1744361688920;
+        Fri, 11 Apr 2025 01:54:48 -0700 (PDT)
+Received: from pc.. ([197.155.71.138])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f205ecb8dsm80867345e9.7.2025.04.11.01.54.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Apr 2025 01:54:47 -0700 (PDT)
+From: Erick Karanja <karanja99erick@gmail.com>
+To: gregkh@linuxfoundation.org,
+	outreachy@lists.linux.dev
+Cc: karanja99erick@gmail.com,
+	philipp.g.hortmann@gmail.com,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8723bs: Use boolean false instead of integer 0
+Date: Fri, 11 Apr 2025 11:54:25 +0300
+Message-ID: <20250411085425.44177-1-karanja99erick@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] mm/gup: clean up codes in fault_in_xxx() functions
-To: Baoquan He <bhe@redhat.com>, linux-mm@kvack.org
-Cc: akpm@linux-foundation.org, osalvador@suse.de, yanjun.zhu@linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250410035717.473207-1-bhe@redhat.com>
- <20250410035717.473207-5-bhe@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250410035717.473207-5-bhe@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10.04.25 05:57, Baoquan He wrote:
-> The code style in fault_in_readable() and fault_in_writable() is a
-> little inconsistent with fault_in_safe_writeable(). In fault_in_readable()
-> and fault_in_writable(), it uses 'uaddr' passed in as loop cursor. While
-> in fault_in_safe_writeable(), local variable 'start' is used as loop
-> cursor. This may mislead people when reading code or making change in
-> these codes.
-> 
-> Here define explicit loop cursor and use for loop to simplify codes in
-> these three functions. These cleanup can make them be consistent in
-> code style and improve readability.
-> 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
->   mm/gup.c | 65 +++++++++++++++++++++++---------------------------------
->   1 file changed, 26 insertions(+), 39 deletions(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 77a5bc622567..a76bd7e90a71 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -2113,28 +2113,24 @@ static long __get_user_pages_locked(struct mm_struct *mm, unsigned long start,
->    */
->   size_t fault_in_writeable(char __user *uaddr, size_t size)
->   {
-> -	char __user *start = uaddr, *end;
-> +	const unsigned long start = (unsigned long)uaddr;
-> +	const unsigned long end = start + size;
-> +	unsigned long cur = start;
+In the struct definition, adaptivity_flag is defined as type 'bool'.
+This change replaces the integer literal 0 with the boolean
+constant false to match the declared type. It ensures semantic
+correctness, and aligns with kernel coding conventions
+that prefer true/false over 1/0 for bool types.
 
-I would initialize cur in the for loop header, makes the loop easier to 
-read.
+found by coccinelle
 
->   
->   	if (unlikely(size == 0))
->   		return 0;
-> +
+Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+---
+ drivers/staging/rtl8723bs/hal/odm_DIG.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Would not add that line to keep it like fault_in_readable() below.
-
->   	if (!user_write_access_begin(uaddr, size))
->   		return size;
-> -	if (!PAGE_ALIGNED(uaddr)) {
-> -		unsafe_put_user(0, uaddr, out);
-> -		uaddr = (char __user *)PAGE_ALIGN((unsigned long)uaddr);
-> -	}
-> -	end = (char __user *)PAGE_ALIGN((unsigned long)start + size);
-> -	if (unlikely(end < start))
-> -		end = NULL;
-> -	while (uaddr != end) {
-> -		unsafe_put_user(0, uaddr, out);
-> -		uaddr += PAGE_SIZE;
-> -	}
-> +
-> +	/* Stop once we overflow to 0. */
-> +	for (; cur && cur < end; cur = PAGE_ALIGN_DOWN(cur + PAGE_SIZE))
-> +		unsafe_put_user(0, (char __user *)cur, out);
->   
-
-Staring at fault_in_safe_writeable(), we could also do
-
-/* Stop once we overflow to 0. */
-end = PAGE_ALIGN(end)
-if (start < end)
-	end = 0;
-
-for (cur = start; cur != end; cur = PAGE_ALIGN_DOWN(cur + PAGE_SIZE))
-	unsafe_put_user(0, (char __user *)cur, out);
-
-Essentially, removing the "cur" check from the loop condition. Not sure 
-if that is better.
-
-In any case, if all functions later look similar and clearer it's a big win.
-
+diff --git a/drivers/staging/rtl8723bs/hal/odm_DIG.c b/drivers/staging/rtl8723bs/hal/odm_DIG.c
+index 97a51546463a..1e2946a23beb 100644
+--- a/drivers/staging/rtl8723bs/hal/odm_DIG.c
++++ b/drivers/staging/rtl8723bs/hal/odm_DIG.c
+@@ -56,7 +56,7 @@ void odm_NHMBBInit(void *pDM_VOID)
+ {
+ 	struct dm_odm_t *pDM_Odm = (struct dm_odm_t *)pDM_VOID;
+ 
+-	pDM_Odm->adaptivity_flag = 0;
++	pDM_Odm->adaptivity_flag = false;
+ 	pDM_Odm->tolerance_cnt = 3;
+ 	pDM_Odm->NHMLastTxOkcnt = 0;
+ 	pDM_Odm->NHMLastRxOkcnt = 0;
 -- 
-Cheers,
-
-David / dhildenb
+2.43.0
 
 
