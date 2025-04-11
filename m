@@ -1,250 +1,183 @@
-Return-Path: <linux-kernel+bounces-599550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC78BA85557
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:21:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F304CA8556B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 126D78C36DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:21:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AFA17B5D1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D63B285409;
-	Fri, 11 Apr 2025 07:21:50 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358A71ADC69;
-	Fri, 11 Apr 2025 07:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB6D29347C;
+	Fri, 11 Apr 2025 07:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="DhVNVtVq"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57852036FD
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744356109; cv=none; b=lopbtCeuWtk/8djIU83eXDwq/Stac21C6gXaFJao/o/Z5qKbkELI4nvd9tDUVegpFGGH1LFeg3p50wUfSZn9CIMJewV+FyDaUDYfsFmxh79eMG9JRyuqREiTYgDKtK9VUvvLQh+DDRfF3UK3yAMlQz9v2zJpYaryjVljLMlt3AY=
+	t=1744356426; cv=none; b=NU+U3cTCb9dVryk0fCV2fIIYsJJOopNVcErHauQiwhHwyaY50VSXQzWCFulAHJlNjorr6rv0Qadw0l0/bKZif810+NWieLflowx/6XC3I8//QPv/MeCUEmWdvJbhxcxPHrHZjG5qrmQglb0YaVOn+KxNxjbg2kJc62OZhbk9nXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744356109; c=relaxed/simple;
-	bh=PgJeEOXi4NpUwNgbPqmn8M+aEnjV8v35bi6nehb7B1k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lism6UtDKZDAJv3Dx3vul1tmswP5OG8VrSq1R8ty8GMWjykpkeHn6xbAaGna6zuNjo63pAdULF6opnYn5OLpzTPlPHx0qeQ2y/uhO+04NMJhYA8UDMybmSnkkXElRV7jkjO0ULQtp8gpOU68Rz/GdMXKqCpJ9Ezm5ZEtcPC+eoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-57-67f8c302739f
-From: Rakie Kim <rakie.kim@sk.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: gourry@gourry.net,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	joshua.hahnjy@gmail.com,
-	ying.huang@linux.alibaba.com,
-	david@redhat.com,
-	Jonathan.Cameron@huawei.com,
-	osalvador@suse.de,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com,
-	rakie.kim@sk.com,
-	akpm@linux-foundation.org
-Subject: Re: [PATCH v7 2/3] mm/mempolicy: Prepare weighted interleave sysfs for memory hotplug
-Date: Fri, 11 Apr 2025 16:21:28 +0900
-Message-ID: <20250411072135.588-1-rakie.kim@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <67f5ef882b674_72052946a@dwillia2-xfh.jf.intel.com.notmuch>
-References: 
+	s=arc-20240116; t=1744356426; c=relaxed/simple;
+	bh=iOidn7l9NBNpeJnxah+wYGgaGQgm9n4v7YKZnNqAmSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sOehObQnsvbKMoP/YW2NctgxZQ9ZJbEDodTWcpMjt89JCKaNCgc8CA04uZqsmTSGUTKJUodBeDZ6CyNq6d0KwqjuifUYSUolbT8nBlqVSe1erVu+DjsFIKSO8yqE6eC/MmTX+UVo+ovJSr9UUoV5Hk3KgXd5jrX2L3i7xwZSR6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=DhVNVtVq; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
+	by cmsmtp with ESMTPS
+	id 38WbufXqZiuzS38muuvoCo; Fri, 11 Apr 2025 07:26:56 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 38mtucaY97b2o38mtuHvsY; Fri, 11 Apr 2025 07:26:55 +0000
+X-Authority-Analysis: v=2.4 cv=EZXOQumC c=1 sm=1 tr=0 ts=67f8c43f
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=B3fuDwYyW55wTQKIj88FGw==:17
+ a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=7T7KSl7uo7wA:10
+ a=0jM7oEE7EF-Y5LCAcXEA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=l/zosEz8AhTGxiuaGjJlq1yFgsiJbd3WrDaBZ/z6su0=; b=DhVNVtVq885OUFdIbXryphjU0c
+	4/ZrblqXNy1b9xM2mKc6AzzrEpOyO469J0QIe+7J85BPST3IDVMtd3hAk9WN6O7KZqO9TJcDwWWXm
+	kKrreeDDQw2eO7jQvtxtnpLayd9m0uLC2xtv6wBMSR1R2pt6/w8tgOeNcOT3ZdETx4x9+DfVn4e0F
+	fFZwHNvH1yQ1/VKjS0vzdbdAx1dsRLOZFdWlgG1IBciDmDlNw1Z/PoeK0SYrwuuDXwAuI+VWQ4+ip
+	O3P2fvJlmFScdSFp6aj+uq7eIlYRPA5EurB5dG+MaL5MMsia379ug/dQAi2FP2NpSs5cDGWNC7i+w
+	XTLDsyIg==;
+Received: from [201.172.174.147] (port=33292 helo=[192.168.15.14])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1u38ms-00000002ADY-286a;
+	Fri, 11 Apr 2025 02:26:54 -0500
+Message-ID: <25518061-7b9d-4a43-be53-c5aee80c0f1d@embeddedor.com>
+Date: Fri, 11 Apr 2025 01:26:15 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsXC9ZZnoS7T4R/pBm8PWVjMWb+GzWL61AuM
-	Fl/X/2K2+Hn3OLvFqoXX2CyOb53HbnF+1ikWi8u75rBZ3Fvzn9XizLQii9VrMhy4PXbOusvu
-	0d12md2j5chbVo/Fe14yeWz6NInd48SM3yweOx9aerzfd5XNY/Ppao/Pm+QCuKK4bFJSczLL
-	Uov07RK4Mia/amIvmKFV8WP9RbYGxpkKXYycHBICJhIt3zYww9ibJ/SzdDFycLAJKEkc2xsD
-	EhYR0JaYOOcgUAkXB7PAEyaJuUeWsoEkhAXiJPb93sgGUs8ioCrxcpIESJhXwFji4v4HTBAj
-	NSUaLt0DszkFPCT2XzvDCGILCfBIvNqwnxGiXlDi5MwnLCA2s4C8RPPW2WC7JAS+s0l8PLgZ
-	6jZJiYMrbrBMYOSfhaRnFpKeBYxMqxiFMvPKchMzc0z0MirzMiv0kvNzNzECw39Z7Z/oHYyf
-	LgQfYhTgYFTi4d2x+nu6EGtiWXFl7iFGCQ5mJRHe9uAf6UK8KYmVValF+fFFpTmpxYcYpTlY
-	lMR5jb6VpwgJpCeWpGanphakFsFkmTg4pRoYezZe+LI8c/P9xR2np7+/au/hKbT6TnnuK7VN
-	3pN1pip9frNru3vsqQ4BD7+F95w+HtjyxWuPhU1R+cqlm1vc13r31jddMz7xMqG+rWu56hPf
-	aQImxpNFWsy0ag9Edqq9PlkvsdfdtyFl4lPRLcb9C3NXz5x08KqMyL0Pd9JeZpcxhsX3lJ2p
-	UmIpzkg01GIuKk4EAExPmnd7AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrELMWRmVeSWpSXmKPExsXCNUNNS5fp8I90g59ftC3mrF/DZjF96gVG
-	i6/rfzFb/Lx7nN3i87PXzBarFl5jszi+dR67xeG5J1ktzs86xWJxedccNot7a/6zWpyZVmRx
-	6NpzVovVazIsfm9bwebA77Fz1l12j+62y+weLUfesnos3vOSyWPTp0nsHidm/Gbx2PnQ0uP9
-	vqtsHt9ue3gsfvGByWPz6WqPz5vkAniiuGxSUnMyy1KL9O0SuDImv2piL5ihVfFj/UW2BsaZ
-	Cl2MnBwSAiYSmyf0s3QxcnCwCShJHNsbAxIWEdCWmDjnIHMXIxcHs8ATJom5R5aygSSEBeIk
-	9v3eyAZSzyKgKvFykgRImFfAWOLi/gdMECM1JRou3QOzOQU8JPZfO8MIYgsJ8Ei82rCfEaJe
-	UOLkzCcsIDazgLxE89bZzBMYeWYhSc1CklrAyLSKUSQzryw3MTPHVK84O6MyL7NCLzk/dxMj
-	MOSX1f6ZuIPxy2X3Q4wCHIxKPLw7Vn9PF2JNLCuuzD3EKMHBrCTC2x78I12INyWxsiq1KD++
-	qDQntfgQozQHi5I4r1d4aoKQQHpiSWp2ampBahFMlomDU6qB0cdejNMgoXzTufW17V1fWqQ/
-	7gi3sl/K33wsYZomz7Q7pWGNrWab5a45+ehe7ov3zFD9JnFG0fylzH3fFPbQ1lnilx4e0i3v
-	EJE7Kxzv37jq0CXNLMPa+pzcH3dj9Lvn5rI0m397XPVYQjMv2qzv9mwzBfNis2Cr7mr7K6ck
-	Vy2dpanNUKPEUpyRaKjFXFScCADh+s2ydQIAAA==
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] drm/nouveau: chan: Avoid
+ -Wflex-array-member-not-at-end warnings
+To: Kees Cook <kees@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <Z-67Hm9uHEJs0RGw@kspp> <202504071227.E8484EB@keescook>
+ <d8e63b8a-7a2c-46dc-a15c-9399044a23ee@embeddedor.com>
+ <202504071336.0C708FCAB8@keescook>
+ <a6dccb66-3f97-443f-85e5-fe089cd93a5e@embeddedor.com>
+ <202504081637.D17F824CE@keescook>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <202504081637.D17F824CE@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.174.147
+X-Source-L: No
+X-Exim-ID: 1u38ms-00000002ADY-286a
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.14]) [201.172.174.147]:33292
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfB4B7BdIK19shpiWZJq5Q3wWDmxCii4PHJhwh1td5iAI4DV+y1UmfxL20VdUBS/jYgcwfOJ/Tx36WAehmX3gF9ds+BJuVXCIwKsb6VLpZZHB4i8o6lZj
+ 0tL6cOw0Xd8oJqNSYAj81rTh861BOPC8vXKbGBOb/E/jm5je06MLPyYNRGcaHbKfIEH/AaKm1bmpXm5ITganJe7U2c9xg1lVIzTkSDYdi9vWYwTyJTB11G8M
 
-On Tue, 8 Apr 2025 20:54:48 -0700 Dan Williams <dan.j.williams@intel.com> wrote:
-> Dan Williams wrote:
-> > >  
-> > > +struct sysfs_wi_group {
-> > > +	struct kobject wi_kobj;
-> > > +	struct iw_node_attr *nattrs[];
-> > > +};
-> > > +
-> > > +static struct sysfs_wi_group *wi_group;
-> > > +
-> > >  static ssize_t node_show(struct kobject *kobj, struct kobj_attribute *attr,
-> > >  			 char *buf)
-> > >  {
-> > > @@ -3461,27 +3468,24 @@ static ssize_t node_store(struct kobject *kobj, struct kobj_attribute *attr,
-> > >  	return count;
-> > >  }
-> > >  
-> > > -static struct iw_node_attr **node_attrs;
-> > > -
-> > > -static void sysfs_wi_node_release(struct iw_node_attr *node_attr,
-> > > -				  struct kobject *parent)
-> > > +static void sysfs_wi_node_delete(int nid)
-> > >  {
-> > > -	if (!node_attr)
-> > > +	if (!wi_group->nattrs[nid])
-> > >  		return;
-> > > -	sysfs_remove_file(parent, &node_attr->kobj_attr.attr);
-> > > -	kfree(node_attr->kobj_attr.attr.name);
-> > > -	kfree(node_attr);
-> > > +
-> > > +	sysfs_remove_file(&wi_group->wi_kobj,
-> > > +			  &wi_group->nattrs[nid]->kobj_attr.attr);
-> > 
-> > This still looks broken to me, but I think this is more a problem that
-> > was present in the original code.
-> > 
-> > At this point @wi_group's reference count is zero because
-> > sysfs_wi_release() has been called. However, it can only be zero if it has
-> > properly transitioned through kobject_del() and final kobject_put(). It
-> > follows that kobject_del() arranges for kobj->sd to be NULL. That means
-> > that this *should* be hitting the WARN() in kernfs_remove_by_name_ns()
-> > for the !parent case.
-> > 
-> > So, either you are not triggering that path, or testing that path, but
-> > sys_remove_file() of the child attributes should be happening *before*
-> > sysfs_wi_release().
-> > 
-> > Did I miss something?
+
+
+On 08/04/25 17:40, Kees Cook wrote:
+> On Mon, Apr 07, 2025 at 05:35:47PM -0600, Gustavo A. R. Silva wrote:
+>> [..]
+>>
+>>>>>> -	struct {
+>>>>>> -		struct nvif_chan_v0 chan;
+>>>>>> -		char name[TASK_COMM_LEN+16];
+>>>>>> -	} args;
+>>>>>> +	DEFINE_RAW_FLEX(struct nvif_chan_v0, args, name, TASK_COMM_LEN + 16);
+>>>>>>     	struct nvif_device *device = &cli->device;
+>>>>>>     	struct nouveau_channel *chan;
+>>>>>>     	const u64 plength = 0x10000;
+>>>>>> @@ -298,28 +295,28 @@ nouveau_channel_ctor(struct nouveau_cli *cli, bool priv, u64 runm,
+>>>>>>     		return ret;
+>>>>>>     	/* create channel object */
+>>>>>> -	args.chan.version = 0;
+>>>>>> -	args.chan.namelen = sizeof(args.name);
+>>>>>> -	args.chan.runlist = __ffs64(runm);
+>>>>>> -	args.chan.runq = 0;
+>>>>>> -	args.chan.priv = priv;
+>>>>>> -	args.chan.devm = BIT(0);
+>>>>>> +	args->version = 0;
+>>>>>> +	args->namelen = __struct_size(args) - sizeof(*args);
+>>>>>
+>>>>> Does __struct_size(args->name) work here (and later)?
+>>>>
+>>>> Why not?
+>>>
+>>> Uhm, I'm genuinely curious. I *think* it will work, but because it's
+>>> within the struct, not outside of it, I'm unclear if it'll DTRT for
+>>> finding the size (since __builtin_object_size() can be touchy).
+>>>
+>>>> I mean, this should be equivalent to `TASK_COMM_LEN+16`, I could
+>>>> use the latter if people prefer it (see my comments below).
+>>>
+>>> Right, it should be the same. I think __struct_size(args->name) would be
+>>> much more readable ... if it works. :)
+>>
+>> OK, I'll double check this.
 > 
-> I think the missing change is that sysfs_wi_node_add() failures need to
-> be done with a sysfs_wi_node_delete() of the added attrs *before* the
-> kobject_del() of @wi_group.
+> Ah-ha, yes, I'm already testing this with KUnit:
+> 
+> struct bar {
+>          int a;
+>          u32 counter;
+>          s16 array[];
+> };
+> ...
+>          DEFINE_RAW_FLEX(struct bar, two, array, 2);
+> 	...
+>          KUNIT_EXPECT_EQ(test, sizeof(*two), sizeof(struct bar));
+>          KUNIT_EXPECT_EQ(test, __struct_size(two), sizeof(struct bar) + 2 * sizeof(s16));
+>          KUNIT_EXPECT_EQ(test, __member_size(two), sizeof(struct bar) + 2 * sizeof(s16));
+>          KUNIT_EXPECT_EQ(test, __struct_size(two->array), 2 * sizeof(s16));
+>          KUNIT_EXPECT_EQ(test, __member_size(two->array), 2 * sizeof(s16));
 
-Hi Dan,
+Nice! I was taking a look at this, and now I want to use __member_size(p->array)
+instead of __struct_size(p->array). ^.^
 
-Thank you for pointing out this issue.
+> 
+> 
+>> I really don't want to condition -Wflex-array-member-not-at-end patches
+>> on counted_by patches, for now.
+> 
+> Fair enough. :) One thing at a time is wise!
+> 
 
-As you suggested, I believe the most appropriate way to handle this is
-to incorporate your feedback into Patch 1 
-(mm/mempolicy: Fix memory leaks in weighted interleave sysfs).
+\o/
 
-To ensure that sysfs_remove_file() is called before kobject_del(), I
-have restructured the code as follows:
-
-<Previously>
-static void sysfs_wi_release(struct kobject *wi_kobj)
-{
-	int nid;
-
-	for (nid = 0; nid < nr_node_ids; nid++)
-		sysfs_wi_node_delete(node_attrs[nid], wi_kobj);
-		-> ERROR: sysfs_remove_file called here
-	kfree(node_attrs);
-	kfree(wi_kobj);
-}
-
-<Now>
-static void sysfs_wi_node_delete_all(struct kobject *wi_kobj)
-{
-	int nid;
-
-	for (nid = 0; nid < nr_node_ids; nid++)
-		sysfs_wi_node_delete(node_attrs[nid], wi_kobj);
-		-> sysfs_remove_file called here
-}
-
-static void sysfs_wi_release(struct kobject *wi_kobj)
-{
-	kfree(node_attrs);
-	kfree(wi_kobj);
-}
-
-In addition, I call sysfs_wi_node_delete_all() before kobject_del()
-during error handling:
-
-+err_cleanup_kobj:
-+	sysfs_wi_node_delete_all(wi_kobj);
-	kobject_del(wi_kobj);
-
-I believe this resolves the issue you raised.
-
-That said, I have a follow-up question. With this structure, when the
-system is shutting down, sysfs_remove_file() will not be called. Based
-on my review of other kernel subsystems, it seems that sysfs_remove_file()
-is only called during module_exit() in driver code, and not in other
-built-in subsystems.
-
-Is this an acceptable practice? If you happen to know the expected
-behavior in such cases, I would appreciate your insights.
-
-Below is the full content of the updated Patch 1.
-@@ -3463,8 +3463,8 @@ static ssize_t node_store(struct kobject *kobj, struct kobj_attribute *attr,
- 
- static struct iw_node_attr **node_attrs;
- 
--static void sysfs_wi_node_release(struct iw_node_attr *node_attr,
--                                 struct kobject *parent)
-+static void sysfs_wi_node_delete(struct iw_node_attr *node_attr,
-+                                struct kobject *parent)
- {
-        if (!node_attr)
-                return;
-@@ -3473,13 +3473,16 @@ static void sysfs_wi_node_release(struct iw_node_attr *node_attr,
-        kfree(node_attr);
- }
- 
--static void sysfs_wi_release(struct kobject *wi_kobj)
-+static void sysfs_wi_node_delete_all(struct kobject *wi_kobj)
- {
--       int i;
-+       int nid;
- 
--       for (i = 0; i < nr_node_ids; i++)
--               sysfs_wi_node_release(node_attrs[i], wi_kobj);
-+       for (nid = 0; nid < nr_node_ids; nid++)
-+               sysfs_wi_node_delete(node_attrs[nid], wi_kobj);
-+}
- 
-+static void sysfs_wi_release(struct kobject *wi_kobj)
-+{
-        kfree(node_attrs);
-        kfree(wi_kobj);
- }
-@@ -3547,13 +3550,14 @@ static int add_weighted_interleave_group(struct kobject *root_kobj)
-                err = add_weight_node(nid, wi_kobj);
-                if (err) {
-                        pr_err("failed to add sysfs [node%d]\n", nid);
--                       goto err_del_kobj;
-+                       goto err_cleanup_kobj;
-                }
-        }
- 
-        return 0;
- 
--err_del_kobj:
-+err_cleanup_kobj:
-+       sysfs_wi_node_delete_all(wi_kobj);
-        kobject_del(wi_kobj);
- err_put_kobj:
-        kobject_put(wi_kobj);
-
-Thank you again for your helpful feedback.
-
-Rakie
+--
+Gustavo
 
 
