@@ -1,290 +1,349 @@
-Return-Path: <linux-kernel+bounces-599337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00223A852C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:47:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA42AA852C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C74D8A9154
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 04:47:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6C9B8C3926
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 04:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C7E27C144;
-	Fri, 11 Apr 2025 04:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C033727CB0F;
+	Fri, 11 Apr 2025 04:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rSj5x62U"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xRXuiQ7h"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474811E7C07
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 04:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744346846; cv=fail; b=hcw1Nhnc86bgrbyFPyakLJxPL/Zbx7S65IP3AYzA88EmEAtEF2tSfjAFVbjBdB3B5pvVsi3zzfOpPgut3/jNV2NkBGL223ESCReRsTsjbZK3xrDhZQrN4bz/wLjT9CLIKzUcjGUyc8UtFOuqs4YC2riSk3hIvVmEWJCsbTMefuc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744346846; c=relaxed/simple;
-	bh=amuEOtI9GGQ3A5WvXBMRbdcjfupA4rRhFNdorZ4MO6A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OofxY/kP3HPYz1wooRDpR4qmOy1XUlmuW8t1Flfc4I1MKxHdLCepftoNG/QRGokQwawafsY+Sk9FLFguGTMz7WVFG29+Tjv95rvZ6yr6T0mqUwrgTrWPrrFfPRUVbzSUDIeyh3xdVE+kUZt2eLID7lzDIy7XjynACYYGykP+Yoo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rSj5x62U; arc=fail smtp.client-ip=40.107.220.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bZr2+wZpV1KvYdye5e40nv2zgGTZ5cyVJagLCU2gXzVMr4DYjUrFg49FjK8sftgtD3pa40VgWpqqyEcApCUjItK/OQJgeKkwHhHLYt/uSp5Nx8ANWuX6JDf3KzbUvlQXDiyonJrpgfXVfSlEZfuoWUexnnzk3JfFY4qCEpjaKWtjEkOahHUhDih24IzaDF0j1ASRa3rkcvAD4L34M5ZXP1oecQzwaFNPkPM0wn47RfGp37WQfg0FwL7MAU6ahsRlPoV8ATS7Dw8FUEH9GPiaLS2+Gl/FjKvcgPyz84gtPGN9phduNZFfm/KuJLn63NDtKfSTnmU/87iMITzKeuuTzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OfkjrbYlMuifLR0ij9JE1tD+4mnpwymrnA4950GEcYQ=;
- b=V2JVmRRa+RgXKUTiKZ3iwRsfPHbYoDEcfrDbNmtREi+oBZaFevn8tAb8IZshvlURZemRwII3kcZAw4KZMvZGIDJMRxM2M14nsdrlfU/pOoh7SU+ZkpWjtprlhYgSezpviCjbr/C6mRvAvYa2HxEY2Y6FAP3ayCLfU4YLhBpt3FQX0XitBbg+kgdHMPBOk/0pz+sKd0ZPL8YpKDGQXlEcwLYjl0BpsJ9sTKFZHjfBC12kzUpiHdoqyVjTN2AAt24TzMBCwEb/Jxe3V5xDJkCNniQOR3oRdBHIjQX1hbMTAu2gAQ350s0M2x2cSLhOlilWhKTKY2TsQtJVAsoQqxXqBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OfkjrbYlMuifLR0ij9JE1tD+4mnpwymrnA4950GEcYQ=;
- b=rSj5x62UChW/9mNAZ1XTYJOd1oN39Zahf8DlNg/johV7P5R8yLcizqCykyapJcNeoqxxZCrJEAmnf+Vkl4s6rwML4+GdhxE9zNLeCg3fUksh/y/49D71NvGRcF/RHmmqgGHcLIazxBK+AMVk0+3QQNcb3uZDgBuHJhF7RZJM+acq90+oChXzW7KUT2IiT32ngnemjY40oYlxHmxlPgZOJrtQ86Bj+wg1aBGAm3JLlUUnrUsAd/xlpBlzEwID8W9O6BOL0UxirSfMV/JSzp67FEJ+ajA/nTZSSQy2uICthPfn1zSaRXP4Fwlsq2McS1MGs1uv5fsC4XbbCbfyYJLVhg==
-Received: from MW4PR04CA0326.namprd04.prod.outlook.com (2603:10b6:303:82::31)
- by IA0PR12MB9048.namprd12.prod.outlook.com (2603:10b6:208:408::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.22; Fri, 11 Apr
- 2025 04:47:19 +0000
-Received: from SJ1PEPF000023D8.namprd21.prod.outlook.com
- (2603:10b6:303:82:cafe::4b) by MW4PR04CA0326.outlook.office365.com
- (2603:10b6:303:82::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.23 via Frontend Transport; Fri,
- 11 Apr 2025 04:47:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ1PEPF000023D8.mail.protection.outlook.com (10.167.244.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8655.0 via Frontend Transport; Fri, 11 Apr 2025 04:47:19 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 10 Apr
- 2025 21:47:08 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 10 Apr
- 2025 21:47:08 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Thu, 10 Apr 2025 21:47:07 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <will@kernel.org>, <robin.murphy@arm.com>
-CC: <joro@8bytes.org>, <jgg@nvidia.com>, <jsnitsel@redhat.com>,
-	<praan@google.com>, <linux-arm-kernel@lists.infradead.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] iommu/arm-smmu-v3: Allow stream table to have nodes with the same ID
-Date: Thu, 10 Apr 2025 21:47:06 -0700
-Message-ID: <20250411044706.356395-1-nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08622110;
+	Fri, 11 Apr 2025 04:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744347049; cv=none; b=XnQ1qkAb3n9euBDvMlCQMB7gNPJBhqAaJyZd6woicZH/jd45khT3C96sMVEQOaZF4y5V85R60WVtvuSNJjKgf6wXiLWYlSY7g2RdSfOcCrDHzVCxzbcQuunsCdR9ulvnUSfbcP2HvoAN43gGARDWNR6FvzcVV1PNz7lMYTiqkeo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744347049; c=relaxed/simple;
+	bh=s+ZuiDn3GuYyyPNvyEaUaEHFNU/y/Rmlc27erlKgRjA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LFauasr9YhN7sEnaosucL1zr+IejSPJsm8jlqAvKUaw0/JI7K6v6LoLWCV/0LqjQOri+66xqMbKRL8Ge2Vo87JiYrILo4DthMNbsXfeqNKDrHthDM5TJ4GLH6qPy6oLw2za+zNm5J+/hA4rxFvhIaHWJNvHQy0Qvyo+O1RuU3a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=xRXuiQ7h; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53B4oY2J1343515
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Apr 2025 23:50:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744347034;
+	bh=EhPbf5qDTYI4Rkb9QPmEziHECCtQigOHNhmMQ53dyy0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=xRXuiQ7h1kSO1ts3PT79Sdn6gQKHQ0vQH0UrNkS4YUO7uOGgY8rkOXW2/Xq7oe50i
+	 c0agGDxIwbbQxgvGMIwreSmFn+QN4BMcGrc2JJMEuShwa+ZY9iQSW2rCgc5w0J8tN9
+	 ljIZwNibqdpIZ9UpYFk1lKk1iz+jpMxkGpf5qErk=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53B4oYIe091892
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 10 Apr 2025 23:50:34 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 10
+ Apr 2025 23:50:33 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 10 Apr 2025 23:50:33 -0500
+Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53B4oQJY113805;
+	Thu, 10 Apr 2025 23:50:27 -0500
+Message-ID: <ad637368-5fa7-45fa-8bb3-3a2cc754ed9b@ti.com>
+Date: Fri, 11 Apr 2025 10:20:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 06/11] arm64: dts: ti: k3-am62a7-sk: Enable IPC with
+ remote processors
+To: Andrew Davis <afd@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+        Jai Luthra
+	<jai.luthra@ideasonboard.com>
+CC: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
+        Hari Nagalla
+	<hnagalla@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Markus Schneider-Pargmann <msp@baylibre.com>, <praneeth@ti.com>,
+        "Khasim, Syed Mohammed" <khasim@ti.com>,
+        <tomi.valkeinen@ideasonboard.com>, <v-krishnamoorthy@ti.com>,
+        <s-tripathy@ti.com>, <s-tripathi1@ti.com>, <c-shilwant@ti.com>,
+        <r-ravikumar@ti.com>
+References: <20250405001518.1315273-1-jm@ti.com>
+ <20250405001518.1315273-7-jm@ti.com>
+ <6868f593-0728-4e92-a57b-87db6a0037f6@ti>
+ <f42607f5-e39d-48a1-89c0-11d4982a2426@ti.com>
+ <e131298f-3713-482a-a740-ff89709270b4@ti.com>
+ <091c0869-525b-4b40-b5fe-a5c1907ec606@ti.com>
+ <czmir7yvss3oreveesyrjqfdcawyn2axtstomsj3yx5sntqwo2@r3udnsyrxvkp>
+ <5969e1e8-0bb7-4334-a0c5-b4c396b8b6af@ti.com>
+ <dccef5d7-46c6-4e08-98f3-ba0e8168aaff@ti.com>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <dccef5d7-46c6-4e08-98f3-ba0e8168aaff@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D8:EE_|IA0PR12MB9048:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8411f44c-26d1-430b-6977-08dd78b3f0d0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Efo8pirebECpalDpA2SaaFh/ajzGv5za3LwbCYBgmA9XoNYecPzL+cGVHrzb?=
- =?us-ascii?Q?7cLAVbdREjG/C294zuh1l+ngsgyL1ektYUS7eA9Muiv7s7fN3T1uvMmKJzt3?=
- =?us-ascii?Q?bl2D97BFbCF4Uu+YOc0yY1t/VgANMbUC7YoAtJchYxtlh968xM75RvR6GY2y?=
- =?us-ascii?Q?Xb9rfXocrium5i9W02StinxzqOtKXlFWGx7hKyL3qjvplDRYsUoYvytSqqu9?=
- =?us-ascii?Q?e8dC0f1N/RWGWhkL9hFDiVwKh+iYd36YG6nky48ENoi+mDf4DpSjmB35iFke?=
- =?us-ascii?Q?+sk4ia5YxXnE5QL2KrQHRFzV0GDECKltz4hx9ZDl/K8u0pHVY4Ldc4in+Ek2?=
- =?us-ascii?Q?77whUBaVch+pEsseHasWseK0LmugXmhB8ejPuYaETp8G790h8LXaCKs2bfJV?=
- =?us-ascii?Q?HuubGZvdxdr3MBkS8cGREYed3fltdTIyTNkVxUbIYWgi1DKgK/fwystGczf5?=
- =?us-ascii?Q?DOc096qI/chOpvZLg7HE6qsdQSuOVsLDn2AQ97mrwWNB6asMWUmPNV0tPDbY?=
- =?us-ascii?Q?cIeeKlA+qjaPT8FZfbLJmnHP+oyex0T1Lq6Inandxpuh2cfIEq3i4u+85tAL?=
- =?us-ascii?Q?OzHc+3p7m3tePEeDSgeiEpiyMCqqleydfH40v5zda7rUz1vqdV8efrIG05TR?=
- =?us-ascii?Q?daXJRCaV/pM1WNAd5gzdgclaRZRamI2+O2QCq6octolLFzbhdz+JKhf2u78W?=
- =?us-ascii?Q?Cecvia8a3ctc+Q83/dFToyjfi/LOBO1ev42vdxZfWJy/kvpNHnqOEereEbBx?=
- =?us-ascii?Q?6Sk+ZUMyAjAPxcnnj3U+E9TEUoKRYhaHEL/g3Crh+iRPMNIWlHOIGC1falHP?=
- =?us-ascii?Q?XaXKzxnblY5lrYaZgDDwEOB23y9ie7Yo9f5J46kUci3OcI18yPWoOd/ayv6I?=
- =?us-ascii?Q?XqFSu2tyRApvBGJG8iexz0U+VpI2bpQbwzaxZdzXBFrg114RF8EZJiWqpuTD?=
- =?us-ascii?Q?n9XPY+uy/IdxOhFPAlwOvZRUwcv86pfW6GR1hBT8TllAhEHAND7qBAJhTo+Q?=
- =?us-ascii?Q?IppD7qSDcJY6Ku3CGeTYKwccerZFeMNxElsvMV1oGImt3C18ENVIYlTVemmm?=
- =?us-ascii?Q?2qyakCVl14BnPhgTq9pE64lpIU5xyJF5Tf5SDjX+WGXN5Sho5Ccy+kK2sZxX?=
- =?us-ascii?Q?u4tWVthsYM8Q39NY0BXQi+qmVblZeAo7JyCAZO0U4f5PXOvMHOuw2f/IkKiG?=
- =?us-ascii?Q?0zvZf+kKsMYv0Fa/0xw0XOMOSCoQyjfJtizCeoGIpvdF0usnbSAIG3GsB9vU?=
- =?us-ascii?Q?Q6i0VkbaKSY3EhIzunIT6qpgMITjGEblIRsfBloTqeWm8GGPgWQOHmlH97Q7?=
- =?us-ascii?Q?J9ERLwH13Eb1fMmvDbLxq9bZqYXwge9IySP2FNk8J6KCT3/L53OiCWcHUOpU?=
- =?us-ascii?Q?RMstNlUz7yqh8FsiGjVbk0Ql480233ZZsS+d0mgkE0hEEet7cGIy0FWgj60I?=
- =?us-ascii?Q?uwa9GPApOhKiXpJzaNEqAn4qJNc3B8+Fdd6ayoMdTZhSdl/qvh9aYtywQfT3?=
- =?us-ascii?Q?omFPnZIscNZVvJzD2gAy/1KhovcKvE0YFvvD?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 04:47:19.0816
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8411f44c-26d1-430b-6977-08dd78b3f0d0
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D8.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB9048
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Jason Gunthorpe <jgg@nvidia.com>
 
-ASPEED VGA card has two built-in devices:
- 0008:06:00.0 PCI bridge: ASPEED Technology, Inc. AST1150 PCI-to-PCI Bridge (rev 06)
- 0008:07:00.0 VGA compatible controller: ASPEED Technology, Inc. ASPEED Graphics Family (rev 52)
+On 10/04/25 23:52, Andrew Davis wrote:
+> On 4/10/25 6:38 AM, Devarsh Thakkar wrote:
+>> Hi Jai,
+>>
+>> On 10/04/25 15:48, Jai Luthra wrote:
+>>> Hi Devarsh,
+>>>
+>>> Thanks for the cc here.
+>>
+>> Thanks for the quick comments.
+>>
+>>>
+>> <snip>
+>>
+>>> On the basic camera + ISP usecase, afaiu the downstream edgeAI SDK uses
+>>> custom gstreamer elements that make calls to the aforementioned R5 core
+>>> that controls the ISP. On top of that there are additional gstreamer
+>>> patches that are not yet posted upstream for review from the community,
+>>> so the userspace design isn't really set in stone, or upstream-friendly
+>>> yet.
+>>>
+>>
+>> I don't see much relation of carve-outs with Gstreamer or it's 
+>> pending downstream patches. The memory is mainly managed from 
+>> firmwares (mainly openvx layer being used underneath) and there are 
+>> even non-gstreamer pure openvx based use-cases/tests which use these 
+>> carveouts. At the end of the day, the firmwares from the only SDK 
+>> which is released publicly for AM62A uses all these carveouts.
+>>
+>
+> These are programmable cores, you can run whatever you want on them. 
+> You can
+> make your own firmware if you like, we have support for them in our 
+> MCU+(FreeRTOS)
+> offering today[0](look at all these firmware you can build/run!).
+>
+> In a week or so I'll start pushing support for these cores into Zephyr,
+> bringing in even more firmware options for these cores.
+>
+> I simply do not see why one firmware, shipped with one of our SDKs*, 
+> doing
+> things wrong should force us to hack up our DT here in upstream Linux.
 
-Its toplogy looks like this:
- +-[0008:00]---00.0-[01-09]--+-00.0-[02-09]--+-00.0-[03]----00.0  Sandisk Corp Device 5017
-                             |               +-01.0-[04]--
-                             |               +-02.0-[05]----00.0  NVIDIA Corporation Device
-                             |               +-03.0-[06-07]----00.0-[07]----00.0  ASPEED Technology, Inc. ASPEED Graphics Family
-                             |               +-04.0-[08]----00.0  Renesas Technology Corp. uPD720201 USB 3.0 Host Controller
-                             |               \-05.0-[09]----00.0  Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller
-                             \-00.1  PMC-Sierra Inc. Device 4028
 
-Being a legacy PCI device that does not have RID on the wire, the system
-does not preserve a RID for that PCI bridge (0008:06), so the IORT code
-has to dma alias for iort_pci_iommu_init() via pci_for_each_dma_alias(),
-resulting in both of them getting the same Stream ID.
+Agreed. I don't see why we should incline towards supporting one of the 
+SDKs.
 
-On a kernel prior to v6.15-rc1, there has been an overlooked warning:
-  pci 0008:07:00.0: vgaarb: setting as boot VGA device
-  pci 0008:07:00.0: vgaarb: bridge control possible
-  pci 0008:07:00.0: vgaarb: VGA device added: decodes=io+mem,owns=none,locks=none
-  pcieport 0008:06:00.0: Adding to iommu group 14
-  ast 0008:07:00.0: stream 67328 already in tree   <===== WARNING
-  ast 0008:07:00.0: enabling device (0002 -> 0003)
-  ast 0008:07:00.0: Using default configuration
-  ast 0008:07:00.0: AST 2600 detected
-  ast 0008:07:00.0: [drm] Using analog VGA
-  ast 0008:07:00.0: [drm] dram MCLK=396 Mhz type=1 bus_width=16
-  [drm] Initialized ast 0.1.0 for 0008:07:00.0 on minor 0
-  ast 0008:07:00.0: [drm] fb0: astdrmfb frame buffer device
+For this patch as it as,
 
-As such a legacy system might not use DMA at all, an iommu_probe_device()
-failure didn't actually break it, except that warning that does not block
-the system boot flow.
+Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
 
-With v6.15-rc, since the commit bcb81ac6ae3c ("iommu: Get DT/ACPI parsing
-into the proper probe path"), the error returned with the warning is moved
-to the IOMMU device probe flow, e.g. call trace with SMMUv3:
-  arm_smmu_probe_device+0x15c/0x4c0
-  __iommu_probe_device+0x150/0x4f8
-  probe_iommu_group+0x44/0x80
-  bus_for_each_dev+0x7c/0x100
-  bus_iommu_probe+0x48/0x1a8
-  iommu_device_register+0xb8/0x178
-  arm_smmu_device_probe+0x1350/0x1db0
+Thanks,
+Beleswar
 
-This then fails the entire SMMU driver probe:
-  arm-smmu-v3 arm-smmu-v3.9.auto: found companion CMDQV device: NVDA200C:04
-  arm-smmu-v3 arm-smmu-v3.9.auto: option mask 0x10
-  arm-smmu-v3 arm-smmu-v3.9.auto: ias 48-bit, oas 48-bit (features 0x001e1fbf)
-  arm-smmu-v3 arm-smmu-v3.9.auto: allocated 524288 entries for cmdq
-  arm-smmu-v3 arm-smmu-v3.9.auto: allocated 524288 entries for evtq
-  arm-smmu-v3 arm-smmu-v3.9.auto: allocated 524288 entries for priq
-  arm-smmu-v3 arm-smmu-v3.9.auto: allocated 524288 entries for vcmdq0
-  arm-smmu-v3 arm-smmu-v3.9.auto: allocated 524288 entries for vcmdq1
-  arm-smmu-v3 arm-smmu-v3.9.auto: msi_domain absent - falling back to wired irqs
-  arm-smmu-v3 arm-smmu-v3.9.auto: no priq irq - PRI will be broken
-  pci 0008:00:00.0: Adding to iommu group 10
-  pci 0008:01:00.0: Adding to iommu group 11
-  pci 0008:01:00.1: Adding to iommu group 12
-  pci 0008:02:00.0: Adding to iommu group 13
-  pci 0008:02:01.0: Adding to iommu group 14
-  pci 0008:02:02.0: Adding to iommu group 15
-  pci 0008:02:03.0: Adding to iommu group 16
-  pci 0008:02:04.0: Adding to iommu group 17
-  pci 0008:02:05.0: Adding to iommu group 18
-  pci 0008:03:00.0: Adding to iommu group 19
-  pci 0008:05:00.0: Adding to iommu group 20
-  pci 0008:06:00.0: Adding to iommu group 21
-  pci 0008:07:00.0: stream 67328 already in tree
-  arm-smmu-v3 arm-smmu-v3.9.auto: Failed to register iommu
-  arm-smmu-v3 arm-smmu-v3.9.auto: probe with driver arm-smmu-v3 failed with error -22
-
-Given that a device bundled with a legacy PCI bridge could have duplicated
-Stream IDs, the concept of a stream_id tree with unique node in the SMMUv3
-driver doesn't work any more.
-
-Change the arm_smmu_streams_cmp_node() to allow the stream table to hold
-multiple nodes with the same Stream ID. Meanwhile, the reverse lookup from
-the Stream ID to a device pointer will have to be broken, i.e. the eventq
-handler will no longer find the device with a Stream ID in such cases.
-
-Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-Tested-by: Nicolin Chen <nicolinc@nvidia.com>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 31 +++++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index b4c21aaed126..5ce64dc78e12 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -1762,8 +1762,25 @@ static int arm_smmu_streams_cmp_key(const void *lhs, const struct rb_node *rhs)
- static int arm_smmu_streams_cmp_node(struct rb_node *lhs,
- 				     const struct rb_node *rhs)
- {
--	return arm_smmu_streams_cmp_key(
--		&rb_entry(lhs, struct arm_smmu_stream, node)->id, rhs);
-+	struct arm_smmu_stream *stream_lhs =
-+		rb_entry(lhs, struct arm_smmu_stream, node);
-+	struct arm_smmu_stream *stream_rhs =
-+		rb_entry(rhs, struct arm_smmu_stream, node);
-+
-+	if (stream_lhs->id < stream_rhs->id)
-+		return -1;
-+	if (stream_lhs->id > stream_rhs->id)
-+		return 1;
-+
-+	/*
-+	 * The stream table can have multiple nodes with the same ID if there
-+	 * are DMA aliases.
-+	 */
-+	if (stream_lhs < stream_rhs)
-+		return -1;
-+	if (stream_lhs > stream_rhs)
-+		return 1;
-+	return 0;
- }
- 
- static struct arm_smmu_master *
-@@ -1776,6 +1793,16 @@ arm_smmu_find_master(struct arm_smmu_device *smmu, u32 sid)
- 	node = rb_find(&sid, &smmu->streams, arm_smmu_streams_cmp_key);
- 	if (!node)
- 		return NULL;
-+	/*
-+	 * If there are DMA alises then there are multiple devices with the same
-+	 * stream ID and we cannot reliably convert from SID to master.
-+	 */
-+	if (node->rb_left &&
-+	    rb_entry(node->rb_left, struct arm_smmu_stream, node)->id == sid)
-+		return NULL;
-+	if (node->rb_right &&
-+	    rb_entry(node->rb_right, struct arm_smmu_stream, node)->id == sid)
-+		return NULL;
- 	return rb_entry(node, struct arm_smmu_stream, node)->master;
- }
- 
--- 
-2.43.0
-
+>
+> *Speaking of the "only" SDK's firmware, if you take our Yocto meta-ti 
+> layer and
+> build an SDK yourself, you get firmware by default that *doesn't need 
+> extra
+> carveouts*! [1][2]
+>
+> Andrew
+>
+> [0] 
+> https://github.com/TexasInstruments/mcupsdk-core-k3/blob/k3_main/makefile.am62ax
+> [1] 
+> https://git.yoctoproject.org/meta-ti/tree/meta-ti-bsp/recipes-bsp/ti-rtos-fw/ti-rtos-echo-test-fw.bb
+> [2] 
+> https://git.ti.com/cgit/processor-firmware/ti-linux-firmware/tree/ti-ipc/am62axx?h=ti-linux-firmware
+>
+>>
+>>> IMO if that architecture is still under discussion, it might be better
+>>> to keep the edgeAI specific carveouts out of the upstream DTs.. just in
+>>> case the carevouts have to go away, or change significantly.
+>>>
+>>> If you are sure that the regions and firmware architecture is set in
+>>> stone and won't be updated even if there is a complete redesign of the
+>>> userspace/application level stack for accessing the ISP (let's say u
+>> sing> libcamera), only then it makes sense to add the carveouts right 
+>> now.
+>>
+>>
+>> Yes as I said if whole firmware arch is getting updated then better 
+>> to wait. I think probably the firmware team marked in cc can comment 
+>> on that. Moreover I don't see any point of adding only half the 
+>> regions as that would anyway not work with SDK supplied firmwares, 
+>> for e.g. RTOS-to-RTOS ipc test run by firmwares on bootup would fail, 
+>> along with other camera+ISP and AI use-cases.
+>>
+>> Regards
+>> Devarsh
+>>
+>>>>>>
+>>>>>> I understand your point, currently with this patch remoteproc 
+>>>>>> loading
+>>>>>> will not work for some cores. However, the goal here is to 
+>>>>>> standardize
+>>>>>> as much as possible the memory carveout sizes, push the "demo 
+>>>>>> firmware"
+>>>>>> to request resources the correct way from resource table, and 
+>>>>>> move away
+>>>>>> from this dependency and limitations that we have with our firmware.
+>>>>
+>>>> I understand this, but my view is that w.r.t firmware only goal 
+>>>> should not
+>>>> just be tp demonstrate correct way of requesting resources from
+>>>> resource-tables, optimize the carve-outs etc but also to 
+>>>> demonstrate the
+>>>> primary use-cases (camera+ISP+edgeAI) which the device is capable of.
+>>>>
+>>>>>> should soon be able to generate our own firmware using Zephyr,  
+>>>>>> which
+>>>>>> Andrew is pioneering, so with this firmware we should move to the
+>>>>>> correct direction upstream. Downstream we are still using the memory
+>>>>>> carveout sizes that the firmware folk want so desperately to 
+>>>>>> keep, for
+>>>>>> now..
+>>>>>>
+>>>>>
+>>>>> +1
+>>>>>
+>>>>> I have this Zephyr based firmware for AM62A working and it uses the
+>>>>> standard IPC regions as specified in this patch. I'll be posting 
+>>>>> the PR
+>>>>> for it in Zephyr upstream by the end of week.
+>>>>>
+>>>>
+>>>> I understand this, but will this zephyr based firmware support 
+>>>> vision +
+>>>> edgeAI analytics ? Does it demonstrate all the unique capabilities 
+>>>> of AM62A
+>>>> SoC ? If not, then what would be utility of such firmware on AM62A 
+>>>> where
+>>>> these are the primary use-cases w.r.t AM62A ?
+>>>>
+>>>> Why should upstream device-tree use carve-outs which match to this 
+>>>> demo
+>>>> zephyr based firmware (which apparently not many are using and is 
+>>>> not going
+>>>> into any official SDK release) instead of official firmwares going 
+>>>> into SDK
+>>>> ? SDK released firmwares are being used by so many customers and SDK
+>>>> documentation maps to it, but zephyr firmware that is being pitched 
+>>>> here,
+>>>> who would be the potential users and what would be it's utility ?
+>>>>
+>>>> [1]: https://www.ti.com/tool/PROCESSOR-SDK-J721E
+>>>>
+>>>> Regards
+>>>> Devarsh
+>>>>
+>>>>> For this patch as it is:
+>>>>>
+>>>>> Acked-by: Andrew Davis <afd@ti.com>
+>>>>>
+>>>>
+>>>>
+>>>>> Andrew
+>>>>>
+>>>>> [0] 
+>>>>> https://lore.kernel.org/lkml/20241011123922.23135-1-richard@nod.at/
+>>>>> [1] https://git.ti.com/cgit/edgeai/meta-edgeai/tree/recipes-kernel/
+>>>>> linux/linux-ti-staging/j721e-evm/0001-arm64-dts-ti-Add-DTB-overlays-for- 
+>>>>>
+>>>>> vision-apps-and-ed.patch?h=kirkstone
+>>>>>
+>>>>>> ~ Judith
+>>>>>>
+>>>>>>>
+>>>>>>> [1]:
+>>>>>>> https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel/tree/
+>>>>>>> arch/arm64/boot/dts/ti/k3-am62a7-sk.dts?h=ti-linux-6.6.y-cicd#n103
+>>>>>>> [2]: https://www.ti.com/tool/PROCESSOR-SDK-AM62A
+>>>>>>>
+>>>>>>> Regards
+>>>>>>> Devarsh
+>>>>>>>
+>>>>>>>>        opp-table {
+>>>>>>>> @@ -741,3 +771,57 @@ dpi1_out: endpoint {
+>>>>>>>>            };
+>>>>>>>>        };
+>>>>>>>>    };
+>>>>>>>> +
+>>>>>>>> +&mailbox0_cluster0 {
+>>>>>>>> +    status = "okay";
+>>>>>>>> +
+>>>>>>>> +    mbox_r5_0: mbox-r5-0 {
+>>>>>>>> +        ti,mbox-rx = <0 0 0>;
+>>>>>>>> +        ti,mbox-tx = <1 0 0>;
+>>>>>>>> +    };
+>>>>>>>> +};
+>>>>>>>> +
+>>>>>>>> +&mailbox0_cluster1 {
+>>>>>>>> +    status = "okay";
+>>>>>>>> +
+>>>>>>>> +    mbox_c7x_0: mbox-c7x-0 {
+>>>>>>>> +        ti,mbox-rx = <0 0 0>;
+>>>>>>>> +        ti,mbox-tx = <1 0 0>;
+>>>>>>>> +    };
+>>>>>>>> +};
+>>>>>>>> +
+>>>>>>>> +&mailbox0_cluster2 {
+>>>>>>>> +    status = "okay";
+>>>>>>>> +
+>>>>>>>> +    mbox_mcu_r5_0: mbox-mcu-r5-0 {
+>>>>>>>> +        ti,mbox-rx = <0 0 0>;
+>>>>>>>> +        ti,mbox-tx = <1 0 0>;
+>>>>>>>> +    };
+>>>>>>>> +};
+>>>>>>>> +
+>>>>>>>> +&wkup_r5fss0 {
+>>>>>>>> +    status = "okay";
+>>>>>>>> +};
+>>>>>>>> +
+>>>>>>>> +&wkup_r5fss0_core0 {
+>>>>>>>> +    mboxes = <&mailbox0_cluster0>, <&mbox_r5_0>;
+>>>>>>>> +    memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+>>>>>>>> + <&wkup_r5fss0_core0_memory_region>;
+>>>>>>>> +};
+>>>>>>>> +
+>>>>>>>> +&mcu_r5fss0 {
+>>>>>>>> +    status = "okay";
+>>>>>>>> +};
+>>>>>>>> +
+>>>>>>>> +&mcu_r5fss0_core0 {
+>>>>>>>> +    mboxes = <&mailbox0_cluster2>, <&mbox_mcu_r5_0>;
+>>>>>>>> +    memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+>>>>>>>> + <&mcu_r5fss0_core0_memory_region>;
+>>>>>>>> +};
+>>>>>>>> +
+>>>>>>>> +&c7x_0 {
+>>>>>>>> +    mboxes = <&mailbox0_cluster1>, <&mbox_c7x_0>;
+>>>>>>>> +    memory-region = <&c7x_0_dma_memory_region>,
+>>>>>>>> +            <&c7x_0_memory_region>;
+>>>>>>>> +    status = "okay";
+>>>>>>>> +};
+>>>>>>>
+>>>>>>
+>>>>>
+>>>>
+>>>>
+>>>
+>>
 
