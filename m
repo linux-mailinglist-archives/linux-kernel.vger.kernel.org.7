@@ -1,113 +1,207 @@
-Return-Path: <linux-kernel+bounces-601013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D869A867EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 23:12:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 490E7A867EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 23:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45D9946249A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 21:12:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40FC87B0566
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 21:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE2925C71C;
-	Fri, 11 Apr 2025 21:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6536929B209;
+	Fri, 11 Apr 2025 21:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="EdoQzLwt"
-Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o0gy2zMm"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA9D1F03EF
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 21:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A44290BC6
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 21:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744405931; cv=none; b=dRg0H6DFYaQUsae1nGbIVJokcYr/QfugOda8WFfFk3wosxlecE5AN7iHEcnzWvOCzpbXNzpuJ+Inz+NS9MpCB/VJURmFx3OgeKrQdpOVy5DrVCfxLcJ25svZqwaokIBhBXe5tVivrpXg5fnTiWkPv7RZBsNzIp5S8dYhzWaF3nQ=
+	t=1744405963; cv=none; b=DzWiN9d0O8Bxp+axmcX9TSuA/BMbdyRjFOb2wiYixU1hRqEMttbCaFSCxglk3tGafL3GjyzWOJONB7Nb50Wsf9aVGK3cbiRLn69MbBDI/xuus25Y0V/UhaZf46bdaR9wlU+3G/15P1fNC4GBAkhkpvLOWBCIDNozZm2JXYf8t2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744405931; c=relaxed/simple;
-	bh=z7ossravAl02wsKG1jGXEHvAup5mV/7gmJYOwpAwUj0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZSVotDJdbTIP0HMns8CoogNNeENXCI8x3AuWdZqG1/TSx52eOA31eQUralSjYCQIUcK9C+/Tqy6GtEQAn8bPl42PiJEa5oAsIUbVj5+0GZ5ZhzuHHt4/n6jMX4+USIqa/xPTMMtXfvj5wXl8hA2wT0U+d7TzaQEH6/pP7BD1EqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=EdoQzLwt; arc=none smtp.client-ip=79.135.106.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1744405926; x=1744665126;
-	bh=IE2p6mZjml/IXoHIZjvaX+O6luNGGdfOBUl5xiXhoUc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=EdoQzLwtYiykqSHi8gYRiUDh1x7R3sUMgkrAaNDmFADCAzH1qkH67Q9Y7o+1VPh2Y
-	 cSVnI9UwN/3hMb0F++MEs+lBJ83bvi2EzgX2XM+LCWkoJQ+JMKS//ONF1XTuleM+Sa
-	 Eww6Izr/3dzrcVWOeQjoVcUN9LkrrmYGrUa5pCpmbBPgxCDrPZtnmLhUbDc0F9sfMv
-	 G/sZ/RjTJqkN5KF7owQaJmEvMYhBmtyY5WqaWEYLB+uuKkuBI46LCvwb5Wl2WBxya6
-	 BcH2aF/mQhRNsH4M1wtf09ZXUcLCV1StRYdmKta2tXeQBD9mvtPo+pB8c+my+h7eMW
-	 vDdn3I+1yn7ig==
-Date: Fri, 11 Apr 2025 21:11:59 +0000
-To: Tamir Duberstein <tamird@gmail.com>, Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: check type of `$ptr` in `container_of!`
-Message-ID: <D944ADIR8SAC.1CRNV5FJ99TFD@proton.me>
-In-Reply-To: <CAJ-ks9ngPKeoR86WX=qcuS8LtMafZuRXQt7+J9YRv+NVoSgr-A@mail.gmail.com>
-References: <20250411-b4-container-of-type-check-v1-1-08262ef67c95@gmail.com> <CAH5fLgioEPTrh0vYt5zdmj8POCMyDdV+Bd=j_M3PZ-EdKLZtTQ@mail.gmail.com> <CAJ-ks9ngPKeoR86WX=qcuS8LtMafZuRXQt7+J9YRv+NVoSgr-A@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 31cfac6718c54d9d2dc0286b06b479b403baf261
+	s=arc-20240116; t=1744405963; c=relaxed/simple;
+	bh=6nlXqivw5n2s2vI3iH0kICSGFjaF+JSbbOv3yESDDQ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bXf56wMmAQPQU46/e+kETDVImFJlH6xfDlrYo9PjejF71qnFJ0NA0yNuCUo8zENv2NqAt1NpcGL1+4rzr0ocRT0jwCTC5lPXUgwG2Hw3hNjA3pwGbLNDMk0qa7Z8ENmV1k0ojaekUbY4GppajYP8vFVtxo7sgu7jnRLUiX89TF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o0gy2zMm; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5f09f2b3959so2914a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 14:12:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744405960; x=1745010760; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5s9O/8O6xeMVl0tLPF60JEEeubmLlBJjqtBbS0i9ciQ=;
+        b=o0gy2zMmuqK9BfwgMn3I5k9bTf0nRUprt9XeyjAur9+ahPXQie+WOrrNzUzj0sDZ3i
+         EElr14q46QtRYlZxd0a5vfB02F2PiZCisBNImbODE0naF+k+Z++fCeOsqYYUTEUKqB6j
+         WBZrL5iG1PbNkpi0QZJbRN1YB/ONArp+/MdGu1EdZXeT1Ev6dEBn88lKHfhwIM4kOfIg
+         Av89OjKtLZMVJ7kVJxnwkYj2o7DwBElDQ/g+E8uf0AOPvZAywh9xLDBn5U6srs0jI3Hh
+         MutSbVTvWAsLBFQ5Zet5Hjiwce3E5mt68o9Mzcwhzj4uJ4R5+x+8Idg5rA5Jr3rSJ05J
+         jMpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744405960; x=1745010760;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5s9O/8O6xeMVl0tLPF60JEEeubmLlBJjqtBbS0i9ciQ=;
+        b=VMN8AEDm76JG+pfyLLUM3YOWgDEC4Xp69noGMZZffDLHrVWeTYEUC7TrFlqs+09FgU
+         247Edj/DevxurWad0Fi2x6nt7mRhAkmvaaH9bndERsa3pb2Hus94qsGNgxJW6Hs2+TZC
+         ZN6zwhfOj/wGZvGjrEhXAejp8Z4I9g2DII29JeE2KZ0Gh/v1cGrjtuJN0b2FNgG2lKNC
+         jAtEDowF9zc5joKOz5JY4WrcCgl3ruCGxTBuMxdxwvbQcMeK7Nyzc5gU6hlbTxCfspVk
+         E4TYPpFc/K4kuW22HrhCrUktGMe0aEhQE1gEnT1CMBh/ZzqFEA8BJEKWPyq7jQTtqZw6
+         kqgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIGhBxPOY6d080c5cqZy4h2fvPgnr3DFdM/pfYTWgLPmDm+HoE9kxPrUKp9EN4p5gr44ECnT77MDG16R4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYbuM1fcnlBPz3FFcTL2KuxAh2M8C9xGF5feu+IarxKkcehgDa
+	HOxlGCEOno/SqhPVwBjDFhqXgoEGRf6jVs3mEjYbv5y0Ezoy6xtc63uehCBndmQjWxicGGA/Huu
+	U1HJN/nm7nbtwcPUq5RUEu3WdCQjcUickHeTu
+X-Gm-Gg: ASbGncsRW3ZpgqjekdmV/bEfoa6j+yKTY790+r7PE48YzWcfxmiS0sMeeln/hSBlyDo
+	dKEhwA53nYQM5G2N7Fux/x8UqAxa2PQvgG+iiybcA6ylhp43pG5Y2nSl6Sc/viHjvUGd00MCvBZ
+	5+eC1AtbamEQoezv4pJ8UB8w==
+X-Google-Smtp-Source: AGHT+IG84lvI3gcXlEPRkJRlkOu8tneyZgmJwr3mqViY4ItysXFcNimZTO7gtwpNKCM01C6d/tdsOPRrFemjcCrBnfs=
+X-Received: by 2002:aa7:cfd6:0:b0:5ec:13d0:4505 with SMTP id
+ 4fb4d7f45d1cf-5f3ea1e2b1dmr6826a12.5.1744405959793; Fri, 11 Apr 2025 14:12:39
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250331082251.3171276-1-xin@zytor.com> <20250331082251.3171276-11-xin@zytor.com>
+ <Z_hTI8ywa3rTxFaz@google.com>
+In-Reply-To: <Z_hTI8ywa3rTxFaz@google.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Fri, 11 Apr 2025 14:12:27 -0700
+X-Gm-Features: ATxdqUHkE9VKKw2s7zj6-Bzo7sFhtVG2VPQmJwr2UovOBmetGvqQ1ElvaKggsjw
+Message-ID: <CALMp9eRJkzA2YXf1Dfxt3ONP+P9aTA=WPraOPJPJ6C6j677+6Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 10/15] KVM: VMX: Use WRMSRNS or its immediate form
+ when available
+To: Sean Christopherson <seanjc@google.com>
+Cc: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-edac@vger.kernel.org, 
+	kvm@vger.kernel.org, xen-devel@lists.xenproject.org, 
+	linux-ide@vger.kernel.org, linux-pm@vger.kernel.org, bpf@vger.kernel.org, 
+	llvm@lists.linux.dev, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, jgross@suse.com, 
+	andrew.cooper3@citrix.com, peterz@infradead.org, acme@kernel.org, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, wei.liu@kernel.org, ajay.kaher@broadcom.com, 
+	alexey.amakhalov@broadcom.com, bcm-kernel-feedback-list@broadcom.com, 
+	tony.luck@intel.com, pbonzini@redhat.com, vkuznets@redhat.com, 
+	luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com, 
+	haiyangz@microsoft.com, decui@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri Apr 11, 2025 at 5:41 PM CEST, Tamir Duberstein wrote:
-> On Fri, Apr 11, 2025 at 10:36=E2=80=AFAM Alice Ryhl <aliceryhl@google.com=
-> wrote:
->>
->> On Fri, Apr 11, 2025 at 4:31=E2=80=AFPM Tamir Duberstein <tamird@gmail.c=
-om> wrote:
->> >
->> > Add a compile-time check that `*$ptr` is of the type of `$type->$($f)*=
-`.
->> >
->> > Suggested-by: Alice Ryhl <aliceryhl@google.com>
->> > Link: https://lore.kernel.org/all/CAH5fLgh6gmqGBhPMi2SKn7mCmMWfOSiS0WP=
-5wBuGPYh9ZTAiww@mail.gmail.com/
->> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->> > ---
->> >  rust/kernel/lib.rs | 5 ++++-
->> >  1 file changed, 4 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
->> > index 1df11156302a..da9e36aa7967 100644
->> > --- a/rust/kernel/lib.rs
->> > +++ b/rust/kernel/lib.rs
->> > @@ -200,7 +200,10 @@ fn panic(info: &core::panic::PanicInfo<'_>) -> ! =
-{
->> >  macro_rules! container_of {
->> >      ($ptr:expr, $type:ty, $($f:tt)*) =3D> {{
->> >          let offset: usize =3D ::core::mem::offset_of!($type, $($f)*);
->> > -        $ptr.byte_sub(offset).cast::<$type>()
->> > +        let container =3D $ptr.byte_sub(offset).cast::<$type>();
->> > +        fn assert_same_type<T>(_: T, _: T) {}
->> > +        assert_same_type($ptr, ::core::mem::addr_of!((*container).$($=
-f)*).cast_mut());
+On Thu, Apr 10, 2025 at 4:24=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
 >
-> I noticed I accidentally sent `::core::mem::addr_of` instead of
-> `::core::ptr::addr_of`; will fix once we agree below.
+> On Mon, Mar 31, 2025, Xin Li (Intel) wrote:
+> > Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+> > ---
+> >  arch/x86/include/asm/msr-index.h |  6 ++++++
+> >  arch/x86/kvm/vmx/vmenter.S       | 28 ++++++++++++++++++++++++----
+> >  2 files changed, 30 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/ms=
+r-index.h
+> > index e6134ef2263d..04244c3ba374 100644
+> > --- a/arch/x86/include/asm/msr-index.h
+> > +++ b/arch/x86/include/asm/msr-index.h
+> > @@ -1226,4 +1226,10 @@
+> >                                               * a #GP
+> >                                               */
+> >
+> > +/* Instruction opcode for WRMSRNS supported in binutils >=3D 2.40 */
+> > +#define ASM_WRMSRNS          _ASM_BYTES(0x0f,0x01,0xc6)
+> > +
+> > +/* Instruction opcode for the immediate form RDMSR/WRMSRNS */
+> > +#define ASM_WRMSRNS_RAX              _ASM_BYTES(0xc4,0xe7,0x7a,0xf6,0x=
+c0)
+> > +
+> >  #endif /* _ASM_X86_MSR_INDEX_H */
+> > diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
+> > index f6986dee6f8c..9fae43723c44 100644
+> > --- a/arch/x86/kvm/vmx/vmenter.S
+> > +++ b/arch/x86/kvm/vmx/vmenter.S
+> > @@ -64,6 +64,29 @@
+> >       RET
+> >  .endm
+> >
+> > +/*
+> > + * Write EAX to MSR_IA32_SPEC_CTRL.
+> > + *
+> > + * Choose the best WRMSR instruction based on availability.
+> > + *
+> > + * Replace with 'wrmsrns' and 'wrmsrns %rax, $MSR_IA32_SPEC_CTRL' once=
+ binutils support them.
+> > + */
+> > +.macro WRITE_EAX_TO_MSR_IA32_SPEC_CTRL
+> > +     ALTERNATIVE_2 __stringify(mov $MSR_IA32_SPEC_CTRL, %ecx;         =
+       \
+> > +                               xor %edx, %edx;                        =
+       \
+> > +                               mov %edi, %eax;                        =
+       \
+> > +                               ds wrmsr),                             =
+       \
+> > +                   __stringify(mov $MSR_IA32_SPEC_CTRL, %ecx;         =
+       \
+> > +                               xor %edx, %edx;                        =
+       \
+> > +                               mov %edi, %eax;                        =
+       \
+> > +                               ASM_WRMSRNS),                          =
+       \
+> > +                   X86_FEATURE_WRMSRNS,                               =
+       \
+> > +                   __stringify(xor %_ASM_AX, %_ASM_AX;                =
+       \
+> > +                               mov %edi, %eax;                        =
+       \
+> > +                               ASM_WRMSRNS_RAX; .long MSR_IA32_SPEC_CT=
+RL),   \
+> > +                   X86_FEATURE_MSR_IMM
+> > +.endm
 >
->> Perhaps it would be better to wrap the type check in an `if false` to
->> avoid evaluating the expressions at runtime?
+> This is quite hideous.  I have no objection to optimizing __vmx_vcpu_run(=
+), but
+> I would much prefer that a macro like this live in generic code, and that=
+ it be
+> generic.  It should be easy enough to provide an assembly friendly equiva=
+lent to
+> __native_wrmsr_constant().
+
+Surely, any CPU that has WRMSRNS also supports "Virtualize
+IA32_SPEC_CTRL," right? Shouldn't we be using that feature rather than
+swapping host and guest values with some form of WRMSR?
+
+> > +
+> >  .section .noinstr.text, "ax"
+> >
+> >  /**
+> > @@ -123,10 +146,7 @@ SYM_FUNC_START(__vmx_vcpu_run)
+> >       movl PER_CPU_VAR(x86_spec_ctrl_current), %esi
+> >       cmp %edi, %esi
+> >       je .Lspec_ctrl_done
+> > -     mov $MSR_IA32_SPEC_CTRL, %ecx
+> > -     xor %edx, %edx
+> > -     mov %edi, %eax
+> > -     wrmsr
+> > +     WRITE_EAX_TO_MSR_IA32_SPEC_CTRL
+> >
+> >  .Lspec_ctrl_done:
+> >
+> > --
+> > 2.49.0
+> >
 >
-> It's optimized out at O1: https://godbolt.org/z/44Go5xnWr. Is it worth it=
-?
-
-Wrapping in `if false` definitely doesn't hurt, since we get better
-debug perf.
-
----
-Cheers,
-Benno
-
 
