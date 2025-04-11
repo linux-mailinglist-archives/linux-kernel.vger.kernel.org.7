@@ -1,219 +1,120 @@
-Return-Path: <linux-kernel+bounces-599570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E59A85590
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:38:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDBCFA8556A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F2EB9A1FB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:37:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9BC47B493B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F287728EA47;
-	Fri, 11 Apr 2025 07:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5A728CF64;
+	Fri, 11 Apr 2025 07:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=est.tech header.i=@est.tech header.b="YXgX4NXc"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2082.outbound.protection.outlook.com [40.107.105.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="I6A+MJdc"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA721E835D;
-	Fri, 11 Apr 2025 07:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744357067; cv=fail; b=CDJgYvYmtCrBAk+xlD4yGH5cHTzMUf2LeFfrx3S3Gbk/OELlCctv/VEo/DpoHYcICI013WEH5C6uTj0cK5w/EEY4PN1nAcr5f/lwDLOarVHzkBc4TBoWAjQ0wbLwkig3+vjIuGz7HedSwEawWxUqOAy6HhABsXYieMr8aPEy474=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744357067; c=relaxed/simple;
-	bh=xQuyS+o50ulyY1KlRY7U2X2NefgnXBKA+J8PXv2ijIw=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=EcmMmUjTFiYAvoPXcrCqy5e89rm8PPBDvt6L2xUtZR1vKYTcgu0Ta8zMjC+suF1+PZLGSWFfiiwztwxGQf02MWbh1kg1eRCu0/d0rIlzzJg4hFXetzmLfsd3CX4wGmK9A5f251MCLPGVzi5TPWbSv33FoufjFsDNSyKuyG7r1g8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=est.tech; spf=pass smtp.mailfrom=est.tech; dkim=pass (2048-bit key) header.d=est.tech header.i=@est.tech header.b=YXgX4NXc; arc=fail smtp.client-ip=40.107.105.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=est.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=est.tech
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R7fz7wczs2egwkQWd1XCIM2Aqv0s/qI+jFLMjL4acuLhOUFU5fv26bMR+bieDoblu2Ksr4Lde7g1cBjUolTjALHHCmt/UP3mQ1sY8x2n9H4gbvHZyriA+hgc7mCY3rC8XpWsGhRNJwMuvUZBDcd25yOeAVXrJKohlIJhF9exi7dkNvlADWQ01vSdAA9VtCxcSGsvcON+iAFyVSVuwcslwfNDPySDL/wQ1RC8iBn/8U/A3pXWPqSAKSa1DpcUaOQXiCokcCBrEzV4TpBKI6w5wVZWAQHglrg1fVt3mCNFgqYdu3Pf8xcZB10h6Nq/zu5mBExVEcXTmKLw6knGW3E5ow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pPNVGsKH9+RYvku5oGypS4tsuJEYtMmwyW6IAAPr3yI=;
- b=ddjojRocL6I+EQIPn+oYTzLljPo5G554DgcQbKnEGrxtwO0L+yvWAgEMScc0vrwV+tEAseIU9ne2BDHaaFQ9hqaY3Sxtik1aintFfAOQsqkifPrM4hSDbjhFUXtwrokLGa7uW9KO/IEktdoBapvt3kVjbxmQcwmlT82PwwCQAYe2ORYVO3kwRlejCIbFl/yuW7sDln0ibe012U3yPFlng1OEV1eb+GUvsaJQ1r8tR0iQBSwz0TMkXNSPJdYmFkscD9y/e1ZJ8h/z/6syxYCHXGdeFugWTYkpXm8gi+xaulWmTiEgyQogmqTHAWkDyB7oyE9hQk2DyqC/z6AvllyF0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=est.tech; dmarc=pass action=none header.from=est.tech;
- dkim=pass header.d=est.tech; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=est.tech; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pPNVGsKH9+RYvku5oGypS4tsuJEYtMmwyW6IAAPr3yI=;
- b=YXgX4NXcclTSuHy30HpJQSx5BbMQL2S6f/07zC+k6YxOPsrwdHNRgWcd2DSpNeucJRkQ5BdVJUGmv/cUbVeP7/xcolZxvAFP6Ppo4FHUslZwFByFt5TTAXOBZ05Yv/zFfAnE1J0DKNZrzuGM5BaLK2t+piuvWLJkz0O0jTVIpbtXzm6e64t0Ax8hViJQXQzyTr20CLIkMnnOOOtAmbsyZl/Km76oPEspA2j1nqMHgr1xvl5U7fd049931DWnk1NAtE2r4Bt4yOkIf6OOj2F5MOn0VWwFUTpB2e7SfBuHt+bjgOxTJNmOIhdq5nwjuAEPA/znqJR3QHurKdkPCpemxA==
-Received: from PRAP189MB1897.EURP189.PROD.OUTLOOK.COM (2603:10a6:102:290::22)
- by AM0P189MB0723.EURP189.PROD.OUTLOOK.COM (2603:10a6:208:192::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.27; Fri, 11 Apr
- 2025 07:37:41 +0000
-Received: from PRAP189MB1897.EURP189.PROD.OUTLOOK.COM
- ([fe80::91d:6a2d:65d3:3da4]) by PRAP189MB1897.EURP189.PROD.OUTLOOK.COM
- ([fe80::91d:6a2d:65d3:3da4%4]) with mapi id 15.20.8632.021; Fri, 11 Apr 2025
- 07:37:41 +0000
-From: Tung Quang Nguyen <tung.quang.nguyen@est.tech>
-To: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>, "jmaloy@redhat.com"
-	<jmaloy@redhat.com>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"horms@kernel.org" <horms@kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "tipc-discussion@lists.sourceforge.net"
-	<tipc-discussion@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net-next] Removing deprecated strncpy()
-Thread-Topic: [PATCH net-next] Removing deprecated strncpy()
-Thread-Index: AQHbqqg2fKRPQg2KPEqrm5rJStmyB7OeEwbA
-Date: Fri, 11 Apr 2025 07:37:40 +0000
-Message-ID:
- <PRAP189MB1897052C5306AC237EE5154CC6B62@PRAP189MB1897.EURP189.PROD.OUTLOOK.COM>
-References: <20250411060754.11955-1-kevinpaul468@gmail.com>
-In-Reply-To: <20250411060754.11955-1-kevinpaul468@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=est.tech;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PRAP189MB1897:EE_|AM0P189MB0723:EE_
-x-ms-office365-filtering-correlation-id: 357cbc78-4a88-4a25-79d0-08dd78cbbd88
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?2GVVr+DYYWEZCczJYuf5lWsJoFM4DosIra/QgFqB0usMc75dwyGBQXlL4tUA?=
- =?us-ascii?Q?G7n/BkT/m2FC9OSz65NOgb4e33dV242ckpasDMu29Yi4Em/wSn9jVJY+3bjq?=
- =?us-ascii?Q?pkXiLYOgoTwsv4WfsmU8pYPvOospfWYYXyR/m3xUMusc0bstm4dMAxQCX0rl?=
- =?us-ascii?Q?coZ6+B2ql/0e7Mq8CDD7EeexRatDPqzJmpmgSg17LWbRc5+x4AKGZu59fuQS?=
- =?us-ascii?Q?YO/FwXWW32wFAMdzdWsjVyGFSLs0leOx+HbRnsdP0SvwgZcEYPgehx/wytX6?=
- =?us-ascii?Q?bxf5YUDDK8J1ozFV1MpaBmkDUX3yITsZA9Fxqhhn1ElleQleSuzpLcqMv493?=
- =?us-ascii?Q?cV2ZT6KCnt8o70L41G2hCFxKyLSsj0Tr05ixwU0vwhNuUWWyeHff2jjl+F3E?=
- =?us-ascii?Q?GlbwJGumot2CT8wnT/MN7Ux3dmd8tDMna32THCRaT+dl+7JKY/N+lfifEeCM?=
- =?us-ascii?Q?irEcmMyIS+LAIjKl0Kca9LjFml1zGQasRNrAcyMyoeX5TPIxQ5dECsLhGfB2?=
- =?us-ascii?Q?Vq7xaSDz6sUM3LIVMdlgtYigZY9rOt4Wi4fMPBf3aYn17O2bcO+5ZBqk3PV2?=
- =?us-ascii?Q?3rQyG7XhlBz5XqaWy47JIQn+rjS327dEJs6ooaYgHDuAfnVFBjHglVK6KWTF?=
- =?us-ascii?Q?FusluByurUH24ZISm10ss6TAbp55XMfe+E16Hn2ffFFMQRlIpMOpS6Ljy++y?=
- =?us-ascii?Q?ZKRFVXq3qktPG++T4N4fA0C3eBkh9voBdiU3Fxtkv195YrfgHHXsadojalU+?=
- =?us-ascii?Q?nv90EmXTUnQ4SZjKIQE0qhdOPPIze0WYNM1rLg/Wxywo3QL+hYsfZSTbPS18?=
- =?us-ascii?Q?urLkJCwuEZkNgg0Z1zedOUM2biUcM7hv3/OXWVHT21kErvu+D0Lm2gNbWKKe?=
- =?us-ascii?Q?st9EI5pVV9o3SWY2CtSyH8ZCrrZRWD6YJ85BYEfZt2wDfoSxkgNiPa7b0NeU?=
- =?us-ascii?Q?aRJeiVIX6emwUih1+xghWZ3NxjEyPJi6D4zgqCglGDW/cztU1rtnqYX9IJH9?=
- =?us-ascii?Q?i0XxY8bHkq7ciQR+jINodTbPxBBdtm5G1cknO1Bwaed8F0FOul32vEtV3VR3?=
- =?us-ascii?Q?MUjcMr78/suP+DGmyQs5Nr0WOpBJ2eFEDy2pMLYKagT6TsdP9VnbINs0uzyc?=
- =?us-ascii?Q?1A/QGOfjbUYnrPsrBvpu/UYHNjSeMutkkb4cw5aEaOfwFNWRKa519S44PjRt?=
- =?us-ascii?Q?izI8B4HITX3zOKrvVeta3om5jnR4j4mkVMi8i9VZX5kg5cplomK6J5OPtxcl?=
- =?us-ascii?Q?RFPCmwJmojxb+p5v8KLat8ehtc69yAbB2+q1RcsjoUgmhLGI8twTwne4OhqZ?=
- =?us-ascii?Q?mGowNY5s7dd+cDRAPkfXAnt14acsR2sq6ECu/fUeiQ06Q3dwM3eWmISXSbb6?=
- =?us-ascii?Q?MJT4O9j4jqkrmVJUi7hvP/2Ef7KWZyiIDQwZ6ecLnRi5Q3cAmyN5s/a2veLJ?=
- =?us-ascii?Q?QMz5v2p6MvopyVofEagsoINCqpk9wljmgeDe+32DYyIXIoh6lscwZR3eFLr5?=
- =?us-ascii?Q?j8XpC7ur8HFTR3U=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PRAP189MB1897.EURP189.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?LH/aiLLG3H8TAsGV77vW7IhDbBwkLy4WQ/EbzoJCLRo0eQAzNMsND93Wiz0a?=
- =?us-ascii?Q?Ffe5Aqlrcx87xWqliCcm0+o1a5Ffcs1loR8ynHY4JSiAjaSVEL4HbCShR2vy?=
- =?us-ascii?Q?gP1e6tr+XZiH+lm4zUmU4QaGZ3/Q5Sf/DHukhxFZdXBu24XAWsJ+ibBygl0L?=
- =?us-ascii?Q?QKnl96mzbNB5KN3XYCunJUv6PcIR6K5lSALRj8ozXarNUasvZHVcnykArZ75?=
- =?us-ascii?Q?axgdJ8uM0mwL/baw5HK7FJxGfOYqOmJ21pTSl6iVm67665mehotOpX1xGCV8?=
- =?us-ascii?Q?QHR4FnZ3OHBX+f1kGHDihGTWHUD/kxK1luO+zrllgnnY4bMlatl4kv0j3w4X?=
- =?us-ascii?Q?EUJGrMWZPOCPdYF2oE9lb+qsjwotQy6y+9LW8Wy096df+3CvLVcC2anYWmwL?=
- =?us-ascii?Q?mtPynbrNENOX6GNB7cPLHt/k4KrDzfdXLTnN6/K5rRnGEAb+r7kKDK5dxGk/?=
- =?us-ascii?Q?OwQaUG87TBk0ZByTwr8SWyAiLWzBo1+hicHWNvVI131AQKM+mdIb5iELiVoB?=
- =?us-ascii?Q?ijY99ZqfFowiXJ1SeFaJKITU7QHbbIXwUoXeamCGVLYeiGcHLi5oeIM6nIeJ?=
- =?us-ascii?Q?4l2H6de8pkdhnB3n/i3RSRSlwAH59u3t0QKg9N4V24FgTe8XNFmYVkQ4xCUx?=
- =?us-ascii?Q?+DUshzZFPQDu6mgW0XUSWwuSpQHk6b38avZVXErjQeJEuo2HYvDZVoxx4U05?=
- =?us-ascii?Q?gNfnfdd7owHCg2T+rvKxOezy9/ZTugc/xybZm9d2k92RLVtExfZBoZICBbSe?=
- =?us-ascii?Q?q7PsKGOg4KZd/H2PtmLwXmiL1KkdAwiHuZNugPJR7IJ2JTDdEXFh+OJCFJs6?=
- =?us-ascii?Q?BxGqmTac/fneXNK9KoIl0axXWINUdN0t3SUjtumYu42fbFsS9X4vxTBDuL6S?=
- =?us-ascii?Q?ulIloR/3b+U9bgRsOLQgq0fBq5HW6TeYZiPfquftxw3kPwz8veqSebz8f8Fl?=
- =?us-ascii?Q?+DlRSEjrbQv7pK5P+Y17QaYfXRJVm5RZOH9ct4DlUX3XVHVQ0hE2F2XBnakK?=
- =?us-ascii?Q?ZpoXrJZ+GRACb9A6Ve/g1FfE/Hd3wRteOI5fz4k+Cgc/o+amC124zPzObuF9?=
- =?us-ascii?Q?Q13cfmt4vqlye5Sv1AODOA6iP3vatFgf0fVly2YAJj81goc5U0fBmhULuvG8?=
- =?us-ascii?Q?AbIW7JS+T0Zbyr9PEDLDqOOA0Zifyuie2gtuKU6Oft2lEZm1uIRpI7ePfS0T?=
- =?us-ascii?Q?Bdh5mpv283CN1Wiz6M+i6TlJZOKRvtwqXbSS7VgM1jnf06Uq+C4zRvHlzBh9?=
- =?us-ascii?Q?X1ZLSQdchK8gU5XWS6V5hJAF2Cta14BBHyr0HebisEq5f8W0fWTUcCzqyp59?=
- =?us-ascii?Q?SquwnfxKG960/nPALrm9Pbdcf5pg8tuHrc25Aqoi3yBYCHC3Z07mAc9/Kf6x?=
- =?us-ascii?Q?1nZVoM9X/VS5tR4dD/0M0HAt+yJf/DPZdIt0MbXcrryug35m/eh2FC5RXD6s?=
- =?us-ascii?Q?uM5HWjTJC5sbkSwSgwtHRzlRuV0VYUafIBMPnYMEREfIFr7z8iGyR7fkFw5C?=
- =?us-ascii?Q?FI4iYpWuagXltb1vdUnTTSnNxjLsf+E/ARyx9XoWzMjX9UTNosF0MUZyDMXN?=
- =?us-ascii?Q?Ctpa+ObaResaiT+BMTDHnd+hOOW6zZAJtFhjZBI4?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F234227CCCF
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744356422; cv=none; b=HDvy/3rqn3itEGHwaDH85L4dgY8pm8afWzRziNDVPCq8TiKb7UIyKwJgixC+qql2cENd0LkNl2l16pldM2SHp/l88uo539IqrvIX/za333lu6k5vNzrRnE9jGLwzd1xmBjmzr8UpwR/BtP3G9Qy/5eFOplfbVFbe2xouZ0Q0T3Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744356422; c=relaxed/simple;
+	bh=6CIxqCnMpsn1uijT53CZNGETFFyaodRiqhBE9B5ubLw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oUlIgzHYhqnnA4fwZuMK+H6rIrR5y7OJcSknffJnUjsE2w4pUyIaLn2Gj2VCfKp3/Pmq2wbcvjKKn3KTQedo7XYejaZUORq6cMpY4hpkemhw2fnQakz7Ybrx0Hzmwoc01YNQl2r4f2Ksi8iCs5M45v4sMXtWO5j668xMv1mKOVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=I6A+MJdc; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-af55b7d56a1so1339027a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 00:27:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1744356420; x=1744961220; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vGU0BWR52BomYHqM8E+XMcmBlKB/OaTdF3+KtqlI85g=;
+        b=I6A+MJdcyDnTzdIJyo7sMQ5GADkN3MYfhorFNqML8zQqly1Cqh8NkdfgihKHqO4LVx
+         vbm/euOspknaoA89MwV8bLfxImGeal/G2NEs3WJpBNtB1vUiTbYIlLKqxy1JibLbYgG/
+         VplJ9fQNQ01d/mHBcOfcT9uhc/EXwNWjplBQMqNHxnwrbb7q8SAPBJ+KN9GCPi917AT9
+         qW0WRCl3qv86Y8O6ZnFghYMnsYUnw4ok2OqkXvDPwPaRG3jfOUl0gvQrZAjOMywaQQMJ
+         j23BNPP8yjxf+xtvZPcfqUAGDqieTTXCR2abx1AOgDa8KuBGFL84CDxbmB8tGHgmJDyG
+         Lrwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744356420; x=1744961220;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vGU0BWR52BomYHqM8E+XMcmBlKB/OaTdF3+KtqlI85g=;
+        b=ZvgQVEn0e1OqZTMYPTwshulw3qVck3UAp+DvDI3FFTz/TH5O2rKT8m1vhIEAsVKbnj
+         B0BUDxLSLhPymJ89rmZhShbd53/KbW3cQigu8qSjetqFMrjIDS1+VbaxVeyCZy7J5zyY
+         tBydJ6usssezEwnyzgQPBNE1XrftaaAMcnAISfOPuQoXe+/3tM0EhPYEMPe8BuJd/hYB
+         WPieKKQcbUItwD1UG4ECzLMoLeknnjB6S0X/X4lRWiNv+c1SxLKKZIHEbwlhBpB1FCAg
+         0BItLsHMOae5oaKOlKAKg9qAMqQAxAH5sIjFZsU37EHVOC9dZP3sEmw93rWCkV01egRV
+         CjHQ==
+X-Gm-Message-State: AOJu0YwvNtdUmF4smUejm7ir8eK9HZcBjDZC3XLvCOKP7VwZ9JzSm5lD
+	vN+RKr7dszeZDtw7dY+zuQOe7QrdX3g11FQFKSNY1GiGTQ5HpzbBy/5CPE5YrbU/AY0JZns6bEX
+	y6S5Bumjx1LcwyAI0ldFJF1iKfFaVdkFyYi+6brvufn1GXGkH9Ti5O0Lat38OIWbgunbKoQk2J8
+	TUT4g89IW6rL447QXQvnR2rzG7a74yVZvB9bF7b1g/ReS4jA4=
+X-Gm-Gg: ASbGncvxB2tio9Fkjt+n1xH390X5OoKOVB1/N6tIVyIxW+nwi2HviLf8+cszaDoVAmF
+	coi6NDcM+tr1hG4k0mfmyZ9ZzHTGq+s1kG25JvsA05QRfQVWKl94jUw3taiqDOj6Vc7G7gskK3F
+	OXUMMK6z+4dHm1eU9Ql90BnGeGC8NLCGg68tyC/U+GdKf7ABeHhaPyL3Dlw4RDcALz90162LQNm
+	vyQZxBmscdE16GIv9VOwFpUnZS3esJmp7ko8ltewmtboeF8yd83oefa3B8fEDjg+rdjJ7W3dOjB
+	YpuVy+QczwxNSCJ5LZXfdGQLYpMUfwFbj59t8DgBDgZsbCDhpL7I6ZWfrtVK8pvlTWUlnZ9M/8z
+	6vpF20IcsC+7d
+X-Google-Smtp-Source: AGHT+IGHWHeQo2R6RInraQwLZWCl25okBDKhcWO3jXSiWRFgrc31SRGIvaMkKaqaxywnFToViY39+w==
+X-Received: by 2002:a17:90b:2246:b0:2fa:228d:5af2 with SMTP id 98e67ed59e1d1-3082367cc9amr3204474a91.15.1744356419636;
+        Fri, 11 Apr 2025 00:26:59 -0700 (PDT)
+Received: from hsinchu36-syssw02.internal.sifive.com ([210.176.154.34])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b654adsm42523585ad.1.2025.04.11.00.26.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Apr 2025 00:26:59 -0700 (PDT)
+From: Nylon Chen <nylon.chen@sifive.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-riscv@lists.infradead.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	charlie@rivosinc.com,
+	jesse@rivosinc.com,
+	evan@rivosinc.com,
+	nylon.chen@sifive.com,
+	cleger@rivosinc.com,
+	zhangchunyan@iscas.ac.cn,
+	samuel.holland@sifive.com,
+	zong.li@sifive.com
+Subject: [PATCH 0/2] riscv: misaligned: Add ZCB handling and fix sleeping function
+Date: Fri, 11 Apr 2025 15:38:48 +0800
+Message-Id: <20250411073850.3699180-1-nylon.chen@sifive.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: est.tech
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PRAP189MB1897.EURP189.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 357cbc78-4a88-4a25-79d0-08dd78cbbd88
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Apr 2025 07:37:40.9520
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d2585e63-66b9-44b6-a76e-4f4b217d97fd
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mlX0RtsKZ0Ml6/wMKIMrM4h3pu8cqTmhPu0Mlipe+IlymkGl4I0RKRrTEo8VzKQSKPv1PZjwCbxZb2sh6hA/peYKRMdsdFavV0YzsYNve2w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0P189MB0723
+Content-Transfer-Encoding: 8bit
 
->Subject: [PATCH net-next] Removing deprecated strncpy()
->
->This patch suggests the replacement of strncpy with strscpy as per
->Documentation/process/deprecated.
->The strncpy() fails to guarantee NULL termination, The function adds zero =
-pads
->which isn't really convenient for short strings as it may cause performanc=
-e
->issues.
->
->strscpy() is a preferred replacement because it overcomes the limitations =
-of
->strncpy mentioned above.
->
->Compile Tested
->
->Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
->---
-> net/tipc/link.c | 2 +-
-> net/tipc/node.c | 2 +-
-> 2 files changed, 2 insertions(+), 2 deletions(-)
->
->diff --git a/net/tipc/link.c b/net/tipc/link.c index 18be6ff4c3db..3ee44d7=
-31700
->100644
->--- a/net/tipc/link.c
->+++ b/net/tipc/link.c
->@@ -2228,7 +2228,7 @@ static int tipc_link_proto_rcv(struct tipc_link *l, =
-struct
->sk_buff *skb,
-> 			break;
-> 		if (msg_data_sz(hdr) < TIPC_MAX_IF_NAME)
-> 			break;
->-		strncpy(if_name, data, TIPC_MAX_IF_NAME);
->+		strscpy(if_name, data, TIPC_MAX_IF_NAME);
->
-> 		/* Update own tolerance if peer indicates a non-zero value */
-> 		if (tipc_in_range(peers_tol, TIPC_MIN_LINK_TOL,
->TIPC_MAX_LINK_TOL)) { diff --git a/net/tipc/node.c b/net/tipc/node.c index
->ccf5e427f43e..cb43f2016a70 100644
->--- a/net/tipc/node.c
->+++ b/net/tipc/node.c
->@@ -1581,7 +1581,7 @@ int tipc_node_get_linkname(struct net *net, u32
->bearer_id, u32 addr,
-> 	tipc_node_read_lock(node);
-> 	link =3D node->links[bearer_id].link;
-> 	if (link) {
->-		strncpy(linkname, tipc_link_name(link), len);
->+		strscpy(linkname, tipc_link_name(link), len);
-> 		err =3D 0;
-> 	}
-> 	tipc_node_read_unlock(node);
->--
->2.39.5
-Reviewed-and-tested-by: Tung Nguyen <tung.quang.nguyen@est.tech>
+1. Adds support for ZCB compressed instructions (C.LHU, C.LH, C.SH).
+
+2. Fixes a bug where copy_from/to_user() calls in non-sleepable contexts
+triggered attempts to sleep.
+
+Signed-off-by: Zong Li <zong.li@sifive.com>
+Signed-off-by: Nylon Chen nylon.chen@sifive.com
+
+Nylon Chen (2):
+  riscv: misaligned: Add handling for ZCB instructions
+  riscv: misaligned: fix sleeping function called during misaligned
+    access handling
+
+ arch/riscv/kernel/traps_misaligned.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
+
 
