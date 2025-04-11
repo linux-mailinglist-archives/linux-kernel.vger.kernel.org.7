@@ -1,119 +1,161 @@
-Return-Path: <linux-kernel+bounces-599992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F7B9A85A9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:55:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB9AA85ABB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 529627B4E6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:54:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83C9E1BC1E8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6ABD238C0F;
-	Fri, 11 Apr 2025 10:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5D0238C1B;
+	Fri, 11 Apr 2025 10:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0WXFHYE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Li71ddM9"
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C06D221274;
-	Fri, 11 Apr 2025 10:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C725221282;
+	Fri, 11 Apr 2025 10:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744368898; cv=none; b=RhumUt9gQW2gZJpLvmfPs8j4hGj2edmTILguGVfmhWAhKhKIsDk1cJHctY6ZIYSaOOmBBWl6NU4Z/eXHEu4HkMLlLN7JXiQ1/fciP+yMf4Cv8O2mEXMk3FosJBx7kg8Aepir7sjYiMh5JNX5HbqSKwfef17d+KlxL2DSRD14Cio=
+	t=1744369027; cv=none; b=LJT4Es4rk4pb3X06RSDR8TK7yhEbXLXdxKbtZVcT0NwzdhW76b8ZKMLo/NKAx4kWVbX+GxCroZl2k0wp6Jvg4yX0Dd44B/TC2ex5SL/kKzYJnG+pLKZJLLxWQp1xsr7vrzcymSw5XVqWaCsseLbGIPqf5NQDKX23LKH0Ywc7kO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744368898; c=relaxed/simple;
-	bh=Au2ajGDP8BCik6aLQ9DNWR0Zj+BLaAGtG+jKy8DHfeo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cu1lb+7A0XV3FRx1qoCfRKfGdnIn7aiZPM1ZN/tROhTHhK/CtaLUAaKU4kzbhJJi97GV2/iKAms4JAJNBMz3GM+IA84UrfX/boesv5k+6yDmve4oSywx7/XGZhxinG47k72voKoK+TIigkW2T039tU8anUdc+Pr9U4k/JiXJLo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0WXFHYE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B16AEC4CEE2;
-	Fri, 11 Apr 2025 10:54:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744368895;
-	bh=Au2ajGDP8BCik6aLQ9DNWR0Zj+BLaAGtG+jKy8DHfeo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W0WXFHYEdWRyqyQgVz1FrZcdccRqLEiRY6SpF+QjpDJ/f023m5lYoi8yN721fy8Wi
-	 MBEqfFjo42AOe8GB6mUunyCf+IQh/VJxSgkoQKWBub5F/yf46V3GmAdog5lqt9/9Vj
-	 /SFkEWYC7sca4jmh0GrMZFy/elFqf/IoPMUXYT+7stAKR1BNPUt5EXaWLLQN5joCVu
-	 VwAjCypJtAbPrfRoUUQ3RFuF0Ny2PT+hqL52uiT6fQ26wR11G84hFMOa6fo2AxdPa9
-	 tHEUX45uwLbYQNaJ5KiugV3zwobduNLPIKSUSGvvsE6EVOqP83dF2JE88b153u3TAS
-	 UeOa/tHcgWVDA==
-Date: Fri, 11 Apr 2025 11:54:50 +0100
-From: Simon Horman <horms@kernel.org>
-To: Huajian Yang <huajianyang@asrmicro.com>
-Cc: pablo@netfilter.org, kadlec@netfilter.org, razor@blackwall.org,
-	idosch@nvidia.com, davem@davemloft.net, dsahern@kernel.org,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	bridge@lists.linux.dev, netdev@vger.kernel.org,
+	s=arc-20240116; t=1744369027; c=relaxed/simple;
+	bh=zB/MGnfcUM0HicN1On6vH3cQhYwo+G4uPJU6tqb/Pgo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kX60GXNBknHayNVIa5/6gZ8OiO0kYbN/lqPpRDnz3JlGt05m1pQSGtespWDoUhriArsXHUuJMY141A6Zz/HtIw5ialiGDtHW8lMDqwTYBmOUZeUArLzUWUmaAG2a4qK6dYshRsA/4AvMhnMcjaslBpQl9Qhyhsr2nQkZp2HSxbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Li71ddM9; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744368973;
+	bh=dnoZUln+EAjEGDwlnRvIY0rJIrjfNNUSfdyabxk3/N0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Li71ddM9aKP19uf1AwXGV5CCCAY5+C4xKJc2WxtHcRyRWsmvw0H9XE6Osd9a5cWt1
+	 Q+cHArAWkaTnjnbuk23RZtdQ+U9gDbVdDAd0zhjXkAu62jNxbjGYmAcFRI6HiHXlgv
+	 x/6OWjkXt6IyIWqmSINvdCdUCWGtM8x2TSYBxY5Y=
+X-QQ-mid: bizesmtp23t1744368946t15cf48c
+X-QQ-Originating-IP: ehBLQkOhan5VWsz5Lv+65mc8nv4szt2NCntTi+SKFNY=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 11 Apr 2025 18:55:40 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 15212760454377048684
+EX-QQ-RecipientCnt: 10
+From: Chen Linxuan <chenlinxuan@uniontech.com>
+To: Yishai Hadas <yishaih@nvidia.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>
+Cc: Winston Wen <wentao@uniontech.com>,
+	Chen Linxuan <chenlinxuan@uniontech.com>,
+	kvm@vger.kernel.org,
+	virtualization@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: Expand headroom to send fragmented packets in
- bridge fragment forward
-Message-ID: <20250411105450.GA395307@horms.kernel.org>
-References: <20250409074444.8213-1-huajianyang@asrmicro.com>
+Subject: [RFC PATCH 3/7] vfio/virtio: add __always_inline for virtiovf_get_device_config_size
+Date: Fri, 11 Apr 2025 18:54:51 +0800
+Message-ID: <27A329AA0DBF4A2B+20250411105459.90782-3-chenlinxuan@uniontech.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250411105459.90782-1-chenlinxuan@uniontech.com>
+References: <31F42D8141CDD2D0+20250411105142.89296-1-chenlinxuan@uniontech.com>
+ <20250411105459.90782-1-chenlinxuan@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409074444.8213-1-huajianyang@asrmicro.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: M9OL2U7tWoeKVuKD663Z/dXV0DPNz+cv8UHITxKw6UV4gDMi1R6n144D
+	VyEBO1HNO1H0nRZPVeaIWwSvVNTRU4mcBYQes+2PuLcRM2CjzlKop4GtSvu1WilzEM4yUj+
+	5CHd91FYjlEFkxehBLmqfGxeIaSRf2Rj5++coAqFI0H63wnIhOI+jjyeg3SQAmnHxEZPGZt
+	CASF7CR/k2DlUgHRPJzmaf+WDVLiixHnEb7CDqevNbPOakp7RqjQEOqGlWibZXEF5b8icCY
+	BhZoNuv2t8GzJal4jA7WsULRVOmR0E2iRjPvgJN1z2rkNy/7JKERScAlehnmKewr0DTa2v5
+	36YuhBGVyAUVH6ja/I1c2wvl9/Lnzn3Xd+Fkh9EEKPEAnyV6pud8ZUG6ciq2F3ZvA4VynZT
+	w8S4lgzOa1bR3AXqwuSlnA+EFz1rLasBiHgfCaaKREGIV6b0A7jHqMZ0b2rSxHBiEdWAr/O
+	qUvKty7rhugcHHNwP9CmbYk93hdVpArIg3C52cVSp1CTfckIRLrZet2BDhBzarfmpewkaji
+	JNxhMByv3o+RT4NIZ2w3dQWJ/EjhiYS8OoRBNIKbfjWsIQ76N2lh7VTJNErG0V0wZK+6ldd
+	k3DAGh0hkwG8KRL9CbKYewMaYONYFuQp6quRsScnntHC9IK9JiyBVb5YMGgi6weD33vsKtn
+	0jc/Zf1FamqyWgquiaxKFkLRCgfH+ko+sTmoLXW+5a3bA0NnIjHe3GdV7cZSW7h2TO4rZ/0
+	5QKZ9va7M8lp4ntYQlvy83mCG1zMn/Vkl9MtUKrt67VsJjhnRvZYQcejDHySgh90ov9l8ZE
+	6tG/jyQbKRmjBuZJeTYcD4HmG+eN5xBv86Sr/OYgi+IEHHVjxWC2wyLSkZeu8/J5cga+WuC
+	j+7HkqMPkx7eZFwILQget+E11gB1a/+jGSzum5uswPCD/ULiWF77RSzQpDqVS3/7PLyhy8T
+	/WK+0OVJyVaCPrKNAcoXcFsQT1lyCMx8SclU1308jXohNYqmnuikpeNljgaOfzvp/Hyk+m2
+	RrfqqDx0+6dxSj98nhVgN99vZRLzVJZvarXrMWMw==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On Wed, Apr 09, 2025 at 03:44:44PM +0800, Huajian Yang wrote:
-> The config NF_CONNTRACK_BRIDGE will change the way fragments are processed.
-> Bridge does not know that it is a fragmented packet and forwards it
-> directly, after NF_CONNTRACK_BRIDGE is enabled, function nf_br_ip_fragment
-> will check and fraglist this packet.
-> 
-> Some network devices that would not able to ping large packet under bridge,
-> but large packet ping is successful if not enable NF_CONNTRACK_BRIDGE.
-> 
-> In function nf_br_ip_fragment, checking the headroom before sending is
-> undoubted, but it is unreasonable to directly drop skb with insufficient
-> headroom.
-> 
-> Using skb_copy_expand to expand the headroom of skb instead of dropping
-> it.
-> 
-> Signed-off-by: Huajian Yang <huajianyang@asrmicro.com>
-> ---
->  net/bridge/netfilter/nf_conntrack_bridge.c | 14 ++++++++++++--
->  net/ipv6/netfilter.c                       | 14 ++++++++++++--
->  2 files changed, 24 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/bridge/netfilter/nf_conntrack_bridge.c b/net/bridge/netfilter/nf_conntrack_bridge.c
-> index 816bb0fde718..b8fb81a49377 100644
-> --- a/net/bridge/netfilter/nf_conntrack_bridge.c
-> +++ b/net/bridge/netfilter/nf_conntrack_bridge.c
+From: Winston Wen <wentao@uniontech.com>
 
-...
+On x86_64 with gcc version 13.3.0, I compile
+drivers/vfio/pci/virtio/legacy_io.c with:
 
-> @@ -97,6 +97,16 @@ static int nf_br_ip_fragment(struct net *net, struct sock *sk,
->  
->  		return err;
->  	}
-> +
-> +expand_headroom:
-> +	struct sk_buff *expand_skb;
+  make defconfig
+  ./scripts/kconfig/merge_config.sh .config <(
+    echo CONFIG_VFIO=m
+    echo CONFIG_VIRTIO_PCI=y
+    echo CONFIG_VIRTIO_PCI_LIB_LEGACY=y
+    echo CONFIG_VIRTIO_VFIO_PCI=m
+    echo CONFIG_VIRTIO_VFIO_PCI_ADMIN_LEGACY=y
+  )
+  make KCFLAGS="-fno-inline-small-functions -fno-inline-functions-called-once" \
+    drivers/vfio/pci/virtio/legacy_io.o
 
-Please move this declaration to the top of the function.
+Then I get a compile error:
 
-Flagged by W=1 builds with gcc 14.2.0 and clang 20.1.2.
+    CALL    scripts/checksyscalls.sh
+    DESCEND objtool
+    INSTALL libsubcmd_headers
+    CC      drivers/vfio/pci/virtio/legacy_io.o
+  In file included from <command-line>:
+  drivers/vfio/pci/virtio/legacy_io.c: In function 'virtiovf_init_legacy_io':
+  ././include/linux/compiler_types.h:557:45: error: call to '__compiletime_assert_889' declared with attribute error: BUILD_BUG_ON failed: !is_power_of_2(virtvdev->bar0_virtual_buf_size)
+    557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+        |                                             ^
+  ././include/linux/compiler_types.h:538:25: note: in definition of macro '__compiletime_assert'
+    538 |                         prefix ## suffix();                             \
+        |                         ^~~~~~
+  ././include/linux/compiler_types.h:557:9: note: in expansion of macro '_compiletime_assert'
+    557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+        |         ^~~~~~~~~~~~~~~~~~~
+  ./include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+        |                                     ^~~~~~~~~~~~~~~~~~
+  ./include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+     50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+        |         ^~~~~~~~~~~~~~~~
+  drivers/vfio/pci/virtio/legacy_io.c:401:9: note: in expansion of macro 'BUILD_BUG_ON'
+    401 |         BUILD_BUG_ON(!is_power_of_2(virtvdev->bar0_virtual_buf_size));
+        |         ^~~~~~~~~~~~
 
-> +
-> +	expand_skb = skb_copy_expand(skb, ll_rs, skb_tailroom(skb), GFP_ATOMIC);
-> +	if (unlikely(!expand_skb))
-> +		goto blackhole;
-> +	kfree_skb(skb);
-> +	skb = expand_skb;
-> +
->  slow_path:
->  	/* This is a linearized skbuff, the original geometry is lost for us.
->  	 * This may also be a clone skbuff, we could preserve the geometry for
+Signed-off-by: Winston Wen <wentao@uniontech.com>
+Co-Developed-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+---
+ drivers/vfio/pci/virtio/legacy_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-...
+diff --git a/drivers/vfio/pci/virtio/legacy_io.c b/drivers/vfio/pci/virtio/legacy_io.c
+index 832af5ba267c..b6871d50b9f9 100644
+--- a/drivers/vfio/pci/virtio/legacy_io.c
++++ b/drivers/vfio/pci/virtio/legacy_io.c
+@@ -350,7 +350,7 @@ int virtiovf_open_legacy_io(struct virtiovf_pci_core_device *virtvdev)
+ 	return virtiovf_set_notify_addr(virtvdev);
+ }
+ 
+-static int virtiovf_get_device_config_size(unsigned short device)
++static __always_inline int virtiovf_get_device_config_size(unsigned short device)
+ {
+ 	/* Network card */
+ 	return offsetofend(struct virtio_net_config, status);
+-- 
+2.48.1
+
 
