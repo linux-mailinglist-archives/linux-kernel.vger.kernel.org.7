@@ -1,71 +1,59 @@
-Return-Path: <linux-kernel+bounces-600200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECCFA85CF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:24:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29913A85CE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B2CA1BA87AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:20:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2558D7B314F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1958E29B215;
-	Fri, 11 Apr 2025 12:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008F429B237;
+	Fri, 11 Apr 2025 12:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WzoC44jV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LibqZGDO"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467BA29AB1E
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 12:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E4B238C29;
+	Fri, 11 Apr 2025 12:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744373982; cv=none; b=CBiJgY/IoLshz3oNjLgAN6AOnQmDhjd9JnIbD9MzlVB67vW8eHfjjon1xPTrylzvA729ljAlfNcqiSA1834Lnuj8J36xgy7pnoGA5P8G7QzWAUx4YCJjipFnPNQqQPPpgW4v5tubk2twO/ujbzwv2oTmJUA4qihlcgesNQjlKWs=
+	t=1744374165; cv=none; b=AK60Fdr8syof8X6rWVZcm/H0PUA935Y8WAb+0P8TrhURq0bFx6Zu/6gS3uzrVOPj1sML7q9jC3u+ZmYL+mBjHSC5ZKO9jJFSNYDfdx4zjCwZfCgHmS6GLyrDrNF01tcDLphfcnMG+sSYRUPsLtkVA87jwAxA0ihvIB9S45AX/Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744373982; c=relaxed/simple;
-	bh=BZ1hw4hPnDqdx9SZMRS1DCWbSn/pHxaYjOx+c/l9exU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ri0Rp/jPBnuQsWWVBk/vt+tv+rGtlGH9mNdl+cEBO1OXPoBTnuo1i0by8xUOiBs60K2U8e7VJuxoNDURAUnhaNNSUilor0fh9i77U1ywRzXOvtiZVzH1cStJpwlK9ULYbyHbbLmhEK8Ff6/YlJzIVUqU0MBHE61Z87iFU6Eri8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WzoC44jV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744373979;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=fRHnGzdHn9ejE3pccxgqN42b7XxG3q84PE7dcsxvZ1w=;
-	b=WzoC44jVCkUab45YoUxxVz4wrPocMnRu2+6UV/+Wy48Qm3j4tAIDCNYsw6gTYHp4zQnn+5
-	pj/cp0t8/xwPPNPtqGZBwBxghRO87hHmWAqEbq/0yTJ/v+Y+6mj57cwWXs/7Yvle0NENSZ
-	j9mj1Bdrc78SJoR0BB47Pe3LynfMUcI=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-339-MMYjxpdPNh6qCqQ_cpmk7A-1; Fri,
- 11 Apr 2025 08:19:37 -0400
-X-MC-Unique: MMYjxpdPNh6qCqQ_cpmk7A-1
-X-Mimecast-MFC-AGG-ID: MMYjxpdPNh6qCqQ_cpmk7A_1744373976
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 62271180025B;
-	Fri, 11 Apr 2025 12:19:36 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.222])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 1C2CE180174E;
-	Fri, 11 Apr 2025 12:19:33 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 11 Apr 2025 14:19:00 +0200 (CEST)
-Date: Fri, 11 Apr 2025 14:18:57 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>,
-	Mateusz Guzik <mjguzik@gmail.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-	"Liam R. Howlett" <Liam.Howlett@Oracle.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] release_task: kill the no longer needed
- get/put_pid(thread_pid)
-Message-ID: <20250411121857.GA10550@redhat.com>
+	s=arc-20240116; t=1744374165; c=relaxed/simple;
+	bh=equTgokpuZkQxYIZ9DBl3iW8zloSceBoyhSWlBB/p74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MivX7pT9y8LtcaGu7GQ2hC9JA64mf529KFjCdtXT8I4h+6Q1DEqSD0MgcRNgkKr0ZWhO3UbTpY2nbBhShYX7m0idLf+4bR5OWievyKrQ0p7PMDRPfNwkFQmrfJn/EzhAmdeb9eLhJ0SolqDrAD0Q3qVvyb+zdj9kt27tjF9Ql24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=LibqZGDO; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=/Dr1EVnQsm860pDgPjXDhoAUeaZ+4e/5Ai84hP8ZNJo=; b=LibqZGDO63LY/KDGsKMHpYwhI1
+	8qj0pjT7qLtKFPMzyk6FfS2pFGGSy7pdktoMh2SdcmKA6lWeUJvHWGfAjyN7cj3ME8mdnPKRARFJt
+	5k5YrzCsJ/fM/2vC+eb5oqrF4EvpQn/G7X8wgtYpqbpYq9i0xsm6NO9D9dXSa9t1KuKE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u3DOm-008nts-Va; Fri, 11 Apr 2025 14:22:20 +0200
+Date: Fri, 11 Apr 2025 14:22:20 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Zilin Guan <zilin@seu.edu.cn>
+Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, alibuda@linux.alibaba.com,
+	tonylu@linux.alibaba.com, guwen@linux.alibaba.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, linux-rdma@vger.kernel.org,
+	linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jianhao.xu@seu.edu.cn
+Subject: Re: [RFC PATCH] net/smc: Consider using kfree_sensitive() to free
+ cpu_addr
+Message-ID: <19237943-5a2d-4930-9aa5-6419819ff51c@lunn.ch>
+References: <20250411044456.1661380-1-zilin@seu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,53 +62,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20250411044456.1661380-1-zilin@seu.edu.cn>
 
-After the commit 7903f907a2260 ("pid: perform free_pid() calls outside
-of tasklist_lock") __unhash_process() -> detach_pid() no longer calls
-free_pid(), proc_flush_pid() can just use p->thread_pid without the
-now pointless get_pid() + put_pid().
+On Fri, Apr 11, 2025 at 04:44:56AM +0000, Zilin Guan wrote:
+> Hello,
+> 
+> In smcr_buf_unuse() and smc_buf_unuse(), memzero_explicit() is used to
+> clear cpu_addr when it is no longer in use, suggesting that cpu_addr
+> may contain sensitive information.
+> 
+> To ensure proper handling of this sensitive memory, I propose using
+> kfree_sensitive()/kvfree_sensitive instead of kfree()/vfree() to free
+> cpu_addr in both smcd_buf_free() and smc_buf_free(). This change aims
+> to prevent potential sensitive data leaks.
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- kernel/exit.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+There is another possible meaning:
 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 1b51dc099f1e..96d639383f86 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -239,7 +239,6 @@ void release_task(struct task_struct *p)
- {
- 	struct release_task_post post;
- 	struct task_struct *leader;
--	struct pid *thread_pid;
- 	int zap_leader;
- repeat:
- 	memset(&post, 0, sizeof(post));
-@@ -253,8 +252,6 @@ void release_task(struct task_struct *p)
- 	pidfs_exit(p);
- 	cgroup_release(p);
- 
--	thread_pid = get_pid(p->thread_pid);
--
- 	write_lock_irq(&tasklist_lock);
- 	ptrace_release_task(p);
- 	__exit_signal(&post, p);
-@@ -282,8 +279,8 @@ void release_task(struct task_struct *p)
- 	}
- 
- 	write_unlock_irq(&tasklist_lock);
--	proc_flush_pid(thread_pid);
--	put_pid(thread_pid);
-+	/* p->thread_pid can't go away until free_pids() below */
-+	proc_flush_pid(p->thread_pid);
- 	add_device_randomness(&p->se.sum_exec_runtime,
- 			      sizeof(p->se.sum_exec_runtime));
- 	free_pids(post.pids);
--- 
-2.25.1.362.g51ebf55
+			memzero_explicit(conn->sndbuf_desc->cpu_addr, bufsize);
+			WRITE_ONCE(conn->sndbuf_desc->used, 0);
 
+The WRITE_ONCE() probably tells the hardware the buffer is ready for
+it. In order to ensure they memzero has completed and that the
+compiler does not reorder the instructions you need a memory barrier:
 
+static inline void memzero_explicit(void *s, size_t count)
+{
+	memset(s, 0, count);
+	barrier_data(s);
+}
+
+So it could be using memzero_explicit() just for the barrier_data().
+
+Please spend some time to analyze this code, look at the git history
+etc, see if there are any clues as to why memzero_explicit is used, or
+if there is any indication of sensitive information.
+
+	Andrew
 
