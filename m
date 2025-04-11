@@ -1,146 +1,180 @@
-Return-Path: <linux-kernel+bounces-599716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC26CA85723
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:59:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29CC0A8573C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDDF91B62CDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:59:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0DFF7B4946
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF00D2980BA;
-	Fri, 11 Apr 2025 08:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6B02989BA;
+	Fri, 11 Apr 2025 09:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Nrx0jzYb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FYZOVChL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oa6ijuqA"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52A5293460
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714451E9B1C;
+	Fri, 11 Apr 2025 09:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744361969; cv=none; b=FdSqMLUblCYcBdPkvxS5YOdgkhHfweCCbUk3NdVXxi0G3SopXg2c2EAXHb9pQKJGlBsHm4omF4Q3pAU+EtsuFNDpd9gu7ocGwx06W5yB7Y2SRGlJ0qt9AgM3cem0HZ69/NT+JM6zCpS1k54Vk3z9s+THLTrU0zyuR1m/n0mVzag=
+	t=1744362110; cv=none; b=RDsaOai0NY1ysaEQPEkRga1syNCU4VGqkAWdtfzmDR+D4tlpYj4GItfn5Rehk5vmvMJQLdRZvL225vXOyxgxYqvJ0NFDYUzd6AKpU7VwJsq8DErhcxH/ga7YYf42C+AHqdkF4D4jDUKU5+YIzjCjD6l4SqkdLAjhsT4xtxYJW5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744361969; c=relaxed/simple;
-	bh=Q3ST2MLjNprt8W8DwVtbdvSbW7Gy41vP2tT3BIUViE0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HCqAUK2Rqjy2hd1yU8MMLNWq3ideMlitfwKDrLYShhjURGGnWcHfgPFMDe2Da8xmxaJreMKo1v7diDBlH8ONL/wfMC6u/EpwJQKfqcP89FbxgRxyl6y9GKVB9241fznAL2IbqFnH0Xt8CSIZB233WMcQ2lwiKXTmr0e/ahbZ058=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Nrx0jzYb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B5X41v019634
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:59:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	T/RuMAy9msHuh5tqlxCLZQdr2TbbASae7QFdHD+HliU=; b=Nrx0jzYb38liETmz
-	nu9EEKOtw7AMJWhT5yBpjoElMqx8GDbuS41u2XQkRBLa09QrwZ3e8TSJqAvwfLcB
-	rIxHywIvG1fSGGPUtslwbPhy08/GCBp9Um3mopyShIGmS06WoxAphw+y2K9f9HA9
-	D4Ew+SuJqPaGS6d37rEO50ujeWm7+ZrOCQarwuZ10kQ27P/w70xBAJE7nauN4/4x
-	2qVeX81u/YjFD1nxoIjJP01hZIkQQQrxJPo1DGQqjRmONHAoEa8yXI+8KjArhLFm
-	xkkK+9oCdyx+yewYZdwv9ykFlXgCBfJvWuEv35aiPliD+KnbLapIWoiJlQlkwXWJ
-	V+XbTA==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twcrt00w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:59:26 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-736c135f695so1310031b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 01:59:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744361965; x=1744966765;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T/RuMAy9msHuh5tqlxCLZQdr2TbbASae7QFdHD+HliU=;
-        b=JI7L+lsv98eFZGpomRivshycRfYQu3dM3K4aTKJksTCRYKKJc5gLKIBuOpUXLgWohF
-         zb9SHOA0VxDCDjNVJw0eTW0BzBCnZzHTSnv8eftC6lO7C9kcF5ubg8bymzumyCpmOc9T
-         olDq8Ws3NENK3RXOnPVxMyiDbhvqo3c3dwULYzJx1y7tGUFzdZblfJ9pcPwgxbCnmMen
-         TBLHB3RS3Fv3Ei2a6tvKTbnj9A2tOBgEckSwwq3OQ8BH66F2HmMAIkcUDOdHIXR9WhZD
-         i9z1TfA7LozGWarqDVVE5wRDMVIErYjcb7dSmlty6PfwI+SUE+aWbLghmT1mZrwreK32
-         TaeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVt4w1lDvuKv1BKnDnTY2HrKfDPe1emeJOziKkcohcGN/KdK7/xEUA0WD3jXnCKImKwn4mIeelRbPkZkj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYMYj1ppyWeBzItyQ3Brbj/gNEUnZWp6iK20MbWGbgdsYYSBpp
-	Hy8k9PtoyFerAM/45YB4jkPwW434rqzq8A6QEqN4CtbXAVm54V61wAh2zsy7c7lmfnnBwq0mQR+
-	Hs6e5YihAbk2D7IUFxf0iMULOsYlxo5S2ZylbIRN7ZCWCSMq70KBStQOF5DaYLkQ=
-X-Gm-Gg: ASbGnctPFqg3zZq3PHvh05i/kNmv8jKus2ViNjicL2kUoUnQ/M+sjJKBv0Q7kxuBg0A
-	v/EpwVlNfpvaO9h46+9FXOo/+pSjD07MNXld9q6S2vNTYeSN/2fcuYw1O/MFaByVSG+30S6OqZM
-	f03cMJQFiin8HK8mkmqSLK963dK1EwHRjrN7PWwO8eg57j9dV1UBkHC7TKKDs+leKKUaL7ha+BU
-	gers3Q8YynCAMglSbyQUOWpH+7ZmEUfDozTOgPTN9MukNC0GCUGLE5K1Yr38LrIWsoKkDnpOxM2
-	K9MMC6A5gJmAX7K9XefouCAy+a+v6k+0lJ4s7NyG8ymWLkaF7+/C
-X-Received: by 2002:a05:6a00:4603:b0:736:6ecd:8e34 with SMTP id d2e1a72fcca58-73bd129b43bmr2796389b3a.18.1744361964949;
-        Fri, 11 Apr 2025 01:59:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGq3Om89V3BbCVuLa01tYbUYAYbP5OVnWoVWe3QAtTUtuyYrDH63vACK+b6upU1gLt6/v8bnA==
-X-Received: by 2002:a05:6a00:4603:b0:736:6ecd:8e34 with SMTP id d2e1a72fcca58-73bd129b43bmr2796362b3a.18.1744361964496;
-        Fri, 11 Apr 2025 01:59:24 -0700 (PDT)
-Received: from [10.151.37.217] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21c4e25sm968489b3a.47.2025.04.11.01.59.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 01:59:23 -0700 (PDT)
-Message-ID: <734cf70a-1d96-4a87-bc7e-c070c1e7dc8c@oss.qualcomm.com>
-Date: Fri, 11 Apr 2025 14:29:20 +0530
+	s=arc-20240116; t=1744362110; c=relaxed/simple;
+	bh=lRkAuH+ixrkqkfK/VRhE4n+cub7VR8SqmZpgfUJ9N5E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fb9QqIKdvHlUvx92cSdzAmKOdQU/PQW2rW0sxQn9Ip5sWXFWoBcAEO9RoAbySQ1wKYniITvIPccTvRLOoMvzbuQiakRRSAJiazst06IDJsmgZc7V6CToTVfCeVUve2naHKJa1UZ3B2OhuHZRw0XLXQmgzYZ+6vXlPnPeGg6HwJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FYZOVChL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oa6ijuqA; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744362105;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jAClCqXSRP7WmfE1GfZ8JkrCWutEBW13P1Lg6794lWQ=;
+	b=FYZOVChLOPvYNZB6iq68H7oEmF17K6K5pGdJ3/SaG+4VP7sTHNdE7KXuuN2jLmgIzDYn6H
+	Jy8E3a3FgiVDpYRZHgaTq/S8MahWcWqNhxXXGVwvO75rb28N1eDfgRdwDQlgA5wns1huCR
+	ltlAoD7l7brHUabOMC3idfbXj1WNO51ug5zAOEGYFwGSjHri1eQTj41HkpXsTT8ANFX5wm
+	bVzDsNe2B42rXhCV5MKDHLrrdx/2NFsea2W34MZw9hE5Bysb3xv/nM594uheIWjcZC/aOf
+	ms7RsCdgAkyKaF75j0t/s12JORV85R9P6aNYRJibXZgsD7EfZar4dKeMlQNggA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744362105;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jAClCqXSRP7WmfE1GfZ8JkrCWutEBW13P1Lg6794lWQ=;
+	b=oa6ijuqAvtq0XUEm3UonuAvnttSoycYTzZtMIV6wYf28cBmzJM7wxtMxjuADfaBU/ujmFo
+	IQv55Q01YErBXZCg==
+Subject: [PATCH v3 00/32] kselftest harness and nolibc compatibility
+Date: Fri, 11 Apr 2025 11:00:24 +0200
+Message-Id: <20250411-nolibc-kselftest-harness-v3-0-4d9c0295893f@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] phy: qcom-qusb2: Update the phy settings for IPQ5424
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-        Varadarajan Narayanan <quic_varada@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250407-revert_hs_phy_settings-v1-1-ec94e316ea19@oss.qualcomm.com>
- <Z/i+6k6VseihdQ69@vaman>
-Content-Language: en-US
-From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-In-Reply-To: <Z/i+6k6VseihdQ69@vaman>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: JhAP0XKsQLH5Kg6FhxduDbegLlEwaKXB
-X-Authority-Analysis: v=2.4 cv=QuVe3Uyd c=1 sm=1 tr=0 ts=67f8d9ee cx=c_pps a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=Mlon7qBrsPBlpjHfUrMA:9 a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-GUID: JhAP0XKsQLH5Kg6FhxduDbegLlEwaKXB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-11_03,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- spamscore=0 malwarescore=0 mlxlogscore=861 bulkscore=0 priorityscore=1501
- clxscore=1015 phishscore=0 impostorscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504110049
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACja+GcC/4XOQQrCMBAF0KtI1kaSSWqjK+8hLtJ0YgdLKkkti
+ vTupnUhFNTlH5j3/5MljISJ7VdPFnGgRF3IQa1XzDU2nJFTnTMDAYWQSvDQtVQ5fknY+h5Tzxs
+ bA6bETQXOOOu0qjzL79eInu4zfTzl3FDqu/iYmwY5Xd8oSPUdHSQXXCGardZlVQh/aCnc+tgFu
+ m9qnHpmRAn9B7G1s6WrQUmEBTKtG+CzSIvyBwYZ88ZI8OUWd0ossXEcXy3P3rpWAQAA
+X-Change-ID: 20250130-nolibc-kselftest-harness-8b2c8cac43bf
+To: Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, 
+ Willy Tarreau <w@1wt.eu>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Kees Cook <kees@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744362103; l=4852;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=lRkAuH+ixrkqkfK/VRhE4n+cub7VR8SqmZpgfUJ9N5E=;
+ b=cBL8/CkLkpBsTrIXqxxaIyUJo4Fbg/iV4BnQ/Kke7DyXJY4xIL3HTnqaknjsxKIYFqaZCa5or
+ 3iBfwmrNlYmCNkbj3DObFH/Fw/OS5KcUcfE4bMqtOu+GDnmZDkWyOpQ
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
+Nolibc is useful for selftests as the test programs can be very small,
+and compiled with just a kernel crosscompiler, without userspace support.
+Currently nolibc is only usable with kselftest.h, not the more
+convenient to use kselftest_harness.h
+This series provides this compatibility by adding new features to nolibc
+and removing the usage of problematic features from the harness.
 
-On 4/11/2025 12:34 PM, Vinod Koul wrote:
-> On 07-04-25, 19:51, Kathiravan Thirumoorthy wrote:
->> Update the phy settings for IPQ5424 to meet compliance requirements.
-> Can you specify which requirements are these?
+The first half of the series are changes to the harness, the second one
+are for nolibc. Both parts are very independent and should go through
+different trees.
+The last patch is not meant to be applied and serves as test that
+everything works together correctly.
 
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Changes in v3:
+- Send patches to correct kselftest harness maintainers
+- Move harness selftest to dedicated directory
+- Add harness selftest to MAINTAINERS
+- Integrate harness selftest cleanup with the selftest framework
+- Consistently use "kselftest harness" in commit messages
+- Properly propagate kselftest harness failure
+- Link to v2: https://lore.kernel.org/r/20250407-nolibc-kselftest-harness-v2-0-f8812f76e930@linutronix.de
 
-The eye diagram (Host High-speed Signal Quality) tests are failed with 
-the current settings. So design team asked to revert.
+Changes in v2:
+- Rebase unto v6.15-rc1
+- Rename internal nolibc symbols
+- Handle edge case of waitpid(INT_MIN) == ESRCH
+- Fix arm configurations for final testing patch
+- Clean up global getopt.h variable declarations
+- Add Acks from Willy
+- Link to v1: https://lore.kernel.org/r/20250304-nolibc-kselftest-harness-v1-0-adca7cd231e2@linutronix.de
 
+---
+Thomas Weißschuh (32):
+      selftests: harness: Add kselftest harness selftest
+      selftests: harness: Use C89 comment style
+      selftests: harness: Ignore unused variant argument warning
+      selftests: harness: Mark functions without prototypes static
+      selftests: harness: Remove inline qualifier for wrappers
+      selftests: harness: Remove dependency on libatomic
+      selftests: harness: Implement test timeouts through pidfd
+      selftests: harness: Don't set setup_completed for fixtureless tests
+      selftests: harness: Always provide "self" and "variant"
+      selftests: harness: Move teardown conditional into test metadata
+      selftests: harness: Add teardown callback to test metadata
+      selftests: harness: Stop using setjmp()/longjmp()
+      selftests: harness: Guard includes on nolibc
+      tools/nolibc: handle intmax_t/uintmax_t in printf
+      tools/nolibc: use intmax definitions from compiler
+      tools/nolibc: use pselect6_time64 if available
+      tools/nolibc: use ppoll_time64 if available
+      tools/nolibc: add tolower() and toupper()
+      tools/nolibc: add _exit()
+      tools/nolibc: add setpgrp()
+      tools/nolibc: implement waitpid() in terms of waitid()
+      Revert "selftests/nolibc: use waitid() over waitpid()"
+      tools/nolibc: add dprintf() and vdprintf()
+      tools/nolibc: add getopt()
+      tools/nolibc: allow different write callbacks in printf
+      tools/nolibc: allow limiting of printf destination size
+      tools/nolibc: add snprintf() and friends
+      selftests/nolibc: use snprintf() for printf tests
+      selftests/nolibc: rename vfprintf test suite
+      selftests/nolibc: add test for snprintf() truncation
+      tools/nolibc: implement width padding in printf()
+      HACK: selftests/nolibc: demonstrate usage of the kselftest harness
 
->
->> The current settings do not meet the requirements, and the design team
->> has requested to use the settings used for IPQ6018.
->>
->> Revert the commit 9c56a1de296e ("phy: qcom-qusb2: add QUSB2 support for
->> IPQ5424") and reuse the IPQ6018 settings.
-> Why not do revert first and then add the settings?
+ MAINTAINERS                                        |    1 +
+ tools/include/nolibc/Makefile                      |    1 +
+ tools/include/nolibc/getopt.h                      |  101 ++
+ tools/include/nolibc/nolibc.h                      |    1 +
+ tools/include/nolibc/stdint.h                      |    4 +-
+ tools/include/nolibc/stdio.h                       |  127 +-
+ tools/include/nolibc/string.h                      |   17 +
+ tools/include/nolibc/sys.h                         |  105 +-
+ tools/testing/selftests/Makefile                   |    1 +
+ tools/testing/selftests/kselftest_harness.h        |  181 +-
+ .../testing/selftests/kselftest_harness/.gitignore |    2 +
+ tools/testing/selftests/kselftest_harness/Makefile |    7 +
+ .../selftests/kselftest_harness/harness-selftest.c |  129 ++
+ .../kselftest_harness/harness-selftest.expected    |   62 +
+ .../kselftest_harness/harness-selftest.sh          |   13 +
+ tools/testing/selftests/nolibc/Makefile            |   13 +-
+ tools/testing/selftests/nolibc/harness-selftest.c  |    1 +
+ tools/testing/selftests/nolibc/nolibc-test.c       | 1729 +-------------------
+ tools/testing/selftests/nolibc/run-tests.sh        |    2 +-
+ 19 files changed, 637 insertions(+), 1860 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250130-nolibc-kselftest-harness-8b2c8cac43bf
 
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-I thought of submitting it separately. But what-if only the first patch 
-merged and second one didn't due to some issue, it will break the USB 
-feature. So, I thought it would be better to keep it in single commit. 
-Please let me know, I can send V2 with 2 patches with the merging 
-strategy (both patches should go together to avoid the USB breakage) in 
-cover letter.
-
-
->
 
