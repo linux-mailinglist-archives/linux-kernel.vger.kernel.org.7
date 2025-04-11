@@ -1,57 +1,67 @@
-Return-Path: <linux-kernel+bounces-600403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D93EA85F8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:48:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A8CA85F84
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 878793BB180
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:42:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 431844C788F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F60E1E0E0C;
-	Fri, 11 Apr 2025 13:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43B61DDA32;
+	Fri, 11 Apr 2025 13:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wveHEQwU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYtYR9HT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E931AA786;
-	Fri, 11 Apr 2025 13:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2461A13E898;
+	Fri, 11 Apr 2025 13:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744378936; cv=none; b=Z5Z4kwOrgLW3thXOmlCGoVnE/fJJLS7CRI1ypDsDWaUvxW5jQUOsccT3GnSRCG5jck3lpROH1cPI92tjJMk0RbVmxZ/ODo1g2fMx3reuE4YjtFtVeUYtxjRugnACCQkw5b0zlO83+hXj++Q/aMThUERud4M5jhkZkqIdPoF6jQ8=
+	t=1744379012; cv=none; b=N0z5RB5pP1pxMGh6ZY7PshWNByzPtYLhMHlrN+BLuMPogvOZn5cv+rq28MXssxOcPMu7Ut6lqfnnfWHfZVihtxwc4GZpV6rczywAnHdH9px10oKq0EiIGrye8e777BR7nWy8v+yDL7VeKtLzuVHZKtVoopKxZGkcRWoUqMm2oRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744378936; c=relaxed/simple;
-	bh=nS4mtmxGRp+CcFT9tVDGPOWxYtnM+243zUP7ZIU9t4U=;
+	s=arc-20240116; t=1744379012; c=relaxed/simple;
+	bh=tliAMtv1OcJaSk4zt2mFjXPHpuo4+e2d80RH30k39qg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WqUKmTSAZYUMKHrLCygYwIEmA9PImJNvhvWi66/B9Re7J5c+SBfbt+gbsC35soJxXe2uQMAhdXbUrJCbmfCVCMv1v3DKcOIpKXL6gkLFL6q1B/wjMeiBfLLjqW34kYD06/aooLTTQoSrL/5SEJhaIJujlLdpgT3yeyJJ12SAgL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wveHEQwU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A547C4CEE2;
-	Fri, 11 Apr 2025 13:42:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744378935;
-	bh=nS4mtmxGRp+CcFT9tVDGPOWxYtnM+243zUP7ZIU9t4U=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=r9BMWAiVSINdGsFMg0i0jZSRbwJQ+P4iJXYcMtALcWOgp9rD/mXwWOJfF0rrbh5xXhz4UfxaqTHFCg66zRxgUxY9fhoM9XBRtXo3Ff+SjrNCgAZqjYQoqno+7wuRhHX/xMxqdUUz0YnWdlZvLW3gtozupv+bCwUswM9SBIvOhZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kYtYR9HT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55A24C4CEE7;
+	Fri, 11 Apr 2025 13:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744379011;
+	bh=tliAMtv1OcJaSk4zt2mFjXPHpuo4+e2d80RH30k39qg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wveHEQwU8QrxS6q3qjGn/QYQwFp5Wu9bwvhXBzF5ePMzmcNztJHnud0AdX+yOVylA
-	 YOyQBQ2tHfE8TjwG7Z8IGtk1XrzHRw8sgDKX205WpOQVcsaAwlNiWTZVHubUn1k+99
-	 GrJBgVvG4AdvJ+p86Lx61F/sN+3BAoPBSpnoLy/4=
-Date: Fri, 11 Apr 2025 15:42:12 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	b=kYtYR9HTZBwMP5Oi7bPretfsvPfOvYCRBS72D97j7i3aPPNTx2mrMavXTUE6McB9f
+	 eTbX6bKtprpTBwHE2o48DSGO3p5BNHOT+nxdbcl0Gq6RpscUvQrNXjeLq4pZV15Afx
+	 Ntbw5YpLpXkixY2/VcHFc1SpYlgJHv9tGOVUeceRLfMjUPmbLjGftwcOXvB1ErfW1k
+	 z+rdIwx6u/uhB7vbmz8CcpHuPlSmtfoANznSJIhe/6W4TJ/goaw/USm8ZNj5qdPXgS
+	 ozeIXMulaLNv2bYN3z3FZkW/VtEbFHxfl/4UuxBFw8Y7oE/dRrYMe50F5OZeTH9Rqh
+	 3DtQX7+3B2iKA==
+Date: Fri, 11 Apr 2025 08:43:30 -0500
+From: Rob Herring <robh@kernel.org>
+To: iuncuim <iuncuim@gmail.com>
+Cc: Vasily Khoruzhick <anarsoul@gmail.com>,
+	Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Andre Przywara <andre.przywara@arm.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: usb: samsung,exynos-dwc3: add
- exynos2200 compatible
-Message-ID: <2025041157-stilt-sculptor-c978@gregkh>
-References: <20250321144804.1435502-1-ivo.ivanov.ivanov1@gmail.com>
- <20250321144804.1435502-2-ivo.ivanov.ivanov1@gmail.com>
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+Subject: Re: [PATCH 6/6] dt-bindings: thermal: sun8i: Add A523 THS0/1
+ controllers
+Message-ID: <20250411134330.GA3054295-robh@kernel.org>
+References: <20250411003827.782544-1-iuncuim@gmail.com>
+ <20250411003827.782544-7-iuncuim@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,22 +70,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321144804.1435502-2-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250411003827.782544-7-iuncuim@gmail.com>
 
-On Fri, Mar 21, 2025 at 04:48:02PM +0200, Ivaylo Ivanov wrote:
-> The Exynos2200 SoC has a DWC3 compatible USB controller and can reuse
-> the existing Exynos glue. Update the dt schema to include the
-> samsung,exynos2200-dwusb3 compatible for it.
+On Fri, Apr 11, 2025 at 08:38:26AM +0800, iuncuim wrote:
+> From: Mikhail Kalashnikov <iuncuim@gmail.com>
 > 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Add dt-bindings description of the thermal sensors in the A523 processor.
+
+That's obvious from the diff. What's not is how is the h/w different 
+from prior versions? For example, why is there another clock?
+
+> 
+> Signed-off-by: Mikhail Kalashnikov <iuncuim@gmail.com>
 > ---
->  .../bindings/usb/samsung,exynos-dwc3.yaml          | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  .../bindings/thermal/allwinner,sun8i-a83t-ths.yaml           | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
+> index 3e61689f6..70ac395ef 100644
+> --- a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
+> @@ -24,17 +24,21 @@ properties:
+>        - allwinner,sun50i-h5-ths
+>        - allwinner,sun50i-h6-ths
+>        - allwinner,sun50i-h616-ths
+> +      - allwinner,sun55i-a523-ths0
+> +      - allwinner,sun55i-a523-ths1
+>  
+>    clocks:
+>      minItems: 1
+>      items:
+>        - description: Bus Clock
+> +      - description: GPADC Clock
+>        - description: Module Clock
+>  
+>    clock-names:
+>      minItems: 1
+>      items:
+>        - const: bus
+> +      - const: gpadc
 
-This doesn't apply to my tree, can you rebase it and resend the series?
+You cannot add new entries in the middle. They must go on the end and 
+you then need to restrict the existing users to 2 clocks. And for the 
+new users, how many clocks are required? 1, 2, or 3?
 
-thanks,
-
-greg k-h
+>        - const: mod
+>  
+>    reg:
+> @@ -107,6 +111,7 @@ allOf:
+>              enum:
+>                - allwinner,sun8i-h3-ths
+>                - allwinner,sun20i-d1-ths
+> +              - allwinner,sun55i-a523-ths0
+>  
+>      then:
+>        properties:
+> -- 
+> 2.49.0
+> 
 
