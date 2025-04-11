@@ -1,36 +1,37 @@
-Return-Path: <linux-kernel+bounces-600698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6FAA86385
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:44:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C190A86383
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 743DD1B6736B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:43:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C9B444E2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A5D21CFE0;
-	Fri, 11 Apr 2025 16:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D3521CFE0;
+	Fri, 11 Apr 2025 16:43:17 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7F426AD9
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 16:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DFA26AD9
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 16:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744389765; cv=none; b=QP2mShqCR+U/lnlgNvtGG3xRppFJPC80iqrnkWdIUXP9Sx7r9dVrDAfiArisq7IZA4la7rC2j/BQ/Ta5Iz1Al1vPqJB9y3y/+T/zfC/nBzZwr+n7Q4Qh0rD3SJfBiaPMqxwo492J6oYYrJ09x1dwqnKAtn5wl6shQhskHJjSRTI=
+	t=1744389797; cv=none; b=kPiFJe1ScDgQJJvL6A0N7Kfs/8fqldQlZZDhAaqd/FP7eCMsVYCztOCppkuYvBlcQzEjpqjplwmgTdUGy/4O9kuQ6HqIPyCnerwgsiUyRFJeJ+o/VQPpDmUPqFipxxW9aPbifjHzcn1XjX+dWtJorE5D4PiSTWV9zCUwv4r6WPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744389765; c=relaxed/simple;
-	bh=goEjl77RfinlOmxikVVtQ3hH9c5z1LujLMVpoNl4hMg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UzaGw7OLPP5eampFes1aREO3ND5jCz8NYSHZLiCLfhsfQETn3D5U1Ni7l73mYqrzFI/JmEDFFpC1j1oPHPlMAaygQ5kyyomTEZ1yU5Qgd21Yl5K3Ofb6Db+UcVI14d/ic4UQis8tV4wh76tGj+YoHKDfpUV/EDKv814o5ZublV0=
+	s=arc-20240116; t=1744389797; c=relaxed/simple;
+	bh=CdTHi6eT1Kjgc4DY1oXdDwJVQJnxHAxgx9tkaj8ccyQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MezjDiBDvI7StHLvx8oHpUZEnX27I4SGHCgUaoHBJj4r/gzjTw7pf3yGQseVLFPXrxRf0p+58b86nnv6qNJQe7ygzRSYejFzvbRR0erXUhjO2X6XauqCSAv2JTnG6jxD9cLd5Ipsor4c589tu075idUW4mQP3mt9Xv9mpOoWLvo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F17C106F;
-	Fri, 11 Apr 2025 09:42:42 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8AB63106F;
+	Fri, 11 Apr 2025 09:43:14 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 376853F694;
-	Fri, 11 Apr 2025 09:42:39 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80B6D3F694;
+	Fri, 11 Apr 2025 09:43:11 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -58,11 +59,15 @@ Cc: Reinette Chatre <reinette.chatre@intel.com>,
 	Dave Martin <dave.martin@arm.com>,
 	Koba Ko <kobak@nvidia.com>,
 	Shanker Donthineni <sdonthineni@nvidia.com>,
-	fenghuay@nvidia.com
-Subject: [PATCH v8 00/21] x86/resctrl: Move the resctrl filesystem code to /fs/resctrl
-Date: Fri, 11 Apr 2025 16:42:08 +0000
-Message-Id: <20250411164229.23413-1-james.morse@arm.com>
+	fenghuay@nvidia.com,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH v8 01/21] x86/resctrl: Fix rdtgroup_mkdir()'s unlocked use of kernfs_node::name
+Date: Fri, 11 Apr 2025 16:42:09 +0000
+Message-Id: <20250411164229.23413-2-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20250411164229.23413-1-james.morse@arm.com>
+References: <20250411164229.23413-1-james.morse@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,123 +76,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Changes since v7:
- * Switched to Tony's alternative for having a structure behind struct
-   mon_data.
+Since commit 741c10b096bc ("kernfs: Use RCU to access kernfs_node::name."),
+a helper rdt_kn_name() that checks that rdtgroup_mutex is held has been
+used for all accesses to the kernfs node name.
 
-Changes otherwise noted on each patch.
+rdtgroup_mkdir() uses the name to determine if a valid monitor group is
+being created by checking the parent name is "mon_groups". This is done
+without holding rdtgroup_mutex, and now triggers the following warning:
+| WARNING: suspicious RCU usage
+| 6.15.0-rc1 #4465 Tainted: G            E
+| -----------------------------
+| arch/x86/kernel/cpu/resctrl/internal.h:408 suspicious rcu_dereference_check() usage!
+[...]
+| Call Trace:
+|  <TASK>
+|  dump_stack_lvl+0x6c/0xa0
+|  lockdep_rcu_suspicious.cold+0x4e/0x96
+|  is_mon_groups+0xba/0xd0
+|  rdtgroup_mkdir+0x118/0x1970
+|  kernfs_iop_mkdir+0xfa/0x1a0
+|  vfs_mkdir+0x456/0x760
+|  do_mkdirat+0x257/0x310
+|  __x64_sys_mkdir+0xd4/0x120
+|  do_syscall_64+0x6d/0x150
+|  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-N.B, the disk in my machine recently died - so I've re-done the feedback
-changes multiple times. Appologies if I missed something on the second pass!
+Creating a control or monitor group calls mkdir_rdt_prepare(), which uses
+rdtgroup_kn_lock_live() to take the rdtgroup_mutex.
+
+To avoid taking and dropping the lock, move the check for the monitor group
+name and position into mkdir_rdt_prepare() so that it occurs under
+rdtgroup_mutex. Hoist is_mon_groups() earlier in the file.
+
+CC: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Fixes: 741c10b096bc ("kernfs: Use RCU to access kernfs_node::name.")
+Signed-off-by: James Morse <james.morse@arm.com>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+
 ---
-Patch 1 has been posted as a fix that should get picked up independently.
+Changes since v1:
+ * Add a word to a comment.
+---
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 48 +++++++++++++++-----------
+ 1 file changed, 27 insertions(+), 21 deletions(-)
 
-Patches X-Y should be squashed together when merged - they are posted like
-this to allow folk to re-generate patch N, then review the differences on
-top. Not squashing them together would expose a ftrace build warning
-during bisect. (but who does that!)
-That would look like this:
-git://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/move_to_fs/v8_final
-
-This series is based on rc1, and can be retrieved from:
-git://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/move_to_fs/v8
-
-This series renames functions and moves code around. With the
-exception of invalid configurations for the configurable-events, there should
-be no changes in behaviour caused by this series. It is now possible for
-throttle_mode to report 'undefined', but no known platform will do this.
-
-The driving pattern is to make things like struct rdtgroup private to resctrl.
-Features like pseudo-lock aren't going to work on arm64, the ability to disable
-it at compile time is added.
-
-After this, I can start posting the MPAM driver to make use of resctrl on arm64.
-(What's MPAM? See the cover letter of the first series. [1])
-
-As ever - bugs welcome,
-Thanks,
-
-James
-
-[v7] https://lore.kernel.org/all/20250228195913.24895-1-james.morse@arm.com/
-[v6] https://lore.kernel.org/lkml/20250207181823.6378-1-james.morse@arm.com/
-[v5] https://lore.kernel.org/r/20241004180347.19985-1-james.morse@arm.com
-[v4] https://lore.kernel.org/all/20240802172853.22529-1-james.morse@arm.com/
-[v3] https://lore.kernel.org/r/20240614150033.10454-1-james.morse@arm.com
-[v2] https://lore.kernel.org/r/20240426150537.8094-1-Dave.Martin@arm.com
-[v1] https://lore.kernel.org/r/20240321165106.31602-1-james.morse@arm.com
-[1] https://lore.kernel.org/lkml/20201030161120.227225-1-james.morse@arm.com/
-
-Amit Singh Tomar (1):
-  x86/resctrl: Remove the limit on the number of CLOSID
-
-Dave Martin (3):
-  x86/resctrl: Squelch whitespace anomalies in resctrl core code
-  x86/resctrl: Prefer alloc(sizeof(*foo)) idiom in rdt_init_fs_context()
-  x86/resctrl: Relax some asm #includes
-
-James Morse (17):
-  x86/resctrl: Fix rdtgroup_mkdir()'s unlocked use of kernfs_node::name
-  x86/resctrl: Rename resctrl_sched_in() to begin with "resctrl_arch_"
-  x86/resctrl: resctrl_exit() teardown resctrl but leave the mount point
-  x86/resctrl: Drop __init/__exit on assorted symbols
-  x86/resctrl: Move is_mba_sc() out of core.c
-  x86/resctrl: Add end-marker to the resctrl_event_id enum
-  x86/resctrl: Expand the width of dom_id by replacing mon_data_bits
-  x86/resctrl: Remove a newline to avoid confusing the code move script
-  x86/resctrl: Split trace.h
-  fs/resctrl: Add boiler plate for external resctrl code
-  x86/resctrl: Move the filesystem bits to headers visible to fs/resctrl
-  x86/resctrl: Always initialise rid field in rdt_resources_all[]
-  x86,fs/resctrl: Move the resctrl filesystem code to live in
-    /fs/resctrl
-  x86,fs/resctrl: Remove duplicated trace header files
-  fs/resctrl: Remove unnecessary includes
-  fs/resctrl: Change internal.h's header guard macros
-  x86,fs/resctrl: Move resctrl.rst to live under
-    Documentation/filesystems
-
- Documentation/arch/x86/index.rst              |    1 -
- Documentation/filesystems/index.rst           |    1 +
- .../{arch/x86 => filesystems}/resctrl.rst     |    0
- MAINTAINERS                                   |    3 +-
- arch/Kconfig                                  |    8 +
- arch/x86/Kconfig                              |   11 +-
- arch/x86/include/asm/resctrl.h                |    7 +-
- arch/x86/kernel/cpu/resctrl/Makefile          |    3 +
- arch/x86/kernel/cpu/resctrl/core.c            |   31 +-
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c     |  635 ---
- arch/x86/kernel/cpu/resctrl/internal.h        |  397 +-
- arch/x86/kernel/cpu/resctrl/monitor.c         |  909 +---
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c     | 1092 +---
- .../resctrl/{trace.h => pseudo_lock_trace.h}  |   26 +-
- arch/x86/kernel/cpu/resctrl/rdtgroup.c        | 4426 +----------------
- arch/x86/kernel/process_32.c                  |    2 +-
- arch/x86/kernel/process_64.c                  |    2 +-
- fs/Kconfig                                    |    1 +
- fs/Makefile                                   |    1 +
- fs/resctrl/Kconfig                            |   39 +
- fs/resctrl/Makefile                           |    6 +
- fs/resctrl/ctrlmondata.c                      |  660 +++
- fs/resctrl/internal.h                         |  440 ++
- fs/resctrl/monitor.c                          |  929 ++++
- fs/resctrl/monitor_trace.h                    |   33 +
- fs/resctrl/pseudo_lock.c                      | 1105 ++++
- fs/resctrl/rdtgroup.c                         | 4311 ++++++++++++++++
- include/linux/resctrl.h                       |   10 +-
- include/linux/resctrl_types.h                 |    5 +
- 29 files changed, 7731 insertions(+), 7363 deletions(-)
- rename Documentation/{arch/x86 => filesystems}/resctrl.rst (100%)
- rename arch/x86/kernel/cpu/resctrl/{trace.h => pseudo_lock_trace.h} (56%)
- create mode 100644 fs/resctrl/Kconfig
- create mode 100644 fs/resctrl/Makefile
- create mode 100644 fs/resctrl/ctrlmondata.c
- create mode 100644 fs/resctrl/internal.h
- create mode 100644 fs/resctrl/monitor.c
- create mode 100644 fs/resctrl/monitor_trace.h
- create mode 100644 fs/resctrl/pseudo_lock.c
- create mode 100644 fs/resctrl/rdtgroup.c
-
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 93ec829015f1..776c8e347654 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -3553,6 +3553,22 @@ static void mkdir_rdt_prepare_rmid_free(struct rdtgroup *rgrp)
+ 		free_rmid(rgrp->closid, rgrp->mon.rmid);
+ }
+ 
++/*
++ * We allow creating mon groups only with in a directory called "mon_groups"
++ * which is present in every ctrl_mon group. Check if this is a valid
++ * "mon_groups" directory.
++ *
++ * 1. The directory should be named "mon_groups".
++ * 2. The mon group itself should "not" be named "mon_groups".
++ *   This makes sure "mon_groups" directory always has a ctrl_mon group
++ *   as parent.
++ */
++static bool is_mon_groups(struct kernfs_node *kn, const char *name)
++{
++	return (!strcmp(rdt_kn_name(kn), "mon_groups") &&
++		strcmp(name, "mon_groups"));
++}
++
+ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 			     const char *name, umode_t mode,
+ 			     enum rdt_group_type rtype, struct rdtgroup **r)
+@@ -3568,6 +3584,15 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 		goto out_unlock;
+ 	}
+ 
++	/*
++	 * Check that the parent directory for a monitor group is a
++	 * "mon_groups" directory.
++	 */
++	if (rtype == RDTMON_GROUP && !is_mon_groups(parent_kn, name)) {
++		ret = -EPERM;
++		goto out_unlock;
++	}
++
+ 	if (rtype == RDTMON_GROUP &&
+ 	    (prdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP ||
+ 	     prdtgrp->mode == RDT_MODE_PSEUDO_LOCKED)) {
+@@ -3751,22 +3776,6 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+ 	return ret;
+ }
+ 
+-/*
+- * We allow creating mon groups only with in a directory called "mon_groups"
+- * which is present in every ctrl_mon group. Check if this is a valid
+- * "mon_groups" directory.
+- *
+- * 1. The directory should be named "mon_groups".
+- * 2. The mon group itself should "not" be named "mon_groups".
+- *   This makes sure "mon_groups" directory always has a ctrl_mon group
+- *   as parent.
+- */
+-static bool is_mon_groups(struct kernfs_node *kn, const char *name)
+-{
+-	return (!strcmp(rdt_kn_name(kn), "mon_groups") &&
+-		strcmp(name, "mon_groups"));
+-}
+-
+ static int rdtgroup_mkdir(struct kernfs_node *parent_kn, const char *name,
+ 			  umode_t mode)
+ {
+@@ -3782,11 +3791,8 @@ static int rdtgroup_mkdir(struct kernfs_node *parent_kn, const char *name,
+ 	if (resctrl_arch_alloc_capable() && parent_kn == rdtgroup_default.kn)
+ 		return rdtgroup_mkdir_ctrl_mon(parent_kn, name, mode);
+ 
+-	/*
+-	 * If RDT monitoring is supported and the parent directory is a valid
+-	 * "mon_groups" directory, add a monitoring subdirectory.
+-	 */
+-	if (resctrl_arch_mon_capable() && is_mon_groups(parent_kn, name))
++	/* Else, attempt to add a monitoring subdirectory. */
++	if (resctrl_arch_mon_capable())
+ 		return rdtgroup_mkdir_mon(parent_kn, name, mode);
+ 
+ 	return -EPERM;
 -- 
 2.20.1
 
