@@ -1,77 +1,51 @@
-Return-Path: <linux-kernel+bounces-599220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899B7A850F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 03:08:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F39A85100
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 03:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8BF4189F5F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 01:08:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 951441BA3E73
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 01:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C7A270EB1;
-	Fri, 11 Apr 2025 01:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF79F276022;
+	Fri, 11 Apr 2025 01:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkMpMzfL"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="XqOdX6U3"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DBB26FA5E;
-	Fri, 11 Apr 2025 01:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03462147E6;
+	Fri, 11 Apr 2025 01:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744333685; cv=none; b=MuDbhYPOKRVUft+MKEinRNpSHTBLTK7L5vOJegyJeEzDFVajBDASCx0kHgp5n/yWz+oZcQc6A0ny23XLaR6Pd1ZS4IUyI8iwEzmgFTauC8iIbA4QBYP7bKV+tZDJAn2GRyvFMvEPWpUEyT1CKhPKYQJCjSlJ9wq0C4DzuOP+x10=
+	t=1744333753; cv=none; b=rHp7M/mEOWhRFir/r/oT9h+HdQ/IMEcKSisycz/qMmmrgoVdSvKJrXR/ui/C3p9D6RF4xR4YW+Mz604elrgeSuez/bnT+d/WuF5ZZ0+2a9fi4D2ttuLlRXr1IcbKQtDcvX1zcWquQNerwjUXJJGSlH0aOjMDCC6KQnVsRJf/3TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744333685; c=relaxed/simple;
-	bh=mrG0fIf92a5Tp/jYDe7PfqHpOhbSZIQ4fkZvzhIho/s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Z8Pry1XpMZ+h+lu4POE4xhgAvCD0+xstuKXfuRogQIXY5kgrt4x1B0MLY3npnEk7ggAgzM8xdFAevegGYOWACRqF8JfE1Eu0hXyGTV8/5g1B3lPGPb4HdcHzrXsK3F1JrfmEi2TjP4Hzfwsueb7hhkGwdsDcxC1T+U/WzuGgboI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EkMpMzfL; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-227aaa82fafso11968425ad.2;
-        Thu, 10 Apr 2025 18:08:03 -0700 (PDT)
+	s=arc-20240116; t=1744333753; c=relaxed/simple;
+	bh=zZLrOshl7jtZigXcVzuG4B997DqzO0hNq3/wxtw6lag=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=B5AzL7TroAvWew0QS6Hq96HDjldpC9+PWKjnM1UnT4Hz0BY/H7hnaIqf/lYzJN1nXDiYpFYtde6RcSiNp1qE3HvWZSWV0LWC1vocjQR9Btjy7r2+3RrH8v9qIIAkErI7R7UgQ75JFMq4yjDxdXRWjWoHAlSirDT3Xm7PwoNzqi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=XqOdX6U3; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744333683; x=1744938483; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JGskHW7seL/P/rvGWfICBJ6oMmfUPuzdCOaSxJuegB4=;
-        b=EkMpMzfLEGbwsKPPw4DjDaUGkI06nO3nbwHs9sd9F9zmXvDk+OgPD8dR0BGcDWPJFB
-         9Jrky23t8r3Wr9H29TvH8KmEOtonJpwnVEMNRz1MkAiSLVBvCOeS7CADI6ulvy93O31H
-         Fkgp3atYBsceVUicmbKzv6UKsiEsqkHKf9q/sOucSh8+zgAcc7eLq8iZoLxyfcEemy9e
-         qWr77B+7f3ypEk2MoFdaC8J8Um8wUqQePC/bRE2AC1gijFswsDi7am9uLewu2HRAoHqE
-         sj+gqiAHLmQZXfwHNB6id5EADvgv3ngGYHNVLJoFktN5kcthl4wbjF1kJH6CVL3ihUvv
-         E2+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744333683; x=1744938483;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JGskHW7seL/P/rvGWfICBJ6oMmfUPuzdCOaSxJuegB4=;
-        b=FQOBX7tKFs4eJlaPL4eNHlAxKnwtDfGeAa9qbSqJVm+5xTDiljW5rOTJ857GTi9SI2
-         6H5DDnvgRdTkgmAR+ISPm6fcTpj6zCIWvKKKqasVsCjHtS2lwMyoakCnPZz42r85HXsV
-         BJ1ekSjl8ruJAwZPdurNm1GDPrrP3NOxgGYt7fWhq5FxGgYn0bqrbMI762YKHcs19HLh
-         DdaYdbQFaWwNa2FI0z+/koD0V+X0O6yjEJrR8JqUv/WYSJLqUcuBI8ATpIDXnxKe3FFM
-         dLzhAxXH/UyKpkfoNM/7NDCDJRyKs0Eh4yUTgcfh3rRkE/XbbsW2BirkWc7ej239kFrh
-         hXSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJsdJ8c4lGNbrsTMHJFaRtAZdALRLsUMOT8zu4aOH7TwiObAm0l1FjZM++VmWoDNP6od64qUdI+IcK9LfJfE1R@vger.kernel.org, AJvYcCX2TMvdAkG1cHF5ulLS2zmEJzcKNhveu0K8X/8tbN8L7QzNQhfldL9wYKqhGLA7S2Gf/U2teIP01Hh/0CU=@vger.kernel.org, AJvYcCX3UjeoWC5nSpAz3wNoZu7tBaoFgu2vKqOeLnXUiaIEAMSZtJ27qn4KkYh4TqJ+46qb/oO7Q4r2@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu3Iikr/Cf9CTtKuQ6b1sR/onb/Ah5svSAFeBGC48y+3SllZ3X
-	ymzxaE/m9GvqM5PtApfcRkGd7a5qu5Lg1sCYoYkmF4sHAqGiq7No
-X-Gm-Gg: ASbGnctdch2izJfoV/WxZKuJUJwv/rQ4+vP5G7uwKXPi/tQks5GrqgOIxsBANVm4gdu
-	LEEk36wdh9izIiVQ6QtOoQSwXT3Hgt7sS15YjEgmSQgph07KZG04/F9hJJDr9LfvhW3rOm6aVTO
-	/br/a6iJbAdMvs0ZqAyYzr6+JMih2fnl6s1KStjFFdheBxwKju+JT1NBPjWPdfjjrftgsG4iylJ
-	u8iGRPi8oZd3Y4XLgGoRpquFA90nQsI9WWCaXnHeug6kCBUfNE+KVtpV1d2AiHZ6G6PPhTz2YAo
-	D+FMb4ZF3aTFiyNxm5GbeNrksWKOZ9VIoV6V0GvE0lC2c2Bi
-X-Google-Smtp-Source: AGHT+IH/PJdoKYT0aClNeZ6cG3SrtolFbPxI7bcbU1N2WvGjdVh+AypnsqfR8vsaLdVrqlT/u61amQ==
-X-Received: by 2002:a17:902:cccc:b0:224:6ee:ad with SMTP id d9443c01a7336-22bea4fdc13mr12842955ad.44.1744333682871;
-        Thu, 10 Apr 2025 18:08:02 -0700 (PDT)
-Received: from localhost ([2a03:2880:2ff:6::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b8b2absm37564365ad.83.2025.04.10.18.08.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 18:08:01 -0700 (PDT)
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-Date: Thu, 10 Apr 2025 18:07:59 -0700
-Subject: [PATCH net-next] selftests/vsock: add initial vmtest.sh for vsock
+	d=codeconstruct.com.au; s=2022a; t=1744333747;
+	bh=owww72mo7rRa4HGyljLXSQgsg6KGAlIxseqdPKYlAm0=;
+	h=From:Subject:Date:To:Cc;
+	b=XqOdX6U3Cq0OakPdb4QSUC556jn3yncHePtbEtu0jYQLrwHC7TKOeZ0RPYiMGHHvW
+	 TN0bxeNNvhlBtp8tXolu6w0pxB+HhyYZ45q3WtAOZW5BZTCpFjl3cIl/AImVPxYzBY
+	 +tf2NTr8dXALLFL4N+70njc+TxSuzcXFxRqqHgp+q+hm772phcDm4IBaKG/iKOJj6g
+	 Jys/+azHbxTEL3e+t8R5XJN3hW1BGC7ea8rXFNmoMAGI/l8iu5GcSCuTHE4FaW9AIK
+	 fn07ZDMEA+xhsjsK2Tw8+Pn1c3SciinO7Dkp1vZnUNujcZCmD1vgZUjxMVbdgD/dQJ
+	 hJYJLUonN45MA==
+Received: from [127.0.1.1] (unknown [180.150.112.225])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 8D5237D705;
+	Fri, 11 Apr 2025 09:09:04 +0800 (AWST)
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+Subject: [PATCH 0/7] soc: aspeed: lpc-snoop: Miscellaneous fixes
+Date: Fri, 11 Apr 2025 10:38:30 +0930
+Message-Id: <20250411-aspeed-lpc-snoop-fixes-v1-0-64f522e3ad6f@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,332 +54,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250410-vsock-vmtest-v1-1-f35a81dab98c@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAG5r+GcC/x3MQQqDMBAF0KsMf+1AMuImVyld2DjVoTSWTAiCe
- Heh7wDvhGs1dSQ6UbWb216QKA6EvM1lVbYFiSBBpjDKxN33/OH+beqNX+MscZEYJAsGwq/q245
- /90DRxkWPhud13ZZ2ustoAAAA
-X-Change-ID: 20250325-vsock-vmtest-b3a21d2102c2
-To: Stefano Garzarella <sgarzare@redhat.com>, 
- Stefan Hajnoczi <stefanha@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: kvm@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
- netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- Bobby Eshleman <bobbyeshleman@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAI5r+GcC/y2M0QrCMBAEf6Xccw/SxELxV8SHkKx6IEnMWRFK/
+ 91DfZxZZjdSdIHScdio4yUqtRhM40DpFssVLNmYvPOzO7iJozYg870l1lJr44u8oYw5+2UJOYY
+ YyOLW8R2sPZ1/3PFY7f/5l/v+AWm6cWJ9AAAA
+X-Change-ID: 20250401-aspeed-lpc-snoop-fixes-e5d2883da3a3
+To: linux-aspeed@lists.ozlabs.org
+Cc: Joel Stanley <joel@jms.id.au>, Henry Martin <bsdhenrymartin@gmail.com>, 
+ Jean Delvare <jdelvare@suse.de>, 
+ Patrick Rudolph <patrick.rudolph@9elements.com>, 
+ Andrew Geissler <geissonator@yahoo.com>, 
+ Ninad Palsule <ninad@linux.ibm.com>, Patrick Venture <venture@google.com>, 
+ Robert Lippert <roblip@gmail.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ stable@vger.kernel.org
 X-Mailer: b4 0.14.2
 
-This commit introduces a new vmtest.sh runner for vsock.
+Henry's bug[1] and fix[2] prompted some further inspection by
+Jean.
 
-It uses virtme-ng/qemu to run tests in a VM. The tests are designed to
-validate both G2H and H2G paths. The testing tools from tools from
-tools/testing/vsock/ are reused. Currently, only vsock_test is used.
+This series provides fixes for the remaining issues Jean identified, as
+well as reworking the channel paths to reduce cleanup required in error
+paths. It is based on the tree at[3].
 
-Only tested on x86.
+Lightly tested on an AST2600 EVB. Further testing on platforms
+designed around the snoop device appreciated.
 
-To run:
+[1]: https://bugzilla.kernel.org/show_bug.cgi?id=219934
+[2]: https://lore.kernel.org/all/20250401074647.21300-1-bsdhenrymartin@gmail.com/
+[3]: https://git.kernel.org/pub/scm/linux/kernel/git/arj/bmc.git/log/?h=aspeed/drivers
 
-  $ tools/testing/selftests/vsock/vmtest.sh
-
-Signed-off-by: Bobby Eshleman <bobbyeshleman@gmail.com>
+Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
 ---
- MAINTAINERS                                |   1 +
- tools/testing/selftests/vsock/.gitignore   |   1 +
- tools/testing/selftests/vsock/config.vsock |   6 +
- tools/testing/selftests/vsock/vmtest.sh    | 247 +++++++++++++++++++++++++++++
- 4 files changed, 255 insertions(+)
+Andrew Jeffery (7):
+      soc: aspeed: lpc-snoop: Cleanup resources in stack-order
+      soc: aspeed: lpc-snoop: Don't disable channels that aren't enabled
+      soc: aspeed: lpc-snoop: Ensure model_data is valid
+      soc: aspeed: lpc-snoop: Constrain parameters in channel paths
+      soc: aspeed: lpc-snoop: Rename 'channel' to 'index' in channel paths
+      soc: aspeed: lpc-snoop: Rearrange channel paths
+      soc: aspeed: lpc-snoop: Lift channel config to const structs
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c3fce441672349f7850c57d788bc1a29b203fba5..f214cf7c4fb59ec67885ee6c81daa44e17c80f5f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25323,6 +25323,7 @@ F:	include/uapi/linux/vm_sockets.h
- F:	include/uapi/linux/vm_sockets_diag.h
- F:	include/uapi/linux/vsockmon.h
- F:	net/vmw_vsock/
-+F:	tools/testing/selftests/vsock/
- F:	tools/testing/vsock/
- 
- VMALLOC
-diff --git a/tools/testing/selftests/vsock/.gitignore b/tools/testing/selftests/vsock/.gitignore
-new file mode 100644
-index 0000000000000000000000000000000000000000..1950aa8ac68c0831c12c1aaa429da45bbe41e60f
---- /dev/null
-+++ b/tools/testing/selftests/vsock/.gitignore
-@@ -0,0 +1 @@
-+vsock_selftests.log
-diff --git a/tools/testing/selftests/vsock/config.vsock b/tools/testing/selftests/vsock/config.vsock
-new file mode 100644
-index 0000000000000000000000000000000000000000..a229c329d44e4a0b650d073b74949b577da3dc64
---- /dev/null
-+++ b/tools/testing/selftests/vsock/config.vsock
-@@ -0,0 +1,6 @@
-+CONFIG_VSOCKETS=y
-+CONFIG_VSOCKETS_DIAG=y
-+CONFIG_VSOCKETS_LOOPBACK=y
-+CONFIG_VIRTIO_VSOCKETS=y
-+CONFIG_VIRTIO_VSOCKETS_COMMON=y
-+CONFIG_VHOST_VSOCK=y
-diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
-new file mode 100755
-index 0000000000000000000000000000000000000000..f2dafcb893232f95ebb22104a62ce1e0312f4e89
---- /dev/null
-+++ b/tools/testing/selftests/vsock/vmtest.sh
-@@ -0,0 +1,247 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (c) 2025 Meta Platforms, Inc. and affiliates
-+#
-+# Dependencies:
-+#		* virtme-ng
-+#		* busybox-static (used by virtme-ng)
-+#		* qemu	(used by virtme-ng)
-+
-+SCRIPT_DIR="$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
-+KERNEL_CHECKOUT=$(realpath ${SCRIPT_DIR}/../../../..)
-+PLATFORM=${PLATFORM:-$(uname -m)}
-+
-+if [[ -z "${QEMU:-}" ]]; then
-+	QEMU=$(which qemu-system-${PLATFORM})
-+fi
-+
-+VSOCK_TEST=${KERNEL_CHECKOUT}/tools/testing/vsock/vsock_test
-+
-+TEST_GUEST_PORT=51000
-+TEST_HOST_PORT=50000
-+TEST_HOST_PORT_LISTENER=50001
-+SSH_GUEST_PORT=22
-+SSH_HOST_PORT=2222
-+VSOCK_CID=1234
-+
-+QEMU_PIDFILE=/tmp/qemu.pid
-+
-+# virtme-ng offers a netdev for ssh when using "--ssh", but we also need a
-+# control port forwarded for vsock_test.  Because virtme-ng doesn't support
-+# adding an additional port to forward to the device created from "--ssh" and
-+# virtme-init mistakenly sets identical IPs to the ssh device and additional
-+# devices, we instead opt out of using --ssh, add the device manually, and also
-+# add the kernel cmdline options that virtme-init uses to setup the interface.
-+QEMU_OPTS=""
-+QEMU_OPTS="${QEMU_OPTS} -netdev user,id=n0,hostfwd=tcp::${TEST_HOST_PORT}-:${TEST_GUEST_PORT}"
-+QEMU_OPTS="${QEMU_OPTS},hostfwd=tcp::${SSH_HOST_PORT}-:${SSH_GUEST_PORT}"
-+QEMU_OPTS="${QEMU_OPTS} -device virtio-net-pci,netdev=n0"
-+QEMU_OPTS="${QEMU_OPTS} -device vhost-vsock-pci,guest-cid=${VSOCK_CID}"
-+QEMU_OPTS="${QEMU_OPTS} --pidfile ${QEMU_PIDFILE}"
-+KERNEL_CMDLINE="virtme.dhcp net.ifnames=0 biosdevname=0 virtme.ssh virtme_ssh_user=$USER"
-+
-+LOG=${SCRIPT_DIR}/vsock_selftests.log
-+
-+#		Name				Description
-+tests="
-+	vm_server_host_client			Run vsock_test in server mode on the VM and in client mode on the host.
-+	vm_client_host_server			Run vsock_test in client mode on the VM and in server mode on the host.
-+"
-+
-+usage() {
-+	echo
-+	echo "$0 [OPTIONS]"
-+	echo
-+	echo "Options"
-+	echo "  -v: verbose output"
-+	echo
-+	echo "Available tests${tests}"
-+	exit 1
-+}
-+
-+die() {
-+	echo "$*" >&2
-+	exit 1
-+}
-+
-+vm_ssh() {
-+	ssh -q -o UserKnownHostsFile=/dev/null -p 2222 localhost $*
-+	return $?
-+}
-+
-+cleanup() {
-+	if [[ -f "${QEMU_PIDFILE}" ]]; then
-+		pkill -9 -F ${QEMU_PIDFILE} 2>&1 >/dev/null
-+	fi
-+}
-+
-+build() {
-+	log_setup "Building kernel and tests"
-+
-+	pushd ${KERNEL_CHECKOUT} >/dev/null
-+	vng \
-+		--kconfig \
-+		--config ${KERNEL_CHECKOUT}/tools/testing/selftests/vsock/config.vsock
-+	make -j$(nproc)
-+	make -C ${KERNEL_CHECKOUT}/tools/testing/vsock
-+	popd >/dev/null
-+	echo
-+}
-+
-+vm_setup() {
-+	local VNG_OPTS=""
-+	if [[ "${VERBOSE}" = 1 ]]; then
-+		VNG_OPTS="--verbose"
-+	fi
-+	vng \
-+		$VNG_OPTS	\
-+		--run ~/local/linux \
-+		--qemu /bin/qemu-system-x86_64 \
-+		--qemu-opts="${QEMU_OPTS}" \
-+		--user root \
-+		--append "${KERNEL_CMDLINE}" \
-+		--rw  2>&1 >/dev/null &
-+}
-+
-+vm_wait_for_ssh() {
-+	i=0
-+	while [[ true ]]; do
-+		if (( i > 20 )); then
-+			die "Timed out waiting for guest ssh"
-+		fi
-+		vm_ssh -- true
-+		if [[ $? -eq 0 ]]; then
-+			break
-+		fi
-+		i=$(( i + 1 ))
-+		sleep 5
-+	done
-+}
-+
-+wait_for_listener() {
-+	local PORT=$1
-+	local i=0
-+	while ! ss -ltn | grep -q ":${PORT}"; do
-+		if (( i > 30 )); then
-+			die "Timed out waiting for listener on port ${PORT}"
-+		fi
-+		sleep 3
-+		i=$(( i + 1 ))
-+	done
-+}
-+
-+vm_wait_for_listener() {
-+	vm_ssh -- "$(declare -f wait_for_listener); wait_for_listener ${TEST_GUEST_PORT}"
-+}
-+
-+host_wait_for_listener() {
-+	wait_for_listener ${TEST_HOST_LISTENER_PORT}
-+}
-+
-+log() {
-+	local prefix="$1"
-+	shift
-+
-+	if [[ "$#" -eq 0 ]]; then
-+		cat | awk '{ printf "%s:\t%s\n","'"${prefix}"'", $0 }' | tee -a ${LOG}
-+	else
-+		echo "$*" | awk '{ printf "%s:\t%s\n","'"${prefix}"'", $0 }' | tee -a ${LOG}
-+	fi
-+}
-+
-+log_setup() {
-+	log "setup" "$@"
-+}
-+
-+log_host() {
-+	testname=$1
-+	shift
-+	log "test:${testname}:host" "$@"
-+}
-+
-+log_guest() {
-+	testname=$1
-+	shift
-+	log "test:${testname}:guest" "$@"
-+}
-+
-+test_vm_server_host_client() {
-+	local testname="vm_server_host_client"
-+	vm_ssh -- "${VSOCK_TEST}" \
-+							--mode=server \
-+							--control-port="${TEST_GUEST_PORT}" \
-+							--peer-cid=2 \
-+							2>&1 | log_guest "${testname}" &
-+
-+	vm_wait_for_listener
-+	${VSOCK_TEST}	\
-+		--mode=client	\
-+		--control-host=127.0.0.1	\
-+		--peer-cid="${VSOCK_CID}"	\
-+		--control-port="${TEST_HOST_PORT}" 2>&1 | log_host "${testname}"
-+
-+	rc=$?
-+}
-+
-+test_vm_client_host_server() {
-+	local testname="vm_client_host_server"
-+
-+	${VSOCK_TEST}	\
-+		--mode "server" \
-+		--control-port "${TEST_HOST_PORT_LISTENER}" \
-+		--peer-cid "${VSOCK_CID}" 2>&1 | log_host "${testname}" &
-+
-+	host_wait_for_listener
-+
-+	vm_ssh -- "${VSOCK_TEST}"	\
-+		--mode=client	\
-+		--control-host=10.0.2.2	\
-+		--peer-cid=2	\
-+		--control-port="${TEST_HOST_PORT_LISTENER}" 2>&1 | log_guest "${testname}"
-+
-+	rc=$?
-+}
-+
-+run_test() {
-+	unset IFS
-+	name=$(echo "${1}" | awk '{ print $1 }')
-+	eval test_"${name}"
-+}
-+
-+while getopts :hv o
-+do
-+	case $o in
-+	v) VERBOSE=1;;
-+	h|*) usage;;
-+	esac
-+done
-+shift $((OPTIND-1))
-+
-+trap cleanup EXIT
-+
-+> ${LOG}
-+build
-+log_setup "Booting up VM"
-+vm_setup
-+vm_wait_for_ssh
-+log_setup "VM booted up"
-+
-+IFS="
-+"
-+cnt=0
-+for t in ${tests}; do
-+	rc=0
-+	run_test "${t}"
-+	if [[ ${rc} != 0 ]]; then
-+		cnt=$(( cnt + 1 ))
-+	fi
-+done
-+
-+if [[ ${cnt} = 0 ]]; then
-+	echo OK
-+else
-+	echo FAILED: ${cnt}
-+fi
-+echo "Log: ${LOG}"
-+exit ${cnt}
-
+ drivers/soc/aspeed/aspeed-lpc-snoop.c | 149 ++++++++++++++++++++--------------
+ 1 file changed, 88 insertions(+), 61 deletions(-)
 ---
-base-commit: cc04ed502457412960d215b9cd55f0d966fda255
-change-id: 20250325-vsock-vmtest-b3a21d2102c2
+base-commit: f3089a4fc24777ea2fccdf4ffc84732b1da65bdc
+change-id: 20250401-aspeed-lpc-snoop-fixes-e5d2883da3a3
 
 Best regards,
 -- 
-Bobby Eshleman <bobbyeshleman@gmail.com>
+Andrew Jeffery <andrew@codeconstruct.com.au>
 
 
