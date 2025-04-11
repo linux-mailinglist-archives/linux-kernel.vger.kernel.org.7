@@ -1,173 +1,148 @@
-Return-Path: <linux-kernel+bounces-600421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 099B0A85FC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:56:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C16ACA85FB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49DD33AC75D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:50:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2CFD1709BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60B61EFFB8;
-	Fri, 11 Apr 2025 13:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0A619E826;
+	Fri, 11 Apr 2025 13:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="lynEyBVh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XHXPK9Yc"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Z97W3Gzr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oQCKUMTK"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7218C1C3BEB;
-	Fri, 11 Apr 2025 13:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B442367A9;
+	Fri, 11 Apr 2025 13:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744379457; cv=none; b=N0gwma7Skw0kxG5g8wQH+vPwBbZNVJA1mnpQXr5JU7c0QA3/ebI3u6VorFNtNak40s/a4CRqWG5YTwBWUNDQ0EphB4viW2Sm/pe+aD4gJZVOa5LA2CKWzuVTQC8dw/p1FQtI+O4mgoQYzB2WcvTWcHc3oeXWHWoaC0n8MMXaNmg=
+	t=1744379566; cv=none; b=p22EWpOUmEolUr4WmWscevV2V83WwSpIL+Q0Yyoa+I9V1R+inC0lHzG3r2TKtWA2d0nWtMuYDFo78w9ixRPUeOpvENqE2BwPZQNjqskpsk75waViP6o+qSDSmfK15Ss7kWNPMM8NaRDRu6b7HeE/+nIgP5sR4Jx475aVpazA6Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744379457; c=relaxed/simple;
-	bh=qtOV60ECJZu9Fi40Bf5lH+RBr8bVEl7SPzPMLSpbslo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TtgGemACEBpDKCsa8KvWOynEi4Z3HFuBLTNxRcFgWSqFCBe9DMJhxZzf0C9a8qJpV9uTesi9YVDWj3W2YYo9Od7+Gzo9gnbWJvbmEZJ6HAzrCYGTtZvdquumMXDYJ7WSeH0lI044U3a4v5g2NcGlX/5sgZZCDNObJUsSP+qV8AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=lynEyBVh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XHXPK9Yc; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6439B13802B1;
-	Fri, 11 Apr 2025 09:50:53 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Fri, 11 Apr 2025 09:50:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1744379453; x=
-	1744465853; bh=Y1OSHZSZRnVHTncatSZJml8c2A69m+s5Vr0UXqqvqfQ=; b=l
-	ynEyBVhe4Sz+Xi3AgsWBDOxUNFh1FL2InBt59AGa0xdbXkhQbP3Py3G+rIiJ/muD
-	uUAx72fAM68BKOMI8SsflJXBdxdj8iF7hYB2VSn68oEezdOA2JM5hcXzTwxLBw5+
-	SUh/HUyGIlm5+gmzhvGNkztrKNXmm5+oQJ++g8Jq2YZak3QJMX9tTyEOtg5Wp51M
-	8VaAFzToLV4boXfRtUsOmCkzUKIhUH170zQez89cehVjTQ4SEHlu2TOaG4BA6nae
-	khQRT9xB5xdWFvwbWWFtqW3DyxL9UOc3xESSWCzs6iuCEKYtb20kaoKxP2COSmvl
-	g0m//ZjNJJt3JEpbQzMCA==
+	s=arc-20240116; t=1744379566; c=relaxed/simple;
+	bh=3G+rGOtpQ0mNF/iZgsPQoMZrNlVHNf+NfdoAhIm0n9o=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=M7f48uU5ZK0hbTu5tqMMoDEFNHteAlNYhV5bNy+IwpWmnVnGGfbon/9RNs0LUte5BEIQNpOZJB2fkz0G2haPBoJ9+AL6fuYWVBgs71Tm9nJ4/LWpTc8fKhi7N29zApdvW0zRHPvEDoH5RV5tcdCs0tWQaH9Qjl6mA4OqDP2Tez0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Z97W3Gzr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oQCKUMTK; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 626F81140289;
+	Fri, 11 Apr 2025 09:52:43 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-05.internal (MEProxy); Fri, 11 Apr 2025 09:52:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1744379563;
+	 x=1744465963; bh=M4cYLoC/D6jghjX4s8EBmGsHgbHlWKjK5fbsRmO/s0w=; b=
+	Z97W3Gzrz8RAPdOFy81h/QbtEYQQAupnEefJrGB2L3FG2Qryy2pboq23+W+TkOB5
+	h5/NkPNxyb9yRF4O+wF9RtzoSdmFEGHbHemZcJ6mZOK/FnHuS+UA6s1VlffduSMd
+	GU83h/Xaqm/8XSvEH9Cm8yzyZk6+fABS9mSQbIO0lEoiQX19X9ab3VouE7JrVKZ8
+	oDmhlTt599h+4bcrXthGZ+jIIdScW23IYMKkfRzeUzr+TnUANGz9wUcCNKmddN1Q
+	G9LCOFmm+6NmEjwfldOgZa8G1NgOis7pcg1HwsyIsp3Q07OGZoM9zh8/H5St21f6
+	Kw0boS0iah8Ny6sCktwxPA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1744379453; x=1744465853; bh=Y1OSHZSZRnVHTncatSZJml8c2A69m+s5Vr0
-	UXqqvqfQ=; b=XHXPK9Yci0zzoHLVvgAwg6ZA28WsHFw+TPedlNEN/8jdvkxE+ue
-	Q2yja/SAS3xV1Ys8uqmqQpFHaPYNWPFDqmVrQpj5eXhg+CY35o6px4EKw+6T14aW
-	Rv+H7v7H/jrWjOm6s7zo1mD/SDGftbgh2h87SFkvG8Q3cmfDx1i7LBp7bMv2fEeG
-	gkxuiiS4bdRiI+ihbVi+/PhvkYTwktIL/4xlRcXQZjQTzHmwWw+pqjHMTxhFAJrn
-	LiyDV8qg+UnkDQZ53OKIOvLJkzCbQ7zHGEC3C7F3uk/GweJYrU2AxfZ+BOpRIFWB
-	HPgS65+AuPKK86Drjw8VCedc4H4py3RJ/qA==
-X-ME-Sender: <xms:PB75Z3PdTJWbL-EYX19JeLDwA77yl_nbEC3AUrCvQdrLM5Dw8OQyvA>
-    <xme:PB75Zx-4qciYr6TILHli5NCvqcg72ZXbvOHQgnYIxKiN_oqR_dB3GX08Xg7Rh3Ixz
-    j7PjHDXRniOeGiQtMM>
-X-ME-Received: <xmr:PB75Z2SXo4FLPtLgP3cE6RJRZFw92yb4F_2ChNYkc5tPDtP2kv5i8KDHkcxb>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvudduleekucetufdoteggodetrf
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744379563; x=
+	1744465963; bh=M4cYLoC/D6jghjX4s8EBmGsHgbHlWKjK5fbsRmO/s0w=; b=o
+	QCKUMTKdorVQ97mGiqq+VmMQx1doraGN581GuFE5wXgDOllc7gWx1kaFhn1v1pAp
+	Uzuhi0O43yEPpkrCT24S2xuOSOw3aCLa6f+tQsoOpuWiT4tO5E4yQ2kNwRneBA+J
+	pXykANAlov1b5iceCWciBMoUYQwSQz5U6frhtuDYxxXKNRuH6K8cd88PMEZI0Ycf
+	k7W4H/DL0pKw3Yyo/h0A253zW8uPesbEzkkbofg5g1Lix7cJrPr7+Z4rneb80t0B
+	UpqoOLCbZQ9ceDRL7nFSRyR5tIc54Pu/1LZ1Uzsm3ZiT4kB1p53Sbfygu2vbE/G/
+	sazXu5BGhosgDjdHjFXIg==
+X-ME-Sender: <xms:qx75Z6z0ZccqpK4iKRXU0l-Cwq85FAVxa9KW55CrzLNP5oU4mPrOQQ>
+    <xme:qx75Z2TRwX7hJperg2O7xzLwHz5_KB6Ei85DzdFjx51vAYmNQ4WoQgsBbun2rl4G5
+    vXS5IxZgXteJBUyxdA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvudduleejucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
     pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
-    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
-    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
-    sggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
-    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehp
-    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
-    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
-    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
-X-ME-Proxy: <xmx:PB75Z7u5vrlCWPEgZTQsqDxNamNyQkNBDuL0n0IXaH8LXqRleJZCiA>
-    <xmx:PB75Z_faug92tfCJp0aKdS57AkNXwJ0P11VU0mwuKnqz7FzwrU5GeA>
-    <xmx:PB75Z33B4yHa1LlSkzJ-o-9W3PKUeMMklwsDAoqjWDC2chNLdoGcTw>
-    <xmx:PB75Z79BqUUcq0xQYbFg3nn2Sj4DmiSy_fOEwUu_oNrBtEMe9KP0Tg>
-    <xmx:PR75Z6rliDh_6ma4bSc2SFswX7tQTDhYEiTk5D2w52UXpS81YpxnnaTy>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 11 Apr 2025 09:50:51 -0400 (EDT)
-Date: Fri, 11 Apr 2025 15:50:49 +0200
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
-	steffen.klassert@secunet.com, antony.antony@secunet.com
-Subject: Re: [PATCH net-next v25 01/23] net: introduce OpenVPN Data Channel
- Offload (ovpn)
-Message-ID: <Z_keORW4OWc8i5Vz@krikkit>
-References: <20250407-b4-ovpn-v25-0-a04eae86e016@openvpn.net>
- <20250407-b4-ovpn-v25-1-a04eae86e016@openvpn.net>
- <20250410195440.3ba7ba0f@kernel.org>
- <f11e8a14-deb0-456f-bb4a-b5e4e16a79d7@openvpn.net>
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhepgefgjedujedvieejgeelgfdthfduffeiteef
+    udeghfffkeejfeehtdejfeejteefnecuffhomhgrihhnpehgihhthhhusgdrtghomhenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
+    rghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpd
+    hrtghpthhtoheprghkshhhrgihrdhguhhpthgrsegrmhgurdgtohhmpdhrtghpthhtohep
+    rghnrghnugdruhhmrghrjhhisegrmhgurdgtohhmpdhrtghpthhtohepghgruhhthhgrmh
+    drshhhvghnohihsegrmhgurdgtohhmpdhrtghpthhtohepmhgrrhhiohdrlhhimhhonhgt
+    ihgvlhhlohesrghmugdrtghomhdprhgtphhtthhopehnrghvvggvnhhkrhhishhhnhgrrd
+    gthhgrthhrrgguhhhisegrmhgurdgtohhmpdhrtghpthhtohepshhhhigrmhdqshhunhgu
+    rghrrdhsqdhksegrmhgurdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfh
+    houhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugiesrhhovggtkhdquhhs
+    rdhnvghtpdhrtghpthhtoheplhhinhhugidqhhifmhhonhesvhhgvghrrdhkvghrnhgvlh
+    drohhrgh
+X-ME-Proxy: <xmx:qx75Z8VXNtJNzJ2YJ55XuCapjIBu1HDfD2Tc1MAuC77CC9Cy2l9Rdw>
+    <xmx:qx75ZwjJfVjDqJq57oE6lkJppWyC2AFR4M2Gf5kTZiqWsJ78-6RhLw>
+    <xmx:qx75Z8CMzy-zOhCSymzat7CF4XoQQqUYOPKVV4kP-OwHXsaxCEOO0Q>
+    <xmx:qx75ZxIKupWZUEL4oIYR1DjUeqD0bIzTU359XtzJRrNZsHNIwh-yrA>
+    <xmx:qx75Z6GELtD11maDUdns3H9hkHOke9EEXGRn4793jSFTNUvT3wULqTyu>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id F08AE2220075; Fri, 11 Apr 2025 09:52:42 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f11e8a14-deb0-456f-bb4a-b5e4e16a79d7@openvpn.net>
+X-ThreadId: Taae6db3719bf4444
+Date: Fri, 11 Apr 2025 15:51:55 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Akshay Gupta" <akshay.gupta@amd.com>, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: "Guenter Roeck" <linux@roeck-us.net>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, shyam-sundar.s-k@amd.com,
+ gautham.shenoy@amd.com, "Mario Limonciello" <mario.limonciello@amd.com>,
+ naveenkrishna.chatradhi@amd.com, anand.umarji@amd.com
+Message-Id: <06b76e0f-0b47-47ea-a48f-2bf09ac4a62c@app.fastmail.com>
+In-Reply-To: <20250411133122.1806991-1-akshay.gupta@amd.com>
+References: <20250411133122.1806991-1-akshay.gupta@amd.com>
+Subject: Re: [PATCH v8 00/10] misc: Move AMD side band interface(SBI) functionality
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-2025-04-11, 10:04:10 +0200, Antonio Quartulli wrote:
-> Hi Jakub,
-> 
-> thanks for taking the time to go through my patchset :)
-> 
-> On 11/04/2025 04:54, Jakub Kicinski wrote:
-> > On Mon, 07 Apr 2025 21:46:09 +0200 Antonio Quartulli wrote:
-> > > +static int ovpn_netdev_notifier_call(struct notifier_block *nb,
-> > > +				     unsigned long state, void *ptr)
-> > > +{
-> > > +	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
-> > > +
-> > > +	if (!ovpn_dev_is_valid(dev))
-> > > +		return NOTIFY_DONE;
-> > > +
-> > > +	switch (state) {
-> > > +	case NETDEV_REGISTER:
-> > > +		/* add device to internal list for later destruction upon
-> > > +		 * unregistration
-> > > +		 */
-> > > +		break;
-> > > +	case NETDEV_UNREGISTER:
-> > > +		/* can be delivered multiple times, so check registered flag,
-> > > +		 * then destroy the interface
-> > > +		 */
-> > > +		break;
-> > > +	case NETDEV_POST_INIT:
-> > > +	case NETDEV_GOING_DOWN:
-> > > +	case NETDEV_DOWN:
-> > > +	case NETDEV_UP:
-> > > +	case NETDEV_PRE_UP:
-> > > +	default:
-> > > +		return NOTIFY_DONE;
-> > > +	}
-> > 
-> > Why are you using a notifier to get events for your own device?
-> 
-> My understanding is that this is the standard approach to:
-> 1) hook in the middle of registration/deregistration;
-> 2) handle events generated by other components/routines.
-> 
-> I see in /drivers/net/ almost every driver registers a notifier for their
-> own device.
+On Fri, Apr 11, 2025, at 15:31, Akshay Gupta wrote:
+> At present, sbrmi driver under hwmon subsystem, is probed as an i2c 
+> driver,
+> fetches data using APML specified protocol and reports through hwmon 
+> power sensor.
+>
+> AMD provides additional information using custom protocols, which cannot be
+> enumerated as hwmon sensors. Hence, move the existing functionality from hwmon/
+> to misc/ and add support for following custom protocols
+>   - read Processor feature capabilities and configuration information
+>     through side band.
+>   - read Machine Check Architecture(MCA) registers over sideband.
+>     The information is accessed for range of MCA registers by passing
+>     register address and thread ID to the protocol.
+>
+> NOTE: AMD defines Advanced Platform Management Link (APML) interface 
+> which provides
+> system management functionality access to the baseboard management
+> controller (BMC).
 
-I think most of them register a notifier for their lower device
-(bridge port, real device under a vlan, or similar).
+I think this addresses all my comments, thanks for the update.
 
-I've mentioned at some point that it would be more usual to replace
-this notifier with a custom dellink, and that ovpn->registered could
-likely be replaced with checking for NETREG_REGISTERED. I just thought
-it could be cleaned up a bit later, but it seems Jakub wants it done
-before taking the patches :)
+> Open-sourced and widely used [1]_ will continue to provide user-space 
+> programmable API.
+>
+> .. [1] https://github.com/amd/esmi_oob_library
 
--- 
-Sabrina
+I'm still a little uneasy about the low-level mailbox interface
+being exposed in a character device, but assuming that everyone
+else is fine with having that in principle, I think the way the
+interface is structured in this version is good enough.
+
+     Arnd
 
