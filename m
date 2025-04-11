@@ -1,214 +1,291 @@
-Return-Path: <linux-kernel+bounces-600805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72A4A8649F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:25:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910BEA864A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9F4E4A7A0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:24:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA61B7B09C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB362063D2;
-	Fri, 11 Apr 2025 17:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9425621D3F0;
+	Fri, 11 Apr 2025 17:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IdYbiTCz"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ahi7LpIQ"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2052.outbound.protection.outlook.com [40.107.236.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0EC2367D0
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 17:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744392285; cv=none; b=i9O3gfE+MVz4BkEGJhRgcplWNUaC9hOqplsYXRF+MvGh/2iX/L1ZF68hUeMWqtMnQXS5mqSdc8TKxxipCwS+43B2XGXUWk3rg0n70uZUfjpPXMZ8B0smq6eQd0rmZF8OCghebWW1oDFS89ilMx1aGXNV5/NmeboscGiDQF05nXI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744392285; c=relaxed/simple;
-	bh=38UxqAXTsRL4eRRrOygpyBxfUJcAVn117NRuZ1h10Ks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dhD7QhCnMuuJm9n2LRZo8GUxLB4cOBqinCG03BDjbnV/WmddrU4v1rLKGWSnZBOT2/pUaopncYsPQbaS1WE7WfMO7g9rZ2wyyaG8uS+3A8pplKGNrAQenhAsiLpYYUSPhSOv13uiww7OVGvasIcarDHRDP5XMLwgcogWm3gmjcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IdYbiTCz; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 11 Apr 2025 13:24:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744392270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sjRmd7vgdBv/Es3659/pi4UqNEvqw4n3yknzAk512eo=;
-	b=IdYbiTCzr5f+/K8yS6n1T+RuE8UfPErx4jkgNC+BSvPjfAJsgClbLhZhYveuZda6kZ/KEQ
-	HwjH2r/KEceVnx7Nj1+DQ6oJROCuxDRBsspDEPl4QZi6/oorU4edW4pHnRZijzdnHhpuBJ
-	3zxagvb4c1a98y+zzmQ8pWsqxHWczTE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Charalampos Mitrodimas <charmitro@posteo.net>
-Cc: syzbot <syzbot+baee8591f336cab0958b@syzkaller.appspotmail.com>, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] general protection fault in
- bch2_snapshot_tree_oldest_subvol
-Message-ID: <5twx4p2qjzj3d3ercotdav5ahftdmlabbwytxutzvyvti5m2xk@nehikibehi4d>
-References: <67eef48d.050a0220.9040b.0262.GAE@google.com>
- <m2o6x2r9s1.fsf@posteo.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D122367D0;
+	Fri, 11 Apr 2025 17:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744392322; cv=fail; b=ZnYH+LHZOmC2jxRra6iwDp+oZBo86bjkWO7VD2KyMhZNgGKMkZa27RdLn1neXl+sXVHPVRBRC7A/FFecjLuHHGYhDndWMLWvEDzRaKeFrUypOGZmFh6WtenWa0hIS8jE0Z0UrOSDUl2UJyEYqp+rp+EObUIVq8lKQOYLLbZqVNA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744392322; c=relaxed/simple;
+	bh=oGtcKkhPKlbtqjUxB3crMGCXBC5U81vg3SQVKTUtFgQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=CBGJ8Ih5Den8d6RWng+2WZB1M7A6MUE+MZlQp0Jhf1oo3q5e6EsMcejlhNXV8TL6X//+05O3GyYd1ubTRBYrFX8NEob4JPtR2scaSHz8ZkBcaGPaJ5brBAHtn3QnsFQYFike0H97doOMIoJKJHqBe7ykTbjweydfoQnFPH8+b10=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ahi7LpIQ; arc=fail smtp.client-ip=40.107.236.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c66VxcZgbAVusp4N5dO0uy5gX+IeQHZ0SVKth27GCx3+7Ma0sd9iMlqH9yAwnRSKHn7byEGNsd2R4ZrjDmW9UE9CZh132ROBT6FVYFR8v+vFYxaiLH8MiUbmPU7ZglHUzKsdjn5UIH1QpY2Yg8K8D2DeNmTBlsLcJwwMOJcg3O+sDoaUn82NktCTLzK/Phq43y9Wbr9QJIWJ9yHF2ntyn5n3FWcOX/hYXz0udLOz9xc/s2zw2TxyAyBTQoFXqlfSbWK0QxN0P5YexOiqhPC816wfFT9FIKZBictkpDSRTIqFJYts5Ta/X5ZmYm49/xq0VMJyP1g8P4NmuIPjUbfv7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YEZ93H7wRpJd9s5DuYKg1vq0bhxrUbKCeZu+4iF1FMU=;
+ b=U0v/sW+xKA9lVGiOevp0SGtdZQxjtGstNSoMSV7hLlDjDk3A17NszEdsLhs5IcnzS1YAmyvAhdzNBtI71mGH1hGJ++LkpXsnNIdqauL5czsch/hZuBCoKFqUnaYknyuoDPb8OFLiObFDQN0KOZvBvePCgR177bS2H6/uXpaAekky7IcQjvUfU1m0YzCVS5d3ePjKjp4+eiiwCcz6N/0QQuZTc8LLFgpCWkuGJv00xu6FcreKCFBC9biDxl42+Rt1EELVNp5eWHFExslUNBn917tIJ94oEG4OgKDTZMSkrDZv0FxY6f2v20+ToGmPLCS2zGkP6l0tEdtAORIQWDCztA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YEZ93H7wRpJd9s5DuYKg1vq0bhxrUbKCeZu+4iF1FMU=;
+ b=ahi7LpIQ6hBIPcCLXlF3/5ybL3VGSwWbpm0AnN7Vz8itV3FYHVyN6ppwZH92zA4uLoEhxN7bIc85OtJwqIsGLEC3AxRr6bVi1qLQ22GaHxY3fb9w+6w2Ow3oWLgM+pBF2W6hEr+302SkOle2TDiGxSfPJPHMDYdQfdN6VmaCJpY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by MW4PR12MB6950.namprd12.prod.outlook.com (2603:10b6:303:207::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Fri, 11 Apr
+ 2025 17:25:16 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8606.033; Fri, 11 Apr 2025
+ 17:25:15 +0000
+Message-ID: <e0f66414-e960-41a7-a8d2-06437405a3d5@amd.com>
+Date: Fri, 11 Apr 2025 12:25:12 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] cpufreq/amd-pstate: Enable ITMT support after
+ initializing core rankings
+To: K Prateek Nayak <kprateek.nayak@amd.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+ Huang Rui <ray.huang@amd.com>, Perry Yuan <perry.yuan@amd.com>,
+ Meng Li <li.meng@amd.com>
+References: <20250411081439.27652-1-kprateek.nayak@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20250411081439.27652-1-kprateek.nayak@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9P221CA0006.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:806:25::11) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <m2o6x2r9s1.fsf@posteo.net>
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|MW4PR12MB6950:EE_
+X-MS-Office365-Filtering-Correlation-Id: 17fcab04-a210-4637-1b4d-08dd791dd2c5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZktDTGVNUVVmQXNFL0pRbm5LeGc5b2x2T1lnZ2FZQTZjSGJDaEw5UFRwTHpP?=
+ =?utf-8?B?cDZyOFM3cmxSSWJUbmh2cnhFSDBKUkhaYzlrUkVQdm53QU4rc0RQaTFJMVp5?=
+ =?utf-8?B?QW5nWG52azFRMkdib1BqK28yNDBZcWR2V2ZQZmZoZENYb3VCRDdCMFlwazZR?=
+ =?utf-8?B?R1VCajBqNVVwSFN1ZG9pSm43c2xJMkFZaDBNbWFTeDlackcremovMThNa0dC?=
+ =?utf-8?B?dHY1TkZETXdtaGsxYk9DQm05TUNSL2pweEJWZTBYcjNEWGlNODhWeElmUjRt?=
+ =?utf-8?B?Qm1hRkV6dVl2bDUxZUJMMm5NSkpra1ErSU44a3hIMThXMTBjVzhCNTd4aExE?=
+ =?utf-8?B?T1JZMmxJckd4SWNDbWFuSUNXOUdzVjFUTzhzRGgzcXFJNVhrUmFlZEhobjRk?=
+ =?utf-8?B?OVN3OG9LL2Y4RmNCNzQzSkl0bUZTcEtXOTBNb2h4U09XMm82SDc0dUY5VHhT?=
+ =?utf-8?B?Q2t3cUNyVnMrQ1c5aEVyc1VERTdwRDhNbVhFUXhneU5nMXp5SmtuUENNQmNW?=
+ =?utf-8?B?b0JMaG5tZnA3dU9jRC9MNXZTTENPZmNyWkt2eTN3QnV0bTZnRHo2L28rL251?=
+ =?utf-8?B?K1U1dWNYeit4UE9GZkM2UnkvQkkvcmZZOURpTVhpOEZDNWd4ZlJydlBRUDl4?=
+ =?utf-8?B?RGV1RnhYWkJLUTNCeXo5bVVsZlFKWExTMmZNQXNQOXlTQkJhQzgzNHlqOElv?=
+ =?utf-8?B?VWhqWVl0aXgrRnRZZWVkanhUZWIwalBkZnFJWHJOeVpiMTFwamRNckR0Z2Z4?=
+ =?utf-8?B?U2hZRy9RR2UvV1ZsMWRwRWZ6T25Sak5PR2F1WFpkN3lKcm5yeGZpRm5MWTNP?=
+ =?utf-8?B?aEFpbkZGSmY3MHg4Zitoek9CSjF5SmFOdGdjbEhtZzVPVW5qY2pnVGYxZWY1?=
+ =?utf-8?B?K3UzYXBseldCdThuakxhZVBaaEdWczlPL3dNN2R0dXVQaUFYOHlwZjV6T0FG?=
+ =?utf-8?B?QWVCbllNL3JGcnpRclk2QjhFTnlEODZjZWFxa1NxUDl0ZElDVTVxZ1dDNnk2?=
+ =?utf-8?B?MTFobXVKOThtQmVlRkJoOE8yWFpGanlrNXd5Rjc2MW15NXZnWmNzWmZrL3ZE?=
+ =?utf-8?B?YW1reWJicHRBYm1UV3Z6SWRqYmhPa3JHT2ZtSksyUVo1RU1vbjJ0eUJrTXN4?=
+ =?utf-8?B?MDBRaldzZzZqTWdNbGtkaXB6T3UySDBzQnRpUGFNUnN4eS8wUWN4c3RQMVh4?=
+ =?utf-8?B?MDlNQXNSQnoyUGNDOG4xZy84S2hvWW1UWjdXaXUrNklhY1VYU0kyR2tiSmky?=
+ =?utf-8?B?a3dQRU9CWk05YXdNYzB6S0Rsb0tBL2hITVdOeUVIM0g1RjNEMWJ2OElqOGxy?=
+ =?utf-8?B?WndPYVp6MVMvc3dyUmxzRXJyNTJ6NS9YVSs0bVRNTzhONWhSNms0cVNneFdi?=
+ =?utf-8?B?Wk5JaTJOaXdrREVjZXJIUHBOalIvUDQ2QzFBdG9lU2haN0RjK1FrRU9sVVQy?=
+ =?utf-8?B?cXE4aGdKMnNQUitYaUF1ZjF4TVJDTlhZWWZvSWkvN29KOFNHVHJRbzBtc0c2?=
+ =?utf-8?B?eDZSWGJBNDhLeGp3RVhzVkwzL0ZMNHhFK1hsQkE3eW9Vczlpakd1MnFvTWpV?=
+ =?utf-8?B?eEkxcXpGWUVMU3BEc2xMQi9NS0RVcjhDRzlwZmJLK09aUjk3VlRBcnJkZlFz?=
+ =?utf-8?B?MEtBSTZERk9aQkRzeDRmTTVNWER6NHQ5ME1ENUJwb3lKODVYcjBRMU81SzJw?=
+ =?utf-8?B?SXB4WlU2WlZQaU90N05tNTV5SW1iK1AzUDc0K2VxaHpBbDJxa3JVVWs1d2RK?=
+ =?utf-8?B?UU92WHdMaTZJaW50NHF5M2FOVDhOTE9uQVJYUncxKzEzSGE4OEVVSlVPb1R6?=
+ =?utf-8?B?YXpkd1pXS1VTWDVPdTFMK1lNYTlwR1FhbWt3VlZXRFZza05lR2NjemxMRnFx?=
+ =?utf-8?B?NWVMbVlJQ0Y4aW9meE9lTktScC9BOWxIK1RUVkxuaVRLMzBxVXFnbUczZERS?=
+ =?utf-8?Q?5B9rlklDDw8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eG5HZkh6ZGp0Q1I1Z2l3QXlndEM2dDhiTjhTYlJ1NUxseW5vSCtlaGl1RFVW?=
+ =?utf-8?B?Nkx0cm96YTNTSU1HWTBsZERBTU02b0lvMy9VSkZuY282ZUpDOEpPeitlTHRK?=
+ =?utf-8?B?dTU2eXh3MGVRTUZUclpnOXJYNlFoQ2MwalkwRXhhY0RHTEd5MTcrWDVMck9m?=
+ =?utf-8?B?S2lnMWptb2ZZOGxLRUlHQmxhSk9DY1lrcUorSnlrZnAzYjhTU0I0bm1iY3J6?=
+ =?utf-8?B?S0ZGQTZTazlORzVQalcvZ3dYb2tEZG0zZE1nTUMyTmt5dTdjRXg3WTJxVlh1?=
+ =?utf-8?B?NnIyM21Xd1MxdUpFaGNzMHpVMnNMcGVYVHd4L3VPRHBwbDdKcXJnMUZNWnNZ?=
+ =?utf-8?B?N1RaaXU0R2owUU5XdWJqMmp3UXhGamN4Wmo2cTNuenVGZzFoSmRNN2pOMjJm?=
+ =?utf-8?B?Qzc5ODZDYVVLdTFVbnJ6ZkFpZHNCSWo1NzdOQXBuZ2ZzRHliR2wxbVVsVkFk?=
+ =?utf-8?B?d2o3MVVlanU5U3IweUNXckRPdmhLTncwb0lrR0krQWNLNzFJMGJRdE1JaUVt?=
+ =?utf-8?B?M0VUempHVnpVblBYOWxrSngyNm5YZitLT292TGhUaG1xaVhXMU1oeXlySHNH?=
+ =?utf-8?B?L2ZxVm5VMnZ4ZGlBOG1MSmQ3S2VvZVJtS0V1L1FZV1dhZGtDTU1WRFN4VEcy?=
+ =?utf-8?B?cDVXaGt0VmlJMHhkOGVEWUh2S1E2OUQ3NkJqclJwT0F2a0ZwU3lzZERuKzR2?=
+ =?utf-8?B?ZWVWbGNaTnNGTVJPd1RRMVlCVEt2L096Q21PK21hNHhlOXVUZlVneGkvQVVZ?=
+ =?utf-8?B?SS9QMWoyT2lvblg4RUNFdFVRcCt3Rk1PZ0hGTFB0RUdsTVkrTmNCRjFnL25n?=
+ =?utf-8?B?ZTdyUGlaYWlyMkxNS1BhRUNLK3RoV083M2RtZlhVbFM2YldRcnNkZVIxTGdN?=
+ =?utf-8?B?K3hwNGJvUjg1Ymg1Wm9uVjB1RlV5by9IUUVKVit0bEFoaHlaRElXSUFGZEVh?=
+ =?utf-8?B?MjcvYjc2QmZSOEk0NnNrK2tWMGdydmFPcVhlZlloanJqSHRXQTJvRjRhUytQ?=
+ =?utf-8?B?Y2JJVlY2emliVnNDZHdqcnRnZVN1M1ptcGxJNC9WVzVGallIMEhFNGtWU0lh?=
+ =?utf-8?B?cUZObGp3cFo4UnBYVzRqbkF6UzRXYnVLS28wa0pJY2wzOUZ1SVJKNW5nOGtT?=
+ =?utf-8?B?QnpJSjBsVVhqQ1IrREFMMGJTVUM5dFFWNWUxeit4bGtpTWZaajJTRmRVQ0lx?=
+ =?utf-8?B?RFgrVE56Y05GWllYNTVDRjZnRng0U2V0NTNiU09jU0tXZUcxYXcxZjFreFR2?=
+ =?utf-8?B?dUR4L1d0T2RMVWV5aWNGUmRyRzVuU0FPU1BNZjROQ0lkbStLMnhydVJtaENn?=
+ =?utf-8?B?ZmwxQ1RFK1hCY29JYUpXNzNIS1JzdnlMZWpJdEZZYjUvdW9xQzkvM0pibWVt?=
+ =?utf-8?B?SUlyT3FrRndpWjF3b2c0Q0hPNmYyam1zazBxbDhoaTFkN3orQUs5VEFER2k1?=
+ =?utf-8?B?a0FWZUlHMTM5TGlWaXYrYjZ3M2dLYnZ1ZkJVSWIrVWRwNlpURTVNTEY3OU50?=
+ =?utf-8?B?NnYwQzUrd25WdFZPMmZWSzR5bi91Q2RuOGR4MUZGazhUV3BkK2tYVHliUk9W?=
+ =?utf-8?B?d1ZjTGMzZk1tdWNBWTlZTFM4VnFPYTBjZWhYZTU4aHlEMFJ0NHR0REhUckRZ?=
+ =?utf-8?B?Z2hZenZmMnRpS041OTZuNzVsSVhQOUMwM0s3ZmVLUnRNZ1NCVy8vUEpUSkxV?=
+ =?utf-8?B?Y2N1NmhmTXZFT0NWOGFSYjVHWE54MFpXYXU2R2FOc0NPc1ZUV3dMZGlRQmJB?=
+ =?utf-8?B?WnlsMElPcE1BaGFNbDZNM09kK0xRbmxpQlR5ek1OT21JN0M3NjA5QjQxbW1V?=
+ =?utf-8?B?VzJoaDlXUG9sMWkyMFFkSDFXa2dWNXR3N1hSQ1RWeTdCNkFUKy9qRnE4TTdN?=
+ =?utf-8?B?KzV5WW1pZ1Q5Rmtta0NNVGllckJyL24wSWM0enhGckhNTWd6ei9admtuL1ZI?=
+ =?utf-8?B?VlNLOHBoNHloWldjTDQ0aVZ0eWdUU0pFdE9Vc3hiTFZSaEY0M0RQaFBVcmxh?=
+ =?utf-8?B?STc1MVNLS2lmMmU3RzB5Tm1QNEJBOEFyQ0VmUTZER3pvUUpRTDVINGIvc0RW?=
+ =?utf-8?B?WUJzMlNaL2o2WmplUmRUaVRMYVBxTzF3SWx3ZlgxN2ZuZE5tQjhIbFZNVGl1?=
+ =?utf-8?Q?EeXI4hSJe6gNmNmxeG/BBekhE?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17fcab04-a210-4637-1b4d-08dd791dd2c5
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 17:25:15.5965
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: j8whLP2Qjbi6pu5opX5s/juVNICvP4iaUpM5HTehkA8NP8kdeoDSikMiLtQaMow9QYS8Aswtts/r1bqq5fZHvA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6950
 
-On Fri, Apr 11, 2025 at 03:35:26PM +0000, Charalampos Mitrodimas wrote:
-> syzbot <syzbot+baee8591f336cab0958b@syzkaller.appspotmail.com> writes:
+On 4/11/2025 3:14 AM, K Prateek Nayak wrote:
+> When working on dynamic ITMT priority support, it was observed that
+> "asym_prefer_cpu" on AMD systems supporting Preferred Core ranking
+> was always set to the first CPU in the sched group when the system boots
+> up despite another CPU in the group having a higher ITMT ranking.
 > 
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    a2cc6ff5ec8f Merge tag 'firewire-updates-6.15' of git://gi..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=12482fb0580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=6fe3b5e6a2cb1cc2
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=baee8591f336cab0958b
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10530be4580000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13d6d404580000
-> >
-> > Downloadable assets:
-> > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-a2cc6ff5.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/c58c1555aab7/vmlinux-a2cc6ff5.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/61fb9d013359/bzImage-a2cc6ff5.xz
-> > mounted in repro: https://storage.googleapis.com/syzbot-assets/86cf46d3a5d9/mount_0.gz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+baee8591f336cab0958b@syzkaller.appspotmail.com
-> >
-> >  done
-> > bcachefs (loop0): accounting_read... done
-> > bcachefs (loop0): alloc_read... done
-> > bcachefs (loop0): snapshots_read... done
-> > bcachefs (loop0): check_allocations...
-> > Oops: general protection fault, probably for non-canonical address 0xdffffc0000000004: 0000 [#1] SMP KASAN NOPTI
-> > KASAN: null-ptr-deref in range [0x0000000000000020-0x0000000000000027]
-> > CPU: 0 UID: 0 PID: 5318 Comm: syz-executor394 Not tainted 6.14.0-syzkaller-12966-ga2cc6ff5ec8f #0 PREEMPT(full) 
-> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> > RIP: 0010:bch2_snapshot_tree_oldest_subvol+0x1d3/0x6a0 fs/bcachefs/snapshot.c:400
-> > Code: e6 e8 81 dd 36 fd 4c 39 e5 0f 86 c9 03 00 00 e8 13 db 36 fd 49 6b c4 38 49 01 c6 49 83 c6 18 49 83 c6 20 4c 89 f0 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 c6 03 00 00 41 8b 2e 31 ff 89 ee e8 24
-> > RSP: 0018:ffffc9000d46e020 EFLAGS: 00010202
-> > RAX: 0000000000000004 RBX: 0000000000000001 RCX: ffff888000f98000
-> > RDX: 0000000000000000 RSI: 00000000ffeb487f RDI: 0000000000000001
-> > RBP: 0000000000000001 R08: ffffffff848c7c5f R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000000 R12: 00000000ffeb487f
-> > R13: dffffc0000000000 R14: 0000000000000020 R15: 000000000014b780
-> > FS:  0000555584fe3380(0000) GS:ffff88808c599000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 000055835cf3c000 CR3: 0000000044318000 CR4: 0000000000352ef0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  <TASK>
-> >  bch2_inum_snap_offset_err_msg_trans+0x374/0x680 fs/bcachefs/error.c:691
-> >  bch2_indirect_extent_missing_error+0x411/0x1290 fs/bcachefs/reflink.c:192
-> >  gc_trigger_reflink_p_segment fs/bcachefs/reflink.c:392 [inline]
-> >  __trigger_reflink_p+0x196c/0x1cc0 fs/bcachefs/reflink.c:432
-> >  bch2_trigger_reflink_p+0x299/0x380 fs/bcachefs/reflink.c:451
-> >  bch2_key_trigger fs/bcachefs/bkey_methods.h:88 [inline]
-> >  bch2_gc_mark_key+0x6bd/0x1180 fs/bcachefs/btree_gc.c:639
-> >  bch2_gc_btree fs/bcachefs/btree_gc.c:677 [inline]
-> >  bch2_gc_btrees fs/bcachefs/btree_gc.c:740 [inline]
-> >  bch2_check_allocations+0x1488/0x6ab0 fs/bcachefs/btree_gc.c:1042
-> >  bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:226
-> >  bch2_run_recovery_passes+0x2ad/0xa90 fs/bcachefs/recovery_passes.c:285
-> >  bch2_fs_recovery+0x292a/0x3e20 fs/bcachefs/recovery.c:936
-> >  bch2_fs_start+0x2fb/0x610 fs/bcachefs/super.c:1060
-> >  bch2_fs_get_tree+0x113e/0x18f0 fs/bcachefs/fs.c:2253
-> >  vfs_get_tree+0x90/0x2b0 fs/super.c:1759
-> >  do_new_mount+0x2cf/0xb70 fs/namespace.c:3878
-> >  do_mount fs/namespace.c:4218 [inline]
-> >  __do_sys_mount fs/namespace.c:4429 [inline]
-> >  __se_sys_mount+0x38c/0x400 fs/namespace.c:4406
-> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >  do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > RIP: 0033:0x7f22f815ae2a
-> > Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007ffd84c61a58 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-> > RAX: ffffffffffffffda RBX: 00007ffd84c61a70 RCX: 00007f22f815ae2a
-> > RDX: 0000200000000040 RSI: 0000200000000000 RDI: 00007ffd84c61a70
-> > RBP: 0000200000000000 R08: 00007ffd84c61ab0 R09: 0000000000005995
-> > R10: 0000000000800001 R11: 0000000000000282 R12: 0000200000000040
-> > R13: 0000000000000004 R14: 0000000000000003 R15: 00007ffd84c61ab0
-> >  </TASK>
-> > Modules linked in:
-> > ---[ end trace 0000000000000000 ]---
-> > RIP: 0010:bch2_snapshot_tree_oldest_subvol+0x1d3/0x6a0 fs/bcachefs/snapshot.c:400
-> > Code: e6 e8 81 dd 36 fd 4c 39 e5 0f 86 c9 03 00 00 e8 13 db 36 fd 49 6b c4 38 49 01 c6 49 83 c6 18 49 83 c6 20 4c 89 f0 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 c6 03 00 00 41 8b 2e 31 ff 89 ee e8 24
-> > RSP: 0018:ffffc9000d46e020 EFLAGS: 00010202
-> > RAX: 0000000000000004 RBX: 0000000000000001 RCX: ffff888000f98000
-> > RDX: 0000000000000000 RSI: 00000000ffeb487f RDI: 0000000000000001
-> > RBP: 0000000000000001 R08: ffffffff848c7c5f R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000000 R12: 00000000ffeb487f
-> > R13: dffffc0000000000 R14: 0000000000000020 R15: 000000000014b780
-> > FS:  0000555584fe3380(0000) GS:ffff88808c599000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 0000556b9781f0c8 CR3: 0000000044318000 CR4: 0000000000352ef0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > ----------------
-> > Code disassembly (best guess):
-> >    0:	e6 e8                	out    %al,$0xe8
-> >    2:	81 dd 36 fd 4c 39    	sbb    $0x394cfd36,%ebp
-> >    8:	e5 0f                	in     $0xf,%eax
-> >    a:	86 c9                	xchg   %cl,%cl
-> >    c:	03 00                	add    (%rax),%eax
-> >    e:	00 e8                	add    %ch,%al
-> >   10:	13 db                	adc    %ebx,%ebx
-> >   12:	36 fd                	ss std
-> >   14:	49 6b c4 38          	imul   $0x38,%r12,%rax
-> >   18:	49 01 c6             	add    %rax,%r14
-> >   1b:	49 83 c6 18          	add    $0x18,%r14
-> >   1f:	49 83 c6 20          	add    $0x20,%r14
-> >   23:	4c 89 f0             	mov    %r14,%rax
-> >   26:	48 c1 e8 03          	shr    $0x3,%rax
-> > * 2a:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax <-- trapping instruction
-> >   2f:	84 c0                	test   %al,%al
-> >   31:	0f 85 c6 03 00 00    	jne    0x3fd
-> >   37:	41 8b 2e             	mov    (%r14),%ebp
-> >   3a:	31 ff                	xor    %edi,%edi
-> >   3c:	89 ee                	mov    %ebp,%esi
-> >   3e:	e8                   	.byte 0xe8
-> >   3f:	24                   	.byte 0x24
-> >
-> >
+> "asym_prefer_cpu" is cached when the sched domain hierarchy is
+> constructed. On AMD systems that support Preferred Core rankings, sched
+> domains are rebuilt when ITMT support is enabled for the first time from
+> amd_pstate*_cpu_init().
 > 
-> #syz test
+> Since amd_pstate*_cpu_init() is called to initialize the cpudata for
+> each CPU, the ITMT support is enabled after the first CPU initializes
+> its asym priority but this is too early since other CPUs have not yet
+> initialized their asym priorities and the sched domain is rebuilt only
+> once when the support is toggled on for the first time.
 > 
-> diff --git a/fs/bcachefs/snapshot.c b/fs/bcachefs/snapshot.c
-> index 0c65065b08ec..8862714b1806 100644
-> --- a/fs/bcachefs/snapshot.c
-> +++ b/fs/bcachefs/snapshot.c
-> @@ -397,7 +397,11 @@ u32 bch2_snapshot_tree_oldest_subvol(struct bch_fs *c, u32 snapshot_root)
->  
->  	rcu_read_lock();
->  	while (id) {
-> -		s = snapshot_t(c, id)->subvol;
-> +		const struct snapshot_t *snap = snapshot_t(c, id);
-> +		if (!snap)
-> +			break;
+> Initialize the asym priorities first in amd_pstate*_cpu_init() and then
+> enable ITMT support later in amd_pstate_register_driver() to ensure all
+> CPUs have correctly initialized their asym priorities before sched
+> domain hierarchy is rebuilt.
+> 
+> Clear the ITMT support when the amd-pstate driver unregisters since core
+> rankings cannot be trusted unless the update_limits() callback is
+> operational.
+> 
+> Remove the delayed work mechanism now that ITMT support is only toggled
+> from the driver init path which is outside the cpuhp critical section.
+> 
+> Fixes: f3a052391822 ("cpufreq: amd-pstate: Enable amd-pstate preferred core support")
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 
-???
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 
+Will queue it up for testing.
+
+> ---
+> v1..v2:
+> 
+> o Retained the name amd_pstate_init_prefcore() (Mario)
+> 
+> o Moved sched_set_itmt_support() towards the end of
+>    amd_pstate_register_driver() to address mode switch scenarios.
+> 
+> o Disable ITMT support when driver unregisters to prevent incorrect ITMT
+>    behavior in absence of update_limits() callback.
+> 
+> v1: https://lore.kernel.org/lkml/20250409030004.23008-1-kprateek.nayak@amd.com/
+> ---
+>   drivers/cpufreq/amd-pstate.c | 25 ++++++++-----------------
+>   1 file changed, 8 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index c54c031939c8..b961f3a3b580 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -794,16 +794,6 @@ static void amd_perf_ctl_reset(unsigned int cpu)
+>   	wrmsrl_on_cpu(cpu, MSR_AMD_PERF_CTL, 0);
+>   }
+>   
+> -/*
+> - * Set amd-pstate preferred core enable can't be done directly from cpufreq callbacks
+> - * due to locking, so queue the work for later.
+> - */
+> -static void amd_pstste_sched_prefcore_workfn(struct work_struct *work)
+> -{
+> -	sched_set_itmt_support();
+> -}
+> -static DECLARE_WORK(sched_prefcore_work, amd_pstste_sched_prefcore_workfn);
+> -
+>   #define CPPC_MAX_PERF	U8_MAX
+>   
+>   static void amd_pstate_init_prefcore(struct amd_cpudata *cpudata)
+> @@ -814,14 +804,8 @@ static void amd_pstate_init_prefcore(struct amd_cpudata *cpudata)
+>   
+>   	cpudata->hw_prefcore = true;
+>   
+> -	/*
+> -	 * The priorities can be set regardless of whether or not
+> -	 * sched_set_itmt_support(true) has been called and it is valid to
+> -	 * update them at any time after it has been called.
+> -	 */
+> +	/* Priorities must be initialized before ITMT support can be toggled on. */
+>   	sched_set_itmt_core_prio((int)READ_ONCE(cpudata->prefcore_ranking), cpudata->cpu);
+> -
+> -	schedule_work(&sched_prefcore_work);
+>   }
+>   
+>   static void amd_pstate_update_limits(unsigned int cpu)
+> @@ -1196,6 +1180,9 @@ static ssize_t show_energy_performance_preference(
+>   
+>   static void amd_pstate_driver_cleanup(void)
+>   {
+> +	if (amd_pstate_prefcore)
+> +		sched_clear_itmt_support();
 > +
-> +		s = snap->subvol;
->  
->  		if (s && (!subvol || s < subvol))
->  			subvol = s;
+>   	cppc_state = AMD_PSTATE_DISABLE;
+>   	current_pstate_driver = NULL;
+>   }
+> @@ -1238,6 +1225,10 @@ static int amd_pstate_register_driver(int mode)
+>   		return ret;
+>   	}
+>   
+> +	/* Enable ITMT support once all CPUs have initialized their asym priorities. */
+> +	if (amd_pstate_prefcore)
+> +		sched_set_itmt_support();
+> +
+>   	return 0;
+>   }
+>   
+> 
+> base-commit: 56a49e19e1aea1374e9ba58cfd40260587bb7355
 
-Don't fix null ptr derefs like this, you're just papering over bugs.
-
-If the snapshot isn't found that indicates snapshot tree corruption, and
-at a minimum that needs to be flagged for repair.
 
