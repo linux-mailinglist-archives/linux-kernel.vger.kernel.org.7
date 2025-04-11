@@ -1,57 +1,62 @@
-Return-Path: <linux-kernel+bounces-599232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49BB0A8511C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 03:14:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A48A8512E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 03:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC6DA7AFEAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 01:13:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC48B8C6957
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 01:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBB7270EC9;
-	Fri, 11 Apr 2025 01:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4CD270EB9;
+	Fri, 11 Apr 2025 01:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="VzBDeQ7B"
-Received: from sender3-op-o12.zoho.com (sender3-op-o12.zoho.com [136.143.184.12])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="HVwQ6Qif"
+Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3B1367;
-	Fri, 11 Apr 2025 01:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744334048; cv=pass; b=gqtyP8zRf2J8NOmm1FuEFFTeesXW7Ysg6O+tBd6Jp7bAYnfYsrX2vwFhliObTRrCeKhA/sJTZf/UX+mlNaG+xtA65U2cC7XECjxwZCTigl4X8n3vey+fkQkQOSDdNFePCZboJQgPa30dWiicA9bhohCcADcSemxNvp9rcemSm9g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744334048; c=relaxed/simple;
-	bh=j4+SiIZxvGybY0h9n1Vw8sCcruUlsGBGVrYHH/f8200=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC2226FD83;
+	Fri, 11 Apr 2025 01:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744334499; cv=none; b=LihH4njy9V6xE9ALj0N/6qDvtg+5PoitDIjHdcxzG6xS37K0d5GuLXclT/cOoAePZBUlDOyP8cQioQon/P7xVKxnpPm/ZAFm1Kvq8fVXBqt0HYM4noo0daLj7Q00uRV5h2HNa+oNXSmhwc1xiHIY9/k3iqlb4tq9DbRCtRxqIBg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744334499; c=relaxed/simple;
+	bh=A540L/314HODQoI/fe0JjdJqlHuZScJRsJaBxZ0kkq8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HTYOQthtRX9LdAong/BPmoarFRIq65rmSQJNbdLHAe3Dj6YI2V9TUu2roSUEKZO05DBdzv+ZUvF5fB4ItdtbsgFXgG7+F3LolY7zddsLMLZQKrd1CnC7iKulZV7KH19QcykBAaD3CgyVU9XTamdhrEdkc9ODt35o1WhWGeDa5IY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=VzBDeQ7B; arc=pass smtp.client-ip=136.143.184.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1744334023; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=OQ9dNyUJmvcDbmGsZyTbKr3B2lP+PG4xvC6/mMCcY7kU1Fa6LLv9g0EyG/Btv/0RhdZtFX2yUSckNml0q9y5TJjOh5l5Dqlh9arggZEZBy53xthV+LYAqokYnIA1t0Ftktklzbho7Iq8PtJM+lTTlulwah32+1Wzm3lflI4UbsU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1744334023; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=apyuPFPIqMQ+y3i2fKfqaByjd0lfZpr9zLn4Mh6y+hw=; 
-	b=me/wqqa7Hf5exjz6XlD0ePYO3ZIerX9wkIzmFRbDPQzv2hLpkAikxc4134XWilvdkq1hxv6XSyY97ayE+oBOlrxgurDx4eK2lMv6mlI+CleIzqnCE2A8Z0KfGzpV3CO9AVM1qYyH9QmoROSBR3aEibc1M+MRTvLuM4a+SXKOccA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744334023;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=apyuPFPIqMQ+y3i2fKfqaByjd0lfZpr9zLn4Mh6y+hw=;
-	b=VzBDeQ7BkM/5q1O6FAEYTtrU3ALrcIj9sRA3En6J1YIBeDoWGfAdqLXIAWIrFFyj
-	fS1Cx5WKhBkoYmJKrCvlkwB0QCQsUTnLXruWx8YFCms7durILycdb1U86CNulYUPOGK
-	H9fgJBhwwQqUphUz0+S7HFSS4Xk4XYY1FSdKbZ38=
-Received: by mx.zohomail.com with SMTPS id 1744334020773726.2543250344297;
-	Thu, 10 Apr 2025 18:13:40 -0700 (PDT)
-Message-ID: <a928de25-9586-4af0-b7f3-63be75cb508b@collabora.com>
-Date: Fri, 11 Apr 2025 04:13:36 +0300
+	 In-Reply-To:Content-Type; b=H4bVyj4/na/3m4w6jC5NOtYoZBpA4uAb5t4ujdLHYr/iK+huH/58ovp9T6tTYEIujQQn+Vq+SuNayep4bLG2hdnuq0gab9FGCbAjAHLoX0RiQUyw8HmJ3aueLoj1D5MrM8PVH8nP47D8co37EIeRtCkIFXYjDOIpzcooXShadhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=HVwQ6Qif; arc=none smtp.client-ip=203.205.221.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1744334185; bh=lPgew/ZydjVlFhZ2JlF+s+97+YPhdSx++24EM+lK7L4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=HVwQ6Qifd9MWfPiCl0stsYBkpQIsM+0bRoN/OvRzmxlQXi1ucJMTVqosP/y1zC8lV
+	 1jJ05T7Voz3rnlOmLZbXlAk5MoARc62a0TVegdJI3Ugb3oos72qT0BW6VZMAhGlIsE
+	 vP828EttGtqJIM3REQqVuMqaRnvdfgm2m8/Rxbx4=
+Received: from [10.42.13.21] ([116.128.244.169])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 3AD86AA1; Fri, 11 Apr 2025 09:14:45 +0800
+X-QQ-mid: xmsmtpt1744334085tq1ydih63
+Message-ID: <tencent_06EA95EC8D190B318CDCE5E4D8C276D6FE0A@qq.com>
+X-QQ-XMAILINFO: MmAB1QhttJoEF87Qa5Jj+DB/UodpSVmzOQIcGvJ4S4DEP5E6kq4b5NH/Vw3XLR
+	 qf6CclLIcnS+2iz4fKCDX1KbQHILAmldhDxZfCFEy0Dcdpmihz+Lwk8pqgRYeQWGk23COC+/MQlT
+	 nWeBZTwnjq810VvNmgx0p47XbnZIAVktbG1JCEGyUtx1gcgZMOozSqCu0PWefXr2loIwphI9BGc8
+	 l/DgWy0E+5LbBtn552jlWG3W0Wphpzw4Fwd0257osi3Dipp8gBIrboyZuz+aZCy/zDoIyY3n4cZF
+	 pE6CucokwTGl06l9+gOlvJekJ+x19iWhHLJ/glQxH0WIazmQbvLpntxHnhUnCQOMp97GLOFogugv
+	 MDXgWhOUFVaomGTduAN0zAmQwpDxAIH+pOYTxlvffyZ+DztQA4VvaWMssxPz7mkRFS2tI4b2kOnx
+	 E8u4MPVhVecfqr8+RuxRHmwj97+1qAuoBIRE75Hl3gvp4tnsxmYGdhEcXrW7RkIOHMbWbGVU0AHh
+	 +mnyMtrpLhFao9woAe3R6BKARwdZXL/2IMugH55Uo7kA8duEIBeRl7T2b9n3FJtYrqQ7lKyh3aWL
+	 pLwNXxaESjkyOYfQW+8iKp4peV0yQlQfxpt+fka240XE9K7yk5fcrEh/M6BYTmiYglV9rLByiaQ0
+	 2z+2pRFk+EcOJzCMSwbvJLbagDMau/BbsZWgB8dFFcRZtupnZj6CG/WcmxmMi7SwwpANsQviKE+o
+	 8lwnVQCDFj6uqU27DanKQvksZJIrtkSqW/9eFMEUtbEW0DDVf+XGsrNr7tvUpCG13ErahT+tmSka
+	 S1A4FYoJGzsv6pvxQujD1om1INrAPyjNfijW8N3DC6npv+gZLdu3iBiVqU2HLwpvLf5+CTHW9ZU4
+	 H2hQdo9M1NnZfk2KO3vqifAgBwDRRouOS/JBpLPO0Fv90E+u+6A/Iteb0ryjBsD8cJwjjU0rOa
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-OQ-MSGID: <2826a8b9-ad77-411c-aa05-a4ec604726fb@qq.com>
+Date: Fri, 11 Apr 2025 09:14:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,82 +64,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] media: synopsys: hdmirx: Renamed frame_idx to
- sequence
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Shreeya Patel <shreeya.patel@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
- <hverkuil@xs4all.nl>, Dingxian Wen <shawn.wen@rock-chips.com>
-Cc: linux-media@vger.kernel.org, kernel@collabora.com,
- linux-kernel@vger.kernel.org
-References: <20250410-rk3588-hdmirx-sequence-v1-0-aad3f216d351@collabora.com>
- <20250410-rk3588-hdmirx-sequence-v1-1-aad3f216d351@collabora.com>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Subject: Re: [PATCH] PM: EM: Fix potential division-by-zero error in
+ em_compute_costs()
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: lukasz.luba@arm.com, len.brown@intel.com, pavel@kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yaxiong Tian <tianyaxiong@kylinos.cn>
+References: <tencent_8478BF8F2549630842D323E7394CB6F49D08@qq.com>
+ <CAJZ5v0jfAdBbKXBg7k0og6MucptJc9G=RTzFPd=N3Q0VdfToFQ@mail.gmail.com>
 Content-Language: en-US
-In-Reply-To: <20250410-rk3588-hdmirx-sequence-v1-1-aad3f216d351@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+From: Yaxiong Tian <iambestgod@qq.com>
+In-Reply-To: <CAJZ5v0jfAdBbKXBg7k0og6MucptJc9G=RTzFPd=N3Q0VdfToFQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-10.04.2025 23:43, Nicolas Dufresne пишет:
-> This variable is used to fill the v4l2_buffer.sequence, let's name it
-> the exact same way to reduce confusion.
-> 
-> No functional changes.
-> 
-> Fixes: 7b59b132ad439 ("media: platform: synopsys: Add support for HDMI input driver")
-> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> ---
->  drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> index 3d2913de9a86c6a4e66562727388b4326365048a..f5b3f5010ede55bde28756da326a434cc9245492 100644
-> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> @@ -114,7 +114,7 @@ struct hdmirx_stream {
->  	spinlock_t vbq_lock; /* to lock video buffer queue */
->  	bool stopping;
->  	wait_queue_head_t wq_stopped;
-> -	u32 frame_idx;
-> +	u32 sequence;
->  	u32 line_flag_int_cnt;
->  	u32 irq_stat;
->  };
-> @@ -1540,7 +1540,7 @@ static int hdmirx_start_streaming(struct vb2_queue *queue, unsigned int count)
->  	int line_flag;
->  
->  	mutex_lock(&hdmirx_dev->stream_lock);
-> -	stream->frame_idx = 0;
-> +	stream->sequence = 0;
->  	stream->line_flag_int_cnt = 0;
->  	stream->curr_buf = NULL;
->  	stream->next_buf = NULL;
-> @@ -1948,7 +1948,7 @@ static void dma_idle_int_handler(struct snps_hdmirx_dev *hdmirx_dev,
->  
->  			if (vb_done) {
->  				vb_done->vb2_buf.timestamp = ktime_get_ns();
-> -				vb_done->sequence = stream->frame_idx;
-> +				vb_done->sequence = stream->sequence;
->  
->  				if (bt->interlaced)
->  					vb_done->field = V4L2_FIELD_INTERLACED_TB;
-> @@ -1956,8 +1956,8 @@ static void dma_idle_int_handler(struct snps_hdmirx_dev *hdmirx_dev,
->  					vb_done->field = V4L2_FIELD_NONE;
->  
->  				hdmirx_vb_done(stream, vb_done);
-> -				stream->frame_idx++;
-> -				if (stream->frame_idx == 30)
-> +				stream->sequence++;
-> +				if (stream->sequence == 30)
->  					v4l2_dbg(1, debug, v4l2_dev,
->  						 "rcv frames\n");
->  			}
-> 
 
-Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
--- 
-Best regards,
-Dmitry
+在 2025/4/10 21:23, Rafael J. Wysocki 写道:
+> On Thu, Apr 10, 2025 at 7:39 AM Yaxiong Tian <iambestgod@qq.com> wrote:
+>>
+>> From: Yaxiong Tian <tianyaxiong@kylinos.cn>
+>>
+>> When the device is of a non-CPU type, table[i].performance won't be
+>> initialized in the previous em_init_performance(), resulting in division
+>>   by zero when calculating costs in em_compute_costs().
+>>
+>> Considering that the performance field in struct em_perf_state is defined
+>> as "CPU performance (capacity) at a given frequency", the original
+>> calculation method should be maintained when the device is of a non-CPU
+>> type.
+>>
+>> Fixes: <1b600da51073> ("PM: EM: Optimize em_cpu_energy() and remove division")
+>>
+>> Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
+>> ---
+>>   kernel/power/energy_model.c | 14 +++++++++++---
+>>   1 file changed, 11 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+>> index d9b7e2b38c7a..bbd95573d91e 100644
+>> --- a/kernel/power/energy_model.c
+>> +++ b/kernel/power/energy_model.c
+>> @@ -231,9 +231,11 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
+>>                              unsigned long flags)
+>>   {
+>>          unsigned long prev_cost = ULONG_MAX;
+>> +       u64 fmax;
+> 
+> Why not initialize it here?  Also please retain the reverse x-mas tree
+> ordering of declarations.
+> 
+There is indeed an issue with imperfect code style here.
+
+>>          int i, ret;
+>>
+>>          /* Compute the cost of each performance state. */
+>> +       fmax = (u64) table[nr_states - 1].frequency;
+> 
+> No need to cast to u64 explicitly (it will be cast anyway).
+> 
+>>          for (i = nr_states - 1; i >= 0; i--) {
+>>                  unsigned long power_res, cost;
+>>
+>> @@ -245,9 +247,15 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
+>>                                  return -EINVAL;
+>>                          }
+>>                  } else {
+>> -                       /* increase resolution of 'cost' precision */
+>> -                       power_res = table[i].power * 10;
+>> -                       cost = power_res / table[i].performance;
+>> +                       if (	) {
+>> +                               /* increase resolution of 'cost' precision */
+>> +                               power_res = table[i].power * 10;
+>> +                               cost = power_res / table[i].performance;
+>> +                       } else {
+>> +                               power_res = table[i].power;
+>> +                               cost = div64_u64(fmax * power_res, table[i].frequency);
+> 
+> Why is it necessary to compute the "cost" field value for non-CPU
+> devices at all?
+> 
+Indeed, I didn't think of this issue—I was focused on ensuring the rest
+of the code was correct and forgot that the 'cost' algorithm was only
+for EAS energy efficiency calculations. I checked other parts of the
+code, and 'cost' isn't used elsewhere. Therefore, this bug can be fixed
+simply by adding a _is_cpu_device(dev) check. I'll make the change in
+the next version and update the commit message accordingly.
+
+>> +
+> 
+> An excess empty line.
+> 
+>> +                       }
+>>                  }
+>>
+>>                  table[i].cost = cost;
+>> --
+
 
