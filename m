@@ -1,158 +1,501 @@
-Return-Path: <linux-kernel+bounces-599682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2148A856CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED31A856D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B99C1BC0BC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:39:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE8941BC178F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11467293B4E;
-	Fri, 11 Apr 2025 08:39:35 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0D32980BC;
+	Fri, 11 Apr 2025 08:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fKIoKpkJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A53A28F936
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2B5296176
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744360774; cv=none; b=lDSoAZ1Srj82VJTIlZzI996aXusOV4h5tWWVLyO4INFsOCzpIcivkSzvXQMdfL+SXK5hgTovf1Vx48rkzsjW/0WYHYSUzNrmrXe5zeaeBXTrp+4cH9Swz0ozpcfLpADBKl5tD578qsDagilYFeeEWk+ufshjAzCliUPPGjAQGdc=
+	t=1744360789; cv=none; b=g9yQ9V+LpnZSh1+5zucQMRHbUN0J5Ge//2nu2cN4d6RWlJ5POHcB4HFOB+STPN88PWJrbwoYHXbsjbDB4dLdlDM3RBy9XZDtv9H2c1ZZSHe74uztzHpyEgGB3x4QVujzWrycKKIFBNZQbstTsejGBDAXMMk/ytuQkCRat3Z6oCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744360774; c=relaxed/simple;
-	bh=Cfxi6fEI2IFX41L3JE13Cy7FJb0PJLrt+bmOBfIv/gY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AE4DgzNWTpzOIW36LQ3Mxgq6hCFPw0dzNKxSSZz2QZCfsiQ51xitzGjpVn7x0xae+Tr+bVyESRZOe1Pwm718rIB+3k3u6RhlE9fOdZDEUtzJZMD51zwI5RC5s7hul8ReCGc1JTpMMw/ZQmodgqp8VlCo8yq4+Md5YAUhMmU4G1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
-	by Atcsqr.andestech.com with ESMTPS id 53B8dGr5046393
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
-	Fri, 11 Apr 2025 16:39:16 +0800 (+08)
-	(envelope-from cl634@andestech.com)
-Received: from swlinux02 (10.0.15.183) by ATCPCS34.andestech.com (10.0.1.134)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Apr
- 2025 16:39:16 +0800
-Date: Fri, 11 Apr 2025 16:39:11 +0800
-From: CL Wang <cl634@andestech.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-rtc@vger.kernel.org>, <tim609@andestech.com>,
-        <ycliang@andestech.com>, <cl634@andestect.com>
-Subject: Re: [PATCH V5 1/3] rtc: atcrtc100: Add ATCRTC100 RTC driver
-Message-ID: <Z_jVLzgZjnF1thbq@swlinux02>
-References: <20250110092702.1146356-1-cl634@andestech.com>
- <20250110092702.1146356-2-cl634@andestech.com>
- <20250331221541333bf9cf@mail.local>
+	s=arc-20240116; t=1744360789; c=relaxed/simple;
+	bh=/fw0aHXXg7z4Hgf4IA+Uzoiq/Cwny0deEwiWzOIl2X0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=t3JI2GDJKPB39YLjJYnq/FJahRDs1+uuaVE0q6gQtpuyGjADtTMk4oZMJD3o+2l+6YuIcBwsdcsiPvkizawOKr5CMCY3cMlyWS28AW4KMckIItSfBzvP9fhzDx1W44UJKYEknxO8qEBtGYw1ZNx3JZWQDi3g6y7ep/7rXGt2eyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fKIoKpkJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744360786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4kbzhowOrdb284WCQY6VYg5xlBwQ2Vxr3h44Uzh92yk=;
+	b=fKIoKpkJRNrOcXqK/EGaZF7D8cwWx5aSVkixqUXcWUqqdopDpO/LCn+aSwbJgIzciP0fdD
+	Tm1dtKJTOvSPmbOiQu8+uiN5YYJb1SX7Y/tKdGUIQkDpepbhOPOvCsVbadMtlzmEPNDJ6p
+	R11ud0TgyTXy4A3bvqEKXXyPKaN1ByU=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-313-GoBai_T5PfyECqh5aRZ93Q-1; Fri, 11 Apr 2025 04:39:45 -0400
+X-MC-Unique: GoBai_T5PfyECqh5aRZ93Q-1
+X-Mimecast-MFC-AGG-ID: GoBai_T5PfyECqh5aRZ93Q_1744360784
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43cec217977so10389785e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 01:39:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744360784; x=1744965584;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4kbzhowOrdb284WCQY6VYg5xlBwQ2Vxr3h44Uzh92yk=;
+        b=UMWhezPFsYOxdP/Z49+VZL82sU6LAivTVCjwI7LBsXEsCyO8k4qTOpVzDCxCphwVXb
+         us38s5xTeeZwHM4KGRjqRilwq7C6slWe9ij6FYPoY/MeXRJ16kZNoscxXm9jOOJEn/NL
+         MXu9MhxNKtZNpwvPL/FYRDzvmVcfQ0RMgUS0ojbXUZEQB30yUWnIDQMgVT4sVhjBDf4c
+         u3Q9IYw6gSaS0l5yQc5oTUUofpbQKn21fXHg9yU8HmJv+Zw3N/qAaPz/swJGf2GT4dCr
+         ZVPoEfjC+tzLPvYsAoguimZ5/mQHwOHF/btqKiVW07CgC1Hs/ne7K6MfqK6NJoBifYnE
+         Aozw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3NsT+18nhZkoYmcl7WYaBU4sQ/Lvnnrfah17UbqnNpD33wv9YIOoDiahQ7CpzT9hXJJMfbk8SL+CZEtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyF46dq6x4f1qGCFnpcOFzAaS7hEdT98L9NBGtB/8DqzNvNqGo
+	ldj75LlVOoii4Y8ZQlLj4+HVfokKjzi0rdgD9uszeoRhGwU+CWOaLh51tMViekaPAtgilJnWDiq
+	Oh1EOF92CoRoSLcrruBdfEue5aWhvz0gN543/4TZ9YIJ2P23N5RqIljwnFmw7nw==
+X-Gm-Gg: ASbGnctYbVEdy51xZY/axvLpGQvuk0lrE+Q9qL8tWjAKH6jTAiHVDa+uddwy265qEgV
+	EdC/3Qd11eIfsU+MN3ch0klS5U94n/UqTRoR7EZITAZ05Y5O5lnLf3BOSZqUR53/GMqFh/+AW3J
+	bS0yoDv8zoVLCZJkFjgZgZ5mNpnYQkzE3X4Ad3g6utFxvbL0QlhWtBhQX7Jcd92sSDc5paFp02T
+	S8BqQalOMy3Bvgb/vM62niUyeABbKI1UhoSNIp8AYxNt9FadyggYep16EIjjPXzvKNyK0hUBVco
+	2C4o1rflPG1CBYZbDIC55DsPK3UoiZzaiIWloQ==
+X-Received: by 2002:a05:600c:348f:b0:43c:f597:d584 with SMTP id 5b1f17b1804b1-43f3a9b039fmr12927235e9.29.1744360783868;
+        Fri, 11 Apr 2025 01:39:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEJZJQoEi7GiI72EPYHpaydqlLw3rRu5pjFRDqfw++7ZZIgj9Ga/PdXmA0PYbR0EkLquJO+Ng==
+X-Received: by 2002:a05:600c:348f:b0:43c:f597:d584 with SMTP id 5b1f17b1804b1-43f3a9b039fmr12927025e9.29.1744360783464;
+        Fri, 11 Apr 2025 01:39:43 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233a2f08sm76432275e9.12.2025.04.11.01.39.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Apr 2025 01:39:42 -0700 (PDT)
+Message-ID: <40ad385f81151320a3c9d380d35a0504d15e0041.camel@redhat.com>
+Subject: Re: [PATCH v2 03/22] rv: Let the reactors take care of buffers
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: john.ogness@linutronix.de, Petr Mladek <pmladek@suse.com>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>
+Date: Fri, 11 Apr 2025 10:39:40 +0200
+In-Reply-To: <fb397e38b56f3eab7b7f662fef4860ee4fbda873.1744355018.git.namcao@linutronix.de>
+References: <cover.1744355018.git.namcao@linutronix.de>
+	 <fb397e38b56f3eab7b7f662fef4860ee4fbda873.1744355018.git.namcao@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250331221541333bf9cf@mail.local>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
- ATCPCS34.andestech.com (10.0.1.134)
-X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 53B8dGr5046393
-
-Hi Alexandre,
-
-Thank you very much for your feedback on the patch, and sorry for the delayed response.
-Below are my replies to your comments and questions. I will prepare and send the next
-version of the patch as soon as possible.
-
-> +#define RTC_MINUTE(x)        ((x >> MIN_OFF) & MIN_MSK)      /* RTC min */
-> +#define RTC_HOUR(x)  ((x >> HOUR_OFF) & HOUR_MSK)    /* RTC hour */
-> +#define RTC_DAYS(x)  ((x >> DAY_OFF) & DAY_MSK)      /* RTC day */
-
-FIELD_PREP can probably replace those.
-=> That's a good suggestion. I will update this to use bitfield-related macros instead.
 
 
-> +struct atcrtc_dev {
-> +     struct rtc_device       *rtc_dev;
-> +     struct regmap           *regmap;
-> +     struct delayed_work     rtc_work;
-> +     struct mutex            lock;
 
-This mutex is not necessary, simply use rtc_lock() in you interrupt handler, the rtc core is already locking before calling the rtc_ops.
-=> You're absolutely right. I will remove the mutex and clean up this
-   part accordingly.
+On Fri, 2025-04-11 at 09:37 +0200, Nam Cao wrote:
+> Each RV monitor has one static buffer to send to the reactors. If
+> multiple
+> errors are detected simultaneously, the one buffer could be
+> overwritten.
+>=20
+> Instead, leave it to the reactors to handle buffering.
+>=20
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> ---
+> Cc: Petr Mladek <pmladek@suse.com>
+> Cc: John Ogness <john.ogness@linutronix.de>
+> Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+> ---
+> =C2=A0include/linux/panic.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 +++
+> =C2=A0include/linux/printk.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 5 ++++
+> =C2=A0include/linux/rv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 +++++--
+> =C2=A0include/rv/da_monitor.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 45 +++++++-----------------------
+> --
+> =C2=A0kernel/panic.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 17 ++++++++----
+> =C2=A0kernel/printk/internal.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0 1 -
+> =C2=A0kernel/trace/rv/reactor_panic.c=C2=A0 |=C2=A0 8 ++++--
+> =C2=A0kernel/trace/rv/reactor_printk.c |=C2=A0 8 ++++--
+> =C2=A0kernel/trace/rv/rv_reactors.c=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+> =C2=A09 files changed, 50 insertions(+), 48 deletions(-)
+>=20
+> diff --git a/include/linux/panic.h b/include/linux/panic.h
+> index 54d90b6c5f47..3522f8c441f4 100644
+> --- a/include/linux/panic.h
+> +++ b/include/linux/panic.h
+> @@ -3,6 +3,7 @@
+> =C2=A0#define _LINUX_PANIC_H
+> =C2=A0
+> =C2=A0#include <linux/compiler_attributes.h>
+> +#include <linux/stdarg.h>
+> =C2=A0#include <linux/types.h>
+> =C2=A0
+> =C2=A0struct pt_regs;
+> @@ -10,6 +11,8 @@ struct pt_regs;
+> =C2=A0extern long (*panic_blink)(int state);
+> =C2=A0__printf(1, 2)
+> =C2=A0void panic(const char *fmt, ...) __noreturn __cold;
+> +__printf(1, 0)
+> +void vpanic(const char *fmt, va_list args) __noreturn __cold;
+> =C2=A0void nmi_panic(struct pt_regs *regs, const char *msg);
+> =C2=A0void check_panic_on_warn(const char *origin);
+> =C2=A0extern void oops_enter(void);
+> diff --git a/include/linux/printk.h b/include/linux/printk.h
+> index 4217a9f412b2..1b7eebe13f14 100644
+> --- a/include/linux/printk.h
+> +++ b/include/linux/printk.h
+> @@ -154,6 +154,7 @@ int vprintk_emit(int facility, int level,
+> =C2=A0
+> =C2=A0asmlinkage __printf(1, 0)
+> =C2=A0int vprintk(const char *fmt, va_list args);
+> +__printf(1, 0) int vprintk_deferred(const char *fmt, va_list args);
+> =C2=A0
+> =C2=A0asmlinkage __printf(1, 2) __cold
+> =C2=A0int _printk(const char *fmt, ...);
+> @@ -213,6 +214,10 @@ int vprintk(const char *s, va_list args)
+> =C2=A0{
+> =C2=A0	return 0;
+> =C2=A0}
+> +__printf(1, 0) int vprintk_deferred(const char *fmt, va_list args)
+> +{
+> +	return 0;
+> +}
+> =C2=A0static inline __printf(1, 2) __cold
+> =C2=A0int _printk(const char *s, ...)
+> =C2=A0{
 
-> +             usleep_range(ATCRTC_TIMEOUT_USLEEP_MIN,
-> +                          ATCRTC_TIMEOUT_USLEEP_MAX);
-> +     }
-> +     dev_err(&rtc->rtc_dev->dev, "Device is busy too long\n");
+From the RV perspective this patch looks really good to me, although
+you're doing a bit more than just RV here.
+I hate to be the one telling you to split patches (22 is already scary
+as it is!) but probably the vpanic and vprintk_deferred belong in
+separate patches.
 
-Is this error message useful, what would be the user action after seeing this?
-==> This message indicates that the RTC hardware might be stuck in a busy state.
-    If this occurs, it suggests a potential hardware issue. During development, it
-    can serve as a hint to review the RTC module's design. In production, a system
-    reset might be required to recover. Based on that, I would prefer to keep this
-    error message for diagnostic purposes.
+Feel free to mark the RV part (and also 1/22 2/22)
 
+Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
 
-> +static time64_t atcrtc_read_rtc_time(struct atcrtc_dev *rtc)
+Thanks,
+Gabriele
 
-Does this have to be in a separate function?
-=> Not necessarily. It can be merged into atcrtc_read_time(). I will
-   make this adjustment.
-
-
-> +     rtc_time64_to_tm(time, tm);
-> +     if (rtc_valid_tm(tm) < 0) {
-
-This is not necessary, the core always checks whether the tm is valid.
-=> Thanks for pointing that out. I’ll remove this check.
-
-
-> +     rem -= hour * 3600;
-> +     min = rem / 60;
-> +     sec = rem - min * 60;
-
-You already had the broken down hour, min and sec, it is not necessary to compute that again here, just fold this function in atcrtc_set_time
-=> You're right, I will simplify this part by integrating it directly
-   into atcrtc_set_time().
-
-> +     ret = atcrtc_check_write_done(rtc);
-> +     if (ret)
-> +             return ret;
-> +     regmap_update_bits(rtc->regmap, RTC_CR, RTC_EN, RTC_EN);
-
-This is losing some important information, the RTC must only be enabled once the time has been correctly set, then you can check RTC_EN in
-atcrtc_read_time() to know whether the time is actually valid or not.
-=> I will move the RTC_EN setting to atcrtc_set_time() and add a check for
-   this bit in atcrtc_read_time() to ensure the time from RTC is valid.
-
-> +     if (IS_ERR(atcrtc_dev->rtc_dev)) {
-> +             dev_err(&pdev->dev,
-> +                     "Failed to allocate RTC device: %ld\n",
-> +                     PTR_ERR(atcrtc_dev->rtc_dev));
-> +             return PTR_ERR(atcrtc_dev->rtc_dev);
-> +     }
+> diff --git a/include/linux/rv.h b/include/linux/rv.h
+> index 3452b5e4b29e..c7c18c06911b 100644
+> --- a/include/linux/rv.h
+> +++ b/include/linux/rv.h
+> @@ -38,7 +38,7 @@ union rv_task_monitor {
+> =C2=A0struct rv_reactor {
+> =C2=A0	const char		*name;
+> =C2=A0	const char		*description;
+> -	void			(*react)(char *msg);
+> +	__printf(1, 2) void	(*react)(const char *msg, ...);
+> =C2=A0};
+> =C2=A0#endif
+> =C2=A0
+> @@ -50,7 +50,7 @@ struct rv_monitor {
+> =C2=A0	void			(*disable)(void);
+> =C2=A0	void			(*reset)(void);
+> =C2=A0#ifdef CONFIG_RV_REACTORS
+> -	void			(*react)(char *msg);
+> +	__printf(1, 2) void	(*react)(const char *msg, ...);
+> =C2=A0#endif
+> =C2=A0};
+> =C2=A0
+> @@ -64,6 +64,11 @@ void rv_put_task_monitor_slot(int slot);
+> =C2=A0bool rv_reacting_on(void);
+> =C2=A0int rv_unregister_reactor(struct rv_reactor *reactor);
+> =C2=A0int rv_register_reactor(struct rv_reactor *reactor);
+> +#else
+> +bool rv_reacting_on(void)
+> +{
+> +	return false;
+> +}
+> =C2=A0#endif /* CONFIG_RV_REACTORS */
+> =C2=A0
+> =C2=A0#endif /* CONFIG_RV */
+> diff --git a/include/rv/da_monitor.h b/include/rv/da_monitor.h
+> index 510c88bfabd4..15f9ed4e4bb6 100644
+> --- a/include/rv/da_monitor.h
+> +++ b/include/rv/da_monitor.h
+> @@ -19,45 +19,22 @@
+> =C2=A0#ifdef CONFIG_RV_REACTORS
+> =C2=A0
+> =C2=A0#define DECLARE_RV_REACTING_HELPERS(name,
+> type)							\
+> -static char
+> REACT_MSG_##name[1024];								\
+> -
+> 												\
+> -static inline char *format_react_msg_##name(type curr_state, type
+> event)			\
+> -
+> {												\
+> -	snprintf(REACT_MSG_##name,
+> 1024,							\
+> -		 "rv: monitor %s does not allow event %s on state
+> %s\n",			\
+> -	=09
+> #name,										\
+> -	=09
+> model_get_event_name_##name(event),						\
+> -	=09
+> model_get_state_name_##name(curr_state));					\
+> -	return
+> REACT_MSG_##name;								\
+> -
+> }												\
+> -
+> 												\
+> -static void cond_react_##name(char
+> *msg)							\
+> +static void cond_react_##name(type curr_state, type
+> event)					\
+> =C2=A0{							=09
+> 				\
+> -	if
+> (rv_##name.react)									\
+> -
+> 		rv_##name.react(msg);								\
+> -
+> }												\
+> -
+> 												\
+> -static bool
+> rv_reacting_on_##name(void)								\
+> -
+> {												\
+> -	return
+> rv_reacting_on();								\
+> +	if (!rv_reacting_on() ||
+> !rv_##name.react)						\
+> +		return;				=09
+> 					\
+> +	rv_##name.react("rv: monitor %s does not allow event %s on
+> state %s\n",			\
+> +			#name,				=09
+> 				\
+> +			model_get_event_name_##name(event),=09
+> 				\
+> +			model_get_state_name_##name(curr_state));
+> 				\
+> =C2=A0}
+> =C2=A0
+> =C2=A0#else /* CONFIG_RV_REACTOR */
+> =C2=A0
+> =C2=A0#define DECLARE_RV_REACTING_HELPERS(name,
+> type)							\
+> -static inline char *format_react_msg_##name(type curr_state, type
+> event)			\
+> -
+> {												\
+> -	return
+> NULL;										\
+> -
+> }												\
+> -
+> 												\
+> -static void cond_react_##name(char
+> *msg)							\
+> +static void cond_react_##name(type curr_state, type
+> event)					\
+> =C2=A0{							=09
+> 				\
+> =C2=A0	return;					=09
+> 					\
+> -
+> }												\
+> -
+> 												\
+> -static bool
+> rv_reacting_on_##name(void)								\
+> -
+> {												\
+> -	return
+> 0;										\
+> =C2=A0}
+> =C2=A0#endif
+> =C2=A0
+> @@ -170,8 +147,7 @@ da_event_##name(struct da_monitor *da_mon, enum
+> events_##name event)				\
+> =C2=A0		return
+> true;									\
+> =C2=A0	}						=09
+> 				\
+> =C2=A0							=09
+> 				\
+> -	if
+> (rv_reacting_on_##name())								\
+> -
+> 		cond_react_##name(format_react_msg_##name(curr_state, event));			\
+> +	cond_react_##name(curr_state,
+> event);							\
+> =C2=A0							=09
+> 				\
+> =C2=A0	trace_error_##name(model_get_state_name_##name(curr_state),
+> 				\
+> =C2=A0			=C2=A0=C2=A0
+> model_get_event_name_##name(event));					\
+> @@ -202,8 +178,7 @@ static inline bool da_event_##name(struct
+> da_monitor *da_mon, struct task_struct
+> =C2=A0		return
+> true;									\
+> =C2=A0	}						=09
+> 				\
+> =C2=A0							=09
+> 				\
+> -	if
+> (rv_reacting_on_##name())								\
+> -
+> 		cond_react_##name(format_react_msg_##name(curr_state, event));			\
+> +	cond_react_##name(curr_state,
+> event);							\
+> =C2=A0							=09
+> 				\
+> =C2=A0	trace_error_##name(tsk-
+> >pid,								\
+> =C2=A0			=C2=A0=C2=A0
+> model_get_state_name_##name(curr_state),				\
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index d8635d5cecb2..df799d784b61 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -277,17 +277,16 @@ static void panic_other_cpus_shutdown(bool
+> crash_kexec)
+> =C2=A0}
+> =C2=A0
+> =C2=A0/**
+> - *	panic - halt the system
+> + *	vpanic - halt the system
+> =C2=A0 *	@fmt: The text string to print
+> =C2=A0 *
+> =C2=A0 *	Display a message, then perform cleanups.
+> =C2=A0 *
+> =C2=A0 *	This function never returns.
+> =C2=A0 */
+> -void panic(const char *fmt, ...)
+> +void vpanic(const char *fmt, va_list args)
+> =C2=A0{
+> =C2=A0	static char buf[1024];
+> -	va_list args;
+> =C2=A0	long i, i_next =3D 0, len;
+> =C2=A0	int state =3D 0;
+> =C2=A0	int old_cpu, this_cpu;
+> @@ -338,9 +337,7 @@ void panic(const char *fmt, ...)
+> =C2=A0
+> =C2=A0	console_verbose();
+> =C2=A0	bust_spinlocks(1);
+> -	va_start(args, fmt);
+> =C2=A0	len =3D vscnprintf(buf, sizeof(buf), fmt, args);
+> -	va_end(args);
+> =C2=A0
+> =C2=A0	if (len && buf[len - 1] =3D=3D '\n')
+> =C2=A0		buf[len - 1] =3D '\0';
+> @@ -477,7 +474,17 @@ void panic(const char *fmt, ...)
+> =C2=A0		mdelay(PANIC_TIMER_STEP);
+> =C2=A0	}
+> =C2=A0}
+> +EXPORT_SYMBOL(vpanic);
+> =C2=A0
+> +/* Identical to vpanic(), except it takes variadic arguments instead
+> of va_list */
+> +void panic(const char *fmt, ...)
+> +{
+> +	va_list args;
 > +
-> +     ret = atcrtc_alarm_enable(&pdev->dev, true);
+> +	va_start(args, fmt);
+> +	vpanic(fmt, args);
+> +	va_end(args);
+> +}
+> =C2=A0EXPORT_SYMBOL(panic);
+> =C2=A0
+> =C2=A0#define TAINT_FLAG(taint, _c_true, _c_false,
+> _module)			\
+> diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
+> index a91bdf802967..28afdeb58412 100644
+> --- a/kernel/printk/internal.h
+> +++ b/kernel/printk/internal.h
+> @@ -71,7 +71,6 @@ int vprintk_store(int facility, int level,
+> =C2=A0		=C2=A0 const char *fmt, va_list args);
+> =C2=A0
+> =C2=A0__printf(1, 0) int vprintk_default(const char *fmt, va_list args);
+> -__printf(1, 0) int vprintk_deferred(const char *fmt, va_list args);
+> =C2=A0
+> =C2=A0void __printk_safe_enter(void);
+> =C2=A0void __printk_safe_exit(void);
+> diff --git a/kernel/trace/rv/reactor_panic.c
+> b/kernel/trace/rv/reactor_panic.c
+> index 0186ff4cbd0b..2587f23db80b 100644
+> --- a/kernel/trace/rv/reactor_panic.c
+> +++ b/kernel/trace/rv/reactor_panic.c
+> @@ -13,9 +13,13 @@
+> =C2=A0#include <linux/init.h>
+> =C2=A0#include <linux/rv.h>
+> =C2=A0
+> -static void rv_panic_reaction(char *msg)
+> +static void rv_panic_reaction(const char *msg, ...)
+> =C2=A0{
+> -	panic(msg);
+> +	va_list args;
+> +
+> +	va_start(args, msg);
+> +	vpanic(msg, args);
+> +	va_end(args);
+> =C2=A0}
+> =C2=A0
+> =C2=A0static struct rv_reactor rv_panic =3D {
+> diff --git a/kernel/trace/rv/reactor_printk.c
+> b/kernel/trace/rv/reactor_printk.c
+> index 178759dbf89f..a15db3fc8b82 100644
+> --- a/kernel/trace/rv/reactor_printk.c
+> +++ b/kernel/trace/rv/reactor_printk.c
+> @@ -12,9 +12,13 @@
+> =C2=A0#include <linux/init.h>
+> =C2=A0#include <linux/rv.h>
+> =C2=A0
+> -static void rv_printk_reaction(char *msg)
+> +static void rv_printk_reaction(const char *msg, ...)
+> =C2=A0{
+> -	printk_deferred(msg);
+> +	va_list args;
+> +
+> +	va_start(args, msg);
+> +	vprintk_deferred(msg, args);
+> +	va_end(args);
+> =C2=A0}
+> =C2=A0
+> =C2=A0static struct rv_reactor rv_printk =3D {
+> diff --git a/kernel/trace/rv/rv_reactors.c
+> b/kernel/trace/rv/rv_reactors.c
+> index 9501ca886d83..4ce6ebb9d095 100644
+> --- a/kernel/trace/rv/rv_reactors.c
+> +++ b/kernel/trace/rv/rv_reactors.c
+> @@ -490,7 +490,7 @@ void reactor_cleanup_monitor(struct
+> rv_monitor_def *mdef)
+> =C2=A0/*
+> =C2=A0 * Nop reactor register
+> =C2=A0 */
+> -static void rv_nop_reaction(char *msg)
+> +static void rv_nop_reaction(const char *msg, ...)
+> =C2=A0{
+> =C2=A0}
+> =C2=A0
 
-Can't atcrtc_alarm_enable be part of atcrtc_hw_init so you don't have to wait twice?
-=> After reviewing your comment, I agree. I think atcrtc_alarm_enable()
-   should instead be integrated into atcrtc_set_alarm() and removed from
-   here.
-
-Thanks again for your detailed feedback. I'll revise the patch accordingly
-and send out the updated version soon.
-
-Best regards,
-CL
 
