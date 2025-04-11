@@ -1,149 +1,98 @@
-Return-Path: <linux-kernel+bounces-600447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302F0A86004
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:07:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52E51A86071
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 530991BA75CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:06:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DB533A145A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916591F2C52;
-	Fri, 11 Apr 2025 14:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0736C17C208;
+	Fri, 11 Apr 2025 14:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiI5UjVI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fivetechno.de header.i=@fivetechno.de header.b="jX3dDLhw"
+Received: from wp725.webpack.hosteurope.de (wp725.webpack.hosteurope.de [80.237.130.247])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E213F8635A;
-	Fri, 11 Apr 2025 14:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CA226AD9;
+	Fri, 11 Apr 2025 14:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744380363; cv=none; b=eupo5RfB0gE22583xkGFIZFjwV99Jk/tYLjCKrBxhPNr9+2UbcUnOQ4Dss5W7K+lOWGH+d1dgciRQOUL5ZyCdyz9PU6f7hSrGc8PUQLe88izcRjbl86XkZP4EVNgW4jO+V22GYINkTyTQaT31ssB84c8ZrblT7w+nOSfQRVVoTg=
+	t=1744381232; cv=none; b=neD/Gddux5lZOoU3QLgv1TOX/FFvoE0lSqgIrrcKTbNq1xorrXLpGCMBeUiB+4w/6+Uc/0H+rkhPiHwV/1e413hu2HESccyk43tt5CG0Y/Qubj5Jq3M4mPNuUMCt4wE1Rka6Rq3bMBfZDY1AkYO2PosrlyG5OoCMob+/rxAj74g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744380363; c=relaxed/simple;
-	bh=HlikJyA3RK/we9R2FRAkqQszIW7QLL+7TnR3hFlO3p8=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 MIME-Version:Date; b=IbE1oKrbpBwj47u+ivqpbRLMZNxWYwZpqjcCx8hXLSnybXHLQQ+2Sh4UCxcGyQX3WLIA4TdZJBLQxsSeTijsRqcbcmAUHAX6RYgYILM2xGseprZ318K7llgjoAKBvQj83xFVmXN5I3BqVWSQXgUijuiw4YPY/6M+MCIGZbI7EuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiI5UjVI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC75AC4CEE2;
-	Fri, 11 Apr 2025 14:05:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744380362;
-	bh=HlikJyA3RK/we9R2FRAkqQszIW7QLL+7TnR3hFlO3p8=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
-	b=CiI5UjVI7wphAZSfd37O9uqQOvJAKY/aFXR68AI0sSamvYzff1Y7ICpnCiBARwqBS
-	 e/PD3XhTxshajAoIHmgt1x20FRASYm6tF0W5rAveYgVU3aFJ9Vef6wRSFpaxZfaiQQ
-	 hJ3IgZNzKdN7odI2VMzTsjM6zxME045mlw/5w4gV1YiUdEowJQ49gQBCax22ddNIw1
-	 w27iN0wFSMhA0DJg0zYL0z66gdIfMncNL0N9+adRIHDY2ERW/GhiJiMMZqjuiHAJ8L
-	 Sbn4t7uLSnRnOzM1Ub/lirc/SwLC1nCnDSjwkW1h1tbVVmQ768Zn4lVU83v8jmG3P6
-	 QkgrvA4OLOZXA==
-Message-ID: <1fb5a9e97e97b86c8b0d6008eee579a0bebea708.camel@kernel.org>
-Subject: Re: [PATCH net-next 2/8] mptcp: sched: split validation part
-From: Geliang Tang <geliang@kernel.org>
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, mptcp@lists.linux.dev, 
- Mat Martineau <martineau@kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet	 <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni	 <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Shuah Khan	 <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-In-Reply-To: <20250411-net-next-mptcp-sched-mib-sft-misc-v1-2-85ac8c6654c3@kernel.org>
-References: 
-	<20250411-net-next-mptcp-sched-mib-sft-misc-v1-0-85ac8c6654c3@kernel.org>
-	 <20250411-net-next-mptcp-sched-mib-sft-misc-v1-2-85ac8c6654c3@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+	s=arc-20240116; t=1744381232; c=relaxed/simple;
+	bh=vvgbcZDknI5NuRuQtUf87K9ENMUNvdauYZFfVSl+3Jc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CiQqxBAM6eENDH21nCCCmVPKuUSz8A+lYLxBpL6+2mAl2hCznJFJIOJDD0FCmqs5CP6QhmyE5HArGeyODpwEfOJDYW1IIWZAkao2GURtBJFhTGc2YX3BK0rsQXzdQrMTzIKsCB4L5dsD83Ma5cuSKSfT259mGAyqsBCBKNwX700=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fivetechno.de; spf=pass smtp.mailfrom=fivetechno.de; dkim=pass (2048-bit key) header.d=fivetechno.de header.i=@fivetechno.de header.b=jX3dDLhw; arc=none smtp.client-ip=80.237.130.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fivetechno.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fivetechno.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fivetechno.de; s=he121032; h=Content-Transfer-Encoding:MIME-Version:
+	Message-Id:Date:Subject:Cc:To:From:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=3EN09kEXG7OMqR0uy2B4D2/5Ob0p4yVnh/cBhdXyJbw=; t=1744381230; x=1744813230; 
+	b=jX3dDLhwIMGOQtuQWwnYcrnbhChGW7Q/COmuqGlc9BKeF0zURu4SG5oWoAFehD5ASRDOSSZqQQP
+	odNjF4KhcfWUz2TGJfLFNqPo5yJ59rS0G7e+rVHdF7EVzRI5XI5G5/FFBK/ks/4nuQHZZI3jzZrzX
+	Xstz67ew45rvogLcQg799z54VR/qtlpuvbPSsbVhGdCd+IkJ2oPhczoVR6dMki6CFyyl7/4yaQqpW
+	9oABZTF950E6K74RlacMSidSYabYNryTYegLHFL+mbSwLBWder5xyRizZppcdXk9FAl8kxDdo79ig
+	gaqBLdsVOTSUminH1rjiGVrWTDZh9L03dakA==;
+Received: from p5098d998.dip0.t-ipconnect.de ([80.152.217.152] helo=hermes.fivetechno.de); authenticated
+	by wp725.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	id 1u3Exs-001YA2-25;
+	Fri, 11 Apr 2025 16:02:40 +0200
+X-Virus-Scanned: by amavisd-new 2.12.1 using newest ClamAV at
+	linuxbbg.five-lan.de
+Received: from roc-pc (p5b125997.dip0.t-ipconnect.de [91.18.89.151])
+	(authenticated bits=0)
+	by hermes.fivetechno.de (8.15.2/8.15.2/SUSE Linux 0.8) with ESMTPSA id 53BE2dPh013976
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Fri, 11 Apr 2025 16:02:39 +0200
+From: Markus Reichl <m.reichl@fivetechno.de>
+To: linux-rockchip@lists.infradead.org, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Markus Reichl <m.reichl@fivetechno.de>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: rockchip: Add vcc supply to spi flash on rk3399-roc-pc.
+Date: Fri, 11 Apr 2025 16:02:21 +0200
+Message-Id: <20250411140223.1069-1-m.reichl@fivetechno.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 11 Apr 2025 09:57:39 -0400
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;m.reichl@fivetechno.de;1744381230;bb283ab1;
+X-HE-SMSGID: 1u3Exs-001YA2-25
 
-Hi Matt,
+Add vcc supply to the spi-nor flash chip on rk3399-roc-pc boards
+according to the board schematics ROC-3399-PC-V10-A-20180804 to avoid
+warnings in dmesg output.
 
-On Fri, 2025-04-11 at 13:04 +0200, Matthieu Baerts (NGI0) wrote:
-> From: Geliang Tang <geliang@kernel.org>
+Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+---
+ arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-Please update my email as "Geliang Tang <tanggeliang@kylinos.cn>" here
-and in patch 7, otherwise, CI will complain that the email address
-after "From: " is different from that after "Signed-off-by: ".
-
-Thanks,
--Geliang
-
-> 
-> A new interface .validate has been added in struct bpf_struct_ops
-> recently. This patch prepares a future struct_ops support by
-> implementing it as a new helper mptcp_validate_scheduler() for struct
-> mptcp_sched_ops.
-> 
-> In this helper, check whether the required ops "get_subflow" of
-> struct
-> mptcp_sched_ops has been implemented.
-> 
-> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
-> Reviewed-by: Mat Martineau <martineau@kernel.org>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> ---
->  net/mptcp/protocol.h |  1 +
->  net/mptcp/sched.c    | 17 +++++++++++++++--
->  2 files changed, 16 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/mptcp/protocol.h b/net/mptcp/protocol.h
-> index
-> d409586b5977f93bff14fffd83b1d3020d57353b..7aa38d74fef6b5f00d97a114d74
-> b711014d0a52d 100644
-> --- a/net/mptcp/protocol.h
-> +++ b/net/mptcp/protocol.h
-> @@ -744,6 +744,7 @@ void mptcp_info2sockaddr(const struct
-> mptcp_addr_info *info,
->  			 struct sockaddr_storage *addr,
->  			 unsigned short family);
->  struct mptcp_sched_ops *mptcp_sched_find(const char *name);
-> +int mptcp_validate_scheduler(struct mptcp_sched_ops *sched);
->  int mptcp_register_scheduler(struct mptcp_sched_ops *sched);
->  void mptcp_unregister_scheduler(struct mptcp_sched_ops *sched);
->  void mptcp_sched_init(void);
-> diff --git a/net/mptcp/sched.c b/net/mptcp/sched.c
-> index
-> f09f7eb1d63f86b9899c72b5c2fd36c8445898a8..1e59072d478c9b52c7f7b60431b
-> 589f6ca3abe65 100644
-> --- a/net/mptcp/sched.c
-> +++ b/net/mptcp/sched.c
-> @@ -82,10 +82,23 @@ void mptcp_get_available_schedulers(char *buf,
-> size_t maxlen)
->  	rcu_read_unlock();
->  }
->  
-> +int mptcp_validate_scheduler(struct mptcp_sched_ops *sched)
-> +{
-> +	if (!sched->get_send) {
-> +		pr_err("%s does not implement required ops\n",
-> sched->name);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  int mptcp_register_scheduler(struct mptcp_sched_ops *sched)
->  {
-> -	if (!sched->get_send)
-> -		return -EINVAL;
-> +	int ret;
-> +
-> +	ret = mptcp_validate_scheduler(sched);
-> +	if (ret)
-> +		return ret;
->  
->  	spin_lock(&mptcp_sched_list_lock);
->  	if (mptcp_sched_find(sched->name)) {
-> 
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
+index 0393da25cdfb..fc9279627ef6 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
+@@ -736,6 +736,7 @@ flash@0 {
+ 		compatible = "jedec,spi-nor";
+ 		reg = <0>;
+ 		spi-max-frequency = <30000000>;
++		vcc-supply = <&vcc3v3_sys>;
+ 	};
+ };
+ 
+-- 
+2.39.5
 
 
