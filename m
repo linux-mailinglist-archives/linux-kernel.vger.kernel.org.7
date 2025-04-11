@@ -1,126 +1,142 @@
-Return-Path: <linux-kernel+bounces-600133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57ECA85C41
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:52:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4453A85C45
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 860C58A00DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:49:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EAA13B9760
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9D029AAF5;
-	Fri, 11 Apr 2025 11:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAB729AAEC;
+	Fri, 11 Apr 2025 11:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="igkt2VE8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WjPBRwiM"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A8B26AD9;
-	Fri, 11 Apr 2025 11:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03004204C02;
+	Fri, 11 Apr 2025 11:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744372187; cv=none; b=INWxdNKHlYhuuA/hADqCNxR7vM4Oq7S6+e3AK5cPEGkOyF6R7pszgZV1MBOiw1NNcyFpY2CgjqXsCb06Wux66FSwS4ZsJT5SBgk9ITte0SGzbbSt19D3U/p83vPDUwxpBWH0mtZ9n4re9eSZ9LDQNqESCkv/P9O8MjHMQSdyYOY=
+	t=1744372270; cv=none; b=WB/QZ2jNhJ6BcSqR6eKj1Tou19ZcoRsDme0a2RRXJ6G2cPnXu5Z1LDsSuZ2rGrEoG9Y5NDwhSfldHcqiJDwdGB4YNQE2yFn5nB4Lry6yroV/V1p1B44qO5FSRk3pTNNRViWQq49ZrR2DoSKLt7XetbWfpIbKHmI74jMeTcf+Nuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744372187; c=relaxed/simple;
-	bh=Y1jBqB8SPrhS4Y4w/rmv4NVxsWmmjHCT1zX7FJlSn8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D5eXOEtgE1ArzHc2coAbM/BqLTpkaELyqMHiQ1LK6DNj7xpgaa3QzooC9cWp1fanz/fti3IIXZJe7wmHG5nWAA8NOarArXyzAow/dB7cm7UDU8wyZ2R02npgC9Lt6Aw7vgiyM+vGuF+d+2g95dwN4mrxFu6SPWEgsH3Pz0IZ36k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=igkt2VE8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7E00C4CEE2;
-	Fri, 11 Apr 2025 11:49:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744372186;
-	bh=Y1jBqB8SPrhS4Y4w/rmv4NVxsWmmjHCT1zX7FJlSn8U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=igkt2VE8p0udba4TvCkKsv0xiU0tUm3e5M/XGbSLrV7UD28g8nyd/6e7DKEwO3uVf
-	 1W9Z/VWJtH7C0QwvrphmcMBlMMUBzzsI8McD/PqLgPl0bytGjyx42SbTr6UaIJFVQt
-	 GZba/dgqwKgfGTKYKPBPgVmcs7TylcG9zE8Z07tDC061yVazw8szAHVGUaEnD82hMl
-	 WTJ/jmNJ/TsuHp1lvKcryh6e2YVBaQXjLrRxmL0aCG7A282RDNYQCc22L66GOI+7i3
-	 hn/dLsMYdhbolbmFC/lJpD+f6mzn1+LbXHIKehBxRXjrByQ0JQzRhfk7Hcr13ZMJ7K
-	 zh7nKFoWiPZ6g==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u3CtK-000000000on-156V;
-	Fri, 11 Apr 2025 13:49:51 +0200
-Date: Fri, 11 Apr 2025 13:49:50 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Christopher Obbard <christopher.obbard@linaro.org>
-Cc: Douglas Anderson <dianders@chromium.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Rui Miguel Silva <rui.silva@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] arm64: dts: qcom: x1e80100: add epd hpd pinctrl
-Message-ID: <Z_kB3jOH04-zFnym@hovoldconsulting.com>
-References: <20250402-wip-obbardc-qcom-t14s-oled-panel-v5-0-ff33f4d0020f@linaro.org>
- <20250402-wip-obbardc-qcom-t14s-oled-panel-v5-1-ff33f4d0020f@linaro.org>
+	s=arc-20240116; t=1744372270; c=relaxed/simple;
+	bh=AtueuoOlmqi+gLWbZfWo0/v6QJx5lOXGeHniFzuHKgs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V/73Q5JgIEbfX9WjPfoK2UVpmQdpm+nQQ/v8F9JBmPqKMugA4o5vfj+xKbqKGpOovtrztjmrYFKB8PyvBQi7/6eM5lR45qunLSfoTci0sdapDb+eiJ9skRqMAKz7B4NI15lef9Sha6oGtsOsBjaoz1yQ9zMJxg0/9AjEMkHTSTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WjPBRwiM; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-30828fc17adso299858a91.1;
+        Fri, 11 Apr 2025 04:51:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744372268; x=1744977068; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qc9XUnFnXiP4+KXniiG6Mpox6n5EbScrsD7BSlOmYoI=;
+        b=WjPBRwiMYS3PPFhnrHnl3gtZCL6iXhaTwF+NmgJ9XpPqucpI4YnCbCS7y/9uWbyqjC
+         BZwWT1oPkf8FYtVscbPZFlC7ImQjpDOD9UlTFwEmcNNdMsoTNj457EwIsEryX+siWHti
+         5fw92K1ledT1WvgJp2db637K51S1XU9gDZFpX/3LeSJ9r/HLCZTeN7k/966SE1l99sSV
+         5GG2E41xqPKJUVYmpOmtg1TzqhYrr2Zpd/5DKHJGJTTof4oHzICb9kOod0HB0pDUXJDe
+         3q7rXqu7/Y2dCNQ2FL6dJVdXpAw2mQ+/Iyf9Ajw89CQbQEC1LKaY7boovgZR8ySJIP1x
+         pLTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744372268; x=1744977068;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qc9XUnFnXiP4+KXniiG6Mpox6n5EbScrsD7BSlOmYoI=;
+        b=gJ3OLPS2yAIHHT5P7kGx71tbY+jAhtnxbB7fvMD2RZfbo8H9bqpgH78FU1JCbm09nj
+         +KtdvS35Ocewt9o8MXmRAz9PiCxByspKn4kni1zUNJ4bN6BJbpelETikStl+j6GRUIc5
+         s3cvXncxB+mRXQdjqqgnjqAmrLsUztbUe8c8HwcDCUYFxV3xabVIjl8lxtJjJW98jGYt
+         d7aLDQkp9kIlCJkM+6mbfQZxYnMidy9Mw8ON9ANDEA0xKWTwgi+x9LtiGT4udrH46klC
+         XI7mtI0wvT+U79y9BMfU6AXWh8U+KTX7W0M8IHEMAjKbe+2iFWYz5gldQyL+1YSM2MvB
+         tIvw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+tqP2Uou0A+KIWjpVD0XD6PX2XpHEHOdeBHkGX5p+tmKgsmfiqw736Wi2YYZmLdimPKdvIixITIiRbiQ=@vger.kernel.org, AJvYcCXX3oOxxp3V9QBhpMV29u5vdblRxjbYJju0CujW07apr/wEfZenYTGDqe7q0gFDS8jAzuOuU3MAEeMehkkU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh4OKJvoNbg966JacSZh9nMj/Q5LCGDXkcS0boBEevhffYMMlg
+	9pHmLfsi14FhzkWfPDGsIE+grOrO4eshSoNQQAQBCdIqn5T3r4W7jJTek0ec
+X-Gm-Gg: ASbGncvHAQicLGYkkeqIW8mmlMsiGqZVAB01u+d120dAC0euMPEEATLewrEcvpxqIQB
+	vIPbT4WFq8RiSXCpEJMb7X1h1s4qMg1Mq6/3ovSene+CNFcrpvjhVzfGON4cF0+BM5aiRM5aXBE
+	rpXCzkXHmu2YllsigFnHEhjO2qhmO3NhX/XkeAsDzQ7QxOpwkzgjISE31qT6oAanJ3G+l0/jjHA
+	oStkPaCmZKcIZKQE+gDKucajl0a8yh0piSEm8IzBoHlyp7p4v+5S3s8WfD4JrUB+VbTPJGLfoSs
+	Y2Q9ai1MrRzH0mJ6lHpF6A0TzHgaYSGptd45oUjoIZesLkhB/WP65TkpcbuKPepfY5dptGE=
+X-Google-Smtp-Source: AGHT+IHHjyG3dH0HF2+qKwo5SaUhp464KTvBTRpqh1hB11GI5qcHK1cV9kKFVYLsFPsHk7RMgiV20Q==
+X-Received: by 2002:a17:90b:5643:b0:2ff:62f3:5b19 with SMTP id 98e67ed59e1d1-30823633eacmr4055660a91.13.1744372268149;
+        Fri, 11 Apr 2025 04:51:08 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7c992aasm46916265ad.157.2025.04.11.04.51.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Apr 2025 04:51:07 -0700 (PDT)
+From: Purva Yeshi <purvayeshi550@gmail.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: andriy.shevchenko@linux.intel.com,
+	arnd@kernel.org,
+	cang1@live.co.uk,
+	bhelgaas@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Purva Yeshi <purvayeshi550@gmail.com>
+Subject: [PATCH] tty: serial: 8250: Fix uninitialized variable warnings in pci_oxsemi_tornado_get_divisor
+Date: Fri, 11 Apr 2025 17:20:48 +0530
+Message-Id: <20250411115048.34948-1-purvayeshi550@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250402-wip-obbardc-qcom-t14s-oled-panel-v5-1-ff33f4d0020f@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 02, 2025 at 03:36:32PM +0100, Christopher Obbard wrote:
-> Add edp_hpd_active pinctrl to the X1E80100 device tree.
+Fix Smatch-detected issue:
 
-Please squash this one with the patch adding the user.
+drivers/tty/serial/8250/8250_pci.c:1233 pci_oxsemi_tornado_get_divisor()
+error: uninitialized symbol 'tcr'.
+drivers/tty/serial/8250/8250_pci.c:1234 pci_oxsemi_tornado_get_divisor()
+error: uninitialized symbol 'quot'.
+drivers/tty/serial/8250/8250_pci.c:1238 pci_oxsemi_tornado_get_divisor()
+error: uninitialized symbol 'quot'.
+drivers/tty/serial/8250/8250_pci.c:1242 pci_oxsemi_tornado_get_divisor()
+error: uninitialized symbol 'cpr'.
+drivers/tty/serial/8250/8250_pci.c:1252 pci_oxsemi_tornado_get_divisor()
+error: uninitialized symbol 'cpr'.
+
+Fix uninitialized variable usage in pci_oxsemi_tornado_get_divisor() that
+was triggering sparse warnings and potential undefined behavior. The
+variables tcr, cpr, and quot were used before being explicitly assigned
+values, leading to smatch warning in multiple lines of the function.
+
+Initialize quot to 1, tcr to 16, and cpr to OXSEMI_TORNADO_CPR_DEF at the
+point of declaration. This ensures safe fallback values are used when these
+variables are not conditionally set later in the function, avoiding
+uninitialized access.
+
+Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+---
+ drivers/tty/serial/8250/8250_pci.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
+index 73c200127b08..ba4dedccc29e 100644
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -1187,9 +1187,9 @@ static unsigned int pci_oxsemi_tornado_get_divisor(struct uart_port *port,
+ 	unsigned int sdiv = DIV_ROUND_CLOSEST(sclk, baud);
+ 	unsigned int best_squot;
+ 	unsigned int squot;
+-	unsigned int quot;
+-	u16 cpr;
+-	u8 tcr;
++	unsigned int quot = 1;
++	u16 cpr = OXSEMI_TORNADO_CPR_DEF;  /* Default Control Prescaler Register */
++	u8 tcr = 16;  /* Typical default value for the Timer Control Register */
+ 	int i;
  
-> Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 46b79fce92c90d969e3de48bc88e27915d1592bb..5b1b80c445404fd02e9f6e5dab207610b03ff9c5 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -6389,6 +6389,11 @@ data-pins {
->  					bias-pull-up;
->  				};
->  			};
-> +
-> +			edp_hpd_active: edp-hpd-active-state {
+ 	/* Old custom speed handling.  */
+-- 
+2.34.1
 
-Please keep the nodes sorted by name.
-
-> +				pins = "gpio119";
-> +				function = "edp_hot";
-
-There is no "edp_hot" function on x1e so I wonder how this has been
-tested.
-
-As I mentioned in a comment to an earlier revision this pin has been
-configured by the firmware as "edp0_hot".
-
-Since there is also an "edp1_hot" pin, this needs to be reflected in the
-node name and label.
-
-Pin configurations really do belong in board files, but unfortunately
-this was not followed for x1e. You should still include the bias
-configuration (somewhere).
-
-> +			};
->  		};
->  
->  		stm@10002000 {
-
-Johan
 
