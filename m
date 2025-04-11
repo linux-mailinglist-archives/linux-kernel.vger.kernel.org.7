@@ -1,87 +1,77 @@
-Return-Path: <linux-kernel+bounces-599537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA4DDA85504
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:12:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39489A85536
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC4A5179562
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:12:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58353BDBC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3307283C8B;
-	Fri, 11 Apr 2025 07:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8BE283CB8;
+	Fri, 11 Apr 2025 07:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IyHmTNLo"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SPZ9j5O3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B133E27EC71;
-	Fri, 11 Apr 2025 07:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB4428369A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744355532; cv=none; b=FiQjKKVntTMWIpPDF2EQsD3t4lemDCT5PNKJuQG4armhi1nhuPJUyJO9r9mgrcH5zTuQI6bE6bXX3YE634ZG49MN7r03W7f1AFqzfhIe611nPEizadKkNmbORS2zmEkY8/8adzvONEaIF3VEjb1um+x4zo5mGkn/Ho9+shNXNNE=
+	t=1744355569; cv=none; b=QZief62K272CI/25IfLE3V1M8UKOa772KkiAoq7HhWqF1+7ZkfSRlj+JMqjNrlYTbRRzbtyS7lwnqLGZgkZlB60C6an/tTFHK5KfoIq8s6VzzT3eIgkHbBAR0dGxi1cEprlLIjxxhZpeRd5Pe4raHWFz5iDTZAWlmJIVSjIncuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744355532; c=relaxed/simple;
-	bh=gdrhVumeTce66VFXx6iutWVlsPAzxQz8fQdDaFP5jWA=;
+	s=arc-20240116; t=1744355569; c=relaxed/simple;
+	bh=1bbCoIICaOjAgKM/FjPojrJuedc/KFAL+hSxDE+eY+g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S3GmwvIn9nR46qvZuZsrZCB3c3qCtjTmgNpcuzw+0ls172OqEyxlS1NOcS999uabVBPvfDhD50r+1BmFeiNQM9KV5mn3DesV8YIOLJBEUc/3BLyLYLdRUsB7CccXtEd7IylCHyJ+4DVAxREA5TRxNovAU5lZsAWOWLaIRcyjLDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IyHmTNLo; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso1902901f8f.1;
-        Fri, 11 Apr 2025 00:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744355529; x=1744960329; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=C7XvJyaIebd7Gra2hTpcbnV/bUDd+9pSKlR1cZwTqv0=;
-        b=IyHmTNLoBC4j0+ImOWqtepfDX4KtI8CMjKQJTLImV5cKXShaVheX92tKj91iquLe1k
-         wfAUPSV0/dNKCaSGBhVqIvTnKV3WUsU0K5drw9pnqwck0dPgNLQIadHLf76ulhT+Rf4r
-         q/JP+8JDbjcDlLfcAakZSb88xNrKGbEQ6ZYbF3LJfz/6+NvvckYuJz59CWv967VmkBW6
-         OSBNUqk/QojzD2y5+pwtvfd8msBbsnKswkVZQu6c65tC/JF2nTCg+NaHx719Cm0OVyzr
-         9BsuUmbhoGyoJlw0y3HFb5mbB8kvtIR3LAncI5MYTM+W1vadkOQHSTB/sX91oFZzt++A
-         mhWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744355529; x=1744960329;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C7XvJyaIebd7Gra2hTpcbnV/bUDd+9pSKlR1cZwTqv0=;
-        b=jeWad6Kdu2Jzvybay8c1A+fTvq/gfrHhkGZBZ9PTT/+RY12YD7P01vc/nuAOL/n7sW
-         7MIltEkvuwkCNic/Wbel+kWajwioAXwhpaUwhz694sZgbaVObn8YtGUHxOwdPsfSRVbH
-         orVIl4grAyrfIuY1wl2go/4MbGkasH22hYaudiBBHPx0mAeTDbLrA/+Qc7mW3/NRy+B9
-         +j6blEdIFYYcudBA4ke2jBXRkArNKh7LTr6boJ+iBLmtMuSTvu8cdrMvr2CpqhRVnnc6
-         Nar8nyyrs0h33xEqnv3xlyqfSXOwHM3Dcwuy+GOlwsHzZ4IA9Zldj9JK6I2S5oAoPPh0
-         N4uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ9MSG++QRi6pfPuOrZlqbaN4f68X3bF/a9L446q5X1NYy5uRDOPaEiMFa7oOmrlxleuOQ2nBZyUgEPdCG@vger.kernel.org, AJvYcCVnpypBNZiMBmb5F6b2OkRi4usaeZAlWZtALsAHhQbB5Xwi1jbcgG2+Eb34hIFLtfZBv4y/1U8IjlT6@vger.kernel.org, AJvYcCW1YRUb4higcStLV9rv08FITgKU6P7V+fjWBgNLA+wjunogXEFW4glCKc+8vUTS65JfBAW+Dmvn8eUA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHtgVwHhyTPHeXexpjO9VAXFQ1Uti7XPXoanaDVLlfGMZngLxx
-	1Zmh8DlqIkz+45+u5ldaYyFJaYPTwvkpHn/yCpklHKZPZr60K8nDyAvrDP3HfPXx8w==
-X-Gm-Gg: ASbGncu2KUzcXVj1ODQnCYLaUEFHxRsFqj9Ccspv/lKqdSWRr5UJGjRlHL7g5iGkl6h
-	akxuawhTEIK/gScaCl9mvsh+8GNh4iUiAwsZT/bbGLPVbaBjppHvOAUw1sA75zEhzKDXKNc/4pK
-	+QY9QBYuQWUoAGS0gH6bvd/DOhVbggWX9NffAd0N6jThHoVtJaK2DQg8j+L3L24AsCgZO5vaDWB
-	Fw3XYiv1VEtET2EJuU0hdVK1HSSzkJnpxAIJ6ZhKdBM8rBKjL2I7lXsHIOjQrVtAMBR0vnR7u7k
-	pgfANh5ApPCWAYUmp0m5/mBj4nlNIKGGRZ4e1F9Gc3QGVeSQtnb1YZw7KFLNiKnaSLQMdxpPWur
-	ag1af2GjvAQ==
-X-Google-Smtp-Source: AGHT+IHl/LN8pzBCnYdaddscA9zS4QyZ1eGKpY2s4nEo1vuy8PrG4l6gk9J2fhiJN5HFEaJ7977gNA==
-X-Received: by 2002:a5d:648d:0:b0:391:65c:1b05 with SMTP id ffacd0b85a97d-39e6e48d03dmr1267790f8f.11.1744355528773;
-        Fri, 11 Apr 2025 00:12:08 -0700 (PDT)
-Received: from antoni-VivoBook-ASUSLaptop-X512FAY-K512FA ([37.161.217.206])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf4456fdsm1104793f8f.86.2025.04.11.00.12.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 00:12:08 -0700 (PDT)
-Date: Fri, 11 Apr 2025 09:11:50 +0200
-From: Antoni Pokusinski <apokusinski01@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: alexandre.belloni@bootlin.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	alexander.stein@ew.tq-group.com, linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: rtc: add binding for RV8063
-Message-ID: <20250411071118.6fwnmpsgm46oejeb@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
-References: <20250407193521.634807-1-apokusinski01@gmail.com>
- <20250407193521.634807-4-apokusinski01@gmail.com>
- <20250410211351.GA1076944-robh@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W6jp2wEFUYfTwOe43TvpjWk48K/uVHEnehGPXcLCUuLFMQV7Cm7stITYpkKk/zXSNWTeQi4VyoH8Ib8QSbtcc+VkyrdQ31XIRksVvmipYorh9rbc7um9rkOkKNRlHfirvloM58izmTIP6mDi6M3HKysYDWitqmJ7Am3QDCVSnbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SPZ9j5O3; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744355569; x=1775891569;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1bbCoIICaOjAgKM/FjPojrJuedc/KFAL+hSxDE+eY+g=;
+  b=SPZ9j5O3p6QXVjAh8fcAQ5JB/pVKye+BcbdKfxDUuMQ964eKWVt1SkOR
+   CVJErh6nboVFxnAm4TU0N9O+qgCWzBPCOHgKi2SMgNox+EEvfC9sGfa+j
+   Us/DR04h0cisJzUqVt7Xu2Glcu1h6Y3el/W6y4pprXlQwwTHLQ+1NSEWb
+   TFxhZsT2LJM8PGH0TB+PtOVpzq/QRVq3ICV52h41hcyaQ/j4rRm2Sk4/W
+   pU+/YRjDrkTHpXcWUG9jC5SpKFCWrzyBw8MKLwqGTkGWPpu0l3WHQjvi2
+   FfUoiPaEkWpzcgcEAsyLk/a5HyCUC+0ixMcDMP0k6RUGOxmJOIrJCL2cD
+   w==;
+X-CSE-ConnectionGUID: pNTYAOmbQ5eM7AvjKt5Vow==
+X-CSE-MsgGUID: ekCz3OaYQoePo222IbAXPQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="45913535"
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="45913535"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 00:12:43 -0700
+X-CSE-ConnectionGUID: ClesbpNgSmmban5dLkKaKw==
+X-CSE-MsgGUID: 1Z44Zn4nTzCMFAuQPZKR9g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="129469542"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 11 Apr 2025 00:12:39 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u38Z3-000Av4-1E;
+	Fri, 11 Apr 2025 07:12:37 +0000
+Date: Fri, 11 Apr 2025 15:12:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, Gabriele Monaco <gmonaco@redhat.com>
+Subject: Re: [PATCH] timers: Exclude isolated cpus from timer migation
+Message-ID: <202504111433.IwFLpkrz-lkp@intel.com>
+References: <20250410065446.57304-2-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,101 +80,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250410211351.GA1076944-robh@kernel.org>
+In-Reply-To: <20250410065446.57304-2-gmonaco@redhat.com>
 
-On Thu, Apr 10, 2025 at 04:13:51PM -0500, Rob Herring wrote:
-> On Mon, Apr 07, 2025 at 09:35:21PM +0200, Antoni Pokusinski wrote:
-> > Microcrystal RV8063 is a real-time clock module with SPI interface.
-> > 
-> > Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
-> > ---
-> >  .../devicetree/bindings/rtc/nxp,pcf85063.yaml | 33 ++++++++++++++++++-
-> >  1 file changed, 32 insertions(+), 1 deletion(-)
-> 
-> Bindings come before users (driver).
-> 
-Fixed in v3 already.
+Hi Gabriele,
 
-Kind regards,
-Antoni
+kernel test robot noticed the following build warnings:
 
-> > 
-> > diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf85063.yaml b/Documentation/devicetree/bindings/rtc/nxp,pcf85063.yaml
-> > index 2f892f8640d1..cb31c7619d66 100644
-> > --- a/Documentation/devicetree/bindings/rtc/nxp,pcf85063.yaml
-> > +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf85063.yaml
-> > @@ -12,6 +12,7 @@ maintainers:
-> >  properties:
-> >    compatible:
-> >      enum:
-> > +      - microcrystal,rv8063
-> >        - microcrystal,rv8263
-> >        - nxp,pcf85063
-> >        - nxp,pcf85063a
-> > @@ -44,7 +45,12 @@ properties:
-> >  
-> >    wakeup-source: true
-> >  
-> > +  spi-cs-high: true
-> > +
-> > +  spi-3wire: true
-> > +
-> >  allOf:
-> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> >    - $ref: rtc.yaml#
-> >    - if:
-> >        properties:
-> > @@ -52,6 +58,7 @@ allOf:
-> >            contains:
-> >              enum:
-> >                - microcrystal,rv8263
-> > +              - microcrystal,rv8063
-> >      then:
-> >        properties:
-> >          quartz-load-femtofarads: false
-> > @@ -65,12 +72,23 @@ allOf:
-> >        properties:
-> >          quartz-load-femtofarads:
-> >            const: 7000
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          not:
-> > +            contains:
-> > +              enum:
-> > +                - microcrystal,rv8063
-> > +    then:
-> > +      properties:
-> > +        spi-cs-high: false
-> > +        spi-3wire: false
-> >  
-> >  required:
-> >    - compatible
-> >    - reg
-> >  
-> > -additionalProperties: false
-> > +unevaluatedProperties: false
-> >  
-> >  examples:
-> >    - |
-> > @@ -90,3 +108,16 @@ examples:
-> >            };
-> >          };
-> >        };
-> > +
-> > +  - |
-> > +    spi {
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        rtc@0 {
-> > +          compatible = "microcrystal,rv8063";
-> > +          reg = <0>;
-> > +          spi-cs-high;
-> > +          spi-3wire;
-> > +        };
-> > +    };
-> > -- 
-> > 2.25.1
-> > 
+[auto build test WARNING on 3b07108ada81a8ebcebf1fe61367b4e436c895bd]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Gabriele-Monaco/timers-Exclude-isolated-cpus-from-timer-migation/20250410-145629
+base:   3b07108ada81a8ebcebf1fe61367b4e436c895bd
+patch link:    https://lore.kernel.org/r/20250410065446.57304-2-gmonaco%40redhat.com
+patch subject: [PATCH] timers: Exclude isolated cpus from timer migation
+config: csky-randconfig-001-20250411 (https://download.01.org/0day-ci/archive/20250411/202504111433.IwFLpkrz-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250411/202504111433.IwFLpkrz-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504111433.IwFLpkrz-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/uprobes.h:18,
+                    from include/linux/mm_types.h:16,
+                    from include/linux/mmzone.h:22,
+                    from include/linux/topology.h:33,
+                    from include/linux/irq.h:19,
+                    from include/asm-generic/hardirq.h:17,
+                    from ./arch/csky/include/generated/asm/hardirq.h:1,
+                    from include/linux/hardirq.h:11,
+                    from include/linux/interrupt.h:11,
+                    from include/linux/kernel_stat.h:8,
+                    from arch/csky/kernel/asm-offsets.c:5:
+   include/linux/timer.h: In function 'tmigr_isolated_exclude_cpumask':
+>> include/linux/timer.h:196:1: warning: no return statement in function returning non-void [-Wreturn-type]
+     196 | static inline int tmigr_isolated_exclude_cpumask(cpumask_var_t exclude_cpumask) { }
+         | ^~~~~~
+--
+   In file included from include/linux/uprobes.h:18,
+                    from include/linux/mm_types.h:16,
+                    from include/linux/mmzone.h:22,
+                    from include/linux/topology.h:33,
+                    from include/linux/irq.h:19,
+                    from include/asm-generic/hardirq.h:17,
+                    from ./arch/csky/include/generated/asm/hardirq.h:1,
+                    from include/linux/hardirq.h:11,
+                    from include/linux/interrupt.h:11,
+                    from include/linux/kernel_stat.h:8,
+                    from arch/csky/kernel/asm-offsets.c:5:
+   include/linux/timer.h: In function 'tmigr_isolated_exclude_cpumask':
+>> include/linux/timer.h:196:1: warning: no return statement in function returning non-void [-Wreturn-type]
+     196 | static inline int tmigr_isolated_exclude_cpumask(cpumask_var_t exclude_cpumask) { }
+         | ^~~~~~
+
+
+vim +196 include/linux/timer.h
+
+   192	
+   193	#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
+   194	extern int tmigr_isolated_exclude_cpumask(cpumask_var_t exclude_cpumask);
+   195	#else
+ > 196	static inline int tmigr_isolated_exclude_cpumask(cpumask_var_t exclude_cpumask) { }
+   197	#endif
+   198	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
