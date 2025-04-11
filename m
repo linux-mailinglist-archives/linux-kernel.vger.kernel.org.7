@@ -1,138 +1,206 @@
-Return-Path: <linux-kernel+bounces-599959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA10A85A1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:36:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A3BA85A2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB7E78C81A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:36:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 641A58C8405
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F6722127B;
-	Fri, 11 Apr 2025 10:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cplnMVNT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00EDB22128A;
+	Fri, 11 Apr 2025 10:37:10 +0000 (UTC)
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2122.outbound.protection.outlook.com [40.107.117.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9411E8356;
-	Fri, 11 Apr 2025 10:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744367783; cv=none; b=JjxJmE0ZZVUBIjj5aDu3Cy8uW7QLk/0CNuK2toDA8CUW1oKLQ33vdR6tzrtUf3C1omYieAhctpkGYcB3S7c18xDZSneJBQG4otuz7MRWjPTsZWTzYNPLTXv/9nE8Tbc8Nfi+6LlYfdPFPZH7pa28StKJnvW4n3EOFQXX8MiXiME=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744367783; c=relaxed/simple;
-	bh=jQDK3fZ1ycSMh7sUpsC3BQyLcbjaSRXgoA9v6dp48qE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KxedNCQlpgnHknX1tRfUg/OcXGZCf5jf++HuU53j18BmXCzO0j2NzIRZVHud+rnrfW80GxOjLWdLcUwuxvbqfBLAcyq6GfsT8cS+8MG5fwIEZ13tgPOGKW7oMvTbiCwgokomnAVpEi79gWYgUqEG3b7pyL5zMNObSN0pguXYcho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cplnMVNT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B5FqAp028897;
-	Fri, 11 Apr 2025 10:35:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	62nn51qRZ/ZFWMBloxR9krgjTLXDPXyKBVafeA5xWKQ=; b=cplnMVNTNvZ6uAZQ
-	5CAqIOjrW0bpRllTvNk0BuKEx7KTQy269JwJHYA1UMpiv6ihnOvjpeEewJqX4OSZ
-	bqnjdwuZNdUwwxgqoaFDTXtj2qIplHGV+7YzoBoCJ+VvcsH2fxSx0viKi9JQvOIo
-	L14hzXFuxorddxO/DU4+MEXToteXp17LU4FIZd42LGKB3ETwey+KsyrHAO59Ybgo
-	Otn6cOjoDH/5rest+vPZA4sUOodY9Qfw1qxa7PInDRXEmDakGI7vlo9+I5z7YIMP
-	nnML5AhH3a1sHURXeJTWz86qV7QcyS8ekhnAPXPqni5lYgrW3gsLRBbMAEVMhvj+
-	vTU5FQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twbut47s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 10:35:57 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53BAZv5l016929
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 10:35:57 GMT
-Received: from [10.218.7.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 11 Apr
- 2025 03:35:51 -0700
-Message-ID: <57fac14e-e4fe-41a3-a5f9-01447f2ff62d@quicinc.com>
-Date: Fri, 11 Apr 2025 16:05:48 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48EA278E67;
+	Fri, 11 Apr 2025 10:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.122
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744367829; cv=fail; b=ar08ahQuqlzEXcI9mWKAxOmHF5Oo911KfaK/Wkv8EQJ9AtfjKSK49Gy7vryi9CQKnET4t4z52/RjtKyn1weF9WqkAjnjNRRuxbnncY1LOCNNv2jLhNC26Bgk4xBdJ+OgDKUFpJVyMn/7LXSHn6b1BfVKb3nfsMSkSmeKMQnQtpI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744367829; c=relaxed/simple;
+	bh=BLpfo6b6oiDl55a7cUn6S9fzd+63ylpyH9UqhGGEA/o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ryykV/ZauJ3P5W5KqPrHbvgCgc7uQsOsGBSyZCThdrsRRC6nrfBKtK2fq0CC2KFB4mvIGU4pTfT2BnQrGbXLCbCpn9xe89XR7KlAx9Xu7zsBoCTjxQSoWbdTvnSdvf2TZ6lnFfvmmgaszYyS6243EVAWDOsw79ZuSJor+S5JufQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.117.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hHGqmwkXc/+QJhp2dcXXHyZFaAeSAi4A/rf0GNCXw8mkYMAMdZzJlebcm8bvy36kViDbs0dBSnD6+c8BssRbKpvz0Dyr1MtwSt27wZ6k2Fs8vKG4NKx/JhZTw0bjOyQMAgt4BrizWiH3y8I5s27kNesJeE6NxEDC+NTYJ7DLUMl7HOH+pAeoJCbO1dhTztGTrJnvhT2WwdbkKwr/pPi1gAHeQpFjKuZEFfwqw9e+WzPPEo0S2MRCGTOzug2P/6/k9gbY5xMK58F1Fr9WM/qMGHqUnvXnceIq7ZdJeVd0Gtds7+xm4/mdIVuPciZ0sd5wLH+kALkZOSZknGBjeiltOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j8Kvqvid3GyfKAyJXYJNuEgattACWvp9m+hCkOhoSWo=;
+ b=wM3TRYcja5A26fO8m20HXE89m4WwA83gfq7ipH1x3aOmQ5b388/+93836NtsdD2OxzYRsQQL5WJk5Ya6S4RNrvT/KlK3BY7PEqQFJTRBXRNpfZfxhRd6pRdQfXMfQosbJ1d8FAiREcoYBJXkCmynXE1jUju6jBqdtbNgneor0sUSPyyyF5xtd01VUfI60mF/fnAtf2s4P8Pc48dgLaXe90tyS2kjEEECwwK4DNgZZQj9mmENZEWg60qH+pmoXsy6DOGmhQC223HGAQBdyTK/CzRfi0uEOO2OERjEN6V0aQs5B/OhAgfaOHYwoN5DyiqKDnuJrmlRA/UraqTHq0kKAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cixtech.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from PS2PR02CA0029.apcprd02.prod.outlook.com (2603:1096:300:59::17)
+ by KL1PR06MB6111.apcprd06.prod.outlook.com (2603:1096:820:d9::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.27; Fri, 11 Apr
+ 2025 10:37:00 +0000
+Received: from HK2PEPF00006FB0.apcprd02.prod.outlook.com
+ (2603:1096:300:59:cafe::a8) by PS2PR02CA0029.outlook.office365.com
+ (2603:1096:300:59::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.26 via Frontend Transport; Fri,
+ 11 Apr 2025 10:37:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ HK2PEPF00006FB0.mail.protection.outlook.com (10.167.8.6) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.12 via Frontend Transport; Fri, 11 Apr 2025 10:36:59 +0000
+Received: from localhost.localdomain (unknown [172.16.64.208])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 2CBB54160CA0;
+	Fri, 11 Apr 2025 18:36:58 +0800 (CST)
+From: hans.zhang@cixtech.com
+To: bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <hans.zhang@cixtech.com>
+Subject: [PATCH v3 0/6] Enhance the PCIe controller driver
+Date: Fri, 11 Apr 2025 18:36:50 +0800
+Message-ID: <20250411103656.2740517-1-hans.zhang@cixtech.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 0/9] Refactor phy powerup sequence
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>,
-        <manivannan.sadhasivam@linaro.org>,
-        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
-        <bvanassche@acm.org>, <bjorande@quicinc.com>,
-        <neil.armstrong@linaro.org>, <konrad.dybcio@oss.qualcomm.com>,
-        <quic_rdwivedi@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>
-References: <20250410090102.20781-1-quic_nitirawa@quicinc.com>
- <zzfffzclcftivaaffri6ucupyh3u5dfy7uctgw6xgid2vucusx@x542fel3qkeg>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <zzfffzclcftivaaffri6ucupyh3u5dfy7uctgw6xgid2vucusx@x542fel3qkeg>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: XiNtat2P8mwY2N6zoagykd4KsANLU2Hg
-X-Proofpoint-ORIG-GUID: XiNtat2P8mwY2N6zoagykd4KsANLU2Hg
-X-Authority-Analysis: v=2.4 cv=dbeA3WXe c=1 sm=1 tr=0 ts=67f8f08d cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VmOQ-WIk0qxU9uKxVVsA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-11_04,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 mlxlogscore=583 phishscore=0 mlxscore=0 spamscore=0
- malwarescore=0 clxscore=1015 adultscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504110066
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB0:EE_|KL1PR06MB6111:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 173d5106-2b6a-46aa-7d79-08dd78e4ca20
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9nreKXmTiQPOiJUkKyGK6jyi36nmps45B6bNL3xWligMtvqkHeM7r7ls0leY?=
+ =?us-ascii?Q?bsy6YQjFAKv2nxZ0yK2Yib0JjHgVFzjV2THzbnp34v2NiT6Dyd7cku0IRBLr?=
+ =?us-ascii?Q?/9k2CwLvMYZbchxxYEtVXVZwluWhHLyWFZuxyR2sN53Bc5To1WJPp2Jsap93?=
+ =?us-ascii?Q?IOTBDMYyF0hQo8lqFG7D2HA5SFnT9P7SR+LsRLyn0j+Au20WF5nD8I0Nt7fx?=
+ =?us-ascii?Q?xDQHa2U9lmkTI2Qhk1MAHgj0gqtouUZNQtLrK8QRBVmOtZ7oIiqLZ4YFc1ns?=
+ =?us-ascii?Q?vmu8trxVM80O8aT3Mw+lqjTR9Cfu5HZg/BJPq0lBCFn8PDJu8Lc7zC5RO8BJ?=
+ =?us-ascii?Q?2KrFMYwbTakJkww8sYuve6c/VcSgJrPYRUY1MNpAME5i63X82d/wMK1KwPm0?=
+ =?us-ascii?Q?QUhwjdWyE9ZXV6vSzwn4Q1tj59QcLed/m81Krjr7u1tuj3zyNzt0cSWjoZCp?=
+ =?us-ascii?Q?6BqG41Pnxt52Ojm9t59NaCshL4wZY2DtPwStMmMlF6idtqrnbBnaX4EFnHhW?=
+ =?us-ascii?Q?x1D3D2dBTXAOG4G8fnIk8ih+iSqkHkJ3fdI/2I/3z91K6PyZJbeNgNYorKUR?=
+ =?us-ascii?Q?S26QX6ZDQHRjxJ2/iFjy+b1jU/MtXcD0uoeUdHsOq88456YMRsnv89mwiMeL?=
+ =?us-ascii?Q?Mc1BHC9Lg2Be1sSkTVcCEdQtjubtcIwvOPMVOCZb6GSPw48ppGq2mhsI/22m?=
+ =?us-ascii?Q?ssr9WpZVNd1OZQPiEX2n9IAPf+RKhrAMZmG1SH0xyABmiaMCmFtmWtWpLwgt?=
+ =?us-ascii?Q?rbt1dHkosNmfJs30cfp7w5wwYsQGESkAfSN3TbVvInCDUiFSbTlyxY7dlOr4?=
+ =?us-ascii?Q?m24uevd/RGoZnR001oMuMcv7sDvdnRE+rRBOBkqmRghQO3JsS+sZAPGKBYYi?=
+ =?us-ascii?Q?DBEqrLh247qqWybMianLQkKQP3efPZPuBu/Q75FrXFoIrK+15uSDfJaE/jcU?=
+ =?us-ascii?Q?VtcMR/9dKKsQju7a5OJn5lWwdHEQm+N6h9GtUNYiEK3OX5dD1KhaG5iEqpr2?=
+ =?us-ascii?Q?VDe8ayPmjhepOWvEWPlrkNpoFw/Ch4ICnXoZ+FUc7uxGrB3TX8cYw/4z+O5i?=
+ =?us-ascii?Q?rW2bWwvpXnih4MIRtg7irgfKu55cOWfgA4tl5YnTRMb3k6dmQi1XsUs1gsFX?=
+ =?us-ascii?Q?GY651EA+AQK8SvQLvjamkDX7z/bj3u8tM/5Th3VqEgjt3B0ezJB7GRiAeM62?=
+ =?us-ascii?Q?fqLfAlRlYUCU8Bf7+WEnrRzVLD+/Yocrsonwz21R/AWoXIcE6QL6ZX2EWP6M?=
+ =?us-ascii?Q?G1Nh9HPL1DG4WNmvy9q+vggMV3ByU3Ctda67MGV/f3i2K9InGJy3g1zaUznS?=
+ =?us-ascii?Q?p58Qg/uz+I+ifC29RVmgktcy9W51pMt5HSdX/rqynMTVbX9Ru+pXFFyB2n+Q?=
+ =?us-ascii?Q?kd48vVi6me6w7xUdCBZPzTNfH1ub6fyWTlzYTjQqBUBnqAdw/Ysxhuvs0JWc?=
+ =?us-ascii?Q?XWgqHxfDLy8MEclJ8ac4qow65i5TM9Xenqw/Zc62m3eVuTUqvNURpfQC6p/H?=
+ =?us-ascii?Q?wmLFpOfaEiarODlbt4xYrQ5GG7I411jcMSQHjlNA4uNQrDYuQWjui91kHA?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 10:36:59.2981
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 173d5106-2b6a-46aa-7d79-08dd78e4ca20
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: HK2PEPF00006FB0.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6111
+
+From: Hans Zhang <hans.zhang@cixtech.com>
+
+Enhances the exiting Cadence PCIe controller drivers to support 
+HPA (High Performance Architecture) Cadence PCIe controllers.
+
+The patch set enhances the Cadence PCIe driver for HPA support.
+The "compatible" property in DTS is added with  more enum to support
+the new platform architecture and the register maps that change with
+it. The driver read register and write register functions take the
+updated offset stored from the platform driver to access the registers.
+The driver now supports the legacy and HPA architecture, with the
+legacy code changes beingminimal.
+
+SoC related changes are not available in this patch set.
+
+The TI SoC continues to be supported with the changes incorporated.
+
+The changes are also in tune with how multiple platforms are supported
+in related drivers.
+ 
+The scripts/checkpatch.pl has been run on the patches with and without
+--strict. With the --strict option, 4 checks are generated on 1 patch
+(PATCH v3 3/6) of the series), which can be ignored. There are no code
+fixes required for these checks. The rest of the 'scripts/checkpatch.pl'
+is clean. 
+The ./scripts/kernel-doc --none have been run on the changed files.
+
+The changes are tested on TI platforms. The legacy controller changes are
+tested on an TI J7200 EVM and HPA changes are planned for on an FPGA
+platform available within Cadence.
+
+The patch set has been version v3, though the earlier two versions had
+issues with threading.
+The previous submitted patch links is at
+https://lore.kernel.org/lkml/fc1c6ded-2246-4d09-90b4-c0a264962ab3@kernel.org/
+
+Changes for v3:
+-	Patch version v3 added to the subject
+-	Use HPA tag for architecture descriptions
+-	Remove bug related changes to be submitted later as a separate patch
+-	Two patches merged from the last series to ensure readability to address
+  the review comments
+-	Fix several description related issues, coding style issues and some
+  misleading comments
+-	Remove cpu_addr_fixup() functions
+
+Manikandan K Pillai (6):
+  dt-bindings: pci: cadence: Extend compatible for new RP configuration
+  dt-bindings: pci: cadence: Extend compatible for new EP configurations
+  PCI: cadence: Add header support for PCIe HPA controller
+  PCI: cadence: Add support for PCIe Endpoint HPA controller
+  PCI: cadence: Add callback functions for RP and EP controller
+  PCI: cadence: Update support for TI J721e boards
+
+ .../bindings/pci/cdns,cdns-pcie-ep.yaml       |   6 +-
+ .../bindings/pci/cdns,cdns-pcie-host.yaml     |   6 +-
+ drivers/pci/controller/cadence/pci-j721e.c    |  12 +
+ .../pci/controller/cadence/pcie-cadence-ep.c  | 170 +++++++--
+ .../controller/cadence/pcie-cadence-host.c    | 284 +++++++++++++--
+ .../controller/cadence/pcie-cadence-plat.c    | 110 ++++++
+ drivers/pci/controller/cadence/pcie-cadence.c | 196 ++++++++++-
+ drivers/pci/controller/cadence/pcie-cadence.h | 332 +++++++++++++++++-
+ 8 files changed, 1054 insertions(+), 62 deletions(-)
 
 
-
-On 4/11/2025 1:35 AM, Dmitry Baryshkov wrote:
-> On Thu, Apr 10, 2025 at 02:30:53PM +0530, Nitin Rawat wrote:
->> In Current code regulators enable, clks enable, calibrating UFS PHY,
->> start_serdes and polling PCS_ready_status are part of phy_power_on.
->>
->> UFS PHY registers are retained after power collapse, meaning calibrating
->> UFS PHY, start_serdes and polling PCS_ready_status can be done only when
->> hba is powered_on, and not needed every time when phy_power_on is called
->> during resume. Hence keep the code which enables PHY's regulators & clks
->> in phy_power_on and move the rest steps into phy_calibrate function.
->>
->> Since phy_power_on is separated out from phy calibrate, make separate calls
->> to phy_power_on and phy_calibrate calls from ufs qcom driver.
->>
->> Also for better power saving, remove the phy_power_on/off calls from
->> resume/suspend path and put them to ufs_qcom_setup_clocks, so that
->> PHY's regulators & clks can be turned on/off along with UFS's clocks.
-> 
-> Please add an explicit note that patch1 is a requirement for the rest of
-> the PHY patches. It might make sense to merge it through the PHY tree
-> too (or to use an immutable branch).
-> 
-
-Hi Dmitry,
-
-Thanks for the suggestion. Sure I would mention this in the cover letter 
-when I post next patchset.
-
-Thanks,
-Nitin
->>
->> This patch series is tested on SM8550 QRD, SM8650 MTP , SM8750 MTP.
->>
-> 
+base-commit: a24588245776dafc227243a01bfbeb8a59bafba9
+-- 
+2.47.1
 
 
