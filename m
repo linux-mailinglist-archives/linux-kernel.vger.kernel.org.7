@@ -1,152 +1,128 @@
-Return-Path: <linux-kernel+bounces-600224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF40EA85D39
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:39:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F9FA85D82
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0464F3A46D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:37:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1CEF4C6162
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C4829C32D;
-	Fri, 11 Apr 2025 12:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9365329B233;
+	Fri, 11 Apr 2025 12:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="CPPXP7mB"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnv/jlUV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EE929C32E;
-	Fri, 11 Apr 2025 12:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744375006; cv=pass; b=OFIJ4WQ/878sy2Kd1yVChkQduK81gjbQRHdJS7WVAG7/QWOL2C6sharLl0z2HQyQXluCxzafHyKwhmpAOgmpoqlTHsL600oA5WijbhMEqj35bn+nPBEz0mPVjw/4xvqHElM9+USZxASgmxrSmlR/no/fQRJjBO17nAJaUFTVTOA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744375006; c=relaxed/simple;
-	bh=/Odg9lL9TgBKwEIAHmwzHxOyl6eF0Cd6KglLSqmCqBY=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA022367DC;
+	Fri, 11 Apr 2025 12:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744375048; cv=none; b=hGfEpHG7hp/xC6chlHY7bZtzgQHfmR0LPSWk32MtpJ5SgbQAZKienckz57RqF2oRt6ayHmAJtV5wKcv7bsljm0e/0mVUrYDnj4iRXpEYD5bXXXMorHy1PY9KttqredfrA6jJUVh2gFzyPd3UNN8Br0xFrswrx6YB2euoRoQUSMw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744375048; c=relaxed/simple;
+	bh=Mkt4qwEL6YZZPNOG+fEpra9ZqeqLpa49F4xR9I37838=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GiyrQ5vXXP20GlxPbrjjY3iZn0B6wpS1BKuCZru4hvr8k7IRPEzPH5Op5v9XR1X6Z3bccohqjr9KO4h6MXZTVAJ19hQilW3YNthaWty98jZrOejmOGX7Az/KygnnhrKjT1SW+CdXTWuOLjKdwZ4vCrop7eqcIAYgUe84ccBXlJI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=CPPXP7mB; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1744374996; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Z2BghWrAKiUotlAVU/k3Yodv4OdFxYLO33Tib6mF667GaBi8+I34ya8GHOrPpsFUyLRNjpPN52f0pYLnqYdtFfcx0ef9bXV0J5lyX7ALMNtZlAZPCCk8+Emf+mJJCAErEEodVA8ceVv7DOqyPfsPWdNnCwIlS77hX4viogKzZ9Q=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1744374996; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Pl05Da7C3vz6G/H2IKlSjFxpaCyLWPpzmBcWtm8HlMM=; 
-	b=nFORDdQXA01Vdu2VxbwlrunBZMVKMa9Pf9baXbUSLSGilNg53tpQ1W9gTgxr6sG06wwn1rGjyp/In4oq28OYqbIE6oxyFJSHyE2CZUKGYn0cU845xElOmQoBz833YMODT8V5qJg0XihmIauJ8lm7TNfsDu5mYpiZY60wEBCMDus=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744374996;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=Pl05Da7C3vz6G/H2IKlSjFxpaCyLWPpzmBcWtm8HlMM=;
-	b=CPPXP7mB1N0G8YugQE+svNa7kN5wdFLfAr1TGWzzCq4i6dbpa4X+ydymS7/EhWgE
-	dyrswrDhD/3fHN2xB8shD6/ok05ZbOBC8mjVWkvpVuMDG288KCTxhwQqOZbykuKK9Iz
-	bEEEZvAk2eKGIrIsyiKPzPDq6ysFarK95jcSLXJk=
-Received: by mx.zohomail.com with SMTPS id 1744374993419573.2779806109937;
-	Fri, 11 Apr 2025 05:36:33 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 7FFA51801EB; Fri, 11 Apr 2025 14:36:30 +0200 (CEST)
-Date: Fri, 11 Apr 2025 14:36:30 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: quentin.schulz@cherry.de, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	dse@thaumatec.com
-Subject: Re: [PATCH v3 0/3] arm64: dts: rockchip: add and enable DSI2 on
- rk3588
-Message-ID: <4pygfbajnn4g6nt5jdzdymp6ukwft5qhhll4c3urmefgchmx5j@iwzmdsyq3dqq>
-References: <20250226140942.3825223-1-heiko@sntech.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ilGnqY2deRFpgbp/431Wvsh5dYhsKD6RcVGrXbsvPKDnTaTJrCNVg4GMNvciZyfaPbPTL4q1D8urGYI60tpTsKETgdW3RDkGb+x1rA8UtoJrt1cklYJ06vrPr/Cfhx2m/ptKZ8ZucpP+DgfoDLDf2SNZLZ6gfKIYuzw9JX9nHDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rnv/jlUV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7698AC4CEE2;
+	Fri, 11 Apr 2025 12:37:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744375047;
+	bh=Mkt4qwEL6YZZPNOG+fEpra9ZqeqLpa49F4xR9I37838=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rnv/jlUVLyD5vk/IaJ1ada8t08ATiZdgJxHz/RdcuXsdj+gyFU7hOuNkqMTIsyd4w
+	 Yyv+ruvjy8kL51NOhv95ua7VxZbm5JYxkqP6hUqV4MYgL7CFgrt7Mt1ilO8bga3tZU
+	 yLFrymZuRPK/Q0PTYjg+/02u4T3Oy+g6OgnVDuZTV75CMiRcUATUd/fWyTHwW+ZxtV
+	 eNmEtAUhetYQMFPXOKtEgD6WIOkDy/Qn0uBlawp1dQ53CrzQCXPi0XGZKByDw4qpPi
+	 iVeHisRqPtNphh4uzdQFvAlHJ48QxWeCkiEPh/KpXQlrxWNTOralCrQ+YqIYr20AkF
+	 YV7YQ/Gv++Z7Q==
+Date: Fri, 11 Apr 2025 14:37:19 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Liam.Howlett@oracle.com, ast@kernel.org
+Subject: Re: [PATCH 20/24] irqchip/gic-v5: Add GICv5 LPI/IPI support
+Message-ID: <Z/kM/+uBsD9DAGjF@lpieralisi>
+References: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
+ <20250408-gicv5-host-v1-20-1f26db465f8d@kernel.org>
+ <Z/jgL52ZVdcxTEkP@lpieralisi>
+ <87plhjrpit.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tqddv3vmsx3kze6v"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226140942.3825223-1-heiko@sntech.de>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.2/244.360.14
-X-ZohoMailClient: External
+In-Reply-To: <87plhjrpit.ffs@tglx>
 
+On Fri, Apr 11, 2025 at 11:55:22AM +0200, Thomas Gleixner wrote:
+> On Fri, Apr 11 2025 at 11:26, Lorenzo Pieralisi wrote:
+> > On Tue, Apr 08, 2025 at 12:50:19PM +0200, Lorenzo Pieralisi wrote:
+> >> Maple tree entries are not used by the driver, only the range tracking
+> >> is required - therefore the driver first finds an empty area large
+> >> enough to contain the required number of LPIs then checks the
+> >> adjacent (and possibly occupied) LPI ranges and try to merge them
+> >> together, reducing maple tree slots usage.
+> >
+> > The maple tree usage for this purpose is an RFC at this stage.
+> >
+> > Added Alexei because I know BPF arena used the maple tree in
+> > a similar way in the past and moved to a range tree because
+> > the BPF arena requires a special purpose mem allocator.
+> >
+> > As Thomas already pointed out a plain bitmap could do even though
+> > it requires preallocating memory up to 2MB (or we can grow it
+> > dynamically).
+> >
+> > We could allocate IDs using an IDA as well, though that's 1 by 1,
+> > we allocate LPI INTIDs 1 by 1 - mostly, upon MSI allocation, so
+> > using an IDA could do (AFAIU it works for 0..INT_MAX we need
+> > 0..2^24 worst case).
+> 
+> The point is that you really only need a 1-bit storage per entry,
+> i.e. used/unused. You won't use any of the storage functions of maple
+> tree, idr or whatever.
 
---tqddv3vmsx3kze6v
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 0/3] arm64: dts: rockchip: add and enable DSI2 on
- rk3588
-MIME-Version: 1.0
+IDA does use the XArray entries (i.e. the pointers) to store bitmaps,
+the only drawback I see is that it allocates IDs one by one (but that's
+not really a problem).
 
-Hi,
+I wonder if it is used in the kernel for IDs larger than 16 bits, it
+should work for 0..INT_MAX.
 
-On Wed, Feb 26, 2025 at 03:09:39PM +0100, Heiko Stuebner wrote:
-> This adds the dcphy and dsi2 controller nodes and adds an overlay
-> for the Tiger-Haikou Video-Demo adapter that provides a DSI display.
+> So the obvious choice is a bitmap and as you said, it's trivial to start
+> with a reasonably sized one and reallocate during runtime if the need
+> arises.
 
-I think this can be merged now, so that I can send a patch adding
-the RK3588 EVB1 panel in the devicetree without having to specify
-any dependencies on other series? :)
+Yes I can do that too but to avoid fiddling with alloc/free ranges crossing
+bitmap chunks we need a single bitmap, AFAICS that may require realloc+copy,
+if the need arises.
 
-Greetings,
+> The reallocation happens in domain::ops::alloc() which is fully
+> preemptible context, i.e. no restrictions vs. allocations.
 
--- Sebastian
+Yes point taken.
 
-> changes in v3:
-> - rebase on newly added overlay-test-infrastructure
-> - add reset-gpio to gpio expander
->=20
-> changes in v2:
-> - adapt to changed dcphy binding (phy-cells =3D 1)
-> - tiger-overlay changes (Quentin):
->   - drop forgotten hdmi-connector node
->   - improve description
->   - fix node sorting
->   - drop unnecessary pwm-pinctrl (set in tiger.dtsi)
->=20
-> Heiko Stuebner (3):
->   arm64: dts: rockchip: add mipi dcphy nodes to rk3588
->   arm64: dts: rockchip: add dsi controller nodes on rk3588
->   arm64: dts: rockchip: add overlay for tiger-haikou video-demo adapter
->=20
->  arch/arm64/boot/dts/rockchip/Makefile         |   5 +
->  arch/arm64/boot/dts/rockchip/rk3588-base.dtsi |  99 ++++++++++++
->  .../rk3588-tiger-haikou-video-demo.dtso       | 153 ++++++++++++++++++
->  3 files changed, 257 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou-vide=
-o-demo.dtso
->=20
-> --=20
-> 2.47.2
->=20
->=20
+> For the top-most domain, the callers hold domain::mutex, which excludes
+> concurrency vs. ops::alloc/free(). If the bitmap is in a domain further
+> down the hierarchy then you need your own mutex there.
 
---tqddv3vmsx3kze6v
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks for confirming Thomas, I do rely on the topmost mutex to be held
+for dynamic IST table entries updates (LPI top domain).
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmf5DM4ACgkQ2O7X88g7
-+pqUHw/+Nf5gsmCdCh559WvamUyOxdMHUed8EwFz9zqglvZN58ibQRL6awLyI/oh
-N9mxk0QkExDpfBzD7Dy9GSrZ5bs7+Tg+LlMbT7Jq3NcLhkUZLk29hJA18S1+4I0U
-KurrJqF/baxgDcAT1wbmYG/7avHqiG54lZKMksGis+OEOQQ8XZkxd9E9TXyCTG3V
-8ylbmgV4lZC0JId2ESy2AuMidpvw83cFhRM5FNdlEDXgs2hLkbRCn9kkZew364mw
-O9qooKKVI3Z6QlKCKvlpJd17HOdAeezNrXScpYPh80bNi69LMQ/PUOVDON0Eni/S
-ikvRVlK4kuLXYxznAQqfLelPvu1rAVuqxsmq8xoBhsfOnpklr5jTpyEUX0BlaU9M
-viuldgbDp6DrcbMsJVCGZxVTjWqr4WrY01v7aO7Js9/oqkk5xjF45w2X0nQxzF/v
-5AJ5EuKN4JqvD1m7dFqvRJXBP9yJPxTP8wIekiYWka0EZfiF8WJHlHndZFWj0dWl
-eCt6MSwS038x+GZfbLSl6/wy87IT5EmmwutEtkCV5LOrPT22kyjvtyq2m3IHjwmK
-T7i75CmZfwuyHYlgKHekhZlOnBBLQ09zmc3kxsaciI2B8I5YhAFnLF55TiUwnFmq
-09LsWD9M3vRXCvAXWSw5dJgc0ZxxbOuXwtWmOFDmjbe6shm0RxI=
-=UWSi
------END PGP SIGNATURE-----
-
---tqddv3vmsx3kze6v--
+Thanks,
+Lorenzo
 
