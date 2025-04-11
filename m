@@ -1,114 +1,117 @@
-Return-Path: <linux-kernel+bounces-600975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D117A86734
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:32:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53331A86746
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 321147B3943
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:31:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 324AA7B2BEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1598628D847;
-	Fri, 11 Apr 2025 20:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD519280CD9;
+	Fri, 11 Apr 2025 20:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bUWKuQ0E"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BBMGp2ko"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C25678F45;
-	Fri, 11 Apr 2025 20:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5934C78F45;
+	Fri, 11 Apr 2025 20:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744403550; cv=none; b=uPWVVQnBbma+um1Teb7FxqWW1DDVAdXOhp6e8PGIjNbXi0KEsjgXOt61u4is+pc0ptoU9FDRFr1DkSXeGn1jI/GZVB0mJ8xGdulrw+AdhwhE6JtcNS++6qZ6dnS7tNSmoGpsggx4tBT2shzHtRzJaGmmvn1382ZmSqZFVndfL84=
+	t=1744403674; cv=none; b=s86vlFStHcUz29cBeGJ9JLF8pVgdrhULaYKJN2p6wHYRoyE1QtRfXZZOQcA3uT0ALFBniIi5nLvduT7mBM7TVFauoJoCOjgDqOkjp7X2x8rcsdpnpreL3hZ3auTWXKYHypJeZYFsTET3AqUf00jnYeDWeHV0Z6mWS7qmxY3aEx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744403550; c=relaxed/simple;
-	bh=ZeVDLiQI9RmmI4E45qBwDAYffUDqetaFi3++XzpfqNU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FB0C1zHjMiqMb0XY2b/0YJMwZC6AGf9bN3srCkH2vTCqfmttIfCYkcEXm/tWu5mUwFVPyxT6jNgwprdMg6Rdlnx3YgqDoqaRhv8EVwbLU+Gj8rGwi4u8JAG1MNB5lTcgmOxSwU0oAtKRGO73NMdQhzy2H8nuGbqH+TJkgy8WoFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bUWKuQ0E; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0E33A439F7;
-	Fri, 11 Apr 2025 20:32:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744403545;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ubuKm8CEtpcOaMisxU9dLcEBpCyqH9xv+s9t40knzhQ=;
-	b=bUWKuQ0Ec7Enbe5JweK3jfBowxndLsuHmjklLcqXu/lZEHUjGcp7upJ6wZH1C1BqVyxaJA
-	1VPtBdBvfNwDNGMbavInD66RnojP+d3tiYiz4rQ/rfU7+VjZCw7t0z4SUf0A2dl28VsMlW
-	bKj/3cl9+WRGD/o2iarX2ut3XCzdcFnNdWIrZ7cNtjwotm+sgGc4nMAXVrcPbFQxXRc+wq
-	3/JAjqYxwxUE538Z89Y7ex+mSgfcx6hT0KxhkGBmLX4q+0rUNkmyzzrUWRkwJj21wBet18
-	ubu/5mUcIQ4t8Azcc6pWFR+X6dBQMewHzeMmXAsJ0vTxWwv33GBClEG/GXJQRg==
-From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Date: Fri, 11 Apr 2025 22:32:13 +0200
-Subject: [PATCH RFC bpf-next 4/4] bpf/selftests: enable tracing tests for
- ARM64
+	s=arc-20240116; t=1744403674; c=relaxed/simple;
+	bh=FAry2WrndROaE8YSKLu6gPsfRytuhZq+Odlo6QRirAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mtXt3FECmw16UbY2tmLVShVweO9fqazY56kPSqGIJNMBi9FoFy4viEko8fZNfDsfKuu5gRlq4cH2gPPXtUwg7GdjggU7mAUrXrGIq5dw2zQRFETWXmuZ7aHvAngqxgpLG3NeuK6U/pHrh+NGEd1Pq4rLH/VaVbUdpq5v1sBqH68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BBMGp2ko; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744403672; x=1775939672;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FAry2WrndROaE8YSKLu6gPsfRytuhZq+Odlo6QRirAk=;
+  b=BBMGp2koqBhrUCoggIfMhnYnTDTyx/aicwyAx0NnAQekHR99VjUwlj/W
+   0d+fqCSiMp/cEs2y7d/ALf33ejJF7Xl+XDLS8S0/S/ugPg6KUHuqF/58n
+   cdIsfB0SzOPS8eZpexhZEEp5E5NscZvQLOFdaQtxa4x+iH7RWRUZFngMN
+   3j97rcdERMqLouehEIyop9QTnURY9RXVHXOYYXL11292veWpzIpEp7im7
+   oIOcuwxOBSegzcVMZ7sHhicAGfDlsq9bqfPqEseo7OZOJDRLTXqx7ER16
+   /12a7hhxxRK5zC30/8dq+h9sv7cFAlZf//MKxoV+lolshdr2y0cSZAkYY
+   Q==;
+X-CSE-ConnectionGUID: 3FN2MryXSiyeUN88ik/8NQ==
+X-CSE-MsgGUID: /SdN1XJeRGeqdi2JSENSEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11401"; a="46054730"
+X-IronPort-AV: E=Sophos;i="6.15,206,1739865600"; 
+   d="scan'208";a="46054730"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 13:34:32 -0700
+X-CSE-ConnectionGUID: dsCZvxaDQi265B+cIetFSQ==
+X-CSE-MsgGUID: 3Vhb6SZXQX2RaqR0qgNTIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,206,1739865600"; 
+   d="scan'208";a="134039993"
+Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.108.170]) ([10.125.108.170])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 13:34:31 -0700
+Message-ID: <41a120c8-e5ad-4a0f-96cf-1159d5d1b4e1@intel.com>
+Date: Fri, 11 Apr 2025 13:34:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250411-many_args_arm64-v1-4-0a32fe72339e@bootlin.com>
-References: <20250411-many_args_arm64-v1-0-0a32fe72339e@bootlin.com>
-In-Reply-To: <20250411-many_args_arm64-v1-0-0a32fe72339e@bootlin.com>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- John Fastabend <john.fastabend@gmail.com>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
- Xu Kuohai <xukuohai@huaweicloud.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Florent Revest <revest@chromium.org>
-Cc: Bastien Curutchet <bastien.curutchet@bootlin.com>, 
- ebpf@linuxfoundation.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvuddvjeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthekredtredtjeenucfhrhhomheptehlvgigihhsucfnohhthhhorhorucdlvgeurffhucfhohhunhgurghtihhonhdmuceorghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeljeektefffeevleegkeelhfethffgieegudevffejheelieeffeejtddujeegueenucfkphepvdgrtddvmeekgedvkeemfhelgegtmegvtddtmeemfhekheenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepihhnvghtpedvrgdtvdemkeegvdekmehfleegtgemvgdttdemmehfkeehpdhhvghloheplgduledvrdduieekrddurdduleejngdpmhgrihhlfhhrohhmpegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedtpdhrtghpthhtohepshgufhesfhhomhhitghhvghvrdhmvgdprhgtphhtthhopehmrghrthhinhdrlhgruheslhhinhhugidruggvvhdprhgtphhtthhopeiguhhkuhhohhgriheshhhurgifvghitghlohhuugdrtghomhdprhgtphhtthhopehjohhlshgrsehkvghrnhgvl
- hdrohhrghdprhgtphhtthhopegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehmhihkohhlrghlsehfsgdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgtohhquhgvlhhinhdrshhtmhefvdesghhmrghilhdrtghomh
-X-GND-Sasl: alexis.lothore@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/1] dmaengine: ptdma: use SLAB_TYPESAFE_BY_RCU for
+ the DMA descriptor slab
+To: Eder Zulian <ezulian@redhat.com>, Basavaraj.Natikar@amd.com,
+ vkoul@kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: jsnitsel@redhat.com, ddutile@redhat.com
+References: <20250411194148.247361-1-ezulian@redhat.com>
+ <20250411194148.247361-2-ezulian@redhat.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250411194148.247361-2-ezulian@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The fentry_many_args, fexit_many_args and struct_many_args tests were
-disabled on ARM64 due to the lack of many args support.
 
-With the previous commits bringing in this missing support, drop the
-last denied tests.
 
-Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
----
- tools/testing/selftests/bpf/DENYLIST.aarch64 | 3 ---
- 1 file changed, 3 deletions(-)
+On 4/11/25 12:41 PM, Eder Zulian wrote:
+> The SLAB_TYPESAFE_BY_RCU flag prevents a change of type for objects
+> allocated from the slab cache (although the memory may be reallocated to
+> a completetly different object of the same type.) Moreover, when the
+> last reference to an object is dropped the finalization code must not
+> run until all __rcu pointers referencing the object have been updated,
+> and then a grace period has passed.
 
-diff --git a/tools/testing/selftests/bpf/DENYLIST.aarch64 b/tools/testing/selftests/bpf/DENYLIST.aarch64
-deleted file mode 100644
-index 6d8feda27ce9de07d77d6e384666082923e3dc76..0000000000000000000000000000000000000000
---- a/tools/testing/selftests/bpf/DENYLIST.aarch64
-+++ /dev/null
-@@ -1,3 +0,0 @@
--fentry_test/fentry_many_args                     # fentry_many_args:FAIL:fentry_many_args_attach unexpected error: -524
--fexit_test/fexit_many_args                       # fexit_many_args:FAIL:fexit_many_args_attach unexpected error: -524
--tracing_struct/struct_many_args                  # struct_many_args:FAIL:tracing_struct_many_args__attach unexpected error: -524
+I would pull some of the explanation on why and how from your cover. Also, a fixes tag may be needed?
 
--- 
-2.49.0
+DJ
+ 
+> 
+> Signed-off-by: Eder Zulian <ezulian@redhat.com>
+> ---
+>  drivers/dma/amd/ptdma/ptdma-dmaengine.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/amd/ptdma/ptdma-dmaengine.c b/drivers/dma/amd/ptdma/ptdma-dmaengine.c
+> index 715ac3ae067b..b70dd1b0b9fb 100644
+> --- a/drivers/dma/amd/ptdma/ptdma-dmaengine.c
+> +++ b/drivers/dma/amd/ptdma/ptdma-dmaengine.c
+> @@ -597,7 +597,8 @@ int pt_dmaengine_register(struct pt_device *pt)
+>  
+>  	pt->dma_desc_cache = kmem_cache_create(desc_cache_name,
+>  					       sizeof(struct pt_dma_desc), 0,
+> -					       SLAB_HWCACHE_ALIGN, NULL);
+> +					       SLAB_HWCACHE_ALIGN |
+> +					       SLAB_TYPESAFE_BY_RCU, NULL);
+>  	if (!pt->dma_desc_cache) {
+>  		ret = -ENOMEM;
+>  		goto err_cache;
 
 
