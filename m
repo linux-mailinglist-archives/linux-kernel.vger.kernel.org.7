@@ -1,257 +1,79 @@
-Return-Path: <linux-kernel+bounces-600960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09104A86702
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:25:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F8AA86706
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6C7D9A8513
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:25:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7232A1B87F70
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C0528F937;
-	Fri, 11 Apr 2025 20:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415B62857E3;
+	Fri, 11 Apr 2025 20:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hQ2AiEVp"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WH+wtpsi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C7D28C5C6;
-	Fri, 11 Apr 2025 20:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957F3280CE6;
+	Fri, 11 Apr 2025 20:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744403095; cv=none; b=PsYgOVHaLNokqMYgAJb6x4fJs+Si6wOh3um0BpEqC3V5YZpeSLkG9A5gavSn1BDmath8gcqxLZC19DmijS5lAGSui7yKjbqQqw0PXZpnQmagS5kx75sSe4KtQ9M9HFeA59T+xuVDUID1W4pFlh1tLVz6/LliyI5l2Kc9bLR17b8=
+	t=1744403120; cv=none; b=rkVez2lRXzk2swhrNAoXI71ToK85xH5LFdKHKMfngcP3v/bfJks+2DEHn4ytK99cOwTFhUvft0h1bIAKViQv/Ydv+SniUcqQFr4jzm2GS4v/2wSZDeKPt9cfG3TlTmjxk6R2t4nl25mPceJDamKMYhRZhwVgg64W4uR5OctZdEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744403095; c=relaxed/simple;
-	bh=OZlu8f89BYxknWQX/kA3bt6HxJ89EN0pJVICj/4m1H0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eIrXWnvbDvHWIGu6qkt6dexdA9GTK/birgCjhX5c3PlV+FrobhLPm3jWg+OM5JigTCMYOMx0GHgeELjA2jmHDqXYxAzMhpCGAZs+X7jEoZvq9ggfIDUgFezBNW0B4BJvFgm1ST9g3VayQVwupLmupYOlupqb6sEHstUFEq21XMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hQ2AiEVp; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53BII4DN022316;
-	Fri, 11 Apr 2025 20:24:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=Qov1yGhcG5wRklZOK
-	SeRMBsnOSzne165QTDxfJ9nals=; b=hQ2AiEVpr2jp+6FslHYjsROpdPph/Ha92
-	TWPLvNgcd6RReSf86ZW5Bj9SMuG5N+BoGiPOx0GStggtGRoWS5C9LFOQ0inah7BC
-	3hk+MwdnMdujNTq5bKgPhkGcfGJGkkSQbuluQZA+OJj7MZsV8IkJrXyRnor1Gdh8
-	TBitV52Gzg8sV8jpfwGi85xozkVvDcehymd/tSsG7ciYjyNw4PCOXWKZwlnNLSFR
-	YAiK1RaAIx8mCaUMqPzCr3i/aQ3QlmcIPX5qceKJCKZQ14Tz8zXebXXU5pAfh4Zl
-	P5QatcWyIfNUR2X0LfzjWfWYt+wCeiRvTI4KWtOLQxc2crwPOv4DA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45y343tb6p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 20:24:43 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53BHcN8J011078;
-	Fri, 11 Apr 2025 20:24:42 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45uf804ux8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 20:24:41 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53BKOeLf28639926
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Apr 2025 20:24:40 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5F04F58051;
-	Fri, 11 Apr 2025 20:24:40 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 62C815805A;
-	Fri, 11 Apr 2025 20:24:39 +0000 (GMT)
-Received: from li-2311da4c-2e09-11b2-a85c-c003041e9174.ibm.com.com (unknown [9.61.105.190])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 11 Apr 2025 20:24:39 +0000 (GMT)
-From: Matthew Rosato <mjrosato@linux.ibm.com>
-To: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
-        gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com
-Cc: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-        svens@linux.ibm.com, borntraeger@linux.ibm.com, clg@redhat.com,
-        iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: [PATCH v5 5/5] iommu/s390: allow larger region tables
-Date: Fri, 11 Apr 2025 16:24:33 -0400
-Message-ID: <20250411202433.181683-6-mjrosato@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250411202433.181683-1-mjrosato@linux.ibm.com>
-References: <20250411202433.181683-1-mjrosato@linux.ibm.com>
+	s=arc-20240116; t=1744403120; c=relaxed/simple;
+	bh=nMvw9nh2VziZVm47ERw5+RmcVfGyxpAXKRMizmyOdeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nJrYe20xzllk8oyL0sA46Xeu5hBphkwNkjDP5JEXL5wDl8k63D+hLgE84qQJB1iYU7k0P+7J4UxusIWhZw2pyvKZNyqTf+aRtK4egB/52/GYWuBSJWK9S+vJPkVioE+2NFnJ4LW3CtL9xbnBTJvxo+ZXtntx5eJj0f2R8QJq+Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WH+wtpsi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF7AEC4CEE2;
+	Fri, 11 Apr 2025 20:25:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744403120;
+	bh=nMvw9nh2VziZVm47ERw5+RmcVfGyxpAXKRMizmyOdeQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WH+wtpsiYfWhHr28LnjR21v5bQjZQO1ZtAfhmUbeTvX6wNxZUqezgvevU32/0iowS
+	 lGA8YxD0OpAN4pgxb8DFtBqBetGLej9PsvCP3TR7k8hnjdUuZdpAVgRg2Rb79jJNJP
+	 PvxpASNb7RCvw5McoyndExDJjSZtMmXgNw458aP2YNYQ6vCZ9PAJ8THp/IAYMKq4k/
+	 TGl426rtF/soiKu/8Z9ntD0GD4nqAdXEQMWxynSYtHWU/uIUpA21Qjp9kGKWPqcIbV
+	 y+TTubFm3IWZnYUu7O8SrntVuF9+cLm9TwXalQ16tmv3loGfZA/ZLk/S8Bnb3ja6HA
+	 Knaq1iBw/XmuA==
+Date: Fri, 11 Apr 2025 15:25:18 -0500
+From: Rob Herring <robh@kernel.org>
+To: hans.zhang@cixtech.com
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Manikandan K Pillai <mpillai@cadence.com>
+Subject: Re: [PATCH v3 6/6] PCI: cadence: Update support for TI J721e boards
+Message-ID: <20250411202518.GB3793660-robh@kernel.org>
+References: <20250411103656.2740517-1-hans.zhang@cixtech.com>
+ <20250411103656.2740517-7-hans.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: SG2dXj0RIqhu0JwkeonmFgGDZdaryUdI
-X-Proofpoint-ORIG-GUID: SG2dXj0RIqhu0JwkeonmFgGDZdaryUdI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-11_08,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 mlxscore=0 suspectscore=0 mlxlogscore=852
- clxscore=1015 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504110127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250411103656.2740517-7-hans.zhang@cixtech.com>
 
-Extend the aperture calculation to consider sizes beyond the maximum
-size of a region third table.  Attempt to always use the smallest
-table size possible to avoid unnecessary extra steps during translation.
-Update reserved region calculations to use the appropriate table size.
+On Fri, Apr 11, 2025 at 06:36:56PM +0800, hans.zhang@cixtech.com wrote:
+> From: Manikandan K Pillai <mpillai@cadence.com>
+> 
+> Update the support for TI J721 boards to use the updated Cadence
+> PCIe controller code.
 
-Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
----
- arch/s390/include/asm/pci_dma.h |  1 +
- drivers/iommu/s390-iommu.c      | 70 ++++++++++++++++++++++++---------
- 2 files changed, 53 insertions(+), 18 deletions(-)
+Without this patch, you just broke TI. That's not bisectable.
 
-diff --git a/arch/s390/include/asm/pci_dma.h b/arch/s390/include/asm/pci_dma.h
-index 8d8962e4fd58..d12e17201661 100644
---- a/arch/s390/include/asm/pci_dma.h
-+++ b/arch/s390/include/asm/pci_dma.h
-@@ -25,6 +25,7 @@ enum zpci_ioat_dtype {
- #define ZPCI_KEY			(PAGE_DEFAULT_KEY << 5)
- 
- #define ZPCI_TABLE_SIZE_RT	(1UL << 42)
-+#define ZPCI_TABLE_SIZE_RS	(1UL << 53)
- 
- #define ZPCI_IOTA_STO_FLAG	(ZPCI_IOTA_IOT_ENABLED | ZPCI_KEY | ZPCI_IOTA_DT_ST)
- #define ZPCI_IOTA_RTTO_FLAG	(ZPCI_IOTA_IOT_ENABLED | ZPCI_KEY | ZPCI_IOTA_DT_RT)
-diff --git a/drivers/iommu/s390-iommu.c b/drivers/iommu/s390-iommu.c
-index 46f45b136993..433b59f43530 100644
---- a/drivers/iommu/s390-iommu.c
-+++ b/drivers/iommu/s390-iommu.c
-@@ -511,9 +511,25 @@ static bool s390_iommu_capable(struct device *dev, enum iommu_cap cap)
- 	}
- }
- 
-+static inline u64 max_tbl_size(struct s390_domain *domain)
-+{
-+	switch (domain->origin_type) {
-+	case ZPCI_TABLE_TYPE_RTX:
-+		return ZPCI_TABLE_SIZE_RT - 1;
-+	case ZPCI_TABLE_TYPE_RSX:
-+		return ZPCI_TABLE_SIZE_RS - 1;
-+	case ZPCI_TABLE_TYPE_RFX:
-+		return U64_MAX;
-+	default:
-+		return 0;
-+	}
-+}
-+
- static struct iommu_domain *s390_domain_alloc_paging(struct device *dev)
- {
-+	struct zpci_dev *zdev = to_zpci_dev(dev);
- 	struct s390_domain *s390_domain;
-+	u64 aperture_size;
- 
- 	s390_domain = kzalloc(sizeof(*s390_domain), GFP_KERNEL);
- 	if (!s390_domain)
-@@ -524,10 +540,26 @@ static struct iommu_domain *s390_domain_alloc_paging(struct device *dev)
- 		kfree(s390_domain);
- 		return NULL;
- 	}
-+
-+	aperture_size = min(s390_iommu_aperture,
-+			    zdev->end_dma - zdev->start_dma + 1);
-+	if (aperture_size <= (ZPCI_TABLE_SIZE_RT - zdev->start_dma)) {
-+		s390_domain->origin_type = ZPCI_TABLE_TYPE_RTX;
-+	} else if (aperture_size <= (ZPCI_TABLE_SIZE_RS - zdev->start_dma) &&
-+		  (zdev->dtsm & ZPCI_IOTA_DT_RS)) {
-+		s390_domain->origin_type = ZPCI_TABLE_TYPE_RSX;
-+	} else if (zdev->dtsm & ZPCI_IOTA_DT_RF) {
-+		s390_domain->origin_type = ZPCI_TABLE_TYPE_RFX;
-+	} else {
-+		/* Assume RTX available */
-+		s390_domain->origin_type = ZPCI_TABLE_TYPE_RTX;
-+		aperture_size = ZPCI_TABLE_SIZE_RT - zdev->start_dma;
-+	}
-+	zdev->end_dma = zdev->start_dma + aperture_size - 1;
-+
- 	s390_domain->domain.geometry.force_aperture = true;
- 	s390_domain->domain.geometry.aperture_start = 0;
--	s390_domain->domain.geometry.aperture_end = ZPCI_TABLE_SIZE_RT - 1;
--	s390_domain->origin_type = ZPCI_TABLE_TYPE_RTX;
-+	s390_domain->domain.geometry.aperture_end = max_tbl_size(s390_domain);
- 
- 	spin_lock_init(&s390_domain->list_lock);
- 	INIT_LIST_HEAD_RCU(&s390_domain->devices);
-@@ -680,6 +712,8 @@ static void s390_iommu_get_resv_regions(struct device *dev,
- {
- 	struct zpci_dev *zdev = to_zpci_dev(dev);
- 	struct iommu_resv_region *region;
-+	u64 max_size, end_resv;
-+	unsigned long flags;
- 
- 	if (zdev->start_dma) {
- 		region = iommu_alloc_resv_region(0, zdev->start_dma, 0,
-@@ -689,10 +723,21 @@ static void s390_iommu_get_resv_regions(struct device *dev,
- 		list_add_tail(&region->list, list);
- 	}
- 
--	if (zdev->end_dma < ZPCI_TABLE_SIZE_RT - 1) {
--		region = iommu_alloc_resv_region(zdev->end_dma + 1,
--						 ZPCI_TABLE_SIZE_RT - zdev->end_dma - 1,
--						 0, IOMMU_RESV_RESERVED, GFP_KERNEL);
-+	spin_lock_irqsave(&zdev->dom_lock, flags);
-+	if (zdev->s390_domain->type == IOMMU_DOMAIN_BLOCKED ||
-+	    zdev->s390_domain->type == IOMMU_DOMAIN_IDENTITY) {
-+		spin_unlock_irqrestore(&zdev->dom_lock, flags);
-+		return;
-+	}
-+
-+	max_size = max_tbl_size(to_s390_domain(zdev->s390_domain));
-+	spin_unlock_irqrestore(&zdev->dom_lock, flags);
-+
-+	if (zdev->end_dma < max_size) {
-+		end_resv = max_size - zdev->end_dma;
-+		region = iommu_alloc_resv_region(zdev->end_dma + 1, end_resv,
-+						 0, IOMMU_RESV_RESERVED,
-+						 GFP_KERNEL);
- 		if (!region)
- 			return;
- 		list_add_tail(&region->list, list);
-@@ -708,13 +753,9 @@ static struct iommu_device *s390_iommu_probe_device(struct device *dev)
- 
- 	zdev = to_zpci_dev(dev);
- 
--	if (zdev->start_dma > zdev->end_dma ||
--	    zdev->start_dma > ZPCI_TABLE_SIZE_RT - 1)
-+	if (zdev->start_dma > zdev->end_dma)
- 		return ERR_PTR(-EINVAL);
- 
--	if (zdev->end_dma > ZPCI_TABLE_SIZE_RT - 1)
--		zdev->end_dma = ZPCI_TABLE_SIZE_RT - 1;
--
- 	if (zdev->tlb_refresh)
- 		dev->iommu->shadow_on_flush = 1;
- 
-@@ -999,7 +1040,6 @@ struct zpci_iommu_ctrs *zpci_get_iommu_ctrs(struct zpci_dev *zdev)
- 
- int zpci_init_iommu(struct zpci_dev *zdev)
- {
--	u64 aperture_size;
- 	int rc = 0;
- 
- 	rc = iommu_device_sysfs_add(&zdev->iommu_dev, NULL, NULL,
-@@ -1017,12 +1057,6 @@ int zpci_init_iommu(struct zpci_dev *zdev)
- 	if (rc)
- 		goto out_sysfs;
- 
--	zdev->start_dma = PAGE_ALIGN(zdev->start_dma);
--	aperture_size = min3(s390_iommu_aperture,
--			     ZPCI_TABLE_SIZE_RT - zdev->start_dma,
--			     zdev->end_dma - zdev->start_dma + 1);
--	zdev->end_dma = zdev->start_dma + aperture_size - 1;
--
- 	return 0;
- 
- out_sysfs:
--- 
-2.49.0
-
+> 
+> Signed-off-by: Manikandan K Pillai <mpillai@cadence.com>
+> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+> ---
+>  drivers/pci/controller/cadence/pci-j721e.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 
