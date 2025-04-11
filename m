@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-599403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F753A85371
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:47:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCFA2A85379
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2EE8188ECE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:45:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B6F54C029B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8C827D797;
-	Fri, 11 Apr 2025 05:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5559293B7C;
+	Fri, 11 Apr 2025 05:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6nd6fa+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aR2uGARw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F1D293475
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 05:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52353293B72
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 05:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744350122; cv=none; b=XObjpJFjYjyQbJQ6vJu1br1JT48jQNB6zuqfw5tYoFvUXEPJk91gw03bBNBGqDclHLMf597Bu1a/0/tQK61rsdwEKvK3WcayflqkjoyVT25sP/tZM9D8G3D9V5mkSgOxbZ941KJjLtPbCkfM/yCwPnrrP4/i72nnx+L5LflTxGY=
+	t=1744350125; cv=none; b=mGGQqUb25+VB0Q2AFD40uR3cPIio3l7V0J1N3MVz65TCaX3By+3IYOOEJywVsJltXFHEFCJyBPGIRSjQNTUwXEOYioQ8g/nl/Kj9owcEMJgqieCisIL66CFEHf/nVR90dhqzYGKJKrf2RxqSRg1PPRj+XKAsrCPYm7jTOVgrtLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744350122; c=relaxed/simple;
-	bh=Cxr9+BpFDPItZf6/GxwLJEbbqAM3a68chIdZlEEpu00=;
+	s=arc-20240116; t=1744350125; c=relaxed/simple;
+	bh=5ve/rJJkqY9+wXdI0eiSUbGq+zG5vSV+XhyvzG//1yk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bLSZw9qnFEyzCtJq12dDBrzMKV+JuHZTlv6kiHBV+EcHE0ejOd3bQwfjPeKw04Ty6h2p+ikyhZuxD0oUtuvL22KUgIePwvfjXRkLPigBDenpUwXI8ArJqerB9NIbJ9y6ocxKXN1tNGGn8WzSKRDGjNf9XQaHC7Sv6vD8/6Hepmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u6nd6fa+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BB89C4CEE2;
-	Fri, 11 Apr 2025 05:42:00 +0000 (UTC)
+	 MIME-Version; b=dkgxj5v+9xasgj6kkajRlrjQ9F3T+1Y/B32Cy5HAQWFnr4JGuxJng9Kv6nXHr9/XVt4rKVNdoACnf2uGIuMFXgiKULywUWlMEwfJMbPuILGCwK9Ba8mqWUw0YLDgk1ouplMRZL4d3L9QXNqyfyskjusJ5yH4LgfkCZS6nP6j1YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aR2uGARw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E50DEC4CEE2;
+	Fri, 11 Apr 2025 05:42:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744350122;
-	bh=Cxr9+BpFDPItZf6/GxwLJEbbqAM3a68chIdZlEEpu00=;
+	s=k20201202; t=1744350124;
+	bh=5ve/rJJkqY9+wXdI0eiSUbGq+zG5vSV+XhyvzG//1yk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=u6nd6fa+o/BuRWZyGJyfVp9kbi/mCQEJRrKFAOkwQBskOinGxBijBX+S2PQSWY/lr
-	 0xKmn8Md5CnPcK8JmXe7XRgmMdMbNnfl0dFXqBAhphdc6wjFkeXDj43hf3Wx5pxzY7
-	 bfxFOwnmIEuILatyWMsPZVrPHF5iG2y+hPj1zi/gR1yuPg2rger5W1+noZBYZwh1ei
-	 jxu6ByAz1UeiO5keBLWdL61T+oUh8+b1wIuHGEJEbnQgeF8vgwEFSxyi//k9dLJoOH
-	 Zi0SDE6jvXmo4e4MIdoAcXU3XLpM3ehBAggYZues3wU1g4nO1B3yah6bpcOKjIKTmY
-	 X1aesOnVSoq/g==
+	b=aR2uGARwcn3CECP5GL0K9EJeifsbLMI+jSKJOoB5xEGPtgN0WdtQKyU7BbAW1fCqO
+	 zhZiHGf/Z4zmaTnf74IIV90pNS+JhfaKE5KlyhPjyy4kKJPY2HeMisGRNNiIAEbnDg
+	 IhVdBgSLb3+jVTmdew4F/M/pFIaLOA1LRGlF7fmtjYK1UbugTebmOz54AiavV3IsEI
+	 mr++I5X5CYrgqfnx0TY7lJl2karI4ccWygELDMIknGXAFmdb66/0RcLkLsjXqrXE5v
+	 lY1P+yNbg+wXg+uwNHYSwfaG2+obOFOgt5j9iSl+Z3OYP6gKYJRbr7nqfR23pIYeut
+	 PuYMdLGDRL8xw==
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Juergen Gross <jgross@suse.com>,
@@ -49,9 +49,9 @@ Cc: Juergen Gross <jgross@suse.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 21/53] x86/alternatives: Add text_mutex) assert to smp_text_poke_batch_flush()
-Date: Fri, 11 Apr 2025 07:40:33 +0200
-Message-ID: <20250411054105.2341982-22-mingo@kernel.org>
+Subject: [PATCH 22/53] x86/alternatives: Use non-inverted logic instead of 'tp_order_fail()'
+Date: Fri, 11 Apr 2025 07:40:34 +0200
+Message-ID: <20250411054105.2341982-23-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250411054105.2341982-1-mingo@kernel.org>
 References: <20250411054105.2341982-1-mingo@kernel.org>
@@ -63,37 +63,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It's possible to escape the text_mutex-held assert in
-smp_text_poke_batch_process() if the caller uses a properly
-batched and sorted series of patch requests, so add
-an explicit lockdep_assert_held() to make sure it's
-held by all callers.
+tp_order_fail() uses inverted logic: it returns true in case something
+is false, which is only a plus at the IOCCC.
 
-All text_poke_int3_*() APIs will call either smp_text_poke_batch_process()
-or smp_text_poke_batch_flush() internally.
+Instead rename it to regular parity as 'text_poke_addr_ordered()',
+and adjust the code accordingly.
 
-The text_mutex must be held, because tp_vec and tp_vec_nr et al
-are all globals, and the INT3 patching machinery itself relies on
-external serialization.
+Also add a comment explaining how the address ordering should be
+understood.
+
+No change in functionality intended.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/alternative.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/kernel/alternative.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index cb1723730f1e..d3d250dcefca 100644
+index d3d250dcefca..c9fd31d512b0 100644
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -2860,6 +2860,8 @@ static bool tp_order_fail(void *addr)
+@@ -2841,28 +2841,34 @@ static void text_poke_int3_loc_init(struct smp_text_poke_loc *tp, void *addr,
+  * We hard rely on the tp_vec being ordered; ensure this is so by flushing
+  * early if needed.
+  */
+-static bool tp_order_fail(void *addr)
++static bool text_poke_addr_ordered(void *addr)
+ {
+ 	struct smp_text_poke_loc *tp;
+ 
+ 	if (!tp_vec_nr)
+-		return false;
++		return true;
+ 
+ 	if (!addr) /* force */
+-		return true;
++		return false;
+ 
+-	tp = &tp_vec[tp_vec_nr - 1];
++	/*
++	 * If the last current entry's address is higher than the
++	 * new entry's address we'd like to add, then ordering
++	 * is violated and we must first flush all pending patching
++	 * requests:
++	 */
++	tp = &tp_vec[tp_vec_nr-1];
+ 	if ((unsigned long)text_poke_addr(tp) > (unsigned long)addr)
+-		return true;
++		return false;
+ 
+-	return false;
++	return true;
+ }
  
  static void smp_text_poke_batch_flush(void *addr)
  {
-+	lockdep_assert_held(&text_mutex);
-+
- 	if (tp_vec_nr == TP_VEC_MAX || tp_order_fail(addr)) {
+ 	lockdep_assert_held(&text_mutex);
+ 
+-	if (tp_vec_nr == TP_VEC_MAX || tp_order_fail(addr)) {
++	if (tp_vec_nr == TP_VEC_MAX || !text_poke_addr_ordered(addr)) {
  		smp_text_poke_batch_process(tp_vec, tp_vec_nr);
  		tp_vec_nr = 0;
+ 	}
 -- 
 2.45.2
 
