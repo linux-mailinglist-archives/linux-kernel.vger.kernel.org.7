@@ -1,320 +1,209 @@
-Return-Path: <linux-kernel+bounces-599477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D615A85416
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:25:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4037A85421
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF0BD1B60A58
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:25:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E107B1B68143
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4B027CCFF;
-	Fri, 11 Apr 2025 06:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="tTyJVGz7";
-	dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="5RXs4eJG"
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C5C27CCFC;
+	Fri, 11 Apr 2025 06:29:12 +0000 (UTC)
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEDC27CB36;
-	Fri, 11 Apr 2025 06:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744352690; cv=pass; b=W9butUd13xPFndbWF6OQrORhP4KheVa0mpDktArYUz/DAxaGE72utlPPDFeLkgpcqv841/kyPbsw46vk8rpk0QtrK2dw/o2NlvOikuYf0cMY1KTaZhrNaKnAfA161QxlnfIf7xxlP82E88QNkzYrPHWmU8aEeW4ixAAfgfj5Lyg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744352690; c=relaxed/simple;
-	bh=l+I6yaZDQZFzU/0lOna1bxv1XefK864QEYTNwA/sEjc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m7JDKJfFs0Jvk6HXBitiAPa6vFY5dG82U7ZStwVJaOTDjnMNTGAZp4Adi0twvM5TtqHmuIvPsOoyZHU607QE6uhj0ElMATdlienD4i0qUp8bNTCOPUBj9rW8VvvPhrXH8nUECQzcdYJeMuELfFq2r3iIY3UuvIgGl17fE2PmbNg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de; spf=pass smtp.mailfrom=a98shuttle.de; dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=tTyJVGz7; dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=5RXs4eJG; arc=pass smtp.client-ip=85.215.255.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=a98shuttle.de
-ARC-Seal: i=1; a=rsa-sha256; t=1744352677; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=kk0uNfbOtzMQ8ForAz8b6Lt/k7bXB2s+CHd+GpQDCe/NYJj/UwpebXwIf7+SDf1Sln
-    rKXllh6RCHYpgQ9GCO8W3NOvdFImzdNhcO5siWFpYo5AVXhRbIIJbH2nlVpEG4iOBzQo
-    1zL7P0UlJxacWXWM/ZponojxCyMy9Q6Ws9mESn3SDVou74RTaq7//Gx3opZPRej2+D2z
-    d0mXCHHxcDoFXrsy4NhsnSczLMVPcquw2ZkIaUOlcRil43UyCTQxUeIUOCn9DYRxd9mj
-    krTf8fwLKJX09Bc+Wl2UCN9pbdA/b2dJ7416kAUGZMhwnxAqC6hRqJa9UXdUqNXZ6eAj
-    ajBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1744352677;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=GOW7EgaK4eTMqPSWF+IPv4cYDIseNc2HtpiUiSUFm3M=;
-    b=Bwf0n1nwuy9C2bPDdtFB7XDkyD7Y2l8tr5jxEyngd1RHklsQvVeuQLLv/dyXEGQUrX
-    4/o0L9fz72wpvGbt9SCyn1+6lQ/MUS5FX//rte+HXbwZjwc8MB+aoXT5VD3djt6UeWu2
-    vFAn7agjASgCj5bRWVOVNl2i5qtfDTVmRL6gSDwFQniqeyWDfdKRol4baHjZPfM8Ssau
-    iik9fux553Ec7Wbtdmz74qHHI0KL0tNIqNeiOl33CXnT29cz8Jeg2npgJE+JlvXVhTVx
-    2YQ7NXz+zhLn2mN5X2SlBfXjEBDDA8hWoY9JafGxSYGwV/TMdMqq+HKvvIeFQM2x/D1v
-    loqA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1744352677;
-    s=strato-dkim-0002; d=fossekall.de;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=GOW7EgaK4eTMqPSWF+IPv4cYDIseNc2HtpiUiSUFm3M=;
-    b=tTyJVGz7GWMYjq9wJD/2fFLB6QiD1iKe11NQGviPtWNAN7Nxf3xe5FEjGlnzwIcdt4
-    ogUPqsDhymWtwjgchgmXuy5U390bqd5cbhg3AWmmPmYUrRR91I+O8YDwh2wEtHsGdUiM
-    2Y0DyJZho4xicql8ZYuogPAkO2g4aT4nywdahux1G6L+BE577GH+pWxYAUUzLK8XHaEk
-    uRv145FqR4eLGNGnI8ynrnQWj1KxLzdwrwlJ1uocPEKxSoKRYrG16WxfipLqMQXslheC
-    xSDOZy3gWC6fzj2B+i4J5YTMHludKCEJh0jft5xkY9ek04bbHVq/f0UUozVpPekCVLJB
-    7vVQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1744352677;
-    s=strato-dkim-0003; d=fossekall.de;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=GOW7EgaK4eTMqPSWF+IPv4cYDIseNc2HtpiUiSUFm3M=;
-    b=5RXs4eJGxZJMKw39+mgUX5pGHyDtJPTiHknySH+W7L4dA8eseQrQ1Fgi5oA0Xk8swu
-    ZpcW2eZVhQsTm7A7DIAw==
-X-RZG-AUTH: ":O2kGeEG7b/pS1EzgE2y7nF0STYsSLflpbjNKxx7cGrBdao6FTL4AJcMdm+lap4JEHkzok9eyEg=="
-Received: from aerfugl
-    by smtp.strato.de (RZmta 51.3.0 AUTH)
-    with ESMTPSA id f28b3513B6ObHae
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Fri, 11 Apr 2025 08:24:37 +0200 (CEST)
-Received: from koltrast.home ([192.168.1.27] helo=a98shuttle.de)
-	by aerfugl with smtp (Exim 4.96)
-	(envelope-from <michael@a98shuttle.de>)
-	id 1u37oa-0000Nm-2r;
-	Fri, 11 Apr 2025 08:24:36 +0200
-Received: (nullmailer pid 8911 invoked by uid 502);
-	Fri, 11 Apr 2025 06:24:36 -0000
-From: Michael Klein <michael@fossekall.de>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Michael Klein <michael@fossekall.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [net-next v6 4/4] net: phy: realtek: Add support for PHY LEDs on RTL8211E
-Date: Fri, 11 Apr 2025 08:24:26 +0200
-Message-Id: <20250411062426.8820-5-michael@fossekall.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250411062426.8820-1-michael@fossekall.de>
-References: <20250411062426.8820-1-michael@fossekall.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6281EFF9C;
+	Fri, 11 Apr 2025 06:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744352951; cv=none; b=LMli9tGRDZFKdr6UH4BQubp39hj5scO2eI7zB/BmhypjoGbAlDavEhn97ffulcTP4L3cWJ1wAmUJ8l/1HnPU0Ps0JTXwDCVNIxS+mqbdyF5fCFQBNBiH4JS3Cw1xXzHTzuBqzOtBwLntnWqEvgSBjMpHQ7VX1lh/umiGB8E6FUI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744352951; c=relaxed/simple;
+	bh=RNF67hXYbIj7AuiBeY9z8+U88Il7RL5JK188qv9/XdI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ft9vMZCZRZqy4G+hlXNgbnJVypxAIW2rreHTqkG6heXJQM/0sxU6+O8kmuag2E1KAcdEw3KPn2UfkMMtMfhse1Yl8Uo4MqQL9cTF9bHAg2OvxobxlB11aJXpIo8c8kDm+MglvpPrhdZwc70HVy3yj22iV5yKPnLV87xjZvmJYLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+Received: from [89.212.21.243] (port=57560 helo=[192.168.69.116])
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <primoz.fiser@norik.com>)
+	id 1u37sx-003VJz-29;
+	Fri, 11 Apr 2025 08:29:07 +0200
+Message-ID: <d68df49c-222a-445d-b29c-f9ad962b87aa@norik.com>
+Date: Fri, 11 Apr 2025 08:29:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/13] arm64: dts: freescale: imx93-phycore-som: Enhance
+ eMMC pinctrl
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, upstream@lists.phytec.de
+References: <20250410090251.1103979-1-primoz.fiser@norik.com>
+ <20250410090251.1103979-5-primoz.fiser@norik.com>
+ <Z/fcFPrHdI8/IBRC@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Primoz Fiser <primoz.fiser@norik.com>
+Autocrypt: addr=primoz.fiser@norik.com; keydata=
+ xjMEZrROOxYJKwYBBAHaRw8BAQdAADVOb5tiLVTUAC9nu/FUl4gj/+4fDLqbc3mk0Vz8riTN
+ JVByaW1veiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT7CiQQTFggAMRYhBK2YFSAH
+ ExsBZLCwJGoLbQEHbnBPBQJmtE47AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQagttAQducE+T
+ gAD+K4fKlIuvH75fAFwGYG/HT3F9mN64majvqJqvp3gTB9YBAL12gu+cm11m9JMyOyN0l6Os
+ jStsQFghPkzBSDWSDN0NzjgEZrROPBIKKwYBBAGXVQEFAQEHQP2xtEOhbgA+rfzvvcFkV1zK
+ 6ym3/c/OUQObCp50BocdAwEIB8J4BBgWCAAgFiEErZgVIAcTGwFksLAkagttAQducE8FAma0
+ TjwCGwwACgkQagttAQducE8ucAD9F1sXtQD4iA7Qu+SwNUAp/9x7Cqr37CSb2p6hbRmPJP8B
+ AMYR91JYlFmOJ+ScPhQ8/MgFO+V6pa7K2ebk5xYqsCgA
+Organization: Norik systems d.o.o.
+In-Reply-To: <Z/fcFPrHdI8/IBRC@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
+X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Like the RTL8211F, the RTL8211E PHY supports up to three LEDs.
-Add netdev trigger support for them, too.
+Hi Frank,
 
-Signed-off-by: Michael Klein <michael@fossekall.de>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
- drivers/net/phy/realtek/realtek_main.c | 125 +++++++++++++++++++++++--
- 1 file changed, 119 insertions(+), 6 deletions(-)
+On 10. 04. 25 16:56, Frank Li wrote:
+> On Thu, Apr 10, 2025 at 11:02:42AM +0200, Primoz Fiser wrote:
+>> Improve eMMC on phyCORE-i.MX93 SOM by adding 100MHz and 200MHz pinctrl
+>> modes. This enables to use eMMC at enhanced data rates (e.g. HS400).
+>>
+>> While at it, apply a workaround for the i.MX93 chip errata ERR052021.
+>>
+>> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+>> ---
+>>  .../boot/dts/freescale/imx93-phycore-som.dtsi | 57 +++++++++++++++----
+>>  1 file changed, 47 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
+>> index 82f680d891c2..3d84eed33074 100644
+>> --- a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
+>> +++ b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
+>> @@ -166,8 +166,10 @@ eeprom@50 {
+>>
+>>  /* eMMC */
+>>  &usdhc1 {
+>> -	pinctrl-names = "default";
+>> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+>>  	pinctrl-0 = <&pinctrl_usdhc1>;
+>> +	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
+>> +	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
+>>  	bus-width = <8>;
+>>  	non-removable;
+>>  	status = "okay";
+>> @@ -213,18 +215,53 @@ MX93_PAD_ENET2_RD3__GPIO4_IO27		0x31e
+>>  		>;
+>>  	};
+>>
+>> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
+>>  	pinctrl_usdhc1: usdhc1grp {
+>>  		fsl,pins = <
+>>  			MX93_PAD_SD1_CLK__USDHC1_CLK		0x179e
+>> -			MX93_PAD_SD1_CMD__USDHC1_CMD		0x1386
+>> -			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x138e
+>> -			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x1386
+>> -			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x138e
+>> -			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x1386
+>> -			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x1386
+>> -			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x1386
+>> -			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x1386
+>> -			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x1386
+>> +			MX93_PAD_SD1_CMD__USDHC1_CMD		0x40001386
+>> +			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x4000138e
+>> +			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x40001386
+>> +			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x4000138e
+>> +			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x40001386
+>> +			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x40001386
+>> +			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x40001386
+>> +			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x40001386
+>> +			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x40001386
+>> +			MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x179e
+>> +		>;
+>> +	};
+>> +
+>> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
+>> +	pinctrl_usdhc1_100mhz: usdhc1-100mhzgrp {
+>> +		fsl,pins = <
+>> +			MX93_PAD_SD1_CLK__USDHC1_CLK		0x17be
+>> +			MX93_PAD_SD1_CMD__USDHC1_CMD		0x4000139e
+>> +			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x4000138e
+> 
+> any reason why DATA0 is difference with other one?
+> 
+>> +			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x4000139e
+>> +			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x400013be
+>> +			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x4000139e
+>> +			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x4000139e
+>> +			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x4000139e
+>> +			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x4000139e
+>> +			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x4000139e
+>> +			MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x179e
+>> +		>;
+>> +	};
+>> +
+>> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
+>> +	pinctrl_usdhc1_200mhz: usdhc1-200mhzgrp {
+>> +		fsl,pins = <
+>> +			MX93_PAD_SD1_CLK__USDHC1_CLK		0x17be
+>> +			MX93_PAD_SD1_CMD__USDHC1_CMD		0x4000139e
+>> +			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x4000139e
+> 
+> any reason why DATA0/DATA1 is difference with other one
 
-diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
-index cf310cc90b97..a37be6b4e9f4 100644
---- a/drivers/net/phy/realtek/realtek_main.c
-+++ b/drivers/net/phy/realtek/realtek_main.c
-@@ -50,6 +50,20 @@
- #define RTL8211E_RX_DELAY			BIT(11)
- #define RTL8211E_DELAY_MASK			GENMASK(13, 11)
- 
-+#define RTL8211E_LEDCR_EXT_PAGE			0x2c
-+
-+#define RTL8211E_LEDCR1				0x1a
-+#define RTL8211E_LEDCR1_ACT_TXRX		BIT(4)
-+#define RTL8211E_LEDCR1_MASK			BIT(4)
-+#define RTL8211E_LEDCR1_SHIFT			1
-+
-+#define RTL8211E_LEDCR2				0x1c
-+#define RTL8211E_LEDCR2_LINK_1000		BIT(2)
-+#define RTL8211E_LEDCR2_LINK_100		BIT(1)
-+#define RTL8211E_LEDCR2_LINK_10			BIT(0)
-+#define RTL8211E_LEDCR2_MASK			GENMASK(2, 0)
-+#define RTL8211E_LEDCR2_SHIFT			4
-+
- #define RTL8211F_PHYCR1				0x18
- #define RTL8211F_PHYCR2				0x19
- #define RTL8211F_CLKOUT_EN			BIT(0)
-@@ -66,7 +80,8 @@
- #define RTL8211F_LEDCR_MASK			GENMASK(4, 0)
- #define RTL8211F_LEDCR_SHIFT			5
- 
--#define RTL8211F_LED_COUNT			3
-+/* RTL8211E and RTL8211F support up to three LEDs */
-+#define RTL8211x_LED_COUNT			3
- 
- #define RTL8211F_TX_DELAY			BIT(8)
- #define RTL8211F_RX_DELAY			BIT(3)
-@@ -141,6 +156,21 @@ static int rtl821x_write_page(struct phy_device *phydev, int page)
- 	return __phy_write(phydev, RTL821x_PAGE_SELECT, page);
- }
- 
-+static int rtl8211e_read_ext_page(struct phy_device *phydev, u16 ext_page,
-+				  u32 regnum)
-+{
-+	int oldpage, ret = 0;
-+
-+	oldpage = phy_select_page(phydev, RTL8211E_SET_EXT_PAGE);
-+	if (oldpage >= 0) {
-+		ret = __phy_write(phydev, RTL8211E_EXT_PAGE_SELECT, ext_page);
-+		if (ret == 0)
-+			ret = __phy_read(phydev, regnum);
-+	}
-+
-+	return phy_restore_page(phydev, oldpage, ret);
-+}
-+
- static int rtl8211e_modify_ext_page(struct phy_device *phydev, u16 ext_page,
- 				    u32 regnum, u16 mask, u16 set)
- {
-@@ -530,7 +560,7 @@ static int rtl821x_resume(struct phy_device *phydev)
- 	return 0;
- }
- 
--static int rtl8211f_led_hw_is_supported(struct phy_device *phydev, u8 index,
-+static int rtl8211x_led_hw_is_supported(struct phy_device *phydev, u8 index,
- 					unsigned long rules)
- {
- 	const unsigned long mask = BIT(TRIGGER_NETDEV_LINK_10) |
-@@ -549,9 +579,11 @@ static int rtl8211f_led_hw_is_supported(struct phy_device *phydev, u8 index,
- 	 *      rates and Active indication always at all three 10+100+1000
- 	 *      link rates.
- 	 * This code currently uses mode B only.
-+	 *
-+	 * RTL8211E PHY LED has one mode, which works like RTL8211F mode B.
- 	 */
- 
--	if (index >= RTL8211F_LED_COUNT)
-+	if (index >= RTL8211x_LED_COUNT)
- 		return -EINVAL;
- 
- 	/* Filter out any other unsupported triggers. */
-@@ -570,7 +602,7 @@ static int rtl8211f_led_hw_control_get(struct phy_device *phydev, u8 index,
- {
- 	int val;
- 
--	if (index >= RTL8211F_LED_COUNT)
-+	if (index >= RTL8211x_LED_COUNT)
- 		return -EINVAL;
- 
- 	val = phy_read_paged(phydev, 0xd04, RTL8211F_LEDCR);
-@@ -603,7 +635,7 @@ static int rtl8211f_led_hw_control_set(struct phy_device *phydev, u8 index,
- 	const u16 mask = RTL8211F_LEDCR_MASK << (RTL8211F_LEDCR_SHIFT * index);
- 	u16 reg = 0;
- 
--	if (index >= RTL8211F_LED_COUNT)
-+	if (index >= RTL8211x_LED_COUNT)
- 		return -EINVAL;
- 
- 	if (test_bit(TRIGGER_NETDEV_LINK_10, &rules))
-@@ -626,6 +658,84 @@ static int rtl8211f_led_hw_control_set(struct phy_device *phydev, u8 index,
- 	return phy_modify_paged(phydev, 0xd04, RTL8211F_LEDCR, mask, reg);
- }
- 
-+static int rtl8211e_led_hw_control_get(struct phy_device *phydev, u8 index,
-+				       unsigned long *rules)
-+{
-+	int ret;
-+	u16 cr1, cr2;
-+
-+	if (index >= RTL8211x_LED_COUNT)
-+		return -EINVAL;
-+
-+	ret = rtl8211e_read_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				     RTL8211E_LEDCR1);
-+	if (ret < 0)
-+		return ret;
-+
-+	cr1 = ret >> RTL8211E_LEDCR1_SHIFT * index;
-+	if (cr1 & RTL8211E_LEDCR1_ACT_TXRX) {
-+		__set_bit(TRIGGER_NETDEV_RX, rules);
-+		__set_bit(TRIGGER_NETDEV_TX, rules);
-+	}
-+
-+	ret = rtl8211e_read_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				     RTL8211E_LEDCR2);
-+	if (ret < 0)
-+		return ret;
-+
-+	cr2 = ret >> RTL8211E_LEDCR2_SHIFT * index;
-+	if (cr2 & RTL8211E_LEDCR2_LINK_10)
-+		__set_bit(TRIGGER_NETDEV_LINK_10, rules);
-+
-+	if (cr2 & RTL8211E_LEDCR2_LINK_100)
-+		__set_bit(TRIGGER_NETDEV_LINK_100, rules);
-+
-+	if (cr2 & RTL8211E_LEDCR2_LINK_1000)
-+		__set_bit(TRIGGER_NETDEV_LINK_1000, rules);
-+
-+	return ret;
-+}
-+
-+static int rtl8211e_led_hw_control_set(struct phy_device *phydev, u8 index,
-+				       unsigned long rules)
-+{
-+	const u16 cr1mask =
-+		RTL8211E_LEDCR1_MASK << (RTL8211E_LEDCR1_SHIFT * index);
-+	const u16 cr2mask =
-+		RTL8211E_LEDCR2_MASK << (RTL8211E_LEDCR2_SHIFT * index);
-+	u16 cr1 = 0, cr2 = 0;
-+	int ret;
-+
-+	if (index >= RTL8211x_LED_COUNT)
-+		return -EINVAL;
-+
-+	if (test_bit(TRIGGER_NETDEV_RX, &rules) ||
-+	    test_bit(TRIGGER_NETDEV_TX, &rules)) {
-+		cr1 |= RTL8211E_LEDCR1_ACT_TXRX;
-+	}
-+
-+	cr1 <<= RTL8211E_LEDCR1_SHIFT * index;
-+	ret = rtl8211e_modify_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				       RTL8211E_LEDCR1, cr1mask, cr1);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_10, &rules))
-+		cr2 |= RTL8211E_LEDCR2_LINK_10;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_100, &rules))
-+		cr2 |= RTL8211E_LEDCR2_LINK_100;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_1000, &rules))
-+		cr2 |= RTL8211E_LEDCR2_LINK_1000;
-+
-+	cr2 <<= RTL8211E_LEDCR2_SHIFT * index;
-+	ret = rtl8211e_modify_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				       RTL8211E_LEDCR2, cr2mask, cr2);
-+
-+	return ret;
-+}
-+
- static int rtl8211e_config_init(struct phy_device *phydev)
- {
- 	u16 val;
-@@ -1401,6 +1511,9 @@ static struct phy_driver realtek_drvs[] = {
- 		.resume		= genphy_resume,
- 		.read_page	= rtl821x_read_page,
- 		.write_page	= rtl821x_write_page,
-+		.led_hw_is_supported = rtl8211x_led_hw_is_supported,
-+		.led_hw_control_get = rtl8211e_led_hw_control_get,
-+		.led_hw_control_set = rtl8211e_led_hw_control_set,
- 	}, {
- 		PHY_ID_MATCH_EXACT(0x001cc916),
- 		.name		= "RTL8211F Gigabit Ethernet",
-@@ -1414,7 +1527,7 @@ static struct phy_driver realtek_drvs[] = {
- 		.read_page	= rtl821x_read_page,
- 		.write_page	= rtl821x_write_page,
- 		.flags		= PHY_ALWAYS_CALL_SUSPEND,
--		.led_hw_is_supported = rtl8211f_led_hw_is_supported,
-+		.led_hw_is_supported = rtl8211x_led_hw_is_supported,
- 		.led_hw_control_get = rtl8211f_led_hw_control_get,
- 		.led_hw_control_set = rtl8211f_led_hw_control_set,
- 	}, {
+Bus signal integrity envelope was measured and drive-strengths adjusted
+accordingly by the PHYTEC hardware department to conform to the specs.
+
+Values were thus determined empirically to adjust for differences in
+signal impedance due to PCB layout.
+
+BR,
+Primoz
+
+> 
+> Frank
+>> +			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x400013be
+>> +			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x400013be
+>> +			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x400013be
+>> +			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x400013be
+>> +			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x400013be
+>> +			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x400013be
+>> +			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x400013be
+>>  			MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x179e
+>>  		>;
+>>  	};
+>> --
+>> 2.34.1
+>>
+
 -- 
-2.39.5
-
+Primoz Fiser
+phone: +386-41-390-545
+email: primoz.fiser@norik.com
+--
+Norik systems d.o.o.
+Your embedded software partner
+Slovenia, EU
+phone: +386-41-540-545
+email: info@norik.com
 
