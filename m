@@ -1,229 +1,134 @@
-Return-Path: <linux-kernel+bounces-600121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15719A85C18
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:43:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C086A85C0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B2653B82E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:38:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739CC1B8042D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890E329AB10;
-	Fri, 11 Apr 2025 11:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D8320FA81;
+	Fri, 11 Apr 2025 11:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLWZR7JD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="3gU2NpFK"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD66F296173;
-	Fri, 11 Apr 2025 11:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A776D20B804
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 11:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744371501; cv=none; b=RCjTRoZEn0mcpwqevuK6UaI3l8yPJMnyWQPcX0QnNqn7cGOfMTzeRBT2pH7uafNwkHKM//39akBMoW+MlFI/be9miwky29Fy7N0erh0NDL2bZe4u2hdsLR9pHJgvL/Wf+Ieb9U9UfCy52KLMadUq3yTgNKbSV2bIAmmY9gTlssE=
+	t=1744371526; cv=none; b=opYHqpfM+h5fLxSFaWC68Hj93SuSi+JEaugJPgsqmo4vDhrtoP0UwkUSCS6v9dBIYplBYM2ZpRTrrlvLQfWeRiZwvXhl969A9DUBUbvC8o/T+iUaA4IzXZcLaKdwIEKpDlrhaIoLxjLR2fkwqpBAn9D59K5T3iqCb2SY3I/qU5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744371501; c=relaxed/simple;
-	bh=m07n1i6EW5KXoabkxKV3BA5YXAEQROFJ/PT65oveu8Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=APjVlCtav+zcGK3g+P6AslvWy7rUS+j7vfZiZptaJNhygtAJI2DYyPk4W0pEiMZedJ8D9LVZIJXgkvnVvdvJ635AZLIC9e52+Wf59q5HZuXrswPLoio2kSQeem/bmCIvslHMZEjnOn8gRLmcpM6Ms59oek653NP1kOpXLFoyMT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLWZR7JD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 46315C4CEEC;
-	Fri, 11 Apr 2025 11:38:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744371500;
-	bh=m07n1i6EW5KXoabkxKV3BA5YXAEQROFJ/PT65oveu8Y=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=RLWZR7JDZQVmDTsMHkommj4Jv9FQXpu9xcwTEQWiV9WOVGZ3KSjWiU95cHKgwYHkj
-	 1f9muvFc9fuWnnJH/f2MHN6rl31gNMoH6uYaVLb/2uFrhlHS8ewqXa2PDWlrjWcHbr
-	 Y4/aE/ypmFD5DUa4JhGerijbhjGyaJZozjRFib4Pu1Zcat0z/fuOHHFnVih9PJ9OjZ
-	 dyjfe2jz25cSlZScDkGZeNGPjjjJ9mVBMpcwhVFmJ6rdn0bxDFhK25hPp9lRrrSPVN
-	 zzhpFp3/fMnaf8+tIsLRvPuy3NUSG6HS3fUy8FjjgIsQtC9oJhjHvE6Y/7v8Kk7p+R
-	 Di26n/MUJqK1A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371EEC369AD;
-	Fri, 11 Apr 2025 11:38:20 +0000 (UTC)
-From: Kelvin Zhang via B4 Relay <devnull+kelvin.zhang.amlogic.com@kernel.org>
-Date: Fri, 11 Apr 2025 19:38:17 +0800
-Subject: [PATCH v6 3/3] arm64: dts: amlogic: Add A5 Reset Controller
+	s=arc-20240116; t=1744371526; c=relaxed/simple;
+	bh=odkZFZUi0f71HBPvN8uYjy7mYt551ylhud30ueDx3R0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q1Q1xpC07fg9ngzqQA1rjqSA4/Rgx79J5+Wsw3oY6MqBhVL0qP19Xq4a7fGcgxTStvj7zSg+nw34DfSY8P0XmVP031sag/4tKUuG0roSG71uGptqbz1YFUAA1m2r3H3kF2QZNfYhggaDo8dU+aME6kCfHfL7WBbgdgV3RdV2sJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3gU2NpFK; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30de488cf81so17533121fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 04:38:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744371520; x=1744976320; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+dh8vYDsog/Ci3+DrgXMQu6sX2O8M8O9Wafm3pVbf48=;
+        b=3gU2NpFKoBHjKBeoK2isTG4PGs1TxydkmO6Q7r3d0i4xZ23tf+PMwiGRAN0xFGiGr6
+         4vSuHNE+YhHv0Mhr6JtTTtI4M/8FzXi3fWqtx5OP8VqA0IUzJYx1UME3xEvZRF/Eh1ey
+         uU2lfyl5GKDXgn7fCgyWCn37wMvG6y90Lyf8AMUvb+dQ6jJWEDsrnyycy5YrNutG0xoP
+         rBwI0bsfgM4ifxUXwP/OTRqxHzw4o2QEG1bJPq1vvgmBS6fFX2e4IUMfchh8SBQp1FnW
+         FMbFLyWKbuKoF1BbawgybKzxdIxZHuASTGrasoznUwfq/ahWlnR4pXXXXgi49+z2aYsE
+         xjtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744371520; x=1744976320;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+dh8vYDsog/Ci3+DrgXMQu6sX2O8M8O9Wafm3pVbf48=;
+        b=Zy11HSl1uEAlqnBL0fFT/0u/AbNZLAcosdx+y5VYxCFWzOw69iqTvtI5fYYn3SaUvT
+         OgQaf3Yf4rQMHYmPtY9522xSbA3NiEzf39gRKydUjjTBX4LgpFLCbsLcb/4Fv08hoXx2
+         CWHLfl9Hyv+lqEMd1MN7esURb1nDoa9UOwm3A6VwSZy+iC5B2dqfwbyHYhqa6IfNoUeR
+         OYsXcePq8UVQJeK9XxlffFyP9MzzYBKusZPPem2eZtUUgc5z8qQ4BuD0XD/U/RidXu1k
+         gXWsnFHBQEJEAzOD+rWG/AMVjWV+9/8NRXokXhg8OvM7FAsfaB9pLCP+9mJfft6Eb971
+         6WUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAxWvoVbJ4EUtPWBnvbdJqfOg0PCkZcL6tUQE7wZ/Iv4RlZ7X/v8gLKP9ak02xt2tvjkdLo1Y91c5cQTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZq4c9xfnR0yyVi6wse5bjm5LkJje4EQfghW/Uo6+KwL+TtQzC
+	izyGaEfjuCGhw+yfTe62jD+jCuo6hnX4S64LylCYUJMMJKTx6SCxqKVjZguoarHUqhcMRALrSHt
+	aZVhdSGb7/dq/m8jKjDCabpIFlnL/CaM2DtQcdw==
+X-Gm-Gg: ASbGncsgOb7zAcMFx1BFDc+TMxUhjG8WD2LGsfxk6GE3cS2LtZa1/q6P0apdeZ//f6m
+	aC+MpUM9vuT/np1TNbP0t3E+WS7JZmWOvqggE6cXGAIC4gorps0w+6H2CGPPwor/8rkQPX6l6d9
+	TpD/I3lzp+YJ6m5QzIdaB3jnEodhK57jzCNT4akjh71DQg0ODVJb51fflV
+X-Google-Smtp-Source: AGHT+IFFm00GPIYdXZ4l3vc4zErYQVOB90f/c77ivhuoRRZN68YVc/a2XaGhO2gIGxfB93Qso8/XMsIqT+2Mct+UlFg=
+X-Received: by 2002:a2e:bea2:0:b0:30b:9813:b011 with SMTP id
+ 38308e7fff4ca-31049a7e684mr8679781fa.28.1744371519491; Fri, 11 Apr 2025
+ 04:38:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250411-a4-a5-reset-v6-3-89963278c686@amlogic.com>
-References: <20250411-a4-a5-reset-v6-0-89963278c686@amlogic.com>
-In-Reply-To: <20250411-a4-a5-reset-v6-0-89963278c686@amlogic.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Zelong Dong <zelong.dong@amlogic.com>, 
- Kelvin Zhang <kelvin.zhang@amlogic.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744371498; l=4039;
- i=kelvin.zhang@amlogic.com; s=20240329; h=from:subject:message-id;
- bh=39cgxEleCRWNGiMf9dZjnPoJH+4QSAKwm+85hqJrCUk=;
- b=PYZD7Sc+pTxBghbA1cA21hexU/OWuPj4rDnnZZ6WOBpv3nXbjtlIHPTwhBqUI0HHSNaobk/Qi
- tEf44laRPLJA3zSVhSqHI0O3qUP7QnvdvQEzT2+6XYwUAEI++as4w/a
-X-Developer-Key: i=kelvin.zhang@amlogic.com; a=ed25519;
- pk=pgnle7HTNvnNTcOoGejvtTC7BJT30HUNXfMHRRXSylI=
-X-Endpoint-Received: by B4 Relay for kelvin.zhang@amlogic.com/20240329 with
- auth_id=148
-X-Original-From: Kelvin Zhang <kelvin.zhang@amlogic.com>
-Reply-To: kelvin.zhang@amlogic.com
+References: <20250411-mdb-gpiolib-setters-fix-v1-1-dea302ab7440@bootlin.com>
+In-Reply-To: <20250411-mdb-gpiolib-setters-fix-v1-1-dea302ab7440@bootlin.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 11 Apr 2025 13:38:26 +0200
+X-Gm-Features: ATxdqUHeXHWBZ4MIFvMYwmaS8Gr1mIm67O6dg2SJ8aNNGnkJhnRQNVQbFwlbeI4
+Message-ID: <CAMRc=MegvXZGAVA210rjnFuKZwg4appN4nAJNejfC2jpY0JLOg@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: Allow to use setters with return value for
+ output-only gpios
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zelong Dong <zelong.dong@amlogic.com>
+On Fri, Apr 11, 2025 at 12:31=E2=80=AFPM Mathieu Dubois-Briand
+<mathieu.dubois-briand@bootlin.com> wrote:
+>
+> The gpiod_direction_output_raw_commit() function checks if any setter
+> callback is present before doing anything. As the new GPIO setters with
+> return values were introduced, make this check also succeed if one is
+> present.
+>
+> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+> ---
+>  drivers/gpio/gpiolib.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index b8197502a5ac..cd4fecbb41f2 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2879,7 +2879,7 @@ static int gpiod_direction_output_raw_commit(struct=
+ gpio_desc *desc, int value)
+>          * output-only, but if there is then not even a .set() operation =
+it
+>          * is pretty tricky to drive the output line.
+>          */
+> -       if (!guard.gc->set && !guard.gc->direction_output) {
+> +       if (!guard.gc->set && !guard.gc->set_rv && !guard.gc->direction_o=
+utput) {
+>                 gpiod_warn(desc,
+>                            "%s: missing set() and direction_output() oper=
+ations\n",
+>                            __func__);
+>
+> ---
+> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> change-id: 20250411-mdb-gpiolib-setters-fix-b87976992070
+>
+> Best regards,
+> --
+> Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+>
 
-Add the device node and related header file for Amlogic
-A5 reset controller.
+Ah good catch. Since the culprit is already in mainline, would you
+mind resending with Cc: stable and Fixes: tags?
 
-Signed-off-by: Zelong Dong <zelong.dong@amlogic.com>
-Link: https://lore.kernel.org/r/20240918074211.8067-4-zelong.dong@amlogic.com
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/amlogic-a5-reset.h | 95 ++++++++++++++++++++++++++
- arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi    |  8 +++
- 2 files changed, 103 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a5-reset.h b/arch/arm64/boot/dts/amlogic/amlogic-a5-reset.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..cdf0f515962097c606e4c53badb19df7d21606ec
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-a5-reset.h
-@@ -0,0 +1,95 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-+/*
-+ * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#ifndef __DTS_AMLOGIC_A5_RESET_H
-+#define __DTS_AMLOGIC_A5_RESET_H
-+
-+/* RESET0 */
-+/*						0-3 */
-+#define RESET_USB				4
-+/*						5-7 */
-+#define RESET_USBPHY20				8
-+/*						9 */
-+#define RESET_USB2DRD				10
-+/*						11-31 */
-+
-+/* RESET1 */
-+#define RESET_AUDIO				32
-+#define RESET_AUDIO_VAD				33
-+/*                                              34 */
-+#define RESET_DDR_APB				35
-+#define RESET_DDR				36
-+/*						37-40 */
-+#define RESET_DSPA_DEBUG			41
-+/*                                              42 */
-+#define RESET_DSPA				43
-+/*						44-46 */
-+#define RESET_NNA				47
-+#define RESET_ETHERNET				48
-+/*						49-63 */
-+
-+/* RESET2 */
-+#define RESET_ABUS_ARB				64
-+#define RESET_IRCTRL				65
-+/*						66 */
-+#define RESET_TS_PLL				67
-+/*						68-72 */
-+#define RESET_SPICC_0				73
-+#define RESET_SPICC_1				74
-+#define RESET_RSA				75
-+
-+/*						76-79 */
-+#define RESET_MSR_CLK				80
-+#define RESET_SPIFC				81
-+#define RESET_SAR_ADC				82
-+/*						83-90 */
-+#define RESET_WATCHDOG				91
-+/*						92-95 */
-+
-+/* RESET3 */
-+/*						96-127 */
-+
-+/* RESET4 */
-+#define RESET_RTC				128
-+/*						129-131 */
-+#define RESET_PWM_AB				132
-+#define RESET_PWM_CD				133
-+#define RESET_PWM_EF				134
-+#define RESET_PWM_GH				135
-+/*						104-105 */
-+#define RESET_UART_A				138
-+#define RESET_UART_B				139
-+#define RESET_UART_C				140
-+#define RESET_UART_D				141
-+#define RESET_UART_E				142
-+/*						143*/
-+#define RESET_I2C_S_A				144
-+#define RESET_I2C_M_A				145
-+#define RESET_I2C_M_B				146
-+#define RESET_I2C_M_C				147
-+#define RESET_I2C_M_D				148
-+/*						149-151 */
-+#define RESET_SDEMMC_A				152
-+/*						153 */
-+#define RESET_SDEMMC_C				154
-+/*						155-159*/
-+
-+/* RESET5 */
-+/*						160-175 */
-+#define RESET_BRG_AO_NIC_SYS			176
-+#define RESET_BRG_AO_NIC_DSPA			177
-+#define RESET_BRG_AO_NIC_MAIN			178
-+#define RESET_BRG_AO_NIC_AUDIO			179
-+/*						180-183 */
-+#define RESET_BRG_AO_NIC_ALL			184
-+#define RESET_BRG_NIC_NNA			185
-+#define RESET_BRG_NIC_SDIO			186
-+#define RESET_BRG_NIC_EMMC			187
-+#define RESET_BRG_NIC_DSU			188
-+#define RESET_BRG_NIC_SYSCLK			189
-+#define RESET_BRG_NIC_MAIN			190
-+#define RESET_BRG_NIC_ALL			191
-+
-+#endif
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
-index 32ed1776891bc7d1befd01a76c76048631606f5a..b1da8cbaa25a1844312a23bc39eb876df3c60df5 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
-@@ -4,6 +4,7 @@
-  */
- 
- #include "amlogic-a4-common.dtsi"
-+#include "amlogic-a5-reset.h"
- #include <dt-bindings/power/amlogic,a5-pwrc.h>
- / {
- 	cpus {
-@@ -50,6 +51,13 @@ pwrc: power-controller {
- };
- 
- &apb {
-+	reset: reset-controller@2000 {
-+		compatible = "amlogic,a5-reset",
-+			     "amlogic,meson-s4-reset";
-+		reg = <0x0 0x2000 0x0 0x98>;
-+		#reset-cells = <1>;
-+	};
-+
- 	gpio_intc: interrupt-controller@4080 {
- 		compatible = "amlogic,a5-gpio-intc",
- 			     "amlogic,meson-gpio-intc";
-
--- 
-2.37.1
-
-
+Bart
 
