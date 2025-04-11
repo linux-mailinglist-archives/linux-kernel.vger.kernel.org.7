@@ -1,98 +1,106 @@
-Return-Path: <linux-kernel+bounces-600429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E765A85FC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:57:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6068EA85FD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F16541BA54C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE0249A5F9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217881F237A;
-	Fri, 11 Apr 2025 13:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A704A1F1317;
+	Fri, 11 Apr 2025 13:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjGwgNWp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c7BDzRiH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749511DE3AD;
-	Fri, 11 Apr 2025 13:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CD71C863E
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 13:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744379840; cv=none; b=chksWaUGaBR2gO0PvpnSrIAGkt7/e/4WDAmwH74WwB58tSCtsVF2QqdN7SsV0/tBskOjhA4kcF5y91ksA3uh3JuG1tRTK/4e6yIySddMl4EGifRqnHTgEsFTG+sFwwOo+1lg8ZqNJK4ZSOMSJVTLipQWXketZwMRS+DFn9q5ihM=
+	t=1744379918; cv=none; b=KIYhEgTxopAp/cT7vu+AMNoxLHmSiE4PTVACQQpohJ+FDLeTY+XhocZzdEi8C6gs5LlR7CEE1+Hl6x4BaQfSRR7RJOO1cOclENBG1wRbivI7i+hupRi4NlnkKFvKrmgvLWBuP9bG1X27lh7kY16kGGo5Zp5QQdsj3jz4jAGTN3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744379840; c=relaxed/simple;
-	bh=U3q0YH9UABshfZ8DUJHHyezmfDdHh8a15wvB6pQwvKY=;
+	s=arc-20240116; t=1744379918; c=relaxed/simple;
+	bh=vDnLG72LCYd10fHlImIqsQps4BBiquf11s9rZSx7hyQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O0JA+SouY+MaLBCnSotk8GoeExNzA63b0xB0lcO1quP063pV4fe+TTfITQJq9s76kOtSXam/eLTik3hBQ0Ev70MRscUxxZVwDJclSj7M/VA7Z7zUN7BWxJQWaISfHcSLZaJih4JoHWutVDG7L5QNkTzPhHEiQaoc6bpnasvI8YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SjGwgNWp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F932C4CEE2;
-	Fri, 11 Apr 2025 13:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744379839;
-	bh=U3q0YH9UABshfZ8DUJHHyezmfDdHh8a15wvB6pQwvKY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SjGwgNWpLqKXJ7hxrOOKyBiP4jfyg4aSH17c6SY7YXbTNsW3gck1hVnsYlbjf0s27
-	 96MrP2z/YMKmfbl2DmNlJ3RlfjnS9dIERZIho2fPOVfzo8sMW9aeLfApLcrQ7oCBY6
-	 SZ5dXY/jl5j+F3qdZFsGLxm0KnGiOvm2wyKXklzVTkcKxBBoBHuuyJaQgQUHjfrMzs
-	 DqmC6auq8y8QR8FuLBtHHry4OPPaLI0NsTwHGb2PTcCv/eXm5vTvvsV7OveYeyvgob
-	 Hj5wN0dcHqGbB5b+Mph0fSSC8OnuEfEtrvs9C1BPsPkfuPvDdxTR6mtQ+kDPa16acW
-	 QQOZrZ81yL1Nw==
-From: Christian Brauner <brauner@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH][V2] select: do_pollfd: add unlikely branch hint return path
-Date: Fri, 11 Apr 2025 15:57:08 +0200
-Message-ID: <20250411-lerngruppen-kojen-823467ef0e54@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250409155510.577490-1-colin.i.king@gmail.com>
-References: <20250409155510.577490-1-colin.i.king@gmail.com>
+	 MIME-Version:Content-Type; b=izTQTX8nCxo4K2bOGougReAvlBohpvqP9X5i0NRB5mwdxTglK5LSmMaER1D+i0bUs0nAifn7TWlhZ8KELyRZ78ZjQQTAssnOSh5FCRwQkB/s2Gixdg0c1+SKUQusgpl6WsvQ29pwI17z1eEF+i9Hxa3LDnnLIraI3bGvYefvi/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c7BDzRiH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744379912;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Pkb2rwVHMrQO1vrCc1zgV2cwtlIuml/FIIAdKay+62E=;
+	b=c7BDzRiHTidn8I/brcxUBI5ghJEjmOZcUj7khvAg+WEWDK5G2FJf6i3Z8Qf5LY+1I7uzUx
+	8gpVdZ9A4fAlyWKjueBb8ZLH1JxLs+sQyWUFDNg0PM924XejiSAUJziDja3BHIcfakq1gx
+	/Nfum6xrxObyLLd6sdN7Y7q8hmiUIP8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-692-h-qS1FRYO-y5ttDd6TFTNQ-1; Fri,
+ 11 Apr 2025 09:57:19 -0400
+X-MC-Unique: h-qS1FRYO-y5ttDd6TFTNQ-1
+X-Mimecast-MFC-AGG-ID: h-qS1FRYO-y5ttDd6TFTNQ_1744379838
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A6ABD180034D;
+	Fri, 11 Apr 2025 13:57:17 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.58.2])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 21A7419560AD;
+	Fri, 11 Apr 2025 13:57:15 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ Omar Sandoval <osandov@osandov.com>, Sargun Dillon <sargun@sargun.me>,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] nfs: don't share pNFS DS connections between net
+ namespaces
+Date: Fri, 11 Apr 2025 09:57:13 -0400
+Message-ID: <1587C44B-7BDE-4B36-8CE6-C654CB154228@redhat.com>
+In-Reply-To: <20250410-nfs-ds-netns-v2-1-f80b7979ba80@kernel.org>
+References: <20250410-nfs-ds-netns-v2-0-f80b7979ba80@kernel.org>
+ <20250410-nfs-ds-netns-v2-1-f80b7979ba80@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1368; i=brauner@kernel.org; h=from:subject:message-id; bh=U3q0YH9UABshfZ8DUJHHyezmfDdHh8a15wvB6pQwvKY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/lN/Fu+z3D645ysvdW6ts3VtyDt8P6p2wXMctz/j4r g/tMVM2dJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkXi0jw5XlTA+e3dfY9zso MTow9pWR15UO213nNT7wTWI6srkjwIThf17nubXFHx8ouYacvm23Qm9feeDn6MhL5QtaFpRdWbW cmw8A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, 09 Apr 2025 16:55:10 +0100, Colin Ian King wrote:
-> Adding an unlikely() hint on the fd < 0 comparison return path improves
-> run-time performance of the poll() system call. gcov based coverage
-> analysis based on running stress-ng and a kernel build shows that this
-> path return path is highly unlikely.
-> 
-> Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
-> a 6.15-rc1 kernel and a poll of 1024 file descriptors with zero timeout
-> shows an call reduction from 32818 ns down to 32635 ns, which is a ~0.5%
-> performance improvement.
-> 
-> [...]
+On 10 Apr 2025, at 16:42, Jeff Layton wrote:
 
-Applied to the vfs-6.16.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.16.misc branch should appear in linux-next soon.
+> Currently, different NFS clients can share the same DS connections, even
+> when they are in different net namespaces. If a containerized client
+> creates a DS connection, another container can find and use it. When the
+> first client exits, the connection will which can lead to stalls in
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+                                         ^^ close ?
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+> other clients.
+>
+> Add a net namespace pointer to struct nfs4_pnfs_ds, and compare those
+> value to the caller's netns in _data_server_lookup_locked() when
+> searching for a nfs4_pnfs_ds to match.
+>
+> Reported-by: Omar Sandoval <osandov@osandov.com>
+> Reported-by: Sargun Dillon <sargun@sargun.me>
+> Closes: https://lore.kernel.org/linux-nfs/Z_ArpQC_vREh_hEA@telecaster/
+> Tested-by: Sargun Dillon <sargun@sargun.me>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Looks good to me,
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.16.misc
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
 
-[1/1] select: do_pollfd: add unlikely branch hint return path
-      https://git.kernel.org/vfs/vfs/c/5730609ffd7e
+Ben
+
 
