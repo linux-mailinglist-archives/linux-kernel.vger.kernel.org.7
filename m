@@ -1,80 +1,105 @@
-Return-Path: <linux-kernel+bounces-599463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02532A853EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:09:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E23C0A853EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E39B3440369
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:09:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78B2E1B84B15
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD6227CCC1;
-	Fri, 11 Apr 2025 06:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E80B27CCC9;
+	Fri, 11 Apr 2025 06:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="NcXceHkd"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UUaMhvYH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFAD1EE019;
-	Fri, 11 Apr 2025 06:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E8E1EE019
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 06:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744351731; cv=none; b=YLUYp4vqdeREzwaAVX09LPgM3bmdZEj5GZXQaD0gZXnIOEdmKNjOj2JfGPEjMwboYmd1XI8pvOczpp+4lHwOOV+NV/9uLRbolZEqBKbg/QJFKqWaI6keqsrbsfrMqTx+De7ehwUiOKyWaz3zgnEdk6wdX0AnRXqbpRrxpJ5MtEM=
+	t=1744351761; cv=none; b=dM1npQ1wS9FKuCXQk1nmkwZ19+xjohgg2kAaJtPFoSE3gsmhRfmScrBg6HOsYwwAklN9uXUd2hr0ieURY1gDUFanpYa8xA59BkmCgdTI+kPM119kd/iPoS2qQj29TR4N46L1WWdV5DR2s+l767l16EyOQo2sDripmruZM2rUxZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744351731; c=relaxed/simple;
-	bh=v4ikpYhTZh3eseTwcRtX2ERZ5hlAidT1UMVq7Q7rXHI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hb0TImUGO4lerh80BaLKMNzTL2sSgvrdqakdn//ViiJ4x0lN0Okv1+NbpAcr/rHzeznaZU8C8PZ+fQVh1Dd7/mfKXYdjFIIjvbBV/vAGHS3ZxYusu2pC7CFNlcrPYUiMcPOPua8+abjMzcbAbcEnc3aN/Lcmd7TXZo+hEjtb5+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=NcXceHkd; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 53B68fEzA673835, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1744351721; bh=v4ikpYhTZh3eseTwcRtX2ERZ5hlAidT1UMVq7Q7rXHI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=NcXceHkdMOxEhHBcSmC+U9Au0HCjnf65rtpbsU3SD3ZmFVqdkSicA6wx7Qljs81Gg
-	 TcG8gVmTc46n5ZpU8/zbC9mmRpY76r0UqcnIY/mLG4geMiPvq2qiOL3h4jgMo64YCc
-	 KXQb5u1vvIj4vFq9d1ElJJFAqZC+N+Z1LhI2JCS+vIqwcJtNwPwoFJqhUcSwdrUjX4
-	 qV0zDHoxgf9xjM5u2parWqj71fNDjA6n60SaYQqVGOPPjLl+K7puaVtnPdfYJQdHM0
-	 e0lAsVPlgGBpHPO71gbB7L/ZAJBVRTmN+aOGfJfGaD80WVMD7LoF9+xd6hr/9VwtUv
-	 Y6ANc1EUK242A==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 53B68fEzA673835
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Apr 2025 14:08:41 +0800
-Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 11 Apr 2025 14:08:42 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 11 Apr 2025 14:08:41 +0800
-Received: from RTEXMBS01.realtek.com.tw ([fe80::f5bd:6ac9:46d:9547]) by
- RTEXMBS01.realtek.com.tw ([fe80::f5bd:6ac9:46d:9547%5]) with mapi id
- 15.01.2507.035; Fri, 11 Apr 2025 14:08:41 +0800
-From: Ricky WU <ricky_wu@realtek.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Subject: RE: [PATCH] mmc: rtsx: usb add 74 clocks in poweron flow
-Thread-Topic: [PATCH] mmc: rtsx: usb add 74 clocks in poweron flow
-Thread-Index: AQHborD2846vsF6F3E6a08GwR4gCjrOa1GaAgAFzDHCAACp8AIABkEDQ
-Date: Fri, 11 Apr 2025 06:08:41 +0000
-Message-ID: <8107c871dc294edab09736157079a3b4@realtek.com>
-References: <20250401025123.895307-1-ricky_wu@realtek.com>
- <CAPDyKFpn5xB50eTomNM=4LbFDX4r154iY2Qk8GBiYb+vor0kbA@mail.gmail.com>
- <1fde0217fa544560888c3e6f4f5963f9@realtek.com>
- <CAPDyKFogPwixHGdmUy_z_udrUpU36mi_9cqdo1bPdM88OL1Erw@mail.gmail.com>
-In-Reply-To: <CAPDyKFogPwixHGdmUy_z_udrUpU36mi_9cqdo1bPdM88OL1Erw@mail.gmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1744351761; c=relaxed/simple;
+	bh=fF3zlNOao4yJFnQIBs8A+l0xxD4t0vYm+VXrEfTfCu4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ftzMwEZgmh+y5qthRYkT9DhRKo8rXbJJN3LU88oqAMWP5L1TauIDbPW9qaOwFcGE1LJD7LaOCn03vINb3e2zfRHshfIVMfhHYyzWUCFb0w+6bkpeSZsiaYjgCrdJnPNkFXpKG12NrMICE3BjpzbGVy6nj6UZZeJl5respavsqjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UUaMhvYH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744351758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=bduNq/HDxv96vZuLWz4nrmlejiXvLwQ3iviE7jW85Lw=;
+	b=UUaMhvYHyf9P1SQgpmgsO4o3kHUwshNFHSIjNjaaIPZVB8Fy4MFrItg12Ft06nMgnb/2we
+	Ei6GlvLjv10W4SXfNQqVgbTOfCKdV1rlVeNHTVAP1Fwm2Gjno9q6cwhk4B4UdCHZ0DCMHi
+	ECV9MQR0pDJMlrBmTepsjuTNp/zzjGI=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-318-nRjYTKUmOOmBwijsNULreA-1; Fri, 11 Apr 2025 02:09:16 -0400
+X-MC-Unique: nRjYTKUmOOmBwijsNULreA-1
+X-Mimecast-MFC-AGG-ID: nRjYTKUmOOmBwijsNULreA_1744351755
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ac2a113c5d8so113555566b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 23:09:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744351755; x=1744956555;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bduNq/HDxv96vZuLWz4nrmlejiXvLwQ3iviE7jW85Lw=;
+        b=PPHw1XcSfNLyevpWq3r4GWNKnPAq0WSrwfDkmnXUUeqfCTp1u3thtNgOlfAzCyFdtS
+         oNf94bdGmy88EjJ4xBhK1uFY5TFjYWHwn/N2IL1zbODLQBOKPEWyGXW5gPQ4q+IR4hab
+         CxkuqhCQJbcLxUxB1VeDi7zYjRFsBYT9zAM1NIoKGeDCJyB7LP86dMqWoT7s37+o2xAC
+         nhvm69dBWNPFv0px7WKknK169pa/C76DZTQt7L1es0GPn4M5lWIRUnPoSrLiEB0EGIuK
+         Yc1hBzNtfjqpcVOCqzKoO6lzyS8ZENeSzcGXH5eT+41bx/5RvsHKTzWsz4UjC1dZ9dX4
+         h8sA==
+X-Gm-Message-State: AOJu0YyzjY3slHhZjQ3iwHMVMbj+9qDcDWUC/+s2GaO3hNqGKKhcn/vt
+	KEg9Rp6okldcwY2k9vt8eQkde2b5g9E7YeO6yduNpotxKZdQyrGFNxWzXnq0TuBIam+LxvAMsFy
+	RI6jDMgj1xmXrqM7Sw4+sb66rKe2nbUYYvBqgwrf8M2aHIZyXZYarYbg3rK8qTw==
+X-Gm-Gg: ASbGnct0a4iodQEPfTiSi74S/JqDGfdjCwBIJ5ue7h2qROUj6Un4jRMYeBge0HwRANd
+	qh/qxuiHNRGLwRgUTCJ36wzKeY/9s2mbYIaW/NcJVjk9gD3ivxB1KeO65WY/rLBqNHmYIlqxHk1
+	kb2h3juWQY7i5JDPxJTQT1zDkSaz5ki+9uVJp0wGrLgsx6FXDPO/fOtFKQObKtJR0ivqtqA1cw1
+	/2mUHSC+orn0miZ0zp4aasAj5mauoNSzBLbo0CgJ2AWUP/FEIYcW1QUIxEnZcbGZ44/Hs69dqZc
+	w2OyfuIPx8hIKAX6qjAWM4xhl6HCZ1fwNSt3N9Y=
+X-Received: by 2002:a17:906:f1d1:b0:aca:d649:72ea with SMTP id a640c23a62f3a-acad6497352mr59422266b.34.1744351754781;
+        Thu, 10 Apr 2025 23:09:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGx5COGNoO1BzAij6r3Tq85m1WsO99uIIPdBpPpSn6yEkwUnzsBHgs3C0kwKICd4VlbxAtivw==
+X-Received: by 2002:a17:906:f1d1:b0:aca:d649:72ea with SMTP id a640c23a62f3a-acad6497352mr59420366b.34.1744351754388;
+        Thu, 10 Apr 2025 23:09:14 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([195.174.134.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1be941asm393302666b.54.2025.04.10.23.09.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 23:09:14 -0700 (PDT)
+Message-ID: <360fe1770511702e35081e950bf2a362a4c092a8.camel@redhat.com>
+Subject: Re: [RFC PATCH 7/9] rv: Retry when da monitor detects race
+ conditions
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Tomas Glozar <tglozar@redhat.com>, Juri
+ Lelli <jlelli@redhat.com>
+Date: Fri, 11 Apr 2025 08:09:12 +0200
+In-Reply-To: <20250411045225.gP4DqmFt@linutronix.de>
+References: <20250404084512.98552-11-gmonaco@redhat.com>
+	 <20250404084512.98552-18-gmonaco@redhat.com>
+	 <20250411045225.gP4DqmFt@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,105 +107,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-PiA+DQo+ID4gPiA+DQo+ID4gPiA+IFNEIHNwZWMgZGVmaW5pdGlvbjoNCj4gPiA+ID4gIkhvc3Qg
-cHJvdmlkZXMgYXQgbGVhc3QgNzQgQ2xvY2tzIGJlZm9yZSBpc3N1aW5nIGZpcnN0IGNvbW1hbmQi
-DQo+ID4gPiA+IEFmdGVyIDFtcyBmb3IgdGhlIHZvbHRhZ2Ugc3RhYmxlIHRoZW4gc3RhcnQgaXNz
-dWluZyB0aGUgQ2xvY2sNCj4gPiA+ID4gc2lnbmFscw0KPiA+ID4gPg0KPiA+ID4gPiBhZGQgaWYg
-c3RhdGVtZW50IHRvIGlzc3VlL3N0b3AgdGhlIGNsb2NrIHNpZ25hbCB0byBjYXJkOg0KPiA+ID4g
-PiBUaGUgcG93ZXIgc3RhdGUgZnJvbSBQT1dFUl9PRkYgdG8gUE9XRVJfVVAgaXNzdWUgdGhlIHNp
-Z25hbCB0bw0KPiA+ID4gPiBjYXJkLCBQT1dFUl9VUCB0byBQT1dFUl9PTiBzdG9wIHRoZSBzaWdu
-YWwNCj4gPiA+ID4NCj4gPiA+ID4gYWRkIDEwMG1zIGRlbGF5IGluIHBvd2VyX29uIHRvIG1ha2Ug
-c3VyZSB0aGUgcG93ZXIgY3ljbGUgY29tcGxldGUNCj4gPiA+DQo+ID4gPiBXaHkgMTAwbXM/IFRo
-YXQgc291bmRzIGEgbG90IHRvIG1lPw0KPiA+ID4NCj4gPiBIaSBVbGYsDQo+ID4NCj4gPiBUaGlz
-IDEwMG1zIGRlbGF5IGlzIHRvIGVuc3VyZSB0aGUgdm9sdGFnZSBpcyBiZWxvdyAwLjVWIGJlZm9y
-ZSBwb3dlcg0KPiA+IG9uIGR1cmluZyBhIHBvd2VyIGN5Y2xlLCBUaGUgZGVsYXlzIGluIHRoZSBt
-bWMgY29yZSBpcyBub3Qgc3VmZmljaWVudCBmb3IgdGhlDQo+IHJ0c3ggdXNiIGRldmljZS4NCj4g
-PiBCZWNhdXNlIGR1cmluZyB0aGUgY2FyZCByZWNvZ25pdGlvbiBwcm9jZXNzLCB0aGUgY2FyZCBw
-b3dlciB3aWxsIGJlIHRvZ2dsZWQNCj4gb25jZSBpbiAxbXMuDQo+ID4gSWYgdGhlIGNhcmQgcG93
-ZXIgaXMgbm90IGZ1bGx5IGRpc2NoYXJnZWQgd2l0aGluIHRoYXQgMW1zIGJlZm9yZSBiZWluZw0K
-PiA+IHR1cm5lZCBvbiBhZ2FpbiwgSXQgbWF5IGFmZmVjdCB0aGUgY2FyZCByZWNvZ25pdGlvbg0K
-PiANCj4gT2theSwgSSBzZWUuIFNvIDFtcyBpc24ndCBzdWZmaWNpZW50IGZvciB5b3VyIGNhc2Uu
-DQo+IA0KPiBJcyB0aGVyZSBhIHJlZ3VsYXRvciBkZXNjcmliZWQgc29tZXdoZXJlPyBDb3VsZCB0
-aGlzIGRlbGF5IGJlIHBhcnQgb2YgdGhlDQo+IHJlZ3VsYXRvciBlbmFibGUvZGlzYWJsZSBpbnN0
-ZWFkPw0KPiANCj4gPg0KPiA+ID4gSXMgdGhpcyBmaXhpbmcgYSByZWFsIHByb2JsZW0gb3IgaXMg
-anVzdCB0cnlpbmcgdG8gYmV0dGVyIGZvbGxvdyB0aGUgc3BlYz8NCj4gPiA+DQo+ID4NCj4gPiBX
-ZSBmb3VuZCBzb21lIGNhcmRzIG5vdCBiZSByZWNvZ25pemVkIGlmIG5vdCBpc3N1ZSB0aGlzIDc0
-IGNsb2Nrcw0KPiANCj4gVGhhdCBzdGlsbCBkb2Vzbid0IGV4cGxhaW4gd2h5IHlvdSBwaWNrZWQg
-ZXhhY3RseSAxMDBtcyBhcyB0aGUgZGVsYXkuDQo+IEFzc3VtaW5nIHdlIGFyZSBydW5uaW5nIGF0
-IGxvd2VzdCBpbml0aWFsaXphdGlvbiBmcmVxdWVuY3kgZm9yIFNEL2VNTUMgYXQNCj4gMTAwa0h6
-LCB0aGVuIDc0IGNsb2NrcyBhcmU6DQo+IA0KPiA3NC8xMDAwMDAgPSAwLDAwMDc0cy4NCj4gDQoN
-CkkgdGhpbmsgd2UgZ290IGEgbGl0dGxlIG1peGVkIHVwLi4uDQpJIHRoaW5rIEkgbmVlZCB0byBz
-ZXBhcmF0ZSB0aGlzIHBhdGNoIGludG8gMiBwYXJ0DQoxKSBmb3IgNzQgY2xvY2tzIGlzc3VlIA0K
-MikgYWRkIGRlbGF5IDEwMG1zIGJlZm9yZSBydHN4IHBvd2VyIG9uDQoNCkkgdGhpbmsgMSkgaXMg
-bm8gcHJvYmxlbSBmb3IgeW91PyBJdCBpcyBmb3IgU0Qgc3BlYyBhbmQgc29tZSBjYXJkcyBjaGVj
-ayB0aGlzLiANCjIpIGFkZCAxMDBtcyBiZWZvcmUgcG93ZXIgb24gaXQgaXMgdG8gbWFrZSBzdXJl
-IHRoZSBsYXN0IHRpbWUgcG93ZXIgb2ZmIGRpZCB0aGUgZGlzY2hhcmdlIGNsZWFuLA0KQmVjYXVz
-ZSBkdXJpbmcgdGhlIGNhcmQgcmVjb2duaXRpb24gcHJvY2VzcywgdGhlIGNhcmQgcG93ZXIgd2ls
-bCBiZSB0b2dnbGVkIGluIDFtc++8jA0KYW5kIHdlIGZvdW5kIDFtcyBpcyBub3QgZW5vdWdoIGZv
-ciBkaXNjaGFyZ2UNCg0KaWYgKDEpIGFuZCAoMikgYXJlIG9rIGZvciB5b3UgSSB3aWxsIHNlcGFy
-YXRlIGl0IEluIFYyIDEvMiBhbmQgMi8yDQpvciB0d28gdW5yZWxhdGVkIHBhdGNoZXMgKDEpIGZv
-ciA3NCBjbG9jayBpc3N1ZSwgKDIpIGZvciBtYWtlIHN1cmUgdGhlIHZvbHRhZ2UgaXMgYmVsb3cg
-MC41ViBiZWZvcmUgcG93ZXIgb24NCndoaWNoIG9uZSB5b3UgdGhpbmsgaXMgZ29vZD8NCiANClJp
-Y2t5DQoNCj4gDQo+ID4NCj4gPiA+ID4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogUmlja3kgV3Ug
-PHJpY2t5X3d1QHJlYWx0ZWsuY29tPg0KPiA+ID4gPiAtLS0NCj4gPiA+ID4gIGRyaXZlcnMvbW1j
-L2hvc3QvcnRzeF91c2Jfc2RtbWMuYyB8IDI4DQo+ID4gPiArKysrKysrKysrKysrKysrKysrKysr
-KysrLS0tDQo+ID4gPiA+ICAxIGZpbGUgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygrKSwgMyBkZWxl
-dGlvbnMoLSkNCj4gPiA+ID4NCj4gPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbW1jL2hvc3Qv
-cnRzeF91c2Jfc2RtbWMuYw0KPiA+ID4gPiBiL2RyaXZlcnMvbW1jL2hvc3QvcnRzeF91c2Jfc2Rt
-bWMuYw0KPiA+ID4gPiBpbmRleCBkMjI5YzJiODNlYTkuLmU1ODIwYjJiYjM4MCAxMDA2NDQNCj4g
-PiA+ID4gLS0tIGEvZHJpdmVycy9tbWMvaG9zdC9ydHN4X3VzYl9zZG1tYy5jDQo+ID4gPiA+ICsr
-KyBiL2RyaXZlcnMvbW1jL2hvc3QvcnRzeF91c2Jfc2RtbWMuYw0KPiA+ID4gPiBAQCAtNDgsNyAr
-NDgsNyBAQCBzdHJ1Y3QgcnRzeF91c2Jfc2RtbWMgew0KPiA+ID4gPiAgICAgICAgIGJvb2wgICAg
-ICAgICAgICAgICAgICAgIGRkcl9tb2RlOw0KPiA+ID4gPg0KPiA+ID4gPiAgICAgICAgIHVuc2ln
-bmVkIGNoYXIgICAgICAgICAgIHBvd2VyX21vZGU7DQo+ID4gPiA+IC0NCj4gPiA+ID4gKyAgICAg
-ICB1bnNpZ25lZCBjaGFyICAgICAgICAgICBwcmV2X3Bvd2VyX21vZGU7DQo+ID4gPiA+ICAjaWZk
-ZWYgUlRTWF9VU0JfVVNFX0xFRFNfQ0xBU1MNCj4gPiA+ID4gICAgICAgICBzdHJ1Y3QgbGVkX2Ns
-YXNzZGV2ICAgICBsZWQ7DQo+ID4gPiA+ICAgICAgICAgY2hhciAgICAgICAgICAgICAgICAgICAg
-bGVkX25hbWVbMzJdOw0KPiA+ID4gPiBAQCAtOTUyLDYgKzk1Miw4IEBAIHN0YXRpYyBpbnQgc2Rf
-cG93ZXJfb24oc3RydWN0IHJ0c3hfdXNiX3NkbW1jDQo+ID4gPiAqaG9zdCkNCj4gPiA+ID4gICAg
-ICAgICBzdHJ1Y3QgcnRzeF91Y3IgKnVjciA9IGhvc3QtPnVjcjsNCj4gPiA+ID4gICAgICAgICBp
-bnQgZXJyOw0KPiA+ID4gPg0KPiA+ID4gPiArICAgICAgIG1zbGVlcCgxMDApOw0KPiA+ID4gPiAr
-DQo+ID4gPiA+ICAgICAgICAgZGV2X2RiZyhzZG1tY19kZXYoaG9zdCksICIlc1xuIiwgX19mdW5j
-X18pOw0KPiA+ID4gPiAgICAgICAgIHJ0c3hfdXNiX2luaXRfY21kKHVjcik7DQo+ID4gPiA+ICAg
-ICAgICAgcnRzeF91c2JfYWRkX2NtZCh1Y3IsIFdSSVRFX1JFR19DTUQsIENBUkRfU0VMRUNULA0K
-PiAweDA3LA0KPiA+ID4gPiBTRF9NT0RfU0VMKTsgQEAgLTEwMTQsNiArMTAxNiwxNiBAQCBzdGF0
-aWMgaW50DQo+ID4gPiBzZF9zZXRfcG93ZXJfbW9kZShzdHJ1Y3QgcnRzeF91c2Jfc2RtbWMgKmhv
-c3QsDQo+ID4gPiA+ICAgICAgICAgICAgICAgICB1bnNpZ25lZCBjaGFyIHBvd2VyX21vZGUpICB7
-DQo+ID4gPiA+ICAgICAgICAgaW50IGVycjsNCj4gPiA+ID4gKyAgICAgICBpbnQgcG93ZXJfbW9k
-ZV90ZW1wOw0KPiA+ID4gPiArICAgICAgIHN0cnVjdCBydHN4X3VjciAqdWNyID0gaG9zdC0+dWNy
-Ow0KPiA+ID4gPiArDQo+ID4gPiA+ICsgICAgICAgcG93ZXJfbW9kZV90ZW1wID0gcG93ZXJfbW9k
-ZTsNCj4gPiA+ID4gKw0KPiA+ID4gPiArICAgICAgIGlmICgocG93ZXJfbW9kZSA9PSBNTUNfUE9X
-RVJfT04pICYmDQo+IChob3N0LT5wb3dlcl9tb2RlDQo+ID4gPiA9PSBNTUNfUE9XRVJfT04pICYm
-DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIChob3N0LT5wcmV2X3Bvd2VyX21vZGUg
-PT0NCj4gPiA+IE1NQ19QT1dFUl9VUCkpIHsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgIGhvc3Qt
-PnByZXZfcG93ZXJfbW9kZSA9IE1NQ19QT1dFUl9PTjsNCj4gPiA+ID4gKyAgICAgICAgICAgICAg
-IHJ0c3hfdXNiX3dyaXRlX3JlZ2lzdGVyKHVjciwgU0RfQlVTX1NUQVQsDQo+ID4gPiBTRF9DTEtf
-VE9HR0xFX0VOLCAweDAwKTsNCj4gPiA+ID4gKyAgICAgICB9DQo+ID4gPiA+DQo+ID4gPiA+ICAg
-ICAgICAgaWYgKHBvd2VyX21vZGUgIT0gTU1DX1BPV0VSX09GRikNCj4gPiA+ID4gICAgICAgICAg
-ICAgICAgIHBvd2VyX21vZGUgPSBNTUNfUE9XRVJfT047IEBAIC0xMDI5LDkNCj4gPiA+ICsxMDQx
-LDE4IEBADQo+ID4gPiA+IHN0YXRpYyBpbnQgc2Rfc2V0X3Bvd2VyX21vZGUoc3RydWN0IHJ0c3hf
-dXNiX3NkbW1jICpob3N0LA0KPiA+ID4gPiAgICAgICAgICAgICAgICAgZXJyID0gc2RfcG93ZXJf
-b24oaG9zdCk7DQo+ID4gPiA+ICAgICAgICAgfQ0KPiA+ID4gPg0KPiA+ID4gPiAtICAgICAgIGlm
-ICghZXJyKQ0KPiA+ID4gPiAtICAgICAgICAgICAgICAgaG9zdC0+cG93ZXJfbW9kZSA9IHBvd2Vy
-X21vZGU7DQo+ID4gPiA+ICsgICAgICAgaWYgKCFlcnIpIHsNCj4gPiA+ID4gKyAgICAgICAgICAg
-ICAgIGlmICgocG93ZXJfbW9kZV90ZW1wID09IE1NQ19QT1dFUl9VUCkgJiYNCj4gPiA+IChob3N0
-LT5wb3dlcl9tb2RlID09IE1NQ19QT1dFUl9PRkYpKSB7DQo+ID4gPiA+ICsgICAgICAgICAgICAg
-ICAgICAgICAgIGhvc3QtPnByZXZfcG93ZXJfbW9kZSA9DQo+IE1NQ19QT1dFUl9VUDsNCj4gPiA+
-ID4gKyAgICAgICAgICAgICAgICAgICAgICAgcnRzeF91c2Jfd3JpdGVfcmVnaXN0ZXIodWNyLCBT
-RF9CVVNfU1RBVCwNCj4gPiA+IFNEX0NMS19UT0dHTEVfRU4sDQo+ID4gPiA+ICsgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBTRF9DTEtfVE9HR0xFX0VOKTsNCj4gPiA+ID4g
-KyAgICAgICAgICAgICAgIH0NCj4gPiA+ID4gKw0KPiA+ID4gPiArICAgICAgICAgICAgICAgaWYg
-KChwb3dlcl9tb2RlX3RlbXAgPT0gTU1DX1BPV0VSX09GRikgJiYNCj4gPiA+IChob3N0LT5wb3dl
-cl9tb2RlID09IE1NQ19QT1dFUl9PTikpDQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
-IGhvc3QtPnByZXZfcG93ZXJfbW9kZSA9DQo+IE1NQ19QT1dFUl9PRkY7DQo+ID4gPiA+DQo+ID4g
-PiA+ICsgICAgICAgICAgICAgICBob3N0LT5wb3dlcl9tb2RlID0gcG93ZXJfbW9kZTsNCj4gPiA+
-ID4gKyAgICAgICB9DQo+ID4gPiA+ICAgICAgICAgcmV0dXJuIGVycjsNCj4gPiA+ID4gIH0NCj4g
-PiA+ID4NCj4gPiA+ID4gQEAgLTEzMTYsNiArMTMzNyw3IEBAIHN0YXRpYyB2b2lkIHJ0c3hfdXNi
-X2luaXRfaG9zdChzdHJ1Y3QNCj4gPiA+IHJ0c3hfdXNiX3NkbW1jICpob3N0KQ0KPiA+ID4gPiAg
-ICAgICAgIG1tYy0+bWF4X3JlcV9zaXplID0gNTI0Mjg4Ow0KPiA+ID4gPg0KPiA+ID4gPiAgICAg
-ICAgIGhvc3QtPnBvd2VyX21vZGUgPSBNTUNfUE9XRVJfT0ZGOw0KPiA+ID4gPiArICAgICAgIGhv
-c3QtPnByZXZfcG93ZXJfbW9kZSA9IE1NQ19QT1dFUl9PRkY7DQo+ID4gPiA+ICB9DQo+ID4gPiA+
-DQo+ID4gPiA+ICBzdGF0aWMgaW50IHJ0c3hfdXNiX3NkbW1jX2Rydl9wcm9iZShzdHJ1Y3QgcGxh
-dGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+ID4gPiAtLQ0KPiA+ID4gPiAyLjI1LjENCj4gPiA+ID4N
-Cj4gPiA+DQo+ID4gPiBLaW5kIHJlZ2FyZHMNCj4gPiA+IFVmZmUNCg==
+On Fri, 2025-04-11 at 06:52 +0200, Nam Cao wrote:
+> On Fri, Apr 04, 2025 at 10:45:20AM +0200, Gabriele Monaco wrote:
+> > DA monitor can be accessed from multiple cores simultaneously, this
+> > is
+> > likely, for instance when dealing with per-task monitors reacting
+> > on
+> > events that do not always occur on the CPU where the task is
+> > running.
+> > This can cause race conditions where two events change the next
+> > state
+> > and we see inconsistent values. E.g.:
+> >=20
+> > =C2=A0 [62] event_srs: 27: sleepable x sched_wakeup -> running (final)
+> > =C2=A0 [63] event_srs: 27: sleepable x sched_set_state_sleepable ->
+> > sleepable
+> > =C2=A0 [63] error_srs: 27: event sched_switch_suspend not expected in
+> > the state running
+> >=20
+> > In this case the monitor fails because the event on CPU 62 wins
+> > against
+> > the one on CPU 63, although the correct state should have been
+> > sleepable, since the task get suspended.
+> >=20
+> > Detect if the current state was modified by using try_cmpxchg while
+> > storing the next value. If it was, try again reading the current
+> > state.
+> > After a maximum number of failed retries, react as if it was an
+> > error
+> > with invalid current state (we cannot determine it).
+> >=20
+> > Monitors where this type of condition can occur must be able to
+> > account
+> > for racing events in any possible order, as we cannot know the
+> > winner.
+>=20
+> Is locking not simpler? I understand raw_spin_lock() doesn't work
+> because
+> it steps on some tracepoints. But how about adding something like
+> raw_spin_lock_notrace()?
+
+It is probably simpler, but I think it would require also to disable
+interrupts (some events occur in interrupt context), I'm not sure the
+introduced overhead is going to be worth it in the fast path, but
+that's kinda what I wanted to learn in this RFC ;)
+
+>=20
+> static inline bool raw_spin_lock_notrace(raw_spinlock_t *lock)
+> {
+> 	preempt_disable_notrace(); //probably not required,
+> tracepoint handlers do this already
+>=20
+> 	if (!do_raw_spin_trylock(lock))
+> 		do_raw_spin_lock(lock);
+> }
+>=20
+> My LTL series theoretically also has this problem, but I have never
+> got it
+> during testing yet. We should use the same solution for both DA and
+> LTL.
+
+Yes totally, on the long run we might get some common utilities for
+this kind of things that aren't too monitor specific. But for now I
+wouldn't worry too much.
+
+>=20
+> Also, can you please Cc me in your RV patches?
+>=20
+
+Right.. will do!
+
+Thanks for your feedback,
+Gabriele
+
 
