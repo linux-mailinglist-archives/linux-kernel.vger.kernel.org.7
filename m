@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-599853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31B78A858A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:00:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D5C7A85864
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9CA89A2D5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:57:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC7798C7519
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E1929AB11;
-	Fri, 11 Apr 2025 09:56:32 +0000 (UTC)
-Received: from out28-74.mail.aliyun.com (out28-74.mail.aliyun.com [115.124.28.74])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDED29899C;
+	Fri, 11 Apr 2025 09:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrOTsqMo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F52529614B;
-	Fri, 11 Apr 2025 09:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB1329899B;
+	Fri, 11 Apr 2025 09:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744365392; cv=none; b=pv5uvPyl4Y3twG5ZOKZvvO3z2+kGeuNFkFOKaBuXi1Z/qzAtiAoY5cW0lgKY2+pWJQwIUkXn5r/kbbpALHhRp5N0vrszMr6WFmPKw1p/M4u4E9eCEvMXCWPtKCU4JJ30GmNUec9KEwqGDwqUgZryJrlf1C75l6QHgw0VlrUY0oc=
+	t=1744365070; cv=none; b=QzakRo2dMLm3A8O8/lOcUhsooRJLzMGzuaUYcucIaGGz0so9G3DQ7S2NOuK/W+CzG7A6jHv/4nF5Z82OMp98RXZrzqG6MVUtISOoL8daESkndvjcufEE1Ubl37wd2fzfh9z6vE6ztz9GETE6eyuDyNcx3OtZHuY3i8lISCqOznQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744365392; c=relaxed/simple;
-	bh=dI24S8coPzz7k1htKptwmRID8NIsoRVYe1b7fMWVAk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ttEZKMhTCw4mmGlNHX4vIFXq8nz///3S0m4/upKrkMwAvUtEzIGHWARPsW5QB2BYhqyZ+sL4kvo+YwTxNNaeBKz311ZRbfoHEvDNqNsUW2Z7PA2SWLz4I3gDFj4AYzl+/b9k2DxysT6qwObIN8TGibm5NSOSs7nZOQ51DI0fNi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=115.124.28.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
-Received: from 10.0.2.15(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.cK5WKQw_1744365055 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Fri, 11 Apr 2025 17:50:56 +0800
-Message-ID: <da434f13-fb08-4036-96ed-7de579cb9ddc@motor-comm.com>
-Date: Fri, 11 Apr 2025 17:50:55 +0800
+	s=arc-20240116; t=1744365070; c=relaxed/simple;
+	bh=wvnOv5eAEw+Z3zqhOidw9lT9fYZueQvCHXPEEptv4JY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rO0Y487ANdPzeEgPYclClikkoEmr4KeJD4dsTSwwfgKLTlup8FdAKRhYfKp58fg9a8eoHMUPVPQTSedW5/YXXxfQJVGOWxQJKnrE9vL4o/sW1Y19fzrXsvB9SgJ1m+nycy2ea62R+uAO02lPS9G8x70Qv45ZysThgTp67UFiIvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FrOTsqMo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6E5C4CEE8;
+	Fri, 11 Apr 2025 09:51:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744365069;
+	bh=wvnOv5eAEw+Z3zqhOidw9lT9fYZueQvCHXPEEptv4JY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FrOTsqMoWVB0W7bYpwbgh3rg8QTVkfPBDvaMOVqo2yUZ8n5xATjjs1zIvtbTZmPbF
+	 Z7rc+isvY5+p0nMaLsd54Yk043AjDX0VjvQN3Dt11S4XUxzv2oftyrzMXtG7LMHJQW
+	 k1VVu3hRLyt+DXMqXw84Tjny2IewyajrdCQTsT4GGY3MZKsz3Qa4uYMh82SELDmL1w
+	 bPkF9bc56cKGIt/HooHSDpKmiRUP0LlvGx5rXvUp9UQ8kwAjzOdc+5o334tZASaqTO
+	 pqWTl6z7QXxgQYixjGLpnlVYb4DoH/4qK/zufS+w2/nyzz7oESniaL3xXrFSNIHC5j
+	 rmxowx41BbIDg==
+Date: Fri, 11 Apr 2025 11:51:03 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, abdiel.janulgue@gmail.com,
+	daniel.almeida@collabora.com, robin.murphy@arm.com,
+	a.hindborg@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, aliceryhl@google.com, tmgross@umich.edu,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rust: helpers: Add dma_alloc_attrs() and
+ dma_free_attrs()
+Message-ID: <Z_jmBz6FBoYMMGyi@cassiopeiae>
+References: <20250410234332.153242-1-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 00/14] yt6801: Add Motorcomm yt6801 PCIe
- driver
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, netdev@vger.kernel.org,
- Masahiro Yamada <masahiroy@kernel.org>, Parthiban.Veerasooran@microchip.com,
- linux-kernel@vger.kernel.org,
- "andrew+netdev @ lunn . ch" <andrew+netdev@lunn.ch>, lee@trager.us,
- horms@kernel.org, linux-doc@vger.kernel.org, corbet@lwn.net,
- geert+renesas@glider.be, xiaogang.fan@motor-comm.com,
- fei.zhang@motor-comm.com, hua.sun@motor-comm.com
-References: <20250408092835.3952-1-Frank.Sae@motor-comm.com>
- <Z_T6vv013jraCzSD@shell.armlinux.org.uk>
-Content-Language: en-US
-From: Frank Sae <Frank.Sae@motor-comm.com>
-In-Reply-To: <Z_T6vv013jraCzSD@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410234332.153242-1-fujita.tomonori@gmail.com>
 
-
-
-On 2025/4/8 18:30, Russell King (Oracle) wrote:
-> On Tue, Apr 08, 2025 at 05:28:21PM +0800, Frank Sae wrote:
->> This series includes adding Motorcomm YT6801 Gigabit ethernet driver
->>  and adding yt6801 ethernet driver entry in MAINTAINERS file.
->> YT6801 integrates a YT8531S phy.
+On Fri, Apr 11, 2025 at 08:43:32AM +0900, FUJITA Tomonori wrote:
+> Add dma_alloc_attrs() and dma_free_attrs() helpers to fix a build
+> error when CONFIG_HAS_DMA is not enabled.
 > 
-> What is different between this and the Designware GMAC4 core supported
-> by drivers/net/ethernet/stmicro/stmmac/ ?
+> Note that when CONFIG_HAS_DMA is enabled, dma_alloc_attrs() and
+> dma_free_attrs() are included in both bindings_generated.rs and
+> bindings_helpers_generated.rs. The former takes precedence so behavior
+> remains unchanged in that case.
 > 
-
-We support more features: NS, RSS, wpi, wol pattern and aspm control.
-
-> Looking at the register layout, it looks very similar. The layout of the
-> MAC control register looks similar. The RX queue and PMT registers are
-> at the same relative offset. The MDIO registers as well.
+> This fixes the following build error on UML:
 > 
-> Can you re-use the stmmac driver?
+> error[E0425]: cannot find function `dma_alloc_attrs` in crate `bindings`
+>      --> rust/kernel/dma.rs:171:23
+>       |
+> 171   |               bindings::dma_alloc_attrs(
+>       |                         ^^^^^^^^^^^^^^^ help: a function with a similar name exists: `dma_alloc_pages`
+>       |
+>      ::: /home/fujita/build/um/rust/bindings/bindings_generated.rs:44568:5
+>       |
+> 44568 | /     pub fn dma_alloc_pages(
+> 44569 | |         dev: *mut device,
+> 44570 | |         size: usize,
+> 44571 | |         dma_handle: *mut dma_addr_t,
+> 44572 | |         dir: dma_data_direction,
+> 44573 | |         gfp: gfp_t,
+> 44574 | |     ) -> *mut page;
+>       | |___________________- similarly named function `dma_alloc_pages` defined here
 > 
+> error[E0425]: cannot find function `dma_free_attrs` in crate `bindings`
+>      --> rust/kernel/dma.rs:293:23
+>       |
+> 293   |               bindings::dma_free_attrs(
+>       |                         ^^^^^^^^^^^^^^ help: a function with a similar name exists: `dma_free_pages`
+>       |
+>      ::: /home/fujita/build/um/rust/bindings/bindings_generated.rs:44577:5
+>       |
+> 44577 | /     pub fn dma_free_pages(
+> 44578 | |         dev: *mut device,
+> 44579 | |         size: usize,
+> 44580 | |         page: *mut page,
+> 44581 | |         dma_handle: dma_addr_t,
+> 44582 | |         dir: dma_data_direction,
+> 44583 | |     );
+>       | |______- similarly named function `dma_free_pages` defined here
+> 
+> Fixes: ad2907b4e308 ("rust: add dma coherent allocator abstraction")
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 
-I can not re-use the stmmac driver, because pcie and ephy can not work well on
-the stmmac driver.
+Please add the new file to the corresponding MAINTAINERS entry. Whith that,
+
+	Acked-by: Danilo Krummrich <dakr@kernel.org>
 
