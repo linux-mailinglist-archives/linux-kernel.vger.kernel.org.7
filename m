@@ -1,61 +1,64 @@
-Return-Path: <linux-kernel+bounces-600165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7A14A85C9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:13:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724FCA85CA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 200D94A65EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:12:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106548C5CB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E97B29B215;
-	Fri, 11 Apr 2025 12:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020FB2BE7BB;
+	Fri, 11 Apr 2025 12:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EUQNS3Tg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qv/HC1U2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633CC29C34E;
-	Fri, 11 Apr 2025 12:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1C729B211;
+	Fri, 11 Apr 2025 12:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744373445; cv=none; b=FpvW/8UHhxRr16fD3083VwVbc4BzoN1eMQUNKdMegDQ3qCZ3QGceeuljmrv6hntRU1jUY2GhZFCPjqf619SQ4m+bDn5OavkiJ73o6iks0oYADWjzZncu8Mgy052RuCGoHQN8Vq7ZYlLdk/pBF3XZssnNDGDE6Ou7ZUxv296Clzk=
+	t=1744373449; cv=none; b=YPn5VGpL7NseUfdgTBePYy7OzOVvM2ABaeEyaqq/TXnTsDlMVIeKFjkvwBXCU1oEiFfwNGIn/ETcts8PXN4m7Ne+E0QuYeZtQhUDYNebG6yINTVkvxPyXxKqXeIRVkQimDDIXGcAXO2ru1f/R6UuCOaZnT6aXvPxBYF0Nn96ZXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744373445; c=relaxed/simple;
-	bh=bef+HJXcEo2hORvZPJWuTpm+dOfyv21lTNoivV+wiLQ=;
+	s=arc-20240116; t=1744373449; c=relaxed/simple;
+	bh=8UJVV5Fz36IAbJkObz0XEdemXb50xF/yasXI52r/U+M=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Obi/jg61wrfgg97dy5er90W78lgqbBExq0Xr+bygBOfMB4yCkktAT/gGY3QnAboNJXGHCTPgbCXrt9aDFlCgkI2HBKXFoFfN6oURJjaqR9oCTr6sHbOSg4wmFzuRW8pXwyk4iObuOMmuTsO907WPmv3Efyx0Z+QSkL7cmmVC/sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EUQNS3Tg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6EEFC4CEE2;
-	Fri, 11 Apr 2025 12:10:41 +0000 (UTC)
+	 MIME-Version:Content-Type; b=oOglx+rk33V5D1dm4GLEWaEzIVl9obcu7jVlWdc06PUbLpuNnOfMoRNhMZXqEfaIUNT+UawtwyAasm2uTaeZ+kKZtgyoIKfpIJaI411zBC+9Lk5yNvkdhf6xtRag5cR5UYZz44gADe0kEFFHF4nxniEwX9wcr2o3t7i641FOU6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qv/HC1U2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72BC1C4CEE7;
+	Fri, 11 Apr 2025 12:10:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744373444;
-	bh=bef+HJXcEo2hORvZPJWuTpm+dOfyv21lTNoivV+wiLQ=;
+	s=k20201202; t=1744373449;
+	bh=8UJVV5Fz36IAbJkObz0XEdemXb50xF/yasXI52r/U+M=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=EUQNS3TgW4ma5b+9diC1JS/QSa3on9tCBUIieI+S3+FKCYTQCBxu0Q5Lm7WxP0C9G
-	 jmTtYq1R2foBthUicTIZLURqxEUVKiAm1xi3yS1nmBl0giAgsKYf3D+23ztucU5UWe
-	 LfZex2TS41FS6nMNCTgL5MU45QNz2DbQ6cQ1luO3Ng7CtltHZcrSrYAGUHI2yWmXBL
-	 5tn53k04JKavpMLGyI5DHaV8ENyl3w83Emww0DZUmSdtOjLYYwrDXnVQMdh3uqo+6/
-	 z+frZgXCsR87+JR+3s8a3vlNgC8B+o0I6DBOjudAKXwhO0G+taW5VybSWG3oJV5sdq
-	 JhBLze5q0F96Q==
+	b=Qv/HC1U2J3/8PruNyRpxqmcsFlDP346pGbsOn5Nv6QihFVAc/z2r8jgYlms10gjh0
+	 x13ETk9epDlXd8BPCMPVVp160/0jhtnGlkZ0xXb8CrT8itRxWomLXut6ciIzjxCGFF
+	 g8vdp9zF/kI6UrFR/PGCQ9XJZyBe+W80SjluYpXg1BiN6FYhO8Tq98MZJ6k7laioUw
+	 EOLjtkI5Yndn/C7iiz8DUbyEyn47+D/75QOkGfYP5FnC2eNU9y18roqf7VYflORUVl
+	 N9v4+B5AVNWgEi7lDn43yTW2Zxo90AZmQNt3N7fY4ANL0bXiTvYUKNWAo2EkFTAxUC
+	 YZEeMQABE0aYw==
 From: Vinod Koul <vkoul@kernel.org>
 To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Frank Wang <frank.wang@rock-chips.com>, 
- Zhang Yubing <yubing.zhang@rock-chips.com>, 
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250407165607.2937088-1-robh@kernel.org>
-References: <20250407165607.2937088-1-robh@kernel.org>
-Subject: Re: [PATCH v2] dt-bindings: phy: rockchip: Add missing
- "phy-supply" property
-Message-Id: <174437344138.673939.9714886269957011717.b4-ty@kernel.org>
-Date: Fri, 11 Apr 2025 17:40:41 +0530
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250410-exynos7870-usbphy-v2-0-2eb005987455@disroot.org>
+References: <20250410-exynos7870-usbphy-v2-0-2eb005987455@disroot.org>
+Subject: Re: [PATCH RESEND v2 0/3] Introduce USBDRD-PHY support for
+ Exynos7870 SoC
+Message-Id: <174437344510.673939.9919903469471924069.b4-ty@kernel.org>
+Date: Fri, 11 Apr 2025 17:40:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,16 +70,22 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Mon, 07 Apr 2025 11:56:06 -0500, Rob Herring (Arm) wrote:
-> Several Rockchip PHYs use the "phy-supply" property, but don't
-> document it. Add it to the current known users.
+On Thu, 10 Apr 2025 14:01:11 +0530, Kaustabh Chakraborty wrote:
+> Apart from introducing driver support and documentation, this patch series
+> also introduces a masking fix and non-functional changes.
+> 
+> This patch series is a part of Exynos7870 upstreaming.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] dt-bindings: phy: rockchip: Add missing "phy-supply" property
-      commit: 070d546258257c75c65a2f15da558eb96bce550c
+[1/3] phy: exynos5-usbdrd: use GENMASK and FIELD_PREP for Exynos5 PHY registers
+      commit: 9b6662a0f715b3f43b42c3aadf32fa6ffaa8890c
+[2/3] dt-bindings: phy: samsung,usb3-drd-phy: add exynos7870-usbdrd-phy compatible
+      commit: 23f793850e9ee7390584c0809f085d6c88de7d3f
+[3/3] phy: exynos5-usbdrd: add exynos7870 USBDRD support
+      commit: 588d5d20ca8defa5ba5d1b536ff3695f6ab7aa87
 
 Best regards,
 -- 
