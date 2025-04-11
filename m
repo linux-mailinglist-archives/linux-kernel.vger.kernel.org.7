@@ -1,66 +1,64 @@
-Return-Path: <linux-kernel+bounces-599997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A98A85AB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:57:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF82A85AA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA5DD17A531
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:57:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82823ADE3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CA6238C05;
-	Fri, 11 Apr 2025 10:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C33221276;
+	Fri, 11 Apr 2025 10:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="jaTfAY82"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="GInpplfv"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654C427CCDC
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9635278E41
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744369012; cv=none; b=h5Ma3zaqJoEnYOhFYJ4ypZY2eg0SvDx6J6er9355JFsCqnmDiFzTCJfQIDCWtFK2qrPFeRtS4sAgwKXQ8mEHbELeA+GL1yhgvPX0mfrDqZy3AO9NqUjY6uiEmJ0s/mfoO0RjHoVV5DBnZd295Yvn34JtWUbdmglLrtnuZPwI02Q=
+	t=1744368965; cv=none; b=T/ZoA5k7/O+1uvFG6k13lQ4r10bg3CZGQemACD+anEumursMs7dWtiio8c6p9FSpDRClbMCgRcZwGB80vRCF+YE1rBk8YY1ncyzaM8k9CPI1xqeMZiNhnXLXzk5bM3u+/uoqtLD+nyaiq71vtVl/6vmJFEyAMwfM8LlBGfQn5wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744369012; c=relaxed/simple;
-	bh=imz+mPlPTWUBDMx7bzEysHcUpw0o89634fVFDMMMBsw=;
+	s=arc-20240116; t=1744368965; c=relaxed/simple;
+	bh=jqDlFIa9nXreIrIE2WW7Y4W6moFZIb47Wmj2ENq+69w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mYBBWckVaneIAn14/U60gInvG94JmnNZQQIcz/jJ6lKgqtmcWolYy+CTCWS/kupwm1iRZcKhjgI4gggEQ7CMs91OBosP4cSOTxiWXKQVv8LHQQxkzhRzPXFyNVLfZUid2osFzWO0YY1sgnaH4+12gYdFpkyRnWygq8RMKxcozg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=jaTfAY82; arc=none smtp.client-ip=54.254.200.128
+	 MIME-Version; b=JmsmwOV5+g4fqCaLi3xKyUV/t8wETU+vtlaZhbNdseKnylhfK9UcZPlytccOORC8Vnhdrw+7bacCROwQ+6Jy44oiaPRoXPlDSpe4+sIJmGnEE4AQS7RA7DY72WfHPjDId9kK09Thvqsz90VN7SMRy5AV1VrdQhlwIC+apsBqj40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=GInpplfv; arc=none smtp.client-ip=18.132.163.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744368948;
-	bh=9KRkDEvc7TMn+BzX0T9birIBPHV4NaWt5YIRVjgsZSM=;
+	s=onoh2408; t=1744368943;
+	bh=/qn0p6J5+xNZBsokBovowNWuCD4lU8aYsY3FHaO7Ed4=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=jaTfAY82zKF05cJhA/t38WygfLp5pfHoISMaJX8ueIT4QYhyB9y9aOpjiDbb6BiWB
-	 p6SUWwCmyfGXH9bB0UztDDXw/u8MLLLbIU9PRgzA5dPjeoa/toWypZF3azpreLv/9x
-	 P5rAKl8JBPX0/o8PiNm7hLBks+K2DpuaKUBj8JYs=
-X-QQ-mid: bizesmtp23t1744368921ta5c660c
-X-QQ-Originating-IP: y6XDffOa9VCdiTTbmBMiGZAntBVmbLMe7C7tY/zlyb4=
+	b=GInpplfvQvhXz0fb+6Rb416j3A9zWZQJwF/cY/WkP9jl8mpG/rP1TWMJmM9uW6Sa1
+	 9yFDRwMxHyILw3XqFuzVDn9TGkFxQ0TRTzEFqSHmZ7CDxc13PwtzUUF2f3segCJrcB
+	 lEyxLPqaABGiSmIYufNXkHj6OMkzPYWoDvis+SHk=
+X-QQ-mid: bizesmtp23t1744368937t5884943
+X-QQ-Originating-IP: duB2Rjf1ZqJYT5wJj13gyN+cKq8Ml0Z4OVfBpGn4x6c=
 Received: from localhost.localdomain ( [113.57.152.160])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 11 Apr 2025 18:55:20 +0800 (CST)
+	id ; Fri, 11 Apr 2025 18:55:23 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 5873114534741564998
-EX-QQ-RecipientCnt: 8
+X-BIZMAIL-ID: 14495813504246100742
+EX-QQ-RecipientCnt: 5
 From: Chen Linxuan <chenlinxuan@uniontech.com>
-To: Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>
+To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Winston Wen <wentao@uniontech.com>,
 	Chen Linxuan <chenlinxuan@uniontech.com>,
-	linux-nvme@lists.infradead.org,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 1/7] nvme: add __always_inline for nvme_pci_npages_prp
-Date: Fri, 11 Apr 2025 18:54:49 +0800
-Message-ID: <8E10021DAFBE47B5+20250411105459.90782-1-chenlinxuan@uniontech.com>
+Subject: [RFC PATCH 2/7] mm: add __always_inline for page_contains_unaccepted
+Date: Fri, 11 Apr 2025 18:54:50 +0800
+Message-ID: <9AE63B25D47B2D2F+20250411105459.90782-2-chenlinxuan@uniontech.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <31F42D8141CDD2D0+20250411105142.89296-1-chenlinxuan@uniontech.com>
+In-Reply-To: <20250411105459.90782-1-chenlinxuan@uniontech.com>
 References: <31F42D8141CDD2D0+20250411105142.89296-1-chenlinxuan@uniontech.com>
+ <20250411105459.90782-1-chenlinxuan@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,46 +68,42 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: Nwz8Cs33/LprLV9bzlLg9s//LwPGS6Z5d8wITrM/fnWYKm1JiyeWpte9
-	R+4nR/zTYMTDtUIawaFd/hYaCWmNr60mgGOl5flw88iGgQQ++zHR4VV3KCksyAGP5eRfICU
-	0KcqVuh6mjujOF0KhblmEKnHe7Dd1BtXG5DKqKUK2Ia40UQhPo9kasruuoiWK7hw9AictLj
-	VqE6z8bsDdMqyJZhfuLMJOmKaBHduD76LjaN4peuQ607kww60cksjipgHDN/Hf6QTkG+Yjo
-	xyCji8GmZttpQpJJN/h06J2VcnQT+qZ5ma70iNZeMNy0dCiRODshoMoFkaEbA4nWGaKy2qY
-	4uaEQWmTLbI9bmDLeWIGv/9ENGdE4MQxrRi15cKGEka1oV6xUBxsPPlgAWQW+vgwNinbALN
-	0v4DOiERlKCJbUMTae6tkS3UNU2uJvRck6X0DNIW9nmt1aMbYyjM+aK5Bh6ocKaFMZEOwLW
-	3uXcWeNpuX179+rXmijKuv+z8uj/9Qb5XZSzW946ryYELgqCnjZeTyh8TSX1s8kvuASlCmh
-	/JdJef67LyTSg7/DQVLiUrOC2lNZkLe0WAyq6m5sStYrwoWsdbHI8aAgWzO3I+OfXovyfI8
-	Wh3WkXLsO34bTPKLK1B7K6RO1owUMgGK2fhg7AMlOGSXTDph+Vg0aORI6a3EdYx/01d0asx
-	CGImwnME0NSEgs6u9GWezsFDBYE/Syk0+TaE/20pjfFJuEk7DRuk+868DQLFvOdwfZ7jRjl
-	Qad4VKfBXZwxF5d5T+hLWvuIDZOoqc7wUl/ZmXiZl4FK3S6/mx1LavyndYIMutw/BQIezVb
-	OKkvAhIakIjDPlI9zDwrJszghKpiqR4MpPIw+TcMojaXMYH/ftBJEOBt2LCCG4CjtDUnvyR
-	QO+eyRCsuN+mwYZaRtP+RSefvBaIoKukBT0lxRc9F729/s/6fq9d/3+vGgJ9gWk9sa2TkhC
-	8KcjjOawrus2Qghj3eyKh0qVVDpnqmiznIz2skGBGPcEOJjZGOxeLhL8+3yyPyOXtq1nP9G
-	+seejhp3p58s5WFX5b
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-XMAILINFO: NtoEpQAviy6qXJlFSJs65qqOvEITHP48t56wn5y4gvMc3vZ/ZDReLYE7
+	sbpP9HHvtmIvJDVw7kR66bARG6152UmO6bL+1pLveAZVvofOc/GMEBggf/iHxAmZ5Y38oM3
+	SdUODR/tHOQ/lZW61l+zq5faV1x5E+n8wx+pDtljWChNdpnOvWwQ5wpRiLcyNC8pBUvnU1O
+	zG6eDtstuT8nXYCAlEozXWBlTwESm2g7C3Yy7ryMzwKxcX5gDVwa5V+De2wtV+tGK7Rg33i
+	CQYqDLkaO6DYI3SyQZJCPj6nkMKI/5DXSUuDV4VvvQpV+hdevf+BfJWXD0oC9XyJzRBn1Jk
+	E3h1ptrDh024Jc4nGdNwBJ8OPZtxOFSDazabTo5e8RK5Qm+lGjauqFv3M3ovCDcZGxxJOqh
+	6KKiC3lag9hHmy5SzuQ7VofxpzV+tbrQVCplozVX3DYLkNckJuJhMdLSt6LBShVA6HHv2s4
+	bsOAm7VFr898QZWgsrn6gv5VW52lCqygioo2mJ2PqOdDY6F7fPlhY0RJnU1LTcRPtWGLQXv
+	jLvAVetn+iiUSgkS1eijsJSLpBE2mxS1h9+A7E4JwYP1nRGaOttIihgxo+6xrtOVu5QWGOS
+	ONN2VTGHueyW/3zvjhfqqOronkCnolMcQOfQ7F87Z8KU3aawJL6l+nm912k8FugoDqaBUYn
+	RfzkOyor4ljgS5+KiYG9imtQen9ciJdxKvEZtOS5dYbeB5bVFnLpyJiyfsqNjclKTgCfmlk
+	IG7b2FgsYCOJa1suxHQD5oP539y5TZJYA1llaYNZ38bjfmcvVquSB5vNm5tQPZtK0UVK94N
+	VjYiB7ivJpuJvtxUg7LR9IBvdCYH2BQmoLQ0xyFj6RJ7Rhg6CokiTfFHPNRfigIFA+QIYaJ
+	2U6rFy0JeDkvdfFnKB8GQmSfAdBpg2jAjQFnVJRMVmNH3yQwBG9M61/Y8+HzahIP3gp3N0h
+	pIc+3O5NkaSj6VhRXM/bYNkRyrz+OzKKZXb6dhKp5NKmutgm2piIJ6Ixx56Us+4LSAOarN/
+	Wtm34Vi2ru+f5kZ57TFJA+sBeVBkajdimWkUHWEQ==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
 X-QQ-RECHKSPAM: 0
 
 From: Winston Wen <wentao@uniontech.com>
 
-On x86_64 with gcc version 13.3.0, I build drivers/nvme/host/pci.c
-with:
+On x86_64 with gcc version 13.3.0, I compile mm/page_alloc.c with:
 
   make defconfig
-  ./scripts/kconfig/merge_config.sh .config <(
-    echo CONFIG_BLK_DEV_NVME=m
-  )
   make KCFLAGS="-fno-inline-small-functions -fno-inline-functions-called-once" \
-    drivers/nvme/host/pci.o
+    mm/page_alloc.o
 
 Then I get a compile error:
 
     CALL    scripts/checksyscalls.sh
     DESCEND objtool
     INSTALL libsubcmd_headers
-    CC      drivers/nvme/host/pci.o
+    CC      mm/page_alloc.o
   In file included from <command-line>:
-  drivers/nvme/host/pci.c: In function 'nvme_init':
-  ././include/linux/compiler_types.h:557:45: error: call to '__compiletime_assert_878' declared with attribute error: BUILD_BUG_ON failed: nvme_pci_npages_prp() > NVME_MAX_NR_ALLOCATIONS
+  mm/page_alloc.c: In function '__free_unaccepted.isra':
+  ././include/linux/compiler_types.h:557:45: error: call to '__compiletime_assert_1013' declared with attribute error: BUILD_BUG failed
     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
         |                                             ^
   ././include/linux/compiler_types.h:538:25: note: in definition of macro '__compiletime_assert'
@@ -121,33 +115,33 @@ Then I get a compile error:
   ./include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
         |                                     ^~~~~~~~~~~~~~~~~~
-  ./include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-     50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-        |         ^~~~~~~~~~~~~~~~
-  drivers/nvme/host/pci.c:3804:9: note: in expansion of macro 'BUILD_BUG_ON'
-   3804 |         BUILD_BUG_ON(nvme_pci_npages_prp() > NVME_MAX_NR_ALLOCATIONS);
-        |         ^~~~~~~~~~~~
+  ./include/linux/build_bug.h:59:21: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+     59 | #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
+        |                     ^~~~~~~~~~~~~~~~
+  mm/page_alloc.c:7301:9: note: in expansion of macro 'BUILD_BUG'
+   7301 |         BUILD_BUG();
+        |         ^~~~~~~~~
 
 Signed-off-by: Winston Wen <wentao@uniontech.com>
 Co-Developed-by: Chen Linxuan <chenlinxuan@uniontech.com>
 Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
 ---
- drivers/nvme/host/pci.c | 2 +-
+ mm/page_alloc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index b178d52eac1b..9ab070a9f037 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -390,7 +390,7 @@ static bool nvme_dbbuf_update_and_check_event(u16 value, __le32 *dbbuf_db,
-  * as it only leads to a small amount of wasted memory for the lifetime of
-  * the I/O.
-  */
--static int nvme_pci_npages_prp(void)
-+static __always_inline int nvme_pci_npages_prp(void)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index fd6b865cb1ab..7c0934c818dd 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -7286,7 +7286,7 @@ static bool __free_unaccepted(struct page *page)
+ 
+ #else
+ 
+-static bool page_contains_unaccepted(struct page *page, unsigned int order)
++static __always_inline bool page_contains_unaccepted(struct page *page, unsigned int order)
  {
- 	unsigned max_bytes = (NVME_MAX_KB_SZ * 1024) + NVME_CTRL_PAGE_SIZE;
- 	unsigned nprps = DIV_ROUND_UP(max_bytes, NVME_CTRL_PAGE_SIZE);
+ 	return false;
+ }
 -- 
 2.48.1
 
