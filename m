@@ -1,90 +1,84 @@
-Return-Path: <linux-kernel+bounces-601030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052F1A8682A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 23:26:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE62A86834
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 23:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A5ED17604F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 21:23:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD23B9C004A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 21:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A6129C341;
-	Fri, 11 Apr 2025 21:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2207298988;
+	Fri, 11 Apr 2025 21:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JRqqtN4Q"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A2tDwgpR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F23E28FFE2;
-	Fri, 11 Apr 2025 21:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505FB1EE7D3
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 21:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744406615; cv=none; b=QETy0fJz4Ip6QcdDj/NFX395RDcMC1VblcTyQAs9b0lhQkKW4Z3eU1SHH4UtmlJxBlORSEEWh6Fanxc8R5EXDdbOydFAnoEFriNzW7hdluwJs5oGqOoeepR1DjBl9CZKz+uVFL2QhSr0TTxh2QZek4O2nL25vRI/DqITvNUAGzI=
+	t=1744406707; cv=none; b=d8e/lsHrm4R2WhLjQxmclnalRi02og64+z3pC97ol+QzbWZRQc8kGgXROehpFK+GKBEop7wX6/vmt9B1TLMrlzsIGiKBD7yISbkbUiYDllvLgQ7S5nLgFXbvsVZm4aZ3NakzmcP9SNt1tZ4eViy8zJGB7NYJp4il9P0POl90j2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744406615; c=relaxed/simple;
-	bh=d7CTNouMikVpNCKELbV8Zv1iC1VlzMsNvbBkIf56lMA=;
+	s=arc-20240116; t=1744406707; c=relaxed/simple;
+	bh=8gu0sYMn4R7ARHizs8VdzCkZueYec/6SpqKatFDp5gQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Of5E6LsuX1Vyr3nMQqWZ4myJaIHMFi9uCNWEyujYqZw0HwgqWLWhoqj0U00aYp7R5ZZGJOhOU1fwgEMXJ+XGoLRXoae75AylSKdaBTbF5EvMTd4uW8eSmDRjRRyqZXFa4fdZyMr+5824z3zl1R3BcUu4tFiKvKUo0D1ZZWV2Usg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JRqqtN4Q; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CB42C40E0242;
-	Fri, 11 Apr 2025 21:23:31 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id NDs9GDfPuPMf; Fri, 11 Apr 2025 21:23:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1744406607; bh=d7CTNouMikVpNCKELbV8Zv1iC1VlzMsNvbBkIf56lMA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=sRzHCYVc6hwQCQ4ZKpMXZar5+Erwfp7MnZ7QjDFPkGFjBzcvDXolQx1+e5YzaJUNm9kadOAw3ZAqmdvyIviW7t8gzIURLa2c51VfmIrrmCsWdHbdPzvMMT0BS5fn5mMb2ArqwCu/4xPS2skN1cOW5K+V7DKntAmPkQW04+HiWV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A2tDwgpR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C066C4CEE2;
+	Fri, 11 Apr 2025 21:25:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744406705;
+	bh=8gu0sYMn4R7ARHizs8VdzCkZueYec/6SpqKatFDp5gQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JRqqtN4Q+QSnnGJl5Xoyy3Nuj45Y8lr/EznkeLeDqIXdVQlK9uMkIXikqhcBKxGkI
-	 PpeseSKiVxSYZEDqxlegRRmn5eWeeFaHTYl1pTHUhE+IdjI2ghnRP6DcvGGfeL2mv3
-	 Y6twcCEAGbr4Cb70sAMt73nJOrb8KQhBf43VDtBQroSdVCGGTmB4AN2I1cCefN1zMw
-	 57HfY2+P3Yq/mgJvSMMm6eeb28ROCU7kjcMUmAlaAg2d2iGOhy6Cy8gEiyNsAlM+bh
-	 LviMDsX1L5ynSEgt1hRGV0SUSMwcXlJcrd3W+HoEsp5pQqD9BsUgORT7bwMIbACeao
-	 Wx0KU0K+XWv9pnbrVwCG5ZNeki5UZj6wdfcJIRS5Cr7YJEnOYp+Uf/focDQQYcJcdB
-	 +rlwKqIhkDI9r+92vZFiIT1gn9x7Q9TyAIU+xip1mbY5HylGFVOQzJdT5N+E8ScbPn
-	 FbSSZkOw/lTKeRcSa/3rREp4wwNJsc1xFcMtJ4uuX06UP1yiSjh+f5aXzmcUu6r3aV
-	 EsCY6IxcXHPmcRfsLv9ekw4a/Mt8z8wDqWKigrTi5hz+EJ3dz3Iq9JvHSO+8JY/SlB
-	 ilzn0Cni0C8uxbgrHf/AUt1eEdTExwaWOTbs9hZDy/lkRtZZkwLkeaAlF/lkA7+wEt
-	 cyDu5VZJcpSgkJb3f8/GBF54=
-Received: from rn.tnic (ip-185-104-138-50.ptr.icomera.net [185.104.138.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 06EAC40E01FF;
-	Fri, 11 Apr 2025 21:23:17 +0000 (UTC)
-Date: Fri, 11 Apr 2025 23:24:11 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sargun Dhillon <sargun@sargun.me>
-Cc: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH] trace, RAS: Use __print_symbolic helper for entry
- severity for aer_events
-Message-ID: <20250411212411.GAZ_mIexRpOrf-QKGB@renoirsky.local>
-References: <20250317205516.599440-1-sargun@sargun.me>
+	b=A2tDwgpRF7Q/GoAcoSLRwzfsW9M4iiigdzYf9IpdMTFgvV+7MgJ6yCgfvE61i2iyP
+	 NMmnB5tFKll4BV3bKyJbKtZ85vc26eVw9xXUcyyfkCf8KHUUPI2ssYeg5TG6nNcqo9
+	 ADoaC5teX4L7BxhFktQSsiMWN4TXYbnVpXTVy/bhSb9x6AA6r4QXFtmjqN2F/qIuH0
+	 j49chTZQZqcsic7nYnpixj4iNA7gZwbkI/e6qGGThFqVnmRmbYRgcK7qMZjaSvyfC+
+	 U38YlZbdz5wtNtyNLTfGMilNgcPeLWWtTBd+KxD7xF+Sr2bhPQDSV6EqqgwzyR1Yi4
+	 0CuydguTC/Q5g==
+Date: Fri, 11 Apr 2025 23:25:02 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: exporting a device type
+Message-ID: <Z_mIrjA5k2CABoG_@pollux.localdomain>
+References: <CAHp75VdssCM74oji59QjPMEzrVuBzPOAMadA=Ds_52hOZGJ2mw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250317205516.599440-1-sargun@sargun.me>
+In-Reply-To: <CAHp75VdssCM74oji59QjPMEzrVuBzPOAMadA=Ds_52hOZGJ2mw@mail.gmail.com>
 
-On Mon, Mar 17, 2025 at 01:55:15PM -0700, Sargun Dhillon wrote:
-> The chained ternary conditional operator in the perf event format for
-> ras:aer_event was causing a misrepresentation of the severity of the event
-> when used with "perf script".
+On Fri, Apr 11, 2025 at 10:39:38PM +0300, Andy Shevchenko wrote:
+> I have an issue with this change
+> 
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/commit/?h=for-driver-core&id=e86cc69186051d7312711565803de586efd9b2cf
+> 
+> (I think you haven't yet sent it for review, so this is just
+> preliminary look at)
+> 
+> The idea of exporting bus type will open a non-reversible box of
+> changes when people will start abusing it. Instead just provide an API
+> dev_is_auxiliary() as it's done in other subsystems (yes, I know that
+> some of them are still exporting the type, but it's most likely due to
+> historical reasons of not thinking through it at that time).
 
-It would be good to know why?
+Yeah, most busses export it and provide a dev_is_*() macro, which we can't use
+in Rust. That's why for PCI and platform I started using the bus type directly,
+see e.g. [1].
 
-Thx.
+However, I already considered changing it up by just creating Rust helper
+functions for the dev_is_*() macros and provide a dev_is_auxiliary() API
+instead. This also simplifies things a bit and gets me rid of the
+Device::bus_type_raw() helper.
+
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/commit/?h=for-driver-core&id=d72c42c1da4149fec28e3b180654bf5fd88c2094
 
