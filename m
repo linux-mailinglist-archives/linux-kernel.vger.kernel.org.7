@@ -1,198 +1,234 @@
-Return-Path: <linux-kernel+bounces-599402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C71A85372
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:47:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 389ABA853A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6882C1BA744A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 248EE9C30C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CA0293B46;
-	Fri, 11 Apr 2025 05:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BE9280CC4;
+	Fri, 11 Apr 2025 05:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="H4yCcFx4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ajrc4d8C"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VOngdkjP"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DE828EA52;
-	Fri, 11 Apr 2025 05:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DB627CCDC
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 05:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744350121; cv=none; b=C8n3/ZbFYchP4n727YL3Af617QGP/JNsIs5wVdSmueO5yIblHHkhYqAiz8E4OMaBiYxL7jS7M3K276dck13wdBkQsOcvbpVL0a5CyR8bWMzT5oG6Dt0hIo7C2lnVUFTOQGbURoiqNsvTScFJ4OEGuIgq5mcmZukVSFGAV7IP9Tg=
+	t=1744350265; cv=none; b=jVn5YAfu0WupuqGOT1mlDRJHRmEjfo9DnmR3wCujHNtrlpGGgEGb3lBl4Tscrv/4mga2lwhUk3QrL8gjWBbdY81fHWXOxoR/a2GdJM5JSeS5seXhqyTF2kjoOM0iYNxrldfXfDyQp28cAowIlzRtLkvUTfbhCqSgWbSBhlzhYdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744350121; c=relaxed/simple;
-	bh=oIU8gLcDTV3kPLLjAuzQ7vOulpLh+Z/92xBdZfOAtCY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=RG/5cW6wU3cN2rdoKVvu+sRaSaa/j13t8vJYltDhFR4wnev5vz8m5X2uq7HIidAp1rBTde5Ts2yu1RPYFTnZGhYsGbayE16riQQQ7EiP6NdqRrJy4hUXWnsVdiduC9eCva2fPDi9ET8SW3pZeMas6+QLbutU2eMXRnS7b6BHGQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=H4yCcFx4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ajrc4d8C; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 8B4A51380211;
-	Fri, 11 Apr 2025 01:41:56 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-05.internal (MEProxy); Fri, 11 Apr 2025 01:41:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1744350116;
-	 x=1744436516; bh=u/lIgIq2sZs+QysnD13sol+n3mWytya/qtsWIP2cQK0=; b=
-	H4yCcFx46+xNBNbovJsA4EnGPX7VQi6FbyLloTokwffY6LCVXZ73b9aMGPNYmAOA
-	mc276oNGc03cg0bF8wLWt9mkS79TB8y2VS9Db464jL14bVJ30244YGOxf0voh7t2
-	briCCnx9OGSttXz8cH78kxAqZOEta3BYqeqH835Jp8DNCjD/DIwmOpHudEezECH2
-	MhEokfwLh9+gI1GOgzrVZRe8gBMQvTBo6X3T0lRjFch/msgDMlnYseLz1PXmG8dl
-	F48GC4S+PnmPWbYlLvzPdA9fRVs3M2rhCMvqdeEjU/MwY5e9yFOT8kTpSsHsDcXw
-	1mvL1O753odZpYh3ZQFQ6Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744350116; x=
-	1744436516; bh=u/lIgIq2sZs+QysnD13sol+n3mWytya/qtsWIP2cQK0=; b=a
-	jrc4d8CxTcJHNpEaby4xm8bBVOO6OA62CjMnhotFub8IuQqYhgU+znSj2p9P5lt5
-	UL1T8ye1d1oPlejTfB88zXxoLqzQkIMcAEDYGqhObmRx9sX5HxFzBNXNw9er7uMo
-	6TghFuVEuIpI5cV39bpwyKUgvVgChm3aG0I0gYBu6PCb+8f7EClI9GdT9/Kgh2RQ
-	CITUD5/LS6wZH8gBRu/bK/fnwqXLikt2fB5Un8eIrHA57H7r2t5PhrtCkLn7E7pn
-	f9HzGxdy92dtRNIE1n+ZqZK/kToGqzTgiUJY9bJ+26ipCuq/vGqHTefuZxjO6ZWa
-	b4EZL5zwU+XZr07vGzuEQ==
-X-ME-Sender: <xms:o6v4Z6cw5nJ9I835vZu4Yt_fCNkbznE4mwp31Jo-SCOLkSfHbH5FCg>
-    <xme:o6v4Z0Pdoq93GCPXVZyobMmpsYf-8rVPjxdtXHHJw2_cDUSLZF2xDXgEJdEBqc7yT
-    EQsGU9_bx90Mi3MtLs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvuddutddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    udeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegtrghtrghlihhnrdhmrghrih
-    hnrghssegrrhhmrdgtohhmpdhrtghpthhtoheprhihrghnrdhrohgsvghrthhssegrrhhm
-    rdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpth
-    htoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopegrlhgv
-    giesghhhihhtihdrfhhrpdhrtghpthhtohepmhhinhhgoheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgt
-    phhtthhopehkihhrihhllhdrshhhuhhtvghmohhvsehlihhnuhigrdhinhhtvghlrdgtoh
-    hmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggr
-    ugdrohhrgh
-X-ME-Proxy: <xmx:o6v4Z7i_RiYTvdPh5P_GA6Nc-L5RAvy1mklYjA8hlRAz_BoYC8TRQA>
-    <xmx:o6v4Z39d4m6ioLxH_V1Ij00ZvWdU1gcRkV7fdW6FhFh4hLsMaCjPKA>
-    <xmx:o6v4Z2utuSVyC8Qzu2SBjFaj0RTuO6h4CX5BylMq7mpC_TekykxFKQ>
-    <xmx:o6v4Z-GUZwvChgmYUtjAoohEJYF7TGmEg_3m4JrI2S36LG7rojbsEg>
-    <xmx:pKv4Z0OgV3ihPjKEN67-k2xz8gZBwn373gRilAZeXQq-1w0wvR0Wp8YS>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id EAF8B2220073; Fri, 11 Apr 2025 01:41:54 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1744350265; c=relaxed/simple;
+	bh=bJayqT9PLYf/Eavx+FSV6PdwXiUM9NaeuJAMdksPK5c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SZlWPVqaV9ejZsWIRVioPXwGiQMfKmBBTpnsTAtMGi5mOMZqnHauIt67DW7RG4JeXuFpyxLs2Ap3lSQCTbxJsMpwa3LRviQ+7rkiN7DdTnlQlvBvFIZksLG22x9As+vqLRvpA2N9gJX6K3QZcKrO7E3CpN/vQzSzx43aP9EIFjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VOngdkjP; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53ALB1ej004517;
+	Fri, 11 Apr 2025 05:44:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=g/9oFaxoRt7zlOW90/wBFLuDkMSAFcU7A0l8UeUUQ
+	ZU=; b=VOngdkjPrlCwCTdU9yx0LT/hEuF0aySRH2URy0UxlQTecwzIEQVTXKE96
+	GrmfRu+wtTouvwGsSzAddt3BGOwqawflxi7dQU59D+GNWwWfnEXqju4WDelSBD+E
+	UudoSvBBCbkNBsUuiQXkVhW9tyhbdz89f2pfJNOb7mtLhrBVHT4z5Y5EHTrh2Ygt
+	sOikJRWfty+icIjwziljuqEese9SJNVH8tyzlOC34gEyaBZDwV1HITkDCFH3uHE6
+	PRL8xKCKYqbfm7NpR7qZICh/Wix7Lo9wKbUWRK9rQZSgpeRdX4R+09GVWQubJP2g
+	7TYX7dMuOeRIBKlMwpddw9ytZJr5w==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45xe13vft4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 05:44:04 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53B0p97m013925;
+	Fri, 11 Apr 2025 05:44:03 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45ufup1j26-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 05:44:03 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53B5i10628836368
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Apr 2025 05:44:01 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8DAE920043;
+	Fri, 11 Apr 2025 05:44:01 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B753C20040;
+	Fri, 11 Apr 2025 05:44:00 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.63.197.14])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 11 Apr 2025 05:44:00 +0000 (GMT)
+Received: from jarvis.ozlabs.ibm.com (haven.au.ibm.com [9.63.198.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 1AC76602D4;
+	Fri, 11 Apr 2025 15:43:57 +1000 (AEST)
+From: Andrew Donnellan <ajd@linux.ibm.com>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: x86@kernel.org, linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        pasha.tatashin@soleen.com, sweettea-kernel@dorminy.me,
+        christophe.leroy@csgroup.eu
+Subject: [PATCH v14 00/11] Support page table check on PowerPC
+Date: Fri, 11 Apr 2025 15:43:43 +1000
+Message-ID: <20250411054354.511145-1-ajd@linux.ibm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T39ebf2d19aff607f
-Date: Fri, 11 Apr 2025 07:41:33 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Liu Runrun" <liurunrun@uniontech.com>,
- "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
- "Alexandre Ghiti" <alex@ghiti.fr>, "Ingo Molnar" <mingo@kernel.org>,
- "Ryan Roberts" <ryan.roberts@arm.com>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, WangYuli <wangyuli@uniontech.com>,
- zhanjun@uniontech.com, niecheng1@uniontech.com
-Message-Id: <b2424c71-d076-4880-86cd-ccf74995f080@app.fastmail.com>
-In-Reply-To: <20250411023408.185150-1-liurunrun@uniontech.com>
-References: <20250411023408.185150-1-liurunrun@uniontech.com>
-Subject: Re: [PATCH] RISC-V: Fix PCI I/O port addressing for MMU-less configurations
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: XFTub1w76ddUJcbaUFbHNKeD3yEsbzlg
+X-Proofpoint-GUID: XFTub1w76ddUJcbaUFbHNKeD3yEsbzlg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_01,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ bulkscore=0 malwarescore=0 phishscore=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 priorityscore=1501 spamscore=0 impostorscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2504110038
 
-On Fri, Apr 11, 2025, at 04:34, Liu Runrun wrote:
-> This patch addresses the PCI I/O port address handling in RISC-V's
-> port-mapped I/O emulation routines when the MMU is not enabled.
-> The changes ensure that:
+Support page table check on all PowerPC platforms. This works by
+serialising assignments, reassignments and clears of page table
+entries at each level in order to ensure that anonymous mappings
+have at most one writable consumer, and likewise that file-backed
+mappings are not simultaneously also anonymous mappings.
 
-Do you have a system that requires this? I sent a patch the other
-day to make PCI 'depends on MMU', based on how nothing today
-uses it. Having a NOMMU system with PCI wounds rather silly,
-so I hope we don't ever get that.
+In order to support this infrastructure, a number of stubs must be
+defined for all powerpc platforms. Additionally, separate set_pte_at()
+and set_pte_at_unchecked(), to allow for internal, uninstrumented mappings.
 
-> 1. For non-MMU systems, the PCI I/O port addresses are properly
->    calculated in marcos inX and outX when PCI_IOBASE is not
->    defined, this avoids the null pointer calculating warning
->    from the compiler.
+(This series was written by Rohan McLure, who has left IBM and is no longer
+working on powerpc.)
 
-This is the wrong way around: the warning tells you that you
-have failed to configure PCI_IOBASE for the particular hardware,
-and that you actually get a NULL pointer dereference.
+v14:
+ * Fix a call to page_table_check_pud_set() that was missed (akpm)
 
-The solution is not to shut up the warning but making it
-not a NULL pointer dereference!
+v13:
+ * Rebase on mainline
+ * Don't use set_pte_at_unchecked() for early boot purposes (Pasha)
+Link: https://lore.kernel.org/linuxppc-dev/20250211161404.850215-1-ajd@linux.ibm.com/
 
-Part of the issue is that historically the asm-generic/io.h
-header includes an incorrect fallback of PCI_IOBASE when
-the architecture does not provide the correct one. I think only
-sparc still relies on that, so that fallback definition should
-be moved into arch/sparc/include/asm/io_{32,64}.h instead.
+v12:
+ * Rename commits that revert changes to instead reflect that we are
+   reinstating old behaviour due to it providing more flexibility
+ * Add return line to pud_pfn() stub
+ * Instrument ptep_get_and_clear() for nohash
+Link: https://lore.kernel.org/linuxppc-dev/20240402051154.476244-1-rmclure@linux.ibm.com/
 
-> 2. In asm-generic/io.h, function ioport_map(), casting PCI_IOPORT
->    to type "long" firstly makes it could compute with variable addr
->    directly, which avoids the null pointer calculating warning when
->    PCI_IOPORT is a null pointer in some case.
+v11:
+ * The pud_pfn() stub, which previously had no legitimate users on any
+   powerpc platform, now has users in Book3s64 with transparent pages.
+   Include a stub of the same name for each platform that does not
+   define their own.
+ * Drop patch that standardised use of p*d_leaf(), as already included
+   upstream in v6.9.
+ * Provide fallback definitions of p{m,u}d_user_accessible_page() that
+   do not reference p*d_leaf(), p*d_pte(), as they are defined after
+   powerpc/mm headers by linux/mm headers.
+ * Ensure that set_pte_at_unchecked() has the same checks as
+   set_pte_at().
+Link: https://lore.kernel.org/linuxppc-dev/20240328045535.194800-14-rmclure@linux.ibm.com/ 
 
-I don't understand that sentence, please rephrase.
+v10:
+ * Revert patches that removed address and mm parameters from page table
+   check routines, including consuming code from arm64, x86_64 and
+   riscv.
+ * Implement *_user_accessible_page() routines in terms of pte_user()
+   where available (64-bit, book3s) but otherwise by checking the
+   address (on platforms where the pte does not imply whether the
+   mapping is for user or kernel)
+ * Internal set_pte_at() calls replaced with set_pte_at_unchecked(), which
+   is identical, but prevents double instrumentation.
+Link: https://lore.kernel.org/linuxppc-dev/20240313042118.230397-9-rmclure@linux.ibm.com/T/
 
-> The original implementation used `PCI_IOBASE + (addr)` for MMU-enabled
-> systems, but failed to handle non-MMU cases correctly. This change adds
-> conditional compilation guards (#ifdef CONFIG_MMU) to differentiate
-> between MMU and non-MMU environments, providing consistent behavior
-> for both scenarios.
+v9:
+ * Adapt to using the set_ptes() API, using __set_pte_at() where we need
+   must avoid instrumentation.
+ * Use the logic of *_access_permitted() for implementing
+   *_user_accessible_page(), which are required routines for page table
+   check.
+ * Even though we no longer need p{m,u,4}d_leaf(), still default
+   implement these to assist in refactoring out extant
+   p{m,u,4}_is_leaf().
+ * Add p{m,u}_pte() stubs where asm-generic does not provide them, as
+   page table check wants all *user_accessible_page() variants, and we
+   would like to default implement the variants in terms of
+   pte_user_accessible_page().
+ * Avoid the ugly pmdp_collapse_flush() macro nonsense! Just instrument
+   its constituent calls instead for radix and hash.
+Link: https://lore.kernel.org/linuxppc-dev/20231130025404.37179-2-rmclure@linux.ibm.com/
 
-This also looks wrong: what you are distinguishing here is systems
-with (potentially) I/O port support and those that never have I/O
-port support.
+v8:
+ * Fix linux/page_table_check.h include in asm/pgtable.h breaking
+   32-bit.
+Link: https://lore.kernel.org/linuxppc-dev/20230215231153.2147454-1-rmclure@linux.ibm.com/
 
-> diff --git a/arch/riscv/include/asm/io.h b/arch/riscv/include/asm/io.h
-> index a0e51840b9db..d5181bb02c98 100644
-> --- a/arch/riscv/include/asm/io.h
-> +++ b/arch/riscv/include/asm/io.h
-> @@ -101,9 +101,15 @@ __io_reads_ins(reads, u32, l, __io_br(), 
-> __io_ar(addr))
->  __io_reads_ins(ins,  u8, b, __io_pbr(), __io_par(addr))
->  __io_reads_ins(ins, u16, w, __io_pbr(), __io_par(addr))
->  __io_reads_ins(ins, u32, l, __io_pbr(), __io_par(addr))
-> +#ifdef CONFIG_MMU
->  #define insb(addr, buffer, count) __insb(PCI_IOBASE + (addr), buffer, 
-> count)
->  #define insw(addr, buffer, count) __insw(PCI_IOBASE + (addr), buffer, 
-> count)
->  #define insl(addr, buffer, count) __insl(PCI_IOBASE + (addr), buffer, 
-> count)
+v7:
+ * Remove use of extern in set_pte prototypes
+ * Clean up pmdp_collapse_flush macro
+ * Replace set_pte_at with static inline function
+ * Fix commit message for patch 7
+Link: https://lore.kernel.org/linuxppc-dev/20230215020155.1969194-1-rmclure@linux.ibm.com/
 
-I see that these are defined unconditionally here, which is probably
-the real mistake. What I think we need instead is to enclose
-them in "#ifdef CONFIG_HAS_IOPORT" with no "#else" block, and
-ensure that HAS_IOPORT is only set when building for targets that
-have a sensible definition of PCI_IOBASE and IO_SPACE_LIMIT.
+v6:
+ * Support huge pages and p{m,u}d accounting.
+ * Remove instrumentation from set_pte from kernel internal pages.
+ * 64s: Implement pmdp_collapse_flush in terms of __pmdp_collapse_flush
+   as access to the mm_struct * is required.
+Link: https://lore.kernel.org/linuxppc-dev/20230214015939.1853438-1-rmclure@linux.ibm.com/
 
-The same approach is used in asm-generic/io.h, we just haven't
-done it for all architectures yet, since it's not entirely
-clear which ones can support ISA bridges and legacy PCI devices
-with port I/O.
+v5:
+Link: https://lore.kernel.org/linuxppc-dev/20221118002146.25979-1-rmclure@linux.ibm.com/
 
-Ideally we'd go through the individual PCI host driver
-implementations and only enable HAS_IOPORT for those that
-are can handle the I/O space window correctly, but leave
-it out if none of them are selected.
+Rohan McLure (11):
+  mm/page_table_check: Reinstate address parameter in
+    [__]page_table_check_pud_set()
+  mm/page_table_check: Reinstate address parameter in
+    [__]page_table_check_pmd_set()
+  mm/page_table_check: Provide addr parameter to
+    page_table_check_pte_set()
+  mm/page_table_check: Reinstate address parameter in
+    [__]page_table_check_pud_clear()
+  mm/page_table_check: Reinstate address parameter in
+    [__]page_table_check_pmd_clear()
+  mm/page_table_check: Reinstate address parameter in
+    [__]page_table_check_pte_clear()
+  mm: Provide address parameter to p{te,md,ud}_user_accessible_page()
+  powerpc: mm: Add pud_pfn() stub
+  powerpc: mm: Implement *_user_accessible_page() for ptes
+  powerpc: mm: Use set_pte_at_unchecked() for internal usages
+  powerpc: mm: Support page table check
 
-      Arnd
+ arch/arm64/include/asm/pgtable.h             | 18 +++---
+ arch/powerpc/Kconfig                         |  1 +
+ arch/powerpc/include/asm/book3s/32/pgtable.h | 12 +++-
+ arch/powerpc/include/asm/book3s/64/pgtable.h | 62 +++++++++++++++---
+ arch/powerpc/include/asm/nohash/pgtable.h    | 13 +++-
+ arch/powerpc/include/asm/pgtable.h           | 19 ++++++
+ arch/powerpc/mm/book3s64/hash_pgtable.c      |  4 ++
+ arch/powerpc/mm/book3s64/pgtable.c           | 17 +++--
+ arch/powerpc/mm/book3s64/radix_pgtable.c     |  9 ++-
+ arch/powerpc/mm/pgtable.c                    | 12 ++++
+ arch/riscv/include/asm/pgtable.h             | 18 +++---
+ arch/x86/include/asm/pgtable.h               | 22 +++----
+ include/linux/page_table_check.h             | 67 ++++++++++++--------
+ include/linux/pgtable.h                      | 10 +--
+ mm/page_table_check.c                        | 39 +++++++-----
+ 15 files changed, 226 insertions(+), 97 deletions(-)
+
+-- 
+2.49.0
+
 
