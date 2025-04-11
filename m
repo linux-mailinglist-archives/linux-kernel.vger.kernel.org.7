@@ -1,94 +1,86 @@
-Return-Path: <linux-kernel+bounces-599200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C319A8509E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 02:39:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F72A850A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 02:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A13341B6841B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 00:39:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFB017B45C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 00:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E932B9A6;
-	Fri, 11 Apr 2025 00:39:34 +0000 (UTC)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399B010A1E;
+	Fri, 11 Apr 2025 00:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRJ0A6Aq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BD516419
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 00:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6AD5C96;
+	Fri, 11 Apr 2025 00:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744331973; cv=none; b=DnxnsYQy1VNqDfO84lxx1BX7RKZqZtN0kh+6MtFQ92KMKZGsD+nvBjKSwV4Gt63GVPghnmfQEG2hvM4KgcKRwwv0E4jvAcB1YRtO+53dQfOZgQ9PKrRt2oauVSrwyWTO/fYsbMaM70ZRYzxVuE3ksKyK/8WgIpUNgue/W2ajylU=
+	t=1744332001; cv=none; b=lsvAdkPWixBkmtqqx608hIpRdaHDtaY06TMqebNjdWu2s+EGUM2i89S8NcUGm6N9BmoDiBGQY4uNqsR4o6lomjfu2jmhdrPqh/WTb3NZlQNxZTU5Eqwh7uaDnP40qNY7SXa/NwinJsI3KQchyro0mTgUmYGP9bI2/bbLr2XdpqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744331973; c=relaxed/simple;
-	bh=e9D0qS5c9xuGHL/ortzIXle6NYY2SiyUiI7O3e/dBck=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ew8+4WgAxDsr48kCsmve2YuN4QzhnLC+lzRxZ6D/ZVEyVp36aQbE/1Xenc/itCcgaiJXE8Aal8/T0FlydDsq0D5prXyvGPiYSr1dYktC/aZMazIuwzEKel/+klegRxQjH2sTwa2fspyhRQa2cDz6r9NHFfTFqwJfV2KpwyRsI58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2254e0b4b79so19902545ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Apr 2025 17:39:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744331971; x=1744936771;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e9D0qS5c9xuGHL/ortzIXle6NYY2SiyUiI7O3e/dBck=;
-        b=DeJCkvW+e4Y54azsE6XLHeWb3/qJc8yXcBGmJO0Z3GvtF3Yc6S+rDktBfI7VSlIBMF
-         AmPZ4qBUK9eHIJDjDI7cnYquP7ttymn2u4nfFg0IsN4/XcTyScy+rJlFxyLm/KTHEU5f
-         VSPS6FzyUfhzHgL5NXfsIdcpBg1iEkk5A2+xtoAZH0Nacj89YtDps2nIYi0gK/cn+PNW
-         loiFYr4oaVBn+gQ0faCa6RuO468yj6UrAEs7UVfy7LtVSNSRWjr4pdLFVCy20lcsKmo+
-         uXpYJ9Ybj6JykoHgEU6eMTpYjR8wJI2bDpTg5wdoEHaPcVWWQtvijKabBUVMtRicfBDH
-         vIQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXE0yhvRFIbxpoId3a6Y/yV114EvhQ+V9JzMxNz5UuzOTiXpV+K15Yjqa66+WD4UDxvfYmY6t6f5G6WqbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+S9s91XXf8kWS2HFwfGNjQ+LK1+X0xSWE0tewtmXOWNYtZdBO
-	6L8TLup2mnS2Hf10UH9wBhnHQvX4OOonAu6i0PNuuCQblXmkUWVxFpmSz36Am1I=
-X-Gm-Gg: ASbGncuhWHlQ30wLVGUVGHSAfQiITF2HOR409o2Ps7HRduEFQ2QR083o2mD0vVQ+ucA
-	1yllE3rs/HmoMfZn2LY+9qMu+0iHZXbaPATKN5zssnYAaTLCFPotN5Py3RWnmcfqdYupQ+5FHqs
-	zR2SyK0JJ10miM+12KybElp0xSD4xsQAWQsoy/1hrGNFl5k4vf0n/ku58XSBsdspWlZa64PzRsF
-	7S6E5oTjK5vU5xKyKDyFPEhFDbrYmtFfNgb6zma7UPpKMYu6dA/jkE3OVyX2dDZfCfzWWq9orkk
-	vsCGkJHzRnfmu7u4M6GAVY106nCDVwV+rFQMfCTN44atZtW15A==
-X-Google-Smtp-Source: AGHT+IHE46ZClxLKC9hdNZdcLjjMQRYqIyIdTcUA0yqBYfKQO0vYwM2JBDfdFcSq7VTlGW9xIaW8WA==
-X-Received: by 2002:a17:902:ccc5:b0:224:376:7a21 with SMTP id d9443c01a7336-22bea4fde7cmr10776535ad.42.1744331971575;
-        Thu, 10 Apr 2025 17:39:31 -0700 (PDT)
-Received: from localhost ([97.126.182.119])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccb5c5sm37254655ad.222.2025.04.10.17.39.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 17:39:31 -0700 (PDT)
-From: Kevin Hilman <khilman@kernel.org>
-To: David Heidelberg <david@ixit.cz>, Tony Lindgren <tony@atomide.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Pali
- =?utf-8?Q?Roh=C3=A1r?=
- <pali@kernel.org>
-Cc: David Heidelberg <david@ixit.cz>, linux-omap@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: nokia n900: remove useless io-channel-cells
- property
-In-Reply-To: <20250213203208.93316-1-david@ixit.cz>
-References: <20250213203208.93316-1-david@ixit.cz>
-Date: Thu, 10 Apr 2025 17:39:30 -0700
-Message-ID: <7htt6vwmyl.fsf@baylibre.com>
+	s=arc-20240116; t=1744332001; c=relaxed/simple;
+	bh=mnGvZiGOwOCpuDiXn5hOB8Yy8cepG2SDp5Tiv7JDr/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZYbUmhGGrO8haEErCq7uBHNRLTZ1EBjZkXpgWEL88DvX9d2xxdoGa5V7avxA7gNUDbyK5MYxo5vK8tswK5QRqy4vFn+QDGgO/UfgxA06UkqkO4I4MrGFTKaNhxbhe8dOVN/uzLmdZceWlkUjLlJsLVFelrv3xGgW0kLiEeM9nm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRJ0A6Aq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93AD6C4CEDD;
+	Fri, 11 Apr 2025 00:40:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744332001;
+	bh=mnGvZiGOwOCpuDiXn5hOB8Yy8cepG2SDp5Tiv7JDr/k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JRJ0A6AqKkGwhN4xgL14GqSP1uApNcmBPrL/HFY33SNa2VOjr0AdE+KzIgkvmy/iO
+	 KZlE9cB57mO21kKZdYMQoQZ5OW1LRwlcWpSrCsZ1fjit4sjyXauHcor6uIF7zybyLV
+	 ZDfFlgh9PTD0f+EmC1dh/D0qC5gbRyQ45h+79O2QdIKfScmfv/ssZuX4Yp4NsbFuy3
+	 UBBqobzkdqfQe6Ik1KJ+BKvJYcvDF283SzBH4vHICLC46ieoRHyfdyfKM9pAvNnl4h
+	 znIV/43wdm69/9RO8BZyLfNfhXnacVCR+T/c2qMHZG8JtO1fFysk1c/yFCDqTjb/nB
+	 4spvJXSUmd15A==
+Date: Thu, 10 Apr 2025 17:39:58 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Matthias Schiffer <mschiffer@universe-factory.net>
+Cc: Paolo Abeni <pabeni@redhat.com>, Marek Lindner
+ <marek.lindner@mailbox.org>, Simon Wunderlich <sw@simonwunderlich.de>,
+ Antonio Quartulli <antonio@mandelbit.com>, Sven Eckelmann
+ <sven@narfation.org>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+ b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] batman-adv: fix duplicate MAC address check
+Message-ID: <20250410173958.788611a1@kernel.org>
+In-Reply-To: <94e1ac2c-46f1-4787-ad50-e4a5ab11011a@universe-factory.net>
+References: <c775aab5514f25014f778c334235a21ee39708b4.1744129395.git.mschiffer@universe-factory.net>
+	<0c288b2e-9747-4a50-a16f-bf4238829ffa@redhat.com>
+	<94e1ac2c-46f1-4787-ad50-e4a5ab11011a@universe-factory.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-David Heidelberg <david@ixit.cz> writes:
+On Thu, 10 Apr 2025 17:38:30 +0200 Matthias Schiffer wrote:
+> >> Fixes: c6c8fea29769 ("net: Add batman-adv meshing protocol")
+> >> Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>  
+> > 
+> > Even if marked for net I assume this will eventually go first via the
+> > batman tree.  
+> 
+> Yes. Should I have marked this differently?
 
-> This property is irrelevant for the ad5820 DAC,
-> the driver nor the hardware indicate use of channel cells.
->
-> Fixes: d510d12f26f4 ("ARM: dts: nokia n900: update dts with camera support")
-> Signed-off-by: David Heidelberg <david@ixit.cz>
+Yes, let's reserve net for patches which will go directly into:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/
+Similar for net-next.
 
-Queued for v6.16,
+The tree name is supposed to tell the maintainer who you expect
+to take the patch.
 
-Thanks,
-
-Kevin
+The batman tree (according to MAINTAINERS) is called linux-merge
+so let's ignore that and use batman and batman-next?
 
