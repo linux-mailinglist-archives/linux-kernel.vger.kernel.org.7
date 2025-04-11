@@ -1,131 +1,173 @@
-Return-Path: <linux-kernel+bounces-600814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697F8A864CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:32:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A832A864C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF898A4872
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:28:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E199C188B179
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B39230D3D;
-	Fri, 11 Apr 2025 17:28:52 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC26230D08;
-	Fri, 11 Apr 2025 17:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD152356DB;
+	Fri, 11 Apr 2025 17:30:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54766230D0D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 17:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744392532; cv=none; b=cqV4Q0fKgXCxJ6FqKxNxOGrKLlOsLSLgJngo8fFlrlCjlOaYh5/J3bfkwMTLAYn3z8MgXBeveWwSqvAOV0OKgF1MOlXi6oVRkZv4hDvJlAfRNGz2KabFlNKfJWXSdM8nXy1nOnjVuw80EhiV0/582Y87S+ylTDKyxkLOWIUvHdk=
+	t=1744392654; cv=none; b=GF4gDNyA3VxThMrN3UW+wgr4QhNPpZFbokIdioaJzE6vhY2fGs49CRQS1VFGdLM33v7mIqYBNc7+zB2n4R7aJVE89THGLqcKN9rgPcx4YtSRwBZmarQa32bAY+51Dfw9qWHbo3fD+TveBg3FiK8BVQ4P8QxPds3OLwSq5pE9Q98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744392532; c=relaxed/simple;
-	bh=N/YDbXopgajU9CXeGj4104OGoJtHsueTri0WdMFP9x0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dqI74RojcCAPCBUd9+++YHdbEVD68gCsDAemiW4EacI500mvoZXu102cBaYpOxfD1FJIM7YH4mNKzzGnyMenHcJ3AlpQ2h2Qs6J1Ixrbu7OzwiDJpav7tbu7os98lqS0WxARr/SAJO1fIy1kA++FqoLH9g8E9L/n8Ql2atlO/dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FAACC4CEE8;
-	Fri, 11 Apr 2025 17:28:51 +0000 (UTC)
-Date: Fri, 11 Apr 2025 13:30:15 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Brown <broonie@kernel.org>
-Subject: [PATCH] ftrace: Do not have print_graph_retval() add a newline
-Message-ID: <20250411133015.015ca393@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744392654; c=relaxed/simple;
+	bh=gXCUSf3XDzPifGKQZ5fcXPrPfIH4zdU2bln8aCuqOvA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qSUYxmabsDG25v00Mku7cWJ0WMOK+GH4SbRyo6uA/X43l74IJNCYoK5RgZnAeWXFdLt5uzEmHROK2CW1+m+fa2GQvc11cj7ciFLhgZdtWKmR4/r7eF35mIaGY7e7xyNx8qBq2Cq1F1f+wPglHQG2BGtQkV8kgU79lLqS8xXvjC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D8BC106F;
+	Fri, 11 Apr 2025 10:30:50 -0700 (PDT)
+Received: from [10.163.75.48] (unknown [10.163.75.48])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 91C733F59E;
+	Fri, 11 Apr 2025 10:30:45 -0700 (PDT)
+Message-ID: <7dccb3a2-f5e2-4f9e-8f5c-465a1d3ffdb6@arm.com>
+Date: Fri, 11 Apr 2025 23:00:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm/contpte: Optimize loop to reduce redundant
+ operations
+To: Barry Song <21cnbao@gmail.com>, Xavier <xavier_qy@163.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org,
+ ryan.roberts@arm.com, ioworker0@gmail.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+ Zi Yan <ziy@nvidia.com>
+References: <20250407092243.2207837-1-xavier_qy@163.com>
+ <CAGsJ_4wsW+urp6gbp+yDG40fZw9Bszny2iJVsV_AzzGqgQy+4g@mail.gmail.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <CAGsJ_4wsW+urp6gbp+yDG40fZw9Bszny2iJVsV_AzzGqgQy+4g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
++others
 
-The retval and retaddr options for function_graph tracer will add a
-comment at the end of a function for both leaf and non leaf functions that
-looks like:
+On 11/04/25 2:55 am, Barry Song wrote:
+> On Mon, Apr 7, 2025 at 9:23 PM Xavier <xavier_qy@163.com> wrote:
+>>
+>> This commit optimizes the contpte_ptep_get function by adding early
+>>   termination logic. It checks if the dirty and young bits of orig_pte
+>>   are already set and skips redundant bit-setting operations during
+>>   the loop. This reduces unnecessary iterations and improves performance.
+>>
+>> Signed-off-by: Xavier <xavier_qy@163.com>
+>> ---
+>>   arch/arm64/mm/contpte.c | 13 +++++++++++--
+>>   1 file changed, 11 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+>> index bcac4f55f9c1..ca15d8f52d14 100644
+>> --- a/arch/arm64/mm/contpte.c
+>> +++ b/arch/arm64/mm/contpte.c
+>> @@ -163,17 +163,26 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
+>>
+>>          pte_t pte;
+>>          int i;
+>> +       bool dirty = false;
+>> +       bool young = false;
+>>
+>>          ptep = contpte_align_down(ptep);
+>>
+>>          for (i = 0; i < CONT_PTES; i++, ptep++) {
+>>                  pte = __ptep_get(ptep);
+>>
+>> -               if (pte_dirty(pte))
+>> +               if (!dirty && pte_dirty(pte)) {
+>> +                       dirty = true;
+>>                          orig_pte = pte_mkdirty(orig_pte);
+>> +               }
+>>
+>> -               if (pte_young(pte))
+>> +               if (!young && pte_young(pte)) {
+>> +                       young = true;
+>>                          orig_pte = pte_mkyoung(orig_pte);
+>> +               }
+>> +
+>> +               if (dirty && young)
+>> +                       break;
+> 
+> This kind of optimization is always tricky. Dev previously tried a similar
+> approach to reduce the loop count, but it ended up causing performance
+> degradation:
+> https://lore.kernel.org/linux-mm/20240913091902.1160520-1-dev.jain@arm.com/
+> 
+> So we may need actual data to validate this idea.
 
-               __wake_up_common(); /* ret=0x1 */
+The original v2 patch does not work, I changed it to the following:
 
-               } /* pick_next_task_fair ret=0x0 */
+diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+index bcac4f55f9c1..db0ad38601db 100644
+--- a/arch/arm64/mm/contpte.c
++++ b/arch/arm64/mm/contpte.c
+@@ -152,6 +152,16 @@ void __contpte_try_unfold(struct mm_struct *mm, 
+unsigned long addr,
+  }
+  EXPORT_SYMBOL_GPL(__contpte_try_unfold);
 
-The function print_graph_retval() adds a newline after the "*/". But if
-that's not called, the caller function needs to make sure there's a
-newline added.
++#define CHECK_CONTPTE_FLAG(start, ptep, orig_pte, flag) \
++       int _start; \
++       pte_t *_ptep = ptep; \
++       for (_start = start; _start < CONT_PTES; _start++, ptep++) { \
++               if (pte_##flag(__ptep_get(_ptep))) { \
++                       orig_pte = pte_mk##flag(orig_pte); \
++                       break; \
++               } \
++       }
++
+  pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
+  {
+         /*
+@@ -169,11 +179,17 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
+         for (i = 0; i < CONT_PTES; i++, ptep++) {
+                 pte = __ptep_get(ptep);
 
-This is confusing and when the function parameters code was added, it
-added a newline even when calling print_graph_retval() as the fact that
-the print_graph_retval() function prints a newline isn't obvious.
+-               if (pte_dirty(pte))
++               if (pte_dirty(pte)) {
+                         orig_pte = pte_mkdirty(orig_pte);
++                       CHECK_CONTPTE_FLAG(i, ptep, orig_pte, young);
++                       break;
++               }
 
-This caused an extra newline to be printed and that made it fail the
-selftests when the retval option was set, as the selftests were not
-expecting blank lines being injected into the trace.
+-               if (pte_young(pte))
++               if (pte_young(pte)) {
+                         orig_pte = pte_mkyoung(orig_pte);
++                       CHECK_CONTPTE_FLAG(i, ptep, orig_pte, dirty);
++                       break;
++               }
+         }
 
-Instead of having print_graph_retval() print a newline, just have the
-caller always print the newline regardless if it calls print_graph_retval()
-or not. This not only fixes this bug, but it also simplifies the code.
+         return orig_pte;
 
-Reported-by: Mark Brown <broonie@kernel.org>
-Closes: https://lore.kernel.org/all/ccc40f2b-4b9e-4abd-8daf-d22fce2a86f0@sirena.org.uk/
-Fixes: ff5c9c576e754 ("ftrace: Add support for function argument to graph tracer")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_functions_graph.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Some rudimentary testing with micromm reveals that this may be 
+*slightly* faster. I cannot say for sure yet.
 
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index 2f077d4158e5..0c357a89c58e 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -880,8 +880,6 @@ static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_ent_entr
- 
- 		if (print_retval || print_retaddr)
- 			trace_seq_puts(s, " /*");
--		else
--			trace_seq_putc(s, '\n');
- 	} else {
- 		print_retaddr = false;
- 		trace_seq_printf(s, "} /* %ps", func);
-@@ -899,7 +897,7 @@ static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_ent_entr
- 	}
- 
- 	if (!entry || print_retval || print_retaddr)
--		trace_seq_puts(s, " */\n");
-+		trace_seq_puts(s, " */");
- }
- 
- #else
-@@ -975,7 +973,7 @@ print_graph_entry_leaf(struct trace_iterator *iter,
- 		} else
- 			trace_seq_puts(s, "();");
- 	}
--	trace_seq_printf(s, "\n");
-+	trace_seq_putc(s, '\n');
- 
- 	print_graph_irq(iter, graph_ret->func, TRACE_GRAPH_RET,
- 			cpu, iter->ent->pid, flags);
-@@ -1313,10 +1311,11 @@ print_graph_return(struct ftrace_graph_ret_entry *retentry, struct trace_seq *s,
- 		 * that if the funcgraph-tail option is enabled.
- 		 */
- 		if (func_match && !(flags & TRACE_GRAPH_PRINT_TAIL))
--			trace_seq_puts(s, "}\n");
-+			trace_seq_puts(s, "}");
- 		else
--			trace_seq_printf(s, "} /* %ps */\n", (void *)func);
-+			trace_seq_printf(s, "} /* %ps */", (void *)func);
- 	}
-+	trace_seq_putc(s, '\n');
- 
- 	/* Overrun */
- 	if (flags & TRACE_GRAPH_PRINT_OVERRUN)
--- 
-2.47.2
+> 
+>>          }
+>>
+>>          return orig_pte;
+>> --
+>> 2.34.1
+>>
+> 
+> Thanks
+> Barry
+> 
 
 
