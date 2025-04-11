@@ -1,166 +1,132 @@
-Return-Path: <linux-kernel+bounces-599479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D94BA8541F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:28:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D946A85413
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4F9B9A40F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:28:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E7DF4A07BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6850627CCC7;
-	Fri, 11 Apr 2025 06:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4882027CCFC;
+	Fri, 11 Apr 2025 06:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="N/8txkv+"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="l55ocSx2";
+	dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="46bCdNpf"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5BC27CCCF
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 06:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744352895; cv=none; b=T8M2zipvWwmpHzA20YkJJrZEJhL9D01OYiXoS5IQZD9lZzdczz1NVR4or6aDBcqsLooVexJzK0MOPRjQtnV6YKmk3jtkpW3/Sgm3OMac6rNZBovKzNA4Wy75+q1eebyP955GmDehCLAi4Hw4wBqIq7Ucq5C5CrOdgpcJJX6wVOo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744352895; c=relaxed/simple;
-	bh=NuArtcv0yvrbxm8h5eZX3ZhdCgwnnBc1d2QdkHpQhEY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=LOVIMLXZL1zF9MXSvS/+I7AYPvFEcE8bi+GacoIWbSvFXYQQ44MX6UHZZ/2EFnGAt/GDw2XtFRFUeBLGZOrV04CFihCWVZCTUL74Pn+124hLRKOG3GreOet2GHlrA8RDjpzOb/IL7TwsHOKMOfzcgLdjGXSwtTdwU3d9/LmRNZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=N/8txkv+; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250411062805epoutp01840c3db5c78635038146c7e62cf10291~1L7UKJx9O0258502585epoutp01Z
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 06:28:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250411062805epoutp01840c3db5c78635038146c7e62cf10291~1L7UKJx9O0258502585epoutp01Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744352885;
-	bh=NuArtcv0yvrbxm8h5eZX3ZhdCgwnnBc1d2QdkHpQhEY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=N/8txkv+5pzo/upg++obqz4WsH5nNTKaBRSOiMkl/8gx3FcpSrz/uyh5NiTfgsRxA
-	 8mC82wCybM3QDObV83XrQHX0cL+OifNp4sICGHxL03p6elt3R0p/Cv48O81zL4vNfX
-	 WFV64K1r4fe6MGiJc3KPxvLSRdaMli3ItUmvEsEM=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250411062804epcas5p3d31ce10848709a9ac85ac4557bbae885~1L7TmDIBW2518725187epcas5p3X;
-	Fri, 11 Apr 2025 06:28:04 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4ZYmvk1M62z2SSKX; Fri, 11 Apr
-	2025 06:28:02 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BB.DA.10173.276B8F76; Fri, 11 Apr 2025 15:28:02 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250411062357epcas5p24091330994395616ad24998eed97044a~1L3s7jSrw1768217682epcas5p2z;
-	Fri, 11 Apr 2025 06:23:57 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250411062356epsmtrp23c04c9ff80cea2ef861f5e351af0f225~1L3swZmYf3232932329epsmtrp2K;
-	Fri, 11 Apr 2025 06:23:56 +0000 (GMT)
-X-AuditID: b6c32a44-8b5fb700000027bd-bc-67f8b672bb8d
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	34.9E.08805.C75B8F76; Fri, 11 Apr 2025 15:23:56 +0900 (KST)
-Received: from INBRO000519 (unknown [107.122.1.150]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250411062355epsmtip1a9da26eb2195619c4c24d1029a803ea3~1L3rMyBMT0874008740epsmtip1H;
-	Fri, 11 Apr 2025 06:23:55 +0000 (GMT)
-From: "Faraz Ata" <faraz.ata@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <alim.akhtar@samsung.com>,
-	<krzk+dt@kernel.org>, <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>
-Cc: <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-serial@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<dev.tailor@samsung.com>
-In-Reply-To: <9970c307-eba6-4c2d-98de-1a0f846efcd4@kernel.org>
-Subject: RE: [PATCH v2] tty: serial: samsung_tty: support 18 uart ports
-Date: Fri, 11 Apr 2025 11:53:44 +0530
-Message-ID: <03cc01dbaaaa$4dea13f0$e9be3bd0$@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4162D367;
+	Fri, 11 Apr 2025 06:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744352676; cv=pass; b=Gsus6rBYrKU2++MlusjOWmoVlu0doFvM8a9flZOTuLCuzRKf0qP2xOcPyrNm8DSSNJ35jDe/po5PcDXD1HejhopkEUDtE6LGXf6BwaB61CjKdzYeAdxN5y3D19nZFBB82l/CClhLg4r88zQ4BBi6/PPmPOKWRPLaq/uuR1Z2VyQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744352676; c=relaxed/simple;
+	bh=d2mubTFJ9Jx4DL5YGmhz/VPRUAIA2O3MS5/h7Kif+Uc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=fAR6c6cp1cotYtXEkxZ+6O17hEYoidFT7xSAY6s0zF8BV45VFMk7ktLfE4dsEuWUS75r67AbiPLg+b9c5SHYbAyhDYdoAsSCMaPsNdQYLBR7BuhIm/NB/R0uNeYebsQHb+W+OzB/i/P4ktV6MBZaLOQXKh2UtKAx4nedkcSp9f4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de; spf=pass smtp.mailfrom=a98shuttle.de; dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=l55ocSx2; dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=46bCdNpf; arc=pass smtp.client-ip=85.215.255.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=a98shuttle.de
+ARC-Seal: i=1; a=rsa-sha256; t=1744352669; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=mnZvPLknnS52ifaS5LViwU60x9fHICIK3NdjphLl6vk6WRADy8a+87j0HPLIaNhcbh
+    wjhLRwKMpiNXdL/6wMJNFxGAws+kLQFy/ZPzuWCrJHq0joAAw/xtO8RaZugGp8dQwMEl
+    IYn7cAm4JOzpxvpJQ8sVuH9xpWxceLJIJhjAAMttDI2ffMUKBlCKnIZJuYbHH9WJc5i9
+    iBA3GfFNw3Uni0ixTHhHLTn91PGxQFhvY2lJZLApVr9U8iTQ9RM8OCadIcMB7BlOxb0M
+    cjYzhbHG3LVhxAOZYKToSZhnKctziIj4K1fDP4CPORVvfBZPJkQgiM9ZgdyUShc/7+ti
+    f2ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1744352669;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=gb5I/mWgjpjIabsaRvpx/HiGJaPWsPrCBoI8IElSb8M=;
+    b=HME4gGxBlVSKB7696YoMGbl0rKKmqxz5kfh37cCI7spLWrr1WvnpD6DRACF9LA+dyU
+    /ncjV8hdSy+pd5vzll5MrsMvQdq21851CmdpKmYDSuDBqHYTpTkqSs/XtHmrfmey/+s+
+    YYtwclpo8LstvcZ4GJICb7sZ95fuj7VI3Rwnx5rHYxboNWUJ7FLh72JpxwLyw3XgvPhs
+    N8kCahtx0DPvuhRoFGh7gTpXc8WXWCyOBllGNxDvVZmizKaG5IvukyqA1ZK79Fx78Jca
+    Kz2niKKbCdHYSwkbN4chsEcMLKD+P4/FZewPYSI91r7LDycoopkp/CmT8s88TS4QdHyT
+    k9XQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1744352669;
+    s=strato-dkim-0002; d=fossekall.de;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=gb5I/mWgjpjIabsaRvpx/HiGJaPWsPrCBoI8IElSb8M=;
+    b=l55ocSx2NBzJaOD81lU3u4xNnpMKQK75zWj5xPf80WyQdjhLctB4v5B1fQZP+3It1x
+    fzCFA0mGKf4LWdqlwKjEE177KeH29rG7iCukcTT5ZTSjbZWZZR3heh9uinpRJsyle3uH
+    UECqZS3Y1/VkBsJs61yYoKO5iqovDm4gjrsr/1hfrCJdVNDvk+uvZ+ZrQkBrNSIxq91P
+    aCDwEvjgDpmb/QcKqkAscOvDizO8iVbhYVt88Ps9goADkF/HM5cJPzPMd6/vmVNb7tCV
+    peq20MNsdTHw+rQ6v8i8L04wC1Cad8xYhXFYoMZURemxA0kCQRxvaClQhOD4iIjpb27I
+    iR3A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1744352669;
+    s=strato-dkim-0003; d=fossekall.de;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=gb5I/mWgjpjIabsaRvpx/HiGJaPWsPrCBoI8IElSb8M=;
+    b=46bCdNpfny6xx8FFhPd2HYQhOzavWgM6DZynhiAeoDE5iCqNFrsJqhjnoV3Ie9GLBx
+    rplpd0sKvtt6jl+iD2AQ==
+X-RZG-AUTH: ":O2kGeEG7b/pS1EzgE2y7nF0STYsSLflpbjNKxx7cGrBdao6FTL4AJcMdm+lap4JEHkzok9eyEg=="
+Received: from aerfugl
+    by smtp.strato.de (RZmta 51.3.0 AUTH)
+    with ESMTPSA id f28b3513B6OTHaY
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Fri, 11 Apr 2025 08:24:29 +0200 (CEST)
+Received: from koltrast.home ([192.168.1.27] helo=a98shuttle.de)
+	by aerfugl with smtp (Exim 4.96)
+	(envelope-from <michael@a98shuttle.de>)
+	id 1u37oS-0000MY-1N;
+	Fri, 11 Apr 2025 08:24:28 +0200
+Received: (nullmailer pid 8854 invoked by uid 502);
+	Fri, 11 Apr 2025 06:24:28 -0000
+From: Michael Klein <michael@fossekall.de>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Michael Klein <michael@fossekall.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [net-next v6 0/4] net: phy: realtek: Add support for PHY LEDs on
+Date: Fri, 11 Apr 2025 08:24:22 +0200
+Message-Id: <20250411062426.8820-1-michael@fossekall.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQE/iintFYLILbr1Km3BNZJiCnEHnQEG7k++AhEV2Ou0vXbOMA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHJsWRmVeSWpSXmKPExsWy7bCmlm7Rth/pBgdfsVs8mLeNzeLejmXs
-	Fs2L17NZvJsrY/Fy1j02i/PnN7BbbHp8jdXi8q45bBYzzu9jsjizuJfd4svPB8wO3B6bVnWy
-	eeyfu4bdY/OSeo++LasYPT5vkgtgjcq2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0
-	MFdSyEvMTbVVcvEJ0HXLzAE6TEmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYFKg
-	V5yYW1yal66Xl1piZWhgYGQKVJiQnfF61wSWgl72ij+dvA2MZ1m7GDk5JARMJPZees3UxcjF
-	ISSwm1Fi0ZHLzBDOJ0aJM3c2sEA43xgl5i6fyQbT8mzPLHaIxF5Gif+z57NCOC8ZJXobOhlB
-	qtgENCXufH4KNlhEYBqjxN/DN8EGMwucYJS482cGC0gVp4CdxLVX/WAdwgLuEs/6r7GD2CwC
-	qhLTtvSC1fAKWErsWzqZGcIWlDg58wlYnFlAW2LZwtfMEDcpSPx8ugzsJREBJ4lT33oYIWrE
-	JV4ePQJ2q4TAWg6Ja/0LWSAaXCS+tfRD2cISr45vYYewpSQ+v9sL9aiPxOSj34AGcQDZGRJ3
-	1opAhO0lVi84wwoSZgb6cv0ufYiwrMTUU+uYINbySfT+fsIEEeeV2DEPxlaWOLlnDzTkJSUO
-	3X7BOoFRaRaSz2Yh+WwWkg9mIWxbwMiyilEytaA4Nz012bTAMC+1HB7jyfm5mxjBCVfLZQfj
-	jfn/9A4xMnEwHmKU4GBWEuFtD/6RLsSbklhZlVqUH19UmpNafIjRFBjcE5mlRJPzgSk/ryTe
-	0MTSwMTMzMzE0tjMUEmct3lnS7qQQHpiSWp2ampBahFMHxMHp1QDk8qq4vUT+H5cVUjw3/ly
-	ufmLGTe67mbfX+X/jvWUb4hxqNX2vHmT/uZ/jWyN5TBhf5VdlXm92PLkHu5PG25EsfmHpeVf
-	nyJyP8EysmPPrIgpQQVrPxv3i2yaZW/2x9DAYolVZMb0pA8tyeby8VvDE16pLO1ecZnBn7nH
-	x50pKFP52suZx4Vkn00TYlqtP43pZ13I1hpeW9fXax58O6MRz8a1i3dd2nGFBavfuiy6H7JF
-	9ufqGJkFL0tnykifF3p8Y4/JsmUfOmV7y76UtL/q2f7x2Ynw5aFsPbLSPpobAtv/sH36+vzP
-	l6unv8ve78/yV+j98vqtlsL5T7r3KjSjrfcmzbC46sTk7eC6XuI+sxJLcUaioRZzUXEiAHXf
-	QVVBBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsWy7bCSnG7N1h/pBi2NOhYP5m1js7i3Yxm7
-	RfPi9WwW7+bKWLycdY/N4vz5DewWmx5fY7W4vGsOm8WM8/uYLM4s7mW3+PLzAbMDt8emVZ1s
-	HvvnrmH32Lyk3qNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgyLr89yFLQwV7ROP8zUwPjMdYu
-	Rk4OCQETiWd7ZrF3MXJxCAnsZpS49XEPO0RCUuLw07tQRcISK/89hyp6zijx//FaNpAEm4Cm
-	xJ3PT5lAEiICcxglrv7vZQNxmAXOMEo8fPQfquUAo8T779PB5nIK2Elce9XPCGILC7hLPOu/
-	BhZnEVCVmLallwXE5hWwlNi3dDIzhC0ocXLmE7A4s4C2xNObT+HsZQtfM0PcpyDx8+kysFtF
-	BJwkTn3rYYSoEZd4efQI+wRG4VlIRs1CMmoWklGzkLQsYGRZxSiZWlCcm55bbFhglJdarlec
-	mFtcmpeul5yfu4kRHHlaWjsY96z6oHeIkYmD8RCjBAezkghve/CPdCHelMTKqtSi/Pii0pzU
-	4kOM0hwsSuK83173pggJpCeWpGanphakFsFkmTg4pRqYDs7Wt9iU9vX3C647ys0LdCdO2pe2
-	K/RIs3nWxj2vvzvZmLCvitvwt1ZL4tAO4c/xi0QXvM88Y75ZaNeS7CMZWzmreJaoTf05ZdGB
-	tubkzbsaK26an7+hx/asOf/ZSze1K2vbdz/Zdt5L3EzjuLJIToRV9u5Oqb0bzx5lC09lN36+
-	1FOt1iGx8Fr7UdevLGvn73vM3r+T05pHeetvi1ndW1K7/ToeZ3EHfg7V62K6OnOz6OSOFhv+
-	NgfTI59cXt3Z92TPl5pgkVqdY7PShb8xX25ckHyiYMbudO24xTMq84QtQ+/fuvx7/WHp2il7
-	5f7NSUi99WLtr7mSxR0xqWd4ZogELJQ23P0+NlOLfd91JiWW4oxEQy3mouJEAPquNo8rAwAA
-X-CMS-MailID: 20250411062357epcas5p24091330994395616ad24998eed97044a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250404134131epcas5p4794f2b1e5d289e1faa142c9093ea45e5
-References: <CGME20250404134131epcas5p4794f2b1e5d289e1faa142c9093ea45e5@epcas5p4.samsung.com>
-	<20250404135006.1263827-1-faraz.ata@samsung.com>
-	<9970c307-eba6-4c2d-98de-1a0f846efcd4@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hello Krzysztof
+Changes in V6:
+- fix macro definition order (patch 1)
+- introduce two more register defines (patch 2)
 
-> Subject: Re: =5BPATCH v2=5D tty: serial: samsung_tty: support 18 uart por=
-ts
->=20
-> On 04/04/2025 15:50, Faraz Ata wrote:
-> > Exynos Auto v920 SoC supports up to 18 UART ports.
-> > Hence changing the value of UART_NR to 18.
-> > ---
->=20
-> How v2, without changelog, is even worse than v1? It goes to wrong
-> direction.
->=20
-> Please run scripts/checkpatch.pl and fix reported warnings. After that, r=
-un
-> also =60scripts/checkpatch.pl --strict=60 and (probably) fix more warning=
-s. Some
-> warnings can be ignored, especially from --strict run, but the code here =
-looks
-> like it needs a fix. Feel free to get in touch if the warning is not clea=
-r.
->=20
->
-Thanks for your review and sorry for the noise,
- that was not intentional, got posted by mistake, will takecare about it.
-Will send another version with change-log.
-> ...
-> Best regards,
-> Krzysztof
+Changes in V5:
+- Split cleanup patch and improve code formatting
+
+Changes in V4:
+- Change (!ret) to (ret == 0)
+- Replace set_bit() by __set_bit()
+
+Changes in V3:
+- move definition of rtl8211e_read_ext_page() to patch 2
+- Wrap overlong lines
+
+Changes in V2:
+- Designate to net-next
+- Add ExtPage access cleanup patch as suggested by Andrew Lunn
+
+Michael Klein (4):
+  net: phy: realtek: Group RTL82* macro definitions
+  net: phy: realtek: Clean up RTL8211E ExtPage access
+  net: phy: realtek: use __set_bit() in rtl8211f_led_hw_control_get()
+  net: phy: realtek: Add support for PHY LEDs on RTL8211E
+
+ drivers/net/phy/realtek/realtek_main.c | 204 ++++++++++++++++++++-----
+ 1 file changed, 163 insertions(+), 41 deletions(-)
+
+-- 
+2.39.5
 
 
