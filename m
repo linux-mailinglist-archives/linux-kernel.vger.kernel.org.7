@@ -1,111 +1,93 @@
-Return-Path: <linux-kernel+bounces-600430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDFA5A85FCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:57:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC8EA85FD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C3161BA58AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:57:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39EA61BA58EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79B31F3BBE;
-	Fri, 11 Apr 2025 13:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D871F180E;
+	Fri, 11 Apr 2025 14:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XrCatCov"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjOTStuo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091E51F3B89;
-	Fri, 11 Apr 2025 13:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C48A198845;
+	Fri, 11 Apr 2025 14:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744379843; cv=none; b=ZZr0ZrtAUjlOkHi/6Y1lBLBFPMSuxhYH0UbZd19QeLGG4ONxxSN/zF89fISVsSLG9cfM8ToVeEpZO7qGTdarZhxJ/YNySgtXqEwdD6vB1YThGS0k4O2CD29nw3lwNEmne7N/+o2ypJC79rgEnv/CPDsecpwYLNw8tmP3/YZWy7w=
+	t=1744380062; cv=none; b=e3npR/gpp9SK+Un3/vz5rxn3hIGkK0Cxmo2y4dTpo1ik2C/6G92A8Dod9C5YjUC+5E76/037JGNPl/g6/NqFpymUQX3REBkcTufKobXhc4tHVlm4vyhn/SsXV7j0qRl0wDp0wE/kZ5tICo7wi4lxFtFWsIW0pW9/ziKfNp3M2oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744379843; c=relaxed/simple;
-	bh=qKM86nHSsdV+O0qGr33nuoJcLArnt2t2yHur6JnRC5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IdbJDS4zlNOq4peBXWqKt0DCmpkqOhdsX3t8x3kDfMnLOhdMiH9ikBfvMiSfjufM8EHLe2mI3OT/4Yne1QJ5jmcUUezGgY/MkTfbX9Mcw2ryXO70WjGY3CYNAGob/TijjJD8UnV5QYc82W/Sp1arJOt7Hv3Ego154JiiR3uOy3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XrCatCov; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 029D9C4CEE7;
-	Fri, 11 Apr 2025 13:57:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744379842;
-	bh=qKM86nHSsdV+O0qGr33nuoJcLArnt2t2yHur6JnRC5Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XrCatCovTvxZdMoG/QMZeli3flXHRA/5zIqVIf8nzEVPAPp2VuigF+znX/J02B1ua
-	 TpQsDPU8lQQxB4f3WL+KtohICnlRh8Bfkpp5tb2Q1tHGiRD2zWmh82x5dKCb9GKfpf
-	 YOQr+EcBpZTgZdOnpvg++nWW5DLcAtEDPRokb678=
-Date: Fri, 11 Apr 2025 15:57:19 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Petr Tesarik <ptesarik@suse.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] usb: core: warn if a GFP zone flag is passed to
- hcd_buffer_alloc()
-Message-ID: <2025041110-starch-abroad-5311@gregkh>
-References: <20250320154733.392410-1-ptesarik@suse.com>
- <20250325134000.575794-1-ptesarik@suse.com>
+	s=arc-20240116; t=1744380062; c=relaxed/simple;
+	bh=7f8FYLo69ndVxvN+7drkLi5nDw1zMVObS8E6TwJKQ54=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bElp25qs0OcD9ePW1K06jjeDqBGXnuMie3cEjQfR6ZPKN6jfaSpqR+YScrRIrwsLmWNOfwIFgdVOBl6LEA1Di8/0r3jfRREFd6DZCSzyYTJKS7HuK1HVHGXni33iqlXvsNlSKNkVbzrCMcuKKHMpEn7Ij2cWh7uisrf/PskNXIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjOTStuo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F599C4CEE2;
+	Fri, 11 Apr 2025 14:00:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744380062;
+	bh=7f8FYLo69ndVxvN+7drkLi5nDw1zMVObS8E6TwJKQ54=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YjOTStuoSBRao9000Y9a+NBaI23xy+zjUoH35q3WBhxlTC2PUrJMtfugNCIFzRS7t
+	 c12e5evJb4D7MOA4FUb5whfSeYAKs6/z34T953OWztvzbdwJ3i8qHFAsQ9x95JqHEi
+	 18ruz9q2jBRxZkoKd8jPH2FIEafDSU4+87tgbV87xgaJVnlkv6FVTzC63bH2iy39JV
+	 HEsVZwoxCIhkBKvh6TfRdyaj7JMLGbCTNKwPHEB0hPaOfckA/ONq2XqMJI25aWofwC
+	 UKO2fgbHf58I24Qio2QCfaT/qaB5rooDI+0srVNaUVHcHRcEyvR0F1gce+1inVdRzv
+	 GZj/Tw2m5RQ0A==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Song Liu <song@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	kernel-team@meta.com,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH] fs: Fix filename init after recent refactoring
+Date: Fri, 11 Apr 2025 16:00:55 +0200
+Message-ID: <20250411-eisen-mitsingen-5885da4bce28@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250409220534.3635801-1-song@kernel.org>
+References: <20250409220534.3635801-1-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250325134000.575794-1-ptesarik@suse.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1023; i=brauner@kernel.org; h=from:subject:message-id; bh=7f8FYLo69ndVxvN+7drkLi5nDw1zMVObS8E6TwJKQ54=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/VJjRtWvBncvlZkGctizLErrcndujj11frHOw0flSV E9+p1RxRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETcbzH8lfh+1Te/8VPo6ocf K9dPuqWlMadse1rh1w7XeCWzGTXPHjMy/OCpFFyRXr/WdtPVqrQXrIcMvK8/ZomZ1ubCeHNXSkU hAwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 25, 2025 at 02:40:00PM +0100, Petr Tesarik wrote:
-> Remove a misleading comment and issue a warning if a zone modifier is
-> specified when allocating a hcd buffer.
+On Wed, 09 Apr 2025 15:05:34 -0700, Song Liu wrote:
+> getname_flags() should save __user pointer "filename" in filename->uptr.
+> However, this logic is broken by a recent refactoring. Fix it by passing
+> __user pointer filename to helper initname().
 > 
-> There is no valid use case for a GFP zone modifier in hcd_buffer_alloc():
-> - PIO mode can use any kernel-addressable memory
-> - dma_alloc_coherent() ignores memory zone bits
 > 
-> This function is called by usb_alloc_coherent() and indirectly by
-> usb_submit_urb(). Despite the comment, no in-tree users currently pass
-> GFP_DMA.
-> 
-> Signed-off-by: Petr Tesarik <ptesarik@suse.com>
-> ---
->  drivers/usb/core/buffer.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/core/buffer.c b/drivers/usb/core/buffer.c
-> index 87230869e1fa..10844cd42e66 100644
-> --- a/drivers/usb/core/buffer.c
-> +++ b/drivers/usb/core/buffer.c
-> @@ -108,10 +108,6 @@ void hcd_buffer_destroy(struct usb_hcd *hcd)
->  }
->  
->  
-> -/* sometimes alloc/free could use kmalloc with GFP_DMA, for
-> - * better sharing and to leverage mm/slab.c intelligence.
-> - */
-> -
->  void *hcd_buffer_alloc(
->  	struct usb_bus		*bus,
->  	size_t			size,
-> @@ -128,6 +124,12 @@ void *hcd_buffer_alloc(
->  	if (hcd->localmem_pool)
->  		return gen_pool_dma_alloc(hcd->localmem_pool, size, dma);
->  
-> +	/*
-> +	 * Zone modifiers are ignored by DMA API, and PIO should always use
-> +	 * GFP_KERNEL.
-> +	 */
-> +	WARN_ON_ONCE(mem_flags & GFP_ZONEMASK);
 
-You just rebooted the box if this happens, do you REALLY want to do
-that?  People generally do not like their data lost :(
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Why not just fix the callers, OR if this really isn't going to be
-allowed, return an error and just fail the whole submission?  And stick
-around to fix up all of the drivers that end up triggering this...
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-thanks,
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-greg k-h
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] fs: Fix filename init after recent refactoring
+      https://git.kernel.org/vfs/vfs/c/b463d7fd118b
 
