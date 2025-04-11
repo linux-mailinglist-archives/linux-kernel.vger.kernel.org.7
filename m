@@ -1,130 +1,241 @@
-Return-Path: <linux-kernel+bounces-600821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F29A864D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:36:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A82A864E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C394A8C485F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:35:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D46F9A4170
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EEB239099;
-	Fri, 11 Apr 2025 17:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MjLSlTVZ"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EBA23BCFF;
+	Fri, 11 Apr 2025 17:36:23 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F2821B908
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 17:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C6323A9A0;
+	Fri, 11 Apr 2025 17:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744392915; cv=none; b=IVfM/3NTgI3y0akniPJE6Q6VILRu83S+DZQzsuyQCwNWv2HC4Q1ZQV8hyOhZ4xUbo8yIZjh8kcG9Cb1guQF9UH3yOoS0D8vM0PJdZuw9SygPurJubtW80f01IrZrJgW7Ta+gHzDfV0j5EZ7JsxqmZe4L33K1IkFswK9/PuIBRAg=
+	t=1744392983; cv=none; b=LJ7AfAa3VMOnIluj8HadHKKPrScLJ1CK5/2+tGsZwTbVhEfAJYWy43uRH0jkYlvXZomCwxzBgQeYRrYLBfyf6leNJHk5zqoV0t1DprmiNtBFE4rGWmrok/B45BPWeiK0/ODh6znsKkru4Ukr/wvZLyc9K43WXEEmoAw0nm6IRaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744392915; c=relaxed/simple;
-	bh=+eht9iaQ6o1fN2gEoUHVMqICYWehtz7ZUwi+FbnEXgE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U+JI5NMOq0CJ9hn5V7tuf85dr3Fzrrll2Y+/wiZ0E8ebEavrWC8vd7DMd+UZDi+UAEHqGrnBALfkcLbYZh15aMZqc/5epbivACgu3YtPlPPz2HMHqYyZs57vN74f0G26XmIvXCNNSDsDCnmkp7xQSF9eyP8TQvG4Y2hlItR7/jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MjLSlTVZ; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2240aad70f2so17505ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744392909; x=1744997709; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+eht9iaQ6o1fN2gEoUHVMqICYWehtz7ZUwi+FbnEXgE=;
-        b=MjLSlTVZjYfLqKTf33/JtYchF8CUgF0UwEGkkv0JgwG/ap3v/DCXMCABtsxenEZRcX
-         yNs20K5X1/pMnI/dMIhE9ZHz0gw3+8r2044zJmWF/rA+c3XSDNGiegIR8Z3MsV/CjET8
-         F8io6HWMeqq52Z4T3HrXJP2NwZxKTIQjs6eVipzOgkHCZWcTbqZyEOLP8SAsGTtJBcV2
-         OIV+aA6abwPo4+FUk8BWP5DA6nBZ/dnspeuKAVQf7P7mAMoSHE0+ae/OFJ7dgwdEnIwR
-         GsIpzp1uMHozhtiWq3mKAJQ8DLasDh4Qe6rhw5SCABehigHy465d4r2tUwg8LJkDWHyZ
-         vRsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744392909; x=1744997709;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+eht9iaQ6o1fN2gEoUHVMqICYWehtz7ZUwi+FbnEXgE=;
-        b=S//VBOKOIray9X9YqYcQfw+1tDA5jUNhI4X66p8/uzl75VGE6pmlL4KTQdW8GlsFX8
-         /HWlsW3WiauzZeA12e5wYNJb7me3DZJLSHR+/6MpzpcZO5JFOd50UgAw1aMzk1TAWlK8
-         7tkDdHnpdo+38bAdfjKBG+xR10MkbOrpCUT4GrkzC1Wnn2LJyOi4cZxOSTcqTJp/w7Gs
-         g6jsk/gMQIhXEPpL0B4yXs9BsYR0zUD5jbC2aC5zxmGQqVJjRuX6oT2VSwHP7IeU28db
-         MrRvmTO663LV2eMIoGxmUZ665IuiMiX0rKdtU37O4IlRaHziAgOOxVgA+5FxNIirWd1+
-         VlFg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7g4Y+EA3rQI/kZu72IK3NywHpaSpiixLpN4h2LSJ0wqjRCGCAkriPdhzNZPwog4avkILMRLgjdkOur00=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykD7K79fxlLG7Mc9OeLQwtI8nMdVRWDbAmQgOAoN5iw75CDfCW
-	Yz6nAvsljuTF+FvZk243F63/jdgQJ9D29TMajMCxH77T0XpR3yYhhrEgErqRfRjXe6vs64D0tju
-	1yiXXUwrhtLoCseql2qm6wTvJgYOgrx9XxWeB
-X-Gm-Gg: ASbGnct51Q4S2IaQdq8GYrpMGxjXAulT866wo9E9BhlysN5A+RiO86Og9LLSubuKysC
-	NEPARcdVRnjQtwz42WjAGaOLE2vLXA8py+KATkmrzWt47GhVSx+Xl7H/hZTtL0LiSR3rdMb4Iec
-	P9dFgKCzknVDz/c5ayQ+2vMRQ=
-X-Google-Smtp-Source: AGHT+IFsqGb2NI4C998L4eRk5pxG9ZDV+EPyXU0sBnQYjqjaZsqLTIZPs5b8kewYg6GP32+Vd/vVcfo+p6pguFqbuOY=
-X-Received: by 2002:a17:902:c40e:b0:216:21cb:2e06 with SMTP id
- d9443c01a7336-22bea920b31mr3043845ad.19.1744392908956; Fri, 11 Apr 2025
- 10:35:08 -0700 (PDT)
+	s=arc-20240116; t=1744392983; c=relaxed/simple;
+	bh=RrQmy/7o+Lvxl/t4l7CT1gzLGDDGt209WtpOumTSV00=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qdkXsSMYZFcho5WttZ0Di+C+j4EeTTpOaW9qo8QToG/upOFkNKiXtMYgYorW2C8yFEvgD/QeZ30VgKfw3aQc76b6/YktQqXwAJf+GP/njzP1vsjxeGlZFEKJCao1t8e+ksa+Fip+9dAINY/g1eFT8K6zqsEtCyn9Mjl3eWosq/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZZ3f821gxz6K9X0;
+	Sat, 12 Apr 2025 01:32:16 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D77C81402F7;
+	Sat, 12 Apr 2025 01:36:16 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Apr
+ 2025 19:36:16 +0200
+Date: Fri, 11 Apr 2025 18:36:14 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
+CC: <remi.buisson@tdk.com>, Jonathan Cameron <jic23@kernel.org>, David Lechner
+	<dlechner@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: Re: [PATCH 6/8] iio: imu: add Kconfig and Makefile for inv_icm45600
+ driver
+Message-ID: <20250411183614.00002382@huawei.com>
+In-Reply-To: <20250411-add_newport_driver-v1-6-15082160b019@tdk.com>
+References: <20250411-add_newport_driver-v1-0-15082160b019@tdk.com>
+	<20250411-add_newport_driver-v1-6-15082160b019@tdk.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408171530.140858-1-mark.barnett@arm.com> <Z_ZcRiHTGljxEEdN@gmail.com>
- <2fa741d8-13c7-49c0-a6c5-540a7c2cf3a7@arm.com>
-In-Reply-To: <2fa741d8-13c7-49c0-a6c5-540a7c2cf3a7@arm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 11 Apr 2025 10:34:56 -0700
-X-Gm-Features: ATxdqUEZa_1pWKSod4wY40ZarBa-DN6S4qpDe5Ur1LE7Pb1ofS8DC8N_Fn09SwQ
-Message-ID: <CAP-5=fUukVQMRHUQ9Mpx38H-7VNLt4mDj-jaYgn8Tf4zjecD-A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] A mechanism for efficient support for per-function metrics
-To: Mark Barnett <mark.barnett@arm.com>
-Cc: Ingo Molnar <mingo@kernel.org>, peterz@infradead.org, mingo@redhat.com, 
-	acme@kernel.org, namhyung@kernel.org, ben.gainey@arm.com, 
-	deepak.surti@arm.com, ak@linux.intel.com, will@kernel.org, 
-	james.clark@arm.com, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, adrian.hunter@intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Apr 11, 2025 at 4:08=E2=80=AFAM Mark Barnett <mark.barnett@arm.com>=
- wrote:
-> Tool Integration
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> We've been using a python script to process the data into a report. We
-> can look at implementing this directly in perf report, if that is
-> required. However, I'm nervous about making the new feature the default
-> behaviour for the tool.
->
-> This feature has been integrated into our tools [1] for the last 12
-> months, and has received a lot of testing on Arm Neoverse hardware.
-> Other platforms have received less rigorous testing. In my opinion, more
-> work would be needed to validate the PMU hardware & software
-> characteristics of other architectures before this can be made the defaul=
-t.
+On Fri, 11 Apr 2025 13:28:38 +0000
+Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org> wrote:
 
-Hi Mark,
+> From: Remi Buisson <remi.buisson@tdk.com>
+> 
+> Add 4 modules:
+> - inv-icm45600
+> - inv-icm45600-i2c
+> - inv-icm45600-spi
+> - inv-icm45600-i3c.
+> 
+> Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
 
-Wrt testing, in v6.14 we've fixed up the python scripting with perf a
-bit more and there is an example that parses an event and then dumps
-samples here:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/python/tracepoint.py?h=3Dperf-tools-next
-There is also the perf script integration for things like flame graphs:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/scripts/python/flamegraph.py?h=3Dperf-tools-next#n96
+Hi Remi,
 
-I don't think work should be gated on cleaning up perf report, top,
-etc. which still needs clean up for things like hybrid events. As the
-histograms should use the sample's period then I believe things should
-just work in much the same way as leader sampling can work. It'd be
-worth checking.
+One quick comment.  A driver should be structured to build fully
+after each patch.  That means the makefile and kconfig should be introduced
+in patch 1 of the series. Obviously more stuff will be added as you go
+along.
+
+If someone just wants to pick up the patches for the core and one bus
+they should be able to do so and expect that to work.
+
+Some other areas of the kernel are more flexible on this than I am
+but for IIO at least that's they way we have always done things
+and I'm not keen to change it.  It means that we know everything
+we need to review each step in sequence is there as otherwise it
+would not build.
+
+It does mean that you need to build test each additional patch
+whenever you do a new version to be sure that the series will be
+fine for a bisection build. 
+
+The exception of 'hidden' library modules like the core one here
+that won't get built until someone selects them from another kconfig
+symbol is fine though.
 
 Thanks,
-Ian
+
+Jonathan
+
+> ---
+>  drivers/iio/imu/Kconfig               |  1 +
+>  drivers/iio/imu/Makefile              |  1 +
+>  drivers/iio/imu/inv_icm45600/Kconfig  | 70 +++++++++++++++++++++++++++++++++++
+>  drivers/iio/imu/inv_icm45600/Makefile | 17 +++++++++
+>  4 files changed, 89 insertions(+)
+> 
+> diff --git a/drivers/iio/imu/Kconfig b/drivers/iio/imu/Kconfig
+> index 15612f0f189b5114deb414ef840339678abdc562..9d732bed9fcdac12a13713dba3455c1fdf9f4a53 100644
+> --- a/drivers/iio/imu/Kconfig
+> +++ b/drivers/iio/imu/Kconfig
+> @@ -109,6 +109,7 @@ config KMX61
+>  	  be called kmx61.
+>  
+>  source "drivers/iio/imu/inv_icm42600/Kconfig"
+> +source "drivers/iio/imu/inv_icm45600/Kconfig"
+>  source "drivers/iio/imu/inv_mpu6050/Kconfig"
+>  
+>  config SMI240
+> diff --git a/drivers/iio/imu/Makefile b/drivers/iio/imu/Makefile
+> index e901aea498d37e5897e8b71268356a19eac2cb59..2ae6344f84699b2f85fff1c8077cb412f6ae2658 100644
+> --- a/drivers/iio/imu/Makefile
+> +++ b/drivers/iio/imu/Makefile
+> @@ -25,6 +25,7 @@ obj-$(CONFIG_FXOS8700_I2C) += fxos8700_i2c.o
+>  obj-$(CONFIG_FXOS8700_SPI) += fxos8700_spi.o
+>  
+>  obj-y += inv_icm42600/
+> +obj-y += inv_icm45600/
+>  obj-y += inv_mpu6050/
+>  
+>  obj-$(CONFIG_KMX61) += kmx61.o
+> diff --git a/drivers/iio/imu/inv_icm45600/Kconfig b/drivers/iio/imu/inv_icm45600/Kconfig
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..4fade8852a0dcf54df2bbd67b9269ed2c59f8699
+> --- /dev/null
+> +++ b/drivers/iio/imu/inv_icm45600/Kconfig
+> @@ -0,0 +1,70 @@
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +config INV_ICM45600
+> +	tristate
+> +	select IIO_BUFFER
+> +	select IIO_KFIFO_BUF
+> +	select IIO_INV_SENSORS_TIMESTAMP
+> +
+> +config INV_ICM45600_I2C
+> +	tristate "InvenSense ICM-456xx I2C driver"
+> +	depends on I2C
+> +	select INV_ICM45600
+> +	select REGMAP_I2C
+> +	help
+> +	  This driver supports the InvenSense ICM-456xx motion tracking
+> +	  devices over I2C.
+> +	  Supported devices:
+> +	  - ICM-45605
+> +	  - ICM-45686
+> +	  - ICM-45688-P
+> +	  - ICM-45608
+> +	  - ICM-45634
+> +	  - ICM-45689
+> +	  - ICM-45606
+> +	  - ICM-45687
+> +
+> +	  This driver can be built as a module. The module will be called
+> +	  inv-icm45600-i2c.
+> +
+> +config INV_ICM45600_SPI
+> +	tristate "InvenSense ICM-456xx SPI driver"
+> +	depends on SPI_MASTER
+> +	select INV_ICM45600
+> +	select REGMAP_SPI
+> +	help
+> +	  This driver supports the InvenSense ICM-456xx motion tracking
+> +	  devices over SPI.
+> +	  Supported devices:
+> +	  - ICM-45605
+> +	  - ICM-45686
+> +	  - ICM-45688-P
+> +	  - ICM-45608
+> +	  - ICM-45634
+> +	  - ICM-45689
+> +	  - ICM-45606
+> +	  - ICM-45687
+> +
+> +	  This driver can be built as a module. The module will be called
+> +	  inv-icm45600-spi.
+> +
+> +config INV_ICM45600_I3C
+> +	tristate "InvenSense ICM-456xx I3C driver"
+> +	depends on I3C
+> +	select INV_ICM45600
+> +	select REGMAP_I3C
+> +	help
+> +	  This driver supports the InvenSense ICM-456xx motion tracking
+> +	  devices over I3C.
+> +	  Supported devices:
+> +	  - ICM-45605
+> +	  - ICM-45686
+> +	  - ICM-45688-P
+> +	  - ICM-45608
+> +	  - ICM-45634
+> +	  - ICM-45689
+> +	  - ICM-45606
+> +	  - ICM-45687
+> +
+> +	  This driver can be built as a module. The module will be called
+> +	  inv-icm45600-i3c.
+> diff --git a/drivers/iio/imu/inv_icm45600/Makefile b/drivers/iio/imu/inv_icm45600/Makefile
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..0fd6fbce0286f24504dbfe71925f9c35e717c446
+> --- /dev/null
+> +++ b/drivers/iio/imu/inv_icm45600/Makefile
+> @@ -0,0 +1,17 @@
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +obj-$(CONFIG_INV_ICM45600) += inv-icm45600.o
+> +inv-icm45600-y += inv_icm45600_core.o
+> +inv-icm45600-y += inv_icm45600_gyro.o
+> +inv-icm45600-y += inv_icm45600_accel.o
+> +inv-icm45600-y += inv_icm45600_temp.o
+> +inv-icm45600-y += inv_icm45600_buffer.o
+> +
+> +obj-$(CONFIG_INV_ICM45600_I2C) += inv-icm45600-i2c.o
+> +inv-icm45600-i2c-y += inv_icm45600_i2c.o
+> +
+> +obj-$(CONFIG_INV_ICM45600_SPI) += inv-icm45600-spi.o
+> +inv-icm45600-spi-y += inv_icm45600_spi.o
+> +
+> +obj-$(CONFIG_INV_ICM45600_I3C) += inv-icm45600-i3c.o
+> +inv-icm45600-i3c-y += inv_icm45600_i3c.o
+> 
+
 
