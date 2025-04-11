@@ -1,221 +1,155 @@
-Return-Path: <linux-kernel+bounces-599261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611B5A8518E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 04:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F78A8519E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 04:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F6417B4583
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 02:26:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 673A17A6DFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 02:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E04F27BF94;
-	Fri, 11 Apr 2025 02:27:32 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA739279339;
+	Fri, 11 Apr 2025 02:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VJzcRa70"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B728F27BF82;
-	Fri, 11 Apr 2025 02:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744338451; cv=fail; b=iibsbbumoru8d/hK8vcl4PpaHpp8+BOoHfhN79rLS72oWPTUTv4kOEnFPeDt8KDVAS78hp3BKfOpIqVQz7gzZsbmiIdnKtqtQ673rhiuKLTEqVQ+0DaOWVi15+H4NF6lwsdUrk7je+1hnQTkhjyX8GmYpSjG0+35DprzSv5FW5k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744338451; c=relaxed/simple;
-	bh=sLJ7FiG28ncUAYD6gh6YzCtLlwiWXbfNYt4gx3FMaYc=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=pnRMLTON4RVdt8LfC6u845StoibObLDfu4uoMDA61o3RG/iMDccqkxO5SM0O81v/qpsQ5OBnXw1RWg/xnKyHSq58Ssf8SaCDfr5ll+zvyd6a8oY/NjY3CIUdBuyMCuXc9OHXOzaDHEM2KOzzClT1KC+nYKmo4RHCzutewdUf6PU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B18mSi014583;
-	Fri, 11 Apr 2025 02:26:40 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2170.outbound.protection.outlook.com [104.47.57.170])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45tsr1qt03-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 02:26:40 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yFULSA0k5HlkyqIEbT5iwNssSXlg9mQN4y+ULPc8J1EBTYjqGSx8KLqAG+ht4SVqWcOjNKPBb0f08vLBBC9fBkJqY4XJ6/XainyUmRHE7ntKV5O+f0zMQreCVBn1WPEaHFCKWrd0ZwscKR6qOjpcXa/dww+3uk4ZiCpI3HmjG/zEDqYZ4z2id3ZI3KQ/BBwrKFBIqWKxRFhWtPUtDBrllQABMW8qv1PhaWooGmOA+aj9b9hixHMRXph8GVHqc5plHFtiWdD+FX3Hk20tg9go8kDXOfpqJ//nRMAQXL299nLdHH+Oa6Iy7s3QCx0GG+Qsc7J+MJ8lbGbixJFQ94DXpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mBAIHBG4ic88cQWcXbWauxQRGZeslouZDyZCVDBUQwY=;
- b=mEtZzNI/ogD1BY8a0A8NDS0pz36tFhjT3XrKEc4P1kHGlogix+NNiYhXEzU6WSjOz5tKC/vJyeqpu3ZZzYL68Cy6ORrzWkB4tH5fPOsp/3M8l8CT/YfUc2odMGGSljhtdw7k8nQY9DJEQ5nX+uKY23KDcY+0GveAurpTPei5isGyb6k9OB92O9T4yGFI65R47/kf0IXQSHE/BID6sxIPvem5p4uTIp8M8hzeCLinm/4yuPHt7LUC67H7/6+sk2iA84VW24V+cVmr0jTh5zxs/oTdXD4P7B69ubeAdLzm3Qnv7qcQWLgpuk4JEELYtKFaeO8+WajuIgxBMIt5uKhynA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from CY8PR11MB7012.namprd11.prod.outlook.com (2603:10b6:930:54::6)
- by CO1PR11MB5186.namprd11.prod.outlook.com (2603:10b6:303:9b::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.22; Fri, 11 Apr
- 2025 02:26:36 +0000
-Received: from CY8PR11MB7012.namprd11.prod.outlook.com
- ([fe80::83d5:946f:3692:8c0d]) by CY8PR11MB7012.namprd11.prod.outlook.com
- ([fe80::83d5:946f:3692:8c0d%4]) with mapi id 15.20.8606.033; Fri, 11 Apr 2025
- 02:26:36 +0000
-From: Cliff Liu <donghua.liu@windriver.com>
-To: stable@vger.kernel.org
-Cc: mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        leitao@debian.org, nathanl@linux.ibm.com, donghua.liu@windriver.com,
-        Zhe.He@windriver.com, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5.10.y] powerpc/rtas: Prevent Spectre v1 gadget construction in sys_rtas()
-Date: Fri, 11 Apr 2025 10:26:23 +0800
-Message-Id: <20250411022623.947973-1-donghua.liu@windriver.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGBP274CA0012.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::24)
- To CY8PR11MB7012.namprd11.prod.outlook.com (2603:10b6:930:54::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C9B1F0990
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 02:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744338840; cv=none; b=r93raeetQFCW5NZGZttnyr9i8MBMjxhYXizKcetFFPHB8jNfums2nZ48hW72O6lX++E7E2dj1h800/eceYebCcPHMmzS8f8YfAIaxFqKK41+3P47kfI/KAIzS+q6EvRnCJnsbRCDPOmDJIw2I14oQT+Env/U1JIfIzfNU3q3aAY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744338840; c=relaxed/simple;
+	bh=tZp/nWpeL3IjPih7amkifGty8bjxnO64DSgmN83xU/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u5PYinQF/7AokbP5KQ35KkzFdZ/0LNJsTBycgac7mwPafa8P5UOGCAbyO7++T1IM93N8a34pVtvwy9idR4GOKNCbrX/jdxUnv3xsTrKavdFEnVpxUszCl0RnfZirY/L7VZ2Ny2LO+G2L91iGYYgIJzoQIqxFRR5v8R9IT8lgak4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VJzcRa70; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1744338834; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=E9bGGUreuEr9WcQwyHdCJYupubC8PqSvroGU5lP73V0=;
+	b=VJzcRa70n7ZGccrp2rhtDhj0p/UFDo7WHJYue1Zra1Oqsy8xehin038BlATyTdbpSYiYSPLP0Nb3/r7deEKO6RdbLHWV9kM3Nb1rBtF8efRWR3dYzMztUR8G6Go7lfkoZFYRGwclZsI7zYAHZSQWBwRaObyf/3Qyf1KbQx7wMqI=
+Received: from 30.74.129.90(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WWRQjjz_1744338516 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 11 Apr 2025 10:28:36 +0800
+Message-ID: <3f901a84-9157-4f93-86a4-b56f5c240f78@linux.alibaba.com>
+Date: Fri, 11 Apr 2025 10:28:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR11MB7012:EE_|CO1PR11MB5186:EE_
-X-MS-Office365-Filtering-Correlation-Id: fca0b609-0eab-43ff-8606-08dd78a04897
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BF2deh7GeynsCl5kEgr9ilhTMsOQKrHixagCr+6uU5HwveHFnOhdh0Fwz4Sh?=
- =?us-ascii?Q?pvux+DAFkmGFR8hAOREAoROqngkVTkayqTGyqMLhvpevkJRD0rlPzucksqel?=
- =?us-ascii?Q?NSvoPc/LxSVc/ekJVM7LKFrKcRolXMvT1qy6hR5KMEfW3GErc5HbRZkRHLbt?=
- =?us-ascii?Q?42ckXHuI9W9AQww+ARu+2ETW+tLRVllrWcDmy4P/Vvc+8ZMAJH2mI69+H0FK?=
- =?us-ascii?Q?VGcpi/rFFZENy8SkQLghLdlFcqMtFsrzcXDsVfcLXa5hmS3yGbz26VQwWX0Z?=
- =?us-ascii?Q?VdHh+fCD4wlIs2ihXx1CtwH8TWnZxXmu9Eo6FUavYcJWNB0zMFBHe342RapV?=
- =?us-ascii?Q?AQpQgzZfJYxAsZ4ojsGaawINiaLow+o4FwxNFkC3t6mKZp3Fmwa7XwTdSi7X?=
- =?us-ascii?Q?FxgypCOJwqgrgWXhcHlsLMJ7m3smYGw65Zr9i7CFEcpFHz3I2mQWiUvPTcYB?=
- =?us-ascii?Q?E3Y1NOloWhA3ak9fhbB8OCTLqlYFkMFE2Em1WMRW6EAL14bGzTANnexaSwp+?=
- =?us-ascii?Q?WkMcFi1f+bkNf/XDLLe+jH61r1lrHYyXiXp4x3WQqZVTMsG5/LytqctrYkkr?=
- =?us-ascii?Q?q8No+xbMl4ipS6qUa3tfdRgW/cn20045CCg706hUyM11nlyMFMf7a6PH0cl6?=
- =?us-ascii?Q?udu0YhlYfQjU0f0KQ7Xa2sNSm5VUJRMRyNdw9gP8cru8AYrzTOEmpZiJFzGp?=
- =?us-ascii?Q?iqfbgh5liOBdEa234yrUBDuMyslQWNT7nMVxfzJep7FOiBJfaGOTPpeoXJFW?=
- =?us-ascii?Q?bXLBe9q2HUv3vGL16hi9EiGXZECYsAdDITjC7/bAtCM16QWoc65kB54dKsNj?=
- =?us-ascii?Q?CfkpXvjAxqxCGx9Fpt0noaKfi3BHXE8yfcLF9gsaXMmmFnT98m4VC485DS1a?=
- =?us-ascii?Q?3HNVBK4xvSIm9estThKWfdxO4QxNzF1e9KzqPbyA1RsSW7vMlBfd18mHk7W3?=
- =?us-ascii?Q?hR1HyV6eVe8+Z3CnYyAmJ2SJDW0q34Es6IlLgpXTcL+qlRkswcN9AUytHFfd?=
- =?us-ascii?Q?LM6IaqmaUZIRAGv7mmabmJwkRQ8SKZYDmKRb9pOP6YZmgsxBNEKxFxEjxTo1?=
- =?us-ascii?Q?QxILxEQ7J2aSwpvR6ngMnqCVbyG4m1d8/TW7M+x3rY36TbQoplmhkYRL3jL7?=
- =?us-ascii?Q?zf55qVXVL//bFmV995QtSUXr1k4cwdVf6KmotmOnBPsDLrkPUMylS2v4TIM8?=
- =?us-ascii?Q?Rr4hvIggYegA9WmZ7hHPXIfOBpEiV7wK0oQvCwsbXPeDls/1uqZ8s52pSNrY?=
- =?us-ascii?Q?SHfLNpGxZbWWrXWswFJ0qu2JWzcnVjVWeGnYxCP6a65dxFJsqXSPVHcXrgmu?=
- =?us-ascii?Q?XTzpjiCRPe1FN2DV/WRm4PrfpLXWajjJlojco/67URnWg4/dYw4g65qfGRU/?=
- =?us-ascii?Q?c/z7v2nQSsBLnPspbBpHNCq81pMho8U5N8Yg/fRxOCJDf7rgCklYwNtEtyul?=
- =?us-ascii?Q?oFxhkRZeatQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7012.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fLWJ7m2cLX4QH6pFcmRzeEiUmuqwV6dTh796zzyl5S8oyN9ZhZVBgqNjtMDE?=
- =?us-ascii?Q?/ej95+C9AfJrpit7jzz5ecs9wW6QXgBVrgcqIjcWiW4Xjo+Ho9K8obTbkGxb?=
- =?us-ascii?Q?S7HFeoMRqJjLNtELgTMtIg/4z0GoVVN5R55e1JaTQLmX71VAG742ITC56BeU?=
- =?us-ascii?Q?NTc+hHRDoHSjdMJTMWgyH6xLfkqMyHtuqbOD0n1djq+bRrZsI12AQZwd7E09?=
- =?us-ascii?Q?r6DS6Ro2C77C4Y+qvCCyOcV4nUDKlhB9oIXchliZlKzrlaK48d2I6TG8t7e2?=
- =?us-ascii?Q?ZKQlVa9bWswUvLHTBZxRwGWKrUsdjfs8Qiima46xT0GwcOMsswxLTL+91Bz7?=
- =?us-ascii?Q?QUuZEz352GvbZ9Qi5cpM0faDwporxcRVV1d2gx8CaJ5QL2QSqC3V9m9nYPDt?=
- =?us-ascii?Q?LJh+j84u9gZi5cCsBSaIyHH5kmvuB05Wye+XQTAYpJfCgUrQsiZuJWmw5BCd?=
- =?us-ascii?Q?ZwVIKJPvxbueAzlIIyNkz1eVCb/WPPQFT0VfSLSqIUF1NNctjyrO9Ma1Okd1?=
- =?us-ascii?Q?FpZMVBT6e+vIVS2LinvHeOFlCr7IhZkfbW2YnR0hvyN8Uo1EGftwMW1CP6II?=
- =?us-ascii?Q?obtBzdT3qDkqU+UlYUubMS+JNbdNFzKZkdjUQZFvNK5pmQto0uJxL9gDchW4?=
- =?us-ascii?Q?/aEMZFXWDzSSVuw5FdhLPTRtPxuUtJyQo9Cgx8KIaedXnCw/aRi0gwYOByKf?=
- =?us-ascii?Q?qffKpydFvIsvBFA5Rwb8duuMbPOpWeCtcPihB4J4duqfalRUNG+SfNZNEuJ9?=
- =?us-ascii?Q?BtwNtWn/k9C+YDfzLSscAWeSsQxjoMMqdrGakhSDyVb0N/tixHR+t4Tp0qyU?=
- =?us-ascii?Q?Sk9b2TOhZO2j2m5M3Fz3S8oFD7ERg0ocMTDkxlTqKKEUYWux+U4R2pi42fEa?=
- =?us-ascii?Q?aXRYFOfEjsfq/V3D2Q2pbGzVXlynaF2ZU0OUglJl6VILr0sGvwZw3ZrBCW/l?=
- =?us-ascii?Q?Li8T4LmsEIwy/Azf1jlhGADsWltzWgclmu3W1vCLD4I0E6Au8G2juqz4EGMw?=
- =?us-ascii?Q?tPnJFHY8CWYJckmMsupu/el4fLbEtbtLRvjw9ZGTZGjgRJrbPB9JsSwNP9KZ?=
- =?us-ascii?Q?b8Gez+j7GXC3TQJyiu1ACbQqOxjTe4iIiKqwIv24oPi3lBId2HGYcpVDYgOf?=
- =?us-ascii?Q?R3MJCN24O1/mdB2HZrO07Gjce6iwsG2sTTcYPAJaQRhBpqn4DpOCERAzsTe1?=
- =?us-ascii?Q?fd+rkt+8BEOT6Y51uGJPI7sEmVuWDmYSXLIana5NTrD/oNuDL6iwczEvulb2?=
- =?us-ascii?Q?DIEJBsXZDnSP1GD1/Idw17GrYwQO2K3NrfLXfIDDJYVuNVb63tndVM3J4IiR?=
- =?us-ascii?Q?ExCXTv85/n0AQ2ivkqIQy7GyYSqL5HnHE1cdmfSofqnqhK5WLNUDx/ONuH/t?=
- =?us-ascii?Q?xMUpLQR11m1OWW7560IWWk4YmHuCPoTGERVeVQMWhUvpC5EAC1ONUwYiAKVy?=
- =?us-ascii?Q?HYohi9zju8tCSWMSuoBhP3msO/qyd3V0qVTiNr4r6xSsDcwCTQYvTjRywrSO?=
- =?us-ascii?Q?piBA5u//U2zOj/KgN1WCpiXXJ0Zuxy7k6QswxPcQ+pfG6OmN6dDPtFV0wKaL?=
- =?us-ascii?Q?SXQy/S/5vQdVwWFj4qgYLTlY5eH6dysIXQQRZpT1hFRIBxsMz2YIskXea526?=
- =?us-ascii?Q?Ng=3D=3D?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fca0b609-0eab-43ff-8606-08dd78a04897
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7012.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 02:26:36.6179
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SSXrzha2C0wxgEfX7dguTr0oIK6/IA/a8cgmR4Ym80KK04EVrDREPpE9OU4ke12STtaOwpgldcy3Vi5XDm+YCvIoFjR48Zf16xZzhi5lRAg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5186
-X-Authority-Analysis: v=2.4 cv=Td6WtQQh c=1 sm=1 tr=0 ts=67f87de0 cx=c_pps a=joO5rFOndlhnht97C4Lqsw==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=XR8D0OoHHMoA:10
- a=bC-a23v3AAAA:8 a=VnNF1IyMAAAA:8 a=xNf9USuDAAAA:8 a=t7CeM3EgAAAA:8 a=u2LiicgN0kIDZIMe9SoA:9 a=-FEs8UIgK8oA:10 a=FO4_E8m0qiDe52t0p3_H:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: KTI_EQ2MxGtGnLvzgCzAgKXtp3XPFi9R
-X-Proofpoint-GUID: KTI_EQ2MxGtGnLvzgCzAgKXtp3XPFi9R
-X-Sensitive_Customer_Information: Yes
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-11_01,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- mlxlogscore=999 clxscore=1011 lowpriorityscore=0 adultscore=0 bulkscore=0
- impostorscore=0 phishscore=0 spamscore=0 suspectscore=0 priorityscore=1501
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.21.0-2502280000
- definitions=main-2504110017
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] erofs: add __packed annotation to union(__le16..)
+To: David Laight <david.laight.linux@gmail.com>
+Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+ kernel test robot <lkp@intel.com>
+References: <20250408114448.4040220-1-hsiangkao@linux.alibaba.com>
+ <20250409195222.4cadc368@pumpkin>
+ <7af3e868-04cb-47b1-a81b-651be3756ec5@linux.alibaba.com>
+ <20250410215305.0c919e78@pumpkin>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20250410215305.0c919e78@pumpkin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Nathan Lynch <nathanl@linux.ibm.com>
 
-[ Upstream commit 0974d03eb479384466d828d65637814bee6b26d7 ]
 
-Smatch warns:
+On 2025/4/11 04:53, David Laight wrote:
+> On Thu, 10 Apr 2025 07:56:45 +0800
+> Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+> 
+>> Hi David,
+>>
+>> On 2025/4/10 02:52, David Laight wrote:
+>>> On Tue,  8 Apr 2025 19:44:47 +0800
+>>> Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+>>>    
+>>>> I'm unsure why they aren't 2 bytes in size only in arm-linux-gnueabi.
+>>>
+>>> IIRC one of the arm ABI aligns structures on 32 bit boundaries.
+>>
+>> Thanks for your reply, but I'm not sure if it's the issue.
+> 
+> Twas a guess, the fragment in the patch doesn't look as though it
+> will add padding.
+> 
+> All tests I've tried generate a 2 byte union.
+> But there might be something odd about the definition of __le16.
+> 
+> Or the compiler is actually broken!
 
-  arch/powerpc/kernel/rtas.c:1932 __do_sys_rtas() warn: potential
-  spectre issue 'args.args' [r] (local cap)
+Sigh, I'm not sure, it's really a mess but I don't have
+more time to look into that.
 
-The 'nargs' and 'nret' locals come directly from a user-supplied
-buffer and are used as indexes into a small stack-based array and as
-inputs to copy_to_user() after they are subject to bounds checks.
+> 
+>>
+>>>    
+>>>>
 
-Use array_index_nospec() after the bounds checks to clamp these values
-for speculative execution.
 
-Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
-Reported-by: Breno Leitao <leitao@debian.org>
-Reviewed-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://msgid.link/20240530-sys_rtas-nargs-nret-v1-1-129acddd4d89@linux.ibm.com
-Signed-off-by: Cliff Liu <donghua.liu@windriver.com>
-Signed-off-by: He Zhe <Zhe.He@windriver.com>
----
-Verified the powerpc build test.
----
- arch/powerpc/kernel/rtas.c | 4 ++++
- 1 file changed, 4 insertions(+)
+..
 
-diff --git a/arch/powerpc/kernel/rtas.c b/arch/powerpc/kernel/rtas.c
-index 5976a25c6264..a8299981798a 100644
---- a/arch/powerpc/kernel/rtas.c
-+++ b/arch/powerpc/kernel/rtas.c
-@@ -16,6 +16,7 @@
- #include <linux/capability.h>
- #include <linux/delay.h>
- #include <linux/cpu.h>
-+#include <linux/nospec.h>
- #include <linux/sched.h>
- #include <linux/smp.h>
- #include <linux/completion.h>
-@@ -1173,6 +1174,9 @@ SYSCALL_DEFINE1(rtas, struct rtas_args __user *, uargs)
- 	    || nargs + nret > ARRAY_SIZE(args.args))
- 		return -EINVAL;
- 
-+	nargs = array_index_nospec(nargs, ARRAY_SIZE(args.args));
-+	nret = array_index_nospec(nret, ARRAY_SIZE(args.args) - nargs);
-+
- 	/* Copy in args. */
- 	if (copy_from_user(args.args, uargs->args,
- 			   nargs * sizeof(rtas_arg_t)) != 0)
--- 
-2.34.1
+>>
+>> I doesn't work and will report
+>>
+>> In file included from <command-line>:
+>> In function 'erofs_check_ondisk_layout_definitions',
+>>       inlined from 'erofs_module_init' at ../fs/erofs/super.c:817:2:
+>> ./../include/linux/compiler_types.h:542:38: error: call to '__compiletime_assert_332' declared with attribute error: BUILD_BUG_ON failed: sizeof(struct erofs_inode_compact) != 32
+>>     542 |  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+>>         |
+> 
+> Try with just __packed __aligned(2) on the union definition.
+> That should overcome whatever brain-damage is causing the larger alignment,
 
+Currently it works fine with `__packed` on the union definition,
+
+do you suggest adding both `__packed` and `__aligned(2)`, may
+I ask what's the benefit of `__aligned(2)`?
+
+> 
+>>
+>>>
+>>> I'd add a compile assert (of some form) on the size of the structure.
+>>
+>> you mean
+>>
+>> @@ -435,6 +435,7 @@ static inline void erofs_check_ondisk_layout_definitions(void)
+>>           };
+>>
+>>           BUILD_BUG_ON(sizeof(struct erofs_super_block) != 128);
+>> +       BUILD_BUG_ON(sizeof(union erofs_inode_i_nb) != 2);
+>>           BUILD_BUG_ON(sizeof(struct erofs_inode_compact) != 32);
+> 
+> I'm sure there is one that you can put in the .h file itself.
+> Might have to be Static_assert().
+> 
+>>
+>> ?
+>>
+>>
+>> ./../include/linux/compiler_types.h:542:38: error: call to '__compiletime_assert_332' declared with attribute error: BUILD_BUG_ON failed: sizeof(union erofs_inode_i_nb) != 2
+>>     542 |  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+>>         |                                      ^
+>>
+>> That doesn't work too.
+> 
+> That it the root of the problem.
+> I'd check with just a 'short' rather than the __le16.
+
+.. sigh.. I have no more interest on this now due to lack
+of time (my current employer doesn't allow me), I think
+if there is no better ideas, let's keep the original patch
+way to resolve arm compile issues...
+
+Thanks,
+Gao Xiang
 
