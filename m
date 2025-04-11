@@ -1,162 +1,128 @@
-Return-Path: <linux-kernel+bounces-600274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D7AA85DD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:55:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB5B9A85DE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A21E41BC380D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:50:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 407D44A470A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF692367BF;
-	Fri, 11 Apr 2025 12:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D352367B4;
+	Fri, 11 Apr 2025 12:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dUTvS9GS"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="H4nAZ3Iw"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4012367A8;
-	Fri, 11 Apr 2025 12:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D8C2367C8;
+	Fri, 11 Apr 2025 12:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744375832; cv=none; b=HCRTiQmcGR6w36rtxnUP+JJtAdmfqIr1CESg/LQGc998p0erE/Gf1ViEeFoTk3koYWkm/lDNxftYTfObbvrf8lqs11EwPzv76vuhQKjdLgXBl/bye+UPM5D6KHKGfDyG6DgT6tTEKdi9aplT+PL1E/0C+X8n/hAGfchbtFWngr4=
+	t=1744375877; cv=none; b=ijLwK+B3TKf0QRL3kt7dMbX8EbeYLoK9gCru4A3nUK1YTUj+s2ejFhIPtRNypBGyCGjWTsu1MZbzMOtefcJdaBG/eRoo4KMvC5h+MM6N68K4BtfabmlpakCK7i2Zrx3SSKuUp4pUIqaTyen4W8LAkRF3z7CnbmWNCUrTabN5ltQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744375832; c=relaxed/simple;
-	bh=krUFr3VNZumQLFuazMnfIo6rVrd52OPbijqeDOl/TLs=;
+	s=arc-20240116; t=1744375877; c=relaxed/simple;
+	bh=Dz14sGHHnu0hkqwQ3vEpnjbNomshNLM2BARAXqV07dU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DqMawMugXsoaWjZRdK9DnlnTprGiCHRLlOs/TXEXwG/WlIv6R8ClD257MdPhRnWOeg/1U7dgRSaeAmpO1soyaeV7tUUCBDKwX7hlGX4YhyPgnq96WMfkgI2OAa+5UfmWXUdmLESEQoatNk35eVTTuXNOSlJ07Tc9KgS121p3lRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dUTvS9GS; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-730517040a9so2340019b3a.0;
-        Fri, 11 Apr 2025 05:50:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744375830; x=1744980630; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mXx2FL46B7WkOgjg7fh0W46JD/pfi8vbcwWhjWRwOFo=;
-        b=dUTvS9GSrLd6nsTJ5z49RdXRRusX2cu4HMFTdoJfhd3vE+2+mECN9QDQqbAIFMQVKY
-         cp/k3HdRHqprtO9QltqxV+P6Q6ltlE+/VXochjuVYz24u8psHmxBRA9z+oV3M1QVEEj/
-         sbTMrnw76LtlWQeXFuRXrxLENi1NNvLZmkgV6ULDmMiBqM3JNZu21+zfjz3VyYBiRJ0e
-         9O99nTg1ASVM6X+3T4pUCQ8RR8/Q2fFP3ckfINk9GQ+/sBaBNtqk4fbcQWiigRJWACfm
-         LP/SoLlirdC7oF+DhDWRGNsd3tbpH4jUYrYGCCvrlHaibLURXmrad8YkjrG523ERPkhC
-         TCwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744375830; x=1744980630;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mXx2FL46B7WkOgjg7fh0W46JD/pfi8vbcwWhjWRwOFo=;
-        b=OLEO9VTwov+LbEKjV3GU0kGuMhCvuRdFD2VNcERDdQzahZlVx9ZIIePxPxjtC2X4/v
-         ASYI7QTZq5qIxcjLAS8nkHxZl3C5aHdfr6NMPETU5FskALrqR8PX2f9FGDKtMy8qVEaQ
-         7t9FKrsbwsEghNZKm3I3JbBHaPxAOpQp7d082j7yrF2Bb4Gxnirr+rtv1p+zLt3/AKtn
-         MhwpYREGNx85nMVd5XJL1Ao/JscDdyd7iK+VB8BW1yE608UGpgaRRJ7eWZKY+VmQLiPc
-         YIAL8Z//ywNeiJATgCi68kQcin0gO0UDP4GAHW4KJL9g2GKG4RyJxzZ6CI0PbCOQM61p
-         JIXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYLi0dp/xI1zcjsVsqc0PMHwpC6vmPcFfrDFmiyvelvgoidA+N9l1oyY5nk5d5I56rbsx3oJj/RRGJvS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg5k6mQlx8WRwqkEfgZ+sEclmx0MI7/nLTNl7qcjN2BMtruo1x
-	FiYK4u12l2Yd4agc7B//QYyiIfbzSdhOAPFsC734PUxIPm1y4w8BNVxxfYay
-X-Gm-Gg: ASbGncu7PP8bJZsiRSkegPOzHUzQeQdu6FnjxMVEE1M2vAFG/mboS+rzF4x8F1GYe9T
-	C+ZT+aSjH3ykNdnMLyZ9h9USwC4vytwYbXYM6YD5rLg5j67kLPDYY0UDy+JxnNaHst/fE7X6gJc
-	Z3u49B1bFpL5Ljhq5vQL9JdVTysf7pNQhu8fGvCXFGPFU4aKAFL5M+9tnRz3whoAf6yaZlLyGKf
-	KlxRd9I6tvSDepNLArGr5c6wJWlAKCLSLEZRgjgjT33MJqyXXWkLiEz0ek1Q8FraoeVYszYBgBt
-	kkhfD1xANAYvlPOoQvBbL0nnfrXj10P4lvpleIA=
-X-Google-Smtp-Source: AGHT+IHDBvV0qQ07NHfk55qvtex+sgwOy6tRhqXVO4CM20TuwI5QvWlbhrJx+JWvNB7ZbVYZ7Pqf4Q==
-X-Received: by 2002:a05:6a00:4644:b0:736:5753:12fd with SMTP id d2e1a72fcca58-73bd1194273mr3931962b3a.4.1744375830033;
-        Fri, 11 Apr 2025 05:50:30 -0700 (PDT)
-Received: from hiago-nb ([2804:1b3:a7c3:a964:9277:4e8:b712:66e2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd230dd71sm1374107b3a.128.2025.04.11.05.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 05:50:29 -0700 (PDT)
-Date: Fri, 11 Apr 2025 09:50:24 -0300
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: linux-pm@vger.kernel.org
-Cc: Peng Fan <peng.fan@nxp.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev,
-	Hiago De Franco <hiago.franco@toradex.com>
-Subject: Re: [REGRESSION] Kernel reboots unexpectdely on i.MX8X when
- Cortex-M4 is running and it was started by U-Boot bootaux
-Message-ID: <20250411125024.i2pib4hyeq4g6ffw@hiago-nb>
-References: <20250404141713.ac2ntcsjsf7epdfa@hiago-nb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pb1kkDbivwoegGo9uy3d3dW7kbrDZW4qKO/TUH8SMfqAjRaeR7b0J54SOii1dshjEX58XLQDkahCQxbsGzxItXP93b+DLlMakXuW6bMN1f8Ym6Crm3X7EbCgf9bpJVUeeakAH+5rQuxapSa6x1kCAiTd5LBxLzj9iaU0C1kTzcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=H4nAZ3Iw; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 60D0040E01FF;
+	Fri, 11 Apr 2025 12:51:13 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id mUQid5vNaHYI; Fri, 11 Apr 2025 12:51:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1744375869; bh=ot8rBley/E20N27sAp7ML+RVP6Nk7oyOk3yJvuyKeZ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H4nAZ3IwtbcSIpkYEwhdRZEA4Ih78krvyGndmBpzTmb75xdSXauU88mL6YjvPuqzr
+	 UHGzfxqrRnPDWJxJmWD1qzOIv56GEoGgdWW89Efe9+FX4Ld6v67EUi8BaRahNv45ZP
+	 I5hG+d7I0oCz6lXsTyLSDWM1woW7yQkIh2SE0D2l6AxYEzi8sCAEna6icWpxqj8euA
+	 k0f2b9IsRvQxKEyjB17R7lqGLxhB9gvTDPDOLq52zbxNWPoMs1apLT5R3cRNLFwn3p
+	 X+mp/TNDGAJkPVo8LfSk4UN9siImds2+jbLomNAKSnAdBC1XCJEKsHiA/fxwWIz2R6
+	 hri+bqEMyMStJ4VBgX+ramesTlZkyiZM2flquZj0ruC2gAz938S8SkZDDviCiJUz+w
+	 MVaNFH7mwG+5uh03TLIfEmUCy7gD67sBAyz1lsrrIPwQu3EjOQJtUeVZMaKwAOg7HO
+	 Jl8a9ex4LJcQNRfRuq9x/CMPUatN7iOaKar0vMjUhetRU0W2t1LfDCLgGBgQPMuW/4
+	 KHZMYDGlc+ZLBaBbq01hnQA/X9vii2r3kj1aVY86VSLzSt4uR+T7T9mysTaELTkSuc
+	 23S/E+V1ix+g9tPLikJPHaTJYIxEBUzrd/XKd0DAltowQ2vzkPU25qnLLEqZKUB7vS
+	 ictJtWz4AJahL6/Yv4EekSf4=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 153D740E0242;
+	Fri, 11 Apr 2025 12:50:51 +0000 (UTC)
+Date: Fri, 11 Apr 2025 14:50:50 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Jean Delvare <jdelvare@suse.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC" <linux-i2c@vger.kernel.org>,
+	"open list:AMD PMC DRIVER" <platform-driver-x86@vger.kernel.org>
+Subject: Re: [PATCH v3 4/4] x86/CPU/AMD: Print the reason for the last reset
+Message-ID: <20250411125050.GEZ_kQKtYBfEMDQuXU@fat_crate.local>
+References: <20250410200202.2974062-1-superm1@kernel.org>
+ <20250410200202.2974062-5-superm1@kernel.org>
+ <20250411120617.GMZ_kFucLFQQ7LJkys@fat_crate.local>
+ <42b7547d-c1f7-4509-a381-7bf0a485a5f5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250404141713.ac2ntcsjsf7epdfa@hiago-nb>
+In-Reply-To: <42b7547d-c1f7-4509-a381-7bf0a485a5f5@kernel.org>
 
-On Fri, Apr 04, 2025 at 11:17:13AM -0300, Hiago De Franco wrote:
-> #regzbot introduced: 4f6c983261
-> 
-> Hi Peng and all,
-> 
-> Commit 4f6c9832613b ("genpd: imx: scu-pd: initialize is_off according to
-> HW state") introduced a regression where the Kernel reboots unexpectedly
-> (without any warnings, crashes or errors) when the Cortex-M4 was loaded
-> and running by U-Boot, using the bootaux command:
-> 
-> # load mmc 0:2 ${loadaddr} /home/root/hello_world.bin
-> # bootaux ${loadaddr} 0
-> # boot
-> 
-> This is a simple hello world binary that prints a message into the
-> M40.UART0 pin (demo from NXP MCUXpresso).
-> 
-> Before this commit, everything worked as expected, Linux boots fine and
-> the HMP core keeps running and printing messages to the UART. After the
-> commit, the kernel reboots at the beggining of the boot process. The
-> only relevant message is printed by U-Boot after reset:
-> 
-> "Reset cause: SCFW fault reset"
-> 
-> This commit was bisectabled, the same device tree, u-boot version, and
-> SCFW versions were used. Reverting this commit fixes the issues.
-> 
-> For testing purposes, I created the following patch which also fixes the
-> issue:
-> 
-> diff --git a/drivers/pmdomain/imx/scu-pd.c b/drivers/pmdomain/imx/scu-pd.c
-> index 38f3cdd21042..0477b3fb4991 100644
-> --- a/drivers/pmdomain/imx/scu-pd.c
-> +++ b/drivers/pmdomain/imx/scu-pd.c
-> @@ -539,6 +539,9 @@ imx_scu_add_pm_domain(struct device *dev, int idx,
->                 return NULL;
->         }
-> 
-> +       if (strstr("cm40", sc_pd->name) != NULL)
-> +               is_off = true;
-> +
->         ret = pm_genpd_init(&sc_pd->pd, NULL, is_off);
->         if (ret) {
->                 dev_warn(dev, "failed to init pd %s rsrc id %d",
-> 
-> 
-> Test Environment:
-> - Hardware: Colibri iMX8DX 1GB with Colbiri Evaluation Board.
-> - U-Boot Version: 2024.04
-> - U-Boot Build info:
-> 	SCFW 83624b99, SECO-FW c9de51c0, IMX-MKIMAGE 4622115c, ATF 7c64d4e
-> 
-> The issue is not present on: v6.5
-> 
-> The real root cause is still unclear to me. Anybody has any ideas? I am
-> happy to share more details if needed.
+On Fri, Apr 11, 2025 at 07:12:24AM -0500, Mario Limonciello wrote:
+> The idea was to walk all the bits and pick the first one that has a string
+> associated with it.  I was finding that sometimes the reserved bits are set
+> which would get you a NULL pointer deref.
 
-Hello everyone, as this introduced a regression, should I send a revert
-for 4f6c983261? Or any ideas that might help fix this issue?
+Uff, that needs a comment at least.
 
+But you can write it a lot simpler instead:
+
+	for (i = 0; i <= ARRAY_SIZE(s5_reset_reason_txt); i++) {
+		if (!(value & BIT(i)))
+			continue;
+
+		if (s5_reset_reason_txt[i])
+			break;
+	}
+
+Simple loop, simple statements and all easy. :-)
+
+> Right; I was worried about that too but find_next_bit() will return the size
+> argument when it doesn't find anything.
 > 
-> Cheers,
-> Hiago.
+> So that should be s5_reset_reason_txt[32] which has the "Unknown" string.
 
-Cheers,
-Hiago.
+Yeah, that definitely needs a comment above it.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
