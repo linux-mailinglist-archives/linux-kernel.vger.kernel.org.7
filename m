@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-600332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E8D8A85EA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:21:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB47AA85EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E1A77ABAE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:17:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB55916B658
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F411E8326;
-	Fri, 11 Apr 2025 13:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77EC1EA7DC;
+	Fri, 11 Apr 2025 13:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="odpgcOrr"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="ttQJEjD5"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356CC1E260C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 13:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AD81EBFFF
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 13:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744377365; cv=none; b=aB2F1h6aiJA8js56I8Cl1BAmdpCOznt1sehsyiM+MGsAsTuV7M8pYYE/ifexlf7GSHCoipcXE2BlLX1Z941Pw7KSXlhKYphUbzCuq1CAG96ByVb6uAVeiso3/j+YvdEonZU93tnCJ+Hf73dh5ruiYtOUmj5BFEKMPCTSasDoyiU=
+	t=1744377376; cv=none; b=BKZ0R0+pztnwG9H2Z5dgcWoDFdcVgNM0ajRNLoOs4xrhOaJd71qYxz1WL3J+hcb34M1tCxsT6w/7zjCQleB7HPmoTjJbQ4buR0MKNqA790ECs5Oi2G+QLIgN1igLvMwSftdSh8Tm9eGuwtRE/EC9WMuFZKaGmjAgo28UF7FJAww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744377365; c=relaxed/simple;
-	bh=MjIPXLoM5IUhIoZhl+wifWQND7T3/kSCdIUtGuu23/U=;
+	s=arc-20240116; t=1744377376; c=relaxed/simple;
+	bh=ZhNpid86PW40a0ogdTCjSqyWtpwrJbhHl+hMeMb+LtA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IX5JUIHeI6oYRSkwIuLUmz1+4a8r4CAgCRlIwnH8flHjgOGLHUoDMMuLtCIL7go6OJOals7/pyVACMq90FwlPaPyP1U92/FWLniy6EI9ZaInGg6mG9h3Fc+ypTox0BFfDJ3HIRpAkvggERxGaImk4JfYRKpj1PCYlOoT1D8F8SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=odpgcOrr; arc=none smtp.client-ip=209.85.214.182
+	 MIME-Version; b=J7jKNhnzTYNVX0IF6cbcgzE6O1Uuv365DkrYP8JKKl3j8ZhMDZX1j8Ag5/XBP6XoaW/5aWMDp+iKCJi9e9tMCHhw5l8Ur2rYO73YtAUDitwYIjsFvXux2xgOHNcH4xR53qFSIVQClaQMe5r+chN2bIoIsbKEt9kCX8b90OGzGHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=ttQJEjD5; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2240b4de12bso26442545ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 06:16:03 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22423adf751so19062745ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 06:16:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744377362; x=1744982162; darn=vger.kernel.org;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744377374; x=1744982174; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Iq/zLUOAjmqMOQyCH6CedvdIB7nhaB2p2wb10oaF0qQ=;
-        b=odpgcOrrn8ZqSaSCAdG37wsEEL3dyRUBAF3pfqHPTrSQyvt3PTWeZqHA9umviBMHf8
-         9bgrYqw5nbNA5VrBNbNUq4x+ENZlzQdt5uBhpcEREAfsbibGKoGTh0T1BrumJBdKN1sq
-         V2E8eZuqsOjQsmES2n3Vf73FbvCthPdbESxjCBg0NB4vNiwWLn6J/ShAnbvYhX/OyaK3
-         7MKU8giQydMOpMVOMHs97hnrlEc0biUs9MlkizS7cu89ZniOJ8gqegaCbBLcsdk4KRN6
-         759j0/VBjpRVgTFrAv9RvfAP2OP1j1lSoNFY6AhAyvp+fwpmYZihuokilA4sPcMhWYJg
-         18yQ==
+        bh=L81sw7HLh9+LhiB6MR/QGvuJQdrXF+C64yrUzRsSA2I=;
+        b=ttQJEjD5Ki9QnekKS48Hd4BKuSioiCBB+BzNJ47rqv9evw8F1ZEZzLzdeaIKqsJlMR
+         ZHO0q7DsmkFXTewAlMIwdvNkWQUQnXgiOlvJLVChIrNrLArqLGwg9BjeAI2TvpYr/ggW
+         3DipILbugc224UU5Q5To0QYVNz91D23g5PM+XjJcyANGRFfjVIX/XiaTvO4LjF9u8DOJ
+         EO+iEdoVyYcuA3rCFj1Uhj8jlkeWV1SPNNt2oxAixLn7nkSqlSSNXm5tP4Am3oVuPfeK
+         ND4tzeIK+dribc3Aom5BRsynddsqdcTHt8GDR5ry8izKbHLD3kZUOYz2ZB5DMcxbolBX
+         9hng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744377362; x=1744982162;
+        d=1e100.net; s=20230601; t=1744377374; x=1744982174;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Iq/zLUOAjmqMOQyCH6CedvdIB7nhaB2p2wb10oaF0qQ=;
-        b=lrPYnCjBnPzxqpztxmwPdoeu8zwatTIR8l+kvK8GYESuY3VngVuyCYl4sV8ipRM6Wr
-         nn6/HAlucSN+9Zu78IkMuLhJxwsWSF0JQ74qUSMQcN0RRljf7rSKAJG4Qyehg5k/1WpB
-         yFiV1DcpsN0GWytNpWCSgYZKOY9MjPAd/ou10kmoA2rTOqNrNnnUbPZ4hNS8ZxPLyI0u
-         OTBkXKYeprWUfZ2Z64nxGRwOyzT3w5GrVXnm9w1XzxjMrxyXeEtT3cEHaLkzTfS0jyrj
-         ZGmTVbZICaAGUG1glTI6v0bqltkpIwNW9UZCq2HrwVuFlr7i8BoKQkhVR0icrWPcrngB
-         CgIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWojgUNSkoP0wPHMknbMvuw2lZmC21Sw+gcil/zkIJ7SEV1rzMfiyV/3ENTBoU6ZO3RKNqv1kJiLGf9hQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys2vYyxj6NFA1u9FArNo6cFUpSpTZ6h1+xS4AENoz6RVOOwcqM
-	vsiIRa13AfBNWJo8IqD6o3dJtEWpPO7GdNcRdp+v4SBRJbEu5qVgWnC3G1ho/IM=
-X-Gm-Gg: ASbGncv1syK+kt6JB/hDQOd7kVX/C4wQF36gT15z9xn8GTMZ81uX3mp/2a5KZpmAR3F
-	gFBUL18MTsW7dJtmnXHZH4iDhVh/VzqOtnnywoZ0GvuVfTei7BGTg9iSA+rKZXa+nALZvFRwVlI
-	UWet7Ft9ZKX/x0BLjCsuo1rQvdazwKJsputUOINQL97KrsfNCq/t8HTuW8ft0mMwwKxRzb+mmt9
-	GdgEJOnnl09RJKJwnuw9tMNVCOA5MHaJSeMqabX/BAQ1p28f19e4VoOP0hIzvgTn06pnCTb1cpI
-	hURX0xUMX/HscW0+NcZrXe6XC42rXv8=
-X-Google-Smtp-Source: AGHT+IFYuzue8rTIhMXZdvGPMyvl0e8z93Koxv1rsyMMhwoJlET+hmldcsrrZX6b0qlRAdpPJUNnxg==
-X-Received: by 2002:a17:902:f68f:b0:215:7421:262 with SMTP id d9443c01a7336-22bea4b40f9mr36467045ad.12.1744377362506;
-        Fri, 11 Apr 2025 06:16:02 -0700 (PDT)
+        bh=L81sw7HLh9+LhiB6MR/QGvuJQdrXF+C64yrUzRsSA2I=;
+        b=GCQTfX4MrQfBpbJn8LZP/8P4Cr1+rnh/PrmBTH4fuTYY2FWaqifHCbwFl4KjZGJgv3
+         7cXdRh/9ngl7RIpJrcbDiChWkOMjeYo/htZU6aHZyHcAXpi6H3nDqwroTFascbIa1sZG
+         +7N63ablcxINI7fGZIII/zIfiSepvgHZAFM9p/fA1ziPKtP4ycD1LJL/TmSdNWbNRIls
+         GmJ1Vc7MuIr+jixoaOaefYCaJVAPpxbHH9UjaKhEersLrjwWwzdib8bXxkecydTbpd5l
+         oLae1im9KOUHL+2atFNcMFMATmEZbp6NCJBx5QNZVgJdM0xheWSJtWQYhGLyG1RplBMP
+         3rXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVi7D++y74Zl6Mog2vGwznX3tnrTkN3QSHKD2OuQAYBQ56x4xK+wqjCHYXm8m9B+pIUsCQghYKaZp5oSsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv5vQN9/sqoHCm0tsQ+MnH+4IDvYbcoS3pkO2nF3XlzZtnCAoG
+	J+SU2aupFuFwmXeigwIrnaq4cAIcCmZU1DOZojo8qDIiA76dYY8urcCgbw9kB6Q=
+X-Gm-Gg: ASbGncsUZcFtVGnqchVlxIufrBhb6OGjwwA2uCHIexqgP2DzPwuFo1T0aAv9xhuzlLY
+	vlxQO+i1OBIBRIRdHhyaO0glO+Vf645RMmKWLJl7fUqopR61QMNmalhyme/Z0Xs+ILbGOURt8FL
+	zlQjCQ2bMr76d6wgXBB7082Fm7fCcIniAlKqC/YKk8CsCCdgdTZkXmm9irKcnA3lvS6pckAgQSk
+	2XWaD+2lSTQk8FrPTee1Bz2+jzkL2VJanY6OqC8eHtjaimJLcG5WrW6iHbpb43JtHnw7ybiI2r3
+	/gF+lkvV0iB08UtEy2RJIL7SRWqSzSEDk6zX5ygNLg==
+X-Google-Smtp-Source: AGHT+IEmLwAHBY89tjHCSmST4XI9krTWMwziLaJxfMz91MwbguhjP76VbrqQ0QFcdTjWcsDUD+s2Rw==
+X-Received: by 2002:a17:902:d4c2:b0:223:26da:4b8e with SMTP id d9443c01a7336-22bea493893mr42628305ad.4.1744377374221;
+        Fri, 11 Apr 2025 06:16:14 -0700 (PDT)
 Received: from localhost.localdomain ([2a12:a305:4::308a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7c95cc6sm48245005ad.122.2025.04.11.06.15.53
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7c95cc6sm48245005ad.122.2025.04.11.06.16.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 06:16:02 -0700 (PDT)
+        Fri, 11 Apr 2025 06:16:13 -0700 (PDT)
 From: Guodong Xu <guodong@riscstar.com>
 To: ukleinek@kernel.org,
 	robh@kernel.org,
@@ -96,9 +96,9 @@ Cc: elder@riscstar.com,
 	linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	spacemit@lists.linux.dev
-Subject: [PATCH 5/9] riscv: dts: spacemit: add PWM support for K1 SoC
-Date: Fri, 11 Apr 2025 21:14:19 +0800
-Message-ID: <20250411131423.3802611-6-guodong@riscstar.com>
+Subject: [PATCH 6/9] riscv: dts: spacemit: Add pinctrl configurations for PWM0-PWM19
+Date: Fri, 11 Apr 2025 21:14:20 +0800
+Message-ID: <20250411131423.3802611-7-guodong@riscstar.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250411131423.3802611-1-guodong@riscstar.com>
 References: <20250411131423.3802611-1-guodong@riscstar.com>
@@ -110,203 +110,346 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The SpacemiT K1 SoC features a PWM controller with 20 independent
-channels. Add the corresponding 20 PWM nodes to the device tree.
+Add pinctrl configurations for PWM0 to PWM19 in the SpacemiT K1
+device tree source file. Each PWM instance is assigned multiple
+pinmux configurations corresponding to different GPIOs and
+function modes.
+
+Configurations include:
+- Mapping GPIOs to appropriate pinctrl nodes for PWM functionality
+- Specifying bias-pull-up and drive-strength attributes
+
+These updates ensure proper pin multiplexing and drive strength
+settings for PWM signals on the SpacemiT K1 SoC when selected.
 
 Signed-off-by: Guodong Xu <guodong@riscstar.com>
 ---
- arch/riscv/boot/dts/spacemit/k1.dtsi | 180 +++++++++++++++++++++++++++
- 1 file changed, 180 insertions(+)
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi | 315 +++++++++++++++++++
+ 1 file changed, 315 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index c0cc4b99c935..609135cb5282 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -556,5 +556,185 @@ sec_uart1: serial@f0612000 {
- 			reg-io-width = <4>;
- 			status = "reserved"; /* for TEE usage */
+diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
+index 283663647a86..294e05409933 100644
+--- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
++++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
+@@ -20,4 +20,319 @@ uart0-2-pins {
+ 			drive-strength = <32>;
  		};
-+
-+		pwm0: pwm@d401a000 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd401a000 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM0>;
-+			resets = <&syscon_apbc RESET_PWM0>;
-+			status = "disabled";
-+		};
-+
-+		pwm1: pwm@d401a400 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd401a400 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM1>;
-+			resets = <&syscon_apbc RESET_PWM1>;
-+			status = "disabled";
-+		};
-+
-+		pwm2: pwm@d401a800 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd401a800 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM2>;
-+			resets = <&syscon_apbc RESET_PWM2>;
-+			status = "disabled";
-+		};
-+
-+		pwm3: pwm@d401ac00 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd401ac00 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM3>;
-+			resets = <&syscon_apbc RESET_PWM3>;
-+			status = "disabled";
-+		};
-+
-+		pwm4: pwm@d401b000 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd401b000 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM4>;
-+			resets = <&syscon_apbc RESET_PWM4>;
-+			status = "disabled";
-+		};
-+
-+		pwm5: pwm@d401b400 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd401b400 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM5>;
-+			resets = <&syscon_apbc RESET_PWM5>;
-+			status = "disabled";
-+		};
-+
-+		pwm6: pwm@d401b800 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd401b800 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM6>;
-+			resets = <&syscon_apbc RESET_PWM6>;
-+			status = "disabled";
-+		};
-+
-+		pwm7: pwm@d401bc00 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd401bc00 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM7>;
-+			resets = <&syscon_apbc RESET_PWM7>;
-+			status = "disabled";
-+		};
-+
-+		pwm8: pwm@d4020000 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd4020000 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM8>;
-+			resets = <&syscon_apbc RESET_PWM8>;
-+			status = "disabled";
-+		};
-+
-+		pwm9: pwm@d4020400 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd4020400 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM9>;
-+			resets = <&syscon_apbc RESET_PWM9>;
-+			status = "disabled";
-+		};
-+
-+		pwm10: pwm@d4020800 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd4020800 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM10>;
-+			resets = <&syscon_apbc RESET_PWM10>;
-+			status = "disabled";
-+		};
-+
-+		pwm11: pwm@d4020c00 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd4020c00 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM11>;
-+			resets = <&syscon_apbc RESET_PWM11>;
-+			status = "disabled";
-+		};
-+
-+		pwm12: pwm@d4021000 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd4021000 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM12>;
-+			resets = <&syscon_apbc RESET_PWM12>;
-+			status = "disabled";
-+		};
-+
-+		pwm13: pwm@d4021400 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd4021400 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM13>;
-+			resets = <&syscon_apbc RESET_PWM13>;
-+			status = "disabled";
-+		};
-+
-+		pwm14: pwm@d4021800 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd4021800 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM14>;
-+			resets = <&syscon_apbc RESET_PWM14>;
-+			status = "disabled";
-+		};
-+
-+		pwm15: pwm@d4021c00 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd4021c00 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM15>;
-+			resets = <&syscon_apbc RESET_PWM15>;
-+			status = "disabled";
-+		};
-+
-+		pwm16: pwm@d4022000 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd4022000 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM16>;
-+			resets = <&syscon_apbc RESET_PWM16>;
-+			status = "disabled";
-+		};
-+
-+		pwm17: pwm@d4022400 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd4022400 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM17>;
-+			resets = <&syscon_apbc RESET_PWM17>;
-+			status = "disabled";
-+		};
-+
-+		pwm18: pwm@d4022800 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd4022800 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM18>;
-+			resets = <&syscon_apbc RESET_PWM18>;
-+			status = "disabled";
-+		};
-+
-+		pwm19: pwm@d4022c00 {
-+			compatible = "spacemit,k1-pwm";
-+			reg = <0x0 0xd4022c00 0x0 0x10>;
-+			#pwm-cells = <1>;
-+			clocks = <&syscon_apbc CLK_PWM19>;
-+			resets = <&syscon_apbc RESET_PWM19>;
-+			status = "disabled";
-+		};
  	};
++	pwm0_0_cfg: pwm0-0-cfg {
++		pwm0-0-pins {
++			pinmux = <K1_PADCONF(104, 5)>;
++			bias-pull-up = <0>;
++			drive-strength = <19>;
++		};
++	};
++	pwm0_1_cfg: pwm0-1-cfg {
++		pwm0-1-pins {
++			pinmux = <K1_PADCONF(14, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm0_2_cfg: pwm0-2-cfg {
++		pwm0-2-pins {
++			pinmux = <K1_PADCONF(22, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm1_0_cfg: pwm1-0-cfg {
++		pwm1-0-pins {
++			pinmux = <K1_PADCONF(105, 5)>;
++			bias-pull-up = <0>;
++			drive-strength = <19>;
++		};
++	};
++	pwm1_1_cfg: pwm1-1-cfg {
++		pwm1-1-pins {
++			pinmux = <K1_PADCONF(29, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm1_2_cfg: pwm1-2-cfg {
++		pwm1-2-pins {
++			pinmux = <K1_PADCONF(23, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm2_0_cfg: pwm2-0-cfg {
++		pwm2-0-pins {
++			pinmux = <K1_PADCONF(106, 5)>;
++			bias-pull-up = <0>;
++			drive-strength = <19>;
++		};
++	};
++	pwm2_1_cfg: pwm2-1-cfg {
++		pwm2-1-pins {
++			pinmux = <K1_PADCONF(22, 2)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm2_2_cfg: pwm2-2-cfg {
++		pwm2-2-pins {
++			pinmux = <K1_PADCONF(30, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm2_3_cfg: pwm2-3-cfg {
++		pwm2-3-pins {
++			pinmux = <K1_PADCONF(24, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm3_0_cfg: pwm3-0-cfg {
++		pwm3-0-pins {
++			pinmux = <K1_PADCONF(107, 5)>;
++			bias-pull-up = <0>;
++			drive-strength = <19>;
++		};
++	};
++	pwm3_1_cfg: pwm3-1-cfg {
++		pwm3-1-pins {
++			pinmux = <K1_PADCONF(33, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm3_2_cfg: pwm3-2-cfg {
++		pwm3-2-pins {
++			pinmux = <K1_PADCONF(25, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm4_0_cfg: pwm4-0-cfg {
++		pwm4-0-pins {
++			pinmux = <K1_PADCONF(108, 5)>;
++			bias-pull-up = <0>;
++			drive-strength = <19>;
++		};
++	};
++	pwm4_1_cfg: pwm4-1-cfg {
++		pwm4-1-pins {
++			pinmux = <K1_PADCONF(34, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm5_0_cfg: pwm5-0-cfg {
++		pwm5-0-pins {
++			pinmux = <K1_PADCONF(109, 5)>;
++			bias-pull-up = <0>;
++			drive-strength = <19>;
++		};
++	};
++	pwm5_1_cfg: pwm5-1-cfg {
++		pwm5-1-pins {
++			pinmux = <K1_PADCONF(35, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm6_0_cfg: pwm6-0-cfg {
++		pwm6-0-pins {
++			pinmux = <K1_PADCONF(88, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm6_1_cfg: pwm6-1-cfg {
++		pwm6-1-pins {
++			pinmux = <K1_PADCONF(36, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm7_0_cfg: pwm7-0-cfg {
++		pwm7-0-pins {
++			pinmux = <K1_PADCONF(92, 2)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm7_1_cfg: pwm7-1-cfg {
++		pwm7-1-pins {
++			pinmux = <K1_PADCONF(37, 2)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm8_0_cfg: pwm8-0-cfg {
++		pwm8-0-pins {
++			pinmux = <K1_PADCONF(0, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm8_1_cfg: pwm8-1-cfg {
++		pwm8-1-pins {
++			pinmux = <K1_PADCONF(38, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm9_0_cfg: pwm9-0-cfg {
++		pwm9-0-pins {
++			pinmux = <K1_PADCONF(1, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm9_1_cfg: pwm9-1-cfg {
++		pwm9-1-pins {
++			pinmux = <K1_PADCONF(39, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm10_0_cfg: pwm10-0-cfg {
++		pwm10-0-pins {
++			pinmux = <K1_PADCONF(2, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm10_1_cfg: pwm10-1-cfg {
++		pwm10-1-pins {
++			pinmux = <K1_PADCONF(40, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm11_0_cfg: pwm11-0-cfg {
++		pwm11-0-pins {
++			pinmux = <K1_PADCONF(3, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm11_1_cfg: pwm11-1-cfg {
++		pwm11-1-pins {
++			pinmux = <K1_PADCONF(41, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm12_0_cfg: pwm12-0-cfg {
++		pwm12-0-pins {
++			pinmux = <K1_PADCONF(4, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm12_1_cfg: pwm12-1-cfg {
++		pwm12-1-pins {
++			pinmux = <K1_PADCONF(42, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm13_0_cfg: pwm13-0-cfg {
++		pwm13-0-pins {
++			pinmux = <K1_PADCONF(5, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm13_1_cfg: pwm13-1-cfg {
++		pwm13-1-pins {
++			pinmux = <K1_PADCONF(43, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm14_0_cfg: pwm14-0-cfg {
++		pwm14-0-pins {
++			pinmux = <K1_PADCONF(6, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm14_1_cfg: pwm14-1-cfg {
++		pwm14-1-pins {
++			pinmux = <K1_PADCONF(44, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm15_0_cfg: pwm15-0-cfg {
++		pwm15-0-pins {
++			pinmux = <K1_PADCONF(7, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm15_1_cfg: pwm15-1-cfg {
++		pwm15-1-pins {
++			pinmux = <K1_PADCONF(45, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm16_0_cfg: pwm16-0-cfg {
++		pwm16-0-pins {
++			pinmux = <K1_PADCONF(9, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm16_1_cfg: pwm16-1-cfg {
++		pwm16-1-pins {
++			pinmux = <K1_PADCONF(46, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm17_0_cfg: pwm17-0-cfg {
++		pwm17-0-pins {
++			pinmux = <K1_PADCONF(10, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm17_1_cfg: pwm17-1-cfg {
++		pwm17-1-pins {
++			pinmux = <K1_PADCONF(53, 2)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm18_0_cfg: pwm18-0-cfg {
++		pwm18-0-pins {
++			pinmux = <K1_PADCONF(11, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm18_1_cfg: pwm18-1-cfg {
++		pwm18-1-pins {
++			pinmux = <K1_PADCONF(57, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm19_0_cfg: pwm19-0-cfg {
++		pwm19-0-pins {
++			pinmux = <K1_PADCONF(13, 3)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
++	pwm19_1_cfg: pwm19-1-cfg {
++		pwm19-1-pins {
++			pinmux = <K1_PADCONF(63, 4)>;
++			bias-pull-up = <0>;
++			drive-strength = <32>;
++		};
++	};
  };
 -- 
 2.43.0
