@@ -1,133 +1,363 @@
-Return-Path: <linux-kernel+bounces-600585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E956CA861B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:24:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F350A861BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7DCB3B167A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:22:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC5E33AD8D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A885A20E01D;
-	Fri, 11 Apr 2025 15:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597DA1FBE83;
+	Fri, 11 Apr 2025 15:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFF9wtRU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="I22R8dGe"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2281F91F6;
-	Fri, 11 Apr 2025 15:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FE420CCF5
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 15:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744384979; cv=none; b=EPQEkAOI1/y5iu7JZZvSty9KgvoMwSwvhUDWTrhccChnn1kXIchqb0nr4LS8CA4LhTZRklhLP9MzxZXVY2/G6k2qjdkRV7YAMpgrRMIuJlD82BKhF6HTiHgsDG4uNuGKe53TeC6L0c/4wp0zCTGTVC+HaDSuJIO+k2w+H1yBC2k=
+	t=1744385016; cv=none; b=Pq6tLpokDQkXSY/SGWW+d5F2v8e0wexKNwAnsQiSThzTC0pQrfwMMGj0qRI+2kRiyH5q4Qbehdo7LrRZc12LJiORxhUB3jygJtdCWmLC+HS8Y8bYV2pPX+2tu1ZHvuf/cMqfKIs5sClbvAYQ3p7wcqV59EBRGbX+/5GCVtC+z3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744384979; c=relaxed/simple;
-	bh=5VH+Kw5uc61DtQBWYw5PyM1LgNGGDqiUvj3mP4vtzho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SN04HYjz/8A/1dO415FMe2y+PI7kr55fsIvukk+YeI+qrYmZMSVPawSiyeRFxEPn317p6NuSVsDpO/ABuHtFHZrl3wbxh2CZBxtgbOmtPZiZZ+jlVH78XfhxVdHuo/jMcJF7oAhUS0JUQP52pcwfW7I/OcZdRpw0AXWtaqL5MoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFF9wtRU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30DF2C4CEE9;
-	Fri, 11 Apr 2025 15:22:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744384977;
-	bh=5VH+Kw5uc61DtQBWYw5PyM1LgNGGDqiUvj3mP4vtzho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jFF9wtRULrrQbnny31jmOpzUAXpNXxVUrIbTKxxkZqGvmmTdqSj91KKl6NkPMNhHc
-	 ofnKGdxbM4RHHURb4B9U204zCVx1plMNxKPefqEYWeCd5fQ4ZT2VaiUNyCfrMvhY6W
-	 BNnCA7cgDNLjfMIk0zMTEKGpCe+k0h8yXGwyZ38B4clA9A7buKm34VNETzfBJOR2gH
-	 VyYG1on5KELT6IABs0XHhehlnP5fl4fUF3iiOSnPmhxxbWH3wU4EAttnWDBXVwln1K
-	 JyAXDEMgbP65kUhawrPNSRo4ksd0PAxzd+aE8QBgjkCVtzVxvnaVtTLbS8RbnaaMrb
-	 bejGVLTBzQdoQ==
-Date: Fri, 11 Apr 2025 10:22:56 -0500
-From: Rob Herring <robh@kernel.org>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <Frank.li@nxp.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/6] arm64: dts: imx8mp: add aipstz-related definitions
-Message-ID: <20250411152256.GA3270148-robh@kernel.org>
-References: <20250408154236.49421-1-laurentiumihalcea111@gmail.com>
- <20250408154236.49421-6-laurentiumihalcea111@gmail.com>
+	s=arc-20240116; t=1744385016; c=relaxed/simple;
+	bh=RR2MMeSwD2yV5hqd68gH2S6l/bGY9NQySA3BzLvS2dg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZK6S9hGLiERR2rkfDb+96x+teAeirInw1KPUtSnR5z7Sf0ZHkU3Lgb+h4uHYe1FnrxryFNQpwLvCwZUuh9ZIVCMBuENmVj+UGGjHrmKn6V2ta/TmGsGakS0jPS5UkAwphlY52V5zBGaD/rQofCXV8VZMGjZYhHWhMvG3ZadksC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=I22R8dGe; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1744385012;
+	bh=RR2MMeSwD2yV5hqd68gH2S6l/bGY9NQySA3BzLvS2dg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I22R8dGeV/nNJKCj9FD0QfAnDzi5ij7+PEfQeqb23broyaDiuHoHVY75CP3PJKRLP
+	 VHrRaW2rgmgE6r5tgpVWG6Zw7a/3pE25Apx6nTa7pH7fg1GvWR98s5WdrRcXoUmYYj
+	 vHg2QZ3q44l/GzZUrg4whAORbqA7Fn0+/EsnOQAcxl6pffBjxNZlFlUcukaZXBTjof
+	 js3KiixZycFBaGS6//eEcmC/uJ3hg2xx6GE8QAJxLgN/Th0NOvYMQXgVPzRCJ8LxzT
+	 tBYJlSrwft/yYHscWfLPV7GM8RNR7DmW1bMXE23V2N6mc7Nj3nJhxXBDfdvX3RQKsf
+	 uNkNbE9TwkkGw==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E1BD817E0FD9;
+	Fri, 11 Apr 2025 17:23:31 +0200 (CEST)
+Date: Fri, 11 Apr 2025 17:23:26 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Karunika Choo <karunika.choo@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
+ <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] drm/panthor: Clean up 64-bit register
+ definitions
+Message-ID: <20250411172326.49d251e1@collabora.com>
+In-Reply-To: <20250411151140.1815435-3-karunika.choo@arm.com>
+References: <20250411151140.1815435-1-karunika.choo@arm.com>
+	<20250411151140.1815435-3-karunika.choo@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408154236.49421-6-laurentiumihalcea111@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 08, 2025 at 11:42:35AM -0400, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Fri, 11 Apr 2025 16:11:40 +0100
+Karunika Choo <karunika.choo@arm.com> wrote:
+
+> With the introduction of 64-bit register accessors, the separate *_HI
+> definitions are no longer necessary. This change removes them and
+> renames the corresponding *_LO entries for cleaner and more consistent
+> register definitions.
 > 
-> Add header file with AIPSTZ-related definitions: consumer types,
-> master/peripheral configuration bits, and master ID definitions.
-> 
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> Suggested-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+
 > ---
->  arch/arm64/boot/dts/freescale/imx8mp-aipstz.h | 39 +++++++++++++++++++
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi     |  1 +
->  2 files changed, 40 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aipstz.h
+>  drivers/gpu/drm/panthor/panthor_gpu.c  | 12 ++--
+>  drivers/gpu/drm/panthor/panthor_gpu.h  | 10 +--
+>  drivers/gpu/drm/panthor/panthor_mmu.c  | 16 ++---
+>  drivers/gpu/drm/panthor/panthor_regs.h | 94 +++++++++-----------------
+>  4 files changed, 52 insertions(+), 80 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-aipstz.h b/arch/arm64/boot/dts/freescale/imx8mp-aipstz.h
-> new file mode 100644
-> index 000000000000..b816cb6ee9d0
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-aipstz.h
-> @@ -0,0 +1,39 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-> +/*
-> + * Copyright 2025 NXP
-> + */
+> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
+> index fd09f0928019..5fc45284c712 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
+> @@ -108,9 +108,9 @@ static void panthor_gpu_init_info(struct panthor_device *ptdev)
+>  
+>  	ptdev->gpu_info.as_present = gpu_read(ptdev, GPU_AS_PRESENT);
+>  
+> -	ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT_LO);
+> -	ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT_LO);
+> -	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT_LO);
+> +	ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT);
+> +	ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT);
+> +	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT);
+>  
+>  	arch_major = GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id);
+>  	product_major = GPU_PROD_MAJOR(ptdev->gpu_info.gpu_id);
+> @@ -147,7 +147,7 @@ static void panthor_gpu_irq_handler(struct panthor_device *ptdev, u32 status)
+>  {
+>  	if (status & GPU_IRQ_FAULT) {
+>  		u32 fault_status = gpu_read(ptdev, GPU_FAULT_STATUS);
+> -		u64 address = gpu_read64(ptdev, GPU_FAULT_ADDR_LO);
+> +		u64 address = gpu_read64(ptdev, GPU_FAULT_ADDR);
+>  
+>  		drm_warn(&ptdev->base, "GPU Fault 0x%08x (%s) at 0x%016llx\n",
+>  			 fault_status, panthor_exception_name(ptdev, fault_status & 0xFF),
+> @@ -457,7 +457,7 @@ void panthor_gpu_resume(struct panthor_device *ptdev)
+>   */
+>  u64 panthor_gpu_read_timestamp(struct panthor_device *ptdev)
+>  {
+> -	return gpu_read64_counter(ptdev, GPU_TIMESTAMP_LO);
+> +	return gpu_read64_counter(ptdev, GPU_TIMESTAMP);
+>  }
+>  
+>  /**
+> @@ -468,5 +468,5 @@ u64 panthor_gpu_read_timestamp(struct panthor_device *ptdev)
+>   */
+>  u64 panthor_gpu_read_timestamp_offset(struct panthor_device *ptdev)
+>  {
+> -	return gpu_read64(ptdev, GPU_TIMESTAMP_OFFSET_LO);
+> +	return gpu_read64(ptdev, GPU_TIMESTAMP_OFFSET);
+>  }
+> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.h b/drivers/gpu/drm/panthor/panthor_gpu.h
+> index 7f6133a66127..89a0bdb2fbc5 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gpu.h
+> +++ b/drivers/gpu/drm/panthor/panthor_gpu.h
+> @@ -30,9 +30,9 @@ int panthor_gpu_block_power_off(struct panthor_device *ptdev,
+>   */
+>  #define panthor_gpu_power_on(ptdev, type, mask, timeout_us) \
+>  	panthor_gpu_block_power_on(ptdev, #type, \
+> -				  type ## _PWRON_LO, \
+> -				  type ## _PWRTRANS_LO, \
+> -				  type ## _READY_LO, \
+> +				  type ## _PWRON, \
+> +				  type ## _PWRTRANS, \
+> +				  type ## _READY, \
+>  				  mask, timeout_us)
+>  
+>  /**
+> @@ -42,8 +42,8 @@ int panthor_gpu_block_power_off(struct panthor_device *ptdev,
+>   */
+>  #define panthor_gpu_power_off(ptdev, type, mask, timeout_us) \
+>  	panthor_gpu_block_power_off(ptdev, #type, \
+> -				   type ## _PWROFF_LO, \
+> -				   type ## _PWRTRANS_LO, \
+> +				   type ## _PWROFF, \
+> +				   type ## _PWRTRANS, \
+>  				   mask, timeout_us)
+>  
+>  int panthor_gpu_l2_power_on(struct panthor_device *ptdev);
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index a0a79f19bdea..1db4a46ddf98 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -564,7 +564,7 @@ static void lock_region(struct panthor_device *ptdev, u32 as_nr,
+>  	region = region_width | region_start;
+>  
+>  	/* Lock the region that needs to be updated */
+> -	gpu_write64(ptdev, AS_LOCKADDR_LO(as_nr), region);
+> +	gpu_write64(ptdev, AS_LOCKADDR(as_nr), region);
+>  	write_cmd(ptdev, as_nr, AS_COMMAND_LOCK);
+>  }
+>  
+> @@ -614,9 +614,9 @@ static int panthor_mmu_as_enable(struct panthor_device *ptdev, u32 as_nr,
+>  	if (ret)
+>  		return ret;
+>  
+> -	gpu_write64(ptdev, AS_TRANSTAB_LO(as_nr), transtab);
+> -	gpu_write64(ptdev, AS_MEMATTR_LO(as_nr), memattr);
+> -	gpu_write64(ptdev, AS_TRANSCFG_LO(as_nr), transcfg);
+> +	gpu_write64(ptdev, AS_TRANSTAB(as_nr), transtab);
+> +	gpu_write64(ptdev, AS_MEMATTR(as_nr), memattr);
+> +	gpu_write64(ptdev, AS_TRANSCFG(as_nr), transcfg);
+>  
+>  	return write_cmd(ptdev, as_nr, AS_COMMAND_UPDATE);
+>  }
+> @@ -629,9 +629,9 @@ static int panthor_mmu_as_disable(struct panthor_device *ptdev, u32 as_nr)
+>  	if (ret)
+>  		return ret;
+>  
+> -	gpu_write64(ptdev, AS_TRANSTAB_LO(as_nr), 0);
+> -	gpu_write64(ptdev, AS_MEMATTR_LO(as_nr), 0);
+> -	gpu_write64(ptdev, AS_TRANSCFG_LO(as_nr), AS_TRANSCFG_ADRMODE_UNMAPPED);
+> +	gpu_write64(ptdev, AS_TRANSTAB(as_nr), 0);
+> +	gpu_write64(ptdev, AS_MEMATTR(as_nr), 0);
+> +	gpu_write64(ptdev, AS_TRANSCFG(as_nr), AS_TRANSCFG_ADRMODE_UNMAPPED);
+>  
+>  	return write_cmd(ptdev, as_nr, AS_COMMAND_UPDATE);
+>  }
+> @@ -1669,7 +1669,7 @@ static void panthor_mmu_irq_handler(struct panthor_device *ptdev, u32 status)
+>  		u32 source_id;
+>  
+>  		fault_status = gpu_read(ptdev, AS_FAULTSTATUS(as));
+> -		addr = gpu_read64(ptdev, AS_FAULTADDRESS_LO(as));
+> +		addr = gpu_read64(ptdev, AS_FAULTADDRESS(as));
+>  
+>  		/* decode the fault status */
+>  		exception_type = fault_status & 0xFF;
+> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
+> index 6fd39a52f887..7e21d6a25dc4 100644
+> --- a/drivers/gpu/drm/panthor/panthor_regs.h
+> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
+> @@ -65,20 +65,16 @@
+>  #define   GPU_STATUS_DBG_ENABLED			BIT(8)
+>  
+>  #define GPU_FAULT_STATUS				0x3C
+> -#define GPU_FAULT_ADDR_LO				0x40
+> -#define GPU_FAULT_ADDR_HI				0x44
+> +#define GPU_FAULT_ADDR					0x40
+>  
+>  #define GPU_PWR_KEY					0x50
+>  #define  GPU_PWR_KEY_UNLOCK				0x2968A819
+>  #define GPU_PWR_OVERRIDE0				0x54
+>  #define GPU_PWR_OVERRIDE1				0x58
+>  
+> -#define GPU_TIMESTAMP_OFFSET_LO				0x88
+> -#define GPU_TIMESTAMP_OFFSET_HI				0x8C
+> -#define GPU_CYCLE_COUNT_LO				0x90
+> -#define GPU_CYCLE_COUNT_HI				0x94
+> -#define GPU_TIMESTAMP_LO				0x98
+> -#define GPU_TIMESTAMP_HI				0x9C
+> +#define GPU_TIMESTAMP_OFFSET				0x88
+> +#define GPU_CYCLE_COUNT					0x90
+> +#define GPU_TIMESTAMP					0x98
+>  
+>  #define GPU_THREAD_MAX_THREADS				0xA0
+>  #define GPU_THREAD_MAX_WORKGROUP_SIZE			0xA4
+> @@ -87,47 +83,29 @@
+>  
+>  #define GPU_TEXTURE_FEATURES(n)				(0xB0 + ((n) * 4))
+>  
+> -#define GPU_SHADER_PRESENT_LO				0x100
+> -#define GPU_SHADER_PRESENT_HI				0x104
+> -#define GPU_TILER_PRESENT_LO				0x110
+> -#define GPU_TILER_PRESENT_HI				0x114
+> -#define GPU_L2_PRESENT_LO				0x120
+> -#define GPU_L2_PRESENT_HI				0x124
+> -
+> -#define SHADER_READY_LO					0x140
+> -#define SHADER_READY_HI					0x144
+> -#define TILER_READY_LO					0x150
+> -#define TILER_READY_HI					0x154
+> -#define L2_READY_LO					0x160
+> -#define L2_READY_HI					0x164
+> -
+> -#define SHADER_PWRON_LO					0x180
+> -#define SHADER_PWRON_HI					0x184
+> -#define TILER_PWRON_LO					0x190
+> -#define TILER_PWRON_HI					0x194
+> -#define L2_PWRON_LO					0x1A0
+> -#define L2_PWRON_HI					0x1A4
+> -
+> -#define SHADER_PWROFF_LO				0x1C0
+> -#define SHADER_PWROFF_HI				0x1C4
+> -#define TILER_PWROFF_LO					0x1D0
+> -#define TILER_PWROFF_HI					0x1D4
+> -#define L2_PWROFF_LO					0x1E0
+> -#define L2_PWROFF_HI					0x1E4
+> -
+> -#define SHADER_PWRTRANS_LO				0x200
+> -#define SHADER_PWRTRANS_HI				0x204
+> -#define TILER_PWRTRANS_LO				0x210
+> -#define TILER_PWRTRANS_HI				0x214
+> -#define L2_PWRTRANS_LO					0x220
+> -#define L2_PWRTRANS_HI					0x224
+> -
+> -#define SHADER_PWRACTIVE_LO				0x240
+> -#define SHADER_PWRACTIVE_HI				0x244
+> -#define TILER_PWRACTIVE_LO				0x250
+> -#define TILER_PWRACTIVE_HI				0x254
+> -#define L2_PWRACTIVE_LO					0x260
+> -#define L2_PWRACTIVE_HI					0x264
+> +#define GPU_SHADER_PRESENT				0x100
+> +#define GPU_TILER_PRESENT				0x110
+> +#define GPU_L2_PRESENT					0x120
 > +
-> +#ifndef __IMX8MP_AIPSTZ_H
-> +#define __IMX8MP_AIPSTZ_H
+> +#define SHADER_READY					0x140
+> +#define TILER_READY					0x150
+> +#define L2_READY					0x160
 > +
-> +/* consumer type - master or peripheral */
-> +#define IMX8MP_AIPSTZ_MASTER 0x0
-> +#define IMX8MP_AIPSTZ_PERIPH 0x1
+> +#define SHADER_PWRON					0x180
+> +#define TILER_PWRON					0x190
+> +#define L2_PWRON					0x1A0
 > +
-> +/* master configuration options */
-> +#define IMX8MP_AIPSTZ_MPL (1 << 0)
-> +#define IMX8MP_AIPSTZ_MTW (1 << 1)
-> +#define IMX8MP_AIPSTZ_MTR (1 << 2)
-> +#define IMX8MP_AIPSTZ_MBW (1 << 3)
+> +#define SHADER_PWROFF					0x1C0
+> +#define TILER_PWROFF					0x1D0
+> +#define L2_PWROFF					0x1E0
 > +
-> +/* peripheral configuration options */
-> +#define IMX8MP_AIPSTZ_TP (1 << 0)
-> +#define IMX8MP_AIPSTZ_WP (1 << 1)
-> +#define IMX8MP_AIPSTZ_SP (1 << 2)
-> +#define IMX8MP_AIPSTZ_BW (1 << 3)
+> +#define SHADER_PWRTRANS					0x200
+> +#define TILER_PWRTRANS					0x210
+> +#define L2_PWRTRANS					0x220
 > +
-> +/* master ID definitions */
-> +#define IMX8MP_AIPSTZ_EDMA 0 /* AUDIOMIX EDMA */
-> +#define IMX8MP_AIPSTZ_CA53 1 /* Cortex-A53 cluster */
-> +#define IMX8MP_AIPSTZ_SDMA2 3 /* AUDIOMIX SDMA2 */
-> +#define IMX8MP_AIPSTZ_SDMA3 3 /* AUDIOMIX SDMA3 */
-> +#define IMX8MP_AIPSTZ_HIFI4 5 /* HIFI4 DSP */
-> +#define IMX8MP_AIPSTZ_CM7 6 /* Cortex-M7 */
-> +
-> +/* helper macros */
-> +#define IMX8MP_AIPSTZ_HIFI4_T_RW_PL					\
-> +	IMX8MP_AIPSTZ_MASTER						\
-> +	IMX8MP_AIPSTZ_HIFI4						\
-> +	(IMX8MP_AIPSTZ_MPL | IMX8MP_AIPSTZ_MTW | IMX8MP_AIPSTZ_MTR)
+> +#define SHADER_PWRACTIVE				0x240
+> +#define TILER_PWRACTIVE					0x250
+> +#define L2_PWRACTIVE					0x260
+>  
+>  #define GPU_REVID					0x280
+>  
+> @@ -170,10 +148,8 @@
+>  #define MMU_AS_SHIFT					6
+>  #define MMU_AS(as)					(MMU_BASE + ((as) << MMU_AS_SHIFT))
+>  
+> -#define AS_TRANSTAB_LO(as)				(MMU_AS(as) + 0x0)
+> -#define AS_TRANSTAB_HI(as)				(MMU_AS(as) + 0x4)
+> -#define AS_MEMATTR_LO(as)				(MMU_AS(as) + 0x8)
+> -#define AS_MEMATTR_HI(as)				(MMU_AS(as) + 0xC)
+> +#define AS_TRANSTAB(as)					(MMU_AS(as) + 0x0)
+> +#define AS_MEMATTR(as)					(MMU_AS(as) + 0x8)
+>  #define   AS_MEMATTR_AARCH64_INNER_ALLOC_IMPL		(2 << 2)
+>  #define   AS_MEMATTR_AARCH64_INNER_ALLOC_EXPL(w, r)	((3 << 2) | \
+>  							 ((w) ? BIT(0) : 0) | \
+> @@ -185,8 +161,7 @@
+>  #define   AS_MEMATTR_AARCH64_INNER_OUTER_NC		(1 << 6)
+>  #define   AS_MEMATTR_AARCH64_INNER_OUTER_WB		(2 << 6)
+>  #define   AS_MEMATTR_AARCH64_FAULT			(3 << 6)
+> -#define AS_LOCKADDR_LO(as)				(MMU_AS(as) + 0x10)
+> -#define AS_LOCKADDR_HI(as)				(MMU_AS(as) + 0x14)
+> +#define AS_LOCKADDR(as)					(MMU_AS(as) + 0x10)
+>  #define AS_COMMAND(as)					(MMU_AS(as) + 0x18)
+>  #define   AS_COMMAND_NOP				0
+>  #define   AS_COMMAND_UPDATE				1
+> @@ -201,12 +176,10 @@
+>  #define  AS_FAULTSTATUS_ACCESS_TYPE_EX			(0x1 << 8)
+>  #define  AS_FAULTSTATUS_ACCESS_TYPE_READ		(0x2 << 8)
+>  #define  AS_FAULTSTATUS_ACCESS_TYPE_WRITE		(0x3 << 8)
+> -#define AS_FAULTADDRESS_LO(as)				(MMU_AS(as) + 0x20)
+> -#define AS_FAULTADDRESS_HI(as)				(MMU_AS(as) + 0x24)
+> +#define AS_FAULTADDRESS(as)				(MMU_AS(as) + 0x20)
+>  #define AS_STATUS(as)					(MMU_AS(as) + 0x28)
+>  #define   AS_STATUS_AS_ACTIVE				BIT(0)
+> -#define AS_TRANSCFG_LO(as)				(MMU_AS(as) + 0x30)
+> -#define AS_TRANSCFG_HI(as)				(MMU_AS(as) + 0x34)
+> +#define AS_TRANSCFG(as)					(MMU_AS(as) + 0x30)
+>  #define   AS_TRANSCFG_ADRMODE_UNMAPPED			(1 << 0)
+>  #define   AS_TRANSCFG_ADRMODE_IDENTITY			(2 << 0)
+>  #define   AS_TRANSCFG_ADRMODE_AARCH64_4K		(6 << 0)
+> @@ -224,8 +197,7 @@
+>  #define   AS_TRANSCFG_DISABLE_AF_FAULT			BIT(34)
+>  #define   AS_TRANSCFG_WXN				BIT(35)
+>  #define   AS_TRANSCFG_XREADABLE				BIT(36)
+> -#define AS_FAULTEXTRA_LO(as)				(MMU_AS(as) + 0x38)
+> -#define AS_FAULTEXTRA_HI(as)				(MMU_AS(as) + 0x3C)
+> +#define AS_FAULTEXTRA(as)				(MMU_AS(as) + 0x38)
+>  
+>  #define CSF_GPU_LATEST_FLUSH_ID				0x10000
+>  
 
-Drop this. 1 define per value. Combining these makes the .dts look 
-wrong.
-
-Rob
 
