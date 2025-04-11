@@ -1,97 +1,102 @@
-Return-Path: <linux-kernel+bounces-600281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D6FA85DF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 128C2A85DFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2869B179CE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:54:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A0E516C107
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBE12367A9;
-	Fri, 11 Apr 2025 12:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF952367C3;
+	Fri, 11 Apr 2025 12:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="D+1poUm5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+BmnKnX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450892367B7;
-	Fri, 11 Apr 2025 12:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5832367A9
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 12:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744376075; cv=none; b=NlgwAVb1xUnEcNXovUfDs17LZ05mJL+dOj5FTMpVAA4palwU0aFxqWSHResORKhTC4s1mJ66jUUcfnXD0BAiRBYWjNQkOJ0ueJe6QVX8cn3o8GgUh75yQlpKFRgMUjRQcK98bpk0GTR1hRKNp3UvC8RyhsN3bSnBS6Sf2s35EXE=
+	t=1744376138; cv=none; b=t+BuGoKek/hMWuywL5ugRZmMjGmMWMCxQhgBPhfCWiIRvXGBDR83mxg5nJWfkYORp8AxvVIlmpXyHGUOoE6VXQXH0p+JZwVc6RbL0oETW/tDLapGUXNoBaFRV3mDunVi0BH6lGSviS30cuZ292Cy3L62h+VZdWhXYJAYHhOMUdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744376075; c=relaxed/simple;
-	bh=1FMfL5JnI997PT62pkJADHSoxPEsKGsxLvDEqOfq+8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kC/V7kH2NIa2JbJqbq0CpNWudf0xzGfZeIXru625GrLpz/F4IgXuIjamDLvm2AVtQMnII/Ap3kiyx5sCA6RjCFfWY5XSYapoyCd2srZJNeXUiQFhaGhVvCm0Co0Q/aa509pv8ajqJBMMsmzcWUp+YeR4E/SRuWN1fh2W/tBiEEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=D+1poUm5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31EC1C4CEE2;
-	Fri, 11 Apr 2025 12:54:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744376074;
-	bh=1FMfL5JnI997PT62pkJADHSoxPEsKGsxLvDEqOfq+8g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D+1poUm5qqgIM4f5Y+ygHQRvTmE/bDvELlFFTrXnk8o9amrj9+VwDjvaI3UHLLXfm
-	 tuvUNtFa0w0fegdzpUTp173lRcHis64JPwwddmp2rS0SIa/5pyLHSpuJsh73wQmqaM
-	 eeyHnimkbrv+XaHd28Y80irAKGZcQH0CzvNaEUXI=
-Date: Fri, 11 Apr 2025 14:54:32 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
-	mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
-	dmitry.torokhov@gmail.com, corbet@lwn.net, broonie@kernel.org,
-	lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-	pierre-louis.bossart@linux.intel.com, Thinh.Nguyen@synopsys.com,
-	tiwai@suse.com, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v38 00/31] Introduce QC USB SND audio offloading support
-Message-ID: <2025041152-eternal-harmonize-d608@gregkh>
-References: <20250409194804.3773260-1-quic_wcheng@quicinc.com>
- <2025041029-oval-cavity-7896@gregkh>
- <2025041144-imitation-reappear-a0d9@gregkh>
- <Z_kNr52hM-iWUgyZ@linaro.org>
+	s=arc-20240116; t=1744376138; c=relaxed/simple;
+	bh=1JVVosuEJjtVUPPGOQoV/EL2ui4efcKyx8phzWVmkg0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=diWQH44kApqcyyg2PT2vPcSIyA/x9ZVIxSxlubPuuN6DFsfYigoWvXLl8+Yu1AMzzd6H/40JJI1F1HFNObp1v2LQdHJEQGM1+OTkDVakNy6LW/YsWL31XegdjiNZnwqL35CuLtHvpNimU+jpeQ0eiRhV5BoLs65eZv2fuqjWKaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+BmnKnX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D692C4CEE2;
+	Fri, 11 Apr 2025 12:55:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744376137;
+	bh=1JVVosuEJjtVUPPGOQoV/EL2ui4efcKyx8phzWVmkg0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=t+BmnKnXy19PvUkWOcAzg7fOKFmhUnDU3SGCoUDWktvSqKtvbdhc85WCv2NbB5Kas
+	 ekrTOe/NVtTDWP+OSothG7PvNErTvbyd3xa1H8+uMZ7NbwiJ6BrLs1eV9l/+6KnQHw
+	 SJzItaX7lT0Hmzf9WqEBVCe7+5QSsRx6ZbTPTVZSDRHIskIuNrn/HeUYUr+tFGoPa/
+	 w3nSpmDEXpZA9Unqzu8zLKJ2mL39xsuF4p20tWW2JM82fdQXFLXpuwyPUwuVy8U4+H
+	 BFIhACQ1Rs+vq3PvT0oBE0zMPahH1LuxmHXCx5UJ68gvprFhbqMbKz+pDF0ZE6uwVa
+	 P003fDMkZRMfw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: ttm: select CONFIG_SHMEM
+Date: Fri, 11 Apr 2025 14:55:25 +0200
+Message-Id: <20250411125532.1444682-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_kNr52hM-iWUgyZ@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Apr 11, 2025 at 02:40:15PM +0200, Stephan Gerhold wrote:
-> Hi Greg,
-> 
-> On Fri, Apr 11, 2025 at 01:04:37PM +0200, Greg KH wrote:
-> > On Thu, Apr 10, 2025 at 09:11:42AM +0200, Greg KH wrote:
-> > > On Wed, Apr 09, 2025 at 12:47:33PM -0700, Wesley Cheng wrote:
-> > > > Requesting to see if we can get some Acked-By tags, and merge on usb-next.
-> > > 
-> > > let me give it some 0-day bot testing to see how that goes...
-> > 
-> > All looks good, so let me go apply this to my usb-next branch now.
-> > 
-> > Thanks for sticking with this, I think it deserves the "most versions ever"
-> > of a patch series award.
-> > 
-> 
-> I have honestly no intention of blocking this series any longer, but the
-> comments I raised on PATCH 26/31 are likely valid and suggest the series
-> wasn't fully tested on v38. So I would personally prefer to get fixes
-> and confirmation on that from Wesley and then merge v39. It doesn't feel
-> like the kind of thing to fix incrementally on top, since the commit
-> message is also misleading now.
+From: Arnd Bergmann <arnd@arndb.de>
 
-I think a fixup is probably sufficient, especially as I can't rebase my
-tree, and reverting all of these is just a mess.
+ttm now directly calls into shmem code, which fails to build when
+that is disabled at compile time.
 
-thanks,
+ld.lld-21: error: undefined symbol: shmem_writeout
+>>> referenced by ttm_backup.c
+>>>               drivers/gpu/drm/ttm/ttm_backup.o:(ttm_backup_backup_page) in archive vmlinux.a
 
-greg k-h
+Select SHMEM here.
+
+Fixes: fe75adffac33 ("ttm: Call shmem_writeout() from ttm_backup_backup_page()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpu/drm/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index b3bbb3f20b2a..831bd384f1fd 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -187,6 +187,7 @@ source "drivers/gpu/drm/display/Kconfig"
+ config DRM_TTM
+ 	tristate
+ 	depends on DRM && MMU
++	select SHMEM
+ 	help
+ 	  GPU memory management subsystem for devices with multiple
+ 	  GPU memory types. Will be enabled automatically if a device driver
+-- 
+2.39.5
+
 
