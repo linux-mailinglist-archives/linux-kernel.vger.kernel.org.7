@@ -1,780 +1,277 @@
-Return-Path: <linux-kernel+bounces-599693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC4DA856E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:45:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD02A856ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3B91BA0639
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:45:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC63E1B62799
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B00F2989B9;
-	Fri, 11 Apr 2025 08:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8042A20B7F1;
+	Fri, 11 Apr 2025 08:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RBG1LnDS"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i2eSUWr+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E1B2980B4
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744361103; cv=none; b=nNVZ5SMOK2mSljpOXg2ZzrByV8cBiOv26YLNJViVuvDNzyoEmdiKf0Fwf6Gn1ytRXc1Q4TTmL+5IUNWJJbUQjv+866W01NwNfJz2w0TTqqAtqljyx7U3Npv+9qgycSwDkfWlrp3clymNA4TL9HuPuQz/a0uWdC9AM38qvh/adxk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744361103; c=relaxed/simple;
-	bh=KT3ZPovNI1QLhpx/sSiAyZgWOThBW+OmkoKkybovVco=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fZ+FUXL+IBQmZY1XKb603A8hu/qZ9N2APN5ew/46O2hZqK+py3yrZPLleVUkvOjvVTSu7LM7fVNQksMAP0FxtUIzB6IfsijzJcEBgC1dOSPq2rgO9KGTRVc0BlULuL43sHN7Y4cmjbEmIEmRAiUvd7LGiovRZ9MxhdI5O5he3xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RBG1LnDS; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39c2688619bso1039922f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 01:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744361098; x=1744965898; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Aj7bYwGpmFij+p6WS5NWCrr8WK21yn91m17fgt7T08=;
-        b=RBG1LnDS0XL9QACH1EzRxLyIN+20ImfvA4fo1lXW8LLnOJ+XgQIZbVOY1Xh2mUAUKs
-         JSpJoDfaF0WLFlJntUNIs7ImBkNA8G7SDGffZ/5Tu+sEl9JqLKfR3TX5St5/f60zJTMG
-         yAxpf2i9dNak/PVE8hpxxrPYFsSGH2D2f3M6rr29V5ZFIYppAYBmhR44S6D8KLlkyp6S
-         MYRQuzRWJ133puckXqW6+IlCGf61jw3lrYNuAwuCkzHUXhuAWsrYhmao4GRYOz6nztJq
-         xL0A+axciZA6CQzMi+fiUDhg6Pf/VVhqa3nhe4FgbqhfWSgt/MSNwsFE8SGKeWdvpxU+
-         thVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744361098; x=1744965898;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Aj7bYwGpmFij+p6WS5NWCrr8WK21yn91m17fgt7T08=;
-        b=TS1YDkVqpNQNYDSOTduAXYNeN284ajzxrwYsZSKPPpqy4DliUgoW6fcmoVKVZWqu5q
-         xGTxWhXgDnMsCKOCJVaUogXLzf3sK3l6tCMImyBtGLetRVAN91bIlkjKS8Z/5O7FQX/J
-         BxHPxKNGL3cDAKVmM4xacAXWFQGbGRkilfCCgiSwhcNfEXirGbhVWpau0qL6l/sWIL9H
-         MXElos/JRxmI87/UwBVayDDflETqCuIFQmqv9A911w9AZae9fGHU+053ZsnV3O+PLHgA
-         uRMjXaeoDWdlS/gs+EIqADAUJKWeQOV9sEn9EUOGgIl2a32NFqlL76JZc/r4j0RWiId7
-         YkkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXL2EGGXtfMFaTx7egeWZvD5N11FEY3iXhO4caqslBzjJId8Z1OvoqQ0V/5vcDurguqTVt2rghTFP1a434=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAeEkH8LgfK8zWXY0Rw9IL0DfrYLBrYXfzbz2VnkhHj892ojhB
-	uWlLO/MUwwXAW0UKByegQaLsFXibXEIrEpMkjKS6t1cU6cg4SV0utZQTRcurRyM=
-X-Gm-Gg: ASbGncvcgkBORayMLA2cAU9zheC140U4MbfdhuMoJpa934OCAp95UAhyV5QIuCyI2DC
-	9bL4eci2wEN+TLcHxwd9EcGtHimUunkUcPtxP2p1kDvKURiGUmAqRxPpn4BBPLnfhv5NuCP1IiH
-	Yg5pHxsxXVkJqs2oVT3XRNR3NzzjGewNdIzn6ahFk5uKBt4Qqt2SvPwhRmEU+pdmiVcr6XUJyxP
-	PQewPmK3yfX95AiSbxKYoTzx46Fnt5xbIBEzcdeXHYuCA4Mu0oEQVjrvrSDTkyCuhaRvF8Dg1xd
-	dYxFz5IbmwoO2WRWgiLKAOT7jO2oyNh+7cFVnyqUsoSei8Cg
-X-Google-Smtp-Source: AGHT+IFmDNoMNIPep30iQGk7L0aRLNYJN1WA4f/yj9i/HMl65pMcNflAUWdBjK5NVU7WvtrKQTywtA==
-X-Received: by 2002:a5d:6d82:0:b0:38f:2b77:a9f3 with SMTP id ffacd0b85a97d-39eaaecd9d3mr1479862f8f.43.1744361098447;
-        Fri, 11 Apr 2025 01:44:58 -0700 (PDT)
-Received: from [192.168.2.177] ([81.0.8.231])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43cb29sm1328298f8f.76.2025.04.11.01.44.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 01:44:58 -0700 (PDT)
-Message-ID: <c65ed484-6edb-4e41-9f63-cde9671aa332@suse.com>
-Date: Fri, 11 Apr 2025 10:44:56 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AD31BEF77;
+	Fri, 11 Apr 2025 08:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744361178; cv=fail; b=fOn8F9H8xZVHXcND0vliFi6hFRURlEfRJA5Kt+IqsjPDet0yQqIPCm/mCdUONkq9kOdli8deCWr+sShl7Hwu87DXjw7wOw+kiCDfLenEDIRurX2d1v/nXWNouBG2uluSyFGUjphM9PJ0H1T+3A1g7owqiS7sJkmERi/GHRJFQQA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744361178; c=relaxed/simple;
+	bh=9Ps4z6/243xhZs+/fdHdQL5alRhG9Ty9KeAJAb5PY+c=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=U7GRo4J0z+mntVkoXbCljCyItTnbPEKt5ngpiZuHJ3q69wpZZz1o8i5E1HRkbd3oRVrszYMm71eKxNns1uMO0Mmvbt009GL58pu32BdaAxr2yH1U9TERbVjZBbYjkcfSFHb3J7znXLUzynWINPQcVJVWaHNBfD9jo+KZQiXkSa4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i2eSUWr+; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744361177; x=1775897177;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=9Ps4z6/243xhZs+/fdHdQL5alRhG9Ty9KeAJAb5PY+c=;
+  b=i2eSUWr+SyBjnUnj3bWm1P8KnW9uo7QSEF/FzSFhMVADdTD6BHp943tu
+   BUJlLrNf+m2vnSWVNxHwb9ndCO69GaSd0h14mMVxWZ4yN5ZdMisTmzjB2
+   LaV5PjmpZfinfs8Isxv9oPWjl0ShivlMs//AHCLxZcHosjDyEjf6IXrgH
+   hLlFMza8ulsiVYmz2X2IiumWOspeMsXiK6qk4IkxOZuc6PEWzIoQ+IJlr
+   kRtBquoBscp+epAh4EB/jil1Uz2NPXELeFTOgLX7gMlppnNXnrrLupC9h
+   88t94DccQ+vUjHivIk/SZamxisF8C9WSiyycfz0HGlncRR0iGl+OEkNn1
+   A==;
+X-CSE-ConnectionGUID: pGJw7HoaTxazRGYIfVgFKg==
+X-CSE-MsgGUID: LLkn/IcnS4SoidrJWv/xTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="45810659"
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="45810659"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 01:46:15 -0700
+X-CSE-ConnectionGUID: vCRYnH26TDCtjtTNzc57wQ==
+X-CSE-MsgGUID: XM+66UvCQuu7v5UtRH88NA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="134002883"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 01:46:15 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 11 Apr 2025 01:46:14 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 11 Apr 2025 01:46:14 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.172)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 11 Apr 2025 01:46:14 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b34/ZgTplICVxSIBtykokTEL1/0XdgWHfhbMDWjFPvg4lCKUu002rHfLzKcTqi/pITnhhe6o2LEhwNmdxA4FCAZ5Zk/9JS+Se2XZzDs1kKRdOW5JY1Pr/LYMr0z8rIj0Cpp34XWFcOBbirUVIrF74MQ1Q2YjGt7AMQdbATMeMME5UbyQc7fvZdV0HXvnmm00Kls62A8fLnYbrsFaH8XMf3lgZOyygXG8Bj1/50leNeudfDTh5y8flIM6rHIHIvNqc4BFJplL5zheJuYyplyDI49jlpi/HlNCjKKWkb/9LKA3nG5USAJ5/f0ULECfTwy2bcTotS4U+W6NVkf/Z98QRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zfHHsepmNb6jEy+hMCkRzhoWszm9q8eA9ZJAVkvze9E=;
+ b=nU9vB8Nm4jj2ntbo8gqhnW1DzA4TjATC2ggTmvHYqSNoS8UtnswD6WNf/q5cgaQooz4S8hvrgPvI+ThptvixO2hA0o37R6wUAWqiXgrYPnuwFrDxjzULMcqJSXH6Pp7vnSXJhKHWZUkKoFkyBqii7vqmsNgitHqxoNvM+H82/IIhYdNZn7DnxZP3e7qi20gnXxv1q1TwY3pu9HXIJ5RhitA6I7cP7qL0K2GdMlpefeokoAwMGUPAz+1CM96WeZSpN8wzkEnu7zARCwCpl3G9HWYn/CNNWTelNeFhVWpTwC8Oy6223/oqEx5Pcbc7p7oQ35YoL4SgAR7mQ897bMhMjQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by SA2PR11MB4988.namprd11.prod.outlook.com (2603:10b6:806:f8::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Fri, 11 Apr
+ 2025 08:46:12 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%4]) with mapi id 15.20.8606.033; Fri, 11 Apr 2025
+ 08:46:12 +0000
+Date: Fri, 11 Apr 2025 16:46:02 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Paolo Bonzini
+	<pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
+	<hpa@zytor.com>
+Subject: Re: [PATCH] KVM: VMX: Flush shadow VMCS on emergency reboot
+Message-ID: <Z/jWytoXdiGdCeXz@intel.com>
+References: <20250324140849.2099723-1-chao.gao@intel.com>
+ <Z_g-UQoZ8fQhVD_2@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Z_g-UQoZ8fQhVD_2@google.com>
+X-ClientProxiedBy: SI2P153CA0004.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:140::23) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] pmdomain: mediatek: Add support for Dimensity 1200
- MT6893
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- robh@kernel.org
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, ulf.hansson@linaro.org,
- matthias.bgg@gmail.com, fshao@chromium.org, y.oudjana@protonmail.com,
- wenst@chromium.org, lihongbo22@huawei.com, mandyjh.liu@mediatek.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20250410143944.475773-1-angelogioacchino.delregno@collabora.com>
- <20250410143944.475773-4-angelogioacchino.delregno@collabora.com>
-Content-Language: en-US, ca-ES, es-ES
-From: Matthias Brugger <mbrugger@suse.com>
-Autocrypt: addr=mbrugger@suse.com; keydata=
- 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
- PVrr2NoUqi/bxI8fFQJD1jVj8K0=
-In-Reply-To: <20250410143944.475773-4-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SA2PR11MB4988:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28570914-6518-486b-2210-08dd78d54ff5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?KBCUyBeQOBdgNqhk7CCXcuLgRHt0aUzi8+E+gs9psXowyue8BYJb/1nFsNco?=
+ =?us-ascii?Q?gd0mJuT/46IXP38RWhC2rbxPMGSrNmk5bO+JqPegN62NHZGMxhXZHvJX/Gd3?=
+ =?us-ascii?Q?wyt/QYn/YTg3zoiXttRPPktAEM8S12tMcvkUKgbQxbaHVryW3NbluFfGEZ1z?=
+ =?us-ascii?Q?aT+TIjUZKkzVZJH1RSl+7P3IQjYMybzZa580EVVHJF1bPhxYEijr//jRR5g3?=
+ =?us-ascii?Q?CjBAicccpAxKDbaGrCxboQLggjgA3t0B/SAkCcOBQFIWH5tkmN3owiHLRIQV?=
+ =?us-ascii?Q?oDUe7LLLMIfJwIeRgGGJP3YZJU/CUQnSXKwukt5Gdr8rgigzLjUs1hI3Um/n?=
+ =?us-ascii?Q?CR0CSuvGwBPLSbQjOHhDerrt9c93G0UupmybViODAYUpcOBw3JCt4k1nnaIi?=
+ =?us-ascii?Q?DZ8NyRGZzynf/+VK8l7FHVJ2K7BO9A7Wp9wAdq3twn0lIMkzGsKzlSxtnv9R?=
+ =?us-ascii?Q?5c6LKrn1GEV0K0Ul3voGKHXtzQ94GmmN0MCfqLLepN8X8R3N1Nm2RwYNVwSl?=
+ =?us-ascii?Q?1eFfq2/vd72Dyi+i0wN7yetVxG2RrAw4Cnu4AlsT2q2w0Yd4EBezdQg6ZJ7J?=
+ =?us-ascii?Q?MPUMyQTTRgg07bghgqJI2+RdAMc6T5CUSkj3WWGdMQn2JnrvJn1IjV+KVWX8?=
+ =?us-ascii?Q?qOszAXPSVsLzw7WXnWKtdPBQzHWhzzzu+im2lqTVpD5ROKv87VJZ8VGPlQ1i?=
+ =?us-ascii?Q?JP5iXRWRP/ZQ5ATUu8pu2vpsZ0lR+L8TQSCYoTxznKU9lBjkZTDnI0XhW1T3?=
+ =?us-ascii?Q?AbxGLyRAP9uB0DmzpD7qzgzLQxe6d9tH3KMriQz7P/4Rw2uZ+Vit1H1ROWwp?=
+ =?us-ascii?Q?4OfTcG5oKYbKRVPbh1ErrVI86mtrH7YRMaherCEBqENLjP6ZV5BfoiYttRIU?=
+ =?us-ascii?Q?eA9NAItbjrZC29mHtTwfIGgI+T5PQOHLEiMEh8tlqs9eJUdK4KZjnRdFR4ZI?=
+ =?us-ascii?Q?5u/Lmdyo1egUbco73Ml+rBwZx/qn8gXOT+nfBqA/YqG2XvpjR2jvl9ZPINiT?=
+ =?us-ascii?Q?GR2gvIEo0LYHF6MShvkxm8DGSn6SVGeCuf6d11SUFShngPDsL3gp4wdLFiiT?=
+ =?us-ascii?Q?4VSQL5mFQlyRwugI3QSu25zG537c3S9Gu5JTgs1MhFiAXnF0onvGuJjKXC4j?=
+ =?us-ascii?Q?XxX9L6gOexyw3zobQnWbMh/2PCXRpIappv3/3QgGBEWpvR8Z6sEeX4ZuBeuT?=
+ =?us-ascii?Q?HSy5WUIYStaSSPEyfafO3nlOowI2BKGsb0xywp3XzSMrGVHlCG5sGP62IYIv?=
+ =?us-ascii?Q?bLFRoRXJUGu3ww/0kAGaNrwhoaApV+EOYmosD6FAr5TK1IaVOKQ5bcvVwvvN?=
+ =?us-ascii?Q?96CrNMO2aw1B9PGtbQqasdFUzbiSFV5aGRo/qo6Bs//1lO9doGAWtCkNK8w/?=
+ =?us-ascii?Q?qvkPg91s/8YVw/QxdDObhDw/kAQOgIjAWzzJ9bCl1TNrXWsVkYIKKeidryHX?=
+ =?us-ascii?Q?lBW6kYV8+H0=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?d1D0vqOui2ILT6dHdR/phX5iZ9hDbOfpVXOgJZ7s3n1kWaJCh+Tv1v+gsNA4?=
+ =?us-ascii?Q?rPYZ4rnSO+m8P/tfOxHf/A2OUwEigtW+Zr27NUmrnPEwZYpnW9lNoaeyd8rI?=
+ =?us-ascii?Q?poTPnCia6Vo0nIv8WgvTVN69SxSxqJisZvwlV+aQh+RJteitg5K/AzWzs3Xc?=
+ =?us-ascii?Q?pbNuYaq9dBfT50xlv7ZAyQBlsYonSSH7W97/XTEmpHdvJcNKUKNnet8D7Ppk?=
+ =?us-ascii?Q?kvE/KV0HvwyV+2T51T7yAxPPXq2e7FLMw1znfgfBbL+mNuTThDkgWOrZX597?=
+ =?us-ascii?Q?fXjK7KXHepAlx+jWFqKdV6vo3QbukM4L5CSAsjP/zLL5A978j80fYnl/DsS/?=
+ =?us-ascii?Q?gG0BRlvTMB777xXzse3x7+ebhwzCuTl5sSZxrBG+EUiZ+3e0XmtPgtIZDH96?=
+ =?us-ascii?Q?CbGP443kixax8Wk7gjH2kD1JYurlxFE+0gaFfeFPXE6L8fTGwclx8HS3A6u9?=
+ =?us-ascii?Q?WdRx/rvup9Q9DVIeraunKgiXlnxmoiS1HourG0PLWfViwuL/cpZ4r9tQJZ6d?=
+ =?us-ascii?Q?m6nRUPfvz0BJ/xHCJu6BMn5WXvOFbxsxoo/+HHtNwxXNGVzgyEHDFk/0fONi?=
+ =?us-ascii?Q?ZkdGXt4x2fK+p3RWw37BxmX7nyDeT5Nu9amC9LbjqHMNAtd4C8XHUouUdoTR?=
+ =?us-ascii?Q?0/jSyR8li7uXTUaoBAV1hOy3eLmXctvJK2bigi9huhDU6nGfUqdhHSfWgHAu?=
+ =?us-ascii?Q?Pq6xjZFcwhdSD4Y/9wwouo8vs8/YPIhqB5OqThWQGvYGk1ivFSgYWeX9mVdk?=
+ =?us-ascii?Q?hE41uSYjvGmkDiSr8/26HRfmpXslD8ckB9OudfNEd23zEpaMPRnj01pS4P8R?=
+ =?us-ascii?Q?mXR0ZQ3PsVLafGWu/Dq96qX2n1uoB3zo3e00M0Oh3tec5v5c7/s3hF6xrDkt?=
+ =?us-ascii?Q?XETbsXjvqV4RVe5Jw05eOG2aif4PHCYSQNcixOSJgB1j0d/crg9SQRjYa+Sa?=
+ =?us-ascii?Q?UDDeyByytqFvPEycbardQNvyGvCSaoncQc00ExgxzUE9O3zTgZA2s7iQE7xz?=
+ =?us-ascii?Q?LLbryDdTDwLfc3BcbYjLAJ9rtsf01L6T2z6/BbM/qoI5AQIKbHafBw9LCXiJ?=
+ =?us-ascii?Q?n0B7Ad+UIs5fTCQCDNlx+MH1IiTY7QNtp869k/XF0vd9F0GdSrQRT189GKfE?=
+ =?us-ascii?Q?pE1EIvseory0itW3H6TCZfnpoEmn0ohVU44OIwGzFQvzDVw44CrKuWWvkJSQ?=
+ =?us-ascii?Q?ubeNm4dH8rdSfA5A7apAEtpCigORjGnNDvxs0vOXwm0DWIKqzihB9TXpdHOG?=
+ =?us-ascii?Q?JxBuexUycEyqxj7gcNh0CmIMHIGcsqAqxR36EXWAm/HM/YalXNMVBFCTjV8M?=
+ =?us-ascii?Q?bGj8E9MvsDuucJ1HVr8qdOsxup/v75HpqL/B0piXzf5VOD7VUa41qQoWUpPh?=
+ =?us-ascii?Q?EDVE77rpgsg2mp+i+vgDepNjpFOPNHCp3L8daWSqvQwNkx3swf/gIjMW/udw?=
+ =?us-ascii?Q?I3AYls5GKQpkOSDkGyiQg4d7fOadpDMl7w7nMziLkLJaJt7fAdmVxiMZ3Q9+?=
+ =?us-ascii?Q?R6rJr8vVRSrDeHxiDFFylTesAj1A2xgivGtzwu/a0Eg3h6wZdDimvQBP8McH?=
+ =?us-ascii?Q?JmmKakcEMvwjp8qdemTAGy4safFK28e75wfLhdxi?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28570914-6518-486b-2210-08dd78d54ff5
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 08:46:12.3723
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DeE5FJ2zky6zPvlfV57aTCoW5JkXEr4as3Jpd+gRgkzHFOlM+Jtvgv1oMve9twmEeIsw2IApGL7NiWoA5DO8Sw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4988
+X-OriginatorOrg: intel.com
 
+On Thu, Apr 10, 2025 at 02:55:29PM -0700, Sean Christopherson wrote:
+>On Mon, Mar 24, 2025, Chao Gao wrote:
+>> Ensure the shadow VMCS cache is evicted during an emergency reboot to
+>> prevent potential memory corruption if the cache is evicted after reboot.
+>
+>I don't suppose Intel would want to go on record and state what CPUs would actually
+>be affected by this bug.  My understanding is that Intel has never shipped a CPU
+>that caches shadow VMCS state.
 
+I am not sure. Would you like me to check internally?
 
-On 10/04/2025 16:39, AngeloGioacchino Del Regno wrote:
-> Add power domains definitions to implement support for the
-> MediaTek Dimensity 1200 (MT6893) SoC.
-> 
-> Since this chip's MTCMOS are similar to the ones of Kompanio
-> 820 (MT8192), the definitions from that have been reused where
-> possible.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+However, SDM Chapter 26.11 includes a footnote stating:
+"
+As noted in Section 26.1, execution of the VMPTRLD instruction makes a VMCS is
+active. In addition, VM entry makes active any shadow VMCS referenced by the
+VMCS link pointer in the current VMCS. If a shadow VMCS is made active by VM
+entry, it is necessary to execute VMCLEAR for that VMCS before allowing that
+VMCS to become active on another logical processor.
+"
 
-Reviewed-by: Matthias Brugger <mbrugger@suse.com>
+To me, this suggests that shadow VMCS may be cached, and software shouldn't
+assume the CPU won't cache it. But, I don't know if this is the reality or
+if the statement is merely for hardware implementation flexibility.
 
-> ---
->   drivers/pmdomain/mediatek/mt6893-pm-domains.h | 585 ++++++++++++++++++
->   drivers/pmdomain/mediatek/mtk-pm-domains.c    |   5 +
->   2 files changed, 590 insertions(+)
->   create mode 100644 drivers/pmdomain/mediatek/mt6893-pm-domains.h
-> 
-> diff --git a/drivers/pmdomain/mediatek/mt6893-pm-domains.h b/drivers/pmdomain/mediatek/mt6893-pm-domains.h
-> new file mode 100644
-> index 000000000000..5baa965d22da
-> --- /dev/null
-> +++ b/drivers/pmdomain/mediatek/mt6893-pm-domains.h
-> @@ -0,0 +1,585 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2025 Collabora Ltd
-> + *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> + */
-> +
-> +#ifndef __PMDOMAIN_MEDIATEK_MT6893_PM_DOMAINS_H
-> +#define __PMDOMAIN_MEDIATEK_MT6893_PM_DOMAINS_H
-> +
-> +#include <linux/soc/mediatek/infracfg.h>
-> +#include <dt-bindings/power/mediatek,mt6893-power.h>
-> +#include "mtk-pm-domains.h"
-> +
-> +#define MT6893_TOP_AXI_PROT_EN_MCU_STA1				0x2e4
-> +#define MT6893_TOP_AXI_PROT_EN_MCU_SET				0x2c4
-> +#define MT6893_TOP_AXI_PROT_EN_MCU_CLR				0x2c8
-> +#define MT6893_TOP_AXI_PROT_EN_VDNR_1_SET			0xba4
-> +#define MT6893_TOP_AXI_PROT_EN_VDNR_1_CLR			0xba8
-> +#define MT6893_TOP_AXI_PROT_EN_VDNR_1_STA1			0xbb0
-> +#define MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_SET		0xbb8
-> +#define MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_CLR		0xbbc
-> +#define MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_STA1		0xbc4
-> +
-> +#define MT6893_TOP_AXI_PROT_EN_1_MFG1_STEP1			GENMASK(21, 19)
-> +#define MT6893_TOP_AXI_PROT_EN_2_MFG1_STEP2			GENMASK(6, 5)
-> +#define MT6893_TOP_AXI_PROT_EN_MFG1_STEP3			GENMASK(22, 21)
-> +#define MT6893_TOP_AXI_PROT_EN_2_MFG1_STEP4			BIT(7)
-> +#define MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_MFG1_STEP5	GENMASK(19, 17)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_VDEC0_STEP1			BIT(24)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_2_VDEC0_STEP2			BIT(25)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_VDEC1_STEP1			BIT(6)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_VDEC1_STEP2			BIT(7)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_VENC0_STEP1			BIT(26)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_2_VENC0_STEP2			BIT(0)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_VENC0_STEP3			BIT(27)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_2_VENC0_STEP4			BIT(1)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_VENC1_STEP1			GENMASK(30, 28)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_VENC1_STEP2			GENMASK(31, 29)
-> +#define MT6893_TOP_AXI_PROT_EN_MDP_STEP1			BIT(10)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_MDP_STEP2			(BIT(2) | BIT(4) | BIT(6) |	\
-> +								 BIT(8) | BIT(18) | BIT(22) |	\
-> +								 BIT(28) | BIT(30))
-> +#define MT6893_TOP_AXI_PROT_EN_MM_2_MDP_STEP3			(BIT(0) | BIT(2) | BIT(4) |	\
-> +								 BIT(6) | BIT(8))
-> +#define MT6893_TOP_AXI_PROT_EN_MDP_STEP4			BIT(23)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_MDP_STEP5			(BIT(3) | BIT(5) | BIT(7) |	\
-> +								 BIT(9) | BIT(19) | BIT(23) |	\
-> +								 BIT(29) | BIT(31))
-> +#define MT6893_TOP_AXI_PROT_EN_MM_2_MDP_STEP6			(BIT(1) | BIT(7) | BIT(9) | BIT(11))
-> +#define MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_MDP_STEP7		BIT(20)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_DISP_STEP1			(BIT(0) | BIT(6) | BIT(8) |	\
-> +								 BIT(10) | BIT(12) | BIT(14) |	\
-> +								 BIT(16) | BIT(20) | BIT(24) |	\
-> +								 BIT(26))
-> +#define MT6893_TOP_AXI_PROT_EN_DISP_STEP2			BIT(6)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_DISP_STEP3			(BIT(1) | BIT(7) | BIT(9) |	\
-> +								 BIT(15) | BIT(17) | BIT(21) |	\
-> +								 BIT(25) | BIT(27))
-> +#define MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_DISP_STEP4	BIT(21)
-> +#define MT6893_TOP_AXI_PROT_EN_2_ADSP				BIT(3)
-> +#define MT6893_TOP_AXI_PROT_EN_2_CAM_STEP1			BIT(1)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_CAM_STEP2			(BIT(0) | BIT(2) | BIT(4))
-> +#define MT6893_TOP_AXI_PROT_EN_1_CAM_STEP3			BIT(22)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_CAM_STEP4			(BIT(1) | BIT(3) | BIT(5))
-> +#define MT6893_TOP_AXI_PROT_EN_MM_CAM_RAWA_STEP1		BIT(18)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_CAM_RAWA_STEP2		BIT(19)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_CAM_RAWB_STEP1		BIT(20)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_CAM_RAWB_STEP2		BIT(21)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_CAM_RAWC_STEP1		BIT(22)
-> +#define MT6893_TOP_AXI_PROT_EN_MM_CAM_RAWC_STEP2		BIT(23)
-> +
-> +/*
-> + * MT6893 Power Domain (MTCMOS) support
-> + *
-> + * The register layout for this IP is very similar to MT8192 so where possible
-> + * the same definitions are reused to avoid duplication.
-> + * Where the bus protection bits are also the same, the entire set is reused.
-> + */
-> +static const struct scpsys_domain_data scpsys_domain_data_mt6893[] = {
-> +	[MT6893_POWER_DOMAIN_CONN] = {
-> +		.name = "conn",
-> +		.sta_mask = BIT(1),
-> +		.ctl_offs = 0x304,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = 0,
-> +		.sram_pdn_ack_bits = 0,
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT8192_TOP_AXI_PROT_EN_CONN,
-> +				    MT8192_TOP_AXI_PROT_EN_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT8192_TOP_AXI_PROT_EN_CONN_2ND,
-> +				    MT8192_TOP_AXI_PROT_EN_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT8192_TOP_AXI_PROT_EN_1_CONN,
-> +				    MT8192_TOP_AXI_PROT_EN_1_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_1_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_1_STA1),
-> +		},
-> +		.caps = MTK_SCPD_KEEP_DEFAULT_OFF,
-> +	},
-> +	[MT6893_POWER_DOMAIN_MFG0] = {
-> +		.name = "mfg0",
-> +		.sta_mask = BIT(2),
-> +		.ctl_offs = 0x308,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.caps = MTK_SCPD_KEEP_DEFAULT_OFF | MTK_SCPD_DOMAIN_SUPPLY,
-> +	},
-> +	[MT6893_POWER_DOMAIN_MFG1] = {
-> +		.name = "mfg1",
-> +		.sta_mask = BIT(3),
-> +		.ctl_offs = 0x30c,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_1_MFG1_STEP1,
-> +				    MT8192_TOP_AXI_PROT_EN_1_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_1_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_1_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_2_MFG1_STEP2,
-> +				    MT8192_TOP_AXI_PROT_EN_2_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_2_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_2_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MFG1_STEP3,
-> +				    MT8192_TOP_AXI_PROT_EN_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_2_MFG1_STEP4,
-> +				    MT8192_TOP_AXI_PROT_EN_2_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_2_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_2_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_MFG1_STEP5,
-> +				    MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_SET,
-> +				    MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_CLR,
-> +				    MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_STA1),
-> +		},
-> +		.caps = MTK_SCPD_KEEP_DEFAULT_OFF | MTK_SCPD_DOMAIN_SUPPLY,
-> +	},
-> +	[MT6893_POWER_DOMAIN_MFG2] = {
-> +		.name = "mfg2",
-> +		.sta_mask = BIT(4),
-> +		.ctl_offs = 0x310,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.caps = MTK_SCPD_KEEP_DEFAULT_OFF,
-> +	},
-> +	[MT6893_POWER_DOMAIN_MFG3] = {
-> +		.name = "mfg3",
-> +		.sta_mask = BIT(5),
-> +		.ctl_offs = 0x314,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.caps = MTK_SCPD_KEEP_DEFAULT_OFF,
-> +	},
-> +	[MT6893_POWER_DOMAIN_MFG4] = {
-> +		.name = "mfg4",
-> +		.sta_mask = BIT(6),
-> +		.ctl_offs = 0x318,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.caps = MTK_SCPD_KEEP_DEFAULT_OFF,
-> +	},
-> +	[MT6893_POWER_DOMAIN_MFG5] = {
-> +		.name = "mfg5",
-> +		.sta_mask = BIT(7),
-> +		.ctl_offs = 0x31c,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.caps = MTK_SCPD_KEEP_DEFAULT_OFF,
-> +	},
-> +	[MT6893_POWER_DOMAIN_MFG6] = {
-> +		.name = "mfg6",
-> +		.sta_mask = BIT(8),
-> +		.ctl_offs = 0x320,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.caps = MTK_SCPD_KEEP_DEFAULT_OFF,
-> +	},
-> +	[MT6893_POWER_DOMAIN_ISP] = {
-> +		.name = "isp",
-> +		.sta_mask = BIT(12),
-> +		.ctl_offs = 0x330,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_ISP,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_ISP_2ND,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_STA1),
-> +		},
-> +	},
-> +	[MT6893_POWER_DOMAIN_ISP2] = {
-> +		.name = "isp2",
-> +		.sta_mask = BIT(13),
-> +		.ctl_offs = 0x334,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_ISP2,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_ISP2_2ND,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +		},
-> +	},
-> +	[MT6893_POWER_DOMAIN_IPE] = {
-> +		.name = "ipe",
-> +		.sta_mask = BIT(14),
-> +		.ctl_offs = 0x338,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_IPE,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_IPE_2ND,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +		},
-> +	},
-> +	[MT6893_POWER_DOMAIN_VDEC0] = {
-> +		.name = "vdec0",
-> +		.sta_mask = BIT(15),
-> +		.ctl_offs = 0x33c,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_VDEC0_STEP1,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_2_VDEC0_STEP2,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +		},
-> +		.caps = MTK_SCPD_KEEP_DEFAULT_OFF,
-> +	},
-> +	[MT6893_POWER_DOMAIN_VDEC1] = {
-> +		.name = "vdec1",
-> +		.sta_mask = BIT(16),
-> +		.ctl_offs = 0x340,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_VDEC1_STEP1,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_VDEC1_STEP2,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +		},
-> +		.caps = MTK_SCPD_KEEP_DEFAULT_OFF,
-> +	},
-> +	[MT6893_POWER_DOMAIN_VENC0] = {
-> +		.name = "venc0",
-> +		.sta_mask = BIT(17),
-> +		.ctl_offs = 0x344,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_VENC0_STEP1,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_2_VENC0_STEP2,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_VENC0_STEP3,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_2_VENC0_STEP4,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_STA1),
-> +		},
-> +		.caps = MTK_SCPD_KEEP_DEFAULT_OFF,
-> +	},
-> +	[MT6893_POWER_DOMAIN_VENC1] = {
-> +		.name = "venc1",
-> +		.sta_mask = BIT(18),
-> +		.ctl_offs = 0x348,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_VENC1_STEP1,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_VENC1_STEP2,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +		},
-> +		.caps = MTK_SCPD_KEEP_DEFAULT_OFF,
-> +	},
-> +	[MT6893_POWER_DOMAIN_MDP] = {
-> +		.name = "mdp",
-> +		.sta_mask = BIT(19),
-> +		.ctl_offs = 0x34c,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MDP_STEP1,
-> +				    MT8192_TOP_AXI_PROT_EN_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_MDP_STEP2,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_2_MDP_STEP3,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MDP_STEP4,
-> +				    MT8192_TOP_AXI_PROT_EN_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_MDP_STEP5,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_2_MDP_STEP6,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_2_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_MDP_STEP7,
-> +				    MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_SET,
-> +				    MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_CLR,
-> +				    MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_STA1),
-> +		},
-> +	},
-> +	[MT6893_POWER_DOMAIN_DISP] = {
-> +		.name = "disp",
-> +		.sta_mask = BIT(20),
-> +		.ctl_offs = 0x350,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_DISP_STEP1,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_DISP_STEP2,
-> +				    MT8192_TOP_AXI_PROT_EN_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_DISP_STEP3,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_DISP_STEP4,
-> +				    MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_SET,
-> +				    MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_CLR,
-> +				    MT6893_TOP_AXI_PROT_EN_SUB_INFRA_VDNR_STA1),
-> +		},
-> +	},
-> +	[MT6893_POWER_DOMAIN_AUDIO] = {
-> +		.name = "audio",
-> +		.sta_mask = BIT(21),
-> +		.ctl_offs = 0x354,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT8192_TOP_AXI_PROT_EN_2_AUDIO,
-> +				    MT8192_TOP_AXI_PROT_EN_2_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_2_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_2_STA1),
-> +		},
-> +	},
-> +	[MT6893_POWER_DOMAIN_ADSP] = {
-> +		.name = "audio",
-> +		.sta_mask = BIT(22),
-> +		.ctl_offs = 0x358,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(9),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_2_ADSP,
-> +				    MT8192_TOP_AXI_PROT_EN_2_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_2_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_2_STA1),
-> +		},
-> +	},
-> +	[MT6893_POWER_DOMAIN_CAM] = {
-> +		.name = "cam",
-> +		.sta_mask = BIT(23),
-> +		.ctl_offs = 0x35c,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_2_CAM_STEP1,
-> +				    MT8192_TOP_AXI_PROT_EN_2_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_2_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_2_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_CAM_STEP2,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_1_CAM_STEP3,
-> +				    MT8192_TOP_AXI_PROT_EN_1_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_1_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_1_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_CAM_STEP4,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +		},
-> +	},
-> +	[MT6893_POWER_DOMAIN_CAM_RAWA] = {
-> +		.name = "cam_rawa",
-> +		.sta_mask = BIT(24),
-> +		.ctl_offs = 0x360,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_CAM_RAWA_STEP1,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_CAM_RAWA_STEP2,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +		},
-> +	},
-> +	[MT6893_POWER_DOMAIN_CAM_RAWB] = {
-> +		.name = "cam_rawb",
-> +		.sta_mask = BIT(25),
-> +		.ctl_offs = 0x364,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_CAM_RAWB_STEP1,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_CAM_RAWB_STEP2,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +		},
-> +	},
-> +	[MT6893_POWER_DOMAIN_CAM_RAWC] = {
-> +		.name = "cam_rawc",
-> +		.sta_mask = BIT(26),
-> +		.ctl_offs = 0x368,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.bp_cfg = {
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_CAM_RAWC_STEP1,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +			BUS_PROT_WR(INFRA,
-> +				    MT6893_TOP_AXI_PROT_EN_MM_CAM_RAWC_STEP2,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_SET,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_CLR,
-> +				    MT8192_TOP_AXI_PROT_EN_MM_STA1),
-> +		},
-> +	},
-> +	[MT6893_POWER_DOMAIN_DP_TX] = {
-> +		.name = "dp_tx",
-> +		.sta_mask = BIT(27),
-> +		.ctl_offs = 0x3ac,
-> +		.pwr_sta_offs = 0x16c,
-> +		.pwr_sta2nd_offs = 0x170,
-> +		.sram_pdn_bits = BIT(8),
-> +		.sram_pdn_ack_bits = BIT(12),
-> +		.caps = MTK_SCPD_KEEP_DEFAULT_OFF,
-> +	},
-> +};
-> +
-> +static const struct scpsys_soc_data mt6893_scpsys_data = {
-> +	.domains_data = scpsys_domain_data_mt6893,
-> +	.num_domains = ARRAY_SIZE(scpsys_domain_data_mt6893),
-> +};
-> +
-> +#endif /* __PMDOMAIN_MEDIATEK_MT6893_PM_DOMAINS_H */
-> diff --git a/drivers/pmdomain/mediatek/mtk-pm-domains.c b/drivers/pmdomain/mediatek/mtk-pm-domains.c
-> index b866b006af69..9a33321d9fac 100644
-> --- a/drivers/pmdomain/mediatek/mtk-pm-domains.c
-> +++ b/drivers/pmdomain/mediatek/mtk-pm-domains.c
-> @@ -18,6 +18,7 @@
->   
->   #include "mt6735-pm-domains.h"
->   #include "mt6795-pm-domains.h"
-> +#include "mt6893-pm-domains.h"
->   #include "mt8167-pm-domains.h"
->   #include "mt8173-pm-domains.h"
->   #include "mt8183-pm-domains.h"
-> @@ -617,6 +618,10 @@ static const struct of_device_id scpsys_of_match[] = {
->   		.compatible = "mediatek,mt6795-power-controller",
->   		.data = &mt6795_scpsys_data,
->   	},
-> +	{
-> +		.compatible = "mediatek,mt6893-power-controller",
-> +		.data = &mt6893_scpsys_data,
-> +	},
->   	{
->   		.compatible = "mediatek,mt8167-power-controller",
->   		.data = &mt8167_scpsys_data,
+>
+>On a very related topic, doesn't SPR+ now flush the VMCS caches on VMXOFF?  If
 
+Actually this behavior is not publicly documented.
+
+>that's going to be the architectural behavior going forward, will that behavior
+>be enumerated to software?  Regardless of whether there's software enumeration,
+>I would like to have the emergency disable path depend on that behavior.  In part
+>to gain confidence that SEAM VMCSes won't screw over kdump, but also in light of
+>this bug.
+
+I don't understand how we can gain confidence that SEAM VMCSes won't screw
+over kdump.
+
+If a VMM wants to leverage the VMXOFF behavior, software enumeration
+might be needed for nested virtualization. Using CPU F/M/S (SPR+) to
+enumerate a behavior could be problematic for virtualization. Right?
+
+>
+>If all past CPUs never cache shadow VMCS state, and all future CPUs flush the
+>caches on VMXOFF, then this is a glorified NOP, and thus probably shouldn't be
+>tagged for stable.
+
+Agreed.
+
+Sean, I am not clear whether you intend to fix this issue and, if so, how.
+Could you clarify?
+
+>
+>> This issue was identified through code inspection, as __loaded_vmcs_clear()
+>> flushes both the normal VMCS and the shadow VMCS.
+>> 
+>> Avoid checking the "launched" state during an emergency reboot, unlike the
+>> behavior in __loaded_vmcs_clear(). This is important because reboot NMIs
+>> can interfere with operations like copy_shadow_to_vmcs12(), where shadow
+>> VMCSes are loaded directly using VMPTRLD. In such cases, if NMIs occur
+>> right after the VMCS load, the shadow VMCSes will be active but the
+>> "launched" state may not be set.
+>> 
+>> Signed-off-by: Chao Gao <chao.gao@intel.com>
+>> ---
+>>  arch/x86/kvm/vmx/vmx.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+>> index b70ed72c1783..dccd1c9939b8 100644
+>> --- a/arch/x86/kvm/vmx/vmx.c
+>> +++ b/arch/x86/kvm/vmx/vmx.c
+>> @@ -769,8 +769,11 @@ void vmx_emergency_disable_virtualization_cpu(void)
+>>  		return;
+>>  
+>>  	list_for_each_entry(v, &per_cpu(loaded_vmcss_on_cpu, cpu),
+>> -			    loaded_vmcss_on_cpu_link)
+>> +			    loaded_vmcss_on_cpu_link) {
+>>  		vmcs_clear(v->vmcs);
+>> +		if (v->shadow_vmcs)
+>> +			vmcs_clear(v->shadow_vmcs);
+>> +	}
+>>  
+>>  	kvm_cpu_vmxoff();
+>>  }
+>> -- 
+>> 2.46.1
+>> 
 
