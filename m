@@ -1,125 +1,162 @@
-Return-Path: <linux-kernel+bounces-600633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BCA3A8626A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:56:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A4E5A8626E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB801BA1C35
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:56:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 935FF4C1422
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4148C213224;
-	Fri, 11 Apr 2025 15:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E816215067;
+	Fri, 11 Apr 2025 15:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ax3oC57y"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="P0usMafc"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDC61FDA
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 15:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C0121324D;
+	Fri, 11 Apr 2025 15:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744386969; cv=none; b=LOMm/XA754T3pHnfWqjFrGsCMTLbkmHx91qrc/hBY9fY293u2EU82bbrr1hiiJHtQWbzKNENrNhKJPIZ2x9ls3w+alV6NdihQFBmbZnwHES7Sc4h6XOQo8b/GSO5curqIhwXDBgPm+zVAYzGQCc/XK2aKgXYmQ2XVuvuaDo8Mos=
+	t=1744387003; cv=none; b=js7FSgBYm9zAvB1JRujNHfxd4AfRvBY4mInORbrbE0jDNXpp3GwfkkqFIWrk4ITbS7U9y5BujUKwoE/u05INb2SksK7Ehn+pmjIDEm9KNsOGfG1gyByWeOfo5uz+IwOM/ygjXUFXG2mDIHzH28jD79z3Xmzs2h6HshG9CZ8r5ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744386969; c=relaxed/simple;
-	bh=GsT9rPD3N9zMwMshwrMuDSa0idXLLHsMuF+i8OR3cUw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sHwy0B+fzR4EAmWw+2MU6KNhEU08kOm4jkMO5/u6eLWvtNBS3mSH5Z4GOj2ntIctwog+VnuS9CEW4Es2vsOo1YJ/Mlqw5pHCFuIWhPp70eiUgtwDWt5T6rGHVWFjlPO8PBRTSBhKbldS7wflmSIXAFlBoB/lkZtBEh5EHEFkxBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ax3oC57y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53BBk21f006879
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 15:56:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IvhKVowDhFsDOwnZ0J1pi+6ZtmcQtfP79gYnQ76SBSY=; b=Ax3oC57yIniGV62A
-	GEfx8KJpxF7SpCnrY4LRJmCns+ympAjQXghr/5SHrZtz4pTqJ4MZ8f+hUUfyJYiJ
-	BGDlBmcxwVnwC7I2UKU7wyQf4f9O4Lg7W8kWo7Ow8djqyS4gzu+TKt0ik4MPymet
-	RBRG3we6uT7Q7JtfEGZIadeEbTcXWREFnFJGyPSgtf+w+GjgBMHlMNNbkW3hvUsa
-	mxQn5HlxR5gWbEiGrI8wH+3i/pt40vfHPbX2jQJTt86q3l4Zd/lFsddYPXqidzDZ
-	6hvfgVaig5MnQj5sUyHTsG0A4kNdUzJH9aVPiIF4+kQDWmyxkyrzV+3JHYkYNFvb
-	fXXQBg==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45xeh3kvy2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 15:56:06 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-227a8cdd272so19181795ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:56:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744386965; x=1744991765;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IvhKVowDhFsDOwnZ0J1pi+6ZtmcQtfP79gYnQ76SBSY=;
-        b=G749+bpFKxoD15Rs0WkbftHwEXh7LthEHaObntVTJWiKmasHPBZPAr3xjhXepbZTZ3
-         7g0n9ngutpt3Sy6erTswCrNAWGhEqEsQ4UjLGwmyPY19M5w/6a3Zv0GF4fjiRZV4ZeZE
-         HGvWbjUI1pNole0d2G6NoGeHZrkDQ2usB5OcQmkOjcVk0uKit4/ZMj1YTDGh2tdjtUh8
-         pBB5ay3hE1YMxR25iaBY9FVOOW8oAHYw6JIJY5slW1ght0w+FKSv+oAa5ggUOUGE8oGm
-         e3pyjrDiev0W+mtRJ8StD3+OITVfwLghk3xaSCJn1Jmu6Zdlow1K0U+0U/pCKLraL/tS
-         K4OQ==
-X-Gm-Message-State: AOJu0Yy7l/dJs9HwmT/MvkBhqdTLlls6ujqyzWt+BXV6BUNqFiBurTyx
-	k3wbIdWVqWjVF5TTP03sfAGQAlB2aALMHIbnRVEljSoITOMRmio0YfTtZJ6QZZSaZrUfe04Rbfe
-	A2TKL+SWc7iMdH51AYR8Y/6hlKi4SRO9CTbfCitxYO7UwK4cMRMB+A5INm7X+7B4=
-X-Gm-Gg: ASbGnctymHkjlikJp9Z5rXhMH628Y81WRRDDdBGAhheX4cwqj9/gtawwoLr+zlS6YJ7
-	yd2MFApDyblG6FI1bNWTNJlS13jd+OinMNVp9uBMbQKJ5mT+s5jhEESAww4GmaOhSmgh9koqnuc
-	v4Iki4eorc9fBsOSTDQkQsc28VAh1lnXXhMilCcXmKX5SO4JGE2tiucI352vunZcv5J5lmpIO6W
-	lBhSzFlIbWLcoFQPfxWQlxSwMlHxSLMOUso6IyHilEjfbf3Zw1vlA9FhctwUTb9wUK1JB0o3GEC
-	WJTyNvD4m5RVeIQQq3XAKMLwrFtIqZijHsgroOjvvdoydEBW1oA4hNYtbOPC1w==
-X-Received: by 2002:a17:902:ea0b:b0:223:64bb:f657 with SMTP id d9443c01a7336-22bea4fde71mr49467595ad.46.1744386965365;
-        Fri, 11 Apr 2025 08:56:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHySzRO76XL/H38ow5Xz1Fbomei564/J+lCLgFhEA9M/x29ck+Cz5AOhsbIgCGup67gE23IhQ==
-X-Received: by 2002:a17:902:ea0b:b0:223:64bb:f657 with SMTP id d9443c01a7336-22bea4fde71mr49467355ad.46.1744386965032;
-        Fri, 11 Apr 2025 08:56:05 -0700 (PDT)
-Received: from [10.226.59.182] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b65105sm51370145ad.44.2025.04.11.08.56.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 08:56:04 -0700 (PDT)
-Message-ID: <c954cb1b-7ba7-464a-a115-429c6085c8ce@oss.qualcomm.com>
-Date: Fri, 11 Apr 2025 09:56:03 -0600
+	s=arc-20240116; t=1744387003; c=relaxed/simple;
+	bh=SqbjxY2D2nKJy3mrM7KUR62IbtcNbC5oRfAgv8M+fhA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r05C75JpshxDQeykbAf7ZqXk+NA/tX7xniFbVq6QhzqGqjzdgHjU4asUpI4HdJ4LtyAGWin0vE3zHbqUnftzOu1irGr4Ds/+wbXachmfkcmZGAW7G4A8LhlZW/k1vF1xp/lGMwRfj5g9U4M90owAsDnLnSJRiwN/vktCK08EiOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=P0usMafc; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53BDeNBM001963;
+	Fri, 11 Apr 2025 11:56:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=qYxHE
+	STvlvHSBz4jAjwvhlkeCZS95rMgFTzUN9x/iOE=; b=P0usMafce/2h4uAy2Mr+l
+	DXwojXapytyplvEOAYDZ/c4N089DTm132h0Aax2WjJH/eEkK4hZyBsZ8+AAmeC9q
+	76kXpmg1Uqb2Gb1T9je1uLfJW3VIJIHTEU0Wo0/T6IiE//T750q31nvN4CP44Dqg
+	5CyEjz+KasuCLPEDjhKxmpqDZbuEb0JPBznqNdDWvdmwypuqIKjjfaw7w1L0ML0w
+	uS4EjuJmj3/imHp3mWMTpPTJib5RL2DdgOyLlCTwJsqTNTM14gxwwynzC6jewu+H
+	SkuwfxYwCCNQ428fIY4N1bT4m4uhtGhiXHe7k4lPmzOcr2Tz241/sik9nannstVk
+	w==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 45x8yp16uh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 11:56:24 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 53BFuNUZ022180
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 11 Apr 2025 11:56:23 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 11 Apr
+ 2025 11:56:23 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 11 Apr 2025 11:56:23 -0400
+Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 53BFu5G3015433;
+	Fri, 11 Apr 2025 11:56:07 -0400
+From: Jonathan Santos <Jonathan.Santos@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+CC: Jonathan Santos <Jonathan.Santos@analog.com>, <lars@metafoo.de>,
+        <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
+        <jic23@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <marcelo.schmitt1@gmail.com>,
+        <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <jonath4nns@gmail.com>, <dlechner@baylibre.com>
+Subject: [PATCH v5 01/14] dt-bindings: trigger-source: add generic GPIO trigger source
+Date: Fri, 11 Apr 2025 12:56:04 -0300
+Message-ID: <414f5b60b81f87f99b4e18b9a55eb51f29d2225a.1744325346.git.Jonathan.Santos@analog.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1744325346.git.Jonathan.Santos@analog.com>
+References: <cover.1744325346.git.Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1] accel/amdxdna: Fix incorrect size of ERT_START_NPU
- commands
-To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
-        dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, min.ma@amd.com, max.zhen@amd.com,
-        sonal.santan@amd.com, king.tam@amd.com
-References: <20250409210013.10854-1-lizhi.hou@amd.com>
-Content-Language: en-US
-From: Jeff Hugo <jeff.hugo@oss.qualcomm.com>
-In-Reply-To: <20250409210013.10854-1-lizhi.hou@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=VbH3PEp9 c=1 sm=1 tr=0 ts=67f93b96 cx=c_pps a=IZJwPbhc+fLeJZngyXXI0A==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=zd2uoN0lAAAA:8 a=EUspDBNiAAAA:8 a=MVSHWqWNM0uh__QEkt8A:9 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-GUID: aEh5cfnqtt_1KBEU_GAeWhEj0pqVhiYI
-X-Proofpoint-ORIG-GUID: aEh5cfnqtt_1KBEU_GAeWhEj0pqVhiYI
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: J8oUsLZOr5tzk5M12I2oijUecxO8FAXl
+X-Authority-Analysis: v=2.4 cv=BoqdwZX5 c=1 sm=1 tr=0 ts=67f93ba8 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=XR8D0OoHHMoA:10 a=gEfo2CItAAAA:8 a=gAnH3GRIAAAA:8 a=HlNMbzSOJvU92ae2w24A:9 a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-GUID: J8oUsLZOr5tzk5M12I2oijUecxO8FAXl
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-11_06,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 impostorscore=0 suspectscore=0 adultscore=0 spamscore=0
- clxscore=1015 malwarescore=0 priorityscore=1501 bulkscore=0 mlxscore=0
- mlxlogscore=972 classifier=spam authscore=0 authtc=n/a authcc=
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 mlxlogscore=999
+ bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
  definitions=main-2504110101
 
-On 4/9/2025 3:00 PM, Lizhi Hou wrote:
-> When multiple ERT_START_NPU commands are combined in one buffer, the
-> buffer size calculation is incorrect. Also, the condition to make sure
-> the buffer size is not beyond 4K is also fixed.
-> 
-> Fixes: aac243092b70 ("accel/amdxdna: Add command execution")
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+Inspired by pwn-trigger, create a new binding for using a GPIO
+pin as a trigger source.
 
-Reviewed-by: Jeff Hugo <jeff.hugo@oss.qualcomm.com>
+Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+---
+v5 Changes:
+* New patch in v5.
+---
+ .../bindings/trigger-source/gpio-trigger.yaml | 40 +++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/trigger-source/gpio-trigger.yaml
+
+diff --git a/Documentation/devicetree/bindings/trigger-source/gpio-trigger.yaml b/Documentation/devicetree/bindings/trigger-source/gpio-trigger.yaml
+new file mode 100644
+index 000000000000..d77d62050179
+--- /dev/null
++++ b/Documentation/devicetree/bindings/trigger-source/gpio-trigger.yaml
+@@ -0,0 +1,40 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/trigger-source/gpio-trigger.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Generic trigger source using GPIO
++
++description: Remaps a GPIO pin as a trigger source.
++
++maintainers:
++  - Jonathan Santos <Jonathan.Santos@analog.com>
++
++properties:
++  compatible:
++    const: gpio-trigger
++
++  '#trigger-source-cells':
++    const: 0
++
++  gpios:
++    maxItems: 1
++    description: GPIO to be used as a trigger source.
++
++required:
++  - compatible
++  - '#trigger-source-cells'
++  - gpios
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    trigger {
++        compatible = "gpio-trigger";
++        #trigger-source-cells = <0>;
++        gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
++    };
+-- 
+2.34.1
+
 
