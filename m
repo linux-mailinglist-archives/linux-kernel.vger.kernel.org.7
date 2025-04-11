@@ -1,106 +1,91 @@
-Return-Path: <linux-kernel+bounces-600455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A09A86019
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:11:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A02D6A8602D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D0A13ACE35
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:08:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0BC41619D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62911F2C52;
-	Fri, 11 Apr 2025 14:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314EF1F4612;
+	Fri, 11 Apr 2025 14:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B3P8xhnw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gBcs0RPS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3A215A848;
-	Fri, 11 Apr 2025 14:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0846D1F37D8
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 14:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744380517; cv=none; b=nV/j/N764MsN6G2Bqhc6QA0WLSTof6z5AQhPNo32ELg6yB4YMv8+TWEdkiNvEqg2g0Wa4rqNjyNf3s0T3xFUMyZ6B5GyCBhnCYfEHj+JD5mv0Trh4UD+OVus/IvZ0FPoR/7oxQMAKQ1xV5ifGbwvSwP56xb8FwaEzOusJFuxLHQ=
+	t=1744380543; cv=none; b=sl2Tae84sWqzAkmdVAMNIBmSLWGHxJcNsQGM1FlX6b6kmn0Pe9hI1jIdoGQq2vTrc/W0FOlLzgt/gU7eBfEdUO6xiOrY0WeGB8QcBmllL1aec0GOTf6OOHeuQX6NQHpicnnJiiqXVvuGYuZCuCCq6nREtXI0CUR3oEPqGWxQ89o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744380517; c=relaxed/simple;
-	bh=+6ZoGuxO7lMvb7tocC279TGiDtafYckzm6Ockln5kAY=;
+	s=arc-20240116; t=1744380543; c=relaxed/simple;
+	bh=arrtb4ukZJFU8QPFxhKYA9mDHq97ep0WfiWoy3zLAKI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CFWrvMfzpg3HfPpOVJGcUWrtQeRkOgWK7lX9XuW38fYrhvb9Ug1K2nIG8DUlJUFekn+FBqZVfIpnsGon1xd5rOliydPm2s4WxLRfckUbM6lkRChAEgZ8CDSezkGj5zXSXXtzw3AMeVjbG7p47+FFrnG75msMu3Qz8orJ+9Gd0o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B3P8xhnw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 201F9C4CEE2;
-	Fri, 11 Apr 2025 14:08:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744380516;
-	bh=+6ZoGuxO7lMvb7tocC279TGiDtafYckzm6Ockln5kAY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=B3P8xhnwvhV5G5jcYQH2Gj4QQfQj9XgSJVmE0DmCAH7orRPQjHgHLyOVSdjNbcN9l
-	 LeXaBSvzWQHz0pIG8pRQwHQU6VF6K067DIjB/Z7EYAMh91GlQvil1YGu1+g+vvF5lb
-	 AQEcc1rvZMOfiytqqTx2WidR0Ezr6rCXrLosM5dCaHTbX+buCrcIrbWgfDXSP5Lt0B
-	 4EdSxBj1L0AZjB5OhD+sYQJRLMIiSKM6MOtHUBA13Vw6y79e13fpugXZlxM1QhqPO2
-	 edDt5PajQlGOKn8DqsY4UN5E8yPHBuf7LsolkJaXzVgtYES0OHNUJsnooT/rKLnwEy
-	 6yVSwxCAALN0A==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	Jan Stancek <jstancek@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: use namespace_{lock,unlock} in dissolve_on_fput()
-Date: Fri, 11 Apr 2025 16:08:30 +0200
-Message-ID: <20250411-computer-wandschmuck-97a26d943a7b@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <cad2f042b886bf0ced3d8e3aff120ec5e0125d61.1744297468.git.jstancek@redhat.com>
-References: <cad2f042b886bf0ced3d8e3aff120ec5e0125d61.1744297468.git.jstancek@redhat.com>
+	 MIME-Version:Content-Type; b=TqysvDeMVvjp1ZjzRKLZYoljXwmE+rEnnIi6X2Yk4a+s9azFr7SRdIwfR1htSIYwO9UotdywB/Je6py5W2irbAxbssLeAzIdkslMyKa+ePEvmJSXCruXg3vu29ekHiJXyptYiuifFCFwTiyvEqkRaD16/DsGyYAEE5lh7KH4gbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gBcs0RPS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744380540;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=arrtb4ukZJFU8QPFxhKYA9mDHq97ep0WfiWoy3zLAKI=;
+	b=gBcs0RPSYYi9cUxuG5hUUFn5Qhufk3cKdSU5ivsg31y5Usc84bDhuhWRfPFTSkSzyTQp4B
+	hEto25afZEUx+vA0d3HpS7bRcw2+A6Vh+Z/2v31UNixiYw3eTpla7x/re0ab1f/PJeOFht
+	KSnmb0+26YVA/g+hgY0cai8NBFvWgQY=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-544-Abn9uyb9MXG5ijyKI3ujRw-1; Fri,
+ 11 Apr 2025 10:08:55 -0400
+X-MC-Unique: Abn9uyb9MXG5ijyKI3ujRw-1
+X-Mimecast-MFC-AGG-ID: Abn9uyb9MXG5ijyKI3ujRw_1744380534
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 250E01800258;
+	Fri, 11 Apr 2025 14:08:54 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.58.2])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4DA941956094;
+	Fri, 11 Apr 2025 14:08:52 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ Omar Sandoval <osandov@osandov.com>, Sargun Dillon <sargun@sargun.me>,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] nfs: move the nfs4_data_server_cache into struct
+ nfs_net
+Date: Fri, 11 Apr 2025 10:08:49 -0400
+Message-ID: <E6922A9D-8AFB-4512-B7D0-6EF9A514A3E3@redhat.com>
+In-Reply-To: <20250410-nfs-ds-netns-v2-2-f80b7979ba80@kernel.org>
+References: <20250410-nfs-ds-netns-v2-0-f80b7979ba80@kernel.org>
+ <20250410-nfs-ds-netns-v2-2-f80b7979ba80@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1993; i=brauner@kernel.org; h=from:subject:message-id; bh=+6ZoGuxO7lMvb7tocC279TGiDtafYckzm6Ockln5kAY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/VIrXtvW+tkvM8FLfraYbFzXn+rRtv+JeqPiwwM2BP 2vLTuPkjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIl0yjEyrOufUMFb/EeSZduc ZayWn+7PiFmz5+QlMaYWrweCCd38Jxn+isSaVIVN47xyZnp4qvR8iyh/aZPm22KeZ521ghpZftZ yAgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, 10 Apr 2025 17:05:42 +0200, Jan Stancek wrote:
-> In commit b73ec10a4587 ("fs: add fastpath for dissolve_on_fput()"),
-> the namespace_{lock,unlock} has been replaced with scoped_guard
-> using the namespace_sem. This however now also skips processing of
-> 'unmounted' list in namespace_unlock(), and mount is not (immediately)
-> cleaned up.
-> 
-> For example, this causes LTP move_mount02 fail:
->     ...
->     move_mount02.c:80: TPASS: invalid-from-fd: move_mount() failed as expected: EBADF (9)
->     move_mount02.c:80: TPASS: invalid-from-path: move_mount() failed as expected: ENOENT (2)
->     move_mount02.c:80: TPASS: invalid-to-fd: move_mount() failed as expected: EBADF (9)
->     move_mount02.c:80: TPASS: invalid-to-path: move_mount() failed as expected: ENOENT (2)
->     move_mount02.c:80: TPASS: invalid-flags: move_mount() failed as expected: EINVAL (22)
->     tst_test.c:1833: TINFO: === Testing on ext3 ===
->     tst_test.c:1170: TINFO: Formatting /dev/loop0 with ext3 opts='' extra opts=''
->     mke2fs 1.47.2 (1-Jan-2025)
->     /dev/loop0 is apparently in use by the system; will not make a filesystem here!
->     tst_test.c:1170: TBROK: mkfs.ext3 failed with exit code 1
-> 
-> [...]
+On 10 Apr 2025, at 16:42, Jeff Layton wrote:
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+> Since struct nfs4_pnfs_ds should not be shared between net namespaces,
+> move from a global list of objects to a per-netns list and spinlock.
+>
+> Tested-by: Sargun Dillon <sargun@sargun.me>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Ben
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] fs: use namespace_{lock,unlock} in dissolve_on_fput()
-      https://git.kernel.org/vfs/vfs/c/47a742fd977a
 
