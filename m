@@ -1,637 +1,254 @@
-Return-Path: <linux-kernel+bounces-601046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4441CA86860
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 23:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC37A86863
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 23:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 883A74463D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 21:34:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1502174CCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 21:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7469A29C35A;
-	Fri, 11 Apr 2025 21:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C9529CB45;
+	Fri, 11 Apr 2025 21:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHHeVN7A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RwSGvrxe"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013019.outbound.protection.outlook.com [52.101.67.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221EB280A45;
-	Fri, 11 Apr 2025 21:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744407287; cv=none; b=EzraVnxP6615ytrgfOv8yQg4bZJC5AqJ+t6ze4Pd11nT/hvxvxmqQ5hxmN+2hLL8btSL8dfFPl/JmVkh0Pt3SQPXN1/FyzNfB8SKTEpcACV1wulEYqz04ms1Quh4EVKNAdYeGA7hLdz1xIZj+TRdvUmYtqINrdNhqCzVUijelVY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744407287; c=relaxed/simple;
-	bh=x/YC8ZhBYUR4zXQOSQJAlRVA1Mu6/vn9KrPwCxcY5YI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SxA/6+3ro0mSEk0jm2FejX5L0n/M7a1OClBzDY46rSLJLD+HmmC7Dght0kUg9PzYn7z1d3TdcepGsCY9n8yyeTpvvTGWRweLyqk72Wunu8/PlSN+/P2XC9i5IqI0eVY7BJM6IOLYLEQdsbphAfGRfXbsX7mGPNw+RiVRDVvF1S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHHeVN7A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FCF0C4CEE2;
-	Fri, 11 Apr 2025 21:34:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744407286;
-	bh=x/YC8ZhBYUR4zXQOSQJAlRVA1Mu6/vn9KrPwCxcY5YI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lHHeVN7A/B2anE2rQqzcGBvtcB9VbFGTUuZSjYfaKYZagq6Q26YiiGnxJdwjfN6xN
-	 PJObiPQcr7U/OQgPgMfeTHgVgW/5p/VI5+XKfruGBJLrmRzZLBa4A1mzlN4+h2xvm7
-	 U7PZjnb5k7wwXj2mR56LO+VM6oVIixd6J7nlHLH2jZ3XUlmL5i8+KD2s4hb0j22n6V
-	 1Md0MMFmTaCf0Q5BG8faOtY4B7Z7ZsOOF5KFwmVx8WuHNSsS5z73sZHmt8kpYh37wa
-	 XPNC2fLYEX5QYZD5Pynxob6TVvMClBPmt1pVsgPoemrJZ0+I4IXTQrRhqAsMZy/Xdp
-	 RZrbldhdmDbew==
-Date: Fri, 11 Apr 2025 14:34:44 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [RFC PATCH v1] perf build: Fix build for clang's
- -Wunreachable-code
-Message-ID: <Z_mK9BVv16MT7shL@z2>
-References: <20250410202647.1899125-1-irogers@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4E221ABD1;
+	Fri, 11 Apr 2025 21:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744407382; cv=fail; b=qBC+E0yVOZtvfYaHaVitOpNR0xNfwxfyNNkxZG09VS8fJkseOUu/SsQUNlLzBpOpNPAM2R81GNES61ixlyHYxwaSiQxA9Q2etiABL3aooqqleWxaelPMn2VCFY2FYGK1TS6806qn1jgEU6QMipAuPP0aNTsoQp18jokyQKAe21o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744407382; c=relaxed/simple;
+	bh=DdjVnv6ESa+NACKMre0bmuM4BDRoh0W9FwcFcY5Npak=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=miK5BcdpZxIbSUAudCadMfxk5MINoGSzXep+p6d/td67DFRfGsF6++QF5OjFJH0+gYfv24WAsqZ3mb6OrM/nhEZOxMleK4tkYZq3U6XoWFBJrfsKo9RhGj7brYM08AkYcPofeAw/TTpIVz8z4zYHPv4p4BsrRQkpt4xLl2PXtXU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RwSGvrxe; arc=fail smtp.client-ip=52.101.67.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=naIAvLSDTdtNCis9uIq2MbmxDhJF0dgMaHayOd0+AsLu2Y74EF2qXe1cszLVb3ZFLvOenhV3sSp5KLijD62viPCCTo2SFQuG5q9Xfwr98SvgjBXeTFXh11iHQP9Xaic/L0EgHNvUlI0pmmUlLXP97CmJ4+hAaG9ZC7DvO5wLTfdaxkkgmIDS6CjpLC2dace/+Vggq8njIR/wuir5RPmjDZK1YRvlesqXku+UBQUmR+2ECR8dJvlCFtxwuRbaWOTA04pNkm5rw9sN5UZuafoauhjS56c83/YNUB3Qqiyi3FTADWWwqWgYnbVzVAFyiiCqUDuPBEv15kwwdFWpFV5fVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UhvEVlID57PMz15q3na8AUJj5YQAgwuVDNrsB621/Z8=;
+ b=JpJFkzJwTDcAeLRWJqFbrf/ZNRRoAlBiy3H9NAQ7E3Tn4/0+lzGnh7MELKOGB2zmkcyvR+LNEwZgoWARqcU0E87suaoiDgBCrD8h3P5JslZVGUBMReSm13K0LteMxzQPVbEqE4GjFNJJFNTEtcw6+9zKTL56U5/ravRd/ki1zVv3YYVaRT2BPOaJueWqhXmwZ8xkBylUnkmkuyUMD67aBUF41CTquMtJuMJQ11qa6N68n2/WqdtMG3gicw77DqmID93hYVtE08d1GFNNapnJxogEhaAk6B+e9SeGH2T4z5xK25o7LjEybFwF4BdnIvYOGtDKA208f5kriqlINeXNiQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UhvEVlID57PMz15q3na8AUJj5YQAgwuVDNrsB621/Z8=;
+ b=RwSGvrxeOM8b/Cle3K+YoFFwLZGLGC59EyZZwqXVLQcEULTCuCr5WklN0PgNqI8dRdnbtIfb4yp5WQky8f7Ur1B9hC3wEcj5bLN5s2a4P8Fjabma6oX2px2WA8Pk7NmhdYFxzvWnXRJ8eNm0S7mUzGww2nD1RKpWjwtvYyJHykjpklQYDcS2+XQl2OoLKTKyak4AQ9Pc2DxdRsjKoLG0kYyxh35UzbubwGK5nC7f5bm+UrFh3FSUds+4VkUiOo2f0Rx78Yo8vqawrRcGX+MaeAI5uLI2gAPe9vDO0EFP56adbad+qv78koO0buL4VqAjlBLRREXUMJBlIcYp9AkALg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAXPR04MB9490.eurprd04.prod.outlook.com (2603:10a6:102:2c2::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.33; Fri, 11 Apr
+ 2025 21:36:17 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8632.025; Fri, 11 Apr 2025
+ 21:36:17 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] dt-bindings: media: convert fsl-vdoa.txt to yaml format
+Date: Fri, 11 Apr 2025 17:36:00 -0400
+Message-Id: <20250411213601.3273670-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY3PR05CA0019.namprd05.prod.outlook.com
+ (2603:10b6:a03:254::24) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250410202647.1899125-1-irogers@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB9490:EE_
+X-MS-Office365-Filtering-Correlation-Id: 391698fd-38c0-4034-ac76-08dd7940e43a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6QgLXieShhppWXq76xWEqZsTUDs8uB7Lf0p9JUs7O4moc2zKaszFUq2fHXJz?=
+ =?us-ascii?Q?2rUnKphMVgzUAkJJcX9ef91rx1Jp2scGABHmqn2G0lEtFoXX4Sgqn8TpWuJq?=
+ =?us-ascii?Q?YNYanVr/iv25TUwkJOpZW8x0rFey5kupzuW+sxlqiL4zD4i4430JjG3LlYMz?=
+ =?us-ascii?Q?TCLF+IV5E9O1fexhfz9jnFMHeaKxU55Uy5IFbTSuA5ezijhp7CkgTPyFsGuV?=
+ =?us-ascii?Q?b6TLJuUqezdi1ZS8X797zfLlIG81fgqunEbT7KnJEkGUptUUySLITAnB9abw?=
+ =?us-ascii?Q?ChNgQpLoq3z0/aXnk4lmN8GtnZ0d/+2AtwdKGhxCtUlzBe9A38tPLurpBhVf?=
+ =?us-ascii?Q?rZMWgm32qVOtKw1Yk9aaDvwIXmCWNjIzsRf4O3EMb7b9/Y0tCjAH8VbnV4i/?=
+ =?us-ascii?Q?7ukP9LXjygGuUa+6vOVJUnln7Hz6xCMvzxea9AVi/ulZPsHqfGlE8pabSEO8?=
+ =?us-ascii?Q?OyMJOrzkarA1kZKiYmnLZlRYH2wZXLSiHftTU4OMhhp0qNNKCr3SKJyAKWuu?=
+ =?us-ascii?Q?uIFbLoSgfoxToyn0OB93MtKOE0PCDp9wmPRGUCAcH98NaFODUpZaM949wUDW?=
+ =?us-ascii?Q?B9nwA8CSSbnxDopuXkZDdaZJuw2c8GrIFv2LVaq2liwILh9ugYyP4oVTJmCp?=
+ =?us-ascii?Q?kjQ7PwhkVKqyfZfxExZTK5q80FfvVCkB+9NxEWwdApzlNHMx6SVoAAU6fM6f?=
+ =?us-ascii?Q?exHwye0XL2j8IKX7D1/BBWyEtP3wUvMAYTq2BQieCxl+SRpBewpL3+S72/re?=
+ =?us-ascii?Q?I204dgul+S2wlgxysaun1y8knjJ/OYnyLc4C9jh1d2noy6tZqYJpTdj+8Rah?=
+ =?us-ascii?Q?oaQkE/GXuXhKemQMFWoIQZEQ9PrZk0cXh8gXUJMHommTQ3EWjf0gH708ly93?=
+ =?us-ascii?Q?j2EaTDwIDF2EJjEyhuLForneS5dBGG8N0lJ6a2TaF8yhDhkb5g+k9qily8cQ?=
+ =?us-ascii?Q?QjHrLHpAP8JUqN6OzrFWpZxVxUMokVWWF1S4pEYACR6KiVtvWNZxQY6jLMxu?=
+ =?us-ascii?Q?XF4BGWn4pR3cK0alCgTdXodu3doZXa15+d3JO7VLsJnJIpymMEZAVtKAUbas?=
+ =?us-ascii?Q?Ye2to9dtb9SbjgCY8ViBnTvVP/wzXkZLJ5fSYTs1OoBCBXuwuPWmk7HypZr4?=
+ =?us-ascii?Q?+26y/oy85UoTkn7V1WKVLt8PLj7+j2AIUQq5pQ2KGzTjG6j4BNcLXgnEu4GE?=
+ =?us-ascii?Q?WiOpH1aWvCJb8FiXrgmd328YAtFsaPjZG507oTdZakKm+AjPjvIcmX+9EYZH?=
+ =?us-ascii?Q?CPvgRAGR0HyvPwocvP/CiBK9tJ2/+AgVRL3GtdzBT6jFgZ6WXA9DgfTiO1A5?=
+ =?us-ascii?Q?6nYo3cZL4RdRftvFKW86U7/IfmQ1ugV9qAwM/q+ENkUBUToh89Dq4eB5OEM7?=
+ =?us-ascii?Q?Nncpxk4plxbk3qCYpTD4jiNdw3bqPoJadlqq5hwzchob2MyvvbTxUOR3pdgc?=
+ =?us-ascii?Q?5DP+nzl+TjYUnudJ+tWIWAi/hrKkg4kc?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?EPn9ZVTbdD5i8+gIgAImh1NLH7BGEv5QNmJtE3CmvAuO5L0uGrps0iGPjplk?=
+ =?us-ascii?Q?ArqAtHtmwglIFxhI6Kid8nsow9S4+03VfDmmZImYMUfzteFQsrFoJWyo5Tz9?=
+ =?us-ascii?Q?JmHJE8mHQqpbEpqNVjfuWL6E4fWGKDLdU3KApVpaOUMlQ2aTsvt4Im5xXwAe?=
+ =?us-ascii?Q?nzDk+yY8vh4BkOYC0r9VPzz5HTZC+MBiVABPPRw1GbVd3CTHpiRaH+H7R6V/?=
+ =?us-ascii?Q?iaH9n3WfEiImODj1q4uizPheoNKDwDmuQ1k+ngJi4RzrzvkSvgQvwBnvML3O?=
+ =?us-ascii?Q?5MzL2PVbHzGgGOTLHK1MYvMsKfA0fqd2Cp6S3/J2mYS4NxfJP3N4lwka9jKP?=
+ =?us-ascii?Q?66m55Dp6Uab1UrHhls7FQCmqH5tNb+GKXZm5jaHA++43SCZaJxu440qw/P/3?=
+ =?us-ascii?Q?bsNCM3wIBYaMhl5MVa3Wxit+e8yaM/1SUhAccvX21HNNPPSzRqXWNWrxLWaE?=
+ =?us-ascii?Q?O4FzblZ7cr2r8QJcxbRE/gaBLMRZJNqsBoOuSrsQ3qN17MWffXGbKGR82PQs?=
+ =?us-ascii?Q?sSeKlDGY/jCmr0IDMpXdMqgd71Jd1w7Kz+7b+CKewajb9SkaVqfX3PeDhbzE?=
+ =?us-ascii?Q?oxFVcuqF9fFmL6KO3V//l6IstfjURIDhkxuzV6ucXpVkldTw6p9A5mW0pKAY?=
+ =?us-ascii?Q?3JXV+25aEEvw904iKDBsCJbuZFHSHXXHlxntKbWKzLsv1LxWC8ptxr7SY9Ia?=
+ =?us-ascii?Q?hu7SZN4MGndvkZWM7iQfdyUthkCNCHc0SwgEezrAD3X0V+tJs00XKtnHo7nf?=
+ =?us-ascii?Q?eTS48vGilveBgVCruINmgtf3RVS/0ykqu/JK+lmnZHW8rTJ/KV+zzYBoq2Sv?=
+ =?us-ascii?Q?G1ud1UktR7UiRj0fVPztvgZorml6DS7zV/bf0e7yDeunBHoSJSg38TYc7kjs?=
+ =?us-ascii?Q?pcmb/s3fjbBIr2lrJNSb2BPiDxo6mECBtjK822CxJ6Qpm3kxbRS4/z5rDmbB?=
+ =?us-ascii?Q?FQRCvC8OzJWSjdg+oX8oh2ur/Uyi5SxQUglI9Lt8xelYJ4p3XmSEcouUffs2?=
+ =?us-ascii?Q?QplRunt2l3sIqV+xO2+CCyf0bl69bgZz9mPfyKZ8pX94pAm03ib0X0VhEFqp?=
+ =?us-ascii?Q?XAEUEBj5AgThPByWlTA7WUTVJJi8btNRJi8hnAPRViPfiaLc3yl3xeQJ261R?=
+ =?us-ascii?Q?TsHPSfjDkXMCYIx8j+Pv2caq21Qy5y89sL5riVpeGkKw1l0Xm8hEhMvyWlBT?=
+ =?us-ascii?Q?ykKWNEn48W4P0A24iNYwxgIFPS3LkgnWP9TEvw1iy7s5fdFqkkM+olwaT8XS?=
+ =?us-ascii?Q?BcTZk4dxfyeizGBrPeCpxx1a3vfwAR7jN5ddvKck8F0TY52w6jjFBaMYmceD?=
+ =?us-ascii?Q?YWpu6QVFECEOWvaX6UvVGAnd6AD/IfnnmjruEDgp3FzC5h5rC8CdrZQpLrBM?=
+ =?us-ascii?Q?+BqmJ55EkChYboL2MVegWvdZ76FEce0SpGjtJL71WmEyASaRFDspHLSsNWSy?=
+ =?us-ascii?Q?uX9pRRSL9isl+Eryzw70dotEOl3ZRM4dJ8EQovCk21+QHIGVRNxfCQ1CZpzg?=
+ =?us-ascii?Q?UQa4Jv+XhtxPK0SYwWeaDFhpp3HvAgjRlDH0bfbNbBZ+40pN3S9lTtF0FH/7?=
+ =?us-ascii?Q?/R/+RjzrvNlhRFPrcjzVdKwdkAu5nzEOAbF188Xl?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 391698fd-38c0-4034-ac76-08dd7940e43a
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 21:36:17.2498
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ojpXmX5yY+oabpCjQHFG1/+looTxBogzEvW7dGxi7IhaU8bA4qgFfvp/G8sC/iSGjInMMUeicj6oVOxhr7i42g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9490
 
-Hi Ian,
+Convert fsl-vdoa.txt to yaml format.
 
-On Thu, Apr 10, 2025 at 01:26:47PM -0700, Ian Rogers wrote:
-> Clang's unreachable code warning is able to catch bugs like the famous
-> "goto fail" which gcc's unreachable code warning fails to warn about
-> (it will complain about misleading indent). The changes here are
-> sufficient to get perf building with clang with -Wunreachable code,
-> but they don't really fix any bugs. Posting as an RFC to see if anyone
-> things this is worth pursuing.
+Additional changes:
+- Add irq.h and imx6qdl-clock.h in example.
 
-I'm not sure if it's useful and don't see what kind of bugs it can
-address.  The proposed changes don't look like an improvement.
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+ .../bindings/media/fsl,imx6q-vdoa.yaml        | 42 +++++++++++++++++++
+ .../devicetree/bindings/media/fsl-vdoa.txt    | 21 ----------
+ 2 files changed, 42 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml
+ delete mode 100644 Documentation/devicetree/bindings/media/fsl-vdoa.txt
 
-Thanks,
-Namhyung
+diff --git a/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml b/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml
+new file mode 100644
+index 0000000000000..511ac0d67a7f2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml
+@@ -0,0 +1,42 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/fsl,imx6q-vdoa.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale Video Data Order Adapter
++
++description:
++  The Video Data Order Adapter (VDOA) is present on the i.MX6q. Its sole purpose
++  is to reorder video data from the macroblock tiled order produced by the CODA
++  960 VPU to the conventional raster-scan order for scanout.
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    const: "fsl,imx6q-vdoa"
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/clock/imx6qdl-clock.h>
++
++    vdoa@21e4000 {
++        compatible = "fsl,imx6q-vdoa";
++        reg = <0x021e4000 0x4000>;
++        interrupts = <0 18 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&clks IMX6QDL_CLK_VDOA>;
++    };
+diff --git a/Documentation/devicetree/bindings/media/fsl-vdoa.txt b/Documentation/devicetree/bindings/media/fsl-vdoa.txt
+deleted file mode 100644
+index 6c5628530bb7b..0000000000000
+--- a/Documentation/devicetree/bindings/media/fsl-vdoa.txt
++++ /dev/null
+@@ -1,21 +0,0 @@
+-Freescale Video Data Order Adapter
+-==================================
+-
+-The Video Data Order Adapter (VDOA) is present on the i.MX6q. Its sole purpose
+-is to reorder video data from the macroblock tiled order produced by the CODA
+-960 VPU to the conventional raster-scan order for scanout.
+-
+-Required properties:
+-- compatible: must be "fsl,imx6q-vdoa"
+-- reg: the register base and size for the device registers
+-- interrupts: the VDOA interrupt
+-- clocks: the vdoa clock
+-
+-Example:
+-
+-vdoa@21e4000 {
+-        compatible = "fsl,imx6q-vdoa";
+-        reg = <0x021e4000 0x4000>;
+-        interrupts = <0 18 IRQ_TYPE_LEVEL_HIGH>;
+-        clocks = <&clks IMX6QDL_CLK_VDOA>;
+-};
+-- 
+2.34.1
 
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/lib/bpf/libbpf.c                        |   3 +
->  tools/perf/bench/breakpoint.c                 |   4 +-
->  tools/perf/bench/epoll-ctl.c                  |   2 +-
->  tools/perf/bench/epoll-wait.c                 |   2 +-
->  tools/perf/bench/evlist-open-close.c          |   2 +-
->  tools/perf/bench/find-bit-bench.c             |   2 +-
->  tools/perf/bench/futex-hash.c                 |   2 +-
->  tools/perf/bench/futex-lock-pi.c              |   2 +-
->  tools/perf/bench/futex-requeue.c              |   2 +-
->  tools/perf/bench/futex-wake-parallel.c        |   2 +-
->  tools/perf/bench/futex-wake.c                 |   2 +-
->  tools/perf/bench/inject-buildid.c             |   2 +-
->  tools/perf/bench/kallsyms-parse.c             |   2 +-
->  tools/perf/bench/pmu-scan.c                   |   2 +-
->  tools/perf/bench/synthesize.c                 |   2 +-
->  tools/perf/builtin-check.c                    |   6 +-
->  tools/perf/builtin-kvm.c                      |   5 +-
->  tools/perf/builtin-kwork.c                    |   5 +-
->  tools/perf/builtin-sched.c                    |   5 +-
->  tools/perf/builtin-trace.c                    | 108 +++++++++---------
->  tools/perf/tests/perf-record.c                |  10 +-
->  tools/perf/util/Build                         |   1 +
->  tools/perf/util/auxtrace.c                    |   2 +-
->  .../scripting-engines/trace-event-python.c    |   2 +-
->  24 files changed, 83 insertions(+), 94 deletions(-)
-> 
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index 194809da5172..4bfbb70d70a6 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -6823,6 +6823,8 @@ static bool need_func_arg_type_fixup(const struct btf *btf, const struct bpf_pro
->  			return true;
->  		break;
->  	case BPF_PROG_TYPE_PERF_EVENT:
-> +		#pragma clang diagnostic push
-> +		#pragma clang diagnostic ignored "-Wunreachable-code"
->  		if (__builtin_types_compatible_p(bpf_user_pt_regs_t, struct pt_regs) &&
->  		    btf_is_struct(t) && strcmp(tname, "pt_regs") == 0)
->  			return true;
-> @@ -6832,6 +6834,7 @@ static bool need_func_arg_type_fixup(const struct btf *btf, const struct bpf_pro
->  		if (__builtin_types_compatible_p(bpf_user_pt_regs_t, struct user_regs_struct) &&
->  		    btf_is_struct(t) && strcmp(tname, "user_regs_struct") == 0)
->  			return true;
-> +		#pragma clang diagnostic pop
->  		break;
->  	case BPF_PROG_TYPE_RAW_TRACEPOINT:
->  	case BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE:
-> diff --git a/tools/perf/bench/breakpoint.c b/tools/perf/bench/breakpoint.c
-> index dfd18f5db97d..e1f046f0f464 100644
-> --- a/tools/perf/bench/breakpoint.c
-> +++ b/tools/perf/bench/breakpoint.c
-> @@ -119,7 +119,7 @@ int bench_breakpoint_thread(int argc, const char **argv)
->  
->  	if (parse_options(argc, argv, thread_options, thread_usage, 0)) {
->  		usage_with_options(thread_usage, thread_options);
-> -		exit(EXIT_FAILURE);
-> +		__builtin_unreachable();
->  	}
->  	breakpoints = calloc(thread_params.nbreakpoints, sizeof(breakpoints[0]));
->  	parallel = calloc(thread_params.nparallel, sizeof(parallel[0]));
-> @@ -205,7 +205,7 @@ int bench_breakpoint_enable(int argc, const char **argv)
->  
->  	if (parse_options(argc, argv, enable_options, enable_usage, 0)) {
->  		usage_with_options(enable_usage, enable_options);
-> -		exit(EXIT_FAILURE);
-> +		__builtin_unreachable();
->  	}
->  	fd = breakpoint_setup(&watched);
->  
-> diff --git a/tools/perf/bench/epoll-ctl.c b/tools/perf/bench/epoll-ctl.c
-> index d66d852b90e4..330aed478f82 100644
-> --- a/tools/perf/bench/epoll-ctl.c
-> +++ b/tools/perf/bench/epoll-ctl.c
-> @@ -322,7 +322,7 @@ int bench_epoll_ctl(int argc, const char **argv)
->  	argc = parse_options(argc, argv, options, bench_epoll_ctl_usage, 0);
->  	if (argc) {
->  		usage_with_options(bench_epoll_ctl_usage, options);
-> -		exit(EXIT_FAILURE);
-> +		__builtin_unreachable();
->  	}
->  
->  	memset(&act, 0, sizeof(act));
-> diff --git a/tools/perf/bench/epoll-wait.c b/tools/perf/bench/epoll-wait.c
-> index 20fe4f72b4af..073fcd5b9977 100644
-> --- a/tools/perf/bench/epoll-wait.c
-> +++ b/tools/perf/bench/epoll-wait.c
-> @@ -441,7 +441,7 @@ int bench_epoll_wait(int argc, const char **argv)
->  	argc = parse_options(argc, argv, options, bench_epoll_wait_usage, 0);
->  	if (argc) {
->  		usage_with_options(bench_epoll_wait_usage, options);
-> -		exit(EXIT_FAILURE);
-> +		__builtin_unreachable();
->  	}
->  
->  	memset(&act, 0, sizeof(act));
-> diff --git a/tools/perf/bench/evlist-open-close.c b/tools/perf/bench/evlist-open-close.c
-> index 5a27691469ed..89ae71d8e7e8 100644
-> --- a/tools/perf/bench/evlist-open-close.c
-> +++ b/tools/perf/bench/evlist-open-close.c
-> @@ -231,7 +231,7 @@ int bench_evlist_open_close(int argc, const char **argv)
->  	argc = parse_options(argc, argv, options, bench_usage, 0);
->  	if (argc) {
->  		usage_with_options(bench_usage, options);
-> -		exit(EXIT_FAILURE);
-> +		__builtin_unreachable();
->  	}
->  
->  	err = target__validate(&opts.target);
-> diff --git a/tools/perf/bench/find-bit-bench.c b/tools/perf/bench/find-bit-bench.c
-> index 7e25b0e413f6..3a513d8400ca 100644
-> --- a/tools/perf/bench/find-bit-bench.c
-> +++ b/tools/perf/bench/find-bit-bench.c
-> @@ -129,7 +129,7 @@ int bench_mem_find_bit(int argc, const char **argv)
->  	argc = parse_options(argc, argv, options, bench_usage, 0);
->  	if (argc) {
->  		usage_with_options(bench_usage, options);
-> -		exit(EXIT_FAILURE);
-> +		__builtin_unreachable();
->  	}
->  
->  	for (i = 1; i <= 2048; i <<= 1)
-> diff --git a/tools/perf/bench/futex-hash.c b/tools/perf/bench/futex-hash.c
-> index b472eded521b..5429210f23e6 100644
-> --- a/tools/perf/bench/futex-hash.c
-> +++ b/tools/perf/bench/futex-hash.c
-> @@ -135,7 +135,7 @@ int bench_futex_hash(int argc, const char **argv)
->  	argc = parse_options(argc, argv, options, bench_futex_hash_usage, 0);
->  	if (argc) {
->  		usage_with_options(bench_futex_hash_usage, options);
-> -		exit(EXIT_FAILURE);
-> +		__builtin_unreachable();
->  	}
->  
->  	cpu = perf_cpu_map__new_online_cpus();
-> diff --git a/tools/perf/bench/futex-lock-pi.c b/tools/perf/bench/futex-lock-pi.c
-> index 0416120c091b..751c851d3cce 100644
-> --- a/tools/perf/bench/futex-lock-pi.c
-> +++ b/tools/perf/bench/futex-lock-pi.c
-> @@ -249,5 +249,5 @@ int bench_futex_lock_pi(int argc, const char **argv)
->  	return ret;
->  err:
->  	usage_with_options(bench_futex_lock_pi_usage, options);
-> -	exit(EXIT_FAILURE);
-> +	__builtin_unreachable();
->  }
-> diff --git a/tools/perf/bench/futex-requeue.c b/tools/perf/bench/futex-requeue.c
-> index aad5bfc4fe18..037d61f642cc 100644
-> --- a/tools/perf/bench/futex-requeue.c
-> +++ b/tools/perf/bench/futex-requeue.c
-> @@ -310,5 +310,5 @@ int bench_futex_requeue(int argc, const char **argv)
->  	return ret;
->  err:
->  	usage_with_options(bench_futex_requeue_usage, options);
-> -	exit(EXIT_FAILURE);
-> +	__builtin_unreachable();
->  }
-> diff --git a/tools/perf/bench/futex-wake-parallel.c b/tools/perf/bench/futex-wake-parallel.c
-> index 4352e318631e..4d20da078fc9 100644
-> --- a/tools/perf/bench/futex-wake-parallel.c
-> +++ b/tools/perf/bench/futex-wake-parallel.c
-> @@ -251,7 +251,7 @@ int bench_futex_wake_parallel(int argc, const char **argv)
->  			     bench_futex_wake_parallel_usage, 0);
->  	if (argc) {
->  		usage_with_options(bench_futex_wake_parallel_usage, options);
-> -		exit(EXIT_FAILURE);
-> +		__builtin_unreachable();
->  	}
->  
->  	memset(&act, 0, sizeof(act));
-> diff --git a/tools/perf/bench/futex-wake.c b/tools/perf/bench/futex-wake.c
-> index 49b3c89b0b35..17e67ec28eee 100644
-> --- a/tools/perf/bench/futex-wake.c
-> +++ b/tools/perf/bench/futex-wake.c
-> @@ -146,7 +146,7 @@ int bench_futex_wake(int argc, const char **argv)
->  	argc = parse_options(argc, argv, options, bench_futex_wake_usage, 0);
->  	if (argc) {
->  		usage_with_options(bench_futex_wake_usage, options);
-> -		exit(EXIT_FAILURE);
-> +		__builtin_unreachable();
->  	}
->  
->  	cpu = perf_cpu_map__new_online_cpus();
-> diff --git a/tools/perf/bench/inject-buildid.c b/tools/perf/bench/inject-buildid.c
-> index f55c07e4be94..3bc923f5391c 100644
-> --- a/tools/perf/bench/inject-buildid.c
-> +++ b/tools/perf/bench/inject-buildid.c
-> @@ -478,7 +478,7 @@ int bench_inject_build_id(int argc, const char **argv)
->  	argc = parse_options(argc, argv, options, bench_usage, 0);
->  	if (argc) {
->  		usage_with_options(bench_usage, options);
-> -		exit(EXIT_FAILURE);
-> +		__builtin_unreachable();
->  	}
->  
->  	return do_inject_loops(&data);
-> diff --git a/tools/perf/bench/kallsyms-parse.c b/tools/perf/bench/kallsyms-parse.c
-> index 2b0d0f980ae9..54620d1eed74 100644
-> --- a/tools/perf/bench/kallsyms-parse.c
-> +++ b/tools/perf/bench/kallsyms-parse.c
-> @@ -68,7 +68,7 @@ int bench_kallsyms_parse(int argc, const char **argv)
->  	argc = parse_options(argc, argv, options, bench_usage, 0);
->  	if (argc) {
->  		usage_with_options(bench_usage, options);
-> -		exit(EXIT_FAILURE);
-> +		__builtin_unreachable();
->  	}
->  
->  	return do_kallsyms_parse();
-> diff --git a/tools/perf/bench/pmu-scan.c b/tools/perf/bench/pmu-scan.c
-> index 9e4d36486f62..491c39d63788 100644
-> --- a/tools/perf/bench/pmu-scan.c
-> +++ b/tools/perf/bench/pmu-scan.c
-> @@ -177,7 +177,7 @@ int bench_pmu_scan(int argc, const char **argv)
->  	argc = parse_options(argc, argv, options, bench_usage, 0);
->  	if (argc) {
->  		usage_with_options(bench_usage, options);
-> -		exit(EXIT_FAILURE);
-> +		__builtin_unreachable();
->  	}
->  
->  	err = run_pmu_scan();
-> diff --git a/tools/perf/bench/synthesize.c b/tools/perf/bench/synthesize.c
-> index 9b333276cbdb..c1e065159062 100644
-> --- a/tools/perf/bench/synthesize.c
-> +++ b/tools/perf/bench/synthesize.c
-> @@ -242,7 +242,7 @@ int bench_synthesize(int argc, const char **argv)
->  	argc = parse_options(argc, argv, options, bench_usage, 0);
->  	if (argc) {
->  		usage_with_options(bench_usage, options);
-> -		exit(EXIT_FAILURE);
-> +		__builtin_unreachable();
->  	}
->  
->  	/*
-> diff --git a/tools/perf/builtin-check.c b/tools/perf/builtin-check.c
-> index 61a11a9b4e75..2f476938f99b 100644
-> --- a/tools/perf/builtin-check.c
-> +++ b/tools/perf/builtin-check.c
-> @@ -170,9 +170,5 @@ int cmd_check(int argc, const char **argv)
->  	/* If no subcommand matched above, print usage help */
->  	pr_err("Unknown subcommand: %s\n", argv[0]);
->  	usage_with_options(check_usage, check_options);
-> -
-> -	/* free usage string allocated by parse_options_subcommand */
-> -	free((void *)check_usage[0]);
-> -
-> -	return 0;
-> +	__builtin_unreachable();
->  }
-> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-> index 67fd2b006b0b..a12a25bbccc9 100644
-> --- a/tools/perf/builtin-kvm.c
-> +++ b/tools/perf/builtin-kvm.c
-> @@ -2126,8 +2126,5 @@ int cmd_kvm(int argc, const char **argv)
->  	else
->  		usage_with_options(kvm_usage, kvm_options);
->  
-> -	/* free usage string allocated by parse_options_subcommand */
-> -	free((void *)kvm_usage[0]);
-> -
-> -	return 0;
-> +	__builtin_unreachable();
->  }
-> diff --git a/tools/perf/builtin-kwork.c b/tools/perf/builtin-kwork.c
-> index c41a68d073de..fa6ecd8e9588 100644
-> --- a/tools/perf/builtin-kwork.c
-> +++ b/tools/perf/builtin-kwork.c
-> @@ -2522,8 +2522,5 @@ int cmd_kwork(int argc, const char **argv)
->  	} else
->  		usage_with_options(kwork_usage, kwork_options);
->  
-> -	/* free usage string allocated by parse_options_subcommand */
-> -	free((void *)kwork_usage[0]);
-> -
-> -	return 0;
-> +	__builtin_unreachable();
->  }
-> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-> index 26ece6e9bfd1..af19b92e33b3 100644
-> --- a/tools/perf/builtin-sched.c
-> +++ b/tools/perf/builtin-sched.c
-> @@ -3965,8 +3965,5 @@ int cmd_sched(int argc, const char **argv)
->  		usage_with_options(sched_usage, sched_options);
->  	}
->  
-> -	/* free usage string allocated by parse_options_subcommand */
-> -	free((void *)sched_usage[0]);
-> -
-> -	return 0;
-> +	__builtin_unreachable();
->  }
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index 6ac51925ea42..43cf3d2c0147 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -4378,25 +4378,34 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
->  	trace->live = true;
->  
->  	if (!trace->raw_augmented_syscalls) {
-> -		if (trace->trace_syscalls && trace__add_syscall_newtp(trace))
-> -			goto out_error_raw_syscalls;
-> +		if (trace->trace_syscalls && trace__add_syscall_newtp(trace)) {
-> +			char errbuf[BUFSIZ];
->  
-> +			tracing_path__strerror_open_tp(errno, errbuf, sizeof(errbuf),
-> +						       "raw_syscalls", "sys_(enter|exit)");
-> +			fprintf(trace->output, "%s\n", errbuf);
-> +			goto out_delete_evlist;
-> +		}
->  		if (trace->trace_syscalls)
->  			trace->vfs_getname = evlist__add_vfs_getname(evlist);
->  	}
->  
->  	if ((trace->trace_pgfaults & TRACE_PFMAJ)) {
->  		pgfault_maj = evsel__new_pgfault(PERF_COUNT_SW_PAGE_FAULTS_MAJ);
-> -		if (pgfault_maj == NULL)
-> -			goto out_error_mem;
-> +		if (pgfault_maj == NULL) {
-> +			fprintf(trace->output, "Not enough memory to run!\n");
-> +			goto out_delete_evlist;
-> +		}
->  		evsel__config_callchain(pgfault_maj, &trace->opts, &callchain_param);
->  		evlist__add(evlist, pgfault_maj);
->  	}
->  
->  	if ((trace->trace_pgfaults & TRACE_PFMIN)) {
->  		pgfault_min = evsel__new_pgfault(PERF_COUNT_SW_PAGE_FAULTS_MIN);
-> -		if (pgfault_min == NULL)
-> -			goto out_error_mem;
-> +		if (pgfault_min == NULL) {
-> +			fprintf(trace->output, "Not enough memory to run!\n");
-> +			goto out_delete_evlist;
-> +		}
->  		evsel__config_callchain(pgfault_min, &trace->opts, &callchain_param);
->  		evlist__add(evlist, pgfault_min);
->  	}
-> @@ -4405,8 +4414,14 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
->  	trace->opts.ignore_missing_thread = trace->opts.target.uid != UINT_MAX || trace->opts.target.pid;
->  
->  	if (trace->sched &&
-> -	    evlist__add_newtp(evlist, "sched", "sched_stat_runtime", trace__sched_stat_runtime))
-> -		goto out_error_sched_stat_runtime;
-> +	    evlist__add_newtp(evlist, "sched", "sched_stat_runtime", trace__sched_stat_runtime)) {
-> +		char errbuf[BUFSIZ];
-> +
-> +		tracing_path__strerror_open_tp(errno, errbuf, sizeof(errbuf),
-> +					       "sched", "sched_stat_runtime");
-> +		fprintf(trace->output, "%s\n", errbuf);
-> +		goto out_delete_evlist;
-> +	}
->  	/*
->  	 * If a global cgroup was set, apply it to all the events without an
->  	 * explicit cgroup. I.e.:
-> @@ -4465,8 +4480,13 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
->  	}
->  
->  	err = evlist__open(evlist);
-> -	if (err < 0)
-> -		goto out_error_open;
-> +	if (err < 0) {
-> +		char errbuf[BUFSIZ];
-> +
-> +		evlist__strerror_open(evlist, errno, errbuf, sizeof(errbuf));
-> +		fprintf(trace->output, "%s\n", errbuf);
-> +		goto out_delete_evlist;
-> +	}
->  #ifdef HAVE_BPF_SKEL
->  	if (trace->syscalls.events.bpf_output) {
->  		struct perf_cpu cpu;
-> @@ -4490,8 +4510,10 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
->  		trace->filter_pids.map = trace->skel->maps.pids_filtered;
->  #endif
->  	err = trace__set_filter_pids(trace);
-> -	if (err < 0)
-> -		goto out_error_mem;
-> +	if (err < 0) {
-> +		fprintf(trace->output, "Not enough memory to run!\n");
-> +		goto out_delete_evlist;
-> +	}
->  
->  #ifdef HAVE_BPF_SKEL
->  	if (trace->skel && trace->skel->progs.sys_enter) {
-> @@ -4505,9 +4527,10 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
->  
->  	if (trace->ev_qualifier_ids.nr > 0) {
->  		err = trace__set_ev_qualifier_filter(trace);
-> -		if (err < 0)
-> -			goto out_errno;
-> -
-> +		if (err < 0) {
-> +			fprintf(trace->output, "errno=%d,%s\n", errno, strerror(errno));
-> +			goto out_delete_evlist;
-> +		}
->  		if (trace->syscalls.events.sys_exit) {
->  			pr_debug("event qualifier tracepoint filter: %s\n",
->  				 trace->syscalls.events.sys_exit->filter);
-> @@ -4532,13 +4555,24 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
->  	if (err)
->  		goto out_delete_evlist;
->  	err = evlist__apply_filters(evlist, &evsel, &trace->opts.target);
-> -	if (err < 0)
-> -		goto out_error_apply_filters;
-> +	if (err < 0) {
-> +		char errbuf[BUFSIZ];
-> +
-> +		fprintf(trace->output,
-> +			"Failed to set filter \"%s\" on event %s with %d (%s)\n",
-> +			evsel->filter, evsel__name(evsel), errno,
-> +			str_error_r(errno, errbuf, sizeof(errbuf)));
-> +		goto out_delete_evlist;
-> +	}
->  
->  	err = evlist__mmap(evlist, trace->opts.mmap_pages);
-> -	if (err < 0)
-> -		goto out_error_mmap;
-> +	if (err < 0) {
-> +		char errbuf[BUFSIZ];
->  
-> +		evlist__strerror_mmap(evlist, errno, errbuf, sizeof(errbuf));
-> +		fprintf(trace->output, "%s\n", errbuf);
-> +		goto out_delete_evlist;
-> +	}
->  	if (!target__none(&trace->opts.target) && !trace->opts.target.initial_delay)
->  		evlist__enable(evlist);
->  
-> @@ -4646,42 +4680,6 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
->  	trace->evlist = NULL;
->  	trace->live = false;
->  	return err;
-> -{
-> -	char errbuf[BUFSIZ];
-> -
-> -out_error_sched_stat_runtime:
-> -	tracing_path__strerror_open_tp(errno, errbuf, sizeof(errbuf), "sched", "sched_stat_runtime");
-> -	goto out_error;
-> -
-> -out_error_raw_syscalls:
-> -	tracing_path__strerror_open_tp(errno, errbuf, sizeof(errbuf), "raw_syscalls", "sys_(enter|exit)");
-> -	goto out_error;
-> -
-> -out_error_mmap:
-> -	evlist__strerror_mmap(evlist, errno, errbuf, sizeof(errbuf));
-> -	goto out_error;
-> -
-> -out_error_open:
-> -	evlist__strerror_open(evlist, errno, errbuf, sizeof(errbuf));
-> -
-> -out_error:
-> -	fprintf(trace->output, "%s\n", errbuf);
-> -	goto out_delete_evlist;
-> -
-> -out_error_apply_filters:
-> -	fprintf(trace->output,
-> -		"Failed to set filter \"%s\" on event %s with %d (%s)\n",
-> -		evsel->filter, evsel__name(evsel), errno,
-> -		str_error_r(errno, errbuf, sizeof(errbuf)));
-> -	goto out_delete_evlist;
-> -}
-> -out_error_mem:
-> -	fprintf(trace->output, "Not enough memory to run!\n");
-> -	goto out_delete_evlist;
-> -
-> -out_errno:
-> -	fprintf(trace->output, "errno=%d,%s\n", errno, strerror(errno));
-> -	goto out_delete_evlist;
->  }
->  
->  static int trace__replay(struct trace *trace)
-> diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
-> index 0958c7c8995f..c4bcef4e79e9 100644
-> --- a/tools/perf/tests/perf-record.c
-> +++ b/tools/perf/tests/perf-record.c
-> @@ -67,7 +67,7 @@ static int test__PERF_RECORD(struct test_suite *test __maybe_unused, int subtest
->  	     found_ld_mmap = false;
->  	int err = -1, errs = 0, i, wakeups = 0;
->  	u32 cpu;
-> -	int total_events = 0, nr_events[PERF_RECORD_MAX] = { 0, };
-> +	int /*total_events = 0, */ nr_events[PERF_RECORD_MAX] = { 0, };
->  	char sbuf[STRERR_BUFSIZE];
->  
->  	perf_sample__init(&sample, /*all=*/false);
-> @@ -165,7 +165,7 @@ static int test__PERF_RECORD(struct test_suite *test __maybe_unused, int subtest
->  	evlist__start_workload(evlist);
->  
->  	while (1) {
-> -		int before = total_events;
-> +		// int before = total_events;
->  
->  		for (i = 0; i < evlist->core.nr_mmaps; i++) {
->  			union perf_event *event;
-> @@ -179,7 +179,7 @@ static int test__PERF_RECORD(struct test_suite *test __maybe_unused, int subtest
->  				const u32 type = event->header.type;
->  				const char *name = perf_event__name(type);
->  
-> -				++total_events;
-> +				//++total_events;
->  				if (type < PERF_RECORD_MAX)
->  					nr_events[type]++;
->  
-> @@ -288,8 +288,8 @@ static int test__PERF_RECORD(struct test_suite *test __maybe_unused, int subtest
->  		 * PERF_RECORD_{!SAMPLE} events don't honour
->  		 * perf_event_attr.wakeup_events, just PERF_EVENT_SAMPLE does.
->  		 */
-> -		if (total_events == before && false)
-> -			evlist__poll(evlist, -1);
-> +		// if (total_events == before && false)
-> +		//	evlist__poll(evlist, -1);
->  
->  		sleep(1);
->  		if (++wakeups > 5) {
-> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-> index 946bce6628f3..fecf39836bb5 100644
-> --- a/tools/perf/util/Build
-> +++ b/tools/perf/util/Build
-> @@ -170,6 +170,7 @@ perf-util-$(CONFIG_PERF_BPF_SKEL) += bpf_ftrace.o
->  perf-util-$(CONFIG_PERF_BPF_SKEL) += bpf_off_cpu.o
->  perf-util-$(CONFIG_PERF_BPF_SKEL) += bpf-filter.o
->  perf-util-$(CONFIG_PERF_BPF_SKEL) += bpf-filter-flex.o
-> +CFLAGS_bpf-filter-flex.o += -Wno-unreachable-code
->  perf-util-$(CONFIG_PERF_BPF_SKEL) += bpf-filter-bison.o
->  perf-util-$(CONFIG_PERF_BPF_SKEL) += btf.o
->  
-> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-> index 03211c2623de..5a05b8e293c2 100644
-> --- a/tools/perf/util/auxtrace.c
-> +++ b/tools/perf/util/auxtrace.c
-> @@ -384,7 +384,7 @@ static int auxtrace_queues__add_buffer(struct auxtrace_queues *queues,
->  		if (!buffer->data)
->  			goto out_free;
->  		buffer->data_needs_freeing = true;
-> -	} else if (BITS_PER_LONG == 32 &&
-> +	} else if (BITS_PER_LONG == (32) &&
->  		   buffer->size > BUFFER_LIMIT_FOR_32_BIT) {
->  		err = auxtrace_queues__split_buffer(queues, idx, buffer);
->  		if (err)
-> diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
-> index 520729e78965..ef7e34172659 100644
-> --- a/tools/perf/util/scripting-engines/trace-event-python.c
-> +++ b/tools/perf/util/scripting-engines/trace-event-python.c
-> @@ -116,7 +116,7 @@ static void handler_call_die(const char *handler_name)
->  	Py_FatalError("problem in Python trace event handler");
->  	// Py_FatalError does not return
->  	// but we have to make the compiler happy
-> -	abort();
-> +	__builtin_unreachable();
->  }
->  
->  /*
-> -- 
-> 2.49.0.604.gff1f9ca942-goog
-> 
 
