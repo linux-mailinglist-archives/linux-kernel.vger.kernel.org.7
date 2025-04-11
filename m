@@ -1,89 +1,82 @@
-Return-Path: <linux-kernel+bounces-600648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37F2A8629A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:00:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2A1A86282
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DD254E084B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:00:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EE8D1BA1F6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C235A221732;
-	Fri, 11 Apr 2025 15:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC28C2144DB;
+	Fri, 11 Apr 2025 15:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPJL0UiE"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="0N8ZaVrY"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0BE21CC44;
-	Fri, 11 Apr 2025 15:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFD0211711;
+	Fri, 11 Apr 2025 15:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744387142; cv=none; b=XyMzucdFXyveYyHB/lkO2FtR4FrH/j21oRZP33icksOSBy2Qf/jyQA2lBt4eOHLZ4bdtOh4gz0VgFCS3TDWSD0SZpPB9O7tkO2+X4WuuA/T1UvKpiPmyk/KKEpJMUeapM2n3jIUAaKWLT05M6r1QIjRL11fJC2k0IWIHRHAwnsw=
+	t=1744386993; cv=none; b=pu5k0Z9iqBXdcLZMkuIywcIe96SGuFdURgmNdltIpaaGmZKPp64DCTyR/IiLohsSGI6rLqLQvTlHmmLbBoawcFQbf9Bgkn1WH3v7j4TF0n/NZkvklLF4PiaswcWPBAUnD3b7/kRay90pPpSeIiGflQxIdy4Tht4iKkWttHSqVjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744387142; c=relaxed/simple;
-	bh=qsXtBiQfzv3ppOjk33t0VTHVUMSlolrvFHO5Ppcv2V0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AGOuF/fE0L0I5BajbnvHDev749EKVJRE2tzzFkdYWiT7LoLqDUmSuJjXfMHbNWYocVeVIEOhiX+imwdiXfogjiQvXcr/K17e1SYD4p5jzd+9sjAHqv4KbGLJPGQnGl+9E72lLomJvb7AaIF/ylMe5qnL1aPCda7mhlu6goIYArQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPJL0UiE; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cec5cd73bso16049035e9.3;
-        Fri, 11 Apr 2025 08:59:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744387139; x=1744991939; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tZr9fTRuG4cPDOtYV40TbKpOUf8PGvyr3lp6HShP6Mc=;
-        b=aPJL0UiEsm9GaMFbdc7vtXJIsSkieGg2IpoA8SExrjovu2h0Lg5a2Cj7No98ZJnW9s
-         xAt1fXhDY6TxoJECCo7Q2xg7601gYXRC8wfCNwHzLDFwkevSmTG9LzMyPrpdhqXMi2dG
-         JBWtE9cBzcCtrRtH+mFkWIbJM3NsfMdFlrne/l5Jxmwv4AS8zKhpoUPrSK2tPxd4Gfni
-         MZLI5JPHYqYJWif+sUKRweDWRchewxpbYmUABRcf2AOJYHvle1DYOAy+f5VOEP8S9bat
-         gGWoR06GFEL8U89fH3YHNnoMUZNCUihjh4T2Xb0FFZZ+mLDHNQ9p32/01YQbsR2tH//S
-         MBvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744387139; x=1744991939;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tZr9fTRuG4cPDOtYV40TbKpOUf8PGvyr3lp6HShP6Mc=;
-        b=LlYqUTZsBuwFED9UUAQdM4B79F9dDHlnXMs1pxJ9ETVclCh6uMaBuyAnJ9AWvhOCPk
-         m21gzA2vwPgV17CNVG/4XXyndxZFBsKlPpAyB9NvrWKpPCsNENCe+B+A2Ro/3iSfDHoQ
-         +ZkJDb+Y/VlQXF1cjWQ1a6hegqSfj1mDKfEiKHBxrPBhd6BeLoyvVNqYUaaoFheSjLXW
-         zRXFhla6n6Lt5WVUw7YZuUvy0lETnJNdNRgEVwmnpB68WIYN21Af0umrCjyZtQ9PFwlW
-         JIAsddZ/wjTy11R13CDdi6GIlGe1Hw3lqjoZUWQi8Gs+AMpEtLmlE2RvswjYrTwyDCEI
-         tFgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqHgmSsUWVYQ7AqgQbCpdTqHIG5mOyBbX+7B9oBmwXYO4igHBVGjWO1IuWPo5P4yhRyHiu1NUaLSfqZyd5@vger.kernel.org, AJvYcCVmuW4Z9Tc+N1YXuwjxeZPIzZZacjW8ull0DAsxlH5XpxOkzCay3llh0D2Jk86Gh0JBP7P8BWfJ41nlXgJoTA==@vger.kernel.org, AJvYcCXFnPopx/acy3fDhyKEecC2gPzA1bBa4J7aPHd39Qk6IAASol6day1k2tVsKDPpaqfhyfmKmCGimSjX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdE8TJlTTaw0WxzpILwe6T6COcVT95zXhJMXAs+bjKZ9XYTjxc
-	EYCf07LfmMRjV6G1q8HOtYCiCJ6FqE3uwzfmnb5dpzlXX6yr5zkRNZR8qlU=
-X-Gm-Gg: ASbGncsowa5b15nwbwyrosjR2Vg/PfYlD+VuJSC8SKYltkeQqIpvgovrzPhAt+f6q9c
-	bMhZgv8cWB1SRC9RspeIKYzUFW71EEtjZOgnjyUN4/27zv8RRAOXl61ZZXOHWBKc+lV3/ao3tNq
-	AnWEAke6l2a30QODPNct1EqyG0q9onNveLQQgXC46U5CA/7BSDov+MTUuncHO/EbdXJ8inASRy5
-	OlXRlgmCb/G632PYLTMn5Gi1EPVPyUdmaGIhFCOXVAUfYylP0/JF71RLs4L0f76pAIgKExQ5HtK
-	Ke13eeOTct8T7enD1XkVjYJUJauv20orv32yz+hOqKwXKvS/9dcDHsEQC0nGbKj41Ye6QjgbPS/
-	nP98jIDk=
-X-Google-Smtp-Source: AGHT+IGhrpb/YrnbELAph4aGtCS9VLS+UBEaIkjtSM/5yDy4tQaDR3ujgdcNMtWfN1WWrmsl1UJ1Vw==
-X-Received: by 2002:a05:600c:5008:b0:43c:ec28:d301 with SMTP id 5b1f17b1804b1-43f3a9aaf7fmr27769825e9.26.1744387138260;
-        Fri, 11 Apr 2025 08:58:58 -0700 (PDT)
-Received: from alex-x1.. (mob-194-230-148-227.cgn.sunrise.net. [194.230.148.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f23572d43sm86028075e9.31.2025.04.11.08.58.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 08:58:57 -0700 (PDT)
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Subject: [PATCH v1 1/1] arm64: dts: qcom: x1e80100-lenovo-yoga-slim7x: enable MICs LDO
-Date: Fri, 11 Apr 2025 17:54:21 +0200
-Message-ID: <20250411155852.4238-1-alex.vinarskis@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1744386993; c=relaxed/simple;
+	bh=Cch5sGaTT2+F0YWxSz4AB3xkKvujbKcwFLNV1deiUUc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qcSd5iFQERlzwjSVmrydlSEOLHKKSmXTlGxUGeiKUDUzhf882aXrvbpziQLxYQE0P2iVCKDMU1b4e68GKS/p8r70E6EebzvIzSzSN1FpU1IkYUOymaDMobbRZDdka3mN/vuVkvS4B4c5E+tmIfoS0z4ty7tXGwFfjVEhlGBh1eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=0N8ZaVrY; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53BEoVFc001831;
+	Fri, 11 Apr 2025 11:56:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=j9xtUhdGhdkE8EyjBRJ/O22T4tN
+	Jah4ogLXZDU/tV8I=; b=0N8ZaVrYTbMppqCdcHAjAO9gFTUr2A1L47TKpQd3d4i
+	AePqVJkYStxGOpnI1cv1YFWGxsNv+Urkugs1IINWQebb0e31co/xiG1mk3UpnBC6
+	Bu9S6JJO1WjXK5XcZJW3bAbJoK+98iX7Kwr5CGy9ipdCZd/j5PNpm7NT8R50Unhb
+	2iuPRsK7W/vfJGVbDGQF+cQxG7rIGvS/S3WGB0MyfiBnAnNTJjyPomk3DtA2L6+F
+	/rZ8iyxti7UQIpv9ysyaOeswrv9wdfMCRVpDsq59TWluBBrHnJlGgPQywvsY8JiR
+	uZo2Ivcz0z5qKl1dDqaM/05a2+6zYeHbYyMktn4OVhQ==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 45x8yp16tq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 11:56:12 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 53BFuBFr022161
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 11 Apr 2025 11:56:11 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 11 Apr 2025 11:56:11 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 11 Apr 2025 11:56:11 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 11 Apr 2025 11:56:11 -0400
+Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 53BFtqcs015425;
+	Fri, 11 Apr 2025 11:55:54 -0400
+From: Jonathan Santos <Jonathan.Santos@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+CC: Jonathan Santos <Jonathan.Santos@analog.com>, <nuno.sa@analog.com>,
+        <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <marcelo.schmitt@analog.com>, <jic23@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <marcelo.schmitt1@gmail.com>, <linus.walleij@linaro.org>,
+        <brgl@bgdev.pl>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
+        <jonath4nns@gmail.com>, <dlechner@baylibre.com>
+Subject: [PATCH v5 00/14] iio: adc: ad7768-1: Add features, improvements, and fixes
+Date: Fri, 11 Apr 2025 12:55:51 -0300
+Message-ID: <cover.1744325346.git.Jonathan.Santos@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,29 +84,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: 1V0-SBfQHb1mGgX1etPvE0AWIn-r8FTk
+X-Authority-Analysis: v=2.4 cv=BoqdwZX5 c=1 sm=1 tr=0 ts=67f93b9c cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=AKSQIOYSF6qBGy93K6UA:9
+X-Proofpoint-GUID: 1V0-SBfQHb1mGgX1etPvE0AWIn-r8FTk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_06,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 mlxlogscore=999
+ bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504110101
 
-Particular device comes without headset combo jack, hence does not
-feature wcd codec IC. In such cases, DMICs are powered from vreg_l1b.
-Set regulator as always-on to enable microphones.
+This patch series introduces some new features, improvements,
+and fixes for the AD7768-1 ADC driver. 
 
-Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+The goal is to support all key functionalities listed in the device
+datasheet, including filter mode selection, common mode voltage output
+configuration and GPIO support. Additionally, this includes fixes 
+for SPI communication and for IIO interface, and also code improvements
+to enhance maintainability and readability.
+
 ---
- arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v5:
+* Added gpio-trigger binding patch.
+* Include START pin and DRDY in the trigger-sources description.
+* increased trigger-source-cells to 1: this cell will define the trigger
+  source type.
+* Fixed the holes in the regmap ranges.
+* replace old iio_device_claim_direct_mode() for the new 
+  iio_device_claim/release_direct() functions.
+* Changed some commit messages.
+* Link to v4: https://lore.kernel.org/linux-iio/cover.1741268122.git.Jonathan.Santos@analog.com/T/#t
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-index 35d97db9e1f6..4a35846b5947 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-@@ -269,6 +269,7 @@ vreg_l1b_1p8: ldo1 {
- 			regulator-min-microvolt = <1800000>;
- 			regulator-max-microvolt = <1800000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-always-on;
- 		};
- 
- 		vreg_l2b_3p0: ldo2 {
+Changes in v4:
+* Added missing `select REGMAP_SPI` and `select REGULATOR` to the device's Kconfig.
+* VCM output regulator property renamed.
+* Added direct mode conditional locks to regulator controller callbacks.
+* Renamed regulator controller.
+* Created helper function to precalculate the sampling frequency table and avoid
+  race conditions.
+* Link to v3: https://lore.kernel.org/linux-iio/cover.1739368121.git.Jonathan.Santos@analog.com/T/#t
+
+Changes in v3:
+* Fixed irregular or missing SoBs.
+* Moved MOSI idle state patch to the start of the patch, as the other fix.
+* fixed dt-binding errors.
+* Trigger-sources is handled in a different way, as an alternative to sync-in-gpio.
+  (this way we avoid breaking old applications).
+* VCM output is controlled by the regulator framework.
+* Added a second regmap for 24-bit register values.
+* Add new preparatory patch replacing the manual attribute declarations for
+  the read_avail from struct iio_info.
+* included sinc3+rej60 filter type.
+* Addressed review comments, see individual pacthes.
+* Link to v2: https://lore.kernel.org/linux-iio/cover.1737985435.git.Jonathan.Santos@analog.com/T/#u
+
+Changes in v2:
+* Removed synchronization over SPI property and replaced it for trigger-sources.
+* Added GPIO controller documentation.
+* VCM output control changed from an IIO attribute to a devicetree property (static value).
+* Converted driver to use regmap and dropped spi_read_reg and spi_write_reg pacthes.
+* replaced decimation_rate attribute for oversampling_ratio and dropped device specific documentation patch.
+* Added low pass -3dB cutoff attribute.
+* Addressed review comments, see individual pacthes.
+* Link to v1: https://lore.kernel.org/linux-iio/cover.1736201898.git.Jonathan.Santos@analog.com/T/#t
+
+Jonathan Santos (11):
+  dt-bindings: trigger-source: add generic GPIO trigger source
+  dt-bindings: iio: adc: ad7768-1: add trigger-sources property
+  dt-bindings: iio: adc: ad7768-1: Document GPIO controller
+  dt-bindings: iio: adc: ad7768-1: document regulator provider property
+  iio: adc: ad7768-1: convert driver to use regmap
+  iio: adc: ad7768-1: add regulator to control VCM output
+  iio: adc: ad7768-1: add multiple scan types to support 16-bits mode
+  iio: adc: ad7768-1: add support for Synchronization over SPI
+  iio: adc: ad7768-1: replace manual attribute declaration
+  iio: adc: ad7768-1: add filter type and oversampling ratio attributes
+  iio: adc: ad7768-1: add low pass -3dB cutoff attribute
+
+Sergiu Cuciurean (3):
+  iio: adc: ad7768-1: Add reset gpio
+  iio: adc: ad7768-1: Move buffer allocation to a separate function
+  iio: adc: ad7768-1: Add GPIO controller support
+
+ .../bindings/iio/adc/adi,ad7768-1.yaml        |   67 +-
+ .../bindings/trigger-source/gpio-trigger.yaml |   40 +
+ drivers/iio/adc/Kconfig                       |    2 +
+ drivers/iio/adc/ad7768-1.c                    | 1105 ++++++++++++++---
+ 4 files changed, 1040 insertions(+), 174 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/trigger-source/gpio-trigger.yaml
+
+
+base-commit: 5d1a5c4f121f0ec50327e899c9450978505f1560
+prerequisite-patch-id: 933ca5331b0044084f60cba5f9019663e01fa9c2
 -- 
-2.45.2
+2.34.1
 
 
