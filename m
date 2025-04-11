@@ -1,169 +1,120 @@
-Return-Path: <linux-kernel+bounces-600721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E79A86398
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:48:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A23A86382
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 426737AE6B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:45:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84924445123
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E6B2327AE;
-	Fri, 11 Apr 2025 16:44:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3283221FDE
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 16:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656AC21D3FB;
+	Fri, 11 Apr 2025 16:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bDjrLT0g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B697626AD9;
+	Fri, 11 Apr 2025 16:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744389871; cv=none; b=WXjui6D8ihlTtMk67WMYCpwGNLysbHFARHxELWSASw9Fj0EddeZl2P1wjx+5/iGNcJX9uPXx85P8swZ05bEU4d+bgqGJgzOw2v/7gn3UkxiACOnO/sj0BXeekNo4BIjdpuErjQxnp67WbK+LrUzSzxITfGOH/mbiRkpZ9RcHjKY=
+	t=1744389787; cv=none; b=KL1yvNkKneT3o9Lcaoox6/4vYVOyI7Hy7bxcQr1Pqz4SFGElEQox7xnp5OqkwC0XTEM+MiQrHcgkGA1rmO1WhKk1MWr9FSU7fsyNSHA/kGDO7Vx38GH8VqPBLncc3YbN/l5491NQY4rsGmrXk/mul4KIVklGAbD7KtTkl2IZ5kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744389871; c=relaxed/simple;
-	bh=IKhiSIwWokukxJGyscyvR5Ko8jRfZFxgmm3B9maAeEk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MiXAWD/3m6EB2pghafg+TQUzkOBlXFcvoYd+Vpjui2q7aCZdwXhH25zHa4kJJlqa9t43lrys2joGSp94DS02BdPB75N+03YOgwNHZcfeEe3PxPzexEpBtzb/LmjInK2R6ShNQkSNiC/H35CY/v5IFhQtGMs+hjIHGiJ1pj1ZJcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D139B244B;
-	Fri, 11 Apr 2025 09:44:28 -0700 (PDT)
-Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C76AE3F694;
-	Fri, 11 Apr 2025 09:44:25 -0700 (PDT)
-From: James Morse <james.morse@arm.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>,
-	Babu Moger <Babu.Moger@amd.com>,
-	James Morse <james.morse@arm.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com,
-	lcherian@marvell.com,
-	bobo.shaobowang@huawei.com,
-	tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	peternewman@google.com,
-	dfustini@baylibre.com,
-	amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	fenghuay@nvidia.com,
-	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
-	Babu Moger <babu.moger@amd.com>
-Subject: [PATCH v8 21/21] x86,fs/resctrl: Move resctrl.rst to live under Documentation/filesystems
-Date: Fri, 11 Apr 2025 16:42:29 +0000
-Message-Id: <20250411164229.23413-22-james.morse@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250411164229.23413-1-james.morse@arm.com>
-References: <20250411164229.23413-1-james.morse@arm.com>
+	s=arc-20240116; t=1744389787; c=relaxed/simple;
+	bh=tR3UHpCXzeA9///t/Dn2xzAjjM6Zw64YyTco64txTrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lz0imBqxGyYAaz+vx7xImMT0GSwrXzN44SantunohBiQTH/OVaq7oxH1rJCWZ0JQLwZ5X3dx4xgnBy4K/gFCaXcVhLYG7gOBpeDXmnIeu9TdCSAfNzRvA+odcOMICBsZxTx/JqpV7ifkpBl5wx6OMphmubPsJQXRyXl7WAJwR1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bDjrLT0g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19F30C4CEE2;
+	Fri, 11 Apr 2025 16:43:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744389787;
+	bh=tR3UHpCXzeA9///t/Dn2xzAjjM6Zw64YyTco64txTrc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bDjrLT0gTM9ncpI1oDN0t7XKA+vnlO4rKWcXymKi7KptWCUHj7CnlK+tvKnHsymDt
+	 QSK0KqJdw4SN5qSuSk3OlQ4QaDabTwjf7G9jVmUdsu378eMRc7mKH0N8JhxRjgjUNU
+	 uBFTUn0rvGd1efZAwApI8XqmH3zj0C4Do/sD1Vbh5QWFZhbs1CPeK6K97G8zq3YRac
+	 GMm2mQP8Fhei5thHit7fEXcBf/8ulfaY4aX3uwM/tr5rLpg+TO4IwCZYm7hqN6VhdC
+	 a6ju+/c6cHfYF4ewuw5JF+CSRFa22mrr/RCgC4uEERQfulgCI286FXb0e8/3ACZ86Q
+	 8VtNYJUp2zUlg==
+Date: Fri, 11 Apr 2025 17:43:00 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Guodong Xu <guodong@riscstar.com>
+Cc: ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, dlan@gentoo.org,
+	p.zabel@pengutronix.de, drew@pdp7.com, inochiama@gmail.com,
+	geert+renesas@glider.be, heylenay@4d2.org, tglx@linutronix.de,
+	hal.feng@starfivetech.com, unicorn_wang@outlook.com,
+	duje.mihanovic@skole.hr, elder@riscstar.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev
+Subject: Re: [PATCH 3/9] dt-bindings: pwm: marvell,pxa: add support to
+ spacemit K1
+Message-ID: <20250411-spoiler-dispatch-8f709700a996@spud>
+References: <20250411131423.3802611-1-guodong@riscstar.com>
+ <20250411131423.3802611-4-guodong@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="LUVx89P2ckqnLgNF"
+Content-Disposition: inline
+In-Reply-To: <20250411131423.3802611-4-guodong@riscstar.com>
 
-The filesystem code has moved from arch/x86 to fs. Move the documentation
-too.
 
-Signed-off-by: James Morse <james.morse@arm.com>
-Tested-by: Peter Newman <peternewman@google.com>
-Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Tested-by: Amit Singh Tomar <amitsinght@marvell.com> # arm64
-Tested-by: Shanker Donthineni <sdonthineni@nvidia.com> # arm64
-Tested-by: Babu Moger <babu.moger@amd.com>
-Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
----
- Documentation/arch/x86/index.rst                    | 1 -
- Documentation/filesystems/index.rst                 | 1 +
- Documentation/{arch/x86 => filesystems}/resctrl.rst | 0
- MAINTAINERS                                         | 2 +-
- arch/x86/kernel/cpu/resctrl/monitor.c               | 2 +-
- fs/resctrl/Kconfig                                  | 2 +-
- 6 files changed, 4 insertions(+), 4 deletions(-)
- rename Documentation/{arch/x86 => filesystems}/resctrl.rst (100%)
+--LUVx89P2ckqnLgNF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/arch/x86/index.rst b/Documentation/arch/x86/index.rst
-index 8ac64d7de4dc..00f9a99689fb 100644
---- a/Documentation/arch/x86/index.rst
-+++ b/Documentation/arch/x86/index.rst
-@@ -31,7 +31,6 @@ x86-specific Documentation
-    pti
-    mds
-    microcode
--   resctrl
-    tsx_async_abort
-    buslock
-    usb-legacy-support
-diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index a9cf8e950b15..32618512a965 100644
---- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@ -113,6 +113,7 @@ Documentation for filesystem implementations.
-    qnx6
-    ramfs-rootfs-initramfs
-    relay
-+   resctrl
-    romfs
-    smb/index
-    spufs/index
-diff --git a/Documentation/arch/x86/resctrl.rst b/Documentation/filesystems/resctrl.rst
-similarity index 100%
-rename from Documentation/arch/x86/resctrl.rst
-rename to Documentation/filesystems/resctrl.rst
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c30c6fbd1f7a..f7a829898344 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20281,7 +20281,7 @@ M:	Tony Luck <tony.luck@intel.com>
- M:	Reinette Chatre <reinette.chatre@intel.com>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
--F:	Documentation/arch/x86/resctrl*
-+F:	Documentation/filesystems/resctrl.rst
- F:	arch/x86/include/asm/resctrl.h
- F:	arch/x86/kernel/cpu/resctrl/
- F:	fs/resctrl/
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index 182f0514cc88..41af0ed18259 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -40,7 +40,7 @@ unsigned int rdt_mon_features;
- static int snc_nodes_per_l3_cache = 1;
- 
- /*
-- * The correction factor table is documented in Documentation/arch/x86/resctrl.rst.
-+ * The correction factor table is documented in Documentation/filesystems/resctrl.rst.
-  * If rmid > rmid threshold, MBM total and local values should be multiplied
-  * by the correction factor.
-  *
-diff --git a/fs/resctrl/Kconfig b/fs/resctrl/Kconfig
-index 478a8e2ad99f..21671301bd8a 100644
---- a/fs/resctrl/Kconfig
-+++ b/fs/resctrl/Kconfig
-@@ -21,7 +21,7 @@ config RESCTRL_FS
- 	  On architectures where this can be disabled independently, it is
- 	  safe to say N.
- 
--	  See <file:Documentation/arch/x86/resctrl.rst> for more information.
-+	  See <file:Documentation/filesystems/resctrl.rst> for more information.
- 
- config RESCTRL_FS_PSEUDO_LOCK
- 	bool
--- 
-2.20.1
+On Fri, Apr 11, 2025 at 09:14:17PM +0800, Guodong Xu wrote:
+> Add "spacemit,k1-pwm" as a compatible string to support the PWM
+> controller on the SpacemiT K1 platform.
+>=20
+> Signed-off-by: Guodong Xu <guodong@riscstar.com>
+> ---
+>  Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml b=
+/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml
+> index 9640d4b627c2..1e3cabf6a89a 100644
+> --- a/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml
+> +++ b/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml
+> @@ -19,6 +19,7 @@ properties:
+>        - marvell,pxa270-pwm
+>        - marvell,pxa168-pwm
+>        - marvell,pxa910-pwm
+> +      - spacemit,k1-pwm
 
+The driver doesn't appear to handle this differently to existing
+compatibles, why is a fallback not used?
+
+> =20
+>    reg:
+>      # Length should be 0x10
+> --=20
+> 2.43.0
+>=20
+
+--LUVx89P2ckqnLgNF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ/lGlAAKCRB4tDGHoIJi
+0rpnAP9M2iA7vkmJyuuQgjwKcFc40rTRbCJ3nRdKJhlWdCEsgAD/TlkE0t6j/G2z
+QjLG3R/QWpuj0Zj2vbNRzmF1FzCpQA0=
+=ulBE
+-----END PGP SIGNATURE-----
+
+--LUVx89P2ckqnLgNF--
 
