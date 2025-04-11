@@ -1,223 +1,253 @@
-Return-Path: <linux-kernel+bounces-601055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE55A86878
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 23:45:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95EE4A8687C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 23:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F14F14645EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 21:45:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E31646603F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 21:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135B729CB5F;
-	Fri, 11 Apr 2025 21:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F42284B25;
+	Fri, 11 Apr 2025 21:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Bto2CHuv"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cyPlVEcV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCDA29CB31
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 21:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744407902; cv=none; b=UzsyCaScMp/kVpcrPU8vNCszTjnFlbhxJoWWZxX9QFu9O5prpBcnaoZrPkKlketV/DyUckqUEyFVCIylk/rEEOWvyJ+rLzf1OgXXw4cIXhh95EzJAaIM9LGBdj3Ni3Gz4Igf1RHHX1K8/S7do/9TgJwscoUotyo8KXGZEuyBjQo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744407902; c=relaxed/simple;
-	bh=JhEtLQYxJUYf6hS4yrM6mRaFZC5s56CpaPGv53UDIbk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fuV6s4fUuinmM05C0uRQs46xAUMp8FDcQ1qI6YGwxOoBFUOEO6V23+4StEjzI5PzACe/8yEpAj7smdy8GF3ZR9Ru///FQcQvcHjoOUlDF5Rls/DXVky5OfQpLOhctn/YdGjyIJAQ7Fv6UXx88SxsOmj7oo28P1lKbyHWAGMOXtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Bto2CHuv; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-60400013960so568478eaf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 14:44:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744407898; x=1745012698; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5qxKGBsMkMzJ2BNc5R5UbHVjtuUaRbTsxJED20d0p+M=;
-        b=Bto2CHuvKd0fx2uKL1m5U1rT9d+ppNeZpZnnvrVgxo1Cxx5TpoTWxstoo3z/WDgRYm
-         PRAq5qlhA3vLQDmK0zu3F4cz4LrcyvhicHjd4VLWeb0r9/nBHDzTerJH919aAQGgvfTn
-         PugZh8FHrb9rY9vcRGCPmDO/O54FvY6P6yxij6pfdTMQv5k8C00Hpg8VVCA2YdyWNnPi
-         13AveBl3pXGtd01jb8fST5eIZpnIskcqrilnxZBOHjCEa9/yg8IEviHZAQk/K90jPHl9
-         e5E5EQJIE/han4nrocNdfO7j/QTHKEh9nX5JvWI5ibrCuCZ6+3pgals5xscdFC0Am2GD
-         7DDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744407898; x=1745012698;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5qxKGBsMkMzJ2BNc5R5UbHVjtuUaRbTsxJED20d0p+M=;
-        b=IczkesqIGraKA6OSZ32degJKtn/QD7RBKk47z+9mDmP2IsEB6dYUL+Aae7sEmD8oYy
-         pf8tzA/HdukhOtKLVQ0+yzIwecDjPV+dvGwpca7a86fLbX2sA7ZE6XCvo7FLI6U3iW7T
-         Q35oPecDWNYPvvltc9CKKzc1wVBXBpudSstDWJhOQgA9xv7ZXv9vnjYeR6OjaShLthlO
-         6fMNTdaUruMk+iUthMC3v2LogcK/FBqpQtFAo/DeDWOqfEqY5bvDA5MXsV/tx4NFAE/J
-         Hj6fyMUf0TglmoUAa46LD6cIHvslhPMlXhgF5539+yhvErdKL2fCcSeOK1/zeAUtHA2D
-         RzKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVthCCMW06qn+I4crKuGGov3TtpufjofV/Y9xGBiajOB1oMq08MSc1GsupwHe2FIT7CmDVkWyRRjep4yX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+aiq30IQ8dfCJfZX4yCtn8VAHvxFuQs40h/PtgE73cYgLUVmR
-	WKVUmsxRJ9sUiJLKKZsOs7CCH22p6PXX8z9Fmv1lRQDaG0wYK5a0Ve4v9k7TqtM=
-X-Gm-Gg: ASbGnctoegApnQO7d9/yOE3n9ZF6xESABda+3uM1Fds1btzHEyMnavP9hyGWeeu9rXt
-	NPoyTEUT1PN11kXf+X+I1LOdnmM7ZVmNsmCs6TQUwG1ECjMNQbiPEN6O7/rERE/aSYL5rbA+q7c
-	h1c0zC4kJqfzcIPolOZt9owON2wJpgHy3mlPyTuE6qNRczepo3LxfTq8M0s3/E2QqbL8xt/COUT
-	xKppfX6QtolAf5wWsJ4nGiZOdHjthixLuUF6WTVVQf/u7bIBlnKzHc7ZFXYL74U0ZajdQqMhUtU
-	qM95M1hre2S4QL5c7ubywDec+xb5vK/vPMEkBH5If+uhaRkGS3FcSVKyaDmKUpvFPHpEQb8lmGN
-	jrQ==
-X-Google-Smtp-Source: AGHT+IHXy3+92TRvDVV1gjmxCyi/zce38/vLVqmGl0gMcBYh4Q0YmYalGIFle2vzEHSzGH1qCGI38A==
-X-Received: by 2002:a05:6820:1514:b0:604:117:1a5d with SMTP id 006d021491bc7-6046f5c8a59mr2387896eaf.7.1744407898203;
-        Fri, 11 Apr 2025 14:44:58 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6045f5b28dfsm1015069eaf.37.2025.04.11.14.44.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 14:44:56 -0700 (PDT)
-Message-ID: <bbdbf4ff-662e-459b-a31f-bc58e738a51f@baylibre.com>
-Date: Fri, 11 Apr 2025 16:44:55 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046C642A9E
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 21:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744408113; cv=fail; b=kRFWYyFQ5gcq255dhpjlXHUVfqSingD2M8Kffqg61et/ZRe58DsiH03jdP+R/eTkickhQwgBq64Z+QMPLiZ9KObUp3hSGpbrYTiIkKVr5uJGpplleEM2mhsEVcOUVvFH37/qbwfHgWonal1qr326MQuW7Pl42lxZWdAQAV4hOX8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744408113; c=relaxed/simple;
+	bh=vRkh6TtGP3hCdKzx0uKeEMCyAUJx32azp37L3E7UBuY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BsiLOwwsFw91l/lzWoEFVO0Bb6Nkyw8gXUSgH/3xIkpGiMfdlpVUlzCXEtfTnP31z3BmfwhCTpKZsIE/OlsGwpAaQptdp+UF3jZGWBHuRnuXHJPkHlC91944qejwuhoRrjsp6hhfv8K/4GWbSxL3Vkt9aXWYBLj+hyMKwe4DvXs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cyPlVEcV; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744408111; x=1775944111;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=vRkh6TtGP3hCdKzx0uKeEMCyAUJx32azp37L3E7UBuY=;
+  b=cyPlVEcVnQ0rc3IDFivNrVPJnKJgiPXY7K0RgJxfVRmSUom6z7doy2tl
+   5SIQmrZv4fC/nSMP6s5E78pYrp1TOdCXPMUmFbh8hI+cDZAJdzmauasmj
+   HqeULv237AAiK9QZPk1D2g54hcfairwK2bqnUCxrOxwA1V6+0kG0JvHCv
+   4TPMSK4zEPqrblEi6skE+UuELS6mYwImfNFyZf/V4HrAxFTpKAEV2gF4X
+   rHH3L8EVVagIKaVSq380Xipmk+XzMcj43FkRnAaO1UCuPdudeVbljNoqS
+   xo2SEA6LlhHKRCh9OvlyuOQqJblOvtATwvSQlW7WI5noNTxVx2GFOWn7F
+   Q==;
+X-CSE-ConnectionGUID: bqVLVbhbT2K6WOrKIAsr6A==
+X-CSE-MsgGUID: nS+OtyvVRWCb3Rsco2wcow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11401"; a="46136414"
+X-IronPort-AV: E=Sophos;i="6.15,206,1739865600"; 
+   d="scan'208";a="46136414"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 14:48:30 -0700
+X-CSE-ConnectionGUID: GbaCHu6TToSOiOQ10BkJag==
+X-CSE-MsgGUID: DrkyQgjSS0Gpvd3JAzQV1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,206,1739865600"; 
+   d="scan'208";a="130142191"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 14:48:30 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 11 Apr 2025 14:48:29 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 11 Apr 2025 14:48:29 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.173)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 11 Apr 2025 14:48:28 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Pu5m9kcHewBelP6RfnarV8+C1d20MHhIn3gpFe01NeQLozRfOnYazv88aYNNY4bP52RPYUZXiGC8pAlSw2CGIxQHnSl5AUm9wNW8GEagnUKiVaW0LoEu1AgLTtbHICJcNkpAkmrIp/ZqpaFVeErAVQsvPPFxQRHk1dQqFEYhZPSSlxR82VjAum0Ou8McoCqv9VUPwPwNyNcBW0c1NdNq5plRDra36cYXTWdiOJ2odcQd6mWSmTso7oK39v0Ol+RtlAtSCQNb7ByaXLxS7cjO7JB8qvHc4FNW+3W5PJi6LaaoPhvxWt8kQvlYvqhjyz/wGJqHHU0ViGM95wjHnIFnSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B4Hs3LtkUc7sjRzPz9/7yKL9GvtOAlT0PTr5dSaYiLk=;
+ b=xs8wHT0taZIxft5Pjqs5gMiz0U2yuZiVHnETlAJgMwXGRU81KEaBseEwgZL2pP5YXw7DukYh3FKrUqNVgDdxyb6xy49lZPAtvnU4/iIKVToYvtgPOz881nBTqk1aWZhdy4ptQIxatcsMPibCQExme3MoP8rT76fNTmmwG5epti/iNIo3jrVQWncLNp7derExXce46+f+/QBAkkA7kKtOpJvfC1cR/TMX+R/bYCkRdzLdzlBMRnaOrgv86q6vnY5f0MTjhUo0TYgw+PzlviBixzzVW2SsnJFpijNgXtqdxMyRm4z2Yo0O98dlmeasNHKbY/BQ/vwQtmE79UJ5gJ0Ozw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by MN6PR11MB8241.namprd11.prod.outlook.com (2603:10b6:208:473::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.27; Fri, 11 Apr
+ 2025 21:48:27 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%3]) with mapi id 15.20.8606.033; Fri, 11 Apr 2025
+ 21:48:27 +0000
+Date: Fri, 11 Apr 2025 14:48:23 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Kees Cook <kees@kernel.org>
+CC: <dave.hansen@linux.intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] devmem: Block mmap access when read/write access
+ is restricted
+Message-ID: <67f98e27a799e_7205294e3@dwillia2-xfh.jf.intel.com.notmuch>
+References: <174433453526.924142.15494575917593543330.stgit@dwillia2-xfh.jf.intel.com>
+ <174433455090.924142.10859114556652046264.stgit@dwillia2-xfh.jf.intel.com>
+ <202504101926.0F8FB73@keescook>
+ <67f8a1a15cc29_7205294d7@dwillia2-xfh.jf.intel.com.notmuch>
+ <bf63b3e3-afdd-424c-87dc-f5488e770315@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bf63b3e3-afdd-424c-87dc-f5488e770315@intel.com>
+X-ClientProxiedBy: MW4PR03CA0252.namprd03.prod.outlook.com
+ (2603:10b6:303:b4::17) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 08/14] iio: adc: ad7768-1: add regulator to control VCM
- output
-To: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com,
- linus.walleij@linaro.org, brgl@bgdev.pl, lgirdwood@gmail.com,
- broonie@kernel.org, jonath4nns@gmail.com
-References: <cover.1744325346.git.Jonathan.Santos@analog.com>
- <7753dcd690f07f855100fc28e7b8ae746082de1c.1744325346.git.Jonathan.Santos@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <7753dcd690f07f855100fc28e7b8ae746082de1c.1744325346.git.Jonathan.Santos@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|MN6PR11MB8241:EE_
+X-MS-Office365-Filtering-Correlation-Id: afae3d50-ee3d-40dc-c646-08dd79429742
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?NFNQRXNGRFh4WVVHcE5GakVMNmlYcWEyOHM3RGFFMmJYOUkxeWlZYkQvV1ZP?=
+ =?utf-8?B?dWMxR2RCVVhuN1Avc0xWZXZseDU1R21uRDVVeEU1MVZZckFZY20vRzluMWJF?=
+ =?utf-8?B?R2t6MGJVVEJ0aU9XZG00UkhLOGl6Y0RNbmdBdTk0NDU0VGx1QjdDcHVWNnFI?=
+ =?utf-8?B?SEhQbVdHZjZkZ2pGSzFFSzVrdHh3Z0VuQVFvMlpybDJVSUxpeWYxMEs2NzBx?=
+ =?utf-8?B?c0JpTzJsMkYvZ0Z0Q2FBQXQ4Z0pTd1NPMDlDWkVaWVhnbnlMMEdRZEcvb0tG?=
+ =?utf-8?B?NGg2aGN4QWV3cEkyUHYzRmJ5QXlLaW9hOVJyWm8zMjg2N2dGZmhHSjRITGdF?=
+ =?utf-8?B?YUpjK3hiYTJ0dnRiRWpLcENKRlJ4bUFRUW9WZWlOU0ZsNXhGZzgrRnB2Wm91?=
+ =?utf-8?B?YXM5ZG12M3FnSEpidkw2WDR2Y3FBNFFzM3B5VzVSODY2bmllKzZDRDdCK2d2?=
+ =?utf-8?B?ZVVxN2sxNnZFOFpmeDVlKzRHTEx4ZWt3NGozZHpuQkQ5NC94azdPK0M2cG9y?=
+ =?utf-8?B?L0JBYlFCZW9JUkJKaUVDWkNkOFRLK0xGRkVLTTBhT1VsSzFYOUp1UzJ3ZTAv?=
+ =?utf-8?B?VEgrWUpST1MyeEY1Q3Nld3BZOXY3TnppajYrNEszY3pMRGlNWVZ3M3FBOXhS?=
+ =?utf-8?B?cFZBZnJwQmhYU2ZCVUNhbnNGMjFmbzFMbVJLcU8vOE11OUUyMURFd3ZEa3Fz?=
+ =?utf-8?B?UjlsWlBMQXdKSzYya0ZKYXNCNnpLeUN1SzQxNzhzOENtaFFzWmhEMlJCYjBx?=
+ =?utf-8?B?MUVYNC81bnYvb1VrUVdzeUlvZGlzc0YxN2t3Y2N1WDFJVUhPbnB6NGtld0xQ?=
+ =?utf-8?B?V2pld3JmRDdQRFI0UUZtSHYzZDFHQzhTU3QxS2QzYzBzSTdCNjZzMDRHSUdX?=
+ =?utf-8?B?OXBjQ3J4TGdyVkFIQlFWUVlIRTRwemN0aXZBN3RsVjZrTXNxakR3aGQxSEti?=
+ =?utf-8?B?eFFPWDg2SVcyOFpzSXdJUWFkdnlqaDQxVGp3MkhtVFJlOXcwZEZmSUorT0xt?=
+ =?utf-8?B?OUNBQ2tRVHRwMEI2Uy9oRnNUWUQxU0VOTGppWTdZRWIvdUdPYU1pSlpFZ1A4?=
+ =?utf-8?B?MXpHLzlLaGF3UC9FUXNFT3V0engrRyszUXBCSDVLYzdDMUwwdzUrVndFNTlM?=
+ =?utf-8?B?dVZqQkZQSXg2RHNuWDZMMFZscjdCcWNrbjZBb2t1Q1IwaC91OWtBd2swbzFo?=
+ =?utf-8?B?b2U2OEpzUE9hMVdWSVd6Z3JpVEdVM2k0TCs1UWNwbVZ6eWZoQmVBakwwT2lT?=
+ =?utf-8?B?WlhvYms4TzJma1ZuVjhUM1Zld1kxTVhZYjhPWlhCM2t4cmJxbnJ4bG5CUEUw?=
+ =?utf-8?B?WkhHalNOY2JrMmhha1dja3hsckoxZ1VRa2JleVk5Qzdrd0xiUDdiT3FUY1Jk?=
+ =?utf-8?B?OGx5QjNPSS9EWFJEMzVYenZ0Y3AvWWNZbDdCWDhJZ2wxZSt6K0poeFYxNzRj?=
+ =?utf-8?B?SHJHQ1UxbTR1UTJIc0RRNVdpSVQyQ1pOWkE1U3NWU0xmZ0tvUGFvNENpanV5?=
+ =?utf-8?B?SmxoZkZPelMzSTJIT3g2U3RVMmNzc0swUWhBWFBpdjhoOEYzR2Zud1pjNzdS?=
+ =?utf-8?B?RTJ4RCt3VTlkbXJ2L2Y3YmoydDBiUFl2eGlSei9VNzlZbmVIN3V6Q05wV1pm?=
+ =?utf-8?B?bVg3QnlabzNrOVVKWXd5WkY3cGtITW5FRHA0MmdCTitFNmVuQzc4Z21kSnIr?=
+ =?utf-8?B?bHY0RkRWazJkQ0dwZFJ0eEVNWnZnSW9WSUxmVUg1b292ZU5mNGcxeGhta1RE?=
+ =?utf-8?B?ODdsUENnMkdBMjBVK1phTStyaVdOY3VMZUpxeXFINUQ1U3JOZHdvZGgzZWxp?=
+ =?utf-8?B?Q3hmQUs2VXdWQ0pUWXAwTDZOTC9Ma0tTMmJvd0lvMXNxRUNhOHFhUWFyQk4v?=
+ =?utf-8?B?aFNmaldzMERGUDZWNytaUVVmS2xDYmN6WFlVQ2l4bFNTYzdpNTJLekRnUElt?=
+ =?utf-8?Q?ZDlFEkOBdU0=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OEs1NVRTQ0ppRHYvZm1yRS9PV2lxaDZHRGdOVkRyazVHN29MTjRUaU1ibCt3?=
+ =?utf-8?B?WjZFZ2ZHemxrcHdZUnhJeVhyKzJWdnNaZXNxWXYzeTEyRXdLcDgyMkNDckpP?=
+ =?utf-8?B?eTBYRjk4Qk55eTRoTGZWN0VjQXRzNElHZW05dlk2SzR5bm1hWTh6bUZFL2Q2?=
+ =?utf-8?B?MTF3L0lKMU1iOGVYdnJvaTBYZjJOUitibXIyNXl4MUZkc21FSmgyODJWdVpC?=
+ =?utf-8?B?SzJPVXJXN2hkeUN6SktNTHNyemxsclYwK2MzWExrRDRQQ09wZmdCcjI4ZUl0?=
+ =?utf-8?B?aCsrclJ6WVhrV0pMbVNLTjFLbS9DT0d3YkJrb2U4RDlQbklIK1RsaVhCbzEw?=
+ =?utf-8?B?TExTZno3SllBQm5VRy83Y0FEeWlPbjlCQmlSWGcxdDBicitHSjdHQmhsYmRB?=
+ =?utf-8?B?aDNKakxpejUvSVpzYlFLTFZUUTVIMUlZdVFDUW5kQXZFRGFUTWZaUkhrMDRa?=
+ =?utf-8?B?T0lXbVN4SFFBYzdPZTRoUnJJcE9RWlVUNC9PN2dXN1JqNlljZXNJbHBwdlQr?=
+ =?utf-8?B?VHhqWEt0bE50Rzd4d0sxMjAwbGhZUVJia3pjMExPTmdBY0kybTVXSm5CeTdk?=
+ =?utf-8?B?akFuV294bExpT0xuWGpFb3NsKzV3eFIza3RyTXkvUkx1N0hObE81STRXTm5O?=
+ =?utf-8?B?a1pPSGNWM3Bta1phaUVQZE1BWm1PMFA4K1RLZUN3T2pXS2tWMnFkMzI4TTBK?=
+ =?utf-8?B?cExDWUovTFpIZlk3OGhzZEZsdjRqT1NLcHQ4N1JUQWpBb3FocitsL1g0dTVz?=
+ =?utf-8?B?WTdsSjh0MFdpZUV6WjFjSnlxRElEZnZBK2pHZFZqMDFtYWh3M3lMMm0xYzJs?=
+ =?utf-8?B?SjVvak1QZXBzSzErYnpJVUJwdjVDZmZvUndKV2tPOHFwZHUrV2crMis4WVBm?=
+ =?utf-8?B?dHJ0a0VwNVIzSUZxMmlnZGtDaEM2bDA0MkZ5TEtUWUJwMDlGQTlrR1R2WFZO?=
+ =?utf-8?B?RndERGNScktmTVd4UHpqYjRXdGdROWc0bkdYOFRyZDQ1L1M2U0d5TzJKQXB2?=
+ =?utf-8?B?MW5CUDJUUTZTTERZL2lpNktoeGs2aEIzZmdudjUvbUp4MjNLMml6d3NxdVFC?=
+ =?utf-8?B?UGx1UHdWTlVselZCVHk5Q3ZHLzRuS2xDdFlTNytJQzBxSytFZ2tJdHNYNWZ5?=
+ =?utf-8?B?VjhpditKbk9PSXFTZTZQaUFSZlI1b1FHc1Y0enZRNWN1dW9IUXNkWnczNUIr?=
+ =?utf-8?B?ck81alZ5ajBGemdNMDIxRk5FdTVrN0tybUduS2wzRjZFNWFhVnphS3dLcGpF?=
+ =?utf-8?B?R2RXNGJmYjFUaVRyUmlFRHF6Rm9XMHFOSXpxalIyNng0TVNzTXYzbEVFV3Bq?=
+ =?utf-8?B?YzN2TjRZTjNEVHBTMUNNdXlkSnV5cnF4NGs4QmFVbTllWU4zdkZCWHdGQzRa?=
+ =?utf-8?B?cDltcnRTWWtZRWl1dVorWmhqekRNUFBPVlhlYUJTTUN2SkVoRmlReEw4cC82?=
+ =?utf-8?B?Q0liblNVa1AwRmdycUphT1hxSXNMek14UmQzT2ZrTUhiU0tWeG1QbTV4THhP?=
+ =?utf-8?B?Qk5RS3hnQ1VmbmtJTFVBZWlDTjkwWEdxSGR0a1RNUDdEUU8zYWRKK09EdHp2?=
+ =?utf-8?B?VVdkS1VMY1BUK3kvR2NxQ3M2MU9lVWxzSEZKRG15dWJMTDNESU1kb2NmYkxo?=
+ =?utf-8?B?MUdDSGNJZWdwbjVCMUVBVG5tdDY0VUNFY2RTL090S2VhSGJDR1Y2OFFDeFJF?=
+ =?utf-8?B?WXhEdFFhWGQ1bHJVZmVnNmZudW1ocTZvTHE3UytMMTF5R0R5WUtBQVZ3Syt2?=
+ =?utf-8?B?NEhYZnRLdTdSbUlwbUY0NE9jdkJBMDJBTnFnVnVIUmZVSXRKSFZwck1iRnJj?=
+ =?utf-8?B?b1B6UEdyTTJZSEV3cTlRS2tBQUVnNkJDakZwcjV2aHV6RkNXd3RhZlJuQW9W?=
+ =?utf-8?B?cXZCTFY4VElaRVRSdWkrSWpxM2tYV3RrckNvdytQR09NaTFXS3hLM0JOZTdP?=
+ =?utf-8?B?akZuQ0dMZkQvN1U1WWx2c1RuRUM3a201NExJOU01VU4yYkM3MWdRTlBVMHR6?=
+ =?utf-8?B?Nk1QZjBuTmRwSDVTMWJZR0ZlVStzc1VoaGVhOUhqRUNRN3Uya3NhS2JxYnMy?=
+ =?utf-8?B?T05OajVSZFZoZlRuc2lVaTMrYnNVR0tzcnB3NGtuYkhuY3ZibjJ6b3N2emtw?=
+ =?utf-8?B?dS81TitMTzZXNDJWQU44Q0VuaFJudVpTVFZKazZIaUwxKzlabFVWckJ4TXh5?=
+ =?utf-8?B?NHc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: afae3d50-ee3d-40dc-c646-08dd79429742
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 21:48:27.0497
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bgPjZoJE+UC/oZQ8A1VYfa4ab60WYoJrt43eGRr6mXN939s/xBkMp05L1GkOILZk3aRJY3t3X5yNnzL03UNm+AKBfZ6xeOUWddMfQ4jRHx4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8241
+X-OriginatorOrg: intel.com
 
-On 4/11/25 10:57 AM, Jonathan Santos wrote:
-> The VCM output voltage can be used as a common-mode voltage within the
-> amplifier preconditioning circuits external to the AD7768-1.
+Dave Hansen wrote:
+> On 4/10/25 21:59, Dan Williams wrote:
+> >> I don't think we can just fail the mmap. 🙁
+> > For the TVM case the havoc of failing mmap for DMI info is smaller and
+> > the recommended fallback for /dev/mem being in accessible is
+> > /sys/firmware/dmi/tables. So I feel ok making TVMs take the modern
+> > replacement path which is what they would need to do anyway in the
+> > lockdown_kernel case. Tom, Dave, what do you think?
 > 
-> This change allows the user to configure VCM output using the regulator
-> framework.
-> 
-> Acked-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> ---
+> Yeah, doing the same as lockdown should be fine.
 
-...
+Note that lockdown fails the open() for /dev/mem and fails the mmap()
+for PCI sysfs. So the proposal here would arrange for lockdown to not be
+required, but fail mmap() in both cases.
 
-> +static int ad7768_vcm_is_enabled(struct regulator_dev *rdev)
-> +{
-> +	struct iio_dev *indio_dev = rdev_get_drvdata(rdev);
-> +	struct ad7768_state *st = iio_priv(indio_dev);
-> +	int ret, val;
-> +
-> +	if (!indio_dev)
-> +		return -EINVAL;
-> +
-> +	if (!iio_device_claim_direct(indio_dev))
-> +		return -EBUSY;
-> +
-> +	ret = regmap_read(st->regmap, AD7768_REG_ANALOG2, &val);
+> The other alternative to failing all mmap()s is to allow mmap(PROT_READ)
+> to succeed and then just map the zero page.
 
-If we put iio_device_release_direct(indio_dev); here, we can avoid
-the goto.
+The only goal of mapping zeroes I can see is to attempt to break legacy
+userspace less severely, but as the Debian code search shows, legacy
+/dev/mem users have already found the mmap() loophole. So, zeroes for
+the TVM case does not help satisfy the requirement to use
+/sys/firmware/dmi/tables and other modern methods with
+private-memory-safe semantics. I.e. the "success but zero" and "mmap()
+failed" cases have the same outcome: legacy software falls back to no
+DMI info.
 
-> +	if (ret)
-> +		goto err_release;
-> +
-> +	ret = FIELD_GET(AD7768_REG_ANALOG2_VCM_MSK, val) != AD7768_VCM_OFF;
-> +err_release:
-> +	iio_device_release_direct(indio_dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static int ad7768_set_voltage_sel(struct regulator_dev *rdev,
-> +				  unsigned int selector)
-> +{
-> +	unsigned int regval = AD7768_REG_ANALOG2_VCM(selector + 1);
-> +	struct iio_dev *indio_dev = rdev_get_drvdata(rdev);
-> +	struct ad7768_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	if (!indio_dev)
-> +		return -EINVAL;
-> +
-> +	if (!iio_device_claim_direct(indio_dev))
-> +		return -EBUSY;
-> +
-> +	ret = regmap_update_bits(st->regmap, AD7768_REG_ANALOG2,
-> +				 AD7768_REG_ANALOG2_VCM_MSK, regval);
-> +	iio_device_release_direct(indio_dev);
-> +	st->vcm_output_sel = selector;
+For PCI sysfs resource mmap() the semantics are different. mmap() fails
+only when devmem_is_allowed() says "no" *and* the kernel has marked the
+range as IORESOURCE_BUSY in the iomem resource tree. That should be
+sufficient to allow userpsace PCI drivers in TVMs because the goal here
+is to avoid simultaneous mappings with mismatched encryption settings or
+allowing userspace access to unaccepted private memory.
 
-Do we still want to make this assignment if there is an error?
+As long as the upcoming TDISP code is careful to hold a
+request_resource() reservation over attempts to convert PCI MMIO from
+shared to private, it should close any potential for mismatched
+encryption settings, or access to unaccepted private MMIO.
 
-> +
-> +	return ret;
-> +}
-> +
-> +static int ad7768_get_voltage_sel(struct regulator_dev *rdev)
-> +{
-> +	struct iio_dev *indio_dev = rdev_get_drvdata(rdev);
-> +	struct ad7768_state *st = iio_priv(indio_dev);
-> +	int ret, val;
-> +
-> +	if (!indio_dev)
-> +		return -EINVAL;
-> +
-> +	if (!iio_device_claim_direct(indio_dev))
-> +		return -EBUSY;
-> +
-> +	ret = regmap_read(st->regmap, AD7768_REG_ANALOG2, &val);
-> +	if (ret)
-> +		goto err_release;
-
-Can rearrange to avoid goto here too.
-
-> +
-> +	val = FIELD_GET(AD7768_REG_ANALOG2_VCM_MSK, val);
-> +	ret = clamp(val, 1, (int)rdev->desc->n_voltages) - 1;
-> +err_release:
-> +	iio_device_release_direct(indio_dev);
-> +
-> +	return ret;
-> +}
-> +
-
-...
-
-> +static int ad7768_register_regulators(struct device *dev, struct ad7768_state *st,
-> +				      struct iio_dev *indio_dev)
-> +{
-> +	struct regulator_config config = {
-> +		.dev = dev,
-> +		.driver_data = indio_dev,
-> +	};
-> +	int ret;
-> +
-> +	/* Disable the regulator before registering it */
-> +	ret = regmap_update_bits(st->regmap, AD7768_REG_ANALOG2,
-> +				 AD7768_REG_ANALOG2_VCM_MSK, AD7768_VCM_OFF);
-> +	if (ret)
-> +		return -EINVAL;
-
-Why not return ret; ?
-
-> +
-> +	st->vcm_rdev = devm_regulator_register(dev, &vcm_desc, &config);
-> +	if (IS_ERR(st->vcm_rdev))
-> +		return dev_err_probe(dev, PTR_ERR(st->vcm_rdev),
-> +				     "failed to register VCM regulator\n");
-> +
-> +	return 0;
-> +}
-> +
+However to get that behavior of not allowing simultaneous
+kernel-ioremap() plus userspace mmap() of a PCI resource the kernel
+needs to be built with CONFIG_IO_STRICT_DEVMEM=y. I note, for example
+that RHEL does not set that, but Fedora does.
 
