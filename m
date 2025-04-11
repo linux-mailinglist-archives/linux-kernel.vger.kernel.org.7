@@ -1,112 +1,272 @@
-Return-Path: <linux-kernel+bounces-599189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57203A85086
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 02:32:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 171BBA85091
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 02:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782AF3BE5FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 00:32:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 435DD1B69456
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 00:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E36C5C96;
-	Fri, 11 Apr 2025 00:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F014810A1E;
+	Fri, 11 Apr 2025 00:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kc6s4Xgu"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="k5THPUhL"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2062.outbound.protection.outlook.com [40.107.101.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5375D3FD1
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 00:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744331545; cv=none; b=usUYN4YkmvfRQJlfFl+2iaLtYvARHwohCZylSnF5BE0JjoeBtkmNrpkCxJURyqOfmjT4j24unpuEUC1Bf88cL7iK0WX5aIG6XcmJY70WTD7GQyYjXHpmb/PnRfKXr0RRDYtHLiCHPLqiLw0ce8HUFuxnZpJWPJTR4ommxpP2IxA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744331545; c=relaxed/simple;
-	bh=YRqr6Ii7qwUwr2w6LMJ18M2BD5ug6XXYaAD7Dv1RIlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QQoGPyc40N9NRv9xCImhCD0aQgGh3jywSYxFZ5AHvlg6vbG+y3TmlsRJMOCWWW/yReHO2xmbFCWMmfgduRFG8t2otYRKvVTJwgtzFTmNBsMvXLcn3YjckYeIrorn9sqz59CzhRCTBHeWVDFJYPRHrs2lFMWGxB/EnQfzmSvE1dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kc6s4Xgu; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 10 Apr 2025 20:32:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744331531;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=2clB0mAcWnAgYlObzuiqKAAGiczD8l6iS9voXhdX8QQ=;
-	b=kc6s4XgunSODoBRn0NHtZbYYgqZSbm66zWX59H51G7DLHbmNK4h4FSJRLft5rzXXCLg0eA
-	WAMEF8MLqtFZfHSem+wIC+7hf+n4zW/CngK+ZllQq9kgOG1oRIh0npOLZ5acuXDM2cVH2T
-	N0HKfeLkij7ABsAgsg31WA6MsBTa0VA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.15-rc2
-Message-ID: <qmulyyzrlr6jdhqoluhqr32ho5qnuf4crxouj7let2anp4n2bz@z2wthovykeul>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3088635A;
+	Fri, 11 Apr 2025 00:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744331558; cv=fail; b=VVD3jlAqccLyKz2x/isqvWI9ugGR31DwBx2lBWs/dccguiuABO5YHJpCUV7Hb6Qs5g7irjyjaAgIEvt/PLEFeL447bwyzFT+lR3fEA0DoRmtlp35DnVMkqr5+1vfxHKVIZu2ct+VMEXfkkCW6MAfOE3x6PUfAd94LPeZ+Dlh7Lc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744331558; c=relaxed/simple;
+	bh=Xl5CxA2KahM9UQTmF87lPXPekYu6kKPOD9zR02bKDJI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y75yPlyfFzxW5xNG3ShdA0nyFIrCHlNbinriqad803CrFqGUF3THSUQ++lGcxpTfKOSOYdwXaw8eKL5JAHvIPr1r/bJL0n8hG42XKwFgqLyMpsz6yAvtzcSaBoku7vsQr5+/fOjlOll5tZb8ZaiI6VZZT/20bAfjsiMRVjM8S38=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=k5THPUhL; arc=fail smtp.client-ip=40.107.101.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Hngf0efapnpN15KoUIU+sSdvFxlo8YiYAVeAXFjynHL/7xTCLdcaapbueMWjix839qM9oP2p79Brg05JkXUZrs30i4IxnCZ17xqobc/W/pXTmrp/7PDDvANb4IR1CRg2S4ORYCBJi8VwBWrllKQBv/VdR2moqCKNMSTg57vNbVIzZdqEuQjO2P3Y79lNof7SiKwDzirp+ImDSYctBcmWPutUskM5FoCLKlhxONn8JpnPgIfPU6gOaeJ4jrPjABr9H7z51djCQdCh/9TU9YHhBYMlvXNxRVaza7/lEFeq8/URoWmn5DK+fLNpj1vgD3vtWlHgIFSBQKWOoB9Tf7lXGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j927mxE6lkJ6neG8DDki8hJvPmQwMaRuI/AfSDrrhr0=;
+ b=qH9iwc7IkeStGXDw/MLce+/SEb30fAu53MensT93CWs5PwY1IZuDEMluG9ztkIUevw1oJuaP4XgKkr0jcpXG2/KdwrweyUC3dh5v/UkrFlXxkZWFzggo3Cpg7hrsrZDxLXrlNwVG9+DapMQfy+ifTF93wKs+pO5zH5f28iSdViPNQlLcbxHCroezMLOYFZ7gmiP5FTZFeV/7p8LNXTF4EGPJNxfWD5ZTOIzXXTUBCBfmw0Y0XvkH236EqH3FngmiHfU5IfDAJ4KaIU2vDqnSvPGvToZs5wHJiz0LcUuRQN+sl3S0OI52Zs5YaWugn/Zmc1eVuUetdhPb6WzrrIlYDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lunn.ch smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j927mxE6lkJ6neG8DDki8hJvPmQwMaRuI/AfSDrrhr0=;
+ b=k5THPUhLmnKtaO3mTqFW5+cprQNxCHJvLPjmcQbxaJwwvoxD++SlH5AEYkYcUwHMXMOPe3XGrACvTBXKUybOl2v5BnK+Rw8iJ7nSE3ofBT5f4aDC+GO0soXLFIJD9P6amSG0RZps5q34OGXYPtBqaUysbC9jfiHUAk3v1EDQbK0=
+Received: from CH5P222CA0018.NAMP222.PROD.OUTLOOK.COM (2603:10b6:610:1ee::29)
+ by IA1PR12MB7616.namprd12.prod.outlook.com (2603:10b6:208:427::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.24; Fri, 11 Apr
+ 2025 00:32:33 +0000
+Received: from DS3PEPF000099DB.namprd04.prod.outlook.com
+ (2603:10b6:610:1ee:cafe::6) by CH5P222CA0018.outlook.office365.com
+ (2603:10b6:610:1ee::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.26 via Frontend Transport; Fri,
+ 11 Apr 2025 00:32:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS3PEPF000099DB.mail.protection.outlook.com (10.167.17.197) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8655.12 via Frontend Transport; Fri, 11 Apr 2025 00:32:33 +0000
+Received: from driver-dev1.pensando.io (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Apr
+ 2025 19:32:31 -0500
+From: Shannon Nelson <shannon.nelson@amd.com>
+To: <andrew+netdev@lunn.ch>, <brett.creeley@amd.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<michal.swiatkowski@linux.intel.com>, <horms@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+CC: Shannon Nelson <shannon.nelson@amd.com>
+Subject: [PATCH v2 net 5/5] pds_core: make wait_context part of q_info
+Date: Thu, 10 Apr 2025 17:32:09 -0700
+Message-ID: <20250411003209.44053-6-shannon.nelson@amd.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250411003209.44053-1-shannon.nelson@amd.com>
+References: <20250411003209.44053-1-shannon.nelson@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099DB:EE_|IA1PR12MB7616:EE_
+X-MS-Office365-Filtering-Correlation-Id: e98de5ab-8fec-4e31-8a5c-08dd789059fb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bnCLxy3vfpF9AovezNkm7TbRfuMT7CkFQYe07fmBbIO6vndAbkw9Aip0jqvc?=
+ =?us-ascii?Q?dfLtOMSAJ83x8zhvWWb7+uUmE0gaAiv6avxu5G+t9sDPLgKAkVqwjT4Yde1l?=
+ =?us-ascii?Q?nHNGmXVtTzWlF06mqcTpSN3AJ8eAfhS5HoOzvY5uEj9jhlbsMKtRkIsPFegA?=
+ =?us-ascii?Q?lJ9tiX3bqLpB9eMgp7D6/CDJnd+KOGmtJyr3ZdIj+qlzQkJKi32/DH7jqGUn?=
+ =?us-ascii?Q?nKVEmIyvWG4R/AeR9d6ryIXss9T2+8EC7JMTZXmlv9cRHqQaQNFJrI1XjjOA?=
+ =?us-ascii?Q?Wwzn766BtMhuiChHaOhBfjQjdmiG++vZRZqOUBYnx6aWW8Ret9YoQTfhCtqY?=
+ =?us-ascii?Q?PX04Biuk03zIv72HEShKuSFFg6/I+4R8CPTzDwGuuS3fbnDURh0N3kwLqJzZ?=
+ =?us-ascii?Q?1v+ImvbrCMVR2EtIqtIPwQ9SN9B/XiFh3470zOA6Mla2OugSFYaPq8yHJVHH?=
+ =?us-ascii?Q?FACu8fMgzi+KWGwsHFtfxUYhCXwtXGGXCMpPGqXw2CMa1OVeHrsu3L6ZBctc?=
+ =?us-ascii?Q?cwRXbBHcHgbgMryYziCwrMfOU5I6xcAKMLNX1RLg/OPlVEi/IIJVVw5jYBkX?=
+ =?us-ascii?Q?sxq9so/lsRrHv3Kh5GMWy1IEbF15pn/zVgBCPBimDUz7tsisIFU6PWAfNdum?=
+ =?us-ascii?Q?AVIRC6v6nbZ3o/g+AYIe052sD32jCFe0wl26z2Rnu7I7itqdgQqOI7nqcv6p?=
+ =?us-ascii?Q?gsAroo5Do4Cqb0c5crAYsBKuPvIgNTDcjIpZoCMCKEXGxjn0APWgo4Tn8aKt?=
+ =?us-ascii?Q?rI7oNJvUWGuSoxcjYjZZysdG3Ib5acQjoJ44U/StUQrcNOp6TOBwq5tczbF8?=
+ =?us-ascii?Q?SaBaKJcMDRcnWvVRDbEP0tcLKbtLfd+DAr7hbKh3cgyH2qq9AZUAXSG9f7gj?=
+ =?us-ascii?Q?pS11QIW+q5u1Ngo8vUsRCYKdDbVVo9WX86c3ll9srFUG0EZ/xslzOjTRkJyH?=
+ =?us-ascii?Q?v45eH2dIMwXaEEjDYnQLC4k+9nHcmAfV8tnvOc4jjO3MictFzGDNajs4H7/d?=
+ =?us-ascii?Q?1WFYHMMLrQkJKzMvbxUoRKgOInvL79dt7/Zm3HA0ui4vm7JJuwA0T2W9eXJ8?=
+ =?us-ascii?Q?w9H3Ghug/OE/GD1qvQAARpYLwSV77MBnpBLT3DOD8BPTVSLXbZ772tGSz+nr?=
+ =?us-ascii?Q?xOHejAvAigTQVb0IWUUfwIvorGGZFgfCUDphnX/kJulR8+Ic3BUtVsR5PO4Y?=
+ =?us-ascii?Q?yQxhf4U6Fl/T9JNAT/f1kwdIUODK+KxVzuMeYFB0aPzPCPDQmER2M74Vi7BQ?=
+ =?us-ascii?Q?4/jKVq3tnKrmFLVz29PEgr5bPio5OK76Lf0oyum7sxcxP8f7cN5bcFGCo8ro?=
+ =?us-ascii?Q?6k+B+QBrVXuCE3xoRVVYV/PCG+zVMfwbfGuhyRiiGYg0jSZcMRaOtVDASFwO?=
+ =?us-ascii?Q?5dNS3NsxmRjD7vDlVHpff2pm9zgNKAqcAMcV/h2OUHpB1Buhx7btsBqTjg8j?=
+ =?us-ascii?Q?DusstglHrNqwPbU7Tn2FoQKdUmaC4/1UwhHhAsauQiC7GzHI7VXDqFa+soR9?=
+ =?us-ascii?Q?4nNJOo4iXpEltAnG/H0HT2/8Aw9dytzeNCX25ZlPPk/Ql1iygnfIMKW7Pg?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 00:32:33.5978
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e98de5ab-8fec-4e31-8a5c-08dd789059fb
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099DB.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7616
 
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+Make the wait_context a full part of the q_info struct rather
+than a stack variable that goes away after pdsc_adminq_post()
+is done so that the context is still available after the wait
+loop has given up.
 
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+There was a case where a slow development firmware caused
+the adminq request to time out, but then later the FW finally
+finished the request and sent the interrupt.  The handler tried
+to complete_all() the completion context that had been created
+on the stack in pdsc_adminq_post() but no longer existed.
+This caused bad pointer usage, kernel crashes, and much wailing
+and gnashing of teeth.
 
-are available in the Git repository at:
+Fixes: 01ba61b55b20 ("pds_core: Add adminq processing and commands")
+Reviewed-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Shannon Nelson <shannon.nelson@amd.com>
+---
+ drivers/net/ethernet/amd/pds_core/adminq.c | 23 +++++++---------------
+ drivers/net/ethernet/amd/pds_core/core.h   |  7 ++++++-
+ 2 files changed, 13 insertions(+), 17 deletions(-)
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-04-10
+diff --git a/drivers/net/ethernet/amd/pds_core/adminq.c b/drivers/net/ethernet/amd/pds_core/adminq.c
+index c83a0a80d533..9bc246a4a9d8 100644
+--- a/drivers/net/ethernet/amd/pds_core/adminq.c
++++ b/drivers/net/ethernet/amd/pds_core/adminq.c
+@@ -5,11 +5,6 @@
+ 
+ #include "core.h"
+ 
+-struct pdsc_wait_context {
+-	struct pdsc_qcq *qcq;
+-	struct completion wait_completion;
+-};
+-
+ static int pdsc_process_notifyq(struct pdsc_qcq *qcq)
+ {
+ 	union pds_core_notifyq_comp *comp;
+@@ -112,7 +107,7 @@ void pdsc_process_adminq(struct pdsc_qcq *qcq)
+ 		/* Copy out the completion data */
+ 		memcpy(q_info->dest, comp, sizeof(*comp));
+ 
+-		complete_all(&q_info->wc->wait_completion);
++		complete_all(&q_info->wc.wait_completion);
+ 
+ 		if (cq->tail_idx == cq->num_descs - 1)
+ 			cq->done_color = !cq->done_color;
+@@ -162,8 +157,7 @@ irqreturn_t pdsc_adminq_isr(int irq, void *data)
+ static int __pdsc_adminq_post(struct pdsc *pdsc,
+ 			      struct pdsc_qcq *qcq,
+ 			      union pds_core_adminq_cmd *cmd,
+-			      union pds_core_adminq_comp *comp,
+-			      struct pdsc_wait_context *wc)
++			      union pds_core_adminq_comp *comp)
+ {
+ 	struct pdsc_queue *q = &qcq->q;
+ 	struct pdsc_q_info *q_info;
+@@ -205,7 +199,6 @@ static int __pdsc_adminq_post(struct pdsc *pdsc,
+ 	/* Post the request */
+ 	index = q->head_idx;
+ 	q_info = &q->info[index];
+-	q_info->wc = wc;
+ 	q_info->dest = comp;
+ 	memcpy(q_info->desc, cmd, sizeof(*cmd));
+ 
+@@ -231,11 +224,8 @@ int pdsc_adminq_post(struct pdsc *pdsc,
+ 		     union pds_core_adminq_comp *comp,
+ 		     bool fast_poll)
+ {
+-	struct pdsc_wait_context wc = {
+-		.wait_completion =
+-			COMPLETION_INITIALIZER_ONSTACK(wc.wait_completion),
+-	};
+ 	unsigned long poll_interval = 1;
++	struct pdsc_wait_context *wc;
+ 	unsigned long poll_jiffies;
+ 	unsigned long time_limit;
+ 	unsigned long time_start;
+@@ -250,19 +240,20 @@ int pdsc_adminq_post(struct pdsc *pdsc,
+ 		return -ENXIO;
+ 	}
+ 
+-	wc.qcq = &pdsc->adminqcq;
+-	index = __pdsc_adminq_post(pdsc, &pdsc->adminqcq, cmd, comp, &wc);
++	index = __pdsc_adminq_post(pdsc, &pdsc->adminqcq, cmd, comp);
+ 	if (index < 0) {
+ 		err = index;
+ 		goto err_out;
+ 	}
+ 
++	wc = &pdsc->adminqcq.q.info[index].wc;
++	wc->wait_completion = COMPLETION_INITIALIZER_ONSTACK(wc->wait_completion);
+ 	time_start = jiffies;
+ 	time_limit = time_start + HZ * pdsc->devcmd_timeout;
+ 	do {
+ 		/* Timeslice the actual wait to catch IO errors etc early */
+ 		poll_jiffies = msecs_to_jiffies(poll_interval);
+-		remaining = wait_for_completion_timeout(&wc.wait_completion,
++		remaining = wait_for_completion_timeout(&wc->wait_completion,
+ 							poll_jiffies);
+ 		if (remaining)
+ 			break;
+diff --git a/drivers/net/ethernet/amd/pds_core/core.h b/drivers/net/ethernet/amd/pds_core/core.h
+index 199473112c29..84fd814d7904 100644
+--- a/drivers/net/ethernet/amd/pds_core/core.h
++++ b/drivers/net/ethernet/amd/pds_core/core.h
+@@ -88,6 +88,11 @@ struct pdsc_buf_info {
+ 	u32 len;
+ };
+ 
++struct pdsc_wait_context {
++	struct pdsc_qcq *qcq;
++	struct completion wait_completion;
++};
++
+ struct pdsc_q_info {
+ 	union {
+ 		void *desc;
+@@ -96,7 +101,7 @@ struct pdsc_q_info {
+ 	unsigned int bytes;
+ 	unsigned int nbufs;
+ 	struct pdsc_buf_info bufs[PDS_CORE_MAX_FRAGS];
+-	struct pdsc_wait_context *wc;
++	struct pdsc_wait_context wc;
+ 	void *dest;
+ };
+ 
+-- 
+2.17.1
 
-for you to fetch changes up to 55fd97fbc4744a43fb2d134908e481266cf33bda:
-
-  bcachefs: Use sort_nonatomic() instead of sort() (2025-04-06 19:33:53 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.15-rc2
-
-Mostly minor fixes.
-
-Eric Biggers' crypto API conversion is included because of long standing
-sporadic crashes - mostly, but not entirely syzbot - in the crypto API
-code when calling poly1305, which have been nigh impossible to reproduce
-and debug. His rework deletes the code where we've seen the crashes, so
-either it'll be a fix or we'll end up with backtraces we can debug.
-(Thanks Eric!).
-
-----------------------------------------------------------------
-Eric Biggers (2):
-      bcachefs: use library APIs for ChaCha20 and Poly1305
-      bcachefs: Remove unnecessary softdep on xxhash
-
-Gabriel Shahrouzi (3):
-      bcachefs: Fix escape sequence in prt_printf
-      bcachefs: Fix type for parameter in journal_advance_devs_to_next_bucket
-      bcachefs: Use cpu_to_le16 for dirent lengths
-
-Kent Overstreet (3):
-      bcachefs: Fix UAF in bchfs_read()
-      bcachefs: Fix duplicate "ro,read_only" in opts at startup
-      bcachefs: Use sort_nonatomic() instead of sort()
-
- fs/bcachefs/Kconfig              |   5 +-
- fs/bcachefs/bcachefs.h           |   4 +-
- fs/bcachefs/btree_journal_iter.c |   5 +-
- fs/bcachefs/btree_node_scan.c    |   6 +-
- fs/bcachefs/btree_write_buffer.c |   8 +-
- fs/bcachefs/checksum.c           | 247 +++++++++------------------------------
- fs/bcachefs/checksum.h           |   3 +-
- fs/bcachefs/data_update.c        |   2 +-
- fs/bcachefs/dirent.c             |   4 +-
- fs/bcachefs/fs-io-buffered.c     |  17 ++-
- fs/bcachefs/io_read.c            |   3 +-
- fs/bcachefs/journal_io.c         |   2 +-
- fs/bcachefs/recovery.c           |   6 +-
- fs/bcachefs/super.c              |  10 --
- 14 files changed, 96 insertions(+), 226 deletions(-)
 
