@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-599440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC41A853A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:56:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90925A853AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D75D53B50E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:51:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65814C1549
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B85281340;
-	Fri, 11 Apr 2025 05:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7CC2281538;
+	Fri, 11 Apr 2025 05:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MIZHCN8E"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KG5VtMqK"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8D9280A50
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 05:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62ED3280CCC
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 05:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744350267; cv=none; b=E5RcNLRPpupc1opHqVBhXMF6eIOQfBlL1evSuE5tnUcMlM5ea1tJJy3+ZyTezMcotrt/M/GWNbOHBofwEt5iYrCJiVFTUgVdDD4vz+OVeofamPG5hk6HrFakhFBrMNrmFiGDApCHLkSTbOZ4DsXdcYCdsyd/Pg2XS8x2z+LX+S0=
+	t=1744350268; cv=none; b=WytVfgqTrvj98x8yeA8Fv40pBWeip2rvPPyXcPQpCZojRFKhQKa6JzqkPWz54wKy/ntJnTpeioTqwnzFMknohxGn8JbRMnayLTRNSDHxT6++8rPKEa0sdJqArxf970p1ybVBqBUx7DdAchKPyJHKAasBI7QZf0pdIli73yKspMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744350267; c=relaxed/simple;
-	bh=XersUTuiD3u0B/6DZhVxrd2vQ0k9WclZQlYQVuhM36k=;
+	s=arc-20240116; t=1744350268; c=relaxed/simple;
+	bh=FOnlmAMm2Z77c+6dSXgAr8x7rIKiN2hSdr9OmBYsG3c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jxwZqgyAMFwsVX0Exu5E7jTLmkycJzl0dGyE4jwQz/x7czBPwu1e6Q1r/7FudGd8QIXsch0pNKJUMh6KxLwNLqZ/w0e3LxvC0LIWTbD3ItZVDeG1OJBMCiW4Gx2Dx3N+UPjgwJTgEa0E03SwC/ctzxIK4WTCpd/+A1kFLNeMU/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MIZHCN8E; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=l+lH0Ow1qmXgmc5eNWo2Xb8W1FD6/IiF0qHQ6g5Cz2ojmli7aXi04CZMyh/9Wn75LU7OJIrwh2q4bR8YgK98nToTxVeI18cO8Umz5atbcuzti+BeqV0lJgVFba25N2FwTSqKPWprUl/1R150c//1fPx76CnA5mUIxpnDi2bfE9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KG5VtMqK; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53AM3dmN010696;
-	Fri, 11 Apr 2025 05:44:05 GMT
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53AKd1Ga013182;
+	Fri, 11 Apr 2025 05:44:04 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=ViHXqHRkbZL7yFIbf
-	xUafURAiGrT/fpY01+3QbhiZ5w=; b=MIZHCN8E8e/kafKVRj1LBnAes+9sv461O
-	EM6aRe0z+IpulIWeaZSMK84/sxTUOkugBXcJAxzLhadAyViEgppG++vBfJbnRSzc
-	Cup4/GJlUyjjLDMUe8tf4zn5/pqZhMiK1kzzL16CC7+9/o/+hVctvX82CGiJSsrd
-	1zpkDHP6TH5A+AaUYASuWw+zJlRYFd+JF4XVhAXk1hrLKNEk7PQIH4Ua/oUmyWyX
-	cAe5MBQULN4xg+kS6p5WCbuqe6tV/FvKA49gaZPul29UvElPi/YPLb88cfRD52I/
-	aOncUeRLJjmNUIw9VD2nzJcH5FfFqVzpV5xsYzxToL4XLs9xB+ddw==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45xfdqkxwr-1
+	:mime-version:references:subject:to; s=pp1; bh=dcyfNoMaMeFuUsOrX
+	suTzsUOU2I36vkpB6ZGMOiUSVQ=; b=KG5VtMqKDmxLoqY+DHxljzMEUau3c0rEc
+	RTa+IJRZq7on9QCQP6nf8lQl7vUaGsPfEHV6m9NraaI2kmk92EQSXObllGVH1gc3
+	jyNtqOPsQ8tiJC/9AY+mtHB44dCTr6XgUusRVbZM2neGwTjerSYkfIV3ulXHuiaf
+	Po/fvlm9I7E28Nm2OvgNatb65iJuDxVHoFFnApwWYMHpz3QN3jajMy03oPna5GxX
+	cIw+HWB/bDfh+FbzSROvOfPSOw2DBusOJhKtEXFmPzouPjjbOSCv7Rt/qwb76DsW
+	tD5o4XeZ8v+42Z+T9k3eTAipXg4CjRcTOdbQ3yphjKbdyTRosd6RA==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45xn719q9e-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 05:44:05 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53B1bNkJ025562;
+	Fri, 11 Apr 2025 05:44:04 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53B5hGDv011069;
 	Fri, 11 Apr 2025 05:44:03 GMT
 Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45ugbm9gwm-1
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45uf801q0v-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Fri, 11 Apr 2025 05:44:03 +0000
 Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53B5i1bn49283504
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53B5i1ED52691404
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Fri, 11 Apr 2025 05:44:01 GMT
 Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 975182004B;
+	by IMSVA (Postfix) with ESMTP id A24C32004E;
 	Fri, 11 Apr 2025 05:44:01 +0000 (GMT)
 Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BF2EE20040;
+	by IMSVA (Postfix) with ESMTP id C397020049;
 	Fri, 11 Apr 2025 05:44:00 +0000 (GMT)
 Received: from ozlabs.au.ibm.com (unknown [9.63.197.14])
 	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
@@ -69,7 +69,7 @@ Received: from ozlabs.au.ibm.com (unknown [9.63.197.14])
 Received: from jarvis.ozlabs.ibm.com (haven.au.ibm.com [9.63.198.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 4F337603DA;
+	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 5E4CD603B6;
 	Fri, 11 Apr 2025 15:43:57 +1000 (AEST)
 From: Andrew Donnellan <ajd@linux.ibm.com>
 To: linuxppc-dev@lists.ozlabs.org
@@ -77,9 +77,9 @@ Cc: x86@kernel.org, linux-mm@kvack.org, linux-riscv@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         pasha.tatashin@soleen.com, sweettea-kernel@dorminy.me,
         christophe.leroy@csgroup.eu
-Subject: [PATCH v14 03/11] mm/page_table_check: Provide addr parameter to page_table_check_pte_set()
-Date: Fri, 11 Apr 2025 15:43:46 +1000
-Message-ID: <20250411054354.511145-4-ajd@linux.ibm.com>
+Subject: [PATCH v14 04/11] mm/page_table_check: Reinstate address parameter in [__]page_table_check_pud_clear()
+Date: Fri, 11 Apr 2025 15:43:47 +1000
+Message-ID: <20250411054354.511145-5-ajd@linux.ibm.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250411054354.511145-1-ajd@linux.ibm.com>
 References: <20250411054354.511145-1-ajd@linux.ibm.com>
@@ -91,132 +91,125 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: PV-S7xATQ_V8KU--at4haRF1iutrjscO
-X-Proofpoint-ORIG-GUID: PV-S7xATQ_V8KU--at4haRF1iutrjscO
+X-Proofpoint-ORIG-GUID: GXBRqM5wvdH8tKIesfxfbzHbqf6PJeOD
+X-Proofpoint-GUID: GXBRqM5wvdH8tKIesfxfbzHbqf6PJeOD
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-11_01,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxscore=0 priorityscore=1501 adultscore=0 phishscore=0 mlxlogscore=758
- impostorscore=0 bulkscore=0 clxscore=1015 lowpriorityscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504110038
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ impostorscore=0 mlxscore=0 adultscore=0 mlxlogscore=964 suspectscore=0
+ phishscore=0 priorityscore=1501 malwarescore=0 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2504110038
 
 From: Rohan McLure <rmclure@linux.ibm.com>
 
-To provide support for powerpc platforms, provide an addr parameter to
-the page_table_check_pte_set() routine. This parameter is needed on some
-powerpc platforms which do not encode whether a mapping is for user or
-kernel in the pte. On such platforms, this can be inferred form the
-addr parameter.
+This reverts commit 931c38e16499 ("mm/page_table_check: remove unused
+parameter in [__]page_table_check_pud_clear").
+
+Reinstate previously unused parameters for the purpose of supporting
+powerpc platforms, as many do not encode user/kernel ownership of the
+page in the pte, but instead in the address of the access.
 
 Signed-off-by: Rohan McLure <rmclure@linux.ibm.com>
 Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-[ajd: rebase]
 Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
 ---
- arch/arm64/include/asm/pgtable.h |  2 +-
- arch/riscv/include/asm/pgtable.h |  2 +-
- include/linux/page_table_check.h | 12 +++++++-----
+ arch/x86/include/asm/pgtable.h   |  2 +-
+ include/linux/page_table_check.h | 11 +++++++----
  include/linux/pgtable.h          |  2 +-
- mm/page_table_check.c            |  4 ++--
- 5 files changed, 12 insertions(+), 10 deletions(-)
+ mm/page_table_check.c            |  5 +++--
+ 4 files changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 54801131ba21..6410c3583ca0 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -427,7 +427,7 @@ static inline void __set_ptes(struct mm_struct *mm,
- 			      unsigned long __always_unused addr,
- 			      pte_t *ptep, pte_t pte, unsigned int nr)
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 466836ead08d..5a71a884858e 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1398,7 +1398,7 @@ static inline pud_t pudp_huge_get_and_clear(struct mm_struct *mm,
  {
--	page_table_check_ptes_set(mm, ptep, pte, nr);
-+	page_table_check_ptes_set(mm, addr, ptep, pte, nr);
- 	__sync_cache_and_tags(pte, nr);
+ 	pud_t pud = native_pudp_get_and_clear(pudp);
  
- 	for (;;) {
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 32d172e8cdde..d348186f4731 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -574,7 +574,7 @@ static inline void __set_pte_at(struct mm_struct *mm, pte_t *ptep, pte_t pteval)
- static inline void set_ptes(struct mm_struct *mm, unsigned long addr,
- 		pte_t *ptep, pte_t pteval, unsigned int nr)
- {
--	page_table_check_ptes_set(mm, ptep, pteval, nr);
-+	page_table_check_ptes_set(mm, addr, ptep, pteval, nr);
+-	page_table_check_pud_clear(mm, pud);
++	page_table_check_pud_clear(mm, addr, pud);
  
- 	for (;;) {
- 		__set_pte_at(mm, ptep, pteval);
+ 	return pud;
+ }
 diff --git a/include/linux/page_table_check.h b/include/linux/page_table_check.h
-index 5855d690c48a..9243c920ed02 100644
+index 9243c920ed02..d01a00ffc1f9 100644
 --- a/include/linux/page_table_check.h
 +++ b/include/linux/page_table_check.h
-@@ -17,8 +17,8 @@ void __page_table_check_zero(struct page *page, unsigned int order);
+@@ -16,7 +16,8 @@ extern struct page_ext_operations page_table_check_ops;
+ void __page_table_check_zero(struct page *page, unsigned int order);
  void __page_table_check_pte_clear(struct mm_struct *mm, pte_t pte);
  void __page_table_check_pmd_clear(struct mm_struct *mm, pmd_t pmd);
- void __page_table_check_pud_clear(struct mm_struct *mm, pud_t pud);
--void __page_table_check_ptes_set(struct mm_struct *mm, pte_t *ptep, pte_t pte,
--		unsigned int nr);
-+void __page_table_check_ptes_set(struct mm_struct *mm, unsigned long addr,
-+				 pte_t *ptep, pte_t pte, unsigned int nr);
+-void __page_table_check_pud_clear(struct mm_struct *mm, pud_t pud);
++void __page_table_check_pud_clear(struct mm_struct *mm, unsigned long addr,
++				  pud_t pud);
+ void __page_table_check_ptes_set(struct mm_struct *mm, unsigned long addr,
+ 				 pte_t *ptep, pte_t pte, unsigned int nr);
  void __page_table_check_pmd_set(struct mm_struct *mm, unsigned long addr,
- 				pmd_t *pmdp, pmd_t pmd);
- void __page_table_check_pud_set(struct mm_struct *mm, unsigned long addr,
-@@ -68,12 +68,13 @@ static inline void page_table_check_pud_clear(struct mm_struct *mm, pud_t pud)
+@@ -59,12 +60,13 @@ static inline void page_table_check_pmd_clear(struct mm_struct *mm, pmd_t pmd)
+ 	__page_table_check_pmd_clear(mm, pmd);
  }
  
- static inline void page_table_check_ptes_set(struct mm_struct *mm,
--		pte_t *ptep, pte_t pte, unsigned int nr)
-+					     unsigned long addr, pte_t *ptep,
-+					     pte_t pte, unsigned int nr)
+-static inline void page_table_check_pud_clear(struct mm_struct *mm, pud_t pud)
++static inline void page_table_check_pud_clear(struct mm_struct *mm,
++					      unsigned long addr, pud_t pud)
  {
  	if (static_branch_likely(&page_table_check_disabled))
  		return;
  
--	__page_table_check_ptes_set(mm, ptep, pte, nr);
-+	__page_table_check_ptes_set(mm, addr, ptep, pte, nr);
- }
- 
- static inline void page_table_check_pmd_set(struct mm_struct *mm,
-@@ -129,7 +130,8 @@ static inline void page_table_check_pud_clear(struct mm_struct *mm, pud_t pud)
+-	__page_table_check_pud_clear(mm, pud);
++	__page_table_check_pud_clear(mm, addr, pud);
  }
  
  static inline void page_table_check_ptes_set(struct mm_struct *mm,
--		pte_t *ptep, pte_t pte, unsigned int nr)
-+					     unsigned long addr, pte_t *ptep,
-+					     pte_t pte, unsigned int nr)
+@@ -125,7 +127,8 @@ static inline void page_table_check_pmd_clear(struct mm_struct *mm, pmd_t pmd)
+ {
+ }
+ 
+-static inline void page_table_check_pud_clear(struct mm_struct *mm, pud_t pud)
++static inline void page_table_check_pud_clear(struct mm_struct *mm,
++					      unsigned long addr, pud_t pud)
  {
  }
  
 diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index e2b705c14945..d7400a6ac604 100644
+index d7400a6ac604..5cc978ef1330 100644
 --- a/include/linux/pgtable.h
 +++ b/include/linux/pgtable.h
-@@ -289,7 +289,7 @@ static inline pte_t pte_advance_pfn(pte_t pte, unsigned long nr)
- static inline void set_ptes(struct mm_struct *mm, unsigned long addr,
- 		pte_t *ptep, pte_t pte, unsigned int nr)
- {
--	page_table_check_ptes_set(mm, ptep, pte, nr);
-+	page_table_check_ptes_set(mm, addr, ptep, pte, nr);
+@@ -650,7 +650,7 @@ static inline pud_t pudp_huge_get_and_clear(struct mm_struct *mm,
+ 	pud_t pud = *pudp;
  
- 	for (;;) {
- 		set_pte(ptep, pte);
+ 	pud_clear(pudp);
+-	page_table_check_pud_clear(mm, pud);
++	page_table_check_pud_clear(mm, address, pud);
+ 
+ 	return pud;
+ }
 diff --git a/mm/page_table_check.c b/mm/page_table_check.c
-index 5c2349ab718e..9bd5c5f09001 100644
+index 9bd5c5f09001..aad4b7e2194d 100644
 --- a/mm/page_table_check.c
 +++ b/mm/page_table_check.c
-@@ -193,8 +193,8 @@ static inline void page_table_check_pte_flags(pte_t pte)
- 		WARN_ON_ONCE(swap_cached_writable(pte_to_swp_entry(pte)));
+@@ -167,7 +167,8 @@ void __page_table_check_pmd_clear(struct mm_struct *mm, pmd_t pmd)
  }
+ EXPORT_SYMBOL(__page_table_check_pmd_clear);
  
--void __page_table_check_ptes_set(struct mm_struct *mm, pte_t *ptep, pte_t pte,
--		unsigned int nr)
-+void __page_table_check_ptes_set(struct mm_struct *mm, unsigned long addr,
-+				 pte_t *ptep, pte_t pte, unsigned int nr)
+-void __page_table_check_pud_clear(struct mm_struct *mm, pud_t pud)
++void __page_table_check_pud_clear(struct mm_struct *mm, unsigned long addr,
++				  pud_t pud)
  {
- 	unsigned int i;
+ 	if (&init_mm == mm)
+ 		return;
+@@ -240,7 +241,7 @@ void __page_table_check_pud_set(struct mm_struct *mm, unsigned long addr,
+ 	if (&init_mm == mm)
+ 		return;
  
+-	__page_table_check_pud_clear(mm, *pudp);
++	__page_table_check_pud_clear(mm, addr, *pudp);
+ 	if (pud_user_accessible_page(pud)) {
+ 		page_table_check_set(pud_pfn(pud), PUD_SIZE >> PAGE_SHIFT,
+ 				     pud_write(pud));
 -- 
 2.49.0
 
