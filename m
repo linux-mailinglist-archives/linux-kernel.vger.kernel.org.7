@@ -1,140 +1,162 @@
-Return-Path: <linux-kernel+bounces-600426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63EBA85FD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:58:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39384A85FC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2835A8C5B64
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:55:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB0121BA55C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B16C1E5B78;
-	Fri, 11 Apr 2025 13:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399E01F0E44;
+	Fri, 11 Apr 2025 13:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9CeYtAJ"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C6regj8R"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DA31917F0;
-	Fri, 11 Apr 2025 13:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0AE2367B7;
+	Fri, 11 Apr 2025 13:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744379759; cv=none; b=R73kP2Vxc+w43aSOxC3rer+wvYLPOJvD+JZG2qTsYoIWCyeVLcZHSWT6cJSUSpPvzELgRkFeVMuErDj7GrN1CI0M3XSfSf7JQ+AXX7zTMRgz5/TZ2YdtGXLCIYQy/zViTs45u22QYoZDOS/z8wUN3UgpSkamp6dKYv+qj1DQy14=
+	t=1744379829; cv=none; b=ARvE/hLdnrqd/cMoZ7lS/mWVqAqZ7UDMKpLNPZh7S8qztYfPWCeVGN5+di5AhqemHhzHyEtVhWh+lWTctzJViuJD4DB1/N7Aj1TG5qWsWn7D9mQM88QsgRcwb49Fji6PlHW8jlOxvmUtzs3/QowZbk4tYIg79xrtVX1vSQMjTMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744379759; c=relaxed/simple;
-	bh=Hksio+SBng2Ph0jL+AW8Cf2YcpKo99uTiSN2rqmAQVM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gNv7ohczrIhpkDs0XRoUHHV5Kf6dN+waZV6i+WaGP6yElxmI+EbuBzQHO15tfNrY6+PYjJ1InNwJIu/QW8eQJ04w61U5ad5q8NZMJY0Jvi5VxuQnXQwDFOOg1ElDGuONtT+0Izhv63UzXL/5pYI4tSliRV3Yv+313lv2RxUQNIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9CeYtAJ; arc=none smtp.client-ip=209.85.210.177
+	s=arc-20240116; t=1744379829; c=relaxed/simple;
+	bh=EHr3sP17GP2rT9bubWQ05YlLLA63mOf++HaX/JCjz2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ypim+9o9m8NWm5DFw+FE/J91TEyZcjLGbXSvX8RJ14nseVwLCpDlZDMvTddTtPm1RZ/Rkdoi9NCRx3sK3Ocwx1+uZn0FkYMgrA54rLL6R4SdWXQ/G1YC7EclPG+EY4pJZYBdC5TwfIAK8J2GrGC7qq7AthaKJNqa7JDl3sLtRuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C6regj8R; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-736bfa487c3so1787839b3a.1;
-        Fri, 11 Apr 2025 06:55:58 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30bf5d7d107so16535431fa.2;
+        Fri, 11 Apr 2025 06:57:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744379758; x=1744984558; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9fgT+aB/ObOAloX5DH3cQKl+POiKYMAsP7NDiSj4mfE=;
-        b=E9CeYtAJ0F0gllu6JtrNqgSzGZFGFoGPVvZBzrn6hCkDyLWvvLDRDcEpy68z8atTox
-         0cuDtLNxE5foj+flOnskYmns+I7R953AMBRppciRSyVAYLcCDkBpJDMP1hQpOwIdjKgS
-         ijHcpy/H7DwIUdlK4qEiSgxnnRbIJ/wmMA1/xW02DVjGOn9D9CH0xxlbca3I6ugMZ1Tt
-         GuWBhBfWg0hNAsyxlAJ8LWXPIsfw5o1uI/jl/i+jH2W30PrgEUPO3BMP4Mvue8OMkulb
-         7e7WCZs7RltEJg3jtTvy282eyo9vfW2dhu2dwujMOk1Hh1tGKqooSrECh2ShLaz2HR2A
-         OcLQ==
+        d=gmail.com; s=20230601; t=1744379826; x=1744984626; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V0ok80ZSRCyKju0uCz08exJzHvXoR6NaXt2Z+ekMppI=;
+        b=C6regj8R4uVoeTHievhfWvAjCjWRjhryRf3yN1MpDN22vyGH6gGPgK7/WlF/D+1Xrf
+         A0xoYa57wUehuQtpEPpBN7uwPIc2TIieq90FbQC5yFlkCvfIzLifqXR6Tfc8Wb3ieA7Y
+         lPEzT7yP4tczaBXjGowvrU0yZ1MtmIole+iJGyjny+EhOjDbCMaanuuBGqqZd4k874dP
+         pSpVd3jvMXwKzk8aOmjYNN1FUUWHJ2OBYuLGIBUQIK/lqJt/ZHhSoSMK9Pu5ksLby+Wz
+         COXWPxLZmxBfqyH8AGS3zrhYxn1qqFKqRfYXDIaaHjR/8PKsmJ1yBxICeteKAsRMBph2
+         wkJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744379758; x=1744984558;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9fgT+aB/ObOAloX5DH3cQKl+POiKYMAsP7NDiSj4mfE=;
-        b=pRz+5HKmkEBgXrghOwQrAzHYVrT+CgyhweSBy8s/2nbWEa/cISlTzYq53QgUZe1p0I
-         iH9PKjrGpCG2Q2mhrbfJNT7ZBmDiPXl792/kil5+Bzcnehb6zc2Sa5TLatpDwH1Sa6n6
-         HOhtAWH2NQwjmKSGNkGzCC+EutE5BKSP8hRWEXa/GbeQAQT8SADzdo0HD5avOvz4QI6c
-         fKEm9JTsqdkHNh4W2U6raM5nvKpONquHA6gWYIlfXFKfmjmqGgkRyQxabCYbE5qb4wVb
-         priZ+jec82pQYywU3Qyr0u6RHA663+B9+tQ4sDfoKRFkF5xsc1PdQZx5qYCdyzjoYFeR
-         yq1w==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ZQxkEJrqH6GoN81AyJroxN+V7gDqEgiarei+vrnaRNsGFcJaOpE3oxmyoBNyisNF0ksKT8sOtg+0j0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLVz24fV8rjTvGF1LuNgkZA2AT2HXNSDc2tMQJlRvEz3uCKovU
-	gd6fSNzgGminsEfGrg9M+7LRf97h5BlnEEWvgTRIVrXCh32EQPoq
-X-Gm-Gg: ASbGncuuLUmlMadp18tl6mu/uREYk2smufNPInnujrXR7AVYBLdB0cgjQE95Nq1bEYY
-	xkCRZRz23Zd899Lv+mxLXhb81Z9yfVP68Rpbq7d6a6EUIiMvsV2/W+8j8hVSogXNhpER/C663Jp
-	TtbKRmHeweJBlQfYw471awSp3Trd7pfgNnLmmwDA2gkD5PJ2tkZpc4sMDJuM1TkF7gmXhyQl9yq
-	Fw0qLwKGHeJ7uSC7VbU21PmQvhYf+lnW4lXajHI49EBmYVLxV0Tqqx+qHT9tL4EI1LlJ/Mqiobs
-	3JYZ0gNoO05gzIjxvG1tj3sqS/MPGxp2D+JlKjnmwj6pq+npVSeP/or2rQ0=
-X-Google-Smtp-Source: AGHT+IF57uOoN1+g2NXZ4dw98X52Co0XdPWGzDqnOvXOt7h2udRQqPwsNmdyGbrkTlaIXPVHPNA03w==
-X-Received: by 2002:a05:6a00:843:b0:730:d5ca:aee with SMTP id d2e1a72fcca58-73bd12cdb7emr3902525b3a.23.1744379757687;
-        Fri, 11 Apr 2025 06:55:57 -0700 (PDT)
-Received: from localhost.localdomain ([2405:201:c408:a0b5:6154:df3d:5cdc:6ad])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd2333859sm1485740b3a.158.2025.04.11.06.55.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 06:55:56 -0700 (PDT)
-From: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
-To: shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kevinpaul468@gmail.com
-Subject: [PATCH] selftests: Removing deprecated strncpy()
-Date: Fri, 11 Apr 2025 19:25:35 +0530
-Message-Id: <20250411135535.41423-1-kevinpaul468@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1744379826; x=1744984626;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V0ok80ZSRCyKju0uCz08exJzHvXoR6NaXt2Z+ekMppI=;
+        b=qQbE6P1q6taYH4hCn8G7MAmPu/W+Oq1tl/WhAiFuA8HcXD7GvQwpnD/KpgHnjMAwi5
+         HR67onIYkYKiWPxrokdM3Rk44B2+Ha9zMXW/ugWsC6GBf2WM6EhYKLlvshMN1mh/0SgA
+         lqIfhue5BwHOVlSbuooPYSBgI1qRY2eSL94dQ1pRJpIRmhSneOHcKHjyz3X6c4em6gR5
+         EKoHFj9nIvtlxL+Ux4oRcd0Ogs996kZHdlz4ZU3N/xJJOWNKiSdpYQU7KYORX3ZQSH/D
+         YzwY6zTpRTuH92wcQO+P4VWLoRxKGS0ShZW+IOsybDMoesIHvcWEXP3mobEMgYEYFztG
+         6arg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpPesI9DhzGUxmyESV7z5zK/u0zG5BOxGIFDqrsjVXeFi90OMmKoXCa3DzjU9cW1YPffWSTei2jM3dawY=@vger.kernel.org, AJvYcCW9yvjCsJXTRF/JdAQPbnK3dN+dzHFSj1aBP0knxbfVNKF0PJVvOretImM6sWSPS6J6i034IdGXhjkiCJP6DgE=@vger.kernel.org, AJvYcCXqah9Uiwmtd09lfRWs+kIhnp4XvQMAtljVhTgdpohG0+/ARWnhu3vo4oTnDxqzgjJTUsUkwI4wtUp3@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4VftjNGRqoeBe45VM+Hc5qaW3v41U4nW0XB9WpC9IJw/HRCtJ
+	684J79lrCmdiBLQL1Q2msKgl5FHSYm/AyPG41tzMTv0COKULNR1TMC5HiYvCCLgLzTlVpAIplHS
+	OpyeWRhVeU6ls08cSJrubwn+mtk8=
+X-Gm-Gg: ASbGncu5sWROkGkBgaa2z2rq6KZRME7IQPFyi2wIFc7zC6aATOe2n8ynAg8d3Zl8UJJ
+	LyRUK4pbfmthMN3xVjv38XjOfvmzFHjo7jCznLa3UsYAQ1p1/UwX7e1Yv921YoGvMAhdX1g6YdJ
+	JLja6TOS+7a5jyXxL1I8VpYIggnv4j3vtdDDqSWYJq7BP+zGuL+Yi6DBcZd9fu/lCNqA==
+X-Google-Smtp-Source: AGHT+IGBOEIfPQcBcLGNI8B8t2buG2qyCkl07e+bDZ36eFeM5osRdU689Rog2YK5/bwFMtkYKvRRli/CrIyQ9ywcGXg=
+X-Received: by 2002:a05:651c:1448:b0:30c:5190:b264 with SMTP id
+ 38308e7fff4ca-310499fb271mr10915891fa.20.1744379825590; Fri, 11 Apr 2025
+ 06:57:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250409-no-offset-v2-0-dda8e141a909@gmail.com>
+ <20250409-no-offset-v2-2-dda8e141a909@gmail.com> <Z_eMe7y0ixrBrHaz@google.com>
+ <CAJ-ks9kms_jFEAHX9MnW1pUOyTeuFuyWwXk-A+qhCPQQNfJdAw@mail.gmail.com> <Z_jcjEtKZRpRi9Yn@google.com>
+In-Reply-To: <Z_jcjEtKZRpRi9Yn@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 11 Apr 2025 09:56:28 -0400
+X-Gm-Features: ATxdqUEDaQovMhot23oFo1TVInzFS-l1gpC5B1ahhOMK6wGAFHaYLD4oU7r3LQQ
+Message-ID: <CAJ-ks9ka0sASqBdhFSv6Ftbd7p1KCBuy6v-2jNd98gDpyAgQGA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rust: workqueue: remove HasWork::OFFSET
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch suggests the replacement of strncpy with strscpy
-as per Documentation/process/deprecated.
-The strncpy() fails to guarantee NULL termination,
-The function adds zero pads which isn't really convenient for short strings
-as it may cause performance issues.
+On Fri, Apr 11, 2025 at 5:10=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> On Thu, Apr 10, 2025 at 10:15:53AM -0400, Tamir Duberstein wrote:
+> > On Thu, Apr 10, 2025 at 5:16=E2=80=AFAM Alice Ryhl <aliceryhl@google.co=
+m> wrote:
+> > >
+> > > On Wed, Apr 09, 2025 at 06:03:22AM -0400, Tamir Duberstein wrote:
+> > > > Implement `HasWork::work_container_of` in `impl_has_work!`, narrowi=
+ng
+> > > > the interface of `HasWork` and replacing pointer arithmetic with
+> > > > `container_of!`. Remove the provided implementation of
+> > > > `HasWork::get_work_offset` without replacement; an implementation i=
+s
+> > > > already generated in `impl_has_work!`. Remove the `Self: Sized` bou=
+nd on
+> > > > `HasWork::work_container_of` which was apparently necessary to acce=
+ss
+> > > > `OFFSET` as `OFFSET` no longer exists.
+> > > >
+> > > > A similar API change was discussed on the hrtimer series[1].
+> > > >
+> > > > Link: https://lore.kernel.org/all/20250224-hrtimer-v3-v6-12-rc2-v9-=
+1-5bd3bf0ce6cc@kernel.org/ [1]
+> > > > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> > > > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > > > Tested-by: Alice Ryhl <aliceryhl@google.com>
+> > > > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> > > > ---
+> > > >  rust/kernel/workqueue.rs | 45 ++++++++++++------------------------=
+---------
+> > > >  1 file changed, 12 insertions(+), 33 deletions(-)
+> > > >
+> > > > diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
+> > > > index f98bd02b838f..1d640dbdc6ad 100644
+> > > > --- a/rust/kernel/workqueue.rs
+> > > > +++ b/rust/kernel/workqueue.rs
+> > > > @@ -429,51 +429,23 @@ pub unsafe fn raw_get(ptr: *const Self) -> *m=
+ut bindings::work_struct {
+> > > >  ///
+> > > >  /// # Safety
+> > > >  ///
+> > > > -/// The [`OFFSET`] constant must be the offset of a field in `Self=
+` of type [`Work<T, ID>`]. The
+> > > > -/// methods on this trait must have exactly the behavior that the =
+definitions given below have.
+> > > > +/// The methods on this trait must have exactly the behavior that =
+the definitions given below have.
+> > >
+> > > This wording probably needs to be rephrased. You got rid of the
+> > > definitions that sentence refers to.
+> >
+> > I don't follow. What definitions was it referring to? I interpreted it
+> > as having referred to all the items: constants *and* methods.
+>
+> I meant for it to refer to the default implementations of the methods.
+>
+> > Could you propose an alternate phrasing?
+>
+> I guess the requirements are something along the lines of raw_get_work
+> must return a value pointer, and it must roundtrip with
+> raw_container_of.
 
-strscpy() is a preferred replacement because
-it overcomes the limitations of strncpy mentioned above.
-
-Compile Tested
-
-Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
----
- tools/testing/selftests/sync/sync.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/sync/sync.c b/tools/testing/selftests/sync/sync.c
-index 7741c0518d18..4b284f517433 100644
---- a/tools/testing/selftests/sync/sync.c
-+++ b/tools/testing/selftests/sync/sync.c
-@@ -29,8 +29,8 @@
- #include <malloc.h>
- #include <poll.h>
- #include <stdint.h>
--#include <string.h>
- #include <unistd.h>
-+#include <linux/string.h>
- 
- #include <sys/ioctl.h>
- #include <sys/stat.h>
-@@ -71,7 +71,7 @@ int sync_merge(const char *name, int fd1, int fd2)
- 	int err;
- 
- 	data.fd2 = fd2;
--	strncpy(data.name, name, sizeof(data.name) - 1);
-+	strscpy(data.name, name, sizeof(data.name) - 1);
- 	data.name[sizeof(data.name) - 1] = '\0';
- 
- 	err = ioctl(fd1, SYNC_IOC_MERGE, &data);
-@@ -198,7 +198,7 @@ int sw_sync_fence_create(int fd, const char *name, unsigned int value)
- 	int err;
- 
- 	data.value = value;
--	strncpy(data.name, name, sizeof(data.name) - 1);
-+	strscpy(data.name, name, sizeof(data.name) - 1);
- 	data.name[sizeof(data.name) - 1] = '\0';
- 
- 	err = ioctl(fd, SW_SYNC_IOC_CREATE_FENCE, &data);
--- 
-2.39.5
-
+What is a value pointer?
 
