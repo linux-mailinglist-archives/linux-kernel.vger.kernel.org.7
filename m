@@ -1,107 +1,93 @@
-Return-Path: <linux-kernel+bounces-600337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB35CA85EA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:21:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D244A85E6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 102591BC0809
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:19:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17D1D188F9BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A464189BB1;
-	Fri, 11 Apr 2025 13:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF5A13AD1C;
+	Fri, 11 Apr 2025 13:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="07hwH+bv"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gcf0TmoG"
+Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125CE26AFC
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 13:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6363C17BA1;
+	Fri, 11 Apr 2025 13:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744377412; cv=none; b=cSIVpNuo43WcsRjPY6VybL/ANxS5fZNGWk5+pVmaXjArbeJUA2J/3HOU4EguJC96atbOBSnmY3GWJyWp9ThEE+/dZ2T0G9Zf1ObxpLdccUhnhDWACTk3JcoM+m1b4s1p3kW1Bd8skf+xSdlfkchdUmLk0hVQnUCzT5NRy/XtidQ=
+	t=1744377288; cv=none; b=PudPSoYd41I8L7crceTTCzVhCG5Ksh3iHYS8MskAa3fnX0/cUf3BmGwqj/X9XH1pstWiE49CF292vJJRHglqG2t1leRLO5jIDkrrGJxBWbXOp4P+pRT0+sPTIzhgDite+PJ8LJuJ5ZIDZHwf2RpOffmF+AaNlIkrl0El10F5zTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744377412; c=relaxed/simple;
-	bh=3q6LzsDwiE+yVVac9evuQozKO150MG55tmEaBUnFpq8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MwmMMo/C0Qb6PNIP9KNqrMFfjhgduDQgYS83tedtGtMMH7ycMAMwgBltL/5XflgtUXwXb4tWdj9GWHsE5y8f3/PvDb4YuLKNOTurcsADvphVpkTY9RAhiLj5hwzEpn45u/7NfCi1c/x0Hx7IMHOrU2QsqCgZnPm61l12+bYXCqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=07hwH+bv; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-227b650504fso18823215ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 06:16:50 -0700 (PDT)
+	s=arc-20240116; t=1744377288; c=relaxed/simple;
+	bh=1UWUISv2DT7w0ljeiMVoiOZmsDc2AkD2/AxvOAuUcNg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qPSxMdgGZswDgdy51TJs7H5KJGRM3zw115jqADoA0zf9VRDzorquNXkAC5pp0NKqaot66S/vR4snQaNmllUXTPTy6/MX+lba7coUYvxW4SSVaEJ8Mt98uOq7ah3Ro4qGonuHdX1bwlJlpVvmTyx++E7HKBKv6jfJL84ccx7tqTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gcf0TmoG; arc=none smtp.client-ip=209.85.210.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-7376e311086so2522153b3a.3;
+        Fri, 11 Apr 2025 06:14:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744377410; x=1744982210; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8UqYwabiGCbW0lFM+J6bILwkNakAnqe4wz5kWFQbMVg=;
-        b=07hwH+bvvpQ+98Tv/g2XwiE/ZR1TXJsbuhS5fgEIj6zK8JiTOEvGZWB+DZUX7ewvqL
-         84GRMIclHqZyc8UKll2c2rZxp0aqMhi38kMIFmiRpptS3s13KXyiDW7nQFT5xCR7lJE4
-         ogANPTWxk8slDLbIhUUcoFYyYF7+u3MLpPRrn3LvpvC0mFb3FFdgJs2gLmuovMuUPaWe
-         Bv3OgllDX8bMWHjmfSCfdEX8zTFBPgghBybALJt/n6v/Rs7iHnswNlJZ855PAjBNVVJq
-         w3VrIoyUnfXF5uNr1X81X027cDy19b77oZBNgCLrddswxbHhZHbC83dBk62tGlJB3/Zo
-         T6xw==
+        d=gmail.com; s=20230601; t=1744377287; x=1744982087; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XthcdcN8Iyv55J5M18ylV0pZBSRnbvsK3fQGBG1/ZS0=;
+        b=Gcf0TmoGTe2JMaaTzKwcP+hpr4OXwCO3So3ae87ao311GfGYrKrxalP4F2JuV7B5un
+         vtPgADnhr+BtfDWiseEN1MJFq6ktVRfU2xPZIyZ+gYzDgukEbQCtsp5gICMh96l8P/Am
+         cxDvElEyCZoenUZNHXYjLnIOMb73gcig/xT/8NP2wjnlRje0p2ZUIlObGyYrZAXSQaAa
+         gSsA74nYXiCv+IdHD96VYWiJmPEVEHYuuLhAsOIj+MIrjS+29n4XH67Q8zKZN0j6PpkL
+         weZlRjTtmpSLWmVGWfMfYzXPR8ezFuMqUPHovYIAB9juRYhyAFJfwY047pO5sGeTNGKd
+         +s8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744377410; x=1744982210;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8UqYwabiGCbW0lFM+J6bILwkNakAnqe4wz5kWFQbMVg=;
-        b=T8zfrQfzujSiTy0egDCGwemZRilnm6OqowQ4WWsFmVt6pAwDC73LztCikn9pTcht3b
-         XUqzc4M9TvDl3iGaDS7Rh0TIGOV2uZK8dqvq8nSIl+zA+zNKi/PhW+dozq1OSHqUinxA
-         wjrszfHW1qnJsmDxvycA0YG5NelJk/+MgIDXHATVaGziCnmBKtRa0TvD5/fFHAwmpH4Q
-         JaUUIkkbrbNG5dPtEuoIVdcOwxI98OXSr9OiW9IxIrnUYIGYEMYmH22dKuFqNj0ffaX1
-         IaQyrPL0aF0VPTjAzshcP4/gnmrqVKM7KIiSTNck/7qo5sg1swfcTIG9tdHBBKHPk6T6
-         p5Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCW9IN27Bp9yjyvhi13YR4T4HSgxhCYGpiE2K1AyAESEAUi0x9cPrZM7kgP2IoHD66uBL8UHo1wfROL4RZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXaxS6baVM3Cp27PJDVycQo4HhM34vBdSiO9zTHOb/GfZrgvlF
-	5MvFAGJRiIZpwuDU0rhmwDiUBhjPtVuJ5dXdlXsjL81vxJ5m0Qor2xJ9wRnthUY=
-X-Gm-Gg: ASbGncs7dApnd+e4Xq9HM6dhB62VkJ37F7xueGWcM8+/p0ZsmL2t7Wt679P1icBJDDm
-	iWHI2V1EXtLnahQPTxyQuPNHTzKyz2GsrfF959RqMA+nvmZkwjamdSIE18gWQKj9Prau2GANa5u
-	p0wXDTK+cCFWlwAjDvVtIO79Uu7SCpsmwW7Rd0FXEFUx+E7AQpxzOJ6A2lIUymnHiL6Za96CeHl
-	obcJxFxbYJXZshDv9gj1d0/sbBOsE+8qDC+YlHHaHuQbM6QgjU4BsFtKSCsZCut9fdk7q5JxUwQ
-	zBahd8okXz8qDeI/6w9KIbMm8VK+PPk=
-X-Google-Smtp-Source: AGHT+IECvokSxW4TE1t/6GjH2KzEiHk/fDfcTN3ty6UKV6n7k5pcSeZTqv5IfUu12KUb+He4PBCOnQ==
-X-Received: by 2002:a17:902:e545:b0:224:1157:6d26 with SMTP id d9443c01a7336-22bea49616dmr42095625ad.4.1744377410365;
-        Fri, 11 Apr 2025 06:16:50 -0700 (PDT)
-Received: from localhost.localdomain ([2a12:a305:4::308a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7c95cc6sm48245005ad.122.2025.04.11.06.16.41
+        d=1e100.net; s=20230601; t=1744377287; x=1744982087;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XthcdcN8Iyv55J5M18ylV0pZBSRnbvsK3fQGBG1/ZS0=;
+        b=YdK+TRLTd7uDBuhZXROksX3Uv4x+3t2RN/8pqemP5uJXKEhn/g53xeJAPQDh84FC/9
+         UvtX6rxD3xLDNVPdIf/fGII9qDVM1gBXqNSbLFS/BfIxAKEFqr7TGNY4+HChhQNaC0jX
+         Su1b1tZYe8t0RtObsCxIm+xhyUsL7CN3gAnC/gweQLzfwjq8lX9+93aKbrDxCLrjPoZQ
+         G8+wR5xOP00El4MKMAVEbbzNOpS075I8XRBbmpV6Omdu0d0D31o1Sv8GBWX8QWEsz+PP
+         N4k0XYfVc02GVAo1g/gtjLSWvxGmmzGpb91vuaPr0Y1tx9WZ+CjqVemaspyKp1Ja5GRB
+         qNPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAPf5ng/ercjQpEpU+/bKiZkb7K4Fj+U6cMAqzawTBH+UlmMIgy2nAFyLe4JHTI71vJSd5UzBMiZcb0s4=@vger.kernel.org, AJvYcCWV9ziCqedApPpBOvqhyDuqwnL6c5IgBwT4frPHj5gdGGnLFH5tBSeJ9bSN39RLd0qWcMyHK2oC+HgONA==@vger.kernel.org, AJvYcCXP2RX7I9gBV765vr4cEN9msoU63VCxdKwfukp9P2BKEDjbw5ll7MiD0mT0rCGFTVYZafi4q50M@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjQJfvWwlEAfKAv2Io1c2tf84lgTvyqOOOfOqvPU5pTOPhoESG
+	bSSfwatHsbcubMFbI8MfGbusEkAs2LffNA88uWcj3wv3g4lBYu6P
+X-Gm-Gg: ASbGncvodgWnv7I2y84GGZq/SOqIExnSokNOsyX6YLA9qT5vVRixyqdhpuBmBNcHjEy
+	Gu0iq5l5R5GZcjWLk5aFPEvqKP73V1LhG+jSH4hTvhumPJhKKSuIQlWG34aUsaD4tPJfIBR2jnr
+	Wxp+eXa4RmSmrB3rKOA5L8AVpVAd34fTocuRrZwms437B2e40r9IbwBpFSSMoMyfm79Y1tyjHCz
+	8Gp4e1wy4LoMksKXkcIstLNoR0SDu5CrzwpCSkraJVLyyv1QoP7QCo2471O3oOjlCY7Qu/5VXx0
+	/WySPhVh7T5FWPO8eiWdgo4BJIYrVP+Hw7+WTzfFn9+p3kyZf8Ob45XyiAhAEphP
+X-Google-Smtp-Source: AGHT+IHmGROtDU7FGfj92ZtlqT45b3qBFiBzD4gjS4C6XnOuqIUxsSIhZ2n2lqx9HDyQ6OcXD/Mg8Q==
+X-Received: by 2002:a05:6a21:3943:b0:1fd:e9c8:b8c3 with SMTP id adf61e73a8af0-20179975a19mr4204075637.26.1744377286370;
+        Fri, 11 Apr 2025 06:14:46 -0700 (PDT)
+Received: from henry.localdomain ([223.72.104.59])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b02a0de8926sm3967494a12.30.2025.04.11.06.14.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 06:16:49 -0700 (PDT)
-From: Guodong Xu <guodong@riscstar.com>
-To: ukleinek@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	dlan@gentoo.org,
-	p.zabel@pengutronix.de,
-	drew@pdp7.com,
-	inochiama@gmail.com,
-	geert+renesas@glider.be,
-	heylenay@4d2.org,
-	tglx@linutronix.de,
-	hal.feng@starfivetech.com,
-	unicorn_wang@outlook.com,
-	duje.mihanovic@skole.hr
-Cc: elder@riscstar.com,
-	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+        Fri, 11 Apr 2025 06:14:45 -0700 (PDT)
+From: Henry Martin <bsdhenrymartin@gmail.com>
+To: saeedm@nvidia.com,
+	leon@kernel.org,
+	tariqt@nvidia.com,
+	netdev@vger.kernel.org
+Cc: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	amirtz@nvidia.com,
+	ayal@nvidia.com,
+	linux-rdma@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Subject: [PATCH 9/9] riscv: defconfig: Enable PWM support for SpacemiT K1 SoC
-Date: Fri, 11 Apr 2025 21:14:23 +0800
-Message-ID: <20250411131423.3802611-10-guodong@riscstar.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250411131423.3802611-1-guodong@riscstar.com>
-References: <20250411131423.3802611-1-guodong@riscstar.com>
+	Henry Martin <bsdhenrymartin@gmail.com>
+Subject: [PATCH v4 0/1] net/mlx5: Fix null-ptr-deref in TTC table creation
+Date: Fri, 11 Apr 2025 21:14:30 +0800
+Message-Id: <20250411131431.46537-1-bsdhenrymartin@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,28 +96,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable CONFIG_PWM and CONFIG_PWM_PXA in the defconfig
-to support the PWM controller used on the SpacemiT K1 SoC.
+This patch fixes a NULL pointer dereference in
+mlx5_create_{inner_,}ttc_table() by adding NULL checks for
+mlx5_get_flow_namespace() return values.
 
-Signed-off-by: Guodong Xu <guodong@riscstar.com>
----
- arch/riscv/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Henry Martin (1):
+  net/mlx5: Fix null-ptr-deref in mlx5_create_{inner_,}ttc_table()
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 4888529df1d8..9bd972867e0a 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -259,6 +259,8 @@ CONFIG_RPMSG_CTRL=y
- CONFIG_RPMSG_VIRTIO=y
- CONFIG_PM_DEVFREQ=y
- CONFIG_IIO=y
-+CONFIG_PWM=y
-+CONFIG_PWM_PXA=y
- CONFIG_THEAD_C900_ACLINT_SSWI=y
- CONFIG_PHY_SUN4I_USB=m
- CONFIG_PHY_STARFIVE_JH7110_DPHY_RX=m
+ drivers/net/ethernet/mellanox/mlx5/core/lib/fs_ttc.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
 -- 
-2.43.0
+2.34.1
 
 
