@@ -1,252 +1,291 @@
-Return-Path: <linux-kernel+bounces-599635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 662BFA8564A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:15:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22160A85655
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:16:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9094B4C3823
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:15:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4FBA7B6D78
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21070296146;
-	Fri, 11 Apr 2025 08:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894EF293B79;
+	Fri, 11 Apr 2025 08:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hIu6DLzL"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2056.outbound.protection.outlook.com [40.107.237.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nhcVIdJP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C86293B49;
-	Fri, 11 Apr 2025 08:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712801EB18D;
+	Fri, 11 Apr 2025 08:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744359306; cv=fail; b=ajwDW1MCo4ZtwhGGIGS8pKgsyV1BzFy5Z3m15Kko/sgU/YFXUIVv5360W7wVeeVA/iHGdkLBGc+kLNhC3qSYDv74WD6AR6Ad9W3L2QnM4dZuz1EMSMj177HUBLqc3gLbo71iMSxNuryhfyDlQMaONAGgpQzvkNsIsq7amjeKIAE=
+	t=1744359384; cv=fail; b=Pr+q3QKruS1zEyweGL7+QHyjgSj5nQpSUyFxvc4QGhlemM1k7n2ybMf3gLbxA73YF2/SJTtMiZJukFhYFuh38tJCorTG0GwdaM1ibEz5BrpXM2aq1HjQUjPGnnXr9RSNJ45kWKJLRtVAv7dWonNJX40E/MA5EQDgoVJdq59/x5w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744359306; c=relaxed/simple;
-	bh=cWDHCI/iFjQj1gv6BzJP8SWUl3QglS2OjZOSrklIC4A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a7YjrkU2TWyscHdpq/rn4hHBZaBfRwAdQQFVkmX4mEDMVby/Lf8aNlor2MnJQ0n3C2I1hXvn/kuAStNEwn5zJv6jU9GBkMmk1WltMbw7p/UUHQfixOC/kBMdylizD2hFH76x+PCHO9p6yuA9oBZBbgb7GAdkEo1g6+KalZNWlNk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hIu6DLzL; arc=fail smtp.client-ip=40.107.237.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1744359384; c=relaxed/simple;
+	bh=ZGaOM9lvuxfKkbs3JWJk1b0Ev//yTigJIrR2rWttRkg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=dNx8ItMKrEETqn+05RwSx0UKwIJjLFGqVdASMYe9lCnVpaqYfJYA1FxAX3y0MIvqP7RBGsYbFF0uOXPHB5WS2z2G37XdJFp3GjR4mgQMjR7ZzHYdAzh9sgTtmOndBezL98eRk5YYSaTdqOdS0hqN1vvABF5a8yjIUj6SPlSbMX4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nhcVIdJP; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744359383; x=1775895383;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=ZGaOM9lvuxfKkbs3JWJk1b0Ev//yTigJIrR2rWttRkg=;
+  b=nhcVIdJPWfTr7i14sHv9CpFiFArf1PK33NyICst/PlTskkA+8jAYbGgK
+   3QQnRfu7FsHMde8KM+Rou2I+o7+vc0qVTNnL0xxLDHDCm1qF+O3tauPen
+   Tv/sVBWD/aMoCpxd/479GfTHdLp6zhOS6l0dQMhaJIclYBfXlegptfYBg
+   CDXcDZeeCb9TuBGkn3Ki9/IM7G3M2cyQQ/6UJDAyn+P5XNUVT8Gh7YZWt
+   +IKQzHMg3oAVPoL5SjHDpM+8HnQfflw5Ru1cJBG6F/SD65rWemQZFp8uf
+   UJcswuL+7UOeG4lgRMwX3kZQU/Gfo+TcqKu8SKOJvjwSwr/4bTRIh04Tr
+   g==;
+X-CSE-ConnectionGUID: XrPgPChtTGmmC4MvacKHtQ==
+X-CSE-MsgGUID: Z1G0Zjr1SpSqELJtNngxPA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="46034118"
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="46034118"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 01:16:18 -0700
+X-CSE-ConnectionGUID: xZhHXa94T0Gffsvzyb1WXA==
+X-CSE-MsgGUID: 8dYFNss4T3Ow9VQteDBaeg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="129129215"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 01:16:18 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 11 Apr 2025 01:16:17 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 11 Apr 2025 01:16:17 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.169)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 11 Apr 2025 01:16:16 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d8VoL6JqcwgYWtPk23MWDsyxbfElX+OKu5l4nbo7PpespbHOUXawMmnDW4C3MjHWg2PQgOBXUkxgLIQKMelPKWgM+YTz9DQDIY2gqsQE8JFTCjIJA6rOFO5Vk7Kr5T/qiFjd4r4W3zibFCb1FmOZnXdmzvBzYUfGMbQIdxWefOe3wz7Jsjgm0lcs9ZnZO1K0OhqWN8GEnbH4k7EvF7YC13wHElqXNuF6201YR0aMiPgBL/Ky3lKEj1c5okaoiXzvVgLC5TCFAbpGaS2DdTvGVqfNLFzJD2Wc4KjkxjbPsI6mK24Af0RUS8DswqEJW1oqwDCoVTLtp+ORXUz9bOpDnQ==
+ b=vS6h7TK+42wc6omKYhsFzuE4R0gMtsleDD/UOyosepmAyJEkNd4B6Y4OFbj4tE8Rv5Ww9ngx6Zd4CITyHGn7YMvI12qJLY23S3rmdCE4ycCt/LnbJ/GiFUXrtjEWQST2GiXWeDaKkR0Kzb5NKuC9q4wGNZt6ucIjWS3J0Z+uR7XkBM4xEiQajbGDDULVMdjAHhm16FHAF5q8OFTC9sus7Ruhf6ydO6ATDq88NtQ3lJPZUOBgcjfcbyLLkrfQppujS7ola2yKYxO41URaWEdqrouV8FDAcaW/9fuSJqipCYBsAlq22ozXI02/NDKS1KSZSc87RRAcQr+QtYaRr38fgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sGJjk857vg3I3BkUU4n+5qV5IfGvTd8lMkJaYdRJAPU=;
- b=l9dsQ/wsGQKjp7QQoSyWGmDu4x2EpdrAzZQcZHAE8Qmtd2jGd0uiIZa4cnualiyRAaVxWuQ2fkWvvsZACFn3ApMqNmf5ZT65fo1OzfAPrIhH0GNGnE/iiZrNdHSJoKyRZLmB+Yf/KMUVPrDfgqHsgO0f7UduDRDtCSxbq8EFOC9zT3tmSoOWaF/nlscOEIU+njOvm8IzuokVRy/Rm9z6uspD6+V6VpetArxmmG+haMv6CX0UWYVCWUa06DO8MS8EEj1wTA0wlAHnPJRQNCrwuxDZdqCd6Bg5rFk1tLC2t+SoEqDhsDPzAWUp9POfrNsB6uWCBwxcpEETee2ZBIDlKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sGJjk857vg3I3BkUU4n+5qV5IfGvTd8lMkJaYdRJAPU=;
- b=hIu6DLzLB40BWylwPL8Oxkx9Fx53hbmIiENwOEEdYgE6bIxNEa2g8VoexjOryn5PfWakpxd3VZ1l2DFpZwBbuxTvyEOBZcjW65ZlA6L4AIti8e9vwWrYvV9tFokyTfZfv9pPGfnhmTr/JEUGL2cAzLwy6iKm022COiOcgmCKYGA=
-Received: from MW4PR04CA0209.namprd04.prod.outlook.com (2603:10b6:303:86::34)
- by DS0PR12MB7608.namprd12.prod.outlook.com (2603:10b6:8:13b::11) with
+ bh=vZZSrULpzlpukfOvkTZ1G2/ADSqgBDHohfoHtvSiOy0=;
+ b=iGa2frvEGRF/PdRSrwd7CPfP7Qh6o1paBpzesZpcaIEjm4wdLekMfvVnbS5HuyB8FL9+vQSp7L9aATtarvxW+Qc79oCtFSoFBz2rBGXPrgSUVW76qLkzPELqFIt6ViSsdYE4Ud7WDIjGoxkCGkZJPJUh0j/+pvilcqFLSLgy1KBaufaxZci6A1161+kr0B759WqUhYjjM1bPmU7ipck4rGOqK37u6SAATgKdpXxBeGQh40LP2N/7NIPBho594hpjW/XMiOTjxqJlQEJDOlPwao78N+/nJ1+/XulrIU4zfMnMmV1V1W8oCM48wz76u1pzIlSdS5EGI8h8hvpS34WulQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8673.namprd11.prod.outlook.com (2603:10b6:408:21c::14)
+ by SJ0PR11MB5136.namprd11.prod.outlook.com (2603:10b6:a03:2d1::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.27; Fri, 11 Apr
- 2025 08:14:56 +0000
-Received: from MWH0EPF000989E7.namprd02.prod.outlook.com
- (2603:10b6:303:86:cafe::e8) by MW4PR04CA0209.outlook.office365.com
- (2603:10b6:303:86::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.26 via Frontend Transport; Fri,
- 11 Apr 2025 08:14:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MWH0EPF000989E7.mail.protection.outlook.com (10.167.241.134) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8632.13 via Frontend Transport; Fri, 11 Apr 2025 08:14:56 +0000
-Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Apr
- 2025 03:14:52 -0500
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Mario Limonciello
-	<mario.limonciello@amd.com>, "Rafael J. Wysocki" <rafael@kernel.org>, "Viresh
- Kumar" <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, Huang Rui
-	<ray.huang@amd.com>, Perry Yuan <perry.yuan@amd.com>, Meng Li
-	<li.meng@amd.com>
-Subject: [PATCH v2] cpufreq/amd-pstate: Enable ITMT support after initializing core rankings
-Date: Fri, 11 Apr 2025 08:14:39 +0000
-Message-ID: <20250411081439.27652-1-kprateek.nayak@amd.com>
-X-Mailer: git-send-email 2.43.0
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.35; Fri, 11 Apr
+ 2025 08:15:30 +0000
+Received: from LV3PR11MB8673.namprd11.prod.outlook.com
+ ([fe80::c098:1901:a40c:505f]) by LV3PR11MB8673.namprd11.prod.outlook.com
+ ([fe80::c098:1901:a40c:505f%7]) with mapi id 15.20.8632.021; Fri, 11 Apr 2025
+ 08:15:30 +0000
+Date: Fri, 11 Apr 2025 10:14:57 +0200
+From: Michal Kubiak <michal.kubiak@intel.com>
+To: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
+CC: Tony Nguyen <anthony.l.nguyen@intel.com>, Jay Vosburgh <jv@jvosburgh.net>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	<daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, "John
+ Fastabend" <john.fastabend@gmail.com>, <intel-wired-lan@lists.osuosl.org>,
+	<netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <sdn@hetzner-cloud.de>
+Subject: Re: [BUG] ixgbe: Detected Tx Unit Hang (XDP)
+Message-ID: <Z/jPgceDT4gRu9/R@localhost.localdomain>
+References: <d33f0ab4-4dc4-49cd-bbd0-055f58dd6758@hetzner-cloud.de>
+ <Z/fWHYETBYQuCno5@localhost.localdomain>
+ <ff7ca6ea-a122-4d7d-9ef2-d091cbdd96d2@hetzner-cloud.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ff7ca6ea-a122-4d7d-9ef2-d091cbdd96d2@hetzner-cloud.de>
+X-ClientProxiedBy: DB9PR06CA0029.eurprd06.prod.outlook.com
+ (2603:10a6:10:1db::34) To DS0PR11MB8665.namprd11.prod.outlook.com
+ (2603:10b6:8:1b8::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E7:EE_|DS0PR12MB7608:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2a74526-e280-45b7-c5ee-08dd78d0f1e2
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8673:EE_|SJ0PR11MB5136:EE_
+X-MS-Office365-Filtering-Correlation-Id: 66788a0f-b795-4ccc-281b-08dd78d0fb94
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XDKN/1+NTb0FTwt7ZefFOGTYthPWgmN/Rd/evptzzgt+sHO5v/VyG4zpi1BO?=
- =?us-ascii?Q?jPuAqmk/3AJJc2wPTsoNYsqLI4uWFrL1kVINQjy94H5tLQbdIrje2lZUvv2R?=
- =?us-ascii?Q?koqz/TAoH5y5fS8dQZz4wFd1S5NlL3slpTBjK3+HsvDCB0e5ThYXoga4foD0?=
- =?us-ascii?Q?k5wkE6hWsu20yC+KHMZG5zNYUV9CAbUHZQlN5LsTKmuaQP8jR6MAT/wZBZKy?=
- =?us-ascii?Q?hJdeJZJpzuYNFIGnkEIJaG+69o61+h+UgPNVXseFEchKjhEV4mvICplMLy7H?=
- =?us-ascii?Q?3NEOW6f89UpWxTmMAikEQKjwAWkrRPinZcHBDYfDAyQLmqvDc4sqYByDznct?=
- =?us-ascii?Q?ecr6eZeA7KfADYwpbXjfLq6fHjheOVzzaOb8dRDIx9Goe5cCC4qz2q2m7g0L?=
- =?us-ascii?Q?EqqnEH7rCs7K6kDF0vZiqcUYIYjZLRS3awM0VjxZGyyF2OueMW/Cdh6uQbvd?=
- =?us-ascii?Q?CikRr7aMF79BC8O5BGpKtdIY8yz42VR5f8IIlexrk4w7N0EbCAeVpEri632H?=
- =?us-ascii?Q?/cQzzizGjV9rSsWDNqBxXaPbstXeEVHQyc6vxXjEDHFmqI5hjFFC9QWvs0op?=
- =?us-ascii?Q?FcdRzv6bEiy3ySzE272lhDMjUAC6SB891ktEPeZ/J43OBHGRRQxjOQWM+KxO?=
- =?us-ascii?Q?vChIp56MIe8wdlZAuyvd2ozemq9t5wtDo92AgETqfDwJmtMEnXCZP3mta5Pm?=
- =?us-ascii?Q?2z8kJXkn1FuRl0uryn84J7FviPvuB1WNlnuDxoKBviIkvARNWizhEdzGzYuy?=
- =?us-ascii?Q?Jc1zDN8lo1JnXB8bmZu0laJmOufgZQjlrQ46XylIXHsmRCKnoAO5GwVrmUOH?=
- =?us-ascii?Q?L+CIZ5Pj+T3+C29hSdB5jv8DzCf3LWALh+qAOKHdKy6FeP5BA/EUlNf6iQ3R?=
- =?us-ascii?Q?N2NLWyufnafdWzVVRk1iRs01YEw6B+ItTVtbv/Ai0Z1FUDTC9vBEV+wslWq7?=
- =?us-ascii?Q?RtZ9lyYwi5ScvyWJpHIGMAw+BIPyW60SrvdUVDfSk3N0bMt5dO776ECcNY8d?=
- =?us-ascii?Q?EYTRv6pcljPeaPRxmoDSGk5oS+PSj41fW86V+N4fNUZAVzTNLrG6HEJpChdu?=
- =?us-ascii?Q?0m0uTJrYxJaVVIpFUiFpadHkextmSK4pCJzyHBvCxGAJDyEdIjUHW5wyszPF?=
- =?us-ascii?Q?PphWPiWAH+oRD4yGzaZnKUmhlwhatNJqOWDeb35YDO6UsrZgVi1ubI5GxqAI?=
- =?us-ascii?Q?T+z9oF4/4cELFKaEKoAfjeR9fvSeavw7x0N15Vb407Juz1TVKd7sUtET2t8x?=
- =?us-ascii?Q?RNNVeySo13N3xtph+MZ8yuMN1wXWfkBplD91vysJxDb4v7PNmeRHtC29qX8+?=
- =?us-ascii?Q?dUWFIfKdkqKTJgBaWfrU8Dxo3Iobepn+d0+oBt2mmFNGEhevTv1hLAzxdzST?=
- =?us-ascii?Q?7F30nfq6Sag2atu3bgQUjkcoh0cTlLaSY8nxJpVxhbPTxuJ9pcIpDBNwKqIS?=
- =?us-ascii?Q?CzvB/e0FFx5YzAhvnvbEgGXfLTQsNlrBiL5sS33kRlBgdL7XXC2iPMSgHW3F?=
- =?us-ascii?Q?OgSSuZ3wCl8IHOFtM34Y7nB5PgyFs9FxVJk4Zkev7A0ewloaWDwJTTzRSQ?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 08:14:56.1773
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ajVkb+ZHCRjtMsqrGlzFlF3dt/7XUvRBcSUQZ3YSYBLV38q6hYMxqzcutLoa?=
+ =?us-ascii?Q?iSl42PLrWtH+Iw/8ifrZdmZfE0zH9Ybbuz2AzEbiatOg7fL8UvQoMyt8n0il?=
+ =?us-ascii?Q?S8nW+sTX3mKNfibQVqvf8sAYtZDexM825HDA/kWoR5apzR1r2Mu5bGXVsKli?=
+ =?us-ascii?Q?wbBVyIxGTBj1gfxw6whEtQTd+5fYwBd83FESmsZLPPUsAL9cuQv06K/NcAba?=
+ =?us-ascii?Q?nLSW5bclPaOfKIg29m3yOMCoAuMrzz9Z390mxi9Lf/XGyV6Do5O3R8Q0K9Fe?=
+ =?us-ascii?Q?t95uaA8xTbmr6xUd+m+hXg4hK7E7UObl0y/IHbrcmcUQd/t5Ft/TDE/BdSm/?=
+ =?us-ascii?Q?OSRZNVByFL8blQ4WBLMaXKp+C+DErKyR8yTqKk01alrhdVkEdgxnVU9M1g7R?=
+ =?us-ascii?Q?Q3d6Vle/xnkDV+MDsd3Rq+Zfo3za1GrkCmpMM7mHbKd+R43V8/bvSVLvQ++N?=
+ =?us-ascii?Q?+77AHhUeSfO5s1wS0nhaaIAfp40tbVfdka55Ej7c96baljtZhs8NTF28KfS4?=
+ =?us-ascii?Q?rcl0iz3+zbwkgEnAMBrQMqc+ittN8h/H/QayCCLogIqD2J1zVUNmvqueGRJQ?=
+ =?us-ascii?Q?p6SNaBHGX5wkFM0iDWrDTUl61GtZcsxPyIuW7+kiGSNuaIjCyHFKu+xwR/mt?=
+ =?us-ascii?Q?qmdXO/xc1t5C7raO4RR5eigUPhFwkai5XwAiPNUpnhN7spvRPBj4mNrlTrII?=
+ =?us-ascii?Q?Pj91ZF1YZr2hcGCL54RWv/y6AcEDqX7i69K2ctQXmsNz9lTTMiK1H+jnBMkX?=
+ =?us-ascii?Q?mJJGX3cBkxV39+fJYD68PnIC9QPYnu8AsXYt5iqlXw/Sw8GYAA+4JbxmJNra?=
+ =?us-ascii?Q?+VxVjPLP6piD99kN7w5tsm+ho+XaQ2/Gn/Eosr1+w6dVeWZIigfnux491LiF?=
+ =?us-ascii?Q?/wBsQTbLESdO/Yd6FeAxkH8vBj9DCYRrgim/9Ksl12wOdKaMqGHY7jfZ00ae?=
+ =?us-ascii?Q?SRSFKwjVwF/ntb4R/sh1F5JJF5jjbU/O/SKihqPi3caVgEFIzCSClA395MHb?=
+ =?us-ascii?Q?XV9N6YqH/rnTaLTA+Nbn6RXjLKnHRZhhu35OUVKVAuWlA5lYRhb7JbrbL+vu?=
+ =?us-ascii?Q?KyaWIYhyxA2cj2dZGicLYV/D6gauwNcjjPp0k9r2ykapdeYUq4AroRb1h/ew?=
+ =?us-ascii?Q?VGqSXSSXxpEqWotZ6v5m0C8SD0cBAtTeuFOZeZqZasv/GjU0x1EGPTYGO0a6?=
+ =?us-ascii?Q?bzxeyUXgL7SL6/V0IXT7faCg030MV4nDGJt9CEUkSZWue9YNTkB2Tj2GUUGv?=
+ =?us-ascii?Q?oEqYCxLW3RjeRIIByps78Be6P3uhsIwPhGTHxoV+kaQp8PpawxKBNiuwtZ8L?=
+ =?us-ascii?Q?0IrBbygPCdyZyM0V2QL2O9+rAX+6YUvcRyh4X1n6YRylUpxHKzYpVPzlcZ+u?=
+ =?us-ascii?Q?QYvPRrtgqzD6EL4xWnpA4Qz/xTnMuNqR//W17gxY6HrlpVYPSg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8673.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ZzYjekPWmk5h8+G7hIW6/ZFSR1uQj8yGfdxvbBkyLxUrY4lhTJyO5yOQzRUd?=
+ =?us-ascii?Q?lsFJbtGU9j77ueSln80k73dRyRWNa7NDAJT17hJ58tMozV/3GREM7RDTkmb6?=
+ =?us-ascii?Q?+I+xIgMxfOLsDCzNjbrO8YcUZpTjee1YOycdYz38kDpBoCNgDVaWCeNKaiCa?=
+ =?us-ascii?Q?l3oyH+CTZizdQyxi8/Q/nKZyOw/7sxdcd39Kj5LNKjyU4fytCMCoZ52qEOHY?=
+ =?us-ascii?Q?vcCcVTyUz2rRIrq/L5+nJflno4PdZ6Sm2u4l+9tx3Edgac6gABNWFORxBzkz?=
+ =?us-ascii?Q?S5evE9OCCK28mENIg/Km83wre2C5B9uYMfiVRYikmgi7tGuPioIgu516Do/g?=
+ =?us-ascii?Q?x2TMVQejhn0gsZETpp7H6R7scj8E94RRPlNNAz8DKkmZqK5KrBlKh/i3QylN?=
+ =?us-ascii?Q?VYBG7xv0c9gCQKBEsm+CHT4Yaze7BuJiF5sqVY3xOHb1/mDcj8HjstezamBH?=
+ =?us-ascii?Q?QpyV6H5nyKEJ2Rwl6aL2rBlMdwkp4wW/dEtuc/zXzNbMpxUQMiu35s01DP3S?=
+ =?us-ascii?Q?lJPgUUgvTvyqxOeEDQH1DQda/2nTXVgOyvKf4tl2MvwuzpKp82IV7AiBDOk7?=
+ =?us-ascii?Q?y0dSoFXhqj6DgVoiKm++HNYsRpZdLcEETvRkqNw+/bjKkUPkYEwQfdEaZkQ2?=
+ =?us-ascii?Q?JN+ognjykBTGGqigxufVybhEZCSiAmw0qcURUzGyXp5cnBicAzfjww400iJZ?=
+ =?us-ascii?Q?eSpEbn9nyGJJ5VHtpWMc2+287GqLN1yHVTlh9jufcs1w4519w7mgqWNm/uwo?=
+ =?us-ascii?Q?MSBvxDnGucbSpbs/w/A/NsoHm1CYneW0Tjv0+eLL/LIEaLZC3VqD/sPpzvMs?=
+ =?us-ascii?Q?u1l7ZUNi8gezxY+zONKiDte20fwHtizQobux9E7AKkFlOQO55dpdGQMQJkga?=
+ =?us-ascii?Q?JqevqPUu0fC81uhXqqGEUWsXpXACMYGR5IWexSVKHvhBd4FQzM0hWJ5pZ4ut?=
+ =?us-ascii?Q?xWj6z+IRGTmNLZJmDwzr9coSXiV8lwmkXG//TB+TtzILlZL022BR37Aiec4w?=
+ =?us-ascii?Q?ltB8geXBbBVnBzhXid9PmhEbLX6t3J3K04u6dN5pCkzZpV0ZnGwm/bGkX0iu?=
+ =?us-ascii?Q?F7NhV1xDNtP2gbdgkRV7wYM+sWqG1p8PrQ2i0ThwcB2+0xfWAUltDcRx/CzP?=
+ =?us-ascii?Q?B14ZNyn8ooWN5GmDcRvGge7GdmmbhYIS54Thcl9qfAGVx3NbMDUC5baRcycm?=
+ =?us-ascii?Q?wKrB/6+We8+cwrWOoFjRAJ5rmbdJ8Xa4H7DAAcBpoqkP6v7rZEfn+9ZJvE5j?=
+ =?us-ascii?Q?QE0S7PeGm6/whezpASpxMWUtIYMhtEU5ajwaGRIA51AuF5iiZTkxBRVbPkdP?=
+ =?us-ascii?Q?QoGEc8wt46jLSquL/0uqiczPSXjWVsnYIW2NDJO75jEOTQthAfqyqXoVMmMV?=
+ =?us-ascii?Q?8Sa51xrqthCNa/EBXTBqtzcJXX6qmyhyT4eOSCALV+ZBlNaZKI2ZDso4rLbF?=
+ =?us-ascii?Q?jD77SQ6iq3uXGX8q8w7q3ML8MvPTA1XC4crlPtwseOaJnZCyCRlue2Andyze?=
+ =?us-ascii?Q?/IJ4p9ElGN5SyCONIYlpLpCtcLYtNOHbLfRv4BYVHfb4caR/muaaNkb+mzIN?=
+ =?us-ascii?Q?pZcyBfnRqEn0eIyz3FppdMWezD7akd3Nl4L8Ou9XMQTs8BmL1LG7MEuhmvEM?=
+ =?us-ascii?Q?9A=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66788a0f-b795-4ccc-281b-08dd78d0fb94
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8665.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 08:15:30.4872
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2a74526-e280-45b7-c5ee-08dd78d0f1e2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989E7.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7608
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: p74gEimsgWDpveTX0kgZ47Yh/6eQidzw71EFT2OQbjkPAaliNkZwexaqLtroBN2qA15H6yFbYsmbW9Xc/hJ/DA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5136
+X-OriginatorOrg: intel.com
 
-When working on dynamic ITMT priority support, it was observed that
-"asym_prefer_cpu" on AMD systems supporting Preferred Core ranking
-was always set to the first CPU in the sched group when the system boots
-up despite another CPU in the group having a higher ITMT ranking.
+On Thu, Apr 10, 2025 at 04:54:35PM +0200, Marcus Wichelmann wrote:
+> Am 10.04.25 um 16:30 schrieb Michal Kubiak:
+> > On Wed, Apr 09, 2025 at 05:17:49PM +0200, Marcus Wichelmann wrote:
+> >> Hi,
+> >>
+> >> in a setup where I use native XDP to redirect packets to a bonding interface
+> >> that's backed by two ixgbe slaves, I noticed that the ixgbe driver constantly
+> >> resets the NIC with the following kernel output:
+> >>
+> >>   ixgbe 0000:01:00.1 ixgbe-x520-2: Detected Tx Unit Hang (XDP)
+> >>     Tx Queue             <4>
+> >>     TDH, TDT             <17e>, <17e>
+> >>     next_to_use          <181>
+> >>     next_to_clean        <17e>
+> >>   tx_buffer_info[next_to_clean]
+> >>     time_stamp           <0>
+> >>     jiffies              <10025c380>
+> >>   ixgbe 0000:01:00.1 ixgbe-x520-2: tx hang 19 detected on queue 4, resetting adapter
+> >>   ixgbe 0000:01:00.1 ixgbe-x520-2: initiating reset due to tx timeout
+> >>   ixgbe 0000:01:00.1 ixgbe-x520-2: Reset adapter
+> >>
+> >> This only occurs in combination with a bonding interface and XDP, so I don't
+> >> know if this is an issue with ixgbe or the bonding driver.
+> >> I first discovered this with Linux 6.8.0-57, but kernel 6.14.0 and 6.15.0-rc1
+> >> show the same issue.
+> >>
+> >>
+> >> I managed to reproduce this bug in a lab environment. Here are some details
+> >> about my setup and the steps to reproduce the bug:
+> >>
+> >> [...]
+> >>
+> >> Do you have any ideas what may be causing this issue or what I can do to
+> >> diagnose this further?
+> >>
+> >> Please let me know when I should provide any more information.
+> >>
+> >>
+> >> Thanks!
+> >> Marcus
+> >>
+> > 
+> > Hi Marcus,
+> 
+> Hi Michal,
+> 
+> thank you for looking into it. And not even 24 hours after my report, I'm
+> very impressed! ;)
+> 
+> > I have just successfully reproduced the problem on our lab machine. What
+> > is interesting is that I do not seem to have to use a bonding interface
+> > to get the "Tx timeout" that causes the adapter to reset.
+> 
+> Interesting. I just tried again but had no luck yet with reproducing it
+> without a bonding interface. May I ask how your setup looks like?
+> 
+> > I will try to debug the problem more closely and let you know of any
+> > updates.
+> > 
+> > Thanks,
+> > Michal
+> 
+> Great!
+> 
+> Marcus
+>
 
-"asym_prefer_cpu" is cached when the sched domain hierarchy is
-constructed. On AMD systems that support Preferred Core rankings, sched
-domains are rebuilt when ITMT support is enabled for the first time from
-amd_pstate*_cpu_init().
+Hi Marcus,
 
-Since amd_pstate*_cpu_init() is called to initialize the cpudata for
-each CPU, the ITMT support is enabled after the first CPU initializes
-its asym priority but this is too early since other CPUs have not yet
-initialized their asym priorities and the sched domain is rebuilt only
-once when the support is toggled on for the first time.
+> thank you for looking into it. And not even 24 hours after my report, I'm
+> very impressed! ;)
 
-Initialize the asym priorities first in amd_pstate*_cpu_init() and then
-enable ITMT support later in amd_pstate_register_driver() to ensure all
-CPUs have correctly initialized their asym priorities before sched
-domain hierarchy is rebuilt.
+Thanks! :-)
 
-Clear the ITMT support when the amd-pstate driver unregisters since core
-rankings cannot be trusted unless the update_limits() callback is
-operational.
+> Interesting. I just tried again but had no luck yet with reproducing it
+> without a bonding interface. May I ask how your setup looks like?
 
-Remove the delayed work mechanism now that ITMT support is only toggled
-from the driver init path which is outside the cpuhp critical section.
+For now, I've just grabbed the first available system with the HW
+controlled by the "ixgbe" driver. In my case it was:
 
-Fixes: f3a052391822 ("cpufreq: amd-pstate: Enable amd-pstate preferred core support")
-Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
----
-v1..v2:
+  Ethernet controller: Intel Corporation Ethernet Controller X550
 
-o Retained the name amd_pstate_init_prefcore() (Mario)
+Also, for my first attempt, I didn't use the upstream kernel - I just tried
+the kernel installed on that system. It was the Fedora kernel:
 
-o Moved sched_set_itmt_support() towards the end of
-  amd_pstate_register_driver() to address mode switch scenarios.
+  6.12.8-200.fc41.x86_64
 
-o Disable ITMT support when driver unregisters to prevent incorrect ITMT
-  behavior in absence of update_limits() callback.
 
-v1: https://lore.kernel.org/lkml/20250409030004.23008-1-kprateek.nayak@amd.com/
----
- drivers/cpufreq/amd-pstate.c | 25 ++++++++-----------------
- 1 file changed, 8 insertions(+), 17 deletions(-)
+I think that may be the "beauty" of timing issues - sometimes you can change
+just one piece in your system and get a completely different replication ratio.
+Anyway, the higher the repro probability, the easier it is to debug
+the timing problem. :-)
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index c54c031939c8..b961f3a3b580 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -794,16 +794,6 @@ static void amd_perf_ctl_reset(unsigned int cpu)
- 	wrmsrl_on_cpu(cpu, MSR_AMD_PERF_CTL, 0);
- }
- 
--/*
-- * Set amd-pstate preferred core enable can't be done directly from cpufreq callbacks
-- * due to locking, so queue the work for later.
-- */
--static void amd_pstste_sched_prefcore_workfn(struct work_struct *work)
--{
--	sched_set_itmt_support();
--}
--static DECLARE_WORK(sched_prefcore_work, amd_pstste_sched_prefcore_workfn);
--
- #define CPPC_MAX_PERF	U8_MAX
- 
- static void amd_pstate_init_prefcore(struct amd_cpudata *cpudata)
-@@ -814,14 +804,8 @@ static void amd_pstate_init_prefcore(struct amd_cpudata *cpudata)
- 
- 	cpudata->hw_prefcore = true;
- 
--	/*
--	 * The priorities can be set regardless of whether or not
--	 * sched_set_itmt_support(true) has been called and it is valid to
--	 * update them at any time after it has been called.
--	 */
-+	/* Priorities must be initialized before ITMT support can be toggled on. */
- 	sched_set_itmt_core_prio((int)READ_ONCE(cpudata->prefcore_ranking), cpudata->cpu);
--
--	schedule_work(&sched_prefcore_work);
- }
- 
- static void amd_pstate_update_limits(unsigned int cpu)
-@@ -1196,6 +1180,9 @@ static ssize_t show_energy_performance_preference(
- 
- static void amd_pstate_driver_cleanup(void)
- {
-+	if (amd_pstate_prefcore)
-+		sched_clear_itmt_support();
-+
- 	cppc_state = AMD_PSTATE_DISABLE;
- 	current_pstate_driver = NULL;
- }
-@@ -1238,6 +1225,10 @@ static int amd_pstate_register_driver(int mode)
- 		return ret;
- 	}
- 
-+	/* Enable ITMT support once all CPUs have initialized their asym priorities. */
-+	if (amd_pstate_prefcore)
-+		sched_set_itmt_support();
-+
- 	return 0;
- }
- 
-
-base-commit: 56a49e19e1aea1374e9ba58cfd40260587bb7355
--- 
-2.34.1
+Thanks,
+Michal
 
 
