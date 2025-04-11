@@ -1,97 +1,81 @@
-Return-Path: <linux-kernel+bounces-600110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83CAA85BF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78675A85C0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F5019E3A60
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:36:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 756423AD2CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC60296148;
-	Fri, 11 Apr 2025 11:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtzGtOeI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6CF290081;
+	Fri, 11 Apr 2025 11:36:42 +0000 (UTC)
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A17202C43;
-	Fri, 11 Apr 2025 11:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E701D20371E
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 11:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744371330; cv=none; b=p3AH10HyaKXepHNWBYX6yf6r7ZVE6Cgafio87Fn28ORCo65rsShWOyYtf89WtmikKHBvFU43d7SWxRiydtQD0gnqY3b8kyb3x2TdK6/fGe3wg5pEImEkZpcABeODmE7bdGWTT5nmmSa6GOHi5AhBecvnHiUJDZ6LcnNCDJTe3XU=
+	t=1744371402; cv=none; b=qybQoenZevnCvtjFEfKWU+Kbtodv9YspAqEe7zKo5nlpv+/sbqCtgL2sCw15iP1/3qFJ36rKRmHazts37v7G6+b0jMliCxiiUlIG70EXfQZwUBuSwTueqHSQaEx+Iy1WpUEXNDz5kgTKCIEZexkZBE4RcILX3rufCxizH2wEe84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744371330; c=relaxed/simple;
-	bh=ZHpRmlxi0N8UYKKEPd33twsru7ukxPU6RRFGjJueWLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GR9d9IrlhQ4YF8mqEwKRiX5HcYx7As2oaGNaAlxJvH5dDhH1N2722LfqklKGLEmGGEU4uM2/hDPPK9oPh2siNRMlI39WrrhFxhqEZn4f6XdbR4u1y6r4NzdrtG/9wRH0sM7NkwrTyOu44qw4w36LmvjNSRFO8IhnSNdxI7ZcU6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtzGtOeI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59453C4CEE7;
-	Fri, 11 Apr 2025 11:35:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744371330;
-	bh=ZHpRmlxi0N8UYKKEPd33twsru7ukxPU6RRFGjJueWLo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YtzGtOeI6RXdDJWLkuG5+oLCHHjqqKyUaVr2+/eUUMUheu1SmJnT6/0CQ4pdeGN7f
-	 8EWsWZniLDnUaLfdMuk3dovnwAJNuhDT6vw77iXrXgvt/gl9Dbjqkrx0fX2LHO/xYy
-	 DbWJ+ZhoBUjskHCl+2X4/go5vHczuBFY/U78BDFyXArgnr6s85mq4R2r2A6BCOSGpI
-	 CYJ2nY5E64Qb1NzaazPOLgk9DJ07KZw2+mclhd30BETTwy4kPfogwBg8cfwV7EtrNj
-	 AMMq9TqDQpDP3i6Q16wZ+UgE1DGwLv7t8vWcZIZXjHn3bfywfB93OPxnBbJjqvuLUy
-	 qrIYtHqYbF3Hg==
-Date: Fri, 11 Apr 2025 17:05:26 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-	Varadarajan Narayanan <quic_varada@quicinc.com>,
-	Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: qcom-qusb2: Update the phy settings for IPQ5424
-Message-ID: <Z/j+fs6hCVhGKLcH@vaman>
-References: <20250407-revert_hs_phy_settings-v1-1-ec94e316ea19@oss.qualcomm.com>
- <Z/i+6k6VseihdQ69@vaman>
- <734cf70a-1d96-4a87-bc7e-c070c1e7dc8c@oss.qualcomm.com>
+	s=arc-20240116; t=1744371402; c=relaxed/simple;
+	bh=zGnF/xU6fd+UG5HzQgAWrDDWXcrOrUQBBZctL7R6qiI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=VTbVgyH5/3EquyBo8kcN9ucrS4njhxueF7yLms8BidIRIDdAW9taGUTYKGmo9MqdfqLob15EBuhMHNyB2zgXR/sjCbYhi0pcyj+hGcZUZGppcvTjUdduXRkl9zmxClORz3Ot4wbayO8ld6ywSs2/6LPy2XX/CBKK4z5MTr+2EYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4ZYvlf1QDGz9shw;
+	Fri, 11 Apr 2025 13:36:30 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <734cf70a-1d96-4a87-bc7e-c070c1e7dc8c@oss.qualcomm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 11 Apr 2025 13:36:27 +0200
+Message-Id: <D93S1SHPJDDU.INJ3UWZUM1UY@buenzli.dev>
+Cc: "Steven Rostedt" <rostedt@goodmis.org>, "Andy Shevchenko"
+ <andriy.shevchenko@linux.intel.com>, "Rasmus Villemoes"
+ <linux@rasmusvillemoes.dk>, "Sergey Senozhatsky"
+ <senozhatsky@chromium.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: Exporting functions from vsprintf.c for Rust
+From: "Remo Senekowitsch" <remo@buenzli.dev>
+To: "Petr Mladek" <pmladek@suse.com>
+References: <D931ZH9KRY2E.2D7HN6QWELGFJ@buenzli.dev>
+ <Z_jj_8vvmWY-WuTU@pathway.suse.cz>
+In-Reply-To: <Z_jj_8vvmWY-WuTU@pathway.suse.cz>
 
-On 11-04-25, 14:29, Kathiravan Thirumoorthy wrote:
-> 
-> On 4/11/2025 12:34 PM, Vinod Koul wrote:
-> > On 07-04-25, 19:51, Kathiravan Thirumoorthy wrote:
-> > > Update the phy settings for IPQ5424 to meet compliance requirements.
-> > Can you specify which requirements are these?
-> 
-> The eye diagram (Host High-speed Signal Quality) tests are failed with the
-> current settings. So design team asked to revert.
+On Fri Apr 11, 2025 at 11:42 AM CEST, Petr Mladek wrote:
+>
+> Honestly, I do not have a good feeling about exporting the internal
+> vsprintf() functions. They have a very specific semantic.
+>
+> Especially, they return pointer to the next-to-write character.
+> And it might be even beyond the given *end pointer. It is because, for
+> example, vsnprintf() returns the number of characters which would
+> have been written to the buffer when it was big enough.
+>
+> Instead, I suggest to create a wrapper which would have a sane
+> semantic and call scnprintf() internally. Something like:
+>
+> int fwnode_full_name_to_string(char *buf, size_t size,
+> 			       struct fwnode_handle *fwnode)
+> {
+> 	return scnprintf(buf, size, "%pfwf", fwnode);
+> }
 
-That would be good to mention in changelog.. am sure you wont recall 6
-months down the line, which requirement this triggered the change!
+That makes sense. I tried your suggestion and it works, thank you!
 
-> > > The current settings do not meet the requirements, and the design team
-> > > has requested to use the settings used for IPQ6018.
-> > > 
-> > > Revert the commit 9c56a1de296e ("phy: qcom-qusb2: add QUSB2 support for
-> > > IPQ5424") and reuse the IPQ6018 settings.
-> > Why not do revert first and then add the settings?
-> 
-> 
-> I thought of submitting it separately. But what-if only the first patch
-> merged and second one didn't due to some issue, it will break the USB
-> feature. So, I thought it would be better to keep it in single commit.
-> Please let me know, I can send V2 with 2 patches with the merging strategy
-> (both patches should go together to avoid the USB breakage) in cover letter.
-
-Series is applied together and you can mention the dependency on cover
-letter
-
--- 
-~Vinod
+Best regards,
+Remo
 
