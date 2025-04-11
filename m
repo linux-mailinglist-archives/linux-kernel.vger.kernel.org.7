@@ -1,135 +1,131 @@
-Return-Path: <linux-kernel+bounces-600795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD5DA86492
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:22:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B9CA8649C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39D4C16B8FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:21:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6C0188B3F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A6122E3FA;
-	Fri, 11 Apr 2025 17:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AEE230274;
+	Fri, 11 Apr 2025 17:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pzXMU6+7"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ho9QR8jJ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360AB22CBE6
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 17:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B895123024D;
+	Fri, 11 Apr 2025 17:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744392082; cv=none; b=QEoqauM8qFr5aTWre4TJZ63kjzSeocVEB7s7CVHNMpwpSHiiFFI6MINTqWPmg2ar8D86ZVudSUPGDfgi0PZ1Gl7k4wMJOOC/pbHYL05SueRCukS+ctIQc3/8UWuUt0nqku95o+4ouWsAgyjIx/O1i9R2a6wtQjdIiIYm1UXViw8=
+	t=1744392142; cv=none; b=F7IE+Eprw/9nNLSv7pFda0dvdrq6IAv7uW/qxdpVgvvd85gAiPZidTToFfzvAk6HgHGCd/6guQiP0rhkJ8dBfuUnp4d8kcq7JJh4s+1yrodylXxA9oH4nvBdz+D2sdwslkJY4vwMXIn6aD1h6i03yWtc5F4xNyd3WWZx6OfVcLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744392082; c=relaxed/simple;
-	bh=9R9uLvsmeGoe14eRCjcItaLOJaEEHinQ3mbc0RgE83Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZlJiQhKeDefAQCXOVbHGAzUdBWN9vrJqLUprw2KmfzcQxfH0ddQU4gtIw0jvxQXwtuSgdVdklPYTSyDz1EOX1iXQnlMCwADY/+jONqYtNY9iEEUkMZsPi1HH5gl80e3d2BlKsFUliqxpwAffJL1kehZ5aeByA02ySm4rVfyB0ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pzXMU6+7; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22403cbb47fso25175175ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:21:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744392079; x=1744996879; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ptvUoeOx/AZMyIxL2MXssLTygn46TbSRcNaMqbuDt2w=;
-        b=pzXMU6+74I1NKFQ4cCgXfY8uvYLZQtI3NJ8sGbYBpso31b0ADraTDwbo5jkqA5c/Q1
-         JzfnL0+nJEnY6UgYKDzjMtm+hbahUw1R0wym2ZKoJyS2UcmYuFQTvjO3s5swkMe1i5hC
-         PjL5dVwpGmR2bI95+fLxJn0P1hWvXHZErPU0T8WEehUz1WYfhr7s+FCv+ij2f8O+YHcK
-         UmIDUmmCop7l+x6zg7Bcz/3rRoGbzd0r+tqj4GPbLck9ivGKMWf4B8VDn7Cv7O65Bz8J
-         ohQn+wVu6/jlfbKFfwipWsYQ+5jriS47dAYCJmT3jVVGQPRnRc2a3GyfVVb/1/v7OxxS
-         v17Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744392079; x=1744996879;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ptvUoeOx/AZMyIxL2MXssLTygn46TbSRcNaMqbuDt2w=;
-        b=TDj5s334yx3pFwXsodbOvBnINi/YMw5R4ZJT8lHlI2zRgN9xc982At7qMMEX+UfseN
-         E5JGaTviUb0Us5rDkfLRWfcye4qaHfgVyCqO1dHIBVM6gXYudmHrkT+B0nVCFAvjrzAf
-         HYBIHXJ68gNTk/gFQcPe08jlDStgEJkk/TaDoJZhOrnU2mPmt3AyigqTNq7PuvHsVMSE
-         XfTbWXSmbw1a4ESeoj5P0/aFNDuJnAmnyf8dqQBmVtZXQ8QRaZuNewGYOAGzbohGP0va
-         tecxw0+Y6/wy/nppdPBAM5m4TTfdonpyF3BmjgWqYPgXTtCkwRwjFewhTm2laU/B8x/1
-         NkIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbZNTABsFPh/c8Q1IyUJQrEUNyvFue1WnRgzfc5ftmi6Nf1LgCcYtqGSNobjqPYJWe0kGJBbB6gvow4Yg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO7ao2lNSKBQV3jZbd3QhFI5fP4fFjER3dyrPBB18daobNUsvN
-	tY9/LG65Zrsyw3exX9NT+UWtwBOHPv09NZwj18LDpyydsprvfzeu9dW4vMWNYA==
-X-Gm-Gg: ASbGncv5Dc7tc/0gLCM7W8cbLzzDNzy5jc2yXz0UE8Fw7zRvLgv23F5t0gfq6rtBJYP
-	f400287VJx33DYRHCjsFjVmfYxIF1W0xY75Cf0z8jO1BzH9rrp6UMFflj2l1eb3sS7txPyRWzuq
-	6+hUewwtFQkF3UqL6bLqnyFwVqLm/UYhhFhtrsfyJZ8lIDz7rWO3EIUExVXso5N4jktWxn/c2WI
-	3Mo2ENjzr8FcPX1XQeeA+SbhkvkOa1DCHjKykwVZing+FH67DcKL40ffGC49HU45KvvrqBV7swq
-	r+w21v7d1zu7LowjTK43zsneontkP6V/AemPpgCGrMKT53nZ5ws=
-X-Google-Smtp-Source: AGHT+IEkpe799Pegl6qkMrJUuoyw8pAVbCt7hNjunwJoxR7oSK/mpaIPaCfCt7LHX0P/PK4I3bcdSg==
-X-Received: by 2002:a17:903:41ce:b0:224:11fc:40c0 with SMTP id d9443c01a7336-22bea4a3495mr53313805ad.11.1744392079396;
-        Fri, 11 Apr 2025 10:21:19 -0700 (PDT)
-Received: from thinkpad ([120.60.142.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b87885sm52538765ad.55.2025.04.11.10.21.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 10:21:19 -0700 (PDT)
-Date: Fri, 11 Apr 2025 22:51:13 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Manish Pandey <quic_mapa@quicinc.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, quic_nitirawa@quicinc.com, 
-	quic_bhaskarv@quicinc.com, quic_rampraka@quicinc.com, quic_cang@quicinc.com, 
-	quic_nguyenb@quicinc.com
-Subject: Re: [PATCH V3 0/2] scsi: ufs: Implement Quirks for Samsung UFS
- Devices
-Message-ID: <nziy3xvvduxeeav7umyvorguctatt7kw3tt6bvuvgwwn6knhbd@2nrs5wb5b2vb>
-References: <20250411121630.21330-1-quic_mapa@quicinc.com>
+	s=arc-20240116; t=1744392142; c=relaxed/simple;
+	bh=QCljS0hw9jKYBEZq4h0Bo4gAqwF4hc/z2hCoqHcj/+k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qMRWYffQLr5+k5Oc6OvhFhipRgG2/vbX3mEOJd49yxQRwGpxVSyed/m5P8rk2d/ZP5AgvqDrsqeH7xUd5FnRbfMnvHtwgZYgYJ2ej4htIv90M9qiwhJxcP2/GvE3iazRMsZyjfbtINPrwaYIH/DDN85Q0Jizf5vFfbsHZF9ih5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ho9QR8jJ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53BGjLkq024676;
+	Fri, 11 Apr 2025 17:22:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=WI7Lw1PTadnxACqs3n949dt5vWuUr+yt2TrxgU7cz
+	Bs=; b=Ho9QR8jJ0Wblqik1k7VZ9e6lJX1xPJPRcdiy+R5+FTaVQz0fSAV8KcIoG
+	OjwLRIgoLZIk7LSSoK2LjRAZhAFgYwnnfqS1d+171aV1ZF/Vz7GvZ6omQixJjoFl
+	KC8MIWHMfwngaIegqQ6KcZHmyb0wLJCKUu0i8gyI6+4e603fa//MaPs8/tYTp5ZC
+	gJyoY6QZiyeP9/RVWpgtdZhG8h/RlsmtbEKMrzHeah95ffA/QrPYBIn+L1P61WdW
+	5Fd/kjsf/dJT/aQg9cmD0B+KCTXrXKkSdJwZSzgFaDQsVRjj2c3TafQyap4/OHyu
+	eFu79frX7M81WeIfsVAHieJce2y9Q==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45xufabqeh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 17:22:14 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53BGXgc6029517;
+	Fri, 11 Apr 2025 17:22:13 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45x1k79utc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 17:22:13 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53BHMAtn55443764
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Apr 2025 17:22:10 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1C00C2004E;
+	Fri, 11 Apr 2025 17:22:10 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8026020040;
+	Fri, 11 Apr 2025 17:22:09 +0000 (GMT)
+Received: from heavy.ibm.com (unknown [9.171.71.74])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 11 Apr 2025 17:22:09 +0000 (GMT)
+From: Ilya Leoshkevich <iii@linux.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>
+Subject: [PATCH] ftrace: Fix type of ftrace_graph_ent_entry.depth
+Date: Fri, 11 Apr 2025 19:21:41 +0200
+Message-ID: <20250411172207.61332-1-iii@linux.ibm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250411121630.21330-1-quic_mapa@quicinc.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: J4N7nojZ-DOIOCKeuLIr1PGkUZb2i5Du
+X-Proofpoint-ORIG-GUID: J4N7nojZ-DOIOCKeuLIr1PGkUZb2i5Du
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_06,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 adultscore=0 spamscore=0 bulkscore=0 mlxlogscore=854
+ clxscore=1011 suspectscore=0 malwarescore=0 mlxscore=0 impostorscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2504110106
 
-On Fri, Apr 11, 2025 at 05:46:28PM +0530, Manish Pandey wrote:
-> Introduce quirks for Samsung UFS devices to modify the PA TX HSG1 sync
-> length and TX_HS_EQUALIZER settings on the Qualcomm UFS Host controller.
-> 
-> Additionally, Samsung UFS devices require extra time in hibern8 mode
-> before exiting, beyond the standard handshaking phase between the host
-> and device. Introduce a quirk to increase the PA_HIBERN8TIME parameter
-> by 100 µs to ensure a proper hibernation process.
+ftrace_graph_ent.depth is int, but ftrace_graph_ent_entry.depth is
+unsigned long. This confuses trace-cmd on big-endian systems and makes
+it print a huge amount of spaces. Make the types match.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Fixes: ff5c9c576e75 ("ftrace: Add support for function argument to graph tracer")
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+---
+ kernel/trace/trace_entries.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-- Mani
-
-> ---
-> Changes in V3
-> - Addressed Mani's comment and updated commit message.
-> - used BIT macro in ufs-qcom.h to define quirks.
-> Changes in V2
-> - Split patches to add PA_HIBERN8TIME quirk in ufshcd.c
-> 
-> ---
-> Manish Pandey (2):
->   ufs: qcom: Add quirks for Samsung UFS devices
->   scsi: ufs: introduce quirk to extend PA_HIBERN8TIME for UFS devices
-> 
->  drivers/ufs/core/ufshcd.c   | 29 +++++++++++++++++++++++++
->  drivers/ufs/host/ufs-qcom.c | 43 +++++++++++++++++++++++++++++++++++++
->  drivers/ufs/host/ufs-qcom.h | 18 ++++++++++++++++
->  include/ufs/ufs_quirks.h    |  6 ++++++
->  4 files changed, 96 insertions(+)
-> 
-> -- 
-> 2.17.1
-> 
-
+diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+index ee40d4e6ad1c..ac6374b47fe3 100644
+--- a/kernel/trace/trace_entries.h
++++ b/kernel/trace/trace_entries.h
+@@ -80,11 +80,11 @@ FTRACE_ENTRY(funcgraph_entry, ftrace_graph_ent_entry,
+ 	F_STRUCT(
+ 		__field_struct(	struct ftrace_graph_ent,	graph_ent	)
+ 		__field_packed(	unsigned long,	graph_ent,	func		)
+-		__field_packed(	unsigned long,	graph_ent,	depth		)
++		__field_packed(	int,		graph_ent,	depth		)
+ 		__dynamic_array(unsigned long,	args				)
+ 	),
+ 
+-	F_printk("--> %ps (%lu)", (void *)__entry->func, __entry->depth)
++	F_printk("--> %ps (%d)", (void *)__entry->func, __entry->depth)
+ );
+ 
+ #ifdef CONFIG_FUNCTION_GRAPH_RETADDR
 -- 
-மணிவண்ணன் சதாசிவம்
+2.49.0
+
 
