@@ -1,124 +1,258 @@
-Return-Path: <linux-kernel+bounces-600469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A36EA8604A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:18:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 242B5A8603B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8967E1741DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:15:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C94517ABEFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BDA1F5828;
-	Fri, 11 Apr 2025 14:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033A31F3BAA;
+	Fri, 11 Apr 2025 14:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j86PcWch"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3Vq6il/s"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289691F4CBC;
-	Fri, 11 Apr 2025 14:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8EF1F30B3
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 14:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744380931; cv=none; b=BtYY0kQwxt/8l6TjpKwPnXB3Mv5aY8kUsJrA8K5Hi/plcqMPJBWaULKsx0JXyRb729802hinu79Oq28tgPggvjdiUNzn0Q7PTrBq1Eg9LOpwSzGwsFGpTAA0btwQGSbRdrqFNHtFI8myzeVpBP+AXYMxCyrSPbfL1H4agAJAHds=
+	t=1744380892; cv=none; b=OFjzbMTR4M7ddm8gxa5wMxoFxAu1YwdWfgfhf7I+qhPz3L+92Q87HIGpZSJ/3rfah6nGJzyM6U33QQDmXpFlPCtxq1U+awPLiVGrq7bM13Znk6RxSAflNm5AlE5l18PrR45ndZrcyA5KzJNAQLhIEUybAj1UDtWfQ/swNW+JSgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744380931; c=relaxed/simple;
-	bh=bw+p5SNhnX6pOkgl0Ry3vJZPsdlpYeSd8CNTNZIG8aI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=O2+f07V5JItnSFkGRI8GFz//ONS12z2KwvHcqShjMIWL77XWd8L6HkY3CHT/yAUcRLo7CdUIWhYD4p497ff9cPkwL9Qatl8vhMxsYkrYyTMRH6ZSELbzQ6ZwJ7wzh1Tft2sAoEQk57pRBzIP1uDj4J8T89Xtl3KpaFJpzm96V3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j86PcWch; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2243803b776so28962845ad.0;
-        Fri, 11 Apr 2025 07:15:29 -0700 (PDT)
+	s=arc-20240116; t=1744380892; c=relaxed/simple;
+	bh=3I/jo4GVACXTfj3jcxaqe6QYqUY4G0brexzhnK0ZACQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N4oiIP3pSO8tsGyLG0XkbL55jmxEC5O4MNEheQxzIt0qRV4b8S7uakqi+nRQKvYJdchWf62cHU4jBGEkkQsoWTBusvPXxDodpn7ApspckZyckwnln+FPLWKN9DMTjBC3TgZ+HhfEWR/MN7kZK7PxQtemarGLnIB3m1k74xlRQtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3Vq6il/s; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39727fe912cso970930f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:14:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744380929; x=1744985729; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NSq0iC5oDVYO2Sr114HUoyiQ9ytidsd6EJphTwPnpOY=;
-        b=j86PcWch6eh738IOzvfs1sf7EzwfCNo82viN8Qsq+0WoTCVQXLgiQbjLs1ZuaOeRZm
-         izhh9qSVe3B8FXM633bA84xKS5ih4SIXPy/73EwhhdVefpLzzFTm7HYQUPsf72jnQMRN
-         1QM3H+aUTgJ2sCsHmJOwMjRjCO+Cxvvy32AUakTC8trs1WxZfvKmU4FpQFsd6G8OCWwr
-         B00F6+TBC5BUlSmlYkz/RtohCWV3fZhfCpx0PeQASxV3Sgrd3/DC45QHyxMstOIqNcC2
-         ZyVNoFBa968TNI0k20+y15ZCGAlpQuOG0loHjb6a4NEUTumMr3WPX6MsHChK5xVhZADV
-         4v1Q==
+        d=google.com; s=20230601; t=1744380888; x=1744985688; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KXMGF02aLSnVhhQjfgbwPODzDlrVvGFax9i6l7P95zQ=;
+        b=3Vq6il/sCVD5ZKXiwUv+117yMDTw/VyqFHjMo8Mo/xhN81MZnac0O6UPv0LG/zZZzu
+         qtp+f2IcAb73rselEvAG0EJUWXYD0in3jWUftxo6ls+332W6OtE35eVw/QH1B8ZGq9UG
+         17PGVdMMwMBSJmYdfYv+cFyYRyqy5H7wpfnIodAId/6d6ZNm8YC5gBWGNWhy/ntXqzw8
+         2zklx+jZCClTvAUtjwjM9BqrRQcx4o5Lv1i9iI6yelghgLAiOylCf5ZkuH0G4YsseFEg
+         S7hChU1ELbv42HCK9bs8YpcJRG+MzyrXQP1kuQmL56ZPhmkp5baJOPc/MT1ySOZy5via
+         Y2vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744380929; x=1744985729;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NSq0iC5oDVYO2Sr114HUoyiQ9ytidsd6EJphTwPnpOY=;
-        b=S6SbR1mGyxaFjlRHQi4BGmnkvSyDfxus3/0R7UNgAVysIlFItHlWlcAgLGc696zR5K
-         oqND49VrgRWClerme87g8NzG4IFCcZ+KbolvRjCVVFUX/mBJkTUBzSuKHqPdCpWSkBNJ
-         tklLyAzlxx36619q8JS+z1RUhzncwvxYxdA+eqTyRW3Q2OBTGuLDHlaPEIS9tZRTndwR
-         s1PTFJz44ej/wCWU2c1NuHtr0F4tN/BVp9m5lAL2+kHL7o4Mz3h+jOrvNwYjYiSu44/R
-         farxvXFnhq+Jfhgg/aMva4ZgrYUMCKgpkLBkcCioRhy/9fwh8aubXZ8TfndtuFpb7pqb
-         blog==
-X-Forwarded-Encrypted: i=1; AJvYcCVM3HMm9T8W0hYfg0lu/3pci0S242baEiPlU9z40l3Dg8nO+K2neesO+0vW4GxpcBlazDr4bTC6@vger.kernel.org, AJvYcCVWo+wenMqiUh7nGrjjZOzLvGSLd8U3i38LxJTVEXfkwxGdWRBtEXvPfEmajs+f3TTUoauPWOJ6C7OE4VM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWsjWIg4i+tiurOnnkA1r8YxWCQlcM6wcD/S0tXen8pW7bc/02
-	69cbtCNhhp+nnMI5OUhG/yqx9rtJc3vC37HeaTq1B/y+0u0AZ3sx
-X-Gm-Gg: ASbGncuoQEIwTP+ILx8RQFynaw+Pt5DX/Oeh/ofYNIP9l9s84DtCS0YvMVlTVDFcNVd
-	xmviWKRwKyrQ/AZKuwBmcfH95ekeYF79z85Awfi5bDhU1gXmThqBayS/iVrdaXtJC/5fMXVA3iC
-	6iOc7vddm970LbzBVgTRjtTkUvMZOA50qCEs//wJ7I/TeKhvwPmOsFzMn7bQpE8JlUo/kg1Zi+4
-	HsQy6YBJtO58kjy/ie0D4jH1ZcN4BU2lFdmeL5HEIWfTyqRTXr9zHxMqQ+dvcNH23Iat8zMCOnv
-	THhK3ncnV1JQrlf47js4qEVr2V1LMGTO5hcuVe5w
-X-Google-Smtp-Source: AGHT+IH/Xc9tf94+92Rkwg8MozsvgNOe2K98JTK8HgIrcsGLWh8rs77bvMZ/KPW7UA+oma8PtOE6zQ==
-X-Received: by 2002:a17:903:1450:b0:223:6180:1bea with SMTP id d9443c01a7336-22bea4ef0b3mr43856725ad.37.1744380929022;
-        Fri, 11 Apr 2025 07:15:29 -0700 (PDT)
-Received: from [192.168.1.26] ([181.91.133.137])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21c4e69sm1575899b3a.53.2025.04.11.07.15.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 07:15:28 -0700 (PDT)
-From: Kurt Borja <kuurtb@gmail.com>
-Subject: [PATCH 0/2] platform/x86: alienware-wmi-wmax: Extend support to
- more laptops
-Date: Fri, 11 Apr 2025 11:14:34 -0300
-Message-Id: <20250411-awcc-support-v1-0-09a130ec4560@gmail.com>
+        d=1e100.net; s=20230601; t=1744380888; x=1744985688;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KXMGF02aLSnVhhQjfgbwPODzDlrVvGFax9i6l7P95zQ=;
+        b=f+MUOQkMMN3DU00xQgVJOgZHloaX+RH7Rcp9WXxLuS8qFaRTHAQm+O1a1phhlolywV
+         NZtpQ+Wt4Uq34/xkG4HgbOq6vYfEcliEJWQI2gr7itFbYRw7DiF+d9fGmHo6QX+0wLRP
+         w4ajPT8QHqFoc7I5PDXL4gZIcMHCYo4w6S9rBa9D2CAXkcVneddBvUnbjTXuhP1v39tf
+         8is2DNh23pTn9h2Tez3igKVNF6Q6+IzoooKRdawxBSNzhPM/kLiNGxR1ggwitn2vtNIN
+         fhWw3ZiQgw2cWny1pfptJ7q0FaBHQ70ZEfdQunjR0rdqmZ5X8CuqbMpTIsTGM5pjRSkW
+         agYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHcURYHiiAgvahZUSEvf4/m6m9NjaednfiLfWNDP6qfx+Ca/na+yrVrz5LzwSI2z+ksf0A6uzGgDLax9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjyHn04DUxa6r7dNam+ioiQ3KfP4Xonz7ELAR4kn0oUG38RAWM
+	ZFx1aYjg37gSZ6jFgdWyPMSzg/2DjJ6bbmLevyCFtMgUi7bUgT9tBFYv3ATVvDm3KFhcNHwqFBE
+	+jIT4VYgYxbtnosWOOxZms+JxOOfRcmawSqdz
+X-Gm-Gg: ASbGncsVQxB/XhOJQ6SorU7SQ2e6Z6iRYUHqAoyd4BQNfO7dVQFC+/uf7fWzNde9aom
+	VM5ZXdYFJ5wdDAbvu5CnP3FRkgvLIybp8l8omHlw/9nhM0kMswSgVjK5nciT0m0zThHKzoz0s9e
+	2DWBWCcenObEuHlwgUA0u4GilQ+K+KT2s7HQ==
+X-Google-Smtp-Source: AGHT+IEvfllzR2JPfvaVSPMfFR259rJ0LInD1vvPV1cUQw8WY9tKKwVRF8+YuZkXX5HFgCCrO2dQv4csvUmAfS+p+8c=
+X-Received: by 2002:a05:6000:144f:b0:38d:dffc:c133 with SMTP id
+ ffacd0b85a97d-39eaaebc5c4mr2768779f8f.44.1744380888247; Fri, 11 Apr 2025
+ 07:14:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAMoj+WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDE0ND3cTy5GTd4tKCgvyiEt0040QLQ4tUQ3MzIyMloJaCotS0zAqwcdG
- xtbUAbkaUTF4AAAA=
-X-Change-ID: 20250411-awcc-support-f3a818e17622
-To: Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Armin Wolf <W_Armin@gmx.de>
-Cc: platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
- linux-kernel@vger.kernel.org, Kurt Borja <kuurtb@gmail.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.2
+References: <20250411-no-offset-v3-1-c0b174640ec3@gmail.com>
+In-Reply-To: <20250411-no-offset-v3-1-c0b174640ec3@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 11 Apr 2025 16:14:35 +0200
+X-Gm-Features: ATxdqUGt2HpUIhfbszKbRnHcJkw44XStGlH5K6VgtPiPDEF_Tvxme1ItV2cYEZU
+Message-ID: <CAH5fLgg6_U4OAnDXy1eM98ur=MZonnDq3tk2o=KAf+YXNPtBbQ@mail.gmail.com>
+Subject: Re: [PATCH v3] rust: workqueue: remove HasWork::OFFSET
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Apr 11, 2025 at 4:08=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> Implement `HasWork::work_container_of` in `impl_has_work!`, narrowing
+> the interface of `HasWork` and replacing pointer arithmetic with
+> `container_of!`. Remove the provided implementation of
+> `HasWork::get_work_offset` without replacement; an implementation is
+> already generated in `impl_has_work!`. Remove the `Self: Sized` bound on
+> `HasWork::work_container_of` which was apparently necessary to access
+> `OFFSET` as `OFFSET` no longer exists.
+>
+> A similar API change was discussed on the hrtimer series[1].
+>
+> Link: https://lore.kernel.org/all/20250224-hrtimer-v3-v6-12-rc2-v9-1-5bd3=
+bf0ce6cc@kernel.org/ [1]
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Tested-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-This two patches are based on the pdx86/fixes branch.
+Seems reasonable enough.
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-To: Hans de Goede <hdegoede@redhat.com>
-To: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: platform-driver-x86@vger.kernel.org
-Cc: Dell.Client.Kernel@dell.com
-Cc: linux-kernel@vger.kernel.org
-
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
----
-Kurt Borja (2):
-      platform/x86: alienware-wmi-wmax: Add G-Mode support to Alienware m16 R1
-      platform/x86: alienware-wmi-wmax: Extend support to more laptops
-
- drivers/platform/x86/dell/alienware-wmi-wmax.c | 48 ++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
----
-base-commit: d8455a63f731b4f585acc4d49fd7ad78db63b3d0
-change-id: 20250411-awcc-support-f3a818e17622
-
-Best regards,
--- 
- ~ Kurt
-
+> ---
+> Changes in v3:
+> - Extract first commit to its own series as it is shared with other
+>   series.
+> - Reword `HasWork` safety comment.
+> - Link to v2: https://lore.kernel.org/r/20250409-no-offset-v2-0-dda8e141a=
+909@gmail.com
+>
+> Changes in v2:
+> - Rebase on v6.15-rc1.
+> - Add WORKQUEUE maintainers to cc.
+> - Link to v1: https://lore.kernel.org/r/20250307-no-offset-v1-0-0c728f63b=
+69c@gmail.com
+> ---
+>  rust/kernel/workqueue.rs | 50 ++++++++++++++++--------------------------=
+------
+>  1 file changed, 17 insertions(+), 33 deletions(-)
+>
+> diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
+> index f98bd02b838f..d092112d843f 100644
+> --- a/rust/kernel/workqueue.rs
+> +++ b/rust/kernel/workqueue.rs
+> @@ -429,51 +429,28 @@ pub unsafe fn raw_get(ptr: *const Self) -> *mut bin=
+dings::work_struct {
+>  ///
+>  /// # Safety
+>  ///
+> -/// The [`OFFSET`] constant must be the offset of a field in `Self` of t=
+ype [`Work<T, ID>`]. The
+> -/// methods on this trait must have exactly the behavior that the defini=
+tions given below have.
+> +/// The methods [`raw_get_work`] and [`work_container_of`] must return v=
+alid pointers and must be
+> +/// true inverses of each other; that is, they must satisfy the followin=
+g invariants:
+> +/// - `work_container_of(raw_get_work(ptr)) =3D=3D ptr` for any `ptr: *m=
+ut Self`.
+> +/// - `raw_get_work(work_container_of(ptr)) =3D=3D ptr` for any `ptr: *m=
+ut Work<T, ID>`.
+>  ///
+>  /// [`impl_has_work!`]: crate::impl_has_work
+> -/// [`OFFSET`]: HasWork::OFFSET
+> +/// [`raw_get_work`]: HasWork::raw_get_work
+> +/// [`work_container_of`]: HasWork::work_container_of
+>  pub unsafe trait HasWork<T, const ID: u64 =3D 0> {
+> -    /// The offset of the [`Work<T, ID>`] field.
+> -    const OFFSET: usize;
+> -
+> -    /// Returns the offset of the [`Work<T, ID>`] field.
+> -    ///
+> -    /// This method exists because the [`OFFSET`] constant cannot be acc=
+essed if the type is not
+> -    /// [`Sized`].
+> -    ///
+> -    /// [`OFFSET`]: HasWork::OFFSET
+> -    #[inline]
+> -    fn get_work_offset(&self) -> usize {
+> -        Self::OFFSET
+> -    }
+> -
+>      /// Returns a pointer to the [`Work<T, ID>`] field.
+>      ///
+>      /// # Safety
+>      ///
+>      /// The provided pointer must point at a valid struct of type `Self`=
+.
+> -    #[inline]
+> -    unsafe fn raw_get_work(ptr: *mut Self) -> *mut Work<T, ID> {
+> -        // SAFETY: The caller promises that the pointer is valid.
+> -        unsafe { (ptr as *mut u8).add(Self::OFFSET) as *mut Work<T, ID> =
+}
+> -    }
+> +    unsafe fn raw_get_work(ptr: *mut Self) -> *mut Work<T, ID>;
+>
+>      /// Returns a pointer to the struct containing the [`Work<T, ID>`] f=
+ield.
+>      ///
+>      /// # Safety
+>      ///
+>      /// The pointer must point at a [`Work<T, ID>`] field in a struct of=
+ type `Self`.
+> -    #[inline]
+> -    unsafe fn work_container_of(ptr: *mut Work<T, ID>) -> *mut Self
+> -    where
+> -        Self: Sized,
+> -    {
+> -        // SAFETY: The caller promises that the pointer points at a fiel=
+d of the right type in the
+> -        // right kind of struct.
+> -        unsafe { (ptr as *mut u8).sub(Self::OFFSET) as *mut Self }
+> -    }
+> +    unsafe fn work_container_of(ptr: *mut Work<T, ID>) -> *mut Self;
+>  }
+>
+>  /// Used to safely implement the [`HasWork<T, ID>`] trait.
+> @@ -504,8 +481,6 @@ macro_rules! impl_has_work {
+>          // SAFETY: The implementation of `raw_get_work` only compiles if=
+ the field has the right
+>          // type.
+>          unsafe impl$(<$($generics)+>)? $crate::workqueue::HasWork<$work_=
+type $(, $id)?> for $self {
+> -            const OFFSET: usize =3D ::core::mem::offset_of!(Self, $field=
+) as usize;
+> -
+>              #[inline]
+>              unsafe fn raw_get_work(ptr: *mut Self) -> *mut $crate::workq=
+ueue::Work<$work_type $(, $id)?> {
+>                  // SAFETY: The caller promises that the pointer is not d=
+angling.
+> @@ -513,6 +488,15 @@ unsafe fn raw_get_work(ptr: *mut Self) -> *mut $crat=
+e::workqueue::Work<$work_typ
+>                      ::core::ptr::addr_of_mut!((*ptr).$field)
+>                  }
+>              }
+> +
+> +            #[inline]
+> +            unsafe fn work_container_of(
+> +                ptr: *mut $crate::workqueue::Work<$work_type $(, $id)?>,
+> +            ) -> *mut Self {
+> +                // SAFETY: The caller promises that the pointer points a=
+t a field of the right type
+> +                // in the right kind of struct.
+> +                unsafe { $crate::container_of!(ptr, Self, $field) }
+> +            }
+>          }
+>      )*};
+>  }
+>
+> ---
+> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> change-id: 20250307-no-offset-e463667a72fb
+> prerequisite-change-id: 20250409-container-of-mutness-b153dab4388d:v1
+> prerequisite-patch-id: 53d5889db599267f87642bb0ae3063c29bc24863
+>
+> Best regards,
+> --
+> Tamir Duberstein <tamird@gmail.com>
+>
 
