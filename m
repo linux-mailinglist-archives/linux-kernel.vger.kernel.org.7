@@ -1,108 +1,106 @@
-Return-Path: <linux-kernel+bounces-599949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C560EA85998
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:24:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 996B1A85A0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DE6A1643B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:23:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85DEC4A4860
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A10D221299;
-	Fri, 11 Apr 2025 10:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XyuP/H1G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6919A1D88D0;
+	Fri, 11 Apr 2025 10:30:46 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2AB278E51;
-	Fri, 11 Apr 2025 10:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7784278E5D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744367021; cv=none; b=fyLSdbLmy5uRm2rLpdp48FFIrYKk2VuS159l3ENAEQzD08E1R29szLUvVFVbu0eANRPwLrg206SS+6f5Lx0os3ssVH1MDdwlLqlqXp/K5JiesLZJgNii9cylby/5UDUU98E7Eg98oPg8RhAnhykNR2dBTSBQ2FfwAIBdtItiXAI=
+	t=1744367446; cv=none; b=e6ho4bO1ltM+qLrHZlfrslMBrwNHMuoD8BBtahHayrFA+k6G/k5NZ+lxP7kQsc1cj3E4B/mYZpC+LtcVdzPqqpujzDFFOUIq8Ytqw0gCMu675TtA03f4OwpZ/UQXzQePd0OERM3Qwl5d0SmjnZYn5YTVqXBttXrH1bO+/dNY0Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744367021; c=relaxed/simple;
-	bh=nNnGjXRPBz3YI4SaNY8a/CQRpAOQ1B60ZYfwjDXFrKY=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=RKv+parpZBw1Bhk5xE5YOM4v3O0v849QwELWSOZFXIlL5xNYrR/GdbmGigKr7+Ju+HuFYWIvc3Lynql/ivxy0ssVveW+UelQ7mRJ/aZiyjroUDCquEFkrgEL3lIFWOUK3O597Xx8/cIZ+nQ8v037Hmj07LR0J8MotC0ePDpuweI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XyuP/H1G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 952FCC4CEE2;
-	Fri, 11 Apr 2025 10:23:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744367020;
-	bh=nNnGjXRPBz3YI4SaNY8a/CQRpAOQ1B60ZYfwjDXFrKY=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=XyuP/H1Gp/7DQAflyk4VGPWDyysyouA9qc5HJ51r/8AM0Ud98Zw7XFi2ejPohS2p0
-	 XFq8/ZPqkkFYVDOcu9AaPo2S14PcsIxBNOFBCpAwzdv/Aw6l2x/vKKV/kunnvB0WzF
-	 QF8Ra6n2R/bWcrT3KGlYnepg7gwXdW0GpwI02xd+BlqlbXme63NtKjEm8+2agVaAEe
-	 8yzy03kLjfA1b15SaWQdyZUPrCR9oKww497PdDKZT2QicsjRMGn2rE6btPbj0sUkJG
-	 mGxW/DK3JYu2FDz1MLFU2IfpGyAFRRROIg+hZGLQfU9ldKQT7vsz8gv0XFIEnpiZvm
-	 fLNZnHX/OIkMg==
-Date: Fri, 11 Apr 2025 05:23:39 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1744367446; c=relaxed/simple;
+	bh=F9ZVS7uMc2q4H4pc2JAAa9mcfQxEK9dcS46bLi6g7U4=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=be4gf+eiaBRO88E4ZK4zTpY/yDaWXhrQ5c2a8a4PQrHY8/93t613XOY7kK62IimL/LhfjRDPlLLompbKgAdC8c0UIzHcIdquPpwimnaErdpLn6yHNJkrZ6VGWJ51MAtQ3NwwOKz6UlkwPJVt9ZBQmETuwmxWRVedp58pUhctP74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mxde.zte.com.cn (unknown [10.35.20.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZYt9G3RBTzKjJ
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 18:25:06 +0800 (CST)
+Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
+	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mxde.zte.com.cn (FangMail) with ESMTPS id 4ZYt990HDXzBRHKW
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 18:25:01 +0800 (CST)
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZYt8z3Tztz5B1J4;
+	Fri, 11 Apr 2025 18:24:51 +0800 (CST)
+Received: from njy2app03.zte.com.cn ([10.40.13.14])
+	by mse-fl2.zte.com.cn with SMTP id 53BAOjIV027590;
+	Fri, 11 Apr 2025 18:24:46 +0800 (+08)
+	(envelope-from jiang.kun2@zte.com.cn)
+Received: from mapi (njb2app05[null])
+	by mapi (Zmail) with MAPI id mid204;
+	Fri, 11 Apr 2025 18:24:48 +0800 (CST)
+Date: Fri, 11 Apr 2025 18:24:48 +0800 (CST)
+X-Zmail-TransId: 2afd67f8edf0fffffffff09-ab5a3
+X-Mailer: Zmail v1.0
+Message-ID: <20250411182448645tJ7XVmvNHqUXluy9xYQ_7@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
- Praneeth Bajjuri <praneeth@ti.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Vignesh Raghavendra <vigneshr@ti.com>, 
- "David S. Miller" <davem@davemloft.net>, Conor Dooley <conor+dt@kernel.org>, 
- Manorit Chawdhry <m-chawdhry@ti.com>, 
- Herbert Xu <herbert@gondor.apana.org.au>, linux-kernel@vger.kernel.org, 
- Kamlesh Gurudasani <kamlesh@ti.com>
-To: T Pratham <t-pratham@ti.com>
-In-Reply-To: <20250411091321.2925308-2-t-pratham@ti.com>
-References: <20250411091321.2925308-1-t-pratham@ti.com>
- <20250411091321.2925308-2-t-pratham@ti.com>
-Message-Id: <174436701744.2577578.5675041796960889580.robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: crypto: Add binding for TI DTHE V2
+Mime-Version: 1.0
+From: <jiang.kun2@zte.com.cn>
+To: <tglx@linutronix.de>, <frederic@kernel.org>, <peterz@infradead.org>,
+        <oleg@redhat.com>, <brauner@kernel.org>, <joel.granados@kernel.org>,
+        <viro@zeniv.linux.org.uk>, <lorenzo.stoakes@oracle.com>,
+        <linux-kernel@vger.kernel.org>
+Cc: <fan.yu9@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIXSBzaWduYWw6IFVwZGF0ZSBzZW5kX3NpZ25hbF9sb2NrZWQgaW4gcmVsZXZhbnQgY29tbWVudHM=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 53BAOjIV027590
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67F8EE01.000/4ZYt9G3RBTzKjJ
 
+From: Fan Yu <fan.yu9@zte.com.cn>
 
-On Fri, 11 Apr 2025 14:43:21 +0530, T Pratham wrote:
-> Add DT binding for Texas Instruments DTHE V2 crypto accelerator.
-> 
-> DTHE V2 is introduced as a part of TI AM62L SoC and can currently be
-> only found in it.
-> 
-> Signed-off-by: T Pratham <t-pratham@ti.com>
-> ---
->  .../devicetree/bindings/crypto/ti,dthev2.yaml | 50 +++++++++++++++++++
->  MAINTAINERS                                   |  6 +++
->  2 files changed, 56 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/crypto/ti,dthev2.yaml
-> 
+The __send_signal has been renamed to __send_signal_locked,
+after the following commit:
 
-My bot found errors running 'make dt_binding_check' on your patch:
+'commit 157cc18122b4 ("signal: Rename send_signal send_signal_locked")'
 
-yamllint warnings/errors:
+But some comments have not been modified along with the
+code, so they need to be updated. This will help readers
+better understand the code.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/crypto/ti,dthev2.example.dtb: crypto@40800000 (ti,am62l-dthev2): reg: [[0, 1082130432], [0, 65536]] is too long
-	from schema $id: http://devicetree.org/schemas/crypto/ti,dthev2.yaml#
+Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+---
+ kernel/signal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250411091321.2925308-2-t-pratham@ti.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 148082db9a55..af5f8bb50491 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2252,7 +2252,7 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
+ 			sig = 0;
+ 	}
+ 	/*
+-	 * Send with __send_signal as si_pid and si_uid are in the
++	 * Send with __send_signal_locked as si_pid and si_uid are in the
+ 	 * parent's namespaces.
+ 	 */
+ 	if (valid_signal(sig) && sig)
+-- 
+2.25.1
 
