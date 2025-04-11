@@ -1,94 +1,70 @@
-Return-Path: <linux-kernel+bounces-599991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B0FA85A9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:55:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B356A85A76
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E9464C63FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:55:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FBA17B0588
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C56238C31;
-	Fri, 11 Apr 2025 10:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63C922128F;
+	Fri, 11 Apr 2025 10:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="NqDWKpjz"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kNUCJnx4"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E635A221284;
-	Fri, 11 Apr 2025 10:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22454278E41;
+	Fri, 11 Apr 2025 10:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744368879; cv=none; b=GDo99iup59jd22x/1nbRDJX++Tnu37tUbterJlwHJ3aHSBkhv2a6cYgB7U0lFVosYtG2dxxdFt1bre6v4MrerLUYoFSVNWLDAv7Vdzjr5qax9Pt81MK+smXejmD46n+f5QsdhjXMCFlSaoF2/ruQyhFGlgINDhsg8tWhDcWgFdU=
+	t=1744368728; cv=none; b=kqv9uOYXE2Gjz3A3UbIhtb4ctDIzvay3PhRzD6PsysY70ghsTJYacImFjWHvY2fnWAlXBAUowokvjI0CwFD/9cW0qnPWxv4sItBA+BF+4xzLtzZ260VDO5hrGI20bYw3SNwndgvY3WVJXqnda0Wem2EPuaUEOOfOpr08tNCg8AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744368879; c=relaxed/simple;
-	bh=ivxH0h28h54uT++OFPn2fGmx8H36zuQIX9TAA6mwKOs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BdqrX2a85NT/n1vb6+S339LUaAvN0mIjNlXNZyg6bhB6Y2nl1VUZLOrY8whSzq7xPHTcB0jz1z4OYs65hOyUa+db1fQeYlSMh5vN/C5lB6LB5kKESwNvkmQHM4eQS/RFQ922FCPetZMye3zpJuzNrRQMuhs9KJdoueWFSSxIcZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=NqDWKpjz; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744368775;
-	bh=X0ufIEoNyj3oR0IYewqEF9lLAz1QUMF0bHnORwk+1hQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=NqDWKpjzZxULw/7LrnZc+xuSRpE30Mgy7HSxiYHlwL4sZsC5r8EgrCk/uRbk2zWJ2
-	 YfgWO1TBjnjLRJFRYnKJBQQX3v+Cp8D/iLDx3Er9Je0Pfopke2zP3LrPccpdca5aRX
-	 QRsc9WdcQxIhTQkLAMg6We7QNcgNsCgEn0kgmOV0=
-X-QQ-mid: izesmtp88t1744368758t32cfd97f
-X-QQ-Originating-IP: tKvnF/gmZ4DIpXdx6u7S98Ombl0e/s4+gqgyAGenmmg=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 11 Apr 2025 18:52:34 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 5811992715279106274
-EX-QQ-RecipientCnt: 39
-From: Chen Linxuan <chenlinxuan@uniontech.com>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Chengchang Tang <tangchengchang@huawei.com>,
-	Junxian Huang <huangjunxian6@hisilicon.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Chen Linxuan <chenlinxuan@uniontech.com>
-Cc: linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-rdma@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	kvm@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	linux-mm@kvack.org,
-	llvm@lists.linux.dev
-Subject: [RFC PATCH 0/7] kernel-hacking: introduce CONFIG_NO_AUTO_INLINE
-Date: Fri, 11 Apr 2025 18:51:35 +0800
-Message-ID: <31F42D8141CDD2D0+20250411105142.89296-1-chenlinxuan@uniontech.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1744368728; c=relaxed/simple;
+	bh=96btQmYImZfAOI+fu8dFlxT8V0oTt4TvrBS2WM70IP8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pix20dSXmKGjuGlowAwd8YlqiMm5r9k3WPiRvlkRY54tUFZp61udb1AYPVO/p/dWTV6McXxvv4ZKZKYWIbEFJNpSpqCEQCh8fZ7crk0+gJWil5k5U/jExH6K+qS9wkwIsgGJiCD1WqYmG3yg6d5zKOJ9aslG2DnQl7a89QUC8q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kNUCJnx4; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53BApvvK2104737
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Apr 2025 05:51:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744368717;
+	bh=ufBPzefqQfv5obE5Pv0KCKQtrt8Mm1vDWW/7ZeaZFxY=;
+	h=From:To:CC:Subject:Date;
+	b=kNUCJnx4JfICJMR5w4JvRK9nedhjnW+I4ofOvhrTD8CQt+x+v9Bu28ZLXhWFUlG+L
+	 FPAC+snIyKZQQmp/22AXkeHoIXPeAfWvBOOPQLJ1q5kFlmlgKxRsQzvDwwgVIc/Q2S
+	 cS7EVWvp4mHp/3K1JQaSJiwGiZxI+3HKAofWCN04=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53BApv45075026
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 11 Apr 2025 05:51:57 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
+ Apr 2025 05:51:56 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 11 Apr 2025 05:51:56 -0500
+Received: from localhost (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.72.182])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53BApts9029842;
+	Fri, 11 Apr 2025 05:51:56 -0500
+From: Jayesh Choudhary <j-choudhary@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <u-kumar1@ti.com>, <devarsht@ti.com>,
+        <linux-kernel@vger.kernel.org>
+CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <kristo@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <j-choudhary@ti.com>
+Subject: [PATCH 0/7] Add DSI display support for TI's Jacinto platforms
+Date: Fri, 11 Apr 2025 16:21:48 +0530
+Message-ID: <20250411105155.303657-1-j-choudhary@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,58 +72,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: izesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: MtJoEQFRGvIzah4Ke5Vo4KIanFxZCiutX0b6+GqzojqVsHeLpmjJq+0/
-	rCj7ZUec/3JjBUW36XLND3xWPhVxvvJ6lz4kH0UFLiJVAxGNUuHNRdOQny7M9Q/9hKYTRpa
-	C2YSbQeNvRE4FfLsOpdlHPzB81Ft4O71uQLIImSOaEd/iqcf53UZdGxfJWx6yGYxr8r8eY7
-	SmWWRQn4wtyCBYoMKv2dD7zFhW6WzgJNPQUmskMSDfEMzu3eG8c83lNYJrGkdDf+EzEhrv3
-	ASu0G2TIiD2rKHxab3WcMxv5Fp14gHBAP5zM+mNWMdt0xMNlX7gc6s906MlnSF++XROGW9V
-	zUt+gVnqvTHsTRVQ/HYB1PiJ/p66PTnTEghuR2TV3uaCRpfUVkv+pXmJw1S2f41vP8PPgao
-	ishFqaBqT3foLyptn4Q92f+jYcIkS+KcoFH5Q3dGMYzUl4lw5vWnyovkZZWBMrK2VLHpam0
-	vA0x97qWEa7CwO3GB3Jl10nsMzByeXT2lykmVP5ax8TXrK6wLvx3CAjr0Ist0gh1A6bzL+B
-	ny1xpJtsm5Kd5tpZau+r+SSLohrxPl1v3yBpJQtCoN62s9lZV7ad/iEPeRQKxuOGqLI//hj
-	nMJFR/Ngs4Bd2Mlem/dCh0AN2ioLFgn0loX4T+MuJOJXqWk19CQn54mTbDnB71Rt7tnVIqK
-	9ryTh1S7dErXIVlg2Uf3Qbhh/XxVfuBJ+2qCDCLbxDxKYHI0/3+SgltiC5eN8Aq/PkeTgDd
-	6MXAArCIy20nGWxB21oLXCg+3t8WfsUG421o5VMAYw3Q5FEUp6f451+rc8wPfzCGieiZMf6
-	cNChTyHG3jmaZWCPTCa3eiihY+Pqz4l+KzFkr2z8t8lKr8X1xz+/vk0jzOIEJWcEMpq0gpP
-	tCGZ4qaWqpJv7IMydJ3Hleuduzdd8EIPHX9F5J5S8ggNk3cR77jGl8D5n+ehiyAyd0bNtoG
-	dRXwZS/HP38d0tGn4lS6Xp+clVOG5royvRDrFwH2UtUJbnW38pZf7v/zFczstz8UZDSE=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This series introduces a new kernel configuration option NO_AUTO_INLINE,
-which can be used to disable the automatic inlining of functions.
+Hello All,
 
-This will allow the function tracer to trace more functions
-because it only traces functions that the compiler has not inlined.
+This series adds the dts support to enable DSI on 3 platforms for TI SoCs:
+- J784S4-EVM
+- J721S2-EVM
+- AM68-SK
 
-Previous discussions can be found here:
-Link: https://lore.kernel.org/all/20181028130945.23581-3-changbin.du@gmail.com/
+This series *depends* upon a couple of driver series[0][1]and a config
+patch[2] that enables CDNS_DSI and CDNS_DPHY.
 
-Chen Linxuan (2):
-  drm/i915/pxp: fix undefined reference to
-    `intel_pxp_gsccs_is_ready_for_sessions'
-  RDMA/hns: initialize db in update_srq_db()
+[0]: <https://lore.kernel.org/all/20250402-cdns-dsi-impro-v2-0-4a093eaa5e27@ideasonboard.com/>
+This series adds cdns-dsi-core fixes
 
-Winston Wen (5):
-  nvme: add __always_inline for nvme_pci_npages_prp
-  mm: add __always_inline for page_contains_unaccepted
-  vfio/virtio: add __always_inline for virtiovf_get_device_config_size
-  tpm: add __always_inline for tpm_is_hwrng_enabled
-  lib/Kconfig.debug: introduce CONFIG_NO_AUTO_INLINE
+[1]: <https://lore.kernel.org/all/20250411092307.238398-1-j-choudhary@ti.com/>
+This patch adds the necessary DSI flags that are used in cdns-dsi-core
+driver which are propagated from sn65dsi86 bridge.
 
- Makefile                                   |  6 ++++++
- drivers/char/tpm/tpm-chip.c                |  2 +-
- drivers/gpu/drm/i915/pxp/intel_pxp_gsccs.h |  8 ++++++--
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c |  2 +-
- drivers/nvme/host/pci.c                    |  2 +-
- drivers/vfio/pci/virtio/legacy_io.c        |  2 +-
- lib/Kconfig.debug                          | 15 +++++++++++++++
- mm/page_alloc.c                            |  2 +-
- 8 files changed, 32 insertions(+), 7 deletions(-)
+[2]: <https://lore.kernel.org/all/20250411095043.272488-1-j-choudhary@ti.com/>
+This patch enables the required configs for DSI.
+
+I have locally tested using kmstest utility on all 3 platforms.
+
+NOTE: For higher resolutions, we need bigger CMA region.
+But for validation, the default value is enough.
+I am posting another series to add CMA region to Jacinto platforms
+similar to Sitara family soon:
+<https://lore.kernel.org/all/20240613150902.2173582-1-devarsht@ti.com/>
+
+Jayesh Choudhary (5):
+  arm64: dts: ti: k3-j784s4-j742s2-main-common: add DSI & DSI PHY
+  arm64: dts: ti: k3-j784s4-j742s2-evm-common: Enable DisplayPort-1
+  arm64: dts: ti: k3-j721s2-common-proc-board: Add main_i2c4 instance
+  arm64: dts: ti: k3-j721s2-common-proc-board: Enable DisplayPort-1
+  arm64: dts: ti: k3-am68-sk: Enable DSI on DisplayPort-0
+
+Rahul T R (2):
+  arm64: dts: ti: k3-j721s2-main: add DSI & DSI PHY
+  arm64: dts: ti: k3-j721s2-som-p0: add DSI to eDP
+
+ .../boot/dts/ti/k3-am68-sk-base-board.dts     |  96 ++++++++++++++
+ .../dts/ti/k3-j721s2-common-proc-board.dts    | 116 +++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi    |  37 ++++++
+ arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi  |  52 ++++++++
+ .../dts/ti/k3-j784s4-j742s2-evm-common.dtsi   | 117 +++++++++++++++++-
+ .../dts/ti/k3-j784s4-j742s2-main-common.dtsi  |  37 ++++++
+ 6 files changed, 454 insertions(+), 1 deletion(-)
 
 -- 
-2.48.1
+2.34.1
 
 
