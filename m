@@ -1,207 +1,154 @@
-Return-Path: <linux-kernel+bounces-599851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14817A8589C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 435D4A8586B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB4B59A28EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:57:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE9E48A7467
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679D92BE7A3;
-	Fri, 11 Apr 2025 09:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A3529899C;
+	Fri, 11 Apr 2025 09:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FUME2f3t"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="hj1BlvFC"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149A02BE7AE
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 09:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FDAEEB1
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 09:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744365278; cv=none; b=uttz48SXs/QLX7abHNN3IWgNFaCMNsaPwzfXttJyhD9VtOt2ggYF1WHNBg4NnVGvG4LTIe/+ihAxBxpWHE1TxgxaiQW/BFoTBbLAK7PN0UtiEEFazsCizr/iKIxg231Kg5Bb26ZMMs3m2bYMd5SvSUFTFOLKLiznkbj+yJCmsbw=
+	t=1744365195; cv=none; b=M5DdqhrSOx1pIgiFv3YlMBdm+k3ny+Q9bY12dkhFWPINOKjrEgITCCXkwaRBAkdUzJBHDsmvT4iCLINQ6Q17+dd4BxndpEF1JAh45Ppi1E/d2aFYber7kLur6JpACmItTFxPEBQasa85EgNlbWWYoAFDS7zV6I5rWWSDoDsZAJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744365278; c=relaxed/simple;
-	bh=31vqYQwn/J2VYn5vPyEE1407XeQoddh8cnodS3c1KD8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rUaGQ1HDYH/HEJWaDUXRVQSXHMhG7Tlb65TH4aKWkickOfI8LE2/+DsLuksn76ei5J+iAvz+Xy3k1SpSEfbB5iPfO5XQvR6dulF/P8sVjvD3w7JchBXWoOpewTNv514WSVQ6bhQvsukbCdutMGEygCyUZ3tS0rOS+1y4O0n9K1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FUME2f3t; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744365276;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V+GN2gS8lk8pQaqDs/K8fd6AI38wy4xbJjG61joXzQc=;
-	b=FUME2f3tKOHK5P2bM0m08yZSWU1EkhBqNWFozX9nNJIjVkQOn67RQVHy+m0wQ27BvBn2UO
-	m5tm8c5lxZCEqmD0UfwgAZMtG28Mt4h0uC/NHL8fJtCgVfk09sI70fkSIDPrJFsHpqU1Y/
-	P+RbWZdHMvvzr+dJzolDGzvQxH7vdWU=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-135-BkWwyU98Ppa3pWzL6wsMYA-1; Fri,
- 11 Apr 2025 05:54:31 -0400
-X-MC-Unique: BkWwyU98Ppa3pWzL6wsMYA-1
-X-Mimecast-MFC-AGG-ID: BkWwyU98Ppa3pWzL6wsMYA_1744365269
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6191B185FBA9;
-	Fri, 11 Apr 2025 09:54:22 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.40])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 049CC1828AA8;
-	Fri, 11 Apr 2025 09:54:18 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-Cc: David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3 14/14] rxrpc: rxperf: Add test RxGK server keys
-Date: Fri, 11 Apr 2025 10:52:59 +0100
-Message-ID: <20250411095303.2316168-15-dhowells@redhat.com>
-In-Reply-To: <20250411095303.2316168-1-dhowells@redhat.com>
-References: <20250411095303.2316168-1-dhowells@redhat.com>
+	s=arc-20240116; t=1744365195; c=relaxed/simple;
+	bh=bYz4VWYXRVMZMzO/WeiodKWmw1L7VQDJw8uSANjmYZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AS8mfio+MOB/yCGzrBRYqWFgm8uA4hJk+i7WtgX33g74ASFBBjrPSO5rq0wQs43NWcGspfEwpN9Dk2l/KKZSmOw/CzmzKl8e/U0cLzReea1iBg2aiAls5ZwBEPLiv+/9FDk2zu3JHTKg4kvA4mf/f++FqOX2yzI8m0k9LkjShio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=hj1BlvFC; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=v5Ml
+	bzfy/UYtcdXL3mkK2vLrVgQkVRSUpZGGQs7rGuU=; b=hj1BlvFCT8dW5Iu9XbxD
+	yDptYRJWrwOidK2/AR/7UnLCIYNA2L8GKb3bqXdAMuEssiYjNOM6xS7OliOXDI0w
+	Maut5TKDfTEyfXSimJXq6DaB5IIc91ZKKYCD1Ht+NCzwa9nkQOA7QM0RgP97nDzd
+	8FOEka8rbYUVTTgL25HXjm+V6s6KBOo1e8hANEha9vrCiztBfK+g8/u5Da0f6nww
+	y8tWYElrfCCfehVwgjiBpywsjmnC3YMZLREpqpIKZCWSBtVE6TwG1fuJWjVRpClj
+	9Odje1lqwq0+CImlgyGq1WJ04NO0JOQ5FBm5sqLZVOEy93fW4MIBlWFRyEyP3XE9
+	1A==
+Received: (qmail 1242354 invoked from network); 11 Apr 2025 11:53:02 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Apr 2025 11:53:02 +0200
+X-UD-Smtp-Session: l3s3148p1@AHYSq30y8pMujnsS
+Date: Fri, 11 Apr 2025 11:53:02 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v4] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb board
+ device-tree
+Message-ID: <Z_jmflS03VHFOE3d@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+References: <20250324-rzn1d400-eb-v4-1-d7ebbbad1918@bootlin.com>
+ <CAMuHMdVM66ni0opbUopt6mCPshoQzO5GPEUZDji39CxtkoFLSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5meMjSjKXGTajXvg"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVM66ni0opbUopt6mCPshoQzO5GPEUZDji39CxtkoFLSA@mail.gmail.com>
 
-Add RxGK server keys of bytes containing { 0, 1, 2, 3, 4, ... } to the
-server keyring for the rxperf test server.  This allows the rxperf test
-client to connect to it.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Simon Horman <horms@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: netdev@vger.kernel.org
----
- net/rxrpc/rxperf.c | 68 ++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 65 insertions(+), 3 deletions(-)
+--5meMjSjKXGTajXvg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/net/rxrpc/rxperf.c b/net/rxrpc/rxperf.c
-index c76fbccfbb91..0377301156b0 100644
---- a/net/rxrpc/rxperf.c
-+++ b/net/rxrpc/rxperf.c
-@@ -8,6 +8,7 @@
- #define pr_fmt(fmt) "rxperf: " fmt
- #include <linux/module.h>
- #include <linux/slab.h>
-+#include <crypto/krb5.h>
- #include <net/sock.h>
- #include <net/af_rxrpc.h>
- #define RXRPC_TRACE_ONLY_DEFINE_ENUMS
-@@ -550,9 +551,9 @@ static int rxperf_process_call(struct rxperf_call *call)
- }
- 
- /*
-- * Add a key to the security keyring.
-+ * Add an rxkad key to the security keyring.
-  */
--static int rxperf_add_key(struct key *keyring)
-+static int rxperf_add_rxkad_key(struct key *keyring)
- {
- 	key_ref_t kref;
- 	int ret;
-@@ -578,6 +579,47 @@ static int rxperf_add_key(struct key *keyring)
- 	return ret;
- }
- 
-+#ifdef CONFIG_RXGK
-+/*
-+ * Add a yfs-rxgk key to the security keyring.
-+ */
-+static int rxperf_add_yfs_rxgk_key(struct key *keyring, u32 enctype)
-+{
-+	const struct krb5_enctype *krb5 = crypto_krb5_find_enctype(enctype);
-+	key_ref_t kref;
-+	char name[64];
-+	int ret;
-+	u8 key[32];
-+
-+	if (!krb5 || krb5->key_len > sizeof(key))
-+		return 0;
-+
-+	/* The key is just { 0, 1, 2, 3, 4, ... } */
-+	for (int i = 0; i < krb5->key_len; i++)
-+		key[i] = i;
-+
-+	sprintf(name, "%u:6:1:%u", RX_PERF_SERVICE, enctype);
-+
-+	kref = key_create_or_update(make_key_ref(keyring, true),
-+				    "rxrpc_s", name,
-+				    key, krb5->key_len,
-+				    KEY_POS_VIEW | KEY_POS_READ | KEY_POS_SEARCH |
-+				    KEY_USR_VIEW,
-+				    KEY_ALLOC_NOT_IN_QUOTA);
-+
-+	if (IS_ERR(kref)) {
-+		pr_err("Can't allocate rxperf server key: %ld\n", PTR_ERR(kref));
-+		return PTR_ERR(kref);
-+	}
-+
-+	ret = key_link(keyring, key_ref_to_ptr(kref));
-+	if (ret < 0)
-+		pr_err("Can't link rxperf server key: %d\n", ret);
-+	key_ref_put(kref);
-+	return ret;
-+}
-+#endif
-+
- /*
-  * Initialise the rxperf server.
-  */
-@@ -607,9 +649,29 @@ static int __init rxperf_init(void)
- 		goto error_keyring;
- 	}
- 	rxperf_sec_keyring = keyring;
--	ret = rxperf_add_key(keyring);
-+	ret = rxperf_add_rxkad_key(keyring);
-+	if (ret < 0)
-+		goto error_key;
-+#ifdef CONFIG_RXGK
-+	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_AES128_CTS_HMAC_SHA1_96);
-+	if (ret < 0)
-+		goto error_key;
-+	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_AES256_CTS_HMAC_SHA1_96);
-+	if (ret < 0)
-+		goto error_key;
-+	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_AES128_CTS_HMAC_SHA256_128);
-+	if (ret < 0)
-+		goto error_key;
-+	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_AES256_CTS_HMAC_SHA384_192);
-+	if (ret < 0)
-+		goto error_key;
-+	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_CAMELLIA128_CTS_CMAC);
-+	if (ret < 0)
-+		goto error_key;
-+	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_CAMELLIA256_CTS_CMAC);
- 	if (ret < 0)
- 		goto error_key;
-+#endif
- 
- 	ret = rxperf_open_socket();
- 	if (ret < 0)
 
+> > +       pinctrl-0 =3D <&pins_eth1>, <&pins_eth2>, <&pins_eth3>, <&pins_=
+eth4>,
+> > +                   <&pins_mdio1>;
+> > +
+> > +       mdio {
+> > +               /* CN15 and CN16 switches must be configured in MDIO2 m=
+ode */
+> > +               switch0phy1: ethernet-phy@1 {
+> > +                       reg =3D <1>;
+> > +                       leds {
+> > +                               #address-cells =3D <1>;
+> > +                               #size-cells =3D <0>;
+> > +
+> > +                               led@0 {
+> > +                                       reg =3D <0>;
+>=20
+> color =3D <LED_COLOR_ID_GREEN>;
+>=20
+> > +                               };
+> > +                               led@1 {
+> > +                                       reg =3D <1>;
+>=20
+> color =3D <LED_COLOR_ID_ORANGE>;
+>=20
+> > +                               };
+>=20
+> The above should also have one of:
+>=20
+>     function =3D LED_FUNCTION_LAN;
+>     function =3D LED_FUNCTION_SPEED_LAN;
+>=20
+> I don't know the LED function mapping.
+
+I have an incremental fix for the LEDs to this patch. Thomas cannot
+really do it because he doesn't have the board. I was waiting with my
+patch until this patch is upstream, but I better send it out now, so you
+can squash it into this one?
+
+
+--5meMjSjKXGTajXvg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmf45noACgkQFA3kzBSg
+KbbhBQ//SA3eCGX0eMFXQS4vM9SjlKaSOc8Sv9fxFOcUPfIOzFQ2in7V5MSsS86y
+qLykrEEz0ddawdAm1v4Ll97vvODHsLJ+Zb7JTcuv3xltq2MddsxOxEldllAXS5dd
+wmAP+krIqhWTZO7l1hOx42rY7lfrw12WM1fZFDXIlwRshciS/6VKBvDdcKrWub5M
+/H3ffK/6jHSUrXmP+2YnqZ/R1KsTnDU8OI72ib/4Tpy6yonmMVJhLwQQFxtXo4YM
+KsDO8oaYhhDqjdMms9juwMiDaObkxXc1Q/Ex27OnQKVQe5Ns7Zxw/Io2r6qMYiZn
+6c4QXDrHZaHsxifc5KdL37R1+CfBJX5/cK6/KpSDYoz9WwiBCaWccjf3tsizxTZL
+FanpqH+9Ddbg8XSSPpJ2HutmK8MQYsYoCtw+paoHUVmBzOR2F9pePbxQxZ1SM0rH
+TnuuureYZje+nAOlQNoLRkqbD2bUfmTlqS3SI/SHDaihesPs2ETWTgyn4LLM0XGI
+JejAOCbYhtXG7CzHcuzRs6dNKmr7OFsuvJcnY4iVshsUvQIgeOqL9YgP9LUeql0x
+mb2eiIfLUswA3m+qvrVbb2QSnq1zUyYkYGNtlDFKv5XRUrP1KY2iGEYxaNL9FmRg
+pgjVrSpKCxlON7Q+2QhIAJfycNG8GPMJbpLsIo4xMq8feKqXYQU=
+=KXkU
+-----END PGP SIGNATURE-----
+
+--5meMjSjKXGTajXvg--
 
