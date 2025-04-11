@@ -1,115 +1,235 @@
-Return-Path: <linux-kernel+bounces-600544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 768B3A8613D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:05:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE15EA86156
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC24119E8ACB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:05:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C82AF1BA4153
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6A31F5858;
-	Fri, 11 Apr 2025 15:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BB420764C;
+	Fri, 11 Apr 2025 15:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDbAI+ZB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wh7rt2Yt"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3F51F4CA9;
-	Fri, 11 Apr 2025 15:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DEA1F418D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 15:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744383890; cv=none; b=mdHHO90UXj5Vp8JULPWmtLSEpcxlTs26ytJYlrBHswvLGbp4CC+CwKB57rCYzVSwnud46oR4IdNYhFk+dWbc7kw8V3voyIKeQshbYNk88l+zeaEwVBISZzASeXsJ48iXjk1TD5cCTnaMSZjLdnmNTbtgwaISQYIfS4smxqYBuEA=
+	t=1744384027; cv=none; b=uOA1uybH9OCXf3Za0GsBb4MQjO1BBYD1bwqki1UghZX2bGqqQ5HWciNQQktKBZUPYIXGHLUsKG9YU5qqVx0bmeuPtjham0Cq5m4nNA5ZXRSV6erGPgv7h4LVwsXhXASn5JV5BKHt6vN8/ljQNCF4Yc3STMePqTiLBjUW/pup840=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744383890; c=relaxed/simple;
-	bh=34rPtorzTUoCO3aLt2l9yvCOuNgkas861WqZJZQNEKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SdQQlqCIs+V0rA0dmdTlS6uXI5I7T+sALAD8ngUbJpVcsoMGPi//JfEm4c7T+qz3EIAOgDCPz0bdSdrGQtZFoSfm1y90YqSJuxAom5EP5CA0CLy9eM7tDPauaDXDZKqdo1D47cridKe+rd0McrSe7E3hT1lRHv4Mzlkds3oTTbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDbAI+ZB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF4CFC4CEE2;
-	Fri, 11 Apr 2025 15:04:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744383890;
-	bh=34rPtorzTUoCO3aLt2l9yvCOuNgkas861WqZJZQNEKA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QDbAI+ZBF/+a+TS4pO/A3ZGxi+eY+4S9Mp3E4tPyntXHfrlVKRnrF8PuOGevL4YBs
-	 cmWWBm0c/eKT6u258RIpB7vfCJsAGmoxPn39kX9hDch/eWxmNAJC/CU5JLuAKAI13S
-	 /LsUt50GVb7Qx/SWQRTB23fGrJP1JpckqYSJJH63Nu7vRod+ftprXGXqDVMuG/9DjG
-	 ZhoDpUkc+zGsnBo5Ier7Fj/njks8r/a00GX0U2O75ECUvzv6E2TndbDS/99jRgoPAU
-	 7Zei8lofUZUsd3a4EpSrgRBQsHAR46J1/EzQU6J8mgSeB/F8etOnPWTPb7n58nbJmU
-	 45cVs/bEdKz6Q==
-Date: Fri, 11 Apr 2025 10:04:48 -0500
-From: Rob Herring <robh@kernel.org>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	"Fedrau Dimitri (LED)" <Dimitri.Fedrau@liebherr.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v2 3/3] net: phy: dp83822: Add support for
- changing the MAC termination
-Message-ID: <20250411150448.GA3236749-robh@kernel.org>
-References: <20250408-dp83822-mac-impedance-v2-0-fefeba4a9804@liebherr.com>
- <20250408-dp83822-mac-impedance-v2-3-fefeba4a9804@liebherr.com>
- <7dbf8923-ac78-47b8-8b9c-8f511a40dfa3@lunn.ch>
- <DB8P192MB0838E18B78149B3EC1E0F168F3B52@DB8P192MB0838.EURP192.PROD.OUTLOOK.COM>
- <04dc2856-f717-4d27-9e5c-5374bb01a322@lunn.ch>
- <20250408171831.GA4828@debian>
+	s=arc-20240116; t=1744384027; c=relaxed/simple;
+	bh=qTlFl5dPv4jGbSPyV2TlGNiuW/1R9GKcrM0RSvIrFfY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Q75B8ypSP5hpN8Ksb05MpGLosiTMZmq/ZjogT/NdlEjYzEn+/8i0twfLGyJJnG5OjepZXIu7cYRhekZPnpU53yY+JxK/F3kejPs2bMoFYBgmKOh57UGgzurfspS8Oj41z8sNjLQ5j/hJxqwat9HPzgEN9BFADVLDdR1zh2gXdS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wh7rt2Yt; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d0a037f97so13557275e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:07:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744384023; x=1744988823; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zT9HK7f4zut0JMwgxK/+pZ5AGVyQQmaHlu9Z+2ZcOlE=;
+        b=wh7rt2YtETyLkD+C1RtgRGzMh47RQstmYlf3WV18hi1I+U4+Re/2MCJUrZQXHxJhBp
+         zpnLm2cEqNZdzMTGV+GKeYHB1SDLqfUG2e8Q5c75fOqwy7Q1YIohs4pSFL/YYXoD9Dba
+         LMj9j4ZJsKpY74ne0MiijWvaRBpaaIXih10Toq0T5m6pqKfB+67qTq/SfUny64gLpK/B
+         /efyJM/KSStlsYa/xtT8sDrK5y6cugTSBKQ/q0atbS51NndyDItvS5aJBYWWgq16h5pf
+         YKuZMgDu4S/41BFaSqm+1ImCa11wy2WVw1K8vqC7MiTrE3Iy1di8uQi92zteJyg/oJh7
+         cBxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744384023; x=1744988823;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zT9HK7f4zut0JMwgxK/+pZ5AGVyQQmaHlu9Z+2ZcOlE=;
+        b=a1gF19cJiPbB1HuDtov4ymXtaOfhIjCQMcvuv8Va35zGBgorn9Q2PIgdz/qHpxQgHu
+         U7Rm4mQ9KeAES8HTZcmXeUMAUobrSecblnyHFe4eMD6lBId+EuZCattQ5qCebn/bmCg9
+         ECuws7cmupmFJgbuTakJNspivNmBKqka4ZwXBBpzNJ01mT8hLGLuI1ojouatNMHiJh18
+         CFUUKXI20DVTjninTdGoNNjSbnGApEiBJiE5Pe0zaLvzkJ7PAoU5FIy8SUxhiLEeNgAg
+         bxuzNoT/vvnz2MnBKuH2frucXtUQefEewDp/ize+PZijaojr+uHClKOZqOpoMgUd56Tj
+         LLvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWamWuNLmpo9YnUIXReWGY3rU1xASekTir+3hg70c+5BGe8TURdQp+VumatfElHT16i9JNLsq7Kb1daLSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytMEb4wESOPWLiJbuAZBPzJwuv9JD6lk/0LFlRNUq6YvUFHYet
+	9SrX8kHezCw+wIUE5DzdmOWhkWyw0QudcZDTBkHTFjiMFY6KQQ0s7W0odBT0okrJLwpHd9u/EGB
+	K+W8p2vin9w==
+X-Google-Smtp-Source: AGHT+IHO4xZ09nGgDUkGFuaki3SkgqbYyALc8qGc3LePIPFrD28NPTB6CI/SE4o7MkIyp0jXLwML7Vw5WAvp8g==
+X-Received: from wmbbh10.prod.google.com ([2002:a05:600c:3d0a:b0:43b:c7e5:66e0])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3b9d:b0:43d:934:ea97 with SMTP id 5b1f17b1804b1-43f3a9af8c5mr31645595e9.27.1744384023753;
+ Fri, 11 Apr 2025 08:07:03 -0700 (PDT)
+Date: Fri, 11 Apr 2025 15:07:01 +0000
+In-Reply-To: <20250411134550.GB366747@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250408171831.GA4828@debian>
+Mime-Version: 1.0
+References: <20250407180154.63348-1-hannes@cmpxchg.org> <20250407180154.63348-2-hannes@cmpxchg.org>
+ <D930DO9PAJR8.SOYZSGRG5Y2O@google.com> <20250411134550.GB366747@cmpxchg.org>
+X-Mailer: aerc 0.20.0
+Message-ID: <D93WJ0HYKRGL.1NWTMXWJBWE80@google.com>
+Subject: Re: [PATCH 2/2] mm: page_alloc: tighten up find_suitable_fallback()
+From: Brendan Jackman <jackmanb@google.com>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mel Gorman <mgorman@techsingularity.net>, Carlos Song <carlos.song@nxp.com>, <linux-mm@kvack.org>, 
+	<linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 08, 2025 at 07:18:31PM +0200, Dimitri Fedrau wrote:
-> On Tue, Apr 08, 2025 at 03:28:32PM +0200, Andrew Lunn wrote:
-> > On Tue, Apr 08, 2025 at 01:01:17PM +0000, Fedrau Dimitri (LED) wrote:
-> > > -----Ursprüngliche Nachricht-----
-> > > Von: Andrew Lunn <andrew@lunn.ch> 
-> > > Gesendet: Dienstag, 8. April 2025 14:47
-> > > An: Fedrau Dimitri (LED) <dimitri.fedrau@liebherr.com>
-> > > Cc: Heiner Kallweit <hkallweit1@gmail.com>; Russell King <linux@armlinux.org.uk>; David S. Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Florian Fainelli <f.fainelli@gmail.com>; netdev@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Dimitri Fedrau <dima.fedrau@gmail.com>
-> > > Betreff: Re: [PATCH net-next v2 3/3] net: phy: dp83822: Add support for changing the MAC termination
-> > > 
-> > > > > +static const u32 mac_termination[] = {
-> > > > > +	99, 91, 84, 78, 73, 69, 65, 61, 58, 55, 53, 50, 48, 46, 44, 43,
-> > > > 
-> > > > Please add this list to the binding.
-> > > 
-> > > Add this list to "ti,dp83822.yaml" ?
-> > 
-> > Yes please. Ideally we want the DT validation tools to pick up invalid
-> > values before they reach the kernel.
-> >
-> Ok, but then I would have to add "mac-termination-ohms" property to
-> "ti,dp83822.yaml" as well together with the allowed values ? Ending up in
-> some sort of duplication, because the property is already defined in
-> "ethernet-phy.yaml". Is this the right way to do it ?
+On Fri Apr 11, 2025 at 1:45 PM UTC, Johannes Weiner wrote:
+>> -		if (find_suitable_fallback(area, order, migratetype, true) >= 0)
+>> +		if (should_try_claim_block(order, migratetype) &&
+>> +		    find_fallback_migratetype(area, order, migratetype) >= 0)
+>
+> So I agree with pushing the test into the callers. However, I think
+> the name "should_try_claim_block()" is not great for this. It makes
+> sense in the alloc/fallback path, but compaction here doesn't claim
+> anything. It just wants to know if this order + migratetype is
+> eligible under block claiming rules.
+>
+> IMO this would be more readable with the old terminology:
+>
+> 		if (can_claim_block(order, migratetype) &&
+> 		    find_fallback_migratetype(area, order, migratetype) >= 0)
 
-It is not duplication because you are adding constraints. I was thinking 
-the definition in ethernet-phy.yaml should have some logical limit. Say
-200 ohms as termination resistance is typically 10s of ohms. 
+Sure, that makes sense, here's a modified version of the patch:
 
-Seems like a long list to define to me, but if the driver is going to 
-reject unknown values it makes sense. You could also make the driver 
-just pick the closest match rather than require an exact match. 
-Resistance values are nominal anyways.
+---
 
-Rob
+From 85be0fca4627c5b832a3382c92b6310609e14ca4 Mon Sep 17 00:00:00 2001
+From: Brendan Jackman <jackmanb@google.com>
+Date: Thu, 10 Apr 2025 13:22:58 +0000
+Subject: [PATCH] mm: page_alloc: Split up find_suitable_fallback()
+
+Now that it's been simplified, it's clear that the bool arg isn't
+needed, callers can just use should_try_claim_block(). Once that logic
+is stripped out, the function becomes very obvious and can get a more
+straightforward name and comment.
+
+Since should_try_claim_block() is now exported to compaction.c, give it
+a name that makes more sense outside the context of allocation -
+should_claim_block() seems confusing in code that has no interest in
+actually claiming a block.
+
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
+---
+ mm/compaction.c |  3 ++-
+ mm/internal.h   |  5 +++--
+ mm/page_alloc.c | 33 +++++++++++++--------------------
+ 3 files changed, 18 insertions(+), 23 deletions(-)
+
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 39a4d178dff3c..0528996c40507 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -2363,7 +2363,8 @@ static enum compact_result __compact_finished(struct compact_control *cc)
+ 		 * Job done if allocation would steal freepages from
+ 		 * other migratetype buddy lists.
+ 		 */
+-		if (find_suitable_fallback(area, order, migratetype, true) >= 0)
++		if (can_claim_block(order, migratetype) &&
++		    find_fallback_migratetype(area, order, migratetype) >= 0)
+ 			/*
+ 			 * Movable pages are OK in any pageblock. If we are
+ 			 * stealing for a non-movable allocation, make sure
+diff --git a/mm/internal.h b/mm/internal.h
+index 4e0ea83aaf1c8..5450ea7f5b1ec 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -914,8 +914,9 @@ static inline void init_cma_pageblock(struct page *page)
+ #endif
+ 
+ 
+-int find_suitable_fallback(struct free_area *area, unsigned int order,
+-			   int migratetype, bool claimable);
++int find_fallback_migratetype(struct free_area *area, unsigned int order,
++			      int migratetype);
++bool can_claim_block(unsigned int order, int start_mt);
+ 
+ static inline bool free_area_empty(struct free_area *area, int migratetype)
+ {
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 0a1f28bf5255c..c27a106ec5985 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2034,7 +2034,7 @@ static inline bool boost_watermark(struct zone *zone)
+  * try to claim an entire block to satisfy further allocations, instead of
+  * polluting multiple pageblocks?
+  */
+-static bool should_try_claim_block(unsigned int order, int start_mt)
++bool can_claim_block(unsigned int order, int start_mt)
+ {
+ 	/*
+ 	 * Leaving this order check is intended, although there is
+@@ -2076,20 +2076,12 @@ static bool should_try_claim_block(unsigned int order, int start_mt)
+ 	return false;
+ }
+ 
+-/*
+- * Check whether there is a suitable fallback freepage with requested order.
+- * If claimable is true, this function returns fallback_mt only if
+- * we would do this whole-block claiming. This would help to reduce
+- * fragmentation due to mixed migratetype pages in one pageblock.
+- */
+-int find_suitable_fallback(struct free_area *area, unsigned int order,
+-			   int migratetype, bool claimable)
++/* Find a fallback migratetype with at least one page of the given order. */
++int find_fallback_migratetype(struct free_area *area, unsigned int order,
++			      int migratetype)
+ {
+ 	int i;
+ 
+-	if (claimable && !should_try_claim_block(order, migratetype))
+-		return -2;
+-
+ 	if (area->nr_free == 0)
+ 		return -1;
+ 
+@@ -2209,18 +2201,19 @@ __rmqueue_claim(struct zone *zone, int order, int start_migratetype,
+ 	 */
+ 	for (current_order = MAX_PAGE_ORDER; current_order >= min_order;
+ 				--current_order) {
++
++		/* Advanced into orders too low to claim, abort */
++		if (!can_claim_block(order, start_migratetype))
++			break;
++
+ 		area = &(zone->free_area[current_order]);
+-		fallback_mt = find_suitable_fallback(area, current_order,
+-						     start_migratetype, true);
++		fallback_mt = find_fallback_migratetype(area, current_order,
++							start_migratetype);
+ 
+ 		/* No block in that order */
+ 		if (fallback_mt == -1)
+ 			continue;
+ 
+-		/* Advanced into orders too low to claim, abort */
+-		if (fallback_mt == -2)
+-			break;
+-
+ 		page = get_page_from_free_area(area, fallback_mt);
+ 		page = try_to_claim_block(zone, page, current_order, order,
+ 					  start_migratetype, fallback_mt,
+@@ -2249,8 +2242,8 @@ __rmqueue_steal(struct zone *zone, int order, int start_migratetype)
+ 
+ 	for (current_order = order; current_order < NR_PAGE_ORDERS; current_order++) {
+ 		area = &(zone->free_area[current_order]);
+-		fallback_mt = find_suitable_fallback(area, current_order,
+-						     start_migratetype, false);
++		fallback_mt = find_fallback_migratetype(area, current_order,
++							start_migratetype);
+ 		if (fallback_mt == -1)
+ 			continue;
+ 
+-- 
+2.49.0.604.gff1f9ca942-goog
 
 
