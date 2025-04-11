@@ -1,244 +1,226 @@
-Return-Path: <linux-kernel+bounces-600591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DAF7A861C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:25:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B56EA861CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88AFD16C6D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:25:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07EA2177A2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466861F418E;
-	Fri, 11 Apr 2025 15:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A89213248;
+	Fri, 11 Apr 2025 15:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EBND34/4"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="azwoyljG";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="CIiuxHEK"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8A020CCF5
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 15:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744385121; cv=none; b=Vo/3135/13//7OFPT+b8UqQMcMbBy8jeXKuaXq7ny8OdyT0eJ5WQeZKGz23RdQvgbCV0SV/fgRZxfWY01Y6r3EUsT6oYfNqymIunKUdhr2S2aF1Li1UNvicJO68AmFCKUb18KMaovgmtffrSlU6O8uMlmN4Wu/Z6WAFmxPeXV6w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744385121; c=relaxed/simple;
-	bh=qDJuN3+lVHYYl3Lm2eiBb57L2Jk6ojBS2YiPNAfbfNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WdVr/HxxsDrjmcSh7+9oKecj4oLkPDCkndEt+V9+laWVO/iJh9d5kwYpVdTaYBD01G5gdn14Q28cWRJkWUxqOBzfE/LGZDf9wwJpgriTRAL8589RPZIKsINrs14GK7XXks3yAk0t53wX75fIWvn9+sYjudUXsrCCUrlINz7tddU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EBND34/4; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744385117;
-	bh=qDJuN3+lVHYYl3Lm2eiBb57L2Jk6ojBS2YiPNAfbfNc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EBND34/4Pn0F3OFFPMKZhoby0uOkNIenHRcMRhBmu4he59oJ06fUCFeD51rkJ2xoj
-	 ybnIwbCkNDsWG/5Ts/yICJsWODUmOIH/RkOntLGbQlR9IV1e5ZRm7wydRYPzGa0ukt
-	 zPx6PPqF41EFpR4nl/nvzQDctgkTX0BkLI7u/nNVZcA3r2i+VvUBglpvxp0UF45F1F
-	 kiO73AS/4ZxPpM6wzNCILOtzzVFsp8JQNveQdlQseCPb4uE5Oh0nWaDMEopwDTjDOk
-	 09llFTZn3pyEY7srbaxk6lQtSm8WgJc8RCNR9T2Dv+m7iMFEcj6DAMZ0QeMHY4nWgg
-	 76PoEXavt9Wwg==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0FA7217E0402;
-	Fri, 11 Apr 2025 17:25:17 +0200 (CEST)
-Date: Fri, 11 Apr 2025 17:25:13 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
- <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/panthor: Add 64-bit and poll register accessors
-Message-ID: <20250411172513.42f0bcc4@collabora.com>
-In-Reply-To: <6994d307-17e7-453b-b5b9-99a422f73f66@arm.com>
-References: <20250410163546.919749-1-karunika.choo@arm.com>
-	<20250410184637.5e0613d2@collabora.com>
-	<6994d307-17e7-453b-b5b9-99a422f73f66@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD3C1F2367;
+	Fri, 11 Apr 2025 15:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744385249; cv=fail; b=KzD3E2qbmItE3ga+QfBVbsoFfhIHOj+9BSKpNXUlLb7idplz7GZqw8SVs9bYho7KOiNS+5JOqsAX3usMRfRQ3EucmJ9iQYuzV2q3Z8Ks0K5XRr/PGX8c9jlSZIE68WW0FDZ3XyAOcqMFbHLZ4SOw/1Q/ugvhoe+H3agr7OinIBA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744385249; c=relaxed/simple;
+	bh=Kqx9XJs89VWbuR5gL+wU5o/m9CSMVlLLPCp+PUR8ZX8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=L73VfCM0RLoNT1CfKLlbgh0iTG0wvx3lWx4eXi6bEAsBHse/U85kPDpBD6Gmsawel+HdmlVJwWpCaA34fZja1AEXtEsSfpNA+ED4FXQlMoLj2H6u9cO08ColQ8/4Q1gLEyYPxn7V1mRPzCO0noMn2ZIMz+8pKbqpGXcSkecp9Do=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=azwoyljG; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=CIiuxHEK; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53BFHMII020571;
+	Fri, 11 Apr 2025 15:27:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=qibXymMk/r1fXkPv5G8QaEYFgPPPeyX4uBbp72qHMPA=; b=
+	azwoyljGfDHtk7xAYOt1+A+k6xrdNZgET0PmvpBHJBsp/oq+DWYviDTXqUu/fHde
+	QjJrT4dXOsYv6n93COyAuY5jQM9D4Cht3O3YkogEL2Cg0vA95I2HfscEl5/4+Tuq
+	zv76HHWdy95ylhrsOe6/DDWqtb46KvjyHe6cl/5oANUahOCrPX7EMo9dDn5ypUTU
+	yT7TaFbF4IPfcbMp5tXaNJRT+O+EMDg3e1XoRJJKsMw7IYiYVaT0XNURCBznGew3
+	I0P25R9HjpY57X/HgDkTBve1KOIcmS2TDWqN9n2h4BhWzbc1hd0Dg/Rt30xn/crK
+	8pyIekvSpwml5xNBDAQ2Ig==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45y5k4r0rt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Apr 2025 15:27:16 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53BE0hvn022194;
+	Fri, 11 Apr 2025 15:27:15 GMT
+Received: from cy7pr03cu001.outbound.protection.outlook.com (mail-westcentralusazlp17012035.outbound.protection.outlook.com [40.93.6.35])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 45ttyej74g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Apr 2025 15:27:15 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LP8HnWeCfNlVoBMUotOP9B+N15TMhqQbl609epSoA8QKcHeBi8rXME7p6I7gJTH2HmguKkhmmDs+C4HeLDaei6LFxu/vDXggeckaIoOajQPBrmhTnA/W33vnL3XxVLCmTZ18+hD3CwH4YCL/WhhwA+FH3Df/xGm0MfolJnyDRmOTmnnT/84+i9RVRKMy/ouS+O7HnTnW/jHrGOE7resdOZJPwUbujCJzJNXNmRHxbnaCSBZcFiR3L/73gYWqFka+gXfDMEYJaHTFljE+mQk280Xqq+4D/FbT/qGvdMBrGYYtMMeT9G9+aYdf6wLWaw7i4j3/FUxnHEDUlptEOpi4Wg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qibXymMk/r1fXkPv5G8QaEYFgPPPeyX4uBbp72qHMPA=;
+ b=Z0jZ/MFDvumzWfTDXkZzCqotse0f3jyER0YP/pj0874P1tuygLzGtXvvZ+5gs0QjQgN30pm3w5+NWCHHUZqujy61jDF2/+O05v7fwgK2lDXDOmfrEEEVYEVPgr572ZvUMWPfrrCbaoqa9djVgjkN9lnf5mCB+Vx/1BnIaMQjhva/kcxZuOVz93CaKdn1qGQU+B8Y6HsWNYPeWgB09LNTCTBKBrE8WLDPhRl48LkVXAw39TMHGcwDdW96+ZGka3rdO02HwHr0LxcQcE6Ziydd3Hc5pAk2ri98+i+ulYj9fN1MDmLz+3Z2EZjycslD/bHmeD8HjyzdGEzP06bSwg8sUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qibXymMk/r1fXkPv5G8QaEYFgPPPeyX4uBbp72qHMPA=;
+ b=CIiuxHEK5n6dGMwvbuNh2bDLti0B3sWLWrVFQh6W5zzsfQ0RiYOgLwK+JrdjIvHiv0ZpML9R1e94zmn78OUxgu3TWge8JqJmLgKOmoCmslsvu8q4LAvI66Ssw9m3HTm9+gTGGgSLgm25Vhm/amWpESt8II3K+ExkmE9SXVXyuOY=
+Received: from DS7PR10MB5328.namprd10.prod.outlook.com (2603:10b6:5:3a6::12)
+ by PH3PPF0A29BA37B.namprd10.prod.outlook.com (2603:10b6:518:1::787) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.27; Fri, 11 Apr
+ 2025 15:27:13 +0000
+Received: from DS7PR10MB5328.namprd10.prod.outlook.com
+ ([fe80::ea13:c6c1:9956:b29c]) by DS7PR10MB5328.namprd10.prod.outlook.com
+ ([fe80::ea13:c6c1:9956:b29c%6]) with mapi id 15.20.8632.025; Fri, 11 Apr 2025
+ 15:27:12 +0000
+Message-ID: <96bd0364-3926-4aed-ad9d-d650c16e7440@oracle.com>
+Date: Fri, 11 Apr 2025 20:57:06 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] selftests: coredump: Properly initialize pointer
+To: Nam Cao <namcao@linutronix.de>, Christian Brauner <brauner@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, John Ogness <john.ogness@linutronix.de>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1744383419.git.namcao@linutronix.de>
+ <4fb9b6fb3e0040481bacc258c44b4aab5c4df35d.1744383419.git.namcao@linutronix.de>
+Content-Language: en-US
+From: ALOK TIWARI <alok.a.tiwari@oracle.com>
+In-Reply-To: <4fb9b6fb3e0040481bacc258c44b4aab5c4df35d.1744383419.git.namcao@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0005.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::13) To DS7PR10MB5328.namprd10.prod.outlook.com
+ (2603:10b6:5:3a6::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR10MB5328:EE_|PH3PPF0A29BA37B:EE_
+X-MS-Office365-Filtering-Correlation-Id: ceaca5ac-69a9-466a-fa31-08dd790d5516
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WVNSZW5sclpTZWxDUVVYQTNTYmFGb1VaK3JESXJmcUJubGdvY1JvQmZKczlT?=
+ =?utf-8?B?Vnk2aXIxWmVVcFJIMkU1eEJPd3JjRktCVWM4eGJHWXJTeFc4WkkwYzlYZnBl?=
+ =?utf-8?B?eHluL1JaU29Lajg3cDhKajBCekpUYW9xK0hyU3NkOTVFZXFscU1wcWVnZkRz?=
+ =?utf-8?B?amt0ek85ZHpYRjZNN0tVK3kzTzI0d0Rhb0NoNnBoaUVlTDZ6d2VOMVAwTGk0?=
+ =?utf-8?B?YzlPQWFqOW5ENmVRRGl3cksrUUx6bFFRdnVEK3huZjhYZ3BTMVlhK1hhaisv?=
+ =?utf-8?B?VnpvekdjWmFETFEwanVzNDhJQzljcWRMY1FPSVo0TkFYaW1wSmhOenNaT2cx?=
+ =?utf-8?B?MWsyRWR3ZzF3THVpeEJFV2drOUt1VXN1cExoTUNXaTVqdjNjelErZzdQSEti?=
+ =?utf-8?B?UmU5RTYrK1ljNFE3YWhqTG83R2RtVzRjdEoweWFsM1ZiT3ZpMlZpSURkYTRF?=
+ =?utf-8?B?YXl0dnJLSyt5cjR6aDRtVXJMYlVwZFNCVk9ldTJxZkJ0WWhjTDBGbWo3NkFN?=
+ =?utf-8?B?VktkMm9HeFFkdUcxQmdxSDdoemtBNlR1cXdSN3gxcktQcTVKazd6K1g3Mmlj?=
+ =?utf-8?B?TUx2ZmhVcEViTm5EbDZGZTVRblF4WS9vdUUySlFKa1dqVjJ2MEh3NlZQUWZH?=
+ =?utf-8?B?cTBSbXY3RWYySDZkUll2TkdtdmhPMkF6RUJpdkFnY3JGV2UvaTBucEtrTFJ0?=
+ =?utf-8?B?Vmduc01GbXB0Sm0yYS8rall3SnRmQmF4QW5YL01JZWFveEI4blZhTnF3Qk1k?=
+ =?utf-8?B?UkNldVdZUHFsNnJ3V2YwajEvQk5HQ1BnNHRDL2I5R0VSRXJlcWtHVTlrVHFh?=
+ =?utf-8?B?djI5cWtZSlVla3Nnb1BET25Tc0FMTXRrR3h6M2hpc3MzaUwrVWJGME14Ylhz?=
+ =?utf-8?B?TEhySU5FVjJGdlJ1a201UVZwT1g1TEE5MUVFM3pHRDhudWxJS0xsODE1ZEk4?=
+ =?utf-8?B?eGlRQjJJVmkzMUY0amhBcDR3QW0vVVAvWWR0eFZ4VkhQbWp5VEhsdzVCbHJD?=
+ =?utf-8?B?MUw5QjhnSWdqempRRytiY1YvdjZNS1dFWXl1NEhsenRXc1NHWE9mZWFKc2kv?=
+ =?utf-8?B?dnM4d1ZuSmtuY1FLUEFydGx1ZU4xMW4waDRsV1pNT290VzJ1YWtHV2Y3ZTIr?=
+ =?utf-8?B?djN4bDVhelZ3UXE4N1ZXVnBuTzJkYmgxdjlDcTJBcnFaY25NZ0xNaUY2dEJm?=
+ =?utf-8?B?aWRTUTJPTjlQS2ZQNlJjRW16Y3NCaUx5ZDlkV3ZFeHJrM2k4UGlZUHp4cmE3?=
+ =?utf-8?B?STdsSzMyWXRreU00VGpFUE9nUU5zUG04YTZMMFBjYzcwZ0U4ZGw4SFNlQ2FE?=
+ =?utf-8?B?bTBDblJ0UFVZTUZGK1lGQkpLZHBtbWFVenpRNDlBTWJHM29iV2tqK1cxNlA2?=
+ =?utf-8?B?a0hSRWNlblVsTkRlOWpGWkNNRmRwNlZ3Ynh5amhMYXJvdkZyVlV4d3pXbG9j?=
+ =?utf-8?B?SW9qb2ZObjBrVFVrbjJlVmsxeFFHdnpLdTMzRElXcmw1WjlwdWFwMzVGZmtp?=
+ =?utf-8?B?WHU4TmViNU9DN2Zjc01ITkNEdks4elFZMjVoeUtqVUdJYWdpVWpQZVV3Q3ZN?=
+ =?utf-8?B?Y0ZmMFI0U3pqckxNMFZURUo2R2NlLzlpb2FqUU42SlhtWlNCelpmWU9reGVS?=
+ =?utf-8?B?ZHVBeHhZWmtxc01ZYW9kYmw2RGJJeG1MaGE0TGE3ZDVtSEJ3d2dEMVlBS1Q2?=
+ =?utf-8?B?MitGNUppUG1hbjJTK1hMYTVKOHlYM1Zrdkt2dWtmcG1iVWt3c1JIdkVkL1h4?=
+ =?utf-8?B?cFByMlZyQlRGQ1F0bVpsMHV4R1ZLdFJwcWliUEREU0w3TXoxdnhSeVlpOFkv?=
+ =?utf-8?B?ckdIZzkwUkdKSVBKOEV6MzZFdWRXTVR5cFdlTkRsOEN0NEtMYWNuWTB0dnZE?=
+ =?utf-8?B?aTJaQnVXRkx1YityUEVySEhWcEIrdy9lODBXSENRaVhyamc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR10MB5328.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZWYrY0ovaHRubysxalFlZjVhSGxEUHUxSWlNdlJub1BGdCttR2g0b0RFeGlW?=
+ =?utf-8?B?L0ZaVi9mTUh4bnhEbmtNbzk5cThxeHAyU2lsK0d3Z0szR0Nack9pY3J1TVBk?=
+ =?utf-8?B?WW1vUFBRNElGK0tpdGg5bUphcVExY1BTNlJpcmowRkdndThhRThDaklVdS96?=
+ =?utf-8?B?eHVsY05JSWlIRlFaa21kRGM5T3V4LzczSER1b3VYYWZGd3IxTVBMcytFc3J0?=
+ =?utf-8?B?WlhVbVhJZkZudHRmekErWmFReXN2NWIrdjdaZ1MyVWVtRy8wZk1EZ255S1NF?=
+ =?utf-8?B?N0x4VGVHeW5jc3pOQWxRTmxFR09QMmMxV1k4K1I5YlFGT0NnQkl1VHNJWWwr?=
+ =?utf-8?B?blJiS3BNdUxDb2FaWEtOc1dYRml6MGFVNS9qRmRXYjlad1hrUkN2TzlUTlBi?=
+ =?utf-8?B?anFrdkV3cVNkdWNMYkpEY1lseWZ4TCtVWjg5SUwwaDNSV01CT09oRVpJdW1J?=
+ =?utf-8?B?YkY2U2ZHdm9uYUJrNDU4Q3M4emFVa2hqY0ZwVXBZMlhkM2JuUzVBTnVzbWFI?=
+ =?utf-8?B?eDFzRjY3VEJlSFl1TGNkMzAwT25KcjFYSmpFTG0xTnhyd1MrUmQzaTJHZlRq?=
+ =?utf-8?B?YzdqU3pOMVY4VlhlRlJpYVE3d1h3WWg0VlJiR2pQV2lndkFKdDZzYzBPUzlK?=
+ =?utf-8?B?QTNKc1kwS1FnWFF6dVlOZ0k5cFVnMEtNdzY5R2I0dXBURUEyUmp1ZVUwTk1B?=
+ =?utf-8?B?aGZzeUpGOFFhWFJFSldLbVNNUU9pSDBscmdXdjNGREJBYkNIU1lFQ0tWREFo?=
+ =?utf-8?B?TElBNVVqSHlrRmRrZ1hSeTJDWHk0aUVlNXdnU3BYNGJXOTVtVnpINE1UbnJO?=
+ =?utf-8?B?TVliblA3Y0J4NTRLdmFwQVlSREdLMXRCaFE1MVZyY3lWWURxa1B4VkpIUDQy?=
+ =?utf-8?B?bnFVRnhkTjhOUE96T3ExS01VL0pCdVQxZTZOWVowYVFkTVBDcTdBd29ZWVVy?=
+ =?utf-8?B?bjAya2Zja2p1Zm1CeHBzVk5iY0prTXdwVTlRd3F2MGlXQWQ0bUNmRHYyN09t?=
+ =?utf-8?B?dkRweXl5ek8yNDdYNnJ5LzRGalh0Tlc4UnlieTlNd1BmMUFBN3c2ZTM3OHpI?=
+ =?utf-8?B?c2ZPTjNiRDFsYTM5SEVxd1QxTlR4UHdIeXVoMCtHdlFjNSt4QTMzbWVVNXpt?=
+ =?utf-8?B?VWFDMFpNRlVCbTRaTUFDeTlKdHdINzNwSnpGanFJRlBJS0o2dE1BLzFwbFNr?=
+ =?utf-8?B?eFAxeXlOU29rODBORHJqcUhTblpoK3RkQkY1SllCSkwzd0EyVzVXb1lDSHox?=
+ =?utf-8?B?Q3RVbGh0NjdLTTdkZ3Y5SmJJN1c2aDNlMWgrdlUxZHJ0ODZFdXNaYXZ5YWVH?=
+ =?utf-8?B?SGFLcVVHUmp4Z1pqcTJoaXVsb0trTTFseXFxQ2hYQytJTE5qYTNCdHIzTXB4?=
+ =?utf-8?B?VWRBUjRybG9lSzVWNDFlMWFoNHM5MFJKRTgyKzdLL0R1MGYzL2dXSER0L1VC?=
+ =?utf-8?B?bi9jbmRtaDFZaEkzQ2FFWThLZ2llUzU0THNMYVBTRVhIMWJKQkozQ3ZaQ3dL?=
+ =?utf-8?B?TzRoRzg1NitTcUYvaXluWTl6V1pXQWhwc0dDRDhQWGdIVDRiUExldEs5ZURE?=
+ =?utf-8?B?ZndYSUNjV0xmbXU0dE0vOGNrS1BWRTgrV0NQc3laTGdPV1FJVmF5NVpHZW1p?=
+ =?utf-8?B?SmIrSDNKbFErc1UzNW9WcUZRZVNieHVkNjIyam02Q04raEZiUWdhTGx4UEx2?=
+ =?utf-8?B?dVBoTEJpVHRZTE5LcXkwRUwwZGdWUUhmcG5ZZ3FRdUNqK3RnMVJ6aG9Fb3dL?=
+ =?utf-8?B?V2szVVNrdWFyZTBEaDZXMkJyRWI5OWI2REJBZUplcW1nNUFVVGxOVVVwOFpJ?=
+ =?utf-8?B?MzBHRXNVV2puTEw5WU5BVm94b28zS2NLSWhiTUpHMW5UUjVDclRYRzdaSGN5?=
+ =?utf-8?B?K1J2ZEdDVnNORzJ1UWZCZlVwY3BuTG5UYmJ2bmNVSlRtcllnb0Z4NUlqd2Rm?=
+ =?utf-8?B?U3A5WDJIWDJJMnUwMWlHNWx3Vm1LNytOV2Fsd1RSaS9PS1dNNUpoaWZNMzhQ?=
+ =?utf-8?B?b2xYY2VnL2U3R0VnRjdZUmhMN0c5WE94R2tNQTZKekpRaXgybTA2dWVHUFFs?=
+ =?utf-8?B?YWxhZHRBcG5QRlhITmhDaHMxRGJwbDFMNjRPNmxNS2hSNnc4ckN5MzIxc3Y5?=
+ =?utf-8?B?R21QdjlFV1p1dGFYcWlGc1owOGJpUmRaOXQwTmpYdEFmcjBiSzlxVTlkRDhN?=
+ =?utf-8?B?M0E9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	On3RvRNY1AAS6noidbLQgV9X28Qk1gXYIfzrOLr8uN0F9grlyQZuy88pQ6nPBba/IgBQN4KOmijUIGvYPKf7dfKoqZqpvglPOtnzQUtjp/InQsI6mlhCx+JKiwWpfQiVBlZw/HY1p7/uf5ihD7AcLdJw+9KKWYUHTqihqes8xFf8Iwgt6kH1SOzqJz3J9XW0Cqdveg782qX4I/V4kcRiOg/7EhgeqYwI7UlDzlvAlzVzUoOkhE5+4kwYZg4ZoeiG6RN3hZt2RrNHROaai0QyTDTxcUojUnf3ChgSRepIzk/CboAnFdSTcKOlzEIkdPGCWtB4jqQn1xhSu4506E0Dqi1r0vGnDQuVwIqAm3WbJmlJxjKg91P06HyqvfwRw3v4y4hYLF/72MKrHtppH2EiG9j+9wbyOuSAfxiFRIJ9WWS20VwVnv0jPjnXk/s19f3iH4TVejYUsYOYkWpBfap41bLOKtvPUnW645zqZJ594Hnd43SUahsMrs7RFUHvEC0SBWp/jESmr9hBrbtjDuhUFd67a+RD8ssPY8F2UzD27UOo4USBrEhbUPgJ8qT/whFE0D5S/CjbnTnUFB1SuHQ9RJJMN+dNHshvNmD8+90fVkg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ceaca5ac-69a9-466a-fa31-08dd790d5516
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR10MB5328.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 15:27:12.9313
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sKiq+iOrnJkA7vlJnsHnt9kt5c1FqGOR+cmBP52ThfryK0PY0jsODepAKqgiNAPt48V6tMfdAB70pL1QNKz+pXwTApLQYuO5sbkr5C4h86c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF0A29BA37B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_05,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
+ adultscore=0 phishscore=0 malwarescore=0 suspectscore=0 mlxlogscore=966
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
+ definitions=main-2504110098
+X-Proofpoint-ORIG-GUID: bm5OTuEJrM3SV0Joll8jtguOc-BUYciY
+X-Proofpoint-GUID: bm5OTuEJrM3SV0Joll8jtguOc-BUYciY
 
-On Fri, 11 Apr 2025 16:17:56 +0100
-Karunika Choo <karunika.choo@arm.com> wrote:
 
-> On 10/04/2025 17:46, Boris Brezillon wrote:
-> > On Thu, 10 Apr 2025 17:35:46 +0100
-> > Karunika Choo <karunika.choo@arm.com> wrote:
-> >   
-> >> This patch adds 64-bit register accessors to simplify register access in
-> >> Panthor. It also adds 32-bit and 64-bit variants for read_poll_timeout.
-> >>
-> >> This patch also updates Panthor to use the new 64-bit accessors and poll
-> >> functions.
-> >>
-> >> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-> >> ---
-> >>  drivers/gpu/drm/panthor/panthor_device.h |  71 ++++++++++++
-> >>  drivers/gpu/drm/panthor/panthor_fw.c     |   9 +-
-> >>  drivers/gpu/drm/panthor/panthor_gpu.c    | 142 ++++++-----------------
-> >>  drivers/gpu/drm/panthor/panthor_mmu.c    |  34 ++----
-> >>  drivers/gpu/drm/panthor/panthor_regs.h   |   6 -
-> >>  5 files changed, 124 insertions(+), 138 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
-> >> index da6574021664..5028e25f5e0d 100644
-> >> --- a/drivers/gpu/drm/panthor/panthor_device.h
-> >> +++ b/drivers/gpu/drm/panthor/panthor_device.h
-> >> @@ -428,4 +428,75 @@ static int panthor_request_ ## __name ## _irq(struct panthor_device *ptdev,			\
-> >>  
-> >>  extern struct workqueue_struct *panthor_cleanup_wq;
-> >>  
-> >> +static inline void gpu_write(struct panthor_device *ptdev, u32 reg, u32 data)
-> >> +{
-> >> +	writel(data, ptdev->iomem + reg);
-> >> +}
-> >> +
-> >> +static inline u32 gpu_read(struct panthor_device *ptdev, u32 reg)
-> >> +{
-> >> +	return readl(ptdev->iomem + reg);
-> >> +}
-> >> +
-> >> +static inline u32 gpu_read_relaxed(struct panthor_device *ptdev, u32 reg)
-> >> +{
-> >> +	return readl_relaxed(ptdev->iomem + reg);
-> >> +}
-> >> +
-> >> +static inline void gpu_write64(struct panthor_device *ptdev, u32 reg, u64 data)
-> >> +{
-> >> +	gpu_write(ptdev, reg, lower_32_bits(data));
-> >> +	gpu_write(ptdev, reg + 4, upper_32_bits(data));
-> >> +}
-> >> +
-> >> +static inline u64 gpu_read64(struct panthor_device *ptdev, u32 reg)
-> >> +{
-> >> +	return (gpu_read(ptdev, reg) | ((u64)gpu_read(ptdev, reg + 4) << 32));
-> >> +}
-> >> +
-> >> +static inline u64 gpu_read64_relaxed(struct panthor_device *ptdev, u32 reg)
-> >> +{
-> >> +	return (gpu_read_relaxed(ptdev, reg) |
-> >> +		((u64)gpu_read_relaxed(ptdev, reg + 4) << 32));
-> >> +}
-> >> +
-> >> +static inline u64 gpu_read64_counter(struct panthor_device *ptdev, u32 reg)
-> >> +{
-> >> +	u32 lo, hi1, hi2;
-> >> +	do {
-> >> +		hi1 = gpu_read(ptdev, reg + 4);
-> >> +		lo = gpu_read(ptdev, reg);
-> >> +		hi2 = gpu_read(ptdev, reg + 4);
-> >> +	} while (hi1 != hi2);
-> >> +	return lo | ((u64)hi2 << 32);
-> >> +}
-> >> +
-> >> +#define gpu_read_poll_timeout(dev, reg, val, cond, delay_us, timeout_us)    \
-> >> +	read_poll_timeout(gpu_read, val, cond, delay_us, timeout_us, false, \
-> >> +			  dev, reg)  
-> > 
-> > nit: can use use tabs to pad till the '\' at the end of the line so we
-> > can have a consistent formatting across these definitions?
-> >   
-> >> +
-> >> +#define gpu_read_poll_timeout_atomic(dev, reg, val, cond, delay_us,         \
-> >> +				     timeout_us)                            \
-> >> +	read_poll_timeout_atomic(gpu_read, val, cond, delay_us, timeout_us, \
-> >> +				 false, dev, reg)
-> >> +
-> >> +#define gpu_read64_poll_timeout(dev, reg, val, cond, delay_us, timeout_us)    \
-> >> +	read_poll_timeout(gpu_read64, val, cond, delay_us, timeout_us, false, \
-> >> +			  dev, reg)
-> >> +
-> >> +#define gpu_read64_poll_timeout_atomic(dev, reg, val, cond, delay_us,         \
-> >> +				       timeout_us)                            \
-> >> +	read_poll_timeout_atomic(gpu_read64, val, cond, delay_us, timeout_us, \
-> >> +				 false, dev, reg)
-> >> +
-> >> +#define gpu_read_relaxed_poll_timeout_atomic(dev, reg, val, cond, delay_us, \
-> >> +					     timeout_us)                    \
-> >> +	read_poll_timeout_atomic(gpu_read_relaxed, val, cond, delay_us,     \
-> >> +				 timeout_us, false, dev, reg)
-> >> +
-> >> +#define gpu_read64_relaxed_poll_timeout(dev, reg, val, cond, delay_us,         \
-> >> +					timeout_us)                            \
-> >> +	read_poll_timeout(gpu_read64_relaxed, val, cond, delay_us, timeout_us, \
-> >> +			  false, dev, reg)
-> >> +
-> >>  #endif
-> >> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-> >> index 0f52766a3120..ecfbe0456f89 100644
-> >> --- a/drivers/gpu/drm/panthor/panthor_fw.c
-> >> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
-> >> @@ -1059,8 +1059,8 @@ static void panthor_fw_stop(struct panthor_device *ptdev)
-> >>  	u32 status;
-> >>  
-> >>  	gpu_write(ptdev, MCU_CONTROL, MCU_CONTROL_DISABLE);
-> >> -	if (readl_poll_timeout(ptdev->iomem + MCU_STATUS, status,
-> >> -			       status == MCU_STATUS_DISABLED, 10, 100000))
-> >> +	if (gpu_read_poll_timeout(ptdev, MCU_STATUS, status,
-> >> +				  status == MCU_STATUS_DISABLED, 10, 100000))
-> >>  		drm_err(&ptdev->base, "Failed to stop MCU");
-> >>  }
-> >>  
-> >> @@ -1085,8 +1085,9 @@ void panthor_fw_pre_reset(struct panthor_device *ptdev, bool on_hang)
-> >>  
-> >>  		panthor_fw_update_reqs(glb_iface, req, GLB_HALT, GLB_HALT);
-> >>  		gpu_write(ptdev, CSF_DOORBELL(CSF_GLB_DOORBELL_ID), 1);
-> >> -		if (!readl_poll_timeout(ptdev->iomem + MCU_STATUS, status,
-> >> -					status == MCU_STATUS_HALT, 10, 100000)) {
-> >> +		if (!gpu_read_poll_timeout(ptdev, MCU_STATUS, status,
-> >> +					   status == MCU_STATUS_HALT, 10,
-> >> +					   100000)) {
-> >>  			ptdev->reset.fast = true;
-> >>  		} else {
-> >>  			drm_warn(&ptdev->base, "Failed to cleanly suspend MCU");
-> >> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
-> >> index 671049020afa..fd09f0928019 100644
-> >> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
-> >> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
-> >> @@ -108,14 +108,9 @@ static void panthor_gpu_init_info(struct panthor_device *ptdev)
-> >>  
-> >>  	ptdev->gpu_info.as_present = gpu_read(ptdev, GPU_AS_PRESENT);
-> >>  
-> >> -	ptdev->gpu_info.shader_present = gpu_read(ptdev, GPU_SHADER_PRESENT_LO);
-> >> -	ptdev->gpu_info.shader_present |= (u64)gpu_read(ptdev, GPU_SHADER_PRESENT_HI) << 32;
-> >> -
-> >> -	ptdev->gpu_info.tiler_present = gpu_read(ptdev, GPU_TILER_PRESENT_LO);
-> >> -	ptdev->gpu_info.tiler_present |= (u64)gpu_read(ptdev, GPU_TILER_PRESENT_HI) << 32;
-> >> -
-> >> -	ptdev->gpu_info.l2_present = gpu_read(ptdev, GPU_L2_PRESENT_LO);
-> >> -	ptdev->gpu_info.l2_present |= (u64)gpu_read(ptdev, GPU_L2_PRESENT_HI) << 32;
-> >> +	ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT_LO);
-> >> +	ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT_LO);
-> >> +	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT_LO);  
-> > 
-> > Now that we have proper 64-bit accessors, I think I would drop the
-> > _LO/_HI definitions and just go a single def per register that replaces
-> > the _LO one.  
-> 
-> Hello, 
-> 
-> please find a link to v2 below that addresses your comments.
-> 
-> - https://lore.kernel.org/dri-devel/20250411151140.1815435-1-karunika.choo@arm.com/
 
-Looks all good now.
+On 11-04-2025 20:39, Nam Cao wrote:
+>   	/* Step 4: Make sure all stack pointer values are non-zero */
+> +	line = NULL;
 
-Thanks!
+such case it should initialize at declaration time.
+better to move up char *test_dir, *line = NULL;
 
-Boris
+>   	for (i = 0; -1 != getline(&line, &line_length, file); ++i) {
+>   		stack = strtoull(line, NULL, 10);
+>   		ASSERT_NE(stack, 0);
+>   	}
+
+
+Thanks,
+Alok
 
