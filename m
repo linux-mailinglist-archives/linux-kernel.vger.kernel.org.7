@@ -1,55 +1,69 @@
-Return-Path: <linux-kernel+bounces-599560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE475A85578
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:30:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B25DA8557B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 400269A0176
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:29:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13633460EC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CC228D827;
-	Fri, 11 Apr 2025 07:29:08 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695CB28FFEA;
+	Fri, 11 Apr 2025 07:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="D9oHE0fh"
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A993D1E9B09;
-	Fri, 11 Apr 2025 07:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B7A283684
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744356547; cv=none; b=srr7PujX4xSTQ1gwsqHf+86oJ+mW1xrJsnYJClyedt3F0/hCciAEJ6gWJdGomFj/f+mePQ5U+Y0j/mc9J+WOgaQ97/7zQizeIWZfVtUKOwSD1Ud/mzMTH18ZLvx/WkvFuHqN3y43WGsC+RcXcKutExVERSOC3WJWuUABO/jIJ6M=
+	t=1744356643; cv=none; b=g82RQz3d+nmPhizrH5AfOZ40u/D1cfauHPpzybZiNthG0BQVFGnvLUzz/BGarUggcAdYK+ICfbFLy+2kodGaHaJ7HQNGHaqwOzTfeof9aji2l57UBaQie5wplBYGc/a2XCVNpXNlckJShRzlG/YfavxWOYyQJKDUd4EPhGl0VeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744356547; c=relaxed/simple;
-	bh=bDqGY1AtiCPNgiPrNANi8hsarVF01F4kRY7ffI9MP0k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AcygXVBrQmitGJNampK1QUkvUSEDs6I39PmMSpFoD8tFKLimHz0ba3h2j5PUMqNqq4dKw1c59p1JCI+fPH9S6zaB+aoF0nSmUgI0DPOD+atCnDfWC0ePGKA4TYojOvg+cefmb9xj7om21F+3TihMdTJlmTKRT8QWoFCF/SukUMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
-	by SHSQR01.spreadtrum.com with ESMTP id 53B7T0gl066240;
-	Fri, 11 Apr 2025 15:29:00 +0800 (+08)
-	(envelope-from Yunlong.Xing@unisoc.com)
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 53B7SPXM062369;
-	Fri, 11 Apr 2025 15:28:25 +0800 (+08)
-	(envelope-from Yunlong.Xing@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4ZYpD85X3Gz2M5NG5;
-	Fri, 11 Apr 2025 15:27:20 +0800 (CST)
-Received: from tj10379pcu1.spreadtrum.com (10.5.32.15) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.48; Fri, 11 Apr 2025 15:28:21 +0800
-From: Yunlong Xing <yunlong.xing@unisoc.com>
-To: <axboe@kernel.dk>, <linux-block@vger.kernel.org>
-CC: <niuzhiguo84@gmail.com>, <yunlongxing23@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <yunlong.xing@unisoc.com>,
-        <hao_hao.wang@unisoc.com>, <zhiguo.niu@unisoc.com>
-Subject: [PATCH] loop: aio inherit the ioprio of original request
-Date: Fri, 11 Apr 2025 15:28:16 +0800
-Message-ID: <20250411072816.445035-1-yunlong.xing@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744356643; c=relaxed/simple;
+	bh=wqK8syJvLU3JJqxy66W+Ah/grD1taGKhIRbavOCs+gw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JD7ULAiN7xGUfGF0WbYVkLReED8GL4UF3wU5OdvpcPZotbP4a1alJy9P/5KBp7rZR2DXFpt/kgHEqPJQkXIVd2CsOWUgUqvCo6aKzogPonVtTnn0Bxgse0kl/QGABQB27MQbTph248UuspSTzaKZrkKeQJdB9J0y2ZuL5cg7HJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=D9oHE0fh; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744356560;
+	bh=uxOm8SHlcWyXtuWQU8WpjfV173mQ5imseKmaQ1ocr88=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=D9oHE0fh6+FHg4F59HaiX+S7cuQhV/h/ToLgup8qbkjmTLVLMdpVD76kPX4PXWiTa
+	 plByWVk+Nj9fF1y9QMbJLZvaZGP7zKlY1mWWz5jAATbePWhK16l6PEcaGraWROnbJ7
+	 sIDRV5eGfjDQQqQk1GB4cNZRtoCZL5ZbzUWktt3c=
+X-QQ-mid: zesmtpip3t1744356550t30aef910
+X-QQ-Originating-IP: 5kBarLaAeNoTnPMhtr/u+NgnIMHwSLfBXYa7qBdeBa4=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 11 Apr 2025 15:29:08 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 14869536792913685592
+EX-QQ-RecipientCnt: 14
+From: WangYuli <wangyuli@uniontech.com>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr
+Cc: wangyuli@uniontech.com,
+	chenhuacai@kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	vincent.chen@sifive.com,
+	palmerdabbelt@google.com,
+	samuel.holland@sifive.com,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com
+Subject: [PATCH v4 0/2] riscv: Rework the arch_kgdb_breakpoint() implementation
+Date: Fri, 11 Apr 2025 15:29:04 +0800
+Message-ID: <D5A83DF3A06E1DF9+20250411072905.55134-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,44 +71,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 53B7SPXM062369
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NMRvUBB6DcheiGY8OQyajK5PCKdIR0ZhnYkrsbCGSmh6clcbRt+51l5u
+	9yvZ+4L53ph8OOo65AxpaHfSIk+gsoQk9WenpjudxVJxwwW4vwejcrEJQ2ZXBbiZccSQxnL
+	LRTWIli1AjY7n6me62/X5GUj/iBiGF/klpXYwkITXIuLewPPQ07cPvOD8M2fAK9oBCPuiN0
+	6G4gInK9hGw65OhxJNqB0m9Wjyd11ilhXXXk+5EHuKwxjzGKiQd6bHhr9ZZF0iThR40Sv8J
+	SEY5Ij4E6nb7Mb7WuQ4PPNrS/NHuIW568fbO5MfMAQsNHYu/JdSI6MQEq0dq3HmHfITylQc
+	mBbWOGcf7E5vG9UZTGF89JBQpyduY5r+xyGHuf0h5wXK6V5daQIVN/xpWgs+0XN7jiib9nn
+	vyNZSYrWyt6Nxll5k9fSYX1DvzVAHQApzE1iiU9UdX72ssOtpvom+Tu7Ans60OhoCrXCYPQ
+	/4KI5LE0tMMN3iETeX9dFLV0IfpeIqNXjSSL/m5FvKw79vsEnShrSVk0YFQOGgr0ZSJz7ML
+	hGtHi+Tz1MR1OG82RyHQjFsZcfGnHDF+RZwKpVtd7IWajkVlJSc+LAmr5zuvlSCOyb2wxzq
+	Z7JmEmdH+q6tFJGFhNVMRkAWpnPNTczUb0O9w1auYmyptQKlPfmWzfCRrOtTBtf6nM6M3SA
+	tF3N9QJ5wvA4av8nzaTrC6kxCmbHQi7fHUoAB+VHNrMsVWOoq4bg6hLeLNlDJPYyTfnHiih
+	8uHTn+pAlFfg3kedBs/QnqPfCgzQgQDZ1F9y4Eq60Wfq2yZ05ZYpYtcKkenGKZdBaEPVh+k
+	GBYUuOU+ei8dxpNHeIqhyVoka0BloWcAivtdn/oPOVT1LBMeEaNUTMCLZG7swwa6VrJm5oT
+	OaARNsjTelSiQARorpkoskfOPUnr9rLRt4WenN0kLAQ1KoFfM/93erNrKukrnACSn8Cy2ua
+	BQCQHwSvzKpk4Lez9QpNKIeYQNWv0Ukg8JEQ8PmHU4lnctG88ZUn4vpKyDrxXgkTLkdvtZo
+	raTnt5Ug==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-Set cmd->iocb.ki_ioprio to the ioprio of loop device's request.
-The purpose is to inherit the original request ioprio in the aio
-flow.
+1. The arch_kgdb_breakpoint() function defines the kgdb_compiled_break
+   symbol using inline assembly.
+    
+   There's a potential issue where the compiler might inline
+   arch_kgdb_breakpoint(), which would then define the kgdb_compiled_break
+   symbol multiple times, leading to fail to link vmlinux.o.
+    
+   This isn't merely a potential compilation problem. The intent here
+   is to determine the global symbol address of kgdb_compiled_break,
+   and if this function is inlined multiple times, it would logically
+   be a grave error.
 
-Signed-off-by: Yunlong Xing <yunlong.xing@unisoc.com>
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
----
- drivers/block/loop.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+2. Remove ".option norvc/.option rvc" to fix a bug that the C extension
+   would unconditionally enable even if the kernel is being built with
+   CONFIG_RISCV_ISA_C=n.
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 674527d770dc..ed73627af3ff 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -447,7 +447,6 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
- 	cmd->iocb.ki_filp = file;
- 	cmd->iocb.ki_complete = lo_rw_aio_complete;
- 	cmd->iocb.ki_flags = IOCB_DIRECT;
--	cmd->iocb.ki_ioprio = IOPRIO_PRIO_VALUE(IOPRIO_CLASS_NONE, 0);
- 
- 	if (rw == ITER_SOURCE)
- 		ret = file->f_op->write_iter(&cmd->iocb, &iter);
-@@ -1892,6 +1891,9 @@ static blk_status_t loop_queue_rq(struct blk_mq_hw_ctx *hctx,
- 		break;
- 	}
- 
-+	/* get original request ioprio */
-+	cmd->iocb.ki_ioprio = req_get_ioprio(rq);
-+
- 	/* always use the first bio's css */
- 	cmd->blkcg_css = NULL;
- 	cmd->memcg_css = NULL;
+WangYuli (2):
+  riscv: KGDB: Do not inline arch_kgdb_breakpoint()
+  riscv: KGDB: Remove ".option norvc/.option rvc" for
+    kgdb_compiled_break
+
+ arch/riscv/include/asm/kgdb.h | 9 +--------
+ arch/riscv/kernel/kgdb.c      | 6 ++++++
+ 2 files changed, 7 insertions(+), 8 deletions(-)
+
 -- 
-2.25.1
+2.49.0
 
 
