@@ -1,234 +1,175 @@
-Return-Path: <linux-kernel+bounces-600081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B01DA85B9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:28:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F04A85C11
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC8E418964FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8E121892383
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A6C298CBE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB32238C21;
+	Fri, 11 Apr 2025 11:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="nkBQ91k7"
+Received: from sienna.cherry.relay.mailchannels.net (sienna.cherry.relay.mailchannels.net [23.83.223.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD81203716;
+	Fri, 11 Apr 2025 11:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.165
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744371610; cv=pass; b=uKxUxH81SiGbRC+xNzSO0ANtFWYOashgIP+VTgteXxtW3DWys+pHzw7lvtVxbH2mRwlzts1cXlx5DEAbBkCPR+zmI91fc2TvfHp46VJCvf6wLXHZmKqey2pGkkPDoIEfCgysQl6h+kgd/SfVVULgkbbF2zvqsVz5RcKquj7sfBw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744371610; c=relaxed/simple;
+	bh=eZ7not74ayGyErQY97GIAbWimn+2ZHtNHi2jpeugyx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U8gkDHGcjXpiMCDV9bp5m53mwy//VHgwwU5bH/Qa0rUuGT2YR9IN1P9OpKXLjIDXFzEzWlunfRiUdtPHCCs55A9kF0Ke6tJjQr+mT45/NS4lRKkm/C+GXU6U2D8/UhvLPlFLNOxr63u2Lg1X2m59eXADad7xHQqsr3u8IYqKJ1E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=nkBQ91k7; arc=pass smtp.client-ip=23.83.223.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 1115E8A3BDD;
 	Fri, 11 Apr 2025 11:25:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCEE21146C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 11:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744370745; cv=none; b=WOxeDY65ACKaGzkqe5cvSn/mn2IHjY8wF5i0vPj1w5JX8CQcINb0KTRWivdXTEdxvLdx+35caMwR5Rcmh/BKyD1W0dsq+9V0G5CnaGLSYkfDdbBMvjHFKf1OXKoY2kHFGGycl+l0AHosH27/We6DS7tf82afnOyMCC6/xCUr/Pg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744370745; c=relaxed/simple;
-	bh=j3xA6bRZZ16EIr9OZEhJvJF9IVjwWP5YQPC7llL4Hgw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sv7fGqUVWZXxSHdfURZbrrVyQ5ZfySGtHVXDr9KIoj5X8Lblj52WaP5Df9+JWZLwm1E9wEFGKw8mlWNwQ3UGUjJC+wa40NDzW/b5Yq9vqjnei7SQafxkBvLMEk6VCNqPAHGBz4fHvYzCfNs9eX2enIeWswvxllqPJSTMYLtsEIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C21A106F;
-	Fri, 11 Apr 2025 04:25:43 -0700 (PDT)
-Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0DEDF3F694;
-	Fri, 11 Apr 2025 04:25:42 -0700 (PDT)
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Huisong Li <lihuisong@huawei.com>
-Subject: [PATCH] soc: hisilicon: kunpeng_hccs: Simplify PCC shared memory region handling
-Date: Fri, 11 Apr 2025 12:25:39 +0100
-Message-Id: <20250411112539.1149863-1-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.34.1
+Received: from pdx1-sub0-mail-a230.dreamhost.com (trex-5.trex.outbound.svc.cluster.local [100.107.20.214])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 883768A3F3E;
+	Fri, 11 Apr 2025 11:25:45 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1744370745; a=rsa-sha256;
+	cv=none;
+	b=TPsLdr6dZ2BhAH4E345JeFCYsm0G2TnumsTCY1Ilub/9FV8+DBVHwxeumGBfDUCv8RphG4
+	Kxgi+DrCceZQ+DmWUYZV1SJ+qAISjK3W+HQS0MZw/PKvFjNZCxMzCMxtYF+SnHv2xRBs9l
+	+svlj1w/mv6IhbgviOmTid8Ae0ti/m8wpre4JGTV5KY8Yi9wiMY0cv3nOr4jHpCWOirztc
+	jgkK2DprIlyHQd7CeNF1LtLKHNrNPesUAn/RBzbiMJaEvsGFL+Em1qo+ndRK07NEscyiR7
+	6hdUAJ1eSu7k0mkf9dv/NNVZoEXpGQvpxNGOyRdyg4w0En8+IjdgJb0RlBDsBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1744370745;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=75ipyekksOM5Ri+JXFAQmqUxDl2VTW0Cqiu2vU7L33g=;
+	b=2HFGKAdBD3yTFIuPbD5v7zJxcotuv766D9IjMOWOYL1dJQBTo0epj7S9jNK1PGpX6u+L8/
+	PFebKug1w+zvqYP/YRlZBsSYS7xymqdeRG+EzzKjbQk6BSHUOfxnXlwp8GND/eyJUl5Fhm
+	cU+WnvmwgMCkwTbFnBMCQkWtUJiHZdj804jtoQPpq4m0TOmCGFPH72UrOSSvylcI2atA7R
+	V5ZghU5fS6SqiZz2Z+gkx0a3Q3/gu/XTKLcgEvwmSRyfo+AIxeloMjem2okhXdpKZpsNsn
+	N5X+88/fHqxuSjW+Mlpyidh93Dw+lf8fYGkA+UDS+32px6uJRWbndo6F8v42tw==
+ARC-Authentication-Results: i=1;
+	rspamd-7d787bdb4f-jxj67;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
+X-MailChannels-Auth-Id: dreamhost
+X-Chemical-Cooing: 1fa47b837051dce2_1744370745843_230911863
+X-MC-Loop-Signature: 1744370745843:2240973692
+X-MC-Ingress-Time: 1744370745842
+Received: from pdx1-sub0-mail-a230.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.107.20.214 (trex/7.0.3);
+	Fri, 11 Apr 2025 11:25:45 +0000
+Received: from [172.22.7.54] (unknown [198.232.126.195])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: rob@landley.net)
+	by pdx1-sub0-mail-a230.dreamhost.com (Postfix) with ESMTPSA id 4ZYvWD2Q8szFh;
+	Fri, 11 Apr 2025 04:25:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
+	s=dreamhost; t=1744370745;
+	bh=75ipyekksOM5Ri+JXFAQmqUxDl2VTW0Cqiu2vU7L33g=;
+	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
+	b=nkBQ91k7vY1XDAEskO+FcFbCEFC0W4ZJ1yOUSLwkzdnEAT5i4nZSFbjOyCrUX/NpP
+	 nQjY0k9JRbymra0/BJd1KXHsgyq56CO8PviX214E7TnvLf+xaWeAeTMcj9+nerguyr
+	 ic951PGOQFcSQdpTW28eeSuOw0vzo9LBbsv2D6AkDAvNNZqYeJOiRR9M41xa2zHAbG
+	 BJCqPpmP8kDEl5ezYaWxcMdYg5ZR3fEJgrWufr+GlYA5/8NoqRK+LOfFsVYUkqGM8w
+	 dpBROtmFSqTd9Tpxdw7TDZTh8l3+vyc7+Oq8NimBZ1xJ84vzPkgPkmPZv4jIl2ZF1i
+	 YFq1zfZyXBQqQ==
+Message-ID: <5656d614-c851-4600-a79c-92edebc9c55e@landley.net>
+Date: Fri, 11 Apr 2025 06:25:43 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] J2 Turtle Board fixes
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Artur Rojek <contact@artur-rojek.eu>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ "D . Jeff Dionne" <jeff@coresemi.io>, linux-sh@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250216175545.35079-1-contact@artur-rojek.eu>
+ <f574808500e2c5fb733c1e5d9b4d17c2884d1b9f.camel@physik.fu-berlin.de>
+ <1551804b-fc78-4a3f-add8-af693f340a01@landley.net>
+ <48881e2d8efa9d7df8156f5f81cd662c2286e597.camel@physik.fu-berlin.de>
+ <9cf43bbe-898f-4b29-bd85-04f5320bce77@landley.net>
+ <afec7233266c6c1fd1e70ac615ff129d9dc3f710.camel@physik.fu-berlin.de>
+Content-Language: en-US
+From: Rob Landley <rob@landley.net>
+In-Reply-To: <afec7233266c6c1fd1e70ac615ff129d9dc3f710.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The PCC driver now handles mapping and unmapping of shared memory
-areas as part of pcc_mbox_{request,free}_channel(). Without these before,
-this Kunpeng HCCS driver did handling of those mappings like several
-other PCC mailbox client drivers.
+On 4/8/25 10:23, John Paul Adrian Glaubitz wrote:
+> Hi Rob,
+> 
+> On Fri, 2025-02-28 at 16:19 -0600, Rob Landley wrote:
+>>>> Which was fixed a year ago, which is why I told you to use the new
+>>>> toolchain with a current musl-libc:
+>>>>
+>>>> http://lists.landley.net/pipermail/toybox-landley.net/2024-February/030040.html
+>>>>
+>>>> Unless you're hitting the OTHER issue I fixed last year...
+>>>>
+>>>> https://github.com/landley/toybox/commit/0b2d5c2bb3f1
+>>>
+>>> I just downloaded the latest toolchain from:
+>>>
+>>> https://landley.net/bin/toolchains/latest/sh2eb-linux-muslfdpic-cross.tar.xz
+>>>
+>>> and the issue still persists.
+>>>
+>>> Am I missing anything?
+>>
+>> The march 2024 rebuild was in response to that Feb 2024 bugfix, so it
+>> _should_ have the fix? (I'm waiting for another musl release to rebuild
+>> them again...)
+>>
+>> I just downloaded the toolchain currently at that URL and built mkroot
+>> and it worked for me:
+>>
+>> Run /init as init process
+>> sntp: time.google.com:123: Try again
+>> Type exit when done.
+>> $ cat /proc/version
+>> Linux version 6.14.0-rc3 (landley@driftwood) (sh2eb-linux-muslfdpic-cc
+>> (GCC) 11.2.0, GNU ld (GNU Binutils) 2.33.1) #1 SMP Fri Feb 28 15:47:36
+>> CST 2025
+>>
+>> And the failure _without_ the fix was deterministic rather than
+>> intermittent, so...
+>>
+>> Keep in mind the init script has a 3 second timeout trying to call sntp
+>> to set the clock, which will fail if the ethernet isn't connected (or no
+>> driver, or no internet...)
+> 
+> I just gave it another try and it still hangs for me at:
+> 
+> 	Run /init as init process
+> 
+> with the latest toolchain, toybox and kernel (v6.15-rc-1).
 
-There were redundant operations, leading to unnecessary code. Maintaining
-the consistency across these driver was harder due to scattered handling
-of shmem.
+FYI I reproduced this but haven't tracked it down yet.
 
-Just use the mapped shmem and remove all redundant operations from this
-driver.
-
-Cc: Huisong Li <lihuisong@huawei.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/soc/hisilicon/kunpeng_hccs.c | 42 ++++++++++------------------
- drivers/soc/hisilicon/kunpeng_hccs.h |  2 --
- 2 files changed, 15 insertions(+), 29 deletions(-)
-
-Hi,
-
-This is just resend of the same patch that was part of a series [1].
-Only core PCC mailbox changes were merged during v6.15 merge window.
-So dropping all the maintainer acks and reposting it so that it can
-be picked up for v6.16 via maintainers tree.
-
-Regards,
-Sudeep
-
-[1] https://lore.kernel.org/all/20250313-pcc_fixes_updates-v3-9-019a4aa74d0f@arm.com/
-
-diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
-index 444a8f59b7da..7fc353732d55 100644
---- a/drivers/soc/hisilicon/kunpeng_hccs.c
-+++ b/drivers/soc/hisilicon/kunpeng_hccs.c
-@@ -167,10 +167,6 @@ static void hccs_pcc_rx_callback(struct mbox_client *cl, void *mssg)
- 
- static void hccs_unregister_pcc_channel(struct hccs_dev *hdev)
- {
--	struct hccs_mbox_client_info *cl_info = &hdev->cl_info;
--
--	if (cl_info->pcc_comm_addr)
--		iounmap(cl_info->pcc_comm_addr);
- 	pcc_mbox_free_channel(hdev->cl_info.pcc_chan);
- }
- 
-@@ -179,6 +175,7 @@ static int hccs_register_pcc_channel(struct hccs_dev *hdev)
- 	struct hccs_mbox_client_info *cl_info = &hdev->cl_info;
- 	struct mbox_client *cl = &cl_info->client;
- 	struct pcc_mbox_chan *pcc_chan;
-+	struct mbox_chan *mbox_chan;
- 	struct device *dev = hdev->dev;
- 	int rc;
- 
-@@ -196,7 +193,7 @@ static int hccs_register_pcc_channel(struct hccs_dev *hdev)
- 		goto out;
- 	}
- 	cl_info->pcc_chan = pcc_chan;
--	cl_info->mbox_chan = pcc_chan->mchan;
-+	mbox_chan = pcc_chan->mchan;
- 
- 	/*
- 	 * pcc_chan->latency is just a nominal value. In reality the remote
-@@ -206,34 +203,24 @@ static int hccs_register_pcc_channel(struct hccs_dev *hdev)
- 	cl_info->deadline_us =
- 			HCCS_PCC_CMD_WAIT_RETRIES_NUM * pcc_chan->latency;
- 	if (!hdev->verspec_data->has_txdone_irq &&
--	    cl_info->mbox_chan->mbox->txdone_irq) {
-+	    mbox_chan->mbox->txdone_irq) {
- 		dev_err(dev, "PCC IRQ in PCCT is enabled.\n");
- 		rc = -EINVAL;
- 		goto err_mbx_channel_free;
- 	} else if (hdev->verspec_data->has_txdone_irq &&
--		   !cl_info->mbox_chan->mbox->txdone_irq) {
-+		   !mbox_chan->mbox->txdone_irq) {
- 		dev_err(dev, "PCC IRQ in PCCT isn't supported.\n");
- 		rc = -EINVAL;
- 		goto err_mbx_channel_free;
- 	}
- 
--	if (!pcc_chan->shmem_base_addr ||
--	    pcc_chan->shmem_size != HCCS_PCC_SHARE_MEM_BYTES) {
--		dev_err(dev, "The base address or size (%llu) of PCC communication region is invalid.\n",
--			pcc_chan->shmem_size);
-+	if (pcc_chan->shmem_size != HCCS_PCC_SHARE_MEM_BYTES) {
-+		dev_err(dev, "Base size (%llu) of PCC communication region must be %d bytes.\n",
-+			pcc_chan->shmem_size, HCCS_PCC_SHARE_MEM_BYTES);
- 		rc = -EINVAL;
- 		goto err_mbx_channel_free;
- 	}
- 
--	cl_info->pcc_comm_addr = ioremap(pcc_chan->shmem_base_addr,
--					 pcc_chan->shmem_size);
--	if (!cl_info->pcc_comm_addr) {
--		dev_err(dev, "Failed to ioremap PCC communication region for channel-%u.\n",
--			hdev->chan_id);
--		rc = -ENOMEM;
--		goto err_mbx_channel_free;
--	}
--
- 	return 0;
- 
- err_mbx_channel_free:
-@@ -246,7 +233,7 @@ static int hccs_wait_cmd_complete_by_poll(struct hccs_dev *hdev)
- {
- 	struct hccs_mbox_client_info *cl_info = &hdev->cl_info;
- 	struct acpi_pcct_shared_memory __iomem *comm_base =
--							cl_info->pcc_comm_addr;
-+							cl_info->pcc_chan->shmem;
- 	u16 status;
- 	int ret;
- 
-@@ -289,7 +276,7 @@ static inline void hccs_fill_pcc_shared_mem_region(struct hccs_dev *hdev,
- 		.status = 0,
- 	};
- 
--	memcpy_toio(hdev->cl_info.pcc_comm_addr, (void *)&tmp,
-+	memcpy_toio(hdev->cl_info.pcc_chan->shmem, (void *)&tmp,
- 		    sizeof(struct acpi_pcct_shared_memory));
- 
- 	/* Copy the message to the PCC comm space */
-@@ -309,7 +296,7 @@ static inline void hccs_fill_ext_pcc_shared_mem_region(struct hccs_dev *hdev,
- 		.command = cmd,
- 	};
- 
--	memcpy_toio(hdev->cl_info.pcc_comm_addr, (void *)&tmp,
-+	memcpy_toio(hdev->cl_info.pcc_chan->shmem, (void *)&tmp,
- 		    sizeof(struct acpi_pcct_ext_pcc_shared_memory));
- 
- 	/* Copy the message to the PCC comm space */
-@@ -321,12 +308,13 @@ static int hccs_pcc_cmd_send(struct hccs_dev *hdev, u8 cmd,
- {
- 	const struct hccs_verspecific_data *verspec_data = hdev->verspec_data;
- 	struct hccs_mbox_client_info *cl_info = &hdev->cl_info;
-+	struct mbox_chan *mbox_chan = cl_info->pcc_chan->mchan;
- 	struct hccs_fw_inner_head *fw_inner_head;
- 	void __iomem *comm_space;
- 	u16 space_size;
- 	int ret;
- 
--	comm_space = cl_info->pcc_comm_addr + verspec_data->shared_mem_size;
-+	comm_space = cl_info->pcc_chan->shmem + verspec_data->shared_mem_size;
- 	space_size = HCCS_PCC_SHARE_MEM_BYTES - verspec_data->shared_mem_size;
- 	verspec_data->fill_pcc_shared_mem(hdev, cmd, desc,
- 					  comm_space, space_size);
-@@ -334,7 +322,7 @@ static int hccs_pcc_cmd_send(struct hccs_dev *hdev, u8 cmd,
- 		reinit_completion(&cl_info->done);
- 
- 	/* Ring doorbell */
--	ret = mbox_send_message(cl_info->mbox_chan, &cmd);
-+	ret = mbox_send_message(mbox_chan, &cmd);
- 	if (ret < 0) {
- 		dev_err(hdev->dev, "Send PCC mbox message failed, ret = %d.\n",
- 			ret);
-@@ -356,9 +344,9 @@ static int hccs_pcc_cmd_send(struct hccs_dev *hdev, u8 cmd,
- 
- end:
- 	if (verspec_data->has_txdone_irq)
--		mbox_chan_txdone(cl_info->mbox_chan, ret);
-+		mbox_chan_txdone(mbox_chan, ret);
- 	else
--		mbox_client_txdone(cl_info->mbox_chan, ret);
-+		mbox_client_txdone(mbox_chan, ret);
- 	return ret;
- }
- 
-diff --git a/drivers/soc/hisilicon/kunpeng_hccs.h b/drivers/soc/hisilicon/kunpeng_hccs.h
-index dc267136919b..f0a9a5618d97 100644
---- a/drivers/soc/hisilicon/kunpeng_hccs.h
-+++ b/drivers/soc/hisilicon/kunpeng_hccs.h
-@@ -60,10 +60,8 @@ struct hccs_chip_info {
- 
- struct hccs_mbox_client_info {
- 	struct mbox_client client;
--	struct mbox_chan *mbox_chan;
- 	struct pcc_mbox_chan *pcc_chan;
- 	u64 deadline_us;
--	void __iomem *pcc_comm_addr;
- 	struct completion done;
- };
- 
--- 
-2.34.1
-
+Rob
 
