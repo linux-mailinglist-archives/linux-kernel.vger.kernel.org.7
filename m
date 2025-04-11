@@ -1,103 +1,385 @@
-Return-Path: <linux-kernel+bounces-600689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E4DA8635F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:35:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B75A8636A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2C141BA733B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:35:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B1C33B1EA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0E222127B;
-	Fri, 11 Apr 2025 16:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDD320F08E;
+	Fri, 11 Apr 2025 16:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LPuy27Sd"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mil10c8x"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C57E2367D9;
-	Fri, 11 Apr 2025 16:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65911DE2DB
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 16:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744389278; cv=none; b=WWwhtsSTwteNDKiT4fmKW9xW+qO/DHuAmAQgyIe8MdUY0K4EQr7LxtPXvub3aMm6ug1QOtTml0Mr8H+G6N2LW1ni3Z+EVqWcq83XxGnU74I7wLrn8ZX8B0no/fkRe2C0a1/6DasYfCLX+tse9WNe+dgZ0r97C4o7QHoU95xLJ7w=
+	t=1744389291; cv=none; b=D2bS6/zcDfsnRn4G4h2NaFgkotOQcRe1CValk6IsgOkmuvVXVTFIQu0bJ1V3+QP30/WDKU2hxoOOMj5EckhLLFkDdkXzEM+PEbZXW4EVeUiUp0wKp1DvgPvoPsCK/3/ZFgJIBUrEvsxpjJiI1yXUV81qE6BTk8rusXXMgG8BJII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744389278; c=relaxed/simple;
-	bh=bOd1S6WkB3HWgKwH+/dZwxloPfCnqa0DEn4j+PlR4es=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MUmzzSV6lGEzY3amFJvrlvWW6BOF2Xrdc6showvQuxlSa5fYUGgpFXT+v6IePn+xcc76jzufQymPFuAIqpfh7QwTeuWoH2ik2guHmhZJIh4X1cKNlfxXWMxmSyjtml/Ys9O+SVIpth4PhvhP8WobqyN/kXX/VO/lu+Qfp+dV8DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LPuy27Sd; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53BGYUaR2131385
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Apr 2025 11:34:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744389270;
-	bh=gueCorUWNnifGsIBAt1Z9xNc0USB9Zc2kP2+96PYWPg=;
-	h=From:To:CC:Subject:Date;
-	b=LPuy27SdMlWwA9HAnyTnokUxGJgnA9GQii2t8rx3N1kHeVtWNaGwUNaJFn1NWcRck
-	 OIw7f26s5M90Ykcvv/UTagjzBCvgKkn6piojrhUCTaZSRrLhHmtvqcrUrxB34z0bDR
-	 gvo3BTz7VWh4cXituCdYumtiQTj56yXrKL7VzDEg=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53BGYUMI012553
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 11 Apr 2025 11:34:30 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
- Apr 2025 11:34:29 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 11 Apr 2025 11:34:29 -0500
-Received: from lelvsmtp6.itg.ti.com ([10.250.35.60])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53BGYTYP063143;
-	Fri, 11 Apr 2025 11:34:29 -0500
-From: Andrew Davis <afd@ti.com>
-To: Pavel Machek <pavel@kernel.org>, Lee Jones <lee@kernel.org>
-CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Andrew Davis
-	<afd@ti.com>
-Subject: [PATCH] leds: lp8860: Remove struct member regulator description
-Date: Fri, 11 Apr 2025 11:34:28 -0500
-Message-ID: <20250411163428.897582-1-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1744389291; c=relaxed/simple;
+	bh=cUytIB6JD4u8jSksVRBv65CJh/bQDLtRlJvAHpLvoNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PxZQAKha0qXYliV9oP6s7M9m/CvIbx+MiNyGSILidin0RlXwNU+KIixOQLtfOW4IMiRlMP63lUxDClnQKkGJ6wuckcgkG0n8leY7mAsnLXPcaCP2JRQ1cZoL+71vsDC5JiJdjhBUFFpJ0br1T50y2C/p0PyJ6+ZSfmzZ7eEpc4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mil10c8x; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53BGPxZL032531
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 16:34:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jvva2kE3vYVEBaJ0888Bum0UF9gFfTGvSCYYnphqITg=; b=mil10c8xL+HfNBzP
+	GYA6yUcePBV3DXzcJPgKMLr3bNKVTBfWXuCYFQsG5CbDk+IPON0lpjIMC3mGo10X
+	cnIatcq2HRpx0XYMIIY33HKg5eyDJH7e0cBr7VmWfDF7YG0nZRH5rPeCTclOUGLV
+	GdsCS9gyVyS17Ga1acqm2brjkkQ0oJRwX2riD8z8Xgn29No6TpnmPUlGlUCdFA2M
+	0DWfYSVZHpA9gq9FlemApC6G7MW90TLDJhOKvDkaomZQXsW0vU6omPC4UnBnv/B9
+	Spqknnh4+44peIBNeB5rWjMlGeg0cDsxT9nJHGasm4iIF132WYRKf8MOyD7sw/p1
+	iDEU7g==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twfkttfp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 16:34:43 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-225429696a9so28528405ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 09:34:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744389282; x=1744994082;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jvva2kE3vYVEBaJ0888Bum0UF9gFfTGvSCYYnphqITg=;
+        b=flyqa+OS6/w5v9iz0s8lImvWhxu8ZtuWvqZzKdAnUCBbeA8H55lpq0YMV+lNdn8Ct6
+         XfNUWPgAC72T8I0bQaFouz7foebZIQzTrHIyvRFEJER+RmESHfJJWDGxX6kL6CvNnUUq
+         ns0EGqdEwe6Q4Y9C2LFlmbXIAeTvg726+0eAekhA/arpHYAAV9xBcQYXLUk+0pmajoK8
+         jYvSPWGpWAtAIzw7/kPZVI65sf/6+jNbq4t/TbxdotImFFujmAAYqqodaB+wPQdN/vpP
+         n1DNPK7ZzLuL5r6/mGRAbdESxk2yDd82ZZDCoX00ifGe3GnhvCkh4SbszBlL0wU3hP+4
+         fauA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmF59C5VcGhHGiGBqd89L4kSVknjDaORh/dm2GVORAdzQEVMKYX4OJbxaIi6JIm69vReWSPgBOmA2nvhg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxb8yrhWnExWFYfVG+iV6uGRG7mkocP6LA6Sitzp4XFifTw8te
+	avrTHujhFfv4Gv9PGMTXFBqkPlEou9FBvM7njWOB2tVqxkiXeSJEXVHMaDTreqf69JKQfWNdV5F
+	0Ur/0/oaI3aT7aJSU0lERaZBSJhaxjcB3FhhSdV35HfU8PNNkhnelp1+8ofTOTx4=
+X-Gm-Gg: ASbGncv1qSpqKx0pRaNbWTy30tbQyLzjqo88rgZeLKPYTVlEiacEfsCPW9pPL2/aKZD
+	eLlAy+FumkOUEtVJ8rJ4HNBqxg0CuOV75lWHanlDsRTqebrMvLztV/6PBJ2SFgcNxds3lKRjADw
+	qzp9qmBgcDd+qcKKByOYzATi9QUA15YbDfhmxtkF1VFMr96ZGhI/kgK3QVWN8ylNnWjKM1dRtl4
+	39Zr8cWbQCl6HwkAVADODC9DThrg8TZ9ZXvcmTGKEUgKeTVmg37tUMmY88crSdZ0Sls8I1lYtll
+	qB/gC+Z1htbih4juCse2lGHiDIj5N6fMiCml+NtYeY1hgO5W5sk1BizxwzxbUw==
+X-Received: by 2002:a17:903:13d0:b0:216:3c36:69a7 with SMTP id d9443c01a7336-22bea50bd92mr52568125ad.45.1744389281656;
+        Fri, 11 Apr 2025 09:34:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGjVbhg891hBTEU/fDXSGsCtHr9+7WqQeuL91yoDYRZ8Vj/jNkTHN9KHit1bNNOf3beOPdFtw==
+X-Received: by 2002:a17:903:13d0:b0:216:3c36:69a7 with SMTP id d9443c01a7336-22bea50bd92mr52567665ad.45.1744389281217;
+        Fri, 11 Apr 2025 09:34:41 -0700 (PDT)
+Received: from [10.226.59.182] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b8c62dsm51759155ad.95.2025.04.11.09.34.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Apr 2025 09:34:40 -0700 (PDT)
+Message-ID: <3260d7de-9e8b-48ee-9d1b-13745e95d933@oss.qualcomm.com>
+Date: Fri, 11 Apr 2025 10:34:38 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] accel/amdpk: add driver for AMD PKI accelerator
+To: Nipun Gupta <nipun.gupta@amd.com>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        krzk+dt@kernel.org, gregkh@linuxfoundation.org, robh@kernel.org,
+        conor+dt@kernel.org, ogabbay@kernel.org,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+        derek.kiernan@amd.com, dragan.cvetic@amd.com, arnd@arndb.de
+Cc: praveen.jain@amd.com, harpreet.anand@amd.com, nikhil.agarwal@amd.com,
+        srivatsa@csail.mit.edu, code@tyhicks.com, ptsm@linux.microsoft.com
+References: <20250409173033.2261755-1-nipun.gupta@amd.com>
+ <20250409173033.2261755-2-nipun.gupta@amd.com>
+Content-Language: en-US
+From: Jeff Hugo <jeff.hugo@oss.qualcomm.com>
+In-Reply-To: <20250409173033.2261755-2-nipun.gupta@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: xhQnYfTRa027M8LHtTSpfHvWfEFgfk4t
+X-Proofpoint-ORIG-GUID: xhQnYfTRa027M8LHtTSpfHvWfEFgfk4t
+X-Authority-Analysis: v=2.4 cv=b7Oy4sGx c=1 sm=1 tr=0 ts=67f944a3 cx=c_pps a=IZJwPbhc+fLeJZngyXXI0A==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=e5mUnYsNAAAA:8 a=zd2uoN0lAAAA:8 a=t4VSQj1yoBEbmVwKJQYA:9 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22 a=Vxmtnl_E_bksehYqCbjh:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_06,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ priorityscore=1501 suspectscore=0 mlxscore=0 impostorscore=0 phishscore=0
+ clxscore=1015 spamscore=0 mlxlogscore=999 bulkscore=0 lowpriorityscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504110104
 
-The device local struct regulator was removed, remove the documentation
-description for the same.
+On 4/9/2025 11:30 AM, Nipun Gupta wrote:
+> The AMD PKI accelerator driver provides a accel interface to interact
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202504111959.7WtsLney-lkp@intel.com/
-Fixes: fa604baf13ce ("leds: lp8860: Enable regulator using enable_optional helper")
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- drivers/leds/leds-lp8860.c | 1 -
- 1 file changed, 1 deletion(-)
+"an accel"
 
-diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-index 7a9eb9a247ae7..86db81675e7dc 100644
---- a/drivers/leds/leds-lp8860.c
-+++ b/drivers/leds/leds-lp8860.c
-@@ -91,7 +91,6 @@
-  * @regmap: Devices register map
-  * @eeprom_regmap: EEPROM register map
-  * @enable_gpio: VDDIO/EN gpio to enable communication interface
-- * @regulator: LED supply regulator pointer
-  */
- struct lp8860_led {
- 	struct mutex lock;
--- 
-2.39.2
+> with the device for offloading and accelerating asymmetric crypto
+> operations.
+> 
+> Signed-off-by: Nipun Gupta <nipun.gupta@amd.com>
+> ---
+> 
+> Changes RFC->v2:
+> - moved from misc to accel
+> - added architecture and compile test dependency in Kconfig
+> - removed sysfs (and added debugfs in new patch 3/3)
+> - fixed platform compat
+> - removed redundant resource index 1 configuration (which was there in
+>    RFC patch)
+> 
+>   MAINTAINERS                     |   2 +
+>   drivers/accel/Kconfig           |   1 +
+>   drivers/accel/Makefile          |   1 +
+>   drivers/accel/amdpk/Kconfig     |  18 +
+>   drivers/accel/amdpk/Makefile    |   8 +
+>   drivers/accel/amdpk/amdpk_drv.c | 736 ++++++++++++++++++++++++++++++++
+>   drivers/accel/amdpk/amdpk_drv.h | 271 ++++++++++++
+>   include/uapi/drm/amdpk.h        |  49 +++
+>   8 files changed, 1086 insertions(+)
+>   create mode 100644 drivers/accel/amdpk/Kconfig
+>   create mode 100644 drivers/accel/amdpk/Makefile
+>   create mode 100644 drivers/accel/amdpk/amdpk_drv.c
+>   create mode 100644 drivers/accel/amdpk/amdpk_drv.h
+>   create mode 100644 include/uapi/drm/amdpk.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 11f8815daa77..cdc305a206aa 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1161,6 +1161,8 @@ L:	dri-devel@lists.freedesktop.org
+>   S:	Maintained
+>   T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+>   F:	Documentation/devicetree/bindings/accel/amd,versal-net-pki.yaml
+> +F:	drivers/accel/amdpk/
+> +F:	include/uapi/drm/amdpk.h
+> 
+>   AMD PMC DRIVER
+>   M:	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> diff --git a/drivers/accel/Kconfig b/drivers/accel/Kconfig
+> index 5b9490367a39..5632c6c62c15 100644
+> --- a/drivers/accel/Kconfig
+> +++ b/drivers/accel/Kconfig
+> @@ -28,5 +28,6 @@ source "drivers/accel/amdxdna/Kconfig"
+>   source "drivers/accel/habanalabs/Kconfig"
+>   source "drivers/accel/ivpu/Kconfig"
+>   source "drivers/accel/qaic/Kconfig"
+> +source "drivers/accel/amdpk/Kconfig"
+
+Alphabetical order
+
+> 
+>   endif
+> diff --git a/drivers/accel/Makefile b/drivers/accel/Makefile
+> index a301fb6089d4..caea6d636ac8 100644
+> --- a/drivers/accel/Makefile
+> +++ b/drivers/accel/Makefile
+> @@ -4,3 +4,4 @@ obj-$(CONFIG_DRM_ACCEL_AMDXDNA)		+= amdxdna/
+>   obj-$(CONFIG_DRM_ACCEL_HABANALABS)	+= habanalabs/
+>   obj-$(CONFIG_DRM_ACCEL_IVPU)		+= ivpu/
+>   obj-$(CONFIG_DRM_ACCEL_QAIC)		+= qaic/
+> +obj-$(CONFIG_DRM_ACCEL_AMDPK)		+= amdpk/
+
+Alphabetical order
+
+> diff --git a/drivers/accel/amdpk/amdpk_drv.c b/drivers/accel/amdpk/amdpk_drv.c
+> new file mode 100644
+> index 000000000000..17c328d03db8
+> --- /dev/null
+> +++ b/drivers/accel/amdpk/amdpk_drv.c
+> @@ -0,0 +1,736 @@
+> +// SPDX-License-Identifier: GPL-2.0
+
+Deprecated SPDX tag.  Checkpatch will catch this.
+
+> +/*
+> + * Copyright (c) 2018-2021 Silex Insight sa
+> + * Copyright (c) 2018-2021 Beerten Engineering scs
+> + * Copyright (c) 2025 Advanced Micro Devices, Inc.
+> + */
+> +
+> +/*
+> + * Device Overview
+> + * ===============
+> + * AMD PKI accelerator is a device on AMD versal-net to execute public
+> + * key asymmetric crypto operations like ECDSA, ECDH, RSA etc. with high
+> + * performance. The driver provides accel interface to applications for
+> + * configuring the device and performing the required operations. AMD PKI
+> + * device comprises of multiple Barco Silex ba414 PKI engines bundled together,
+> + * and providing a queue based interface to interact with these devices on AMD
+> + * versal-net.
+> + *
+> + * Following figure provides the brief overview of the device interface with
+> + * the software:
+> + *
+> + * +------------------+
+> + * |    Software      |
+> + * +------------------+
+> + *     |          |
+> + *     |          v
+> + *     |     +-----------------------------------------------------------+
+> + *     |     |                     RAM                                   |
+> + *     |     |  +----------------------------+   +---------------------+ |
+> + *     |     |  |           RQ pages         |   |       CQ pages      | |
+> + *     |     |  | +------------------------+ |   | +-----------------+ | |
+> + *     |     |  | |   START (cmd)          | |   | | req_id | status | | |
+> + *     |     |  | |   TFRI (addr, sz)---+  | |   | | req_id | status | | |
+> + *     |     |  | | +-TFRO (addr, sz)   |  | |   | | ...             | | |
+> + *     |     |  | | | NTFY (req_id)     |  | |   | +-----------------+ | |
+> + *     |     |  | +-|-------------------|--+ |   |                     | |
+> + *     |     |  |   |                   v    |   +---------------------+ |
+> + *     |     |  |   |         +-----------+  |                           |
+> + *     |     |  |   |         | input     |  |                           |
+> + *     |     |  |   |         | data      |  |                           |
+> + *     |     |  |   v         +-----------+  |                           |
+> + *     |     |  |  +----------------+        |                           |
+> + *     |     |  |  |  output data   |        |                           |
+> + *     |     |  |  +----------------+        |                           |
+> + *     |     |  +----------------------------+                           |
+> + *     |     |                                                           |
+> + *     |     +-----------------------------------------------------------+
+> + *     |
+> + *     |
+> + * +---|----------------------------------------------------+
+> + * |   v                AMD PKI device                      |
+> + * |  +-------------------+     +------------------------+  |
+> + * |  | New request FIFO  | --> |       PK engines       |  |
+> + * |  +-------------------+     +------------------------+  |
+> + * +--------------------------------------------------------+
+> + *
+> + * To perform a crypto operation, the software writes a sequence of descriptors,
+> + * into the RQ memory. This includes input data and designated location for the
+> + * output data. After preparing the request, request offset (from the RQ memory
+> + * region) is written into the NEW_REQUEST register. Request is then stored in a
+> + * common hardware FIFO shared among all RQs.
+> + *
+> + * When a PK engine becomes available, device pops the request from the FIFO and
+> + * fetches the descriptors. It DMAs the input data from RQ memory and executes
+> + * the necessary computations. After computation is complete, the device writes
+> + * output data back to RAM via DMA. Device then writes a new entry in CQ ring
+> + * buffer in RAM, indicating completion of the request. Device also generates
+> + * an interrupt for notifying completion to the software.
+> + */
+
+Feels like this would be better served in Documentation
+
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/delay.h>
+> +#include <linux/eventfd.h>
+> +#include <drm/drm_accel.h>
+> +#include <drm/drm_ioctl.h>
+
+Alphabetical order
+
+> +
+> +#include "amdpk_drv.h"
+> +
+> +#define DRIVER_NAME "amdpk"
+> +
+> +static void amdpk_init_cq(struct amdpk_dev *pkdev, struct amdpk_cq *cq,
+> +			  int szcode, char *base)
+> +{
+> +	cq->pkdev = pkdev;
+> +	cq->generation = 1;
+> +	cq->szcode = szcode;
+> +	cq->base = (u32 *)base;
+> +	cq->tail = 0;
+> +}
+> +
+> +static int amdpk_pop_cq(struct amdpk_cq *cq, int *rid)
+> +{
+> +	u32 status = CQ_STATUS_VALID;
+> +	unsigned int sz;
+> +	u32 completion;
+> +
+> +	completion = cq->base[cq->tail + 1];
+> +	if ((completion & CQ_GENERATION_BIT) != cq->generation)
+> +		return CQ_STATUS_INVALID;
+> +
+> +	*rid = (completion >> 16) & 0xffff;
+> +	/* read memory barrier: to avoid a race condition, the status field should
+> +	 * not be read before the completion generation bit. Otherwise we could
+> +	 * get stale outdated status data.
+> +	 */
+
+Incorrect comment format.
+
+> +	rmb();
+
+Shouldn't you be using readl()?
+
+> +	status |= cq->base[cq->tail];
+> +	/* advance completion queue tail */
+> +	cq->tail += 2;
+> +	sz = 1 << (cq->szcode - 2);
+> +	if (cq->tail >= sz) {
+> +		cq->tail = 0;
+> +		cq->generation ^= 1; /* invert generation bit */
+> +	}
+> +
+> +	/* evaluate status from the completion queue */
+> +	if (completion & CQ_COMPLETION_BIT)
+> +		status |= CQ_COMPLETION_ERROR;
+> +
+> +	return status;
+> +}
+> +
+> +static const struct file_operations amdpk_accel_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.open		= accel_open,
+> +	.release	= drm_release,
+> +	.unlocked_ioctl	= drm_ioctl,
+> +	.compat_ioctl	= drm_compat_ioctl,
+> +	.llseek		= noop_llseek,
+> +	.mmap		= amdpk_accel_mmap,
+> +};
+
+DEFINE_DRM_ACCEL_FOPS ?
+
+> diff --git a/include/uapi/drm/amdpk.h b/include/uapi/drm/amdpk.h
+> new file mode 100644
+> index 000000000000..e5e18fdbc2c4
+> --- /dev/null
+> +++ b/include/uapi/drm/amdpk.h
+> @@ -0,0 +1,49 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2025 Advanced Micro Devices, Inc.
+> + */
+> +
+> +#ifndef __AMDPK_H__
+> +#define __AMDPK_H__
+> +
+> +#if defined(__cplusplus)
+> +extern "C" {
+> +#endif
+> +
+> +#define MAX_PK_REQS		256
+> +
+> +struct amdpk_info {
+> +	/** maximum available queue depth */
+
+This doesn't look like valid kerneldoc
+
+> +	unsigned int avail_qdepth;
+> +};
+
+Doesn't look like this handles compat correctly.  Did you read the 
+documentation on creating ioctls?
 
 
