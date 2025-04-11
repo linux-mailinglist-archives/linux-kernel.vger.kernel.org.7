@@ -1,122 +1,155 @@
-Return-Path: <linux-kernel+bounces-600980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224ECA86750
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:37:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 415B6A86755
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B315A9C0CF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:37:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35A907A82A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30306283C8F;
-	Fri, 11 Apr 2025 20:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E590A2853F4;
+	Fri, 11 Apr 2025 20:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TeJnRkc3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="HuZd3vAa"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7793078F45;
-	Fri, 11 Apr 2025 20:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2C627BF78
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 20:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744403845; cv=none; b=GEHKeD6C/0V9B6qqSrs8VMKzOpGw7zaRZASjHPfKrr3RcriBNL6JNlQ3juTVxbuAGGwZJwoDkuO1+J8P9LOwS9FxAyBnSdBFzYSDahZRuc7YNrzCbbu3/o4Pd6YMk1JhE3xMOuCEGolwVOHlA9APs3yFQ8ggP8hk5JbaMevLQ1I=
+	t=1744403916; cv=none; b=m8+VVUmT7qTa2jozvz9Becuh+qH6F3WBryCnMXiVxSY9Y+Mbmh8g8BmMEZKfxplc6nPSve7UZOkDPKjLVxff4Pn57ui88Kq5uCIfeqKgaWlueAiVtHyTDwiTJl2t8L86/2ldUjUa+WL9E3YMnFnkE6mjgZBgA+UDUac6+Sj1evs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744403845; c=relaxed/simple;
-	bh=exZwru58LVotG272Mvo+05uK9XNLnHfaNNEeiFcpt3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DqpLduRNkim2TVjKPxuNi9UsY9GPW2Wg+wu7hWerelsYsqH9gNzG7uSsM8pG34i3jPp2YOmWtkaCWvIp4HcPRIMytc1PCtALhWbpiGMnvcoaenBo47NHShH9m4hY7vSV975M2VoU4Cxf1GlHvTewBOhDkaUJFgaD58j9UVjabyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TeJnRkc3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ACDDC4CEE2;
-	Fri, 11 Apr 2025 20:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744403844;
-	bh=exZwru58LVotG272Mvo+05uK9XNLnHfaNNEeiFcpt3I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TeJnRkc3zG3wy2mgbzvrgxwQsRfVNaGaoFQFiXfU5HkA5wNoiuWd9b49GgqcPC3DQ
-	 funKMNx+TdQU8HGqNvf95xspfm6X5W12pQb9E5ONPSpUJil+2IA67zJ8kJ6DHJ076L
-	 FBJav3c6rmR875bfzcB6iGRqL8bTX+xYbJtIimWilvwG76Mx567YYyUD5nf22YBocq
-	 U0kiL//sRUdblcQ4VWjLRxVIC2ln9JrrT5UX1KmBMJBXiNEh0XKCxFdBWWS6nkowAi
-	 VfPs0nA9Vy9WTZS87uXlMqPwVLlKqgOz+WPzFd1HI4uWepWCx4+lqFZw4qYeRVr24y
-	 6Amlaiw6Vp9QA==
-Date: Fri, 11 Apr 2025 23:37:19 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: keyrings@vger.kernel.org, Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v8] KEYS: Add a list for unreferenced keys
-Message-ID: <Z_l9f45aO3CqYng_@kernel.org>
-References: <20250407125801.40194-1-jarkko@kernel.org>
- <2426186.1744387151@warthog.procyon.org.uk>
+	s=arc-20240116; t=1744403916; c=relaxed/simple;
+	bh=jP2gH2HxizlXVnfCoefiIXX50CVQy/awrI7TNYRAzsk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=imMZlg0DmS6C/48fdkUZrEmDA4PufwBSUCV3RyN/e3apwOvp1OnJ71pyiRAbAHbfomnIo6v3ph8b7qsq70ydaDzRMA0Jmya6JL88HuRWwnBHaZx6cc5L0YpkoIfVHc7YIpAU2weyjWtyxJRXSDw/HZvUw/K1OSDjadPWrwb1KVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=HuZd3vAa; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-8616987c261so76428039f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 13:38:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744403913; x=1745008713; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G2ZInTEwsl47QZUkjk8fk2tvbcX5FPggXx8vW7X4elk=;
+        b=HuZd3vAaKxn6C6d2hH42QD+cWH/9GKh1OwWI/pMjqPJC+IRTZ1mAelTWKHMFQxSF5D
+         YEqy0dAByDxGN3L/ycvXZlkAmy2IBGSiYBuPCQMAMdkoGNUIZinNE9jt8IUJw9D0FHSf
+         kZjoS6NS3fSNpLV4tteaZPIprDaGB+uqM5Q2q2Ok5fZNkIhvlP2ndUS4FAxOyIO/8I/d
+         nC4oqP+EkmZGgAfUnLT1ijAjlVlJo24Zlgj9sI9QB2ydIqBPgfgkeOrOqkF3tgNO3aPv
+         +kdAcQEE/zuZPxeZos7cEOfkQR339aWkEphL0R5MGTEFetaDAiuqONimvOzmpAmdVAoM
+         gNZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744403913; x=1745008713;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G2ZInTEwsl47QZUkjk8fk2tvbcX5FPggXx8vW7X4elk=;
+        b=B1d3mOyLPYuq1ejca4cyqXuhlyTas6530JLSD2/mnJ9zaShCHfx/TvWe6n0K+ha54B
+         cvp8IooRy+hSHhe5hLNPlJkHvCMBBEyAYnt00FKDUnOiRA4/lPbUKWlqLc8ryG7FjVYY
+         uGdLtSIbYN27OstGxKvLJ5KBXgj10TUObsPx0iJx6DXdNznQNExJwIrckIaxWa8WS7rR
+         WTRaVO5uS5Mxi9C8lqewCGGzCmkuAMvIya0G8NiROlKytJDs3apN7ctyA8Y94cvUcx6c
+         SlVPQX3wf88RdA1yzP6pNmoeVw+EKfUVJ14zWSHH9y1A+X6AqQsEId0JwloDaOyTv9kP
+         1udA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfedi/MsqoZZbDXPuRDJbnKwjn4TJAGvqANVXcOGcwapFgiwwftwvSY4urvT2EyvgzBwGIS4KpVF7c7ao=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPN59oMiFK6Wyj0TvEASfYBpaUwT5/PNjBZvNfhr2n+X4a7Q9P
+	uDJDL1wQVZEmtuJChPGbbcSHhm7XsRMU7zsmsoklYo5uYjOfaQ75PRiqz9CkZHg=
+X-Gm-Gg: ASbGncvy2B3YZDUYMRwCD9Z2ZPkR+gCX+Voo92N08TZO+RjjVPnHVi03aJfe5tfVBSR
+	IXRfcjZz9y3DDrPJ2Lb9KTh9sv7UwSadtt2PSdEHD1ykjuekb8ffWdQMj6RXvC4G3jJTqCNFlzL
+	W+1G4pWLUcszVMIedowllrUmnLLr5uzHvyU24RFWyJZnUEAfLyQOPFWJI3IyJ9ylaPW/MOxa0hl
+	WU2GFipo0LiiXe8IlBR6SfQSBZZ11scn/8vOzVeTkxr6cwS496qFogmzy4koDEB5B3OHW+0yGLz
+	K5tjp2El+HJuNFcJ4XxzlOWq77QjY/Si6iN0xXfjIclyUk/f7vL84eAimK+bgzSCu5I8kNRVRY9
+	cGW1fICe0PGmn5F7i805OrR2D
+X-Google-Smtp-Source: AGHT+IF64rFuEmhScHDoMsL9QXFX4Agysz2oW5sGUVVn3Q82xJQ20AI5xuTlCrtn92K/dBEu6SxbnQ==
+X-Received: by 2002:a92:c267:0:b0:3d6:cb9b:cbe9 with SMTP id e9e14a558f8ab-3d7ec1caab5mr44116655ab.5.1744403913131;
+        Fri, 11 Apr 2025 13:38:33 -0700 (PDT)
+Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505e2ea1esm1420787173.123.2025.04.11.13.38.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Apr 2025 13:38:32 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: andy.shevchenko@gmail.com,
+	dlan@gentoo.org,
+	benjamin.larsson@genexis.eu,
+	bastien.curutchet@bootlin.com,
+	andriy.shevchenko@linux.intel.com,
+	u.kleine-koenig@baylibre.com,
+	lkundrak@v3.sk,
+	devicetree@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] serial: 8250_of: support an optional bus clock
+Date: Fri, 11 Apr 2025 15:38:24 -0500
+Message-ID: <20250411203828.1491595-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2426186.1744387151@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Apr 11, 2025 at 04:59:11PM +0100, David Howells wrote:
-> Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> 
-> > +	spin_lock_irqsave(&key_graveyard_lock, flags);
-> > +	list_splice_init(&key_graveyard, &graveyard);
-> > +	spin_unlock_irqrestore(&key_graveyard_lock, flags);
-> 
-> I would wrap this bit in a check to see if key_graveyard is empty so that we
-> can avoid disabling irqs and taking the lock if the graveyard is empty.
+The SpacemiT UART hardware requires a bus clock to be enabled in addition
+to the primary function clock.
 
-Can do, and does make sense.
+This series makes it possible to specify both clocks via DTS.  If a
+bus clock is required, it and the primary clock are fetched by name.
 
-> 
-> > +		if (!refcount_inc_not_zero(&key->usage)) {
-> 
-> Sorry, but eww.  You're going to wangle the refcount twice on every key on the
-> system every time the gc does a pass.  Further, in some cases inc_not_zero is
-> not the fastest op in the world.
+This code is available here:
+  https://github.com/riscstar/linux/tree/outgoing/serial-v4
 
-One could alternatively "test_bit(KEY_FLAG_FINAL_PUT, &key->flags)) &&
-!refcount_inc_not_zero(&key->usage))" without mb() on either side and
-set_bit() could be at the beginning of key_put().
+Changes between v3 and v4:
+  - I simplified the third patch by reusing the local variable, as
+    suggested by Andy Shevchenko
+  - The first two patches are identical to what was in v3
 
-Race at worst would be an extra refcount_inc_not_zero() but not often.
+Here is version 3 of this series:
+  https://lore.kernel.org/lkml/20250411154419.1379529-1-elder@riscstar.com/
 
-> 
-> > +			spin_lock_irqsave(&key_graveyard_lock, flags);
-> > +			list_add_tail(&key->graveyard_link, &key_graveyard);
-> > +			spin_unlock_irqrestore(&key_graveyard_lock, flags);
-> >  			schedule_work(&key_gc_work);
-> 
-> This is going to enable and disable interrupts twice and that can be
-> expensive, depending on the arch.  I wonder if it would be better to do:
-> 
-> 			local_irq_save(flags);
-> 			spin_lock(&key_graveyard_lock);
-> 			list_add_tail(&key->graveyard_link, &key_graveyard);
-> 			spin_unlock(&key_graveyard_lock);
-> 			schedule_work(&key_gc_work);
-> 			local_irq_restore(flags);
+Changes between v2 and v3:
+  - A third patch was added to disable the bus clock on suspend and
+    enable it again on resume, as requested by Yixun Lan
+  - Rob's Reviewed-by tag has been added to patch 1
+  - The first two patches are otherwise identical to what was in v2
 
-I like this but shouldn't this also comprehend the quota update before
-(just asking for completeness sake)?
+Here is version 2 of this series:
+  https://lore.kernel.org/lkml/20250409192213.1130181-1-elder@riscstar.com/
 
-> 
-> David
-> 
-> 
+Changes between v1 and v2:
+  - The DT binding was fixed to properly define the number of clocks and
+    clock names based on the compatible string, as suggested by Rob Herring
+  - Logic to look up the optional bus clock was changed as requested
+    by Andy Shevchenko
+  - The bus clock pointer (which was never used after it was enabled)
+    was renmoved from the of_serial_info structure
 
-BR, Jarkko
+Here is the first version of this series:
+  https://lore.kernel.org/lkml/20250408175146.979557-1-elder@riscstar.com/
+
+					-Alex
+
+Alex Elder (3):
+  dt-bindings: serial: 8250: support an optional second clock
+  serial: 8250_of: add support for an optional bus clock
+  serial: 8250_of: manage bus clock in suspend/resume
+
+ .../devicetree/bindings/serial/8250.yaml      | 30 ++++++++++++++++++-
+ drivers/tty/serial/8250/8250_of.c             | 15 +++++++++-
+ 2 files changed, 43 insertions(+), 2 deletions(-)
+
+
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+-- 
+2.45.2
+
 
