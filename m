@@ -1,169 +1,116 @@
-Return-Path: <linux-kernel+bounces-600067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77360A85B84
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:24:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D042AA85B9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D49916E168
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:23:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C9E19E104B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4DB298CCC;
-	Fri, 11 Apr 2025 11:23:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E758D27BF82;
-	Fri, 11 Apr 2025 11:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD51D29614B;
+	Fri, 11 Apr 2025 11:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X0ZwWI//"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0EF290BA9
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 11:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744370588; cv=none; b=NISdDc6Omjmgem7C69e9RxmnYmlUwWCPIyumGFIpR3ofgYJelsjOdPBeQ8mkrVMX/TNED5HP4W8aYQRwFHReux2CpYPNXGWthED3igyVL+00niXTfXt+514XYUfbC2TRwrhYxvEqVyZJuvKlIY3qCy3R34I0qyk3FuaZR1oDw/g=
+	t=1744370781; cv=none; b=suA0adC5q593gbrGk6M+AR9M9dCwFZYIeRdQHbznC8ZvYB4Ms4UaRrOyBIEhwrFPYtoLAnyfIZe3huKWARRaCC+IMGQUEij/VDqZI/034tXw8UF6jK3/p+Xaz+l4yhvDzqAS3Ecz6wtgAUw0zNW7RSNHbY1S+5xnrkkZGLiG1IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744370588; c=relaxed/simple;
-	bh=JPqWn5zSZ2P34Z5dMgc400dC1XwDpykcXnA7Qi26IZA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tJ+bGrVcW/geo7qrozwZ05S9rZP6jJPc+xckmnElDPl+bRWU2Mvw3fpyfW2ipxzlyVjXv6n0MTBDVtIGt1iS2v7RshUasdmbwH8ZIjEKoEGiL6NszrNHM9/qUuEvPBB22QjJA+1c/X8KsbQAck5fSQMdbt5jVVTZfCyKYBludjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 002BF106F;
-	Fri, 11 Apr 2025 04:23:06 -0700 (PDT)
-Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 619213F694;
-	Fri, 11 Apr 2025 04:23:05 -0700 (PDT)
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH] i2c: xgene-slimpro: Simplify PCC shared memory region handling
-Date: Fri, 11 Apr 2025 12:23:03 +0100
-Message-Id: <20250411112303.1149086-1-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744370781; c=relaxed/simple;
+	bh=87Ltzq6HKLjkX/uQWLKCQyBirwpvzhofRwmX2yjH3y8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rSjKwVRmSj08kK2T4PH+DJT3eszTm//7A2axwT2MqbTiSY/5ubKD61SuiKjjuT0Qk+hLA2AOITpwLefij8Mz9Y88+hbAxn7D775pNBCINJwCqQ0k5lgR8ZayDlpPkxRQq+XnvBNzyLs7ek0apWL/KYF7gwMvpv+ve5rxRNOB43k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X0ZwWI//; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744370778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KDIVaeNm8vxnC2JSluEZFM54sMrWsv29to6xjnlSMEE=;
+	b=X0ZwWI//t18AeYw5nctnTnpAuYnM2S9DwPt7JiOhK4a/udY+Doy0zD9qR7l70mS8kuZrSy
+	kywFPDLIr8RulF7IcbJdzPQXGOhFBCrP4miMt+dcqQp5OBh/WZVYn34EhHQpDBWhX2XQCc
+	HfTvYmNjIRjFANnuXRu0bRizEw/35oc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-nxWyZ_p4O3SVzGtqGdu_Gg-1; Fri,
+ 11 Apr 2025 07:26:15 -0400
+X-MC-Unique: nxWyZ_p4O3SVzGtqGdu_Gg-1
+X-Mimecast-MFC-AGG-ID: nxWyZ_p4O3SVzGtqGdu_Gg_1744370773
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 46CAB18007E1;
+	Fri, 11 Apr 2025 11:26:13 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.222])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id F239A1808882;
+	Fri, 11 Apr 2025 11:26:09 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 11 Apr 2025 13:25:37 +0200 (CEST)
+Date: Fri, 11 Apr 2025 13:25:33 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Lennart Poettering <lennart@poettering.net>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org,
+	Peter Ziljstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH] pidfs: ensure consistent ENOENT/ESRCH reporting
+Message-ID: <20250411112532.GC5322@redhat.com>
+References: <20250409-sesshaft-absurd-35d97607142c@brauner>
+ <20250409-rohstoff-ungnade-d1afa571f32c@brauner>
+ <20250409184040.GF32748@redhat.com>
+ <20250410101801.GA15280@redhat.com>
+ <20250410-barhocker-weinhandel-8ed2f619899b@brauner>
+ <20250410131008.GB15280@redhat.com>
+ <20250410-inklusive-kehren-e817ba060a34@brauner>
+ <20250410-akademie-skaten-75bd4686ad6b@brauner>
+ <20250411-tagwerk-server-313ff9395188@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250411-tagwerk-server-313ff9395188@brauner>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-The PCC driver now handles mapping and unmapping of shared memory
-areas as part of pcc_mbox_{request,free}_channel(). Without these before,
-this xgene-slimpro I2C driver did handling of those mappings like several
-other PCC mailbox client drivers.
+On 04/11, Christian Brauner wrote:
+>
+> > Looking close at this. Why is:
+> >
+> >         if (type == PIDTYPE_PID) {
+> >                 WARN_ON_ONCE(pid_has_task(pid, PIDTYPE_PID));
+> >                 wake_up_all(&pid->wait_pidfd);
+> >         }
+> >
+> > located in __change_pid()? The only valid call to __change_pid() with a NULL
+> > argument and PIDTYPE_PID is from __unhash_process(), no?
+>
+> We used to perform free_pid() directly from __change_pid() so prior to
+> v6.15 changes it wasn't possible.
 
-There were redundant operations, leading to unnecessary code. Maintaining
-the consistency across these driver was harder due to scattered handling
-of shmem.
+Yes, exactly ;)
 
-Just use the mapped shmem and remove all redundant operations from this
-driver.
+> Now that we free the pids separately let's
+> just move the notification into __unhash_process(). I have a patch ready
+> for this.
 
-Cc: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/i2c/busses/i2c-xgene-slimpro.c | 39 +++-----------------------
- 1 file changed, 4 insertions(+), 35 deletions(-)
+Agreed,
 
-Hi,
-
-This is just resend of the same patch that was part of a series [1].
-Only core PCC mailbox changes were merged during v6.15 merge window.
-So dropping all the maintainer(Andi) acks and reposting it so that it can
-be picked up for v6.16 via maintainers tree.
-
-Regards,
-Sudeep
-
-[1] https://lore.kernel.org/all/20250313-pcc_fixes_updates-v3-10-019a4aa74d0f@arm.com/
-
-diff --git a/drivers/i2c/busses/i2c-xgene-slimpro.c b/drivers/i2c/busses/i2c-xgene-slimpro.c
-index 663fe5604dd6..a0880f4a056d 100644
---- a/drivers/i2c/busses/i2c-xgene-slimpro.c
-+++ b/drivers/i2c/busses/i2c-xgene-slimpro.c
-@@ -101,8 +101,6 @@ struct slimpro_i2c_dev {
- 	struct completion rd_complete;
- 	u8 dma_buffer[I2C_SMBUS_BLOCK_MAX + 1]; /* dma_buffer[0] is used for length */
- 	u32 *resp_msg;
--	phys_addr_t comm_base_addr;
--	void *pcc_comm_addr;
- };
- 
- #define to_slimpro_i2c_dev(cl)	\
-@@ -148,7 +146,8 @@ static void slimpro_i2c_rx_cb(struct mbox_client *cl, void *mssg)
- static void slimpro_i2c_pcc_rx_cb(struct mbox_client *cl, void *msg)
- {
- 	struct slimpro_i2c_dev *ctx = to_slimpro_i2c_dev(cl);
--	struct acpi_pcct_shared_memory *generic_comm_base = ctx->pcc_comm_addr;
-+	struct acpi_pcct_shared_memory __iomem *generic_comm_base =
-+							ctx->pcc_chan->shmem;
- 
- 	/* Check if platform sends interrupt */
- 	if (!xgene_word_tst_and_clr(&generic_comm_base->status,
-@@ -169,7 +168,8 @@ static void slimpro_i2c_pcc_rx_cb(struct mbox_client *cl, void *msg)
- 
- static void slimpro_i2c_pcc_tx_prepare(struct slimpro_i2c_dev *ctx, u32 *msg)
- {
--	struct acpi_pcct_shared_memory *generic_comm_base = ctx->pcc_comm_addr;
-+	struct acpi_pcct_shared_memory __iomem *generic_comm_base =
-+							ctx->pcc_chan->shmem;
- 	u32 *ptr = (void *)(generic_comm_base + 1);
- 	u16 status;
- 	int i;
-@@ -464,15 +464,12 @@ static int xgene_slimpro_i2c_probe(struct platform_device *pdev)
- 	} else {
- 		struct pcc_mbox_chan *pcc_chan;
- 		const struct acpi_device_id *acpi_id;
--		int version = XGENE_SLIMPRO_I2C_V1;
- 
- 		acpi_id = acpi_match_device(pdev->dev.driver->acpi_match_table,
- 					    &pdev->dev);
- 		if (!acpi_id)
- 			return -EINVAL;
- 
--		version = (int)acpi_id->driver_data;
--
- 		if (device_property_read_u32(&pdev->dev, "pcc-channel",
- 					     &ctx->mbox_idx))
- 			ctx->mbox_idx = MAILBOX_I2C_INDEX;
-@@ -494,34 +491,6 @@ static int xgene_slimpro_i2c_probe(struct platform_device *pdev)
- 			goto mbox_err;
- 		}
- 
--		/*
--		 * This is the shared communication region
--		 * for the OS and Platform to communicate over.
--		 */
--		ctx->comm_base_addr = pcc_chan->shmem_base_addr;
--		if (ctx->comm_base_addr) {
--			if (version == XGENE_SLIMPRO_I2C_V2)
--				ctx->pcc_comm_addr = memremap(
--							ctx->comm_base_addr,
--							pcc_chan->shmem_size,
--							MEMREMAP_WT);
--			else
--				ctx->pcc_comm_addr = memremap(
--							ctx->comm_base_addr,
--							pcc_chan->shmem_size,
--							MEMREMAP_WB);
--		} else {
--			dev_err(&pdev->dev, "Failed to get PCC comm region\n");
--			rc = -ENOENT;
--			goto mbox_err;
--		}
--
--		if (!ctx->pcc_comm_addr) {
--			dev_err(&pdev->dev,
--				"Failed to ioremap PCC comm region\n");
--			rc = -ENOMEM;
--			goto mbox_err;
--		}
- 	}
- 	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
- 	if (rc)
--- 
-2.34.1
+Acked-by: Oleg Nesterov <oleg@redhat.com>
 
 
