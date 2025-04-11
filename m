@@ -1,123 +1,98 @@
-Return-Path: <linux-kernel+bounces-600175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D0ADA85CBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:16:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F11A85CB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E459D4469DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:14:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 266131BA3FD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952C02C374B;
-	Fri, 11 Apr 2025 12:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9385729CB5F;
+	Fri, 11 Apr 2025 12:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KJrmP+Jo"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qT6QbywF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A111D2BF3DF;
-	Fri, 11 Apr 2025 12:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011A020D4E1
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 12:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744373479; cv=none; b=aij4CgPGVQkySSXi0TARSksd/JdqDE5Yp9+VYYZpoRubs0yAAPuf3CC82XoT0UdP5eghz78Yz2E60OP0ImnLzpQnmOmuRNX+1u9Fg/kWvYHZXNFaaVPfmHGEmcVmcjJW9NEgIXT1m3ikbahWAKqQQIMa3jwZwBBnyF9IBG4m8As=
+	t=1744373464; cv=none; b=bAXYNwVWQwxAaUkKH2v+pJNlcrJklC7Js90vNivz1OySwWNBmlyc9Pb03iIBgivDpihoYYJx9oFIHPKDZUcdO/t7dxDynqOJNhMNlHGOATjfRd3LEE50qxl0X3xPdlZUKQeqOyceszRSqXD6h5XtjnNj/+dnROXkKvnGg4Rmk08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744373479; c=relaxed/simple;
-	bh=yzF33gKvYRvTTNQyiHSKd1m6sCWnvqK2EfrNCow/rKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qd0quCBjdTksYbOM4/cSfYqlDOUXoB26lEbWJC4dATODuQEN4SxlYFyI5Hq2f3J114ESvUEmVmaiCzF9tDqa/YjSc7V+NeC8dHVVd2J9Wf9gxAc8gxd0WrHBWyy6K/Z5DgMyVdWjyYi2S67dLcsdrtjorR/4wx5WGfKugD/9s0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=KJrmP+Jo; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rNYHj+jMsjKcQ0NBqVY00CTxiyNat9iFuHkI3uiocOY=; b=KJrmP+JovP2P9xpa3JDZx/JtZP
-	JtWQwOoCQvVCPB4QGUr5YlNkKzL3r7Q5mOODeZKTr1+MR3Dhk7G+Paus7+haNrtDezlEwg0j3NSKd
-	YcQudvJbx9SMzW55WVSP0oT924FtLAFG5eyLkvjBQKf+Cie6VGV/D73o5BfqDN5fT+Pkc67908pAp
-	0KhKLNFsCx4PTo+fip5FDCjhK/MFYrHbEOofJZiTd3Gp0CMf4cuYeGZtr8rxgKVUBtzqY5m6NtZ8k
-	PYv2jHn1UBaDECx067z/Fi7ZPPXJ/bPK0S5bsXIhQsnWK6ENdII4+oKiiHi/5bVoTtEiKwGkKZXc7
-	1nPsgQIg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54684)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1u3DDq-0003Js-0Q;
-	Fri, 11 Apr 2025 13:11:02 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1u3DDh-0004bC-1Y;
-	Fri, 11 Apr 2025 13:10:53 +0100
-Date: Fri, 11 Apr 2025 13:10:53 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Frank Sae <Frank.Sae@motor-comm.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Parthiban.Veerasooran@microchip.com, linux-kernel@vger.kernel.org,
-	"andrew+netdev @ lunn . ch" <andrew+netdev@lunn.ch>, lee@trager.us,
-	horms@kernel.org, linux-doc@vger.kernel.org, corbet@lwn.net,
-	geert+renesas@glider.be, xiaogang.fan@motor-comm.com,
-	fei.zhang@motor-comm.com, hua.sun@motor-comm.com
-Subject: Re: [PATCH net-next v4 00/14] yt6801: Add Motorcomm yt6801 PCIe
- driver
-Message-ID: <Z_kGzeUfQB9qa2EN@shell.armlinux.org.uk>
-References: <20250408092835.3952-1-Frank.Sae@motor-comm.com>
- <Z_T6vv013jraCzSD@shell.armlinux.org.uk>
- <da434f13-fb08-4036-96ed-7de579cb9ddc@motor-comm.com>
+	s=arc-20240116; t=1744373464; c=relaxed/simple;
+	bh=EVla19k7Xz+stoAyJo+yqYuYF6XV6eRPPI+AlLJ62TU=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=bAfmmtBvwbv7Tf7Utuc4bsHeKymTFdC3Lb5WEVYc97LcAvyAkH+IdKYWMNhEQ/2pYZRjgKLOwk1z/xasWy5Mii/5IeD/gUCV0ZN6HT4mL6j7QdouzS5/3pVUOtLSaDCst63nc/FzNHAptrJ8fdv+YyyvudVX4PbxA90Z2NPwMnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qT6QbywF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 478BBC4CEE2;
+	Fri, 11 Apr 2025 12:11:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744373463;
+	bh=EVla19k7Xz+stoAyJo+yqYuYF6XV6eRPPI+AlLJ62TU=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=qT6QbywFqYsrdZFdqe20nIlTmNihKMZ+lrEgG5/C7gEaUewM5LBELkTBrqpdZjuRI
+	 O/DjsxQpgNfd2xZrhmjeGVszCnpmAFkEgA40zr4Nhm9ZsGgIzup3Qir7rbxSSTpL3Q
+	 xpGU7cToXWwkXxApwWT3pxdwEwwnzu1ZY3U3ftgWvnKiK1IGW78X6c6kVAVQ1l/REu
+	 RFNrCBsL0tHgiXPkCRBdmbGrpCLc3j82Yr9wXGp1HtaBQAdF4j1DKsmrmdfA5XssOS
+	 gjXithieX0VGwQFLQkNqVLZwNguljxQcmOgMTbf62mw/LL7k4lusUfSR9xMhoacxKC
+	 euYyM3VAwNCyg==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Anand Moon <linux.amoon@gmail.com>
+In-Reply-To: <20250410133332.294556-1-linux.amoon@gmail.com>
+References: <20250410133332.294556-1-linux.amoon@gmail.com>
+Subject: Re: [PATCH v1 0/6] Messon: Simplify error handling with
+ dev_err_probe()
+Message-Id: <174437346092.673939.9321583863717790007.b4-ty@kernel.org>
+Date: Fri, 11 Apr 2025 17:41:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <da434f13-fb08-4036-96ed-7de579cb9ddc@motor-comm.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Fri, Apr 11, 2025 at 05:50:55PM +0800, Frank Sae wrote:
+
+On Thu, 10 Apr 2025 19:03:15 +0530, Anand Moon wrote:
+> Use dev_err_probe() for phy resources to indicate the deferral
+> reason when waiting for the resource to come up.
 > 
+> Note: The following patch for RTC:
 > 
-> On 2025/4/8 18:30, Russell King (Oracle) wrote:
-> > On Tue, Apr 08, 2025 at 05:28:21PM +0800, Frank Sae wrote:
-> >> This series includes adding Motorcomm YT6801 Gigabit ethernet driver
-> >>  and adding yt6801 ethernet driver entry in MAINTAINERS file.
-> >> YT6801 integrates a YT8531S phy.
-> > 
-> > What is different between this and the Designware GMAC4 core supported
-> > by drivers/net/ethernet/stmicro/stmmac/ ?
-> > 
+> phy: amlogic: phy-meson-axg-pcie: Fix PHY creation order in axg-pcie probe
 > 
-> We support more features: NS, RSS, wpi, wol pattern and aspm control.
+> [...]
 
-Is it not possible to add those features?
+Applied, thanks!
 
-> > Looking at the register layout, it looks very similar. The layout of the
-> > MAC control register looks similar. The RX queue and PMT registers are
-> > at the same relative offset. The MDIO registers as well.
-> > 
-> > Can you re-use the stmmac driver?
-> > 
-> 
-> I can not re-use the stmmac driver, because pcie and ephy can not work well on
-> the stmmac driver.
+[1/6] phy: amlogic: phy-meson-gxl-usb2: Simplify error handling with dev_err_probe()
+      commit: 05457917e50c3d6bf75d2e3b99c7e6709a4a6844
+[2/6] phy: amlogic: phy-meson-g12a-usb2: Simplify error handling with dev_err_probe()
+      commit: 9bff4ef29a6409850c27df705da54277a8e836f2
+[3/6] phy: amlogic: phy-meson-axg-mipi-pcie-analog: Simplify error handling with dev_err_probe()
+      commit: de39730f9258e9984892c0af68a3e884ad19acea
+[4/6] phy: amlogic: phy-meson-axg-mipi-dphy: Simplify error handling with dev_err_probe()
+      commit: a77e2e899841937798bff0924c03d4d0e4963aa3
+[5/6] phy: amlogic: phy-meson-axg-pcie: Simplify error handling with dev_err_probe()
+      commit: fef364bd4c9cf712c91e0013f5f304f4e7f09198
+[6/6] phy: amlogic: phy-meson-axg-pcie: Fix PHY creation order in axg-pcie probe
+      commit: bdeff6d8a211c832f5ce1a65aff17f4a5e6de00f
 
-Doesn't the stmmac driver support PCIe already (e.g. for Intel
-platforms?) Can't it be fixed?
-
-We shouldn't be duplicating what we already have, but fixing it if
-there are problems.
-
+Best regards,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+~Vinod
+
+
 
