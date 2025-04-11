@@ -1,60 +1,53 @@
-Return-Path: <linux-kernel+bounces-599536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98C8A85502
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:11:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2415FA85534
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A1C09A5F2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:11:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 738CE3B9047
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3EF27E1A2;
-	Fri, 11 Apr 2025 07:11:13 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BFD1E98FB;
-	Fri, 11 Apr 2025 07:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234D12853EF;
+	Fri, 11 Apr 2025 07:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WUO4j2Cx"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729C4283C8A;
+	Fri, 11 Apr 2025 07:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744355473; cv=none; b=QW/a2QQWhkl4PW3lJ3A6tacNL/jBSXH5nLVCh03vOznQapXYTo//1W/Fla7Hg7XTtea8YSQVTvzsFs3um4bHzGBkM8CePZXp3LuCYEkbGU5/c/Tn7eXrvj1yf2eawxESLXfav/13TvwlwywKNKtBCGqrYT5U4o/FvDOGfXBFzLE=
+	t=1744355562; cv=none; b=Bg0wTjfrhdyfk0kq9ScmuLQrWCWB/i7wP6VkjXnGvXZOkhqpTMSC1+KuBeVmDR6Dzw8tq4/jfl0yKlbZ2VP71EQxB3TRNUiEW3hN0dIxf7nro0u+KvPUUTANusD8YYIeaUu6iYHhutT/H2a7TBxoAf5pWaAv+o8y0olivMUxEc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744355473; c=relaxed/simple;
-	bh=d1asBId/vImwN+l9IIgHITylI4P4oM+6PNnKpdlyGyY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Kj5k9D71BbVYlQdSlxAvjhVQwvJZdg0UPMq2l7252XNrGPqx2udBWnuUmUZUEYTpkjq2Wvy9w1ri3dqVkJJnasYhyB1bQUxl+5qjTj1PrggMXSOqPs1FD/GWCtk0fv+QWpCfWdsLHhN8Qx9IRdH1ZE8xMtt5pRAASoQK47V7mPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B5AfLo028040;
-	Fri, 11 Apr 2025 07:10:22 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45tug8qxyh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 11 Apr 2025 07:10:22 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Fri, 11 Apr 2025 00:10:21 -0700
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Fri, 11 Apr 2025 00:10:16 -0700
-From: <jianqi.ren.cn@windriver.com>
-To: <stable@vger.kernel.org>
-CC: <patches@lists.linux.dev>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>, <jianqi.ren.cn@windriver.com>,
-        <ast@kernel.org>, <daniel@iogearbox.net>, <john.fastabend@gmail.com>,
-        <andrii@kernel.org>, <martin.lau@linux.dev>, <song@kernel.org>,
-        <yhs@fb.com>, <kpsingh@kernel.org>, <sdf@google.com>,
-        <haoluo@google.com>, <jolsa@kernel.org>, <davem@davemloft.net>,
-        <kuba@kernel.org>, <hawk@kernel.org>, <bpf@vger.kernel.org>,
-        <xukuohai@huawei.com>
-Subject: [PATCH 6.1.y] bpf: Prevent tail call between progs attached to different hooks
-Date: Fri, 11 Apr 2025 15:10:15 +0800
-Message-ID: <20250411071015.3418413-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744355562; c=relaxed/simple;
+	bh=yY1oHUe582lGxyx4eCz34x3c0y9yzaNniW+6J65cqqE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lNwTltcd5kxI7dXEb/KRwV7eL/nK7sok//OfsyKobw+RT+kApU5/hQxT+FKQ8HnUCopEFoh2TLB/pNsScnX4G2ErH2C0WSU0WQ6NJtyFMgb6hk6G5/MyZMzapyMirn4uCY0JHuB6VjGRjN7F2IYewtRQmQw+e6AuxAdKjVOOU6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WUO4j2Cx; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=hTcAR
+	Rvnn8qq+1dZy1r2KQFiwbDtnMu0NN5G/m8h1rY=; b=WUO4j2Cx0zqDMuEg6OOfF
+	dAL+rj23i/NN4VUrnQUzMyL/bLmRtaJcTAMa9X/20nde/OHqa88CI5ifj/KHxkxI
+	iY9JBihV8EYUO7iUD4vdmob/0WvgYgyiYsCGckXHxzPnt59WC16BIyUwu8y+/4OZ
+	v76b+v5RN77UiGDF3dUER0=
+Received: from localhost (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgBXThbEwPhnm38MAA--.12885S2;
+	Fri, 11 Apr 2025 15:12:04 +0800 (CST)
+From: Honggang LI <honggangli@163.com>
+To: zyjzyj2000@gmail.com,
+	jgg@ziepe.ca,
+	leon@kernel.org,
+	matsuda-daisuke@fujitsu.com
+Cc: linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Honggang LI <honggangli@163.com>
+Subject: [PATCH] RDMA/rxe: Fix kernel panic for fast registered MR
+Date: Fri, 11 Apr 2025 15:11:41 +0800
+Message-ID: <20250411071141.82619-1-honggangli@163.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,122 +55,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: tT9gAepxN9zNWcm2eSIYEBdIy9MSnCNk
-X-Authority-Analysis: v=2.4 cv=YJefyQGx c=1 sm=1 tr=0 ts=67f8c05e cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=AiHppB-aAAAA:8 a=i0EeH86SAAAA:8 a=t7CeM3EgAAAA:8 a=iaREAby1aPJEnX_tXCEA:9
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: tT9gAepxN9zNWcm2eSIYEBdIy9MSnCNk
-X-Sensitive_Customer_Information: Yes
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-11_02,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 bulkscore=0 mlxlogscore=999 adultscore=0 lowpriorityscore=0
- mlxscore=0 clxscore=1011 impostorscore=0 phishscore=0 spamscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
- definitions=main-2504110049
+X-CM-TRANSID:PSgvCgBXThbEwPhnm38MAA--.12885S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Gw43tF4fGryUtF48Cw47XFb_yoW7ur4DpF
+	WrJ3WYkF48G3WUZa1DAr1jg3y7Za17Za4DWr9Fq3sruF15urWUWasxtryjgryDtr1DJay2
+	qF1UXw4vkw4fGaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEeMK9UUUUU=
+X-CM-SenderInfo: 5krqwwxdqjzxi6rwjhhfrp/1tbiOgksRWf4vxhJ4wAAsI
 
-From: Xu Kuohai <xukuohai@huawei.com>
+`rxe_reg_fast_mr` does not set the `umem` for fast registered MRs.
+Check the `umem` pointer before check `umem->is_odp` flag, otherwise
+we will have kernel panic issue.
 
-[ Upstream commit 28ead3eaabc16ecc907cfb71876da028080f6356 ]
+[ 1475.416503] BUG: kernel NULL pointer dereference, address: 0000000000000028
+[ 1475.416560] #PF: supervisor read access in kernel mode
+[ 1475.416583] #PF: error_code(0x0000) - not-present page
+[ 1475.416607] PGD 0 P4D 0
+[ 1475.416625] Oops: Oops: 0000 [#1] SMP PTI
+[ 1475.416649] CPU: 2 UID: 0 PID: 6106 Comm: kworker/u33:0 Kdump: loaded Not tainted 6.15.0-0.rc0.20250401git08733088b566.8.fc43.x86_64 #1 PREEMPT(lazy)
+[ 1475.416694] Hardware name: Powerleader PR1715R/X9DRD-iF, BIOS 3.3 09/10/2018
+[ 1475.416721] Workqueue: rxe_wq do_work [rdma_rxe]
+[ 1475.416774] RIP: 0010:rxe_mr_copy+0x71/0xf0 [rdma_rxe]
+[ 1475.416819] Code: 3c 24 4c 8b 4c 24 08 85 c0 44 8b 5c 24 18 4c 8b 54 24 10 44 8b 44 24 1c 75 4f 48 8b 87 f0 00 00 00 44 89 d9 4c 89 d2 4c 89 ce <f6> 40 28 02 74 09 48 83 c4 20 e9 20 47 00 00 48 83 c4 20 e9 57 f7
+[ 1475.416874] RSP: 0018:ffffcbcfc936fd70 EFLAGS: 00010246
+[ 1475.416897] RAX: 0000000000000000 RBX: ffff8a9c48314328 RCX: 000000000000003c
+[ 1475.416924] RDX: ffff8a9dc5f7110a RSI: ffff8a9c4ce40024 RDI: ffff8a9c44ae9200
+[ 1475.416949] RBP: ffff8a9c4007f800 R08: 0000000000000000 R09: ffff8a9c4ce40024
+[ 1475.416974] R10: ffff8a9dc5f7110a R11: 000000000000003c R12: ffff8a9c45112000
+[ 1475.416999] R13: ffff8a9c4007f800 R14: 0000000000000000 R15: ffff8a9c4007fc28
+[ 1475.417024] FS:  0000000000000000(0000) GS:ffff8a9dfb58e000(0000) knlGS:0000000000000000
+[ 1475.417052] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 1475.417075] CR2: 0000000000000028 CR3: 000000040282e006 CR4: 00000000001726f0
+[ 1475.417103] Call Trace:
+[ 1475.417119]  <TASK>
+[ 1475.417135]  execute+0x281/0x310 [rdma_rxe]
+[ 1475.417179]  rxe_receiver+0x41f/0xda0 [rdma_rxe]
+[ 1475.417219]  do_task+0x61/0x1d0 [rdma_rxe]
+[ 1475.417256]  process_one_work+0x18e/0x350
+[ 1475.417286]  worker_thread+0x25a/0x3a0
+[ 1475.417309]  ? __pfx_worker_thread+0x10/0x10
+[ 1475.417334]  kthread+0xfc/0x240
+[ 1475.417354]  ? __pfx_kthread+0x10/0x10
+[ 1475.417374]  ret_from_fork+0x34/0x50
+[ 1475.417396]  ? __pfx_kthread+0x10/0x10
+[ 1475.417416]  ret_from_fork_asm+0x1a/0x30
+[ 1475.418046]  </TASK>
+[ 1475.418615] Modules linked in: rnbd_server rtrs_server rtrs_core rdma_cm iw_cm ib_cm brd rdma_rxe ib_uverbs ip6_udp_tunnel udp_tunnel ib_core rfkill intel_rapl_msr intel_rapl_common sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel sunrpc kvm binfmt_misc rapl intel_cstate iTCO_wdt intel_pmc_bxt iTCO_vendor_support ipmi_ssif intel_uncore pcspkr isci acpi_ipmi i2c_i801 i2c_smbus mgag200 ipmi_si mei_me lpc_ich libsas mei scsi_transport_sas ipmi_devintf ioatdma joydev ipmi_msghandler acpi_pad ip6_tables ip_tables fuse loop nfnetlink zram lz4hc_compress lz4_compress igb polyval_clmulni polyval_generic ghash_clmulni_intel sha512_ssse3 sha256_ssse3 dca sha1_ssse3 i2c_algo_bit wmi
+[ 1475.422332] CR2: 0000000000000028
 
-bpf progs can be attached to kernel functions, and the attached functions
-can take different parameters or return different return values. If
-prog attached to one kernel function tail calls prog attached to another
-kernel function, the ctx access or return value verification could be
-bypassed.
-
-For example, if prog1 is attached to func1 which takes only 1 parameter
-and prog2 is attached to func2 which takes two parameters. Since verifier
-assumes the bpf ctx passed to prog2 is constructed based on func2's
-prototype, verifier allows prog2 to access the second parameter from
-the bpf ctx passed to it. The problem is that verifier does not prevent
-prog1 from passing its bpf ctx to prog2 via tail call. In this case,
-the bpf ctx passed to prog2 is constructed from func1 instead of func2,
-that is, the assumption for ctx access verification is bypassed.
-
-Another example, if BPF LSM prog1 is attached to hook file_alloc_security,
-and BPF LSM prog2 is attached to hook bpf_lsm_audit_rule_known. Verifier
-knows the return value rules for these two hooks, e.g. it is legal for
-bpf_lsm_audit_rule_known to return positive number 1, and it is illegal
-for file_alloc_security to return positive number. So verifier allows
-prog2 to return positive number 1, but does not allow prog1 to return
-positive number. The problem is that verifier does not prevent prog1
-from calling prog2 via tail call. In this case, prog2's return value 1
-will be used as the return value for prog1's hook file_alloc_security.
-That is, the return value rule is bypassed.
-
-This patch adds restriction for tail call to prevent such bypasses.
-
-Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
-Link: https://lore.kernel.org/r/20240719110059.797546-4-xukuohai@huaweicloud.com
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-[Minor conflict resolved due to code context change.]
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
-Signed-off-by: He Zhe <zhe.he@windriver.com>
+Fixes: 2fae67ab63db ("RDMA/rxe: Add support for Send/Recv/Write/Read with ODP")
+Fixes: d03fb5c6599e ("RDMA/rxe: Allow registering MRs for On-Demand Paging")
+Signed-off-by: Honggang LI <honggangli@163.com>
 ---
-Verified the build test
----
- include/linux/bpf.h |  1 +
- kernel/bpf/core.c   | 19 +++++++++++++++++--
- 2 files changed, 18 insertions(+), 2 deletions(-)
+ drivers/infiniband/sw/rxe/rxe_mr.c   | 4 ++--
+ drivers/infiniband/sw/rxe/rxe_odp.c  | 2 +-
+ drivers/infiniband/sw/rxe/rxe_resp.c | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 2189c0d18fa7..e9c1338851e3 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -250,6 +250,7 @@ struct bpf_map {
- 	 * same prog type, JITed flag and xdp_has_frags flag.
- 	 */
- 	struct {
-+		const struct btf_type *attach_func_proto;
- 		spinlock_t lock;
- 		enum bpf_prog_type type;
- 		bool jited;
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 83b416af4da1..c281f5b8705e 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -2121,6 +2121,7 @@ bool bpf_prog_map_compatible(struct bpf_map *map,
- {
- 	enum bpf_prog_type prog_type = resolve_prog_type(fp);
- 	bool ret;
-+	struct bpf_prog_aux *aux = fp->aux;
- 
- 	if (fp->kprobe_override)
- 		return false;
-@@ -2132,12 +2133,26 @@ bool bpf_prog_map_compatible(struct bpf_map *map,
- 		 */
- 		map->owner.type  = prog_type;
- 		map->owner.jited = fp->jited;
--		map->owner.xdp_has_frags = fp->aux->xdp_has_frags;
-+		map->owner.xdp_has_frags = aux->xdp_has_frags;
-+		map->owner.attach_func_proto = aux->attach_func_proto;
- 		ret = true;
- 	} else {
- 		ret = map->owner.type  == prog_type &&
- 		      map->owner.jited == fp->jited &&
--		      map->owner.xdp_has_frags == fp->aux->xdp_has_frags;
-+		      map->owner.xdp_has_frags == aux->xdp_has_frags;
-+		if (ret &&
-+		    map->owner.attach_func_proto != aux->attach_func_proto) {
-+			switch (prog_type) {
-+			case BPF_PROG_TYPE_TRACING:
-+			case BPF_PROG_TYPE_LSM:
-+			case BPF_PROG_TYPE_EXT:
-+			case BPF_PROG_TYPE_STRUCT_OPS:
-+				ret = false;
-+				break;
-+			default:
-+				break;
-+			}
-+		}
+diff --git a/drivers/infiniband/sw/rxe/rxe_mr.c b/drivers/infiniband/sw/rxe/rxe_mr.c
+index 868d2f0b74e9..7aebb359f69d 100644
+--- a/drivers/infiniband/sw/rxe/rxe_mr.c
++++ b/drivers/infiniband/sw/rxe/rxe_mr.c
+@@ -323,7 +323,7 @@ int rxe_mr_copy(struct rxe_mr *mr, u64 iova, void *addr,
+ 		return err;
  	}
- 	spin_unlock(&map->owner.lock);
  
+-	if (mr->umem->is_odp)
++	if (mr->umem && mr->umem->is_odp)
+ 		return rxe_odp_mr_copy(mr, iova, addr, length, dir);
+ 	else
+ 		return rxe_mr_copy_xarray(mr, iova, addr, length, dir);
+@@ -536,7 +536,7 @@ int rxe_mr_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value)
+ 	u64 *va;
+ 
+ 	/* ODP is not supported right now. WIP. */
+-	if (mr->umem->is_odp)
++	if (mr->umem && mr->umem->is_odp)
+ 		return RESPST_ERR_UNSUPPORTED_OPCODE;
+ 
+ 	/* See IBA oA19-28 */
+diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c b/drivers/infiniband/sw/rxe/rxe_odp.c
+index 9f6e2bb2a269..066a50da06f4 100644
+--- a/drivers/infiniband/sw/rxe/rxe_odp.c
++++ b/drivers/infiniband/sw/rxe/rxe_odp.c
+@@ -229,7 +229,7 @@ int rxe_odp_mr_copy(struct rxe_mr *mr, u64 iova, void *addr, int length,
+ 	if (length == 0)
+ 		return 0;
+ 
+-	if (unlikely(!mr->umem->is_odp))
++	if (unlikely(!(mr->umem && mr->umem->is_odp)))
+ 		return -EOPNOTSUPP;
+ 
+ 	switch (dir) {
+diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/infiniband/sw/rxe/rxe_resp.c
+index 54ba9ee1acc5..e27efc93a138 100644
+--- a/drivers/infiniband/sw/rxe/rxe_resp.c
++++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+@@ -650,7 +650,7 @@ static enum resp_states process_flush(struct rxe_qp *qp,
+ 	struct resp_res *res = qp->resp.res;
+ 
+ 	/* ODP is not supported right now. WIP. */
+-	if (mr->umem->is_odp)
++	if (mr->umem && mr->umem->is_odp)
+ 		return RESPST_ERR_UNSUPPORTED_OPCODE;
+ 
+ 	/* oA19-14, oA19-15 */
+@@ -706,7 +706,7 @@ static enum resp_states atomic_reply(struct rxe_qp *qp,
+ 	if (!res->replay) {
+ 		u64 iova = qp->resp.va + qp->resp.offset;
+ 
+-		if (mr->umem->is_odp)
++		if (mr->umem && mr->umem->is_odp)
+ 			err = rxe_odp_atomic_op(mr, iova, pkt->opcode,
+ 						atmeth_comp(pkt),
+ 						atmeth_swap_add(pkt),
 -- 
-2.34.1
+2.49.0
 
 
