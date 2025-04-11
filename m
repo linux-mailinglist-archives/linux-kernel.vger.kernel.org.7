@@ -1,112 +1,87 @@
-Return-Path: <linux-kernel+bounces-599835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B394AA85865
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:51:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B78A858A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D63BA8C73E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9CA89A2D5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECC829AB16;
-	Fri, 11 Apr 2025 09:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rNvdBvht"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E1929AB11;
+	Fri, 11 Apr 2025 09:56:32 +0000 (UTC)
+Received: from out28-74.mail.aliyun.com (out28-74.mail.aliyun.com [115.124.28.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59D52989B3
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 09:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F52529614B;
+	Fri, 11 Apr 2025 09:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744365072; cv=none; b=TJdMfK3mFLukReQEB2Nz0AAPJ5GvGuIb9/66OfbvlHV5LSi6FLm+zUfBlPOwOJ+xQUFHzIRO75oZYE4SC0jVZqBzZux3MilbOB7r9TXb1GotZ8G8g7LHrAvhogY0bO4uf1ircVDpTzmRNUQYXA3FV9GXGcuQDhMgba0Kqblw+MQ=
+	t=1744365392; cv=none; b=pv5uvPyl4Y3twG5ZOKZvvO3z2+kGeuNFkFOKaBuXi1Z/qzAtiAoY5cW0lgKY2+pWJQwIUkXn5r/kbbpALHhRp5N0vrszMr6WFmPKw1p/M4u4E9eCEvMXCWPtKCU4JJ30GmNUec9KEwqGDwqUgZryJrlf1C75l6QHgw0VlrUY0oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744365072; c=relaxed/simple;
-	bh=aAkMjJEdeOUJBORC3WJHhBKrNd6RMnYwpWX83qkxdU0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E67LAd73zIXS55W5SMVVPW5Lvtq2Nq+W5QNCiZRoE5qF5vgPvhT/AJ3OJY2jWDdHXsDqWPn0PolLmPkhomvPzeT93etZb9h002sfS96zxLkC9oJ7q8yji7k4DeJN5+jNg/1Vwv3ROMVRLqSfw1inxSla4vmfbFXS40pmqZBTuAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rNvdBvht; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53B9ojbZ1538872
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Apr 2025 04:50:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744365045;
-	bh=9OUXsKYr4L8cuuHUPZZv3opOZe1U/R9+5ovmxBvfKK0=;
-	h=From:To:CC:Subject:Date;
-	b=rNvdBvhtHct0DEJBrhbtzrrcRyvGfUPNa3Q7m4AZ1q1I+B3WqtBNN4CYrFznkmhkT
-	 0CdkIuuJMCOHHTUnvvQQWYR6hNT2z49vt3y8OrClasGNqdmJK58d4+DRkFzlJt4iL9
-	 6Y4Yz63IW6GmdajvVFPjvyWxvbrN0aeQ7ytT3uwg=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53B9oj0C036392
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 11 Apr 2025 04:50:45 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
- Apr 2025 04:50:45 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 11 Apr 2025 04:50:45 -0500
-Received: from localhost (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.72.182])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53B9oiQX104055;
-	Fri, 11 Apr 2025 04:50:44 -0500
-From: Jayesh Choudhary <j-choudhary@ti.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <nm@ti.com>,
-        <linux-kernel@vger.kernel.org>
-CC: <bjorn.andersson@oss.qualcomm.com>, <krzysztof.kozlowski@linaro.org>,
-        <geert+renesas@glider.be>, <lumag@kernel.org>,
-        <nfraprado@collabora.com>, <quic_tdas@quicinc.com>,
-        <elinor.montmasson@savoirfairelinux.com>, <ebiggers@google.com>,
-        <ross.burton@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-        <j-choudhary@ti.com>
-Subject: [PATCH] arm64: defconfig: Add CDNS_DSI and CDNS_PHY config
-Date: Fri, 11 Apr 2025 15:20:43 +0530
-Message-ID: <20250411095043.272488-1-j-choudhary@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744365392; c=relaxed/simple;
+	bh=dI24S8coPzz7k1htKptwmRID8NIsoRVYe1b7fMWVAk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ttEZKMhTCw4mmGlNHX4vIFXq8nz///3S0m4/upKrkMwAvUtEzIGHWARPsW5QB2BYhqyZ+sL4kvo+YwTxNNaeBKz311ZRbfoHEvDNqNsUW2Z7PA2SWLz4I3gDFj4AYzl+/b9k2DxysT6qwObIN8TGibm5NSOSs7nZOQ51DI0fNi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=115.124.28.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
+Received: from 10.0.2.15(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.cK5WKQw_1744365055 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Fri, 11 Apr 2025 17:50:56 +0800
+Message-ID: <da434f13-fb08-4036-96ed-7de579cb9ddc@motor-comm.com>
+Date: Fri, 11 Apr 2025 17:50:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 00/14] yt6801: Add Motorcomm yt6801 PCIe
+ driver
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, netdev@vger.kernel.org,
+ Masahiro Yamada <masahiroy@kernel.org>, Parthiban.Veerasooran@microchip.com,
+ linux-kernel@vger.kernel.org,
+ "andrew+netdev @ lunn . ch" <andrew+netdev@lunn.ch>, lee@trager.us,
+ horms@kernel.org, linux-doc@vger.kernel.org, corbet@lwn.net,
+ geert+renesas@glider.be, xiaogang.fan@motor-comm.com,
+ fei.zhang@motor-comm.com, hua.sun@motor-comm.com
+References: <20250408092835.3952-1-Frank.Sae@motor-comm.com>
+ <Z_T6vv013jraCzSD@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Frank Sae <Frank.Sae@motor-comm.com>
+In-Reply-To: <Z_T6vv013jraCzSD@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Enable configs for cdns-dsi and cdns-dphy. (dsi wrapper for
-j721e is enabled by default if cdns-dsi config is enabled)
 
-Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5c85e5da152f..4c0eb2711bbe 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -938,6 +938,7 @@ CONFIG_DRM_TI_SN65DSI86=m
- CONFIG_DRM_ANALOGIX_ANX7625=m
- CONFIG_DRM_I2C_ADV7511=m
- CONFIG_DRM_I2C_ADV7511_AUDIO=y
-+CONFIG_DRM_CDNS_DSI=m
- CONFIG_DRM_CDNS_MHDP8546=m
- CONFIG_DRM_IMX8MP_DW_HDMI_BRIDGE=m
- CONFIG_DRM_DW_HDMI_AHB_AUDIO=m
-@@ -1579,6 +1580,7 @@ CONFIG_PHY_CAN_TRANSCEIVER=m
- CONFIG_PHY_NXP_PTN3222=m
- CONFIG_PHY_SUN4I_USB=y
- CONFIG_PHY_CADENCE_TORRENT=m
-+CONFIG_PHY_CADENCE_DPHY=m
- CONFIG_PHY_CADENCE_DPHY_RX=m
- CONFIG_PHY_CADENCE_SIERRA=m
- CONFIG_PHY_CADENCE_SALVO=m
--- 
-2.34.1
+On 2025/4/8 18:30, Russell King (Oracle) wrote:
+> On Tue, Apr 08, 2025 at 05:28:21PM +0800, Frank Sae wrote:
+>> This series includes adding Motorcomm YT6801 Gigabit ethernet driver
+>>  and adding yt6801 ethernet driver entry in MAINTAINERS file.
+>> YT6801 integrates a YT8531S phy.
+> 
+> What is different between this and the Designware GMAC4 core supported
+> by drivers/net/ethernet/stmicro/stmmac/ ?
+> 
 
+We support more features: NS, RSS, wpi, wol pattern and aspm control.
+
+> Looking at the register layout, it looks very similar. The layout of the
+> MAC control register looks similar. The RX queue and PMT registers are
+> at the same relative offset. The MDIO registers as well.
+> 
+> Can you re-use the stmmac driver?
+> 
+
+I can not re-use the stmmac driver, because pcie and ephy can not work well on
+the stmmac driver.
 
