@@ -1,209 +1,348 @@
-Return-Path: <linux-kernel+bounces-599922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF92BA8592A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:13:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78CE0A85929
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D03917C4FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:13:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67E481B8171A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6805278E52;
-	Fri, 11 Apr 2025 10:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D9F29AAFD;
+	Fri, 11 Apr 2025 10:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="a5hLY7PK";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="MGxNEZuc"
-Received: from e2i655.smtp2go.com (e2i655.smtp2go.com [103.2.142.143])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6FMzvCZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C9B278E40
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.142.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A8729AB0A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744366405; cv=none; b=XkPWzIrxUT2qomGQoWUNadp0rOmPOC1kYgX409KlkxRz6j+uFtSgnrZyFJjtzUHRcQGp37hlGSkkfL6xK18WI2KvGVm7IFjnKfdVCPTjHO/sBhyjnzjrE39r2XnYyrj9iy1hS5t1j776H/S0KeWQ7ZLfMH4f4XT/QNJ4X56CvCQ=
+	t=1744366033; cv=none; b=CCBY0n6TOujTbrI6cIXtFJCQD4DViQnJwCOXCzYAAJfoOx1ACTzbZ0dyqy60diiZ5pFLqdf9WaKPk1IL4OHjGxIpf6TmKP7/pawO6pGg+bljQViCZyv/TsdcLhrCl5+LcFcKChv7hiUvPylxMlVSwNY7L3wPCezAFvjcZCZVmsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744366405; c=relaxed/simple;
-	bh=PWNSQc6TOmToyxJPxRmIfaUxC8jmVIYtwGAloEpfCXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oGsbHRJeKMD/N3gaJBwMKMG/FYjsb5gWNvVaHlzPtwrX4ix38odXHAtDR2zaputACZDnH7KyR/ekfPzr6/XEmBh6lmD30cvyZh+9MuJffTFDKTT0TycXHkfh/+d8ly0cVtxcpyq4L+yP2oW+wqWa/+DsPWYVHflH2GewDBaGT00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=a5hLY7PK reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=MGxNEZuc; arc=none smtp.client-ip=103.2.142.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1744367298; h=Feedback-ID:
-	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
-	List-Unsubscribe:List-Unsubscribe-Post;
-	bh=FT6H7ZVT7qjT0tHeNL6ZfiwPZh7QsXu9tJmoUMdPOTM=; b=a5hLY7PKiNGOp42dOknLsRyZeW
-	AyMCxN9abwjAPxmXjYWz8+rztARhO9gbSXjdzPtOCGzZ93YzMSIFu4aNJ5AcDfPJi2mQQlp8rCw6U
-	TQyIK1nE7EiSO6zKD4iCKCwjyGYVx2zATeP0cbKubbNvliBJBPD6AdHtzlQPq14j0EG3pdL5AQIy8
-	X/B/4N+tnsBMDlXnRrqV9T+0A4H9rENAbKxw4j79Po2f2S8Te/ROoJ5gSKYWMtfd0YpoTfSgf/17c
-	uuOX8Lew6LGlBCEugAM9+NJ04E+LpTDMysYT9A9AYnxI0Xawrou33aqXeMoxlDv3Q2XnLJKOW0nwe
-	H+3vKBtw==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1744366398; h=from : subject
- : to : message-id : date;
- bh=FT6H7ZVT7qjT0tHeNL6ZfiwPZh7QsXu9tJmoUMdPOTM=;
- b=MGxNEZucKAhmx8kXTyYFYpsMdKnAiV8yQWghJ0mmoYM8PG1CdJNo8CH6JhIdBnmxi1f5p
- JA/301RZnBhK41qbNpJ4nliItkxpvuIycDwbAkfVefH62VxNo38KN7a8IuOMASyTn2Fe9i6
- aOB5tU0IR6LfMpURbrJHcOeYYXYoGJ7mO5/zdrZCab7r8p/jL6ewBJnvr4wrF4Vr8S669XA
- widBuJUgTrAUJEAjjYfqG6RrLpI5wfezGpgmEANgV3cqNcjI43DTZCh6DWofNBOjiQGBHuv
- 8b3TEqzrti5VKUUGO+r+p3loetyafQyGrI0CMQn9Pp2LNBcnNGEiHG5QQucg==
-Received: from [10.139.162.187] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
- id 1u3BNh-qt4DyW-Nr; Fri, 11 Apr 2025 10:13:05 +0000
-Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.97.1-S2G) (envelope-from <repk@triplefau.lt>)
- id 1u3BNh-4o5NDgrpqqr-lFwP; Fri, 11 Apr 2025 10:13:05 +0000
-Date: Fri, 11 Apr 2025 12:06:35 +0200
-From: Remi Pommarel <repk@triplefau.lt>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- johannes@sipsolutions.net
-Subject: Re: [PATCH wireless v2 1/2] wifi: mac80211: Update skb's control
- block key in ieee80211_tx_dequeue()
-Message-ID: <Z_jpq26P99qzPP1c@pilgrim>
-References: <06aa507b853ca385ceded81c18b0a6dd0f081bc8.1742833382.git.repk@triplefau.lt>
- <20250410215527.3001-1-spasswolf@web.de>
+	s=arc-20240116; t=1744366033; c=relaxed/simple;
+	bh=zog6+A4bgw41mwmAj6LyqLPSAxuQKdxXwCOjw49nIK8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Y4PpuhoseOe24wIGF6eRvasGkpSF+VoySDWMk056eO12oWzDStIjfothiNi4yEKpD/LfyCyX/OC1UTX52EkjuBg5egk60Uqj7Y7/X+kFu2FrpoXztBEAD48d3jZVacDG+sNwJ3J3HaRCA2Qvic2r/6zYc7CIowKM1K1E7Z4V7iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6FMzvCZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C5A5C4CEE2;
+	Fri, 11 Apr 2025 10:07:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744366032;
+	bh=zog6+A4bgw41mwmAj6LyqLPSAxuQKdxXwCOjw49nIK8=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=T6FMzvCZcTie4kDjUokrIJ3jvbvbY/L/v5No62p6OonvotilYAET8qCvlwllba9Ez
+	 EGI/qofFtMc5FENlcF0XIa5ez/ApZwKtFnBk9o9UDwmIknq2bnotER+/3ueDWqa7u7
+	 OpA77z8I71PEMjsKoyijBKIs3ukTDLIf7FKRK8mtNGFJBl50xDfY42ev0AoPlzXb9t
+	 YpvR90aJGBiz8ruQvetgz97r7agScgMiJyWkoguupJGhjNOO08YV+9zIlErwRIOL03
+	 cNj/0WK6FJ8Fjg88vaVFyll6De4xHjx+vz82XZ6i5zxjVmCu0vLssk8OaVA1wGgzA2
+	 LuqthIwCzwY+w==
+Message-ID: <de198b35-fdfd-4fe9-98b9-bb346a81b54c@kernel.org>
+Date: Fri, 11 Apr 2025 18:07:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410215527.3001-1-spasswolf@web.de>
-X-Smtpcorp-Track: 3s3BhFMJKlhI.zNYnkfmoOy1Y.bIeJSQxb6lH
-Feedback-ID: 510616m:510616apGKSTK:510616sBGiWowcYh
-X-Report-Abuse: Please forward a copy of this message, including all headers,
- to <abuse-report@smtp2go.com>
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, pilhyun.kim@sk.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, daeho43@gmail.com
+Subject: Re: [f2fs-dev] [PATCH v1] f2fs: Improve large section GC by locating
+ valid block segments
+To: "yohan.joung" <yohan.joung@sk.com>
+References: <20250410001747.1844-1-yohan.joung@sk.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250410001747.1844-1-yohan.joung@sk.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Bert,
+Yohan,
 
-On Thu, Apr 10, 2025 at 11:55:26PM +0200, Bert Karwatzki wrote:
-> This commit breaks the mediatek mt7921 wireless driver. In linux-next-20250410
-> my mt7921e Wi-Fi controller is no longer able to connect to a network.
-> I bisected this to commit a104042e2bf6 ("wifi: mac80211: Update skb's control
-> block key in ieee80211_tx_dequeue()").
-> 
-> Hardware:
-> 04:00.0 Network controller: MEDIATEK Corp. MT7921K (RZ608) Wi-Fi 6E 80MHz
-> 
-> This debugging patch reveals that the change causes key to be NULL in
-> mt7921_tx_prepare_skb().
-> 
-> diff --git a/drivers/net/wireless/mediatek/mt76/mt7921/pci_mac.c b/drivers/net/wireless/mediatek/mt76/mt7921/pci_mac.c
-> index 881812ba03ff..3b8552a1055c 100644
-> --- a/drivers/net/wireless/mediatek/mt76/mt7921/pci_mac.c
-> +++ b/drivers/net/wireless/mediatek/mt76/mt7921/pci_mac.c
-> @@ -13,6 +13,7 @@ int mt7921e_tx_prepare_skb(struct mt76_dev *mdev, void *txwi_ptr,
->         struct mt792x_dev *dev = container_of(mdev, struct mt792x_dev, mt76);
->         struct ieee80211_tx_info *info = IEEE80211_SKB_CB(tx_info->skb);
->         struct ieee80211_key_conf *key = info->control.hw_key;
-> +       dev_info(mdev->dev, "%s: key = %px\n", __func__, key);
->         struct mt76_connac_hw_txp *txp;
->         struct mt76_txwi_cache *t;
->         int id, pid;
-> 
-> 
-> So why is info->control.hw_key not updated by ieee80211_tx_h_select_key()?
-> 
-> diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
-> index 34f229a6eab0..2510e3533d13 100644
-> --- a/net/mac80211/tx.c
-> +++ b/net/mac80211/tx.c
-> @@ -631,8 +631,10 @@ ieee80211_tx_h_select_key(struct ieee80211_tx_data *tx)
->  		case WLAN_CIPHER_SUITE_WEP40:
->  		case WLAN_CIPHER_SUITE_WEP104:
->  		case WLAN_CIPHER_SUITE_TKIP:
-> -			if (!ieee80211_is_data_present(hdr->frame_control))
-> +			if (!ieee80211_is_data_present(hdr->frame_control)) {
-> +				printk(KERN_INFO "%s %d: setting tx->key = NULL\n", __func__, __LINE__);
->  				tx->key = NULL;
-> +			}
->  			break;
->  		case WLAN_CIPHER_SUITE_CCMP:
->  		case WLAN_CIPHER_SUITE_CCMP_256:
-> @@ -641,19 +643,23 @@ ieee80211_tx_h_select_key(struct ieee80211_tx_data *tx)
->  			if (!ieee80211_is_data_present(hdr->frame_control) &&
->  			    !ieee80211_use_mfp(hdr->frame_control, tx->sta,
->  					       tx->skb) &&
-> -			    !ieee80211_is_group_privacy_action(tx->skb))
-> +			    !ieee80211_is_group_privacy_action(tx->skb)) {
-> +				printk(KERN_INFO "%s %d: setting tx->key = NULL\n", __func__, __LINE__);
->  				tx->key = NULL;
-> -			else
-> +			} else {
->  				skip_hw = (tx->key->conf.flags &
->  					   IEEE80211_KEY_FLAG_SW_MGMT_TX) &&
->  					ieee80211_is_mgmt(hdr->frame_control);
-> +			}
->  			break;
->  		case WLAN_CIPHER_SUITE_AES_CMAC:
->  		case WLAN_CIPHER_SUITE_BIP_CMAC_256:
->  		case WLAN_CIPHER_SUITE_BIP_GMAC_128:
->  		case WLAN_CIPHER_SUITE_BIP_GMAC_256:
-> -			if (!ieee80211_is_mgmt(hdr->frame_control))
-> +			if (!ieee80211_is_mgmt(hdr->frame_control)) {
-> +				printk(KERN_INFO "%s %d: setting tx->key = NULL\n", __func__, __LINE__);
->  				tx->key = NULL;
-> +			}
->  			break;
->  		}
-> 
-> @@ -662,9 +668,13 @@ ieee80211_tx_h_select_key(struct ieee80211_tx_data *tx)
->  			     tx->skb->protocol != tx->sdata->control_port_protocol)
->  			return TX_DROP;
-> 
-> +		printk(KERN_INFO "%s: skip_hw=%d tx->key=%px\n",
-> +				__func__, skip_hw, tx->key);
->  		if (!skip_hw && tx->key &&
-> -		    tx->key->flags & KEY_FLAG_UPLOADED_TO_HARDWARE)
-> +		    tx->key->flags & KEY_FLAG_UPLOADED_TO_HARDWARE) {
->  			info->control.hw_key = &tx->key->conf;
-> +			printk(KERN_INFO "%s: info->control.hw_key = %px\n", __func__, info->control.hw_key);
-> +		}
->  	} else if (ieee80211_is_data_present(hdr->frame_control) && tx->sta &&
->  		   test_sta_flag(tx->sta, WLAN_STA_USES_ENCRYPTION)) {
->  		return TX_DROP;
-> @@ -3894,6 +3904,8 @@ struct sk_buff *ieee80211_tx_dequeue(struct ieee80211_hw *hw,
->  	 * The key can be removed while the packet was queued, so need to call
->  	 * this here to get the current key.
->  	 */
-> +	printk(KERN_INFO "%s: info->control.hw_key = %px, setting to NULL\n",
-> +			__func__, info->control.hw_key);
->  	info->control.hw_key = NULL;
->  	r = ieee80211_tx_h_select_key(&tx);
->  	if (r != TX_CONTINUE) {
-> 
-> This patch reveals that tx->key is set to NULL (in the @@ -641,19 +643,23 @@ chunk)
-> and so the updating of info->contro.hw_key is skipped:
-> 
-> [   17.411298] [   T1232] ieee80211_tx_h_select_key 647: setting tx->key = NULL
+Sorry for the delay, will catch up this a little bit latter.
 
-That means that we are trying to send non management frames using
-AES_CMAC, or BIP_* cipher, aren't those ciphers used only for group
-management frames ?
-
-> [   17.411300] [   T1232] ieee80211_tx_h_select_key: skip_hw=0 tx->key=0000000000000000
-> [   17.411307] [   T1232] mt7921e 0000:04:00.0: mt7921e_tx_prepare_skb: key = 0000000000000000
+On 2025/4/10 8:17, yohan.joung wrote:
+> hi jeageuk, chao
+> How about changing the large section gc in this direction?
+> Thanks
 > 
-> If I revert commit a104042e2bf6 while keeping the debug patches it shows that
-> the for mt7921e the key is never updated in ieee80211_tx_h_select_key(), mt7921e
-> relies on the key your patch is setting to NULL.
-> 
-> Is this a problem with your patch or with the mt7921e driver that just got
-> revealed by your patch?
+>> Change the large section GC to locate valid block segments instead of
+>> performing a sequential search. This modification enhances performance
+>> by reducing unnecessary block scanning in large storage sections.
+>>
+>> example :
+>> [invalid seg 0] [invalid seg 1] [invalid seg 2]
+>> [  valid seg 3] [  valid seg 4] [  valid seg 5]
+>>
+>> Current: In the first GC, nothing is moved,
+>> but in the second GC, segments 3, 4, and 5 are moved.
+>> Change: In the first GC, segments 3, 4, and 5 are moved.
+>>
+>> Signed-off-by: yohan.joung <yohan.joung@sk.com>
+>> ---
+>>   fs/f2fs/f2fs.h  |  2 ++
+>>   fs/f2fs/gc.c    | 92 +++++++++++++++++++++++++++++++++++--------------
+>>   fs/f2fs/gc.h    |  6 ++++
+>>   fs/f2fs/super.c |  8 ++++-
+>>   4 files changed, 82 insertions(+), 26 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index f1576dc6ec67..348417edac25 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -4008,6 +4008,8 @@ int f2fs_gc_range(struct f2fs_sb_info *sbi,
+>>   int f2fs_resize_fs(struct file *filp, __u64 block_count);
+>>   int __init f2fs_create_garbage_collection_cache(void);
+>>   void f2fs_destroy_garbage_collection_cache(void);
+>> +int __init f2fs_init_garbage_collection_summary_cache(void);
+>> +void f2fs_destroy_garbage_collection_summary_cache(void);
+>>   /* victim selection function for cleaning and SSR */
+>>   int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
+>>   			int gc_type, int type, char alloc_mode,
+>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>> index 2b8f9239bede..3b63e85fa038 100644
+>> --- a/fs/f2fs/gc.c
+>> +++ b/fs/f2fs/gc.c
+>> @@ -24,6 +24,7 @@
+>>   #include <trace/events/f2fs.h>
+>>   
+>>   static struct kmem_cache *victim_entry_slab;
+>> +static struct kmem_cache *gc_page_entry_slab;
+>>   
+>>   static unsigned int count_bits(const unsigned long *addr,
+>>   				unsigned int offset, unsigned int len);
+>> @@ -711,6 +712,30 @@ static void release_victim_entry(struct f2fs_sb_info *sbi)
+>>   	f2fs_bug_on(sbi, !list_empty(&am->victim_list));
+>>   }
+>>   
+>> +static struct gc_page_entry *add_gc_page_entry(struct list_head *gc_page_list,
+>> +					struct page *sum_page, unsigned int segno)
+>> +{
+>> +	struct gc_page_entry *gpe;
+>> +
+>> +	gpe = f2fs_kmem_cache_alloc(gc_page_entry_slab, GFP_NOFS, true, NULL);
+>> +	gpe->segno = segno;
+>> +	gpe->sum_page = sum_page;
+>> +	list_add_tail(&gpe->list, gc_page_list);
+>> +	return gpe;
+>> +}
+>> +
+>> +static void release_gc_page_entry(struct list_head *gc_page_list, bool putpage)
+>> +{
+>> +	struct gc_page_entry *gpe, *tmp;
+>> +
+>> +	list_for_each_entry_safe(gpe, tmp, gc_page_list, list) {
+>> +		if (putpage)
+>> +			f2fs_put_page(gpe->sum_page, 0);
+>> +		list_del(&gpe->list);
+>> +		kmem_cache_free(gc_page_entry_slab, gpe);
+>> +	}
+>> +}
+>> +
+>>   static bool f2fs_pin_section(struct f2fs_sb_info *sbi, unsigned int segno)
+>>   {
+>>   	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+>> @@ -1721,14 +1746,18 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>>   	struct page *sum_page;
+>>   	struct f2fs_summary_block *sum;
+>>   	struct blk_plug plug;
+>> +	struct gc_page_entry *gpe;
+>>   	unsigned int segno = start_segno;
+>>   	unsigned int end_segno = start_segno + SEGS_PER_SEC(sbi);
+>>   	unsigned int sec_end_segno;
+>> +	unsigned int window_granularity = 1;
+>>   	int seg_freed = 0, migrated = 0;
+>>   	unsigned char type = IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
+>>   						SUM_TYPE_DATA : SUM_TYPE_NODE;
+>>   	unsigned char data_type = (type == SUM_TYPE_DATA) ? DATA : NODE;
+>>   	int submitted = 0;
+>> +	int gc_list_count = 0;
+>> +	LIST_HEAD(gc_page_list);
+>>   
+>>   	if (__is_large_section(sbi)) {
+>>   		sec_end_segno = rounddown(end_segno, SEGS_PER_SEC(sbi));
+>> @@ -1744,7 +1773,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>>   					f2fs_usable_segs_in_sec(sbi);
+>>   
+>>   		if (gc_type == BG_GC || one_time) {
+>> -			unsigned int window_granularity =
+>> +			window_granularity =
+>>   				sbi->migration_window_granularity;
+>>   
+>>   			if (f2fs_sb_has_blkzoned(sbi) &&
+>> @@ -1752,8 +1781,6 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>>   					sbi->gc_thread->boost_zoned_gc_percent))
+>>   				window_granularity *=
+>>   					BOOST_GC_MULTIPLE;
+>> -
+>> -			end_segno = start_segno + window_granularity;
+>>   		}
+>>   
+>>   		if (end_segno > sec_end_segno)
+>> @@ -1762,37 +1789,38 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>>   
+>>   	sanity_check_seg_type(sbi, get_seg_entry(sbi, segno)->type);
+>>   
+>> -	/* readahead multi ssa blocks those have contiguous address */
+>> -	if (__is_large_section(sbi))
+>> +	for (segno = start_segno; segno < end_segno; segno++) {
+>> +		if (!get_valid_blocks(sbi, segno, false))
+>> +			continue;
+>> +
+>> +		/* readahead multi ssa blocks those have contiguous address */
+>>   		f2fs_ra_meta_pages(sbi, GET_SUM_BLOCK(sbi, segno),
+>> -					end_segno - segno, META_SSA, true);
+>> +				window_granularity, META_SSA, true);
+>>   
+>> -	/* reference all summary page */
+>> -	while (segno < end_segno) {
+>> -		sum_page = f2fs_get_sum_page(sbi, segno++);
+>> +		/* reference all summary page */
+>> +		sum_page = f2fs_get_sum_page(sbi, segno);
+>>   		if (IS_ERR(sum_page)) {
+>>   			int err = PTR_ERR(sum_page);
+>> -
+>> -			end_segno = segno - 1;
+>> -			for (segno = start_segno; segno < end_segno; segno++) {
+>> -				sum_page = find_get_page(META_MAPPING(sbi),
+>> -						GET_SUM_BLOCK(sbi, segno));
+>> -				f2fs_put_page(sum_page, 0);
+>> -				f2fs_put_page(sum_page, 0);
+>> -			}
+>> +			release_gc_page_entry(&gc_page_list, true);
+>>   			return err;
+>>   		}
+>> +		add_gc_page_entry(&gc_page_list, sum_page, segno);
+>>   		unlock_page(sum_page);
+>> +		if (++gc_list_count >= window_granularity)
+>> +			break;
+>>   	}
+>>   
+>>   	blk_start_plug(&plug);
+>>   
+>> -	for (segno = start_segno; segno < end_segno; segno++) {
+>> +	list_for_each_entry(gpe, &gc_page_list, list) {
+>>   
+>>   		/* find segment summary of victim */
+>> -		sum_page = find_get_page(META_MAPPING(sbi),
+>> -					GET_SUM_BLOCK(sbi, segno));
+>> -		f2fs_put_page(sum_page, 0);
+>> +		sum_page = gpe->sum_page;
+>> +		segno = gpe->segno;
+>> +		if (!sum_page) {
+>> +			f2fs_err(sbi, "Failed to get summary page for segment %u", segno);
+>> +			goto skip;
+>> +		}
+>>   
+>>   		if (get_valid_blocks(sbi, segno, false) == 0)
+>>   			goto freed;
+>> @@ -1835,18 +1863,20 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>>   				get_valid_blocks(sbi, segno, false) == 0)
+>>   			seg_freed++;
+>>   
+>> -		if (__is_large_section(sbi))
+>> -			sbi->next_victim_seg[gc_type] =
+>> -				(segno + 1 < sec_end_segno) ?
+>> -					segno + 1 : NULL_SEGNO;
+>>   skip:
+>>   		f2fs_put_page(sum_page, 0);
+>>   	}
+>>   
+>> +	if (__is_large_section(sbi) && !list_empty(&gc_page_list))
+>> +		sbi->next_victim_seg[gc_type] =
+>> +			(segno + 1 < sec_end_segno) ?
+>> +				segno + 1 : NULL_SEGNO;
+>> +
+>>   	if (submitted)
+>>   		f2fs_submit_merged_write(sbi, data_type);
+>>   
+>>   	blk_finish_plug(&plug);
+>> +	release_gc_page_entry(&gc_page_list, false);
+>>   
+>>   	if (migrated)
+>>   		stat_inc_gc_sec_count(sbi, data_type, gc_type);
+>> @@ -2008,6 +2038,18 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
+>>   	return ret;
+>>   }
+>>   
+>> +int __init f2fs_init_garbage_collection_summary_cache(void)
+>> +{
+>> +	gc_page_entry_slab = f2fs_kmem_cache_create("f2fs_gc_page_entry",
+>> +					sizeof(struct gc_page_entry));
+>> +	return gc_page_entry_slab ? 0 : -ENOMEM;
+>> +}
+>> +
+>> +void f2fs_destroy_garbage_collection_summary_cache(void)
+>> +{
+>> +	kmem_cache_destroy(gc_page_entry_slab);
+>> +}
+>> +
+>>   int __init f2fs_create_garbage_collection_cache(void)
+>>   {
+>>   	victim_entry_slab = f2fs_kmem_cache_create("f2fs_victim_entry",
+>> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+>> index 5c1eaf55e127..9c8695efe394 100644
+>> --- a/fs/f2fs/gc.h
+>> +++ b/fs/f2fs/gc.h
+>> @@ -82,6 +82,12 @@ struct victim_entry {
+>>   	struct list_head list;
+>>   };
+>>   
+>> +struct gc_page_entry {
+>> +	unsigned int segno;
+>> +	struct page *sum_page;
+>> +	struct list_head list;
+>> +};
+>> +
+>>   /*
+>>    * inline functions
+>>    */
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index f087b2b71c89..a3241730fe4f 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -5090,9 +5090,12 @@ static int __init init_f2fs_fs(void)
+>>   	err = f2fs_create_garbage_collection_cache();
+>>   	if (err)
+>>   		goto free_extent_cache;
+>> -	err = f2fs_init_sysfs();
+>> +	err = f2fs_init_garbage_collection_summary_cache();
+>>   	if (err)
+>>   		goto free_garbage_collection_cache;
+>> +	err = f2fs_init_sysfs();
+>> +	if (err)
+>> +		goto free_garbage_collection_summary_cache;
+>>   	err = f2fs_init_shrinker();
+>>   	if (err)
+>>   		goto free_sysfs;
+>> @@ -5141,6 +5144,8 @@ static int __init init_f2fs_fs(void)
+>>   	f2fs_exit_shrinker();
+>>   free_sysfs:
+>>   	f2fs_exit_sysfs();
+>> +free_garbage_collection_summary_cache:
+>> +	f2fs_destroy_garbage_collection_summary_cache();
+>>   free_garbage_collection_cache:
+>>   	f2fs_destroy_garbage_collection_cache();
+>>   free_extent_cache:
+>> @@ -5172,6 +5177,7 @@ static void __exit exit_f2fs_fs(void)
+>>   	f2fs_destroy_root_stats();
+>>   	f2fs_exit_shrinker();
+>>   	f2fs_exit_sysfs();
+>> +	f2fs_destroy_garbage_collection_summary_cache();
+>>   	f2fs_destroy_garbage_collection_cache();
+>>   	f2fs_destroy_extent_cache();
+>>   	f2fs_destroy_recovery_cache();
+>> -- 
+>> 2.33.0
+>>
+>>
+>>
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
 
-Not sure yet, do you happen to know which kind of frame mt7921e is
-trying to be sent using this NULL key ?
-
-Thanks,
-
--- 
-Remi
 
