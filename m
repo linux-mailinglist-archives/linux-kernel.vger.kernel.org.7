@@ -1,110 +1,124 @@
-Return-Path: <linux-kernel+bounces-599457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56DC8A853CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:00:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3887A853CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8179F1893F55
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:58:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E28DC7AA53D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 05:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99071EE014;
-	Fri, 11 Apr 2025 05:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9023727CCCD;
+	Fri, 11 Apr 2025 06:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dCbs3wd9"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A9gUaiU2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A50645;
-	Fri, 11 Apr 2025 05:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B502913F434;
+	Fri, 11 Apr 2025 06:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744351078; cv=none; b=lML9pWrs2c5H8vrH6I1YYaizxbiKZreOGbLvb1Jr31lRXuPQjnaBeMFPqWU0EjDZ/NdEggXnXTtV/eQXRK+eVoGBljq+d7gDNMTt6e7f55NZ0cOV1SCBEoBuqp7hrFhFIzYXjBc2VdJk8g+ob6tp16oz8apRPDeEIAZi8sPMHF0=
+	t=1744351240; cv=none; b=HVWZB4pON4JdH8fqpJEqqJ5UnVwIxIoo9CTJOu4Dqui496zVzqgnGEtUDhFl7hC3FIwp3ny/rO4KcvZD5hIgR1U7GPav0eo9OMmAZZK61JTPEB0lNwx0qDkv5cTCQoimNizPHu02OxEHHuLtLbX8RA6ITb9WPFu3LOvZyXNJjYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744351078; c=relaxed/simple;
-	bh=YPD/YojZ1CL2rVuj6iDVV+N3kNal4B64jOrHgS76RAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Hnko/cJRbUVU8hixpxfIXO7PF4bXqKvuS5k+X6zPoHKAISC8RvrtBKYGIBp+WPINkTRicTY4FkBg3HllbSkeDfqJPEz0KVpKy2XTBhyf/7qW5IpQlWDNEAFTdbXYnmkDP42mxrvkrYcKIhy5tqnqUSLpz1uip1yMKz362O8Ectw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dCbs3wd9; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1744351072;
-	bh=M/Vy4k6oE6Q5+4FihTIeboLuCjQyfxOAFYcMS8WMduA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dCbs3wd9vgl3LjBY5EAtXxCqW+QIBbnnwzEQ1tqrIINS+OdVj+bYSOI33xHmIqTrb
-	 ib4wduoNbQ2K90LaY9bxr8g5rb75hpgeo/q281J0CIBMcjPqeZg2HZVVzWCNbQ2HoB
-	 qBWb7jh6HrltBdBROxhZWf5NXqLB/lqClivJInDZKCBe+87GWOiKbpV0EhR0cEtp3C
-	 LyCPbuHoPXORKlMRv+J5F+h7sAgeTmZYVINOY9bkEITcBsVdSfEf9GNiB7EVknkRH/
-	 to7OvzdYedWjvKl+w3UfjhF688r/Vd242nKuj+WKR2cODreMB4zWCjkIbIC6cIJjbl
-	 WTI1n+oI1pTtw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZYmDw1r83z4wbc;
-	Fri, 11 Apr 2025 15:57:52 +1000 (AEST)
-Date: Fri, 11 Apr 2025 15:57:51 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the bcachefs tree
-Message-ID: <20250411155751.03bda841@canb.auug.org.au>
+	s=arc-20240116; t=1744351240; c=relaxed/simple;
+	bh=XLNuZl1M/V2LzJD/AZf7Wdiyi698tvwzlUnWdV61V+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bKavrodKrWCOSyxhHgqpybrq5qBQVRtVlqxskl8FhCo3DyNzEPFPNASvV0l6W3nHkTMofiIGb1C92SCelzM5SQwOBPlzoYr1GvDCQPltaAy49NIlDAfFMBhsj1pmSI36gl/PxexJmdUzETLooBUZSgwo1m9mdoK3PF85sI9jn/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A9gUaiU2; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744351236; x=1775887236;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XLNuZl1M/V2LzJD/AZf7Wdiyi698tvwzlUnWdV61V+E=;
+  b=A9gUaiU2N9hFbUiN2IiDD3IDjhza6SvMtymZLol/stg9fN/Bgx8KQrWo
+   eA5JLWEVZ2nVPKFPsLFqRDWl/OR6LPSz7MdnDajT+7KOpXp8m7GTvXXUa
+   WDFEfOE9Er+H/YDzjb9ly5w4FCDqSJJASEMZA9FZLxMX9ZmpMkDAl64xD
+   OGvGMproJ+j74l/kO8uIziUkGs5pfSRDfj63zsl0HptQQD7RkwTi2s9bC
+   AhBmmF9KUVrb8vmNe2R7pIIMCIbGdAUNrlhufio+L7yeR7bxhaSpOZEAq
+   W6gXFW0tztSE7XsnliRNEBv7BO5BtUk7cfEubzHCHLCkznFi3Fkq1oN6t
+   A==;
+X-CSE-ConnectionGUID: Ap/cq5kBQvmvyrRmZgPaZQ==
+X-CSE-MsgGUID: 4nLKMwyYRL2UXAeHPST0qQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="45133933"
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="45133933"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Apr 2025 23:00:35 -0700
+X-CSE-ConnectionGUID: TRt2w+rgSeGCSYvkQJ6qtQ==
+X-CSE-MsgGUID: IKbVr+5tTXqoUI+D6j5Sbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="129072394"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 10 Apr 2025 23:00:34 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u37RH-000Ask-20;
+	Fri, 11 Apr 2025 06:00:31 +0000
+Date: Fri, 11 Apr 2025 14:00:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nicolas Pitre <nico@fluxnic.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Nicolas Pitre <npitre@baylibre.com>,
+	Dave Mielke <Dave@mielke.cc>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/11] vt: create ucs_recompose.c using
+ gen_ucs_recompose.py
+Message-ID: <202504111359.urXWyzvQ-lkp@intel.com>
+References: <20250410011839.64418-8-nico@fluxnic.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/HwGW.pqezsKdq3qy7zo3OPQ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410011839.64418-8-nico@fluxnic.net>
 
---Sig_/HwGW.pqezsKdq3qy7zo3OPQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Nicolas,
 
-Hi all,
+kernel test robot noticed the following build warnings:
 
-The following commits are also in Linus Torvalds' tree as different
-commits (but the same patches):
+[auto build test WARNING on tty/tty-testing]
+[also build test WARNING on tty/tty-next tty/tty-linus linus/master v6.15-rc1 next-20250410]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-  7dbcd51dd047 ("bcachefs: Fix UAF in bchfs_read()")
-  ff89dfe4d59e ("bcachefs: Use cpu_to_le16 for dirent lengths")
-  6c14329d3da1 ("bcachefs: Fix type for parameter in journal_advance_devs_t=
-o_next_bucket")
-  d589fb60c015 ("bcachefs: Fix escape sequence in prt_printf")
+url:    https://github.com/intel-lab-lkp/linux/commits/Nicolas-Pitre/vt-minor-cleanup-to-vc_translate_unicode/20250410-092318
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
+patch link:    https://lore.kernel.org/r/20250410011839.64418-8-nico%40fluxnic.net
+patch subject: [PATCH 07/11] vt: create ucs_recompose.c using gen_ucs_recompose.py
+config: csky-randconfig-001-20250411 (https://download.01.org/0day-ci/archive/20250411/202504111359.urXWyzvQ-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250411/202504111359.urXWyzvQ-lkp@intel.com/reproduce)
 
-These are commits
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504111359.urXWyzvQ-lkp@intel.com/
 
-  34b47e3d73a2 ("bcachefs: Fix UAF in bchfs_read()")
-  4a22a7332341 ("bcachefs: Use cpu_to_le16 for dirent lengths")
-  afc5444e4d86 ("bcachefs: Fix type for parameter in journal_advance_devs_t=
-o_next_bucket")
-  f5cd27ec7146 ("bcachefs: Fix escape sequence in prt_printf")
+All warnings (new ones prefixed by >>):
 
-in Linus' tree.
+>> drivers/tty/vt/ucs_recompose.c:148: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * Attempt to recompose two Unicode characters into a single character.
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/HwGW.pqezsKdq3qy7zo3OPQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+vim +148 drivers/tty/vt/ucs_recompose.c
 
------BEGIN PGP SIGNATURE-----
+   146	
+   147	/**
+ > 148	 * Attempt to recompose two Unicode characters into a single character.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmf4r18ACgkQAVBC80lX
-0Gy1EQf9FnY/Qud1cyJRWpvZzlgy3gO5hLY612UiUuDtznNbNGkuQLILmboadwTX
-a9qqqhTtobjpI71DYqNI0T+0P8A/sOB7xLzQPVVk1Kq8Isx1ggoCHQAIgjY9HPpj
-n6JU9LGsfl9S3Ye3fA+t0IrEh7rS+khqew16F2xxuPSucx/ClqAuIN5jrlv7gYBF
-zeDPZGJArWl/kwrRGrO18pIS/72yMyqy9e975LMy3snzLY6Fg81npFwjTHnpP/BP
-fE1CH9hWfjtyZ3tTRFj2+TEJwLF/qKFpujZDRso0w5TQFgM7UC82yA1JRb3l0ehf
-Vra9Hog6Z81Ew1URvkgSdAed2Nrgrg==
-=qadj
------END PGP SIGNATURE-----
-
---Sig_/HwGW.pqezsKdq3qy7zo3OPQ--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
