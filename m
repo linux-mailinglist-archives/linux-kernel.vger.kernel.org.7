@@ -1,96 +1,84 @@
-Return-Path: <linux-kernel+bounces-599569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E67AA8558D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:37:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5882AA855F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66DDA4681CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:37:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D7137AC748
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86B228CF64;
-	Fri, 11 Apr 2025 07:37:16 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031DA293473;
+	Fri, 11 Apr 2025 07:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Pg3+w1Tk"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269E0283684
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10321E7C0E;
+	Fri, 11 Apr 2025 07:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744357036; cv=none; b=Xtjjx1J4d7rV+fiD7jilR3h9rziGPPeqNpZ8Tc8p1uMOYx+SyXgMoN0QFXLXPWhYW7m7EQyz3iIOwP6KF+j9oMEIbnBHM7b6Nl97pIKACnuk8e1X6Dyz+hDy0BmSWVaVnen+gEVolh4/3zjPcuhrDETwQZWfdUKpDJXHQFXvrPc=
+	t=1744358308; cv=none; b=ETGRw07/NU0qy+O5B5DetomwX22eUViRx7lpLTP6BTCUmVGVbCDDcs96lF160eDL6+EDpqh4qyDQ1jm01+mCQ5H6jENyusWsFkNbj66V9FfMnJtvrL3G5t8oZexBnb5Ie0BPfnLjX7p1bKjMOJG93gGZVgWVzH6jHFjwzsoUmuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744357036; c=relaxed/simple;
-	bh=3Ds+I64o3wm/v6dh94Mn+eiddrweREBbYMgtu/Gp4og=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Faf0tUUF/KEe0hwtHaZosPUvcSrWxp/8R47tsO7np+hX1/dLEdVNDg9N7v3S9lHcgJ1BQWNACTon9R/f/+t/wdd/zWZp9BRuNlOUf14xjIvE5i7bOqu0m54gAa8p151C6lGtAfWv8S48dVY7wpOGb+NRnmjdczXFyG68iKxAoB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZYpMS2KX8z2Cdg1;
-	Fri, 11 Apr 2025 15:33:40 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5A5591A0188;
-	Fri, 11 Apr 2025 15:37:04 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 11 Apr
- 2025 15:37:03 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <jassisinghbrar@gmail.com>, <afd@ti.com>,
-	<valentina.fernandezalanis@microchip.com>
-CC: <linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
-Subject: [PATCH -next] mailbox: mchp-ipc-sbi: Fix COMPILE_TEST build error
-Date: Fri, 11 Apr 2025 15:57:47 +0800
-Message-ID: <20250411075747.3716565-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744358308; c=relaxed/simple;
+	bh=RPYcAqD4y+hgyeMW2NJKkGGQDPPJG1ewfZv3Mzh/woc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gm29BKxSenwRG1XvoOrimDgfwDm+ZQ833IaWxxo3iB8lm3+wgC83erTtGW1yQmmdM1N/pM+BiJ1eKA8vd+CeLgjSp0ZIh23QVbguzoGQtCTQRAvmCAfbpLWeuMRIGnUHV80VCLATXF7e7I7gunHIA7mve7bvFPKYGWjdnUjPvCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Pg3+w1Tk; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 31B1F1F95D;
+	Fri, 11 Apr 2025 09:58:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1744358302;
+	bh=jhFLKSiuMEHIVF1fYtgFDkjX7z90xWK4KoI2jpP6mFQ=; h=From:To:Subject;
+	b=Pg3+w1TkdRCZg2QZGbZQGRD7HO7IKsprBmVvuMDem+CGtF4FKPugDC3PWt6kc/UpQ
+	 ZIUiGHZQoVil7td6XlFXUMOK5SqiMuJWBUzLSPfHqCsAWYyjX+UQH7zql9jsahxBxV
+	 dk6YSV0+8hkrq+h7B8z/zh+sgm2NQ95peP4wxcfweqInP8kTstnsyWdc6pFj0hpxTq
+	 QsuKtlt4wQElvlTrvePVq+kQKqv08wzSO5yNxtP+RnPDSgce1z4TrbdHirgldKNUCv
+	 VTDcvGgQjw9T4RIOha+GtE/u23ohjDjeSXt4xmLovcrvwqUsgnBZDagEcMaHhQm51O
+	 OfTxXUSsaoqsA==
+Date: Fri, 11 Apr 2025 09:58:20 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH 2/4] wifi: mwifiex: let mwifiex_init_fw() return 0 for
+ success
+Message-ID: <20250411075820.GB12707@francesco-nb>
+References: <20250410-mwifiex-drop-asynchronous-init-v1-0-6a212fa9185e@pengutronix.de>
+ <20250410-mwifiex-drop-asynchronous-init-v1-2-6a212fa9185e@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410-mwifiex-drop-asynchronous-init-v1-2-6a212fa9185e@pengutronix.de>
 
-If COMPILE_TEST is y but RISCV_SBI is n, build fails:
+On Thu, Apr 10, 2025 at 12:28:44PM +0200, Sascha Hauer wrote:
+> mwifiex_sta_init_cmd() returns -EINPROGRESS as sucess indication when
+> the init param is true. Likewise mwifiex_init_fw() returns -EINPROGRESS
+> as success indication: It will either return -EINPROGRESS directly when
+> in mfg_mode or the return value of mwifiex_sta_init_cmd() when in normal
+> mode.
+> 
+> -EINPROGRESS is a leftover from times when the initialization commands
+> were sent asynchronously. Since 7bff9c974e1a ("mwifiex: send firmware
+> initialization commands synchronously") the return value has become
+> meaningless, so change mwifiex_sta_init_cmd() and mwifiex_init_fw()
+> to return 0 for success.
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-drivers/mailbox/mailbox-mchp-ipc-sbi.c: In function ‘mchp_ipc_sbi_chan_send’:
-drivers/mailbox/mailbox-mchp-ipc-sbi.c:119:23: error: storage size of ‘ret’ isn’t known
-	struct sbiret ret;
-	              ^~~
-  CC      drivers/nvmem/lpc18xx_otp.o
-drivers/mailbox/mailbox-mchp-ipc-sbi.c:121:15: error: implicit declaration of function ‘sbi_ecall’ [-Werror=implicit-function-declaration]
-	ret = sbi_ecall(SBI_EXT_MICROCHIP_TECHNOLOGY, command, channel,
-	      ^~~~~~~~~
-
-move COMPILE_TEST to ARCH_MICROCHIP dependency as other drivers.
-
-Fixes: e4b1d67e7141 ("mailbox: add Microchip IPC support")
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- drivers/mailbox/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-index ed52db272f4d..e8445cda7c61 100644
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@ -191,8 +191,8 @@ config POLARFIRE_SOC_MAILBOX
- 
- config MCHP_SBI_IPC_MBOX
- 	tristate "Microchip Inter-processor Communication (IPC) SBI driver"
--	depends on RISCV_SBI || COMPILE_TEST
--	depends on ARCH_MICROCHIP
-+	depends on RISCV_SBI
-+	depends on ARCH_MICROCHIP || COMPILE_TEST
- 	help
- 	  Mailbox implementation for Microchip devices with an
- 	  Inter-process communication (IPC) controller.
--- 
-2.34.1
+Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 
 
