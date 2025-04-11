@@ -1,151 +1,160 @@
-Return-Path: <linux-kernel+bounces-600569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40961A86176
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:14:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B319AA8615E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ADD8168FB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:13:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBEBC9A2906
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7008D20DD63;
-	Fri, 11 Apr 2025 15:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GAVi5RsK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123381F4CB2;
-	Fri, 11 Apr 2025 15:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2FF20AF99;
+	Fri, 11 Apr 2025 15:09:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910FC1F8BDD;
+	Fri, 11 Apr 2025 15:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744384410; cv=none; b=I1JlnfZBlyMZwZB+1B+UVN/4+ciCb/yoPBOTk3rP42U/6mLjzHV9YrGtSevtnronqI43cWY/DQ4fi0rvhEDBe9XFd6+A1PQvIlFB021T+pEjY/pI5yNBqEV2ewc3xBcNzKO+xxPWekQ95X8k0ibh3+iS2pQm7el3MywS/uqR+AU=
+	t=1744384167; cv=none; b=EPCiOLsJQkTBa138Wa4OYOgXOHYnoIQ/7WDqqXmrQTiMtu3ke1m+9RL0pc34Kl3W3L7zvyhqyteKimMOicZwbi1WVFUKUoCjwfKOqA0mY0jUPAiTrOmHHT1tYHHHsusMDA8Z9WGaxCCxT6jLkI+AW4B5uanNzNengNJhyK0OASU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744384410; c=relaxed/simple;
-	bh=Q6oiw5NI10n4M3nXXpNGthLxIT/SdM7Jwoja/NSGTkQ=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=o/abnVreZh9sttP+4rI39DNA8FsXIyfXtBKqPmUiDthFVBJZ9cV3t8TYJOI1LhFgy2ldaHLzHz0ZVeD7duk7DJJ2cPEvaH2phtRiXpY49e/BPFckRNxvrG4US8brrQsCXpPImHZPZ77j/5AtTnKCNhy1dv0N0bkdMzCs5yriNIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GAVi5RsK; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744384409; x=1775920409;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Q6oiw5NI10n4M3nXXpNGthLxIT/SdM7Jwoja/NSGTkQ=;
-  b=GAVi5RsK/HUOyub4rHqLr0AQeEZ6BYdBj+elvW7lEdNRDNUuETcLSkX8
-   ieyfW6+XtS9IPwHdH9eZMIKFWqjTYNvykId14MImlIlTetCIETI9grIxs
-   G217mYDOeympixD6yKfHCwJsIWZCF28D2RfFTyuQCymRJIGp51Tw5KKKt
-   IdL61dO2S9UOPH3fEAy+gVNfG+MGDOH8R2U8DM+1o3BG/rCl8+M8GO6Sl
-   cTNvp3ySaSF3wN5iLuwaTU+Z6NzPUUQnXiBf4csKzA+dXkAUgk1qs3aO0
-   JBcf7Mr7xlhwWhuTQ/niV7jji78rtMX3+PObtynUpPyxg37yDuSJyvcP8
-   Q==;
-X-CSE-ConnectionGUID: CTcrWBcARHuNM9yaWMtidw==
-X-CSE-MsgGUID: ZiZY8eW8TmSSfBABl4rAzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11401"; a="49742487"
-X-IronPort-AV: E=Sophos;i="6.15,205,1739865600"; 
-   d="scan'208";a="49742487"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 08:09:27 -0700
-X-CSE-ConnectionGUID: hrlbZrJZQCi2mheKUPcsiQ==
-X-CSE-MsgGUID: ++9EY4/3TXCppV+gP4pmtA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,205,1739865600"; 
-   d="scan'208";a="134200079"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.51])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 08:09:20 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 11 Apr 2025 18:09:16 +0300 (EEST)
-To: Antheas Kapenekakis <lkml@antheas.dev>
-cc: platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-    linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, 
-    Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, 
-    Jonathan Corbet <corbet@lwn.net>, 
-    Joaquin Ignacio Aramendia <samsagax@gmail.com>, 
-    Derek J Clark <derekjohn.clark@gmail.com>, 
-    Kevin Greenberg <kdgreenberg234@protonmail.com>, 
-    Joshua Tam <csinaction@pm.me>, Parth Menon <parthasarathymenon@gmail.com>, 
-    Eileen <eileen@one-netbook.com>, LKML <linux-kernel@vger.kernel.org>, 
-    sre@kernel.org, linux@weissschuh.net, Hans de Goede <hdegoede@redhat.com>, 
-    mario.limonciello@amd.com
-Subject: Re: [PATCH v8 12/14] platform/x86: oxpec: Follow reverse xmas
- convention for tt_toggle
-In-Reply-To: <20250322103606.680401-13-lkml@antheas.dev>
-Message-ID: <31eabe0a-3cc6-2022-e426-dead9ab308c9@linux.intel.com>
-References: <20250322103606.680401-1-lkml@antheas.dev> <20250322103606.680401-13-lkml@antheas.dev>
+	s=arc-20240116; t=1744384167; c=relaxed/simple;
+	bh=xyb6zXpVTHYI5oHHidMO4UGACvo/hzgyyyMUVF8C+tY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gnnEHG24k4RzJ+1RZMXZQfM8vOw2/Df4rD9dEdQRMKcHN8lowQ+C6VrScwi6/4DbCzsx/hpGy/EFEAuX6ZOxIO6oeWzPraE8fpMiTyemZpjLUBG/yGQbMLy1HFZeGWdBZP25nSUaoQHbGxpyARCHP46Sz29RZcUO9lCou+oG1Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D13D153B;
+	Fri, 11 Apr 2025 08:09:24 -0700 (PDT)
+Received: from [192.168.20.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 24B0B3F59E;
+	Fri, 11 Apr 2025 08:09:19 -0700 (PDT)
+Message-ID: <cef3f3db-7dcc-4f0f-b6c9-c8336b4a9433@arm.com>
+Date: Fri, 11 Apr 2025 10:09:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-192321225-1744384156=:944"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/6] arm64: probes: Add GCS support to bl/blr/ret
+To: linux-trace-kernel@vger.kernel.org
+Cc: linux-perf-users@vger.kernel.org, mhiramat@kernel.org, oleg@redhat.com,
+ peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+ thiago.bauermann@linaro.org, broonie@kernel.org, yury.khrustalev@arm.com,
+ kristina.martsenko@arm.com, liaochang1@huawei.com, catalin.marinas@arm.com,
+ will@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250407161951.560865-1-jeremy.linton@arm.com>
+ <20250407161951.560865-5-jeremy.linton@arm.com>
+Content-Language: en-US
+From: Jeremy Linton <jeremy.linton@arm.com>
+In-Reply-To: <20250407161951.560865-5-jeremy.linton@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi,
 
---8323328-192321225-1744384156=:944
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Sat, 22 Mar 2025, Antheas Kapenekakis wrote:
-
-> Since the rest of the driver follows this convention, apply it to the
-> tt_toggle attribute as well.
->=20
-> Suggested-by: Derek J. Clark <derekjohn.clark@gmail.com>
-> Reviewed-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> Reviewed-by: Derek J. Clark <derekjohn.clark@gmail.com>
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+On 4/7/25 11:19 AM, Jeremy Linton wrote:
+> The arm64 probe simulation doesn't currently have logic in place
+> to deal with GCS and this results in core dumps if probes are inserted
+> at control flow locations. Fix-up bl, blr and ret to manipulate the
+> shadow stack as needed.
+> 
+> While we manipulate and validate the shadow stack correctly, the
+> hardware provides additional security by only allowing GCS operations
+> against pages which are marked to support GCS. For writing there is
+> gcssttr() which enforces this, but there isn't an equivalent for
+> reading. This means that uprobe users should be aware that probing on
+> control flow instructions which require reading the shadow stack (ex:
+> ret) offers lower security guarantees than what is achieved without
+> the uprobe active.
+> 
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 > ---
->  drivers/platform/x86/oxpec.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.c
-> index 3bf2c597e9b00..0a5b33a842b24 100644
-> --- a/drivers/platform/x86/oxpec.c
-> +++ b/drivers/platform/x86/oxpec.c
-> @@ -275,9 +275,9 @@ static const struct dmi_system_id dmi_table[] =3D {
->  /* Helper functions to handle EC read/write */
->  static int read_from_ec(u8 reg, int size, long *val)
->  {
-> -=09int i;
-> -=09int ret;
->  =09u8 buffer;
-> +=09int ret;
-> +=09int i;
-> =20
->  =09if (!lock_global_acpi_lock())
->  =09=09return -EBUSY;
-> @@ -389,8 +389,8 @@ static ssize_t tt_toggle_store(struct device *dev,
->  =09=09=09       struct device_attribute *attr, const char *buf,
->  =09=09=09       size_t count)
->  {
-> -=09int rval;
->  =09bool value;
-> +=09int rval;
-> =20
->  =09rval =3D kstrtobool(buf, &value);
->  =09if (rval)
-> @@ -411,8 +411,8 @@ static ssize_t tt_toggle_show(struct device *dev,
->  =09=09=09      struct device_attribute *attr, char *buf)
->  {
->  =09int retval;
-> -=09u8 reg;
->  =09long val;
-> +=09u8 reg;
-> =20
->  =09switch (board) {
->  =09case oxp_mini_amd_a07:
->=20
+>   arch/arm64/kernel/probes/simulate-insn.c | 28 ++++++++++++++++++++----
+>   1 file changed, 24 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
+> index 09a0b36122d0..1fc9bb69b1eb 100644
+> --- a/arch/arm64/kernel/probes/simulate-insn.c
+> +++ b/arch/arm64/kernel/probes/simulate-insn.c
+> @@ -13,6 +13,7 @@
+>   #include <asm/traps.h>
+>   
+>   #include "simulate-insn.h"
+> +#include "asm/gcs.h"
+>   
+>   #define bbl_displacement(insn)		\
+>   	sign_extend32(((insn) & 0x3ffffff) << 2, 27)
+> @@ -49,6 +50,18 @@ static inline u32 get_w_reg(struct pt_regs *regs, int reg)
+>   	return lower_32_bits(pt_regs_read_reg(regs, reg));
+>   }
+>   
+> +static inline void update_lr(struct pt_regs *regs, long addr)
+> +{
+> +	int err = 0;
+> +
+> +	if (user_mode(regs) && task_gcs_el0_enabled(current)) {
+> +		push_user_gcs(addr + 4,	 &err);
+> +		if (err)
+> +			force_sig(SIGSEGV);
+> +	}
+> +	procedure_link_pointer_set(regs, addr + 4);
+> +}
+> +
+>   static bool __kprobes check_cbz(u32 opcode, struct pt_regs *regs)
+>   {
+>   	int xn = opcode & 0x1f;
+> @@ -107,9 +120,8 @@ simulate_b_bl(u32 opcode, long addr, struct pt_regs *regs)
+>   {
+>   	int disp = bbl_displacement(opcode);
+>   
+> -	/* Link register is x30 */
+>   	if (opcode & (1 << 31))
+> -		set_x_reg(regs, 30, addr + 4);
+> +		update_lr(regs, addr);
+>   
+>   	instruction_pointer_set(regs, addr + disp);
+>   }
+> @@ -133,17 +145,25 @@ simulate_br_blr(u32 opcode, long addr, struct pt_regs *regs)
+>   	/* update pc first in case we're doing a "blr lr" */
+>   	instruction_pointer_set(regs, get_x_reg(regs, xn));
+>   
+> -	/* Link register is x30 */
+>   	if (((opcode >> 21) & 0x3) == 1)
+> -		set_x_reg(regs, 30, addr + 4);
+> +		update_lr(regs, addr);
+>   }
+>   
+>   void __kprobes
+>   simulate_ret(u32 opcode, long addr, struct pt_regs *regs)
+>   {
+> +	u64 ret_addr;
+> +	int err = 0;
+>   	int xn = (opcode >> 5) & 0x1f;
+>   
+>   	instruction_pointer_set(regs, get_x_reg(regs, xn));
+> +
+> +	if (user_mode(regs) && task_gcs_el0_enabled(current)) {
+> +		ret_addr = pop_user_gcs(&err);
+> +		if (err || ret_addr != procedure_link_pointer(regs))
+> +			force_sig(SIGSEGV);
+> +	}
+> +
+>   }
 
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+I was looking at this earlier this week and decided that this routine 
+should have a return added following the force_sig(), and moving the 
+instruction_pointer_set() below that. That syncs the behavior with what 
+would happen without the uprobe active when ret_addr != LR. Then I 
+dumped the 'xn' too.
 
---=20
- i.
 
---8323328-192321225-1744384156=:944--
 
