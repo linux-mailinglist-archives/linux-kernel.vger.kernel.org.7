@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-599678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7764DA856C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:40:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A9E8A856CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992C51BA75AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:38:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E66419C0CB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7036629614A;
-	Fri, 11 Apr 2025 08:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0874F29614C;
+	Fri, 11 Apr 2025 08:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="B0yCSpsF"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KfdbVQKB"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC73C27E1CD
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A12927CB3D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744360705; cv=none; b=io/xAMftKI6xJ5asrbu6OlpHXzYVYgTOr63+JR6sZM65T62s346bHG4q6Fu3cAKMB29UnGa6ZRO3ybpUEEbZWoxWNIYZq1AQSE+iinDj8zdWYYoz+ZUVzHr/3EoNXH5MJ5f7k8yrFKon6acxKG4+oNyMl6xhKN1mFSfqJqdRTCw=
+	t=1744360750; cv=none; b=X+7zB+g4g//Alnm9vCCyDvxHehMoLQae4g+dwkT1oycROKX9oppjPzi8a8IZGofUyplZHD4w6npRgFegBGOtSQM8jHJn9ML0Z1irVrNsaoRxNoYTGRA5a92nhXt6a1KOXDJQ9b2TCb/jQ/Bq/2zjN6s1AGmRRHR5CCxQluJAI8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744360705; c=relaxed/simple;
-	bh=Epr+eQBTBU+1ATMEcOYwgYpBi+5oAELlBmkst6805Y8=;
+	s=arc-20240116; t=1744360750; c=relaxed/simple;
+	bh=a4nmPV125IR5vsAfrV5WUXEQFwK/wU5UXjFm3L+FsTs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TahLN5iNBRPmJEPRAXCGMr06gHHI1rRrXpyCn79WIxUviEDdVAsARFm++wrydEVoQnjA8y1HNnwERjyqOaRp0E4eg+BX8m4icioHZFZe0/i4ovFTfHK0vcphlNoyc4Wn4xQ3cccYy+865sAmWzQ2iGaBWxjy4Nnwp9BNgJ/PImw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=B0yCSpsF; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cf257158fso12795625e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 01:38:23 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=HQaLNm+mubVp2x/dkDUTzHZ9ne1jL82lkmWfRBXpoZM/bhDRsVzj5OcTrigZIjJJaKqMfXNh+6ll9uSnSRI374jfnmJzgBdjbtbsG+G124Hd/c0dKS1Nt8fhHdpD9befskErzBgbbyRkh/M/aWH2HmPW3wt+N/rgOM8U/1AzyvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KfdbVQKB; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so9190885e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 01:39:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1744360702; x=1744965502; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+        d=suse.com; s=google; t=1744360745; x=1744965545; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=sLffW0MYcqM/kbItIhY6HvWZCj3KnwBnjUOkirxLQ30=;
-        b=B0yCSpsFauabFeSmpImWI91WIartpOH5alEONnCw1kOBegi3hhoCX4iuib2tiFKlSP
-         BalEWX9Fca/n2N0EWEimJYTzkkAOHI98o8kwImMG9BmPbgCZrrlbBSbQmiIj86ognehR
-         Pj453DEfbiOmbqNeD1sRPCHkc+tWpaM3U6dU4jzon+xADOfFZYSb2LLedbPzZGxpsncr
-         KNz73O4lK6rGsgOkdKgxZBocN0EtWzKxbrZ23dOqodX6PZxDmuK56P7eN45P0BQWCsRw
-         mp4oswBW7RL6JjZ9YWs3FvaIldFA9aUyfeGbvTB/5cFPawKb99CCu/ESbGDVwTS3vW8M
-         bzGQ==
+        bh=UbqhHpDGnLPGkVsMmvEXgPCxtKOy8gFGjV4mEQUjUaE=;
+        b=KfdbVQKB2dxgBZ3SfOuSEQKEmjBgt+qxGHl7zDMsRkTxEV3yEfr1+5Z3XXQUd+wagy
+         b6FRxkovX/AOB0L9V94dq8dR6tqI++df761C90MUZMu3Yvnl65jueUDk7frGfpfEoq1o
+         327d21ZJGEyhj0Utx9yLUflV6cBEZbo++K+EnTYJEatu1PeVLyCnIGDhCw2Rvd5wIr02
+         URPAraj8RJGkxPomejqKTJ1aeSE8YEVa5yZ4hloDogEpTsYgjQGTxhmUZQaZs8e0qDri
+         wg69T1OCyloM5ELh7IS8iDWN6xLw5JMfQW6hhAcYpC4qmj0LwNTWnh2H6WB9evwqmpWs
+         zxeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744360702; x=1744965502;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+        d=1e100.net; s=20230601; t=1744360745; x=1744965545;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sLffW0MYcqM/kbItIhY6HvWZCj3KnwBnjUOkirxLQ30=;
-        b=qFw9bXu5Z9QV3dwRbauuSH+bMEFfbQ8sUkDaS05aK86OnZcln5Cvb6s5nMC/SuAQQY
-         pjtN/wrqfx5RSErxdjlsjFGUyPr30Zt0Rvq1vuK+0dzYSqIDx7MfqgsaQZUz5JDWzlWN
-         8QpwswWs8Ax/oNjPx3gt1lqRHSRsA/eicHuVVDywjKggERBX9h2sfJl7/QY1qZ92vFRm
-         ROwR0S4NCJN0qs74/rYZub+XXaIZEC21c+fdCvyx+V21pwUUfviIp2W+/4DLtWwthbg3
-         CkeQImyNQUYd2BpQHg1VyYElKsgmV5Zax4J2C4bWe521w+bAPF1nfkKYhVkKgbaQ5FKv
-         S5yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwKS27plCq4iFv53fjP4eTjNqzV3q+23cE28dzWnOMU80TkDssao+imUlIzBvdWEYXN4XbzjkWszdyLlc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqC8fWbMBY9pUb+S5p142MG+mC2ypvtRUf1m4+pfCZBgnuZdRa
-	rUAAHlA06CopUUSLwV5PCy6dfUNa4J7P0nX+3+ftFTT61/vD2qkLVNvOLhBFTVq4wqaZ+xvOUHH
-	QyN+jyxBgNzzDQJrZdFMs7nqJXsqqdM9V+sIq4UjpZnwnfydeeDj8fiA=
-X-Gm-Gg: ASbGncufDWNXPod0DHFBprUHyVE4iK52uzq7rXJGlg8t1R+kg+OoforAszAjsVQVSPB
-	IrOPn+oc3GR43W/bYGRGfOFVWzQiYovXeOZtY0fOvbVoNJ0jsfa92R8kDr670O1nX5W2NVlw5c7
-	LVXwadQTElMoTD7aGo8MQ3lE0OFnD3ELNl8phV2QWsRMiqZNio8DkBRGgQ3zw0xCP247xIl5Glr
-	PUr+hQE0uePoxT0ZWlDLOF1hbDikEfNBOzW4623HdQZQKuASULJYJEA+p14VET5xOzeflhnc49p
-	c5aA+Vy5FQ2C9uagD11bwWtXh5MMHcnXA1Q2yIwDidS2JN1v5tbh4V6zLJEB+b5qauFm/ifH8Ot
-	QuL9mbyhMmlXqgg==
-X-Google-Smtp-Source: AGHT+IF99oxdyDqfyn57Lonv1kNPOlFA9HMh6oBiEUe+C+vJOJbIHsy3y4iVXg2sytLFO2/obYxOuQ==
-X-Received: by 2002:a05:600c:a08e:b0:43c:eeee:b706 with SMTP id 5b1f17b1804b1-43f3a9aa66dmr13977265e9.24.1744360702027;
-        Fri, 11 Apr 2025 01:38:22 -0700 (PDT)
-Received: from ?IPV6:2001:67c:2fbc:1:e8be:40be:972d:7ee4? ([2001:67c:2fbc:1:e8be:40be:972d:7ee4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f207aed49sm78101205e9.34.2025.04.11.01.38.20
+        bh=UbqhHpDGnLPGkVsMmvEXgPCxtKOy8gFGjV4mEQUjUaE=;
+        b=kcsZYBML6+y8iCZ70ysj3YYSBfX9zV35lklRunmQWAGs+xq3ggxQZoZKCX/jmny3M8
+         c0wqnwtihaVYlS06ImL6Rj7bCmiaWql84bPDL7MiyeBv+kbfW1apYENYgjuiBSiFFHaq
+         3MCf8/Y7zIq37yQuIOy64cnJLveyDG5PmKZZXDsJ07NyZO074XzsmnscQCMJWjWocxCW
+         ppJqDWXf0qPNjJP+/W/vFOm2VwpnIdb9iY2S87wMTzBa0MRxrV6hvSUGdYQEp9BVXcVN
+         xEyIBcEC/A6RLFIPaqVH9DpKLkMPOv5RvbiiOhiwyccdzKb1p7NtgcoCGLC3BY2p8qzI
+         2aww==
+X-Forwarded-Encrypted: i=1; AJvYcCVB7PxsiPqnRrNJf10ZwhmDcQ0mMy0vLko6J01nkGGkPIu7x3qmrx8SsnNkoLxEG4MAKdRbSrXQgjgtmrM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFEKQWbO/Ef8AWnygCuI3Za9zzPK2QtCreF/AhNJk2CUJ1YXL+
+	4ptmiQ8p/O7WNDOH83B7bJSFJaHm50GPpSdDxdrS/KJmZB1VUDT3iEcHNnP05yI=
+X-Gm-Gg: ASbGnctKkYzsddkd4ZIarTXYy5dxlu+jueKPjgyBkaFzJ/4INtDvD52/Ykvc8Sxm4BW
+	2nl0v0KHHh3oESSIwJEC6BJXE4zP8vbenqJ+Ts5rZERoYzJwYnmdveasODYogGDw7cwyOCq8sI/
+	yYjzagwT1UquvG25mi3axvw+RGorIdmrj5+uno2iYlUlGFMf1SHPfCf8tlJhKJ3hQ/ysK9x6y8t
+	mZkaKkAUd7UWVDKsrc0Ui6bNnq9F62BMHZ2tNLYRiN1PLrFm+EML6N1lylYeMJQLf+uhjIoi3E/
+	kY1AQJmiWLXVVO4d66ubbTk8eiJxbjJ0GP94hw==
+X-Google-Smtp-Source: AGHT+IFbch+LgCuDELs3WvE9MRNvWpRzSp1CQ1o92LxtiZcQYdnuekpCyYt/EYUT5l/w0OVuxllPbg==
+X-Received: by 2002:a05:600c:350c:b0:43c:ea40:ae4a with SMTP id 5b1f17b1804b1-43f3a9b02a8mr14817275e9.31.1744360745461;
+        Fri, 11 Apr 2025 01:39:05 -0700 (PDT)
+Received: from [192.168.2.177] ([81.0.8.231])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f207aed49sm78118455e9.34.2025.04.11.01.39.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 01:38:21 -0700 (PDT)
-Message-ID: <af1a5da4-12dc-47bd-8836-9b7bda0281fd@openvpn.net>
-Date: Fri, 11 Apr 2025 10:38:20 +0200
+        Fri, 11 Apr 2025 01:39:05 -0700 (PDT)
+Message-ID: <99ba6e9e-463f-47d0-8d1d-52d097808098@suse.com>
+Date: Fri, 11 Apr 2025 10:39:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,91 +81,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v25 04/23] ovpn: keep carrier always on for MP
- interfaces
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Xiao Liang <shaw.leon@gmail.com>
-References: <20250407-b4-ovpn-v25-0-a04eae86e016@openvpn.net>
- <20250407-b4-ovpn-v25-4-a04eae86e016@openvpn.net>
- <20250410200325.5621a4f5@kernel.org>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <20250410200325.5621a4f5@kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: s32gxxxa-rdb: Add PCA85073A RTC module
+ over I2C0
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
+ Chester Lin <chester62515@gmail.com>,
+ Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, s32@nxp.com, imx@lists.linux.dev,
+ Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
+ Enric Balletbo <eballetb@redhat.com>, Eric Chanudet <echanude@redhat.com>,
+ Frank Li <Frank.Li@nxp.com>
+References: <20250410144826.73651-1-ciprianmarian.costea@oss.nxp.com>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <mbrugger@suse.com>
+Autocrypt: addr=mbrugger@suse.com; keydata=
+ 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
+ PVrr2NoUqi/bxI8fFQJD1jVj8K0=
+In-Reply-To: <20250410144826.73651-1-ciprianmarian.costea@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/04/2025 05:03, Jakub Kicinski wrote:
-> On Mon, 07 Apr 2025 21:46:12 +0200 Antonio Quartulli wrote:
->> +	/* carrier for P2P interfaces is switched on and off when
->> +	 * the peer is added or deleted.
->> +	 *
->> +	 * in case of P2MP interfaces we just keep the carrier always on
->> +	 */
->> +	if (ovpn->mode == OVPN_MODE_MP)
->> +		netif_carrier_on(dev);
+
+
+On 10/04/2025 16:48, Ciprian Costea wrote:
+> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 > 
-> Any reason why you turn it during open rather than leaving it be before
-> registration? Now the link is down until first open, then it stays up
-> even if user closes?
+> Add support for the PCA85073A RTC module connected via I2C0 on
+> S32G274A-RDB2 and S32G399A-RDB3 boards.
+> 
+> Note that the PCA85073A RTC module is not battery backed.
+> 
+> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Mh your concern makes sense.
-Originally Andrew suggested adding the carrier_on() to _probe(), which I 
-interpreted as _open() (I don't think virtual drivers have any _probe() 
-hook).
+Reviewed-by: Matthias Brugger <mbrugger@suse.com>
 
-Being the goal to keep the carrier always on for MP ifaces, I'd say I 
-should move the carrier_on() call to newlink().
-There I can set the carrier on if MP or off if P2P.
-
-Regards,
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
+> ---
+>   arch/arm64/boot/dts/freescale/s32gxxxa-rdb.dtsi | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/s32gxxxa-rdb.dtsi b/arch/arm64/boot/dts/freescale/s32gxxxa-rdb.dtsi
+> index ba53ec622f0b..4587e1cb8835 100644
+> --- a/arch/arm64/boot/dts/freescale/s32gxxxa-rdb.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/s32gxxxa-rdb.dtsi
+> @@ -153,6 +153,11 @@ pcal6524: gpio-expander@22 {
+>   		gpio-controller;
+>   		#gpio-cells = <2>;
+>   	};
+> +
+> +	pca85073a: rtc@51 {
+> +		compatible = "nxp,pca85073a";
+> +		reg = <0x51>;
+> +	};
+>   };
+>   
+>   &i2c2 {
 
 
