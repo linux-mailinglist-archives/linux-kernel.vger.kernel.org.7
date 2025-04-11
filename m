@@ -1,58 +1,66 @@
-Return-Path: <linux-kernel+bounces-599514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A1BA854A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:50:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3515A854AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 08:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25A1C3B04AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:49:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1C374C02D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 06:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDA927D791;
-	Fri, 11 Apr 2025 06:49:58 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CA627CCEA;
+	Fri, 11 Apr 2025 06:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I3y5txtt"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E8C27CCD0
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 06:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F08627D787;
+	Fri, 11 Apr 2025 06:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744354198; cv=none; b=GaGF13OfuPkxlWokETLL8lw2pKXofiBmYQSvAccDVE0BGfdvFHcBb2xwvGm7H9OxxXoAZvIMqaMRPsdoOSzJduhiFAly6JNb1r1iSIiJcxBQZNmkVu2pw2Q3nFQvbWZtSGgm6YoaVeMmEfvEARVnZVMZE81jYUUGPVdtXj6lmec=
+	t=1744354262; cv=none; b=XmpZkO0nQtmr2ICVXEYuEVrohr8vfI+qXh5x+i1VOuw4ohMdCfejGPTJ70TFZACV5oAfE2DEXXyrcCcuKdgl0uKaxTCl4oWfGaWJ+Mv28wuYSALdJfVK/W7lnVC5emoGlyynh4apfd+FFilNWmC3iryPUygCn1nxfsP9UyuVU/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744354198; c=relaxed/simple;
-	bh=XV+2iCr69t+gaddiA6idm+TI/+B7jKqSOS6iARUWPd0=;
+	s=arc-20240116; t=1744354262; c=relaxed/simple;
+	bh=H5M+RwsQOulVvzrUR1rxNWFkr1ScfSx7Ms0AQnVWbPA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cGtZ8IfQpCCZyROoQSr2ORS4Bwfy7JlTH6h/mGAgvTd3P3fGPpy0dzChGGIEtsMF2lKSMbcIAaXcDN8UAXC6Hgh8vt13u7W94F3PMpjKRDoavkdGmWyF3+M4HrxAkFBgBtwMRnBUXweAv+2f5ksj5P8ye9L+uvLV9/dTbJV8cjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1u38Ct-00023K-Do; Fri, 11 Apr 2025 08:49:43 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1u38Cs-004OIR-30;
-	Fri, 11 Apr 2025 08:49:42 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1u38Cs-00CB57-2h;
-	Fri, 11 Apr 2025 08:49:42 +0200
-Date: Fri, 11 Apr 2025 08:49:42 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH 3/4] wifi: mwifiex: drop asynchronous init waiting code
-Message-ID: <Z_i7hvpeCvSqtuTl@pengutronix.de>
-References: <20250410-mwifiex-drop-asynchronous-init-v1-0-6a212fa9185e@pengutronix.de>
- <20250410-mwifiex-drop-asynchronous-init-v1-3-6a212fa9185e@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uQnrzT3HymDuY5Rk8kkMvkIOLBmty4wpNXuziEhD8UYiS1hUVsDMfAjB9320cVdct7CGGF67wykPm/KvlXHMymDuTlaS+WyCTr3BKR9dZCQBvVMgTVpNIs51G7tRJdnAMjHzAKowhNDXd5SLwfKC2TKcGqca4pdJ4IjfnI4kvJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=I3y5txtt; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oulxrBhV/GtDVDbQQtRTXKElduFaApaSwW+JQxQ0T5g=; b=I3y5txttoV21DxBgQlAbXPKORi
+	eXDnPQ0PQU8BRO8eeknYHyujG0wFjTNPLny0IsNQUT5HqgaWEpQJJEkiu9DuswbwNgiH6xwzrbaAC
+	+rWAb4mJTUj9C6XM77SpJPcKymfbgVe01UDGjkTYWJj+/9IVcmEpxwTkvopZDucmboqkFJkdtjTXr
+	nIT58gyz9cY1VZC9zkFQhWe6yXeldAnWihG6OItsByFfkPErCeK0Cj3HCb5tvSrcKoH+115iV+15N
+	++v0x9nMtGMJfH9L9aNVteALOXWgAfnYd2vRcdByupeBrCt8i9tJdTeZfI1oS0cBvxMyc2rvMWSe1
+	1/vv8xqA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u38E2-00000003tfC-0WJh;
+	Fri, 11 Apr 2025 06:50:55 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 43E6630057A; Fri, 11 Apr 2025 08:50:54 +0200 (CEST)
+Date: Fri, 11 Apr 2025 08:50:54 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Arnd Bergmann <arnd@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
+	Rae Moar <rmoar@google.com>, Shuah Khan <skhan@linuxfoundation.org>,
+	Sergio =?iso-8859-1?Q?Gonz=E1lez?= Collado <sergio.collado@gmail.com>,
+	David Gow <davidgow@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Mostafa Saleh <smostafa@google.com>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scripts/mksysmap: skip objtool __pfx_ symbols
+Message-ID: <20250411065054.GM9833@noisy.programming.kicks-ass.net>
+References: <20250328112156.2614513-1-arnd@kernel.org>
+ <ycgbf7jcq7nc62ndqiynogt6hkabgl3hld4uyelgo7rksylf32@oysq7jpchtp4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,72 +69,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250410-mwifiex-drop-asynchronous-init-v1-3-6a212fa9185e@pengutronix.de>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <ycgbf7jcq7nc62ndqiynogt6hkabgl3hld4uyelgo7rksylf32@oysq7jpchtp4>
 
-On Thu, Apr 10, 2025 at 12:28:45PM +0200, Sascha Hauer wrote:
-> Historically all commands sent to the mwifiex driver have been
-> asynchronous. The different commands sent during driver initialization
-> have been queued at once and only the final command has been waited
-> for being ready before finally starting the driver.
+On Tue, Apr 08, 2025 at 06:58:49PM -0700, Josh Poimboeuf wrote:
+> On Fri, Mar 28, 2025 at 11:48:19AM +0100, Arnd Bergmann wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > The recently added testcase for overly long symbols triggers when
+> > CONFIG_FUNCTION_PADDING_CFI is set:
+> > 
+> > Symbol __pfx_snnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7n too long for kallsyms (517 >= 512).
+> > Please increase KSYM_NAME_LEN both in kernel and kallsyms.c
+> > 
+> > Change the mksymtab table so the prefixed symbols are not included
+> > in kallsyms.
+> > 
+> > Fixes: c104c16073b7 ("Kunit to check the longest symbol length")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > 
-> This has been changed in 7bff9c974e1a ("mwifiex: send firmware
-> initialization commands synchronously"). With this the initialization
-> is finished once the last mwifiex_send_cmd_sync() (now
-> mwifiex_send_cmd()) has returned. This makes all the code used to
-> wait for the last initialization command to be finished unnecessary,
-> so it's removed in this patch.
+> I'm not sure we want to remove the __pfx_ symbols from kallsyms. There
+> can be actual code there.
 > 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
->  drivers/net/wireless/marvell/mwifiex/cmdevt.c  | 16 ----------------
->  drivers/net/wireless/marvell/mwifiex/init.c    |  5 +++--
->  drivers/net/wireless/marvell/mwifiex/main.c    | 12 ++----------
->  drivers/net/wireless/marvell/mwifiex/main.h    |  6 ------
->  drivers/net/wireless/marvell/mwifiex/sta_cmd.c |  4 ----
->  drivers/net/wireless/marvell/mwifiex/util.c    | 18 ------------------
->  6 files changed, 5 insertions(+), 56 deletions(-)
+> For example, FineIBT writes code in the __pfx area which can trigger an
+> #UD.  And we'd want a sane backtrace for that.
 
-The following hunk is missing in this patch. Will add next time.
+On top of that, clang kcfi builds do a similar thing, they will generate
+__cfi_ prefixed symbols.
 
--------------------------------8<-------------------------------
+And yes, those symbols exist for a reason, there is code there under
+various circumstances and backtraces look really weird without these
+symbols on -- notably the code in the prefix will be attributed to
+whatever symbol comes before, most confusing.
 
-commit 707b4d85612123bee63b79947cb036211b59152f
-Author: Sascha Hauer <s.hauer@pengutronix.de>
-Date:   Fri Apr 11 08:47:59 2025 +0200
-
-    fixup! wifi: mwifiex: drop asynchronous init waiting code
-
-diff --git a/drivers/net/wireless/marvell/mwifiex/main.c b/drivers/net/wireless/marvell/mwifiex/main.c
-index ff094b5c32239..73298b0769c94 100644
---- a/drivers/net/wireless/marvell/mwifiex/main.c
-+++ b/drivers/net/wireless/marvell/mwifiex/main.c
-@@ -584,14 +584,6 @@ static int _mwifiex_fw_dpc(const struct firmware *firmware, void *context)
- 	if (ret == -1)
- 		goto err_init_fw;
- 
--	/* Wait for mwifiex_init to complete */
--	if (!adapter->mfg_mode) {
--		wait_event_interruptible(adapter->init_wait_q,
--					 adapter->init_wait_q_woken);
--		if (adapter->hw_status != MWIFIEX_HW_STATUS_READY)
--			goto err_init_fw;
--	}
--
- 	maybe_quirk_fw_disable_ds(adapter);
- 
- 	if (!adapter->wiphy) {
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+So yeah, don't remove these symbols, and fix the kunit test.
 
