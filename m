@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-599555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD84A85574
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:29:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC171A8556C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE51A1BA5320
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:27:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69CE57B5D51
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B3A29346B;
-	Fri, 11 Apr 2025 07:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F21290BD4;
+	Fri, 11 Apr 2025 07:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="RBd7CyQX"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="KBk2pUoI"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF512857D8
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AA3293B4F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744356425; cv=none; b=bTQffVIkqO2LQ0VApAt0Ix8QxrXyiUlcliWoFLGTY7BcUMWiWRP7Ex9m4Hm6S/j2knKAu5dNKt7eX/tVUpKuBLiwJCiNtMAhtvJRCN3lAsNBCeb4rgzbzy5wZ+0sf+U3Acj5Ui8YGV7KIWzYn5LMJNj/2COeiphtIVgzHhWJV+w=
+	t=1744356429; cv=none; b=KmdrFsfIOoLCfxycbwOhWcX6dNjvDbggSjfELAQfS315ItKMVNR/XTKAFNBHziNxQ2WuVLrab8PN2Ly7Mka1Ll9u92EodLQezd1ywcsR8OONHlfPmorjFNi4nuwsaLbv7gpnLUuuxX67in80ShF37+QA6ItiUCgHSh1jEQx8rKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744356425; c=relaxed/simple;
-	bh=Dn/D4QJBKyz+JgFhDXu/GfzzgKaBIArVHhrMyCulHAU=;
+	s=arc-20240116; t=1744356429; c=relaxed/simple;
+	bh=6iospfpiXarFhMAbeZMPrqrrUAFFsDXq8Q7IfWRbt20=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AeuF9/H/HJT5fsgdxmp/nmYkHOFmEpkiIK1hmNOXVuXl0CGjkYv3oXLDt1fhv+wJ3GJ4Gkt7ui4WmiPj3+ErgV2TY2N3LhP2AjFfyEC2AfaqSSR7WrR843nkKR50iFSsbRQWb1nInOPvG1om8DR6x48PwusBRENZL9niiNZ9H0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=RBd7CyQX; arc=none smtp.client-ip=209.85.214.177
+	 MIME-Version; b=pKMD4V/Z32O9lsvGE/RGV5tnIN8VtWra4dWThGtx4KBou/EGBm6Si/7KPUfXu0PZUH6c9Vj6nrLWtGpzesoAAEmzBs+6frmNtYyY2tTVXnW5gqmsy8cU6lsnx6LTaGlH9vfsxPcg9Gc5jy5pkqjnq472/e+TDmCiXNlT3s6F8bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=KBk2pUoI; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-223fd89d036so21331535ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 00:27:04 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22403cbb47fso17589165ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 00:27:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1744356423; x=1744961223; darn=vger.kernel.org;
+        d=sifive.com; s=google; t=1744356427; x=1744961227; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+ENXPmp9Sy2IzNDd02W7czpvRgisjjQJ7XRFhqNoZ+g=;
-        b=RBd7CyQX5S0vv3JE7rXE4JIf8X/wZRtAfpd/Vx2BnNRW6yFS84aX3Y2OlDE43Hxilg
-         aG7/PktK2LotSqF3GSg9d1+yesFnH/VhDGEwf2k3TmsNg9pETR9tdMHlP7DUZZAH+ia8
-         8TROX5Eic+bbK07pNRXjuWjbUx1np0r6iqLby+f1lc1abnF7qxepLsJRMzPKPSakVzqF
-         kpN2ZIT3ohhUc6/N6tYJgCpKGgaH9+Dzfr3zVvAN6IdkEQk0UE9mbbiUHetxpy9kuWdW
-         KU71v2Mhma39eGx22umbqZZXB52vjLYRISOHgfPZa9e3URXJOb/+Nqi3F1fZNTR3fgi6
-         kXFQ==
+        bh=OEkz9sj9aVBNDIp/tCSuFWlfQARpupwyYG7ODnJ3fr0=;
+        b=KBk2pUoIqmLeNBYYBDfS1/HiT+ojwrIwqpMIiK+aIU6Bpyau5/o2NeMMuu0Dq5aVjI
+         J/RMienB9K3eXrwwNrKCXxy2LfBD/TGtej77T4eBfrb9Y2QAdG1wYPz8PZVc5c3bnkR+
+         bbIxshFOdd4UiVmoQjIZZ58K+fHBn3w0PHNwqERXxvj9TpykGdFA6698MItO7XVvKMrN
+         8YrboybcIGyQbfrIGjkUSbTPLGpFmPkx6vf485eK6kxfPv2Fo3tEI3cXTnCjAt/K4crd
+         5r0U6YPrn9ZoTcyH1biWqYQCoyp6k8+pkNZVjouUMXI4mzzHuNcITjLaPLnXORTHzfAW
+         JvrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744356423; x=1744961223;
+        d=1e100.net; s=20230601; t=1744356427; x=1744961227;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+ENXPmp9Sy2IzNDd02W7czpvRgisjjQJ7XRFhqNoZ+g=;
-        b=WxMM+HG9ovqiFHhihrRbmSYFcmZz/0UwYq5Iw3GLd83dx9UjBC8Mq7c60NeC1QWknb
-         DQqlgGEdmvoiksBrPR1ILVmX9R6yDLGC221NqG2y+gGlyAShhZZya+fZJVKwa/fGdVxP
-         6G+Y+jx1ALRZQc0ej2huXDR4j55hrhBwETbKqSdTVgJz1fph1jcmj+6zBYd4Jm2qHpaS
-         Fsm1miNW2j07HrAb0AoDR1Y2Nk2KUZdwUFBFI83aO1d2jGyx92cXyFTIsvsyk4bw9ulg
-         hfRgiha8qmgcsZ0/d/y8OR8J4d1gEk0+LP7L5nQU6U+VPq4R3atstJ7hhqAv2SyHw75K
-         N59A==
-X-Gm-Message-State: AOJu0YwB0zEf5wBeREeUsxx0UyXqP79t8kYCk76nV4Sv1HomW80vUccp
-	8X8NSA5vlJwk2Wa7wnxyT9HUCWnwKNujB3JPTW2PKEuBabwcne+oGT8Th0BAmz20Bk5tIlWpK4x
-	Ye0vHfhPtYWk4jVmuyRcF5pemoq4DxLqEe1llVJRcCG9fiMqDJT3pK3uj22rVfjcNRXBOUnlaWq
-	gvrf3+FGG5KCx3Go1GrKyotqa7nIt6nLWnXVpleZ2Ni/kszZc=
-X-Gm-Gg: ASbGncuM24B56kW5Ez3j+BoKFPGI1EJWiptmLHctYNhIneBfT21k/iCgS0tia+kmb5Y
-	OJlNHI5NiCQI1KxZyq3Xf2FznN4WyYsDV2g2iAvTuM4njFij7pdEx8fbTq07IYWeN+Ysze2ccPo
-	xjBSxFIKMHSFYZEQhtK+Qg/wipoeM9bgXVmAw2ukPBJAio8ju2yM9CBxpa8deRfG/70JdwJ0Zdg
-	fNzhogPdNUcK4O6G1OrYW/RRDoCWkj/0muDyT4limQm+96eYY82AfWFuyTN4z2DwVpP+Z6GxCPe
-	/N8X350ulpRsRSeERGWsd6HKTDFCA4SrQHaBXYEqYZJPNvjQyVWriEKClkXE3CQjIT7X+INl5Gt
-	xXg==
-X-Google-Smtp-Source: AGHT+IF6mn86yuiqI6kJMhDegTA4bq362CwYWfmUPLstVHdii8BaLlLtNTUJiV5Fpt/tDNcOxZpdgg==
-X-Received: by 2002:a17:902:db0b:b0:224:10a2:cae7 with SMTP id d9443c01a7336-22bea4f666emr31781715ad.40.1744356423321;
-        Fri, 11 Apr 2025 00:27:03 -0700 (PDT)
+        bh=OEkz9sj9aVBNDIp/tCSuFWlfQARpupwyYG7ODnJ3fr0=;
+        b=RCg2rhLed+E/DPCR2fu3wYqupXUxnHOZNe23LdWI17zuvNAKVxdPRuwSgKaEWHptdN
+         zeDSrAwA85YetGDaibU8C2TPIrYP3OtSChTCMV71yNOSSSrOjbhTwcEfKBN6DEMKEOmn
+         YhbXoCfIV+gNRbaJLSIj7Ljxojbxqc4VlybtpnRzC9dPTznUj0cfboJKqq6aGJfX2RBp
+         e5laG1WN5XvSaH1Su+7CFeVZqmyAzpyEOunYBZngvkgEFL2C4qSxbjO109+BjX8ZXTuN
+         bv+xC2h86CES/Lfr5IJpA2KNdPj5op+lTRh2jt2bAMxHX2i+TpcB+n9wwXq4EaTPkmlh
+         Y0dA==
+X-Gm-Message-State: AOJu0YxiRxGC16ulo8PmdP+Tk/sQDrGOrXIMx3rayts2RHJbuYBdn8kw
+	5svp2MKpj/+NxdSuUqfQ+3sedrxZtRA4MfALMdjYhtD/5jloB4Fs9X5ycbxYbFzmLNFQwIsJ35l
+	opRMGX0LxvxqRmdXy+3KtHCqeAMFSMyWAF7HYd8q7RtXnsogkTgj4I7C0kbGIb0TX+j+MGYDw3I
+	C8VhBjCdtWK4sHt+dh8YTn8SxVVCw4dyIRrhnBkXH1NLMkD3g=
+X-Gm-Gg: ASbGnctc19MrA34lgu3JlVLMdrL6dYrFHYVpYsPUqr4YKkCWcPtF7OGo7ZQEhZesyWE
+	TsyZ2KVhhIGEi1yMHHMjoBC/OXNYQNqzbJhjwMn9VU+fYSiFnXA/6mV6I5rGWvHLsYw2vB2OpY0
+	+6yf0snSv2HiL9J6f+024DzOJKPxBn6VpZqEnis5BjAuAWT6MlDZu/977f4FLCHLBOjjs7ZDR9e
+	qFqiaaY14U7n750FjfhqG6wW8g4ObxHq/fnkxAzigTsY1KKRHCXH3/yomsh0Z7Y25fDFB7CCtxm
+	vFeKvhceiVIsqtSUxUp67RQsCvPh4h8KGXakYCux7I9Et7IFo9lZLiktR8B0tAi5yP/10hA5xLi
+	dUg==
+X-Google-Smtp-Source: AGHT+IHGaeBskLQLYpXz2YaNwdKixufR57YYfZ8SkaOfywMMlz5BGlU3CvKcG4DzeH1HMJO/YjugXQ==
+X-Received: by 2002:a17:903:1a08:b0:224:1294:1d26 with SMTP id d9443c01a7336-22bea4b6dd7mr24156105ad.13.1744356426996;
+        Fri, 11 Apr 2025 00:27:06 -0700 (PDT)
 Received: from hsinchu36-syssw02.internal.sifive.com ([210.176.154.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b654adsm42523585ad.1.2025.04.11.00.27.00
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b654adsm42523585ad.1.2025.04.11.00.27.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 00:27:03 -0700 (PDT)
+        Fri, 11 Apr 2025 00:27:06 -0700 (PDT)
 From: Nylon Chen <nylon.chen@sifive.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-riscv@lists.infradead.org,
@@ -88,9 +88,9 @@ Cc: linux-riscv@lists.infradead.org,
 	zhangchunyan@iscas.ac.cn,
 	samuel.holland@sifive.com,
 	zong.li@sifive.com
-Subject: [PATCH 1/2] riscv: misaligned: Add handling for ZCB instructions
-Date: Fri, 11 Apr 2025 15:38:49 +0800
-Message-Id: <20250411073850.3699180-2-nylon.chen@sifive.com>
+Subject: [PATCH 2/2] riscv: misaligned: fix sleeping function called during misaligned access handling
+Date: Fri, 11 Apr 2025 15:38:50 +0800
+Message-Id: <20250411073850.3699180-3-nylon.chen@sifive.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250411073850.3699180-1-nylon.chen@sifive.com>
 References: <20250411073850.3699180-1-nylon.chen@sifive.com>
@@ -102,57 +102,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for the Zcb extension's compressed half-word instructions
-(C.LHU, C.LH, and C.SH) in the RISC-V misaligned access trap handler.
+Use copy_from_user_nofault() and copy_to_user_nofault() instead of
+copy_from/to_user functions in the misaligned access trap handlers.
+
+The following bug report was found when executing misaligned memory
+accesses:
+
+BUG: sleeping function called from invalid context at ./include/linux/uaccess.h:162
+in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 115, name: two
+preempt_count: 0, expected: 0
+CPU: 0 UID: 0 PID: 115 Comm: two Not tainted 6.14.0-rc5 #24
+Hardware name: riscv-virtio,qemu (DT)
+Call Trace:
+ [<ffffffff800160ea>] dump_backtrace+0x1c/0x24
+ [<ffffffff80002304>] show_stack+0x28/0x34
+ [<ffffffff80010fae>] dump_stack_lvl+0x4a/0x68
+ [<ffffffff80010fe0>] dump_stack+0x14/0x1c
+ [<ffffffff8004e44e>] __might_resched+0xfa/0x104
+ [<ffffffff8004e496>] __might_sleep+0x3e/0x62
+ [<ffffffff801963c4>] __might_fault+0x1c/0x24
+ [<ffffffff80425352>] _copy_from_user+0x28/0xaa
+ [<ffffffff8000296c>] handle_misaligned_store+0x204/0x254
+ [<ffffffff809eae82>] do_trap_store_misaligned+0x24/0xee
+ [<ffffffff809f4f1a>] handle_exception+0x146/0x152
+
+Fixes: b686ecdeacf6 ("riscv: misaligned: Restrict user access to kernel memory")
+Fixes: 441381506ba7 ("riscv: misaligned: remove CONFIG_RISCV_M_MODE specific code")
 
 Signed-off-by: Zong Li <zong.li@sifive.com>
 Signed-off-by: Nylon Chen <nylon.chen@sifive.com>
 ---
- arch/riscv/kernel/traps_misaligned.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/riscv/kernel/traps_misaligned.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
-index 7cc108aed74e..d7275dfb6b7e 100644
+index d7275dfb6b7e..563f73f88fa8 100644
 --- a/arch/riscv/kernel/traps_misaligned.c
 +++ b/arch/riscv/kernel/traps_misaligned.c
-@@ -88,6 +88,13 @@
- #define INSN_MATCH_C_FSWSP		0xe002
- #define INSN_MASK_C_FSWSP		0xe003
+@@ -455,7 +455,7 @@ static int handle_scalar_misaligned_load(struct pt_regs *regs)
  
-+#define INSN_MATCH_C_LHU		0x8400
-+#define INSN_MASK_C_LHU			0xfc43
-+#define INSN_MATCH_C_LH			0x8440
-+#define INSN_MASK_C_LH			0xfc43
-+#define INSN_MATCH_C_SH			0x8c00
-+#define INSN_MASK_C_SH			0xfc43
-+
- #define INSN_LEN(insn)			((((insn) & 0x3) < 0x3) ? 2 : 4)
+ 	val.data_u64 = 0;
+ 	if (user_mode(regs)) {
+-		if (copy_from_user(&val, (u8 __user *)addr, len))
++		if (copy_from_user_nofault(&val, (u8 __user *)addr, len))
+ 			return -1;
+ 	} else {
+ 		memcpy(&val, (u8 *)addr, len);
+@@ -556,7 +556,7 @@ static int handle_scalar_misaligned_store(struct pt_regs *regs)
+ 		return -EOPNOTSUPP;
  
- #if defined(CONFIG_64BIT)
-@@ -431,6 +438,13 @@ static int handle_scalar_misaligned_load(struct pt_regs *regs)
- 		fp = 1;
- 		len = 4;
- #endif
-+	} else if ((insn & INSN_MASK_C_LHU) == INSN_MATCH_C_LHU) {
-+		len = 2;
-+		insn = RVC_RS2S(insn) << SH_RD;
-+	} else if ((insn & INSN_MASK_C_LH) == INSN_MATCH_C_LH) {
-+		len = 2;
-+		shift = 8 * (sizeof(ulong) - len);
-+		insn = RVC_RS2S(insn) << SH_RD;
+ 	if (user_mode(regs)) {
+-		if (copy_to_user((u8 __user *)addr, &val, len))
++		if (copy_to_user_nofault((u8 __user *)addr, &val, len))
+ 			return -1;
  	} else {
- 		regs->epc = epc;
- 		return -1;
-@@ -530,6 +544,9 @@ static int handle_scalar_misaligned_store(struct pt_regs *regs)
- 		len = 4;
- 		val.data_ulong = GET_F32_RS2C(insn, regs);
- #endif
-+	} else if ((insn & INSN_MASK_C_SH) == INSN_MATCH_C_SH) {
-+		len = 2;
-+		val.data_ulong = GET_RS2S(insn, regs);
- 	} else {
- 		regs->epc = epc;
- 		return -1;
+ 		memcpy((u8 *)addr, &val, len);
 -- 
 2.34.1
 
