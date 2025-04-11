@@ -1,183 +1,107 @@
-Return-Path: <linux-kernel+bounces-599916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5CBA8591D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:12:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C247A85922
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D4914A0174
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:12:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B42F189DE48
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22441238C0D;
-	Fri, 11 Apr 2025 10:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21B229C34E;
+	Fri, 11 Apr 2025 10:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FFjd0heH"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QNaEj7OZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5233278E69
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7006E29AB0F;
+	Fri, 11 Apr 2025 10:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744365790; cv=none; b=uXj93PZg8wuncPu59QShA9HtLkWNhfFoTNrVK6pEAVaAKCeIQxEKPxxjlPohY0uLW8UnZY55iG7L8eHhhH0NMyQ6j9C0jdSf2VkdgI+IgVxlygetTa5hAfYzmWv9jcU3t3rzxXHmqYwgoXMLj/exeHsyTcYX4Id7sGdWJGa2ZUQ=
+	t=1744365799; cv=none; b=SfSlDSbCa+YuqUWNEref0r+uBso04JxZq89ekhhksra0GyteRgUNuFRaMteOIj8QrK8Oqc3v3F2E3PhEaxiwuec0Kssdpv8YlmtBNAJdA9fPEc2yOyXfcmKwB5QLWDmqJBpY/Bps1ORUOH24Ya2fVOB2AJwuFf8c9RReU1IO/e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744365790; c=relaxed/simple;
-	bh=ImN70cz4djh42SVt8sWQnPR6aFylty88MzicTBCSTIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XWYRUoTB/QfReufzlyQvrTXy12GlcJSCObl0SKf3SpWEuymYtjbRAl4V8xSe4UNdoxSooW5bfuIFtyjPVKdEE74EOacRehpRqiHCL+EdqULbJWNukRuDMZriGUIv2loc+s+UxEA3gud/nk6unn2j3sAoJ33c2+cr52E7eJvm+/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FFjd0heH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B5Z4J7032024
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:03:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TChXZ6jQnWmn2gjeO8rx1Bx0hrnCDqPo46JM3visYYs=; b=FFjd0heHTi5a3EYd
-	unZ891elrIymmhwRuD77Z8YwUdTRanoczY0QVd38q9z1pVI/YDa4uNdGPODFedym
-	HU82fi8CsN/eAfFVmJP5+UED2p42tmmp7SO0BkHwwerMo1oMT7MPeHf1RHqtCtJV
-	Ypmo9iQbnnh5rrhcmL9mAlsgpSTDCcc/m8Kr3/leJ7q3GAcWcTJgQp/owAXa6CcP
-	mSH4kwBIIr6e4X/Mv8fQzaG9mGWcAMfor3A/SgYa1YlSw1hp6qtgtLgPYuyvvkwW
-	hZg9H/AsZVo9Jf0DFbqDa0RKnWdx7aX6sGIoZDowrxHLh6MlhpzCkv2bjEUlfmj4
-	eClHEg==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twpmhx7h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:03:07 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c54734292aso46575185a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 03:03:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744365786; x=1744970586;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TChXZ6jQnWmn2gjeO8rx1Bx0hrnCDqPo46JM3visYYs=;
-        b=rG/SRsReMHc64RnlGfLUN5UpKlX/nqiemwF2vthaA9pduCQQz1zVHHwjQ5aGVrxlbO
-         Aau9+qgPJ0fvXb0N14KvsW3v4CgWi07E0A7X1UTM0a9dTLFdoqtz5qDgKK7SUTtpXk2+
-         G/Yarxr73vlSYc17qbbxdfEWeaQ12uNo9XaHo6ATNdZrHqtWh7OHPA3igm1DzmxzgfFV
-         2kIS/BpBQowMJJpCp3tqrfv601OMmGgjX7X5N6KkzwtRMuk05go9HebEyPktnvwGfMOX
-         5gpGpoLFb6yOChz4vv5BAyNZMB5h5fFkciQjSbRu1b9Ag32/uKBKSvGth183RTDOt3cA
-         HLHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWiTAXgWwwlg4fYbh0c34qu/HG3U1fHj+9iAi3Qh0YZG03wWnFZ4fM8oSndaL7FzvNLSa5yzWCFbbXsJAg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+d9YCQ80CVRDCYGhsl83wPb3bHqZ7y0E9+V4BSqhI6J+z7zRG
-	3U7Yq+5jiwqqTuw/KvvEQQ+b37em27thONaWn7Vmjug8w/MmCiFtoJSD52kvCU7k6I40W5W24qS
-	lLH9o+6bKvh8bRjOAOV+45JhCiPmiO0gxL9/bnoLW78wx9WaqaWrmQZB5fagKmy8=
-X-Gm-Gg: ASbGncvqEAeccQcaJHdzuJsoE5w/53951PQAgIn6XiYc+VEUZA/fKf/4V/J/+xPojeS
-	yJoX/ltM7KIIu+BXy6Ga/BDV5dJYprhb1CgrheVB94ozq8q72BPm4H+OK7nhGUjNUKCWV25qln+
-	Okw/2CWZIojWhQOBervdyZ2wyIjU38RoF4PBb0GZTeTQg88eK81UOxKtm1WPmVHEdKJRBF+1aBA
-	Ca9tbKsCHtlFuA9Sz4tBWITk0xNTiq9CTuWI6hyYaoFoez2uW8m0gRkrSLeHXj4ThdCemLb6pbz
-	f+go6OufHOS6nbqbThgRzqqkVDLzF8tSUoiM4h6ksgrSW5nKntK6X/bZa2oYKg/W/w==
-X-Received: by 2002:a05:620a:3945:b0:7c0:c024:d5 with SMTP id af79cd13be357-7c7af116677mr129314885a.8.1744365786446;
-        Fri, 11 Apr 2025 03:03:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGAMFmbhBPTTCvhJj0P5xFnbrJJ/hfR7pw3RAhhVJwTUi6Q679ffPasjTr0Us/aTCC0PySNjg==
-X-Received: by 2002:a05:620a:3945:b0:7c0:c024:d5 with SMTP id af79cd13be357-7c7af116677mr129312285a.8.1744365785908;
-        Fri, 11 Apr 2025 03:03:05 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ccd1ebsm424629266b.140.2025.04.11.03.03.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 03:03:05 -0700 (PDT)
-Message-ID: <b04464b6-2ad9-4866-88e9-437e96645726@oss.qualcomm.com>
-Date: Fri, 11 Apr 2025 12:03:03 +0200
+	s=arc-20240116; t=1744365799; c=relaxed/simple;
+	bh=G0ccYDcVmNaW4i7jQrUQm2ImT7AM3+xsmhVnz88nrm4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=sLGIwCoCB3c69ospAj9zPzmFM62oVorsn6hwH9inTDNtTi8lWahQVVMTdAWBotRokVevpzghJmFkSGNHVI1sWH6QexTn2o57ev1apxuySYjrwbeOtNZ68McmU+pkrRi4BwqRgsLxeXds5pWftzGg7q5SEatqZuxfHmhrNn9fbqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QNaEj7OZ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744365798; x=1775901798;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=G0ccYDcVmNaW4i7jQrUQm2ImT7AM3+xsmhVnz88nrm4=;
+  b=QNaEj7OZZJtW4lTrphZPVa4UG5zSfipC0yIRDg0jedz7PrMrDF/fZUAF
+   ZoO8DKYzRRpe9Z5CUrtR1XNPbiO34pW9D1AxsK5uIX/MSwnXczgJmvi6t
+   wVmZbEYbKjPt9V0+R9YNZlPoTfNkWinUF5v7kl2bq7v8kJMKw+UVGgTQv
+   4N8OqWzqkmdYvuvMWZs0mxSfqGbznRqzMjcANJ8/fGjQDKhvhkbt647Jg
+   nJJVFyqW7+8Q5+pL/C1EPGpyhW30BTYqAcK4p+/Kq1NJd534YGMzqef95
+   L/9SGC0bLynLM2vlEW4l5w9FwjTOD9MR7Ddesv8anIo0IQQayiBMOo8gV
+   Q==;
+X-CSE-ConnectionGUID: 1iSqPBNQS9iUVIXkeTQVag==
+X-CSE-MsgGUID: vcGiFadwSEKskU5QW1TRww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11400"; a="68399677"
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="68399677"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 03:03:17 -0700
+X-CSE-ConnectionGUID: popynGDlS3CoInAuACFg+w==
+X-CSE-MsgGUID: /b4cKC+mR+mwwXJ941XPig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,203,1739865600"; 
+   d="scan'208";a="134136122"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.51])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 03:03:13 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Corentin Chary <corentin.chary@gmail.com>, 
+ Denis Arefev <arefev@swemel.ru>
+Cc: "Luke D. Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>, 
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ lvc-project@linuxtesting.org, stable@vger.kernel.org
+In-Reply-To: <20250403122603.18172-1-arefev@swemel.ru>
+References: <20250403122603.18172-1-arefev@swemel.ru>
+Subject: Re: [PATCH v2] asus-laptop: Fix an uninitialized variable
+Message-Id: <174436578937.2374.8623940315358740853.b4-ty@linux.intel.com>
+Date: Fri, 11 Apr 2025 13:03:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Retrieve information about DDR from SMEM
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org
-References: <20250409-topic-smem_dramc-v1-0-94d505cd5593@oss.qualcomm.com>
- <685e784c-3f36-4cd1-9c34-7f98c64d50f2@oss.qualcomm.com>
- <0bec3e62-0753-4c3d-abe1-1a43356afc80@oss.qualcomm.com>
- <e7bd2840-dd93-40dd-a1bc-4cd606a34b44@oss.qualcomm.com>
- <CAO9ioeUeNeSxz7ADZ-BbJbhEKkszVS+SmbqaZCgTpL=csak=hg@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CAO9ioeUeNeSxz7ADZ-BbJbhEKkszVS+SmbqaZCgTpL=csak=hg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: OWdRsV6_R7JOa2XJH8huXP5Q5BiGbCuN
-X-Proofpoint-ORIG-GUID: OWdRsV6_R7JOa2XJH8huXP5Q5BiGbCuN
-X-Authority-Analysis: v=2.4 cv=MpRS63ae c=1 sm=1 tr=0 ts=67f8e8db cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=uBBskLQT7c7fgIZri1kA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-11_03,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=918 clxscore=1015 priorityscore=1501 impostorscore=0
- spamscore=0 bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0
- phishscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504110062
+X-Mailer: b4 0.13.0
 
-On 4/11/25 11:57 AM, Dmitry Baryshkov wrote:
-> On Fri, 11 Apr 2025 at 12:49, Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
->>
->> On 4/9/25 5:49 PM, Konrad Dybcio wrote:
->>> On 4/9/25 5:44 PM, Dmitry Baryshkov wrote:
->>>> On 09/04/2025 17:47, Konrad Dybcio wrote:
->>>>> SMEM allows the OS to retrieve information about the DDR memory.
->>>>> Among that information, is a semi-magic value called 'HBB', or Highest
->>>>> Bank address Bit, which multimedia drivers (for hardware like Adreno
->>>>> and MDSS) must retrieve in order to program the IP blocks correctly.
->>>>>
->>>>> This series introduces an API to retrieve that value, uses it in the
->>>>> aforementioned programming sequences and exposes available DDR
->>>>> frequencies in debugfs (to e.g. pass to aoss_qmp debugfs). More
->>>>> information can be exposed in the future, as needed.
->>>>
->>>> I know that for some platforms HBB differs between GPU and DPU (as it's being programmed currently). Is there a way to check, which values are we going to program:
->>>>
->>>> - SM6115, SM6350, SM6375 (13 vs 14)
->>
->> SM6350 has INFO_V3
->> SM6375 has INFO_V3_WITH_14_FREQS
-> 
-> I'm not completely sure what you mean here. I pointed out that these
-> platforms disagreed upon the HBB value between the DPU/msm_mdss.c and
-> a6xx_gpu.c.
-> In some cases (a610/SM6115 and a619/SM6350) that was intentional to
-> fix screen corruption issues. I don't remember if it was the case for
-> QCM2290 or not.
+On Thu, 03 Apr 2025 15:26:01 +0300, Denis Arefev wrote:
 
-As I said below, I couldn't get a good answer yet, as the magic value
-is not provided explicitly and I'll hopefully be able to derive it from
-the available data
+> The value returned by acpi_evaluate_integer() is not checked,
+> but the result is not always successful, so it is necessary to
+> add a check of the returned value.
+> 
+> If the result remains negative during three iterations of the loop,
+> then the uninitialized variable 'val' will be used in the clamp_val()
+> macro, so it must be initialized with the current value of the 'curr'
+> variable.
+> 
+> [...]
 
-Konrad
 
-> 
->>
->>>> - SC8180X (15 vs 16)
->>
->> So I overlooked the fact that DDR info v3 (e.g. on 8180) doesn't provide
->> the HBB value.. Need to add some more sanity checks there.
->>
->> Maybe I can think up some fallback logic based on the DDR type reported.
->>
->>>> - QCM2290 (14 vs 15)
->>
->> I don't have one on hand, could you please give it a go on your RB1?
->> I would assume both it and SM6115 also provide v3 though..
->>
->> Konrad
-> 
-> 
-> 
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] asus-laptop: Fix an uninitialized variable
+      commit: 6c683c6887e4addcd6bd1ddce08cafccb0a21e32
+
+--
+ i.
+
 
