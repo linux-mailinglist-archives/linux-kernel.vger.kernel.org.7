@@ -1,130 +1,121 @@
-Return-Path: <linux-kernel+bounces-599950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD13A859A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:27:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 590A6A85A07
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4574C8A5EB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:26:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6658B8C7DF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C6C2A1BA;
-	Fri, 11 Apr 2025 10:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11072221271;
+	Fri, 11 Apr 2025 10:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OHdImQMY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="AMB1+Gay"
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2856A2111
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57B3204840
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744367204; cv=none; b=bMhG2fFg2Vbn7FXjf11B/pUHl0DJvvGfv25q7z+xjoCsiyVsDwXUM7lQXLSPbM3n30KzBmNgXni9vkxxohjGAaJd4I1xB0zazJYp0iiWFzcVz+iEnzJBlun1W5HL3Jf1S0hcPNR3jy722bkOLth1vnRBuix0yayhk6LYZwdIgw4=
+	t=1744367328; cv=none; b=FX8eT0nSTHm4pqI2WilwN5Z/WsidseUWsXm4HUazmL8R08F7nxzy4NOEmZzMbZycmaqiz3w6zZ8f/ERYsH8X7pdGVQJnS1P3jW7lZNh5O2oI6kuvwONaYBrHS2J+QWIo86y+7ADff91e72vzXEF9+pZ2+odSwh/XWNG/PuFdNxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744367204; c=relaxed/simple;
-	bh=aHuCE/uU7spSprHLf5V5HqSNXI02fPpj/JvVgJEM574=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sGJXboCbCCZS6v1dJJD1sUKmThMEvaUaXx2QHzjU8O2cMBKMn0zkSgLnezr3jSpJi5sZF3IcStHYSR35phA6SMB0I9hE0hAV/7KBOuPr7IAeN2yczQHYuE8rFqk0Bd4RkwOaf3PE+dztuWXQ2i+30+Z/gXYDc9iMFzwk1l1OB8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OHdImQMY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744367202;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JmMufGW94wEMZGWR6BkGZ+0dzdW798fPhJuI4K0fmUQ=;
-	b=OHdImQMY/jBXZLxwIbg+8pjYDKW8wYP6QrvilvZMuotuKiHrprECg6lDAMQHNqMnk4ww56
-	j4+2mLopMXKOpbQLvVzT1yDGgEc9y31fYlefnr3Tn5A/nk3jGk0icazs82wz5f7SwpvgZW
-	QnHnH2RDZUMsI3ZzhyfNYTpK9lVGZi8=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-3-uVoF_uO9y8ccWm1ixl5A-1; Fri,
- 11 Apr 2025 06:26:38 -0400
-X-MC-Unique: 3-uVoF_uO9y8ccWm1ixl5A-1
-X-Mimecast-MFC-AGG-ID: 3-uVoF_uO9y8ccWm1ixl5A_1744367197
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0905B1955DC5;
-	Fri, 11 Apr 2025 10:26:37 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.222])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id CEBE8180176C;
-	Fri, 11 Apr 2025 10:26:32 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 11 Apr 2025 12:26:01 +0200 (CEST)
-Date: Fri, 11 Apr 2025 12:25:56 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org
-Subject: Re: [PATCH 5/6] sched/isolation: Introduce isolated task work
-Message-ID: <20250411102555.GA5322@redhat.com>
-References: <20250410152327.24504-1-frederic@kernel.org>
- <20250410152327.24504-6-frederic@kernel.org>
+	s=arc-20240116; t=1744367328; c=relaxed/simple;
+	bh=ZDCwX/VIIX2cwjTORa/viaElRwz8HH8NWVCcOJobQOI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G9aPkeqmhun3b/H6NEKo4r4EikdoQhcI9T9mzqMuekqC1hzkLFABE2tZdGeKm7T8g8mNUUZt7aEbMOSBdhZ1Wxi4eS5dQTKm/Xo/PxU82Iop5r+U+O65QU194FBKNlvXueEuF6DFgU0wQkPKBEzPcpeo2/pkU/+ZO0lirk5lCqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=AMB1+Gay; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744367220;
+	bh=Qvl4cj8ljBGCVeGDelcgbiIaxF0858Xn7bz1tzcyE/c=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=AMB1+GayCZ2msOfMu4sw9l2YodfAa4F7Smo6rdQngCRhumO5VY4iI3ApjIDVBlUGV
+	 /Lyc9fzWfm2Ys46pO14Ffa31pwepkx1O+l7gleLtpKl9XY7A4VChWo6C7HS02fV/mK
+	 F6b7tnYbcIxcmBxOC8wlVvk67vZCTDTGjOYoK5l4=
+X-QQ-mid: zesmtpip3t1744367176t06a84176
+X-QQ-Originating-IP: T6GmBeruXCFtkICI5bUi36KWkx/42EidU75gg0SRHd8=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 11 Apr 2025 18:26:13 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 11810010522310925225
+EX-QQ-RecipientCnt: 15
+From: WangYuli <wangyuli@uniontech.com>
+To: mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com
+Cc: akpm@linux-foundation.org,
+	kuba@kernel.org,
+	dmantipov@yandex.ru,
+	mingo@kernel.org,
+	axboe@kernel.dk,
+	wangyuli@uniontech.com,
+	tglx@linutronix.de,
+	ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com
+Subject: [PATCH] ocfs2: o2net_idle_timer: Rename del_timer_sync in comment
+Date: Fri, 11 Apr 2025 18:26:10 +0800
+Message-ID: <BDDB1E4E2876C36C+20250411102610.165946-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410152327.24504-6-frederic@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NWaY/LEHNR/FznKEMis7KFA3cuZI6LvpOtEWDSfif2oJYzutp3G2Bhmw
+	p50Mlqe9LYhzY6J03qqnB0RwZP38Qyfav7dFWw4RnO8C4Pw1Nl+//Oq0OD5FKohz5Rv30Ms
+	YN479BzXUwe8mphEPA1tzN5RubvWdXgle+O44UWWQcFn6NSX0AqZTuKUc+5pQOQzZwlC7yl
+	94tJPy7WWXkCzhc393TVwGbgklsppbxrcAnz8yBGk4CYJ73CxkCPw1VZufrWopNoskFhWVo
+	2XrVG5UL1hbYoyVgcesumwYL/xs+aqIzmGrdo7JOBBm98/B/GApoRReZsI23g0r392c0Smg
+	+K2DjfJ2+s6yDXobuH0qleO2lQomQ1uxOjUNSUCNPZVZy/nPpsqHoI3UZ3HDbXHimptCc+Q
+	Z9OrdeixAn9pGHXaxGH1iGVrboiONDGBfegArvtryts04ctv4r9hbuLrbKyXTQz9Os3wDCP
+	FgXr35nwV/FL73mbJLobJz6gVlb+OerHRl89P2DsSOlO/vLXXvAIRLVtExmlFeh1z78Q+8p
+	4dgQrYVe/4E8Md6GfXAtw4yK6zdSSVBLcTmPsct+1XV+2myqpW3ufuiEnPkYYmSvRvA1Zgt
+	Jm13116uM7xSCogc0/Q4NqtJyczZCW2Yxkb0MfUatX/3tdjE423OoljgJYgcRI2ggpKttOX
+	Y5kEqQyBugbyvXl21o9/DVNKFWdjDOPp+Y0fv2Rg4Y2X3SPiXxNU9u9AqQeOmJxA/ymZ7/F
+	n1fPmQIqKk6uHsRruIZsbJbb+BftKL3x8KT3yKaXYijXuUkdCp4U35Wwjr9dpsc3UYH1dY0
+	bBqYgMz4atLJOkm5wFGKc8cUyz0SW5yp0n9n97TNiHDSIuLCuhkluEMXraZxHyFgOPnQOzc
+	gXRUGs78XbPd/G5KLmYklDLToFYp1hNG/mFhwJBwZuc9bwym9Ff2otbNG7SRn/WQAo1ErHc
+	WYRkR1HTxlTsXf0TX1EgdZ7AMb9iESDAMoC3YqEfYW/dUBX88A+fqoleBXlwk0zuoxiMZ+1
+	lekEBAHw==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-I know nothing about this code so I can't review, but let me
-ask anyway...
+Commit 8fa7292fee5c ("treewide: Switch/rename to timer_delete[_sync]()")
+switched del_timer_sync to timer_delete_sync, but did not modify the
+comment for o2net_idle_timer(). Now fix it.
 
-On 04/10, Frederic Weisbecker wrote:
->
-> +int __isolated_task_work_queue(void)
-> +{
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	if (current->flags & PF_KTHREAD)
-> +		return -EINVAL;
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ fs/ocfs2/cluster/tcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What about PF_USER_WORKER's ? IIUC, these (in fact kernel) threads
-never return to userspace and never call task_work_run().
-
-Or PF_IO_WORKER's, they too run only in kernel mode... But iirc they
-do call task_work_run().
-
-> +	local_irq_save(flags);
-> +	if (task_work_queued(&current->nohz_full_work)) {
-> +		ret = 0;
-> +		goto out;
-> +	}
-> +
-> +	ret = task_work_add(current, &current->nohz_full_work, TWA_RESUME);
-> +out:
-> +	local_irq_restore(flags);
-> +	return ret;
-
-Hmm, why not
-
-	local_irq_save(flags);
-	if (task_work_queued(...))
-		ret = 0;
-	else
-		ret = task_work_add(...);
-
-?
-
-Oleg.
+diff --git a/fs/ocfs2/cluster/tcp.c b/fs/ocfs2/cluster/tcp.c
+index fce9beb214f0..43e652a2adaf 100644
+--- a/fs/ocfs2/cluster/tcp.c
++++ b/fs/ocfs2/cluster/tcp.c
+@@ -1483,7 +1483,7 @@ static void o2net_sc_send_keep_req(struct work_struct *work)
+ 	sc_put(sc);
+ }
+ 
+-/* socket shutdown does a del_timer_sync against this as it tears down.
++/* socket shutdown does a timer_delete_sync against this as it tears down.
+  * we can't start this timer until we've got to the point in sc buildup
+  * where shutdown is going to be involved */
+ static void o2net_idle_timer(struct timer_list *t)
+-- 
+2.49.0
 
 
