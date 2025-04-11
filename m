@@ -1,123 +1,81 @@
-Return-Path: <linux-kernel+bounces-600969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA11A8671E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:30:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAEA1A86722
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD9267B5096
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:29:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C28D34677ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09976290BBE;
-	Fri, 11 Apr 2025 20:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C897A283C8A;
+	Fri, 11 Apr 2025 20:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="J4q3tkaN"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPHH7uM/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA70928D85A
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 20:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FA422D7AA;
+	Fri, 11 Apr 2025 20:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744403381; cv=none; b=roMHWbUgA8vssNRfGOfNqnn/2zOYUVMGr24VcpDmC4cEmXZXPOE5FU5Oe05dtPb9siiH8H2/IiJ7jR/ESkww+kSP0aU2O7gZFQh+T0yH2jhJ5ArbsXeTItVck3uohlp8WcdnG/c72SCDheicDLGuuTHrXKGi0WS5cWA+uS5QRd0=
+	t=1744403455; cv=none; b=Ur/vSeM7ybgjiTk+LSXyO3M1Muq/qJyzgh8e4sQPrLbfz9BdWObbA+2rf48eJ4BHVp1NMtiYpkZBn5uQpTzxkOYPSckf8diub78LWaM07aSYu/ppxE2KbnDgLExG53PdeWc+D3MMZ1y6KReZQShZETbGyaL9um4AZgWgJwL1xI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744403381; c=relaxed/simple;
-	bh=yfZ7tSoVUlgX2zAOigOxPAbHH5o70chJtfqLZj811rc=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=clEKXDUk884snQ9vgWTjzxm2JWGY8lkxN9erTp0qSmqWf8Pe+gicdprX4jyIMxtKaLHYqZB4ky88rzBDVAek1u4WY0NeB3FWL6zNnco11Vjy4qzTzat1pbJAdZAxucRquVvQtGX2E3Q/YQyjXk7yVvOCHYLiRCHKED26HOnB8Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=J4q3tkaN; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c560c55bc1so249679485a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 13:29:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1744403379; x=1745008179; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=udx8P5NQgti6FOsmWgVm69I0Zh1i+WolhwcYzN3WDvs=;
-        b=J4q3tkaNtRFIicpeJxa6YNjci735jlGkg7rFCar+Z7sYItlaqf9gNPaHrC5N93OSmy
-         J4GOmAAy4BLExOa3Trys1UgredqQIB+3aOTWsc69uV0JnqaYepZT4QbcqTXTAsBXruaP
-         u239HmOj+NQ3SF+XZelllTGa4KNEA1IJd+GLBtwoTg/XIkTWjZQFKO7Iq1GT57qo3jOe
-         af21Ggzs55yZasGLMizrCnD2LnHodcUKDdz0OmIYWtxt0JvIksJng58ghnIY0sUFV3fO
-         3TjoJ3XqAgmk6KPGvGek0ybhKJ4EN//MiNZHXshDZfLCkf2dyn0oZllVCJsQRAjxFsdl
-         c8Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744403379; x=1745008179;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=udx8P5NQgti6FOsmWgVm69I0Zh1i+WolhwcYzN3WDvs=;
-        b=M4JobZkk62/qJHhNfeSNJ7UivyW+AMAD0xswf5jZhOIAsqHNQFoKQCGpnDuXRCoCyD
-         kt3YsxTDNj2kPA3PcdCX2RmRQ3qqoRWdnLzczAl7WOBzED1VDcZwPNLGx5DNA/ofc1Wr
-         Ymaehd2Tjh1o7ZWlW8mjFpTjCP46G1gSw/8F2uWB6x4q6ktZ/KOWJn7WnXuasgTPerxh
-         sQqKArE6YG7LM8GcEwSkst3cuYLU6aevQvuPLjgZmMhbUM/x51zGqzlHaFgjZH9XxeAv
-         SEsOHHukseiVeB2IlvEjM5jcM2MGmtz7+hTO410sgql5YWGqrMQi3q94g3RGMDaTsJKR
-         pILQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/9ooKy2w2638YeCVt7YHyrDs9DjyzX8Q/cApSZerGDceDt6GLWNfboSFIuNd4+nI/DCVw/t3b6PKZP4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsEYIAH1RvlmiDn1aDu2UUqXqJ+wSJo2qDHWyAZpJPNxbN8sFP
-	BA/D5uJ0LhsKus3q229BjV79zCearEteFmcX/eS+YZSvZqdOcbJ9eQRhgqUM3A==
-X-Gm-Gg: ASbGncsphEXjEkV/L452ooi9SEF2I+weaAkSTiEpmb6xALILsgqUsh1ZXZ0vSz09GAw
-	Wp+DSH5eUOTw7qKOVYPns6j/hOsRREdZXEALgzxzlOpozZ69dXNCi2/ndJADHIETub/Lz/qsnf/
-	z372URw5rrSJgKbYLNR4Ku/rXlxH5vD04Lrhrhmjgi01njtdNzG/Nk2ORMZVlqdYRQ04u8uPMLH
-	3dlEOsKuji9Vgtv29bkJGxYslKWTwX+U6ZOGehEObj16rtKD2ucfw2U09r8mAnDkCsc6Vei07Ux
-	LXaCLwb6Kyir5uVhk6HJMnlwhzxz8SFEKgxVZn5JkS1F4R71BP4GYuGrogDoAnHmLbo3DwhPrfo
-	LrR30FhB5Ig==
-X-Google-Smtp-Source: AGHT+IHAZKi3da6H9ZT6r5+1QkoznXgFAO4EgfroOWd3yfn68Dolte8fO5VnmxOOmYKtTSskUzNiQQ==
-X-Received: by 2002:a05:620a:4554:b0:7c7:739d:5cea with SMTP id af79cd13be357-7c7af12dc20mr617096885a.35.1744403378650;
-        Fri, 11 Apr 2025 13:29:38 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c7a896a15dsm308067185a.56.2025.04.11.13.29.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 13:29:38 -0700 (PDT)
-Date: Fri, 11 Apr 2025 16:29:37 -0400
-Message-ID: <4e6ec6918748074d1f081320eba38eda@paul-moore.com>
+	s=arc-20240116; t=1744403455; c=relaxed/simple;
+	bh=IgZpynRK7I4zg1Vh1VMqbr8T90CF+k7sF5KdcrTjxEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UsT0MLieWeFJjucGMxlturPgoU6UPrHbhA5pgLhyex43Ab2UMwk8Da6NAQJmnXDD7xjEZuocIJTZiPz1cepDoz5n85Wr1j99JZsB28g8Ua4xzOO265pNBjqB7Mlh9qQyUasQBNowXa0rNgVn2q0Dkdp60NUOoab5MF7Zmn4411s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EPHH7uM/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5593BC4CEE2;
+	Fri, 11 Apr 2025 20:30:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744403454;
+	bh=IgZpynRK7I4zg1Vh1VMqbr8T90CF+k7sF5KdcrTjxEM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EPHH7uM/Qu0KE1Ki08vAe0SQly95cP11L1X41U2O4z0rKo9qDBuZq1t1fEcwT56WS
+	 +XXHKa4eFQF7zSPmePs+9eOm0wjvKz99exST793SpBJV4jYTvxUcWuMBgerq39Uw0R
+	 sp5uB8Sb0QmWxWPYkuSaH8kMbZdfF30L5ExKDo45ftSOyEvduFHhqBra54sqwguyEq
+	 2c5i+ynAjxai6Z+B+QQxR5a03vfjfx+10TpNaYi+l5ivxn6MMhFu2VRq9WLq134Zqk
+	 4RAh7EW2X96oTj3NvM3urA8bCdDXBhZeeZjm15g4YJ6gwcL1m6diIgdHQGZFVoAsQj
+	 GoWGDeU1Xc2Kw==
+Date: Fri, 11 Apr 2025 15:30:53 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Cc: alexandre.belloni@bootlin.com, linux-i3c@lists.infradead.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	andersson@kernel.org, krzk+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	konradybcio@kernel.org, jarkko.nikula@linux.intel.com
+Subject: Re: [PATCH v4 1/3] dt-bindings: i3c: Add support for Qualcomm I3C
+ controller
+Message-ID: <174440334691.3918820.6898145674623743895.robh@kernel.org>
+References: <20250411113516.87958-1-quic_msavaliy@quicinc.com>
+ <20250411113516.87958-2-quic_msavaliy@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250411_1406/pstg-lib:20250411_1552/pstg-pwork:20250411_1406
-From: Paul Moore <paul@paul-moore.com>
-To: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>, =?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>, Casey Schaufler <casey@schaufler-ca.com>, Canfeng Guo <guocanfeng@uniontech.com>, GUO Zihua <guozihua@huawei.com>, Chen Zhou <chenzhou10@huawei.com>, selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 5/6] selinux: unify OOM handling in network hashtables
-References: <20250318083422.21489-4-cgoettsche@seltendoof.de>
-In-Reply-To: <20250318083422.21489-4-cgoettsche@seltendoof.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250411113516.87958-2-quic_msavaliy@quicinc.com>
 
-On Mar 18, 2025 =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de> wrote:
+
+On Fri, 11 Apr 2025 17:05:14 +0530, Mukesh Kumar Savaliya wrote:
+> Add device tree bindings for the Qualcomm I3C controller. This includes
+> the necessary documentation and properties required to describe the
+> hardware in the device tree.
 > 
-> For network objects, like interfaces, nodes, port and InfiniBands, the
-> object to SID lookup is cached in hashtables.  OOM during such hashtable
-> additions of new objects is considered non-fatal and the computed SID is
-> simply returned without adding the compute result into the hash table.
-> 
-> Actually ignore OOM in the InfiniBand code, despite the comment already
-> suggesting to do so.  This reverts commit c350f8bea271 ("selinux: Fix
-> error return code in sel_ib_pkey_sid_slow()").
-> 
-> Add comments in the other places.
-> 
-> Use kmalloc() instead of kzalloc(), since all members are initialized on
-> success and the data is only used in internbal hash tables, so no risk
-> of information leakage to userspace.
-> 
-> Fixes: c350f8bea271 ("selinux: Fix error return code in sel_ib_pkey_sid_slow()")
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
 > ---
->  security/selinux/ibpkey.c  | 11 +++++------
->  security/selinux/netif.c   |  6 +++++-
->  security/selinux/netnode.c |  5 ++++-
->  security/selinux/netport.c |  6 +++++-
->  4 files changed, 19 insertions(+), 9 deletions(-)
+>  .../bindings/i3c/qcom,geni-i3c.yaml           | 59 +++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i3c/qcom,geni-i3c.yaml
+> 
 
-Merged into selinux/dev, thanks!
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
---
-paul-moore.com
 
