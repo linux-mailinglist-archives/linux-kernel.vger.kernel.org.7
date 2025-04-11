@@ -1,137 +1,124 @@
-Return-Path: <linux-kernel+bounces-600465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5B29A86038
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:15:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A36EA8604A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0267188F91A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:14:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8967E1741DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839A11F3B8D;
-	Fri, 11 Apr 2025 14:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BDA1F5828;
+	Fri, 11 Apr 2025 14:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4TLZsKf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j86PcWch"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C676726AD9;
-	Fri, 11 Apr 2025 14:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289691F4CBC;
+	Fri, 11 Apr 2025 14:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744380875; cv=none; b=BDla/6SYY4tamK2WPg6c6w784u7TgJsOC9Zf6scOyrsMorlmQ4Uap/0Gm3V8wcbI/92yeFkQqnfbs4s3P6+QjYouPaT7b5a8YonLyB2C/sbmlOZciyPDhzi5GMzLbqnFoW8nvTf+UXaaIdTbLZ6QzUeRRieSKzDIKEBcKsHaxo4=
+	t=1744380931; cv=none; b=BtYY0kQwxt/8l6TjpKwPnXB3Mv5aY8kUsJrA8K5Hi/plcqMPJBWaULKsx0JXyRb729802hinu79Oq28tgPggvjdiUNzn0Q7PTrBq1Eg9LOpwSzGwsFGpTAA0btwQGSbRdrqFNHtFI8myzeVpBP+AXYMxCyrSPbfL1H4agAJAHds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744380875; c=relaxed/simple;
-	bh=U3OTrdd7E2WfYEtaGGB2vQ72NUHYGUz4BHNai+8xQIU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k85XsWBVnSOP+reZblGjWD0/6uaaKmFqAlWMPw2ttNmIj693mkZWrDd5NQm9HM6c210LgUGZp0CbPc9RAcaCzVjLkxFrL8KdMrNduH4limXs8VfVIGE9EiG6TQ5GspdphCtuKE90upcr/IyECAViPD55xmAGsM2wAV/LEZeM4wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4TLZsKf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA383C4CEE2;
-	Fri, 11 Apr 2025 14:14:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744380875;
-	bh=U3OTrdd7E2WfYEtaGGB2vQ72NUHYGUz4BHNai+8xQIU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f4TLZsKfG5Fs5GE+9PSOyy4buJ9DRog30G0akJCxjAsFnvuslrVO/LkElZmmBREFj
-	 ZLSGF9dYGrvKpZg1BWT/i3lAaECh7vNb8X+P/p9S6F1PjwCz3CUSDtf++09IuXsju5
-	 wBSV2LrJoqRQucRi9k91qewJxdgVfwBDQ+cIxHGykSRP/EXMEG1+6UwjQNrhrPS8hg
-	 333TbA7L67i5TgEJaRjItkE+C8i7Ix+bgH1WRZ20tqhJvk187oXUquMZf2v1hN92nA
-	 69nD6XwiB1tf4idEcp/LjmAeIZrW8xOB5leP5FBUKcf+ghCGF09LVjOAcElZtfLKyF
-	 Nj1u/luNQclVQ==
-Message-ID: <f4ff4f5d-637f-4f82-9936-4c2553861eda@kernel.org>
-Date: Fri, 11 Apr 2025 16:14:29 +0200
+	s=arc-20240116; t=1744380931; c=relaxed/simple;
+	bh=bw+p5SNhnX6pOkgl0Ry3vJZPsdlpYeSd8CNTNZIG8aI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=O2+f07V5JItnSFkGRI8GFz//ONS12z2KwvHcqShjMIWL77XWd8L6HkY3CHT/yAUcRLo7CdUIWhYD4p497ff9cPkwL9Qatl8vhMxsYkrYyTMRH6ZSELbzQ6ZwJ7wzh1Tft2sAoEQk57pRBzIP1uDj4J8T89Xtl3KpaFJpzm96V3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j86PcWch; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2243803b776so28962845ad.0;
+        Fri, 11 Apr 2025 07:15:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744380929; x=1744985729; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NSq0iC5oDVYO2Sr114HUoyiQ9ytidsd6EJphTwPnpOY=;
+        b=j86PcWch6eh738IOzvfs1sf7EzwfCNo82viN8Qsq+0WoTCVQXLgiQbjLs1ZuaOeRZm
+         izhh9qSVe3B8FXM633bA84xKS5ih4SIXPy/73EwhhdVefpLzzFTm7HYQUPsf72jnQMRN
+         1QM3H+aUTgJ2sCsHmJOwMjRjCO+Cxvvy32AUakTC8trs1WxZfvKmU4FpQFsd6G8OCWwr
+         B00F6+TBC5BUlSmlYkz/RtohCWV3fZhfCpx0PeQASxV3Sgrd3/DC45QHyxMstOIqNcC2
+         ZyVNoFBa968TNI0k20+y15ZCGAlpQuOG0loHjb6a4NEUTumMr3WPX6MsHChK5xVhZADV
+         4v1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744380929; x=1744985729;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NSq0iC5oDVYO2Sr114HUoyiQ9ytidsd6EJphTwPnpOY=;
+        b=S6SbR1mGyxaFjlRHQi4BGmnkvSyDfxus3/0R7UNgAVysIlFItHlWlcAgLGc696zR5K
+         oqND49VrgRWClerme87g8NzG4IFCcZ+KbolvRjCVVFUX/mBJkTUBzSuKHqPdCpWSkBNJ
+         tklLyAzlxx36619q8JS+z1RUhzncwvxYxdA+eqTyRW3Q2OBTGuLDHlaPEIS9tZRTndwR
+         s1PTFJz44ej/wCWU2c1NuHtr0F4tN/BVp9m5lAL2+kHL7o4Mz3h+jOrvNwYjYiSu44/R
+         farxvXFnhq+Jfhgg/aMva4ZgrYUMCKgpkLBkcCioRhy/9fwh8aubXZ8TfndtuFpb7pqb
+         blog==
+X-Forwarded-Encrypted: i=1; AJvYcCVM3HMm9T8W0hYfg0lu/3pci0S242baEiPlU9z40l3Dg8nO+K2neesO+0vW4GxpcBlazDr4bTC6@vger.kernel.org, AJvYcCVWo+wenMqiUh7nGrjjZOzLvGSLd8U3i38LxJTVEXfkwxGdWRBtEXvPfEmajs+f3TTUoauPWOJ6C7OE4VM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWsjWIg4i+tiurOnnkA1r8YxWCQlcM6wcD/S0tXen8pW7bc/02
+	69cbtCNhhp+nnMI5OUhG/yqx9rtJc3vC37HeaTq1B/y+0u0AZ3sx
+X-Gm-Gg: ASbGncuoQEIwTP+ILx8RQFynaw+Pt5DX/Oeh/ofYNIP9l9s84DtCS0YvMVlTVDFcNVd
+	xmviWKRwKyrQ/AZKuwBmcfH95ekeYF79z85Awfi5bDhU1gXmThqBayS/iVrdaXtJC/5fMXVA3iC
+	6iOc7vddm970LbzBVgTRjtTkUvMZOA50qCEs//wJ7I/TeKhvwPmOsFzMn7bQpE8JlUo/kg1Zi+4
+	HsQy6YBJtO58kjy/ie0D4jH1ZcN4BU2lFdmeL5HEIWfTyqRTXr9zHxMqQ+dvcNH23Iat8zMCOnv
+	THhK3ncnV1JQrlf47js4qEVr2V1LMGTO5hcuVe5w
+X-Google-Smtp-Source: AGHT+IH/Xc9tf94+92Rkwg8MozsvgNOe2K98JTK8HgIrcsGLWh8rs77bvMZ/KPW7UA+oma8PtOE6zQ==
+X-Received: by 2002:a17:903:1450:b0:223:6180:1bea with SMTP id d9443c01a7336-22bea4ef0b3mr43856725ad.37.1744380929022;
+        Fri, 11 Apr 2025 07:15:29 -0700 (PDT)
+Received: from [192.168.1.26] ([181.91.133.137])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21c4e69sm1575899b3a.53.2025.04.11.07.15.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Apr 2025 07:15:28 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+Subject: [PATCH 0/2] platform/x86: alienware-wmi-wmax: Extend support to
+ more laptops
+Date: Fri, 11 Apr 2025 11:14:34 -0300
+Message-Id: <20250411-awcc-support-v1-0-09a130ec4560@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net-next 2/8] mptcp: sched: split validation part
-Content-Language: en-GB, fr-BE
-To: Geliang Tang <geliang@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, mptcp@lists.linux.dev,
- Mat Martineau <martineau@kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>
-References: <20250411-net-next-mptcp-sched-mib-sft-misc-v1-0-85ac8c6654c3@kernel.org>
- <20250411-net-next-mptcp-sched-mib-sft-misc-v1-2-85ac8c6654c3@kernel.org>
- <1fb5a9e97e97b86c8b0d6008eee579a0bebea708.camel@kernel.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <1fb5a9e97e97b86c8b0d6008eee579a0bebea708.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMoj+WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDE0ND3cTy5GTd4tKCgvyiEt0040QLQ4tUQ3MzIyMloJaCotS0zAqwcdG
+ xtbUAbkaUTF4AAAA=
+X-Change-ID: 20250411-awcc-support-f3a818e17622
+To: Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Armin Wolf <W_Armin@gmx.de>
+Cc: platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
+ linux-kernel@vger.kernel.org, Kurt Borja <kuurtb@gmail.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-Hi Geliang,
+Hi all,
 
-On 11/04/2025 15:57, Geliang Tang wrote:
-> Hi Matt,
-> 
-> On Fri, 2025-04-11 at 13:04 +0200, Matthieu Baerts (NGI0) wrote:
->> From: Geliang Tang <geliang@kernel.org>
-> 
-> Please update my email as "Geliang Tang <tanggeliang@kylinos.cn>" here
-> and in patch 7, otherwise, CI will complain that the email address
-> after "From: " is different from that after "Signed-off-by: ".
+This two patches are based on the pdx86/fixes branch.
 
-Arf, sorry, I sent these patches from a new dev environment, and I
-forgot to apply fixes for b4 [1][2], not in a stable version yet. I will
-re-send these patches later on with these fixes.
+To: Hans de Goede <hdegoede@redhat.com>
+To: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: platform-driver-x86@vger.kernel.org
+Cc: Dell.Client.Kernel@dell.com
+Cc: linux-kernel@vger.kernel.org
 
-[1] https://git.kernel.org/pub/scm/utils/b4/b4.git/commit/?id=8438e306d9
-[2] https://git.kernel.org/pub/scm/utils/b4/b4.git/commit/?id=42535902a4
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+Kurt Borja (2):
+      platform/x86: alienware-wmi-wmax: Add G-Mode support to Alienware m16 R1
+      platform/x86: alienware-wmi-wmax: Extend support to more laptops
 
-Cheers,
-Matt
+ drivers/platform/x86/dell/alienware-wmi-wmax.c | 48 ++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+---
+base-commit: d8455a63f731b4f585acc4d49fd7ad78db63b3d0
+change-id: 20250411-awcc-support-f3a818e17622
+
+Best regards,
 -- 
-Sponsored by the NGI0 Core fund.
+ ~ Kurt
 
 
