@@ -1,57 +1,68 @@
-Return-Path: <linux-kernel+bounces-600656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2FB5A862D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:06:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9209EA862D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3AB3441234
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:04:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE93A188B749
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC92214A93;
-	Fri, 11 Apr 2025 16:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A87218AA3;
+	Fri, 11 Apr 2025 16:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="miPD2+rw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXhVy8mq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2331E102D;
-	Fri, 11 Apr 2025 16:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444D8376F1;
+	Fri, 11 Apr 2025 16:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744387439; cv=none; b=tYYYSshGUM6BUkzJ6dHhSFRGtWSP9jFmHJx7IECy3DAWwU/y4PqvpU6Q7q8DX5Rd/LujT2xyebsoTVMuUmg0DPCYuC3r0A1RmNoJ8OKxa3eiQII+sy+BG26DhEZsQgO2oDlBBlUVP64h26Hj+gY0qZOhDg7m+G7l2p/bAqzPkJ0=
+	t=1744387533; cv=none; b=BwmN8zC13nE58rW4/YKKN5yNiOJyfxEhtlsl3aI8YUJN3a6a9Cz0NUkfAlUnRlf0ENceYR+H639pXOl9g9ZNId6SMamUrQyCO+zIACFBI17kUVtZ6ETgQLcZL3fnlZHsZEHW2xCkmPKta0qq48kh+HasSOO2Ct/1bDv1Q+nacZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744387439; c=relaxed/simple;
-	bh=KqcHpLtYGIe+KPzDUv64VC3jawenUyBCz4MhtthBEPE=;
+	s=arc-20240116; t=1744387533; c=relaxed/simple;
+	bh=Ql4MKbHYn0LYUmCqBEk+Nsc4K3zGFojAGH/c0V7kks8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pQp/uEFkBIs+8NRQRJDa+5T4ZLAMLxpSQsTxf5fbeYdkPZgKeX1yQkNzC5Dq1HvQSQHrXB665i7VLMe6kHLoWHqebGCG/sdVXAc+rcgaQ6wHMX9ZkPde8dH+fco8Xfxq7QY2jXasTn/Mu1u1RJ7l9pfCWAjfqLtE7qnGoT1eneA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=miPD2+rw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E90A6C4CEE2;
-	Fri, 11 Apr 2025 16:03:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=reyGcKjexLqM++FNF6HVASXiWBb7//4a0ly01fGi6+azDAU4FRvzx6Luj7fkDVrJw+I1n+wuIi74HFN757pvDmpzDXssHgX6M1y0P7ERs3uivfhz9gGaO0ihZ/A2RXPFWiBPiTIVdKSEQC/kZEc3Tb50yIVbl04KIEoZ+Jo8gTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXhVy8mq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C5AFC4CEE2;
+	Fri, 11 Apr 2025 16:05:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744387438;
-	bh=KqcHpLtYGIe+KPzDUv64VC3jawenUyBCz4MhtthBEPE=;
+	s=k20201202; t=1744387532;
+	bh=Ql4MKbHYn0LYUmCqBEk+Nsc4K3zGFojAGH/c0V7kks8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=miPD2+rwV0dQP4B/8sjkwn3hZFOS3HTZ8dEsYwuZ/mWBNUem/giiiMYNTXP63So1u
-	 NSQhWAzhggX+gnY7U1IUxICmCzVodgwS1gbql/iAE4kH74RUH0MCdFjC315PsFgWmR
-	 NxMNE28xpu4Jx9tXRThlZCPxfZOurye0IEBreA6mH/NTQ6VSlQHqiKLcCnT5vUsPKj
-	 tPZpUQ454OzPxPoM6TPun1aHAcgdm90fN+2HrbPrcdwXT3yoXVezrY8MjEw+pxBKKq
-	 6dSehQI1sziaJUEwrfw2Wh0RwYf7k80VNscV+YTK82tUDxZ61pghqppOx4ozHdUpc9
-	 2gC9jvXD66mew==
-Date: Fri, 11 Apr 2025 17:03:53 +0100
-From: Will Deacon <will@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, robin.murphy@arm.com,
-	nicolinc@nvidia.com, jsnitsel@redhat.com, praan@google.com,
-	kevin.tian@intel.com, ddutile@redhat.com
-Subject: Re: [PATCH] iommu/arm-smmu-v3: Add missing S2FWB feature detection
-Message-ID: <20250411160352.GB5675@willie-the-truck>
-References: <20250408033351.1012411-1-aneesh.kumar@kernel.org>
- <20250408120919.GB1727154@ziepe.ca>
+	b=oXhVy8mqPgH6iNMP4+lN8KNPVXoFje6XG5rQFRyuLKVcYXED8/uujYcMza1jW81ST
+	 t2FpJ0iq8DIs7wAIvSxUDGbD7ttiEtdyzun9uvrWkiNsI9AWQ4jwRqYR8nsW+kIDIW
+	 nt+WxmSkLSoZf3VmG0zjf4EClldhybwBxLF2drK3FKSBAIgpCf9WBjfeBd3dnCSwI2
+	 WKgGRFwrbXArZFQO7r6aea1VNmzD/dLb86VzcqTt5i4J/BapByaUpYtCLUAJKRZo5d
+	 M70gZwtqbyIaSVoKl5FkS0IjqO4oX8DlzW0eJxZCXovJyZtXaxOp2kgmnEbaNVi48p
+	 ORB5HE8Gwq34Q==
+Date: Fri, 11 Apr 2025 11:05:31 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	andriy.shevchenko@intel.com,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	linux-kernel@vger.kernel.org, Michael Walle <mwalle@kernel.org>,
+	linux-pwm@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Danilo Krummrich <dakr@kernel.org>, Mark Brown <broonie@kernel.org>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 01/12] dt-bindings: mfd: gpio: Add MAX7360
+Message-ID: <174438751337.3319673.5204335405880872375.robh@kernel.org>
+References: <20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com>
+ <20250409-mdb-max7360-support-v6-1-7a2535876e39@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,37 +71,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250408120919.GB1727154@ziepe.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20250409-mdb-max7360-support-v6-1-7a2535876e39@bootlin.com>
 
-On Tue, Apr 08, 2025 at 09:09:19AM -0300, Jason Gunthorpe wrote:
-> On Tue, Apr 08, 2025 at 09:03:51AM +0530, Aneesh Kumar K.V (Arm) wrote:
-> > Commit 67e4fe398513 ("iommu/arm-smmu-v3: Use S2FWB for NESTED domains")
-> > introduced S2FWB usage but omitted the corresponding feature detection.
-> > As a result, vIOMMU allocation fails on FVP in arm_vsmmu_alloc(), due to
-> > the following check:
-> > 
-> > 	if (!arm_smmu_master_canwbs(master) &&
-> > 	    !(smmu->features & ARM_SMMU_FEAT_S2FWB))
-> > 		return ERR_PTR(-EOPNOTSUPP);
-> > 
-> > This patch adds the missing detection logic to prevent allocation
-> > failure when S2FWB is supported.
-> > 
-> > Fixes: 67e4fe398513 ("iommu/arm-smmu-v3: Use S2FWB for NESTED domains")
-> > Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> > ---
-> >  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 ++
-> >  1 file changed, 2 insertions(+)
+
+On Wed, 09 Apr 2025 16:55:48 +0200, Mathieu Dubois-Briand wrote:
+> Add device tree bindings for Maxim Integrated MAX7360 device with
+> support for keypad, rotary, gpios and pwm functionalities.
 > 
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+> ---
+>  .../bindings/gpio/maxim,max7360-gpio.yaml          |  83 ++++++++++
+>  .../devicetree/bindings/mfd/maxim,max7360.yaml     | 171 +++++++++++++++++++++
+>  2 files changed, 254 insertions(+)
 > 
-> This should go to rc
 
-Yup. I'll pick this up next week along with any other SMMU fixes kicking
-around.
+With the typos fixed,
 
-Cheers,
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Will
 
