@@ -1,86 +1,64 @@
-Return-Path: <linux-kernel+bounces-601117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02267A8696B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 01:45:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCC6A8696D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 01:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ACCB8A7121
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 23:43:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 955844C18EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 23:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF9B2BF3C6;
-	Fri, 11 Apr 2025 23:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFF72BF3DF;
+	Fri, 11 Apr 2025 23:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XQ3dwEZX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hvv8jGzH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB652BEC50
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 23:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97DC2BEC59;
+	Fri, 11 Apr 2025 23:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744415014; cv=none; b=oJPxnAqsAF5MpwrJM1NnYRYTaJ6buc5nQoR3K/ANEmKntTWi/sr1oVn+FUlESpDLvF3nLsLYqmYsnYjE2AlcXLzux3SlHxP31dXr9s55YJkc07HGuS73ki/GCbThgeH6RJOmHajDbf1arSlHUDIp4G15qgwbPBprMaSBNToRks0=
+	t=1744415073; cv=none; b=qp0H4PxHTI0Q7/K7WWu7S2lX+8vqPnczZgb+gB4bCB4BtkFZU7kZXS5ivP+UMPn3XiL6TKWX1cWpo1ovVTfOqdemHEg6Ws0IXo2WzZIdL/E7qCY24rpAQwSLpmIcrzTZcOUsm9qvb/ec2IsIHleqzJHIwCacoJG+vXCeUPkaqpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744415014; c=relaxed/simple;
-	bh=RcYfp/RjV5F1dKaHB49S7m3vw72njaVwN3ugq7P95S4=;
+	s=arc-20240116; t=1744415073; c=relaxed/simple;
+	bh=nTiktkxwTTIuoaDMGBCESJQS0PIKAYmw7EA1N95Tnhs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gfi1kgJqV/IoG32Wx/ciQKJ8s3EvwFdAdWsp0r06lad5ADdbJJ55rA4VP/bHm/GAY/Fg+lXA7LVq4n/q7j3xDv4Z4bTcMk1m6eSyHgrZb9NQSLvDh8HMiWYsmISpg72ulGS//802xqx0GPVxA7dKSaEr2FIyveAwof1sxwbqf3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XQ3dwEZX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53BGAKSF000641
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 23:43:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5kuwO957i06jlGl35YGVg3kdzK0saemUuXwQScoMGh0=; b=XQ3dwEZX9tsZtwYx
-	/NE4ChGMLeguTVuiUE5GTgb82bXZruH6tgXuUkNKhN7YkOFrqSq34aIAV5aSfa7m
-	xIjah+eQ3uKG2OYh5FeHXz/L3geQhOqT4Vhvu0Ih/q8kCwwN36KprfI+nt92VU5p
-	D1WPQ8LoPZwasbs2uCg1ZXvOcf2czFwOVXTH1CHa/Vl3J4WOhAgrrWHMNDG9cFAQ
-	0Jehvvro6M1twbc6KduVg3RyAqp828vM0OUsIJPkvkVLkpKTHPIlp8nSIb8l363F
-	N4iMRcDnnWEHpnn9tKEaC1TJhr+768RLaZ92pEosQJY7JYwbdE4fB/4S3uQ7tMl0
-	/s5hBQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twd33vnj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 23:43:30 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c54734292aso62686585a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 16:43:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744415009; x=1745019809;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5kuwO957i06jlGl35YGVg3kdzK0saemUuXwQScoMGh0=;
-        b=CenQ9CxGsjvpv7yI102NqB6926l6XYAbItlyzdeJw33ibP0dcWoEa/MeWkXY/c2KWY
-         cVxnoyQ1XgTzzyTRAh0py/xUuLriVh5pcfoiK3gR3EXFKZRLxz/2TeF0ldQxCmqbJbkF
-         ixKxg2EKY2z6i/cgEV/OoCS91I8DL1B8qI2CxUYd1g8Gp/REAutpaIDeBxckneyB4L3Y
-         ym8r8HGlrhxS/zE38VJMUxPnyhJI89fSIMmGtucoVRAoFBwB+Dk5cj2FBA799sylrJlD
-         +S9C/bNmjzqg7g93gc36PGsx15bODFWvX/xD+E+JClWm7zAGKHEP685BaRpJTVftw13U
-         prrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVD544+GsWEoJXoKd2Gi6NkSvyW9zszr9j7f/r8aamv3HbPqOhFnIwsE8xUnvK9OuCG4xpu1RAtbJOHk4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxefgzBrFmKocduC0Cs4on4YuAWKi4nP+SJs7DZJxNs734uAMsl
-	FXwRj8W4bfbz2EowSp3FknBwIrfrhRFLJN7obDDsU09cCSQEHw0ItxA/BkwcgbVCUbWgPI7ZSMY
-	+Sl3s2XUEgTcSP6C/pbQwq0MMkgC3ZPmYTgjoesz2DV+xUvdgicS1WdzJ95d18DI=
-X-Gm-Gg: ASbGncu4KXmxGFwACkPS5jTz3mlkyDH2vMRfKsXktxVddqW1GGT3kFxutCYSNTyvkt/
-	YeyWK4LGhX+Sq1tJ7eIhSUpX0jmQ1zZuj2nlHvWzdwbBBMOsCnrzJanfWavM8AglNfK2e7CFpbe
-	vGnHPnSmlu3X3XY5wmhkwfkAo1PZnims5TmBPTccWVxan5q/b10FZCYTungm6iiT+3Wc5F+yTRs
-	SZxtVds+Bf/MpsOvQHufPPB6VNao0zYTV2RoSkwm36aEdyhcsIPspPnXTgwjCK0vNiRf9C6vgn+
-	b5ZMSBW/n9DRKgu3bdwlgvociA3yCHNuxn0mH+A1Ri6zMH1UKIkuuiAj79jCMFb5Lg==
-X-Received: by 2002:a05:6214:f0b:b0:6d8:a091:4f52 with SMTP id 6a1803df08f44-6f230ed2d8emr20608346d6.7.1744415009365;
-        Fri, 11 Apr 2025 16:43:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGjBNP6sTL79kHO3BeKhFTVOdbgi543Y7RfDMhY1m1LwH1hR6cEmGuWH0TjpSSwXUHB3XNjhA==
-X-Received: by 2002:a05:6214:f0b:b0:6d8:a091:4f52 with SMTP id 6a1803df08f44-6f230ed2d8emr20608246d6.7.1744415009028;
-        Fri, 11 Apr 2025 16:43:29 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1cb3fcdsm519045966b.107.2025.04.11.16.43.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 16:43:28 -0700 (PDT)
-Message-ID: <7f893243-572b-4e23-8f2b-ae364d154107@oss.qualcomm.com>
-Date: Sat, 12 Apr 2025 01:43:26 +0200
+	 In-Reply-To:Content-Type; b=bOwPUsZ3XRZZVa5vNLTSLLO3Ogr8uP8qX/ZTODb81wJK2V17kpQtFejzclJF+AXBvaCF+JFiAuU4VvrWcIrUHIzPLkz2OI/wx9+1GVG6aXzrMoApk+0EHCxhZNvxz+lhp/qQpU1e5NNisP2GjABRDViE0jm6VCOJvlSXgSbEvKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hvv8jGzH; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744415072; x=1775951072;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=nTiktkxwTTIuoaDMGBCESJQS0PIKAYmw7EA1N95Tnhs=;
+  b=hvv8jGzH0+iyr+oc42nViBeZzAtDb5E32FzbD6tgZmJs4koG9E87DgRK
+   G7/HqodxnVLERFRMGT4Bp/11UF53C4N+z762omKrfQAl/f9LcVjdBauay
+   3MHs0S5MKELna8IlZpGdLo8lh1b2TJe54VgYpp1WGSGNgGPswTW6tK429
+   ui83al0juWHFnDv2Jni9d0VNiPUqvpxcG42QQeg//ssUGW5VgQeiXzb0f
+   67UlsRqdXwCzj/ZnaCbcsiRfDbdw8IyXp54wKvUd7m0qZ55z47NUsikk0
+   q56kBI0+R4v+wDlyUdybcYhhS4ExT7gpREARa5RBmrd8gZrNBg0U9F8Y6
+   g==;
+X-CSE-ConnectionGUID: Qw1wZL/PTs61ZIK87CjCqA==
+X-CSE-MsgGUID: aLBCiYS/Th+e5VfsbXRtPw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11401"; a="49808013"
+X-IronPort-AV: E=Sophos;i="6.15,206,1739865600"; 
+   d="scan'208";a="49808013"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 16:44:20 -0700
+X-CSE-ConnectionGUID: yeIxdz7XQxqWRWXxqIROJA==
+X-CSE-MsgGUID: tOssRkaKTcytuSJFzbuMgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,206,1739865600"; 
+   d="scan'208";a="134483138"
+Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO [10.124.221.159]) ([10.124.221.159])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 16:44:16 -0700
+Message-ID: <08b63835-121d-4adc-8f03-e68f0b0cabdf@intel.com>
+Date: Fri, 11 Apr 2025 16:44:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,121 +66,147 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] arm64: dts: qcom: Enable TSENS support for QCS615
- SoC
-To: Gaurav Kohli <quic_gkohli@quicinc.com>, amitk@kernel.org,
-        rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com,
-        lukasz.luba@arm.com, robh@kernel.org, krzk+dt@kernel.org,
-        andersson@kernel.org, konradybcio@kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, quic_manafm@quicinc.com
-References: <cover.1744292503.git.quic_gkohli@quicinc.com>
- <76e0ce0e312f691abae7ce0fd422f73306166926.1744292503.git.quic_gkohli@quicinc.com>
+Subject: Re: [PATCH 05/11] x86: remove HIGHMEM64G support
+To: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
+ x86@kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andy Shevchenko <andy@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Sean Christopherson <seanjc@google.com>,
+ Davide Ciminaghi <ciminaghi@gnudd.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ kvm@vger.kernel.org, Mike Rapoport <rppt@kernel.org>
+References: <20241204103042.1904639-1-arnd@kernel.org>
+ <20241204103042.1904639-6-arnd@kernel.org>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <76e0ce0e312f691abae7ce0fd422f73306166926.1744292503.git.quic_gkohli@quicinc.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20241204103042.1904639-6-arnd@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: AXIDAOCXSWZMnJr3blSnQbGJIQzGNQ66
-X-Proofpoint-GUID: AXIDAOCXSWZMnJr3blSnQbGJIQzGNQ66
-X-Authority-Analysis: v=2.4 cv=NaLm13D4 c=1 sm=1 tr=0 ts=67f9a922 cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=b6z04DhpLtwLpLbA0DcA:9 a=QEXdDO2ut3YA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-11_09,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- priorityscore=1501 adultscore=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 bulkscore=0 mlxlogscore=796 clxscore=1015 phishscore=0
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504110155
 
-On 4/10/25 4:00 PM, Gaurav Kohli wrote:
-> Add TSENS and thermal devicetree node for QCS615 SoC.
-> 
-> Signed-off-by: Gaurav Kohli <quic_gkohli@quicinc.com>
-> ---
+Has anyone run into any problems on 6.15-rc1 with this stuff?
 
-subject: "arm64: dts: qcom: qcs615: ..">  arch/arm64/boot/dts/qcom/qcs615.dtsi | 281 +++++++++++++++++++++++++++
->  1 file changed, 281 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> index edfb796d8dd3..f0d8aed7da29 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> @@ -3668,6 +3668,17 @@ usb_2_dwc3: usb@a800000 {
->  				maximum-speed = "high-speed";
->  			};
->  		};
-> +
-> +		tsens0: tsens@c222000 {
-> +			compatible = "qcom,qcs615-tsens", "qcom,tsens-v2";
-> +			reg = <0x0 0xc263000 0x0 0x1ff>,
-> +				<0x0 0xc222000 0x0 0x8>;
-Pad the address part to 8 hex digits with leading zeroes> +			interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>,
+0xf75fe000 is the mem_map[] entry for the first page >4GB. It obviously
+wasn't allocated, thus the oops. Looks like the memblock for the >4GB
+memory didn't get removed although the pgdats seem correct.
 
-&pdc 26
+I'll dig into it some more. Just wanted to make sure there wasn't a fix
+out there already.
 
-> +					<GIC_SPI 508 IRQ_TYPE_LEVEL_HIGH>;
+The way I'm triggering this is booting qemu with a 32-bit PAE kernel,
+and "-m 4096" (or more).
 
-&pdc 28
+> [    0.003806] Warning: only 4GB will be used. Support for for CONFIG_HIGHMEM64G was removed!
+...
+> [    0.561310] BUG: unable to handle page fault for address: f75fe000
+> [    0.562226] #PF: supervisor write access in kernel mode
+> [    0.562947] #PF: error_code(0x0002) - not-present page
+> [    0.563653] *pdpt = 0000000002da2001 *pde = 000000000300c067 *pte = 0000000000000000 
+> [    0.564728] Oops: Oops: 0002 [#1] SMP NOPTI
+> [    0.565315] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.15.0-rc1-00288-ge618ee89561b-dirty #311 PREEMPT(undef) 
+> [    0.567428] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> [    0.568777] EIP: __free_pages_core+0x3c/0x74
+> [    0.569378] Code: c3 d3 e6 83 ec 10 89 44 24 08 89 74 24 04 c7 04 24 c6 32 3a c2 89 55 f4 e8 a9 11 45 fe 85 f6 8b 55 f4 74 19 89 d8 31 c9 66 90 <0f> ba 30 0d c7 40 1c 00 00 00 00 41 83 c0 28 39 ce 75 ed 8b 03 c1
+> [    0.571943] EAX: f75fe000 EBX: f75fe000 ECX: 00000000 EDX: 0000000a
+> [    0.572806] ESI: 00000400 EDI: 00500000 EBP: c247becc ESP: c247beb4
+> [    0.573776] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00210046
+> [    0.574606] CR0: 80050033 CR2: f75fe000 CR3: 02da6000 CR4: 000000b0
+> [    0.575464] Call Trace:
+> [    0.575816]  memblock_free_pages+0x11/0x2c
+> [    0.576392]  memblock_free_all+0x2ce/0x3a0
+> [    0.576955]  mm_core_init+0xf5/0x320
+> [    0.577423]  start_kernel+0x296/0x79c
+> [    0.577950]  ? set_init_arg+0x70/0x70
+> [    0.578478]  ? load_ucode_bsp+0x13c/0x1a8
+> [    0.579059]  i386_start_kernel+0xad/0xb0
+> [    0.579614]  startup_32_smp+0x151/0x154
+> [    0.580100] Modules linked in:
+> [    0.580358] CR2: 00000000f75fe000
+> [    0.580630] ---[ end trace 0000000000000000 ]---
+> [    0.581111] EIP: __free_pages_core+0x3c/0x74
+> [    0.581455] Code: c3 d3 e6 83 ec 10 89 44 24 08 89 74 24 04 c7 04 24 c6 32 3a c2 89 55 f4 e8 a9 11 45 fe 85 f6 8b 55 f4 74 19 89 d8 31 c9 66 90 <0f> ba 30 0d c7 40 1c 00 00 00 00 41 83 c0 28 39 ce 75 ed 8b 03 c1
+> [    0.584767] EAX: f75fe000 EBX: f75fe000 ECX: 00000000 EDX: 0000000a
+> [    0.585651] ESI: 00000400 EDI: 00500000 EBP: c247becc ESP: c247beb4
+> [    0.586530] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00210046
+> [    0.587480] CR0: 80050033 CR2: f75fe000 CR3: 02da6000 CR4: 000000b0
+> [    0.588344] Kernel panic - not syncing: Attempted to kill the idle task!
+> [    0.589435] ---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
 
-Please align the <s
-
-> +			#qcom,sensors = <16>;
-> +			interrupt-names = "uplow", "critical";
-
-it would make sense for interrupt-names to come right under interrupts
-> +			#thermal-sensor-cells = <1>;
-> +		};
->  	};
->  
->  	arch_timer: timer {
-> @@ -3677,4 +3688,274 @@ arch_timer: timer {
->  			     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
->  			     <GIC_PPI 0 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
->  	};
-> +
-> +	thermal-zones {
-> +		aoss-thermal {
-> +			thermal-sensors = <&tsens0 0>;
-> +
-> +			trips {
-> +
-> +				trip-point0 {
-> +					temperature = <110000>;
-> +					hysteresis = <5000>;
-> +					type = "passive";
-> +				};
-> +			};
-> +		};
-> +
-> +		cpuss-0-thermal {
-> +			thermal-sensors = <&tsens0 1>;
-> +
-> +			trips {
-> +
-> +				trip-point0 {
-> +					temperature = <115000>;
-> +					hysteresis = <5000>;
-> +					type = "passive";
-> +				};
-> +
-> +				trip-point1 {
-> +					temperature = <118000>;
-> +					hysteresis = <5000>;
-> +					type = "passive";
-> +				};
-
-Please drop the passive trip point for the *CPU* tzones, see
-
-commit 06eadce936971dd11279e53b6dfb151804137836
-("arm64: dts: qcom: x1e80100: Drop unused passive thermal trip points for CPU")
-
-and add a single critical point instead, see
-
-commit 03f2b8eed73418269a158ccebad5d8d8f2f6daa1
-("arm64: dts: qcom: x1e80100: Apply consistent critical thermal shutdown")
-
-Konrad
+> [    0.561310] BUG: unable to handle page fault for address: f75fe000
+> [    0.562226] #PF: supervisor write access in kernel mode
+> [    0.562947] #PF: error_code(0x0002) - not-present page
+> [    0.563653] *pdpt = 0000000002da2001 *pde = 000000000300c067 *pte = 0000000000000000 
+> [    0.564728] Oops: Oops: 0002 [#1] SMP NOPTI
+> [    0.565315] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.15.0-rc1-00288-ge618ee89561b-dirty #311 PREEMPT(undef) 
+> [    0.567428] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> [    0.568777] EIP: __free_pages_core+0x3c/0x74
+> [    0.569378] Code: c3 d3 e6 83 ec 10 89 44 24 08 89 74 24 04 c7 04 24 c6 32 3a c2 89 55 f4 e8 a9 11 45 fe 85 f6 8b 55 f4 74 19 89 d8 31 c9 66 90 <0f> ba 30 0d c7 40 1c 00 00 00 00 41 83 c0 28 39 ce 75 ed 8b 03 c1
+> [    0.571943] EAX: f75fe000 EBX: f75fe000 ECX: 00000000 EDX: 0000000a
+> [    0.572806] ESI: 00000400 EDI: 00500000 EBP: c247becc ESP: c247beb4
+> [    0.573776] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00210046
+> [    0.574606] CR0: 80050033 CR2: f75fe000 CR3: 02da6000 CR4: 000000b0
+> [    0.575464] Call Trace:
+> [    0.575816]  memblock_free_pages+0x11/0x2c
+> [    0.576392]  memblock_free_all+0x2ce/0x3a0
+> [    0.576955]  mm_core_init+0xf5/0x320
+> [    0.577423]  start_kernel+0x296/0x79c
+> [    0.577950]  ? set_init_arg+0x70/0x70
+> [    0.578478]  ? load_ucode_bsp+0x13c/0x1a8
+> [    0.579059]  i386_start_kernel+0xad/0xb0
+> [    0.579614]  startup_32_smp+0x151/0x154
+> [    0.580100] Modules linked in:
+> [    0.580358] CR2: 00000000f75fe000
+> [    0.580630] ---[ end trace 0000000000000000 ]---
+> [    0.581111] EIP: __free_pages_core+0x3c/0x74
+> [    0.581455] Code: c3 d3 e6 83 ec 10 89 44 24 08 89 74 24 04 c7 04 24 c6 32 3a c2 89 55 f4 e8 a9 11 45 fe 85 f6 8b 55 f4 74 19 89 d8 31 c9 66 90 <0f> ba 30 0d c7 40 1c 00 00 00 00 41 83 c0 28 39 ce 75 ed 8b 03 c1
+> [    0.584767] EAX: f75fe000 EBX: f75fe000 ECX: 00000000 EDX: 0000000a
+> [    0.585651] ESI: 00000400 EDI: 00500000 EBP: c247becc ESP: c247beb4
+> [    0.586530] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00210046
+> [    0.587480] CR0: 80050033 CR2: f75fe000 CR3: 02da6000 CR4: 000000b0
+> [    0.588344] Kernel panic - not syncing: Attempted to kill the idle task!
+> [    0.589435] ---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
 
