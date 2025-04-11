@@ -1,202 +1,155 @@
-Return-Path: <linux-kernel+bounces-600471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B15A8604F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:18:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16ED7A86045
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D21CC9A2759
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:16:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58FF8170BF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7C81F583D;
-	Fri, 11 Apr 2025 14:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4F31F3BB0;
+	Fri, 11 Apr 2025 14:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dhBgBel2"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vgbJMh/l";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4ixnTbgW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761A11F8BBD;
-	Fri, 11 Apr 2025 14:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155BC26AD9;
+	Fri, 11 Apr 2025 14:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744380935; cv=none; b=ArrcMlcjw6vU5Twcs74lY3tAVXNUwiBEnWZZ8sOsiySwr/xg7cBzvaCsK2tx3F/YUmGuy3hxILpn0owpA+vN7+N4s8V9RpHkxzGUUFbzY658wpozciKYmRePKnCflfwqc0mDk4nftshLK9rRLfgjft+YJ17SugUgSjdJNDnUWa8=
+	t=1744380926; cv=none; b=kggN3Ni/HaK3VtAbliVPQwc3bcOIOXb91HQQxzfQJwDefhqoCpjK9R4z3jqTWC+mDzOudICNiHi/3WokaKDFe0yiExF8/L7yr2s4TY243v1nQrYh2cvpFKwIEDSsDL0iUschzyE2lRaSDaI+J6e6cKF0t8St4VPid9UM0i/7OQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744380935; c=relaxed/simple;
-	bh=Oh6U9/8vWzalKUh9y0isy++XZ4EmqSNgNeYBlVBTepY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bMoXMx7/7PxvDwxwefHPiZrsU2VU5enx0dcz8Xi3SVjrfUJeQKgWR68OFjKicmZFK3638DGWXw+NlfvBolv2DcMysSIdQMXDpUP18kgo+2CEKPFWL5nTmu4nQz0aXWBDXyqq78L/PajYIJTdPukBoHUMUqPTbXSD3066nFEfUh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dhBgBel2; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7399838db7fso2048126b3a.0;
-        Fri, 11 Apr 2025 07:15:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744380934; x=1744985734; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P8ZWpaaoL0rpCV5zM+76p6yH0fnIHdpxWJLBhCTwKfU=;
-        b=dhBgBel2X6Yc+pSDXJnFpXUO+wZ0xi3AzZkw+BuSJG2Y9ng/G6vjkB8I5ya77/3pVN
-         D0HO+Be3Ui0cRHH7RFQ9P8FMsh6vC5KiohtVlK16dDKXSbp8o0o5WZ7nSpzo1dKhNVdY
-         gDKa72xPthYEOWTWvABym86IrURgkLSJhGZBgVuWY5kBsyFdPkTTn4/VBlvJ9Flvb2wm
-         zCZTfFis9Q/W+/FlOFlO31N2gCVbo9/9S7doN2RCnNeliVaow7ZwZ3ydb1PdaSEmqpWQ
-         urw/KU0f9NHXRUmh7cZAVW+LXANv2nYWoL6EzBE7fDLh7iCLeit+b7uTvFRpOthh1QHd
-         Zqtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744380934; x=1744985734;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P8ZWpaaoL0rpCV5zM+76p6yH0fnIHdpxWJLBhCTwKfU=;
-        b=fDz56byd/KvRPUIDgvnscvQfVNUtMaREi8E5/Mk4HXkuTwOlZCSs//y0p7sx/JthP8
-         qER2fBKqH5doJXD7/IAt0UjCT6Gl2qInnY3kuiJ3Sm3N0+eCkWGqfdt7fYT/J9Vqq5eh
-         pksB0JL67M7Eb7qbV/Aglge4Fd7w8pDunehinlG7zneQ2trq1Yh4y/zbVhd3e2KYdFc7
-         2XLukbj3GadXLZ7Tqy8SJlA+X29EizQ03aHa5ZiPB/PbEgIsyqhCMG1aetJShDR+cAQ7
-         Okxi1GemooVHzbjIQy7YlDkOwOGEtGxLLkPkCv5DIDtYRW+vtrWfPhGL816dGnHcg62H
-         S1sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKY6ktp5wASupL3rCLcgFaQk1i7sbLgTJUtx4jLWgaiCkNSh/M3xHHX1GtSkpPVEDkBOaVNVgU@vger.kernel.org, AJvYcCV7IuBCJaRf+9n446Oy/HrhbwCMd5dqlJ2NRiMbiMG/2U8BsRGJnklRVjSEhcNrb9bXt+/bP54nUEzEPpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiSKjycc35GL52X0+2Ef9j7jxEHoJpFwA+FDen4H3eTHPddB8d
-	3uJVhVohKCez9qdJYHP+DpAL3RKRodfx1pdiioCpKncEZWGLPziu
-X-Gm-Gg: ASbGnctPG3RusgcmCKET5TmC9sZKeOfqxzk1ta5Y8m/b1pLuURP2sSgTk0H77xJKe/H
-	f5nkKYnWl6uHlHibXIebYiVB34kULGsyYHM5DhPDvpCBawjrSxcnSaeDVR+euIa4h8VWvzUPhuz
-	rUl8KA2kGjXlAGYhVscaMJd6B4R9LGyFfQIdbGIrGsMudq8NjlFFFpNASLF729MYercnvCZJq2u
-	PeLff0JJKHUBonCj3HzPL5CUNgbSQnKlNTQkqRzMAL9etGN48a9CWICHFAIGJ8fd14g1sW01Wtl
-	h74Zej5BehnAkZGeaTsKf3uEPAIMwurUreILkIy5
-X-Google-Smtp-Source: AGHT+IGqjI7b4qJLsnr8D5Igjr103VAfd9kQUdc1ZbI+EdPXcUbGHC8HtKN8lgIpPjOO86kH+w/aag==
-X-Received: by 2002:a05:6a00:240c:b0:728:f21b:ce4c with SMTP id d2e1a72fcca58-73bd0c23fa5mr4368004b3a.5.1744380933679;
-        Fri, 11 Apr 2025 07:15:33 -0700 (PDT)
-Received: from [192.168.1.26] ([181.91.133.137])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21c4e69sm1575899b3a.53.2025.04.11.07.15.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 07:15:33 -0700 (PDT)
-From: Kurt Borja <kuurtb@gmail.com>
-Date: Fri, 11 Apr 2025 11:14:36 -0300
-Subject: [PATCH 2/2] platform/x86: alienware-wmi-wmax: Extend support to
- more laptops
+	s=arc-20240116; t=1744380926; c=relaxed/simple;
+	bh=yKn+5SF3Dpgrv0+A7PseJ1UZlNnllcUAY/s/idgnMtw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dchv2nheNO8hRHxCoyVnuOG+UUS+9o3AeJLYddLvQzShfBEhiNlCaoN2vBBgEdTpI354YXRs8VEbAjoS2uHAUBNzQjT4v6XP7OlEExvDca8+bfQ7chuIkFEOGIJJoZ7fWEr/mQJ8MWPv7mpjMpxGZpmRczUXi4H+rJOnZdpgd6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vgbJMh/l; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4ixnTbgW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 11 Apr 2025 16:15:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744380923;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hxO+YChvuje2MP0BYtkRHXq4kPQhbbBFk2Mh1TGHe2Q=;
+	b=vgbJMh/lwXQuVgee5QjyEPZ5BWev+nDayzQ7/OyZz0sU/gVEU2VLKWnyfGExek2aZwf1Yi
+	0p7GrX3otiSwLlvp+MbQKCHYKAwmjI/CW5ms8eGrriuoZO7Lm3hpiq4HEF85QTe/UCBSKd
+	T8boPsW/li5t3WtjU3rnD1yLaU30+uG1XnlUjaGcXQi55ug1vZgPLiNaUVtoVjTA5FmMRL
+	zPmzUR+s0kCW/PpTEfw7t8grlnxTxUn/9aFi+Vaupkv4apisCu2QxwfQqjN9FRp3H9JDiz
+	FFRHPdlurY48EDX3OWl6/p8aJFmsriY52rDJ5m2rP6IZ0E2LMODW1MYesCyiIg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744380923;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hxO+YChvuje2MP0BYtkRHXq4kPQhbbBFk2Mh1TGHe2Q=;
+	b=4ixnTbgWR0rqxsqOKcMXOg9Rzl/maCEmIWgKmxq8UgS94eODhcoDnvZRfSYuG+Bk3DTx8J
+	L/KhU0XKtaye2QCQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	john.ogness@linutronix.de
+Subject: Re: [PATCH v2 13/22] rv: Add support for LTL monitors
+Message-ID: <20250411141521.eCdcbw70@linutronix.de>
+References: <cover.1744355018.git.namcao@linutronix.de>
+ <5dbd62940b252ee49777e9c4298eadd644bf6526.1744355018.git.namcao@linutronix.de>
+ <ce9ef5e41c17953010bd31d19e7d2840cd533066.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250411-awcc-support-v1-2-09a130ec4560@gmail.com>
-References: <20250411-awcc-support-v1-0-09a130ec4560@gmail.com>
-In-Reply-To: <20250411-awcc-support-v1-0-09a130ec4560@gmail.com>
-To: Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Armin Wolf <W_Armin@gmx.de>
-Cc: platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
- linux-kernel@vger.kernel.org, Kurt Borja <kuurtb@gmail.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce9ef5e41c17953010bd31d19e7d2840cd533066.camel@redhat.com>
 
-Extend thermal control support to:
+On Fri, Apr 11, 2025 at 01:17:30PM +0200, Gabriele Monaco wrote:
+> On Fri, 2025-04-11 at 09:37 +0200, Nam Cao wrote:
+> > +struct ltl_monitor {
+> > +#ifdef CONFIG_RV_LTL_MONITOR
+> > +	DECLARE_BITMAP(states, RV_MAX_BA_STATES);
+> > +	DECLARE_BITMAP(atoms, RV_MAX_LTL_ATOM);
+> > +	DECLARE_BITMAP(unknown_atoms, RV_MAX_LTL_ATOM);
+> > +#endif
+> > +};
+> 
+> Mmh, we have a lot of those ifdefs in quite inappropriate places, but I
+> think we can do better than this.
+> 
+> What about something like:
+> 
+> #ifdef CONFIG_RV_LTL_MONITOR
+> 
+> struct ltl_monitor {
+> 	DECLARE_BITMAP(states, RV_MAX_BA_STATES);
+> 	DECLARE_BITMAP(atoms, RV_MAX_LTL_ATOM);
+> 	DECLARE_BITMAP(unknown_atoms, RV_MAX_LTL_ATOM);
+> };
+> 
+> static inline bool rv_ltl_valid_state(struct ltl_monitor *mon)
+> {
+> 	...
+> }
+> 
+> static inline bool rv_ltl_all_atoms_known(struct ltl_monitor *mon)
+> {
+> 	...
+> }
+> 
+> #else
+> 
+> /*
+>  * Leave the struct empty not to use up space
+>  * In a later patch we could do the same for DAs..
+>  */
+> struct ltl_monitor { };
+> 
+> #endif
 
- - Alienware Area-51m R2
- - Alienware m16 R1
- - Alienware m16 R2
- - Dell G16 7630
- - Dell G5 5505 SE
+I have no preference for either, so sure!
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
----
- drivers/platform/x86/dell/alienware-wmi-wmax.c | 48 ++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+> > diff --git a/include/rv/ltl_monitor.h b/include/rv/ltl_monitor.h
+> > new file mode 100644
+> > index 000000000000..78f5a1197665
+> > --- /dev/null
+> > +++ b/include/rv/ltl_monitor.h
+> 
+> You hate macros don't you? :)
 
-diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-index 5b6a0c866be220aacef795491d4f64d575740e20..0c3be03385f899b1b1f678a9d111eb610cedda0a 100644
---- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
-+++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-@@ -61,6 +61,22 @@ static struct awcc_quirks generic_quirks = {
- static struct awcc_quirks empty_quirks;
- 
- static const struct dmi_system_id awcc_dmi_table[] __initconst = {
-+	{
-+		.ident = "Alienware Area-51m R2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware Area-51m R2"),
-+		},
-+		.driver_data = &generic_quirks,
-+	},
-+	{
-+		.ident = "Alienware m16 R1",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware m16 R1"),
-+		},
-+		.driver_data = &g_series_quirks,
-+	},
- 	{
- 		.ident = "Alienware m16 R1 AMD",
- 		.matches = {
-@@ -69,6 +85,14 @@ static const struct dmi_system_id awcc_dmi_table[] __initconst = {
- 		},
- 		.driver_data = &g_series_quirks,
- 	},
-+	{
-+		.ident = "Alienware m16 R2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware m16 R2"),
-+		},
-+		.driver_data = &generic_quirks,
-+	},
- 	{
- 		.ident = "Alienware m17 R5",
- 		.matches = {
-@@ -93,6 +117,14 @@ static const struct dmi_system_id awcc_dmi_table[] __initconst = {
- 		},
- 		.driver_data = &generic_quirks,
- 	},
-+	{
-+		.ident = "Alienware x15 R2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware x15 R2"),
-+		},
-+		.driver_data = &generic_quirks,
-+	},
- 	{
- 		.ident = "Alienware x17 R2",
- 		.matches = {
-@@ -125,6 +157,14 @@ static const struct dmi_system_id awcc_dmi_table[] __initconst = {
- 		},
- 		.driver_data = &g_series_quirks,
- 	},
-+	{
-+		.ident = "Dell Inc. G16 7630",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Dell G16 7630"),
-+		},
-+		.driver_data = &g_series_quirks,
-+	},
- 	{
- 		.ident = "Dell Inc. G3 3500",
- 		.matches = {
-@@ -149,6 +189,14 @@ static const struct dmi_system_id awcc_dmi_table[] __initconst = {
- 		},
- 		.driver_data = &g_series_quirks,
- 	},
-+	{
-+		.ident = "Dell Inc. G5 5505",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "G5 5505"),
-+		},
-+		.driver_data = &g_series_quirks,
-+	},
- };
- 
- enum WMAX_THERMAL_INFORMATION_OPERATIONS {
+YES!
 
--- 
-2.49.0
+> Anyway I really like your approach, very neat.
 
+Thank you! I'm very happy to have found a way to escape the macros.
+
+> > +static struct ltl_monitor *ltl_get_monitor(struct task_struct *task)
+> > +{
+> > +	return &task->rv[ltl_monitor_slot].ltl_mon;
+> > +}
+> 
+> This means ltl monitors only support per-task, right?
+
+Yes.
+
+> It shouldn't take much effort putting an ifdef chain here and defining e.g.
+> PER_CPU in the header file to choose a different get_monitor.
+> Or directly an ltl_monitor_implicit.h
+
+Yes, either can work.
+
+> I think this patch is ready without it, just trying to brainstorm how we could
+> potentially extend this.
+> 
+> I need more time to play with these, but it looks promising.
+
+Thank you,
+Nam
 
