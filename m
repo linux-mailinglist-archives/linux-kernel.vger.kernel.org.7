@@ -1,141 +1,103 @@
-Return-Path: <linux-kernel+bounces-600754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98DD8A863FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:06:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 225EDA863EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D25891B83952
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:04:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C53B09C2CF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC87221FCF;
-	Fri, 11 Apr 2025 17:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y1VrOb+0"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E13221F3A;
+	Fri, 11 Apr 2025 17:00:38 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43668221713;
-	Fri, 11 Apr 2025 17:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118FE218AA3;
+	Fri, 11 Apr 2025 17:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744390912; cv=none; b=kNrPNVoPvpuWPte44JFLVN2H6jqSdBB3eMwlQ6rnHQWQXzXJaq/1Y6b8SXfVtof+tic9/1wKY/YSuR4YBoP+ChR+aD2OviO1HETQFP+32CCxbEYfVow1qlFNXM+jp4qm0s7e6Ff3+tK+h/y7Sowd44ZgVOudFxbeZnVnUR0Np/k=
+	t=1744390838; cv=none; b=KqHkc4F6/gf0PVRT6vfn+whAYBobVnYjvC5vOgdjqezLh1YC78/lYdh/hD74Iiig6a7mxjapoF4mG1oT2K5taYkxX7w9k1l5JWlf3ZdW4/qGhsi9kAOmTtCk0ovW2sfo8emGkYLaUBU/nsNX4dk4fJTB/vIifGU7fpQxhi5SMa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744390912; c=relaxed/simple;
-	bh=/KN5H4z7CroAIRt2BKniUi5Cpcgz5JCQepcfrafxVZM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=e07KnRjxqqkLzOD5Y5sL8LmTLsxaArYrfaVjvVWI6lMAY9rz/BgqBMgw/a7yOnNtHoUkzM1T/OEg3yOuKZ3yIkms7FLy7L1GQntQFPttyZP3kldaowDsAA8gcEFpDgMZc6KSF9DBHheGyxJ/JaVp/jceKwkea+ddY4ywkYlI7yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y1VrOb+0; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cec5cd73bso16546265e9.3;
-        Fri, 11 Apr 2025 10:01:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744390908; x=1744995708; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/KN5H4z7CroAIRt2BKniUi5Cpcgz5JCQepcfrafxVZM=;
-        b=Y1VrOb+0jNob7afsv68GcEOPVOMIR5vc715FL9ad3izc99uJSf5j1RlM/qhCRlIqMj
-         G3sfr5c0y9AXJt06q+JdQt4kDpBBv0XqKjNFTAg7bLwXIEGvmtYvyP+aGkqiAwjkryc4
-         XtLBUscPINx81m0DvmSM8aUYNeRB36h7IQJbUKNGO9EJs5fCjodcmSHZvmUwRocBPQSU
-         V1XLUnKiim12zlsGHoLYzHFq0/+Z4PIbX6Ryxgl24q2Xy/NXMojxzWWWWykZl3RajhFh
-         3umKhvoAY3WlLrqBmAUBMxOInQg1Y3J96wYGrk1HT4ncILLrmvpu0tGsbc+CGcxuYyvY
-         CA4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744390908; x=1744995708;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/KN5H4z7CroAIRt2BKniUi5Cpcgz5JCQepcfrafxVZM=;
-        b=BXmSQmP1VtWsgM4L5iN3e7rPBmZo5+Fyp6/B9e7P5TdgCEQQuBqWF8m2qxA69ANw4M
-         p8/8wR95rkP+uIloznxJnmDAgVhgeCjGpbacdE5SOnrrLiECD6FkxtHbo7XecmSqk6jM
-         IGUm+8UUH1LtoLUqq+iBu0/MnRfO1VnSOKqnQPXsX2Sf+COZnkGeM6U+D8M/Pl6RXr+p
-         9B39HCP5+cHCiprIFlu/E15/Id35MKKm3GSPnGOVczfuT3+TT7XIc2AMdkJ+t2f5obUj
-         LI63S6d4rbfu7UvX/AHAt7JUX2FxS7n8+ER0JOU/1xVhzjZN6HZqTLlCnFgr+HNB2oiF
-         bdQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWD2s9culBTnTnDpDjkbVI9bKccfzKL4ibH8Zmlzzcz3X7Vg3ZNIm+eF1GBqMvBp0Zj4lTZJdT2D/F8sKk6@vger.kernel.org, AJvYcCXQahWfplq6S218srZFG6h1Eo2Xzkj+6h6/KFNDf49A2A/oRzNECwoE0S2epCXQ99vJu44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP6GYmtf3F/WaxPvfxKMsYZapfr+IbCftNYF1iDPSMreVpVIF5
-	uEII8Pq0ecyOebrwUNTrLsCEKQ+q3EV+ZBIjswL9+3G6LeNZV82Z
-X-Gm-Gg: ASbGncuagb61R5/8IPoBs+SMMnGx9Kqp4+6rOvDg4guBJn0kB84Em1oZISS+FNt5nF0
-	Y4NMM/eapgu4cgWs7EUUrET0bbpGfiIQHPEaSEYqLbPKAu4amwmsNh4mzn+E8k3zRwR7bz17NCN
-	Q10CwABpBPVDQmlMR8eGU5ZD0TLIIM6D9G2BDhJpqpPfGmPeRYiazdpkH/Ga3TMPhSKXAFn4DwJ
-	PzbnCDTj6dSawoeQcIAeAth+MerStG4R6QrEG0aB7mgwkCHJ8mm5UaV2oEbfMxzPkbYq6K1jykX
-	XPppIdPeILJ0/Y2LVdN3/nEzNUyCYupYDy1l7kWNpQnACyJiKTAAd8NpbiLcHVW/nDzkqMdcGGk
-	gqtRMhOzfl9YVqm9yGexWWQ==
-X-Google-Smtp-Source: AGHT+IFJSlr3fMFwLRozrYI4EVe3jtIuZE4RPCKujDG2hAxxfr6+yYavPIctDfrr4CDrTirY2dtkBA==
-X-Received: by 2002:a05:600c:34ca:b0:43c:f5e4:895e with SMTP id 5b1f17b1804b1-43f3a928afamr31127085e9.1.1744390906560;
-        Fri, 11 Apr 2025 10:01:46 -0700 (PDT)
-Received: from ?IPv6:2001:b07:5d29:f42d:be33:c0f9:503a:236d? ([2001:b07:5d29:f42d:be33:c0f9:503a:236d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f2075fc6dsm93524705e9.28.2025.04.11.10.01.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 10:01:46 -0700 (PDT)
-Message-ID: <521b5214803d404766cb576af2b90fe3ec8326f2.camel@gmail.com>
-Subject: Re: [PATCH v3 14/17] x86/apic: Add kexec support for Secure AVIC
-From: Francesco Lavra <francescolavra.fl@gmail.com>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org
-Cc: bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, 
- dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, nikunj@amd.com, 
- Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
- Suravee.Suthikulpanit@amd.com,  David.Kaplan@amd.com, x86@kernel.org,
- hpa@zytor.com, peterz@infradead.org,  seanjc@google.com,
- pbonzini@redhat.com, kvm@vger.kernel.org,  kirill.shutemov@linux.intel.com,
- huibo.wang@amd.com, naveen.rao@amd.com
-Date: Fri, 11 Apr 2025 19:01:44 +0200
-In-Reply-To: <20250401113616.204203-15-Neeraj.Upadhyay@amd.com>
-References: <20250401113616.204203-1-Neeraj.Upadhyay@amd.com>
-	 <20250401113616.204203-15-Neeraj.Upadhyay@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1744390838; c=relaxed/simple;
+	bh=hO4XGME8TAzrE0q5v6+x5le7ATOxe1KHXdX7KCcunQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CUXPRZdOZhQgcxvzgJv4Cq3wjdeK6e/SOQGgtdEyf2hFnCjhGA+EtP+ZS/EgZapnE5xVWgpzr0KiQzPb0tiWOJGAT1PdWqaP+4llJ9FsoDkj0TlL4fBjzm9dEYB37sIkuk4wKCnbkos+tyd2ZPYfn6TXHGLWOaYV+IStFfF3w9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE6DAC4CEE2;
+	Fri, 11 Apr 2025 17:00:35 +0000 (UTC)
+Date: Fri, 11 Apr 2025 13:02:00 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Sven Schnelle
+ <svens@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren
+ <guoren@kernel.org>, Donglin Peng <dolinux.peng@gmail.com>, Zheng Yejian
+ <zhengyejian@huaweicloud.com>, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH v4 2/4] ftrace: Add support for function argument to
+ graph tracer
+Message-ID: <20250411130200.76b52a61@gandalf.local.home>
+In-Reply-To: <20250411124849.30d612ed@gandalf.local.home>
+References: <20250227185804.639525399@goodmis.org>
+	<20250227185822.810321199@goodmis.org>
+	<ccc40f2b-4b9e-4abd-8daf-d22fce2a86f0@sirena.org.uk>
+	<20250410131745.04c126eb@gandalf.local.home>
+	<c41e5ee7-18ba-40cf-8a31-19062d94f7b9@sirena.org.uk>
+	<20250411124552.36564a07@gandalf.local.home>
+	<20250411124849.30d612ed@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-T24gVHVlLCAyMDI1LTA0LTAxIGF0IDE3OjA2ICswNTMwLCBOZWVyYWogVXBhZGh5YXkgd3JvdGU6
-Cj4gQWRkIGEgYXBpYy0+dGVhcmRvd24oKSBjYWxsYmFjayB0byBkaXNhYmxlIFNlY3VyZSBBVklD
-IGJlZm9yZQo+IHJlYm9vdGluZyBpbnRvIHRoZSBuZXcga2VybmVsLiBUaGlzIGVuc3VyZXMgdGhh
-dCB0aGUgbmV3Cj4ga2VybmVsIGRvZXMgbm90IGFjY2VzcyB0aGUgb2xkIEFQSUMgYmFja2luZyBw
-YWdlIHdoaWNoIHdhcwo+IGFsbG9jYXRlZCBieSB0aGUgcHJldmlvdXMga2VybmVsLiBTdWNoIGFj
-Y2Vzc2VzIGNhbiBoYXBwZW4KPiBpZiB0aGVyZSBhcmUgYW55IEFQSUMgYWNjZXNzZXMgZG9uZSBk
-dXJpbmcgZ3Vlc3QgYm9vdCBiZWZvcmUKPiBTZWN1cmUgQVZJQyBkcml2ZXIgcHJvYmUgaXMgZG9u
-ZSBieSB0aGUgbmV3IGtlcm5lbCAoYXMgU2VjdXJlCj4gQVZJQyB3b3VsZCBoYXZlIHJlbWFpbmVk
-IGVuYWJsZWQgaW4gdGhlIFNlY3VyZSBBVklDIGNvbnRyb2wKPiBtc3IpLgo+IAo+IFNpZ25lZC1v
-ZmYtYnk6IE5lZXJhaiBVcGFkaHlheSA8TmVlcmFqLlVwYWRoeWF5QGFtZC5jb20+Cj4gLS0tCj4g
-Q2hhbmdlcyBzaW5jZSB2MjoKPiDCoC0gQ2hhbmdlIHNhdmljX3VucmVnaXN0ZXJfZ3BhKCkgaW50
-ZXJmYWNlIHRvIGFsbG93IEdQQQo+IHVucmVnaXN0cmF0aW9uCj4gwqDCoCBvbmx5IGZvciBsb2Nh
-bCBDUFUuCj4gCj4gwqBhcmNoL3g4Ni9jb2NvL3Nldi9jb3JlLmPCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIHwgMjUgKysrKysrKysrKysrKysrKysrKysrKysrKwo+IMKgYXJjaC94ODYvaW5jbHVkZS9h
-c20vYXBpYy5owqDCoMKgwqDCoMKgwqDCoCB8wqAgMSArCj4gwqBhcmNoL3g4Ni9pbmNsdWRlL2Fz
-bS9zZXYuaMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMiArKwo+IMKgYXJjaC94ODYva2VybmVsL2Fw
-aWMvYXBpYy5jwqDCoMKgwqDCoMKgwqDCoCB8wqAgMyArKysKPiDCoGFyY2gveDg2L2tlcm5lbC9h
-cGljL3gyYXBpY19zYXZpYy5jIHzCoCA4ICsrKysrKysrCj4gwqA1IGZpbGVzIGNoYW5nZWQsIDM5
-IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYvY29jby9zZXYvY29yZS5j
-IGIvYXJjaC94ODYvY29jby9zZXYvY29yZS5jCj4gaW5kZXggOWFkZTJiMTk5M2FkLi4yMzgxODU5
-NDkxZGIgMTAwNjQ0Cj4gLS0tIGEvYXJjaC94ODYvY29jby9zZXYvY29yZS5jCj4gKysrIGIvYXJj
-aC94ODYvY29jby9zZXYvY29yZS5jCj4gQEAgLTE1ODgsNiArMTU4OCwzMSBAQCBlbnVtIGVzX3Jl
-c3VsdCBzYXZpY19yZWdpc3Rlcl9ncGEodTY0IGdwYSkKPiDCoMKgwqDCoMKgwqDCoMKgcmV0dXJu
-IHJlczsKPiDCoH0KPiDCoAo+ICtlbnVtIGVzX3Jlc3VsdCBzYXZpY191bnJlZ2lzdGVyX2dwYSh1
-NjQgKmdwYSkKPiArewo+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBnaGNiX3N0YXRlIHN0YXRlOwo+
-ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBlc19lbV9jdHh0IGN0eHQ7Cj4gK8KgwqDCoMKgwqDCoMKg
-dW5zaWduZWQgbG9uZyBmbGFnczsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgZ2hjYiAqZ2hjYjsK
-PiArwqDCoMKgwqDCoMKgwqBpbnQgcmV0ID0gMDsKClRoaXMgc2hvdWxkIGJlIGFuIGVudW0gZXNf
-cmVzdWx0LCBhbmQgdGhlcmUgaXMgbm8gbmVlZCB0byB6ZXJvLQppbml0aWFsaXplIGl0LgoKPiAr
-Cj4gK8KgwqDCoMKgwqDCoMKgbG9jYWxfaXJxX3NhdmUoZmxhZ3MpOwoKZ3VhcmQoaXJxc2F2ZSko
-KTsKCj4gKwo+ICvCoMKgwqDCoMKgwqDCoGdoY2IgPSBfX3Nldl9nZXRfZ2hjYigmc3RhdGUpOwo+
-ICsKPiArwqDCoMKgwqDCoMKgwqB2Y19naGNiX2ludmFsaWRhdGUoZ2hjYik7Cj4gKwo+ICvCoMKg
-wqDCoMKgwqDCoGdoY2Jfc2V0X3JheChnaGNiLCAtMVVMTCk7Cj4gK8KgwqDCoMKgwqDCoMKgcmV0
-ID0gc2V2X2VzX2doY2JfaHZfY2FsbChnaGNiLCAmY3R4dCwKPiBTVk1fVk1HRVhJVF9TRUNVUkVf
-QVZJQywKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoFNW
-TV9WTUdFWElUX1NFQ1VSRV9BVklDX1VOUkVHSVNURVJfR1BBLCAwKTsKPiArwqDCoMKgwqDCoMKg
-wqBpZiAoZ3BhICYmIHJldCA9PSBFU19PSykKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgKmdwYSA9IGdoY2ItPnNhdmUucmJ4Owo+ICvCoMKgwqDCoMKgwqDCoF9fc2V2X3B1dF9naGNi
-KCZzdGF0ZSk7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoGxvY2FsX2lycV9yZXN0b3JlKGZsYWdzKTsK
-PiArwqDCoMKgwqDCoMKgwqByZXR1cm4gcmV0Owo+ICt9Cg==
+On Fri, 11 Apr 2025 12:48:49 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
+> On Fri, 11 Apr 2025 12:45:52 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > Also, is it possible to just enable function_graph tarcing and see if it
+> > adds these blank lines between events?  
+> 
+> Never mind. When I enable the funcgraph-retval option, I get the blank
+> lines too.
+> 
+> There's likely an added '\n' that shouldn't be. Let me go look.
+> 
+
+Found it, and yes it is the commit you bisected it to:
+
+It added a '\n' when the retval option would print one too.
+
+This should fix it:
+
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index 2f077d4158e5..718f6e84cc83 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -971,11 +971,10 @@ print_graph_entry_leaf(struct trace_iterator *iter,
+ 
+ 		if (args_size >= FTRACE_REGS_MAX_ARGS * sizeof(long)) {
+ 			print_function_args(s, entry->args, ret_func);
+-			trace_seq_putc(s, ';');
++			trace_seq_puts(s, ";\n");
+ 		} else
+-			trace_seq_puts(s, "();");
++			trace_seq_puts(s, "();\n");
+ 	}
+-	trace_seq_printf(s, "\n");
+ 
+ 	print_graph_irq(iter, graph_ret->func, TRACE_GRAPH_RET,
+ 			cpu, iter->ent->pid, flags);
+-- Steve
 
