@@ -1,144 +1,142 @@
-Return-Path: <linux-kernel+bounces-599921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38878A85940
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:16:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5959AA85938
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E70CA3BEFC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:12:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BD4E189126C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1FA221271;
-	Fri, 11 Apr 2025 10:08:01 +0000 (UTC)
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84691F03D9;
+	Fri, 11 Apr 2025 10:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zowzIRpD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u0f6+hG9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79662221260;
-	Fri, 11 Apr 2025 10:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C6B278E67;
+	Fri, 11 Apr 2025 10:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744366081; cv=none; b=mPu25iirbwpePjnp2GzZGbDYHmOpRNhDJjUK4sHuhOxFnidG73dDLGtmxYxzIz8fYPnzDQZh/MuEkzEWIr0hDhcbC7X6d/YhmhSuDUXl3xc7IbeURZVlnEjy6ZdhizVfBAtmaXH35bWG/rI09xwt2lcYxXcj6fzBJrk/Ni9U72Y=
+	t=1744366545; cv=none; b=KGPvKzxIxi8Z2Tf/13IczCnYbj83mUkDow69ndonJL+HJ4L0n2bwe0YLlLI0BhIRUXlypEV8FyGvlnZfrB+ETtuEzyF9JrWWyzyg/QlbAHDY/gVn0i64aQTp0YD+HeuwNf2idaBJgOWLY554MNBf4T9SfSS168dvPC40QMc8nzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744366081; c=relaxed/simple;
-	bh=JQiOxEydpjkY3R4wf1viG+I3A66jmqhQqGDZShveHGY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=HeX6Cn1UnkjPJqgq1cK0l4SGm4HyV+JJQhFpGmHJ5+uSF8ilS6FxsP5XRkJV0BT1c+TBtlY9O1HnYGZdTnnF0eNy4ftAUkMf2mzF6MfMyamUMr907H6/qEFBV4oFwFxYq+1FUR0eoK+G8rfNp07X6wMLXKh8GgaAvsPeC2a8suo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-86d69774081so759611241.0;
-        Fri, 11 Apr 2025 03:07:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744366076; x=1744970876;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7aYMXTFEV2NalT55jsvEKisxIi9LMjUtCvvPVRHdMAY=;
-        b=Su2/6nJXYy6HNsrAC+nRrqVQP/HhmjgQTzO34K1d6RAjw0lRHhQdlJz2r5Q+BzDqfx
-         BE47i5osKOBSwUkIkdg+tBODCguufIKcuzWQymOYooBby93k9ziEbA1zEkon0wPRxSVb
-         0phm+QcdLTT1iPMbVZ0kA2IDLE3OR/XB1q2VZWmZ1f5vEl/CzgijvCUg8ykniq7kF98e
-         g06sV62DQsTuXR76F8fubrSqG9zdoELSUeylHAkolUoPl5UrsWjVfu0s3bco6Hkc8vtm
-         boBjbQJHeerovJSPvQ8zwqIkwZ+JP8e6wWZGnzi2+NAxe3c5DecPvva1PgOb9Ry2Xupm
-         CMNA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0vF7oYEmBIQrNiMkjUtIqoO1NAx+NWRCWSfRl1jkpY1xMzvnq2AXADOQulULpK8habH7R2aCwNzQ37Ki4Mpix4/Q=@vger.kernel.org, AJvYcCVQ0I9Uao6LKbLqSniJMMhk8LG1yPjIela2yW47FH9BJEOiJ1NEPJUjIvdSWNd7iXLA9xOQkcCJCv3Re2SR@vger.kernel.org, AJvYcCXGmqs3LcIPjM5PhMaiCzBvrz8pzGPsVlj2x2uz5mde9qrwqcONzbcg2iFk4YjTcE9cwhXKfKlKNiIv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8DtzEQ0GhYmmXmynAY65BLzUa9KvzYYef57fBSXYprfPfqtAk
-	E2/eTGMwV9lfw+pFtuCkde0jzCCY2/FfWN9YKU5bNnKX2KfLh1sm67kkzdzlYxE=
-X-Gm-Gg: ASbGncuB/zxPy8Qu/aJLN/o2r9hKXxJCEZlxHaRJeMUC7wLFJVjRQa1vUAOGaEVT7cY
-	5eATlFLoIx6Un95s3BMeKYrYlzK35Ker1jQXRqANdLcmbyEatNC3coHjJY7GJbKolg+rFr8WuKl
-	QPBEec3KuIGsMAjacrrdcHu2WrkxlC6Sw0lvHp2T3O2xhM+p1GlrpRXw8sr8qCIQbKVrEAvMRmI
-	bn0V3JacjC6QPKjzHi5O2EyhJUDQ0czaSK4e3o7G/sIBhKy3Dk3CAyu/fpZ8v/yZ8BEk0UzhJT/
-	dH7xj1vQHsc7I7uOjix165HjheKMloG6xfgxUhXFU17Vi/ck9dCJezvg1Qghi//noZ/WsG4OXWl
-	1ndo=
-X-Google-Smtp-Source: AGHT+IEx9WqGNK1cP0Df4iBSbm9zeaLSNPa3OMsvpo0qjnyS2q781iB10q5n1v4vV8RdLD+QVdC/QA==
-X-Received: by 2002:a05:6102:3f09:b0:4c4:e414:b4eb with SMTP id ada2fe7eead31-4c9e4f137c2mr973378137.12.1744366076294;
-        Fri, 11 Apr 2025 03:07:56 -0700 (PDT)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c9c98afd1asm1013662137.21.2025.04.11.03.07.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 03:07:55 -0700 (PDT)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-86fbc8717fcso716925241.2;
-        Fri, 11 Apr 2025 03:07:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUas0zOHx80b0ihqGxRCEb3AnmYytSG1pje23Fr5Y3gWrk0CcUFslSjAQOSDEnOEs1VpeZcea/aptno@vger.kernel.org, AJvYcCWfPPAxqCf69Hc/0HN49a9QbbKTaIv/7kiyHA85evXNUuebi5ym1bhuVBiQWqzj+g2YKtvJZG2wbr3Fb5OV@vger.kernel.org, AJvYcCXhZs66MzY5tgVIx1KDi3LcRFmUPI6fELO9BsIwx9iT8boq/Kk1QdA84cUNjm02ubnITAbPC3NRV2kqW/r2jgNslbU=@vger.kernel.org
-X-Received: by 2002:a05:6102:f12:b0:4bb:e36f:6a25 with SMTP id
- ada2fe7eead31-4c9e4f19dc0mr988215137.13.1744366075115; Fri, 11 Apr 2025
- 03:07:55 -0700 (PDT)
+	s=arc-20240116; t=1744366545; c=relaxed/simple;
+	bh=yhff2Dmm7Y8iOFKE1r2qu5UNquNChag6ePG9LM3UbjY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=rAV0aLgOAXPoS3zVmlFyE24rEgXB8ju+AP9FrQCaPHZnfItnAD06u+xXdtzEDYCevBKHnjxxI071oLvi060+8g+garQLNoAUdm/OWmezonkiH9NbaCCPk8cOBxF+4QkSU/wwej0V4X2cdlrAZHb0EZDDWlSuM4DHU4P9fmmjeVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zowzIRpD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u0f6+hG9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 11 Apr 2025 10:15:34 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744366541;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aV56czXmq+FjwpZJwMSAMnCvlza5YySdc4rI5nQxInw=;
+	b=zowzIRpDebDAgoNk8aGy754Iko1ithVzsjyHqdGw4eEuxaS3UGBKRGn6mhgW3f65VYk1fb
+	DK67iKJr43iKV1R4iw/Pt1ZiDghze27d1ixhBQ1yZIsrNtzjQuRxr93qp8rv+nxQAL26LT
+	3wBaxVmzjZAvxZLv8VAM1jR8FPTsiZkMOGNdOwBffkLTZ2BqPrXdbNbLHrCwJ+hXnP3czb
+	7ihuNiOnryg4mEZlLxDvDNPTjIqCn/4QupuFCG5oeSm9SJACQsw1rYubl5qi+a0+z4WZng
+	nV44jQEVTuHtA7TD7Y8oEd66I/JM8whqejLUY8yO1YjE4y1sAyZJ+CudMttouw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744366541;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aV56czXmq+FjwpZJwMSAMnCvlza5YySdc4rI5nQxInw=;
+	b=u0f6+hG9MftXdw1j3Xwqo9VgLuX/Ge9LblJffHLX2jXE4LO3Xa6UPkVYnc/m5amB6CQUQN
+	gcILudLjTJKUH5CQ==
+From: "tip-bot2 for Stefano Garzarella" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/sev] x86/sev: Register tpm-svsm platform device
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Tom Lendacky <thomas.lendacky@amd.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250410135118.133240-5-sgarzare@redhat.com>
+References: <20250410135118.133240-5-sgarzare@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324-rzn1d400-eb-v4-1-d7ebbbad1918@bootlin.com>
- <CAMuHMdVM66ni0opbUopt6mCPshoQzO5GPEUZDji39CxtkoFLSA@mail.gmail.com> <Z_jmflS03VHFOE3d@shikoro>
-In-Reply-To: <Z_jmflS03VHFOE3d@shikoro>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 11 Apr 2025 12:07:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXH6Fcm5xzS5UWpqBm4gFZ4bJBL_paDmpqCYvCO=uyWYg@mail.gmail.com>
-X-Gm-Features: ATxdqUF0bh9AK1tx6h_9egQNGo2RuMFqivgLKPOhWUILou5PveUK6j4x2NBWXIg
-Message-ID: <CAMuHMdXH6Fcm5xzS5UWpqBm4gFZ4bJBL_paDmpqCYvCO=uyWYg@mail.gmail.com>
-Subject: Re: [PATCH v4] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb board device-tree
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <174436653445.31282.8324011808720867533.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Wolfram,
+The following commit has been merged into the x86/sev branch of tip:
 
-On Fri, 11 Apr 2025 at 11:53, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> > > +       pinctrl-0 = <&pins_eth1>, <&pins_eth2>, <&pins_eth3>, <&pins_eth4>,
-> > > +                   <&pins_mdio1>;
-> > > +
-> > > +       mdio {
-> > > +               /* CN15 and CN16 switches must be configured in MDIO2 mode */
-> > > +               switch0phy1: ethernet-phy@1 {
-> > > +                       reg = <1>;
-> > > +                       leds {
-> > > +                               #address-cells = <1>;
-> > > +                               #size-cells = <0>;
-> > > +
-> > > +                               led@0 {
-> > > +                                       reg = <0>;
-> >
-> > color = <LED_COLOR_ID_GREEN>;
-> >
-> > > +                               };
-> > > +                               led@1 {
-> > > +                                       reg = <1>;
-> >
-> > color = <LED_COLOR_ID_ORANGE>;
-> >
-> > > +                               };
-> >
-> > The above should also have one of:
-> >
-> >     function = LED_FUNCTION_LAN;
-> >     function = LED_FUNCTION_SPEED_LAN;
-> >
-> > I don't know the LED function mapping.
->
-> I have an incremental fix for the LEDs to this patch. Thomas cannot
-> really do it because he doesn't have the board. I was waiting with my
-> patch until this patch is upstream, but I better send it out now, so you
-> can squash it into this one?
+Commit-ID:     e396dd85172c6098e3b70b17e91424edc7bb2d8f
+Gitweb:        https://git.kernel.org/tip/e396dd85172c6098e3b70b17e91424edc7bb2d8f
+Author:        Stefano Garzarella <sgarzare@redhat.com>
+AuthorDate:    Thu, 10 Apr 2025 15:51:16 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Thu, 10 Apr 2025 16:25:33 +02:00
 
-Yes please.This patch is becoming too much of a dependency.
-Thanks!
+x86/sev: Register tpm-svsm platform device
 
-Gr{oetje,eeting}s,
+SNP platform can provide a vTPM device emulated by SVSM.
 
-                        Geert
+The "tpm-svsm" device can be handled by the platform driver registered by the
+x86/sev core code.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Register the platform device only when SVSM is available and it supports vTPM
+commands as checked by snp_svsm_vtpm_probe().
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+  [ bp: Massage commit message. ]
+
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Link: https://lore.kernel.org/r/20250410135118.133240-5-sgarzare@redhat.com
+---
+ arch/x86/coco/sev/core.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index ecd09da..654a4cc 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -2688,6 +2688,11 @@ static struct platform_device sev_guest_device = {
+ 	.id		= -1,
+ };
+ 
++static struct platform_device tpm_svsm_device = {
++	.name		= "tpm-svsm",
++	.id		= -1,
++};
++
+ static int __init snp_init_platform_device(void)
+ {
+ 	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
+@@ -2696,7 +2701,11 @@ static int __init snp_init_platform_device(void)
+ 	if (platform_device_register(&sev_guest_device))
+ 		return -ENODEV;
+ 
+-	pr_info("SNP guest platform device initialized.\n");
++	if (snp_svsm_vtpm_probe() &&
++	    platform_device_register(&tpm_svsm_device))
++		return -ENODEV;
++
++	pr_info("SNP guest platform devices initialized.\n");
+ 	return 0;
+ }
+ device_initcall(snp_init_platform_device);
 
