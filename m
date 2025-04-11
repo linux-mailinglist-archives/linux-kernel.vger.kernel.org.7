@@ -1,117 +1,132 @@
-Return-Path: <linux-kernel+bounces-600722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FA18A863A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:50:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F4EA863B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B546C460736
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:47:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D769A1BC3F96
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C3E233700;
-	Fri, 11 Apr 2025 16:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B63A22069E;
+	Fri, 11 Apr 2025 16:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AxAXb9LZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A215233148;
-	Fri, 11 Apr 2025 16:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59662220683;
+	Fri, 11 Apr 2025 16:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744389872; cv=none; b=XZdS3A+p2GuWCHqiVJlD3lhocReqZsLgQjUm6FZm3X+NYUw1ljj7DzM/8VOQu0iHJViXV7a+6OD2CH4TYFTi8QhN+nfpjt4ArI8mxS6hji8f+/Qst0MZdB1CDwb82jCwwt/C0qdcFCUgtyQyhGAxmQ6ZHPqRA/TFefx3lYYw0W0=
+	t=1744390004; cv=none; b=XgAjL3JoGu7eGJ32TmXYmdSUAvW3YR3JXyB8GcXKpxT4lbJOWo3gXY67y8Oa8kw/QQnjFPT8vOV/Ta1GNKUIDG5dg9ioQHUmAVGY6Nv6AeSfwZ5Bx8uC8c37UI2HnEGc+yBlcsGTA9o5392aM5wbMtS07up0fALrHAdokUc/iXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744389872; c=relaxed/simple;
-	bh=L/mb+QQWwTatT5L5Nejifp0o/+LSgqAg5l4QjS3xCZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=piROzL/mhdaIcJ2oeFz1SgzZjMIzKt28Eq43rP4CqHa3Ez+kTpIxPi++AOo1C5IGWtW/aJ4mOTE7z0etQeTFE35239d9/dXeUazjy8mdGIMQAaI5+8l33s88ceeh5U9hA1PEx+gmRFEb0bxx2oKYtMW2E3ST+wa8lDDqj1p8KW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38296C4CEED;
-	Fri, 11 Apr 2025 16:44:30 +0000 (UTC)
-Date: Fri, 11 Apr 2025 12:45:52 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>, Sven Schnelle
- <svens@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren
- <guoren@kernel.org>, Donglin Peng <dolinux.peng@gmail.com>, Zheng Yejian
- <zhengyejian@huaweicloud.com>, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v4 2/4] ftrace: Add support for function argument to
- graph tracer
-Message-ID: <20250411124552.36564a07@gandalf.local.home>
-In-Reply-To: <c41e5ee7-18ba-40cf-8a31-19062d94f7b9@sirena.org.uk>
-References: <20250227185804.639525399@goodmis.org>
-	<20250227185822.810321199@goodmis.org>
-	<ccc40f2b-4b9e-4abd-8daf-d22fce2a86f0@sirena.org.uk>
-	<20250410131745.04c126eb@gandalf.local.home>
-	<c41e5ee7-18ba-40cf-8a31-19062d94f7b9@sirena.org.uk>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744390004; c=relaxed/simple;
+	bh=KRJyaCNBuio27Dc7HTLuBLoaNfpbX8S+zCNEoZ10qeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r101mGMP3NFrXRXJyxq+uSyvpwmHwSwClnDJmZuPftC1yjxOM0M/KP8dV6rFrmYuJLJkyrnOW4/oeVjUDnuwFOb63vFHHseW5iXvWU3425et/Pdi24y1JTJtUeoQDSmIthO3tGBx5grEl4iPXEdYPHu7OEowP/WJ/LtnwM136/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AxAXb9LZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8FD2C4CEE2;
+	Fri, 11 Apr 2025 16:46:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744390003;
+	bh=KRJyaCNBuio27Dc7HTLuBLoaNfpbX8S+zCNEoZ10qeI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AxAXb9LZ6ibhSYLAfgeO3lRxGhZvVDAOXyNMMyqnEpIzCtqyKwV3QS5CfIk3vCqRw
+	 ui6K41mTa8Kn7GQ1kX1mA0h7uMkmsSrzeb/1v9ywYUIxyhpIUuF0MzCFXS3VWnQk2C
+	 hiijFzbWqbD2sNAXMHLyTWe8Ty8HLgU4wOBLnJ5mlp9H6biOemikMWopvI86dZfwks
+	 bH1wk7g6DFRA7tpfHAW94RQ/5gDT72XNAiAfUk2EjI/46z/mzI92KO57ccuJtGtqaj
+	 3sCboV9+hwGbH7ILSIl2pqTheNSZW/Ifn5+8SMqdkZhVQurU2IBKTUdFzSMfKLt3dM
+	 jm/VkfAkzOEZQ==
+Date: Fri, 11 Apr 2025 17:46:38 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux@roeck-us.net, Conor Dooley <conor.dooley@microchip.com>,
+	Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Zev Weiss <zev@bewilderbeest.net>,
+	Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Peter Yin <peteryin.openbmc@gmail.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] regulator: dt-bindings: promote infineon buck
+ converters to their own binding
+Message-ID: <20250411-stapling-unwed-21a303742ca0@spud>
+References: <20240223-moonrise-feminist-de59b9e1b3ba@spud>
+ <20240223-blabber-obnoxious-353e519541a6@spud>
+ <CAMuHMdXXWSfDrrQUTW54FFHN464efe+672jyCjqYw4jpSPosBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6wRL8umIpjJ8SWNb"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXXWSfDrrQUTW54FFHN464efe+672jyCjqYw4jpSPosBA@mail.gmail.com>
 
-On Fri, 11 Apr 2025 14:00:40 +0100
-Mark Brown <broonie@kernel.org> wrote:
 
-> On Thu, Apr 10, 2025 at 01:17:45PM -0400, Steven Rostedt wrote:
-> > Mark Brown <broonie@kernel.org> wrote:  
-> 
-> > > We've been seeing the PID filters selftest failing for a while on
-> > > several arm64 systems, a bisect I managed to run without running into
-> > > any confounding issues pointed to this patch which is in mainline as
-> > > ff5c9c576e75.  It's in the ftrace code, but I'm not immediately seeing
-> > > the relevance.  Output from a failing run:  
-> 
-> > Hmm, I wonder if there's junk being added into the trace.  
-> 
-> > Can you add this patch, and show me the output when it fails again?  
-> 
+--6wRL8umIpjJ8SWNb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can you show the information before this output, to see what it is actually
-testing?
+On Thu, Apr 10, 2025 at 06:15:24PM +0200, Geert Uytterhoeven wrote:
+> Hi Conor,
+>=20
+> On Fri, 23 Feb 2024 at 17:23, Conor Dooley <conor@kernel.org> wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> >
+> > These devices are regulators may need to make use of the common
+> > regulator properties, but these are not permitted while only documented
+> > in trivial-devices.yaml
+> >
+> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+>=20
+> Thanks for your patch, which is now commit bad582f9879812bc
+> ("regulator: dt-bindings: promote infineon buck converters
+> to their own binding") in v6.9-rc1.
+>=20
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/regulator/infineon,ir38060.yaml
+> > @@ -0,0 +1,46 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/regulator/infineon,ir38060.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Infineon Buck Regulators with PMBUS interfaces
+> > +
+> > +maintainers:
+> > +  - Not Me.
+>=20
+> make dt_binding_check:
+>=20
+>     Documentation/devicetree/bindings/regulator/infineon,ir38060.yaml:
+> maintainers:0: 'Not Me.' does not match '@'
+>             from schema $id: http://devicetree.org/meta-schemas/base.yaml#
 
-> # # + cat trace
-> # # # tracer: function_graph
-> # # #
-> # # # CPU  TASK/PID         DURATION                  FUNCTION CALLS
-> # # # |     |    |           |   |                     |   |   |   |
-> # # 0)  ftracet-5190  | ! 537.633 us  |  kernel_clone(); /* ret=0x1470 */
-> # # 
-> # # 0)  ftracet-5190  | ! 508.253 us  |  kernel_clone(); /* ret=0x1471 */
-> # # 
-> # # 0)  ftracet-5190  | ! 215.716 us  |  kernel_clone(); /* ret=0x1476 */
-> # # 
-> # # 0)  ftracet-5190  | ! 493.890 us  |  kernel_clone(); /* ret=0x147b */
-> # # 
-> # # + fail PID filtering not working?
-> 
-> ...
-> 
-> # # + cat trace
-> # # # tracer: function_graph
-> # # #
-> # # # CPU  TASK/PID         DURATION                  FUNCTION CALLS
-> # # # |     |    |           |   |                     |   |   |   |
-> # # 0) ftracet-12279  | ! 598.118 us  |  kernel_clone(); /* ret=0x301f */
-> # # 
-> # # 0) ftracet-12279  | ! 492.539 us  |  kernel_clone(); /* ret=0x3020 */
-> # # 
-> # # 0) ftracet-12279  | ! 231.104 us  |  kernel_clone(); /* ret=0x3025 */
-> # # 
-> # # 0) ftracet-12279  | ! 555.566 us  |  kernel_clone(); /* ret=0x302a */
-> # # 
-> # # + fail PID filtering not working?
+Yup, and it is still "Not Me.". Shouldn't have been merged in the first
+place (or sent tbh), but someone who understands and cares for it should
+be here (Not me!)
 
-Also, is it possible to just enable function_graph tarcing and see if it
-adds these blank lines between events?
+--6wRL8umIpjJ8SWNb
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- Steve
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ/lHbgAKCRB4tDGHoIJi
+0jU1AQCsqiKWTaB3RtphflqxEMzhA5Q4kq+XEHvCauo/Jr1E5QD+JHeWzHkm9cx9
++/v2EKTCVexboj6QnEuDalRsgMlsmw0=
+=MDyY
+-----END PGP SIGNATURE-----
+
+--6wRL8umIpjJ8SWNb--
 
