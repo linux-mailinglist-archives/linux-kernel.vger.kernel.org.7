@@ -1,115 +1,141 @@
-Return-Path: <linux-kernel+bounces-600617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A94A86221
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:42:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4464FA86232
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 543234A045A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:42:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF06C3B1DCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4188D211A3C;
-	Fri, 11 Apr 2025 15:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CE820FA9C;
+	Fri, 11 Apr 2025 15:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MxId31xc"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="La62plsp"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BD12AD14;
-	Fri, 11 Apr 2025 15:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7E71F584C
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 15:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744386143; cv=none; b=ighlB7Ri/kTHIF0QO2cbVcJuvbimMNt+uzZ0YjXSoOO/ha4K0fHrcOUZC3QqMmzeJgznRpIeu0eGb2wK4xc6EdqfVlXsNOe+zp6seHxVBrwJyDvywcSRxr7Cj75dRg0JB+8OEc6Q65/zvLF8xGN+V3Pa6afN5rLY/ziez3zJzdc=
+	t=1744386268; cv=none; b=jm9InIJqiu791CHYnMeYmaFvsaGR0WVzTIwrvGcsL82ifYZas0vzHm7ZM3Tf9snNo98s8lCIvRD6ilppC79pfPBq2cg1u5VTMgMLDf5C/pAAdDBN+fll5rHYwCYlw61/DlmxAdx8dafjMg5fDb6QXM9k5ZxONZceinibIctXImU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744386143; c=relaxed/simple;
-	bh=It2VnWFeoAs2/AO81MkBMka6daEY9+eiPuA3+Nx/GX0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WXCQUY/4Pb+fUjNW0hsU1bDoMsizkJK05l0ZCEGjFAv1lLt+5o7337AoXH4r2wR9j16f4/aqSoot3Aajis2YoggCss7p7xNxifaBMe09gVC/pnBSVRqgX/bbz70g79NZ8dNN8l3R+GAzxgfapLQkbM++GeVxJjwtIlgxTlE4998=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MxId31xc; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e5e34f4e89so4348651a12.1;
-        Fri, 11 Apr 2025 08:42:21 -0700 (PDT)
+	s=arc-20240116; t=1744386268; c=relaxed/simple;
+	bh=2wgs8xkLPcDzrMkx5fPptVOf8gKg9PkOJJY3p/JCOtE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dlbxfhgnZ601mRcvnUyJ7IWMy50YeYPq8YVzh43K71ThgjVj1zBvqZ463iOt52nHJCNhn3RCyvOtVPWhrGdEPynVGCEGKU4dqicHkGCjar1Hc/7z0SPGboZ3+gP/R1qt3ZsHddeHaHIHr6iiwyObNgbxN907N09NpIyrfbEG71M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=La62plsp; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d5e2606a1bso18118525ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:44:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744386140; x=1744990940; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=It2VnWFeoAs2/AO81MkBMka6daEY9+eiPuA3+Nx/GX0=;
-        b=MxId31xcG0nNt8Oys25Ykt0MDpra0f1aO9oT1Uz1oKyfrU5xDroiKxkqP4eAS+ncWO
-         KV28v08+R/PHe+Be+qWFn9wg9byjtaO72z5fTXs87acZvHm0NRl5sVomM+c6k70i2kp/
-         woyNsDDTOA5AEvg7c7vLVsbi30TWJhPtfTC/EziYR0vj7GIExbuofcByAXvmAEk751x9
-         T3RH+YgimOpsxWtyZsZ3cPVMyCsRZbCB1sfcKPY8Y2QPTaqxoRnfIJyTPzMcAlksjPr7
-         6dnpO8lUPC8r6LuRV9eRrkNFYOPYyGeBJ6OZxG4jTn+mLVgviIxSRUbzpCA32TTYd+/I
-         W8Kw==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744386265; x=1744991065; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2r1c/vOhjgtnKBMGLqUCUilpq9yxWP4WtszcGjN9x5E=;
+        b=La62plsp+VYYlfiiDPGdu3r5WjNlfltaD9Sxk3FEvgxDTjjrzcm7aP54H7fIj9FDAH
+         8R3ooLXpA1wPZiH2qwApaSQGqnS4UgLX8XIw44y7cVDyCl0UZLPXM8n+4W5/nCNEehin
+         041+VdhdvJW37i7DJ1rrwChvp5e9aDR6TERIKHy/rmInbjm0ErGyJGiitrQ5h0kAi0bS
+         EOWUoB083qeTSVanZn3fA5XPNanoXG21YY0Km4KXECEl/vEuRLuA1B//7sr7PMfK67Xr
+         9O1ZDYHHPx6/3xtcKeYRq3NH+8g4IR5rSRMtiUxkKTcSkOIzWVulF4YJYq3afra0r5ZZ
+         3nAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744386140; x=1744990940;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=It2VnWFeoAs2/AO81MkBMka6daEY9+eiPuA3+Nx/GX0=;
-        b=WP+QZe5V+uj3KUAvBnJMB+7cZmJFGMZ+63WENbD6V6toF5gGxZdhWTnQljOb2y3FYe
-         +lHZv7qeYr+rMa4pJdSDMigI5mmbjC8qA8G3vozwreLqOyrwMK+gQWh0LnWs63+arlu5
-         XRsfIrje1BLlPBS6QOGgXLD3LRPct22t3F4kYaEjx/9xX8frNLSAfS53vdLiYr4QdFGv
-         E6190ZTLUImNWij3lfasmK3yCXguIWTsP/vakTL5IB8ikIVsGxDrUSLO8Iqt/b6+QXEt
-         gJeV3voG4eEW1IZsQkGm9Al2AAu+V0EmD0EZ2pvw5yM8VvaNTW2JsIWr3NQpwP+XiLX+
-         VG8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUemsTugXoJ58B3zrq1dhk50VdJk1zc8lLlD5MFdjP4Geat5OcBkAUvRLnUwec48mGJhMBSwF3ChATAsOuk@vger.kernel.org, AJvYcCWOy4RgrwdVaybF/kZcnnkGPA596+o23cohMthl4ThEit7doIvvbDiTe2NxZepEP+3jJ0L9GILp6HGMANUX@vger.kernel.org, AJvYcCXTgjbO06ie7MYC6SltNZZeSdow/5xHHu7PnvXo5dJ2hnFIDvSJgwMUrtHQtfclUxiPucZASeU9+burNg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiCCIMaPC74yEMR4UinVT3Gj+YMb8tds47qS2EJ88h42nIbfyA
-	HwvcXTx/BC/4Pz6IWCe6Tquu/d84CTdMIxNx8B3SdW29PeaJJUej
-X-Gm-Gg: ASbGncvbPd1DL7sS4ZXzCwFMfEPS9xDzLuPjEXwsmlFf9Pn9BwaGKjT0TtOGQYjf4qa
-	ci3u366eX2dum772XOW/fInFdRAzCkgGP9f8/VAqNaoUWJmnGGlAEwp+OONtOdSDeJfViwzI3D+
-	3pOwS/oj+elOWgA+7M1ysciddfDOSA9z50UsjufJbOjoGvARJcZM+ZIHX6WgDXjpjKL/+FINwIx
-	V/0VPK9r0Fh2d5eSC/CpUST0NVrUuge0uiBg3nnppBZFWogkOwr90XeYqMtnUdQCsCoOOJiwvqt
-	6CM8RAasZVFaF2x+V7wfMgyHF2L3Z78PJPuk6vrkWLY=
-X-Google-Smtp-Source: AGHT+IEtSIaJ3H+ZraLLFCodD6/LDQvZtvBke+gPK1x5t3vsMCHDWRB4OCz2umhxenATOBcALBtRxA==
-X-Received: by 2002:a17:907:1b03:b0:ac4:493:403 with SMTP id a640c23a62f3a-acad36a5b29mr264461366b.37.1744386140056;
-        Fri, 11 Apr 2025 08:42:20 -0700 (PDT)
-Received: from [10.176.234.34] ([137.201.254.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1cb3d8fsm464863166b.106.2025.04.11.08.42.17
+        d=1e100.net; s=20230601; t=1744386265; x=1744991065;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2r1c/vOhjgtnKBMGLqUCUilpq9yxWP4WtszcGjN9x5E=;
+        b=vJ+ldl5HbMZpD7s8JrIaKdN/r7l3G1cfHYUBldhGhRo36mgbMEjbHYCFsuc+yEoNp5
+         hZalGIpJ4ogUbZhIInBluJGcpTL3Cv+SbLAeulZQzj5QN9AyHydPza6DPlhRa37wiJp4
+         Sqb8oT4qDjiszZdW3NHdvtVjfyerdSknz2sdB4UfSHLkONu+rt79MLZpQsFxzQpiGX0q
+         qRpptgMjADOr/5jBFWqnqoMrqTYCQeePdpHaqBCFCUzVizgfvtiPZQGxbxKVeUyt3O3n
+         DW4FUga7OSUqHCIq1EU5Sm1B2DuOHz35XQUzk9ooaBq+zNUz8yGP02Ea22PG7KCbSzNv
+         Uq/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV9xa54GtOOzBg+Ped2EjCUtSp4pjUqjSZ7WWvsxHZkww1EfRj9NtHdS8QqwPSL8kiOO7u69nSrpVlBt0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5rn0IeWNnj6N5HuealcsJjQw3DNA3VwjfnqOTvl+GAEcisVSw
+	5Rb9KIvexc8nFTurMxP48CgjLu6zaH+LN1jubsD9bLMiqTgZKROXM5PR13z6y8A=
+X-Gm-Gg: ASbGncuu1Uz5Sb8WvXz+qzhzGQFDUfw6yr1/VVSvnUi5Sxf0sixzXleSKUNEmhuVxxH
+	r4ywrb8kUtuIhO0+KKfFIRa37zYpwB8GZzr4ZA4/FhKkNk4scRCyERU5SsbbfTy8kPp1/4+zcd7
+	F67RjKQgR3Qs97zwRwLHUZ+DHkCFZXj0tRuYnQLKwOrf8abA6PkJuFiK+JRSQAZF7fp26LeIaDs
+	tyWKho8UakofuoNu7WktT0CtRjp0Na9PNGIQ3MSfwFqufebaFq7fMMTNG6rucGgv0zmuJDDmu9p
+	lr0sW/5CYnvwTWcnhdhN2j0lE4WmuNJLBA4WmgOhJLxkqms35eGk6ILr82NzXgKKhNs8LpCUpUC
+	hEjXxrVC/ecwaww==
+X-Google-Smtp-Source: AGHT+IFK5sdaLIBjH4lJHrLTb46aftzH6TysHI0IthYxIBi/kqyaLNxSazBe9csKjIFKMCbouX8yUw==
+X-Received: by 2002:a05:6e02:3601:b0:3d0:4bce:cfa8 with SMTP id e9e14a558f8ab-3d7ec1dc7f4mr34974745ab.3.1744386264887;
+        Fri, 11 Apr 2025 08:44:24 -0700 (PDT)
+Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505cf812dsm1276326173.18.2025.04.11.08.44.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 08:42:19 -0700 (PDT)
-Message-ID: <995f5cd137d0b0b82a1d253cc081fe9e145738c5.camel@gmail.com>
-Subject: Re: [PATCH V3 2/2] scsi: ufs: introduce quirk to extend
- PA_HIBERN8TIME for UFS devices
-From: Bean Huo <huobean@gmail.com>
-To: Manish Pandey <quic_mapa@quicinc.com>, "James E.J. Bottomley"
-	 <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
-	 <martin.petersen@oracle.com>, Manivannan Sadhasivam
-	 <manivannan.sadhasivam@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman
- <avri.altman@wdc.com>,  Bart Van Assche <bvanassche@acm.org>,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, quic_nitirawa@quicinc.com, 
- quic_bhaskarv@quicinc.com, quic_rampraka@quicinc.com,
- quic_cang@quicinc.com,  quic_nguyenb@quicinc.com
-Date: Fri, 11 Apr 2025 17:42:17 +0200
-In-Reply-To: <20250411121630.21330-3-quic_mapa@quicinc.com>
-References: <20250411121630.21330-1-quic_mapa@quicinc.com>
-	 <20250411121630.21330-3-quic_mapa@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Fri, 11 Apr 2025 08:44:24 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: dlan@gentoo.org,
+	benjamin.larsson@genexis.eu,
+	bastien.curutchet@bootlin.com,
+	andriy.shevchenko@linux.intel.com,
+	u.kleine-koenig@baylibre.com,
+	lkundrak@v3.sk,
+	devicetree@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] serial: 8250_of: support an optional bus clock
+Date: Fri, 11 Apr 2025 10:44:15 -0500
+Message-ID: <20250411154419.1379529-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-04-11 at 17:46 +0530, Manish Pandey wrote:
-> Samsung UFS devices require additional time in hibern8 mode before
-> exiting,
-> beyond the negotiated handshaking phase between the host and device.
-> Introduce a quirk to increase the PA_HIBERN8TIME parameter by 100 =C2=B5s=
-,
-> a value derived from experiments, to ensure a properhibernation
-> process.
->=20
-> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+The SpacemiT UART hardware requires a bus clock to be enabled in addition
+to the primary function clock.
 
+This series makes it possible to specify both clocks via DTS.  If a
+bus clock is required, it and the primary clock are fetched by name.
 
-Reviewed-by: Bean Huo <beanhuo@micron.com>
+Changes between v2 and v3:
+  - A third patch was added to disable the bus clock on suspend and
+    enable it again on resume, as requested by Yixun Lan
+  - Rob's Reviewed-by tag has been added to patch 1
+  - The first two patches are otherwise identical to what was in v2
+
+Here is version 2 of this series:
+  https://lore.kernel.org/lkml/20250409192213.1130181-1-elder@riscstar.com/
+
+Changes between v1 and v2:
+  - The DT binding was fixed to properly define the number of clocks and
+    clock names based on the compatible string, as suggested by Rob Herring
+  - Logic to look up the optional bus clock was changed as requested
+    by Andy Shevchenko
+  - The bus clock pointer (which was never used after it was enabled)
+    was renmoved from the of_serial_info structure
+
+Here is the first version of this series:
+  https://lore.kernel.org/lkml/20250408175146.979557-1-elder@riscstar.com/
+
+					-Alex
+Alex Elder (3):
+  dt-bindings: serial: 8250: support an optional second clock
+  serial: 8250_of: add support for an optional bus clock
+  serial: 8250_of: manage bus clock in suspend/resume
+
+ .../devicetree/bindings/serial/8250.yaml      | 30 ++++++++++++++++++-
+ drivers/tty/serial/8250/8250_of.c             | 13 +++++++-
+ 2 files changed, 41 insertions(+), 2 deletions(-)
+
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+-- 
+2.45.2
+
 
