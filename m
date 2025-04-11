@@ -1,250 +1,150 @@
-Return-Path: <linux-kernel+bounces-600451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C425A86009
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:08:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56757A8600E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C79884C38D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:07:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9625118926CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFE61F3B82;
-	Fri, 11 Apr 2025 14:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481721F30B3;
+	Fri, 11 Apr 2025 14:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HjTfNss+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hvdO1zan"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287E81F3BAD
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 14:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E3F1865EE;
+	Fri, 11 Apr 2025 14:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744380416; cv=none; b=uh9dwTjmFJV9sM0iVHrkRvf5QCD5Rfb+VdWPeCiia0F6vOJUCOpJomX2abKxMp+LsGawd1l0jNx5DDAPQRCQLny6USucPEyltA1UpdlmSXS+c8xrQbx8YyBi1JZbdhtg3GYyqi9Vo4EDCJ9dOHrl48jXQDT0td8q3YDD7lHvcS8=
+	t=1744380384; cv=none; b=ZoVJp9FRLnPSYAD0UM47x89vaAqT+/o6H4GHb2dXYFR4RJidL58fRI6TkWdfs2Qgmexn4BWE5zVqmraX5z1+LAErBYagWQJ+aJHMip9BOaWF1UrNVSfJWFCtMDMGe3+V/bJzJVVRhsYaLbXCAgteMlzUAIbNKAObcV++c3lB5fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744380416; c=relaxed/simple;
-	bh=FhZFvEkcpPO1RMBJeoPoPJ0a36fDZlWJwz+/53Jzw8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dbi0WWRgINVlorERfLvcPAHQOTg5nTMBucGnSKZpTmGj+THjqT5WlMgdTnXelE5Zohcx62u8XljCVcwB01EOl9TI7/N78C7FN4hlveDwj/V3LAsUk/BgedsIxbs8JpvwiwtM7quN7cjlbycyZt6xr3ki6TpwKsW25gx7TGHtdyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HjTfNss+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744380412;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iWl/qqJnW4YKy7fD9Y1Bq2qyKwnzAfjOsHSpc/KwuOE=;
-	b=HjTfNss+xyMtFh14FE+m7HBT1xMnJycIgEVp0l5a3kZP9KoEUm2wnCKffUt7L5/LaK1uWw
-	y7aTnwTXRFquGCToP4qwiAFDJC1FW+VNnlCxaGaUIi85kMTkjzR5uxJyAFwLI5UYrO9b3t
-	HDloSYDfGCeBQpvqBojf98Rhcl4UK6c=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-411-Ov1DihxHMLSVa6UZohL51w-1; Fri,
- 11 Apr 2025 10:06:46 -0400
-X-MC-Unique: Ov1DihxHMLSVa6UZohL51w-1
-X-Mimecast-MFC-AGG-ID: Ov1DihxHMLSVa6UZohL51w_1744380404
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D80F3195608D;
-	Fri, 11 Apr 2025 14:06:43 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.222])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C4DCA180175D;
-	Fri, 11 Apr 2025 14:06:38 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 11 Apr 2025 16:06:08 +0200 (CEST)
-Date: Fri, 11 Apr 2025 16:06:02 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	wsd_upstream@mediatek.com, bobule.chang@mediatek.com,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	chenqiwu <chenqiwu@xiaomi.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Breno Leitao <leitao@debian.org>, Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: [RFC PATCH] exit: Skip panic in do_exit() during poweroff
-Message-ID: <20250411140601.GG5322@redhat.com>
-References: <20250410143937.1829272-1-Tze-nan.Wu@mediatek.com>
- <20250410210507.GD15280@redhat.com>
+	s=arc-20240116; t=1744380384; c=relaxed/simple;
+	bh=9cqZdTdGMUBt7Rph2nfcNpf4nK9yVw+u1OjWgO7NIUw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Nj/kA+Y30DCk2eam4F1Ut/vOMK+FClUCGQqzCNNayjTRBWPPqFSpohibZYIftc216gs1Ka3AIAinWLkpQwdPThbIB1Wchpv8ORIFrOsE7nA6eEwOF+LBwOpLmZ/C3qluaQAY57jPXAyDt+DDYjyQ8NmTwzXjVD9sPiMqu4zw94M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hvdO1zan; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1744380378; x=1744985178; i=markus.elfring@web.de;
+	bh=9cqZdTdGMUBt7Rph2nfcNpf4nK9yVw+u1OjWgO7NIUw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=hvdO1zanezD/o2IjYg06dbe7NAY9cFu9Cp2PvTKntTnK5o9Q/kKNhflcpquE3SX8
+	 Mg0plsgQbRoaIYTbNO3zlE/BzX3ZKoZ3VkWMNM7JMBnMyW1t0Q8zzsgUjvKzEzkw7
+	 Qa/B+wZXJ1VfUHuDeTfHkMyX7xMaO7lo9SjNouM3AjjS1x0zmeXSj9Vwf89y6sqd4
+	 KHAaNpwTHVdzXiWUYgYdH01eCoNtJ3DyM/BlS3ZWuhf85egUlUvOxpBwOdgYoxF34
+	 ItstO0Wj/dGVb1z+jsdhw510CxNm28Up5DfLC9sMKxcQGazlqXR+w7PTzZxCY2Z9q
+	 4w+q8UJdlC2D9c1R4Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.66]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mt8kN-1tABON04FN-00wl8s; Fri, 11
+ Apr 2025 16:06:18 +0200
+Message-ID: <1784cc08-918c-4745-bc7d-22a0217fea45@web.de>
+Date: Fri, 11 Apr 2025 16:06:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410210507.GD15280@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+To: Henry Martin <bsdhenrymartin@gmail.com>, linux-rdma@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Amir Tzin <amirtz@nvidia.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Aya Levin <ayal@nvidia.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Leon Romanovsky <leon@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>,
+ Tariq Toukan <tariqt@nvidia.com>
+References: <20250411131431.46537-2-bsdhenrymartin@gmail.com>
+Subject: Re: [PATCH v4] net/mlx5: Fix null-ptr-deref in
+ mlx5_create_{inner_,}ttc_table()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250411131431.46537-2-bsdhenrymartin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:hwKkeL4ea4YlMxXKdVeEjUCvOe87wC43IxzlfSr4ys29JlOCp+U
+ mk1U751DCZk3Gdh6CQsxzqdF3s6Xu7ENmHufromhgsY0gXxpyaq4DxwcICTvS17yoRBYbgv
+ V/jbqc2u7Tltk/ZiY3gIeE/3g+PUhmQvYmmfhs0oLqW3ncmgerJUgBd+U4iVclT33bpTXMo
+ B5TEB/z8wVlQeJkbcwkBw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xGRtdU2csCM=;7C0jJlyxH+/Py2yhnU6zHSgSDZ8
+ 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
 
-Add cc'es.
+> Add NULL check for mlx5_get_flow_namespace() returns in
+> mlx5_create_inner_ttc_table() and mlx5_create_ttc_table() to prevent
+> NULL pointer dereference.
 
-A similar problem was recently reported,
-https://lore.kernel.org/all/20250403-exit-v1-1-8e9266bfc4b7@debian.org/
-and I didn't realize this is another thread.
+Can any other summary phrase variants become more desirable accordingly?
 
-On 04/10, Oleg Nesterov wrote:
->
-> Well...
->
-> Let me repeat. I don't understand the kernel/reboot.c paths, you can
-> safely ignore me.
->
-> But I still think that you target the wrong goal. Quite possibly I am
-> wrong.
->
-> On 04/10, Tze-nan Wu wrote:
-> >
-> > If PID 1 exits due to the unreliable userspace after kernel_power_off()
-> > invoked,
->
-> Why. Why the global init does do_exit()? It should not, that is all.
-> It doesn't matter if it is single threaded or not.
->
-> As for sys_reboot(), I think that kernel_power_off() must be __noreturn,
-> and sys_reboot() should use BUG() after LINUX_REBOOT_CMD_POWER_OFF/_HALT
-> instead of do_exit().
->
-> If nothing else. do_exit() also does debug_check_no_locks_held() and
-> sys_reboot() calls do_exit() with system_transition_mutex held.
->
-> IOW. IMO, it is not that do_exit() needs some changes. The very fact
-> that the global init does do_exit() is wrong, this should be fixed.
->
-> But again, again, I can't really comment.
->
-> Oleg.
->
-> > the panic follow by the last thread of global init exited in
-> > do_exit() will stop the kernel_power_off() procedure, turn a shutdown
-> > behavior into panic flow(reboot).
-> >
-> > Add a condition check to ensure that the panic triggered by the last
-> > thread of the global init exiting, only occurs while:
-> > ( system_state != SYSTEM_POWER_OFF and system_state != SYSTEM_RESTART).
-> > Otherwise, WARN() instead.
-> >
-> > [On Android 16 with arm64 arch]
-> > Here's a scenario where the global init exits during kernel_power_off:
-> > If PID 1 encounters a page fault after kernel_power_off() has been
-> > invoked, the kernel will fail to handle the page fault because the
-> > disk(UFS) has already shut down.
-> > Consequently, the kernel will send a SIGBUS to PID 1 to indicate the
-> > page fault failure, and ultimately, the panic will occur after PID 1
-> > exits due to receiving the SIGBUS.
-> >
-> >             cpu1                           cpu2
-> >           ----------                     ----------
-> >     kernel_power_off() start
-> >         UFS shutdown
-> >             ...                	       PID 1 page fault
-> >             ...                    page fault handle failure
-> >             ...			             PID 1 received SIGBUS
-> >             ...                             panic
-> >    kernel_power_off() not done
-> >
-> > Backtrace while PID 1 received signal 7:
-> >    init-1 [007] d..1 41239.922385: \
-> >       signal_generate: sig=7 errno=0 code=2 comm=init pid=1 grp=0 res=0
-> >    init-1 [007] d..1 41239.922389: kernel_stack: <stack trace>
-> >    => __send_signal_locked
-> >    => send_signal_locked
-> >    => force_sig_info_to_task
-> >    => force_sig_fault
-> >    => arm64_force_sig_fault
-> >    => do_page_fault
-> >    => do_translation_fault
-> >    => do_mem_abort
-> >    => el0_ia
-> >    => el0t_64_sync_handler
-> >
-> > Simplified kernel log:
-> > kernel_power_off() invoked by pt_notify_thread.
-> > [41239.526109] pt_notify_threa: reboot set flag, old value 0x********,
-> > *.
-> > [41239.526114] pt_notify_threa: reboot set flag new value 0x********.
-> > UFS reject I/O after kerenl_power_off.
-> > [41239.686411]  scsi +scsi******** apexd: sd* ******** rejecting I/O to
-> > offline device.
-> > Lots of I/O error & erofs error happened after kernel_power_off().
-> > [41239.690312] apexd: I/O error, dev sdc, sector ******* op ***:(READ)
-> > flags 0x**** phys_seg ** prio class 0.
-> > [41239.690465] apexd: I/O error, dev sdc, sector ******* op ***:(READ)
-> > flags 0x**** phys_seg ** prio class 0.
-> > ...
-> > ...
-> > [41239.922265] init: erofs: (device ****): z_erofs_read_folio: read
-> > error * @ *** of nid ********.
-> > [41239.922341] init: erofs: (device ****): z_erofs_read_folio: read
-> > error * @ *** of nid ********.
-> > Finally device panic due to PID 1 received SIGBUS.
-> > [41239.923789] init: Kernel panic - not syncing: Attempted to kill init!
-> > exitcode=0x00000007
-> >
-> > Fixes: 43cf75d96409 ("exit: panic before exit_mm() on global init exit")
-> > Link: https://lore.kernel.org/all/20191219104223.xvk6ppfogoxrgmw6@wittgenstein/
-> > Signed-off-by: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
-> > ---
-> >
-> > I am also wondering if this patch is reasonable?
-> >
-> > From my perspective, there are two reasons not to trigger such panic
-> > during kernel_power_off() or kernel_restart():
-> >   1. It is not worthwhile to interrupt kernel_power_off() by a panic
-> >      resulted from userspace instability.
-> >   2. The panic in do_exit() was originally designed to ensure a usable
-> >      coredump if the last thread of the global init process exited.
-> > 	 However, capture a coredump triggered by userspace crash after
-> >      kernel_power_off() seems not particularly useful, in my opinion.
-> >
-> > In certain scenarios, a kernel module may need to directly power off
-> > from kernel space to protect hardware (e.g., thermal protection).
-> > In my opinion, rather than causing a panic during kernel_power_off(),
-> > it sounds better to allow the device to complete its power-off process.
-> >
-> > Appreciate for any comment on this, if there's any better way to
-> > handle this panic, please point me out.
-> >
-> > ---
-> >  kernel/exit.c | 14 ++++++++++----
-> >  1 file changed, 10 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/kernel/exit.c b/kernel/exit.c
-> > index 1dcddfe537ee..23cb6b42a1f1 100644
-> > --- a/kernel/exit.c
-> > +++ b/kernel/exit.c
-> > @@ -901,11 +901,17 @@ void __noreturn do_exit(long code)
-> >  	if (group_dead) {
-> >  		/*
-> >  		 * If the last thread of global init has exited, panic
-> > -		 * immediately to get a useable coredump.
-> > +		 * immediately to get a usable coredump, except when the
-> > +		 * device is currently powering off or restarting.
-> >  		 */
-> > -		if (unlikely(is_global_init(tsk)))
-> > -			panic("Attempted to kill init! exitcode=0x%08x\n",
-> > -				tsk->signal->group_exit_code ?: (int)code);
-> > +		if (unlikely(is_global_init(tsk))) {
-> > +			if (system_state != SYSTEM_POWER_OFF &&
-> > +			    system_state != SYSTEM_RESTART)
-> > +				panic("Attempted to kill init! exitcode=0x%08x\n",
-> > +				      tsk->signal->group_exit_code ?: (int)code);
-> > +			WARN(1, "Attempted to kill init! exitcode=0x%08x\n",
-> > +			     tsk->signal->group_exit_code ?: (int)code);
-> > +		}
-> >
-> >  #ifdef CONFIG_POSIX_TIMERS
-> >  		hrtimer_cancel(&tsk->signal->real_timer);
-> > --
-> > 2.45.2
-> >
 
+=E2=80=A6
+> ---
+> V3 -> V4: Fix potential memory leak.
+
+* Do you propose to complete the error handling for more function implemen=
+tations?
+
+* Please avoid duplicate source code.
+
+* Can an other enumeration style become nicer for version numbers?
+
+
+> V2 -> V3: No functional changes, just gathering the patches in a series.
+
+Would you usually expect more than one update step then?
+
+Regards,
+Markus
 
