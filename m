@@ -1,161 +1,127 @@
-Return-Path: <linux-kernel+bounces-600482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2714FA8606D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:24:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F18A8608E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 724423ACA9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A6651B66924
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31712AF11;
-	Fri, 11 Apr 2025 14:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B0F1F30D1;
+	Fri, 11 Apr 2025 14:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CpQndmyX"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eabWNFMd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA081E89C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 14:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3342367D1
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 14:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744381217; cv=none; b=d5yadZz2/KiBwzANxcGSOuM5VZwhFVCnrHEu2GuP/NLYhCxvLmznuM7MrnM6yDETFply7t0ffcLAt8jhMaM3jbc3FCj2YRxpuaDXtpkwDEE9enSDrNEKsBv4KY/CeTWh8unBFMSE0n9KS4fCsOocZg/Zi/AQTnZrLTHijCfYUkY=
+	t=1744381637; cv=none; b=NvnCc4xPiZ2R2VnkubRFzt/QVHML0H+P2GfCOpVsKRDOe0DJfk5fSUs9XOUOS/ekJnC9Lr5VgITxxV5KIC2sn4wiORprpcVzIMfgrfNPTAjmsiUl+GaCuU2E6p8nl7QhIFDjHN71PUc+WB34PIeGTMtDmBchl50STQ9RydwCxZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744381217; c=relaxed/simple;
-	bh=JeBrqQZu0gZIi8Dm4fdfFBXgfOVcuCnDWuOPdGHdoVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S6ibo0U6d8iLwwdzJBvILHqA0F2kdXeWxDsKfs6qpPCjUC6NlaNE5kUths1u7TFvmwEQYqS2J6KIKWni0i988A/NMJ6hrpvXmdKzdWtSmw5jFujcbkYDm4nvrwo+oMY/88Ug9BQgyghYYr1qFBKhZuQ/otVNx4cOndjhbUvOkHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CpQndmyX; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39bf44be22fso1210636f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:20:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744381212; x=1744986012; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rdBe+uF56KhkOuabVb/m7WvzCAHrcIAYgMQIeJhFnuo=;
-        b=CpQndmyXHRELFTffeClv1wljG9qVOG0OvzgWGM6usKqnw9ubExB2lgPAbRprbhggoX
-         0l84F7VRF/UGeuPpmQPwEiWuUM35kui4qRTuHVxKTQpGCFO7mcCiFYhG+GsGXmwkvncB
-         Ctd4WWq/N8VC9r5gi1B1uew9QDC9IyeJE1ns/97+Qns9+D2eWGHEUBPGFpC6lC6JWH/D
-         9njVYm35MwSt7Q0rx6lh0YDpaGcCr9YqWyJpdwtNZ9mXcIrlS7lwUNOXvjhwCu0gBa/H
-         YND/0pDj15BoA8zqi+plyEWCmEV2Si4fVw/JprcTq0z9UQZL8LR+ZeiCJAvjBOEbSAD5
-         Jc2Q==
+	s=arc-20240116; t=1744381637; c=relaxed/simple;
+	bh=0sSLM8Gl1SSfcycmM/UtlknnQ4e+BUVsux/kF0SISqQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MclLhhwK0pbraSs8G7XppdwSC4krn6AmKXhdFboIwsL5z9oeqNtJD1H7OmqmUbUIuOFgclAvzETKVLzfjl0+eo26uLuQ0+/yQZnTwRzv5iqOxgKgc/ZUYMOoqchWKhuWzD9lGn90cFeu1XcmE3EfzNt2un0top6HhDVYFWX1Qs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eabWNFMd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744381634;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GP8/HtUHIEVDUJEVLPkaBWTUMFy21m2j5eMBYPZlbWY=;
+	b=eabWNFMdwqiMKt92TIsvdOfWTwoTQtHcKO8v9dxovFp79sZOQONkC1rtTOL6WFVzfY5iVS
+	nSjpccYrcrppCtqI+RQ95TMSCJU51aSbXK5KC9cMjm8Ea/Ed/FJRdCRMnPsU0+oJW2omvj
+	5DvMoqpjhUg6b4YUGw5Zmpz1nmG761c=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-659-9Rg67iVsNPSjQAxWbNzimw-1; Fri, 11 Apr 2025 10:20:44 -0400
+X-MC-Unique: 9Rg67iVsNPSjQAxWbNzimw-1
+X-Mimecast-MFC-AGG-ID: 9Rg67iVsNPSjQAxWbNzimw_1744381244
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5e2a31f75so595542085a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:20:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744381212; x=1744986012;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rdBe+uF56KhkOuabVb/m7WvzCAHrcIAYgMQIeJhFnuo=;
-        b=fwmLXUeuqK5I/zBG6HP06hzZf0Jp0IPX6VomARk3ZzXcwZ9YhCz/btpLZnjFsF6pYa
-         HCWmUJUB4YqO/nmXZMYPu1VJESmDmgetzj8PAptyxxrL9sBmQ54Z9mlmc1l7Og401S0N
-         yzxTpXrwiZNpz6QqriCAkIGKTmWtAoPMkTu4D+zLsk6xCe1xg6wIjidku9x+n1WUG60F
-         9txMyi/S9qkQFCuCCxLeT6NjgKv4l743SqmDxOCJ4nKXc/VKUcf6g9LApP7ySJsKcCKw
-         5V7ww9zBHREN1Y7K3SWmgpoixm0A/EgWQlb9vVUO2+TolYyMyIAOuxkGmF3YoT/rilWq
-         Tn5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW4vDwy488DlZD4MS4xhmAH/m8uBRvX9s9uffUXcsMHnApsYFEwbz1WMS3ne/szUGFLEzi2wL9LMg3hGSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0YjOjY8Q+QzS5QSk++5vMidDvxb5a3KwExSFRB9j3sE18CVFj
-	FvyMdjo9y1VWlHtr03toIcSJbCiGkrwWtkV1mUWSMTG9nXTHQfXUFXBwIvmoj70=
-X-Gm-Gg: ASbGncumiUJDnvalpRv0uOIT19IYWk3Js2C+oioMkx66Vid3py6inPwnX8lr8Sy+KD9
-	pA+1RGne7q5XxilSCod5lzyOCkGCmtcQtPSjHslkWYXLfVMAfW2E9pr2tMEHRcMMmZCx9tYflFO
-	lhcXey80SRvcGMbtk1oaPxJjD89z7bydU3AiZYtx9gegXdDnrfx/D/OfRo5wyCIXI/bm2eEDFUh
-	/hi6oR1DbNSLIaaS4IHxBO2ZjgbAeXnGl1mBk6S6JGTs7BFWc2B9KTQ0uCWgAlBbeu+pOFF2apI
-	k2x/DXNJTd/mfe7r5qMvwucfHUgcjmkc5fhIlJBOj58F4GqC66TFmdFUOofy4/s4hnOJJkHTxOU
-	fHwFGM1eJug==
-X-Google-Smtp-Source: AGHT+IFZ4lJFn1G3FTPM3/pefChplb5Ul1NZ2T59kDMMnV2Japyqu1iF66jX5ixamcxpq9HuXW+pSg==
-X-Received: by 2002:a05:6000:1a8a:b0:391:1139:2653 with SMTP id ffacd0b85a97d-39eaaec9e98mr2481396f8f.52.1744381212408;
-        Fri, 11 Apr 2025 07:20:12 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:5ee:79d0:cf9d:bb30:5951:692? ([2a01:e0a:5ee:79d0:cf9d:bb30:5951:692])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43cb43sm2138998f8f.65.2025.04.11.07.20.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 07:20:12 -0700 (PDT)
-Message-ID: <8ea16b0a-85aa-4ff7-8531-9eb253a9575a@baylibre.com>
-Date: Fri, 11 Apr 2025 16:20:11 +0200
+        d=1e100.net; s=20230601; t=1744381244; x=1744986044;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GP8/HtUHIEVDUJEVLPkaBWTUMFy21m2j5eMBYPZlbWY=;
+        b=u6wvTRKx+2Csr2eks//m4WhTeoItjLHjfRwIrl+dhEBXcPvlHo2s2n3EyJV+XCs88d
+         5uXEYdJS4WbWHsn6sRnhE8tW0rEzz2isP4iSrIiK0sDOxNkjUa7hdjnPVOA8cfmOX+pM
+         g9T+cmKbC1GneTTtYmZ+DB16hazjWGHZwctEQQd6ryg+7k7qf0U6LTYBxGZSXnZRvDLk
+         8C2/EUk6XufgLLGif1fFmFRkHG7SDlgq1E0Mql89a28E9RLj17oT+0usVTPgwqKeY1dv
+         adm/f97DTGHEk1tZLfNLyGAdWQLsqyAfubmYbPrLi3fxOg3B5ZkuRBfkPGwSMwqzKZ4f
+         61xA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5mZZO4fsSaWD7yW8rAsaR2AXTUxkAsQ2twAx1sxCaD4fHry6RdLbTFjxnh3PiN1haKWbiwVX44qKBDzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznuG8/m8toiRObW3lmW1kpgO2Mgn1g2pJYXV9cX58115sWrc0p
+	ALScBmDzJqy+FrD2VDFeB7djrbw26d9MW/lHgHqm2vyWbFMN44kkIrfLIDuxMRW47YyEPvTAdmS
+	d1VEqFGmaXGe7XY+0XbYiA6naDdVx3t4roIEx1VQ0eHgLZ8FEDImsPkFJh1shMxU2AZu0+gCEUN
+	qu4OM9l0M/vGYbjFWAlhikI3eF6zg8EgeLe/C+
+X-Gm-Gg: ASbGncuXEeMCB20QzRNx7NronCjvElpDW/agPGiJTmLERin9v3CplL2GSYpfpOuZSUD
+	fxwcJDkDyeZFdztp5wjh0kANLqWarE696h13l4k2in8dyICSCDZro5nn4pDkbI2Wz8Gmo
+X-Received: by 2002:a05:620a:4555:b0:7c3:d5a4:3df3 with SMTP id af79cd13be357-7c7af0e4069mr446713985a.34.1744381244168;
+        Fri, 11 Apr 2025 07:20:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE87/SkmJqkCTFo3ondJGkFj0c7IjvtrQht+ufW53KKYYwMMEMEB+bhas8EXXkb6Qb8MJd6901LxjVSU8qgMcU=
+X-Received: by 2002:a05:620a:4555:b0:7c3:d5a4:3df3 with SMTP id
+ af79cd13be357-7c7af0e4069mr446710485a.34.1744381243833; Fri, 11 Apr 2025
+ 07:20:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] rtc: mt6397: Fix mt6357 RTC year offset handling
- for hwclock commands
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Eddie Huang <eddie.huang@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250109-enable-rtc-v2-0-d7ddc3e73c57@baylibre.com>
- <20250109-enable-rtc-v2-2-d7ddc3e73c57@baylibre.com>
- <4d916221-d9ea-4e08-8d22-1be1982323ee@collabora.com>
-Content-Language: en-US
-From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <4d916221-d9ea-4e08-8d22-1be1982323ee@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <cad2f042b886bf0ced3d8e3aff120ec5e0125d61.1744297468.git.jstancek@redhat.com>
+ <20250411-umlegen-herauf-508fe182fffa@brauner>
+In-Reply-To: <20250411-umlegen-herauf-508fe182fffa@brauner>
+From: Jan Stancek <jstancek@redhat.com>
+Date: Fri, 11 Apr 2025 16:20:27 +0200
+X-Gm-Features: ATxdqUFDVkes1gAHo_3pSyiyrwIAhhZcJcFcsj7AiggBUI7bmKdbRteKcHOEm_c
+Message-ID: <CAASaF6yT=YbDfnwczWSEiEkn+evkWCPF0_MmO3OKCEmuFOG32w@mail.gmail.com>
+Subject: Re: [PATCH] fs: use namespace_{lock,unlock} in dissolve_on_fput()
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Apr 11, 2025 at 4:09=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Thu, Apr 10, 2025 at 05:05:42PM +0200, Jan Stancek wrote:
+> > In commit b73ec10a4587 ("fs: add fastpath for dissolve_on_fput()"),
+> > the namespace_{lock,unlock} has been replaced with scoped_guard
+> > using the namespace_sem. This however now also skips processing of
+> > 'unmounted' list in namespace_unlock(), and mount is not (immediately)
+> > cleaned up.
+>
+> Thank you for spotting and fixing this! My bad.
+>
+> > diff --git a/fs/namespace.c b/fs/namespace.c
+> > index 14935a0500a2..ee1fdb3baee0 100644
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -1830,6 +1830,8 @@ static inline void namespace_lock(void)
+> >       down_write(&namespace_sem);
+> >  }
+> >
+> > +DEFINE_GUARD(namespace_locked, struct rw_semaphore *, namespace_lock()=
+, namespace_unlock())
+>
+> I'll call that namespace_lock instead if you don't mind.
 
+I don't mind - I used "locked" because it's easier to grep for, when
+it has distinct name.
 
-On 02/04/2025 15:03, AngeloGioacchino Del Regno wrote:
-> Il 02/04/25 12:51, Alexandre Mergnat ha scritto:
->> The mt6357 RTC was failing when using the `hwclock -r --verbose` command,
->> despite reading correctly through sysfs. There is high chance for other
->> platform to be impacted by the year offset handling issue.
->>
->> The hardware RTC registers store years relative to 1968, but the driver
->> wasn't consistently applying the offset when converting between
->> hardware and Linux time representation.
->>
->> This inconsistency caused alarm rollover failures during device
->> registration, with the error "alarm rollover not handled -22" in the
->> logs, causing hwclock commands to fail.
->>
->> The ioctl interface used by the hwclock command requires proper time
->> range validation that wasn't happening with the inconsistent year
->> offsets.
->>
->> Fixes the issue by applying the year offset in all operations:
->>     - Adding (RTC_MIN_YEAR - RTC_BASE_YEAR) when reading from hardware
->>     - Subtracting the same offset when writing to hardware
->>     - Using the same logic for both regular time and alarm operations
->>
->> With these changes, the hwclock command works correctly and time
->> values are consistently handled across all interfaces.
->>
->> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
->> ---
->>   drivers/rtc/rtc-mt6397.c | 13 ++++++++-----
->>   1 file changed, 8 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
->> index 692c00ff544b2..ba52e225dc8fa 100644
->> --- a/drivers/rtc/rtc-mt6397.c
->> +++ b/drivers/rtc/rtc-mt6397.c
->> @@ -77,7 +77,8 @@ static int __mtk_rtc_read_time(struct mt6397_rtc *rtc,
->>       tm->tm_mday = data[RTC_OFFSET_DOM];
->>       tm->tm_wday = data[RTC_OFFSET_DOW];
->>       tm->tm_mon = data[RTC_OFFSET_MTH] & RTC_TC_MTH_MASK;
->> -    tm->tm_year = data[RTC_OFFSET_YEAR];
->> +    /* The RTC registers store years since 1968 (hardware's base year) */
->> +    tm->tm_year = data[RTC_OFFSET_YEAR] + (RTC_MIN_YEAR - RTC_BASE_YEAR);
-> 
-> This patch received a NACK because of RTC_MIN_YEAR_OFFSET.
-> 
-> What you're doing here is avoiding to use the "RTC_MIN_YEAR_OFFSET" definition name
-> but otherwise doing the very same thing that was NACKed before.
-
-You're right sorry. In my mind, the rtc framework was working well, then I try-hard to
-fix the issue in this driver... but I was wrong. :(
-The RTC framework have issues so fixes should be in the framework directly. My next suggestion:
-https://lore.kernel.org/r/20250109-enable-rtc-v3-0-f003e8144419@baylibre.com
-
-
--- 
 Regards,
-Alexandre
+Jan
+
 
