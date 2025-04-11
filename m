@@ -1,175 +1,149 @@
-Return-Path: <linux-kernel+bounces-600440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD7A5A85FED
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:04:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 302F0A86004
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A60217D0BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:04:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 530991BA75CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D70D1F418E;
-	Fri, 11 Apr 2025 14:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916591F2C52;
+	Fri, 11 Apr 2025 14:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iwi6Dsmy"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiI5UjVI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4D51F37D8;
-	Fri, 11 Apr 2025 14:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E213F8635A;
+	Fri, 11 Apr 2025 14:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744380222; cv=none; b=ewkcaVYfHYhow7q2kEWoCWu9hGADqk95W1TcBmr4AlSlvXTQvpwNOjqnZXRBktwIvUj8lOYYQGyvBkH0GlvouNzv4ab4iwy7oPf3xXiaVpBIloW2g7XNXjrIxmZwCKn2ZmZX+KIP/M3+yrga63G0+oZ+qliL5dhWXwDPX2GjNdg=
+	t=1744380363; cv=none; b=eupo5RfB0gE22583xkGFIZFjwV99Jk/tYLjCKrBxhPNr9+2UbcUnOQ4Dss5W7K+lOWGH+d1dgciRQOUL5ZyCdyz9PU6f7hSrGc8PUQLe88izcRjbl86XkZP4EVNgW4jO+V22GYINkTyTQaT31ssB84c8ZrblT7w+nOSfQRVVoTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744380222; c=relaxed/simple;
-	bh=Ns1e3L/IMBtWBIq2EJ8Q7nkRbzMXS8QMJmt1EKKPMcE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DkmwUg6lXVnyDv9o9vG+eA1WZ4dfTd/uBrZPyTJ1cFCnpWOiFsWvdRyTtia89rqqFN2X6J74jOO/6ra3vuiTotjJOL2rPDqtgP59mXjE6Mo6/eTQCt4jH004NWwicVU/nn2O5EpIe0AZs7yksCADZExBm31yc+qx8BqRSfcodZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iwi6Dsmy; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7376e311086so2601301b3a.3;
-        Fri, 11 Apr 2025 07:03:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744380220; x=1744985020; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=aSqmoz4W2Qpz+EROreX9HulA0/vYEtNIQOH9MGn8boc=;
-        b=Iwi6DsmykNP2YtsOglthn8QTL4nHrPtUdw8cUSpfUCK/YNIlgRqi6/XHS6sduhuz7I
-         thVSFTl+Gbc0LYHxxpYBanYdDSTx5WD1wCrIw0qCF9p62Er6OIXVS6szdBd83TkZOm02
-         z5PHG8zLnfLfildmcmuUS/oieSuTRUlgkBcFdrzrUButBMinWR7UBVZ7N4m+Y4yamR3L
-         wjVBv6hQY2HkLZ10M06rwbQlOMaJTxTnv7V3ZZYWycnWPA8fTy87yL98ybt6ot5N6cv1
-         JqH45GpyoBad3wtAXfkrrOlS9vkJzfLR1KJytPTysKT0aMzWfQTNABkQObgqmziGZoow
-         zO0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744380220; x=1744985020;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aSqmoz4W2Qpz+EROreX9HulA0/vYEtNIQOH9MGn8boc=;
-        b=NNI9zI1nyymVizlxexw3fNzHZvsW0LGH8QGiBo+vi9r6GCcOGr9sbH992CAOx757p7
-         HFnUB6XoUvM1U61SLahtjQTJSTY+ALJ1NXJfCcpnld2UiZeUHtwe3tk7dZl/xDfXE5xU
-         vsfDGOmitITeDAyWUCj+zPvwK58k3TfPGx1fZWVwlY4fju1eK4YA5wpkDmAO/PnQiDbR
-         iDlQ/beVInutzNEKp38dTVuUyJeqKAGvh4T6kHepDVKpBYlV5osrAz6eSluhk5arSnCQ
-         Gcug0mnCzaR6jBG9fvvvogK1ReG++TTaablBnmzJwoIiMOC7wwwyn5RltBYjcDbYE0Ti
-         wdvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXDRkeIJrIq+mVs+grf406u4nNMgqNIqn5By95UgyuS6gFE59WNR2swBeGpDrT1PCk67mBPXAl9VLTMGhF@vger.kernel.org, AJvYcCX/ClYk3G5fILs2UPRuhmlN32oGwjOXcVgU2aUm6jQl4FoVjw+vL/Rj/DjV+Hui/KKcsyRt0Om8ApvtJQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDgWqV4QgLfa3ui6DLw2wix1OrwRUQxAetrhkZ26xhzTKtB22q
-	4ciwPAashj3l1Ruco8MCmk98L/bkyWmmvZD+EmUzpFvS0o7vV6ECVvgR4Q==
-X-Gm-Gg: ASbGncvdFarEVmWXMjPVPyAaWJyxKcG2fxvAnBDAf5QYxngziD5LcV/1FFfVf7S3CG6
-	wY78AFvISkIRgPh4nBiDoknSK/ZEu7CnqFfTQpdm4dUJ1pC0jtMGha1Sg17MLb33MnSCYz7d/jz
-	9bLMEDGKAVBtls1u1u+M8D5aASOfBetCo3MHs2Zer5+SMMGhGnvpYMTO3qnpPZM0IX0HFBjN2sl
-	P8sCB36Pu9nInApK9t9zSPGTw9sNFAQT8NS7jpLCxcFXWJmmLT7IRi+e1RHP2AX4PLKtWne1p8x
-	EFT7DWhFyvR60RuVuOEbEDZPv/+SMmCRGBlDrafoc7Jc7N7Gjm1X0aC5KYVbtOaBN5QH8QyFi8r
-	KZx+7rR5S9B+D1g==
-X-Google-Smtp-Source: AGHT+IGpHD1mQ7+2yVdg1uHTVSNjp8+oRF/lePIAXNTlFAMCDr2vK8GcHad9Go1qdHo5ZSnxh3cwHQ==
-X-Received: by 2002:aa7:88d2:0:b0:737:6fdf:bb69 with SMTP id d2e1a72fcca58-73bd1211412mr3465831b3a.13.1744380219729;
-        Fri, 11 Apr 2025 07:03:39 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21e0469sm1507234b3a.79.2025.04.11.07.03.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 07:03:39 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <ef19ce31-fb9a-455b-8db9-f803154f8723@roeck-us.net>
-Date: Fri, 11 Apr 2025 07:03:37 -0700
+	s=arc-20240116; t=1744380363; c=relaxed/simple;
+	bh=HlikJyA3RK/we9R2FRAkqQszIW7QLL+7TnR3hFlO3p8=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 MIME-Version:Date; b=IbE1oKrbpBwj47u+ivqpbRLMZNxWYwZpqjcCx8hXLSnybXHLQQ+2Sh4UCxcGyQX3WLIA4TdZJBLQxsSeTijsRqcbcmAUHAX6RYgYILM2xGseprZ318K7llgjoAKBvQj83xFVmXN5I3BqVWSQXgUijuiw4YPY/6M+MCIGZbI7EuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiI5UjVI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC75AC4CEE2;
+	Fri, 11 Apr 2025 14:05:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744380362;
+	bh=HlikJyA3RK/we9R2FRAkqQszIW7QLL+7TnR3hFlO3p8=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
+	b=CiI5UjVI7wphAZSfd37O9uqQOvJAKY/aFXR68AI0sSamvYzff1Y7ICpnCiBARwqBS
+	 e/PD3XhTxshajAoIHmgt1x20FRASYm6tF0W5rAveYgVU3aFJ9Vef6wRSFpaxZfaiQQ
+	 hJ3IgZNzKdN7odI2VMzTsjM6zxME045mlw/5w4gV1YiUdEowJQ49gQBCax22ddNIw1
+	 w27iN0wFSMhA0DJg0zYL0z66gdIfMncNL0N9+adRIHDY2ERW/GhiJiMMZqjuiHAJ8L
+	 Sbn4t7uLSnRnOzM1Ub/lirc/SwLC1nCnDSjwkW1h1tbVVmQ768Zn4lVU83v8jmG3P6
+	 QkgrvA4OLOZXA==
+Message-ID: <1fb5a9e97e97b86c8b0d6008eee579a0bebea708.camel@kernel.org>
+Subject: Re: [PATCH net-next 2/8] mptcp: sched: split validation part
+From: Geliang Tang <geliang@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, mptcp@lists.linux.dev, 
+ Mat Martineau <martineau@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet	 <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni	 <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, Shuah Khan	 <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+In-Reply-To: <20250411-net-next-mptcp-sched-mib-sft-misc-v1-2-85ac8c6654c3@kernel.org>
+References: 
+	<20250411-net-next-mptcp-sched-mib-sft-misc-v1-0-85ac8c6654c3@kernel.org>
+	 <20250411-net-next-mptcp-sched-mib-sft-misc-v1-2-85ac8c6654c3@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwmon: (xgene-hwmon) Simplify PCC shared memory region
- handling
-To: Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org
-References: <20250411112053.1148624-1-sudeep.holla@arm.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20250411112053.1148624-1-sudeep.holla@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Date: Fri, 11 Apr 2025 09:57:39 -0400
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+Content-Transfer-Encoding: 8bit
 
-On 4/11/25 04:20, Sudeep Holla wrote:
-> The PCC driver now handles mapping and unmapping of shared memory
-> areas as part of pcc_mbox_{request,free}_channel(). Without these before,
-> this xgene hwmon driver did handling of those mappings like several
-> other PCC mailbox client drivers.
+Hi Matt,
+
+On Fri, 2025-04-11 at 13:04 +0200, Matthieu Baerts (NGI0) wrote:
+> From: Geliang Tang <geliang@kernel.org>
+
+Please update my email as "Geliang Tang <tanggeliang@kylinos.cn>" here
+and in patch 7, otherwise, CI will complain that the email address
+after "From: " is different from that after "Signed-off-by: ".
+
+Thanks,
+-Geliang
+
 > 
-> There were redundant operations, leading to unnecessary code. Maintaining
-> the consistency across these driver was harder due to scattered handling
-> of shmem.
+> A new interface .validate has been added in struct bpf_struct_ops
+> recently. This patch prepares a future struct_ops support by
+> implementing it as a new helper mptcp_validate_scheduler() for struct
+> mptcp_sched_ops.
 > 
-> Just use the mapped shmem and remove all redundant operations from this
-> driver.
+> In this helper, check whether the required ops "get_subflow" of
+> struct
+> mptcp_sched_ops has been implemented.
 > 
-> Cc: Jean Delvare <jdelvare@suse.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: linux-hwmon@vger.kernel.org
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
+> Reviewed-by: Mat Martineau <martineau@kernel.org>
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 > ---
->   drivers/hwmon/xgene-hwmon.c | 39 ++++---------------------------------
->   1 file changed, 4 insertions(+), 35 deletions(-)
+>  net/mptcp/protocol.h |  1 +
+>  net/mptcp/sched.c    | 17 +++++++++++++++--
+>  2 files changed, 16 insertions(+), 2 deletions(-)
 > 
-> Hi,
+> diff --git a/net/mptcp/protocol.h b/net/mptcp/protocol.h
+> index
+> d409586b5977f93bff14fffd83b1d3020d57353b..7aa38d74fef6b5f00d97a114d74
+> b711014d0a52d 100644
+> --- a/net/mptcp/protocol.h
+> +++ b/net/mptcp/protocol.h
+> @@ -744,6 +744,7 @@ void mptcp_info2sockaddr(const struct
+> mptcp_addr_info *info,
+>  			 struct sockaddr_storage *addr,
+>  			 unsigned short family);
+>  struct mptcp_sched_ops *mptcp_sched_find(const char *name);
+> +int mptcp_validate_scheduler(struct mptcp_sched_ops *sched);
+>  int mptcp_register_scheduler(struct mptcp_sched_ops *sched);
+>  void mptcp_unregister_scheduler(struct mptcp_sched_ops *sched);
+>  void mptcp_sched_init(void);
+> diff --git a/net/mptcp/sched.c b/net/mptcp/sched.c
+> index
+> f09f7eb1d63f86b9899c72b5c2fd36c8445898a8..1e59072d478c9b52c7f7b60431b
+> 589f6ca3abe65 100644
+> --- a/net/mptcp/sched.c
+> +++ b/net/mptcp/sched.c
+> @@ -82,10 +82,23 @@ void mptcp_get_available_schedulers(char *buf,
+> size_t maxlen)
+>  	rcu_read_unlock();
+>  }
+>  
+> +int mptcp_validate_scheduler(struct mptcp_sched_ops *sched)
+> +{
+> +	if (!sched->get_send) {
+> +		pr_err("%s does not implement required ops\n",
+> sched->name);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int mptcp_register_scheduler(struct mptcp_sched_ops *sched)
+>  {
+> -	if (!sched->get_send)
+> -		return -EINVAL;
+> +	int ret;
+> +
+> +	ret = mptcp_validate_scheduler(sched);
+> +	if (ret)
+> +		return ret;
+>  
+>  	spin_lock(&mptcp_sched_list_lock);
+>  	if (mptcp_sched_find(sched->name)) {
 > 
-> This is just resend of the same patch that was part of a series [1].
-> Only core PCC mailbox changes were merged during v6.15 merge window.
-> So dropping all the maintainer acks and reposting it so that it can
-
-Why drop my Ack ? To have me review it again ?
-
-FWIW, I had expected that the patch will be picked up with the series.
-
-Anyway, applied.
-
-Guenter
 
 
