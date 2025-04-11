@@ -1,112 +1,115 @@
-Return-Path: <linux-kernel+bounces-600260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D997A85DB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:51:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36F4A85DA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82984C4267
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:45:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FCB9A6C03
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2FD2BEC32;
-	Fri, 11 Apr 2025 12:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AB52BE7B5;
+	Fri, 11 Apr 2025 12:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGk+NyoW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="FxlUfy/2"
+Received: from mail-24417.protonmail.ch (mail-24417.protonmail.ch [109.224.244.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE4929B223;
-	Fri, 11 Apr 2025 12:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE257290BCF
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 12:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744375375; cv=none; b=ibQU5zXGinrcXUkSJl7exk2JEegICWqVa47CCRRdb/ZtgwQ05sa0vxvgz8EerPUWZ1lD1VVQpOCt9dbqcH+oqO8xLQRSkoTVg88M6qghItdtsZiN9JZp4XisQDLoMqMbU/6/7x/RH6qWh4e2ElZrxGaTESduGU9+ecKpfBEs/8g=
+	t=1744375402; cv=none; b=g6kB0cxJUUKAtPHcvDgI6Bz1BoUVwsEOlqmSsve0ubCCFC1V59vw8fKLaNMzRne7FWF9Q7MHodMqRji+1i6PL+0tiAbFdMMBo7eVWFRao9+4/eGlcf4wBZY5MIyNdfelcioqqUmKWyFZEW1NyFjP4zXy5Sx6nQMZfeBJ+q45NfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744375375; c=relaxed/simple;
-	bh=HLUNHReE0cNLO6CqkVo6sXtk4KZJ2890NAAWXXyNoFk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hSVvDAjAUwqaQ7urCp5ePpdmFz2YixL7oYTHgSZlZ0pagHqagpa/ZPnp1v6MCw9cXsvq0YILh6Sma4sV1WX9DCUDZdNVxQsJG2OV2wkiB7j1sBD/L8VoK9A6tVc9t5hLiek6fyh5tTwqE49sLK8QqHCIyPmO+spKushpT2M6ftk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGk+NyoW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 316AEC4CEF7;
-	Fri, 11 Apr 2025 12:42:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744375375;
-	bh=HLUNHReE0cNLO6CqkVo6sXtk4KZJ2890NAAWXXyNoFk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=jGk+NyoWzuBHZPmQPPUNW+Duw3aCsOpaGF8vy8VkfiP5nE5iDiDNUoX5B7BkqRRXs
-	 fK8ZCmshrQnClvb+0Daow2f4KVhuojCHmcCPYuQYjzSnSSAx7OZNgWxmvoJzP+Q2+K
-	 GkJCQpXnSj/Mq8ZBS6ZpbR8CBz+S6A/Y3D228e+d4b6Wt7JAqxjZ7L08/zgezrF5ie
-	 XEvhotfgHhmbKvmrpW1i5VGdUdXkCKPd3nqnqFq/KdLZ+IPcZ0BrmcpyRToXQ/BUPO
-	 CBaDokiU8iP2Z4V80PXAM2f0MzzWGbdTTXH5NyaI/uAXIoFGLF17h7tDGn8FEsliKv
-	 jILBuyyQQOhBw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28423C369A8;
-	Fri, 11 Apr 2025 12:42:55 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Fri, 11 Apr 2025 20:42:49 +0800
-Subject: [PATCH 7/7] arm64: dts: amlogic: S4: Add clk-measure controller
- node
+	s=arc-20240116; t=1744375402; c=relaxed/simple;
+	bh=P1zQf8kAKobzVBeJEcS0MCw8raw2jLMB9XWrZOaVBi4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OSotddyU+VD+eXZb6uGw2wZIfsXE45MlYQXJWI6KKzOTHaQ7rRZj1mh7bdZIuzOyhHw5UbsHP6kn2+3YlgfjrPhuMFaAWtRnCFHKJaD3Iu26KXQRyZ3Flnx7Bmkc1eZcjPQnhc/OS/egwonrxfilk1lCG8tMSYAtdDElmX7fsSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=FxlUfy/2; arc=none smtp.client-ip=109.224.244.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=etr4v4u6ufcdhk2pjn7vwmgjpi.protonmail; t=1744375397; x=1744634597;
+	bh=KeHFjHClHGzraiUMbSQaXzvSScQGZcUsAN1CBTNnBdA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=FxlUfy/2nPfpf6Y4zF2GtsmWY0wtobZnfgGhh8/U18Zltf1/JvZrjiYa/Qd/nOsrX
+	 qBEZTPqJnA4sKAZTLNX3gF//e8pGbhDdZaHniWGCLt+svmaBYjMsSuIsQ8ehYQgaaO
+	 7RBPVxrTPaPy2SnTCp2HM/eHICUyLL0lvcDJtwfCZtpM5X/Dn/5Bf/6yW6fJ9iv5js
+	 lX9yRs5MUtLh/f10o874iTso3Q+/VumzqXaW+rlhQOmmHphRlk+PaXQIweVnOUDV5j
+	 k+osjz3KrhWI7M2tYKj6uTMxkX5JyC3d/Sqjfo54fp2TKOZWEU6U6QIt3YJhlgRJHc
+	 Ajx1aLvNj1oJQ==
+Date: Fri, 11 Apr 2025 12:43:11 +0000
+To: Alexandre Courbot <acourbot@nvidia.com>, Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rust: alloc: allow coercion from `Box<T>` to `Box<dyn U>` if T implements U
+Message-ID: <D93TGVDQS6B6.1V6CKR5QSEWF6@proton.me>
+In-Reply-To: <20250411-box_trait_objs-v2-1-c5f31b8db847@nvidia.com>
+References: <20250411-box_trait_objs-v2-1-c5f31b8db847@nvidia.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 01337d7214de44fd2dce290a24dcd8de785da503
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250411-clk-measure-v1-7-cb46a78d019a@amlogic.com>
-References: <20250411-clk-measure-v1-0-cb46a78d019a@amlogic.com>
-In-Reply-To: <20250411-clk-measure-v1-0-cb46a78d019a@amlogic.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744375372; l=767;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=itRtutR2PIVs/kAFr6Titwp0GUUTkodKKnworvlokhM=;
- b=HkLHQwUO4HrZDuTx82Q4lLAZGwoF6OGZJQla3YnGfIsydsSWucE6PSmhvIS/JMYVod6KlvVBN
- spDHf+yEF9WAKvCoQ0EuQvZixoBqSExl9cfQuYZsHWI78avK2kycxxb
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+On Fri Apr 11, 2025 at 2:07 PM CEST, Alexandre Courbot wrote:
+> This enables the creation of trait objects backed by a Box, similarly to
+> what can be done with the standard library.
+>
+> Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Add the clk-measure controller node for S4 SoC family.
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> ---
+> From this discussion on Zulip [1].
+>
+> Heavily inspired from the similar feature on `Arc`.
+>
+> [1] https://rust-for-linux.zulipchat.com/#narrow/channel/291565-Help/topi=
+c/Trait.20objects.3F/with/510689662
+> ---
+> Changes in v2:
+> - Use where clauses to improve readability.
+> - Fix build with rustc 1.78.
+> - Link to v1: https://lore.kernel.org/r/20250408-box_trait_objs-v1-1-58d8=
+e78b0fb2@nvidia.com
+> ---
+>  rust/kernel/alloc/kbox.rs | 30 +++++++++++++++++++++++++++++-
+>  1 file changed, 29 insertions(+), 1 deletion(-)
+>
+> diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+> index b77d32f3a58bab5ec73c612bdaaba0d79bfdff65..b9a905cd4bd285782b0db284b=
+6771aec03e0c10b 100644
+> --- a/rust/kernel/alloc/kbox.rs
+> +++ b/rust/kernel/alloc/kbox.rs
+> @@ -32,6 +32,8 @@
+>  ///
+>  /// When dropping a [`Box`], the value is also dropped and the heap memo=
+ry is automatically freed.
+>  ///
+> +/// [`Box`]es can also be used to store trait objects by coercing their =
+type.
+> +///
+>  /// # Examples
+
+I agree with Miguel, you could move the added line above down here and
+also provide a simple example.
+
 ---
- arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Cheers,
+Benno
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-index 957577d986c0..9d99ed2994df 100644
---- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-@@ -629,6 +629,11 @@ internal_ephy: ethernet-phy@8 {
- 				};
- 			};
- 
-+			clk_msr: clock-measure@48000 {
-+				compatible = "amlogic,s4-clk-measure";
-+				reg = <0x0 0x48000 0x0 0x1c>;
-+			};
-+
- 			spicc0: spi@50000 {
- 				compatible = "amlogic,meson-g12a-spicc";
- 				reg = <0x0 0x50000 0x0 0x44>;
-
--- 
-2.42.0
-
+>  ///
+>  /// ```
 
 
