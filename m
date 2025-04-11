@@ -1,130 +1,283 @@
-Return-Path: <linux-kernel+bounces-600261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7321EA85D9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:49:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 782BBA85DA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C85269A5ADC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 415194E0161
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AC52BEC37;
-	Fri, 11 Apr 2025 12:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051E229C356;
+	Fri, 11 Apr 2025 12:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SICH88CT"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUNFG7rg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621DF29CB42;
-	Fri, 11 Apr 2025 12:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15101221FC6;
+	Fri, 11 Apr 2025 12:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744375378; cv=none; b=KZPlx8MVqJds9kTfB55v39S4lzbmfPVMuXuGutsgaCnGR53cQZRA0jmOZo4ENIyi+reWQoOVfdd7WTNN9aYE75/vjJSxZW1F3Z9GtN1RrK/5zN5a6m5ZOBe3antq4/tCUU5SyxCYoK09aNbyHBAkwN/sDgEnmo3WvC4cPncn38c=
+	t=1744375375; cv=none; b=bIPsaD0xMiprIm9uaLErRBpvQeE9GgnUDVoGo0BRQolw8SMHHhzE77dsV97j/cN0Ip9XHuyNqM55Clslmb2fFEt0SFFMIQJIGsevCFTZ6cArPZ/lIAZFyW7gfxlqHknXY8tK4AHnO/1pLksCV/egr3GF04+zVSmpVBQDbMaQJ5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744375378; c=relaxed/simple;
-	bh=LRBlzSos3dhGHutKp01tSFMKt4Gbxl3XFGUSmAinjeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q5yW1r+f9x7wiIg6xu9wHrd3Sfk5FN6Gq3e0ulJ2aO3Rlr3zbffpHQRJgJiF/dJSdExA3KJiZh0wHKLK0Q+eNYuJkHgTHh/MHuDab8Dov9/F47mCxoQ+4Pze1qKe5rGiJ2SO+J4nYvle4ZMOhtYesayt48ZnRF/GUybW4xxKzoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SICH88CT; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B2GwTQ028860;
-	Fri, 11 Apr 2025 12:42:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=wllDMLVyjUN526ZRNsd50HowPiyj1q
-	cvrx5XL9ogpG0=; b=SICH88CT3h4e5JoHQhDhlysl8FFRCeiJoF4pIiDIj0HQtP
-	goz4LQb6iBTxk0A/2clqpGP0NesX0has3UbYRMOctiK8oYWULcvxWmKB8Mr0snls
-	vYmKQLxHRxkVMqGfR10cDTpw1YWMCbV/7Cv0M01Fuhrj942j9UI9AtBWcGBJolxz
-	Ikp1up47HDPeSYsgBo9cm9OfyX/M85K40LbAwLwlMbIIdZkGZzjM/b1HddImP4Jb
-	P1/DCW9JmB/dBfwEX9UKBOavUnI+8CauzOb1FuJWNQnwIreLrvE9xQ5ayXNYHdUf
-	yMTpC6wYa+/1Xc4Lw2j1RTULtDMULX8PGBi5ynjw==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45xj5xmhh7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 12:42:49 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53BB57rE017826;
-	Fri, 11 Apr 2025 12:42:48 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45uh2m2su6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 12:42:48 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53BCgitX45613410
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Apr 2025 12:42:45 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CD35420043;
-	Fri, 11 Apr 2025 12:42:44 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D7CD320040;
-	Fri, 11 Apr 2025 12:42:43 +0000 (GMT)
-Received: from osiris (unknown [9.171.65.230])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 11 Apr 2025 12:42:43 +0000 (GMT)
-Date: Fri, 11 Apr 2025 14:42:42 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Christian Borntraeger <borntraeger@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-        kvm@vger.kernel.org, Chandra Merla <cmerla@redhat.com>,
-        Stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
-        Thomas Huth <thuth@redhat.com>, Halil Pasic <pasic@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>, Wei Wang <wei.w.wang@intel.com>
-Subject: Re: [PATCH v1] s390/virtio_ccw: don't allocate/assign airqs for
- non-existing queues
-Message-ID: <20250411124242.123863D16-hca@linux.ibm.com>
-References: <20250402203621.940090-1-david@redhat.com>
- <065d46ba-83c1-473a-9cbe-d5388237d1ea@redhat.com>
- <a6f667b2-ef7d-4636-ba3c-cf4afe8ff6c3@linux.ibm.com>
+	s=arc-20240116; t=1744375375; c=relaxed/simple;
+	bh=eHEa9Kqvkam4+sJtbQR3MVChbyGpCP+iVaXdlRJkmB0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=JYWkQ8nOFfyNBSKJPtbPm0Wvx0JjEG/wOR0Ukr3/FzJEwMpkttueK7NgdcYmWQWFvFNAceENCtDKnL7h53/KFyJeDiDsjPCgq6ESTSVV5vRC987skU9Exhp4lLxo8c58gs1VgKuP40JIpgrQsDqRXMXe4777w7AKu0KNl65ySgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUNFG7rg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8F8E8C4CEE7;
+	Fri, 11 Apr 2025 12:42:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744375374;
+	bh=eHEa9Kqvkam4+sJtbQR3MVChbyGpCP+iVaXdlRJkmB0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=YUNFG7rg0bS1eJJeG9TFzmjoHKETvnFU4kLikdxmVe1+a4IR5IrgBO+LuNWdP94Rk
+	 u3OZNF1NzxilLF+aVeI3i30s0c3m1Mw25Brg9uw7qe4+kbtddehSBl1YE6Iiy6l88w
+	 DHJEGscmuQ2PnP5DPHXBKvfD4YIRy2H65Or0Jfr1vLIwZmDlLcMr9kcYn6HC2jpFFZ
+	 4+meyA1aBIzlrym4eGflcZvgVBZSuCc3TP8//zbJ9zY18emrgolHMBsyA6f2vY91V0
+	 YWlpTHuWHgcZJENOOqaYD7qR6J/JC5hu7PGbhrXjy9Yy+PLmo9+R3g5xWygYKOPwV3
+	 seQMPIaaxHk1g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1CCC369A8;
+	Fri, 11 Apr 2025 12:42:54 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Fri, 11 Apr 2025 20:42:43 +0800
+Subject: [PATCH 1/7] soc: amlogic: clk-measure: Define MSR_CLK's register
+ offset separately
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6f667b2-ef7d-4636-ba3c-cf4afe8ff6c3@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 9om_QFYPDMLFrBloZCYPQNzLoFWKkiaT
-X-Proofpoint-ORIG-GUID: 9om_QFYPDMLFrBloZCYPQNzLoFWKkiaT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-11_04,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- spamscore=0 malwarescore=0 bulkscore=0 phishscore=0 mlxscore=0
- suspectscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
- mlxlogscore=719 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504110080
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250411-clk-measure-v1-1-cb46a78d019a@amlogic.com>
+References: <20250411-clk-measure-v1-0-cb46a78d019a@amlogic.com>
+In-Reply-To: <20250411-clk-measure-v1-0-cb46a78d019a@amlogic.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744375372; l=5785;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=o37HsmS/LhKiY/hPb95VmdLfnQkmXFWILQkMmhIbObk=;
+ b=HAK7O7iFxegmwupeR2l/Z15cossX+6nAb+rCqWQ4RHW1JUspGURGfCZMjP61rjI4k0XG9jqUJ
+ ZjRE4AoySr8DvoWujhHDvOsogKGfzGnRmGaPm1t6iSWIkDDloaiaGhp
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-On Fri, Apr 11, 2025 at 01:11:55PM +0200, Christian Borntraeger wrote:
-> Am 10.04.25 um 20:44 schrieb David Hildenbrand:
-> [...]
-> > > ---
-> > 
-> > So, given that
-> > 
-> > (a) people are actively running into this
-> > (b) we'll have to backport this quite a lot
-> > (c) the spec issue is not a s390x-only issue
-> > (d) it's still unclear how to best deal with the spec issue
-> > 
-> > I suggest getting this fix here upstream asap. It will neither making sorting out the spec issue easier nor harder :)
-> > 
-> > I can spot it in the s390 fixes tree already.
-> 
-> Makes sense to me. MST, ok with you to send via s390 tree?
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-Well, it is already part of a pull request:
-https://lore.kernel.org/r/20250411100301.123863C11-hca@linux.ibm.com/
+Since the MSR_CLK register offset differs between chip variants, we
+replace the macro-based definition with chip-specific assignments.
 
-...and contains all the Acks that were given in this thread.
+Change the max_register in regmap_config to be retrieved from DTS.
+
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+ drivers/soc/amlogic/meson-clk-measure.c | 70 ++++++++++++++++++++++++++-------
+ 1 file changed, 55 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
+index 39638d6a593c..30387d26307c 100644
+--- a/drivers/soc/amlogic/meson-clk-measure.c
++++ b/drivers/soc/amlogic/meson-clk-measure.c
+@@ -14,11 +14,6 @@
+ 
+ static DEFINE_MUTEX(measure_lock);
+ 
+-#define MSR_CLK_DUTY		0x0
+-#define MSR_CLK_REG0		0x4
+-#define MSR_CLK_REG1		0x8
+-#define MSR_CLK_REG2		0xc
+-
+ #define MSR_DURATION		GENMASK(15, 0)
+ #define MSR_ENABLE		BIT(16)
+ #define MSR_CONT		BIT(17) /* continuous measurement */
+@@ -39,9 +34,20 @@ struct meson_msr_id {
+ 	const char *name;
+ };
+ 
++struct msr_reg_offset {
++	unsigned int duty;
++	unsigned int reg0;
++	unsigned int reg1;
++	unsigned int reg2;
++	unsigned int reg3;
++	unsigned int reg4;
++	unsigned int reg5;
++};
++
+ struct meson_msr_data {
+ 	struct meson_msr_id *msr_table;
+ 	unsigned int msr_count;
++	struct msr_reg_offset reg;
+ };
+ 
+ struct meson_msr {
+@@ -495,6 +501,7 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
+ 			    unsigned int duration)
+ {
+ 	struct meson_msr *priv = clk_msr_id->priv;
++	struct msr_reg_offset *reg = &priv->data.reg;
+ 	unsigned int val;
+ 	int ret;
+ 
+@@ -502,22 +509,22 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
+ 	if (ret)
+ 		return ret;
+ 
+-	regmap_write(priv->regmap, MSR_CLK_REG0, 0);
++	regmap_write(priv->regmap, reg->reg0, 0);
+ 
+ 	/* Set measurement duration */
+-	regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_DURATION,
++	regmap_update_bits(priv->regmap, reg->reg0, MSR_DURATION,
+ 			   FIELD_PREP(MSR_DURATION, duration - 1));
+ 
+ 	/* Set ID */
+-	regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_CLK_SRC,
++	regmap_update_bits(priv->regmap, reg->reg0, MSR_CLK_SRC,
+ 			   FIELD_PREP(MSR_CLK_SRC, clk_msr_id->id));
+ 
+ 	/* Enable & Start */
+-	regmap_update_bits(priv->regmap, MSR_CLK_REG0,
++	regmap_update_bits(priv->regmap, reg->reg0,
+ 			   MSR_RUN | MSR_ENABLE,
+ 			   MSR_RUN | MSR_ENABLE);
+ 
+-	ret = regmap_read_poll_timeout(priv->regmap, MSR_CLK_REG0,
++	ret = regmap_read_poll_timeout(priv->regmap, reg->reg0,
+ 				       val, !(val & MSR_BUSY), 10, 10000);
+ 	if (ret) {
+ 		mutex_unlock(&measure_lock);
+@@ -525,10 +532,10 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
+ 	}
+ 
+ 	/* Disable */
+-	regmap_update_bits(priv->regmap, MSR_CLK_REG0, MSR_ENABLE, 0);
++	regmap_update_bits(priv->regmap, reg->reg0, MSR_ENABLE, 0);
+ 
+ 	/* Get the value in multiple of gate time counts */
+-	regmap_read(priv->regmap, MSR_CLK_REG2, &val);
++	regmap_read(priv->regmap, reg->reg2, &val);
+ 
+ 	mutex_unlock(&measure_lock);
+ 
+@@ -599,11 +606,10 @@ static int clk_msr_summary_show(struct seq_file *s, void *data)
+ }
+ DEFINE_SHOW_ATTRIBUTE(clk_msr_summary);
+ 
+-static const struct regmap_config meson_clk_msr_regmap_config = {
++static struct regmap_config meson_clk_msr_regmap_config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+-	.max_register = MSR_CLK_REG2,
+ };
+ 
+ static int meson_msr_probe(struct platform_device *pdev)
+@@ -611,6 +617,7 @@ static int meson_msr_probe(struct platform_device *pdev)
+ 	const struct meson_msr_data *match_data;
+ 	struct meson_msr *priv;
+ 	struct dentry *root, *clks;
++	struct resource *res;
+ 	void __iomem *base;
+ 	int i;
+ 
+@@ -636,15 +643,18 @@ static int meson_msr_probe(struct platform_device *pdev)
+ 	       match_data->msr_count * sizeof(struct meson_msr_id));
+ 	priv->data.msr_count = match_data->msr_count;
+ 
+-	base = devm_platform_ioremap_resource(pdev, 0);
++	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
++	meson_clk_msr_regmap_config.max_register = resource_size(res) - 4;
+ 	priv->regmap = devm_regmap_init_mmio(&pdev->dev, base,
+ 					     &meson_clk_msr_regmap_config);
+ 	if (IS_ERR(priv->regmap))
+ 		return PTR_ERR(priv->regmap);
+ 
++	memcpy(&priv->data.reg, &match_data->reg, sizeof(struct msr_reg_offset));
++
+ 	root = debugfs_create_dir("meson-clk-msr", NULL);
+ 	clks = debugfs_create_dir("clks", root);
+ 
+@@ -667,26 +677,56 @@ static int meson_msr_probe(struct platform_device *pdev)
+ static const struct meson_msr_data clk_msr_gx_data = {
+ 	.msr_table = (void *)clk_msr_gx,
+ 	.msr_count = ARRAY_SIZE(clk_msr_gx),
++	.reg = {
++		.duty = 0x0,
++		.reg0 = 0x4,
++		.reg1 = 0x8,
++		.reg2 = 0xc,
++	},
+ };
+ 
+ static const struct meson_msr_data clk_msr_m8_data = {
+ 	.msr_table = (void *)clk_msr_m8,
+ 	.msr_count = ARRAY_SIZE(clk_msr_m8),
++	.reg = {
++		.duty = 0x0,
++		.reg0 = 0x4,
++		.reg1 = 0x8,
++		.reg2 = 0xc,
++	},
+ };
+ 
+ static const struct meson_msr_data clk_msr_axg_data = {
+ 	.msr_table = (void *)clk_msr_axg,
+ 	.msr_count = ARRAY_SIZE(clk_msr_axg),
++	.reg = {
++		.duty = 0x0,
++		.reg0 = 0x4,
++		.reg1 = 0x8,
++		.reg2 = 0xc,
++	},
+ };
+ 
+ static const struct meson_msr_data clk_msr_g12a_data = {
+ 	.msr_table = (void *)clk_msr_g12a,
+ 	.msr_count = ARRAY_SIZE(clk_msr_g12a),
++	.reg = {
++		.duty = 0x0,
++		.reg0 = 0x4,
++		.reg1 = 0x8,
++		.reg2 = 0xc,
++	},
+ };
+ 
+ static const struct meson_msr_data clk_msr_sm1_data = {
+ 	.msr_table = (void *)clk_msr_sm1,
+ 	.msr_count = ARRAY_SIZE(clk_msr_sm1),
++	.reg = {
++		.duty = 0x0,
++		.reg0 = 0x4,
++		.reg1 = 0x8,
++		.reg2 = 0xc,
++	},
+ };
+ 
+ static const struct of_device_id meson_msr_match_table[] = {
+
+-- 
+2.42.0
+
+
 
