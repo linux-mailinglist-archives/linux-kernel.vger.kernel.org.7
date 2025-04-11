@@ -1,125 +1,189 @@
-Return-Path: <linux-kernel+bounces-600651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78581A862B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:02:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F57EA862B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C10B58A6A54
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:00:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD740168DB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019A8221FC1;
-	Fri, 11 Apr 2025 15:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E7321ABB4;
+	Fri, 11 Apr 2025 15:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gAfL9Itd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="dCN9TiVN"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0A3221FAD
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 15:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D8E2165E9;
+	Fri, 11 Apr 2025 15:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744387171; cv=none; b=cR6FcHbpCRMDMbL+QBuU5s1Bzu9P3AQ9gvOblrmxpUrKMH+wWlHIWILWZlWwQTlsawJPncxOVC4Thi4o+rT+DHAtwsH2SMSWMZMXkMU/Pltv5y9odkuk1tBylnZ4gWjZkTjl3rgPn+YMR21IiLs78ymW7dzSRK/BQOgNY2TBDbM=
+	t=1744387193; cv=none; b=XESdWGoRCrS/dUgGxAGF2lNUeIH4eJ8rskwkAHNZDGh3mj9/2rg1n7Uq3HTsZxDA/QDM/XElxZYEQOOpnEVnQyNbmJGWbXBw06lKAc1Ufr8uZHDo09q4mIXPF4hrc9JB++g8peY5KdkWAdzClhzIOz8KSf4ETD+lxQ1XR6NhjMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744387171; c=relaxed/simple;
-	bh=fZlIPKzYCfS3JWZkzUhx6xvi3UjrSnLayoxpbPfvozY=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=plbF4ycXZG9XmOgwwW7L9NFtZM4tFloWK1msCXigLMYK/oxGZGhfS8hr89Xmdqiv2tW9yOVaVXbjt1MKb7eMfnrTlvB+5GE383fN/ksqT53qK9ijYxv+V9f1zrVLIl5YWBhWH/OlTOq41hnqCy07j94XY5XcMv5biilZ8ktgP2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gAfL9Itd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744387168;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1YGwsbANdm5+UipwPPrI05eTBmxw+TZxLni/YQ7Hx4Q=;
-	b=gAfL9Itd+sYQsLVZLz6rR2vsOPpTWBbUPpDFa5y0Yna2AkbPJ9IIt8VaoQ/pJlh9X/3pPb
-	Pv/jGrvbTwT+dXRiI1UpaJGf9w2puQ5Eh4k2QGlHUU4m5nakSRwxkqSUJJWn1DxsctU+br
-	IqWn5zro9sWtq6rRCqZ1ixooTqyTJs4=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-652-1LNp5UCTODWVVEnUWP054A-1; Fri,
- 11 Apr 2025 11:59:23 -0400
-X-MC-Unique: 1LNp5UCTODWVVEnUWP054A-1
-X-Mimecast-MFC-AGG-ID: 1LNp5UCTODWVVEnUWP054A_1744387160
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 743D21801A00;
-	Fri, 11 Apr 2025 15:59:19 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 62EF11808882;
-	Fri, 11 Apr 2025 15:59:13 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250407125801.40194-1-jarkko@kernel.org>
-References: <20250407125801.40194-1-jarkko@kernel.org>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: dhowells@redhat.com, keyrings@vger.kernel.org,
-    Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-    stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-    Ignat Korchagin <ignat@cloudflare.com>,
-    Herbert Xu <herbert@gondor.apana.org.au>,
-    "David S. Miller" <davem@davemloft.net>,
-    Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-    Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-    "Serge E.
- Hallyn" <serge@hallyn.com>,
-    James Bottomley <James.Bottomley@HansenPartnership.com>,
-    Mimi Zohar <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
-    linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-    linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v8] KEYS: Add a list for unreferenced keys
+	s=arc-20240116; t=1744387193; c=relaxed/simple;
+	bh=DFqXN9+cm+tTalfoxQahvpgLc5wgkfNgFwfMnkLB9Bo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bcSc1OiicFzX55Vs7OpVNrVlMCGFJ3agHGb9Qw/CqW5oxrok5lcLvS+ZqijUg7OiMGR0I4JN9KjOSZUZ1FeKmPScXT3Nfv6YEyAGiZDUrg2ukAy1Pcqz3yqCA96CQQIoskXS05zho55jXrpEsnMT2Kilw5m1KvhWayF80cQo/m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=dCN9TiVN; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53BFHdVV015162;
+	Fri, 11 Apr 2025 11:59:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=k7/TG
+	ozs0r7B3yLHxyAJn1dKbkhli79duWZxIYniFlE=; b=dCN9TiVNj9e16KgYvKMXU
+	BKHDZMBlj0JRbS3KtMsJ6F8JvSxi0RXIztpHkb3L9WvwL8+hM1KFyFGzV8jJ2Z8X
+	JGYSlOjLkLFbUrxJRFQF7ZQSgnrBcuFujFMmiGNfYTOvMO4kd27Qdae/Zj7vgnYm
+	FDHHpe1s90leQBipbaCFq1mZl3LSvoDNbuJIWH7y3HtkRQIMyzcS1f76CC3z/Ro3
+	fP2DxJV3NeoHNwbN5M/MZaUuRz9+vfIJN0qSsAfHSo9O0Se5KGvlKFMSuXWfjUAt
+	Oc5RRcwHtHfPDaKhrzT83wmE7+3O7x4h9zeENjvcTx6zl3ZxiUPT/YInl3gpLCN5
+	g==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 45u1e6uytc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 11:59:33 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 53BFxWs2022452
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 11 Apr 2025 11:59:32 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 11 Apr 2025 11:59:32 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 11 Apr 2025 11:59:32 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 11 Apr 2025 11:59:32 -0400
+Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 53BFxEC5015670;
+	Fri, 11 Apr 2025 11:59:16 -0400
+From: Jonathan Santos <Jonathan.Santos@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+CC: Jonathan Santos <Jonathan.Santos@analog.com>, <lars@metafoo.de>,
+        <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
+        <jic23@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <marcelo.schmitt1@gmail.com>,
+        <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <jonath4nns@gmail.com>, <dlechner@baylibre.com>
+Subject: [PATCH v5 14/14] iio: adc: ad7768-1: add low pass -3dB cutoff attribute
+Date: Fri, 11 Apr 2025 12:59:13 -0300
+Message-ID: <8d3393a297fbdd99d0df3d6d924cacc9edf8f741.1744325346.git.Jonathan.Santos@analog.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1744325346.git.Jonathan.Santos@analog.com>
+References: <cover.1744325346.git.Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2426185.1744387151.1@warthog.procyon.org.uk>
-Date: Fri, 11 Apr 2025 16:59:11 +0100
-Message-ID: <2426186.1744387151@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: BhojdHvz7FUxk3T3V6a2lbc_PcnN1-VT
+X-Authority-Analysis: v=2.4 cv=cdjSrmDM c=1 sm=1 tr=0 ts=67f93c66 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=XR8D0OoHHMoA:10 a=gAnH3GRIAAAA:8 a=IpJZQVW2AAAA:8 a=ZkoTrUv0hqWFqrPu6skA:9 a=IawgGOuG5U0WyFbmm1f5:22
+X-Proofpoint-GUID: BhojdHvz7FUxk3T3V6a2lbc_PcnN1-VT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_06,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 impostorscore=0 spamscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 mlxscore=0 clxscore=1015 mlxlogscore=999
+ phishscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504110101
 
-Jarkko Sakkinen <jarkko@kernel.org> wrote:
+Ad7768-1 has a different -3db frequency multiplier depending on
+the filter type configured. The cutoff frequency also varies according
+to the current ODR.
 
-> +	spin_lock_irqsave(&key_graveyard_lock, flags);
-> +	list_splice_init(&key_graveyard, &graveyard);
-> +	spin_unlock_irqrestore(&key_graveyard_lock, flags);
+Add a readonly low pass -3dB frequency cutoff attribute to clarify to
+the user which bandwidth is being allowed depending on the filter
+configurations.
 
-I would wrap this bit in a check to see if key_graveyard is empty so that we
-can avoid disabling irqs and taking the lock if the graveyard is empty.
+Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Reviewed-by: David Lechner <dlechner@baylibre.com>
+Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+---
+v5 Changes:
+* None
 
-> +		if (!refcount_inc_not_zero(&key->usage)) {
+v4 Changes:
+* None
 
-Sorry, but eww.  You're going to wangle the refcount twice on every key on the
-system every time the gc does a pass.  Further, in some cases inc_not_zero is
-not the fastest op in the world.
+v3 Changes:
+* None
 
-> +			spin_lock_irqsave(&key_graveyard_lock, flags);
-> +			list_add_tail(&key->graveyard_link, &key_graveyard);
-> +			spin_unlock_irqrestore(&key_graveyard_lock, flags);
->  			schedule_work(&key_gc_work);
+v2 Changes:
+* New patch in v2.
+---
+ drivers/iio/adc/ad7768-1.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-This is going to enable and disable interrupts twice and that can be
-expensive, depending on the arch.  I wonder if it would be better to do:
-
-			local_irq_save(flags);
-			spin_lock(&key_graveyard_lock);
-			list_add_tail(&key->graveyard_link, &key_graveyard);
-			spin_unlock(&key_graveyard_lock);
-			schedule_work(&key_gc_work);
-			local_irq_restore(flags);
-
-David
+diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
+index ab46714ee20a..d3d5b3505c41 100644
+--- a/drivers/iio/adc/ad7768-1.c
++++ b/drivers/iio/adc/ad7768-1.c
+@@ -152,6 +152,17 @@ enum ad7768_scan_type {
+ 	AD7768_SCAN_TYPE_HIGH_SPEED,
+ };
+ 
++/*
++ * -3dB cutoff frequency multipliers (relative to ODR) for
++ * each filter type. Values are multiplied by 1000.
++ */
++static const int ad7768_filter_3db_odr_multiplier[] = {
++	[AD7768_FILTER_SINC5] = 204,
++	[AD7768_FILTER_SINC3] = 262,
++	[AD7768_FILTER_SINC3_REJ60] = 262,
++	[AD7768_FILTER_WIDEBAND] = 433,
++};
++
+ static const int ad7768_mclk_div_rates[4] = {
+ 	16, 8, 4, 2,
+ };
+@@ -230,7 +241,8 @@ static const struct iio_chan_spec ad7768_channels[] = {
+ 		.type = IIO_VOLTAGE,
+ 		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+ 		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |
+-					    BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
++					    BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO) |
++					    BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY),
+ 		.info_mask_shared_by_type_available = BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
+ 		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
+ 		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_SAMP_FREQ),
+@@ -765,7 +777,7 @@ static int ad7768_read_raw(struct iio_dev *indio_dev,
+ {
+ 	struct ad7768_state *st = iio_priv(indio_dev);
+ 	const struct iio_scan_type *scan_type;
+-	int scale_uv, ret;
++	int scale_uv, ret, temp;
+ 
+ 	scan_type = iio_get_current_scan_type(indio_dev, chan);
+ 	if (IS_ERR(scan_type))
+@@ -803,6 +815,12 @@ static int ad7768_read_raw(struct iio_dev *indio_dev,
+ 	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+ 		*val = st->oversampling_ratio;
+ 
++		return IIO_VAL_INT;
++
++	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
++		temp = st->samp_freq * ad7768_filter_3db_odr_multiplier[st->filter_type];
++		*val = DIV_ROUND_CLOSEST(temp, 1000);
++
+ 		return IIO_VAL_INT;
+ 	}
+ 
+-- 
+2.34.1
 
 
