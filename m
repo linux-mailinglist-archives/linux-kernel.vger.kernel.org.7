@@ -1,94 +1,66 @@
-Return-Path: <linux-kernel+bounces-599990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A64CA85A98
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:55:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A98A85AB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AFC0177955
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:54:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA5DD17A531
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC17B238C09;
-	Fri, 11 Apr 2025 10:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CA6238C05;
+	Fri, 11 Apr 2025 10:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="EANsV0Xv"
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="jaTfAY82"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF996221261;
-	Fri, 11 Apr 2025 10:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654C427CCDC
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744368877; cv=none; b=Xz2UNUTCoAJQmhB9jn4w4/OJfZDK/8/UoABsvYd+0nSMmTX4IUgX6zFAkju8DB6NMvLfbX7WLDRgvCQQnuMIXEM2kwNwjRVlXw9Xma4ghafM/iTwS/KxRVPwVm9vdVtCffmd5ymFnG+CfyUX7iwZrYCpjnBKy16Vy3q6bjnPEus=
+	t=1744369012; cv=none; b=h5Ma3zaqJoEnYOhFYJ4ypZY2eg0SvDx6J6er9355JFsCqnmDiFzTCJfQIDCWtFK2qrPFeRtS4sAgwKXQ8mEHbELeA+GL1yhgvPX0mfrDqZy3AO9NqUjY6uiEmJ0s/mfoO0RjHoVV5DBnZd295Yvn34JtWUbdmglLrtnuZPwI02Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744368877; c=relaxed/simple;
-	bh=ivxH0h28h54uT++OFPn2fGmx8H36zuQIX9TAA6mwKOs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cEfuzSeU+wXg5coNlX//fN7T4beQ2Tf3l/jNmJCelOBAi6h3MnTPi8SVWzAfdzOsEKFAnoGx/UKgKrEFastztEpCEZf8ekGDQcXZJC+eHsCtDhrY/dBZOH14iPjv9wajuev+f5PNTpC2ABvPaKEsJ9yqihoC3JCjVm39aRpEs1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=EANsV0Xv; arc=none smtp.client-ip=54.207.19.206
+	s=arc-20240116; t=1744369012; c=relaxed/simple;
+	bh=imz+mPlPTWUBDMx7bzEysHcUpw0o89634fVFDMMMBsw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mYBBWckVaneIAn14/U60gInvG94JmnNZQQIcz/jJ6lKgqtmcWolYy+CTCWS/kupwm1iRZcKhjgI4gggEQ7CMs91OBosP4cSOTxiWXKQVv8LHQQxkzhRzPXFyNVLfZUid2osFzWO0YY1sgnaH4+12gYdFpkyRnWygq8RMKxcozg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=jaTfAY82; arc=none smtp.client-ip=54.254.200.128
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744368813;
-	bh=X0ufIEoNyj3oR0IYewqEF9lLAz1QUMF0bHnORwk+1hQ=;
+	s=onoh2408; t=1744368948;
+	bh=9KRkDEvc7TMn+BzX0T9birIBPHV4NaWt5YIRVjgsZSM=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=EANsV0XvXwJUiSCcaOCTuKiWZy2xV0SYc87LLZpMEY+Dtys0pXMPT7jrjggRm6ZtD
-	 YPCGQBT99mXLKnHQcn5oQxoucmYcrMdfA8WfF1bPrX4E22p6qMJW+yvOo0s0jHZ/gJ
-	 91PT97X85nrSfu3Zc4UiUEH+9pJXzNWaQ8RUEkxo=
-X-QQ-mid: izesmtp89t1744368797te5117757
-X-QQ-Originating-IP: IPlCEmE7xzZ8ozIOcwucNJTzsElxK9Oh578T97Ar7i4=
+	b=jaTfAY82zKF05cJhA/t38WygfLp5pfHoISMaJX8ueIT4QYhyB9y9aOpjiDbb6BiWB
+	 p6SUWwCmyfGXH9bB0UztDDXw/u8MLLLbIU9PRgzA5dPjeoa/toWypZF3azpreLv/9x
+	 P5rAKl8JBPX0/o8PiNm7hLBks+K2DpuaKUBj8JYs=
+X-QQ-mid: bizesmtp23t1744368921ta5c660c
+X-QQ-Originating-IP: y6XDffOa9VCdiTTbmBMiGZAntBVmbLMe7C7tY/zlyb4=
 Received: from localhost.localdomain ( [113.57.152.160])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 11 Apr 2025 18:53:13 +0800 (CST)
+	id ; Fri, 11 Apr 2025 18:55:20 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 3300532361145628569
-EX-QQ-RecipientCnt: 39
+X-BIZMAIL-ID: 5873114534741564998
+EX-QQ-RecipientCnt: 8
 From: Chen Linxuan <chenlinxuan@uniontech.com>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Chengchang Tang <tangchengchang@huawei.com>,
-	Junxian Huang <huangjunxian6@hisilicon.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Keith Busch <kbusch@kernel.org>,
+To: Keith Busch <kbusch@kernel.org>,
 	Jens Axboe <axboe@kernel.dk>,
 	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Chen Linxuan <chenlinxuan@uniontech.com>
-Cc: linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-rdma@vger.kernel.org,
+	Sagi Grimberg <sagi@grimberg.me>
+Cc: Winston Wen <wentao@uniontech.com>,
+	Chen Linxuan <chenlinxuan@uniontech.com>,
 	linux-nvme@lists.infradead.org,
-	kvm@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	linux-mm@kvack.org,
-	llvm@lists.linux.dev
-Subject: [RFC PATCH 0/7] kernel-hacking: introduce CONFIG_NO_AUTO_INLINE
-Date: Fri, 11 Apr 2025 18:52:59 +0800
-Message-ID: <E9B8B40E39453E89+20250411105306.89756-1-chenlinxuan@uniontech.com>
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 1/7] nvme: add __always_inline for nvme_pci_npages_prp
+Date: Fri, 11 Apr 2025 18:54:49 +0800
+Message-ID: <8E10021DAFBE47B5+20250411105459.90782-1-chenlinxuan@uniontech.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <31F42D8141CDD2D0+20250411105142.89296-1-chenlinxuan@uniontech.com>
+References: <31F42D8141CDD2D0+20250411105142.89296-1-chenlinxuan@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,58 +69,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: izesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: OY1xLn4i1DCCe+pV62a5XcYNmEanncg93iy1JlORaQsdrCFagMBB/xiT
-	gBSOykTEPbPdSL3POL5nhKAmlWQx6OI9OvZyhOrHVNf+JZIJOrDqo0jrSY2OWfQaPcNaUA3
-	W1TNLdPtnytNkbt2e8m8GqBHytP6TaTlxnSu+5YmjlSZZ2nWxaquUPdXp5lacsv+X4UP0cV
-	RWnP6D0EUZbFczwFInqy1KSHSJUgftLA7VLGMwIff1w1L2YMWT42mBhXCaLPJXT3MKWNYDb
-	k0sBMtWG6m8dNaWSL6c9x5nuz7/FFWD92bFnPpyhUrBvcldiYXhHpk6tekjEXG/IITrioOt
-	L/HFw5kAL/85N8Io6xHLcSRt8HClFxKvA5wbnWkSBzMEAjUq4vJLeffrvFphCsXXB756MIG
-	h2jFg0woLU54xumqWzpxJBZS34U87/e9bS60LXf3Cj99paKBvuEVdMWjVAynAk3RoW7y7Cs
-	lGZy4+Xgd/uG3aT4psvqDKyRyX86LgG/Eko8KfK4lxDcVKEM91rjqFJ+D/wf7U8B7xX+MM6
-	j7PJpQvPt2/IvbHxFZeM86XuKS3MDwhxXVhYzH8C34TczkDD/3p+lrV/IhTsb2sT9IdoMBk
-	W2b8z0EDv6PPga0mNxr/W6HpQqsXAQmqynfU1JTfYAACHwEjKal9TL4icy0Cmd5VLPkkI0q
-	93ty54tOJ+0pFeujaVijfOU1prkH4LmIZefHzuZkozXIf4IutWL3894pVlR2wLjc/+vVpvF
-	djciTm54DuyQXYAHpW8SVm+ppgi3eBqrCn+a5qoR08h1rDDuhnwQuZ7JvZRYHEXVDrLBNIJ
-	nJgvkMm0FVQfNmP0vUn6+d67LWL7gK8a7fxcNE3m/OszBJTCcW4zCzGn16+7ztUijvHckt0
-	s97Hf9Lcdvf0GO19OFfPF+p9CN31VCcyDYXE7buM2YQkqnEQA0qmDqaHXrRttXyaY9M3F3/
-	qbeIwMvj14CfNDrBrzThPClogwHszKu9zyItA3vnsXvQhzTK0pdxuKexWBCFXd7F31LapIN
-	dRhcVOExYy2DyiJ6C3yGlCSJM8FrmHJkQWb5VauG415UMYQsGbDQd0F66mTUT8re1yGt+Uh
-	4/M9rveUFtz
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: Nwz8Cs33/LprLV9bzlLg9s//LwPGS6Z5d8wITrM/fnWYKm1JiyeWpte9
+	R+4nR/zTYMTDtUIawaFd/hYaCWmNr60mgGOl5flw88iGgQQ++zHR4VV3KCksyAGP5eRfICU
+	0KcqVuh6mjujOF0KhblmEKnHe7Dd1BtXG5DKqKUK2Ia40UQhPo9kasruuoiWK7hw9AictLj
+	VqE6z8bsDdMqyJZhfuLMJOmKaBHduD76LjaN4peuQ607kww60cksjipgHDN/Hf6QTkG+Yjo
+	xyCji8GmZttpQpJJN/h06J2VcnQT+qZ5ma70iNZeMNy0dCiRODshoMoFkaEbA4nWGaKy2qY
+	4uaEQWmTLbI9bmDLeWIGv/9ENGdE4MQxrRi15cKGEka1oV6xUBxsPPlgAWQW+vgwNinbALN
+	0v4DOiERlKCJbUMTae6tkS3UNU2uJvRck6X0DNIW9nmt1aMbYyjM+aK5Bh6ocKaFMZEOwLW
+	3uXcWeNpuX179+rXmijKuv+z8uj/9Qb5XZSzW946ryYELgqCnjZeTyh8TSX1s8kvuASlCmh
+	/JdJef67LyTSg7/DQVLiUrOC2lNZkLe0WAyq6m5sStYrwoWsdbHI8aAgWzO3I+OfXovyfI8
+	Wh3WkXLsO34bTPKLK1B7K6RO1owUMgGK2fhg7AMlOGSXTDph+Vg0aORI6a3EdYx/01d0asx
+	CGImwnME0NSEgs6u9GWezsFDBYE/Syk0+TaE/20pjfFJuEk7DRuk+868DQLFvOdwfZ7jRjl
+	Qad4VKfBXZwxF5d5T+hLWvuIDZOoqc7wUl/ZmXiZl4FK3S6/mx1LavyndYIMutw/BQIezVb
+	OKkvAhIakIjDPlI9zDwrJszghKpiqR4MpPIw+TcMojaXMYH/ftBJEOBt2LCCG4CjtDUnvyR
+	QO+eyRCsuN+mwYZaRtP+RSefvBaIoKukBT0lxRc9F729/s/6fq9d/3+vGgJ9gWk9sa2TkhC
+	8KcjjOawrus2Qghj3eyKh0qVVDpnqmiznIz2skGBGPcEOJjZGOxeLhL8+3yyPyOXtq1nP9G
+	+seejhp3p58s5WFX5b
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
 X-QQ-RECHKSPAM: 0
 
-This series introduces a new kernel configuration option NO_AUTO_INLINE,
-which can be used to disable the automatic inlining of functions.
+From: Winston Wen <wentao@uniontech.com>
 
-This will allow the function tracer to trace more functions
-because it only traces functions that the compiler has not inlined.
+On x86_64 with gcc version 13.3.0, I build drivers/nvme/host/pci.c
+with:
 
-Previous discussions can be found here:
-Link: https://lore.kernel.org/all/20181028130945.23581-3-changbin.du@gmail.com/
+  make defconfig
+  ./scripts/kconfig/merge_config.sh .config <(
+    echo CONFIG_BLK_DEV_NVME=m
+  )
+  make KCFLAGS="-fno-inline-small-functions -fno-inline-functions-called-once" \
+    drivers/nvme/host/pci.o
 
-Chen Linxuan (2):
-  drm/i915/pxp: fix undefined reference to
-    `intel_pxp_gsccs_is_ready_for_sessions'
-  RDMA/hns: initialize db in update_srq_db()
+Then I get a compile error:
 
-Winston Wen (5):
-  nvme: add __always_inline for nvme_pci_npages_prp
-  mm: add __always_inline for page_contains_unaccepted
-  vfio/virtio: add __always_inline for virtiovf_get_device_config_size
-  tpm: add __always_inline for tpm_is_hwrng_enabled
-  lib/Kconfig.debug: introduce CONFIG_NO_AUTO_INLINE
+    CALL    scripts/checksyscalls.sh
+    DESCEND objtool
+    INSTALL libsubcmd_headers
+    CC      drivers/nvme/host/pci.o
+  In file included from <command-line>:
+  drivers/nvme/host/pci.c: In function 'nvme_init':
+  ././include/linux/compiler_types.h:557:45: error: call to '__compiletime_assert_878' declared with attribute error: BUILD_BUG_ON failed: nvme_pci_npages_prp() > NVME_MAX_NR_ALLOCATIONS
+    557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+        |                                             ^
+  ././include/linux/compiler_types.h:538:25: note: in definition of macro '__compiletime_assert'
+    538 |                         prefix ## suffix();                             \
+        |                         ^~~~~~
+  ././include/linux/compiler_types.h:557:9: note: in expansion of macro '_compiletime_assert'
+    557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+        |         ^~~~~~~~~~~~~~~~~~~
+  ./include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+        |                                     ^~~~~~~~~~~~~~~~~~
+  ./include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+     50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+        |         ^~~~~~~~~~~~~~~~
+  drivers/nvme/host/pci.c:3804:9: note: in expansion of macro 'BUILD_BUG_ON'
+   3804 |         BUILD_BUG_ON(nvme_pci_npages_prp() > NVME_MAX_NR_ALLOCATIONS);
+        |         ^~~~~~~~~~~~
 
- Makefile                                   |  6 ++++++
- drivers/char/tpm/tpm-chip.c                |  2 +-
- drivers/gpu/drm/i915/pxp/intel_pxp_gsccs.h |  8 ++++++--
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c |  2 +-
- drivers/nvme/host/pci.c                    |  2 +-
- drivers/vfio/pci/virtio/legacy_io.c        |  2 +-
- lib/Kconfig.debug                          | 15 +++++++++++++++
- mm/page_alloc.c                            |  2 +-
- 8 files changed, 32 insertions(+), 7 deletions(-)
+Signed-off-by: Winston Wen <wentao@uniontech.com>
+Co-Developed-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+---
+ drivers/nvme/host/pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index b178d52eac1b..9ab070a9f037 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -390,7 +390,7 @@ static bool nvme_dbbuf_update_and_check_event(u16 value, __le32 *dbbuf_db,
+  * as it only leads to a small amount of wasted memory for the lifetime of
+  * the I/O.
+  */
+-static int nvme_pci_npages_prp(void)
++static __always_inline int nvme_pci_npages_prp(void)
+ {
+ 	unsigned max_bytes = (NVME_MAX_KB_SZ * 1024) + NVME_CTRL_PAGE_SIZE;
+ 	unsigned nprps = DIV_ROUND_UP(max_bytes, NVME_CTRL_PAGE_SIZE);
 -- 
 2.48.1
 
