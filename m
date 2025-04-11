@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-599908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62175A8590B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:10:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1674DA85916
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2465D1895440
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:10:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F35A4E4628
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A0A272F78;
-	Fri, 11 Apr 2025 10:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AA52746F5;
+	Fri, 11 Apr 2025 10:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qvJN/T1d";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eKRh3NiJ"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZGOCTqBK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ah8nIu8h"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761B429B214;
-	Fri, 11 Apr 2025 10:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A6B24DC41;
+	Fri, 11 Apr 2025 10:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744365743; cv=none; b=Z8NwMRO4vORd62sCsI5QbOsh0TCrz+7Z14OJcWCLKa8h/obauXiqybg4iPN+QHU4XBhc2ZeY2dLDSKrSmZfL3K68p832FRzuBUwaoc5zp4H1DoAeY8ocIG3MEjQO5LdUYENvqgyMhEFBN60NZlawFxm92kfl2/LfLlHGDbxw+2I=
+	t=1744365745; cv=none; b=g1sDG7zqAHolubxe1DaZIoqpu/471l4PdFnIlowuuljgUR8jc45XcyovRnh9Qpr4EB+g93vMIla7WfxFyn0+AkzkuEMFlEumE4DlQk7LMXiUCvtVe0j+SgliOsrmn2mCizTZPQ4mzHamXll3h0MUDr3bmoxg3L/FSPbVW6ahtB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744365743; c=relaxed/simple;
-	bh=d2j8JqGgCwmcZUfFuBnhj88PsErUTtS7Y1q4LDxXxwA=;
+	s=arc-20240116; t=1744365745; c=relaxed/simple;
+	bh=2VYdbjnIZHEwc7T29T6nCUKAp2Gk7FQJZi0RA3rC8Nw=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=H0RrCr8yjeYhcEJK/csV7lKj7znwk5kBLUwW+E7IBI2FeWGq216tauhEXVAEQbOIQEyppvO7uks5++HrHoGx+NCdddRXo/mKOfk5r/11/SJ7l6aEnQrzZq77+5H+vbkFtcvvN4H3Dz+IipxeXcRLL9z/6fntFEPrXt0xqwo9roQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qvJN/T1d; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eKRh3NiJ; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=ZbFdzWAYP/1aJ/WfkkVQ69k+K1MyK/18/72QiC91Qo8iEBqq1Xjrbce1UJD2jxyZY8DFKTOg/jIesU4fVFr5fwMET0qjN0SdEXxNiCWOWUcXzJ+kCnsdtD8Fn/mZcON7csRcpkBhBk+15a/PlpR60FRNQCB5O+bvkb+N8A3i5B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZGOCTqBK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ah8nIu8h; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 11 Apr 2025 10:02:19 -0000
+Date: Fri, 11 Apr 2025 10:02:20 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744365740;
+	s=2020; t=1744365741;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0k7Iaui3kZzdPNFKyepVMKjEfZLrX+KnaMDeZQebwGY=;
-	b=qvJN/T1dC/CuP9UPx6NGu0GfYdbC/5IGKRbkBMDjxixtq5DT0RVCTzD2zEI/4cSPbfLFZa
-	HOotxPD+eA5w7+gnvzk78AWeQEC9kp4eja3sVVlSZo4UC6T44fhm5P2hGRZtSmsBvw8yLy
-	ayu7gBp5YqyKJD8Cxp8y1s60L1qzu/AUfG0+jsKqJPM0clK7C78+0MkERVXT0Gt05kvDMB
-	JCkoFe47dRrWjtpqNeq5tsXtceOIh+Pb1iJejEtuOoAUevmB48GZj1YABkSWNtCxBN7TZr
-	n9AlNML/LdqDgYCp4aFcfYPS15Bv5NP7Ua9iVv/6sK3AqtN/UqRs3ezLzrztpw==
+	bh=5V92K6yi/QYkwueENPyyrnkMqI4EdEpVXZNZwGFNC2g=;
+	b=ZGOCTqBKkjaZ8+85NYAJ/rXRp5+t7V1TAAKqyEphgA7H9VP270TioBckXDXeLb5gb1vYje
+	YYLik9Ld7Dj4m4KCsh5a2ku28Y2g9+w+9X1kyL7Pi0uTWsGh65vt8m75hJOQaVlGR/kvLA
+	CFwut5cnEl4J75DO4RufSbqOTDQ6Aul7AmQ+UWKVOua3cviSPoMHpmfceGRnfqp8MOGZjS
+	506bC1zs2FrM2+vNm9+gwTd3cezLYjzG3tD/WMxsDVHPu6gOdYvyLepWPbYa3XgtPezhHq
+	apEIzKjE2hAAiKhElW9Pjltj9/BwC248hwqD9gHKXn7qcegPJmgUerXKoGV5SQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744365740;
+	s=2020e; t=1744365741;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0k7Iaui3kZzdPNFKyepVMKjEfZLrX+KnaMDeZQebwGY=;
-	b=eKRh3NiJ0+/HGRCl6trS7EMHOiMnmnDlcp+W2aLThODbuSDcgbObrp+UeT3K1NenTl29/a
-	fpkbKlICb1GzIvBA==
+	bh=5V92K6yi/QYkwueENPyyrnkMqI4EdEpVXZNZwGFNC2g=;
+	b=ah8nIu8hCjSsg9/m7xcCG+a7kN6z4M0VM0wxyHjdWZMe5RrlLL0D5L8l1GfXPLJeiQtflE
+	1RekHa/qkJKnpmDg==
 From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/alternatives] x86/alternatives: Rename
- 'text_poke_bp_batch()' to 'smp_text_poke_batch_process()'
+Subject: [tip: x86/alternatives] x86/alternatives: Rename 'struct
+ bp_patching_desc' to 'struct text_poke_int3_vec'
 Cc: Ingo Molnar <mingo@kernel.org>, Juergen Gross <jgross@suse.com>,
  "H . Peter Anvin" <hpa@zytor.com>,
  Linus Torvalds <torvalds@linux-foundation.org>,
  Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250411054105.2341982-6-mingo@kernel.org>
-References: <20250411054105.2341982-6-mingo@kernel.org>
+In-Reply-To: <20250411054105.2341982-4-mingo@kernel.org>
+References: <20250411054105.2341982-4-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174436573939.31282.2783999910189511914.tip-bot2@tip-bot2>
+Message-ID: <174436574070.31282.7865255954237542519.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -84,79 +84,61 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/alternatives branch of tip:
 
-Commit-ID:     bee4fcfbc128c3ad604539f88307dc2c0fc6f843
-Gitweb:        https://git.kernel.org/tip/bee4fcfbc128c3ad604539f88307dc2c0fc6f843
+Commit-ID:     84e5ba949b0a3fcf2fd0a1b6c9ce14d8436dbbb8
+Gitweb:        https://git.kernel.org/tip/84e5ba949b0a3fcf2fd0a1b6c9ce14d8436dbbb8
 Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Fri, 11 Apr 2025 07:40:17 +02:00
+AuthorDate:    Fri, 11 Apr 2025 07:40:15 +02:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Fri, 11 Apr 2025 11:01:33 +02:00
 
-x86/alternatives: Rename 'text_poke_bp_batch()' to 'smp_text_poke_batch_process()'
+x86/alternatives: Rename 'struct bp_patching_desc' to 'struct text_poke_int3_vec'
+
+Follow the INT3 text-poking nomenclature, and also adopt the
+'vector' name for the entire object, instead of the rather
+opaque 'descriptor' naming.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Cc: Juergen Gross <jgross@suse.com>
 Cc: "H . Peter Anvin" <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250411054105.2341982-6-mingo@kernel.org
+Link: https://lore.kernel.org/r/20250411054105.2341982-4-mingo@kernel.org
 ---
- arch/x86/kernel/alternative.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/kernel/alternative.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 9bd71c0..78024e5 100644
+index 5f44814..8edf7d3 100644
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -2467,7 +2467,7 @@ struct text_poke_loc {
- 	u8 len;
- 	u8 opcode;
- 	const u8 text[POKE_MAX_OPCODE_SIZE];
--	/* see text_poke_bp_batch() */
-+	/* see smp_text_poke_batch_process() */
+@@ -2471,17 +2471,17 @@ struct text_poke_loc {
  	u8 old;
  };
  
-@@ -2540,7 +2540,7 @@ noinstr int poke_int3_handler(struct pt_regs *regs)
- 		return 0;
+-struct bp_patching_desc {
++struct text_poke_int3_vec {
+ 	struct text_poke_loc *vec;
+ 	int nr_entries;
+ };
  
- 	/*
--	 * Discount the INT3. See text_poke_bp_batch().
-+	 * Discount the INT3. See smp_text_poke_batch_process().
- 	 */
- 	ip = (void *) regs->ip - INT3_INSN_SIZE;
+ static DEFINE_PER_CPU(atomic_t, bp_refs);
  
-@@ -2602,7 +2602,7 @@ static struct text_poke_loc tp_vec[TP_VEC_MAX];
- static int tp_vec_nr;
+-static struct bp_patching_desc bp_desc;
++static struct text_poke_int3_vec bp_desc;
  
- /**
-- * text_poke_bp_batch() -- update instructions on live kernel on SMP
-+ * smp_text_poke_batch_process() -- update instructions on live kernel on SMP
-  * @tp:			vector of instructions to patch
-  * @nr_entries:		number of entries in the vector
-  *
-@@ -2622,7 +2622,7 @@ static int tp_vec_nr;
-  *		  replacing opcode
-  *	- sync cores
-  */
--static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries)
-+static void smp_text_poke_batch_process(struct text_poke_loc *tp, unsigned int nr_entries)
+ static __always_inline
+-struct bp_patching_desc *try_get_desc(void)
++struct text_poke_int3_vec *try_get_desc(void)
  {
- 	unsigned char int3 = INT3_INSN_OPCODE;
- 	unsigned int i;
-@@ -2866,7 +2866,7 @@ static bool tp_order_fail(void *addr)
- static void text_poke_flush(void *addr)
- {
- 	if (tp_vec_nr == TP_VEC_MAX || tp_order_fail(addr)) {
--		text_poke_bp_batch(tp_vec, tp_vec_nr);
-+		smp_text_poke_batch_process(tp_vec, tp_vec_nr);
- 		tp_vec_nr = 0;
- 	}
- }
-@@ -2902,5 +2902,5 @@ void __ref text_poke_bp(void *addr, const void *opcode, size_t len, const void *
- 	struct text_poke_loc tp;
+ 	atomic_t *refs = this_cpu_ptr(&bp_refs);
  
- 	text_poke_loc_init(&tp, addr, opcode, len, emulate);
--	text_poke_bp_batch(&tp, 1);
-+	smp_text_poke_batch_process(&tp, 1);
- }
+@@ -2517,7 +2517,7 @@ static __always_inline int patch_cmp(const void *key, const void *elt)
+ 
+ noinstr int poke_int3_handler(struct pt_regs *regs)
+ {
+-	struct bp_patching_desc *desc;
++	struct text_poke_int3_vec *desc;
+ 	struct text_poke_loc *tp;
+ 	int ret = 0;
+ 	void *ip;
 
