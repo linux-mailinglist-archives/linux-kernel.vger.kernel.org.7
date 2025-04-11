@@ -1,109 +1,130 @@
-Return-Path: <linux-kernel+bounces-600254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC34A85DA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:50:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7321EA85D9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28D514A3B36
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:44:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C85269A5ADC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C608629C327;
-	Fri, 11 Apr 2025 12:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AC52BEC37;
+	Fri, 11 Apr 2025 12:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VhGa06pn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SICH88CT"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1508B221FC4;
-	Fri, 11 Apr 2025 12:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621DF29CB42;
+	Fri, 11 Apr 2025 12:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744375375; cv=none; b=Sj3qkqK3GxoIt+SxjJcTO3WKM2MNCqTmdA6/g0jIGABSqHyweq1fQH67c3tcJikiZlIM7xA5NatgEcawxGXiQ0WmoLAuzYue0tiOXKJJUwvyglGmRzcx+KmWBa/0WWbwNsu3a6lF1CzCaIpoBeQr91Krq8sW23EG5EACRZUjx0E=
+	t=1744375378; cv=none; b=KZPlx8MVqJds9kTfB55v39S4lzbmfPVMuXuGutsgaCnGR53cQZRA0jmOZo4ENIyi+reWQoOVfdd7WTNN9aYE75/vjJSxZW1F3Z9GtN1RrK/5zN5a6m5ZOBe3antq4/tCUU5SyxCYoK09aNbyHBAkwN/sDgEnmo3WvC4cPncn38c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744375375; c=relaxed/simple;
-	bh=4Ja56XexhMA1DCbBsQ1zoDOwfhujr3WsOePoWuHRSsc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ro98ibo1Tb7WG02FJRyCazzb5516ZqP01qJdebYdhz3dF5PdXdAeF0SG98Gd3Y+Oh9LU1vy/RSJcQ0Zc60pD5JP0PnxkwBmEmhAE+Asd5hpRC0AamIgCfqocE3SIkenOQ+hQuagX+w26pQ/dwbrriycXWoqaBa5lUvZY6dTxoL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VhGa06pn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7AC4AC4CEE2;
-	Fri, 11 Apr 2025 12:42:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744375374;
-	bh=4Ja56XexhMA1DCbBsQ1zoDOwfhujr3WsOePoWuHRSsc=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=VhGa06pnAJjSwN1NSo8al7+LsFhxD+uf7+PY+TCvEWDXrdO1n41QSFG3HQa3+/ToQ
-	 q51MS4KyRixR99YarxfmL6PwoUXNJyCyszkUhBZlBoIOgMJDPmzU89WJ40+9Br4Eop
-	 HqeteyhhoDk/VAbzaT2PaSsuKJj9F1qW57XSm67UCuqJpvlnj5XViPB0aUUrt/+HtA
-	 eOz4OMAR9rx5p95GqiJpTtYh45qI5tejplMyuF/cUGiLSKeGl27i8iTl+eI8QiQ+k2
-	 lckBBwgAubxpHx69AgbnW7RSEoFxliOg/sU6zRBX1AO87v58uwYNdEBV/erJ3dzW09
-	 Cju/CLmqIJXjA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67832C36010;
-	Fri, 11 Apr 2025 12:42:54 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Subject: [PATCH 0/7] soc: amlogic: clk-measure: Add clk-measure support for
- C3 and S4
-Date: Fri, 11 Apr 2025 20:42:42 +0800
-Message-Id: <20250411-clk-measure-v1-0-cb46a78d019a@amlogic.com>
+	s=arc-20240116; t=1744375378; c=relaxed/simple;
+	bh=LRBlzSos3dhGHutKp01tSFMKt4Gbxl3XFGUSmAinjeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q5yW1r+f9x7wiIg6xu9wHrd3Sfk5FN6Gq3e0ulJ2aO3Rlr3zbffpHQRJgJiF/dJSdExA3KJiZh0wHKLK0Q+eNYuJkHgTHh/MHuDab8Dov9/F47mCxoQ+4Pze1qKe5rGiJ2SO+J4nYvle4ZMOhtYesayt48ZnRF/GUybW4xxKzoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SICH88CT; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B2GwTQ028860;
+	Fri, 11 Apr 2025 12:42:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=wllDMLVyjUN526ZRNsd50HowPiyj1q
+	cvrx5XL9ogpG0=; b=SICH88CT3h4e5JoHQhDhlysl8FFRCeiJoF4pIiDIj0HQtP
+	goz4LQb6iBTxk0A/2clqpGP0NesX0has3UbYRMOctiK8oYWULcvxWmKB8Mr0snls
+	vYmKQLxHRxkVMqGfR10cDTpw1YWMCbV/7Cv0M01Fuhrj942j9UI9AtBWcGBJolxz
+	Ikp1up47HDPeSYsgBo9cm9OfyX/M85K40LbAwLwlMbIIdZkGZzjM/b1HddImP4Jb
+	P1/DCW9JmB/dBfwEX9UKBOavUnI+8CauzOb1FuJWNQnwIreLrvE9xQ5ayXNYHdUf
+	yMTpC6wYa+/1Xc4Lw2j1RTULtDMULX8PGBi5ynjw==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45xj5xmhh7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 12:42:49 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53BB57rE017826;
+	Fri, 11 Apr 2025 12:42:48 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45uh2m2su6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 12:42:48 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53BCgitX45613410
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Apr 2025 12:42:45 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CD35420043;
+	Fri, 11 Apr 2025 12:42:44 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D7CD320040;
+	Fri, 11 Apr 2025 12:42:43 +0000 (GMT)
+Received: from osiris (unknown [9.171.65.230])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 11 Apr 2025 12:42:43 +0000 (GMT)
+Date: Fri, 11 Apr 2025 14:42:42 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+        kvm@vger.kernel.org, Chandra Merla <cmerla@redhat.com>,
+        Stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
+        Thomas Huth <thuth@redhat.com>, Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>, Wei Wang <wei.w.wang@intel.com>
+Subject: Re: [PATCH v1] s390/virtio_ccw: don't allocate/assign airqs for
+ non-existing queues
+Message-ID: <20250411124242.123863D16-hca@linux.ibm.com>
+References: <20250402203621.940090-1-david@redhat.com>
+ <065d46ba-83c1-473a-9cbe-d5388237d1ea@redhat.com>
+ <a6f667b2-ef7d-4636-ba3c-cf4afe8ff6c3@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEIO+WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDE0ND3eScbN3c1MTi0qJU3RRj42TTxCQzIzMzSyWgjoKi1LTMCrBp0bG
- 1tQD1zih3XQAAAA==
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744375372; l=1025;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=4Ja56XexhMA1DCbBsQ1zoDOwfhujr3WsOePoWuHRSsc=;
- b=hNqHwd8xj6la7bifCJfhTbVRhSovhfmFzrYyzc9dzFgcKEAMHEqsdY6+AhrxaJauQy/eae5NF
- PLtq085pFpjCsXqAkyeugg02kDsfGTyViS4F7xDX3inqsLT5CYxyQfk
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6f667b2-ef7d-4636-ba3c-cf4afe8ff6c3@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 9om_QFYPDMLFrBloZCYPQNzLoFWKkiaT
+X-Proofpoint-ORIG-GUID: 9om_QFYPDMLFrBloZCYPQNzLoFWKkiaT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_04,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ spamscore=0 malwarescore=0 bulkscore=0 phishscore=0 mlxscore=0
+ suspectscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ mlxlogscore=719 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2504110080
 
-Add clk-measure support for C3/S4 SoCs.
+On Fri, Apr 11, 2025 at 01:11:55PM +0200, Christian Borntraeger wrote:
+> Am 10.04.25 um 20:44 schrieb David Hildenbrand:
+> [...]
+> > > ---
+> > 
+> > So, given that
+> > 
+> > (a) people are actively running into this
+> > (b) we'll have to backport this quite a lot
+> > (c) the spec issue is not a s390x-only issue
+> > (d) it's still unclear how to best deal with the spec issue
+> > 
+> > I suggest getting this fix here upstream asap. It will neither making sorting out the spec issue easier nor harder :)
+> > 
+> > I can spot it in the s390 fixes tree already.
+> 
+> Makes sense to me. MST, ok with you to send via s390 tree?
 
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
----
-Chuan Liu (7):
-      soc: amlogic: clk-measure: Define MSR_CLK's register offset separately
-      dt-bindings: soc: amlogic: C3 supports clk-measure
-      dt-bindings: soc: amlogic: S4 supports clk-measure
-      soc: amlogic: clk-measure: Add support for C3
-      soc: amlogic: clk-measure: Add support for S4
-      arm64: dts: amlogic: C3: Add clk-measure controller node
-      arm64: dts: amlogic: S4: Add clk-measure controller node
+Well, it is already part of a pull request:
+https://lore.kernel.org/r/20250411100301.123863C11-hca@linux.ibm.com/
 
- .../soc/amlogic/amlogic,meson-gx-clk-measure.yaml  |   2 +
- arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi        |   5 +
- arch/arm64/boot/dts/amlogic/meson-s4.dtsi          |   5 +
- drivers/soc/amlogic/meson-clk-measure.c            | 399 ++++++++++++++++++++-
- 4 files changed, 396 insertions(+), 15 deletions(-)
----
-base-commit: 37021be47d02d2913d6767795a6f4c72b4e63a4f
-change-id: 20250411-clk-measure-d33c5ab62669
-
-Best regards,
--- 
-Chuan Liu <chuan.liu@amlogic.com>
-
-
+...and contains all the Acks that were given in this thread.
 
