@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-600968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77503A8671D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:30:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36391A8671B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E610C46793B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:29:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39B351B82840
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F7928D83A;
-	Fri, 11 Apr 2025 20:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1FD290BC8;
+	Fri, 11 Apr 2025 20:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PWk1Glzl"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I8u4OxPU"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF19280CD5
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 20:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8151E27E1B0
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 20:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744403379; cv=none; b=au3dnCvhzNUXuLpCBM1Hpcq1OmGAz+76G+snjpc1Ncl11TfIZBhKyyyqN2hZDUFfSPxergIjkp2ndGnEE8i9NeWe6A6VBu8eVwlkZwaQ2EAHXemDhR6OnMgdRBbg0O9S57qGsBs4rU68Ll9N3qIF4UtIHKpN4rSBaCGfyv6+u9g=
+	t=1744403381; cv=none; b=ljYHqVvDbDji5VaO2RDybYRTbn7tNUj0GbHqJMwjqgo/KmgHVYllPPXmzr4bqLVKT2sm2paJHxJ7vM72pM0545NWWcfi6i7D99ALRSD5gMMDUvB+Vur7xyYUm8GHk8LJusnP8/aFXKScEhTw+mGr9K6k/8Vtr+w4d7pfaObpGZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744403379; c=relaxed/simple;
-	bh=PLl9qmt/fzbjwndzJldvUlU3AVSqPKp1HHLdDNYCu9s=;
+	s=arc-20240116; t=1744403381; c=relaxed/simple;
+	bh=Zz8alp7eLPIwTzedMMr8/MJPGI2MAf5TOo/6UlH4/vw=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=ma/AIL4Pkv2EjXUaTmQ5PzSpgKl4WN8+yhq9yjJ8znydrkywDDQxniShO1YvPmPVLBrRoaIciIuTxHcwLgiqEJ1yImINCthBVk6Jgztr092nk50N4ewxj0t9QXPivR0TNw5I5Prfeb//AUtPtcpS733JoLDwOtvXZVSkL11C6sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PWk1Glzl; arc=none smtp.client-ip=209.85.222.177
+	 References:In-Reply-To; b=PyrmdglF+41AlTV4ByK6nGwntxdBpYIIHtpfsyBDRm16ndOoZYgRPItgigwHZJ64kSUvq9K7F7Dyi/SQjOK87T+T1IAMDuku9ijajaOrK1T8F7I01ks6frkwr5SqpU/h9L4CmWlJgKq1q4RiN8aqCuqWjq9v+yCqXgwlJ9qEKVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I8u4OxPU; arc=none smtp.client-ip=209.85.219.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c5b2472969so246544985a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 13:29:37 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e8f7019422so21624436d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 13:29:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1744403376; x=1745008176; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1744403377; x=1745008177; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ktRVy/kIheAqpbf8tUSC8ehC31QAJCePsk0t6WKxomI=;
-        b=PWk1GlzlbAObnirKuJ7i+Y0A0IHBshXp3bAJMN+BXP+lWjDB3+W7AXLpxbgEeP3hMU
-         3vE9TMrRrL7a4z0/8YAFHYS0FSJQB0AZhu4Huzfd3SWnuAxEcYsFbc4ke0jb33jog4Yc
-         /6nwHJfVXClhVKHMEkxyV8cRk+zejfLaQV3jrsZfsrB3U5apoKT1eu6nDmmj8Unuztco
-         wV+0NkXJsc3xI6Xy4Out51HLha1tNKeJBkCBuhHzl8TxAioKaum/QUgLy2Ch95Sle2kC
-         IZ2vkzkRP/EALGjCZCcg0thlZ4xjcdHEDJc1aTD3G1HhrDf4cWLP9TksQSRx76Zgp0XI
-         45fw==
+        bh=JbHr93LO4bs0ZMoXRyryi8G/f9qfrVu4Cl+FMwxiTZ8=;
+        b=I8u4OxPUBdDE1vZ0s0xDjkdQxI3Sbz4HS11OjZqj/AZCzFdRIWHVjkqc5awE81BKBS
+         j7Kc/cHuvqOlGR3Y9d3jWA+QjngKx5Fa8LlCtYpuRDOufqQ2FChLBKUCCqDyIa+QGonL
+         caMLtseK48RqSJCx05L7kqRD5nZOhqTRsBum3lu7XZZ7RP7WTKHu6xmUDdSw70b7JqQS
+         2e3YcahcuxAT4aN4m3byuhSYGJxmMM8NUbxYCY2bLxo/9FKXFmCiJcTJ1b21pkqiTlRi
+         kKRYPy5BPP5q2OMKEwueDaXPnvzLZd8TpVOUV2d67RpDdUhEK5OZaTSMtrU6+y3F+U6G
+         2a9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744403376; x=1745008176;
+        d=1e100.net; s=20230601; t=1744403377; x=1745008177;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=ktRVy/kIheAqpbf8tUSC8ehC31QAJCePsk0t6WKxomI=;
-        b=ZKl/oS5eB2VS8qD9CcC2eou+2cNh8Klvjq+pIQ6S2STKMi+NLPgZZApofUF+GK59bS
-         4xSWgkHvIXypuo7LJaXcwPh99ekhySdOgatktfmbVfZNBazwBKsDV8VirOQqQUdImHoB
-         MM8euBHhQJL15e3gECz+UK0ohOogIY1Tr0gr1fwW/FGshovlXEer/RLiZ4jrl6W2OD5a
-         J4mnwRFq251BjKSN8+Eh2zoUWcpy7JDhjVOYubVypZQK8pjTZ8/6hzVj/ZwzXwYNl5yd
-         sgYXiGkpJI0p253ZGHB/RuRyFXlMrLfzuJtb+HyWGmLOmh1BUJt2YVBQcFixBDzqkxVF
-         yxrA==
-X-Forwarded-Encrypted: i=1; AJvYcCV99yURMIqpKJy5Kdx5+pJrp4e2A9d51wiND280qB2FIpjhZF4AEG1A0GacGpHnSbxEk2mJyxh+JXzKGhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEj7Fnt+uzcbLCgA5/7A3imoTaCUqKzZHe+C4wmJCrD2PldV3A
-	0l/3UE/XWEIpCsw1HULBQO9jUaAQSd+52OZmus8qHa/C5ExD20c95FcGaB/etw==
-X-Gm-Gg: ASbGncvB6EzsO6apD0Ug9i8MKW7br2gsplEYIoxAJ6WXEtC1iaPrVdZ6tK0o/SdKpBm
-	0lIjFArAEzs4+t3vDwmqW418JAq2zVDSam+QteJwDmKEG2eV0DQeD7RAZTD+MFZYflu7OP/UIau
-	coQcIHHDd1fBn1Rt5Y3G3thSJAKuXVMr23NZA9YZS1v4Ly5ATEQDn5BxjssL+3T58jeQPxna4kY
-	1UaivdJxDoYWMYIL0mxAnnbWv70yV3zv0IXo1079aDY+sSoVrCF7P8MlBImioLw5qfyM8/90yXh
-	muGQC7XQZJKXRUJnlldaFwEvLlNoRM0FdFBn9h1pUIcc/8pTGJYtbyhByw+VOnqNlgHGBK9lS5t
-	wgbHgoTwEmXt1PJcRVimz
-X-Google-Smtp-Source: AGHT+IHrI1EUrUVygltkuHfnRucDiC0qqict77jWL5RBb/PkRNG9F9tnOg0M8ZX6T5ukmsj9PaclnQ==
-X-Received: by 2002:a05:620a:1792:b0:7c5:a55b:fa6c with SMTP id af79cd13be357-7c7af1f3a65mr569107785a.38.1744403376436;
-        Fri, 11 Apr 2025 13:29:36 -0700 (PDT)
+        bh=JbHr93LO4bs0ZMoXRyryi8G/f9qfrVu4Cl+FMwxiTZ8=;
+        b=OyDrT/rkJCI00cEa8+uzYkB3kVhVi7C6Sbwi3kea1SM6lP6lEcyiOPmcRG0oOl65Hk
+         +56Ie2NgI1oE7dju7jGuKVDRphi28f1XUHvedb4c4QMDgwwi+UiK9yngRglJLEV4XNl5
+         Zb0cgNUA7HRuCGqjRijia7tG4lCqIi0wN4a/C/BE+PWxXOnopcjFHG2oBEmwh78xSAoo
+         Zsez8zRzl1fcNZjhAIJIHL41Od0JQU4sxHTxxp/FqoZ6fsB0NcTI2KzsyX0sivWLHiOo
+         Or2tZbsWcAHiEUi7xnohMbHCBpVMIiy2KaUaGELgEESPgi8MsaPluxrX8/WHLilF10UZ
+         Fn+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVmXm+jb1ssSfD1GXNW+J1IUCcNUyXgKrLxAA2PoUtnnZxV30ZvJjiE9U77v6FzRliNzIhu3PmXLz7bflQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKtEH9uRPp7lMDLxlZ5fNiEkE/lOZ4Npobwu+p+zFr8r3Pjl64
+	UcQt1YoqGTLtNkMRFYxoV+8dyE7ndsvaPi1dTZVRB/no9ko6F4AtV4ygIcmSDQ==
+X-Gm-Gg: ASbGncvXlEXAPjSv4YWu2A7yq14lD2lrYiLJHoih7xWOj9N+yTT3U+QAv7WQuT4P/lr
+	00FoNfZ3dXyk2u5CO2l5aZE8Nq1sWkWHuFG0I0+Nctw+J7tMIsx8XAoNWrNRt/UToENp/4k0ANj
+	yp0f0Draf+pxgLQqsS1vaYodXKBST8b/FdiXVm4NBfqdplfW1eUQ96Jq0GGssOA/hxDA0Yceps+
+	XptqNHjX4v/qp+ampoDByj/ULB9Qu7AfAlOpaic6dF+IHYVnBVf8zJBW0RzkChJIAAkyf8NWbmF
+	qBQwMA+3Y6LJRvpzdVeB5InOiSp5oC6voqjYsQRvxQqXWYJ1ANH4nD3+vsoF3dWmVj8juQDb4wQ
+	SdZ/WBjejHA==
+X-Google-Smtp-Source: AGHT+IEBKJDajZYrrZ3gDKTry1qqALA694IS63BLywJqibFp8HFfvqn3OIAivhRbWMwLbAA37COABg==
+X-Received: by 2002:ad4:5dc6:0:b0:6e8:f3b0:fa33 with SMTP id 6a1803df08f44-6f230cb96d5mr64559166d6.8.1744403377434;
+        Fri, 11 Apr 2025 13:29:37 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c7a89514f7sm309302285a.25.2025.04.11.13.29.35
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f0de98096bsm41240806d6.59.2025.04.11.13.29.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 11 Apr 2025 13:29:36 -0700 (PDT)
-Date: Fri, 11 Apr 2025 16:29:35 -0400
-Message-ID: <b2a47590f8fea264863d0cef0a9c426d@paul-moore.com>
+Date: Fri, 11 Apr 2025 16:29:36 -0400
+Message-ID: <7ed70f417b10ae1510dbbea501da892c@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,24 +85,83 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: pstg-pwork:20250411_1406/pstg-lib:20250411_1552/pstg-pwork:20250411_1406
 From: Paul Moore <paul@paul-moore.com>
 To: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>, =?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>, Casey Schaufler <casey@schaufler-ca.com>, Canfeng Guo <guocanfeng@uniontech.com>, GUO Zihua <guozihua@huawei.com>, selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 3/6] selinux: add likely hints for fast paths
-References: <20250318083422.21489-2-cgoettsche@seltendoof.de>
-In-Reply-To: <20250318083422.21489-2-cgoettsche@seltendoof.de>
+Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>, =?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>, Casey Schaufler <casey@schaufler-ca.com>, GUO Zihua <guozihua@huawei.com>, Canfeng Guo <guocanfeng@uniontech.com>, selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 4/6] selinux: improve network lookup failure warnings
+References: <20250318083422.21489-3-cgoettsche@seltendoof.de>
+In-Reply-To: <20250318083422.21489-3-cgoettsche@seltendoof.de>
 
 On Mar 18, 2025 =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de> wrote:
 > 
-> In the network hashtable lookup code add likely() compiler hints in the
-> fast path, like already done in sel_netif_sid().
+> Rate limit the warnings and include additional available information.
 > 
 > Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 > ---
->  security/selinux/ibpkey.c  | 2 +-
->  security/selinux/netnode.c | 2 +-
->  security/selinux/netport.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+>  security/selinux/netif.c   | 8 ++++----
+>  security/selinux/netnode.c | 4 ++--
+>  security/selinux/netport.c | 4 ++--
+>  3 files changed, 8 insertions(+), 8 deletions(-)
 
-Merged into selinux/dev, thanks.
+How many of these messages were you seeing that rate limiting was a
+concern?  Also, what were you doing that was causing this?
+
+> diff --git a/security/selinux/netif.c b/security/selinux/netif.c
+> index 43a0d3594b72..38fdba1e64bf 100644
+> --- a/security/selinux/netif.c
+> +++ b/security/selinux/netif.c
+> @@ -141,8 +141,8 @@ static int sel_netif_sid_slow(struct net *ns, int ifindex, u32 *sid)
+>  
+>  	dev = dev_get_by_index(ns, ifindex);
+>  	if (unlikely(dev == NULL)) {
+> -		pr_warn("SELinux: failure in %s(), invalid network interface (%d)\n",
+> -			__func__, ifindex);
+> +		pr_warn_ratelimited("SELinux: failure in %s(), invalid network interface (%d)\n",
+> +				    __func__, ifindex);
+>  		return -ENOENT;
+>  	}
+>  
+> @@ -169,8 +169,8 @@ static int sel_netif_sid_slow(struct net *ns, int ifindex, u32 *sid)
+>  	spin_unlock_bh(&sel_netif_lock);
+>  	dev_put(dev);
+>  	if (unlikely(ret))
+> -		pr_warn("SELinux: failure in %s(), unable to determine network interface label (%d)\n",
+> -			__func__, ifindex);
+> +		pr_warn_ratelimited("SELinux: failure in %s(), unable to determine network interface label (%d):  %d\n",
+> +				    __func__, ifindex, ret);
+>  	return ret;
+>  }
+>  
+> diff --git a/security/selinux/netnode.c b/security/selinux/netnode.c
+> index 8bb456d80dd5..76cf531af110 100644
+> --- a/security/selinux/netnode.c
+> +++ b/security/selinux/netnode.c
+> @@ -228,8 +228,8 @@ static int sel_netnode_sid_slow(const void *addr, u16 family, u32 *sid)
+>  
+>  	spin_unlock_bh(&sel_netnode_lock);
+>  	if (unlikely(ret))
+> -		pr_warn("SELinux: failure in %s(), unable to determine network node label\n",
+> -			__func__);
+> +		pr_warn_ratelimited("SELinux: failure in %s(), unable to determine network node label (%d):  %d\n",
+> +				    __func__, family, ret);
+>  	return ret;
+>  }
+>  
+> diff --git a/security/selinux/netport.c b/security/selinux/netport.c
+> index 7d2207384d40..dadf14984fb4 100644
+> --- a/security/selinux/netport.c
+> +++ b/security/selinux/netport.c
+> @@ -162,8 +162,8 @@ static int sel_netport_sid_slow(u8 protocol, u16 pnum, u32 *sid)
+>  out:
+>  	spin_unlock_bh(&sel_netport_lock);
+>  	if (unlikely(ret))
+> -		pr_warn("SELinux: failure in %s(), unable to determine network port label\n",
+> -			__func__);
+> +		pr_warn_ratelimited("SELinux: failure in %s(), unable to determine network port label (%d:%d):  %d\n",
+> +				    __func__, protocol, pnum, ret);
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.49.0
 
 --
 paul-moore.com
