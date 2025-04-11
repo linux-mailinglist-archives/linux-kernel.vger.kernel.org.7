@@ -1,124 +1,220 @@
-Return-Path: <linux-kernel+bounces-600796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E11BA864A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E94EA864AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74F843B4E86
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:21:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 500448A478B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B985822F16F;
-	Fri, 11 Apr 2025 17:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E93F231A57;
+	Fri, 11 Apr 2025 17:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3Tmywx6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wvqO3akg"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2075.outbound.protection.outlook.com [40.107.100.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DACE22CBE6;
-	Fri, 11 Apr 2025 17:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744392111; cv=none; b=FKIfgnUfbZChTJDSh7fULWOlttFxLpSScFI53CSrhQT6gw5IlzanOhCCsSyvazYMUhJLP+SCmTSLZNkQ4KifmaA3oeBcYltY6n+TK9CkMH8/QKcYUNelBZ7j3RqwlKo5m+rE2EINKvoZpKPaWNWIA0/GDgXtCc07RuZEU21oPH8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744392111; c=relaxed/simple;
-	bh=wTPBagsj4ElwWlYBiHEHYq9pY64izexZsXD5qh2E0TA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Szj2bH2vtqjtnEQYuJT4/azpbdtNzUO/mn9vl1AoXGw3Avksm3rUxax1uEMCOGbW/uwSZ+pL7307UVBcAonlPRkNvxkczJ7AjqWXx3I+oR1Qa7VeelsRXuc8LkRUkmYY+etJIFTnWEtPthJAwEC+9TjONAtnvp8JEvwO1zwGDlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h3Tmywx6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E362C4CEE2;
-	Fri, 11 Apr 2025 17:21:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744392110;
-	bh=wTPBagsj4ElwWlYBiHEHYq9pY64izexZsXD5qh2E0TA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h3Tmywx6RBQubYx+gshdwNzpLadpwLONa/JXZ2+cByAIyHimdCAf8dJgslgqK3je0
-	 wiZ17zsuRnmX1ZNz6j7kdb1HCBNTbHsPjLYeJuYeFXHIW8q8gO+War6J2CfqgmC7Dt
-	 rcJGH/ncTKw9WM0DT1lljR8q5nJgbkhdIahZ4owOZLJCXIb5dhScRmpxTx1u3Ox03P
-	 6yrl9s2Rjml+aWVC/1cCJmUQp5Z7ZXzMOXlPbak7L+NZ+yenzBRuGTa5/VXqqOrxvT
-	 xFQ5ojPvq3i0Eb+TnpErDyukPnDVxNx4rxjT3pMsCkEUqC5ONhwy8ElmAoRpmPr7Qi
-	 8spN1e4KCIXOg==
-Date: Fri, 11 Apr 2025 12:21:49 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	kernel@pengutronix.de,
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-Subject: Re: [PATCH v3 2/3] dt-bindings: clock: add TI CDCE6214 binding
-Message-ID: <20250411172149.GA3468525-robh@kernel.org>
-References: <20250410-clk-cdce6214-v3-0-d73cf9ff3d80@pengutronix.de>
- <20250410-clk-cdce6214-v3-2-d73cf9ff3d80@pengutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBECA230D14;
+	Fri, 11 Apr 2025 17:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744392148; cv=fail; b=OvaGZaOIu02ORI68bz+oZZQ43/vmRlOjsBABVbC3fJFUoVE5r/mvmZpaLwTe3aiZLj9iBEJiGCai/TJ7Hr2v2jQhDt1m3l/ly+lUzB+lkgG6A412GPgZ9aNSpL33Nl17bLJM9gt2p8HmZprOnFr+kp5LZzcOKkpJI5XJ9N6Wb9I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744392148; c=relaxed/simple;
+	bh=8ZLPZ9tqMLn1vQMO9F6L0RsvKfb8taJZQq+SCzGTI6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=M6KpoZg6Aqt+jkRW2Z+XWNCRKWYZrVyXR4gM1JCb5vnhhlSWdsrxsTUj2A5EtO7TGDf7FEvSduXcNs9NHPDquxMHtbE9+Dg3ymvgjtOCxframHDAZj61bljSjUwURxbSOnCsiWQTHtd3ixj6qQWGdRu0g4pZjyjJazh474vQX+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wvqO3akg; arc=fail smtp.client-ip=40.107.100.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jTFr+Db3kUbJyt50Qp+kKI3lFSZuSMDk8hlvySGfT1XIDGViTOQqgGFSKrlqqgs9h5NDHW+R2clfXaWOEafKDC+sHRKyNNPAwEMvOeX8Iix8tdALmJpMszGZiIXTOp5JTx29uHBMr819cFyYnjGQ+9upRdLWvQDBJLUNN7JaZhLThq/jyyzCHaOmS8uB8tKXtUMzYThJf6X5fckpiDRZ7yo/us8iDKFLPvdOiMnWRkFdvqKayCX8WpR2NdN+eUQp7AQGxTOgUrzEQUfeSwHIi2roTQl0ERwmbhMmrs5j9m2BHwOeBzizTfqlDe5dpJe0gbvXE3j5JiJT8Q9R6nS3bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BtUtWQYm6Cbrc1s/M0a8wqSVpWD44g/0MbJsFCjd5xM=;
+ b=e/G2qpX9zWoWjK0DmbMyisFJF5l75lgJ7nwpU9w3nqSJdpT4ZXkBqNzI05zIHV1InbcBL3oG9lpdTvv0osMgjndKrYVdsD5t8/aHgzHptQyOr2hrWvINLt/bTGaUJ4BA7wcrlEjFNLhtb3FmzWmSb79bQrSBQDuePv+uAjf5HwGKnCsuvxsaUGLa4sueT13dSTawLvY3IAbEqJlJyZcFeWupAFLBlwFMIw4gXj4BdB2wEHw0hCkKC0Fm5DaKhr6/vBE/Obu4j97kaN5I/BtjCjFf+ne7ECqMDErWkuXLFoK9re5tMH3XtsDb8A4flJAWQx9KBlVYCFGTWdxA8adTmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BtUtWQYm6Cbrc1s/M0a8wqSVpWD44g/0MbJsFCjd5xM=;
+ b=wvqO3akgCZM2yisz2fLAjXlg+h+yvxb+OEE9Hq+cPnmg2+05lxgCp1zk6vI7A8SgAsZRD8YsfrmepSh0z1fjg1XjQNnvEHxJ+IbXTDmm6FuQGfCxn2upXQNLD/OigSSR7v6YH2q4mmCEEKIzoli6VCNe9qGQVk6Lo+1CrwHfudc=
+Received: from DS7PR05CA0029.namprd05.prod.outlook.com (2603:10b6:5:3b9::34)
+ by SN7PR12MB6912.namprd12.prod.outlook.com (2603:10b6:806:26d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.31; Fri, 11 Apr
+ 2025 17:22:22 +0000
+Received: from DS1PEPF00017095.namprd03.prod.outlook.com
+ (2603:10b6:5:3b9:cafe::73) by DS7PR05CA0029.outlook.office365.com
+ (2603:10b6:5:3b9::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8655.12 via Frontend Transport; Fri,
+ 11 Apr 2025 17:22:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS1PEPF00017095.mail.protection.outlook.com (10.167.17.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8655.12 via Frontend Transport; Fri, 11 Apr 2025 17:22:22 +0000
+Received: from [172.31.190.189] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Apr
+ 2025 12:22:17 -0500
+Message-ID: <d8fca516-235a-4156-aaf6-8cf41c47d0b0@amd.com>
+Date: Fri, 11 Apr 2025 22:52:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410-clk-cdce6214-v3-2-d73cf9ff3d80@pengutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/67] KVM: x86: Pass new routing entries and irqfd when
+ updating IRTEs
+To: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>,
+	"David Woodhouse" <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
+	<kvm@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, Maxim Levitsky <mlevitsk@redhat.com>, "Joao
+ Martins" <joao.m.martins@oracle.com>, David Matlack <dmatlack@google.com>,
+	Naveen N Rao <naveen.rao@amd.com>, Vasant Hegde <vasant.hegde@amd.com>
+References: <20250404193923.1413163-1-seanjc@google.com>
+ <20250404193923.1413163-9-seanjc@google.com>
+ <6f76183f-a903-47fd-8c84-0d9892632fca@amd.com> <Z_kgbna7grb833Fy@google.com>
+Content-Language: en-US
+From: Sairaj Kodilkar <sarunkod@amd.com>
+In-Reply-To: <Z_kgbna7grb833Fy@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017095:EE_|SN7PR12MB6912:EE_
+X-MS-Office365-Filtering-Correlation-Id: a7b4ec70-616a-4cbc-b37f-08dd791d6b86
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|7416014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dmZnYmtlRDRwaTVyVUJFd2xkbVk1N1lTNTM0dDZWQ29SUW5XaHZYM2dLTU52?=
+ =?utf-8?B?TEY4V0JwRkYwQnFQVjQ1YktXTGNicENBZVcrM3l4MmpXakRmZGVKS0FsbWhH?=
+ =?utf-8?B?d3U5akkwN09WQi9wdHF3S0xQeDZXcCtrdWF6UnVYNElwOXpkSlR5QkhVbnFI?=
+ =?utf-8?B?WXpwck5IcnNheVhmNzNnZDY4RkhvWlBmQWpaOVdhaEk0MFVaUlhRUFhqbzA1?=
+ =?utf-8?B?bDZhbVNvQ0dTQzd6U2VYNFU1SEM5dkRjK0NOSlZiWDlEamNSTG5lcVB4YlVO?=
+ =?utf-8?B?QURMY3Rwa2t5SEQwRnI0cDdweTJjTnJhSHg3RTJPKzdvZXJNdGdWdm02R1hw?=
+ =?utf-8?B?Y2NyN3lrUHlFWmk0RnJIZlVaN0dWMXhJK2w2UWw5UDdnQjRISWFmQ0J6MmJy?=
+ =?utf-8?B?Qkk4aHNZcVVOWUtGYXRieGVabWVEN2tMRGdSNFl4bHl0bWdHRjNiVlQ5bDBs?=
+ =?utf-8?B?VEdtSWZoN2JxSFNyaGhsZXBxbGR6WnpFTURvM1VqL1NWUTRtbXJ5STdFQWZU?=
+ =?utf-8?B?UGlSb2p4L3NwMVh4cUtXRHl5c3ErV09TNkg4dklnZkNBaWRnS3ZzME1uNXlo?=
+ =?utf-8?B?alJTYVhBVFNobmhhSFdYbm9DcFhtQXBrVFRTODA3Q3JhMXFnbjJqaldxRXU3?=
+ =?utf-8?B?ZXFWRFdnQnMySnZSZy9FcFlrMThvc3JBaTVCY0ZEN1NPVll4eEE1VzVnNkFO?=
+ =?utf-8?B?UjlMaWNNYkNONElQODRuUmJOZUpwQ2wyU21ha0VHYi9sVFFONEdKVzVkT1h2?=
+ =?utf-8?B?ZlR0aGZINk5FWGtQdm5JdW5ydDhYcFQ3dlVVTURMWmViS2dyZW5jeWF4Uk1W?=
+ =?utf-8?B?MEJISXlrTHdYQ3U3M2dkeEpqVnFlaktWMHdFUkJYdTF3SUNCU2xET280elpV?=
+ =?utf-8?B?RTFocEF2WXdrd1J2dHowazJRcm5qYVQvOU9WdE82RHBtRzBaNTFoUVBqSHhz?=
+ =?utf-8?B?OFJlQ3VoS0NhVUdwVVRuSGhiN0p0RUw1MEN1aFZPSjJXdjM3dWt5bDFPK21i?=
+ =?utf-8?B?ZktPRkYyWk50MEk4QnF0RjBLSmJHZ0lZSWpsaWM1enpFZ21VejcwbUR0OVBq?=
+ =?utf-8?B?eW1ZODFLRWVOenVzZnJ3M3FWdmhVUlBrVG1FdVJsV3NzMEdielA4U25haWZ3?=
+ =?utf-8?B?SGtZYng5dVkzVmFnRDhpK2V6ZjJXSUdXWExHMWJxeStBaCtXZXFkQWhDZ0dX?=
+ =?utf-8?B?ZzdwSEtSa3ZEcisxSFArOTJJYUhodkZRSmk2OUlxd1lwMm9RWU1NWnlObTZW?=
+ =?utf-8?B?T1dKMUdZTEgrMkdnYkM0Rkh6UEdQMTBjTGhsQ3owM3VsSFordkhHbDlUMWpJ?=
+ =?utf-8?B?Y2xHN2VDcytwcTRlUWFPdlVuYWo4V0lUN28xaGl6ZVBXU1dCT0ZBaU94aERu?=
+ =?utf-8?B?K0tKR3k4a1pySEdITE1BTm9HQ0FSRFVZSjRVbTlBWmxKSThWV21Ob1ZWRkVu?=
+ =?utf-8?B?R2p2MEVFUThmR3RDK2R6Y0tQQ1BUM2N6MEkxLzRoa09TZWlxQ0NBcC9peGtU?=
+ =?utf-8?B?T2ptb21sWk9oRUNON3NvYUovTHpGNFYwNE0xVTFQVFpnUDdlazRoRjZDMWE5?=
+ =?utf-8?B?cGxyT0NaWituQU9xTWJyVDZ4dk5kOTAzTW80ZFA5a1Y3VG9QMDZMb0dFbVFB?=
+ =?utf-8?B?aFd4WjZ5RnF1bVFSVllhRVU3Q0JtN1JJYzFCdW5WNmxvZ2NCYWEvOSt3dUtD?=
+ =?utf-8?B?eFl6cHRtZ2hmbU9ldm5NeFdhdVdmU0tpaFJySk5yNFJRYnZKVDR2YTR1UnIw?=
+ =?utf-8?B?cW9KM3BTckFyWU1WWVVKNEk0RCt5aUk5QmVyTjhIOXhrWjU1Q2xlZERoWmU1?=
+ =?utf-8?B?RFpXaDlpaTZ1NytKQjk2Mzl6a2FpUFpRWEtsVEJMdGw0THhsTDBudUZhdlBz?=
+ =?utf-8?B?Ti8yOEJ1Smluc1NoVTNLa2dUVW5IdjhYb2JFTXczdllPeTBONElOVVIyS3B0?=
+ =?utf-8?B?eHEvck41UXpWaS9DZUFzWnZkdkphb09rN1U2SjFYWitudlRhZjhvWW1WSkxH?=
+ =?utf-8?B?U0ZWMmRTcWZTSzVlMjViQXpXYnRzWWdIWFlGc25NTUFtN2hKZ0Vja29Yb3dM?=
+ =?utf-8?Q?R2of/l?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 17:22:22.0699
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7b4ec70-616a-4cbc-b37f-08dd791d6b86
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF00017095.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6912
 
-On Thu, Apr 10, 2025 at 12:34:57PM +0200, Sascha Hauer wrote:
-> The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
-> Differential Outputs, Two Inputs, and Internal EEPROM. This patch adds
-> the device tree binding for this chip.
+
+
+On 4/11/2025 7:31 PM, Sean Christopherson wrote:
+> On Fri, Apr 11, 2025, Arun Kodilkar, Sairaj wrote:
+>> On 4/5/2025 1:08 AM, Sean Christopherson wrote:
+>>> +int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+>>> +			unsigned int host_irq, uint32_t guest_irq,
+>>> +			struct kvm_kernel_irq_routing_entry *new)
+>>>    {
+>>>    	struct kvm_kernel_irq_routing_entry *e;
+>>>    	struct kvm_irq_routing_table *irq_rt;
+>>>    	bool enable_remapped_mode = true;
+>>> +	bool set = !!new;
+>>>    	int idx, ret = 0;
+>>>    	if (!kvm_arch_has_assigned_device(kvm) || !kvm_arch_has_irq_bypass())
+>>> @@ -925,6 +919,8 @@ int avic_pi_update_irte(struct kvm *kvm, unsigned int host_irq,
+>>>    		if (e->type != KVM_IRQ_ROUTING_MSI)
+>>>    			continue;
+>>> +		WARN_ON_ONCE(new && memcmp(e, new, sizeof(*new)));
+>>> +
+>>>
+>>
+>> Hi Sean,
+>>
+>> In kvm_irq_routing_update() function, its possible that there are
+>> multiple entries in the `kvm_irq_routing_table`,
 > 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
->  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 155 +++++++++++++++++++++
->  include/dt-bindings/clock/ti,cdce6214.h            |  24 ++++
->  2 files changed, 179 insertions(+)
+> Not if one of them is an MSI.  In setup_routing_entry():
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-> new file mode 100644
-> index 0000000000000..12737e67dcf2d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-> @@ -0,0 +1,155 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/ti,cdce6214.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TI CDCE6214 programmable clock generator with PLL
-> +
-> +maintainers:
-> +  - Sascha Hauer <s.hauer@pengutronix.de>
-> +
-> +description:
+> 	/*
+> 	 * Do not allow GSI to be mapped to the same irqchip more than once.
+> 	 * Allow only one to one mapping between GSI and non-irqchip routing.
+> 	 */
+> 	hlist_for_each_entry(ei, &rt->map[gsi], link)
+> 		if (ei->type != KVM_IRQ_ROUTING_IRQCHIP ||
+> 		    ue->type != KVM_IRQ_ROUTING_IRQCHIP ||
+> 		    ue->u.irqchip.irqchip == ei->irqchip.irqchip)
+> 			return -EINVAL;
+> 
+>> and `irqfd_update()` ends up setting up the new entry type to 0 instead of
+>> copying the entry.
+>>
+>> if (n_entries == 1)
+>>      irqfd->irq_entry = *e;
+>> else
+>>      irqfd->irq_entry.type = 0;
+>>
+>> Since irqfd_update() did not copy the entry to irqfd->entries, the "new"
+>> will not match entry "e" obtained from irq_rt, which can trigger a false
+>> WARN_ON.
+> 
+> And since there can only be one MSI, if there are multiple routing entries, then
+> the WARN won't be reached thanks to the continue that's just above:
+> 
+> 		if (e->type != KVM_IRQ_ROUTING_MSI)
+> 			continue;
 
-Needs '>' modifier
+Thanks.. I understand it now. I did not see complete code hence the 
+confusion. Sorry about that.
 
-> +  Ultra-Low Power Clock Generator With One PLL, Four Differential Outputs,
-> +  Two Inputs, and Internal EEPROM
-> +
-> +  https://www.ti.com/product/CDCE6214
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,cdce6214
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 1
-
-How can you have 2 clocks, but only 1 name? See my reply on v2.
-
-> +    items:
-> +      enum: [ priref, secref ]
+Regards
+Sairaj kodilkar
 
