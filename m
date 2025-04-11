@@ -1,110 +1,88 @@
-Return-Path: <linux-kernel+bounces-600936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC56A86688
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 21:42:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7833A8668E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 21:44:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A599A8436
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:42:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3559C188D9E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 19:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACDA280A42;
-	Fri, 11 Apr 2025 19:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B71280A2E;
+	Fri, 11 Apr 2025 19:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MSSm5xy/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bx69LwlN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842AF1519A1
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 19:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2062A27C17D;
+	Fri, 11 Apr 2025 19:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744400542; cv=none; b=OaqCtREzs40saYZd5yv9wEN292W84UGOzHWgvujIhGNKH/3bl8bF501CkMQz48oZpnP6nLBie9XkP7aCX3KSaQgWeIdNuBFbEO7epPokEJ8uBWh9pJ7MQFiARUODCwHMlaNHpQkF8tnXB4vgzcYjJukG4gTBE0p4nhRJKk1TOeA=
+	t=1744400541; cv=none; b=A/cdrW29/F3qSiuMD43f2pJe51EoBKVYOoa/6itdQsEpIc+k8QsqD6QFJ+23FQDJfRqHLfhKTwSmmIv7+CDz6XIVBnbM17Q20RbysSx9ptiBWRmlRr3lkSxy5FUU1rupFdNVx8CA8S4z4SDKBys+ShcWhBUxlJPKoY/d+hTr5ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744400542; c=relaxed/simple;
-	bh=Zm4eBLztnRMQWuE+Eq4LeGF+5ABhujo26jiHcJq6DAQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hQiWyFH2OYQaKbvhz8GQg9bdBzsvJUrzTVw4iLO+W7gQl6GOjhRi6fvzWU7xH38TfW/0ArIH5sFssOwp7RtTK/dUbbKpYKdPOFwtXCtyiMOGOoPfeNkoo+kn8QhwZstLJ6xRJcbfgSdsWFCh/J9e9TzLAKrczQtr6hosDCds6VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MSSm5xy/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744400539;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c7x66GKHy0/KWv9FzU6CXwzT7v4B6HZmPgZ9jBsGca0=;
-	b=MSSm5xy/GuTkbI3VMEUEk356ZH0wEIRG79clbjC+v9FoKOcM497P3BOAvRP0EyVybED7QY
-	rliG6c20fvtyqaHDQcwGsHW3ztyEM8zFj0/AK7hx7VGWTJKP+c/ymXUPMPIKof29KhRUM7
-	PBRjjjF2zb+R+hSqemD6CDPnwyyNhus=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-7-3ekrurHQPoCY3yNdQ9eizw-1; Fri,
- 11 Apr 2025 15:42:18 -0400
-X-MC-Unique: 3ekrurHQPoCY3yNdQ9eizw-1
-X-Mimecast-MFC-AGG-ID: 3ekrurHQPoCY3yNdQ9eizw_1744400536
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8020B1954B33;
-	Fri, 11 Apr 2025 19:42:16 +0000 (UTC)
-Received: from f39.redhat.com (unknown [10.22.65.78])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 582FD3001D15;
-	Fri, 11 Apr 2025 19:42:14 +0000 (UTC)
-From: Eder Zulian <ezulian@redhat.com>
-To: Basavaraj.Natikar@amd.com,
-	vkoul@kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: jsnitsel@redhat.com,
-	ddutile@redhat.com,
-	Eder Zulian <ezulian@redhat.com>
-Subject: [PATCH RFC 1/1] dmaengine: ptdma: use SLAB_TYPESAFE_BY_RCU for the DMA descriptor slab
-Date: Fri, 11 Apr 2025 21:41:48 +0200
-Message-ID: <20250411194148.247361-2-ezulian@redhat.com>
-In-Reply-To: <20250411194148.247361-1-ezulian@redhat.com>
-References: <20250411194148.247361-1-ezulian@redhat.com>
+	s=arc-20240116; t=1744400541; c=relaxed/simple;
+	bh=GIcyZThvoYXaHxUFa3uu98idbETsxCqqaZINj5bP1Rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=inRirLMLP/xB/2EeV8xEAzpFVZmfug9ADS5nF2Z3pu1taJ8armu4H4YyFVZsTsiycGkAE7EZ2ndRyIqCqYkcH6wA5T5RJffDsgtYyBPPaw+SEbni80iETPlHhLd+SY679ADt34E/n360aFtKlNz2QiBZTBYzcYbVnYM90nTREtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bx69LwlN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BFBDC4CEE2;
+	Fri, 11 Apr 2025 19:42:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744400539;
+	bh=GIcyZThvoYXaHxUFa3uu98idbETsxCqqaZINj5bP1Rg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bx69LwlN4gDJwXWMTiGjpADgGOkfzd6DpRdh3i2THAnBow67TMqLPFbO4HOP5i0He
+	 wobzWvKUHEoOAJcNuiK8Sm6MaP7ffQbzasARcRWK13LHUmH0xkEIScK7/9xVuhLbAG
+	 pkIrHBOpapVCoLZ+jODtWHwH4Dko1rjr1iU5oPENOw4Lm94uC2pbH7K+7/zheP95SH
+	 usTcfyQ2uav6fw3pR3xAXK/i3s3P3llCGBLimEAZEhuAf0skxxbqg4AwnYxdTB4eEK
+	 i/vdgOG4Ot0YCr2gL2wH/dg75Vk+KgMU7yyFrpnBY4w/mGtKTnygugNfGPd8cA+zU8
+	 sY4ksq2isZECQ==
+Date: Fri, 11 Apr 2025 14:42:18 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+	kishon@kernel.org, srk@ti.com, yamonkar@cadence.com,
+	sjakhade@cadence.com, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, vkoul@kernel.org
+Subject: Re: [PATCH] dt-bindings: phy: cadence-torrent: enable
+ PHY_TYPE_USXGMII
+Message-ID: <174440053779.3778537.10228186490743369615.robh@kernel.org>
+References: <20250411055743.623135-1-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250411055743.623135-1-s-vadapalli@ti.com>
 
-The SLAB_TYPESAFE_BY_RCU flag prevents a change of type for objects
-allocated from the slab cache (although the memory may be reallocated to
-a completetly different object of the same type.) Moreover, when the
-last reference to an object is dropped the finalization code must not
-run until all __rcu pointers referencing the object have been updated,
-and then a grace period has passed.
 
-Signed-off-by: Eder Zulian <ezulian@redhat.com>
----
- drivers/dma/amd/ptdma/ptdma-dmaengine.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Fri, 11 Apr 2025 11:27:43 +0530, Siddharth Vadapalli wrote:
+> The Cadence Torrent SERDES supports USXGMII protocol. Hence, update the
+> bindings to allow PHY_TYPE_USXGMII. Since PHY_TYPE_USXGMII has the value
+> of "12" while the existing maximum allowed PHY TYPE is "9", switch back to
+> using "enum" property in the bindings to account for this discontinuity.
+> 
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+> 
+> Hello,
+> 
+> This patch is based on linux-next tagged next-20250411.
+> 
+> Regards,
+> Siddharth.
+> 
+>  Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
 
-diff --git a/drivers/dma/amd/ptdma/ptdma-dmaengine.c b/drivers/dma/amd/ptdma/ptdma-dmaengine.c
-index 715ac3ae067b..b70dd1b0b9fb 100644
---- a/drivers/dma/amd/ptdma/ptdma-dmaengine.c
-+++ b/drivers/dma/amd/ptdma/ptdma-dmaengine.c
-@@ -597,7 +597,8 @@ int pt_dmaengine_register(struct pt_device *pt)
- 
- 	pt->dma_desc_cache = kmem_cache_create(desc_cache_name,
- 					       sizeof(struct pt_dma_desc), 0,
--					       SLAB_HWCACHE_ALIGN, NULL);
-+					       SLAB_HWCACHE_ALIGN |
-+					       SLAB_TYPESAFE_BY_RCU, NULL);
- 	if (!pt->dma_desc_cache) {
- 		ret = -ENOMEM;
- 		goto err_cache;
--- 
-2.49.0
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
