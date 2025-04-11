@@ -1,148 +1,165 @@
-Return-Path: <linux-kernel+bounces-600882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B368A8659F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:40:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1746A865AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 886024A70EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:40:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A01A9A811C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7182269882;
-	Fri, 11 Apr 2025 18:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4EA26A0C8;
+	Fri, 11 Apr 2025 18:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Yek4zvc2"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d9Lq+nM/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1128C2690F0
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 18:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C85269892;
+	Fri, 11 Apr 2025 18:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744396842; cv=none; b=Th40Tm16kRHy42kUn1rpkTONOinalgxGDmb0+ADiWWFLxW8LsnfuQI+YXzRF8jfXYd1Oh3aomSX57fX77JJOyrWQ+5KMzimyghpy9pn0UWbKzW9xYQiZs3R5sIIjyktuBHg0tZKjGC9xmD/B0BKDptLo/MZQIL+jO6V8qzf0mUU=
+	t=1744396913; cv=none; b=l5pZ3RNN8cQQDDl9dXqu/i8g40ECWq7tcioHORhB5HnusllLtODBW6KShmrp3j1rfE4HXnxqysVXblmRzyQEltAZVmTF52qMS8Hm8M7SOY1PMXQdBls9qXHrTXmoLnZE0Hfl8avyH6B59ItUEFDH1iw6fMzMwafZ5wmCyu9QmO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744396842; c=relaxed/simple;
-	bh=rX0+J7BmciO66CwTZws6P9nzek58KCk86XaVC/SFc2I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f2ckCAMIaIwndqVtFtaBVFYIS0rrDvjgC5sNGUvvoU7FDuax7PhfhoYyONFCYIT3jiULGhKmuNL55lytPMM+FY9+G3Zwn8LaC5TtlHmfbKze7DT3rEThrOEaRwHlmb6RSAhUtmyIrvZ4xb03cmDFLYVhNwnVT6g0oTlbbGZzlMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Yek4zvc2; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3d59c8f0979so10440065ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 11:40:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744396839; x=1745001639; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NwKbo/ILjWgi++92O9Gpt2wNYU/D5B16c7f5jk0t3ec=;
-        b=Yek4zvc2m0TCBIoZ3ycKYfikiAphq7CQhmJTJVR9xy39btgUT61ux6ulvr6Esf95Pi
-         ttYPNuWo/N19vBZ+xPvWZzFbBQR7zOLE1r6LMZO6SmQJ4gMbIOec6UPHRcGOoHODp3RH
-         3jndY8kuh3TmSITsgDGmCgHnFplc1fKCrLYon74Oa3tov3xvjU+cB/qAlIQIe5B9aQkp
-         9/Q+ONAyJGArpnicRsmmwHAduz1QCrUP5jOir28U7S37YUJ39yxiXEKyvPK6TeZXz5yh
-         MF4ABQDKhjUxzKgrDMf8h5bXMrMKJJ/Ig6RSGflzuHmImXH0EP3V6CUXfr03dNJQjgzO
-         U61w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744396839; x=1745001639;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NwKbo/ILjWgi++92O9Gpt2wNYU/D5B16c7f5jk0t3ec=;
-        b=j0ffHFj/wxu7kRi/7t7mkQxhXz6lxhzx9DJceGy70SO0gvyEMBCyZgCZQRZ/mHr5nY
-         wceuM17scrTjQtKveC5MjlCGxhEclz53dO4lyFcmIUh1KQbQc/inPtIOt7wpt9CQGZoE
-         pa9vcdz07hyNxeHE1g2zxKHKZopVmKTzkzVfIoUigKo0KsP9fpm+MWQcrcBQMYUvgp8n
-         tS0tTUINXLAzPV6dhAwvnUdacbIIqKSDgh1n5+bhqs9P2zQwQfDSUumxSqykI7TLjZwm
-         h44QKnkD35adFVkhkWp+GIG0gFCr4dUsyciy07ugmYvW8KweXaCs4xai2HCRqmjU+q+l
-         6wng==
-X-Forwarded-Encrypted: i=1; AJvYcCX1OrOiT+2fiNxzR2O4xm+Ajnrhsip3+DZUqNeI7lPQ6RfAKkTM/kwIiIoVN3WnnQCGi4XfNqM2Uz8Ek18=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR8ECy47u8PdJ48CWyKc65JGIINHno5nfZ4KbwAx9QmvWhOAFa
-	cf3Yqbbqrvg+JOaxn+NLHa2QA37f9LRShElIkvmtqnlwfqwUIjwjsqz2U55pHLo=
-X-Gm-Gg: ASbGncsY3pC1IZgNaSo04Z76/ikFpFDW1+AH2S1LIVnV8xIF6ZB4t9DPj8Wz8G1/8Y/
-	yZ35YlO0gxzlymkUzKhRuyNHJYv7itTyAB1Uvpu/g0CJ6sye/KnUajkSHCrQfoeC9by3jj5gPpp
-	NadeVIjF0Lk+DOIAJ3w1aYgqw0+BfEhkeSguBd4BfTbytH5oknT6PXz03ZGvjEwkkMUvQ7c+inm
-	KOX23nB/hq2fCBO9n/9LFVoZOU49F3QF/7myqtG2rCF3Ihf+6zJ7uqDJHZe4uLTGnX1R8XpLmi1
-	OY2CecviqRKqur2cZwnSb8yFTaDMyEC5cLfk+A==
-X-Google-Smtp-Source: AGHT+IHHx2FuLcfpiqZEhV0h2YcX8Y5A+GiQtHlGAIQleui4k5vNjuZS9xP7B9uTqkuZj09S4EcZmw==
-X-Received: by 2002:a92:1304:0:b0:3d3:d08d:d526 with SMTP id e9e14a558f8ab-3d7e4d0c549mr66318445ab.11.1744396838982;
-        Fri, 11 Apr 2025 11:40:38 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505d3b945sm1327945173.69.2025.04.11.11.40.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 11:40:38 -0700 (PDT)
-Message-ID: <f46e6057-704e-4dc8-8443-37006ca2ae74@kernel.dk>
-Date: Fri, 11 Apr 2025 12:40:37 -0600
+	s=arc-20240116; t=1744396913; c=relaxed/simple;
+	bh=NY8+7+ZEmdWqqx0zQOF9aAujJPW4CRyp6FmkPwIcd+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y6pCbFvNiXcmQ1fxo1MNa+q0oQGFulYTYgdFrQMY7cKBaqaBufzSURQmpU69BA5NNU++N/Nyd5tm6CSxLOAh0jWnKaFudOwk8JR6+61D4S19A8UHsfHENJXBZ8h/7PmbaJgOSBL3jNPn1sWG1gtrVjPtyiNsTbe/Hf5dE+2l940=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d9Lq+nM/; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744396911; x=1775932911;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NY8+7+ZEmdWqqx0zQOF9aAujJPW4CRyp6FmkPwIcd+w=;
+  b=d9Lq+nM/2lV5ChjjnQ/zGREVg7pP3vjW11ZIFfd4SEd6pb5Os7uEyySQ
+   Kb0V/rnnpuaEomBjr2ZjfvuWI0Ya2NkEKYgnpZSKvcI0S7NL0RUrRGqUL
+   G5puANSFUtBwqgQ5g/HgOl1YbdqAfBLnmnBAfXX7k/6NFcecqLSJPIbeF
+   cfysNlryKFaoPJ3lCZH2umQQ4X62Ybn/OeaOisEORL3A7F3vdLegaWo7/
+   mMIRTEHIJootX7LO2jQAOjJ6hr9KRoxTfa08gdjCyicZobvcq5ndSBIdN
+   xISSme44mctcWE8vPAWKhraV0it29da9AFwvgxteVwE/2/pXKQ0EbfNBT
+   g==;
+X-CSE-ConnectionGUID: RlttfFGIS3mXtNGLCkFurA==
+X-CSE-MsgGUID: WARzn40OR9Cm0hDklpGVWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11401"; a="63500552"
+X-IronPort-AV: E=Sophos;i="6.15,205,1739865600"; 
+   d="scan'208";a="63500552"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 11:41:48 -0700
+X-CSE-ConnectionGUID: e3q01x+CRf6UfIA1beGItA==
+X-CSE-MsgGUID: 8a1ba08VQkKVcgN2zvTF2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,205,1739865600"; 
+   d="scan'208";a="129124558"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 11 Apr 2025 11:41:43 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u3JJt-000BJa-0o;
+	Fri, 11 Apr 2025 18:41:41 +0000
+Date: Sat, 12 Apr 2025 02:40:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Praveen Talari <quic_ptalari@quicinc.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	psodagud@quicinc.com, djaggi@quicinc.com, quic_msavaliy@quicinc.com,
+	quic_vtanuku@quicinc.com, quic_arandive@quicinc.com,
+	quic_mnaresh@quicinc.com, quic_shazhuss@quicinc.com
+Subject: Re: [PATCH v1 4/9] soc: qcom: geni-se: Enable QUPs on SA8255p
+ Qualcomm platforms
+Message-ID: <202504120226.2XbpK0yU-lkp@intel.com>
+References: <20250410174010.31588-5-quic_ptalari@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ublk: skip blk_mq_tag_to_rq() bounds check
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Ming Lei <ming.lei@redhat.com>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250409024955.3626275-1-csander@purestorage.com>
- <Z_eOX-8QHxsq21Rz@infradead.org>
- <a76ac487-564e-4b6e-89fb-9c848a398c43@kernel.dk>
- <CADUfDZruQch9Nd9dQ2tNzFUFMPmqTrVvKK_uHrwEQ1+4oL6YZw@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <CADUfDZruQch9Nd9dQ2tNzFUFMPmqTrVvKK_uHrwEQ1+4oL6YZw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410174010.31588-5-quic_ptalari@quicinc.com>
 
-On 4/11/25 12:36 PM, Caleb Sander Mateos wrote:
-> On Thu, Apr 10, 2025 at 6:13?AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 4/10/25 3:24 AM, Christoph Hellwig wrote:
->>> On Tue, Apr 08, 2025 at 08:49:54PM -0600, Caleb Sander Mateos wrote:
->>>> The ublk driver calls blk_mq_tag_to_rq() in several places.
->>>> blk_mq_tag_to_rq() tolerates an invalid tag for the tagset, checking it
->>>> against the number of tags and returning NULL if it is out of bounds.
->>>> But all the calls from the ublk driver have already verified the tag
->>>> against the ublk queue's queue depth. In ublk_commit_completion(),
->>>> ublk_handle_need_get_data(), and case UBLK_IO_COMMIT_AND_FETCH_REQ, the
->>>> tag has already been checked in __ublk_ch_uring_cmd(). In
->>>> ublk_abort_queue(), the loop bounds the tag by the queue depth. In
->>>> __ublk_check_and_get_req(), the tag has already been checked in
->>>> __ublk_ch_uring_cmd(), in the case of ublk_register_io_buf(), or in
->>>> ublk_check_and_get_req().
->>>>
->>>> So just index the tagset's rqs array directly in the ublk driver.
->>>> Convert the tags to unsigned, as blk_mq_tag_to_rq() does.
->>>
->>> Poking directly into block layer internals feels like a really bad
->>> idea.  If this is important enough we'll need a non-checking helper
->>> in the core code, but as with all these kinds of micro-optimizations
->>> it better have a really good justification.
->>
->> FWIW, I agree, and I also have a hard time imagining this making much of
->> a measurable difference. Caleb, was this based "well this seems
->> pointless" or was it something you noticed in profiling/testing?
-> 
-> That's true, the nr_tags check doesn't show up super prominently in a
-> CPU profile. The atomic reference counting in
-> __ublk_check_and_get_req() or ublk_commit_completion() is
-> significantly more expensive. Still, it seems like unnecessary work.
+Hi Praveen,
 
-Matching atomics on either side is always going to be miserable, and I'd
-wager a much bigger issue than the minor thing that this patch is trying
-to address...
+kernel test robot noticed the following build warnings:
 
-> nr_tags is in a different cache line from rqs, so there is the
-> potential for a cache miss. And the prefetch() is another unnecessary
-> cache miss in the cases where ublk doesn't access any of struct
-> request's fields.
-> I am happy to add a "blk_mq_tag_to_rq_unchecked()" helper to avoid
-> accessing the blk-mq internals.
+[auto build test WARNING on tty/tty-testing]
+[also build test WARNING on tty/tty-next tty/tty-linus robh/for-next driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.15-rc1 next-20250411]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Or maybe go the route that Ming suggested? But if you go the other
-route, I'd just add a __blk_mq_tag_to_rq() and have blk_mq_tag_to_rq()
-call that with the validation happening before.
+url:    https://github.com/intel-lab-lkp/linux/commits/Praveen-Talari/opp-add-new-helper-API-dev_pm_opp_set_level/20250411-015310
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
+patch link:    https://lore.kernel.org/r/20250410174010.31588-5-quic_ptalari%40quicinc.com
+patch subject: [PATCH v1 4/9] soc: qcom: geni-se: Enable QUPs on SA8255p Qualcomm platforms
+config: arm-randconfig-001-20250412 (https://download.01.org/0day-ci/archive/20250412/202504120226.2XbpK0yU-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250412/202504120226.2XbpK0yU-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504120226.2XbpK0yU-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/soc/qcom/qcom-geni-se.c:953:1: warning: unused label 'out' [-Wunused-label]
+     953 | out:
+         | ^~~~
+   1 warning generated.
+
+
+vim +/out +953 drivers/soc/qcom/qcom-geni-se.c
+
+   928	
+   929	static int geni_se_probe(struct platform_device *pdev)
+   930	{
+   931		struct device *dev = &pdev->dev;
+   932		struct geni_wrapper *wrapper;
+   933		const struct geni_se_desc *desc;
+   934		int ret;
+   935	
+   936		wrapper = devm_kzalloc(dev, sizeof(*wrapper), GFP_KERNEL);
+   937		if (!wrapper)
+   938			return -ENOMEM;
+   939	
+   940		wrapper->dev = dev;
+   941		wrapper->base = devm_platform_ioremap_resource(pdev, 0);
+   942		if (IS_ERR(wrapper->base))
+   943			return PTR_ERR(wrapper->base);
+   944	
+   945		desc = device_get_match_data(&pdev->dev);
+   946	
+   947		if (!has_acpi_companion(&pdev->dev) && desc->geni_se_rsc_init) {
+   948			ret = desc->geni_se_rsc_init(wrapper, desc);
+   949			if (ret)
+   950				return -EINVAL;
+   951		}
+   952	
+ > 953	out:
+   954		dev_set_drvdata(dev, wrapper);
+   955		dev_dbg(dev, "GENI SE Driver probed\n");
+   956		return devm_of_platform_populate(dev);
+   957	}
+   958	
 
 -- 
-Jens Axboe
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
