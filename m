@@ -1,128 +1,104 @@
-Return-Path: <linux-kernel+bounces-600397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F2C8A85F6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F765A85F72
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A97B1771D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:39:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7E5F17E6E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AC81D7E2F;
-	Fri, 11 Apr 2025 13:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C08C1D7E4C;
+	Fri, 11 Apr 2025 13:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CNjnPAJt"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kc1u2MTN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8281AA786;
-	Fri, 11 Apr 2025 13:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32B11D95B3;
+	Fri, 11 Apr 2025 13:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744378782; cv=none; b=gfze7UHCljLutbWgjLW/6QrBwMezUAVYWuYU61dnTcVzsJa0mq/ZF0k7mahbArPHgFgdk/pbHbG+3bmQBdMrrHkZoSCJxyHdoM3EzdZTyHiVVwZZglMgHDVS6WMyWbfx0i5XS51Besg3mNWQVE1jtxd6QR8IfBPU3++WsBOkp7Y=
+	t=1744378801; cv=none; b=NahpS3mMK+foFGYGgcPm2ivhyeJlqEa+cNT9BcCpiZds6fjMU9xyM1bEb8WmDjw6O+vKzFJx4TCscabdviv1rmzcb0Ip3WUeu9wxkGs6Pb//P20SNnZ3hMlu63JXoffTdd3tpHow+u1gADy54FIs+NjmaNjSc35A8a5mGfmhETI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744378782; c=relaxed/simple;
-	bh=sSUCYKLy6uMKqdzRFqwuKnQE0QQdd2NpVGK6fARcRac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gofrFn0y2ZiCA65B5lmoUXFNPFWgV9V2rsy8OloQQq7UWUy+S0QOeZa0VlS5OpTV4UtY8i5YM4md1oQDKO3pwMZoKtMGH1+4/rfhxQpw7XjSxJfuCkXOA6ZZhx7+H7lCWI8ma5XIfQenwqzZ92AiPiVlhrlkPOmxGGeA7kdbZH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CNjnPAJt; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 410D543ACA;
-	Fri, 11 Apr 2025 13:39:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744378777;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GpvRFI7Lupv3VnoBPyaTus7ezMzs20Cw8F5IJ0eXs8g=;
-	b=CNjnPAJtiIAabTH47iVvCgZgdT36qu1LViodDMR7ZbxHKAjEG7Coyxc6SFNrpJD6vY9XB6
-	H3rxQ+t52eu6TMzbYfUa2NtFCBVFeYnzPSD62It4IVifSchigZnUALNbF9R6lWWW4JImKg
-	wRvkYvbyYAcF6QmIyEg9diR16jW2DoKu93VsmE1gyZn6voLteWiJQ2Iwzx6dZSaVVaUirY
-	KiKNc4dPZg9JJqO1WAb9KcN40H7hV34PkN2Lgdds7nRyTsH3kYRlDPFuXuk+aBKkIX6Mmx
-	PXzmHlR0otwBm+pxL/57zO6T9m5prKgJCssS6YMyiw0WCuAxdgPhxPNocy+OGQ==
-Date: Fri, 11 Apr 2025 15:39:35 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Eddie Huang <eddie.huang@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] rtc: mt6397: Remove start time parameters
-Message-ID: <202504111339359e840246@mail.local>
-References: <20250109-enable-rtc-v3-0-f003e8144419@baylibre.com>
- <20250109-enable-rtc-v3-4-f003e8144419@baylibre.com>
- <20250411133609a1295543@mail.local>
+	s=arc-20240116; t=1744378801; c=relaxed/simple;
+	bh=5jz1qkE/Q8XQMrUn0GNQ78dWw3mtN7ZWkDw+3cClcNw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TxBXs7PdHX3Fiz5Pw3JezVmtRGBhtLS9RbnWYDluHApCOG1G+aTbvRz+i6IRHl93U5JC7d/gt3e8+AnVTPefBEZu6Q2anT91by3f1Sn31skgb/SNys1I++hDIOet4vfSWckRK/IMO97NOsJZ/az303tWAHaHNcaTh/qPoY71Byg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kc1u2MTN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E74C4CEE2;
+	Fri, 11 Apr 2025 13:39:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744378801;
+	bh=5jz1qkE/Q8XQMrUn0GNQ78dWw3mtN7ZWkDw+3cClcNw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=kc1u2MTNnqVwdU7xx75NS/icTmamaZ5iDsKfeTouFwbnqSNbi6mp7TEgefztuDNNN
+	 LJBRafVvZMvE4mvZRgV2m4nsCuDwKdLqWqOoZ9mPiAHFBKpJEPmkzhwosdP9J8yI6S
+	 hTQI+ePPn/z3cI7yvcGmsBrciWQ854wHC9pJQyU+COt34pV6AOO/csbFOxuth3oG6c
+	 keYG37dudgyZZm2DfNk/jBaBq+TRH6fwOpMSwhaaTFILzTblEFE0hUpPiwQsg/TDm/
+	 ZU9NkSmKa6RRDsWEpqjJFSlM3Ynw+J54wXeqxM2m69br5gw1j8KAYSSQWIqXtNsi3r
+	 qHFRF5NlDQe+A==
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Daniel Baluta <daniel.baluta@gmail.com>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel@collabora.com
+In-Reply-To: <20250410-test-component-tdm-slot-v1-1-9c3a7162fa7a@collabora.com>
+References: <20250410-test-component-tdm-slot-v1-1-9c3a7162fa7a@collabora.com>
+Subject: Re: [PATCH] ASoC: test-component: add set_tdm_slot stub
+ implementation
+Message-Id: <174437879941.1666456.2351901600646571889.b4-ty@kernel.org>
+Date: Fri, 11 Apr 2025 14:39:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250411133609a1295543@mail.local>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvudduleeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeeiudeuteehhfekgeejveefhfeiudejuefhgfeljefgjeegkeeujeeugfehgefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemugekjegvmedusgdusgemledtkeegmegttghftgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemugekjegvmedusgdusgemledtkeegmegttghftgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtoheprghmvghrghhnrghtsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopegvugguihgvrdhhuhgrnhhgsehmvgguihgrthgvkhdrtghomhdprhgtphhtthhop
- ehsvggrnhdrfigrnhhgsehmvgguihgrthgvkhdrtghomhdprhgtphhtthhopehmrghtthhhihgrshdrsghgghesghhmrghilhdrtghomhdprhgtphhtthhopegrnhhgvghlohhgihhorggttghhihhnohdruggvlhhrvghgnhhosegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-On 11/04/2025 15:36:12+0200, Alexandre Belloni wrote:
-> On 11/04/2025 14:35:57+0200, Alexandre Mergnat wrote:
-> > The start time parameters is currently hardcoded to the driver, but
-> > it may not fit with all equivalent RTC that driver is able to support.
-> > 
-> > Remove the start_secs and set_start_time value setup because it
-> > will be handled by the rtc_device_get_offset function using the
-> > start-year DTS property.
-> > 
-> > Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
-> > ---
-> >  drivers/rtc/rtc-mt6397.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-> > index 692c00ff544b2..d47626d47602f 100644
-> > --- a/drivers/rtc/rtc-mt6397.c
-> > +++ b/drivers/rtc/rtc-mt6397.c
-> > @@ -291,8 +291,6 @@ static int mtk_rtc_probe(struct platform_device *pdev)
-> >  	rtc->rtc_dev->ops = &mtk_rtc_ops;
-> >  	rtc->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_1900;
-> >  	rtc->rtc_dev->range_max = mktime64(2027, 12, 31, 23, 59, 59);
-> > -	rtc->rtc_dev->start_secs = mktime64(1968, 1, 2, 0, 0, 0);
-> > -	rtc->rtc_dev->set_start_time = true;
-> >  
+On Thu, 10 Apr 2025 21:25:32 +0200, Nicolas Frattaroli wrote:
+> The test-component driver implements various stub callbacks. One
+> of the ones it doesn't implement is set_tdm_slot. This has no
+> functional impact on whether ASoC core believes test-component to
+> do TDM or not, it just means that any TDM configuration can't
+> readily be dumped for debugging purposes like it can with the other
+> callbacks.
 > 
-> This is going to break the time for people upgrading their kernel, you
-> are unfortunately stuck with this.
-> 
+> [...]
 
-To be clear, the breakage will happen when upgrading the kernel but not
-the device tree with 5/5
+Applied to
 
-> >  	return devm_rtc_register_device(rtc->rtc_dev);
-> >  }
-> > 
-> > -- 
-> > 2.25.1
-> > 
-> 
-> -- 
-> Alexandre Belloni, co-owner and COO, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks!
+
+[1/1] ASoC: test-component: add set_tdm_slot stub implementation
+      commit: e78e7856d233010e6afef62f15567a8e7777c8bc
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
