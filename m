@@ -1,149 +1,202 @@
-Return-Path: <linux-kernel+bounces-599566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFC3A85588
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:34:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73716A85585
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4603C3B3B60
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:34:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5414B460EC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34C027E1AF;
-	Fri, 11 Apr 2025 07:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D54285409;
+	Fri, 11 Apr 2025 07:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="iIOgSk69"
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="btXHBcQv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EZdlgi0E";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="btXHBcQv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EZdlgi0E"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9F71DED56
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA581DED56
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744356855; cv=none; b=izWJl/aKsLmM4zaNtgELYOmVemuXjtRT2fqAMl3w33ai2UknctofeHzEKe8SF0nLzfeVflsBAXKyUjZN2VVvl0iQ2ATa5L3mvzMGjpY6EnJd4NgnJ5Yu487LW5rnFiMCpy9RMVevELQk7D7hMRyMPbiy5nsxrfwgy5h8acw6XPY=
+	t=1744356759; cv=none; b=VhPEAo1i21xlfesGzJdOjQJTIvVdI2WNoAKx03Do4FfTApY0ZAbh5E4RSXDUZcdua5QxJAKAWrCRXV1YC2svW3ZEdYQhWHjh12V5iinnS7riuRsT0VRLcMUV1VAdK+7dm6wYX7i2UDhvTuVvgOfnSAIsmbx3SZqpsOOJaN/B65o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744356855; c=relaxed/simple;
-	bh=GQSY4n3NRJog1bda4ITkgQYSFl+YVkb7GieEnd7A4hA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G3kWupYSLeIyGYDTDtDGVNv0uDI+xKpgbWeXCp0fm7OYsk4AU+sObnxKJ9b50kzbhhwUqbHldYsp7KMLyaCvggimKmDWOzWePopUlfUkmIh2eEHev6q82Fm4Xw5yd1b+dy2NLYlGfDTQTZk2fYPhh7l5Xi9vGHLvFITmkHpPjt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=iIOgSk69; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744356768;
-	bh=sd+Nl/eaYzN8NjAAOpF0InQ3lgV2aivi7Oa4f7/cTMQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=iIOgSk69q4aMhB1sFz4ecADvx0FTbhutrlvSGNq58rIM9JSEr6LIvLwzuBLfDdjeG
-	 eQaWEfELw4z3LyMrjB8x1ycElr77nnVs8KVVjuU3CG/833nOTQYNk2GzEM3SxBO6X/
-	 47Zzj51Oqkvg/49FbUQiH4h7BEKVGBEu81L0ebY0=
-X-QQ-mid: bizesmtpip4t1744356756t660852
-X-QQ-Originating-IP: dp3YO1nfHeRSP4/c/LdDabyOm2l79Z0gF2bkZ4hRILM=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 11 Apr 2025 15:32:31 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 8021715095780151493
-EX-QQ-RecipientCnt: 14
-From: WangYuli <wangyuli@uniontech.com>
-To: wangyuli@uniontech.com
-Cc: alex@ghiti.fr,
-	aou@eecs.berkeley.edu,
-	chenhuacai@kernel.org,
-	guanwentao@uniontech.com,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	niecheng1@uniontech.com,
-	palmer@dabbelt.com,
-	palmerdabbelt@google.com,
-	paul.walmsley@sifive.com,
-	samuel.holland@sifive.com,
-	vincent.chen@sifive.com,
-	zhanjun@uniontech.com
-Subject: [PATCH v4 2/2] riscv: KGDB: Remove ".option norvc/.option rvc" for kgdb_compiled_break
-Date: Fri, 11 Apr 2025 15:32:22 +0800
-Message-ID: <8B431C6A4626225C+20250411073222.56820-2-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <D5A83DF3A06E1DF9+20250411072905.55134-1-wangyuli@uniontech.com>
-References: <D5A83DF3A06E1DF9+20250411072905.55134-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1744356759; c=relaxed/simple;
+	bh=DW9ea9Y61BWgs0I/MZNHS6U6OKgCJ+kdenv2Xznx2ug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cphVQSeRAzYMKU2TXaYUDY95uhl6iCiyfj10Bgq+5+MSVQKfHm8eJWQOd3zKcfaJN+K094Lbf5bNirhjUGk850A3ONYMGL1tTGzePhgCMBQY+o95xeUNfD9Bt8dVuE0HHeJxWmd47sCbmlYZqYXrUrjzTXSNbtQoFutmna/O2GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=btXHBcQv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EZdlgi0E; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=btXHBcQv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EZdlgi0E; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 081001F453;
+	Fri, 11 Apr 2025 07:32:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744356756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dOE6AFasUP2dw9RpzhwVHr8ydKiAOCUzpYc4dztswk0=;
+	b=btXHBcQvhNRb7gVWoE8dBdxWm87fKT6W/cGudsdmwXSn32GLz9+TkHHrj6I7e80O/mUVQp
+	jt0TYvT+ORtYFrakdDswq4Vz3WuJ69Kw0N0p7l0MP265PltApicJvKsdQh7/4Op4tAt7YP
+	fO5YSyY259Qcc2lQGHxPS6CXXpV32S0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744356756;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dOE6AFasUP2dw9RpzhwVHr8ydKiAOCUzpYc4dztswk0=;
+	b=EZdlgi0E0oAnq3VZqBqrBGuUvXtFd2qi7rrUcs0NhknRjGwI3N8l8CEJgAF4W8a8i4ZQUu
+	3pD53TiAo5BLVTDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=btXHBcQv;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=EZdlgi0E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744356756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dOE6AFasUP2dw9RpzhwVHr8ydKiAOCUzpYc4dztswk0=;
+	b=btXHBcQvhNRb7gVWoE8dBdxWm87fKT6W/cGudsdmwXSn32GLz9+TkHHrj6I7e80O/mUVQp
+	jt0TYvT+ORtYFrakdDswq4Vz3WuJ69Kw0N0p7l0MP265PltApicJvKsdQh7/4Op4tAt7YP
+	fO5YSyY259Qcc2lQGHxPS6CXXpV32S0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744356756;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dOE6AFasUP2dw9RpzhwVHr8ydKiAOCUzpYc4dztswk0=;
+	b=EZdlgi0E0oAnq3VZqBqrBGuUvXtFd2qi7rrUcs0NhknRjGwI3N8l8CEJgAF4W8a8i4ZQUu
+	3pD53TiAo5BLVTDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E301B13886;
+	Fri, 11 Apr 2025 07:32:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id S4sJN5PF+GfRAwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 11 Apr 2025 07:32:35 +0000
+Message-ID: <eecb9994-1fdb-4636-9430-9911fd3e28c4@suse.cz>
+Date: Fri, 11 Apr 2025 09:32:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MowBDtlQhFJIGhz6nIsmDMS1L+Ged06XYVsc0ui1ECiZXIgsFdsEcQ0E
-	wcr1QaADniCw7+hJbxyhdNfNM6RwJy1HWTktQkPt7xIBHy1jKXIOEGOedsWJ0sQot+QX6fK
-	2KHKbwt8Y1hb+MCdBJvxw98sLVjAYTb4+fsgVPUqBX0GQvyJUMWWlCSL0x6f2o2kcm/hoOd
-	hF81lsBoeUHMnImHN3za4/NL2cDxOBPR7YxptFYDVcBZLhHMG91hGQhjgknlFeyAQxLH6wa
-	IOgaXKN52+/GTxymvAOl7TccPCWjScYa08UhP/+pwuWHGnWS0RweuGwSSU8FA9OnXR9ytSK
-	5ISMj37TpkYJZDQJaH5dcVrrkUmVAL7jXmlE+whvwG6hv/TsLNUM0imbr64aIf3VH2JH884
-	VB2q5GzUyqj5QnP9xyEf+nP3N935oGk+wjwxc0R7tXFA4duVpiGSrE1/IMRRDhGBJ+9Wwe2
-	8CtJn54CPWD6s4gshvGeK/8GjkaBY4s/sH3++mVBeJ5RzplhkZlTShm5pidzbemex/GkO5N
-	2YKqwExhsu+1kTO6ZE6tF9mZ5nBBMTMSMly6MPEfbhbRiDde5NDUFwRpY9DNCkVgE5TRtQy
-	DzBMNkqAJjxEYFbOW8CDrzCj1/aXxuEXtLXnHi9RiQ5c6of4HFj3N9MPr4/McFo/DeQplEB
-	zzuwQvkm9w2Ik7HYjS00Y9B4i3dwuGglH0HT6KVnFEovJ4tXYoRMp78P9C0HAqxhlFkzfe/
-	mqp8n1n94RyX1MfdK86ZAN6OlS9n+u1iIUVHkWIKil3Pi6a5P7N7GntNgPa2GGW9jAfibqn
-	ISWd9hzOwu07Olld113/fBbxBGpUBqUXcRl+eccCbvhUPekSsyMjBxF4vg7UVlgOPY/lUxp
-	df5Rfb693AW0+xkugbOmASF/PerXExBruJRQBONUWwPlQGcMT5D3EKJQeUAh5lfCrWce05Y
-	oX71oIvKhx9XhkcvCgZGlEqhn9JbtM3G0DMBy+8VIysnqiRf7MDmxJSToO2fnhnPl7kyJAp
-	4uAyTpbakFc1IiSjXM7r2WpIgIF3YzfYDcnLXbiQ==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] mm: compaction: push watermark into
+ compaction_suitable() callers
+Content-Language: en-US
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Mel Gorman <mgorman@techsingularity.net>, Zi Yan <ziy@nvidia.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250313210647.1314586-1-hannes@cmpxchg.org>
+ <20250313210647.1314586-2-hannes@cmpxchg.org>
+ <2025de6c-a25b-42f2-8ff2-da2bad0e0aa0@suse.cz>
+ <20250410201718.GA366747@cmpxchg.org>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20250410201718.GA366747@cmpxchg.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 081001F453
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-[ Quoting Samuel Holland: ]
+On 4/10/25 22:17, Johannes Weiner wrote:
+> On Thu, Apr 10, 2025 at 05:19:06PM +0200, Vlastimil Babka wrote:
+>> On 3/13/25 22:05, Johannes Weiner wrote:
+> 
+> Ah yes, it would have made sense to point out.
+> 
+> I was wondering about this check. It was introduced to bail on
+> compaction if there are not enough free non-CMA pages. But if there
+> are, we still fall through and check the superset of regular + CMA
+> pages against the watermarks as well. We know this will succeed, so
+> this seems moot.
 
-  This is a separate issue, but using ".option rvc" here is a bug.
-  It will unconditionally enable the C extension for the rest of
-  the file, even if the kernel is being built with CONFIG_RISCV_ISA_C=n.
+I guess we didn't want to avoid the fragindex part of compaction_suitable(),
+which in theory may not succeed?
 
-[ Quoting Palmer Dabbelt: ]
+> It's also a little odd that compaction_suitable() hardcodes ALLOC_CMA
+> with the explanation that "CMA are migration targets", but then this
+> check says "actually, it doesn't help us if blocks are formed in CMA".
 
-  We're just looking at the address of kgdb_compiled_break, so it's
-  fine if it ends up as a c.ebreak.
+Hm yes.
 
-[ Quoting Alexandre Ghiti: ]
+> Does it make more sense to plumb alloc_flags to compaction_suitable()?
 
-  .option norvc is used to prevent the assembler from using compressed
-  instructions, but it's generally used when we need to ensure the
-  size of the instructions that are used, which is not the case here
-  as noted by Palmer since we only care about the address. So yes
-  it will work fine with C enabled :)
+Possibly.
 
-So let's just remove them all.
+> There is more head-scratching, though. The check is meant to test
+> whether compaction has a chance of forming non-CMA blocks. But free
+> pages are targets. You could have plenty of non-contiguous, free
+> non-CMA memory - compaction will then form blocks in CMA by moving CMA
+> pages into those non-CMA targets.
+> 
+> The longer I look at this, the more I feel like this just hard-coded
+> the very specific scenario the patch author had a problem with: CMA is
+> massive. The page allocator fills up regular memory first. Once
+> regular memory is full, non-CMA requests stall on compaction making
+> CMA blocks. So just bail on compaction then.
 
-Link: https://lore.kernel.org/all/4b4187c1-77e5-44b7-885f-d6826723dd9a@sifive.com/
-Link: https://lore.kernel.org/all/mhng-69513841-5068-441d-be8f-2aeebdc56a08@palmer-ri-x1c9a/
-Link: https://lore.kernel.org/all/23693e7f-4fff-40f3-a437-e06d827278a5@ghiti.fr/
-Fixes: fe89bd2be866 ("riscv: Add KGDB support")
-Cc: Samuel Holland <samuel.holland@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/riscv/kernel/kgdb.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Right.
 
-diff --git a/arch/riscv/kernel/kgdb.c b/arch/riscv/kernel/kgdb.c
-index 5d1ce8dacaf5..9f3db3503dab 100644
---- a/arch/riscv/kernel/kgdb.c
-+++ b/arch/riscv/kernel/kgdb.c
-@@ -257,9 +257,7 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long pc)
- noinline void arch_kgdb_breakpoint(void)
- {
- 	asm(".global kgdb_compiled_break\n"
--	    ".option norvc\n"
--	    "kgdb_compiled_break: ebreak\n"
--	    ".option rvc\n");
-+	    "kgdb_compiled_break: ebreak\n");
- }
- 
- void kgdb_arch_handle_qxfer_pkt(char *remcom_in_buffer,
--- 
-2.49.0
+> It's a valid problem, but I don't see how this code makes any general
+> sense outside of this exact sequence of events. Especially once
+> compaction has moved stuff around between regular and CMA memory, the
+> issue will be back, and the check does nothing to prevent it.
 
+Yeah, it seemed to fix a real problem and we both acked it :) but it's not
+ideal.
+
+Maybe the true solution (or a step towards it) would be for compaction for
+!ALLOC_CMA only use non-CMA pageblocks as migration sources.
+IMHO it's just another symptom of the general problem that CMA pageblocks
+exist as part of a zone that's not otherwise ZONE_MOVABLE and suddenly the
+watermarks have to depend on the allocation type. And of course for the
+high-order allocations it doesn't just matter the amount of memory in cma vs
+non-cma parts of the zone, but also its contiguity.
 
