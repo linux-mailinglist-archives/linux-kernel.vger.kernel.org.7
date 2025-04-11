@@ -1,83 +1,205 @@
-Return-Path: <linux-kernel+bounces-599974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF9BA85A58
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:43:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC6FCA85A62
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B574D1B84B75
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:43:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 018A216FDBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AEF22127B;
-	Fri, 11 Apr 2025 10:43:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4127278E64;
-	Fri, 11 Apr 2025 10:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91691F0996;
+	Fri, 11 Apr 2025 10:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jQL3SgM5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4974C20DD47
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744368216; cv=none; b=fbuLz5nLwu3MI5bl5k8uXgNKKTM5RxyGfAAmSNESQFdLi4GAuiBcPA+sLNQlKf4WAg4211FVQwZwEMg3+T+AfjzTInFiimO6W/bKRVxXo5hjXdk0jmraNpYGnCpRSusDVePgqISDhOWMc0w5r0L1kC2BXYltZvykGooKOjFFfuM=
+	t=1744368272; cv=none; b=tA2wQ6M4Yl88kY/y8IG2iCfkJdHDqq0dKMbfWxPeITKC5M98VmLHrpOdJVET0mJ9wPsC+n3JDW+4oqj2y4kHF2ThUrRPIlUVbzT17pIK3bNmshBgsbD2WvLKpU9HrPtQ2URjOK+kqkAUX1T/IJDqEasbihjwX2ODjw6ButK5bHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744368216; c=relaxed/simple;
-	bh=TY4BcYnPfrKFA2/AVV1qhzSrSnSVkHMrc911GcJujzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jFPz2lDtBkYjQq0mOHIG6+xOeZmZl7J+7ONSXvdMIpIZf78iPXJPzoXtVKnhoj5AmoSqJClS0BffOiKwoGGnLzmY1ltlwa93T5wBAZtbF6Sk5I8mr6BFFRZHqCuuEtLs3KE6PXK/mPTfZduX9ZBzHPElTkvzWOLUFkVK4mPGYnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 77F3D106F;
-	Fri, 11 Apr 2025 03:43:28 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 492143F59E;
-	Fri, 11 Apr 2025 03:43:27 -0700 (PDT)
-Date: Fri, 11 Apr 2025 11:43:24 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, peterhuewe@gmx.de, jgg@ziepe.ca,
-	Sudeep Holla <sudeep.holla@arm.com>, stuart.yoder@arm.com,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tpm_ffa_crb: access tpm service over FF-A direct
- message request v2
-Message-ID: <20250411-glittering-cerulean-scallop-ddfdaa@sudeepholla>
-References: <20250411090856.1417021-1-yeoreum.yun@arm.com>
- <Z_jw6z_2k0vzqyK_@kernel.org>
+	s=arc-20240116; t=1744368272; c=relaxed/simple;
+	bh=x+iRIgahHokrDbJzMk7EUJ4fi5GnUOw18uY13owibtM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jojYM6RWdyJKhu07NMyYwb9atP3BtNXdcz4JbqEyrtm5lMjx34Z5FLHfeyKkL5OrF46IglKHZHlXs1a1QlD2h39rUx/g2YNeiC01fGKUc4cO5jQW4z/iYnRl2M8JfZ+8Si/TSwkQsvS8TPOkbq93BsPVSGS/OAkXhI2r3iA00sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jQL3SgM5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B1EwVl006985;
+	Fri, 11 Apr 2025 10:44:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dgZYfPr64nT5wVvJBmQSEkiL7zVNqrvTZf9AcZAi0k8=; b=jQL3SgM57kgGJlMu
+	37mMLEH704UQKb8Ns9FDi4jAXQfu1wJggx0rvfqqCGfT2ZlH1/66qIPTfDPUHYOL
+	QJNdJDUWRIg/znDF3K5BMVmvAqeeC1L14tym4Xw9tDWvEZ6/sY9/GpgtBlrUfQLY
+	IzFnIXHgX7nH4zCRdU8SzAPJ50GbtBvfhMs85ZUwcV2BtpRV002SDyxFtoasRmIn
+	YT0DeCsW+tP1tFAGulTyBAwo7ZfA5wRhQ1dkSOo984ro0M0aT2+p3Xzah8C2FPnC
+	goKnPBtjL8ji3a7qh5c78QPqnO1eA79Y4kz/3NBoy9mZwuMK5nfqrS+eESiXUAs2
+	WdGIUw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45xeh3k466-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 10:44:25 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53BAiOZI009626
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Apr 2025 10:44:24 GMT
+Received: from [10.253.33.69] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 11 Apr
+ 2025 03:44:22 -0700
+Message-ID: <d5fee986-15c6-44ae-b08b-82e91445e922@quicinc.com>
+Date: Fri, 11 Apr 2025 18:43:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_jw6z_2k0vzqyK_@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] bitfield: Add FIELD_MODIFY() helper
+To: Yury Norov <yury.norov@gmail.com>
+CC: <linux@rasmusvillemoes.dk>, <linux-kernel@vger.kernel.org>,
+        <andrew@lunn.ch>, <quic_kkumarcs@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>
+References: <20250410131048.2054791-1-quic_luoj@quicinc.com>
+ <Z_fvPOn1-v9WAnxJ@yury>
+Content-Language: en-US
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <Z_fvPOn1-v9WAnxJ@yury>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=VbH3PEp9 c=1 sm=1 tr=0 ts=67f8f289 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=PSJ8d4jgiRcMPstjhLQA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: UYe-F4O17ewfp-UjoLBuTnE2JZZ73j9f
+X-Proofpoint-ORIG-GUID: UYe-F4O17ewfp-UjoLBuTnE2JZZ73j9f
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_04,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 impostorscore=0 suspectscore=0 adultscore=0 spamscore=0
+ clxscore=1015 malwarescore=0 priorityscore=1501 bulkscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504110067
 
-On Fri, Apr 11, 2025 at 01:37:31PM +0300, Jarkko Sakkinen wrote:
-> On Fri, Apr 11, 2025 at 10:08:56AM +0100, Yeoreum Yun wrote:
-> > For secure partition with multi service, tpm_ffa_crb can access tpm
-> > service with direct message request v2 interface according to chapter 3.3,
-> > TPM Service Command Response Buffer Interface Over FF-A specification [0].
-> > 
-> > This patch reflects this spec to access tpm service over
-> > FF-A direct message request v2 ABI.
-> > 
-> > Link: https://developer.arm.com/documentation/den0138/latest/ [0]
-> 
-> Sorry, did not notice in the first round:
-> 
-> 1. Does not have "[0]" postfix.
-> 2. Only for lore links:
->    https://www.kernel.org/doc/html/v6.12/maintainer/configure-git.html#creating-commit-links-to-lore-kernel-org 
-> 
 
-I was about to comment on the presence of link itself but left it to
-the maintainer. It was part of the first commit log from Stuart. If it
-is so important that it requires mention in each commit, it better me
-made part of the file itself to avoid having to mention again and again.
-Just my opinion, I leave it to the maintainers.
 
--- 
-Regards,
-Sudeep
+On 4/11/2025 12:18 AM, Yury Norov wrote:
+> On Thu, Apr 10, 2025 at 09:10:48PM +0800, Luo Jie wrote:
+>> Add a helper for replacing the contents of bitfield in memory
+>> with the specified value.
+>>
+>> Even though a helper xxx_replace_bits() is available, it is not
+>> well documented, and only reports errors at the run time, which
+>> will not be helpful to catch possible overflow errors due to
+>> incorrect parameter types used.
+>>
+>> Add the helper FIELD_MODIFY() to the FIELD_XXX family of bitfield
+>> macros. It is functionally similar as xxx_replace_bits(), and in
+>> addition adds the compile time type checking.
+>>
+>> FIELD_MODIFY(&reg, REG_FIELD_C, c) is the wrapper of the code below.
+>> reg &= ~REG_FIELD_C;
+>> reg |= FIELD_PREP(REG_FIELD_C, c);
+>>
+>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+>> ---
+>>
+>> The new added macro FIELD_MODIFY() is expected to be used by the
+>> following Ethernet PPE driver as link.
+>> https://lore.kernel.org/linux-arm-msm/20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com/
+>>
+>> Changes in v2:
+>> - Update the documented example for FIELD_MODIFY().
+>> - Improve the commit message to describe the need for the change.
+>>
+>>   include/linux/bitfield.h | 23 ++++++++++++++++++++---
+>>   1 file changed, 20 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+>> index 63928f173223..421c7701a18d 100644
+>> --- a/include/linux/bitfield.h
+>> +++ b/include/linux/bitfield.h
+>> @@ -7,8 +7,9 @@
+>>   #ifndef _LINUX_BITFIELD_H
+>>   #define _LINUX_BITFIELD_H
+>>   
+>> -#include <linux/build_bug.h>
+>>   #include <asm/byteorder.h>
+>> +#include <linux/build_bug.h>
+>> +#include <linux/typecheck.h>
+> 
+> Don't change the headers order: linux first, asm next.
+
+Understand, I will fix this order in the next version.
+
+> 
+>>   
+>>   /*
+>>    * Bitfield access macros
+>> @@ -38,8 +39,7 @@
+>>    *	  FIELD_PREP(REG_FIELD_D, 0x40);
+>>    *
+>>    * Modify:
+>> - *  reg &= ~REG_FIELD_C;
+>> - *  reg |= FIELD_PREP(REG_FIELD_C, c);
+>> + *  FIELD_MODIFY(REG_FIELD_C, &reg, c);
+>>    */
+>>   
+>>   #define __bf_shf(x) (__builtin_ffsll(x) - 1)
+>> @@ -156,6 +156,23 @@
+>>   		(typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));	\
+>>   	})
+>>   
+>> +/**
+>> + * FIELD_MODIFY() - modify a bitfield element
+>> + * @_mask: shifted mask defining the field's length and position
+>> + * @_reg_p: pointer to the memory that should be updated
+>> + * @_val: value to store in the bitfield
+>> + *
+>> + * FIELD_MODIFY() modifies the set of bits in @_reg_p specified by @_mask,
+>> + * by replacing them with the bitfield value passed in as @_val.
+>> + */
+> 
+> Please inspect the codebase and convert existing opencoded FIELD_MODIFY()s.
+> I don't ask you to convert every driver out there, but core kernel files
+> should be clear.
+> 
+> The first good candidate for you is __tlbi_level() in arm64. You may want
+> to use Coccinelle to automate the search.
+> 
+> Thanks,
+> Yury
+
+OK, thanks for the suggestions. I will use the tool to find and convert
+the opencoded FIELD_MODIFY() instances.
+
+> 
+>> +#define FIELD_MODIFY(_mask, _reg_p, _val)				\
+>> +	({								\
+>> +		typecheck_pointer(_reg_p);				\
+>> +		__BF_FIELD_CHECK(_mask, *(_reg_p), _val, "FIELD_MODIFY: "); \
+>> +		*(_reg_p) &= ~(_mask);					\
+>> +		*(_reg_p) |= ((_val) << __bf_shf(_mask)) & (_mask);	\
+>> +	})
+>> +
+>>   extern void __compiletime_error("value doesn't fit into mask")
+>>   __field_overflow(void);
+>>   extern void __compiletime_error("bad bitfield mask")
+>> -- 
+>> 2.34.1
+
 
