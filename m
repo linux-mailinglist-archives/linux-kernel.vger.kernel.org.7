@@ -1,163 +1,79 @@
-Return-Path: <linux-kernel+bounces-599557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC171A8556C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:27:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D77A855B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69CE57B5D51
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:26:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C12E3B24D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 07:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F21290BD4;
-	Fri, 11 Apr 2025 07:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491EB290BDB;
+	Fri, 11 Apr 2025 07:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="KBk2pUoI"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="HD1Z8DLC"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AA3293B4F
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 07:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA73928EA52;
+	Fri, 11 Apr 2025 07:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744356429; cv=none; b=KmdrFsfIOoLCfxycbwOhWcX6dNjvDbggSjfELAQfS315ItKMVNR/XTKAFNBHziNxQ2WuVLrab8PN2Ly7Mka1Ll9u92EodLQezd1ywcsR8OONHlfPmorjFNi4nuwsaLbv7gpnLUuuxX67in80ShF37+QA6ItiUCgHSh1jEQx8rKw=
+	t=1744357322; cv=none; b=SiGK6c18Ugyq3YhmL5T/8ujrNVOHbrWSWIRLqOAJFCKVudg2qoUxjIArXIPiZnS6V3aQE171D1OJSxJLZd8V0W6VbLhHc/E77ohE28K0d3i4I/zNgKQH9rA99M33P9QJjzGKe0Q9H+/L6XLF7AqdMS02FC3fpuNyFmkZxj8X9Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744356429; c=relaxed/simple;
-	bh=6iospfpiXarFhMAbeZMPrqrrUAFFsDXq8Q7IfWRbt20=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pKMD4V/Z32O9lsvGE/RGV5tnIN8VtWra4dWThGtx4KBou/EGBm6Si/7KPUfXu0PZUH6c9Vj6nrLWtGpzesoAAEmzBs+6frmNtYyY2tTVXnW5gqmsy8cU6lsnx6LTaGlH9vfsxPcg9Gc5jy5pkqjnq472/e+TDmCiXNlT3s6F8bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=KBk2pUoI; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22403cbb47fso17589165ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 00:27:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1744356427; x=1744961227; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OEkz9sj9aVBNDIp/tCSuFWlfQARpupwyYG7ODnJ3fr0=;
-        b=KBk2pUoIqmLeNBYYBDfS1/HiT+ojwrIwqpMIiK+aIU6Bpyau5/o2NeMMuu0Dq5aVjI
-         J/RMienB9K3eXrwwNrKCXxy2LfBD/TGtej77T4eBfrb9Y2QAdG1wYPz8PZVc5c3bnkR+
-         bbIxshFOdd4UiVmoQjIZZ58K+fHBn3w0PHNwqERXxvj9TpykGdFA6698MItO7XVvKMrN
-         8YrboybcIGyQbfrIGjkUSbTPLGpFmPkx6vf485eK6kxfPv2Fo3tEI3cXTnCjAt/K4crd
-         5r0U6YPrn9ZoTcyH1biWqYQCoyp6k8+pkNZVjouUMXI4mzzHuNcITjLaPLnXORTHzfAW
-         JvrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744356427; x=1744961227;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OEkz9sj9aVBNDIp/tCSuFWlfQARpupwyYG7ODnJ3fr0=;
-        b=RCg2rhLed+E/DPCR2fu3wYqupXUxnHOZNe23LdWI17zuvNAKVxdPRuwSgKaEWHptdN
-         zeDSrAwA85YetGDaibU8C2TPIrYP3OtSChTCMV71yNOSSSrOjbhTwcEfKBN6DEMKEOmn
-         YhbXoCfIV+gNRbaJLSIj7Ljxojbxqc4VlybtpnRzC9dPTznUj0cfboJKqq6aGJfX2RBp
-         e5laG1WN5XvSaH1Su+7CFeVZqmyAzpyEOunYBZngvkgEFL2C4qSxbjO109+BjX8ZXTuN
-         bv+xC2h86CES/Lfr5IJpA2KNdPj5op+lTRh2jt2bAMxHX2i+TpcB+n9wwXq4EaTPkmlh
-         Y0dA==
-X-Gm-Message-State: AOJu0YxiRxGC16ulo8PmdP+Tk/sQDrGOrXIMx3rayts2RHJbuYBdn8kw
-	5svp2MKpj/+NxdSuUqfQ+3sedrxZtRA4MfALMdjYhtD/5jloB4Fs9X5ycbxYbFzmLNFQwIsJ35l
-	opRMGX0LxvxqRmdXy+3KtHCqeAMFSMyWAF7HYd8q7RtXnsogkTgj4I7C0kbGIb0TX+j+MGYDw3I
-	C8VhBjCdtWK4sHt+dh8YTn8SxVVCw4dyIRrhnBkXH1NLMkD3g=
-X-Gm-Gg: ASbGnctc19MrA34lgu3JlVLMdrL6dYrFHYVpYsPUqr4YKkCWcPtF7OGo7ZQEhZesyWE
-	TsyZ2KVhhIGEi1yMHHMjoBC/OXNYQNqzbJhjwMn9VU+fYSiFnXA/6mV6I5rGWvHLsYw2vB2OpY0
-	+6yf0snSv2HiL9J6f+024DzOJKPxBn6VpZqEnis5BjAuAWT6MlDZu/977f4FLCHLBOjjs7ZDR9e
-	qFqiaaY14U7n750FjfhqG6wW8g4ObxHq/fnkxAzigTsY1KKRHCXH3/yomsh0Z7Y25fDFB7CCtxm
-	vFeKvhceiVIsqtSUxUp67RQsCvPh4h8KGXakYCux7I9Et7IFo9lZLiktR8B0tAi5yP/10hA5xLi
-	dUg==
-X-Google-Smtp-Source: AGHT+IHGaeBskLQLYpXz2YaNwdKixufR57YYfZ8SkaOfywMMlz5BGlU3CvKcG4DzeH1HMJO/YjugXQ==
-X-Received: by 2002:a17:903:1a08:b0:224:1294:1d26 with SMTP id d9443c01a7336-22bea4b6dd7mr24156105ad.13.1744356426996;
-        Fri, 11 Apr 2025 00:27:06 -0700 (PDT)
-Received: from hsinchu36-syssw02.internal.sifive.com ([210.176.154.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b654adsm42523585ad.1.2025.04.11.00.27.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 00:27:06 -0700 (PDT)
-From: Nylon Chen <nylon.chen@sifive.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-riscv@lists.infradead.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	charlie@rivosinc.com,
-	jesse@rivosinc.com,
-	evan@rivosinc.com,
-	nylon.chen@sifive.com,
-	cleger@rivosinc.com,
-	zhangchunyan@iscas.ac.cn,
-	samuel.holland@sifive.com,
-	zong.li@sifive.com
-Subject: [PATCH 2/2] riscv: misaligned: fix sleeping function called during misaligned access handling
-Date: Fri, 11 Apr 2025 15:38:50 +0800
-Message-Id: <20250411073850.3699180-3-nylon.chen@sifive.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250411073850.3699180-1-nylon.chen@sifive.com>
-References: <20250411073850.3699180-1-nylon.chen@sifive.com>
+	s=arc-20240116; t=1744357322; c=relaxed/simple;
+	bh=lDciwDSB+Q8RHrtpBmFw8CuEsorY9NR80tu5cfO+FKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GJhfCLfiujhy3+X8oGbtV3t1RQO0eHvxYGdIKz1hLRWa485r7gL/wljwtFhZj5C3rEfUv7HtUiE1dkpn6iZJE+HvIwugAzaIXlS8nT9R2OJz1Z7B+UlxdmLSaXlo85td+TiaysUo7xU4qXMf1dmwo3vXjeTNrSQvxwaXvlmhHdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=HD1Z8DLC; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 921A71F902;
+	Fri, 11 Apr 2025 09:41:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1744357308;
+	bh=qzlruQ0UPIPGDnxKdS/af/06MdcIsKAg/0N3dWvtqv8=; h=From:To:Subject;
+	b=HD1Z8DLCvxEj8dKDHipjhqUxD17mn+N+6lil99+0xgT6qAZd4ll6CcqkJSWq5lZ82
+	 FbMbmwpZ0Kp6FLMco83BoYIe6aBZgKY3R6fNgF5VwjSY9ELXCx+657dOiLfKFrYeR3
+	 qnieKVJHADn6kv0PgOUFny5T1x4vzIdBmXI8iOJMrkbVLn7/eEwGgL6qLz5G3oTeGT
+	 HNlce8SYkL9T1g6vpcZfuC518M4fHEN4WdnZ1jsGLkmX1+LlWws/YI03OX6L1/svDi
+	 oS3Qj1RftqZBLNVb2SF4BwQSSAuSqiv7+8mpX4c3bNhUh5G1plhUPgZUQvatGLDVup
+	 l25mdgW/OGVjA==
+Date: Fri, 11 Apr 2025 09:41:44 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH 1/4] wifi: mwifiex: remove unnecessary queue empty check
+Message-ID: <20250411074144.GA12707@francesco-nb>
+References: <20250410-mwifiex-drop-asynchronous-init-v1-0-6a212fa9185e@pengutronix.de>
+ <20250410-mwifiex-drop-asynchronous-init-v1-1-6a212fa9185e@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410-mwifiex-drop-asynchronous-init-v1-1-6a212fa9185e@pengutronix.de>
 
-Use copy_from_user_nofault() and copy_to_user_nofault() instead of
-copy_from/to_user functions in the misaligned access trap handlers.
+On Thu, Apr 10, 2025 at 12:28:43PM +0200, Sascha Hauer wrote:
+> Since 7bff9c974e1a ("mwifiex: send firmware initialization commands
+> synchronously") all initialization commands are sent synchronously which
+> means the command queue is empty when mwifiex_sta_init_cmd() returns. No
+> need to check for entries in the command code then, so remove the check.
+> 
+> Add a WARN_ON() just in case there is something wrong with the
+> reasoning.
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-The following bug report was found when executing misaligned memory
-accesses:
-
-BUG: sleeping function called from invalid context at ./include/linux/uaccess.h:162
-in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 115, name: two
-preempt_count: 0, expected: 0
-CPU: 0 UID: 0 PID: 115 Comm: two Not tainted 6.14.0-rc5 #24
-Hardware name: riscv-virtio,qemu (DT)
-Call Trace:
- [<ffffffff800160ea>] dump_backtrace+0x1c/0x24
- [<ffffffff80002304>] show_stack+0x28/0x34
- [<ffffffff80010fae>] dump_stack_lvl+0x4a/0x68
- [<ffffffff80010fe0>] dump_stack+0x14/0x1c
- [<ffffffff8004e44e>] __might_resched+0xfa/0x104
- [<ffffffff8004e496>] __might_sleep+0x3e/0x62
- [<ffffffff801963c4>] __might_fault+0x1c/0x24
- [<ffffffff80425352>] _copy_from_user+0x28/0xaa
- [<ffffffff8000296c>] handle_misaligned_store+0x204/0x254
- [<ffffffff809eae82>] do_trap_store_misaligned+0x24/0xee
- [<ffffffff809f4f1a>] handle_exception+0x146/0x152
-
-Fixes: b686ecdeacf6 ("riscv: misaligned: Restrict user access to kernel memory")
-Fixes: 441381506ba7 ("riscv: misaligned: remove CONFIG_RISCV_M_MODE specific code")
-
-Signed-off-by: Zong Li <zong.li@sifive.com>
-Signed-off-by: Nylon Chen <nylon.chen@sifive.com>
----
- arch/riscv/kernel/traps_misaligned.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
-index d7275dfb6b7e..563f73f88fa8 100644
---- a/arch/riscv/kernel/traps_misaligned.c
-+++ b/arch/riscv/kernel/traps_misaligned.c
-@@ -455,7 +455,7 @@ static int handle_scalar_misaligned_load(struct pt_regs *regs)
- 
- 	val.data_u64 = 0;
- 	if (user_mode(regs)) {
--		if (copy_from_user(&val, (u8 __user *)addr, len))
-+		if (copy_from_user_nofault(&val, (u8 __user *)addr, len))
- 			return -1;
- 	} else {
- 		memcpy(&val, (u8 *)addr, len);
-@@ -556,7 +556,7 @@ static int handle_scalar_misaligned_store(struct pt_regs *regs)
- 		return -EOPNOTSUPP;
- 
- 	if (user_mode(regs)) {
--		if (copy_to_user((u8 __user *)addr, &val, len))
-+		if (copy_to_user_nofault((u8 __user *)addr, &val, len))
- 			return -1;
- 	} else {
- 		memcpy((u8 *)addr, &val, len);
--- 
-2.34.1
+Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 
 
