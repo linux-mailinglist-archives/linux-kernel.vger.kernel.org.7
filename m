@@ -1,65 +1,63 @@
-Return-Path: <linux-kernel+bounces-600001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4DEA85ACF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 13:01:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F81CA85AAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7D1E8A5759
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:58:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8182C17A726
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 10:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64932238C2D;
-	Fri, 11 Apr 2025 10:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B07D238C1D;
+	Fri, 11 Apr 2025 10:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="RYpM6Lsu"
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="UspNZreF"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574BE221276
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 10:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A233238C09;
+	Fri, 11 Apr 2025 10:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744369085; cv=none; b=CRUnPbi81gUNr6UL3jbSDqQUhA/+ZHdHFJLRp1jZwTKmP5yZ9+7XS0X8WN7AUN1H+/JW9MElyeSvSCSHoBO5AXq6tjIXcUQU+so7Ok/q1ErtTH17lG63aeD7C+mkeppwImjc03gVWt1zVowxX9WL2UCLemUBcwwWfSU/MB5WBXE=
+	t=1744369005; cv=none; b=d/rnmknTBZ0cIW+Nshd5DLo7Vf+1OwCpbwvLjMu+AAAptBiM9EwWtqQxHEpKsPBBmGmMj4HobffgVB4hfHYFp8DCUtPnV8ORkaQn3zn9Ag7/WQQjR1VtEkZF41hRj617gRqUWZwnsKGi+ViRYdJiQCl/v/r+q2QZ0JlDsfXuKY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744369085; c=relaxed/simple;
-	bh=CpAXgl3qIPNhwV4nhGvgp5rf2RM5JobS3taHnWXNADM=;
+	s=arc-20240116; t=1744369005; c=relaxed/simple;
+	bh=oy5d/S4pW5MASgYEOTGgUSbVs+pUxqnQeCfcjnI416o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PhDDsQCZpv7+bs6Mv/031mcsHZp1aXtlQR1J+oQ503wyMo88qfbhoZPhNccDe1IjtMar1bf3ol0VhhAEpte9JzLm2ZXpC8eQ3GTY/nSWevEUP1uSmSz5nJTQ9tBmy7O4kb8XgrMfS8lY0N4tikPmVcckI0NQvf6+53eZappgvFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=RYpM6Lsu; arc=none smtp.client-ip=52.59.177.22
+	 MIME-Version; b=LEH2FKgObPLbRUmv+Tr9jjfGGmvMMrV2A8WM5D3jjN6w+Ah/KwnAAEkrjjRPXwyEfaNfV2IWYQxtnqOz/F/xCg1SE+J1wLMRz3P4KnSILmLfrOi+FFiTagZqCak6UAOKscOxKRVQiarBQlhaKXJPaHrz326YOIpvWWetw5IFVbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=UspNZreF; arc=none smtp.client-ip=54.254.200.128
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744368973;
-	bh=NmDXTK+4Kxgs42S2SDvzBSL3QLhh5lqVdK90DWHJpMQ=;
+	s=onoh2408; t=1744368988;
+	bh=g48Qtb2HgrJLkqkNBpiJ1SxVJhJHuhOOWJNEegE8LW4=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=RYpM6LsuqePgXVcA+LH2p2kEZ0uEsa0wHKIaqd5yAV28DMMkiuQ1KWGFbJ9KQP8u9
-	 kkHd72fFE4B1G8deJoCrjrB7mstVQx1e6wIVKnO/BLTcBTQIEpWkAI3ievUeftUfoB
-	 rehMpoFf6/U4jLBVt3ZnPThsCQk8xbk8+NFobMBE=
-X-QQ-mid: bizesmtp23t1744368955tc9900ee
-X-QQ-Originating-IP: E+95eiCIMfMVh6UVqQOHgjo4HzQI0WCrSHwCW4L7S7I=
+	b=UspNZreFEoDVooUaoW8dbiO13tV7z8eDKK+4rco/RDwLbLhghTFObAMB70fyChXiI
+	 R4YsEsK+i8LPLeC0hC/XuwSn5Q6H27/WqVTO/hNb9YtyDKjHn+w48Vf+WWZw4TRSWX
+	 snW80FC/G5+evua+4sa3OF9i7TkiKgi6C+UZO8SQ=
+X-QQ-mid: bizesmtp23t1744368963t53fc982
+X-QQ-Originating-IP: 2fxz1gLvHhLKZ3VuxioAS5pWAz4jebflTDRToLk4ZBA=
 Received: from localhost.localdomain ( [113.57.152.160])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 11 Apr 2025 18:55:48 +0800 (CST)
+	id ; Fri, 11 Apr 2025 18:55:57 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 12124381483811632618
-EX-QQ-RecipientCnt: 10
+X-BIZMAIL-ID: 402799742258955829
+EX-QQ-RecipientCnt: 8
 From: Chen Linxuan <chenlinxuan@uniontech.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Chen Linxuan <chenlinxuan@uniontech.com>
-Cc: intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
+To: Chengchang Tang <tangchengchang@huawei.com>,
+	Junxian Huang <huangjunxian6@hisilicon.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>
+Cc: Chen Linxuan <chenlinxuan@uniontech.com>,
+	Winston Wen <wentao@uniontech.com>,
+	linux-rdma@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 4/7] drm/i915/pxp: fix undefined reference to `intel_pxp_gsccs_is_ready_for_sessions'
-Date: Fri, 11 Apr 2025 18:54:52 +0800
-Message-ID: <8921351F23CD8948+20250411105459.90782-4-chenlinxuan@uniontech.com>
+Subject: [RFC PATCH 5/7] RDMA/hns: initialize db in update_srq_db()
+Date: Fri, 11 Apr 2025 18:54:53 +0800
+Message-ID: <FF922C77946229B6+20250411105459.90782-5-chenlinxuan@uniontech.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250411105459.90782-1-chenlinxuan@uniontech.com>
 References: <31F42D8141CDD2D0+20250411105142.89296-1-chenlinxuan@uniontech.com>
@@ -73,68 +71,83 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: MrfJYRspGRl/M9u+zXwrSdqolYI2G6pNayzYh4cBk0asA9K6FhrvumbW
-	My4xqrmw5ovzt0nCJO+y77goE8CHClyp4YZqASxCUnhsPm6Nt+Pkgm8VBqBFZLFwMtpI4g/
-	r+1p5gnlVbFpkce3VWe7cjtHtoXfvax4gklB7J2c7s4+9QRnGaOAMaLuHCRBRVmrcC0GtUu
-	gkxabekkAe2ow/ZADnh3KXnuTCBMFrVXCCnhfxxtJf1FB1o+tFMmirt6SoGfZroNP/Y72jL
-	nc8+kMoZ2R1vo9HYBcu6nnvEeSUbbzlzBJ2h4eJKUyhFrPdvxxHfm21icuzywWGNeYWIuKt
-	Ez3weXXjeweKri1fjOmtjbcYX+YiynkXuJmEZtOfOwkWvCRrauCWVlS9pK+FnRV1VbjwFLd
-	m/kfzZr7veZG6hXGPM0xAaLab3xZemcjITDciwigvR+I2BcKP5tBbRFgOHzmdxJTLeIZ36y
-	r2SCyHIz/SSaMSdC1Wu8ZlboZggQ8bx3jBKcEKnaA6VnvtWnVufQpjQkc1iSv4z9mHW8JTB
-	BvITP2ChVHcXCLBH2XTPe5pGSTPtNpRkhwhapZTu1U2RXZCbgz+qBaWk5id05Ek0+k1nAJc
-	Ismm304VfuQI/qLLIbLZrJ3qGTivAUidS0epYQ/EKylAiacBJA3X/6w+VmWzWwDyqR0GJzx
-	VjnykOjGMugrpW9IZV45XIELOcfbOjH3DcpME5Ep1EA1MRYmzhd0enw8gCCNpMRrCoo3doL
-	quQwBVw+O651+K8bBh3Uu4S9rBz9PaXkHmDDAJR/2TOuT5GUwAz//tTGiCVTkuazap/O06B
-	a8rITqc2RWUneaDueIdF51wfHtzBzSLObh7bPFREwXCW90EdeTA6YS6V6ioqRCph41Yr9Ba
-	CxDRnXC4SnQ7QMRtMDEoLe1169JcVZI0EBAECI3++1po6pqe403+a1pZ1LNqilFeOVqUcir
-	Xm3SwvD6CwYhW9lk55EG7VYlbMxjJiY3+69vjChY0VWz40A==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-XMAILINFO: OAj1qrjhA85AfHsK+j36bU99pHpvKn9xm6f++7FHQ2suVasozllnp2XU
+	OiLmm6z+ScOETPPNgheUFvkn6YEZZafvtnDRKsBt/6Ra2bJ2XyGVguQmgPYUul2YmVRkTVp
+	hwfGXISY7XaOlpPNR/Jzsae/zbBhkQWbenWC4vbYfpV7/4MOJCsWdJ5cRMUHpj/ylKKtk7U
+	YQnfS601mfeOP6gW/DjXbe0e3yg0ecTBxxGWkSeN6dqVQUa2njETm/mRpNKl5DRKnWY1Ier
+	Zwb6Ck06WUhqMOhA+ZzXGj9meWECie8q8fvFsX/TvVuJARcEBgVJb8jwmjtIfPcl914r26P
+	10YynOm09utG5NuAGKBVteQnBYRiDL76hUGWIlz7FuO3C+WDeSGSJdWl3guMLskj8cPdaC7
+	+Bk+dbX/SUyPvUdKzXitSurVWh/jUsgczZ+D5dRMYsfO6VjPUdtVpzSYgS6Ix2nwtXhCwqV
+	ttKokWkr6QV02owuSe8DXhIEfopKYaDh/RGi9K6mNDezD6/SQrfIF7ie8SqdC9F3g+jeq5y
+	wVQip7dUJxG3cj1PiE2j+BnnDvDLhwvdzSMk2maiDqz9wM3ZPasvgvMpcTCXeHNtVY8l/CI
+	NrGK4hqEQIq3fNTSlCgOupJecIEAZ6pylStQdi2g+KTCGJOkGhxh+Lsa3QWeYu+dYw9TH3X
+	6QY9uSRK0qhi1mrUDd6lJar8lqByn0Dz8CHl46M5JpqELocPQihSn9gDUJ3gth2WRLr0wVb
+	YQ2SZR0YAcSRLJkrZseJPrdfrGODKNbWlt4ZkIKYj+HtlgvTXD2hYl/jGHH49y6vV4V1+oS
+	weTYriFQi7+DbQD7MVjLnzIhtFdAUJDaSFeRUEw4xwe44ZwleEI/ltJZ7MRmXKNCYX7w8YE
+	2Zms2Tpz3sNhJTDAkONnP8GcsY3BpL+hqZfhX+NaEx0PZnKPfT92NMOnvg6FovGFOP3aD5q
+	WDEIZD3pXsby/IhyDEXSDL0cLyp9UBANSm4mGO8EIr2LZGns4UYHb7u1H80frosZXmmgVFl
+	6KadT0Rg==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
 X-QQ-RECHKSPAM: 0
 
-On x86_64 with gcc version 13.3.0, I compile kernel with:
+On x86_64 with gcc version 13.3.0, I compile
+drivers/infiniband/hw/hns/hns_roce_hw_v2.c with:
 
   make defconfig
   ./scripts/kconfig/merge_config.sh .config <(
     echo CONFIG_COMPILE_TEST=y
+    echo CONFIG_HNS3=m
+    echo CONFIG_INFINIBAND=m
+    echo CONFIG_INFINIBAND_HNS_HIP08=m
   )
-  make KCFLAGS="-fno-inline-functions -fno-inline-small-functions -fno-inline-functions-called-once"
+  make KCFLAGS="-fno-inline-small-functions -fno-inline-functions-called-once" \
+    drivers/infiniband/hw/hns/hns_roce_hw_v2.o
 
-Then I get a linker error:
+Then I get a compile error:
 
-  ld: vmlinux.o: in function `pxp_fw_dependencies_completed':
-  kintel_pxp.c:(.text+0x95728f): undefined reference to `intel_pxp_gsccs_is_ready_for_sessions'
+    CALL    scripts/checksyscalls.sh
+    DESCEND objtool
+    INSTALL libsubcmd_headers
+    CC [M]  drivers/infiniband/hw/hns/hns_roce_hw_v2.o
+  In file included from drivers/infiniband/hw/hns/hns_roce_hw_v2.c:47:
+  drivers/infiniband/hw/hns/hns_roce_hw_v2.c: In function 'update_srq_db':
+  drivers/infiniband/hw/hns/hns_roce_common.h:74:17: error: 'db' is used uninitialized [-Werror=uninitialized]
+     74 |                 *((__le32 *)_ptr + (field_h) / 32) &=                          \
+        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  drivers/infiniband/hw/hns/hns_roce_common.h:90:17: note: in expansion of macro '_hr_reg_clear'
+     90 |                 _hr_reg_clear(ptr, field_type, field_h, field_l);              \
+        |                 ^~~~~~~~~~~~~
+  drivers/infiniband/hw/hns/hns_roce_common.h:95:39: note: in expansion of macro '_hr_reg_write'
+     95 | #define hr_reg_write(ptr, field, val) _hr_reg_write(ptr, field, val)
+        |                                       ^~~~~~~~~~~~~
+  drivers/infiniband/hw/hns/hns_roce_hw_v2.c:948:9: note: in expansion of macro 'hr_reg_write'
+    948 |         hr_reg_write(&db, DB_TAG, srq->srqn);
+        |         ^~~~~~~~~~~~
+  drivers/infiniband/hw/hns/hns_roce_hw_v2.c:946:31: note: 'db' declared here
+    946 |         struct hns_roce_v2_db db;
+        |                               ^~
+  cc1: all warnings being treated as errors
 
 Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Co-Developed-by: Winston Wen <wentao@uniontech.com>
+Signed-off-by: Winston Wen <wentao@uniontech.com>
 ---
- drivers/gpu/drm/i915/pxp/intel_pxp_gsccs.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/pxp/intel_pxp_gsccs.h b/drivers/gpu/drm/i915/pxp/intel_pxp_gsccs.h
-index 9aae779c4da3..4969d3de2bac 100644
---- a/drivers/gpu/drm/i915/pxp/intel_pxp_gsccs.h
-+++ b/drivers/gpu/drm/i915/pxp/intel_pxp_gsccs.h
-@@ -23,6 +23,7 @@ int intel_pxp_gsccs_init(struct intel_pxp *pxp);
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index 160e8927d364..7d6c0cfa1ded 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -943,7 +943,7 @@ static void fill_wqe_idx(struct hns_roce_srq *srq, unsigned int wqe_idx)
+ static void update_srq_db(struct hns_roce_srq *srq)
+ {
+ 	struct hns_roce_dev *hr_dev = to_hr_dev(srq->ibsrq.device);
+-	struct hns_roce_v2_db db;
++	struct hns_roce_v2_db db = { 0 };
  
- int intel_pxp_gsccs_create_session(struct intel_pxp *pxp, int arb_session_id);
- void intel_pxp_gsccs_end_arb_fw_session(struct intel_pxp *pxp, u32 arb_session_id);
-+bool intel_pxp_gsccs_is_ready_for_sessions(struct intel_pxp *pxp);
- 
- #else
- static inline void intel_pxp_gsccs_fini(struct intel_pxp *pxp)
-@@ -34,8 +35,11 @@ static inline int intel_pxp_gsccs_init(struct intel_pxp *pxp)
- 	return 0;
- }
- 
--#endif
-+static inline bool intel_pxp_gsccs_is_ready_for_sessions(struct intel_pxp *pxp)
-+{
-+	return false;
-+}
- 
--bool intel_pxp_gsccs_is_ready_for_sessions(struct intel_pxp *pxp);
-+#endif
- 
- #endif /*__INTEL_PXP_GSCCS_H__ */
+ 	hr_reg_write(&db, DB_TAG, srq->srqn);
+ 	hr_reg_write(&db, DB_CMD, HNS_ROCE_V2_SRQ_DB);
 -- 
 2.48.1
 
