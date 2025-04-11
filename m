@@ -1,186 +1,293 @@
-Return-Path: <linux-kernel+bounces-600509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41321A860BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:35:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02F9CA860B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 16:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 070504C4361
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:35:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70C1F4A773A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8096C207A33;
-	Fri, 11 Apr 2025 14:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27781F541E;
+	Fri, 11 Apr 2025 14:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VrN1qj8A"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kh6cNZl6"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2089.outbound.protection.outlook.com [40.107.241.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F771F7575;
-	Fri, 11 Apr 2025 14:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744382080; cv=none; b=l+8fJ5lTGVzXRZeKg0So3fD5rnJJcdQY0h/kr8l1MyVCni2AGlNXBASEzzcQY9doZn0O6iBO2RsQDN0+98AwUqQ1luQPSv3pb3rh0m32X/zqnype9EF9GMIFI/raBvjwwz4sJaFgkidd/hCx2IYYNeQgblX7BesY1qfx6m24tMQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744382080; c=relaxed/simple;
-	bh=EE0z7VcnS5alp4WrNEPDp5Ms9yqPCFGjsjy878pe6mw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TSgPRezWPqLVgQU2P66NL3sGFUChaJU6jnnuKgjgkvsaZ1JeyOeyLaffqyxsfBT8x9fr6Rd3qdD7H5iv5yW+W1L2XtnRw6i+vG90Lit7YKekMtYSSW0bENjz1W7EnAdeCtgeYGq53bbww4NtZ+Kvbz/HyBUqRNufliU+YChxC8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VrN1qj8A; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30613802a59so21504301fa.0;
-        Fri, 11 Apr 2025 07:34:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744382077; x=1744986877; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0iiM4A5jNc7XQCTZ7wbH5EfX577sulbS78AGVv/5JM4=;
-        b=VrN1qj8AzV1baf4YRBreWeB8R+k1RcTJ6ACOgZkxHFqwOqkCjdC23Gk2gcgxELB2zo
-         +mzeNGVIaASAOz/rTbmc9MwWX8trTbR1WtGliPEnHhjAL31TxrKTLe+EFLZBc2iOxc4L
-         jlSmidKJMy1Ss0fTS6qiKyHb4bW1h5U+E3TyJgaIxDIvcJFfSfsOgY4PCdcfS/ad2Kdx
-         oKXvjxjASWbpEiY5vD4HrthD/CInDAbK8/zI2onLhKcTPd+7qz4YJDDdeW78uw7fevea
-         NOJnaYZjjHL2Eh5qDwKdyxMqbiQest6KICxQK7Ffkq6xTqM0PgfKR/GJGC+X1llSfktA
-         o5LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744382077; x=1744986877;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0iiM4A5jNc7XQCTZ7wbH5EfX577sulbS78AGVv/5JM4=;
-        b=rGAh/RYPleDKlDoKeAAJn1dhzbCmvhgLh9rnJVYAjhBuDEgvtaAlhAyWi1EgacHfod
-         W4Gs6CDk2BoDK89pFu2ZAkoKoU8oCmHRaH6pwC+GDOIHLq65RCgOCcQVrRS9Tk0lz8u+
-         xvN7K3x4XFjwRkpaAQgE0ivPf0UrDH+FDFSJBLuCPYku7jYq/SFRy/vGFTgIjSlqVp/y
-         B/KAhwkqXjlSVEQlVhJYBxfiJmAokOEsG5ATGaeUrJTT9KUkUp79aNAZY9zsu9QKDj5s
-         MKKbCYnxCMkC5NaHj/ejDykSPD+pUyESMuhIpvV2QpmBRP8GSX7ygOckfFWGVlWpTHS7
-         XvTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUi9UuFjaLxTZgf69k8L0WZvNiGIF5aNowisdeXfmie+HzyBuXzxJ3xQukL8+EBhj8yHIHsXpbKC93n7rIdCgQ=@vger.kernel.org, AJvYcCVDgFDNMQ6OKGQPvXSiiPwSnCEJEnPJUewFLW68EezEd0mFDyfSmBTi+3iIWM2YZZgII3iVJ2aYP2crceM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+0eP4Padfhd9SjloGEAMXSCkcjZWLKU/No0meo6dDS2qybecU
-	+34wUQIQpcA2SgwsipOm3mNEsbCoSSDI7SRjflqshZRDLxgt6MGX1wM10ulb624Fdr1fbIeMwvV
-	9IF28H47keNm52a6rXoaSqh9b7G0=
-X-Gm-Gg: ASbGncuI/SOdMJDNeskwrQfwPxKeI9LAkPBX8XtBIAK9VLNv9mqdyQ8bfYXrhdqjbK8
-	CZTAnTmb+NiQSwp5xOG2bOLYZ9rBhTr3hKaylJozJEowd4iSHeGTUbYyWx+9f0ckiA/J2piHmhs
-	qr4n/kZMPmekj2pmxWR4q9rFJVcx7OqzsQrwJ+JU5vN86LRDAjR0WwT1c=
-X-Google-Smtp-Source: AGHT+IGSlwBM6FhbW7GiINpo0e0h9j8maWNeh2TROlmjwiwk8OBBSwUPmjW49GjLZpDNULwYmRok5G0g9+2l3lLU1JM=
-X-Received: by 2002:a05:651c:1443:b0:30d:894a:a538 with SMTP id
- 38308e7fff4ca-310499fb2d4mr11682591fa.21.1744382076746; Fri, 11 Apr 2025
- 07:34:36 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD73A18FC89;
+	Fri, 11 Apr 2025 14:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744382075; cv=fail; b=am8PAO0dw8PdI6q38pyMnmlfEuuO6Suarw9c418DnjLZZxHKz22vgtdF9CaJZiAyncn9A4CKklJdbsHBGlbbYQ8R4bEInPmPN2iQZLQ5JNgW79aeXGDobHAJCUVcxBrY0mIYBZHr3BvUcBtW+36Xujxr2+GllfdoWHrPJIwZr6k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744382075; c=relaxed/simple;
+	bh=ljptRlRggIC4Yh879NKj2rm2HyvTBJb/Fr6C/KcJp2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JdnCSbqaHeT+LJzmB1fD531Y7idjNLS/e/DN+SandtnxtATCQOJLybImPdi/UcSy6tbNv7aw10YZM6mTzAIbDLnOGAvqMOTRwyF7YZ31YoPHa6rwYc/9NU/b3cjgcz+4B5lrDIwLRYLTWcHDuboOT/5/6iV9nnH6M1ohKW7t7Rg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kh6cNZl6; arc=fail smtp.client-ip=40.107.241.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bICpxwzDGyh66Ysh5tKfbxjCl3YR400WzYL7gSsFLI/dkKmacsTNQi+HtXmjXDV5/TXs32pG9sbiPnFWWimXhthFFNDRAI+Vi5XNTTFoK5JkbQl8hgjVpISNVLlzTdbBVxSOOtYThkzjSFY5ey35xJBfoNGDwARbBowU9jkzYQnKaina2hk1wywXWelxPbDDHcVM9dySWpmFXIrNol7BtgUrQv+Ccf52NqrIh6lpRczHdvu8gUL9v9z6Qlg1EOFJWQ3SAVO3cF87RsGVlOtGTS4yBc1bysWAhE95JvA7eASCryNI9a0CHczcdJeerC/jlGEuq0XyQGv94mpdQzh20w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hVfGITe1XOirvsDK3h0gWxNDRoNqpR9Vpbl/HygzyOU=;
+ b=QTw8yGbR2Y/HDUL9Zi9WFP3yuPF4PH4oyMsK8NEtQzAg1m+BoZ56Yv/5ugntA6kQq2m0WTVgPjaLXdtvBKsrabWNp5D+07NGIbU0WPV+72XiluT6gTOr2QYNZ06URgOJPlq5opB5FQ20P7X7m2gJCzbAiLqdxZAvRw0fZabzd4L4p79qVsrklfsG5hEfQpiu921L2G+xQWpdQQUjwVcHZY6GRaqM+Jm70XQeydLOX7lr6pXohzOadDqBBjb7nCjX9Ms1eutzNrAQH+OtfAXV2kTo4dNSYToT8lTj5vzWANP6OOFukOcWLCFKP8iU89Cfo2gLwSAMihzk1L/75nhZXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hVfGITe1XOirvsDK3h0gWxNDRoNqpR9Vpbl/HygzyOU=;
+ b=kh6cNZl61/5HV+WK9JrFk8UCO+agP+XQTR8YJOgvN8l2I7nED4iPDq6jjoyi2i8we83e1w5fMIcmAGtMQsF1Xsde2D9QJX07iI+xNfx1NmRHTHIJsVGwXzSrKbodUPIKn28DB2vfqC/RhphVmRdQ+181f6m3Y5XeMN6i77qhZuq8uqkqsxgGF1PcF9B0ztEdFVo0OTfjF3u11tJ9QnZf0mu0JR7E8JzvbfH0n4pEe0ltJSZLXe9nSvKRSU9FdcEfwbTVPVyj0sPn6G5idBmQczO+xXtCCVZGwnFxdFv5b1Vofj9nFH0CCE3U4WBHGuqsNAds9BsXASSDRxn/pKaKEw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by AM9PR04MB8324.eurprd04.prod.outlook.com (2603:10a6:20b:3e2::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.33; Fri, 11 Apr
+ 2025 14:34:30 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d%4]) with mapi id 15.20.8606.033; Fri, 11 Apr 2025
+ 14:34:30 +0000
+Date: Fri, 11 Apr 2025 10:34:23 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Primoz Fiser <primoz.fiser@norik.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
+Subject: Re: [PATCH 04/13] arm64: dts: freescale: imx93-phycore-som: Enhance
+ eMMC pinctrl
+Message-ID: <Z/kobxo56A857eZr@lizhi-Precision-Tower-5810>
+References: <20250410090251.1103979-1-primoz.fiser@norik.com>
+ <20250410090251.1103979-5-primoz.fiser@norik.com>
+ <Z/fcFPrHdI8/IBRC@lizhi-Precision-Tower-5810>
+ <d68df49c-222a-445d-b29c-f9ad962b87aa@norik.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d68df49c-222a-445d-b29c-f9ad962b87aa@norik.com>
+X-ClientProxiedBy: PH7P220CA0142.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:327::12) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409-container-of-mutness-v1-1-64f472b94534@gmail.com>
- <Z_jakOS8mciIpxy0@google.com> <CAJ-ks9kEMwpDoys=RJGfWvyLdRco_Lm1984KSmju7mio5_5_WA@mail.gmail.com>
- <D93TAL6PHO34.2WCMTNVGUY522@proton.me> <CAH5fLgh6gmqGBhPMi2SKn7mCmMWfOSiS0WP5wBuGPYh9ZTAiww@mail.gmail.com>
- <CAJ-ks9k_0Ly1nG5jDYQZL=GQ26FVajekCaMQ9C3MOK9VknZssg@mail.gmail.com> <CAH5fLggDVVwfsxVqOojcib3v0COqyatCisQem5z+CUC7aaLDww@mail.gmail.com>
-In-Reply-To: <CAH5fLggDVVwfsxVqOojcib3v0COqyatCisQem5z+CUC7aaLDww@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 11 Apr 2025 10:34:00 -0400
-X-Gm-Features: ATxdqUGC7GCFIQ26Wis4gvos7FvyMBrX6ffMxRK8sEct8rCKgc9dMd5Gn0fzTjw
-Message-ID: <CAJ-ks9mxRqFPz4J_L3KLa-VHX+dcbsobncc=n2f84iZ+ju2VaA@mail.gmail.com>
-Subject: Re: [PATCH] rust: retain pointer mut-ness in `container_of!`
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AM9PR04MB8324:EE_
+X-MS-Office365-Filtering-Correlation-Id: 40d3b58f-2ee2-442c-a66c-08dd7905f834
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|52116014|366016|376014|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JAJmBZVGdxqjWt+Ys7UDo2GuwqGsKA4e2MMGhlfSvVtz27AsLyryzhI3Urna?=
+ =?us-ascii?Q?rO5JwQg2TK6giID2AKItNMG6qjkDTdvd7iijkngzrmn0ez2vGO5/i20fGi3M?=
+ =?us-ascii?Q?Biq48MJ0tMTnECTtN4nydvh7ffRZivbKoR6h5xy72H/3gk5iQHZyGArm4qMh?=
+ =?us-ascii?Q?WcOPEnuiWDxOmZ1NsnpnHFEP6gn0qOPbcKRZwt0bM6/SlJ9YLZGm3C46JMIG?=
+ =?us-ascii?Q?R6umugAW08SrFyGPSnzArvmdhtkkSAgW6k185ItBn0UugAQr2C52c/2NM8hJ?=
+ =?us-ascii?Q?obD8hV3whdNp8QZIeCG9F+XINmGb2u1vIbNdQjX3QM86sKeku2IEBg5d+LEN?=
+ =?us-ascii?Q?1Ls/+QpLx2qRPTdh2dY38otueJCyy+5EMsAjXht1hbwn79/s84rJt07texyR?=
+ =?us-ascii?Q?IxjEgXO+Nfe+S5M6AjHUdeblQD+LP90V2JTH+Te3aSiPohHtiwztDE1afliC?=
+ =?us-ascii?Q?0HxeA9/LmcdlfskM0d7E5t0uDRcIOk1VbVaOtLs/4tL0jSSUNEdZfEjtW446?=
+ =?us-ascii?Q?45NfTSouSyH705WVHkp3U0HJ+MBj6JmJwB2bHNMg3cSSujBM8L+M51uvOpyS?=
+ =?us-ascii?Q?xLTV4z/IoU6yY8t6QENBGrIc+4Lm+Luct5GN8MCjtO4yGOkjs4TGED+u3R4b?=
+ =?us-ascii?Q?vb/4FM9tEDGE3LF6SiN0Ztd+RsHbjc8jP3+77qnbgyan0LXFuSkFXWT4qCGA?=
+ =?us-ascii?Q?98rV9LJ5+fCu2JsP9Z77JugZAQhoQsW7IKFpCrz7w6UsqOwxtw5osPxb1OPh?=
+ =?us-ascii?Q?k2/c/Asvs/YZ/JecQKsxtgZfStk1WCH/smDhQL2FDACme2W2gOcQXuL6m1bM?=
+ =?us-ascii?Q?YvFUFqc32Fb/ufnuG4YfRGMLm4GlCz08AvhhEJkJfV4zH7SnLluqdWHj6bsH?=
+ =?us-ascii?Q?YC0q6x7U3FAxZDcElulDEyckcY92ip0BhmVdJQLHmCrTtPl9eoWAB2AE521H?=
+ =?us-ascii?Q?TyZdniOIXmV+l4GjIQjdPfTlKHdhpMvb1aekPPY6x7VYHJB8sQ1LPZPyEjRE?=
+ =?us-ascii?Q?4p7JuNU51U2YeD+G1BkQXM+Xxz9Hp0bMZlS+lZCKv59MDLwk4Q2TWepypd0H?=
+ =?us-ascii?Q?LfAnzntD/lXiJLfCVWpp/zeWqEG2ljMvcy86a8tAraO3aeAAQdJMLnl6bS6h?=
+ =?us-ascii?Q?SuaLpKd4oSA9SHpHMSTOREwy2geI6lLLw9h005E2t1BQI4yyUwUWLYJyZuQj?=
+ =?us-ascii?Q?H8+va8GVaE4k5oZa79Z9pKoq3NS46BrPx/CImblihh0UHWOt7VUOSAVa+vdq?=
+ =?us-ascii?Q?eF2PEu3uBouPf8R7HaPIlinCq7d/EV4iw9ccK40eE6xlqzhNBSagpO1mxzQz?=
+ =?us-ascii?Q?6c7UB04T1ECcOoJMFb29RKs608erwKi1dhs9Ii7LSnahUzlDpzruTCkOxXXL?=
+ =?us-ascii?Q?IFj+IYgtNoLX0MsnMlYu9y/6AQKvLhR566B/n1uwypjxl32Nwpypmt6CVGPv?=
+ =?us-ascii?Q?TGi/888Z+fb95IPhDxGT/TU04tx9BVannKdCyjk03NVumc0zMk5GaH5qQ1S0?=
+ =?us-ascii?Q?JNBeyAT1GuTV5Ks=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(366016)(376014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BwcunphGHyLU6oVM+qlzkQKryUCtB4RjofQIZTYTXF0Wn52RFOU9iAWUhSp+?=
+ =?us-ascii?Q?IlzG25nnn1oz+ZGgCanKiwbBs2DpTH5N+nuQgwM+YzBZbJzIXGuKJJQLC2HT?=
+ =?us-ascii?Q?vYkvT0rvElflch0D99IFR3RzaKDH7VtaJeYAVCTJX87JmDD+PRnoaYixgeqV?=
+ =?us-ascii?Q?zc8ENDhs7lDopsgdrxG8dQVw7tSfkFrzAJzHdMeTzw3fXmUNFYM1TD5TA8SL?=
+ =?us-ascii?Q?RS4anHqj3jAU5oVPkbUl08pO/o+GroVAo0z7EIFo9EAx8Nb6uLWwd6v53/uF?=
+ =?us-ascii?Q?yAvyIE/P8wzMpyszBpAKHxjKGcdkVPCjxWa7oFTDM4uUQbKK9Vcfb0KijZwB?=
+ =?us-ascii?Q?ptGuJ5BjZrpSaOkiPR55yNSbPhSCNeqhuHvGfRWosDqGqlFpLvMnLixF7ibu?=
+ =?us-ascii?Q?R+Rk4ZNL9uvf9IMYl9NbpZDQc116KicSyvspVsA3LVi7m0InB+Qmqam57j+t?=
+ =?us-ascii?Q?f65GUoAydAQ/Js5rAUZ01/OMorY+GlXlG2Q6ngDePfxc+vcUAa34MhMBhdgV?=
+ =?us-ascii?Q?+9yLb5QxpuFjxehhvE5EAbmqxZvFsa5psXR/qeUhVGNxO/MmNq+a0palsv6q?=
+ =?us-ascii?Q?8av6xz0OAnxPIZXIWqlvHxKUdxoswvGsoUxC2FnJuCVcXSV7N5whUIBrLDzr?=
+ =?us-ascii?Q?qshgj8+r5owJgO5x28tfmJoO19oz6wVKeIAcKH43T19u/hN06ntUJH6+wiyf?=
+ =?us-ascii?Q?1I+bXnWA0BPTKN4g5VTVvQwLeYi0z2ZtOQ5SYM+kAk6qSg0SV6AhDUpGRzas?=
+ =?us-ascii?Q?w2wHTMTniUywloATFoOYpInHK1Wtocz53tG3vOtmNvSf9zvXWh/5bga38gId?=
+ =?us-ascii?Q?oXDXahl71u5p6b6lkloagin3s2CgD+Dl6at5suZwJrf5tGXtkpZYvPn0J7UL?=
+ =?us-ascii?Q?KuuzQjaeCmk7PbidHoQYmdJziZ53Ho3bs0i9HC9QsOZyHf+AbpK/mJ9PFR1C?=
+ =?us-ascii?Q?1eSw1o701o0ssyCMsZHz8CJ5tLLPav3F4t0uooeGN2xEBjT636kB2QHhd8lo?=
+ =?us-ascii?Q?HXjoA7GgZPkBNgWIea9R5YGTfR3Nopa1s15ga/C7KO3idimzUILNw8l5Lx3R?=
+ =?us-ascii?Q?Z8RRuRqQcacKii7Bknnz1Nolcpnq6sO9kgpEtdHKrTMloGhZwSSluyG3IVhJ?=
+ =?us-ascii?Q?GMcIjFjn4PM5eDS2lqs1DEMfVAA7IBbyep89nJN4F2OQL9xkbsKRBTLm/MDi?=
+ =?us-ascii?Q?TW3zvVOahBpVpGx1DNdSP2L0J4gl/0bGBlKSltDh00f2Ynb1KfrhaPf4m9nZ?=
+ =?us-ascii?Q?tdcUoaUdrkhOtN08hhTDJS5VslSrQ8kn/dSDTjq/GAygTx+45WNYY1h4rBmQ?=
+ =?us-ascii?Q?8fWKk30Btv1WK56yE6c5CWUT9/n9HXQm5IrLSRBLJZZ1y8wDY3Ba4a+BtksC?=
+ =?us-ascii?Q?a6JOWWMuoqAPgvh9PRAFo5qPiqPDC3t6oOmSxMNglEtRyy3Kc0zfWhp87gXv?=
+ =?us-ascii?Q?W8W9HFzsn1qr8Gx1j5+RgcrSBuazWZy29vXJlsHyzdytoeBV3ZX65hbeeqiP?=
+ =?us-ascii?Q?ar9rOQ2mkvc5tVxvk7lgS5Tz7rrZXrJpJScSYHEfjHj4HKxKkDVhY4ccZFZA?=
+ =?us-ascii?Q?s9SZCMOCt0hHXf5HEgkr6Ln7m5LfObBx4uh0K3rj?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40d3b58f-2ee2-442c-a66c-08dd7905f834
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 14:34:30.4518
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0v7N3yVeJ6sBradVa6wOzXEC32+pmTK3FryW8UrkP1zEXdBZ6vQNKrwTWmQ/sSwUYhOQyz4YoUDimu8UqvQDAw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8324
 
-On Fri, Apr 11, 2025 at 9:29=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
+On Fri, Apr 11, 2025 at 08:29:05AM +0200, Primoz Fiser wrote:
+> Hi Frank,
 >
-> On Fri, Apr 11, 2025 at 3:09=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
-m> wrote:
+> On 10. 04. 25 16:56, Frank Li wrote:
+> > On Thu, Apr 10, 2025 at 11:02:42AM +0200, Primoz Fiser wrote:
+> >> Improve eMMC on phyCORE-i.MX93 SOM by adding 100MHz and 200MHz pinctrl
+> >> modes. This enables to use eMMC at enhanced data rates (e.g. HS400).
+> >>
+> >> While at it, apply a workaround for the i.MX93 chip errata ERR052021.
+> >>
+> >> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+> >> ---
+> >>  .../boot/dts/freescale/imx93-phycore-som.dtsi | 57 +++++++++++++++----
+> >>  1 file changed, 47 insertions(+), 10 deletions(-)
+> >>
+> >> diff --git a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
+> >> index 82f680d891c2..3d84eed33074 100644
+> >> --- a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
+> >> +++ b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
+> >> @@ -166,8 +166,10 @@ eeprom@50 {
+> >>
+> >>  /* eMMC */
+> >>  &usdhc1 {
+> >> -	pinctrl-names = "default";
+> >> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+> >>  	pinctrl-0 = <&pinctrl_usdhc1>;
+> >> +	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
+> >> +	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
+> >>  	bus-width = <8>;
+> >>  	non-removable;
+> >>  	status = "okay";
+> >> @@ -213,18 +215,53 @@ MX93_PAD_ENET2_RD3__GPIO4_IO27		0x31e
+> >>  		>;
+> >>  	};
+> >>
+> >> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
+> >>  	pinctrl_usdhc1: usdhc1grp {
+> >>  		fsl,pins = <
+> >>  			MX93_PAD_SD1_CLK__USDHC1_CLK		0x179e
+> >> -			MX93_PAD_SD1_CMD__USDHC1_CMD		0x1386
+> >> -			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x138e
+> >> -			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x1386
+> >> -			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x138e
+> >> -			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x1386
+> >> -			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x1386
+> >> -			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x1386
+> >> -			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x1386
+> >> -			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x1386
+> >> +			MX93_PAD_SD1_CMD__USDHC1_CMD		0x40001386
+> >> +			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x4000138e
+> >> +			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x40001386
+> >> +			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x4000138e
+> >> +			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x40001386
+> >> +			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x40001386
+> >> +			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x40001386
+> >> +			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x40001386
+> >> +			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x40001386
+> >> +			MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x179e
+> >> +		>;
+> >> +	};
+> >> +
+> >> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
+> >> +	pinctrl_usdhc1_100mhz: usdhc1-100mhzgrp {
+> >> +		fsl,pins = <
+> >> +			MX93_PAD_SD1_CLK__USDHC1_CLK		0x17be
+> >> +			MX93_PAD_SD1_CMD__USDHC1_CMD		0x4000139e
+> >> +			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x4000138e
 > >
-> > On Fri, Apr 11, 2025 at 8:38=E2=80=AFAM Alice Ryhl <aliceryhl@google.co=
-m> wrote:
-> > >
-> > > On Fri, Apr 11, 2025 at 2:35=E2=80=AFPM Benno Lossin <benno.lossin@pr=
-oton.me> wrote:
-> > > >
-> > > > On Fri Apr 11, 2025 at 2:25 PM CEST, Tamir Duberstein wrote:
-> > > > > On Fri, Apr 11, 2025 at 5:02=E2=80=AFAM Alice Ryhl <aliceryhl@goo=
-gle.com> wrote:
-> > > > >> On Wed, Apr 09, 2025 at 10:43:16AM -0400, Tamir Duberstein wrote=
-:
-> > > > >> > @@ -199,9 +199,8 @@ fn panic(info: &core::panic::PanicInfo<'_>=
-) -> ! {
-> > > > >> >  #[macro_export]
-> > > > >> >  macro_rules! container_of {
-> > > > >> >      ($ptr:expr, $type:ty, $($f:tt)*) =3D> {{
-> > > > >> > -        let ptr =3D $ptr as *const _ as *const u8;
-> > > > >> >          let offset: usize =3D ::core::mem::offset_of!($type, =
-$($f)*);
-> > > > >> > -        ptr.sub(offset) as *const $type
-> > > > >> > +        $ptr.byte_sub(offset).cast::<$type>()
-> > > > >> >      }}
-> > > > >> >  }
-> > > > >>
-> > > > >> This implementation does not check the type of `ptr`. Would we n=
-ot want
-> > > > >> it to have the type of the field?
-> > > > >
-> > > > > I might be missing it but ISTM that the current implementation do=
-esn't
-> > > > > check that either.
-> > > > >
-> > > > > It's not obvious to me how you'd implement such a check; given `$=
-ptr`
-> > > > > and `$f`, how do you get your hands on the type of `$ptr->$($f)*`=
-?
-> > > >
-> > > > I don't think it's possible with current rust, but maybe with field
-> > > > projection (:
-> > > >
-> > > >     ($ptr:expr, $type:ty, $($f:tt)*) =3D> {{
-> > > >         // do not run this code, only use it for type-checking:
-> > > >         let _ =3D || {
-> > > >             let mut ptr =3D $ptr;
-> > > >             ptr =3D $ptr.cast::<<field_of!($t, $($f)*) as Field>::T=
-ype>();
-> > > >         };
-> > > >         let offset: usize =3D ::core::mem::offset_of!($type, $($f)*=
-);
-> > > >         $ptr.byte_sub(offset).cast::<$type>()
-> > > >     }}
-> > >
-> > > You can definitely implement the check with current Rust. You use
-> > > addr_of! to create a raw pointer with the type of the field, and
-> > > trigger a type error if `ptr` doesn't have the same type as that othe=
-r
-> > > pointer. Something along these lines would do it:
-> > >
-> > > let mut ptr =3D $ptr;
-> > > let offset: usize =3D ::core::mem::offset_of!($type, $($f)*);
-> > > let container =3D ptr.byte_sub(offset).cast::<$type>();
-> > > if false {
-> > >     ptr =3D ::core::ptr::addr_of!((*container).$($f)*).cast_mut();
-> > > }
-> > > container
+> > any reason why DATA0 is difference with other one?
 > >
-> > It's a nice idea. Wouldn't it require `$ptr` to be `*mut _` and not
-> > work with `*const _`?
+> >> +			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x4000139e
+> >> +			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x400013be
+> >> +			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x4000139e
+> >> +			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x4000139e
+> >> +			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x4000139e
+> >> +			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x4000139e
+> >> +			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x4000139e
+> >> +			MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x179e
+> >> +		>;
+> >> +	};
+> >> +
+> >> +	/* need to config the SION for data and cmd pad, refer to ERR052021 */
+> >> +	pinctrl_usdhc1_200mhz: usdhc1-200mhzgrp {
+> >> +		fsl,pins = <
+> >> +			MX93_PAD_SD1_CLK__USDHC1_CLK		0x17be
+> >> +			MX93_PAD_SD1_CMD__USDHC1_CMD		0x4000139e
+> >> +			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x4000139e
+> >
+> > any reason why DATA0/DATA1 is difference with other one
 >
-> As far as I can tell, it should work with const pointers too. The rhs
-> of the last assignment gets downgraded back to a const pointer in that
-> case.
+> Bus signal integrity envelope was measured and drive-strengths adjusted
+> accordingly by the PHYTEC hardware department to conform to the specs.
 >
-> > In any case, I hope we agree that this can be
-> > done separately.
->
-> Yes, since the feature does not exist today, it can happen separately.
+> Values were thus determined empirically to adjust for differences in
+> signal impedance due to PCB layout.
 
-Sent as another patch:
-https://lore.kernel.org/all/20250411-b4-container-of-type-check-v1-1-08262e=
-f67c95@gmail.com/.
+Okay thanks, I just to make sure it is not typo.
 
-Thanks for the suggestion!
-Tamir
+Frank
+>
+> BR,
+> Primoz
+>
+> >
+> > Frank
+> >> +			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x400013be
+> >> +			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x400013be
+> >> +			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x400013be
+> >> +			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x400013be
+> >> +			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x400013be
+> >> +			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x400013be
+> >> +			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x400013be
+> >>  			MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x179e
+> >>  		>;
+> >>  	};
+> >> --
+> >> 2.34.1
+> >>
+>
+> --
+> Primoz Fiser
+> phone: +386-41-390-545
+> email: primoz.fiser@norik.com
+> --
+> Norik systems d.o.o.
+> Your embedded software partner
+> Slovenia, EU
+> phone: +386-41-540-545
+> email: info@norik.com
 
