@@ -1,201 +1,221 @@
-Return-Path: <linux-kernel+bounces-600861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5462A86569
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:23:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6B4A86562
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 20:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F067E4E2545
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:23:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE4DD189A4F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 18:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F1325D204;
-	Fri, 11 Apr 2025 18:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BDD258CF7;
+	Fri, 11 Apr 2025 18:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kOxaV7hA"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2088.outbound.protection.outlook.com [40.107.94.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="pc9pudzY"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B76425A34F;
-	Fri, 11 Apr 2025 18:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744395729; cv=fail; b=CmBlRcZM/3Dkcfu7ue9w5ZKAuOwZ2hz/PDTA7I1iN8qRn/4I8N53Bmld73Yqa4REtRl+jYOebAo+0UMlL/YU98g3l+VtDsEC4pB2Pm1wHgBrxYc1AxZSV+iApwOARzIAmWJzgiJidPhItupPGcKS6CUZQH7ifE9lSm/jEND8mY4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744395729; c=relaxed/simple;
-	bh=MyEQr0pqNroTIuiiVHylHmJz8gNp9nghrUJuP6YbpWI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hUyjqUgyjMFsRqfz0mLgE3/izIA9r9cb6Dvegxcwj3VWL/RLBCEw53RjPbEAHuQGb7Hdp16uMqc3jl657+MqlhEPuqTEb2ldl36IuOaq4tNFJcE8PhmhDeAnWdMjA3v65Kr1RPK+3CDs0gHZbr8K4B97YX6uRgGo79rBS/bxYw4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kOxaV7hA; arc=fail smtp.client-ip=40.107.94.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CuaAjIc8JB9k8zVCxDT0sTyZnTEnjazE/+PKo1GMiZJy+bqwSumNR+r/WS/qplY0q7hJRIA++/2+7X3I9kBd6Jh+0d5aWpHtbJvyVgh6sXnh//ifahAngQX3j8xv/7fvIh7BsWvyC/QoEOSxtUriuSXUvmF7RGmK+lb2Wr0LF2Juqy2fkKkgFRi/byjxz37nnPWfMQzTCj3EvoojkwOMkwT7wWgKTc/DfpqM1m48wgB9m7s4P823LRwymHyWH6BsbG4c8W9Yh+5ODE7z+v/QlvD7Cd+Q7Ed4qJ2ZFRAIjpPqGE+AEQBp981j8yhmoPaG+SGF2ZvzxYvlM1emehWjSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ff/w18+f1OseMFSch/LRK3Va+WXFnn0aguc/A3dbxmM=;
- b=EQNnRAQapkC/CMJcuwF09pxQVLHcucVR15Wg8IwFF4OouEr4j1m4RtV04CZ8HuC0cprQ2rmtlal2lqfIVmuWyoJstAnT/lgYO0auG5d9li7zGjCtSS+6HegLH73jb/9R+aGl939F215yXOBvZaQRgRPoDBNNoIdAKpAjnrK9tJudUus0Yp9+dHdmhL5tNq5ID4IwBcei+seTmymMDOrvfj+yWz+azDMSsaTHcJAPQFh/n2FpG26chjVYUMp3UxiGTrMOoj+k00ASzsU9NphDqaqkLRUQuSsgru3nsD2kQntSnAyt3cfhgcS6M6UYzGe5+EaauNCq5HEznc0Y9lksPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lunn.ch smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ff/w18+f1OseMFSch/LRK3Va+WXFnn0aguc/A3dbxmM=;
- b=kOxaV7hAEdnDkS8hMniP/ArX5D9ksRoXpFnWm3VPhiuROpnGS2Xtvl1X0DLOoFF/9ndyy5CuDOXc7WoIignBS6nMivx0FbdFOp/VFvOMgzpApDtaVmjVamcfg9wu6MKaIcg/7NvapiEkaAZmlavlA+IGkP/AiMLeIA3KD99mRVM=
-Received: from DS7P222CA0028.NAMP222.PROD.OUTLOOK.COM (2603:10b6:8:2e::21) by
- SA1PR12MB8117.namprd12.prod.outlook.com (2603:10b6:806:334::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.27; Fri, 11 Apr
- 2025 18:22:04 +0000
-Received: from DS3PEPF000099DA.namprd04.prod.outlook.com
- (2603:10b6:8:2e:cafe::a8) by DS7P222CA0028.outlook.office365.com
- (2603:10b6:8:2e::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.26 via Frontend Transport; Fri,
- 11 Apr 2025 18:22:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS3PEPF000099DA.mail.protection.outlook.com (10.167.17.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Fri, 11 Apr 2025 18:22:04 +0000
-Received: from driver-dev1.pensando.io (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Apr
- 2025 13:22:00 -0500
-From: Shannon Nelson <shannon.nelson@amd.com>
-To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <brett.creeley@amd.com>, Shannon Nelson <shannon.nelson@amd.com>
-Subject: [PATCH net-next 3/3] ionic: add module eeprom channel data to ionic_if and ethtool
-Date: Fri, 11 Apr 2025 11:21:40 -0700
-Message-ID: <20250411182140.63158-4-shannon.nelson@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250411182140.63158-1-shannon.nelson@amd.com>
-References: <20250411182140.63158-1-shannon.nelson@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5446523236D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 18:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744395722; cv=none; b=kLcVD2qh/WKmbO5jcpv1ofwM+EgjC+jlNnxAymeZSrAbkLXq6PRjDO1z/eH1voLI9uOA2BBVbGP3nqHSxWLf6e6dCLBatKIakcEtxsT0S3sdRI+LMtpK3nrjniybEsa5VWAFdEdubVXOj8gO/Mwvv7gpLaytYnreCeo4pSKARtY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744395722; c=relaxed/simple;
+	bh=M9CFvCcbsx9+0Tzu3qhRdd8Urm02rDrsZiYEXJdnSrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3/RDgfwkt1TSDJQiqKZiRpccIXo+syK3lEmvO8DLjcvVSI29bh330OYg3bt97NCml0vCUt+jcXjbNXF1Q0JqecK03zhoNhKJIPKug0aHuICvQDYOVCgAwZUyPDPmlAxp7fpfS1W+E+O4w5SQ/2TLRhNYsfHoSjfbycutYhYdK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=pc9pudzY; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c5a88b34a6so228442785a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 11:21:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1744395718; x=1745000518; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tKqiMrQYuUOQJDIH+t14CV1L3h37l2QDGVazr53LeIY=;
+        b=pc9pudzYOk4LQa8J3FzDzLLvSN3lRCj0wiI74cM+UQcUFMm5dooxTmXnfZ8eqJWjSr
+         X5oVk9vOa9zmvguRHwxUFihdg0QKiKnh8fwmDLwC+jyINsH32VlYW1bspqdVloLQSVU8
+         dXjIxdY8B05sezSxfxhpxJi2NydHHtXWK5MAosexqD4CIhtPbjzk7PW0MXsoWNvkLS32
+         8AaCtyoVNrT8dMCsusYOC6GbccisDzkvqUuJh71NWtheGzpXZS1eMzBeuSx+6eVG+lW7
+         GdbegjtBp6hTbV2I4sZUZsonaF3DI8a+eKJunkJUBo9LW5QSuGN4Ccmdr+T6nNZn2F/s
+         1m0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744395718; x=1745000518;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tKqiMrQYuUOQJDIH+t14CV1L3h37l2QDGVazr53LeIY=;
+        b=p3aP8kfguveCEctw79XxyIn0jE+huD0UVgPpkbh/wCFMUGsoDpacHQ3SwPx9St3DYP
+         L3O55z56jkknJwGB0e6ORf/Yfh2zGsUf92p1op8lCllGVo5mrYq+eHzphNlxt/s7YYkx
+         t+o1r/OkFfc/EsSE6ksAlW0DT+jBUfmhu5jKaDV7nTEKvU6H0h9pmF9ozgmKNeeRRDmh
+         Bm7DQZKF0/39AGWoVaTMbNnVJeXUG+jEJ2b3FbcqPqhSJHe2PD6FfW8HOW/g5rZ3B+9w
+         4Ncc3yqGRQZEdLPXUvtBuZMtuJCuBzvIdSSgeMh/UbJzoM39GH2eFQfRj0C6QTvRzqaw
+         LIIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYZ1bVqGxL/Ai7JFsJW/FcFoJnReFbgu9afDaym7M8uFi18KlRcd/K2NNmB6j4GVhUk8ZKXQolYgPyGxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHBx1KkpRb2TDWPdoJ8AIbb/CRha8wIbA9yacSp0J8Hzbv+Vzf
+	h0cmGE0S4jHgovUsf1RZv54ZCVf9tYeQwQms1gsPO6BcHaat2FJq7yRr823VNmA=
+X-Gm-Gg: ASbGnctNTPZRMCgtW7iNJdD51WS9Eap4NfTEZHpsWcFEcmlAi+BIJ0LikSygLI7gVaT
+	ECNmHO+I/EL4znKj6+hhgeKkMeITqB13Tk5cztXiUnXXjqwN1kmcWrhu0kncW0Y/TB9tybppMbA
+	ra56yPLWwh/m0zSZBZs14RlowHMKi9iKXpqtF4g8y/8LvUutnZEwbXb4ktAGkgfathxpKcv73Kv
+	MC+whvmk07pmPNn4CbS8polSqK3Ndp6+dD5kUhSHz/Yxw3G0ezLbnUrdStceUZP7LKbhtDVVedB
+	DlQW/1+0TvdWv2a+AZn3f4l1NBM54A9cRPoLLMk=
+X-Google-Smtp-Source: AGHT+IFP5i8asMphTbO//EcXhT7tEAdDoywkvdhj4bCFryDnvhvpiDrafe5VTkjrjelyP+Ckao5TYg==
+X-Received: by 2002:a05:620a:4001:b0:7c5:4278:d15e with SMTP id af79cd13be357-7c7af15287dmr519282685a.33.1744395717985;
+        Fri, 11 Apr 2025 11:21:57 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c7a8969e26sm294494585a.64.2025.04.11.11.21.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Apr 2025 11:21:57 -0700 (PDT)
+Date: Fri, 11 Apr 2025 14:21:56 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Mel Gorman <mgorman@techsingularity.net>, Zi Yan <ziy@nvidia.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] mm: page_alloc: defrag_mode kswapd/kcompactd
+ watermarks
+Message-ID: <20250411182156.GE366747@cmpxchg.org>
+References: <20250313210647.1314586-1-hannes@cmpxchg.org>
+ <20250313210647.1314586-6-hannes@cmpxchg.org>
+ <46f1b2ab-2903-4cde-9e68-e334a0d0df22@suse.cz>
+ <20250411153906.GC366747@cmpxchg.org>
+ <efa6eb69-cff3-421d-94c7-e37a9a1e26f8@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099DA:EE_|SA1PR12MB8117:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e5b43f3-926f-4cc7-c3d7-08dd7925c28b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BGUJ/6roLzch/b41PAYfIXQME8avxkwDDWxNBKSRn41I3627MPQo1av6yuRd?=
- =?us-ascii?Q?v3leGnrrfMx0yiJRNrCrzWnmZjrs3IGEu3Dr02Le6PxgHMAE97gWR2oE6rm4?=
- =?us-ascii?Q?rhnvvZ+xoSnQYx0SvnitjCZ/5FT+T0ONF1YNTNsF3LNV/5GLY11UgXn5E3YW?=
- =?us-ascii?Q?yMfWqwMCiCjdv50wWkT6JV74Kd+1O7BALeLcCDwi/KZNV7gB3xTknRgkVufX?=
- =?us-ascii?Q?ClJYQdsnNeG4ddUP8WgsjbXvFHATnKBxqvUmUy9FY3WJp9dYkphSlklWWb0f?=
- =?us-ascii?Q?iOP6puGs6bHU4afsy5d5ujpR8WVvxx787kxNUOKKfq4SS1qZtI6Qnxin++JI?=
- =?us-ascii?Q?/udxJxpzPkqtpyDj/bZqC/6kHnN8+sq/qt32vLnvpq9l1ts6UG8+xRGj0HdZ?=
- =?us-ascii?Q?Cfvb8MSjIOYwXNUlpZ+pAcX23igSkqqtvTsDMOwHo3EK3380bvtiDS5PoJHe?=
- =?us-ascii?Q?9sdsH8ZPHLRaAJHiA/2TYlUCro1jj+zonKgg3YvlZDkX1T/ClFLq5ue03IYg?=
- =?us-ascii?Q?tI94FdBRaQm+D45+UA99dNlf90TSWOR98gxttPDPaqEe4VBZU4MWIlz46hnI?=
- =?us-ascii?Q?PGsFLbgslBvPGkxIRfS0HoxkS76/sOeoo72Y2vfS4bjyO3qkFomXhztgW7NF?=
- =?us-ascii?Q?UHt/AhKDm5xG5qxvrHyEAdc/OxDW+KW67TrvKPxLlxVmzWww91nzT/LBc6u5?=
- =?us-ascii?Q?msOtuWSJ1H8uWAbdMmlVapKgWa3igdrKIxqTLsHQn4R63BdYf4rZTrlEOycl?=
- =?us-ascii?Q?R9n7BLpWSQ8blZFauTvN34tLNK4SsimvkWTBb3r00I01+u6zFbXWudKycZ/m?=
- =?us-ascii?Q?YVhc8pCKK4wSLiLThDan0pJs2pl/A6pBgVLw7N2stzGvLFz3+x0gmmHwJzso?=
- =?us-ascii?Q?Ru6bqG3g01CVjx5bFU0L+ZZTZ077BgGhgtc/nJAYnQyG4ef+bqxP7qtMjFnH?=
- =?us-ascii?Q?Jgr8BNn37l3Ou5psX8qFtwD9HWyuT1XOOsCEBMWKooFTVVqeQ6Vv9qGSjwsq?=
- =?us-ascii?Q?uKkfj1tKWKpt32AaQraTNFmpDlRnKu4PRtTCfUO3qHmnEqgmCT4+Jtl0xXff?=
- =?us-ascii?Q?mrjF7jGeOyd++qZMgwQDe56sqBhba6/f5Lpt/JR/MlXXv1/nXDb5UWGLZQG1?=
- =?us-ascii?Q?FW4Qm9qfZm3N/1u63eJiz5iwwMSBpeSSo2VqXtNMbPbCRsMmUNCfAqUVOVvS?=
- =?us-ascii?Q?EWDgxIT8C4ZaatLCOvquLMTtlZvAaORcARcJL5Ct62gQ2io7uEf8dRed7Xbx?=
- =?us-ascii?Q?vVjhfMOKfX6HqWwjcmNBt66lknofIX8rfAeBj4RzXLisdVaRn6424Ur5r3j0?=
- =?us-ascii?Q?z++bJVUcunrrd7xfN1Zr4U1UzNKdUQ5PAVYdY+SOkLo8IrMcKMaNNUnMQLDm?=
- =?us-ascii?Q?C85LF2dCXmJwFKSIFFe04e025B64atGOI4dDqSHZB3dEXDNgG6liKtcjfo9u?=
- =?us-ascii?Q?mVlmdi7b1bphA41XgFlqSlkGU6cFslfzCH9eJP7dY6HHzv8ZxMyCwv38iaCA?=
- =?us-ascii?Q?NUXmfOqzLZPMgQsT7OQRyltKWrBDx0wB6Ll7?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 18:22:04.0231
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e5b43f3-926f-4cc7-c3d7-08dd7925c28b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099DA.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8117
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <efa6eb69-cff3-421d-94c7-e37a9a1e26f8@suse.cz>
 
-Make the CMIS module type's page 17 channel data available for
-ethtool to request.  As done previously, carve space for this
-data from the port_info reserved space.
+On Fri, Apr 11, 2025 at 06:51:51PM +0200, Vlastimil Babka wrote:
+> On 4/11/25 17:39, Johannes Weiner wrote:
+> > On Fri, Apr 11, 2025 at 10:19:58AM +0200, Vlastimil Babka wrote:
+> >> On 3/13/25 22:05, Johannes Weiner wrote:
+> >> > @@ -2329,6 +2329,22 @@ static enum compact_result __compact_finished(struct compact_control *cc)
+> >> >  	if (!pageblock_aligned(cc->migrate_pfn))
+> >> >  		return COMPACT_CONTINUE;
+> >> >  
+> >> > +	/*
+> >> > +	 * When defrag_mode is enabled, make kcompactd target
+> >> > +	 * watermarks in whole pageblocks. Because they can be stolen
+> >> > +	 * without polluting, no further fallback checks are needed.
+> >> > +	 */
+> >> > +	if (defrag_mode && !cc->direct_compaction) {
+> >> > +		if (__zone_watermark_ok(cc->zone, cc->order,
+> >> > +					high_wmark_pages(cc->zone),
+> >> > +					cc->highest_zoneidx, cc->alloc_flags,
+> >> > +					zone_page_state(cc->zone,
+> >> > +							NR_FREE_PAGES_BLOCKS)))
+> >> > +			return COMPACT_SUCCESS;
+> >> > +
+> >> > +		return COMPACT_CONTINUE;
+> >> > +	}
+> >> 
+> >> Wonder if this ever succeds in practice. Is high_wmark_pages() even aligned
+> >> to pageblock size? If not, and it's X pageblocks and a half, we will rarely
+> >> have NR_FREE_PAGES_BLOCKS cover all of that? Also concurrent allocations can
+> >> put us below high wmark quickly and then we never satisfy this?
+> > 
+> > The high watermark is not aligned, but why does it have to be? It's a
+> > binary condition: met or not met. Compaction continues until it's met.
+> 
+> What I mean is, kswapd will reclaim until the high watermark, which would be
+> 32.7 blocks, wake up kcompactd [*] but that can only create up to 32 blocks
+> of NR_FREE_PAGES_BLOCKS so it has already lost at that point? (unless
+> there's concurrent freeing pushing it above the high wmark)
 
-In the future, if additional pages are needed, a new firmware
-AdminQ command will be added for accessing random pages.
+Ah, but kswapd also uses the (rounded up) NR_FREE_PAGES_BLOCKS check.
 
-Reviewed-by: Brett Creeley <brett.creeley@amd.com>
-Signed-off-by: Shannon Nelson <shannon.nelson@amd.com>
----
- drivers/net/ethernet/pensando/ionic/ionic_ethtool.c | 3 +++
- drivers/net/ethernet/pensando/ionic/ionic_if.h      | 6 ++++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
+Buckle up...
 
-diff --git a/drivers/net/ethernet/pensando/ionic/ionic_ethtool.c b/drivers/net/ethernet/pensando/ionic/ionic_ethtool.c
-index 25dca4b36bcf..66685cfb3571 100644
---- a/drivers/net/ethernet/pensando/ionic/ionic_ethtool.c
-+++ b/drivers/net/ethernet/pensando/ionic/ionic_ethtool.c
-@@ -1089,6 +1089,9 @@ static int ionic_get_module_eeprom_by_page(struct net_device *netdev,
- 	case 2:
- 		src = &idev->port_info->sprom_page2[page_data->offset - 128];
- 		break;
-+	case 17:
-+		src = &idev->port_info->sprom_page17[page_data->offset - 128];
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-diff --git a/drivers/net/ethernet/pensando/ionic/ionic_if.h b/drivers/net/ethernet/pensando/ionic/ionic_if.h
-index 23218208b711..f1ddbe9994a3 100644
---- a/drivers/net/ethernet/pensando/ionic/ionic_if.h
-+++ b/drivers/net/ethernet/pensando/ionic/ionic_if.h
-@@ -2842,6 +2842,7 @@ union ionic_port_identity {
-  * @sprom_epage:     Extended Transceiver sprom
-  * @sprom_page1:     Extended Transceiver sprom, page 1
-  * @sprom_page2:     Extended Transceiver sprom, page 2
-+ * @sprom_page17:    Extended Transceiver sprom, page 17
-  * @rsvd:            reserved byte(s)
-  * @pb_stats:        uplink pb drop stats
-  */
-@@ -2853,13 +2854,14 @@ struct ionic_port_info {
- 		struct ionic_mgmt_port_stats mgmt_stats;
- 	};
- 	union {
--		u8     sprom_epage[256];
-+		u8     sprom_epage[384];
- 		struct {
- 			u8 sprom_page1[128];
- 			u8 sprom_page2[128];
-+			u8 sprom_page17[128];
- 		};
- 	};
--	u8     rsvd[504];
-+	u8     rsvd[376];
- 
- 	/* pb_stats must start at 2k offset */
- 	struct ionic_port_pb_stats  pb_stats;
--- 
-2.17.1
+> > Of course, similar to kswapd, it might not reach the watermarks and
+> > keep running if there is a continuous stream of allocations consuming
+> > the blocks it's making. Hence the ratio between wakeups & continues.
+> > 
+> > But when demand stops, it'll balance the high mark and quit.
+> 
+> Again, since kcompactd can only defragment free space and not create it, it
+> may be trying in vain?
+> 
+> [*] now when checking the code between kswapd and kcompactd handover, I
+> think I found a another problem?
+> 
+> we have:
+> kswapd_try_to_sleep()
+>   prepare_kswapd_sleep() - needs to succeed for wakeup_kcompactd()
+>    pgdat_balanced() - needs to be true for prepare_kswapd_sleep() to be true
+>     - with defrag_mode we want high watermark of NR_FREE_PAGES_BLOCKS, but
+>       we were only reclaiming until now and didn't wake up kcompactd and
+>       this actually prevents the wake up?
 
+Correct, so as per above, kswapd also does the NR_FREE_PAGES_BLOCKS
+check. At first, at least. So it continues to produce adequate scratch
+space and won't leave compaction high and dry on a watermark it cannot
+meet. They are indeed coordinated in this aspect.
+
+As far as the *handoff* to kcompactd goes, I've been pulling my hair
+over this for a very long time. You're correct about the graph
+above. And actually, this is the case before defrag_mode too: if you
+wake kswapd with, say, an order-8, it will do pgdat_balanced() checks
+against that, seemingly reclaim until the request can succeed, *then*
+wake kcompactd and sleep. WTF?
+
+But kswapd has this:
+
+	/*
+	 * Fragmentation may mean that the system cannot be rebalanced for
+	 * high-order allocations. If twice the allocation size has been
+	 * reclaimed then recheck watermarks only at order-0 to prevent
+	 * excessive reclaim. Assume that a process requested a high-order
+	 * can direct reclaim/compact.
+	 */
+	if (sc->order && sc->nr_reclaimed >= compact_gap(sc->order))
+		sc->order = 0;
+
+Ignore the comment and just consider the code. What it does for higher
+orders (whether defrag_mode is enabled or not), is reclaim a gap for
+the order, ensure order-0 is met (but most likely it is), then enter
+the sleep path - wake kcompactd and wait for more work.
+
+Effectively, as long as there are pending higher-order requests
+looping in the allocator, kswapd does this:
+
+1) reclaim a compaction gap delta
+2) wake kcompactd
+3) goto 1
+
+This pipelining seems to work *very* well in practice, especially when
+there is a large number of concurrent requests.
+
+In the huge allocator original series, I tried to convert kswapd to
+use compaction_suitable() to hand over quicker. However, this ran into
+scaling issues with higher allocation concurrency: maintaining just a
+single, static compact gap when there could be hundreds of allocation
+requests waiting for compaction results falls apart fast.
+
+The current code has it right. The comments might be a bit dated and
+maybe it could use some fine tuning. But generally, as long as there
+are incoming wakeups from the allocator, it makes sense to keep making
+more space for compaction as well.
+
+I think Mel was playing 4d chess with this stuff.
+
+[ I kept direct reclaim/compaction out of this defrag_mode series, but
+  testing suggests the same is likely true for the direct path.
+
+  Direct reclaim bails from compaction_ready() if there is a static
+  compaction gap for that order. But once the gap for a given order is
+  there, you can get a thundering herd of direct compactors storming
+  on this gap, most of which will then fail compaction_suitable().
+
+  A pipeline of "reclaim gap delta, direct compact, retry" seems to
+  make more sense there as well. With adequate checks to prevent
+  excessive reclaim in corner cases of course... ]
 
