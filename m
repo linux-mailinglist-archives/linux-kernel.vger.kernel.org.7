@@ -1,95 +1,140 @@
-Return-Path: <linux-kernel+bounces-600590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92709A861C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:25:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E042EA861D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE023AC5ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:24:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30EFD189900A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9384F20FA9C;
-	Fri, 11 Apr 2025 15:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDO88O0k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7675C20FA90;
+	Fri, 11 Apr 2025 15:27:29 +0000 (UTC)
+Received: from alt2.a-painless.mh.aa.net.uk (alt2.a-painless.mh.aa.net.uk [81.187.30.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DB41F5433;
-	Fri, 11 Apr 2025 15:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A3D1F91F6;
+	Fri, 11 Apr 2025 15:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.187.30.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744385070; cv=none; b=Jg8gpCNBlpt5VL7yTLvyhJd1cMFr0Vhmy33qrjnLaqlopFiYHcKH69NB5b1v+B8YAqBDhp45WvJVRdh5/dEIQhKZOF+uLwcGHZ17WnrDAqGxszpjDkxSMyBKFqbmfobw8vV6I6uFKcTTkzl2QsjHemIE+m6KTUfdt3QHjMcqIt4=
+	t=1744385249; cv=none; b=HQNNppIU6WWLAC4LmYohJaGzygrQ5NKvyL7EAmvXIC226LCqWgBu0m23ZIBTdG23vIQKkFoL4rBZI5Vp+EaLFde+prR/Pt9MB0QkDRGNAVMaB2lJ+LayLvfqb7Ig9e2Sy/21QYIToMSvlbhiQlo0pZF1+OL/dSCmntc/ymoZBac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744385070; c=relaxed/simple;
-	bh=cTCtE7M2VM4FPzXtByWa4pTLyYxPE1Z31+L/QQw6RZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QYXuLOcKJNEL+l37JZjXWYUB6M39Pae+RxSloDPWlicmQmoNBFv2TsCvTbpz+Lz0+27mogfyUewe4baSCGMXms2/xLuAvQExjHbxmGaTBVsljc7Bj/CXXyuSLwONVOxIj9VgORJVcSiZXc2VcguaCIL43FRXpUxwdf09RIG8Jsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDO88O0k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 284B4C4CEE2;
-	Fri, 11 Apr 2025 15:24:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744385069;
-	bh=cTCtE7M2VM4FPzXtByWa4pTLyYxPE1Z31+L/QQw6RZ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WDO88O0kc0oPCPnbT1RIM6DPBqiYzsiXPXA4JBnnNPgV2b3KND7Cl3QRTxC1fZQc+
-	 fuN5am5HeMkTUl5gLe3U5yVCRxLZHCCWLm25cy6IWtS9sjhGejVoHgsjyWP8A05IFC
-	 Xo+Xfckq2xXOvxalh7jnnkc5sZIZsjYOy71HG76O5SopX3oQS0Y5vqYIduUFQ92h3l
-	 ARV1WWLIzQHd0KIhDar9+CD8ftR12r++YKaojl93gD0aeGvykhWCmHLeKpi1g56OhO
-	 opdB4Q29VkPmYT9pJVduWyKXJ9VtrIp1Kt1ZQlpW1PavKatDCTpTS5Rl4YA5jbh8ag
-	 qwLbW4DMD6otQ==
-Date: Fri, 11 Apr 2025 10:24:28 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org,
-	Bitterblue Smith <rtl8821cerfe2@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jes Sorensen <Jes.Sorensen@gmail.com>, devicetree@vger.kernel.org,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-wireless@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: net: wireless: Add Realtek
- RTL8188ETV USB WiFi
-Message-ID: <174438506750.3274609.16595551844546804224.robh@kernel.org>
-References: <20250408-rtl-onboard-v2-0-0b6730b90e31@posteo.net>
- <20250408-rtl-onboard-v2-1-0b6730b90e31@posteo.net>
+	s=arc-20240116; t=1744385249; c=relaxed/simple;
+	bh=WpttMGEFACYtJqJnUwkPCWw+acWMM2hKAWZzdH4zkVE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X9yvqDIFG8+5yPNTUZNTq4Ul7tYE4/h+J6FPAEBtxgOb3v+0nBLFU+j6YjS334ZEwOo9BVtEla7cGI/6awENJRF+vLkT8XXfw3sECJwfInxyAkAneysgyrKN01vIKu03u+cmP6ApVbvzWfUfD54AwAG2X8hpvZU1h+YtYxmtwH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pileofstuff.org; spf=pass smtp.mailfrom=pileofstuff.org; arc=none smtp.client-ip=81.187.30.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pileofstuff.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pileofstuff.org
+Received: from 5.d.5.f.e.3.5.0.9.5.6.b.1.c.c.2.0.5.8.0.9.1.8.0.0.b.8.0.1.0.0.2.ip6.arpa ([2001:8b0:819:850:2cc1:b659:53e:f5d5] helo=andrews-2024-laptop.lan)
+	by painless-a.thn.aa.net.uk with esmtp (Exim 4.96)
+	(envelope-from <kernel.org@pileofstuff.org>)
+	id 1u3GHp-001I64-17;
+	Fri, 11 Apr 2025 16:27:21 +0100
+From: Andrew Sayers <kernel.org@pileofstuff.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Len Brown <len.brown@intel.com>,
+	Todd E Brandt <todd.e.brandt@linux.intel.com>
+Cc: Andrew Sayers <kernel.org@pileofstuff.org>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] PM: Use two lines for "Restarting..." / "done" messages
+Date: Fri, 11 Apr 2025 16:25:04 +0100
+Message-ID: <20250411152632.2806038-1-kernel.org@pileofstuff.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250408-rtl-onboard-v2-1-0b6730b90e31@posteo.net>
 
+Other messages are occasionally printed between these two, for example:
 
-On Tue, 08 Apr 2025 21:13:12 +0200, J. Neuschäfer wrote:
-> This is an on-board USB device that requires a 3.3V supply.
-> 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> ---
-> 
-> V2:
-> - Use my current email address
-> - Remove TODO comment
-> - Rename schema file to realtek,rtl8188e.yaml. This is the same
->   granularity at which the rtl8xxxu driver is split into files, making
->   it unnecessary to rename the schema file if another similar chip is added
->   in the future.
-> - Change license identifier from (GPL-2.0 OR BSD-2-Clause) to (GPL-2.0-only
->   OR BSD-2-Clause) because GPL-2.0 is ambiguous
-> ---
->  .../bindings/net/wireless/realtek,rtl8188e.yaml    | 50 ++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
-> 
+    [203104.106534] Restarting tasks ...
+    [203104.106559] mei_hdcp 0000:00:16.0-b638ab7e-94e2-4ea2-a552-d1c54b627f04: bound 0000:00:02.0 (ops i915_hdcp_ops [i915])
+    [203104.112354] done.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+This seems to be a timing issue, seen in two of the eleven
+hibernation exits in my current `dmesg` output.
+
+When printed on its own, the "done" message has the default log level.
+This makes the output of `dmesg --level=warn` quite misleading.
+
+Add enough context for the "done" messages to make sense on their own,
+and use the same log level for all messages.
+
+Change the messages to "<event>..." / "Done <event>.", unlike a449dfbfc089
+which uses "<event>..." / "<event> completed.".  Front-loading the unique
+part of the message makes it easier to scan the log, and reduces ambiguity
+for users who aren't confident in their English comprehension.
+
+Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
+Signed-off-by: Andrew Sayers <kernel.org@pileofstuff.org>
+---
+v1 -> v2: mentioned a449dfbfc089 in commit message (thanks Lucas De Marchi)
+
+ kernel/power/process.c             | 8 ++++----
+ tools/power/pm-graph/sleepgraph.py | 3 ++-
+ 2 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/power/process.c b/kernel/power/process.c
+index 66ac067d9ae6..4c674282df03 100644
+--- a/kernel/power/process.c
++++ b/kernel/power/process.c
+@@ -189,7 +189,7 @@ void thaw_processes(void)
+ 
+ 	oom_killer_enable();
+ 
+-	pr_info("Restarting tasks ... ");
++	pr_info("Restarting tasks ...\n");
+ 
+ 	__usermodehelper_set_disable_depth(UMH_FREEZING);
+ 	thaw_workqueues();
+@@ -208,7 +208,7 @@ void thaw_processes(void)
+ 	usermodehelper_enable();
+ 
+ 	schedule();
+-	pr_cont("done.\n");
++	pr_info("Done restarting tasks.\n");
+ 	trace_suspend_resume(TPS("thaw_processes"), 0, false);
+ }
+ 
+@@ -217,7 +217,7 @@ void thaw_kernel_threads(void)
+ 	struct task_struct *g, *p;
+ 
+ 	pm_nosig_freezing = false;
+-	pr_info("Restarting kernel threads ... ");
++	pr_info("Restarting kernel threads ...\n");
+ 
+ 	thaw_workqueues();
+ 
+@@ -229,5 +229,5 @@ void thaw_kernel_threads(void)
+ 	read_unlock(&tasklist_lock);
+ 
+ 	schedule();
+-	pr_cont("done.\n");
++	pr_info("Done restarting kernel threads.\n");
+ }
+diff --git a/tools/power/pm-graph/sleepgraph.py b/tools/power/pm-graph/sleepgraph.py
+index e2261f33a082..1555b51a7d55 100755
+--- a/tools/power/pm-graph/sleepgraph.py
++++ b/tools/power/pm-graph/sleepgraph.py
+@@ -4017,7 +4017,8 @@ def parseKernelLog(data):
+ 							'PM: early restore of devices complete after.*'],
+ 		'resume_complete': ['PM: resume of devices complete after.*',
+ 							'PM: restore of devices complete after.*'],
+-		    'post_resume': [r'.*Restarting tasks \.\.\..*'],
++		    'post_resume': [r'.*Restarting tasks \.\.\..*',
++							'Done restarting tasks.*'],
+ 	}
+ 
+ 	# action table (expected events that occur and show up in dmesg)
+-- 
+2.49.0
 
 
