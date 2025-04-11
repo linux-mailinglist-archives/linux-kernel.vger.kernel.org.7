@@ -1,88 +1,124 @@
-Return-Path: <linux-kernel+bounces-600629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2231A86257
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:52:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BA9A86261
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 17:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 829373AAC11
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:51:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0631F4C11D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 15:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CEC211A15;
-	Fri, 11 Apr 2025 15:52:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADC62135C3;
+	Fri, 11 Apr 2025 15:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbhzcTJ/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9BE20FA90
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 15:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B8B1FDA;
+	Fri, 11 Apr 2025 15:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744386726; cv=none; b=t640rZ81Ytv8zk6etUYm+l6pwOpTKIcmCV3xT8jE504Mj7O8GGR0LeQYQGmY4x74ut+JLBENiJpd7CyxdTR0GuDSyhM0qsFCup+w3aXzJ1znl2OVnyHMDVh8bqnkim/QjAvfcVy7FOCgEIZ4S2lJlW3AsMrgflu3Wcd/+Uvqs74=
+	t=1744386808; cv=none; b=NmEYmo0+ybqEGwIkQqcitGRQlCNLysQxk2diM9r73EXo8Uv0aV8QD8lgPh7WLyrCy9+moKf0xGYd2Iz0LUVeanEBbD2VTvFZpU+Wu6rQMFmfZL7n4YWJd857TQJScwp0eaFRP29tY31ObubgK7WS+pYqJqitVGR1gtnXG9VBsUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744386726; c=relaxed/simple;
-	bh=Cm1S8n4HvXkNg3M7+x98S/klYnfkLdVLWBGBf4WpcLo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=e5K6WlLi5ZsDuVL1U4OKHgv29DItVy/hlKKV7bc2te9BIuZyk2MQN6zYrnzAhZ/9WuCNIxFapKuM8eFP1dwuP/HK8HVZ7HoZnggKsjP7pe5lvqoX+GFZp5st12Ycx8RVcAVZGG/k4aoEtIyLu8gdgw4C6/nFanTeYnDiuMXlOho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d4578fbaf4so43956455ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 08:52:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744386724; x=1744991524;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j9Rm20tgPIVlasLY5+mlUVDiqqosCGRBLcfWz2QKiWw=;
-        b=fipKXvL26XVejh95D8z2jUHVEyy/2NzaNufffyZYcgTB8RkunczijajBD8dso9j+eK
-         TVeQW7UXJ0kUjZ0vsj3mdz8wqsu1PjOB6pOTC/ipORUZ0HJN1MObYJgn5GD6kiI6ZZzJ
-         ci4xmt1vfL8oOBAvkYWaMncZTnH0wiSi5BH+juf0GdcFymBEOoNgEHjA8TkPbmFYWkcg
-         6i+Uk70qMzVQZE6CQ5P7tZ5Uy4NuTMV/YbW+rK21oWpTZXIgvugPHYR/CtPqORq+6r37
-         xj80zp7yv0wclj5iTGDc0B9xQ3b5MEZoYdY2BxmKxrSLF7+0jZVCWsIomKD9MseduP0o
-         /4jg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhy2VqeCFLrgTRSSLaN2CseaO3Uhbk7T+m3M4DZpCzd2tFa8AJ9f2sywpxWrxcMiIHvBpmpnNFrTU05KA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfOAzOie3c801GkE5FPZKrCornfeg9SRkzxEy0NX5DzB80HOUW
-	batrmCkBy+msGOSbYv3Is2fq1kqLoldJbAzCsiqiF5MrwU3bTc3c0n2nDXWPlAOWdlsL4yC/Awk
-	XwIf69bQKtxV1wGJEp2cAuT/XTM1N2YTzY4PkLVlw1J+LUixh8t4OLYc=
-X-Google-Smtp-Source: AGHT+IGl5gBtzIhGcLfzPKV03qwQ0UJaaZQFsriMvDyR9hHnL1GiKpgBiHaW2VNixnElsnhBjWSXs8jCrtNIC+BjcGXAyHE412g6
+	s=arc-20240116; t=1744386808; c=relaxed/simple;
+	bh=WpLLjD7bOW1+fhZZ7vlzZrNDNsR7j0cmT3HhyvWs3dE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BO5kQhy2sfONziC7o0XSu4uUtwvQqu2MgNacgeTHz1lT1VRjCGcA2i8c0onwr/i9KyuSRt1eQm58+6KD8UHiIbc3748CRe1Rmq5wIzytntzAHLq8mOWiLLsxCQxb45pPMxWbWZFb8AxYt+sZoAP90+fT/yEh6Owa+jTRPn2oSB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CbhzcTJ/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84F5CC4CEE2;
+	Fri, 11 Apr 2025 15:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744386808;
+	bh=WpLLjD7bOW1+fhZZ7vlzZrNDNsR7j0cmT3HhyvWs3dE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CbhzcTJ/RcGu4IXToUC3ZYA40ZZJtE9BKTx9YhPlHKNMv9K3T70fHI/McAFA9hPHY
+	 cg6juXNyihAA4hVHHcsfqtlhAC6GMkMOkKKJRszHAeHE+zi3M0ilQPCTQ2KGv2L/b9
+	 LBY8ggDrYbuhadgyBz7t1e7lZ+PYdoD2xvFpkwJJe76TbWVHAcTp4aROeJPnGUlg4x
+	 xtVfg/CA1u0/3qj04YOkSocRlsTIZIn8SaHwlbjWpf7SREQsWNTgQmU5MlPzwtCP1t
+	 GbtbU27P5qU2qVnIZXt2pMVpNfEhFE/zJBg8+nGh3rY/KwE2zw23P8eDPqQBia2DCN
+	 DWZDUwWqjkErQ==
+Date: Fri, 11 Apr 2025 16:53:23 +0100
+From: Simon Horman <horms@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Russell King <rmk+kernel@armlinux.org.uk>
+Subject: Re: [PATCH net-next v2 2/2] net: phy: Add Marvell PHY PTP support
+Message-ID: <20250411155323.GK395307@horms.kernel.org>
+References: <20250407-feature_marvell_ptp-v2-0-a297d3214846@bootlin.com>
+ <20250407-feature_marvell_ptp-v2-2-a297d3214846@bootlin.com>
+ <20250408154934.GZ395307@horms.kernel.org>
+ <20250409100757.07b00067@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b25:b0:3d4:244b:db1d with SMTP id
- e9e14a558f8ab-3d7ec2033cbmr31096595ab.6.1744386723815; Fri, 11 Apr 2025
- 08:52:03 -0700 (PDT)
-Date: Fri, 11 Apr 2025 08:52:03 -0700
-In-Reply-To: <m2o6x2r9s1.fsf@posteo.net>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67f93aa3.050a0220.2c5fcf.0000.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] general protection fault in bch2_snapshot_tree_oldest_subvol
-From: syzbot <syzbot+baee8591f336cab0958b@syzkaller.appspotmail.com>
-To: charmitro@posteo.net, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250409100757.07b00067@kmaincent-XPS-13-7390>
 
-Hello,
+On Wed, Apr 09, 2025 at 10:07:57AM +0200, Kory Maincent wrote:
+> On Tue, 8 Apr 2025 16:49:34 +0100
+> Simon Horman <horms@kernel.org> wrote:
+> 
+> > On Mon, Apr 07, 2025 at 04:03:01PM +0200, Kory Maincent wrote:
+> > > From: Russell King <rmk+kernel@armlinux.org.uk>
+> > > 
+> > > From: Russell King <rmk+kernel@armlinux.org.uk>
+> > > 
+> > > Add PTP basic support for Marvell 88E151x PHYs. These PHYs support
+> > > timestamping the egress and ingress of packets, but does not support
+> > > any packet modification.
+> > > 
+> > > The PHYs support hardware pins for providing an external clock for the
+> > > TAI counter, and a separate pin that can be used for event capture or
+> > > generation of a trigger (either a pulse or periodic).  This code does
+> > > not support either of these modes.
+> > > 
+> > > The driver takes inspiration from the Marvell 88E6xxx DSA and DP83640
+> > > drivers.  The hardware is very similar to the implementation found in
+> > > the 88E6xxx DSA driver, but the access methods are very different,
+> > > although it may be possible to create a library that both can use
+> > > along with accessor functions.
+> > > 
+> > > Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> > > 
+> > > Add support for interruption.
+> > > Fix L2 PTP encapsulation frame detection.
+> > > Fix first PTP timestamp being dropped.
+> > > Fix Kconfig to depends on MARVELL_PHY.
+> > > Update comments to use kdoc.
+> > > 
+> > > Co-developed-by: Kory Maincent <kory.maincent@bootlin.com>
+> > > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>  
+> > 
+> > Hi Kory,
+> > 
+> > Some minor feedback from my side.
+> > 
+> > > ---
+> > > 
+> > > Russell I don't know which email I should use, so I keep your old SOB.  
+> > 
+> > Russell's SOB seems to be missing.
+> 
+> It is, 5 lines higher, but maybe you prefer to have them all together. 
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-unregister_netdevice: waiting for DEV to become free
+This thread seems to have subsequently gone elsewhere.
+But, FTR, yes, I would prefer all tags together.
 
-unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
-
-
-Tested on:
-
-commit:         900241a5 Merge tag 'drm-fixes-2025-04-11-1' of https:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1314c870580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fb8650d88e9fb80f
-dashboard link: https://syzkaller.appspot.com/bug?extid=baee8591f336cab0958b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16f08870580000
-
+...
 
