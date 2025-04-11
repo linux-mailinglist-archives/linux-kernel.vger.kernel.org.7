@@ -1,183 +1,139 @@
-Return-Path: <linux-kernel+bounces-599822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-599824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38231A85840
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:43:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67AA3A8583F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 11:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6334E7B12AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:41:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 613634C7ACD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 09:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5104290BC0;
-	Fri, 11 Apr 2025 09:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6702989A6;
+	Fri, 11 Apr 2025 09:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QN2LPWmF"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fCqsjHb0"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CC727CB39
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 09:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9826AA7;
+	Fri, 11 Apr 2025 09:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744364550; cv=none; b=IskA3PHnaEX871r0DsmctIGZiH/0khCfqrfPSmiDpRQw5NnhBWuv5sFliUYVhBI70DlrLhD3k3cv/91anc1I+tbrJBjBMBPUFAI4EkXv9DDHK5dfUOivHzMEZKKB/15KKVrX35NcTxxgsI/xX7fRD7brGkLaON8Ko3tMp25YAaY=
+	t=1744364601; cv=none; b=A44/jtA9EKZ4vU0nn/cWjhhvmHIjOLXh+0gnoZita4MDqV5j2b9TTINTVpczicTIuzKWoKKxiNrebMuK6dNdsJQNyDLccRsdw9sTerGHc3sxgU5TLcd1UTHzMChjuTITphicvtSuY73mlgdboQYbtHDLmffYWJpfjJ8A5bG+pDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744364550; c=relaxed/simple;
-	bh=5a8IqEg0B6tgmmZdTPBgyrQ7BtOyZybuO/7ITkZqZ7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jrE0P5NKqlH9kxnpHYLIYg1f2zwALT+obDA3PmOfPM5lHCg6lerKEdhaF5+VaqVinlUwllhjdmkQ5PB1S4aSlVqb1TKLyidJF7erwB9XDgMWYlqzBWHLd3/p03d7ftViJhi7daXbFj9WpmvEDVpTN8aAJnfJdeP+svtrG1z44lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QN2LPWmF; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso18817345e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 02:42:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744364546; x=1744969346; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ik7Kk0gWH7p5aFOmLTfUiCa4UM2teSE9U/Cy13SbPPs=;
-        b=QN2LPWmFByls8K+O82p4VJ7r/5raZrrUOJTCX9sTaljHtVfMatmGt+wH8g/1tHg1wW
-         Vp12R71YakENszD+MFTB5LJE2zXch3zrdZ6j6dnX+0MIJyKLcjNsdKneUpcS7RE0ToDF
-         ByreljEBy5Y4zAs74bRMzEEaBDS56O11WrWojcON/GaOCflF+WLjidO1zCIm134ze2Nv
-         0+aainDUuaXUPnKXQ0WmeIVy4XWGZe1ObDY6h5nG3CwslJVwTL+tfVKHM8XHtMEfwGj4
-         LDh2HOc2yHozAO9HCEgn6Yz8UDhSbvQ0rWMX+CVqNAxLkAmlJxEnHNX+hWgLgVlOqg6U
-         nF/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744364546; x=1744969346;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ik7Kk0gWH7p5aFOmLTfUiCa4UM2teSE9U/Cy13SbPPs=;
-        b=rvfv0j7VscdM710q1YtkiU3U9tfWCuKbLKG/Z0HwHVOhKo/4PrF3fJsu2/Vs9x4NX2
-         RFI3L7dUdGwWH+e1YZWU9flj3M1sHWfUNyLrVVSViFQYyEFs+7XvDBE9GbKURQ72nwn+
-         1Ccbt9zTxIxRboqxSrXP+hJkDX83Q8oAzdNqAAz/Qg4BUCF4AbI06EqBQFbv2TVyXCW+
-         tZgSKhv/tL4nuUyCOpUVxvcF3ZVM0D943ofT1JAlcZWQe/lTqYgnST1Pn48BhKojGkVY
-         jEqfiPf4EpBxECQAu5SEDcxdRzfFz9jwcksNhvfeMIjO46XfC/+tv4ONvzOL4zg0qAuW
-         d7jw==
-X-Forwarded-Encrypted: i=1; AJvYcCWx7Or9nGtRkvdoJ1H7BIHu3MY0aVlMx4YeaRwktrB5dG9btfJYRU+qtWUUxuOvoHSa0dVx1cRvA6Sil5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr4986Axq+/SImcW9KpMsYSAyS4fYYv8boFOx23GBDk879Fn2q
-	ThcZdeYEtLU36ZLjYvd7YfyeMWBgn/odRmvJQ0DIg8VutpO3KZ60f0YXSDP80DM=
-X-Gm-Gg: ASbGncukPtje3EFJG4I814sWZx7hgI/IG2rCcrOhpptK4vuvxAdJN2TBWxrm9NHKi2q
-	Mu2ptLdU0AGY9RRM24URszeYhQmgLOll4qKyzpDKxUuuRD+qPl+bOTcsuioHwuyWXLj2hYBo5Wn
-	EHo21nMcmhX5cXhgFucgpfZoKm3Z/k8mGzfoCNT4FsEOZI+S6fKfAQ9HZWeags+DCZ0cwiTMWC/
-	6osf1EmB8EH+notUUqMlnczphzKE2Du1CP11sJaWhVFJ7us2lOP/U1qtxhy7dzTEGodjHHbrJ/p
-	DJbjeuGxIep2qpj0QtgeDaIbTCU4DVSnplxkGQB07QlO9nA2kJ2dyg==
-X-Google-Smtp-Source: AGHT+IHb/xrWOL3vZlZGhOnz2Titrw4KhO37wLQq3stAmL3/f48u2dHGiQ064W6roqwZ86N5mx3wNA==
-X-Received: by 2002:a05:6000:4308:b0:39b:fa24:950a with SMTP id ffacd0b85a97d-39eaaec7752mr1445051f8f.36.1744364545957;
-        Fri, 11 Apr 2025 02:42:25 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43cc72sm1508427f8f.67.2025.04.11.02.42.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 02:42:25 -0700 (PDT)
-Date: Fri, 11 Apr 2025 11:42:23 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Remo Senekowitsch <remo@buenzli.dev>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: Exporting functions from vsprintf.c for Rust
-Message-ID: <Z_jj_8vvmWY-WuTU@pathway.suse.cz>
-References: <D931ZH9KRY2E.2D7HN6QWELGFJ@buenzli.dev>
+	s=arc-20240116; t=1744364601; c=relaxed/simple;
+	bh=ZME8Tn9ZexvrhNDvWXDyemzAGyiSUHmYYEAeyQD0j+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GU/Kr8u9cEbqtCKJ3F7Ba1EF/srbF6bGaARQVsafxl7D9Z0k4Dgc1S5kd7U63+QeoOfSX00hFg4jN4zlxj9NtSSCDfD/1RgYDt2h+7gAz2mOwrDo7mRE1yax6n6zn458P4o6Bt+frv7bo4mW8XK9DoUs7e0IgJnY4uZD2g+cZH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fCqsjHb0; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E97F54396B;
+	Fri, 11 Apr 2025 09:43:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744364595;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MFWGjDZpJQKWyumVjSVusoS+pfr9Jcz83VYW30MbCNo=;
+	b=fCqsjHb0p3H4RhP2fTJ1bBk411wyD/V8beCqlH9flF+GIlda+loLy/ToVzo0eLyE2rmduW
+	TqBjU9eybhdcwg31kAp/hGSZXNdYp236DeifyS9oyJKJWhwMEYnjfKJyXAsfa56+edTC4m
+	PldMctDHy4YQKJk5YMaZy2f4Q1igGm710fWax1dmQUTp0pCxGVdgl9lnNDS7o/w+3oRbwr
+	mwXglju99zvQyVD22Zt0fpXwEiSIJ4iyTxFU6npEPIhVm/I6crKverLBbuEKgXNcTnmOU/
+	uMOMABjYC0SUV/TxOEek1jTAiz7fAEQG7zj1myORsdtDVZFXRbfifvDxBz5Eqg==
+Date: Fri, 11 Apr 2025 11:43:11 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, kernel@pengutronix.de,
+ linux-doc@vger.kernel.org, netdev@vger.kernel.org, Liam Girdwood
+ <lgirdwood@gmail.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Dent Project <dentproject@linuxfoundation.org>, Mark Brown
+ <broonie@kernel.org>, Kyle Swenson <kyle.swenson@est.tech>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v7 07/13] net: pse-pd: Add support for budget
+ evaluation strategies
+Message-ID: <20250411114311.22c869e9@kmaincent-XPS-13-7390>
+In-Reply-To: <Z_e3chchKI5j6Ryv@pengutronix.de>
+References: <20250408-feature_poe_port_prio-v7-0-9f5fc9e329cd@bootlin.com>
+	<20250408-feature_poe_port_prio-v7-7-9f5fc9e329cd@bootlin.com>
+	<Z_e3chchKI5j6Ryv@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D931ZH9KRY2E.2D7HN6QWELGFJ@buenzli.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvuddugeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudelmeekheekjeemjedutddtmegsvgdvjeemvggstgegmegvtgdvfhemvghfvgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkeehkeejmeejuddttdemsggvvdejmegvsggtgeemvggtvdhfmegvfhgvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdejpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvv
+ ghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhm
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Adding few more people and lkml into Cc.
+On Thu, 10 Apr 2025 14:20:02 +0200
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-On Thu 2025-04-10 17:10:57, Remo Senekowitsch wrote:
-> Hi
-> 
-> I need to print the full path of a fwnode in Rust. One approach is to
-> export it, as shown below. Is this acceptable to you in principle?
-> 
-> There are also some intermediary solutions like not providing a header
-> and or prefixing `__`.
-> 
-> Thanks,
-> Remo
-> 
-> ---
-> diff --git a/include/linux/vsprintf.h b/include/linux/vsprintf.h
-> new file mode 100644
-> index 000000000..b37b11868
-> --- /dev/null
-> +++ b/include/linux/vsprintf.h
+> Hi,
+>=20
+> looks like i started to review it and forgot to send it. Sorry :)
 
-Just for record. Steven suggested to use include/linux/sprintf.h
-instead because it was already used for another vsprintf APIs.
+Hello Oleksij,
 
-> @@ -0,0 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +char *fwnode_full_name_string(struct fwnode_handle *fwnode, char *buf,
-> +			      char *end);
+Thanks for you review and the naming fixes!
 
-Honestly, I do not have a good feeling about exporting the internal
-vsprintf() functions. They have a very specific semantic.
+> On Tue, Apr 08, 2025 at 04:32:16PM +0200, Kory Maincent wrote:
+> > From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> >=20
+> > This patch introduces the ability to configure the PSE PI budget evalua=
+tion
+> > strategies. Budget evaluation strategies is utilized by PSE controllers=
+ to
+> > determine which ports to turn off first in scenarios such as power budg=
+et
+> > exceedance.
+> >=20
+> > The pis_prio_max value is used to define the maximum priority level
+> > supported by the controller. Both the current priority and the maximum
+> > priority are exposed to the user through the pse_ethtool_get_status cal=
+l.
+> > +/**
+> > + * _pse_pi_enable_sw_pw_ctrl - Enable PSE PI in case of software power
+> > control.
+> > + *			       Assumes the PSE lock has been acquired
+> > + * @pcdev: a pointer to the PSE
+> > + * @id: index of the PSE control
+> > + * @extack: extack for error reporting
+> > + *
+> > + * Return: 0 on success and failure value on error
+> > + */
+> > +static int _pse_pi_enable_sw_pw_ctrl(struct pse_controller_dev *pcdev,=
+ int
+> > id,
+> > +				     struct netlink_ext_ack *extack)
+> > +{ =20
+>=20
+> Is it for "admin enable" or "start power delivery"?
 
-Especially, they return pointer to the next-to-write character.
-And it might be even beyond the given *end pointer. It is because, for
-example, vsnprintf() returns the number of characters which would
-have been written to the buffer when it was big enough.
+Power delivery.=20
 
-Instead, I suggest to create a wrapper which would have a sane
-semantic and call scnprintf() internally. Something like:
+I will rename it to: _pse_pi_delivery_power_sw_pw_ctrl
 
-int fwnode_full_name_to_string(char *buf, size_t size,
-			       struct fwnode_handle *fwnode)
-{
-	return scnprintf(buf, size, "%pfwf", fwnode);
-}
-
-I am just not sure where to put it. It might be vsprintf.c.
-But I think that a better place would be drivers/base/property.c.
-For example, I see a "similar" fwnode_property_match_string()
-already there.
-
-Best Regards,
-Petr
-
-
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index 56fe96319..3b4d0065a 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -43,6 +43,7 @@
->  #include <linux/compiler.h>
->  #include <linux/property.h>
->  #include <linux/notifier.h>
-> +#include <linux/vsprintf.h>
->  #ifdef CONFIG_BLOCK
->  #include <linux/blkdev.h>
->  #endif
-> @@ -2103,7 +2104,7 @@ char *flags_string(char *buf, char *end, void *flags_ptr,
->  	return format_flags(buf, end, flags, names);
->  }
->  
-> -static noinline_for_stack
-> +noinline_for_stack
->  char *fwnode_full_name_string(struct fwnode_handle *fwnode, char *buf,
->  			      char *end)
->  {
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index 4bd02abd2..24a565ffd 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -38,6 +38,7 @@
->  #include <linux/security.h>
->  #include <linux/slab.h>
->  #include <linux/tracepoint.h>
-> +#include <linux/vsprintf.h>
->  #include <linux/wait.h>
->  #include <linux/workqueue.h>
->  #include <trace/events/rust_sample.h>
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
