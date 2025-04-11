@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-600223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-600232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C34A85D37
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:38:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039D9A85D47
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 14:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D566A3A1C2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:37:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6C4E7B8536
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 12:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5012BD58C;
-	Fri, 11 Apr 2025 12:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FE02C375D;
+	Fri, 11 Apr 2025 12:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RArPY3MD"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VOhTDv66"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F15C29C32A
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 12:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECA22BEC3B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 12:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744375006; cv=none; b=XKr+74fkLqgpIkeruL+VHfBN3i2//1v1dhTGJLNAtnkK1zQ+KCO9tamD6RzRIkA8eNcI/jvMH3u1mqVFB3DCiDcEhbjq+ypIwKtwdSiB87g6CJ58boWQGU1mswqD2dvHJap7muKZ5yuXxOyiWqrH4vub3z/6otvpw569nw5vK5w=
+	t=1744375013; cv=none; b=MN4yJSEfqICMXcp/VkYpqc8+aRUJvOH3pfhnL46IbL0u+dI+AC0uI6kFbduYYV6buKCnIyzDDH1R+HUM/kiUHhdfV+g96BnZfhgM3ku7cK7ULwDlvqxKBLZsmcXtkOS6bNUXmY+yVmtVSAZBI1ukqXF0zwu7BunLapg1YCxhe8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744375006; c=relaxed/simple;
-	bh=vGUfgBYd/nqdiWhakMrxzcEEIqB0t/sqp/diq7LMGlc=;
+	s=arc-20240116; t=1744375013; c=relaxed/simple;
+	bh=trGJ+81hvgNk61JAyUi09epqF3tLwjd5H58jiE8ssKI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FCA3RParGuVDy8W/+svjUIGsYloGCh6Fzz6iSbAdKZPfsnWKg8CEt6REB4dcGF/2BolfLdMOKAGQWRv6g0rlAwatplxcYe1TK2+xYmEAQWwtVvqvd7+adzV4ymr6L7OGp8gsaPhCirgFy/BydMtS26DDzHQ2nmAS3MFguhl0XT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RArPY3MD; arc=none smtp.client-ip=209.85.210.172
+	 In-Reply-To:To:Cc; b=s39kCVPJS1qaVy4aGDBa29XNxLwTJlEd9Uo5rO/7P6oLOTwTw9DfbMcSuKW7JqERivyFacqLjacgmDEhNEDsCg5OzI9CRfl4EhqGYGFEwAWN25PLkP7NOl/V4NZjKkrDVEgnnq/OhoZ+WwGUuLfRVEJo9mkRQRF0iFqDN680ud0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VOhTDv66; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7376dd56f8fso2302497b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 05:36:44 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7369ce5d323so1648482b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 05:36:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744375003; x=1744979803; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744375011; x=1744979811; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wWvOtZ2Ij96tOi1o1hUr0b9qGVWu80vcBedKzsseg9k=;
-        b=RArPY3MDH2P26+1MurZ2G5433n6JbjHnVEzDtnNEeQYlFFlPXzDtA4R4c70CY0+hGg
-         3X01IAK5Y97ijCubaueulHJk1a1SyMIgniFtJMeWdXq4pKx+NPCnMjyh/y2Do0DfTbYt
-         6iaPBvF3yU4KPk1Pq1WzbZANLd1DszyioRPVpEPD4a03aU4R61OLyGeitY876utK2F/o
-         XsDTsucntkTkWcGbE4TbKBFBcOQDFX1584oT/Ebb6EkdfbeudlQePbvC/lU7SknTJXXq
-         jbQbOsMG8+MHnhIs4TiUrxv2SP+pROB3C3usccOHUdvIQDsBTNak9IFfmLsBi+zqY3Su
-         3yaQ==
+        bh=wSHsj9E7pEVKPo/XiZbiTbb5aejzBmBA8Mzu2UJ7TSE=;
+        b=VOhTDv66TKkL6OctU/gsj7dJmdGEwZOrmzO5sMCTTkNy0Q7p4OcOuqFMPkbVQDXD4u
+         kqtu2eShJI2P3vRnO7Y1tRV4Yid6jIoLm8gijuuKbqjNPKr332oBQj4bSa9jTetZhjVp
+         PxmxWbG6qiy8awCjGDUHHHd80O4ZZgbKW+G2Zyt5NHlpbKCMQv0ZA8y6BxMaR00/XME7
+         U2foyDtsopZ3ySjIYcG2J0xEZlSq/GxjnQY0pxWmyIvu5GSZhdDGg0omFK/W7QaUNwTJ
+         c1Wrfy7XbNfl4x8W3VVikgMILn7zLLwCSCx4yCsnuIaT6LWB4cxagKgXTat1e6l6nxrB
+         kfxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744375003; x=1744979803;
+        d=1e100.net; s=20230601; t=1744375011; x=1744979811;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wWvOtZ2Ij96tOi1o1hUr0b9qGVWu80vcBedKzsseg9k=;
-        b=U/Zz5Ru0MWXCWPqditQjQx0unRxEAxv726Xc2pYR0acFydoMcO1IA6bt6nARC84deF
-         6vr0qP24ub8gW6USy7ydUJjJyi+CIE4bof+FnC8mbHrWQvJ3QWaYTcr7VOaIt9xH87s3
-         Rrke3KH4gU/1Etz2sNaNMGi5T7Hk+9htCbvkU5+h1l7HK3PyczXRzawrdsw22odVrfvX
-         3abJjyTY5IeRvuoYnjgi23eY1OOrxa4nf+aql5y+mlL/BTWY7Plu/if3PNCn7rKJVzsG
-         IDfMnqyQ6oRook/y1sKNR7U7C9cHaaSjj7F0F2FHZaZ7ChrLajcw7PGjVdDHVuqo4+8J
-         lEew==
-X-Forwarded-Encrypted: i=1; AJvYcCWNT2Rj5V171OA+qBJ7soaFkQchui3yj8mv9bW4sSk3g0+y8QUnOvJn+vRbopjNIY8dyc6/HMTnMR7wans=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXPIDQgBNKZH4dnsDyjPgkcyvbSmYnyF+wPkICTtykhWXzYjQi
-	WzqtQiA+XRyYq3NbHeXdAGl4E7mShkQ2s76wpRxlDoO7wFS1wAZfTjnD3XWVnzRJYE1HOsDRuco
-	J6wQ=
-X-Gm-Gg: ASbGncuNrFjicgo8T4mxwzl5hY/K1+4uAh1J7vILKJqlDm44uw6taC/CMFsSoCIBvjH
-	FkWwwBtVQfYbTmK1su6hU6wt7ts+HDKzajuoebLeoKGqKxei10OSHoiWTvnPTrDYjoiQkgpd//8
-	ig0q5jNDZ+4hPK0NKj//tUB6YNYyPejSSePyUBqosxgBtY84ei69bFzMJET4uW2b8HH4e7Mq9CL
-	RO1q8ebRH/AXJZVEjha816E/dTbf07wWMlnLc29uLlVzAZbC3exd/7B63YSjFLnYFlpHLBM4qMF
-	G6DnREDwMNdlI9QB1KnjTxx1263uPib3lTew5LSg/+o=
-X-Google-Smtp-Source: AGHT+IHHr6PfcniD19K70c7n3k5QYjLiwj66+qa8B+xXfSPCuWN5/YZWkukIqVWOva+qdLyKiB11mg==
-X-Received: by 2002:a05:6a00:3908:b0:736:5822:74b4 with SMTP id d2e1a72fcca58-73bd129c6d1mr3275598b3a.21.1744375003638;
-        Fri, 11 Apr 2025 05:36:43 -0700 (PDT)
+        bh=wSHsj9E7pEVKPo/XiZbiTbb5aejzBmBA8Mzu2UJ7TSE=;
+        b=pTRD6GgMnFkY7BecIeDYEAcWTdZZoQHoKVVavKuL6o71Dla7Dm61buBPOLn094QiBZ
+         ZA7jI39FlcND11TzafPR0bCFa1tS+RzsKEmKZahgidWIG9IMs5VrxnpQ5Mik0rMNc1uf
+         J9sfv8Km6FQJaR73wH/SbKBS3gSiIyXN2TJbd2SdBksKaW8bkA7z35wkUg6CMJCH6Gq9
+         RRGqqJGJT53uHZ8115gEmkJBZw4FG+As0OddSbazd5Udr1PDYArlJLjG2y8c5cFY+dcJ
+         t2AFN0xjkGaQuSJ8jk7dkmpa+IEqRaVRzVoT48UuCT7aJ8hqhiJE+P6ibShoHirLyqWe
+         GI1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUYI4D8Y01Jma5kwGYLVcfVc7gYWBBhTIfaUkyHwm9DFmUlH4yDbUA86ggG7RiwgX4SMb1ayRmUpPSHfmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZRMXmFZb7b51B1hk++xEL9JBi/0HO1evb55PgpkmQ5Hqug/Ud
+	CLgUmy/A8SEfRP+u1dOAKuoBPFD1AVGjAkhWEIh3OK4JpBRXEJNzTtn70hrchVz6v9ZhvO+5LgG
+	jPE0=
+X-Gm-Gg: ASbGncsH29vTFrzrkOmeuFOK69S7GazBlFmjm59dXADgIPHw+fd4lyyD766YmKuYs4t
+	gCfXEXUDS7JFUJNuBeR+9uTUGjjovSc2UvYRomiD5UV6+O+TbjYRQQOuFMs01pZZ5vDAECQRiQa
+	/6c6q9buoW80qlpfSx7GLkJMdu0z4d+xVGbgl8+akvFTX94hIHYYC8BvHwKeze2CFQGTrk6UMDr
+	Dx/ALkKTXEa0eWpMs/skyOaU5q2qUwzf+CDFfcbiHyfdvo+9ZhXhCwJEcWzsvGwJfW0Y6i6ambA
+	jlrUQDZpXcqpz4Z379cJeYkybYCVCipwKi8dofMYdW8=
+X-Google-Smtp-Source: AGHT+IFfX3ot/L43d0QBZxG633pc/hZyXtl8UpByDyVjAeqVDIhCDU73ulTwgr/AGiuYBQtmE0nzNw==
+X-Received: by 2002:aa7:8895:0:b0:736:3d7c:2368 with SMTP id d2e1a72fcca58-73bd11dc695mr3255714b3a.7.1744375010978;
+        Fri, 11 Apr 2025 05:36:50 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:e0a:5ee:79d0:cf9d:bb30:5951:692])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-73bd22f8253sm1408292b3a.93.2025.04.11.05.36.36
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-73bd22f8253sm1408292b3a.93.2025.04.11.05.36.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 05:36:43 -0700 (PDT)
+        Fri, 11 Apr 2025 05:36:50 -0700 (PDT)
 From: Alexandre Mergnat <amergnat@baylibre.com>
-Date: Fri, 11 Apr 2025 14:35:56 +0200
-Subject: [PATCH v3 3/5] rtc: Fix the RTC time comparison issues adding cast
+Date: Fri, 11 Apr 2025 14:35:57 +0200
+Subject: [PATCH v3 4/5] rtc: mt6397: Remove start time parameters
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250109-enable-rtc-v3-3-f003e8144419@baylibre.com>
+Message-Id: <20250109-enable-rtc-v3-4-f003e8144419@baylibre.com>
 References: <20250109-enable-rtc-v3-0-f003e8144419@baylibre.com>
 In-Reply-To: <20250109-enable-rtc-v3-0-f003e8144419@baylibre.com>
 To: Eddie Huang <eddie.huang@mediatek.com>, 
@@ -98,113 +98,47 @@ Cc: linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
  Alexandre Mergnat <amergnat@baylibre.com>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3840; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=vGUfgBYd/nqdiWhakMrxzcEEIqB0t/sqp/diq7LMGlc=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBn+Qy+G925gTSnI2f/g5RRp1mmiZxGxczjO4K3kNYm
- 9g+lrSyJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZ/kMvgAKCRArRkmdfjHURcl9D/
- wP0ww2kkK7+Wdz6lCWG8tR0wOKrrvr2qjTu4xuKN9SRbZGSWhA9QmDb/dWzu4/0eAm8sl3qJMEk5Yk
- 72cNB66JOZpwVfgY4Xp+ppUa5CNpHWBGe3QOQegRAvq9iSOBZ0Befi0rR5kfl788zp72w+3x1VXO7E
- R1BFLx8c2FhBePEp0TmhPL/thzoVTQhUv/11ONiQwlSewTu3UTlymMfTRZ8D6pSsM3pfNhSLzDLCh1
- yybqickSMBVYd4qqOnp08M4WsDnTHYsFYb51RyUczq3CSXrZ7Tw3/8rnGoaMFfRoe+9a2GaVNfcena
- LCt1tD6kBkx31OUdTCgi2xU4TbUkN0KBgcGLu8G6MH2r4Zj/Ul3Dd8BAHPtQdYc1qL86ylvzmkLCT+
- XZ04Bh+xraV8u4h7iUkZAoDEn12HInoSfG5xk2AIlsUP6jWf5w1VGcBHbwuBvVfUQr4IF3WsZNJb5p
- +iS8HHZgWKGNJaC7hsERyf63bEwLaYX/v9yCj9JsPBJ8kN+CnJ9QvKUqS39GqOS0fNyH34jfvnBUSv
- eX9nVxrWHyd4x5cifMm5s4lhMt2iZinXa7klv9V8rXsvW5aXOUmt9iBd0RF3YBmxDj+xcv5XUVKG6H
- MPHZrxIA9oPg2KHF1+4pye8NG1q1tx7stersv89cat7tXtLmaMbi2Fs7UNbQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1012; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=trGJ+81hvgNk61JAyUi09epqF3tLwjd5H58jiE8ssKI=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBn+Qy+LNjqc2TQncoR/fu21kLb3B4nDnpKBpYpF3u7
+ K+vKNHeJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZ/kMvgAKCRArRkmdfjHURUBLEA
+ CAC42jhzXF95nwzYaBzqk8pqi2wLrVXoH4PBA0deKY2gEdZoIl9sAOEFMAke8ktBZFrY8zyD3Iilcs
+ oByCGpN9m/wQ5S2Ih3Us5gmmwCkWz1CcqvUeMk6aOzqC6tnV+SUW/WHutDoEzQrS+Y3hbbq8SCf628
+ TxVPv8tc1AaQc1RRi29L97urd+zi8P2/ucYydlvR0VnVd5BEd9ve7obWrjiwfWA22tckQTsOCO2sAB
+ z+j+DbUM3nWqNIVBRj+hlyQOkgxl2NMLlZYfY4uSdJjl42PBffIMp2plpK2m2DZwO2b9LqYtEu33Xv
+ qKE/nKDGQK3kUPIQqDkgZpXsg8YdsCSkn09ne3NOpGaw4S8q306wT4gViU2OyQbq2jDy/+5X3WyH6r
+ bswFi1Fwgg1sefTSK+B7S/NhI8rhjGYcRxNj7YvLRwGEu2bzNW8KwkcQWYjlF5FAo7lfeuIizrxfqA
+ OLV8tKAgl8ncXWKuHgzKKtYqaJzfA2aJXrD6yK5u3U9aNlVe5qbOd3r10sFURDisAhtuCm7fURJqHx
+ JC+aHpfgCVZUB/fiWVkYOXBkyeKLsx++ZOoMa2Wi8/mg1CSRWFX0MERFX6a/9stWB7mb3L0L4McAod
+ KlRc9GKCciMymJ4QFkvBsy0p0HLsmyvqgdUvtv0sgoLe96aZBCXhM1PiaHFQ==
 X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
  fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 
-The RTC subsystem was experiencing comparison issues between signed and
-unsigned time values. When comparing time64_t variables (signed) with
-potentially unsigned range values, incorrect results could occur leading
-to runtime errors.
+The start time parameters is currently hardcoded to the driver, but
+it may not fit with all equivalent RTC that driver is able to support.
 
-Adds explicit type casts to time64_t for critical RTC time comparisons
-in both class.c and interface.c files. The changes ensure proper
-handling of negative time values during range validation and offset
-calculations, particularly when dealing with timestamps before 1970.
-
-The previous implementation might incorrectly interpret negative values
-as extremely large positive values, causing unexpected behavior in the
-RTC hardware abstraction logic.
+Remove the start_secs and set_start_time value setup because it
+will be handled by the rtc_device_get_offset function using the
+start-year DTS property.
 
 Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 ---
- drivers/rtc/class.c     | 6 +++---
- drivers/rtc/interface.c | 8 ++++----
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/rtc/rtc-mt6397.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
-index e31fa0ad127e9..1ee3f609f92ea 100644
---- a/drivers/rtc/class.c
-+++ b/drivers/rtc/class.c
-@@ -282,7 +282,7 @@ static void rtc_device_get_offset(struct rtc_device *rtc)
- 	 * then we can not expand the RTC range by adding or subtracting one
- 	 * offset.
- 	 */
--	if (rtc->range_min == rtc->range_max)
-+	if (rtc->range_min == (time64_t)rtc->range_max)
- 		return;
+diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
+index 692c00ff544b2..d47626d47602f 100644
+--- a/drivers/rtc/rtc-mt6397.c
++++ b/drivers/rtc/rtc-mt6397.c
+@@ -291,8 +291,6 @@ static int mtk_rtc_probe(struct platform_device *pdev)
+ 	rtc->rtc_dev->ops = &mtk_rtc_ops;
+ 	rtc->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_1900;
+ 	rtc->rtc_dev->range_max = mktime64(2027, 12, 31, 23, 59, 59);
+-	rtc->rtc_dev->start_secs = mktime64(1968, 1, 2, 0, 0, 0);
+-	rtc->rtc_dev->set_start_time = true;
  
- 	ret = device_property_read_u32(rtc->dev.parent, "start-year",
-@@ -299,7 +299,7 @@ static void rtc_device_get_offset(struct rtc_device *rtc)
- 	if (!rtc->set_start_time)
- 		return;
- 
--	range_secs = rtc->range_max - rtc->range_min + 1;
-+	range_secs = (time64_t)rtc->range_max - rtc->range_min + 1;
- 
- 	/*
- 	 * If the start_secs is larger than the maximum seconds (rtc->range_max)
-@@ -327,7 +327,7 @@ static void rtc_device_get_offset(struct rtc_device *rtc)
- 	 *
- 	 * Otherwise the offset seconds should be 0.
- 	 */
--	if (rtc->start_secs > rtc->range_max ||
-+	if (rtc->start_secs > (time64_t)rtc->range_max ||
- 	    rtc->start_secs + range_secs - 1 < rtc->range_min)
- 		rtc->offset_secs = rtc->start_secs - rtc->range_min;
- 	else if (rtc->start_secs > rtc->range_min)
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index aaf76406cd7d7..93bdf06807f23 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -37,7 +37,7 @@ static void rtc_add_offset(struct rtc_device *rtc, struct rtc_time *tm)
- 	 */
- 	if ((rtc->start_secs > rtc->range_min && secs >= rtc->start_secs) ||
- 	    (rtc->start_secs < rtc->range_min &&
--	     secs <= (rtc->start_secs + rtc->range_max - rtc->range_min)))
-+	     secs <= (time64_t)(rtc->start_secs + rtc->range_max - rtc->range_min)))
- 		return;
- 
- 	rtc_time64_to_tm(secs + rtc->offset_secs, tm);
-@@ -58,7 +58,7 @@ static void rtc_subtract_offset(struct rtc_device *rtc, struct rtc_time *tm)
- 	 * device. Otherwise we need to subtract the offset to make the time
- 	 * values are valid for RTC hardware device.
- 	 */
--	if (secs >= rtc->range_min && secs <= rtc->range_max)
-+	if (secs >= rtc->range_min && secs <= (time64_t)rtc->range_max)
- 		return;
- 
- 	rtc_time64_to_tm(secs - rtc->offset_secs, tm);
-@@ -66,7 +66,7 @@ static void rtc_subtract_offset(struct rtc_device *rtc, struct rtc_time *tm)
- 
- static int rtc_valid_range(struct rtc_device *rtc, struct rtc_time *tm)
- {
--	if (rtc->range_min != rtc->range_max) {
-+	if (rtc->range_min != (time64_t)rtc->range_max) {
- 		time64_t time = rtc_tm_to_time64(tm);
- 		time64_t range_min = rtc->set_start_time ? rtc->start_secs :
- 			rtc->range_min;
-@@ -74,7 +74,7 @@ static int rtc_valid_range(struct rtc_device *rtc, struct rtc_time *tm)
- 			(rtc->start_secs + rtc->range_max - rtc->range_min) :
- 			rtc->range_max;
- 
--		if (time < range_min || time > range_max)
-+		if (time < range_min || time > (time64_t)range_max)
- 			return -ERANGE;
- 	}
- 
+ 	return devm_rtc_register_device(rtc->rtc_dev);
+ }
 
 -- 
 2.25.1
