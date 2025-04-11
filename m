@@ -1,193 +1,159 @@
-Return-Path: <linux-kernel+bounces-601080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FCAA868CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 00:12:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 111FAA868D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 00:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD47A17BED2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:12:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1B611BA5EE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Apr 2025 22:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974452BE7DE;
-	Fri, 11 Apr 2025 22:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE48A29CB48;
+	Fri, 11 Apr 2025 22:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="LZ6ak8wR"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="G/SPHAu0"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D4F202C50
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 22:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DB829DB60
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 22:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744409500; cv=none; b=FPQO7JB5JFbTWi2yWW8DW430rmVyC9r44ZQYAB0b2yn37OX8m1cSqmAsCKFHr+NDPaga3v1WKFEveeuLocxt1cTMBYs9K1AUFYRvyX/PiBxsSB4eA+5Dbc0i8atVMZcQot4tp/zuqtbmiMNBwnLSFF90cJhdfv0i3l+Vyhwt53c=
+	t=1744409662; cv=none; b=JJxaTq+2IoLZSvLX8OzauPb6ioHXa6K8rv+bk+rYT+UOPqzRfHNtHZO3VDpWRT9saX+Sq1gqXPavToUoPTrTWLCujolgH/GAzH+QuQNLpTe1Bwt6ia7D8xCmhnKCM1hr7d1Xv7HnogJuR8yxDucNuu3Zxox4sKFxUiC44XHVws8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744409500; c=relaxed/simple;
-	bh=iipUogHWKqbSnD4CjJCUz99hy1w9mLc5GhkbwJjFgE8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VRQDbgBRWnMCgs+6mlzORLYEK5OdIK3bFUpZNwo2k+NTYdH6lbS0OwzkDNwKVBtYIJ4tZ8f1W59IjvgsPQM1rlSA4b3qDM+aqTgr/2Kzu9LkS0teHa/UxOFXTxduVkGHsTbdEQWBzDKK0e0JVCIrF8E+1vgvGpGzmiQW8MVeMKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=LZ6ak8wR; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7be49f6b331so283319285a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 15:11:39 -0700 (PDT)
+	s=arc-20240116; t=1744409662; c=relaxed/simple;
+	bh=inbFC05GiKvTcdNo0+ZTfj3hju7i5EVggQMpuyhjTeI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XI79XsUiOIqlrbl39cyr/HVnbmooK4i9K2dE2whaByhg2pLhmf4Xw84o2yZFSx7R2d86R0/Jxb/X5dCuw3LZEERc/2/mzPQla+ngSkfMdHIRNRcnVhdMrogF0oRQaNjpAuhJEE/kBtUjc88+/JkG/PBIhQPgxAVljHxpwUVAzUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=G/SPHAu0; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6f6ca9a3425so31228247b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 15:14:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1744409498; x=1745014298; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1744409659; x=1745014459; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lWwZ2vfL+KhsRUswnAKZ8QRNf9jCtW28RDZA6bxWNqI=;
-        b=LZ6ak8wR1fshCx0fXAjvmT/MFyk5V3oySomvy27rN65222y2m+kiIAq7DC0VBJWW95
-         9qXTGAq+4CFncw+tOmtqQRAmU4IlOkz/f6FJErAmD0HJo+mwY4OhqS5HNLBqqPlYGspl
-         yda+kscupelujuOAG00hQPejteMZrfi5NXXKf9WXq9A1tRqgqaXYMkLXjY/bL64ni02S
-         nYNNRo2QI2ILeXJMUcBrcx4TlAgzUJjNcqrbuHyyY1vXRWFzuYw+dXMmwAY4vCeD9ifl
-         /X990Ptl41isNUeFi7rFioLVSgiFhwl7jHFtJLrbh/XW8XjGRfI7vvmrEzJnHFnTL2uO
-         gqPw==
+        bh=p+m7hz6r5/ApjZEveg5QQkULfTfewkyo7s8/B03DRoo=;
+        b=G/SPHAu01IjVZJIJXPOs3rz9w9xPbN1VLyJSwQ2znutM4zpt5X4IceNGFlSojMVAe3
+         6JjGxow84UH9sjx2v8jRIw4kBPGOt/FQy5PA3IHdKoN+TNePGtEkXdIDprZFSXw+L/1Z
+         llTiKxpgAdzD2fs2h05Wj4m+NbQC5d7WGN0CcijviBuQdoe+NYY9jAN0vQ0WTWaqlmT+
+         SUD8unXKHuTxLYoqjS3/LzA6wf+3m3OgOKW2qj+PHjbiRGFM3B2qQiXVKSLYtGYuZ/Dv
+         0LDnK6i78dIm6cccsOgKBrdYRCsnCeqeVey6J5RdSyUfydyzwMlNqS64x69GddcGn8l6
+         iFmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744409498; x=1745014298;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1744409659; x=1745014459;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lWwZ2vfL+KhsRUswnAKZ8QRNf9jCtW28RDZA6bxWNqI=;
-        b=U+ajiUMxgbPyEb+khB0NoPgrawWQeiNO5VGoVIOrcK3zF6MH4iZXjx3iEfpPAwAWt9
-         7xnARUTjR45AEsF5Cug/Pl5ibg4HHqAapkK8IbTWz8/z/6XTW/xlwAlLRSQJTv/lL6Ij
-         ytCJ3ztbZHkmrXHhh2kCaPrfoKefFpL/jdnJma4QGSb8FVvIg6lDGgMBEHgnCvQxNKXK
-         4Sd6iW9FXSzaprY6vip66uE/CmKQ21ZoT1gBKGtR1yQ2H84jY8xsTT2Mtp0YfZpN0tCG
-         D4nmO6d2fs2hlesStK9Vh2eGMrjqAB0YAJgsnDMsA1og0F/jbQ9RS8FmaCIubjdpCpnP
-         EitQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0ZqwbCVTxksgMIjtegKNme/qHUlA9lOCZlpY8repasAB4XHtKw0afO75ELQsAF/0FFivpxQ4SwC+wSKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtqwgBrbiwp7bXUh6VmJRuK2wY8rCAS3RY7TXSVCjIXdWXSG79
-	eWxtwTZ5bsfXW0GTks1qp+bk0zzqnvou+Uo9jRy1TLTsiMA+l3vUzIllqYM85Ng=
-X-Gm-Gg: ASbGncu9Sp9xqpdr696pX6DVIiYx+vh981Fnpy7Ga5g5JeQL1LVk2fpdiCbFtZt8StQ
-	0tyTU/lDtKlsCwBbA2PgVRcd6Ab4lGkSyitBb7GfzKjHHW84N1GKIZSaKT6tIvD//4xCynnIKmQ
-	/CPavhkCUTQocIKsJ0z7+dTkgZb+AhSyx9A+x8h/sOG4Ps8T33bavzVa65/tOzAN9pCMUgOjyC1
-	dT+siqW82bn+cGJ3Eo96uNCmzbHi8pP5XnnAv0cL+CbdD1hufq8GLJbenmIMF/2aLNrU0PDpf/N
-	KXGvpSJQv/u1nV6RNVseZMBVeqvIIOx+bmDfn/BVWuiSXoQ6ETPjQ4GN4IXmhtM4Iq2DqfQYq++
-	ImCzbRDDB6ZAeojmSqUiSRglDN0UR
-X-Google-Smtp-Source: AGHT+IGLtJZR0JJVKRILz/ZiqYmeVboSBH4PK1DJ0UoO9oX8aCb9uz98PkTHNKxCb1p4ZJETUczmng==
-X-Received: by 2002:a05:620a:3913:b0:7c7:a602:66ee with SMTP id af79cd13be357-7c7af0bd2fbmr513370685a.10.1744409497970;
-        Fri, 11 Apr 2025 15:11:37 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F.lan (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c7a8943afcsm321264485a.16.2025.04.11.15.11.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 15:11:37 -0700 (PDT)
-From: Gregory Price <gourry@gourry.net>
-To: linux-mm@kvack.org
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	akpm@linux-foundation.org,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	donettom@linux.ibm.com
-Subject: [RFC PATCH v4 6/6] mm/swap.c: Enable promotion of unmapped MGLRU page cache pages
-Date: Fri, 11 Apr 2025 18:11:11 -0400
-Message-ID: <20250411221111.493193-7-gourry@gourry.net>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250411221111.493193-1-gourry@gourry.net>
-References: <20250411221111.493193-1-gourry@gourry.net>
+        bh=p+m7hz6r5/ApjZEveg5QQkULfTfewkyo7s8/B03DRoo=;
+        b=M+SOs8t/M0mfiFr6bBohPBQd76nQMk4xPDLUCqOPgKT9B4wB3PTZiowtl8R6hejukR
+         r5ggvNJGhSvSN5JYuTf+2SCJAG9ZepKcoLemjcKWvy+7SRyfL+4euo8FUzMUpv0VXrCH
+         F+lIXL9W8ibTZxlSYBJxZ2lzPa4ayNhOJVhAWaXQXi/NUCZYIX4nhaP9jErXRG0kdC2Q
+         4k8VhhbSI7OlVhj/4F4C9D9yvE7r0+/ZEC6xEU5xftiwb2Go7Hq0W7O64bLPmOoppFiv
+         Qk+Db9G3/SaQWyA+gvAWfv0CRPDjWGvrqawQSzCHKm0lVFDxwun0aroiT7dLxIeiszw+
+         FwPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmOKBDsAGSpP6l05EJwjQ6IwDcT8K4y2ib7k7OG3RLDNfeGEGNvZkNe2POXKQQx3O0jYZH8vq7xxffH9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLxBMsLDPiTNAc+2kxsf21j4+/jEKGiUFFKJyRm/kacdIFqGjL
+	tEKyRvtRxkLyLoY4e/uJC+uevJOQ6taLF35enDwpsTY1WC8nZyLEfWRbY2Avg+BOcT+ZIlktyJm
+	wnBYXg3XA0dIhyx3160Q6ap9nf9fpom6gPly7
+X-Gm-Gg: ASbGncu7RBb6tMLvqjTxWD2tk+mP9P6BrfBcu7WU7gW+Tdh2JeAOewHwvMn4STjboIh
+	5sn6lmOl1jxPUaj26d1a+8uEy2j3fkGqa4MwC+eWtehJiyPut5ZXLH2Yrd2Tp+4J/FUQfVTz9DD
+	TEWJf4orZyZrttAT+1e2b/eg==
+X-Google-Smtp-Source: AGHT+IEynk71rTo5QAU0nN+o2O+0yFjyQ113XZBjQvgh1uLkqf8zyYIq2nZaaxEVVWn37yekS9kI1R7YzDqNHi95Q40=
+X-Received: by 2002:a05:690c:7002:b0:6fd:6748:928a with SMTP id
+ 00721157ae682-70559a6a25fmr75224277b3.29.1744409659266; Fri, 11 Apr 2025
+ 15:14:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <fb9f7900d411a3ab752759d818c3da78e2f8f0f1.camel@huaweicloud.com>
+ <Z_f-uBGhBq9CYmaw@lei> <bbc39aec812383f836ad51bc91b013fa8de8a410.camel@huaweicloud.com>
+In-Reply-To: <bbc39aec812383f836ad51bc91b013fa8de8a410.camel@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 11 Apr 2025 18:14:08 -0400
+X-Gm-Features: ATxdqUHUqC_GnYV1ob9atu9iK3mHRkgbWg3uQONWT0Q0sNaX4f87ERAqln_Lkfg
+Message-ID: <CAHC9VhTaffwcGsmcix21ODAwMYxVDM+SH=By_oejxMZK8vSSUQ@mail.gmail.com>
+Subject: Re: Credentials not fully initialized before bprm_check LSM hook
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: sergeh@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, "Eric W. Biederman" <ebiederm@xmission.com>, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Donet Tom <donettom@linux.ibm.com>
+On Fri, Apr 11, 2025 at 5:07=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Thu, 2025-04-10 at 17:24 +0000, sergeh@kernel.org wrote:
+> > On Thu, Apr 10, 2025 at 01:47:07PM +0200, Roberto Sassu wrote:
+> > > Hi everyone
+> > >
+> > > recently I discovered a problem in the implementation of our IMA
+> > > bprm_check hook, in particular when the policy is matched against the
+> > > bprm credentials (to be committed later during execve().
+> > >
+> > > Before commit 56305aa9b6fab ("exec: Compute file based creds only
+> > > once"), bprm_fill_uid() was called in prepare_binprm() and filled the
+> > > euid/egid before calling security_bprm_check(), which in turns calls
+> > > IMA.
+> > >
+> > > After that commit, bprm_fill_uid() was moved to begin_new_exec(), whi=
+ch
+> > > is when the last interpreter is found.
+> > >
+> > > The consequence is that IMA still sees the not yet ready credentials
+> > > and an IMA rule like:
+> > >
+> > > measure func=3DCREDS_CHECK euid=3D0
+> >
+> > "IMA still sees" at which point exactly?
+>
+> IMA sees the credentials in bprm->cred prepared with
+> prepare_bprm_creds(), where the euid/egid are taken from the current
+> process.
+>
+> > Do I understand right that the problem is that ima's version of
+> > security_bprm_creds_for_exec() needs to run after
+> > bprm_creds_from_file()?
+>
+> IMA's version of security_bprm_check(). security_bprm_creds_for_exec()
+> is for checking scripts executed by the interpreters with execveat()
+> and the AT_EXECVE_CHECK flag.
+>
+> Uhm, it would not be technically a problem to move the IMA hook later,
+> but it would miss the intermediate binary search steps, which are
+> visible with security_bprm_check().
 
-Extend MGLRU to support promotion of page cache pages.
+I'm still trying to make sure I understand everything here, so I've
+got a few questions:
 
-An MGLRU page cache page is eligible for promotion when:
+* How important is it for IMA to vet the intermediate binaries?  Those
+binaries don't actually do anything with the program/scripts, right?
 
-1. Memory Tiering and pagecache_promotion_enabled are enabled
-2. It resides in a lower memory tier.
-3. It is referenced.
-4. It is part of the working set.
-5. folio reference count is maximun (LRU_REFS_MASK).
+* Based on the comment block at the top of begin_new_exec(), I'm
+assuming that using the security_bprm_creds_from_file() hook would be
+a problem due to challenges in returning an error code?  There might
+also be an issue for any LSMs that run *before* capabilities, but I
+think that would only be Lockdown in the default case so likely not a
+big problem.
 
-When a page is accessed through a file descriptor, folio_inc_refs()
-is invoked. The first access will set the folio’s referenced flag,
-and subsequent accesses will increment the reference count in the
-folio flag (reference counter size in folio flags is 2 bits). Once
-the referenced flag is set, and the folio’s reference count reaches
-the maximum value (LRU_REFS_MASK), the working set flag will be set
-as well.
+* This patch has been out for almost five years and presumably offers
+a performance bump when doing an exec; I'm skeptical that Eric, Linus,
+or anyone outside of security/ would be interested in doing a revert
+to better support the AT_EXECVE_CHECK for a LSM.  Yes, I might be
+wrong, but for a moment let's assume a revert is not an option, what
+would you propose to solve this?  If you can't think of a general
+solution, can you think of an IMA specific solution?
 
-If a folio has both the referenced and working set flags set, and its
-reference count equals LRU_REFS_MASK, it becomes a good candidate for
-promotion. These pages will be added to the promotion list. The
-per-process task task_numa_promotion_work() takes the pages from the
-promotion list and promotes them to a higher memory tier.
-
-In the MGLRU, for folios accessed through a file descriptor, if the
-folio’s referenced and working set flags are set, and the folio's
-reference count is equal to LRU_REFS_MASK, the folio is lazily
-promoted to the second oldest generation in the eviction path. When
-folio_inc_gen() does this, it clears the LRU_REFS_FLAGS so that
-lru_gen_inc_refs() can start over.
-
-Test process:
-We measured the read time in below scenarios for both LRU and MGLRU.
-Scenario 1: Pages are on Lower tier + promotion off
-Scenario 2: Pages are on Lower tier + promotion on
-Scenario 3: Pages are on higher tier
-
-Test Results MGLRU
-----------------------------------------------------------------
-Pages on higher   | Pages Lower tier |  Pages on Lower Tier    |
-   Tier           |  promotion off   |   Promotion On          |
-----------------------------------------------------------------
-  0.48s           |    1.6s          |During Promotion - 3.3s  |
-                  |                  |After Promotion  - 0.48s |
-                  |                  |                         |
-----------------------------------------------------------------
-
-Test Results LRU
-----------------------------------------------------------------
-Pages on higher   | Pages Lower tier |  Pages on Lower Tier    |
-   Tier           |  promotion off   |   Promotion On          |
-----------------------------------------------------------------
-   0.48s          |    1.6s          |During Promotion - 3.3s  |
-                  |                  |After Promotion  - 0.48s |
-                  |                  |                         |
-----------------------------------------------------------------
-
-MGLRU and LRU are showing similar performance benefit.
-
-Signed-off-by: Donet Tom <donettom@linux.ibm.com>
----
- mm/swap.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/mm/swap.c b/mm/swap.c
-index 382828fde505..3af2377515ad 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -399,8 +399,13 @@ static void lru_gen_inc_refs(struct folio *folio)
- 
- 	do {
- 		if ((old_flags & LRU_REFS_MASK) == LRU_REFS_MASK) {
--			if (!folio_test_workingset(folio))
-+			if (!folio_test_workingset(folio)) {
- 				folio_set_workingset(folio);
-+			} else if (!folio_test_isolated(folio) &&
-+				  (sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) &&
-+				   numa_pagecache_promotion_enabled) {
-+				promotion_candidate(folio);
-+			}
- 			return;
- 		}
- 
--- 
-2.49.0
-
+--=20
+paul-moore.com
 
