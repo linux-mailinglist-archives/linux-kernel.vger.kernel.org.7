@@ -1,133 +1,142 @@
-Return-Path: <linux-kernel+bounces-601194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55AFA86AA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 05:53:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5B7A86AAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 06:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E9119E38EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 03:53:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D20D88C2968
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 04:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A4816631C;
-	Sat, 12 Apr 2025 03:53:03 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C29715853B;
+	Sat, 12 Apr 2025 04:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="VXSWyCys"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1EA15CD78;
-	Sat, 12 Apr 2025 03:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D8117C77
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 04:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744429982; cv=none; b=a8AlXMQKYFFtRAiBIfkgun/pr0SZGCqHOj+45mHRMa4yBgHmFB6pMpFiTG58mBA+1IQFIIe0O6ej64/9A/QH1ajh/YiqjtXua0SsyS69rekrwIx/01fgTLH2PcwOLjx8aojoAmktrnFYr9WvoDv2eMHj8tHlWZcIQ30j1LQIvmQ=
+	t=1744430471; cv=none; b=fU+gqcBiI1Dr1qGWt/3rkKkc6wBDebdywC1g0jlKAU2vcoLVku+mNCEjk8HQgw02vJXs1XL4wUhjpgr5d8SkLDhwoPc+U4Knj8MQ/edddtQ9T1ybqclMTLO/JSMwAdugwOMK8VtbVT3l3EP/F83z7amS8schy79OqyVziMsXG9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744429982; c=relaxed/simple;
-	bh=r4/JMs6C2Dvw1bW8VHdZlPi+YkDCZTs1eOaXxjGw/oM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g2vDr3xPSBuO2kFHgZWy06EAOlxUngqcQJxQRfPw4T0x/ZxNW9yzPC55MtAr5U4VOZqEg8Y+jR/R+PgTP2FrS5lpY5uyb9QVso899Latx9/CG4hDLOYjQv2qaiDVvxLkxV/7nBoufzu5tYPWb/C+f2Gu+SQVGlPLBIzADZaSDBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 35C8D2C4C0D2;
-	Sat, 12 Apr 2025 05:52:25 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 031171E092; Sat, 12 Apr 2025 05:52:56 +0200 (CEST)
-Date: Sat, 12 Apr 2025 05:52:56 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczy??ski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	chaitanya chundru <quic_krichai@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com,
-	amitk@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com,
-	Dmitry Baryshkov <lumag@kernel.org>
-Subject: Re: [PATCH v5 7/9] PCI: PCI: Add pcie_link_is_active() to determine
- if the PCIe link is active
-Message-ID: <Z_njmA49Gda-m0aH@wunner.de>
-References: <20250412-qps615_v4_1-v5-0-5b6a06132fec@oss.qualcomm.com>
- <20250412-qps615_v4_1-v5-7-5b6a06132fec@oss.qualcomm.com>
+	s=arc-20240116; t=1744430471; c=relaxed/simple;
+	bh=/oaDy5SzWfzyFBs8bTU2LHsjy16/G0IhlbubH2Ym338=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p/HCvKovKsXaHBZAL6+JRPpyoPe4DyUapE5+sanuKghgWBin05tvIM4D5esSlEuKPVlg1vZ2AoRwGOJpr2niEtUKkRY3Hb2LJUNJH52b7NxLUCN2NLhrOjNm3+cU3P7WGPWihhWBcLX2i+Vzt0nUzQwLzDr7pldMEHxCTsxf908=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=VXSWyCys; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5ed43460d6bso4157159a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 21:01:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744430466; x=1745035266; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/CRPWfzlQeNRznSdwAcCFwL0YU/Q8vcd3a6wdTbE3VY=;
+        b=VXSWyCys6KU+a6U5T4TSlQD19NnPRyi3Pm00IJ+KrfOFilFkzY2VwO5JK7kXaAG28G
+         CmbfF4f22ZuhCkmMhOuUjyWjDsR8PGtdLdCGiQqMhj8Sxun+NEqTOmkVxqDEdidhFWqm
+         1CSPxamDgZqwKwvFocUb6yxciBqvMlaUQEs/O8Bh8UB+mFAgr3kxWp3CRSSXeHD88wMf
+         Og8DrtqyQvtUp2ITx9K92fbm9ooqYKB/eZCvWhPohCqdS3fbEe6wffQ4XNz84jsln1ik
+         qGD6fRqnjP9ctZxh6DojlsSYx9Sxfrhj5awvMfXj204kHrL6h4TbEtTzG4xKOiBILJyx
+         elqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744430466; x=1745035266;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/CRPWfzlQeNRznSdwAcCFwL0YU/Q8vcd3a6wdTbE3VY=;
+        b=vri6ELrg8d8+JQ0aiMgRcbVCQ3PVwFSXop7u6mTr0IkWbLGJKH8PVMgRR1ZDwJlmix
+         J0sfow6V7sR3aHEOAql/I/A4H9LFcFx5UMeN7KgaMPxi4YXei+/1H0VcNhnE+fNZ5I5l
+         H+pjcsybn6vQKmvIVqTdgtFxsV5WpFyytutpdRUULAzMOsBdw6wgEkiZqQMmmKTekSoX
+         IfEX4IGYeppK2YybgOJHdL/dEl90QiYYI9JUuTVEs4FTM3Rw4MTEJQnGwNSeAYHvtgPQ
+         kA2OLItZe6ZiSjnji/LM1bEHUo+vkjkAtadqsteajgoQxSornJUhouJj7z+pI0v0dEXk
+         4qEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVA9aDbevIWWOhMR8b/hYn3EgAN5QBd5T5j3EPanjyrdDEPBF2UASUCjAV+TybjL0VCRKptbkdgamcw1eU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykAn1npcPSjb5AehbFtmJxLcEEz35q4YBEoHMRzbs6EHOHZeon
+	pzXDiY3SLgOz2QEGMJp+HMTYSGob/V0KBCamh81rj3fccv9JIOju6PVdKAXSN0QmIr6In6lrPCT
+	507zepfdp2vGjsnXgZdvS8pTHd7cLvjIV+AeoHQ==
+X-Gm-Gg: ASbGncvt6/vRLz3hGy2iqo3Fzxyskm80eYSeGX3CHOEwMH90z5jrT26J+QO0Z/+tCjV
+	gheooJ3bDhI2V7kc5i8BIJQZm6SC/r9WTO/ztfg6CckDkjWea4hTkDVdy7I1kqAL0EN4gFXpREW
+	YZiNNg5jj45JIb+2hwcVZLIBaHNw==
+X-Google-Smtp-Source: AGHT+IENp9Rsn1tl1gtpbQVTMzSC6/93PX9bXuEoDkAlRHWwSvf7X/I+LUs0PiXsS9JvQ3CIAnw0CeEUzESATSMDzW8=
+X-Received: by 2002:a17:907:c22:b0:ac1:e881:8997 with SMTP id
+ a640c23a62f3a-acad3445eb0mr424260766b.3.1744430465564; Fri, 11 Apr 2025
+ 21:01:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250412-qps615_v4_1-v5-7-5b6a06132fec@oss.qualcomm.com>
+References: <20250411131423.3802611-1-guodong@riscstar.com>
+ <20250411131423.3802611-4-guodong@riscstar.com> <20250411-spoiler-dispatch-8f709700a996@spud>
+In-Reply-To: <20250411-spoiler-dispatch-8f709700a996@spud>
+From: Guodong Xu <guodong@riscstar.com>
+Date: Sat, 12 Apr 2025 12:00:53 +0800
+X-Gm-Features: ATxdqUGgkB-PsMfv6YqmcddOd__4CXMlcvN5r0cbFMC6NhGoCTmz_wliYFT0jOQ
+Message-ID: <CAH1PCMZcevte5kJ9PUO3cvoaFwdido=WboNcLV9dTk9SJuLGBQ@mail.gmail.com>
+Subject: Re: [PATCH 3/9] dt-bindings: pwm: marvell,pxa: add support to
+ spacemit K1
+To: Conor Dooley <conor@kernel.org>
+Cc: ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, alex@ghiti.fr, dlan@gentoo.org, p.zabel@pengutronix.de, 
+	drew@pdp7.com, inochiama@gmail.com, geert+renesas@glider.be, heylenay@4d2.org, 
+	tglx@linutronix.de, hal.feng@starfivetech.com, unicorn_wang@outlook.com, 
+	duje.mihanovic@skole.hr, elder@riscstar.com, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 12, 2025 at 07:19:56AM +0530, Krishna Chaitanya Chundru wrote:
-> Introduce a common API to check if the PCIe link is active, replacing
-> duplicate code in multiple locations.
-> 
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+On Sat, Apr 12, 2025 at 12:43=E2=80=AFAM Conor Dooley <conor@kernel.org> wr=
+ote:
+>
+> On Fri, Apr 11, 2025 at 09:14:17PM +0800, Guodong Xu wrote:
+> > Add "spacemit,k1-pwm" as a compatible string to support the PWM
+> > controller on the SpacemiT K1 platform.
+> >
+> > Signed-off-by: Guodong Xu <guodong@riscstar.com>
+> > ---
+> >  Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml=
+ b/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml
+> > index 9640d4b627c2..1e3cabf6a89a 100644
+> > --- a/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml
+> > +++ b/Documentation/devicetree/bindings/pwm/marvell,pxa-pwm.yaml
+> > @@ -19,6 +19,7 @@ properties:
+> >        - marvell,pxa270-pwm
+> >        - marvell,pxa168-pwm
+> >        - marvell,pxa910-pwm
+> > +      - spacemit,k1-pwm
+>
+> The driver doesn't appear to handle this differently to existing
+> compatibles, why is a fallback not used?
+>
 
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
+The only difference in the SpacemiT K1 PWM controller is the addition of
+a resets line. This property is not used by any existing PXA-based platform=
+s.
 
-One heads-up and one nit:
+Since resets is defined as optional, I agree that continuing to use
+the existing marvell,pxa... compatible string is reasonable.
 
-> --- a/drivers/pci/hotplug/pciehp_hpc.c
-> +++ b/drivers/pci/hotplug/pciehp_hpc.c
-> @@ -584,7 +557,7 @@ static void pciehp_ignore_dpc_link_change(struct controller *ctrl,
->  	 * Synthesize it to ensure that it is acted on.
->  	 */
->  	down_read_nested(&ctrl->reset_lock, ctrl->depth);
-> -	if (!pciehp_check_link_active(ctrl))
-> +	if (!pcie_link_is_active(ctrl_dev(ctrl)))
->  		pciehp_request(ctrl, PCI_EXP_SLTSTA_DLLSC);
->  	up_read(&ctrl->reset_lock);
->  }
+I'll update the next version accordingly and include an explanation of this
+decision in the commit message.
 
-Heads-up:  There's a trivial merge conflict here with what's queued on
-pci.git/hotplug.  No need for you to respin because I expect this will be
-merged through a different topic branch anyway, but Bjorn and the other
-maintainers will see the merge conflict when generating the next branch.
+-Guodong
 
-
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1945,6 +1945,7 @@ pci_release_mem_regions(struct pci_dev *pdev)
->  			    pci_select_bars(pdev, IORESOURCE_MEM));
->  }
->  
-> +bool pcie_link_is_active(struct pci_dev *dev);
->  #else /* CONFIG_PCI is not enabled */
->  
->  static inline void pci_set_flags(int flags) { }
-> @@ -2093,6 +2094,9 @@ pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
->  {
->  	return -ENOSPC;
->  }
-> +
-> +static inline bool pcie_link_is_active(struct pci_dev *dev)
-> +{ return false; }
->  #endif /* CONFIG_PCI */
-
-Nit:  Seems like this would still fit within 80 chars:
-
-static inline bool pcie_link_is_active(struct pci_dev *dev) { return false; }
-
-That said, all existing callers of this function as well as the new one
-introduced by this series are only compiled in the CONFIG_PCI=y case,
-so I'm not sure the inline stub is necessary at all?
-
-Thanks,
-
-Lukas
+> >
+> >    reg:
+> >      # Length should be 0x10
+> > --
+> > 2.43.0
+> >
 
