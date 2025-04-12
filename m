@@ -1,130 +1,132 @@
-Return-Path: <linux-kernel+bounces-601380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DB6A86D1F
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 15:04:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3D4A86D24
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 15:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19C4B1B66663
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 13:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35D949A019B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 13:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25D11E8326;
-	Sat, 12 Apr 2025 13:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDEE1E835C;
+	Sat, 12 Apr 2025 13:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zb40OONT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOlxZbke"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8DD80B;
-	Sat, 12 Apr 2025 13:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7C7190057;
+	Sat, 12 Apr 2025 13:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744463089; cv=none; b=AyHVEBlem9a8yBcGrw41PRcJ0HZChqbaQxectMO4SeTtxiDP6DJM2KUU0YXV9B9j7ghb9R2ddMx3etGhUTqQUfFVpPvaFPwoVJRS5Yk6DwwUw2B4JG7lqmRLvIjqkfG4I63q3DfUzxb6CClQIDHC69GFF2JbE35l1v36ruxKduc=
+	t=1744463456; cv=none; b=p8+jSCLJm89vzZS7KOREqTkzS5qiS/d4gOEqzG+EHhjge7/zSSTTsoez9cbwZ9tINFGqYqAixd0cw7e6wOMuuCB7PSxGEGSG/L0kLy7F0LNSqVjlHhhoSJhxsFD30KzEmnmLtOQYEauGZZTXk37VPU9blE6nn0Y5msJ3JP8HtIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744463089; c=relaxed/simple;
-	bh=T+kgOlCvxoAnQ1MopdtoUTigE/tI5eb4m3xUku3rKik=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jsBwJgaqPzClZEKCxCKhkrRkB2spN8XA0SkDewIpwu9aml1zZYsLsTJEwRzA/aLVEwNmBUmxL5/b8ujzfeOwQnQ/5U6jnlZ7TvyE1QFMJwAVtcu4cKdACnlvNgbRADcuTUvX01NwJbFu25TOpxqvcbuSlhRH1YjGf+qCYgtWZ10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zb40OONT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8EF01C4CEE3;
-	Sat, 12 Apr 2025 13:04:48 +0000 (UTC)
+	s=arc-20240116; t=1744463456; c=relaxed/simple;
+	bh=zPnjWEDnV//Fj6ip5BNwiywdF2j4nrxppCfJXU4SIiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gzMYuvihbMm1X4jG8/V3JkrO4qi8dDTov6ToeJDh6lTnvHoUAuJcYqGeX2vsg6HMEIMTniesvqtpVwq7JaAR2B5Zl9gKHMah1a2uqbDTKlM9Mu7B1ARd4cC8kHeHwFUhA1dWBsiBQ9ZPyo6qb1B91/Ce62d/8ShTK/gnWLRUcek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOlxZbke; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7E2C4CEE3;
+	Sat, 12 Apr 2025 13:10:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744463088;
-	bh=T+kgOlCvxoAnQ1MopdtoUTigE/tI5eb4m3xUku3rKik=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=Zb40OONTlEn+HE8ksmqmUXGZioqIoeUTL1YQssByv1CvHjxAQ1biFCSdWJaSPOO7o
-	 PuR6OIjAyKmMubByyvuF+qkPQ06m7CZF/zwvEFj/lHapaR6X/m4KmciwLvQ8+1iWnI
-	 RnNwv7PYEHAgEqhByoga7WhUZnNeT2R6ElVwrXtqlW3TJ75an4pBxZjc63zIwdazki
-	 gLZdc66+WAxf/+sZBZmBd3fUP0Y4MKgU7sv+FoasWBf3meAltZ/M/QXdBcTWkrdT6K
-	 frFU37C4E0Mq8EA8F8f6rl36Cl/jMSBGQaM79u69T1RuleVrE0T9QY1sSPXurdzO2Q
-	 aYC+EPBKeD9+Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71AD4C369AE;
-	Sat, 12 Apr 2025 13:04:48 +0000 (UTC)
-From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Sat, 12 Apr 2025 15:04:32 +0200
-Subject: [PATCH v2] dt-bindings: leds: Allow differently named multicolor
- leds
+	s=k20201202; t=1744463455;
+	bh=zPnjWEDnV//Fj6ip5BNwiywdF2j4nrxppCfJXU4SIiE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dOlxZbkemQ3VFrv+YVoBOCstAPSS4ga/uAaU+NIyXUjPYZuLIRgDVSRh68bfKMMQV
+	 QUWlgaV6Lu8KSj3NPf0tQshqa6AQeoRWFJow24bnCbguRIu2yAW/T8tbBg5t9OvlJe
+	 JqKee/+Ru049ziXLZa9rJ9hBwKUWV/D3iGhaBW527dT3RTQ5vtYWmca0uyNR6lIy/Q
+	 SX4Qgbwwk9zrSeySupKB4PMunbIpf3cXpwhYkTXzqxTp8+V2xKD+J3zigYxcF1Yhmi
+	 Wx+1MaN8b1ytChtF1jtTyaK6/94UuGSj3LpfU+LZkJFIUed3A952O+obDTNt9U7mRF
+	 QPiCreCNf9e5w==
+Date: Sat, 12 Apr 2025 14:10:47 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sukrut Bellary <sbellary@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Angelo Compagnucci <angelo.compagnucci@gmail.com>,
+ Nishanth Menon <nm@ti.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Matti Vaittinen
+ <mazziesaccount@gmail.com>
+Subject: Re: [PATCH 0/2] iio: adc: ti-adc128s052: Add support for adc102s021
+Message-ID: <20250412141047.4273a8b1@jic23-huawei>
+In-Reply-To: <20250408132120.836461-1-sbellary@baylibre.com>
+References: <20250408132120.836461-1-sbellary@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250412-multi-led-v2-1-56af86908744@posteo.net>
-X-B4-Tracking: v=1; b=H4sIAN9k+mcC/23MQQrDIBCF4auEWdeiA1LsqvcoWUSdNAOpBrXSE
- rx7bdZd/o/Ht0OmxJThOuyQqHLmGHrgaQC3TOFBgn1vQIlaojTi+VoLi5W8MMYoQqktzR76f0s
- 08/uw7mPvhXOJ6XPQVf3Wf0pVQgk9kXXOevT2cttiLhTPgQqMrbUvPNjQD6MAAAA=
-X-Change-ID: 20250209-multi-led-9991e205befd
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>, 
- Pavel Machek <pavel@kernel.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744463086; l=1614;
- i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=a7MVW7lJ84PcK32/7G3ucUp7YIndCA/M048QSEAkvoA=;
- b=zq7jcq7nd/DWtjq3QNRNbNkPq+8Cpldi//o2EfFdnuzk/jWfS9b4gQM91iSibxLnntRxLBri0
- gY+s92S2WluAzm0JVz3NuHogrRGZqWd9Kp5xv99Pby9mXchLd65lnPw
-X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
- pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
-X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
- auth_id=156
-X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-Reply-To: j.ne@posteo.net
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: "J. Neuschäfer" <j.ne@posteo.net>
+On Tue,  8 Apr 2025 06:21:18 -0700
+Sukrut Bellary <sbellary@baylibre.com> wrote:
 
-In some cases, for example when using multiple instances of
-leds-group-multicolor, a board may have multiple multi-leds which can't
-be distinguished by unit address. In such cases it should be possible to
-name them differently, for example multi-led-a and multi-led-b. This
-patch adds another node name pattern to leds-class-multicolor.yaml to
-allow such names.
+> The patch series adds the support for adc102s021 and family.
+> 
+> The family of devices are easier to
+> support since they all (no matter the resolution) seem to respond in
+> 12-bits with the LSBs set to 0 for the reduced resolution devices.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
----
-V2:
-- Add Krzysztof's review tag
-- mention leds-group-multicolor in the commit message
-- rebase on 6.15-rc1
+This has raced against Matti's series
+https://lore.kernel.org/linux-iio/cover.1744022065.git.mazziesaccount@gmail.com/
+Support ROHM BD79104 ADC
 
-Link to v1: https://lore.kernel.org/r/20250209-multi-led-v1-1-5aebccbd2db7@posteo.net
----
- Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+With hindsight that wasn't obvious from the patch series name though
+which should ideally have been
+iio: adc: ti-adc128s052: Support ROHM BD79104 ADC
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
-index bb40bb9e036ee00e06d21e2321ecd5a7d471c408..c22af25b6430be71300c0e37f696cd61112ea190 100644
---- a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
-+++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
-@@ -21,7 +21,9 @@ description: |
+Please rebase on the iio testing branch on kernel.org or on top of that series.
+Technically I've only applied the first 7 patches so far, but the 8th
+should be a simple change from that v3.
  
- properties:
-   $nodename:
--    pattern: "^multi-led(@[0-9a-f])?$"
-+    oneOf:
-+      - pattern: "^multi-led(@[0-9a-f])?$"
-+      - pattern: "^multi-led-.*$"
- 
-   color:
-     description: |
+Matti, you volunteered as maintainer :)  Hence please take a look at
+this one.
 
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250209-multi-led-9991e205befd
+One nice thing in there is we now have a __be16 buffer16 element that
+can avoid at least one cast in patch 2.
 
-Best regards,
--- 
-J. Neuschäfer <j.ne@posteo.net>
+Thanks,
 
+Jonathan
+
+> 
+> Changes in v3:
+> 	Patch 1:
+>         - No changes in dt-bindings
+> 
+> 	Patch 2:
+> 	- used be16_to_cpu() for the endian conversion.
+> 	- used config index enum while setting up the adc128_config[]
+> 
+> - Link to v2:
+> 	https://lore.kernel.org/lkml/20231022031203.632153-1-sukrut.bellary@linux.com/
+> 
+> Changes in v2:
+> 	Patch 1:
+> 	- No changes in dt-bindings
+> 
+> 	Patch 2:
+> 	- Arranged of_device_id and spi_device_id in numeric order.
+> 	- Used enum to index into adc128_config.
+> 	- Reorder adc128_config in alphabetical.
+> 	- Include channel resolution information.
+> 	- Shift is calculated per resolution and used in scaling and
+> 	raw data read.
+> 
+> - Link to v1: https://lore.kernel.org/all/20220701042919.18180-1-nm@ti.com/
+> 
+> Sukrut Bellary (2):
+>   dt-bindings: iio: adc: ti,adc128s052: Add adc08c and adc10c family
+>   iio: adc: ti-adc128s052: Add lower resolution devices support
+> 
+>  .../bindings/iio/adc/ti,adc128s052.yaml       |   6 +
+>  drivers/iio/adc/ti-adc128s052.c               | 149 +++++++++++++-----
+>  2 files changed, 118 insertions(+), 37 deletions(-)
+> 
 
 
