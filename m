@@ -1,111 +1,90 @@
-Return-Path: <linux-kernel+bounces-601241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C873A86B41
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 08:25:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB844A86B47
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 08:26:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0279A8C8609
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 06:25:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCE99464A95
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 06:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F9C18BC1D;
-	Sat, 12 Apr 2025 06:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UpC6CwPi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A807191F66;
+	Sat, 12 Apr 2025 06:26:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC637FD
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 06:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660D219005D
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 06:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744439141; cv=none; b=bCzE2sXjXmXTEu0Rj0KhEQIHfUABA7U6kfO1VsMYwHwCQDeadf2Ld+w4jJC38jqjRUsiXtvk8CSf3vX5f6LeGKNifLarY9mnin08HQT+YhxvzYgu6Frs8jmuBVtFzRsM8vmJdld/jVbi80958m0uwosMYY+3Nn/9D5A/2/gqCGU=
+	t=1744439164; cv=none; b=UKhjtkPKSPJ/UEr8spg4JhpF3FGZybtzOARCXz2bJy6HrzGSihWV9bb0YAUf5w/JbYmWsIhMVeMYaSzZ9zv8rnA+kWbw2S1DMgiNm+RiTYwtqhO2rhbiTPmJyJRxNOWuEehSrBgm8/uvH0k+U8dISIUO/wPxN7CVT/PDOu0U5c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744439141; c=relaxed/simple;
-	bh=C9FJCaqWjBbJYONd4u4BeG0MfIDA8Flo5Yry5CDL8Ek=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=WQqJkrIrxVr3WPvSXYD1FZoQh4SCA0myTnXWp5TBxGpzEkcM7VQcfi0f9AReE0mdr+6fbpCLPhzVQl/e1Q1OcDcHp+Ot5U3nE27+vcIbTaHuODlFT6oKQxYbiDeUPUFLEKcYef8SPly873kDixne0XJtyvLVaFLsPQHDGhIJ0Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UpC6CwPi; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744439138; x=1775975138;
-  h=date:from:to:cc:subject:message-id;
-  bh=C9FJCaqWjBbJYONd4u4BeG0MfIDA8Flo5Yry5CDL8Ek=;
-  b=UpC6CwPiOiKSfwjAkrRE5xS9IOnGVWLgV7lSR7KimjE/UVH7cgDOePRa
-   qwudOtUZuWRD0NNqJz9JSR914NHg58slyyvgSz1IdslArbUI8dYm+kGOB
-   tjq3iaVKZzsSXpQHniyNt5w/wjrqo8GGetTljfghlz6qQUHPMFoyf6Lhm
-   LO7Wdeobe1VCwSZC25a/0WA8n6hGohnDcb0r3lsfMsCeDMPLgZJQchz8G
-   5oiFfckUFkI6WAkRSwbU/MXGOcRNw5EBK4YkanIGx8h3/V7TB3lOof8Hc
-   bUpn6ib787fmHz3WS+fU6jRJSVcnBPVQRcOdnhpY/U6ofhjFknWTVkzuY
-   Q==;
-X-CSE-ConnectionGUID: oiSgsbz1TJeCDFl8U/9Cjw==
-X-CSE-MsgGUID: d8xgvV/6Q7ejQ+r1Nm7E1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11401"; a="49640513"
-X-IronPort-AV: E=Sophos;i="6.15,207,1739865600"; 
-   d="scan'208";a="49640513"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 23:25:38 -0700
-X-CSE-ConnectionGUID: 7wGjlHi3Q5GuuIzbG+V7Lw==
-X-CSE-MsgGUID: 3gYxCmxxRIWH6iAi6npdIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,207,1739865600"; 
-   d="scan'208";a="129927064"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 11 Apr 2025 23:25:37 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u3UJ4-000Bbk-39;
-	Sat, 12 Apr 2025 06:25:34 +0000
-Date: Sat, 12 Apr 2025 14:25:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:timers/urgent] BUILD SUCCESS
- 3940f5349b476197fb079c5aa19c9a988de64efb
-Message-ID: <202504121457.9cgViO6D-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1744439164; c=relaxed/simple;
+	bh=zjA9IMoXlF2IQ+gWITjMtMmmRvvzM1MQba86M1hAkkE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IMgQw/IHPUpusIYbhUHYnl6K96arRHheEIKRzfQbwLTXOwPQtjZCsDiaZtgDzKZFn+ttgAMW0Ii9EWJo9r5vwnTJNxW9tcLMAsQsn/oKYuSGDV4Jt5RW68ucIseSWE0TijDf0ju7Kz3yyFx/NimIokWEJmJOqhtBfheDT+NpUhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85e318dc464so532742739f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 23:26:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744439162; x=1745043962;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k7pttFx1O6P8ng4Jkcmf/T3DH7cXDuHmxWgJ1Rn6+98=;
+        b=rUS1NT2RyzE/BTQ6AAEaCKKUMXGMjO0tOULiXA3AvDtit2gdnMUy4Q3eoda9aVQgXx
+         SF49qdWSFM5j9qb9HBqRW0riBoIWWnHNRMOgZce4Yv1IZnJlc5fmCvpRx3w/2jyAiIbL
+         hfIwLo1rlqalmp4gRXLUQ67R3nUiw0f08XcehN1SWDNN/u9JSfhJTJcKlVKUMEzrKI2B
+         rOBe3JGbj1mKnRnuY+M50PbUS79iKYX6rOh4IxR/57iETDHMztVg4I0RsjnslHS616CE
+         soTn9YNfYvwM8QCRhyPSsrV39/Yt1QKrhcKlRoq1Va/S4m6/oiXkHSP2+ikUACvXXWaG
+         2URw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeFGV/eOSxwAwT/kS3zV0djhkq+0j4peygsAq8WB+iLkhPHQpQDCYJQcmFW4AwCq4v2uKuKw++WxuQXV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsPk4myTweCC80nohNM5gbUr7w6OMMVhHRdWddsHRHGt0nhLZX
+	ihcssNF/Y/p//8VzS7k07dR6xTtmoT4BoUd4/tW2BLkysiPgU37h/DSCF5KN1sEkuJaYXV1zO5W
+	+94/wvioYmKl6LWM5sEIIsSg4De3AmH84hzCTYtt/dTD9DUePUsLgOdw=
+X-Google-Smtp-Source: AGHT+IG34fLR8s87QCkirZyimVSt8DfVCzD5DN1vQwsxH5TRHhPhR+G8guF7fGAgVlg0wM0SP6SIA5hpf73XP5474nqpzyGkCsZb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:6:b0:3a7:88f2:cfa9 with SMTP id
+ e9e14a558f8ab-3d7ec225f03mr53785075ab.11.1744439162437; Fri, 11 Apr 2025
+ 23:26:02 -0700 (PDT)
+Date: Fri, 11 Apr 2025 23:26:02 -0700
+In-Reply-To: <d16ba399-8ddb-4d4e-9c1c-3f657ea86abe@ovn.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67fa077a.050a0220.378c5e.0003.GAE@google.com>
+Subject: Re: [syzbot] [openvswitch?] KMSAN: uninit-value in validate_set (2)
+From: syzbot <syzbot+b07a9da40df1576b8048@syzkaller.appspotmail.com>
+To: aconole@redhat.com, davem@davemloft.net, dev@openvswitch.org, 
+	echaudro@redhat.com, edumazet@google.com, horms@kernel.org, 
+	i.maximets@ovn.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, pshelar@ovn.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/urgent
-branch HEAD: 3940f5349b476197fb079c5aa19c9a988de64efb  x86/i8253: Call clockevent_i8253_disable() with interrupts disabled
+Hello,
 
-elapsed time: 1444m
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-configs tested: 19
-configs skipped: 127
+Reported-by: syzbot+b07a9da40df1576b8048@syzkaller.appspotmail.com
+Tested-by: syzbot+b07a9da40df1576b8048@syzkaller.appspotmail.com
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Tested on:
 
-tested configs:
-i386                         allmodconfig    gcc-12
-i386                          allnoconfig    gcc-12
-i386                         allyesconfig    gcc-12
-i386    buildonly-randconfig-001-20250411    gcc-12
-i386    buildonly-randconfig-002-20250411    gcc-12
-i386    buildonly-randconfig-003-20250411    gcc-12
-i386    buildonly-randconfig-004-20250411    clang-20
-i386    buildonly-randconfig-005-20250411    gcc-11
-i386    buildonly-randconfig-006-20250411    gcc-12
-i386                            defconfig    clang-20
-x86_64                        allnoconfig    clang-20
-x86_64                       allyesconfig    clang-20
-x86_64  buildonly-randconfig-001-20250411    gcc-11
-x86_64  buildonly-randconfig-002-20250411    gcc-11
-x86_64  buildonly-randconfig-003-20250411    clang-20
-x86_64  buildonly-randconfig-004-20250411    gcc-12
-x86_64  buildonly-randconfig-005-20250411    clang-20
-x86_64  buildonly-randconfig-006-20250411    gcc-12
-x86_64                          defconfig    gcc-11
+commit:         8c1a4c54 net: openvswitch: fix nested key length valid..
+git tree:       https://github.com/igsilya/linux.git tmp-validate-set
+console output: https://syzkaller.appspot.com/x/log.txt?x=15a29c04580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=36f90188412b4fb8
+dashboard link: https://syzkaller.appspot.com/bug?extid=b07a9da40df1576b8048
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
