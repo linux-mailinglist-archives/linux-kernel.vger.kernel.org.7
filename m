@@ -1,114 +1,117 @@
-Return-Path: <linux-kernel+bounces-601331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60C3AA86C80
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:29:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9081FA86C86
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AFE8174871
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 10:29:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9133517868F
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 10:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8311C6FF4;
-	Sat, 12 Apr 2025 10:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDF31AB530;
+	Sat, 12 Apr 2025 10:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5s9VgC0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FhRe/8YT"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA6D5339D;
-	Sat, 12 Apr 2025 10:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695965339D;
+	Sat, 12 Apr 2025 10:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744453740; cv=none; b=StfrH4jlN8dcSNcI3jxaxjuABTXpvIpGML6sZ0XJ8IhmLfgPWoOQx8qxsQG+wzTtdxOVJFclHiq+Wky7shhLqK8qq9xxyDpVuoex5YSv817wVoRjZM3seTJTxCuRWI4qKSyfKHXkrhHH94UVgoxm1ocUJef9IcdAOpZX2LJZcQg=
+	t=1744453795; cv=none; b=rm7FqX1eZBKbxRajoa5/GsL+mKcJb6qty2L7lREkeoQhCdYb3c6o+6+xb3hzfOa4i0cDDPROb+m/rtr1NUadIK3luMOB3ZADkeAMVRkNeO8G4I8dTRZ2hK8m+9+zxgle28yAcipFUVcBgK0p7Om7Lm9rEuHfBKpM5+bUiJNUqTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744453740; c=relaxed/simple;
-	bh=rTZue6TIWXirhiH6eYRqm8lVBetcgKb0L2l3SJ0K36Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EFOUyEskjN95HJ63rDkMEwmxztX+VTk5Vwx6cZx9hlfaOEqogeSXD6LbFyQb0GF0hpVi4qAzHttRGy9mHTQSHI7nxCGJyceUYykg1OhrKB3R+5OLMSPucKij8yLcYDGR0HptCrd3Un8BFJVddlvoZcMoOTZfENU5b5c5RSEn0YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5s9VgC0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD7B1C4CEE3;
-	Sat, 12 Apr 2025 10:28:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744453740;
-	bh=rTZue6TIWXirhiH6eYRqm8lVBetcgKb0L2l3SJ0K36Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=n5s9VgC0vKBUxU8c4kQLOuBDb/fKbCyDB7xZ6x8aZsoQpgEyOXUx/L2hyinnhiTx7
-	 95y2pCneoLIL5YXTsCfgoIHU2+aso84xHbXy6rD3zLfAF8gKWZc18xT4E5PFcYqShy
-	 7pt6BTGNhoXDDo+mk3PxlD5q+SO2UYu+ltj5WX985GuLh/7iRW3exHPt8J1v03YtbX
-	 ca5zZ4pGAm4HoEfNAdndS7a5lmtrpFBIIXseieCoGGtgZQlu3njvzKnUFVD3Ibo3ZU
-	 FrH8TLrdUq5XLI5XRJluuv7mT1KnLYI4sKpeVprrhb0dDfNviuAlUH7A6Bpc7FYXCm
-	 FVGGvb629Q4gQ==
-Date: Sat, 12 Apr 2025 11:28:52 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Marcelo Schmitt
- <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, lars@metafoo.de,
- Michael.Hennerich@analog.com, corbet@lwn.net
-Subject: Re: [PATCH v4 1/4] iio: adc: ad4000: Add support for SPI offload
-Message-ID: <20250412112852.19eacac3@jic23-huawei>
-In-Reply-To: <Z_fe69bn90oVjPNk@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1743110188.git.marcelo.schmitt@analog.com>
-	<386ce043a0e3fc9e8ff71f17aef8de128ce5869e.1743110188.git.marcelo.schmitt@analog.com>
-	<97d0cc16-cdd4-449c-87f5-f62e0515de97@baylibre.com>
-	<Z_fe69bn90oVjPNk@debian-BULLSEYE-live-builder-AMD64>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744453795; c=relaxed/simple;
+	bh=DfiZ8h8pxXi6PEKdDc9EKvyLdmzPeSkt3+jW9TIozNc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X/xKrrkWwtW4tzc5U2cf46Gp8bqOGZ/UNr730UC3nsOf0pIq/C4NyoH2VTX3AQgbVn69disMp0qme2W/JPe41YpIjvIAwWGnBWzRFO6wfJLS3/xdlgv4OxW1alHolLqKx8AW4mDmS9wfAkhJPdBlHOZMDBgBL22TaqlOcHTbpT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=FhRe/8YT; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53CAN7OA028580;
+	Sat, 12 Apr 2025 10:29:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=gPgqoTIGqj5+L1srp+y4+XFzxkZ4VE4jSTvXjKEzxqo=; b=
+	FhRe/8YTD2ZCGX85QNmwooaFS6IgwxksEq1DWtGaNaPXJRk6k/OHdm/R46bQ62Tu
+	LIkUHlr6iKcAWf9k3vSxl+rbQtSOMc0EX4smZpM/Bm55uUtmVeiVtp9Ptt2xtbGS
+	DCPa0ELXyqbZQtBJogGgi7znKYitEYDfOg3QyAOOHbmJUnUb0nkMop/0hjXHse4W
+	dBJmUtccF5u9iSk0o7AgUB3NTDjHhXR9PhaiBTK/pHZ4Hoz8KEUwIZ151yhGQIVx
+	P4k18sSsMkWCpo/WY/LjDur34emaAR3knuv+8PfmpN2QoeOr6paf7Tx/O2OnC6FO
+	VSDoskmhMbY77TPrjwmnyg==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45ypbu803q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 12 Apr 2025 10:29:28 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53C71Fj3032204;
+	Sat, 12 Apr 2025 10:29:27 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45yem69s15-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 12 Apr 2025 10:29:27 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 53CATROc038043;
+	Sat, 12 Apr 2025 10:29:27 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 45yem69s0s-1;
+	Sat, 12 Apr 2025 10:29:27 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+        James.Bottomley@HansenPartnership.com, peter.wang@mediatek.com,
+        minwoo.im@samsung.com, manivannan.sadhasivam@linaro.org,
+        viro@zeniv.linux.org.uk, cw9316.lee@samsung.com,
+        quic_nguyenb@quicinc.com, quic_cang@quicinc.com,
+        stanley.chu@mediatek.com, Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: ufs: mcq: Add NULL check in ufshcd_mcq_abort()
+Date: Sat, 12 Apr 2025 06:28:53 -0400
+Message-ID: <174445370235.1751018.17269242214304693746.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250410001320.2219341-1-chenyuan0y@gmail.com>
+References: <20250410001320.2219341-1-chenyuan0y@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-12_04,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0
+ mlxlogscore=655 phishscore=0 spamscore=0 suspectscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2502280000 definitions=main-2504120077
+X-Proofpoint-ORIG-GUID: 7jqC1S_svR8jCKup5NgRjxybuE2yH2Mx
+X-Proofpoint-GUID: 7jqC1S_svR8jCKup5NgRjxybuE2yH2Mx
 
-On Thu, 10 Apr 2025 12:08:27 -0300
-Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
+On Wed, 09 Apr 2025 19:13:20 -0500, Chenyuan Yang wrote:
 
-> On 04/09, David Lechner wrote:
-> > On 3/27/25 4:24 PM, Marcelo Schmitt wrote:  
-> > > FPGA HDL projects can include a PWM generator in addition to SPI-Engine.
-> > > The PWM IP is used to trigger SPI-Engine offload modules that in turn set
-> > > SPI-Engine to execute transfers to poll data from the ADC. That allows data
-> > > to be read at the maximum sample rates. Also, it is possible to set a
-> > > specific sample rate by setting the proper PWM duty cycle and related state
-> > > parameters, thus allowing an adjustable ADC sample rate when a PWM (offload
-> > > trigger) is used in combination with SPI-Engine.
-> > > 
-> > > Add support for SPI offload.
-> > > 
-> > > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > > ---  
-> > 
-> > I think I spotted a bug. With that fixed...
-> > 
-> > Reviewed-by: David Lechner <dlechner@baylibre.com>
-> >   
-> > > @@ -690,6 +942,15 @@ static int ad4000_prepare_3wire_mode_message(struct ad4000_state *st,
-> > >  
-> > >  	xfers[1].rx_buf = &st->scan.data;
-> > >  	xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);  
-> > 
-> > Now this needs to be:
-> > 
-> > 	xfer->len = chan->scan_type.realbits > 16 ? 4 : 2;
-> > 
-> > Otherwise when there is SPI offload, this could read 2 words because
-> > storagebits is always == 32.  
+> A race can occur between the MCQ completion path and the abort handler:
+> once a request completes, __blk_mq_free_request() sets rq->mq_hctx to
+> NULL, meaning the subsequent ufshcd_mcq_req_to_hwq() call in
+> ufshcd_mcq_abort() can return a NULL pointer. If this NULL pointer is
+> dereferenced, the kernel will crash.
 > 
-> I've just tested both versions with ADAQ4003 and with AD7687.
-> There's no practical difference between the suggestion and what already is in
-> IIO testing. I don't mind sending a patch with the change, but don't think it
-> fixes anything.
-If it is an unnecessary over read in some cases, probably sensible to either
-reduce the length or add a comment on why we don't care.
-
-Jonathan
-
+> Add a NULL check for the returned hwq pointer. If hwq is NULL, log an
+> error and return FAILED, preventing a potential NULL-pointer dereference.
+> As suggested by Bart, the ufshcd_cmd_inflight() check is removed.
 > 
-> Thanks,
-> Marcelo
+> [...]
 
+Applied to 6.15/scsi-fixes, thanks!
+
+[1/1] scsi: ufs: mcq: Add NULL check in ufshcd_mcq_abort()
+      https://git.kernel.org/mkp/scsi/c/4c3240850629
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
