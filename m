@@ -1,165 +1,121 @@
-Return-Path: <linux-kernel+bounces-601594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7E1A86FF8
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 00:19:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0AB9A86FFD
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 00:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2879719E118D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 22:19:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C082D19E170B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 22:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA02222595;
-	Sat, 12 Apr 2025 22:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1751F03FE;
+	Sat, 12 Apr 2025 22:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="E4NW2k0F"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MgRnyNbZ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B7518F2EF;
-	Sat, 12 Apr 2025 22:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775C6188A0C;
+	Sat, 12 Apr 2025 22:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744496343; cv=none; b=WQ3vdtfuh3icHFc2B40k2h3iXlrT2CGmw+t/91jiPElDuX5ekf+BoMnmvm/dzlMMwetlzrkbv3flkKnjxsOyGDQVkQw0v8cfkjIrmOa/4/jI6UTv9s08ZeBflCKl8sr96R5cUS3DTJa81c0Sy8UlBKQbwL0WOqE0Nes23qdl1Ow=
+	t=1744497028; cv=none; b=n2HTTT1wVnfvimmMHni7M1ooIyantzXygRA2pFXzsBVr09pvYDMBDmq8cmtGPA4bczyWPCPAYE9aFPooLdre/bHyrKBJT6Q086ysQGXAGdpY1T0vBqsYw1hLRJ3TWEkWvgkjVWmbbp9ousiYJ4T+xA6JZQNUxxO9lIIt4eb9AO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744496343; c=relaxed/simple;
-	bh=bUoyTR7zWuPOeu9znbGSLLWtFmzYgUkuz+IwAkY9WZQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O3p1l9FiBWLbSkydvn5WIan4HLKZu6McL6Aeto2VKMRkqrkbUNBUujLyr619hL8dKffu+8w4wHOFsZ8z48dBKSZ9Rjgsh7nR9Tdzuy0/lf52h8CUBvGJg25Te/e1nRWUMLRC+a+qXDJ3zkLkBc6q8zfNalFvrPCd3PA+9cVNKPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=E4NW2k0F; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53CLu7S5012339;
-	Sat, 12 Apr 2025 22:18:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=e5lxLau2HhvDmAhkl
-	x7/Ooouz1ck21AGSWcyFSPkON8=; b=E4NW2k0FSvyCnrV+8sD17J1qzDGCHpPoE
-	wMwxAfhkJt2ziUD0o4TluzR+UIa06ymZJ1tXnLGbiuQkHYAFDfJwK/+2Ek3gwBvL
-	URumDgEK6o1HoB4kLbe8jnSDjvNVKv0agM9T3HlKHFW858Tb/oJm5UF7aO6/HSUo
-	GUm61dJ1gC4IooyQGdEJqXbWUKpQuJu8PU6NLq3lkfLnhmOeVo/fwu/d1cEYBg1k
-	6eVs9lbLjROwGJWKPh2pDtUEL+Hen4yKq3GiIz2GV2ps6ep/tfIR11QPn71efE8J
-	W+YQv1if0htTBKaIxrauQmCoh50Bc4kiUSowun4xSPsYnxOCZF++g==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ypmpa9ft-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 12 Apr 2025 22:18:56 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53CJqRZh006030;
-	Sat, 12 Apr 2025 22:18:55 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45ygu1ubqv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 12 Apr 2025 22:18:55 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53CMIqpo15663434
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 12 Apr 2025 22:18:52 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E3E5A20067;
-	Sat, 12 Apr 2025 22:18:51 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6702720065;
-	Sat, 12 Apr 2025 22:18:51 +0000 (GMT)
-Received: from heavy.ibmuc.com (unknown [9.179.5.213])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sat, 12 Apr 2025 22:18:51 +0000 (GMT)
-From: Ilya Leoshkevich <iii@linux.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Sven Schnelle <svens@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v2 2/2] ftrace: Expose call graph depth as unsigned int
-Date: Sun, 13 Apr 2025 00:10:44 +0200
-Message-ID: <20250412221847.17310-3-iii@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250412221847.17310-1-iii@linux.ibm.com>
-References: <20250412221847.17310-1-iii@linux.ibm.com>
+	s=arc-20240116; t=1744497028; c=relaxed/simple;
+	bh=fgM9g8YgFdwLq5azORwymy8IjXW2p4LaTGSja8GFWBk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=U4OwVYpyXKQVTBvo4ZnlCMM4WI2EhxcI7WOeGWGY+xSLX9Qx5u1nodb1GjRgI7Eez5NJ6gxUllVsToGDwoHGjpR9GvHLxJuGwibh9WnBcUXDKy+0uaLSiBhxXVaEQrZOonAeCjBMc29pfpX9LxDeiclb5VfEn+oPpi41Gf1/E+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MgRnyNbZ; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D8C5740E0246;
+	Sat, 12 Apr 2025 22:30:15 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id lFCTngavlAfn; Sat, 12 Apr 2025 22:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1744497011; bh=79WROknjgzL/p85Gq/nIuNnilYKiczPAyh8PISeeOnk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=MgRnyNbZaP73CeNWPdjmsI6bzHZj85bt418JwJSLVe4kyqeAK4yTQ+uG5XmHeMxwW
+	 UGg+/7INMZjvuH6FQMS4NbFYCgdppnud+soaJjN0EdPFBMxm52asidyTBseAC65VW8
+	 IDear1ebrdhv00FcUmbdUXvNSfIa8zbyOqn0OTLkmvVIzggni7AO8HZjTkFR9wcqxE
+	 ApIOs8L0MmezOCHcl4y3yBKyMiwWyD2BNuFTtHtz+scF5NdzH2eXd7GuTyEFbwIG57
+	 wXQviOk0GqUg6RZGMOM1lcuvkbA3LG56WizorNv4hSmdZM/E9hEDdK2FFRELVjKy1a
+	 cDMgjf9coaMNYDwBazh2KvPs9S3jKkEOMTe59JQdOLzOlDBfrzrOXownKRDgQljSwz
+	 uJSV7Vz55sd8zjyqlSpBLa/3r94rH/EdOxuTEDxP6gZR0WBOPxrPi21I44R/fh9ONZ
+	 nUDThDY67PF8VAQLKqjmJdslgr2zTwuuWloZJdJa1LXMWkQnqUTOnoqKqkNZIgG0Lg
+	 +9vEalBiY3EiYusx61ziY1lMtshS2XJftmD4VsDKvF0nDt1gtzY/7S/SUCq4vWoL2p
+	 a10+eU3zQOqJ2vantx7BGqx1BC15nRQtSU3NIUztydieegXMJ2gAd24neuWegtXaSY
+	 cOnITsUdo4Oq4yi+uy3ddkvs=
+Received: from [127.0.0.1] (ip-109-091-218-137.um37.pools.vodafone-ip.de [109.91.218.137])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4BB4F40E023A;
+	Sat, 12 Apr 2025 22:29:52 +0000 (UTC)
+Date: Sun, 13 Apr 2025 00:29:49 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ingo Molnar <mingo@kernel.org>, Mario Limonciello <superm1@kernel.org>
+CC: Jean Delvare <jdelvare@suse.com>, Andi Shyti <andi.shyti@kernel.org>,
+ =?ISO-8859-1?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Yazen Ghannam <yazen.ghannam@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H . Peter Anvin" <hpa@zytor.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC" <linux-i2c@vger.kernel.org>,
+ "open list:AMD PMC DRIVER" <platform-driver-x86@vger.kernel.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_2/4=5D_i2c=3A_piix4=3A_Move_SB800=5F?=
+ =?US-ASCII?Q?PIIX4=5FFCH=5FPM=5FADDR_definition_to_amd=5Fnode=2Eh?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <Z_rJ37er9Dc25ne-@gmail.com>
+References: <20250410200202.2974062-1-superm1@kernel.org> <20250410200202.2974062-3-superm1@kernel.org> <20250411114908.GLZ_kBtN94h79EEN6j@fat_crate.local> <dc564c29-38fc-4b9d-8b1c-c6f890b2333c@kernel.org> <20250411124157.GDZ_kOFfsGgY4zUXA5@fat_crate.local> <Z_rCuLD56IZ4hsNw@gmail.com> <5509f044-912b-4d10-bdeb-95ec52002b06@kernel.org> <Z_rJ37er9Dc25ne-@gmail.com>
+Message-ID: <BE7BBBD7-BDFF-452E-8FAA-669970950B27@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ksuD4hXsFTfVf5ZCPsQ_-upy_Hp13i9X
-X-Proofpoint-GUID: ksuD4hXsFTfVf5ZCPsQ_-upy_Hp13i9X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-12_10,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- mlxlogscore=897 impostorscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 bulkscore=0 phishscore=0 clxscore=1015 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504120170
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Depth is stored as int because the code uses negative values to break
-out of iterations. But what is recorded is always zero or positive. So
-expose it as unsigned int instead of int.
+On April 12, 2025 10:15:27 PM GMT+02:00, Ingo Molnar <mingo@kernel=2Eorg> w=
+rote:
+>
+>* Mario Limonciello <superm1@kernel=2Eorg> wrote:
+>
+>> SB800 is pre-Zen stuff=2E  It's "before my time" - I guess that's the=
+=20
+>> precursor to FCH being in the SoC but has the same functionality=2E
+>>=20
+>> So I'm thinking <asm/amd_fch=2Eh>=2E
+>
+>I went by the SB800_PIIX4_FCH_PM_ADDR name, which is a misnomer these=20
+>days?
+>
+>But yeah, <asm/amd_fch=2Eh> sounds good to me too=2E Boris?
 
-Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
----
- kernel/trace/trace_entries.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+I was aiming more for a header which contains non-CPU defines  - i=2Ee=2E,=
+ platform=2E But the FCH is only one part of that platform=2E But let's sta=
+rt with amd/fch=2Eh - "amd/" subpath element would allow us to trivially pu=
+t other headers there too - and see where it gets us=2E We can (and will) a=
+lways refactor later if needed=2E=2E=2E
 
-diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-index 4ef4df6623a8..de294ae2c5c5 100644
---- a/kernel/trace/trace_entries.h
-+++ b/kernel/trace/trace_entries.h
-@@ -97,11 +97,11 @@ FTRACE_ENTRY_PACKED(fgraph_retaddr_entry, fgraph_retaddr_ent_entry,
- 	F_STRUCT(
- 		__field_struct(	struct fgraph_retaddr_ent,	graph_ent	)
- 		__field_packed(	unsigned long,	graph_ent,	func		)
--		__field_packed(	int,		graph_ent,	depth		)
-+		__field_packed(	unsigned int,	graph_ent,	depth		)
- 		__field_packed(	unsigned long,	graph_ent,	retaddr		)
- 	),
- 
--	F_printk("--> %ps (%d) <- %ps", (void *)__entry->func, __entry->depth,
-+	F_printk("--> %ps (%u) <- %ps", (void *)__entry->func, __entry->depth,
- 		(void *)__entry->retaddr)
- );
- 
-@@ -124,13 +124,13 @@ FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_ret_entry,
- 		__field_struct(	struct ftrace_graph_ret,	ret	)
- 		__field_packed(	unsigned long,	ret,		func	)
- 		__field_packed(	unsigned long,	ret,		retval	)
--		__field_packed(	int,		ret,		depth	)
-+		__field_packed(	unsigned int,	ret,		depth	)
- 		__field_packed(	unsigned int,	ret,		overrun	)
- 		__field(unsigned long long,	calltime		)
- 		__field(unsigned long long,	rettime			)
- 	),
- 
--	F_printk("<-- %ps (%d) (start: %llx  end: %llx) over: %d retval: %lx",
-+	F_printk("<-- %ps (%u) (start: %llx  end: %llx) over: %u retval: %lx",
- 		 (void *)__entry->func, __entry->depth,
- 		 __entry->calltime, __entry->rettime,
- 		 __entry->depth, __entry->retval)
-@@ -146,13 +146,13 @@ FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_ret_entry,
- 	F_STRUCT(
- 		__field_struct(	struct ftrace_graph_ret,	ret	)
- 		__field_packed(	unsigned long,	ret,		func	)
--		__field_packed(	int,		ret,		depth	)
-+		__field_packed(	unsigned int,	ret,		depth	)
- 		__field_packed(	unsigned int,	ret,		overrun	)
- 		__field(unsigned long long,	calltime		)
- 		__field(unsigned long long,	rettime			)
- 	),
- 
--	F_printk("<-- %ps (%d) (start: %llx  end: %llx) over: %d",
-+	F_printk("<-- %ps (%u) (start: %llx  end: %llx) over: %u",
- 		 (void *)__entry->func, __entry->depth,
- 		 __entry->calltime, __entry->rettime,
- 		 __entry->depth)
--- 
-2.49.0
+Thx=2E
 
+--=20
+Sent from a small device: formatting sucks and brevity is inevitable=2E 
 
