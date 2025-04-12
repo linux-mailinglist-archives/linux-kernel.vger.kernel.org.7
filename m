@@ -1,210 +1,148 @@
-Return-Path: <linux-kernel+bounces-601320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80DAA86C5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:10:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA9CA86C57
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02A1A8C5B30
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 10:09:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B606C3BA2B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 10:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72181C54AF;
-	Sat, 12 Apr 2025 10:10:05 +0000 (UTC)
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2109.outbound.protection.partner.outlook.cn [139.219.17.109])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC06A1B4F0E;
+	Sat, 12 Apr 2025 10:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sLsGqeoX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E99D192D77;
-	Sat, 12 Apr 2025 10:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.109
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744452605; cv=fail; b=K8zKG0Rv6yXAWErZed/rq/AMn9GobeB+Wm6KLyMxRtIrrri9fpC41OS5NYrwY1NoVptP+/wGnwj3SPCh0U3na/lQMUEsnf60uGTxw5A3pa3usO6cVVzqgKly7ciT9hDFtvIzyERs3z/gaO8YJ3uF8GxjZnSrLHvNzh126E9ipl8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744452605; c=relaxed/simple;
-	bh=D6i+4xtnjenbRjnKP4FmC6fVdWuWUYhm49OxVzeXpFU=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ElLAMsoURFiVXFjW7k/M8mpzL8Cj07XodBJMI3H+z3FrKKmNEr4ZUXKSkGuqbCV1m/lLz097wt8ITAtkWA3wjy+lterfOaLZ44aB6z8NhbgNKRxr8UymuzWeQDqMl6C2bhanIKAEIjSkK43wEAq3GqrsA7znxKbFlmBr6Mm00jw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Es4e4vkLbuJbwIuLWjTP3IsV8kYjt+zemc2gruRS1lyA7TdLrllCPmDRvu9q4WELEi9CphqgUVFPDVaYnv0tQXOggILAp0SUnEfsHOxPORBz0sIui+fJYsdMTSu/j7WHjCeJQ0P2ji1NZ4APbwJpvqled8nPNQQnh+BMIKXYDvhNI5/T6b7L72zi2pHBpCU608AzSIn/FQM8/9zFXUVd49IQEZNgJUTTzPbIK/oniSMprqscjcwoqGrwaTg8OVByQ+4Fq8jwwZib36TwVl7GFrwkxiUl3T8genD4I9Z9OJ/zJ09TI1XdGQVEsxoDiMjBdNaFHbl+NqsMLicUl8VHyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1ECiAeMW5bTAj+W1eCok0ft9wopZlzd8vRBtmP3mO9Y=;
- b=glgQ8S9sii9IGuEtdwsTXiJ7fyBC3szv2GrwNG5GaaQVHMPNKCwzsmapXjjfikiDVenJckVPWwkZL4gQO9VsFxoe41kfNQAwBlcg3RdC1wQ8aIZzjnaH6rrsO5aYu6zBiMtBchfmPoAosNOtzERvI4u+EwiqIVEIN/lNB3Ze0m0Cz+lPumF7tv1Bu8+p0Di10BQqTZy4AgCFHT9MjhxNKB5lFVMCXSIZiWguFyHkbD11HlfWa+6XahhaDQ6S1RWSSW8Y3dhXOiJxE0xlZRe11YpF2GZ4LnbTrRWbPJFv8cufJxtFUkh1d3zlm4B2/8e/F6lX87oVtXGbkIo402MYMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:b::7) by NTZPR01MB0953.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:a::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.30; Sat, 12 Apr
- 2025 09:34:29 +0000
-Received: from NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
- ([fe80::e1c4:5bb3:adc:97f5]) by NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
- ([fe80::e1c4:5bb3:adc:97f5%5]) with mapi id 15.20.8632.030; Sat, 12 Apr 2025
- 09:34:28 +0000
-From: ende.tan@starfivetech.com
-To: linux-i2c@vger.kernel.org
-Cc: jarkko.nikula@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	mika.westerberg@linux.intel.com,
-	jsd@semihalf.com,
-	andi.shyti@kernel.org,
-	linux-kernel@vger.kernel.org,
-	leyfoon.tan@starfivetech.com,
-	endeneer@gmail.com,
-	Tan En De <ende.tan@starfivetech.com>
-Subject: [v2,1/1] i2c: designware: Add SMBus Quick Command support
-Date: Sat, 12 Apr 2025 17:34:14 +0800
-Message-Id: <20250412093414.39351-1-ende.tan@starfivetech.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SH0PR01CA0010.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:5::22) To NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17054193402;
+	Sat, 12 Apr 2025 10:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744452280; cv=none; b=fgqCb6OR9Dy8XBhsdm+3cw3NO6jrRcsoUcN5RrGrgGKbxbCmLAUTm02nsVh++2EBBYkAXmrWutj5KRPnuWiCtX8U0Q/3P0MF8zqKZFEf82Z4v0uTIQghuwkAbcXsUy6PX70h1oWxH0L0kCFxJd5iBTgtSHUNSuaKiSPDbaYgxck=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744452280; c=relaxed/simple;
+	bh=2lo3tH8bxtbasyCHIvu2dU4b+0ohfe5cOcqF6bKusYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VVaqGXT1JbQqffF9MvnIjVETsIxmqYz4pRjd8CBM1paLnZJm97aBuJTZud1ULpiLmZf/vnEEbSIrZwxMiCYXzc9n4BDjrYO6zCLWoZEk0TkE+rydawPUKEksZlWglwEksXdc4y0RSauB4KVymlaKC28gr6L1W9y8KeJnRK9wJvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sLsGqeoX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B5DBC4CEE3;
+	Sat, 12 Apr 2025 10:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744452279;
+	bh=2lo3tH8bxtbasyCHIvu2dU4b+0ohfe5cOcqF6bKusYI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sLsGqeoXq2eGVCEabMHDb9nymqhjuewH2Xcixc/l77lFCuink9OlixxIU81X3qiwe
+	 oyn0xlP24P/6ezuJrWm/bYBEyarUJRCFJNOjokmv85v0n8ihiSyUbG0jiBgmdMVZxD
+	 1pCvtYfufuFCEgvKLX8peVfMPMczn0j8HY4ZuuayX+df3RgOzC7v9fmfJGkMnP/O5V
+	 zsMEwnC5WT1fXu/bSt8eGPId/csMeerf/u+gMKq+zyp5y6FZ758p32gno46OUVct2r
+	 22gw8kGroXr7Bh02c2uJ4wZuSs372gKq1/gsR3PEBCJCRr94opMKo6ZiHixoMlJhyO
+	 jdPLiMfgJFzWQ==
+Message-ID: <859a4fc2-45f5-4d72-9727-7979e4c15bd5@kernel.org>
+Date: Sat, 12 Apr 2025 12:04:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: NTZPR01MB1018:EE_|NTZPR01MB0953:EE_
-X-MS-Office365-Filtering-Correlation-Id: 21e0fd3b-c8d7-46f1-f43f-08dd79a5385c
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|366016|41320700013|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	4M5YLy9dzCZ6xzG1yVa7mCCqYng3LFesF5l7iM9GC9Q5BQPCdQsSq3Ebq9OGyisFr9rEXW1LbNHn7aCdSZmsjLWP+9hNtbiXxGcLRhIh+l+H5cSQ7eYLqFrqfDlo+X5BX/dLr+Jwc+ChN9sDqY6A1OmqReQJf2X1b1Xb7q3sdKoYJUdqk+HHSWknmH3Gj7KhkC6cY4d7T2rt/5/4Vbgc0ybKICF9okGx4uCyW5fGomr2ymAO6gcPBRBeqsxMvI9Mv1UkhKcoYRNatObuXb3DmveUIGtT1nBcFnvcdan8uL0GHOPU+FJsdJEF4+ZD3xce21K8jIZ4ZEj/Li74BmzOrTMb4HAfU1z77vQ08I/R680g/xqQYnUQqkgYpvVcHTWL+aoo5+Efz/Uwf4v4zEsOv1YeFn803EpHzZvwnEg/puzlE3s/YZyiTMfTy+wcssW1MO3wJZKhMC2ZTqLG6kxkRBQYsjE9xdK9l12IgY3K+olVEXAaO4154VwTqxU8+DagN7OqRePIyf3Oexn1ZMh22mmpEG1o6E1vmVEHo3HsuIkCL/ppckmkC2E36N6nqwG8aTLrtb9wEdH5oslNtCfjFA==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(41320700013)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BkefV/37hUkZIynwqpn3Q+bfzbJazifU0U04sraN6hkdQEzFtUtuhHqWRBOd?=
- =?us-ascii?Q?rFSO117wwQ76w7mckA9mhX9LHG9NHkG1JUL8V9B56kHf8rTQ24cAt8r2MvPs?=
- =?us-ascii?Q?Q8kigPIlXcZDTa2yJVu46C5ad9kF98vE52ED/A82Y24V5ZX0a5nIMWqOmA3b?=
- =?us-ascii?Q?sOQ8evzCT7qT4ILDBwWQ3o7mM5ZTprGHFgUJJr1KUgpjoGr4q5szpOYvaUEG?=
- =?us-ascii?Q?aFl7DwNHks3icl+8Tu5UVYUKYFBBaahRpOFvFEkySlKvSEzJ4gy6ulI4R8up?=
- =?us-ascii?Q?8Cb7FlZ1Cc4bBUZYXVZCI47eR/v/h1WCbwsdIlCLxMMAyhfIqmXAl95QrXb+?=
- =?us-ascii?Q?xaEZ3Af5c8ojDflrwyLBxjONsMnLCfXE/kq4msYLYY5cEbj5ci8Q2BaC+R7A?=
- =?us-ascii?Q?Dc9a1sdDnAKBZlLGdOBT4BKiex7CffPDDGO4KFP631QFsczrsAKWewrpSpm5?=
- =?us-ascii?Q?bw9saviLwIG+e0R7F9fXbtTwavQjkT+sGHFdQVUz5cjhx6pLcGexAkF9yYqc?=
- =?us-ascii?Q?7eemk2YeZuMnrw+R8OcHGUQkIbq7hXtzR+cPWZS3Y2qDNwz3jAmXRu9HESbA?=
- =?us-ascii?Q?Zo4dNgkv+yrf9x1c/FdeFpI0t8+VqOdcUGYGo6tMaTnyAlcDYtUtvNJ+MB+R?=
- =?us-ascii?Q?nzJEsLqeBr38mxnTbCs41dLCK5XrIx5gB4mVUMoxadp+CQ8mJmd/5uB2GWbu?=
- =?us-ascii?Q?TfkHfRSaytEOydOguFxdg5xIUR2lDjy9Cu5hnmsENCbnAnk2CcpX4Bgry5e1?=
- =?us-ascii?Q?sTm+dZxOw4e3Z017EODVz30wB5gbEXPA07GvBLPR7FHGwfuDAPYX/BiBuEBl?=
- =?us-ascii?Q?QHTJyUMSUuYuRu32gX0S0Q0Jvo/Br6cQuBQUi871govoopeXvOayTu1NJyt4?=
- =?us-ascii?Q?nqVEFIQorcLJFPLwBEfXKyKE2PUwb7nNOu7zguXweEDTufW/OagjZ6f+S72H?=
- =?us-ascii?Q?9C/w7aEUdjJsJaP8gOTnoBy9fDmANKp9fJrWBWtE+Ptf7GJMikslt5ZBA/lw?=
- =?us-ascii?Q?OKSgDtSyG/f8uPYPMKfMODRPHiCg2A/JS3JxHaSTpOcANhksdoyKme7Kc2AC?=
- =?us-ascii?Q?jYsw3Osm1fPHhBhnjLeLjZw5F6wFFl06Ee9CltfYG3Rx3fi10N2iL6Dfdsc0?=
- =?us-ascii?Q?NmlVepK7gDg4W9/sZMe+/iqcQxXq0DArlwRIJz8y7z4WXHWBKgP67jC2MFPf?=
- =?us-ascii?Q?v4dierbQfBUzXn8bkFw7oNR0bJBOW489L+bQhnx9tXbkztOxRyPlISNlf1fM?=
- =?us-ascii?Q?hoNBN91WtvQtzqudqNuHo9X6s31YEN5MdlE4rQaOrDsWZega5jMiYvxD9JFf?=
- =?us-ascii?Q?0fZTBiGtRsiPF02OI4pl3BvGwoSHSdN+DwM3/tMpOoNFayMmNpZk37+yn/aU?=
- =?us-ascii?Q?O9ix9LbEpTrkgF7CfzOWoEzZzuZnLGwRY98ea3ppjVS+33s1uF2mj8mwwcXG?=
- =?us-ascii?Q?UkDxd7yU8bO3bQe4R4hytxStsYKNeMgatCwX/nib6kD0OcRbLTJF0Dz5yxqG?=
- =?us-ascii?Q?Jb19MCZUP5135d9u9u2kCckpVEzKoIZKVtsuJGSpu7QUWkFRmfO1wOFVBGrZ?=
- =?us-ascii?Q?3Nizaqg4DmE5LJLUgCv4aA4/5hs6H3x7TxBkLCeSwTrifOqFJdvWLvZs3k2X?=
- =?us-ascii?Q?Ew=3D=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21e0fd3b-c8d7-46f1-f43f-08dd79a5385c
-X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2025 09:34:28.6764
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1EPcXVwG0/DMV2OR0tadPjbd/8xeqbs0GgvCjfIrLUq/W7mc4/RvBpwUZj45niZLxmW3Ue0qCCX67RJAy5aNQURW4f9V1raLmWGGdWHGCsw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB0953
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] arm64: dts: ti: k3-am62l: add initial
+ infrastructure
+To: Bryan Brattlof <bb@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250407-am62lx-v4-0-ce97749b9eae@ti.com>
+ <20250407-am62lx-v4-2-ce97749b9eae@ti.com>
+ <20250409-calculating-hungry-mosquito-f8cfeb@shite>
+ <20250411182608.cpxr357humjq6ln7@bryanbrattlof.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250411182608.cpxr357humjq6ln7@bryanbrattlof.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Tan En De <ende.tan@starfivetech.com>
+On 11/04/2025 20:26, Bryan Brattlof wrote:
+>>> +
+>>> +		usb0_phy_ctrl: syscon@45000 {
+>>> +			compatible = "ti,am62-usb-phy-ctrl", "syscon";
+>>> +			reg = <0x45000 0x4>;
+>>> +			bootph-all;
+>>> +		};
+>>> +
+>>> +		usb1_phy_ctrl: syscon@45004 {
+>>> +			compatible = "ti,am62-usb-phy-ctrl", "syscon";
+>>> +			reg = <0x45004 0x4>;
+>>
+>> No, you do not get syscon per register. The entire point of syscon is to
+>> collect ALL registers. Your device is the syscon, not a register.
+>>
+> 
+> My understanding from [0] was that we would need to break this up into 
+> smaller syscon nodes because the alternative would be to mark the entire 
+> region as a syscon and every other node using it would need to use it's 
+> base + offset which was kinda undesirable especially for the small 
+> number of drivers that need data from this region.
+> 
+>     a-device {
+>         clocks = <&epwm_tbclk 0>;
 
-Add support for SMBus Quick Read and Quick Write commands.
 
-Signed-off-by: Tan En De <ende.tan@starfivetech.com>
----
-v1 -> v2: Removed redundant check of tx_limit and rx_limit
----
- drivers/i2c/busses/i2c-designware-core.h   |  4 ++++
- drivers/i2c/busses/i2c-designware-master.c | 18 +++++++++++++++++-
- 2 files changed, 21 insertions(+), 1 deletion(-)
+Hm? That's how you use the syscon, so how it can be undesirable?
 
-diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-index 347843b4f5dd..91f17181ece1 100644
---- a/drivers/i2c/busses/i2c-designware-core.h
-+++ b/drivers/i2c/busses/i2c-designware-core.h
-@@ -40,6 +40,8 @@
- 
- #define DW_IC_DATA_CMD_DAT			GENMASK(7, 0)
- #define DW_IC_DATA_CMD_FIRST_DATA_BYTE		BIT(11)
-+#define DW_IC_DATA_CMD_STOP			BIT(9)
-+#define DW_IC_DATA_CMD_CMD			BIT(8)
- 
- /*
-  * Registers offset
-@@ -123,7 +125,9 @@
- 
- #define DW_IC_ERR_TX_ABRT			0x1
- 
-+#define DW_IC_TAR_SMBUS_QUICK_CMD		BIT(16)
- #define DW_IC_TAR_10BITADDR_MASTER		BIT(12)
-+#define DW_IC_TAR_SPECIAL			BIT(11)
- 
- #define DW_IC_COMP_PARAM_1_SPEED_MODE_HIGH	(BIT(2) | BIT(3))
- #define DW_IC_COMP_PARAM_1_SPEED_MODE_MASK	GENMASK(3, 2)
-diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-index c5394229b77f..a67add117e44 100644
---- a/drivers/i2c/busses/i2c-designware-master.c
-+++ b/drivers/i2c/busses/i2c-designware-master.c
-@@ -268,6 +268,10 @@ static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
- 	regmap_update_bits(dev->map, DW_IC_CON, DW_IC_CON_10BITADDR_MASTER,
- 			   ic_con);
- 
-+	/* i2c-core-smbus.c: Only I2C_SMBUS_QUICK has msg[0].len = 0 */
-+	if (dev->msgs[0].len == 0)
-+		ic_tar |= DW_IC_TAR_SMBUS_QUICK_CMD | DW_IC_TAR_SPECIAL;
-+
- 	/*
- 	 * Set the slave (target) address and enable 10-bit addressing mode
- 	 * if applicable.
-@@ -474,6 +478,16 @@ i2c_dw_xfer_msg(struct dw_i2c_dev *dev)
- 		regmap_read(dev->map, DW_IC_RXFLR, &flr);
- 		rx_limit = dev->rx_fifo_depth - flr;
- 
-+		/* i2c-core-smbus.c: Only I2C_SMBUS_QUICK has msg[0].len = 0 */
-+		if (buf_len == 0) {
-+			regmap_write(
-+				dev->map, DW_IC_DATA_CMD,
-+				*buf | DW_IC_DATA_CMD_STOP |
-+				((msgs[dev->msg_write_idx].flags & I2C_M_RD) ?
-+				DW_IC_DATA_CMD_CMD : 0)
-+			);
-+		}
-+
- 		while (buf_len > 0 && tx_limit > 0 && rx_limit > 0) {
- 			u32 cmd = 0;
- 
-@@ -919,7 +933,9 @@ void i2c_dw_configure_master(struct dw_i2c_dev *dev)
- {
- 	struct i2c_timings *t = &dev->timings;
- 
--	dev->functionality = I2C_FUNC_10BIT_ADDR | DW_IC_DEFAULT_FUNCTIONALITY;
-+	dev->functionality = I2C_FUNC_10BIT_ADDR |
-+			     I2C_FUNC_SMBUS_QUICK |
-+			     DW_IC_DEFAULT_FUNCTIONALITY;
- 
- 	dev->master_cfg = DW_IC_CON_MASTER | DW_IC_CON_SLAVE_DISABLE |
- 			  DW_IC_CON_RESTART_EN;
--- 
-2.34.1
+Anyway, one register is not a device, so no device node per register.
 
+In the link you provided I was repeating the same, so you got same
+review in multiple places.
+
+Best regards,
+Krzysztof
 
