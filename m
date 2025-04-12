@@ -1,81 +1,117 @@
-Return-Path: <linux-kernel+bounces-601240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71561A86B3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 08:12:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC30A86B42
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 08:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CCAE446226
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 06:12:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE5D1464ACE
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 06:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BCA187325;
-	Sat, 12 Apr 2025 06:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C321190057;
+	Sat, 12 Apr 2025 06:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h0c7bbNF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=orange.fr header.i=@orange.fr header.b="cfsr93SM"
+Received: from out.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1A017BB6
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 06:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7F218B475
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 06:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744438347; cv=none; b=p9Pl454YUzO2jLTY4vPNAmv7VnVc9xRHCJfrrSxKhtCuw+6ZWuiGFVj0128fayBMm6t7WVx7AIffZgR+g5OFV6d6oaEwW5JmLHA0IUuoANOtCjts8i9hTeGHK7vvfU3svoFXbn9vcIsnfn0FR9FyVL+4hrlF4Kr+hoViR7rYYS0=
+	t=1744439153; cv=none; b=k700iVu6EIwgkeqetIA+0KjVB1Ia70EosE1kL4+ntkdXW226FMQVNtGFV9BsVKLMDOPvXpGUvS3keVJ7GamwREvtLoInEhsejZvzimNbfJNI3cnw5DbFDgx47eTHAHNzhkd+hJEcn230rh9I3v7fY+I+h76mrudWxa9Ehhd7E0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744438347; c=relaxed/simple;
-	bh=h8oTTN2YriP6MbhNfhyn96MBZFeleI8dCrvM8e/1T5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kRH8kBJT0LHGX4FcLN8oQIJ6+K55A2Z2Xs31ZER2T6xXV5LXZq9ZHymbTG5HjTmUCuGyGuE+UIELlZuR8MnsyjZxQiXjtqGR2u/hGdQ+dd5HQ/70L33DZj3LN5auhsBmQfDxHoHOf/h+1tUfAMS/zQH0VKxmPhuXzpLs+Fcq21Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h0c7bbNF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F39C4CEE3;
-	Sat, 12 Apr 2025 06:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744438346;
-	bh=h8oTTN2YriP6MbhNfhyn96MBZFeleI8dCrvM8e/1T5k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h0c7bbNF3CgUIG2LSKma7pKYL6ii8zHiFS3dG16GiFdmEYVYn/YhI7yqx2D32NNuM
-	 FIHdGy/LBgnMKjYGSJOROvo4NPiEtxslF3LskZAZkqvdN29VBXCYLDvVAu0zSZRvkR
-	 EEiG56zvZd+DfzAqiXuGaZSnjomUI6yBd5zO6EZg=
-Date: Sat, 12 Apr 2025 08:12:22 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: alexjlzheng@gmail.com
-Cc: tj@kernel.org, alexjlzheng@tencent.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH kernfs 1/3] kernfs: switch global kernfs_idr_lock to
- per-fs lock
-Message-ID: <2025041256-sanction-sandal-7f51@gregkh>
-References: <20250411183109.6334-1-alexjlzheng@tencent.com>
- <20250411183109.6334-2-alexjlzheng@tencent.com>
+	s=arc-20240116; t=1744439153; c=relaxed/simple;
+	bh=Xv+mdSuxde95QgyLMGtMjVr4KIkdT8E7hXUTabzHBSM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bqHRUzhiomH8fve5oOPY/Dpa0yiWU3T5CwkkCtNKmYg1xFFuQ44P5k/a7wIB0B2SlOp7H1NVTgMiNeyq6GXvbDyV+P+YRCUxM5gtsbWciJkf1BDvrCG6GSys9kyjZ5IHjjKgBjhTxsP/MRtlPeSpfBtGQa53LECbZqScPPCF318=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=orange.fr; spf=pass smtp.mailfrom=orange.fr; dkim=pass (2048-bit key) header.d=orange.fr header.i=@orange.fr header.b=cfsr93SM; arc=none smtp.client-ip=193.252.22.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=orange.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orange.fr
+Received: from cyber-villager.csun.edu ([130.166.192.226])
+	by smtp.orange.fr with ESMTPA
+	id 3UI4u7H5JdZ1m3UI8uouzA; Sat, 12 Apr 2025 08:24:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
+	s=t20230301; t=1744439078;
+	bh=jaDC2gQqqeZhqpywnDYK4njZ3ZRUz94TlsCDdPOKsVE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=cfsr93SMulOME7S3cnJ/xmA/ZseVvIMrwvX/a/jo2yP5CstSmzon31Mc/coYLbLGI
+	 q7LcJFDVcBy9DrrvC3BhCodzlwu9vi1HgSK650Tb5glgvHb6iHLrLWPLLzI0bqljuw
+	 vaC0DMgwxZUVV6FOvPrWB4OwjyG4hkzrYPRD3hIacy0/XSJ+0JStogTKvaUXcsidCD
+	 Twg45T/8UnEEIov1LSryMGfiJ1Z3NFSQ9jexp0ynzjLzRLdcwttt5sdWqpaunBxouh
+	 sLvm+EpO25qU2STA4Lip+m8HRRSL2owkLGcybfcaIRrinRrGOyY4E1CDhFUDI2KPY4
+	 0SLd6XBVYx75w==
+X-ME-Helo: cyber-villager.csun.edu
+X-ME-Auth: cGF1bC5yZXRvdXJuZUBvcmFuZ2UuZnI=
+X-ME-Date: Sat, 12 Apr 2025 08:24:38 +0200
+X-ME-IP: 130.166.192.226
+From: =?UTF-8?q?Paul=20Retourn=C3=A9?= <paul.retourne@orange.fr>
+To: gregkh@linuxfoundation.org,
+	dpenkler@gmail.com,
+	dan.carpenter@linaro.org
+Cc: =?UTF-8?q?Paul=20Retourn=C3=A9?= <paul.retourne@orange.fr>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/16] staging: gpib: fixes multiline comments style
+Date: Fri, 11 Apr 2025 23:21:52 -0700
+Message-ID: <cover.1744438358.git.paul.retourne@orange.fr>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250411183109.6334-2-alexjlzheng@tencent.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 12, 2025 at 02:31:07AM +0800, alexjlzheng@gmail.com wrote:
-> From: Jinliang Zheng <alexjlzheng@tencent.com>
-> 
-> The kernfs implementation has big lock granularity(kernfs_idr_lock) so
-> every kernfs-based(e.g., sysfs, cgroup) fs are able to compete the lock.
-> 
-> This patch switches the global kernfs_idr_lock to per-fs lock, which
-> put the spinlock into kernfs_root.
-> 
-> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> ---
->  fs/kernfs/dir.c             | 14 +++++++-------
->  fs/kernfs/kernfs-internal.h |  1 +
->  2 files changed, 8 insertions(+), 7 deletions(-)
+Fixes the style of multiline comments to comply with the linux kernel
+coding style as requested in the gpib TODO file.
 
-What kind of testing / benchmark did you do for this series that shows
-that this works, AND that this actually is measureable?  What workload
-are you doing that causes these changes to be needed?
+Paul Retourné (16):
+  staging: gpib: agilent_82357a: fixes multiline comments style
+  staging: gpib: cb7210: fixes multiline comments style
+  staging: gpib: common: fixes multiline comments style
+  staging: gpib: eastwood: fixes multiline comments style
+  staging: gpib: fmh_gpib: fixes multiline comments style
+  staging: gpib: gpio: fixes multiline comments style
+  staging: gpib: hp_82335: fixes multiline comments style
+  staging: gpib: hp_82341: fixes multiline comments style
+  staging: gpib: include: fixes multiline comments style
+  staging: gpib: ines: fixes multiline comments style
+  staging: gpib: lpvo_usb_gpib: fixes multiline comments style
+  staging: gpib: nec7210: fixes multiline comments style
+  staging: gpib: ni_usb: fixes multiline comments style
+  staging: gpib: pc2: fixes multiline comments style
+  staging: gpib: tms9914: fixes multiline comments style
+  staging: gpib: tnt4882: fixes multiline comments style
 
-thanks,
+ .../gpib/agilent_82357a/agilent_82357a.c      |  14 +-
+ drivers/staging/gpib/cb7210/cb7210.c          |   9 +-
+ drivers/staging/gpib/cb7210/cb7210.h          |  14 +-
+ drivers/staging/gpib/common/gpib_os.c         |  47 ++++---
+ drivers/staging/gpib/common/iblib.c           |  19 ++-
+ drivers/staging/gpib/eastwood/fluke_gpib.c    |  51 +++++---
+ drivers/staging/gpib/eastwood/fluke_gpib.h    |  17 ++-
+ drivers/staging/gpib/fmh_gpib/fmh_gpib.c      |  66 ++++++----
+ drivers/staging/gpib/gpio/gpib_bitbang.c      |   6 +-
+ drivers/staging/gpib/hp_82335/hp82335.c       |   5 +-
+ drivers/staging/gpib/hp_82341/hp_82341.c      |  11 +-
+ drivers/staging/gpib/include/gpib_types.h     |  81 ++++++++----
+ .../staging/gpib/include/nec7210_registers.h  |   3 +-
+ drivers/staging/gpib/include/tms9914.h        |   6 +-
+ drivers/staging/gpib/ines/ines_gpib.c         |  86 ++++++------
+ .../gpib/lpvo_usb_gpib/lpvo_usb_gpib.c        | 123 +++++++++---------
+ drivers/staging/gpib/nec7210/nec7210.c        |  23 ++--
+ drivers/staging/gpib/ni_usb/ni_usb_gpib.c     |  40 ++++--
+ drivers/staging/gpib/ni_usb/ni_usb_gpib.h     |  32 +++--
+ drivers/staging/gpib/pc2/pc2_gpib.c           |   5 +-
+ drivers/staging/gpib/tms9914/tms9914.c        |   9 +-
+ drivers/staging/gpib/tnt4882/tnt4882_gpib.c   |  32 +++--
+ 22 files changed, 421 insertions(+), 278 deletions(-)
 
-greg k-h
+-- 
+2.49.0
+
 
