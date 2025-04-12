@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-601319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C1DA86C5C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:07:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD35A86C61
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93A3819E301E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 10:07:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9536178F6C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 10:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15421AB530;
-	Sat, 12 Apr 2025 10:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB211C5F13;
+	Sat, 12 Apr 2025 10:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMH7yNWz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S91cKhCF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C55DDDAB;
-	Sat, 12 Apr 2025 10:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0B4192D77;
+	Sat, 12 Apr 2025 10:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744452415; cv=none; b=Am8VdcnrHAt1lXCFtQjJkB1y7ecer08TEQ6yOMlRyWMT/YWQmvqaRVwzOFvwz6t9GQtZNE3ZZi2MeuxC05cjzN/dzsyItpkJqjXvZn5+0xuyemswPFjXYOats0uJxMt7W64lXhf6VQMZjKCkpO+YCvlEdjBdh+zURD6ne2lPP3o=
+	t=1744452683; cv=none; b=Ierr5H0hCBIDkaeE++t7DAb4dJt26gK4pp4X2aMN4Jv3TTKpamSLEM4mx4JSLTNZe0ai4KuMuzq2jOR1c7t88K3BGE/hLSLq6oa0qZSG7qkKMJ9X7kg4RNXHwQFdVAOUqUjMqKCbVseNdDEX+IypGHATsZ2iXFZWD4uYdswpEW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744452415; c=relaxed/simple;
-	bh=DGBEY6Nzx3c1xUOICUz1fgJAzTomHbyF0+Cw80fMWUY=;
+	s=arc-20240116; t=1744452683; c=relaxed/simple;
+	bh=RNflmceC0PXkskPu8wmVlsRy34v1ud7Y93OVVupX/Vk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GuPddKVEzWbNq+1nZ+3UcIyUiX6rl5bT7dCyCI6FGNXKomcG8Fw6aQ/pPnjCJ9ifSGZODT8IBv0fcecT+VVxglT2gxc+Z+tOQnKXzi8CtKYjIqQ/iQXDBTGA3TQYx0sIJDBajqjh6W88avzBCmDV7ZR7NCqgOCwNc2Kc4a1YW4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AMH7yNWz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 031B7C4CEE3;
-	Sat, 12 Apr 2025 10:06:52 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Vv/UjSv4r/BKryBMPH1k73kmIM0kon+nFlWpaj+g503Xwhs7MmZuz5vcNsnC5PjFftYYMr5ZMNR63vFqdwbnP5KrpkCbl7ACrIRBF44A31cm0UEQD3qmX2mrxh/SrlPNeloclhe89XtPpzedYJ/22uVV85Vk9e6yr3B+qr82hGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S91cKhCF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 983D2C4CEE3;
+	Sat, 12 Apr 2025 10:11:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744452414;
-	bh=DGBEY6Nzx3c1xUOICUz1fgJAzTomHbyF0+Cw80fMWUY=;
+	s=k20201202; t=1744452682;
+	bh=RNflmceC0PXkskPu8wmVlsRy34v1ud7Y93OVVupX/Vk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AMH7yNWznk2UZuSS3HmFqwhk+mHm6BODVeQw8IJCf5ReP3WhImyrU8RHxYrLSTKZ3
-	 LyoyHqJfsBIJffG/OMTa/K6E1ugqPHYMP/Kn723tYOyWPP0asr+iP5HYRjtU+/ZCUH
-	 r5UKvzXck94i62hNN9BXAAp9gXbGRgCkyy0xzgLcjSfIkpuvsyC3GfzPSZNdAYsbSM
-	 7nIBwGNnKn3c9Glid0MBDyMN6040ogr5p6jb7vlItfG2D2K+AvKLeoXW0lpLIa7yKU
-	 PYcf/ozARPL9cwgnoc+CudH4aL/CJlEyMxjz7JfmEJMGzKKlCywhR4PrQ9i353DIg2
-	 NvSdNMZtkwsug==
-Message-ID: <9fa738c8-e993-4ca1-8bed-cd31029cadec@kernel.org>
-Date: Sat, 12 Apr 2025 12:06:50 +0200
+	b=S91cKhCF3WenA0c8+gv8j+s5O7CFNwdzbVaieyIuBXfkFVs15UH8oDyCMJFYqdT9L
+	 8oScioMe+9JLVQZiJlK/ozFTcAdKelwxHWSuJR0U/x33nx4CkNTvK2FD7n+DQrUzA0
+	 9SOGGDAoZltouDjaYL3CEVjeDMFaFaPbV1+DO/+iyfSQPSp3MXpfV3L30aBIpNdlN1
+	 JyAvFIed7WpLqMiNvuSwa0VwbD9zC+eRZfVp1+GZzYTgiuAySdV7Cd9qb28eZQZcuA
+	 YSfnC50bsyJ/XS3idOTPeeezyQX5LNaQ2N6uK8NtJjy/yBOWAXOQ706oTUMGzmbTOy
+	 qKAPG+iVTaKnA==
+Message-ID: <a52969f2-8ea2-41e5-b4c8-8a03220cbf51@kernel.org>
+Date: Sat, 12 Apr 2025 12:11:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,12 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dt-bindings: trivial: Document TPS53685
-To: Chiang Brian <chiang.brian@inventec.com>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
- linux-kernel@vger.kernel.org, robh@kernel.org
-References: <b9379597-2827-4391-88a9-b2ac23227a35@kernel.org>
- <20250411124739.2725364-1-chiang.brian@inventec.corp-partner.google.com>
+Subject: Re: [PATCH v2] arm64: dts: exynos: Add DT node for all UART ports
+To: Faraz Ata <faraz.ata@samsung.com>, alim.akhtar@samsung.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rosa.pila@samsung.com, dev.tailor@samsung.com, suyash.bitti@samsung.com
+References: <CGME20250318074801epcas5p3de68627a3e64ebc2a95ed33a3f485e80@epcas5p3.samsung.com>
+ <20250318075635.3372599-1-faraz.ata@samsung.com>
+ <befe7d30-1727-4540-9072-f21ef96ea504@kernel.org>
+ <03e501dbaab0$65bb47a0$3131d6e0$@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -100,43 +104,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250411124739.2725364-1-chiang.brian@inventec.corp-partner.google.com>
+In-Reply-To: <03e501dbaab0$65bb47a0$3131d6e0$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/04/2025 14:47, Chiang Brian wrote:
-> On 14/03/2025 07:11, Chiang Brian wrote:
->>
->> On 14/03/2025 04:28, Chiang Brian wrote:
->>> Add undocumented tps53685 into compatible in dt-bindings
->>>
->>> Signed-off-by: Chiang Brian <chiang.brian@inventec.com>
->>> ---
->>>  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
->>> index fadbd3c041c8..c98d69facb48 100644
->>> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
->>> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
->>> @@ -380,6 +380,8 @@ properties:
->>>            - ti,tps53676
->>>              # TI Dual channel DCAP+ multiphase controller TPS53679
->>>            - ti,tps53679
->>> +            # TI Dual channel DCAP+ multiphase controller TPS53685 with AMD-SVI3
->>> +          - ti,tps53685
->>
->> There is no user of such compatible, so how can it be undocumented?
+On 11/04/2025 09:07, Faraz Ata wrote:
+> Hello Krzysztof
 > 
-> The following link is the patch which I would like to add support tps53685,
-> and I think it is the user of the compatible:
+>> Subject: Re: [PATCH v2] arm64: dts: exynos: Add DT node for all UART ports
+>>
+>> On 18/03/2025 08:56, Faraz Ata wrote:
+>>> +
+>>> +		usi_17: usi@10d800c0 {
+>>
+>> Messed order. Keep nodes sorted by unit address (see DTS coding style).
+>>
+>>
+> Thanks for your review
+> Based on the DTS coding style, it is acceptable to group nodes
+> of the same type together, even if it breaks the unit address ordering.
 
-So that patch introduces undocumented compatible? That patchset needs to
-be fixed instead - this belongs there. The commit msg here is not
-correct: there is no undocumented compatible.
+That's accepted alternative because some subsystems do that way. I don't
+think we ever applied such rule to Samsung? Do you have any prior
+reference about this? I accepted mess in the past, but that does not
+mean that mess is the rule.
 
-Please also read submitting patches in DT or just simply look how every
-other patchset is sent. Every.
+> https://docs.kernel.org/6.12/devicetree/bindings/dts-coding-style.html
+> Please let me know your opinion on this.
+> Do you mean I should move all the USI_ node after pwm node?
+
+Please it according to sorting by unit address.
 
 
 Best regards,
