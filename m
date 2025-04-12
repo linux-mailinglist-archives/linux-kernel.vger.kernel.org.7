@@ -1,84 +1,117 @@
-Return-Path: <linux-kernel+bounces-601486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 929CDA86E90
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 20:03:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC50DA86E93
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 20:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 031C5179B04
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 18:03:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D76619E36DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 18:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098D1208997;
-	Sat, 12 Apr 2025 18:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4KT3su+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C218320A5EC;
+	Sat, 12 Apr 2025 18:04:37 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2A4204C2E;
-	Sat, 12 Apr 2025 18:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EDE1F0E2C
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 18:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744481026; cv=none; b=KtFOK1/DkjHqUf4EDOX9voc/GfEVIGHuNNDDZoniiLpv/TTsQjy1pcYvlbfan4SZFic1xJ8xbPlh9ZlXQEaP/OqK+vq5oOXNYF0Yzd4HQ55rBG+BFC7F7vOIQ5sBLn6exehEZdUjrsaEaDD56dmjW4IeSYaCdvrEQw6LSj2bXqk=
+	t=1744481077; cv=none; b=mzJmwnMViqYrquJj0PYnKH59EVX+m5OFy9h42eQNW7q2f4psEjKigzyhdU9rTkP+hpmi4l8fExJ8pIO7Yg1ZEko411/Po1UWVYDnaGHkcMmCuGCCsuN/2vHL8hUUmHINJnvI1eXzOzcbIaCgdKeDk2lN9chPZe+y4Ym3ufRXE0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744481026; c=relaxed/simple;
-	bh=1AUMW9p2rIBFD6BguK3C9owmSBdUU41XGSu13NVq6cM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvHCIKmNOnl+3zMB2lGfRNRla/J8tyrWYfdRDPIpf/TU+lCptnYtJBiDBPF5NX4cVOJuPJspMZCFin538HFbXSouW0hXSHb579zx/8AxDpD6XK2/LFCnlDdT+lfKnwS77ALQf8+4/NBGbfw1CrBfSxEkGtmILvx1Ez5AruMmeFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4KT3su+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B4A3C4CEE3;
-	Sat, 12 Apr 2025 18:03:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744481024;
-	bh=1AUMW9p2rIBFD6BguK3C9owmSBdUU41XGSu13NVq6cM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c4KT3su+5+9E+s+sPOXj0mNLmgsawjS+tTAYXNLAIXRmHyJTZb7tk9t2niSFY4SxC
-	 ug22xkcMhk4SKuj1cszRFtAgPXn6DQRkJALaT1ln6QJw+z98bkMasZyYcor+hPBreu
-	 Fap+KZnQOUJ820yKUtI+RTKiWst0dYts74Vf9pZkxUpp3zOJoQBdkPEWR4Cc0+KVJ8
-	 USJLUyiZW6IUzSSXSRYACJ5lC3HvayAYyyCU/UTIMAUdezXGMopCUInDMKXo/Fs275
-	 S1zUOmyTGwwc4QP24znAnQsFoiySQVaxfutKfgmY1jB1SuaAWWwuw0xcoM01CWJR/3
-	 UDo7dELIz7kbw==
-Date: Sat, 12 Apr 2025 13:03:43 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/1] dt-bindings: clock: convert vf610-clock.txt to yaml
- format
-Message-ID: <174448102270.1415062.15572681322070189263.robh@kernel.org>
-References: <20250411212339.3273202-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1744481077; c=relaxed/simple;
+	bh=o1+j9SdXj41J8uzTtsahM4t6OBWwdcLbKAkiYzLGz+E=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eKUUweFzPmzb0wtqbZKfuqVSBNGefgheQ+avCdvBZmfd8Jv1DDtYWsmp1Nocd4aXqgC39zZacwtJMhm9ZYUnL2WWpLzyh4IopQuZlPm/3bikOODxzodVjwCWvDiG38BUwwXhqgqVeqm2HW0VWp7QBvkSJcogIdt2DtmSFdNNbFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d43c0dbe6aso58949965ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 11:04:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744481075; x=1745085875;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2knTX2uIuqaGUOlE0CBKIzKL91Rwf0r6rw/x7RKLifI=;
+        b=YmNk7r+DD2DWETXahPcHTXyyIQzR5/Phl7FN1IZhBM44E2TojLNeEyM7+PrDFIsHa7
+         YcNgs8UDuLCyo0d0cMb0gYIbcEGt0T6S9KkCTWXW4AlT0WXXBSVCMf1aOsI0mjmhRBt9
+         Tug+il303+KveYxd/bSh0IzgYUvfaG9PDWeUM58DcG9Z9lmSkO/Fc1pkuKZvxFC/eN/J
+         +r2l2xPeP9k0MQeeKM/jwLRQ+n8LRfG7LYzeULixZWr3/usEzRyF3+Ngo9yajxnCuBL4
+         6geL3iFAuDcjH8Q5Cg09+u6xzHU0BgsjJRevlemSYkB2vLCtPikx6Rg7E+JMHTRh+oMy
+         OTeQ==
+X-Gm-Message-State: AOJu0YwvuxAHWRo13i5T8iX3H4MhDW0HHC097fwDxo7QQVARXcKLnKN8
+	IDuTWAtLnQhtl9wehJBAvaeKBFtaZQid29N00Ov4UNYkqBn1qyHo8RhIPCW4nRXS2ewXsnn5eQW
+	q5YOGQasR/KmwS+akrK0kXNktAFz/bfeeV1L6Q5X0eNxpva3HEOC6VAk=
+X-Google-Smtp-Source: AGHT+IHHCJkrhRplrhOrpC9QQv5SfHWrNVKloPNe8ckCsc7jvJkqShHkc5wcnEioxB8/9bfFAbaAM+Js6nGwXHWugVfwEXWLmcLR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250411212339.3273202-1-Frank.Li@nxp.com>
+X-Received: by 2002:a05:6e02:3601:b0:3d0:4bce:cfa8 with SMTP id
+ e9e14a558f8ab-3d7ec1dc7f4mr76197985ab.3.1744481074997; Sat, 12 Apr 2025
+ 11:04:34 -0700 (PDT)
+Date: Sat, 12 Apr 2025 11:04:34 -0700
+In-Reply-To: <67f50e3e.050a0220.396535.0560.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67faab32.050a0220.2c5fcf.0010.GAE@google.com>
+Subject: Re: [syzbot] #syz test
+From: syzbot <syzbot+aec9606169fbc3a12ca6@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-On Fri, 11 Apr 2025 17:23:38 -0400, Frank Li wrote:
-> Convert vf610-clock.txt to yaml format.
-> 
-> Additional changes:
-> - swap audio_ext and enet_ext to match existed dts order
-> - remove clock consumer in example
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../bindings/clock/fsl,vf610-ccm.yaml         | 58 +++++++++++++++++++
->  .../devicetree/bindings/clock/vf610-clock.txt | 41 -------------
->  2 files changed, 58 insertions(+), 41 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,vf610-ccm.yaml
->  delete mode 100644 Documentation/devicetree/bindings/clock/vf610-clock.txt
-> 
+***
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Subject: #syz test
+Author: gshahrouzi@gmail.com
+
+Try to remove device but fails
+Reinitialize reference counting for write operations for device
+Shut down the filesystem
+Make the filesystem read only
+	Read-write bit is not set so it skips trying to make the filesystem read-o=
+nly, implying that the filesystem is already in read-only mode.
+Encounter error because write operations are still assigned to a device
+When the filesystem is starting up, it tries setting it to set the filesyst=
+em to read-only but it=E2=80=99s already set.
+When failing to remove a device, it tries giving back write permissions to =
+a device when the filesystem is read-only (not sure if this is nonsensical =
+or not).
+Since a device has write permissions, it tries to remove them but fails bec=
+ause the filesystem is in read-only mode.
+So the fix here is to prevent it from giving the device write permissions i=
+f the filesystem is in read-only mode.
+
+Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+---
+ fs/bcachefs/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
+index b79e80a435e09..788e870bfef6a 100644
+--- a/fs/bcachefs/super.c
++++ b/fs/bcachefs/super.c
+@@ -1757,7 +1757,8 @@ int bch2_dev_remove(struct bch_fs *c, struct bch_dev =
+*ca, int flags)
+ 	up_write(&c->state_lock);
+ 	return 0;
+ err:
+-	if (ca->mi.state =3D=3D BCH_MEMBER_STATE_rw &&
++	if (test_bit(BCH_FS_rw, &c->flags) &&
++	    ca->mi.state =3D=3D BCH_MEMBER_STATE_rw &&
+ 	    !percpu_ref_is_zero(&ca->io_ref[READ]))
+ 		__bch2_dev_read_write(c, ca);
+ 	up_write(&c->state_lock);
+--=20
+2.43.0
 
 
