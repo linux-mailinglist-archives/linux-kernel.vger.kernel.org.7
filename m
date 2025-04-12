@@ -1,174 +1,230 @@
-Return-Path: <linux-kernel+bounces-601255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BD73A86B55
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 08:45:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCE32A86B57
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 08:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E31218C5466
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 06:45:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6D7B1B68209
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 06:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574E818A6DF;
-	Sat, 12 Apr 2025 06:45:35 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7C217C210;
+	Sat, 12 Apr 2025 06:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=orange.fr header.i=@orange.fr header.b="EmdFd7Qi"
+Received: from out.smtpout.orange.fr (out-15.smtpout.orange.fr [193.252.22.15])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA091862
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 06:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC223645
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 06:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744440334; cv=none; b=S1rrUrvY/ndLW1h3CAblOeB0Go8G3jcN7lX1NZ6PxEkvyWHDG7RMEoON40Gg6J7BmZcpGOtT1Ge9a18xULWBtrkC+3UK5T9xPTW8O8dyTGiSavqYYXlYZYdbuWxP7qDdl2VAUWc+LEO5I53xEh0NyPqjf9ip6krsoiNo8JnclLw=
+	t=1744440520; cv=none; b=I7BUc3pJ4Rm4I2CfYVpIoTEdANQ/PNGt2/ENz2n4d8p2fy2UO9L8aUeei9FpMoMONMgJYqL6cR/vHgfoSCptn+L4hjBBt8rV+/GG0trJlsOSa+kmIcvwGaCbdiz94ZfLyBz0kn3Njp0TaKQjfnVD5OH+KhfSApZGANQTjPNfaKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744440334; c=relaxed/simple;
-	bh=H9kLDsJmpzpnfYIQanCORfrJ0FSG23RcROmNIXHKYKA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jAju3/lYFtoMQtXcan/+F3VvqRqpT+w0ndcS30NjYhANkucYTpkdf+uyyFZzmJt356UdB82YCw5s/AjklGaEZJEaBf1KHuv1aeHpvPyv4WAMRYilMrHZlbSwnkOg6GYklVHuuJbv143kE/x4onbtj+ahso5+MjxsCbe4kwovLas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d7f24a7582so13018535ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 23:45:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744440332; x=1745045132;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Gh2HAU3Z8eygYtu2Or+U/7qjXGiVyrdhRpBi6ban/60=;
-        b=ddnSSdioJWHVxN3O65IEw9x/yFAhhIp90K+Rrd5Q7hq5k190qKnncrye3NdVhWs2Ql
-         XSX/ecgjGdk7rooYt5HSYJqLDf2MvvZ3fSjDNjRoY3Vg5/fygIVUDqHj7v+nzRrKO/3d
-         BGIFGZtbeXIJm5Wq4kYYb7kdkFWiUXZYGfIbxsC4GjnjvWy8QXzBK3duK97MGF9lv6MO
-         Fm9VVHeGJ/G34n2tY1u1WaedDosu+V6faQV7fcsnoUYa27f/jwMTSy3F/MNGRBp9R6EJ
-         J45H450cvQdEyqiE20dASyG2VoatrKPTzgxGRmnKfuxWJVRk/9X14G8YAxaMoDEZIo4L
-         Gndg==
-X-Forwarded-Encrypted: i=1; AJvYcCW81NbxMdpoaxJOfzB9vv3MLPo4bFE5Oxv6TjHylVKO4gZmS9dMF43mGmBerqInPpm0x3n8tmXuojgVWhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztTwQuh6H8xXmECKaB2QqO0siy6vjcHx6DuiI3aE8XyxJc4bz3
-	rGfEs/no1iAfkgFZZVmcALz237rn7+U6FVkIHWM7982UPvRcsj+cWqSDPfLH58DGwqWf4a4v9By
-	81rXXxRQciIK/mlfUSvExfB6oycfmj6kNdtgp/Lsd9ehv3AFfmMtYD4M=
-X-Google-Smtp-Source: AGHT+IEZPmBsjfhzs+4NXAG57JJ1JWZEcwYwZLZGJietlhCZv+AJ7VrY1mZXyiH+oLPwLoXkAbye48HU8SvseC2WxtlYwPHB9Vrm
+	s=arc-20240116; t=1744440520; c=relaxed/simple;
+	bh=O1JgI00a/efCbNOGQpa+5xqZJHTLJe8jQNXtRk7lwXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VlTO8ep8eCWgSDH9eqJITsqj+jZprhqZDtzgp/Vm0uel4zUlYCnx22/O4kWnnQMDuhb/4s3jrmjW1TBcFki1WEzDgtFVDjdZlExCyyegJLbXIns2vWphLpj5Cu9I8ZSuCDIJX1WVnm0SNH6+oiCp7I5cpTY21jN1I5qyIn+jXoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=orange.fr; spf=pass smtp.mailfrom=orange.fr; dkim=pass (2048-bit key) header.d=orange.fr header.i=@orange.fr header.b=EmdFd7Qi; arc=none smtp.client-ip=193.252.22.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=orange.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orange.fr
+Received: from cyber-villager.csun.edu ([130.166.192.226])
+	by smtp.orange.fr with ESMTPA
+	id 3UeAuNICOB75R3UeEuB4Ro; Sat, 12 Apr 2025 08:47:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
+	s=t20230301; t=1744440448;
+	bh=AphogcM6Nx5fUPKv40KkaG6PJmjwevwNNLjesePnqVI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=EmdFd7QieXenGN/JHWEMeAwpU4Kk+Wj8TnNUFXZh1nsDQbsVGx5ZA14YBL3lnx/VB
+	 k/9MJUG5gAidN97wVRa8TM+ankn1mtOkv9EIkL7u2hl/lN0hnOQkAB1PuUVY/YfOL7
+	 F1YKyoiNww57+7VbQqw7iE+O+KmUdZDyiR/+bl224hg+YHfLn/mwDhSauIhYvD+ulG
+	 hYiKcz/4o4xgRn3tXKYy2CPC4or0EWnq+ckT8aHN9BQjQY12rb2V4z4joCDFMZzUKi
+	 CQ5Bb43dZtuIfXE++Xs1KLW6Aw+ORXGD2hjaMdUZ5uGKeifvkNj79fy3/CCwD2aN0C
+	 cQzAl/mFd9FeQ==
+X-ME-Helo: cyber-villager.csun.edu
+X-ME-Auth: cGF1bC5yZXRvdXJuZUBvcmFuZ2UuZnI=
+X-ME-Date: Sat, 12 Apr 2025 08:47:28 +0200
+X-ME-IP: 130.166.192.226
+From: =?UTF-8?q?Paul=20Retourn=C3=A9?= <paul.retourne@orange.fr>
+To: gregkh@linuxfoundation.org,
+	dpenkler@gmail.com,
+	dan.carpenter@linaro.org
+Cc: =?UTF-8?q?Paul=20Retourn=C3=A9?= <paul.retourne@orange.fr>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 10/16] staging: gpib: ines: fixes multiline comments style
+Date: Fri, 11 Apr 2025 23:47:18 -0700
+Message-ID: <69a082f18148881a673e1d57b4a9d83767d87a2a.1744438358.git.paul.retourne@orange.fr>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1744438358.git.paul.retourne@orange.fr>
+References: <cover.1744438358.git.paul.retourne@orange.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2165:b0:3d3:d823:5402 with SMTP id
- e9e14a558f8ab-3d7ec1f3e77mr64474345ab.7.1744440332144; Fri, 11 Apr 2025
- 23:45:32 -0700 (PDT)
-Date: Fri, 11 Apr 2025 23:45:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67fa0c0c.050a0220.379d84.0007.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_fs_initialize
-From: syzbot <syzbot+d10151bf01574a09a915@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Fixes the style of multiline comments to comply with the linux kernel
+coding style.
 
-syzbot found the following issue on:
-
-HEAD commit:    29e7bf01ed80 Add linux-next specific files for 20250410
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1515f74c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a554d15459e77547
-dashboard link: https://syzkaller.appspot.com/bug?extid=d10151bf01574a09a915
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14634398580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/bb76302efd6b/disk-29e7bf01.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7da3c6b9e532/vmlinux-29e7bf01.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4909c61270ed/bzImage-29e7bf01.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d99f7622732d/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d10151bf01574a09a915@syzkaller.appspotmail.com
-
-0 pages HighMem/MovableOnly
-428629 pages reserved
-0 pages cma reserved
-bcachefs (loop0): error reallocating journal fifo (32768 open entries)
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/journal.h:442!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 1 UID: 0 PID: 6987 Comm: syz.0.185 Not tainted 6.15.0-rc1-next-20250410-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:bch2_journal_set_replay_done fs/bcachefs/journal.h:442 [inline]
-RIP: 0010:bch2_fs_initialize+0x15f9/0x1620 fs/bcachefs/recovery.c:1130
-Code: ff e8 eb a8 a8 07 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 04 fe ff ff 4c 89 f7 e8 32 7d a3 fd e9 f7 fd ff ff e8 08 51 39 fd 90 <0f> 0b e8 00 51 39 fd e8 7b 6f a3 fd 4c 89 ff 8b 74 24 38 e8 bf 3f
-RSP: 0018:ffffc90003c67420 EFLAGS: 00010293
-RAX: ffffffff848a29d8 RBX: 0000000000000000 RCX: ffff88802c799e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90003c67920 R08: ffffffff848a1dfe R09: 1ffff11009c792c0
-R10: dffffc0000000000 R11: ffffed1009c792c1 R12: ffff88804e380000
-R13: ffff88804e380820 R14: ffff88804e3c9600 R15: ffff88804e3c95c0
-FS:  00007fa3bfd836c0(0000) GS:ffff888125080000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c00009bfc0 CR3: 000000003475c000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_fs_start+0x301/0x620 fs/bcachefs/super.c:1100
- bch2_fs_get_tree+0x1138/0x18e0 fs/bcachefs/fs.c:2253
- vfs_get_tree+0x90/0x2b0 fs/super.c:1809
- do_new_mount+0x2cf/0xb70 fs/namespace.c:3879
- do_mount fs/namespace.c:4219 [inline]
- __do_sys_mount fs/namespace.c:4430 [inline]
- __se_sys_mount+0x38c/0x400 fs/namespace.c:4407
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa3bef8e90a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa3bfd82e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fa3bfd82ef0 RCX: 00007fa3bef8e90a
-RDX: 00002000000000c0 RSI: 0000200000000180 RDI: 00007fa3bfd82eb0
-RBP: 00002000000000c0 R08: 00007fa3bfd82ef0 R09: 0000000000000080
-R10: 0000000000000080 R11: 0000000000000246 R12: 0000200000000180
-R13: 00007fa3bfd82eb0 R14: 0000000000005a18 R15: 0000200000000440
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_journal_set_replay_done fs/bcachefs/journal.h:442 [inline]
-RIP: 0010:bch2_fs_initialize+0x15f9/0x1620 fs/bcachefs/recovery.c:1130
-Code: ff e8 eb a8 a8 07 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 04 fe ff ff 4c 89 f7 e8 32 7d a3 fd e9 f7 fd ff ff e8 08 51 39 fd 90 <0f> 0b e8 00 51 39 fd e8 7b 6f a3 fd 4c 89 ff 8b 74 24 38 e8 bf 3f
-RSP: 0018:ffffc90003c67420 EFLAGS: 00010293
-RAX: ffffffff848a29d8 RBX: 0000000000000000 RCX: ffff88802c799e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90003c67920 R08: ffffffff848a1dfe R09: 1ffff11009c792c0
-R10: dffffc0000000000 R11: ffffed1009c792c1 R12: ffff88804e380000
-R13: ffff88804e380820 R14: ffff88804e3c9600 R15: ffff88804e3c95c0
-FS:  00007fa3bfd836c0(0000) GS:ffff888125080000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c00009bfc0 CR3: 000000003475c000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
+Signed-off-by: Paul Retourné <paul.retourne@orange.fr>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/staging/gpib/ines/ines_gpib.c | 86 ++++++++++++++-------------
+ 1 file changed, 44 insertions(+), 42 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/staging/gpib/ines/ines_gpib.c b/drivers/staging/gpib/ines/ines_gpib.c
+index d93eb05dab90..f143fe8011bd 100644
+--- a/drivers/staging/gpib/ines/ines_gpib.c
++++ b/drivers/staging/gpib/ines/ines_gpib.c
+@@ -990,12 +990,13 @@ static struct pci_driver ines_pci_driver = {
+ 
+ static const int ines_pcmcia_iosize = 0x20;
+ 
+-/*    The event() function is this driver's Card Services event handler.
+- *    It will be called by Card Services when an appropriate card status
+- *    event is received.  The config() and release() entry points are
+- *    used to configure or release a socket, in response to card insertion
+- *    and ejection events.  They are invoked from the gpib event
+- *    handler.
++/*
++ * The event() function is this driver's Card Services event handler.
++ * It will be called by Card Services when an appropriate card status
++ * event is received.  The config() and release() entry points are
++ * used to configure or release a socket, in response to card insertion
++ * and ejection events.  They are invoked from the gpib event
++ * handler.
+  */
+ 
+ static int ines_gpib_config(struct pcmcia_device  *link);
+@@ -1007,31 +1008,31 @@ static irqreturn_t ines_pcmcia_interrupt(int irq, void *arg);
+ static int ines_common_pcmcia_attach(struct gpib_board *board);
+ /*
+  * A linked list of "instances" of the gpib device.  Each actual
+- *  PCMCIA card corresponds to one device instance, and is described
+- *  by one dev_link_t structure (defined in ds.h).
++ * PCMCIA card corresponds to one device instance, and is described
++ * by one dev_link_t structure (defined in ds.h).
+  *
+- *  You may not want to use a linked list for this -- for example, the
+- *  memory card driver uses an array of dev_link_t pointers, where minor
+- *  device numbers are used to derive the corresponding array index.
++ * You may not want to use a linked list for this -- for example, the
++ * memory card driver uses an array of dev_link_t pointers, where minor
++ * device numbers are used to derive the corresponding array index.
+  */
+ 
+ static struct pcmcia_device *curr_dev;
+ 
+ /*
+- *   A dev_link_t structure has fields for most things that are needed
+- *  to keep track of a socket, but there will usually be some device
+- *  specific information that also needs to be kept track of.  The
+- *  'priv' pointer in a dev_link_t structure can be used to point to
+- *  a device-specific private data structure, like this.
++ * A dev_link_t structure has fields for most things that are needed
++ * to keep track of a socket, but there will usually be some device
++ * specific information that also needs to be kept track of.  The
++ * 'priv' pointer in a dev_link_t structure can be used to point to
++ * a device-specific private data structure, like this.
+  *
+- *  A driver needs to provide a dev_node_t structure for each device
+- *  on a card.	In some cases, there is only one device per card (for
+- *  example, ethernet cards, modems).  In other cases, there may be
+- *  many actual or logical devices (SCSI adapters, memory cards with
+- *  multiple partitions).  The dev_node_t structures need to be kept
+- *  in a linked list starting at the 'dev' field of a dev_link_t
+- *  structure.	We allocate them in the card's private data structure,
+- *  because they generally can't be allocated dynamically.
++ * A driver needs to provide a dev_node_t structure for each device
++ * on a card.	In some cases, there is only one device per card (for
++ * example, ethernet cards, modems).  In other cases, there may be
++ * many actual or logical devices (SCSI adapters, memory cards with
++ * multiple partitions).  The dev_node_t structures need to be kept
++ * in a linked list starting at the 'dev' field of a dev_link_t
++ * structure.	We allocate them in the card's private data structure,
++ * because they generally can't be allocated dynamically.
+  */
+ 
+ struct local_info {
+@@ -1042,13 +1043,13 @@ struct local_info {
+ };
+ 
+ /*
+- *   gpib_attach() creates an "instance" of the driver, allocating
+- *   local data structures for one device.  The device is registered
+- *   with Card Services.
++ * gpib_attach() creates an "instance" of the driver, allocating
++ * local data structures for one device.  The device is registered
++ * with Card Services.
+  *
+- *   The dev_link structure is initialized, but we don't actually
+- *   configure the card at this point -- we wait until we receive a
+- *   card insertion event.
++ * The dev_link structure is initialized, but we don't actually
++ * configure the card at this point -- we wait until we receive a
++ * card insertion event.
+  */
+ static int ines_gpib_probe(struct pcmcia_device *link)
+ {
+@@ -1079,10 +1080,10 @@ static int ines_gpib_probe(struct pcmcia_device *link)
+ }
+ 
+ /*
+- *   This deletes a driver "instance".	The device is de-registered
+- *   with Card Services.  If it has been released, all local data
+- *   structures are freed.  Otherwise, the structures will be freed
+- *   when the device is released.
++ * This deletes a driver "instance".	The device is de-registered
++ * with Card Services.  If it has been released, all local data
++ * structures are freed.  Otherwise, the structures will be freed
++ * when the device is released.
+  */
+ static void ines_gpib_remove(struct pcmcia_device *link)
+ {
+@@ -1103,9 +1104,9 @@ static int ines_gpib_config_iteration(struct pcmcia_device *link, void *priv_dat
+ }
+ 
+ /*
+- *   gpib_config() is scheduled to run after a CARD_INSERTION event
+- *   is received, to configure the PCMCIA socket, and to make the
+- *   device available to the system.
++ * gpib_config() is scheduled to run after a CARD_INSERTION event
++ * is received, to configure the PCMCIA socket, and to make the
++ * device available to the system.
+  */
+ static int ines_gpib_config(struct pcmcia_device *link)
+ {
+@@ -1125,8 +1126,9 @@ static int ines_gpib_config(struct pcmcia_device *link)
+ 	dev_dbg(&link->dev, "ines_cs: manufacturer: 0x%x card: 0x%x\n",
+ 		link->manf_id, link->card_id);
+ 
+-	/*  for the ines card we have to setup the configuration registers in
+-	 *	attribute memory here
++	/*
++	 * for the ines card we have to setup the configuration registers in
++	 * attribute memory here
+ 	 */
+ 	link->resource[2]->flags |= WIN_MEMORY_TYPE_AM | WIN_DATA_WIDTH_8 | WIN_ENABLE;
+ 	link->resource[2]->end = 0x1000;
+@@ -1159,9 +1161,9 @@ static int ines_gpib_config(struct pcmcia_device *link)
+ } /* gpib_config */
+ 
+ /*
+- *   After a card is removed, gpib_release() will unregister the net
+- *   device, and release the PCMCIA configuration.  If the device is
+- *   still open, this will be postponed until it is closed.
++ * After a card is removed, gpib_release() will unregister the net
++ * device, and release the PCMCIA configuration.  If the device is
++ * still open, this will be postponed until it is closed.
+  */
+ 
+ static void ines_gpib_release(struct pcmcia_device *link)
+-- 
+2.49.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
