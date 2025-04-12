@@ -1,318 +1,136 @@
-Return-Path: <linux-kernel+bounces-601424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE76A86DC9
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 16:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03946A86DCE
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 16:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 027058C7C15
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 14:34:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 454568A6CAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 14:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447FD1DEFE0;
-	Sat, 12 Apr 2025 14:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A3513D8B2;
+	Sat, 12 Apr 2025 14:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GjgSnZ9o";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LFK6GeIZ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="JnaOdI5B"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5929F1EE7D3;
-	Sat, 12 Apr 2025 14:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7841AAA29
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 14:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744468429; cv=none; b=atkhV0ZvYQPVzDhRQHv5RVNfuWGC21tmPxokzgS3VcA8mi/bJpbS+SecVyGFvMT6wCMgs7yWm5wsX/8r1isCgfLf7lIPEgXpFCnJxzkZqj0OpO2VpkuNs4PuR+0JrbJdhJSm4CmYGEJlzADY/zpAMee0HNvsPiuE/vPZFX/Kro8=
+	t=1744468554; cv=none; b=qcux6gaFHgMdeaLdwIGTUAXEKeupZbGI5lOQtgWELtYyzpruRU6us94mHwJ3qs7PoLQGy36WHgnsRPdHwQc+ckg7d/j4JG0/zod4deOaYXaelxPXMPRherjPNxUoNoe6Ptjp1pwS5v6gb9UVpBAQhzsNVxT82DguGvcNx0UV7eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744468429; c=relaxed/simple;
-	bh=D8H6qQTfQJxE/3XdZ2MVjcHocwNVG98rmXjnnwFRmzc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=OxMkxWJZ54k5rhWl0gSdTqV9R/SpirOsIS77B4GCEh6WA6usHy5Mj2X0S9AucnEHCRx8HEhn21Tqsqq5bLXw7LZd+ajw6QVtHiTGJ7pED3oy02l7BHYZZCAx6K1qzpeis3QA0r/6V7cudPamo1pkkvx/bu0VyLihKH9rQwKUwpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GjgSnZ9o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LFK6GeIZ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 12 Apr 2025 14:33:39 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744468420;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V2itsVul/BKjQ21rj6JGyKU7b4KsVX33+4IkgRUp6VE=;
-	b=GjgSnZ9ocNUiUURZPl1jgMFbdV/C+Wd5ji6iq4d3mAYrhYCiMyk9uL9ssbDjb34S6TAH1F
-	4RDSa3EurgMn2hlR+/LPO3PniIz0LIPs1HpzKbGMyr4wB0kFUZ00aDTD8WtDwc2pWPa314
-	8lWEGQ4PYLLUhu+60wqBv7qFSoc5tNIOmK8IrHh921nCddtrpY2AK0WAyUE2E6kXHctaBB
-	gQDUpWTzPCEqGJYpfe4hseVw9IA5hFezc1WOfER3EASifmCCg46tUZI96DLV2OMcqK7C78
-	QUtRxAvR8Tcnr8EbM/JVB+mTUcY1VGINLPONNIXihM7Ydx+MXfcIHX1azHpQKg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744468420;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V2itsVul/BKjQ21rj6JGyKU7b4KsVX33+4IkgRUp6VE=;
-	b=LFK6GeIZjwPABGdx2PGz33gSY/fZw1HxUzp08eLp9i4dpn61ZHoffmzwBql1TmcCco2q6z
-	pfrL1y5boIvFKmBg==
-From: "tip-bot2 for Ard Biesheuvel" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/boot] x86/asm: Make rip_rel_ptr() usable from fPIC code
-Cc: Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Dionna Amalie Glaze <dionnaglaze@google.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>,
- Kevin Loughlin <kevinloughlin@google.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Tom Lendacky <thomas.lendacky@amd.com>, linux-efi@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250410134117.3713574-14-ardb+git@google.com>
-References: <20250410134117.3713574-14-ardb+git@google.com>
+	s=arc-20240116; t=1744468554; c=relaxed/simple;
+	bh=TbaDZzL6rMhmNxwCb5EkKrjkKd4SNnXJvVsLOY0xK3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eMQj1+JkLd4CCb87cnLlgvDrZaRMT/KozX8tgETwudqDUF+8ZWK9DF9J6mpf/dCf5DzuCDwn8BaGwO7vqU4IumtVY4/fXhtH2tJK9NKF/ojF5v+8xFQ+vBJCQttnKDzMq134Mq0zeM++1PK0adGgAfS3mdjZmY+i3RDOf2wPWRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=JnaOdI5B; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6ecf0e07954so40938686d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 07:35:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1744468551; x=1745073351; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dKA6CW8lkxsZYkZcNj1adEARS2rUQdUi3RNcgzxuj0E=;
+        b=JnaOdI5BUB0a3mlfHxjKSZGw46aH6gXZo3DGj0ORT8gZsbH4o4+TlBxBpt4Rep/EmP
+         kwMNPG2u31oIQGPNe0kVnt23tLej+Xy5GzszUn+J+9CBXEvFUwPkngFY91G4aHobku53
+         zJIheAqNCXJhOd2/SGhKWeCV37M9EnmoJunqDct4YXas6lrqMwzQGPWcjD8Y9ULh3fgG
+         lWOtxK7KacXGG8E38PjrvZLPKPIFDmWrsGt8N86bBQUefrbDFAGjno3xyIeHsys1GNSD
+         RJhy9fGyg0JvH8RheyAuR3lXS/7U7MyGzLh0CQL3wkQiXBz+5rlmP8uUpgyXT/mrhr/0
+         Xm2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744468551; x=1745073351;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dKA6CW8lkxsZYkZcNj1adEARS2rUQdUi3RNcgzxuj0E=;
+        b=EGfC3Pd+RTXEDpPMdYufJTR1KQXYYoc6oZtu2BGZFLVm7bK7EFGioKqlF3JkC00Ip1
+         Y/JLoUMLNVgfKRZp83qmqcVbMGQh81R0dtxoNjE/L5hACnt1OlcLX5Q+sVhC26jArEPH
+         +LT31xUgsa1jWzvJFEs0RR1F4+288prOSc1MSW0WHIby6t+nAcyCEgNoq4Ef4CwqhzCc
+         kK/9eO6T2xM0wEYleVqwUf+fPfJAgPlrjBodk9XLM67oRANX3bj3OBGh5BtccPhiL/tz
+         uOX9AVK3fnwAR1jnu5+kATOSnazMoBVR4NHEChULdyHEh5KlXEGwc41OosnsIJVRHpGn
+         HirQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURTIoyndHJkQ6U31hzI1Dh2s3SX1W5aRN4OOL3Be0mVmsIiSoKPbqFtjnEy2CR29fFOWQg/XgVurUWStk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx79FZQ4zi/diAd6gWFKWc0ugKCahjtOHqycmJozBiiMoOYJ+OX
+	/QOd3j9PVwYtXnqGAuOGKDiRSOd39JmP9NEOITm6LRz1DORyD69//3ahVsbaJwk=
+X-Gm-Gg: ASbGncvCJEvJm6b+UlBJ0EvRcWgwxJg2xJDhYWtyBi/xPfUxLVdVGbzmV0yWNHD2miY
+	AoBDMqQpl5FKyQXywLF/9CAm4ktc62ySN2FkJrBjGivk27bSIM/DfG4zgTCrHfQCE0o659fS0Wh
+	5HtTH96E/ndgVB+RKz9ExRa0GUzz2ETvKg/0dA5LjBpDoWXzbzEcGfHRWD3+d2FLHCbSRyEWG43
+	v/GvX6It0ThTX6fFarWu1B5zvxVN8VlQIRoadK75OqD4Ng9Dpc5fasUDOPLq49pZ8H31jbGjrZ2
+	tvk950aPNSmPPzdcOQxi342D8LTvTvIiptip9DwiI7nmyB3xpTxqBosuocAynuD7CPLMuI3zVCP
+	yZ9r3h9oAT/jn53QssOPfHpU=
+X-Google-Smtp-Source: AGHT+IGqSSEfyQRXlH6VjXNUEfEkbf0/sQSfoUZEWOGabEh6iMrD2lgAmfhikxDIs2A67ZjcfmNMdg==
+X-Received: by 2002:ad4:4eaa:0:b0:6e0:f451:2e22 with SMTP id 6a1803df08f44-6f23f15d640mr105210826d6.38.1744468551139;
+        Sat, 12 Apr 2025 07:35:51 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f0dea215adsm50726506d6.120.2025.04.12.07.35.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Apr 2025 07:35:50 -0700 (PDT)
+Date: Sat, 12 Apr 2025 10:35:48 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, akpm@linux-foundation.org, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, mhocko@kernel.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	donettom@linux.ibm.com, Huang Ying <ying.huang@linux.alibaba.com>,
+	Keith Busch <kbusch@meta.com>, Feng Tang <feng.tang@intel.com>,
+	Neha Gholkar <nehagholkar@meta.com>
+Subject: Re: [RFC PATCH v4 0/6] Promotion of Unmapped Page Cache Folios.
+Message-ID: <Z_p6RBQN0S_N9oAG@gourry-fedora-PF4VCD3F>
+References: <20250411221111.493193-1-gourry@gourry.net>
+ <Z_mqfpfs--Ak8giA@casper.infradead.org>
+ <Z_mvUzIWvCOLoTmX@gourry-fedora-PF4VCD3F>
+ <Z_m1bNEuhcVkwEE2@casper.infradead.org>
+ <Z_m3VKO2EPd09j4T@gourry-fedora-PF4VCD3F>
+ <87jz7p1ts7.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174446841928.31282.6253523068552611395.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87jz7p1ts7.fsf@gmail.com>
 
-The following commit has been merged into the x86/boot branch of tip:
+On Sat, Apr 12, 2025 at 05:22:24PM +0530, Ritesh Harjani wrote:
+> Gregory Price <gourry@gourry.net> writes:
+> 0: Demotion disabled
+> 1: Demotion enabled for both anon and file pages
+> Till here the support is already present.
+> 
+> 2: Demotion enabled only for anon pages
+> 3: Demotion enabled only for file pages
+> 
+> Should this be further classified for dirty v/s clean page cache
+> pages too?
+> 
 
-Commit-ID:     bcceba3c72c0cf06dfbae77f5aec70fb6187e8df
-Gitweb:        https://git.kernel.org/tip/bcceba3c72c0cf06dfbae77f5aec70fb6187e8df
-Author:        Ard Biesheuvel <ardb@kernel.org>
-AuthorDate:    Thu, 10 Apr 2025 15:41:19 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Sat, 12 Apr 2025 11:13:04 +02:00
+There are some limitations around migrating dirty pages IIRC, but right
+now the vmscan code indescriminately adds any and all folios to the
+demotion list if it gets to that chunk of the code.
 
-x86/asm: Make rip_rel_ptr() usable from fPIC code
+> > Assuming we can recognize anon from just struct folio
+> 
+> I am not 100% sure of this, so others should correct. Should this
+> simply be, folio_is_file_lru() to differentiate page cache pages?
+> 
+> Although this still might give us anon pages which have the
+> PG_swapbacked dropped as a result of MADV_FREE. Note sure if that need
+> any special care though?
+> 
 
-RIP_REL_REF() is used in non-PIC C code that is called very early,
-before the kernel virtual mapping is up, which is the mapping that the
-linker expects. It is currently used in two different ways:
+I made the comment without looking but yeah, PageAnon/folio_test_anon
+exist, so this exists in some form somewhere.  Basically there's some
+space to do something a little less indescriminate here.
 
- - to refer to the value of a global variable, including as an lvalue in
-   assignments;
-
- - to take the address of a global variable via the mapping that the code
-   currently executes at.
-
-The former case is only needed in non-PIC code, as PIC code will never
-use absolute symbol references when the address of the symbol is not
-being used. But taking the address of a variable in PIC code may still
-require extra care, as a stack allocated struct assignment may be
-emitted as a memcpy() from a statically allocated copy in .rodata.
-
-For instance, this
-
-  void startup_64_setup_gdt_idt(void)
-  {
-        struct desc_ptr startup_gdt_descr = {
-                .address = (__force unsigned long)gdt_page.gdt,
-                .size    = GDT_SIZE - 1,
-        };
-
-may result in an absolute symbol reference in PIC code, even though the
-struct is allocated on the stack and populated at runtime.
-
-To address this case, make rip_rel_ptr() accessible in PIC code, and
-update any existing uses where the address of a global variable is
-taken using RIP_REL_REF.
-
-Once all code of this nature has been moved into arch/x86/boot/startup
-and built with -fPIC, RIP_REL_REF() can be retired, and only
-rip_rel_ptr() will remain.
-
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Dionna Amalie Glaze <dionnaglaze@google.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Kevin Loughlin <kevinloughlin@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-efi@vger.kernel.org
-Link: https://lore.kernel.org/r/20250410134117.3713574-14-ardb+git@google.com
----
- arch/x86/coco/sev/core.c           |  2 +-
- arch/x86/coco/sev/shared.c         |  4 ++--
- arch/x86/include/asm/asm.h         |  2 +-
- arch/x86/kernel/head64.c           | 24 ++++++++++++------------
- arch/x86/mm/mem_encrypt_identity.c |  6 +++---
- 5 files changed, 19 insertions(+), 19 deletions(-)
-
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index b0c1a7a..832f7a7 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -2400,7 +2400,7 @@ static __head void svsm_setup(struct cc_blob_sev_info *cc_info)
- 	 * kernel was loaded (physbase), so the get the CA address using
- 	 * RIP-relative addressing.
- 	 */
--	pa = (u64)&RIP_REL_REF(boot_svsm_ca_page);
-+	pa = (u64)rip_rel_ptr(&boot_svsm_ca_page);
- 
- 	/*
- 	 * Switch over to the boot SVSM CA while the current CA is still
-diff --git a/arch/x86/coco/sev/shared.c b/arch/x86/coco/sev/shared.c
-index 2e4122f..04982d3 100644
---- a/arch/x86/coco/sev/shared.c
-+++ b/arch/x86/coco/sev/shared.c
-@@ -475,7 +475,7 @@ static int sev_cpuid_hv(struct ghcb *ghcb, struct es_em_ctxt *ctxt, struct cpuid
-  */
- static const struct snp_cpuid_table *snp_cpuid_get_table(void)
- {
--	return &RIP_REL_REF(cpuid_table_copy);
-+	return rip_rel_ptr(&cpuid_table_copy);
- }
- 
- /*
-@@ -1681,7 +1681,7 @@ static bool __head svsm_setup_ca(const struct cc_blob_sev_info *cc_info)
- 	 * routine is running identity mapped when called, both by the decompressor
- 	 * code and the early kernel code.
- 	 */
--	if (!rmpadjust((unsigned long)&RIP_REL_REF(boot_ghcb_page), RMP_PG_SIZE_4K, 1))
-+	if (!rmpadjust((unsigned long)rip_rel_ptr(&boot_ghcb_page), RMP_PG_SIZE_4K, 1))
- 		return false;
- 
- 	/*
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index cc28815..a9f0779 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -114,13 +114,13 @@
- #endif
- 
- #ifndef __ASSEMBLER__
--#ifndef __pic__
- static __always_inline __pure void *rip_rel_ptr(void *p)
- {
- 	asm("leaq %c1(%%rip), %0" : "=r"(p) : "i"(p));
- 
- 	return p;
- }
-+#ifndef __pic__
- #define RIP_REL_REF(var)	(*(typeof(&(var)))rip_rel_ptr(&(var)))
- #else
- #define RIP_REL_REF(var)	(var)
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index fa9b633..954d093 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -106,8 +106,8 @@ static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
- 	 * attribute.
- 	 */
- 	if (sme_get_me_mask()) {
--		paddr = (unsigned long)&RIP_REL_REF(__start_bss_decrypted);
--		paddr_end = (unsigned long)&RIP_REL_REF(__end_bss_decrypted);
-+		paddr = (unsigned long)rip_rel_ptr(__start_bss_decrypted);
-+		paddr_end = (unsigned long)rip_rel_ptr(__end_bss_decrypted);
- 
- 		for (; paddr < paddr_end; paddr += PMD_SIZE) {
- 			/*
-@@ -144,8 +144,8 @@ static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
- unsigned long __head __startup_64(unsigned long p2v_offset,
- 				  struct boot_params *bp)
- {
--	pmd_t (*early_pgts)[PTRS_PER_PMD] = RIP_REL_REF(early_dynamic_pgts);
--	unsigned long physaddr = (unsigned long)&RIP_REL_REF(_text);
-+	pmd_t (*early_pgts)[PTRS_PER_PMD] = rip_rel_ptr(early_dynamic_pgts);
-+	unsigned long physaddr = (unsigned long)rip_rel_ptr(_text);
- 	unsigned long va_text, va_end;
- 	unsigned long pgtable_flags;
- 	unsigned long load_delta;
-@@ -174,18 +174,18 @@ unsigned long __head __startup_64(unsigned long p2v_offset,
- 		for (;;);
- 
- 	va_text = physaddr - p2v_offset;
--	va_end  = (unsigned long)&RIP_REL_REF(_end) - p2v_offset;
-+	va_end  = (unsigned long)rip_rel_ptr(_end) - p2v_offset;
- 
- 	/* Include the SME encryption mask in the fixup value */
- 	load_delta += sme_get_me_mask();
- 
- 	/* Fixup the physical addresses in the page table */
- 
--	pgd = &RIP_REL_REF(early_top_pgt)->pgd;
-+	pgd = rip_rel_ptr(early_top_pgt);
- 	pgd[pgd_index(__START_KERNEL_map)] += load_delta;
- 
- 	if (IS_ENABLED(CONFIG_X86_5LEVEL) && la57) {
--		p4d = (p4dval_t *)&RIP_REL_REF(level4_kernel_pgt);
-+		p4d = (p4dval_t *)rip_rel_ptr(level4_kernel_pgt);
- 		p4d[MAX_PTRS_PER_P4D - 1] += load_delta;
- 
- 		pgd[pgd_index(__START_KERNEL_map)] = (pgdval_t)p4d | _PAGE_TABLE;
-@@ -258,7 +258,7 @@ unsigned long __head __startup_64(unsigned long p2v_offset,
- 	 * error, causing the BIOS to halt the system.
- 	 */
- 
--	pmd = &RIP_REL_REF(level2_kernel_pgt)->pmd;
-+	pmd = rip_rel_ptr(level2_kernel_pgt);
- 
- 	/* invalidate pages before the kernel image */
- 	for (i = 0; i < pmd_index(va_text); i++)
-@@ -531,7 +531,7 @@ static gate_desc bringup_idt_table[NUM_EXCEPTION_VECTORS] __page_aligned_data;
- static void __head startup_64_load_idt(void *vc_handler)
- {
- 	struct desc_ptr desc = {
--		.address = (unsigned long)&RIP_REL_REF(bringup_idt_table),
-+		.address = (unsigned long)rip_rel_ptr(bringup_idt_table),
- 		.size    = sizeof(bringup_idt_table) - 1,
- 	};
- 	struct idt_data data;
-@@ -565,11 +565,11 @@ void early_setup_idt(void)
-  */
- void __head startup_64_setup_gdt_idt(void)
- {
--	struct desc_struct *gdt = (void *)(__force unsigned long)gdt_page.gdt;
-+	struct gdt_page *gp = rip_rel_ptr((void *)(__force unsigned long)&gdt_page);
- 	void *handler = NULL;
- 
- 	struct desc_ptr startup_gdt_descr = {
--		.address = (unsigned long)&RIP_REL_REF(*gdt),
-+		.address = (unsigned long)gp->gdt,
- 		.size    = GDT_SIZE - 1,
- 	};
- 
-@@ -582,7 +582,7 @@ void __head startup_64_setup_gdt_idt(void)
- 		     "movl %%eax, %%es\n" : : "a"(__KERNEL_DS) : "memory");
- 
- 	if (IS_ENABLED(CONFIG_AMD_MEM_ENCRYPT))
--		handler = &RIP_REL_REF(vc_no_ghcb);
-+		handler = rip_rel_ptr(vc_no_ghcb);
- 
- 	startup_64_load_idt(handler);
- }
-diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-index 5eecdd9..e7fb377 100644
---- a/arch/x86/mm/mem_encrypt_identity.c
-+++ b/arch/x86/mm/mem_encrypt_identity.c
-@@ -318,8 +318,8 @@ void __head sme_encrypt_kernel(struct boot_params *bp)
- 	 *     memory from being cached.
- 	 */
- 
--	kernel_start = (unsigned long)RIP_REL_REF(_text);
--	kernel_end = ALIGN((unsigned long)RIP_REL_REF(_end), PMD_SIZE);
-+	kernel_start = (unsigned long)rip_rel_ptr(_text);
-+	kernel_end = ALIGN((unsigned long)rip_rel_ptr(_end), PMD_SIZE);
- 	kernel_len = kernel_end - kernel_start;
- 
- 	initrd_start = 0;
-@@ -345,7 +345,7 @@ void __head sme_encrypt_kernel(struct boot_params *bp)
- 	 *   pagetable structures for the encryption of the kernel
- 	 *   pagetable structures for workarea (in case not currently mapped)
- 	 */
--	execute_start = workarea_start = (unsigned long)RIP_REL_REF(sme_workarea);
-+	execute_start = workarea_start = (unsigned long)rip_rel_ptr(sme_workarea);
- 	execute_end = execute_start + (PAGE_SIZE * 2) + PMD_SIZE;
- 	execute_len = execute_end - execute_start;
- 
+~Gregory
 
