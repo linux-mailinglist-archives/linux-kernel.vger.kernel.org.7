@@ -1,124 +1,157 @@
-Return-Path: <linux-kernel+bounces-601577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53961A86FB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 23:01:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E6FA86FBB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 23:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDEC11894567
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 21:01:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E040E8A5E23
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 21:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDBC221702;
-	Sat, 12 Apr 2025 21:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PFamEBUy"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BF1225419;
+	Sat, 12 Apr 2025 21:03:43 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C235170A23;
-	Sat, 12 Apr 2025 21:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F415A21D5B0
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 21:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744491681; cv=none; b=W4N+BS2GL1PS32eCiyWYHry6vdBrZWyPnYpHluGytTUx4uNJVPTUaQbFTSbWte90DBk60qwfaunFTL+lM8fgc3mkuEbX4Fte04xYxo63Wn41qDHP255Jo2v2zKyjEoCFw0j54s/3kb2P0sz7WVi+IRLpZbYr0UWac5BnpXlj2Vw=
+	t=1744491823; cv=none; b=GbxF/suJQ37TFRglzU9ZpqPUFa8kYPvVL0JXm6u8cx95Lw8utQUcy5fcOEwNsOaDQe/AMHTMkhI0WSb/XHWwM+uSwz6kx/mJTayZXO9o7Hb0d4+QWtjsuoh8DB1/sV4eRFJh3+3i1JqJgEo/un3lkEDdOpdNHu0l9f9U90Qt5PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744491681; c=relaxed/simple;
-	bh=d1galf7rq47D2V+U+ZwTUxOcqWMuUopO+i2tZEem29U=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=smCuqepbyZ9hmBpNguyZmRSurDVyk+dNY5kPlYRRkz5kkW7O3p07+Tzxv272iWwd1GUFX0LfQcRFYaVH8JzmAGvXgDKTSlMvBWSzShie+UD5ZCmc0VhgN7Skc11H0i08Q7h0XamGNVB3SDxw4u3AoRs6Qd7S66ZqpTVIK7EukfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PFamEBUy; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53CAfZlG012330;
-	Sat, 12 Apr 2025 21:01:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/NX5mR
-	K47P4P75OQ87H50QkPcpvtLBppnFCwMfUk9RU=; b=PFamEBUyFdhFaoeDICx/+Y
-	zfThffxzbE71885Rfp7V/56uMaxKbnsBv6lAKjEFOrlLF7AN/cv2LbkjdNyu1tEv
-	ohBrr2DEVvkMJpGvguU27KFkJbrGh7bUQ+TU+jTayR2TtatvLQqkvZPHJs5qJoij
-	URStdflWl93zelTsoZtI5jb1j3NtYklCMRXoZY5WNMrfQIF19kvU+xHOkMPCbxZW
-	D84cogS/k64SrjBzrcx0wnI5XCDdw9BCylX0fzagovSVPuIvPsx2utyQG17rD1L1
-	BNNZAhpNp5Xz1R0l/QngkjAIqMXC5i8AiBEgN/zkEZuwT3xu7oFpdOQiOfId6T2g
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ypmp9vgh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 12 Apr 2025 21:01:08 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53CJrjh2022682;
-	Sat, 12 Apr 2025 21:01:08 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45ygu4u08s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 12 Apr 2025 21:01:08 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53CL14cq12124698
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 12 Apr 2025 21:01:04 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B91D058053;
-	Sat, 12 Apr 2025 21:01:06 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0424558043;
-	Sat, 12 Apr 2025 21:01:06 +0000 (GMT)
-Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Sat, 12 Apr 2025 21:01:05 +0000 (GMT)
+	s=arc-20240116; t=1744491823; c=relaxed/simple;
+	bh=Flp9lkBsvXesJLjakIkBqsDUrcE1bfOpwpFxdZjOpvg=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=byZ9u4e3dmfXKWIkiYAfqnF02nmDknNcaR/q2FXRC+hXubS7haHaONqcXvEJ+dZ6O5Qe576AlwWLhFu3xuw1QyleX26N4djvpenVBU5iHJ4Q5OOIWVtY6rSSIjfS3BZtX5STQ8PrNCKuZndX6/mnUcFEQwaCmHrm4O5fzRySZ68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70CE3C4CEE3;
+	Sat, 12 Apr 2025 21:03:42 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1u3i2I-0000000AECs-15Wq;
+	Sat, 12 Apr 2025 17:05:10 -0400
+Message-ID: <20250412210446.338481957@goodmis.org>
+User-Agent: quilt/0.68
+Date: Sat, 12 Apr 2025 17:04:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-linus][PATCH 0/7] tracing: Fixes for 6.15
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Date: Sat, 12 Apr 2025 23:01:05 +0200
-From: Ilya Leoshkevich <iii@linux.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>,
-        Sven Schnelle <svens@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org,
-        Heiko
- Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander
- Gordeev <agordeev@linux.ibm.com>
-Subject: Re: [PATCH] ftrace: Fix type of ftrace_graph_ent_entry.depth
-In-Reply-To: <20250412120712.67fc45d9@batman.local.home>
-References: <20250411172207.61332-1-iii@linux.ibm.com>
- <20250412120712.67fc45d9@batman.local.home>
-Message-ID: <6bbd72b60478d363d03c268ce8095f8a@linux.ibm.com>
-X-Sender: iii@linux.ibm.com
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: GhDraqYsm8_2RHLEYPasQeD9LutLceP0
-X-Proofpoint-GUID: GhDraqYsm8_2RHLEYPasQeD9LutLceP0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-12_09,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- mlxlogscore=539 impostorscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 bulkscore=0 phishscore=0 clxscore=1015 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504120162
 
-On 2025-04-12 18:07, Steven Rostedt wrote:
-> On Fri, 11 Apr 2025 19:21:41 +0200
-> Ilya Leoshkevich <iii@linux.ibm.com> wrote:
-> 
->> 
->> -	F_printk("--> %ps (%lu)", (void *)__entry->func, __entry->depth)
->> +	F_printk("--> %ps (%d)", (void *)__entry->func, __entry->depth)
-> 
-> depth should never be negative. Why did you use "%d" and not "%u" ?
-> 
-> -- Steve
 
-I used int, because it's int in ftrace_graph_ent and all other events.
-If you think it's a good idea, I can change them all to unsigned int in 
-a follow-up patch.
+tracing fixes for v6.15
+
+- Hide get_vm_area() from MMUless builds
+
+  The function get_vm_area() is not defined when CONFIG_MMU is not defined.
+  Hide that function within #ifdef CONFIG_MMU.
+
+- Fix output of synthetic events when they have dynamic strings
+
+  The print fmt of the synthetic event's format file use to have "%.*s" for
+  dynamic size strings even though the user space exported arguments had
+  only __get_str() macro that provided just a nul terminated string. This
+  was fixed so that user space could parse this properly. But the reason
+  that it had "%.*s" was because internally it provided the maximum size of
+  the string as one of the arguments. The fix that replaced "%.*s" with "%s"
+  caused the trace output (when the kernel reads the event) to write
+  "(efault)" as it would now read the length of the string as "%s".
+
+  As the string provided is always nul terminated, there's no reason for the
+  internal code to use "%.*s" anyway. Just remove the length argument to
+  match the "%s" that is now in the format.
+
+- Fix the ftrace subops hash logic of the manager ops hash
+
+  The function_graph uses the ftrace subops code. The subops code is a way
+  to have a single ftrace_ops registered with ftrace to determine what
+  functions will call the ftrace_ops callback. More than one user of
+  function graph can register a ftrace_ops with it. The function graph
+  infrastructure will then add this ftrace_ops as a subops with the main
+  ftrace_ops it registers with ftrace. This is because the functions will
+  always call the function graph callback which in turn calls the subops
+  ftrace_ops callbacks.
+
+  The main ftrace_ops must add a callback to all the functions that the
+  subops want a callback from. When a subops is registered, it will update
+  the main ftrace_ops hash to include the functions it wants. This is the
+  logic that was broken.
+
+  The ftrace_ops hash has a "filter_hash" and a "notrace_hash" were all the
+  functions in the filter_hash but not in the notrace_hash are attached by
+  ftrace. The original logic would have the main ftrace_ops filter_hash be a
+  union of all the subops filter_hashes and the main notrace_hash would be a
+  intersect of all the subops filter hashes. But this was incorrect because
+  the notrace hash depends on the filter_hash it is associated to and not
+  the union of all filter_hashes.
+
+  Instead, when a subops is added, just include all the functions of the
+  subops hash that are in its filter_hash but not in its notrace_hash. The
+  main subops hash should not use its notrace hash, unless all of its subops
+  hashes have an empty filter_hash (which means to attach to all functions),
+  and then, and only then, the main ftrace_ops notrace hash can be the
+  intersect of all the subops hashes.
+
+  This not only fixes the bug, but also simplifies the code.
+
+- Add a selftest to better test the subops filtering
+
+  Add a selftest that would catch the bug fixed by the above change.
+
+- Fix extra newline printed in function tracing with retval
+
+  The function parameter code changed the output logic slightly and called
+  print_graph_retval() and also printed a newline. The print_graph_retval()
+  also prints a newline which caused blank lines to be printed in the
+  function graph tracer when retval was added. This caused one of the
+  selftests to fail if retvals were enabled. Instead remove the new line
+  output from print_graph_retval() and have the callers always print the
+  new line so that it doesn't have to do special logic if it calls
+  print_graph_retval() or not.
+
+- Fix out-of-bound memory access in the runtime verifier
+
+  When rv_is_container_monitor() is called on the last entry on the link
+  list it references the next entry, which is the list head and causes an
+  out-of-bound memory access.
+
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace/fixes
+
+Head SHA1: 8d7861ac507d23024c7d74b6cb59a9cca248bcb7
+
+
+Andy Chiu (1):
+      ftrace: Properly merge notrace hashes
+
+Nam Cao (1):
+      rv: Fix out-of-bound memory access in rv_is_container_monitor()
+
+Steven Rostedt (5):
+      tracing: Hide get_vm_area() from MMUless builds
+      tracing: Do not add length to print format in synthetic events
+      ftrace: Fix accounting of subop hashes
+      tracing/selftest: Add test to better test subops filtering of function graph
+      ftrace: Do not have print_graph_retval() add a newline
+
+----
+ kernel/trace/ftrace.c                              | 314 ++++++++++++---------
+ kernel/trace/rv/rv.c                               |   7 +-
+ kernel/trace/trace.c                               |   7 +
+ kernel/trace/trace_events_synth.c                  |   1 -
+ kernel/trace/trace_functions_graph.c               |  11 +-
+ .../ftrace/test.d/ftrace/fgraph-multi-filter.tc    | 177 ++++++++++++
+ 6 files changed, 372 insertions(+), 145 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/fgraph-multi-filter.tc
 
