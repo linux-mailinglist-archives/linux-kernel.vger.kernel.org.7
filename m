@@ -1,219 +1,131 @@
-Return-Path: <linux-kernel+bounces-601334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C61A86C87
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:30:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9929A86C8B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25E517B710B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 10:29:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE8A8A6BB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 10:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C361C84A7;
-	Sat, 12 Apr 2025 10:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E02D1A3169;
+	Sat, 12 Apr 2025 10:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j7s12GfT"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lt3/M182"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164F118B46C;
-	Sat, 12 Apr 2025 10:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FD028FF;
+	Sat, 12 Apr 2025 10:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744453831; cv=none; b=T5cqE+FLwEHLVWEznGLGG2WCnXGUwMZ7d94IBW0AfF++x/V0CkKgHGW5aL9tT1idNktWc3cSIVLPtMboZaLrWXpn7L/bxUxp4eNm0ERXMGdE2yYdk3w1x4uLzYXKxgCLVq8q/zje1AErXC/i3aSkC2hFR2owX6HWzaS/KeR1XOg=
+	t=1744454030; cv=none; b=mjWtnICr60MxjWPg450OTySDJ7/TOe1lU3Oqfhc5weBcbAAmxlKFGOv5ei7WzTHgxVGHqFa33wktOC8JjRZ52vH0uEfFJJnrB50P6wqqf57LuX/G7aZh5GnRBjKrmy8gPxQwKvbyV/doRnE/O8Vfhn5emG53unKoMb9s9j31Pbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744453831; c=relaxed/simple;
-	bh=Hia1kiZk+FyPPlJb2ZUpH2pxAd1gwNy6AchxZIxJ0CM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bK9I6oYeM8+4RruhWnKc+sb/yp1LyGt3/nhJcGUWFCuwS7q6cCh9PxeJEW5zyA8WeGeouETjR08O2zlVZG3T4BxnfsDIjOXdiJaGCOHDl1mS93i6207wrexVrDPx+GWL50ehQQrADhH0thiZyqpVm0Q1q6/gsPE45AJL+ZD4BwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j7s12GfT; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5e0caa151so4679798a12.0;
-        Sat, 12 Apr 2025 03:30:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744453828; x=1745058628; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QO2E8+vYpqjJWt2sYsfaDpbyyaGYjdr6q5T2ONGGna0=;
-        b=j7s12GfTLGpEIpj36I9unotlrGrr3Bjnx/URLnEb1ftffIetMFm2rhUIYO9YM3v685
-         0uhrmCZWFxwulkCnBnHVVVYIZ+SrY9o0kgAugtE75G7PmutAV8e36lmnmPYnNKnSM1X7
-         uJYtV/EaWZi0XSQKeXsjCy+Eow6JrXZPi6+Aj1PHE6oYLZA0/g6AoV70OTMK4SFkuFCp
-         50ww1b9TciVhBCX9bonFQaHRvWNq9fBUodmL9BMqc8BJEGfZ9tOJYyVgduKyMK3cYmEq
-         gQ+9mdFpOlT9fEOr7l/TkF0/GCKkuCyM1vOH8sYkfb0XqM3GoBqdgBRa71k8B2TTqAHI
-         jGWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744453828; x=1745058628;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QO2E8+vYpqjJWt2sYsfaDpbyyaGYjdr6q5T2ONGGna0=;
-        b=S+ud48P5LuYxFenvijZkikrzWNIhfSGDCDoZpmohfeTtE/7Z4iT+JD8ZbXFpZ3oDWe
-         r1ft3Cu9ZcSOZw3iMpqXezp62wuWrOl9lllB9ZuVVnFEpDAiMo9FWFrj+tRKdO2Sxd8+
-         LgMWrbGzwvSieV9bS3+W99WCjRxxLzTBfPS6aW6844Zn7IzfAwsf3/wIgru9PUcCw8e+
-         ASinGuCGyzK6LP3rdpLgV+7iNbwN1f8yoIPlJ0lnnjZTsVQqxBsNuZxpzrNkNoMLZFLn
-         NjH4tgx4PQeHZdIMS+F15tTkup2eX922QIBf6Zs5kbtzDlW4WW5H46ZV83qt2i5of7cS
-         2TGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVy8SaedKFw/uq2cvW+cN5ij0O8/uV6fpcXqwHw3QrDxFJMPnV4xgsl2PZvKR3CXHkCz8p1xy2IY0dFtqcNPw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD6iIrXj3xwp3Yj3gg/bLm6OE275iBI3umXMGkSXtZ3SH+lD81
-	zYQM4nc/H82PUvu1boMkN3YKzMK1rHAS+HlLGFYrNagl0/t5qEHR
-X-Gm-Gg: ASbGncuLanhPpRMhrbEPqKvZmQx30cjFfh4Qxkl62yu6/jHKoY/0GlnG6KQYKIk06ZH
-	EfZooOxjGzEWAyxomu9HEJ6oZutbTKfS79Rjvj1b4BYMs/TVt9yekwCTOG2+ieUPwkxnK2KUqzX
-	7rO2PESDBo8xewOwzENg0E9gIhZQvkj2rdLdOXsP6GnaztIF9vHIJFkbJ5jNCmCVtEY5l8/mrP4
-	Bs84W8N+mAXmZKS3suTaJ0ehrc8MiBQqg2iSZAJMCBKQxaNC2Q4s7VQB/4wWZ9RCwdDKF+FN0aM
-	/u6ve7l3mOkaZyhLMtVQEqUNs30oPC65Ioqgunc=
-X-Google-Smtp-Source: AGHT+IFx5V72a7tg9cHAQQUr9kXipb+oIc4HaS/kuzRV8AI7lbHBEsYX8cRNDSFc0s1eSlGLfUkTaA==
-X-Received: by 2002:a05:6402:2791:b0:5d3:cff5:634f with SMTP id 4fb4d7f45d1cf-5f370268ae9mr4363917a12.24.1744453828030;
-        Sat, 12 Apr 2025 03:30:28 -0700 (PDT)
-Received: from [10.0.1.56] ([2001:871:22a:99c5::1ad1])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5f36f528beasm2124249a12.76.2025.04.12.03.30.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Apr 2025 03:30:27 -0700 (PDT)
-From: Christian Schrefl <chrisi.schrefl@gmail.com>
-Date: Sat, 12 Apr 2025 12:29:48 +0200
-Subject: [PATCH v2] rust: Use `ffi::c_char` type in firmware abstraction
- `FwFunc`
+	s=arc-20240116; t=1744454030; c=relaxed/simple;
+	bh=+PhhzIK1QIE56uYa9MoSKWYNCOfwLRwgWFjqY9gwMn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=biKoalNiVUhUD5xPiHdBVZCfX7pe/dUJe86qm/36qMhIYG3/wOMEh7E+9wfuVEOT9fvgkYwd7kGhwZJa6la6iEIRVWKowaRL/3cMqvuMEQoK9qVTeo8iWcJl/iOaaaCYiuhCudniAqIqSljcRuzUECvnNhv6b+CmrRvjfbqKZuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lt3/M182; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29DDBC4CEE3;
+	Sat, 12 Apr 2025 10:33:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744454029;
+	bh=+PhhzIK1QIE56uYa9MoSKWYNCOfwLRwgWFjqY9gwMn8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lt3/M182/kPikzhJcBSQvkO9CbtuYFLw0jTODGMciwawPRMS+eVgGyamEK8EMeaGl
+	 abeaulEqpLNpKLsw8CvwwBYVM2VPbGkCPVVBN7ZvBHl0bCOoFXcDEIdI9LXNvr8bJF
+	 4JfNnTdDmnMk6vT8Y4ekjUBJDxfrFNw0oXtH4LunRwuKdee1D4+h3JRWcga/pz7fFs
+	 2uAvU1CtmXDyxD3JOPfN1jMrzB2Efb++OyOgwWCVSQRw8KqVf6eVYpJ4LlgL76Di+S
+	 XIVLqcu/fwthCYUqkelYqe7Umo6zM+Iwsqhi1bODyuOqoIwpxj0D0mah6FD+Do8EFY
+	 DZm49XVDpdZng==
+Date: Sat, 12 Apr 2025 11:33:40 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Siddharth Menon <simeddon@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-staging@lists.linux.dev, gregkh@linuxfoundation.org,
+ Michael.Hennerich@analog.com, lars@metafoo.de, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v5] iio: frequency: ad9832: Use FIELD_PREP macro to set
+ bit fields
+Message-ID: <20250412113340.6934a8e0@jic23-huawei>
+In-Reply-To: <CAGd6pzP470VDxGoP4e_2hVXsKrJhnhbv-WgFzCq7tMX9RjOLwg@mail.gmail.com>
+References: <20250330135402.105418-1-simeddon@gmail.com>
+	<20250330152044.18cf81f6@jic23-huawei>
+	<CAGd6pzP470VDxGoP4e_2hVXsKrJhnhbv-WgFzCq7tMX9RjOLwg@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250412-rust_arm_fix_fw_abstaction-v2-1-8e6fdf093d71@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAJxA+mcC/32NwQ6CMBBEf8Xs2Zq2UqWe/A9DmrUssImAaStqC
- P9uJZ49vsnMmxkiBaYIp80MgSaOPA4Z9HYDvsOhJcF1ZtBSG1nIUoRHTA5D7xp+uebp8BoT+pR
- novB7LG19NKQtZME9UC6t8kuVueOYxvBevyb1TX9apf5pJyWUkGjJ2LIwyh/ObY982/mxh2pZl
- g9rOWWexAAAAA==
-X-Change-ID: 20250408-rust_arm_fix_fw_abstaction-4c3a89d75e29
-To: Luis Chamberlain <mcgrof@kernel.org>, 
- Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@kernel.org>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- Christian Schrefl <chrisi.schrefl@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744453827; l=4002;
- i=chrisi.schrefl@gmail.com; s=20250119; h=from:subject:message-id;
- bh=Hia1kiZk+FyPPlJb2ZUpH2pxAd1gwNy6AchxZIxJ0CM=;
- b=8I08EuDpBqcEUoesrMVxiv1KI5r1L1AXqgwzBm42mgnpmFOx99MtP7VW1C7Nx3v4S5SBniLPb
- /vmUtocPv1oDL3Ws7Il4P8dNqKC+zkJQ4fGzgb6dPXrquzXdLw3SqWP
-X-Developer-Key: i=chrisi.schrefl@gmail.com; a=ed25519;
- pk=EIyitYCrzxWlybrqoGqiL2jyvO7Vp9X40n0dQ6HE4oU=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The `FwFunc` struct contains an function with a char pointer argument,
-for which a `*const u8` pointer was used. This is not really the
-"propper" type for this, so use a `*const kernel::ffi::c_char` pointer
-instad.
+On Wed, 9 Apr 2025 01:25:52 +0530
+Siddharth Menon <simeddon@gmail.com> wrote:
 
-This has no real functionality changes, since `kernel::ffi::c_char` is
-a type alias to `u8` anyways.
+> On Sun, 30 Mar 2025 at 19:50, Jonathan Cameron <jic23@kernel.org> wrote:
+> > > +     for (int i =3D 0; i < ARRAY_SIZE(regval_bytes); i++) {
+> > > +             freq_cmd =3D (i % 2 =3D=3D 0) ? AD9832_CMD_FRE8BITSW : =
+AD9832_CMD_FRE16BITSW;
+> > > +
+> > > +             st->freq_data[i] =3D cpu_to_be16(FIELD_PREP(AD9832_CMD_=
+MSK, freq_cmd) |
+> > > +                     FIELD_PREP(AD9832_ADD_MSK, addr - i) |
+> > > +                     FIELD_PREP(AD9832_DAT_MSK, regval_bytes[i])); =
+=20
+> > Looking at the data layout here, this seems like an interesting dance t=
+o fill two unrelated
+> > u8 values - it's not a be16 at all.
+> >
+> > I'd be tempted to split the freq_data into u8s and then you will just h=
+ave
+> >                 st->freq_data[i][0] =3D FIELD_PREP(AD9832_CMD_MSK, freq=
+_cmd) |
+> >                                       FIELD_PREP(AD9832_ADD_SMK, addr -=
+ i);
+> > //with masks adjusted appropriately.
+> >                 st->freq_data[i][1] =3D regval_bytes[i];
+> > =20
+>=20
+> Hello Jonathan,
+>=20
+> I briefly went through the datasheet for the device.
+> From what I understand, the device is expecting 16 bit write operations w=
+here:
+> - First 4 bits: Operation type (frequency/phase)
+> - Next 4 bits: Destination register address
+> - Last 8 bits: Data
+> so these fields would need to be combined into a single 16-bit value rega=
+rdless.
 
-This used to cause problems on 6.13 when building for 32 bit arm (with
-my patches), since rust mapped c_char to i8 instead.
-Build error for this case:
+Hmm. That is really a documentation thing rather than anything real.
+If they had been documented it as a control value of 8 bits and a data valu=
+e of 8
+bits then it would naturally map to an array.
 
-```
-error[E0308]: mismatched types
-  --> rust/kernel/firmware.rs:20:4
-   |
-20 |         Self(bindings::request_firmware)
-   |         ---- ^^^^^^^^^^^^^^^^^^^^^^^^^^ expected fn pointer, found fn item
-   |         |
-   |         arguments to this function are incorrect
-   |
-   = note: expected fn pointer `unsafe extern "C" fn(_, *const i8, _) -> _`
-                 found fn item `unsafe extern "C" fn(_, *const u8, _) -> _ {request_firmware}`
-note: tuple struct defined here
-  --> rust/kernel/firmware.rs:14:8
-   |
-14 | struct FwFunc(
-   |        ^^^^^^
+>=20
+> As I am unable to procure a testing unit at this time, I=E2=80=99m hesita=
+nt to make
+> changes that could unintentionally break the existing driver.
+Sure.  It is always a bit of a risk assessment for changes like this.
+I'm less nervous about breaking staging drivers than others, but we should
+still do our best to not do so.  Probably not worth spinning up some emulat=
+ion
+for this change!
 
-error[E0308]: mismatched types
-  --> rust/kernel/firmware.rs:24:14
-   |
-24 |         Self(bindings::firmware_request_nowarn)
-   |         ---- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected fn pointer, found fn item
-   |         |
-   |         arguments to this function are incorrect
-   |
-   = note: expected fn pointer `unsafe extern "C" fn(_, *const i8, _) -> _`
-                 found fn item `unsafe extern "C" fn(_, *const u8, _) -> _ {firmware_request_nowarn}`
-note: tuple struct defined here
-  --> rust/kernel/firmware.rs:14:8
-   |
-14 | struct FwFunc(
-   |        ^^^^^^
+>=20
+> Would it be acceptable to limit the scope of this patch to introducing
+> bitfield macros and addressing the remaining feedback?
+Sure.  We can perhaps revisit this suggestion in a future series.
 
-error[E0308]: mismatched types
-  --> rust/kernel/firmware.rs:64:45
-   |
-64 |         let ret = unsafe { func.0(pfw as _, name.as_char_ptr(), dev.as_raw()) };
-   |                            ------           ^^^^^^^^^^^^^^^^^^ expected `*const i8`, found `*const u8`
-   |                            |
-   |                            arguments to this function are incorrect
-   |
-   = note: expected raw pointer `*const i8`
-              found raw pointer `*const u8`
+Jonathan
 
-error: aborting due to 3 previous errors
-```
-
-Fixes: de6582833db0 ("rust: add firmware abstractions")
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
----
-This should probably be backported to stable, for people/distros
-using Arm 32 patches on stable.
----
-Changes in v2:
-- Use `kernel::ffi::c_char` instead of `core::ffi::c_char`. (Danilo & Benno)
-- Reword the commit message.
-- Link to v1: https://lore.kernel.org/r/20250411-rust_arm_fix_fw_abstaction-v1-1-0a9e598451c6@gmail.com
----
- rust/kernel/firmware.rs | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-index f04b058b09b2d2397e26344d0e055b3aa5061432..2494c96e105f3a28af74548d63a44464ba50eae3 100644
---- a/rust/kernel/firmware.rs
-+++ b/rust/kernel/firmware.rs
-@@ -4,7 +4,7 @@
- //!
- //! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h)
- 
--use crate::{bindings, device::Device, error::Error, error::Result, str::CStr};
-+use crate::{bindings, device::Device, error::Error, error::Result, ffi, str::CStr};
- use core::ptr::NonNull;
- 
- /// # Invariants
-@@ -12,7 +12,11 @@
- /// One of the following: `bindings::request_firmware`, `bindings::firmware_request_nowarn`,
- /// `bindings::firmware_request_platform`, `bindings::request_firmware_direct`.
- struct FwFunc(
--    unsafe extern "C" fn(*mut *const bindings::firmware, *const u8, *mut bindings::device) -> i32,
-+    unsafe extern "C" fn(
-+        *mut *const bindings::firmware,
-+        *const ffi::c_char,
-+        *mut bindings::device,
-+    ) -> i32,
- );
- 
- impl FwFunc {
-
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250408-rust_arm_fix_fw_abstaction-4c3a89d75e29
-
-Best regards,
--- 
-Christian Schrefl <chrisi.schrefl@gmail.com>
+>=20
+> Regards,
+> Siddharth Menon
+>=20
 
 
