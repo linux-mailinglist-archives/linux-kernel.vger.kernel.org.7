@@ -1,151 +1,107 @@
-Return-Path: <linux-kernel+bounces-601306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56811A86BFA
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 11:25:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05E7DA86BFE
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 11:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6380B9A16F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 09:23:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35CF53B759E
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 09:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E056E1A2389;
-	Sat, 12 Apr 2025 09:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGo/G8Ik"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31551A2389;
+	Sat, 12 Apr 2025 09:32:46 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923AA33F6;
-	Sat, 12 Apr 2025 09:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AC018C011;
+	Sat, 12 Apr 2025 09:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744449790; cv=none; b=cch1jz5km5oIv5h4HdhM67/+RP1dUi84za7mVR8p61YEL2/1k6G1Em7cFuhOCJ/GM4fFXRgisGWC/dvO+AHA2KWbxg9z1+Iiy/sdUUP4avjahrv4yHdM0VIrOMSNLTpde0MBdgarJjUjVhk0Yqdqx/YM61GtHgg7chQ4QPgl0D0=
+	t=1744450366; cv=none; b=M2CiwwBKARz6CoM3Be70qJV7b1nExwr3Q/5SznDNGrT+/3DVCIUPhiCm1+5qXZukdF12tf+kWU95igGrzpqHkIvg1Is3EflZ7SCuRHZP+RS5iPkYHAGXZ1qyFJc/obdkLg9xj1OMoTowOOm3/eqSKib11XH7FbGpaJ6USDj5M5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744449790; c=relaxed/simple;
-	bh=PyHtxqdvzJpDkiGKGKlbzxVr6AnLaJq1JdOhGC2eDGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NxzCLDJTgt/B/So/Vj7RcrvCBCijzWUjQmI0o/AVXtMfaneBXK+bp0FbUu7UPP6dNOsSXYe++hWWyrxEC8d2XWbuNXiW14LLHWyH3Rp/sg5SsdxmTKurA4gT/Q2bqPcMmD3nsz/GJJ+1UWs3LXxUPeBIiZ3wFY+FFBwgAlIOpk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VGo/G8Ik; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cf3192f3bso28108155e9.1;
-        Sat, 12 Apr 2025 02:23:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744449787; x=1745054587; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vP8+nS29EeEt4QYMObmQEzs8JougkVOmBsA4oHck4vI=;
-        b=VGo/G8IkHRVNRqcDqtjJnIH2zBxwUEtPtz9/wenB+Gs89/zRdCGNY7U8UXJn9Pyh1R
-         JCb+maQKXVF1H/79giNmQokIWwm9LRz2Ui8deTWP95tH7UcpmB7ojnEa/+4V818sX73a
-         y/1ZLpq7WeRub7f6l+pCE0s3xH8CKDEy0c5T5B9QGa2YPylRfwZgzkwymtfGuQFkLxHQ
-         lngKOrWSNy+j2/di+w13j+eKt8igWjcmFSvSW0UJ6qRqbmxXwKFGYaOKLD7Qd6sl0Jyy
-         1zqaNKnYUVOovmOfMuiBGFwwziUcFs4aK3NJIU2EaQy6YKnT+AUsVxTJnslitby4BUZt
-         2vFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744449787; x=1745054587;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vP8+nS29EeEt4QYMObmQEzs8JougkVOmBsA4oHck4vI=;
-        b=o7XmZX/elIe9S37cjTf+kT4FbB2ZqBVA70qqNttbFYws/yOuu0inD9sHthedKAJ+6n
-         eD8jF8uzYsjizoGEXoG2IXyHIVUhfJPgbbStJhIDgClNoti5BW6QPLWgjvbJN4JBXxxn
-         xFNBTgvwY3POaQDvXi6gAUgmBzAVUR2mte1VJYrvugPi9T/CXX15a5XO6sY3NDkWqfEJ
-         sPum6z4XGgsspDgpNkes7PeJhgYeY3ASupQpDR+k7SNKK8MKx5zw3PwbPE8XZmmxq4pM
-         VkFXLoaRiWH51VEd6+fdad2TVZz4uRr5UUKhipDD713We2+sjC7hBhhRgMcJ8b/dOhFu
-         G/Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCXP/XwYMM9xUdjEgTDrDju1QRD3AvthwtdUPB/MtFWPtSCSSA4XBdK9RrLMD5G68H85CdLHVuyW@vger.kernel.org, AJvYcCXrnMU5qjeIVaZvUz389cOr4ZUUULStBASBhnmU2NavRolL4KEDZCpBJcHHnbI46/4T5j5DalvV7RtLYRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJR5ow4/dGoGuFV/UxqEd1Q5JIIEzxzMnktyyE8ElhACwb4rHf
-	hxmnwDZA0LKhFQrvHshG+IvSK0BWGxIVX5LrDzdCgDj4f2H5zqkU
-X-Gm-Gg: ASbGncvG9i80GR5XYhtnV8PyBwGOP6jlo5UCA2k40R8g1VYkb6XVbakHPAdAk6QQdVu
-	JaWQeRhqfsAgmx4PB4lQYqgPgb39d0HyRPOu71LJ7OFgNa/R35rcXgIpvbzQhKtT1Rr9fL4Yzzf
-	PhW+zFo7a/oUYCVeo2XmQZaBx63bsJ4Dl+RWvgCSCT72nxMjXV9u8B/Zqqrc7h2j5b2QmDvn1dp
-	xbWq34CQakcwekpIQyXx08BMJfjdpbbMBHbE0WrbQ0/Pyy4XeKrwY82IacXWRBEEQB6C3VvDaJX
-	jGOOYhpdsrWLJfrfDnpm1hnJzbbHL5H+Z88XXCb0K7ro0NVtekK2erelS5lV3rc9c/tPcwIGbGD
-	b4X4=
-X-Google-Smtp-Source: AGHT+IEdvyQBBmM+g9GNjxWlarB7rYN6lH8hVFAsGG/oIntQEo2K2905CeEol3l2b14ckD4up/jsKw==
-X-Received: by 2002:a05:600c:1d93:b0:43c:e8a5:87a with SMTP id 5b1f17b1804b1-43f3a95bcfbmr61779245e9.16.1744449786503;
-        Sat, 12 Apr 2025 02:23:06 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233c7a68sm108921695e9.19.2025.04.12.02.23.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Apr 2025 02:23:05 -0700 (PDT)
-Date: Sat, 12 Apr 2025 10:23:04 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Paul Fertser <fercerpav@gmail.com>
-Cc: kalavakunta.hari.prasad@gmail.com, sam@mendozajonas.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, npeacock@meta.com, akozlov@meta.com,
- hkalavakunta@meta.com
-Subject: Re: [PATCH net-next v2] net: ncsi: Fix GCPS 64-bit member variables
-Message-ID: <20250412102304.3f74738c@pumpkin>
-In-Reply-To: <Z/eiki2mlBiAeBrc@home.paul.comp>
-References: <20250410012309.1343-1-kalavakunta.hari.prasad@gmail.com>
-	<Z/eiki2mlBiAeBrc@home.paul.comp>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1744450366; c=relaxed/simple;
+	bh=gUwRljP4XbLx/LC0fbh6grs6LOeDpIl64YWdJzlyaec=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DeGjfrq3Jchw4WqxDYO0rkLjS3zCllntfiZ0OdOApnuHU1am1i9bsE4DJ/Eeie3u9wpK0h47KezeSQ51wUGLFXrOLndJLmET12ir2Tw7fxzoQPCYUl8/gdRKy0jo/4mvRq+Qc1Rdt4u3z8cw4M1PATjO8RUdMhLGc/Ob2QgqKRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZZSxq4zSyz4f3jMV;
+	Sat, 12 Apr 2025 17:32:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 42F421A0FC8;
+	Sat, 12 Apr 2025 17:32:39 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgA3m181M_pngHkCJQ--.7961S4;
+	Sat, 12 Apr 2025 17:32:39 +0800 (CST)
+From: Zheng Qixing <zhengqixing@huaweicloud.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	zhengqixing@huawei.com
+Subject: [PATCH] block: fix resource leak in blk_register_queue() error path
+Date: Sat, 12 Apr 2025 17:25:54 +0800
+Message-Id: <20250412092554.475218-1-zhengqixing@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgA3m181M_pngHkCJQ--.7961S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrKF17Gw1kWFyfWr4rZFykGrg_yoWDWFc_Kr
+	yF9r1rWws3Cr45uw12kF10vF42kw4ktF4xWay0qF9Ig3Z7XFn5GwsF9F1rXr429a1xWF45
+	Gr1IgFyUuryI9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbz8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267
+	AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80
+	ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4
+	AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
 
-On Thu, 10 Apr 2025 13:50:58 +0300
-Paul Fertser <fercerpav@gmail.com> wrote:
+From: Zheng Qixing <zhengqixing@huawei.com>
 
-> Hello Hari,
-> 
-> Thank you for the patch, it looks really clean. However I have one
-> more question now.
-> 
-> On Wed, Apr 09, 2025 at 06:23:08PM -0700, kalavakunta.hari.prasad@gmail.com wrote:
-> > @@ -290,11 +289,11 @@ struct ncsi_rsp_gcps_pkt {
-> >  	__be32                  tx_1023_frames; /* Tx 512-1023 bytes frames   */
-> >  	__be32                  tx_1522_frames; /* Tx 1024-1522 bytes frames  */
-> >  	__be32                  tx_9022_frames; /* Tx 1523-9022 bytes frames  */
-> > -	__be32                  rx_valid_bytes; /* Rx valid bytes             */
-> > +	__be64                  rx_valid_bytes; /* Rx valid bytes             */
-> >  	__be32                  rx_runt_pkts;   /* Rx error runt packets      */
-> >  	__be32                  rx_jabber_pkts; /* Rx error jabber packets    */
-> >  	__be32                  checksum;       /* Checksum                   */
-> > -};
-> > +}  __packed __aligned(4);  
-> 
-> This made me check the Specification and indeed somehow it happened
-> that they have forgotten to ensure natural alignment for 64-bit fields
-> (at least they cared enough to do it for 32-bit values). [0] is the
-> relevant read.
-> 
-> > +	ncs->hnc_cnt            = be64_to_cpu(rsp->cnt);  
+When registering a queue fails after blk_mq_sysfs_register() is
+successful but the function later encounters an error, we need
+to clean up the blk_mq_sysfs resources.
 
-Doesn't look related to the structure above.
+Add the missing blk_mq_sysfs_unregister() call in the error path
+to properly clean up these resources and prevent a memory leak.
 
-> 
-> This means that while it works fine on common BMCs now (since they run
-> in 32-bit mode) the access will be trappped as unaligned on 64-bit
-> Arms which one day will be common (Aspeed AST2700, Nuvoton NPCM8XX).
-> 
-> So I guess you should be doing `be64_to_cpup(&rsp->cnt)` there.
+Fixes: 320ae51feed5 ("blk-mq: new multi-queue block IO queueing mechanism")
+Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+---
+ block/blk-sysfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-That is is the one that fails - the compiler is likely to warn about
-taking the address of a member of a packed structure.
-
-If the compiler knows the value might be misaligned (eg if the structure
-is __packed) then it will do multiple reads and shifts.
-
-IIRC it is enough to mark the member rx_valid_bytes __packed.
-That removes the padding before it and the compiler will then assume
-it is 4-byte aligned.
-
-	David
-
-> 
-> [0] https://www.catb.org/esr/structure-packing/
-> 
+diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+index a2882751f0d2..1f9b45b0b9ee 100644
+--- a/block/blk-sysfs.c
++++ b/block/blk-sysfs.c
+@@ -909,6 +909,8 @@ int blk_register_queue(struct gendisk *disk)
+ out_debugfs_remove:
+ 	blk_debugfs_remove(disk);
+ 	mutex_unlock(&q->sysfs_lock);
++	if (queue_is_mq(q))
++		blk_mq_sysfs_unregister(disk);
+ out_put_queue_kobj:
+ 	kobject_put(&disk->queue_kobj);
+ 	return ret;
+-- 
+2.39.2
 
 
