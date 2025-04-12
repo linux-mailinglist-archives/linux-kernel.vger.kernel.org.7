@@ -1,168 +1,167 @@
-Return-Path: <linux-kernel+bounces-601361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E448EA86CE7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 14:25:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5738A86CDF
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 14:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 980E67B285D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:24:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D2658C3BCF
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C3B1EE00D;
-	Sat, 12 Apr 2025 12:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977F91E04AC;
+	Sat, 12 Apr 2025 12:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aMHGrnPS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jaocKa5h"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B681E98FB
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 12:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572FA1519BA;
+	Sat, 12 Apr 2025 12:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744460680; cv=none; b=P3tnf5cnL55vkg3uwJ//zLvwt0CshDPIFrff6hQXOWrNK3AuIif9pAYX1vnXVpJVqFpaymqA1SVITo9ZK/nzaH8KVvdmLdxSL+27xblF7n2fwN3r9SB1i8CoGuF8DqbPpLqHShIffJiC7SYUHPSwCnOFEyb9N/iJKqpa/XXnkFk=
+	t=1744460676; cv=none; b=gyZseV57LgRqlxxVS0XskpBW05mLU5ok/cqkWrDoXfiWo91LJ6tcVGBoV1W1qedxyEbyb3GtSfYZWXlSBUX9074g7RnbnGs2fiZuPCJUsVex0KDYgmEtXSgzI/CoNXgpgcoFOlxctOZOW/ChlWlUUrzIujBmj8CRrsQ1hCfSuBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744460680; c=relaxed/simple;
-	bh=NqAv1TV864Xqi+E0ZtzNiKeIgyz7+EmpUkpDdubgk4k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uQVXOz8C3a9C2JQ5yulCdenUEzCoOoZUoQlg7nwkY6xVtsqEeYm9+DKkExMTBgDkldcfb7Ni6mJueO0IVFH2Ysu1hBC2+DMit8SG/itB0wGf0j5L3Ns8ETD+XUhjIqE3lpEVflylP+Z5aJAAEvl6jTOoluTkNFszZTmmUjKd0HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aMHGrnPS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744460675;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PstkTZ34lBm2NUVL+KAkFru/gxIEVY1LaGP4oPHMoPo=;
-	b=aMHGrnPSju+1PFbREzFWWmxMXmJVB1qGy1RFP/wLdOD28kBOpV4KLmkxPozPyI1H2oh0JP
-	XmsPjrgxyxw6g1QMIjdoUYysZWOWIws5LLx8jk3YduHlInpGCRdy9acUQE7Ii/Ef1W6Ux3
-	xjGNhrCTImPymGyfpPx5Y3jF0UHpPfc=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-58-_yMGKUnSMcO50DJzmrbBRg-1; Sat, 12 Apr 2025 08:24:34 -0400
-X-MC-Unique: _yMGKUnSMcO50DJzmrbBRg-1
-X-Mimecast-MFC-AGG-ID: _yMGKUnSMcO50DJzmrbBRg_1744460673
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2254e500a73so21346755ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 05:24:34 -0700 (PDT)
+	s=arc-20240116; t=1744460676; c=relaxed/simple;
+	bh=J80O7lx+S9pEIU6bV6NeFN2f6XCVqGZw2Hw8t5NoRHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ScjHWKJ4A9b9FDtY2lGhxlmYfu88lTjPDWHfMIMXnja+phjksikNVVKApXOSZ1b1Xq8b3+8DodhwL/u2s1xorIggGxk1bpXFmgpnr/YaJwTeDY/RCEcgxx8SP8YBDcTTGeWspcj7rkaeSMfT8Mzl3tB615SzM8bMpvuIsiHFilA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jaocKa5h; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9eb12so4534741a12.1;
+        Sat, 12 Apr 2025 05:24:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744460673; x=1745065473; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bVuqSu3NOK87RkcbSVOR8gLBwOzmPgPAFU9FS4oYFp4=;
+        b=jaocKa5hMxDYZyIc08OZZCJPKFTkUegZufrmHZp2BfEX40OsgLfqt0ZVjKnHDmMhVo
+         j1A8Bnj1Bv0JeJK6qobMgItFQEe2PC+fp656cx3cLMISMZzQM+pSsr2KJSbrEVPC3ztw
+         4nmiqJF/CQwxKAOdyMUF/O4BkWkTHIvZsJxVF3hkc0Otf2TyMc+vgprD12csa0Gr628s
+         Lo8zHrXw6rHHXXi3jHWNXs3nyJWk2R2KMnKTIX/ucV193BpjqUo4joAbaXNE7ZYxCHIs
+         YwYkNxirKIDYJj5wAKTHrOM1ugpF3WcFS3DiZiDkWyTEbkbLvfIANr4SekTgzDgFsL9g
+         MAwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1744460673; x=1745065473;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PstkTZ34lBm2NUVL+KAkFru/gxIEVY1LaGP4oPHMoPo=;
-        b=DvHh1yw/BxqA15YQ6++HsGT0gTpQvs9Xq7U14ytJTKFap9Ise7LyyG/SRAiyM+BKBr
-         Gw6UgDyOwgkaS2upxvwis1nUQXPbNPJU+VhuiMWbJca/D6fQ4BQtpgVXdnTEJmPyE2NP
-         4Lzpykwyaj3kMQXgaEIznma9N/f/5Fz+YlplgT2nixUgnq3lQIk3zpQIqWzJkJ5ZGcyz
-         rqtrTQLuCtJVWAyXkzCu8SX3oloBRl8NrDuoN6HOWwMorwDE1E1WjOnBjDOMBFzzPUao
-         elsjeL3NPRL5IVZghBPLrtJ8gDUPT6NjCC4bnL96JsPNjDqL4ILd9BgjuAL02Rlzei5N
-         e/gA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyx/DQcvl3lLs08WPiAbzu1bNj/3NUQtD1dtrIts6YBqcdNY5zZbGGGsg8cWL1DOaHODw+jaiOdmi2vJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4isEXQFrA/BbX25wEAQHwQHhW8mRGPowH/xEobVybpyEeQzWJ
-	ERypU7Snb48iTVzbfc6Uumkp6Y+OXvGUJ138/zfBRrzV92dBVcljTOaSxweBoqqiQlySFgmJWOH
-	qOk0U39Sx/8gGqzsbh/GGARMPdMujMngnPlDvgniHaMrwcw+GcTSCJhuEOTeFVt0Kln3W+qcla7
-	DJs+WlqrLwWtD3dE3JYNqujDTfAd2SzRloHF6x
-X-Gm-Gg: ASbGncuIp3bHq3XBGI8+b5EIDUr7+2jQQ5jg8vQqmzGwwxY25Rbew/E2mw7CF0t2Aw3
-	BcW9iqqcjNROptFDE2PKNdJFdNAne88J6YXdJ1DIrbRTAv6AR7cIS1Q6CBEO+xL8MgAE=
-X-Received: by 2002:a17:903:2392:b0:216:410d:4c53 with SMTP id d9443c01a7336-22bea4ef20cmr105041815ad.41.1744460673278;
-        Sat, 12 Apr 2025 05:24:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGdwLi3is9xzOobpflle8QawgvTBanFLeQKCo4W7mdaerjMfbMARDG/Av3Ou9QEft2fRetb/E6lzOJYKUFnldY=
-X-Received: by 2002:a17:903:2392:b0:216:410d:4c53 with SMTP id
- d9443c01a7336-22bea4ef20cmr105041485ad.41.1744460672807; Sat, 12 Apr 2025
- 05:24:32 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bVuqSu3NOK87RkcbSVOR8gLBwOzmPgPAFU9FS4oYFp4=;
+        b=QJgEfLBZKdIxTPMVq+bnXbC9qpb1nzUpbJfR9ncjOGWh1jMMGDkfLHBGeXxGkfAdgk
+         Zi4Y7Qe9FBc4HghB1YNseUFA4qxzU9EWk8zo85eKS7Qdt4iBGX9yGpHn3ECkRELet6T6
+         33rCrUcRAjCc13YMVGb6PZACupbHwF3AeoBOxaRBZl6oOFIziFpIJ+CT+kb9WHNquueb
+         uLkNr+D5wFIjm43DsW/p5ZYKMtM6S4wWzM6HNJHJf/dhiI1aG9pOew3E43ntm/TtsF3s
+         nExyIAovCbirbhP75o0NAoM6uDX+tXscvctxRpeE4x+5cTVXoktomod5eQ/DlEYwAt6d
+         5gew==
+X-Forwarded-Encrypted: i=1; AJvYcCU8DL6JMnmVMrM2EFUOcoGQsII2tAcqvUj00ZHKVtl/NIaaQGf2RKmqVF5A62sB+EB0CFkO0O+4@vger.kernel.org, AJvYcCVPeMG8NDQWx5Ato2TD+rHhCkeU1K8w6QJIh1daBsexodVlmaP2uxkJpiHa+/P8QofUkbunyAcNg9LGFb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWYL0Kdh9Yyn9BLLmbzD/fogz8do2KOVh3hONfxHV37i9GIn/y
+	aJ8AIjl5I4RXHMPcGwFWXIVin0zwXMJyKCt+Zh4Oe174v2aqzrLI
+X-Gm-Gg: ASbGncvvieZOL8MtRo9BdilIdRhbtOel8TS9l3Qum5/rDnIQ0YTWvUVyZi/BZefSNS5
+	oJtiEMhbd57RI7TqNadIZpSZKQPEDw4rfhfYz6hpAOIzhliLbD7btY22Kzy6bm7EfxqbQdQ7Ytr
+	a8ptyzpATngYdlUT0OKpBwKQGph/iaKCzSSCGjlNLXjOGHrhL1xjL5Oy1YktAB4Ot2Y9yrUhufg
+	/6MuwN2kK2lpfkiH+T48ya7omG/84U9S7dAGFbodvz6+R+VB4OCfIaOQzAXoN4rpH+ll0PkrTFw
+	32WC7QWDEJmXvRgMq/Fg3LJfup0KkZDmlNxFJk95Z5CO7hxuRc1PyZLz63h2x/2UQu0yYEpKZYQ
+	H5sPUAZ0QXoNXzCq07e1q
+X-Google-Smtp-Source: AGHT+IFc5anELwtiJCusv+yFZK/tdXxvnsuy47DJan7xHGiTN/SrWnZQYj+SMt5guZE4sgjUUqlcjg==
+X-Received: by 2002:a17:907:3f16:b0:aca:c7e0:6375 with SMTP id a640c23a62f3a-acad3456e7fmr561981366b.2.1744460672462;
+        Sat, 12 Apr 2025 05:24:32 -0700 (PDT)
+Received: from localhost (dslb-002-205-021-146.002.205.pools.vodafone-ip.de. [2.205.21.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1be91a3sm588742766b.44.2025.04.12.05.24.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Apr 2025 05:24:31 -0700 (PDT)
+From: Jonas Gorski <jonas.gorski@gmail.com>
+To: Nikolay Aleksandrov <razor@blackwall.org>,
+	Ido Schimmel <idosch@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>,
+	bridge@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RFC net 0/2] net: dsa: fix handling brentry vlans with flags
+Date: Sat, 12 Apr 2025 14:24:26 +0200
+Message-ID: <20250412122428.108029-1-jonas.gorski@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67f8d2b2.050a0220.355867.001c.GAE@google.com> <tencent_C803BAF1BB47330C9E131B254B191B682508@qq.com>
-In-Reply-To: <tencent_C803BAF1BB47330C9E131B254B191B682508@qq.com>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Sat, 12 Apr 2025 14:24:21 +0200
-X-Gm-Features: ATxdqUHgvWknHJJ78rpWQQ6kr8Tjf-L7N-ZDmzI4ZGsdt54hEMM8c3Sq8QOSQhg
-Message-ID: <CAHc6FU6pznS5PfaSavub7y6hxXsSZcP+TrsUKNhw2g4eOEbJKQ@mail.gmail.com>
-Subject: Re: [PATCH] gfs2: capture blocksize set failed
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+b0018b7468b2af33b4d5@syzkaller.appspotmail.com, 
-	gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 12, 2025 at 7:16=E2=80=AFAM Edward Adam Davis <eadavis@qq.com> =
-wrote:
-> syzbot reported a oob in gfs2_fill_super. [1]
->
-> When setting blocksize fails, the s_blocksize_bits value is incorrect.
->
-> [1]
-> UBSAN: shift-out-of-bounds in fs/gfs2/ops_fstype.c:1172:19
-> shift exponent 4294967287 is too large for 64-bit type 'unsigned long'
-> CPU: 1 UID: 0 PID: 6127 Comm: syz.0.42 Not tainted 6.14.0-next-20250404-s=
-yzkaller #0 PREEMPT(full)
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 02/12/2025
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  ubsan_epilogue lib/ubsan.c:231 [inline]
->  __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:492
->  gfs2_fill_super+0x255e/0x27b0 fs/gfs2/ops_fstype.c:1172
->  get_tree_bdev_flags+0x490/0x5c0 fs/super.c:1636
->  gfs2_get_tree+0x54/0x220 fs/gfs2/ops_fstype.c:1330
->  vfs_get_tree+0x90/0x2b0 fs/super.c:1759
->  do_new_mount+0x2cf/0xb70 fs/namespace.c:3879
->  do_mount fs/namespace.c:4219 [inline]
->  __do_sys_mount fs/namespace.c:4430 [inline]
->  __se_sys_mount+0x38c/0x400 fs/namespace.c:4407
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Reported-by: syzbot+b0018b7468b2af33b4d5@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  fs/gfs2/ops_fstype.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-> index e83d293c3614..d5bc25164b89 100644
-> --- a/fs/gfs2/ops_fstype.c
-> +++ b/fs/gfs2/ops_fstype.c
-> @@ -1167,6 +1167,10 @@ static int gfs2_fill_super(struct super_block *sb,=
- struct fs_context *fc)
->         /* Set up the buffer cache and fill in some fake block size value=
-s
->            to allow us to read-in the on-disk superblock. */
->         sdp->sd_sb.sb_bsize =3D sb_min_blocksize(sb, 512);
-> +       if (!sdp->sd_sb.sb_bsize) {
-> +               error =3D -EINVAL;
-> +               goto fail_free;
-> +       }
->         sdp->sd_sb.sb_bsize_shift =3D sb->s_blocksize_bits;
->         sdp->sd_fsb2bb_shift =3D sdp->sd_sb.sb_bsize_shift - 9;
->         sdp->sd_fsb2bb =3D BIT(sdp->sd_fsb2bb_shift);
-> --
-> 2.43.0
+While trying to figure out the hardware behavior of a DSA supported
+switch chip and printing various internal vlan state changes, I noticed
+that some flows never triggered adding the cpu port to vlans, preventing
+it from receiving any of the VLANs traffic.
 
-Thanks for this patch.
+E.g. the following sequence would cause the cpu port not being member of
+the vlan, despite the bridge vlan output looking correct:
 
-I've made a small coding style adjustment, added a check for the
-return value of sb_set_blocksize(), and I've changed the description
-to:
+$ ip link add swbridge type bridge vlan_filtering 1 vlan_default_pvid 1
+$ ip link set lan1 master swbridge
+$ bridge vlan add dev lan1 vid 1 pvid untagged
+$ bridge vlan add dev swbridge vid 1 pvid untagged self
 
-    gfs2: check sb_min_blocksize return value
+Adding more printk debugging, I traced it br_vlan_add_existing() setting
+changed to true (since the vlan "gained" the pvid untagged flags), and
+then the dsa code ignoring the vlan notification, since it is a vlan for
+the cpu port that is updated.
 
-    Check the return value of sb_min_blocksize(): it will be 0 when the
-    requested block size is invalid.
+Then I noticed that deleting that vlan didn't work either:
 
-    In addition, check the return value of sb_set_blocksize() as well.
+$ bridge vlan
+port              vlan-id
+lan1              1 PVID Egress Untagged
+swbridge          1 PVID Egress Untagged
+$ bridge vlan del dev swbridge vid 1 self
+$ bridge vlan
+port              vlan-id
+lan1              1 PVID Egress Untagged
+swbridge          1 Egress Untagged
 
-Andreas
+which is caused by the same issue, because from the dsa standpoint I am
+now trying to delete a non-existing vlan.
+
+After fixing that, both were now correctly working, but the configured
+vlan on the cpu port would be stuck with whatever the initial add set.
+
+E.g.:
+$ bridge vlan add dev swbridge vid 1 pvid untagged self
+$ bridge vlan add dev swbridge vid 1 self
+
+would change the flags in the vlandb, but the hardware configured vlan
+would still untag at egress to the cpu port.
+
+Patch two fixes this by allowing changed = true vlan add notifications
+for the cpu port, but skip the refcounting. Presumably with the patch
+there should never be a vlan add notification for the brentry with
+changed set to true anymore.
+
+In case my reasoning is wrong, I added a WARN_ON(), but I didn't get to
+trigger it so far.
+
+I did a check of all handlers of switchdev port vlan add notifications,
+but DSA seems to be the only one that even looks at the changed flag.
+
+Sent as RFC as I am not too familiar with the dsa/vlan code, so I might
+very well have overlooked something.
+
+Jonas Gorski (2):
+  net: bridge: switchdev: do not notify new brentries as changed
+  net: dsa: propagate brentry flag changes
+
+ net/bridge/br_vlan.c |  4 +++-
+ net/dsa/switch.c     | 22 ++++++++++++----------
+ 2 files changed, 15 insertions(+), 11 deletions(-)
+
+-- 
+2.43.0
 
 
