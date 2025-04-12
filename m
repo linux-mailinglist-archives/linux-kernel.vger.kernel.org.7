@@ -1,175 +1,119 @@
-Return-Path: <linux-kernel+bounces-601493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FDAAA86E9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 20:10:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36D3A86EA2
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 20:11:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41D219E45E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 18:10:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B4B16C1B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 18:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1844A205ABB;
-	Sat, 12 Apr 2025 18:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E649920C46A;
+	Sat, 12 Apr 2025 18:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=orange.fr header.i=@orange.fr header.b="kvmJKXx9"
-Received: from out.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmsEAa59"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3841A1A23B1
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 18:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBDB1A23B1;
+	Sat, 12 Apr 2025 18:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744481420; cv=none; b=UzPQGaDZVsnHTsK1qDRBtW/YhP6AuArm/ofTxjpYTUzNbwFoPVVb7tW7vJLLLxbpm8fi0Z5HS6w6xBrqEaQw8/yNBAL1p1pSRnvW6CKtFs6gNcA0Q9Qq3yfcHqsl0dGYW4hIaXHo7vBKS7pVbUPGoXe3v0gMM7oo9ZAVjUHShd0=
+	t=1744481498; cv=none; b=ni5+9jz6oFsxia0wbKtswvNmQtm6OpI41QFTiDZ9WUJMQqV4VXena+RpYe/qGbPrZy6rhlGGPjbwci8y8yX/G10+HW0uvZlNeFCS2DQL5KCo7MZXdNC2xfiqXSeX2DR4GiHnkoN9CrczWdrSeKrX3hmKxu2aJp+8sRkq8u78vL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744481420; c=relaxed/simple;
-	bh=gaudnVqMUoy2Fr1V0TmMlGZFF+5NS84yjRnDGzpWB6o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OozAPVV04r4IjkuB7JaEHyNmlGGKKUD2aDEcQDvVYYxjXwLevoxzZzpnvAzTP71kh4ssyW2T6jlFbtxfyJQTdD4gpnpe4kNy0iZktEnT7HRw4jRYZSfRyuoXyDc00LUaS742DP6Y4F5Ci9BAZMwdnDq0CDIYZlv54xnBhKZoIx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=orange.fr; spf=pass smtp.mailfrom=orange.fr; dkim=pass (2048-bit key) header.d=orange.fr header.i=@orange.fr header.b=kvmJKXx9; arc=none smtp.client-ip=193.252.22.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=orange.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orange.fr
-Received: from cyber-villager.csun.edu ([130.166.192.226])
-	by smtp.orange.fr with ESMTPA
-	id 3fIuuykkq5k813fIyuvf6X; Sat, 12 Apr 2025 20:10:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
-	s=t20230301; t=1744481415;
-	bh=GUegS7DJ1heWnU9cJ9eegjqKTPOLv20pbEP3tyGJKzA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=kvmJKXx9qbM5D5vGzgyuDLqe+GcT8lcR71Yuhox5O8f2v92bRo0xrkz0wwEy/wSbG
-	 OegatmqpSg2iRCzRog4XHNiD+0s2tMG4S8otOWAUOSWv1H8FYzkopVKjkwicF6A1IH
-	 Y8+kzIVAz0sTE+6JK17smXOUpX4vDsu3MJ6bAKrrSmzn5EWyDD6goosb+zdcDAa4iP
-	 CnZsb1V/Us+OSxHU4UnbheRXy8cdpFGIQjr/f9AyOCI3nl/wdrkeNYaTrM73CHA7O8
-	 xviyUrHhjqW24VWyzU3Xl+G4K01ZMCJw3Gp9OjfTlDhlSrR/bliOJngfpwNC1u87VK
-	 BnY9/bMTYMOMQ==
-X-ME-Helo: cyber-villager.csun.edu
-X-ME-Auth: cGF1bC5yZXRvdXJuZUBvcmFuZ2UuZnI=
-X-ME-Date: Sat, 12 Apr 2025 20:10:15 +0200
-X-ME-IP: 130.166.192.226
-From: =?UTF-8?q?Paul=20Retourn=C3=A9?= <paul.retourne@orange.fr>
-To: gregkh@linuxfoundation.org,
-	dpenkler@gmail.com,
-	dan.carpenter@linaro.org
-Cc: =?UTF-8?q?Paul=20Retourn=C3=A9?= <paul.retourne@orange.fr>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 16/16] staging: gpib: tnt4882: fixes multiline comments style
-Date: Sat, 12 Apr 2025 11:10:05 -0700
-Message-ID: <2b72df3bfc4a3f57679d2af52112e58acb5c259f.1744438358.git.paul.retourne@orange.fr>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1744438358.git.paul.retourne@orange.fr>
-References: <cover.1744438358.git.paul.retourne@orange.fr>
+	s=arc-20240116; t=1744481498; c=relaxed/simple;
+	bh=b3HaXXW+MR1VOkMnYXtzpEuVhn4y0K81DcGV47y/ueg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rbKUh2DYTaLsgKVAmTZb93J/ehrwl8jHix1NsatIxWofZW9MoNOzQOknsXclb+VFLz/4v6AJDgApMUARbrUmmCUd9QajKZYFSIOtNh8GgN5pjUT4s17QA0XQpLhbDbeITjitSSO30zJc+6wWMOA0YK9aAcrtA1pwdb+07M8KQtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmsEAa59; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A616C4CEE3;
+	Sat, 12 Apr 2025 18:11:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744481497;
+	bh=b3HaXXW+MR1VOkMnYXtzpEuVhn4y0K81DcGV47y/ueg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mmsEAa59dTWc4y15WeR8qPZcy1o85rX7iSQrRXWxqfJsPyfKbhnmdzeb4buEDW/bD
+	 I2IGLnW+dIggXRY7Gpa4W6JAmJ8C0GOLuigBDxLn9bbJlq2rko5CSGuZ7nAfUOGLoo
+	 uM+2dA3vnEWaNt2X72wPt3LgTkEeVQGsbd3PRMUjuQp+eYXK4tfi7X9Fhf/KzEDEn6
+	 hzRsDF2Gb1jXabhNNR5obU24ed8MxfpnjY3jXr8KFnSePNU9JQkygO6PZTd3n685Po
+	 edqSAzcmQu0JKO9KxzeAEOL6zNVDV0VLC/I2+1izvSZ2CNoxKE5PkfWmGYXnAuCsuX
+	 lZpXd8M6l0c8A==
+Date: Sat, 12 Apr 2025 19:11:26 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+ <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+ <marcelo.schmitt@analog.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <marcelo.schmitt1@gmail.com>,
+ <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <lgirdwood@gmail.com>,
+ <broonie@kernel.org>, <jonath4nns@gmail.com>, <dlechner@baylibre.com>, Pop
+ Paul <paul.pop@analog.com>
+Subject: Re: [PATCH v5 13/14] iio: adc: ad7768-1: add filter type and
+ oversampling ratio attributes
+Message-ID: <20250412191126.06c19115@jic23-huawei>
+In-Reply-To: <e5ea27f88607d1cc12daecf310c18f71383a3bbe.1744325346.git.Jonathan.Santos@analog.com>
+References: <cover.1744325346.git.Jonathan.Santos@analog.com>
+	<e5ea27f88607d1cc12daecf310c18f71383a3bbe.1744325346.git.Jonathan.Santos@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Fixes the style of multiline comments to comply with the linux kernel
-coding style.
 
-Signed-off-by: Paul Retourné <paul.retourne@orange.fr>
----
- drivers/staging/gpib/tnt4882/tnt4882_gpib.c | 32 ++++++++++++---------
- 1 file changed, 19 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/staging/gpib/tnt4882/tnt4882_gpib.c b/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
-index c35b084b6fd0..51ddade6819a 100644
---- a/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
-+++ b/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
-@@ -258,7 +258,8 @@ static void tnt4882_release_holdoff(struct gpib_board *board, struct tnt4882_pri
- 
- 	sasr_bits = tnt_readb(tnt_priv, SASR);
- 
--	/*tnt4882 not in one-chip mode won't always release holdoff unless we
-+	/*
-+	 * tnt4882 not in one-chip mode won't always release holdoff unless we
- 	 * are in the right mode when release handshake command is given
- 	 */
- 	if (sasr_bits & AEHS_BIT) /* holding off due to holdoff on end mode*/	{
-@@ -384,7 +385,8 @@ static int tnt4882_accel_read(struct gpib_board *board, uint8_t *buffer, size_t
- 
- 	nec7210_set_reg_bits(nec_priv, IMR1, HR_ENDIE, 0);
- 	nec7210_set_reg_bits(nec_priv, IMR2, HR_DMAI, 0);
--	/* force handling of any pending interrupts (seems to be needed
-+	/*
-+	 * force handling of any pending interrupts (seems to be needed
- 	 * to keep interrupts from getting hosed, plus for syncing
- 	 * with RECEIVED_END below)
- 	 */
-@@ -531,7 +533,8 @@ static int generic_write(struct gpib_board *board, uint8_t *buffer, size_t lengt
- 
- 	nec7210_set_reg_bits(nec_priv, IMR1, HR_ERR, 0x0);
- 	nec7210_set_reg_bits(nec_priv, IMR2, HR_DMAO, 0x0);
--	/* force handling of any interrupts that happened
-+	/*
-+	 * force handling of any interrupts that happened
- 	 * while they were masked (this appears to be needed)
- 	 */
- 	tnt4882_internal_interrupt(board);
-@@ -760,7 +763,8 @@ static void tnt4882_parallel_poll_response(struct gpib_board *board, int ist)
- 	nec7210_parallel_poll_response(board, &priv->nec7210_priv, ist);
- }
- 
--/* this is just used by the old nec7210 isa interfaces, the newer
-+/*
-+ * this is just used by the old nec7210 isa interfaces, the newer
-  * boards use tnt4882_serial_poll_response2
-  */
- static void tnt4882_serial_poll_response(struct gpib_board *board, uint8_t status)
-@@ -788,7 +792,8 @@ static void tnt4882_serial_poll_response2(struct gpib_board *board, uint8_t stat
- 			priv->nec7210_priv.srq_pending = 0;
- 	}
- 	if (reqt)
--		/* It may seem like a race to issue reqt before updating
-+		/*
-+		 * It may seem like a race to issue reqt before updating
- 		 * the status byte, but it is not.  The chip does not
- 		 * issue the reqt until the SPMR is written to at
- 		 * a later time.
-@@ -796,7 +801,8 @@ static void tnt4882_serial_poll_response2(struct gpib_board *board, uint8_t stat
- 		write_byte(&priv->nec7210_priv, AUX_REQT, AUXMR);
- 	else if (reqf)
- 		write_byte(&priv->nec7210_priv, AUX_REQF, AUXMR);
--	/* We need to always zero bit 6 of the status byte before writing it to
-+	/*
-+	 * We need to always zero bit 6 of the status byte before writing it to
- 	 * the SPMR to insure we are using
- 	 * serial poll mode SP1, and not accidentally triggering mode SP3.
- 	 */
-@@ -1581,10 +1587,10 @@ static int ni_gpib_probe(struct pcmcia_device *link)
- }
- 
- /*
-- *	This deletes a driver "instance".  The device is de-registered
-- *	with Card Services.  If it has been released, all local data
-- *	structures are freed.  Otherwise, the structures will be freed
-- *	when the device is released.
-+ * This deletes a driver "instance".  The device is de-registered
-+ * with Card Services.  If it has been released, all local data
-+ * structures are freed.  Otherwise, the structures will be freed
-+ * when the device is released.
-  */
- static void ni_gpib_remove(struct pcmcia_device *link)
- {
-@@ -1611,9 +1617,9 @@ static int ni_gpib_config_iteration(struct pcmcia_device *link,	void *priv_data)
- }
- 
- /*
-- *	ni_gpib_config() is scheduled to run after a CARD_INSERTION event
-- *	is received, to configure the PCMCIA socket, and to make the
-- *	device available to the system.
-+ * ni_gpib_config() is scheduled to run after a CARD_INSERTION event
-+ * is received, to configure the PCMCIA socket, and to make the
-+ * device available to the system.
-  */
- static int ni_gpib_config(struct pcmcia_device *link)
- {
--- 
-2.49.0
+>  
+> -static int ad7768_set_dig_fil(struct ad7768_state *st,
+> -			      enum ad7768_dec_rate dec_rate)
+> +static int ad7768_set_sinc3_dec_rate(struct ad7768_state *st,
+> +				     unsigned int dec_rate)
+>  {
+> -	unsigned int mode;
+> +	unsigned int max_dec_rate;
+> +	u8 dec_rate_reg[2];
+>  	int ret;
+>  
+> -	if (dec_rate == AD7768_DEC_RATE_8 || dec_rate == AD7768_DEC_RATE_16)
+> -		mode = AD7768_DIG_FIL_FIL(dec_rate);
+> -	else
+> -		mode = AD7768_DIG_FIL_DEC_RATE(dec_rate);
+> +	/*
+> +	 * Maximum dec_rate is limited by the MCLK_DIV value
+> +	 * and by the ODR. The edge case is for MCLK_DIV = 2
+> +	 * ODR = 50 SPS.
+> +	 * max_dec_rate <= MCLK / (2 * 50)
+> +	 */
+> +	max_dec_rate = st->mclk_freq / 100;
+> +	dec_rate = clamp_t(unsigned int, dec_rate, 32, max_dec_rate);
+> +	/*
+> +	 * Calculate the equivalent value to sinc3 decimation ratio
+> +	 * to be written on the SINC3_DECIMATION_RATE register:
+> +	 *  Value = (DEC_RATE / 32) -1
+> +	 */
+> +	dec_rate = DIV_ROUND_UP(dec_rate, 32) - 1;
+> +	dec_rate_reg[0] = FIELD_GET(AD7768_SINC3_DEC_RATE_MSB_MSK, dec_rate);
+> +	dec_rate_reg[1] = FIELD_GET(AD7768_SINC3_DEC_RATE_LSB_MSK, dec_rate);
+Looks like a larger big endian value. It's a little messy because of
+the 12 bit mask but I think still clearer as
 
+	u16 regval = FIELD_PREP(GENMASK(11, 0), dec_rate);
+	
+	unaligned_put_be16(dec_rate_reg, regval);
+
+Avoids the use of masks to get bytes from the dec_rate value which is
+is sort of backwards.
+
+
+> +	ret = regmap_bulk_write(st->regmap, AD7768_REG_SINC3_DEC_RATE_MSB,
+> +				dec_rate_reg, 2);
+> +	if (ret)
+> +		return ret;
+> 
 
