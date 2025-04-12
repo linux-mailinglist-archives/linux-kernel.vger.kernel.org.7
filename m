@@ -1,95 +1,168 @@
-Return-Path: <linux-kernel+bounces-601357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4909BA86CDD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 14:23:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E448EA86CE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 14:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 073A78C3A4C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:23:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 980E67B285D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C351DEFC8;
-	Sat, 12 Apr 2025 12:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C3B1EE00D;
+	Sat, 12 Apr 2025 12:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tLphxu5P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aMHGrnPS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413391922E7;
-	Sat, 12 Apr 2025 12:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B681E98FB
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 12:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744460593; cv=none; b=I9oToGxOxqvX4zbvHIqdsT1kHzRK8O5KtTb7MJxOBxWqqwqjpkBj/hWCg3AniKsyNBodwy/u2HUJ3bflsIYfSZjxdqjm1RH6jhiK9EuawE8GfQZQMunLZRKmIyqz65edDX4Y08kHxNc4Cfhn8swfCdIWPeAwMAaMq+qp/ieoDVc=
+	t=1744460680; cv=none; b=P3tnf5cnL55vkg3uwJ//zLvwt0CshDPIFrff6hQXOWrNK3AuIif9pAYX1vnXVpJVqFpaymqA1SVITo9ZK/nzaH8KVvdmLdxSL+27xblF7n2fwN3r9SB1i8CoGuF8DqbPpLqHShIffJiC7SYUHPSwCnOFEyb9N/iJKqpa/XXnkFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744460593; c=relaxed/simple;
-	bh=rCGXsclibXfHVBuI+pwG5d9Ht1uSZNvAreOP4bKx09w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o7Wv5wVPRFOqh0aFQAnEiykFrJ7IYjFgR+jnRpHhOQ60R0VPCY/PPh+vFRxOnrq1nInGdnrzr2DQi04nEgliiRUEmkVXnysM/YX9HwSi0lP0qeMIjUkUR0++pMJsoPz8ccsG+wuL5NEcJY8V9tX8z9nR9OnZy3qjcb1+3sLq8yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tLphxu5P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6ACDC4CEE3;
-	Sat, 12 Apr 2025 12:23:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744460592;
-	bh=rCGXsclibXfHVBuI+pwG5d9Ht1uSZNvAreOP4bKx09w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tLphxu5PPCyba/Db+5zEJt8dhis6Rfgzl01UJ7Cb8aZ5isuHzZ+J9A3ou8Riw+ntb
-	 6xjQc7p4h2Ll/r3deDcHccKm2LOHH3E+K4PqbotgHf4yW+vUlZA9AndLvKoRl97eai
-	 A0iSsTDKCS+8uwMQYAbUumQt2GXyoAxnIGuN6p0wPy3VsLW0GhU0hPmBDlc6Lt+qj9
-	 tynN0twQQiGQh8zqT1xOzBn5I3I5yP2TNWWGJdjuJmES3dysbnm+/lo3AjLhZZuOgs
-	 aaeCQtKM+xLaG2FegXsWeGcBSsEAqbLK7r0wD2U1ax0kBR+wbLHJc4xrYKo2uvX+0f
-	 RwVylJKicP0Lg==
-Date: Sat, 12 Apr 2025 14:23:08 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-efi@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Dionna Amalie Glaze <dionnaglaze@google.com>,
-	Kevin Loughlin <kevinloughlin@google.com>
-Subject: Re: [PATCH v4 08/11] x86/sev: Split off startup code from core code
-Message-ID: <Z_pbLAw56NIFo7yK@gmail.com>
-References: <20250410134117.3713574-13-ardb+git@google.com>
- <20250410134117.3713574-21-ardb+git@google.com>
+	s=arc-20240116; t=1744460680; c=relaxed/simple;
+	bh=NqAv1TV864Xqi+E0ZtzNiKeIgyz7+EmpUkpDdubgk4k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uQVXOz8C3a9C2JQ5yulCdenUEzCoOoZUoQlg7nwkY6xVtsqEeYm9+DKkExMTBgDkldcfb7Ni6mJueO0IVFH2Ysu1hBC2+DMit8SG/itB0wGf0j5L3Ns8ETD+XUhjIqE3lpEVflylP+Z5aJAAEvl6jTOoluTkNFszZTmmUjKd0HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aMHGrnPS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744460675;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PstkTZ34lBm2NUVL+KAkFru/gxIEVY1LaGP4oPHMoPo=;
+	b=aMHGrnPSju+1PFbREzFWWmxMXmJVB1qGy1RFP/wLdOD28kBOpV4KLmkxPozPyI1H2oh0JP
+	XmsPjrgxyxw6g1QMIjdoUYysZWOWIws5LLx8jk3YduHlInpGCRdy9acUQE7Ii/Ef1W6Ux3
+	xjGNhrCTImPymGyfpPx5Y3jF0UHpPfc=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-58-_yMGKUnSMcO50DJzmrbBRg-1; Sat, 12 Apr 2025 08:24:34 -0400
+X-MC-Unique: _yMGKUnSMcO50DJzmrbBRg-1
+X-Mimecast-MFC-AGG-ID: _yMGKUnSMcO50DJzmrbBRg_1744460673
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2254e500a73so21346755ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 05:24:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744460673; x=1745065473;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PstkTZ34lBm2NUVL+KAkFru/gxIEVY1LaGP4oPHMoPo=;
+        b=DvHh1yw/BxqA15YQ6++HsGT0gTpQvs9Xq7U14ytJTKFap9Ise7LyyG/SRAiyM+BKBr
+         Gw6UgDyOwgkaS2upxvwis1nUQXPbNPJU+VhuiMWbJca/D6fQ4BQtpgVXdnTEJmPyE2NP
+         4Lzpykwyaj3kMQXgaEIznma9N/f/5Fz+YlplgT2nixUgnq3lQIk3zpQIqWzJkJ5ZGcyz
+         rqtrTQLuCtJVWAyXkzCu8SX3oloBRl8NrDuoN6HOWwMorwDE1E1WjOnBjDOMBFzzPUao
+         elsjeL3NPRL5IVZghBPLrtJ8gDUPT6NjCC4bnL96JsPNjDqL4ILd9BgjuAL02Rlzei5N
+         e/gA==
+X-Forwarded-Encrypted: i=1; AJvYcCWyx/DQcvl3lLs08WPiAbzu1bNj/3NUQtD1dtrIts6YBqcdNY5zZbGGGsg8cWL1DOaHODw+jaiOdmi2vJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4isEXQFrA/BbX25wEAQHwQHhW8mRGPowH/xEobVybpyEeQzWJ
+	ERypU7Snb48iTVzbfc6Uumkp6Y+OXvGUJ138/zfBRrzV92dBVcljTOaSxweBoqqiQlySFgmJWOH
+	qOk0U39Sx/8gGqzsbh/GGARMPdMujMngnPlDvgniHaMrwcw+GcTSCJhuEOTeFVt0Kln3W+qcla7
+	DJs+WlqrLwWtD3dE3JYNqujDTfAd2SzRloHF6x
+X-Gm-Gg: ASbGncuIp3bHq3XBGI8+b5EIDUr7+2jQQ5jg8vQqmzGwwxY25Rbew/E2mw7CF0t2Aw3
+	BcW9iqqcjNROptFDE2PKNdJFdNAne88J6YXdJ1DIrbRTAv6AR7cIS1Q6CBEO+xL8MgAE=
+X-Received: by 2002:a17:903:2392:b0:216:410d:4c53 with SMTP id d9443c01a7336-22bea4ef20cmr105041815ad.41.1744460673278;
+        Sat, 12 Apr 2025 05:24:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGdwLi3is9xzOobpflle8QawgvTBanFLeQKCo4W7mdaerjMfbMARDG/Av3Ou9QEft2fRetb/E6lzOJYKUFnldY=
+X-Received: by 2002:a17:903:2392:b0:216:410d:4c53 with SMTP id
+ d9443c01a7336-22bea4ef20cmr105041485ad.41.1744460672807; Sat, 12 Apr 2025
+ 05:24:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250410134117.3713574-21-ardb+git@google.com>
+References: <67f8d2b2.050a0220.355867.001c.GAE@google.com> <tencent_C803BAF1BB47330C9E131B254B191B682508@qq.com>
+In-Reply-To: <tencent_C803BAF1BB47330C9E131B254B191B682508@qq.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Sat, 12 Apr 2025 14:24:21 +0200
+X-Gm-Features: ATxdqUHgvWknHJJ78rpWQQ6kr8Tjf-L7N-ZDmzI4ZGsdt54hEMM8c3Sq8QOSQhg
+Message-ID: <CAHc6FU6pznS5PfaSavub7y6hxXsSZcP+TrsUKNhw2g4eOEbJKQ@mail.gmail.com>
+Subject: Re: [PATCH] gfs2: capture blocksize set failed
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+b0018b7468b2af33b4d5@syzkaller.appspotmail.com, 
+	gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-* Ard Biesheuvel <ardb+git@google.com> wrote:
-
-> From: Ard Biesheuvel <ardb@kernel.org>
-> 
-> Disentangle the SEV core code and the SEV code that is called during
-> early boot. The latter piece will be moved into startup/ in a subsequent
-> patch.
-> 
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+On Sat, Apr 12, 2025 at 7:16=E2=80=AFAM Edward Adam Davis <eadavis@qq.com> =
+wrote:
+> syzbot reported a oob in gfs2_fill_super. [1]
+>
+> When setting blocksize fails, the s_blocksize_bits value is incorrect.
+>
+> [1]
+> UBSAN: shift-out-of-bounds in fs/gfs2/ops_fstype.c:1172:19
+> shift exponent 4294967287 is too large for 64-bit type 'unsigned long'
+> CPU: 1 UID: 0 PID: 6127 Comm: syz.0.42 Not tainted 6.14.0-next-20250404-s=
+yzkaller #0 PREEMPT(full)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 02/12/2025
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  ubsan_epilogue lib/ubsan.c:231 [inline]
+>  __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:492
+>  gfs2_fill_super+0x255e/0x27b0 fs/gfs2/ops_fstype.c:1172
+>  get_tree_bdev_flags+0x490/0x5c0 fs/super.c:1636
+>  gfs2_get_tree+0x54/0x220 fs/gfs2/ops_fstype.c:1330
+>  vfs_get_tree+0x90/0x2b0 fs/super.c:1759
+>  do_new_mount+0x2cf/0xb70 fs/namespace.c:3879
+>  do_mount fs/namespace.c:4219 [inline]
+>  __do_sys_mount fs/namespace.c:4430 [inline]
+>  __se_sys_mount+0x38c/0x400 fs/namespace.c:4407
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> Reported-by: syzbot+b0018b7468b2af33b4d5@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 > ---
->  arch/x86/boot/compressed/sev.c |    2 +
->  arch/x86/coco/sev/Makefile     |   12 +-
->  arch/x86/coco/sev/core.c       | 1574 ++++----------------
->  arch/x86/coco/sev/shared.c     |  281 ----
->  arch/x86/coco/sev/startup.c    | 1395 +++++++++++++++++
->  5 files changed, 1658 insertions(+), 1606 deletions(-)
+>  fs/gfs2/ops_fstype.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+> index e83d293c3614..d5bc25164b89 100644
+> --- a/fs/gfs2/ops_fstype.c
+> +++ b/fs/gfs2/ops_fstype.c
+> @@ -1167,6 +1167,10 @@ static int gfs2_fill_super(struct super_block *sb,=
+ struct fs_context *fc)
+>         /* Set up the buffer cache and fill in some fake block size value=
+s
+>            to allow us to read-in the on-disk superblock. */
+>         sdp->sd_sb.sb_bsize =3D sb_min_blocksize(sb, 512);
+> +       if (!sdp->sd_sb.sb_bsize) {
+> +               error =3D -EINVAL;
+> +               goto fail_free;
+> +       }
+>         sdp->sd_sb.sb_bsize_shift =3D sb->s_blocksize_bits;
+>         sdp->sd_fsb2bb_shift =3D sdp->sd_sb.sb_bsize_shift - 9;
+>         sdp->sd_fsb2bb =3D BIT(sdp->sd_fsb2bb_shift);
+> --
+> 2.43.0
 
-x86-64 allmodconfig build failure:
+Thanks for this patch.
 
-arch/x86/boot/compressed/sev.c:263:13: error: implicit declaration of function ‘vmgexit_psc’ [-Wimplicit-function-declaration]
-|             ^~~~~~~~~~~
-arch/x86/boot/compressed/sev.c:266:9: error: implicit declaration of function ‘pvalidate_pages’; did you mean ‘pvalidate_4k_page’? [-Wimplicit-function-declaration]
-|         ^~~~~~~~~~~~~~~
-|         pvalidate_4k_page
+I've made a small coding style adjustment, added a check for the
+return value of sb_set_blocksize(), and I've changed the description
+to:
 
-Thanks,
+    gfs2: check sb_min_blocksize return value
 
-	Ingo
+    Check the return value of sb_min_blocksize(): it will be 0 when the
+    requested block size is invalid.
+
+    In addition, check the return value of sb_set_blocksize() as well.
+
+Andreas
+
 
