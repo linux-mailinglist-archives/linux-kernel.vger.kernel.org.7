@@ -1,224 +1,133 @@
-Return-Path: <linux-kernel+bounces-601192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EACDA86A9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 05:39:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D55AFA86AA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 05:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB28D7B6A8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 03:38:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E9119E38EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 03:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A026D1482E8;
-	Sat, 12 Apr 2025 03:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gfUTb1EC"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2059.outbound.protection.outlook.com [40.107.94.59])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A4816631C;
+	Sat, 12 Apr 2025 03:53:03 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7EE5228
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 03:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744429187; cv=fail; b=qamvD4pnwuAorV1wmMcm8gjAe2FuHpUu4LyENrR1C0JUw+VfWR52gX2r81DGQtUJ083c/GtUQitn4TiXttKZWJra+soESYq8p8X0eJ3snolCc1eYXXkShDKhy0v36CeUa6JESx69IciCGr97SMxa3UQNbe0QIoHED7Sf0SD8qD0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744429187; c=relaxed/simple;
-	bh=F3sI72mNXUt0pTkNG3zWhD7srfK3vOzxHurL7hRQ4SI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RktsHtv0rtfVuTwL1eM0ZLdha5yJGsAqSPof4ydJnsh6zu9wIKBeErLfLrK6ZXXON/8A/AfS/fedNNF8CpXZAsYAKeZngzGBZmz1oQlAH9dyXSlHEw7wuARPNc6FRWXhdtDA7GHk1efAZjTI7GD6WnOtwtPJl5voFgv6/tOXTqM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gfUTb1EC; arc=fail smtp.client-ip=40.107.94.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C0dKrg00HSlQ5EN5TMvXVMDcp2dJQCn8jDSB+pjME5e8LSLJBE3zMs6FI5cEcNllTOIeA/tUNHEFjqKyv5EgORR7jcCEXudnu59BdttO6JeXtIc1fSxv37J3sNerBrmifNhX1p84re/+6Tpx+Dw7HOQsskOXwHHQiXfraD9wh15zfNNYKVWKr5DXYiNyhSV5KdCauXGxJvUwKxytNvQ4BkQsmRNuszG45Q8ucrTw+8HgTUTDNd6PAv4nqs9Y/Gm7BlwWbugzgzbov/QJfYm7bM7R1OBjQi5wyOFwrm7WlNtBhUmYIKDWKhysLd1hSCzLUiAobLI+jyRQDkZMsb3L4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n8Ta1/tG9qF5fWRxBI6z6PpLcV9KETeHPlK8Sg57X1k=;
- b=cACFJiCUuHE5ogYvdjKWTQk94idRaCPJ9+xPeoV781KKwXDZwaaTenMghRCj4HKkt3LbcSegwYGCz5/DGJ+QfYUvY+DQ8ysFXq+U2OUXQINMwx0mMj1CfgfrIukgdLDKDyIg5L1CXJ/w8DY9JpKqd+8v34OeQwWA6mwhuKdXZA2SpFd8C15BPWxVMJsAUJQYHQZibe1qHVpuHqogGPqpMQAEWYSQsnmbHBGWTo+I1V5IrM3POsrSAdvrlpD2Eq7A3dOH+3IMG3GK/Phxqu3Ylp9YLndAuTH3U7YIxsvFcrA+pW09DN65Ahh6+YMunLHU+r/yTycaR3Fm+0sfEv+WCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n8Ta1/tG9qF5fWRxBI6z6PpLcV9KETeHPlK8Sg57X1k=;
- b=gfUTb1ECNcVniw6cwQI4/EETJrlcyzTmRoNx5MP7lvAcVPeW/8N+5DssFp7EAxiz1WdN/SUjRzkF/jz6hS8w1Iuypo7e8FAwqaHJxjflwALRmJXVSEMTuPZrh3rWYND7YCV7q6+M+vWAob/gmWUe3FBzwrLsTKhAicgjHiu/0Hp9Gax1QjrcWMo3x3hibKw0UNO4rMD678FKzS5v9cvotWLSgnf4pdzbjE2GE7SXqAHu+hJkCj6cB+W32KxgSQgpsM6UlHpYihV9SDVr0fx/JLmmQr3VM3ydhl4VpSe+WH1g3dX1kNzQSFcUlRpq/pgqDPy+AwS3whiSlOrqIflEHA==
-Received: from CH0PR04CA0102.namprd04.prod.outlook.com (2603:10b6:610:75::17)
- by IA0PR12MB8974.namprd12.prod.outlook.com (2603:10b6:208:488::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.27; Sat, 12 Apr
- 2025 03:39:41 +0000
-Received: from CH1PEPF0000A345.namprd04.prod.outlook.com
- (2603:10b6:610:75:cafe::8) by CH0PR04CA0102.outlook.office365.com
- (2603:10b6:610:75::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.30 via Frontend Transport; Sat,
- 12 Apr 2025 03:39:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CH1PEPF0000A345.mail.protection.outlook.com (10.167.244.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8655.12 via Frontend Transport; Sat, 12 Apr 2025 03:39:41 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 11 Apr
- 2025 20:39:39 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 11 Apr
- 2025 20:39:39 -0700
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Fri, 11 Apr 2025 20:39:38 -0700
-Date: Fri, 11 Apr 2025 20:39:36 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: Robin Murphy <robin.murphy@arm.com>, <will@kernel.org>, <joro@8bytes.org>,
-	<jsnitsel@redhat.com>, <praan@google.com>,
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iommu/arm-smmu-v3: Allow stream table to have nodes with
- the same ID
-Message-ID: <Z/ngeFHmygxnPn6f@Asurada-Nvidia>
-References: <20250411044706.356395-1-nicolinc@nvidia.com>
- <5c8d16f9-246e-45d0-aaac-45b7712cefb5@arm.com>
- <Z/mm2EQAQtOqpVCy@Asurada-Nvidia>
- <20250411234419.GC252886@nvidia.com>
- <Z/mupP6m0gRbeYtg@Asurada-Nvidia>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1EA15CD78;
+	Sat, 12 Apr 2025 03:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744429982; cv=none; b=a8AlXMQKYFFtRAiBIfkgun/pr0SZGCqHOj+45mHRMa4yBgHmFB6pMpFiTG58mBA+1IQFIIe0O6ej64/9A/QH1ajh/YiqjtXua0SsyS69rekrwIx/01fgTLH2PcwOLjx8aojoAmktrnFYr9WvoDv2eMHj8tHlWZcIQ30j1LQIvmQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744429982; c=relaxed/simple;
+	bh=r4/JMs6C2Dvw1bW8VHdZlPi+YkDCZTs1eOaXxjGw/oM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g2vDr3xPSBuO2kFHgZWy06EAOlxUngqcQJxQRfPw4T0x/ZxNW9yzPC55MtAr5U4VOZqEg8Y+jR/R+PgTP2FrS5lpY5uyb9QVso899Latx9/CG4hDLOYjQv2qaiDVvxLkxV/7nBoufzu5tYPWb/C+f2Gu+SQVGlPLBIzADZaSDBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 35C8D2C4C0D2;
+	Sat, 12 Apr 2025 05:52:25 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 031171E092; Sat, 12 Apr 2025 05:52:56 +0200 (CEST)
+Date: Sat, 12 Apr 2025 05:52:56 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczy??ski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	chaitanya chundru <quic_krichai@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com,
+	amitk@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com,
+	Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH v5 7/9] PCI: PCI: Add pcie_link_is_active() to determine
+ if the PCIe link is active
+Message-ID: <Z_njmA49Gda-m0aH@wunner.de>
+References: <20250412-qps615_v4_1-v5-0-5b6a06132fec@oss.qualcomm.com>
+ <20250412-qps615_v4_1-v5-7-5b6a06132fec@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z/mupP6m0gRbeYtg@Asurada-Nvidia>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A345:EE_|IA0PR12MB8974:EE_
-X-MS-Office365-Filtering-Correlation-Id: d8f835b4-c6a1-4382-09a0-08dd7973a8a0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kI03sahckJWUg+96QCkU9oAXeoZWQ0J5/cqdLgLoWcikbYI8EfDI17QoI0cP?=
- =?us-ascii?Q?1MHDxkoOsJ7Nt01RQG++PyYxGiIRoTRlCmqYci3LSdhG1p/LbP9fXCHWt8JP?=
- =?us-ascii?Q?09kjEfI4MHR1972XHFdh09C1DJeilt6a1VlycSflMtzacL8hDOee4zOFu0sV?=
- =?us-ascii?Q?KJd0tJdrLt5bNLmI1m8BtfTR9iJVw+Wn9PDOTGX7UkWuO039YOCqUOsIJsgx?=
- =?us-ascii?Q?2oLYVmYsr9ECdAIr7jeO7F2OFELm0fIs9cpnLwQB7Zr5sInyuH+B82Dlxu1O?=
- =?us-ascii?Q?tNrO6gYgC9MObxyBLD89nB8x+BgyUxuwVueilbQKnoTUjGTOFK2y3lFEQhWL?=
- =?us-ascii?Q?3775TkwOclQALedIdjWzndIZWo3m83cAV1ms1Iu1buADyLgKaarbVB8A5Kzz?=
- =?us-ascii?Q?LxOeJQsyRhLVwpGfL5FnHpFfs2cz8AQw6BkbgB5YTLfo9S3bYyGAzUEcaI/z?=
- =?us-ascii?Q?AAq7sjFj5DNN4zofkvegbYWeC7aOHam56gx4k+TzMlP6O4qfEgREJL262for?=
- =?us-ascii?Q?wDPKldreq+RbQ/kLEvUCcuvRaIsPb4s0UDSfyzE06SXWEYEVjLgdsu1YkoLf?=
- =?us-ascii?Q?EVMXca8ps/xpKTAuyHXl+BP5EU6SzLg05ndWHLlyVVrUaYlCa0/ZIT26T4a8?=
- =?us-ascii?Q?gT20wfekETmC57JVc/69H0j6pexYe7lqp6ZA4CPfqK4wIG+pu1+E5w/ZAemV?=
- =?us-ascii?Q?Ualg1vZVSyRUGszG4NkYlPB6+N6Jh7tF3Gtd5dqBFdVOYf8crsEUEJ1U6izF?=
- =?us-ascii?Q?WUErMNvDzXpHYkLzU/Q5SG61ya9gMyLJ1FvSn5H+s1vQJulooMPn1g/N1knW?=
- =?us-ascii?Q?MlkWGzodccsBY9HCQ7fEU3APohF72MWnopkk8MikObdpRD1+tBKbkhh1pKWk?=
- =?us-ascii?Q?HijMmmOHOlWb6O0giN0h4kgFSVpOVDQNNb9AliUUMXb5DQwXWRmxYZFxNGey?=
- =?us-ascii?Q?LC3iAn8U1NwiucPpLW88OM8skMF0KM3dtla1TcR1bygetiE8zHs5gn3ad0Ec?=
- =?us-ascii?Q?QHrsUhRqPDMJfZpCae3OAAGwn9dUvBHSddQ3JH0r5cVWsbpGWDg5LbGesder?=
- =?us-ascii?Q?aMhFBwXMVNb52wzmpn9lFW7sRb4vAd0otpkBcwWL8ZsXOSf0GmYDjZj1QnVC?=
- =?us-ascii?Q?uM/4fxqr5/LpRlOZ17Z9SYcwWhVf/Q3sF9t+4cHib9QmRF5gNFNKwmf3bhPk?=
- =?us-ascii?Q?ypuiB9dxu00ejKQnVsek+3N1Wbk6ohf5W+gVarfPMKV4ek1VGXatqkQi7BmI?=
- =?us-ascii?Q?g6oZ1buQvQCprG9MGP8Pr73S1pb3FE6U3DhLExMB2rBaVCPwHaWz60sBbQ/I?=
- =?us-ascii?Q?qLIl5UZHXDFVtPTmJbnots9hPRT19+swy0WUPSvuTTw0R2t8vNfOVGFscNUM?=
- =?us-ascii?Q?/8NTlS/JYWVIG6hqumtMwwNeS8triDl+rYFbukOfg374rbaL9XSnX4I6WefS?=
- =?us-ascii?Q?39zvsP+7NdId2oZa4DgA4JioG+7oADBjoegmg3NKGdUoZykM58nvImdYN8ym?=
- =?us-ascii?Q?C3g1U1To9YsxmgYgJL7j5+7QR9TRyFoSMXO7?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2025 03:39:41.2176
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8f835b4-c6a1-4382-09a0-08dd7973a8a0
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A345.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8974
+In-Reply-To: <20250412-qps615_v4_1-v5-7-5b6a06132fec@oss.qualcomm.com>
 
-On Fri, Apr 11, 2025 at 05:07:03PM -0700, Nicolin Chen wrote:
-> On Fri, Apr 11, 2025 at 08:44:19PM -0300, Jason Gunthorpe wrote:
-> > On Fri, Apr 11, 2025 at 04:33:44PM -0700, Nicolin Chen wrote:
-> > 
-> > > > The bridge *does* claim its own RID, and per the aliasing rules the
-> > > > devices behind it claim both their own RID and the alias to function
-> > > > 00.0 on the bridge's secondary bus, like so in action:
-> > > 
-> > > Yea, I just found out that the bridge does have a different SID.
-> > > It was actually the VGA controller itself having two fwspec->ids
-> > > populated by the IORT code. Then, the SMMU driver allocated two
-> > > separate streams with the same set of device pointer and SID:
-> > >   pci 0008:06:00.0: arm_smmu_insert_master: fwspec index=0, sid=0x10600
-> > >   pci 0008:06:00.0: Adding to iommu group 21
-> > >   pci 0008:07:00.0: arm_smmu_insert_master: fwspec index=0, sid=0x10700
-> > >   pci 0008:07:00.0: arm_smmu_insert_master: fwspec index=1, sid=0x10700
-> > >   pci 0008:07:00.0: Adding to iommu group 21
-> > > 
-> > > Perhaps the duplicated fwspec->id should be avoided in the IORT
-> > > code at the first place v.s. bypassing the fwspec->ids[1]?
-> > 
-> > It is a much easier fix if all you have to do is ignore hits in the RB
-> > tree that match to the same master, just don't fail on duplicates and
-> > don't add the duplicate rb node at all?
-> >
-> > Seem strange though. Where did the duplicate come from?
+On Sat, Apr 12, 2025 at 07:19:56AM +0530, Krishna Chaitanya Chundru wrote:
+> Introduce a common API to check if the PCIe link is active, replacing
+> duplicate code in multiple locations.
 > 
-> iort_iommu_configure_id
->  |=> pci_for_each_dma_alias
->       |=> iort_pci_iommu_init
->       |    |=> iort_iommu_xlate
->       |         |=> acpi_iommu_fwspec_init
->       |              |=> iommu_fwspec_add_id(sid=0x10700) //index=0
->       |=> iort_pci_iommu_init
->            |=> iort_iommu_xlate
->                 |=> acpi_iommu_fwspec_init
->                      |=> iommu_fwspec_add_id(sid=0x10700) //index=1
-> 
-> We could add a piece of code in iommu_fwspec_add_ids() rejecting
-> a duplicated ID, which would be smaller than we do in SMMU driver
-> that requires a device_group change too?
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 
-I figured that we could do something smaller too in SMMUv3 driver,
-somewhat similar to what Robin did for STE in commit 563b5cbe334e
-("iommu/arm-smmu-v3: Cope with duplicated Stream IDs"):
-----------------------------------------------
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index b4c21aaed1266..4b66e8ebef539 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -3393,6 +3393,10 @@ static int arm_smmu_insert_master(struct arm_smmu_device *smmu,
-                new_stream->id = sid;
-                new_stream->master = master;
+Reviewed-by: Lukas Wunner <lukas@wunner.de>
 
-+               /* Bridged PCI devices may end up with duplicated IDs */
-+               if (master == arm_smmu_find_master(smmu, sid))
-+                       continue;
-+
-                ret = arm_smmu_init_sid_strtab(smmu, sid);
-                if (ret)
-                        break;
-----------------------------------------------
+One heads-up and one nit:
 
-This would bypass the duplicated ID. And here is the test result:
-[    6.327800] pci 0008:06:00.0: Adding to iommu group 21
-[    6.327847] pci 0008:07:00.0: Adding to iommu group 21
+> --- a/drivers/pci/hotplug/pciehp_hpc.c
+> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> @@ -584,7 +557,7 @@ static void pciehp_ignore_dpc_link_change(struct controller *ctrl,
+>  	 * Synthesize it to ensure that it is acted on.
+>  	 */
+>  	down_read_nested(&ctrl->reset_lock, ctrl->depth);
+> -	if (!pciehp_check_link_active(ctrl))
+> +	if (!pcie_link_is_active(ctrl_dev(ctrl)))
+>  		pciehp_request(ctrl, PCI_EXP_SLTSTA_DLLSC);
+>  	up_read(&ctrl->reset_lock);
+>  }
 
-Thanks
-Nicolin
+Heads-up:  There's a trivial merge conflict here with what's queued on
+pci.git/hotplug.  No need for you to respin because I expect this will be
+merged through a different topic branch anyway, but Bjorn and the other
+maintainers will see the merge conflict when generating the next branch.
+
+
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -1945,6 +1945,7 @@ pci_release_mem_regions(struct pci_dev *pdev)
+>  			    pci_select_bars(pdev, IORESOURCE_MEM));
+>  }
+>  
+> +bool pcie_link_is_active(struct pci_dev *dev);
+>  #else /* CONFIG_PCI is not enabled */
+>  
+>  static inline void pci_set_flags(int flags) { }
+> @@ -2093,6 +2094,9 @@ pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
+>  {
+>  	return -ENOSPC;
+>  }
+> +
+> +static inline bool pcie_link_is_active(struct pci_dev *dev)
+> +{ return false; }
+>  #endif /* CONFIG_PCI */
+
+Nit:  Seems like this would still fit within 80 chars:
+
+static inline bool pcie_link_is_active(struct pci_dev *dev) { return false; }
+
+That said, all existing callers of this function as well as the new one
+introduced by this series are only compiled in the CONFIG_PCI=y case,
+so I'm not sure the inline stub is necessary at all?
+
+Thanks,
+
+Lukas
 
