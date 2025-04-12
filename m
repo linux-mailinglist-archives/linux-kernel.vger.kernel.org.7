@@ -1,232 +1,152 @@
-Return-Path: <linux-kernel+bounces-601184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C79A86A68
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 04:29:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1175A86A81
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 05:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCEF94A6965
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 02:28:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E00AB8A82C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 03:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF07E1494CC;
-	Sat, 12 Apr 2025 02:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HkJUwkkb"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4D31459EA;
+	Sat, 12 Apr 2025 03:16:24 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF032D7BF;
-	Sat, 12 Apr 2025 02:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FD2195
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 03:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744424930; cv=none; b=I5q1pZP9b9QGMDyeUSy5XBJ07d1jTPakHQhID0CBXBl7rS/tkXwDa75cuuVkOVnoygbJ16DPl0NUe/BMG4cmNuGOIJmaqmhBqKGo9LqBGKNrCcNDxxTOqEK73cOxqt+v46ksUTbTtXEQy+oDpXsvftQScpxsjf1b5McW8YL9Q8E=
+	t=1744427784; cv=none; b=Q5GuCiIRRQNCTfZUwg7/FacDgKn42onwNKwCawdEScDUinivlX443azNp6tmWssDvQatgc9ssbmrwtwXl5cqC8sQyc69wOu5sy2KG95K9awgKyQLVTiIJqyh8TjP6WFYshX/cl3ofAG9IdMyotittHaIOuQ5MzkLUCtuIidTwBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744424930; c=relaxed/simple;
-	bh=+uB0/KeWoS+78o/K4+P1lOYb8Brc3GUB6FoOcaDAEb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQzlYTsR0arJD3lL07XTIOCMUVFFPuSKPtKUxAvjfnt0t4UBt7t9eYuDgQuKI8WhLq1FwB6rByi2rlDBXPFSXbghIYQcpRc4mpT8cCMTVL1LCnFrBqkD+3xGrNOeRJSA18gYxWBMPoYww9hyDOV4ZOh68Lvzw3aZa1zRiZYCQCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HkJUwkkb; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-223fb0f619dso28777515ad.1;
-        Fri, 11 Apr 2025 19:28:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744424928; x=1745029728; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uS59NBreB8JVw6WZXaddYSZve8l7pZ2vm6Mp80Lo0qg=;
-        b=HkJUwkkbRtJ3IbRpItdTFz0VO9n7Qbei6hhAASZp+jrbbvn8dqFSsoRc0X/ESg2AAa
-         qCCCRfCcM40C90RKK7ARvdix90ZuKv65/gIZPJRKIkcIWCFbqFxGH9ok8ycluNV0DdGC
-         N+EI8nqMRzNxLIjUQU8JEPIbG6I6JeN4l/8uk10EkMPslsxYasmlr+Da6LdvEUHM2qyg
-         QK2UAUbJ+INwknegS0dGKYPDF3Fs01D/lx+GbA2BJhCtHqnsKh9kBCJT9MYzz+9w76LE
-         gk7SA0cnma3LGEmWqVhV2Js6OR5r7G7v3zlerUvef4wvw0USTBBolEXvV0Yt3WYOTbNu
-         rFjA==
+	s=arc-20240116; t=1744427784; c=relaxed/simple;
+	bh=AgDXfnsTK8+YguBIAfkD2mLlbxgmGPX/sqDsMJs5mRk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IH16oG4bpi7+Vbq43qhVsCPeGsbMl2sTuqb982ImGew2drun+wqknFo+nFdqhHrD27NOM2dpUJlv8nKLy1rsd9nXIhTq/DwjgMFMpMLh08ixzKhRQw+r7V31xgNRwcuHmvT5AKwIN19ZF6Vk4cdbDvFRvcNccHgcdAeiSamBo00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d438be189bso24787005ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Apr 2025 20:16:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744424928; x=1745029728;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uS59NBreB8JVw6WZXaddYSZve8l7pZ2vm6Mp80Lo0qg=;
-        b=Wsjtco6t8+26umMOq1qlmMJWo8h0OarHIqfA0JqlVLuTQffrN6paSu4ogivDVK9Uot
-         0RmCwZyiNYN2ixNK5dLQE2vSKhQFJoJvR41GS+rVrd8CUD4ByfmTTlWiKxlFmYxwQnC1
-         0pm9Whow0GgMMena9UBvcxBvCVMGDtuZ2l07lTRXxBcaXMyTbSvlnvA6gm+tvkVWYxt0
-         nOm09h7fO04aZQREV4tm08UPKgQKTNGbvfI+4nDjT+zGCA5zkG/qcFMyiaok7rVytZEi
-         ZgwdRM/l6mXU9HlYT/XvmS/d9TYA+n1jAVUvndqPu752nQDcQTtt6d5RCftR6R8gt45g
-         tYwA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1GSpXbKeTI7k5LtJnxhEJtOFixKRM/ZsUhSioNVyfcBduq+vurMAxj6dY3eHxKDORqeyay/CoacLh@vger.kernel.org, AJvYcCUMaHN7TO/Q3NaI4edeFdRqXqKxecL8lTZ4utqjaWVoSCdSU6EjmD/IXmfinKaDUdLs/txDOGp2Qjc=@vger.kernel.org, AJvYcCVcUtl8umfRP01qBwoyeKR/HesCBz9HEOy2mE2aQgEXv7Y8eC2/uuy3t9mWpe0nCIZLI6TYxPNC06NEXmZHhYlKQT998w==@vger.kernel.org, AJvYcCWnDjHuAHEBh4wPBq+9UOCcjmdMKOQIe5cuAYbcvkW6UjewNneQtOVnzgV0wZfFBE7rBmvcq86P5jx7ny49@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcaroZTSVoULrMjIGkEe0SENiYqK31Y5T1h+WjnX+5AzAWe6Pq
-	PV/jDzK0ypr5D529FKX2uLeio1MERvhlxcp8DbT6lRGYBnxjr8zn
-X-Gm-Gg: ASbGncsn1E+6zisUfDZHZCCWvqzpZ5m8y73PhmDG1p6BoI0LJwSgFhOcMek+LKxQb+x
-	hfcjVTx/qMwH05n4k/OLD1jbbzlEblNolvE3lA7Y/OFRVTTE4EFu1ZgqkhuPg3JzEGDPjSaIwb/
-	uJUfiS4AqoV50TPWUeik4Ltno1w0hXoz7/FyCQlnrQFcKrbeGAcCKJXawpegrifzI6yQm0wrs9O
-	iOklN+xCKSKEb+FE7w/+TKmk7p8KXZ6wEQts7ysnygSQQbn+/Po2SsjfHdTGxYgeN6BqX+NvYKV
-	x/C6XEaW16UQ08NftJh3tvMFdtg3ATbhUbd5iiLZ
-X-Google-Smtp-Source: AGHT+IF7yQgtxx+Pvoj+nBOJQAO+OSo9hSesRaYvYmdz+vl6sbpTrhSzTeHhEoT89B0HPOGTeKZpFQ==
-X-Received: by 2002:a17:903:2308:b0:221:331:1d46 with SMTP id d9443c01a7336-22bea495302mr66673465ad.2.1744424927728;
-        Fri, 11 Apr 2025 19:28:47 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7badb24sm58027815ad.105.2025.04.11.19.28.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 19:28:46 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id CFD86422656C; Sat, 12 Apr 2025 09:28:44 +0700 (WIB)
-Date: Sat, 12 Apr 2025 09:28:44 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Mario Limonciello <superm1@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	Jean Delvare <jdelvare@suse.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC" <linux-i2c@vger.kernel.org>,
-	"open list:AMD PMC DRIVER" <platform-driver-x86@vger.kernel.org>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>
-Subject: Re: [PATCH v3 1/4] Documentation: Add AMD Zen debugging document
-Message-ID: <Z_nP3FGEZzvRf26g@archie.me>
-References: <20250410200202.2974062-1-superm1@kernel.org>
- <20250410200202.2974062-2-superm1@kernel.org>
- <Z_nMEwobMzGbG74L@archie.me>
- <8497954e-38de-43f5-b3e9-f354c308289e@kernel.org>
+        d=1e100.net; s=20230601; t=1744427781; x=1745032581;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r6zi2RrzRY7UuAAecIJ8rYOOGjA2CcvwJYV7rTH538w=;
+        b=goa+UkTOsHZ94c3w3gQXKZAA7uNCPJeJ8B39ful710CzzZNTqFpGRPooGsgDZcMld0
+         tCplU8FigP4kp57T6/ZF8egQ2YEgCZ73FyCxIdgSgelL5ZAjY2bMs8VpbD+Jc6tDWP7Y
+         KzEabhvibEyftl82/UPETeKS+OrmQr3VB/OpAm5cP96eVEYt59ERrqYh9Fcf8gPtQ1I/
+         45QnUrJqdZEJX+yiYPpYbVZm8iciFB7+MadPTgx/F7jLIIgNniS/HV6cYZGsZlTYjmbC
+         Zs4gl89OjmZb23fFIFHQbmCB4FPrEgbD46POXUEsrITcQmUzbI3Ucu14yMX7jk040pco
+         IMPw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7FpQHHpB3Rf815eG0fVTliJGz1foLMFCqbeCQ9c58nBpocVjQEFKiD1ZfP5tZ7oIJzDdbuPKk7RZS2ws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynYUOBWW+uMj2guIPRwyrLOc4l3Zll71oNXPeKSlTyTCQFVEKC
+	r8IW65ou9D3AcjnWZRuEtn7OyxA8HzBfTXtJOVIAvDr42gTTSTAn2qgMQtc3/o/jgVIuQloTQmH
+	QpaOrp9nwtZmIsXUMgMJCAVDMzY3atvZnaRra8Azw27xzyTCfLCEAhBw=
+X-Google-Smtp-Source: AGHT+IEq826wkvnIK8SjQD79IkL4KhtGSaNCTmn1wcJNjdchRYnl5H3yFn0YXsQe6TF4pKOrIeC4ehQfzIN5dEIbI7nIlo+i8ZqJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZEyrUDEPnAmvIh5K"
-Content-Disposition: inline
-In-Reply-To: <8497954e-38de-43f5-b3e9-f354c308289e@kernel.org>
+X-Received: by 2002:a05:6e02:2603:b0:3d5:d6ad:286a with SMTP id
+ e9e14a558f8ab-3d7ec225f5amr50705875ab.13.1744427781538; Fri, 11 Apr 2025
+ 20:16:21 -0700 (PDT)
+Date: Fri, 11 Apr 2025 20:16:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67f9db05.050a0220.379d84.0004.GAE@google.com>
+Subject: [syzbot] [f2fs?] kernel BUG in f2fs_put_super (3)
+From: syzbot <syzbot+1badb065d3258a08f5e2@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    0af2f6be1b42 Linux 6.15-rc1
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=11464c04580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cd7cb758c9c7b24c
+dashboard link: https://syzkaller.appspot.com/bug?extid=1badb065d3258a08f5e2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d136202c0eb5/disk-0af2f6be.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3adf5299bf86/vmlinux-0af2f6be.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3f351885eecb/Image-0af2f6be.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1badb065d3258a08f5e2@syzkaller.appspotmail.com
+
+F2FS-fs (loop2): detect filesystem reference count leak during umount, type: 9, count: 4
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/super.c:1674!
+Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
+Modules linked in:
+CPU: 0 UID: 0 PID: 6486 Comm: syz-executor Not tainted 6.15.0-rc1-syzkaller-g0af2f6be1b42 #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : f2fs_put_super+0xea4/0xef0 fs/f2fs/super.c:1672
+lr : f2fs_put_super+0xea4/0xef0 fs/f2fs/super.c:1672
+sp : ffff8000a0c17960
+x29: ffff8000a0c17a50 x28: ffff8000a0c17980 x27: dfff800000000000
+x26: ffff700014182f30 x25: ffff0000cac24000 x24: 0000000000002ff5
+x23: ffff0000cc3a6087 x22: ffff0000cc3a6087 x21: 0000000000000004
+x20: 0000000000000009 x19: ffff0000c6fc0000 x18: 0000000000000008
+x17: 00000000fffffffa x16: ffff8000833376cc x15: 0000000000000001
+x14: 1ffff00014182e60 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000001 x10: 0000000000ff0100 x9 : 6e36701c3beb6900
+x8 : 6e36701c3beb6900 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff8000a0c16fd8 x4 : ffff800090035280 x3 : ffff8000832c7c3c
+x2 : 0000000000000001 x1 : 0000000100000000 x0 : 0000000000000058
+Call trace:
+ f2fs_put_super+0xea4/0xef0 fs/f2fs/super.c:1672 (P)
+ generic_shutdown_super+0x12c/0x2bc fs/super.c:642
+ kill_block_super+0x44/0x90 fs/super.c:1710
+ kill_f2fs_super+0x2b4/0x590 fs/f2fs/super.c:5032
+ deactivate_locked_super+0xc4/0x12c fs/super.c:473
+ deactivate_super+0xe0/0x100 fs/super.c:506
+ cleanup_mnt+0x34c/0x3dc fs/namespace.c:1435
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1442
+ task_work_run+0x230/0x2e0 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ do_notify_resume+0x178/0x1f4 arch/arm64/kernel/entry-common.c:151
+ exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
+ el0_svc+0xac/0x168 arch/arm64/kernel/entry-common.c:745
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+Code: aa1303e0 2a1f03e1 2a1403e3 97ff825f (d4210000) 
+---[ end trace 0000000000000000 ]---
 
 
---ZEyrUDEPnAmvIh5K
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On Fri, Apr 11, 2025 at 09:19:09PM -0500, Mario Limonciello wrote:
->=20
->=20
-> On 4/11/25 21:12, Bagas Sanjaya wrote:
-> > On Thu, Apr 10, 2025 at 03:01:59PM -0500, Mario Limonciello wrote:
-> > > v3:
-> > >   * Move debugging.rst to index.rst
-> >=20
-> > Do you plan to add more AMD-specific admin docs in the future?
->=20
-> I don't have any others planned right now.  That move was because I notic=
-ed
-> a toc warning with how I had it structured before.
->=20
-> > (BTW, I don't
-> > follow v2 discussions.)
->=20
-> Don't worry; documentation hasn't been talked about in v2, it's all been
-> discussion on the S5_RESET_STATUS.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Understand.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
->=20
-> >=20
-> > > +As there are a lot of places that problems can occur, a debugging sc=
-ript has
-> > > +been created that can help test for common problems and offer sugges=
-tions.
-> > > +
-> > > +https://git.kernel.org/pub/scm/linux/kernel/git/superm1/amd-debug-to=
-ols.git/tree/amd_s2idle.py
-> > > +
-> > > +If you have an s2idle issue, it's best to start with this and follow=
- instructions
-> > > +from its findings.  If you continue to have an issue, raise a bug wi=
-th the
-> > > +report generated from this script.
-> >=20
-> > To mailing list following Documentation/admin-guide/reporting-issues.rs=
-t?
->=20
-> Actually I prefer them to drm/amd with the s2idle bug template.  I'll add
-> this detail.
->=20
-> >=20
-> > > +First convert the GPIO number into hex. ::
-> > > +
-> > > +  $ python3 -c "print(hex(59))"
-> > > +  0x3b
-> > > +
-> > > +Next determine which ACPI table has the ``_EVT`` entry. For example:=
- ::
-> > > +
-> > > +  $ sudo grep EVT /sys/firmware/acpi/tables/SSDT*
-> > > +  grep: /sys/firmware/acpi/tables/SSDT27: binary file matches
-> > > +
-> > > +Decode this table:::
-> > > +
-> > > +  $ sudo cp /sys/firmware/acpi/tables/SSDT27 .
-> > > +  $ sudo iasl -d SSDT27
-> >=20
-> > Nit: two colons are sufficient for literal code-block.
->=20
-> Thanks.
->=20
-> >=20
-> > > +To activate PM debugging, use the kernel command line option: ``pm_d=
-ebug_messages``.
-> > > +
-> > > +Or enable the feature using the sysfs file: ``/sys/power/pm_debug_me=
-ssages``
-> > > +Constraints that are not met will be displayed in the kernel log and=
- can be
-> > > +viewed using anything that processes the kernel ring buffer such as =
-``dmesg``` or
-> > > +``journalctl``.
-> >=20
-> > "To activate PM debugging, either specify ``pm_debug_messagess`` kernel
-> > command-line option at boot or write to ``/sys/power/pm_debug_messages`=
-`.
-> > Unmet constraints will be displayed in the kernel log and can be
-> > viewed by logging tools that process kernel ring buffer like dmesg or
-> > journalctl."
-> >=20
-> > > +`patch <https://lore.kernel.org/amd-gfx/20250305051402.1550046-3-chi=
-ahsuan.chung@amd.com/T/#u>`_
-> >=20
-> > What about that patchset status? It was not reviewed by upstream mainta=
-iners,
-> > right?
-> >=20
->=20
-> At the time I wrote this document it wasn't yet merged.  It's been since
-> merged, I will update to the commit details.
->=20
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-OK, thanks!
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
---=20
-An old man doll... just what I always wanted! - Clara
-
---ZEyrUDEPnAmvIh5K
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ/nP3AAKCRD2uYlJVVFO
-o15qAQCHblhM69t0Xc0j/spdbJnAlpiGhGiV2ZAWomX+adiGKwEAuY6uI/j1royt
-FWMMMFRVStGfBo4HLqzUWcimkOK6dgM=
-=yv/A
------END PGP SIGNATURE-----
-
---ZEyrUDEPnAmvIh5K--
+If you want to undo deduplication, reply with:
+#syz undup
 
