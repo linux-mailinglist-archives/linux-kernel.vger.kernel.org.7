@@ -1,104 +1,129 @@
-Return-Path: <linux-kernel+bounces-601273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C837A86B84
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 09:28:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4496CA86B8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 09:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 928337AB445
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 07:27:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24E719A2101
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 07:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD171946BC;
-	Sat, 12 Apr 2025 07:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FdYIm31P"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834C4197A68;
+	Sat, 12 Apr 2025 07:38:54 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA55333F6
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 07:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6FE18BC1D;
+	Sat, 12 Apr 2025 07:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744442927; cv=none; b=DbbzXJoYFfLSr11jaOte3lGLo5it87LH3ZAkbu1rX8kWqrU5XaA7MeT4VQCBVymBDuQeJx2yE0HAwLH/j2FmkSid2CAKpKs4iGpQmPqmunBcsSrMSgddtYtWy3g6l/dITQk7bAm0mMfN6dFD1Qvaepy6V+nCL+sN1TumpUKP7kE=
+	t=1744443534; cv=none; b=jA3aHLEkYNfBLCVzhre/0hLdfwOUAwRxTHIVuqiYSQaCwNkal9/RNpMsHuT7/8vBvkPqdOCziUmJuvhdgf777KOMme1C3K2/7WcsuqwQqY9Hs67hKTtS2QN8ELVLI0zrusBT11gMc9kIH3Ct/p4Tap1+a5kqqIzAjkiaon8q7LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744442927; c=relaxed/simple;
-	bh=SPqo/maVqrv3EOqPrlfjZlnRQMzbkmVrEpK1AqiJJqg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Bwg3EQpuIJxq3nayQFGo8qZe/C3qkr1qPAsD5LFxrPbJ0hNdCKjfLY/SEzDzMzBdxU+kYkq6BDE2a/cWQ3X8b5/QSG3VtQJIh/KO4zLUq6hnX+WB18Hwums2IgKAZc87J9GmWHG+dNu45fuRqXhQGjpdTDEYnxSFSC1VeaOHzGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FdYIm31P; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744442925; x=1775978925;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=SPqo/maVqrv3EOqPrlfjZlnRQMzbkmVrEpK1AqiJJqg=;
-  b=FdYIm31Px1IaftIYZXvEoxOlejWH0KgTT/t3hDMGIuSbA3KndAiqfFMa
-   F9o48yPtVHBOW3GOsVVvp6fg5/d3ug6p5g8EzynZHRnvz0h28F0ExBdV7
-   +0p2mODbPp6D5g6MKc8fd16JUQug4BUHuDQSpBNGdLex6alBpCo5BXU+k
-   n/N5NAWCKuXHfbpbqvnbISmolhYT0zTeRH1OIenu2ZQub3BHGQTzMwaKd
-   SRgvYccoG6swk+Vo8jIScR0SfdKwl+8gtnIa3HSbDgny3vq0NTvvB9VLu
-   VbIjTnpxWZHzndTeHbfAzAILNZooxJizy1ymBJQW9hubIHLluJWf9xE8W
-   w==;
-X-CSE-ConnectionGUID: sQDJfhlsSh2Ol1gLGPJbjg==
-X-CSE-MsgGUID: bHjRZIrWTaGM/ZijaXGQlA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11401"; a="46119897"
-X-IronPort-AV: E=Sophos;i="6.15,207,1739865600"; 
-   d="scan'208";a="46119897"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2025 00:28:44 -0700
-X-CSE-ConnectionGUID: EKB1H0y1Q0u0VFfyTiux7Q==
-X-CSE-MsgGUID: 4xqNpjx8Rqaly0ZdrcQgTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,207,1739865600"; 
-   d="scan'208";a="129944063"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 12 Apr 2025 00:28:43 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u3VI9-000Bdo-0J;
-	Sat, 12 Apr 2025 07:28:41 +0000
-Date: Sat, 12 Apr 2025 15:28:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shanker Donthineni <sdonthineni@nvidia.com>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Marc Zyngier <maz@kernel.org>, Vikram Sethi <vsethi@nvidia.com>
-Subject: kismet: WARNING: unmet direct dependencies detected for
- HAVE_ARM_SMCCC_DISCOVERY when selected by ARM_GIC_V3
-Message-ID: <202504121542.POjGXRh2-lkp@intel.com>
+	s=arc-20240116; t=1744443534; c=relaxed/simple;
+	bh=kubeogLQpHAXcRV4aoJBU/xNkOB3D8QMn02xuklfBvg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hmnQLFYiRT4E86k9tigJfBkdbSv4eNqEjWQTZD7DuStUG1zjFc2iMo6i3sDp+MGEXJTkwT8GDlX5dhsHWjACgPD4rozqOagkJ47KadLqvGVGmXRaEXntA4QmMi2/ExrpBym321x1C841ZyGunEGmqC0p/xOjZuv876MCA0yPUfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZZQQS1YG7z4f3jMV;
+	Sat, 12 Apr 2025 15:38:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id BEF531A06DE;
+	Sat, 12 Apr 2025 15:38:47 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCnC2CFGPpnI5n6JA--.63008S4;
+	Sat, 12 Apr 2025 15:38:47 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	song@kernel.org,
+	yukuai3@huawei.com,
+	xni@redhat.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH 0/4] md: fix is_mddev_idle()
+Date: Sat, 12 Apr 2025 15:31:58 +0800
+Message-Id: <20250412073202.3085138-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnC2CFGPpnI5n6JA--.63008S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7WF4xuF18XF1ftr1ftw17trb_yoW8WFWDpF
+	WUZa4SvFyj9r9xZr9xJw10yFyrt3yfA390qFy3A348Z3Z8XryrtF43tw4Sq34kJ393Aa42
+	q3W5Ga98C3WjyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   3bde70a2c82712f05c7220b8b94fc2cbdf7fbfe0
-commit: 35727af2b15d98a2dd2811d631d3a3886111312e irqchip/gicv3: Workaround for NVIDIA erratum T241-FABRIC-4
-date:   2 years ago
-config: arm-kismet-CONFIG_HAVE_ARM_SMCCC_DISCOVERY-CONFIG_ARM_GIC_V3-0-0 (https://download.01.org/0day-ci/archive/20250412/202504121542.POjGXRh2-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250412/202504121542.POjGXRh2-lkp@intel.com/reproduce)
+From: Yu Kuai <yukuai3@huawei.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504121542.POjGXRh2-lkp@intel.com/
+If sync_speed is above speed_min, then is_mddev_idle() will be called
+for each sync IO to check if the array is idle, and inflihgt sync_io
+will be limited if the array is not idle.
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for HAVE_ARM_SMCCC_DISCOVERY when selected by ARM_GIC_V3
-   WARNING: unmet direct dependencies detected for HAVE_ARM_SMCCC_DISCOVERY
-     Depends on [n]: ARM_PSCI_FW [=n]
-     Selected by [y]:
-     - ARM_GIC_V3 [=y]
+However, while mkfs.ext4 for a large raid5 array while recovery is in
+progress, it's found that sync_speed is already above speed_min while
+lots of stripes are used for sync IO, causing long delay for mkfs.ext4.
+
+Root cause is the following checking from is_mddev_idle():
+
+t1: submit sync IO: events1 = completed IO - issued sync IO
+t2: submit next sync IO: events2  = completed IO - issued sync IO
+if (events2 - events1 > 64)
+
+For consequence, the more sync IO issued, the less likely checking will
+pass. And when completed normal IO is more than issued sync IO, the
+condition will finally pass and is_mddev_idle() will return false,
+however, last_events will be updated hence is_mddev_idle() can only
+return false once in a while.
+
+Fix this problem by changing the checking as following:
+
+1) mddev doesn't have normal IO completed;
+2) mddev doesn't have normal IO inflight;
+3) if any member disks is partition, and all other partitions doesn't
+   have IO completed.
+
+Yu Kuai (4):
+  block: export part_in_flight()
+  md: add a new api sync_io_depth
+  md: fix is_mddev_idle()
+  md: cleanup accounting for issued sync IO
+
+ block/blk.h               |   1 -
+ block/genhd.c             |   1 +
+ drivers/md/md.c           | 181 ++++++++++++++++++++++++++------------
+ drivers/md/md.h           |  15 +---
+ drivers/md/raid1.c        |   3 -
+ drivers/md/raid10.c       |   9 --
+ drivers/md/raid5.c        |   8 --
+ include/linux/blkdev.h    |   1 -
+ include/linux/part_stat.h |   1 +
+ 9 files changed, 130 insertions(+), 90 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.2
+
 
