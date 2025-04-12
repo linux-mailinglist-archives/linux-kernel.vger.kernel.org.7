@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-601595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4932A86FF9
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 00:19:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2C2A86FF7
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 00:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58D2F19E123C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 22:19:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBBE919E117B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 22:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15F4231C9C;
-	Sat, 12 Apr 2025 22:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFCD221FDC;
+	Sat, 12 Apr 2025 22:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XzIN2DJL"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="R2JwXa6v"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00B0230BE8;
-	Sat, 12 Apr 2025 22:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B29151991;
+	Sat, 12 Apr 2025 22:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744496346; cv=none; b=aTYnVC2Ahyh3RYZ3/wL2OvAPLRLaabqIp9WYaInROwRa6qh/LGDH2vvVW5cyA6R1ijNgrcTyP+2dPXgMdmmnYSRUG9afIBT8JJshHp3XeCt89KrcCwNGOrX/ZzKHRWMdq//UAd6pqURI23BUptzHs30B+t++9U/sSXE3mLQCzL4=
+	t=1744496342; cv=none; b=beDuckDDhP2OPjzXGeLx1tz/7Cl+FCobof2BVmwXbIc+PhUDLoWsr0HZ2IstpjqkqjG5Xz+iIxvvsnaCeyBCni0VK7pwzLuNrqxKKKA+TVlkQER03KcIrMW8/kIEkYa0ypnHF+SRS7ZFqolLkTgUO9vltaGTXfRFLwGtFTKVdNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744496346; c=relaxed/simple;
-	bh=kuDzUPnqWpY0LD79GLgwgUxFC5auipRyUTvXSYUi+Ro=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QVC3auRTyM+j4EkRBGhFDQCKJg9dlGp7po+StH4ZzP+v3becnB+vxj5yOjBwizoul3Mu5i8zN1NLVlgocOZFtlzNhgKbPyfhN9rsWqMeXVG5o9kKEL9bM/y1EMeUvwWiZsbT6cQ8ZGKxRuHTy9EXhjR8EW8J7JnEC65EvJaZDQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XzIN2DJL; arc=none smtp.client-ip=148.163.156.1
+	s=arc-20240116; t=1744496342; c=relaxed/simple;
+	bh=uRhpV3OE9uIKRjCN8KwA0z6HP1xwtPJs4K0j6afjfM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=k13cH/vEy+s43dx7iVUIIZQckn+JFC7CG4I55zu02UljHsE0M/61PciOK4W30yg80rSQYTHOUW5iBui99t64dGQrXtc9GZa3MeGpH/8Jkf2eA7My/8X4zevS9qaP4ymbu4Z1OcX1BtQPS5qZZ1gp85B9VCXA4N9y2+9Zx34cI/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=R2JwXa6v; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53CL33nO018067;
-	Sat, 12 Apr 2025 22:18:54 GMT
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53CF8kLx023387;
+	Sat, 12 Apr 2025 22:18:55 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=d0l23QETrR86BKTGbFZIBjSDN/xiASYRlseP/4Z2R
-	Xo=; b=XzIN2DJLe4OZ0qNNLRZct1hgIJO8l1XPeDUFmXm+3D+V2zkXcTuceguep
-	GUyE5WH1lrRA1y6muLuIKlQCtehzUTtHsXHXwgu3JPMINefEtvQy+SpHEcHnPGc1
-	w85iFJ32kgissl9xGRLkFQ0bkrDevm51Uz4GUeE8VDI3mDA2nlgOMT13LpsWc9MD
-	toViVae+fRHyE4YV8KbzLcRQV327m1qrPoxclAHUtPS/MuMjS+xTeSlbAuL0D933
-	M0RDE1fkf+sFM7zRDyZZJBJ2V3rON1dH70RT48HilNNAdudyosvVxB2JRywwnHWY
-	tyuyDJcpvp08vzwRJGddMvOUgbTRg==
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=EdpbFwCNmQDH6XmT/
+	HxpnLTDzMdhlQ817LeBL2lp0bs=; b=R2JwXa6vBc/kX+ao49T40oKBHq/8Ja1SL
+	WcyoqyMZ/g8XHQRV+yumbGYe7iTJXpAOVX2GfCk4CgUBtm+Vru/XRwUH8a9BfCE0
+	T5jOkb+j0+MXpEVnA/FoBM261HuayTUHMQ1949mDZU2vWFF8m3Gb/dygGxrW4pPg
+	EejM5eYneHo9l6T7c3X9buwdnFxesAblz+KNs7ndJ5wM10OALA4zWAIGeSfGAtCp
+	uggEpuNfIBAYHxkw6h4S2LDoPKUgoafoSFUxaVGoBVqd6fV909gwXqd0jXK9ZevO
+	6BK/y/zejeblNIB/aqfUR2rXWLWtSOISyHH3TKYysn4L18VRphInw==
 Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45yyrfgbv8-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ypmpa9fp-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 12 Apr 2025 22:18:54 +0000 (GMT)
+	Sat, 12 Apr 2025 22:18:55 +0000 (GMT)
 Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53CJkYx5002378;
-	Sat, 12 Apr 2025 22:18:53 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45ygs7bc18-1
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53CJgXp3002564;
+	Sat, 12 Apr 2025 22:18:54 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45ygs7bc19-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 12 Apr 2025 22:18:53 +0000
+	Sat, 12 Apr 2025 22:18:54 +0000
 Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53CMInWv35521206
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53CMIo7151184004
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 12 Apr 2025 22:18:49 GMT
+	Sat, 12 Apr 2025 22:18:50 GMT
 Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A8CA620065;
-	Sat, 12 Apr 2025 22:18:49 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id CB3E020067;
+	Sat, 12 Apr 2025 22:18:50 +0000 (GMT)
 Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 221BF20069;
-	Sat, 12 Apr 2025 22:18:49 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 4411B20065;
+	Sat, 12 Apr 2025 22:18:50 +0000 (GMT)
 Received: from heavy.ibmuc.com (unknown [9.179.5.213])
 	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sat, 12 Apr 2025 22:18:49 +0000 (GMT)
+	Sat, 12 Apr 2025 22:18:50 +0000 (GMT)
 From: Ilya Leoshkevich <iii@linux.ibm.com>
 To: Steven Rostedt <rostedt@goodmis.org>,
         Masami Hiramatsu <mhiramat@kernel.org>
@@ -74,10 +75,12 @@ Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Vasily Gorbik <gor@linux.ibm.com>,
         Alexander Gordeev <agordeev@linux.ibm.com>,
         Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v2 0/2] ftrace: Expose call graph depth as unsigned int
-Date: Sun, 13 Apr 2025 00:10:42 +0200
-Message-ID: <20250412221847.17310-1-iii@linux.ibm.com>
+Subject: [PATCH v2 1/2] ftrace: Fix type of ftrace_graph_ent_entry.depth
+Date: Sun, 13 Apr 2025 00:10:43 +0200
+Message-ID: <20250412221847.17310-2-iii@linux.ibm.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250412221847.17310-1-iii@linux.ibm.com>
+References: <20250412221847.17310-1-iii@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,45 +89,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: FM2qqSMySAtrzL5J-7TMtZvbtZAcDFsG
-X-Proofpoint-GUID: FM2qqSMySAtrzL5J-7TMtZvbtZAcDFsG
+X-Proofpoint-ORIG-GUID: fBMZsFH_NTg87zf53SJ2J-l9xH-xxCox
+X-Proofpoint-GUID: fBMZsFH_NTg87zf53SJ2J-l9xH-xxCox
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-12_10,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- adultscore=0 phishscore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=973 spamscore=0 bulkscore=0 malwarescore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504120170
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ mlxlogscore=999 impostorscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 clxscore=1015 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2504120170
 
-v1: https://lore.kernel.org/lkml/20250411172207.61332-1-iii@linux.ibm.com/
-v1 -> v2: Use unsigned int instead of int.
-          Add a follow-up patch that changes depth to unsigned int in
-          all events.
+ftrace_graph_ent.depth is int, but ftrace_graph_ent_entry.depth is
+unsigned long. This confuses trace-cmd on 64-bit big-endian systems and
+makes it print a huge amount of spaces. Fix this by using unsigned int,
+which has a matching size, instead.
 
-Hi,
+Fixes: ff5c9c576e75 ("ftrace: Add support for function argument to graph tracer")
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+---
+ kernel/trace/trace_entries.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This series changes the type of depth in all call graph events to
-unsigned int.
-
-Patch 1 fixes a size mismatch issue in ftrace_graph_ent_entry, which
-causes trace-cmd on 64-bit big-endian systems to output a lot of bogus
-spaces, rendering it unusable.
-
-Patch 2 changes type of depth in all other events to unsigned int in
-order to better reflect its semantics: it can only be negative
-internally, but recorded values are always non-negative.
-
-Best regards,
-Ilya
-
-Ilya Leoshkevich (2):
-  ftrace: Fix type of ftrace_graph_ent_entry.depth
-  ftrace: Expose call graph depth as unsigned int
-
- kernel/trace/trace_entries.h | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
+diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+index ee40d4e6ad1c..4ef4df6623a8 100644
+--- a/kernel/trace/trace_entries.h
++++ b/kernel/trace/trace_entries.h
+@@ -80,11 +80,11 @@ FTRACE_ENTRY(funcgraph_entry, ftrace_graph_ent_entry,
+ 	F_STRUCT(
+ 		__field_struct(	struct ftrace_graph_ent,	graph_ent	)
+ 		__field_packed(	unsigned long,	graph_ent,	func		)
+-		__field_packed(	unsigned long,	graph_ent,	depth		)
++		__field_packed(	unsigned int,	graph_ent,	depth		)
+ 		__dynamic_array(unsigned long,	args				)
+ 	),
+ 
+-	F_printk("--> %ps (%lu)", (void *)__entry->func, __entry->depth)
++	F_printk("--> %ps (%u)", (void *)__entry->func, __entry->depth)
+ );
+ 
+ #ifdef CONFIG_FUNCTION_GRAPH_RETADDR
 -- 
 2.49.0
 
