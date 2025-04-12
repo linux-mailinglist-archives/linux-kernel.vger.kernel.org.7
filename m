@@ -1,226 +1,118 @@
-Return-Path: <linux-kernel+bounces-601405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F8DA86D6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 16:09:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA607A86D6A
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 16:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 487241736B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 14:09:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D677F1B6311C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 14:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5021E0E13;
-	Sat, 12 Apr 2025 14:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143571E0DD9;
+	Sat, 12 Apr 2025 14:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDJUvVok"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q066v9Oj"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3EF32367CC;
-	Sat, 12 Apr 2025 14:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCCF1EB3E;
+	Sat, 12 Apr 2025 14:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744466980; cv=none; b=Fijd/8idow5NdYpi5AFXxhmd4pSKY4dpjg4gaJu151N7Hy1EyMiIpBce2W4CxVHVjo/hQaPI8puJO2JshefN2cUio0ApF/D7H6ZJrPmZ5LRIdNMSamfSmtbmNA2wH0fn+eWuH7wANShbsIwqg3uJHyzXajwa5Kb8e8Wv9bf7Kwc=
+	t=1744466764; cv=none; b=VYEbhsCNZyN9NewUR00vO7VBeNWeEd6LjbMmpZdsS/p0oGddJUhOHXg55Jvx91VbfHgdrd32oT4QwT88iWe5IuLVGUo5p7XeBex6+iCKMluiUp2WepiSzvFWVZrrPIwqocfBZVBQp8jP1eFoyFhiRVfY9r6qYVwuS+2PGkcsZts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744466980; c=relaxed/simple;
-	bh=tMRlI8+sSKuu9ZmukwLQTti70ORkwjFUDohaNELHm3I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=X9xiG98PtvrJaf6xb5bSzkWodjS7A0l00DPU7uCpKh8zp/tpk3vRP8jhPUge2jWbWt+tjJBT/818/Stplx886cKTmCcXPF9ap6rxE8PGKOpNR0AULBB97r4yl0/eka28IjY6LU3P3owpaLFVRU0XjoJ34Bk42vit7lZ17LzoMY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDJUvVok; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 26261C4CEE3;
-	Sat, 12 Apr 2025 14:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744466980;
-	bh=tMRlI8+sSKuu9ZmukwLQTti70ORkwjFUDohaNELHm3I=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=WDJUvVok9f1AnfhvVQLBUhea5yz4QTA0voOOM/ooZe0MuJLJ4CNm5gIPHXHksP9Zp
-	 n3sb9MAMThntj/7MMO5D4uHDVa4YQayA1+v0B2UOdC4ldaq/5Lyf9iJojbzc7mYKdf
-	 7DM+uCraHhbAiYQkLILG3eblkQecbZn91FZYi1EP0lmKVEex508w9L9fCoqY6QiZf2
-	 1s2EnAVXrW25pj8h8p5KEFiMN6lGnqh6eOIhh2RJ9HCM7lrvydylyOUlkhEEtiqTZt
-	 6Skyhp/iTJ+Qbp526jem07a2phhmg30szOHpNnPVdeChYFdUaM42s+QzYznNjgLdax
-	 C/uN5kLGc1fIw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0531FC369AE;
-	Sat, 12 Apr 2025 14:09:40 +0000 (UTC)
-From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Sat, 12 Apr 2025 15:55:38 +0200
-Subject: [PATCH v4] dt-bindings: powerpc: Add Freescale/NXP MPC83xx SoCs
+	s=arc-20240116; t=1744466764; c=relaxed/simple;
+	bh=D4vtNM/AeJV6M1nJxyoGkOmqX6HuRM/R+DRn1WQhXck=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iCVHgyArjd08C1eoz0G9ymSQ4p+0XOYDFJNPkHDyX6HHmtWxITb/AK/ndN9A2M6wH+F4dV3vcRD5/KaCct6oU8h1j1Wg6wLrmTbMy2b7InF+0HN+jEZ0lLslwppNXJEKpZNRpqkkvAVrqAGdARzsyUCDxaBjJSvYlZAzpN7NrN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q066v9Oj; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ff73032ac0so367746a91.3;
+        Sat, 12 Apr 2025 07:06:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744466762; x=1745071562; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jpe5BZI98ovtJR4rpCzzkwuonA+MqIXKFFvSG9YBc6s=;
+        b=Q066v9Oj2pGXdqhMtah51LBLFDKejxPVElG+paHf7Z/4l2mZeZE+HDuNLsBPmjg9y6
+         nTSZQ9PhxMWSYfr7KuFdSLpUfdDlkM+rJ1JaJ+2hnq2KEWxl3Pf22OSK+6sOI8VkDDjh
+         0hicEHBiT72B6NXcbAHX70AZX/40NojsZMh+0HJqNzDjEg+xwxPikHgNyTx1zMrgL9jd
+         HNNpF/gWWH7sw3FdavG5/vPeJTdRh++5Jbvl6aT8qqkp+Jh9fMlug7mciRzSBbhBiXNL
+         5+WNXAGaJYQbl7B4Gqp9uACUAz7JbAJTobb+Mb1soJTBPL5qJDoiuKo7UE8RHEFIcdfZ
+         Af9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744466762; x=1745071562;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jpe5BZI98ovtJR4rpCzzkwuonA+MqIXKFFvSG9YBc6s=;
+        b=DWCVQJrz98P2aVie7vtkqknwOh4+VqTGZhUr0EqOII4I1l0DwM+CfRM2WGZALozL14
+         MNpdKXKYQZ0enJ49NbEEMSnXJMQazg5gtTViidryxrFP0ZMkSiMCXFaKQx7TzteObys3
+         Zyj15AxEbslBg5oBEf66VRRqR6WddpIgx0f2cXX9ZmiYTr1/vSoHv6/owsIvM+JChRAI
+         2+LswnV35lWY2Dk9BizuVtHH97nV0ZGAF0hXv/D1hJ3hMKiecq3zQXbIeAT4+asAR3mc
+         aL6aRrXGyz3MILiUbo8+6z2/YHUyAdfKepKpoZx2QK+ostiNNOLaQv0RcTOvpgXv3v43
+         Bt/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW4Weu15MrscJ98z51hzN9hmTwGnCocnTIal4xXZ+pZv+PkB6dFaoiuvtqL6tkQef/nh48+kW24vxD6G5zQeKM=@vger.kernel.org, AJvYcCXNczyvuqgQHE2SOvoIuXcA1uh2q/ZeTO+ABQm8gCcabrWNwB0cdMKLbTcxNBSoAWFerqdYWkIRzNf5ZOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhYCp3sN0ueSLAYCG0aSP4dBkt8ylChc4nJ040m8vfj9ISWWOf
+	hppTNttl4aWTOAparA988X0FK97hwPq86xemFwxyuERoyzdjXxO+pnmcT5RbB2i0D04y8urECCQ
+	65mOBOWChrorV3Zm6r7VLKsWzbUM=
+X-Gm-Gg: ASbGnct+dhSXMZa/Z4l3NxHBZ1nyBcomNggYNLFOwKs9a3REsqRk0rq+O8xtTgB36uM
+	8hF8Wi3DWDkTT6MPCZ5fDZHOVSuiv4yImivIuU4AH4rDXN6ZrHcOIHM/FuQ6x5KwP3gW3sA/gfo
+	fHJttEvGObnUZf9XFc5KZoryG/oMKDE8Vp
+X-Google-Smtp-Source: AGHT+IEJwJkloTfnCLOMHYt4Q7+NPP4HVIwunx3KXcCNPxs0UYSvR0TYil4LI6tfaXqEKUKHS62BUgCAQLjwExOa5ec=
+X-Received: by 2002:a17:90b:33c5:b0:305:5f31:6c63 with SMTP id
+ 98e67ed59e1d1-308237c9f1bmr3594590a91.6.1744466762136; Sat, 12 Apr 2025
+ 07:06:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250412-ppcyaml-soc-v4-1-bd34f4613d31@posteo.net>
-X-B4-Tracking: v=1; b=H4sIANlw+mcC/23MSw7CIBSF4a00dyyGRzXUUfdhOqDXiyXRQoAQm
- 4a9ix07/E9yvh0SRUcJbt0OkYpLzq8t+lMHuJj1Scw9WoPk8sKl5CwE3Mz7xZJHhoaEFT1apQd
- ojxDJus+h3afWi0vZx+3Ai/qt/52imGCzxkGbq5hRmDH4lMmfV8ow1Vq/F6KQAacAAAA=
-X-Change-ID: 20250220-ppcyaml-soc-cae1f14cf389
-To: Scott Wood <oss@buserror.net>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744466978; l=4043;
- i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=6plfv1l6lzxqkUoN3xWxPFcjS2rxaHYhhOY/zeHTkAc=;
- b=lb4ghCUhlUAhV9xnysDHjXOBUe4iE8OSsf2qv12XoN8Ph2gJR6gadDhcf5HTp1+pXe9+oWbN7
- kvkZJId0swnCiKK7IFm5AP7jtsTrexZZPorHMEM8EHVpYObW2vLUXIO
-X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
- pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
-X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
- auth_id=156
-X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-Reply-To: j.ne@posteo.net
+References: <20250412-rust_arm_fix_fw_abstaction-v2-1-8e6fdf093d71@gmail.com>
+ <CANiq72=BoURMmkwqBzZ9Bzf5oXkZbUia-gZKJcNmVt7Qg8bKzg@mail.gmail.com> <Z_peBtLuLhEDHqga@pollux>
+In-Reply-To: <Z_peBtLuLhEDHqga@pollux>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 12 Apr 2025 16:05:50 +0200
+X-Gm-Features: ATxdqUG1Xx5WEm8-r3L7KoiOZGOoscCY1Hj0R9_I141AIMVcLI9vyEdLWS9jPaw
+Message-ID: <CANiq72nf7m-_5FWdC1ktFcdPDo7BmFfgJXJEFfArgV7Bonu-tw@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: Use `ffi::c_char` type in firmware abstraction `FwFunc`
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Christian Schrefl <chrisi.schrefl@gmail.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "J. Neuschäfer" <j.ne@posteo.net>
+On Sat, Apr 12, 2025 at 2:35=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> Typically, firmware patches go through driver-core, but if you like I'm f=
+ine
+> with you taking it through the Rust tree.
+>
+>         Acked-by: Danilo Krummrich <dakr@kernel.org>
 
-Add a new binding for MPC83xx platforms, describing the board compatible
-strings used in currently existing device trees.
+Happy either way! If someone else takes it:
 
-Note that the SoC bus is called immr@... in many existing devicetrees,
-but this contradicts the simple-bus binding.
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
----
-Changes in v4:
-- Rebase on v6.15-rc1
-- Link to v3: https://lore.kernel.org/r/20250220-ppcyaml-soc-v3-1-b8c98a61bc1a@posteo.net
----
+> Just note that before v6.13, core::ffi is required, since kernel::ffi doe=
+s not
+> exist. The firmware abstractions were introduced with v6.11.
 
-V4:
-- Try to list all existing compatible strings for MPC83xx boards
+It exists nowadays in 6.12.y (I backported it with the big `alloc`
+backport series).
 
-V3:
-- split out as a single patch
-- otherwise no changes
-
-V2:
-- part of series [PATCH v2 00/12] YAML conversion of several Freescale/PowerPC DT bindings
-  Link: https://lore.kernel.org/lkml/20250207-ppcyaml-v2-1-8137b0c42526@posteo.net/
-- trim subject line
-- fix property order to comply with dts coding style
-- add Rob Herrings's R-b tag
----
- .../bindings/powerpc/fsl/fsl,mpc83xx.yaml          | 93 ++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/powerpc/fsl/fsl,mpc83xx.yaml b/Documentation/devicetree/bindings/powerpc/fsl/fsl,mpc83xx.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..9e37d155c5829a652d1e4e59536b6586a58d530e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/powerpc/fsl/fsl,mpc83xx.yaml
-@@ -0,0 +1,93 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/powerpc/fsl/fsl,mpc83xx.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Freescale PowerQUICC II Pro (MPC83xx) platforms
-+
-+maintainers:
-+  - J. Neuschäfer <j.ne@posteo.net>
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - description: MPC83xx Reference Design Boards
-+        items:
-+          - enum:
-+              - fsl,mpc8308rdb
-+              - fsl,mpc8315erdb
-+              - fsl,mpc8360rdk
-+              - fsl,mpc8377rdb
-+              - fsl,mpc8377wlan
-+              - fsl,mpc8378rdb
-+              - fsl,mpc8379rdb
-+
-+      - description: MPC8313E Reference Design Board
-+        items:
-+          - const: MPC8313ERDB
-+          - const: MPC831xRDB
-+          - const: MPC83xxRDB
-+
-+      - description: MPC8323E Reference Design Board
-+        items:
-+          - const: MPC8323ERDB
-+          - const: MPC832xRDB
-+          - const: MPC83xxRDB
-+
-+      - description: MPC8349E-mITX(-GP) Reference Design Platform
-+        items:
-+          - enum:
-+              - MPC8349EMITX
-+              - MPC8349EMITXGP
-+          - const: MPC834xMITX
-+          - const: MPC83xxMITX
-+
-+      - description: Keymile KMETER1 board
-+        const: keymile,KMETER1
-+
-+      - description: MPC8308 P1M board
-+        const: denx,mpc8308_p1m
-+
-+patternProperties:
-+  "^soc@.*$":
-+    type: object
-+    properties:
-+      compatible:
-+        oneOf:
-+          - items:
-+              - enum:
-+                  - fsl,mpc8315-immr
-+                  - fsl,mpc8308-immr
-+              - const: simple-bus
-+          - items:
-+              - const: fsl,mpc8360-immr
-+              - const: fsl,immr
-+              - const: fsl,soc
-+              - const: simple-bus
-+          - const: simple-bus
-+
-+additionalProperties: true
-+
-+examples:
-+  - |
-+    / {
-+        compatible = "fsl,mpc8315erdb";
-+        model = "MPC8315E-RDB";
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+
-+        soc@e0000000 {
-+            compatible = "fsl,mpc8315-immr", "simple-bus";
-+            reg = <0xe0000000 0x00000200>;
-+            #address-cells = <1>;
-+            #size-cells = <1>;
-+            device_type = "soc";
-+            ranges = <0 0xe0000000 0x00100000>;
-+            bus-frequency = <0>;
-+        };
-+    };
-+
-+...
-
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250220-ppcyaml-soc-cae1f14cf389
-
-Best regards,
--- 
-J. Neuschäfer <j.ne@posteo.net>
-
-
+Cheers,
+Miguel
 
