@@ -1,89 +1,94 @@
-Return-Path: <linux-kernel+bounces-601430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0810AA86DD6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 16:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F41A86DDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 16:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 910AA8A3873
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 14:39:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A36E48C16A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 14:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9631EDA37;
-	Sat, 12 Apr 2025 14:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C6D1EF08D;
+	Sat, 12 Apr 2025 14:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T9f99DOn"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="kLJ3zGUa"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BE51EA7DE
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 14:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175097603F
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 14:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744468789; cv=none; b=K+9umA4DUYib67PyIe29+jLxjBjXM9d1aFXeDcepl5+vY2q+SKfK477VO+kPTvr/O073OWx6IEHeoQkhKlcYwLTnR4kvJRGuZ8sziN7PkmkRgUCkCxUZ5zZs+g61br9ceo+6+ITKCMDXIYQje6Wt2JzYiR1vX8hWnsj0BzIFDDg=
+	t=1744469123; cv=none; b=HUEOy3Yaau9seWdyvj8hTTR3gjMxNgNFhGst8kZcsHH93rsa2+b7a6KixVStjYS3yaPf6v36nzSPwQQXvLKCzElufoIXEiUub5KnmkJHw8hxnk7bemhi/9MeShI0OQkxW4kBxGHsFqOTFufJSHnX2bYKSgQHlXsRy/pEAdHSm7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744468789; c=relaxed/simple;
-	bh=G6sHjtbEI3xpm/YTYV16t7KZ2vRcxMmdD7U4Biu6eCE=;
+	s=arc-20240116; t=1744469123; c=relaxed/simple;
+	bh=RN/j9DFZ+CO45Wo3mYYbAVag+7CjqaLHD8x49oYQI/w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HsrxNguhQc6azIAe4CEFH9caBay04fYsLYXCnCQD9iTZe3PpEkNltsDwDg4NFmYthQXP2ka4e8L+m8b7s7SKYb/UKB1qbDa8yt3rcnj4G2jFnfOruh6n0X8G5OFa25LUJqNpAyET8GDhiPputYWbSk0tRinghCROGH9cjdQrS1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T9f99DOn; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3913b539aabso1703537f8f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 07:39:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744468786; x=1745073586; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/0APbTrVqZTQ7b+tNHxNW9om5cpeJ+hNOY66GU+x9GE=;
-        b=T9f99DOn+bYUFzlOjY3sL+L27Fz0djKRQd74QLGsiaWi5L384BXhSe76sQR2odO7tV
-         T7IlAi/mWLSR7+Amgb6AGInRKRTl06UcvwhOdCFobv2kXFaoUkjexde2ZyxuljVShy0Q
-         2Vp7cNToyYafLlg1PfSUHkglG+0RMHFLGOqgYz+UEyUt/W52Dkmb0YBsn9q0DOleujs+
-         Pq+QZnTapZbwZg3vf8SYgzfJOQbjLx0cD0yeYyDc663BIY/HdWzNLcP8r7Kk16lW0Fl/
-         Bw2t+IrVEHWMzj4i/B3pYUC9QaRcPCKriJwcTKNZCWciSTwFfD96ZtURw5gqXlI2PqR8
-         raMg==
+	 Content-Type:Content-Disposition:In-Reply-To; b=AMIN2OuqIjSiJarXjSN1wdNhqGmwVJGehun7Smma8/Cr9K6FUs8WdNbU8LM4JdC/vz1FilBebRLP8+maRiMdh+5BDuH1oOI4LhE5gY5fXz4QWlyBzKREthhTqdgYGHTDxoV/q93KDdN8T8+6tNeRCvNlYVWitHCuDbRRyVyPrYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=kLJ3zGUa; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 76312403E7
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 14:45:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1744469113;
+	bh=dMnte3bUYKtheIFCBih/uasbJjspqVJC5iPHCAuYEFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=kLJ3zGUav6Xz0PqrKaUWjBgVsbTgHFLFk4DMc8F5F5pnKLabnBfX5SPk4co+jPLLU
+	 b84LoM3Jg4y/yoshn/DktMZ/OP364jv+D5a3O1BBLV2ZKaLMUtmSqGjYAbwJavyXCN
+	 1dZrPVKBpmWBuG+EKt2r3X3iqlUYIuiqyUKm6eOv75JIUGsib4+1EL5nxz2p6ow7Kg
+	 ZJVuhTXhIyyfIkja7+cs5WPJeolo+w2nKQALMg0VU7G5f6z9zIiu/+w0eNJ8RYJ09I
+	 rnYQlKeLlEKlUicYw1QKl5huuNvjImYK1M28RyNto4v5+X+v+4pvS3MZJLGtweuMId
+	 KlFqEzesTouhw==
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7375e2642b4so2140286b3a.2
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 07:45:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744468786; x=1745073586;
+        d=1e100.net; s=20230601; t=1744469111; x=1745073911;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/0APbTrVqZTQ7b+tNHxNW9om5cpeJ+hNOY66GU+x9GE=;
-        b=Qv2PGvE//w/PoCuhhIQsU/0zQTGeDcoUT9zeV0UxN+P4BYws3OhWTpkL7Kfa7A9gJT
-         FpmrzxQnT3JnJWrslgkqF2v0D4Ab3hLh/zljhlAU7urV0Trj9eVlmju5b6XyD276onGy
-         wPPpCsEmX6UrFHS2VPYn9bLfNH7Fr8RJN3DYK1LbIHZU5MLe7SeU6+y3hX/cfzq+zdq9
-         bceeUotAVtAbEpihofM8YnKqehOYaOBocLvpFyKAPXhGmSX5AAicDDAlnFzWs1Mgitu4
-         /ZVlV3dlQw9eWLseM3nu+cDik06S13gs8iVTsc+hljieAljVRWOf0JrZ0LwRuRyPhSuq
-         Pj5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVJbkFPFgSin7lWcm18Wt7EHmiDKThpqsVxyNjmb3LbBFQ8x0I5XvKC8DWcjjrIu2WeI0aq0/WmNc00yLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTzl3mQALiHLJCc/4tXSwNx0oEbRWt+UtA8HwDawypAWRIKFoY
-	wAfLSa6x07aDUHIUbqEgkuxiLSLjQW5CD+mftM368oJlxKTqAPTrO8NcMC3+63w=
-X-Gm-Gg: ASbGncvOjWvUfBbRPZMGoqXcr+T8aUVxN/V1v+a+mPUtMQvRS2h3ebSkD4Z+dNbbENP
-	9X9uC53ut2NaKxMHuGDe6uUY9S3GOGZ0431ZTjE5pCBelKAbKjKxnrESkc4gpKtubHcFxPVDZSo
-	MfMt0PKyqMeGquuhD0+lpOwcVdteVM5QekMeJThbwyhymWqfQ/KEXQY2FPEaJ/U8jdJJ/JRmipr
-	B4LShUH6PCmBmBW2FKXrCwDbVbKksuaUG6XmrHkjauh4a4+F0lIldPHbeEu4YSJWMqf4vneAjOM
-	bNuyMot6gvFzexpPfRpubNgPfBJeIoz2/rT6TVqW7ALyYw==
-X-Google-Smtp-Source: AGHT+IEIPIweCgA9/UK8lpvU9btA6Cbv8a80TioEApKtzRIcWdW/8sHJOEnuxUXW7drGXCEjT/WBmA==
-X-Received: by 2002:a05:6000:1a8f:b0:391:a74:d7dc with SMTP id ffacd0b85a97d-39eaaecab96mr5356300f8f.50.1744468786353;
-        Sat, 12 Apr 2025 07:39:46 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39eae963fccsm5179479f8f.3.2025.04.12.07.39.45
+        bh=dMnte3bUYKtheIFCBih/uasbJjspqVJC5iPHCAuYEFo=;
+        b=V6yt6xG+kujG8TFsVS+STjCh0DdLym6cu4NcJ9IBx64Sop7gAczqXxZolowrbkualR
+         rAdyrJziK2fOVUH5Uhh7wgg4AnEsd41G4a1XCh9MMMJxoHw9jxFk/aBTNsIMXmfnKTsA
+         YQUFJfWrl+MfEbOfUNzuCTx54GHBF+qKilK5xaPK9aqw3l6Okd8Z/CYxckavftN4iS3H
+         dvAUxzQ2cwzuA9U7qLzer1zUgHamvIX1YSByvEUNzDXMAxywL+87iqDwc1xINImf0bSp
+         IwQUT9/VlhR+zzGj6YjXwRF0FjJqSy+U6Xrh09z8JXKZflsNt9tBEPVagnL8Mw1fGQUh
+         oIHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDp7j7lZyq+sRnX2Ef68rAwJcywGkryHdn08GnhR+Xxut0ACR9EJqZk+aRnC345J3cz3oiEbHHseugGoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo5zQxHfAHfMT/dNAkF+15k7T/uuA0EXalVqtPaDtsiuAdACvM
+	vCcrOF3BA7sdh1fLUQ847Z7SNmGM/JSJBZx8fyo8lRNj7k0kYAf30p2/6kb4evDkXeXVQpUZpEA
+	HxtqgsJCDWZTG4WGg6NyZ+txfRzmoXeGDsJhJAgWb/daEbOlVHOmYVeTpWOVQpMl+t1oh6C0gbt
+	Wczg==
+X-Gm-Gg: ASbGncuo8ey0BySTugdVpbqCzNYmbL50LpMpdCbZScI0YBt8auHU/LjfL71KHnztzRs
+	24ZT2Rh7hPshM/u3CFNfomCCsQPyQB61Q+eIXq4p2SmRvhxIdkDFso3e66XdtNrqrEVv6D3zguK
+	uNE2VrDIDWj3C95Ip2//sgabzJ03mg2fmEByrqWgOnkcz7+90tWvMEwpnqzm9RZtPcWiFLniaTa
+	FLfGnrEMEO/3HveVYFzYBq2cv2FtBfof2EgI4n8kT/5zSzgRN+CwajmzJJVKEgnSdMuFCxoZ5Wt
+	oU+QIDnMVEWt
+X-Received: by 2002:a05:6a00:240d:b0:736:ab1d:83c4 with SMTP id d2e1a72fcca58-73bd0ea5de9mr8269684b3a.0.1744469110624;
+        Sat, 12 Apr 2025 07:45:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGgs/5961Tp4ODI1uCtwmazIOwGScEXQjNWVM6D4BLHjUvb+kl0xxTjoourf6aP5pGbA4cGOA==
+X-Received: by 2002:a05:6a00:240d:b0:736:ab1d:83c4 with SMTP id d2e1a72fcca58-73bd0ea5de9mr8269656b3a.0.1744469110103;
+        Sat, 12 Apr 2025 07:45:10 -0700 (PDT)
+Received: from localhost ([240f:74:7be:1:3a1:1528:8601:c20c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21c3870sm3432688b3a.48.2025.04.12.07.45.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Apr 2025 07:39:46 -0700 (PDT)
-Date: Sat, 12 Apr 2025 17:39:43 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alex Deucher <alexander.deucher@amd.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>,
-	Arvind Yadav <Arvind.Yadav@amd.com>,
-	Shashank Sharma <shashank.sharma@amd.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] drm/amdgpu: Clean up error handling in
- amdgpu_userq_fence_driver_alloc()
-Message-ID: <b9adf038b3ccf058c49e7e74e1998bc2216e0678.1744468610.git.dan.carpenter@linaro.org>
-References: <cover.1744468610.git.dan.carpenter@linaro.org>
+        Sat, 12 Apr 2025 07:45:09 -0700 (PDT)
+Date: Sat, 12 Apr 2025 23:45:08 +0900
+From: Koichiro Den <koichiro.den@canonical.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] gpio: aggregator: Fix Smatch warnings
+Message-ID: <52ap2hc6ii7hlk2zixxf455nens3rxtwvrrwhlv4ii5avpgmcq@lbrdov3ygay3>
+References: <cover.1744452787.git.dan.carpenter@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,41 +97,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1744468610.git.dan.carpenter@linaro.org>
+In-Reply-To: <cover.1744452787.git.dan.carpenter@linaro.org>
 
-1) Checkpatch complains if we print an error message for kzalloc()
-   failure.  The kzalloc() failure already has it's own error messages
-   built in.  Also this allocation is small enough that it is guaranteed
-   to succeed.
-2) Return directly instead of doing a goto free_fence_drv.  The
-   "fence_drv" is already NULL so no cleanup is necessary.
+On Sat, Apr 12, 2025 at 01:14:53PM GMT, Dan Carpenter wrote:
+> Fix some static checker warnings from Smatch:
+> https://github.com/error27/smatch
+> 
+> Dan Carpenter (5):
+>   gpio: aggregator: fix "_sysfs" prefix check in
+>     gpio_aggregator_make_group()
+>   gpio: aggregator: Fix gpio_aggregator_line_alloc() checking
+>   gpio: aggregator: Return an error if there are no GPIOs in
+>     gpio_aggregator_parse()
+>   gpio: aggregator: Fix error code in gpio_aggregator_activate()
+>   gpio: aggregator: Fix leak in gpio_aggregator_parse()
+> 
+>  drivers/gpio/gpio-aggregator.c | 21 ++++++++++++---------
+>  1 file changed, 12 insertions(+), 9 deletions(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: New patch
+Thank you very much for spotting these issues. I doubt myself for having
+overlooked these.. And I had actually forgotten to run Smatch (it's really
+amazing tool). I also tested the patched module by running kselftest
+(gpio-aggregator.sh), with the addition of a new test case for the issue
+that your first patch uncovered. I'll submit a patch to add it to selftest
+later.
 
- drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Acked-by: Koichiro Den <koichiro.den@canonical.com>
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
-index b012fece91e8..86eab5461162 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
-@@ -75,11 +75,8 @@ int amdgpu_userq_fence_driver_alloc(struct amdgpu_device *adev,
- 	int r;
- 
- 	fence_drv = kzalloc(sizeof(*fence_drv), GFP_KERNEL);
--	if (!fence_drv) {
--		DRM_ERROR("Failed to allocate memory for fence driver\n");
--		r = -ENOMEM;
--		goto free_fence_drv;
--	}
-+	if (!fence_drv)
-+		return -ENOMEM;
- 
- 	/* Acquire seq64 memory */
- 	r = amdgpu_seq64_alloc(adev, &fence_drv->va, &fence_drv->gpu_addr,
--- 
-2.47.2
+Thanks,
+Koichiro Den
 
+> 
+> -- 
+> 2.47.2
+> 
 
