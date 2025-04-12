@@ -1,85 +1,90 @@
-Return-Path: <linux-kernel+bounces-601431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C11A86DDA
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 16:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 405EBA86DDD
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 16:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8941319E66DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 14:45:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D52C189829C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 14:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0777A1EA7FA;
-	Sat, 12 Apr 2025 14:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C5F1F03FE;
+	Sat, 12 Apr 2025 14:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXGVIS0a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F2813C67C;
-	Sat, 12 Apr 2025 14:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15172367DB;
+	Sat, 12 Apr 2025 14:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744469121; cv=none; b=W7ViCuij5ctQoKopnSuxG4Arvip9lokqTVeM+9uVxbZKj8Omh27xeZuxI7wfNnGEZZiLvwCncSxG2T3rRhoTouGZYn9F9HEC0Uumk7IWEl0QnY3dHjctCLtbQw5cFroPRkyi1173EP/lZhewkJgBNl9MZiiSYj5Uoqt83PH8rDs=
+	t=1744469592; cv=none; b=T6NbRc2PZ0pf7Kdw5NfmFkxq3Udg/N++MK8ZXE53F984q+FcXQUdbMEAZO+vxGNKJWRzefkJd+9q5KTEHQN5qAMBX3m5ReODzIwbxh07QBfgTwzHfa5MnI1YE92mC57xO0YUpId6zMBctxp0RaCTCHqVKtX8hMIqhoDPStPO5i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744469121; c=relaxed/simple;
-	bh=0z/z7q4ki/s8UOAgcSC8gyFRaO52Y/ZjXGFFPh0ypbA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RRDVXEsWqKJavoXaYkuyrvCvcTU/WyLIoqgyXgH75p6w69UqGEI7Q9XO11qvfHo0D4LuBoggMLVIOyej7Zw0a2yUhz0zZSH5VN+iwDbQ9i0epjd/aWCA32nrBbVBnIgpqU9OvbTkZxgY4x9d6aguWjk4E/daqusdnFWbXhNCAOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C764AC4CEE3;
-	Sat, 12 Apr 2025 14:45:19 +0000 (UTC)
-Date: Sat, 12 Apr 2025 10:45:18 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: mhiramat@kernel.org, mark.rutland@arm.com,
- mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, Menglong Dong
- <dongml2@chinatelecom.cn>
-Subject: Re: [PATCH bpf] ftrace: fix incorrect hash size in
- register_ftrace_direct()
-Message-ID: <20250412104518.2b4598d3@batman.local.home>
-In-Reply-To: <CADxym3bAXpqC3awWBTm+zc4Wn348=7cYVCN_+em=b5qPimUTYQ@mail.gmail.com>
-References: <20250412133348.92718-1-dongml2@chinatelecom.cn>
-	<20250412100939.7f8dbbb7@batman.local.home>
-	<CADxym3bAy4aV=UJU9ge0vw055C2DzC=zubjhOBSay_88CkW+hQ@mail.gmail.com>
-	<CADxym3bAXpqC3awWBTm+zc4Wn348=7cYVCN_+em=b5qPimUTYQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744469592; c=relaxed/simple;
+	bh=KJvcw7s62BQZZ771kg+Ctzm2F1K76QG8aFGD8mzaXcA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bOOrLg9RlwZcbbfu4TX47Og++AmmRPeTj2Jb06m5+PgLH7jSqhuXgXVAVnElKgL4dDI43jizIRgbleW0vW26h2jwMPOuL6SLDicMF8hU0PlgYI3OYtxD9f3DNRc7QAZFCLrOxbG7HTyIYBd6vnGXDEHdyb/Ieuzl96teHJhQGlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXGVIS0a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6EF5C4CEE3;
+	Sat, 12 Apr 2025 14:53:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744469591;
+	bh=KJvcw7s62BQZZ771kg+Ctzm2F1K76QG8aFGD8mzaXcA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oXGVIS0anaXjEGffYf8Pc+BRPOqx0HrI9xpsQ8+d1a+3o094GYoZ/zFyCU0M5RbJm
+	 hyIhlmeqjJbZCQ+T7R5A8oxz8Up62wEUM8NA96ovxhH7pTG435xNmQbiHOE6mKgO3A
+	 QlEdT3YCVPawU9zbwhmHWB7lxX56aRAPmVBlrFhtpVcHsDd58pInOSrvgx2SSbioc9
+	 nDm0Y5k10E74GhIL60Zk7Ekq3MpVv84p9xDM4CGIhweUYE/GPOY86L21ECNZt3O5Df
+	 K49hBW0ey/FVV6/3KNMhlEYzQn8RzLNEsj72mL6IAbyFvrPYK0nxDgSzugsQaQoZ3Q
+	 nywZdWdrUtTsA==
+Date: Sat, 12 Apr 2025 16:53:06 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Christian Schrefl <chrisi.schrefl@gmail.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Russ Weight <russ.weight@linux.dev>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2] rust: Use `ffi::c_char` type in firmware abstraction
+ `FwFunc`
+Message-ID: <Z_p-UoycGk3BceXm@pollux>
+References: <20250412-rust_arm_fix_fw_abstaction-v2-1-8e6fdf093d71@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250412-rust_arm_fix_fw_abstaction-v2-1-8e6fdf093d71@gmail.com>
 
-On Sat, 12 Apr 2025 22:36:56 +0800
-Menglong Dong <menglong8.dong@gmail.com> wrote:
-
-> > Yeah, this seems to make more sense. And I'll send a V2
-> > later.
-> >
-> > BTW, Should we still keep the "size = min(size, 32)" logic  
+On Sat, Apr 12, 2025 at 12:29:48PM +0200, Christian Schrefl wrote:
+> The `FwFunc` struct contains an function with a char pointer argument,
+> for which a `*const u8` pointer was used. This is not really the
+> "propper" type for this, so use a `*const kernel::ffi::c_char` pointer
+> instad.
 > 
-> Oops, I mean "size =  max(size, 32); size = fls(size);" here :/
+> This has no real functionality changes, since `kernel::ffi::c_char` is
+> a type alias to `u8` anyways.
 > 
-> > to avoid the hash bits being too small, just like the origin
-> > logic in "dup_hash"?
-> >
+> This used to cause problems on 6.13 when building for 32 bit arm (with
+> my patches), since rust mapped c_char to i8 instead.
 
-If you have 5 functions, why do you need more that 5 buckets?
+Now that I read this again:
 
-	size = 5;
-	size = max(5, 32); // size = 32
-	size = fls(size); // size = 5
-	alloc_ftrace_hash(size);
+Isn't it the other way around? For arm32 c_char was mapped to u8, but FwFunc
+expected i8 (since that's what c_char was mapped to for all other architectures
+that are supported in v6.13).
 
-		size = 1 << size; // size = 32
-		hash->buckets = kcalloc(size, ...);
-
-Now you have 32 buckets for 5 functions. Why waste the memory?
-
-If you add more functions, the hash bucket size will get updated.
-
--- Steve
+Can you please clarify this in the commit message?
 
