@@ -1,214 +1,210 @@
-Return-Path: <linux-kernel+bounces-601315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62515A86C55
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:04:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A80DAA86C5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D2D8C32DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 10:03:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02A1A8C5B30
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 10:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AD91A5BAC;
-	Sat, 12 Apr 2025 10:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="imkOyJ2u"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72181C54AF;
+	Sat, 12 Apr 2025 10:10:05 +0000 (UTC)
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2109.outbound.protection.partner.outlook.cn [139.219.17.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470B31519A6
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 10:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744452240; cv=none; b=CN0teiBLS8jeovjQO+jBDAHAeytDQ3UteYB1mnEKRYE2TWPF+UTpaN+C7pkXiWmatTPFMdijRK4ZGZgNlZMpc+Z9k4hTYRVMQ3zrecKmKzjpLw8PyVFE7s30B4JXQw2TBI8yt/f/FgnrUB2rlAEfxuydQ6wXFAq6VwOm4dvYxWs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744452240; c=relaxed/simple;
-	bh=4YAmMb1xiYyI2Fpa9bsasL2uEV9W7HYkldVbh2qBk/k=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=rca3+g6x7EgKnCTd2LZKsXYmpH3w6pBZQRyypcsOx1+q+1nCmK6DYfjKdIBoDwo6RBDkkABZjf0fuv8ARVCyKJHMqqp+dkEavkWcW/vH0nZDK5IfF7X4rr8iOmAb7qGW3G/dxS72H7wH7hu0dbnYedtvGpz/KJG5JDH8Bjv7obA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=imkOyJ2u; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744452238; x=1775988238;
-  h=date:from:to:cc:subject:message-id;
-  bh=4YAmMb1xiYyI2Fpa9bsasL2uEV9W7HYkldVbh2qBk/k=;
-  b=imkOyJ2uvpwfpdIcPrEafVzACvaqY069QGYJldmwcOJ12I6EcpnYLwua
-   pQNpmXQJVoN6P176S4DwQrzPaE3tne2EcDq9LFy13z3Jy7jkIrzyxFK3J
-   jIHu4/sOR7OnSUHZXMUpqsYqG4kWBhQ9QS6Lx0AGs1U1qnjl0fM+Bj6wD
-   ooOvM2BcMIgRToOPNDHk4l1GfHruyJ6NS8euBOi8ww3ks2OB4XVRose+E
-   kYrpCMyUDtTtwRTBWwSXfdfgBtSgC0bf1xZ6eYrdGiXawRVbadiaUML62
-   uT5PNhHZDz3mlLJBsYUUnV5cWuocTgUm0D9bpvHYfciD31G+gC56Z+/uR
-   Q==;
-X-CSE-ConnectionGUID: +aBqym6oQJmb5eOUiAN8Cg==
-X-CSE-MsgGUID: wIC4ta7ORVC+B6gSDOeQsA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11401"; a="45877654"
-X-IronPort-AV: E=Sophos;i="6.15,208,1739865600"; 
-   d="scan'208";a="45877654"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2025 03:03:57 -0700
-X-CSE-ConnectionGUID: IsI294xcQY2iSw0EHOkOrQ==
-X-CSE-MsgGUID: /L5pd+YOSnuflVi1XeSzXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,208,1739865600"; 
-   d="scan'208";a="134253933"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 12 Apr 2025 03:03:57 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u3XiM-000BiA-1G;
-	Sat, 12 Apr 2025 10:03:54 +0000
-Date: Sat, 12 Apr 2025 18:02:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/cpu] BUILD SUCCESS
- 62e565273993ee47c82ca2975e65ce4bec3c3697
-Message-ID: <202504121852.sA3S8rxB-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E99D192D77;
+	Sat, 12 Apr 2025 10:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.109
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744452605; cv=fail; b=K8zKG0Rv6yXAWErZed/rq/AMn9GobeB+Wm6KLyMxRtIrrri9fpC41OS5NYrwY1NoVptP+/wGnwj3SPCh0U3na/lQMUEsnf60uGTxw5A3pa3usO6cVVzqgKly7ciT9hDFtvIzyERs3z/gaO8YJ3uF8GxjZnSrLHvNzh126E9ipl8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744452605; c=relaxed/simple;
+	bh=D6i+4xtnjenbRjnKP4FmC6fVdWuWUYhm49OxVzeXpFU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ElLAMsoURFiVXFjW7k/M8mpzL8Cj07XodBJMI3H+z3FrKKmNEr4ZUXKSkGuqbCV1m/lLz097wt8ITAtkWA3wjy+lterfOaLZ44aB6z8NhbgNKRxr8UymuzWeQDqMl6C2bhanIKAEIjSkK43wEAq3GqrsA7znxKbFlmBr6Mm00jw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Es4e4vkLbuJbwIuLWjTP3IsV8kYjt+zemc2gruRS1lyA7TdLrllCPmDRvu9q4WELEi9CphqgUVFPDVaYnv0tQXOggILAp0SUnEfsHOxPORBz0sIui+fJYsdMTSu/j7WHjCeJQ0P2ji1NZ4APbwJpvqled8nPNQQnh+BMIKXYDvhNI5/T6b7L72zi2pHBpCU608AzSIn/FQM8/9zFXUVd49IQEZNgJUTTzPbIK/oniSMprqscjcwoqGrwaTg8OVByQ+4Fq8jwwZib36TwVl7GFrwkxiUl3T8genD4I9Z9OJ/zJ09TI1XdGQVEsxoDiMjBdNaFHbl+NqsMLicUl8VHyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1ECiAeMW5bTAj+W1eCok0ft9wopZlzd8vRBtmP3mO9Y=;
+ b=glgQ8S9sii9IGuEtdwsTXiJ7fyBC3szv2GrwNG5GaaQVHMPNKCwzsmapXjjfikiDVenJckVPWwkZL4gQO9VsFxoe41kfNQAwBlcg3RdC1wQ8aIZzjnaH6rrsO5aYu6zBiMtBchfmPoAosNOtzERvI4u+EwiqIVEIN/lNB3Ze0m0Cz+lPumF7tv1Bu8+p0Di10BQqTZy4AgCFHT9MjhxNKB5lFVMCXSIZiWguFyHkbD11HlfWa+6XahhaDQ6S1RWSSW8Y3dhXOiJxE0xlZRe11YpF2GZ4LnbTrRWbPJFv8cufJxtFUkh1d3zlm4B2/8e/F6lX87oVtXGbkIo402MYMQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:b::7) by NTZPR01MB0953.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:a::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.30; Sat, 12 Apr
+ 2025 09:34:29 +0000
+Received: from NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e1c4:5bb3:adc:97f5]) by NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e1c4:5bb3:adc:97f5%5]) with mapi id 15.20.8632.030; Sat, 12 Apr 2025
+ 09:34:28 +0000
+From: ende.tan@starfivetech.com
+To: linux-i2c@vger.kernel.org
+Cc: jarkko.nikula@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	mika.westerberg@linux.intel.com,
+	jsd@semihalf.com,
+	andi.shyti@kernel.org,
+	linux-kernel@vger.kernel.org,
+	leyfoon.tan@starfivetech.com,
+	endeneer@gmail.com,
+	Tan En De <ende.tan@starfivetech.com>
+Subject: [v2,1/1] i2c: designware: Add SMBus Quick Command support
+Date: Sat, 12 Apr 2025 17:34:14 +0800
+Message-Id: <20250412093414.39351-1-ende.tan@starfivetech.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SH0PR01CA0010.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c311:5::22) To NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: NTZPR01MB1018:EE_|NTZPR01MB0953:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21e0fd3b-c8d7-46f1-f43f-08dd79a5385c
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|366016|41320700013|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	4M5YLy9dzCZ6xzG1yVa7mCCqYng3LFesF5l7iM9GC9Q5BQPCdQsSq3Ebq9OGyisFr9rEXW1LbNHn7aCdSZmsjLWP+9hNtbiXxGcLRhIh+l+H5cSQ7eYLqFrqfDlo+X5BX/dLr+Jwc+ChN9sDqY6A1OmqReQJf2X1b1Xb7q3sdKoYJUdqk+HHSWknmH3Gj7KhkC6cY4d7T2rt/5/4Vbgc0ybKICF9okGx4uCyW5fGomr2ymAO6gcPBRBeqsxMvI9Mv1UkhKcoYRNatObuXb3DmveUIGtT1nBcFnvcdan8uL0GHOPU+FJsdJEF4+ZD3xce21K8jIZ4ZEj/Li74BmzOrTMb4HAfU1z77vQ08I/R680g/xqQYnUQqkgYpvVcHTWL+aoo5+Efz/Uwf4v4zEsOv1YeFn803EpHzZvwnEg/puzlE3s/YZyiTMfTy+wcssW1MO3wJZKhMC2ZTqLG6kxkRBQYsjE9xdK9l12IgY3K+olVEXAaO4154VwTqxU8+DagN7OqRePIyf3Oexn1ZMh22mmpEG1o6E1vmVEHo3HsuIkCL/ppckmkC2E36N6nqwG8aTLrtb9wEdH5oslNtCfjFA==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(41320700013)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BkefV/37hUkZIynwqpn3Q+bfzbJazifU0U04sraN6hkdQEzFtUtuhHqWRBOd?=
+ =?us-ascii?Q?rFSO117wwQ76w7mckA9mhX9LHG9NHkG1JUL8V9B56kHf8rTQ24cAt8r2MvPs?=
+ =?us-ascii?Q?Q8kigPIlXcZDTa2yJVu46C5ad9kF98vE52ED/A82Y24V5ZX0a5nIMWqOmA3b?=
+ =?us-ascii?Q?sOQ8evzCT7qT4ILDBwWQ3o7mM5ZTprGHFgUJJr1KUgpjoGr4q5szpOYvaUEG?=
+ =?us-ascii?Q?aFl7DwNHks3icl+8Tu5UVYUKYFBBaahRpOFvFEkySlKvSEzJ4gy6ulI4R8up?=
+ =?us-ascii?Q?8Cb7FlZ1Cc4bBUZYXVZCI47eR/v/h1WCbwsdIlCLxMMAyhfIqmXAl95QrXb+?=
+ =?us-ascii?Q?xaEZ3Af5c8ojDflrwyLBxjONsMnLCfXE/kq4msYLYY5cEbj5ci8Q2BaC+R7A?=
+ =?us-ascii?Q?Dc9a1sdDnAKBZlLGdOBT4BKiex7CffPDDGO4KFP631QFsczrsAKWewrpSpm5?=
+ =?us-ascii?Q?bw9saviLwIG+e0R7F9fXbtTwavQjkT+sGHFdQVUz5cjhx6pLcGexAkF9yYqc?=
+ =?us-ascii?Q?7eemk2YeZuMnrw+R8OcHGUQkIbq7hXtzR+cPWZS3Y2qDNwz3jAmXRu9HESbA?=
+ =?us-ascii?Q?Zo4dNgkv+yrf9x1c/FdeFpI0t8+VqOdcUGYGo6tMaTnyAlcDYtUtvNJ+MB+R?=
+ =?us-ascii?Q?nzJEsLqeBr38mxnTbCs41dLCK5XrIx5gB4mVUMoxadp+CQ8mJmd/5uB2GWbu?=
+ =?us-ascii?Q?TfkHfRSaytEOydOguFxdg5xIUR2lDjy9Cu5hnmsENCbnAnk2CcpX4Bgry5e1?=
+ =?us-ascii?Q?sTm+dZxOw4e3Z017EODVz30wB5gbEXPA07GvBLPR7FHGwfuDAPYX/BiBuEBl?=
+ =?us-ascii?Q?QHTJyUMSUuYuRu32gX0S0Q0Jvo/Br6cQuBQUi871govoopeXvOayTu1NJyt4?=
+ =?us-ascii?Q?nqVEFIQorcLJFPLwBEfXKyKE2PUwb7nNOu7zguXweEDTufW/OagjZ6f+S72H?=
+ =?us-ascii?Q?9C/w7aEUdjJsJaP8gOTnoBy9fDmANKp9fJrWBWtE+Ptf7GJMikslt5ZBA/lw?=
+ =?us-ascii?Q?OKSgDtSyG/f8uPYPMKfMODRPHiCg2A/JS3JxHaSTpOcANhksdoyKme7Kc2AC?=
+ =?us-ascii?Q?jYsw3Osm1fPHhBhnjLeLjZw5F6wFFl06Ee9CltfYG3Rx3fi10N2iL6Dfdsc0?=
+ =?us-ascii?Q?NmlVepK7gDg4W9/sZMe+/iqcQxXq0DArlwRIJz8y7z4WXHWBKgP67jC2MFPf?=
+ =?us-ascii?Q?v4dierbQfBUzXn8bkFw7oNR0bJBOW489L+bQhnx9tXbkztOxRyPlISNlf1fM?=
+ =?us-ascii?Q?hoNBN91WtvQtzqudqNuHo9X6s31YEN5MdlE4rQaOrDsWZega5jMiYvxD9JFf?=
+ =?us-ascii?Q?0fZTBiGtRsiPF02OI4pl3BvGwoSHSdN+DwM3/tMpOoNFayMmNpZk37+yn/aU?=
+ =?us-ascii?Q?O9ix9LbEpTrkgF7CfzOWoEzZzuZnLGwRY98ea3ppjVS+33s1uF2mj8mwwcXG?=
+ =?us-ascii?Q?UkDxd7yU8bO3bQe4R4hytxStsYKNeMgatCwX/nib6kD0OcRbLTJF0Dz5yxqG?=
+ =?us-ascii?Q?Jb19MCZUP5135d9u9u2kCckpVEzKoIZKVtsuJGSpu7QUWkFRmfO1wOFVBGrZ?=
+ =?us-ascii?Q?3Nizaqg4DmE5LJLUgCv4aA4/5hs6H3x7TxBkLCeSwTrifOqFJdvWLvZs3k2X?=
+ =?us-ascii?Q?Ew=3D=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21e0fd3b-c8d7-46f1-f43f-08dd79a5385c
+X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2025 09:34:28.6764
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1EPcXVwG0/DMV2OR0tadPjbd/8xeqbs0GgvCjfIrLUq/W7mc4/RvBpwUZj45niZLxmW3Ue0qCCX67RJAy5aNQURW4f9V1raLmWGGdWHGCsw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB0953
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cpu
-branch HEAD: 62e565273993ee47c82ca2975e65ce4bec3c3697  x86/cacheinfo: Standardize header files and CPUID references
+From: Tan En De <ende.tan@starfivetech.com>
 
-elapsed time: 1444m
+Add support for SMBus Quick Read and Quick Write commands.
 
-configs tested: 122
-configs skipped: 3
+Signed-off-by: Tan En De <ende.tan@starfivetech.com>
+---
+v1 -> v2: Removed redundant check of tx_limit and rx_limit
+---
+ drivers/i2c/busses/i2c-designware-core.h   |  4 ++++
+ drivers/i2c/busses/i2c-designware-master.c | 18 +++++++++++++++++-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
+index 347843b4f5dd..91f17181ece1 100644
+--- a/drivers/i2c/busses/i2c-designware-core.h
++++ b/drivers/i2c/busses/i2c-designware-core.h
+@@ -40,6 +40,8 @@
+ 
+ #define DW_IC_DATA_CMD_DAT			GENMASK(7, 0)
+ #define DW_IC_DATA_CMD_FIRST_DATA_BYTE		BIT(11)
++#define DW_IC_DATA_CMD_STOP			BIT(9)
++#define DW_IC_DATA_CMD_CMD			BIT(8)
+ 
+ /*
+  * Registers offset
+@@ -123,7 +125,9 @@
+ 
+ #define DW_IC_ERR_TX_ABRT			0x1
+ 
++#define DW_IC_TAR_SMBUS_QUICK_CMD		BIT(16)
+ #define DW_IC_TAR_10BITADDR_MASTER		BIT(12)
++#define DW_IC_TAR_SPECIAL			BIT(11)
+ 
+ #define DW_IC_COMP_PARAM_1_SPEED_MODE_HIGH	(BIT(2) | BIT(3))
+ #define DW_IC_COMP_PARAM_1_SPEED_MODE_MASK	GENMASK(3, 2)
+diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
+index c5394229b77f..a67add117e44 100644
+--- a/drivers/i2c/busses/i2c-designware-master.c
++++ b/drivers/i2c/busses/i2c-designware-master.c
+@@ -268,6 +268,10 @@ static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
+ 	regmap_update_bits(dev->map, DW_IC_CON, DW_IC_CON_10BITADDR_MASTER,
+ 			   ic_con);
+ 
++	/* i2c-core-smbus.c: Only I2C_SMBUS_QUICK has msg[0].len = 0 */
++	if (dev->msgs[0].len == 0)
++		ic_tar |= DW_IC_TAR_SMBUS_QUICK_CMD | DW_IC_TAR_SPECIAL;
++
+ 	/*
+ 	 * Set the slave (target) address and enable 10-bit addressing mode
+ 	 * if applicable.
+@@ -474,6 +478,16 @@ i2c_dw_xfer_msg(struct dw_i2c_dev *dev)
+ 		regmap_read(dev->map, DW_IC_RXFLR, &flr);
+ 		rx_limit = dev->rx_fifo_depth - flr;
+ 
++		/* i2c-core-smbus.c: Only I2C_SMBUS_QUICK has msg[0].len = 0 */
++		if (buf_len == 0) {
++			regmap_write(
++				dev->map, DW_IC_DATA_CMD,
++				*buf | DW_IC_DATA_CMD_STOP |
++				((msgs[dev->msg_write_idx].flags & I2C_M_RD) ?
++				DW_IC_DATA_CMD_CMD : 0)
++			);
++		}
++
+ 		while (buf_len > 0 && tx_limit > 0 && rx_limit > 0) {
+ 			u32 cmd = 0;
+ 
+@@ -919,7 +933,9 @@ void i2c_dw_configure_master(struct dw_i2c_dev *dev)
+ {
+ 	struct i2c_timings *t = &dev->timings;
+ 
+-	dev->functionality = I2C_FUNC_10BIT_ADDR | DW_IC_DEFAULT_FUNCTIONALITY;
++	dev->functionality = I2C_FUNC_10BIT_ADDR |
++			     I2C_FUNC_SMBUS_QUICK |
++			     DW_IC_DEFAULT_FUNCTIONALITY;
+ 
+ 	dev->master_cfg = DW_IC_CON_MASTER | DW_IC_CON_SLAVE_DISABLE |
+ 			  DW_IC_CON_RESTART_EN;
+-- 
+2.34.1
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-14.2.0
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    gcc-14.2.0
-arc                      axs103_smp_defconfig    gcc-14.2.0
-arc                   randconfig-001-20250411    gcc-14.2.0
-arc                   randconfig-002-20250411    gcc-14.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    gcc-14.2.0
-arm                      jornada720_defconfig    clang-21
-arm                        multi_v5_defconfig    gcc-14.2.0
-arm                   randconfig-001-20250411    clang-21
-arm                   randconfig-002-20250411    clang-21
-arm                   randconfig-003-20250411    gcc-6.5.0
-arm                   randconfig-004-20250411    gcc-6.5.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250411    gcc-9.5.0
-arm64                 randconfig-002-20250411    gcc-9.5.0
-arm64                 randconfig-003-20250411    clang-21
-arm64                 randconfig-004-20250411    clang-21
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250411    gcc-14.2.0
-csky                  randconfig-002-20250411    gcc-9.3.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250411    clang-21
-hexagon               randconfig-002-20250411    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250411    gcc-12
-i386        buildonly-randconfig-002-20250411    gcc-12
-i386        buildonly-randconfig-003-20250411    gcc-12
-i386        buildonly-randconfig-004-20250411    clang-20
-i386        buildonly-randconfig-005-20250411    gcc-11
-i386        buildonly-randconfig-006-20250411    gcc-12
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250411    gcc-14.2.0
-loongarch             randconfig-002-20250411    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                         amcore_defconfig    gcc-14.2.0
-m68k                       bvme6000_defconfig    gcc-14.2.0
-m68k                        m5307c3_defconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250411    gcc-9.3.0
-nios2                 randconfig-002-20250411    gcc-7.5.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-14.2.0
-parisc                randconfig-001-20250411    gcc-14.2.0
-parisc                randconfig-002-20250411    gcc-8.5.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-21
-powerpc                      ep88xc_defconfig    gcc-14.2.0
-powerpc                    ge_imp3a_defconfig    gcc-14.2.0
-powerpc                        icon_defconfig    gcc-14.2.0
-powerpc                    mvme5100_defconfig    gcc-14.2.0
-powerpc               randconfig-001-20250411    gcc-9.3.0
-powerpc               randconfig-002-20250411    clang-21
-powerpc               randconfig-003-20250411    clang-21
-powerpc64             randconfig-001-20250411    gcc-5.5.0
-powerpc64             randconfig-002-20250411    gcc-5.5.0
-powerpc64             randconfig-003-20250411    clang-21
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-21
-riscv                 randconfig-001-20250412    clang-20
-riscv                 randconfig-002-20250412    gcc-8.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250412    clang-18
-s390                  randconfig-002-20250412    gcc-9.3.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                                  defconfig    gcc-14.2.0
-sh                    randconfig-001-20250412    gcc-14.2.0
-sh                    randconfig-002-20250412    gcc-14.2.0
-sh                           se7721_defconfig    gcc-14.2.0
-sh                            titan_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250412    gcc-10.3.0
-sparc                 randconfig-002-20250412    gcc-13.3.0
-sparc64               randconfig-001-20250412    gcc-13.3.0
-sparc64               randconfig-002-20250412    gcc-5.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250412    gcc-12
-um                    randconfig-002-20250412    gcc-12
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250411    gcc-11
-x86_64      buildonly-randconfig-002-20250411    gcc-11
-x86_64      buildonly-randconfig-003-20250411    clang-20
-x86_64      buildonly-randconfig-004-20250411    gcc-12
-x86_64      buildonly-randconfig-005-20250411    clang-20
-x86_64      buildonly-randconfig-006-20250411    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                           alldefconfig    gcc-14.2.0
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250412    gcc-14.2.0
-xtensa                randconfig-002-20250412    gcc-13.3.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
