@@ -1,117 +1,953 @@
-Return-Path: <linux-kernel+bounces-601330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B358A86C77
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:16:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C62EA86C89
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 12:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3956E1B81C60
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 10:16:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CB3E7A891D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Apr 2025 10:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323451DC9B1;
-	Sat, 12 Apr 2025 10:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBA31A08AF;
+	Sat, 12 Apr 2025 10:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s8QrKQ0Y"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="ubHfoeyd"
+Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E978E18DB1E
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 10:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8498F28FF;
+	Sat, 12 Apr 2025 10:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744452938; cv=none; b=FOyytqAXC/NS22xcT/V3aNKfRaWVQ5cRJlKmTLirJpAGy0fsfapMDPepZXDA43dazKxlCPC/AJD1kohHyfy0A2yswpP2rUx/7T+RPXoWLFivfoHt5mPCnGoDh+xro/xeeQxVcGqak9TJhfFoUFHfSQWrcxb25eXrb+7DDjrMNHU=
+	t=1744453885; cv=none; b=Jp/HjHh7Ga4qmCCGikCReem52tmqywzFhR5mmIX4IUMZ+tSNawtms6RxNaOTE5J/4Zb8HRR+EHVhITJn8K2U47YXPcQLNqVRMD+9Ql2dTt+Oc3OAjw2Il+IgLL9Z4DBomXbU16JOc0eBGyxX4eCnjgoYikQBYKJYyfhqX0h4nh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744452938; c=relaxed/simple;
-	bh=U5hk+MMWODIgneoe/y7sjmG33jRN88m0448jMEiqvfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JKcaJFuF75Y5VIQpGmZFAV8icLl+ctHH20iARh7QRC0uHkL1F/Caet+pnKocXpNfeVJ1uwQdwfw7re0rv28HhKcjRdLRNkLF4kNZBrKWC3hlSjYBJ4GE5uN3PX3BcqXYNYVIvT3N6+PdismP4Bp5dp0W56G0lqE1vg2su/aLlDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s8QrKQ0Y; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so13359535e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Apr 2025 03:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744452935; x=1745057735; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e4ZyWmi66QBBd2EXEOk510Gi6AUK8otoa49t7kPH6c0=;
-        b=s8QrKQ0YLrkvny7p8Vk4mO2D3IloATv5VmLyHCobKJi+7GeacHSRw9nmz4XUUBHUAk
-         fT4IIXnCwFA7ZR2O+H7ICECgzt4XBo3H+r1XR27fvH9NWCPh+8Amxqe191qAOwAhawdx
-         IK5Ss70MdpVbXL2zWsmM44rHOCcA5X+djAHUap92JMn3GkYkXGVkVq5Vi7s/OakqUGR8
-         cq7IkzWo9aS+OPY+3vLgIeSAYaPMUvf5eAfdUxujUVBvb8NuXoTb3UZyIxMtLlgXfTrh
-         L4lLP/sXYHqKLCA3lc+vAPuC6YJBrV2azftWWH4Oiy1dVM7eCcXLx9rRCw1MKrkHrCzL
-         jSCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744452935; x=1745057735;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e4ZyWmi66QBBd2EXEOk510Gi6AUK8otoa49t7kPH6c0=;
-        b=v+qaD7KN+pLYePa6FLmxFvBJNVA0JRjf7PzpT1/xRNsVOlVjrN04KpcGc626gfoPdz
-         rDuOmI6CCeWqe8lB6ccIBcLST1lNTeihVBFYDUhJRwhcSnrTEELHdPTEZRD3PMcHuJoA
-         wkjZKo+de5pDU+C6G3YC6IfQv6S04YGqTvanRXHYpZEe5e6ggkTSaCSBk+FhDGEjSa0V
-         0PS1RLVPi5he/t1F4fnC1KSxIdZg2IU1lDGhnVRXPsP6pYslPUtWtm37f+anQ/l+t3lG
-         Ojc0rXZUfZYabWzuSqBNaWJj10+Sh52UUM2K2lkU5Pug7vUrbJXzK1g+17TxcfK3iKZU
-         8t+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVSoGSH+x2iEV+/kKc5Hv4PpJ7McKuCwhU9PkFLUmN9TRMvQSa2ATDTvwNTqlEP0C5A0eAfCLjWhADnZ80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUK+LahH+d6eS1F6kZfbHD4itT9bG6c4uw83OwIbjKK7i6RUqc
-	hXDTrFP+9AAhU9z5JHZ8DOFyb49b3PFV4SW7pbFTgbvq6dZn3g/oIW4V4j4HbxE=
-X-Gm-Gg: ASbGncs1KiTc8bx/BZlkDi9TnSdm8bRxQrXfuwYE0EAYQfuF2/WKxrzjM85NQ5smraw
-	H3MqPE1vvCslPC1uR6mArZIYSoqcpXccVJnn8QVLqO4/TEWD6XdfkF7zIZ43Fqz0VeUW6RaWQob
-	7Y5JJ91Ue7jVJ21W5chS/IPRpBCHVrw25UD0JoUOb6YioJlCC/HEWwij3nXhFtsSBO4w9hzWZBu
-	bHmB+0vsLI5SeW2cPR3fiEkaPQi/FP3vW9Fe3BwbiXOTLDqyJ3Noax9TxGWVkNzEgSivMd5+QlI
-	ZVRVWgBsUzLmDGwtliZvFv/PodJpEXo4J2CVsFVHaNqyPw==
-X-Google-Smtp-Source: AGHT+IGQa6VYeWqqBTxj6y7PlQMkElGotH4Th/ZzP0eMaB+7v7hp4x7EvVajjz8OyBown1N1qO/VMQ==
-X-Received: by 2002:a05:600c:c87:b0:43d:abd:ad0e with SMTP id 5b1f17b1804b1-43f4aafa03amr1252175e9.18.1744452935145;
-        Sat, 12 Apr 2025 03:15:35 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39eae9640e3sm4735171f8f.12.2025.04.12.03.15.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Apr 2025 03:15:34 -0700 (PDT)
-Date: Sat, 12 Apr 2025 13:15:31 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Koichiro Den <koichiro.den@canonical.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] gpio: aggregator: Fix leak in gpio_aggregator_parse()
-Message-ID: <e023bfe52509ce1bef6209ec7c47e99279c551dd.1744452787.git.dan.carpenter@linaro.org>
-References: <cover.1744452787.git.dan.carpenter@linaro.org>
+	s=arc-20240116; t=1744453885; c=relaxed/simple;
+	bh=urZiRLAp0aoNUYUITEgwgx5XgHsoaRYj67OdOVlu9ZY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YIfvDvxs4lYYxgXq96nHzzEHt6NDrq+37EebetLPIvx0AzcHudLXrNQyMjHzATDLWHdPyipDsSndC4VjiIQ5x3szb37hBmz+jEKj1BNVsJg7va0LdUab4+btnIv3ZnYf4q3MOVMYvkymhqJm2KJV8hiy850hFwPMliI/sBxAdXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=ubHfoeyd; arc=none smtp.client-ip=134.0.28.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbox4.masterlogin.de (unknown [192.168.10.79])
+	by mxout2.routing.net (Postfix) with ESMTP id 7B5055FDD4;
+	Sat, 12 Apr 2025 10:21:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1744453294;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9yyHzze+oCaHafYrSUqcLsH/ROgdWzv/1y2Xpf4//kk=;
+	b=ubHfoeyd/duRAyUXsHw39Wm1HZB6CuDk//SHWPBqAaPHtMcCuQDU8lVhKqjNlzOrq8/LXA
+	KuJx+T2KvOuOw+DN9msky47WBlhNogxWfpGIS5mv6vdpntjinrRoJJRYMN8/HlKgXjb0tR
+	h28iN9YrQ0Fi3fk8GHV7Yu4Z9YpowLs=
+Received: from frank-u24.. (fttx-pool-194.15.86.2.bambit.de [194.15.86.2])
+	by mxbox4.masterlogin.de (Postfix) with ESMTPSA id 838DB803AB;
+	Sat, 12 Apr 2025 10:21:33 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Daniel Golle <daniel@makrotopia.org>
+Subject: [PATCH v2] arm64: dts: mediatek: mt7988a-bpi-r4: allow hw variants of bpi-r4
+Date: Sat, 12 Apr 2025 12:21:08 +0200
+Message-ID: <20250412102109.101094-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1744452787.git.dan.carpenter@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-Mail-ID: 6b0e37a7-b3fa-40bc-9b71-d54df8b01019
 
-Call gpio_aggregator_free_lines() before returning on this error path.
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Fixes: 83c8e3df642f ("gpio: aggregator: expose aggregator created via legacy sysfs to configfs")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Sinovoip has released other variants of Bananapi-R4 board.
+The known changes affecting only the LAN SFP+ slot which is replaced
+by a 2.5G phy with optional PoE.
+
+Just move the common parts to a new dtsi and keep differences (only
+i2c for lan-sfp) in dts.
+
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 ---
- drivers/gpio/gpio-aggregator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2:
+- added basic dts for 2g5 variant
+- moved i2c used for sfp-lan to board dts
+---
+ arch/arm64/boot/dts/mediatek/Makefile         |   2 +
+ .../mediatek/mt7988a-bananapi-bpi-r4-2g5.dts  |   5 +
+ .../dts/mediatek/mt7988a-bananapi-bpi-r4.dts  | 404 +-----------------
+ .../dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi | 403 +++++++++++++++++
+ 4 files changed, 414 insertions(+), 400 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-2g5.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi
 
-diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-index 071d76dbfcec..6f941db02c04 100644
---- a/drivers/gpio/gpio-aggregator.c
-+++ b/drivers/gpio/gpio-aggregator.c
-@@ -1101,7 +1101,7 @@ static int gpio_aggregator_parse(struct gpio_aggregator *aggr)
- 		error = bitmap_parselist(offsets, bitmap, AGGREGATOR_MAX_GPIOS);
- 		if (error) {
- 			pr_err("Cannot parse %s: %d\n", offsets, error);
--			return error;
-+			goto err;
- 		}
+diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+index 58484e830063..a1ebc9aa4ba6 100644
+--- a/arch/arm64/boot/dts/mediatek/Makefile
++++ b/arch/arm64/boot/dts/mediatek/Makefile
+@@ -22,6 +22,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-sd.dtbo
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-rfb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986b-rfb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4.dtb
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-2g5.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-emmc.dtbo
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-sd.dtbo
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8167-pumpkin.dtb
+@@ -107,4 +108,5 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8516-pumpkin.dtb
+ DTC_FLAGS_mt7986a-bananapi-bpi-r3 := -@
+ DTC_FLAGS_mt7986a-bananapi-bpi-r3-mini := -@
+ DTC_FLAGS_mt7988a-bananapi-bpi-r4 := -@
++DTC_FLAGS_mt7988a-bananapi-bpi-r4-2g5 := -@
+ DTC_FLAGS_mt8395-radxa-nio-12l := -@
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-2g5.dts b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-2g5.dts
+new file mode 100644
+index 000000000000..76eca976b968
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-2g5.dts
+@@ -0,0 +1,5 @@
++// SPDX-License-Identifier: GPL-2.0-only OR MIT
++
++/dts-v1/;
++
++#include "mt7988a-bananapi-bpi-r4.dtsi"
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
+index 6623112c24c7..431bf066fffb 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
++++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
+@@ -2,408 +2,12 @@
  
- 		for_each_set_bit(i, bitmap, AGGREGATOR_MAX_GPIOS) {
+ /dts-v1/;
+ 
+-#include <dt-bindings/gpio/gpio.h>
+-#include <dt-bindings/regulator/richtek,rt5190a-regulator.h>
++#include "mt7988a-bananapi-bpi-r4.dtsi"
+ 
+-#include "mt7988a.dtsi"
+-
+-/ {
+-	compatible = "bananapi,bpi-r4", "mediatek,mt7988a";
+-	model = "Banana Pi BPI-R4";
+-	chassis-type = "embedded";
+-
+-	chosen {
+-		stdout-path = "serial0:115200n8";
+-	};
+-
+-	reg_1p8v: regulator-1p8v {
+-		compatible = "regulator-fixed";
+-		regulator-name = "fixed-1.8V";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <1800000>;
+-		regulator-boot-on;
+-		regulator-always-on;
+-	};
+-
+-	reg_3p3v: regulator-3p3v {
+-		compatible = "regulator-fixed";
+-		regulator-name = "fixed-3.3V";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
+-		regulator-boot-on;
+-		regulator-always-on;
+-	};
+-};
+-
+-&cpu0 {
+-	proc-supply = <&rt5190_buck3>;
+-};
+-
+-&cpu1 {
+-	proc-supply = <&rt5190_buck3>;
+-};
+-
+-&cpu2 {
+-	proc-supply = <&rt5190_buck3>;
+-};
+-
+-&cpu3 {
+-	proc-supply = <&rt5190_buck3>;
+-};
+-
+-&cpu_thermal {
+-	trips {
+-		cpu_trip_hot: hot {
+-			temperature = <120000>;
+-			hysteresis = <2000>;
+-			type = "hot";
+-		};
+-
+-		cpu_trip_active_high: active-high {
+-			temperature = <115000>;
+-			hysteresis = <2000>;
+-			type = "active";
+-		};
+-
+-		cpu_trip_active_med: active-med {
+-			temperature = <85000>;
+-			hysteresis = <2000>;
+-			type = "active";
+-		};
+-
+-		cpu_trip_active_low: active-low {
+-			temperature = <40000>;
+-			hysteresis = <2000>;
+-			type = "active";
+-		};
+-	};
+-};
+-
+-&i2c0 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&i2c0_pins>;
+-	status = "okay";
+-
+-	rt5190a_64: rt5190a@64 {
+-		compatible = "richtek,rt5190a";
+-		reg = <0x64>;
+-		vin2-supply = <&rt5190_buck1>;
+-		vin3-supply = <&rt5190_buck1>;
+-		vin4-supply = <&rt5190_buck1>;
+-
+-		regulators {
+-			rt5190_buck1: buck1 {
+-				regulator-name = "rt5190a-buck1";
+-				regulator-min-microvolt = <5090000>;
+-				regulator-max-microvolt = <5090000>;
+-				regulator-allowed-modes =
+-				<RT5190A_OPMODE_AUTO>, <RT5190A_OPMODE_FPWM>;
+-				regulator-boot-on;
+-				regulator-always-on;
+-			};
+-			buck2 {
+-				regulator-name = "vcore";
+-				regulator-min-microvolt = <600000>;
+-				regulator-max-microvolt = <1400000>;
+-				regulator-boot-on;
+-				regulator-always-on;
+-			};
+-			rt5190_buck3: buck3 {
+-				regulator-name = "vproc";
+-				regulator-min-microvolt = <600000>;
+-				regulator-max-microvolt = <1400000>;
+-				regulator-boot-on;
+-			};
+-			buck4 {
+-				regulator-name = "rt5190a-buck4";
+-				regulator-min-microvolt = <1800000>;
+-				regulator-max-microvolt = <1800000>;
+-				regulator-allowed-modes =
+-				<RT5190A_OPMODE_AUTO>, <RT5190A_OPMODE_FPWM>;
+-				regulator-boot-on;
+-				regulator-always-on;
+-			};
+-			ldo {
+-				regulator-name = "rt5190a-ldo";
+-				regulator-min-microvolt = <1800000>;
+-				regulator-max-microvolt = <1800000>;
+-				regulator-boot-on;
+-				regulator-always-on;
+-			};
+-		};
+-	};
+-};
+-
+-&i2c2 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&i2c2_1_pins>;
+-	status = "okay";
+-
+-	pca9545: i2c-mux@70 {
+-		compatible = "nxp,pca9545";
+-		reg = <0x70>;
+-		reset-gpios = <&pio 5 GPIO_ACTIVE_LOW>;
++&pca9545 {
++	i2c_sfp2: i2c@2 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-
+-		i2c@0 {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			reg = <0>;
+-
+-			pcf8563: rtc@51 {
+-				compatible = "nxp,pcf8563";
+-				reg = <0x51>;
+-				#clock-cells = <0>;
+-			};
+-
+-			eeprom@57 {
+-				compatible = "atmel,24c02";
+-				reg = <0x57>;
+-				size = <256>;
+-			};
+-
+-		};
+-
+-		i2c_sfp1: i2c@1 {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			reg = <1>;
+-		};
+-
+-		i2c_sfp2: i2c@2 {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			reg = <2>;
+-		};
++		reg = <2>;
+ 	};
+ };
+-
+-/* mPCIe SIM2 */
+-&pcie0 {
+-	status = "okay";
+-};
+-
+-/* mPCIe SIM3 */
+-&pcie1 {
+-	status = "okay";
+-};
+-
+-/* M.2 key-B SIM1 */
+-&pcie2 {
+-	status = "okay";
+-};
+-
+-/* M.2 key-M SSD */
+-&pcie3 {
+-	status = "okay";
+-};
+-
+-&pio {
+-	mdio0_pins: mdio0-pins {
+-		mux {
+-			function = "eth";
+-			groups = "mdc_mdio0";
+-		};
+-
+-		conf {
+-			pins = "SMI_0_MDC", "SMI_0_MDIO";
+-			drive-strength = <8>;
+-		};
+-	};
+-
+-	i2c0_pins: i2c0-g0-pins {
+-		mux {
+-			function = "i2c";
+-			groups = "i2c0_1";
+-		};
+-	};
+-
+-	i2c1_pins: i2c1-g0-pins {
+-		mux {
+-			function = "i2c";
+-			groups = "i2c1_0";
+-		};
+-	};
+-
+-	i2c1_sfp_pins: i2c1-sfp-g0-pins {
+-		mux {
+-			function = "i2c";
+-			groups = "i2c1_sfp";
+-		};
+-	};
+-
+-	i2c2_0_pins: i2c2-g0-pins {
+-		mux {
+-			function = "i2c";
+-			groups = "i2c2_0";
+-		};
+-	};
+-
+-	i2c2_1_pins: i2c2-g1-pins {
+-		mux {
+-			function = "i2c";
+-			groups = "i2c2_1";
+-		};
+-	};
+-
+-	gbe0_led0_pins: gbe0-led0-pins {
+-		mux {
+-			function = "led";
+-			groups = "gbe0_led0";
+-		};
+-	};
+-
+-	gbe1_led0_pins: gbe1-led0-pins {
+-		mux {
+-			function = "led";
+-			groups = "gbe1_led0";
+-		};
+-	};
+-
+-	gbe2_led0_pins: gbe2-led0-pins {
+-		mux {
+-			function = "led";
+-			groups = "gbe2_led0";
+-		};
+-	};
+-
+-	gbe3_led0_pins: gbe3-led0-pins {
+-		mux {
+-			function = "led";
+-			groups = "gbe3_led0";
+-		};
+-	};
+-
+-	gbe0_led1_pins: gbe0-led1-pins {
+-		mux {
+-			function = "led";
+-			groups = "gbe0_led1";
+-		};
+-	};
+-
+-	gbe1_led1_pins: gbe1-led1-pins {
+-		mux {
+-			function = "led";
+-			groups = "gbe1_led1";
+-		};
+-	};
+-
+-	gbe2_led1_pins: gbe2-led1-pins {
+-		mux {
+-			function = "led";
+-			groups = "gbe2_led1";
+-		};
+-	};
+-
+-	gbe3_led1_pins: gbe3-led1-pins {
+-		mux {
+-			function = "led";
+-			groups = "gbe3_led1";
+-		};
+-	};
+-
+-	i2p5gbe_led0_pins: 2p5gbe-led0-pins {
+-		mux {
+-			function = "led";
+-			groups = "2p5gbe_led0";
+-		};
+-	};
+-
+-	i2p5gbe_led1_pins: 2p5gbe-led1-pins {
+-		mux {
+-			function = "led";
+-			groups = "2p5gbe_led1";
+-		};
+-	};
+-
+-	mmc0_pins_emmc_45: mmc0-emmc-45-pins {
+-		mux {
+-			function = "flash";
+-			groups = "emmc_45";
+-		};
+-	};
+-
+-	mmc0_pins_emmc_51: mmc0-emmc-51-pins {
+-		mux {
+-			function = "flash";
+-			groups = "emmc_51";
+-		};
+-	};
+-
+-	mmc0_pins_sdcard: mmc0-sdcard-pins {
+-		mux {
+-			function = "flash";
+-			groups = "sdcard";
+-		};
+-	};
+-
+-	uart0_pins: uart0-pins {
+-		mux {
+-			function = "uart";
+-			groups =  "uart0";
+-		};
+-	};
+-
+-	snfi_pins: snfi-pins {
+-		mux {
+-			function = "flash";
+-			groups = "snfi";
+-		};
+-	};
+-
+-	spi0_pins: spi0-pins {
+-		mux {
+-			function = "spi";
+-			groups = "spi0";
+-		};
+-	};
+-
+-	spi0_flash_pins: spi0-flash-pins {
+-		mux {
+-			function = "spi";
+-			groups = "spi0", "spi0_wp_hold";
+-		};
+-	};
+-
+-	spi1_pins: spi1-pins {
+-		mux {
+-			function = "spi";
+-			groups = "spi1";
+-		};
+-	};
+-
+-	spi2_pins: spi2-pins {
+-		mux {
+-			function = "spi";
+-			groups = "spi2";
+-		};
+-	};
+-
+-	spi2_flash_pins: spi2-flash-pins {
+-		mux {
+-			function = "spi";
+-			groups = "spi2", "spi2_wp_hold";
+-		};
+-	};
+-};
+-
+-&pwm {
+-	status = "okay";
+-};
+-
+-&serial0 {
+-	status = "okay";
+-};
+-
+-&ssusb1 {
+-	status = "okay";
+-};
+-
+-&tphy {
+-	status = "okay";
+-};
+-
+-&watchdog {
+-	status = "okay";
+-};
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi
+new file mode 100644
+index 000000000000..1ab09ed2f151
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi
+@@ -0,0 +1,403 @@
++// SPDX-License-Identifier: GPL-2.0-only OR MIT
++
++/dts-v1/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/regulator/richtek,rt5190a-regulator.h>
++
++#include "mt7988a.dtsi"
++
++/ {
++	compatible = "bananapi,bpi-r4", "mediatek,mt7988a";
++	model = "Banana Pi BPI-R4";
++	chassis-type = "embedded";
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	reg_1p8v: regulator-1p8v {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-1.8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	reg_3p3v: regulator-3p3v {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++};
++
++&cpu0 {
++	proc-supply = <&rt5190_buck3>;
++};
++
++&cpu1 {
++	proc-supply = <&rt5190_buck3>;
++};
++
++&cpu2 {
++	proc-supply = <&rt5190_buck3>;
++};
++
++&cpu3 {
++	proc-supply = <&rt5190_buck3>;
++};
++
++&cpu_thermal {
++	trips {
++		cpu_trip_hot: hot {
++			temperature = <120000>;
++			hysteresis = <2000>;
++			type = "hot";
++		};
++
++		cpu_trip_active_high: active-high {
++			temperature = <115000>;
++			hysteresis = <2000>;
++			type = "active";
++		};
++
++		cpu_trip_active_med: active-med {
++			temperature = <85000>;
++			hysteresis = <2000>;
++			type = "active";
++		};
++
++		cpu_trip_active_low: active-low {
++			temperature = <40000>;
++			hysteresis = <2000>;
++			type = "active";
++		};
++	};
++};
++
++&i2c0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c0_pins>;
++	status = "okay";
++
++	rt5190a_64: rt5190a@64 {
++		compatible = "richtek,rt5190a";
++		reg = <0x64>;
++		vin2-supply = <&rt5190_buck1>;
++		vin3-supply = <&rt5190_buck1>;
++		vin4-supply = <&rt5190_buck1>;
++
++		regulators {
++			rt5190_buck1: buck1 {
++				regulator-name = "rt5190a-buck1";
++				regulator-min-microvolt = <5090000>;
++				regulator-max-microvolt = <5090000>;
++				regulator-allowed-modes =
++				<RT5190A_OPMODE_AUTO>, <RT5190A_OPMODE_FPWM>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			buck2 {
++				regulator-name = "vcore";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <1400000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			rt5190_buck3: buck3 {
++				regulator-name = "vproc";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <1400000>;
++				regulator-boot-on;
++			};
++			buck4 {
++				regulator-name = "rt5190a-buck4";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-allowed-modes =
++				<RT5190A_OPMODE_AUTO>, <RT5190A_OPMODE_FPWM>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			ldo {
++				regulator-name = "rt5190a-ldo";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++		};
++	};
++};
++
++&i2c2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c2_1_pins>;
++	status = "okay";
++
++	pca9545: i2c-mux@70 {
++		compatible = "nxp,pca9545";
++		reg = <0x70>;
++		reset-gpios = <&pio 5 GPIO_ACTIVE_LOW>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		i2c@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++
++			pcf8563: rtc@51 {
++				compatible = "nxp,pcf8563";
++				reg = <0x51>;
++				#clock-cells = <0>;
++			};
++
++			eeprom@57 {
++				compatible = "atmel,24c02";
++				reg = <0x57>;
++				size = <256>;
++			};
++
++		};
++
++		i2c_sfp1: i2c@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++		};
++	};
++};
++
++/* mPCIe SIM2 */
++&pcie0 {
++	status = "okay";
++};
++
++/* mPCIe SIM3 */
++&pcie1 {
++	status = "okay";
++};
++
++/* M.2 key-B SIM1 */
++&pcie2 {
++	status = "okay";
++};
++
++/* M.2 key-M SSD */
++&pcie3 {
++	status = "okay";
++};
++
++&pio {
++	mdio0_pins: mdio0-pins {
++		mux {
++			function = "eth";
++			groups = "mdc_mdio0";
++		};
++
++		conf {
++			pins = "SMI_0_MDC", "SMI_0_MDIO";
++			drive-strength = <8>;
++		};
++	};
++
++	i2c0_pins: i2c0-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c0_1";
++		};
++	};
++
++	i2c1_pins: i2c1-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c1_0";
++		};
++	};
++
++	i2c1_sfp_pins: i2c1-sfp-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c1_sfp";
++		};
++	};
++
++	i2c2_0_pins: i2c2-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c2_0";
++		};
++	};
++
++	i2c2_1_pins: i2c2-g1-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c2_1";
++		};
++	};
++
++	gbe0_led0_pins: gbe0-led0-pins {
++		mux {
++			function = "led";
++			groups = "gbe0_led0";
++		};
++	};
++
++	gbe1_led0_pins: gbe1-led0-pins {
++		mux {
++			function = "led";
++			groups = "gbe1_led0";
++		};
++	};
++
++	gbe2_led0_pins: gbe2-led0-pins {
++		mux {
++			function = "led";
++			groups = "gbe2_led0";
++		};
++	};
++
++	gbe3_led0_pins: gbe3-led0-pins {
++		mux {
++			function = "led";
++			groups = "gbe3_led0";
++		};
++	};
++
++	gbe0_led1_pins: gbe0-led1-pins {
++		mux {
++			function = "led";
++			groups = "gbe0_led1";
++		};
++	};
++
++	gbe1_led1_pins: gbe1-led1-pins {
++		mux {
++			function = "led";
++			groups = "gbe1_led1";
++		};
++	};
++
++	gbe2_led1_pins: gbe2-led1-pins {
++		mux {
++			function = "led";
++			groups = "gbe2_led1";
++		};
++	};
++
++	gbe3_led1_pins: gbe3-led1-pins {
++		mux {
++			function = "led";
++			groups = "gbe3_led1";
++		};
++	};
++
++	i2p5gbe_led0_pins: 2p5gbe-led0-pins {
++		mux {
++			function = "led";
++			groups = "2p5gbe_led0";
++		};
++	};
++
++	i2p5gbe_led1_pins: 2p5gbe-led1-pins {
++		mux {
++			function = "led";
++			groups = "2p5gbe_led1";
++		};
++	};
++
++	mmc0_pins_emmc_45: mmc0-emmc-45-pins {
++		mux {
++			function = "flash";
++			groups = "emmc_45";
++		};
++	};
++
++	mmc0_pins_emmc_51: mmc0-emmc-51-pins {
++		mux {
++			function = "flash";
++			groups = "emmc_51";
++		};
++	};
++
++	mmc0_pins_sdcard: mmc0-sdcard-pins {
++		mux {
++			function = "flash";
++			groups = "sdcard";
++		};
++	};
++
++	uart0_pins: uart0-pins {
++		mux {
++			function = "uart";
++			groups =  "uart0";
++		};
++	};
++
++	snfi_pins: snfi-pins {
++		mux {
++			function = "flash";
++			groups = "snfi";
++		};
++	};
++
++	spi0_pins: spi0-pins {
++		mux {
++			function = "spi";
++			groups = "spi0";
++		};
++	};
++
++	spi0_flash_pins: spi0-flash-pins {
++		mux {
++			function = "spi";
++			groups = "spi0", "spi0_wp_hold";
++		};
++	};
++
++	spi1_pins: spi1-pins {
++		mux {
++			function = "spi";
++			groups = "spi1";
++		};
++	};
++
++	spi2_pins: spi2-pins {
++		mux {
++			function = "spi";
++			groups = "spi2";
++		};
++	};
++
++	spi2_flash_pins: spi2-flash-pins {
++		mux {
++			function = "spi";
++			groups = "spi2", "spi2_wp_hold";
++		};
++	};
++};
++
++&pwm {
++	status = "okay";
++};
++
++&serial0 {
++	status = "okay";
++};
++
++&ssusb1 {
++	status = "okay";
++};
++
++&tphy {
++	status = "okay";
++};
++
++&watchdog {
++	status = "okay";
++};
 -- 
-2.47.2
+2.43.0
 
 
