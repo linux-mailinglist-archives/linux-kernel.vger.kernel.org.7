@@ -1,80 +1,86 @@
-Return-Path: <linux-kernel+bounces-601756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA2EA871FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 14:51:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E552A87219
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 15:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02B457AC1AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 12:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6723B4EE2
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 13:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3C41B393A;
-	Sun, 13 Apr 2025 12:50:52 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CADB1C6FE2;
+	Sun, 13 Apr 2025 13:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=frank.fyi header.i=@frank.fyi header.b="PBdMPDZA"
+Received: from mx01.frank.fyi (mx01.frank.fyi [5.189.178.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B561AF0CE
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 12:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CB8170A0B;
+	Sun, 13 Apr 2025 13:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.178.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744548652; cv=none; b=HOUdv4XwNLt20E17WzCXOYiRdQ0V2DAS346UPc2y6Mo5GUVu1YxYM6ksUxHqnv/0/ulCmk/MSTSFNxFgP/JrWtFcXlAX/MlBURTyD/6PVHUzNy6yLO5aXF9ocr6M/YJ1CsLc2MG+qGAx6QsC8R7ke5E8RtNnUof2Vi1nqmF3Gm0=
+	t=1744549799; cv=none; b=K8Q37kMPWimRZDR80d9x9tFYK3TVHi5kp16P1wZf/1STZaPzf8or7AymQ6mdTXcGWCLVpl36YB3OaD4EGbXwk0viw6CJcmM6almY1L9rw3cXC4iUbO13nQVdnC1XXU4kVgrErPm6yU8jMR9QAl3mmMmwhclfT7nkCT3AtMPo+og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744548652; c=relaxed/simple;
-	bh=f6hWhAVNRCt1ZlU8kRO/QK8Bf80ASNvP+5hVXVlXR6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZB62ATzKPjHaTmPG/hTbXR+APS0+CRAHD59/MNHK/EY8KD0FmkrZsMiHs1ldkpy4rST1nwMMt7YgMRVu0YCXaDs4/0M2BYc+VHmakBdvUprWiXU9UbNOOJfiPl03HxWgAyQ5S1miP+NuexrqxLmMro7LwBShs+FSzPMJPFqGUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-82-137.bstnma.fios.verizon.net [173.48.82.137])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 53DCoe9B010927
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 13 Apr 2025 08:50:41 -0400
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 5A0F12E00E9; Sun, 13 Apr 2025 08:50:40 -0400 (EDT)
-Date: Sun, 13 Apr 2025 08:50:40 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
-Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-Subject: Re: [PATCH] ext4: filesystems without casefold feature cannot be
- mounted
-Message-ID: <20250413125040.GB1116327@mit.edu>
-References: <20250413045718.150126-1-kevinpaul468@gmail.com>
+	s=arc-20240116; t=1744549799; c=relaxed/simple;
+	bh=wtiQ0nS3DhbObUTTm+6iRZ44WlXogukaqHakj7jL4Jo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iNvf3CeEwura9NTZlMZ3gtJX47B/d4RDVCr9DcTBzNzdiX502s9NqpGNBNlFOGHao7mBckEN4xnmVa5T7xc6MsMNSbdPWSeTmJi2eh4Dd+gHEDWQkdur6ohyGdGRJ4h/NVUW12TrnpleFk1CLk/eS7HEEvZ5MVP8wDD3l7g61fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=frank.fyi; spf=pass smtp.mailfrom=agowa338.de; dkim=pass (2048-bit key) header.d=frank.fyi header.i=@frank.fyi header.b=PBdMPDZA; arc=none smtp.client-ip=5.189.178.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=frank.fyi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=agowa338.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=frank.fyi; s=mail;
+	t=1744549789; bh=wtiQ0nS3DhbObUTTm+6iRZ44WlXogukaqHakj7jL4Jo=;
+	h=From:To:Cc:Subject:Date:Reply-To:From;
+	b=PBdMPDZATl+cpGkIPTSkCd8UxAC4+BcdOFAylNr7HEUsRfflKAHFoyD7PHEHvnGU2
+	 M6NmYBRl7ca6iuV0bDIj8x2rRg+eBoz8ZSS2/081GlV9b6Q3JPmui6CWOxjUIKbQHI
+	 VGWrbNzMu1i94+ORd2WBXINcNlR1crgdLJs7UUfngrZ4H92Y3033uHxk71HscwTKXs
+	 VAxNZ2VnqfnroosxcJ64gcaLXXrUMpvFFXbOHer0kmWa1hBrioY0No+lEERlma6vy2
+	 0i8HaO6d+g2khZdm256SH224aDi8PpIx+CW/28u2F4gvvVvzziRIN2wlSf5uE/Ew2k
+	 rvzqWoprc3aNA==
+Received: by mx01.frank.fyi (Postfix, from userid 0)
+	id DE2E7112010F; Sun, 13 Apr 2025 15:09:49 +0200 (CEST)
+From: Klaus Frank <vger.kernel.org@frank.fyi>
+To: linux-doc@vger.kernel.org
+Cc: Tom Herbert <tom@herbertland.com>, "David S . Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org
+Subject: [PATCH] Fixes: be26849bfb6f docs net.ipv6.flowlabel_state_ranges new default FALSE
+Date: Sun, 13 Apr 2025 15:02:37 +0200
+Message-ID: <20250413130237.4098868-1-vger.kernel.org@frank.fyi>
+X-Mailer: git-send-email 2.49.0
+Reply-To: linux-doc@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250413045718.150126-1-kevinpaul468@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Apr 13, 2025 at 10:27:18AM +0530, Kevin Paul Reddy Janagari wrote:
-> commit 985b67cd8639 ("ext4: filesystems without casefold feature cannot be
-> mounted with siphash") upstream
-> 
-> CONFLICT: A condition above this was wrapped in #ifdef making git not
-> able to merge them: Merge conflict
-> 
-> When mounting the ext4 filesystem, if the default hash version is set to
-> DX_HASH_SIPHASH but the casefold feature is not set, exit the mounting.
-> 
-> compile tested
-> Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+From: Klaus Frank <git@frank.fyi>
 
-I believe the problem you are concerned with was fixed by commit
-a2187431c395 ("ext4: fix error message when rejecting the default
-hash")
+Commit be26849bfb6fcee4123c687fc39bd6da1b3be328 changed the default value
+this updates the documentation.
 
-And I'm not sure what you meant by your reference to the merge
-conflict?  Were you trying to cherry-pick 985b67cd8639 into some other
-tree or branch, and that was where you saw the merge conflict?
+Signed-off-by: Klaus Frank <git@frank.fyi>
+---
+ Documentation/networking/ip-sysctl.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-     		    	     	       - Ted
+diff --git a/Documentation/networking/ip-sysctl.rst b/Documentation/networking/ip-sysctl.rst
+index 5c63ab928b97..b3e70b760cf4 100644
+--- a/Documentation/networking/ip-sysctl.rst
++++ b/Documentation/networking/ip-sysctl.rst
+@@ -2057,7 +2057,7 @@ flowlabel_state_ranges - BOOLEAN
+ 	- TRUE: enabled
+ 	- FALSE: disabled
+ 
+-	Default: true
++	Default: FALSE
+ 
+ flowlabel_reflect - INTEGER
+ 	Control flow label reflection. Needed for Path MTU
+-- 
+2.49.0
+
+
 
