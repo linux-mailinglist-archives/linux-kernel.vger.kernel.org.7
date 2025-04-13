@@ -1,47 +1,48 @@
-Return-Path: <linux-kernel+bounces-601814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91374A872D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 19:11:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82BD9A872DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 19:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEB4D18952F6
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 17:11:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E84117A4360
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 17:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8561EA7F0;
-	Sun, 13 Apr 2025 17:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DEF1E9B26;
+	Sun, 13 Apr 2025 17:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="gXQb7WEx"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="rr4lF3it"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190431C5D56;
-	Sun, 13 Apr 2025 17:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737382F32;
+	Sun, 13 Apr 2025 17:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744564271; cv=none; b=ZpHpSWvCtiUm2VbMpJJZXZ2mRXdB+QZ7k22sIHhh6tZP8KDBZmpLPUehjcMu7GlRbzMX/WwymipseBxYamqbje66RJ68nOvmSjIVtb34flKC4N13F0qAkArr/26jpkHwRyf/UdPYouiyZEIzXKdCURtUHFTRY8lonW0Z36c5cRo=
+	t=1744564282; cv=none; b=Nkz3QQRJovIl2klyegfG3eoyZTN0HAbgBRE6paeS9lTlPKvg6OyxVARrBZeL2En13tAkvdDgyzWafqjO2i4nUEuLyWdwm3WQcvZUxifQjndxcdeIOWkve+2fYdQ5dxK7fCg98x5FrBl2KKR2zfKIcILUWdGrKx8WfJTQbrVeOTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744564271; c=relaxed/simple;
-	bh=Dd00MAcQXaBwzX5oHPO/PZyvKrghrdBUXv9jtXcuSEI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jDbiISjCU8w6GTFWs3b4svufWy9fDI8KpxLOZfOfHFS1fVPniZa57R38p6YjtJFwGVyjgEXzUiQu5RYZ/gTfMFONiQ0PqnQaH0EuO/LJwr6Mx/Cy4Pw/3lfWPim7UPdxyLGi1GZaQUNrKwlWNHsWA2xIeVHAAadNRtomhrYuoFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=gXQb7WEx; arc=none smtp.client-ip=46.235.229.95
+	s=arc-20240116; t=1744564282; c=relaxed/simple;
+	bh=9oHVQ7CtSbKX133UJ9gCH7uieSHnTxBKrJT23eh+fSU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jIKnxILWH2H6iPfdVp8KkeqEQuRXrdtjJA6Wd/XTSK0geFQQmP+1bekca8xiJx2RcHcmxJPM4zeTbxeX8FdQVY7Uua6KOt54BXUWvyqDBHM3Z88lTTpX+iJvHfPORTX/LW1FXr7TJHezTgx+/h2uPizpzZYsIn9ToeG6+w/UtV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=rr4lF3it; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=zuyyklr2NSR5SZnTYhW13D4u+H13Qg7A3uaAtI3DJS8=; b=gXQb7WExS0sZ2bjQ
-	Tqch/B6Ur8i7yedpK714X8cDhVuGKbeEySlmK4VMq8L9r/SlTGFsRiGBZJYe1t4lceS6ZpSB+VGBo
-	ronFZzxmrHTPUtivRylrlPxjKTtGwT48FK6wpX2Ld+sImOIJwaxu+D56rX4FGwOyuUKnVEdo06eE1
-	XKP0x5CiZgNPiKzFmo7fpMboyK8hBZdkzQTzCasdtAGRTIMQg8mZWeodwfu0p7S+RTo4NWXD0E71U
-	n2Fd/yX83DJrmarZ4jr/aq1dQVUeu4s+yNPRpfnz5pLG2ZRsHqg2104d56et4qhA8INz/baUVUggp
-	fpj89oTb0JfBnA+3IA==;
+	:Subject; bh=bgWFqULpEF30Eenn5ri+Fulo5+82i9/JXUhAOMaGLMA=; b=rr4lF3itGf/2AhCA
+	9F21QhOwLgeQt97SnbCtdlMLTBX+pL7IzYL2VDi5Z6W69i8/kt2wX8w6zsaUKTI9YCt0LRhdWP+rx
+	0WxWMdvENyVyZr1+TqJqmrFbYQ+KaNlhzZt3SFVjnXXcIMvPdWc0ZYVjBc+bAtA/HJdrinNQBP0sN
+	TLV7TEuDGKsgMSFTqTUBQPQMDfPV1FEjeKZg33c1RTO8YV2EZ4yPRx9xOP3x96M5aV2G6iC4avli6
+	x0WRj+z9GhPyx+Nz9ao+/vNMN5nKlrSYMGKDe+T9KBQ/+lar6lee8qlmLPBSSFzqvoUQV9+p1ZBj9
+	G5w9pb7aDTDXFKMzSA==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1u40rD-00B22s-1j;
-	Sun, 13 Apr 2025 17:10:59 +0000
+	id 1u40rE-00B22s-0f;
+	Sun, 13 Apr 2025 17:11:00 +0000
 From: linux@treblig.org
 To: kraxel@redhat.com,
 	airlied@redhat.com
@@ -55,10 +56,12 @@ Cc: maarten.lankhorst@linux.intel.com,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 0/2] drm: qxl: Deadcoding
-Date: Sun, 13 Apr 2025 18:10:56 +0100
-Message-ID: <20250413171058.271234-1-linux@treblig.org>
+Subject: [PATCH 1/2] drm: qxl: Remove dead qxl_io_flush_* functions
+Date: Sun, 13 Apr 2025 18:10:57 +0100
+Message-ID: <20250413171058.271234-2-linux@treblig.org>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250413171058.271234-1-linux@treblig.org>
+References: <20250413171058.271234-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,25 +72,52 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Hi,
-  A couple of small deadcodings for qxl.  The first
-just cleans up a couple of trivial unusued wrappers.
-The second cleans out some debugfs code that's been unused
-for a few years.
+qxl_io_flush_release() and qxl_io_flush_surfaces() were both added
+in 2013's
+commit f64122c1f6ad ("drm: add new QXL driver. (v1.4)")
 
-Dave
+but have remained unused.  Remove them.
+
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/gpu/drm/qxl/qxl_cmd.c | 10 ----------
+ drivers/gpu/drm/qxl/qxl_drv.h |  2 --
+ 2 files changed, 12 deletions(-)
 
-
-Dr. David Alan Gilbert (2):
-  drm: qxl: Remove dead qxl_io_flush_* functions
-  drm: qxl: Remove unused debugfs code
-
- drivers/gpu/drm/qxl/qxl_cmd.c     | 10 ----------
- drivers/gpu/drm/qxl/qxl_debugfs.c | 29 -----------------------------
- drivers/gpu/drm/qxl/qxl_drv.h     | 12 ------------
- 3 files changed, 51 deletions(-)
-
+diff --git a/drivers/gpu/drm/qxl/qxl_cmd.c b/drivers/gpu/drm/qxl/qxl_cmd.c
+index d6ea01f3797b..1bdc5abf8dd1 100644
+--- a/drivers/gpu/drm/qxl/qxl_cmd.c
++++ b/drivers/gpu/drm/qxl/qxl_cmd.c
+@@ -356,16 +356,6 @@ void qxl_io_notify_oom(struct qxl_device *qdev)
+ 	outb(0, qdev->io_base + QXL_IO_NOTIFY_OOM);
+ }
+ 
+-void qxl_io_flush_release(struct qxl_device *qdev)
+-{
+-	outb(0, qdev->io_base + QXL_IO_FLUSH_RELEASE);
+-}
+-
+-void qxl_io_flush_surfaces(struct qxl_device *qdev)
+-{
+-	wait_for_io_cmd(qdev, 0, QXL_IO_FLUSH_SURFACES_ASYNC);
+-}
+-
+ void qxl_io_destroy_primary(struct qxl_device *qdev)
+ {
+ 	wait_for_io_cmd(qdev, 0, QXL_IO_DESTROY_PRIMARY_ASYNC);
+diff --git a/drivers/gpu/drm/qxl/qxl_drv.h b/drivers/gpu/drm/qxl/qxl_drv.h
+index cc02b5f10ad9..a6184aaebf62 100644
+--- a/drivers/gpu/drm/qxl/qxl_drv.h
++++ b/drivers/gpu/drm/qxl/qxl_drv.h
+@@ -355,8 +355,6 @@ int qxl_io_update_area(struct qxl_device *qdev, struct qxl_bo *surf,
+ void qxl_io_reset(struct qxl_device *qdev);
+ void qxl_io_monitors_config(struct qxl_device *qdev);
+ int qxl_ring_push(struct qxl_ring *ring, const void *new_elt, bool interruptible);
+-void qxl_io_flush_release(struct qxl_device *qdev);
+-void qxl_io_flush_surfaces(struct qxl_device *qdev);
+ 
+ union qxl_release_info *qxl_release_map(struct qxl_device *qdev,
+ 					struct qxl_release *release);
 -- 
 2.49.0
 
