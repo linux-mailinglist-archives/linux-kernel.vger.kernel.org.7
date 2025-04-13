@@ -1,73 +1,77 @@
-Return-Path: <linux-kernel+bounces-601654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E654A870DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 08:17:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E141DA870DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 08:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9025189AE1B
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 06:17:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53469179DD7
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 06:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03EE14B945;
-	Sun, 13 Apr 2025 06:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259F8156C63;
+	Sun, 13 Apr 2025 06:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="LD66cF0R"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="mgnEflpp"
+Received: from out162-62-58-69.mail.qq.com (out162-62-58-69.mail.qq.com [162.62.58.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAF0AD51
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 06:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59FB54764
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 06:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744525041; cv=none; b=LTPdaAanz1VZxjnD0y2zremSEeiDe6ecgsddiIqevGzleZsX6KoTUXVLpaggNANVtIY06OFj6YtzPyTc/FBefeycog1/NpEBbw97+jG1OGrxU8Wud3+j2xn/j83aro3txFcYs0A4jWGgNp7cISaHbbfIMKc/LOljiqhAy23mRms=
+	t=1744525758; cv=none; b=LMoA1SYzxZw6GU5t4z7fvLeIofaKVx+00ay58J+WE4QVRBiugrN7QewmOhOg9U0lTuaYeNOn/pJssZEISqhbHWzbFPUfyQb4JCLHXcSF9wH+LJIdoFH5tA4zxrYTtAkGs1cYjKGsyIVY4zGKk3C7xyTQUQR80SgpEqE7lEIziqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744525041; c=relaxed/simple;
-	bh=Yoq4L1+8A7XrTAZFoddY8DSgifS75oyCOY4YYU44hzI=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=IwlPQ2EpiT5hhDKYPLCa7q+KgqgrzVC6j3IhiYbv3NkRBgYDqeAy2NGaAFNvLY84SNeGDiRwvj2XHuEYUvIIJa9NuayeHpuFoH5ju6DNL2974wmn3mxADRMy6NLRGGODZUCiVf4ln1TfsTNCgSUxLgkaqDPR0PORjZwYLjtFDs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=LD66cF0R; arc=none smtp.client-ip=162.62.58.211
+	s=arc-20240116; t=1744525758; c=relaxed/simple;
+	bh=VfjOKrdlXknj6vXHwWJVj/PZAb+mg4jlr/TvsLO2kuQ=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=mPPl9qGvWI/XqPDGiBNJzS8//c59FnxT28G9ft1jL6vUnz4TTcO8Ak3dA7mDoASutR7vg44ZLoYS9L/p8oyeizb6rNPoPvmj/HCASdrOfgsIJoybX6g4EhYdgNSAw1s7Br24wkAA9qHwDMwbySN7rOS6jn42/Ba0JmCPDbKtBdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=mgnEflpp; arc=none smtp.client-ip=162.62.58.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1744524727; bh=2yvmZAuH9j25eTkS6E+NJjKnimW3QAVF9M+qJhAohyg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=LD66cF0RAdglWmaSxDnZ9O4GFeHpk74cT9ubTDeCVSBckeoNTy6fU4J9UQV2Dy4Ed
-	 rDYQe0Po4cun1y0iNRZtEHAdxb5HLC5dhfzNpMRPjIY1U5gjw78tai/CFfI/xevrZb
-	 jBdUipG1R45GjPm6jIV2j/aVIcwJdjCgSlGnun2k=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id 30523E86; Sun, 13 Apr 2025 14:12:05 +0800
-X-QQ-mid: xmsmtpt1744524725trffrrpcl
-Message-ID: <tencent_2A0DBB8A33499E9B1B374B021B8925D5BA08@qq.com>
-X-QQ-XMAILINFO: NyTsQ4JOu2J2cFDr+85NpTYteCgurxpNhlOOuE+OAdPGDk/1u57mlWB9iRWYRC
-	 hGpP4qCp42XkMrrEY+YfB/Irio0lBESFfzVfhOo5B2cIHG/8cSJO1z7Q+DmiO2c+sDghCgO5xEbZ
-	 33KAPTt2v3k/sj3SZmll/g7LGe+SwhuETnKikNxsoVKj0Sbk+421ttoF/7emqNO1nZNsQn1tYFNx
-	 DUKkYyISIxEYX0c0myBRps372kFfX0PNl5cQfNDB7quDR7Hm0i/PmFnI/a6Ht5tI6/Y48IHgUFVj
-	 Kml5i5mwT45ORmA9HwsaHO6JrMNkr/1AzaLiEWU2ArDRRgwOyMeVbJuz/hWy4JMwSkP0brqpFlM9
-	 edXsBAJOT005xL7aOL7/A+eC01N+Lkw8G2mz3bazfixKJzvt1DpiJZhlxb6X/le1vysnfg0kig+N
-	 n369DOZX4N+Ln2iGh26rF75kvkrfwfM/uBt6tahHJ1JEAsZrQ/JREgp4Bnqs9vYe6NsoNVL5Cw3o
-	 C8QDL8ksGX1hw0+nF/O5Mf/AObthTB4YAiPyGJRGHtyBTjA3KJadYT+o3aqoWe3BiftpFnfYCvJT
-	 2yQx0iNdVnv0VchaBiyTzq9yHPMdN30MStfl5pvoZ1SmIIjmVQIDG/fFBH6N9/2L+z88voXE0ZPC
-	 S26YNGPoN+gwOLEcTRHwwxjY5cWisi82XTC/4/Iz/rdjUTjsZrfeUEVpTvsNTEnI0gkLHcDr9wAH
-	 R9QLlb/7R1cYUBg3ZKb7V2b0piJINCTm8Lq1nsLiUYgRy4C5tKri8S2UrN3+XCfwTVwM/LVAumA1
-	 u+RUcFsBXnWT3dqBvzz5vaLYg8QynqCBiE/F2PbUfw+pnlEm8zinYMrGf2/tIIQdng4vx8ar0Mjo
-	 W8tDh/UPta1M7oZGLzzIqf5GOub9F4rNthlKYRbEkiVqCylbrMpWs=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+5c042fbab0b292c98fc6@syzkaller.appspotmail.com
-Cc: dhowells@redhat.com,
-	linux-afs@lists.infradead.org,
+	t=1744525750; bh=D0ZirlimTq5Afw6FKAt5hzKPG4G54aL2TbVMhjYhzlk=;
+	h=From:To:Cc:Subject:Date;
+	b=mgnEflppUO9gQryvS9cohbmo5vJBkpFbReG+FRBLdOnb1ObWH0+8dOHhZyyJqkyml
+	 eM7DHzKfgVY2MNoTx9yRKzIzgYzdEHrHRtvOpeBi0pr2ox8JkL8yvctL1e8Zb08bmT
+	 T6RBiNiVIikD31Q+r5WnySeUkxqU6+4EIDKglbVo=
+Received: from ground-ThinkStation-P3-Tower.. ([159.226.94.115])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 42AADAF5; Sun, 13 Apr 2025 14:16:42 +0800
+X-QQ-mid: xmsmtpt1744525002t7211d50w
+Message-ID: <tencent_20ED8A5A99ECCFE616B18F17D8056B5AF707@qq.com>
+X-QQ-XMAILINFO: OQ59tfF64tJLUuC/UaBXPGpc48yfl8ikeVT8EldQ9/JSA1xi0KT6CnB5h+ygdL
+	 yAi4dcg4GWRX5w0iOjTgpCPgf7owO7fFlHn1rO0nyeZqLbXnmmdif5W6ZLwrvIV2P24TWPIi//vw
+	 hVEROrgssqRDOdjKnqkcGnM5tsNSGuZ5gz+gZ8LbND6+xUE9O/KnIYMK2VOBknTrZQaMG+Q8Nedr
+	 uE2h7mPKWRcoT1CoRLIONBVSkLewM9jxmmbNUEhisK+1jdHXDMXJSplC8RaMBFSVveOXf+7UVdGP
+	 2TjrV93cYnI4xAmX4KJyp5BF4DMDBmFPrbTvAwO7LkdoDRw7WUd140GPSfW0MBxE9+9YskhEUjO/
+	 sNfT8FdcFs1x66drPsgfHXfwOiikiMtZtUHqBI3gDNJP7N2qVUt8EzkXCcbxYs9kHPtjajmLvq9N
+	 QEWe9eMgQl4a3YJN7TsGTc8py4pUkXPLRu/qFGej1fr1V3ONfUnLuuWlXcEohUsicEa1CkkHsJNM
+	 7tt8iSg6IWpoij83wpzK4QZOTrXXJmBoN0uGRB5qD8ZXKD7AB4Me8bja0DdQyg1nzR7Kr/ymeGm+
+	 MN8qPN94abOG134g/V1J4aPa28fJAnqzSV5twvkrJGv82xnc0nHVwz1TCnKQOcvHIeyPghEegyOl
+	 98Qjv4GUQk6sLRO+ul/XzdDB/uecJsaEGKVEJBXiV0VNZCu07rZc0/83ckrH5PeBzhX6CflZDhbD
+	 RsayhWW/hCBBsw0AovPIEIABRUzM7DPQYRjMp/X+FoVWfuQD3IiKeKGVe0TZkZXt6uItgRWj4CHP
+	 wf2/Xoq+2X+wAb62oEgk1LKEyiV37/GMNzlLL3vPdvYSTlgakkbBAx9yaKYe3dUYX3Prvuy8EUaP
+	 Pha73Z/JlqhDlj9LSbAIpT2PRoUkWA6u4wcx2Gw44x0JeJu3kxDlyVt0r4Zzqfmvv6j6DfFOdc
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: cxxz16 <990492108@qq.com>
+To: sgoutham@marvell.com,
+	gakula@marvell.com,
+	sbhatta@marvell.com,
+	hkelam@marvell.com,
+	bbhushan2@marvell.com,
+	netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	andrew+netdev@lunn.ch,
 	linux-kernel@vger.kernel.org,
-	marc.dionne@auristor.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] afs: Set vllist to NULL if addr parsing fails
-Date: Sun, 13 Apr 2025 14:12:05 +0800
-X-OQ-MSGID: <20250413061204.184651-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <67fb3265.050a0220.2c5fcf.001a.GAE@google.com>
-References: <67fb3265.050a0220.2c5fcf.001a.GAE@google.com>
+	cxxz16 <990492108@qq.com>
+Subject: [Patch next] octeontx2-pf: fix potential double free in rvu_rep_create()
+Date: Sun, 13 Apr 2025 14:16:39 +0800
+X-OQ-MSGID: <20250413061639.2162285-1-990492108@qq.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,79 +80,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-syzbot reported a bug in in afs_put_vlserverlist. [1]
+In rvu_rep_create(), the netdev is allocated via alloc_etherdev()
+and assigned to rep->netdev. This rep structure is then stored
+in the priv->reps array indexed by rep_id.
 
-Because afs_parse_text_addrs() parses incorrectly, its return value -EINVAL
-is assigned to vllist, which results in -EINVAL being used as the vllist
-address when afs_put_vlserverlist() is executed.
+If either rvu_rep_devlink_port_register() or register_netdev() fails,
+the function frees ndev using free_netdev(ndev) before jumping to 
+the 'exit:' label. However, in the 'exit:' section, the function 
+iterates over priv->reps[] and again frees rep->netdev, which points 
+to the same ndev.
 
-Set the vllist value to NULL when a parsing error occurs to avoid this issue.
+This results in a potential double free of the same netdev pointer,
+which can cause memory corruption or crashes.
 
-[1]
-kAFS: bad VL server IP address
-BUG: unable to handle page fault for address: fffffffffffffffa
-#PF: supervisor write access in kernel mode
-#PF: error_code(0x0002) - not-present page
-PGD e186067 P4D e186067 PUD e188067 PMD 0
-Oops: Oops: 0002 [#1] SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5834 Comm: syz-executor362 Not tainted 6.15.0-rc1-syzkaller-00025-gbec7dcbc242c #0 PREEMPT(full)
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:arch_atomic_fetch_add arch/x86/include/asm/atomic.h:93 [inline]
-RIP: 0010:raw_atomic_fetch_sub_release include/linux/atomic/atomic-arch-fallback.h:949 [inline]
-RIP: 0010:atomic_fetch_sub_release include/linux/atomic/atomic-instrumented.h:401 [inline]
-RIP: 0010:__refcount_sub_and_test include/linux/refcount.h:389 [inline]
-RIP: 0010:__refcount_dec_and_test include/linux/refcount.h:432 [inline]
-RIP: 0010:refcount_dec_and_test include/linux/refcount.h:450 [inline]
-RIP: 0010:afs_put_vlserverlist+0x3a/0x220 fs/afs/vl_list.c:67
-Code: 53 48 83 ec 18 e8 e6 35 2f fe 48 85 ed 74 43 e8 dc 35 2f fe 4c 8d 65 10 be 04 00 00 00 bb ff ff ff ff 4c 89 e7 e8 76 ad 93 fe <f0> 0f c1 5d 10 31 ff 89 de e8 f8 30 2f fe 85 db 7e 29 e8 af 35 2f
-RSP: 0018:ffffc90003e5fae0 EFLAGS: 00010246
-RAX: 0000000000000001 RBX: 00000000ffffffff RCX: ffffffff838c071a
-RDX: fffffc0000000000 RSI: 0000000000000004 RDI: fffffffffffffffa
-RBP: ffffffffffffffea R08: 0000000000000001 R09: fffffbffffffffff
-R10: fffffffffffffffd R11: 0000000000000001 R12: fffffffffffffffa
-R13: ffffffffffffffea R14: ffff8880216ad700 R15: ffff888034ec2000
-FS:  0000555561d3e380(0000) GS:ffff888124ab9000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffffffffffffffa CR3: 000000007a922000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- afs_alloc_cell fs/afs/cell.c:218 [inline]
- afs_lookup_cell+0x12a5/0x1680 fs/afs/cell.c:264
- afs_cell_init+0x17a/0x380 fs/afs/cell.c:386
- afs_proc_rootcell_write+0x21f/0x290 fs/afs/proc.c:247
- proc_simple_write+0x114/0x1b0 fs/proc/generic.c:825
- pde_write fs/proc/inode.c:330 [inline]
- proc_reg_write+0x23d/0x330 fs/proc/inode.c:342
- vfs_write+0x25c/0x1180 fs/read_write.c:682
- ksys_write+0x12a/0x240 fs/read_write.c:736
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+To fix this, avoid calling free_netdev(ndev) before jumping to 'exit:'.
+The cleanup logic at 'exit:' should handle the freeing safely.
 
-Fixes: e2c2cb8ef07a ("afs: Simplify cell record handling")
-Reported-by: syzbot+5c042fbab0b292c98fc6@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=5c042fbab0b292c98fc6
-Tested-by: syzbot+5c042fbab0b292c98fc6@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Signed-off-by: cxxz16 <990492108@qq.com>
 ---
- fs/afs/cell.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/marvell/octeontx2/nic/rep.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index 0168bbf53fe0..f31359922e98 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -177,6 +177,7 @@ static struct afs_cell *afs_alloc_cell(struct afs_net *net,
- 					      VL_SERVICE, AFS_VL_PORT);
- 		if (IS_ERR(vllist)) {
- 			ret = PTR_ERR(vllist);
-+			vllist = NULL;
- 			goto parse_failed;
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+index 04e08e06f30f..de9a50f2fc39 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+@@ -681,7 +681,6 @@ int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack *extack)
+ 		eth_hw_addr_random(ndev);
+ 		err = rvu_rep_devlink_port_register(rep);
+ 		if (err) {
+-			free_netdev(ndev);
+ 			goto exit;
+ 		}
+ 
+@@ -691,7 +690,6 @@ int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack *extack)
+ 			NL_SET_ERR_MSG_MOD(extack,
+ 					   "PFVF representor registration failed");
+ 			rvu_rep_devlink_port_unregister(rep);
+-			free_netdev(ndev);
+ 			goto exit;
  		}
  
 -- 
-2.43.0
+2.34.1
 
 
