@@ -1,116 +1,106 @@
-Return-Path: <linux-kernel+bounces-601900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B45A873BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 22:00:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 285CBA873B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 22:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BF34188D6A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 20:00:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882F8170EB0
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 20:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C6A1F4624;
-	Sun, 13 Apr 2025 20:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920941519A1;
+	Sun, 13 Apr 2025 20:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rkTQcgXG"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7etbMb4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8001F3FEB
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 20:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C904B1EEA39;
+	Sun, 13 Apr 2025 20:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744574424; cv=none; b=P4vf03q4FU7HMMESR8+qZMwH+L6zZL4WaOi2pbrYhw9KBib5AkYZorfFn2CauVEebVaTMSgTiHlY5ufXQNJVvjDXImF2LRGdB86TCCKEnj1nWRj0TWX8TdlZUSiHU+1R+thHMhkimfXcIupZ38QciaCe0XvP6yjLcSr12AbA+WI=
+	t=1744574421; cv=none; b=gGsdImHwFSBWuC7bz0nNJx2ihrTtF0q7kLaess+IYJhH48pnDiZEYWfXadiNNhceZ8f1m2dn4oEdISLgRv260MpIR1WuR90bd/A4MRjdG1FIPmD52/SXBfENUrS/1GX1uHHnqJhEhwqS9EBvNNHyw3t8qi63vmyP9MR0kJkdv8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744574424; c=relaxed/simple;
-	bh=QJ2echnBKmP1Tc0MPNN5Qs/cA6RJIbwCOvfk2b6xdjY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iBm/my9OvmjTo8uWynID2KQ56cRE53XoGMXSzjJDcQjnkpnBYbvGbAYNjZlEJtKhlpiy/XBksSU6k20Bxj7uc0cPqonb/5x5pCbtaT6Y3+b/lOpweFRbHroSbUrEaqHUTLK88LM6xrV6pIo+AvAP8t6xd/N2E4Eb5L7t76Mu2wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rkTQcgXG; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39c266c1389so2442072f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 13:00:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744574420; x=1745179220; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BRXcjlCuBBWXh12lLPtZTq+NKWPipRgLKhuCTXh5/1M=;
-        b=rkTQcgXG8jjTiFwH+FSfUA0XIp5wl2xUDG7/bMz2DCsRDGEv6PQjD9nNOss4a4xwC1
-         tVhi8tPQgu4QdpvtW8piDZkYtpR8GZO3l+EQ0FEx2h2Ygu3ieYtSF97vtw+d4f5ZQ1hw
-         ZTSl+Sg/O+7xqz6FbvlLvH+Rpxk01WDg/jkWkg8OsqEz4EjTdxXB68hkk8f5WZWEXhl0
-         KUO8nv/R/WloqdHK/6wDXPHzZ+Zo0+4Kl7g1FBPc+m8IEBeumI4Nq9l/Wkb6Do0WmMdX
-         0GkjmojXWLCkMZLZ4wgTdlc9J6+xZwvV651WFX3U1qJ6o1XPSNgUmpv0CjwgR02jdwJU
-         I7Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744574420; x=1745179220;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BRXcjlCuBBWXh12lLPtZTq+NKWPipRgLKhuCTXh5/1M=;
-        b=uyWGSj0pFEntBIcbQHCEOsez11UBRz2sd34TtbxgaLWo1VixpUwl4QYGUxEzTj/yTE
-         0xZ+xKcKbrrslB8flYbV/Pc8icjYmJlY1S8afI2unUjwxm7KIq2/xmQnxvnLP4N4gBzA
-         CoUewjRrPWcTmJs6z7yB7sjq6xUCUwqkzvXCD1JTemSb0aR4p/Iz5xda51k8AEO3S4wg
-         B8nqqQBebVIhPyM5bTFQJumnS40PjEeL3Tz4Jf2gkZZsSNE51YVEgDhBm24hGcEoa1ki
-         RkQOX7tv4LGFb6+h6l4I85EdiO+MSHo+sQKoG9RF7eE+3iVHx9UChgHer32sEdcNwLOQ
-         LCOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMoZJGp79tA9RcwyWxr4+Q0I7NqhlynwCFDEAndgf3DOiT+R3Tz2RqWMoNXoATaLXTMPjyYzwkEVGPX6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS2F5paGwFPCz4QC9pWsQKh0wfaVTvvQqznJGQV/L7fAAttBhc
-	e8fFH0VXfG8m5su5BOupj5APPhmYkQ0mEuevzYDU3c6kVVXp6IuQUDi08IgwDUI=
-X-Gm-Gg: ASbGncsyIVXfD8LGRqFefKh7nKE/xf5x759vAbGKGHz46M0OTR0ZjCFRNwR2wxnBNao
-	Z+qApHFXnQlQdfaZ6jpcNLH4iCIAVEwGbPMh3DKVpnGN+OleUxkvVbB/GVXEzXJ7FinbctRQndB
-	lSdKKZKcHwnuJ42nfs6F6rccAEWGrtM5ITEbKiCmXveNY8KGuM5WUZd+r7NjfcahQykCcmW/woa
-	9iFRibPaQt1+rC6jQwvqHxSgoSFq2UrnGmHr4cKZJgJdWes7F0MwfRq7qAWwV6vuvh9Krt/rrMc
-	tmFMj8SethQSRnq4O8va2pbHXQ+7CiKBjarC
-X-Google-Smtp-Source: AGHT+IG6aXB8MfFdxS06qXTQl7E0SZ9Bu9T+Rnn8pWyPvB1ogSH7Ry2LHZj1Y9t+Z1BdYzRzo+8lFw==
-X-Received: by 2002:a5d:6da8:0:b0:39c:1424:3246 with SMTP id ffacd0b85a97d-39ea51d3527mr7164305f8f.2.1744574420199;
-        Sun, 13 Apr 2025 13:00:20 -0700 (PDT)
-Received: from brgl-pocket.. ([2a01:e0a:81f:5e10:e852:1f2c:a4b2:8e89])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43ce0asm8810540f8f.70.2025.04.13.13.00.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Apr 2025 13:00:19 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2] gpiolib: Allow to use setters with return value for output-only gpios
-Date: Sun, 13 Apr 2025 22:00:14 +0200
-Message-ID: <174457440298.11196.9277089690698361995.b4-ty@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250411-mdb-gpiolib-setters-fix-v2-1-9611280d8822@bootlin.com>
-References: <20250411-mdb-gpiolib-setters-fix-v2-1-9611280d8822@bootlin.com>
+	s=arc-20240116; t=1744574421; c=relaxed/simple;
+	bh=+Fq0MhmsH1itLSjdDC0e0AQDvHDYfYtdZa0fZk4m4G8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UIBc5r6tPvPY245XbyXxfUnG3+AFRh1cUZuSuLexWmrLhX0pEuj9eVBjPl1/g/SJKMpaVUWHnXBxkKpE5xu/h80ZQzuMwCBrvBDRPS6I2OjYjCaqeJAWWtXCPD9/8N/HCGydSYYZHcHBIeq9j1qPZ6VpPplt3vq5JCZhPcy2u9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7etbMb4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18373C4CEE7;
+	Sun, 13 Apr 2025 20:00:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744574421;
+	bh=+Fq0MhmsH1itLSjdDC0e0AQDvHDYfYtdZa0fZk4m4G8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I7etbMb4XdA3KK4rodjXK+gs7WJKkTNURpYg1Dm3lmMi0djrpCanbW0EMa1nU7NgG
+	 2m9IMgPYgfqHVSx3hNRxMTiGSv596a7uN8rGHOVN4C2Y6+5refmXtRlnnNYx1t68WI
+	 ThOA3/zPpfS2ql5xJy7ecnRSV9lHnVMRbDbJW7qX/GlkALVy1Xyl8JfuN9V1NAZ7Fp
+	 VFjpzfocCRa1cc4gVTkn9hclofT6PEcML1iQJb1X4y4mGvpGdXlGssK20oAL4hI2py
+	 vFuYL+IiJOje9CSjjDInkdrDbO15+Giymo5Njey3/KkhpB48k0zKHvb2tTdb+uodP4
+	 0+q2UgFBlyqSg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1u43V4-0051hr-Fo;
+	Sun, 13 Apr 2025 21:00:18 +0100
+Date: Sun, 13 Apr 2025 21:00:23 +0100
+Message-ID: <87v7r7ygq0.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org,	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,	linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev,	Alyssa Rosenzweig <alyssa@rosenzweig.io>,	Janne
+ Grunau <j@jannau.net>,	Hector Martin <marcan@marcan.st>,	Sven Peter
+ <sven@svenpeter.dev>,	Bjorn Helgaas <bhelgaas@google.com>,	Lorenzo
+ Pieralisi <lpieralisi@kernel.org>,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
+ <kw@linux.com>,	Rob Herring <robh@kernel.org>,	Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,	Mark Kettenis <mark.kettenis@xs4all.nl>
+Subject: Re: [PATCH v3 01/13] PCI: apple: Set only available ports up
+In-Reply-To: <k3wj3wkk3cymyacboalkhe2fa7jvkpuehq4knpsouoyhvoavpl@bafg4oakp4lr>
+References: <20250401091713.2765724-1-maz@kernel.org>
+	<20250401091713.2765724-2-maz@kernel.org>
+	<k3wj3wkk3cymyacboalkhe2fa7jvkpuehq4knpsouoyhvoavpl@bafg4oakp4lr>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: manivannan.sadhasivam@linaro.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, asahi@lists.linux.dev, alyssa@rosenzweig.io, j@jannau.net, marcan@marcan.st, sven@svenpeter.dev, bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, krzk+dt@kernel.org, mark.kettenis@xs4all.nl
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-
-On Fri, 11 Apr 2025 16:52:09 +0200, Mathieu Dubois-Briand wrote:
-> The gpiod_direction_output_raw_commit() function checks if any setter
-> callback is present before doing anything. As the new GPIO setters with
-> return values were introduced, make this check also succeed if one is
-> present.
+On Sun, 13 Apr 2025 17:57:35 +0100,
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
 > 
+> On Tue, Apr 01, 2025 at 10:17:01AM +0100, Marc Zyngier wrote:
+> > From: Janne Grunau <j@jannau.net>
+> > 
+> > Iterating over disabled ports results in of_irq_parse_raw() parsing
+> > the wrong "interrupt-map" entries, as it takes the status of the node
 > 
+> 'as it doesn't take account'?
+> 
+> > into account.
 
-Applied, thanks!
+No, I really mean it in the positive form. of_irq_parse_raw() checks
+of_device_is_available(), and gets really confused if walking from a
+disabled port. You end up with the interrupt for the next *available*
+port, and everything goes pear shaped from then onwards.
 
-[1/1] gpiolib: Allow to use setters with return value for output-only gpios
-      https://git.kernel.org/brgl/linux/c/93eb2c1249eadce4bbc1914092f34f5988be13af
+So IMO "as it takes into account" describes pretty accurately the
+situation.
 
-Best regards,
+	M.
+
 -- 
-Bartosz Golaszewski <brgl@bgdev.pl>
+Jazz isn't dead. It just smells funny.
 
