@@ -1,355 +1,174 @@
-Return-Path: <linux-kernel+bounces-601822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B20A872F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 19:24:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04583A872FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 19:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375E63AA868
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 17:22:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE92E17222A
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 17:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980561F1523;
-	Sun, 13 Apr 2025 17:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7241F1931;
+	Sun, 13 Apr 2025 17:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AQncs9AL"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PP4g02t/"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2084.outbound.protection.outlook.com [40.107.237.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE1B1EE7DF
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 17:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744564988; cv=none; b=ACZR+mJsfsPBvzYNKrn5iXGlqaKjaRsLvk5pwyYHuAFtzAiaJ7iBXcX4R9gaRX5Gt65SfMuoFNSLvAi4UvXHQcnfSnVihH6Na/YnbokV44+KisuA50+kQmIVptRxAHYzWQNjc0Qg8RvLoZMmEdb7gxWEwq3Xe0fkpouzI+uM1ek=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744564988; c=relaxed/simple;
-	bh=+3rXgyYwnpGLLiDASVXR4Gp/bWkwXQqmC3/UYTJemow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kepqL3MucryfHyTLnPOlUlyGr583d+fHw3LVK/6sB+hLBiGgIb0+YTy6X/OpuqKenAgda+nmQT4470nFhKijVJ3VAmlVVS/I8dxEY2xlT2/I1F5ThEL+1PEVkFJxbiWWd3iqAIIp6UwAwUbKN1zdYulSqXdJAkYjWmRnpuGGLc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AQncs9AL; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-af590aea813so4216484a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 10:23:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744564985; x=1745169785; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WMLqGtdJ/lNZg2u+SzDoYr1T8Gc3psQxwhxeVe0bA0Y=;
-        b=AQncs9ALeCy8FBmQgaPeLCrg0l0RVyIGY3cOJvay/l3Csn4BZmVVX4kBtUU6GMlXXx
-         kmw9fQiBuxtDXa+jPrS7+f+tJbcfAOSEHPpI9XoBGJbEsDFNAFScbiK5vbuZ+0iUtDbR
-         as18yZed9qzxfafK0yMK+nPhtBl3azD2QN4SHwg6cl4aNTiKdRY3I9FYcWDkbWFB/Hms
-         z5uXI9tWtZBZmUYciH4329CT2GnJGHEuXfC2w8nyW7WzqwcZhwFpjMrOM8qFbRaeqXZy
-         h/pjqfIDzmncXgWRM2IzJJECE/LN0lbCVr4aRlvuYaaPl3EfqiO6vBAM2jnayna8G2zl
-         GTNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744564985; x=1745169785;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WMLqGtdJ/lNZg2u+SzDoYr1T8Gc3psQxwhxeVe0bA0Y=;
-        b=LXhWry4VL0gA/YJRdf6yc25IZvj7M2Um9uu9GUErE4pDeRNwAV46kw2UDsCrUCxW1n
-         y3DK5uEa2vTW6mziYZvqNugEsUSFZGp4+R4ZlUvbDe/FbN1l2aXqt/9DwmbGWxERvP/R
-         JBDdYLN7WZ1t7EOCQC29M9v8hnasUq2EzLxYjg0J4rJ+xObBtZeg2ilo3Zbh1WifZ58J
-         cLnAeUbcLpmzz5xiB3RK5+0y2xxUs/X13e4q2Shexa9vb147zp60ubMtn8/enY572Uey
-         TC9C5C3fkF4s4Rj2J5n1aPtK3Q0s/askQhEPLlobY9j3z542xU2/IeFcUx4t4d2SEkMT
-         YQHA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1AeUlgGsIoLmv/xvkgeAxucnZo3yT8yDUwWmUSb4QvQdo6RkS5pT0GVr8Pluk1FeZ0g4PjlbS1fhhGdY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPQCFceE8weG8BBQpDhqF6dvq6CFfjlVaG9GKNBgwvXXVMQW0J
-	J/shIGt0WKxodLu93GqhQf7hQRCg/IwCi0MaGbYebN8AK5RPvZMipQo/5fwL8Q==
-X-Gm-Gg: ASbGncv35YuU9tKtdDVqh8lLu9xbK5PLn9OGRJ01Zo2sFCirDb4Js4tYv1hyiLCmim0
-	BVTwiOYgLfY/xhVwy4Zugiz/9qtgb8HsDwTdL7/jWSoUMherrBNUOpCLFD2BfKOHGtvl2FFYoqM
-	m7wt0zbNw02uD3RB6TG3R6Q9cFhpmhhwBkJ6ouO/28gOLobA3+uuYOl9s/5hmI1k6Pd473mTDC6
-	368gwZ7Mj3B9EE3dz8GnbgtmeRi/OcGtowQX1/42pLvsMBMCGDTSOnYovndWDr/NL1BlXjsz5nt
-	5Y1lkU8hPsJ8z1Dezpf55/W4/1eREbCv5XJzebPis4IPY0zRpzeO
-X-Google-Smtp-Source: AGHT+IFlRjD7Fra8KN0FhMq7Q6pK28kTkoPIZ2LALF6SUFBEuRkY8x4yld7mrcxkPzz2Bbxo02/hmw==
-X-Received: by 2002:a17:902:ccce:b0:221:1497:7b08 with SMTP id d9443c01a7336-22b7f91d901mr213900565ad.23.1744564984871;
-        Sun, 13 Apr 2025 10:23:04 -0700 (PDT)
-Received: from thinkpad ([120.60.137.231])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccb7b5sm84346255ad.237.2025.04.13.10.22.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Apr 2025 10:23:04 -0700 (PDT)
-Date: Sun, 13 Apr 2025 22:52:56 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Janne Grunau <j@jannau.net>, Hector Martin <marcan@marcan.st>, 
-	Sven Peter <sven@svenpeter.dev>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Mark Kettenis <mark.kettenis@xs4all.nl>
-Subject: Re: [PATCH v3 12/13] PCI: apple: Abstract register offsets via a
- SoC-specific structure
-Message-ID: <vhmf25kseqbyt4nikec5i3aqb57kmjb6d3aenstuvflfl3xslp@66aclligtyoy>
-References: <20250401091713.2765724-1-maz@kernel.org>
- <20250401091713.2765724-13-maz@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA73225776
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 17:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744565105; cv=fail; b=n/nx2/6IY+YXhNu7h7BTYSWNNo5fOV83GM2JxEJo1AD5yHHNTTJlhy0tVu2mZdqYKABmBgAt0te/IcwMcjfu2xNBmUTdlAvy85kdI0PXpuFELHmX8WMXnmndxpYuKaJDajyDbnzMBRQqB5qXbJEVMIJuO85v38uRm2mTHtOuSzU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744565105; c=relaxed/simple;
+	bh=xPUJFw6Dcac6UBHYRCxafLf9cqBVvDuFkz0cdEeSvB8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N0/ZJKUUvLBGNV1eosQQpY85KcXqoSjhNM3BWQVCA1YAScWsP7Zp2ZhjKKPR4Sb9uAIkwpYqyusOfNxwthaYAvr6QbgYnWRwRhhmRKVrexTGuAPADI6EThNV1V46mZTPNK6tZ4XwBbdS5wqtis9VKmOXbmp5OOnXYirM1iG3sOw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PP4g02t/; arc=fail smtp.client-ip=40.107.237.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rWC4FFpMEYgzeoFaC0D7NKNh4FePi5BhcCeTwUtpH/dXPfKOjOwmLOX5YRwtdBFVppwWJAAKY4iX1Io+5KsZOkVf395E4/6Uc/Bggl9MjVQtpKXGpi1j1i7OReIHOGmGb54yctNsTbdnPlj7pjjiwdTwLPqdbaJ+/DUZq4sBEGoh5xSXjEB9kT8jIPeg0R0cb4CtdMs3ZWGr5nUpFsPOB406/dfWDVAzNfRRLjq0KI1N7SO0qgNo3eD5duQ3IxUVWyy0s11jBrcs0MWBguijMv743p9W6M4g5+gS+FCC8KpC0Mr0lgB4TL8/kqMGrxzIwYVfY4OuxpXHOwRBV49DUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iF56jiip/23j8b3CD3FezVNCccrvBnOXxTV2T9XYPbU=;
+ b=e3GA/U5Kfj5Rvagt9Ix6iX9bxQH3EAg17yWXVWdo8QQ/Zlpvl5SVFsFdtzVRw6RF9G0H5GAFrIMaOzVOS7WUhibaAdinTMv4BD6/LQ/rLbfppXylZ2EcggPbf3YwS/dIqChyK6icNsAwn2lGL860KJT7bnreTvMgWZ4TEP7eCRWGXZ6NwCDECXKZV38X/aS7kzgNVH6CuW6eU7o9wDF62f9KfwR/0pT6g7+Km3Bl3lVLRoo2LPnnxtoyqV9NHBFbdV/busOWbyq2s26bU52zFNFu3vR9Ag9WuarUljycO1wZ8yQmCQ6ysFs1WWapg/3RamAjkf1Ho2ZE56HDh3Psxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iF56jiip/23j8b3CD3FezVNCccrvBnOXxTV2T9XYPbU=;
+ b=PP4g02t/ncyEEwyjw49BDYfThjCz3kJ1hdTA76jAFDnV/XKYDxvhWdpjiG5yv/2+niktybBFxgkM7krbwLRAV4YTICM3B/PiUq7qXLshYPv02Qgpfeulcxbi+equIGRx9waxjHjHVkWUVZqeeA6oHs4Hl1u/nIWqX+Qg3mPDj8I=
+Received: from BN9PR03CA0297.namprd03.prod.outlook.com (2603:10b6:408:f5::32)
+ by SA1PR12MB6945.namprd12.prod.outlook.com (2603:10b6:806:24c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.27; Sun, 13 Apr
+ 2025 17:24:59 +0000
+Received: from BN3PEPF0000B074.namprd04.prod.outlook.com
+ (2603:10b6:408:f5:cafe::b2) by BN9PR03CA0297.outlook.office365.com
+ (2603:10b6:408:f5::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.31 via Frontend Transport; Sun,
+ 13 Apr 2025 17:24:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B074.mail.protection.outlook.com (10.167.243.119) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8655.12 via Frontend Transport; Sun, 13 Apr 2025 17:24:59 +0000
+Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 13 Apr
+ 2025 12:24:56 -0500
+From: Shivank Garg <shivankg@amd.com>
+To: <shaggy@kernel.org>
+CC: <shivankg@amd.com>, <willy@infradead.org>,
+	<jfs-discussion@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+	<syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com>
+Subject: [PATCH] jfs: implement migrate_folio for jfs_metapage_aops
+Date: Sun, 13 Apr 2025 17:23:57 +0000
+Message-ID: <20250413172356.561544-1-shivankg@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250401091713.2765724-13-maz@kernel.org>
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B074:EE_|SA1PR12MB6945:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9f32a26-45db-4699-d26c-08dd7ab01dfc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dMqkSpvGMhIvMsyoGC/fsm3PX6kNmIMEax9sEs/vhpC0wz/TrQVTLIsIhj0B?=
+ =?us-ascii?Q?xDiC68bNu4SLOAo9WG9hvxymYRSyVc4Kx2wuRWr+EePv2+8Z2Npa69OCZuIy?=
+ =?us-ascii?Q?lqp0DTC/sHmErjOD8CqmRXvr70/lAAaEJTMCOGr74EhXBBViKX3SG5SafHxJ?=
+ =?us-ascii?Q?8trM5A4s1UZsDvS6lqYb3BNEAOxn7DBGrwf/ffrE6dQMOU1OzvFWqdVYUqCg?=
+ =?us-ascii?Q?mltI872AHmZgAm2LZAwo0WQWxBPVYukpibPX1iswUkrlF3/j849dcBSMXmAP?=
+ =?us-ascii?Q?QQPfati512U6/0bL98AQ0mrA2yU/JNdPEaE8r3cbDRnSVCpMyDNW4zu7Ta5Z?=
+ =?us-ascii?Q?InYxigazoh+jQqxiFYKnkXhH3pk3edDfZ1ROfn/mXj+ORDiYYdLMgSuwl5Cj?=
+ =?us-ascii?Q?3nLnk0++BPW9zqNWbbzKvsfvYK5pwf7QZoAjXHIULt4kd+BLARWHRIOBpRA+?=
+ =?us-ascii?Q?MDfdO5vcTjpgkYcY+koqidWfRsjNfQ7duI1ju+JFkUYoraQe61PJRFb8x0++?=
+ =?us-ascii?Q?6YUUBWsbDM2O9bNfPxJKgJeDi10o8vkJRZq9Eh3pQeJ9uSk1BDV9GvQG/Da4?=
+ =?us-ascii?Q?iTAFu5WETy+9u1TKmESRSnqGSZF691VEX9LHgpAFYZn3QsniE2ukfld7tjyU?=
+ =?us-ascii?Q?D+lCCjv86b20Pk6bvtwg392RM28AxxwFPN7RXMjKLtx0xu98VEKncvnK+zPh?=
+ =?us-ascii?Q?BDmiByt7NUJ93MKBdp9ehyssIPU/Fn694kldvPWDEl8Z/TahKBIZEY2jbvYg?=
+ =?us-ascii?Q?lwq3m1xxtdHJUTw4AEwY7xa5NjF5AwRO7509aBMVMRSc+mEVQhBUzsi1YIh2?=
+ =?us-ascii?Q?Yq0auXbcRc+qRXyV9hY2O8Q/tFe+I3x7KVuYxRGL0KfMqTyO7aBFQsLoJqmg?=
+ =?us-ascii?Q?XIS6Kq0+jflW10n+aQf5PGk1uCiaHD7Hzu3N6NIZGuqm4nov9BF5wtz1v/iD?=
+ =?us-ascii?Q?w5CnnJUBV5r1YDm6nhSGzQAMCFTM620H7cuDqYh96nPPzEMM4acbc09xo2LE?=
+ =?us-ascii?Q?MN30H/aUIbMnDTu5KIcX2vo9qADrUitSBnxHQiETfQOEfP92qhqAfCeTTDuw?=
+ =?us-ascii?Q?i7tV517SHUZgzK7+Sx78FQgBjPL4Ff8CoZ1/BnCbbEdHjX0DrCuBrac1JkYq?=
+ =?us-ascii?Q?xjPMwC7O0OyPqDF6pKjGv+m/5m27QgGVopO2wXuQ0j7aazgNMLg8nEKeX9tM?=
+ =?us-ascii?Q?WLfDij/to5FsHoiVEYECAV0K0EGoNLOpdGmoA+BTkihRksM0OeeNbCIK4/rK?=
+ =?us-ascii?Q?op3+IqN7WhCC1OO/kmxO8L9DHQvcGWIz0A8EQgWuQ4MeKYzAu33LVHK2H6XP?=
+ =?us-ascii?Q?voFu2pkovx2eNW8Re5aN426uS0jfQrOtFQot8lHCKz5lBXnJBSE5m35OCqND?=
+ =?us-ascii?Q?9edvGwLru7mEWWivQA7TxBu50qu40OFd8IhVvFCb5HCRGi6B3ko3N7C5B+XK?=
+ =?us-ascii?Q?nlq/LjyPvvfzcI262NUbpo+JtNVIfSfjG9mRuubFuLxQLw5AqgxE+44wzzg6?=
+ =?us-ascii?Q?R17ck5JaDFTKcrxQ9Gczntpy0Z32/EWEx9lJ?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Apr 2025 17:24:59.1950
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9f32a26-45db-4699-d26c-08dd7ab01dfc
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B074.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6945
 
-On Tue, Apr 01, 2025 at 10:17:12AM +0100, Marc Zyngier wrote:
-> From: Hector Martin <marcan@marcan.st>
-> 
-> Newer versions of the Apple PCIe block have a bunch of small, but
-> annoying differences.
-> 
-> In order to embrace this diversity of implementations, move the
-> currently hardcoded offsets into a hw_info structure. Future SoCs
-> will provide their own structure describing the applicable offsets.
-> 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Acked-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> Tested-by: Janne Grunau <j@jannau.net>
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> [maz: split from original patch to only address T8103]
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
+Add the missing migrate_folio operation to jfs_metapage_aops to fix
+warnings during memory compaction. These warnings were introduced by
+commit 7ee3647243e5 ("migrate: Remove call to ->writepage") which
+added explicit warnings when filesystems don't implement migrate_folio.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+System reports following warnings:
+  jfs_metapage_aops does not implement migrate_folio
+  WARNING: CPU: 0 PID: 6870 at mm/migrate.c:955 fallback_migrate_folio mm/migrate.c:953 [inline]
+  WARNING: CPU: 0 PID: 6870 at mm/migrate.c:955 move_to_new_folio+0x70e/0x840 mm/migrate.c:1007
 
-- Mani
+Implement the migrate_folio handler by delegating to the
+filemap_migrate_folio() function.
 
-> ---
->  drivers/pci/controller/pcie-apple.c | 89 +++++++++++++++++++++++------
->  1 file changed, 72 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
-> index 505adf64bd66d..847cba753d28d 100644
-> --- a/drivers/pci/controller/pcie-apple.c
-> +++ b/drivers/pci/controller/pcie-apple.c
-> @@ -18,6 +18,7 @@
->   * Author: Marc Zyngier <maz@kernel.org>
->   */
->  
-> +#include <linux/bitfield.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/kernel.h>
->  #include <linux/iopoll.h>
-> @@ -29,6 +30,7 @@
->  #include <linux/of_irq.h>
->  #include <linux/pci-ecam.h>
->  
-> +/* T8103 (original M1) and related SoCs */
->  #define CORE_RC_PHYIF_CTL		0x00024
->  #define   CORE_RC_PHYIF_CTL_RUN		BIT(0)
->  #define CORE_RC_PHYIF_STAT		0x00028
-> @@ -104,7 +106,7 @@
->  #define   PORT_REFCLK_CGDIS		BIT(8)
->  #define PORT_PERST			0x00814
->  #define   PORT_PERST_OFF		BIT(0)
-> -#define PORT_RID2SID(i16)		(0x00828 + 4 * (i16))
-> +#define PORT_RID2SID			0x00828
->  #define   PORT_RID2SID_VALID		BIT(31)
->  #define   PORT_RID2SID_SID_SHIFT	16
->  #define   PORT_RID2SID_BUS_SHIFT	8
-> @@ -122,7 +124,8 @@
->  #define   PORT_TUNSTAT_PERST_ACK_PEND	BIT(1)
->  #define PORT_PREFMEM_ENABLE		0x00994
->  
-> -#define MAX_RID2SID			64
-> +#define PORT_MSIMAP_ENABLE	BIT(31)
-> +#define PORT_MSIMAP_TARGET	GENMASK(7, 0)
->  
->  /*
->   * The doorbell address is set to 0xfffff000, which by convention
-> @@ -133,10 +136,33 @@
->   */
->  #define DOORBELL_ADDR		CONFIG_PCIE_APPLE_MSI_DOORBELL_ADDR
->  
-> +struct hw_info {
-> +	u32 phy_lane_ctl;
-> +	u32 port_msiaddr;
-> +	u32 port_msiaddr_hi;
-> +	u32 port_refclk;
-> +	u32 port_perst;
-> +	u32 port_rid2sid;
-> +	u32 port_msimap;
-> +	u32 max_rid2sid;
-> +};
-> +
-> +static const struct hw_info t8103_hw = {
-> +	.phy_lane_ctl		= PHY_LANE_CTL,
-> +	.port_msiaddr		= PORT_MSIADDR,
-> +	.port_msiaddr_hi	= 0,
-> +	.port_refclk		= PORT_REFCLK,
-> +	.port_perst		= PORT_PERST,
-> +	.port_rid2sid		= PORT_RID2SID,
-> +	.port_msimap		= 0,
-> +	.max_rid2sid		= 64,
-> +};
-> +
->  struct apple_pcie {
->  	struct mutex		lock;
->  	struct device		*dev;
->  	void __iomem            *base;
-> +	const struct hw_info	*hw;
->  	struct irq_domain	*domain;
->  	unsigned long		*bitmap;
->  	struct list_head	ports;
-> @@ -380,7 +406,9 @@ static void apple_port_irq_handler(struct irq_desc *desc)
->  static int apple_pcie_port_setup_irq(struct apple_pcie_port *port)
->  {
->  	struct fwnode_handle *fwnode = &port->np->fwnode;
-> +	struct apple_pcie *pcie = port->pcie;
->  	unsigned int irq;
-> +	u32 val = 0;
->  
->  	/* FIXME: consider moving each interrupt under each port */
->  	irq = irq_of_parse_and_map(to_of_node(dev_fwnode(port->pcie->dev)),
-> @@ -402,13 +430,23 @@ static int apple_pcie_port_setup_irq(struct apple_pcie_port *port)
->  
->  	/* Configure MSI base address */
->  	BUILD_BUG_ON(upper_32_bits(DOORBELL_ADDR));
-> -	writel_relaxed(lower_32_bits(DOORBELL_ADDR), port->base + PORT_MSIADDR);
-> +	writel_relaxed(lower_32_bits(DOORBELL_ADDR),
-> +		       port->base + pcie->hw->port_msiaddr);
-> +	if (pcie->hw->port_msiaddr_hi)
-> +		writel_relaxed(0, port->base + pcie->hw->port_msiaddr_hi);
->  
->  	/* Enable MSIs, shared between all ports */
-> -	writel_relaxed(0, port->base + PORT_MSIBASE);
-> -	writel_relaxed((ilog2(port->pcie->nvecs) << PORT_MSICFG_L2MSINUM_SHIFT) |
-> -		       PORT_MSICFG_EN, port->base + PORT_MSICFG);
-> +	if (pcie->hw->port_msimap) {
-> +		for (int i = 0; i < pcie->nvecs; i++)
-> +			writel_relaxed(FIELD_PREP(PORT_MSIMAP_TARGET, i) |
-> +				       PORT_MSIMAP_ENABLE,
-> +				       port->base + pcie->hw->port_msimap + 4 * i);
-> +	} else {
-> +		writel_relaxed(0, port->base + PORT_MSIBASE);
-> +		val = ilog2(pcie->nvecs) << PORT_MSICFG_L2MSINUM_SHIFT;
-> +	}
->  
-> +	writel_relaxed(val | PORT_MSICFG_EN, port->base + PORT_MSICFG);
->  	return 0;
->  }
->  
-> @@ -475,7 +513,9 @@ static int apple_pcie_setup_refclk(struct apple_pcie *pcie,
->  	u32 stat;
->  	int res;
->  
-> -	rmw_set(PHY_LANE_CTL_CFGACC, port->phy + PHY_LANE_CTL);
-> +	if (pcie->hw->phy_lane_ctl)
-> +		rmw_set(PHY_LANE_CTL_CFGACC, port->phy + pcie->hw->phy_lane_ctl);
-> +
->  	rmw_set(PHY_LANE_CFG_REFCLK0REQ, port->phy + PHY_LANE_CFG);
->  
->  	res = readl_relaxed_poll_timeout(port->phy + PHY_LANE_CFG,
-> @@ -492,20 +532,28 @@ static int apple_pcie_setup_refclk(struct apple_pcie *pcie,
->  	if (res < 0)
->  		return res;
->  
-> -	rmw_clear(PHY_LANE_CTL_CFGACC, port->phy + PHY_LANE_CTL);
-> +	if (pcie->hw->phy_lane_ctl)
-> +		rmw_clear(PHY_LANE_CTL_CFGACC, port->phy + pcie->hw->phy_lane_ctl);
->  
->  	rmw_set(PHY_LANE_CFG_REFCLKEN, port->phy + PHY_LANE_CFG);
-> -	rmw_set(PORT_REFCLK_EN, port->base + PORT_REFCLK);
-> +
-> +	if (pcie->hw->port_refclk)
-> +		rmw_set(PORT_REFCLK_EN, port->base + pcie->hw->port_refclk);
->  
->  	return 0;
->  }
->  
-> +static void __iomem *port_rid2sid_addr(struct apple_pcie_port *port, int idx)
-> +{
-> +	return port->base + port->pcie->hw->port_rid2sid + 4 * idx;
-> +}
-> +
->  static u32 apple_pcie_rid2sid_write(struct apple_pcie_port *port,
->  				    int idx, u32 val)
->  {
-> -	writel_relaxed(val, port->base + PORT_RID2SID(idx));
-> +	writel_relaxed(val, port_rid2sid_addr(port, idx));
->  	/* Read back to ensure completion of the write */
-> -	return readl_relaxed(port->base + PORT_RID2SID(idx));
-> +	return readl_relaxed(port_rid2sid_addr(port, idx));
->  }
->  
->  static int apple_pcie_setup_port(struct apple_pcie *pcie,
-> @@ -528,7 +576,7 @@ static int apple_pcie_setup_port(struct apple_pcie *pcie,
->  	if (!port)
->  		return -ENOMEM;
->  
-> -	port->sid_map = devm_bitmap_zalloc(pcie->dev, MAX_RID2SID, GFP_KERNEL);
-> +	port->sid_map = devm_bitmap_zalloc(pcie->dev, pcie->hw->max_rid2sid, GFP_KERNEL);
->  	if (!port->sid_map)
->  		return -ENOMEM;
->  
-> @@ -572,7 +620,7 @@ static int apple_pcie_setup_port(struct apple_pcie *pcie,
->  	usleep_range(100, 200);
->  
->  	/* Deassert PERST# */
-> -	rmw_set(PORT_PERST_OFF, port->base + PORT_PERST);
-> +	rmw_set(PORT_PERST_OFF, port->base + pcie->hw->port_perst);
->  	gpiod_set_value_cansleep(reset, 0);
->  
->  	/* Wait for 100ms after PERST# deassertion (PCIe r5.0, 6.6.1) */
-> @@ -585,7 +633,11 @@ static int apple_pcie_setup_port(struct apple_pcie *pcie,
->  		return ret;
->  	}
->  
-> -	rmw_clear(PORT_REFCLK_CGDIS, port->base + PORT_REFCLK);
-> +	if (pcie->hw->port_refclk)
-> +		rmw_clear(PORT_REFCLK_CGDIS, port->base + pcie->hw->port_refclk);
-> +	else
-> +		rmw_set(PHY_LANE_CFG_REFCLKCGEN, port->phy + PHY_LANE_CFG);
-> +
->  	rmw_clear(PORT_APPCLK_CGDIS, port->base + PORT_APPCLK);
->  
->  	ret = apple_pcie_port_setup_irq(port);
-> @@ -593,7 +645,7 @@ static int apple_pcie_setup_port(struct apple_pcie *pcie,
->  		return ret;
->  
->  	/* Reset all RID/SID mappings, and check for RAZ/WI registers */
-> -	for (i = 0; i < MAX_RID2SID; i++) {
-> +	for (i = 0; i < pcie->hw->max_rid2sid; i++) {
->  		if (apple_pcie_rid2sid_write(port, i, 0xbad1d) != 0xbad1d)
->  			break;
->  		apple_pcie_rid2sid_write(port, i, 0);
-> @@ -741,7 +793,7 @@ static void apple_pcie_disable_device(struct pci_host_bridge *bridge, struct pci
->  	for_each_set_bit(idx, port->sid_map, port->sid_map_sz) {
->  		u32 val;
->  
-> -		val = readl_relaxed(port->base + PORT_RID2SID(idx));
-> +		val = readl_relaxed(port_rid2sid_addr(port, idx));
->  		if ((val & 0xffff) == rid) {
->  			apple_pcie_rid2sid_write(port, idx, 0);
->  			bitmap_release_region(port->sid_map, idx, 0);
-> @@ -794,6 +846,9 @@ static int apple_pcie_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	pcie->dev = dev;
-> +	pcie->hw = of_device_get_match_data(dev);
-> +	if (!pcie->hw)
-> +		return -ENODEV;
->  	pcie->base = devm_platform_ioremap_resource(pdev, 1);
->  	if (IS_ERR(pcie->base))
->  		return PTR_ERR(pcie->base);
-> @@ -810,7 +865,7 @@ static int apple_pcie_probe(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id apple_pcie_of_match[] = {
-> -	{ .compatible = "apple,pcie" },
-> +	{ .compatible = "apple,pcie",		.data = &t8103_hw },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, apple_pcie_of_match);
-> -- 
-> 2.39.2
-> 
+Reported-by: syzbot+8bb6fd945af4e0ad9299@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67faff52.050a0220.379d84.001b.GAE@google.com
+Signed-off-by: Shivank Garg <shivankg@amd.com>
+---
+ fs/jfs/jfs_metapage.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
+index df575a873ec6..868ab7d16ab3 100644
+--- a/fs/jfs/jfs_metapage.c
++++ b/fs/jfs/jfs_metapage.c
+@@ -570,6 +570,7 @@ const struct address_space_operations jfs_metapage_aops = {
+ 	.release_folio	= metapage_release_folio,
+ 	.invalidate_folio = metapage_invalidate_folio,
+ 	.dirty_folio	= filemap_dirty_folio,
++	.migrate_folio	= filemap_migrate_folio,
+ };
+ 
+ struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
 -- 
-மணிவண்ணன் சதாசிவம்
+2.34.1
+
 
