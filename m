@@ -1,110 +1,73 @@
-Return-Path: <linux-kernel+bounces-601789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F18BA87266
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 17:44:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A730EA87270
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 18:02:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3AED3B911B
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 15:44:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35813188CA38
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 16:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A901E3DE5;
-	Sun, 13 Apr 2025 15:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6556B1DDA2D;
+	Sun, 13 Apr 2025 16:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TtpMgEbM"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfAjKNan"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249761B4232;
-	Sun, 13 Apr 2025 15:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CB9E57D
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 16:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744559052; cv=none; b=UTlFHBPuOAqQDfmvqDDULFYUgvZn+K9CRo9O5tKosY3sPUEEas/mYVhiIeCStJxoVmOw8yCr8DlyFeUHc4HHwhwVEheZ9Qone5k5QRRwmacwrZc/bhCu7h4TL6DwH4LM6YRMiXg4FfTQjAaK4yU8yuMLy6wxVgb0YQ7Q8L7PzQM=
+	t=1744560128; cv=none; b=gsKyMZN+mdooW+8CUX3gl4aF5lmpNbpKTXmXGAbPaICvtGH4kOLmVdkJdLp0voJltvk4i3jtoQZrTfQRxtFW2+0V6PJMj8eiiTw0hhcCpslWDGV9IbCRNcSyBKmP4L6v8zeIDAHb1dxDb5r1XqB0ioGbdgJBpB6NyrHSU5oTjiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744559052; c=relaxed/simple;
-	bh=dKGcm9+VOTlNT0szeJkGwNqWqdg07bPvzWyv98pkRg8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EBA6YS/HOn/KBkvREAaJJiH5ZEXMzKYHcldOBrLcx/FCqak9mc2l/fpwCJFoP7LIyFarfxa8PcC/fUi1wmHWDReXobMzehi+ge622CXgk2vxLc/iuxtPmuiNvx9yK3XeWOU9yDkczPwpnW8oPTKncicTW5TqJXUULnu7kS/Uz7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TtpMgEbM; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-301a6347494so680959a91.3;
-        Sun, 13 Apr 2025 08:44:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744559050; x=1745163850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dKGcm9+VOTlNT0szeJkGwNqWqdg07bPvzWyv98pkRg8=;
-        b=TtpMgEbMJAjWnWInXWGETefEDaJv0jj930BQp0wEWN298vuix6Ui9Fzr6VnKdA249M
-         VbKjp+my5du2Qkaf+nB4yeH+3JIPOywx9GyqkzGQT7dxvwTOijEo+4cXXH77VNjZxG/n
-         dIAa96mLrGI0Ymwg68cgE5bwMNXCav3h+lL2wPoxA6e7kdR4EnnVTEkqFvYjW3mOZ/G+
-         zYXVFBm899jSBawUBnxTvAk8fXeP1FCPjr70bQyFP2SFJ+X2Aao7WjXlpTLkcjO3VOHh
-         4FLhMsnQxVbI6El/cLJkAJRAhh6NtWfUDXdG5y5V4gyDCWNk3eA5KU50Cx+WUoAvCpOk
-         EZRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744559050; x=1745163850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dKGcm9+VOTlNT0szeJkGwNqWqdg07bPvzWyv98pkRg8=;
-        b=PWv4NCz8vctsXXgFeIeXAdatjBDUCmD/gFReVyk34bfeovO9hPz1R9umKyMjakYR9o
-         +Ut05auu2SHdFwY/4lCzjPLfamZBzgz3LIaYk0EZ2NUCin/lYI0Yx5gqYLwDdbv/9IrE
-         7uYyYZv0an4mS5PR781Lb5oAT421c3xoObABGLMn7qvdNhtkqSj9SoTxU5mSjC7buN9t
-         6h3JYieEfEL0Xl+ku/nTasIMGuVTuJtVAmYFfhPW17XHTEA8MNNBDPFBo0i2F8MATBIN
-         57/uVOdYlp4PAbbip3HdEAl9XytZv35bb7TZecGfYgqOnGajhduHNhefz1xMthhS8tmE
-         SMwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUq07rQCaf/HmNNp7A8RvurCGaeYxkfvJKGval9a8ehsAeJbQZJBSolvICCX5JuleWDbt387e3JMDe2Xt5Qu7w=@vger.kernel.org, AJvYcCWvfn25T14+uvkDadSTPpKWdJ+eP8PbEv9szC2mEfjJRwRAuTigL/0Ku2960bPrpmbls+HRzn/phoWTLtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl2trye/XtcGnxcD2lXkZY6AJQPsYJmXCWUq+xpS3HS5i/Mqpj
-	cVfeBclOaFXelSPi7UY0nI0HAS9beu/xPAC0JQnXuAplzjlcflHkeASpLIFUPozMW+/jsQxMlBR
-	YivWv86JuYgH471gQBLCao0FMPJw=
-X-Gm-Gg: ASbGncthcc5jXxC54fyCtx2E5JjalCVTxoxCTwCgrfmwbtEM+OLC1tH6A3oAELfwX5m
-	XaDIG6hnFUMjNu+mGpB/4tYDxy1mlw/1ht+P7SobGtp2AO19jEbMuEk0oK2OrJFk5S863ELcOpU
-	EIPEODpvRWANHZ4hFMJUC4GQ==
-X-Google-Smtp-Source: AGHT+IFisTIVZQ7RKon9gvA2HuBL7trcYspVwgVbvqE9nCsrg0Fzdnga7r4sSa1SJ1j19Q7TF9lbFbI+GLtHOTyvUG0=
-X-Received: by 2002:a17:90b:1e51:b0:2ee:acea:9ec4 with SMTP id
- 98e67ed59e1d1-30823775b41mr5139487a91.3.1744559050084; Sun, 13 Apr 2025
- 08:44:10 -0700 (PDT)
+	s=arc-20240116; t=1744560128; c=relaxed/simple;
+	bh=2NaVP5B5uP0EAUwCKZ0jYYq2HWAKil1PegTTkj/+Hlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a5rOQvZMbWd15DfX2Ua8gPuakRuzLxMZsBAsobGMjuMRlJ7SLHCbti0E6AaW7AHjj9VywQ6RrfBBbaYutc2TaeyxyotMqaynVXam2h6gMnj8DNLVo3bbY/fj37saa2mO0vm85DYNozK+aBfXs8LFGDqYLq6i8yAptavxaNADGb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfAjKNan; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E212C4CEDD;
+	Sun, 13 Apr 2025 16:02:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744560128;
+	bh=2NaVP5B5uP0EAUwCKZ0jYYq2HWAKil1PegTTkj/+Hlo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZfAjKNanYVTorjzPc387K+BEqBIDf4jj4UKI4g25nEd8mZetP9Z0j9ecYeAVa1YFq
+	 yxSTUug3pTqAOB365U41+Vvc+IktHIRLzlERi6qDSz79bUkaG5Au2G6N2ZUOiyuFaM
+	 3oMfYAjYw8PKhxbV3mrZSw8qnpi44V/Pex55ZljClq7WmixOmDGB3QE9/v67F8seal
+	 CRJ8scckKDe8Gr4Kw6F8C/Xv0x2Za1YWc/E+ayEfwygyfdl1jix4ZDgvE/kU43MZxy
+	 AHZXaEdohwwKNbSOczVCBjCcaUrW0iZVKamneKK/bIdpsSbkeN1S3J0j6LXYwAbXmr
+	 rFhQJOUl8tT9w==
+Date: Mon, 14 Apr 2025 00:01:59 +0800
+From: Gao Xiang <xiang@kernel.org>
+To: Bingwu Zhang <xtex@envs.net>
+Cc: Gao Xiang <xiang@kernel.org>, Bingwu Zhang <xtex@aosc.io>,
+	linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] erofs-utils: add contrib/stress to .gitignore
+Message-ID: <Z/vf90eBBLJ9zxH9@debian>
+Mail-Followup-To: Bingwu Zhang <xtex@envs.net>,
+	Gao Xiang <xiang@kernel.org>, Bingwu Zhang <xtex@aosc.io>,
+	linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20250412140940.88303-1-xtex@envs.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250412-rust_arm_fix_fw_abstaction-v2-1-8e6fdf093d71@gmail.com>
- <Z_p-UoycGk3BceXm@pollux> <c04d3ec9-46f8-4ccd-b0ed-52a1adea11b7@gmail.com>
- <CANiq72mpKQM8v1=qhACWGYo1c0jtOymnACDxXiRgjEs2-+X2=g@mail.gmail.com> <8de46681-18b9-4ab2-a8c4-df6315c2125e@gmail.com>
-In-Reply-To: <8de46681-18b9-4ab2-a8c4-df6315c2125e@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 13 Apr 2025 17:43:58 +0200
-X-Gm-Features: ATxdqUER78uV26S-aBGFI4R4a_d51gxVEDkWXrxWw6cidI-ZOTWd8VK_PQPd_Rg
-Message-ID: <CANiq72nP5dUREBfBE-gM_nF65qDH6y3PkeW9UtaodLPrVs1hXg@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: Use `ffi::c_char` type in firmware abstraction `FwFunc`
-To: Christian Schrefl <chrisi.schrefl@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Russ Weight <russ.weight@linux.dev>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250412140940.88303-1-xtex@envs.net>
 
-On Sun, Apr 13, 2025 at 5:32=E2=80=AFPM Christian Schrefl
-<chrisi.schrefl@gmail.com> wrote:
->
-> Sorry for the confusion, Thunderbird showed this as a response to the
-> original patch mail, so I thought you were referring to that.
+On Sat, Apr 12, 2025 at 10:09:38PM +0800, Bingwu Zhang wrote:
+> From: Bingwu Zhang <xtex@aosc.io>
+> 
+> Signed-off-by: Bingwu Zhang <xtex@aosc.io>
 
-No worries! Lore shows it as replying to the right message, so I
-assume it is Thunderbird-related, yeah.
+Thanks, applied.
 
-Thanks!
-
-Cheers,
-Miguel
+Thanks,
+Gao Xiang
 
