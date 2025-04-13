@@ -1,159 +1,156 @@
-Return-Path: <linux-kernel+bounces-601689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F85A87127
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 11:04:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB4AA87123
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 11:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FDF3189AA32
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 09:04:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AA3D3B6C68
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 09:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0330418DB34;
-	Sun, 13 Apr 2025 09:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876AD54640;
+	Sun, 13 Apr 2025 09:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="ZjnUgL6A"
-Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A99rXV7D";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qT/rD37q"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A50863CB;
-	Sun, 13 Apr 2025 09:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624B5339A8;
+	Sun, 13 Apr 2025 09:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744535069; cv=none; b=ZHRl4kbALDVqC2vCQw3N7phhvdsl3LbgQz6rk6MiaNQkMAW84t7ZtD/MVFj85N2kSfwHi+0wwqCC47r4aFiSTXZ5po3aMyt8vQ0KtVeHRbFOZOthy9+5iCgJokkuNQfn4o8qrss6f8mx+M8iFVUeEMVGsJHDy+1XH1j7s/tbW74=
+	t=1744534913; cv=none; b=H4qrFDyBgVG6GACOZctwBb5d+GuTlZ2k+P6jBm8Px9JefU64fySWdcYp5Axmu4mHDgw4jvofoBVv0BYfIxJ+BX2o4HdL27aBiYnOpixOJyl44uH4e/gBJ/iJQ1dQw4vqPq7sCGiKzXEc1ZHslDQAjwINCtMc1qZBSeVOBKNr3Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744535069; c=relaxed/simple;
-	bh=PbhWn/+pnrNkNBgud89PAjBem9DGk+oL1/wMyS48/G8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j2YFOS7VOxhR/csphV45tWjWc3+kF1xpTvk6/VyycVrXmnzxLWjjWzFMiU2nofaLEC00BRqwXn85VluhSWnb/0+VIF0MtlLdXKCTrQ9vaysFwqB2vQVg+xhqnXwaqF9X0b2M3LMaqOfQ/61CWC9HL7ELHba3txaBYZiaHHi9h3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=ZjnUgL6A; arc=none smtp.client-ip=134.0.28.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox1.masterlogin.de (unknown [192.168.10.88])
-	by mxout3.routing.net (Postfix) with ESMTP id 155CE60536;
-	Sun, 13 Apr 2025 08:58:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1744534696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	s=arc-20240116; t=1744534913; c=relaxed/simple;
+	bh=45ocQFISqG4KV3czmx8gtFs2TjMm5kguDIVH+dXISoY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Ve6pYxZvxslotJWfoV86Fv/FnGQld2p28hbMIXttLzPUgNbzAtupeYK5Tsa1lLDGjIINyLUc3FvqOZU2DkNoUQdxS9Rm79JlP627zKbXgNufdLq5P2OuS/1icZXCe9vTmaROtMtbJDOfc3GQn5WKXA5H55acy5OOy8WWV1bRG8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A99rXV7D; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qT/rD37q; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 13 Apr 2025 09:01:39 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744534909;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fUg/DncS2AhYG89VBxFJm1aq8shzU0lzttlOs1DPzvU=;
-	b=ZjnUgL6ARihXC/nQO4jManNDUvZw6u+ojM0IQH9iESkQE8HMOY166SZ/i4TH41Yccj0yk9
-	0tpOCkWLhxjn8fCV5/kpZCig7MQx8AWMZhZz7GfhgS4SYZVu7fAlIPV9Ybokzwu1ChNSD1
-	MY0azaWWbG1pUBbOyk4ybi8mTNQFC0A=
-Received: from frank-u24.. (fttx-pool-194.15.86.153.bambit.de [194.15.86.153])
-	by mxbox1.masterlogin.de (Postfix) with ESMTPSA id 2D57940089;
-	Sun, 13 Apr 2025 08:58:15 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Sam Shih <sam.shih@mediatek.com>,
-	MandyJH Liu <mandyjh.liu@mediatek.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC 5/5] arm64: dts: mediatek: mt7988: Add xsphy for ssusb0/pcie2
-Date: Sun, 13 Apr 2025 10:58:05 +0200
-Message-ID: <20250413085806.8544-6-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250413085806.8544-1-linux@fw-web.de>
-References: <20250413085806.8544-1-linux@fw-web.de>
+	bh=Dx0V8f12YaPJY88JOj0YQ+7lHhTjeAQTjZgPvXKE0ic=;
+	b=A99rXV7Dr9gSGfrH1rOIObkMWfbCZ2k0awr4OB7y/b+dol1GE4F0Wh0Z3GUyPPi3UYcr9K
+	K8qMBVPHROhG8nmdjSP0y6XSGSg7kRDzgPgVdI/wkP2cBP9ddYN4plGrdPe/806MlvE9GX
+	yRvmZnboijg6FQEOEaTn81tGmKxebgDnNS459PHlFBW3U/MlyDyNrrSpiZRqJu1rZ+8UCe
+	bmvombrbULCroxowjHHg2W6XG0EqxTmHmI09d48tolfprv/g2ZuAh5pZMpHDzLZhpFmxNK
+	SgTyaP+CT2Ji9x5MLfE0pzxvpQL7OemDDPLIx71KneMcSuEjI4Jw64gA9oOBHg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744534909;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dx0V8f12YaPJY88JOj0YQ+7lHhTjeAQTjZgPvXKE0ic=;
+	b=qT/rD37q/am/bDNPi6QG6tCcngv+x2v2HqoCqGmEwP5JvLyOP7GMbICT19ajKgeMlUlSmR
+	/CceKTY1wi3a8lDw==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/asm] objtool, x86/hweight: Remove ANNOTATE_IGNORE_ALTERNATIVE
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Juergen Gross <jgross@suse.com>,
+ Kees Cook <keescook@chromium.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <e7070dba3278c90f1a836b16157dcd34ccd21e21.1744318586.git.jpoimboe@kernel.org>
+References:
+ <e7070dba3278c90f1a836b16157dcd34ccd21e21.1744318586.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mail-ID: bf08c37c-044c-4f9f-90b3-b87e6ed8eae5
+Message-ID: <174453489941.31282.10931005949650290494.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-From: Frank Wunderlich <frank-w@public-files.de>
+The following commit has been merged into the x86/asm branch of tip:
 
-First usb and third pcie controller on mt7988 need a xs-phy to work
-properly.
+Commit-ID:     7b3169dfa4ba1b1898d4bdfad6ddabbc9e8a57ed
+Gitweb:        https://git.kernel.org/tip/7b3169dfa4ba1b1898d4bdfad6ddabbc9e8a57ed
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Thu, 10 Apr 2025 13:58:35 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sun, 13 Apr 2025 09:52:42 +02:00
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+objtool, x86/hweight: Remove ANNOTATE_IGNORE_ALTERNATIVE
+
+Since objtool's inception, frame pointer warnings have been manually
+silenced for __arch_hweight*() to allow those functions' inline asm to
+avoid using ASM_CALL_CONSTRAINT.
+
+The potentially dubious reasoning for that decision over nine years ago
+was that since !X86_FEATURE_POPCNT is exceedingly rare, it's not worth
+hurting the code layout for a function call that will never happen on
+the vast majority of systems.
+
+However, those functions actually started using ASM_CALL_CONSTRAINT with
+the following commit:
+
+  194a613088a8 ("x86/hweight: Use ASM_CALL_CONSTRAINT in inline asm()")
+
+And rightfully so, as it makes the code correct.  ASM_CALL_CONSTRAINT
+will soon have no effect for non-FP configs anyway.
+
+With ASM_CALL_CONSTRAINT in place, ANNOTATE_IGNORE_ALTERNATIVE no longer
+has a purpose for the hweight functions.  Remove it.
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/e7070dba3278c90f1a836b16157dcd34ccd21e21.1744318586.git.jpoimboe@kernel.org
 ---
- arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 39 +++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ arch/x86/include/asm/arch_hweight.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-index 88b56a24efca..10525d977007 100644
---- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-@@ -334,6 +334,8 @@ usb@11190000 {
- 				 <&infracfg CLK_INFRA_133M_USB_HCK>,
- 				 <&infracfg CLK_INFRA_USB_XHCI>;
- 			clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck", "xhci_ck";
-+			phys = <&xphyu2port0 PHY_TYPE_USB2>,
-+			       <&xphyu3port0 PHY_TYPE_USB3>;
- 			status = "disabled";
- 		};
+diff --git a/arch/x86/include/asm/arch_hweight.h b/arch/x86/include/asm/arch_hweight.h
+index cbc6157..b5982b9 100644
+--- a/arch/x86/include/asm/arch_hweight.h
++++ b/arch/x86/include/asm/arch_hweight.h
+@@ -16,8 +16,7 @@ static __always_inline unsigned int __arch_hweight32(unsigned int w)
+ {
+ 	unsigned int res;
  
-@@ -398,6 +400,9 @@ pcie2: pcie@11280000 {
- 			pinctrl-0 = <&pcie2_pins>;
- 			status = "disabled";
+-	asm_inline (ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE
+-				"call __sw_hweight32",
++	asm_inline (ALTERNATIVE("call __sw_hweight32",
+ 				"popcntl %[val], %[cnt]", X86_FEATURE_POPCNT)
+ 			 : [cnt] "=" REG_OUT (res), ASM_CALL_CONSTRAINT
+ 			 : [val] REG_IN (w));
+@@ -46,8 +45,7 @@ static __always_inline unsigned long __arch_hweight64(__u64 w)
+ {
+ 	unsigned long res;
  
-+			phys = <&xphyu3port0 PHY_TYPE_PCIE>;
-+			phy-names = "pcie-phy";
-+
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0x7>;
- 			interrupt-map = <0 0 0 1 &pcie_intc2 0>,
-@@ -548,6 +553,40 @@ tphyu3port0: usb-phy@11c50700 {
- 			};
- 		};
- 
-+		topmisc: power-controller@11d10000 {
-+			compatible = "mediatek,mt7988-topmisc", "syscon",
-+				     "mediatek,mt7988-power-controller";
-+			reg = <0 0x11d10000 0 0x10000>;
-+			#clock-cells = <1>;
-+			#power-domain-cells = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		xs-phy@11e10000 {
-+			compatible = "mediatek,mt7988-xsphy",
-+				     "mediatek,xsphy";
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+			status = "disabled";
-+
-+			xphyu2port0: usb-phy@11e10000 {
-+				reg = <0 0x11e10000 0 0x400>;
-+				clocks = <&infracfg CLK_INFRA_USB_UTMI>;
-+				clock-names = "ref";
-+				#phy-cells = <1>;
-+			};
-+
-+			xphyu3port0: usb-phy@11e13000 {
-+				reg = <0 0x11e13400 0 0x500>;
-+				clocks = <&infracfg CLK_INFRA_USB_PIPE>;
-+				clock-names = "ref";
-+				#phy-cells = <1>;
-+				mediatek,syscon-type = <&topmisc 0x218 0>;
-+			};
-+		};
-+
- 		clock-controller@11f40000 {
- 			compatible = "mediatek,mt7988-xfi-pll";
- 			reg = <0 0x11f40000 0 0x1000>;
--- 
-2.43.0
-
+-	asm_inline (ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE
+-				"call __sw_hweight64",
++	asm_inline (ALTERNATIVE("call __sw_hweight64",
+ 				"popcntq %[val], %[cnt]", X86_FEATURE_POPCNT)
+ 			 : [cnt] "=" REG_OUT (res), ASM_CALL_CONSTRAINT
+ 			 : [val] REG_IN (w));
 
