@@ -1,99 +1,93 @@
-Return-Path: <linux-kernel+bounces-601741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016DDA871CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 13:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C64CA871D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 13:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50ABB189B2B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 11:12:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4BA18985F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 11:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C351A0739;
-	Sun, 13 Apr 2025 11:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E451A0739;
+	Sun, 13 Apr 2025 11:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRnWJBq7"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMnVsGT+"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB001A8F79;
-	Sun, 13 Apr 2025 11:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF262581;
+	Sun, 13 Apr 2025 11:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744542663; cv=none; b=QoGzdurtNjLKhkFkZvVoWhgv+euh4Q0tkAWiG2Fo/2Znl4TY0R2avwrxqvcHlmcKegMSaxqYi6FAzHu1ZINtdxhjh4zMVkMZBVaJwSWG9zQLGfD46UryUCxk5OJAHRb5UHdgzDoFPWBsBlVvRLgUZYsCGAiuVq9V4XyrIpbZlPA=
+	t=1744543453; cv=none; b=DW79yKVJV9aDNYpeIb2XrpxYs4VDY/RRydBSJPMcRtVH9bczDRQbpRp8FeaZGyiVmHDDw5cq2YKNZOFcXZH6RHMgmDnV2o4eXIY2luYvaknsvonuh/VFE9SDJbhDHiGvpLyy49q8hXeFb2lyOEN46tMotxD1GaiAY8KOenlVuvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744542663; c=relaxed/simple;
-	bh=BBXGgxmEIZfQk26iEKset/TH1HIPQXdklPwmouELyIY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=alsuBhL+PwzCcdAZvWzYWdomlr+Qqn6Rc1Dxdo/x9qbk9ZPA0CiEi4R5BqBADuXL/oYFW3wRvqBLg2Wmg1ayrE4mc9REKkBZU8OjzoqzX+xHx/vPIQvtYHggxQxpVvh4sESrlpdTSOzw4PraN9qQlIaUTfd0f2vs9X1Hq0N94MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRnWJBq7; arc=none smtp.client-ip=209.85.208.52
+	s=arc-20240116; t=1744543453; c=relaxed/simple;
+	bh=+tSMAYW0z/PmwuzJzSLQPajX3zX0QSEXp1dKdO1Rf9Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AZxgjYRZSlFoPTK/Fj2zeEdU462dE4N1ML9NxjAPnSL7fvqrkxv03IKeGvkyW5c9Jyuk0C20UQpGkII6A/ZBWfD/i5vtFOoQpgejD2YZL3XOkaKGtJUT48kUeNWiITGWwiCQAUGPX7EEZifLN9FuWElEW73FZcT9ITj+aUxKPRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMnVsGT+; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e66407963fso6241720a12.2;
-        Sun, 13 Apr 2025 04:11:00 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac6e8cf9132so638284466b.2;
+        Sun, 13 Apr 2025 04:24:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744542659; x=1745147459; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=taQydatFRUUIgWEIrpl5CYVqIF0OiF14uRuCSzbkAJY=;
-        b=BRnWJBq76rOAMrhFjdZXErt7zPEcH0cSmgfmZuOBqX1aLUuKigm9ZXlUGPGcUxJq2Y
-         bdW6fnhtbM4UPOBwTSJeqsB3Ibmet8sU631/BPlPOyl149mRMkjq/ZfQbXeCYJkFNhxy
-         XGYWhoZZo6ifM38TD8CSEot1yzhjrJ4mlxMxvwE8zRQTxMXt2t/714ZmjJU15ckN88yR
-         +tKua44Vsz2R6rK9HNzonTujKkOVw+5+VxSX1/02oxMTkE1itM0t0IjKCnKQTeoe4eio
-         +fROy3cqh1VE3Kq+SssD15Y+nJKVhCBe75CnsjefJxrSqCYCm2ZawQ8S87KTzYlllb/x
-         TbeQ==
+        d=gmail.com; s=20230601; t=1744543450; x=1745148250; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rUTDjy7xdeVquaQ2yrizRZXgwdn38Vk2chACh8D3pZE=;
+        b=KMnVsGT+yAnXkHsrhvxOggFv3h4VOWwKWjnk+lAZmkIFiuUeAgxeoE6Hte8RP2Wu2A
+         F5NiICt5nj4FybQgIJUcvU0N+zUVDQ2oThcGUvFae+V5uwrxVJ+SyIdydNrb2XldxoIm
+         Kfsx7nXxtYinuWHlGz7WVbwvBz8UuFYy7HgSIzXzDPRZMtpB3nxM4INdsHEZbgTKt1hn
+         CZyIPtLGTtP5P3s+dRnzApxUMTwisK2DAvQvJfFvWnn9VMnlCcAMLDhnOC3z7gDqMRxx
+         3YCVzQczFKDGVRMbFIZTldtI3qQyECD8tOp+MZA6MtpGSgXPbsTi4aJbWIjl0VpyC1fx
+         BjJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744542659; x=1745147459;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=taQydatFRUUIgWEIrpl5CYVqIF0OiF14uRuCSzbkAJY=;
-        b=MgyM03BgYfKUsxbgqAoN1BR7vPBlXnWiLJDv0BgdYixDpVdU2xwBxzaG429LQcJEVP
-         MC4u0YcmIcqiUuXf9J8BE+7PMDKLkwsuwOt0wdxwi0bYNfHd1/OI/SLnZw5FFAwYzWT2
-         dHkcpMZpjPRnuUN7cl63kW514iuCtkD9ujHF8tf75lXc8Rbbm4EyuFbN5+OVYB6N7Z/h
-         psxshC4FQ8BuvEv4giUW37rZJMF9R6jomlo0aVj7RM8SjanVDRT5VgGkk7CyPIBFJWaC
-         N2dnuD2cxEp/8A06CFrh4lX+5Ms0JBQ4T5YtsPwuVigtfZW1xvlLbPcd8izYMEwsG3sF
-         j6qA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7rypBzMiLQnYEx8m/0qcwCXIZ70YReMCHKMaQd9/SIHS3WnRefS2q7plCb6dt1YZq/xRLWNMs6lUv@vger.kernel.org, AJvYcCV3ZtJLHt+FyS11WoxjuxWjTgN8g7m4dL2E+XG602mInuuGAbRhUnw0ZMFRWY2RgMhY1W5/x89kMF3Oc1I=@vger.kernel.org, AJvYcCVv01JPftyvdn5x9d+f21nnlhxgWEy/wc93jlLW4tqF3Cx3k+ROVWAIdEiWv1P9AQiFeceCJ6solDUNl6xq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7X7NXAq+zqkzpVkTjIJ1ndIKlkj4uuvngHCg/84qEpYnGqCfD
-	SP7gjHIvtoMw2twnepLhJrF/yB5OFNaqCQ3E3kesiBpKDp0NaOcm
-X-Gm-Gg: ASbGncv6aZgbGk3wzXzHhKNiJgRYlvmJ6R0xyzs2Jdsh/oJ748gwUoR+qcSENofHYoA
-	Q4bzME7KgLUNJBsiOqXrsrunip+JQKWUGU/kH0MK0p3iLIu1xyua04nihetwHXwS4ECN4YgmkN9
-	2DLIUCKevfJllPZj+nC5dgS2KQNIU/IwwmumyIMHHldkVB63RZbjIbDi6KuZREjXB/M0IOoZPVe
-	cyhUpvekIdZPqSJIHX+pGUfEEmGmrgnUJ8WXW8cXFLCri6uBKXks1g5SBFaPrVN6eqjLT6WSKu2
-	EyFaqqHGhbHv12/Zg5QV0h2BCmVngPIo
-X-Google-Smtp-Source: AGHT+IGPC9f/KWk0lWHsX3nZmihYw21EjWEm1OZsXaWLqJQRQ5y0yZvbB3JEz1t9QR2eEzbb/Zp6ew==
-X-Received: by 2002:a17:906:c14e:b0:ac3:c56c:26ca with SMTP id a640c23a62f3a-acad3446a15mr776027366b.8.1744542659317;
-        Sun, 13 Apr 2025 04:10:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744543450; x=1745148250;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rUTDjy7xdeVquaQ2yrizRZXgwdn38Vk2chACh8D3pZE=;
+        b=VIoqKbxdH5/ZzOoSnSqVISm/sq5GLI2CrJgfjr9lhzZF0RtKCWXPobj/pk99uAkAuZ
+         d8QOasM2iICaVaruYSAZGSVDuFoEGQ1MMdxJ9Bn7qAwImIbeLcCrnHnzlw9BgTwMwl+2
+         ubUGvy+2VEehAMp8ZycZX9ZFm7Pi/f6y9bKaWkEp/mrX/FkRcwZpqBVxIsmHgDlDHyh6
+         gHHmf3b2ZCcUej0WZnHL4tXDLacP/EFwwJa5HUkjFCSiI7DvbBnWxObWQllC8je6rxsG
+         W4bRvyqf0eky6fwiMtPoZ17A1CbQ2yBwSPLpi++rxXBGZKEc+zIELv9ItWQq8eHEg0yg
+         WNxg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7RX8LkvzxKc63iu9fhKrWEMX146f3zRt2DSwRnCclgVBmANe7RmfDbAH+MoMZpyxQBanOdUsUO7E8QT8Y@vger.kernel.org, AJvYcCWGne2KylyOltgSKx7XuSSeJ0RwuBtq4PpJGEoawjR4VUksgfPJBIyFIwXW2R+5XgIlup/mQ5KWkpjK@vger.kernel.org
+X-Gm-Message-State: AOJu0YyndMoKOaa1t/6J7PFqOFvkv6F3Cy+x6JHmVDTFSXoqmnl8HM2/
+	IrOhjuE6W98Y+nzr/OoGTDPTXHAc51R7XxryYpCZBvQgIU02TT9iwWiMKQ==
+X-Gm-Gg: ASbGncvZ/m2Ebm9TIqUc/sW0Po5NgT4vyXtupyPlhsNRpaEvADVBXA9dYL99nyzEXkW
+	GaYuBtxpolFY4ubj278xp/bY76ayoAeGo7suwnIpw6C1xSdFXWyn/o2ZkgIclL/jW+rlrw8Nku1
+	FmPFXZzr2bFpC7T/UChiHQBQj1Luvc1Z9x5IdAH63n+HW6OhdqQwOBUoCilsEKnpiZymtZNIKvT
+	4X6N5/RPU5rD6e4fM9NO2j0225xxY3zUIgET1GKMicT57ZtcTlc4bDPvlq8jzpVGmy06cu6BVW8
+	ZlqIs5csMxCVrpyVqbsAwOFEvH1spFRjDcAsgxrELB8=
+X-Google-Smtp-Source: AGHT+IE93UB1qoyXlQ7Rv6TpcB8vp7o9k6YIA/hmBR3invbLq9NB0l+XJsASKJhsxC36HjPlH/VLXw==
+X-Received: by 2002:a17:907:3e87:b0:abf:8f56:fe76 with SMTP id a640c23a62f3a-acad34d8da8mr882386766b.25.1744543449638;
+        Sun, 13 Apr 2025 04:24:09 -0700 (PDT)
 Received: from xeon.. ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1be98d4sm728571266b.59.2025.04.13.04.10.58
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1cb4110sm733529766b.91.2025.04.13.04.24.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Apr 2025 04:10:59 -0700 (PDT)
+        Sun, 13 Apr 2025 04:24:09 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Sebastian Reichel <sre@kernel.org>,
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Aradhya Bhatia <a-bhatia1@ti.com>,
 	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-pm@vger.kernel.org,
+Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v2 4/4] ARM: tegra: chagall: Add embedded controller node
-Date: Sun, 13 Apr 2025 14:10:33 +0300
-Message-ID: <20250413111033.11408-5-clamor95@gmail.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/4] drm: panel: add support for panels used in LG P880/P895
+Date: Sun, 13 Apr 2025 14:23:57 +0300
+Message-ID: <20250413112401.12543-1-clamor95@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250413111033.11408-1-clamor95@gmail.com>
-References: <20250413111033.11408-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,47 +96,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add embedded controller node to Pegatron Chagall device-tree.
+Add support for panels used in LG P880/P895 which are based on Renesas IC
+(not related to Renesas RISC-V architecture just the same manufacturer).
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- .../boot/dts/nvidia/tegra30-pegatron-chagall.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Maxim Schwalm (1):
+  drm: panel: Add support for Renesas R69328 based MIPI DSI panel
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts b/arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts
-index 4012f9c799a8..b7d0ebb766a6 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts
-@@ -1155,6 +1155,14 @@ lcd_ddc: i2c@7000c000 {
- 		status = "okay";
- 		clock-frequency = <400000>;
- 
-+		embedded-controller@10 {
-+			compatible = "pegatron,chagall-ec";
-+			reg = <0x10>;
-+
-+			monitored-battery = <&battery>;
-+			power-supplies = <&mains>;
-+		};
-+
- 		/* Wolfson Microelectronics WM8903 audio codec */
- 		wm8903: audio-codec@1a {
- 			compatible = "wlf,wm8903";
-@@ -2596,6 +2604,14 @@ backlight: backlight {
- 		default-brightness-level = <15>;
- 	};
- 
-+	battery: battery-cell {
-+		compatible = "simple-battery";
-+		device-chemistry = "lithium-ion-polymer";
-+		charge-full-design-microamp-hours = <3050000>;
-+		energy-full-design-microwatt-hours = <23000000>;
-+		operating-range-celsius = <0 45>;
-+	};
-+
- 	/* PMIC has a built-in 32KHz oscillator which is used by PMC */
- 	clk32k_in: clock-32k {
- 		compatible = "fixed-clock";
+Svyatoslav Ryhel (3):
+  dt-bindings: display: panel: Document Renesas R61307 based DSI panel
+  drm: panel: Add support for Renesas R61307 based MIPI DSI panel
+  dt-bindings: display: panel: Document Renesas R69328 based DSI panel
+
+ .../display/panel/renesas,r61307.yaml         |  93 +++++
+ .../display/panel/renesas,r69328.yaml         |  72 ++++
+ drivers/gpu/drm/panel/Kconfig                 |  26 ++
+ drivers/gpu/drm/panel/Makefile                |   2 +
+ drivers/gpu/drm/panel/panel-renesas-r61307.c  | 326 ++++++++++++++++++
+ drivers/gpu/drm/panel/panel-renesas-r69328.c  | 282 +++++++++++++++
+ 6 files changed, 801 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/renesas,r61307.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/panel/renesas,r69328.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-renesas-r61307.c
+ create mode 100644 drivers/gpu/drm/panel/panel-renesas-r69328.c
+
 -- 
 2.43.0
 
