@@ -1,87 +1,88 @@
-Return-Path: <linux-kernel+bounces-601904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB317A873C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 22:09:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C03A873CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 22:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4C5D171337
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 20:09:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB98188EAE3
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 20:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14A21F3BB6;
-	Sun, 13 Apr 2025 20:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729A31EB5F1;
+	Sun, 13 Apr 2025 20:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rqv7WeFv"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T7xcqW0i"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9911D78F4C
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 20:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C402017B425
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 20:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744574976; cv=none; b=KNeWNbA6KYgwuz8cHgqtGFugoiGbXw98axXk3zjis7S0cH6KDnIchW0PTGbPAXdFOkZVNteJolGRtF2NSWrHpeX6rZOaeHP9LZa3vr8F0//3u3XJ6OF4YktwVWoxIy62G5tDHnDL7dEInx2PWpS/IIQ/CGvNTZFLDi/d6rV/12U=
+	t=1744575624; cv=none; b=BI3MLNlFinHRZi2YZzl1xExulD6g6PTG8PeoVlG1Wpf5x9HRLjfBFUQpCnn3Lj0ZBz+c+CTcYiDnTY0Cy2+XtE5P/d6vyihO067v0UXCE34+bPogvExm+gwj3v/WrqJ4cVFFRromwIpC+tsGI2pzvb2Ndx+qaO8rKmktvrzSdlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744574976; c=relaxed/simple;
-	bh=XpCVrQ3b8tX99TR9K8zuVxctWa/+aOTJuTrdy/x32Cg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nw96t7pXXItIg5vXsD8qNaNLW7UhDts28lCsN/l2gEjV4qPNziZvyXye6fmHi/iQjB0YZmL+pUFy1Dhs89YdmBzOKcTzpnj4rJ5IwF3XfJh3AFl3CnY0+McmDoWOyQ6hAAUPqF75LzIIGz3shoTGJp6sAhiLQ+AKm/NH8Y+w0cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rqv7WeFv; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1744575624; c=relaxed/simple;
+	bh=k6mT6cN+XIAjCLdm5SrGHRzq4mRU5aV0D8co4vOt5P0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BdWqisVU8KJe33TZLlpKa0gjQRGHWtNTE07sO/AAfAG4YES0Fc8jfw19eTg57GS96a73ev3wDV0ZNBqftcGmUOG3JkfSCMtM9sHVxGM35uu1EERGhm6KSWRLUX9DIMNcZARlhkyYHgiUC/q8R5t4N+tWqYkJLx25gwVPNF8kTT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T7xcqW0i; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744574973;
+	s=mimecast20190719; t=1744575621;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=31dW4hhoE6rQzohYOFQKu+yIo7zhpk3yfsTJqJ61yIk=;
-	b=Rqv7WeFvwXVGFWncyARoUoAIhv7ECi6NVGzOV7WvSSEo7hseOuJ0BkDmJlUcQzQDL7k9mg
-	e2KDl8FroRQtVd2oJc+Ap34Wm3MMyoIF1fKJBFIP/tFgT9iv3SwaTBinjCZUh4skWjNQrZ
-	CvbXocch2g2RprSV1Gmz0amTHIuiCXE=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=0co4iS1FTstjHk6lJy6IDvVtmBh/1r3x+AlyXOIUSGY=;
+	b=T7xcqW0ix9M13Bf5VgsoRTAAGNYMGqA/+Q5GZOOIDJLykObYXK0J3nOvIKFp6RqBI5BR1M
+	BH1NiJ+nX/AiQWg6LMQHAW0aO/+YgKSJLdXAjRcfCEjfp0kkSgegRk9oj+64XOPngE7qDp
+	I5gSuPiZGEYenfLi5o/gda4QVkzg6dE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-692-lSxXGT1ZNWycPk-2BC9_XQ-1; Sun, 13 Apr 2025 16:09:31 -0400
-X-MC-Unique: lSxXGT1ZNWycPk-2BC9_XQ-1
-X-Mimecast-MFC-AGG-ID: lSxXGT1ZNWycPk-2BC9_XQ_1744574971
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3913aea90b4so1441719f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 13:09:31 -0700 (PDT)
+ us-mta-12-hCLNN1UZP5OnPNrbT3kb7w-1; Sun, 13 Apr 2025 16:20:20 -0400
+X-MC-Unique: hCLNN1UZP5OnPNrbT3kb7w-1
+X-Mimecast-MFC-AGG-ID: hCLNN1UZP5OnPNrbT3kb7w_1744575619
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43d733063cdso30121075e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 13:20:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744574970; x=1745179770;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=31dW4hhoE6rQzohYOFQKu+yIo7zhpk3yfsTJqJ61yIk=;
-        b=b5K3JIaEB9rZThLZVULaJU543UZok2gy/g5PxzMpMR8ohUK0gMG6bCtS0xJitP7Zdi
-         CuPjWRQsgoHzc6UEAujSD8A6RktmteckNV9pEo/rKzKDLzgKIzK4S3W9pnNogp5xNPWu
-         Lufu+n9ISO1z2WLC2WyyzPZpzLVICiZ/n5sxZLgse+f189x67K6HgF1OVLTV9uC69qoB
-         NxoVoRLRbfoIlxbGg9t1lbfia8cvMEI8ewyfsIj7Qh2jY/PmyqU/jhaewRWr/YzzoYwL
-         XoxVNTzf0fGwcTLzumCOneRKPaPoYej/+s705iWIIM6ASo2nINeHVjWB0bOk0Lcfp0o8
-         I4Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWxBlL9N9rZjrI8ugyPfBWhU3EDbTynqs/1BzI40Ndt844X1SSpj3tfzUUZmwQvtckR5phtBJBf6DgKIXs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIJ+tMSs0aDakIlm/lwZ8AYn6LXusEZhYPIHZtvTvpLJ+Esz0l
-	uy1zH7ItrN+Oqh+lhusHDNunaAjKZMXrWHKBSEF9QnC1MrF87gtCgN549lqRIkOp2a6dM19BH8P
-	QR/K2sP8RUY/Lo+pWe64BsJsE4v8lUCpKUxj77ardVfcGi/TcaWuQXDLby1XPWw==
-X-Gm-Gg: ASbGncv/9fLSCf777sy0e0cYolgVrqwtwLCz9iRY+RZHlzFoQnTWnyVFaPy07hueYxJ
-	3PUyhGULG+o7wHMZh2O6qdlRPICMmQUBYllTyyf42lDfIYiVqEpKlbtU4B6cJx4m8Oh5pPzTGoe
-	iBtNK/oIDgXmsaLc2kV8qeptbBA0gLkgDJRLirZzCkSlK5Rio3qh2Onbl87K4G4hixM7AYmR6KI
-	y/gKCetRG/RI8gKHO7GmgBskKEhLNyyxagMSE01/0vvfEx7picBwbTEJ/LZ1AhB5jKNcr6EcI9K
-	gJSwa1A0KRUlTsvX+WcudCuk9At6xxGtuuFnch5ZQmZnNw0N6MPDe2ZJkfW5bsocR1st6Wr63jj
-	OxgY/V0LFmNRkRxez1aG8CrZfBpjfnghbMDjC7/w=
-X-Received: by 2002:a05:6000:22c1:b0:391:3d97:bd33 with SMTP id ffacd0b85a97d-39ea51f506emr7749397f8f.13.1744574970647;
-        Sun, 13 Apr 2025 13:09:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHf5y8Urm27uqHtUYFYgEjadABoT249/CjidrtT4w8oUCDaLSsP7Fzxka+tkR6nzr7xf5LIIg==
-X-Received: by 2002:a05:6000:22c1:b0:391:3d97:bd33 with SMTP id ffacd0b85a97d-39ea51f506emr7749387f8f.13.1744574970198;
-        Sun, 13 Apr 2025 13:09:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744575619; x=1745180419;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0co4iS1FTstjHk6lJy6IDvVtmBh/1r3x+AlyXOIUSGY=;
+        b=vpkNQqY0UxM2c0MN5P+9rtZAV4y20TVhnjRddgzOckw1jlME8bPO41Vmn8uopnUiXp
+         eYdoL3w6px3Hs+2OIqXsG8ImWiOSCgmNqA6Axc8c1JCED4pGLV1BVjE3umQWMC73eLe0
+         EHchoxIhdTWdRAqhbqNKsGpsfyfwZzOGCLlj4+nJtPgM7cYQIaXUSuiq5+E4C2q3ouAF
+         2gfFRjrJaU3ORjIcAVBWFX2g5jpKKYu1oyjWM5+EH3EMrkxK6rluRffc22fly5g/pW6X
+         D/wtYv8QlaDejV/Z0UbamOFZtY0jTX5573GpzrAMFqgSiD22Vs+GOGgzX6WKHcguWJnf
+         g/dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRbL1TZrmD3pXqXAO5LTE2iFBIEQf/ui4dRhHTkc82glLexdU2ATiTsEFjWh775L3fQheAWplTMR4trdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh/SF07pIYHJCGvDZlHBhTtPnKz1uKvrk66p7tixQxVbApe3bH
+	9kscW7vcp29rwIpYfjHNkVbVyk98P3bq/Po6suZGwofwC/A+fPhu8QVaotcoD4gvoCzLZuMKnPF
+	PSJff76xaprvAUWf882s3sZE0TFDY7Igz7vSl7vrBdu54vvcTAhfniAtWXIbcVE55nLTBtJVKcO
+	M=
+X-Gm-Gg: ASbGncsyDRqHjXnDBryBc+4W6CwB7MQxLAtuyZY88ny6FPCDZwK/to3Hcpg2V/qN62S
+	q0pl0CSaQt9ZRCk/jtdfbVx1wNFmIwByOKYV9vbQfTUArha4TpD1ag4DYfuOThaE9cuLTsXHb3M
+	wY8VsPsrfD5NGbZsHBGEAFwqetK8Cnt31Dx+uawWbORVcdSxuaPVHZKzHuyBLDMZRq0NDQYiYkf
+	MRPEAKZCW2zcfAYbVDu963zZAzyeEA3oVpmkTcR1ibb9vezc4K4p9+SddVM4ab42JTWcFIJtYam
+	Y2+t0GakLj6WIUa9IfxN/WIxPDgtasGQBGVGQMW0pl7/LBVMB5ZfvRP9ZymzilmB5TIZl/p5uAo
+	JMJn4WyWcJLIv1wWZYURZ/PF0YncOM0sZo/2WN/A=
+X-Received: by 2002:a05:600c:1d83:b0:43d:300f:fa1d with SMTP id 5b1f17b1804b1-43f3a9aed73mr103726355e9.31.1744575618879;
+        Sun, 13 Apr 2025 13:20:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEY5sCopFzMEfPoLnFxTMfbFhDn7XBbd5nfLeA4Joa5cRUrvz8UvQ9hZT7epeQAQaGESU5MAg==
+X-Received: by 2002:a05:600c:1d83:b0:43d:300f:fa1d with SMTP id 5b1f17b1804b1-43f3a9aed73mr103726265e9.31.1744575618457;
+        Sun, 13 Apr 2025 13:20:18 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f02:2900:f54f:bad7:c5f4:9404? (p200300d82f022900f54fbad7c5f49404.dip0.t-ipconnect.de. [2003:d8:2f02:2900:f54f:bad7:c5f4:9404])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43cc72sm9013629f8f.67.2025.04.13.13.09.29
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f23572c4esm156784745e9.26.2025.04.13.13.20.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Apr 2025 13:09:29 -0700 (PDT)
-Message-ID: <35a93c36-6e97-4b33-aae5-efd1c907518a@redhat.com>
-Date: Sun, 13 Apr 2025 22:09:28 +0200
+        Sun, 13 Apr 2025 13:20:18 -0700 (PDT)
+Message-ID: <ec2c31e4-f7f2-4ec0-bbfe-e6d6e080429f@redhat.com>
+Date: Sun, 13 Apr 2025 22:20:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,14 +90,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/4] mm/gup: clean up codes in fault_in_xxx() functions
-To: Baoquan He <bhe@redhat.com>, linux-mm@kvack.org
-Cc: akpm@linux-foundation.org, osalvador@suse.de, yanjun.zhu@linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250410035717.473207-1-bhe@redhat.com>
- <20250410035717.473207-5-bhe@redhat.com> <Z/sbv3EmLXWgEE7+@MiWiFi-R3L-srv>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [syzbot] [mm?] WARNING in do_wp_page
+To: syzbot <syzbot+5e8feb543ca8e12e0ede@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ syzkaller-bugs@googlegroups.com
+References: <67fab4fe.050a0220.2c5fcf.0011.GAE@google.com>
 Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
  dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
@@ -142,32 +142,91 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <Z/sbv3EmLXWgEE7+@MiWiFi-R3L-srv>
+In-Reply-To: <67fab4fe.050a0220.2c5fcf.0011.GAE@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 13.04.25 04:04, Baoquan He wrote:
-> The code style in fault_in_readable() and fault_in_writable() is a
-> little inconsistent with fault_in_safe_writeable(). In fault_in_readable()
-> and fault_in_writable(), it uses 'uaddr' passed in as loop cursor. While
-> in fault_in_safe_writeable(), local variable 'start' is used as loop
-> cursor. This may mislead people when reading code or making change in
-> these codes.
+On 12.04.25 20:46, syzbot wrote:
+> Hello,
 > 
-> Here define explicit loop cursor and use for loop to simplify codes in
-> these three functions. These cleanup can make them be consistent in
-> code style and improve readability.
+> syzbot found the following issue on:
+
+Related to my recent changes
+
 > 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
+> HEAD commit:    0af2f6be1b42 Linux 6.15-rc1
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1766323f980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f175b153b655dbb3
 
-Hopefully we don't introduce anything unexpected ... do we have some 
-unit test that could make use feel better, especially regarding end < start?
+CONFIG_ARCH_WANTS_THP_SWAP=y
+CONFIG_MM_ID=y
+CONFIG_TRANSPARENT_HUGEPAGE=y
+# CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS is not set
+CONFIG_TRANSPARENT_HUGEPAGE_MADVISE=y
+# CONFIG_TRANSPARENT_HUGEPAGE_NEVER is not set
+CONFIG_THP_SWAP=y
+CONFIG_READ_ONLY_THP_FOR_FS=y
+# CONFIG_NO_PAGE_MAPCOUNT is not set
+CONFIG_PAGE_MAPCOUNT=y
 
-If not, could we add one based on some feature that ends up calling at 
-least one of these functions?
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5e8feb543ca8e12e0ede
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/f1d71d1bf77d/disk-0af2f6be.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/7f1638f065da/vmlinux-0af2f6be.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/9b3e49834705/bzImage-0af2f6be.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5e8feb543ca8e12e0ede@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 7165 at mm/memory.c:3738 __wp_can_reuse_large_anon_folio mm/memory.c:3738 [inline]
 
-Acked-by: David Hildenbrand <david@redhat.com>
+VM_WARN_ON_ONCE(folio_entire_mapcount(folio));
+
+Which is rather unexpected. I know we had a scenario (remapping a THP?) 
+where we would have a PMD mapping and a PTE mapping of an exclusive anon 
+folio for a very short time. But, IIRC locking should make sure that 
+that cannot be observed by some other page table walker.
+
+Unfortunately o reproducer. I'll do some digging ...
+
+
+> WARNING: CPU: 0 PID: 7165 at mm/memory.c:3738 wp_can_reuse_anon_folio mm/memory.c:3788 [inline]
+> WARNING: CPU: 0 PID: 7165 at mm/memory.c:3738 do_wp_page+0x4c62/0x59f0 mm/memory.c:3918
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 7165 Comm: syz.3.280 Not tainted 6.15.0-rc1-syzkaller #0 PREEMPT(full)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+> RIP: 0010:__wp_can_reuse_large_anon_folio mm/memory.c:3738 [inline]
+> RIP: 0010:wp_can_reuse_anon_folio mm/memory.c:3788 [inline]
+> RIP: 0010:do_wp_page+0x4c62/0x59f0 mm/memory.c:3918
+> Code: 48 89 ef e8 50 c3 ea ff e9 62 b8 ff ff e8 c6 e0 b4 ff 48 c7 c6 20 43 9b 8b 4c 89 e7 e8 f7 a0 fc ff 90 0f 0b e8 af e0 b4 ff 90 <0f> 0b 90 e9 df ed ff ff e8 a1 e0 b4 ff 48 c7 c6 60 46 9b 8b 48 89
+> RSP: 0018:ffffc900039f77e0 EFLAGS: 00010287
+> RAX: 0000000000041ec0 RBX: ffffc900039f7a00 RCX: ffffc9000d0c6000
+> RDX: 0000000000080000 RSI: ffffffff82065c61 RDI: 0000000000000005
+> RBP: ffffea0001320000 R08: 0000000000000005 R09: 00000000ffffffff
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffff888012935dc0
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000001
+> FS:  00007f57215806c0(0000) GS:ffff8881249b9000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000020000001e000 CR3: 000000006cd88000 CR4: 0000000000350ef0
+> Call Trace:
+>   <TASK>
+>   handle_pte_fault mm/memory.c:6013 [inline]
+>   __handle_mm_fault+0x1ada/0x2a40 mm/memory.c:6140
+>   handle_mm_fault+0x3fe/0xad0 mm/memory.c:6309
+>   faultin_page mm/gup.c:1193 [inline]
+>   __get_user_pages+0x771/0x36f0 mm/gup.c:1491
+>   populate_vma_page_range+0x278/0x3a0 mm/gup.c:1929
+>   __mm_populate+0x1d8/0x380 mm/gup.c:2032
+>   do_mlock+0x448/0x810 mm/mlock.c:655
+
+During do_mlock() we should be holding the mmap lock in write mode I 
+assume once we reach do_wp_page.
 
 -- 
 Cheers,
