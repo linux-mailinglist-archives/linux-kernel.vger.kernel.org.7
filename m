@@ -1,106 +1,86 @@
-Return-Path: <linux-kernel+bounces-601898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285CBA873B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 22:00:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0AE1A873C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 22:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882F8170EB0
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 20:00:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48C397A7122
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 20:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920941519A1;
-	Sun, 13 Apr 2025 20:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756EF1F4161;
+	Sun, 13 Apr 2025 20:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7etbMb4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJSjaxJM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C904B1EEA39;
-	Sun, 13 Apr 2025 20:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4E91F3B87;
+	Sun, 13 Apr 2025 20:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744574421; cv=none; b=gGsdImHwFSBWuC7bz0nNJx2ihrTtF0q7kLaess+IYJhH48pnDiZEYWfXadiNNhceZ8f1m2dn4oEdISLgRv260MpIR1WuR90bd/A4MRjdG1FIPmD52/SXBfENUrS/1GX1uHHnqJhEhwqS9EBvNNHyw3t8qi63vmyP9MR0kJkdv8w=
+	t=1744574468; cv=none; b=Lx5RV588OgAT2IJGwcZKSwtQV7OOmhcKuMvGSC2lsWRgYUx16sXGISVCoJvoK4L4TIHQVMLHwA65LLiQXo496zMl8WYMzbHw6LFY0MMKoHw21/ZhbqrADdVDpYFfD+bWrbs/Ode1lotEnQ5Of3G932XIE9Dh5heloKfqA01AoEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744574421; c=relaxed/simple;
-	bh=+Fq0MhmsH1itLSjdDC0e0AQDvHDYfYtdZa0fZk4m4G8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UIBc5r6tPvPY245XbyXxfUnG3+AFRh1cUZuSuLexWmrLhX0pEuj9eVBjPl1/g/SJKMpaVUWHnXBxkKpE5xu/h80ZQzuMwCBrvBDRPS6I2OjYjCaqeJAWWtXCPD9/8N/HCGydSYYZHcHBIeq9j1qPZ6VpPplt3vq5JCZhPcy2u9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7etbMb4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18373C4CEE7;
-	Sun, 13 Apr 2025 20:00:21 +0000 (UTC)
+	s=arc-20240116; t=1744574468; c=relaxed/simple;
+	bh=mBFfUee3RE/ORcogTSmYi0S8W7Std6PnRpce5lpwtgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEHkgFomfH+yseMAyghs9Hk2CBcu+OlDKRRqN/rgKzRoPXfexxrv9+zBzythhipF2WzYcxcm19lUYkVvQwLt6Mjf38jtyCmGuvK8pvs8IKuHvTIJZJ8ny29xKcPQONUFD5NylFsbLEx6qXU0v5tXMrZQMr0pDZMzNSOIu5aqoXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJSjaxJM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C246C4CEDD;
+	Sun, 13 Apr 2025 20:01:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744574421;
-	bh=+Fq0MhmsH1itLSjdDC0e0AQDvHDYfYtdZa0fZk4m4G8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I7etbMb4XdA3KK4rodjXK+gs7WJKkTNURpYg1Dm3lmMi0djrpCanbW0EMa1nU7NgG
-	 2m9IMgPYgfqHVSx3hNRxMTiGSv596a7uN8rGHOVN4C2Y6+5refmXtRlnnNYx1t68WI
-	 ThOA3/zPpfS2ql5xJy7ecnRSV9lHnVMRbDbJW7qX/GlkALVy1Xyl8JfuN9V1NAZ7Fp
-	 VFjpzfocCRa1cc4gVTkn9hclofT6PEcML1iQJb1X4y4mGvpGdXlGssK20oAL4hI2py
-	 vFuYL+IiJOje9CSjjDInkdrDbO15+Giymo5Njey3/KkhpB48k0zKHvb2tTdb+uodP4
-	 0+q2UgFBlyqSg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1u43V4-0051hr-Fo;
-	Sun, 13 Apr 2025 21:00:18 +0100
-Date: Sun, 13 Apr 2025 21:00:23 +0100
-Message-ID: <87v7r7ygq0.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org,	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,	linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev,	Alyssa Rosenzweig <alyssa@rosenzweig.io>,	Janne
- Grunau <j@jannau.net>,	Hector Martin <marcan@marcan.st>,	Sven Peter
- <sven@svenpeter.dev>,	Bjorn Helgaas <bhelgaas@google.com>,	Lorenzo
- Pieralisi <lpieralisi@kernel.org>,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
- <kw@linux.com>,	Rob Herring <robh@kernel.org>,	Krzysztof Kozlowski
- <krzk+dt@kernel.org>,	Mark Kettenis <mark.kettenis@xs4all.nl>
-Subject: Re: [PATCH v3 01/13] PCI: apple: Set only available ports up
-In-Reply-To: <k3wj3wkk3cymyacboalkhe2fa7jvkpuehq4knpsouoyhvoavpl@bafg4oakp4lr>
-References: <20250401091713.2765724-1-maz@kernel.org>
-	<20250401091713.2765724-2-maz@kernel.org>
-	<k3wj3wkk3cymyacboalkhe2fa7jvkpuehq4knpsouoyhvoavpl@bafg4oakp4lr>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1744574468;
+	bh=mBFfUee3RE/ORcogTSmYi0S8W7Std6PnRpce5lpwtgg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nJSjaxJM4QqCUxleHQ5qGPjrnyRDnJ9NOWy1OiDGoaBA7PUry14TZHm7qm7nvc1XG
+	 IOXC8rrPvrbh+Y7COhTRoNdD12cAXduQqoDY1hNHtXP+uVM0KTscPJaQXjpM7CK0EM
+	 dlQ7SZWfXhQFln9VYaEXQrXoiO8IJJYW2afClJUPBAdg4UkppTntLNX9ctUJsD39IZ
+	 Xx/g7SUBdIaww/K07eV2qMkenTjVYWiuuKURsUIl/Mp87iJtfcmZ5E4pyDGh1nDPH2
+	 3o49EY6Cf3v6SSJLM+afWRNfzDgOc/4d5Gkak7+0454of6DVNIwyqXHXiFOBjqqPAa
+	 PPwCPVgelqrQg==
+Date: Sun, 13 Apr 2025 22:01:03 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, Doug Anderson <dianders@chromium.org>, 
+	Vincent Palatin <vpalatin@chromium.org>, Simon Glass <sjg@chromium.org>, Lee Jones <lee@kernel.org>, 
+	Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, kernel-dev@igalia.com
+Subject: Re: [PATCH] i2c: cros-ec-tunnel: defer probe if parent EC is not
+ present
+Message-ID: <yh2uau644cq22qw5wnj7cypg6wf5aoef7a7z7smbvkva56jtle@dxzs6etk7cb6>
+References: <20250407-null-ec-parent-v1-1-f7dda62d3110@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: manivannan.sadhasivam@linaro.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, asahi@lists.linux.dev, alyssa@rosenzweig.io, j@jannau.net, marcan@marcan.st, sven@svenpeter.dev, bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, krzk+dt@kernel.org, mark.kettenis@xs4all.nl
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407-null-ec-parent-v1-1-f7dda62d3110@igalia.com>
 
-On Sun, 13 Apr 2025 17:57:35 +0100,
-Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+Hi,
+
+On Mon, Apr 07, 2025 at 05:33:34PM -0300, Thadeu Lima de Souza Cascardo wrote:
+> When i2c-cros-ec-tunnel and the EC driver are built-in, the EC parent
+> device will not be found, leading to NULL pointer dereference.
 > 
-> On Tue, Apr 01, 2025 at 10:17:01AM +0100, Marc Zyngier wrote:
-> > From: Janne Grunau <j@jannau.net>
-> > 
-> > Iterating over disabled ports results in of_irq_parse_raw() parsing
-> > the wrong "interrupt-map" entries, as it takes the status of the node
+> That can also be reproduced by unbinding the controller driver and then
+> loading i2c-cros-ec-tunnel module (or binding the device).
+
+...
+
+> Returning -EPROBE_DEFER will allow the device to be bound once the
+> controller is bound, in the case of built-in drivers.
 > 
-> 'as it doesn't take account'?
-> 
-> > into account.
+> Fixes: 9d230c9e4f4e ("i2c: ChromeOS EC tunnel driver")
+> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
 
-No, I really mean it in the positive form. of_irq_parse_raw() checks
-of_device_is_available(), and gets really confused if walking from a
-disabled port. You end up with the interrupt for the next *available*
-port, and everything goes pear shaped from then onwards.
+merged in i2c/i2c-host-fixes.
 
-So IMO "as it takes into account" describes pretty accurately the
-situation.
-
-	M.
-
--- 
-Jazz isn't dead. It just smells funny.
+Thanks,
+Andi
 
