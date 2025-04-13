@@ -1,126 +1,116 @@
-Return-Path: <linux-kernel+bounces-601897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-601899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C374A873B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 21:51:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08487A873BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 22:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11917188E2CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 19:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D641F3AC864
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Apr 2025 20:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00BB1F3FD9;
-	Sun, 13 Apr 2025 19:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923031F4187;
+	Sun, 13 Apr 2025 20:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FDAD/u5Q"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UFdTl2AN"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7137D64A98;
-	Sun, 13 Apr 2025 19:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0451DBB2E
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 20:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744573869; cv=none; b=Pg4icViC7LCYVgUgMjcLNOB4g3TyIs9s52GkX+vp4Ck+bzSWCxFjwRVbYpjpyn+Ruw+Vtklhz0IC3QCJxDD/k24B7ddz00/9Q8iK1jI+NSSzhxMswXIZWM0tEUmp7Xc3DngtTslbrCRJsnZnr1IDAFDXa3Zw4wLHGSNEKiVXPxg=
+	t=1744574423; cv=none; b=Eely07KeQf1XqmygVORM/p8kmiB49DrRZaQnQDn4QM/gm3VQGkmMaiUdXEFmSrhGKE/uk33Jme9zLwe1f5AqhsvlN6cv25U86E5LWwl+slUnVZgCfiUeuRZvQ8BezKWg752yrDAsFwRG1b27U32AWxJHn6auTgUVrgP2ajaj4Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744573869; c=relaxed/simple;
-	bh=IRLaNQdb3TIWz0TX8veHTm12z8DUreWzQbAPozk2cUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oQjhxCRu+frYHqTj2I35Q6dC/Gd1HC3F1DP55vihgGtTJZuAZ3BAsbp51q9qo61j4J6BI6cWpkUaLwzLxTRfgtQwpnwqUQpKgNdWWJJb+tSx/DztpvEFV1ttSpBVnY2xHNrfrkTgrxBoU42EeweNoH1mHAmz8VHP/sVgp3agiG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FDAD/u5Q; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=gk7+NueQV0rZfB0Vb9kEXe2k5hVrXUXOMr3/Bjby3Bw=; b=FD
-	AD/u5QyeIYJuWo3xHLH0qKp4HT6S10GFJi6yvcp1visS1XZQLaYnTtiYiq4vHuiKvttgnSaR/Csph
-	jZEUXQW3Hur7F9uzhZ09nxx5HtR/x7LBHCEU6M8WNg2MyMDLeGlEhAdRlFIYOuIRcnrMci6as30Kq
-	cZXXKVUZ2G17BaE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u43Ls-0095Ss-8s; Sun, 13 Apr 2025 21:50:48 +0200
-Date: Sun, 13 Apr 2025 21:50:48 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, netdev@vger.kernel.org,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Schmidt <mschmidt@redhat.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 07/14] mfd: zl3073x: Add components versions register
- defs
-Message-ID: <83f83841-fa10-422f-9b4b-625c678a4b5e@lunn.ch>
-References: <20250409144250.206590-1-ivecera@redhat.com>
- <20250409144250.206590-8-ivecera@redhat.com>
- <CAHp75Ve4LO5rB3HLDV5XXMd4SihOQbPZBEZC8i1VY_Nz0E9tig@mail.gmail.com>
- <b7e223bd-d43b-4cdd-9d48-4a1f80a482e8@redhat.com>
- <46ff3480-caca-4e2c-9382-2897c611758a@redhat.com>
+	s=arc-20240116; t=1744574423; c=relaxed/simple;
+	bh=TtZ14UJApXMRPvr4GnfMfduGzgNBfwCVMzqr/TJZeSY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qpxxmTI2zFQCVtKDoYhMf2LDf6xDyjnf6gHf4w1AtU3xZwis6EogXeeXMog/XHk9sXdMeevDZhh47t42pEJnNMiAIiq9BkOdARlKLLK4NW+K/gVx/Dqn6Sqb4lGQWF7fpEmYVHpHRnLPQiYjpYP9V5lSGYmdl7tZBHowQKu5de8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UFdTl2AN; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so39289525e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 13:00:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744574419; x=1745179219; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9Yy/848/baLEzkw8qa5zoxS7nq5QkNFAJau0dpZhAiE=;
+        b=UFdTl2ANrR3WHnhTzgrvrQP/XrROa44vFvQAii72eGJvLaf4Py6LCKuc4iniE9dMta
+         GZisRtevt5Uwlze3PhXz0YFKKE8nbVL3IX82/Jd51x1uPrLtB9E/+mzzwzV89LQtmNYo
+         y8wEVo7P4fH2FQCMPFEVI/NuM8F3CnM5F2hr11UeIbqjJJ2wKwYrwB1a5ckhg0DwuHWl
+         AQKZ0DYdfxZrtIin+xVAMtQXf6mWEaPwe3nQVARf5iTZ1HB/44GcX5B4brdDJHSi451D
+         9HaKOkmSOMgzRw1xHB+RNBlMNDIWpEAOx8YA2qyS+jXeSS2fv5J8pdy4c4IuX3lr/HCk
+         fv+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744574419; x=1745179219;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9Yy/848/baLEzkw8qa5zoxS7nq5QkNFAJau0dpZhAiE=;
+        b=RyLewKnp52nxGwnEx+6rlQNWnQZa1Asveh6qMldbvK/xfOvPbB6nisRuzKvctLV29S
+         n0ftzXeprEcO12UxKtQ4gmDNGjIYH/6lpX1L7PSCDQ/W/dmgt9voBlt4PHZDYNuRwhGF
+         7by7TMepnqXXPiXSi1SRMB/DzgDNVJUd8tKfUOWz3TUxJggYIYlPo3PXVjxf7ITuGpM8
+         aKhU9eVRYvmT7XjE42emU0/yKSTz8olC04PZZU0jlunMbedOm9cX/p2zQnOIKe9FiKcx
+         XSjbvats7LHZGKF8tz+yOhN/2CD3yPXsOzc/C6JAkrwooHyML+UoluUgySN/dGgQ4Qz/
+         ceXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWUB0ts2KgF2nRGklk1cO6tJHA0AW3SoJcYIaL9iFNWkWCgdSi9WpFE423ue7iPisCXn8/jBGxIV9EfVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy1N83/mdPE2qqO3ikqX1vsLAJVDJrWckdBjiqA8q511w5cwee
+	hXgfP6YspQHt61nfqAutgPrFTj2k379xRI5z/iwHw6MPp8j/fj0s6YNSJkrI63w=
+X-Gm-Gg: ASbGnct9LSouU4vxAlj1Q+hC2WOS2LCRBHrVTj7l7Z1PaVjN42C02cFt8U9iP+NaJYt
+	XQJ+iLIrOf8xIbWHQux9r1wtrqeYsm9Nd4cUeTitvw0YTmE1dAnxw2QrP48e49eQOtUmDTiqr5z
+	+ykklWEpHyJ5gL8YJ+g/96sQS1kZKd/NEOhRY4drWTCP2W9MqkDYGMXPRWc/i6JW3M+MYol6Idr
+	92FuKHuULjElR/6v2134m6Duvl5r45mOzyhZ2bkB/tjyz4smO18LUILjQgqUryIhnkIY/qaOAcp
+	djLTjGx1OEbNZOrVHe7JvcUTw2xReeNKqeNg
+X-Google-Smtp-Source: AGHT+IHkeeRojU6nphRcBzcpFgA1HGJWrqUBo0zw7NF6Zq4RRkjDJ2KrUAA7MSqPk38slZirAV8Kmg==
+X-Received: by 2002:a05:600c:3c82:b0:43c:ebc4:36a5 with SMTP id 5b1f17b1804b1-43f3a933b99mr83516875e9.7.1744574418483;
+        Sun, 13 Apr 2025 13:00:18 -0700 (PDT)
+Received: from brgl-pocket.. ([2a01:e0a:81f:5e10:e852:1f2c:a4b2:8e89])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43ce0asm8810540f8f.70.2025.04.13.13.00.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Apr 2025 13:00:17 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linus.walleij@linaro.org,
+	theo.lebrun@bootlin.com,
+	Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: nomadik: Add check for clk_enable()
+Date: Sun, 13 Apr 2025 22:00:13 +0200
+Message-ID: <174457440296.11196.17152391053685137943.b4-ty@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250412193153.49138-1-chenyuan0y@gmail.com>
+References: <20250412193153.49138-1-chenyuan0y@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <46ff3480-caca-4e2c-9382-2897c611758a@redhat.com>
 
 
-61;8000;1cOn Fri, Apr 11, 2025 at 03:17:14PM +0200, Ivan Vecera wrote:
-> On 11. 04. 25 1:19 odp., Ivan Vecera wrote:
-> > The range for regmap 1: (registers 0x000-0x4FF)
-> > regmap_range_cfg {
-> >      .range_min = 0,
-> >      .range_max = 10 * 128 - 1, /* 10 pages, 128 registers each */
-> >      .selector_reg = 0x7f,      /* page selector at each page */
-> >      .selector_shift = 0,       /* no shift in page selector */
-> >      .selector_mask = GENMASK(3, 0),    /* 4 bits for page sel */
-> >      .window_start = 0,         /* 128 regs from 0x00-0x7f */
-> >      .window_len = 128,
-> > };
-> > 
-> > The range for regmap 2: (registers 0x500-0x77F)
-> > regmap_range_cfg {
-> >      .range_min = 10 * 128,
-> >      .range_max = 15 * 128 - 1, /* 5 pages, 128 registers each */
-> >      .selector_reg = 0x7f,      /* page selector at each page */
-> >      .selector_shift = 0,       /* no shift in page selector */
-> >      .selector_mask = GENMASK(3, 0),    /* 4 bits for page sel */
-> >      .window_start = 0,         /* 128 regs from 0x00-0x7f */
-> >      .window_len = 128,
-> > };
-> > 
-> > Is it now OK?
+On Sat, 12 Apr 2025 14:31:53 -0500, Chenyuan Yang wrote:
+> Add check for the return value of clk_enable() to catch
+> the potential error.
 > 
-> No this is not good... I cannot use 2 ranges.
+> This is similar to the commit 8332e6670997
+> ("spi: zynq-qspi: Add check for clk_enable()").
 > 
-> This is not safe... if the caller use regmap 2 to read/write something below
-> 0x500 (by mistake), no mapping is applied and value is directly used as
-> register number that's wrong :-(.
 > 
-> Should I use rather single mapping range to cover all pages and ensure at
-> driver level that regmap 2 is not used for regs < 0x500?
+> [...]
 
-I don't know regmap too well, but cannot your mailbox regmap have a
-reg_base of 10 * 128. Going blow that would then require a negative
-reg, but they are unsigned int.
+Applied, thanks!
 
-One of that things the core MFD driver is about is giving you safe
-access to shared registers on some sort of bus. So it could well be
-your MFD exports an higher level API for mailboxs, a mailbox read and
-mailbox write, etc. The regmap below it is not exposed outside of the
-MFD core. And the MFD core does all the locking.
+[1/1] gpio: nomadik: Add check for clk_enable()
+      https://git.kernel.org/brgl/linux/c/4521e0884c261fd286c02da942e9e8596bf2e7cf
 
-	Andrew
+Best regards,
+-- 
+Bartosz Golaszewski <brgl@bgdev.pl>
 
