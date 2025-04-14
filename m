@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-602149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4AAAA8773A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:31:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE3EA87740
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE86916E9B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 05:31:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CFC13ADE0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 05:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E2C1A239D;
-	Mon, 14 Apr 2025 05:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2396719F48D;
+	Mon, 14 Apr 2025 05:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nguol5js"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1JmwAHV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88231E485;
-	Mon, 14 Apr 2025 05:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805841862
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 05:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744608711; cv=none; b=H7U7pf2Df/3ZB7CMcSHtRx+Ukq68Ui4iX18Aal9IaaIgj0ORKPLFgMYYddcLzwismocFPWp1aFkiLxXAG3hKXYK01lNF3kb33u7Vw0JN3xy0OgymK5hkm+OB8Qy9mYA7N9QtfDYxLcXpQc7/e/hP/8tUS6JUhkcwkg9obgtqLQs=
+	t=1744608896; cv=none; b=ED9ZmF7xjZH3P5Jq82UlOOrjMPqnA4aZsx7KKaaZBCzQXwQfQb5U+dUMJi5834witGz4UL+Tdy5lkl3SJq6Ic0wnyltud7Re7eJuZg8JX31CjZaa4oaYTqITEctJ38cW3F6UNBYzViYKr1KyJALr+4kRe88QvEe6od+YPXBqNs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744608711; c=relaxed/simple;
-	bh=yyNJl4g3bOgdii6aWvXqbkE/wzU/EU/wMK6naAzWIl0=;
+	s=arc-20240116; t=1744608896; c=relaxed/simple;
+	bh=RBHWsa/lYY2TzfGGGmu9sF7ys+yTQ+QL84nu8ilvsHI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qSDWZ7sniI/hFgrZYCYaymT9z5HMY0hJX6pV07B5K0T2nmix9xoVs+nVRaFFTOzfVu4Hrwr3AHv6ZpBCWeAalcOzzlv1cDvaAPUKySZd3Rin2aFGu1oJCaH/oO9K/020gp8XODr44dHo+XRxX4o/brwjjsgJpYNZ2LYhCIwaJnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nguol5js; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 843C5C4CEE2;
-	Mon, 14 Apr 2025 05:31:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VBOmM9jVg2V4Ou/Bk2PQ3Mn3BA8a0ZQ5KQkhlGYWl9RO8bgMAl3DcFiIMVES5bpx6DPOSjNNlcP50DYEkySnULRKOGvxcsgENVl7geYP2/VZYxJU60AhpLZ5NsGx/IyD01qCh4JUUAzkclnsI3QG6lYnoBkzyRYzKna4ulWcqik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r1JmwAHV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62872C4CEEA;
+	Mon, 14 Apr 2025 05:34:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744608711;
-	bh=yyNJl4g3bOgdii6aWvXqbkE/wzU/EU/wMK6naAzWIl0=;
+	s=k20201202; t=1744608895;
+	bh=RBHWsa/lYY2TzfGGGmu9sF7ys+yTQ+QL84nu8ilvsHI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nguol5jsekueg+zeMBErNjyhxrkTAHJFo1t2GzJIr4L3HakW6qmn9c28tFrRoxRj2
-	 3eEP3eSNLTRehb8QtJ9qSRiucEoB7o86bGQa8gALh6NRbKlGn7LB25fRKbLh4e6aBA
-	 AHPRuZNehfcsa3BeiAkMmuJ7jGhRR9EVa9YuxqkaMjqQAb48TxxEdRyST7+wkZPORD
-	 8eJxVsY6eybt1+dNRroMCqXKVKafMEJXeTzfZ7SjDIz2DbJos2ZZwoR2jWja+zjWlt
-	 EX8qLmHpP6ybs5ba8F7qrdk/kZEXr58pfpTzrgzkNtlhmTIbrqFxH+m4rNg3Yxm1P/
-	 B8Ktz7YMATMYA==
-Date: Mon, 14 Apr 2025 07:31:45 +0200
+	b=r1JmwAHVlaNDRKobUkCOHhQTmRvKptLMvewXTjJIm/TpEHLl/CMOU3d9eu5jf7pGH
+	 3bNTVBwKh5NyEAdh0YVVkd4ZTseFRKLWzdMlgtk2tZgap+1JBRmTtjl3fWUlaBeV7d
+	 Im90rpwiQWnf+tBuyC27FbyltNg+luDdT+dq+wUnXqtTqKzCnovWqZfHRf6555mYeX
+	 fc1ckyCDBQBfk3aZlbyViiHlc25oDut1+CRVHxL/LlPnxWjRIJkKohHPSxHj4/etb/
+	 933WFYCrW3sgXGu5S5CbbShpkP0RDVSFG7sq48hl0IIknQ0RGGlyJAwYW1XXdd1FgH
+	 +PwyNFPuA69RQ==
+Date: Mon, 14 Apr 2025 07:34:48 +0200
 From: Ingo Molnar <mingo@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Binbin Wu <binbin.wu@linux.intel.com>, KVM <kvm@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
-Message-ID: <Z_ydwZOWA9cXDqXd@gmail.com>
-References: <20250414141411.469e897f@canb.auug.org.au>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+	mingo@redhat.com, luto@kernel.org, peterz@infradead.org,
+	paulmck@kernel.org, rostedt@goodmis.org, tglx@linutronix.de,
+	willy@infradead.org, jon.grimm@amd.com, bharata@amd.com,
+	raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com
+Subject: Re: [PATCH v3 0/4] mm/folio_zero_user: add multi-page clearing
+Message-ID: <Z_yeeOAVqOdg82pA@gmail.com>
+References: <20250414034607.762653-1-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,48 +62,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250414141411.469e897f@canb.auug.org.au>
+In-Reply-To: <20250414034607.762653-1-ankur.a.arora@oracle.com>
 
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+* Ankur Arora <ankur.a.arora@oracle.com> wrote:
 
-> Hi all,
-> 
-> Today's linux-next merge of the kvm tree got a conflict in:
-> 
->   arch/x86/kvm/vmx/vmx.c
-> 
-> between commits:
-> 
->   c435e608cf59 ("x86/msr: Rename 'rdmsrl()' to 'rdmsrq()'")
->   78255eb23973 ("x86/msr: Rename 'wrmsrl()' to 'wrmsrq()'")
-> 
-> from the tip tree and commit:
-> 
->   7172c753c26a ("KVM: VMX: Move common fields of struct vcpu_{vmx,tdx} to a struct")
-> 
-> from the kvm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> Ankur Arora (4):
+>   x86/clear_page: extend clear_page*() for multi-page clearing
+>   x86/clear_page: add clear_pages()
+>   huge_page: allow arch override for folio_zero_user()
+>   x86/folio_zero_user: multi-page clearing
 
->  -	wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
->  +	wrmsrq(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
+These are not how x86 commit titles should look like. Please take a 
+look at the titles of previous commits to the x86 files you are 
+modifying and follow that style. (Capitalization, use of verbs, etc.)
 
->  -	wrmsrl(MSR_KERNEL_GS_BASE, vmx->vt.msr_host_kernel_gs_base);
-> ++	wrmsrq(MSR_KERNEL_GS_BASE, vmx->vt.msr_host_kernel_gs_base);
-
->  -		rdmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
->  +		rdmsrq(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
-
->  -		wrmsrl(MSR_KERNEL_GS_BASE, data);
->  +		wrmsrq(MSR_KERNEL_GS_BASE, data);
-
-Looks good, thanks!
+Thanks,
 
 	Ingo
 
