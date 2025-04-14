@@ -1,120 +1,144 @@
-Return-Path: <linux-kernel+bounces-602128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60DC6A876E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:24:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA80A876E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 278BA3AA348
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 04:23:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67936188FDEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 04:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1844B19CC0A;
-	Mon, 14 Apr 2025 04:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9414719CC0A;
+	Mon, 14 Apr 2025 04:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="TaHORxwJ"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PiMfB+HK"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A26E199EBB
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 04:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827E317A586;
+	Mon, 14 Apr 2025 04:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744604642; cv=none; b=q31oXO6ytEacd5CzSC4LEPAeuOMUGmvluv5dz3pXUeCDe/y63YWDlRsRzn3l2WgP6zylmm0BhjorXlx8ovSSkO12+8naiMOSjO5k+gtkNo/eWSJ7B4FhGNoRf6k7TqILzyCh/O9aq/g7yy5z8/22+vVOlPHNjOu03DsLj2//wTA=
+	t=1744604593; cv=none; b=eOocPuPgdjw6BGKRGcwDaYACf5HhTgZKT+GgOEoo0rE2lo5thhX8QYbUp8kqeRLufoR48Xx7PG92ohUEXrYIdykcpUr1+6MKXBKHYcUdi3aNw9rCRo0gf6JeIW0mzmbuKzlRlhQfZK1jh48Ii5PFLZUZsFOR5jvtJAe21XO7QhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744604642; c=relaxed/simple;
-	bh=GWSTSTj5Bi+IH0R5CruPau9fafbM4cxQUNt4l71H7HE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i3Qln6dTFwcw7S3Nw4STSghjnlKIPkHdbws79RlHH1KC919n9k8OQLZgqmwMvb3MLHPzoP6E1nj0ZBabRCKeOZZgfnpFD5rXmjbdYPpl0yYLVgZkrDo8e9x+H/ChT/j660Ol2E/gczsARTGbW91sOOS2lvpU+GwmKXTIFFHFqkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=TaHORxwJ; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744604592;
-	bh=vcBvQjCcKGTrIg0j33ponHXhhjiRBvJT7ni4uKW+6io=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=TaHORxwJGjkMlWQ6DvaiSFcDHwBjhirleE0buc6RI6VHC78POrZc0tliKnMPTYelT
-	 4kQJpokI/Tcb3C57+lZmh9ITPrumkQ+dgbr/aTtP/is4GVidhGPa6hguQ2cMxukD02
-	 e81ScJgzTIDpIzmF6vML1OM7mBHybb9xIrlG6uLY=
-X-QQ-mid: zesmtpip3t1744604581tfe496c65
-X-QQ-Originating-IP: 7C3dqLLuc1N76D3N37XRg6r6cRRotqPQhGGx9dlUBM0=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 14 Apr 2025 12:22:59 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 2176129901492631011
-EX-QQ-RecipientCnt: 8
-From: WangYuli <wangyuli@uniontech.com>
-To: akpm@linux-foundation.org
-Cc: mingo@kernel.org,
-	tglx@linutronix.de,
-	linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH v2 0/5] treewide: Rename del_timer[_sync] in comment
-Date: Mon, 14 Apr 2025 12:22:51 +0800
-Message-ID: <37A1CE32D2AEA134+20250414042251.61846-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744604593; c=relaxed/simple;
+	bh=SI/yMIbrU5RJMbKvNS2C9js5QNV6MNoDwN8h2gvaqxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=O2vVDmxDNZtGMym2pfc7/bgW55G8sG6YWH7DRKHVBUGXHLNAp1NBL97aEwPa3cDzeCzpKHMzjIcxjyJk7mHIgeziOHsVKJhDBvoZpsjx+/YAf3Oi8Sd3e7zHYm3dvpwaYlls4FL90kE+l6wLzw+dzWpVxYAfaP+7tGQ/hAzjG54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PiMfB+HK; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1744604588;
+	bh=CyarvyjTtLMRhzYDsLNbSCVGVbO9qlGbtamPzbN+qNM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=PiMfB+HKenf/60lR4m9+JEQ9PN33iP5iF88RLVMGobFyZ1R4xV595n+KRm5yEAA0H
+	 gTKx4gEKX/DAqbge7obKZPC16P1Lte9boQT+H4PJd1DjJpKrGsDNli5XNydqljT3Yc
+	 JgkTh3GGAB1DQV/2atPvyFofuTt0QzCmhhRPYTtJaGOQeyjRDG5XnElVOMhkVvdPiU
+	 eMX2VzlAqWMuhAeaIPxselLVgHxzor9CsE8Sxd0DxXbsx2FvPQS9lLp/z7q7lF5BbM
+	 TataLUR+tRyUgFQ+XNsQeSSYZMUozkTvJBeWqvuJe47xKXgWNiBXWAZSO977/27KZX
+	 EyzTXs1+6GxWA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZbZ0C5vWCz4wbb;
+	Mon, 14 Apr 2025 14:23:07 +1000 (AEST)
+Date: Mon, 14 Apr 2025 14:23:07 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Xu Yang <xu.yang_2@nxp.com>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Message-ID: <20250414142307.7df3443d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OEX5jM8j0kQw+Gu5BKbslAGhc5b8avFee4gxKM6JLNOACBEL+nLTpTlF
-	ymJi95IerpekFu0jQITKuyF+fmxZ974+rONAj7Wgg/POHUuV1EsUJeAKgUF0KZfUZLlnQOj
-	qcoCTLJNR+gghcFT/rooU3VOsyYX6mbPj8L7jlb+Pr+65PfxBJ3ZNQ7cz5KS4iiPyt+apdZ
-	WpWN0k9mg98eUOX+YbredEj28BVAz+vsS+i0+D1fvCmLNEF9XaRmkL8FrNZp3mvcV7NIys5
-	Ua9Yd2xxZ+E2Og/rEUjArAAoBw8DXLertZ/Iut9aQpqFdTtlio8PsDxkAYvmCB2ayiN6bD3
-	7MPnRXT4GHI7WmVhLwatPuE4ge+cz7Dldh4tjVJ9FXgBaZ+B4oUjYJyR7+NurCXjsXuUa8m
-	owSK3H72KrNjg3w1jN2FEJhGNP+l4yJiSUI1Vte835O7neeeQM1Etno/YnqUUD6W5pHNTp6
-	qZ/LpsXVYQZXRlQ3ZNgrZ6SSFuh369CJRMjsOkeYb1vAJoHTKYmGnSptBSJbgmCMrocsiUk
-	s72SGhPYJBew1vTKSqSCrfFeXhPGgCgAl1oa+fSBNfAWrKkTia6bhEHAEago3LF4hfrNR7b
-	RJOX5JTms+8ljzXAwAsvMGBy+YVF1owJM7SzU3ETJdAZ4bvRyS/LGT2d4D0A9jJ9CRatkE5
-	lpWtqjr9Ao7EMpJrPERgOvuf5NWsycVGbPDzxKd4CYSnEEEn5cKhYaLhMhu23etvfG97hFw
-	hVdA3fan697a7Hr5n6OOH73/MTcPQ+L67jA2V39j5+39PgWUcT5JZ3uI3ydHqtU9ZihJSYY
-	jM1zby7XQos5CInMHC4p29+iubr1d+5+9d3DTERNqtx3VOWb5SHiKxjPRIJGPuwJcFskw1F
-	UmNmhKlCgJasFskCMI3ZzR7Z0qAqV8mTMbyZoddaCr/B0zRCWm4PY3gQ2lf0XTecc4i0sn8
-	F8G936yaMuiF0sTPNLfNd0OPEyghbCu5vlzmBaEn0QAsbt+xxWv1+elQLTADglbhvUEktFU
-	RSz5OJZg==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+Content-Type: multipart/signed; boundary="Sig_/QTB6j2jdEf+9OAfWRawRpEu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Commit 8fa7292fee5c ("treewide: Switch/rename to timer_delete[_sync]()")
-switched del_timer[_sync] to timer_delete[_sync], but did not modify some
-comments. Now fix them.
+--Sig_/QTB6j2jdEf+9OAfWRawRpEu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-NOTE:
-  1. This is not a straightforward global replacement operation.
-Certain changelogs located within comments should be skipped.
-  2. Commit ("cfs2: o2net_idle_timer: Rename del_timer_sync in comment")
-has been already added in the -mm mm-nonmm-unstable branch.[1] This change
-introduces the addition of an "Acked-by" tag from Joseph Qi.[2]
+Hi all,
 
-[1]. https://lore.kernel.org/all/20250411223021.73435C4CEE2@smtp.kernel.org/
-[2]. https://lore.kernel.org/all/207bef0c-c26f-49c5-8c08-c89e0eab9c45@linux.alibaba.com/
+Today's linux-next merge of the usb tree got a conflict in:
 
-WangYuli (5):
-  bna: bnad_dim_timeout: Rename del_timer_sync in comment
-  ocfs2: o2net_idle_timer: Rename del_timer_sync in comment
-  scsi: scsi_transport_fc: Rename del_timer in comment
-  ipvs: ip_vs_conn_expire_now: Rename del_timer in comment
-  ALSA: korg1212: snd_korg1212_prepare: Rename del_timer in comment
+  drivers/usb/chipidea/ci_hdrc_imx.c
 
- drivers/net/ethernet/brocade/bna/bnad.c | 2 +-
- drivers/scsi/scsi_transport_fc.c        | 2 +-
- fs/ocfs2/cluster/tcp.c                  | 2 +-
- net/netfilter/ipvs/ip_vs_conn.c         | 2 +-
- sound/pci/korg1212/korg1212.c           | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+between commit:
 
--- 
-2.49.0
+  8cab0e9a3f3e ("usb: chipidea: ci_hdrc_imx: fix call balance of regulator =
+routines")
 
+from the usb.current tree and commit:
+
+  ee0dc2f7d522 ("usb: chipidea: imx: add wakeup interrupt handling")
+
+from the usb tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/usb/chipidea/ci_hdrc_imx.c
+index 4f8bfd242b59,c34298ccc399..000000000000
+--- a/drivers/usb/chipidea/ci_hdrc_imx.c
++++ b/drivers/usb/chipidea/ci_hdrc_imx.c
+@@@ -336,13 -338,16 +338,23 @@@ static int ci_hdrc_imx_notify_event(str
+  	return ret;
+  }
+ =20
+ +static void ci_hdrc_imx_disable_regulator(void *arg)
+ +{
+ +	struct ci_hdrc_imx_data *data =3D arg;
+ +
+ +	regulator_disable(data->hsic_pad_regulator);
+ +}
+ +
++ static irqreturn_t ci_wakeup_irq_handler(int irq, void *data)
++ {
++ 	struct ci_hdrc_imx_data *imx_data =3D data;
++=20
++ 	disable_irq_nosync(irq);
++ 	pm_runtime_resume(&imx_data->ci_pdev->dev);
++=20
++ 	return IRQ_HANDLED;
++ }
++=20
+  static int ci_hdrc_imx_probe(struct platform_device *pdev)
+  {
+  	struct ci_hdrc_imx_data *data;
+
+--Sig_/QTB6j2jdEf+9OAfWRawRpEu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmf8jasACgkQAVBC80lX
+0Gx4CQgApiqKDqgJK4H7NS4rSHd8G0aRkhGs4QKueKzaylXUD63pYlvpf/QvsSVB
+rP9YCjfs5AAb0yKUe3hNEFRr+ymuKF2f94ka2sIAZU4izpLeqJpOLyLmovkCYHKS
+O1aRiLsWEFotMGGgXsyO2YDnmarRw5NI+QiwRokagglEbt4gNMTucGvLBxG+CWCU
+T1emAMkF40DWYwr0bON1+m68LLBqbLqU9nq9xIl2+3pOvq1TILtAXPS05Q/fRhEI
+Z46/1vzgU2r41+Mib3HeDNEDJINbajQ+IigQl1Fy2kp7kU/gFrmUkRogMuoq40OL
+AlI4W98owiPCDu3ojnp86D7vNUHioQ==
+=AnX4
+-----END PGP SIGNATURE-----
+
+--Sig_/QTB6j2jdEf+9OAfWRawRpEu--
 
