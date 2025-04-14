@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-603029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B678A882B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:42:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF78A882D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33FFA165471
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:39:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E0C5173DFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061272918C1;
-	Mon, 14 Apr 2025 13:28:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA281291166
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CF72957B4;
+	Mon, 14 Apr 2025 13:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eI9m/UHt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1CE2957A5;
+	Mon, 14 Apr 2025 13:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744637300; cv=none; b=XuuyOy9gEazP6d2PBCv/lNMnb9sDzct8EGFZKd01zHAizviHV8hWXqCMuBGuIUgj0/5350Il9A9I1RthjOf34t5ww1ZPls7ne9i3tAdLlidyrr33ARyrEe0pEYM+C7x2V2zgAzkl36Be5Hf+9Gxg2gYJBTWLnma9OYRXSD1tbZU=
+	t=1744637331; cv=none; b=HMu7sq8SOQHey5/6XeKLIKLUy3cceEwobYc/01yDaFytkaMKniGy4YybCnFaqgxBtL2WPcHnFtTtxRiwg7tGbHoQ9j74kvRXMYjxqIL8vt/E9cA1KAa4u1UPnWlCnvXud7ySqhePY/pKBT9kzaELMPFh6xQYO5tV0BlKORg85eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744637300; c=relaxed/simple;
-	bh=3Xf7AnPyIb0MCZLKWd/TQ94I/pjvr3vA6WPdxScA+jY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d3M9aEaMXCvRJaLi6hrIlmvSk1dFKMBZpmgrwzK1pIdKoZelWx6xKlDviDGXjS3izTBqIZPPVTxhodaNqK+8uc+KDp6JvGFo8cpxc1OxAMgcb9wOB/COkBIVND29qHpT6bWReGbbv6r5q12VfEKnfnyv3w/axopezBVJY41btGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2E3F1007;
-	Mon, 14 Apr 2025 06:28:14 -0700 (PDT)
-Received: from [10.57.86.225] (unknown [10.57.86.225])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B5DC3F66E;
-	Mon, 14 Apr 2025 06:28:15 -0700 (PDT)
-Message-ID: <0bad3714-06b3-488f-a414-b825f409b926@arm.com>
-Date: Mon, 14 Apr 2025 14:28:13 +0100
+	s=arc-20240116; t=1744637331; c=relaxed/simple;
+	bh=oH1eW4mjfFf+HBxbIxg/zlJ2VSYoPk4kQzYqfN4r4wE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LvOrMkURNeUr1bUrZSCNXK7RPaNztPhD/Wytcb516dUghFAXE/TeYn9PTet6eOdWckxhZA6vaeTV6t8lcok8pqNghMh+OVeSML48T+HjKrgIEIbUxuz399ooBXYI3qGA4wat0B9CAD2NNLXp7kMDJsdqgNN7huuVJaiWS04kfbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eI9m/UHt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CB51C4CEE9;
+	Mon, 14 Apr 2025 13:28:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744637331;
+	bh=oH1eW4mjfFf+HBxbIxg/zlJ2VSYoPk4kQzYqfN4r4wE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eI9m/UHtmYjfS+DFRI6C19yjC3RbNN178ELcSv2IpGjCEb6Jt/yvWJ2kxIZz5dyys
+	 ARv7x5T5iDIZ9VuDTaO3vWxQLfCo/DNjNct71MwFh7etieHOgiNxVc+G2q2yF4SjQx
+	 jfiVGGca9Fd0qqLy2PGPzehlmRa34aPYk4WUWREEr4nFBQ4XWZXAc0MDAt8Cvvm53Y
+	 8bBVCUTjY6qCxSR4+CwbsgmZvlvF7WTgiejD2IbJqTeiC8OcZbx2UgPw1KQdDO+K4/
+	 U47p5uI2pqkGVbgxvrsap5xYQjmmzttMJk5yUxfPcon2z5mylrixFjmlX33tr0cli0
+	 VuYAzwLwHxQRQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Michael Mueller <mimu@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Sasha Levin <sashal@kernel.org>,
+	borntraeger@linux.ibm.com,
+	imbrenda@linux.ibm.com,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	kvm@vger.kernel.org,
+	linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 01/30] KVM: s390: Don't use %pK through tracepoints
+Date: Mon, 14 Apr 2025 09:28:18 -0400
+Message-Id: <20250414132848.679855-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/mm: Implement pte_po_index() for permission overlay
- index
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20250410052021.1533180-1-anshuman.khandual@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250410052021.1533180-1-anshuman.khandual@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.23
+Content-Transfer-Encoding: 8bit
 
-On 10/04/2025 06:20, Anshuman Khandual wrote:
-> From: Ryan Roberts <ryan.roberts@arm.com>
-> 
-> Previously pte_access_permitted() used FIELD_GET() directly to retrieve
-> the permission overlay index from the pte. However, FIELD_GET() doesn't
-> work for 128 bit quanitites. Since we are about to add support for D128
-> pgtables, let's create a specific helper, pte_po_index() which can do
-> the required mask and shift regardless of the data type width.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> This patch applies on v6.15-rc1
-> 
->  arch/arm64/include/asm/pgtable-hwdef.h | 1 +
->  arch/arm64/include/asm/pgtable-prot.h  | 2 ++
->  arch/arm64/include/asm/pgtable.h       | 2 +-
->  3 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-> index f3b77deedfa2..028a164924df 100644
-> --- a/arch/arm64/include/asm/pgtable-hwdef.h
-> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
-> @@ -211,6 +211,7 @@
->  #define PTE_PO_IDX_2	(_AT(pteval_t, 1) << 62)
->  
->  #define PTE_PO_IDX_MASK		GENMASK_ULL(62, 60)
-> +#define PTE_PO_IDX_SHIFT	60
->  
->  
->  /*
-> diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
-> index 7830d031742e..b53bc241e4e7 100644
-> --- a/arch/arm64/include/asm/pgtable-prot.h
-> +++ b/arch/arm64/include/asm/pgtable-prot.h
-> @@ -136,6 +136,8 @@ static inline bool __pure lpa2_is_enabled(void)
->  	((pte & BIT(PTE_PI_IDX_1)) >> (PTE_PI_IDX_1 - 1)) | \
->  	((pte & BIT(PTE_PI_IDX_0)) >> (PTE_PI_IDX_0 - 0)))
->  
-> +#define pte_po_index(pte)	((pte_val(pte) & PTE_PO_IDX_MASK) >> PTE_PO_IDX_SHIFT)
-> +
->  /*
->   * Page types used via Permission Indirection Extension (PIE). PIE uses
->   * the USER, DBM, PXN and UXN bits to to generate an index which is used
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index d3b538be1500..41979c0e6c21 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -182,7 +182,7 @@ static inline bool por_el0_allows_pkey(u8 pkey, bool write, bool execute)
->  	(((pte_val(pte) & (PTE_VALID | PTE_USER)) == (PTE_VALID | PTE_USER)) && (!(write) || pte_write(pte)))
->  #define pte_access_permitted(pte, write) \
->  	(pte_access_permitted_no_overlay(pte, write) && \
-> -	por_el0_allows_pkey(FIELD_GET(PTE_PO_IDX_MASK, pte_val(pte)), write, false))
-> +	por_el0_allows_pkey(pte_po_index(pte), write, false))
->  #define pmd_access_permitted(pmd, write) \
->  	(pte_access_permitted(pmd_pte(pmd), (write)))
->  #define pud_access_permitted(pud, write) \
+From: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-kvm also uses PTE_PO_IDX_MASK in compute_s1_overlay_permissions(). Shouldn't we
-be converting that site too?
+[ Upstream commit 6c9567e0850be2f0f94ab64fa6512413fd1a1eb1 ]
 
-----8<----
-diff --git a/arch/arm64/kvm/at.c b/arch/arm64/kvm/at.c
-index 3a96c96816e9..d9a8ee8e600f 100644
---- a/arch/arm64/kvm/at.c
-+++ b/arch/arm64/kvm/at.c
-@@ -1073,7 +1073,7 @@ static void compute_s1_overlay_permissions(struct kvm_vcpu
-*vcpu,
- {
-        u8 idx, pov_perms, uov_perms;
+Restricted pointers ("%pK") are not meant to be used through TP_format().
+It can unintentionally expose security sensitive, raw pointer values.
 
--       idx = FIELD_GET(PTE_PO_IDX_MASK, wr->desc);
-+       idx = pte_po_index(__pte(wr->desc));
+Use regular pointer formatting instead.
 
-        switch (wi->regime) {
-        case TR_EL10:
-----8<----
+Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: Michael Mueller <mimu@linux.ibm.com>
+Link: https://lore.kernel.org/r/20250217-restricted-pointers-s390-v1-1-0e4ace75d8aa@linutronix.de
+Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
+Message-ID: <20250217-restricted-pointers-s390-v1-1-0e4ace75d8aa@linutronix.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/s390/kvm/trace-s390.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/s390/kvm/trace-s390.h b/arch/s390/kvm/trace-s390.h
+index 9ac92dbf680db..9e28f165c114c 100644
+--- a/arch/s390/kvm/trace-s390.h
++++ b/arch/s390/kvm/trace-s390.h
+@@ -56,7 +56,7 @@ TRACE_EVENT(kvm_s390_create_vcpu,
+ 		    __entry->sie_block = sie_block;
+ 		    ),
+ 
+-	    TP_printk("create cpu %d at 0x%pK, sie block at 0x%pK",
++	    TP_printk("create cpu %d at 0x%p, sie block at 0x%p",
+ 		      __entry->id, __entry->vcpu, __entry->sie_block)
+ 	);
+ 
+@@ -255,7 +255,7 @@ TRACE_EVENT(kvm_s390_enable_css,
+ 		    __entry->kvm = kvm;
+ 		    ),
+ 
+-	    TP_printk("enabling channel I/O support (kvm @ %pK)\n",
++	    TP_printk("enabling channel I/O support (kvm @ %p)\n",
+ 		      __entry->kvm)
+ 	);
+ 
+-- 
+2.39.5
+
 
