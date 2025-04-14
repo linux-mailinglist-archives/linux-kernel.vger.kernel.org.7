@@ -1,398 +1,82 @@
-Return-Path: <linux-kernel+bounces-602698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A28A87E06
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:52:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54F42A87E13
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F444175581
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:52:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 600CC1757E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E72727BF68;
-	Mon, 14 Apr 2025 10:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B2D27CCD6;
+	Mon, 14 Apr 2025 10:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FQTD9NRo"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AvZ+4ZND"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A659D27935E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 10:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060BB27CB37
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 10:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744627938; cv=none; b=e1b3tck/VTB12ou6kplsk6RArgP/KlADH+tm4rOp5hf6kMJYFgd1+e3PAS5TCYoJIVj/hNYqzuIs2Q4lMGy2m+3sDGalOX2PEqoN1ocWPiFMfdqfvbhDp24ERQHhAjiKPy8I+bKKVG/klZbN9ztx5VRfnQzne+lziIUlkMjuSXc=
+	t=1744627989; cv=none; b=EOHsTBjxnae4Hsj74ZhOz2z/E3derswn5EOjfVcLP4fpczAHN/Uk5YjWPaxbGXtzIJJ6rGOYz4Zp4kjjKonGdgdAarrkYQRsRbhwY9tUC0kbbGRxdHkVMtUle3jqQcXNgnHWo5803z+xRs/MDH6QuSf09cR4Jq8v/gcfzW2AuBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744627938; c=relaxed/simple;
-	bh=OfXWzcASFdHkw+rQrReNFmKefWqB2Yv7RRdxhucvLis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mH23v1sadlt4uUFTFN6/2OuRU538SPimaBQE752GADLvo0rf6dsoEqzPrTpFxh0+XzQ55Xy4VciMxZIBEyHJn7C7hxRY99TJCqtFuudgZRenSAh/S+oTyFskipW8PWqg+2vhakgJIV5saAPdfSWT/FDlMVWEXi4YEcCxl98jC14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FQTD9NRo; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso3880934b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 03:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744627936; x=1745232736; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lK+fUhBepKMqw6zHBM4g47enyu9DAO43HLamRknec80=;
-        b=FQTD9NRocJbqRIX+JwfKqeU+eZ3LyKe7ulsBwyen37iYJfmSfYKpGIik+SKxxDXTu3
-         RUMCd7T5ULVxC/Z0JN12wtVLmoqVQ7Zi6cKdNdQfy4br8w7kHC+f0vKad6DOnFdamrZP
-         /cyIAqfPxYY5YVVvXfEDvEo53uoy1gGNgRHOjlQioHTmyX7isiCn3n/rGvUTLlyHiy7L
-         UAhaBMQFVrLK+7JUe/QiXSJZfs1MftC5ubhyCMyULhTswExkpJ/qnU8ogKX8BSAAygkX
-         4AW6/y8p94CHv0+ovJlkxmr0gn5x0VqhxgOTiKsKFjJLST8AJgBBhceEXVVTPr8ak0zi
-         oWOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744627936; x=1745232736;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lK+fUhBepKMqw6zHBM4g47enyu9DAO43HLamRknec80=;
-        b=Nh8lW+nlOK6Y38UuvYQHwAu6wYRPMXgf/9yjdAAgwcMluikaWxu1PK4aAm/mRjP86r
-         +JghWJsEdt2dldpJEoCE1DSssif6SYxe34YrjHj5YrvP4ifaPwmfksuDv+b1w4/0EMt3
-         Bf0/37dWlnw4FT+MmKtF7T80exSpdmUwlk7fe/QCdqILUlZMVxFNw/sTS8ksHY46+m3e
-         xNB6ByjGFa8dT+nAUaa6Jan4WdEb/Ag1md+6m+Xfa3EcXjk78E76hSICCmgc7qfhk2w/
-         eemmLunHl2FyyuG1oy/TKciHnGDEgDsyA1jTlflSM0okb+Rn0eqibcxZ8/r00JGq9BeI
-         9dxA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6VhuHLosYCzsydzmwUAXg/TY54L/xyaP+vSsiMseJA9ogKnNYAmKSC0/KSDCkihjjg5DMgGSw2tKSV+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjRPf7ShjLIDr/Q94Go9PSi1rImAElmZHmB6YzAoupRXFYwlZn
-	sTtEXM4vNV0HsX08mI2Q53PbdZqR3Tjm/zei1CkAfDSUJgjaTXLYogh6RW7Q5dE=
-X-Gm-Gg: ASbGncunF9NPWMrYZSqhq50T9Q400d8yxe46j2IezIC+ISFQOwpzWLfhuwbozuCNbVB
-	g3ENlQ5wWtnxJ2KC1OWfSudm0WQreiOuIN6kDA4zBwHwm8cLcbrC9vWd/RSbnJ2pcNOTQHOzkUC
-	cB3shoM99tjE98ZiU0ji2oAYdBHKMblhEbJV1Hw36wwjEPj1SdQPsqyPfUJ/EHPnUgU3ZkJPPQM
-	9sRclQuiUhNkejeDrshOK9kmlBltBhT1Rr9DIyV+wlT/AAy7qrWsg1fquk4+we613Gsy96j00fD
-	GDW+/xaxNzoYCeBKjliGugRJ00ZT/uk8lvuGrV3wTfqWLXE8FaLJ
-X-Google-Smtp-Source: AGHT+IGf76/JgRAw8wNgwqBKu4NDlC8JrtbtBDopdoD5Xs6AJphS7tnkVXQ5d2l1i97zuQqjxDVevg==
-X-Received: by 2002:a05:6a20:cfa1:b0:1fd:f56f:1cbe with SMTP id adf61e73a8af0-201797a192fmr17645570637.13.1744627935875;
-        Mon, 14 Apr 2025 03:52:15 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd22f82a3sm6516216b3a.90.2025.04.14.03.52.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 03:52:15 -0700 (PDT)
-Date: Mon, 14 Apr 2025 16:22:12 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-	rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Erik Schilling <erik.schilling@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V9 15/17] rust: cpufreq: Extend abstractions for driver
- registration
-Message-ID: <20250414105212.glxkrto4ybvxgx3y@vireshk-i7>
-References: <cover.1744366571.git.viresh.kumar@linaro.org>
- <2f7a1331ad513b94fb47c05bf1d0f5c3fa803858.1744366572.git.viresh.kumar@linaro.org>
- <Z_kD5G3WhcYlgqmr@cassiopeiae>
- <20250414084706.rjsdaoxmug4p4e7l@vireshk-i7>
- <Z_zX22N9cFmVpC_5@pollux>
+	s=arc-20240116; t=1744627989; c=relaxed/simple;
+	bh=N/oOtBHpVIf8Y/Ndag63Io3nJvG/R35WBpnc8Gbkk3M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EPy8obQAp/KmjAVkImA/6oWjrh3U5tYhWq1EwUNdeYCNu7mLJuKorEtnaFJmOGLrtqF5HZUBUT8gqd/ON1dzssce3cqUXzbbssbkxfEeWV3HZHNiiYXhIxSjyAYZREnC06CsqsEEf58hwAM/+03s6hfahibWYZRdBryGDE2Thb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AvZ+4ZND; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2E7CC4CEE5;
+	Mon, 14 Apr 2025 10:53:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744627988;
+	bh=N/oOtBHpVIf8Y/Ndag63Io3nJvG/R35WBpnc8Gbkk3M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=AvZ+4ZNDXksZ2kxcbOjHn3IEZRPwm6/Ky7/sPA7LppeRx0Q5GvMU1sCIk23BFbUTP
+	 yImEKznZg7emCp4ltFbOZe8PebAwS6vrAITeGPsC9rZEwy3qIog8flJXBd3jnHaYk7
+	 2+Ou+mFK+xBc9Fut0dgs4n1qcZuAaFlYugh0wSaUtvR4qWrY34oZBAFv8JEJkPiEI5
+	 q8n+SmIhmndD2hMaBeNgefjjzn+6C/je7EdU/OQSlA2OjGBQIx9B7P346oj3sMMVSZ
+	 aC9+OksDKxc+MvqEHuCu+qjB4TZ6BQV0yE9aYLRzWJwhl+6OPTuvEvsEcqyaVBbiOr
+	 9uAUKyNBriOEA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH 1/2] f2fs: clean up w/ fscrypt_is_bounce_page()
+Date: Mon, 14 Apr 2025 18:52:36 +0800
+Message-ID: <20250414105237.728522-1-chao@kernel.org>
+X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_zX22N9cFmVpC_5@pollux>
+Content-Transfer-Encoding: 8bit
 
-On 14-04-25, 11:39, Danilo Krummrich wrote:
-> 	const VTABLE: bindings::cpufreq_driver = bindings::cpufreq_driver {
-> 	   name: Self::copy_name(T::NAME),
-> 	   boost_enabled: T::BOOST_ENABLED,
-> 	   flags: T::FLAGS,
-> 	   [...]
-> 	}
+Just cleanup, no logic changes.
 
-Ahh, thanks for this.
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 1a90aca499f6..4f70755c30cc 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -53,7 +53,7 @@ bool f2fs_is_cp_guaranteed(struct page *page)
+ 	struct inode *inode;
+ 	struct f2fs_sb_info *sbi;
+ 
+-	if (!mapping)
++	if (fscrypt_is_bounce_page(page))
+ 		return false;
+ 
+ 	inode = mapping->host;
 -- 
-viresh
+2.49.0
 
-diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-index 9b275d4d3eb6..a6e660d46304 100644
---- a/rust/kernel/cpufreq.rs
-+++ b/rust/kernel/cpufreq.rs
-@@ -9,28 +9,32 @@
- //! Reference: <https://docs.kernel.org/admin-guide/pm/cpufreq.html>
- 
- use crate::{
-+    alloc::AllocError,
-     bindings,
-     clk::{Clk, Hertz},
-     cpumask,
-     device::Device,
-     devres::Devres,
-     error::{code::*, from_err_ptr, from_result, to_result, Result, VTABLE_DEFAULT_ERROR},
--    ffi::c_ulong,
-+    ffi::{c_char, c_ulong},
-     prelude::*,
-     types::ForeignOwnable,
-     types::Opaque,
- };
- 
- use core::{
--    cell::UnsafeCell,
-     marker::PhantomData,
-+    mem::MaybeUninit,
-     ops::{Deref, DerefMut},
-     pin::Pin,
--    ptr,
-+    ptr::{self, NonNull},
- };
- 
- use macros::vtable;
- 
-+// Maximum length of CPU frequency driver's name.
-+const CPUFREQ_NAME_LEN: usize = bindings::CPUFREQ_NAME_LEN as usize;
-+
- /// Default transition latency value in nanoseconds.
- pub const ETERNAL_LATENCY_NS: u32 = bindings::CPUFREQ_ETERNAL as u32;
- 
-@@ -855,10 +859,8 @@ fn register_em(_policy: &mut Policy) {
- ///     cpufreq::Registration::<FooDriver>::new_foreign_owned(dev).unwrap();
- /// }
- /// ```
--pub struct Registration<T: Driver> {
--    drv: KBox<UnsafeCell<bindings::cpufreq_driver>>,
--    _p: PhantomData<T>,
--}
-+#[repr(transparent)]
-+pub struct Registration<T: Driver>(NonNull<bindings::cpufreq_driver>, PhantomData<T>);
- 
- // SAFETY: `Registration` doesn't offer any methods or access to fields when shared between threads
- // or CPUs, so it is safe to share it.
-@@ -870,135 +872,136 @@ unsafe impl<T: Driver> Sync for Registration<T> {}
- unsafe impl<T: Driver> Send for Registration<T> {}
- 
- impl<T: Driver> Registration<T> {
--    /// Registers a CPU frequency driver with the cpufreq core.
--    pub fn new() -> Result<Self> {
--        // Required due to Rust 1.82's stricter handling of `unsafe` in mutable statics. The
--        // `unsafe` blocks aren't required anymore with later versions.
--        #![allow(unused_unsafe)]
--
--        let mut drv = KBox::new(
--            UnsafeCell::new(bindings::cpufreq_driver::default()),
--            GFP_KERNEL,
--        )?;
--        let drv_ref = drv.get_mut();
--
--        // Account for the trailing null byte.
--        let len = T::NAME.len() + 1;
--        if len > drv_ref.name.len() {
--            return Err(EINVAL);
--        };
--
--        // SAFETY: `T::NAME` is a valid `CStr`, and we are copying it to an array of equal or
--        // larger size.
--        let name = unsafe { &*(T::NAME.as_bytes_with_nul() as *const [u8]) };
--        drv_ref.name[..len].copy_from_slice(name);
--
--        drv_ref.boost_enabled = T::BOOST_ENABLED;
--        drv_ref.flags = T::FLAGS;
-+    const VTABLE: bindings::cpufreq_driver = bindings::cpufreq_driver {
-+        name: Self::copy_name(T::NAME),
-+        boost_enabled: T::BOOST_ENABLED,
-+        flags: T::FLAGS,
- 
-         // Initialize mandatory callbacks.
--        drv_ref.init = Some(Self::init_callback);
--        drv_ref.verify = Some(Self::verify_callback);
-+        init: Some(Self::init_callback),
-+        verify: Some(Self::verify_callback),
- 
-         // Initialize optional callbacks based on the traits of `T`.
--        drv_ref.setpolicy = if T::HAS_SETPOLICY {
-+        setpolicy: if T::HAS_SETPOLICY {
-             Some(Self::setpolicy_callback)
-         } else {
-             None
--        };
--        drv_ref.target = if T::HAS_TARGET {
-+        },
-+        target: if T::HAS_TARGET {
-             Some(Self::target_callback)
-         } else {
-             None
--        };
--        drv_ref.target_index = if T::HAS_TARGET_INDEX {
-+        },
-+        target_index: if T::HAS_TARGET_INDEX {
-             Some(Self::target_index_callback)
-         } else {
-             None
--        };
--        drv_ref.fast_switch = if T::HAS_FAST_SWITCH {
-+        },
-+        fast_switch: if T::HAS_FAST_SWITCH {
-             Some(Self::fast_switch_callback)
-         } else {
-             None
--        };
--        drv_ref.adjust_perf = if T::HAS_ADJUST_PERF {
-+        },
-+        adjust_perf: if T::HAS_ADJUST_PERF {
-             Some(Self::adjust_perf_callback)
-         } else {
-             None
--        };
--        drv_ref.get_intermediate = if T::HAS_GET_INTERMEDIATE {
-+        },
-+        get_intermediate: if T::HAS_GET_INTERMEDIATE {
-             Some(Self::get_intermediate_callback)
-         } else {
-             None
--        };
--        drv_ref.target_intermediate = if T::HAS_TARGET_INTERMEDIATE {
-+        },
-+        target_intermediate: if T::HAS_TARGET_INTERMEDIATE {
-             Some(Self::target_intermediate_callback)
-         } else {
-             None
--        };
--        drv_ref.get = if T::HAS_GET {
-+        },
-+        get: if T::HAS_GET {
-             Some(Self::get_callback)
-         } else {
-             None
--        };
--        drv_ref.update_limits = if T::HAS_UPDATE_LIMITS {
-+        },
-+        update_limits: if T::HAS_UPDATE_LIMITS {
-             Some(Self::update_limits_callback)
-         } else {
-             None
--        };
--        drv_ref.bios_limit = if T::HAS_BIOS_LIMIT {
-+        },
-+        bios_limit: if T::HAS_BIOS_LIMIT {
-             Some(Self::bios_limit_callback)
-         } else {
-             None
--        };
--        drv_ref.online = if T::HAS_ONLINE {
-+        },
-+        online: if T::HAS_ONLINE {
-             Some(Self::online_callback)
-         } else {
-             None
--        };
--        drv_ref.offline = if T::HAS_OFFLINE {
-+        },
-+        offline: if T::HAS_OFFLINE {
-             Some(Self::offline_callback)
-         } else {
-             None
--        };
--        drv_ref.exit = if T::HAS_EXIT {
-+        },
-+        exit: if T::HAS_EXIT {
-             Some(Self::exit_callback)
-         } else {
-             None
--        };
--        drv_ref.suspend = if T::HAS_SUSPEND {
-+        },
-+        suspend: if T::HAS_SUSPEND {
-             Some(Self::suspend_callback)
-         } else {
-             None
--        };
--        drv_ref.resume = if T::HAS_RESUME {
-+        },
-+        resume: if T::HAS_RESUME {
-             Some(Self::resume_callback)
-         } else {
-             None
--        };
--        drv_ref.ready = if T::HAS_READY {
-+        },
-+        ready: if T::HAS_READY {
-             Some(Self::ready_callback)
-         } else {
-             None
--        };
--        drv_ref.set_boost = if T::HAS_SET_BOOST {
-+        },
-+        set_boost: if T::HAS_SET_BOOST {
-             Some(Self::set_boost_callback)
-         } else {
-             None
--        };
--        drv_ref.register_em = if T::HAS_REGISTER_EM {
-+        },
-+        register_em: if T::HAS_REGISTER_EM {
-             Some(Self::register_em_callback)
-         } else {
-             None
--        };
-+        },
-+        // SAFETY: All zeros is a valid value for `bindings::cpufreq_driver`.
-+        ..unsafe { MaybeUninit::zeroed().assume_init() }
-+    };
-+
-+    const fn copy_name(name: &'static CStr) -> [c_char; CPUFREQ_NAME_LEN] {
-+        let src = name.as_bytes_with_nul();
-+        let mut dst = [0; CPUFREQ_NAME_LEN];
-+
-+        build_assert!(src.len() <= CPUFREQ_NAME_LEN);
-+
-+        let mut i = 0;
-+        while i < src.len() {
-+            dst[i] = src[i];
-+            i += 1;
-+        }
-+
-+        dst
-+    }
-+
-+    /// Registers a CPU frequency driver with the cpufreq core.
-+    pub fn new() -> Result<Self> {
-+        let drv = &Self::VTABLE as *const _ as *mut _;
- 
-         // SAFETY: It is safe to register the driver with the cpufreq core in the kernel C code.
--        to_result(unsafe { bindings::cpufreq_register_driver(drv_ref) })?;
-+        to_result(unsafe { bindings::cpufreq_register_driver(drv) })?;
- 
--        Ok(Self {
--            drv,
--            _p: PhantomData,
--        })
-+        Ok(Self(
-+            NonNull::new(drv.cast()).ok_or(AllocError)?,
-+            PhantomData,
-+        ))
-     }
- 
-     /// Same as [`Registration::new`], but does not return a [`Registration`] instance.
-@@ -1259,9 +1262,7 @@ extern "C" fn register_em_callback(ptr: *mut bindings::cpufreq_policy) {
- impl<T: Driver> Drop for Registration<T> {
-     // Removes the `Registration` from the kernel, if it has initialized successfully earlier.
-     fn drop(&mut self) {
--        let drv = self.drv.get_mut();
--
-         // SAFETY: The driver was earlier registered from `new`.
--        unsafe { bindings::cpufreq_unregister_driver(drv) };
-+        unsafe { bindings::cpufreq_unregister_driver(self.0.as_ptr()) };
-     }
- }
 
