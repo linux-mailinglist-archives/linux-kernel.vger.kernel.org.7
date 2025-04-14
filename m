@@ -1,106 +1,116 @@
-Return-Path: <linux-kernel+bounces-603187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D710A88489
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:21:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1E1A882E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F2B6440C96
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:16:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BAF91793DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DAD2918E4;
-	Mon, 14 Apr 2025 13:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B727627B4FD;
+	Mon, 14 Apr 2025 13:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=helmholz.de header.i=@helmholz.de header.b="OSjUkqt9"
-Received: from www253.your-server.de (www253.your-server.de [188.40.28.33])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jd9WLyX8"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DA22741D5;
-	Mon, 14 Apr 2025 13:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.28.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6312957CD;
+	Mon, 14 Apr 2025 13:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744638917; cv=none; b=n6WV/qC1JuTIgEfQpCbLcpx0trTSwDxrQfNtgFIQuBOhCs9yJ72A2zk0ePfnmtoYyi8iIHbL2vCAN7CWGLXh3HHBF7hPFLsc+ljVJIqAXbJdokk5xe9YFOXTf4XBmYu6o4sYxjEWa9jve545rWzYsPZh0pru7Yc6SL2ZVxCXBUs=
+	t=1744637336; cv=none; b=fM6TcYLLaU0QP28AhSJizI12c6zCvH2Jzq4WDwnPc373/VIAAHr+I/tgBP+TWIpj5Ao7C/p1teOKO1msEJ3OrdWlLYaBPXIrcceuyPSXkEOh6awoaKeJfjHKeNDWN3SWuyb9948PPK4k7inF5Lo9hxF1k+/J9FrMFp5+VeELQqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744638917; c=relaxed/simple;
-	bh=pgNx2sdENX2tGay1fmIECFu/j3ax4mCzVXRE8j5WKxU=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=fr3QBINVVvVz353bWwujoifTIJ6bUbXHC5noCx96RCmsk+6lATz7ZhiqldgAuQEDi6IHjAnuadfgGoVyvhl3gJV7R7vjVbaEr5+a18vWYAHNNPSpVUBEjzUtLg9tmTQsipIMvLRNnjcsdZ5g6aSnnxRGkDMHyX9vg3gpj1QBxDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=helmholz.de; spf=fail smtp.mailfrom=helmholz.de; dkim=pass (2048-bit key) header.d=helmholz.de header.i=@helmholz.de header.b=OSjUkqt9; arc=none smtp.client-ip=188.40.28.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=helmholz.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=helmholz.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=helmholz.de
-	; s=default2501; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=ECoGTVyrfDzehLrz8EMEF8qTYvNgxk0rK5zEaP9773M=; b=OSjUkqt9YejcixAqdz7AIYXVv3
-	yHG/gFtVEV5W1gB+VKs77qsrFhoXOf0df0G5cll7oTa093/8etkoEPXk7ZVZUSCv8C+VF42diTng3
-	EXyE/ukFo87GDSvtVnKo0wlKCYByE3yY9Nvjfdjk44LnKPSEcHPL2ITDOIhgCkqmXAD61B/8wnp9q
-	NrKuEjUIDsNBH8RTw+A+r0gVCXYzybL3BBCMrTj56u3nt/iLd4xCS9qFRtaPTNXncCNO9fSYdh210
-	6CCq7DJ7pY2sjr7ISJ/LE0XYORy8CltwcMItRg43egrkBtTWlXnfB5rKmqvCbFVrkrzUqMeD34dyr
-	msOIB4qw==;
-Received: from sslproxy08.your-server.de ([78.47.166.52])
-	by www253.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <ante.knezic@helmholz.de>)
-	id 1u4JsP-0008n7-04;
-	Mon, 14 Apr 2025 15:29:29 +0200
-Received: from [217.6.86.34] (helo=linuxdev.helmholz.local)
-	by sslproxy08.your-server.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
-	(Exim 4.96)
-	(envelope-from <ante.knezic@helmholz.de>)
-	id 1u4JsO-000Eer-1v;
-	Mon, 14 Apr 2025 15:29:28 +0200
-From: Ante Knezic <ante.knezic@helmholz.de>
-To: linux-leds@vger.kernel.org
-Cc: lee@kernel.org,
-	pavel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	corbet@lwn.net,
-	knezic@helmholz.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH 0/3] Add support for WL-ICLEDs from Wurth Elektronik
-Date: Mon, 14 Apr 2025 15:28:48 +0200
-Message-Id: <cover.1744636666.git.knezic@helmholz.com>
-X-Mailer: git-send-email 2.11.0
-X-Authenticated-Sender: knezic@helmholz.com
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27608/Mon Apr 14 10:34:28 2025)
+	s=arc-20240116; t=1744637336; c=relaxed/simple;
+	bh=6C5Jici+EhLeC4d7iAWY8LbyVL6AZqGWquMhefHINnQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iul95l4yYz8w+owN5j3N7CiXQF0qwWFpn5qxfDNHiliL0oaRntVuq2Pm3VQZxV6XVumbtJ1w7l3YqR4dA6vVeNfWyBqjz9pijKOJrJpQEBJOXqOlAtY6dRXmvILtW0B5D/ykLFdmJWRbypC+GcK7MLBC0ErQi37ymIzvGCwK9A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jd9WLyX8; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1744637331;
+	bh=6C5Jici+EhLeC4d7iAWY8LbyVL6AZqGWquMhefHINnQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=jd9WLyX895EKUjHfL//CV32DucIcz3vI971IypjJ/VtSZ0bnryE/NwcUE4aA/ntqW
+	 LT7smg2s9M5tcwC1Qq4QNiVPBOLrhnUpSdoC8Z7d8HGtM1qg2cFrwBt58/U2duC8hn
+	 qkkapL95veKTcscEzHUO3+/syZaqUbjh7oPQn8xWloLeq1WkG/88NpHtgOA5bnax6Y
+	 wOcm9HGZigw3XeYvH4t7s35JH1rMKmPtP+0AMZH5cHBGCLaHG6ZSvsytDyg00JjoNj
+	 Ajj7nBcfxoCfFF428trLp8AKC8KwTvGjn6uEodv2xo3g4rDxalqd6R1HGCfziE/Ydq
+	 pUv8dc62tNr3Q==
+Received: from [IPv6:2606:6d00:11:e976::5ac] (unknown [IPv6:2606:6d00:11:e976::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id F347717E017D;
+	Mon, 14 Apr 2025 15:28:49 +0200 (CEST)
+Message-ID: <296144dec19f3aee958dcdae7700e7a7ed38b8ff.camel@collabora.com>
+Subject: Re: [RESEND PATCH v1 0/7] Performance improvement of decoder
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: "jackson.lee" <jackson.lee@chipsnmedia.com>, "mchehab@kernel.org"	
+ <mchehab@kernel.org>, "hverkuil-cisco@xs4all.nl"
+ <hverkuil-cisco@xs4all.nl>,  "bob.beckett@collabora.com"	
+ <bob.beckett@collabora.com>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+ "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>,
+ "lafley.kim" <lafley.kim@chipsnmedia.com>,  "b-brnich@ti.com"	
+ <b-brnich@ti.com>, "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>, Nas Chung	
+ <nas.chung@chipsnmedia.com>
+Date: Mon, 14 Apr 2025 09:28:48 -0400
+In-Reply-To: <SE1P216MB130320F62126A2F02BDB7FB3EDB32@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+References: <20250410034002.88-1-jackson.lee@chipsnmedia.com>
+	 <b11f2cd9706c409775a44db06dd8399193be3758.camel@collabora.com>
+	 <SE1P216MB130320F62126A2F02BDB7FB3EDB32@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+Organization: Collabora Canada
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.0 (3.56.0-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Ante Knezic <knezic@helmholz.com>
+Jackson,
 
-This patch adds support for WL-ICLED series of RGB Leds. These LEDs
-are equipped with integrated controller and can be daisy chained to
-arbitrary number of units. The MCU communicates with the first LED
-in series via SPI. Interface can be regular SPI protocol or single
-line only (MOSI connection only) depending on the model.
+Le lundi 14 avril 2025 à 02:04 +0000, jackson.lee a écrit :
+> > > Sequence Change test
+> > > =====================
+> > > gst-launch-1.0 filesrc location=./switch_1080p_720p_240frames.h264 !
+> > > h264parse ! v4l2h264dec ! filesink location=./h264_output_420.yuv
+> > > Setting pipeline to PAUSED ...
+> > > Pipeline is PREROLLING ...
+> > > Redistribute latency...
+> > > Redistribute latency...
+> > > Pipeline is PREROLLED ...
+> > > Setting pipeline to PLAYING ...
+> > > Redistribute latency...
+> > > New clock: GstSystemClock
+> > > Got EOS from element "pipeline0".
+> > > Execution ended after 0:00:05.772414400 Setting pipeline to NULL ...
+> > > Freeing pipeline ...
+> > 
+> > I did a test of my own here, and did get kernel splat. The warning
+> > indicate that the state machine is no longer respected. This needs to be
+> > address in v2, we added these check, since the locking is bound to legal
+> > use of the state machine.
+> 
+> 
+> Since applying the performance patch, device_run and wave5_vpu_dec_finish_decode is not synchronized any more.
+> How about removing this warning message ?
 
-Ante Knezic (3):
-  Documentation: leds: Add docs for Wurth Elektronik WL-ICLED
-  dt-bindings: leds: add binding for WL-ICLED
-  leds: add WL-ICLED SPI driver
+I would like to understand how it makes sense the we've reached STOP
+state while the HW is still actively decoding. It does not feel robust
+to me, perhaps you want to introduce a new state ? Also, I'm concern
+with overall thread-safety now.
 
- .../bindings/leds/leds-wl-icled.yaml          |  88 ++++
- Documentation/leds/index.rst                  |   1 +
- Documentation/leds/leds-wl-icled.rst          |  69 +++
- drivers/leds/Kconfig                          |  10 +
- drivers/leds/Makefile                         |   1 +
- drivers/leds/leds-wl-icled.c                  | 406 ++++++++++++++++++
- 6 files changed, 575 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-wl-icled.yaml
- create mode 100644 Documentation/leds/leds-wl-icled.rst
- create mode 100644 drivers/leds/leds-wl-icled.c
+regards,
 
 -- 
-2.48.1
-
+Nicolas Dufresne
+Principal Engineer at Collabora
 
