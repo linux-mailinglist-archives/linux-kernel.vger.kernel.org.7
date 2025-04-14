@@ -1,71 +1,137 @@
-Return-Path: <linux-kernel+bounces-602197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A64EA877EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:33:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A16DA877FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0836D3A88E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:32:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 840D816E671
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1D41A9B46;
-	Mon, 14 Apr 2025 06:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jcu2vzrk"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8424219FA92;
+	Mon, 14 Apr 2025 06:36:44 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831E719D07A;
-	Mon, 14 Apr 2025 06:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDF81A08DF
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744612370; cv=none; b=XILIZuLgvwFXf/t+4XLAin7d8wPQk4kUz8O7N53iv4fpzxSsr4r2YS+W6FKJtm+amvzcrdLFVPZLqnPrytbD2T/kVcZpicgUMyG4Rjdrk6KU753QGctZudWUVmC2R9Wm85VPp6Dy141u37te1wTRS3M6Otzfd2dcrz/gwy59OW4=
+	t=1744612604; cv=none; b=U6F9v5HUNR7bGk4hOG/BVAAcbPyElBOYO5GSPFI5DKuygnVVcHuHg8USzJ+fkKO6L3dEyVQXx9ip1IWRyU4VzZXG/T9cp1i2NLy6NjpakLKBHHy+XsK0bxASny1rFGdIbEcqOtJgZyP0xUxg0H2hldHevB5OfPlcp3M6FGZzzJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744612370; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hy+gAHR5cvmyfPqCUpqvzbUmyyBHJRpKHoos10GyremfjATMyVdQs7qH5qVb0xG1UOSrNH7YHAjjOT8DfW8dwpaQz4K8BgeDrUEaua/aUBBHwDlzHX4ekxfIFoed5wHF/RAUPod52hSW6tgEzy7z5gY2BJHFtYVnuNvnDD8cD1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jcu2vzrk; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=jcu2vzrk9cWpqrN+IFQSjh1Ruf
-	MHs1mnecz9e0ATOhLAnqRjvqO16TCMK+tsPoFi7nMEsWAiJJloHc9qXhqyMLCYDTrd62tFT2BzQEC
-	4xHZTexVIvwnB0Bp8pvBS3scHWVb1hvmHfcgucLXuIS/OPjOOpg+u7sFk01HcIU91XtWmOY+3o/bW
-	5i7pAdqHRh5BmUJaH3w1E/9/wVH1qYkn93BD6ITTsIIVyZNZZYgYGq3oIgoWtPGB/5Kcy8unmn0JA
-	Xt8w9Z/Lx8+5fC2PiJuqwVPAz19gLps4K78xG7m47ti6UUHQTy2ro5LkZJsSgEmLrXpvUKadBahpp
-	/2PNEViA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u4DNB-00000000oUD-0SN9;
-	Mon, 14 Apr 2025 06:32:49 +0000
-Date: Sun, 13 Apr 2025 23:32:49 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Bird, Tim" <Tim.Bird@sony.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-spdx@vger.kernel.org" <linux-spdx@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] block: add SPDX header line to blk-throttle.h
-Message-ID: <Z_ysEW3dUtv_qLuh@infradead.org>
-References: <MW5PR13MB5632EE4645BCA24ED111EC0EFDB62@MW5PR13MB5632.namprd13.prod.outlook.com>
+	s=arc-20240116; t=1744612604; c=relaxed/simple;
+	bh=tf694kECYu/EWPbbQ45vsQ6LcGLLICsZok3e/DD7KDI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Eux4yVUQ1fAGMOxfQuUfQMtfB7H1idTpi23gqbHQLSxJ0gUNDxkEngkSaB5cvvKhOVc2N1VFzbQ5LXv2kvDNjokYcgrcPdptVhWGF6iw275vZ3M2bIamIhP9iru5PEd6gfaGrFX9wxaifHcx00Fqah0V2vQ8wgFqp12U6KJfUhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowABHhQ3xrPxn6qzlCA--.18678S2;
+	Mon, 14 Apr 2025 14:36:34 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: kenneth.feng@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH RESEND] drm/amd/pm/powerplay/smumgr/fiji_smumgr: Fix wrong return value of fiji_populate_smc_boot_level()
+Date: Mon, 14 Apr 2025 14:36:11 +0800
+Message-ID: <20250414063611.2100-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MW5PR13MB5632EE4645BCA24ED111EC0EFDB62@MW5PR13MB5632.namprd13.prod.outlook.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowABHhQ3xrPxn6qzlCA--.18678S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF43Wr4xZw43CF4kCF47CFg_yoW5GF15pr
+	WDXrZIv39YyanrJrnrtFs2qr4S9FyxJFW8G3y7C34rZw1UtrW8Zr40ya4ayF48GFyIkws3
+	X342gFWUGr4Ika7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_GF1l42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU8D7aUUUUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAgMA2f8nB469QAAsd
 
-Looks good:
+The return value of fiji_populate_smc_boot_level() is always 0, which
+represent the failure of the function. The result of phm_find_boot_level()
+should be recored and return. An error handling is also needed to
+phm_find_boot_level() to reset the boot level when the function fails.
+A proper implementation can be found in tonga_populate_smc_boot_level().
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Fixes: dcaf3483ae46 ("drm/amd/pm/powerplay/smumgr/fiji_smumgr: Remove unused variable 'result'")
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ .../drm/amd/pm/powerplay/smumgr/fiji_smumgr.c | 23 +++++++++++++------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
+index 5e43ad2b2956..7d0cb3741b94 100644
+--- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
++++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
+@@ -1600,19 +1600,28 @@ static int fiji_populate_smc_uvd_level(struct pp_hwmgr *hwmgr,
+ static int fiji_populate_smc_boot_level(struct pp_hwmgr *hwmgr,
+ 		struct SMU73_Discrete_DpmTable *table)
+ {
++	int result = 0;
+ 	struct smu7_hwmgr *data = (struct smu7_hwmgr *)(hwmgr->backend);
+ 
+ 	table->GraphicsBootLevel = 0;
+ 	table->MemoryBootLevel = 0;
+ 
+ 	/* find boot level from dpm table */
+-	phm_find_boot_level(&(data->dpm_table.sclk_table),
+-			    data->vbios_boot_state.sclk_bootup_value,
+-			    (uint32_t *)&(table->GraphicsBootLevel));
++	result = phm_find_boot_level(&(data->dpm_table.sclk_table),
++				     data->vbios_boot_state.sclk_bootup_value,
++				     (uint32_t *)&(table->GraphicsBootLevel));
++	if (result) {
++		table->GraphicsBootLevel = 0;
++		return 0;
++	}
+ 
+-	phm_find_boot_level(&(data->dpm_table.mclk_table),
+-			    data->vbios_boot_state.mclk_bootup_value,
+-			    (uint32_t *)&(table->MemoryBootLevel));
++	result = phm_find_boot_level(&(data->dpm_table.mclk_table),
++				     data->vbios_boot_state.mclk_bootup_value,
++				     (uint32_t *)&(table->MemoryBootLevel));
++	if (result) {
++		table->MemoryBootLevel = 0;
++		return 0;
++	}
+ 
+ 	table->BootVddc  = data->vbios_boot_state.vddc_bootup_value *
+ 			VOLTAGE_SCALE;
+@@ -1625,7 +1634,7 @@ static int fiji_populate_smc_boot_level(struct pp_hwmgr *hwmgr,
+ 	CONVERT_FROM_HOST_TO_SMC_US(table->BootVddci);
+ 	CONVERT_FROM_HOST_TO_SMC_US(table->BootMVdd);
+ 
+-	return 0;
++	return result;
+ }
+ 
+ static int fiji_populate_smc_initailial_state(struct pp_hwmgr *hwmgr)
+-- 
+2.42.0.windows.2
 
 
