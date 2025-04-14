@@ -1,176 +1,204 @@
-Return-Path: <linux-kernel+bounces-602198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B9F8A877ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:33:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92FE1A877EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A9EC17062E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:33:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53482188E0E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAA51ACEDA;
-	Mon, 14 Apr 2025 06:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AEA1AB528;
+	Mon, 14 Apr 2025 06:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BhzCTthy"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktR1h8Ju"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FE81A705C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF45019D07A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744612371; cv=none; b=hDn02McR0tcKy4HhR8NtJGzVU19zi05v8Mh8D2Yxv4ET6VgQvHrd8HjzPltoE7cDNfriPcHiT5JzBiMQyipBuciiok7pcs8/w1pYJq1FdMZdqeo2dkw2YIiyBUl2Rvk9eCInI9Rn7RGXhQR/hc1eame8KoPUBo2Z8F+2bSKAzak=
+	t=1744612357; cv=none; b=VN0/WmcvJv7XHJl6Komd7id5ptk2tjb5m4Y8wsmF5iOj8XeME6fbxKnRhfr9od26xsp1+JF32GQGjrYguoR23JiSZYr44be0OzUdl3GpGG2974qBmDY1zc9k3yIiXZTfqKB2rXdnM1AUpOnCXPVi/Y5LlByxcaGzmD5QUf0kh6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744612371; c=relaxed/simple;
-	bh=nLEN0mRQBU98GL722Rm2InfoZ9yQqHM2A2cCHIcGfuw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dMw4hcPAeinTJdbIfI09mLChZKk2Ok65HwGU0XgAwYNKUxfMpglZkrSOv+lO3JF9Z6+syTcNzfVJ6YEQwv6Ma+j/N8/iigrAJsZP1+BeotEQl1/t3JDdd1GzsiHmymH/GO6FdCewjOMTICLPBqG+QVs6tGXBwrePkDWIDsf/AhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BhzCTthy; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744612365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RJYZL5y1/cpavQ/FXHXrZFP+mwIePZYZLUGgRKwzPYk=;
-	b=BhzCTthyr3n5/G9dSoxdKtW5flcdSqN4H63wXyg/EOCyaHm+XFEBOxKQrEej41SePNlxiR
-	43cgczI4W+mpf8GMxnajAir6QMTofeJUCHt5CUCuJPqtCQ6csipvNIIg7vFCrc1I8TBJxd
-	FAAzWwi7Dph2jFp3Clb3NUTjJjWS+PY=
-From: Ye Liu <ye.liu@linux.dev>
-To: bsingharora@gmail.com,
-	yang.yang29@zte.com.cn
-Cc: linux-kernel@vger.kernel.org,
-	Ye Liu <liuye@kylinos.cn>
-Subject: [PATCH] delayacct: use macro to simplify delayacct_end calls
-Date: Mon, 14 Apr 2025 14:32:27 +0800
-Message-Id: <20250414063227.97035-1-ye.liu@linux.dev>
+	s=arc-20240116; t=1744612357; c=relaxed/simple;
+	bh=EsnzLqlAA53UvsolhqObhC929/tsG0a5GbdMQu0r4vM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H1egXUY2SR2J8cdWtGgEDFXAjYKDkESKg/yZcqyodz3Y74fdAIiB43wu1TixojJpWtDIUa08fKCOq08OXcOVcb0l++BffQMqjaovcGOxQSdSI4SoJUUlvspSbLVpbJK0vDAitLldGzbAyQRmNqap7RPp0KGNlmTVryHuBSL1AQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktR1h8Ju; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6CA8C4CEE2;
+	Mon, 14 Apr 2025 06:32:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744612357;
+	bh=EsnzLqlAA53UvsolhqObhC929/tsG0a5GbdMQu0r4vM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ktR1h8Jul5fv6V5VgCcaDbnGMQD3A4vvm97Cgd45ocrhZXIeMXMuyRV985aglOziD
+	 OPXYJDddj9JmuPYWdclGblAouOjwToz8LFwKC4pOf3DFmmSkTfXzp6Dq2IcBTT6f0C
+	 HbAp+0aKeWM+5QwWIr395EENiedS956r9FO3fvGJGFMSLu2QwuxNIDvjeRZI22udYs
+	 dpOXShyqvoObbmA5Yyt/h7VZJeUvMSyZuYC+ZNxajGX4AlgO8R3fcumafjj2wspdmQ
+	 y0LQKUL7EMpqfrSExErORJhobIylJcURmgYp9InrGRZseucQG17XKZXQ7cbSrI5+jv
+	 XvNhrvWIVaI4Q==
+Date: Mon, 14 Apr 2025 08:32:29 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+	mingo@redhat.com, luto@kernel.org, peterz@infradead.org,
+	paulmck@kernel.org, rostedt@goodmis.org, tglx@linutronix.de,
+	willy@infradead.org, jon.grimm@amd.com, bharata@amd.com,
+	raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com
+Subject: Re: [PATCH v3 1/4] x86/clear_page: extend clear_page*() for
+ multi-page clearing
+Message-ID: <Z_yr_cmXti4kXHaX@gmail.com>
+References: <20250414034607.762653-1-ankur.a.arora@oracle.com>
+ <20250414034607.762653-2-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414034607.762653-2-ankur.a.arora@oracle.com>
 
-From: Ye Liu <liuye@kylinos.cn>
 
-Replace repetitive calls to delayacct_end() with a new macro
-DELAYACCT_END to reduce code duplication.
-No functional changes.
+* Ankur Arora <ankur.a.arora@oracle.com> wrote:
 
-Signed-off-by: Ye Liu <liuye@kylinos.cn>
----
- kernel/delayacct.c | 50 +++++++++++++---------------------------------
- 1 file changed, 14 insertions(+), 36 deletions(-)
+> clear_page*() variants now take a page-aligned length parameter and
+> clears the whole region.
 
-diff --git a/kernel/delayacct.c b/kernel/delayacct.c
-index eb63a021ac04..3d7ca3928be2 100644
---- a/kernel/delayacct.c
-+++ b/kernel/delayacct.c
-@@ -18,6 +18,14 @@ DEFINE_STATIC_KEY_FALSE(delayacct_key);
- int delayacct_on __read_mostly;	/* Delay accounting turned on/off */
- struct kmem_cache *delayacct_cache;
- 
-+#define DELAYACCT_END(task, type) \
-+	delayacct_end(&(task)->delays->lock, \
-+		      &(task)->delays->type##_start, \
-+		      &(task)->delays->type##_delay, \
-+		      &(task)->delays->type##_count, \
-+		      &(task)->delays->type##_delay_max, \
-+		      &(task)->delays->type##_delay_min)
-+
- static void set_delayacct(bool enabled)
- {
- 	if (enabled) {
-@@ -123,12 +131,7 @@ void __delayacct_blkio_start(void)
-  */
- void __delayacct_blkio_end(struct task_struct *p)
- {
--	delayacct_end(&p->delays->lock,
--		      &p->delays->blkio_start,
--		      &p->delays->blkio_delay,
--		      &p->delays->blkio_count,
--		      &p->delays->blkio_delay_max,
--		      &p->delays->blkio_delay_min);
-+	DELAYACCT_END(p, blkio);
- }
- 
- int delayacct_add_tsk(struct taskstats *d, struct task_struct *tsk)
-@@ -231,12 +234,7 @@ void __delayacct_freepages_start(void)
- 
- void __delayacct_freepages_end(void)
- {
--	delayacct_end(&current->delays->lock,
--		      &current->delays->freepages_start,
--		      &current->delays->freepages_delay,
--		      &current->delays->freepages_count,
--		      &current->delays->freepages_delay_max,
--		      &current->delays->freepages_delay_min);
-+	DELAYACCT_END(current, freepages);
- }
- 
- void __delayacct_thrashing_start(bool *in_thrashing)
-@@ -255,12 +253,7 @@ void __delayacct_thrashing_end(bool *in_thrashing)
- 		return;
- 
- 	current->in_thrashing = 0;
--	delayacct_end(&current->delays->lock,
--		      &current->delays->thrashing_start,
--		      &current->delays->thrashing_delay,
--		      &current->delays->thrashing_count,
--		      &current->delays->thrashing_delay_max,
--		      &current->delays->thrashing_delay_min);
-+	DELAYACCT_END(current, thrashing);
- }
- 
- void __delayacct_swapin_start(void)
-@@ -270,12 +263,7 @@ void __delayacct_swapin_start(void)
- 
- void __delayacct_swapin_end(void)
- {
--	delayacct_end(&current->delays->lock,
--		      &current->delays->swapin_start,
--		      &current->delays->swapin_delay,
--		      &current->delays->swapin_count,
--		      &current->delays->swapin_delay_max,
--		      &current->delays->swapin_delay_min);
-+	DELAYACCT_END(current, swapin);
- }
- 
- void __delayacct_compact_start(void)
-@@ -285,12 +273,7 @@ void __delayacct_compact_start(void)
- 
- void __delayacct_compact_end(void)
- {
--	delayacct_end(&current->delays->lock,
--		      &current->delays->compact_start,
--		      &current->delays->compact_delay,
--		      &current->delays->compact_count,
--		      &current->delays->compact_delay_max,
--		      &current->delays->compact_delay_min);
-+	DELAYACCT_END(current, compact);
- }
- 
- void __delayacct_wpcopy_start(void)
-@@ -300,12 +283,7 @@ void __delayacct_wpcopy_start(void)
- 
- void __delayacct_wpcopy_end(void)
- {
--	delayacct_end(&current->delays->lock,
--		      &current->delays->wpcopy_start,
--		      &current->delays->wpcopy_delay,
--		      &current->delays->wpcopy_count,
--		      &current->delays->wpcopy_delay_max,
--		      &current->delays->wpcopy_delay_min);
-+	DELAYACCT_END(current, wpcopy);
- }
- 
- void __delayacct_irq(struct task_struct *task, u32 delta)
--- 
-2.25.1
+Please read your changelogs and fix typos. ;-)
 
+> +void clear_pages_orig(void *page, unsigned int length);
+> +void clear_pages_rep(void *page, unsigned int length);
+> +void clear_pages_erms(void *page, unsigned int length);
+
+What unit is 'length' in? If it's bytes, why is this interface 
+artificially limiting itself to ~4GB? On x86-64 there's very little (if 
+any) performance difference between a 32-bit and a 64-bit length 
+iterations.
+
+Even if we end up only exposing a 32-bit length API to the generic MM 
+layer, there's no reason to limit the x86-64 assembly code in such a 
+fashion.
+
+>  static inline void clear_page(void *page)
+>  {
+> +	unsigned int length = PAGE_SIZE;
+>  	/*
+> -	 * Clean up KMSAN metadata for the page being cleared. The assembly call
+> +	 * Clean up KMSAN metadata for the pages being cleared. The assembly call
+>  	 * below clobbers @page, so we perform unpoisoning before it.
+
+>  	 */
+> -	kmsan_unpoison_memory(page, PAGE_SIZE);
+> -	alternative_call_2(clear_page_orig,
+> -			   clear_page_rep, X86_FEATURE_REP_GOOD,
+> -			   clear_page_erms, X86_FEATURE_ERMS,
+> +	kmsan_unpoison_memory(page, length);
+> +
+> +	alternative_call_2(clear_pages_orig,
+> +			   clear_pages_rep, X86_FEATURE_REP_GOOD,
+> +			   clear_pages_erms, X86_FEATURE_ERMS,
+>  			   "=D" (page),
+> -			   "D" (page),
+> +			   ASM_INPUT("D" (page), "S" (length)),
+>  			   "cc", "memory", "rax", "rcx");
+>  }
+>  
+> diff --git a/arch/x86/lib/clear_page_64.S b/arch/x86/lib/clear_page_64.S
+> index a508e4a8c66a..bce516263b69 100644
+> --- a/arch/x86/lib/clear_page_64.S
+> +++ b/arch/x86/lib/clear_page_64.S
+> @@ -13,20 +13,35 @@
+>   */
+>  
+>  /*
+> - * Zero a page.
+> - * %rdi	- page
+> + * Zero kernel page aligned region.
+> + *
+> + * Input:
+> + * %rdi	- destination
+> + * %esi	- length
+> + *
+> + * Clobbers: %rax, %rcx
+>   */
+> -SYM_TYPED_FUNC_START(clear_page_rep)
+> -	movl $4096/8,%ecx
+> +SYM_TYPED_FUNC_START(clear_pages_rep)
+> +	movl %esi, %ecx
+>  	xorl %eax,%eax
+> +	shrl $3,%ecx
+>  	rep stosq
+>  	RET
+> -SYM_FUNC_END(clear_page_rep)
+> -EXPORT_SYMBOL_GPL(clear_page_rep)
+> +SYM_FUNC_END(clear_pages_rep)
+> +EXPORT_SYMBOL_GPL(clear_pages_rep)
+>  
+> -SYM_TYPED_FUNC_START(clear_page_orig)
+> +/*
+> + * Original page zeroing loop.
+> + * Input:
+> + * %rdi	- destination
+> + * %esi	- length
+> + *
+> + * Clobbers: %rax, %rcx, %rflags
+> + */
+> +SYM_TYPED_FUNC_START(clear_pages_orig)
+> +	movl   %esi, %ecx
+>  	xorl   %eax,%eax
+> -	movl   $4096/64,%ecx
+> +	shrl   $6,%ecx
+
+So if the natural input parameter is RCX, why is this function using 
+RSI as the input 'length' parameter? Causes unnecessary register 
+shuffling.
+
+> +/*
+> + * Zero kernel page aligned region.
+> + *
+> + * Input:
+> + * %rdi	- destination
+> + * %esi	- length
+> + *
+> + * Clobbers: %rax, %rcx
+> + */
+> +SYM_TYPED_FUNC_START(clear_pages_erms)
+> +	movl %esi, %ecx
+>  	xorl %eax,%eax
+>  	rep stosb
+>  	RET
+
+Same observation: unnecessary register shuffling.
+
+Also, please rename this (now-) terribly named interface:
+
+> +void clear_pages_orig(void *page, unsigned int length);
+> +void clear_pages_rep(void *page, unsigned int length);
+> +void clear_pages_erms(void *page, unsigned int length);
+
+Because the 'pages' is now a bit misleading, and why is the starting 
+address called a 'page'?
+
+So a more sensible namespace would be to follow memset nomenclature:
+
+	void memzero_page_aligned_*(void *addr, unsigned long len);
+
+... and note the intentional abbreviation to 'len'.
+
+Also, since most of these changes are to x86 architecture code, this is 
+a new interface only used by x86, and the MM glue is minimal, I'd like 
+to merge this series via the x86 tree, if the glue gets acks from MM 
+folks.
+
+Thanks,
+
+	Ingo
 
