@@ -1,119 +1,109 @@
-Return-Path: <linux-kernel+bounces-603878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96E0A88D67
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 22:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F26FA88D3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 22:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECAE617BAD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:53:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B58017B87A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D36D1F4261;
-	Mon, 14 Apr 2025 20:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390781DF24B;
+	Mon, 14 Apr 2025 20:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="kU+sEdgo"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EYZYcHMV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292891EB5D6;
-	Mon, 14 Apr 2025 20:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3CDDDC3
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 20:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744663965; cv=none; b=XJoGl13kl+uNdljrEbp3oFyzRdTGOp4YrWfygFZv1g2ERtxj8YLhQXxW5QUfhtc5iiH3ixhJK1kKjKckETmChzOCScm9ZPMLtt8gxxaWhComu7v50jhGuZHoTR62eZ1gOU8j4/uaS/9QC7m315Nhh2nObCCawLd36lrszHipguo=
+	t=1744663242; cv=none; b=Buufz4uir2pwG5T/vQrbANckMKonMWd/TfJ8mtq+wLUTD4y4zwl3tIdr6kGp9zE9SAKud/3jvC3dNi2B/lrDoxIaYsOqbNL7Hq63iCcCp7Ow+04qoy5sG9kHgvzHZUXnSNqHQzF0hsp4el6L9PWeEurP2YVE05u+FprLwkIVYd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744663965; c=relaxed/simple;
-	bh=nd8+9UJ+TOW1+YdlodfI+xvYQNqm7gqnsIfwCuBXWPs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AJSZiDHKM8R8HjYvgkap3vrBpKo2tOBwfVS2sB8GvF0aJVeXpzmD6yl7NVeoe102f0xCLoL88+m+xQOyNVYkBTQrZUYo3HaBMoAQvnD2ohB+pL3wEn11SujpN014HVhd8lJ0/UlR6STzOgHBGbSCKGgLomp6nqBx9lYuemYa2Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=kU+sEdgo; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [195.136.19.94])
+	s=arc-20240116; t=1744663242; c=relaxed/simple;
+	bh=8monUW/vJ6/0vG0xs8zE7z2VK5nRgnFX8tHR6eBVM4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VU2vcdn1rA8dEU9Y2bvteJUdQiPh7pCgjB7wkFf+9ka4cvt2UluD+L1PjvGvXm2OZg4jgxbh96xS7BqhM6SCoANMOitmKcb3FiNvOi7xasxAn/r6zOzD/BRIlwJClu8+2Y+EaniT+vuUjC/Rt9PlwFevNleoQwLtebm9kDoNF2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EYZYcHMV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744663239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zYlFFwWJIygfpn5eHvFvQZD02VDNncVIPXeKChWRAmY=;
+	b=EYZYcHMViqJNloqMkY9zlVEMSgojL+gJfAKaZVX6xhuLSVgKIIJnR914U3ZX5HViT0t/Xm
+	zHKL/cqVi8Xx4eehbc48WM9nHrRFJ5g8vm5jFucEIeozaEkYq4vVcdXt+oQbvNx3NyusPg
+	zAP4E8/ddOQVT0PtW26gMv/5XnA1PiM=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-401-To-egiYVPhmpxC19orCRvg-1; Mon,
+ 14 Apr 2025 16:40:36 -0400
+X-MC-Unique: To-egiYVPhmpxC19orCRvg-1
+X-Mimecast-MFC-AGG-ID: To-egiYVPhmpxC19orCRvg_1744663235
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 275A06625E5;
-	Mon, 14 Apr 2025 22:52:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1744663956;
-	bh=nd8+9UJ+TOW1+YdlodfI+xvYQNqm7gqnsIfwCuBXWPs=;
-	h=From:Subject:Date;
-	b=kU+sEdgorq20UccxrPVADnIKzDKR/nQfh0snvRRZp5Mx4AcmQQGqWdetw/jeilJJv
-	 g6idjoCN7bhRBSBOliPKhiEaURiAeea1u4raGK3kJaSTiGm1pixOTnA9UmNbmD7yJD
-	 C+18xbLWhHwCsgc2Yoq5qa2INWnVatV4V+ydXyV8ah9MeLzYPum5m6XKqvtn4h82th
-	 ndeT1JwRkrAcqGBTmvj6GEMZge4FQuzdiEB76xq6ymEXHk+o45GGiyOzbm7GlCmjec
-	 dsI973VnblHalqFz8YNgwpHaysN3dtU4w+uLG6SIOZoETaiVA0HlW+dHtjrgMuS4fa
-	 UOsPwsXiHFhAw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Christian Loehle <christian.loehle@arm.com>,
- Sultan Alsawaf <sultan@kerneltoast.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>
-Subject:
- [PATCH v1 0/5] cpufreq/sched: Improve synchronization of policy limits
- updates with schedutil
-Date: Mon, 14 Apr 2025 22:39:53 +0200
-Message-ID: <3364921.aeNJFYEL58@rjwysocki.net>
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4EA771801A07;
+	Mon, 14 Apr 2025 20:40:35 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.114])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4231E1955BC1;
+	Mon, 14 Apr 2025 20:40:32 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 14 Apr 2025 22:39:59 +0200 (CEST)
+Date: Mon, 14 Apr 2025 22:39:56 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] release_task: kill the no longer needed
+ get/put_pid(thread_pid)
+Message-ID: <20250414203955.GH28345@redhat.com>
+References: <20250411121857.GA10550@redhat.com>
+ <20250414-lappalie-abhilfe-eb7810af39bb@brauner>
+ <20250414-tintenfleck-planbar-656144f25a3b@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvdduheeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrvghshhdrkhhumhgrrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtgh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414-tintenfleck-planbar-656144f25a3b@brauner>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi Everyone,
+On 04/14, Christian Brauner wrote:
+>
+> On Mon, Apr 14, 2025 at 09:39:47PM +0200, Christian Brauner wrote:
+> > On Fri, Apr 11, 2025 at 02:18:57PM +0200, Oleg Nesterov wrote:
+> > > -	put_pid(thread_pid);
+> > > +	/* p->thread_pid can't go away until free_pids() below */
+> > > +	proc_flush_pid(p->thread_pid);
+> >
+> > This cannot work though, right?
+> > Because after __unhash_process() p->thread_pid may be NULL:
 
-This series of patches has been inspired by the discussion following a bug
-report regarding the patch at
+Oh, indeed! What was I thinking about???
 
-https://lore.kernel.org/lkml/20241212015734.41241-2-sultan@kerneltoast.com/
+And, as you can guess, I didn't even bother to test this "obvious" cleanup :/
 
-and its attempted unsuccessful resolution:
+> The task_pid() needs to be moved after the repeat label. I'm appending
+> the full patch I applied.
 
-https://lore.kernel.org/linux-pm/20250410024439.20859-1-sultan@kerneltoast.com/
+Thanks a lot!
 
-which basically leads to the conclusion that cpufreq policy limits updates are
-not sufficiently synchronized with the scheditil governor, especially in the
-fast switching case in which running the driver callback is the only way to
-make the new policy limits take effect.
+Can you add your Co-developed-by or Fixed-by ?
 
-The purpose of this series is to address this concern.
-
-Patch [1/5] is a fix for the issue introduced by the patch linked above (please
-see the patch changelog for details), for 6.15-rc.  The remaining patches are
-for 6.16.
-
-Patch [2/5] adds memory barriers in two places in schedutil along with some
-WRITE_ONCE()/READ_ONCE() annotations to ensure that policy limits updates will
-not be missed due to reordering of instructions.
-
-Patch [3/5] is a preparatory function rename with no functional impact.
-
-Patch [4/5] updates the cpufreq core to avoid situations in which
-cpufreq_driver_resolve_freq(), called by schedutil, may see intermediate
-values of policy->min and policy->max and makes that function address the
-unlikely case in which it may see policy->min > policy->max.
-
-Patch [5/5] cleans up the code after the previous changes.
-
-Please see individual patch changelogs for details.
-
-Thanks!
-
-
+Oleg.
 
 
