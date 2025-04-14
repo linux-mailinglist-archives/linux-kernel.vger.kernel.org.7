@@ -1,177 +1,516 @@
-Return-Path: <linux-kernel+bounces-603164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E823A88463
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:18:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD11A8846B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47727441141
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:10:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38513188697C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F3E27A90D;
-	Mon, 14 Apr 2025 13:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3586727587C;
+	Mon, 14 Apr 2025 13:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="XteWAv+h"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJwNylCd"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC7F2749EE
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5CA24729D;
+	Mon, 14 Apr 2025 13:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744637996; cv=none; b=V2gpvtcVHq7XGAbGkY+P3XXHV9I1FCbz7UyyqtJ8vHS/tPe2YRkQb2SKvFXiXlIxRMDvMjEegBGW8av8BK8DFzvPGEWeGWO4piYXH+hf0+CxqtZ3XmjBAu18GuNpeQtqdDqUeYmjzlsGIfT/hxihzyL60EjIu8sRWMcdokEflrw=
+	t=1744638104; cv=none; b=N1WRCM+DDEGMSvWo3LFBbPSCmevlpBT8ndqrzJkq9BRAyjiaFgst6NmcR39ANvoFBlUI661e5UtLJbxhA68X/4EXagfL+wmXOyJ3ghe4+iDW16h99VC/nQh82fFTN8n4hlN0TzzjmqJ7+lV6BYjDBQcixawZgArUfODaBRtuvTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744637996; c=relaxed/simple;
-	bh=NtCW/E8exydYTxFSwUlIDYXeH3TA9ME05Yx8nihFiFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZrLd98h6jxeFSvja7nx5z+nAQAnUXx2Iz6Pig68H8ETHQ14cT1q9swdqKQQ9wSoLkJDMgIU5H0sTK6XXCT+MpBCGI3QEKHzGiOnE8Y2t6q10qioFQVDM9j/Q/tos+K1GxCcgUuWy0hBwYfstRIikGe9erPE4OC415F+f6cNMvHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=XteWAv+h; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5c9662131so6597641a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:39:53 -0700 (PDT)
+	s=arc-20240116; t=1744638104; c=relaxed/simple;
+	bh=VFIZ8IUvl6sQu41G6YkpR8xVraIpjUX1phEG6i0UBh4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KVtyu7ims0GRtdnu63wNbDS3CgWN0HSo9Gc7Pqg3A/OvsmOXmxjFqgWQZjxKyOqEp9avB3J1Ox9hrjgLHBQ2OcnQ2Quq7bboWAa9ECPk9dGya+rAn17Xo4pwRoK3Fn5PJkiOC6RzS6zmP6pzGDztQvcPT0BYaoo/dMavjV4dfio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJwNylCd; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso684032266b.1;
+        Mon, 14 Apr 2025 06:41:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1744637992; x=1745242792; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZquJTzO2TMrzx3oM3vRZxn3X9pd2r24oUtQt3eHPnLc=;
-        b=XteWAv+h8B74asVCm/j/e0NLRp4TEeKg6pdI/nhhYbAsUNJVE3IKA3re7QUrGNfoC+
-         vTfI3OuJKiGhJAiEK/eMQOuQtBkRgxHt/86RkPF6rsaIIUM1JS9hswRObGwZSGF28fLv
-         6kKYMPKNZNeBUdW63FI6Iln97wCpqnBahwtJYXskzglvw4RR4qw9BTzYLmSFSyzH04GJ
-         nG0mRiJpC8Jfjs8tVIHSkqpg/aC6hJH2O40fgk4DyOFwA9MRHE8r4SoRTpWvEKmjhZge
-         C6ZGNXzx5J8XcBhQiD99pFCYJC7895BUXj2W2k6ss5P88v0xC8aQXDKJffcka/FhaBJv
-         aW3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744637992; x=1745242792;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1744638100; x=1745242900; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZquJTzO2TMrzx3oM3vRZxn3X9pd2r24oUtQt3eHPnLc=;
-        b=whSzI563gn6lmV2ZAXgbdVuKFl7Ltjo+0C4dDWvp3s8gqCe3QvJzyj4hOvrsOCC7pO
-         gEmsgBT1s1e+gifLvuONx/7Ofj6hBFoY4H7n3xDW24UdeO13vCVkfRATGi6tND0X6yEO
-         LI93b/CN/go6pS6AczVtbCpn1XFN8PoiuEP0WAOGzkOGRfm7QsDalispZ24H/Y+Tq/4G
-         gHh3uIx7jTDP4B4GIvQGBCzwEKVw9N1JzB8IaDID938k8LRglhcUj+cizkh60NByjXJu
-         u+gJyg5HaVe3hMebG2go40hXbPrKiLX+TviEfIBfsgQMy+eWfizK6rAVzxIu/D1tVgC7
-         QY3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWEXxtAaUZjZxMvLQSa3p8K4hp02P6gXY491IDsynAyIwxrvxHDjuSWLBoI/J700y3niNirfY8WRjFpRDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygKQd/bLwnPkflbbl3mvxTrs7KqT5x/KCBfNRDGNwZ4X9R2Y0w
-	kS2qkAPaf04xm6Y9vjeIK3znFBM4yC1W8YgpY+znjniO+LI2NAf/+3hwgxzi/jVMk8BmATo6l/y
-	45EZy5/Vu0rJj86UobXUHO9dqQvU5He5VKsmKUUfrvMHY07w3mT1fE2M=
-X-Gm-Gg: ASbGncsa6OGJ5g7AND6bbN+mqGL2cVv6D0s1u2QFxvxtJVlPPx32W0h2b8EEqXOb+AE
-	HyO5Dcl8uAv+CV0WFOocMciwExMtpLQC/hWIK6C2YUKAuQHiCHLzq/PpQVlHc1OFz3DcNqsBo8r
-	VmnxK6J1uFGYgVkG9R0gJ8XdAICGjk09qF8+zYifL0PtnxzdgeW1qDSggRlXI7mXgKUMBePXTPI
-	E/bMvO9JZj9DHxi3EeMPuydFayZkPOrVmsfBvMqJVvOnaKVTagqkFRSbHg1q1jTjlAzrK9CBQPF
-	CpA5ZPdggeGJmTM354J3u9ZvWX+aXgo1tF/5GbGws4+R4dMF4zgarGoU43W07xAYluR4QuEApoB
-	l8ghVQvQM2dObBQ==
-X-Google-Smtp-Source: AGHT+IFPxNqtw28ADerWg6CufaL1pKk/7NGw4kAzwMNIMYRZtCBUOHqCketsjh37yheEVO4bOxUj2g==
-X-Received: by 2002:a05:6402:3487:b0:5ec:f769:db07 with SMTP id 4fb4d7f45d1cf-5f36fefc74amr8488977a12.29.1744637992033;
-        Mon, 14 Apr 2025 06:39:52 -0700 (PDT)
-Received: from ?IPV6:2001:67c:2fbc:1:7de8:ff34:becd:c8f0? ([2001:67c:2fbc:1:7de8:ff34:becd:c8f0])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f36ef5c445sm4905583a12.31.2025.04.14.06.39.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 06:39:51 -0700 (PDT)
-Message-ID: <963c2166-aed8-4928-bdeb-6acbec2b0ea7@openvpn.net>
-Date: Mon, 14 Apr 2025 15:39:50 +0200
+        bh=73xHJ9IYiHIaK02xaTMdK7NbfrF6WDOxYWmZYyt7is4=;
+        b=dJwNylCdCqAMh9rhlRUpmT2FEWjZTvZ3PzEdy9z8ZrzOEAyvdtJTOZV+7Bw7kkFH7d
+         QfqtDEZEGC2K54GJBvh043i40Xx9A5pOagaznc2MYeZQUfqPutG5a4/ZHcbkWtlQnuug
+         jNOQqgOoWK5S5mNf/BtXrtFuhLHa++p7yRghcFnysiF7MaoYxk5honll9FQHRgGXfm7W
+         XQwHuES2/WzjCrP4wNeIXWbc+iQiPi6K40UUDG0/rnWAeZrWxqhqCMbxb2fm8IOEVIPL
+         GoTyw15D+px2kCX+OcMaEiR1iGyN/KfFDtgcLBNiqZJTN+14dW1u1SK5An1RiHWQcoc/
+         WrZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744638100; x=1745242900;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=73xHJ9IYiHIaK02xaTMdK7NbfrF6WDOxYWmZYyt7is4=;
+        b=kXwBBToDa9a/9JQVBdvCTVHpUrwnQ9cslx17JGRWVo6TdX6+tPgPqOIBXPCWMxbx1N
+         RdVr1tL/UdrOy8zsqJw0exg7F0H2ZPcp9yQU8s1DFTWNTkxOPOeh5iZXK0OL2vKlJ/XN
+         XF38U0FTI+b7DL47sitq8G7lLQmKFFgOZ0CnaRUGL+J7InVwYwxuOW4YmALOD+216LGR
+         O7Dz7LrYn7oWpxz6EP7M5o4r8Y6Zn1Nw7zRNMglX+z+bO/Mm2NpVx7i2g9c5OJP/VvzB
+         vxthz8rlysucz0JmMUJKLJJdF8e/2ZZivYsIz4F9O4AT7Y7gEGvRd5Dx6UTb/42T8/pH
+         R/iw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4WjMXcS3kUSK1jNZb/dEFMkMKrANxbbdBgHzVhWtO9fUjYBWhPZruAdRW22W+I9ZPx1/EUEV5UmuW@vger.kernel.org, AJvYcCUjQfSOcrLuU8SPqbItUoE9KmHuUQmI26Lh0oOuD570HxtUFUI4vZwLPJQcmLvBe2AML3RJfFwAyV3W9YGO@vger.kernel.org, AJvYcCXUTcqJ0GFPdMOgAgkLhFgD9JBkIdwTH1SJ4FTT/DgnlUAkwfRyAnzbbIoujLCgU0APUB5U5nDWLotp@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywqk3mi7lDbytJkI4OddnHA7rcYZq5H7be5JYjSYF2punu5j7rD
+	W22pGSnG3WbZSuoNIsWnm4ocyWHXgmAIxY0XDZadLbYFvY1416npYjJSgzOvajGOEi36vrC1DCW
+	Bm4lT+nEDZOHuh+7wyiUeaQtM6nY=
+X-Gm-Gg: ASbGncsAS4gawhGZKp0vlIVIyLK5gs0h/BXKq7mJ4bG+MLixPF9Fc4XqA+UCgAmmipx
+	LXsIqoIbTS0o7pnBYeu/Yk7i/MaWJGryWTpPT3j4F57pzaC+WmrfzTKW31HnO/fTff+ca5Z5EuU
+	914caiG6oOFW9vLH3zGgPlsQ==
+X-Google-Smtp-Source: AGHT+IEUBXB+ktsYxUFxin7yI8JSpLsDLbeEGr6D25mEE6RXhiuDW8CRdDgitNFauJwognP5bX/GANHUvSy3sHEAg7Q=
+X-Received: by 2002:a17:907:944e:b0:ac7:81b2:c6e5 with SMTP id
+ a640c23a62f3a-acad36d04fdmr1043991366b.55.1744638099971; Mon, 14 Apr 2025
+ 06:41:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v25 01/23] net: introduce OpenVPN Data Channel
- Offload (ovpn)
-To: Jakub Kicinski <kuba@kernel.org>, Sabrina Dubroca <sd@queasysnail.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Xiao Liang <shaw.leon@gmail.com>, steffen.klassert@secunet.com,
- antony.antony@secunet.com
-References: <20250407-b4-ovpn-v25-0-a04eae86e016@openvpn.net>
- <20250407-b4-ovpn-v25-1-a04eae86e016@openvpn.net>
- <20250410195440.3ba7ba0f@kernel.org>
- <f11e8a14-deb0-456f-bb4a-b5e4e16a79d7@openvpn.net> <Z_keORW4OWc8i5Vz@krikkit>
- <20250411141847.6dba6987@kernel.org>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <20250411141847.6dba6987@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250409012351.2543450-1-j2anfernee@gmail.com>
+ <20250409012351.2543450-3-j2anfernee@gmail.com> <Z_aeEuIk9brES6dM@smile.fi.intel.com>
+In-Reply-To: <Z_aeEuIk9brES6dM@smile.fi.intel.com>
+From: Yu-Hsian Yang <j2anfernee@gmail.com>
+Date: Mon, 14 Apr 2025 21:40:35 +0800
+X-Gm-Features: ATxdqUG2e8O27VtT5a1XgBKf9cFzDJdly9huEPojacM_h6OgLdhDriMAHMCYe70
+Message-ID: <CA+4VgcKG2EEsicysds0zu7y1xDhg88m3heGUBaQZ7-MVWanCaw@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] iio: adc: add support for Nuvoton NCT7201
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+	javier.carrasco.cruz@gmail.com, gstols@baylibre.com, tgamblin@baylibre.com, 
+	alisadariana@gmail.com, antoniu.miclaus@analog.com, eblanc@baylibre.com, 
+	jstephan@baylibre.com, matteomartelli3@gmail.com, 
+	angelogioacchino.delregno@collabora.com, herve.codina@bootlin.com, 
+	marcelo.schmitt@analog.com, chanh@os.amperecomputing.com, KWLIU@nuvoton.com, 
+	yhyang2@nuvoton.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/04/2025 23:18, Jakub Kicinski wrote:
-> On Fri, 11 Apr 2025 15:50:49 +0200 Sabrina Dubroca wrote:
->>> My understanding is that this is the standard approach to:
->>> 1) hook in the middle of registration/deregistration;
->>> 2) handle events generated by other components/routines.
->>>
->>> I see in /drivers/net/ almost every driver registers a notifier for their
->>> own device.
->>
->> I think most of them register a notifier for their lower device
->> (bridge port, real device under a vlan, or similar).
->>
->> I've mentioned at some point that it would be more usual to replace
->> this notifier with a custom dellink, and that ovpn->registered could
->> likely be replaced with checking for NETREG_REGISTERED. I just thought
->> it could be cleaned up a bit later, but it seems Jakub wants it done
->> before taking the patches :)
-> 
-> Ideally, yes. One fewer place for us to check when trying to figure
-> out if we will break anything with the locking changes :(
-> Notifiers are very powerful but that comes at high maintenance cost.
+Dear Andy,
 
-ACK, working on it!
+Thanks for the review and the comments.
+Will fix all.
 
-Thanks,
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2025=E5=B9=B4=
+4=E6=9C=8810=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=8812:19=E5=AF=AB=
+=E9=81=93=EF=BC=9A
+>
+> On Wed, Apr 09, 2025 at 09:23:51AM +0800, Eason Yang wrote:
+> > Add Nuvoton NCT7201/NCT7202 system voltage monitor 12-bit ADC driver
+> >
+> > NCT7201/NCT7202 supports up to 12 analog voltage monitor inputs and up =
+to
+> > 4 SMBus addresses by ADDR pin. Meanwhile, ALERT# hardware event pins fo=
+r
+> > independent alarm signals, and all the threshold values could be set fo=
+r
+> > system protection without any timing delay. It also supports reset inpu=
+t
+> > RSTIN# to recover system from a fault condition.
+> >
+> > Currently, only single-edge mode conversion and threshold events are
+> > supported.
+>
+> > +#include <linux/array_size.h>
+> > +#include <linux/bitfield.h>
+> > +#include <linux/bits.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/device.h>
+> > +#include <linux/err.h>
+> > +#include <linux/i2c.h>
+> > +#include <linux/mod_devicetable.h>
+> > +#include <linux/module.h>
+> > +#include <linux/regmap.h>
+> > +#include <linux/types.h>
+> > +#include <linux/unaligned.h>
+>
+> ...
+>
+> > +#define NCT7201_VIN_MAX                              12
+>
+> Is this in volts? Can you add a unit suffix?
 
--- 
-Antonio Quartulli
-OpenVPN Inc.
+Rename it as
+#define NCT7201_MAX_CHANNEL 12
 
+>
+> ...
+>
+> > +#define NCT7201_IN_SCALING                           4995
+> > +#define NCT720X_IN_SCALING_FACTOR         10000
+> Interesting number, just want to confirm it's indeed 4995 and not 4095.
+>
+
+These definitions are for real voltage calculations,
+the formula is Voltage(V) =3D 13bitCountValue * 0.0004995
+However, the definitions are not used anymore.
+So remove them.
+
+> ...
+>
+> > +static int nct7201_read_event_value(struct iio_dev *indio_dev,
+> > +                                 const struct iio_chan_spec *chan,
+> > +                                 enum iio_event_type type,
+> > +                                 enum iio_event_direction dir,
+> > +                                 enum iio_event_info info,
+> > +                                 int *val, int *val2)
+> > +{
+> > +     struct nct7201_chip_info *chip =3D iio_priv(indio_dev);
+> > +     unsigned int value;
+> > +     int err;
+> > +
+> > +     if (chan->type !=3D IIO_VOLTAGE)
+> > +             return -EOPNOTSUPP;
+> > +
+> > +     if (info !=3D IIO_EV_INFO_VALUE)
+> > +             return -EINVAL;
+>
+> > +     if (dir =3D=3D IIO_EV_DIR_FALLING) {
+> > +             err =3D regmap_read(chip->regmap16, NCT7201_REG_VIN_LOW_L=
+IMIT(chan->address),
+> > +                               &value);
+> > +             if (err < 0)
+> > +                     return err;
+> > +     } else {
+> > +             err =3D regmap_read(chip->regmap16, NCT7201_REG_VIN_HIGH_=
+LIMIT(chan->address),
+> > +                               &value);
+> > +             if (err < 0)
+> > +                     return err;
+> > +     }
+>
+>         if (dir =3D=3D IIO_EV_DIR_FALLING) {
+>                 err =3D regmap_read(chip->regmap16, NCT7201_REG_VIN_LOW_L=
+IMIT(chan->address),
+>                                   &value);
+>         } else {
+>                 err =3D regmap_read(chip->regmap16, NCT7201_REG_VIN_HIGH_=
+LIMIT(chan->address),
+>                                   &value);
+>         }
+>         if (err)
+>                 return err;
+>
+> Here and elsewhere why ' < 0' is used? Do you expect positive return valu=
+es
+> from those?
+>
+
+In regmap_read function, A value of zero will be returned on success,
+a negative errno will be returned in error cases.
+We don't have a positive return case.
+
+
+> > +     *val =3D FIELD_GET(NCT7201_REG_VIN_MASK, value);
+> > +
+> > +     return IIO_VAL_INT;
+> > +}
+>
+> ...
+>
+> > +static int nct7201_write_event_value(struct iio_dev *indio_dev,
+> > +                                  const struct iio_chan_spec *chan,
+> > +                                  enum iio_event_type type,
+> > +                                  enum iio_event_direction dir,
+> > +                                  enum iio_event_info info,
+> > +                                  int val, int val2)
+> > +{
+> > +     struct nct7201_chip_info *chip =3D iio_priv(indio_dev);
+>
+> > +     int  err =3D 0;
+>
+> Useless assignment.
+>
+
+> > +     if (chan->type !=3D IIO_VOLTAGE)
+> > +             return -EOPNOTSUPP;
+> > +
+> > +     if (info !=3D IIO_EV_INFO_VALUE)
+> > +             return -EOPNOTSUPP;
+> > +
+> > +     if (dir =3D=3D IIO_EV_DIR_FALLING) {
+> > +             err =3D regmap_write(chip->regmap16, NCT7201_REG_VIN_LOW_=
+LIMIT(chan->address),
+> > +                                FIELD_PREP(NCT7201_REG_VIN_MASK, val))=
+;
+> > +             if (err < 0)
+> > +                     return err;
+> > +     } else {
+> > +             err =3D regmap_write(chip->regmap16, NCT7201_REG_VIN_HIGH=
+_LIMIT(chan->address),
+> > +                                FIELD_PREP(NCT7201_REG_VIN_MASK, val))=
+;
+> > +             if (err < 0)
+> > +                     return err;
+> > +     }
+> > +
+> > +     return 0;
+>
+>         if (dir =3D=3D IIO_EV_DIR_FALLING) {
+>                 err =3D regmap_write(chip->regmap16, NCT7201_REG_VIN_LOW_=
+LIMIT(chan->address),
+>                                    FIELD_PREP(NCT7201_REG_VIN_MASK, val))=
+;
+>         } else {
+>                 err =3D regmap_write(chip->regmap16, NCT7201_REG_VIN_HIGH=
+_LIMIT(chan->address),
+>                                    FIELD_PREP(NCT7201_REG_VIN_MASK, val))=
+;
+>         }
+>         return err;
+>
+>
+> > +}
+>
+> ...
+>
+> > +static int nct7201_write_event_config(struct iio_dev *indio_dev,
+> > +                                   const struct iio_chan_spec *chan,
+> > +                                   enum iio_event_type type,
+> > +                                   enum iio_event_direction dir,
+> > +                                   bool state)
+> > +{
+> > +     struct nct7201_chip_info *chip =3D iio_priv(indio_dev);
+> > +     unsigned int mask;
+> > +     int err;
+> > +
+> > +     if (chan->type !=3D IIO_VOLTAGE)
+> > +             return -EOPNOTSUPP;
+> > +
+> > +     mask =3D BIT(chan->address);
+> > +
+> > +     if (state)
+> > +             chip->vin_mask |=3D mask;
+> > +     else
+> > +             chip->vin_mask &=3D ~mask;
+>
+> > +     if (chip->num_vin_channels <=3D 8) {
+> > +             err =3D regmap_write(chip->regmap, NCT7201_REG_CHANNEL_EN=
+ABLE_1,
+> > +                                chip->vin_mask);
+> > +             if (err < 0)
+> > +                     return err;
+> > +     } else {
+> > +             err =3D regmap_bulk_write(chip->regmap, NCT7201_REG_CHANN=
+EL_ENABLE_1,
+> > +                                     &chip->vin_mask, sizeof(chip->vin=
+_mask));
+> > +             if (err < 0)
+> > +                     return err;
+> > +     }
+> > +
+> > +     return 0;
+>
+> Same as above.
+>
+> > +}
+>
+> ...
+>
+> > +static int nct7201_init_chip(struct nct7201_chip_info *chip)
+> > +{
+> > +     u8 data[2] =3D {0};
+>
+> '0' is not needed. Shouldn't this be __le16 or __be16 instead?
+>
+
++ __be16 data =3D NCT7201_REG_CHANNEL_ENABLE_MASK;
+
+> > +     unsigned int value;
+> > +     int err;
+> > +
+> > +     err =3D regmap_write(chip->regmap, NCT7201_REG_CONFIGURATION,
+> > +                        NCT7201_BIT_CONFIGURATION_RESET);
+> > +     if (err < 0)
+> > +             return dev_err_probe(&chip->client->dev, -EIO,
+>
+>         struct device *dev =3D &chip->client->dev;
+>
+> at the top of the function will help a lot in tiding up the below code.
+>
+> Shadowed error code, why?
+>
+
+Do not shadow the return code by -EIO and let the regmap API caller decide.
+
+> > +                                  "Failed to write NCT7201_REG_CONFIGU=
+RATION\n");
+> > +
+> > +     /*
+> > +      * After about 25 msecs, the device should be ready and then the =
+Power
+> > +      * Up bit will be set to 1. If not, wait for it.
+> > +      */
+> > +     mdelay(25);
+>
+> No sleep? Why? Can't you use fsleep()?
+>
+
++ msleep(25);
+
+> > +     err =3D regmap_read(chip->regmap, NCT7201_REG_BUSY_STATUS, &value=
+);
+> > +     if (err < 0)
+> > +             return err;
+> > +     if (!(value & NCT7201_BIT_PWR_UP))
+> > +             return dev_err_probe(&chip->client->dev, -EIO,
+>
+> Shadowed error code, why?
+
+Do not shadow the return code by -EIO and let the regmap API caller decide.
+
+>
+> > +                                  "Failed to power up after reset\n");
+> > +
+> > +     /* Enable Channel */
+> > +     if (chip->num_vin_channels <=3D 8) {
+> > +             data[0] =3D NCT7201_REG_CHANNEL_ENABLE_1_MASK;
+> > +             err =3D regmap_write(chip->regmap, NCT7201_REG_CHANNEL_EN=
+ABLE_1, data[0]);
+> > +             if (err < 0)
+> > +                     return dev_err_probe(&chip->client->dev, -EIO,
+>
+> Why error code is shadowed?
+>
+
+Do not shadow the return code by -EIO and let the regmap API caller decide.
+
+> > +                                          "Failed to write NCT7201_REG=
+_CHANNEL_ENABLE_1\n");
+> > +     } else {
+> > +             data[0] =3D NCT7201_REG_CHANNEL_ENABLE_1_MASK;
+> > +             data[1] =3D NCT7201_REG_CHANNEL_ENABLE_2_MASK;
+> > +             err =3D regmap_bulk_write(chip->regmap, NCT7201_REG_CHANN=
+EL_ENABLE_1,
+> > +                                     data, ARRAY_SIZE(data));
+> > +             if (err < 0)
+> > +                     return dev_err_probe(&chip->client->dev, -EIO,
+>
+> Ditto.
+>
+> > +                                          "Failed to write NCT7201_REG=
+_CHANNEL_ENABLE_1 and NCT7201_REG_CHANNEL_ENABLE_2\n");
+> > +     }
+>
+> Just make it 16-bit type, define one value and use just simple English
+> in the error message: "Failed to write channel enable mask\n");
+>
+> Same to all your error messages.
+>
+
+We would examine all the error messages in simple English.
+
+> > +     chip->vin_mask =3D get_unaligned_le16(data);
+> > +
+> > +     /* Start monitoring if needed */
+> > +     err =3D regmap_read(chip->regmap, NCT7201_REG_CONFIGURATION, &val=
+ue);
+> > +     if (err < 0)
+> > +             return dev_err_probe(&chip->client->dev, -EIO,
+> > +                                  "Failed to read NCT7201_REG_CONFIGUR=
+ATION\n");
+>
+> > +     regmap_set_bits(chip->regmap, NCT7201_REG_CONFIGURATION, NCT7201_=
+BIT_CONFIGURATION_START);
+>
+> > +     return 0;
+>
+> No error check? Why?
+>
+
++ err =3D regmap_set_bits(chip->regmap, NCT7201_REG_CONFIGURATION,
++       NCT7201_BIT_CONFIGURATION_START);
++ if (err)
++ return dev_err_probe(dev, err, "Failed to start monitoring\n");
+
+
+> > +}
+>
+> ...
+>
+> > +static int nct7201_probe(struct i2c_client *client)
+> > +{
+> > +     const struct nct7201_adc_model_data *model_data;
+>
+>         struct device *dev =3D &client->dev;
+>
+> > +     struct nct7201_chip_info *chip;
+> > +     struct iio_dev *indio_dev;
+> > +     int ret;
+> > +
+> > +     model_data =3D i2c_get_match_data(client);
+> > +     if (!model_data)
+> > +             return -EINVAL;
+>
+> ENODEV is more suitable here.
+>
++ return -ENODEV
+
+> > +
+> > +     indio_dev =3D devm_iio_device_alloc(&client->dev, sizeof(*chip));
+> > +     if (!indio_dev)
+> > +             return -ENOMEM;
+> > +     chip =3D iio_priv(indio_dev);
+> > +
+> > +     chip->regmap =3D devm_regmap_init_i2c(client, &nct7201_regmap8_co=
+nfig);
+> > +     if (IS_ERR(chip->regmap))
+> > +             return dev_err_probe(&client->dev, PTR_ERR(chip->regmap),
+> > +                                  "Failed to init regmap\n");
+> > +
+> > +     chip->regmap16 =3D devm_regmap_init_i2c(client, &nct7201_regmap16=
+_config);
+> > +     if (IS_ERR(chip->regmap16))
+> > +             return dev_err_probe(&client->dev, PTR_ERR(chip->regmap16=
+),
+> > +                                  "Failed to init regmap16\n");
+> > +
+> > +     chip->num_vin_channels =3D model_data->num_vin_channels;
+>
+> > +     chip->client =3D client;
+>
+> How exactly is _client_ used elsewhere? Shouldn't it be just a struct dev=
+ice
+> pointer?
+
+Yes, it is just a struct device pointer.
+In nct7201_init_chip(chip), we would use the chip->client->dev as
+dev_err_probe() parameter
+>
+> > +     ret =3D nct7201_init_chip(chip);
+> > +     if (ret < 0)
+>
+> Do you expect positive returned values? What is their meaning?
+> Why do you skip them?
+>
+
+No, we don't expect positive return values.
+
+> > +             return ret;
+> > +
+> > +     indio_dev->name =3D model_data->model_name;
+> > +     indio_dev->channels =3D model_data->channels;
+> > +     indio_dev->num_channels =3D model_data->num_channels;
+> > +     if (client->irq)
+> > +             indio_dev->info =3D &nct7201_info;
+> > +     else
+> > +             indio_dev->info =3D &nct7201_info_no_irq;
+> > +     indio_dev->modes =3D INDIO_DIRECT_MODE;
+> > +
+> > +     return devm_iio_device_register(&client->dev, indio_dev);
+> > +}
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
