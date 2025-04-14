@@ -1,107 +1,211 @@
-Return-Path: <linux-kernel+bounces-602758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FE6A87ED9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:19:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE067A87EE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCA133A889B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:19:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9C73AC2D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B6E26E165;
-	Mon, 14 Apr 2025 11:19:20 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDEB2620D6;
+	Mon, 14 Apr 2025 11:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ec3pTnbu"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3661A18DB18;
-	Mon, 14 Apr 2025 11:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB0025D8E0;
+	Mon, 14 Apr 2025 11:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744629559; cv=none; b=nxPKLf31lsC3XfVy3bgxYY8ZbyG5iV1zwgu1sS/JsaaDfwuP0OavDETW8c9MypOWI+oZ/PiitdZ7sSSWuALNyvmssSl7Nm+9DjJ9a8BKsLFSwS5RYWBOeY1b7yLpX/Yza8X3K8THrTBKaOIBTkutiObqbSn1s/W7QQyj+m7J7I4=
+	t=1744629586; cv=none; b=nJ3K4YXaGKnfbYQasC7/4dFLdTB1ZftTgsfYr1Ced8cZDDbc6KvnuBvsz6ocNW8pQ3SFGMl97j9MUq3nCr9qYU/NgwTljTLJAFvThH2tpa8enDJHtyVhu+wLGCHRqC4Hs74/4Ufk44zvWlueRhhLb5b4vjj4rl3PFBNBJnkuDJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744629559; c=relaxed/simple;
-	bh=4sYWNtAc4YF7YZg03HO0SzkfYuVw4goAQfDHPc5y0l0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mUWkGrKRt7bSS7lINPJgQXJUhcCtTMUCMcncowfXpKPZdK1hrd7ViRyt6s8up4vkWNSznN54vvgbR7WHQ93lrCI3lkvcAzsSAW3EKQWvNPrqUtrcPjirMyL1tHYjtmKIiyWEJRm+2N6DcjEcgxoBdz3ciI/EKStQV7MajDHsX5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-03 (Coremail) with SMTP id rQCowABH9EAX7_xnqxTUCA--.8348S2;
-	Mon, 14 Apr 2025 19:18:59 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: davem@davemloft.net,
-	andreas@gaisler.com,
-	make24@iscas.ac.cn,
-	sam@ravnborg.org,
-	dawei.li@shingroup.cn
-Cc: sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	stable@vger.kernel.org
-Subject: [PATCH RESEND] sparc: fix error handling in scan_one_device()
-Date: Mon, 14 Apr 2025 19:18:45 +0800
-Message-Id: <20250414111845.3084334-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744629586; c=relaxed/simple;
+	bh=BKzGtY0m29Mf6TkuRUUflwug+d15q5+nqop+AkHVYkQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hqgjieHN15DanqzKtNM+AnlVSc2dOC97jAmUlrQJDy+GbzT/pxUciGINsSamQYm5X4mx+SJ14QJ8U+31SglGpzcjktGIswYZi0n4wALZ+PFHt0vW1Tyb/TaPvPpHq+J+PcvaI0nU32WJb4R2lHU4RTu/d+ycQQc6JbhRZomuO+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ec3pTnbu; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523f1b31cf8so1480674e0c.0;
+        Mon, 14 Apr 2025 04:19:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744629583; x=1745234383; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VEqhZeC/SxQPEFxYDopllibBPq2tN/nqOZR4I+9eMe4=;
+        b=ec3pTnbuSLPB7kJy/d8ZbIX9BwWvom36JE4F3maMqa1CDxCirSOeTTj1ha1R8wmKcs
+         Nsd7fIbPybU10ZUXdMtZg/ZNmWTS/N1boPvr9VTACMMIaHw1C6Fw0EYjSyeWB7NJvClW
+         /8Aqi8LuZnaSsQw4TWBEAD+246TYmAN6veYJPCxqtsTOcVWNvakyK9cfi7gArsHvDRs9
+         L1+YK48aS+3rGeIePfk6qxbR4LFoX+wHvu0ru+fYo6EzYvrLhBrSpcCaogB3QQ/HGfJQ
+         vv9yvcKf4UQDAwFyptbf1087eUUfgV5ApnBLVOm+vByl6TfkVGkyN2X/CsTyLCjPwWp1
+         9kPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744629583; x=1745234383;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VEqhZeC/SxQPEFxYDopllibBPq2tN/nqOZR4I+9eMe4=;
+        b=hgymS6lMnCu1u4BSEMCQJDWqxUuVlEnWtN2SfBVK+oTHDvAthn0WaF78VAZ+wwKhOo
+         BMYsXgdI0Ae1470B0+pNDjY3OZCF99Ai2sh4ezNYUGd71VvArmG5SP8a02hNTtLHXqON
+         vgarPPMY4tyFJkCjMKVJoJur0fMWjtE5lb++88XFdxUHYe1z6c+8EiFRdJMxZoNgGZYW
+         PZ7JPMWDWU9IGYD2n806PxGhraxgpQiR5NB/rSp3+QJOpFOYmJJixOfLni66Tuhptrlb
+         Yoe84UADOVJScc2UjHMYoMEJ+v7goH8Q3222rIYkHMFGh7OLo4/FuA7CrbWZekfuiRL9
+         KkcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2JDKU+n3m5EFHTcjqO1MI5jYSPPiAA2TJPk+01jyHdHN13EMN8qcKbn+AvG6kVL8aFHzq0nPzbqnH@vger.kernel.org, AJvYcCVAic2+cW9OYt3H/I2+lxAcy/gdSOIPtQIep2f2kfuNMPHm3ViGA8yJpPRRfsut/7Nla+2HMsOGlRlfX+OhdqCpAPw=@vger.kernel.org, AJvYcCVSzTXRF/pI1ntmYNdSsPz2EOs2cmTWYpL5JBi9TSaBSNxZTdVkXWsU6Uzmz3W0g0hP5CDuhLLZwi4C3RBn@vger.kernel.org, AJvYcCVw0khGCl0N94Iq7CLJfYys7rhlLUcyHesDaP4EHVRRrgRbfw+rsEnoXafQnCD6ZWa4g1bIwsDGyjd+3lwe@vger.kernel.org, AJvYcCWbE3piOOMi2AcEb7Xytj1/FLox/T2Efn+23vpE+9sTzjZAyECfDgsn11cP0IDy3Fs8hpbCVFvXxDh2vA==@vger.kernel.org, AJvYcCWy8Hn5GLSXC3q4l5BdBWmozfYdtjg2Mm80FSsdxoBdUG9TKKyDbBL+8cfaMaAN+ue1qso21j/fdmX7@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTNNNzsPmgqbj9IzsLa47CZaahd1iRCbybWYiBxLarzbiDUYw+
+	9k5PsYgRGnsER9iNu4UYtZbUy4DDniu+/ilT6dc8VU3iqxOlDps8NoW0f5DGmc19Eq85hjyByXL
+	RIHli8wZ+wCCGsNkgOUoqMCIq+P0=
+X-Gm-Gg: ASbGncs6yX+0kyQZDkILIGly0oKuDtHJ1e4L/g10KY8ZTSdTjFbDHdcGUt/qJYfb4eK
+	YBSCqzXidGnpamOecHrZTXxSCl3S6CUErGz3UUk3wi+nVAIpLMS2bA2aBiCNwLciT8sWlT3s702
+	hGfm5iMfU0NZ279PJnTSRv97ViKz3HmPSL5DlbT3W1L7LBeK1Dq6KLEA==
+X-Google-Smtp-Source: AGHT+IHBThT2zEj4KJtUm3PS9DNJ79HJu09faPsTCT7kPgy8QzXrty9/2BnAr01/9b/AIEkrW8flUc10uUA4F5iz66s=
+X-Received: by 2002:a05:6122:1d89:b0:518:a0ac:1f42 with SMTP id
+ 71dfb90a1353d-527c3464832mr5207743e0c.1.1744629582771; Mon, 14 Apr 2025
+ 04:19:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowABH9EAX7_xnqxTUCA--.8348S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7GF13GrWUGF4kuFW8WF43GFg_yoWktwbEga
-	12v34UWr1fAwsagw43Ar4a9r1xtrnFyFWrK34Iyr1kJayrXrZrWrs5Gw4vvr9rWa17Cr1D
-	Za4qqrsFkr1SgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUbQVy7UUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 14 Apr 2025 12:19:16 +0100
+X-Gm-Features: ATxdqUFod-By5skQwut9E6OLv-Y-Yr-c2MfufCYZft6F7eFLNq3WA8NWjWHZnLY
+Message-ID: <CA+V-a8useBh5m+MqGXQwQJhuemehm=bPidL6XydR-FOmVN9QNQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] Add support for Renesas RZ/V2N SoC and EVK
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Jiri Slaby <jirislaby@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Once of_device_register() failed, we should call put_device() to
-decrement reference count for cleanup. Or it could cause memory leak.
-So fix this by calling put_device(), then the name can be freed in
-kobject_cleanup().
+Hi Geert,
 
-As comment of device_add() says, 'if device_add() succeeds, you should
-call device_del() when you want to get rid of it. If device_add() has
-not succeeded, use only put_device() to drop the reference count'.
+Thank you for the review.
 
-Found by code review.
+On Mon, Apr 7, 2025 at 8:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
+m> wrote:
+>
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> This patch series adds initial support for the Renesas RZ/V2N (R9A09G056)
+> SoC and its evaluation board (EVK). The Renesas RZ/V2N is a vision AI
+> microprocessor (MPU) designed for power-efficient AI inference and
+> real-time vision processing. It features Renesas' proprietary AI
+> accelerator (DRP-AI3), delivering up to 15 TOPS AI performance, making
+> it ideal for applications such as Driver Monitoring Systems (DMS),
+> industrial monitoring cameras, and mobile robots.
+>
+> Key features of the RZ/V2N SoC:
+>   Processing Power:
+>     - Quad Arm Cortex-A55 cores at 1.8GHz for high-performance computing
+>     - Single Arm Cortex-M33 core at 200MHz for real-time processing
+>     - 1.5MB on-chip SRAM for fast data access
+>     - LPDDR4/LPDDR4X memory interface for high-speed RAM access
+>
+>   AI and Vision Processing:
+>     - DRP-AI3 accelerator for low-power, high-efficiency AI inference
+>     - Arm Mali-C55 ISP (optional) for image signal processing
+>     - Dual MIPI CSI-2 camera interfaces for multi-camera support
+>
+>   High-Speed Interfaces:
+>     - PCIe Gen3 (2-lane) 1ch for external device expansion
+>     - USB 3.2 (Gen2) 1ch (Host-only) for high-speed data transfer
+>     - USB 2.0 (Host/Function) 1ch for legacy connectivity
+>     - Gigabit Ethernet (2 channels) for network communication
+>
+>   Industrial and Automotive Features:
+>     - 6x CAN FD channels for automotive and industrial networking
+>     - 24-channel ADC for sensor data acquisition
+>
+> LINK: https://tinyurl.com/renesas-rz-v2n-soc
+>
+> The series introduces:
+> - Device tree bindings for various subsystems (SYS, SCIF, SDHI, CPG, pinc=
+trl).
+> - RZ/V2N SoC identification support.
+> - Clock and pinctrl driver updates for RZ/V2N.
+> - Initial DTSI and device tree for the RZ/V2N SoC and EVK.
+>
+> These patches have been tested on the RZ/V2N EVK with v6.15-rc1 kernel,
+> logs can be found here:
+> https://gist.github.com/prabhakarlad/aa3da7558d007aab8a288550005565d3
+>
+> @Geert, Ive rebased the patches on top of v6.15-rc1 + renesas-dts-for-v6.=
+16
+> + renesas-clk-for-v6.16 branches. Also these patches apply on top of the =
+below
+> series [1] and [2]. I had to sort the order in Makefile for patch [3] to
+> avoid conflicts.
+> [1] https://lore.kernel.org/all/20250401090133.68146-1-prabhakar.mahadev-=
+lad.rj@bp.renesas.com/
+> [2] https://lore.kernel.org/all/20250403212919.1137670-1-thierry.bultel.y=
+h@bp.renesas.com/#t
+> [3] https://lore.kernel.org/all/20250403212919.1137670-13-thierry.bultel.=
+yh@bp.renesas.com/
+>
+> Note, dtbs_check will generate the below warnings this is due to missing
+> ICU support as part of initial series. I will be sending a follow-up patc=
+h
+> series to add ICU support which will fix these warnings.
+> arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@10410000 =
+(renesas,r9a09g056-pinctrl): 'interrupt-controller' is a required property
+>         from schema $id: http://devicetree.org/schemas/pinctrl/renesas,rz=
+g2l-pinctrl.yaml#
+> arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@10410000 =
+(renesas,r9a09g056-pinctrl): '#interrupt-cells' is a required property
+>         from schema $id: http://devicetree.org/schemas/pinctrl/renesas,rz=
+g2l-pinctrl.yaml#
+>
+> v1->v2:
+> - Added acks from Rob.
+> - Squashed the RZ/V2N EVK and SoC variant documentation into a single
+>   commit.
+> - Updated the commit messages.
+> - Added RZV2N_Px, RZV2N_PORT_PINMUX, and RZV2N_GPIO macros in
+>   SoC DTSI as we are re-using renesas,r9a09g057-pinctrl.h
+>   in pictrl driver hence to keep the consistency with the
+>   RZ/V2H(P) SoC these macros are added.
+> - Dropped `renesas,r9a09g056-pinctrl.h` header file.
+> - Followed DTS coding style guidelines
+> - Dropped defconfig changes from the series.
+> - Dropped SDHI dt-binding patch as its already applied to mmc -next tree.
+>
+> Cheers,
+> Prabhakar
+>
+> Lad Prabhakar (12):
+>   dt-bindings: soc: renesas: Document Renesas RZ/V2N SoC variants and
+>     EVK
+>   soc: renesas: Add config option for RZ/V2N (R9A09G056) SoC
+>   dt-bindings: soc: renesas: Document SYS for RZ/V2N SoC
+>   soc: renesas: sysc: Add SoC identification for RZ/V2N SoC
+>   dt-bindings: serial: renesas: Document RZ/V2N SCIF
+>   dt-bindings: clock: renesas: Document RZ/V2N SoC CPG
+>   clk: renesas: rzv2h-cpg: Sort compatible list based on SoC part number
+>   clk: renesas: rzv2h: Add support for RZ/V2N SoC
+>   dt-bindings: pinctrl: renesas: Document RZ/V2N SoC
+>   pinctrl: renesas: rzg2l: Add support for RZ/V2N SoC
+>   arm64: dts: renesas: Add initial SoC DTSI for RZ/V2N
+>   arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
+>
+Would it be OK if I send version 3 containing only patches 4/12 and 10/12?
 
-Cc: stable@vger.kernel.org
-Fixes: cf44bbc26cf1 ("[SPARC]: Beginnings of generic of_device framework.")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- arch/sparc/kernel/of_device_64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/sparc/kernel/of_device_64.c b/arch/sparc/kernel/of_device_64.c
-index f98c2901f335..4272746d7166 100644
---- a/arch/sparc/kernel/of_device_64.c
-+++ b/arch/sparc/kernel/of_device_64.c
-@@ -677,7 +677,7 @@ static struct platform_device * __init scan_one_device(struct device_node *dp,
- 
- 	if (of_device_register(op)) {
- 		printk("%pOF: Could not register of device.\n", dp);
--		kfree(op);
-+		put_device(&op->dev);
- 		op = NULL;
- 	}
- 
--- 
-2.25.1
-
+Cheers,
+Prabhakar
 
