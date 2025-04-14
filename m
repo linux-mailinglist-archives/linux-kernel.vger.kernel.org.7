@@ -1,129 +1,144 @@
-Return-Path: <linux-kernel+bounces-603247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59FF3A88509
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:32:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63AB0A8859B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA6B07A2FA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:31:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C532568246
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F9F288CA1;
-	Mon, 14 Apr 2025 14:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8240F2797A4;
+	Mon, 14 Apr 2025 14:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hjkOl1s3"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pAG1JJ8G"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F6324728E;
-	Mon, 14 Apr 2025 14:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2637723D287
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744639748; cv=none; b=qkVumnrLLAD3mHYActKhZg0tOoFMU6tieH9vpUOR9CaV6OHoQYrdGHaucYFBBB9t/2ALRlOy/O8ngbdqmnatZXlqzwAB3JUIjmzHy3hnM0NbPOYy1lso6oV4cULJEXjEaYR00v+xoD4rJHxuUKiTR2NC591Vf/TvDpnC6etFjEM=
+	t=1744639790; cv=none; b=CJ+FUcXaJ+B3SOVd7hWi7l2Aqm5MzgdnCtLccr1pDc5djt4j4o74rxTahQBXbacCXCBHfaoQQfdJSkod2me4cvmtkctcjOxN2fD0SWVfkDU2QliPZd+PsTcwVPmhPW8hhBwNczKqOMAxDdMqQsjtDSB2iWHg1oP0Kd6zVMhwvBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744639748; c=relaxed/simple;
-	bh=B12gaYxryrr/rPJ3pcLrF0Rl7Kt4JWDFN75r8W5U58A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NKMTM4kYavFgopqmQB+qdS8PAHKn1PO/gigGAwfjrP2qzsGi1TYCa0nUV/jpX1AB4CujdY/NXO41vSkAvmjsD+sfEIY4X7dlc4aGRcyjI7b1xTNQz+Vf2odsCUKnbIF/zQ4BFcYWGoDjih5cYiKbJKmTNvuZBGNtJJnKa/s/kGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hjkOl1s3; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e8f254b875so41522836d6.1;
-        Mon, 14 Apr 2025 07:09:06 -0700 (PDT)
+	s=arc-20240116; t=1744639790; c=relaxed/simple;
+	bh=5dBTRx2JIjm9+LihM7UA5L0oIoK5vg/QFSo98pV/tvw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ZLbZ8detq2eSQ6AwTLRZCuC7fujT4CXn8A6jPK+HO9hbp+pPPUROv+TXAxG0jW7YZEtz3g7hIn14tISLUm/3ba0MmnuLWiPFJxrqxtBfXG/FKYwXwIetbiorUeIe/xcBtuONFL5BkcsmsKhsNKBfY1BgRuUYA1/saSxHLYvJB+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pAG1JJ8G; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43cfda30a3cso24532305e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 07:09:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744639745; x=1745244545; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CnhmU/ZILoUaMWGd+8bGeiu5Y0rkdVWKSR+fUdJPinE=;
-        b=hjkOl1s3HttoAVOj66Pzj1xcohgenqmy/xhY5T3HloTZdOxAWFpkEdFfIYtNo+XBQv
-         0BpTq5jyJbeTRBNTyhiCeIxdr7GRBtWLLfzTvC5w0qFbHlRqpoDJ2NrLWLZjaV7rCSUp
-         AMNFylCoVh7R57XPh0vpkwQWVwh5mVt/B90uClG2HZ/rgeCOQiLVd+B1ycI7KvK7lmz0
-         kY+bnaEq59HGWzMQiBHkBw5q+3AyLmN7kVpfl3a6MJm3ZA67R4jt1M//7BePLCqBoBDC
-         lwx7brRqxGsDAoMxXTfzDXr7CPV4Z2eERK0A8HyHhbCAS+jk2thWK6w2/jxYIH9isNmH
-         trVg==
+        d=google.com; s=20230601; t=1744639787; x=1745244587; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V1x1VwM+BJyXyNpGH07RBkzI8imHg185uo9CLrDLxwA=;
+        b=pAG1JJ8GCrpjB1r4A15qa99PvA4hG8NYyhc7kJZUZ50He1brBtSfRewUYo0QsAKqUh
+         3F6y+2L5jvyTfDZimCNbuR2AVDchzIQjZIwh2clARkbBjFX+WW2E0NuQ6yuH8frpBcL3
+         XflQBXS+dY/NUuFIQKyIZVwAl6mnPi+715sMpljPlnUTCiB12+snfdMZJQWDT1oNDINf
+         S+hvW75a0r1tdwpKX2dgO0UkJeAxGuBHyZS828y9mllljnu2XDxjkYRHGqwoKgdS6rP8
+         3eRRIuTl3mR5Km71L6ignzI8OptnCz9GjCMFlTx9MuhXfAHzTUISpcQySQJOjMU/4gvA
+         WZhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744639745; x=1745244545;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CnhmU/ZILoUaMWGd+8bGeiu5Y0rkdVWKSR+fUdJPinE=;
-        b=rjzUAk74KkNkOgP14KgFLkx+Rtmq34S/mJyX/nuT1mXmFe14Wi7yL445cB4z6nckyf
-         NE18ySettMJIP89T+sJpbuLSe3M2ChvDM9X/7Lsz45qXf36frcXK+Kg/6SAewt9DW8SF
-         4LIuteENe7zhw+6oSK2LXeXEpTYd14p1toC87ERQVnJAjhKI7v4FnjebHDMZvq+0cuYE
-         2uSCDpGcuDmNusaYMs7YTX2T0hihYniVBLF/HoAAQfxHT6jxg/R9KkCd2nUm13z5bcgW
-         Fpdb8SiQjpehHK24+iu336oxU5B54GBEAGA0nBUGgVZ9nQDMWzHDK4bXR8rwTSiJtcTZ
-         C86Q==
-X-Forwarded-Encrypted: i=1; AJvYcCULuxJRheCjn8oJ9p+Spx9E6d8exe69xmDQ/jyfMLR8TN32HqTbN6Fw1vwgLDwJjY+D60ERsEXVYBTni1h5@vger.kernel.org, AJvYcCVmf/7rl11QPHe6dh7aKtZaMPVdP4+d4rbaYlh+Cy1e2/IUf/19Z2YLx90ZTXk8/sTRVfyMLOcTiw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+AbNIFU0tETen75dvrsTkd0gHaotJR8E8jXQBqKpuEhvkg4wd
-	Ge6ZJcmaJ2gO03cwl406tgR5n79RQf+0aBcamTBIJJOb1KF1tIRt
-X-Gm-Gg: ASbGncvdfCo1dZisXWWRAOh9a27oCQ16S6cuPaXILUUSl94c3D2iZxfz/CeGNoWOQx9
-	z/sSXqIFRniGNamJpXrlxQ2DbFLPEiTer25zWzwS0LlRCF7P/z1zMIUT8ZNeo0x9bZ/iSLfeDfO
-	/RjggLQc/MpK3ogqIn/+ps25ipLaFlkWhCFqIpIyR4bmJpmmfNPPa7sa8awORQMCfMeRmOq0ItY
-	smaZ/ZSYgaSGUh6m1DsD/tqfanGLyWoxRdWQSfQQvcxWoRLPtI/HfZPI88TG3jxhpkgPPMUeP/C
-	tu5+FewSy3MCmioQ2WDPa18ndNavbjcfw8gsBmtneJGqf0BgIo36qkM9CH5Mc3XkCLHDTpGownA
-	cAPuWYga6vTWdNTwKgEw=
-X-Google-Smtp-Source: AGHT+IFGRinbFYIbEanUCrc0USF9meGu9XI5hh+1+7w8QKX2Q86t6AvSznRkMwFHVH86Mq5ooeGfGQ==
-X-Received: by 2002:a05:6214:d44:b0:6e8:e828:820d with SMTP id 6a1803df08f44-6f23f14bc14mr238912856d6.36.1744639745184;
-        Mon, 14 Apr 2025 07:09:05 -0700 (PDT)
-Received: from theriatric.mshome.net (c-73-123-232-110.hsd1.ma.comcast.net. [73.123.232.110])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f0de973552sm84019906d6.50.2025.04.14.07.09.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 07:09:04 -0700 (PDT)
-From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-iio@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: gshahrozui@gmail.com,
-	skhan@linuxfoundation.org,
-	kernelmentees@lists.linuxfoundation.org,
-	Gabriel Shahrouzi <gshahrouzi@gmail.com>
-Subject: [PATCH] iio: adc: Correct conditional logic for store mode
-Date: Mon, 14 Apr 2025 10:09:01 -0400
-Message-ID: <20250414140901.460719-1-gshahrouzi@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1744639787; x=1745244587;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V1x1VwM+BJyXyNpGH07RBkzI8imHg185uo9CLrDLxwA=;
+        b=mgSykkNZb0tXYNX4VgrrlKAutGvomUpvoeqd+hy4W2bhUqvoxY/5PQLWy6RZQ2Da67
+         jUJmrLmFlGFJJxp9nO1QT06LKcfSN/DyqeXnk54b7xz35x4DYiaBIJev7HLGyxq7F8jf
+         kXWjB7gAMvLmIMotZejwYoQ4+mN6PV1haELR6nuKldRwpRaXZvxKS/939MtsE1YbZd1s
+         B3KTCdYersWzx8ug/GAm5JjvpgFb/trJNVfvHcg73ZVfD7H9FxY9o3T3PLzZ/cjW/Oa2
+         Oh4ubGz8Zubi/rLOUxPzvVE+13rkuM8T64u+F6ibfrcg/BHcS95EI/xxnb2JLI7tXfLD
+         mr6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXsS/59cHhbOyZteS8e7v+rc5L2lZnRQaJlpQpn0KMXVN1JS22+qvn7tHdR2QGcA4xLvfWsexCuKHA1JSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVWCQPDnsvRLLHlYC2oxngxoUhPgnDwImS4EN3ZZ4F712horqK
+	qWU50mbeDJgUM14S9O9rg+4QIyZYBKOY2cb1L89ueYLibmLl/as8ljXkkw4OvaLHblK87dbu7lr
+	MuDf3c0jckIqiSw==
+X-Google-Smtp-Source: AGHT+IEgLd19E5nBP06l0bJPxMy3VssHMtCjQBP0qyE6H94W9oIzvjooWRxUxI4LOc3bY/vqSQTc4RQzGe+DuOg=
+X-Received: from wmbay32.prod.google.com ([2002:a05:600c:1e20:b0:43d:4038:9229])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3113:b0:43d:fa5d:9315 with SMTP id 5b1f17b1804b1-43f3a9b159emr92766275e9.33.1744639787648;
+ Mon, 14 Apr 2025 07:09:47 -0700 (PDT)
+Date: Mon, 14 Apr 2025 14:09:45 +0000
+In-Reply-To: <20250403163805.67770-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250403163805.67770-1-ojeda@kernel.org>
+Message-ID: <Z_0XKfAMnWElZDzU@google.com>
+Subject: Re: [PATCH] rust: disable `clippy::needless_continue`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="utf-8"
 
-The mode setting logic in ad7816_store_mode was reversed due to
-incorrect handling of the strcmp return value. strcmp returns 0 on
-match, so the `if (strcmp(buf, "full"))` block executed when the
-input was not "full".
+On Thu, Apr 03, 2025 at 06:38:05PM +0200, Miguel Ojeda wrote:
+> Starting with Rust 1.86.0, Clippy's `needless_continue` lint complains
+> about the last statement of a loop [1], including cases like:
+> 
+>     while ... {
+>         match ... {
+>             ... if ... => {
+>                 ...
+>                 return ...;
+>             }
+>             _ => continue,
+>         }
+>     }
+> 
+> as well as nested `match`es in a loop.
+> 
+> One solution is changing `continue` for `()` [2], but arguably using
+> `continue` shows the intent better when it is alone in an arm like that.
+> 
+> Moreover, I am not sure we want to force people to try to find other
+> ways to write the code either, in cases when that applies.
+> 
+> In addition, the help text does not really apply in the new cases the
+> lint has introduced, e.g. here one cannot simply "drop" the expression:
+> 
+>     warning: this `continue` expression is redundant
+>       --> rust/macros/helpers.rs:85:18
+>        |
+>     85 |             _ => continue,
+>        |                  ^^^^^^^^
+>        |
+>        = help: consider dropping the `continue` expression
+>        = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#needless_continue
+>        = note: requested on the command line with `-W clippy::needless-continue`
+> 
+> The examples in the documentation do not show a case like this, either,
+> so the second "help" line does not help.
+> 
+> In addition, locally disabling the lint is not possible with `expect`,
+> since the behavior differs across versions. Using `allow` would be
+> possible, but, even then, an extra line just for this is a bit too much,
+> especially if there are other ways to satisfy the lint.
+> 
+> Finally, the lint is still in the "pedantic" category and disabled by
+> default by Clippy.
+> 
+> Thus disable the lint, at least for the time being.
+> 
+> Feedback was submitted to upstream Clippy, in case this can be improved
+> or perhaps the lint split into several [3].
+> 
+> Link: https://github.com/rust-lang/rust-clippy/pull/13891 [1]
+> Link: https://lore.kernel.org/rust-for-linux/20250401221205.52381-1-ojeda@kernel.org/ [2]
+> Link: https://github.com/rust-lang/rust-clippy/issues/14536 [3]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-This resulted in "full" setting the mode to AD7816_PD (power-down) and
-other inputs setting it to AD7816_FULL.
-
-Fix this by checking it against 0 to correctly check for "full" and
-"power-down", mapping them to AD7816_FULL and AD7816_PD respectively.
-
-Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
----
- drivers/staging/iio/adc/ad7816.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/iio/adc/ad7816.c b/drivers/staging/iio/adc/ad7816.c
-index 6c14d7bcdd675..6b545547660dd 100644
---- a/drivers/staging/iio/adc/ad7816.c
-+++ b/drivers/staging/iio/adc/ad7816.c
-@@ -136,7 +136,7 @@ static ssize_t ad7816_store_mode(struct device *dev,
- 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
- 	struct ad7816_chip_info *chip = iio_priv(indio_dev);
- 
--	if (strcmp(buf, "full")) {
-+	if (sysfs_streq(buf, "full")) {
- 		gpiod_set_value(chip->rdwr_pin, 1);
- 		chip->mode = AD7816_FULL;
- 	} else {
--- 
-2.43.0
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
