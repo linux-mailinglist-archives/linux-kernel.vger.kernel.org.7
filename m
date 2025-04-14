@@ -1,216 +1,314 @@
-Return-Path: <linux-kernel+bounces-603767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A4FA88BFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:10:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83DA9A88C05
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6B27189B1DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:11:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BBF03B17D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B944C28BAAD;
-	Mon, 14 Apr 2025 19:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F691A5BB6;
+	Mon, 14 Apr 2025 19:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GSH3nVp3"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2058.outbound.protection.outlook.com [40.107.223.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6ckRRo/"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A951990C7
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744657851; cv=fail; b=K1jgZTbovehFoA5DCRtw1BCDVzkmnYtPglRXaTolhjRZtK0iYwOv/8N/UuP1y9sEptqTMSJnzksOrNpQ81YDN3gGNS9cU+wrUQOQMB4eZmk9cbmys7DOjVGpaBIOPC/jSUaP08eylOs4JJtjwulTO16sesRtnRwVackhFqp4cpI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744657851; c=relaxed/simple;
-	bh=GJxHwhnczwNZ+Z+AzfhQ8zp0MyMeacHMqaOaNLxAe3Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=IddZ4XMu6EAYVpWeGmeTm5IjjIV0CNViE1DLG80X13XsKb0hW6AqJaGBOx3/7cyNFcvj0V9g02blvR/ZKu99PvcK6oORbX0E6ddp56VKB0RRLagoxHnyPwJI4HpelFn4lbqdf3pr35fvlcbJATJ+KfICApY2f7Gwfrm1GVf/78k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GSH3nVp3; arc=fail smtp.client-ip=40.107.223.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=goOpPraM25SUObQyks5AOQd38YQvabnpbx0DbH0CbXYCRuVojwv266kF4nKPxfF9R96zuAqsnwxat2EE1eA0fhT5SKpjpCRgdH92znZvlXtNnHRfPObzbkkgi03m8isXIJw83mI3dsiz5JX4ow2GZdKvr2/6wTMObK1CFx7pwClLlHds9qZkKFaWOpsPBTazUEoZ2Mv9Jz9M6sO/KdjxH+TdQ3uTV4c7p5/watBHL6dsOkCHWIRmkJhXXbogiDdd3fNQUFASDjjvNm8nPM4pbZAdwt5vPKEpoIr/RomzkPq5ONi7MXyB8aT0wUMwF/MqGqzm0WN83AOb6L8r7r1/ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GJxHwhnczwNZ+Z+AzfhQ8zp0MyMeacHMqaOaNLxAe3Y=;
- b=UijM0L/URH7q3n7ZYFblLCnt/cq0Bi6QD6otYf6wvWvTSIEXCl8ogDxKu/QktCMMgwPflCiEljUWUKAQra6oEEEHhHMOZr2helH749hBcGV2T7lP5928MQMI+PahHeVVaqWS1KamXymslRiyPycfJa6wY0t1A48cNitFuJjQkW4VTqCP+swhPIKvtBgOXui82cLOjQ4S7ibYzNKiGb1cJQJm62mJs6DDgFkv3zElxF3+5s3hCJMh4Te2H2vCqAtO2WY5TWMnOwPUynwmtwXbNP0ejlMA3jKMmxf9QMGHa4tclbW/HtdI4J/81ysuxDrpBT81WmIpo54W0LV0MF2XNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GJxHwhnczwNZ+Z+AzfhQ8zp0MyMeacHMqaOaNLxAe3Y=;
- b=GSH3nVp3uvKPd3gzIOwdgeq8/ma7M0SWXdkOtFI9s3sDq9mYwZPRThB0hdx4lVfCytFTL9UR/PO65R/CQSMmKjmJRl2BeLdzkjn/79VdzBSiEphLh84HUZ9OwOF48uCxA/zK4Bpx1TdVhz8jzdIewEoICvxTHZVIkae/8Pqp+4g=
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com (2603:10b6:408:215::14)
- by SN7PR12MB7833.namprd12.prod.outlook.com (2603:10b6:806:344::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.35; Mon, 14 Apr
- 2025 19:10:47 +0000
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::cf78:fbc:4475:b427]) by LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::cf78:fbc:4475:b427%6]) with mapi id 15.20.8632.025; Mon, 14 Apr 2025
- 19:10:46 +0000
-From: "Kaplan, David" <David.Kaplan@amd.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>, Pawan Gupta
-	<pawan.kumar.gupta@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, "H .
- Peter Anvin" <hpa@zytor.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Brendan Jackman <jackmanb@google.com>, Derek
- Manwaring <derekmn@amazon.com>
-Subject: RE: [PATCH v4 04/36] x86/bugs: Restructure rfds mitigation
-Thread-Topic: [PATCH v4 04/36] x86/bugs: Restructure rfds mitigation
-Thread-Index: AQHbqjUTcL4YHs9lp0aZJBI8ktP6IbOjjVHg
-Date: Mon, 14 Apr 2025 19:10:46 +0000
-Message-ID:
- <LV3PR12MB92656DCE365B8F955AB1072A94B32@LV3PR12MB9265.namprd12.prod.outlook.com>
-References: <20250310164023.779191-1-david.kaplan@amd.com>
- <20250310164023.779191-5-david.kaplan@amd.com>
- <h7p644ejmyef2x6jau7wonbqufrtknyifza5ey2fjmz3bqfvas@xh5olvfqktg5>
-In-Reply-To: <h7p644ejmyef2x6jau7wonbqufrtknyifza5ey2fjmz3bqfvas@xh5olvfqktg5>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=aabe7476-b116-4ec3-bb24-c8dfc76337ad;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-04-14T19:10:20Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9265:EE_|SN7PR12MB7833:EE_
-x-ms-office365-filtering-correlation-id: d1f6822a-f1be-4bac-7566-08dd7b880fe8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?N25WVHozZ2Q0citWZG9zN3YzWkdEVngrL0FmZGVuWVNPTTZ5VDFSWTROeXc5?=
- =?utf-8?B?K1c5Z3dJVElxK3NPMUFwZnpYMEp1KzVXTlBNWHRuQjAvaEdhY2EyeVNnZ2Nk?=
- =?utf-8?B?WlN2N2lrZUo1elJBK051YjlXNkJGT05EWTBRL3Bvd2ljSkFrWFpxbzJOZUl6?=
- =?utf-8?B?emhyT1JJckptQmVQbUlkTENndjFEcE1wZ1RXYzMyemhaeG8vbUk1ajF0L3Vr?=
- =?utf-8?B?cXVZZGtMUTl1Ymw0WGJETTZIWjhlL1UvZGgxRlJKMHVKQjZUeTRJU3ZHUEpP?=
- =?utf-8?B?T1R0clM4UHZGQXd6V1hRWVF2MVBzdURwcmxQOXp6S2p4QUUxaWZacG90a3RS?=
- =?utf-8?B?U29jM25IVldPbm5LNnlpVytHNGRQYkVEN2E0SDRrdlpnN2pKZ1pEdVFFSHhz?=
- =?utf-8?B?MW9JZEhmd1M1WS9yUkx4VHl6R3VwL1NNK3hvRG1oaGxGMTJkbGlJdUgzbjJt?=
- =?utf-8?B?eC9wQ1ZuQXV2WVQzaW15azU2S3NOYUVNeFpod0xrR21Bc05IOXB4c0J3RDRz?=
- =?utf-8?B?UVFJV2VVOFU1YTNQQUV3RzNmakVONVphQ1VQcjVTQWpIaG5aaG9ub09qQjBz?=
- =?utf-8?B?Vms2Znp0VDlRU3RsQVFSZWJYUnE2L2NBQXhsT3QrdWZmTmJsamQ4U0VzNnpI?=
- =?utf-8?B?WEdNUVJlNEhpd3dYL3pyeVZ5WXBJZWpwcDBNTFYwTzVKTW83d2tHZHBvaUMr?=
- =?utf-8?B?ZGpWeW01TDVOSjJ4TUVGcHU5eng0NlZMaWMvOEM3RUhvVFZ0alpxOUM4NmlG?=
- =?utf-8?B?WVB4REtYeVFXamtBYUN3UzMwSzlBYVA3bEx3R1RHVG44azJ6aGtMMFhtTFl5?=
- =?utf-8?B?L2RHRkpjNE1rSnYrOHJjQitkeit3SG03ZDFncm4rVkdtZzFEV2c1c2l5QVJD?=
- =?utf-8?B?RkpLM0xoSTBJTzd5SHg4cElUY0hsSENDVTUyTWlvQ2JOaTdkV3ZDZG1XeVdI?=
- =?utf-8?B?dUZzdncrcUFYNlh4UGU1WTlIenpEMW8va0FuTUxQY0JDM052WCtlbEVIWStL?=
- =?utf-8?B?SUxGZEdTNHcrMDRCVE12TWhaQlcwK3pzZHFndnpqOTBrdHZWU1NaTWpZMmRH?=
- =?utf-8?B?VXNtWEUxbDJmNDd4blZLbGg1cU5ocCthVGs1UEZXSThyREgva0lOemxrSzV0?=
- =?utf-8?B?S1doRHhZOGRQNDhGSGtGaWEvUk85MElwMUdvWkdjWnJrbjAyWUJQWWNrMThv?=
- =?utf-8?B?cG1VWXBFWE5GU29wK1JPWU9VRVh5cDhhNUN3UHRVZkkvWk13ZzR5Q0Noaytr?=
- =?utf-8?B?S3ZBcjBHVkhxV0trK0JIQm9SVmJ3QW5udEI4bm00ZGliMUpWV1ZpNWVpM21L?=
- =?utf-8?B?aGJoa2RVVlI4V1pRNHJvekVtck9pd3BvRDU3ek9EVTNBY1ROQ09ZRk54cEgy?=
- =?utf-8?B?ZGxNZkhHOTg5eUQ2S0hkQkIrUjhrNm1Wci9MUG9pZjRONUEwZTlXSk1pM3ht?=
- =?utf-8?B?ejU4ck9PaWZIR1pqSXlLYy9ncVJFamppY1IwcytxSXIxTUJqdDFYYkhjSkU1?=
- =?utf-8?B?TzFtdWhMK0hyVmE0K0FDSTVBazM1ejRweThSTDJUNHVDcjMzMW5rU2d3Qjl6?=
- =?utf-8?B?Sis2SWMrZHJoTmZoSFF4OGZDRDNNcGhFcDVBOEVaem04TWRGeFloUjhpWXhn?=
- =?utf-8?B?NFo1RDUyd3hwaFNaZDl0VlkrcUt2cytWSHE2UzlEbnRMV1ZGRGhnckdLVExr?=
- =?utf-8?B?bENVNU5jYnJaNVNLa3VaUlhnRFpnSGN6Z1o5Si9UMHlJRnhPUE55Ukt5VVVO?=
- =?utf-8?B?WFROdnN1LzdDZGlFOWRUUFJ6QlVpUmZMSXVNdDBDbmxvK1dlWHl0RmVzR0R1?=
- =?utf-8?B?VUNJS0NmVUwyUWRzWEhqeUFIUEJGU1BhTlRNQ1NRUHFqWmNMR2FMdG15VG42?=
- =?utf-8?B?VU0yT0pmd3ZMWnBQTEd1d1EvcW81bjJDN0hGN1FWVm1zQ2U0U25DcnNYOW1T?=
- =?utf-8?B?bkRBTjhwZTdZK0h5cTRQZWthTlB2UTJHeVNlbWY2MlErT0xCNjZpTHEvQ09E?=
- =?utf-8?B?RGxaVWw5b1FnPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9265.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?S3o0UUFTcFZ0U2ltSVp1UFVrdkJjVmtkU1VNWmxIdVJsUm1MK0JFVlA1ZHEv?=
- =?utf-8?B?Z255TmhnMzNtS0JYb2FiOFdqQUpWVG5nSzFrWjhwR2pDS2ZtakJGdUpscC80?=
- =?utf-8?B?bWZqN0NMV2pTTU1IL3Z5cytpS2RJVEdpMEU5bDVlY0cxdzQzQkl1eThOeCt3?=
- =?utf-8?B?RDlXZU1qc1RZWnl2SStjWXdCWW5idEhqM3R2S0lrcWJ0S21GTGlTeVV2UFlB?=
- =?utf-8?B?dVBSM3F5dDU0YUxhbG5wbEUvbFVaMWlPdld1YWFIRHNPVEZyTUFNQVltNDZx?=
- =?utf-8?B?VkNJSjRra0o5SXFXNWZRK1NleWZLdjhYcUhENWNqbnN4WEtCeVpZaE5RVng1?=
- =?utf-8?B?UHJncjY0RDFjL01oVkZiS0xYTW5BMHlTQUREUnZsQlVON29HMkxjTm4yYmJV?=
- =?utf-8?B?aEFWSzFMNlhhV0NRRk1adjhYTTdKOUlQWm9qSEppU2xEcVJCeERuMGtXVi8z?=
- =?utf-8?B?aXZVbHNVbVdXVXJpOVEyWERzSEs4bUR5SG9kL0RWVmxBWVlTMlVYQWFGTzVE?=
- =?utf-8?B?TFBYNGxkMUdFYXFUYTdna0hJSzBnYm5wNkM4RzBxN0RlQVlwejhPWGZjbGdG?=
- =?utf-8?B?cGJrUUNVeWxqUmZEanM4V01RYWpwdkw3RDFudnRSYm9ZWlpzWWZYSEZFcmxO?=
- =?utf-8?B?UFgrN1FLNDhKdE5HdGlUY3V4ZkVwY093REgzMmUvbHFudzRPRUlOdm8zNnJj?=
- =?utf-8?B?d2YycUZpZm5ENndEY3ZGbDcrbzZ1aUZZeG5hMVpDTTRyUFNzaHk0RUR6L1hm?=
- =?utf-8?B?MlE3M1hhSHg3SGoyOXljQ3ZuZ3hXTnJ6Y0ZYTDZhTXF5ZXREL0JMSzVRaXpX?=
- =?utf-8?B?M0hNT3E1QlFLdU4raDdXQUM3cVVXNUl3NlBpQVMyaHU3U1VqMGxQYkU2djhL?=
- =?utf-8?B?TmhMTXdhcUIrYkNEb1RNZko0VmtSdGlLeDNLbFA3RFZQZGVpZ2ZPWEY4dE51?=
- =?utf-8?B?UTBWMExDbENUS2ppekZ6S3R1aXVKc0hGVmVtS1dOemlvSkRpdzRaVm9vOHpC?=
- =?utf-8?B?aUUzOTJmQmhsbHFZMjhxWUtrRzlYVFVUb1J6Rm5zckpDLzUxY3MvNFN6Rk55?=
- =?utf-8?B?ZFRWV0JyVUhhVW0xdGRlQWtEa252MFUrUm5pVFo5Q3k0ejk1N0dNdHc1MXdX?=
- =?utf-8?B?czhaMVpDUXdIU1FqcFJiUGxleVV6ZFJndzBkVUpNaU82c2ZRdmNiQkYyUFVE?=
- =?utf-8?B?UDdBY25MeFlMTXdLUHYxN2RwVWFkQXg3LzBCMW5CeVRObFIvQ093QnRwalFH?=
- =?utf-8?B?Y1NTNDJSSXpBSjVONVlZQ2pmWUQ2UE5UYzFZTWxCMXlCeUhsZ2NJUW13Qng1?=
- =?utf-8?B?a0dBTm1DVUIyRCt6WG5tMFI1ZHpPdjNOcEJYalNkT1poNGw3T1J2OEttMVUz?=
- =?utf-8?B?QTA3Y0xXU09FWFVEN0JtODkvTzZOaFMyYUVGRmc5OGo1Z2JYUS9pSUVrT2V5?=
- =?utf-8?B?dnVNSmV0Z0JpMnVMbkZ6VDFYNUxVMmtaeU9LNE4wUmtkMFJJUEpURkRDNHk0?=
- =?utf-8?B?ZzROTFF1bEFCT0wrbW1BUjE0WnlhMEs5WFRYWUZRTzZkcWoyOTZYVTJiMGRP?=
- =?utf-8?B?OElCZWZCdGwyZHdpT2tQS01ycFBxMEd0aWw3RHUySFhVT1ZpQ1FYRHcxaFlz?=
- =?utf-8?B?OWJ2NW1XK0xLNUU0OEhJVDhINmRsV3hWVUh2ZTR1Z3JIT05lL0ROY2VKbjBV?=
- =?utf-8?B?UDJRQjFDNVZZTktadzYxV0lSVWVCc3hSVy9SUk9VcmlZb1JycElZSUVCbkgv?=
- =?utf-8?B?aVBpS0l1YXJieWlEVUpvMzkyUmYxT0dYOTh3dlltWW1WeDA3TDd3Q2xHSEUx?=
- =?utf-8?B?Y1JGNTRRQjJMRnhSbEhtYTVPSGd0MXk1N0ZlYWhIYUIveTVQd1NWMXUzTkc4?=
- =?utf-8?B?cVp1WVFNSW5INnU3TkFGZWl0NlU1bTFYS1FVV1M3UE90STB3dTFkV3l6Vktu?=
- =?utf-8?B?WEY4eEFCaU5TWC9PcGkyUEtuMHowUjFZL0JzLzNsSUdVQkxBVU95NFpJaXJo?=
- =?utf-8?B?dEF5YU5FSXVnengxUTRBbEJRVENNVjQyRHppcVU4VGttY2FjZDhYcDZ1dDFU?=
- =?utf-8?B?eGdtK1lqMUI1QTdzUGs4WitYbk4xR1ltNWdwNUd3VUtRTGY3aUd3eW1RSTY3?=
- =?utf-8?Q?DpUI=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B75F28DF07;
+	Mon, 14 Apr 2025 19:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744658103; cv=none; b=CEO6ge02IwCpdgjFESjBog7A2tQUUO9FZUs4sfoxd57wy70eLVNBRTC+op53PmB+21T2RYrvyyY/bSnvMA2Kwda1sfgRBi9E+ZDQ0o3nvginVoBTOJ+SSYx1NPRdrONezWGWpLnfwa5KW6nKsy4mez6TiT0KQdw/8+aZD4ohcz0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744658103; c=relaxed/simple;
+	bh=SZLc80JSRS4bke1tP8vkfy2i+0aEBhWWMyEdEXjfRfU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ge32r0d2s//rZ+qUJ6UCkG9xxcnFPQqGs08HuZNIIR+42+cFIG1M5HplgoukTbtPd6uoBSFuNtWwp1QJX296gdjsG8BvMlUIkLvybivTVR/NzeytroQ28DatNJYZvyQVdivErI/ZD8SWDtyd1Wnkajk0PNqfTdp/DbShhcKNgY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y6ckRRo/; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-227cf12df27so38049645ad.0;
+        Mon, 14 Apr 2025 12:15:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744658100; x=1745262900; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BYDKbWQ4u2NcbGHsioG5Cqiy01R5mCg0Ne+nPydVgbU=;
+        b=Y6ckRRo/GboJcSrl5heGN0rNc2Vl+kakmdP43IHvtALpGtGziiyVEHwOfnGj/PpVCJ
+         ncW6SPRuwrkohQFByK2EKtw5UcKn/wW4awjv+77xjWOJT/SM4QOHWmARs6qOx8acwqp0
+         IGrZGkPHaBbJ9FJE76XLJkjpeuFHQQTM61Zk4vlMzRCGaFLxqAFtv3kVspjwAjDn5nVX
+         Se2sDXtj5K+jhFx65ynJD4bTGegtNHYZGIIe7kyY94hcxJSeYPlmY1XVW0A6CiqhjGC/
+         Rnl0TLKCI+wGFjTDDOSIZqkpfK2+1qUyQ0AK66MxwAPC8kNRhcDJHLyahOF5UuGV4iZD
+         /65g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744658100; x=1745262900;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BYDKbWQ4u2NcbGHsioG5Cqiy01R5mCg0Ne+nPydVgbU=;
+        b=gXCvHNcVmcUF5mn+OcM/PceKwbvwFxEXkSzQcqvVhTTs694o5vnA4iiOQB+Z+bXK5J
+         TeQafNaOWDDhnZhKnZ2u/eNVTkqkn/xuzCKcQo5OeIJSEMH00TuXImthQmk1OPvDJY4E
+         YtOSiHvVN05ZnmPxeHnWwemrN614rLjRY7s3jKgPyIQd5nEAZEBuiHZcGtiiVCxyoHu2
+         WqTogVxpq3/QhknvTryaqvRADCMQchyyHFcYynsjUKfV6GKGlDQEsc9+K6qwWPwZPdWb
+         ho7R32XSp+iQQcHTdxEhAMteSGA3aAbhD8Ksx/Nm4p9FFExh0xwW6qSqe+jtod5N5tv+
+         ix4Q==
+X-Gm-Message-State: AOJu0YwtsdhPfAU8UY5q9QgFEFZgag8/218PiU45i7+tMUU2Na0AAO4S
+	6HiDYankahHYll6d1h6ZXEfPZwtClOSwKVkPlpRAyMJeW1TzZzMW8MPjYZgIPa8=
+X-Gm-Gg: ASbGncufWrO0T1B8BhSy1EzYNGw0n0PzCGpy5LM20fmI4ZsxaLOwrTwDbp7wmWewJZn
+	lJ6auAkhoCvae4FwvhA6S8avLsDx1g+qEWAey0gT357xKvbwTdSKc3GL4JMeNyDzJIAd0M8sCxs
+	UuPH4X7NO3TdpNjQkSYL3F0HV5CHm/p25IRTrUQGQgef+YLpRb2qnMSZK9lI5S9HyXiNlR0uYA6
+	6CCF8IJCp7DMFlSkuX0K/cJIdzToj36InijqRAKTOk3mB1i6/W6B7y7ZR11JcWMMLeLTNsZ/Tpq
+	I+D3IHDVc24TFeHB07/MaCuSTEONWezUmWBohw==
+X-Google-Smtp-Source: AGHT+IEuerABYWz61bn0kK9fA1Um8mNSN54Ov1FV120MP0ffB1+zwyz3P8qouSb5mAU25KZelhS0GA==
+X-Received: by 2002:a17:903:fa5:b0:221:89e6:ccb6 with SMTP id d9443c01a7336-22c249c9ec4mr8568325ad.25.1744658100165;
+        Mon, 14 Apr 2025 12:15:00 -0700 (PDT)
+Received: from fedora.. ([2405:201:f022:f80b:bc98:df72:df5a:60fa])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccbe16sm102483705ad.246.2025.04.14.12.14.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 12:14:59 -0700 (PDT)
+From: Siddharth Menon <simeddon@gmail.com>
+To: linux-iio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	gregkh@linuxfoundation.org,
+	jic23@kernel.org,
+	Michael.Hennerich@analog.com,
+	lars@metafoo.de,
+	marcelo.schmitt1@gmail.com,
+	Siddharth Menon <simeddon@gmail.com>
+Subject: [PATCH v7] iio: frequency: ad9832: Use FIELD_PREP macro to set bit fields
+Date: Tue, 15 Apr 2025 00:42:26 +0530
+Message-ID: <20250414191453.10222-1-simeddon@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9265.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1f6822a-f1be-4bac-7566-08dd7b880fe8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Apr 2025 19:10:46.8910
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fEiQIUOYz3DeEkz2soNqMmqrrdDfoKBINDiWWC1wQ1nXvUgvhw307fTwK2xoA2Db
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7833
+Content-Transfer-Encoding: 8bit
 
-W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
-Cg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKb3NoIFBvaW1ib2V1ZiA8
-anBvaW1ib2VAa2VybmVsLm9yZz4NCj4gU2VudDogVGh1cnNkYXksIEFwcmlsIDEwLCAyMDI1IDEx
-OjI1IEFNDQo+IFRvOiBLYXBsYW4sIERhdmlkIDxEYXZpZC5LYXBsYW5AYW1kLmNvbT4NCj4gQ2M6
-IFRob21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRlPjsgQm9yaXNsYXYgUGV0a292IDxi
-cEBhbGllbjguZGU+Ow0KPiBQZXRlciBaaWpsc3RyYSA8cGV0ZXJ6QGluZnJhZGVhZC5vcmc+OyBQ
-YXdhbiBHdXB0YQ0KPiA8cGF3YW4ua3VtYXIuZ3VwdGFAbGludXguaW50ZWwuY29tPjsgSW5nbyBN
-b2xuYXIgPG1pbmdvQHJlZGhhdC5jb20+OyBEYXZlDQo+IEhhbnNlbiA8ZGF2ZS5oYW5zZW5AbGlu
-dXguaW50ZWwuY29tPjsgeDg2QGtlcm5lbC5vcmc7IEggLiBQZXRlciBBbnZpbg0KPiA8aHBhQHp5
-dG9yLmNvbT47IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEJyZW5kYW4gSmFja21hbg0K
-PiA8amFja21hbmJAZ29vZ2xlLmNvbT47IERlcmVrIE1hbndhcmluZyA8ZGVyZWttbkBhbWF6b24u
-Y29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY0IDA0LzM2XSB4ODYvYnVnczogUmVzdHJ1Y3R1
-cmUgcmZkcyBtaXRpZ2F0aW9uDQo+DQo+IENhdXRpb246IFRoaXMgbWVzc2FnZSBvcmlnaW5hdGVk
-IGZyb20gYW4gRXh0ZXJuYWwgU291cmNlLiBVc2UgcHJvcGVyIGNhdXRpb24NCj4gd2hlbiBvcGVu
-aW5nIGF0dGFjaG1lbnRzLCBjbGlja2luZyBsaW5rcywgb3IgcmVzcG9uZGluZy4NCj4NCj4NCj4g
-T24gTW9uLCBNYXIgMTAsIDIwMjUgYXQgMTE6Mzk6NTFBTSAtMDUwMCwgRGF2aWQgS2FwbGFuIHdy
-b3RlOg0KPiA+ICBzdGF0aWMgdm9pZCBfX2luaXQgcmZkc19zZWxlY3RfbWl0aWdhdGlvbih2b2lk
-KSAgew0KPiA+ICAgICAgIGlmICghYm9vdF9jcHVfaGFzX2J1ZyhYODZfQlVHX1JGRFMpIHx8IGNw
-dV9taXRpZ2F0aW9uc19vZmYoKSkgew0KPiA+ICAgICAgICAgICAgICAgcmZkc19taXRpZ2F0aW9u
-ID0gUkZEU19NSVRJR0FUSU9OX09GRjsNCj4gPiAgICAgICAgICAgICAgIHJldHVybjsNCj4gPiAg
-ICAgICB9DQo+ID4gLSAgICAgaWYgKHJmZHNfbWl0aWdhdGlvbiA9PSBSRkRTX01JVElHQVRJT05f
-T0ZGKQ0KPiA+IC0gICAgICAgICAgICAgcmV0dXJuOw0KPg0KPiBUaGUgcmVtb3ZhbCBvZiB0aGlz
-IFJGRFNfTUlUSUdBVElPTl9PRkYgY2hlY2sgY2FuIGNhdXNlDQo+IHZlcndfbWl0aWdhdGlvbl9z
-ZWxlY3RlZCB0byBnZXQgd3JvbmdseSBlbmFibGVkIGJlbG93IGlmIGl0IHdhcw0KPiBSRkRTX01J
-VElHQVRJT05fT0ZGIHRvIGJlZ2luIHdpdGguDQo+DQo+IEkgdGhpbmsgaXQncyBvbmx5IGEgYmlz
-ZWN0aW9uIGlzc3VlLCB0aGF0IGdldHMgcmUtYWRkZWQgbGF0ZXIgd2l0aA0KPiAieDg2L2J1Z3M6
-IEFkZCBhdHRhY2sgdmVjdG9yIGNvbnRyb2xzIGZvciByZmRzIi4NCj4NCg0KQWgsIGdvb2QgY2F0
-Y2guICBXaWxsIGZpeC4NCg0KVGhhbmtzIC0tRGF2aWQgS2FwbGFuDQo=
+Use bitfield and bitmask macros to clearly specify AD9832 SPI
+command fields to make register write code more readable.
+
+Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Signed-off-by: Siddharth Menon <simeddon@gmail.com>
+---
+ v1->v2:
+ - remove CMD_SHIFT and ADD_SHIFT
+ - use GENMASK
+ - store regval in an array and iterate through it
+ v2->v3:
+ - add missing header
+ - refactor code in the previously introduced loops
+ v3->v4:
+ - update commit message with a better one
+ - convert AD9832_PHASE and RES_MASK to masks
+ - cleanup a few if else blocks
+ v4->v5
+ - remove unnecessary inversion (val ? 0 : 1) used
+   with AD9832_PHASE_MASK introduced in v4
+ - use ARRAY_SIZE instead of fixed integers
+ - use reverse xmas tree order
+ - align mask macros
+ v5->v6
+ - rearranged includes to be alphabetical
+ - remove unused RES_MASK
+ - corrected logical errors pointed out by Marcelo
+ v6->v7
+ - fix st->ctrl_x alignment
+ drivers/staging/iio/frequency/ad9832.c | 92 ++++++++++++++------------
+ 1 file changed, 48 insertions(+), 44 deletions(-)
+
+diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
+index 140ee4f9c137..08891d66b896 100644
+--- a/drivers/staging/iio/frequency/ad9832.c
++++ b/drivers/staging/iio/frequency/ad9832.c
+@@ -7,6 +7,8 @@
+ 
+ #include <asm/div64.h>
+ 
++#include <linux/bitfield.h>
++#include <linux/bits.h>
+ #include <linux/clk.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
+@@ -16,6 +18,7 @@
+ #include <linux/slab.h>
+ #include <linux/spi/spi.h>
+ #include <linux/sysfs.h>
++#include <linux/unaligned.h>
+ 
+ #include <linux/iio/iio.h>
+ #include <linux/iio/sysfs.h>
+@@ -59,17 +62,17 @@
+ #define AD9832_CMD_SLEEPRESCLR	0xC
+ 
+ #define AD9832_FREQ		BIT(11)
+-#define AD9832_PHASE(x)		(((x) & 3) << 9)
++#define AD9832_PHASE_MASK	GENMASK(10, 9)
+ #define AD9832_SYNC		BIT(13)
+ #define AD9832_SELSRC		BIT(12)
+ #define AD9832_SLEEP		BIT(13)
+ #define AD9832_RESET		BIT(12)
+ #define AD9832_CLR		BIT(11)
+-#define CMD_SHIFT		12
+-#define ADD_SHIFT		8
+ #define AD9832_FREQ_BITS	32
+ #define AD9832_PHASE_BITS	12
+-#define RES_MASK(bits)		((1 << (bits)) - 1)
++#define AD9832_CMD_MSK		GENMASK(15, 12)
++#define AD9832_ADD_MSK		GENMASK(11, 8)
++#define AD9832_DAT_MSK		GENMASK(7, 0)
+ 
+ /**
+  * struct ad9832_state - driver instance specific data
+@@ -131,6 +134,8 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+ {
+ 	unsigned long clk_freq;
+ 	unsigned long regval;
++	u8 regval_bytes[4];
++	u16 freq_cmd;
+ 
+ 	clk_freq = clk_get_rate(st->mclk);
+ 
+@@ -138,19 +143,15 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+ 		return -EINVAL;
+ 
+ 	regval = ad9832_calc_freqreg(clk_freq, fout);
++	put_unaligned_be32(regval, regval_bytes);
+ 
+-	st->freq_data[0] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+-					(addr << ADD_SHIFT) |
+-					((regval >> 24) & 0xFF));
+-	st->freq_data[1] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+-					((addr - 1) << ADD_SHIFT) |
+-					((regval >> 16) & 0xFF));
+-	st->freq_data[2] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+-					((addr - 2) << ADD_SHIFT) |
+-					((regval >> 8) & 0xFF));
+-	st->freq_data[3] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+-					((addr - 3) << ADD_SHIFT) |
+-					((regval >> 0) & 0xFF));
++	for (int i = 0; i < ARRAY_SIZE(regval_bytes); i++) {
++		freq_cmd = (i % 2 == 0) ? AD9832_CMD_FRE8BITSW : AD9832_CMD_FRE16BITSW;
++
++		st->freq_data[i] = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, freq_cmd) |
++			FIELD_PREP(AD9832_ADD_MSK, addr - i) |
++			FIELD_PREP(AD9832_DAT_MSK, regval_bytes[i]));
++	}
+ 
+ 	return spi_sync(st->spi, &st->freq_msg);
+ }
+@@ -158,15 +159,21 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+ static int ad9832_write_phase(struct ad9832_state *st,
+ 			      unsigned long addr, unsigned long phase)
+ {
++	u8 phase_bytes[2];
++	u16 phase_cmd;
++
+ 	if (phase >= BIT(AD9832_PHASE_BITS))
+ 		return -EINVAL;
+ 
+-	st->phase_data[0] = cpu_to_be16((AD9832_CMD_PHA8BITSW << CMD_SHIFT) |
+-					(addr << ADD_SHIFT) |
+-					((phase >> 8) & 0xFF));
+-	st->phase_data[1] = cpu_to_be16((AD9832_CMD_PHA16BITSW << CMD_SHIFT) |
+-					((addr - 1) << ADD_SHIFT) |
+-					(phase & 0xFF));
++	put_unaligned_be16(phase, phase_bytes);
++
++	for (int i = 0; i < ARRAY_SIZE(phase_bytes); i++) {
++		phase_cmd = (i % 2 == 0) ? AD9832_CMD_PHA8BITSW : AD9832_CMD_PHA16BITSW;
++
++		st->phase_data[i] = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, phase_cmd) |
++			FIELD_PREP(AD9832_ADD_MSK, addr - i) |
++			FIELD_PREP(AD9832_DAT_MSK, phase_bytes[i]));
++	}
+ 
+ 	return spi_sync(st->spi, &st->phase_msg);
+ }
+@@ -197,25 +204,23 @@ static ssize_t ad9832_write(struct device *dev, struct device_attribute *attr,
+ 		ret = ad9832_write_phase(st, this_attr->address, val);
+ 		break;
+ 	case AD9832_PINCTRL_EN:
+-		if (val)
+-			st->ctrl_ss &= ~AD9832_SELSRC;
+-		else
+-			st->ctrl_ss |= AD9832_SELSRC;
+-		st->data = cpu_to_be16((AD9832_CMD_SYNCSELSRC << CMD_SHIFT) |
+-					st->ctrl_ss);
++		st->ctrl_ss &= ~AD9832_SELSRC;
++		st->ctrl_ss |= FIELD_PREP(AD9832_SELSRC, val ? 0 : 1);
++
++		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_SYNCSELSRC) |
++							st->ctrl_ss);
+ 		ret = spi_sync(st->spi, &st->msg);
+ 		break;
+ 	case AD9832_FREQ_SYM:
+-		if (val == 1) {
+-			st->ctrl_fp |= AD9832_FREQ;
+-		} else if (val == 0) {
++		if (val == 1 || val == 0) {
+ 			st->ctrl_fp &= ~AD9832_FREQ;
++			st->ctrl_fp |= FIELD_PREP(AD9832_FREQ, val ? 1 : 0);
+ 		} else {
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+-		st->data = cpu_to_be16((AD9832_CMD_FPSELECT << CMD_SHIFT) |
+-					st->ctrl_fp);
++		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_FPSELECT) |
++							st->ctrl_fp);
+ 		ret = spi_sync(st->spi, &st->msg);
+ 		break;
+ 	case AD9832_PHASE_SYM:
+@@ -224,22 +229,21 @@ static ssize_t ad9832_write(struct device *dev, struct device_attribute *attr,
+ 			break;
+ 		}
+ 
+-		st->ctrl_fp &= ~AD9832_PHASE(3);
+-		st->ctrl_fp |= AD9832_PHASE(val);
++		st->ctrl_fp &= ~AD9832_PHASE_MASK;
++		st->ctrl_fp |= FIELD_PREP(AD9832_PHASE_MASK, val);
+ 
+-		st->data = cpu_to_be16((AD9832_CMD_FPSELECT << CMD_SHIFT) |
+-					st->ctrl_fp);
++		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_FPSELECT) |
++							st->ctrl_fp);
+ 		ret = spi_sync(st->spi, &st->msg);
+ 		break;
+ 	case AD9832_OUTPUT_EN:
+ 		if (val)
+-			st->ctrl_src &= ~(AD9832_RESET | AD9832_SLEEP |
+-					AD9832_CLR);
++			st->ctrl_src &= ~(AD9832_RESET | AD9832_SLEEP | AD9832_CLR);
+ 		else
+-			st->ctrl_src |= AD9832_RESET;
++			st->ctrl_src |= FIELD_PREP(AD9832_RESET, 1);
+ 
+-		st->data = cpu_to_be16((AD9832_CMD_SLEEPRESCLR << CMD_SHIFT) |
+-					st->ctrl_src);
++		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_SLEEPRESCLR) |
++							st->ctrl_src);
+ 		ret = spi_sync(st->spi, &st->msg);
+ 		break;
+ 	default:
+@@ -396,8 +400,8 @@ static int ad9832_probe(struct spi_device *spi)
+ 	spi_message_add_tail(&st->phase_xfer[1], &st->phase_msg);
+ 
+ 	st->ctrl_src = AD9832_SLEEP | AD9832_RESET | AD9832_CLR;
+-	st->data = cpu_to_be16((AD9832_CMD_SLEEPRESCLR << CMD_SHIFT) |
+-					st->ctrl_src);
++	st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_SLEEPRESCLR) |
++						st->ctrl_src);
+ 	ret = spi_sync(st->spi, &st->msg);
+ 	if (ret) {
+ 		dev_err(&spi->dev, "device init failed\n");
+-- 
+2.49.0
+
 
