@@ -1,108 +1,127 @@
-Return-Path: <linux-kernel+bounces-603362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D5CA8861E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:00:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECCD4A8864D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 358587A846F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:59:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53A401903E68
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339E727A10A;
-	Mon, 14 Apr 2025 14:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086EE1A2632;
+	Mon, 14 Apr 2025 14:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="niK5s1o/"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZWNkHsp"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C5827465F;
-	Mon, 14 Apr 2025 14:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB8760DCF;
+	Mon, 14 Apr 2025 14:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744642695; cv=none; b=MUMqSSLTki5urWcGXPTfTgr7v/g7hHpoOnVLUmxD1SbQr7bsNVDt3NHf7uhpWJgQ1qgeitou7g8KFxEGyQoAeiCQnXoEO6984jRuQCqtBnswWSlRM6fzqCz/MdQa1ZPkx+oc7vVK0XsAAq/SyIloM5zQDPMch943zmE2vay9zQo=
+	t=1744642687; cv=none; b=Sk01je0452utfRyRlnXo8yh4xSSfs6EOIJNw73FC5vNxHYzTDQdf8gCeDTMgdwjT1/G5V7c2fBSuL+0LMftpJZQwGrFVPRBNSoPpKLIN2AtG+d2SzUX/qXCUvLTmBXeGbTouQEbqt5QsM0ogq2jgK8FtSZ/0u/vX+DAaZ82p4mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744642695; c=relaxed/simple;
-	bh=PtjUEru/MWDigkFbMYqWhSeFikqKS2tSKC6Ni7r8tWw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dreTT8dyjnqYnj/C9kEP7cdIXZ95e8VXWEDU4e42NcKLO2SNZPRC+ZbhMYIVk+IowVMpj/GkdCcZtObERegJ9s3Iu2I7t9QfLCAQniNcR4lE9nUG18iC4FRAYLkcQ7F7RJv+obQXUn9BKvmlwabLcOTQsQMy79E1uejOf0boJw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=niK5s1o/; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 218954387A;
-	Mon, 14 Apr 2025 14:58:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744642691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9AdPveDqEJDa+CI3B6Nckox8CtUrK5elBYK6QnIu9Yw=;
-	b=niK5s1o/Vf5WzfQCrvffcFGPBCfCo9nR+N7eROkfvrQiWTMqdcRHgSMPY1N7f8tj0ahDHN
-	KPaNGKodMDj0xvSPnsdR/Nfbu+8JzRG4fOoMijFAtYxNOUW9zJbG6Wcy2iYSumM8gK6WuI
-	QLWisGvrpA2ziGis/iDc53pIjKKaiWNdh/S64TF52w7P2+arKFD+892w1PwwxJoelCTIEs
-	Qzdc7hD1NycsymrGFuebnWUlm8Trp5GWC1nAXsFAbYgr7UT+ybkZAUNRdfK41HJOsuUel8
-	LhuXMUGRGcT7wpKpLkYCozUNckpSFTj7n6SmnMucNLJxNoTLqYBeRKlxNmQWQQ==
-From: Thomas Richard <thomas.richard@bootlin.com>
-Date: Mon, 14 Apr 2025 16:57:25 +0200
-Subject: [PATCH v2 2/2] arm64: dts: imx8qm: add system controller watchdog
- support
+	s=arc-20240116; t=1744642687; c=relaxed/simple;
+	bh=8MmHBd8wz/TyzpcGxo23yEMNUS7HTINXGTVS9whTgrA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LtTmYpxZn3BwXWBwA3qPZLryZbJG5tkTavA8LrHuyM/y/qNy+MaqjOm71tK/CyYdSJOQelKYTtkEmWTOJbc28to8AY9v1BZFlGk4dwln5DL7Ta27tUNXGvw/Vpei/Dv9I3FDEae6ecqRvOtnGtHlwTa2GXkxFMq87Sgx86QAKWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZWNkHsp; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39c0dfba946so3194856f8f.3;
+        Mon, 14 Apr 2025 07:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744642684; x=1745247484; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9GuDr3OODxOaS6eMA/BRTIN4gXbmYJXN0wNkkvy4ipY=;
+        b=RZWNkHspQBUYr8nn1pD26zmlsbVm4CtajyFRDyi/aPzpMZuCOZA+QKU6Qvm11WybWc
+         SYiP0En6187xBnPCMo5bR0sVw6teFGNA9yFFICHOkGz3Yk62W2D0CAN1xuganQ1DAvZ3
+         /xVeM972PNuA7tBELu5PBPGpITIhFUaW9RaUEoOz5KGVT81Lm4kw5JEk/jhSBjOHt7CR
+         06onJroizLFRsixMc1DCsIeEdV8u3Z1/MAjK9OCGq2jI62jCz0rSmHnWFgZCCMGcuAfb
+         X541SswKB1dZ2lMCObhmlMDqz0Wctz56iiOw/r8Pyi+Sm5QKbEs9/8BOka6MI9QVONMc
+         UJLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744642684; x=1745247484;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9GuDr3OODxOaS6eMA/BRTIN4gXbmYJXN0wNkkvy4ipY=;
+        b=w3Cofq6PDDNXJ+eZJfmzn5rGCxUQn0vxlGQwWLLVhal3fLZYPVC/EXJ4/k1osY1ekT
+         4AhwJbQd2S1Zt6+rym8TGRK7fpUFVPPa7sVamD/bYUNhdYA3xYwq6/SKu+5WNDk9f80O
+         ml34d1FUQ33kYZU5ATge0rNJ5dlL1HPMu1yArev/0LMK8xBLCTc4KT0mffqwRPUHNqtk
+         TcFic3qexw72UXeJP76JSEX6qEBi6ZSnWPiYOnPuVhTba69B+4a9k0/r4Zrc2hz+ZHAH
+         g9Kflun7IJgM4dsiu03MCaTlA1Mbc3XzibWIzGuwLOCfmX+tEhxV5TdM1Ic1JbZXM3W1
+         D+eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQjUHOT862wbGsV/H2eJukujjM9EJPWQaGPf3fu6kQfyuC844YCxgOwVXjaRlOykMVvs/VMCFh785BZv8d@vger.kernel.org, AJvYcCWIy4ynMu8JQTk2MS/p5ihoQ6Ej81gYEhxKAWEdcMUcxkh2oOXhSpmMLqNfeR+7CYHmvpoOzs2ApyYSP83OFXnfsMQ=@vger.kernel.org, AJvYcCXJCrBV6Yrlqo68wLCtiKkufRnU7U9eVFNSCaNZ2XIXHVjdHKSTBS6IiFAba0s5wZnZt2cTxlQyf+o0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy49Ye5P2+G6TES7y4DLtC8zzplrkNQ4oaa3b8IozjVmOaqRRAi
+	mSjp9Dl2k/sQTtkrEuC1ZNs71bOSw0L2MG8eHQPqeF9zh+sAIP6V
+X-Gm-Gg: ASbGncviMPJeQ8rkzOoSLuEEaZHUAUiFHf+HVYMJ7VQ9WpxyqKTt4f1vZTkMljwo0cE
+	QBf04wqTGRGZ7Uu9LsTrGR7mTVW4mTnD4FHAaTh2ZwBWREgLrICOEZ+IW9mVHteM3EEtnOheJKh
+	o70anYIhXWd4U8Dy22ttVLBuo5T3iYWWSX/YlZrN8owuSI3brJwVZEfG6SwSuv8QdRx4Me7vmRB
+	0E51O/0Et6bCG+oTROZK0WVx6CfiP557Veb3RidocIko3tpZ4hhifyeVDM95GdWLDGD/2CSSb5T
+	8NFGzP8vqyB06hPKy1evyideS5sRUYpo26eCRx9cniunqIDAWT3T4fXEInRv3VHiuO2OFr/v+CQ
+	=
+X-Google-Smtp-Source: AGHT+IGWCwKIq/nNeRQ2UTY6+IOOM2Pu2ytEms5QgF0NEmsOrc8nzRtVMUhcJboDBExAT/971oRTtw==
+X-Received: by 2002:a05:6000:220d:b0:39c:e0e:b27a with SMTP id ffacd0b85a97d-39ea5201aefmr10245762f8f.23.1744642683517;
+        Mon, 14 Apr 2025 07:58:03 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:eb55:397c:6c6:e937])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae96bdf9sm11067041f8f.22.2025.04.14.07.58.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 07:58:03 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/4] Add USB2.0 PHY support for RZ/V2H(P) SoC
+Date: Mon, 14 Apr 2025 15:57:25 +0100
+Message-ID: <20250414145729.343133-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250414-imx8qm-watchdog-v2-2-449265a9da4e@bootlin.com>
-References: <20250414-imx8qm-watchdog-v2-0-449265a9da4e@bootlin.com>
-In-Reply-To: <20250414-imx8qm-watchdog-v2-0-449265a9da4e@bootlin.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, 
- Thomas Richard <thomas.richard@bootlin.com>
-X-Mailer: b4 0.14.1
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvddtkeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeektdehvdeiteehtdelteffheduveelgeelvdetgedvueejgefhhfekgefgfeduveenucfkphepvdgrtddumegtsgdugeemfhegtdemsghftddtmehftdehgeemtgeltgdvmedvudgtfeemudehieeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemfhegtdemsghftddtmehftdehgeemtgeltgdvmedvudgtfeemudehieeipdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtoheplhhinhhugiesrhhovggtkhdquhhsrdhnvghtpdhrtghpthhtoheprghishhhvghnghdrughonhhgsehngihprdgtohhmpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrs
- hdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdifrghttghhughoghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopeifihhmsehlihhnuhigqdifrghttghhughoghdrohhrgh
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Add system controller watchdog support for i.MX8QM.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
----
- arch/arm64/boot/dts/freescale/imx8qm.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+This patch series introduces support for the USB2.0 PHY on the
+Renesas RZ/V2H(P) SoC. It includes updates to the device tree
+bindings and driver implementation.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8qm.dtsi b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
-index 6fa31bc9ece8..11527050ac8b 100644
---- a/arch/arm64/boot/dts/freescale/imx8qm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
-@@ -356,6 +356,11 @@ tsens: thermal-sensor {
- 			compatible = "fsl,imx8qxp-sc-thermal", "fsl,imx-sc-thermal";
- 			#thermal-sensor-cells = <1>;
- 		};
-+
-+		watchdog {
-+			compatible = "fsl,imx8qm-sc-wdt", "fsl,imx-sc-wdt";
-+			timeout-sec = <60>;
-+		};
- 	};
- 
- 	thermal-zones {
+Best regards,  
+Prabhakar  
+
+Lad Prabhakar (4):
+  dt-bindings: phy: renesas,usb2-phy: Add clock constraint for RZ/G2L
+    family
+  dt-bindings: phy: renesas,usb2-phy: Document RZ/V2H(P) SoC
+  phy: renesas: phy-rcar-gen3-usb2: Sort compatible entries by SoC part
+    number
+  phy: renesas: phy-rcar-gen3-usb2: Add USB2.0 PHY support for RZ/V2H(P)
+
+ .../bindings/phy/renesas,usb2-phy.yaml        |  8 +++-
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c      | 38 +++++++++++++++++--
+ 2 files changed, 41 insertions(+), 5 deletions(-)
 
 -- 
-2.39.5
+2.49.0
 
 
