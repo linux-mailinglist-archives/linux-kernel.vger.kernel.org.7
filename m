@@ -1,175 +1,130 @@
-Return-Path: <linux-kernel+bounces-602512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC765A87BC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:23:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E945CA87D26
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB33E3ACC45
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:22:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B2EE3B76F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8484F25EF85;
-	Mon, 14 Apr 2025 09:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F132690F8;
+	Mon, 14 Apr 2025 10:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PFAoR7Ek";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Prcl1iwK";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zxKvh6lM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tHz5QMMA"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linatsea.fr header.i=@linatsea.fr header.b="RO5VAnnx"
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF1B1CDFD5
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA6F25E471;
+	Mon, 14 Apr 2025 10:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744622581; cv=none; b=r13EkH2QZnhBkFKXOURpYD9xwT2/H7awLStRK23GlOcgafbBPZeVlE9MIipmS5QZ4en+tmDePAcYkpe6yJEil8KSfW8wyiNnPjaVRbc1FKz1af2fhdtYWIr88QTAsVRj3dhUyJI4IlrNUjsBlxNYxpPP8DJOE6UWt5+sxJI0Aug=
+	t=1744625333; cv=none; b=RwohT2ZuZdsk++l8s6JGm40Io8rFuX1MXJ+cR44LW7NQ7YhnAhoqKeL7CK6k6ofNa/ZNrTM187g5lYsdA3yYCLqU1JzbhJ8BkGFBLL975ukVRorJ6NXw547jfMK4hImm9++0ygW6qLGb3lcg3M39oH/gVFxMHnsh7ijOcGn6IWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744622581; c=relaxed/simple;
-	bh=xnCc7LUdCE8A0jAetS5WlNpM1cLLzzzYqwEDyHMWkD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dpBf5pLitOSFyPisa9q77nHevQl/2XoNTWotwAxje/4+Wk/kUhNrzkwOeWqq3Og6lqda9sc2ZfkSQb9VDRX0SSkJFZ+FDEQTsWE6npkoVXbSLvHJsma744NomF827ogdyAnDQqDsVzdR40GZwXI5GygEK94ol12345NJbeIjXqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PFAoR7Ek; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Prcl1iwK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zxKvh6lM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tHz5QMMA; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5853A2125D;
-	Mon, 14 Apr 2025 09:22:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744622578;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1744625333; c=relaxed/simple;
+	bh=ikcFIKiUa4XCXRzxwCujAZL//L2GImleFBpghLCAdbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a1QNizTsv5vgjUpI+dFeIWC3Y79yzhROXs1bfTL19IDi2a3oDbY/JZXG5RQG7PIK5SIRDfpg1Vpyy9gh8CPWwWdEADOKZN5GPU0wgwwCE6CXqHnmKzNQmqQ7tIkvisfgrnpFrgWPfI75OK7qVjYqoyO0Hdp3Wn9IFkiP08n82Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linatsea.fr; spf=pass smtp.mailfrom=linatsea.fr; dkim=pass (2048-bit key) header.d=linatsea.fr header.i=@linatsea.fr header.b=RO5VAnnx; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linatsea.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linatsea.fr
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id 38015584AE7;
+	Mon, 14 Apr 2025 09:23:45 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 108D4433F6;
+	Mon, 14 Apr 2025 09:23:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linatsea.fr; s=gm1;
+	t=1744622617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fTJ2sT8ir4Gfn1MTTn6LhWi1R6St8alGrdGiGAdMgLg=;
-	b=PFAoR7Ek0yy6zm05Efw1DG7iNMKzXoOMdUIswbk+bimpGO5kAxL5tbwu/CLS9V6QfX/5OI
-	Q99+YGnGcgW0AOtRs5ndOE7oHzgEgtrMaRGMrsTfSglMBQjtQ/1GkK7ludn+xTehJTzUa1
-	3IOSV7IKDxG22h1E9eitimY5nhZ9l98=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744622578;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fTJ2sT8ir4Gfn1MTTn6LhWi1R6St8alGrdGiGAdMgLg=;
-	b=Prcl1iwKct5UEhVTw0+5YwBdMzJ3v9ofwQPxV1yYXGc5dyNt6/zUPPGSN4mZbKBTxKAs9l
-	aZqTNShSXLj3trCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=zxKvh6lM;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=tHz5QMMA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744622577;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fTJ2sT8ir4Gfn1MTTn6LhWi1R6St8alGrdGiGAdMgLg=;
-	b=zxKvh6lMdtNRaakbbadbPmIZ3J9qbkgki0pYzHKV7q5r3xT3werS80Vrz+AQvKbsOjbIs4
-	YsAmq+uKn3oDFkV8bKwfbVl4u/q7pw2VYqYYXrp1FJdAR0DA/AcnJFh0N2TcpL2WjpV3IS
-	6vROV6hQaunpkYlbfivTZnZtlQGWXJY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744622577;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fTJ2sT8ir4Gfn1MTTn6LhWi1R6St8alGrdGiGAdMgLg=;
-	b=tHz5QMMApoC++KogAIvXz+VrZovgm5mj5aFxNuVX3TN7AMfZ7y77m/knPafb6ealWlH2t2
-	EGRaG+dlbZB2P4CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 37583136A7;
-	Mon, 14 Apr 2025 09:22:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VkIoDfHT/Gc6MQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 14 Apr 2025 09:22:57 +0000
-Date: Mon, 14 Apr 2025 11:22:52 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Daniel Vacek <neelx@suse.com>
-Cc: Yangtao Li <frank.li@vivo.com>, clm@fb.com, josef@toxicpanda.com,
-	dsterba@suse.com, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: use BTRFS_PATH_AUTO_FREE in
- btrfs_truncate_inode_items()
-Message-ID: <20250414092251.GB16750@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250411034425.173648-1-frank.li@vivo.com>
- <CAPjX3Fe34HVF2JUi2DEyxqShFhadxy7M7F6xTA_yVn5ywHMBhQ@mail.gmail.com>
+	bh=2xX1JnrLD/Xmneb1rgW8av3OLo09hQ4pZGDbeGR+qj8=;
+	b=RO5VAnnxDB8lpFxKu641LS0B9QLtjt9TUl9rTMYFBCSXgRg5jmtbsItblG8jlNiXcDHr9P
+	ZTiHksLdTyzu2/OAqJ+hurpuJitXUf4TB5aAHq7zEwh+V96wXLpyweU7W05QpDXdV9wZqz
+	iQfDu2WvOGFyNTQWdW3mf5nTGeH2sCyw59gw4S0jzlLsTRg7itiTvSNu0fcQQYBHV0Tryc
+	7v6hp5vT5D50D2T9UkuXgi8JjeojuaSRJdk6aabHHnEby2e7ieLDeqKSOvdXmcVcCNkT7g
+	uKgkyl/7vl/dZnqrL1UTjo09G7NOVaTP/lgmzAVVxHPfs8S4fqg4CYoDNA1uMg==
+Message-ID: <eba16d9a-9e07-498f-a7ab-0bb36076de40@linatsea.fr>
+Date: Mon, 14 Apr 2025 11:23:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPjX3Fe34HVF2JUi2DEyxqShFhadxy7M7F6xTA_yVn5ywHMBhQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 5853A2125D
-X-Spam-Score: -4.21
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 10/13] serial: sh-sci: Add support for RZ/T2H SCI
+To: Greg KH <gregkh@linuxfoundation.org>,
+ Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "geert@linux-m68k.org" <geert@linux-m68k.org>,
+ Paul Barker <paul.barker.ct@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com>
+ <20250403212919.1137670-11-thierry.bultel.yh@bp.renesas.com>
+ <2025041152-puzzling-clinking-e573@gregkh>
+ <TYCPR01MB11492DDF2728C9D3B3F14DCA38AB32@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+ <2025041456-legacy-craftwork-2d8b@gregkh>
+Content-Language: fr
+From: Thierry Bultel <thierry.bultel@linatsea.fr>
+In-Reply-To: <2025041456-legacy-craftwork-2d8b@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvddtudekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhhihgvrhhrhicuuehulhhtvghluceothhhihgvrhhrhidrsghulhhtvghlsehlihhnrghtshgvrgdrfhhrqeenucggtffrrghtthgvrhhnpeffleefheeutdeuhfehteehkeduieeltdejffetkeekuedtveeivedvudelkefgteenucfkphepkeelrddvgeekrdejiedrjedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepkeelrddvgeekrdejiedrjedtpdhhvghloheplgduledvrdduieekrdehjedrleejngdpmhgrihhlfhhrohhmpehthhhivghrrhihrdgsuhhlthgvlheslhhinhgrthhsvggrrdhfrhdpnhgspghrtghpthhtohepkedprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehthhhivghrrhihrdgsuhhlthgvlhdrhihhsegsphdrrhgvnhgvshgrshdrtghomhdprhgtphhtthhopehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgp
+ dhrtghpthhtohepphgruhhlrdgsrghrkhgvrhdrtghtsegsphdrrhgvnhgvshgrshdrtghomhdprhgtphhtthhopeifshgrodhrvghnvghsrghssehsrghnghdqvghnghhinhgvvghrihhnghdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvghrihgrlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: thierry.bultel@linatsea.fr
 
-On Fri, Apr 11, 2025 at 04:17:38PM +0200, Daniel Vacek wrote:
-> On Fri, 11 Apr 2025 at 05:25, Yangtao Li <frank.li@vivo.com> wrote:
-> >
-> > All cleanup paths lead to btrfs_path_free so we can define path with the
-> > automatic free callback.
-> >
-> > And David Sterba point out that:
-> >         We may still find cases worth converting, the typical pattern is
-> >         btrfs_path_alloc() somewhere near top of the function and
-> >         btrfs_free_path() called right before a return.
-> >
-> > So let's convert it.
-> >
-> > Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> > ---
-> >  fs/btrfs/inode-item.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> And what about the other functions in that file? We could even get rid
-> of two allocations passing the path from ..._inode_ref() to
-> ..._inode_extref().
 
-If you mean to pass the path object from btrfs_del_inode_ref() to
-btrfs_del_inode_extref() yeah this looks like a good optimization and
-reducing the allocations (and potential failures).
 
-The other cases in the "..._inode_ref" is btrfs_insert_inode_ref() ->
-btrfs_insert_inode_extref().
+Le 14/04/2025 à 10:58, Greg KH a écrit :
+> On Mon, Apr 14, 2025 at 07:54:12AM +0000, Thierry Bultel wrote:
+>> Hi Greg,
+>>
+>>> -----Original Message-----
+>>> From: Greg KH <gregkh@linuxfoundation.org>
+>>> Sent: vendredi 11 avril 2025 16:57
+>>> To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+>>> Cc: thierry.bultel@linatsea.fr; linux-renesas-soc@vger.kernel.org;
+>>> geert@linux-m68k.org; Paul Barker <paul.barker.ct@bp.renesas.com>; Wolfram
+>>> Sang <wsa+renesas@sang-engineering.com>; linux-kernel@vger.kernel.org;
+>>> linux-serial@vger.kernel.org
+>>> Subject: Re: [PATCH v7 10/13] serial: sh-sci: Add support for RZ/T2H SCI
+>>>
+>>> On Thu, Apr 03, 2025 at 11:29:12PM +0200, Thierry Bultel wrote:
+>>>> --- a/include/uapi/linux/serial_core.h
+>>>> +++ b/include/uapi/linux/serial_core.h
+>>>> @@ -231,6 +231,9 @@
+>>>>   /* Sunplus UART */
+>>>>   #define PORT_SUNPLUS	123
+>>>>
+>>>> +/* SH-SCI */
+>>>> +#define PORT_RSCI	124
+>>> Why do you need to tell userspace about this specific port?  Is that a
+>>> hard requirement that your userspace tools require?  If not, please don't
+>>> export this here.
+>> This point has been discussed with Geert and Wolfram.
+>> We cannot use PORT_GENERIC for this IP, and adding the new type
+>> is just keeping consistent with the sh-sci driver.
+> But, why does userspace need to know this number?  And why doesn't
+> PORT_GENERIC work?
+
+The reason is that the sh-sci driver discriminates internally between 
+port types.
+There are number of locations when it checks for PORT_SCI, PORT_SCIF, 
+PORT_SCIFA...
+T2H SCI needs special handling, too, that is the reason why PORT_GENERIC 
+cannot work. I just therefore added this new type.
+
+>
+> thanks,
+>
+> greg k-h
+
 
