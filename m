@@ -1,234 +1,160 @@
-Return-Path: <linux-kernel+bounces-603840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E28DBA88CEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 22:16:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43D0A88CF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 22:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2A3917A60F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:16:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61AC13B3A27
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7678D1DE4C2;
-	Mon, 14 Apr 2025 20:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC351DC9A8;
+	Mon, 14 Apr 2025 20:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OSxdxWY/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="e3NP75Ad";
+	dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="VJxjNjSW";
+	dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="SgW9pEy3"
+Received: from e2i427.smtp2go.com (e2i427.smtp2go.com [103.2.141.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9E61ACEAF
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 20:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D6E1C1F12
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 20:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744661752; cv=none; b=G3pbWm7Hyh4V46MW13n1XLQt1199AX0evwUU7nrKwu8uvcoBc3B/oZNQnWSZTFIftukQBf/a1hq/K6ipvm9VlY0VOCn08TIjd1HPfEAR3pmRa73RoYW/azmQAFbysPoiH2N+1L0vDOk32LpzH1er0ZdHIgb68q4N60zKup+2Fgg=
+	t=1744661977; cv=none; b=RQjShJGBztgAtysCY3NusGr71OEW3lBHO3v/DhSR2qksMRL/2PjiCtXEbsqyPgGRTLIaWAfKgTowXu++SXMBRRjL48v2bmURG58PBZn0dzxX1TU84xB048fJIH43Su6zcBB70d7RZp74gVhrOf2GDEIsLbnsyY9FotIUztaP39c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744661752; c=relaxed/simple;
-	bh=LbhbCo+zbVvMZaZ4UPNWEgaPM3+UBAl8LfeZaHYhc+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ibdgez1zJxgnRhBTKklmYe8hkU+M2ngMNLFtauvIzLCf4ZN2G0r8CqKWLVOCsy4ECEeU0DIvB1kM0aGquz9TaOuusMZ1OrxlQ48wOC0RbcivrjkpZwG5EmMnfumMK9UjKrzEgBmhvcTfBXND8lOYIi0xwnu5g+eZj4aD2zNQBbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OSxdxWY/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744661749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=67wq8uX0UDI4+mNd83RsPzYK7yn9VdDdlik8w849lpc=;
-	b=OSxdxWY/qYtBYWDG2q+CUQ+AGZvCHStCAFNDFruoCrO7cC2vpTPv749HGDBqYV4zX501uq
-	32H4uVtei9XbwoqMVim4Hmmcc2uslGe+kRC1zttueNdMFylrKMf4O0RdJ1cCU7FfAYSyKD
-	IjGP0RyfSmyxGyN3qjwqQaQnY1sFyoI=
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
- [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-483-Yp2X1c6nMeqsMHHf1RaJWw-1; Mon, 14 Apr 2025 16:15:48 -0400
-X-MC-Unique: Yp2X1c6nMeqsMHHf1RaJWw-1
-X-Mimecast-MFC-AGG-ID: Yp2X1c6nMeqsMHHf1RaJWw_1744661747
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-85b5c68c390so51574539f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:15:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744661747; x=1745266547;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=67wq8uX0UDI4+mNd83RsPzYK7yn9VdDdlik8w849lpc=;
-        b=twYssIAxacedeIf1tMDhxuDnTqvWohvmHFN8O4saUtitiKE3Po8tl+U2LeiGY09yFo
-         tHfuvbA/pnLMaCaFZ+Ou7tKpoKJO1EAuZrn0LrYKbaAJDTReLWvMn74VnRvgshlHBgVn
-         3wx5/8wx1wDykeML32sZoGIsScL5sZ2Z6w0uydOBdQBSFeNbP+CnsBLWbYza8QBQEHo6
-         D77UDZ0kfRpU6t+gWtoKR6PnCEK+569+UGgHAZNjPfb1j7tUxT9GDLUOlLMPUwfM8h53
-         PZ9/eE3nscTKGWFodRbT2cOPllxJ965/2eNgzrS8o216CWBs9qCtogEufONEDFmF84fw
-         O+1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUHacIkUhHBedT3IZu25qG2ACsyBWy/mhXiQaqBMyJMBdLYS6/C1OHTvp5z/Sun9yZaA81j1kbcAAbP8vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzihuzqN66HvqsaJdwcLOyh4WQuhgjKbJg7eTRHHmvDXd5P14jM
-	ZnaJGeLpmaVuo3b4IQdRObpOLeFa/n3Up9Hx47l/it64KTCRTWtVJftWHTedUo+ReTGyTROHBwr
-	vUMgVR4Zozmc7XCbeBRDRSAop17bdLfTtdrjyDAU+LtnBn+pX30AkBT5l11a91Q==
-X-Gm-Gg: ASbGncuCitmxaxtFseIYJ9McxCG6xfpD8A7uOYpG8i/gxy2YhRj0MjO2yP4LQlPTY8m
-	IPKJ+N66Q+7S/kcLv7LDqJmbEo4kLWAOihE/xPs0x2KM1knCcnISheZVyirZSNgHszTv/qUpfcR
-	ddTlLp40rJ8OToJtfuTLJS36taeTiRGiShFxQRiyHIwSufDSiUKc7W6LwuJpRrONB20xwdbnUcL
-	h+gVNJh9Lx+Vj4TLJdMr5cio4fF7xzm0VIEEgsnjwVcn083/S8kyl5+VKBQpUrk/9ULDzKRZtnl
-	433UkvE/3yNjoAM=
-X-Received: by 2002:a05:6e02:1544:b0:3d4:6d6f:6e1f with SMTP id e9e14a558f8ab-3d8099c8c68mr2336045ab.6.1744661747535;
-        Mon, 14 Apr 2025 13:15:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEvYHcXa5XzzEeeBnhYrriz1zDFvRJNFHVKn7pAJsuo0WYw3znjjkQIP0oUx01t/dn7SlakGw==
-X-Received: by 2002:a05:6e02:1544:b0:3d4:6d6f:6e1f with SMTP id e9e14a558f8ab-3d8099c8c68mr2335905ab.6.1744661747096;
-        Mon, 14 Apr 2025 13:15:47 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505e2f3f9sm2726409173.129.2025.04.14.13.15.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 13:15:46 -0700 (PDT)
-Date: Mon, 14 Apr 2025 14:15:44 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Nishanth Aravamudan <naravamudan@nvidia.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Raphael Norwitz <raphael.norwitz@nutanix.com>, Amey
- Narkhede <ameynarkhede03@gmail.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>, Yishai
- Hadas <yishaih@nvidia.com>, Shameer Kolothum
- <shameerali.kolothum.thodi@huawei.com>, Kevin Tian <kevin.tian@intel.com>,
- kvm@vger.kernel.org
-Subject: Re: [PATCH v3] PCI: account for sysfs-disabled reset in
- pci_{slot,bus}_resettable()
-Message-ID: <20250414141544.22ebd4c9.alex.williamson@redhat.com>
-In-Reply-To: <20250304234050.GA265524@bhelgaas>
-References: <20250207205600.1846178-1-naravamudan@nvidia.com>
-	<20250304234050.GA265524@bhelgaas>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1744661977; c=relaxed/simple;
+	bh=XleZMG7I0hBKpWBBZ30vgWlJ3X7D9YnR4f8NvVxN7ZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZHeLhChUii6e+gZb3+ML+naYBziUlL1u3enipDOUBGx9xlyGp7bRyNaknmmjb6eZuDL/IY5+JZ/+20MNxxgzj3lJvNE8v/0Gjd2nI8YAnh5JdAqYZqQQZM4dX+0MelVgdtMXPxT8hXQpFTy4P9rE1krmYizhsByi06kfJNIoemk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=em1174286.fjasle.eu; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=e3NP75Ad reason="unknown key version"; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=VJxjNjSW; dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=SgW9pEy3; arc=none smtp.client-ip=103.2.141.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1174286.fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpservice.net; s=mp6320.a1-4.dyn; x=1744662868; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=DBHs10rDRwWakJ+0FNRVX8rLj2BxosVKCp/U+3H5D8k=; b=e3NP75Ad8cFrD0RJjLIu4L8M3u
+	qUXGlki599QiJswH5sC9NcadD/BP2FmasvXauCYN47zyIA5QCBTWVM8Dqm1SK8dDKvaZfCkznnibV
+	G8fP+ETo5nIPdMb9+6fwLhQXOcqTgiLiRvCXcDOjUsY4Wv0eCQ9xUkGVwIoxYPklNQHPaUqlN6oO9
+	FDlTNqEUTgRPHWm01WQuzUQM7sorspqaN0tLqLpaygrtRVll7cTAbLauLZtO89OTz01dv0Ukn8teV
+	dVT3oGbsWABIR4BxPN4Lrd6bXVFd0VwL2i9X32XY1P1iLiEFCt5B1INWH5LzwbIo3mVVOaZUTF54d
+	vPPzxhsw==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjasle.eu;
+ i=@fjasle.eu; q=dns/txt; s=s1174286; t=1744661968; h=from : subject :
+ to : message-id : date;
+ bh=DBHs10rDRwWakJ+0FNRVX8rLj2BxosVKCp/U+3H5D8k=;
+ b=VJxjNjSW42UgGqwDP9g7k9vaznGVqN1FWTScseMdQmS0R4td5MZUTUENlT01yl9dPmxtN
+ mMi/cQ18ePA+tsbJsOAp8Dq4OIG9E0HSRErqd1y0wQKWwzCrA/YYL/BKCzrVx/eaSpbfvPT
+ N+nu6SwYpIzmljgmR0i7T9BxKwqOP1AUBggDdjM48IcpuxJyHYRvVGHnddgyWvdkEYklvcm
+ tePN0txRFD2GxDcmaUCi4iPsYxWebi+XzPBEDhdtgl3NRPJvNDajXDVIcsnv3DX+HTT5rHh
+ Q0U6hbgzi+iSTz8fCiCGnYY1cXchtG+HYerG+N+yCuzL3V6K61cFWgx0z3UA==
+Received: from [10.172.233.58] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <nicolas@fjasle.eu>)
+ id 1u4QFI-TRjwtI-IS; Mon, 14 Apr 2025 20:17:32 +0000
+Received: from [10.85.249.164] (helo=leknes.fjasle.eu)
+ by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.97.1-S2G) (envelope-from <nicolas@fjasle.eu>)
+ id 1u4QFH-FnQW0hPuS5z-lIjL; Mon, 14 Apr 2025 20:17:32 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fjasle.eu; s=mail;
+ t=1744661848; bh=XleZMG7I0hBKpWBBZ30vgWlJ3X7D9YnR4f8NvVxN7ZQ=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=SgW9pEy3RvEhKOAWcSympA8YWxTr9kdBVMh8OHIPWoLR2eXOIXdcilDMCyUHvC6uC
+ mFBwyCLvJfZi2HP3NNPNmFFD9umMjBxCOonKwrwTO1wTyArzylURFLDHqlrUSB3izX
+ bVBTVt0qWj3/rJBV+nksjCukEGxSSd+DFjaiCo8Q=
+Received: by leknes.fjasle.eu (Postfix, from userid 1000)
+ id 546994973C; Mon, 14 Apr 2025 22:17:28 +0200 (CEST)
+Date: Mon, 14 Apr 2025 22:17:28 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] rust: kbuild: use `pound` to support GNU Make < 4.3
+Message-ID: <Z_1tWOkpW_d_OlOW@fjasle.eu>
+References: <20250414171241.2126137-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250414171241.2126137-1-ojeda@kernel.org>
+X-Smtpcorp-Track: EGjkhv9nxL9W.5MkZfR2L6lva.yZ6lOAwHHcU
+Feedback-ID: 1174286m:1174286a9YXZ7r:1174286s7UJPYc9yz
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
 
-On Tue, 4 Mar 2025 17:40:50 -0600
-Bjorn Helgaas <helgaas@kernel.org> wrote:
+On Mon, Apr 14, 2025 at 07:12:41PM +0200 Miguel Ojeda wrote:
+>GNU Make 4.3 changed the behavior of `#` inside commands in commit
+>c6966b323811 ("[SV 20513] Un-escaped # are not comments in function
+>invocations"):
+>
+>    * WARNING: Backward-incompatibility!
+>      Number signs (#) appearing inside a macro reference or function invocation
+>      no longer introduce comments and should not be escaped with backslashes:
+>      thus a call such as:
+>        foo := $(shell echo '#')
+>      is legal.  Previously the number sign needed to be escaped, for example:
+>        foo := $(shell echo '\#')
+>      Now this latter will resolve to "\#".  If you want to write makefiles
+>      portable to both versions, assign the number sign to a variable:
+>        H := \#
+>        foo := $(shell echo '$H')
+>      This was claimed to be fixed in 3.81, but wasn't, for some reason.
+>      To detect this change search for 'nocomment' in the .FEATURES variable.
+>
+>Unlike other commits in the kernel about this issue, such as commit
+>633174a7046e ("lib/raid6/test/Makefile: Use $(pound) instead of \#
+>for Make 4.3"), that fixed the issue for newer GNU Makes, in our case
+>it was the opposite, i.e. we need to fix it for the older ones: someone
+>building with e.g. 4.2.1 gets the following error:
+>
+>    scripts/Makefile.compiler:81: *** unterminated call to function 'call': missing ')'.  Stop.
+>
+>Thus use the existing variable to fix it.
+>
+>Reported-by: moyi geek
+>Closes: https://rust-for-linux.zulipchat.com/#narrow/channel/291565/topic/x/near/512001985
+>Cc: stable@vger.kernel.org
+>Fixes: e72a076c620f ("kbuild: fix issues with rustc-option")
+>Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+>---
+> scripts/Makefile.compiler | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+>index 7ed7f92a7daa..f4fcc1eaaeae 100644
+>--- a/scripts/Makefile.compiler
+>+++ b/scripts/Makefile.compiler
+>@@ -79,7 +79,7 @@ ld-option = $(call try-run, $(LD) $(KBUILD_LDFLAGS) $(1) -v,$(1),$(2),$(3))
+> # Usage: MY_RUSTFLAGS += $(call __rustc-option,$(RUSTC),$(MY_RUSTFLAGS),-Cinstrument-coverage,-Zinstrument-coverage)
+> # TODO: remove RUSTC_BOOTSTRAP=1 when we raise the minimum GNU Make version to 4.4
+> __rustc-option = $(call try-run,\
+>-	echo '#![allow(missing_docs)]#![feature(no_core)]#![no_core]' | RUSTC_BOOTSTRAP=1\
+>+	echo '$(pound)![allow(missing_docs)]$(pound)![feature(no_core)]$(pound)![no_core]' | RUSTC_BOOTSTRAP=1\
+> 	$(1) --sysroot=/dev/null $(filter-out --sysroot=/dev/null --target=%,$(2)) $(3)\
+> 	--crate-type=rlib --out-dir=$(TMPOUT) --emit=obj=- - >/dev/null,$(3),$(4))
+>
+>
+>base-commit: a3cd5f507b72c0532c3345b6913557efab34f405
+>-- 
+>2.49.0
+>
 
-> On Fri, Feb 07, 2025 at 02:56:00PM -0600, Nishanth Aravamudan wrote:
-> > Commit d88f521da3ef ("PCI: Allow userspace to query and set
-> > device reset mechanism") added support for userspace to disable reset of
-> > specific PCI devices (by echo'ing "" into reset_method) and
-> > pci_{slot,bus}_resettable() methods do not check pci_reset_supported()
-> > to see if userspace has disabled reset.
-
-The reset_method attribute selects which reset mechanism is available
-to pci_reset_function().  It is not intended to interact with the
-slot and bus scope reset mechanisms.
-
-> > 
-> > __pci_reset_bus()  
-> > 	-> pci_bus_reset(..., PCI_RESET_PROBE)
-> > 		-> pci_bus_resettable()  
-> > 
-> > __pci_reset_slot()  
-> > 	-> pci_slot_reset(..., PCI_RESET_PROBE)
-> > 		-> pci_slot_resettable()  
-> > 
-> > pci_reset_bus()  
-> > 	-> pci_probe_reset_slot()
-> > 		-> pci_slot_reset(..., PCI_RESET_PROBE)
-> > 			-> pci_bus_resettable()  
-> > 	if true:
-> > 		__pci_reset_slot()
-> > 	else:
-> > 		__pci_reset_bus()
-> > 
-> > I was able to reproduce this issue with a vfio device passed to a qemu
-> > guest, where I had disabled PCI reset via sysfs. Both
-> > vfio_pci_ioctl_get_pci_hot_reset_info() and
-> > vfio_pci_ioctl_pci_hot_reset() check if either the vdev's slot or bus is
-> > not resettable by calling pci_probe_reset_slot(). Before my change, this
-> > ends up ignoring the sysfs file contents and vfio-pci happily ends up
-> > issuing a reset to that device.
-
-And that's exactly how it's supposed to work, bus and slot resets are
-different mechanisms.  This change has broken vfio-pci's ability to
-perform bus/slot reset for the vast majority of use cases, where the
-reset_methods array is empty because we have devices that have no reset
-mechanism other than bus reset.  This is seen for example in the
-trivial case of a multi-function GPU and audio device.  We can no
-longer perform a bus reset here because audio function has no reset
-mechanism[1].
-
-The irony here is that the bus/slot reset is meant to provide resets
-when the device does not support function level reset, but now we need
-function level reset support in order to perform a bus/slot reset.
-
-This change has been pushed to stable trees and is already beginning to
-cause problems:
-
-https://lore.kernel.org/all/808e1111-27b7-f35b-6d5c-5b275e73677b@absolutedigital.net/
-
-Please revert this change with a cc to stable.  Thanks,
-
-Alex
-
-[1] Both the GPU and the audio device should report no available reset,
-but I suspect we have an ordering problem that function 1 hadn't been
-discovered before we probed bus reset on function 0.
-
-> > 
-> > Add an explicit check of pci_reset_supported() in both
-> > pci_slot_resettable() and pci_bus_resettable() to ensure both the reset
-> > status and reset execution are both bypassed if an administrator
-> > disables it for a device.
-> > 
-> > Fixes: d88f521da3ef ("PCI: Allow userspace to query and set device reset mechanism")
-> > Signed-off-by: Nishanth Aravamudan <naravamudan@nvidia.com>
-> > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > Cc: Alex Williamson <alex.williamson@redhat.com>
-> > Cc: Raphael Norwitz <raphael.norwitz@nutanix.com>
-> > Cc: Amey Narkhede <ameynarkhede03@gmail.com>
-> > Cc: linux-pci@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: Jason Gunthorpe <jgg@nvidia.com>
-> > Cc: Yishai Hadas <yishaih@nvidia.com>
-> > Cc: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> > Cc: Kevin Tian <kevin.tian@intel.com>
-> > Cc: kvm@vger.kernel.org  
-> 
-> Applied to pci/reset for v6.15, thanks!
-> 
-> > ---
-> > 
-> > Changes since v2:
-> >  - update commit message to include more details
-> > 
-> > Changes since v1:
-> >  - fix capitalization and ()s
-> >  - clarify same checks are done in reset path
-> > 
-> >  drivers/pci/pci.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> > index 869d204a70a3..738d29375ad3 100644
-> > --- a/drivers/pci/pci.c
-> > +++ b/drivers/pci/pci.c
-> > @@ -5405,6 +5405,8 @@ static bool pci_bus_resettable(struct pci_bus *bus)
-> >  		return false;
-> >  
-> >  	list_for_each_entry(dev, &bus->devices, bus_list) {
-> > +		if (!pci_reset_supported(dev))
-> > +			return false;
-> >  		if (dev->dev_flags & PCI_DEV_FLAGS_NO_BUS_RESET ||
-> >  		    (dev->subordinate && !pci_bus_resettable(dev->subordinate)))
-> >  			return false;
-> > @@ -5481,6 +5483,8 @@ static bool pci_slot_resettable(struct pci_slot *slot)
-> >  	list_for_each_entry(dev, &slot->bus->devices, bus_list) {
-> >  		if (!dev->slot || dev->slot != slot)
-> >  			continue;
-> > +		if (!pci_reset_supported(dev))
-> > +			return false;
-> >  		if (dev->dev_flags & PCI_DEV_FLAGS_NO_BUS_RESET ||
-> >  		    (dev->subordinate && !pci_bus_resettable(dev->subordinate)))
-> >  			return false;
-> > -- 
-> > 2.34.1
-> >   
-> 
-
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
 
