@@ -1,115 +1,112 @@
-Return-Path: <linux-kernel+bounces-603197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C958A884CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:27:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980E0A884DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D861D188C4BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:19:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDDBC1885D81
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F04A296D38;
-	Mon, 14 Apr 2025 13:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D1D29A3E8;
+	Mon, 14 Apr 2025 13:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/0pocpD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TuR5g0hQ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1C52750E7;
-	Mon, 14 Apr 2025 13:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8870F29A3D8;
+	Mon, 14 Apr 2025 13:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744638987; cv=none; b=QDQbWS2x6EUUJG+KL9+NkWCktMVWvLJvLCBMnTFWu3ILoPtw3/Q8A+7Mgr6hC2znQbmQxx+OWg8bG8bLhF+GZCEXHVvxD4Wct9nZwepnMi3+ztatKBu32IQNIMn5YrVeuQ4fcJqZlZlpTAtH6IHaGMdT1k2DrhrovfhcPy3LppU=
+	t=1744639007; cv=none; b=VFoo+sAxon/+BQBzcCDBvFT4RLZw80TxqQuAiIQYrZVNjdULc3K2/LPYVXXIiRsCgCwTEWq4rR67HwwlJOVfozY3ao4qOpdkvp7qE7pOMIT/rTt2OElpEA+r9h79fKbN4dclb2ssZ/glosVPUT9ESw3m0waqwvLT+3KTwhjxWsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744638987; c=relaxed/simple;
-	bh=NFLGYLwfMv4O8oauiY7vmwB/nw7imAlHzVax0tuTb+E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=i6Ja071a5w47RglaC/5BFii8HOES/zAxm4s49HG+SgOEsOLx26FAszeGtcmp4PqO/VipZMZ53xt1qxO3wJF4Z6WqbMcwqwNXoa/6bganc4Avjs9dwWzIB4067d9/OoUijTm7RuevxUP/pMDN5GK3Qr/2YLLpSgdvauoRxU7OrzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/0pocpD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48C4BC4CEE2;
-	Mon, 14 Apr 2025 13:56:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744638986;
-	bh=NFLGYLwfMv4O8oauiY7vmwB/nw7imAlHzVax0tuTb+E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=f/0pocpDSbkaNH9t2nd0UfGeZ2kaghu7xBWHR8+RAV/ZT/esgLAF5DrxIVl7ml2Sr
-	 vzP30Qc8TpuvpR/0hyX2N/+1EGKYtsKhy9I0dF/FXx1QNBwPUjNKeceQFehm+RZ+tj
-	 n/MCvgJrKHDuQfmpOfoq28JeTkcCxqGGIEnMwDqMPoUTLk2RnvACi77o40eV0GEGek
-	 WaGgqDcr8ZCsbvA7fCPhLtGHyEJ6CSJd+si0BmTDAK0uIOtxmIfbjIX4Xx/4olHACc
-	 UkgJiOiV8WZTzb+poBd4KmPe9cjh5cfcVA01v7fQGNs7vDSkkkBe5fAqlz5ioY093k
-	 hs/OwjkW6ARlA==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>, 
- Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, 
- Dan Murphy <dmurphy@ti.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shi Fu <shifu0704@thundersoft.com>, 
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- James Calligeros <jcalligeros99@gmail.com>
-Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
- Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- asahi@lists.linux.dev, linux-hwmon@vger.kernel.org, 
- Neal Gompa <neal@gompa.dev>
-In-Reply-To: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
-References: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
-Subject: Re: (subset) [PATCH v3 00/20] ASoC: tas27{64,70}: improve support
- for Apple codec variants
-Message-Id: <174463898202.86688.2390703716966922295.b4-ty@kernel.org>
-Date: Mon, 14 Apr 2025 14:56:22 +0100
+	s=arc-20240116; t=1744639007; c=relaxed/simple;
+	bh=ICCERbdN+d9XFG8QIphAhllv31qITvWteyiyQQaPFN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BV8X8KzKyquHMEpISuhduJ/IuDSFEXD0jffc10J66LXrKQSp/eLE0a7mPY5NnUwn+M4GjfBpNlz9A+xb/Hz5BIGehO8dAsihnfPQE0yJXs6/6YoJ+HHd1giUmn41+RedXVhK7nnBcNIEpCizZ8ks/1edMNFFNVdBmjAQBziv7pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TuR5g0hQ; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6C1E140E0248;
+	Mon, 14 Apr 2025 13:56:43 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id fCWBT3j8Izt0; Mon, 14 Apr 2025 13:56:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1744639000; bh=HLCX4EFuYm2pv8p7i93n8Dt29qH3zK/d7q3+Qm86V8s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TuR5g0hQlKQUWDCd92qQWz56T8nQYK9LQ4W+8pxG/h3rU8NoUGlJTjTGPajgLW/JU
+	 2L7+kSN08GiLCFscrjgRthUzbRHu37dwe/aQtkTFOveE2PCPaQ1LQuToc/IYdkCzCE
+	 Nos9nb2KmYyGof6OjrsAvh6SMgR3vdWT8lLNQMWqMykdD+QSBbHh2apC2zQ4Md/x9/
+	 TehcClhhgnPByKfpPiSB3FCsGTaxORTd0eGOi+t4rs23lur+Jh+sU657g29ZQpWdss
+	 Kv4Y86sM6VBDQfGA9gDQCX9c1Zk55zlea4oBHLrZsksXSHO/qeuXGkqhePkfHXdEAw
+	 L8GBCQTUNntZiVDfVDLgJRJ3PVQuEJnUIpfJCkJecnIE4lB7TTwQ61wEUe4TPR1vmW
+	 VCfmyuOsL+PbPzkYgqBCJZlWwhQo0sgBWpligNfS2No5j5qlI5Dbluhvt/dbu8ys8f
+	 gPTeKFbD2DpNOgvDZ9B1WocDNClJJBO7OfSA8ctOOzE5C+6CXZ0l36wa1yoLg0xT83
+	 fKjT7TMoXciJFG92krA1Vggp/iNYyNjwm9NY7IxVWFfVFPMweVtLxcnGcITC6lGaWH
+	 3Mqz3Lly9banijveGg+eMwEBCzX2M1chCAAAHd2URSoLLU/Wnec4qHqHfTItnrNclH
+	 ZfO1/06JSg0Al3m6qofV5imE=
+Received: from zn.tnic (p579690ee.dip0.t-ipconnect.de [87.150.144.238])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E26A340E023A;
+	Mon, 14 Apr 2025 13:56:31 +0000 (UTC)
+Date: Mon, 14 Apr 2025 15:56:25 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Ian Campbell <ijc@hellion.org.uk>,
+	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
+Subject: Re: [tip: x86/build] x86/boot: Add back some padding for the CRC-32
+ checksum
+Message-ID: <20250414135625.GDZ_0UCcIQ-fg8DKZL@fat_crate.local>
+References: <20250312081204.521411-2-ardb+git@google.com>
+ <174178137443.14745.10057090473999621829.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <174178137443.14745.10057090473999621829.tip-bot2@tip-bot2>
 
-On Thu, 27 Feb 2025 22:07:27 +1000, James Calligeros wrote:
-> This series introduces a number of changes to the drivers for
-> the Texas Instruments TAS2764 and TAS2770 amplifiers in order to
-> introduce (and improve in the case of TAS2770) support for the
-> variants of these amps found in Apple Silicon Macs.
+On Wed, Mar 12, 2025 at 12:09:34PM -0000, tip-bot2 for Ard Biesheuvel wrote:
+> The following commit has been merged into the x86/build branch of tip:
 > 
-> Apple's variant of TAS2764 is known as SN012776, and as always with
-> Apple is a subtly incompatible variant with a number of quirks. It
-> is not publicly available. The TAS2770 variant is known as TAS5770L,
-> and does not require incompatible handling.
+> Commit-ID:     e471a86a8c523eccdfd1c4745ed7ac7cbdcc1f3f
+> Gitweb:        https://git.kernel.org/tip/e471a86a8c523eccdfd1c4745ed7ac7cbdcc1f3f
+> Author:        Ard Biesheuvel <ardb@kernel.org>
+> AuthorDate:    Wed, 12 Mar 2025 09:12:05 +01:00
+> Committer:     Ingo Molnar <mingo@kernel.org>
+> CommitterDate: Wed, 12 Mar 2025 13:04:52 +01:00
 > 
-> [...]
+> x86/boot: Add back some padding for the CRC-32 checksum
+> 
+> Even though no uses of the bzImage CRC-32 checksum are known, ensure
+> that the last 4 bytes of the image are unused zero bytes, so that the
+> checksum can be generated post-build if needed.
 
-Applied to
+Sounds like it is not needed and sounds like we should whack this thing no?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Or are we doing a grace period and then whack it when that grace period
+expires?
 
-Thanks!
+Thx.
 
-[07/20] ASoC: tas2764: Reinit cache on part reset
-        commit: 592ab3936b096da5deb64d4c906edbeb989174d6
+-- 
+Regards/Gruss,
+    Boris.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
