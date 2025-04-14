@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-604074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A558A8903C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 01:48:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5D2A8903F
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 01:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E81CA3B2916
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 23:48:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E86063B2972
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 23:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CF51C84DC;
-	Mon, 14 Apr 2025 23:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302781F55ED;
+	Mon, 14 Apr 2025 23:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OMn6DttZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVux9MiH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CAB61A29A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 23:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906061E3DFD
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 23:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744674530; cv=none; b=fKmkvgLxns1r5rxEvlBTO9uIDMk1soT/S2CVztGhm99oBJmB5nEBFPw08dC6WbrMnTVHfJJuJ+XII1gvokq45c/u7x5nehrSB6BEarVyWK/HV+8nbmEhO3LZEEHkgScoDsu1mgaPDjoFNfRsBmAjBFTGLVNzZRyl2caUUu75ABA=
+	t=1744674675; cv=none; b=adqOvc3rvLeZ9fOnwInjOLODDMwM7ji+dW+4Vrr01zHs/CqyfKnoLekitZ/L+qn//JvZxG1z6i1+80oaazKUf1BZAk2xGxX8v08UwlautZD7OMnE8CL4imFM+kOGBsb3HSlEy/Zo1dpc2fDoTpICF/z6NPp02trQVj0fEYeLHsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744674530; c=relaxed/simple;
-	bh=gEEs90Q0Xhu/Ex4H4YdnueUCDF3bEMB8y6GVYNbIO7E=;
+	s=arc-20240116; t=1744674675; c=relaxed/simple;
+	bh=2U8BxDvBaIROKjt2bCDKIJjt8BuENEiwmVEAorJNa/8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i+cs1FcWdZrO7tFNDNUJ8raRWOzIE7QNkXL7JG1xvB7O65nglRzaUcrc6Gd05a145BsBQwqp7M13PrvDSgfeEWYHrg222atK+K1dCJ9r0JInY9nCI+tozMPu7j5uBtJRKer5UaGTfcH/KNqzfzT+nNcNxmvEwNcWMGkwaGlStjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OMn6DttZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75B99C4CEE2;
-	Mon, 14 Apr 2025 23:48:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=h5bARNrrDey7hrXaNqgfm3skdK+izEn+Zw9w4Fhy2w+mqnpa3qw9ulpfESOiFoUuUEHogzd+o08PH3K/741ClPbg7A1L4Ht+mGVfwDKSFhCkL4+hXS03RG3C/q82acCNDX3KdImeSBh755e/tiDK40GcbG54J4G90IidkYXMMmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PVux9MiH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D413FC4CEEA;
+	Mon, 14 Apr 2025 23:51:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744674529;
-	bh=gEEs90Q0Xhu/Ex4H4YdnueUCDF3bEMB8y6GVYNbIO7E=;
+	s=k20201202; t=1744674675;
+	bh=2U8BxDvBaIROKjt2bCDKIJjt8BuENEiwmVEAorJNa/8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OMn6DttZ/rSTw2C3OD0Qp1Qnjj5dboTFFyTf1dFX76ecVFvHInX3rGM9nnhv9pTmm
-	 /9SDdV61E4N5WK9exS7K6idm051M716oRff0CNDe6BduJ9SV16hVFapyH9w8Ju9NW/
-	 5c4D5tnCfm4hgtWIUx3+PU68+V+dqdACg8iWM/6+9kQEv7tnD/vTKrHoHR7WEELibh
-	 y5p+6IfTLrYbb3fgSD1Kn2mbu0V4EXMoIhQ7PsnR8lPIt6x4+kWlSZoyKu0bWzQOyr
-	 iCiETe2Pd1QE82J0a5p/FpuNAydUCM0O2VoFgHz8RCjWwbREt0sSploUt4EUgqHYld
-	 xWN6wzATfuTQg==
-Date: Mon, 14 Apr 2025 16:48:46 -0700
+	b=PVux9MiHxao1O5H4Ht8bIgl7/jpmndr7QafUZK12IcpssOeQiB3SNI1CcxuYc5bmA
+	 iWfcIyygbjMe153wrpxIZO2mquJQ3uCs1I44i+sYO/VIaLTrLELnTQDYY/HODWvGrT
+	 Cw1rXGQgKzYApuh/ynUvrdLFNWifXHYxeSOwZ9fnhEJLpTc3l4eByXqmsmSeAt5e3t
+	 mUNz0d++InS8Kvnyc/PcnTR3nv8m7WTymfnSuAXzRKX3KBhcgGMrrWqCvmeWCyMhtO
+	 YjuFAgDkeZjSnUOd3bPosnQAqJ2lhN/YMbOgf1YtQdeYaTD5LoLsEnmaxmSeJAy3Gh
+	 JCP8ygR680xaQ==
+Date: Mon, 14 Apr 2025 16:51:11 -0700
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 To: "Kaplan, David" <David.Kaplan@amd.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
@@ -49,12 +49,13 @@ Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	"x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Brendan Jackman <jackmanb@google.com>, 
 	Derek Manwaring <derekmn@amazon.com>
-Subject: Re: [PATCH v4 11/36] x86/bugs: Restructure spectre_v2_user mitigation
-Message-ID: <ikjndaokjcwq5mshmdnfkl3w3qrt7cn2vflmtd5in4pviupgzg@xxhzsopjmhrj>
+Subject: Re: [PATCH v4 17/36] Documentation/x86: Document the new attack
+ vector controls
+Message-ID: <mybnv24fbz5nsxmz2yihzctnbv7ab7sznyotupp6mbpzfdvy2e@r2oantiw4wmo>
 References: <20250310164023.779191-1-david.kaplan@amd.com>
- <20250310164023.779191-12-david.kaplan@amd.com>
- <pruotxsn2qn5gdxzeiowx4wy75xtlbiarpqyqjt5timl3sui5h@uiareopp3xny>
- <LV3PR12MB9265359D4950ADE05B0E181494B32@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250310164023.779191-18-david.kaplan@amd.com>
+ <fkl2b3ymatulazt2xjegubqcejx5bgaraktztpkitodrbbsozw@xrskej3fg3jf>
+ <LV3PR12MB92654563086027BB944A117594B32@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,14 +64,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <LV3PR12MB9265359D4950ADE05B0E181494B32@LV3PR12MB9265.namprd12.prod.outlook.com>
+In-Reply-To: <LV3PR12MB92654563086027BB944A117594B32@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-On Mon, Apr 14, 2025 at 07:20:59PM +0000, Kaplan, David wrote:
+On Mon, Apr 14, 2025 at 09:15:54PM +0000, Kaplan, David wrote:
 > [AMD Official Use Only - AMD Internal Distribution Only]
 > 
 > > -----Original Message-----
 > > From: Josh Poimboeuf <jpoimboe@kernel.org>
-> > Sent: Thursday, April 10, 2025 11:41 AM
+> > Sent: Thursday, April 10, 2025 1:15 PM
 > > To: Kaplan, David <David.Kaplan@amd.com>
 > > Cc: Thomas Gleixner <tglx@linutronix.de>; Borislav Petkov <bp@alien8.de>;
 > > Peter Zijlstra <peterz@infradead.org>; Pawan Gupta
@@ -78,27 +79,48 @@ On Mon, Apr 14, 2025 at 07:20:59PM +0000, Kaplan, David wrote:
 > > Hansen <dave.hansen@linux.intel.com>; x86@kernel.org; H . Peter Anvin
 > > <hpa@zytor.com>; linux-kernel@vger.kernel.org; Brendan Jackman
 > > <jackmanb@google.com>; Derek Manwaring <derekmn@amazon.com>
-> > Subject: Re: [PATCH v4 11/36] x86/bugs: Restructure spectre_v2_user mitigation
+> > Subject: Re: [PATCH v4 17/36] Documentation/x86: Document the new attack
+> > vector controls
 > >
 > > Caution: This message originated from an External Source. Use proper caution
 > > when opening attachments, clicking links, or responding.
 > >
 > >
-> > On Mon, Mar 10, 2025 at 11:39:58AM -0500, David Kaplan wrote:
-> > > @@ -214,6 +211,8 @@ void __init cpu_select_mitigations(void)
-> > >        * choices.
-> > >        */
-> > >       retbleed_update_mitigation();
-> > > +     /* spectre_v2_user_update_mitigation() depends on retbleed_mitigation */
-> > > +     spectre_v2_user_update_mitigation();
+> > On Mon, Mar 10, 2025 at 11:40:04AM -0500, David Kaplan wrote:
+> > > +=============== ============== ============ =============
+> > ============== ============
+> > > +Vulnerability   User-to-Kernel User-to-User Guest-to-Host Guest-to-Guest
+> > Cross-Thread
+> > > +=============== ============== ============ =============
+> > ============== ============
+> > > +BHI                   X                           X
+> > > +GDS                   X              X            X              X        (Note 1)
+> > > +L1TF                  X                           X                       (Note 2)
+> > > +MDS                   X              X            X              X        (Note 2)
+> > > +MMIO                  X              X            X              X        (Note 2)
+> > > +Meltdown              X
+> > > +Retbleed              X                           X                       (Note 3)
+> > > +RFDS                  X              X            X              X
+> > > +Spectre_v1            X
+> > > +Spectre_v2            X                           X
+> > > +Spectre_v2_user                      X                           X        (Note 1)
+> > > +SRBDS                 X              X            X              X
+> > > +SRSO                  X                           X
+> > > +SSB (Note 4)
 > >
-> > Function names need trailing parentheses: "retbleed_mitigation()"
+> > Any reason not to put the "Note 4" in the same column as the others?
 > >
 > 
-> That one is not actually a function name, it's the name of the file-scope variable.
+> The other notes are about cross-thread mitigation specifically and those notes refer to the SMT aspects of those issues.
+> 
+> Note 4 in this case is about the SSB vulnerability itself, explaining
+> that by default there is no mitigation for any case.  I was concerned
+> that including SSB but without any X's in any of the columns would be
+> confusing, so the note attempted to explain that there were no default
+> mitigations for SSB under any attack vector.
 
-Why refer to a variable?  Isn't it the function dependencies which
-matter here?
+Putting the note there makes it a lot harder to see it.  And I think the
+lack of X's is accurate, no?
 
 -- 
 Josh
