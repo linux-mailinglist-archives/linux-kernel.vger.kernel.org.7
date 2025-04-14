@@ -1,78 +1,61 @@
-Return-Path: <linux-kernel+bounces-602910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48625A880E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:56:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6274A880EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53799177C76
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:56:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1EE43AB94C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777D42BE7A5;
-	Mon, 14 Apr 2025 12:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6D42BEC3A;
+	Mon, 14 Apr 2025 12:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="brXYogK8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MsokLDbl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4E229DB8E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 12:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4567C539A;
+	Mon, 14 Apr 2025 12:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744635411; cv=none; b=iT+ZTeXMmDcw+0GqMhadlCkNgPaunQ+ck5Yr0TU7gt6rET3Np2UHWQpwGbLEck6Qkdd8jBzXr5lZCrJ+r0Ler1YII6cudBVlfLOUacBTqa6t2flb/U1qYRFfq41+cddmKlzpj8CekaOmv2dX8rJ1MAuepQIurZmgl2sNGuHGjdI=
+	t=1744635521; cv=none; b=MOCHyveBJIOB0k8RznMrHLUUHyXUIfLOK+PvFMN5R0m0fMrE0d0wQOmuf1UL2yT7DkAwn2tw46xFBU606keKSEeBZFuVn2M+DClaqQ8Mhpge1DGs8QDd49QAfIubF0KyC6IV1/O8Sq/svBG4hevFljIqUtcFABWP3GZFXDnaRx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744635411; c=relaxed/simple;
-	bh=4ndoZIQadw0fx/9dfIwynU9KS2mYw03hR5z3re/dctk=;
+	s=arc-20240116; t=1744635521; c=relaxed/simple;
+	bh=ZLod5GeDITCrF893kFp2KeEfQ+aSWVu96c4Qc/UeQZc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oGQkPQG+1kCsg/EQHkY/iVO+hxQOEdXdwrO/scaqSSH851zw7TN3+ug8LsyK0ec7JK90J9g/3+wZ+lXVn0qfz03eqVJelTeq3h2L/cPT+kZGkWHJk7RZmMU28bfzKaU9ZMj/osAy5jKo7dgf0Ft9EekRQ/1H7GTD038k9EY/Vfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=brXYogK8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744635409;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VMtlMTzc9ePJmlezuKsazNNqLDwaXztNRY4ZPAIEu+4=;
-	b=brXYogK8VpB2R+qct90GWwZQyvL70lsq+W5BiBEkV9y1XWjMRWhiRXaKr2TFu4223if9H+
-	PIFKZP7+8lcfhYQjpLobRL4A1jeQq19dTzQyCPJTVtZvRitxC0vud0NCn+Hv++CsTLK+4N
-	tJ6TyJ/WoZTPxQLo2RfRe3hhgE8NfuM=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-484-HHZHfESfMJSQqcHc6uG-SA-1; Mon,
- 14 Apr 2025 08:56:43 -0400
-X-MC-Unique: HHZHfESfMJSQqcHc6uG-SA-1
-X-Mimecast-MFC-AGG-ID: HHZHfESfMJSQqcHc6uG-SA_1744635401
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 861591955DCC;
-	Mon, 14 Apr 2025 12:56:41 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.114])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4B4CB180B487;
-	Mon, 14 Apr 2025 12:56:35 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 14 Apr 2025 14:56:05 +0200 (CEST)
-Date: Mon, 14 Apr 2025 14:55:59 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>
-Subject: Re: [PATCHv3 perf/core 1/2] uprobes/x86: Add support to emulate nop
- instructions
-Message-ID: <20250414125558.GC28345@redhat.com>
-References: <20250414083647.1234007-1-jolsa@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RL9CwAB7mhDMw49VZPFF6s3lnsvEui3s+dAQRPRJ+MkEFE7w1cdC15JmQrkD10o0ZNQ49fvyQPvphg2gqbaIcW96qVNfWu6sDkxG+WziLYn6N8/bgxsyvTL9IeAAxK88c0yiFro19hCSDMniRaYTheQ1RvXSCzR0JsAM92tIYwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MsokLDbl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2119C4CEE2;
+	Mon, 14 Apr 2025 12:58:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744635520;
+	bh=ZLod5GeDITCrF893kFp2KeEfQ+aSWVu96c4Qc/UeQZc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MsokLDblm+WdMl14QgRVs1R5PBaQBE3jwmg6Hc2CCxHcsiauCK3emMZr5hk82yq1k
+	 4XexBZlVM4nuuF9HzLa8ErPvZqDuc7OF9sjO1BeNUeF/cSk2alseevgTIYuafDqNL2
+	 RSOFs0qZTMg1BSkgerauzXTSrgValXrKfvCDHh6/wjW+iW72i/RMqMgJ2vNEM2I+z4
+	 pylsamysF9amTav30VE0b4+b0yrBdGLt7MxC0ICR4inGDhZSYHaPFgp5k9NWJ0HJpV
+	 X8NbV2zCYvxrP3rXaxKPOQBF50CrY5KgQVnD+XXrZ2Xd5sQs90TjMMWobCTkw7JSim
+	 0lwB1PN3j5UzA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1u4JOW-000000008Pr-2SZ2;
+	Mon, 14 Apr 2025 14:58:37 +0200
+Date: Mon, 14 Apr 2025 14:58:36 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, lumag@kernel.org,
+	quic_kriskura@quicinc.com, manivannan.sadhasivam@linaro.org,
+	konrad.dybcio@oss.qualcomm.com, quic_varada@quicinc.com,
+	quic_kbajaj@quicinc.com, johan+linaro@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] phy: qcom-qmp-usb: Fix an NULL vs IS_ERR() bug
+Message-ID: <Z_0GfAFufdAiYE_j@hovoldconsulting.com>
+References: <20250414125050.2118619-1-chenyuan0y@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,21 +64,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250414083647.1234007-1-jolsa@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20250414125050.2118619-1-chenyuan0y@gmail.com>
 
-On 04/14, Jiri Olsa wrote:
->
-> @@ -840,6 +840,11 @@ static int branch_setup_xol_ops(struct arch_uprobe *auprobe, struct insn *insn)
->  	insn_byte_t p;
->  	int i;
->  
-> +	/* x86_nops[insn->length]; same as jmp with .offs = 0 */
-> +	if (insn->length <= ASM_NOP_MAX &&
-> +	    !memcmp(insn->kaddr, x86_nops[insn->length], insn->length))
-> +		goto setup;
+On Mon, Apr 14, 2025 at 07:50:50AM -0500, Chenyuan Yang wrote:
+> The qmp_usb_iomap() helper function currently returns the raw result of
+> devm_ioremap() for non-exclusive mappings. Since devm_ioremap() may return
+> a NULL pointer and the caller only checks error pointers with IS_ERR(),
+> NULL could bypass the check and lead to an invalid dereference.
+> 
+> Fix the issue by checking if devm_ioremap() returns NULL. When it does,
+> qmp_usb_iomap() now returns an error pointer via IOMEM_ERR_PTR(-ENOMEM),
+> ensuring safe and consistent error handling.
+> 
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> Fixes: a5d6b1ac56cb ("phy: qcom-qmp-usb: fix memleak on probe deferral")
+> CC: Johan Hovold <johan@kernel.org>
+> CC: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Thanks for the update, looks good.
 
+Next time, remember to include a short changelog here after the --- line
+(so that it does not get included in the commit message when the patch
+is applied).
+
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+
+Johan
 
