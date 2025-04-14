@@ -1,320 +1,162 @@
-Return-Path: <linux-kernel+bounces-603695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56642A88B13
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:29:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862A3A88B1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8E51899B1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:29:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4341899DB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9E728BA85;
-	Mon, 14 Apr 2025 18:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F74C28B514;
+	Mon, 14 Apr 2025 18:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qowdkBkC"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F58728BABD;
-	Mon, 14 Apr 2025 18:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="F0+Mk7aB"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6624A28466C;
+	Mon, 14 Apr 2025 18:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744655332; cv=none; b=f1rZWtAMK0Hj8KOvs7tFLuaSwJmAGoEXhosG6/7mqzR1As5rsummqqePiGbVGIPituG46/UtG8yRKIgYWQF8czqex90C4ggHwYk5HBH9OJg7iof5q+WXHsxtFYaGd6bc7WrhWHTdY+qBU+pr95dMJ5QXN33vRqE214mAsnHirx0=
+	t=1744655424; cv=none; b=BVb6DmIXTtIUyPz6m+okUVKw2Sc0dbppscyEUT3lfU53Xovoxtb5cuNJZ6jpL1rDm/nyKA9dM5I2mWOj0nKVriIZy/QQE7XL3SbNqOSbTfA2Wxjws2CRxCMe4exD+87TOka3ru6uOqx9ILybL53X2WCrh4//+yAsuFJuaHdhMjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744655332; c=relaxed/simple;
-	bh=wAR3zRcC32JyRZSscQWjjEDRobAr+4tnxdrwNhQ8q6w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=rdA8vZjXhWLd2hgJCHxIyqG53c7YwS70JhZyilDDWFrurhWePOz7x1VCFXN4KHRh47kNDBtMztRSy/IZWhv31DpMQRjWgXBY8dlVA0/PVsNEHwzJ702VTQB4cgoEku6jasOnHNkUETvpeUoxl6OdYv8itw1m21BWZa+ROC6bNvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qowdkBkC; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1186)
-	id CE6782052511; Mon, 14 Apr 2025 11:28:49 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CE6782052511
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1744655329;
-	bh=T+t2Pr+b5X9fRwcM37Y8+xt2plb2c5xj4H5UNxKpUJo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qowdkBkCp2uzCmgxfXYX3q5BQzX6goFFqdFKjVOnAvCaNla71eQn7JG338Xewc+3b
-	 wyZUdsyHTQxRKcVN4ucW3pa2AjlI8CgnNpEjNvPYAPAn46+fLOjmQH4v5uOei45+IR
-	 ZR5rlW4AYCf+EhGFTi+9RVKWp++UblNq+48DfTNw=
-From: Konstantin Taranov <kotaranov@linux.microsoft.com>
-To: kotaranov@microsoft.com,
-	pabeni@redhat.com,
-	haiyangz@microsoft.com,
-	kys@microsoft.com,
-	edumazet@google.com,
-	kuba@kernel.org,
-	davem@davemloft.net,
-	decui@microsoft.com,
-	wei.liu@kernel.org,
-	longli@microsoft.com,
-	jgg@ziepe.ca,
-	leon@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH rdma-next 4/4] net: mana: Add support for auxiliary device servicing events
-Date: Mon, 14 Apr 2025 11:28:49 -0700
-Message-Id: <1744655329-13601-5-git-send-email-kotaranov@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1744655329-13601-1-git-send-email-kotaranov@linux.microsoft.com>
-References: <1744655329-13601-1-git-send-email-kotaranov@linux.microsoft.com>
+	s=arc-20240116; t=1744655424; c=relaxed/simple;
+	bh=6HmJKQO2X4WyvpQqfOeCUt/KLjexAoDH+2V1AxIXnok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hwMrDM+J3F184UlbPx82vf7DgSap74II99OuAaC0gz6TihgCk1EACydvo2JNauBQDaMrOxy0Fl/dbhAnUqcWW7K+VbWm0M5Zj4GuCUD82O12JXskkV95wjJqKt8yN/jMdga86TJi3sZ6TSQhlgANwFEP0m3bt5upJojyjs+ha38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=F0+Mk7aB; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=KvrP4YX9S88PE5IGWj9XQEJrki5oMuCrrMt/Wwr1Hxw=; b=F0+Mk7aBUK+0Qn8yr3+0zXWTV4
+	Y6tEaB+VVFzxQ5xMlEqWLRg99PhfBRfcefiA++Hi/koQtHGy5Xe2qzxrpHUFoy/+55OKQufU3Yin5
+	XPnHk7xWytSkie8IVd5hishRde0WcEpsneqeOJ/tD8dy/tTdSo9EGks8j9H4F/YkGs6s=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u4OZI-009FcJ-GO; Mon, 14 Apr 2025 20:30:04 +0200
+Date: Mon, 14 Apr 2025 20:30:04 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Bo-Cun Chen <bc-bocun.chen@mediatek.com>, Felix Fietkau <nbd@nbd.name>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net 1/5] net: ethernet: mtk_eth_soc: revise mdc divider
+ configuration
+Message-ID: <6c36505c-7af3-49f5-9141-8a655f90a2f9@lunn.ch>
+References: <08498e31e830cf0ee1ceb4fc1313d5c528a69150.1744654076.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <08498e31e830cf0ee1ceb4fc1313d5c528a69150.1744654076.git.daniel@makrotopia.org>
 
-From: Shiraz Saleem <shirazsaleem@microsoft.com>
+On Mon, Apr 14, 2025 at 07:11:20PM +0100, Daniel Golle wrote:
+> From: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
+> 
+> In the current method, the MDC divider was reset to the default setting
+> of 2.5MHz after the NETSYS SER. Therefore, we need to move the MDC
+> divider configuration function to mtk_hw_init().
+> 
+> Fixes: c0a440031d431 ("net: ethernet: mtk_eth_soc: set MDIO bus clock frequency")
+> Signed-off-by: Bo-Cun Chen <bc-bocun.chen@mediatek.com>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+>  drivers/net/ethernet/mediatek/mtk_eth_soc.c | 60 ++++++++++++++-------
+>  1 file changed, 42 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+> index 43197b28b3e74..fd643cc1b7dd2 100644
+> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+> @@ -871,11 +871,11 @@ static const struct phylink_mac_ops mtk_phylink_ops = {
+>  	.mac_enable_tx_lpi = mtk_mac_enable_tx_lpi,
+>  };
+>  
+> -static int mtk_mdio_init(struct mtk_eth *eth)
+> +static int mtk_mdio_config(struct mtk_eth *eth)
+>  {
+>  	unsigned int max_clk = 2500000, divider;
+>  	struct device_node *mii_np;
+> -	int ret;
+> +	int ret = 0;
+>  	u32 val;
+>  
+>  	mii_np = of_get_available_child_by_name(eth->dev->of_node, "mdio-bus");
+> @@ -884,22 +884,6 @@ static int mtk_mdio_init(struct mtk_eth *eth)
+>  		return -ENODEV;
+>  	}
+>  
+> -	eth->mii_bus = devm_mdiobus_alloc(eth->dev);
+> -	if (!eth->mii_bus) {
+> -		ret = -ENOMEM;
+> -		goto err_put_node;
+> -	}
+> -
+> -	eth->mii_bus->name = "mdio";
+> -	eth->mii_bus->read = mtk_mdio_read_c22;
+> -	eth->mii_bus->write = mtk_mdio_write_c22;
+> -	eth->mii_bus->read_c45 = mtk_mdio_read_c45;
+> -	eth->mii_bus->write_c45 = mtk_mdio_write_c45;
+> -	eth->mii_bus->priv = eth;
+> -	eth->mii_bus->parent = eth->dev;
+> -
+> -	snprintf(eth->mii_bus->id, MII_BUS_ID_SIZE, "%pOFn", mii_np);
+> -
+>  	if (!of_property_read_u32(mii_np, "clock-frequency", &val)) {
+>  		if (val > MDC_MAX_FREQ || val < MDC_MAX_FREQ / MDC_MAX_DIVIDER) {
+>  			dev_err(eth->dev, "MDIO clock frequency out of range");
+> @@ -922,6 +906,42 @@ static int mtk_mdio_init(struct mtk_eth *eth)
+>  
+>  	dev_dbg(eth->dev, "MDC is running on %d Hz\n", MDC_MAX_FREQ / divider);
+>  
+> +err_put_node:
+> +	of_node_put(mii_np);
+> +	return ret;
+> +}
+> +
+> +static int mtk_mdio_init(struct mtk_eth *eth)
+> +{
+> +	struct device_node *mii_np;
+> +	int ret;
+> +
+> +	mii_np = of_get_child_by_name(eth->dev->of_node, "mdio-bus");
+> +	if (!mii_np) {
+> +		dev_err(eth->dev, "no %s child node found", "mdio-bus");
+> +		return -ENODEV;
+> +	}
+> +
+> +	if (!of_device_is_available(mii_np)) {
+> +		ret = -ENODEV;
+> +		goto err_put_node;
+> +	}
 
-Handle soc servcing events which require the rdma auxiliary device resources to
-be cleaned up during a suspend, and re-initialized during a resume.
+It seems like you end up doing these checks twice. In theory it might
+change between the calls, but it is very unlikely? Maybe just keep
+node reference returned by of_get_child_by_name() and release it in
+mtk_mdio_cleanup()?
 
-Signed-off-by: Shiraz Saleem <shirazsaleem@microsoft.com>
-Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
----
- .../net/ethernet/microsoft/mana/gdma_main.c   | 11 +++-
- .../net/ethernet/microsoft/mana/hw_channel.c  | 19 ++++++
- drivers/net/ethernet/microsoft/mana/mana_en.c | 60 +++++++++++++++++++
- include/net/mana/gdma.h                       | 18 ++++++
- include/net/mana/hw_channel.h                 |  9 +++
- 5 files changed, 116 insertions(+), 1 deletion(-)
+Or calculate the divider in mtk_mdio_init() as is, but store it away
+in struct mtk_eth, so you don't need to redo all the DT parsing?
 
-diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-index 1caf73c..1d98dd6 100644
---- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
-+++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-@@ -385,6 +385,7 @@ static void mana_gd_process_eqe(struct gdma_queue *eq)
- 	case GDMA_EQE_HWC_INIT_EQ_ID_DB:
- 	case GDMA_EQE_HWC_INIT_DATA:
- 	case GDMA_EQE_HWC_INIT_DONE:
-+	case GDMA_EQE_HWC_SOC_SERVICE:
- 	case GDMA_EQE_RNIC_QP_FATAL:
- 		if (!eq->eq.callback)
- 			break;
-@@ -1438,9 +1439,13 @@ static int mana_gd_setup(struct pci_dev *pdev)
- 	mana_gd_init_registers(pdev);
- 	mana_smc_init(&gc->shm_channel, gc->dev, gc->shm_base);
- 
-+	gc->service_wq = alloc_ordered_workqueue("gdma_service_wq", 0);
-+	if (!gc->service_wq)
-+		return -ENOMEM;
-+
- 	err = mana_gd_setup_irqs(pdev);
- 	if (err)
--		return err;
-+		goto free_workqueue;
- 
- 	err = mana_hwc_create_channel(gc);
- 	if (err)
-@@ -1464,6 +1469,8 @@ destroy_hwc:
- 	mana_hwc_destroy_channel(gc);
- remove_irq:
- 	mana_gd_remove_irqs(pdev);
-+free_workqueue:
-+	destroy_workqueue(gc->service_wq);
- 	return err;
- }
- 
-@@ -1474,6 +1481,8 @@ static void mana_gd_cleanup(struct pci_dev *pdev)
- 	mana_hwc_destroy_channel(gc);
- 
- 	mana_gd_remove_irqs(pdev);
-+
-+	destroy_workqueue(gc->service_wq);
- }
- 
- static bool mana_is_pf(unsigned short dev_id)
-diff --git a/drivers/net/ethernet/microsoft/mana/hw_channel.c b/drivers/net/ethernet/microsoft/mana/hw_channel.c
-index a00f915..407b46e 100644
---- a/drivers/net/ethernet/microsoft/mana/hw_channel.c
-+++ b/drivers/net/ethernet/microsoft/mana/hw_channel.c
-@@ -112,11 +112,13 @@ out:
- static void mana_hwc_init_event_handler(void *ctx, struct gdma_queue *q_self,
- 					struct gdma_event *event)
- {
-+	union hwc_init_soc_service_type service_data;
- 	struct hw_channel_context *hwc = ctx;
- 	struct gdma_dev *gd = hwc->gdma_dev;
- 	union hwc_init_type_data type_data;
- 	union hwc_init_eq_id_db eq_db;
- 	u32 type, val;
-+	int ret;
- 
- 	switch (event->type) {
- 	case GDMA_EQE_HWC_INIT_EQ_ID_DB:
-@@ -199,7 +201,24 @@ static void mana_hwc_init_event_handler(void *ctx, struct gdma_queue *q_self,
- 		}
- 
- 		break;
-+	case GDMA_EQE_HWC_SOC_SERVICE:
-+		service_data.as_uint32 = event->details[0];
-+		type = service_data.type;
-+		val = service_data.value;
- 
-+		switch (type) {
-+		case GDMA_SERVICE_TYPE_RDMA_SUSPEND:
-+		case GDMA_SERVICE_TYPE_RDMA_RESUME:
-+			ret = mana_rdma_service_event(gd->gdma_context, type);
-+			if (ret)
-+				dev_err(hwc->dev, "Failed to schedule adev service event: %d\n", ret);
-+			break;
-+		default:
-+			dev_warn(hwc->dev, "Received unknown SOC service type %u\n", type);
-+			break;
-+		}
-+
-+		break;
- 	default:
- 		dev_warn(hwc->dev, "Received unknown gdma event %u\n", event->type);
- 		/* Ignore unknown events, which should never happen. */
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index 70c4955..d832700 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -2982,6 +2982,66 @@ idx_fail:
- 	return ret;
- }
- 
-+static void mana_handle_rdma_servicing(struct work_struct *work)
-+{
-+	struct mana_service_work *serv_work =
-+		container_of(work, struct mana_service_work, work);
-+	struct gdma_dev *gd = serv_work->gdma_dev;
-+	struct device *dev = gd->gdma_context->dev;
-+	int ret;
-+
-+	switch (serv_work->event) {
-+	case GDMA_SERVICE_TYPE_RDMA_SUSPEND:
-+		if (!gd->adev || gd->is_suspended)
-+			break;
-+
-+		remove_adev(gd);
-+		gd->is_suspended = true;
-+		break;
-+
-+	case GDMA_SERVICE_TYPE_RDMA_RESUME:
-+		if (!gd->is_suspended)
-+			break;
-+
-+		ret = add_adev(gd, "rdma");
-+		if (ret)
-+			dev_err(dev, "Failed to add adev on resume: %d\n", ret);
-+		else
-+			gd->is_suspended = false;
-+		break;
-+
-+	default:
-+		dev_warn(dev, "unknown adev service event %u\n",
-+			 serv_work->event);
-+		break;
-+	}
-+
-+	kfree(serv_work);
-+}
-+
-+int mana_rdma_service_event(struct gdma_context *gc, enum gdma_service_type event)
-+{
-+	struct gdma_dev *gd = &gc->mana_ib;
-+	struct mana_service_work *serv_work;
-+
-+	if (gd->dev_id.type != GDMA_DEVICE_MANA_IB) {
-+		/* RDMA device is not detected on pci */
-+		return 0;
-+	}
-+
-+	serv_work = kzalloc(sizeof(*serv_work), GFP_ATOMIC);
-+	if (!serv_work)
-+		return -ENOMEM;
-+
-+	serv_work->event = event;
-+	serv_work->gdma_dev = gd;
-+
-+	INIT_WORK(&serv_work->work, mana_handle_rdma_servicing);
-+	queue_work(gc->service_wq, &serv_work->work);
-+
-+	return 0;
-+}
-+
- int mana_probe(struct gdma_dev *gd, bool resuming)
- {
- 	struct gdma_context *gc = gd->gdma_context;
-diff --git a/include/net/mana/gdma.h b/include/net/mana/gdma.h
-index 89abf98..335d061 100644
---- a/include/net/mana/gdma.h
-+++ b/include/net/mana/gdma.h
-@@ -60,6 +60,7 @@ enum gdma_eqe_type {
- 	GDMA_EQE_HWC_INIT_DONE		= 131,
- 	GDMA_EQE_HWC_SOC_RECONFIG	= 132,
- 	GDMA_EQE_HWC_SOC_RECONFIG_DATA	= 133,
-+	GDMA_EQE_HWC_SOC_SERVICE	= 134,
- 	GDMA_EQE_RNIC_QP_FATAL		= 176,
- };
- 
-@@ -70,6 +71,18 @@ enum {
- 	GDMA_DEVICE_MANA_IB	= 3,
- };
- 
-+enum gdma_service_type {
-+	GDMA_SERVICE_TYPE_NONE		= 0,
-+	GDMA_SERVICE_TYPE_RDMA_SUSPEND	= 1,
-+	GDMA_SERVICE_TYPE_RDMA_RESUME	= 2,
-+};
-+
-+struct mana_service_work {
-+	struct work_struct work;
-+	struct gdma_dev *gdma_dev;
-+	enum gdma_service_type event;
-+};
-+
- struct gdma_resource {
- 	/* Protect the bitmap */
- 	spinlock_t lock;
-@@ -224,6 +237,7 @@ struct gdma_dev {
- 	void *driver_data;
- 
- 	struct auxiliary_device *adev;
-+	bool is_suspended;
- };
- 
- /* MANA_PAGE_SIZE is the DMA unit */
-@@ -409,6 +423,8 @@ struct gdma_context {
- 	struct gdma_dev		mana_ib;
- 
- 	u64 pf_cap_flags1;
-+
-+	struct workqueue_struct *service_wq;
- };
- 
- #define MAX_NUM_GDMA_DEVICES	4
-@@ -888,4 +904,6 @@ int mana_gd_destroy_dma_region(struct gdma_context *gc, u64 dma_region_handle);
- void mana_register_debugfs(void);
- void mana_unregister_debugfs(void);
- 
-+int mana_rdma_service_event(struct gdma_context *gc, enum gdma_service_type event);
-+
- #endif /* _GDMA_H */
-diff --git a/include/net/mana/hw_channel.h b/include/net/mana/hw_channel.h
-index 158b125..83cf933 100644
---- a/include/net/mana/hw_channel.h
-+++ b/include/net/mana/hw_channel.h
-@@ -49,6 +49,15 @@ union hwc_init_type_data {
- 	};
- }; /* HW DATA */
- 
-+union hwc_init_soc_service_type {
-+	u32 as_uint32;
-+
-+	struct {
-+		u32 value	: 28;
-+		u32 type	:  4;
-+	};
-+}; /* HW DATA */
-+
- struct hwc_rx_oob {
- 	u32 type	: 6;
- 	u32 eom		: 1;
--- 
-2.43.0
-
+	Andrew
 
