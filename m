@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-602278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1097A878D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:35:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99FBA878DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0EEA189154D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:35:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30E2B18917A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCDF259CA5;
-	Mon, 14 Apr 2025 07:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B1B25A341;
+	Mon, 14 Apr 2025 07:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n/NL8SpA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7gUO4Nft"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BabdX7dL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gOvzAxQ0"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA192580EE;
-	Mon, 14 Apr 2025 07:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D668259498;
+	Mon, 14 Apr 2025 07:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744616090; cv=none; b=pUa7/bfZ5maR9HiYOxZ25yLnHEBHcxzV5DIrrXGNAy5gLUZeYSJE5RSCTEZXrd7kCyPEHPagHmz/SDhL/5wMtdusi57mw4GFboyF55Ps65EQgu5EsBunzLMR6ZinIj7WK4EPcOXFIEtwvaWW69YRAeG9KJafsuZjMRmiwglBVv0=
+	t=1744616092; cv=none; b=aZ/Mm3XU6voCS+LtTjxiNRg2NVu/dKUz0alG40R49kXBvOu1ifrDN6l2achVRwo4uf//02qf7a7TkOdkldaQUJvHaGpJ8WLeQOIqR7oQNboKNzVLnyAUmX4Sn/XT9WOoaQAoaHTvqOw6XxG1977yCCkLWMWzAnkLNHW1sqQhY4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744616090; c=relaxed/simple;
-	bh=2AqFaaVVlBvEZiwu6OujEy+cmoPolG+hfLrABeNwABw=;
+	s=arc-20240116; t=1744616092; c=relaxed/simple;
+	bh=P/FF+DjUJzZeTs6ySv5W1avpU23vPgKKEd9nqJ0goz4=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Xp+ot7HFNbDboW4zn3jyukehiEsh2nc54UAufJLG4UX70DueNNTcBmPDR9B0jsm0yeFXT/KLaBPBCusAMLmSPR6OEbbcfvzDoyUt2auA+TOVf7379Tr9wc++ugjwe981xKwQUix9oHq4xbljnp34CmONj7TkFKdg7mKkQqVtqkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n/NL8SpA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7gUO4Nft; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=dqdPvBFSLPDBkhStNssR3aODdKT6PTudHGu28k4vwNRW3OXHQKDIt+w/b/6gPF60u035Vs2Q/LYNd97InJrk/Xtv0nuGVRH/0II9pWagfb8eIQ/3KmiNgcFVi6+AIvMWaeqgdKtFyuGqG1g5u8ksnHGav0v+w/5nUrPwW49DXkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BabdX7dL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gOvzAxQ0; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 14 Apr 2025 07:34:46 -0000
+Date: Mon, 14 Apr 2025 07:34:47 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744616086;
+	s=2020; t=1744616088;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8ZqD7RUr1PuLIwugMQKUQuYjk3Dp0V/kEJsTkWo1oZo=;
-	b=n/NL8SpA8HUnH8EA7cAEAvOOKuSChREyb+flC5kMMwLKXELo5h1kZXoW91d0Qz1ekqti8J
-	AaUx7QLOUnGsrq2TacYZgmCmqmGjDgAF2S8yIub3o92x+F+LMsI44ozzTfpwX1IC1hIPm3
-	6bxznaadbYcXx4GDUu1tveCrnnFpdCIxhVqshjaCzHSvuoLbICIECQEgrPCeWYtCu7yvKR
-	QJlvfvhU99zUKlVzvSSdIDB5XrWOnvDiNRXchEDn0GUfOQTd7QOGHnwZwnCJShEachASbu
-	ygYnRCoeXoxmYbyXdhjs0zvhjHCw+x0qA11Cgzs16rfvDCFi2Sbv3nMz4/XGZg==
+	bh=IS5VEqA6spfCmgguOSLrVSt/pX90gqpbIjDS2aZo7YA=;
+	b=BabdX7dL5UKAR1XRYE/VrfavBe1MpZ9YHS0QbLPyjl27dg4PLueXQDPpP4akqF1NdO7JdV
+	BwM+CxBzqvWW1nTV0ALzBvt7JlN1nYu9J6paIcVOTj+mVHrm3FUFjUTdrJb6/0ulsV7FE1
+	Re0wpXs5mcvfieBAHhjwjIWwmNdnMIHPA/8jIiAsmQ3r0J0zG96EK1y4iepHj62gjCCY5K
+	oMLwO6ZGbWB4GU42v1B8CNXuqXL8PqydnDbxtjyGcZbw8Y8LeXAzcbIbHhMZoNjBKxpi4r
+	8Zj/8+7O2wtsorQRoGbIj4EaaxSpiAiQEh+Bx5nugGheq2a7rJ467q2VfhFzJg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744616086;
+	s=2020e; t=1744616088;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8ZqD7RUr1PuLIwugMQKUQuYjk3Dp0V/kEJsTkWo1oZo=;
-	b=7gUO4Nftp/YVN08xxuo/aJkMDk1G/YA7OaSqpUESokSzZMxBZEkBTxaP4fcXxmgwnHvia+
-	56AkFkl07Lf6+XBg==
+	bh=IS5VEqA6spfCmgguOSLrVSt/pX90gqpbIjDS2aZo7YA=;
+	b=gOvzAxQ0JiQUk+VPG3cO6UGEuci1wYzwz7CmnMX3ET0DB5ciBkxqJNQK87AkDypQge46nq
+	PzZTKBL3LVb/mTBg==
 From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/merge] x86/fpu: Remove init_task FPU state dependencies,
- add debugging warning for PF_KTHREAD tasks
+Subject: [tip: x86/merge] x86/fpu: Push 'fpu' pointer calculation into the
+ fpu__drop() call
 Cc: Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
  Brian Gerst <brgerst@gmail.com>, "Chang S. Bae" <chang.seok.bae@intel.com>,
- Fenghua Yu <fenghua.yu@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
  Linus Torvalds <torvalds@linux-foundation.org>,
  Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250409211127.3544993-8-mingo@kernel.org>
-References: <20250409211127.3544993-8-mingo@kernel.org>
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250409211127.3544993-6-mingo@kernel.org>
+References: <20250409211127.3544993-6-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174461608607.31282.3975145232708711882.tip-bot2@tip-bot2>
+Message-ID: <174461608736.31282.11951675295903835985.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -85,155 +85,82 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/merge branch of tip:
 
-Commit-ID:     22aafe3bcb67472effdea1ccf0df20280192bbaf
-Gitweb:        https://git.kernel.org/tip/22aafe3bcb67472effdea1ccf0df20280192bbaf
+Commit-ID:     ec2227e03a46a162f2721917262adc553b212e2d
+Gitweb:        https://git.kernel.org/tip/ec2227e03a46a162f2721917262adc553b212e2d
 Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Wed, 09 Apr 2025 23:11:26 +02:00
+AuthorDate:    Wed, 09 Apr 2025 23:11:24 +02:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Mon, 14 Apr 2025 08:18:29 +02:00
 
-x86/fpu: Remove init_task FPU state dependencies, add debugging warning for PF_KTHREAD tasks
+x86/fpu: Push 'fpu' pointer calculation into the fpu__drop() call
 
-init_task's FPU state initialization was a bit of a hack:
-
-		__x86_init_fpu_begin = .;
-		. = __x86_init_fpu_begin + 128*PAGE_SIZE;
-		__x86_init_fpu_end = .;
-
-But the init task isn't supposed to be using the FPU context
-in any case, so remove the hack and add in some debug warnings.
-
-As Linus noted in the discussion, the init task (and other
-PF_KTHREAD tasks) *can* use the FPU via kernel_fpu_begin()/_end(),
-but they don't need the context area because their FPU use is not
-preemptible or reentrant, and they don't return to user-space.
+This encapsulates the fpu__drop() functionality better, and it
+will also enable other changes that want to check a task for
+PF_KTHREAD before calling x86_task_fpu().
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Brian Gerst <brgerst@gmail.com>
 Cc: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Uros Bizjak <ubizjak@gmail.com>
-Link: https://lore.kernel.org/r/20250409211127.3544993-8-mingo@kernel.org
+Link: https://lore.kernel.org/r/20250409211127.3544993-6-mingo@kernel.org
 ---
- arch/x86/include/asm/processor.h |  6 +++++-
- arch/x86/kernel/fpu/core.c       | 15 +++++++++++----
- arch/x86/kernel/fpu/init.c       |  3 +--
- arch/x86/kernel/fpu/xstate.c     |  3 ---
- arch/x86/kernel/vmlinux.lds.S    |  4 ----
- 5 files changed, 17 insertions(+), 14 deletions(-)
+ arch/x86/include/asm/fpu/sched.h | 2 +-
+ arch/x86/kernel/fpu/core.c       | 4 +++-
+ arch/x86/kernel/process.c        | 3 +--
+ 3 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index b7f7c9c..eaa7214 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -516,7 +516,11 @@ struct thread_struct {
- #endif
- };
+diff --git a/arch/x86/include/asm/fpu/sched.h b/arch/x86/include/asm/fpu/sched.h
+index 1feaa68..5fd1263 100644
+--- a/arch/x86/include/asm/fpu/sched.h
++++ b/arch/x86/include/asm/fpu/sched.h
+@@ -10,7 +10,7 @@
+ #include <asm/trace/fpu.h>
  
--#define x86_task_fpu(task)	((struct fpu *)((void *)(task) + sizeof(*(task))))
-+#ifdef CONFIG_X86_DEBUG_FPU
-+extern struct fpu *x86_task_fpu(struct task_struct *task);
-+#else
-+# define x86_task_fpu(task)	((struct fpu *)((void *)(task) + sizeof(*(task))))
-+#endif
- 
- /*
-  * X86 doesn't need any embedded-FPU-struct quirks:
+ extern void save_fpregs_to_fpstate(struct fpu *fpu);
+-extern void fpu__drop(struct fpu *fpu);
++extern void fpu__drop(struct task_struct *tsk);
+ extern int  fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
+ 		      unsigned long shstk_addr);
+ extern void fpu_flush_thread(void);
 diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 4a21938..4d1a205 100644
+index 974b276..e4c2090 100644
 --- a/arch/x86/kernel/fpu/core.c
 +++ b/arch/x86/kernel/fpu/core.c
-@@ -51,6 +51,16 @@ static DEFINE_PER_CPU(bool, in_kernel_fpu);
+@@ -681,8 +681,10 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
+  * a state-restore is coming: either an explicit one,
+  * or a reschedule.
   */
- DEFINE_PER_CPU(struct fpu *, fpu_fpregs_owner_ctx);
- 
-+#ifdef CONFIG_X86_DEBUG_FPU
-+struct fpu *x86_task_fpu(struct task_struct *task)
-+{
-+	if (WARN_ON_ONCE(task->flags & PF_KTHREAD))
-+		return NULL;
+-void fpu__drop(struct fpu *fpu)
++void fpu__drop(struct task_struct *tsk)
+ {
++	struct fpu *fpu = x86_task_fpu(tsk);
 +
-+	return (void *)task + sizeof(*task);
-+}
-+#endif
-+
- /*
-  * Can we use the FPU in kernel mode with the
-  * whole "kernel_fpu_begin/end()" sequence?
-@@ -599,11 +609,9 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
- 	 *
- 	 * This is safe because task_struct size is a multiple of cacheline size.
- 	 */
--	struct fpu *src_fpu = x86_task_fpu(current);
--	struct fpu *dst_fpu = x86_task_fpu(dst);
-+	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
+ 	preempt_disable();
  
- 	BUILD_BUG_ON(sizeof(*dst) % SMP_CACHE_BYTES != 0);
--	BUG_ON(!src_fpu);
+ 	if (fpu == x86_task_fpu(current)) {
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 88868a9..5fb502c 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -120,7 +120,6 @@ void arch_release_task_struct(struct task_struct *tsk)
+ void exit_thread(struct task_struct *tsk)
+ {
+ 	struct thread_struct *t = &tsk->thread;
+-	struct fpu *fpu = x86_task_fpu(tsk);
  
- 	/* The new task's FPU state cannot be valid in the hardware. */
- 	dst_fpu->last_cpu = -1;
-@@ -666,7 +674,6 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
- 	if (update_fpu_shstk(dst, ssp))
- 		return 1;
+ 	if (test_thread_flag(TIF_IO_BITMAP))
+ 		io_bitmap_exit(tsk);
+@@ -128,7 +127,7 @@ void exit_thread(struct task_struct *tsk)
+ 	free_vm86(t);
  
--	trace_x86_fpu_copy_src(src_fpu);
- 	trace_x86_fpu_copy_dst(dst_fpu);
- 
- 	return 0;
-diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-index da41a1d..16b6611 100644
---- a/arch/x86/kernel/fpu/init.c
-+++ b/arch/x86/kernel/fpu/init.c
-@@ -38,7 +38,7 @@ static void fpu__init_cpu_generic(void)
- 	/* Flush out any pending x87 state: */
- #ifdef CONFIG_MATH_EMULATION
- 	if (!boot_cpu_has(X86_FEATURE_FPU))
--		fpstate_init_soft(&x86_task_fpu(current)->fpstate->regs.soft);
-+		;
- 	else
- #endif
- 		asm volatile ("fninit");
-@@ -207,7 +207,6 @@ static void __init fpu__init_system_xstate_size_legacy(void)
- 	fpu_kernel_cfg.default_size = size;
- 	fpu_user_cfg.max_size = size;
- 	fpu_user_cfg.default_size = size;
--	fpstate_reset(x86_task_fpu(current));
+ 	shstk_free(tsk);
+-	fpu__drop(fpu);
++	fpu__drop(tsk);
  }
  
- /*
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 253da5a..4c771b9 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -870,9 +870,6 @@ void __init fpu__init_system_xstate(unsigned int legacy_size)
- 	if (err)
- 		goto out_disable;
- 
--	/* Reset the state for the current task */
--	fpstate_reset(x86_task_fpu(current));
--
- 	/*
- 	 * Update info used for ptrace frames; use standard-format size and no
- 	 * supervisor xstates:
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index d9ca2d1..ccdc45e 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -181,10 +181,6 @@ SECTIONS
- 		/* equivalent to task_pt_regs(&init_task) */
- 		__top_init_kernel_stack = __end_init_stack - TOP_OF_KERNEL_STACK_PADDING - PTREGS_SIZE;
- 
--		__x86_init_fpu_begin = .;
--		. = __x86_init_fpu_begin + 128*PAGE_SIZE;
--		__x86_init_fpu_end = .;
--
- #ifdef CONFIG_X86_32
- 		/* 32 bit has nosave before _edata */
- 		NOSAVE_DATA
+ static int set_new_tls(struct task_struct *p, unsigned long tls)
 
