@@ -1,147 +1,120 @@
-Return-Path: <linux-kernel+bounces-602219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134B2A87835
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:50:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C536A87839
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8193B1C6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:50:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2212F16DB01
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62081B0437;
-	Mon, 14 Apr 2025 06:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6781B0F0A;
+	Mon, 14 Apr 2025 06:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Hs90We8a"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mr5LhCg7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDD31ADFE4
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1440845C18
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744613412; cv=none; b=PDSKIdH6zm+uDnDAlZaSteWpw64PI5idGjuWT0OQU3jPqUsF88VrUw6swc0syNMbB6Tz4w6xbhAyPgQ3erEFauPipKFQAg+69PqntTmHsFHXUYXftLbc8AoJ1F4aNr8n3vomPo391k4xR5CYO1YzkQ1ry0+/2kwghMQj6NEOajo=
+	t=1744613495; cv=none; b=NOnh2C5RWWodmWehrgfXKfOEC0QNWmc1Me5odoXWMQZgTmo5W5TlnVBLQ95dAAsIf6WrQueSB1rHRiyI/1Iiuy4nxse/xzwBwTCAotLfcXCM1UByHz4kVbcXAIjngdUeRDDxFvFMAlM5s8KIt4galRI6MduYUTgUF9q8rXggqsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744613412; c=relaxed/simple;
-	bh=eJuQ6K53iIE7H+B7T4xrEmRXHvyysdEcji4rNeYft9s=;
+	s=arc-20240116; t=1744613495; c=relaxed/simple;
+	bh=+Ele0F1poW+d98mRXmolJyecgMIOJ5Yg0Z0vGLasXMM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fzZnPOwvEajdw/SFpWaBRviEXHtHPQSlCNAbxQ1anhzbeuXpCEnyj0kCRFZt4AJir0btVWh8aAJ28i3ay5k88iiiYq9w+fa2J1j1/Q1Tn1jSiG1rpGZqMCrlSTTzujiGAHpdoXo3zpw5wFlQq3YdrCTnzreI/R7h3lkJ7pproMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Hs90We8a; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 14 Apr 2025 12:20:02 +0530
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744613408;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bV+9Q8YkIlG7twmYcn7d/G5ce4v53eG6zFWycuhqVrs=;
-	b=Hs90We8aRLict0baKvkhSRRp1/cGjYc9CvEirjeMvg41VRzkOt2j8aNUX7SVNla60+rToL
-	JUbxUHbR15EJu1nc1qrJijPyXKdy34ht7L4U/aFpjKVDyV1bkRkEdJ0k9uZ3m6Uf6af5d3
-	kNIiGLjcretrOI8sl+KbK8pt4P0Nqhw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Jai Luthra <jai.luthra@linux.dev>
-To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, vaishnav.a@ti.com, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, u-kumar1@ti.com, stable@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] arm64: dts: ti: k3-am62x: Rename I2C switch to
- I2C mux in OV5640 overlay
-Message-ID: <bc5ocuam2ghevg6ory35leuebfka7amllfqr5xggiori7qt2xh@mevrrqj74lmd>
-X-PGP-Key: http://jailuthra.in/files/public-key.asc
-References: <20250409134128.2098195-1-y-abhilashchandra@ti.com>
- <20250409134128.2098195-8-y-abhilashchandra@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TwOUsjV9/DB2DWJ8oh0BRem1bqm9GGSbJN2KJrx6AzTRe1qWS2bncYdufYVOgX1UbyCzqavDDsmz0wlgNGmQfofME2DXNNgiSh6Cf3AcvYL7qyPPLrzx0PLz7gmgfmncREbizYTlF0981rQXrg9oh6xzauTw0hrQDO5XUC1yp/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mr5LhCg7; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744613493; x=1776149493;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+Ele0F1poW+d98mRXmolJyecgMIOJ5Yg0Z0vGLasXMM=;
+  b=mr5LhCg7ePRN8b4ysheTJFx7w/zJQS2XgooTTaAT9rXuH3x/AHc5Q3no
+   KCkI1Ify2zIVyRpGFP6fIfatPXLs18o9o3whK5EGYfPsTLAoSAyGcxird
+   RfQ1nDCM1rFDMJc2nOEfFQDIUjnN/mcTnaonoHEy49r2GjEAQ/b65Kukb
+   CAebOVkoW6dnGUXF+rILiG9wd6CLDqhOiKG96PO1ALC5D+Xw46UEAHloj
+   mnt5R1bssATyn9TDRdyBl1+o69vp1OqwLPNX+bcpmk13wVh+i38PzkK6b
+   B0suz93ETInEiaEy2z3zv4XdKH+A/9+8zMKuCgZ7hpsy5W04AM+cUiVRW
+   A==;
+X-CSE-ConnectionGUID: 6PR9JjgQQoOSRKRmwrdurw==
+X-CSE-MsgGUID: e1Q3E1nFS5Sq0TsQ9WxzJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="46203110"
+X-IronPort-AV: E=Sophos;i="6.15,211,1739865600"; 
+   d="scan'208";a="46203110"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2025 23:51:29 -0700
+X-CSE-ConnectionGUID: g/VZw56JRP6WlA831XPG0Q==
+X-CSE-MsgGUID: TU5W4yAoRUyNfwzJ82kq7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,211,1739865600"; 
+   d="scan'208";a="130279695"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2025 23:51:16 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u4Dey-0000000C9iZ-2r4k;
+	Mon, 14 Apr 2025 09:51:12 +0300
+Date: Mon, 14 Apr 2025 09:51:12 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matt Coster <Matt.Coster@imgtec.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, Frank Binns <Frank.Binns@imgtec.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Alessio Belle <Alessio.Belle@imgtec.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 01/10] drm/imagination: avoid unused-const-variable
+ warning
+Message-ID: <Z_ywYNsYjuZy8v9x@smile.fi.intel.com>
+References: <20250409122131.2766719-1-arnd@kernel.org>
+ <20250409122314.2848028-1-arnd@kernel.org>
+ <7ae4be5c-b115-405e-aa57-caeaa206775b@imgtec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dg2ofw3wo72v6frl"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250409134128.2098195-8-y-abhilashchandra@ti.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <7ae4be5c-b115-405e-aa57-caeaa206775b@imgtec.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Thu, Apr 10, 2025 at 11:22:05AM +0000, Matt Coster wrote:
+> On 09/04/2025 13:22, Arnd Bergmann wrote:
+
+...
+
+> > Rather than adding more #ifdef blocks, address this by changing the
+> > existing #ifdef into equivalent IS_ENABLED() checks so gcc can see
+> > where the symbol is used but still eliminate it from the object file.
+> 
+> Possibly a silly question, but wouldn't adding __maybe_unused to
+> stid_fmts be a simpler change here?
+
+I'm not Arnd (and I just have read his answer), but I would like to add that
+__maybe_unused should be the last resort as it has more cons than more invasive
+solutions. In particular, it makes build time increase with a lot of work to
+be made at link time, and also it might hide the real bugs when somebody simply
+forgot to use it (depending on the configuration options) or so.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---dg2ofw3wo72v6frl
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 7/7] arm64: dts: ti: k3-am62x: Rename I2C switch to
- I2C mux in OV5640 overlay
-MIME-Version: 1.0
-
-On Wed, Apr 09, 2025 at 07:11:28PM +0530, Yemike Abhilash Chandra wrote:
-> The OV5640 device tree overlay incorrectly defined an I2C switch instead
-> of an I2C mux. According to the DT bindings, the correct terminology and
-> node definition should use "i2c-mux" instead of "i2c-switch". Hence,
-> update the same to avoid dtbs_check warnings.
->=20
-> Fixes: 635ed9715194 ("arm64: dts: ti: k3-am62x: Add overlays for OV5640")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-
-Reviewed-by: Jai Luthra <jai.luthra@linux.dev>
-
-> ---
->  arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso      | 2 +-
->  arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso b/arch/a=
-rm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso
-> index ccc7f5e43184..7fc7c95f5cd5 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso
-> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso
-> @@ -22,7 +22,7 @@ &main_i2c2 {
->  	#size-cells =3D <0>;
->  	status =3D "okay";
-> =20
-> -	i2c-switch@71 {
-> +	i2c-mux@71 {
->  		compatible =3D "nxp,pca9543";
->  		#address-cells =3D <1>;
->  		#size-cells =3D <0>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso b/a=
-rch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
-> index 4eaf9d757dd0..b6bfdfbbdd98 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
-> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
-> @@ -22,7 +22,7 @@ &main_i2c2 {
->  	#size-cells =3D <0>;
->  	status =3D "okay";
-> =20
-> -	i2c-switch@71 {
-> +	i2c-mux@71 {
->  		compatible =3D "nxp,pca9543";
->  		#address-cells =3D <1>;
->  		#size-cells =3D <0>;
-> --=20
-> 2.34.1
->=20
-
---dg2ofw3wo72v6frl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmf8sBoACgkQQ96R+SSa
-cUUy0BAA0gb0YY99MVaqw2qUY9WJWfMvUk7dMWK89JmtKgTTWnm/y2O0me2oWrnv
-o3j3FrXIZip5yr8iyzcscWpsFpCR/XiyyprLC0vIajZqs5Wf2HsthGfWZkNRCGX9
-rCrttkk5lj4KX/mNHiUdkTbUTtxzogU/QMHu+wQ8OwX0BtiCw4zzkuhhl2wXqlW/
-eh7UFQ1ntmdx91GHqa6kHXulxt76PHB8/PHgSLzqlGHX8TCdpBwYCUCKyeK8ckT1
-/+jnmnTa9HIRUxsbU50R119Rvj5HZ5X2ZAzY/qw8Q+fHozAAHk3iC6sAj/o53rwu
-9dkMkqUBOZnuSFCRaDhhmgQpV5OLl03Tc6TpMUJJCkJ10TJ5DcIrANitCM7s4z1/
-Eo5o2+SMMza9pFo94f7uJzn5JTUkhaZYu7cc5I++L5HFQzI1v68ieBdV4dfL/QdB
-W9niWHSpLZD6EGDfki/mGdvM4OqKgVAzszW/n4gH3ljMx39Yuc9uXP5wqnbQT87w
-sIqDTJpRuG3UYpXaJk40/fQ0/d6gYCkibCRIYY7Z9H4eu91ei8syeazveEr/dQ/w
-iIThXVfBUaK5Zs9oH4ETcq3z0XLsQ3XAjqLYHv4p18kGdnmq856vFPplFoUy4m9a
-trre856gV5bh32+mxX5M3DYALa2JA1wbs0rulf6Y2pgMLjq9MzM=
-=HJ8g
------END PGP SIGNATURE-----
-
---dg2ofw3wo72v6frl--
 
