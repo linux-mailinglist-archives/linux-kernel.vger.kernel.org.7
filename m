@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-603057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 635E3A88303
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:49:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53EA9A8833D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 727D61731D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:46:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D52D0163E98
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EF3299CB1;
-	Mon, 14 Apr 2025 13:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7889925229A;
+	Mon, 14 Apr 2025 13:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="RHNBEhgh"
-Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+ZA/MO/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F53429962C;
-	Mon, 14 Apr 2025 13:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECE82C0319;
+	Mon, 14 Apr 2025 13:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744637363; cv=none; b=MpItyg0OrlC1GmwB2xrwEGiDQH3t1Z15REttkDTeIBFT/Am1Um/k045Lzjx/zOHpubmmTP3G1XM7APzt4qLSHrgVqkXsEUwsf5M/t1+qS6ohJZmLeVqfsZ19im/0Q8jcfz2y/2y6riAlf3fbroajDiH2Ki4fUmL1aoSWSPHreqQ=
+	t=1744637400; cv=none; b=pbi0TKzSUZar7qEiOOPjXjaAYuBuDmw1Py9l24r0uOvPBAIvw3vHr+nz2Eoa4gC3NTnNi2GJyBM3UB45XdK450PyQwRpifjum6cPaCM7unrQQnSOJ3YC4tmHfnE2sHTu09BI7W50nXyYh/Tt4cpm+Tx+/XHoOin16CnyDZtSWzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744637363; c=relaxed/simple;
-	bh=wIGlb0JgOuwiC6IqQEg85pvZ6euhKuAbSysd3/Caak8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jDS8ltfbhvlbdZckyZygpyDmIwUAUvbHJFfcoIjgufOpx+MJ3NAcWtWvPISLejZtcFhkvojHRUIeFI5t/DrtfK1vPAA0eyBZ1fI9kbyobTNTGlEgK731+v1GrUqXVed3W3u7LUfV/FS1lt95xV1pEGshXDZSkqzsNf3Tp6/Z6UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=RHNBEhgh; arc=none smtp.client-ip=195.181.215.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-	t=1744637356; bh=wIGlb0JgOuwiC6IqQEg85pvZ6euhKuAbSysd3/Caak8=;
-	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
-	b=RHNBEhghIQYVkI1o3nhkC8zttax0ME5Ix9OJQmq4Dui0DaQPuUUVnmDCC2nXXeP5m
-	 tQOltPwFaBOGi0Wq0bQyaYEw78JKlsTxUFCOCUXASqCqcz+vG1wkzigHfozd/gu18l
-	 fQD0ZZNTO06uHZhVjNeDeJUvbtvrM6sel6T2SID0=
-Date: Mon, 14 Apr 2025 15:29:16 +0200
-From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Igor Mammedov <imammedo@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	=?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
-Subject: Re: [PATCH 1/1] PCI: Restore assigned resources fully after release
-Message-ID: <3vbkz6o375yu6dybgxpzuazqivibvdpbx64hp6bqauinquhltf@tupmqb2p3abp>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Igor Mammedov <imammedo@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	=?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
-References: <20250403093137.1481-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1744637400; c=relaxed/simple;
+	bh=9J/z5T0JY/xcwsk6SXFTA+zsyiZ/gs3asCJyO6IhBN4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ud4aZTe4dPpbEE7gClS22r0kBzTpiRiIs7b9yAzcGTEyjWlDU/KHk02TGcti2RRmXemWkchpSmNs+JaAjFfFEM6Oo0bzNXQGizlmyM9EP36oo+xb2KbNtoMVD+iA3Mi07EM+8Jm1B46GYjOc+zE7cTRMbDbMN+gg9EK6uLFPxUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+ZA/MO/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 005E1C4CEE2;
+	Mon, 14 Apr 2025 13:29:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744637400;
+	bh=9J/z5T0JY/xcwsk6SXFTA+zsyiZ/gs3asCJyO6IhBN4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=X+ZA/MO/6pO3VZKIoY/rjL1w0VrNTYq6gu+NjqK8kpc8XxPr3dkU5Owgguif21Egj
+	 48P3QvjBe/3ZNnBnc4KT55VFpn2PhseKas70t5kD8ul0l7WBVjbJ1TUYWpp2nGho+D
+	 /pD/kIN3FlHoI1cL9uFHRzjQ1ejPLtb4e9GP4MeuTlakcDDb4hJmIyHw+2ijdNUNZA
+	 xwpi8M8jIG11FP/OVTVuqQlDeYXdNZjqORRcmbZOiuFkKE+K8DHdG/Nnq49JdCxmY1
+	 dqwAwIG9GQs26j3cEvO4XJSgYic1xBibwxSbQvOmHjiYzQq38Ud7Pm/xoSMsjAzgnr
+	 36UX7cj/gQDpA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Michael Mueller <mimu@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Sasha Levin <sashal@kernel.org>,
+	borntraeger@linux.ibm.com,
+	imbrenda@linux.ibm.com,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	kvm@vger.kernel.org,
+	linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 01/24] KVM: s390: Don't use %pK through tracepoints
+Date: Mon, 14 Apr 2025 09:29:34 -0400
+Message-Id: <20250414132957.680250-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.87
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250403093137.1481-1-ilpo.jarvinen@linux.intel.com>
 
-Hello,
+From: Thomas Wei√üschuh <thomas.weissschuh@linutronix.de>
 
-On Thu, Apr 03, 2025 at 12:31:37PM +0300, Ilpo J‰rvinen wrote:
-> PCI resource fitting code in __assign_resources_sorted() runs in
-> multiple steps. A resource that was successfully assigned may have to
-> be released before the next step attempts assignment again. The
-> assign+release cycle is destructive to a start-aligned struct resource
-> (bridge window or IOV resource) because the start field is overwritten
-> with the real address when the resource got assigned.
-> 
-> Properly restore the resource after releasing it. The start, end, and
-> flags fields must be stored into the related struct pci_dev_resource in
-> order to be able to restore the resource to its original state.
-> 
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Fixes: 96336ec70264 ("PCI: Perform reset_resource() and build fail list in sync")
-> Signed-off-by: Ilpo J‰rvinen <ilpo.jarvinen@linux.intel.com>
-> Tested-by: Guenter Roeck <linux@roeck-us.net>
+[ Upstream commit 6c9567e0850be2f0f94ab64fa6512413fd1a1eb1 ]
 
-I've tested this on Orange Pi 5+ where it fixed a regression, too.
+Restricted pointers ("%pK") are not meant to be used through TP_format().
+It can unintentionally expose security sensitive, raw pointer values.
 
-Tested-by: Ondrej Jirman <megi@xff.cz>
+Use regular pointer formatting instead.
 
-Thank you,
-	Ondrej
+Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
+Signed-off-by: Thomas Wei√üschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: Michael Mueller <mimu@linux.ibm.com>
+Link: https://lore.kernel.org/r/20250217-restricted-pointers-s390-v1-1-0e4ace75d8aa@linutronix.de
+Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
+Message-ID: <20250217-restricted-pointers-s390-v1-1-0e4ace75d8aa@linutronix.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/s390/kvm/trace-s390.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  drivers/pci/setup-bus.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> 
-> base-commit: 7d06015d936c861160803e020f68f413b5c3cd9d
-> 
-> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> index 54d6f4fa3ce1..e994c546422c 100644
-> --- a/drivers/pci/setup-bus.c
-> +++ b/drivers/pci/setup-bus.c
-> @@ -187,6 +187,9 @@ static void pdev_sort_resources(struct pci_dev *dev, struct list_head *head)
->  			panic("%s: kzalloc() failed!\n", __func__);
->  		tmp->res = r;
->  		tmp->dev = dev;
-> +		tmp->start = r->start;
-> +		tmp->end = r->end;
-> +		tmp->flags = r->flags;
->  
->  		/* Fallback is smallest one or list is empty */
->  		n = head;
-> @@ -545,6 +548,7 @@ static void __assign_resources_sorted(struct list_head *head,
->  		pci_dbg(dev, "%s %pR: releasing\n", res_name, res);
->  
->  		release_resource(res);
-> +		restore_dev_resource(dev_res);
->  	}
->  	/* Restore start/end/flags from saved list */
->  	list_for_each_entry(save_res, &save_head, list)
+diff --git a/arch/s390/kvm/trace-s390.h b/arch/s390/kvm/trace-s390.h
+index 6f0209d45164f..9c5f546a2e1a3 100644
+--- a/arch/s390/kvm/trace-s390.h
++++ b/arch/s390/kvm/trace-s390.h
+@@ -56,7 +56,7 @@ TRACE_EVENT(kvm_s390_create_vcpu,
+ 		    __entry->sie_block = sie_block;
+ 		    ),
+ 
+-	    TP_printk("create cpu %d at 0x%pK, sie block at 0x%pK",
++	    TP_printk("create cpu %d at 0x%p, sie block at 0x%p",
+ 		      __entry->id, __entry->vcpu, __entry->sie_block)
+ 	);
+ 
+@@ -255,7 +255,7 @@ TRACE_EVENT(kvm_s390_enable_css,
+ 		    __entry->kvm = kvm;
+ 		    ),
+ 
+-	    TP_printk("enabling channel I/O support (kvm @ %pK)\n",
++	    TP_printk("enabling channel I/O support (kvm @ %p)\n",
+ 		      __entry->kvm)
+ 	);
+ 
+-- 
+2.39.5
+
 
