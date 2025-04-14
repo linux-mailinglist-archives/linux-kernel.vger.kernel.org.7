@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel+bounces-603201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17AFEA884BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:27:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681FDA8847B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C893E188F647
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:20:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDD457A37F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A1E2472A9;
-	Mon, 14 Apr 2025 13:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BAC297A71;
+	Mon, 14 Apr 2025 13:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mG10IvCq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6A+4fEX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9612973DB;
-	Mon, 14 Apr 2025 13:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA28F2973DB;
+	Mon, 14 Apr 2025 13:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744638998; cv=none; b=VAhMb86RbfHKUQD8ePrzEi1LGS+P3/JqV1yfrR+mVoHg/PSYQE7oK9wVJ0143SkUdpY+aIOq7ksWzIE9i3gyAEPhApCnRqq2jcAJrMn7hNagDl9OtRSiX+XRJHWLUjt42BNShJMorS7OqoI6PUsbKfKWQyNxNY1RblGNGEvH7L8=
+	t=1744639001; cv=none; b=BYMSAiKEHV1RjeISveDUOa+YvlC/DCfbycG2h5kY36mJbqZlV9GRFAQOAxE1IMzD1cn7PMAjhcNA4+ZBRaoXIGb/qsVelMDglK5Ovw9sXxiNHGuEmfAQK3aejCTAdq7i3a8MRqVLggIBsekIThXNm4A9Xmujvs25eLMdaV9W39M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744638998; c=relaxed/simple;
-	bh=VPEb2K8tDnYjiX8IJGMJSBmSgMFmgydjh+ShSPL9v4o=;
+	s=arc-20240116; t=1744639001; c=relaxed/simple;
+	bh=/efdcXBCkp25/Whv4nPqxxiDxKeXYrIljk214SJcbtk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Dvf36EYAWhd2U5H/DWYY8+7Uj6vrxh9weiGbJ5bXMG4tBfggtLdBAjaZEgLMS2MG4r1R8Hzm/sa0i9t0E39FGciW+XcZQiYBCAGq9Y/9YRPu2q3KpK3TK3jG94niidlmS+xSs+JfDPPg2pegHlSZZnbsfjK7W8KyRNSt3tZEOb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mG10IvCq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5D40C4CEE2;
-	Mon, 14 Apr 2025 13:56:36 +0000 (UTC)
+	 MIME-Version:Content-Type; b=HzZaWRQ0dDfbYmDDKuQCfv4hJ2a5NYLJgIY6j92J/A5jzBoHSyRiK+ZYSZqMTK4sJwomVpzqZZbeer/qoy9Is14deVvDMTp8DqpTjrqglL/lmtsXN6rOjFug8FBOcCcTkGc+V/3NLBQbQjU6IXQFbAD0Ue9OYtNFFTkbjj2HNwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6A+4fEX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F7CC4CEEC;
+	Mon, 14 Apr 2025 13:56:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744638997;
-	bh=VPEb2K8tDnYjiX8IJGMJSBmSgMFmgydjh+ShSPL9v4o=;
+	s=k20201202; t=1744639000;
+	bh=/efdcXBCkp25/Whv4nPqxxiDxKeXYrIljk214SJcbtk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=mG10IvCqFdT5Y1P9uGnZ/YRaWdJZo4xuhf5uJmwvYMZdfMhLsvIloBa9KKcqZJP2t
-	 Sv/ub4mYZ/gZemsptAs3HhKlYQCy0vWAH2xqhOcZJFWkY6zVpyBRDEoA1g1yRIS+Y7
-	 KDtSMErL5EHalwpxYyqvvj8+LnLp0gpVHw6QDSH38FxKMvridvOBAHCwwFOk1MUfHB
-	 LNeKDGR2C+mJUfQ141RnjPk0OPQpqU+WLXz33VGZg3ryOloOjYbHTWT/qr3YuDfPrx
-	 OaOVp9PYd3HUm2fUprKx124Fu2OzY3F2Rs8R1eYxZ4aV+p55gJbVYgxrgud3brsPJq
-	 nu1Ly89V5jnpQ==
+	b=k6A+4fEXe7SHkW6I6+sdgDNidr/hWTyi5YOiRu2mVojqOAxbbfHtKzflStaYBmy2u
+	 a16daAogKddexBTxm7P9VUpnEvnAbNFPU8e7x8A6K7kkTPy3Kk7nE1PDz6L+tbZ/1V
+	 /zX+Om0AGw7RNg6k9+6ANrc1/PfyE519FdavAIC5JtNn/ywktWbiKXZnlXtsEP01/f
+	 mgL+1ZalDZIa1gqErc1oE1ea2tzdW2pjlVe23B6HmW+KBvcluU5F91/3mvZ2gJZG/j
+	 R7iY6fMS38QZGq3DoBhHB1wAx4DS7GU0bidyNVCa1+wcrDXq5p0Mkbf5WA5yBSisWa
+	 cpG20PRBe0LHw==
 From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- patches@opensource.cirrus.com
-In-Reply-To: <20250409104544.878475-1-rf@opensource.cirrus.com>
-References: <20250409104544.878475-1-rf@opensource.cirrus.com>
-Subject: Re: [PATCH] ASoC: cs-amp-lib-test: Don't select SND_SOC_CS_AMP_LIB
-Message-Id: <174463899647.86688.12448424769294907568.b4-ty@kernel.org>
-Date: Mon, 14 Apr 2025 14:56:36 +0100
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Keguang Zhang <keguang.zhang@gmail.com>
+Cc: linux-mips@vger.kernel.org, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20250409-loongson1-ac97-v2-0-65d5db96a046@gmail.com>
+References: <20250409-loongson1-ac97-v2-0-65d5db96a046@gmail.com>
+Subject: Re: [PATCH v2 0/4] Add support for Loongson-1 AC97
+Message-Id: <174463899776.86688.5147297198063500549.b4-ty@kernel.org>
+Date: Mon, 14 Apr 2025 14:56:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,15 +63,12 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c25d1
 
-On Wed, 09 Apr 2025 11:45:44 +0100, Richard Fitzgerald wrote:
-> Depend on SND_SOC_CS_AMP_LIB instead of selecting it.
-> 
-> KUNIT_ALL_TESTS should only build tests for components that are
-> already being built, it should not cause other stuff to be added
-> to the build.
+On Wed, 09 Apr 2025 18:29:30 +0800, Keguang Zhang wrote:
+> Add the driver and dt-binding document for Loongson-1 AC97.
+> Add the dt-binding document for Realtek ALC203 Codec.
+> Add DT support for the AC97 generic codec driver.
 > 
 > 
-> [...]
 
 Applied to
 
@@ -75,8 +76,14 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: cs-amp-lib-test: Don't select SND_SOC_CS_AMP_LIB
-      commit: 96014d91cffb335d3b396771524ff2aba3549865
+[1/4] ASoC: dt-bindings: Add Loongson-1 AC97 Controller
+      commit: d60007fc9b739d939d5b6148c25805f206c836f9
+[2/4] ASoC: dt-bindings: Add Realtek ALC203 Codec
+      commit: 0142b45000457b9d112d40d5685d0898e51ed52f
+[3/4] ASoC: loongson: Add Loongson-1 AC97 Driver
+      commit: 1fc55a2baef5289c9535ce10a4f5f37664ce854a
+[4/4] ASoC: ac97: Add DT support
+      commit: 436a3cc8afbf34bb68166c2c5c19ca5113c0c756
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
