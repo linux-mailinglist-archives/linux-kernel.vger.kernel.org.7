@@ -1,88 +1,55 @@
-Return-Path: <linux-kernel+bounces-602872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D503A88064
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:32:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DEA3A88069
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A862B3A5242
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30093189007B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5882BD5A6;
-	Mon, 14 Apr 2025 12:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VbKNcsH5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676C72BD5AB;
+	Mon, 14 Apr 2025 12:33:14 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6595318C32C;
-	Mon, 14 Apr 2025 12:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E939329AAE5;
+	Mon, 14 Apr 2025 12:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744633960; cv=none; b=HvM4qo5hGXkREZaNF5dB46fIJacXnbfOoXjN7wwfkj5C2vqzabLnClRnFLjFU/cKIhcESSgke8fZsf+GKu9Hy23a0+Kf7LGNo8lKlqFxjRiyFizCTiaAYcnM1IVPn+GNtq3uYpOnxUXoyp0MAznjfKOiIXQTiPd0IwppSjo+aPI=
+	t=1744633994; cv=none; b=Bn2dL2EzMh85/iUic2FBcVZ/dP8waCUZbubD0oxMUGY0PvdmNm4x4isOwKwyuM+RZvhE+cbEkwMQJyuptjCYIH3BWmVd6Txut5JNzn+x9Cml04Dh+fitCnIHa7SL13s4u9wkVKttLUs+/yMqMHHdjMYJ2kQ3Vur3waWbekCF3cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744633960; c=relaxed/simple;
-	bh=b1keoTXPWw7k5udECc1+8NUdD3ePHHJCcIsh6QBDyYc=;
+	s=arc-20240116; t=1744633994; c=relaxed/simple;
+	bh=6400OJF4YI0lPtmmohOJ8lmx6Xr6n7ia3Oj+TECM5Ls=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rYvixVXn6LBHC4zyHBhFdmR8XTopoqdNm5k0xvmUs5qy+CTR2pS9NCSNH6pR1hTx7Md4NXHscPeEH+3LzptdNHNONCEiPSClMVNx+A6Wg2wgDVUPAuak7gepYpCw6Hcm8oWAEVrCpP7B69fQRv4qXLiGXba5wX0pdZZf7V7gm6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VbKNcsH5; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744633958; x=1776169958;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=b1keoTXPWw7k5udECc1+8NUdD3ePHHJCcIsh6QBDyYc=;
-  b=VbKNcsH5nS1nIgn1hxeqxvEXiHoqGZeMNWn+QCdy9FfcLri3qnYHB2YD
-   2qU0wLyRDwdAjlLDTEORPRBufhqyY0tgeryDqW08DMiKeRpQdMId6VUrP
-   0AKowUk/lx0lBEG/vMm98ePSKnf/MALrb0QQdCq50EUKSSlO9Kxhh+6TN
-   sAl8pPDGCP+wrJN3zEr6ARsMwtsCzVGCLCJU6gfJM9SKgMty74Wpyjj38
-   Au3H1kUQfpxj/O31S0+6+6MmFECDVxtQ/GMS0FuloXw3VCdF8E5y60NpG
-   1a4yktofKXY00snQVMBQF2OmLKpbRMBIqyAA9nPPP/9KckHjfV0subauh
-   g==;
-X-CSE-ConnectionGUID: iDcnApmaSyyO1rORWUtPCw==
-X-CSE-MsgGUID: MYluBme5RVKPITNLzXV+nA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="46266132"
-X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="46266132"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 05:32:37 -0700
-X-CSE-ConnectionGUID: D/kesmV9TDqj8IL94+rbWQ==
-X-CSE-MsgGUID: 9zsfbpScQAS/3cAy6pmd/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="160797047"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 05:32:34 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 0B31C11F871;
-	Mon, 14 Apr 2025 15:32:32 +0300 (EEST)
-Date: Mon, 14 Apr 2025 12:32:31 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: "Yan, Dongcheng" <dongcheng.yan@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Yan, Dongcheng" <dongcheng.yan@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	hverkuil@xs4all.nl, u.kleine-koenig@baylibre.com,
-	ricardo.ribalda@gmail.com, bingbu.cao@linux.intel.com,
-	hao.yao@intel.com
-Subject: Re: [PATCH v1 1/2] platform/x86: int3472: add hpd pin support
-Message-ID: <Z_0AX9sdwSAWhzTc@kekkonen.localdomain>
-References: <cfc709a8-85fc-4e44-9dcf-ae3ef7ee0738@redhat.com>
- <c8ae2d43-157c-408a-af89-7248b30d52d1@linux.intel.com>
- <Z_zDGYD1QXZYWwI9@smile.fi.intel.com>
- <d9cab351-4850-42c7-8fee-a9340d157ed9@linux.intel.com>
- <Z_zMMtUdJYpHuny7@smile.fi.intel.com>
- <f10f919e-7bdc-4a01-b131-41bdc9eb6573@intel.com>
- <01570d5d-0bdf-4192-a703-88854e9bcf78@redhat.com>
- <9dc86b0c-b63c-447d-aa2f-953fbccb1d27@redhat.com>
- <Z_z04jMiTg_xW-c2@kekkonen.localdomain>
- <518b1420-a356-4e4b-8422-c2689bc54794@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AK5Pv4A5V/DN//nyiaTpaXc6bQx9kGkDIBABrAGjrkyn+/HSJJ57M/g0qCrHwuJ4xP/dhRWiv+/+zYTAZ6eKWXqsa1LCmx6hNixJKhk90w5AZOBVjqZNpBLZv86dpVz5TMzxVR04HbEq4627bmorFdCJmm6GH5HovoxRuk6JhDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1u4Izh-0000000016s-3E1k;
+	Mon, 14 Apr 2025 12:32:57 +0000
+Date: Mon, 14 Apr 2025 13:32:54 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <linux@fw-web.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: mediatek: mt7988a-bpi-r4: allow hw
+ variants of bpi-r4
+Message-ID: <Z_0AdtyvehR9SHnU@pidgin.makrotopia.org>
+References: <20250412102109.101094-1-linux@fw-web.de>
+ <c8f9f019-a238-47c8-a900-9ca48ce09503@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,69 +58,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <518b1420-a356-4e4b-8422-c2689bc54794@redhat.com>
+In-Reply-To: <c8f9f019-a238-47c8-a900-9ca48ce09503@collabora.com>
 
-Hi Hans,
-
-On Mon, Apr 14, 2025 at 02:21:56PM +0200, Hans de Goede wrote:
-> Hi Sakari,
-> 
-> On 14-Apr-25 13:43, Sakari Ailus wrote:
-> > Hans, Dongcheng,
+On Mon, Apr 14, 2025 at 11:27:23AM +0200, AngeloGioacchino Del Regno wrote:
+> Il 12/04/25 12:21, Frank Wunderlich ha scritto:
+> > From: Frank Wunderlich <frank-w@public-files.de>
 > > 
-> > On Mon, Apr 14, 2025 at 01:09:47PM +0200, Hans de Goede wrote:
-> >> Hi,
-> >>
-> >> On 14-Apr-25 13:04, Hans de Goede wrote:
-> >>> Hi,
-> >>>
-> >>> On 14-Apr-25 11:59, Yan, Dongcheng wrote:
-> >>>> Hi Andy and Hans,
-> >>>>
-> >>>> I found the description of lt6911uxe's GPIO in the spec:
-> >>>> GPIO5 is used as the interrupt signal (50ms low level) to inform SOC
-> >>>> start reading registers from 6911UXE;
-> >>>>
-> >>>> So setting the polarity as GPIO_ACTIVE_LOW is acceptable?
-> >>>
-> >>> Yes that is acceptable, thank you for looking this up.
-> >>
-> >> p.s.
-> >>
-> >> Note that setting GPIO_ACTIVE_LOW will invert the values returned
-> >> by gpiod_get_value(), so if the driver uses that you will need
-> >> to fix this in the driver.
-> >>
-> >> Hmm, thinking more about this, I just realized that this is an
-> >> input pin to the CPU, not an output pin like all other pins
-> >> described by the INT3472 device. I missed that as first.
-> >>
-> >> In that case using GPIO_LOOKUP_FLAGS_DEFAULT as before probably
-> >> makes the most sense. Please add a comment that this is an input
-> >> pin to the INT3472 patch and keep GPIO_LOOKUP_FLAGS_DEFAULT for
-> >> the next version.
+> > Sinovoip has released other variants of Bananapi-R4 board.
+> > The known changes affecting only the LAN SFP+ slot which is replaced
+> > by a 2.5G phy with optional PoE.
 > > 
-> > The GPIO_LOOKUP_FLAGS_DEFAULT is the "Linux default", not the hardware or
-> > firmware default so I don't think it's relevant in this context. There's a
-> > single non-GPIO bank driver using it, probably mistakenly.
+> > Just move the common parts to a new dtsi and keep differences (only
+> > i2c for lan-sfp) in dts.
 > > 
-> > I'd also use GPIO_ACTIVE_LOW, for the reason Dongcheng pointed to above.
+> > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> > ---
+> > v2:
+> > - added basic dts for 2g5 variant
+> > - moved i2c used for sfp-lan to board dts
+> > ---
+> >   arch/arm64/boot/dts/mediatek/Makefile         |   2 +
+> >   .../mediatek/mt7988a-bananapi-bpi-r4-2g5.dts  |   5 +
+> >   .../dts/mediatek/mt7988a-bananapi-bpi-r4.dts  | 404 +-----------------
+> >   .../dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi | 403 +++++++++++++++++
+> >   4 files changed, 414 insertions(+), 400 deletions(-)
+> >   create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-2g5.dts
+> >   create mode 100644 arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi
+> > 
+> > diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+> > index 58484e830063..a1ebc9aa4ba6 100644
+> > --- a/arch/arm64/boot/dts/mediatek/Makefile
+> > +++ b/arch/arm64/boot/dts/mediatek/Makefile
+> > @@ -22,6 +22,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-sd.dtbo
+> >   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-rfb.dtb
+> >   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986b-rfb.dtb
+> >   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4.dtb
+> > +dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-2g5.dtb
+> >   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-emmc.dtbo
+> >   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4-sd.dtbo
+> >   dtb-$(CONFIG_ARCH_MEDIATEK) += mt8167-pumpkin.dtb
+> > @@ -107,4 +108,5 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8516-pumpkin.dtb
+> >   DTC_FLAGS_mt7986a-bananapi-bpi-r3 := -@
+> >   DTC_FLAGS_mt7986a-bananapi-bpi-r3-mini := -@
+> >   DTC_FLAGS_mt7988a-bananapi-bpi-r4 := -@
+> > +DTC_FLAGS_mt7988a-bananapi-bpi-r4-2g5 := -@
+> >   DTC_FLAGS_mt8395-radxa-nio-12l := -@
+> > diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-2g5.dts b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-2g5.dts
+> > new file mode 100644
+> > index 000000000000..76eca976b968
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4-2g5.dts
+> > @@ -0,0 +1,5 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+> > +
+> > +/dts-v1/;
+> > +
+> > +#include "mt7988a-bananapi-bpi-r4.dtsi"
 > 
-> The GPIO being interpreted as active-low is a thing specific to
-> the chip used though. Where as in the future the HPD pin type
-> in the INT3472 device might be used with other chips...
+> This should at least have some different compatible, if not probably also a
+> different model string - as it's a different device.
 > 
-> Anyways either way is fine with me bu, as mentioned, using GPIO_ACTIVE_LOW
-> will invert the values returned by gpiod_get_value(), for which the driver
-> likely needs to be adjusted.
+> 	compatible = "bananapi,bpi-r4-2g5", "bananapi,bpi-r4", "mediatek,mt7988a";
 
-The driver appears to ask for both IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING
-and it only uses the GPIO for an ISR so it doesn't seem to require driver
-changes IMO. Although this also seems to make the polarit irrelevant, at
-least for this driver.
+Imho it doesn't make sense to declare compatibility with the
+"bananapi,bpi-r4" as the "bananapi,bpi-r4-2g5" is NOT compatible with the
+"bananapi,bpi-r4". It's a different board and using firmware meant for the
+"bananapi,bpi-r4-2g5" on the "bananapi,bpi-r4" (or vice versa) will result
+in a non-working Ethernet port.
 
--- 
-Regards,
-
-Sakari Ailus
 
