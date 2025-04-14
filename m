@@ -1,246 +1,163 @@
-Return-Path: <linux-kernel+bounces-603803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1AAAA88C63
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:43:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464F9A88C84
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76BD93B2802
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:43:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455F216A347
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC761C5D50;
-	Mon, 14 Apr 2025 19:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCB51C8616;
+	Mon, 14 Apr 2025 19:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="BwaxlqCf"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Qz8dSeYD"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0633FC2;
-	Mon, 14 Apr 2025 19:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744659822; cv=pass; b=J+U7Ns4wTzzR4QMiPaW4WCDuFi02D/sCjpfR15iRz6F8nii06LWxIzAL1I0ggDSs9UNK3u4ji5qdulhEnX+GFINxRQMPaJuD8oAH0pQ+jczSn1X5uIoqX65Yk3nAgtdFYHpsTdjlWuBXAcjx7kqyk+Wq1kogThSDs/XSlvCSGNU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744659822; c=relaxed/simple;
-	bh=tjo3jQe96GSLinLo/4NAMvqApLNbnQdtUc6qjgq91wI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WqPn6E91CFH+b/+JN+G/5pfFIh0CHdMPy/ld0vRvvAgwKc76ksSqBFrk5oMKEmThenS1gdhzLDEIp+hRjr2V2/r7724d7TuxcnfEFtuG9NaRzVO2P/M3vPqkN2jUWLLjz0cZ1EfjUpRJ6M3EJO08wWWfd0Vro3YDOw77soMHu78=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=BwaxlqCf; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1744659793; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NYnh47+N5Vhhhzu4jLqQuWk9ZpietQY7sN1ScxaVTcrrmhJcwHd2tYBQtTnOHw9vwPyrskAkMY+CcBk5fIEOnBWMONYSLvfQ2JGVDp7dMsXZiB5qCxcTG8Dp0Ksed7sI7ZnNMpZ1UNiuQ1vT/yH2Por+ZS8+CZmurSJPJ1OX8V4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1744659793; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Xh7ESEH0SRDsTTA+0VoPrwh9bXEKVfaUYrmcwXEkfOg=; 
-	b=Qf38uLw6VfsPrXWVxAxndjuPEPXit6ArSF8hUQ42r9zq2D5/xWZplW5yTBABtBHWXhKNLUvo68zswondDpqa9ZcnReaI5alrhQTuu9LvcKXpjywulgoJoL2Kn4aPMnvu8YXUn6PAym3OvK010pba+sRfoxRpZRLPwvpoALqFyvM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744659792;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=Xh7ESEH0SRDsTTA+0VoPrwh9bXEKVfaUYrmcwXEkfOg=;
-	b=BwaxlqCfLXMr58D60gn3JgKo/6P31uyvk23G+z12+RjnAky8hTQLNRN2e3s5M/1X
-	ItXsS4IgADsBxBx5LWayrJsCgqsC7LRTBGTQYEkt+SiHIAoB6L55opi5/s847HIVF/X
-	/UMdHQYaNt7XVW6chd79fTZe33z6MbE67GKmkPRc=
-Received: by mx.zohomail.com with SMTPS id 17446597917831022.0556401897062;
-	Mon, 14 Apr 2025 12:43:11 -0700 (PDT)
-Date: Mon, 14 Apr 2025 20:43:06 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	kernel@collabora.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v7 1/4] drm/panthor: Introduce BO labeling
-Message-ID: <ejq47pilr3phywio3oudfrqbj2a3u2j3irk7uhlwd4pz24ve2c@3pc3cbdlerqk>
-References: <20250411150357.3308921-1-adrian.larumbe@collabora.com>
- <20250411150357.3308921-2-adrian.larumbe@collabora.com>
- <93a4ec41-3bd8-4485-a4fe-d0def3509b79@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7530C2E645
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744660529; cv=none; b=ID5X1bm0URIqgNqLrkjsmfEQ9iZzmUszixdrrzAVgchRNw6uJNECErtrzshi8zkOj2njkYvLb81eR41qIUVGXA6oTZN5suN2Y8YK8cYpSm2Kkhs754UoSaGkIwy7LIPPLiGiBEbOBmsNvlTsroZxXcB54FTmGqszBotK3eMzYis=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744660529; c=relaxed/simple;
+	bh=um7KY1goRBfoVujd+omY/E95dCOWx2kO/R7QV2JW/eM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KOe4CXq2jqLKfeaqEW+8iNVkawV4YwaG78K/aFWwaL19QZdFnJw45vWowbR7RGjiug0sQtgkK2ZByrC5RoHh2/0nXngci9LdYUTK6KsWVFlwrKgsrRt6xRAUnYBSgIgtNIzTn18URlSlG49vfEwJHLQ82dDEx5FpQ+KCOpPMwZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Qz8dSeYD; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <77b8a156-49af-4900-b17a-b2b3fd11eba0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744660512;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jE0M98+rObl+Zn7RowjnVlz8XhYfQEBVKI1/h9Xj26U=;
+	b=Qz8dSeYDWFs5SXRoR9Rn+XEfoBi4dQlx/KJ8IDAgOp2304GhuuRGNIkqKAY3Ki0MuS/J38
+	aJuq6zxTM8c1f4oMvpyIytxdNp4KWOFWHUz54pdaAsnGR6P0fYyYXvPX0ZrfoO5SsEmSeI
+	61HmYPshoLWuCW+aHvhXwNwg64DGomE=
+Date: Mon, 14 Apr 2025 14:43:50 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <93a4ec41-3bd8-4485-a4fe-d0def3509b79@arm.com>
+Subject: Re: [PATCH 1/3] ASoC: SDCA: Create DAPM widgets and routes from DisCo
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, yung-chuan.liao@linux.intel.com,
+ peter.ujfalusi@linux.intel.com, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+References: <20250321163928.793301-1-ckeepax@opensource.cirrus.com>
+ <20250321163928.793301-2-ckeepax@opensource.cirrus.com>
+ <2b899796-b9fc-49ef-a4a7-858baa90a36b@linux.dev>
+ <Z+KROae2x3nB6Ov8@opensource.cirrus.com>
+ <a5aa25de-919f-462c-8aab-996fbc381de9@linux.dev>
+ <Z+PTl4fg5tRoXmEE@opensource.cirrus.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+In-Reply-To: <Z+PTl4fg5tRoXmEE@opensource.cirrus.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Steven,
+Delayed answer, sorry...
 
-On 14.04.2025 10:50, Steven Price wrote:
-> Hi Adrián,
->
-> On 11/04/2025 16:03, Adrián Larumbe wrote:
-> > Add a new character string Panthor BO field, and a function that allows
-> > setting it from within the driver.
-> >
-> > Driver takes care of freeing the string when it's replaced or no longer
-> > needed at object destruction time, but allocating it is the responsibility
-> > of callers.
-> >
-> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> > Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> > ---
-> >  drivers/gpu/drm/panthor/panthor_gem.c | 39 +++++++++++++++++++++++++++
-> >  drivers/gpu/drm/panthor/panthor_gem.h | 17 ++++++++++++
-> >  2 files changed, 56 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/panthor/panthor_gem.c
-> > index 8244a4e6c2a2..af0ac17f357f 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_gem.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_gem.c
-> > @@ -2,6 +2,7 @@
-> >  /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
-> >  /* Copyright 2023 Collabora ltd. */
-> >
-> > +#include <linux/cleanup.h>
-> >  #include <linux/dma-buf.h>
-> >  #include <linux/dma-mapping.h>
-> >  #include <linux/err.h>
-> > @@ -18,6 +19,14 @@ static void panthor_gem_free_object(struct drm_gem_object *obj)
-> >  	struct panthor_gem_object *bo = to_panthor_bo(obj);
-> >  	struct drm_gem_object *vm_root_gem = bo->exclusive_vm_root_gem;
-> >
-> > +	/*
-> > +	 * Label might have been allocated with kstrdup_const(),
-> > +	 * we need to take that into account when freeing the memory
-> > +	 */
-> > +	kfree_const(bo->label.str);
-> > +
-> > +	mutex_destroy(&bo->label.lock);
-> > +
-> >  	drm_gem_free_mmap_offset(&bo->base.base);
-> >  	mutex_destroy(&bo->gpuva_list_lock);
-> >  	drm_gem_shmem_free(&bo->base);
-> > @@ -196,6 +205,7 @@ struct drm_gem_object *panthor_gem_create_object(struct drm_device *ddev, size_t
-> >  	obj->base.map_wc = !ptdev->coherent;
-> >  	mutex_init(&obj->gpuva_list_lock);
-> >  	drm_gem_gpuva_set_lock(&obj->base.base, &obj->gpuva_list_lock);
-> > +	mutex_init(&obj->label.lock);
-> >
-> >  	return &obj->base.base;
-> >  }
-> > @@ -247,3 +257,32 @@ panthor_gem_create_with_handle(struct drm_file *file,
-> >
-> >  	return ret;
-> >  }
-> > +
-> > +void
-> > +panthor_gem_bo_set_label(struct drm_gem_object *obj, const char *label)
-> > +{
-> > +	struct panthor_gem_object *bo = to_panthor_bo(obj);
-> > +	const char *old_label;
-> > +
-> > +	scoped_guard(mutex, &bo->label.lock) {
-> > +		old_label = bo->label.str;
-> > +		bo->label.str = label;
-> > +	}
-> > +
-> > +	kfree(old_label);
->
-> Shouldn't this be kfree_const()? I suspect as things stand we can't
-> trigger this bug but it's inconsistent.
+>> How would the state of those DAPM SU widgets be updated
+>> though? I think we need to 'translate' the GE settings to tell
+>> DAPM which paths can become active, but the SUs state is set
+>> by hardware so I could see a possible racy disconnect if we
+>> make a path activable but hardware hasn't done so yet.
+> 
+> All the SU DAPM widgets are linked to the single GE control,
+> the same ALSA control is shared across all the widgets. So
+> all the paths are updated in a single DAPM sync, and on the
+> hardware side with a single write to the GE control.
 
-This could only be called either from the set_label() ioctl, in which case
-old_label could be NULL or a pointer to a string obtained from strdup(); or from
-panthor_gem_kernel_bo_set_label(). In the latter case, it could only ever be
-NULL, since we don't reassign kernel BO labels, so it'd be safe too.
+The race I am concerned about is between SU values represented in DAPM and actual values propagated inside the SDCA device. There could be a delay between writing a GE register and the SU register values changing.
 
-However I do agree that it's not consistent, and then in the future perhaps
-relabelling kernel BO's might be justified, so I'll change it to kfree_const().
+>>>>> SDCA also has a slight habit of having fully connected paths, relying
+>>>>> more on activating the PDEs to enable functionality. This doesn't map
+>>>>> quite so perfectly to DAPM which considers the path a reason to power
+>>>>> the PDE. Whilst in the current specification Mixer Units are defined as
+>>>>> fixed-function, in DAPM we create a virtual control for each input. This
+>>>>> allows paths to be connected/disconnected, providing a more ASoC style
+>>>>> approach to managing the power.
+>>>>
+>>>> Humm, maybe my analysis was too naive but the SDCA PDE seemed
+>>>> like a DAPM power supply to me. When a path becomes active,
+>>>> DAPM turns on the power for you, and power is turned off some time
+>>>> after the path becomes inactive.
+>>>
+>>> Correct, the PDEs are modeled as supply widgets and those are
+>>> powered up when the path is active as normal. The problem
+>>> alluded to in this paragraph is there a couple times where
+>>> SDCA topologies just have a permanently connected path so
+>>> things would always power up.
+>>
+>> Ah yes those loops would indeed be problematic, but no more
+>> than in existing non-SDCA topologies where we used pin switches
+>> to disable such loops. All existing TDM-based solutions used
+>> pin switches, I was assuming we'd use them as well for SDCA.
+> 
+> I wanted to do a little more thinking on it. The general
+> concern I have is that typically the pin switches are added
+> along with the "fabric" widgets in the machine driver. As this
+> code here is effectively creating a single codec (function in
+> SDCA land), it feels like it is probably inappropriate to hook
+> up pin switchs at this level.
+> 
+> To put that as a more concrete example this code will create
+> input widgets for IT 31, 32, 33 (the UAJ mics), however it
+> would be unusual to hook a pin switch to those. Something
+> should be creating an actual microphone widget, attaching
+> that to the input widgets and attaching a pin switch to that.
+> Typically those actions are handled in the machine driver,
+> there is possibly an argument for handling them in the codec
+> driver for SDCA but I felt it would make more sense to progress
+> things a little further until resolving that one.
 
-> > +}
-> > +
-> > +void
-> > +panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const char *label)
-> > +{
-> > +	const char *str;
-> > +
-> > +	str = kstrdup_const(label, GFP_KERNEL);
-> > +	if (!str) {
->
-> In the next patch you permit user space to clear the label
-> (args->size==0) which means label==NULL and AFAICT kstrdup_const() will
-> return NULL in this case triggering this warning.
+The SDCA spec is supposed to describe what's physically connected, so when we parse the DisCo descriptors we should only see the level that is typically present in machine drivers. The codec descriptors are not generic at all, they should only describe a specific way of how a SDCA codec is used. The traditional split between codec and machine drivers does not really apply for SDCA, the SDCA descriptors represent the *machine* already.
 
-Kernel and UM-exposed BO's should never experience cross-labelling, so in theory
-this scenario ought to be impossible. The only way panthor_gem_kernel_bo_set_label()
-might take NULL in the 'label' argument is that someone called panthor_kernel_bo_create()
-with NULL for its name 'argument'.
+>>> My opinion is that even if we end up adding the pin switches as
+>>> well it still makes sense to allow connecting and disconnecting
+>>> the inputs of a Mixer Unit.  These are typically where two
+>>> audio streams come together and having the ability from the
+>>> host side to say if you want that connection or not seems very
+>>> valuable to me. As in SDCA land you basically make that choice by
+>>> directly flipping the PDE.
+>>
+>> I have no objection if there are both pin switches and MU switches.
+>>
+>> I view pin switches as a more generic mechanism that userpace
+>> has to set to use a specific endpoint.
+>>
+>> The MU switches seem like debug capabilities to isolate which
+>> path has a problem. My experience fixing Baytrail issues is
+>> that you want a default mixer switch to be on, otherwise you'll
+>> get warnings on unconnected items or 'there is no sound' bug
+>> reports. In other words, the MU switches are a nice-to-have
+>> mechanism to disable default paths, so even if userspace
+>> doesn't touch those controls sound can be heard on endpoints.
+> 
+> The mixer switches do default to connected.
+> 
+> What I like about having mixer switches is it allows a
+> clearer specification of intent. For example one can power
+> the capture path and one can power the playback path, but the
+> mixer switch makes it clear user-space has an intention to
+> use the sidetone rather than just those two paths being
+> powered coincidentally.
+> 
+> I could drop them for now and just have the mixers permanently
+> connected, until we deal with pin switching, but I am inclined
+> to leave it as is and we can revisit later if necessary.
 
-I think as a defensive check, I could do something as follows
-
-void
-panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const char *label)
-{
-	const char *str;
-
-	/* We should never attempt labelling a UM-exposed GEM object */
-	if (drm_WARN_ON(bo->obj->dev, &bo->obj->handle_count > 0))
-		return;
-
-	if (!label)
-		return;
-
-       [...]
-}
-
-> Thanks,
-> Steve
->
-> > +		/* Failing to allocate memory for a label isn't a fatal condition */
-> > +		drm_warn(bo->obj->dev, "Not enough memory to allocate BO label");
-> > +		return;
-> > +	}
-> > +
-> > +	panthor_gem_bo_set_label(bo->obj, str);
-> > +}
-> > diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/panthor/panthor_gem.h
-> > index 1a363bb814f4..af0d77338860 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_gem.h
-> > +++ b/drivers/gpu/drm/panthor/panthor_gem.h
-> > @@ -46,6 +46,20 @@ struct panthor_gem_object {
-> >
-> >  	/** @flags: Combination of drm_panthor_bo_flags flags. */
-> >  	u32 flags;
-> > +
-> > +	/**
-> > +	 * @label: BO tagging fields. The label can be assigned within the
-> > +	 * driver itself or through a specific IOCTL.
-> > +	 */
-> > +	struct {
-> > +		/**
-> > +		 * @label.str: Pointer to NULL-terminated string,
-> > +		 */
-> > +		const char *str;
-> > +
-> > +		/** @lock.str: Protects access to the @label.str field. */
-> > +		struct mutex lock;
-> > +	} label;
-> >  };
-> >
-> >  /**
-> > @@ -91,6 +105,9 @@ panthor_gem_create_with_handle(struct drm_file *file,
-> >  			       struct panthor_vm *exclusive_vm,
-> >  			       u64 *size, u32 flags, uint32_t *handle);
-> >
-> > +void panthor_gem_bo_set_label(struct drm_gem_object *obj, const char *label);
-> > +void panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const char *label);
-> > +
-> >  static inline u64
-> >  panthor_kernel_bo_gpuva(struct panthor_kernel_bo *bo)
-> >  {
-
-Adrian Larumbe
+I bet we'll revisit this multiple times :-)
 
