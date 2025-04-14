@@ -1,153 +1,133 @@
-Return-Path: <linux-kernel+bounces-603188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE86A884BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:27:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0573AA884F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB771903090
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:17:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944FC3B95E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A30292909;
-	Mon, 14 Apr 2025 13:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0048B2741D0;
+	Mon, 14 Apr 2025 13:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YhYf3UmX"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UD2ttOfL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B762918D1
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56554253932;
+	Mon, 14 Apr 2025 13:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744638919; cv=none; b=WVQMHFb3ZcXeX0p3FDukWg8cBcjfUEDc+OXwhCynDbwlDuf6MFQE6nLykUgZ9HzNQ2/SIQvqdKFL1t5w+1iaTvlaiLtDul6z70HKSJWAE4twtHuuS6lbqxKA4yMpT7yn0hHtESDT6K8oQxQRm2KViMuapzPdg+BftASBFshPPxE=
+	t=1744638914; cv=none; b=lgEflMgym0l7/9Y7U35QVqjOcDIfdTWDzsRYzIPUG0MoIkN7GLi0HmPEwkwAepYNwtbmRoKEBSAUvAjnoqo6mjIyeh3HYDOqQGKmOXy8csfrVISiGMJTUCJ4pK326FrNTtM/fMQq7SYTnWYJQ44AerTefYNqiLfgv/3HeguRey0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744638919; c=relaxed/simple;
-	bh=MaeOxhcy0kSXPdQa9c6bBXclCHpRlK8Oy1Bs7ACf41E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tD+iNoW8S5bm2lGNaLHwBX5ApCA8eUZ97IwC+yNGAvmTJ8+4ZbERRPVR6AUXtpRmy6xLE9AxQFFRGby+Y4E2/HdwSb50RSFwhouv2n0RSKNoRhdWUp1vJf543+HbuDetT48rGPJ8csmRB0DLwLyB+lSdyQthgc3dfUBWiVdcNAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YhYf3UmX; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <44b67f86-ed27-49e8-9e15-917fa2b75a60@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744638903;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tIYBysX76Fq0W6ZzBNpz3VdTuJO+XbHPB2gh+NH0oiQ=;
-	b=YhYf3UmX62HiPWiKx9Jb9bTh2qfoNKm1g8TFp4kyNxPUh79RKASumn49R+QV+Oi22fbBc1
-	cINUW7G83eGbPijrSPelhVdmWGT9szsliFjT+VGubpZMsJeTyUm8MVVbwp4Cmiz+NE3YXC
-	V6GCRpbZEy0m2l5Zq//RfiglDRtyHnw=
-Date: Mon, 14 Apr 2025 14:54:57 +0100
+	s=arc-20240116; t=1744638914; c=relaxed/simple;
+	bh=8RqAkmbz2l81D3t0B9ThE8x0Hqu+VPdeWun13k7vuFc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pdnSyTmZHOe5bVnuPVe27rRwxEfmVKFzNQQAaUfuLhMTsSopMP808IK5veTUCNgz76aE41XTvN5EQrenhz4I2ONn8atF3Ts7gmbQHZwLiYUObOxlyCPcAejtDVdjElu0BPzmM0f0K09D+09ZH8LqKsSlogh5j6wdtpthTgt5YzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UD2ttOfL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC9D6C4CEE2;
+	Mon, 14 Apr 2025 13:55:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744638913;
+	bh=8RqAkmbz2l81D3t0B9ThE8x0Hqu+VPdeWun13k7vuFc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=UD2ttOfLL6Dn0Ntj/U5mh4Nakc5iP+k4+cIHXYXRxODW3PxgixSHqAyfi9r15tXm2
+	 MToEhe5MMi7H1I2BC/owOfKXw++fXZZEQitp/LUT6n3F/eQEvNZboyrn89i8XKOZcG
+	 SvxYlbGrLA0sRXCfFLpmX0AMFGOLmuCVtGmjU+o9FqC6OdLtPcsKqrXppnzPEJSuQB
+	 i00TlXWZ93ClnJds60t4oz1y7+v2GxWFuqpjURuaYDNE3nxU8Arf0uN6+njzG8IRJB
+	 cnzEeqnlvT1n7BOwx4RbPJhdcedDIhCgfnjPPwjnf+2OdyIfAjQph2gOJejJf5FOD0
+	 ybcCLGjfL1IBA==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 0/3] coredump: hand a pidfd to the usermode coredump
+ helper
+Date: Mon, 14 Apr 2025 15:55:04 +0200
+Message-Id: <20250414-work-coredump-v2-0-685bf231f828@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1] ptp: ocp: fix NULL deref in _signal_summary_show
-To: Sagi Maimon <maimon.sagi@gmail.com>
-Cc: jonathan.lemon@gmail.com, richardcochran@gmail.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20250414085412.117120-1-maimon.sagi@gmail.com>
- <b6aea926-ebb6-48fe-a1be-6f428a648eae@linux.dev>
- <CAMuE1bG_+qj++Q0OXfBe3Z_aA-zFj3nmzr9CHCuKJ_Jr19oWEg@mail.gmail.com>
- <aa9a1485-0a0b-442b-b126-a00ee5d4801c@linux.dev>
- <CAMuE1bETL1+sGo9wq46O=Ad-_aa8xNLK0kWC63Mm5rTFdebp=w@mail.gmail.com>
- <39839bcb-90e9-4886-913d-311c75c92ad8@linux.dev>
- <CAMuE1bHsPeaokc-_qR4Ai8o=b3Qpbosv6MiR5_XufyRTtE4QFQ@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <CAMuE1bHsPeaokc-_qR4Ai8o=b3Qpbosv6MiR5_XufyRTtE4QFQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALgT/WcC/12OwQ6CMBAFf4X07JIWCxhP/ofhUMoWGqQlW6waw
+ r9bSLx4nMO8eSsLSBYDu2YrI4w2WO8SFKeM6UG5HsF2iVnBi5JLcYaXpxG0J+ye0wzc1EbVWEk
+ hNUvOTGjs+9i7N4lbFRBaUk4P+8qkwoKUxyoXJZAWuzLYsHj6HA+i2MVfTP7FogAOlVbY6guvj
+ ZG3EcnhI/fUs2bbti/AWVdmzgAAAA==
+X-Change-ID: 20250413-work-coredump-0f7fa7e6414c
+To: linux-fsdevel@vger.kernel.org
+Cc: Oleg Nesterov <oleg@redhat.com>, 
+ Luca Boccassi <luca.boccassi@gmail.com>, 
+ Lennart Poettering <lennart@poettering.net>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, Mike Yuan <me@yhndnzj.com>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2587; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=8RqAkmbz2l81D3t0B9ThE8x0Hqu+VPdeWun13k7vuFc=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/Fd6fqqQ1+bGAvQXnhtbk/98PrlORWXZJ3NHPY/5Gv
+ dwJrQ8md5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExE+SLDX4GH38pOS8g3ysfs
+ s29leF7CxGl67tnM6bJyKoFrxIOUZRj+aSZotThFuGnZOTYtYX493+a9cpXWi6tR/x/+NgtSMfv
+ ADwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On 14/04/2025 14:43, Sagi Maimon wrote:
-> On Mon, Apr 14, 2025 at 4:01 PM Vadim Fedorenko
-> <vadim.fedorenko@linux.dev> wrote:
->>
->> On 14/04/2025 12:38, Sagi Maimon wrote:
->>> On Mon, Apr 14, 2025 at 2:09 PM Vadim Fedorenko
->>> <vadim.fedorenko@linux.dev> wrote:
->>>>
->>>> On 14/04/2025 11:56, Sagi Maimon wrote:
->>>>> On Mon, Apr 14, 2025 at 12:37 PM Vadim Fedorenko
->>>>> <vadim.fedorenko@linux.dev> wrote:
->>>>>>
->>>>>> On 14/04/2025 09:54, Sagi Maimon wrote:
->>>>>>> Sysfs signal show operations can invoke _signal_summary_show before
->>>>>>> signal_out array elements are initialized, causing a NULL pointer
->>>>>>> dereference. Add NULL checks for signal_out elements to prevent kernel
->>>>>>> crashes.
->>>>>>>
->>>>>>> Fixes: b325af3cfab9 ("ptp: ocp: Add signal generators and update sysfs nodes")
->>>>>>> Signed-off-by: Sagi Maimon <maimon.sagi@gmail.com>
->>>>>>> ---
->>>>>>>      drivers/ptp/ptp_ocp.c | 3 +++
->>>>>>>      1 file changed, 3 insertions(+)
->>>>>>>
->>>>>>> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
->>>>>>> index 7945c6be1f7c..4c7893539cec 100644
->>>>>>> --- a/drivers/ptp/ptp_ocp.c
->>>>>>> +++ b/drivers/ptp/ptp_ocp.c
->>>>>>> @@ -3963,6 +3963,9 @@ _signal_summary_show(struct seq_file *s, struct ptp_ocp *bp, int nr)
->>>>>>>          bool on;
->>>>>>>          u32 val;
->>>>>>>
->>>>>>> +     if (!bp->signal_out[nr])
->>>>>>> +             return;
->>>>>>> +
->>>>>>>          on = signal->running;
->>>>>>>          sprintf(label, "GEN%d", nr + 1);
->>>>>>>          seq_printf(s, "%7s: %s, period:%llu duty:%d%% phase:%llu pol:%d",
->>>>>>
->>>>>> That's not correct, the dereference of bp->signal_out[nr] happens before
->>>>>> the check. But I just wonder how can that even happen?
->>>>>>
->>>>> The scenario (our case): on ptp_ocp_adva_board_init we
->>>>> initiate only signals 0 and 1 so 2 and 3 are NULL.
->>>>> Later ptp_ocp_summary_show runs on all 4 signals and calls _signal_summary_show
->>>>> when calling signal 2 or 3  the dereference occurs.
->>>>> can you please explain: " the dereference of bp->signal_out[nr] happens before
->>>>> the check", where exactly? do you mean in those lines:
->>>>> struct signal_reg __iomem *reg = bp->signal_out[nr]->mem;
->>>>       ^^^
->>>> yes, this is the line which dereferences the pointer.
->>>>
->>>> but in case you have only 2 pins to configure, why the driver exposes 4
->>>> SMAs? You can simply adjust the attributes (adva_timecard_attrs).
->>>>
->>> I can (and will) expose only 2 sma in adva_timecard_attrs, but still
->>> ptp_ocp_summary_show runs
->>> on all 4 signals and not only on the on that exposed, is it not a bug?
->>
->> Yeah, it's a bug, but different one, and we have to fix it other way.
->>
-> Do you want to instruct me how to fix it , or will you fix it?
+Give userspace a way to instruct the kernel to install a pidfd for the
+crashing process into the process started as a usermode helper. There's
+still tricky race-windows that cannot be easily or sometimes not closed
+at all by userspace. There's various ways like looking at the start time
+of a process to make sure that the usermode helper process is started
+after the crashing process but it's all very very brittle and fraught
+with peril.
 
-well, the original device structure was not designed to have the amount
-of SMAs less than 4. We have to introduce another field to store actual
-amount of SMAs to work with, and adjust the code to check the value. The
-best solution would be to keep maximum amount of 4 SMAs in the structure
-but create a helper which will init new field and will have
-BUILD_BUG_ON() to prevent having more SMAs than fixed size array for
-them. That will solve your problem, but I will need to check it on the
-HW we run.
+The crashed-but-not-reaped process can be killed by userspace before
+coredump processing programs like systemd-coredump have had time to
+manually open a PIDFD from the PID the kernel provides them, which means
+they can be tricked into reading from an arbitrary process, and they run
+with full privileges as they are usermode helper processes.
 
->>>>> struct ptp_ocp_signal *signal = &bp->signal[nr];
->>>>>> I believe the proper fix is to move ptp_ocp_attr_group_add() closer to
->>>>>> the end of ptp_ocp_adva_board_init() like it's done for other boards.
->>>>>>
->>>>>> --
->>>>>> pw-bot: cr
->>>>
->>
+Even if that specific race-window wouldn't exist it's still the safest
+and cleanest way to let the kernel provide the pidfd directly instead of
+requiring userspace to do it manually. In parallel with this commit we
+already have systemd adding support for this in [1].
+
+When the usermode helper process is forked we install a pidfd file
+descriptor three into the usermode helper's file descriptor table so
+it's available to the exec'd program.
+
+Since usermode helpers are either children of the system_unbound_wq
+workqueue or kthreadd we know that the file descriptor table is empty
+and can thus always use three as the file descriptor number.
+
+Note, that we'll install a pidfd for the thread-group leader even if a
+subthread is calling do_coredump(). We know that task linkage hasn't
+been removed yet and even if this @current isn't the actual thread-group
+leader we know that the thread-group leader cannot be reaped until
+@current has exited.
+
+[1]: https://github.com/systemd/systemd/pull/37125
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v2:
+- Store a pid in struct coredump_params instead of a file.
+- Link to v1: https://lore.kernel.org/20250414-work-coredump-v1-0-6caebc807ff4@kernel.org
+
+---
+Christian Brauner (3):
+      pidfs: move O_RDWR into pidfs_alloc_file()
+      coredump: fix error handling for replace_fd()
+      coredump: hand a pidfd to the usermode coredump helper
+
+ fs/coredump.c            | 68 +++++++++++++++++++++++++++++++++++++++++++-----
+ fs/pidfs.c               |  1 +
+ include/linux/coredump.h |  1 +
+ kernel/fork.c            |  2 +-
+ 4 files changed, 65 insertions(+), 7 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250413-work-coredump-0f7fa7e6414c
 
 
