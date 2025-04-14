@@ -1,126 +1,179 @@
-Return-Path: <linux-kernel+bounces-603514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BADC2A888D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:45:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D538A88882
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B51801899ACB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5666D167E98
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9EF2820AF;
-	Mon, 14 Apr 2025 16:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A3E27FD6D;
+	Mon, 14 Apr 2025 16:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PLXAQqRB"
-Received: from sonic307-30.consmr.mail.bf2.yahoo.com (sonic307-30.consmr.mail.bf2.yahoo.com [74.6.134.229])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YVVRwPEC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+btaYtm/";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YVVRwPEC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+btaYtm/"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C924288C83
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 16:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.134.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E88918C031
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 16:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744649104; cv=none; b=cAcPT+pv8PBzGY33iRrFkBcfNE0qxWf8IuPzl7uH07GECc79cc1z3ziO4Drvx5i0XZ/IcdcBDvYXB4KlX3g6Cgu5N3tb4Ot/xAAKYKqykRS1bFYVB3MVZMDWbXglf9a0AANHt7OU+qO8kJfml5M5qQAJ0q+8kW4QT6f0fo5ArnA=
+	t=1744647817; cv=none; b=Y3oa68bEtvqFtMRI6zikWy1pOx6yT8n+Z9lFxCkXEhp2yzw5gh0DLH/6okceHXIlu7qTmM2WTZGMUh4kbTTZLP0y7TxY+lHgt8aFTjm0U6ZobRVpjkrQEegYWojDlVZg40VPssIHUWIm0bbbBxOTgzaaTbXziMsQcf6+mSO3FZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744649104; c=relaxed/simple;
-	bh=LRip5C8YXBMcattS1GRTxAuDuczRlbVQDGWhRq42ClI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RE1xp0wDsMYwzkcqE3lia43U97NzSzJfwTdjzqtN449yc2AwPyOEO/Zh9banNZWnNnRJyDe2/g6TZK8OnwFacMAu0S3pukCP2Qxg9w5zHnjbtERkL3xUjCFFD0RZguA0VFGuRCpQ/p746r/xxP5HoT61m+eWiOycgON/NKNcSq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=PLXAQqRB; arc=none smtp.client-ip=74.6.134.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1744649102; bh=6V04kO3rpZ47EWD3X905dHz9fGQ1xlrcbJbLzzJKDj8=; h=Date:Subject:From:To:Cc:References:In-Reply-To:From:Subject:Reply-To; b=PLXAQqRBQBxCZmqsG3MmecLziQkfzx4oBEUHGQSvCPTNSoW3yW3IV4yNnzF36MWLNzWBcN9Ok+sJctQQC4SkIwW9lTNPzmy8gc/IzIoZKD17xmF/9ZXzF8yxicBGngsjwCVK5brOEId4No7fEeyyL5sr4Rlc69Zuzrog88gA9fdil5tbTaufNPp28m8Q4XIaFzi9y6NDlZncSHKgkA69gNgs0k5HDZcOqWzDnA2dErnvCu5RgxxYtCQ+p0P2S3RRmWKrChw88SLx+Am1tPKw64MsquCSq/Q+trWxzvCN6uYVkSYdFOt75oKonytbYUjJ6ZcCwAZOGQlO0ofGvrga1A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1744649102; bh=PNc+hfhIh1LCGx+RzY5TEkiADztooHAQI1WNhiDG+F6=; h=X-Sonic-MF:Date:Subject:From:To:From:Subject; b=YGpeh5mLhXMErC6iVVGHWXy3Z1/N3hncuB9hT+zXmBX3cPEfs8QhQkA2e3TKlpYGctchwa0bf3nmcoHsm53hLwMN1ddtZ0G7PflP7dSjKYrIHWhvdNFinhaLbCIpceOSwSJr6Cqyti2dmz0fGGd/wRGbHrvxI5lL84YqlzdlG618Uoov+CE/XAHRMWl93OxX42YyF1UhUCjmcOhM/NZhlkpcppdkFmeyPIJbYA90HdAfc1LAn/yg6ydkHLK9U4DLWIard+fJ2Q7H1BxmYGi6fM1caCjFYX5UVmmYJ3961piztqC7TApufsbeAJCpzWCLkZK05v4xVy0F4PgNNnPUmg==
-X-YMail-OSG: ijaescAVM1kj5AFBIzzT.YKhGnW2.GMXcoNbQi.Jna0FItqIw5ZmuNjyO6y4WBL
- nGAdxWYqSBtPW7w6BJi3kQLTHkYS0Fyt5OKIJzTo255iMyr5RfZ0F2qquSlJh0LoiU8T3eiul4tE
- 9K3BMCQf93_hzZCVBcXw2c95HyrFdn4XqOj1QRRS6IhnQObkdTwv3D1bmKADOU7eWlI3UKO.9tYY
- R4TYDbz9rwrZaepSU1349IKr1S2Qu3guonNuts1Pj_jG6Faq7DR0Iwrz2B6BfxPgBGTTdU77q.tv
- 8Ivhly6Bt82znn7SANBbhGhnHcjy_En7BAiLplxZPK3WIyGzV.Z66T8lMlMHoPyHuujr6XUB9WGi
- kLVY7VQ5MV8mLaT2kz5aRz0DRRpi4pM8bXVYilFTujbdkgebdsnSOoaC1LlCKqBXs3VktflfFgSN
- CCmFlAqaf1.vOE2zxeXJhHSNWG2aCSwdg1whgQDKAEvRKgQwxhAmbsLsGCEmIzu6PTwQxA3Rc4Ij
- OWrMnMhLEyaUAYWIO4ZAmuJ1xxXJUuauhX2aEKKnOnjnyKbSpuRVz_94gDN5ZHmAPZCc_5IgU7x4
- BzG7FpRA4amT1lhVjCqcGoQsUrxz1CeUXNivlnRhdokeNHND1KyqMMJ5Is9NqiV5CxkhIrtv6GtS
- hXsc8aCSr4FCbuc6vF5nI.eRPFZSN5lGDEBhbwdA3JR9QVqTODNcAglR498sijcdqVYCA.xzFj7s
- xdNwP5RSe5xRo7thDmkzRSjYSEF2S4xpDqtLM84SNt_Q4QIh2ckfp_eSfxP.aUxmQYLBCgpbvIJz
- ElllqXu.JdgOmDgXmlH0J_vKlxNLwooRNuUnogEN.ATpAu26KV2ID9aqjtVGdGjK55MfYU0teetL
- XA9EzdzkU3etTnb2lAEW1ebexZwiZlfxPSNUFRs01hP4Tw53ivColKJhxFD1f74kEefmVfQyCJXS
- aCVbsRiWlVYWyt6DWA.YY8BSIE6s32LCrlVS.JlLi80lNSapZxeKkYPrfgCra.0SprZfe1XhPKEV
- aKKW0zCa1IWqqY8hUDN.Uz.Ov4Tik4iwkJjWruy4u5hBWno.Az0b9F..xVj91vfZ37JI2wMCkSfQ
- Yt8xmeGZaL_o_UcLLaNpkHIx6D616F5hOxo0vZcNRHJa5.zDEZPgY0ErKtwxI7yHvXxbyh7C30Dr
- dPBVJQRTZF8XAuoIWbnDFh.SfWICdopamHEdFnV6Qp485h0Q6hvAzyBBB_.geAGdIm68d4rO5h2Y
- M75NWavibJsQWCQ_j4ZoRSn8T2Ztn_3yI6HcIJh3Q8Gu2RpuQBF8jEqiZGNr93VaVio4Ev3tF2X3
- ap57Wu3p0uM6UssZqY5QdAXAdtiLYCHbNj_ybVALCZN6kU1.ptLZSjArgE1kI0pMqMzwSuajpp0S
- _wS3nRptlINDwD78V2tBeWQyhPFqOY4YHWU7JNlS6WA7Q.WGuZJyE6wO8zYIs42JimYDcMdreOck
- 6zr.6R1hwsP0oIBcyJrz2zBCfVYHsSyR_0e17Zec3kEcWIOBlWeuqegwyZLabUkOU1Vpmdlupx1V
- Kz2fL9agosZDxRAk6k5vHOFQ9YTLTNHYMtvBJ2g3c3DEsqOPalQyG2S7fd.rMcVG7xxWRVfCB.AB
- 6U.Sn8VklpY4dcK1n7NBBJg0Ro6OmfnvBxc1bezv3Gt_NjUlIHD.ouh4tP28bhu5i7i8uSTIof8X
- Y8K9RLR0OmEDIj3_C431SxQ2IZhKWuBwBNtoRT_Tz8vFg36k2BF0x.wG482p5M9G_waTKw5QBnrY
- PV2hx6ZIaw0cUcoDxBeAiLtRENKoOhmHIEUChWDOpK.KWD5n2fHh4XUc2M0rbzNrpRXVNHlcLxaz
- 8RQ4X2ay1lT3JvRnVa6.bSajS21qYnVW_B5.npCmkS6j8Gjy0G6FaeOxsPsJOSLD2teUZRPG4vNZ
- 0x7enlFk1mvGEdGmkL6yLsiL1_dOiujje.akjTuY3gMuzvn0iuoqBEpEdgYIrL5PW2nLw_mhg0Di
- BODDRNa.BCPpewEfzdGzj9ytsSG6sq3UH6J4gfS3E3eIxsYP6ebawE7oR6VOp13Nvl5K3FmrAizb
- Z2UC84hAnQbtOw8FWFmEx20M2VRbXwrUr2c6lDfO5OVdQIWGaTzrizOeOXR.qQsB4qVDB0aPVcrD
- WdYVqj25OaxfI.cSPKAFQssdVnUjnxie9uSdhHsEkWA6DhhpphGZ7sxGIb5KMDZn0m9QC_wo6zp5
- UCE_iAr29sp4JfrkfixrANyuNhPZeJ1CwYGA9OD69mgFTgKl0Wu_ZNwS0L96wtjsRZOBVLjou5p_
- gVzxzbi8m2ED32Ql8BTFHvBi2DAXzQDnybLfiZN5Vb.An
-X-Sonic-MF: <dullfire@yahoo.com>
-X-Sonic-ID: fb281f51-85b9-4bd8-87a5-49c0144f821e
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.bf2.yahoo.com with HTTP; Mon, 14 Apr 2025 16:45:02 +0000
-Received: by hermes--production-ne1-9495dc4d7-vqjq6 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7de9b757f65aed43fbd0bf15ec9cf014;
-          Mon, 14 Apr 2025 16:22:47 +0000 (UTC)
-Message-ID: <3aa3b1aa-84c1-4bdd-ac79-918bcd80f98b@yahoo.com>
-Date: Mon, 14 Apr 2025 11:22:54 -0500
+	s=arc-20240116; t=1744647817; c=relaxed/simple;
+	bh=irp9PXJtIIx2teIMnPiDImHx5G/IpFENzHfE8+kY8bE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VI43WHks08CR7sf8C9nYiVPdHMoPa7S0olMdG3yATwqd5DZXnmGJtWdhNzuRV6X5D87Qqejw3JH2Z60mwiKUmEsWFNxMI6vufDYiYLeBQolnfQ1E5GnRtujS8+uevI9xTdBfT4zd3BMSEJDHqtMJw0fEtdfJQqLXly7SLN1qzG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YVVRwPEC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+btaYtm/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YVVRwPEC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+btaYtm/; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6659C1F7D6;
+	Mon, 14 Apr 2025 16:23:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744647813;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d+JQuTBW77bWtfE5+W53YaiupIeeFOBZnWOzf0kq4/c=;
+	b=YVVRwPECQmftqbDS5SLIeArNCXOHrD34/qEN8aRNBPRPUHFgGlN4QFQ5VmNeMy2cOE0Uu6
+	cHR/mjKwbfeVHn7IWQBdyKOQS6xrkD+GsapGO8L9zArbBFoa0goUCli6F8ExykDolAATof
+	EK1w2apUYDynErIcaZPtbJlpnZP1Suk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744647813;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d+JQuTBW77bWtfE5+W53YaiupIeeFOBZnWOzf0kq4/c=;
+	b=+btaYtm/9AWveh+lTgvB8gdsjOn85Q4qHcinpVrGz4+srtVGTDRA6prKpO80Wb8u+axE7O
+	CaxPKNkMSXDz3+Dg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=YVVRwPEC;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="+btaYtm/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744647813;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d+JQuTBW77bWtfE5+W53YaiupIeeFOBZnWOzf0kq4/c=;
+	b=YVVRwPECQmftqbDS5SLIeArNCXOHrD34/qEN8aRNBPRPUHFgGlN4QFQ5VmNeMy2cOE0Uu6
+	cHR/mjKwbfeVHn7IWQBdyKOQS6xrkD+GsapGO8L9zArbBFoa0goUCli6F8ExykDolAATof
+	EK1w2apUYDynErIcaZPtbJlpnZP1Suk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744647813;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d+JQuTBW77bWtfE5+W53YaiupIeeFOBZnWOzf0kq4/c=;
+	b=+btaYtm/9AWveh+lTgvB8gdsjOn85Q4qHcinpVrGz4+srtVGTDRA6prKpO80Wb8u+axE7O
+	CaxPKNkMSXDz3+Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3CB211336F;
+	Mon, 14 Apr 2025 16:23:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yCuYDoU2/We6MwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 14 Apr 2025 16:23:33 +0000
+Date: Mon, 14 Apr 2025 18:23:28 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	now4yreal <now4yreal@foxmail.com>, Jan Kara <jack@suse.com>,
+	Viro <viro@zeniv.linux.org.uk>, Bacik <josef@toxicpanda.com>,
+	Stone <leocstone@gmail.com>, Sandeen <sandeen@redhat.com>,
+	Johnson <jeff.johnson@oss.qualcomm.com>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [Bug Report] OOB-read BUG in HFS+ filesystem
+Message-ID: <20250414162328.GD16750@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <tencent_B730B2241BE4152C9D6AA80789EEE1DEE30A@qq.com>
+ <20250414-behielt-erholen-e0cd10a4f7af@brauner>
+ <Z_0aBN-20w20-UiD@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] PCI/MSI: Add MSIX option to write to ENTRY_DATA
- before any reads
-From: Dullfire <dullfire@yahoo.com>
-To: Paolo Abeni <pabeni@redhat.com>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Jacob Keller <jacob.e.keller@intel.com>, Simon Horman <horms@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Mostafa Saleh <smostafa@google.com>,
- Marc Zyngier <maz@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20241117234843.19236-1-dullfire@yahoo.com>
- <20241117234843.19236-2-dullfire@yahoo.com>
- <a292cdfe-e319-4bbd-bcc0-a74c16db9053@redhat.com>
- <07726755-f9e7-4c01-9a3f-1762e90734af@yahoo.com>
- <4f621a9d-f527-4148-831b-aad577a6e097@redhat.com>
- <5a580609-aa5e-4153-b8dd-a6751af72685@yahoo.com>
-Content-Language: en-US
-In-Reply-To: <5a580609-aa5e-4153-b8dd-a6751af72685@yahoo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23665 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_0aBN-20w20-UiD@casper.infradead.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: 6659C1F7D6
+X-Spam-Score: -4.21
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[foxmail.com,gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,foxmail.com,suse.com,zeniv.linux.org.uk,toxicpanda.com,gmail.com,redhat.com,oss.qualcomm.com,vger.kernel.org];
+	RCVD_COUNT_TWO(0.00)[2];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-
-
-On 1/20/25 6:38 AM, Dullfire wrote:
+On Mon, Apr 14, 2025 at 03:21:56PM +0100, Matthew Wilcox wrote:
+> On Mon, Apr 14, 2025 at 04:18:27PM +0200, Christian Brauner wrote:
+> > On Mon, Apr 14, 2025 at 09:45:25PM +0800, now4yreal wrote:
+> > > Dear Linux Security Maintainers,
+> > > I would like to report a OOB-read vulnerability in the HFS+ file
+> > > system, which I discovered using our in-house developed kernel fuzzer,
+> > > Symsyz.
+> > 
+> > Bug reports from non-official syzbot instances are generally not
+> > accepted.
+> > 
+> > hfs and hfsplus are orphaned filesystems since at least 2014. Bug
+> > reports for such filesystems won't receive much attention from the core
+> > maintainers.
+> > 
+> > I'm very very close to putting them on the chopping block as they're
+> > slowly turning into pointless burdens.
 > 
-> On 11/21/24 04:28, Paolo Abeni wrote:
-[...]
->> The niu driver is not exactly under very active development, I guess the
->> whole series could go via the IRQ subsystem, if Thomas agrees.
->>
->> Cheers,
->>
->> Paolo
->>
-> 
-> Thomas, does this work for you, or is there something else you would to see in this series?
+> I've tried asking some people who are long term Apple & Linux people,
+> but haven't been able to find anyone interested in becoming maintainer.
+> Let's drop both hfs & hfsplus.  Ten years of being unmaintained is
+> long enough.
 
+Agreed. If needed there are FUSE implementations to access .dmg files
+with HFS/HFS+ or other standalone tools.
 
-Since it's been a few months, just wanted to give this a bump, and see if the series is lacking anything.
-Thanks,
-
-Sincerely,
-Jonathan Currier
+https://github.com/0x09/hfsfuse
+https://github.com/darlinghq/darling-dmg
 
