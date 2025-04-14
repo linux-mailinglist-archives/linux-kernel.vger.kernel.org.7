@@ -1,305 +1,91 @@
-Return-Path: <linux-kernel+bounces-603940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59CF8A88E4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 23:51:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B661DA88E27
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 23:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DE503A6634
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:51:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ADD17A27F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE122215060;
-	Mon, 14 Apr 2025 21:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B641F3FDC;
+	Mon, 14 Apr 2025 21:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="08r7WgUO"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Mw81SF0g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B92720D4E4
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 21:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7347A1A9B28;
+	Mon, 14 Apr 2025 21:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744667336; cv=none; b=g7r2cQG9hAZX8l+nDOOOiJ5mRg+Chk8cv+SAgYCuZO9D3rpcKBIrP6V9NZcfv1jOKHDFsjdl9iqHjtWdhJEbwWgqocw3WoKUDIH4YHXajSFrb91PZmRd0FXGSpgFi7UMGhHligSkpRdUNZCmx8YwipmRK6bBIqCWwi74iEV6drk=
+	t=1744667262; cv=none; b=uCA2yM32Drp97DFYMXon3FYMuNbQqoNk0NfXLmtZ0GEi5jl5uyFs29UN2dkuoz76r6YbwU7z1Il1LzelXnde2PeoCcdc6AWlpD6WIySAYxK/q0+wKBUYx5NxPFNiG91R0vvrKHsvQ1j5JMwgIObfEp3OdTKai70h/l85qTt+sXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744667336; c=relaxed/simple;
-	bh=/zOeabVaWmj3ZBy6cagVDkNfmaleWBzKPvbdEK8hbR0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=k7o7snTg6pmASd1it7BcbTrnzgSQ5Sc7DgMScAyB+TClKMeF9U/T2YxUpTV+A0Fdf0YC2quMJSCxPFrPLFJTNdWyG+Az2Q7zJQMxux+6YWiok0sHDACqZDbzaOubz5R/rpvQn3YshVni1ASi4joxz7HjD5ElmzZRmqS5gsSOxOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=08r7WgUO; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7375e2642b4so3462941b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:48:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744667335; x=1745272135; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jvxzosC3E+lxZEmxfjvYTYgKzTvlQJfvRPb3j1x3DvU=;
-        b=08r7WgUOrxRIfUxUKY8nyD7zr4nsGd/e5U/oQ19rRbNESB3wvf7JpkCjq39RNYf+6t
-         2Q37dD6OkQ397+iyGYgZjIq2XtiTo0MRlcfw+1v/Lcl2O0u1W0b9HxAXxesh1M+a7Mys
-         mOvsCTTwKyFsV/w6tzAqe+RsCasd1DKT45nPDOcX8q6NryNThv5d9TxU3evblLtrMjjN
-         WXNW7vJ+QiBfqLwxbi2ket/5mufUdHxDYjg6jtqPFE98uOXdbpmfQ6xSkOdW0e1WUNiu
-         GNQbkNnkXek37CNJlCmBcwmQuzjuy2CluP4XYVLJ8aeVY8QBDd+VLfNJbrEcyB4H/1KY
-         6CuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744667335; x=1745272135;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jvxzosC3E+lxZEmxfjvYTYgKzTvlQJfvRPb3j1x3DvU=;
-        b=UyTj34yu1LD2V5E+G6QRy2n/VYhyheIAHd9yWlQxMhIR3tzxNUV4f77lGhFB0slmB9
-         qWQKZw3nssnhngXud13Iw6oEeanA8J2oLJPVzJWiQrIpWmHTfNgtyzloEjRZegdvzGVD
-         YdZgR+TLbW0OTrIv0csw1Saxq/UYL3IiBp2VTCvnfaq5aPzDN27gyeRPJ4e7/8R/1vWX
-         mtQGQJ4vjvxxMjglkoYM575axL6j2aQpscyGypOvdTdFLVD0gFGEX0IJAZKVYQSCVfB8
-         yAU4h6V9LFQe4TcyMSHq7JXZlNqV3MrLzjslsRRGtEPrHnPCswYCgf0TuNO74dpbVQZ/
-         2xCg==
-X-Gm-Message-State: AOJu0Yw6GGbKnA3SrMMaO4xCLAXQLSHBFC/91ohbf6SfqiWeZ1BzwIg4
-	jiXtPpj34Yi2jQt6CvjM+M5U/MBNh+Kn+rfcQSJW30AnWJdwFgJmr+tR7bP2s2pXh0w/sxmhIA=
-	=
-X-Google-Smtp-Source: AGHT+IFS7Kr8bx+0klE1FP3hZnDFtbssejplTY6nzf5tgCxpJkRtMlcE6Nh8yK0e8eHxLyE5mrhr6eXvCQ==
-X-Received: from pfbgm11.prod.google.com ([2002:a05:6a00:640b:b0:736:38af:afeb])
- (user=sagis job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1486:b0:736:5e28:cfba
- with SMTP id d2e1a72fcca58-73bd126b973mr17147271b3a.18.1744667334573; Mon, 14
- Apr 2025 14:48:54 -0700 (PDT)
-Date: Mon, 14 Apr 2025 14:47:40 -0700
-In-Reply-To: <20250414214801.2693294-1-sagis@google.com>
+	s=arc-20240116; t=1744667262; c=relaxed/simple;
+	bh=Ff776Uh707DAB51HDGiW1TU5SCO3NJAIPvfEppRKcD4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=qGbgf05/Rv7dd17zwd1YB4Qc+y/a4m9k+RO2Pm5nLhdywp+9o2EtAbbxjs9xc5N7kTBmfzxdgnONA8UcXaPaF7i/kD6zoxZ7bGCSh82KHjTCwT6C5EP3OgiGjYGRq8Y7gZOKB80j7PwBYozlpEHaENWdKRgGztXahVtljutdPgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Mw81SF0g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3441C4CEE2;
+	Mon, 14 Apr 2025 21:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1744667261;
+	bh=Ff776Uh707DAB51HDGiW1TU5SCO3NJAIPvfEppRKcD4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Mw81SF0gpvuSEla2pIDdPcIqG/tRaqJACbGlO7XzjPbu5jSBzmPt53qvKof7IUwc7
+	 YV0MyFwiismAkBUJHb+9rn6WTW/6Gc77v7O8jSTcLxVETPv9P+c030iHq0Z++AAwYU
+	 za3BfqqjgB36HbZ70DyWb9Rr2Uq7aAw2nmpFVcI4=
+Date: Mon, 14 Apr 2025 14:47:41 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: cgroups@vger.kernel.org, Jan Kara <jack@suse.cz>, Tetsuo Handa
+ <penguin-kernel@i-love.sakura.ne.jp>, Rafael Aquini <aquini@redhat.com>,
+ gfs2@lists.linux.dev, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] writeback: Fix false warning in inode_to_wb()
+Message-Id: <20250414144741.56f7e4162c5faa9f3fb5c2a6@linux-foundation.org>
+In-Reply-To: <20250412163914.3773459-3-agruenba@redhat.com>
+References: <20250412163914.3773459-1-agruenba@redhat.com>
+	<20250412163914.3773459-3-agruenba@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250414214801.2693294-1-sagis@google.com>
-X-Mailer: git-send-email 2.49.0.777.g153de2bbd5-goog
-Message-ID: <20250414214801.2693294-12-sagis@google.com>
-Subject: [PATCH v6 11/30] KVM: selftests: TDX: Adding test case for TDX port IO
-From: Sagi Shahar <sagis@google.com>
-To: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Sagi Shahar <sagis@google.com>, Roger Wang <runanwang@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Verifies TDVMCALL<INSTRUCTION.IO> READ and WRITE operations.
+On Sat, 12 Apr 2025 18:39:12 +0200 Andreas Gruenbacher <agruenba@redhat.com> wrote:
 
-Signed-off-by: Sagi Shahar <sagis@google.com>
----
- .../selftests/kvm/include/x86/tdx/test_util.h | 20 +++++
- .../selftests/kvm/lib/x86/tdx/test_util.c     | 35 +++++++++
- tools/testing/selftests/kvm/x86/tdx_vm_test.c | 78 ++++++++++++++++++-
- 3 files changed, 130 insertions(+), 3 deletions(-)
+> From: Jan Kara <jack@suse.cz>
+> 
+> inode_to_wb() is used also for filesystems that don't support cgroup
+> writeback. For these filesystems inode->i_wb is stable during the
+> lifetime of the inode (it points to bdi->wb) and there's no need to hold
+> locks protecting the inode->i_wb dereference. Improve the warning in
+> inode_to_wb() to not trigger for these filesystems.
+> 
+> ...
+>
+> --- a/include/linux/backing-dev.h
+> +++ b/include/linux/backing-dev.h
+> @@ -249,6 +249,7 @@ static inline struct bdi_writeback *inode_to_wb(const struct inode *inode)
+>  {
+>  #ifdef CONFIG_LOCKDEP
+>  	WARN_ON_ONCE(debug_locks &&
+> +		     (inode->i_sb->s_iflags & SB_I_CGROUPWB) &&
+>  		     (!lockdep_is_held(&inode->i_lock) &&
+>  		      !lockdep_is_held(&inode->i_mapping->i_pages.xa_lock) &&
+>  		      !lockdep_is_held(&inode->i_wb->list_lock)));
 
-diff --git a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h b/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
-index dafeee9af1dc..cf11955d56d6 100644
---- a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
-+++ b/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
-@@ -13,6 +13,19 @@
- #define PORT_READ	0
- #define PORT_WRITE	1
- 
-+/*
-+ * Assert that some IO operation involving tdg_vp_vmcall_instruction_io() was
-+ * called in the guest.
-+ */
-+void tdx_test_assert_io(struct kvm_vcpu *vcpu, uint16_t port, uint8_t size,
-+			uint8_t direction);
-+
-+/*
-+ * Run the tdx vcpu and check if there was some failure in the guest, either
-+ * an exception like a triple fault, or if a tdx_test_fatal() was hit.
-+ */
-+void tdx_run(struct kvm_vcpu *vcpu);
-+
- /*
-  * Run a test in a new process.
-  *
-@@ -57,4 +70,11 @@ void tdx_test_fatal(uint64_t error_code);
-  */
- void tdx_test_fatal_with_data(uint64_t error_code, uint64_t data_gpa);
- 
-+/*
-+ * Assert on @error and report the @error to userspace.
-+ * Return value from tdg_vp_vmcall_report_fatal_error() is ignored since execution
-+ * is not expected to continue beyond this point.
-+ */
-+void tdx_assert_error(uint64_t error);
-+
- #endif // SELFTEST_TDX_TEST_UTIL_H
-diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-index 6c82a0c3bd37..4ccc5298ba25 100644
---- a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-+++ b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-@@ -8,8 +8,37 @@
- 
- #include "kvm_util.h"
- #include "tdx/tdx.h"
-+#include "tdx/tdx_util.h"
- #include "tdx/test_util.h"
- 
-+void tdx_test_assert_io(struct kvm_vcpu *vcpu, uint16_t port, uint8_t size,
-+			uint8_t direction)
-+{
-+	TEST_ASSERT(vcpu->run->exit_reason == KVM_EXIT_IO,
-+		    "Got exit_reason other than KVM_EXIT_IO: %u (%s)\n",
-+		    vcpu->run->exit_reason,
-+		    exit_reason_str(vcpu->run->exit_reason));
-+
-+	TEST_ASSERT(vcpu->run->exit_reason == KVM_EXIT_IO &&
-+		    vcpu->run->io.port == port &&
-+		    vcpu->run->io.size == size &&
-+		    vcpu->run->io.direction == direction,
-+		    "Got unexpected IO exit values: %u (%s) %u %u %u\n",
-+		    vcpu->run->exit_reason,
-+		    exit_reason_str(vcpu->run->exit_reason),
-+		    vcpu->run->io.port, vcpu->run->io.size,
-+		    vcpu->run->io.direction);
-+}
-+
-+void tdx_run(struct kvm_vcpu *vcpu)
-+{
-+	td_vcpu_run(vcpu);
-+	if (vcpu->run->exit_reason == KVM_EXIT_SYSTEM_EVENT)
-+		TEST_FAIL("Guest reported error. error code: %lld (0x%llx)\n",
-+			  vcpu->run->system_event.data[12],
-+			  vcpu->run->system_event.data[13]);
-+}
-+
- int run_in_new_process(void (*func)(void))
- {
- 	int wstatus;
-@@ -69,3 +98,9 @@ void tdx_test_fatal(uint64_t error_code)
- {
- 	tdx_test_fatal_with_data(error_code, 0);
- }
-+
-+void tdx_assert_error(uint64_t error)
-+{
-+	if (error)
-+		tdx_test_fatal(error);
-+}
-diff --git a/tools/testing/selftests/kvm/x86/tdx_vm_test.c b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-index 7d6d71602761..97330e28f236 100644
---- a/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-+++ b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-@@ -3,6 +3,7 @@
- #include <signal.h>
- 
- #include "kvm_util.h"
-+#include "tdx/tdcall.h"
- #include "tdx/tdx.h"
- #include "tdx/tdx_util.h"
- #include "tdx/test_util.h"
-@@ -25,7 +26,7 @@ static void verify_td_lifecycle(void)
- 
- 	printf("Verifying TD lifecycle:\n");
- 
--	td_vcpu_run(vcpu);
-+	tdx_run(vcpu);
- 	tdx_test_assert_success(vcpu);
- 
- 	kvm_vm_free(vm);
-@@ -69,9 +70,78 @@ void verify_report_fatal_error(void)
- 	TEST_ASSERT_EQ(vcpu->run->system_event.data[12], 0x0BAAAAAD00000000);
- 	TEST_ASSERT_EQ(vcpu->run->system_event.data[13], 0);
- 
--	td_vcpu_run(vcpu);
-+	tdx_run(vcpu);
-+	tdx_test_assert_success(vcpu);
-+
-+	kvm_vm_free(vm);
-+	printf("\t ... PASSED\n");
-+}
-+
-+#define TDX_IOEXIT_TEST_PORT 0x50
-+
-+/*
-+ * Verifies IO functionality by writing a |value| to a predefined port.
-+ * Verifies that the read value is |value| + 1 from the same port.
-+ * If all the tests are passed then write a value to port TDX_TEST_PORT
-+ */
-+void guest_ioexit(void)
-+{
-+	uint64_t data_out, data_in;
-+	uint64_t ret;
-+
-+	data_out = 0xAB;
-+	ret = tdg_vp_vmcall_instruction_io(TDX_IOEXIT_TEST_PORT, 1,
-+					   PORT_WRITE, &data_out);
-+	tdx_assert_error(ret);
-+
-+	ret = tdg_vp_vmcall_instruction_io(TDX_IOEXIT_TEST_PORT, 1,
-+					   PORT_READ, &data_in);
-+	tdx_assert_error(ret);
-+
-+	if (data_in != 0xAC)
-+		tdx_test_fatal(data_in);
-+
-+	tdx_test_success();
-+}
-+
-+void verify_td_ioexit(void)
-+{
-+	struct kvm_vcpu *vcpu;
-+	uint32_t port_data;
-+	struct kvm_vm *vm;
-+
-+	vm = td_create();
-+	td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
-+	vcpu = td_vcpu_add(vm, 0, guest_ioexit);
-+	td_finalize(vm);
-+
-+	printf("Verifying TD IO Exit:\n");
-+
-+	/* Wait for guest to do a IO write */
-+	tdx_run(vcpu);
-+	tdx_test_assert_io(vcpu, TDX_IOEXIT_TEST_PORT, 1, PORT_WRITE);
-+	port_data = *(uint8_t *)((void *)vcpu->run + vcpu->run->io.data_offset);
-+
-+	printf("\t ... IO WRITE: DONE\n");
-+
-+	/*
-+	 * Wait for the guest to do a IO read. Provide the previous written data
-+	 * + 1 back to the guest
-+	 */
-+	tdx_run(vcpu);
-+	tdx_test_assert_io(vcpu, TDX_IOEXIT_TEST_PORT, 1, PORT_READ);
-+	*(uint8_t *)((void *)vcpu->run + vcpu->run->io.data_offset) = port_data + 1;
-+
-+	printf("\t ... IO READ: DONE\n");
-+
-+	/*
-+	 * Wait for the guest to complete execution successfully. The read
-+	 * value is checked within the guest.
-+	 */
-+	tdx_run(vcpu);
- 	tdx_test_assert_success(vcpu);
- 
-+	printf("\t ... IO verify read/write values: OK\n");
- 	kvm_vm_free(vm);
- 	printf("\t ... PASSED\n");
- }
-@@ -83,11 +153,13 @@ int main(int argc, char **argv)
- 	if (!is_tdx_enabled())
- 		ksft_exit_skip("TDX is not supported by the KVM. Exiting.\n");
- 
--	ksft_set_plan(2);
-+	ksft_set_plan(3);
- 	ksft_test_result(!run_in_new_process(&verify_td_lifecycle),
- 			 "verify_td_lifecycle\n");
- 	ksft_test_result(!run_in_new_process(&verify_report_fatal_error),
- 			 "verify_report_fatal_error\n");
-+	ksft_test_result(!run_in_new_process(&verify_td_ioexit),
-+			 "verify_td_ioexit\n");
- 
- 	ksft_finished();
- 	return 0;
--- 
-2.49.0.504.g3bcea36a83-goog
+Is this a does-nothing now GFS2 has been altered?
 
+Otherwise, a bogus WARN is something we'll want to eliminate from
+-stable kernels also.  Are we able to identify a Fixes: for this?
+
+Thanks.
 
