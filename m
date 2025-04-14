@@ -1,151 +1,206 @@
-Return-Path: <linux-kernel+bounces-602971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E9BA881F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:28:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40452A881BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D2E13AE0A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:27:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E61103A86FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1082798ED;
-	Mon, 14 Apr 2025 13:24:50 +0000 (UTC)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755FC23D2AA;
+	Mon, 14 Apr 2025 13:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T/pvW068";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3nt0s0Hf";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T/pvW068";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3nt0s0Hf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B203427585C;
-	Mon, 14 Apr 2025 13:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391C917741
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744637090; cv=none; b=EpQ+YABmDV/Z5uJhDX/bilLjTltM/nQwinAAkUNUQVSuTnyjUP7f2XNMf502XBfFlBOybPd/tIfjXcT3PbxrTXMwwnuW8C5XgEq2jvXof8XfY06BdwLj8ULRWkiqSGmZB6ycvMnKiarXQ9Sc+mkUMji6MpbkmMeA2R5aG0VeJY4=
+	t=1744637071; cv=none; b=CNKLrLArp3pZxRJvdnQqy169/cw0RxMz6cjJyev3AYRS9JCPBxgfsw59yEif8w3+t6LfBNX5QdrtYspLlMVe89BSgHFSZ8iEh4Y8xTawc56ds+o0eB1zDW7/LYN2VWDTmp+ev39KH39DibV7kBMZeHCtAmi7gWfPG90/V1+zdGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744637090; c=relaxed/simple;
-	bh=QH4HBkEgzWlR+iLppNxzhUiHrA5hDihNEzcMAW7W4Oo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fmNRxZw0RrwBujwmbO9PkP8lB+SdqDOt6oEbL1pv4s3lZD3N8wGamljQAVB7ZOz6b2a15w8kTeFHP6Ne4+82rN49PnzjfZit5y3mjCXdx3mYvQzN4+xItwFnuTLUO18nKkSQkmOhNZkY7vP3CPdmEAVA2J/Z3Nvkjaf2pfkbBv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac289147833so866674266b.2;
-        Mon, 14 Apr 2025 06:24:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744637087; x=1745241887;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZRtNPlxz2zfsOHt7gPeh2UUvvFdJM11RSUvY0S+WMYU=;
-        b=APeJONcCn286sZy66aYe+LgaT/3EFz/WatTUntgPKOMt96yulQb7BI7rhxzEY7hNtM
-         LSCV6zbPtd+e/EF/vtgW+aWXITw7IQD0goiQvqJUF9BF8yRSxkDGCeOubBGou8WYKt4u
-         Mps5sdVTqdtvqiXfkHl7RXXSIjJotBcD95sBz1LN5MT20bmFd+XZEH3sxUO9csnly8/a
-         ziUqxjFUZ4rkcs3IlQ5NnS0MuemI/CKFgsifJa2YKSmkkqCopokzSZOk1rXQo1u+ywbG
-         j9vq1uBcLX3D4H5Mx3jMf4Zg4Q6IO16HECnCz9Stcbd+tbd9mB3Z2ySfnDBpUbUSLP98
-         GgdA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1ifWjG5770oDD+jcrTJTd1Z5fAnlCX8rE0kj/9XZIxoddliAU1G/oZOHMchEGGddNg70D1sdFYWxaa/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIT5lj/JHG4EM0dlfM+OJqgqVYvHDtC/O0wJo3dLQWlYepBkOt
-	k11aa+g4LdP0BxWPSW5nX9sP+Pf5gLeK1tyfab8Zx6c+koOfymgy
-X-Gm-Gg: ASbGnctqigL0f5zC7tS0RIfm3tZ1d0X1UA1mPzUFAKuXOnsKA9VOr88AbzGcigvCurE
-	91ngxHuzUg1hGYROnkzz2HYauL1lHH/4Rjk77rsRpJkJCOOwV+oj1AwZAfnzIoC9BWYXvwwhdeF
-	k7ie1MU+fk76rHUtvHUZXOUwXwUTyab2kcc6pdWZAm+Y/KTYLA+H3OqOTsnasjfJK6yOuzyyKuL
-	wcWoKshngSHb3voNbrRkoRxUfGuqin8rCH/vniyrPuk6rQjVYvF6qy9iIk7il2phTcSIKkZvwS7
-	M2FBMOiVB/+KcH3HKk7CbrYICo3mINQ=
-X-Google-Smtp-Source: AGHT+IGOWuCkTf+8tbhnvHToKES03iq4QshkRj7yoBfScEmpqVGoq4VGxClzsOy3zoBI1YXrodGUDw==
-X-Received: by 2002:a17:906:4889:b0:acb:e1:6503 with SMTP id a640c23a62f3a-acb00e1666emr226128366b.50.1744637087053;
-        Mon, 14 Apr 2025 06:24:47 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:8::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ce7fdcsm921165966b.176.2025.04.14.06.24.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 06:24:46 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 14 Apr 2025 06:24:16 -0700
-Subject: [PATCH net-next v2 10/10] net: fib_rules: Use nlmsg_payload in
- fib_{new,del}rule()
+	s=arc-20240116; t=1744637071; c=relaxed/simple;
+	bh=Hybz39FZma9Cyg3nKyz13PSchI9YPrOfhu5q7waKemo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=il+FzZjoTNvLYAtmC/B+G0akQ13+4Rov2cbQcnfRoemBqbbhgbJyStemVD8ZcDIPAf157DsEN4RM2IqvWGP+F5Bd85GMEkEjbuSeqP4cL06ljdGux9qr7+IU/Qr52liVX3O8rYYOtW7HCMnIS+De33H8FlhCbLYJH9Uk92ZWzMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T/pvW068; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3nt0s0Hf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T/pvW068; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3nt0s0Hf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5ED07218FE;
+	Mon, 14 Apr 2025 13:24:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744637068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G/XOuGgsFDfzaw3odh04S2DPENIai1JkJFf4sFeasm8=;
+	b=T/pvW068HgdILPwwvVNRYkcex0xoq4V7gQ5onNJtLqU/Jp/aL6G1NYZ0MN6Yl1DmzksgsX
+	3pOG9rmB53fvBYaauUB3Ez5Sl0y3qTofDy5OJRxD1Or1hkWvrmOzggyl6Nyx6hmTaJZSlp
+	Uddqwos63sG8FgxGzxxQDBLa6ZcBn3U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744637068;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G/XOuGgsFDfzaw3odh04S2DPENIai1JkJFf4sFeasm8=;
+	b=3nt0s0Hf09loo9mAN8WSGKpMNLtm5/x682S3d1CydYo5iEvVGu1ki80z+yyfrZQ+4yYtcj
+	rEd2mMHEwmRE/gAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744637068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G/XOuGgsFDfzaw3odh04S2DPENIai1JkJFf4sFeasm8=;
+	b=T/pvW068HgdILPwwvVNRYkcex0xoq4V7gQ5onNJtLqU/Jp/aL6G1NYZ0MN6Yl1DmzksgsX
+	3pOG9rmB53fvBYaauUB3Ez5Sl0y3qTofDy5OJRxD1Or1hkWvrmOzggyl6Nyx6hmTaJZSlp
+	Uddqwos63sG8FgxGzxxQDBLa6ZcBn3U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744637068;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G/XOuGgsFDfzaw3odh04S2DPENIai1JkJFf4sFeasm8=;
+	b=3nt0s0Hf09loo9mAN8WSGKpMNLtm5/x682S3d1CydYo5iEvVGu1ki80z+yyfrZQ+4yYtcj
+	rEd2mMHEwmRE/gAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 53242136A7;
+	Mon, 14 Apr 2025 13:24:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9pNHFIwM/WckfAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 14 Apr 2025 13:24:28 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1760DA094B; Mon, 14 Apr 2025 15:24:28 +0200 (CEST)
+Date: Mon, 14 Apr 2025 15:24:28 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: improve codegen in link_path_walk()
+Message-ID: <ayawbty4mgxuxkbncblr6xgl25ixjb34ywh3qxhozwuhxnr5t3@2fk4hmvtwuq3>
+References: <20250412110935.2267703-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250414-nlmsg-v2-10-3d90cb42c6af@debian.org>
-References: <20250414-nlmsg-v2-0-3d90cb42c6af@debian.org>
-In-Reply-To: <20250414-nlmsg-v2-0-3d90cb42c6af@debian.org>
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- David Ahern <dsahern@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Breno Leitao <leitao@debian.org>, kernel-team@meta.com, 
- Kuniyuki Iwashima <kuniyu@amazon.com>
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1686; i=leitao@debian.org;
- h=from:subject:message-id; bh=QH4HBkEgzWlR+iLppNxzhUiHrA5hDihNEzcMAW7W4Oo=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBn/QyO/SuSwBqi5s9qnVkbc6llOeGblYxm27yEv
- ZvXm0acPDSJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ/0MjgAKCRA1o5Of/Hh3
- bTecEACpv2HtCD+FWwLu+5RJN460rj/87oBfaM8dK1Gu+3sOHXt/OW/YdI0jkj4HC+uz4OZpLKj
- 5YeLycdVwlfHUf23eT04t7VlcTreOucWB7SmfM6MCOV5EbdnAxwGxczKSI53HZG3fM4ndTIE2Q1
- 6vf+/BZO3XiX47Z7GZ+Qh9cdp4Zvqc/fSltIVCldkp7P/81DsWwKYRep4CHehWMHJzzEDRql469
- huXTxjzBH+aI30gCjBXCgCuUpLFqPX/0D7bW9H3GMx2q9kaoUKmj+DDTonN6frejmSoWfcF8Y7e
- 6ELwFg2oPC4ENWLlXOhHJOX8ddKqqtoNiDh29MkxsNVgpmmjJ6XkxkEU/BABAA/uIM1Fsbi/93f
- 4gV+uS1LIsrmWu5P2LO9hC2BcHutVQNZXoggNkWOieoMkaG4ZrXEmUeom+C8Sqf6obe0gzDR+Xf
- SDlvUwRSKL+WT9lBrKQ/ybTganD2KRnoI+aZibaukiDqQ0H4FsgBkhk5xJWcwtAcgFepk9by561
- ccx8tzzBPtz3HRqFxhpeKyX7LtbvcXEvpUaiXvWH9ur5DxIvSuN5q0JTwUrj2jh6XHxVEd2K+U9
- /qNMsJNBFn2SYRS4ugTlnb6ZIRDHH5Nq67IWy6aOeBSV3q7uHXU6qJIZUDfAsRlFD1LisGh81rR
- NOPSYSElMrNXQPg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250412110935.2267703-1-mjguzik@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-Leverage the new nlmsg_payload() helper to avoid checking for message
-size and then reading the nlmsg data.
+On Sat 12-04-25 13:09:35, Mateusz Guzik wrote:
+> Looking at the asm produced by gcc 13.3 for x86-64:
+> 1. may_lookup() usage was not optimized for succeeding, despite the
+>    routine being inlined and rightfully starting with likely(!err)
+> 2. the compiler assumed the path will have an indefinite amount of
+>    slashes to skip, after which the result will be an empty name
+> 
+> As such:
+> 1. predict may_lookup() succeeding
+> 2. check for one slash, no explicit predicts. do roll forward with
+>    skipping more slashes while predicting there is only one
+> 3. predict the path to find was not a mere slash
+> 
+> This also has a side effect of shrinking the file:
+> add/remove: 1/1 grow/shrink: 0/3 up/down: 934/-1012 (-78)
+> Function                                     old     new   delta
+> link_path_walk                                 -     934    +934
+> path_parentat                                138     112     -26
+> path_openat                                 4864    4823     -41
+> path_lookupat                                418     374     -44
+> link_path_walk.part.constprop                901       -    -901
+> Total: Before=46639, After=46561, chg -0.17%
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- net/core/fib_rules.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Looks sensible. Feel free to add:
 
-diff --git a/net/core/fib_rules.c b/net/core/fib_rules.c
-index 6a7a28bf631c2..06052b6c946b9 100644
---- a/net/core/fib_rules.c
-+++ b/net/core/fib_rules.c
-@@ -852,13 +852,14 @@ int fib_newrule(struct net *net, struct sk_buff *skb, struct nlmsghdr *nlh,
- 		struct netlink_ext_ack *extack, bool rtnl_held)
- {
- 	struct fib_rule *rule = NULL, *r, *last = NULL;
--	struct fib_rule_hdr *frh = nlmsg_data(nlh);
- 	int err = -EINVAL, unresolved = 0;
- 	struct fib_rules_ops *ops = NULL;
- 	struct nlattr *tb[FRA_MAX + 1];
- 	bool user_priority = false;
-+	struct fib_rule_hdr *frh;
- 
--	if (nlh->nlmsg_len < nlmsg_msg_size(sizeof(*frh))) {
-+	frh = nlmsg_payload(nlh, sizeof(*frh));
-+	if (!frh) {
- 		NL_SET_ERR_MSG(extack, "Invalid msg length");
- 		goto errout;
- 	}
-@@ -980,13 +981,14 @@ int fib_delrule(struct net *net, struct sk_buff *skb, struct nlmsghdr *nlh,
- 		struct netlink_ext_ack *extack, bool rtnl_held)
- {
- 	struct fib_rule *rule = NULL, *nlrule = NULL;
--	struct fib_rule_hdr *frh = nlmsg_data(nlh);
- 	struct fib_rules_ops *ops = NULL;
- 	struct nlattr *tb[FRA_MAX+1];
- 	bool user_priority = false;
-+	struct fib_rule_hdr *frh;
- 	int err = -EINVAL;
- 
--	if (nlh->nlmsg_len < nlmsg_msg_size(sizeof(*frh))) {
-+	frh = nlmsg_payload(nlh, sizeof(*frh));
-+	if (!frh) {
- 		NL_SET_ERR_MSG(extack, "Invalid msg length");
- 		goto errout;
- 	}
+Reviewed-by: Jan Kara <jack@suse.cz>
 
+								Honza
+
+> ---
+> 
+> I'm looking at skipping perm checks with an "everybody can MAY_EXEC and
+> there are no acls" bit for opflags. This crapper is a side effect of
+> straighetning out the code before I get there.
+> 
+>  fs/namei.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 360a86ca1f02..40a636bbfa0c 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2424,9 +2424,12 @@ static int link_path_walk(const char *name, struct nameidata *nd)
+>  	nd->flags |= LOOKUP_PARENT;
+>  	if (IS_ERR(name))
+>  		return PTR_ERR(name);
+> -	while (*name=='/')
+> -		name++;
+> -	if (!*name) {
+> +	if (*name == '/') {
+> +		do {
+> +			name++;
+> +		} while (unlikely(*name == '/'));
+> +	}
+> +	if (unlikely(!*name)) {
+>  		nd->dir_mode = 0; // short-circuit the 'hardening' idiocy
+>  		return 0;
+>  	}
+> @@ -2439,7 +2442,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
+>  
+>  		idmap = mnt_idmap(nd->path.mnt);
+>  		err = may_lookup(idmap, nd);
+> -		if (err)
+> +		if (unlikely(err))
+>  			return err;
+>  
+>  		nd->last.name = name;
+> -- 
+> 2.43.0
+> 
 -- 
-2.47.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
