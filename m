@@ -1,168 +1,261 @@
-Return-Path: <linux-kernel+bounces-602756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B88A87ED1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:17:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B489A87EDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CEB53A21B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:16:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A28E1171CBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28D42BD588;
-	Mon, 14 Apr 2025 11:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC865293B4E;
+	Mon, 14 Apr 2025 11:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIiY88Lq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="2r7UTh6G"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBFB29DB9E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 11:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CD428EA4C;
+	Mon, 14 Apr 2025 11:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744629306; cv=none; b=FqYvugaODA9k13L6OSEdDFyujWjBLGili00H6z1WRw0Wm6H9M0PteD/fD51tc8D3itS3YMvEUXbZnmQYDZAO88zMgO5kRKxBVW5+VgyTeForN5VvcqW6OUVkc9PDzEd33NS/L6UCpAlcMEgs7fiYMrDwh0+SVN7pk1J7JTJmWu8=
+	t=1744629563; cv=none; b=hD6dPs7qLLpXJcgYmm1pIDxEIq0zphQI3X2TWeMMdhYbOLJYQoMLt7mxqS47II537fuTS/p+75hYbBcXdfwAnHVmkVccD1Sr8Af4lQGfjiUOsFu/rxqZGCV/B6JMjMsNaU7DM2CZyoBf5Yo8l9z7WX23tn9YzpshyGdLb1ZOU9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744629306; c=relaxed/simple;
-	bh=8yHKkbWoft8F9o9x75jDIA+cD6IIJndCHKNdCRxUXB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dJPqWkaRg9hyxyz38CNcJip2mp14JVhVbE+92MBFaUnbJft164pbJx8CVA8parvf4XiQ2IftYcGuZyRmI08Vz9nuF+EuIPwd99nMGS21fvtzHyzcP//rEwJMOywahUPdvLbG7XnQzsRF5USXgXbqePhhpnZFgxh23gOsS9g+irQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIiY88Lq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 225BDC4CEE2;
-	Mon, 14 Apr 2025 11:15:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744629305;
-	bh=8yHKkbWoft8F9o9x75jDIA+cD6IIJndCHKNdCRxUXB8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lIiY88LqfgtcHo/NfiDeMJp/NkC1MUfTzb8mUF3W9UC47qtCUJXwswFVuszSOoYDj
-	 mAv4NgnZHBDNgK76G8J9imNBkukYlejO+ypo8D5CJasPRzSqGZHp3Z/qQAAvIdFYSu
-	 ABiv1sHU2mOjushl3E5q+VzsnpQ6sKKrm8OqCdtpb29739iONLKqyYJgLywqct9z+W
-	 iLIdkLfVhFXfLq8UBH4CpWW5bB5a1osu+yVn5b8n+Xf4OGgnA4sORfaPltYPqCtm0U
-	 gbcqTN1ElfPLwaam8/IMSK7mc+Ehom0vE9bJ7jnjcM13u4YBQPQCFNi32db1f+cIgB
-	 kJNytXd9WS9Zg==
-Date: Mon, 14 Apr 2025 13:14:58 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, x86@kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
-	luto@kernel.org, paulmck@kernel.org, rostedt@goodmis.org,
-	tglx@linutronix.de, willy@infradead.org, jon.grimm@amd.com,
-	bharata@amd.com, raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com
-Subject: Re: [PATCH v3 1/4] x86/clear_page: extend clear_page*() for
- multi-page clearing
-Message-ID: <Z_zuMvZq43nc0SoO@gmail.com>
-References: <20250414034607.762653-1-ankur.a.arora@oracle.com>
- <20250414034607.762653-2-ankur.a.arora@oracle.com>
- <Z_yr_cmXti4kXHaX@gmail.com>
- <20250414110259.GF5600@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1744629563; c=relaxed/simple;
+	bh=STzxtrjaleEEfCoMMNe4whlXBIquCUD+zNSnw5eeZog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=j+thOT5FyO7uqT7hwPctD/jFIH/ebrI9RUPiDW4KUB9l9uee2yqPra8beDLrRV3SBb0imZGlDpV5w0IBcWATKkTCuidwOg3W4C88eAPE324UvTCTwihEvW9KpTPmbZotGdl1Ddhoz9HWJVJ37sUq9vlS7Pc7hA5ShwgrpEHstGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=2r7UTh6G; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53E8DgFV030537;
+	Mon, 14 Apr 2025 13:18:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	b64+5Fyc2XBoUKGin9x9phROn71/VpDRGxeTWMDWMDQ=; b=2r7UTh6GWBYWwiT9
+	hcaoQA3S3eaZFgcfT4Lr1bqqqeIBB6cnwspB4DKMTz3xB0JnArETHV+YciqnlAnR
+	MBQrDZxmIu7tbYJ9F359QeeerglGi4NamuvmQ1AiuLfACtSYb01nNHXVcc95qZ+c
+	y7jHdqYOdWDI8SjvBwyqr/FoKdqFpO+ho3DfZglE2PSncQj7R3f2P/mFHSVZEkkS
+	XWaTiGK8cwznlxNzII67+wUV5l/ssK7ByJKYMaYp4wbZQvV7P+pDcMQqQzQCFKtr
+	0G2VBeUkdBXQf8zsbrB8y1p2Y1S7QxlYDOeXmIm5FGRniSr/3yVi5YpVLn2nj173
+	ejk8hg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45yda8ynsf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Apr 2025 13:18:44 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E762C40047;
+	Mon, 14 Apr 2025 13:17:46 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A3FE295BA29;
+	Mon, 14 Apr 2025 13:17:19 +0200 (CEST)
+Received: from [10.48.86.196] (10.48.86.196) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 14 Apr
+ 2025 13:17:19 +0200
+Message-ID: <f7dcc10e-b2c6-4252-9c71-6715cebe49fd@foss.st.com>
+Date: Mon, 14 Apr 2025 13:17:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414110259.GF5600@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dmaengine: stm32: Don't use %pK through printk
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+        Vinod
+ Koul <vkoul@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC: <dmaengine@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250407-restricted-pointers-dma-v1-1-b617dd0e293a@linutronix.de>
+Content-Language: en-US
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+In-Reply-To: <20250407-restricted-pointers-dma-v1-1-b617dd0e293a@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-14_03,2025-04-10_01,2024-11-22_01
 
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
 
-> On Mon, Apr 14, 2025 at 08:32:29AM +0200, Ingo Molnar wrote:
+On 4/7/25 10:26, Thomas Weißschuh wrote:
+> In the past %pK was preferable to %p as it would not leak raw pointer
+> values into the kernel log.
+> Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
+> the regular %p has been improved to avoid this issue.
+> Furthermore, restricted pointers ("%pK") were never meant to be used
+> through printk(). They can still unintentionally leak raw pointers or
+> acquire sleeping looks in atomic contexts.
+
+I forgot to highlight this typo:
+
+s/looks/locks
+
 > 
-> > >  static inline void clear_page(void *page)
-> > >  {
-> > > +	unsigned int length = PAGE_SIZE;
-> > >  	/*
-> > > -	 * Clean up KMSAN metadata for the page being cleared. The assembly call
-> > > +	 * Clean up KMSAN metadata for the pages being cleared. The assembly call
-> > >  	 * below clobbers @page, so we perform unpoisoning before it.
-> > 
-> > >  	 */
-> > > -	kmsan_unpoison_memory(page, PAGE_SIZE);
-> > > -	alternative_call_2(clear_page_orig,
-> > > -			   clear_page_rep, X86_FEATURE_REP_GOOD,
-> > > -			   clear_page_erms, X86_FEATURE_ERMS,
-> > > +	kmsan_unpoison_memory(page, length);
-> > > +
-> > > +	alternative_call_2(clear_pages_orig,
-> > > +			   clear_pages_rep, X86_FEATURE_REP_GOOD,
-> > > +			   clear_pages_erms, X86_FEATURE_ERMS,
-> > >  			   "=D" (page),
-> > > -			   "D" (page),
-> > > +			   ASM_INPUT("D" (page), "S" (length)),
-> > >  			   "cc", "memory", "rax", "rcx");
-> > >  }
-> > >  
-> > > diff --git a/arch/x86/lib/clear_page_64.S b/arch/x86/lib/clear_page_64.S
-> > > index a508e4a8c66a..bce516263b69 100644
-> > > --- a/arch/x86/lib/clear_page_64.S
-> > > +++ b/arch/x86/lib/clear_page_64.S
-> > > @@ -13,20 +13,35 @@
-> > >   */
-> > >  
-> > >  /*
-> > > - * Zero a page.
-> > > - * %rdi	- page
-> > > + * Zero kernel page aligned region.
-> > > + *
-> > > + * Input:
-> > > + * %rdi	- destination
-> > > + * %esi	- length
-> > > + *
-> > > + * Clobbers: %rax, %rcx
-> > >   */
-> > > -SYM_TYPED_FUNC_START(clear_page_rep)
-> > > -	movl $4096/8,%ecx
-> > > +SYM_TYPED_FUNC_START(clear_pages_rep)
-> > > +	movl %esi, %ecx
-> > >  	xorl %eax,%eax
-> > > +	shrl $3,%ecx
-> > >  	rep stosq
-> > >  	RET
-> > > -SYM_FUNC_END(clear_page_rep)
-> > > -EXPORT_SYMBOL_GPL(clear_page_rep)
-> > > +SYM_FUNC_END(clear_pages_rep)
-> > > +EXPORT_SYMBOL_GPL(clear_pages_rep)
-> > >  
-> > > -SYM_TYPED_FUNC_START(clear_page_orig)
-> > > +/*
-> > > + * Original page zeroing loop.
-> > > + * Input:
-> > > + * %rdi	- destination
-> > > + * %esi	- length
-> > > + *
-> > > + * Clobbers: %rax, %rcx, %rflags
-> > > + */
-> > > +SYM_TYPED_FUNC_START(clear_pages_orig)
-> > > +	movl   %esi, %ecx
-> > >  	xorl   %eax,%eax
-> > > -	movl   $4096/64,%ecx
-> > > +	shrl   $6,%ecx
-> > 
-> > So if the natural input parameter is RCX, why is this function using 
-> > RSI as the input 'length' parameter? Causes unnecessary register 
-> > shuffling.
+> Switch to the regular pointer formatting which is safer and
+> easier to reason about.
+> There are still a few users of %pK left, but these use it through seq_file,
+> for which its usage is safe.
 > 
-> This symbol is written as a C function with C calling convention, even
-> though it is only meant to be called from that clear_page() alternative.
->
-> If we want to go change all this, then we should go do the same we do
-> for __clear_user() and write it thusly:
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> ---
+>   drivers/dma/stm32/stm32-dma.c  | 10 +++++-----
+>   drivers/dma/stm32/stm32-dma3.c | 10 +++++-----
+>   drivers/dma/stm32/stm32-mdma.c |  8 ++++----
+>   3 files changed, 14 insertions(+), 14 deletions(-)
 > 
-> 	asm volatile(ALTERNATIVE("rep stosb",
-> 				 "call rep_stos_alternative", ALT_NOT(X86_FEATURE_FSRS)
-> 				 : "+c" (size), "+D" (addr), ASM_CALL_CONSTRAINT
-> 				 : "a" (0))
+> diff --git a/drivers/dma/stm32/stm32-dma.c b/drivers/dma/stm32/stm32-dma.c
+> index 917f8e9223739af853e492d97cecac0e95e0aea3..ee9246c6888ffde2d416270f25890c04c72daff7 100644
+> --- a/drivers/dma/stm32/stm32-dma.c
+> +++ b/drivers/dma/stm32/stm32-dma.c
+> @@ -613,7 +613,7 @@ static void stm32_dma_start_transfer(struct stm32_dma_chan *chan)
+>   	reg->dma_scr |= STM32_DMA_SCR_EN;
+>   	stm32_dma_write(dmadev, STM32_DMA_SCR(chan->id), reg->dma_scr);
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: started\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: started\n", &chan->vchan);
+>   }
+>   
+>   static void stm32_dma_configure_next_sg(struct stm32_dma_chan *chan)
+> @@ -676,7 +676,7 @@ static void stm32_dma_handle_chan_paused(struct stm32_dma_chan *chan)
+>   
+>   	chan->status = DMA_PAUSED;
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: paused\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: paused\n", &chan->vchan);
+>   }
+>   
+>   static void stm32_dma_post_resume_reconfigure(struct stm32_dma_chan *chan)
+> @@ -728,7 +728,7 @@ static void stm32_dma_post_resume_reconfigure(struct stm32_dma_chan *chan)
+>   	dma_scr |= STM32_DMA_SCR_EN;
+>   	stm32_dma_write(dmadev, STM32_DMA_SCR(chan->id), dma_scr);
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: reconfigured after pause/resume\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: reconfigured after pause/resume\n", &chan->vchan);
+>   }
+>   
+>   static void stm32_dma_handle_chan_done(struct stm32_dma_chan *chan, u32 scr)
+> @@ -820,7 +820,7 @@ static void stm32_dma_issue_pending(struct dma_chan *c)
+>   
+>   	spin_lock_irqsave(&chan->vchan.lock, flags);
+>   	if (vchan_issue_pending(&chan->vchan) && !chan->desc && !chan->busy) {
+> -		dev_dbg(chan2dev(chan), "vchan %pK: issued\n", &chan->vchan);
+> +		dev_dbg(chan2dev(chan), "vchan %p: issued\n", &chan->vchan);
+>   		stm32_dma_start_transfer(chan);
+>   
+>   	}
+> @@ -922,7 +922,7 @@ static int stm32_dma_resume(struct dma_chan *c)
+>   
+>   	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: resumed\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: resumed\n", &chan->vchan);
+>   
+>   	return 0;
+>   }
+> diff --git a/drivers/dma/stm32/stm32-dma3.c b/drivers/dma/stm32/stm32-dma3.c
+> index 0c6c4258b19561c94f1c68f26ade16b82660ebe6..50e7106c5cb73394c1de52ad5f571f6db63750e6 100644
+> --- a/drivers/dma/stm32/stm32-dma3.c
+> +++ b/drivers/dma/stm32/stm32-dma3.c
+> @@ -801,7 +801,7 @@ static void stm32_dma3_chan_start(struct stm32_dma3_chan *chan)
+>   
+>   	chan->dma_status = DMA_IN_PROGRESS;
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: started\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: started\n", &chan->vchan);
+>   }
+>   
+>   static int stm32_dma3_chan_suspend(struct stm32_dma3_chan *chan, bool susp)
+> @@ -1452,7 +1452,7 @@ static int stm32_dma3_pause(struct dma_chan *c)
+>   
+>   	chan->dma_status = DMA_PAUSED;
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: paused\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: paused\n", &chan->vchan);
+>   
+>   	return 0;
+>   }
+> @@ -1465,7 +1465,7 @@ static int stm32_dma3_resume(struct dma_chan *c)
+>   
+>   	chan->dma_status = DMA_IN_PROGRESS;
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: resumed\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: resumed\n", &chan->vchan);
+>   
+>   	return 0;
+>   }
+> @@ -1490,7 +1490,7 @@ static int stm32_dma3_terminate_all(struct dma_chan *c)
+>   	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+>   	vchan_dma_desc_free_list(&chan->vchan, &head);
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: terminated\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: terminated\n", &chan->vchan);
+>   
+>   	return 0;
+>   }
+> @@ -1543,7 +1543,7 @@ static void stm32_dma3_issue_pending(struct dma_chan *c)
+>   	spin_lock_irqsave(&chan->vchan.lock, flags);
+>   
+>   	if (vchan_issue_pending(&chan->vchan) && !chan->swdesc) {
+> -		dev_dbg(chan2dev(chan), "vchan %pK: issued\n", &chan->vchan);
+> +		dev_dbg(chan2dev(chan), "vchan %p: issued\n", &chan->vchan);
+>   		stm32_dma3_chan_start(chan);
+>   	}
+>   
+> diff --git a/drivers/dma/stm32/stm32-mdma.c b/drivers/dma/stm32/stm32-mdma.c
+> index e6d525901de7ecf822d218b87b95aba6bbf0a3ef..080c1c725216cb627675c372591b4c0c227c3cea 100644
+> --- a/drivers/dma/stm32/stm32-mdma.c
+> +++ b/drivers/dma/stm32/stm32-mdma.c
+> @@ -1187,7 +1187,7 @@ static void stm32_mdma_start_transfer(struct stm32_mdma_chan *chan)
+>   
+>   	chan->busy = true;
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: started\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: started\n", &chan->vchan);
+>   }
+>   
+>   static void stm32_mdma_issue_pending(struct dma_chan *c)
+> @@ -1200,7 +1200,7 @@ static void stm32_mdma_issue_pending(struct dma_chan *c)
+>   	if (!vchan_issue_pending(&chan->vchan))
+>   		goto end;
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: issued\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: issued\n", &chan->vchan);
+>   
+>   	if (!chan->desc && !chan->busy)
+>   		stm32_mdma_start_transfer(chan);
+> @@ -1220,7 +1220,7 @@ static int stm32_mdma_pause(struct dma_chan *c)
+>   	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+>   
+>   	if (!ret)
+> -		dev_dbg(chan2dev(chan), "vchan %pK: pause\n", &chan->vchan);
+> +		dev_dbg(chan2dev(chan), "vchan %p: pause\n", &chan->vchan);
+>   
+>   	return ret;
+>   }
+> @@ -1261,7 +1261,7 @@ static int stm32_mdma_resume(struct dma_chan *c)
+>   
+>   	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: resume\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: resume\n", &chan->vchan);
+>   
+>   	return 0;
+>   }
 > 
-> And forget about all those clear_page_*() thingies.
-
-Yeah.
-
-Thanks,
-
-	Ingo
+> ---
+> base-commit: e48e99b6edf41c69c5528aa7ffb2daf3c59ee105
+> change-id: 20250404-restricted-pointers-dma-29cf839a1a0b
+> 
+> Best regards,
 
