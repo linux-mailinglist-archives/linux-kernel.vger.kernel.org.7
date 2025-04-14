@@ -1,54 +1,52 @@
-Return-Path: <linux-kernel+bounces-603605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E9FFA88A10
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:41:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC29A88A0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FE617CB47
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:41:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC889189AA52
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363A428A1ED;
-	Mon, 14 Apr 2025 17:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A80528A1D0;
+	Mon, 14 Apr 2025 17:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDKMhpd2"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h7S8rw4L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9181F28A1E9;
-	Mon, 14 Apr 2025 17:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5654288C90
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 17:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744652463; cv=none; b=fS4vbPI+Vbh5po64ksmLRR4OBzBHHbPfvjcSre3mlWIqD+ovTEg/PF9IIPCr5WAzx3omJfDYXhy6iGnwdbkavhOGmog2cQuWynR44j7xCO405sMg576DnWqhv3mX7OfTJPXQrBPEScLtyEhNHAlBYEkuiitnwIGtYAfrh7x7x+c=
+	t=1744652454; cv=none; b=oDtuw1XA2il58Y5LY1pE6JIE3YVOLVvJ7XVYRrjokgAx+No2DyEtYThQT+6q56NBPyPpHl0fLhovgU+y2a3eIsS9ZEGayjbDfRVm4XkGPfBy3DH4Bp9+/DF+cbd6/QZppoWlqgP09NSAGohyoWToAmrdnwD9jveLFc1QbDl/uJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744652463; c=relaxed/simple;
-	bh=JGtuDrAIZbqWDfcYpvFO724uSw25Op9JJywY8Ih08pQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jQdkYNOndRiOhErJ54f4iydwSzvA5Xjz99Ofz8f5UeY1CIqtwHKPzD8wvbZ9gVzV9SPRBFNnYjAJuVaNt/JB4DXhb8GZcjW8z+qLXkvq/2DE6b+45lf9Em+K7PseVxzoJSxVV1hWKQ34/8F+WzYewYzOObl7/BqXm0wF70E45AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDKMhpd2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 905B8C4CEE2;
-	Mon, 14 Apr 2025 17:40:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744652463;
-	bh=JGtuDrAIZbqWDfcYpvFO724uSw25Op9JJywY8Ih08pQ=;
+	s=arc-20240116; t=1744652454; c=relaxed/simple;
+	bh=RhuBuFuUSgwG0M2hcHNcoi4znVRnMbEzsy4MBOZpuqw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZxYlDq03xSbjgrxRIE9Q8bNdFj1o6KPeRodwgzoIppmAGuKxP5AJcrEjOftukPBD7GIRtLzw8h/17BJmlPTWfXwQ/tL5OpBNBo4p/PKexYPU12ceOnvrVBjIBXl7hBGYB5m7CEkghmj5O+nzr/SSbGgsem8y9D/1ruYXgPJE7E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h7S8rw4L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06B47C4CEE2;
+	Mon, 14 Apr 2025 17:40:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744652453;
+	bh=RhuBuFuUSgwG0M2hcHNcoi4znVRnMbEzsy4MBOZpuqw=;
 	h=From:To:Cc:Subject:Date:From;
-	b=QDKMhpd2GMCOX6pmZd5WG5+sNI8cSFZlUwiTOyQTghliWIWnz1LTl7DUDAd3Ja1+j
-	 dS/IVSK5DX1qAUp3FKnScd6WXDWbNME0S7g6cD2qqoDzxOmHgyPB7s8KNUBxUqBf27
-	 /+nWgkX5EUubaQshiKQFGIFOJhzaeD1EzatCirxvBpEgJ7fJx41uyq+FqQaM7dM36W
-	 vQp1DBWopHfvXybzUG3n+lr/dKCfqgCouN7rCNCbIl+8yyr66QuY5Ir5+YErPuVjud
-	 ODFG1sR8NjKVzlqXT1k7Zd3/Rpkh4aQXrZRx7z01GDFmtfN/x+HLXknS5yXPF7mkBM
-	 gumiLvCNeUwBw==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH] arm64: Kconfig: remove unnecessary selection of CRC32
-Date: Mon, 14 Apr 2025 10:40:18 -0700
-Message-ID: <20250414174018.6359-1-ebiggers@kernel.org>
+	b=h7S8rw4LkSL2yZiK2Jb9RdOq9KyBiHkWAIT9ks4oablT7axSE0QG4bEzXOhZS1a+7
+	 wWvnW4T8gciYm82GCGyBLS8tb+MJG2vwrkoavsAfqeUzvQfJnfGODU48THluJ9Zzb8
+	 3btivrXpCTIp3/MgluFedhzlDIZbVvDen11h7zHQ=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH] MAINTAINERS: update the location of the driver-core git tree
+Date: Mon, 14 Apr 2025 19:40:48 +0200
+Message-ID: <2025041447-showbiz-other-7130@gregkh>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -56,51 +54,54 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Lines: 45
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1733; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=RhuBuFuUSgwG0M2hcHNcoi4znVRnMbEzsy4MBOZpuqw=; b=owGbwMvMwCRo6H6F97bub03G02pJDOl/PRZcTNzwNXvtjqcH9gXVNVzXXplyWr3+6beUCau3X LWfUpch1xHLwiDIxCArpsjyZRvP0f0VhxS9DG1Pw8xhZQIZwsDFKQATsf/IMJvdrC9+b1OgwHoV t08d+7QXHvj0uJFhntWKCaf22Nj2F6eKXD65buXL9/9CjQE=
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
 Content-Transfer-Encoding: 8bit
 
-From: Eric Biggers <ebiggers@google.com>
+The driver core git tree has moved, so properly document it.
 
-The selection of CRC32 by ARM64 was added by commit 7481cddf29ed
-("arm64/lib: add accelerated crc32 routines") as a workaround for the
-fact that, at the time, the CRC32 library functions used weak symbols to
-allow architecture-specific overrides.  That only worked when CRC32 was
-built-in, and thus ARM64 was made to just force CRC32 to built-in.
-
-Now that the CRC32 library no longer uses weak symbols, that no longer
-applies.  And the selection does not fulfill a user dependency either;
-those all have their own selections from other options.  Therefore, the
-selection of CRC32 by ARM64 is no longer necessary.  Remove it.
-
-Note that this does not necessarily result in CRC32 no longer being set
-to y, as it still tends to get selected by something else anyway.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Dave Ertman <david.m.ertman@intel.com>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
+ MAINTAINERS | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Please consider taking this through the arm64 tree.  But if it doesn't
-get picked up there, I'll take it through the crc tree.
-
- arch/arm64/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a182295e6f08..14073b0094c1 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -132,11 +132,10 @@ config ARM64
- 	select BUILDTIME_TABLE_SORT
- 	select CLONE_BACKWARDS
- 	select COMMON_CLK
- 	select CPU_PM if (SUSPEND || CPU_IDLE)
- 	select CPUMASK_OFFSTACK if NR_CPUS > 256
--	select CRC32
- 	select DCACHE_WORD_ACCESS
- 	select DYNAMIC_FTRACE if FUNCTION_TRACER
- 	select DMA_BOUNCE_UNALIGNED_KMALLOC
- 	select DMA_DIRECT_REMAP
- 	select EDAC_SUPPORT
-
-base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 96b827049501..f19cf0443e49 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3868,7 +3868,7 @@ M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ R:	Dave Ertman <david.m.ertman@intel.com>
+ R:	Ira Weiny <ira.weiny@intel.com>
+ S:	Supported
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git
+ F:	Documentation/driver-api/auxiliary_bus.rst
+ F:	drivers/base/auxiliary.c
+ F:	include/linux/auxiliary_bus.h
+@@ -7225,7 +7225,7 @@ M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ M:	"Rafael J. Wysocki" <rafael@kernel.org>
+ M:	Danilo Krummrich <dakr@kernel.org>
+ S:	Supported
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git
+ F:	Documentation/core-api/kobject.rst
+ F:	drivers/base/
+ F:	fs/debugfs/
+@@ -13106,7 +13106,7 @@ KERNFS
+ M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ M:	Tejun Heo <tj@kernel.org>
+ S:	Supported
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git
+ F:	fs/kernfs/
+ F:	include/linux/kernfs.h
+ 
 -- 
 2.49.0
 
