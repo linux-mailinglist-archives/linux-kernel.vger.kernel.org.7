@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-602544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A804A87C3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:49:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC35A87C52
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F11393AE0A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:49:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60177189463C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E6B265CD3;
-	Mon, 14 Apr 2025 09:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D029266B7D;
+	Mon, 14 Apr 2025 09:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MGTAg3NE"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="h1evmA5s"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79568265CD1
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E98265CD3
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744624165; cv=none; b=i8/YW1HarmcWv/IsiAcDfIuOGU72WvX8P5IO7olf8pLT8Y8vA21sVlUnw2Tz7P1zG3e7YqcNUJw8noRh5suJhu6mUZpRrHJ2HTKHp8SjevhDZugxQYYBT/3bArxg70LYzsQrjpNd1516hzb88NL4hJ0Av/Z9TBkm4QD2ANXdl98=
+	t=1744624197; cv=none; b=EiTeHBfdGjlLFtcNCZp6oTUekExwd7V8OBwRbns2+hsPNdt7YtdnPSjOKRDycN3dKrcPDQ3knoytb4z3EWgALhcxxfqYrcqvaCr399SdV5FnGPXEBM1C9edeX1zggw/l/IQYcRviH/ih4Tw5q0FqV6YUOw9DfZTSjpzN00Mx5dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744624165; c=relaxed/simple;
-	bh=yUKqCPPORdYVe342mQqddOKMLZ0bybmVAHWIG65MK4w=;
+	s=arc-20240116; t=1744624197; c=relaxed/simple;
+	bh=UpCWjbJlvqX+lZRx1GWi09bIQhROQ34WhK48kOtNG4Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mZcjDjms/4Z7OidRO05zMiPrvGnhrsZW1S0c7SunLN6Q4trcD17/AG+IfAowMn0+fZ1z+TH2YH8t9vRnBYDcnR0XVXUPtZ7mUYKuewoDo+xYIVZei0ibHaq4EOZDwHrQdQ9wgAIPyF9qiyW1BZF2QqSvmwzb/RidVhWJ5yg2Rjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MGTAg3NE; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=Z0OS49mcHbuV1s1Po7sBH1XKOcsfKWggfd3TeRTjAsyN2yInKIUvXAhEeaur0vluj0SUOY0O57DayuYZNRnbfZateTuJS7NERQdG/QtGiOGQ/UEOGXT7+0XDg3VTBmxn4WLPxFYNmqKllvg5pHZ1fPYZwDhMb7R9xnPt61YCDL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=h1evmA5s; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53E99vr7001845
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:49:22 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53E99rYN016373
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:49:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/sdJrQAAPCExE5G43phs3Cg9sP4wasVXTslo08/sa84=; b=MGTAg3NEob7NbEkF
-	KwirsgchUJrFDt+xwKjcEdYD1rRCu6BM5E7bQv0ZxVRcBP2Dm4KHou/aNK5JWiBl
-	onbAxJKCP5xfRzwp+z6zhVwCJ7povMgpLO86sy3iA7o6/lZDtmP6zqlBJdFSToJ4
-	lBQcVdiv3AEQPfB10wdZRgaDbcLMNX5Y+hGLY0YOrU9tFIrZAsCBVtXcw86NHQCz
-	oWKORFiiU4Usd/Vt2FKCu5690IcrJFZyTi9QZOwQY6lgn2SEsI/IC8jYLXz8R+5S
-	U4YI9Jl1jNusicIYY+pLHnFwI5CS+/pOwUoRh9UF2WQgS7wDpqH4AgauSfYAIh+3
-	h3vkiw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ydhq4ajc-1
+	otwibO+B1RJWMfT84nQrsXKdELhQ7z3K4EdM/HQ4kbU=; b=h1evmA5sLBCjOty0
+	enCqC7PLiGv+sARxC9HV4xxZs5BSkX4K+HSbG5FmS+BtUv67m58dEvzC7Nfplz4r
+	P4Dw11xn7RQyIbleTY+Ywlpyul5RjNwiLRIZSb+lctLPN8xEqETpxNFnOU5VDELN
+	jXDEy1JyCkN+tJBZ5sMj+Z5ue4O6E7lXBfiuwACT0KZiCyW/DWEbiE7t841RSiUk
+	K+Y0vT4S6XkjOr3na2CM7nj4J6EhxuIUYqSzTtjyVKHwQOoTBe4Nz9wyCzFMC4sx
+	yRhkfveEd1oGUMSD7qzLOIF3b4ysZa4zuYq+4oqHCHz/dBtLIRcDxrnKxnkt1Ba1
+	hRXK8Q==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yfgjc374-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:49:21 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e8fd4ef023so8003246d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 02:49:21 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:49:53 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c76062c513so109745185a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 02:49:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744624161; x=1745228961;
+        d=1e100.net; s=20230601; t=1744624192; x=1745228992;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/sdJrQAAPCExE5G43phs3Cg9sP4wasVXTslo08/sa84=;
-        b=iJVprkm8YzrG2tQOh2LEjhWy/XMgkgl5pht8w3Zm9EUma3Y5dhzITcO2sWr0LC5RCU
-         mEhmbSo8Z56Oau1ywX3Kv1/MFSZdrOzkok7BGxO3XXDA60+ezekgLNa0iuNu+LtvC6fV
-         VrAV1oJh/ST0giMqbudQgioYPmQvVm7MJX3mIVueVWmZMa8r9kBdcwiP/jpDEIeMkZDX
-         Ynl9HijTBTrFq0Pvdt+uGvDNdH8QJlc+YderzbW6hoSJIh1l5Fzugvg7aTY42XmgVMAW
-         Dlsw6JMvXgKA0vCfQHNcyRjYVnGdh/snExMj4Zq4oaUL2MvDRqQ76bpZixu/of0KySvL
-         lfZA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6UCbBtiC7z+TRWy0ZmdJLAnb4GBhE+mlVPU0sWvHYNRhs495l+6jczmwwS4hjFEvwU7xv3SOL2dNihnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygeDrTJ6z2F1zP/ePmqoroacAv7ryH9gKuTNYmnNIeEnElpQld
-	o0lKyLtKsyqd83VZiPYIDq6fs+VyYersroEJKM1p6Jdz9nejPRn/z3d4cVL3+oBD+H7qs+XU9NR
-	VCkYlyiKTH6pfj+Zap65dXNHZnaSRbVWge7iVWIJgN1JJFWeJ9UTPnvcHaCgmksQ=
-X-Gm-Gg: ASbGncvKKJYtfnQ62TJySzAKd4CFKCGZiCvklgFt3tl3hjEYbZHntCsblGpuZmAKHf9
-	IbXX2XqfCUKlIwR9oiLU+zDlFllWukPw6Jr/CLbPjiV+0NvrMC6GYiEr/0LbwugYS0nYAqfuSNI
-	2UmV3Wtc+WfI6CSJ2WYEySsIojR2huVuOBOuiWZS4BlreRryJzOqoGH5xYn/e/Q0NlQa6KAc+If
-	Azg4X3v+A8MJSKUML3TxT7VO+hDuwQGmY1jfZ7+3kKDI0N0ukuhGfmSxEh5HEW6CK8pufxnMX6C
-	FThURuuz44c6NZ8Ma492QWNXDML50yxyCrs6WInPgf5lgSCGoNXALYBGY4kd2mIfDg==
-X-Received: by 2002:a05:6214:1ccc:b0:6e4:449c:ab1d with SMTP id 6a1803df08f44-6f230cb46cfmr64487986d6.2.1744624160753;
-        Mon, 14 Apr 2025 02:49:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHhADRsGTwzKbE5j8WsaRwODBqXHXEGGv9BGd3uEhWTHB0foPltVfzAR/8ilB2KcoK3NHYsZg==
-X-Received: by 2002:a05:6214:1ccc:b0:6e4:449c:ab1d with SMTP id 6a1803df08f44-6f230cb46cfmr64487836d6.2.1744624160216;
-        Mon, 14 Apr 2025 02:49:20 -0700 (PDT)
+        bh=otwibO+B1RJWMfT84nQrsXKdELhQ7z3K4EdM/HQ4kbU=;
+        b=B5fCTh8t1Ksl2yiMK+wz7RJgE2I/lP2nzlsPe3o6vCUsVWsYrkdQEJpVQZCDzKgWk8
+         xFyq6s0ODg+hbeGUyAC8zZsturBV4Y//klHHkwmmZ0JX47T595YX1es1rg9lqFGz7BVx
+         SxbLbcMSCTENRLnEeQOVPjvwuuYkS10j+XkkJY8IZkfjqJk7RR7/4xbXDpCDEE3nqZpG
+         2itFlRKF3QSEryVHfwZeN3NhikrXNWPbEhwYMxtJd5Q3Dl7n8eHLZkhV06iTuRVJ+MsO
+         j1pVmDYAVmyYtFxvBDCWuILcxwLv0nsVF5/HTVWACQ3kHp6i3Jc3COe3Ln05QFfR2gGF
+         GehA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0VEspAsF5FaY6rUcMlKtr9Yr/zFj/toXC8X9KcI5Qpxmz/CO6RcGn7gODFWYveVZQ7jseHqgU6GASwo0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7/Zr/s6vDFPAMU4GleG9R0L59ILsauQrluU5Qwn2Ya+Vy9mRx
+	vpU2U2B3ucN5NbR/wtiJYQiPNgbiyNqjQwyw9gSAaHUpIgJQy5cjLyVoUAGOstplxLWRruyBw6V
+	BUMIY8kGPluCMvFqs0XMYvxb98xCDHbhUHVEMHsUSH362bbu/E+0AOk0dGu0pHhA=
+X-Gm-Gg: ASbGncuRNXoY6olqflqBXHNeLz8vtFkhSJR9Ipp7/94AteaJr6XbQ+WXqN+DvxzFRMh
+	3DVqW8MXiGWnD+N2pKN4BZWYDYwZL+jhS3soMA/0Difp1fwJ1TA6Uig5Vw8vtHojUx+ruYe2nhG
+	y+3crSH746RLLVz7LswijjAiTDaD6/8HuQ7mwU2/tZZUlhO7RB/Xcm9Mtz0+iVd8a6uR3f7r6al
+	orhav/ZLFSy9wxFX4w/Lr4+WDwTxaC+o4IYK6IzBm1VX+MqBI+NkBDN7Cxn/b99FMLASdebuoPa
+	ttZfFJ+5KYOqrvXUg5AJrl4NX8Ip7KGLdOUA87m96EcmLILXN3jlHbDT148mdXtZ9Q==
+X-Received: by 2002:a05:620a:2489:b0:7c3:c814:591d with SMTP id af79cd13be357-7c7af0f0403mr648276185a.1.1744624192548;
+        Mon, 14 Apr 2025 02:49:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF00odbGqpr+NrwU6tII/IQJplxH+w+y1CYdgLC0L7P41kv1mE5rKymC9sH3HYVqso2Q/R8NQ==
+X-Received: by 2002:a05:620a:2489:b0:7c3:c814:591d with SMTP id af79cd13be357-7c7af0f0403mr648275285a.1.1744624192033;
+        Mon, 14 Apr 2025 02:49:52 -0700 (PDT)
 Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1cb422asm875859166b.115.2025.04.14.02.49.17
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1bea593sm892427066b.62.2025.04.14.02.49.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 02:49:19 -0700 (PDT)
-Message-ID: <60239482-cc86-495c-9184-11f3453251aa@oss.qualcomm.com>
-Date: Mon, 14 Apr 2025 11:49:17 +0200
+        Mon, 14 Apr 2025 02:49:51 -0700 (PDT)
+Message-ID: <69fbfe29-f5ff-4a24-b270-289b2f160f38@oss.qualcomm.com>
+Date: Mon, 14 Apr 2025 11:49:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,194 +88,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: Add support for X1-based Asus
- Zenbook A14
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+Subject: Re: [PATCH] arm64: dts: qcom: msm8953: Add uart_5
+To: Luca Weiss <luca@lucaweiss.eu>, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, maud_spierings@hotmail.com,
-        dmitry.baryshkov@oss.qualcomm.com
-References: <20250402084646.10098-1-alex.vinarskis@gmail.com>
- <20250402084646.10098-4-alex.vinarskis@gmail.com>
- <2b9128be-1989-4511-995c-103c8ba71af7@oss.qualcomm.com>
- <CAMcHhXrBw6a7gSndG2F-JNgnNsYrDN3nTJjM+NjuT=s9FFWZkw@mail.gmail.com>
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Felix Kaechele <felix@kaechele.ca>
+References: <20250406-msm8953-uart_5-v1-1-7e4841674137@lucaweiss.eu>
+ <e87220f1-bf8e-4014-834f-ae99c0b032ca@oss.qualcomm.com>
+ <cc84ef26-6c33-42d0-a11f-4d6b31d8beee@lucaweiss.eu>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CAMcHhXrBw6a7gSndG2F-JNgnNsYrDN3nTJjM+NjuT=s9FFWZkw@mail.gmail.com>
+In-Reply-To: <cc84ef26-6c33-42d0-a11f-4d6b31d8beee@lucaweiss.eu>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 1y6yRtIyrXYIJkjlSNiW0CpUD_q2ioui
-X-Authority-Analysis: v=2.4 cv=C7DpyRP+ c=1 sm=1 tr=0 ts=67fcda21 cx=c_pps a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=OOIuroA6IYICTT_mFq8A:9 a=QEXdDO2ut3YA:10
- a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-GUID: 1y6yRtIyrXYIJkjlSNiW0CpUD_q2ioui
+X-Proofpoint-GUID: 7SCO-I_45Tn2kCxvsizm_-4wV7v314la
+X-Proofpoint-ORIG-GUID: 7SCO-I_45Tn2kCxvsizm_-4wV7v314la
+X-Authority-Analysis: v=2.4 cv=Cve/cm4D c=1 sm=1 tr=0 ts=67fcda41 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=TyM6OeZ_AAAA:8 a=dlmhaOwlAAAA:8 a=O41bOD_wkTG2M6k6xrUA:9 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=RxdkCTCKa-xTImXFM8fo:22 a=y4cfut4LVr_MrANMpYTh:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-14_03,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 suspectscore=0 clxscore=1015 spamscore=0 bulkscore=0
- impostorscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ malwarescore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
  definitions=main-2504140070
 
-On 4/12/25 1:47 PM, Aleksandrs Vinarskis wrote:
-> On Sat, 12 Apr 2025 at 01:36, Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
->>
->> On 4/2/25 10:44 AM, Aleksandrs Vinarskis wrote:
->>> Initial support for Asus Zenbook A14. Particular moddel exists
->>> in X1-26-100, X1P-42-100 (UX3407QA) and X1E-78-100 (UX3407RA).
+On 4/12/25 10:34 AM, Luca Weiss wrote:
+> On 4/10/25 6:45 PM, Konrad Dybcio wrote:
+>> On 4/6/25 3:52 PM, Luca Weiss wrote:
+>>> From: Felix Kaechele <felix@kaechele.ca>
 >>>
->>> Mostly similar to other X1-based laptops. Notable differences are:
->>> * Wifi/Bluetooth combo being Qualcomm FastConnect 6900 on UX3407QA
->>>   and Qualcomm FastConnect 7800 on UX3407RA
->>> * USB Type-C retimers are Parade PS8833, appear to behave identical
->>>   to Parade PS8830
->>> * gpio90 is TZ protected
+>>> Add the node and pinctrl for uart_5 found on the MSM8953 SoC.
 >>>
->>> Working:
->>> * Keyboard
->>> * Touchpad
->>> * NVME
->>> * Lid switch
->>> * Camera LED
->>> * eDP (FHD OLED, SDC420D) with brightness control
->>> * Bluetooth, WiFi (WCN6855)
->>> * USB Type-A port
->>> * USB Type-C ports in USB2/USB3/DP (both orientations)
->>> * aDSP/cDPS firmware loading, battery info
->>> * Sleep/suspend, nothing visibly broken on resume
->>>
->>> Out of scope of this series:
->>> * Audio (Speakers/microphones/headphone jack)
->>> * Camera (OmniVision OV02C10)
->>> * HDMI (Parade PS185HDM)
->>> * EC
->>>
->>> Add dtsi and create two configurations for UX3407QA, UX3407RA.
->>> Tested on UX3407QA with X1-26-100.
->>>
->>> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+>>> Signed-off-by: Felix Kaechele <felix@kaechele.ca>
+>>> [luca: Prepare patch for upstream submission]
+>>> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
 >>> ---
+
+[...]
+
 >>
->> [...]
->>
->>> +     /* Left-side display-adjacent port, PS8833 */
->>> +     typec-mux@8 {
->>> +             compatible = "parade,ps8830";
->>
->> What Krzysztof referred to with fallback compatible is this:
->>
->> diff --git a/Documentation/devicetree/bindings/usb/parade,ps8830.yaml b/Documentation/devicetree/bindings/usb/parade,ps8830.yaml
->> index 935d57f5d26f..aeb33667818e 100644
->> --- a/Documentation/devicetree/bindings/usb/parade,ps8830.yaml
->> +++ b/Documentation/devicetree/bindings/usb/parade,ps8830.yaml
->> @@ -11,8 +11,11 @@ maintainers:
->>
->>  properties:
->>    compatible:
->> -    enum:
->> -      - parade,ps8830
->> +    oneOf:
->> +      - items:
->> +          - const: parade,ps8833
->> +          - const: parade,ps8830
->> +      - const: parade,ps8830
->>
->>
->> so that in case there are any sw changes down the line, people with older
->> DT receive the fixes, as if "parade,ps8833" is attributed to a driver, it
->> will match (due to being the primary entry) and if it's not (like today),
->> it will fall back to matching the next compatible (and the driver currently
->> looks for just that)
->>
+>> It's more usual to send these together with a user, but I don't mind
 > 
-> Hi,
+> This seems to be used with the out-of-tree dts
+> apq8053-lenovo-cd-18781y.dts
 > 
-> Thanks, was not aware of that, found it in the examples now, will update.
-> As Krzysztof suggested to drop the patch adding compatible from
-> driver's code, If I understand correctly I also need the following dts
-> change, could you please confirm:
-> 
-> ```
-> compatible = "parade,ps8833", "parade,ps8830";
-> ```
+> I'm just sometimes trying to reduce the out-of-tree diff of the
+> msm8953-mailine tree on GitHub
 
-Yep!
-
->>> +     eusb6_repeater: redriver@4f {
->>> +             compatible = "nxp,ptn3222";
->>> +             reg = <0x4f>;
->>> +             #phy-cells = <0>;
->>> +
->>> +             vdd3v3-supply = <&vreg_l13b_3p0>;
->>> +             vdd1v8-supply = <&vreg_l4b_1p8>;
->>> +
->>> +             reset-gpios = <&tlmm 184 GPIO_ACTIVE_LOW>;
->>> +
->>> +             pinctrl-0 = <&eusb6_reset_n>;
->>> +             pinctrl-names = "default";
->>> +     };
->>> +
->>> +     /* EC */
->>
->> It's customary to leave the i2c address to make it slightly easier for
->> the next tinkerer ;)
-> 
-> I am unsure about the address. There are multiple addresses showing up
-> when discovering the bus, 0x1d, 0x5b, 0x61, 0x6a. Did a quick SMBUS
-> analysis, they all have non-zero registers responding... My best guess
-> right now is its 0x5b, as messing with it enabled backlight and broke
-> the keyboard. Will add that one.
-
-It may be that there are also some 'dumb' devices, like program-and-forget
-regulators or similar components, that aren't even described in your [SD]SDT
-
->>> +&uart14 {
->>> +     status = "okay";
->>> +
->>> +     bluetooth {
->>> +             compatible = "qcom,wcn7850-bt";
->>> +             pinctrl-names = "default";
->>> +             pinctrl-0 = <&bt_en_default>;
->>> +             enable-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
->>> +             max-speed = <3000000>;
->>
->> You'll need to provide some supplies, coming out of a pwrseq device, see
->> e.g. the QCP
->>
-> 
-> I assume you are referring to change like this [1]. There were some
-> discussions on whether the supplies are modelled correctly as it seems
-> to be different when using m.2 card, so as I was not sure about this
-> platform I did not add it. At least in the variant that I have, the
-> wcn6855 is soldered onboard, so I would assume so is the wcn7850
-> variant.
-> It seems that the two use quite different supplies - are the platform
-> dependent, or only wlan card dependent? Ie. Can I just copy pwrseq for
-> wcn6855 from a different platform?
-
-The power sequencer is a description of the hardware that's part of the
-same die as the wifi logic, IIUC
-
-The inputs are most likely fixed per SoC+PMIC combo for various reasons
-
-> For  wcn7850's pwrseq, I can add similarly to other platforms, but
-> cannot verify it. Should I still add it in this case?
-
-Let's not introduce it then
-
-> A bit unrelated question: in the meantime I managed to bring-up the
-> sound on Zenbook as well. Would it be more correct to wait for this
-> series to land, and then send it separately, or is it okay to add it
-> in directly on re-spin?
-
-Let's get what we have merged first
+Sure that's fine
 
 Konrad
 
