@@ -1,151 +1,118 @@
-Return-Path: <linux-kernel+bounces-602370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67EA3A879EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:12:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1044A879E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F36A41890102
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:12:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 337B43B0D31
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A611225A2D2;
-	Mon, 14 Apr 2025 08:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740D9259C9B;
+	Mon, 14 Apr 2025 08:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kS96/vwx"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="blHz6bGV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA15259C84;
-	Mon, 14 Apr 2025 08:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2531A9B49;
+	Mon, 14 Apr 2025 08:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744618300; cv=none; b=DxAKT4rzInMRpYkd9lgm4epzOXnWrq0MzH3YooXy84zSTtNqSv9bosUiiG4givzRnhExbqj7845E71Hgt8jYy/rheVcBTsTQ4XZVRQoKZp54vd5fF2wUaKmKkrn1ZIOrtZbenfyUvs26d2wyiGSmxNL8klQITDA11ZP/zenqiKY=
+	t=1744618274; cv=none; b=nrieJZ2V/EimlFhcUqgGUF1sJbuPL0H22LeFdEfpEHWepUkSI187d33YI2o5CJemSQkSVdW5SA6dyGHYQz0c5PWUcY+y52+naCLhlo3U+Ue6ity/Xvo3+7D4b+F/j27GMPSAXwLIltp2ilgwqcnytXPqya9AX48QBgCtBwptZIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744618300; c=relaxed/simple;
-	bh=M0Px4sQq0Ua88FTGip8MlAZaR44q/swxW1mcn7Kadw8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ENopIlI6TCQdiatfiGXgghdMheFHde9qjVEQVN7Galz7zO5jIPmyJ13vdnmU3xXO7wWyckc87BjSHhEUKfv97GmoIjndxYmZj9EH0QxvH/5FGhtloOi7Ab8a6hShlTNGwj/kW2hrnJDQCz0UEKIJDydefzNmiwvUEUNSTvboY0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kS96/vwx; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e686d39ba2so7335047a12.2;
-        Mon, 14 Apr 2025 01:11:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744618296; x=1745223096; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JQLehcjcbISmim2iPvDB9cValC6G9pjc/biEGN2jZVA=;
-        b=kS96/vwxcVevwCv35sjKfGua8bCo4JrSXScINfk/xRBabcsKkg62CGlk28taiEbc1L
-         jdyoByJSCpwAvzs1J+1Z2lp5M7ciHFyKxRPZDKg4/EsJ9kfs5Zuk52MrPh1wMctlQusm
-         9NTFNVyzLUGieANuY2QV0bUOYxfcovkFhdgsqC2v4COOy+W/g4NuwNmKDB+UJyRD/7RT
-         wpBvsO7/IhGOMx9Bxl4jZCehWhcscQduPtnA0iqQ2RM+26sWqFDIOJjkN29BdxP11/4C
-         Ffi9mizkJQOsVyshvl6jrvnMSu1N9jFCP/0aT2qbky5YAZHe7lwZrH2UHkTe/WL1iOzW
-         ZCvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744618296; x=1745223096;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JQLehcjcbISmim2iPvDB9cValC6G9pjc/biEGN2jZVA=;
-        b=OA9OWp+jSTxRHUJ1o+7WDoO01KjjmI+ysYGnQG9S4YKqpFtO5oBqC4xz5yvQzDkfgf
-         3EN7tgmXdVHDza2Enw4+eq3yj8HCsQxRNFSANiMbxd1d5xIu3UxN3u3W5p1FTjbcAUHH
-         rDYhVi/cQroc3lbyuvF50KXa2VjGrfSgIgqfTy9DFrVMR3XZE8d69/cHHyi5yGXtl48d
-         HYyLEgIl2eX6jmkk48YJq6h92svVF0YOCG6pa0C1C1Ic/BCJP6g+Zcsb7y9ePzOTg/jY
-         Fp7coztzjJMJsOskeeacZEc6ujXJgziwQixdjH4XeTTomXgonMmA9Md+B4K2XRxf6XX8
-         VeAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWyg2eAg+Y7tvJjv9JDhldNX/WQY6ulpACB6xDaPAe3n1Krq7/d5p/pP6Qt/3Hd8VWGx0/fn5KOE8PC03Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvVY3RTAhHtn5Ar/zQryzJI4MH/8H3oUMLjqtBlhBw7MTzRFTM
-	q5yzCOgyXvk8lvec37oddycrD6twNNwnWtKKxZZCFTjlSEjSLG1i0vad4FZ6
-X-Gm-Gg: ASbGncvbNkuDvG0j17BBVcOxt855PMgryrI+VmA4ns7Q99walHp3f9024Ce+OugHNOI
-	cKmvKCgge8LEl5hjLS/Jrx5APipxc8IQPO/JO9K/HaW7xTcElqBZw1VLZWnLkGGIZFidISJLUlO
-	vS/dNDPreDt1Hp9sBQ2FD6IRGANRTQJFNCH596OaieB0LwoYLCrLiquC956sP5DaAtalBHcpGLX
-	VYLpuW5i4E5sjFlVc49cMuoJiYQB/kTuFw0iQy0WsAekI5ahJdGYqGSmQB+8Xb/30oK44P85Jzo
-	texLqdVilPiOUTk5TvTaEUUKU0JwFtD7
-X-Google-Smtp-Source: AGHT+IEt0SfgVcxAhqTlfRSXKOZHjazMKmKgeZnwLG/vZgN0qwUdwA1UDhLWRkFlgHXABhWiZx1p9Q==
-X-Received: by 2002:a05:6402:2812:b0:5e5:cb92:e770 with SMTP id 4fb4d7f45d1cf-5f36f77ffdamr9859194a12.1.1744618295711;
-        Mon, 14 Apr 2025 01:11:35 -0700 (PDT)
-Received: from fedora.. ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f36ee55212sm4435244a12.9.2025.04.14.01.11.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 01:11:35 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: kvm@vger.kernel.org,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 2/2] KVM: VMX: Use LEAVE in vmx_do_interrupt_irqoff()
-Date: Mon, 14 Apr 2025 10:10:51 +0200
-Message-ID: <20250414081131.97374-2-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250414081131.97374-1-ubizjak@gmail.com>
-References: <20250414081131.97374-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1744618274; c=relaxed/simple;
+	bh=XNUzHoBdEDWGdV/RLxbr8oT+QBseJbzPEo7a9/FHdt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ao8MmZr70TNjCxq8ecBdvNsAQLu33CjQffdewMT0MNjsBmvWNvMnKOiMECqfnRBFn7ANK1SH2tDe+fTtXiEnAU5fZVP0fKckHelIUTgyhA2E9FpBqz6gm7g4cdh6QqjDYW4eaJLv1oAckstoch27ZzonJI0AsJqd/NvCOa+Satw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=blHz6bGV; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744618273; x=1776154273;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XNUzHoBdEDWGdV/RLxbr8oT+QBseJbzPEo7a9/FHdt4=;
+  b=blHz6bGVkDgigdlrNG7pxIEFkyWDuXFvqE8BcegkpmMyiqzih5Vrga9L
+   ROydfA2t0WA+4U4Ye3911mpOcQ3Nbf8pGX5HS7VgbDevgciM1bAwvKcEV
+   JqxHCcztByvCpNH+R1EpQLdchYUTBz6SxEXYO9eUphBsaW85UBVCR/m2R
+   /inndEQoKL7sE7uEEvnYZbvNNNp+xUb13/uiIxQC2d20As17Z7mZqrvlp
+   NFK2Wj1E+arF8Tw50RsftQ8KgbUBaYnHudzl/SB/DNxpl+8s7yMIlxjJx
+   fB1ho+GktfW/o6ICZzBiY5mBtYC35HRb2Uy9yGDupF9NDvLNVGhlCvKHG
+   A==;
+X-CSE-ConnectionGUID: 8lc3X6EPSjasCM+noO0GGg==
+X-CSE-MsgGUID: G0WVMkjOSCy57XT/9zf69A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="45309648"
+X-IronPort-AV: E=Sophos;i="6.15,211,1739865600"; 
+   d="scan'208";a="45309648"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 01:11:12 -0700
+X-CSE-ConnectionGUID: CjSKdSSrRHGFjdtesd+hcg==
+X-CSE-MsgGUID: 6a+Y5wWST1G1Qr9Jh/Cb1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,211,1739865600"; 
+   d="scan'208";a="130289335"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 01:11:10 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u4EuH-0000000CAns-3pd6;
+	Mon, 14 Apr 2025 11:11:05 +0300
+Date: Mon, 14 Apr 2025 11:11:05 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Yan, Dongcheng" <dongcheng.yan@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
+	u.kleine-koenig@baylibre.com, ricardo.ribalda@gmail.com,
+	bingbu.cao@linux.intel.com, stable@vger.kernel.org,
+	hao.yao@intel.com
+Subject: Re: [PATCH v1 1/2] platform/x86: int3472: add hpd pin support
+Message-ID: <Z_zDGYD1QXZYWwI9@smile.fi.intel.com>
+References: <20250411082357.392713-1-dongcheng.yan@intel.com>
+ <cfc709a8-85fc-4e44-9dcf-ae3ef7ee0738@redhat.com>
+ <c8ae2d43-157c-408a-af89-7248b30d52d1@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c8ae2d43-157c-408a-af89-7248b30d52d1@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Micro-optimize vmx_do_interrupt_irqoff() by substituting
-MOV %RBP,%RSP; POP %RBP instruction sequence with equivalent
-LEAVE instruction. GCC compiler does this by default for
-a generic tuning and for all modern processors:
+On Mon, Apr 14, 2025 at 03:52:50PM +0800, Yan, Dongcheng wrote:
+> On 4/11/2025 4:33 PM, Hans de Goede wrote:
+> > On 11-Apr-25 10:23 AM, Dongcheng Yan wrote:
 
-DEF_TUNE (X86_TUNE_USE_LEAVE, "use_leave",
-	  m_386 | m_CORE_ALL | m_K6_GEODE | m_AMD_MULTIPLE | m_ZHAOXIN
-	  | m_TREMONT | m_CORE_HYBRID | m_CORE_ATOM | m_GENERIC)
+...
 
-The new code also saves a couple of bytes, from:
+> >> +	case INT3472_GPIO_TYPE_HOTPLUG_DETECT:
+> >> +		*con_id = "hpd";
+> >> +		*gpio_flags = GPIO_LOOKUP_FLAGS_DEFAULT;
+> > 
+> > This looks wrong, we really need to clearly provide a polarity
+> > here since the ACPI GPIO resources do not provide one.
+> > 
+> I tested gpio_flags=GPIO_LOOKUP_FLAGS_DEFAULT/HIGH/LOW, the lt6911uxe
+> driver can pass the test and work normally.
 
-  27:	48 89 ec             	mov    %rbp,%rsp
-  2a:	5d                   	pop    %rbp
+I doubt you tested that correctly. It's impossible to have level triggered
+event to work with either polarity. It might be also a bug in the code lurking
+somewhere, but it would be unlikely (taking into account amount of systems
+relying on this).
 
-to:
+Is it edge triggered event?
 
-  27:	c9                   	leave
-
-No functional change intended.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
- arch/x86/kvm/vmx/vmenter.S | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
-index f6986dee6f8c..0a6cf5bff2aa 100644
---- a/arch/x86/kvm/vmx/vmenter.S
-+++ b/arch/x86/kvm/vmx/vmenter.S
-@@ -59,8 +59,7 @@
- 	 * without the explicit restore, thinks the stack is getting walloped.
- 	 * Using an unwind hint is problematic due to x86-64's dynamic alignment.
- 	 */
--	mov %_ASM_BP, %_ASM_SP
--	pop %_ASM_BP
-+	leave
- 	RET
- .endm
- 
 -- 
-2.49.0
+With Best Regards,
+Andy Shevchenko
+
 
 
