@@ -1,163 +1,123 @@
-Return-Path: <linux-kernel+bounces-603816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 464F9A88C84
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:55:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C965A88C68
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455F216A347
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:55:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 971197A9429
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCB51C8616;
-	Mon, 14 Apr 2025 19:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD711B4242;
+	Mon, 14 Apr 2025 19:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Qz8dSeYD"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UOFkcywX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7530C2E645
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84453383A5;
+	Mon, 14 Apr 2025 19:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744660529; cv=none; b=ID5X1bm0URIqgNqLrkjsmfEQ9iZzmUszixdrrzAVgchRNw6uJNECErtrzshi8zkOj2njkYvLb81eR41qIUVGXA6oTZN5suN2Y8YK8cYpSm2Kkhs754UoSaGkIwy7LIPPLiGiBEbOBmsNvlTsroZxXcB54FTmGqszBotK3eMzYis=
+	t=1744659957; cv=none; b=qJD7pZsLjhuOYVT/WlUjdSA1aKF/kZmaMiCYO5l9pBHDhMTHy0vKmGXt/L2ojqawv/Tm6k7A9IHMb9uw/7gSYuxDX5caLDmTSUI2LkN5nkNUSSEPDQnIxpZg19zrcyr5+VWiF2tGA3bD6m6fvr18y2nPNkTVX2CbCmSfE173hcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744660529; c=relaxed/simple;
-	bh=um7KY1goRBfoVujd+omY/E95dCOWx2kO/R7QV2JW/eM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KOe4CXq2jqLKfeaqEW+8iNVkawV4YwaG78K/aFWwaL19QZdFnJw45vWowbR7RGjiug0sQtgkK2ZByrC5RoHh2/0nXngci9LdYUTK6KsWVFlwrKgsrRt6xRAUnYBSgIgtNIzTn18URlSlG49vfEwJHLQ82dDEx5FpQ+KCOpPMwZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Qz8dSeYD; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <77b8a156-49af-4900-b17a-b2b3fd11eba0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744660512;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jE0M98+rObl+Zn7RowjnVlz8XhYfQEBVKI1/h9Xj26U=;
-	b=Qz8dSeYDWFs5SXRoR9Rn+XEfoBi4dQlx/KJ8IDAgOp2304GhuuRGNIkqKAY3Ki0MuS/J38
-	aJuq6zxTM8c1f4oMvpyIytxdNp4KWOFWHUz54pdaAsnGR6P0fYyYXvPX0ZrfoO5SsEmSeI
-	61HmYPshoLWuCW+aHvhXwNwg64DGomE=
-Date: Mon, 14 Apr 2025 14:43:50 -0500
+	s=arc-20240116; t=1744659957; c=relaxed/simple;
+	bh=IMOh9BCmxuP8X1IrkobhNuG+UnD0MCGF/Hah1mGcikY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kTthd0/BJTCofDt80ExVkv/DOc+rWVCWwXwqP5ktlKY66GplR1vmnPhVIKUk/U+jV+93RIoiysF697kaFPPrgUmkW1zGK8bQf1vlE5lwNtEAxyYSwnhjcsuWeZmZnr5TRsvFPis9ODfitn4x7DUosStufCjGR14bDu6vZ7NRIEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UOFkcywX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D535FC4CEEC;
+	Mon, 14 Apr 2025 19:45:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744659956;
+	bh=IMOh9BCmxuP8X1IrkobhNuG+UnD0MCGF/Hah1mGcikY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UOFkcywXAZt3yS7UL34p6e+ECift0SqVFyJk35lCExiMilK3Ge0sN6t/aoYXuX4l5
+	 73fy7fceKxuXM1SbKso8LLT15qX8SdpDG/PlwomgNx4jvzM5KRLZFOegmgWk1TOMJp
+	 NQMtvcGVHKFprYznfZxmwpYO+zw2B79NUgxBdZpVgGmzNQlmTb7V6kqMwLFWMqBA3W
+	 L98gICuhuzbOWfsyYzMlU77yOPICVGXcnTV7gavPz4kYoKHSYbzQ+SbMhJYGWJ2IR5
+	 u48TMXD9X4jov5zJYwUgKht1OKi9ZOZz/XlFiBYJE+uNYB5IWVmls2d+7A6zN9Mp7o
+	 ktvECox2950rA==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bfc8faef9so45005791fa.1;
+        Mon, 14 Apr 2025 12:45:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUf28tRsYXLxlUajFgYK/bNQUgRQOXyKKib/jjamVIuv1GkRT432TLU+h2yvjMcNiN4ESJ6uke/8/GVXmMH@vger.kernel.org, AJvYcCWz/zxKyMMJ+t/arW3NIfdRdxVnR2S5/Xi7daRDemOfOrsEO27NDOdCnNQRCBUtiNCFfSGbXlVJ7fQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywzxj9FL3BVSIv0xVEe1EeH1+if9dRWMJxGUDsd0JRV2bIDAxg+
+	ovguUZQ4bRU3G0eaANTLpouORqhkHVCo0fK1xZIw1HMXfF+4WYwEZQ3UGG7yQkxf5QPrdzrGnXn
+	tx10f4A89cZQVFz/lmaiBDWhtF/4=
+X-Google-Smtp-Source: AGHT+IEVLrbKVxe/lkRq28/ydzyMaOWT/QfqRrcYYPCVt1jvGt554xAgZAfaKIn+A573laaxDtQMmHcDbsRqa3B9kls=
+X-Received: by 2002:a05:651c:19a0:b0:30b:bb45:6616 with SMTP id
+ 38308e7fff4ca-31049a80874mr47825411fa.29.1744659955161; Mon, 14 Apr 2025
+ 12:45:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/3] ASoC: SDCA: Create DAPM widgets and routes from DisCo
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, yung-chuan.liao@linux.intel.com,
- peter.ujfalusi@linux.intel.com, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-References: <20250321163928.793301-1-ckeepax@opensource.cirrus.com>
- <20250321163928.793301-2-ckeepax@opensource.cirrus.com>
- <2b899796-b9fc-49ef-a4a7-858baa90a36b@linux.dev>
- <Z+KROae2x3nB6Ov8@opensource.cirrus.com>
- <a5aa25de-919f-462c-8aab-996fbc381de9@linux.dev>
- <Z+PTl4fg5tRoXmEE@opensource.cirrus.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-In-Reply-To: <Z+PTl4fg5tRoXmEE@opensource.cirrus.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250414130417.1486395-2-ardb+git@google.com> <e48bf1ad-3d48-0867-35ce-068da901d01c@amd.com>
+In-Reply-To: <e48bf1ad-3d48-0867-35ce-068da901d01c@amd.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 14 Apr 2025 21:45:42 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGOegcJhOOiyw_0A0Y1GW0K3LqBuhpn1TrVp4aKLGn=-w@mail.gmail.com>
+X-Gm-Features: ATxdqUE1QbHKWUxNAg3luWZuL5hQcvn05NE1dpjMR298VxR2vWgqvxb922UwJEg
+Message-ID: <CAMj1kXGOegcJhOOiyw_0A0Y1GW0K3LqBuhpn1TrVp4aKLGn=-w@mail.gmail.com>
+Subject: Re: [RFC/RFT PATCH] x86/efistub: Don't bother enabling SEV in the EFI stub
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, mingo@kernel.org, 
+	Borislav Petkov <bp@alien8.de>, Dionna Amalie Glaze <dionnaglaze@google.com>, 
+	Kevin Loughlin <kevinloughlin@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Delayed answer, sorry...
+Hi Tom,
 
->> How would the state of those DAPM SU widgets be updated
->> though? I think we need to 'translate' the GE settings to tell
->> DAPM which paths can become active, but the SUs state is set
->> by hardware so I could see a possible racy disconnect if we
->> make a path activable but hardware hasn't done so yet.
-> 
-> All the SU DAPM widgets are linked to the single GE control,
-> the same ALSA control is shared across all the widgets. So
-> all the paths are updated in a single DAPM sync, and on the
-> hardware side with a single write to the GE control.
+Thanks for taking a look.
 
-The race I am concerned about is between SU values represented in DAPM and actual values propagated inside the SDCA device. There could be a delay between writing a GE register and the SU register values changing.
 
->>>>> SDCA also has a slight habit of having fully connected paths, relying
->>>>> more on activating the PDEs to enable functionality. This doesn't map
->>>>> quite so perfectly to DAPM which considers the path a reason to power
->>>>> the PDE. Whilst in the current specification Mixer Units are defined as
->>>>> fixed-function, in DAPM we create a virtual control for each input. This
->>>>> allows paths to be connected/disconnected, providing a more ASoC style
->>>>> approach to managing the power.
->>>>
->>>> Humm, maybe my analysis was too naive but the SDCA PDE seemed
->>>> like a DAPM power supply to me. When a path becomes active,
->>>> DAPM turns on the power for you, and power is turned off some time
->>>> after the path becomes inactive.
->>>
->>> Correct, the PDEs are modeled as supply widgets and those are
->>> powered up when the path is active as normal. The problem
->>> alluded to in this paragraph is there a couple times where
->>> SDCA topologies just have a permanently connected path so
->>> things would always power up.
->>
->> Ah yes those loops would indeed be problematic, but no more
->> than in existing non-SDCA topologies where we used pin switches
->> to disable such loops. All existing TDM-based solutions used
->> pin switches, I was assuming we'd use them as well for SDCA.
-> 
-> I wanted to do a little more thinking on it. The general
-> concern I have is that typically the pin switches are added
-> along with the "fabric" widgets in the machine driver. As this
-> code here is effectively creating a single codec (function in
-> SDCA land), it feels like it is probably inappropriate to hook
-> up pin switchs at this level.
-> 
-> To put that as a more concrete example this code will create
-> input widgets for IT 31, 32, 33 (the UAJ mics), however it
-> would be unusual to hook a pin switch to those. Something
-> should be creating an actual microphone widget, attaching
-> that to the input widgets and attaching a pin switch to that.
-> Typically those actions are handled in the machine driver,
-> there is possibly an argument for handling them in the codec
-> driver for SDCA but I felt it would make more sense to progress
-> things a little further until resolving that one.
+On Mon, 14 Apr 2025 at 21:10, Tom Lendacky <thomas.lendacky@amd.com> wrote:
+>
+> On 4/14/25 08:04, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > One of the last things the EFI stub does before handing over to the core
+> > kernel when booting as a SEV guest is enabling SEV, even though this is
+> > mostly redundant: one of the first things the core kernel does is
+> > calling sme_enable(), after setting up the early GDT and IDT but before
+> > even setting up the kernel page tables.
+> >
+> > So let's just drop this call to sev_enable(), and rely on the core
+> > kernel to initiaize SEV correctly.
+>
+> SEV support does some things in sev_enable() that aren't done later in
+> the kernel proper. For example, we check certain hypervisor features and
+> save the CC blob into the boot parameters.
 
-The SDCA spec is supposed to describe what's physically connected, so when we parse the DisCo descriptors we should only see the level that is typically present in machine drivers. The codec descriptors are not generic at all, they should only describe a specific way of how a SDCA codec is used. The traditional split between codec and machine drivers does not really apply for SDCA, the SDCA descriptors represent the *machine* already.
+I misread the last part: the kernel proper checks struct boot_params
+and setup_data, whereas the decompressor checks both of those as well
+as the EFI config table.
 
->>> My opinion is that even if we end up adding the pin switches as
->>> well it still makes sense to allow connecting and disconnecting
->>> the inputs of a Mixer Unit.  These are typically where two
->>> audio streams come together and having the ability from the
->>> host side to say if you want that connection or not seems very
->>> valuable to me. As in SDCA land you basically make that choice by
->>> directly flipping the PDE.
->>
->> I have no objection if there are both pin switches and MU switches.
->>
->> I view pin switches as a more generic mechanism that userpace
->> has to set to use a specific endpoint.
->>
->> The MU switches seem like debug capabilities to isolate which
->> path has a problem. My experience fixing Baytrail issues is
->> that you want a default mixer switch to be on, otherwise you'll
->> get warnings on unconnected items or 'there is no sound' bug
->> reports. In other words, the MU switches are a nice-to-have
->> mechanism to disable default paths, so even if userspace
->> doesn't touch those controls sound can be heard on endpoints.
-> 
-> The mixer switches do default to connected.
-> 
-> What I like about having mixer switches is it allows a
-> clearer specification of intent. For example one can power
-> the capture path and one can power the playback path, but the
-> mixer switch makes it clear user-space has an intention to
-> use the sidetone rather than just those two paths being
-> powered coincidentally.
-> 
-> I could drop them for now and just have the mixers permanently
-> connected, until we deal with pin switching, but I am inclined
-> to leave it as is and we can revisit later if necessary.
+It would make sense for the EFI stub to populate the field in struct
+boot_params directly.
 
-I bet we'll revisit this multiple times :-)
+> And as I look closer, I see
+> that we don't call initialize_identity_maps() from the EFI stub so we
+> aren't calling snp_check_features() from the EFI stub, which we should
+> have been doing.
+>
+
+The EFI stub has its own check for this, based on the same underlying
+logic (have_unsupported_snp_features()). But it checks this much
+earlier so it can fail gracefully and return to the firmware, rather
+than terminate.
+
+> Just removing the call does cause an SNP boot to crash. My testing shows
+> just ensuring that the cc_blob_address in the boot_params structure is
+> set results in a successful boot under SNP. So some of sev_enable()
+> needs to remain and some things need to be moved into the kernel proper.
+>
+
+Thanks, this is very helpful. I'll dig a bit deeper and try to address
+the points you raised.
 
