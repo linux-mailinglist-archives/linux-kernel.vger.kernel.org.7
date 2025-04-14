@@ -1,96 +1,159 @@
-Return-Path: <linux-kernel+bounces-603497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F15CA88896
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:29:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADEF9A888A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2443B460A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:28:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACB46171CE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14D828469A;
-	Mon, 14 Apr 2025 16:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB9C2820AF;
+	Mon, 14 Apr 2025 16:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sK929LWN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VrppPEBy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5B0279903;
-	Mon, 14 Apr 2025 16:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6011917E7
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 16:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744648126; cv=none; b=X3dS0ZVXpvQuyaoxrLoP4L6Fmc9Ubpb0D/WRhgV0xYuBgIlOYw43HyNvRMoOod1hbOukGPYWFRWEttyBG2Su+AHzqOedsZHIM6F4Wm5uSLARzyxSe5U0cCjE93OWK3x3JkLVMxOCwKkTBsuIGKCYNWDykwXhLuQYUFpTKdrcQSs=
+	t=1744648359; cv=none; b=ntQAClwajVSu9JmQMpkjWX1jigy3bWvYsSF8LIadKDcdmywQDumpsElyU5HnziQqj0NG9X2QSCrahB6v4uQQN59No3ivjc+J0JswfJfiKv9mHzrnx0Tsu3D7+QzGgH2xljHO0UcQL32B5nHZm1hF6vKd3qmzoblkvt8sT340r5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744648126; c=relaxed/simple;
-	bh=P/fa8u8mypyH0+6vdYrtZjJEaFzYh19+DjXazRmCLPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZrJI3DAnTPTYoTrhSbqUdGvh31oYVxQ5S3D2j2SgdmUTj4uqeM4RXqV2HpKlQdJ0qoj7Zu4M+PwBaK3Qja1LmBCASB/oc8yLsvMzGWwz4awrOG7ARdCFK/11QWBB3SX/Do1XlEwBdAPkuOKSCX5UoXMP7SYRX3qkdLy9j167kf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sK929LWN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28C61C4CEEB;
-	Mon, 14 Apr 2025 16:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744648126;
-	bh=P/fa8u8mypyH0+6vdYrtZjJEaFzYh19+DjXazRmCLPg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sK929LWNbvs845GbWY+rfc/M02ZlGNFxZwVDINnN5mSSEZOVzRx5BbM9eiPNLwD8W
-	 VChZqkmLlSEFvE002cJO/oAZil7ruyP3ou8ywNsmPTUr9U+KvFoTT7byucRGAgYYlJ
-	 3EzZvxi/TGFTic4AqyIL3GIrzC4L/P7jfKTEhAJyXKi2cTafz1/KXrppnOyyvRrfVF
-	 NeqVXmnJNA9Gf9rxd8wW/13nU5uM4BDkclidQoiC4i2sLxuxrq54NrpHxfodDdyb/I
-	 LCNHQaUuLSSDP4ke82MUU/9YDqui7lhAO1Bv2W3wzoUoHmTnpHKQmc4DAwuE2FIhPw
-	 9wZ39T/yFzK9A==
-Date: Mon, 14 Apr 2025 09:28:44 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Richard Cochran <richardcochran@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, "Russell
- King (Oracle)" <rmk+kernel@armlinux.org.uk>, Giuseppe Cavallaro
- <peppe.cavallaro@st.com>, Jose Abreu <joabreu@synopsys.com>,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio Castro
- <fabrizio.castro.jz@renesas.com>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH net-next v5 0/3] Add GBETH glue layer driver for Renesas
- RZ/V2H(P) SoC
-Message-ID: <20250414092844.77999958@kernel.org>
-In-Reply-To: <CA+V-a8uqkG+u_ZXztPe7R0BNV6BA46KgGRHRW-G3axBt566pEQ@mail.gmail.com>
-References: <20250407120317.127056-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-	<20250407104447.072449cd@kernel.org>
-	<CA+V-a8uqkG+u_ZXztPe7R0BNV6BA46KgGRHRW-G3axBt566pEQ@mail.gmail.com>
+	s=arc-20240116; t=1744648359; c=relaxed/simple;
+	bh=LxeEjXsTzyjmpn+ReNlLxMKLEF/tsQrcB3L0UMTB9is=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sV6auPO6fiToMrCEmJzx8VaGdfUdLwZR3QfdXT96uocLTPBEmtlV37fcq6oKiOkYq2lP/QrKKD5gAgJOH2sQWWuyTQlWdbaSvZSzJrZ1t1VEwhpHYgcu7ROWkIBLdBTT/ssJpijU9rh9jD5kou2JnfxE9Jw7+wNFQfxkScxv/Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VrppPEBy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744648356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=psPpYVaNQlJBPoNb/90nh8sbsObK4AuLZcGNe09lj5c=;
+	b=VrppPEByuDEadsvSH+p/M1HnQCMj2v5XF6AtS80foymTitPpmiIE2Wd7OklxnBTn8KptjP
+	cMjxNz1BJIYJykiYD3CB73znx6OgDQqRRwARqkF/FoecqbhK0Nmhp1qdoAywk9Rs0p/YYk
+	4KZxmYhS1mgx26NWN4iNlWa6vHVGH2A=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-310-uerkHiodO_222ZwAHlXNOw-1; Mon, 14 Apr 2025 12:32:35 -0400
+X-MC-Unique: uerkHiodO_222ZwAHlXNOw-1
+X-Mimecast-MFC-AGG-ID: uerkHiodO_222ZwAHlXNOw_1744648354
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43d22c304adso23780075e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:32:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744648354; x=1745253154;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=psPpYVaNQlJBPoNb/90nh8sbsObK4AuLZcGNe09lj5c=;
+        b=qjDC2txHEILhVhNFco8eFXd+ILdwUnVQe9NdUonkBUElJtiOpp6VTTR8kGPfcj3kiP
+         FQBDhQ0JPKv6uRzF0vlxjMpgZutZJUzf8Aq53rHp6PpRtZMd9KiFGitHr8dhSqgQTbGa
+         e6OrxQpri/8Vzsf5sMnYQ1eFLduc3iWYoo1p9qOX2Phwm3hUEEBFPu1dV+1jmBla0cky
+         3bEzSydFiQYMx0m8pG/pIlC0kJJMJovhNU3U/lZi4+7ROi5WI4wqSVPysbrbY97Pa1Gs
+         s/7e0ktEhQyCGVLebitbtdm93tFvt1CU9mWE3xi2q9/7oEPx9ytthKwCzCU1ff5m3HMH
+         wuYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoN3PvtZOr3rB493DBTh//33ugpg3mpdc+K/rfZFbWNlQ6+O5rzn+McE6algxOZ6HS1FXSwZ08mu8Nicw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPXs9DFgjetAjzO6EcdCaeqrEKNaDy7eHA4NxcOBLmXqJ3IH2J
+	yMZxnTW0c3XKimkPIyrVrGP+RxrRof3yU9qN5o1ifhcKuuW2W69qdT3+l889vrpnts/nC8pkqk4
+	ilaCSW+i3dtaDk3OYlgBSAqIdghM7RlTuz1G3DTdpjirWNUklKFCqPUgy9yJPgw==
+X-Gm-Gg: ASbGncskrx0QYE1SpyzgrlLtTXNiaOXm9DIpdpJnSNfx5DXVpcizeXsaFUqeLeZhz+N
+	WTuA7pg9LfLbomewNtYtm8pBhMl4ARVhQdOfHUTQGjEc2LrlRz3oDUbjqM59rxrZ58vspptyRba
+	DbTRkPgPipdpejONJPnd/U9oL5m1jKeyq0vw2BvC0P5NHpe9Eyj7iAQCY1yOhMOP6GJ8eo07x3H
+	ZOTEilfQpYKxZpSgFu69lWHer+27cvpo7sdY5IlYN0OrZ2gWLo3HVe+5nNUVMBGWzNpg8HpDeHk
+	xuxjGg==
+X-Received: by 2002:a05:6000:248a:b0:39e:cbca:8a72 with SMTP id ffacd0b85a97d-39edc3059aamr38195f8f.12.1744648353759;
+        Mon, 14 Apr 2025 09:32:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IErshira9b65DJz4U+YOoZ2EfEQ5MJmWz7qS8OqJT6VLSYpu4hvsslk7OCkkLLr5Vcu2G6UIQ==
+X-Received: by 2002:a05:6000:248a:b0:39e:cbca:8a72 with SMTP id ffacd0b85a97d-39edc3059aamr38167f8f.12.1744648353322;
+        Mon, 14 Apr 2025 09:32:33 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233a2a13sm179644545e9.10.2025.04.14.09.32.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 09:32:32 -0700 (PDT)
+Date: Mon, 14 Apr 2025 12:32:29 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Dongli Zhang <dongli.zhang@oracle.com>
+Cc: virtualization@lists.linux.dev, kvm@vger.kernel.org,
+	netdev@vger.kernel.org, jasowang@redhat.com,
+	michael.christie@oracle.com, pbonzini@redhat.com,
+	stefanha@redhat.com, eperezma@redhat.com, joao.m.martins@oracle.com,
+	joe.jin@oracle.com, si-wei.liu@oracle.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 9/9] vhost: add WARNING if log_num is more than limit
+Message-ID: <20250414123119-mutt-send-email-mst@kernel.org>
+References: <20250403063028.16045-1-dongli.zhang@oracle.com>
+ <20250403063028.16045-10-dongli.zhang@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250403063028.16045-10-dongli.zhang@oracle.com>
 
-On Mon, 14 Apr 2025 09:52:03 +0100 Lad, Prabhakar wrote:
-> > On Mon,  7 Apr 2025 13:03:14 +0100 Prabhakar wrote:  
-> > > This patch series adds support for the GBETH (Gigabit Ethernet) glue layer
-> > > driver for the Renesas RZ/V2H(P) SoC. The GBETH IP is integrated with
-> > > the Synopsys DesignWare MAC (version 5.20). The changes include updating
-> > > the device tree bindings, documenting the GBETH bindings, and adding the
-> > > DWMAC glue layer for the Renesas GBETH.  
-> >
-> > This was posted prior to the "net-next is OPEN" announcement:
-> > https://lore.kernel.org/all/20250407055403.7a8f40df@kernel.org/
-> >
-> > In the interest of fairness towards those who correctly wait
-> > for the tree to be open I will ask you to repost this again,
-> > in a couple of days.
-> >  
-> Are you ok for me to now respin this series?
+On Wed, Apr 02, 2025 at 11:29:54PM -0700, Dongli Zhang wrote:
+> Since long time ago, the only user of vq->log is vhost-net. The concern is
+> to add support for more devices (i.e. vhost-scsi or vsock) may reveals
+> unknown issue in the vhost API. Add a WARNING.
+> 
+> Suggested-by: Joao Martins <joao.m.martins@oracle.com>
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
 
-yessir
+
+Userspace can trigger this I think, this is a problem since
+people run with reboot on warn.
+Pls grammar issues in comments... I don't think so.
+
+> ---
+>  drivers/vhost/vhost.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index 494b3da5423a..b7d51d569646 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -2559,6 +2559,15 @@ static int get_indirect(struct vhost_virtqueue *vq,
+>  		if (access == VHOST_ACCESS_WO) {
+>  			*in_num += ret;
+>  			if (unlikely(log && ret)) {
+> +				/*
+> +				 * Since long time ago, the only user of
+> +				 * vq->log is vhost-net. The concern is to
+> +				 * add support for more devices (i.e.
+> +				 * vhost-scsi or vsock) may reveals unknown
+> +				 * issue in the vhost API. Add a WARNING.
+> +				 */
+> +				WARN_ON_ONCE(*log_num >= vq->dev->iov_limit);
+> +
+>  				log[*log_num].addr = vhost64_to_cpu(vq, desc.addr);
+>  				log[*log_num].len = vhost32_to_cpu(vq, desc.len);
+>  				++*log_num;
+> @@ -2679,6 +2688,15 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
+>  			 * increment that count. */
+>  			*in_num += ret;
+>  			if (unlikely(log && ret)) {
+> +				/*
+> +				 * Since long time ago, the only user of
+> +				 * vq->log is vhost-net. The concern is to
+> +				 * add support for more devices (i.e.
+> +				 * vhost-scsi or vsock) may reveals unknown
+> +				 * issue in the vhost API. Add a WARNING.
+> +				 */
+> +				WARN_ON_ONCE(*log_num >= vq->dev->iov_limit);
+> +
+>  				log[*log_num].addr = vhost64_to_cpu(vq, desc.addr);
+>  				log[*log_num].len = vhost32_to_cpu(vq, desc.len);
+>  				++*log_num;
+> -- 
+> 2.39.3
+
 
