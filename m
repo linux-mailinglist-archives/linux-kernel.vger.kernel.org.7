@@ -1,158 +1,160 @@
-Return-Path: <linux-kernel+bounces-603556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B142CA88993
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E71A8899A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A660417A3CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:17:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51AE17A798
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB1E288C9B;
-	Mon, 14 Apr 2025 17:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7B1289367;
+	Mon, 14 Apr 2025 17:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Dx/VuRjp"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZ8f2c9l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120E7284685;
-	Mon, 14 Apr 2025 17:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395571F236B;
+	Mon, 14 Apr 2025 17:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744651066; cv=none; b=u93ZIC7WfErsmHVNShEN2JEpb4oj9cHLXbXRXpklJnxh3ijO0kuawaKCupf47QkhQHo8xd3R9fG7V7iVXnKsyF3wrqP1PmEwAakVM+x8XUG1yziiYaal6M3UzzckMbOT9WZCBBrirSxQQxyFwYmxBZmzS18kakoVh9Ttrs3IjJw=
+	t=1744651188; cv=none; b=UvC30c+BF0elcM4NUSeaUBaozCaNSsJw6AySu6YNL5oMqlX6aB3o5qoti4j2JrHWd0YZV0DL1K67O8ryh9Y0/xRqhNjqf4Meh/M6r43hKkWH94UlkANzhmp3rhakXfqT4u+m+OP0DSt6+zGsTBkJVOq5TJ4hvXVtqLM0m/JcJYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744651066; c=relaxed/simple;
-	bh=rzA20/pIdWBHMGU7xAsPsa+U0QCOSidUUd989Wkkeeg=;
+	s=arc-20240116; t=1744651188; c=relaxed/simple;
+	bh=z37GMPLQfQqtOQrNOtRcvsIzo/ZNg3+Bc9JSK7Jgb08=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EEWzRrB+1Byo7CWF1hkbc/xX/bh8yyykWLOa+rd5TIJvjY3voWsi2a+2crDHWN3Joa4Hg1KCtF/IUB/xmml4i7qymU4/0LebdfYCBcmNb2mOrkUpoB8gA75U96KfVFYZCQ1xtPVY80dwEwfQlGg4/HZmB8pzBQ/r3qmQYiQlx2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Dx/VuRjp; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=IYRKGwR89Rpw68pdLeCst1myOZk4GqPsPOkkIazWR3w=; b=Dx
-	/VuRjp0nFQKNbq1x3+XqZofv0ZRl6pr8c0elKq4L5tqkwKQSiOVIkavVio24lxk1k60DTPHSABwJ8
-	mWgekEFQAkOwh3KxZqIcUmirU6CVu0e92MYFR/WHbtCvI27sadxWQC7gSaWj3rKB2Y/KmiKMCAeoL
-	Jlaa3jt9wRrFnb0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u4NRA-009EqC-1B; Mon, 14 Apr 2025 19:17:36 +0200
-Date: Mon, 14 Apr 2025 19:17:36 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sai Krishna Gajula <saikrishnag@marvell.com>
-Cc: "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Sunil Kovvuri Goutham <sgoutham@marvell.com>,
-	Geethasowjanya Akula <gakula@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Jerin Jacob <jerinj@marvell.com>,
-	Hariprasad Kelam <hkelam@marvell.com>,
-	Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	Bharat Bhushan <bbhushan2@marvell.com>,
-	"nathan@kernel.org" <nathan@kernel.org>,
-	"ndesaulniers@google.com" <ndesaulniers@google.com>,
-	"morbo@google.com" <morbo@google.com>,
-	"justinstitt@google.com" <justinstitt@google.com>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-	"horms@kernel.org" <horms@kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [net-next PATCH v3 1/2] octeontx2-af: correct __iomem
- annotations flagged by Sparse
-Message-ID: <e80bd0f7-f38e-4882-aa48-ff98d0fd0101@lunn.ch>
-References: <20250311182631.3224812-1-saikrishnag@marvell.com>
- <20250311182631.3224812-2-saikrishnag@marvell.com>
- <7009d4cc-a008-49ea-8f50-1e9aec63b592@lunn.ch>
- <BY3PR18MB4707C3348715B237C0A95C47A0B32@BY3PR18MB4707.namprd18.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jylm6NB7eI/TvUC3ChU4FTrYAU1pip7n8ANijToTvFcrvOgY1qCfFuiISFjc2qOCF/KrG+RU8Gp/8xZI9Y1Nsf3Zcm5Gal/tFcJrlt+jLX8olI5HMUQJ0OJS43wkorImg/DieyEzZ/W3YxMUb9OlbTvuZbGl/PetOhvi6TcruG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZ8f2c9l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C958C4CEE2;
+	Mon, 14 Apr 2025 17:19:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744651187;
+	bh=z37GMPLQfQqtOQrNOtRcvsIzo/ZNg3+Bc9JSK7Jgb08=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AZ8f2c9lqfQZuQfWRr3KwemWv7exS/LcHLgCoLIJY1DNeczSaMQ2+K/p3z/mVRHXf
+	 5fYgsygYh/xIH5tIyU6QCvN2kjL9ycG1XsUaTCvSMyNM4nLwmEiQOuIVQJBGnIU6Wi
+	 eH72/9HbUpRpNs98Zbzt7Vw2DVusLEdBAFtqH9l7CD88Y6x5GgcdBgeL04Bde+YmwC
+	 uvjY5W2kBUh85KIg46dZSjcc6e1uqYGFbQIOnKSpCtulOiaTYwdjG2KKrMZ9DZebqt
+	 cv8y7JFEPsnuR9d4g+wONPywfX0U+hqROxapwUq2PEVZlBBIUUt0Kmcio/GxuCMMnk
+	 0927u0k2ScVQw==
+Date: Mon, 14 Apr 2025 18:19:41 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Prathosh.Satish@microchip.com,
+	krzk@kernel.org, netdev@vger.kernel.org, vadim.fedorenko@linux.dev,
+	arkadiusz.kubalewski@intel.com, jiri@resnulli.us, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
+	kees@kernel.org, andy@kernel.org, akpm@linux-foundation.org,
+	mschmidt@redhat.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 02/14] dt-bindings: dpll: Add support for Microchip
+ Azurite chip family
+Message-ID: <20250414-residual-unblended-c21c7bc6eeb2@spud>
+References: <20250409144250.206590-3-ivecera@redhat.com>
+ <20250410-skylark-of-silent-symmetry-afdec9@shite>
+ <1a78fc71-fcf6-446e-9ada-c14420f9c5fe@redhat.com>
+ <20250410-puritan-flatbed-00bf339297c0@spud>
+ <6dc1fdac-81cc-4f2c-8d07-8f39b9605e04@redhat.com>
+ <CY5PR11MB6462412A953AF5D93D97DCE5ECB72@CY5PR11MB6462.namprd11.prod.outlook.com>
+ <bd7d005b-c715-4fd9-9b0d-52956d28d272@lunn.ch>
+ <7ab19530-d0d4-4df1-9f75-060c3055585b@redhat.com>
+ <4e331736-36f2-4796-945f-613279329585@lunn.ch>
+ <7e6bf69b-0916-4ad9-b42f-8645f5c95d5d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2OKUgsrCAQgxlv5y"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <BY3PR18MB4707C3348715B237C0A95C47A0B32@BY3PR18MB4707.namprd18.prod.outlook.com>
+In-Reply-To: <7e6bf69b-0916-4ad9-b42f-8645f5c95d5d@redhat.com>
 
-On Mon, Apr 14, 2025 at 04:38:53PM +0000, Sai Krishna Gajula wrote:
-> > -----Original Message-----
-> > From: Andrew Lunn <andrew@lunn.ch>
-> > Sent: Wednesday, March 12, 2025 2:52 AM
-> > To: Sai Krishna Gajula <saikrishnag@marvell.com>
-> > Cc: davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
-> > pabeni@redhat.com; netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > Sunil Kovvuri Goutham <sgoutham@marvell.com>; Geethasowjanya Akula
-> > <gakula@marvell.com>; Linu Cherian <lcherian@marvell.com>; Jerin Jacob
-> > <jerinj@marvell.com>; Hariprasad Kelam <hkelam@marvell.com>; Subbaraya
-> > Sundeep Bhatta <sbhatta@marvell.com>; andrew+netdev@lunn.ch; Bharat
-> > Bhushan <bbhushan2@marvell.com>; nathan@kernel.org;
-> > ndesaulniers@google.com; morbo@google.com; justinstitt@google.com;
-> > llvm@lists.linux.dev; horms@kernel.org; kernel test robot <lkp@intel.com>
-> > Subject: Re: [net-next PATCH v3 1/2] octeontx2-af: correct
-> > __iomem annotations flagged by Sparse
-> > 
-> > > if (mbox->mbox. hwbase) > - iounmap(mbox->mbox. hwbase); > +
-> > > iounmap((void __iomem *)mbox->mbox. hwbase); This looks wrong. If you
-> > > are unmapping it, you must of mapped it somewhere. And that mapping
-> > > would of returned an __iomem
-> > 
-> > >  	if (mbox->mbox.hwbase)
-> > > -		iounmap(mbox->mbox.hwbase);
-> > > +		iounmap((void __iomem *)mbox->mbox.hwbase);
-> > 
-> > This looks wrong. If you are unmapping it, you must of mapped it
-> > somewhere. And that mapping would of returned an __iomem value. So
-> > mbox.hwbase should be an __iomem value and you would not need this
-> > cast.
 
-> Yes,  mbox->mbox.hwbase is ioremapped with cache (ioremap_wc), while initialization it is declared as __iomem. But this hwbase is actually a DRAM memory mapped to BAR for better accessibility across the system. Since we use large memcpy (64KB and more) to/from this hwbase, we forced it to use as "void */u64" before exiting with unmap. As this is DRAM memory, memory access will not have side effects. Infact the AI applications also recommended similar mechanism. Please suggest if you have any other view and this can be addressed in some other way.
+--2OKUgsrCAQgxlv5y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please configure your email client to correctly wrap emails.
+On Fri, Apr 11, 2025 at 11:56:15AM +0200, Ivan Vecera wrote:
+>=20
+>=20
+> On 10. 04. 25 11:12 odp., Andrew Lunn wrote:
+> > On Thu, Apr 10, 2025 at 08:33:31PM +0200, Ivan Vecera wrote:
+> > >=20
+> > >=20
+> > > On 10. 04. 25 7:36 odp., Andrew Lunn wrote:
+> > > > > Prathosh, could you please bring more light on this?
+> > > > >=20
+> > > > > > Just to clarify, the original driver was written specifically w=
+ith 2-channel
+> > > > > > chips in mind (ZL30732) with 10 input and 20 outputs, which led=
+ to some confusion of using zl3073x as compatible.
+> > > > > > However, the final version of the driver will support the entir=
+e ZL3073x family
+> > > > > > ZL30731 to ZL30735 and some subset of ZL30732 like ZL80732 etc
+> > > > > > ensuring compatibility across all variants.
+> > > >=20
+> > > > Hi Prathosh
+> > > >=20
+> > > > Your email quoting is very odd, i nearly missed this reply.
+> > > >=20
+> > > > Does the device itself have an ID register? If you know you have
+> > > > something in the range ZL30731 to ZL30735, you can ask the hardware
+> > > > what it is, and the driver then does not need any additional
+> > > > information from DT, it can hard code it all based on the ID in the
+> > > > register?
+> > > >=20
+> > > > 	Andrew
+> > > >=20
+> > > Hi Andrew,
+> > > yes there is ID register that identifies the ID. But what compatible =
+should
+> > > be used?
+> > >=20
+> > > microchip,zl3073x was rejected as wildcard and we should use all
+> > > compatibles.
+> >=20
+> > You have two choices really:
+> >=20
+> > 1) You list each device with its own compatible, because they are in
+> > fact not compatible. You need to handle each one different, they have
+> > different DT properties, etc. If you do that, please validate the ID
+> > register against the compatible and return -ENODEV if they don't
+> > match.
+> >=20
+> > 2) You say the devices are compatible. So the DT compatible just
+> > indicates the family, enough information for the driver to go find the
+> > ID register. This does however require the binding is the same for all
+> > devices. You cannot have one family member listing 10 inputs in its
+> > binding, and another family member listing 20.
+> >=20
+> > If you say your devices are incompatible, and list lots of
+> > compatibles, you can then use constraints in the yaml, based on the
+> > compatible, to limit each family member to what it supports.
+> >=20
+> > My guess is, you are going to take the first route.
+>=20
+> Yes, this looks reasonable... in this case should I use
+> microchip,zl3073x.yaml like e.g. gpio/gpio-pca95xx.yaml?
 
-Did you check the performance of memcpy_fromio()? That is the API you
-are supposed to be using with an __iomem. I _think_ memcpy is only
-going to work for some architectures and other architectures will give
-you problems. That is the whole point of the __iomem, to make sure you
-use the correct API which works across architectures.
+No, please pick one of the compatibles in the file and name the same as
+one of those.
 
-> > 
-> > >  	for (qidx = 0; qidx < pf->qset.cq_cnt; qidx++) {
-> > > -		ptr = otx2_get_regaddr(pf, NIX_LF_CQ_OP_INT);
-> > > +		ptr = (__force u64 *)otx2_get_regaddr(pf,
-> > NIX_LF_CQ_OP_INT);
-> > >  		val = otx2_atomic64_add((qidx << 44), ptr);
-> > 
-> > This also looks questionable. You should be removing casts, not adding them.
-> > otx2_get_regaddr() returns an __iomem. So maybe
-> > otx2_atomic64_add() is actually broken here?
-> Similar to the above case, otx2_atomic64_add is a special case where it uses assembly code as part of definition, hence we had to use typecasting the "ptr". Please suggest if there is any better way.
-> 
-> static inline u64 otx2_atomic64_add(u64 incr, u64 *ptr)
-> {
->         u64 result;
-> 
+--2OKUgsrCAQgxlv5y
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Teach this function to accept an __iomem. Worst case, you remove the
-cast here, before going into assembly.
+-----BEGIN PGP SIGNATURE-----
 
->         __asm__ volatile(".cpu   generic+lse\n"
->                          "ldadd %x[i], %x[r], [%[b]]"
->                          : [r]"=r"(result), "+m"(*ptr)
->                          : [i]"r"(incr), [b]"r"(ptr)
->                          : "memory");
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ/1DrQAKCRB4tDGHoIJi
+0tgQAQDiMG2LA+SQ4PGFUrDaU4IzQmjpflF0phs6a37CN+1gnwEA/FHtd04YGCSz
+Oc9nrC2QJLVRLTQhkJ6c3IA9ypnSrwU=
+=DfiI
+-----END PGP SIGNATURE-----
 
-What actually happens if you keep the attribute? My guess is
-nothing. These are sparse markups, and gcc/as never seems them.
-
-	Andrew
+--2OKUgsrCAQgxlv5y--
 
