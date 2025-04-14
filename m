@@ -1,164 +1,260 @@
-Return-Path: <linux-kernel+bounces-602417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD22A87A9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:40:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F168A87AE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9009F1892843
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:40:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75F2F3AFD21
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3745325A64A;
-	Mon, 14 Apr 2025 08:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A9A25D901;
+	Mon, 14 Apr 2025 08:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TahVKnII"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="s8+Piv/1"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CA615DBB3;
-	Mon, 14 Apr 2025 08:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE79E25A626;
+	Mon, 14 Apr 2025 08:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744620027; cv=none; b=KL0x9lxJg1JqMMnj5Ug1dKMuNRXK13vPRvTpVK/q0961szpxtzDWFFwM1NfgPs5+gW4a2hZ8xws2KgB+wPQqUT+jZmD54z1hEAMkOQUMWOM2V2/YrTMDU9JAjavp0sGy07qw9fH/Jo/V3RORFF1KrRUQjIAzT2QOMC9ymgbgiIc=
+	t=1744620344; cv=none; b=jU2vC+20Pp3/0HLJhFJ2RczAyh3c1hDJ+sTq9WTKRWyF6SFsyq/IPGmYK5iwD492sblqShGUmvFAdHK4zcZCtw6yybxbo0c4/JAJVFED0qzsImfPC3U3JV7gNrOotWbSvwhQTrRdZR2Iw1L7nPX8xfdDBFwvDVk03tBSICcCBig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744620027; c=relaxed/simple;
-	bh=zKaosKnqxAEMJEQPHKc8iNMMQCXDKe5oSZ2DRY1bgWw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JDTS0SfRcYUBzHsSZ0PdPirLhMnQG5H2PlY2MT7foLYiFEeNe4vCtvJtwGYdb857hB0SpCTnD8jWt+fHjM2hTrKaHxQxUarJuQ3aVvqXunKWaEuis+ItMvllnv63RRv8T0Lz7aC5AsSZGGjvG6aDhbFoEj+HFnjo2djbqmTPUgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TahVKnII; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-524038ba657so4055770e0c.0;
-        Mon, 14 Apr 2025 01:40:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744620025; x=1745224825; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uWMxGH9MN2lw9UiJgZXH2sA9J8cJGOnXvoh40QjiLJY=;
-        b=TahVKnIIsRU1HpboyrV0cL4n709KE4bPEkvR2NpKjrlucZaR9DLKDCcopa/WgWjK27
-         wE+Xb8b5Hl8YajAR3Qu0YQgi6sTZLNOD/v3FhOiBC/qf09yPtSIpaOYu049QRv71HIxm
-         6GjxJD/c3n1WBJVMPsB2huoWJJSmlywNX7sHyfBQ3usgg7M4mLVD2t6/Za7F80FGQV0f
-         PJ+Q8eFXEu+pTk01RwCMsm8usb1W1vH/Uj2DwL4ONalv90LEsH5gNJb3ERPikai8MoFG
-         rRhdy6fHAKatQ3FIrpxeYH/mL2fJtW2zWT/SioQo5gvyo/cSc7mSubafE1axgvvgH88A
-         MtJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744620025; x=1745224825;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uWMxGH9MN2lw9UiJgZXH2sA9J8cJGOnXvoh40QjiLJY=;
-        b=a9UNQdAiC6yGMweuMBaImSir0QiwfAloTxjBvnUlqAKNObXWNW8qSOWBJ/66rKt8T1
-         0vtOt3g0cfLLUe8RJxJDiaOXCkkxngMUifuBkpJvnrTX7GcFPVZCU9MrDLwXif1QBldH
-         34am4fSxlVMFyuiiKiBCpvYpPIlLKgAfY8SV2i+gGgpdZBdUszsr9kXr6/usNO3MnxSL
-         K1GOHn0iagDUCFFCFpQCI9q/M4z/nMlk+sLAYeyQRLDGYH0d7ZzB//ErhDzwxdi5MW65
-         /DXwUQjJXXHnqrel3ATiWlCIPOESccMIC+6/44mX298WUSC+oeMO4yRrnqqSWycdrdNq
-         w95A==
-X-Forwarded-Encrypted: i=1; AJvYcCUgrR4sR0mcD1qxUIBgd+M/JMZ/zBby4oRF6k9UsjfQEJNFz5kn1m+jiLkP+edJCDFGNBw4aiHTyD8njM3T@vger.kernel.org, AJvYcCVXgUQ9yDG1IvWfptbupnWCNzeWMrZ8Eyx2WFYnTRFVwR90+hWPqrSJ+/XhvRnoCI9xoTnCrzpNTWiV5XiZ3QaZwaM=@vger.kernel.org, AJvYcCVwfFWIhF/m0OsANW5acaqc2xMdjM62gbyOSsRrH47t9h3dyYciaXsHdAd7alWHPYWP2HJxyXPBJuR7@vger.kernel.org, AJvYcCW9CnbvKKXm3Nqo2ZqeZAPcV6OIb/uptRdMNLGS6HeUKZu8C/nPApSCWrnlYTsrXkF2Il9z5Uw7elUeIQ==@vger.kernel.org, AJvYcCWWbyNzE54M1TE7HQVzK9fe/bast6Xt0P9CJZ9KeqjXX0myxH6qScaVOZcubjg+vIzGe2ToXbRfMP4STXaR@vger.kernel.org, AJvYcCX/D3B+Km0kOkhQdRHKuimlDxBS21UptLPELdkJjaHMjmtEFW386VwKqCxrw3i8NP4tsTSn3c+U7AIH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl6tXJqXXx7BzLTC/4cXTzOelgi1dd0YQfkoWGmA6+UT0EJRpP
-	QidB+9jQzY6vqeLps+xuIwCoQKljkhmpSWd0MPY+5dR969LPbvhLCQdeZMTHVcAVXUUJ+qVQzxi
-	5hKSvmVs0HHZ96Fw53jiDIdzD7F0=
-X-Gm-Gg: ASbGncsPHsYMa3YZvAdQWhQr+zDkFaJtvYo28Kl7L8f+PQA2WiUfDpeO94K6dAWu6df
-	Qo0ZVOcWKy7CZ8/WQfV/9YsL/1FGbSs/3WVcxL3IsX3IFKBxV5V7srRvqO6byfQvD+K/UAla4dT
-	Gvvg8jsgupJtg0894GH4Vv0P5gRVkG22Gf
-X-Google-Smtp-Source: AGHT+IET2qRXboEKhidUb5hBJlClL8RXUpYBKRhEnEi/wLWquyPq+HRgvLZKLIrzDsDjB07VIxygOjghYhgLKS7v14g=
-X-Received: by 2002:a05:6122:3417:b0:523:eb47:2884 with SMTP id
- 71dfb90a1353d-527b5ecadcbmr12260095e0c.6.1744620024811; Mon, 14 Apr 2025
- 01:40:24 -0700 (PDT)
+	s=arc-20240116; t=1744620344; c=relaxed/simple;
+	bh=1DneHrOh2P4wCCvAFwmXK/TSoA3m02FScStaifEQ4nU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qCuNlPKaYR7xK0/owZi7sR9Up6lTWT3/kVwPoRMZfPzNqfiUPYY8Ycit4271wXzMhqBAje/lbjSXB7uR1g5GC28JjxJe7OAQb7S5B6WRUI/LM91GpxKEkKKXYrHZDaNv3wvBlVqEiOBrIOOnnvCyBjO+4eNPmrpkcky9YMCtF58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=s8+Piv/1; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53E8Dgqr002903;
+	Mon, 14 Apr 2025 10:45:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	iMxypOAW8Oa6O6QVpYmX6cdYifOLRH3rTIKzTjQ0LoE=; b=s8+Piv/1ysUJCi+t
+	7UIfFhgwwEsmNuzbYPLELMy2rag14Nn81fUecOECARc7pji3gWZCvYKM23HALKXg
+	T8EHjYHUWpMlmmHc8k4k+AW324xnojdYfhII8eyQKqUz7gT6DeMrzhxHDh1O/dMD
+	20GKksyHX3CbcIzlu8Utbhmkz5I41Uzra7jNxmgaaIlg7Jyteoww92pcPdIAXEka
+	8cpKC0BaEI5U9GZVmQaqWJVeQN8cM+wneLJb27Hun9vPGvfrsyiSxylPsO+1HjZf
+	P7G8WcMRM/bOr6kh6bY3VvJNiED2zFfYHtCmBtA+qiJiyhos9xob46iGKsmttuWy
+	fnRGaA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45yfh1pveg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Apr 2025 10:45:04 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8132B400B0;
+	Mon, 14 Apr 2025 10:43:47 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A5BF59EA15F;
+	Mon, 14 Apr 2025 10:40:18 +0200 (CEST)
+Received: from [10.48.86.196] (10.48.86.196) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 14 Apr
+ 2025 10:40:18 +0200
+Message-ID: <b8140b9d-b5d9-48dc-b652-9eebc3e1ee01@foss.st.com>
+Date: Mon, 14 Apr 2025 10:40:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250407191628.323613-13-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVYfe7oUp+2QiHbBqxb3zKUYufpZHJQWmbzD1cu3TuRxg@mail.gmail.com>
-In-Reply-To: <CAMuHMdVYfe7oUp+2QiHbBqxb3zKUYufpZHJQWmbzD1cu3TuRxg@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 14 Apr 2025 09:39:58 +0100
-X-Gm-Features: ATxdqUHlsc5uJ7-xCYIyly9sEU832hppwQxRaNf8N6phxVH69LOeEigYs5a45bg
-Message-ID: <CA+V-a8vzPuxAqJ8waJWw0TNRqV5FMeuojZ7bxfPJzLMPNdy79g@mail.gmail.com>
-Subject: Re: [PATCH v2 12/12] arm64: dts: renesas: Add initial device tree for
- RZ/V2N EVK
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dmaengine: stm32: Don't use %pK through printk
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+        Vinod
+ Koul <vkoul@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC: <dmaengine@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250407-restricted-pointers-dma-v1-1-b617dd0e293a@linutronix.de>
+Content-Language: en-US
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+In-Reply-To: <20250407-restricted-pointers-dma-v1-1-b617dd0e293a@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-14_02,2025-04-10_01,2024-11-22_01
 
-Hi Geert,
 
-Thank you for the review.
 
-On Thu, Apr 10, 2025 at 1:07=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
+On 4/7/25 10:26, Thomas Weißschuh wrote:
+> In the past %pK was preferable to %p as it would not leak raw pointer
+> values into the kernel log.
+> Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
+> the regular %p has been improved to avoid this issue.
+> Furthermore, restricted pointers ("%pK") were never meant to be used
+> through printk(). They can still unintentionally leak raw pointers or
+> acquire sleeping looks in atomic contexts.
+> 
+> Switch to the regular pointer formatting which is safer and
+> easier to reason about.
+> There are still a few users of %pK left, but these use it through seq_file,
+> for which its usage is safe.
 >
-> Hi Prabhakar,
->
-> On Mon, 7 Apr 2025 at 21:16, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add the initial device tree for the Renesas RZ/V2N EVK board, based on
-> > the R9A09G056N48 SoC. Enable basic board functionality, including:
-> >
-> > - Memory mapping (reserve the first 128MB for the secure area)
-> > - Clock inputs (QEXTAL, RTXIN, AUDIO_EXTAL)
-> > - PINCTRL configurations for peripherals
-> > - Serial console (SCIF)
-> > - SDHI1 with power control and UHS modes
-> >
-> > Update the Makefile to include the new DTB.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v1->v2
-> > - Followed DTS coding style guidelines
->
-> Thanks for the update!
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-devel for v6.16.
->
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
->
-> > +&pinctrl {
->
-> > +       sdhi1_pins: sd1 {
-> > +               sd1-dat-cmd {
-> > +                       pins =3D "SD1DAT0", "SD1DAT1", "SD1DAT2", "SD1D=
-AT3", "SD1CMD";
-> > +                       input-enable;
-> > +                       renesas,output-impedance =3D <3>;
-> > +                       slew-rate =3D <0>;
-> > +               };
-> > +
-> > +               sd1-clk {
-> > +                       pins =3D "SD1CLK";
-> > +                       renesas,output-impedance =3D <3>;
-> > +                       slew-rate =3D <0>;
-> > +               };
-> > +
-> > +               sd1-cd {
-> > +                       pinmux =3D <RZV2N_PORT_PINMUX(9, 4, 14)>; /* SD=
-1_CD */
-> > +               };
->
-> I will sort these subnodes while applying.
->
-Thanks for taking care.
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Thank you for your patch,
 
-Cheers,
-Prabhakar
+Reviewed-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+
+> ---
+>   drivers/dma/stm32/stm32-dma.c  | 10 +++++-----
+>   drivers/dma/stm32/stm32-dma3.c | 10 +++++-----
+>   drivers/dma/stm32/stm32-mdma.c |  8 ++++----
+>   3 files changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/dma/stm32/stm32-dma.c b/drivers/dma/stm32/stm32-dma.c
+> index 917f8e9223739af853e492d97cecac0e95e0aea3..ee9246c6888ffde2d416270f25890c04c72daff7 100644
+> --- a/drivers/dma/stm32/stm32-dma.c
+> +++ b/drivers/dma/stm32/stm32-dma.c
+> @@ -613,7 +613,7 @@ static void stm32_dma_start_transfer(struct stm32_dma_chan *chan)
+>   	reg->dma_scr |= STM32_DMA_SCR_EN;
+>   	stm32_dma_write(dmadev, STM32_DMA_SCR(chan->id), reg->dma_scr);
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: started\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: started\n", &chan->vchan);
+>   }
+>   
+>   static void stm32_dma_configure_next_sg(struct stm32_dma_chan *chan)
+> @@ -676,7 +676,7 @@ static void stm32_dma_handle_chan_paused(struct stm32_dma_chan *chan)
+>   
+>   	chan->status = DMA_PAUSED;
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: paused\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: paused\n", &chan->vchan);
+>   }
+>   
+>   static void stm32_dma_post_resume_reconfigure(struct stm32_dma_chan *chan)
+> @@ -728,7 +728,7 @@ static void stm32_dma_post_resume_reconfigure(struct stm32_dma_chan *chan)
+>   	dma_scr |= STM32_DMA_SCR_EN;
+>   	stm32_dma_write(dmadev, STM32_DMA_SCR(chan->id), dma_scr);
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: reconfigured after pause/resume\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: reconfigured after pause/resume\n", &chan->vchan);
+>   }
+>   
+>   static void stm32_dma_handle_chan_done(struct stm32_dma_chan *chan, u32 scr)
+> @@ -820,7 +820,7 @@ static void stm32_dma_issue_pending(struct dma_chan *c)
+>   
+>   	spin_lock_irqsave(&chan->vchan.lock, flags);
+>   	if (vchan_issue_pending(&chan->vchan) && !chan->desc && !chan->busy) {
+> -		dev_dbg(chan2dev(chan), "vchan %pK: issued\n", &chan->vchan);
+> +		dev_dbg(chan2dev(chan), "vchan %p: issued\n", &chan->vchan);
+>   		stm32_dma_start_transfer(chan);
+>   
+>   	}
+> @@ -922,7 +922,7 @@ static int stm32_dma_resume(struct dma_chan *c)
+>   
+>   	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: resumed\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: resumed\n", &chan->vchan);
+>   
+>   	return 0;
+>   }
+> diff --git a/drivers/dma/stm32/stm32-dma3.c b/drivers/dma/stm32/stm32-dma3.c
+> index 0c6c4258b19561c94f1c68f26ade16b82660ebe6..50e7106c5cb73394c1de52ad5f571f6db63750e6 100644
+> --- a/drivers/dma/stm32/stm32-dma3.c
+> +++ b/drivers/dma/stm32/stm32-dma3.c
+> @@ -801,7 +801,7 @@ static void stm32_dma3_chan_start(struct stm32_dma3_chan *chan)
+>   
+>   	chan->dma_status = DMA_IN_PROGRESS;
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: started\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: started\n", &chan->vchan);
+>   }
+>   
+>   static int stm32_dma3_chan_suspend(struct stm32_dma3_chan *chan, bool susp)
+> @@ -1452,7 +1452,7 @@ static int stm32_dma3_pause(struct dma_chan *c)
+>   
+>   	chan->dma_status = DMA_PAUSED;
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: paused\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: paused\n", &chan->vchan);
+>   
+>   	return 0;
+>   }
+> @@ -1465,7 +1465,7 @@ static int stm32_dma3_resume(struct dma_chan *c)
+>   
+>   	chan->dma_status = DMA_IN_PROGRESS;
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: resumed\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: resumed\n", &chan->vchan);
+>   
+>   	return 0;
+>   }
+> @@ -1490,7 +1490,7 @@ static int stm32_dma3_terminate_all(struct dma_chan *c)
+>   	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+>   	vchan_dma_desc_free_list(&chan->vchan, &head);
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: terminated\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: terminated\n", &chan->vchan);
+>   
+>   	return 0;
+>   }
+> @@ -1543,7 +1543,7 @@ static void stm32_dma3_issue_pending(struct dma_chan *c)
+>   	spin_lock_irqsave(&chan->vchan.lock, flags);
+>   
+>   	if (vchan_issue_pending(&chan->vchan) && !chan->swdesc) {
+> -		dev_dbg(chan2dev(chan), "vchan %pK: issued\n", &chan->vchan);
+> +		dev_dbg(chan2dev(chan), "vchan %p: issued\n", &chan->vchan);
+>   		stm32_dma3_chan_start(chan);
+>   	}
+>   
+> diff --git a/drivers/dma/stm32/stm32-mdma.c b/drivers/dma/stm32/stm32-mdma.c
+> index e6d525901de7ecf822d218b87b95aba6bbf0a3ef..080c1c725216cb627675c372591b4c0c227c3cea 100644
+> --- a/drivers/dma/stm32/stm32-mdma.c
+> +++ b/drivers/dma/stm32/stm32-mdma.c
+> @@ -1187,7 +1187,7 @@ static void stm32_mdma_start_transfer(struct stm32_mdma_chan *chan)
+>   
+>   	chan->busy = true;
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: started\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: started\n", &chan->vchan);
+>   }
+>   
+>   static void stm32_mdma_issue_pending(struct dma_chan *c)
+> @@ -1200,7 +1200,7 @@ static void stm32_mdma_issue_pending(struct dma_chan *c)
+>   	if (!vchan_issue_pending(&chan->vchan))
+>   		goto end;
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: issued\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: issued\n", &chan->vchan);
+>   
+>   	if (!chan->desc && !chan->busy)
+>   		stm32_mdma_start_transfer(chan);
+> @@ -1220,7 +1220,7 @@ static int stm32_mdma_pause(struct dma_chan *c)
+>   	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+>   
+>   	if (!ret)
+> -		dev_dbg(chan2dev(chan), "vchan %pK: pause\n", &chan->vchan);
+> +		dev_dbg(chan2dev(chan), "vchan %p: pause\n", &chan->vchan);
+>   
+>   	return ret;
+>   }
+> @@ -1261,7 +1261,7 @@ static int stm32_mdma_resume(struct dma_chan *c)
+>   
+>   	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+>   
+> -	dev_dbg(chan2dev(chan), "vchan %pK: resume\n", &chan->vchan);
+> +	dev_dbg(chan2dev(chan), "vchan %p: resume\n", &chan->vchan);
+>   
+>   	return 0;
+>   }
+> 
+> ---
+> base-commit: e48e99b6edf41c69c5528aa7ffb2daf3c59ee105
+> change-id: 20250404-restricted-pointers-dma-29cf839a1a0b
+> 
+> Best regards,
 
