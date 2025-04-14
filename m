@@ -1,179 +1,129 @@
-Return-Path: <linux-kernel+bounces-603699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F92A88B1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:30:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35825A88B25
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02F93B3FBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:30:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C394D17D982
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C8827FD71;
-	Mon, 14 Apr 2025 18:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F0728B4FD;
+	Mon, 14 Apr 2025 18:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f85bucBm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="A9M8M+KD"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400FF289374;
-	Mon, 14 Apr 2025 18:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744655417; cv=none; b=eLtN40DrP3+6x1lpxmxIJ6FoDPS/sCYtX4iKjYhceZYNTZDjuINJtVf0nhy25xq8HOPZj56LBKnZQ0pI1zlHEuv7yhwazNXIKdVj1BMy8JpTMvyH59MSNRLvvXVNJkhbEX5aVj7qAL7V8tr/cnD04mY6t8MJ2nHxvrReP1YOd5Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744655417; c=relaxed/simple;
-	bh=BtcwZGRvn5TesENoDrfjjj8HyL7mLHa6Ze3jrfXvGEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LdmipwymVHphUUg5tFy+U+y3I2NbgWUNKba8C7V17fHN4kAkM5vdUA2NKoRQC6we7TSLPywxe0Zo7d6gKqt/2QCTMoKYAj43baO30UOHux9vG8HqSgNLpzTOkTU7GnsBZOtI/gYKNSN/mRcUYEALtbBn1gxUiLe/c684q18wWho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f85bucBm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 706B9C4CEE2;
-	Mon, 14 Apr 2025 18:30:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744655416;
-	bh=BtcwZGRvn5TesENoDrfjjj8HyL7mLHa6Ze3jrfXvGEg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f85bucBmfd43blwejOgTiqV2C9OWkdfcVHiTrbzYmvV2XqwNIgUK9u+tGs5xOdpDR
-	 ueoH4ADTmzHAOimKyQPO7Q+3msaeRxjgbqg3ChtKPiFsIu4dY068I+LXuzCoEN3K7V
-	 ViIVtbfOcoSezM6+xU7547ln4NYvl3ZLXuoSuNkqJZZaK6dTZ34Y4BonCrHUTvb7kA
-	 //GRZ1Td00Ndc/2c0qB2s/G+Ss/R4W6EI4KoCoIbKAXZl4bPLEWHY00AkFZooRUguq
-	 D6NTw8POTU/wu10HjOoUu9jhPv3JkXjrXYTaqr+j+Je1018Kowda/jAEEKhxhgiMYy
-	 G/8m1/IuPvhGg==
-Date: Mon, 14 Apr 2025 19:30:10 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v5 06/11] iio: accel: adxl345: extend sample frequency
- adjustments
-Message-ID: <20250414193010.0ff1ea59@jic23-huawei>
-In-Reply-To: <CAFXKEHau6n2o_MPimiEkYRNvE3TO9f5j_tDH0FwJYsk6V5B9WA@mail.gmail.com>
-References: <20250318230843.76068-1-l.rubusch@gmail.com>
-	<20250318230843.76068-7-l.rubusch@gmail.com>
-	<20250331113300.08379a5a@jic23-huawei>
-	<CAFXKEHau6n2o_MPimiEkYRNvE3TO9f5j_tDH0FwJYsk6V5B9WA@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB96A192D6B;
+	Mon, 14 Apr 2025 18:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744655472; cv=pass; b=NU+MEJ93Ydn5e9P0EXQXhalMKtGf98XU7I9uVJfYMlAKprr2YsFOMhmweIxAhO8oJTNR8TbVuXkIBmTOCUlkgVcrABS/yLyjkPEw88VkhsaCUbjJVwXHFIthU5tb44fyVGBdLR+2qtCuBd6ozQD+YgGHamLR0N3IJ1VigQ9h+ZU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744655472; c=relaxed/simple;
+	bh=nvfI6Dtjl9c8eSOHzN5OCdhlcKHF1Xh3nblGQq//xxs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IeGshxuTcNH31/qnDmBSVjhrinPRiwFihQqHOQX4I210mbG9sRBhDlhWB3Z/sUdectzHTuKdvmE320XpgZjS5p9f9J17KUK3OjtLHSSR9sIqHI/KHAYs+wwde/yW9tLnqsR1AvxfMIM8533LoI9C0MjwrnyloQ1AwgCbfrYgmwg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=A9M8M+KD; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744655447; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=aK9QbFLPjjNWwlAHM+7jqXXYkZSyotrm4OpqYBZ6Z+7vjhqlvez1f+PL379uk9xzqoSF6iITw0vcbLi/5d56FqTSxfckQ8bVg5OlU5oCF3kg4cd/t22MRnH8JVTkmi91wGUqj/PNsc2dHlDKILWgCHoGv596aKqZGHKYDCjqwiA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744655447; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=0W68kifwClbmxOD9uB2cLoC+ZOmDFfEOuSDxczncg7A=; 
+	b=NnanDKGIw2jbi6e5Xc8Wy7BWebenhI2JPjGlWQZaOSjFO/+adLpumbi87vt34Pw9mygqSwkmkjWTIbSQKpBMHvR5Ce9B0Wlk/LiqOkwmLtFuKdfMt3clvw1c54CtQ49kEH49mBfTBBzoFLO/2aVawi+VBEAGE7vkb6hem77sVRI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744655447;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=0W68kifwClbmxOD9uB2cLoC+ZOmDFfEOuSDxczncg7A=;
+	b=A9M8M+KDKMG7ngJrCcR8EyH1YFAWoOsBiMjvc5f7DXQ9x4mceV+16Cb+JYnRFbp5
+	eMN9g8GulITK60NJnEJuO3cH3+5U6KzGHHzzub8twfHPEIJQdWiKFIJ5hp1zIgDdA2t
+	lqyBWjpaLaPs6cnIcPL++Vy6dfuJ4pV/lyRvktOI=
+Received: by mx.zohomail.com with SMTPS id 1744655444841430.53710170104966;
+	Mon, 14 Apr 2025 11:30:44 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: heiko@sntech.de, Kever Yang <kever.yang@rock-chips.com>
+Cc: andersson@kernel.org, Kever Yang <kever.yang@rock-chips.com>,
+ Shawn Lin <Shawn.lin@rock-chips.com>, Conor Dooley <conor+dt@kernel.org>,
+ Finley Xiao <finley.xiao@rock-chips.com>,
+ Frank Wang <frank.wang@rock-chips.com>, Rob Herring <robh@kernel.org>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ Andy Yan <andy.yan@rock-chips.com>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v9 2/2] arm64: dts: rockchip: Add rk3576 pcie nodes
+Date: Mon, 14 Apr 2025 20:30:38 +0200
+Message-ID: <5019259.31r3eYUQgx@workhorse>
+In-Reply-To: <20250414145110.11275-3-kever.yang@rock-chips.com>
+References:
+ <20250414145110.11275-1-kever.yang@rock-chips.com>
+ <20250414145110.11275-3-kever.yang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, 14 Apr 2025 13:41:20 +0200
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
+On Monday, 14 April 2025 16:51:10 Central European Summer Time Kever Yang wrote:
+> rk3576 has two pcie controllers, both are pcie2x1 work with
+> naneng-combphy.
+> 
+> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+> Tested-by: Shawn Lin <Shawn.lin@rock-chips.com>
+> ---
+> 
+> Changes in v9:
+> - rebase on 6.15-rc1
+> - Add test tag
+> 
+> Changes in v8: None
+> Changes in v7:
+> - re-order the properties.
+> 
+> Changes in v6: None
+> Changes in v5: None
+> Changes in v4: None
+> Changes in v3:
+> - Update the subject
+> 
+> Changes in v2:
+> - Update clock and reset names and sequence to pass DTB check
+> 
+>  arch/arm64/boot/dts/rockchip/rk3576.dtsi | 108 +++++++++++++++++++++++
+>  1 file changed, 108 insertions(+)
+> 
 
-> On Mon, Mar 31, 2025 at 12:33=E2=80=AFPM Jonathan Cameron <jic23@kernel.o=
-rg> wrote:
-> >
-> > On Tue, 18 Mar 2025 23:08:38 +0000
-> > Lothar Rubusch <l.rubusch@gmail.com> wrote:
-> > =20
-> > > Introduce enums and functions to work with the sample frequency
-> > > adjustments. Let the sample frequency adjust via IIO and configure
-> > > a reasonable default.
-> > >
-> > > Replace the old static sample frequency handling. During adjustment of
-> > > bw registers, measuring is disabled and afterwards enabled again.
-> > >
-> > > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com> =20
-> > One minor thing inline.
-> >
-> > =20
-> > >       return -EINVAL;
-> > > @@ -504,7 +581,12 @@ static int adxl345_write_raw(struct iio_dev *ind=
-io_dev,
-> > >                            int val, int val2, long mask)
-> > >  {
-> > >       struct adxl345_state *st =3D iio_priv(indio_dev);
-> > > -     s64 n;
-> > > +     enum adxl345_odr odr;
-> > > +     int ret;
-> > > +
-> > > +     ret =3D adxl345_set_measure_en(st, false); =20
-> >
-> > Why is this necessary but wasn't before?
-> > If it should always have been done for existing calibbias etc,
-> > perhaps a separate precursor patch is appropriate?
-> > =20
->=20
-> On the one side the datasheet recommends to have measurement disabled,
-> when adjusting certain sensor registers, mostly related to interrupt
-> events. Before the sensor was operated in FIFO_BYPASS mode only
-> without using the sensor events. With interrupt based events, it will
-> operate in FIFO_STREAM or similar. Then it seems to me to be a better
-> approach to put it generally in standby mode when configuring
-> registers to avoid ending up e.g. in FIFO overrun or the like. On the
-> other side, I saw similar approaches in the sources of Analog sensors.
-> Enable/disable measurement was done there in the particular functions.
-> In the particular case of adxl345_write_raw, odr and range values are
-> going to be set and I implement enable/disable measurement directly in
-> the write_raw. In comparison to the ADXL380 (different sensor!) where
-> this is done, too, but down in the specific setter functions. I can
-> see a bit of an advantage, if something fails, the sensor generally
-> stays turned off. I'll keep this in v6 of the patches.
+Reviewed-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Tested-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-Thanks for the explanation.  That answered my question nicely and
-this is fine.
+Successfully used this on an ArmSoM Sige5 RK3576 board. PCIe works.
+Properties look correct, though the `ranges = ` doesn't separate out the
+different ranges into individual `<cells>` but this doesn't seem to make
+any difference and doesn't cause any warnings either. The only added
+warning is "simple-bus unit address format error" which seems like a
+bug in the thing generating the warning and not the device-tree itself,
+as it doesn't seem to notice that the address of the node is within the
+regs array, just not as the first cell.
 
->=20
-> Pls,  note, I did not observe faulty behavior due to that or analyzed
-> it thoroughly if and where it is probably better to have measurement
-> turned off. At best, it won't make any difference and is probably
-> rather kind of "best practice". If not, I would expect rather sporadic
-> minor issues.
->=20
-> As always, pls consider my patch(es) as a proposal, sometimes with an
-> invisible question mark ;) If you have a contrary opinion and/or
-> experience, please let me know.
->=20
-> > =20
-> > > +     if (ret)
-> > > +             return ret;
-> > >
-> > >       switch (mask) {
-> > >       case IIO_CHAN_INFO_CALIBBIAS:
-> > > @@ -512,20 +594,26 @@ static int adxl345_write_raw(struct iio_dev *in=
-dio_dev,
-> > >                * 8-bit resolution at +/- 2g, that is 4x accel data sc=
-ale
-> > >                * factor
-> > >                */
-> > > -             return regmap_write(st->regmap,
-> > > -                                 ADXL345_REG_OFS_AXIS(chan->address),
-> > > -                                 val / 4);
-> > > +             ret =3D regmap_write(st->regmap,
-> > > +                                ADXL345_REG_OFS_AXIS(chan->address),
-> > > +                                val / 4);
-> > > +             if (ret)
-> > > +                     return ret;
-> > > +             break;
-> > >       case IIO_CHAN_INFO_SAMP_FREQ:
-> > > -             n =3D div_s64(val * NANOHZ_PER_HZ + val2,
-> > > -                         ADXL345_BASE_RATE_NANO_HZ);
-> > > +             ret =3D adxl345_find_odr(st, val, val2, &odr);
-> > > +             if (ret)
-> > > +                     return ret;
-> > >
-> > > -             return regmap_update_bits(st->regmap, ADXL345_REG_BW_RA=
-TE,
-> > > -                                       ADXL345_BW_RATE,
-> > > -                                       clamp_val(ilog2(n), 0,
-> > > -                                                 ADXL345_BW_RATE));
-> > > +             ret =3D adxl345_set_odr(st, odr);
-> > > +             if (ret)
-> > > +                     return ret;
-> > > +             break;
-> > > +     default:
-> > > +             return -EINVAL;
-> > >       }
-> > >
-> > > -     return -EINVAL;
-> > > +     return adxl345_set_measure_en(st, true);
-> > >  } =20
+I think this looks good for merging, I'll also send out a Sige5 enablement
+patch shortly.
+
+Thank you!
+
+Regards,
+Nicolas Frattaroli
+
 
 
