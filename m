@@ -1,135 +1,144 @@
-Return-Path: <linux-kernel+bounces-602806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA64FA87F92
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:49:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DA3A87FA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC29B1685DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:48:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 705881897F96
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344CD18FDA5;
-	Mon, 14 Apr 2025 11:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D393929DB72;
+	Mon, 14 Apr 2025 11:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JgU96GVi"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcCd0OFE"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1D219924E;
-	Mon, 14 Apr 2025 11:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE7929CB32
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 11:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744631326; cv=none; b=GJrSmICxUCaLCFgH/ULd4wuqJfhfIvL1AQqojHowTuaMuPsV8/6/AL9QNKrXggYwojqJzuYaG6N/lLAfHXjIzKOz8GaISVhdkE1Tx0eY10S9iNqPF+GBz/fHiDt90VtWlP/A7fQf+/M4XoGPcP5NWt4DlpoQ1afd0/QQR1mPhG0=
+	t=1744631361; cv=none; b=YvqRBdom6igGrEhF5c4NkpFEaK0hFUiz31VGoeGls1yoyWDf51uEoPuAN7H6Pc8RY2JA3odrxV21H3HrwU3tmr1TVTBkRCDrhQCHwj7vooPz6EwHhtXoiwCCIA+r95PMQHMyjpfnMgC4GFjFgoZK1dq4pscloZuIEeAyDJu3i/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744631326; c=relaxed/simple;
-	bh=iSPshvzpE8zoSw79jci9fdSoHi9dXqSVQIl2Q2vgGbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H4vOtkQMb/PKE9yQLkj4iaE9WvvmFz7uKWWSbLwxktrFCviTpKzHJca7XnV1/aL7G/aSabXfMyF6HqxP7MT/sbZ5TaxueIOSLwfWqPjgKhP+Cd2GO9wmfqAo/IJYCLJR6dOpk58Yc1qqG+Pgm0Ionv7nht7OxA8FEhcDF2yDbvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JgU96GVi; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CFCA14397C;
-	Mon, 14 Apr 2025 11:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744631315;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y6CpKHYE4RH4SAXoypcVbA2iREoZ4cwFDGsOs3AGUT8=;
-	b=JgU96GViuEpr6Ee/o8L3t8o0PE+3idNIeLwwIP+gM42sBs3YvHKEoIHSuMQJflU1fbAdH1
-	ohhsDbozYc/YFec+Wa2vCrTZ5qPOMsIE2GUnsbl7j9yBSODLxQO3gHeDgbk/MjMnCPCmtA
-	pS8QFNNZBW8OJcCHj+0gUafNDCLuMZCt6K7tqC3J0BoLVmO8hLYcHVWuj8EB/xY63fJiWh
-	UO3swrUc/eO+2LWv7BN3t4jI9aj3v8t+shXVgPcMJ4wuo8Xe6OGy3EWgkbX6Fl2mpUcYTH
-	vy8dOVkDpKHYl/x1RP4ULFadCcmKe+OjU02KymlZZqHjlrVakzkNrUJpeL2bhQ==
-Date: Mon, 14 Apr 2025 13:48:31 +0200
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Bastien Curutchet <bastien.curutchet@bootlin.com>, Sumit Semwal
- <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] uio/dma-buf: Give UIO users access to DMA
- addresses.
-Message-ID: <20250414134831.20b04c77@windsurf>
-In-Reply-To: <Z_zwZYBO5Txz6lDF@infradead.org>
-References: <20250410-uio-dma-v1-0-6468ace2c786@bootlin.com>
-	<Z_yjNgY3dVnA5OVz@infradead.org>
-	<20250414102455.03331c0f@windsurf>
-	<Z_zwZYBO5Txz6lDF@infradead.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1744631361; c=relaxed/simple;
+	bh=aEusxvWhtxsSU6c6RiVQfSnOin9Z96cw15RbGNdbXV4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WDyv/1C3iwQ0yTyAOKojuoPaQy85SHYeQNsVbk2eDNyAi+hv64IxzNs2mCuX1A0AMml0X41ZFT1olmTjAUcA1HcmmYEnwAcZXqJuXOiqBerxhy3KFTusNZrmdvWwP7BS9sHUC0SapHktoLdYpK3o+meOzaZCvom721Rc/19dBIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcCd0OFE; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2279915e06eso42301385ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 04:49:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744631359; x=1745236159; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SXO27tnNFypn90AJmN3DKAGd3jsvWoI9DoDd6wFIgYM=;
+        b=LcCd0OFEL6vSoaG/i5rMbopGHy9xQRQ6sQ6LcwWfllV/2IDQH5k+5x98oM43P/9L3j
+         RGhEGOSTZgMew9RonnFRDyKq1ZwbjK6sUg7GPd2GrWUj7FFROtPe2tROXRz1N+5xzinA
+         c8MKFHj2saZZV3YGSIYP7vqDE3y1WjNbH5BBm9GcS9s2dtCmDW6V//mlEwHI8NgRcVmb
+         xatAxdiPZdogOtBkN+GsQt9qe5IbHoit6j47bAkHAyB6EBXkE6qdWaaEySZzM1W2XyI2
+         BKzzQSOcez2WdiXvg6fNVDgRl94SZwGk/0OM50aEnJidbbVASpLa9OexJ1jspnXwQXl0
+         IYkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744631359; x=1745236159;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SXO27tnNFypn90AJmN3DKAGd3jsvWoI9DoDd6wFIgYM=;
+        b=FB1vF5mUnBzezdCdn4xTm4vPqmjGd9h7DM59MYumtPpFV91SdhX88KZtqwqBU9zYng
+         +3MoS04soYw0qYoNZvTEDLLiqEIisb9OhkqtbzbalL50ceO7qFAg5vx+QVXM3EsLV7ts
+         uan0ql2NFASgWQS8o5R2uf5MrxnWNqhAMZowDiqYoWCfwit+xWARbPw8ZflPJWOs7Kcs
+         6RvJV9+52E40WrmdmfncLAr1+GB0KjxUviN+KUYXb6Dt2sDPrRxvyEtMbmnonRQEd7XW
+         sGaOgbhYUD4ykkkRv/phzhawTBhZ1uXTgyit3KpHVcpR6eD/u5UNS1OEQZcE6vTBg4QN
+         BtEA==
+X-Gm-Message-State: AOJu0YznCDXsxsm6nJ2SzWYnteJ99NcgDcGxTS6j49Z4c5f4rXhrcG55
+	vIYVau05RCMWmOs707v5YJoO815IIQgR9SKhKxJ2HhaEk1EW1TElYueTph2Y4dU=
+X-Gm-Gg: ASbGncvW/CIdZlIdaM8zsZKExNJKs891qOU1n0+WexOeHj+e807/klyck3EDIfNE0FC
+	iH8OwUwwIVH3IjobJCr003rxtDjxGWQIEqwNBVJeOWbMtB5HDjITS4PbLPXbFSOnu9QzQPg/5kz
+	MxEIGz5e1pw24RQluJOrSmgs0Dw0lKdxGTk5Sr40NLN/KxB84ZrOw9XW0F1sksJTvymLB5x2bzo
+	igVfNIwbA+J/Ndc0dFSDMPC26dP7OBH5TAZWxpnyUGO1zv6/nRG+gnWfDjfVDmqBHYCdPx9lfjQ
+	XUo7yIRgaSTLs5WCLPDW+3/SdaRRyTsXnZC/kW7AVUFs3v32dZSD6d1K
+X-Google-Smtp-Source: AGHT+IEJ/IcNRkURRpTkd5ss2SVZHjIYK8naKSC50UqfwCtbPIp08ao38/9r4dDcjxy0EJEMuMOpJw==
+X-Received: by 2002:a17:902:d481:b0:223:fdac:2e4 with SMTP id d9443c01a7336-22bea4958f1mr142174595ad.1.1744631359031;
+        Mon, 14 Apr 2025 04:49:19 -0700 (PDT)
+Received: from PC.mioffice.cn ([43.224.245.227])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd230e4adsm6624156b3a.142.2025.04.14.04.49.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 04:49:18 -0700 (PDT)
+From: LiuJie Xie <xieliujie92@gmail.com>
+X-Google-Original-From: LiuJie Xie <xieliujie@xiaomi.com>
+To: mingo@redhat.com,
+	peterz@infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	xieliujie92@gmail.com,
+	LiuJie Xie <xieliujie@xiaomi.com>
+Subject: [PATCH] sched/rt: Update wait_time when doing migration.
+Date: Mon, 14 Apr 2025 19:48:41 +0800
+Message-ID: <20250414114841.2181865-1-xieliujie@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvddtgeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefvhhhomhgrshcurfgvthgriiiiohhnihcuoehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepledtgedvjeehgeetgfeufffglefhkedvfeduveeiieelteeliedtfefguefggffhnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemkeegfeegmeelfhdtleemvdektddumeefsgelmeejsggtfhemheehleehmegvfhefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemkeegfeegmeelfhdtleemvdektddumeefsgelmeejsggtfhemheehleehmegvfhefvgdphhgvlhhopeifihhnughsuhhrfhdpmhgrihhlfhhrohhmpehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepledprhgtphhtthhopehhtghhsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepsggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehsu
- hhmihhtrdhsvghmfigrlheslhhinhgrrhhordhorhhgpdhrtghpthhtoheptghhrhhishhtihgrnhdrkhhovghnihhgsegrmhgurdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhgvughirgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheplhhinhgrrhhoqdhmmhdqshhigheslhhishhtshdrlhhinhgrrhhordhorhhg
-X-GND-Sasl: thomas.petazzoni@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hello Christoph,
+From: LiuJie Xie <xieliujie@xiaomi.com>
 
-On Mon, 14 Apr 2025 04:24:21 -0700
-Christoph Hellwig <hch@infradead.org> wrote:
+With __update_stats_wait_start() and __update_stats_wait_end(), we track
+task's latency and the info can be seen in proc node '/proc/pid/sched'.
+But it seems that we loss updating wait_time when rt task doing migration.
+In update_stats_dequeue_fair() by calling update_stats_wait_end_fair(), the
+fair sched class make this update work.
 
-> On Mon, Apr 14, 2025 at 10:24:55AM +0200, Thomas Petazzoni wrote:
-> > What this patch series is about is to add new user-space interface to
-> > extend the existing UIO subsystem.  
-> 
-> Which as I explained to you is fundamentally broken and unsafe.  If you
-> need to do DMA from userspae you need to use vfio/iommufd.
+When a rt doing migration, we can see:
+step1: wait_start=1503718063442 C:(__update_stats_wait_start<-ttwu_do_activate<-try_to_wake_up)
+step2: wait_start=124844 C:(__update_stats_wait_start<-activate_task<-push_rt_task<-push_rt_tasks<-finish_task_switch)
+step3: wait_start=124844 delta=1503718120473 C:(__update_stats_wait_end<-__schedule<-schedule)
 
-I'm still unclear as to why it is more "broken and unsafe" than UIO
-already is. As I already replied in this thread: UIO allows to remap
-MMIO registers into a user-space application, which can then do
-whatever it wants with the IP block behind those MMIO registers. If
-this IP block supports DMA, it already means that _today_ with the
-current UIO subsystem as it is, the user-space application can program
-a DMA transfer to read/write to any location in memory.
+In step2, the wait_start become very small after doing the below logic
+and we will get a very big delta in step3.
+void __update_stats_wait_start()
+{
+    prev_wait_start = schedstat_val(stats->wait_start);
 
-Therefore, providing a way to cleanly allocate DMA buffers and get
-their physical address will not make things any better or worse in
-terms of safety.
+    if (p && likely(wait_start > prev_wait_start))
+            wait_start -= prev_wait_start;
 
-The fact that it is reasonably safe is solely based on access control
-to the UIO device, done using usual Unix permissions, and that is
-already the case today.
+    __schedstat_set(stats->wait_start, wait_start);
+}
 
-> > I am not sure how this can work in our use-case. We have a very simple
-> > set of IP blocks implemented in a FPGA, some of those IP blocks are
-> > able to perform DMA operations. The register of those IP blocks are
-> > mapped into a user-space application using the existing, accepted
-> > upstream, UIO subsystem. Some of those registers allow to program DMA
-> > transfers. So far, we can do all what we need, except program those DMA
-> > transfers. Lots of people are having the same issue, and zillions of
-> > ugly out-of-tree solutions flourish all over, and we're trying to see
-> > if we can constructively find a solution that would be acceptable
-> > upstream to resolve this use-case. Our platform is an old PowerPC with
-> > no IOMMU.  
-> 
-> Then your driver design can't work and you need to replace it with a
-> proper in-kernel driver.
+So, update_stats_dequeue_rt() should also update wait_time just like
+fair to get the correct delta.
 
-See above: your point is moot because providing capabilities to
-allocate a buffer and get its physical address so that a UIO-based
-user-space application can do DMA transfer does not make things any
-more unsafe than they already are.
+Signed-off-by: LiuJie Xie <xieliujie@xiaomi.com>
+---
+ kernel/sched/rt.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Best regards,
-
-Thomas
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index fa03ec3ed56a..a93d23b839ad 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -1346,6 +1346,13 @@ update_stats_dequeue_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se,
+ 	if (rt_entity_is_task(rt_se))
+ 		p = rt_task_of(rt_se);
+ 
++	/*
++	 * Mark the end of the wait period if dequeueing a
++	 * waiting task:
++	 */
++	if (p && !task_on_cpu(task_rq(p), p))
++		update_stats_wait_end_rt(rt_rq, rt_se);
++
+ 	if ((flags & DEQUEUE_SLEEP) && p) {
+ 		unsigned int state;
+ 
 -- 
-Thomas Petazzoni, co-owner and CEO, Bootlin
-Embedded Linux and Kernel engineering and training
-https://bootlin.com
+2.43.0
+
 
