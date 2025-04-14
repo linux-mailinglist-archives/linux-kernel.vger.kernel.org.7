@@ -1,216 +1,134 @@
-Return-Path: <linux-kernel+bounces-602076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D79A87622
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 05:13:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 028EEA87624
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 05:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0582F16FADA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 03:13:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCC903AAF07
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 03:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA94819258E;
-	Mon, 14 Apr 2025 03:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kW83BjPL"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2076.outbound.protection.outlook.com [40.107.92.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9728194C86;
+	Mon, 14 Apr 2025 03:15:08 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2B4E571
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 03:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744600401; cv=fail; b=HeD6EExHeuWW8mg8iwg3uCJiS4lN65SwBcebuoPxoep3Aaf3z3jg7N2+1l8sCTkvd3bGHOPnhZQYK+W//bqfEbt0Am2OD0wPDz8iDYZPQYmHCmtbLjIqvwvZlchmD2aL3FJyHtVDefyEFNzkrtNmd4qNLtGvBiyjLBpVCuqbneo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744600401; c=relaxed/simple;
-	bh=IqWqTsywpp9yPlvx+PwoaBkuqjoyHieA0f8UfzCE+YM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tHwSxKpsIhdaP8c3crJf8IueqLCWUyiZ27cAWqsxR+UZlnXtDIW0OvYLo+NnpIsh4a7WOVsAd7aYM44M3xoEAKtXiJAHa8R4lXp2a9rCBDs+wlZu5ID41gSmfsKOHyVcYwKtIZcaohRhsKzDYMMayrYtDkL+FLwMUQq3KqP+lOY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kW83BjPL; arc=fail smtp.client-ip=40.107.92.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uGqZZKnD3Ra4N5yXYoYpTHsdAmlaq5gzQk7a3KtOMIlXv2pkMwuJyxql8iy5zFgnQqnjVejzexe8glbPkmobdLuS8pn1VAnnMdryv0NGk3S0ckcDVe1UgrRn2f2G/XzgiB7V9G0qtZICc46xuHpVizD+4ir81XRyuZriCB56tZ01lIpCgs4yYD+k7mtlGYXpYRGHO8pkb4JrpyH9/5xqFsJFyDqYVNfmRV8yekCtnthtAHvuArTdlFd76rfbTttt2L6cmCYDTJybluZe6SyiBZk9k31/wcZeuxXoqHt0SMNxx54u2vbBBMHxIn8/PRrtc2Tb+aUfXhiZqbkj+eJKig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=haryoVN7pJepGxCjqGp0I2LmVYeahDA/RE92nZJIHno=;
- b=GnaADy0WOktfSZoQyi2AW/6poMHtqXmwCRaqBxsBj68ax2Q/Rg6EYdJ6Wj73+V95UZ5QEV970ZbuuitJ7uQEE4Wwh934QtIseOn5wb0mDAP8BJ+SqrQQkGgKgdc+YCgGGTx6j1qaOjHQuKyyCidLI1eaywwURZL2bfBZrQ0QxSyfgTSEcAlqSPOMXjq2OcH/x07/Y6a46aQyql/HjFrjhlV+xLpqS6VUG/FmlEOcLk3i2NeumLAqpn+YlaVy5P4K7Q58/ibfvB4PoDdgZJKJ/5+lCbrmSTCUhQAhpEH0eFXu5P8KGOIzBOrnpRA3QFsAaPuGtH99zGL2MSPJD4wZBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=bytedance.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=haryoVN7pJepGxCjqGp0I2LmVYeahDA/RE92nZJIHno=;
- b=kW83BjPLCb4NB2vtgNP+Rl4FjI+sZhPQqFL2//ysX1JU3f4i+kGfQCk5WxXTYRjitiXnLHiucB4h796HUwDM8xfTIM4KB9891JhdxtilHYnGBVJWpbIbFHPtdR0sCDDMJjk55z3rCZRTrjS1kH2JMd/aH8C4l8m0HmiueYYGuBs=
-Received: from SA0PR11CA0120.namprd11.prod.outlook.com (2603:10b6:806:d1::35)
- by IA0PR12MB9009.namprd12.prod.outlook.com (2603:10b6:208:48f::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.27; Mon, 14 Apr
- 2025 03:13:13 +0000
-Received: from SN1PEPF00026367.namprd02.prod.outlook.com
- (2603:10b6:806:d1:cafe::ac) by SA0PR11CA0120.outlook.office365.com
- (2603:10b6:806:d1::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.34 via Frontend Transport; Mon,
- 14 Apr 2025 03:13:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF00026367.mail.protection.outlook.com (10.167.241.132) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Mon, 14 Apr 2025 03:13:12 +0000
-Received: from [10.85.36.22] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 13 Apr
- 2025 22:13:08 -0500
-Message-ID: <30a82975-a6a0-435e-8574-b570386cd6f0@amd.com>
-Date: Mon, 14 Apr 2025 08:43:05 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F974198851
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 03:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744600508; cv=none; b=baTO9JEMyD4/rED6GXxaHPNFgMSNvQ68dtA+aT5vXoyi4M+QMPdK7iORq2IK541qzej4A7pP9AVw32sjNJKOWJk8uf5B6GBsDZCFt/ucGUfIdRLM6epwf0Lo4smRHAF/xSdXVYywZgiYi47h/z39sm20+MfL79rP0iur+lDnp84=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744600508; c=relaxed/simple;
+	bh=CMTgxbmMKRjikEeKDDpvoZBdRAA+KUNy6JgrtUiG8lI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rv+LR84CWXCNxQwpf+R8jUJFH/5f5wUXKRgFIcYujGmlVa2iWf8fYs42aBhf0l3R/t+WVI9oNR1NSvtLMjIniPyOPuXz1beRLU7gxVJXzlGe9Le3xlfrvPgsxT68YnPxo20Yb7WDeuViVn5X4gJVjN4e6VbMtpimempWEBwqbhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-01 (Coremail) with SMTP id qwCowADXfwCtffxnLIbCCA--.13743S2;
+	Mon, 14 Apr 2025 11:14:54 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	alex.hung@amd.com
+Cc: chiahsuan.chung@amd.com,
+	hamza.mahfooz@amd.com,
+	sunil.khatri@amd.com,
+	aurabindo.pillai@amd.com,
+	hersenxs.wu@amd.com,
+	mario.limonciello@amd.com,
+	mwen@igalia.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH v3] drm/amd/display: Add error check for avi and vendor infoframe setup function
+Date: Mon, 14 Apr 2025 11:14:39 +0800
+Message-ID: <20250414031439.1895-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 3/5] sched/fair: Update overloaded mask in presence of
- pushable task
-To: Aaron Lu <ziqianlu@bytedance.com>
-CC: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, <linux-kernel@vger.kernel.org>, "Dietmar
- Eggemann" <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, "Valentin
- Schneider" <vschneid@redhat.com>, "Gautham R. Shenoy"
-	<gautham.shenoy@amd.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>
-References: <20250409111539.23791-1-kprateek.nayak@amd.com>
- <20250409111539.23791-4-kprateek.nayak@amd.com>
- <20250414022859.GA3326447@bytedance>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250414022859.GA3326447@bytedance>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF00026367:EE_|IA0PR12MB9009:EE_
-X-MS-Office365-Filtering-Correlation-Id: dfe2a04b-4f82-44c4-e718-08dd7b024a54
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?a0E4L3FxcTB1MThyVldPazRxVTJUdWRFMVljZEN3bWNIY0xZVDBHNkEzTEdI?=
- =?utf-8?B?cFNxUk91TmlxUlZUNXlUT1BTT3hLTnJzblZJakNYRVNFdWRUdGs2bUloTXUy?=
- =?utf-8?B?R3Zxc3N5WnE4Q0NibDFNOHFubmE2TWxqcCs0QWRXTTZqU2FwMUpqeExaczdZ?=
- =?utf-8?B?R1NTWVpYTlh5UjdlTk84a3V3REJGei9mdHZiWDJSZHV1SC94UTF0TEdtdWlt?=
- =?utf-8?B?WGVsdUZuYTBUeVp3Y0VZN3YvYk9NWUdZWFlBanUwSUdHUDBQSU0wcDFYaUdy?=
- =?utf-8?B?S0h6U3liYXRxaDdUMUNJUmpFZ2puUVJCRS9DWEYrSERJNGsxYTBPZnZubTZh?=
- =?utf-8?B?UWNtaldzWUNNSWp6aXlNc2NuS3I5OGdhYngwQ01HcGNrbUVITHhhOFlOL0pz?=
- =?utf-8?B?MWJDaUpSVjgvRFZEZ1hDeE5HdFhoWjBsQTd5KzRuYU9PUy9KMWVYcUNmVnZE?=
- =?utf-8?B?RXlUUHJiWFNuNXBVWjJENHlJSFZ6ZVM0ZjJQV3JZZ05IS0pXZkdYNXFtNzg4?=
- =?utf-8?B?V3lSYkkxcHViajQwY25BZ0h1cDdTc3l3QUFFbWdZa3d0SWNxLzY5UWxNOHln?=
- =?utf-8?B?bXpyTVZ3cUs0ZUJJYjliVHhhemptZFNGd21OQ1RxS3BWVGluUmtFWmU4djRj?=
- =?utf-8?B?YkNvSVdlKzdlSFo5VG10VVdBSmVqaHVmdDhabHdhdjlyOEtiN09CY2FRem9S?=
- =?utf-8?B?dDZabG9va2RzWHZWdk1xUzV1dlowQVMrd3RCYVh5THJDN3JjcXZxb3pGOFpE?=
- =?utf-8?B?QWhmY214ZC9uTjFpZVhPOWMrcDFSd2w5Zi9DczM1SU1Gb3V3OU5weWJpSWxs?=
- =?utf-8?B?OEpHOFdwVWpBY2g5UnRMMEpGSEp0RmNoY3hvREtxOE5IeWY3Y2JUNkhrVFlS?=
- =?utf-8?B?QVVUQ0luU1ZrWjZ1UjhUL2ppMlNmN1E0KzlZdDV3aHNYYm5vWkxpK3JqWDBv?=
- =?utf-8?B?NnQrbDloQkRBaGNnTkJsejJ6V2NXZ0xMbUpNRXAzOHdHZDQ5dWROS0VPei9L?=
- =?utf-8?B?VmF5YkhFYUF0c3liajM2WUNZbWs1ZHJTTUh0NUV0bGVOS29hVHJaYnh4UDFD?=
- =?utf-8?B?QzNQbk5jeVVza1ZUcThiQS8reUtmcmRwSlZjQ1hZQ3A0KzNLd2JNekNHeVJ4?=
- =?utf-8?B?ZjdYWmQyNFlxOVkrSGp4TEFZRzMxdmtkV21seWdId3ExNWZ6ODhBb3R5YWdT?=
- =?utf-8?B?RlZkbmhESXArT1QrQjdtMkdSU25QV04rSm5heGpob1E4ZDI1UFM3c0VIOE1H?=
- =?utf-8?B?V0ZycWZlUEZ5L1FDVzZoNWpJZzZoWnNtbk1yVVFiU3V2bmxGc2pRU2xiRnJB?=
- =?utf-8?B?ZDFtWG1reDlwcW1PTDluelZqdHE1VzMvblkwYXh2WG1ZUVFhZkp0cXNmdUsw?=
- =?utf-8?B?YXpVNEJ5YmQ5dWZMbzI0SkZNQ0pVa1JHRjI1TU9qWDB4eWJpbVFGQnYrdDFs?=
- =?utf-8?B?M1F1MitIUVNCUFRFUHgyYUFJcXVlN2FiNTBmM3c4Smp6L1FBaVlQSTVzd0ww?=
- =?utf-8?B?NFFiVGtsUVN6VTBhZW9FMGQ4Zjgwb1BuLzQ5dEYzY2tmTmZscWlHR2U1MzRw?=
- =?utf-8?B?MWtpbzBCVThGUmpsY3NvRHlUTjIySHAvS1BCMHZuZTNscytGQVVPcGJvZENO?=
- =?utf-8?B?cC9oQ1MvdlU4NDFiaml6Ym1JVUQ4L29BdjhaR084ZmhVZWZiek1wRTRZZkg1?=
- =?utf-8?B?OWpzZEozQWp6OStNdzQ3aW9TMzlBSWd5TmNVa3JvajhpYkYxdE95bTRhUFB1?=
- =?utf-8?B?OWpmY2tBQm1CUnBQeGFITDNRd0RLaVkrancwOGxOM2JzbDl3aEF2SVV4VzJ1?=
- =?utf-8?B?c05pdTlFdm5uMmpDejhlRmZ0UTAzWHpzb3RnVGtaMmUwWFNxb1Fpa1FzZzM2?=
- =?utf-8?B?Y0pVVmNUdHdFUFRXYnpra3RiVmluR2o1S2Jzemh4Zm5KckxUQmlHYUVvUkc4?=
- =?utf-8?B?eERZZWhqeHJIUzJVUk94dUZTVFpFWlFpejJqZm1Ra085SXBQYkg1RVRkNDBs?=
- =?utf-8?B?VGdrekJtVW8wRm1lb21xUlQrdDdHYVRkZEFqbU5lM0hpMTJXTjF0SWlweHJu?=
- =?utf-8?Q?hCJ6s3?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2025 03:13:12.2926
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dfe2a04b-4f82-44c4-e718-08dd7b024a54
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF00026367.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB9009
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowADXfwCtffxnLIbCCA--.13743S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF4UAr47KFyUJw47ZF4rAFb_yoW8uw1Upw
+	48t34qyrW0qFZxCryUAFn5ua90k3s7JFy7Kr45Aw15W3s5KrZxJa1fJF1kJ3y7ZFZ5A3Wa
+	y3WUX3y2qF1vk3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPYb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjc
+	xK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVW8JV
+	WxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxkIecxEwV
+	AFwVW8GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pKLvKUU
+	UUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgwMA2f8WvF21QABsX
 
-Hello Aaron,
+The function fill_stream_properties_from_drm_display_mode() calls the
+function drm_hdmi_avi_infoframe_from_display_mode() and the
+function drm_hdmi_vendor_infoframe_from_display_mode(), but does
+not check its return value. Log the error messages to prevent silent
+failure if either function fails.
 
-On 4/14/2025 7:58 AM, Aaron Lu wrote:
-> Hi Prateek,
-> 
-> On Wed, Apr 09, 2025 at 11:15:37AM +0000, K Prateek Nayak wrote:
->> In presence of pushable tasks on the CPU, set it on the newly introduced
->> "overloaded+mask" in sched_domain_shared struct. This will be used by
->> the newidle balance to limit the scanning to these overloaded CPUs since
->> they contain tasks that could be run on the newly idle target.
->>
->> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
->> ---
->>   kernel/sched/fair.c | 24 ++++++++++++++++++++++++
->>   1 file changed, 24 insertions(+)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 98d3ed2078cd..834fcdd15cac 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -8559,6 +8559,24 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
->>   	return target;
->>   }
->>   
->> +static inline void update_overloaded_mask(int cpu, bool contains_pushable)
->> +{
->> +	struct sched_domain_shared *sd_share = rcu_dereference(per_cpu(sd_llc_shared, cpu));
-> 
-> I got a suspicious RCU usage warning for this line while testing your
-> series. Since rq lock is held here, rcu_dereference() should not be
-> necessary.
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+v3: Fix error-logging function error
+v2: Fix code diff error
 
-Thank you for reporting this. I'll make sure to run with LOCKDEP next
-time around. Note: The performance aspect is still quite bad with this
-series an the intent for the RFC was to vet the idea and to understand
-if I got the basic implementation details right.
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-> 
->> +	cpumask_var_t overloaded_mask;
->> +
->> +	if (!sd_share)
->> +		return;
->> +
->> +	overloaded_mask = sd_share->overloaded_mask;
->> +	if (!overloaded_mask)
->> +		return;
->> +
->> +	if (contains_pushable)
->> +		cpumask_set_cpu(cpu, overloaded_mask);
->> +	else
->> +		cpumask_clear_cpu(cpu, overloaded_mask);
->> +}
-
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 5f216d626cbb..cdf1a07aa8af 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -6104,6 +6104,7 @@ static void fill_stream_properties_from_drm_display_mode(
+ 	struct amdgpu_dm_connector *aconnector = NULL;
+ 	struct hdmi_vendor_infoframe hv_frame;
+ 	struct hdmi_avi_infoframe avi_frame;
++	ssize_t err;
+ 
+ 	if (connector->connector_type != DRM_MODE_CONNECTOR_WRITEBACK)
+ 		aconnector = to_amdgpu_dm_connector(connector);
+@@ -6150,9 +6151,17 @@ static void fill_stream_properties_from_drm_display_mode(
+ 	}
+ 
+ 	if (stream->signal == SIGNAL_TYPE_HDMI_TYPE_A) {
+-		drm_hdmi_avi_infoframe_from_display_mode(&avi_frame, (struct drm_connector *)connector, mode_in);
++		err = drm_hdmi_avi_infoframe_from_display_mode(&avi_frame,
++							       (struct drm_connector *)connector,
++							       mode_in);
++		if (err < 0)
++			drm_err(connector->dev, "Failed to setup avi infoframe: %zd\n", err);
+ 		timing_out->vic = avi_frame.video_code;
+-		drm_hdmi_vendor_infoframe_from_display_mode(&hv_frame, (struct drm_connector *)connector, mode_in);
++		err = drm_hdmi_vendor_infoframe_from_display_mode(&hv_frame,
++								  (struct drm_connector *)connector,
++								  mode_in);
++		if (err < 0)
++			drm_err(connector->dev, "Failed to setup vendor infoframe: %zd\n", err);
+ 		timing_out->hdmi_vic = hv_frame.vic;
+ 	}
+ 
 -- 
-Thanks and Regards,
-Prateek
+2.42.0.windows.2
 
 
