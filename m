@@ -1,154 +1,303 @@
-Return-Path: <linux-kernel+bounces-603464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B3AA887FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:08:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41984A8881C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1BC174F62
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:08:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 972443B2DA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F1E27F73A;
-	Mon, 14 Apr 2025 16:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RU52wIoL"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AE528B50C;
+	Mon, 14 Apr 2025 16:08:28 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C380C27B513
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 16:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6438228B505;
+	Mon, 14 Apr 2025 16:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744646885; cv=none; b=EfSenNaHcCz/Zbn3mTuW/MPze+9zPLpvz/JjBEXCbVnjbiGGH5gYo0b+nc9Tx3MBN2UGcI5iriy6kyN7TylbYvreH4alllMIPF38dc2IlrUuu/LDAz5ObcCIL0gqjF5ZBTHmlReRk9SnLMHNOueF8rZaEmyWxnQPfLWklDUEMu4=
+	t=1744646907; cv=none; b=LLcltbzZD3cu9FsrWX648yS/XAKDHdD6eykoduK3XEJok6cTb+PlbCWRjqQIh6mavVqmyyofDQeKJp8K1RdTAsNLhsF0OWKR69rQw5pzDZh4NsJSmouNXL7KbaOLmGMMl4N9hzlrKtitFRikzjJoN228ypvPcVYAqkbJlPjY3BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744646885; c=relaxed/simple;
-	bh=YsDDrqdiKPewJFDI/ZaIPX3S15luwx8n2Mto/qWn4FU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=nVaokuRc0wghQrv+0IPR8VK6JyWrLtr0ic+IL/ckyZPyr3DzTYEXuGacw800SxSTFq0mo6/hfTIKHghGfCCP93aRbY03JlifXqs0FDzKHYzI5WtY82bn/HKQe9uogQdVDKFOrnMERHKrIGhBAOnLhg3mLbDglT4jYMPKjqRIKCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RU52wIoL; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5259331b31eso1854589e0c.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:08:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744646882; x=1745251682; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GVdhvs8iCKF+l1CgTbrVGuUPsMa5kPGA5aq8CngfGco=;
-        b=RU52wIoL4NZVYIMc7+jUhsTtGENoQwkEllZ3lPfTmdt5K47jZMwRbIu7wwYxSrV+Wu
-         tMpYlijrTwmr1lPDpQJ8LwgvXA6/pIVJk8EW51/53pwproSVwufTPsS1WnztWMG4YBU3
-         Dq0z+y2fYEVBz1sdVZLAoIUVmiQgc2m5N9kv9mkpuWi/xpTfTSh4R+3hmuXDjEhfR6de
-         A0rT8J2g012hWA3jV7PKNd9ui9HoEbpCUrmmMt4zNyCaCJHTgfM00RdYNZdoQ8oz4fCG
-         AVH9V3iA528PEPVtBgK3/yYrEMWO9LIL0W3lGn9F719q2R/STda0lNDjeF6zGHiR80nw
-         hwlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744646882; x=1745251682;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GVdhvs8iCKF+l1CgTbrVGuUPsMa5kPGA5aq8CngfGco=;
-        b=dePbqMlfC80urf+z2LUHPfL9aZdLemqLSPWc5KprFjvHgulbySuXhSCAW2Rz8swubD
-         6IYFBbipzc7V6QwCF3BdnL86uevd+NY3+m13boBgaDXpbTxedE/dW8DI9cDXv0J4ywOv
-         HfvEm8bH5cmZOVvdPuRQyHV+U/ogeVNsWk+qAmuj6DfUDnXE4oOFrNa0yN3pLDlPr/gv
-         pX7sPCwspoNsxjrXaygf3FvgRKgC5NqybYRcwtYD58uzicSibeTYC3iTdN9uPJQqUCQR
-         /n0KtO+8Wl7KXen/ka6QNboYhN2KF+/FdvMUxTVSI3hqXDN9f8R7WFGFf788WWNBx5DB
-         +rfg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5V5xZHryQr8sPqZzPHKE52aS9PoZuawvmA1QShW8+luV7iqHywAsMP3Hc/GNGnkW41ufLTmih8rL4d7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR29eyFiY8FSuzhPNeoPiKO0ADzUvLbvZxAP8gdnBjnIGCzDkb
-	tlpIBrWjyedJwjpZvSDkpl8CPuBt9f+6w2jw7AVm0fgnohwZRGfCXWDmNcZDqvencpJK+uno075
-	DOtrNt94f/G3M4CvrPzS0sBzSw6ARl56mR6ZG+7XRSnPqikJG104=
-X-Gm-Gg: ASbGncv80sIB/sLvfTc8wyIryz9rI+YmNpKu7ZbImbBUaoGA4P53zPXD8IuEVsN253w
-	vce7I8DtpUIHC5uvTfb9eeCLqTgDFeMT6p4B5PMpHuE83Q50jHBSwmB0kVA3OA5SmilKnfOvo28
-	qIxp+M88NGwH7wnED1R9lvmMMTMjSc9ZwS8Pp8ataEMylsR6Gwvm/h/QA=
-X-Google-Smtp-Source: AGHT+IHBAGkweFTifi1qPgR9IAfMLmuSmWZaZQ6DuipMBRn0J0LfwS+rc70yp8/jIym5PdQxz5lfL2wrwCdthfYvTjU=
-X-Received: by 2002:ac5:cdf7:0:b0:528:6ea9:bc45 with SMTP id
- 71dfb90a1353d-5286ea9d6a9mr5875777e0c.7.1744646882420; Mon, 14 Apr 2025
- 09:08:02 -0700 (PDT)
+	s=arc-20240116; t=1744646907; c=relaxed/simple;
+	bh=4tzjbsPIalsIkZI1FaTcEcaA14AfUu0LM+YlbM/mrZA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SxoPM2z+khZu3vLNyNO4PadmylIKY6w7e/YfzCV8hclhRo/CwovH2pUVbXQWbpHPMcLNpKb5t/L8IvWQ03WcbwiuVZ6bHJVoYZVmhvnt9ednnadCfqY1j5B8LhzMAEQSxdVQTGgpGNfa0RHhFKTM7ZIta0FcGtPltFCPu1ZJoo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZbsXt0t7tz6M4wC;
+	Tue, 15 Apr 2025 00:03:58 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 518631402FC;
+	Tue, 15 Apr 2025 00:07:54 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Apr
+ 2025 18:07:53 +0200
+Date: Mon, 14 Apr 2025 17:07:52 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Ira Weiny <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Dan
+ Williams" <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, <linux-cxl@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Li Ming
+	<ming.li@zohomail.com>
+Subject: Re: [PATCH v9 12/19] cxl/extent: Process dynamic partition events
+ and realize region extents
+Message-ID: <20250414170752.00002356@huawei.com>
+In-Reply-To: <20250413-dcd-type2-upstream-v9-12-1d4911a0b365@intel.com>
+References: <20250413-dcd-type2-upstream-v9-0-1d4911a0b365@intel.com>
+	<20250413-dcd-type2-upstream-v9-12-1d4911a0b365@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 14 Apr 2025 21:37:51 +0530
-X-Gm-Features: ATxdqUEU9CbNcg5O-P00XITiRp_i9HXoSVbIKt6BMPS9caFWsHNxBM8T9sm2aH8
-Message-ID: <CA+G9fYvnun+bhYgtt425LWxzOmj+8Jf3ruKeYxQSx-F6U7aisg@mail.gmail.com>
-Subject: x86_64 clang-20 clang-nightly config lto-full failed - ld.lld: error:
- linking module flags 'Code Model': IDs have conflicting values: 'i32 1' from
- vmlinux.a(gdt_idt.o at 1321040), and 'i32 2' from ld-temp.o
-To: clang-built-linux <llvm@lists.linux.dev>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Regressions on x86_64 config LTO_CLANG_FULL with korg-clang-20 and
-clang-nightly on the
-Linux next-20250407 and found again on next-20250414 tag
+On Sun, 13 Apr 2025 17:52:20 -0500
+Ira Weiny <ira.weiny@intel.com> wrote:
 
-First seen on the next-20250407.
-Bad: next-20250407 and next-20250414
-Good:next-20250404
+> A dynamic capacity device (DCD) sends events to signal the host for
+> changes in the availability of Dynamic Capacity (DC) memory.  These
+> events contain extents describing a DPA range and meta data for memory
+> to be added or removed.  Events may be sent from the device at any time.
+> 
+> Three types of events can be signaled, Add, Release, and Force Release.
+> 
+> On add, the host may accept or reject the memory being offered.  If no
+> region exists, or the extent is invalid, the extent should be rejected.
+> Add extent events may be grouped by a 'more' bit which indicates those
+> extents should be processed as a group.
+> 
+> On remove, the host can delay the response until the host is safely not
+> using the memory.  If no region exists the release can be sent
+> immediately.  The host may also release extents (or partial extents) at
+> any time.  Thus the 'more' bit grouping of release events is of less
+> value and can be ignored in favor of sending multiple release capacity
+> responses for groups of release events.
+> 
+> Force removal is intended as a mechanism between the FM and the device
+> and intended only when the host is unresponsive, out of sync, or
+> otherwise broken.  Purposely ignore force removal events.
+> 
+> Regions are made up of one or more devices which may be surfacing memory
+> to the host.  Once all devices in a region have surfaced an extent the
+> region can expose a corresponding extent for the user to consume.
+> Without interleaving a device extent forms a 1:1 relationship with the
+> region extent.  Immediately surface a region extent upon getting a
+> device extent.
+> 
+> Per the specification the device is allowed to offer or remove extents
+> at any time.  However, anticipated use cases can expect extents to be
+> offered, accepted, and removed in well defined chunks.
+> 
+> Simplify extent tracking with the following restrictions.
+> 
+> 	1) Flag for removal any extent which overlaps a requested
+> 	   release range.
+> 	2) Refuse the offer of extents which overlap already accepted
+> 	   memory ranges.
+> 	3) Accept again a range which has already been accepted by the
+> 	   host.  Eating duplicates serves three purposes.
+> 	   3a) This simplifies the code if the device should get out of
+> 	       sync with the host.  And it should be safe to acknowledge
+> 	       the extent again.
+> 	   3b) This simplifies the code to process existing extents if
+> 	       the extent list should change while the extent list is
+> 	       being read.
+> 	   3c) Duplicates for a given partition which are seen during a
+> 	       race between the hardware surfacing an extent and the cxl
+> 	       dax driver scanning for existing extents will be ignored.
+> 
+> 	   NOTE: Processing existing extents is done in a later patch.
+> 
+> Management of the region extent devices must be synchronized with
+> potential uses of the memory within the DAX layer.  Create region extent
+> devices as children of the cxl_dax_region device such that the DAX
+> region driver can co-drive them and synchronize with the DAX layer.
+> Synchronization and management is handled in a subsequent patch.
+> 
+> Tag support within the DAX layer is not yet supported.  To maintain
+> compatibility with legacy DAX/region processing only tags with a value
+> of 0 are allowed.  This defines existing DAX devices as having a 0 tag
+> which makes the most logical sense as a default.
+> 
+> Process DCD events and create region devices.
+> 
+> Based on an original patch by Navneet Singh.
+> 
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> Reviewed-by: Li Ming <ming.li@zohomail.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+I've forgotten what our policy on spec references in new
+code. Maybe update them to 3.2?
 
-* x86_64, Build
- - Build/korg-clang-20-lkftconfig-lto-full
- - Build/clang-nightly-lkftconfig-lto-full
+A few tiny little things inline from a fresh look.
 
-Regression Analysis:
-- New regression? Yes
-- Reproducibility? Yes
+Thanks,
 
-Build regression: x86_64 clang-20 clang-nightly config lto-full failed
+Jonathan
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> diff --git a/drivers/cxl/core/extent.c b/drivers/cxl/core/extent.c
+> new file mode 100644
+> index 000000000000..6df277caf974
+> --- /dev/null
+> +++ b/drivers/cxl/core/extent.c
 
-## Build log
-ld.lld: error: linking module flags 'Code Model': IDs have conflicting
-values: 'i32 1'
-    from vmlinux.a(gdt_idt.o at 1321040), and 'i32 2' from ld-temp.o
+> +static int cxlr_rm_extent(struct device *dev, void *data)
+> +{
+> +	struct region_extent *region_extent = to_region_extent(dev);
+> +	struct range *region_hpa_range = data;
+> +
+> +	if (!region_extent)
+> +		return 0;
+> +
+> +	/*
+> +	 * Any extent which 'touches' the released range is removed.
+> +	 */
 
-Clang-20 versions:
-   "name": "clang",
-   "version": "20.1.2",
-   "version_full": "ClangBuiltLinux clang version 20.1.2
-   (https://github.com/llvm/llvm-project.git
-58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)"
+Single line comment syntax.
 
-Clang-nightly versions:
-   "name": "clang",
-   "version": "21.0.0",
-   "version_full": "Debian clang version 21.0.0
-   (++20250402105505+c57b9c233a87-1~exp1~20250402225526.1363)"
+> +	if (range_overlaps(region_hpa_range, &region_extent->hpa_range)) {
+> +		dev_dbg(dev, "Remove region extent HPA %pra\n",
+> +			&region_extent->hpa_range);
+> +		region_rm_extent(region_extent);
+> +	}
+> +	return 0;
+> +}
 
-## Source
-* Kernel version: 6.15.0-rc2
-* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-* Git sha: b425262c07a6a643ebeed91046e161e20b944164
-* Git describe: next-20250414
-* Project details:
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250414/
 
-## Test
-* Test log: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250407/testrun/27929871/suite/build/test/clang-nightly-lkftconfig-lto-full/log
-* Test details:
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250414/testrun/28114606/suite/build/test/clang-nightly-lkftconfig-lto-full/
-* Test history:
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250414/testrun/28114606/suite/build/test/clang-nightly-lkftconfig-lto-full/history/
-* Test history:
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250414/testrun/28114590/suite/build/test/korg-clang-20-lkftconfig-lto-full/history/
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2viBgnFQjsmdmrsmASvlyYWisRa/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2viBgnFQjsmdmrsmASvlyYWisRa/config
+> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+> index b3dd119d166a..de01c6684530 100644
+> --- a/drivers/cxl/core/mbox.c
+> +++ b/drivers/cxl/core/mbox.c
+> @@ -930,6 +930,60 @@ int cxl_enumerate_cmds(struct cxl_memdev_state *mds)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_enumerate_cmds, "CXL");
+>  
+> +static int cxl_validate_extent(struct cxl_memdev_state *mds,
+> +			       struct cxl_extent *extent)
+> +{
+> +	struct cxl_dev_state *cxlds = &mds->cxlds;
+> +	struct device *dev = mds->cxlds.dev;
+> +	u64 start, length;
+> +
+> +	start = le64_to_cpu(extent->start_dpa);
+> +	length = le64_to_cpu(extent->length);
+Set these at declaration..
 
-## Steps to reproduce
-# tuxmake --runtime podman --target-arch x86_64 --toolchain korg-clang-20 \
-   --kconfig defconfig --kconfig-add CONFIG_DEBUG_INFO_REDUCED=y \
-   --kconfig-add CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y \
-   --kconfig-add CONFIG_IGB=y \
-   --kconfig-add CONFIG_LTO_CLANG_FULL=y LLVM=1 LLVM_IAS=1
+> +
+> +	struct range ext_range = (struct range){
+> +		.start = start,
+> +		.end = start + length - 1,
+> +	};
 
---
-Linaro LKFT
-https://lkft.linaro.org
+With the above set at declaration this is then not declaration
+mid code which are still generally looked at in a funny way in kernel!
+
+> +
+> +	if (le16_to_cpu(extent->shared_extn_seq) != 0) {
+> +		dev_err_ratelimited(dev,
+> +				    "DC extent DPA %pra (%pU) can not be shared\n",
+> +				    &ext_range, extent->uuid);
+> +		return -ENXIO;
+> +	}
+> +
+> +	if (!uuid_is_null((const uuid_t *)extent->uuid)) {
+> +		dev_err_ratelimited(dev,
+> +				    "DC extent DPA %pra (%pU); tags not supported\n",
+> +				    &ext_range, extent->uuid);
+> +		return -ENXIO;
+> +	}
+> +
+> +	/* Extents must be within the DC partition boundary */
+> +	for (int i = 0; i < cxlds->nr_partitions; i++) {
+> +		struct cxl_dpa_partition *part = &cxlds->part[i];
+> +
+> +		if (part->mode != CXL_PARTMODE_DYNAMIC_RAM_A)
+> +			continue;
+> +
+> +		struct range partition_range = (struct range) {
+
+Maybe move the declaration up and just assign it here.
+
+> +			.start = part->res.start,
+> +			.end = part->res.end,
+> +		};
+> +
+> +		if (range_contains(&partition_range, &ext_range)) {
+> +			dev_dbg(dev, "DC extent DPA %pra (DCR:%pra)(%pU)\n",
+> +				&ext_range, &partition_range, extent->uuid);
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	dev_err_ratelimited(dev,
+> +			    "DC extent DPA %pra (%pU) is not in a valid DC partition\n",
+> +			    &ext_range, extent->uuid);
+> +	return -ENXIO;
+> +}
+
+> +/**
+> + * struct cxled_extent - Extent within an endpoint decoder
+> + * @cxled: Reference to the endpoint decoder
+> + * @dpa_range: DPA range this extent covers within the decoder
+> + * @uuid: uuid from device for this extent
+> + */
+> +struct cxled_extent {
+> +	struct cxl_endpoint_decoder *cxled;
+> +	struct range dpa_range;
+> +	uuid_t uuid;
+> +};
+
+> +/* See CXL 3.1 8.2.9.2.1.6 */
+> +enum dc_event {
+> +	DCD_ADD_CAPACITY,
+> +	DCD_RELEASE_CAPACITY,
+> +	DCD_FORCED_CAPACITY_RELEASE,
+> +	DCD_REGION_CONFIGURATION_UPDATED,
+
+Perhaps a comment here that the other values don't apply to the
+normal mailbox interface (they are FM only).
+Might avoid confusion.
+
+> +};
+
+> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
+> index 34a606c5ead0..63a38e449454 100644
+> --- a/drivers/cxl/cxlmem.h
+> +++ b/drivers/cxl/cxlmem.h
+
+> +/*
+> + * Add Dynamic Capacity Response
+> + * CXL rev 3.1 section 8.2.9.9.9.3; Table 8-168 & Table 8-169
+> + */
+> +struct cxl_mbox_dc_response {
+> +	__le32 extent_list_size;
+> +	u8 flags;
+> +	u8 reserved[3];
+> +	struct updated_extent_list {
+> +		__le64 dpa_start;
+> +		__le64 length;
+> +		u8 reserved[8];
+> +	} __packed extent_list[];
+
+counted_by marking always nice to have and here it's the extent_list_size I think
+(which has an odd name giving it is a count, not a size... *dramatic sigh*)
+
+
+> +} __packed;
+
 
