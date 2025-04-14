@@ -1,92 +1,139 @@
-Return-Path: <linux-kernel+bounces-602794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5707EA87F73
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:43:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5E6A87F79
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45152177BE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:43:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D3EB3B9B18
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D9C2989B6;
-	Mon, 14 Apr 2025 11:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA6D2989A9;
+	Mon, 14 Apr 2025 11:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6GlVXGM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ArLGY7FX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BE619924E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 11:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300BF29899D;
+	Mon, 14 Apr 2025 11:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744630978; cv=none; b=Igx3ws8myhIVdZSuFqb0NJUE87UOlbJiq3gs+j4aqhTFAUMkF6J/5qhYJAU9w2XdIzPKui2gYM6Ygm6JRm7nCaSWWEHiXZfqyCAQczFV0mW4laozPsgCgsRCe5Y5JnFV6ZJlx52C0OA8lpAui98fXlE8jymkfWQjToo9zjruwGM=
+	t=1744631017; cv=none; b=CASR5hm+qzLuJWoApS08534jPl8VaCKNGfywmvy05vJglhTNrSlqgepnfdqkrodmwkWHmIFubzwiOqRius3dpZn6VvY0DoXlqZ2JwRXsIgVx1gn557qWpGDpZhv/UW0tBycWbKIbvikts+xUWNm2ZCVM0gTJQTAmNv21aWb3NLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744630978; c=relaxed/simple;
-	bh=tCNsgrDri8daLFGZvhhEyRWqH5aNJdMnDcDM9O99Hm4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qDvevjEcpomAOUeBEsFlD/+ao+XgAN1Jnb4dPg4WNorr2YunQrEuN61KluuOHwqQWg7faoJ8nMmMwoInC6h8uwUB0Q8Bi+zfZWh/9MYw4tX3xIT58jdZ1T7QilGZSbpuRW3MvFoaLLY1sVVTdl5za5lsQ4ySZJCxo/GmgZdxGCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6GlVXGM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50434C4CEE2;
-	Mon, 14 Apr 2025 11:42:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744630977;
-	bh=tCNsgrDri8daLFGZvhhEyRWqH5aNJdMnDcDM9O99Hm4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=U6GlVXGMrI6w9y190podeFPKmPimN1ITyX0x+5DSidnZAt/g0vVCl8g4Vi9OwSBlZ
-	 n0he8ZOP7RXn/kJO8MA4g49mbvpE3GZ7MqCa8fe+idrCztHFngTvcQTF+NZSsP/joS
-	 R/frX1L9zPP9/2Z7rjXmV1teoZS4WBQuM18ANw0CgCawNnGtGpzg7scIxhEdwGGFab
-	 bN9hSbMn8teXgox8LsWF+e/JLB5KmK+u2xmFNCEP8FF8HuD3lN9KtypVeEloKmsnW+
-	 Y7AsTfrMgW+jO8yMziXVBuYZmPZwjuzDQ8xb2Vl1P99SyRMM47/53Ocny3fe8YEUu+
-	 Xi+q+Im6W1q8A==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	"Liam R. Howlett" <Liam.Howlett@Oracle.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] release_task: kill the no longer needed get/put_pid(thread_pid)
-Date: Mon, 14 Apr 2025 13:42:51 +0200
-Message-ID: <20250414-ertasten-gelassen-78abebf1625e@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250411121857.GA10550@redhat.com>
-References: <20250411121857.GA10550@redhat.com>
+	s=arc-20240116; t=1744631017; c=relaxed/simple;
+	bh=3HPyCdz3Lztb+QYCCc3qGtYzyXcLfWGMxkMLGe4pgOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rvycwytHxK5mRaBBb4aSui16hEbwFNgW+9sciFX6ILEjiS80rAVBh3mSyVtBrTMNKme5R7ZkxDmKH6TK7O1J0JOqJQO2kT9c0fAfWzN2Fe/hXokoDNXbgIyzdTmimu0ufklunr98ctWf0QmVhgSxCQX7BBapy8CZAnJBR/bNh60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ArLGY7FX; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744631016; x=1776167016;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3HPyCdz3Lztb+QYCCc3qGtYzyXcLfWGMxkMLGe4pgOw=;
+  b=ArLGY7FX7e2m/ZfjFFEaT6eOTuDbodLdZIOGjizx041NVfoK4ZPWPYri
+   hKDKok/IPrE40nYfSeV3Xm8FPrBuR69gFfO5tUnhtE0jStAqNC49P1eIG
+   la4XzRdenV3QXa8L+/9wyyPFqN7uQMU8ocRiM3G+/5wrXfX83DbCbvZbx
+   IBm78WIjXuj/Zt2mdpzGgVwMFwi17j8qXvElGRTC/zvZg/CMzrTH8vXUi
+   3nYHytE1FPsSP74hXMVbGP9VBGpebsUcpTLuqpdK0uwGAVXmFeZg+eFHs
+   aieXfsKggsbLJU6vQc8yccoY9ApmmigDUmkOe3xcwbqoDsx6Z156TgBlb
+   w==;
+X-CSE-ConnectionGUID: BXCrLeWURI2uzLhemJBopg==
+X-CSE-MsgGUID: 7CRpOzlcRh2bsPduZn0Sfw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="49902563"
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="49902563"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 04:43:35 -0700
+X-CSE-ConnectionGUID: nfRB8LLRSIygCouwV8Gjtg==
+X-CSE-MsgGUID: 3YEhKAn/SoS5EJaCBdgiVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="152985329"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 04:43:32 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 2FD6B11F871;
+	Mon, 14 Apr 2025 14:43:30 +0300 (EEST)
+Date: Mon, 14 Apr 2025 11:43:30 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: "Yan, Dongcheng" <dongcheng.yan@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Yan, Dongcheng" <dongcheng.yan@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	hverkuil@xs4all.nl, u.kleine-koenig@baylibre.com,
+	ricardo.ribalda@gmail.com, bingbu.cao@linux.intel.com,
+	hao.yao@intel.com
+Subject: Re: [PATCH v1 1/2] platform/x86: int3472: add hpd pin support
+Message-ID: <Z_z04jMiTg_xW-c2@kekkonen.localdomain>
+References: <20250411082357.392713-1-dongcheng.yan@intel.com>
+ <cfc709a8-85fc-4e44-9dcf-ae3ef7ee0738@redhat.com>
+ <c8ae2d43-157c-408a-af89-7248b30d52d1@linux.intel.com>
+ <Z_zDGYD1QXZYWwI9@smile.fi.intel.com>
+ <d9cab351-4850-42c7-8fee-a9340d157ed9@linux.intel.com>
+ <Z_zMMtUdJYpHuny7@smile.fi.intel.com>
+ <f10f919e-7bdc-4a01-b131-41bdc9eb6573@intel.com>
+ <01570d5d-0bdf-4192-a703-88854e9bcf78@redhat.com>
+ <9dc86b0c-b63c-447d-aa2f-953fbccb1d27@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1117; i=brauner@kernel.org; h=from:subject:message-id; bh=tCNsgrDri8daLFGZvhhEyRWqH5aNJdMnDcDM9O99Hm4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/+bJ3qa6g+zmvGl7W8B8LvjIvYfqt1HY0SNB6yk6r6 oK2PXrGHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABN5FM7wV/Bla/zbACv9HTtt 1nEb9vms/HZTzyhk5uqEDRlpF06cjGRkuCNxJebg1SduxXKsuV2JB8Om5/MflPycPSlC4ecVJdV WJgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9dc86b0c-b63c-447d-aa2f-953fbccb1d27@redhat.com>
 
-On Fri, 11 Apr 2025 14:18:57 +0200, Oleg Nesterov wrote:
-> After the commit 7903f907a2260 ("pid: perform free_pid() calls outside
-> of tasklist_lock") __unhash_process() -> detach_pid() no longer calls
-> free_pid(), proc_flush_pid() can just use p->thread_pid without the
-> now pointless get_pid() + put_pid().
+Hans, Dongcheng,
+
+On Mon, Apr 14, 2025 at 01:09:47PM +0200, Hans de Goede wrote:
+> Hi,
 > 
+> On 14-Apr-25 13:04, Hans de Goede wrote:
+> > Hi,
+> > 
+> > On 14-Apr-25 11:59, Yan, Dongcheng wrote:
+> >> Hi Andy and Hans,
+> >>
+> >> I found the description of lt6911uxe's GPIO in the spec:
+> >> GPIO5 is used as the interrupt signal (50ms low level) to inform SOC
+> >> start reading registers from 6911UXE;
+> >>
+> >> So setting the polarity as GPIO_ACTIVE_LOW is acceptable?
+> > 
+> > Yes that is acceptable, thank you for looking this up.
 > 
+> p.s.
+> 
+> Note that setting GPIO_ACTIVE_LOW will invert the values returned
+> by gpiod_get_value(), so if the driver uses that you will need
+> to fix this in the driver.
+> 
+> Hmm, thinking more about this, I just realized that this is an
+> input pin to the CPU, not an output pin like all other pins
+> described by the INT3472 device. I missed that as first.
+> 
+> In that case using GPIO_LOOKUP_FLAGS_DEFAULT as before probably
+> makes the most sense. Please add a comment that this is an input
+> pin to the INT3472 patch and keep GPIO_LOOKUP_FLAGS_DEFAULT for
+> the next version.
 
-Applied to the vfs-6.16.pidfs branch of the vfs/vfs.git tree.
-Patches in the vfs-6.16.pidfs branch should appear in linux-next soon.
+The GPIO_LOOKUP_FLAGS_DEFAULT is the "Linux default", not the hardware or
+firmware default so I don't think it's relevant in this context. There's a
+single non-GPIO bank driver using it, probably mistakenly.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+I'd also use GPIO_ACTIVE_LOW, for the reason Dongcheng pointed to above.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+-- 
+Regards,
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.16.pidfs
-
-[1/1] release_task: kill the no longer needed get/put_pid(thread_pid)
-      https://git.kernel.org/vfs/vfs/c/c9e3b2f77268
+Sakari Ailus
 
