@@ -1,126 +1,78 @@
-Return-Path: <linux-kernel+bounces-603627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46548A88A2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:45:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF4D3A88A0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4533E165A68
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:45:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CF4917CB49
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A3A2949F8;
-	Mon, 14 Apr 2025 17:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4AF28B4F7;
+	Mon, 14 Apr 2025 17:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q8ByRYu/"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjFfVyxB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA9828B4F5
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 17:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1AF289374;
+	Mon, 14 Apr 2025 17:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744652550; cv=none; b=csecBk6Gnag3yO+2DtT4ZnHaQeHHI7CNqV5EgkQi3b6a4z+1l/v2tjEZ09NztOeDLitkbpPHlWmk1dNxWctfLv4Axdlqn2TzPAVTooRviy9xVDugeXu86yUVeQrB7WLgCzxHT0kbwFuqWYYmIEA4vp5eM5k1+9t29TXFNSaTs5Y=
+	t=1744652463; cv=none; b=fAvFrJNXc/1SFYKwrIgVaOprztz+T6e56Xfynf8LTUN+dUEtw/KBsiQ0Pz7k7NCOdmFE4vqDxkix1xzU+SJK2s5m8wp3J8Mc8AGSs1zmDMkGT4ie7bbb0Uwfu1TKL2HPjDSTXHng4KhcKtRrTfAgusXKpEckMduW1ieHc8GQuLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744652550; c=relaxed/simple;
-	bh=SomKEZjiqnP411eTa4RWzo05FrdFH31Ut1NNYLapab0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=MpHjoKIkjzpe4g8l8LnEfyj82mHDBU4OXRi6a+qjnL9TS3qiq6eEfz1XBSEyIvRKUtCcQb8OajohX1Rk+gD6ZdJomDXm3EkkWhV4VxKlo6xYuiYe6u/DKI1aOsV3kt5h4hoJgK5zEYXbr4n0/sRX/N7fFMTV7r6VI8oLnxtTqiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q8ByRYu/; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3054210ce06so6124239a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 10:42:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744652547; x=1745257347; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=272QWo3N2/8KrEceZ3Y5V9F3EMqW3wkjRAZ/C8l8AXw=;
-        b=Q8ByRYu/GyN3qm1uj2L6QTGrVdUP+WIyeM2J90C6uEsFKqo8Omz3cL1XUJwWScr40n
-         p4YKzbHZ3j6QJePcngS6WVM4OBpzgTsY/I4HmnyT90SGePg0X8eAKv0qrknX9Hiuut2o
-         dC/qWypLVhilMcFdcdrpquRuiJ8FDO4k4e2Rik3BamA+0GYGrqFmTvDX0edhPUcKupj7
-         P4w6L7BPflFrNJfh9o3Hg0QW9XX5R7Bz6bWKqgWQKXuTZIx3SS0rrkN29Da3zGsEymMN
-         A77CszdwUT693YBTRIuSek8HVLtJPg3lhunum7k/Q8eGemXIzmeqnfIgsNfRmlFEIKki
-         6kzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744652547; x=1745257347;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=272QWo3N2/8KrEceZ3Y5V9F3EMqW3wkjRAZ/C8l8AXw=;
-        b=HS/NXxU0bIJh0CfwkASmj9d/zqjDE6YZOQjW98zclRbFJjc+t1KkSunzN+ae3eRKzN
-         4w+DPCXBs6RIxAJeMctX1UF8hPrsz3e6zs2qLTZNWiCy4RXUgxL20L1QWh3XnixFdOL+
-         fLlaeVu1rRRAeZjFAuLA++pELXkotjEo5AFJkdE0HzTA0b9rbiyIypXpxDMsqOZGGW5L
-         Q3JwB/iJgjGaChoD62zSaTMSwPh9IKDZAKzV0hhRL5TaqNtqwJS6Aaa5fAgH7LsrIe38
-         r0l8p22HidpOnmeCEBHszWwFlAJd8T95O/cUDsBTR4SLntFVP/Z6oqAkaYJzorIvaxXz
-         vrBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcTOX0g5dEmAbPvomKhpIX7Qm1g1MimWY/6vwFMVEknH6X+4ounK0b3CIMJlnNzoeOqA/eRp/AVrW3tGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfSOwF3nTOivazfhvl6w9X0CfWzpiRcqzrHqRb0ePSDZfqxujg
-	T5HZ72bruailpsH2Cv4+YbjOTSdiKx87jSS0JgcaPEpk7wjIt+wDmW0fbzQ1VJdP9aTav4oem0H
-	owZ7wNw==
-X-Google-Smtp-Source: AGHT+IHKQXzYZsPd1emW5mymOx2ih0yymDwCa7QOwk9ye4CQI309sFEd4KkK0iKEkR0PdlCtKrtXkduqPk5D
-X-Received: from pji15.prod.google.com ([2002:a17:90b:3fcf:b0:2fa:1803:2f9f])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:58eb:b0:2fa:1851:a023
- with SMTP id 98e67ed59e1d1-30823784865mr20250837a91.35.1744652547187; Mon, 14
- Apr 2025 10:42:27 -0700 (PDT)
-Date: Mon, 14 Apr 2025 10:41:34 -0700
-In-Reply-To: <20250414174134.3095492-1-irogers@google.com>
+	s=arc-20240116; t=1744652463; c=relaxed/simple;
+	bh=CUYe5DKKYp4Nrie0XBwdqr21NoFcqQ57+8C+95ZKQjA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=B2EUmhvUYBP8mk3K/hrmHRzNqTjdSNe3wBEUpU1SNjRZ/4JS63e1BLg6SGQ63KLapKZu87+AYUt/JBqSv/w6/HORX0Hchm6YP2X9Ptwbty24ggH6ivN6KapobNx0azGhpcwPDexI35L0TdmxtNU1DaIHFxNsl2lWvt4G0b+7en4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AjFfVyxB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59BB4C4CEEB;
+	Mon, 14 Apr 2025 17:41:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744652463;
+	bh=CUYe5DKKYp4Nrie0XBwdqr21NoFcqQ57+8C+95ZKQjA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=AjFfVyxB0ZbRRvnta7/55haN1+QSRdR7B9GpCz4f9p9kfiif9+4AK2JqNpjJVvLra
+	 IMNJvsj9ofRHwl7o1u8IaPyOf1cYPyg+A5ZRgpRtaoLBi/kvw1O/fppAxpfRiZgTYD
+	 qrmfe/8UgGDeVtdew2fqt4G/MuC6Mks6Bb0aGiopqCg3THlfhZpV/nhVSO1eV121K8
+	 5WflP1H+mmPSnzRftS57b5hMMzBVSK7ugUknBRQgsGQGFQAa9rfIDXwnpejB/x/EAU
+	 t6JtikQWerlpktaD+UAu5eNAJoW8P8RDFg8yOIeluG+AXPOlZU6hoB6teu5hT15JeX
+	 tT5OjPGRi1BkQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D933822D1A;
+	Mon, 14 Apr 2025 17:41:42 +0000 (UTC)
+Subject: Re: [GIT PULL] vfs fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250414-vfs-fixes-135f081cd64a@brauner>
+References: <20250414-vfs-fixes-135f081cd64a@brauner>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250414-vfs-fixes-135f081cd64a@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc3.fixes
+X-PR-Tracked-Commit-Id: e2aef868a8c39f411eb7bcee3c42e165a21d5cd6
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3618002d007244be851fb5f314c6ddc61b8b860d
+Message-Id: <174465250097.1985657.13457865497688992470.pr-tracker-bot@kernel.org>
+Date: Mon, 14 Apr 2025 17:41:40 +0000
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250414174134.3095492-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
-Message-ID: <20250414174134.3095492-17-irogers@google.com>
-Subject: [PATCH v5 16/16] perf record: Retirement latency cleanup in evsel__config
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, 
-	"=?UTF-8?q?Andreas=20F=C3=A4rber?=" <afaerber@suse.de>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Caleb Biggers <caleb.biggers@intel.com>, 
-	Weilin Wang <weilin.wang@intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Perry Taylor <perry.taylor@intel.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>
-Content-Type: text/plain; charset="UTF-8"
 
-Perf record will fail with retirement latency events as the open
-doesn't do a perf_event_open system call. Use evsel__config to set up
-such events for recording by removing the flag and enabling sample
-weights - the sample weights containing the retirement latency.
+The pull request you sent on Mon, 14 Apr 2025 12:44:19 +0200:
 
-Signed-off-by: Ian Rogers <irogers@google.com>
-Tested-by: Weilin Wang <weilin.wang@intel.com>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/evsel.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc3.fixes
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 661a07cbdb25..6a84893e3c58 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1440,9 +1440,10 @@ void evsel__config(struct evsel *evsel, struct record_opts *opts,
- 		attr->branch_sample_type = opts->branch_stack;
- 	}
- 
--	if (opts->sample_weight)
-+	if (opts->sample_weight || evsel->retire_lat) {
- 		arch_evsel__set_sample_weight(evsel);
--
-+		evsel->retire_lat = false;
-+	}
- 	attr->task     = track;
- 	attr->mmap     = track;
- 	attr->mmap2    = track && !perf_missing_features.mmap2;
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3618002d007244be851fb5f314c6ddc61b8b860d
+
+Thank you!
+
 -- 
-2.49.0.604.gff1f9ca942-goog
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
