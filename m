@@ -1,145 +1,387 @@
-Return-Path: <linux-kernel+bounces-602180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69CCEA877BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:06:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3490A877C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 649477A28E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:05:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6916E3ADCCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0E71A239A;
-	Mon, 14 Apr 2025 06:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC941A23A9;
+	Mon, 14 Apr 2025 06:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lgiR4Wde"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="SdOUyh/J"
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2050.outbound.protection.outlook.com [40.107.104.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9667428F4;
-	Mon, 14 Apr 2025 06:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744610808; cv=none; b=oQzVpdje7Gg379hbD+9vSp3f3JlGIi5ADT6eNEqlHVg9kG+7Kqfb/8xR8nYqZXlScJNS7Nyz8ZSB0s41dfu5JoZo/DtF4dXWVbsoxklKLVrOQVZToLFMuq0S/+wP2+kePT67DJK1sOrgSXNmVTRYSwsZpcclold4X2VpqOl4VtY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744610808; c=relaxed/simple;
-	bh=9mJ1ouKP6AUJco+IEEwgsZRlDCRhET75JLATzGghxnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dsQOUf9dRNMM3RosvKRo2IJjMMF2xSvsThRYK8ndfzlSt2wg+mCfhiDgnHxZCd/eR6JwkYasuAis48GSYJP7mwaoEzZ62x3QhRP6wKagbCg7VL2roT51MZ5+TqmNOnVCo/CCSAdZM9vV7jTf4OPfE3bvEcYeguSUV0GFV/RY35c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lgiR4Wde; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22403cbb47fso40012775ad.0;
-        Sun, 13 Apr 2025 23:06:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744610806; x=1745215606; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xxIaHbBXZ+RwgLgvB4tQny1ra/FHDti7NjCX7XAn8CI=;
-        b=lgiR4WdewkCN8KItHOYLXd7fkB8WSnrz6OY+5tch8oZPpLXZ62wzLjRd0REtJGQfbg
-         pOnBVzB540qKww+ERekMNh3oHJEGRZakdUJsZcain1Mb3hclWP55MFptP5gPaFTk611t
-         6wAlBeSEOeRyB3AYhYOWj1qr0xhYd9z0+Xh/uvqE2V3rPdKIw99YuGo3o2u52kyHg9E2
-         eQTvch/I8vAMS8iBRqnzW8Ol3f4q6432Y2+TTeYOJDLxjh7rYxg8LSwcL7dhmXA4Bd1S
-         Ya3OPEA99nKXy3E82kLJSVbX1FMtju+LoBix/yNBQFxBjCXIMH7t91D8C1zYDadFCJJ0
-         dXGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744610806; x=1745215606;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xxIaHbBXZ+RwgLgvB4tQny1ra/FHDti7NjCX7XAn8CI=;
-        b=TIkfH6LXdb6oSvb9u/VjPU7FVISFjnv+sMtBaAAPoD0h/5u5o7Cg3e7r0wyoLxTXDN
-         199fcXSd3Cu9JmMgcs1bJZfZFQVXH+xq0c+bSGIyYbIdDem6ixAykPI/eakZWyd3XH8M
-         c46Xm/9fvXRo/LMrm+Qtx7BxNG2u19iPJtPT0luexB4DtXcnwpeHTewX8ShN4HMrFJ9e
-         vJatCMNVNMvSZgiiOew5n+VoGbCcuj5/+o/XykTArvugcJB7dY9kmNMVtgRpYuu0KzLR
-         iAgaSVWFo5ohxLSyrGCERjHikF24cn2sSm4Z1DsKEUEthgD+nT3Ok1lkktebWCvarBv1
-         Lfxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvkZDIk8IAc69wXurIill/2gpi9B3DkW2CDrVJ+1Wb89iM31lHvHbZAqamNC49Wyh15gSNTW4+eGIOauA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRU3w5Y8g9rB7bTj6Ce+QRhqpUfKfGItr3kAnCc4zeD7sagpSy
-	eEKu5Y34tLC14qJkthnNIpfDCqciK7A59HvLaBZ4e6/1xCIdIp6C
-X-Gm-Gg: ASbGncvsgARs75Hi54e1OSnxaTTOxraR9vESvBbfObIiFZuVlO8Af42plVQ0GE8feD/
-	tqFBS+l1HiH27zM6cKzc+VWNPmJmMDlXOOz7U2LGrBoY+o5LYtX3wwDg+uz88ffnOZoXwQRaveb
-	h+b84xF5mlY1Q9XU2wze3dOG3l2plGfsdY4x1kegT0XqrCp7PSh7ayzzjlJC4Xkt22b+MBtOdRI
-	TJMEQchV5jfTbQI6CcPolfSsTHPZOy4rnF3cj5n+zULTgNIzVaexpc6ZzefGzgATIMI6s9XmS9a
-	xmKiR7F9w4LVq2IZn01mn5Qg722gIrILNbMnh2YDv6XhLYcXdeY=
-X-Google-Smtp-Source: AGHT+IEqkd3bo9jG14/uA5feef7+vpo4LRa0tq592FJ1o8s6/vtXDY497Yo7Vmw0Crv9MiyXUqBpBA==
-X-Received: by 2002:a17:902:eb8a:b0:224:1e7a:43fe with SMTP id d9443c01a7336-22bea50df42mr155742075ad.46.1744610805520;
-        Sun, 13 Apr 2025 23:06:45 -0700 (PDT)
-Received: from fedora ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7cb536bsm91840835ad.201.2025.04.13.23.06.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Apr 2025 23:06:44 -0700 (PDT)
-Date: Mon, 14 Apr 2025 06:06:38 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Jay Vosburgh <jv@jvosburgh.net>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Simon Horman <horms@kernel.org>, Cosmin Ratiu <cratiu@nvidia.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 net] bonding: use permanent address for MAC swapping if
- device address is same
-Message-ID: <Z_yl7tQne6YTcU6S@fedora>
-References: <20250401090631.8103-1-liuhangbin@gmail.com>
- <3383533.1743802599@famine>
- <Z_OcP36h_XOhAfjv@fedora>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F8E191F95;
+	Mon, 14 Apr 2025 06:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744610995; cv=fail; b=GQcX9vcAi+Euqq+JzZGGVUScTpAOfQfvhmPN7c/AocF7zWi2i6rxoi7Ha9D6f0jx7k9C7SgDvbl/q8Rq4llayr5DAMEIpfo56aYTmzb+7A83VKorW/iTZtA814nXIds7GKfVqx/E2+vUs/ULOaXBOSjarmogHWZhW7/K+GzlL6o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744610995; c=relaxed/simple;
+	bh=YdhsN156COUWlk9uFSm1pMbi6H3bQi1TYhehQMeANCE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ohCMGJWg1sjg0nCioCS90Dc6419OPansr6wu/cpgP2hILzD8huhN6hcvWVifyTJdIo7GJmKLvVfHRWawxlpt+iV8ANNnpjNHmpwPKdk0ZQ3atAGDeehzXDOsdstBUbtUihn/6KVg8ynCdfGzIgJad+5XgtqwrqciMqraWuHAJBk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=SdOUyh/J; arc=fail smtp.client-ip=40.107.104.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XymWrqTHsEGaPNg+TRN8iUgwR0bjFntFTL9u8rq23DpV9blLKIEXgrg2jfk2FDlme8KXPtMINn3uw3afnL05iMQ9Zx6x5dYP8QsuWj/PwnhCdzzI8ApNW53WCvaZgTBl9acrIQOgVN5oa18lqKCotWVV+rRpcZE/B/v6UexpYRGn7JdmotIlnxSTf+0oP5JMU8Hc75yOD4O88uYx8G5qPN8yiS0iQRp39GNXinYf91jkmmHXDyTYE+ODMWAGflS/kBwe8buSyYFaLAkxgchepF/tmp8LdYqsEwmCXgoL1XGvZy+CdXV0BhYzcAQfXv3q6eUr6bAP0hJtROvrMomj1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xVAg16JVCAiG9MQW0qpPpwc3/MP7bc75m1yF5eeUErA=;
+ b=cZT1slbWvsqiAgJ+qVY/1T+7UBEtPud6KeDUxTZVj8/sdnJ1K3HUNhCPfkSSNb7z7YylRoV7ukNJyp8XP4dx+B2Y1kypy0Xcvo8D4NLPz8mlKDO+8KVe4oY30Ie/86gy1dfQ6ke08wI3ff1kjBW/a5089zdjBkiBiGfvaSgB6XYGqOajiI0+lRxSyV7ubuquVuA2u8GQzXrnXnqTVVbAY0dM7TXxxZbEr3E19nTjZ/MxM/LF7W2KFvfnr3wMgTCfOE1/4j/P0HqfP4redMECQxIi4RBQtCQMH/Sz4hxZr6ZMY44sAOZ4Tfcyt86VVX19krmuMFtk/8xp2OipA1iHKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xVAg16JVCAiG9MQW0qpPpwc3/MP7bc75m1yF5eeUErA=;
+ b=SdOUyh/JHtr7W7hVpk6tLXHFTuZB1r7kyZvvQfhP0P6+Wad2Jc7eBvFrV0hrWvjxdw2K3efvb2owzIII/tqL59V4olDloccHUSJUuYR7zUvrJDFvVrAQM9M0yZOG6t6Y/XHv78rFijRilUxNlWkCKIwWgtaEvg+0fDlO3ephT1YqHuOa31DNoGefLteFi1bqDCqAf3svVfheWiI17gde7xCTpqW7Ev58SoTJWiZCCxpUZbNYxvA7wXJerD30aS/mM7RJTsiVgLKfK/1Tjp50oqCCHPWWKMtd0+ys63HdqnXHIprsz1yTCipMFw7szGIKXXhJSxj0Bg+spmElc65sAg==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by DBAPR04MB7221.eurprd04.prod.outlook.com (2603:10a6:10:1b1::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.32; Mon, 14 Apr
+ 2025 06:09:49 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%5]) with mapi id 15.20.8632.030; Mon, 14 Apr 2025
+ 06:09:49 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Hiago De Franco <hiagofranco@gmail.com>
+CC: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Ulf Hansson
+	<ulf.hansson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "regressions@lists.linux.dev"
+	<regressions@lists.linux.dev>, Hiago De Franco <hiago.franco@toradex.com>
+Subject: RE: [REGRESSION] Kernel reboots unexpectdely on i.MX8X when Cortex-M4
+ is running and it was started by U-Boot bootaux
+Thread-Topic: [REGRESSION] Kernel reboots unexpectdely on i.MX8X when
+ Cortex-M4 is running and it was started by U-Boot bootaux
+Thread-Index: AQHbpWxIyVwHrK1A2UqE7zPASmzQ0LOedbwAgAAHyXCAADO/AIAECmYA
+Date: Mon, 14 Apr 2025 06:09:49 +0000
+Message-ID:
+ <PAXPR04MB8459ED33238AA790252E730988B32@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20250404141713.ac2ntcsjsf7epdfa@hiago-nb>
+ <20250411125024.i2pib4hyeq4g6ffw@hiago-nb>
+ <PAXPR04MB8459ED6CE869173D4051257088B62@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <20250411162328.y2kchvdb4v4xi2lj@hiago-nb>
+In-Reply-To: <20250411162328.y2kchvdb4v4xi2lj@hiago-nb>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|DBAPR04MB7221:EE_
+x-ms-office365-filtering-correlation-id: 5f00f20e-aedf-421d-1612-08dd7b1af6b0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?GS08y8v7Bj0UdXM+YFZgacSaOkA5sDgnlGJqMejUa8p8q8g5Bu88WgfGafZ1?=
+ =?us-ascii?Q?ZL6bVtyG5X3MQsar34vxEALXIOCZNmAgDMVRPmxlKYSDYdeN2QTWHapsWf16?=
+ =?us-ascii?Q?R8CWEFKjV/QnQ0H7QT4+FpeKvbLjsA5TMWP/7eOWp3rp/XYixwUqOxX3RwZZ?=
+ =?us-ascii?Q?TjtFOuZYOZsPT1rlFdc2bFZl6W02DhhTKu+R3/YNn6MSFxRkcfMqpfSNHjZ2?=
+ =?us-ascii?Q?28AilgMDfl27LJFOyRP6dBJElJV9lWdp0SV1UstzCrklv7WVbxsrSVrD2p0S?=
+ =?us-ascii?Q?8MOIZ5M0e03gw13NewoZoQS4/B0GY3zGFS0DpMxJwIkamb2Ip56eqcJpjlaB?=
+ =?us-ascii?Q?AXVttCJyTl6lXxdm0kuHIWlFJKrFJjBUtkvLuBWs3SisK/wEtlqAHQeQj6ZW?=
+ =?us-ascii?Q?v5Gq7AtQH+KH2QI2R5ZDXPYnW5ZNZxA+QfV1WlTP3WR/UJIv4QSYqLllKfkj?=
+ =?us-ascii?Q?nJo9oE/rbn4obqcmsF3DAC0yBwP4xqPnGQpE+FPqiNhdDx76gxSzau76jk28?=
+ =?us-ascii?Q?82pArh+qi6bkXElHUOZLTBgBGaBuHIzzJr9t5GUlu9UYUuFV3gS+ASrPTZla?=
+ =?us-ascii?Q?muYpJQEQulDT1FUOaszMt0UshDEKt+IDFxjTFr9IpeOHuEL31uV5MWw3DEJf?=
+ =?us-ascii?Q?qBLt1stkEyoOXaV4eJrDT8gRZRqbi7TSiU9SmcMzCzldicwEQ/zgU9YdgqCI?=
+ =?us-ascii?Q?lcL1Xl2uQP43yZoE3uTQZV71kzv/1gPj1unSOwXomQN3N/H8fyGL62kyo5cM?=
+ =?us-ascii?Q?lHcA0G8dNNRk948yjAb0apKR5q4BBMuVjtHvfTJsG2a9fhbco63Yh2479Ton?=
+ =?us-ascii?Q?pEoXGr6rpGJxQXE9EoTSF96XA6R/jtniDCA8ipu/5U78lPjP1DPwzymbqNpv?=
+ =?us-ascii?Q?zgiDjNZdy1M7iFAN2YVYyJ8w0evCUVBi92FetWiWczSVgr8k0F5iQBW3LWnx?=
+ =?us-ascii?Q?jv5uMYs2pPX6n/HAG/nNOP7pGAcOxLOpgRc+YGQSA/YP3TjoeBENhzpyOkaw?=
+ =?us-ascii?Q?3dUwROFtHzw810cyG1JkllrqlPt91kgUneJ4S0UoaqZL5FUF56H/twXS3uar?=
+ =?us-ascii?Q?SMUh58PraJGyWnN4CqNgcGIP+SLVEeUSwEPEmQU1Wxelzsa2aTC6i81u3Hxv?=
+ =?us-ascii?Q?N6kZMmJWX+gV/tG2qZ8F1mN8rcI85fG0b5cfL8f85tSt74oIahicAC1o+C/3?=
+ =?us-ascii?Q?ExIJ+2nC7pQq0YqJTgZ2uT0Y0dwJ9UKO7zjmMm10Vhpjggn1U64ZdWctKsio?=
+ =?us-ascii?Q?C/OqnU9py5DFecIUWJwbl48TYO9ECEvGSYeAYRsz5wDFjiipPRnK1dAKcYdM?=
+ =?us-ascii?Q?z6kZ7MgGTC3cz/WPLn7zqLxtKpKAqCQUH/CUuNQHS7DUOJuQi8668e6jvp9m?=
+ =?us-ascii?Q?x8i/qa6Q4zdxFckfogezEk0Df6iteyrYD+23c2exkzjXfCYi3IzMd7esA200?=
+ =?us-ascii?Q?bsw+JgiGO4OQd/71X6BJ5SYOZs8vfbH6yhKmUePPfLoFzZ6cHxq7zw=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?f/CQh87NgFmyD4RNKR5C5yawiDxo9uNGpbkRlEcESP66JGZk0/bQNsrUDy0x?=
+ =?us-ascii?Q?lvURllKdvMBdJBxFa39zjA1prJ1WlbGGK4HmXuZYLEvlRxnMlOuXAL71pR4Q?=
+ =?us-ascii?Q?trNDYfpERXgoKqPJ56ae+nlf39/rsPOenJLUJD0iGQk3i9nijeYmNN/IU3tk?=
+ =?us-ascii?Q?nx4OOguA5BVkLSMgmCe6ctUClK58m5LabfMP/rjccEkg6/D1CcfoYHOw2EUP?=
+ =?us-ascii?Q?0546JWZ/OnX9O9DzQ9HXv9nQacwiWkI6Q8Pw5mK3rO4YSVcs1UJJMnoZnZUe?=
+ =?us-ascii?Q?TSYrNC9zioFdiGWAaVKEIHe4YytVlHOUQ9J+nVwygoOgiehKE/oax3uwv61p?=
+ =?us-ascii?Q?XP/rPMkWgwEGRVipNwb4v+UGyYnybtypghuQ5KowS80YIY0fye+cpWATDB5H?=
+ =?us-ascii?Q?olqMUahJHoBGN53hqZQ8QC5/YejENqTlMIlJB7iuLSQ6yNo1s08F7w0mfESo?=
+ =?us-ascii?Q?szFV2wBzUn6AgdkZHPqDNpC6woRotf0AdtUIH5Nl1adXKBH+D3pHfErVuUEB?=
+ =?us-ascii?Q?0zrvsDTtowwCLM6Wrunr9Z+ck+/tqV7XBsUYg31cZt2GbEI+BnnAsFzwu31d?=
+ =?us-ascii?Q?2HeeIVVWquWfRuMMYiZy4ZaVdIoSpSl3LR0LUMbAZfqRoqDIBDaM5pEZ2ZrI?=
+ =?us-ascii?Q?b2hyr7n3V6KFAAPwU4+S9NFel0BXxudKYzwwMdw7MzKjxmUVLhxiLGkBQe8m?=
+ =?us-ascii?Q?sgI9dugMIg5ojmZg5vsCbsxtx924HF+TEoHDKAYmpz4mu2XO4Krtvyv0vK5+?=
+ =?us-ascii?Q?C/7Fog9Kbj2tZNQGBHtr9BhT9HOlJLk7EudIcwtNsFBJ5gY6G61xm2GsAUhG?=
+ =?us-ascii?Q?ovO5CS9a1gD2ZNHP8IFQoi2CELqliX58ZljFqDhrnCnAAOv1E9B/xdkzy8s+?=
+ =?us-ascii?Q?tH8dafQLz/k+Etq/IkNe4PpWMAxQWwd0zuEgpyet72FpfxGK687C96veoEXS?=
+ =?us-ascii?Q?OmgV7+AmBFMsk4lrEVSiNjpvLg4zDc533/0/wp0/tS2qvFH/4rFAQs0Ggvuf?=
+ =?us-ascii?Q?n3SagwI7srAwFaY6ebn2gaseX4NAOizVANpJfYpdFEXisc7OuHcetVL6fV2L?=
+ =?us-ascii?Q?cJNnUZP2j1uf2wfbhMaxPwamdKoweorwDJJHDdA3ziYShnvRT4ww+LzqihSd?=
+ =?us-ascii?Q?gh5CZWFRiojU6Y75+E9Fs5vX78knhOkZY96fjW0bWTEgk3txTaG5lHDuup8i?=
+ =?us-ascii?Q?qPR4o4ErRycV7apfNRCfnvk3wXQgBdqVIXsd23K0Z3X3Pw9R6KnU+nkIJWhE?=
+ =?us-ascii?Q?ouHLIanIHsJ4mlA1pbRjy3NrIErROsQhGdJLl44LjTV18RSGqlEiSeKkDm80?=
+ =?us-ascii?Q?54uo/3NZVPl3NbQ6AUTVpxgLFQgT7fRGzhsMDXT6HhiyxBJNyOdL4m/GJOpQ?=
+ =?us-ascii?Q?CjcldavTgd/qLT2IawW9pyevSZxIKov91DmqUTOgQMUINXwV3pFkDG3yD2EN?=
+ =?us-ascii?Q?XnjX1/Rao3wD6SMeOuiKtcxNA1uUB1adq0fvO0adngp7fVHiThzHUVliVoEU?=
+ =?us-ascii?Q?K8NctyEe30U5cmrC9B04hmHpaDLOFD7t1/OLmCoc4hAk9Dz9NsrrxDMDjFaU?=
+ =?us-ascii?Q?sawUbO2t86e9VRQPUaY=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_OcP36h_XOhAfjv@fedora>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f00f20e-aedf-421d-1612-08dd7b1af6b0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Apr 2025 06:09:49.4370
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3teFmPanowaMfJr698OjANhcCST/M/nnH0OyO5KbIfZEUrbxf3c7BBqerVQQ2GAXtQRXjaSy2+qklszAiTmztA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7221
 
-Hi Jay,
-On Mon, Apr 07, 2025 at 09:35:03AM +0000, Hangbin Liu wrote:
-> > 	So this patch's change wouldn't actually resolve the MAC
-> > conflict until a failover takes place?  I.e., if we only do step 4 but
-> > not step 5 or 6, eth0 and eth1 will both have the same MAC address.  Am
-> > I understanding correctly?
-> 
-> Yes, you are right. At step 4, there is no failover, so eth0 is still using
-> it's own mac address. How about set the mac at enslave time, with this we
-> can get correct mac directly. e.g.
+> Subject: Re: [REGRESSION] Kernel reboots unexpectdely on i.MX8X
+> when Cortex-M4 is running and it was started by U-Boot bootaux
+>=20
+> Hi Peng,
+>=20
+> On Fri, Apr 11, 2025 at 01:23:32PM +0000, Peng Fan wrote:
+> > Hi,
+> >
+> > Sorry for late.
+> > > Subject: Re: [REGRESSION] Kernel reboots unexpectdely on i.MX8X
+> when
+> > > Cortex-M4 is running and it was started by U-Boot bootaux
+> > >
+> > > On Fri, Apr 04, 2025 at 11:17:13AM -0300, Hiago De Franco wrote:
+> > > > #regzbot introduced: 4f6c983261
+> > > >
+> > > > Hi Peng and all,
+> > > >
+> > > > Commit 4f6c9832613b ("genpd: imx: scu-pd: initialize is_off
+> > > according
+> > > > to HW state") introduced a regression where the Kernel reboots
+> > > > unexpectedly (without any warnings, crashes or errors) when the
+> > > > Cortex-M4 was loaded and running by U-Boot, using the bootaux
+> > > command:
+> > > >
+> > > > # load mmc 0:2 ${loadaddr} /home/root/hello_world.bin #
+> bootaux
+> > > > ${loadaddr} 0 # boot
+> > > >
+> > > > This is a simple hello world binary that prints a message into the
+> > > > M40.UART0 pin (demo from NXP MCUXpresso).
+> >
+> > Which release is this image from?
+>=20
+> This is MCUXpresso SDK 2.9.0.
+>=20
+> >
+> > > >
+> > > > Before this commit, everything worked as expected, Linux boots
+> > > > fine and the HMP core keeps running and printing messages to
+> the UART.
+> > > > After the commit, the kernel reboots at the beggining of the boot
+> > > > process. The only relevant message is printed by U-Boot after
+> reset:
+> > > >
+> > > > "Reset cause: SCFW fault reset"
+> > > >
+> > > > This commit was bisectabled, the same device tree, u-boot
+> version,
+> > > and
+> > > > SCFW versions were used. Reverting this commit fixes the issues.
+> > > >
+> > > > For testing purposes, I created the following patch which also
+> > > > fixes the
+> > > > issue:
+> > > >
+> > > > diff --git a/drivers/pmdomain/imx/scu-pd.c
+> > > > b/drivers/pmdomain/imx/scu-pd.c index
+> > > 38f3cdd21042..0477b3fb4991
+> > > > 100644
+> > > > --- a/drivers/pmdomain/imx/scu-pd.c
+> > > > +++ b/drivers/pmdomain/imx/scu-pd.c
+> > > > @@ -539,6 +539,9 @@ imx_scu_add_pm_domain(struct device
+> > > *dev, int idx,
+> > > >                 return NULL;
+> > > >         }
+> > > >
+> > > > +       if (strstr("cm40", sc_pd->name) !=3D NULL)
+> > > > +               is_off =3D true;
+> > > > +
+> > > >         ret =3D pm_genpd_init(&sc_pd->pd, NULL, is_off);
+> > > >         if (ret) {
+> > > >                 dev_warn(dev, "failed to init pd %s rsrc id %d",
+> > > >
+> > > >
+> > > > Test Environment:
+> > > > - Hardware: Colibri iMX8DX 1GB with Colbiri Evaluation Board.
+> > > > - U-Boot Version: 2024.04
+> > > > - U-Boot Build info:
+> > > > 	SCFW 83624b99, SECO-FW c9de51c0, IMX-MKIMAGE
+> > > 4622115c, ATF 7c64d4e
+> > > >
+> > > > The issue is not present on: v6.5
+> > > >
+> > > > The real root cause is still unclear to me. Anybody has any ideas?
+> > > > I am happy to share more details if needed.
+> >
+> > Have you tried pd_ignore_unused?
+> >
+> > I think it is linux power down M4 which M4 is running, then SCFW
+> > reports error. So please give a try pd_ignore_unused.
+>=20
+> For debugging purposes, I tried it and it works, kernel boots fine with
+> M4 running and pd_ignore_unused parameter.
+>=20
+> >
+> > If this is the case, may I know do you have m4 nodes in dts and with
+> > power domain included?
+>=20
+> This is the device tree overlay I am testing:
+>=20
+> /dts-v1/;
+> /plugin/;
+>=20
+> #include <dt-bindings/clock/imx8mm-clock.h>
+> #include <dt-bindings/firmware/imx/rsrc.h>
+>=20
+> / {
+> 	compatible =3D "toradex,colibri-imx8x";
+> };
+>=20
+> &{/} {
+> 	imx8x-cm4 {
+> 		compatible =3D "fsl,imx8qxp-cm4";
+> 		mbox-names =3D "tx", "rx", "rxdb";
+> 		mboxes =3D <&lsio_mu5 0 1
+> 			  &lsio_mu5 1 1
+> 			  &lsio_mu5 3 1>;
+> 		memory-region =3D <&vdevbuffer>, <&vdev0vring0>,
+> <&vdev0vring1>,
+> 				<&vdev1vring0>, <&vdev1vring1>,
+> <&rsc_table>;
+> 		power-domains =3D <&pd IMX_SC_R_M4_0_PID0>,
+> 				<&pd IMX_SC_R_M4_0_MU_1A>;
+> 		fsl,entry-address =3D <0x34fe0000>;
+> 		fsl,resource-id =3D <IMX_SC_R_M4_0_PID0>;
+> 	};
+>=20
+> 	reserved-memory {
+> 		#address-cells =3D <2>;
+> 		#size-cells =3D <2>;
+> 		ranges;
+>=20
+> 		vdev0vring0: memory@90000000 {
+> 			reg =3D <0 0x90000000 0 0x8000>;
+> 			no-map;
+> 		};
+>=20
+> 		vdev0vring1: memory@90008000 {
+> 			reg =3D <0 0x90008000 0 0x8000>;
+> 			no-map;
+> 		};
+>=20
+> 		vdev1vring0: memory@90010000 {
+> 			reg =3D <0 0x90010000 0 0x8000>;
+> 			no-map;
+> 		};
+>=20
+> 		vdev1vring1: memory@90018000 {
+> 			reg =3D <0 0x90018000 0 0x8000>;
+> 			no-map;
+> 		};
+>=20
+> 		rsc_table: memory@900ff000 {
+> 			reg =3D <0 0x900ff000 0 0x1000>;
+> 			no-map;
+> 		};
+>=20
+> 		vdevbuffer: memory@90400000 {
+> 			compatible =3D "shared-dma-pool";
+> 			reg =3D <0 0x90400000 0 0x100000>;
+> 			no-map;
+> 		};
+> 	};
+> };
+>=20
+> &lsio_mu5 {
+> 	status =3D "okay";
+> };
+>=20
+> This was basically copied from
+> arch/arm64/boot/dts/freescale/imx8qxp-mek.dts. Do you see anything
+> wrong? Should I also add the "clocks" property to imx8x-cm4 node?
 
-Any comments for the new approach?
+In your case, m4 is in same scu partition as a53, so m4
+power domain is manageable(owned) by Linux.
 
-Thanks
-Hangbin
-> 
-> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> index 950d8e4d86f8..0d4e1ddd900d 100644
-> --- a/drivers/net/bonding/bond_main.c
-> +++ b/drivers/net/bonding/bond_main.c
-> @@ -2120,6 +2120,24 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev,
->  			slave_err(bond_dev, slave_dev, "Error %d calling set_mac_address\n", res);
->  			goto err_restore_mtu;
->  		}
-> +	} else if (bond->params.fail_over_mac == BOND_FOM_FOLLOW &&
-> +		   BOND_MODE(bond) == BOND_MODE_ACTIVEBACKUP &&
-> +		   memcmp(slave_dev->dev_addr, bond_dev->dev_addr, bond_dev->addr_len) == 0) {
-> +		/* Set slave to current active slave's permanent mac address to
-> +		 * avoid duplicate mac address.
-> +		 */
-> +		curr_active_slave = rcu_dereference(bond->curr_active_slave);
-> +		if (curr_active_slave) {
-> +			memcpy(ss.__data, curr_active_slave->perm_hwaddr,
-> +			       curr_active_slave->dev->addr_len);
-> +			ss.ss_family = slave_dev->type;
-> +			res = dev_set_mac_address(slave_dev, (struct sockaddr *)&ss,
-> +					extack);
-> +			if (res) {
-> +				slave_err(bond_dev, slave_dev, "Error %d calling set_mac_address\n", res);
-> +				goto err_restore_mtu;
-> +			}
-> +		}
->  	}
-> 
-> Thanks
-> Hangbin
+However to m4 earlyboot(kicked by bootloader),
+if you not wanna linux to handle m4, use scu_rm
+to create a separate partition in u-boot.
+If you wanna linux to handle m4, but not wanna linux
+to shutdown the pd in kernel boot, imx_rproc.c
+needs to be built in, and need to add a clock entry
+or use clock optional api in imx_rproc.c .
+
+Current imx_rproc.c needs a clock entry to probe pass.
+
+I think in your case, this driver not probe pass, so the
+M4 pd still get powered off.
+
+
+Regards,
+Peng.
+
+>=20
+> >
+> > Anyway, I will give a try on i.MX8QM EVK.
+>=20
+> Great, thanks.
+>=20
+> >
+> > >
+> > > Hello everyone, as this introduced a regression, should I send a
+> > > revert for 4f6c983261?
+> >
+> > Please wait a while, I think we need find root cause.
+> >
+> > Thanks,
+> > Peng.
+> >
+> > Or any ideas that might help fix this issue?
+> > >
+> > > >
+> > > > Cheers,
+> > > > Hiago.
+> > >
+> > > Cheers,
+> > > Hiago.
+>=20
+> Cheers,
+> Hiago.
 
