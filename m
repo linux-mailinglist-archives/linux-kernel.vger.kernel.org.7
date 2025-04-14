@@ -1,170 +1,192 @@
-Return-Path: <linux-kernel+bounces-602222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178B7A8783B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:53:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CE70A8783F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:53:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 217E3170959
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:53:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3511B3B028F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020CE1B041E;
-	Mon, 14 Apr 2025 06:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F7E1B0421;
+	Mon, 14 Apr 2025 06:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWJARPmo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DsNgH2Vm"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629511A2630
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1AC1B041E
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744613590; cv=none; b=EHCgRlAcapWS+H8Z9l2qUHBj7MUhxGUIW+xhkNZXK4O2/2ywfrC4ASymUI1zbXhHNBjx5ePM+fqqL20koHnP1KJBIrbY52FIPjpKQKi0tS17E3hnd3ndJwmGsoS6hC2ZO8wgSxTkip75xOp1ukoVre2fkCFZK8qJCvMwjz/VTaw=
+	t=1744613617; cv=none; b=qlkZdxCY7bOxUlXQyXCZlD1Gac5dTRCI7FYSs7NU6wXI+kDKTh+3HQ6xIFMKlIdVYTkLTl5RG6g57xG6v9DwuCP5A2VrtV8Qiii4kXBhcUp5mXdyPoxvvMGNBrQC+8DyUKMvZKCi8YBtFifsyn6h/Ar1Jq2RkQxxbYxvruqHwpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744613590; c=relaxed/simple;
-	bh=AHvofNn5TL3U2ajIrQ9gUjfUGkeWtcbsQ1mCQPypoL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KnVFyDKca8mFloOc8Bri6mi6v/YDKjspAF1cYv55XaljOd5JmrP3LPgLqjFuNuxV0+QOop29zaJHskNxs3v2mSdtsPnAhH2kloTurdOBWKgDTWw65b8vWxPd3wX0b+UJKUkJnxv23qAPcdZNwVI6vuBdmISw0GXMMwRYMB0f/Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sWJARPmo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6374BC4CEE2;
-	Mon, 14 Apr 2025 06:53:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744613589;
-	bh=AHvofNn5TL3U2ajIrQ9gUjfUGkeWtcbsQ1mCQPypoL0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sWJARPmoJzyiLOTGOtX/2dezXvdf2fh7nhbxBkVEU6wCjtq47P+jxcr76UGmyU7g3
-	 hV39/tOYkL223mfzF6NKJysn4zMGBL/251CtSYAN13XcEiyFOZJnZilkHMq49C+a2R
-	 IgNIjN2tw5Ts6YjOk4EN7821v9iH/QMrJYqUZ4j9WPDtyoKLePBB5skU0+AtZhkmPn
-	 5Z8i7Ml0pbSNLqqgq0wh++RoM3zXfM81xSDzXFxG1eAtio5M5gLzW11RTHHIWP6MT2
-	 fHZUmDvb2vYCYEJN5je8dAOieNjfHZcrCGnZmyWmI9ovok4qmvKVGB08Pv6yOsGW6T
-	 UNiAbh5vAby6g==
-Date: Mon, 14 Apr 2025 08:53:02 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-	mingo@redhat.com, luto@kernel.org, peterz@infradead.org,
-	paulmck@kernel.org, rostedt@goodmis.org, tglx@linutronix.de,
-	willy@infradead.org, jon.grimm@amd.com, bharata@amd.com,
-	raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com
-Subject: Re: [PATCH v3 4/4] x86/folio_zero_user: multi-page clearing
-Message-ID: <Z_ywzkEEqUOMHcO0@gmail.com>
-References: <20250414034607.762653-1-ankur.a.arora@oracle.com>
- <20250414034607.762653-5-ankur.a.arora@oracle.com>
+	s=arc-20240116; t=1744613617; c=relaxed/simple;
+	bh=Agoq23bDUAXqo9AaPPRQFYVTVNaPa5Zc5OdDh/SbrY8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ETe3wky28VF2s1sx1hLpn4B0IB5/8Okh0dmklb7FN/K0541FSwRV8MMZBUNLm6SOlIUGrdf70iLdCpceJ/sF5ymzdGu2LOqlodqYBPJ9oKy4Ms6GlRcgNHGt8OYJg5KIbR564Gl1KN/C4iJ6reLGajIxq6KkxIOb2gLK0GLteDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DsNgH2Vm; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac73723b2d5so794193966b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 23:53:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1744613613; x=1745218413; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EQbNREGYurDkVhqmrR2KiVmvUT/jocZ+TY4xPaBX+u4=;
+        b=DsNgH2VmcqbrylbmwMb3S9C/JplqP6gTFpVD2w0rQpKjQ/lrkew+P4fSRm+ddCRKZ6
+         ny71qUnb3C4podJaR9nr6eQyrpilHyyeMTuvVvLnk6Fan1mfXcmdHJxv6llZ4PUBQp0z
+         gQarS9gTENjfZ4tKGn0QFYQ6bBRT3SzBOqvAi0CaSTdfWcPRSgqL5vesfwcZfvspYRa+
+         Cx6TL18rBQUFqTVDJOSlhbnLYxufKzPd7HTjXC/B/RO14QQcJWkVuTabJzvM3oXVie1V
+         vGWNG6Vt1zGqqAJcg5Z8Y0A2tMzBn6ujkpkW6ouD8TDqCcyJpK+qQsQaDw83sX0CjpjL
+         ZdKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744613613; x=1745218413;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EQbNREGYurDkVhqmrR2KiVmvUT/jocZ+TY4xPaBX+u4=;
+        b=LEJBeCclf6deqhNz1SEJ8wLxb3d99GqmROBkn8+vGs6+1LamXBDF9Rj+0IdLc/vmGi
+         YILN0Fyu/+c0ZAs/1LfbLANh6Dq1T6LM4ACsRneeuwGBZkdEo6RocG4lkooc0Ub8lNzz
+         UlNnJ3ltFXIxIi+fuwnCQiNLlROC8kUvxBb6velbUacbuvjuYfDyQX4b4xayZds8a7iI
+         05wDYGEtcITUyc9K2DZT7us1bUyKJiSiK/kWfrFCMZPHHXF/L3Kox8Q7rYT0ox+l98YO
+         lsYoHA8VLsyXHjJm1DpU3sBTmCe+mlbOmn19MquWCiaqcg/RiGZT0jGK6laov5CbMjw/
+         sH0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVCiPvor6r5F9r4o3Yb+dZVQFXd+EHrCe5+xSvEaswwdkA8ylNaVOBFYfkHUO21Ml8kcqanSET6tXMmU1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtZYgvoEZlZFdcsdu6hOTPm9FgOc572BAQaAmfrc1W211cSiqm
+	J2/X5i/br430grfsZ7zLB0L+76Lf/RnbFrC/ThDMHqJ3/lBKYcA+IqTrtlDn57x1EIAYBhLy7Xr
+	8BE7nRA6Pwim4OsbLA2UWsi9XDlT7LlF9G30hNQ==
+X-Gm-Gg: ASbGncuqJOfoRTnClgxHc0/HlaCelV/5bpfcCEPrPoqqeGy6iTnsbRUPWxB7Aaqqdf+
+	LqiKIZAuwyPeaUI87augnYgI9P99AXOvaXTC4qe0JDRvadgkFJtwnabJbU75p3LN2e7zPIHg3JY
+	HQvOz/qgqHRHAX91XOSAi7+6oEGQ0YRvc=
+X-Google-Smtp-Source: AGHT+IH4trRZYgVHR0ualPPj/jVwcxdOfEGnoWxbXqXWi2EIvLcKnEFRknYx4vOWQBhOcyoslaT+/L7G3bzJKKzGRY8=
+X-Received: by 2002:a17:907:9810:b0:aca:b720:f158 with SMTP id
+ a640c23a62f3a-acad348a128mr1012156166b.13.1744613612720; Sun, 13 Apr 2025
+ 23:53:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414034607.762653-5-ankur.a.arora@oracle.com>
+References: <20250331082347.1407151-1-neelx@suse.com> <2a759601-aebf-4d28-8649-ca4b1b3e755c@suse.com>
+ <CAPjX3Fdru3v6vezwzgSgkBcQ28uYvjsEquWHBHPFGNFOE8arjQ@mail.gmail.com>
+ <b1437d32-8c85-4e5d-9c68-76938dcf6573@gmx.com> <20250331225705.GN32661@twin.jikos.cz>
+ <CAPjX3FfVgmmqbT2O0mg9YyMnNf3z7mN5ShnXiN1cL9P=4iUrTg@mail.gmail.com>
+In-Reply-To: <CAPjX3FfVgmmqbT2O0mg9YyMnNf3z7mN5ShnXiN1cL9P=4iUrTg@mail.gmail.com>
+From: Daniel Vacek <neelx@suse.com>
+Date: Mon, 14 Apr 2025 08:53:21 +0200
+X-Gm-Features: ATxdqUHak9AiMMSwlhClElvAYjPSN7_Sx5iFmhNZVEvfe4TE6-tM8bxa8iRg7XI
+Message-ID: <CAPjX3FfOJMFC8cXCqLa2yS1qSYmhu5cjV__+7xVRFGuKu=RqiA@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: zstd: add `zstd-fast` alias mount option for fast modes
+To: dsterba@suse.cz
+Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, Qu Wenruo <wqu@suse.com>, Chris Mason <clm@fb.com>, 
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Nick Terrell <terrelln@fb.com>, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, 2 Apr 2025 at 16:31, Daniel Vacek <neelx@suse.com> wrote:
+>
+> On Tue, 1 Apr 2025 at 00:57, David Sterba <dsterba@suse.cz> wrote:
+> >
+> > On Tue, Apr 01, 2025 at 07:44:01AM +1030, Qu Wenruo wrote:
+> > >
+> > >
+> > > =E5=9C=A8 2025/3/31 20:36, Daniel Vacek =E5=86=99=E9=81=93:
+> > > [...]
+> > > >>>                        btrfs_set_opt(ctx->mount_opt, COMPRESS);
+> > > >>>                        btrfs_clear_opt(ctx->mount_opt, NODATACOW)=
+;
+> > > >>>                        btrfs_clear_opt(ctx->mount_opt, NODATASUM)=
+;
+> > > >>> +             } else if (strncmp(param->string, "zstd-fast", 9) =
+=3D=3D 0) {
+> > > >>> +                     ctx->compress_type =3D BTRFS_COMPRESS_ZSTD;
+> > > >>> +                     ctx->compress_level =3D
+> > > >>> +                             -btrfs_compress_str2level(BTRFS_COM=
+PRESS_ZSTD,
+> > > >>> +                                                       param->st=
+ring + 9
+> > > >>
+> > > >> Can we just use some temporary variable to save the return value o=
+f
+> > > >> btrfs_compress_str2level()?
+> > > >
+> > > > I don't see any added value. Isn't `ctx->compress_level` temporary
+> > > > enough at this point? Note that the FS is not mounted yet so there'=
+s
+> > > > no other consumer of `ctx`.
+> > > >
+> > > > Or did you mean just for readability?
+> > >
+> > > Doing all the same checks and flipping the sign of ctx->compress_leve=
+l
+> > > is already cursed to me.
+> > >
+> > > Isn't something like this easier to understand?
+> > >
+> > >       level =3D btrfs_compress_str2level();
+> > >       if (level > 0)
+> > >               ctx->compress_level =3D -level;
+> > >       else
+> > >               ctx->compress_level =3D level;
+> > >
+> > > >
+> > > >> );
+> > > >>> +                     if (ctx->compress_level > 0)
+> > > >>> +                             ctx->compress_level =3D -ctx->compr=
+ess_level;
+> > > >>
+> > > >> This also means, if we pass something like "compress=3Dzstd-fast:-=
+9", it
+> > > >> will still set the level to the correct -9.
+> > > >>
+> > > >> Not some weird double negative, which is good.
+> > > >>
+> > > >> But I'm also wondering, should we even allow minus value for "zstd=
+-fast".
+> > > >
+> > > > It was meant as a safety in a sense that `s/zstd:-/zstd-fast:-/` st=
+ill
+> > > > works the same. Hence it defines that "fast level -3 <=3D=3D=3D> fa=
+st level
+> > > > 3" (which is still level -3 in internal zstd representation).
+> > > > So if you mounted `compress=3Dzstd-fast:-9` it's understood you act=
+ually
+> > > > meant `compress=3Dzstd-fast:9` in the same way as if you did
+> > > > `compress=3Dzstd:-9`.
+> > > >
+> > > > I thought this was solid. Or would you rather bail out with -EINVAL=
+?
+> > >
+> > > I prefer to bail out with -EINVAL, but it's only my personal choice.
+> >
+> > I tend to agree with you, the idea for the alias was based on feedback
+> > that upstream zstd calls the levels fast, not by the negative numbers.
+> > So I think we stick to the zstd: and zstd-fast: prefixes followed only
+> > by the positive numbers.
+>
+> I'd still opt for keeping full range and functionality including
+> negative levels using the plain `zstd:N` option and having the other
+> just as an additional alias (for maybe being a bit nicer to some
+> humans, but not a big deal really and a matter of preference).
+> Checking the official documentation, it still mentions "negative
+> compression levels" being the fast option.
+>
+> https://facebook.github.io/zstd/
+> https://facebook.github.io/zstd/zstd_manual.html
+>
+> The deprecation part looks like just some gossip. It looks more about
+> the cli tool api and we are defining a kernel mount api - perfectly
+> unrelated.
 
-* Ankur Arora <ankur.a.arora@oracle.com> wrote:
+Any feedback, Dave? I tend to drop this ida of `zstd-fast` alias.
 
-> clear_pages_rep(), clear_pages_erms() use string instructions to zero
-> memory. When operating on more than a single page, we can use these
-> more effectively by explicitly advertising the region-size to the
-> processor, which can use that as a hint to optimize the clearing
-> (ex. by eliding cacheline allocation.)
-
-> +#ifndef CONFIG_HIGHMEM
-> +/*
-> + * folio_zero_user_preemptible(): multi-page clearing variant of folio_zero_user().
-> + *
-> + * Taking inspiration from the common code variant, we split the zeroing in
-> + * three parts: left of the fault, right of the fault, and up to 5 pages
-> + * in the immediate neighbourhood of the target page.
-> + *
-> + * Cleared in that order to keep cache lines of the target region hot.
-> + *
-> + * For gigantic pages, there is no expectation of cache locality so just do a
-> + * straight zero.
-> + */
-> +void folio_zero_user_preemptible(struct folio *folio, unsigned long addr_hint)
-> +{
-> +	unsigned long base_addr = ALIGN_DOWN(addr_hint, folio_size(folio));
-> +	const long fault_idx = (addr_hint - base_addr) / PAGE_SIZE;
-> +	const struct range pg = DEFINE_RANGE(0, folio_nr_pages(folio) - 1);
-> +	int width = 2; /* pages cleared last on either side */
-> +	struct range r[3];
-> +	int i;
-> +
-> +	if (folio_nr_pages(folio) > MAX_ORDER_NR_PAGES) {
-> +		clear_pages(page_address(folio_page(folio, 0)), folio_nr_pages(folio));
-
-> +			clear_pages(page_address(folio_page(folio, r[i].start)), len);
-
-So the _user postfix naming is super confusing here and elsewhere in 
-this series.
-
-clear_page(), and by extension the clear_pages() interface you extended 
-it to, fundamentally only works on kernel addresses:
-
-/*
- * Zero a page.
- * %rdi - page
- */
-SYM_TYPED_FUNC_START(clear_page_rep)
-        movl $4096/8,%ecx
-        xorl %eax,%eax
-        rep stosq
-        RET
-
-Note the absolute lack of fault & exception handling.
-
-But folio_zero_user*() uses the kernel-space variants of page clearing 
-AFAICT (contrary to the naming):
-
-void folio_zero_user(struct folio *folio, unsigned long addr_hint)
-{
-        unsigned int nr_pages = folio_nr_pages(folio);
-
-        if (unlikely(nr_pages > MAX_ORDER_NR_PAGES))
-                clear_gigantic_page(folio, addr_hint, nr_pages);
-        else
-                process_huge_page(addr_hint, nr_pages, clear_subpage, folio);
-}
-
-
-static void clear_gigantic_page(struct folio *folio, unsigned long addr_hint,
-                                unsigned int nr_pages)
-{
-        unsigned long addr = ALIGN_DOWN(addr_hint, folio_size(folio));
-        int i;
-         
-        might_sleep();
-        for (i = 0; i < nr_pages; i++) {
-                cond_resched();
-                clear_user_highpage(folio_page(folio, i), addr + i * PAGE_SIZE);
-        }       
-}
-
-Which on x86 is simply mapped into a kernel-memory interface:
-
-static inline void clear_user_page(void *page, unsigned long vaddr,
-                                   struct page *pg)
-{
-        clear_page(page);
-}
-
-So at minimum this is a misnomer and a confusing mixture of user/kernel 
-interface names on an epic scale that TBH should be cleaned up first 
-before extended...
-
-> +out:
-> +	/* Explicitly invoke cond_resched() to handle any live patching necessary. */
-> +	cond_resched();
-
-What again?
-
-Thanks,
-
-	Ingo
+> > We can make this change before 6.15 final so it's not in any released
+> > kernel and we don't have to deal with compatibility.
 
