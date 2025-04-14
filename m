@@ -1,144 +1,138 @@
-Return-Path: <linux-kernel+bounces-603042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE85A882D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:45:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B678A882B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7A0188F9AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:43:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33FFA165471
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A102951DB;
-	Mon, 14 Apr 2025 13:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fsdTCl1U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A105C2951C9;
-	Mon, 14 Apr 2025 13:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061272918C1;
+	Mon, 14 Apr 2025 13:28:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA281291166
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744637327; cv=none; b=pe1oymOId8q/xGYx+pXbdMS4FiMuCy23u2vX2bqrwXAbWNfxvAAe/S4Slll+N95Kwj2m/jsBpyXpudhZ9r/kzUbhmFT6Lyo2FvRYjunJag+4sh5m2U7S9zlEOt3gSgGhpYi9tJkpeGwQhqo9t27uQTwmWgOrsMhvFV17oVPs9YU=
+	t=1744637300; cv=none; b=XuuyOy9gEazP6d2PBCv/lNMnb9sDzct8EGFZKd01zHAizviHV8hWXqCMuBGuIUgj0/5350Il9A9I1RthjOf34t5ww1ZPls7ne9i3tAdLlidyrr33ARyrEe0pEYM+C7x2V2zgAzkl36Be5Hf+9Gxg2gYJBTWLnma9OYRXSD1tbZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744637327; c=relaxed/simple;
-	bh=RQRrmfW46BQXDgi9spmXMqI9izUGjPu2e0yvLBN9m2w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=m5Vm0Hj7+2SweO3MHsyQGGGSylyNAAiKHmrqwZQJB6AgUccwIre/78itzez8eTDGRUUHUVrbZ+Sivsr2dDdIMAhdalbOs1jdfWdJuylbhMNXwx7faUVGbptRxhdQWosHmwBCLWP2zmjFqsZqhE2Ecb829VjtmRjHkpvZoTI/Mjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fsdTCl1U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0EBCC4CEE9;
-	Mon, 14 Apr 2025 13:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744637327;
-	bh=RQRrmfW46BQXDgi9spmXMqI9izUGjPu2e0yvLBN9m2w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fsdTCl1UsB8yWedsTh+b3BudfA1x5aZv0M3BAFBm9JGCbgkkeXb8JzNlwpC2ak/y4
-	 tavloA9lVNO+g2/FyR7kTFv53wHnQ7MHw8REQ9MroRA0k2MmZIX/2lvMf99el/H5aO
-	 dEDcsZVdR1bqCNhUk6dnCdUnLUVXqu2FDdaMk4UW9RuTtzy/NuTM+3QEkSIqpSOlyq
-	 MT5CZPTkk2gBrFxyroyq38ci5D0D60RyRYjRXUwbr5RD3ToHdCWk4w8IH9BX6bOGx8
-	 EixNxzTvve85iyDJz0KOQ+o/p3ki+ZViBPRe0gF5/IyfEuCMDJgmpRQiMdCOUv8mnC
-	 cXxyAjfCPuaPA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Baokun Li <libaokun1@huawei.com>,
-	Jan Kara <jack@suse.cz>,
-	Zhang Yi <yi.zhang@huawei.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Sasha Levin <sashal@kernel.org>,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.13 34/34] ext4: make block validity check resistent to sb bh corruption
-Date: Mon, 14 Apr 2025 09:27:28 -0400
-Message-Id: <20250414132729.679254-34-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250414132729.679254-1-sashal@kernel.org>
-References: <20250414132729.679254-1-sashal@kernel.org>
+	s=arc-20240116; t=1744637300; c=relaxed/simple;
+	bh=3Xf7AnPyIb0MCZLKWd/TQ94I/pjvr3vA6WPdxScA+jY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d3M9aEaMXCvRJaLi6hrIlmvSk1dFKMBZpmgrwzK1pIdKoZelWx6xKlDviDGXjS3izTBqIZPPVTxhodaNqK+8uc+KDp6JvGFo8cpxc1OxAMgcb9wOB/COkBIVND29qHpT6bWReGbbv6r5q12VfEKnfnyv3w/axopezBVJY41btGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2E3F1007;
+	Mon, 14 Apr 2025 06:28:14 -0700 (PDT)
+Received: from [10.57.86.225] (unknown [10.57.86.225])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B5DC3F66E;
+	Mon, 14 Apr 2025 06:28:15 -0700 (PDT)
+Message-ID: <0bad3714-06b3-488f-a414-b825f409b926@arm.com>
+Date: Mon, 14 Apr 2025 14:28:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.13.11
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64/mm: Implement pte_po_index() for permission overlay
+ index
+Content-Language: en-GB
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20250410052021.1533180-1-anshuman.khandual@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250410052021.1533180-1-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+On 10/04/2025 06:20, Anshuman Khandual wrote:
+> From: Ryan Roberts <ryan.roberts@arm.com>
+> 
+> Previously pte_access_permitted() used FIELD_GET() directly to retrieve
+> the permission overlay index from the pte. However, FIELD_GET() doesn't
+> work for 128 bit quanitites. Since we are about to add support for D128
+> pgtables, let's create a specific helper, pte_po_index() which can do
+> the required mask and shift regardless of the data type width.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+> This patch applies on v6.15-rc1
+> 
+>  arch/arm64/include/asm/pgtable-hwdef.h | 1 +
+>  arch/arm64/include/asm/pgtable-prot.h  | 2 ++
+>  arch/arm64/include/asm/pgtable.h       | 2 +-
+>  3 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+> index f3b77deedfa2..028a164924df 100644
+> --- a/arch/arm64/include/asm/pgtable-hwdef.h
+> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
+> @@ -211,6 +211,7 @@
+>  #define PTE_PO_IDX_2	(_AT(pteval_t, 1) << 62)
+>  
+>  #define PTE_PO_IDX_MASK		GENMASK_ULL(62, 60)
+> +#define PTE_PO_IDX_SHIFT	60
+>  
+>  
+>  /*
+> diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
+> index 7830d031742e..b53bc241e4e7 100644
+> --- a/arch/arm64/include/asm/pgtable-prot.h
+> +++ b/arch/arm64/include/asm/pgtable-prot.h
+> @@ -136,6 +136,8 @@ static inline bool __pure lpa2_is_enabled(void)
+>  	((pte & BIT(PTE_PI_IDX_1)) >> (PTE_PI_IDX_1 - 1)) | \
+>  	((pte & BIT(PTE_PI_IDX_0)) >> (PTE_PI_IDX_0 - 0)))
+>  
+> +#define pte_po_index(pte)	((pte_val(pte) & PTE_PO_IDX_MASK) >> PTE_PO_IDX_SHIFT)
+> +
+>  /*
+>   * Page types used via Permission Indirection Extension (PIE). PIE uses
+>   * the USER, DBM, PXN and UXN bits to to generate an index which is used
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index d3b538be1500..41979c0e6c21 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -182,7 +182,7 @@ static inline bool por_el0_allows_pkey(u8 pkey, bool write, bool execute)
+>  	(((pte_val(pte) & (PTE_VALID | PTE_USER)) == (PTE_VALID | PTE_USER)) && (!(write) || pte_write(pte)))
+>  #define pte_access_permitted(pte, write) \
+>  	(pte_access_permitted_no_overlay(pte, write) && \
+> -	por_el0_allows_pkey(FIELD_GET(PTE_PO_IDX_MASK, pte_val(pte)), write, false))
+> +	por_el0_allows_pkey(pte_po_index(pte), write, false))
+>  #define pmd_access_permitted(pmd, write) \
+>  	(pte_access_permitted(pmd_pte(pmd), (write)))
+>  #define pud_access_permitted(pud, write) \
 
-[ Upstream commit ccad447a3d331a239477c281533bacb585b54a98 ]
+kvm also uses PTE_PO_IDX_MASK in compute_s1_overlay_permissions(). Shouldn't we
+be converting that site too?
 
-Block validity checks need to be skipped in case they are called
-for journal blocks since they are part of system's protected
-zone.
-
-Currently, this is done by checking inode->ino against
-sbi->s_es->s_journal_inum, which is a direct read from the ext4 sb
-buffer head. If someone modifies this underneath us then the
-s_journal_inum field might get corrupted. To prevent against this,
-change the check to directly compare the inode with journal->j_inode.
-
-**Slight change in behavior**: During journal init path,
-check_block_validity etc might be called for journal inode when
-sbi->s_journal is not set yet. In this case we now proceed with
-ext4_inode_block_valid() instead of returning early. Since systems zones
-have not been set yet, it is okay to proceed so we can perform basic
-checks on the blocks.
-
-Suggested-by: Baokun Li <libaokun1@huawei.com>
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Link: https://patch.msgid.link/0c06bc9ebfcd6ccfed84a36e79147bf45ff5adc1.1743142920.git.ojaswin@linux.ibm.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ext4/block_validity.c | 5 ++---
- fs/ext4/inode.c          | 7 ++++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
-index 87ee3a17bd29c..e8c5525afc67a 100644
---- a/fs/ext4/block_validity.c
-+++ b/fs/ext4/block_validity.c
-@@ -351,10 +351,9 @@ int ext4_check_blockref(const char *function, unsigned int line,
+----8<----
+diff --git a/arch/arm64/kvm/at.c b/arch/arm64/kvm/at.c
+index 3a96c96816e9..d9a8ee8e600f 100644
+--- a/arch/arm64/kvm/at.c
++++ b/arch/arm64/kvm/at.c
+@@ -1073,7 +1073,7 @@ static void compute_s1_overlay_permissions(struct kvm_vcpu
+*vcpu,
  {
- 	__le32 *bref = p;
- 	unsigned int blk;
-+	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
- 
--	if (ext4_has_feature_journal(inode->i_sb) &&
--	    (inode->i_ino ==
--	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-+	if (journal && inode == journal->j_inode)
- 		return 0;
- 
- 	while (bref < p+max) {
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 89aade6f45f62..1b151b60dd150 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -383,10 +383,11 @@ static int __check_block_validity(struct inode *inode, const char *func,
- 				unsigned int line,
- 				struct ext4_map_blocks *map)
- {
--	if (ext4_has_feature_journal(inode->i_sb) &&
--	    (inode->i_ino ==
--	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-+	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
-+
-+	if (journal && inode == journal->j_inode)
- 		return 0;
-+
- 	if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
- 		ext4_error_inode(inode, func, line, map->m_pblk,
- 				 "lblock %lu mapped to illegal pblock %llu "
--- 
-2.39.5
+        u8 idx, pov_perms, uov_perms;
 
+-       idx = FIELD_GET(PTE_PO_IDX_MASK, wr->desc);
++       idx = pte_po_index(__pte(wr->desc));
+
+        switch (wi->regime) {
+        case TR_EL10:
+----8<----
 
