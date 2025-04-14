@@ -1,110 +1,169 @@
-Return-Path: <linux-kernel+bounces-603648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B42E7A88A72
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:55:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A37CA88A7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B525517B06B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:55:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CCB73ACABE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5044284682;
-	Mon, 14 Apr 2025 17:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEE328A1FB;
+	Mon, 14 Apr 2025 17:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EYNcJlvn"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mI0sWe26"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7D819CC0A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 17:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F31A274640
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 17:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744653340; cv=none; b=K9AlBFYCIXpTwII0nzfpQ/OZyVDSb2kQ/SSftNvPYA+CQJVVBVDek45IZYXRujUK5lhX/FviuWYW+wDSBBIUYanpRD+OVwtOBuD34/Z5qSfaR4ojAsrcbfHhMX7WzynCleZDBnO0pLM3kWXI9VcMHeOoKT3uQQkUg4ehQAX/pBQ=
+	t=1744653391; cv=none; b=aGpadAGwti5vHmvpOv/hRzhZm+IQPVLJYFlzeI2hIQfrvmE4n8XItN9o0CSpTHWXH2PQ+iKLhPjJ4/BxesVcPppwZKQQB5GDiUidn6EgVp8dQx5+pLIrQb2P1Hd/vizsD+xmqw8wkoaPbY+xTzFZRecM79sAK+syZuBI1vnGsIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744653340; c=relaxed/simple;
-	bh=nW3p7+wE7/lwNaWRvze0Y3CNGJXQgh7d1oS4++gmo8k=;
+	s=arc-20240116; t=1744653391; c=relaxed/simple;
+	bh=AZK12C0Fqchmlto8qBrceDdsuvAShASuIB+dDuARDr0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZKilYBNvBBuvJMsJO5PKmyAjIzBi2FGdejRf4Dw1Pct4YwUAANMsIRg6IZxYYKbwtdnWDgje1u+25Bq3VpCeARyLk+CpPJfaHoRl0apu4YRl/IY4ILzGLfaT5k9+GtrCpsLALreYguc5lDyK/b1/MT7EUeoKpmrrX2dRVCKCZL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EYNcJlvn; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 14 Apr 2025 10:55:31 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744653336;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f+3eEggjd5QTRtUIj7cAsYQvM1HXr9Ku4rtj4bUFtT8=;
-	b=EYNcJlvnyq/gWHNNZ6g3SvfVKaA7zwZCkPusItP0EIdMBplF3wRj0RA4VlwGPErpATy5Wx
-	/8885b8gZfeVvpssCWZGVYVGF49uTU0ZBvvl7vDQ2ThWbhpie0UbOQwcOaXGSQRv+xlGnw
-	ca1pCmW9tPVx1cydaqgdo45b10n8SvU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Vlastimil Babka <vbabka@suse.cz>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, Waiman Long <llong@redhat.com>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: decouple memcg_hotplug_cpu_dead from stock_lock
-Message-ID: <esdt7fygdyzxxlb7ql6qzwqydzokmfi4uxkfwvxiqedff5wnxl@n34muduktzou>
-References: <20250410210623.1016767-1-shakeel.butt@linux.dev>
- <0e9e2d5d-ec64-4ad4-a184-0c53832ff565@suse.cz>
- <CAGj-7pUxYUDdRGaiFon=V2EG+3Ex5s9i7VvWbDH5T0v-7SE-CQ@mail.gmail.com>
- <8cce9a28-3b02-4126-a150-532e92c0e7f8@suse.cz>
- <CAGj-7pXRmG2D+5=yj-5uuciiNccWws6erBg_hSm9S6coEhN+3Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DCZDh7FHpUpAqQ6Bp483allp6ESpeTDf2gthN/4rCkPPCjeMvHj4qVcdKG065LNBcBxZ0Ho4wWMgkekwm2/Rs4HfdTCaDQLjBpyjrZXCdE/a/e90/dCSHkz0Yc5QQrnH9C3ws+jEs/SN5ixlzvgaSwraIH0jL5p5ue3qPi2cztU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mI0sWe26; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744653390; x=1776189390;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AZK12C0Fqchmlto8qBrceDdsuvAShASuIB+dDuARDr0=;
+  b=mI0sWe26wEEGl25sjW/NttLZksshanXrO4lrPrCulwl1XYHm3dozFlgq
+   M4mGT8k0nyBP1oD+N6ItOA1zOODFNyEecNOXZHfkSgHYSxa4MoP55J7xl
+   37+V1q+eAR/aG9YHYd56HG7ZwJX6g2Dk/wxn7cwPBjsen3W1ZLGBCEH/I
+   M+yGeRaHSvwvJFPPF5VqDp3LeFpXpydBoqtjA86sczhlJ5UHnz1jWQQwZ
+   meB+KCbclQhijZPn6qAR7UgtiurV4k3cPMjdpGsk/AhOBNloi3DhSPAdx
+   JOY8ujPxUhYuM5MzxLIduEFzIp+VX2QALfEEW1TSAh1+Ngr1K7XWnMiqD
+   w==;
+X-CSE-ConnectionGUID: H+0PK9Q3QU6ZekXPWzdz6w==
+X-CSE-MsgGUID: HoeMGylDQUCpd+FtcWbNFg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="56779930"
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="56779930"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 10:56:29 -0700
+X-CSE-ConnectionGUID: dPwM8Y+UT8qyeKBve9u41A==
+X-CSE-MsgGUID: ltLoji/CTuKkNCN7WKpCmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
+   d="scan'208";a="134941100"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 10:56:30 -0700
+Date: Mon, 14 Apr 2025 10:56:27 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghuay@nvidia.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: Region aware RDT options for resctrl
+Message-ID: <Z_1MS8ocgi1_LkAp@agluck-desk3>
+References: <Z_mBcnAcGzMMvfxV@agluck-desk3>
+ <Z_mB-gmQe_LR4FWP@agluck-desk3>
+ <4bec8924-6125-45ef-a212-f123ab2e4f5b@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGj-7pXRmG2D+5=yj-5uuciiNccWws6erBg_hSm9S6coEhN+3Q@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <4bec8924-6125-45ef-a212-f123ab2e4f5b@intel.com>
 
-On Fri, Apr 11, 2025 at 02:12:46PM -0400, Shakeel Butt wrote:
-> On Fri, Apr 11, 2025 at 2:06 PM Vlastimil Babka <vbabka@suse.cz> wrote:
-> >
-> > On 4/11/25 19:54, Shakeel Butt wrote:
-> > > (my migadu/linux.dev stopped working and I have to send through gmail,
-> > > sorry for any formatting issue)
-> > >
-> > > I don't see how local_irq_save() will break anything. We are working on
-> > > a stock of a dead remote cpu. We actually don't even need to disable irq
-> > > or need local cpu's local_lock. It is actually the calls to
-> > > __mod_memcg_lruvec_state() and __mod_memcg_state() in
-> > > __drain_obj_stock() which need irq-disabled on non-RT kernels and for
-> > > RT-kernels they already have preempt_disable_nested().
-> > >
-> > > Disabling irq even on RT seems excessive but this is not a performance
-> > > critical code, so I don't see an issue unless there is
-> > > local_lock_irqsave() alternative which does not disables irqs on RT
-> > > kernels.
-> >
-> > local_lock_irqsave() does not disable irqs on RT kernels :)
+On Mon, Apr 14, 2025 at 10:30:18AM -0700, Reinette Chatre wrote:
+> Hi Tony,
 > 
-> Sorry, I wanted to say local_irq_save() here instead of local_lock_irqsave().
+> Could you please help clarify how memory regions should be viewed?
 > 
-> > so keeping
-> > local_lock as is would do the irq disable on !RT and be more RT-friendly on
-> > RT. It's just wrong from the logical scope of the lock to perform it on a
-> > different cpu than the stock we modify. If one day we have some runtime
-> > checks for that, they would complain.
+> On 4/11/25 1:56 PM, Luck, Tony wrote:
+> > On Fri, Apr 11, 2025 at 01:54:12PM -0700, Luck, Tony wrote:
+> > 
+> > Add Cc: lkml
+> > 
+> >> A future CPU from Intel will implement "region aware" memory bandwidth
+> >> monitoring and bandwidth allocation. This will provide for more granular
+> >> monitoring and control for heterogeneous memory configurations. BIOS
+> >> will populate an ACPI table that describes which system physical address
+> >> ranges belong to each region. E.g. for a two socket system with both
+> >> DDR and CXL memory regions could be assigned like this:
+> >>
+> >> Region 0: Local DDR
+> >> Region 1: Remote DDR
+> >> Region 2: Local CXL
+> >> Region 3: Remote CXL
 > 
-> Basically I don't want to use stock_lock here. Maybe I should explore
-> adding a new local_lock for __mod_memcg_lruvec_state and
-> __mod_memcg_state.
+> If considering an assignment like above ...
+> 
+> ...
+> 
+> >> Option 1: Per-memory regions might be described individually like this:
+> >>
+> >> 	$ cat schemata
+> >> 	RMB0:0=100;1=100
+> >> 	RMB1:0=75;1=75
+> >> 	RMB2:0=25;1=25
+> >>
+> 
+> ... I assume "RMB0" represents "Region 0" and so forth. In this case, what do
+> the "domain IDs" used in above option represent?
 
-Vlastimil & Sebastian, if you don't have a strong opinion/push-back on
-this patch then I will keep it as is. However I am planning to rework
-the memcg stats (& vmstats) to see if I can use dedicated local_lock for
-them and able to modify them in any context.
+Measurement and control is still done at the scope of each L3 cache. So
+the domain ids in the schemata file and in the names of the directories
+under "mon_data" are the Linux L3 cache ids.
+
+Here's a different example of a schemata file (with different throttle
+values in all positions to make the explanation below easier):
+
+	$ cat schemata
+	RMB0:0=100;1=75
+	RMB1:0=50;1=25
+
+This is a two socket system with just two regions (DDR local and remote)
+
+0=100	CPUs in the domain of L3 instance 0 are not throttled for
+	accesses to their local DDR
+1=75	CPUs in the domain of L3 instance 1 are throttled to 75% for
+	accesses to their local DDR
+0=50	CPUS in the domain of L3 instance 0 are throttled to 50% for
+	accesses to remote DDR
+1=25	CPUs in the domain of L3 instance 1 are throttled to 25% for
+	accesses to remote DDR
+
+The ACPI MRRM table describes the memory ranges in each region. Each
+range has two region number associated with it. One for local access,
+the other for remote access. A dump of one entry looks like this:
+
+[0002]                       Memory Range : 0000
+[0002]                             Length : 0020
+[0004]                           Reserved : 00000000
+[0008]                System Address Base : 0000000000000000
+[0008]              System Address Length : 00000000E0000000
+[0002]                 Region Valid Flags : 0003
+[0001]             Static Local Region ID : 00
+[0001]            Static Remote Region ID : 01
+[0004]                           Reserved : 00000000
+
+It shows that the range from 0 GB to 3.5 GB will be counted/controlled
+in region 0 when accessed by a CPU where this is local memory, but as
+region 1 when accessed by a CPU where this range is remote.
+
+> 
+> Thank you.
+> 
+> Reinette
+
+-Tony
 
