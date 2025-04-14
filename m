@@ -1,166 +1,184 @@
-Return-Path: <linux-kernel+bounces-602366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A71DA879E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:10:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F41A879EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 002C93B0BB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:10:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBDE3188B701
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508A625A63F;
-	Mon, 14 Apr 2025 08:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6207B259CA5;
+	Mon, 14 Apr 2025 08:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNgMweN6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j7gZ74VL"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B63259C90;
-	Mon, 14 Apr 2025 08:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96DF258CF2;
+	Mon, 14 Apr 2025 08:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744618206; cv=none; b=ndr1VID46GSm6Li9+m05ok6XTQaCJcETlaldEId9C3xqowtjkKopHFeR8OVAsMuVhCL4kwnx2Ugn6uzVKa8qdADmB0vIVh+xWik0vOX4NWREnF+xx9tnkBC1wWTWYzcSCztzL1VucFy0NNPaDV19DaGMzcWG6j9Tr6mtoMs9RZ4=
+	t=1744618299; cv=none; b=jUGCd3lzID+efF2c8eRNz3d4kJd92Zd6a+NC2C2pQniZ1GnqAeVP8hduHbkbdjYVAV7Lorpjej2d95yMmh2Bdyp69Ilz6qeUzgfv9pPsgOT8jaxBeodE7is27vB68hmiiUrj/KG9e1nFl9xjMqzplk4g92mRzDceRlvs9+XPqwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744618206; c=relaxed/simple;
-	bh=7gW73NKAyGGLmTkMsehID/ovPJ452vhDfNk50dFRytw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k0nxbBbTPSMsBkY3JRYCcXMw6oKgHN1iOzR3LtUyzyROVL56t5EQSyV6Sxbytb1XjGRzEMC/igLo4+AzoV41VT1qNHhCND8hUZRB/dQey6vEtf9idOhFCKmTQhNW0vxi4C2R9QWprF8enBYiqhj92dDHR2TqsgEPnxaQczWaoJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNgMweN6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 114D2C4CEE2;
-	Mon, 14 Apr 2025 08:10:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744618206;
-	bh=7gW73NKAyGGLmTkMsehID/ovPJ452vhDfNk50dFRytw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hNgMweN6/Y5qu+EhOVBOvoRV/oXQHcyv/chvp1dhnNx63bbu0+p66cxuLIwJ0H6nd
-	 ObUXN7GrOT0gjgIBrquoTS9LUcL1odwrdNfOgV1nnANPplchbytwjDLzs6WXfdgaYb
-	 WfnabJVAfWA5yJw54HqH5G0ukDbr45zazdQd0XuXIUlVBmqSQLWViaAaqESBVPdE/z
-	 hvnYk4wLQvJ0Ch+ZoguRjCGoUqNM8K+4trSb8QSybKRHfc+QCRWIBeZSFJg5sDFiML
-	 W4RmKKRBwJTA9c0ofQ/YWFX5yvspyxUCgsQ7KYGNgzkSq+FcwvDP+t0YsQoeJ4Z9eQ
-	 PLrr3mQAxVxCw==
-Message-ID: <4183462f-7e4c-4da2-8f6b-0dadf26e1b2a@kernel.org>
-Date: Mon, 14 Apr 2025 10:09:59 +0200
+	s=arc-20240116; t=1744618299; c=relaxed/simple;
+	bh=WiNB2ppjNeN7UPDQ3srWOqez2dv5sjdGd2i612Gjopo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YfTGNMXc581PjZdJGRx1BMNLQzHP8OHzAPBWOt5KXxCeP+GSo6QZcfnUPm+DCjh+FWRNvDxhzXBljcZyhI6uYHWQuEoK0I97pb1tAKKBe4XYblqo1SZyQIzUS2hXEfRkKcVxf6r0lxAkGqjOjO8TRCO8OuAnkniH0X7xxY+kJjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j7gZ74VL; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e5c7d6b96fso7408349a12.3;
+        Mon, 14 Apr 2025 01:11:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744618295; x=1745223095; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yFiL7XQwjMNSusYEB+zRirLMLyCH2wO7H0kvak0x6S8=;
+        b=j7gZ74VLWpfWvG4lbWvukHoo0ggUbtL2imp0Rq+F5yXdD9f9Dd4oCAb88K5Gk5ndv2
+         uuZ0eSkuPrmk1Q1xHukucjHCNlx5kOM1iotu1X3E2N10Bj1ojzykAuqeA9iRzidAzWME
+         yaWrlZeB/fCLpU/eIWnPY3I/Or4it1aafwsOtURS+w5Vas9Vij6hfsxUKD/g/CQI3D79
+         Z8ZLrRHCdlZhdlRakUNZvjW89pyZ83V6COHip4zMvOa8o24/OQYbP40PWOzC5wHQJ208
+         ct7C2RbtHMZAAW02MXh4Lq8cN61PR6mSe/IAURQCpraQUk87KzRWHhdk36gZolXWsmRH
+         jxpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744618295; x=1745223095;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yFiL7XQwjMNSusYEB+zRirLMLyCH2wO7H0kvak0x6S8=;
+        b=nBJ9iD97hWIyHLcthc0TdgBS/JQQOggJEzX6FceuBxjHgoXHA+2BtvUApRoIRRtaZy
+         EL0k4BldS7jQiP7CykXsTd/6paKVwgVaEegelDdZ6KoB2hTp7zep8mohddDD9R8W+C0a
+         +W/cF5Voc2lGEKbLx5vx/WiNleKo0fLzynaHEbvP7KAK7AyQFcMyP3C3Clm8J229Lbd2
+         4ULNz6wXYX2Vhw7FYpryZyrhphi2nIbyq+58BLnHhr1Of30uJT7Qew0gDYmmP68w3kGg
+         +gTfs48v5juBUk8r1FH9osDw/ov3d5tRwUSwFqfO/Su5gdS8X/+i5ilzNN9kf5MOdarC
+         yCYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUkol4/66vlQEe21sOYw6KSjHXluIWTkDlFJfdcJpFk+zaBV9G4mb3K8of9VDXlg4kK/K9MW5F0ZFQ7Gs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjMU8HVxyI4wcv1wcQrMycvQuV3+AqKlmUAzx83Ic+A52sQMWk
+	2zHvS6GNfvuxcQX0ya6xk8VYqlCILnd1wQzovVjgae0ho2zbKGaLLvGBbW7H
+X-Gm-Gg: ASbGncta3rQSY2Gynq2gvPL+siC7be9n8oBw7Q1wZCdeOWAlfb0cPXD+YbSvKAeW6kJ
+	IJQk8L9fr32sgI0AsWlySv0rg/s2zVdE3sWTHzgLuu9mN34ShcSQKw64PxdvObwQcXmcxfIZVWr
+	2tl2ixo+tBGILSm+YeUX358/Sw1OSiFmwuv0jLN9Qwbzi72wZFBA3QFPqnadFCLfnf8XXw1BhV1
+	2B6g7heOJ6B1n31vLWSTTJIZML5nwyWWk3YIk+KDLOnkxtmuRo8ai0nocJmw4yhCnGJXUUJOtdh
+	bZNPs9Pht3T9Vi2JBwheysB4yZETLqLEodmbM/qt3Fg=
+X-Google-Smtp-Source: AGHT+IHd5XfB1F4BTG4yVgpJ1M8ZY4YhHp7lAzw+Vzz8WQVt+Y12JzvPfddOXG5nCrBfMyHnds0oTA==
+X-Received: by 2002:a17:906:c14e:b0:ac3:c56c:26ca with SMTP id a640c23a62f3a-acad3446a15mr1011810566b.8.1744618294716;
+        Mon, 14 Apr 2025 01:11:34 -0700 (PDT)
+Received: from fedora.. ([193.77.86.199])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f36ee55212sm4435244a12.9.2025.04.14.01.11.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 01:11:34 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: kvm@vger.kernel.org,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH 1/2] KVM: x86: Use asm_inline() instead of asm() in kvm_hypercall[0-4]()
+Date: Mon, 14 Apr 2025 10:10:50 +0200
+Message-ID: <20250414081131.97374-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 9/9] serial: qcom-geni: Enable Serial on SA8255p
- Qualcomm platforms
-To: Praveen Talari <quic_ptalari@quicinc.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
- Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: psodagud@quicinc.com, djaggi@quicinc.com, quic_msavaliy@quicinc.com,
- quic_vtanuku@quicinc.com, quic_arandive@quicinc.com,
- quic_mnaresh@quicinc.com, quic_shazhuss@quicinc.com
-References: <20250410174010.31588-1-quic_ptalari@quicinc.com>
- <20250410174010.31588-10-quic_ptalari@quicinc.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250410174010.31588-10-quic_ptalari@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10. 04. 25, 19:40, Praveen Talari wrote:
-> The Qualcomm automotive SA8255p SoC relies on firmware to configure
-> platform resources, including clocks, interconnects and TLMM.
-> The driver requests resources operations over SCMI using power
-> and performance protocols.
-> 
-> The SCMI power protocol enables or disables resources like clocks,
-> interconnect paths, and TLMM (GPIOs) using runtime PM framework APIs,
-> such as resume/suspend, to control power states(on/off).
-> 
-> The SCMI performance protocol manages UART baud rates, with each baud
-> rate represented by a performance level. The driver uses the
-> dev_pm_opp_set_level() API to request the desired baud rate by
-> specifying the performance level.
-> 
-> Signed-off-by: Praveen Talari <quic_ptalari@quicinc.com>
-> ---
->   drivers/tty/serial/qcom_geni_serial.c | 150 +++++++++++++++++++++++---
->   1 file changed, 136 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-> index 9649297d4a9e..40b71d4b7590 100644
-> --- a/drivers/tty/serial/qcom_geni_serial.c
-> +++ b/drivers/tty/serial/qcom_geni_serial.c
-...
-> @@ -1624,8 +1669,27 @@ static int geni_serial_resources_on(struct uart_port *uport)
->   	return ret;
->   }
->   
-> -static int geni_serial_resource_init(struct qcom_geni_serial_port *port)
-> +static int geni_serial_resource_state(struct uart_port *uport, bool power_on)
-> +{
-> +	return power_on ? geni_serial_resources_on(uport) : geni_serial_resources_off(uport);
-> +}
-> +
-> +static int geni_serial_pwr_init(struct uart_port *uport)
->   {
-> +	struct qcom_geni_serial_port *port = to_dev_port(uport);
-> +	int ret;
-> +
-> +	ret = dev_pm_domain_attach_list(port->se.dev,
-> +					&port->dev_data->pd_data, &port->pd_list);
-> +	if (ret <= 0)
-> +		return -EINVAL;
+Use asm_inline() to instruct the compiler that the size of asm()
+is the minimum size of one instruction, ignoring how many instructions
+the compiler thinks it is. ALTERNATIVE macro that expands to several
+pseudo directives causes instruction length estimate to count
+more than 20 instructions.
 
-Any reason to reroute every (sane) error code into EINVAL?
+bloat-o-meter reports minimal code size increase
+(x86_64 defconfig, gcc-14.2.1):
 
+  add/remove: 0/0 grow/shrink: 1/0 up/down: 10/0 (10)
+
+	Function                          old     new   delta
+	-----------------------------------------------------
+	__send_ipi_mask                   525     535     +10
+
+  Total: Before=23751224, After=23751234, chg +0.00%
+
+due to different compiler decisions with more precise size
+estimations.
+
+No functional change intended.
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+---
+ arch/x86/include/asm/kvm_para.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm_para.h b/arch/x86/include/asm/kvm_para.h
+index 57bc74e112f2..519ab5aee250 100644
+--- a/arch/x86/include/asm/kvm_para.h
++++ b/arch/x86/include/asm/kvm_para.h
+@@ -38,7 +38,7 @@ static inline long kvm_hypercall0(unsigned int nr)
+ 	if (cpu_feature_enabled(X86_FEATURE_TDX_GUEST))
+ 		return tdx_kvm_hypercall(nr, 0, 0, 0, 0);
+ 
+-	asm volatile(KVM_HYPERCALL
++	asm_inline volatile(KVM_HYPERCALL
+ 		     : "=a"(ret)
+ 		     : "a"(nr)
+ 		     : "memory");
+@@ -52,7 +52,7 @@ static inline long kvm_hypercall1(unsigned int nr, unsigned long p1)
+ 	if (cpu_feature_enabled(X86_FEATURE_TDX_GUEST))
+ 		return tdx_kvm_hypercall(nr, p1, 0, 0, 0);
+ 
+-	asm volatile(KVM_HYPERCALL
++	asm_inline volatile(KVM_HYPERCALL
+ 		     : "=a"(ret)
+ 		     : "a"(nr), "b"(p1)
+ 		     : "memory");
+@@ -67,7 +67,7 @@ static inline long kvm_hypercall2(unsigned int nr, unsigned long p1,
+ 	if (cpu_feature_enabled(X86_FEATURE_TDX_GUEST))
+ 		return tdx_kvm_hypercall(nr, p1, p2, 0, 0);
+ 
+-	asm volatile(KVM_HYPERCALL
++	asm_inline volatile(KVM_HYPERCALL
+ 		     : "=a"(ret)
+ 		     : "a"(nr), "b"(p1), "c"(p2)
+ 		     : "memory");
+@@ -82,7 +82,7 @@ static inline long kvm_hypercall3(unsigned int nr, unsigned long p1,
+ 	if (cpu_feature_enabled(X86_FEATURE_TDX_GUEST))
+ 		return tdx_kvm_hypercall(nr, p1, p2, p3, 0);
+ 
+-	asm volatile(KVM_HYPERCALL
++	asm_inline volatile(KVM_HYPERCALL
+ 		     : "=a"(ret)
+ 		     : "a"(nr), "b"(p1), "c"(p2), "d"(p3)
+ 		     : "memory");
+@@ -98,7 +98,7 @@ static inline long kvm_hypercall4(unsigned int nr, unsigned long p1,
+ 	if (cpu_feature_enabled(X86_FEATURE_TDX_GUEST))
+ 		return tdx_kvm_hypercall(nr, p1, p2, p3, p4);
+ 
+-	asm volatile(KVM_HYPERCALL
++	asm_inline volatile(KVM_HYPERCALL
+ 		     : "=a"(ret)
+ 		     : "a"(nr), "b"(p1), "c"(p2), "d"(p3), "S"(p4)
+ 		     : "memory");
 -- 
-js
-suse labs
+2.49.0
+
 
