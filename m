@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-602608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C6AA87CFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:07:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E704A87D0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C83027A9C96
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA7513B247F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBB126B2B6;
-	Mon, 14 Apr 2025 10:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A23D26E175;
+	Mon, 14 Apr 2025 10:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K3cfMpvF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Evv/3vmQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9A426B08A;
-	Mon, 14 Apr 2025 10:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF1825FA04
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 10:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744625147; cv=none; b=GcvRmY9Y1LuoXoOFR9uY6eeZeiDun+DP08BDv3oX5YKkEOjHqGdVs6OhpaPQ1A1/hSUXWOUdn5rhcUKmyaTdJa3OKJo+DOSrrpwG05ReNv6JhdfWIei7Ci2n3teFO+dEgVGSBMHToaPZrHi7oTH055O05RxKvNbhZgf/hLd6dYg=
+	t=1744625191; cv=none; b=mZrbMXZ5emGloxfAgZ0568f+k0SSCEtZCCdz1G2oFGS9+wzVOPA5IFbgwWjbRF1UnUMDEXM1X8E8eQhOeBfFuJOIPLYvagY4z46UwATmu0OoRg2NRm8hz8xH0UauVO0Evv7jjjLP+d4vAdUFojer6s+i1YBBNvkDj+1xBR+F/JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744625147; c=relaxed/simple;
-	bh=F1AlJoHjOHPtKPHcI1/WRpTs95CH1wV1k4+PVrQlr2o=;
+	s=arc-20240116; t=1744625191; c=relaxed/simple;
+	bh=BiSUzfCDnNgIrJX+isw39+Vro9YCyJ6cdnHsguSEtUc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FgJ/T5F+7eHOSUMusKGXEI2Z3sO6XIAAEbPNPdtY6q9pThdBcpV/ZmgEt7H9OiKlpVD+npqgHavZJQ55eJZYtYfm2e4Iah7Jf9/CLaZbsVqDN7jZlid5DQtHublJo+TeBrLegP3OSAEACJ0s4FNUVMzpL1qLp63C0n29nYMwK5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K3cfMpvF; arc=none smtp.client-ip=198.175.65.19
+	 Content-Type:Content-Disposition:In-Reply-To; b=dOlF851Je1vDsGm/zOXEST7IUCBFG5saJg5ZIL9wYKxrOHAPVBfqI/3XvXbnjhkoysDayW/Q7OHDB7WHT1umariSjrlPWuMSL/YsHN9zKYjVUsAkW9CCHNsaewtUoY1XWNIEh9pBL+YinSSKBfdHD9hcuhoeZpNpU3oCj/1RraE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Evv/3vmQ; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744625145; x=1776161145;
+  t=1744625190; x=1776161190;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=F1AlJoHjOHPtKPHcI1/WRpTs95CH1wV1k4+PVrQlr2o=;
-  b=K3cfMpvFcKHjO8mdAAcugaYkeLpPKbZ8jhr2Cf/CXgmwWcs9XeBLgONp
-   0A8VUGhnWkePA8t6TI2hdXE77d2K4q2rlWw5fmjMt1RmjzNsr0t0Z9Pr7
-   BgsorqJHn9KCy56ohDWCVYLJarPK5YWqDkYPE+s5+xh6G9F49z/+zhfvZ
-   uqY11kHPlipKL1M8gd1zD7RSZw+yjheF04efqsWdgo0kSkrKN1gINYUPx
-   FPo2NnP4PWMg+qaZAp2sfFFXFI98497iQRVrtj7Bmoua5MxFM+AMEPTVD
-   Ob17UP304KDzCWzb+byHfumN0kmjJdgTplOenTZTVBDg/UF+PeRzYcQC5
-   w==;
-X-CSE-ConnectionGUID: e7DNuFipSv6BkpQXkKM35g==
-X-CSE-MsgGUID: bV5/Xli9TVO1N8DFzsEAlA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="45973024"
+  bh=BiSUzfCDnNgIrJX+isw39+Vro9YCyJ6cdnHsguSEtUc=;
+  b=Evv/3vmQE1VoVcZZrRmH5Q62nyNVfzxhyA8NXD+8Ws6IQ1M4Y0WYlFwf
+   LF6VD6YtBus1ft2AnBCI9s5uprNArzuFirM+rJPOwGhXV5wR6Ty0Qx0Ok
+   DnEwT/LT8boVoC2FmV5j3SHqZMvFMgofNOlIuMEcPagld0ML/zK34kCiY
+   0QEVo/12zDBMMopj2SfATtTBm72mjK+ECnLFonzNPyM5lIiUdxhqpxJFI
+   O6DaX6q9/etkZHBe91fFv75/qmDOf0RB/g9x1GXAaLpyye4SElptY6wYM
+   GkoRjMeMzAUVA51Gp6v/WxaCoc6pLaZ5U8u+2M0PbvecteqseKY6b4Jw/
+   A==;
+X-CSE-ConnectionGUID: sktQJ78eQFCU8QIo0WMqHw==
+X-CSE-MsgGUID: LaLexroRQ4iCshhQB7kBzg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="46177331"
 X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="45973024"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 03:05:45 -0700
-X-CSE-ConnectionGUID: SfouxUGlT2SZEPwGuXFLfw==
-X-CSE-MsgGUID: /VoKRjlJQMqY1B8ddPrbmg==
+   d="scan'208";a="46177331"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 03:06:30 -0700
+X-CSE-ConnectionGUID: qTJjutGBRhqLYDoKfDvGew==
+X-CSE-MsgGUID: PSjkCGfHS2ins9CPEqykHw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="152957247"
+   d="scan'208";a="129625952"
 Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 03:05:43 -0700
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 03:06:28 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u4Gh9-0000000CCb3-3buo;
-	Mon, 14 Apr 2025 13:05:39 +0300
-Date: Mon, 14 Apr 2025 13:05:39 +0300
+	id 1u4Ght-0000000CCbZ-3Dmf;
+	Mon, 14 Apr 2025 13:06:25 +0300
+Date: Mon, 14 Apr 2025 13:06:25 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v1 1/1] x86/PCI: Drop 'pci' suffix from intel_mid_pci.c
-Message-ID: <Z_zd88_-lqFFvtnP@smile.fi.intel.com>
-References: <20250407070321.3761063-1-andriy.shevchenko@linux.intel.com>
- <Z_QOAPXsacHI6TZz@gmail.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] coresight: cti: Replace inclusion by struct
+ fwnode_handle forward declaration
+Message-ID: <Z_zeIdZMhF31DL4o@smile.fi.intel.com>
+References: <20250331071453.3987013-1-andriy.shevchenko@linux.intel.com>
+ <28dd049e-65b1-4111-8a24-ba9765bbb1f6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,31 +82,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z_QOAPXsacHI6TZz@gmail.com>
+In-Reply-To: <28dd049e-65b1-4111-8a24-ba9765bbb1f6@linaro.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Apr 07, 2025 at 07:40:16PM +0200, Ingo Molnar wrote:
-> 
-> * Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > CE4100 PCI specific code has no 'pci' suffix in the filename,
-> > intel_mid_pci.c is the only one that duplicates the folder
-> > name in its filename, drop that redundancy.
-> > 
-> > While at it, group the respective modules in the Makefile.
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  MAINTAINERS                                   | 2 +-
-> >  arch/x86/pci/Makefile                         | 6 +++---
-> >  arch/x86/pci/{intel_mid_pci.c => intel_mid.c} | 0
-> >  3 files changed, 4 insertions(+), 4 deletions(-)
-> >  rename arch/x86/pci/{intel_mid_pci.c => intel_mid.c} (100%)
-> 
-> Acked-by: Ingo Molnar <mingo@kernel.org>
+On Mon, Mar 31, 2025 at 02:40:51PM +0100, James Clark wrote:
+> On 31/03/2025 8:14 am, Andy Shevchenko wrote:
 
-Thanks!
-I believe it's Bjorn who is going to apply?
+> Reviewed-by: James Clark <james.clark@linaro.org>
+
+Thank you! Can it be applied now?
 
 -- 
 With Best Regards,
