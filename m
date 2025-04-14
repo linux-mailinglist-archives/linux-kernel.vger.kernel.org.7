@@ -1,172 +1,246 @@
-Return-Path: <linux-kernel+bounces-602166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E7EA877A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:00:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9CCA877AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4471F3ADF6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:00:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECA8F1886555
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3811A2564;
-	Mon, 14 Apr 2025 06:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1933B1A5BBE;
+	Mon, 14 Apr 2025 06:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TlXqQqtI"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jw1zYXRT"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD12B28F4;
-	Mon, 14 Apr 2025 06:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B041728F4;
+	Mon, 14 Apr 2025 06:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744610441; cv=none; b=N+Ue5omNVH9vZbOVU2FJ2sRuv2XdeLTN+Hs9zmnNRFUZUK3OohsKofbo6eORbjVDpbID1+Qw6UAQPCaPEmC1BancykXqWJGfIomqRpudpe8M67rXbE82Ch/Myo5fBgoAuivvTpSWcqQelXA6LPukJ1VMVSil1cx9OqA9Qxu+tm0=
+	t=1744610483; cv=none; b=dZ2sAmTmQfmtrYmf4QshwM8vuLcXJyDyZaMzWdF0c3VXpF2gIYCqToOpel7JveUwFPJUp4POkMBbyX7qQ2rRShS6qLEPp7wb95dwcAgfhpVd+SkKS7SNAG7hCsDJLMPxojSbu6yN5igLYCQWXhBdv06XrMEK0HjNUfxVJ2ZEIXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744610441; c=relaxed/simple;
-	bh=rVZcTwDNqe0ZDhhksVpKMZmXPkNUspEtmilQLlgmpZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=umMX19zqjw2JZ+zuu3UM8jIKPTndksIY+hIuiS763NaFb/4IQfp1vg+wbeT0BWKxTZzuwKDLHEV/iwsKcL+mOgThX5ANm+euL8SsJmoRwx3MY8Fh9EtGolVhSDWBSpMvPCCon56HwDh8B9Lv0gusLy+ePk9Z9jh42B/JivE2MXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TlXqQqtI; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1744610483; c=relaxed/simple;
+	bh=oZAK8zrupjjH+O6tNbwe6KbSyiTI2uGDFByDdDSwCXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SMjPxwAasROPIq2ZjBAlGyF4elLWP7Wc1qvLFNu+2dzq3XVylU8XVt8QEy5qy/ygFk6ghuosC2NYKdsO3KfMazMstH9HEAWIVaXoqohlMvgaBmReDH5L3ULXtCZF5VY13qC1ZY7mbU8d879pdZTV45n/Y4RL2Q9YcE+GHDcGHRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jw1zYXRT; arc=none smtp.client-ip=209.85.219.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5499c5d9691so4168722e87.2;
-        Sun, 13 Apr 2025 23:00:39 -0700 (PDT)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6ecfa716ec1so38718716d6.2;
+        Sun, 13 Apr 2025 23:01:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744610438; x=1745215238; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AcIn03qHBJHK9ZybMtH0fREfD8sLUUq68wtHGB9S3aU=;
-        b=TlXqQqtIpRe7VSZoqqo08pCqRxinBk/sJLzCUNw1sCGE0ODH3zHgNDswFVObKs2CDN
-         CdghX16cXwppnLizxoeKg+2FH7ipeRgfRJEANnktf6s27+pfqdyC3Y4APygkfzzhJgQH
-         FZbZeYV0mGS+u+axYclK26RLMWPmMHFzN4GnNQt/zbWf6tYXwKd9NXLg1NNcDHqUWPf9
-         6YAZW85MfaHTdD852nlBl1MDH8D6Y21BdmIXtDsQsBg2FYvyxuKB9glxg/iK/uQhl6AU
-         HpoTRh7niIhhqQB+R2F/g1VJ9n84Xrztg4dVVOqNkWQxxDwYZL/lZc6342p+9AwbSMaX
-         36yg==
+        d=gmail.com; s=20230601; t=1744610479; x=1745215279; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=L0L1XVEs/40Inqn2wXUAx/QRxfMJixUhrq/LYTX7ULk=;
+        b=Jw1zYXRTtV0/wsSGoVh8sq4HMOwSuBQIMQjOYVzG5d1Oqk8vkvj4Um9O9fRY7+sU8T
+         FHvSfwwhjF7aD78g1n5NmMtd2yR0CzGy6CU4NSR3Cut5cpZDEQRuG1t47V7MC3vNeq1T
+         VsxLAaMVYAo/AiXs7JDx8kE2ILgYzqAdORs3nGiKNsNwGjkyVOw5ZwvzarWXeIzrI2sw
+         HkMksynIFnQRjg2L6BTQE2y3pQ86KPYsHTLl/ygqLyNWsKB2YjI/WAdHKzReKS7zg7ki
+         ixGoYrqLmLd+iYagKUV64fCkNVE0T94d07Z4Qf9IZWCGgTC/8WAcYVP3L4KvKEEa+YFF
+         H20A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744610438; x=1745215238;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AcIn03qHBJHK9ZybMtH0fREfD8sLUUq68wtHGB9S3aU=;
-        b=DQNTkCwP+t6+wLDW0kabBAZAboM9+Y92MYmShzIIxWI5lX5h+fC58pAOfN+2Y5DcZp
-         tmYjH7aV5T2dczAgBFV5agesZ+gUHHoPiAvvtyndTeFckpFOmIm1sB55LpuTC/tc666a
-         Qh9SY1QuqohDOylCyTHmlq0Q17scvZgSARiyHkZZDcQqVRUcAozIyrdq82NuvWjv2auO
-         sRR/sChpfcyqQXah1Y18/MfsV6f5fCuGbaBZGd2KS+1kdL7l77fis9d8laS9ysJkLXVx
-         ACr27SMK4fAI2FfB6ic9tu22VMuOuNbRAQA9jcVAKe4nMiyEkixDVtqCcdSF/xNtIOir
-         GkJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfEeCUQzEf6htz3QJh6EX8G65d3BUXKOJRdxk21OPYQJqXuMJ5EWG383wYgSQcWK3OCTkzPw741lqN@vger.kernel.org, AJvYcCVBDxTbdGeW2S1/XFYDp2rR2DMa5v01lvk3Odx3dS1cxi/wqtMIDhBJFkBNY7vh3QSQ5lujjqnDjJxSNGQW@vger.kernel.org, AJvYcCX3XRBcqYlhFDNK1yiiy9fCEsGktkcPediRqV6aPs80biG/vgaqPf8ObVIhxoz4npm+5YtTT71r8xSC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yytj84AmOnog9z9dlL5d6SikStnwqltHMfUKhEvRpaGIJlWoxFM
-	c4H5zXE7asEO7yGGJD4uzlNfRqEpZeeUIluU0EWW5OhoZL+WNfh+GRdgFQ==
-X-Gm-Gg: ASbGnctYq/8P/dZYvE56oMbSBHSU9rdhJjI6/bYPRzcer41UGcyl61rbKrSN77tvP1i
-	AsmGyGxqwx+/p2uB/b56p55pRzTL4u69dBQzll1hoqZX5Zy179uaIZZIX/flCwiifXCxx0tN/It
-	2L+6dIqPcdubIFWCKjs8eEzlkXI+aP6c9tU97UMbYkeAsXp4HRTwv70aTXIeAQ3EqcotoZNOSHh
-	HZGwypCNiIvFlszu9hTp829zMhWBzdUh6Ts9zGLSdkefxotxv0v45q0ELNQRNqwdSDbh6rg0dR0
-	6MyF3YtH0JAnDoxXuDZAXBq5m4MtGw1Ixw1M8ktd3UFzf9yHKGatsBVqthxnHr17doY5oUyu8ei
-	giL1y0APwcbZ2ocdAfLRWFg==
-X-Google-Smtp-Source: AGHT+IH0cUKTxL25iLjT2ZG9STnoFpV9gLLZyLsXwHIy6uY0/oJbxypUfloa/SLaEw0Worz/jhyBoQ==
-X-Received: by 2002:a05:6512:3503:b0:549:8d07:ff13 with SMTP id 2adb3069b0e04-54d452d9b65mr3046591e87.51.1744610437469;
-        Sun, 13 Apr 2025 23:00:37 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54d3d52037bsm997934e87.241.2025.04.13.23.00.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Apr 2025 23:00:35 -0700 (PDT)
-Message-ID: <ab0fa023-91b6-48de-a71d-95eb9aa70c01@gmail.com>
-Date: Mon, 14 Apr 2025 09:00:34 +0300
+        d=1e100.net; s=20230601; t=1744610479; x=1745215279;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L0L1XVEs/40Inqn2wXUAx/QRxfMJixUhrq/LYTX7ULk=;
+        b=FxriTyLu4pk/Et2bvrysMfbkwksMWIojeXrmWTrlqegrMuiyseKo5hTL8w2AzaBu5I
+         OBDNTBDOPyjPOqlndK56iziKZ1MK4CKB8krhpoIDMjxwW0yg6tRe11qN9QQvcHJbJ2I9
+         SDBygbdAyaAEeRllW23oJMVBVWaHt5ASRKz+cq7sVS22aOu2KeSXCh1ruDaR/kCzoRiD
+         UaP7pNcvz4lAiRFBT8OSM7zLLBwPO1Jl260zy7jJ0ice3ZTev0oxp9QaGstxLooB2nQj
+         5YHD6aj/PXXtsgnrviXdx+3VX6EiArn5Lig/mU9cu2MhEMwMUKUwaYdPy8KK6MZEE5gB
+         bBEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkIT8j1Px90jtoRU4Deb0p7urjFWOFaTz3Qu3enDJfm5GF6Sv+1QqZar4n0ELwUH67h8kf4vQvTmDwGOU=@vger.kernel.org, AJvYcCWGEcQNZviBnK0MybyON8RWOLobmOvUzOgN7PJjrQFnmaLX/mxC1sU/cMTbNeVSzJaD+YhrWdRh@vger.kernel.org, AJvYcCXhS97G9LviOKZtbPb52j9dglaJ8+/IecpZ4Nm/7Tr+ycMvYDov8SeqDzaOUYoHulubFoOL@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlR+PVzT6RwXm6hOzE9wj8viUKVRyCDI29/6dd4pZv2Bl6hcuk
+	2Z3/MeHu7y6lLVW4yraQ6BdpimMYU4IyMO5f0kM9EPH9Ss3IlVzs
+X-Gm-Gg: ASbGncvF8VPE8BPDq+0CuPuvHcBte0mGkEox/WjFT24uYdLPLnJUpaPvXfUqLSGzZbP
+	snXqHdxbaUo9+zK9TlGCCGEF7JYGJjIBIYAUfEGgOrWGYJU6LhT7GcfKNdV3lDCyHY3GXmVM2H+
+	rJ3V8JLOOAxoaa7SzN86SvyeW7W8sqs1GvAWd1uRGLL/WqEXOC7v5n9+vBFQFBg2tl15IxH6ptd
+	I0jEtQv0JaGaHjhtu5Iu9ElQxKTxk5zxDrlpNcv5cIMjHT2dk9QAS/7ChAi+mUoIzUSYk2SBnd+
+	VNMOAU2jF/t8Mobove/jKaoxe8KjZ1kbOJkKOCGtSSxhncGjifl7esdLsK0/ZtVV6ARI5SYGXI2
+	ILBMF4R+akfyZ2FtOT3pOoHAQA2WbhYI=
+X-Google-Smtp-Source: AGHT+IETl7E/+bzwq61cS2fWibUseOcyKaw0dAYo3A+plXELvtQoVtUaR+f6mDLalDZp7TNAsX4tEQ==
+X-Received: by 2002:ad4:5c64:0:b0:6e8:ef80:bcbc with SMTP id 6a1803df08f44-6f230cb9778mr167100666d6.5.1744610479281;
+        Sun, 13 Apr 2025 23:01:19 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c7a8a0de11sm682145785a.101.2025.04.13.23.01.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Apr 2025 23:01:18 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 241701200043;
+	Mon, 14 Apr 2025 02:01:18 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Mon, 14 Apr 2025 02:01:18 -0400
+X-ME-Sender: <xms:rqT8ZyHTy2LBwH2v3_nnp5OCGu6cEzSlURtWJxHEskXZKhcAKl98oA>
+    <xme:rqT8ZzWn2rjwaBl9rg7u_4ZvZXLvVyQGM8PYN7FPvLldyPT_oa0sXuO1wjev7Sxz8
+    yq_xji3SfaEpfFJBQ>
+X-ME-Received: <xmr:rqT8Z8InjznoLs0NWBUPZoHrW4HjnfN722D88fUkDTQBp18iCwIeC1fb7VOogg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvudeljeekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeeggeeukeeghfevudektdevjeehhfekffevueef
+    udeivdelteeltdekheejgfeiveenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
+    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
+    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
+    mhgvpdhnsggprhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+    eplhgvihhtrghoseguvggsihgrnhdrohhrghdprhgtphhtthhopehpvghtvghriiesihhn
+    fhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomh
+    dprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhonhhg
+    mhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprggvhhesmhgvthgrrdgtohhmpd
+    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
+X-ME-Proxy: <xmx:rqT8Z8GlZ0cHY8lIpgu0dp1X1nZKRXI0VadFbxDCvEdIs7LcRm-C4w>
+    <xmx:rqT8Z4W9PO4LnyzNAeAn2XtR96sZpmUdbU1hma1Kc5AlCpIMHnTHUQ>
+    <xmx:rqT8Z_PLpI9zz2SASZvNpjoObvWPwjCr3YIRo_uawWVO-gAiAfDLWA>
+    <xmx:rqT8Z_25CGlTdI6lgz_yaJSqvwdtLsOzq8t6GMQL5qcS6l4oaNZvzQ>
+    <xmx:rqT8Z5VLvXMdMielQ5yr1d1OyMXftwyE5xipADGIHjlEEGi5eZH7pKT5>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 14 Apr 2025 02:01:17 -0400 (EDT)
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Breno Leitao <leitao@debian.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>
+Cc: aeh@meta.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	edumazet@google.com,
+	jhs@mojatatu.com,
+	kernel-team@meta.com,
+	Erik Lundgren <elundgren@meta.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	rcu@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>
+Subject: [RFC PATCH 0/8] Introduce simple hazard pointers for lockdep
+Date: Sun, 13 Apr 2025 23:00:47 -0700
+Message-ID: <20250414060055.341516-1-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 8/8] iio: ti-adc128s052: Drop variable vref
-To: David Lechner <dlechner@baylibre.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1744022065.git.mazziesaccount@gmail.com>
- <db5cb2e1543e03d5a9953faa3934d66f4621cd12.1744022065.git.mazziesaccount@gmail.com>
- <78d17b05-3f0d-4903-afe3-8051d4bd051d@baylibre.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <78d17b05-3f0d-4903-afe3-8051d4bd051d@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/04/2025 16:34, David Lechner wrote:
-> On 4/7/25 6:37 AM, Matti Vaittinen wrote:
->> According to Jonathan, variable reference voltages are very rare. It is
->> unlikely it is needed, and supporting it makes the code a bit more
->> complex.
->>
->> Simplify the driver and drop the variable vref support.
->>
->> Suggested-by: Jonathan Cameron <jic23@kernel.org>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->>
->> ---
-> 
-> ...
-> 
->>   static int adc128_probe(struct spi_device *spi)
->>   {
->>   	const struct adc128_configuration *config;
->> @@ -183,17 +173,12 @@ static int adc128_probe(struct spi_device *spi)
->>   	indio_dev->channels = config->channels;
->>   	indio_dev->num_channels = config->num_channels;
->>   
->> -	adc->reg = devm_regulator_get(&spi->dev, config->refname);
->> -	if (IS_ERR(adc->reg))
->> -		return PTR_ERR(adc->reg);
->> +	adc->vref_mv = devm_regulator_get_enable_read_voltage(&spi->dev,
->> +							   config->refname);
->> +	if (adc->vref_mv < 0)
->> +		return adc->vref_mv;
->>   
->> -	ret = regulator_enable(adc->reg);
->> -	if (ret < 0)
->> -		return ret;
->> -	ret = devm_add_action_or_reset(&spi->dev, adc128_disable_regulator,
->> -				       adc->reg);
->> -	if (ret)
->> -		return ret;
->> +	adc->vref_mv /= 1000;
-> 
-> In other drivers, we've been doing:
-> 
-> ret = devm_regulator_get_enable_read_voltage(...);
-> if (ret < 0)
-> 	return dev_err_probe(dev, ret, "failed to read '%s' voltage, ...);
-> 
-> adc->vref_mv = ret / 1000;
-> 
-> It can be easy to make a typo or forget to specify the voltage when creating
-> a .dts, so I think the error message is helpful to catch that.
+Hi,
 
-Good idea. Thanks.
+This RFC is mostly a follow-up on discussion:
 
-> And we use ret to avoid having adc->vref_mv temporarily holding a
-> value with the wrong units (and can make it have an unsigned type).
+	https://lore.kernel.org/lkml/20250321-lockdep-v1-1-78b732d195fb@debian.org/
 
-I'm not convinced about the benefits. The "temporary holding" is not 
-really an issue as it is only held unmodified for the duration of the 
-error check. Furthermore, converting the voltage unsigned does not add 
-much as the regulator framework does any way return the voltage as integer.
+I found that using a hazard pointer variant can speed up the
+lockdep_unregister_key(), on my system (a 96-cpu VMs), the results of:
 
-Still, even if I am not convinced about the benefits, I don't really see 
-any downsides in your suggestions either :)
+	time /usr/sbin/tc qdisc replace dev eth0 root handle 0x1: mq
 
->>   
->>   	if (config->num_other_regulators) {
->>   		ret = devm_regulator_bulk_get_enable(&spi->dev,
-> 
+are
 
-Yours,
-	-- Matti
+	(without the patchset)
+	real    0m1.039s
+	user    0m0.001s
+	sys     0m0.069s
+
+	(with the patchset)
+	real    0m0.053s
+	user    0m0.000s
+	sys     0m0.051s
+
+i.e. almost 20x speed-up.
+
+Other comparisons between RCU and shazptr, the rcuscale results (using
+default configuration from
+tools/testing/selftests/rcutorture/bin/kvm.sh):
+
+RCU:
+
+	Average grace-period duration: 7470.02 microseconds
+	Minimum grace-period duration: 3981.6
+	50th percentile grace-period duration: 6002.73
+	90th percentile grace-period duration: 7008.93
+	99th percentile grace-period duration: 10015
+	Maximum grace-period duration: 142228
+
+shazptr:
+
+	Average grace-period duration: 0.845825 microseconds
+	Minimum grace-period duration: 0.199
+	50th percentile grace-period duration: 0.585
+	90th percentile grace-period duration: 1.656
+	99th percentile grace-period duration: 3.872
+	Maximum grace-period duration: 3049.05
+
+shazptr (skip_synchronize_self_scan=1, i.e. always let scan kthread to
+wakeup):
+
+	Average grace-period duration: 467.861 microseconds
+	Minimum grace-period duration: 92.913
+	50th percentile grace-period duration: 440.691
+	90th percentile grace-period duration: 460.623
+	99th percentile grace-period duration: 650.068
+	Maximum grace-period duration: 5775.46
+
+shazptr_wildcard (i.e. readers always use SHAZPTR_WILDCARD):
+
+	Average grace-period duration: 599.569 microseconds
+	Minimum grace-period duration: 1.432
+	50th percentile grace-period duration: 582.631
+	90th percentile grace-period duration: 781.704
+	99th percentile grace-period duration: 1160.26
+	Maximum grace-period duration: 6727.53
+
+shazptr_wildcard (skip_synchronize_self_scan=1):
+
+	Average grace-period duration: 460.466 microseconds
+	Minimum grace-period duration: 303.546
+	50th percentile grace-period duration: 424.334
+	90th percentile grace-period duration: 482.637
+	99th percentile grace-period duration: 600.214
+	Maximum grace-period duration: 4126.94
+	
+
+Overall it looks promising to me, but I would like to see how it
+performs in the environment of Breno. Also as Paul always reminds me:
+buggy code usually run faster, so please take a look in case I'm missing
+something ;-) Thanks!
+
+The patchset is based on v6.15-rc1.
+
+Boqun Feng (8):
+  Introduce simple hazard pointers
+  shazptr: Add refscale test
+  shazptr: Add refscale test for wildcard
+  shazptr: Avoid synchronize_shaptr() busy waiting
+  shazptr: Allow skip self scan in synchronize_shaptr()
+  rcuscale: Allow rcu_scale_ops::get_gp_seq to be NULL
+  rcuscale: Add tests for simple hazard pointers
+  locking/lockdep: Use shazptr to protect the key hashlist
+
+ include/linux/shazptr.h  |  73 +++++++++
+ kernel/locking/Makefile  |   2 +-
+ kernel/locking/lockdep.c |  11 +-
+ kernel/locking/shazptr.c | 318 +++++++++++++++++++++++++++++++++++++++
+ kernel/rcu/rcuscale.c    |  60 +++++++-
+ kernel/rcu/refscale.c    |  77 ++++++++++
+ 6 files changed, 534 insertions(+), 7 deletions(-)
+ create mode 100644 include/linux/shazptr.h
+ create mode 100644 kernel/locking/shazptr.c
+
+-- 
+2.47.1
+
 
