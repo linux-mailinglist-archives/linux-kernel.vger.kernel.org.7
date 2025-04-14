@@ -1,144 +1,106 @@
-Return-Path: <linux-kernel+bounces-603075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F608A8833C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:53:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D710A88489
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ADDD1886FE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:50:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F2B6440C96
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673742C0329;
-	Mon, 14 Apr 2025 13:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DAD2918E4;
+	Mon, 14 Apr 2025 13:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFT8Umo7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=helmholz.de header.i=@helmholz.de header.b="OSjUkqt9"
+Received: from www253.your-server.de (www253.your-server.de [188.40.28.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E742C0319;
-	Mon, 14 Apr 2025 13:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DA22741D5;
+	Mon, 14 Apr 2025 13:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.28.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744637396; cv=none; b=Eacb96X0YYZxZN2uYkxXYJIkZbI32YzQs/MlMTD4syBW/a5XZBA+OKtzuG1W4sBFkEz/nkvShFhFmXuiZw8dMuF+61xw4YfrAe5gjkuZWisDYI07X8waXAvjKEOQMJBi/4O2WXe1DXz3rqkUSW/+qjjhvqOraEzrThRcirnY5Iw=
+	t=1744638917; cv=none; b=n6WV/qC1JuTIgEfQpCbLcpx0trTSwDxrQfNtgFIQuBOhCs9yJ72A2zk0ePfnmtoYyi8iIHbL2vCAN7CWGLXh3HHBF7hPFLsc+ljVJIqAXbJdokk5xe9YFOXTf4XBmYu6o4sYxjEWa9jve545rWzYsPZh0pru7Yc6SL2ZVxCXBUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744637396; c=relaxed/simple;
-	bh=/rAY3btrsoSQFDtZJbu9cArnT83eyjCjHHLhGgnTWjA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BvZ6o8qBrKsxIdVadw+7DcnqjY/GsVbOwMhxhBA0oVYPdnD3OX4k4zQZdzYViTXQa5gTniKUKhRtldirTvCSSme0B0SCFK9GB5ElHEhZjbkjwzdJckoepu9TA2VmEcYu90LfXXt8U7zedtARConjv01YLMnFnqxACpWQ4UP7u9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFT8Umo7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30F58C4CEE2;
-	Mon, 14 Apr 2025 13:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744637396;
-	bh=/rAY3btrsoSQFDtZJbu9cArnT83eyjCjHHLhGgnTWjA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jFT8Umo7WPLYSzVivu6o6qGNGmWlHYCW0R3Wtk+r0lMwLpAyF7VHCPeuIe+LJkAUo
-	 5tsDl9ULqnuHTwQlNqpVEr971ya+9VytHt1r+tVRISleNC7XmTkgkugYfmRzUDzHL4
-	 9pKIHrF6x+G3UMYy/xoPA9+k7Zu3hIlo1389IC0+LXsIdbzci74vA3gJ9XiAIMzzx9
-	 RoUfrLpJtr3o0yEAmYXESAU23La5bwAcZoYD5RJPs2fVu7b7mcJ+Ba78fFFeWIpzHK
-	 jzKV13Tq15TehwMWpTpLw/HzEyoe3auLagw02tMyxvPrMLKbYYPKGlrAH2+8qjrRSs
-	 VJkrGNIV3FbcA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Baokun Li <libaokun1@huawei.com>,
-	Jan Kara <jack@suse.cz>,
-	Zhang Yi <yi.zhang@huawei.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Sasha Levin <sashal@kernel.org>,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 30/30] ext4: make block validity check resistent to sb bh corruption
-Date: Mon, 14 Apr 2025 09:28:47 -0400
-Message-Id: <20250414132848.679855-30-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250414132848.679855-1-sashal@kernel.org>
-References: <20250414132848.679855-1-sashal@kernel.org>
+	s=arc-20240116; t=1744638917; c=relaxed/simple;
+	bh=pgNx2sdENX2tGay1fmIECFu/j3ax4mCzVXRE8j5WKxU=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=fr3QBINVVvVz353bWwujoifTIJ6bUbXHC5noCx96RCmsk+6lATz7ZhiqldgAuQEDi6IHjAnuadfgGoVyvhl3gJV7R7vjVbaEr5+a18vWYAHNNPSpVUBEjzUtLg9tmTQsipIMvLRNnjcsdZ5g6aSnnxRGkDMHyX9vg3gpj1QBxDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=helmholz.de; spf=fail smtp.mailfrom=helmholz.de; dkim=pass (2048-bit key) header.d=helmholz.de header.i=@helmholz.de header.b=OSjUkqt9; arc=none smtp.client-ip=188.40.28.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=helmholz.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=helmholz.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=helmholz.de
+	; s=default2501; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=ECoGTVyrfDzehLrz8EMEF8qTYvNgxk0rK5zEaP9773M=; b=OSjUkqt9YejcixAqdz7AIYXVv3
+	yHG/gFtVEV5W1gB+VKs77qsrFhoXOf0df0G5cll7oTa093/8etkoEPXk7ZVZUSCv8C+VF42diTng3
+	EXyE/ukFo87GDSvtVnKo0wlKCYByE3yY9Nvjfdjk44LnKPSEcHPL2ITDOIhgCkqmXAD61B/8wnp9q
+	NrKuEjUIDsNBH8RTw+A+r0gVCXYzybL3BBCMrTj56u3nt/iLd4xCS9qFRtaPTNXncCNO9fSYdh210
+	6CCq7DJ7pY2sjr7ISJ/LE0XYORy8CltwcMItRg43egrkBtTWlXnfB5rKmqvCbFVrkrzUqMeD34dyr
+	msOIB4qw==;
+Received: from sslproxy08.your-server.de ([78.47.166.52])
+	by www253.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <ante.knezic@helmholz.de>)
+	id 1u4JsP-0008n7-04;
+	Mon, 14 Apr 2025 15:29:29 +0200
+Received: from [217.6.86.34] (helo=linuxdev.helmholz.local)
+	by sslproxy08.your-server.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+	(Exim 4.96)
+	(envelope-from <ante.knezic@helmholz.de>)
+	id 1u4JsO-000Eer-1v;
+	Mon, 14 Apr 2025 15:29:28 +0200
+From: Ante Knezic <ante.knezic@helmholz.de>
+To: linux-leds@vger.kernel.org
+Cc: lee@kernel.org,
+	pavel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	corbet@lwn.net,
+	knezic@helmholz.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH 0/3] Add support for WL-ICLEDs from Wurth Elektronik
+Date: Mon, 14 Apr 2025 15:28:48 +0200
+Message-Id: <cover.1744636666.git.knezic@helmholz.com>
+X-Mailer: git-send-email 2.11.0
+X-Authenticated-Sender: knezic@helmholz.com
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27608/Mon Apr 14 10:34:28 2025)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.23
-Content-Transfer-Encoding: 8bit
 
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+From: Ante Knezic <knezic@helmholz.com>
 
-[ Upstream commit ccad447a3d331a239477c281533bacb585b54a98 ]
+This patch adds support for WL-ICLED series of RGB Leds. These LEDs
+are equipped with integrated controller and can be daisy chained to
+arbitrary number of units. The MCU communicates with the first LED
+in series via SPI. Interface can be regular SPI protocol or single
+line only (MOSI connection only) depending on the model.
 
-Block validity checks need to be skipped in case they are called
-for journal blocks since they are part of system's protected
-zone.
+Ante Knezic (3):
+  Documentation: leds: Add docs for Wurth Elektronik WL-ICLED
+  dt-bindings: leds: add binding for WL-ICLED
+  leds: add WL-ICLED SPI driver
 
-Currently, this is done by checking inode->ino against
-sbi->s_es->s_journal_inum, which is a direct read from the ext4 sb
-buffer head. If someone modifies this underneath us then the
-s_journal_inum field might get corrupted. To prevent against this,
-change the check to directly compare the inode with journal->j_inode.
+ .../bindings/leds/leds-wl-icled.yaml          |  88 ++++
+ Documentation/leds/index.rst                  |   1 +
+ Documentation/leds/leds-wl-icled.rst          |  69 +++
+ drivers/leds/Kconfig                          |  10 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-wl-icled.c                  | 406 ++++++++++++++++++
+ 6 files changed, 575 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-wl-icled.yaml
+ create mode 100644 Documentation/leds/leds-wl-icled.rst
+ create mode 100644 drivers/leds/leds-wl-icled.c
 
-**Slight change in behavior**: During journal init path,
-check_block_validity etc might be called for journal inode when
-sbi->s_journal is not set yet. In this case we now proceed with
-ext4_inode_block_valid() instead of returning early. Since systems zones
-have not been set yet, it is okay to proceed so we can perform basic
-checks on the blocks.
-
-Suggested-by: Baokun Li <libaokun1@huawei.com>
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Link: https://patch.msgid.link/0c06bc9ebfcd6ccfed84a36e79147bf45ff5adc1.1743142920.git.ojaswin@linux.ibm.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ext4/block_validity.c | 5 ++---
- fs/ext4/inode.c          | 7 ++++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
-index 87ee3a17bd29c..e8c5525afc67a 100644
---- a/fs/ext4/block_validity.c
-+++ b/fs/ext4/block_validity.c
-@@ -351,10 +351,9 @@ int ext4_check_blockref(const char *function, unsigned int line,
- {
- 	__le32 *bref = p;
- 	unsigned int blk;
-+	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
- 
--	if (ext4_has_feature_journal(inode->i_sb) &&
--	    (inode->i_ino ==
--	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-+	if (journal && inode == journal->j_inode)
- 		return 0;
- 
- 	while (bref < p+max) {
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 67a5b937f5a92..977bd92c77108 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -383,10 +383,11 @@ static int __check_block_validity(struct inode *inode, const char *func,
- 				unsigned int line,
- 				struct ext4_map_blocks *map)
- {
--	if (ext4_has_feature_journal(inode->i_sb) &&
--	    (inode->i_ino ==
--	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-+	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
-+
-+	if (journal && inode == journal->j_inode)
- 		return 0;
-+
- 	if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
- 		ext4_error_inode(inode, func, line, map->m_pblk,
- 				 "lblock %lu mapped to illegal pblock %llu "
 -- 
-2.39.5
+2.48.1
 
 
