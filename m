@@ -1,171 +1,83 @@
-Return-Path: <linux-kernel+bounces-602429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E1AA87AC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:44:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43D5A87AD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C261A3A423E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:44:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB7EA3A6348
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960802620FA;
-	Mon, 14 Apr 2025 08:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6761A268C4C;
+	Mon, 14 Apr 2025 08:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cMY0c5au";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HqYieTUq";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cMY0c5au";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HqYieTUq"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrxgoMrO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFAF25D52D
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 08:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7D01B4234;
+	Mon, 14 Apr 2025 08:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744620217; cv=none; b=WkTbwM8OxOa0f2vA3WmXjy0wLtxhDQ4irgJLocNq6cd0e3jdEVrv5MfdQ5yWJYEmHN6XLhJBGO8FUe+hpY1kxYiar13y6uyBFB3PJXK10eJB10ijnD5p9viFHZJbX+9L01ZhkO/+aDv4fRuOQQQPKE2dT4F0OC+aaY2s/W4W7g0=
+	t=1744620231; cv=none; b=HzmXwEHWU+7JVWV7GavJsKWFGdvRHz/WFVmk4jrpU4FzFlZsxrIHZa4XAya+Sy915jBOrka24RJAfe0oCKnNFBUZYx+Mr5HeLbqbkrWSWdoBxumwyb5OGrKQ8y/ynuLIjMcxoLITYzBaoyJPVVe0Cp6xVdwrcmrJmxOiMWV9uLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744620217; c=relaxed/simple;
-	bh=AwgKm8kvP2a4PUSc9WNl5iIsdlsfHWGIBQqXHjp2bEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s7Qgwv3jJCfrmWtvxF9xV8xR+J8QgTs/Cftw1TU+yQ0pMZSrRjzgjbzVardwyY/xvbcX4EQaKaXlURaFFWx6i6+/nmToEZFp+YtgGufbpFtc0ci+aSNGH4CkOKH+x4o/QZ3JS+7kUUfHlqJ8HJjI8ciflBtz7v9GWaw7ZeAYzNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cMY0c5au; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HqYieTUq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cMY0c5au; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HqYieTUq; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 14AA521228;
-	Mon, 14 Apr 2025 08:43:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744620214;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KvjQtz75tDEkQA+bj18RK+CDB7e9yCet6uptqL/3LjY=;
-	b=cMY0c5auBMELfot1AMzpxdSKzQto7Fz75mz/14AwFhaLvfN9mWLXYSuY/ptfZdxBRz/In+
-	HEB5n7bL1pq5bGjW4b/SNalB6HErDK3iF9k890rgRsygtfcSqj4SK/2jQIHgl/7Aot3xID
-	i9QnCA+QD0hxCdHt3bPc2Cvzth2U9no=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744620214;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KvjQtz75tDEkQA+bj18RK+CDB7e9yCet6uptqL/3LjY=;
-	b=HqYieTUqBvWYaGSd3RFYff42KtgPI/5/sO2135FbcDdjgA/C/15fptT4sBXRGjPLVVyymg
-	uh55axNz4PtavaAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cMY0c5au;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=HqYieTUq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744620214;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KvjQtz75tDEkQA+bj18RK+CDB7e9yCet6uptqL/3LjY=;
-	b=cMY0c5auBMELfot1AMzpxdSKzQto7Fz75mz/14AwFhaLvfN9mWLXYSuY/ptfZdxBRz/In+
-	HEB5n7bL1pq5bGjW4b/SNalB6HErDK3iF9k890rgRsygtfcSqj4SK/2jQIHgl/7Aot3xID
-	i9QnCA+QD0hxCdHt3bPc2Cvzth2U9no=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744620214;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KvjQtz75tDEkQA+bj18RK+CDB7e9yCet6uptqL/3LjY=;
-	b=HqYieTUqBvWYaGSd3RFYff42KtgPI/5/sO2135FbcDdjgA/C/15fptT4sBXRGjPLVVyymg
-	uh55axNz4PtavaAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EC1AA1336F;
-	Mon, 14 Apr 2025 08:43:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eyBvObXK/GccJQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 14 Apr 2025 08:43:33 +0000
-Date: Mon, 14 Apr 2025 10:43:24 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Po-Ying Chiu <charlie910417@gmail.com>
-Cc: peterz@infradead.org, dsterba@suse.com, wqu@suse.com,
-	mhiramat@kernel.org, beckerlee3@gmail.com,
-	linux-kernel@vger.kernel.org, jserv@ccns.ncku.edu.tw
-Subject: Re: [PATCH] rbtree: Fix typo in header comment
-Message-ID: <20250414084324.GA16750@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250412015516.8924-1-charlie910417@gmail.com>
+	s=arc-20240116; t=1744620231; c=relaxed/simple;
+	bh=kZGZJs9fshO2B9a734LtIaqW+UPcDJtnxkAeSsKZ3AI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Gzj01tp3m/un38tJNV97Iwz3lorGzMsjVJKupREBgxUQIka91tc7CgUApev9TBHDikIvTWHFPCXDMHfz/LQBsLkSOgFKZX7Xc5U7JGSYMl1XBr6Yc5wHt84QXBMmnq5wuPnRdXntVYYxD3lzIKs50fxgfSDkJDxjMB0tB5wSxJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrxgoMrO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A47BC4CEED;
+	Mon, 14 Apr 2025 08:43:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744620231;
+	bh=kZGZJs9fshO2B9a734LtIaqW+UPcDJtnxkAeSsKZ3AI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZrxgoMrOHFmHp/hG9gB0087c21Z9w8TyDT407cj7nJ71j4EBewMJ0HovJIuWBuzBh
+	 UhND+TXLi686SSD+3ZWK2xK/Zq1uB5ZBXWCcQUGfrFovJKRnKwCwohUb7M30HE2KXO
+	 Y4GQCY+pr+luDJpPYvsmSxzwyeHYx+D0EMCmmr7zI/VyM51+Q/G5/UYECOtWacnB0l
+	 6NPJy4fegEKqjaht8U6fH/AY6dl5kx8xCOn+zuumANA7SKGnDOixEf9SRsTHluT8Cm
+	 lOHHXTP/Ev61IDVake4Vbhx/kaXbme9zz96KFXcKEo5QcDRZXY1JhxVwehAXxH3nua
+	 f8LouMteO6g2A==
+From: Michael Walle <mwalle@kernel.org>
+To: Saravana Kannan <saravanak@google.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Walle <mwalle@kernel.org>
+Subject: [PATCH net-next v2 0/2] net: ethernet: ti: am65-cpsw: Fix MAC address fetching
+Date: Mon, 14 Apr 2025 10:43:34 +0200
+Message-Id: <20250414084336.4017237-1-mwalle@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250412015516.8924-1-charlie910417@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 14AA521228
-X-Spam-Score: -4.21
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[infradead.org,suse.com,kernel.org,gmail.com,vger.kernel.org,ccns.ncku.edu.tw];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:mid,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 12, 2025 at 09:55:16AM +0800, Po-Ying Chiu wrote:
-> Correct "drammatically" to "dramatically" in the rbtree.h header comment.
-> This improves the readability of the header comment.
-> 
-> Signed-off-by: Po-Ying Chiu <charlie910417@gmail.com>
-> ---
->  include/linux/rbtree.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/rbtree.h b/include/linux/rbtree.h
-> index 8d2ba3749866..78a7a260c36f 100644
-> --- a/include/linux/rbtree.h
-> +++ b/include/linux/rbtree.h
-> @@ -7,7 +7,7 @@
->    linux/include/linux/rbtree.h
->  
->    To use rbtrees you'll have to implement your own insert and search cores.
-> -  This will avoid us to use callbacks and to drop drammatically performances.
-> +  This will avoid us to use callbacks and to drop dramatically performances.
->    I know it's not the cleaner way,  but in C (not in C++) to get
->    performances and genericity...
+MAC addresses can be fetched from a NVMEM device. of_get_mac_address()
+will return EPROBE_DEFER if that device is not available yet. That
+isn't handled correctly by the driver and it will always fall back
+to either a random MAC address or it's own "fetch by fuse" method.
 
-Maybe the paragraph can be rephrased entierely, "drop dramatically
-performances" does not sound right to me.
+Also, if the ethernet (sub)node has a link to the nvmem device,
+it will fail to create a device link as the fwnode parameter isn't
+populated. That's fixed in the first patch.
+
+Michael Walle (2):
+  net: ethernet: ti: am65-cpsw: set fwnode for ports
+  net: ethernet: ti: am65-cpsw: handle -EPROBE_DEFER
+
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c | 26 +++++++++++++-----------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
+
+-- 
+2.39.5
+
 
