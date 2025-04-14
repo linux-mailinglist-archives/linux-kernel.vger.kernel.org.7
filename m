@@ -1,350 +1,134 @@
-Return-Path: <linux-kernel+bounces-603352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B92A886E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:21:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED74A886A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC3EC190822C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:58:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFC251907654
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8772749DB;
-	Mon, 14 Apr 2025 14:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA192741AF;
+	Mon, 14 Apr 2025 14:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="e1MI4oDY"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YrvMUCEu"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CD92749CC
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6EB23D2A9;
+	Mon, 14 Apr 2025 14:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744642654; cv=none; b=Om+xqcLIctKpjb3/cjeEVIU6/zTfpTOJdKYmCQi9OqzZ2Qgfbh9hFwVJnWNMMH8V3+Kgfj9HBXF4skEeBETfivJ5x96szaDTwcXUSrKKwD2rLXnSkMIDXTxcTdVAViKQ3kgHZYaYyRSXwI5FjUCwRmOfH3+2egVF/t7OtO4/FsA=
+	t=1744642688; cv=none; b=icPd0tbixe4BcSOj3q94oYxPdMucn3htUsrqn/vOqt8jGiz2R6xeMA92duZ5ZYzlbrw+CRcvcE9OdOC43e6g5ME0AL0X6tKG4kmpnZlUpTszez69ck3TmEZoSy2+pjAWmKdClkqHFx9VwaDp7zX9IBMB3Q6DbBV0dHe4iQtqiBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744642654; c=relaxed/simple;
-	bh=hnm/oYqQDUMkUrOAAhakj/9hXx1Nt4bMrYxs2saO9t8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IeMsBIHS63b3jOgoyz2OI+V/UALfHMhxRA8VlmKh4sti4kn3qxQe0FzbO0HZ13lI7Jh4NP83XGR4CUu2EZxKQZCmM/orDWnVbYg6SDWvlzgKDEjpm3C2pwEOWCsW+POcRSVK2IvtNXOZsMiqpxoXKqw4caIYtqGCxHvskVT2Zck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=e1MI4oDY; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso33714795e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 07:57:30 -0700 (PDT)
+	s=arc-20240116; t=1744642688; c=relaxed/simple;
+	bh=WpJMrP24Y29R8iyQiFWSEKIjSFDqYx5qk3yQINMuAdc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IJGKPfXt+uEIpIGoFBnKFW47X8kv2UDXDJkd/E6i0JsTfHlz7S0lamjqZeqeNLE7eBBYdPiCAxrE26wC9XbsqtuzoFxTm4pg1zH4iyDmusv40cSUQzdV7CbVVbaIMWW2GLUgq0WfghPLgXqv2eNbVtSBFFrzW0lCQiaB7jMXBhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YrvMUCEu; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3912d2c89ecso4159909f8f.2;
+        Mon, 14 Apr 2025 07:58:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744642649; x=1745247449; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MkFHWdqaWX0QyUTLHCeULo3hti03rOZsj812F135JBg=;
-        b=e1MI4oDYC90ZmNoZ9N8smxZTDtrQeX/MpDS7GCJ4/zc/I5H7tdKoIHa+rkzhvrx+zU
-         Mcd5qqOmtzmPIebkJzzEL8916DSNJdjTVS6vJ+TOJuYEFvTiBC3Jl/dPXnen69iT5xDe
-         ZDyhW41kqRjexVjm8RLhjxJsKKaclxhi4CFgYaH3UQVrkmN5AujP9cGq98KWq4aNlgm+
-         k4sI02KBWolwipDewf1YjHB5MS2DoeeCct+deh4wwQVuaOdF7ObJEoIHmFe9vnhWp4Wc
-         A4ZqoFJfeOIdeCGQB79yYJcH+6LMVeq+R/ChzukTTbgHGYoaNlMCWcHi2oi76XTzrcxn
-         jqHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744642649; x=1745247449;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1744642684; x=1745247484; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MkFHWdqaWX0QyUTLHCeULo3hti03rOZsj812F135JBg=;
-        b=s6rSnV5agO3ORQ7M2FRopyb2oR/U88pWv+qCN9Snc+LD2/fytumC+mGwkmy5xE98/0
-         xPpa92NRbNv1esPUEjnryundgrI6OPguZVCC3RF/GlKoDzjR+GgjR1xKUFXbPogW9/nk
-         8EcHDw89Xb3R+QZSb+5NTH1Ybt7pD2PMPaTyF+Exmfqals3TBKyUHpG2BgWbOtwAUUN3
-         5FbUbFN7WljdLqcrZBfsRPci3ACN00LJWdE+UW3lHx9UwUqFIQ/QOEqth9mOvDOAaEl+
-         xQ4Ho87StPEvTqPc6mjYobRfEBp0SpbcaaEsHP4atAe/fcmyBSFNBnx2ZKv7CSsHgOVM
-         j4tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIo6003DTdYWNlmLzKP937OXZgfh4pC3ItuPNqHmBmWUkKFW589FRPnzpiFR0pJH+70OexcJ+9Vsy98YI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhjGjIKL3RZnWOj41iJLAen+2RHCWV4TVDxYw0v3uODhT6GwuY
-	T11Jjj7Ro9T2Tlxs9YQla/AAD/skoFWeQ5/DbbOTa4djpMGaboHKR4sewHn1Kbg=
-X-Gm-Gg: ASbGncsR16MmkyhleaTMoYYKHSj/hIzKLKchoblc5YTxsOOuE/hLtC1T+j5qbx6f/jR
-	hHvu0C3B8r/TbYjxKcsVTGEfy/5DfXOjXpIldI0NaITyLxBfVCeGwWZc2E9M9ME51CeMu4XrT4j
-	mxn9511vGHS8Zn8g8HBJ/XuyELGNTzEdzurGhoZ7cNG3Pdu4NV7X7A+gdMZ1UIjgoXSozAzHfjQ
-	LVasw7A69FlftLGT87AgEDU7dSifZFYyaD+QLZW9tsZ3ZgbMcIbYdalWW5B8LVoRVN/4uHRlmeb
-	qmzPlwAcpdFeSwuU3AvvD8SxhHtwo0CFGl+lrETU4wyzvIwwcrS4GXCWszPLnk9R0ZEc42B0QZy
-	QJhC6h/o=
-X-Google-Smtp-Source: AGHT+IEaJhoecPlmPXWGKen7dTKN59ocQmLUiBg6r4S0rqVEL6LRINhybBu0P7UQhy/dP7QC7yIQeA==
-X-Received: by 2002:a05:600c:1f11:b0:43b:cf12:2ca5 with SMTP id 5b1f17b1804b1-43f3a93c2f5mr101955755e9.8.1744642649070;
-        Mon, 14 Apr 2025 07:57:29 -0700 (PDT)
-Received: from localhost (p200300f65f13aa0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f13:aa04::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43f20625eeesm181127665e9.11.2025.04.14.07.57.28
+        bh=P6LNIjk4+CQR7WYivVqEj1OTKKERr/w582iehRk3oAk=;
+        b=YrvMUCEu0Oa0WMRIyyonIme88O2iNCC9IFDrGEe1nNV9JZYFyf4MH4W7wvKy+QVpUd
+         x4GbNvz7dqGLc55kfUfTmWJZgotBntMxEazyS6RfMKsLASZt+C4fvnt3+xC69W0d431a
+         57a7ljuXdzCzcNS82xMIQK8k38C60u6FyCztjXypiLXoBL4ts2Kz/tkwr6hI7NrKpCGw
+         RsShnwB4I3k72wvd+keSFh1YVbfBVCwb1rvzcnYWnTJAiC+VPYJfxVEA8AWT4o9inPPK
+         0Pk+IawxcSdmBFgCgCaNMvFKKnU9toUPQUFTDNffHr5bdDOE1ar7ahKeyGuF2qjB8MZT
+         IW9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744642684; x=1745247484;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P6LNIjk4+CQR7WYivVqEj1OTKKERr/w582iehRk3oAk=;
+        b=E62SEFLYrp8MdqIcBjmrEnOlKxI51ySJzInR8SjUPoD/+LCAhBPBwmLWwo5kN0sGYF
+         qth8ccc8lTf5wNObikfgEFIX2lT5MISeKvYEI5x2HSm3Z898R3Gc2jK5PajSOXTHTJjv
+         jk3Ag2BZSLcCCCFokicllzZQWFxFc6ATt7dKVuYPAUf/EHymfWMzj593R6CUqvPgjOxL
+         up8p23fIHVtqdpOh0YiYLDBAtWGp0UqktySmFbfgDTbIwVjFmhEQMs8iBkHuWizMF9fS
+         /SHoMGI4hFv0Tkksf88nfFmbfyPzOwBCrlCRRXn0GWY+ad4KQapIpViASh+Ev5eqwB9R
+         dclw==
+X-Forwarded-Encrypted: i=1; AJvYcCUX/jtV0yVCaOmsQoP4lm/HxZAF1nh0Xyn4f+B3nzpEKwYhMYJt9Gwp4iJ5vqiqLkpoou4bL3laI5mPZKp9TdJH3YE=@vger.kernel.org, AJvYcCW/rk/PVR37BWnCJuZQ9qXD1E97LSHtYw0f6eWjz5oUrrbcwPpXx7TjgFsV30ls6x3ys0TDyKN123hv@vger.kernel.org, AJvYcCW53G4J9YVqKFVvzmLGweRz/qvohylvZ43/mFyfUOWhD/qyAUPQN5NxL0Kej6H13lm8iHlGYVPQRLTg8gsn@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkCwCavg2mFNzExQoGiB5OMKvwgHL7yRqfc7Yg4MDExqj4I9qF
+	Jy7WTZ6BIaO5Bke/7gEoc1ypD8k0burIzrA5mV5FRjBziQsKR8gN
+X-Gm-Gg: ASbGnctv/QlzDZWyv2m4SNFLgQ5rLkmgqWYKEMi1lFPa+UDpgdpIAPxG7wRGgBzb8Ea
+	yME89PVuwYEXCcPE6cyKzhaj9a7OBGsBaaVMFieRb1SQCBWmp1AiUCtCKpCC2mp9d18N5zRF+iM
+	zjXvZS7khBUCgNu6tkjxSAmInXjNx0yyJ6yFgUDLuy8N/Bw2sAeyJEt49naDOBnCVD0S483GPij
+	DeQ3e621cYja4vZhDWEAgFQIEvMTS8pFrdAxEc/XbzgxbCifv3sPiu/pv7YN6+SbXhcwyOjwpXu
+	cjCCLKdLraDGe2PqmhVQ1+e1FsExD7kdL3jwQ9e0hWVNX39kwNZZyVzLFPe3Au3B
+X-Google-Smtp-Source: AGHT+IEPz5C0J8GbuZJl8OnkFachiw/6N2wZesYOBPtnyjvfbgxyv2oJ2wOoDuHtbMr02fQDOmG88Q==
+X-Received: by 2002:a05:6000:18ac:b0:391:2d61:4561 with SMTP id ffacd0b85a97d-39ea51ee713mr9265668f8f.6.1744642684379;
+        Mon, 14 Apr 2025 07:58:04 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:eb55:397c:6c6:e937])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae96bdf9sm11067041f8f.22.2025.04.14.07.58.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 07:57:28 -0700 (PDT)
-Date: Mon, 14 Apr 2025 16:57:26 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Hao Chang <ot_chhao.chang@mediatek.com>
-Cc: Sean Wang <sean.wang@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wenbin Mei <wenbin.mei@mediatek.com>, 
-	Axe Yang <axe.yang@mediatek.com>, Qingliang Li <qingliang.li@mediatek.com>, 
-	Hanks Chen <hanks.chen@mediatek.com>, Chunhui Li <chunhui.li@mediatek.com>, 
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, regressions@lists.linux.dev
-Subject: Re: [PATCH v5 1/1] pinctrl: mediatek: Add EINT support for multiple
- addresses
-Message-ID: <43nd5jxpk7b7fv46frqlfjnqfh5jlpqsemeoakqzd4wdi3df6y@w7ycd3k5ezvn>
-References: <20250322035307.4811-1-ot_chhao.chang@mediatek.com>
- <20250322035307.4811-2-ot_chhao.chang@mediatek.com>
+        Mon, 14 Apr 2025 07:58:03 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 1/4] dt-bindings: phy: renesas,usb2-phy: Add clock constraint for RZ/G2L family
+Date: Mon, 14 Apr 2025 15:57:26 +0100
+Message-ID: <20250414145729.343133-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250414145729.343133-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250414145729.343133-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="w4ospt4bmb4y7he7"
-Content-Disposition: inline
-In-Reply-To: <20250322035307.4811-2-ot_chhao.chang@mediatek.com>
+Content-Transfer-Encoding: 8bit
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
---w4ospt4bmb4y7he7
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 1/1] pinctrl: mediatek: Add EINT support for multiple
- addresses
-MIME-Version: 1.0
+The RZ/G2L family requires two clocks for USB2 PHY, which are already
+defined in the DTSI files. Add a constraint in the DT binding document
+to ensure validation with `dtbs_check`.
 
-Hello,
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-this patch became commit 3ef9f710efcb in v6.15-rc1. It breaks booting a
-mt8365-evk.
+diff --git a/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml b/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
+index af275cea3456..f8d15f239b18 100644
+--- a/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
+@@ -107,6 +107,9 @@ allOf:
+           contains:
+             const: renesas,rzg2l-usb2-phy
+     then:
++      properties:
++        clocks:
++          minItems: 2
+       required:
+         - resets
+ 
+-- 
+2.49.0
 
-With earlycon it's possible to see a null pointer exception:
-
-	[    0.072938] Unable to handle kernel NULL pointer dereference at virtual=
- address 0000000000000002
-	[    0.074101] Mem abort info:
-	[    0.074468]   ESR =3D 0x0000000096000004
-	[    0.074984]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-	[    0.075681]   SET =3D 0, FnV =3D 0
-	[    0.076083]   EA =3D 0, S1PTW =3D 0
-	[    0.076495]   FSC =3D 0x04: level 0 translation fault
-	[    0.077134] Data abort info:
-	[    0.077511]   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
-	[    0.078229]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-	[    0.078891]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-	[    0.079593] [0000000000000002] user address but active_mm is swapper
-	[    0.080426] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-	[    0.081248] Modules linked in:
-	[    0.081656] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.14.0-rc3=
--00113-g3ef9f710efcb #18
-	[    0.082796] Hardware name: MediaTek MT8365 Open Platform EVK (DT)
-	[    0.083594] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=
-=3D--)
-	[    0.084507] pc : mtk_eint_do_init+0x470/0x580
-	[    0.085088] lr : mtk_eint_do_init+0x37c/0x580
-	[    0.085663] sp : ffff80008160b7e0
-	[    0.086098] x29: ffff80008160b850 x28: 0000000000000000 x27: ffff800081=
-2600b0
-	[    0.087040] x26: ffff0000bf9b7a80 x25: ffff0000bf9baac8 x24: ffff0000bf=
-9baac8
-	[    0.087981] x23: 0000000000000000 x22: ffff8000800cebe0 x21: ffff800081=
-47e418
-	[    0.088922] x20: 0000000000000000 x19: ffff0000021be780 x18: 00000000ff=
-ffffff
-	[    0.089863] x17: 0000000000000003 x16: ffff000001832b00 x15: ffff000002=
-1b70e0
-	[    0.090804] x14: 0000000000000001 x13: ffff0000021b70e3 x12: ffff000001=
-832c00
-	[    0.091744] x11: 0000000000000000 x10: ffff800080f11cc0 x9 : ffff800081=
-60b780
-	[    0.092685] x8 : ffff80008160b780 x7 : 0000000000000000 x6 : 00000000ff=
-ffffff
-	[    0.093626] x5 : 0000000000000000 x4 : 0000000000000000 x3 : ffff800080=
-d0dbb0
-	[    0.094567] x2 : 0000000000000000 x1 : ffff800080d53100 x0 : 0000000000=
-000000
-	[    0.095509] Call trace:
-	[    0.095831]  mtk_eint_do_init+0x470/0x580 (P)
-	[    0.096408]  mtk_pctrl_init+0x464/0x4fc
-	[    0.096917]  mtk_pctrl_common_probe+0x30/0x60
-	[    0.097494]  platform_probe+0x68/0xdc
-	[    0.097981]  really_probe+0xbc/0x2c0
-	[    0.098457]  __driver_probe_device+0xcc/0x120
-	[    0.099035]  driver_probe_device+0x3c/0x154
-	[    0.099590]  __device_attach_driver+0xb8/0x140
-	[    0.100179]  bus_for_each_drv+0x88/0xe8
-	[    0.100688]  __device_attach+0xa0/0x190
-	[    0.101197]  device_initial_probe+0x14/0x20
-	[    0.101752]  bus_probe_device+0xb4/0xc0
-	[    0.102261]  device_add+0x554/0x72c
-	[    0.102724]  of_device_add+0x54/0x64
-	[    0.103201]  of_platform_device_create_pdata+0x8c/0x118
-	[    0.103891]  of_platform_bus_create+0x190/0x38c
-	[    0.104491]  of_platform_bus_create+0x1d8/0x38c
-	[    0.105091]  of_platform_populate+0x74/0x108
-	[    0.105656]  of_platform_default_populate_init+0xe8/0x10c
-	[    0.106369]  do_one_initcall+0x60/0x1d4
-	[    0.106879]  kernel_init_freeable+0x210/0x274
-	[    0.107456]  kernel_init+0x20/0x140
-	[    0.107921]  ret_from_fork+0x10/0x20
-	[    0.108400] Code: 14000002 39404265 f9403260 8b170000 (39400802)
-	[    0.109199] ---[ end trace 0000000000000000 ]---
-	[    0.109821] Kernel panic - not syncing: Attempted to kill init! exitcod=
-e=3D0x0000000b
-	[    0.110824] SMP: stopping secondary CPUs
-	[    0.111345] ---[ end Kernel panic - not syncing: Attempted to kill init=
-! exitcode=3D0x0000000b ]---
-
-The problem is that ...
-
-On Sat, Mar 22, 2025 at 11:52:28AM +0800, Hao Chang wrote:
->  int mtk_eint_do_init(struct mtk_eint *eint)
->  {
-> -	int i;
-> +	unsigned int size, i, port, inst =3D 0;
-> +	struct mtk_pinctrl *hw =3D (struct mtk_pinctrl *)eint->pctl;
-> =20
->  	/* If clients don't assign a specific regs, let's use generic one */
->  	if (!eint->regs)
->  		eint->regs =3D &mtk_generic_eint_regs;
-> =20
-> -	eint->wake_mask =3D devm_kcalloc(eint->dev, eint->hw->ports,
-> -				       sizeof(*eint->wake_mask), GFP_KERNEL);
-> -	if (!eint->wake_mask)
-> +	eint->base_pin_num =3D devm_kmalloc_array(eint->dev, eint->nbase, sizeo=
-f(u16),
-> +						GFP_KERNEL | __GFP_ZERO);
-> +	if (!eint->base_pin_num)
->  		return -ENOMEM;
-> =20
-> -	eint->cur_mask =3D devm_kcalloc(eint->dev, eint->hw->ports,
-> -				      sizeof(*eint->cur_mask), GFP_KERNEL);
-> -	if (!eint->cur_mask)
-> -		return -ENOMEM;
-> +	if (eint->nbase =3D=3D 1) {
-> +		size =3D eint->hw->ap_num * sizeof(struct mtk_eint_pin);
-> +		eint->pins =3D devm_kmalloc(eint->dev, size, GFP_KERNEL);
-> +		if (!eint->pins)
-> +			goto err_pins;
-> +
-> +		eint->base_pin_num[inst] =3D eint->hw->ap_num;
-> +		for (i =3D 0; i < eint->hw->ap_num; i++) {
-> +			eint->pins[i].instance =3D inst;
-> +			eint->pins[i].index =3D i;
-> +			eint->pins[i].debounce =3D (i < eint->hw->db_cnt) ? 1 : 0;
-> +		}
-> +	}
-> =20
-> -	eint->dual_edge =3D devm_kcalloc(eint->dev, eint->hw->ap_num,
-> -				       sizeof(int), GFP_KERNEL);
-> -	if (!eint->dual_edge)
-> -		return -ENOMEM;
-> +	if (hw && hw->soc && hw->soc->eint_pin) {
-> +		eint->pins =3D hw->soc->eint_pin;
-> +		for (i =3D 0; i < eint->hw->ap_num; i++) {
-> +			inst =3D eint->pins[i].instance;
-> +			if (inst >=3D eint->nbase)
-> +				continue;
-> +			eint->base_pin_num[inst]++;
-> +		}
-> +	}
-> +
-> +	eint->pin_list =3D devm_kmalloc(eint->dev, eint->nbase * sizeof(u16 *),=
- GFP_KERNEL);
-> +	if (!eint->pin_list)
-> +		goto err_pin_list;
-> +
-> +	eint->wake_mask =3D devm_kmalloc(eint->dev, eint->nbase * sizeof(u32 *)=
-, GFP_KERNEL);
-> +	if (!eint->wake_mask)
-> +		goto err_wake_mask;
-> +
-> +	eint->cur_mask =3D devm_kmalloc(eint->dev, eint->nbase * sizeof(u32 *),=
- GFP_KERNEL);
-> +	if (!eint->cur_mask)
-> +		goto err_cur_mask;
-> +
-> +	for (i =3D 0; i < eint->nbase; i++) {
-> +		eint->pin_list[i] =3D devm_kzalloc(eint->dev, eint->base_pin_num[i] * =
-sizeof(u16),
-> +						 GFP_KERNEL);
-> +		port =3D DIV_ROUND_UP(eint->base_pin_num[i], 32);
-> +		eint->wake_mask[i] =3D devm_kzalloc(eint->dev, port * sizeof(u32), GFP=
-_KERNEL);
-> +		eint->cur_mask[i] =3D devm_kzalloc(eint->dev, port * sizeof(u32), GFP_=
-KERNEL);
-> +		if (!eint->pin_list[i] || !eint->wake_mask[i] || !eint->cur_mask[i])
-> +			goto err_eint;
-> +	}
-> =20
->  	eint->domain =3D irq_domain_add_linear(eint->dev->of_node,
->  					     eint->hw->ap_num,
->  					     &irq_domain_simple_ops, NULL);
->  	if (!eint->domain)
-> -		return -ENOMEM;
-> +		goto err_eint;
-> =20
->  	if (eint->hw->db_time) {
->  		for (i =3D 0; i < MTK_EINT_DBNC_MAX; i++)
-> @@ -523,8 +580,11 @@ int mtk_eint_do_init(struct mtk_eint *eint)
-> =20
->  	mtk_eint_hw_init(eint);
->  	for (i =3D 0; i < eint->hw->ap_num; i++) {
-> +		inst =3D eint->pins[i].instance;
-
-=2E.. here eint->pins is NULL.
-
-> +		if (inst >=3D eint->nbase)
-> +			continue;
-> +		eint->pin_list[inst][eint->pins[i].index] =3D i;
->  		int virq =3D irq_create_mapping(eint->domain, i);
-> -
->  		irq_set_chip_and_handler(virq, &mtk_eint_irq_chip,
->  					 handle_level_irq);
->  		irq_set_chip_data(virq, eint);
-> @@ -534,6 +594,27 @@ int mtk_eint_do_init(struct mtk_eint *eint)
->  					 eint);
-> =20
->  	return 0;
-> +
-> +err_eint:
-> +	for (i =3D 0; i < eint->nbase; i++) {
-> +		if (eint->cur_mask[i])
-> +			devm_kfree(eint->dev, eint->cur_mask[i]);
-> +		if (eint->wake_mask[i])
-> +			devm_kfree(eint->dev, eint->wake_mask[i]);
-> +		if (eint->pin_list[i])
-> +			devm_kfree(eint->dev, eint->pin_list[i]);
-> +	}
-> +	devm_kfree(eint->dev, eint->cur_mask);
-> +err_cur_mask:
-> +	devm_kfree(eint->dev, eint->wake_mask);
-> +err_wake_mask:
-> +	devm_kfree(eint->dev, eint->pin_list);
-> +err_pin_list:
-> +	if (eint->nbase =3D=3D 1)
-> +		devm_kfree(eint->dev, eint->pins);
-> +err_pins:
-> +	devm_kfree(eint->dev, eint->base_pin_num);
-> +	return -ENOMEM;
->  }
->  EXPORT_SYMBOL_GPL(mtk_eint_do_init);
-
-That commit can be cleanly reverted on top of v6.15-rc2 which makes my
-machine boot again.
-
-Best regards
-Uwe
-
-#regzbot introduced: 3ef9f710efcb
-
---w4ospt4bmb4y7he7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmf9IlMACgkQj4D7WH0S
-/k4QXggAgyNLn6ylpjS1KX4hrElozzwTP7V+KDK8Y7CFWkovlKY0pUSCvJ3Ml6jK
-p9JLwHC4fcoPrUSmKfQD5BPvx3DtgFJn3IepDCF8HKGptPE8MFeeq6rUUmVXmvi0
-zIyCxPke3FZVhB7GqYBcWuICz3HgNzDTS0F+nxIs1t4e4gEQFXSpEmwbU0W8mmPv
-c6bcDCJgqNKdJzYeg/reovaX/rtRSy9x0o7BGZLs1RaAp7/ZcjUaDCRv3vXB/OEk
-385Xt4KjxPDUaoIsYHMXoXEQ3ToNST55h+EUWIBrfcVnaehc2HB9PUIOnd6u1cmE
-nCMWuO1KuTJ15lE1ICZPeNnKm4cz1Q==
-=bFBV
------END PGP SIGNATURE-----
-
---w4ospt4bmb4y7he7--
 
