@@ -1,144 +1,112 @@
-Return-Path: <linux-kernel+bounces-603007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CEE1A88290
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:39:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8CAA8827B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C0603BA85C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:35:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 384CF1716E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CEF28A1DE;
-	Mon, 14 Apr 2025 13:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558B6253941;
+	Mon, 14 Apr 2025 13:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjzesvO/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bq7dejzX"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9404728A1D1;
-	Mon, 14 Apr 2025 13:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E404D288C90;
+	Mon, 14 Apr 2025 13:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744637249; cv=none; b=US3JXX2R+mhY6yAJgskHtr+D04IS3XFo1vBGF/cNQKgbaah9S6ZB2OV65c/7zNj4n5+VZDxuvOU9Oe7eYcmGQ5LMNiemKEXNKcYuFou7LxcMRG5OtTZqU9jnNoFqpZyG7wrq3Fzff//KK08RTPxdufkm/pMRgPu4BF3233EmIdY=
+	t=1744637244; cv=none; b=pEOMYGga2riwNWd1phBaHI3G8OI9waFTh6gdbdwJnfPcbB0S4ZX0293FUfYqVvz2RFli212J/qyg3AkdSCK5bHptO3ZhywjGWR9OnMb88aVdJDKfZ0JLn1FcgXQPdIgPSRVpk12KrxW0jlH/d5+59S7NgfaBuvHf9Q2e6IFbLuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744637249; c=relaxed/simple;
-	bh=/2931WUVUnI4kC4vaI7k4sqmVVKEM0lVRVzKtjjdaMQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FNfqg045dzir2JdDgoI6srx3bTJPxwbLKVLxMXbofBTvm7UMuYzPi/negq/2koMbxFYbBXPDuWY9YZ+OmSCrpHlYCeUiM4mrvi57t+NJpaEog0ylh9ua6X2xtokz7OXTUOf8mxViMBqjOkZTP5oGpilZXlKAeDZPith4zwCtM2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WjzesvO/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA2B9C4CEE2;
-	Mon, 14 Apr 2025 13:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744637248;
-	bh=/2931WUVUnI4kC4vaI7k4sqmVVKEM0lVRVzKtjjdaMQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WjzesvO/ycvQB+jWEiEzJlzygmYCcJeSGYC58ZP354ljOSLy7OLtHtwTNK8jMmvSd
-	 1xYghTkrAHO/PeyOPOLgkuxCziOQdwnHV4iXjgAxAHihu4jsugUnEquCqP6d3umlOR
-	 L55BLitB+AQUxA3/pDcmCkriLxQhjBc8GqzLgLqGSopeWwYjRlGfPdUYtI3ATf+KP2
-	 dOGnnwhVWE8pbBx84sr7yDxVYuUsErxO1QPrzfQFDgc7+3qQJmJR6KnziFJorKxI/D
-	 chIaeaFt7iGZG6QGRDfsEvSXJ/5HFt0MlUNLOz/n9Ky3aXycexsvFOEjdIEr3Pljqr
-	 k9y5mEpC2VioA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Baokun Li <libaokun1@huawei.com>,
-	Jan Kara <jack@suse.cz>,
-	Zhang Yi <yi.zhang@huawei.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Sasha Levin <sashal@kernel.org>,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 34/34] ext4: make block validity check resistent to sb bh corruption
-Date: Mon, 14 Apr 2025 09:26:10 -0400
-Message-Id: <20250414132610.677644-34-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250414132610.677644-1-sashal@kernel.org>
-References: <20250414132610.677644-1-sashal@kernel.org>
+	s=arc-20240116; t=1744637244; c=relaxed/simple;
+	bh=LZJSiNjAH6Oa2ChLaKL004LkS+w5IQsL9RmW7A+KpbQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bm2e1HajBwpl99aPTkAcsf38gOTjLWVwRXm69/blLeV5VnDLFFkln4mKlT6HRhugmSAjC5qnGbAg/3Gl/aurtCNYLAOkPj9HsuGwPWM4AAtzomRTjBLhep/oJXMnbj/UtACBxaqsT0XbNLm06fjOxe/6vxujrIkQ5do9saKN37g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bq7dejzX; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30bfc8faef9so41071491fa.1;
+        Mon, 14 Apr 2025 06:27:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744637241; x=1745242041; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l2GarGfA59cCcsifpfMtHE+6H6aD/cbRRsW+VrYAjg8=;
+        b=bq7dejzXw+8dcRpC6N9q4KFFtG+6tZ4ds4sztHbCGsz+SLS64okhU6G7ml4AffXkg7
+         GMXa8qqpbyKWAbvGHITmngokDapbt6paLVp/MmwIwDy7Z1AX1vM8cqslX5LxgvMUuO7p
+         DFtKPUQNgVt9RLjfBDjyDaMsKUVrfT0doHavbouVTZhjUQknXz0jX2+St+5yCnLDNWVX
+         R3oTG7vEqDzEBp7xFlijh5JjOAj5k1MnJqj9R61XNBu4BkpbNh5YrRNqhLp2aZ28DpQF
+         5pEjXmu1lrxe50LfvuTXX3DFx95fdgaQRbj5H4Dsr0lXr5SHRRuCDKZvkzPVLnFwsnrP
+         mVjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744637241; x=1745242041;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l2GarGfA59cCcsifpfMtHE+6H6aD/cbRRsW+VrYAjg8=;
+        b=O7UfSrJxLtIdPtKuzHVTyElR9RN8HtexDzRLifrzJuM6dxKPxh/xFOAa3BPUsWLdMG
+         ffaOMbckeBJcy3KuFEKs4tT6WDXLDaQDercJ3XhNEtjRyVHG00aTyc248/C/wrYpe1Vg
+         D5h/Mw/tTCbJBriCWrPc00zwBOS98BHbMyrc4TNDZlqqxoyQJ4guQfxM8VO3UDcX1KnU
+         9sTjxpq8OWBPI2blnYLUsBQuVx4BMNZ7EgcBSz5KNf8ENga+vDeG7E+1aj8euCt01e/b
+         XZO9+yWyl/G08fxlIabBANBqlLK8utadLTnLvdwOjpLkENMy+P+fEpnBmrz2oc9rZ3hU
+         we1A==
+X-Forwarded-Encrypted: i=1; AJvYcCV9sqNrQaVuZG9ADwU4GCQ2gZ+jL5hBTPGVQzt1fKy9xQk6GOyp6fG0AINyedsW4lGH0j3UQXcNvhz3EBk=@vger.kernel.org, AJvYcCWufq3VKAnExedBNo9XL54ARl7x8bfGuM5BlKJBVfESIZbvVhAUCg+r8eCmDgvUNUQAj4B+VumMGnkPiUeZCNc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0pIWiHeN6rOE91IuBFF1xKXGc9Xt8Vy5KW4L5KRNdSVq7AhgR
+	O1dNKC66Cfo1S2v0vMusRzv5O/VAi25uKesnaBnrCQAiY5PTZbpN1RKuirYFaTRpa/Q9v5VDX+d
+	6SEu4/UEQF7057ypjWTUjtcYoHBs=
+X-Gm-Gg: ASbGncsa481g21BAdns35y/QgDwdW5gaDMAREBXDGprpvYKvyvENcwG500uBIBWcVx9
+	WYcWgJ2N+xKk+mvO+tOCNRxBLwwiYhc8WMixqFkON2Zc8daK4cMNsCowWRvNTS2n0+674ZGqCAA
+	EMZtFSilAOP9uAjSbPUCsOgDCO3tYqoR1cT3yO6Q==
+X-Google-Smtp-Source: AGHT+IElIOolL+iZP0f+Y+BgM95sfaRXz/LuHBUI5ARm+sVv9guruT7fCZ1Q66x3Pby6JWYAylZ00wRHOlSdxvFNl7I=
+X-Received: by 2002:a2e:b88d:0:b0:30b:a8c2:cbd3 with SMTP id
+ 38308e7fff4ca-31049a80428mr46066281fa.28.1744637240405; Mon, 14 Apr 2025
+ 06:27:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.2
-Content-Transfer-Encoding: 8bit
+References: <20250412-b4-container-of-type-check-v2-1-f3cc9934c160@gmail.com> <CANiq72kAYp0Z3VNS=JgApceCXx1OVXMNJJYcm8OnZdToz0zufQ@mail.gmail.com>
+In-Reply-To: <CANiq72kAYp0Z3VNS=JgApceCXx1OVXMNJJYcm8OnZdToz0zufQ@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 14 Apr 2025 09:26:43 -0400
+X-Gm-Features: ATxdqUGOesfZN0UEIar63QO9dKjiC7ZbO0odb_mk10rtxaJFzrOTVMNPZXADc4s
+Message-ID: <CAJ-ks9mrRYkEGJ38tTkDXg0RkSP7K8=wtWBa8y6S3dxDh7ei9A@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: check type of `$ptr` in `container_of!`
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+On Sun, Apr 13, 2025 at 4:31=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Sat, Apr 12, 2025 at 8:16=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
+m> wrote:
+> >
+> > ; diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
+>
+> I am curious, what is the reason for the `;` notation? If is it to
+> avoid issues with the `diff` marker, then I think indenting with 4
+> spaces as usual would work.
 
-[ Upstream commit ccad447a3d331a239477c281533bacb585b54a98 ]
+`b4 prep --check` complains:
+  =E2=97=8F checkpatch.pl: :207: ERROR: Avoid using diff content in the com=
+mit
+message - patch(1) might not work
 
-Block validity checks need to be skipped in case they are called
-for journal blocks since they are part of system's protected
-zone.
-
-Currently, this is done by checking inode->ino against
-sbi->s_es->s_journal_inum, which is a direct read from the ext4 sb
-buffer head. If someone modifies this underneath us then the
-s_journal_inum field might get corrupted. To prevent against this,
-change the check to directly compare the inode with journal->j_inode.
-
-**Slight change in behavior**: During journal init path,
-check_block_validity etc might be called for journal inode when
-sbi->s_journal is not set yet. In this case we now proceed with
-ext4_inode_block_valid() instead of returning early. Since systems zones
-have not been set yet, it is okay to proceed so we can perform basic
-checks on the blocks.
-
-Suggested-by: Baokun Li <libaokun1@huawei.com>
-Reviewed-by: Baokun Li <libaokun1@huawei.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Link: https://patch.msgid.link/0c06bc9ebfcd6ccfed84a36e79147bf45ff5adc1.1743142920.git.ojaswin@linux.ibm.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ext4/block_validity.c | 5 ++---
- fs/ext4/inode.c          | 7 ++++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
-index 87ee3a17bd29c..e8c5525afc67a 100644
---- a/fs/ext4/block_validity.c
-+++ b/fs/ext4/block_validity.c
-@@ -351,10 +351,9 @@ int ext4_check_blockref(const char *function, unsigned int line,
- {
- 	__le32 *bref = p;
- 	unsigned int blk;
-+	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
- 
--	if (ext4_has_feature_journal(inode->i_sb) &&
--	    (inode->i_ino ==
--	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-+	if (journal && inode == journal->j_inode)
- 		return 0;
- 
- 	while (bref < p+max) {
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 4009f9017a0e9..dd1b0118d65aa 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -383,10 +383,11 @@ static int __check_block_validity(struct inode *inode, const char *func,
- 				unsigned int line,
- 				struct ext4_map_blocks *map)
- {
--	if (ext4_has_feature_journal(inode->i_sb) &&
--	    (inode->i_ino ==
--	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-+	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
-+
-+	if (journal && inode == journal->j_inode)
- 		return 0;
-+
- 	if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
- 		ext4_error_inode(inode, func, line, map->m_pblk,
- 				 "lblock %lu mapped to illegal pblock %llu "
--- 
-2.39.5
-
+What do you suggest?
 
