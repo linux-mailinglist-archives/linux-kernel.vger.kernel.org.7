@@ -1,220 +1,169 @@
-Return-Path: <linux-kernel+bounces-603761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2906A88BE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:03:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF6CA88BED
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14055189AEF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:03:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4AEF3B48E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 19:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B8528BAAD;
-	Mon, 14 Apr 2025 19:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C678B28DEE6;
+	Mon, 14 Apr 2025 19:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Z46D+z74";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iyReO/R8";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Z46D+z74";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iyReO/R8"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iqhBsErW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC892820C1
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5884C74
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744657412; cv=none; b=DebpyW2S2K7SiJINzpGdVF7j55yrOsIUXlUB/XVBcmWb7MX2kTUraqCp4jyYB+cg8Ljs1q//jAWd5BOdGxqMxDTO+QUAqmPlDPxISJmw6fHkJ1rMQs7qWl6o0nD6FMNIbBrgEJgr/Qfh9YLGlBvdW/H+exagStynPlWcEX/2eQc=
+	t=1744657480; cv=none; b=Y1LTkLz4iOkalBiRGXjDUaYBeqrj/UmE/U51eDzKBcIC84j3sWyY8AObSCGkWfDGfGaheCnqPfQZJa35Xbhwb/eu4hhn4/epwDqV64ymrpZgeiEfLuZe4LxVJrsOe61xRVE5zYeIY3zUbPpA6fGpB5SidYG2AZ97aLfWA+j2ccs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744657412; c=relaxed/simple;
-	bh=zq+Ja4QSGlRpVAaQiNMkrU7ZKwvVSWJgWhPdSB222zo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rphEsa2duHmeI+teOXUfivsl0wKdmeHFqCKXvi4YQcXKtEbguHCA4+POpm3wATjwlfFWeGvFEHy1mz+jxsEl9zgvHEofa9ttuLP+0Z6wjZVDaX/Mq4GBM2xWsmgW9EbMvMOpolMrirKcrnLC/qCn59jCOn+RRdJFg74gQ5JIJ1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Z46D+z74; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iyReO/R8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Z46D+z74; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iyReO/R8; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 52D7A1F74D;
-	Mon, 14 Apr 2025 19:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744657403;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5WhyLp5Z/xL9J2ArNZxj+5ArhmYPFvUg0sB0dunk0Ck=;
-	b=Z46D+z74SZP4jRLEaDQl73iIS/ter4DcrURR27rVowmB62lSTuAtkes50KFEi737qu+6nN
-	0VaR6+HxOw4R4qMaXu8mXYeYMMm+ZxJ9yRBfEDMrf2+VxLeZV59DBbnyLym0lewrYV7yO6
-	FRC9SHIPh/3usfzdY3N0r56lN25mNPM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744657403;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5WhyLp5Z/xL9J2ArNZxj+5ArhmYPFvUg0sB0dunk0Ck=;
-	b=iyReO/R8FvqA7jGMmxx9HRKUJYlZyPlLR1Z43owEq/4qt7+jfcfQRZXqJ3LTLprfzuyRDe
-	j0sjA0ptHbf6PNDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744657403;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5WhyLp5Z/xL9J2ArNZxj+5ArhmYPFvUg0sB0dunk0Ck=;
-	b=Z46D+z74SZP4jRLEaDQl73iIS/ter4DcrURR27rVowmB62lSTuAtkes50KFEi737qu+6nN
-	0VaR6+HxOw4R4qMaXu8mXYeYMMm+ZxJ9yRBfEDMrf2+VxLeZV59DBbnyLym0lewrYV7yO6
-	FRC9SHIPh/3usfzdY3N0r56lN25mNPM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744657403;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5WhyLp5Z/xL9J2ArNZxj+5ArhmYPFvUg0sB0dunk0Ck=;
-	b=iyReO/R8FvqA7jGMmxx9HRKUJYlZyPlLR1Z43owEq/4qt7+jfcfQRZXqJ3LTLprfzuyRDe
-	j0sjA0ptHbf6PNDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2BBB71336F;
-	Mon, 14 Apr 2025 19:03:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5zh6Cvtb/WetXQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 14 Apr 2025 19:03:23 +0000
-Date: Mon, 14 Apr 2025 21:03:21 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Yangtao Li <frank.li@vivo.com>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: reuse exit helper in btrfs_bioset_init()
-Message-ID: <20250414190321.GF16750@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250414124401.739723-1-frank.li@vivo.com>
+	s=arc-20240116; t=1744657480; c=relaxed/simple;
+	bh=DZJOc6WrSAEY9owB5FQgoe3x+B3vdTe1ADDIMIXhUG4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KaTZsSH2hdJMUse1XRkzqGWSfn0w4GjXI7zyi0LbKeis+L/x1oWPkePgthq/QBmEAcf8MpWcfdcdGFnJu/W8X8Rkuzu6UJ9DNMRvPxVuSzAen2lYtlNFXfN4CfHCRmiRBEQRmh/xKwZ9qKwSSlLeA++n2xnqoT4U0PICpwhv5Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iqhBsErW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53EIUxnP001845
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:04:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OETJdvcRlTDOC3wxrm7MGgDibXakzm2Chi5+CwgMXn0=; b=iqhBsErWeoSHj9J/
+	E045fLrifvanLVRlAnodQyBohn4gGtolujIB2SUUzOB1CPk7IVZSQYJLnzv/sIky
+	T2iI/EjCTc12ZsEw3TC+51CCdKIZky4cIvuF0PxxWJ1QdEfyWQMEx5WISqWTozZR
+	rM11Ayg53i2c/y79QoXyGCeXXJCYsmEuQEnjWeFN86mEyLl/iwqpWJJJcrfgGAR6
+	qGCdp3F3nWKNtGwdcWxpsSuW2WJBas6WpIyhrCDp1YII3DT/ZEGP1MKE8ClU1gvI
+	E2U7vHGHi4J8dcbvE3dPLT6pWrPt/zwGTj7+8T2WshytoyYsSToeth72Ba53alWO
+	gvdZZQ==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ydhq5t31-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 19:04:37 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e905e89798so73623146d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 12:04:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744657476; x=1745262276;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OETJdvcRlTDOC3wxrm7MGgDibXakzm2Chi5+CwgMXn0=;
+        b=C579GWTlm5XY7MS5KGBgUV+DA14nDxbhYiur9Tz5ocU+XJtVlLDZT1I0IDeW3kgAag
+         JjK6xQoIeJ2zhCJjYXGFqFGMtWd+ftl3r6dffyVl0GHjV6bKY0Byp3llOqXN/NSpYMDn
+         wC+w2F1HDKF8VrgnHnsr5RTZ5E1t189G5PUYo/9KHQlbYDV1vmj/zoL7bAFyZNUOgzO/
+         +IUtl2pbqc1gC+9kLR8ThTPHs4qyCVr8TUKr5b0+WcQauLR9AamwdzlHAMy+Ig+AFoZw
+         3EbciVRGVZWRcNtj+kItuCzPLOxuCmYOH4qofLfZULRtpRlPwxZjilMZskKUUlqr9c4O
+         F9gA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvHzs/plGnwfjvww6x0oYF9IhNtZStThneiEyDSCJBtGTBr0NWg7lfu4WMyXKc8fdRYQM2Bg8GvUJCF4g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+51bGp0aUvKjAjI3Y1zkDe9MA18hzaxnZCZCjtF/JXKlNRfW0
+	sKtIsx5RAwPriUbgVxZZXbzaJTWoXyb/agE/7eWuBd9itOrsKDLBwGknuQdqm3qn3yADBZSFACX
+	wHRn4Qb0dQMBJmI23z3WejrTr44dwxtVUtP//ZqjlLjq4q9PZk8Lr8+cjSTZiDSz7uQJypTgjdl
+	veX1XHOAo0EYwiUHjPTADriSjJTnUDm7uwQnE3Mg==
+X-Gm-Gg: ASbGncvDKCcbOgi8h2nZkpiPL24nn/5eaAn69ENlX0aUDQZj/a2W92BwsxFpdbAczkT
+	4QgWevDUaEmRAIfNxphG5qCP63RhRzDTN9OSs+yaHroo6otZm6kU6T8fmpcBbY4tPV9MezkA=
+X-Received: by 2002:ad4:5aac:0:b0:6e8:f945:ec5 with SMTP id 6a1803df08f44-6f230d9f19dmr188264976d6.24.1744657476366;
+        Mon, 14 Apr 2025 12:04:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGzelK//k2TwD46eVAuZhiJNjDOOOFl3EoM1T+XqSjz0DyaIMYpfLn3sF+Nm6yY82gIZ0h6m/EK/PQS4Vwle6I=
+X-Received: by 2002:ad4:5aac:0:b0:6e8:f945:ec5 with SMTP id
+ 6a1803df08f44-6f230d9f19dmr188264526d6.24.1744657475883; Mon, 14 Apr 2025
+ 12:04:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414124401.739723-1-frank.li@vivo.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Score: -4.00
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20250414-restricted-pointers-net-v1-0-12af0ce46cdd@linutronix.de> <20250414-restricted-pointers-net-v1-4-12af0ce46cdd@linutronix.de>
+In-Reply-To: <20250414-restricted-pointers-net-v1-4-12af0ce46cdd@linutronix.de>
+From: Loic Poulain <loic.poulain@oss.qualcomm.com>
+Date: Mon, 14 Apr 2025 21:04:25 +0200
+X-Gm-Features: ATxdqUFggdvW0Cci0Y7dRfrjAmK6JyGKc4MbfrCN7JALN63x-K56mHIpeth7yd4
+Message-ID: <CAFEp6-26mFztO-AfGrL0cScGFMR5Z3Sp1KOsUvH_FoJfK+8q2w@mail.gmail.com>
+Subject: Re: [PATCH net-next 4/7] wifi: wcn36xx: Don't use %pK through printk
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Jeff Johnson <jjohnson@kernel.org>, Loic Poulain <loic.poulain@linaro.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Francesco Dolcini <francesco@dolcini.it>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+        ath10k@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ath11k@lists.infradead.org, ath12k@lists.infradead.org,
+        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-ORIG-GUID: JRs0yp8VSGvjOjNpK_4K3lEI2y0CMeQT
+X-Authority-Analysis: v=2.4 cv=C7DpyRP+ c=1 sm=1 tr=0 ts=67fd5c45 cx=c_pps a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=ZS808JPYK9pMg9uJusAA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-GUID: JRs0yp8VSGvjOjNpK_4K3lEI2y0CMeQT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-14_07,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=977
+ priorityscore=1501 suspectscore=0 clxscore=1015 spamscore=0 bulkscore=0
+ impostorscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504140138
 
-On Mon, Apr 14, 2025 at 06:44:01AM -0600, Yangtao Li wrote:
-> As David Sterba said before:
-> 
->   This is partially duplicating btrfs_delayed_ref_exit(), I'd rather reuse
->   the exit helper.
-> 
->   I've checked if this can be done elsewhere, seems that there's only one
->   other case btrfs_bioset_init(), which is partially duplicating
->   btrfs_bioset_exit(). All other init/exit functions are trivial and
->   allocate one structure. So if you want to do that cleanup, please update
->   btrfs_bioset_init() to the preferred pattern. Thanks.
+On Mon, Apr 14, 2025 at 10:27=E2=80=AFAM Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> In the past %pK was preferable to %p as it would not leak raw pointer
+> values into the kernel log.
+> Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
+> the regular %p has been improved to avoid this issue.
+> Furthermore, restricted pointers ("%pK") were never meant to be used
+> through printk(). They can still unintentionally leak raw pointers or
+> acquire sleeping looks in atomic contexts.
+>
+> Switch to the regular pointer formatting which is safer and
+> easier to reason about.
+> There are still a few users of %pK left, but these use it through seq_fil=
+e,
+> for which its usage is safe.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 
-Please write the changelogs as standalone text without the references or
-copied text from some suggestions.
+Acked-by:  Loic Poulain <loic.poulain@oss.qualcomm.com>
 
-Mentions, credits or Suggested-by make most sense if there's some
-groundbreaking idea implemented and not mentioning the author would be
-percieved as stealing it. Otherwise, suggestions are part of the
-review process and should be transformed into useful text in the
-changelog.
-
-> So let's convert it.
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
 > ---
->  fs/btrfs/bio.c | 30 +++++++++++++-----------------
->  1 file changed, 13 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
-> index 8c2eee1f1878..f6f84837d62b 100644
-> --- a/fs/btrfs/bio.c
-> +++ b/fs/btrfs/bio.c
-> @@ -892,6 +892,14 @@ void btrfs_submit_repair_write(struct btrfs_bio *bbio, int mirror_num, bool dev_
->  	btrfs_bio_end_io(bbio, errno_to_blk_status(ret));
->  }
->  
-> +void __cold btrfs_bioset_exit(void)
-> +{
-> +	mempool_exit(&btrfs_failed_bio_pool);
-> +	bioset_exit(&btrfs_repair_bioset);
-> +	bioset_exit(&btrfs_clone_bioset);
-> +	bioset_exit(&btrfs_bioset);
-> +}
-
-This function is public and you don't need to move it.
-
-> +
->  int __init btrfs_bioset_init(void)
->  {
->  	if (bioset_init(&btrfs_bioset, BIO_POOL_SIZE,
-> @@ -900,29 +908,17 @@ int __init btrfs_bioset_init(void)
->  		return -ENOMEM;
->  	if (bioset_init(&btrfs_clone_bioset, BIO_POOL_SIZE,
->  			offsetof(struct btrfs_bio, bio), 0))
-> -		goto out_free_bioset;
-> +		goto out;
->  	if (bioset_init(&btrfs_repair_bioset, BIO_POOL_SIZE,
->  			offsetof(struct btrfs_bio, bio),
->  			BIOSET_NEED_BVECS))
-> -		goto out_free_clone_bioset;
-> +		goto out;
->  	if (mempool_init_kmalloc_pool(&btrfs_failed_bio_pool, BIO_POOL_SIZE,
->  				      sizeof(struct btrfs_failed_bio)))
-> -		goto out_free_repair_bioset;
-> +		goto out;
->  	return 0;
->  
-> -out_free_repair_bioset:
-> -	bioset_exit(&btrfs_repair_bioset);
-> -out_free_clone_bioset:
-> -	bioset_exit(&btrfs_clone_bioset);
-> -out_free_bioset:
-> -	bioset_exit(&btrfs_bioset);
-> +out:
-> +	btrfs_bioset_exit();
->  	return -ENOMEM;
->  }
-> -
-> -void __cold btrfs_bioset_exit(void)
-> -{
-> -	mempool_exit(&btrfs_failed_bio_pool);
-> -	bioset_exit(&btrfs_repair_bioset);
-> -	bioset_exit(&btrfs_clone_bioset);
-> -	bioset_exit(&btrfs_bioset);
-> -}
-> -- 
-> 2.39.0
-> 
+>  drivers/net/wireless/ath/wcn36xx/testmode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/wireless/ath/wcn36xx/testmode.c b/drivers/net/wi=
+reless/ath/wcn36xx/testmode.c
+> index e5142c052985ddf629b93d7b9687e6ba63a48e8b..d7a2a483cbc486308032709a9=
+9bba9a52ed0ff59 100644
+> --- a/drivers/net/wireless/ath/wcn36xx/testmode.c
+> +++ b/drivers/net/wireless/ath/wcn36xx/testmode.c
+> @@ -56,7 +56,7 @@ static int wcn36xx_tm_cmd_ptt(struct wcn36xx *wcn, stru=
+ct ieee80211_vif *vif,
+>         msg =3D buf;
+>
+>         wcn36xx_dbg(WCN36XX_DBG_TESTMODE,
+> -                   "testmode cmd wmi msg_id 0x%04X msg_len %d buf %pK bu=
+f_len %d\n",
+> +                   "testmode cmd wmi msg_id 0x%04X msg_len %d buf %p buf=
+_len %d\n",
+>                    msg->msg_id, msg->msg_body_length,
+>                    buf, buf_len);
+>
+>
+> --
+> 2.49.0
+>
+>
 
