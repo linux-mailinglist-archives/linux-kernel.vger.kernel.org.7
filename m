@@ -1,91 +1,148 @@
-Return-Path: <linux-kernel+bounces-602265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17C5A878AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:26:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630A2A878C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C7693B0F11
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:26:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901FC18903F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866C32580ED;
-	Mon, 14 Apr 2025 07:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818791B3929;
+	Mon, 14 Apr 2025 07:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvkA14uf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Ov8XkArb"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA2B148832;
-	Mon, 14 Apr 2025 07:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A219B86344;
+	Mon, 14 Apr 2025 07:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744615607; cv=none; b=LrV8LDOu34Z3vdMo4Om46kBDLBEjXtQjXmKNUou/y8sKHionGhJzuH5CrzvcbtUjb6xrKwTsP93fDni2fNjXxwyEuohTBn3Pvnj0N6OMXiSvqvSmavcbMnRaQ+1abBBFXcvG6Hhx3iid2jKQC850c4DLoX7Mb0yXNDYtSTj5uyU=
+	t=1744615864; cv=none; b=iWrCYR9liXP0TDrU700jo4GhFnXWE/yBbI219UY6iBajzB5UzjTgw7frKDqp/dIH4wR1JT7O+8glbXk4tGpIZFr6gNOUgKYfVJTSwaDXxOtPUYa5rNI8o5UWWMXger6glNYoi+6fL4VINx26RuKUmjJ5AyJS16KegFwsZM66DKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744615607; c=relaxed/simple;
-	bh=B5aWKWH2FORQFNpAWOtD5r+9LPdCnzGQZHEkjywxDVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ILCg7dtelAkXkDDWibtaAHnLR6h/jqqC2Hw3hmvR/sHm/pDAMRfYcKQcBCA7YuFgc5OW29AqnrrkXxlLSgvVleTUStFrx+nw8z3oohUmxb/BYN7jVoyLHTwUKTIfstD/uNqWMh7HoWZ+emK42VR3IVqduYVTTCCsXv8U/VJN/Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvkA14uf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0DB1C4CEE2;
-	Mon, 14 Apr 2025 07:26:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744615606;
-	bh=B5aWKWH2FORQFNpAWOtD5r+9LPdCnzGQZHEkjywxDVw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XvkA14ufc5R0yibMxePJMAuvTCUdkfjLaz+u1o1kazGDjsXZVnin8IklNLq6t9t6Q
-	 j4629ZES7tetWbWjxK4CtZnr/79RrZQIKyYIH6OvFM6Og+9IWGSizuRQN99jzIf4s+
-	 hI5FOaCQ+TxFm5nfYsm39ZfXLxw4DBaFMbWaTRQtqZmVPeiab2pN1dSPHgBcCg2iIe
-	 YrT88ukt5bElpzx9Uybz69OTYlQVroXxLU0KkdwTBpIImf792PELU/0fg8/ibG/Dkh
-	 aC947MFroRYdqEDVsDbHKJV1JA0CQkqBvJGAT5C8aFS2hvoh4tEcObmf0EvwqjW1NN
-	 Sbx/eoo2HIOng==
-Date: Mon, 14 Apr 2025 09:26:42 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Sugar Zhang <sugar.zhang@rock-chips.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	kernel@collabora.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH v2 05/11] ASoC: dt-bindings: add schema for rockchip SAI
- controllers
-Message-ID: <20250414-xanthic-tortoise-of-experiment-dcbfda@shite>
-References: <20250410-rk3576-sai-v2-0-c64608346be3@collabora.com>
- <20250410-rk3576-sai-v2-5-c64608346be3@collabora.com>
+	s=arc-20240116; t=1744615864; c=relaxed/simple;
+	bh=J5T5W0NJLy8lDsH4lewzVbpxAHn03oE/y6l8dOkaqOg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H4ASUrzeXpHb6lmwe5kMdKQBoO0h9A63PHDYRm/TR6QijybNHSz81LjhiAix09gOLtfqXwPOWAK7pVEwgPsaP9ur2kIcE7yNTkTnOhlJH4t733yiXLiIMiMo5VFPw3hhCPUvwVlytouX57x+TVbFSbNBl+p9xfSKYI9v5mz2IOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Ov8XkArb; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=vEgQw4Oeh0QWFwliFzc7dalA4Bm+0n5fXz5F6FYvZqM=; b=Ov8XkArbr9XmCTfO400l0lXI5h
+	Vm8AVuIA9VvF7xGsbmxrBIvZs/LsGC+NwwHi49LN00REb73Qj1EceSuoQT1zmzXee9penmNUcJnV3
+	RotzY8UC+jwnC55zzItWfD1/ykelnhWEkDaphrcmEYtx8W76zeeru1AdAbYsHaAhaJzSv0GzBDndm
+	J5PtSpaNmQORvtKQ9/TVqgWZ0Iav9tZrhX+8nN7yTbWW96O/YCnJ37VQkaHW+3B35k+yd4mER3Rxy
+	evzVNhBrZXo7u9DaMoGov41ijQOW93qjeQylVqVrzUjftpH4z6jcMrePkz3qmCEUTdmUuYmGN1AVM
+	s3pgzcMQ==;
+Received: from 114-44-251-90.dynamic-ip.hinet.net ([114.44.251.90] helo=gavin-HP-Z840-Workstation..)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1u4EH2-00GG91-A1; Mon, 14 Apr 2025 09:30:32 +0200
+From: Gavin Guo <gavinguo@igalia.com>
+To: linux-mm@kvack.org,
+	akpm@linux-foundation.org
+Cc: willy@infradead.org,
+	ziy@nvidia.com,
+	linmiaohe@huawei.com,
+	hughd@google.com,
+	revest@google.com,
+	kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] mm/huge_memory: fix dereferencing invalid pmd migration entry
+Date: Mon, 14 Apr 2025 15:27:37 +0800
+Message-ID: <20250414072737.1698513-1-gavinguo@igalia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250410-rk3576-sai-v2-5-c64608346be3@collabora.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 10, 2025 at 09:39:57PM GMT, Nicolas Frattaroli wrote:
-> Rockchip introduced a new audio controller called the "Serial Audio
-> Interface", or "SAI" for short, on some of their newer SoCs. In
-> particular, this controller is used several times on the RK3576 SoC.
-> 
-> Add a schema for it, with only an RK3576 compatible for now. Other SoCs
-> may follow as mainline support for them lands.
-> 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->  .../bindings/sound/rockchip,rk3576-sai.yaml        | 144 +++++++++++++++++++++
->  MAINTAINERS                                        |   6 +
->  2 files changed, 150 insertions(+)
+When migrating a THP, concurrent access to the PMD migration entry
+during a deferred split scan can lead to a page fault, as illustrated
+below. To prevent this page fault, it is necessary to check the PMD
+migration entry and return early. In this context, there is no need to
+use pmd_to_swp_entry and pfn_swap_entry_to_page to verify the equality
+of the target folio. Since the PMD migration entry is locked, it cannot
+be served as the target.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+BUG: unable to handle page fault for address: ffffea60001db008
+CPU: 0 UID: 0 PID: 2199114 Comm: tee Not tainted 6.14.0+ #4 NONE
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+RIP: 0010:split_huge_pmd_locked+0x3b5/0x2b60
+Call Trace:
+<TASK>
+try_to_migrate_one+0x28c/0x3730
+rmap_walk_anon+0x4f6/0x770
+unmap_folio+0x196/0x1f0
+split_huge_page_to_list_to_order+0x9f6/0x1560
+deferred_split_scan+0xac5/0x12a0
+shrinker_debugfs_scan_write+0x376/0x470
+full_proxy_write+0x15c/0x220
+vfs_write+0x2fc/0xcb0
+ksys_write+0x146/0x250
+do_syscall_64+0x6a/0x120
+entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Best regards,
-Krzysztof
+The bug is found by syzkaller on an internal kernel, then confirmed on
+upstream.
+
+Fixes: 84c3fc4e9c56 ("mm: thp: check pmd migration entry in common path")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gavin Guo <gavinguo@igalia.com>
+---
+ mm/huge_memory.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 2a47682d1ab7..0cb9547dcff2 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3075,6 +3075,8 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+ void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
+ 			   pmd_t *pmd, bool freeze, struct folio *folio)
+ {
++	bool pmd_migration = is_pmd_migration_entry(*pmd);
++
+ 	VM_WARN_ON_ONCE(folio && !folio_test_pmd_mappable(folio));
+ 	VM_WARN_ON_ONCE(!IS_ALIGNED(address, HPAGE_PMD_SIZE));
+ 	VM_WARN_ON_ONCE(folio && !folio_test_locked(folio));
+@@ -3085,10 +3087,18 @@ void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
+ 	 * require a folio to check the PMD against. Otherwise, there
+ 	 * is a risk of replacing the wrong folio.
+ 	 */
+-	if (pmd_trans_huge(*pmd) || pmd_devmap(*pmd) ||
+-	    is_pmd_migration_entry(*pmd)) {
+-		if (folio && folio != pmd_folio(*pmd))
+-			return;
++	if (pmd_trans_huge(*pmd) || pmd_devmap(*pmd) || pmd_migration) {
++		if (folio) {
++			/*
++			 * Do not apply pmd_folio() to a migration entry; and
++			 * folio lock guarantees that it must be of the wrong
++			 * folio anyway.
++			 */
++			if (pmd_migration)
++				return;
++			if (folio != pmd_folio(*pmd))
++				return;
++		}
+ 		__split_huge_pmd_locked(vma, pmd, address, freeze);
+ 	}
+ }
+
+base-commit: a24588245776dafc227243a01bfbeb8a59bafba9
+-- 
+2.43.0
 
 
