@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-602056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F754A875DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 04:35:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 008CBA875C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 04:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AEC51890CD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 02:35:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 168D6188F8B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 02:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05CF1494A9;
-	Mon, 14 Apr 2025 02:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B11B18FC91;
+	Mon, 14 Apr 2025 02:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="PWDQu5Yq"
-Received: from mail-m15590.qiye.163.com (mail-m15590.qiye.163.com [101.71.155.90])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="IgTGUOhq"
+Received: from mail-m19731113.qiye.163.com (mail-m19731113.qiye.163.com [220.197.31.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954BBE571
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 02:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DB1188CB1
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 02:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744598140; cv=none; b=LHVkWE3L19F4RUb7h47frCFSWZOY8wzDHDbhT93pVjGSfT0uh5hCqA9BipIHKpJR+3M2WfmNbSaFXBZjZ1A6YA3Ih9Z+TWYmB2zGzTohMfTVtDZhUVeNIJyjm85fCKQeXtl3LwE1l58o9UeNECkP+r4JGb5BHMO2e9tB5xlKrJY=
+	t=1744596604; cv=none; b=PPmsZ14rYewhVC8GRJzqEs1/GtNa71NiiQoaINlRRzUQoQEEZLwsHmkS5JrUabPZWnP5UB7jN4WMJR7wM9sJdVDCkIsnPS/rxOkrshFo9OHSdI9KaHgZ8yN4udBB/hFwOF5Iif0/k+LXknKtrUtNucXmQvISptCsjBr93Hd/x3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744598140; c=relaxed/simple;
-	bh=46XAbl9MsJrpu0/2atPcNG31CSZYtlA93xWdPwEVDkc=;
+	s=arc-20240116; t=1744596604; c=relaxed/simple;
+	bh=yyDCYP2eZKKMjOqeaVbEHO2AF0CcqqEKK+uSkzU3zSA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=JHahtGOAhx9A86QONydwTDQNCkKcu/iY8JnfTSF1wFeLlvZp8kEFmCdK02fqwD5nUBUnygjBxUIIDG4eMDtIk8LLktlfDUoSvhLuVGi4onuhL76Kl6r+DMeNndACgPYKKsbriVh0aEj42nwoLeYPe+v2tFZtBLzVv8fa310YDpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=PWDQu5Yq; arc=none smtp.client-ip=101.71.155.90
+	 In-Reply-To:Content-Type; b=mMDDy+3/1w57ylYP84A0Cp3720uTPCgfdQvX8eTZrqCaj2nSu9Iwpj2ABoQcCLdfTtZ99v2P2djfoPFSzAEOMIRxkK8SyPn1V2VsiPgDN4TRaIxCyohDN3xOTJikrIb4DHZTUJtYEjrqmUPvQn8jQr5c0U5sqh+3quILUkxxHvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=IgTGUOhq; arc=none smtp.client-ip=220.197.31.113
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 11b9cb942;
-	Mon, 14 Apr 2025 09:20:00 +0800 (GMT+08:00)
-Message-ID: <6b662c34-7a1d-4e07-aaa7-752bc0c7575f@rock-chips.com>
-Date: Mon, 14 Apr 2025 09:20:00 +0800
+	by smtp.qiye.163.com (Hmail) with ESMTP id 11bb22db8;
+	Mon, 14 Apr 2025 09:54:36 +0800 (GMT+08:00)
+Message-ID: <61f0bdc4-1262-4d8e-a358-7f6da94d8a61@rock-chips.com>
+Date: Mon, 14 Apr 2025 09:54:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,11 +42,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] drm/bridge: analogix_dp: drop extra calls to
+Subject: Re: [PATCH 5/7] drm/bridge: analogix_dp: inline
  analogix_dp_prepare_panel()
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 References: <20250401-panel-return-void-v1-0-93e1be33dc8d@oss.qualcomm.com>
- <20250401-panel-return-void-v1-1-93e1be33dc8d@oss.qualcomm.com>
+ <20250401-panel-return-void-v1-5-93e1be33dc8d@oss.qualcomm.com>
 Content-Language: en-US
 Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
  andrzej.hajda@intel.com, dri-devel@lists.freedesktop.org,
@@ -55,101 +55,108 @@ Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
  neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, rfoss@kernel.org,
  simona@ffwll.ch, tzimmermann@suse.de
 From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <20250401-panel-return-void-v1-1-93e1be33dc8d@oss.qualcomm.com>
+In-Reply-To: <20250401-panel-return-void-v1-5-93e1be33dc8d@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRhNSlZCHhgaQxhOSBlCH0tWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh9JSFZMTx1JQkMeS01JHUtWFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
 	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a9631e1bfb403a3kunm11b9cb942
+X-HM-Tid: 0a9632016ba503a3kunm11bb22db8
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Kwg6Fxw5OjIDLC4NTxw6KDIs
-	IglPCkNVSlVKTE9PTkJITUtKQ09NVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFIQ0JNNwY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6N1E6SSo6DDJJPC4rHigXTz0T
+	IyswCj9VSlVKTE9PTkJOTUxMTklIVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFPSk5PNwY+
 DKIM-Signature:a=rsa-sha256;
-	b=PWDQu5YqPF1XeNhsR+IW7rTbu91p2McyotfPxrjfiqQuJeuhN+4kuCmiEXKXfqGOd18Qf/Ru6LCJIxgp6s1JBrmZscb78w0xwMdBhrOOCnQ0KFs5ptBRvCOTzKc1VL9Ig/hooslZgz2WisstwU+VLQn7K6JvMiKFtDTgdo30goE=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=YaobMm8o+70LNUX6WDcV+2R5nfMUxLQHI1fhk+wAPpU=;
+	b=IgTGUOhqyj/JFnSgt6LJHfOOmO3iU3p8jhBisDLCXW9gBCVRRmJtjMfCB3b6dZ1/NZytO4hFh/gNi8K0RjRovQW6jujsFyaUTq3r5opa562HnZzzgCWFM35gLCNuN+5/Fqxt0RaBAimPUD87yuBUD2fheEIIy7cxDuL4X58XEo8=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=Pn2juoFybSlR3t4mOBSpwjTiKo1IYUX0ygf0WJGwj9k=;
 	h=date:mime-version:subject:message-id:from;
 
 Hi Dmitry,
 
 On 2025/4/1 13:11, Dmitry Baryshkov wrote:
-> The analogix_dp_prepare_panel() returns immediately if there is no
-> attached panel. Drop several calls to this function which are performed
-> when dp->plat_data->panel is NULL.
+> The analogix_dp_prepare_panel() is now only calling a corresponding
+> drm_panel function. Inline it to simplify the code.
 > 
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > ---
->   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 22 +---------------------
->   1 file changed, 1 insertion(+), 21 deletions(-)
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 43 +++++-----------------
+>   1 file changed, 10 insertions(+), 33 deletions(-)
 > 
 > diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> index 042154e2d8ccd74ac2dc27fe527e810a50e08a09..ab1cfc340aa95bbf13fe021bd33227b565a5458d 100644
+> index 1ec4d277fe6bb03ad9eb8451ae2af5ad5ada0978..f60068011008482f7b7b2edfcab5fb1b3e9e130f 100644
 > --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 > +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -1005,17 +1005,11 @@ static int analogix_dp_get_modes(struct drm_connector *connector)
->   {
->   	struct analogix_dp_device *dp = to_dp(connector);
->   	const struct drm_edid *drm_edid;
-> -	int ret, num_modes = 0;
-> +	int num_modes = 0;
->   
->   	if (dp->plat_data->panel) {
->   		num_modes += drm_panel_get_modes(dp->plat_data->panel, connector);
->   	} else {
-> -		ret = analogix_dp_prepare_panel(dp, true, false);
-> -		if (ret) {
-> -			DRM_ERROR("Failed to prepare panel (%d)\n", ret);
-> -			return 0;
-> -		}
-> -
->   		drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
->   
->   		drm_edid_connector_update(&dp->connector, drm_edid);
-> @@ -1024,10 +1018,6 @@ static int analogix_dp_get_modes(struct drm_connector *connector)
->   			num_modes += drm_edid_connector_add_modes(&dp->connector);
->   			drm_edid_free(drm_edid);
->   		}
-> -
-> -		ret = analogix_dp_prepare_panel(dp, false, false);
-> -		if (ret)
-> -			DRM_ERROR("Failed to unprepare panel (%d)\n", ret);
->   	}
->   
->   	if (dp->plat_data->get_modes)
-> @@ -1087,19 +1077,9 @@ analogix_dp_detect(struct drm_connector *connector, bool force)
->   	if (dp->plat_data->panel)
->   		return connector_status_connected;
->   
-> -	ret = analogix_dp_prepare_panel(dp, true, false);
-> -	if (ret) {
-> -		DRM_ERROR("Failed to prepare panel (%d)\n", ret);
-> -		return connector_status_disconnected;
-> -	}
-> -
->   	if (!analogix_dp_detect_hpd(dp))
->   		status = connector_status_connected;
->   
-> -	ret = analogix_dp_prepare_panel(dp, false, false);
-> -	if (ret)
-> -		DRM_ERROR("Failed to unprepare panel (%d)\n", ret);
-> -
->   	return status;
+> @@ -955,33 +955,6 @@ static int analogix_dp_disable_psr(struct analogix_dp_device *dp)
+>   	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
 >   }
 >   
+> -/*
+> - * This function is a bit of a catch-all for panel preparation, hopefully
+> - * simplifying the logic of functions that need to prepare/unprepare the panel
+> - * below.
+> - *
+> - * If @prepare is true, this function will prepare the panel. Conversely, if it
+> - * is false, the panel will be unprepared.
+> - *
+> - * The function will disregard the current state
+> - * of the panel and either prepare/unprepare the panel based on @prepare.
+> - */
+> -static int analogix_dp_prepare_panel(struct analogix_dp_device *dp,
+> -				     bool prepare)
+> -{
+> -	int ret = 0;
+> -
+> -	if (!dp->plat_data->panel)
+> -		return 0;
+> -
+> -	if (prepare)
+> -		ret = drm_panel_prepare(dp->plat_data->panel);
+> -	else
+> -		ret = drm_panel_unprepare(dp->plat_data->panel);
+> -
+> -	return ret;
+> -}
+> -
+>   static int analogix_dp_get_modes(struct drm_connector *connector)
+>   {
+>   	struct analogix_dp_device *dp = to_dp(connector);
+> @@ -1174,9 +1147,11 @@ static void analogix_dp_bridge_atomic_pre_enable(struct drm_bridge *bridge,
+>   	if (old_crtc_state && old_crtc_state->self_refresh_active)
+>   		return;
+>   
+> -	ret = analogix_dp_prepare_panel(dp, true);
+> -	if (ret)
+> -		DRM_ERROR("failed to setup the panel ret = %d\n", ret);
+> +	if (dp->plat_data->panel) {
+> +		ret = drm_panel_prepare(dp->plat_data->panel);
+> +		if (ret)
+> +			DRM_ERROR("failed to prepare the panel ret = %d\n", ret);
+> +	}
+>   }
+>   
+>   static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+> @@ -1274,9 +1249,11 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
+>   
+>   	pm_runtime_put_sync(dp->dev);
+>   
+> -	ret = analogix_dp_prepare_panel(dp, false);
+> -	if (ret)
+> -		DRM_ERROR("failed to setup the panel ret = %d\n", ret);
+> +	if (dp->plat_data->panel) {
+> +		ret = drm_panel_unprepare(dp->plat_data->panel);
+> +		if (ret)
+> +			DRM_ERROR("failed to unprepare the panel ret = %d\n", ret);
+> +	}
+>   
+>   	dp->fast_train_enable = false;
+>   	dp->psr_supported = false;
 > 
 
-With the patch series:
-https://patchwork.kernel.org/project/linux-rockchip/list/?series=942183
+The patch has been verified with the eDP panel "lg,lp079qx1-sp0v" in 
+RK3588S EVB1 board.
 
-When I verify this patch, there will be a small warning:
-drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:1075:6: warning: 
-unused variable 'ret' [-Wunused-variable]
-         int ret;
-             ^
-
-It should be better to remove the unused 'ret'.
+Tested-by: Damon Ding <damon.ding@rock-chips.com>
 
 Best regards,
 Damon
