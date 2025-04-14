@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-602280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C99FBA878DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:35:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89234A878DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30E2B18917A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:35:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51F7B18916BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B1B25A341;
-	Mon, 14 Apr 2025 07:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE9625C716;
+	Mon, 14 Apr 2025 07:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BabdX7dL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gOvzAxQ0"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M7DXM+QG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t5Jcdpa2"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D668259498;
-	Mon, 14 Apr 2025 07:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7BC259CB4;
+	Mon, 14 Apr 2025 07:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744616092; cv=none; b=aZ/Mm3XU6voCS+LtTjxiNRg2NVu/dKUz0alG40R49kXBvOu1ifrDN6l2achVRwo4uf//02qf7a7TkOdkldaQUJvHaGpJ8WLeQOIqR7oQNboKNzVLnyAUmX4Sn/XT9WOoaQAoaHTvqOw6XxG1977yCCkLWMWzAnkLNHW1sqQhY4U=
+	t=1744616093; cv=none; b=rgH2d5rlkal+PC7GDcH77INNbg25KrcpLYXv/qTjy+CwJhAmGgLQddzrWMOfqtPZbg+/yfKGsAjWrNIGIqPGRNqAfUqjgHnfbRo6Yf7ukel9RX3s0taqNa5OH8d58UiiZOcdJ+f5q9/yNeLwWEkHEZCk700SEnFjuxQec5hF8JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744616092; c=relaxed/simple;
-	bh=P/FF+DjUJzZeTs6ySv5W1avpU23vPgKKEd9nqJ0goz4=;
+	s=arc-20240116; t=1744616093; c=relaxed/simple;
+	bh=Vu4ARyyxKFerMoLOXzMzx5Gc++3E4XOyvaqOX79pXPk=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=dqdPvBFSLPDBkhStNssR3aODdKT6PTudHGu28k4vwNRW3OXHQKDIt+w/b/6gPF60u035Vs2Q/LYNd97InJrk/Xtv0nuGVRH/0II9pWagfb8eIQ/3KmiNgcFVi6+AIvMWaeqgdKtFyuGqG1g5u8ksnHGav0v+w/5nUrPwW49DXkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BabdX7dL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gOvzAxQ0; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=eO4cjWLFCbzts9bmsyPJ/upx3gC6gyzWV3VYds3lE6Z8ixV9KzB57rzXdBacQxZzOXry6Q1RkTI/1gKa/RvQ1tgEfYQ/82o2KC9eiiy5nQ08gseiaboH6Z0qNv78HRjXNqWVkS9brRDlwLGD9BRdhJFRSBEm9yV29W57W5XUIyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M7DXM+QG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t5Jcdpa2; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 14 Apr 2025 07:34:47 -0000
+Date: Mon, 14 Apr 2025 07:34:48 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744616088;
+	s=2020; t=1744616089;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IS5VEqA6spfCmgguOSLrVSt/pX90gqpbIjDS2aZo7YA=;
-	b=BabdX7dL5UKAR1XRYE/VrfavBe1MpZ9YHS0QbLPyjl27dg4PLueXQDPpP4akqF1NdO7JdV
-	BwM+CxBzqvWW1nTV0ALzBvt7JlN1nYu9J6paIcVOTj+mVHrm3FUFjUTdrJb6/0ulsV7FE1
-	Re0wpXs5mcvfieBAHhjwjIWwmNdnMIHPA/8jIiAsmQ3r0J0zG96EK1y4iepHj62gjCCY5K
-	oMLwO6ZGbWB4GU42v1B8CNXuqXL8PqydnDbxtjyGcZbw8Y8LeXAzcbIbHhMZoNjBKxpi4r
-	8Zj/8+7O2wtsorQRoGbIj4EaaxSpiAiQEh+Bx5nugGheq2a7rJ467q2VfhFzJg==
+	bh=jyU+nWU4a7n//NboP9f4k47sjGjb+ctZ+kH6gaEuAD8=;
+	b=M7DXM+QGlU5TwQDzazqn7zK4R5i52lWFtgkvIj/ytnaUXdr3L5deWqE4dhq4Sz3XZ63GfE
+	h81S37RXLvdu5rinhwYKW0c2axSqezC4+NTbkTVBULdKc37i18W7cXx78c15gvyNiguQoW
+	gfn8zLdgJrzWZZsTZpwh2AC2CliaPK8u9JZ5UKtmnJaMOBi0g9uxc0YeLmScIEnhDGhBQx
+	djAUnjF3uknnR+SUIiw/EcoJZujiYR3MQzHvMf7Lh2wopmWFA/aibNIy8AUWhajcb5lrhS
+	se90wDh/dbMDbxUfw2caR31dU2CoYwbgmMojWnTdc4x8VpGYzNHmCva89Aoe/A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744616088;
+	s=2020e; t=1744616089;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IS5VEqA6spfCmgguOSLrVSt/pX90gqpbIjDS2aZo7YA=;
-	b=gOvzAxQ0JiQUk+VPG3cO6UGEuci1wYzwz7CmnMX3ET0DB5ciBkxqJNQK87AkDypQge46nq
-	PzZTKBL3LVb/mTBg==
+	bh=jyU+nWU4a7n//NboP9f4k47sjGjb+ctZ+kH6gaEuAD8=;
+	b=t5Jcdpa20k6LLiZ/e/56ln/spWFb609MLJvhQTF7H+MR3J2TisXqdT4OHIh2Cv8YhzcG4Q
+	N+Zidf7dq3ajvbDA==
 From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/merge] x86/fpu: Push 'fpu' pointer calculation into the
- fpu__drop() call
+Subject: [tip: x86/merge] x86/fpu: Make task_struct::thread constant size
 Cc: Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
  Brian Gerst <brgerst@gmail.com>, "Chang S. Bae" <chang.seok.bae@intel.com>,
  "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250409211127.3544993-6-mingo@kernel.org>
-References: <20250409211127.3544993-6-mingo@kernel.org>
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250409211127.3544993-4-mingo@kernel.org>
+References: <20250409211127.3544993-4-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174461608736.31282.11951675295903835985.tip-bot2@tip-bot2>
+Message-ID: <174461608898.31282.7663316545402138900.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -85,82 +83,245 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/merge branch of tip:
 
-Commit-ID:     ec2227e03a46a162f2721917262adc553b212e2d
-Gitweb:        https://git.kernel.org/tip/ec2227e03a46a162f2721917262adc553b212e2d
+Commit-ID:     cb7ca40a3882360ce87191793449d48df0b29184
+Gitweb:        https://git.kernel.org/tip/cb7ca40a3882360ce87191793449d48df0b29184
 Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Wed, 09 Apr 2025 23:11:24 +02:00
+AuthorDate:    Wed, 09 Apr 2025 23:11:22 +02:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Mon, 14 Apr 2025 08:18:29 +02:00
 
-x86/fpu: Push 'fpu' pointer calculation into the fpu__drop() call
+x86/fpu: Make task_struct::thread constant size
 
-This encapsulates the fpu__drop() functionality better, and it
-will also enable other changes that want to check a task for
-PF_KTHREAD before calling x86_task_fpu().
+Turn thread.fpu into a pointer. Since most FPU code internals work by passing
+around the FPU pointer already, the code generation impact is small.
 
+This allows us to remove the old kludge of task_struct being variable size:
+
+  struct task_struct {
+
+       ...
+       /*
+        * New fields for task_struct should be added above here, so that
+        * they are included in the randomized portion of task_struct.
+        */
+       randomized_struct_fields_end
+
+       /* CPU-specific state of this task: */
+       struct thread_struct            thread;
+
+       /*
+        * WARNING: on x86, 'thread_struct' contains a variable-sized
+        * structure.  It *MUST* be at the end of 'task_struct'.
+        *
+        * Do not put anything below here!
+        */
+  };
+
+... which creates a number of problems, such as requiring thread_struct to be
+the last member of the struct - not allowing it to be struct-randomized, etc.
+
+But the primary motivation is to allow the decoupling of task_struct from
+hardware details (<asm/processor.h> in particular), and to eventually allow
+the per-task infrastructure:
+
+   DECLARE_PER_TASK(type, name);
+   ...
+   per_task(current, name) = val;
+
+... which requires task_struct to be a constant size struct.
+
+The fpu_thread_struct_whitelist() quirk to hardened usercopy can be removed,
+now that the FPU structure is not embedded in the task struct anymore, which
+reduces text footprint a bit.
+
+Fixed-by: Oleg Nesterov <oleg@redhat.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Brian Gerst <brgerst@gmail.com>
 Cc: Chang S. Bae <chang.seok.bae@intel.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250409211127.3544993-6-mingo@kernel.org
+Link: https://lore.kernel.org/r/20250409211127.3544993-4-mingo@kernel.org
 ---
- arch/x86/include/asm/fpu/sched.h | 2 +-
- arch/x86/kernel/fpu/core.c       | 4 +++-
- arch/x86/kernel/process.c        | 3 +--
- 3 files changed, 5 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/processor.h | 20 +++++++++-----------
+ arch/x86/kernel/fpu/core.c       | 23 ++++++++++++-----------
+ arch/x86/kernel/fpu/init.c       | 17 ++++++++++-------
+ arch/x86/kernel/process.c        |  2 +-
+ include/linux/sched.h            | 15 ++++-----------
+ 5 files changed, 36 insertions(+), 41 deletions(-)
 
-diff --git a/arch/x86/include/asm/fpu/sched.h b/arch/x86/include/asm/fpu/sched.h
-index 1feaa68..5fd1263 100644
---- a/arch/x86/include/asm/fpu/sched.h
-+++ b/arch/x86/include/asm/fpu/sched.h
-@@ -10,7 +10,7 @@
- #include <asm/trace/fpu.h>
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 2f631e0..5ea7e5d 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -516,21 +516,19 @@ struct thread_struct {
+ #endif
  
- extern void save_fpregs_to_fpstate(struct fpu *fpu);
--extern void fpu__drop(struct fpu *fpu);
-+extern void fpu__drop(struct task_struct *tsk);
- extern int  fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
- 		      unsigned long shstk_addr);
- extern void fpu_flush_thread(void);
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 974b276..e4c2090 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -681,8 +681,10 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
-  * a state-restore is coming: either an explicit one,
-  * or a reschedule.
-  */
--void fpu__drop(struct fpu *fpu)
-+void fpu__drop(struct task_struct *tsk)
+ 	/* Floating point and extended processor state */
+-	struct fpu		fpu;
+-	/*
+-	 * WARNING: 'fpu' is dynamically-sized.  It *MUST* be at
+-	 * the end.
+-	 */
++	struct fpu		*fpu;
+ };
+ 
+-#define x86_task_fpu(task) (&(task)->thread.fpu)
+-
+-extern void fpu_thread_struct_whitelist(unsigned long *offset, unsigned long *size);
++#define x86_task_fpu(task) ((task)->thread.fpu)
+ 
+-static inline void arch_thread_struct_whitelist(unsigned long *offset,
+-						unsigned long *size)
++/*
++ * X86 doesn't need any embedded-FPU-struct quirks:
++ */
++static inline void
++arch_thread_struct_whitelist(unsigned long *offset, unsigned long *size)
  {
-+	struct fpu *fpu = x86_task_fpu(tsk);
-+
- 	preempt_disable();
- 
- 	if (fpu == x86_task_fpu(current)) {
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 88868a9..5fb502c 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -120,7 +120,6 @@ void arch_release_task_struct(struct task_struct *tsk)
- void exit_thread(struct task_struct *tsk)
- {
- 	struct thread_struct *t = &tsk->thread;
--	struct fpu *fpu = x86_task_fpu(tsk);
- 
- 	if (test_thread_flag(TIF_IO_BITMAP))
- 		io_bitmap_exit(tsk);
-@@ -128,7 +127,7 @@ void exit_thread(struct task_struct *tsk)
- 	free_vm86(t);
- 
- 	shstk_free(tsk);
--	fpu__drop(fpu);
-+	fpu__drop(tsk);
+-	fpu_thread_struct_whitelist(offset, size);
++	*offset = 0;
++	*size = 0;
  }
  
- static int set_new_tls(struct task_struct *p, unsigned long tls)
+ static inline void
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index dc6d7f9..853a738 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -593,8 +593,19 @@ static int update_fpu_shstk(struct task_struct *dst, unsigned long ssp)
+ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
+ 	      unsigned long ssp)
+ {
++	/*
++	 * We allocate the new FPU structure right after the end of the task struct.
++	 * task allocation size already took this into account.
++	 *
++	 * This is safe because task_struct size is a multiple of cacheline size.
++	 */
+ 	struct fpu *src_fpu = x86_task_fpu(current);
+-	struct fpu *dst_fpu = x86_task_fpu(dst);
++	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
++
++	BUILD_BUG_ON(sizeof(*dst) % SMP_CACHE_BYTES != 0);
++	BUG_ON(!src_fpu);
++
++	dst->thread.fpu = dst_fpu;
+ 
+ 	/* The new task's FPU state cannot be valid in the hardware. */
+ 	dst_fpu->last_cpu = -1;
+@@ -664,16 +675,6 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
+ }
+ 
+ /*
+- * Whitelist the FPU register state embedded into task_struct for hardened
+- * usercopy.
+- */
+-void fpu_thread_struct_whitelist(unsigned long *offset, unsigned long *size)
+-{
+-	*offset = offsetof(struct thread_struct, fpu.__fpstate.regs);
+-	*size = fpu_kernel_cfg.default_size;
+-}
+-
+-/*
+  * Drops current FPU state: deactivates the fpregs and
+  * the fpstate. NOTE: it still leaves previous contents
+  * in the fpregs in the eager-FPU case.
+diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
+index ad5cb29..848ea79 100644
+--- a/arch/x86/kernel/fpu/init.c
++++ b/arch/x86/kernel/fpu/init.c
+@@ -71,8 +71,15 @@ static bool __init fpu__probe_without_cpuid(void)
+ 	return fsw == 0 && (fcw & 0x103f) == 0x003f;
+ }
+ 
++static struct fpu x86_init_fpu __attribute__ ((aligned (64))) __read_mostly;
++
+ static void __init fpu__init_system_early_generic(void)
+ {
++	fpstate_reset(&x86_init_fpu);
++	current->thread.fpu = &x86_init_fpu;
++	set_thread_flag(TIF_NEED_FPU_LOAD);
++	x86_init_fpu.last_cpu = -1;
++
+ 	if (!boot_cpu_has(X86_FEATURE_CPUID) &&
+ 	    !test_bit(X86_FEATURE_FPU, (unsigned long *)cpu_caps_cleared)) {
+ 		if (fpu__probe_without_cpuid())
+@@ -150,6 +157,8 @@ static void __init fpu__init_task_struct_size(void)
+ {
+ 	int task_size = sizeof(struct task_struct);
+ 
++	task_size += sizeof(struct fpu);
++
+ 	/*
+ 	 * Subtract off the static size of the register state.
+ 	 * It potentially has a bunch of padding.
+@@ -164,14 +173,9 @@ static void __init fpu__init_task_struct_size(void)
+ 
+ 	/*
+ 	 * We dynamically size 'struct fpu', so we require that
+-	 * it be at the end of 'thread_struct' and that
+-	 * 'thread_struct' be at the end of 'task_struct'.  If
+-	 * you hit a compile error here, check the structure to
+-	 * see if something got added to the end.
++	 * 'state' be at the end of 'it:
+ 	 */
+ 	CHECK_MEMBER_AT_END_OF(struct fpu, __fpstate);
+-	CHECK_MEMBER_AT_END_OF(struct thread_struct, fpu);
+-	CHECK_MEMBER_AT_END_OF(struct task_struct, thread);
+ 
+ 	arch_task_struct_size = task_size;
+ }
+@@ -213,7 +217,6 @@ static void __init fpu__init_system_xstate_size_legacy(void)
+  */
+ void __init fpu__init_system(void)
+ {
+-	fpstate_reset(x86_task_fpu(current));
+ 	fpu__init_system_early_generic();
+ 
+ 	/*
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 47694e3..3ce4cce 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -103,7 +103,7 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
+ 	dst->thread.vm86 = NULL;
+ #endif
+ 	/* Drop the copied pointer to current's fpstate */
+-	x86_task_fpu(dst)->fpstate = NULL;
++	dst->thread.fpu = NULL;
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f96ac19..4ecc0c6 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1646,22 +1646,15 @@ struct task_struct {
+ 	struct user_event_mm		*user_event_mm;
+ #endif
+ 
+-	/*
+-	 * New fields for task_struct should be added above here, so that
+-	 * they are included in the randomized portion of task_struct.
+-	 */
+-	randomized_struct_fields_end
+-
+ 	/* CPU-specific state of this task: */
+ 	struct thread_struct		thread;
+ 
+ 	/*
+-	 * WARNING: on x86, 'thread_struct' contains a variable-sized
+-	 * structure.  It *MUST* be at the end of 'task_struct'.
+-	 *
+-	 * Do not put anything below here!
++	 * New fields for task_struct should be added above here, so that
++	 * they are included in the randomized portion of task_struct.
+ 	 */
+-};
++	randomized_struct_fields_end
++} __attribute__ ((aligned (64)));
+ 
+ #define TASK_REPORT_IDLE	(TASK_REPORT + 1)
+ #define TASK_REPORT_MAX		(TASK_REPORT_IDLE << 1)
 
