@@ -1,223 +1,198 @@
-Return-Path: <linux-kernel+bounces-603406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07B92A8874A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB183A8873A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90F243B0BAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:25:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B152A3BE065
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A58274641;
-	Mon, 14 Apr 2025 15:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B56274670;
+	Mon, 14 Apr 2025 15:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WppRh4Bd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LFX7jvGf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="g7na2JkN"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013029.outbound.protection.outlook.com [40.107.159.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEAF1FDD;
-	Mon, 14 Apr 2025 15:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744644336; cv=none; b=jA0i2nAjsh0KNysu1ugiznqxSIwOAX2Gq1je6MrSeneOl83I3O1IgSc8YVed2M6iBA19/CLC+R/eO5Rkz9OTuS3m/Yruzwr6OpcOaQ9PLOZmXGJoennnACq3cd0wZs+d5b/xtdTEyc/aXN7vAB2vZaJmEnuk8UZNwTXesJmHFsg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744644336; c=relaxed/simple;
-	bh=y6yz8eG3xQ0fyYP9YIopaUmz0nDdVPc/Jh3OkNzxgjk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=UEWwZzQyR1tFE+xylTBL1ghu+JZjz+ex2nszbXBej9SRonhsW+xXiEMiR1tS7CZs8IBj1TThomGSDUkJfFsw2FwQ3rkarLtTDvocsKhhZS7M+OVEA8R73X+1hOV3rAWjlP13808kvz5798LGhBXoGcwtDSvv3zXMovmHMr+PhjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WppRh4Bd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LFX7jvGf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 14 Apr 2025 15:25:20 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744644326;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3qJxCJxTPme5lnrRdpPFvQmpJRRGWDgVC5HggM5lAIE=;
-	b=WppRh4Bdcs2YKhzvuWoHWv1Bq+DEFjc392xHciOstQHmnZ44+swFS93hrdYG4k4/Z/qRd1
-	0zfDbrmq2vWuDVWD9dD95Ov+lLTCmY5ptFxznJyCntBfHDTi0R02u9umUZO2pASk3VLigK
-	sF9ZLuJryidUut5YDBbcALq3PnaW2uII6fHZv/VjGrficuEr0HS4Ebq2n6E4w63zELZGi/
-	37cANqgmdf/1UXv9jgwH22Auua50x/qf23+sT5D3EGTC9r/FkL65fhsJkMHFcArYzUPTTM
-	5K0CEJVhKZEKH9zOb8Yea+JslpjQLwOjlo9YVKRFbiZAqDxyheI8cpBRI9pTmw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744644326;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3qJxCJxTPme5lnrRdpPFvQmpJRRGWDgVC5HggM5lAIE=;
-	b=LFX7jvGf+DmdoHdPHCQSgdHct1yrwcil80yr/K3JMjqdvQalNpBviaNdHin4cEabEuof0H
-	N0wRcAYk6yhguxAg==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/bugs: Remove X86_BUG_MMIO_UNKNOWN
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- David Kaplan <david.kaplan@amd.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Josh Poimboeuf <jpoimboe@redhat.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250414150951.5345-1-bp@kernel.org>
-References: <20250414150951.5345-1-bp@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A68327464E;
+	Mon, 14 Apr 2025 15:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744644347; cv=fail; b=XIxEsqozGLsrcsYAzlArvLm0aqizi00oxJV5LrF40OD6kYILym3r4tA2eDgEOmxFnfL5VOCs9Mq/4OoicxSQxax7mUUFjtfztuzMX+ptJBPF7gg5f9WJ1snMl2935CuZEJOa0q6WMNnKgsmj123UJT1xpBMX7YhnXWX1T4XUg+A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744644347; c=relaxed/simple;
+	bh=fJr+D9tLOGrFoB/q5AU3keW43rowXv3QgXcDVj7H6J4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LDTCzB6d9M953gt5eiaAjmCIZFFG2kaW1qWdNfrr8O38BitpXxKqv9/yYtf9JSe99XIsYBClU+62uyaYmzjtNGHOcwcXhMVY+kj9EyGjvb2uF6hlv4ENNA7G2mBdUgXAS5SNcwsLeKaQIKVrmb+YNdS5UBQ3vjS+kMjMUcDXyJU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=g7na2JkN; arc=fail smtp.client-ip=40.107.159.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eK8H8VDcNuiFGZm/inNY5D4wkpA/SELNpZ9cu4RlU8XPgw5lI/PecjD65nBPklfYMDStUGjPZHFBK+cvYUObnYqpv3KVXYrrKJ0Zts+rBtGdgSJXG8F8dvhSlJrkF7VcA7QVa3uVhvy4H2V42H9FszQYu8eqf1mPKsL67GXU3+KLottz5wQKptrTjxdTUlYHTEZu5uX34X3qDaGNb1W0VonHCRkc5uRoOtouISRdHRpq8Qqhc/TfSRcFroMJ5/kxRzDLyU7X6HQg5QnWGTznrecKjs926tBCcMb5MyYOtB/XmxP4m6h9Y/H29AZmrVlYDRMhIIHKySAC++BkElJBbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YfUQi3pjQeIkpxM9t1dZJOmIQgLeVqeZe6yX0IxvAtM=;
+ b=c4ruryZz8SZP2RaBVBTGQzaIYUpHwQPZ1JYh5cXe6ukcay+IXZ1YFpKzoSgXg33sNahcD7hJTa92aPb/LgfsqN5tD4CDNblm2hwyATXKkcMZDcj05JtPKpkc6QNSeACIAyyGkEhVWRu5Z47rUjJN4IhrQFtBZHfQbVcX4bub3wFfpzXxXkxeGop6AgQkiiA/6k41e25TBr8qy8KPOQlnSFzCZ9306kJZSU5tc+eJCmh/irZQqm0I86mPT6AWuK9nS41ze3UH1/NYiIPSVmPLZ88RlRKcJKYS77Dw7rhB651neuuDnlXz9nQW1yuABZPjRtrkjncZoL14xKCE4G5A8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YfUQi3pjQeIkpxM9t1dZJOmIQgLeVqeZe6yX0IxvAtM=;
+ b=g7na2JkNdSSZ8HYLQ+pwk8WQecF0HbXbAQbKDqWoj0dXFMfnwWWhYDQ5cC47dE2w4E3CedIqf+3CnUPGiAVuZqyOcGAcg8a5J7RPkrn6JBCEFkWpfy11IgeMuhAVhUzKGbbt84ZDnlDV77aSIR55cuAUUNYwHxcqOGZXqhOt22eUxV4ZDIMHknqrGu/4BijmL9rfOMIyJiKuF03KrhmR24sqMhBy37kKUc2IFlLHP4uyz0IK+h+vKdyRHnZcyT3J/H7sm9UbWgFyViEEAZOUX7Cqg1a5gTYb6YFvDdz7fuhCsgHuGxvMhkGG1YU/dJVb+EhKp4uyePCesiTy16fQIA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB7623.eurprd04.prod.outlook.com (2603:10a6:20b:29c::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.32; Mon, 14 Apr
+ 2025 15:25:42 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8632.030; Mon, 14 Apr 2025
+ 15:25:41 +0000
+Date: Mon, 14 Apr 2025 11:25:32 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] arm64: dts: imx8qm: add system controller
+ watchdog support
+Message-ID: <Z/0o7J2JMTagobih@lizhi-Precision-Tower-5810>
+References: <20250414-imx8qm-watchdog-v2-0-449265a9da4e@bootlin.com>
+ <20250414-imx8qm-watchdog-v2-2-449265a9da4e@bootlin.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414-imx8qm-watchdog-v2-2-449265a9da4e@bootlin.com>
+X-ClientProxiedBy: BYAPR06CA0002.namprd06.prod.outlook.com
+ (2603:10b6:a03:d4::15) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174464432010.31282.9076437983406164205.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB7623:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe755d4e-1b67-44f9-3533-08dd7b689e23
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|52116014|1800799024|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?g5TTqkswkBCD4l/9+v5i/wgKbbJb9AW2pLh0/5k2XeylY172+cSw56dcv44T?=
+ =?us-ascii?Q?f2imAt6xFBLbehUU6xec/IAE+VMmg58oFLAFhNbD58+9uUGLHZ3E3yMW/jfL?=
+ =?us-ascii?Q?QaPs7z67a/PO6sfP+od9b+3uwZiUJM8HN+2LW+4pgsuYpjWOBxC2HcBgDxZJ?=
+ =?us-ascii?Q?x7s0HGVaa0XRix/35NjCX2qFBg1tLMJGmzzttyIYBbhbbDBVoctdPhFb9iRF?=
+ =?us-ascii?Q?7LLs8+2InkUS2mpGhttyNCxV+C7ZOHhmQKpIpVtW+ZiaL6X+dN2I86/wVPl8?=
+ =?us-ascii?Q?J55G03nZHwjZecT4rmwP2wx7uQ1l6aP4QAHT7Swk01xfWfPwm69r8Wmxy9NW?=
+ =?us-ascii?Q?K5vLtodTV604D+TIIjoF8oEK2bFvDXGBAuG/g5+jsnNX4exb+nrYgoxBcFF4?=
+ =?us-ascii?Q?1pL4SU2qWchi3E3ZpyWVyRa6EnLvIRyS7ZHjh9xkFM2VqmUR1JTzujGUcJtg?=
+ =?us-ascii?Q?DVS6fENnfYe8bEhFwdYEqg8yu3JcSvm3UE3sgAkmH2FPn2HC3KTScYoH3wE9?=
+ =?us-ascii?Q?FafZwNkSTzB98xdXQl0H3vOAypi9qDRKscC/ie4kSwhWJDKGf+qk9GOKXZ3X?=
+ =?us-ascii?Q?VOHzVL0VWKpbnZJ7R3nf9dcCdSm0QXe4pw0OD5vNrFCRMItnykx8mr9LTCXU?=
+ =?us-ascii?Q?MSkb3uK3AdZp/UDoyJQaSe8lHNgaeukyo0/7tn/dmCnSAOl2bBHIGH+kZeXM?=
+ =?us-ascii?Q?BUEfDO17PD7gydoSHilsS4BGlUOS7yaR8EGmnVXOEGHi7iNlsy/0FPOJU8ws?=
+ =?us-ascii?Q?Gdv23XxZ7vd+mf1qkvOVBib/kxu6MfnMvmJONG0DlWSNojG0oeT8Gbkoxv2r?=
+ =?us-ascii?Q?3ZpcWcue46zWVeKHxTvk555SUF7Ry7azkgQsAh1VnUIWPA201pcAzz2ZDGmK?=
+ =?us-ascii?Q?8itrySLVNsO8lU09eaVp/+uBSZlNFqV8X8LEuy41au2VnVVhuq09hwmho0n+?=
+ =?us-ascii?Q?NRWZLqgzHl3XMUKlOq6i2qC6bZ8PBtLwNEYcBUwzZJHaF5N4f67ixw4b4nvY?=
+ =?us-ascii?Q?vTSRLKGiOoTnEgO7ToZVOMhtnBZjSk0Kf3yTZvW+LcPGc85XsLdQkldJAvZO?=
+ =?us-ascii?Q?GPJ+wNgPdMBL0/+h4m0xgpiMGTSvYVhomkMtC4foVMJytVbdIoo5twnqIx27?=
+ =?us-ascii?Q?KPQVPczWrvLnTsY9P9ZOCjK6B1zubFmfFflVTx3JXE/DZefh2agz+Bl072L1?=
+ =?us-ascii?Q?fIkdd4Y8OekPLFRHHRRxXivLo0PZJ/SAIqLWQAMeNMkypDxfzM062Bye2HAI?=
+ =?us-ascii?Q?W6SA8HHzVMIBrHcekFiWzGJYe4zfhcFqKRgKkd7W0wghWktm2o//EKjJph+k?=
+ =?us-ascii?Q?+cVQCR73/pIwgMZDH4JAU5R+2iW4XkOelVdFw5ug2LgdYGxHdd5jM7lYsPAQ?=
+ =?us-ascii?Q?US1vRgdmYWFQlTc9yOhFJAnRE48iBlAxsaiIPi3tI8091Cb5wvMqWt4hUCLM?=
+ =?us-ascii?Q?+2z/YuHh/QYHLLC2IKdiBd575P81j+clYTkY2BGGT5UXkN44TYPqRQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(52116014)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?auzEHRjXCLAsSO0hXuu0A2XRshViAz7IcfDs5TCggrvQEz8Ray1SQxQv1ku9?=
+ =?us-ascii?Q?CAAP7UrllSiGP58NJtYMeEzARpN7TgmpbL5CtRzlzBZ3oQrR7xOaRvNlq9DQ?=
+ =?us-ascii?Q?UKKcNaalrFbW5R/4YNmuNNAx/zlZmjmNPDr5nvAXgtwNgJXgDy1oDErbRKnu?=
+ =?us-ascii?Q?9ZEk3wmrZkVqdPLaOn5ylRpjfvV4vkZULJqRzxKMhOvvmMh+IxtaJhx5macA?=
+ =?us-ascii?Q?wx2eDTLNV7+PkQdZE5AAEAxZF60RXpX+u7LT6vAZZLm5eA89/oLkNtFjIXf1?=
+ =?us-ascii?Q?jvThSPgn4L4yi5R72JaoHb/WXxghqcMd3ocxnPcilW9rLurNJIlwbaCbPugi?=
+ =?us-ascii?Q?730OszgfPP0WjfNMnvEXA1ZB6Q1/mL0lOILk5M4yPPOd0dgUSFIQEIVEdUt0?=
+ =?us-ascii?Q?o+QCZn8NJlJnt7TiwiEx6xaOkXd3vsWgcWVs8wBQ2+hZUNK2fAl2RG45CMWJ?=
+ =?us-ascii?Q?UaCNwW7CZINzbb3cQLuBFk7nEyUoCUMepPEayfSJbaU1dLRptVV0KUZO+Zl8?=
+ =?us-ascii?Q?0iDjuEli3f88vgFG4tiaPvynOTuZwTwhJxGuicM7eWd5aKFBbw+LUYOk75ah?=
+ =?us-ascii?Q?en1kNw6m+QW/Kxpr25XbmZOuwbZTOZxaLoLAeDrtRuTR8cUl2OTUzaxRMS18?=
+ =?us-ascii?Q?eoJxDr3FhAmvvUwuuC1aJpGRUAuCGLP9jMR2FeUiI+PDO1DJaeIrc7xBZaZu?=
+ =?us-ascii?Q?FOYi/bx9rMcQIKpLv0jRZmdJ+/vDMt6ZI+zuhvNV1pf1U3f6OUCcGx7Y3CF8?=
+ =?us-ascii?Q?8mtiP8jlXpntDyZ9vTWr0z7ibVXVsq1BTBCbCwDjJgvm6kt/vysm8AkwxeZN?=
+ =?us-ascii?Q?XSBlgx1WNfXiBk506BCGSrfuUbOFpET8QJIcnDngeIHeVFpIanuh3OQab7CZ?=
+ =?us-ascii?Q?BRaYEvbtpXQBlUi3YuIT+wGCevcL26HqYw0jIcNJc32WSHVEiUcomO4Z+1+Z?=
+ =?us-ascii?Q?y0ZF8inAZ6Jw45AoQ9yV/rM9fWTBeAoyM3DDTNEz8DFKCw90fx8gSmeYXnJO?=
+ =?us-ascii?Q?qs06Edtmt0zJ9RlwIQgh9vfh1fDqh8bwn54nWJP4GtymF/JA+r6QP5ByP8rB?=
+ =?us-ascii?Q?qNsqEjY3XDRjY+Vn60/wwEiQjj5z6DGVcvGPVnrWUa4jaGasNpMVCy08zbnf?=
+ =?us-ascii?Q?sAkGRLB7LLf9WH2DivpfI9lfaPqQlZccsA0AFKkNW6ap3cADxwiuM60y1IHs?=
+ =?us-ascii?Q?dspM+Wh22/mI7wwPAPHobfMHmUJuHS+M0yUc8bDxOc/NtDzaHeCofLQa6In1?=
+ =?us-ascii?Q?44xwiMr0iMFQfCmHxJl66u8FAtvHIBEaYZ4IiFQ9wJzpgnnBhS5Txe19Lpkq?=
+ =?us-ascii?Q?Qmq+Sq10iWUUUsaE+LvHXGojQd95Iad3x10HqnTMcsdIS3Q3+uwZIZX/0EUN?=
+ =?us-ascii?Q?1nTe3cCCwLhfZGOWfdB4clbOySHbwYtGk7fzds46O0wtnxmPc8l1iyh+sgIv?=
+ =?us-ascii?Q?96FRDp+/s6Y3VnqOkvvOsx5+MBAQwVfdNAT7A0dZzCnmZZTZM7GS6Gp0M91A?=
+ =?us-ascii?Q?TJXEYyDmKnChI7CMzKzSTn2Y8OBKETCz+PFP47/HJ52WaeSrQdB7hAOVeaRx?=
+ =?us-ascii?Q?MlQ9zB6EM4oiZzSKnm9mTdhvl4Af4Zoy8nw6JLqs?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe755d4e-1b67-44f9-3533-08dd7b689e23
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2025 15:25:41.8881
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gSg/YO5asntyQniXVH9RP5KIZro//Shy3ApyptzaCsH2xdPlokeKWI7BsArHBFXrxkzvq2VWxj1PGajpKA9ybw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7623
 
-The following commit has been merged into the x86/cpu branch of tip:
+On Mon, Apr 14, 2025 at 04:57:25PM +0200, Thomas Richard wrote:
+> Add system controller watchdog support for i.MX8QM.
+>
+> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+> ---
 
-Commit-ID:     dd86a1d013e0c94fedd060514b9e7be2988ef320
-Gitweb:        https://git.kernel.org/tip/dd86a1d013e0c94fedd060514b9e7be2988ef320
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Mon, 14 Apr 2025 17:09:51 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 14 Apr 2025 17:15:27 +02:00
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-x86/bugs: Remove X86_BUG_MMIO_UNKNOWN
-
-Whack this thing because:
-
-- the "unknown" handling is done only for this vuln and not for the
-  others
-
-- it doesn't do anything besides reporting things differently. It
-  doesn't apply any mitigations - it is simply causing unnecessary
-  complications to the code which don't bring anything besides
-  maintenance overhead to what is already a very nasty spaghetti pile
-
-- all the currently unaffected CPUs can also be in "unknown" status so
-  there's no need for special handling here
-
-so get rid of it.
-
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: David Kaplan <david.kaplan@amd.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Link: https://lore.kernel.org/r/20250414150951.5345-1-bp@kernel.org
----
- arch/x86/include/asm/cpufeatures.h       |  2 +-
- arch/x86/kernel/cpu/bugs.c               | 12 +-----------
- arch/x86/kernel/cpu/common.c             |  5 -----
- tools/arch/x86/include/asm/cpufeatures.h |  2 +-
- 4 files changed, 3 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 6c2c152..e8f8d43 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -519,7 +519,7 @@
- #define X86_BUG_ITLB_MULTIHIT		X86_BUG(23) /* "itlb_multihit" CPU may incur MCE during certain page attribute changes */
- #define X86_BUG_SRBDS			X86_BUG(24) /* "srbds" CPU may leak RNG bits if not mitigated */
- #define X86_BUG_MMIO_STALE_DATA		X86_BUG(25) /* "mmio_stale_data" CPU is affected by Processor MMIO Stale Data vulnerabilities */
--#define X86_BUG_MMIO_UNKNOWN		X86_BUG(26) /* "mmio_unknown" CPU is too old and its MMIO Stale Data status is unknown */
-+/* unused, was #define X86_BUG_MMIO_UNKNOWN		X86_BUG(26) "mmio_unknown" CPU is too old and its MMIO Stale Data status is unknown */
- #define X86_BUG_RETBLEED		X86_BUG(27) /* "retbleed" CPU is affected by RETBleed */
- #define X86_BUG_EIBRS_PBRSB		X86_BUG(28) /* "eibrs_pbrsb" EIBRS is vulnerable to Post Barrier RSB Predictions */
- #define X86_BUG_SMT_RSB			X86_BUG(29) /* "smt_rsb" CPU is vulnerable to Cross-Thread Return Address Predictions */
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 4386aa6..a91a1ca 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -428,7 +428,6 @@ static const char * const mmio_strings[] = {
- static void __init mmio_select_mitigation(void)
- {
- 	if (!boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA) ||
--	     boot_cpu_has_bug(X86_BUG_MMIO_UNKNOWN) ||
- 	     cpu_mitigations_off()) {
- 		mmio_mitigation = MMIO_MITIGATION_OFF;
- 		return;
-@@ -591,8 +590,6 @@ out:
- 		pr_info("TAA: %s\n", taa_strings[taa_mitigation]);
- 	if (boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA))
- 		pr_info("MMIO Stale Data: %s\n", mmio_strings[mmio_mitigation]);
--	else if (boot_cpu_has_bug(X86_BUG_MMIO_UNKNOWN))
--		pr_info("MMIO Stale Data: Unknown: No mitigations\n");
- 	if (boot_cpu_has_bug(X86_BUG_RFDS))
- 		pr_info("Register File Data Sampling: %s\n", rfds_strings[rfds_mitigation]);
- }
-@@ -2819,9 +2816,6 @@ static ssize_t tsx_async_abort_show_state(char *buf)
- 
- static ssize_t mmio_stale_data_show_state(char *buf)
- {
--	if (boot_cpu_has_bug(X86_BUG_MMIO_UNKNOWN))
--		return sysfs_emit(buf, "Unknown: No mitigations\n");
--
- 	if (mmio_mitigation == MMIO_MITIGATION_OFF)
- 		return sysfs_emit(buf, "%s\n", mmio_strings[mmio_mitigation]);
- 
-@@ -3006,7 +3000,6 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
- 		return srbds_show_state(buf);
- 
- 	case X86_BUG_MMIO_STALE_DATA:
--	case X86_BUG_MMIO_UNKNOWN:
- 		return mmio_stale_data_show_state(buf);
- 
- 	case X86_BUG_RETBLEED:
-@@ -3075,10 +3068,7 @@ ssize_t cpu_show_srbds(struct device *dev, struct device_attribute *attr, char *
- 
- ssize_t cpu_show_mmio_stale_data(struct device *dev, struct device_attribute *attr, char *buf)
- {
--	if (boot_cpu_has_bug(X86_BUG_MMIO_UNKNOWN))
--		return cpu_show_common(dev, attr, buf, X86_BUG_MMIO_UNKNOWN);
--	else
--		return cpu_show_common(dev, attr, buf, X86_BUG_MMIO_STALE_DATA);
-+	return cpu_show_common(dev, attr, buf, X86_BUG_MMIO_STALE_DATA);
- }
- 
- ssize_t cpu_show_retbleed(struct device *dev, struct device_attribute *attr, char *buf)
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 12126ad..4ada55f 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1402,15 +1402,10 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
- 	 * Affected CPU list is generally enough to enumerate the vulnerability,
- 	 * but for virtualization case check for ARCH_CAP MSR bits also, VMM may
- 	 * not want the guest to enumerate the bug.
--	 *
--	 * Set X86_BUG_MMIO_UNKNOWN for CPUs that are neither in the blacklist,
--	 * nor in the whitelist and also don't enumerate MSR ARCH_CAP MMIO bits.
- 	 */
- 	if (!arch_cap_mmio_immune(x86_arch_cap_msr)) {
- 		if (cpu_matches(cpu_vuln_blacklist, MMIO))
- 			setup_force_cpu_bug(X86_BUG_MMIO_STALE_DATA);
--		else if (!cpu_matches(cpu_vuln_whitelist, NO_MMIO))
--			setup_force_cpu_bug(X86_BUG_MMIO_UNKNOWN);
- 	}
- 
- 	if (!cpu_has(c, X86_FEATURE_BTC_NO)) {
-diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-index 9e3fa79..e88500d 100644
---- a/tools/arch/x86/include/asm/cpufeatures.h
-+++ b/tools/arch/x86/include/asm/cpufeatures.h
-@@ -508,7 +508,7 @@
- #define X86_BUG_ITLB_MULTIHIT		X86_BUG(23) /* "itlb_multihit" CPU may incur MCE during certain page attribute changes */
- #define X86_BUG_SRBDS			X86_BUG(24) /* "srbds" CPU may leak RNG bits if not mitigated */
- #define X86_BUG_MMIO_STALE_DATA		X86_BUG(25) /* "mmio_stale_data" CPU is affected by Processor MMIO Stale Data vulnerabilities */
--#define X86_BUG_MMIO_UNKNOWN		X86_BUG(26) /* "mmio_unknown" CPU is too old and its MMIO Stale Data status is unknown */
-+/* unused, was #define X86_BUG_MMIO_UNKNOWN		X86_BUG(26) * "mmio_unknown" CPU is too old and its MMIO Stale Data status is unknown */
- #define X86_BUG_RETBLEED		X86_BUG(27) /* "retbleed" CPU is affected by RETBleed */
- #define X86_BUG_EIBRS_PBRSB		X86_BUG(28) /* "eibrs_pbrsb" EIBRS is vulnerable to Post Barrier RSB Predictions */
- #define X86_BUG_SMT_RSB			X86_BUG(29) /* "smt_rsb" CPU is vulnerable to Cross-Thread Return Address Predictions */
+>  arch/arm64/boot/dts/freescale/imx8qm.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qm.dtsi b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+> index 6fa31bc9ece8..11527050ac8b 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+> @@ -356,6 +356,11 @@ tsens: thermal-sensor {
+>  			compatible = "fsl,imx8qxp-sc-thermal", "fsl,imx-sc-thermal";
+>  			#thermal-sensor-cells = <1>;
+>  		};
+> +
+> +		watchdog {
+> +			compatible = "fsl,imx8qm-sc-wdt", "fsl,imx-sc-wdt";
+> +			timeout-sec = <60>;
+> +		};
+>  	};
+>
+>  	thermal-zones {
+>
+> --
+> 2.39.5
+>
 
