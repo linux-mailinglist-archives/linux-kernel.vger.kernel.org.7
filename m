@@ -1,80 +1,93 @@
-Return-Path: <linux-kernel+bounces-603178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 558D0A88482
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:21:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 241DBA8849E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AFB81886B3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:14:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6325560847
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F2C28F50F;
-	Mon, 14 Apr 2025 13:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40D2247291;
+	Mon, 14 Apr 2025 13:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o5YZ1X5I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="e/ZwtEiL"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECA228F501;
-	Mon, 14 Apr 2025 13:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C4529115D
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744638576; cv=none; b=sJqCZCD7QpO1fHNqE8YhYReJMY5o3eylyLP2eHEI4QAguAhhtcYGkc7qTcjmI4YxKD49rxyM41HCljKwKNPB8aeArq+XmlRfNIKo67yIrJGkSZ/sloAhYnelzTY3Fj4AOOg+s/YGbakPT4bBM95iUb19aEsPuTB2ZFiJ70FYpnI=
+	t=1744638601; cv=none; b=OlKHm281FxiACG7ClqJR4kHFFJIGS3vq8sAoc1SFCR/uFVq/8BxRzjjAoud3ZSGsnfoz9NIo3t9J9aypmuvU6TNVritQmeeADt293ppX/t4A7J7e1lXskR6MmSn58I7+LbwIhjvyf2JUxdiT7ujQXN/Qr1I2bXd8zLiKPF5U/bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744638576; c=relaxed/simple;
-	bh=o8ivKalBhI+guvKrIwk44UYG38JFMxuYu71uRcbYqY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jCFZaZv+b1MFnxh+fUpD/1fc83kHI4dao2BUmaUUIFieK4iD6DRzpS6xl3M+OSeIkZxGWWjeI4UtO2PwrBShnfzknuj+AOLnS626b4AlFtRWba0yEJpd4U3vKD2SS/dDKJoF2Yg0JIrGunUprfLEEmaqBcB9csSNO+L+DjDTzQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o5YZ1X5I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EFABC4CEE2;
-	Mon, 14 Apr 2025 13:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744638575;
-	bh=o8ivKalBhI+guvKrIwk44UYG38JFMxuYu71uRcbYqY8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o5YZ1X5IJtQo2hx7VfRuefWpzaxcV/rlVeJSJMXSj/FkBff6I5nELmLNPZC7VRyG8
-	 eLrKUHoPhZbIwuZEyfNxQsnG+1x+nelnr9YBsuT48kHWQimchVYzfNki+ckAQSUsKN
-	 DjYttJkGOqP1f2doAK+6zWYQgDS/vf5trdiT6ez5oh19kq8+HmZfcVw6rEyHWGm8Go
-	 l/hQjT/hu15tYjY+KR9GSpsBXTs+JFjQ/AfX5Tn+k8kKM25krbAS/8mPfWMylvBjGj
-	 hes5KS0cImv3fgTWwky+8MSJaPRe1d+IT9u1ELanf/3N2eywiD5zosT7r1dmHv3cbe
-	 jzDLYZDnbCGnw==
-Date: Mon, 14 Apr 2025 08:49:33 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: Remove obsolete cpu-topology.txt
-Message-ID: <174463857063.241931.7472620485655725624.robh@kernel.org>
-References: <20250410201325.962203-1-robh@kernel.org>
+	s=arc-20240116; t=1744638601; c=relaxed/simple;
+	bh=9bY19X6s1XcHU0Bp+zVhPyp51N++cEtOnYIuBK8fw2Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qIfLz58JPtt7+DHKFpKXJy4P+1/Qjy4qbjECOgZEiAKQOMxU7hmY/p72ISSqXFNK9PR3MsFOO05KuJiu1KveHQtumtSt9lOsc2c5FAFLKrNSANa5qCNj2PaailQFZpeAkANJ3vsMa/yBbiMSfU6ScPQjTI7EPYlr6USUrgfGWoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=e/ZwtEiL; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-477296dce76so37219281cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:49:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1744638597; x=1745243397; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9bY19X6s1XcHU0Bp+zVhPyp51N++cEtOnYIuBK8fw2Y=;
+        b=e/ZwtEiLPSuRgSFQlJwVQZDV+qAt41LrLjenc8rbwxaijIhqHcmaOe5xUg8whGjlb3
+         7VKRtZxJtZSgC5s2VmZ9oZ8kPqXpDeI6K4LJ6PQup6pbN8sHVg1VdwwXLzlqxm4m8reV
+         YkwxuQhOxu8YQl8+My2ysPba5f6S014DbRyd8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744638597; x=1745243397;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9bY19X6s1XcHU0Bp+zVhPyp51N++cEtOnYIuBK8fw2Y=;
+        b=nYHOD4XB0dpNecdQ+9PkGrDn/M8nvHvEVqHPYERL2kEQogT14qPOiZACdzsM4kBvQY
+         Qo7rc37T7N02VAORRGDx27RGZ5mA/dld7lko5o1L3AcKwwPsSd1sVIQwmqUIt42jVtV8
+         MTuOyuN9syF2n5aOSw4mzPgYdHHQSB92a44cRzBtvqeRsc2KHS5t1Fg/uqh6tYcP/lDb
+         5sOdCMozkgyHDMy0YrDo0b+y3Kk4ccLLxMjAGbHnBCLTgM/TCDQ4v7c8hRPJFv3EgVr1
+         rebZC9euPu1f/OyPz19vDEZt9j5goOgechKQpPLq3A/3BZsXsz4So5zrky9OhBpTcdJw
+         61tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVt0WZB7eM0U2UW7RvQPFugD/eQQDzc4/Hv0BK8w+byVWKXf+4dLBjwJPg6fpJoOtU8kvVaLGYQC+QS7mQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrfoTK6+ID34G0qW0ZP5uyDyVzYol/xhpQl38ek3LihCaO3W0s
+	ZQWCPsbIJzGRPF49WP4RZoaisXhBO9VuQFlw5zbRWtLLrfWirtA6PTeDvRpQMh3R+8oMiJUHhkK
+	dX4ZAnvF1ZBv1K0qGWybkuGFs3FYZGxtpQQx4ow==
+X-Gm-Gg: ASbGncugH+IWCJCqbkA9eJV5amoLrn4OxO942Q4ebLJvm+FCo9eku2Iz2bMvhy2cptv
+	7dUPgRdgu2QYsLamQPJxt86mIyLDXfr7scvAlRPk2f8o3ZKaPStRp02imhwujNkcEJdg3ziKYJL
+	y4cNcA8L9qopE+KePmALE=
+X-Google-Smtp-Source: AGHT+IEZnx2ua4BNTwwSY90xVl9/DsFfXFO/2jCY0FjwTjZbpcGwRMsGVneaA3gXMQIvMPRCpa5zRDyI3qKpKbF/JuQ=
+X-Received: by 2002:a05:622a:652:b0:476:9b40:c2cf with SMTP id
+ d75a77b69052e-479775eaa53mr209840541cf.50.1744638596951; Mon, 14 Apr 2025
+ 06:49:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250410201325.962203-1-robh@kernel.org>
+References: <tencent_F1DBC4D1F22658222170020AC7DB0B4CF405@qq.com>
+In-Reply-To: <tencent_F1DBC4D1F22658222170020AC7DB0B4CF405@qq.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 14 Apr 2025 15:49:46 +0200
+X-Gm-Features: ATxdqUGVRx8qh1Vx9I4nLgse8lILHVF6-1K_zzvhAe6AotPhJh8_DJGed1KytJk
+Message-ID: <CAJfpegv4eAj7OL0AZJhtyvGenet5iF7cp3yKA26BuWucRW+hNg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs/fuse: Change 'unsigned's to 'unsigned int's.
+To: Jiale Yang <295107659@qq.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 20 Nov 2024 at 09:30, Jiale Yang <295107659@qq.com> wrote:
+>
+> Prefer 'unsigned int' to bare 'unsigned', as reported by checkpatch.pl:
+> WARNING: Prefer 'unsigned int' to bare use of 'unsigned'.
+>
+> Signed-off-by: Jiale Yang <295107659@qq.com>
 
-On Thu, 10 Apr 2025 15:13:22 -0500, Rob Herring (Arm) wrote:
-> The cpu topology binding is now covered by the dtschema cpu-map.yaml
-> schema with all the relevant descriptions moved to it.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../devicetree/bindings/cpu/cpu-topology.txt  | 553 ------------------
->  1 file changed, 553 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/cpu/cpu-topology.txt
-> 
+Applied, thanks.
 
-Applied, thanks!
-
+Miklos
 
