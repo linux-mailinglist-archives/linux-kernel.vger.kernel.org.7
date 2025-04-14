@@ -1,130 +1,127 @@
-Return-Path: <linux-kernel+bounces-602617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E945CA87D26
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:11:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 173EDA87BCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B2EE3B76F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:09:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF49E3AD211
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F132690F8;
-	Mon, 14 Apr 2025 10:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3ED25F987;
+	Mon, 14 Apr 2025 09:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linatsea.fr header.i=@linatsea.fr header.b="RO5VAnnx"
-Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WSOjll3b"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA6F25E471;
-	Mon, 14 Apr 2025 10:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0D8C13D;
+	Mon, 14 Apr 2025 09:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744625333; cv=none; b=RwohT2ZuZdsk++l8s6JGm40Io8rFuX1MXJ+cR44LW7NQ7YhnAhoqKeL7CK6k6ofNa/ZNrTM187g5lYsdA3yYCLqU1JzbhJ8BkGFBLL975ukVRorJ6NXw547jfMK4hImm9++0ygW6qLGb3lcg3M39oH/gVFxMHnsh7ijOcGn6IWU=
+	t=1744622675; cv=none; b=Qi3+XMKXt4q0FoPd572ehnZb+GiBP4OoCvihaY0/I73uPTTCwFP6LRih+h73uwp0VGGWEAcGN+I0PrzJNKk0RHxyC1HOrfeI19dUOYjBW7ucryQxhPV4BadvVJlax2S/jjX7f1Dm037pSVtcKTkGSGkft5po3haOnF0YFGezd3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744625333; c=relaxed/simple;
-	bh=ikcFIKiUa4XCXRzxwCujAZL//L2GImleFBpghLCAdbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a1QNizTsv5vgjUpI+dFeIWC3Y79yzhROXs1bfTL19IDi2a3oDbY/JZXG5RQG7PIK5SIRDfpg1Vpyy9gh8CPWwWdEADOKZN5GPU0wgwwCE6CXqHnmKzNQmqQ7tIkvisfgrnpFrgWPfI75OK7qVjYqoyO0Hdp3Wn9IFkiP08n82Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linatsea.fr; spf=pass smtp.mailfrom=linatsea.fr; dkim=pass (2048-bit key) header.d=linatsea.fr header.i=@linatsea.fr header.b=RO5VAnnx; arc=none smtp.client-ip=217.70.178.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linatsea.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linatsea.fr
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	by mslow3.mail.gandi.net (Postfix) with ESMTP id 38015584AE7;
-	Mon, 14 Apr 2025 09:23:45 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 108D4433F6;
-	Mon, 14 Apr 2025 09:23:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linatsea.fr; s=gm1;
-	t=1744622617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2xX1JnrLD/Xmneb1rgW8av3OLo09hQ4pZGDbeGR+qj8=;
-	b=RO5VAnnxDB8lpFxKu641LS0B9QLtjt9TUl9rTMYFBCSXgRg5jmtbsItblG8jlNiXcDHr9P
-	ZTiHksLdTyzu2/OAqJ+hurpuJitXUf4TB5aAHq7zEwh+V96wXLpyweU7W05QpDXdV9wZqz
-	iQfDu2WvOGFyNTQWdW3mf5nTGeH2sCyw59gw4S0jzlLsTRg7itiTvSNu0fcQQYBHV0Tryc
-	7v6hp5vT5D50D2T9UkuXgi8JjeojuaSRJdk6aabHHnEby2e7ieLDeqKSOvdXmcVcCNkT7g
-	uKgkyl/7vl/dZnqrL1UTjo09G7NOVaTP/lgmzAVVxHPfs8S4fqg4CYoDNA1uMg==
-Message-ID: <eba16d9a-9e07-498f-a7ab-0bb36076de40@linatsea.fr>
-Date: Mon, 14 Apr 2025 11:23:34 +0200
+	s=arc-20240116; t=1744622675; c=relaxed/simple;
+	bh=agTCgMoSAjEhU2SJdZ9IyLmvMRHBWqSCUMYVX1x+tbY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mhe0YpFHRupgwC1xRkI4YRJIbSWUmVZT+64d4nz5JEQCZqDK8+JmUhBkxAWZPYQTkgxu0edH6kFudmGa9Q4AVWY0Nq+B/I17i2N7FX45hQb0MqE8GFGQtv04DphVVunLgVvVjW+978donkuxLPn1q5LTnLrFAsxypAVKFoK9Ibk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WSOjll3b; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43ed8d32a95so34355585e9.3;
+        Mon, 14 Apr 2025 02:24:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744622672; x=1745227472; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xzue1Jqf/6PZMYk21IFwYXYNC/Y+Ds8648fAr55/H5I=;
+        b=WSOjll3bfqGOL/IjTDFaKJFg901NdMT5hQivaNKEqqQPc07u6Sj5/GWM29PKI92WUR
+         T8QJDW74rrtja9rQ7WDjzEoHOMFcXQnufsSBQjXP+9oxDcl1DppojYEK84GHWXM3aApk
+         6tMjyLscMu5Req2voS7+EscPuBSAg1Fk1jEieRpQztmgQNxvNcVI7ITWgrXXna22DOBB
+         SOYyPbN04sESDP/djRQcf2KQ+qek5pYAh43Lo0/8MwtEFS8hJjdFNjoXxllCR8bY3ZKS
+         yTgjWFD7vJou3COVixwXC/+WPp/czoeoHeOuMC3tV0vIx8yfxaGx8bHK3W0ct2ILTwgN
+         i3xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744622672; x=1745227472;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xzue1Jqf/6PZMYk21IFwYXYNC/Y+Ds8648fAr55/H5I=;
+        b=kiKxPrsd9wFnPj7F/ivFcb1IXC9jVfncrUkYjl/dWW9YEwrK2OXt1PA9KXGPRx3iKW
+         8dsBWFCTiJlD3D2AZvytuq4iVzp3xo12pG9qKF4bAO63oTwjp63sK0nvNqPmfxNtva/s
+         FGJc7+rIaw43YH1qjQiinPCoyXtoJ21sW+JFla7++o/bX7X40RJLUbWUTh/ExrsldmTv
+         DtqTh6No2PvUdjyLilV0wwaAMeF2r1pxSFHbCrc5i5NRU509DL+EiqLKmfUOdM6TRU0r
+         L978CZsqpoVsAc/QMAbINJpfx6MFHVdcTG3EPeisEy9KM1a+9TNRNz3enHlJAOIHEpU5
+         Z/hw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSJRjjKtmScc/MCeQtFM9AoMoyOXteu4OIXyIbNc8K1ilUFPVFcpabB6n+lFk5sT70cPjj0TLadTnrwi2u@vger.kernel.org, AJvYcCVZzMl1j09XT6lyJGn9ucx2qSolIR2pVNesWNZrYT+v/UMYYMWd9zmll7uJbo9kh0xNbgnn6sWGbITn0TLP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr/FwDToINVFzCXNhYiU3chRKl7OrWdxMozdmFLl74ZYxKGTNF
+	C36fvg+vU2m2Sp4AVrYfHTPrv/nZTRP36f96JQtPGKgUQLjSaeDv
+X-Gm-Gg: ASbGncvhDAFsYzK4AeDuX5npZvgt4r1OWJzM2s26+gXM8Psw5eQPWL34apJPXfOngwo
+	miGnyKWTGi6KCTIfeV+D2uje0azgDi7o1fghJ+42YDgmceaV55rSlzsOkpuLZ0/3LG1ai9P+MIh
+	WEdLL2V1M4dzoXwlN/ZiP59zxucWU5kXWsnGqx+GnaJYFzGgpPyvgO5ratjSLU8b0YoSsTPhhGf
+	9tz+LdqJj8GQh+cyfEWO7PFOgpYJoD9VUjUclghcWyNqifrZ4aBahXvY3DjN2c5NoLSu2Za2Wu9
+	bvbizVkH9me5cAYitdSzWtbMIkTr0aGadolmMltRAqMhclXgrHYT
+X-Google-Smtp-Source: AGHT+IHtWY6E+K4K+bXtvTUnA8A+xDFVvz/cd8uuterYyuoV91+43oLtXfRw8mAVEcC4tqjNcP+mAA==
+X-Received: by 2002:a05:600c:46d1:b0:43c:e9f7:d6a3 with SMTP id 5b1f17b1804b1-43f3a93d697mr94168135e9.13.1744622671428;
+        Mon, 14 Apr 2025 02:24:31 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43f23572c4esm172954905e9.26.2025.04.14.02.24.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 02:24:31 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] select: core_sys_select add unlikely branch hint on return path
+Date: Mon, 14 Apr 2025 10:24:26 +0100
+Message-ID: <20250414092426.53529-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 10/13] serial: sh-sci: Add support for RZ/T2H SCI
-To: Greg KH <gregkh@linuxfoundation.org>,
- Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "geert@linux-m68k.org" <geert@linux-m68k.org>,
- Paul Barker <paul.barker.ct@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com>
- <20250403212919.1137670-11-thierry.bultel.yh@bp.renesas.com>
- <2025041152-puzzling-clinking-e573@gregkh>
- <TYCPR01MB11492DDF2728C9D3B3F14DCA38AB32@TYCPR01MB11492.jpnprd01.prod.outlook.com>
- <2025041456-legacy-craftwork-2d8b@gregkh>
-Content-Language: fr
-From: Thierry Bultel <thierry.bultel@linatsea.fr>
-In-Reply-To: <2025041456-legacy-craftwork-2d8b@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvddtudekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhhihgvrhhrhicuuehulhhtvghluceothhhihgvrhhrhidrsghulhhtvghlsehlihhnrghtshgvrgdrfhhrqeenucggtffrrghtthgvrhhnpeffleefheeutdeuhfehteehkeduieeltdejffetkeekuedtveeivedvudelkefgteenucfkphepkeelrddvgeekrdejiedrjedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepkeelrddvgeekrdejiedrjedtpdhhvghloheplgduledvrdduieekrdehjedrleejngdpmhgrihhlfhhrohhmpehthhhivghrrhihrdgsuhhlthgvlheslhhinhgrthhsvggrrdhfrhdpnhgspghrtghpthhtohepkedprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehthhhivghrrhihrdgsuhhlthgvlhdrhihhsegsphdrrhgvnhgvshgrshdrtghomhdprhgtphhtthhopehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgp
- dhrtghpthhtohepphgruhhlrdgsrghrkhgvrhdrtghtsegsphdrrhgvnhgvshgrshdrtghomhdprhgtphhtthhopeifshgrodhrvghnvghsrghssehsrghnghdqvghnghhinhgvvghrihhnghdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvghrihgrlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: thierry.bultel@linatsea.fr
 
+Adding an unlikely() hint on the n < 0 comparison return path improves
+run-time performance of the select() system call, the negative
+value of n is very uncommon in normal select usage.
 
+Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
+a 6.15-rc1 kernel built with 14.2.0 using a select of 1000 file
+descriptors with zero timeout shows a consistent call reduction from
+258 ns down to 254 ns, which is a ~1.5% performance improvement.
 
-Le 14/04/2025 à 10:58, Greg KH a écrit :
-> On Mon, Apr 14, 2025 at 07:54:12AM +0000, Thierry Bultel wrote:
->> Hi Greg,
->>
->>> -----Original Message-----
->>> From: Greg KH <gregkh@linuxfoundation.org>
->>> Sent: vendredi 11 avril 2025 16:57
->>> To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
->>> Cc: thierry.bultel@linatsea.fr; linux-renesas-soc@vger.kernel.org;
->>> geert@linux-m68k.org; Paul Barker <paul.barker.ct@bp.renesas.com>; Wolfram
->>> Sang <wsa+renesas@sang-engineering.com>; linux-kernel@vger.kernel.org;
->>> linux-serial@vger.kernel.org
->>> Subject: Re: [PATCH v7 10/13] serial: sh-sci: Add support for RZ/T2H SCI
->>>
->>> On Thu, Apr 03, 2025 at 11:29:12PM +0200, Thierry Bultel wrote:
->>>> --- a/include/uapi/linux/serial_core.h
->>>> +++ b/include/uapi/linux/serial_core.h
->>>> @@ -231,6 +231,9 @@
->>>>   /* Sunplus UART */
->>>>   #define PORT_SUNPLUS	123
->>>>
->>>> +/* SH-SCI */
->>>> +#define PORT_RSCI	124
->>> Why do you need to tell userspace about this specific port?  Is that a
->>> hard requirement that your userspace tools require?  If not, please don't
->>> export this here.
->> This point has been discussed with Geert and Wolfram.
->> We cannot use PORT_GENERIC for this IP, and adding the new type
->> is just keeping consistent with the sh-sci driver.
-> But, why does userspace need to know this number?  And why doesn't
-> PORT_GENERIC work?
+Results based on running 25 tests with turbo disabled (to reduce clock
+freq turbo changes), with 30 second run per test and comparing the number
+of select() calls per second. The % standard deviation of the 25 tests
+was 0.24%, so results are reliable.
 
-The reason is that the sh-sci driver discriminates internally between 
-port types.
-There are number of locations when it checks for PORT_SCI, PORT_SCIF, 
-PORT_SCIFA...
-T2H SCI needs special handling, too, that is the reason why PORT_GENERIC 
-cannot work. I just therefore added this new type.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/select.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> thanks,
->
-> greg k-h
+diff --git a/fs/select.c b/fs/select.c
+index 0eaf3522abe9..9fb650d03d52 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -630,7 +630,7 @@ int core_sys_select(int n, fd_set __user *inp, fd_set __user *outp,
+ 	long stack_fds[SELECT_STACK_ALLOC/sizeof(long)];
+ 
+ 	ret = -EINVAL;
+-	if (n < 0)
++	if (unlikely(n < 0))
+ 		goto out_nofds;
+ 
+ 	/* max_fds can increase, so grab it once to avoid race */
+-- 
+2.49.0
 
 
