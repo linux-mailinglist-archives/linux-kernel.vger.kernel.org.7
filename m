@@ -1,409 +1,198 @@
-Return-Path: <linux-kernel+bounces-602073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 088BCA8761C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 05:09:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCFA0A87615
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 05:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55E403B11F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 03:09:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9DB3B114D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 03:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A0D19DF4A;
-	Mon, 14 Apr 2025 03:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AA91991D2;
+	Mon, 14 Apr 2025 03:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="g9gnIQtF"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2071.outbound.protection.outlook.com [40.107.237.71])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMaZkW8c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C93E571;
-	Mon, 14 Apr 2025 03:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744600155; cv=fail; b=hino+px5l5pDv8CSgnFaA7lOfEWc6zsOgJndhM1od6eJup21fXVp9WFp2CDNXfbHDElqiaE3c+H77RqF8JanduqghFRs403LF95cHgzmS2Bbv5WiiJXNhO38aCBtPfURlDU5EeW5XKNB2DKh/D8qLMIOH+/9M6u+fGASRQ5Z04M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744600155; c=relaxed/simple;
-	bh=aoTUak1EbkNKk0XIx/+b7ZFr2ycUtGb2VgAbphHoTYQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UCsinEoB4j4h298bbor9HBwBMbNl5Wo6LkJYCM9Vga+OHLjsOLC9URxXS/JNoUj4CS9B3r0SfxLjQe1hS5Bvz+FtyTW6VFV6BE7yMYiMzIQzj0FpCdrfrkl7ptiPDWM9dZbxHeqUAs7FOl9CEs/Eoiv80yOBV/AfqrKxCHOZ+Ak=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=g9gnIQtF; arc=fail smtp.client-ip=40.107.237.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RVXfjho2hOPuSgO2rLQhCiZ9yMTFnATGtfANqII0aCZ7My5My90SK0R6Dlt5Qm5LYXo5Vo2Ze/slPWAKnL774JId7HM48TbUNdyABPe0DOH84SoBAcg9wbCEmGCX3WXr5OXOy4v5JYZH4u3hD28f8VWYWgs8el2HscPcXAk3DPQhZEcr1tQyCCGQKrp2XB2A0g82c5nRjle+qCr9WIlfT3fPGgK7eOGkDNHIbuQQmtab377RyklDK6Tn0+kGa7mG2pL0KHlzi3nD2SbJhKWSpnxcsz+0pf62e950DNiJbMKl24KB5lfNwY8k+BL/gECSpijbkPF/jL2ffeKfWF9JBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C5lm4OtzGWA3FO1KkReRtd9VLBWMxs0yCq3Gs9lvrhs=;
- b=RsABXBVpRaug9QFfKR3KKlYAxsoRif9By0Hiz/uvxXVJc8zzZmRtJCAJihuGYbely1nsyo1FUkcfdwve9emFtMRLWxeCkMXJQrco3FW1/R/O2AhGExfQN1RD8dOPnd0oQFasoFRL81tDY6DPIbBxNaINBk13w69Sk8/QQIE+3eLXK478iXQMLkS8Uu/hT16q/R7OqEzWZN+3pOEhbpBegcPLa62oZWtnxU3jsFu+dC160f7LvidydU4M/j+tpK3MR0qnZhHQO3LtX4Ci9c/Hc57jkV1oMTWNzkNidpBZoBFx8HAU1IZRWC8CNbqZraPbewFaQLmNpWbWP4fuAXp0Qw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C5lm4OtzGWA3FO1KkReRtd9VLBWMxs0yCq3Gs9lvrhs=;
- b=g9gnIQtFRpvu53HhbCx+SuoIRgw6KyKy8qK97voza65CFkcu2Z6v1PfM7WYHCly2uEU94M/Op5Ikl7StmpVthi+xrPulKp9nE00fEOcKQeGXG3pXUX+LaK2abeuVHzcESPpkri3ix2g/b9mjoz/qLMRbaILB7/Bz/m4Rr9xqw7s=
-Received: from PH7P220CA0160.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:33b::18)
- by SN7PR12MB6744.namprd12.prod.outlook.com (2603:10b6:806:26c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.31; Mon, 14 Apr
- 2025 03:09:09 +0000
-Received: from CY4PEPF0000EDD2.namprd03.prod.outlook.com
- (2603:10b6:510:33b:cafe::53) by PH7P220CA0160.outlook.office365.com
- (2603:10b6:510:33b::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.32 via Frontend Transport; Mon,
- 14 Apr 2025 03:09:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EDD2.mail.protection.outlook.com (10.167.241.198) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8655.12 via Frontend Transport; Mon, 14 Apr 2025 03:09:08 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 13 Apr
- 2025 22:09:03 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 13 Apr
- 2025 22:09:03 -0500
-Received: from xhdlc201369.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Sun, 13 Apr 2025 22:08:59 -0500
-From: Sai Krishna Musham <sai.krishna.musham@amd.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-	<manivannan.sadhasivam@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <cassel@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
-	<bharat.kumar.gogada@amd.com>, <thippeswamy.havalige@amd.com>,
-	<sai.krishna.musham@amd.com>
-Subject: [LINUX PATCH v7 2/2] PCI: xilinx-cpm: Add support for PCIe RP PERST# signal
-Date: Mon, 14 Apr 2025 08:38:42 +0530
-Message-ID: <20250414030842.857176-3-sai.krishna.musham@amd.com>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <20250414030842.857176-1-sai.krishna.musham@amd.com>
-References: <20250414030842.857176-1-sai.krishna.musham@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0C21953AD;
+	Mon, 14 Apr 2025 03:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744600142; cv=none; b=Drwh4EUCfE7aeT4MuGvfe9I0R3m8FyMTEuMR/1TVcjKYrmMtsUmgpelAnEfrHrnioyIyK08lCs9H82nKxm+vFxxRcybBGRfwEAoBxTnegkeheQzNXvl8e8bCImAojwu3coNXtJyeWG0ny9AkozRsNmn9x29l4HgvJRSCcYZ7qPk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744600142; c=relaxed/simple;
+	bh=g7wafSBCYLabX41Qp9oGHFXOid7epq0wqGnZyAyGK4Y=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=aKtNqd5zDJ2NTuYX6GSegQ3uRiH+bqH11xKkPbAE78iniWbq1zcFRid2pYpmHee38XkJNU8c/HJn+B2shgxHK/a1pZYtYetn4jsBix9/cK2sPbsqk/oGnWUcWVfRf1aNSzx0NPT6pgwR7Hm/o6nhwRE942zvC1pO/xWBRXJwaGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMaZkW8c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2C8DC4CEDD;
+	Mon, 14 Apr 2025 03:08:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744600142;
+	bh=g7wafSBCYLabX41Qp9oGHFXOid7epq0wqGnZyAyGK4Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gMaZkW8cG8zb0rXc8EQvuTKQGyDDPwrftGnN5vzXYBwB/RsaivHlpKBUt6MIUOBLH
+	 VfgRbu1imzTIe6VvtUk3ZHsWW/UgWZpQa2sYlbRh25oA9z5okRxw6rKYJnW3YybAjp
+	 oUUByWppBw8t6S48uzTI7bX19NWpazxKZkYCC5h1/Z7CFkyBNVy7s8qxR56OEVFows
+	 68wPpMN+Y4QvXkymvxaUpEf/AmbmShOTVGIriYg2ewg6qWDtE/nj46TYOg0HMsEhRE
+	 /AHPXxPVfCYJ7yoNbDaiAWXrKhmbp9Lf12OLfavvO/CtK1RDpm7nfvWZ57hNhgoMh3
+	 FlMf3jl1DTMnQ==
+Date: Mon, 14 Apr 2025 12:08:58 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Sven Schnelle <svens@linux.ibm.com>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, Donglin
+ Peng <dolinux.peng@gmail.com>, Zheng Yejian <zhengyejian@huaweicloud.com>,
+ Aishwarya.TCV@arm.com
+Subject: Re: [PATCH v4 2/4] ftrace: Add support for function argument to
+ graph tracer
+Message-Id: <20250414120858.0cda755e37a68537a8ae5b67@kernel.org>
+In-Reply-To: <20250411151358.1d4fd8c7@gandalf.local.home>
+References: <20250227185804.639525399@goodmis.org>
+	<20250227185822.810321199@goodmis.org>
+	<ccc40f2b-4b9e-4abd-8daf-d22fce2a86f0@sirena.org.uk>
+	<20250410131745.04c126eb@gandalf.local.home>
+	<c41e5ee7-18ba-40cf-8a31-19062d94f7b9@sirena.org.uk>
+	<20250411124552.36564a07@gandalf.local.home>
+	<2edc0ba8-2f45-40dc-86d9-5ab7cea8938c@sirena.org.uk>
+	<20250411131254.3e6155ea@gandalf.local.home>
+	<350786cc-9e40-4396-ab95-4f10d69122fb@sirena.org.uk>
+	<9dafc156-1272-4039-a9c0-3448a1bd6d1f@sirena.org.uk>
+	<20250411142427.3abfb3c3@gandalf.local.home>
+	<20250411143132.56096f76@gandalf.local.home>
+	<20250411151358.1d4fd8c7@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD2:EE_|SN7PR12MB6744:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0fb4dc95-4de6-411e-4297-08dd7b01b922
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lUIGHXtojXYwImz4nDEabbfewZ8UUocvOoKXgllpDXkGwdlFITYku3n1oYWb?=
- =?us-ascii?Q?8oGKYidTLtcNLmpQVM64EcUUbaS3Ch293TIIceFcUjx+YrqQqbGMvC2fty5z?=
- =?us-ascii?Q?Dxiec75wvmWvr8DkoPdo88ta+43hyhAewQyN7wdDDZab6gMiXsCx/znzO+6F?=
- =?us-ascii?Q?KUJ8gNRrSzlWwNkG6J96n4sFMd9lDM8rFWk+ASgb0S38dwVQ/vmmkEgeVpfJ?=
- =?us-ascii?Q?ZvwtxJUI3VzvJk8y78gnQixeYmnsF4SR2wDXMIjo6tK1e6YCVZ/+uM/W5NCk?=
- =?us-ascii?Q?/LRqNIb1MPXdpXb7m0gdqUeJZ3jY+nKyOYZnkLj3VX9PdGd3KXzjUN4jyueF?=
- =?us-ascii?Q?boreqV/CbnsQdS3pcMjrul5fWmDr05PLQE2BbYFlFX88esvEKmX8Wszr4NVs?=
- =?us-ascii?Q?QWjWjhDHXqCZTsjteGD+GySfKe9xcZQruzR3By2724yTcrl5LW7X4AbWt4Xa?=
- =?us-ascii?Q?CmxyUuQiIxNi4vhsh0yBi2T5rZyEb+OfCtLpiG6Ri+LCQCAJkFJ6XedCqt6A?=
- =?us-ascii?Q?6uWACMbRtnXbs8NjKf84ubYRHh7Qwfv0Z4gxKcv94Q7uhB9JB2AY0HmUtdUU?=
- =?us-ascii?Q?LVffxRvi6uw1wZR9nuZU9Xh5mYH6Mle4vdef163Ad0jc7eFID8fMUHx6Vids?=
- =?us-ascii?Q?d47mulbVCtzF1BBofFUzkghcWE6lbDlNzi9ysLpuxA0Z1iX14TbRcScLPTZm?=
- =?us-ascii?Q?hBipXqFGNL9eGPzUcBEW0Zw7r9BJwnp4csGg6nR3pJL5/I/eK10wOjyga5JJ?=
- =?us-ascii?Q?035PLfagJkgErUeWhPT4jz/n/Rd1y6FVgOkcYsd315LKmyi97dU3JGMfKz64?=
- =?us-ascii?Q?mA/fmE/uol/xe6oUWpeoFRTDYaYyTzMsw07xmn7Y/0zHpZE5IMV0gLBqtUVU?=
- =?us-ascii?Q?imJkUCJitZ9dF+E+5ApcKDgayE/n5of5sfLvz77ZrZX2KjgVxhTY0oHSBS6F?=
- =?us-ascii?Q?0F/J0VZ8TCFLV7n+qKgFHvMUaPnIzzdMyEdnGekP9exVoBUm+02ui0kxbvTy?=
- =?us-ascii?Q?XbRjax8Ct9a3OKp5BycpxqMwVivl6YOF/FlQgPh+4RCtZuj3jQoRb0zTCV0Y?=
- =?us-ascii?Q?+FEme+oxjwRa+pZJxk427x/9rc1JgF7v/kRX2rMFrbPb8lDMXhkfGRDYWVvZ?=
- =?us-ascii?Q?q73BRadnGevcAXQw3IpJyeU45SG28lZq4KEI4CEFRMVhWOYAKpfj7qiYxR9i?=
- =?us-ascii?Q?ehdJjoawu59uMbH2pZjYooEZPsjxz/9jcVa1XS09/NW5u/Dmfi2zvcUfPDzS?=
- =?us-ascii?Q?mswRM+ASs23ixUJSCxNCkijYDUfnIGZRp2zJ7PkrlGpRadve/1D1IdlQjKPL?=
- =?us-ascii?Q?6mF0TTJmgsCbUIueBcbVKQNV4ewGgXfLaKpOSE7meTwWkDFfUu186e6sk1AN?=
- =?us-ascii?Q?WqjkPy0Gei58Q6fbexRQkVOe6usmVAWxN1i8qRBLdXgD/S+pYhZ45iafN564?=
- =?us-ascii?Q?eAsjLiVGEiYPGmqWW+cx7VbrihQ+kn3v+4I3GQ44Mem4XWxby8MhSYbbIlxx?=
- =?us-ascii?Q?oOoC0quQ/DuaL2oIYYkpUl3o1lKSd9f/0fCk?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2025 03:09:08.6129
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0fb4dc95-4de6-411e-4297-08dd7b01b922
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD2.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6744
 
-Add support for handling the PCIe Root Port (RP) PERST# signal using
-the GPIO framework, along with the PCIe IP reset. This reset is
-managed by the driver and occurs after the Initial Power Up sequence
-(PCIe CEM r6.0, 2.2.1) is handled in hardware before the driver's probe
-function is called.
+On Fri, 11 Apr 2025 15:13:58 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-This reset mechanism is particularly useful in warm reset scenarios,
-where the power rails remain stable and only PERST# signal is toggled
-through the driver. Applying both the PCIe IP reset and the PERST#
-improves the reliability of the reset process by ensuring that both
-the Root Port controller and the Endpoint are reset synchronously
-and avoid lane errors.
+> On Fri, 11 Apr 2025 14:31:32 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > Hmm, I just tested this, and it fails on my box too (I test on a debian VM).
+> > 
+> > It fails with and without setting it to bash. I'll take a look too.
+> 
+> Hmm, maybe it is a bashism.
+> 
+> The test has this:
+> 
+>   # Max arguments limitation
+>   MAX_ARGS=128
+>   EXCEED_ARGS=$((MAX_ARGS + 1))
+> 
+>   check_max_args() { # event_header
+>     TEST_STRING=$1
+>     # Acceptable
+>     for i in `seq 1 $MAX_ARGS`; do
+>       TEST_STRING="$TEST_STRING \\$i"
+>     done
+>     echo "$TEST_STRING" >> dynamic_events
+>     echo > dynamic_events
+>     # Error
+>     TEST_STRING="$TEST_STRING \\$EXCEED_ARGS"
+>     ! echo "$TEST_STRING" >> dynamic_events
+>     return 0
+>   }
+> 
+>   # Kprobe max args limitation
+>   if grep -q "kprobe_events" README; then
+>     check_max_args "p vfs_read"
+>   fi
+> 
+> So I tried manually executing this in bash:
+> 
+> --------------------------8<--------------------------
+> # TEST_STRING='p vfs_read'
+> # for i in `seq 1 128`; do TEST_STRING="$TEST_STRING \\$i" ; done
+> # echo $TEST_STRING
+> p vfs_read \1 \2 \3 \4 \5 \6 \7 \8 \9 \10 \11 \12 \13 \14 \15 \16 \17 \18 \19 \20 \21 \22 \23 \24 \25 \26 \27 \28 \29 \30 \31 \32 \33 \34 \35 \36 \37 \38 \39 \40 \41 \42 \43 \44 \45 \46 \47 \48 \49 \50 \51 \52 \53 \54 \55 \56 \57 \58 \59 \60 \61 \62 \63 \64 \65 \66 \67 \68 \69 \70 \71 \72 \73 \74 \75 \76 \77 \78 \79 \80 \81 \82 \83 \84 \85 \86 \87 \88 \89 \90 \91 \92 \93 \94 \95 \96 \97 \98 \99 \100 \101 \102 \103 \104 \105 \106 \107 \108 \109 \110 \111 \112 \113 \114 \115 \116 \117 \118 \119 \120 \121 \122 \123 \124 \125 \126 \127 \128
+> # echo "$TEST_STRING" >> /sys/kernel/tracing/dynamic_events
+> # echo $?
+> 0
+> # cat /sys/kernel/tracing/dynamic_events
+> p:kprobes/p_vfs_read_0 vfs_read arg1=\1 arg2=\2 arg3=\3 arg4=\4 arg5=\5 arg6=\6 arg7=\7 arg8=\8 arg9=\9 arg10=\10 arg11=\11 arg12=\12 arg13=\13 arg14=\14 arg15=\15 arg16=\16 arg17=\17 arg18=\18 arg19=\19 arg20=\20 arg21=\21 arg22=\22 arg23=\23 arg24=\24 arg25=\25 arg26=\26 arg27=\27 arg28=\28 arg29=\29 arg30=\30 arg31=\31 arg32=\32 arg33=\33 arg34=\34 arg35=\35 arg36=\36 arg37=\37 arg38=\38 arg39=\39 arg40=\40 arg41=\41 arg42=\42 arg43=\43 arg44=\44 arg45=\45 arg46=\46 arg47=\47 arg48=\48 arg49=\49 arg50=\50 arg51=\51 arg52=\52 arg53=\53 arg54=\54 arg55=\55 arg56=\56 arg57=\57 arg58=\58 arg59=\59 arg60=\60 arg61=\61 arg62=\62 arg63=\63 arg64=\64 arg65=\65 arg66=\66 arg67=\67 arg68=\68 arg69=\69 arg70=\70 arg71=\71 arg72=\72 arg73=\73 arg74=\74 arg75=\75 arg76=\76 arg77=\77 arg78=\78 arg79=\79 arg80=\80 arg81=\81 arg82=\82 arg83=\83 arg84=\84 arg85=\85 arg86=\86 arg87=\87 arg88=\88 arg89=\89 arg90=\90 arg91=\91 arg92=\92 arg93=\93 arg94=\94 arg95=\95 arg96=\96 arg97=\97 arg98=\98 ar
+ g99=\99 arg100=\100 arg101=\101 arg102=\102 arg103=\103 arg104=\104 arg105=\105 arg106=\106 arg107=\107 arg108=\108 arg109=\109 arg110=\110 arg111=\111 arg112=\112 arg113=\113 arg114=\114 arg115=\115 arg116=\116 arg117=\117 arg118=\118 arg119=\119 arg120=\120 arg121=\121 arg122=\122 arg123=\123 arg124=\124 arg125=\125 arg126=\126 arg127=\127 arg128=\128
+> -------------------------->8--------------------------
+> 
+> Doing the same in dash:
+> 
+> --------------------------8<--------------------------
+> # dash
+> # TEST_STRING='p vfs_read'
+> # for i in `seq 1 128`; do TEST_STRING="$TEST_STRING \\$i" ; done
+> # echo $TEST_STRING
+> p vfs_read         \8 \9 	 
+>  
+>   
+>    8 9         8 9   ␦  9   ! " # $ % & ' 8 9 ( ) * + , - . / 8 9 0 1 2 3 4 5 6 7 8 9 8 9 : ; < = > ? 8 9 \80 \81 \82 \83 \84 \85 \86 \87 \88 \89 \90 \91 \92 \93 \94 \95 \96 \97 \98 \99 @ A B C D E F G89 H I J K L M N O 	8 	9 P Q R S T U V W 
+> 8
+> # echo "$TEST_STRING" >> /sys/kernel/tracing/dynamic_events
+> dash: 8: echo: echo: I/O error
+> -------------------------->8--------------------------
 
-Adapt the implementation to use the GPIO framework for reset signal
-handling and make this reset handling optional, along with the
-`cpm_crx` property, to maintain backward compatibility with existing
-device tree binaries (DTBs).
+Oops...
 
-Additionally, clear Firewall after the link reset for CPM5NC to allow
-further PCIe transactions.
+> 
+> Looks like dash will translate those "\#" into the ASCII equivalent,
+> whereas bash does not.
 
-Signed-off-by: Sai Krishna Musham <sai.krishna.musham@amd.com>
----
-Changes for v7:
-- Use platform_get_resource_byname() to make cpm_crx and cpm5nc_fw_attr
-  optional
-- Use 100us delay T_PERST as per PCIe spec before PERST# deassert.
+Ah, I didn't know that.
 
-Changes for v6:
-- Correct version check condition of CPM5NC_HOST.
+> 
+> This patch seems to fix it:
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/dynevent_limitations.tc b/tools/testing/selftests/ftrace/test.d/dynevent/dynevent_limitations.tc
+> index 6b94b678741a..ebe2a34cbf92 100644
+> --- a/tools/testing/selftests/ftrace/test.d/dynevent/dynevent_limitations.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/dynevent/dynevent_limitations.tc
+> @@ -11,7 +11,7 @@ check_max_args() { # event_header
+>    TEST_STRING=$1
+>    # Acceptable
+>    for i in `seq 1 $MAX_ARGS`; do
+> -    TEST_STRING="$TEST_STRING \\$i"
+> +    TEST_STRING="$TEST_STRING \\\\$i"
+>    done
+>    echo "$TEST_STRING" >> dynamic_events
+>    echo > dynamic_events
+> 
+> 
+> Masami, you just recently added this test (it's dated March 27th 2025), did
+> you mean to write in the ASCII characters? Why the backslash?
 
-Changes for v5:
-- Handle probe defer for reset_gpio.
-- Resolve ABI break.
+No, the kprobe_event accepts raw digit values to record in the trace buffer
+which is for the probe points which uses a fixed digit value for the actual
+local variable (or function parameter), e.g. constant propagation with
+optimized function instances.
 
-Changes for v4:
-- Add PCIe PERST# support for CPM5NC.
-- Add PCIe IP reset along with PERST# to avoid Link Training Errors.
-- Remove PCIE_T_PVPERL_MS define and PCIE_T_RRS_READY_MS after
-  PERST# deassert.
-- Move PCIe PERST# assert and deassert logic to
-  xilinx_cpm_pcie_init_port() before cpm_pcie_link_up(), since
-  Interrupts enable and PCIe RP bridge enable should be done after
-  Link up.
-- Update commit message.
+In this case, can we use below?
 
-Changes for v3:
-- Use PCIE_T_PVPERL_MS define.
+TEST_STRING="$TEST_STRING "'\\'$i
 
-Changes for v2:
-- Make the request GPIO optional.
-- Correct the reset sequence as per PERST#
-- Update commit message
----
- drivers/pci/controller/pcie-xilinx-cpm.c | 97 +++++++++++++++++++++++-
- 1 file changed, 94 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
-index 13ca493d22bd..c46642417d52 100644
---- a/drivers/pci/controller/pcie-xilinx-cpm.c
-+++ b/drivers/pci/controller/pcie-xilinx-cpm.c
-@@ -6,6 +6,8 @@
-  */
- 
- #include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/irqchip.h>
-@@ -21,6 +23,13 @@
- #include "pcie-xilinx-common.h"
- 
- /* Register definitions */
-+#define XILINX_CPM_PCIE0_RST		0x00000308
-+#define XILINX_CPM5_PCIE0_RST		0x00000318
-+#define XILINX_CPM5_PCIE1_RST		0x0000031C
-+#define XILINX_CPM5NC_PCIE0_RST		0x00000324
-+
-+#define XILINX_CPM5NC_PCIE0_FRWALL	0x00000140
-+
- #define XILINX_CPM_PCIE_REG_IDR		0x00000E10
- #define XILINX_CPM_PCIE_REG_IMR		0x00000E14
- #define XILINX_CPM_PCIE_REG_PSCR	0x00000E1C
-@@ -93,12 +102,16 @@ enum xilinx_cpm_version {
-  * @ir_status: Offset for the error interrupt status register
-  * @ir_enable: Offset for the CPM5 local error interrupt enable register
-  * @ir_misc_value: A bitmask for the miscellaneous interrupt status
-+ * @cpm_pcie_rst: Offset for the PCIe IP reset
-+ * @cpm5nc_fw_rst: Offset for the CPM5NC Firewall
-  */
- struct xilinx_cpm_variant {
- 	enum xilinx_cpm_version version;
- 	u32 ir_status;
- 	u32 ir_enable;
- 	u32 ir_misc_value;
-+	u32 cpm_pcie_rst;
-+	u32 cpm5nc_fw_rst;
- };
- 
- /**
-@@ -106,6 +119,8 @@ struct xilinx_cpm_variant {
-  * @dev: Device pointer
-  * @reg_base: Bridge Register Base
-  * @cpm_base: CPM System Level Control and Status Register(SLCR) Base
-+ * @crx_base: CPM Clock and Reset Control Registers Base
-+ * @cpm5nc_fw_base: CPM5NC Firewall Attribute Base
-  * @intx_domain: Legacy IRQ domain pointer
-  * @cpm_domain: CPM IRQ domain pointer
-  * @cfg: Holds mappings of config space window
-@@ -118,6 +133,8 @@ struct xilinx_cpm_pcie {
- 	struct device			*dev;
- 	void __iomem			*reg_base;
- 	void __iomem			*cpm_base;
-+	void __iomem			*crx_base;
-+	void __iomem			*cpm5nc_fw_base;
- 	struct irq_domain		*intx_domain;
- 	struct irq_domain		*cpm_domain;
- 	struct pci_config_window	*cfg;
-@@ -475,12 +492,57 @@ static int xilinx_cpm_setup_irq(struct xilinx_cpm_pcie *port)
-  * xilinx_cpm_pcie_init_port - Initialize hardware
-  * @port: PCIe port information
-  */
--static void xilinx_cpm_pcie_init_port(struct xilinx_cpm_pcie *port)
-+static int xilinx_cpm_pcie_init_port(struct xilinx_cpm_pcie *port)
- {
- 	const struct xilinx_cpm_variant *variant = port->variant;
-+	struct device *dev = port->dev;
-+	struct gpio_desc *reset_gpio;
-+	bool do_reset = false;
-+
-+	if (port->crx_base && (variant->version < CPM5NC_HOST ||
-+			       (variant->version == CPM5NC_HOST &&
-+				port->cpm5nc_fw_base))) {
-+		/* Request the GPIO for PCIe reset signal and assert */
-+		reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-+		if (IS_ERR(reset_gpio))
-+			return dev_err_probe(dev, PTR_ERR(reset_gpio),
-+					     "Failed to request reset GPIO\n");
-+		if (reset_gpio)
-+			do_reset = true;
-+	}
-+
-+	if (do_reset) {
-+		/* Assert the PCIe IP reset */
-+		writel_relaxed(0x1, port->crx_base + variant->cpm_pcie_rst);
-+
-+		/*
-+		 * "PERST# active time", as per Table 2-10: Power Sequencing
-+		 * and Reset Signal Timings of the PCIe Electromechanical
-+		 * Specification, Revision 6.0, symbol "T_PERST".
-+		 */
-+		udelay(100);
-+
-+		/* Deassert the PCIe IP reset */
-+		writel_relaxed(0x0, port->crx_base + variant->cpm_pcie_rst);
-+
-+		/* Deassert the reset signal */
-+		gpiod_set_value(reset_gpio, 0);
-+		mdelay(PCIE_T_RRS_READY_MS);
-+
-+		if (variant->version == CPM5NC_HOST &&
-+		    port->cpm5nc_fw_base) {
-+			/* Clear Firewall */
-+			writel_relaxed(0x00, port->cpm5nc_fw_base +
-+				       variant->cpm5nc_fw_rst);
-+			writel_relaxed(0x01, port->cpm5nc_fw_base +
-+				       variant->cpm5nc_fw_rst);
-+			writel_relaxed(0x00, port->cpm5nc_fw_base +
-+				       variant->cpm5nc_fw_rst);
-+		}
-+	}
- 
- 	if (variant->version == CPM5NC_HOST)
--		return;
-+		return 0;
- 
- 	if (cpm_pcie_link_up(port))
- 		dev_info(port->dev, "PCIe Link is UP\n");
-@@ -512,6 +574,8 @@ static void xilinx_cpm_pcie_init_port(struct xilinx_cpm_pcie *port)
- 	pcie_write(port, pcie_read(port, XILINX_CPM_PCIE_REG_RPSC) |
- 		   XILINX_CPM_PCIE_REG_RPSC_BEN,
- 		   XILINX_CPM_PCIE_REG_RPSC);
-+
-+	return 0;
- }
- 
- /**
-@@ -552,6 +616,24 @@ static int xilinx_cpm_pcie_parse_dt(struct xilinx_cpm_pcie *port,
- 		port->reg_base = port->cfg->win;
- 	}
- 
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cpm_crx");
-+	if (res) {
-+		port->crx_base = devm_ioremap_resource(dev, res);
-+		if (IS_ERR(port->crx_base))
-+			return PTR_ERR(port->crx_base);
-+	}
-+
-+	if (port->variant->version == CPM5NC_HOST) {
-+		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+						   "cpm5nc_fw_attr");
-+		if (res) {
-+			port->cpm5nc_fw_base =
-+				devm_ioremap_resource(dev, res);
-+			if (IS_ERR(port->cpm5nc_fw_base))
-+				return PTR_ERR(port->cpm5nc_fw_base);
-+		}
-+	}
-+
- 	return 0;
- }
- 
-@@ -603,7 +685,11 @@ static int xilinx_cpm_pcie_probe(struct platform_device *pdev)
- 		goto err_free_irq_domains;
- 	}
- 
--	xilinx_cpm_pcie_init_port(port);
-+	err = xilinx_cpm_pcie_init_port(port);
-+	if (err) {
-+		dev_err(dev, "Init port failed\n");
-+		goto err_setup_irq;
-+	}
- 
- 	if (port->variant->version != CPM5NC_HOST) {
- 		err = xilinx_cpm_setup_irq(port);
-@@ -636,6 +722,7 @@ static int xilinx_cpm_pcie_probe(struct platform_device *pdev)
- static const struct xilinx_cpm_variant cpm_host = {
- 	.version = CPM,
- 	.ir_misc_value = XILINX_CPM_PCIE0_MISC_IR_LOCAL,
-+	.cpm_pcie_rst = XILINX_CPM_PCIE0_RST,
- };
- 
- static const struct xilinx_cpm_variant cpm5_host = {
-@@ -643,6 +730,7 @@ static const struct xilinx_cpm_variant cpm5_host = {
- 	.ir_misc_value = XILINX_CPM_PCIE0_MISC_IR_LOCAL,
- 	.ir_status = XILINX_CPM_PCIE0_IR_STATUS,
- 	.ir_enable = XILINX_CPM_PCIE0_IR_ENABLE,
-+	.cpm_pcie_rst = XILINX_CPM5_PCIE0_RST,
- };
- 
- static const struct xilinx_cpm_variant cpm5_host1 = {
-@@ -650,10 +738,13 @@ static const struct xilinx_cpm_variant cpm5_host1 = {
- 	.ir_misc_value = XILINX_CPM_PCIE1_MISC_IR_LOCAL,
- 	.ir_status = XILINX_CPM_PCIE1_IR_STATUS,
- 	.ir_enable = XILINX_CPM_PCIE1_IR_ENABLE,
-+	.cpm_pcie_rst = XILINX_CPM5_PCIE1_RST,
- };
- 
- static const struct xilinx_cpm_variant cpm5n_host = {
- 	.version = CPM5NC_HOST,
-+	.cpm_pcie_rst = XILINX_CPM5NC_PCIE0_RST,
-+	.cpm5nc_fw_rst = XILINX_CPM5NC_PCIE0_FRWALL,
- };
- 
- static const struct of_device_id xilinx_cpm_pcie_of_match[] = {
+Thank you,
+
+> 
+> -- Steve
+> 
+
+
 -- 
-2.44.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
