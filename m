@@ -1,106 +1,108 @@
-Return-Path: <linux-kernel+bounces-603349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 108A6A886C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:19:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A58A4A886F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C9EC3BC8E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:57:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37A9B19026C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FEE2741C3;
-	Mon, 14 Apr 2025 14:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170372798FF;
+	Mon, 14 Apr 2025 14:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="mHArkJhz"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OO/7IjbV"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594A219F130;
-	Mon, 14 Apr 2025 14:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1DE279788;
+	Mon, 14 Apr 2025 14:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744642644; cv=none; b=bxGd3MQinOmstudzUgNx7kgUCsDlCcACI8j8QasuUyjIJYAPRdk4hNQkzWfyNP0iynyJn6nicVx/urbVd8vwrd4lFbiFowanTVKIf/4yqryP3QM/Y+tugHuvCw6U8eCw+hGtMiEyaPXDflRcjeWHybdGsa/Mjvsh5H89FgVxVYg=
+	t=1744642694; cv=none; b=Nf9PP5FcnxP3miQ4ISSmJKZXuCCCXahMExHTlF8Yph+3NvupM8JJyhPb3Gv+Wa+Z1zU97xWOL0RauR5CghsPNk9gkFnrKjIjbNLGRTn3cnTHAKbBYSqn6UET8vCptBtCp+1pBBi3yF+4JOPUKFqD/CLWSi0Aq9O2EzML1Ugy1jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744642644; c=relaxed/simple;
-	bh=SGurqnDTwGQqt7VnQak1Gr21rDfjF4zfWiv+Vz/bzyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qudw9zBx9yZ2Q0New1c7ysGgF8a6IhFIKtYX6rpdEJZTA5tlucfA2vtTcgsizbQTrUCURSj1yhshWYk4tDQuE7LOPtm+Ntxx6BTFO63+IxtzUvGRYSUEPPGy74Z4L+TScm6kYJJSCIOAAMJGxqiw+dUTyeFEWNR9WOKalr2DfD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=mHArkJhz; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
-	by mail11.truemail.it (Postfix) with ESMTPA id 70D741F93C;
-	Mon, 14 Apr 2025 16:57:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1744642637;
-	bh=cyeKeCAcuH3S7JCIv0170g0jwezsswjGC82t2IsOcf8=; h=From:To:Subject;
-	b=mHArkJhzqYoR9InBBrA6sxzzbD14A5j2eoUpotqY781DBhPnOT2tEZfbvosPXrfDr
-	 4zNkS3w6ckC1+9an3WNsT0hqeKEUmJ09nIKsNTSlBElv1TZ9peUARv6ihGc4ZBAvlM
-	 vmxN+XHYcXmYMbGW28p7pju3yiXdLEd/68GxIqXkbL3fBzksoVjmGtHGxkMMf4dEUJ
-	 65axAjx3ZoafvZS4I7yvvtbotNcd+W1JkiwvMZ791ZzjXGv0hDkf5ZUfG1qA0C4BnN
-	 CbrEECfhnRWSlN60Bt1xGyZWnfVu5HOdZzfSDzjG+q0LwhgKoUwdj6QZOp0uAhuXCs
-	 VPLx+XkJvkv2Q==
-Date: Mon, 14 Apr 2025 16:57:12 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Judith Mendez <jm@ti.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Hiago De Franco <hiagofranco@gmail.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Josua Mayer <josua@solid-run.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Moteen Shah <m-shah@ti.com>,
-	Hiago De Franco <hiago.franco@toradex.com>
-Subject: Re: [PATCH 0/2] Fix V1P8_SIGNAL_ENA and HIGH_SPEED_ENA
-Message-ID: <20250414145712.GA59296@francesco-nb>
-References: <20250407222702.2199047-1-jm@ti.com>
- <20250411130354.dc3sv3e7ruekkhkp@hiago-nb>
- <d8e45e50-f0eb-41d0-9c50-56147eaf262a@ti.com>
- <20250411194813.c4ft2uxgdiuza5cm@hiago-nb>
- <5f36ec5d-bb31-4b6c-aa4e-4ec48cb1d067@ti.com>
- <20250414065119.GA6309@francesco-nb>
- <65119d3a-6907-4911-ba19-e3bcdb65b529@ti.com>
+	s=arc-20240116; t=1744642694; c=relaxed/simple;
+	bh=55tWICBZ8y2Traciy+f7Py17nBWym/iZSkE7S5JD+9M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pb1m9fO8jjAhsp2hnST6NzDbuWE0nJvTbn241odSH+VWKnLmIh/X5MUsQ5x+Vysh4tz9KsPU44SyyIVNKA28earHxqfZSSbzyTN8u+sy46E/NRESIqQ13goqKk3YTJigcIRh+RbaY9ekp0aruJ5DoKrVQOty7x4N9O+9iTRLluA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OO/7IjbV; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C694843873;
+	Mon, 14 Apr 2025 14:58:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744642690;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VzojeLzRzjGTLGMyfYp2jFx4+LuKjP4OXY5FtffKGh4=;
+	b=OO/7IjbVfrVk6xAWP4rf7KxCg/QeTbSKDvEfKBRJAl6Y5vRQk+0Lz3H8QauGfslmII75u5
+	w5k/Z3r6eM42Po5LBDv63KZm3SnpyUl4y6Ha2Zqw7YZq29I+7RcX8T0iP1HyB8Nsm1B+xy
+	riD6zdJ4/hOtdi6brtCRNUkRdtiS5kDPF04Rc6RC2vJIMqufogSbSNqA0AxQ7VGU+ve3n9
+	2CGn9um/ssi5hxo8U1gG/lquGb5/s1JbsqW6TPY2vrjyYJQfzCyS2qZiwxFejy/i6qGqQJ
+	+SNq/8dVmAlrt0TfQQsdDescE2NBcC0M6e+jwUHmfQQXZK51shNo8WAnp83dfQ==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Subject: [PATCH v2 0/2] Enable watchdog support for iMX8QM
+Date: Mon, 14 Apr 2025 16:57:23 +0200
+Message-Id: <20250414-imx8qm-watchdog-v2-0-449265a9da4e@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <65119d3a-6907-4911-ba19-e3bcdb65b529@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFMi/WcC/2WNyw6CMBBFf4XM2pp2Coqu/A/Dgj6gkwjFllQM4
+ d+tuHR5TnLPXSHaQDbCtVgh2ESR/JgBDwVo1469ZWQyA3KsOHLJaFjq58Be7ayd8T1TtTxJWWJ
+ dooW8moLtaNmL9yazozj78N4PkvjaX6vk579WEowz5BrFRYmqM3hT3s8PGo/aD9Bs2/YBqPUHF
+ bAAAAA=
+To: Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, 
+ Thomas Richard <thomas.richard@bootlin.com>, Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.14.1
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvddtkeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegteeijeduffelvdevuedvieeuvdeugfekgeehjedufefgkedtueduvdffhffggfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudegmehfgedtmegsfhdttdemfhdtheegmegtlegtvdemvddutgefmeduheeiieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmehfgedtmegsfhdttdemfhdtheegmegtlegtvdemvddutgefmeduheeiiedphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepthhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedukedprhgtphhtthhopehlihhnuhigsehrohgvtghkqdhushdrnhgvthdprhgtphhtthhopegrihhshhgvnhhgrdguohhnghesnhigphdrtghomhdprhgtphhtthhopehshhgrfihnghhuoheskhgvrhhnvghlr
+ dhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfigrthgthhguohhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihimheslhhinhhugidqfigrthgthhguohhgrdhorhhg
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On Mon, Apr 14, 2025 at 09:37:53AM -0500, Judith Mendez wrote:
-> Hi Francesco,
-> 
-> On 4/14/25 1:51 AM, Francesco Dolcini wrote:
-> > Hello Judith
-> > 
-> > On Fri, Apr 11, 2025 at 04:55:39PM -0500, Judith Mendez wrote:
-> > > My understanding was that we do not like adding new DT properties if
-> > > we can find a way to apply the quirk in the driver.
-> > ...
-> > 
-> > > If this implementation flies with the maintainers, then we can go back to DT
-> > > property implementation.
-> > 
-> > Not sure if this is clear, but this patch is NOT working according to
-> > our tests, we would need to fix it in a different way.
-> 
-> Not sure if you are following the thread with Hiago, but we are fixing
-> it a different way; add a new DT property: "ti,suppress-v1p8-ena" for SD
-> card which allows us to have granular control on when v1p8 is suppressed
-> for MMC1.
-> 
-> With this method, we make sure the quirk is never applied to your board (;
+Second version of this series, I just took the Acked-by/Reviewed-by tags
+for the bindings patch, and in the devicetree I moved the watchdog node
+after thermal-sensor as requested by Frank.
 
-My board needs the quirk ;-)
-It was not clear to me that this change was going to be added to this
-patch, because without it's not working.
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
+Changes in v2:
+- bindings: take "Acked-by: Rob Herring (Arm) <robh@kernel.org>"
+- bindings: take "Reviewed-by: Frank Li <Frank.Li@nxp.com>"
+- devicetree: move the watchdog node just after thermal-sensor
+- Link to v1: https://lore.kernel.org/r/20250407-imx8qm-watchdog-v1-0-20c219b15fd2@bootlin.com
 
-Thanks for the clarification.
+---
+Thomas Richard (2):
+      dt-bindings: watchdog: fsl,scu-wdt: Document imx8qm
+      arm64: dts: imx8qm: add system controller watchdog support
 
-Francesco
+ Documentation/devicetree/bindings/watchdog/fsl,scu-wdt.yaml | 1 +
+ arch/arm64/boot/dts/freescale/imx8qm.dtsi                   | 5 +++++
+ 2 files changed, 6 insertions(+)
+---
+base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
+change-id: 20250203-imx8qm-watchdog-b8363342842e
+
+Best regards,
+-- 
+Thomas Richard <thomas.richard@bootlin.com>
 
 
