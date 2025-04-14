@@ -1,121 +1,127 @@
-Return-Path: <linux-kernel+bounces-603295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55EF8A8867F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:10:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE933A8862B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 005C73BAB00
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:44:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D18D1188C6F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5058E275856;
-	Mon, 14 Apr 2025 14:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C260279783;
+	Mon, 14 Apr 2025 14:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PfXOV3Qv"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Zm9eD3mk"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E587627466C;
-	Mon, 14 Apr 2025 14:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86474275872;
+	Mon, 14 Apr 2025 14:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744641077; cv=none; b=daFVkET2hudXV9Lk+XjlSR6dbuu8fX3rEQKjdmpT/Iht0uV4I3tZdLatVqxOkKut083X4adCFRnvJ9WsHWNWzE1UXa4hZguRf4i8mjoEMEEVfFHCIskXFt81qNvvWP1cXnyUfebBN9XI6pKOvIIvmL37Rnbfb3A7b3rbGAw0JOA=
+	t=1744641116; cv=none; b=jUIIRb8cfpB2v0b+bq0Pqx8Y7ufq4H0BbKbKZnmQXL8zmsK0Lbgctx6IBhlXvu5aXLoLCbBaYsz0NL1SW7DGFNDJLy7b+rWKnxkPUlnbmwDU3zUmKu9/SwUo8eA3Cw9/4EvhxkQTVf92Jp/7zL52KCVlI2Lj55YeiSc13euV5Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744641077; c=relaxed/simple;
-	bh=2gXSInJKusrPdd4J5X6NbBlVa5dxF7j9qgzK0PQiHaE=;
+	s=arc-20240116; t=1744641116; c=relaxed/simple;
+	bh=JTrzdiz7XhEyL0SreHMCxYY3DvYmAUsCVxY/Glddl2o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Re3tdNJFVhIF9aDGw8qSgokaJ2iFBIWgbmyvhW7l+bvKMa0BPJswflcpEIG82dI2dYi1JzJWEolSv2n5kJ1ck7ITVTCXSjvCVt/fWxytEyITG/691jGiL2VOfyGC0th33x2f1y0Bpf1MVeoW3nFlEzei2w76NB1XPBiL+p0oUAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PfXOV3Qv; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-399749152b4so2332285f8f.3;
-        Mon, 14 Apr 2025 07:31:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744641074; x=1745245874; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HCrgWYM3Hgypgkdhg98cFtG7nn+j6jrPiIXWi6bPyp0=;
-        b=PfXOV3QvJjLS3B6OEdGeVZ8Y+UKQhdU5kfWkGWKUrfNkTy42HLVzYxmZrMfXLMy5zL
-         Aw8DUxc/Zuoqiw/cm8UdeOI0TiIwiBmU1L0lyVHbsh9XN+/V1I3geYePp9zLCSNuDJQD
-         LF5kvFBUMNkaDH/GSheQY8I8Y6/HimFEXyZgn1dnQwdJH12n05j+NwLIfXCijExidcj8
-         3/iMkoMVlwplTwipPNw8kBO2qKfF9n3vyr6QZEkDwubA1T8G5QQv7DyeAbTRxbwFnXIO
-         0JSTo1100waAbEO1yMOxKpGyLy6qH4at8Ln5GaNeHEPGua3ZjTTMM19aVgjTXdxbGKLG
-         3Zmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744641074; x=1745245874;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HCrgWYM3Hgypgkdhg98cFtG7nn+j6jrPiIXWi6bPyp0=;
-        b=edGfSowPbPczzgFy+spu+ZYzBwnR4KJAaYxyaOI2HmFukXzNtvjLL4sQDG++pthdsG
-         PRlS3UUrIg4nIj2xH7t7eiR+9uzk+BqXIA71zmsMIekmRWVUArGyHfWuaQRx6OYMNeuI
-         N6JywS/gUiZwM3K3qTNSa66Pu91YEYtDzO3h9m9r69bjsYKTgxv/h1eNPdVlJtQVNhRN
-         qSTEyNhIeiI+C5KZffRwewprf7ivnw5SEWNadaO7NrKDxSisVSNotll2MrhgqeI4+SGZ
-         s86m0NS5vkOG3DmRQTYABwjsNKW8fuQ5DsrQJobO6Ixas6SKckHk6VSa9gCsZ5OFfeqv
-         2gLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJVt2ysIgyLfCRbK2aBDXBaV/Ccm6/sw4f7WqevTbi7uGxxuuo2ukx6Id/KkZ2XL2vou4s5tw//2wt8FI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlrI1U8CnJNPHHMfKHFgnEPnzOBNjfbSfeZSgxNkwrFWabIqDX
-	rOOnEXspluxF2aLWup7oUm9xzRDpJc8ruH8tyyzigAxP01lDunQqGXIS4Q==
-X-Gm-Gg: ASbGncu9GIxi6sfwcApBEh5sJ3zFFdR+xlVTsNDA9LtaYMtPeW3oLgWPJcKLNRmn7Nf
-	aWmeXCn0oReVC+27OR5BX1fHxefcLFQdTbsPHLWoQn1caST3gu819H3KurZS4XCUM5ReKTC4GKk
-	T++U2o1wlBwqsvQZUxLGmYZLQ/guVzjnZ+wzy/nONNBKUzE82bdRoj+0KZAhlNB4Xv9iXpymfKp
-	yj+vWEiCRBOOwuBXDErR32vczP6mI8fWZ6mM2zx16HTlF06cDay91B9Cb/kHONaa1Oe+7Yt5BSj
-	/0eGHEpx222RhcRTluHaAD7VVukQGdmwwm0COpgzzb9Vfn4Hwxg=
-X-Google-Smtp-Source: AGHT+IF4cFQXcUsJCUJ4rTn9rXcC4sO3n9nbDC1x24huqFx1CW67qBr8ulhefX4lOvKb92oRjDJHCw==
-X-Received: by 2002:a05:6000:144d:b0:391:4999:776c with SMTP id ffacd0b85a97d-39eaaecdb44mr10571104f8f.40.1744641073750;
-        Mon, 14 Apr 2025 07:31:13 -0700 (PDT)
-Received: from Red ([2a01:cb1d:898:ab00:4a02:2aff:fe07:1efc])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-39eaf43cd17sm11246340f8f.78.2025.04.14.07.31.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 07:31:13 -0700 (PDT)
-Date: Mon, 14 Apr 2025 16:31:11 +0200
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
-To: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-Cc: linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au,
-	davem@davemloft.net, linux-kernel@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 3/4] crypto: sun8i-ss - use API helpers to setup fallback
- request
-Message-ID: <Z_0cLywDNhlYIQBd@Red>
-References: <20250407123604.2109561-1-ovidiu.panait.oss@gmail.com>
- <20250407123604.2109561-3-ovidiu.panait.oss@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iBb9mxK0FZwJOnZWg1mhPvU8SoyofL+iAUU9FajBTW7je8KNgc0AdLmp2moltKjet8tmjVBgRReXLXnarDHPuyEDTGiaT1J7B7tpl/5mqiw1mOcJdUVMqNt6NUYAO2bTKgeJWHNhLGxVmyXCYtodBJ/jdcTP3nM34LyMN5fQACM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Zm9eD3mk; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cuaKggYDRTaGllYGEl45fC0lvQ48d6zJXW22p95ihu0=; b=Zm9eD3mk3WM5hftniSBwFF1yr9
+	wvxNTAJzgVasbkxZJHOK1DR3oOVb/26e4oc2Nzpgxl1KKp3lmgm7r0q4O4v1RXq44g3YXAnkmPM43
+	2ha6YdMWO85CxFeTmi0XPvzd/aM0EX4N1G0Bo7ih03EUeqbV7ZcBOWGPdcG+MVbfEwUGIeKhmBY1g
+	wZUp8xPG4mf95iso0eT2piUlROajI6jwnHoSX8Ei8Of0/zZAt3qtyK3lSb39SV9/9l7TRKiqaPBao
+	z2gd3UeLxHusJWeDBZkkC2cny2t4IQ9/61aLTMG/t/Bj2Ul5kUTCL/MpnPtuL1et0NBwMJz/BygFc
+	P5hiyRbA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58820)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1u4KqS-0006gu-0p;
+	Mon, 14 Apr 2025 15:31:32 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1u4KqM-0007pA-1n;
+	Mon, 14 Apr 2025 15:31:26 +0100
+Date: Mon, 14 Apr 2025 15:31:26 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next v5 3/3] net: stmmac: Add DWMAC glue layer for
+ Renesas GBETH
+Message-ID: <Z_0cPmY_LzI_fo4S@shell.armlinux.org.uk>
+References: <20250407120317.127056-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250407120317.127056-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <Z_QSHpvSK7I--xPq@shell.armlinux.org.uk>
+ <CA+V-a8vgavmN7c9KYjc-3tm-9GC1_aVUkF-dF=Ws9axTBmSa5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250407123604.2109561-3-ovidiu.panait.oss@gmail.com>
+In-Reply-To: <CA+V-a8vgavmN7c9KYjc-3tm-9GC1_aVUkF-dF=Ws9axTBmSa5g@mail.gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Le Mon, Apr 07, 2025 at 03:36:03PM +0300, Ovidiu Panait a écrit :
-> Rather than setting up the fallback request by hand, use
-> ahash_request_set_callback() and ahash_request_set_crypt() API helpers
-> to properly setup the new request.
-> 
-> This also ensures that the completion callback is properly passed down
-> to the fallback algorithm, which avoids a crash with async fallbacks.
-> 
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-> ---
-> Cc: Corentin Labbe <clabbe.montjoie@gmail.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-> Cc: Samuel Holland <samuel@sholland.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-sunxi@lists.linux.dev
-> 
+On Mon, Apr 07, 2025 at 07:07:49PM +0100, Lad, Prabhakar wrote:
+> On Mon, Apr 7, 2025 at 6:58â€¯PM Russell King (Oracle)
+> <linux@armlinux.org.uk> wrote:
+> >
+> > On Mon, Apr 07, 2025 at 01:03:17PM +0100, Prabhakar wrote:
+> > > +static struct clk *renesas_gbeth_find_clk(struct plat_stmmacenet_data *plat_dat,
+> > > +                                       const char *name)
+> > > +{
+> > > +     for (unsigned int i = 0; i < plat_dat->num_clks; i++)
+> > > +             if (!strcmp(plat_dat->clks[i].id, name))
+> > > +                     return plat_dat->clks[i].clk;
+> > > +
+> > > +     return NULL;
+> > > +}
+> >
+> > In addition to Jakub's request, I'll ask that you hold off for a week
+> > because I have the following that I'd like to submit:
+> >
+> Ack, please add me in Cc while you post this patch.
 
-Herbert I acked but just saw some crash I didnt saw in first look.
-Please wait a bit before merging, I verify what is the cause.
+FYI, the patch was merged last Thursday, so please update to replace
+the above with stmmac_pltfr_find_clk() which will do this for you.
 
-Regards
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
