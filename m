@@ -1,135 +1,170 @@
-Return-Path: <linux-kernel+bounces-602497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E00A87B9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:14:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22457A87B88
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C86BF16CE9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:14:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B305C169BEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3604225DD1F;
-	Mon, 14 Apr 2025 09:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A40F25E463;
+	Mon, 14 Apr 2025 09:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="pwoHy4he"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P8CEMBt/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2160A1ACECD;
-	Mon, 14 Apr 2025 09:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC7B25D20B
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744622038; cv=none; b=N8NGlA3qdU38xV6GO4Zti5yhO80od8DkIHcZpsoq6yaiaO8wxWdtnOyCMu3iK4U0nZaeo6zyUOAdl/4cqhD8tV3se7BKudUxRtEmA95jbUoOiSoAUXXOuaIMX11JM+8ZE1iAbF4Vn9wC4lNs7D3Q1Y07j837Ao40HNrkORqmmFg=
+	t=1744621767; cv=none; b=tWCEpP+7kvaBsIYUeSYrEfQgRYx05DrTSTa60a9povDbDm8SfVlJUqdgnrF3cizjsg+Ch8PjBUnt/EzpmkLqdM+RnBecbq7iSHYoSn/T7O6gnSnZ1jQZRLI39wxidvX8p3uxlAg95/txh6ed12WLNfRzZPzgtz6HGMyZvrv4c5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744622038; c=relaxed/simple;
-	bh=1qqSAJZ/PwAdy62qVn9BQF0MgJ9ab7JoKj7ppdolhW4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mWSMW9As709dwmrFcDRsUM1kmnqHHO5hgv0lndXvfGm8jtAzs540IVAFuV565ZtFvYAhh8UGrdRbBLemYJtSDZby2Fstz7YLiSo04zLqoryThwG+ivZmmPkNqAaY8JJydqJ+RSdlXpcQH9UaELyuz3clmffdHQjsRggxhkAoMdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=pwoHy4he; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1744621726; bh=JyZI+rw4HfhhbQ/+Fl0XVLkTQxuLHv0Bx+Vl7zI4WkI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=pwoHy4heCDWRWMPmZEyi9eZHxXPzZ5E1pSfHnIB/cXwMRup/uMAXBR/zv9D0hia/x
-	 rK9QFksgbuxDBzPoYKSODjLf0yzQvzLEtd8QKa+2NTOdRAiLTwvsbxzRSbC9FVQYHV
-	 nEwS7lAkj6HIZVKiz+ZHm/Xy3C5PcRIJnFCDhRvQ=
-Received: from [10.42.13.21] ([116.128.244.169])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 22C91837; Mon, 14 Apr 2025 17:08:44 +0800
-X-QQ-mid: xmsmtpt1744621724tojvj56qr
-Message-ID: <tencent_C16C813B177E434BEAC73E842C46D872BC09@qq.com>
-X-QQ-XMAILINFO: MUV+lZ/VG+GeMaJWvBPQHXphYXqors6nUDUksAGYKrI59uirbryIhoro5c4cQY
-	 tRpKIij4NKeBX2YRDoS193Gji9emLtgDodKiLW9MDi80pSkbYrWG7mQ/roAroqLKsDa4sBHsIYRG
-	 +NCNsmCC4qNyk1DRPLpk714a2cYClUbOobrHVF5mUah9R83GgCuXDcxTcsUGo4bjNxDn2GmUZPpZ
-	 9FKLcI1/AM0FyBiwosYnTu6m5VaJE7GCSEiZMJ7lNhx19tzhEQzE5riCLSgu7TZfkRZfYpOc/tb8
-	 BUpfrGjsbs0f2wqEw6t84gSyiC2SmelYNmoT17lX08Nd5HH2CmK1q8H8Gz//pHrHHo0mpcopm26U
-	 XZYi78YMSRIptxcMzkb1kQ9eSbdWcnXNm2UiUVyfV1KukPUgY74w44t+pCmjuQzGQrLIBRGfNotW
-	 dwFk5F5XC9VHcT6WOFtmxkcqogm99vcB9/wGYL2MK99zfXcUlrgwTTox/XT8P8jtPNwpXCZe9Gav
-	 FNV/r7V9ecUHsPuxKGrVl1CbX6FK8KLjvvHujKU7DmH8Pk4BpywWFVDDz91K4t+rNNojDhmcWLDK
-	 Cz8dEdiD+hxtJeAOSzSbSK2L7NheGMKNzAJQVMR3E9el4o9blSIlKCUrd3VtsrwfLSCZYXvg5Nhp
-	 G8awqjyWheP4C9jduyQwo8hdpNb51qcmdfTleiMSMYtmdC8TUZo+USI3vq7MnSabcOBwhqxuEJsf
-	 7rDdgstgqPNywTzDofi7suEmz/ILFOzjClyy6gaNOVpulqDZ4gWAoNA6xBn5yZoYYx2VJn+/fpbU
-	 NEGZP6qYMFHYkVw04Eccuf8wkISkZIfdgKaXH/Enl+y3HiDgsw+o0Tq+cwTCrbre9fWW6L4hnOWB
-	 9BLmTkuqmLSQwNKk2iuTas60ouqdoAnUEBk4kP4RCRY/vmz6HlgW5RhPP4GR2zw91T/4zJ/EmMUi
-	 2tZ4Ro0iofihY4ccP0QmUo303z0bI9
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-OQ-MSGID: <e8980e05-5cad-44f9-bda3-56546ba28111@qq.com>
-Date: Mon, 14 Apr 2025 17:08:44 +0800
+	s=arc-20240116; t=1744621767; c=relaxed/simple;
+	bh=XQMo0uczyPP0GXC+0WEdFqI0nC3jUulQ06qf2jkqAgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uWxolMTuhvS0iCmzOqkUCYAUXfBopjBrorm13PSEcF6xYKd9xop3qg+HbHsPX2ZSKh/CXRSyodBxxiffzNQ+gKQGFcxnytoiCDkPYSt2P8PJOCIuuumvNekdelMuxExc1PrYZ8yi7p7foEL8QOmzM8sx94NvhlOIuf+S4wmQdP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P8CEMBt/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744621764;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Czg22D4jD5meostV/Wb/dw3xgxlk3uHhu2dp+mQ6LZE=;
+	b=P8CEMBt/sFOEnOHprg4JWEwHxoRnXd9AJICzj7lBeW73ueEOKDu4clbbJFCrbEmyXpZBqW
+	UyjSkVFXhrRoS99Wk8h8qUqhaOn4HcS9B8VqbWLI//kYwHmObRKcePwHjfR+f61QoKw0H+
+	QZWKRgeWkyvEiUeI//zs89nsRTQKSZo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-296-AtiwVJ8kPgm7qKGOabSIyw-1; Mon, 14 Apr 2025 05:09:23 -0400
+X-MC-Unique: AtiwVJ8kPgm7qKGOabSIyw-1
+X-Mimecast-MFC-AGG-ID: AtiwVJ8kPgm7qKGOabSIyw_1744621762
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43cf3168b87so21192635e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 02:09:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744621762; x=1745226562;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Czg22D4jD5meostV/Wb/dw3xgxlk3uHhu2dp+mQ6LZE=;
+        b=DupdN5kaKPzEfg+oTBcFQ51UYyIS6emVnLsBjRUQ0yI9Dz0KEJdLmHa4jqdbizkIqD
+         ZxGfResv1EG2EZBU03sWf1yT2fYROgRhhVTzCcForbJMKirq7Hlfwthum9GW35+9l+ve
+         9Vmcivv6jZheRtn8ZsEshVSEJdEJhWbiQkuU6UdzXqL5325fUf+q3dCFHsPGUtiRGrFu
+         yyJn2l7MajOIEWVT/Qhvm+HlpbHpyG9YxcGYqV39fPZQbrF4Z6s5+UgJQx3RSUrabJSo
+         QSeK97TsF0XTj2vQdFCAcMJu4ikwu8UbV6x8YyMUmvG+u7ZZ4buEDru4qIwgAdnxJaXO
+         WIUg==
+X-Gm-Message-State: AOJu0YwxNpzZZdl+6zwfg+dj4opoDBvEHYu8EiNfiDNvwVnVquoBNQFW
+	FpjJ6nXki8zGzy+E3PRScLmeehPWXFi7ec+mO+I9/0BdQeOYvtp0pXPspyjL1kTjy080zAecxk8
+	rkfLPPBUThhrCgYH+RztXnhLE+xk/Uk50TkNyMUJaQvgoi3qjaxkkQeTytky4ng==
+X-Gm-Gg: ASbGncv+SbdiBRrQBy9DNP+b/dlDwwfV6BRiYfI+1ZvPEnkmXgr8nW4t/dg6uyCPTMt
+	4Tjx6sJNkBXMqieTDXzVlceE+BEGVulk1l7VS52NYtJCQMC6NJtz0gcvFnJvgaNlLCBCkuAdHLn
+	gzWmbvczsId9lyLEgpTww7YBKkd1wfw0KlQDpj1G7R4/khYdWz/XKKMNMYipxb8nF7asqBlekqb
+	0lKQbewWWy4fGoAWSVxKTBjB4jqu0C1CWzFeFXBW7oAqTfTaqBqOGdAv9GGlrV3mDsRJLkNMGMF
+	XHHuU42hcIRyhWGhFCf18QANYz+WsTSrXCFSl2L0
+X-Received: by 2002:a05:600c:5251:b0:43b:cc42:c54f with SMTP id 5b1f17b1804b1-43f3a93f77fmr88615885e9.14.1744621761983;
+        Mon, 14 Apr 2025 02:09:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE0R3zHohnMc/AUPNjmdF9kk37P9530AK5pzqcjNIDCtiicbg2J1qwMvKIIfrJJNKzlTULYxg==
+X-Received: by 2002:a05:600c:5251:b0:43b:cc42:c54f with SMTP id 5b1f17b1804b1-43f3a93f77fmr88615505e9.14.1744621761424;
+        Mon, 14 Apr 2025 02:09:21 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.85.18])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f2066d14fsm174055645e9.21.2025.04.14.02.09.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 02:09:20 -0700 (PDT)
+Date: Mon, 14 Apr 2025 11:09:18 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Valentin Schneider <valentin.schneider@arm.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com,
+	Connor O'Brien <connoro@google.com>
+Subject: Re: [PATCH v16 3/7] locking/mutex: Add p->blocked_on wrappers for
+ correctness checks
+Message-ID: <Z_zQvuPOlMj3oM3z@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250412060258.3844594-1-jstultz@google.com>
+ <20250412060258.3844594-4-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] PM: EM: Fix potential division-by-zero error in
- em_compute_costs()
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yaxiong Tian <tianyaxiong@kylinos.cn>, rafael@kernel.org
-References: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
- <143378b0-5740-4f2b-9a79-f04cf9ef1f77@arm.com>
-Content-Language: en-US
-From: Yaxiong Tian <iambestgod@qq.com>
-In-Reply-To: <143378b0-5740-4f2b-9a79-f04cf9ef1f77@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250412060258.3844594-4-jstultz@google.com>
 
+Hi John,
 
+On 11/04/25 23:02, John Stultz wrote:
+> From: Valentin Schneider <valentin.schneider@arm.com>
+> 
+> This lets us assert mutex::wait_lock is held whenever we access
+> p->blocked_on, as well as warn us for unexpected state changes.
+> 
+> Cc: Joel Fernandes <joelagnelf@nvidia.com>
+> Cc: Qais Yousef <qyousef@layalina.io>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Cc: Valentin Schneider <vschneid@redhat.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Ben Segall <bsegall@google.com>
+> Cc: Zimuzo Ezeozue <zezeozue@google.com>
+> Cc: Mel Gorman <mgorman@suse.de>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> Cc: Metin Kaya <Metin.Kaya@arm.com>
+> Cc: Xuewen Yan <xuewen.yan94@gmail.com>
+> Cc: K Prateek Nayak <kprateek.nayak@amd.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Suleiman Souhlal <suleiman@google.com>
+> Cc: kernel-team@android.com
+> Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+> [fix conflicts, call in more places]
+> Signed-off-by: Connor O'Brien <connoro@google.com>
+> [jstultz: tweaked commit subject, reworked a good bit]
+> Signed-off-by: John Stultz <jstultz@google.com>
+> ---
 
-在 2025/4/14 16:08, Lukasz Luba 写道:
-> Hi Yaxiong,
-> 
-> On 4/11/25 02:28, Yaxiong Tian wrote:
->> From: Yaxiong Tian <tianyaxiong@kylinos.cn>
->>
->> When the device is of a non-CPU type, table[i].performance won't be
->> initialized in the previous em_init_performance(), resulting in division
->> by zero when calculating costs in em_compute_costs().
->>
->> Since the 'cost' algorithm is only used for EAS energy efficiency
->> calculations and is currently not utilized by other device drivers, we
->> should add the _is_cpu_device(dev) check to prevent this division-by-zero
->> issue.
->>
->> Fixes: <1b600da51073> ("PM: EM: Optimize em_cpu_energy() and remove 
->> division")
->> Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
->> ---
->>   kernel/power/energy_model.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
->> index d9b7e2b38c7a..d1fa7e8787b5 100644
->> --- a/kernel/power/energy_model.c
->> +++ b/kernel/power/energy_model.c
->> @@ -244,7 +244,7 @@ static int em_compute_costs(struct device *dev, 
->> struct em_perf_state *table,
->>                       cost, ret);
->>                   return -EINVAL;
->>               }
->> -        } else {
->> +        } else if (_is_cpu_device(dev)) {
->>               /* increase resolution of 'cost' precision */
->>               power_res = table[i].power * 10;
->>               cost = power_res / table[i].performance;
-> 
-> 
-> As the test robot pointed out, please set the 'cost' to 0
-> where it's declared.
-> 
-> The rest should be fine.
-> 
-> Regards,
-> Lukasz
+...
 
-Okay.
-I wasn’t sure whether the new patch should reuse the current Message-ID
-or create a new one, so I checked with ChatGPT and kept the original
-Message-ID for v2. If a new Message-ID is required, I can resend the
-email.
+> +static inline struct mutex *__get_task_blocked_on(struct task_struct *p)
+> +{
+> +	return READ_ONCE(p->blocked_on);
+> +}
+> +
+
+Shouldn't we check that wait_lock is held also when reading blocked_on?
+And, if that's the case, why do we use READ_ONCE?
+
+Thanks,
+Juri
 
 
