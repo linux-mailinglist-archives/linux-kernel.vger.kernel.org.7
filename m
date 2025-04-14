@@ -1,164 +1,239 @@
-Return-Path: <linux-kernel+bounces-603177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1182AA88479
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:20:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C674A884D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9715316533F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:14:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC9BC3B029D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1525A28E605;
-	Mon, 14 Apr 2025 13:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3FE28F531;
+	Mon, 14 Apr 2025 13:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cUZxv8Ki"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlJQxT07"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE2028E5F1
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B945828F525;
+	Mon, 14 Apr 2025 13:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744638537; cv=none; b=gFGIlMb20EgQux2rutkwlEv7dLqiPPQFQ54ohLFyF06kQi2y4MWBeVnAcpeY7HRGf6UsE/YiEyLgWFkK5b8H3en7Q8ncDLevzicxUyx8AEFqEt+1PqYiq+r3sqxOAF5PcyHu2mT4JRuj1eKQmT3POMl5zVFn9gNnPgH0hHy/LLk=
+	t=1744638581; cv=none; b=J192qcSldms3JpES/QR07xhmOpDW2vcLAe4AFPuqC2lVTUgw0GO5rBpk7z6GqEyf95rg+AlbVBWlxKvxIU6ia+hPTTXS+Fs+keoIoziO95nByeLtbfcvUbCrQce7ndTLhd2DlhaP9BA8Yi1EQ8cSNhXAoHZKtBOvvz9kinXmCOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744638537; c=relaxed/simple;
-	bh=np9hmuuv/xFfm2pC735FXo2uI8JBzBXFBa4WLOBK+kk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jDORR0iu7vvF+Jotigzmrf+BBnT78zEu+TpvFfVFhnBcP0kFuyvsi+ElJJqgygisiH9byGY52TkpV0I4WWwLXw467BoPV4i8fC2OjR2XuxHh5AHRLA33ufU56wNghzr7q2LLeH+ZjIihxpnhqkSZU7RYkyCt9jBC59Eu7RvCG3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cUZxv8Ki; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53E99mMk012976
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:48:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9KEpYH2fL1hZL343CQIkegiAhh7VDBORXCRTiifeB24=; b=cUZxv8KiEnifrGyg
-	NPkbNKmnHQrRHd/LGWOuhOoRpWONaljJkArdhzfyUj2kGWz6bIni3rJTE3ov6OXU
-	AqFu2ouknX4VOljQHsMZGnwPhkDskIzY7nssZhRwaAdLnokCgcF7Ccp9THO1sE/D
-	dmtD5iyiD0rTAUdbjIKxDUbENI2SAjwkniQ1bYChm/oi7FYC4O35+4xL4Oulp5sB
-	K9JrHUpHwh0zpmnuxgthNYhywKyJ3z+LctE4vPcGJ2xfZRktgPPqLLpCazkoyMul
-	ZYuXQ4wfbHpfROADIIfb1O1jU1YiZ8Em5VhLhK2F6Vfw5pd0VP4B12iWchtclZcv
-	w+KCgg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygj94q7f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:48:54 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5ad42d6bcso91425885a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:48:54 -0700 (PDT)
+	s=arc-20240116; t=1744638581; c=relaxed/simple;
+	bh=8+orToe/4RdZZxMkZi8d6qlyA9kIqNrN26wfR6EjFsM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NieVZOTx7M/+FlIFNH7DYFoK6J0UI+Rgrsdp5f6C9Oy9JLdIJDj5itu5OaKviIktBoiv+xEPjFfkfI1KfgG2VTuodiy4PIZ5SoQl9ivi48CCCKp3W4V49j3x7KLBc2+5kcu4CLM5MRB46oB034gJQFGiCy5F92Te1jh05w/EhSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XlJQxT07; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e6405b5cd9bso3642635276.1;
+        Mon, 14 Apr 2025 06:49:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744638578; x=1745243378; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8+orToe/4RdZZxMkZi8d6qlyA9kIqNrN26wfR6EjFsM=;
+        b=XlJQxT077jMYhL+sZ1DHGYFPsMNMWP8tiIbuWTOEvVtUAgOcwb1xV97IL6Py3h/paL
+         sENGD7UT+dGe/CyJ7Djskj8ZeTVOUatKIzb3cB0i4Sb/296xX9SG4v640ZXDca/vARXu
+         y6snuD6XcH5VoXGeCRpOkhQG+rBY5tyG2Zc6VGDNwvfifdd+Yrk++R57Si3oGvOUo+v9
+         Tvyng7rAiM74VWtfWqsEIT7WTmgsBRZR8v2erPUCjVd2GK2cOBZRGfIAP0p7VQX5HqIG
+         VvsWuU01zJ9HnPu5fGMyvWRiU1IqmQ8+f1g4I0DiFzkCondUtNQ1KoH+P2ZmraZcKLlC
+         Ag2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744638534; x=1745243334;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9KEpYH2fL1hZL343CQIkegiAhh7VDBORXCRTiifeB24=;
-        b=WaZlwQc1Osuiwst0toA+FWNS0HoRepsZ/h75egPkoQOD5F2IQZrgjhzD1mdqk2IzW8
-         ju4wzurZ8jqazm9RBHWQi2tMCfsSH5L5w0jxqrE7h6obkPdR1uXm8JH2Isgjj0JZ3Ip5
-         FlTEGGQtKF0PTd+ngQGcrVNh75hgr2qSi55g+QI0VKdD3Jpx7i7UZRSMGby1HB0X8Oev
-         Is1NfPb7iggUQkgqfOuFgysvjEV4W0hmtwVv+e2DaIDUi0qki80OlV2uCk9ukEUpEmjr
-         dAc3AR5muTol/O78RmGqmUq4/ZMS3Y8QMxwil5sSjP4uXdOV0thDSO040cbL0/fXzjnN
-         rXig==
-X-Forwarded-Encrypted: i=1; AJvYcCU1d4RjWWbsr0ri+ju29GLvHjb3VOnsxGkNHfs0QSmWgjxVDhsQUUoxJimwhQLVvXhGQWsPHYG/L0GyBhQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe5Hjk9AaWVZB26CrkBDlhu3qoalx68QV6wU8yK4ggr6TgKsxI
-	rlL5tsyn0b7pe1WkXLSpiFv2WZWW1QgzYI4HlBBGlu8WzVq8OoYHsy5BhKFPzNC1lQsrUMxTnv2
-	Zl1jGJ4QiADdIXGnBgtil+jmgtJSFAAF63Q4n8nHRVUrgBXB/NUzXma4mE8s9tv8=
-X-Gm-Gg: ASbGnctJRUuZ4+OllB3TUWOARsyIH4IibG9rbS4FH/Pgq/QtFyNQLQlpOzZ8Fue0dCk
-	yQim2J5Td/UfpIqPkLP6aKCTaO3S0ojunoHppfpoPKqE3X2Fhpb1tH69zhW7qts/MuCw0E4kLOp
-	3GDtwRzHDcrI0q+g5nc0Rh9wtO5KZu3Jw7nzQKfajGV8lJ2g7T1/NgvYr5VsBGwUmOhiKTkCk8f
-	rpVVKCGL5eQ5BFw/wCezpwZcwlc0JXdLhcsXEJBdvzkER1QxsjFugVRV/YxiuLBhljnalBfepJ0
-	Osx3tL3KVUoL1K2lJiu+63bH69fFdDC7Q+xCdj96UYFGYPQaTPE2ATy+zsJPdGJJVQ==
-X-Received: by 2002:a05:620a:2991:b0:7c3:bcb2:f450 with SMTP id af79cd13be357-7c7b1af90a8mr547104385a.15.1744638533666;
-        Mon, 14 Apr 2025 06:48:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEX4O+qSr5lYuI0xXci8UwClLylPYXi2as5JPMMjmn1VLvTa5A/AYniUqnKC46HZ2UH6QSe5w==
-X-Received: by 2002:a05:620a:2991:b0:7c3:bcb2:f450 with SMTP id af79cd13be357-7c7b1af90a8mr547100885a.15.1744638532970;
-        Mon, 14 Apr 2025 06:48:52 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1c02227sm905491966b.81.2025.04.14.06.48.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 06:48:52 -0700 (PDT)
-Message-ID: <65663927-cc11-4810-8714-7600786f299b@oss.qualcomm.com>
-Date: Mon, 14 Apr 2025 15:48:49 +0200
+        d=1e100.net; s=20230601; t=1744638578; x=1745243378;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8+orToe/4RdZZxMkZi8d6qlyA9kIqNrN26wfR6EjFsM=;
+        b=oA6+s+Qc1vAejptYBsICp76gxGezD++EyOW5z1SU1v89b22fgkUNyM1wg2i1ByUbYo
+         GXMCvcVrgvhaxBmnCoj5VPBphlDGQNObzPtsO8RbK7AB53/JgAo0zkB7yATEzNG3nQAB
+         gdnfi0ZgfarCl1PbjnFfKZwgkFLdshnIoVtn/sVfFBopNyYjpqY8PCRCToa7/SWcxn6I
+         yeRgizONjo4BAAcifr7CPE7fyl1Y7JZS5sxg9iP1XlWwBMTzmAvoUfcOxoDtqfx55zT3
+         rqaAIjMVgWTBt5YhZWO5nBStcV8TNoyPPtNxYgkgReZnwFtTHLSK5DWCxklEPoY9OhHp
+         snoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVoHbupVtvyigf+pDth2P0oDyP5s2yx+aRT2V3sPu+zTr2nvXhesEoQHfi6ojnSBoYuHoBJntca@vger.kernel.org, AJvYcCW7zYBymg1LUZ1s3qj+OAo9VeMx07FdnxHI2pzH1PKX43wkthrVxQP8zn11DZJBzRh+93OQIOVAGt+ubuk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyusxjA4ayHvdsxG/a8sJqiHSPRTdJj/Vw4T8nTxO5VzcCtVHg4
+	pxY9Hh67e5qfL6+fEMehH8Apz05CERBSxxv6O3y5VHTrOsmsqH1S4nMkKqqUM4uEny6/Cd/3cQw
+	6VV55SVK0v26g+tMl/93Sjd3PXxE=
+X-Gm-Gg: ASbGncvd4gPTA0y6bN3QTUIe9lARRWDoBcPXcFppzSNcs0+Z1EFgX2+yZ5fDKAca7o9
+	i/tO1OC+Bx9d8lAaylXujeD5j9lquEUm9yJxxzaGcq1Pp6t/+rh+ZhyXi6s/C40air55cqsSZjo
+	Hv/h71dWlJ9XSZ8NbvDgK3
+X-Google-Smtp-Source: AGHT+IE7pz41ktet1N5msnDIGSIJ8EVDaFKfYflTEEXpfdGTOulYVfFTKrTv4d98YMMWSu5tauXipgFsb8VtweYkv9k=
+X-Received: by 2002:a05:6902:a07:b0:e60:b135:4c07 with SMTP id
+ 3f1490d57ef6-e704dfda84cmr18878812276.15.1744638578458; Mon, 14 Apr 2025
+ 06:49:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] arm64: dts: qcom: sa8775p: Add support for camss
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
-        todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        andersson@kernel.org, konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
-        cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com,
-        will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Suresh Vankadara <quic_svankada@quicinc.com>
-References: <20250210155605.575367-1-quic_vikramsa@quicinc.com>
- <20250210155605.575367-3-quic_vikramsa@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250210155605.575367-3-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: S2K3x6uQ6qlCf98QAqkl_U9VSGmtOI0o
-X-Authority-Analysis: v=2.4 cv=PruTbxM3 c=1 sm=1 tr=0 ts=67fd1246 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=iMC0Jze56uYpCOfz6HIA:9 a=QEXdDO2ut3YA:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: S2K3x6uQ6qlCf98QAqkl_U9VSGmtOI0o
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-14_04,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 clxscore=1015 spamscore=0 mlxscore=0 mlxlogscore=776
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504140100
+References: <20250412122428.108029-3-jonas.gorski@gmail.com>
+ <20250414124930.j435ccohw3lna4ig@skbuf> <20250414125248.55kdsbjfllz4jjed@skbuf>
+In-Reply-To: <20250414125248.55kdsbjfllz4jjed@skbuf>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Mon, 14 Apr 2025 15:49:27 +0200
+X-Gm-Features: ATxdqUFhDGYeuHnd2o7xa-r3cQYxibJ0ZKR7cyDNcq-eDDRt7bhB2BFaj0CHTI4
+Message-ID: <CAOiHx==VEbdn3ULHXf5FEBaNAxzyoHTqJEMYYtcQzjkj__RoLg@mail.gmail.com>
+Subject: Re: [PATCH RFC net 2/2] net: dsa: propagate brentry flag changes
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Nikolay Aleksandrov <razor@blackwall.org>, Ido Schimmel <idosch@nvidia.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Andrew Lunn <andrew@lunn.ch>, bridge@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/10/25 4:56 PM, Vikram Sharma wrote:
-> Add changes to support the camera subsystem on the SA8775P.
-> 
-> Co-developed-by: Suresh Vankadara <quic_svankada@quicinc.com>
-> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
+On Mon, Apr 14, 2025 at 2:52=E2=80=AFPM Vladimir Oltean <vladimir.oltean@nx=
+p.com> wrote:
+>
+> +Jonas, whom I've mistakenly removed from To: :-/
+>
+> On Mon, Apr 14, 2025 at 03:49:30PM +0300, Vladimir Oltean wrote:
+> > On Sat, Apr 12, 2025 at 02:24:28PM +0200, Jonas Gorski wrote:
+> > > Currently any flag changes for brentry vlans are ignored, so the
+> > > configured cpu port vlan will get stuck at whatever the original flag=
+s
+> > > were.
+> > >
+> > > E.g.
+> > >
+> > > $ bridge vlan add dev swbridge vid 10 self pvid untagged
+> > > $ bridge vlan add dev swbridge vid 10 self
+> > >
+> > > Would cause the vlan to get "stuck" at pvid untagged in the hardware,
+> > > despite now being configured as tagged on the bridge.
+> > >
+> > > Fix this by passing on changed vlans to drivers, but do not increase =
+the
+> > > refcount for updates.
+> > >
+> > > Since we should never get an update for a non-existing VLAN, add a
+> > > WARN_ON() in case it happens.
+> > >
+> > > Fixes: 134ef2388e7f ("net: dsa: add explicit support for host bridge =
+VLANs")
+> > > Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+> > > ---
+> >
+> > I think it's important to realize that the meaning of the "flags" of
+> > VLANs offloaded to the CPU port is not completely defined.
+> > "egress-untagged" from the perspective of the hardware CPU port is the
+> > opposite direction compared to "egress-untagged" from the perspective o=
+f
+> > the bridge device (one is Linux RX, the other is Linux TX).
+> >
+> > Additionally, we install in DSA as host VLANs also those bridge port VL=
+ANs
+> > which were configured by the user on foreign interfaces. It's not exact=
+ly
+> > clear how to reconcile the "flags" of a VLAN installed on the bridge
+> > itself with the "flags" of a VLAN installed on a foreign bridge port.
+> >
+> > Example:
+> > ip link add br0 type bridge vlan_filtering 1 vlan_default_pvid 0
+> > ip link set veth0 master br0 # foreign interface, unrelated to DSA
+> > ip link set swp0 master br0 # DSA interface
+> > bridge vlan add dev br0 vid 1 self pvid untagged # leads to an "dsa_vla=
+n_add_hw: cpu port N vid 1 untagged" trace event
+> > bridge vlan add dev veth0 vid 1 # still leads to an "dsa_vlan_add_bump:=
+ cpu port N vid 1 refcount 2" trace event after your change
+> >
+> > Depending on your expectations, you might think that host VID 1 would
+> > also need to become egress-tagged in this case, although from the
+> > bridge's perspective, it hasn't "changed", because it is a VLAN from a
+> > different VLAN group (port veth0 vs bridge br0).
+> >
+> > The reverse is true as well. Because the user can toggle the "pvid" fla=
+g
+> > of the bridge VLAN, that will make the switchdev object be notified wit=
+h
+> > changed=3Dtrue. But since DSA clears BRIDGE_VLAN_INFO_PVID, the host VL=
+AN,
+> > as programmed to hardware, would be identical, yet we reprogram it anyw=
+ay.
+> >
+> > Both would seem to indicate that "changed" from the bridge perspective
+> > is not what matters for calling the driver, but a different "changed"
+> > flag, calculated by DSA from its own perspective.
+> >
+> > I was a bit reluctant to add such complexity in dsa_port_do_vlan_add(),
+> > considering that many drivers treat the VLANs on the CPU port as
+> > always-tagged towards software (not b53 though, except for
+> > b53_vlan_port_needs_forced_tagged() which is only for DSA_TAG_PROTO_NON=
+E).
+> > In fact, what is not entirely clear to me is what happens if they _don'=
+t_
+> > treat the CPU port in a special way. Because software needs to know in
+> > which VLAN did the hardware begin to process a packet: if the software
+> > bridge needs to continue the processing of that packet, it needs to do
+> > so _in the same VLAN_. If the accelerator sends packets as VLAN-untagge=
+d
+> > to software, that information is lost and VLAN hopping might take place=
+.
+> > So I was hoping that nobody would notice that the change of flags on
+> > host VLANs isn't propagated to drivers, because none of the flags shoul=
+d
+> > be of particular relevance in the first place.
+> >
+> > I would like to understand better, in terms of user-visible impact, wha=
+t
+> > is the problem that you see?
 
-[...]
+I was just in the progress of writing down some thoughts myself I had
+while thinking about this.
 
-> +			interrupts = <GIC_SPI 565 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 564 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 759 IRQ_TYPE_EDGE_RISING>,
+So to me passing on the original flags but then no updates of these
+flags feels wrong. I would expect them to be either never passed on,
+or always sync it (and let the driver choose to handle or ignore
+them).
 
-760> +				     <GIC_SPI 758 IRQ_TYPE_EDGE_RISING>,
+Having the cpu port as egress untagged I can easily find one case
+where this breaks stuff (at least with b53):
 
-759
+With lan1, lan2 being dsa ports of the same switch:
 
-> +				     <GIC_SPI 604 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 545 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 546 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 547 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 761 IRQ_TYPE_EDGE_RISING>,
+# bridge with lan1
+$ ip link add swbridge type bridge vlan_filtering 1
+$ ip link set lan1 master swbridge
+$ bridge vlan add dev swbridge vid 10 self pvid untagged
 
-762
+# lan2 stand alone
+$ ip link add lan2.10 link lan2 type vlan id 10
 
-> +				     <GIC_SPI 760 IRQ_TYPE_EDGE_RISING>,
+as then lan2.10 would never receive any packets, as the VLAN 10
+packets received by the CPU ports never carry any vlan tags.
 
-761
+The core issue here is that b53 switches do not provide any way of
+knowing the original tagged state of received packets, as the dsa
+header has no field for that (bcm56* switches do, but these are a
+different beast).
 
-Konrad
+I guess the proper fix for b53 is probably to always have a vlan tag
+on the cpu port (except for the special vlan 0 for untagged traffic on
+ports with no PVID), and enable untag_vlan_aware_bridge_pvid.
+
+To continue the stream of consciousness, it probably does not make
+sense to pass on the untagged flag for the bridge/cpu port, because it
+will affect all ports of the switch, regardless of them being member
+of the bridge. Looking through drivers in net/drivers/dsa, I don't see
+anyone checking if egress untag is applied to the cpu port, so I
+wonder if not most, maybe even all (dsa) switch drivers have the same
+issue and would actually need to keep the cpu port always tagged. And
+looking through the tag_* handlers, only ocelot looks like it may have
+the information available whether a packet was originally tagged or
+not, so would also need to have untag_vlan_aware_bridge_pvid enabled.
+
+Makes the think the cpu port always tagged should be the default
+behavior. It's easy to strip a vlan tag that shouldn't be there, but
+hard to add one that's missing, especially since in contrast to PVID
+you can have more than one vlan as egress untagged.
+
+Jonas
 
