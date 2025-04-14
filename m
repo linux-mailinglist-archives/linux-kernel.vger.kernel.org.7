@@ -1,112 +1,204 @@
-Return-Path: <linux-kernel+bounces-603901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F313A88DC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 23:27:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC88A88DD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 23:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BAB9179611
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B376169FB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 21:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C35E1F30C3;
-	Mon, 14 Apr 2025 21:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3511C1EF380;
+	Mon, 14 Apr 2025 21:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KL4J1r6L"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QjcMKmZ3"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6721D63E4
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 21:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D531ACED9
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 21:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744666010; cv=none; b=IRS/4/EJcOgAApwVqeiWWo5VuEtJKjSk5gUIAKzllNLPRQSMg/X8TiHcGislt2GFYpa5ZV5ChswdcJ8hD91+hRVdUikt9x3rb2IPQ6DVWK7B3he2R2Q90/AKP8eyTfGtlDRTpW4XnMyQBDEn7NhqMxbdAB2rdfAyVDrFwLt5hjU=
+	t=1744666495; cv=none; b=PQ9yS263HY02kA1jyCsK/on5YPGvqdb4zDxNm2axQgU6lN7PpF5OtbCXxD/j8EdzR3LXthH4MLNifdBa9uvm2z0uxfvBhTPyfdnb1HfhYCAgEriSFlDL7cEhFqpFMN7TMMvmCP/FqiR4IJUyUyKXzNplxJLGMGOl/vnv5vJURFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744666010; c=relaxed/simple;
-	bh=4t2rtLVqqU0aTkJeDPtSqq4FVhOaMGn3kakYdD+NjSY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nxQMpzpGC62MG9XUskLKS2BwfUTCQKM6RSbRLHHLtDgptPj4ljqn770nuON9QOccuFr26IKreMEnYG17/92CoNS+611suYf0/qjo5rz0ZZ9+LvAANfLfpxYT5u0RGQ6Gd19dyubEEehkUDkNy3qrTdtfAEDD3EhvHhQTNUmPFCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KL4J1r6L; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so3057414a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:26:48 -0700 (PDT)
+	s=arc-20240116; t=1744666495; c=relaxed/simple;
+	bh=crIMSumShIOAq9dEq0E0IScyY+k844YcG8x54zymQH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hLkLn0AEI7gUWhPA2G7itej3ytyyee2k9TLjzrggU3a+9pZGEX04T73w15mgj46ojvkrqRuowDEUpvwmA3Zyx9T9HI3Qa2QedHPMGGnPrFkEPKHntqqRUJrS9Nrcnyy0iIxmhLzfLaovOWl3Kc8toWorwTAvZv+JG0l/VNCYJFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QjcMKmZ3; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e5c7d6b96fso8926026a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:34:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744666007; x=1745270807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4t2rtLVqqU0aTkJeDPtSqq4FVhOaMGn3kakYdD+NjSY=;
-        b=KL4J1r6L4atQzQIib5/hCoMQCn3uIm5UzrZyTJ9PRgYS0UfYwSMQjqB5gWJzP59mg+
-         42xokV/JMBRl60dfI9pPhCratwegq2Myz15WbsNs6TUWeKvK8FMoT7fzoOksZzdEAXdQ
-         ywulrhSZ4UTcGjowjSg7q6zZkE5X3UJbdCYg4ubFgh+fZCOor0ppnSH/N8pH2DqOMlA4
-         3D+WHcehRAdPAc0tH/fsHBev7LWxFocxFeF0rfNLKqpXjH2PdyEBFNdUD46cm1MiMoJI
-         ZsbxOK0xQ5yxzHBcDqAgKZ4kEFGnh7BF7t2xpkl/+K/k7eAv76CdMzPKMJ8y326MsLQy
-         kdsA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744666491; x=1745271291; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S7BZi7HnKfbbt9TH74oPDg7WDBebYy2OSaVokgDUUbg=;
+        b=QjcMKmZ3sB+CZb8dglnfrWX5ZQt9MkpMzOmNXvQzJ6PzWyF6KDTYA8vdbR69dPchy+
+         pLsUG2ZN3oVJy4AhTBytaoj7DSPbexDZ2QTHcppe/7l2L+NUKgUGlDWAKxLmzPojZYRK
+         /6SMx8e1C+AKOzeDeVcOgU1k571O33HMZanv4DrzX1drHqiCQKkUbZ/VBH+cyZH5UtNU
+         dUZC2zTLUHliRFmU2ZB2TqSVoL1GhATUbAzCBFJw/h6pgZ+pPneMIgQqTktWRP+e0HZu
+         0g5674z0g4nWyPKe0LigJL88k4PtV8DuLN6WL1kVxANritEezi1GnAkM86JMT9WsjW4Z
+         wz4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744666007; x=1745270807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4t2rtLVqqU0aTkJeDPtSqq4FVhOaMGn3kakYdD+NjSY=;
-        b=FZHKxrLP0gthaCIOoHqpQwc04/5WEUxJwWcqVMP0YAMpKY7sKHiGLxg6YJFR5rVn81
-         TnJYwWf9urJ5yXUyCPXeuGA6iOQG3wdAZ0gso8Qa1X5L3SlmWsolt15ZHvAsXlLuRQN+
-         lxGabBJmpG7VEdU+RDemwggkUzJtFmG3mNcEr077ST2g+lOMPFuvYQf87Moeph7RXsWx
-         T2yQumguquGo2has/clBSpnotVHGRphz/uHnQ58BCW+1JhH879nALdAMQ4Y9Ju/tLp3S
-         rOVhpT1iGcHECECOnH61/yCMaeo/j3uxrPAurTLYu0XYlskzcE5lwh1xqoMNWXsjBfWn
-         rQ7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXKQD0m9n+W7PCreVxFAU1AZXBgpXw94i8aVsYfdmxizFxXUu6tXID3bvGw+VM4cdcCj1VXNkEsGpmJnwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRCylfWVxKIwt3n8Gtszb3q56fgYdDY7YmTWuKgeXoaD1gDGxS
-	hld5tL1htlyNzxo7LbYCGgJqOe10S+FNqXfSi5Vi8riKRSCFO5Lfhc2Kmo/78lsNvXpyorq0kVo
-	nPuwu2KTxtTehTm7Fz1pNOrlbXU0=
-X-Gm-Gg: ASbGncu9FWggvxe5MGcHlu7cI6hp4EJEgyoSMNzXCM8ckrAJXo6UMq3iJCWKiZNNgFY
-	xspHhVjBUJhRXabnrNm7wblNCM+9U/hkfvw5UDCW7jn1F2PDgc1MCz+r08v0Ou797EALcFACNA/
-	tKPMN4BOjkBIVQX9r6+6xv
-X-Google-Smtp-Source: AGHT+IFX7NdWsPkZIK7ChMY8jRnvLH7QWIwuHybxq7167LI22diypZoHx+d7FAAuWNWxWNxqFnXF6UbH++2MYTG5CVg=
-X-Received: by 2002:a05:6402:4027:b0:5f3:7f49:a398 with SMTP id
- 4fb4d7f45d1cf-5f45dfce67dmr1017949a12.12.1744666007160; Mon, 14 Apr 2025
- 14:26:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744666491; x=1745271291;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S7BZi7HnKfbbt9TH74oPDg7WDBebYy2OSaVokgDUUbg=;
+        b=TGpR1fLwy9HQWtO+elLka4tepketAwGruTzvi1b5WTlPDJjzfoi+Fq4XdEZCQ7YZWb
+         HqMuN0Q3l58G7N1z1IiHN9lCQ6PucGDoW4ZPt1wgDw5QcbnJz7XYzW7yfHdRXKOO7+yY
+         ce35fxmHfeeFB2wirRDnPe1a/NSFNlJR9YRwYmZlMAZ8lBWPQevbHOH1aQRTQyw1cYfC
+         P8weG+ZTLetx2QdPac2smi+TwBxxWJ7zSvi2wKmwHykjI3r5cchN9wdcR2zA12hlEvrv
+         fh29XebprIzVv/O5DXs41yfJZ9YnjwvUMjV7x/7SVjDIhvsSw87/bfoNLxnhmoXT3fhU
+         papQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKWpfK74pjnmALxHfAdS9cRGbvacWAZXT2b1NfbEqrukCpNHz3yX7CmZ4uU61YlIKD09uu/lYYYn9mzfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIKgFYh4rvPKzzQsFV7MrcdIICGATmTJSb9sUc8HCsL+Pnnbnu
+	Nq4zXXM2uJK2kKtlbq14d9RTo+xhzCY4zE3/yszrVqvZ+XS5x0qYqwL27+Zw83A=
+X-Gm-Gg: ASbGnctD7vte5dUGNk9MwopAGGVJoa3pHobalABYS1g+wFJ4d5T7tZf1JS547n7Av1v
+	SFBqAOgkXT6Yi0g3vr2JmlsXcNrfAYjT6J0zeQ6BtplJ1qzkJg/CQtKonalsvjcbvkQEpVhuKRB
+	X8T5b8lGnR2tMrm/1gaQDE2pTeth26xUfppMRsU2GPIxv7gc2fJw+6yAzQ+zFxoDosifBB4ztxP
+	tS4PqGJ6c0iaE+lEe2oP5uJ+wkDphylywNQtUsSqORn3gYHnqhvyviX4Ns0bYNGyhEj1iSL1se9
+	NSpNxqmQ+bRincM+1Et0HxpV0nP8KUV8Wm6OBlwTOo7KnA==
+X-Google-Smtp-Source: AGHT+IG/kDZsmoxinyBq4n/Im69g3ys9L3BT2wiv3DJKobRUo+Jzgfnpx2t+FVw18cLid5H4hJIEjA==
+X-Received: by 2002:a05:6402:1ec9:b0:5f3:8171:a4e2 with SMTP id 4fb4d7f45d1cf-5f38171a75amr12298487a12.18.1744666491385;
+        Mon, 14 Apr 2025 14:34:51 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5f36f506425sm5554281a12.53.2025.04.14.14.34.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 14:34:50 -0700 (PDT)
+Date: Mon, 14 Apr 2025 23:34:48 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Alexandre Mergnat <amergnat@baylibre.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Eddie Huang <eddie.huang@mediatek.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] rtc: mt6397: Remove start time parameters
+Message-ID: <vpf4apahhpovhrqje4i647nldszen2pglbm5fdmar7bsyg7uao@3ymuod45ftlj>
+References: <20250109-enable-rtc-v3-0-f003e8144419@baylibre.com>
+ <20250109-enable-rtc-v3-4-f003e8144419@baylibre.com>
+ <20250411133609a1295543@mail.local>
+ <202504111339359e840246@mail.local>
+ <968001f7-96d1-4ad5-8c36-28cac5dc30f1@collabora.com>
+ <97cfeafe-7044-4f06-b2e6-e4a158419473@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250411121857.GA10550@redhat.com> <20250414-lappalie-abhilfe-eb7810af39bb@brauner>
- <20250414-tintenfleck-planbar-656144f25a3b@brauner> <CAGudoHGyN5qno0TVfY-vCJBHjkDd-CL82-W_o7u6b+qXraAJVA@mail.gmail.com>
- <20250414204535.GI28345@redhat.com>
-In-Reply-To: <20250414204535.GI28345@redhat.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 14 Apr 2025 23:26:35 +0200
-X-Gm-Features: ATxdqUHHz-GRSQvHsttRZh3ZUG8ItZSpptA4qnv9ZCudjhUcl5unxudRVNw7xOA
-Message-ID: <CAGudoHGi6yZNDVzA1coEu5t4NB_PB51wo1tJmKV0f=mxzWs=0w@mail.gmail.com>
-Subject: Re: [PATCH] release_task: kill the no longer needed get/put_pid(thread_pid)
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, "Eric W. Biederman" <ebiederm@xmission.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xgxword5effrvsfi"
+Content-Disposition: inline
+In-Reply-To: <97cfeafe-7044-4f06-b2e6-e4a158419473@baylibre.com>
+
+
+--xgxword5effrvsfi
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 4/5] rtc: mt6397: Remove start time parameters
+MIME-Version: 1.0
 
-On Mon, Apr 14, 2025 at 10:46=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wr=
-ote:
-> I'd prefer to move add_device_randomness() after release_thread(),
-> but perhaps this needs another minor cleanup?
->
+Hello Alex,
 
-I have no opinion on that front. As far as cosmetics go I would not
-touch it past the nit I mentioned in my previous e-mail, but I'm not
-going to protest any other changes.
+On Mon, Apr 14, 2025 at 03:56:11PM +0200, Alexandre Mergnat wrote:
+> On 14/04/2025 13:09, AngeloGioacchino Del Regno wrote:
+> > Il 11/04/25 15:39, Alexandre Belloni ha scritto:
+> > > On 11/04/2025 15:36:12+0200, Alexandre Belloni wrote:
+> > > > On 11/04/2025 14:35:57+0200, Alexandre Mergnat wrote:
+> > > > > diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
+> > > > > index 692c00ff544b2..d47626d47602f 100644
+> > > > > --- a/drivers/rtc/rtc-mt6397.c
+> > > > > +++ b/drivers/rtc/rtc-mt6397.c
+> > > > > @@ -291,8 +291,6 @@ static int mtk_rtc_probe(struct platform_devi=
+ce *pdev)
+> > > > > =A0=A0=A0=A0=A0 rtc->rtc_dev->ops =3D &mtk_rtc_ops;
+> > > > > =A0=A0=A0=A0=A0 rtc->rtc_dev->range_min =3D RTC_TIMESTAMP_BEGIN_1=
+900;
+> > > > > =A0=A0=A0=A0=A0 rtc->rtc_dev->range_max =3D mktime64(2027, 12, 31=
+, 23, 59, 59);
+> > > > > -=A0=A0=A0 rtc->rtc_dev->start_secs =3D mktime64(1968, 1, 2, 0, 0=
+, 0);
+> > > > > -=A0=A0=A0 rtc->rtc_dev->set_start_time =3D true;
+> > > >=20
+> > > > This is going to break the time for people upgrading their kernel, =
+you
+> > > > are unfortunately stuck with this.
+> > >=20
+> > > To be clear, the breakage will happen when upgrading the kernel but n=
+ot
+> > > the device tree with 5/5
+> >
+> > Yes, you're stuck with this. Devicetree has to be retrocompatible.
+> >=20
+> > Besides, this start_secs is what gets used by default, and the start-ye=
+ar
+> > devicetree property should take precedence and effectively override the
+> > start_secs default.
+> >=20
+> > Just keep it there.... :-)
 
-imo the real thing to do concerning the routine is to figure out if
-the call is even of any benefit -- it very well may be this is call is
-only there because nobody with random-fu bothered to remove it.
-Personally I have epsilon knowledge of that area, so I'm not even
-going to try to evaluate it. But it would be nice if someone(tm)
-reached out to random folk concerning it. Worst case, even if it still
-has to be there, maybe the sucker can trylock and bail. It does
-contribute to contention, likely for no good reason.
+It would work to keep setting start_secs but allow overwriting that
+value in the device tree. But see below.
+=20
+> When you boot your board for the first time, is the date January 2nd 1968=
+ ?
+> If not, that mean it is used as a finetune offset year.
+> IMHO, mktime64(1968, 1, 2, 0, 0, 0) is a workaround for the rtc framework
+> issue we try to solve in this serie because start_secs is negative (1968 <
+> 1970). Now framework handle the negative value properly, even if you keep
+> mktime64(1968, 1, 2, 0, 0, 0) , the device time will change. I prefer to
+> notify you.  :)
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+I don't understand everything you wrote here, but as far as I see it,
+rtc_time64_to_tm() not being able to handle dates before 1970 is the
+main issue here. This is of course only relevant, because your hardware
+occasionally contains such a date. The technically right fix is to
+extend rtc_time64_to_tm() to work for dates >=3D 1900-01-01. (An
+alternative would be to assume that a hardware read returning a date
+before 1970 is invalid. If you refuse to write dates before 1970 that
+should give a consistent behaviour. But the original approach is the
+nicer one.)
+
+> TBH, it's hard to follow the logic, so I've a question:
+> If I push in my V4 a framework fix that drivers using year < 1970 will ne=
+ed
+> to have a new start_secs or start-year value to stay aligned with there
+> previous value, do you will accept it ?
+
+Doesn't the need to shift the start year simply goes away once
+rtc_time64_to_tm() is fixed for negative time values?
+
+So I would expect that going forward with just patches #1 and #2 should
+result in a fixed driver regarding the breakage you're seeing. (I'm
+unsure about patch #3, I'll address that in a reply to the respective
+mail.)
+
+Best regards
+Uwe
+
+--xgxword5effrvsfi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmf9f3UACgkQj4D7WH0S
+/k6kAwgAn7QiSrVS5Jy5qEwJYxUOj7XozPsN8Zq0zgKKYBqm8IWz+mS1nyNSrfl5
+oZQooSYT9XLLkgxOZJjHUV47P8G3ClP+nR+PvatZa7ukJTHU32GEOWNEtAd1NZ6k
+EbH7z1BFqU+zXbNp4lCwS4bXpp0JH3j4r727u/UD5rg1yrO7HACF+VoNUYKpcKuw
+aEVAFy51VngHisOufxAY3JYnQMtwhLN03t1UpwWrm/dhcukyWsBQGgJHs3cQMK0r
+JJhVftzvihK98K3vv94fjlc8tr51LJIl8HVqMSZkVp/C9QwkaFHUy9bV9UGWqhQO
+wBdR79PYhwox2zLOU50JR6euQ/yhFw==
+=Kl2H
+-----END PGP SIGNATURE-----
+
+--xgxword5effrvsfi--
 
