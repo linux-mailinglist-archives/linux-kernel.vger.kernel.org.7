@@ -1,193 +1,159 @@
-Return-Path: <linux-kernel+bounces-602777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 230EDA87F3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:39:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8CBEA87F42
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FCDA172B31
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:39:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D63A7174F8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43012989B6;
-	Mon, 14 Apr 2025 11:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EB529C322;
+	Mon, 14 Apr 2025 11:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="H0sFDIZs"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WfFG4sTn"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91731A9B4A;
-	Mon, 14 Apr 2025 11:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBF429AB0A;
+	Mon, 14 Apr 2025 11:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744630732; cv=none; b=m3wH0s99TFfqUGhrgmKNb27R9ALMPS4/jaY9XSuFtmWtJYre/7A8kkJX7nlrj2DV5dvLyI6CEgHJzP4CCh3hO6+xDLTFG7q40rKdOHSmETENQ9oS0mf14/wbpzFSdz2T2JJ+bsKvIgsp0DfDd6BZgu+RU7zG69YfMBMxDS7fNm0=
+	t=1744630755; cv=none; b=HoOVf6nXy67p6daHyZekOVp+dnUvMxdy5V/fsA0qsjIPrQgfEFNGsc7ur2+Mu136MvOz6qj53EAHUiqLZIk91/ojyGEu6Z70sge/JQJA+IUCP+HrdC/GN/rIqSsxcwyxwCV3bq10Ofjp9kl5b5LeR3UzOt/O2jQNZ4RkYET+Czc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744630732; c=relaxed/simple;
-	bh=tw8NicR85wtZWn7+Of5iPSQ4ltvwsaFU5yYg/jkmpFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OB4ZKpkdozPf0cc8Jq7ehoZ1lNtgveD5kGX1GS2UiomOebP3vyB2iKqFQCqSeD4v2yu54SpAh/X/uBxv7HL6neGRaSItUPqaGh58Tw4L/7Mfv9BdZa0wi+QnaUiJkUPFSwFnI0XrFZ2BpsrgunG2+ToPXARIk66MpKucuCuS0+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=H0sFDIZs; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1744630711; x=1745235511; i=wahrenst@gmx.net;
-	bh=5Yqz6YDLmosCf4LwVIBid/uZpaNuifGBNUOWF1Ok3z8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=H0sFDIZsvbu7eadEOfhvpsig557h5T4fVsdqhIrBvDjjyxf+kw5m2dYClZv3FATR
-	 rpATfe2E5LMuvoZL8B+aKpyj9Bwg6//OnkxVxgdoXrv68ycU9zOh7uIVb8CLp9w0I
-	 VzBOxdVZvAvqby0MLfPVA7ztYVMQijJ3rtzDfCXt0Hh/vgaU0FltcFkW1Z+af9u2C
-	 913J6HX7dOF21eWTKxsYC4hwGs4yvnVHVXlNnef9DAy+MGPXvImJzcJgNKeOk03oB
-	 zO6aC/1IhSLQgshoySKcyTB1EBJzg6aItmds8ZWWjpkWREKzfjphWDQDJ1/7TzqjH
-	 pZEyJzAGIDZaxAaRqg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.107] ([37.4.251.153]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M1poA-1u26Hv1PB2-00DKvJ; Mon, 14
- Apr 2025 13:38:31 +0200
-Message-ID: <abb3405a-45fb-4425-a817-89a03b0c16c4@gmx.net>
-Date: Mon, 14 Apr 2025 13:38:29 +0200
+	s=arc-20240116; t=1744630755; c=relaxed/simple;
+	bh=FyVWnpa4/PtbPKZcTFnoIrzLAhKqHQiTyYZCE5N8F+g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VtCOb4vUu4utr1lDt0vUOqkrcFrEcbnTECq5qFVTK/xQNx4pKHmYeRM2/bfmQ0o6QBxhI2DeBpcZfqBMDXfCC9NsM874AcsSdXHwxllFSqQiuuV3roNwt/XVjKQYpqD2PWCyz8X8gm1O7IytjSZgdO5AaaHG+ftVvU43g9Ge2VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WfFG4sTn; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso810883966b.0;
+        Mon, 14 Apr 2025 04:39:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744630752; x=1745235552; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X6PwPr4LZYXEj7QhUyvyfmnH+e+d5JgPgBGYKHOh478=;
+        b=WfFG4sTnskXpXvNHRw6tl8LwiEDEl2/GXAgmQ/GsLPbTpF3Oj1l5t7KW2VXZ6kXJ1x
+         nCCB1NAEhp3epTpXq9nWxGnRVxO5yj8kcriiVGUzkFRoWmzESMuZVNwIt5Af8ujvhyuB
+         w54SqH9vbsGiuQABrZvHWLRnYHgxmPtVcDKgXzPgcwQ7Xln2Psv2VpqQyr2MLKb98NmV
+         hgcKVPcuI8wZDrROtQFiwo4bBLKD7wkEyT2vcEwYqghcXI6UeJutXFtP5RqFFaNq+2qm
+         fDg2soE9jsy3zmezIKvi0hTbcGiCY6iZcDOc//gjvBxiDnT/H1BdAiBJxFhKCg9h7l8o
+         CmGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744630752; x=1745235552;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X6PwPr4LZYXEj7QhUyvyfmnH+e+d5JgPgBGYKHOh478=;
+        b=GJ1m8mDaGedkNAAL1JjUTqY9gKo7H8mFHcys52YpwF7eVg3LDt8ai9cUjzYB+UWa6l
+         z1XZa+TqNOWig6wUYMOLMJYKH/sfg9wZdoaaHlBzPL4K/Y5EaCPP+3j8ZMPnjOqENJyj
+         txk5fpsYc8Kz6KJR4vdaevnh+qDCcvkOmHkfyoOHX30ImZsErR8BIcwdVcyIhVcZZi7S
+         F072vnh0FOzPw8EALf0h0mmY4AO3he7HYoGWc/Qn9kSlvqMU4LdPCoY8AaP8WzNZfhVE
+         ubT3O04Rm6s77aii4kV/qT2d5pxBldD/0VFmIXEfMPExJTvplYTEAyVk237L6d1EEg/7
+         WUdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXIgOS3r/0neIOCS/5l8ADSzVRtUU7PEBrVASZYiK2rxGjqgSNTr/K0MLpbz/9/Bvf0BP6/yhyxeu/RHs=@vger.kernel.org, AJvYcCXKq3W0gn00QWbRa1n/8OMVhFqpKHi9UBmZlmkP4YN9WZ+I/O0DZLLKDSoCrCSe/8JtVvco96rF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWuclLajBE9PicHTqhBlE0KnpV9YIFXcVgShZWF8HqFCYCEYkG
+	xDIj/xZFNnIgrX6BVjZfqVkdOGqrwiZee74u61PKvXCa/shc3GRLxSfBhAdosHpbIGdxfBCINcE
+	L6ff6SoJAn+AqIwpk/5KVYIn6Th6qM5BDckc=
+X-Gm-Gg: ASbGnctwCkhuhIFjSF57ptuDadM+yZ5obkoa53APEKKhI/yVXNWwWviKh9l5FSEPDNc
+	yyApzqqzboyr8g+nifD+WMthGFNFnQfjkEjJilhHbbQctOYLkYTC/rNgEzWzFVtNue/D9L9RPMQ
+	x+Y+ZgkFFYV2VgeDrqzaYnpiapBhe2+Jg=
+X-Google-Smtp-Source: AGHT+IHgZ2/rXYU/OGDbcfayiE0rw+vTh3MWm4mOX17tRBHKvUWo5Qflea89DZfZ3iyLUiKBINgS89iXQlVnZIx3jkY=
+X-Received: by 2002:a17:906:6a27:b0:ac8:1bb3:35b0 with SMTP id
+ a640c23a62f3a-acad34a184dmr1017501966b.20.1744630751474; Mon, 14 Apr 2025
+ 04:39:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 10/13] arm64: dts: Add overlay for RP1 device
-To: Andrea della Porta <andrea.porta@suse.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof Wilczynski <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
- <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
- Herve Codina <herve.codina@bootlin.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn
- <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>, kernel-list@raspberrypi.com
-References: <cover.1742418429.git.andrea.porta@suse.com>
- <ab9ab3536baf5fdf6016f2a01044f00034189291.1742418429.git.andrea.porta@suse.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-Autocrypt: addr=wahrenst@gmx.net; keydata=
- xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
- IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
- NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
- JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
- TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
- f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
- V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
- aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
-In-Reply-To: <ab9ab3536baf5fdf6016f2a01044f00034189291.1742418429.git.andrea.porta@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20250414085412.117120-1-maimon.sagi@gmail.com>
+ <b6aea926-ebb6-48fe-a1be-6f428a648eae@linux.dev> <CAMuE1bG_+qj++Q0OXfBe3Z_aA-zFj3nmzr9CHCuKJ_Jr19oWEg@mail.gmail.com>
+ <aa9a1485-0a0b-442b-b126-a00ee5d4801c@linux.dev>
+In-Reply-To: <aa9a1485-0a0b-442b-b126-a00ee5d4801c@linux.dev>
+From: Sagi Maimon <maimon.sagi@gmail.com>
+Date: Mon, 14 Apr 2025 14:38:45 +0300
+X-Gm-Features: ATxdqUEpnPU3zu3s09tXz533FGAy5vpZCIylZKOeqAHMcDlPRDdFr6WOEbEI3xg
+Message-ID: <CAMuE1bETL1+sGo9wq46O=Ad-_aa8xNLK0kWC63Mm5rTFdebp=w@mail.gmail.com>
+Subject: Re: [PATCH v1] ptp: ocp: fix NULL deref in _signal_summary_show
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: jonathan.lemon@gmail.com, richardcochran@gmail.com, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:m8JLxCwdInGWwVIBpPbWU85afGcQak8XuDSiAyyOP0EmeklFBz0
- hl4x34oAp+KNiLjDCLAoxHrznsBPvcnDWCFB193V4upZYpMs40GI2TqwkaQ6gaacflG7bOQ
- EMPaxpr1mFixC81q0mbv+LRK8wc44QYFoCnKnP6uT1vlasOa6ZQCCtek/T2Kz9SKVqA1bFJ
- wdUbubZcymN48TQHDXT0w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EhsPipdgz2M=;g3X/9zeu8NWjQ6d/rmQ0irfcxJ/
- XzlBaf60rX/TLoFVsn5MVtvPRLvOEiKdfGSUC2bX2UBW0EpJOJWfagXAKhkfoBkCMlwm+tZpw
- yYaJ+bIiqADOU/+GZ3dSVaQMzLVKMESLZJorEtoqtT49HEFCVfMAVFrcxlr/FnodYVTuvqBLI
- 2jd+2LK6QUd6RMo3b5S1tiP3NkJTLX65UIGJb+EX3QKlzcBbuDtqET0D5edbUxhgiK+1aEPao
- RqNr7IiJFI9AP4Yk5T3RjT5KsrBN+BJ7kt5Z9V/lQvOqwL9RDiMH94pi/6xu9MCZ3TeN8n4Lk
- WC0tILwnOgBUzD2ZYLdI1yjpGzRSOYNN3y5NGaK1kYHJ29X2kyN+H0HZD1em6uskGWU3v5B6o
- +Jsi+HUlsphsvY9OM8lubZC9dqQ2DzWvUZkKS7dzSO1ugQcH3nt/UXxzAyh7xKYClx0WUgFvh
- QJ1a4rI4nl43TZ4E7uoLMWHAwn+cdy+iFFUQcCSC0J/WYgvhm9NtLaloCHypcu4DECk/EN1KM
- yf57bYcS92ZavxWNGeoNMOSwd/zp0hMQPBF1BSPVPWOZZ5z1iBaK9k4o36xnLrDNZrVJeD4OP
- IcLtxlUtrRE5KH/+F9jWouP9eNhK+hesGmYyvY/P7RnDdBeGfdXjPc9oKEk1OJqHN4wLXFzik
- roe44AAeU5YSHd3NZ8j/5tDyKiRklQYpjlqVbAnd4jIVpXZK/o6DZWiyZRmhcCtPP0ZMgeUro
- ytiZQqeQMCDdYBupYDfclhA+Zgh72EYTt8OUImEIdiDMILHbUtZk/RyXn39oY+cRiKa2LBUK/
- 0ElUSPw4u++83Pu+kOYpXRuf0lmJ3obBHSgkdKbNh6AVWlbHuvnEKXRaAbhROt1b2c1a5S2/H
- JvrGHvmGwapmXSL/y7bKIZRbIwEsnff8fsyKRBQyRd6w1smn1gK2A9UEuuIvWQ7egeQo1i4PL
- l+fDr4/1GbDzkXXDlHHg5d6eBEAIJMIhKWs8eaIt/Fa9wOTDj0xUF8Dr6gvAhrqJ0ZEkZ9oF0
- mtD2MCFsFlpijH8E3NeRoJCAI0wuEbGPD5dvv6K+vIo+LyQpKjdUNw5PZVWNFR3smQdC4u7oh
- XYu9Zv4PO6cu+8A6HIJ6KvmYj0GCVxzUkXkZsE3ZdmlA/W09eZmJzNG3b/vQOQdGY18GoJsZw
- 3TRjhx1bvUtr/jUtoSSaTPJ1iJAtK2nfLkrv8i/rJqBko+T7nDfLx1KIqKoOGZWkks1r8f5zU
- aqN2d+8ChDTNSFENFKtnofG/2w/7U7vnkncD134pe6x9S/0xaZwBIsGyAQD2G5oSsHR+Wr3/o
- yiC8Jdj9mo1q/5fKhnM4RLVQNrUfWocUhqMig2BqR8ovSxtNEInnV/QlaAxcPG8+iKRqjnIak
- HpFb5XQquykn9MQLQx6/9+vrpAyceuUW9Tx1hEBYooWafXQerd482sXlUw1Riuw8zk3NuYQ7a
- 3wMVDcCP5dcHNixEAYB82cPXEpmg=
 
-Hi Andrea,
-
-just a nit. Could you please add "broadcom:" to the subject?
-
-Am 19.03.25 um 22:52 schrieb Andrea della Porta:
-> Define the RP1 node in an overlay. The inclusion tree is
-> as follow (the arrow points to the includer):
+On Mon, Apr 14, 2025 at 2:09=E2=80=AFPM Vadim Fedorenko
+<vadim.fedorenko@linux.dev> wrote:
 >
->                        rp1.dtso
->                            ^
->                            |
-> rp1-common.dtsi ----> rp1-nexus.dtsi
+> On 14/04/2025 11:56, Sagi Maimon wrote:
+> > On Mon, Apr 14, 2025 at 12:37=E2=80=AFPM Vadim Fedorenko
+> > <vadim.fedorenko@linux.dev> wrote:
+> >>
+> >> On 14/04/2025 09:54, Sagi Maimon wrote:
+> >>> Sysfs signal show operations can invoke _signal_summary_show before
+> >>> signal_out array elements are initialized, causing a NULL pointer
+> >>> dereference. Add NULL checks for signal_out elements to prevent kerne=
+l
+> >>> crashes.
+> >>>
+> >>> Fixes: b325af3cfab9 ("ptp: ocp: Add signal generators and update sysf=
+s nodes")
+> >>> Signed-off-by: Sagi Maimon <maimon.sagi@gmail.com>
+> >>> ---
+> >>>    drivers/ptp/ptp_ocp.c | 3 +++
+> >>>    1 file changed, 3 insertions(+)
+> >>>
+> >>> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+> >>> index 7945c6be1f7c..4c7893539cec 100644
+> >>> --- a/drivers/ptp/ptp_ocp.c
+> >>> +++ b/drivers/ptp/ptp_ocp.c
+> >>> @@ -3963,6 +3963,9 @@ _signal_summary_show(struct seq_file *s, struct=
+ ptp_ocp *bp, int nr)
+> >>>        bool on;
+> >>>        u32 val;
+> >>>
+> >>> +     if (!bp->signal_out[nr])
+> >>> +             return;
+> >>> +
+> >>>        on =3D signal->running;
+> >>>        sprintf(label, "GEN%d", nr + 1);
+> >>>        seq_printf(s, "%7s: %s, period:%llu duty:%d%% phase:%llu pol:%=
+d",
+> >>
+> >> That's not correct, the dereference of bp->signal_out[nr] happens befo=
+re
+> >> the check. But I just wonder how can that even happen?
+> >>
+> > The scenario (our case): on ptp_ocp_adva_board_init we
+> > initiate only signals 0 and 1 so 2 and 3 are NULL.
+> > Later ptp_ocp_summary_show runs on all 4 signals and calls _signal_summ=
+ary_show
+> > when calling signal 2 or 3  the dereference occurs.
+> > can you please explain: " the dereference of bp->signal_out[nr] happens=
+ before
+> > the check", where exactly? do you mean in those lines:
+> > struct signal_reg __iomem *reg =3D bp->signal_out[nr]->mem;
+>     ^^^
+> yes, this is the line which dereferences the pointer.
 >
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> ---
-> This patch can be considered optional, since it fills just the second
-> scenario as detailed in [1], which is the RP1 DT node loaded from a dtb
-> overlay by the FW at early boot stage.
-> This may be useful for debug purpose, but as such not strictly necessary=
-.
+> but in case you have only 2 pins to configure, why the driver exposes 4
+> SMAs? You can simply adjust the attributes (adva_timecard_attrs).
 >
-> [1] https://lore.kernel.org/all/CAMEGJJ0f4YUgdWBhxvQ_dquZHztve9KO7pvQjoD=
-WJ3=3Dzd3cgcg@mail.gmail.com/#t
-> ---
->   arch/arm64/boot/dts/broadcom/Makefile |  3 ++-
->   arch/arm64/boot/dts/broadcom/rp1.dtso | 11 +++++++++++
->   2 files changed, 13 insertions(+), 1 deletion(-)
->   create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
+I can (and will) expose only 2 sma in adva_timecard_attrs, but still
+ptp_ocp_summary_show runs
+on all 4 signals and not only on the on that exposed, is it not a bug?
+> > struct ptp_ocp_signal *signal =3D &bp->signal[nr];
+> >> I believe the proper fix is to move ptp_ocp_attr_group_add() closer to
+> >> the end of ptp_ocp_adva_board_init() like it's done for other boards.
+> >>
+> >> --
+> >> pw-bot: cr
 >
-> diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts=
-/broadcom/Makefile
-> index 4836c6da5bee..58293f9c16ab 100644
-> --- a/arch/arm64/boot/dts/broadcom/Makefile
-> +++ b/arch/arm64/boot/dts/broadcom/Makefile
-> @@ -13,7 +13,8 @@ dtb-$(CONFIG_ARCH_BCM2835) +=3D bcm2711-rpi-400.dtb \
->   			      bcm2837-rpi-3-b.dtb \
->   			      bcm2837-rpi-3-b-plus.dtb \
->   			      bcm2837-rpi-cm3-io3.dtb \
-> -			      bcm2837-rpi-zero-2-w.dtb
-> +			      bcm2837-rpi-zero-2-w.dtb \
-> +			      rp1.dtbo
->  =20
->   subdir-y	+=3D bcmbca
->   subdir-y	+=3D northstar2
-> diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts=
-/broadcom/rp1.dtso
-> new file mode 100644
-> index 000000000000..ab4f146d22c0
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
-> @@ -0,0 +1,11 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +&pcie2 {
-> +	#address-cells =3D <3>;
-> +	#size-cells =3D <2>;
-> +
-> +	#include "rp1-nexus.dtsi"
-> +};
-
 
