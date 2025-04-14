@@ -1,122 +1,115 @@
-Return-Path: <linux-kernel+bounces-602491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64798A87B89
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:09:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C92A87BA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21639168580
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:09:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E717D3AF92E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C3925E471;
-	Mon, 14 Apr 2025 09:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D8F25E82F;
+	Mon, 14 Apr 2025 09:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="MOe9ZzBN"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SThNxVR1"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897F01ACEDF;
-	Mon, 14 Apr 2025 09:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275BB25DD14;
+	Mon, 14 Apr 2025 09:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744621768; cv=none; b=WYMH0ptMEFjL5OHpKuB/wZyrA7HcFb0aGZtIUH/uoT0eNRt+jf0tq8UxDphe6IuZD1cFLVPDC8ruaHu2DqaPezZg8uaXzhIX596evhBYXNhXcRRXvJgK0WfzODzjhZctRRbP9uF2YMl2wAdPR0DXIqT63UVojjgNylh0VoyAejQ=
+	t=1744622108; cv=none; b=tjPgLc1pMDGE7HKmpJKg+kKGe2rBuYr30VN4ItkQn1Xp4QOIH5vLRlCJnA/CzeFTDvSLaomDOP3qxGtawdTRm9RgT4zVcxk1bPKmsi5lnjtRarPWhHR9anU+n9A4hhWr9I3A6vd/asbdkeqq6GL91017mEOsVnYiWVStB5rr8rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744621768; c=relaxed/simple;
-	bh=3wZPbKQ5oUdhFU6aeVJ9IfGzc2VNcc3Z7mBcz6+L1Rc=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=ChvS0VsL5cRO3uXzYB3bOfTFMR7l6QKnWo2713io9mqSAhFmD5enT275uNQQ5B/hEQKZX5mRKBW/Ol4YRpuDWwr0rLuwOy6A3X+soQkESjgaqfkBp25LpwVWzgzG69UGADbBX/rQ3cr8L0SsxtTe5w5tK3/+P+3g64k50gFUPxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=MOe9ZzBN; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1744621450; bh=H/KIZKqdS3yDEUxbnXVXELq5+Ffxoz4WFW5qpPHDmjQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=MOe9ZzBN75JF8AghUBGNN2/PzJO174U4AsCctf43LSjnymdsxlzZAVNpPFpLNnEyA
-	 sJfz+i6sWrKRbiTIwInckqnm5sHzBctuwsAIce3c9WoTM5qznOa9/W/60xPmGle3yp
-	 Z0eVGWEIr7YFkeUJwgdPN4Abmo+9DJ6zjOk+JiOg=
-Received: from localhost.localdomain ([116.128.244.169])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 108A92C4; Mon, 14 Apr 2025 17:04:08 +0800
-X-QQ-mid: xmsmtpt1744621448ts30wq64d
-Message-ID: <tencent_6D2374392DB66C9D23BF6E2546638A42EC08@qq.com>
-X-QQ-XMAILINFO: MFdGPHhuqhNoktDupUjrbNsITT8+WvnxQpRzYhCSwdqyiSYJjVyD+PBOqK1f6x
-	 9kAeyWzE9twRU15fFXk+8JWv+MNo34hLp8dav0Z7AWX491Ga3tGHPBcU4wPsWASbAK+prlqHTUk2
-	 AAwcZu2L/+kT9ZHqPjy2ljvBEMhqdzd8Qtmtf5iFPHvUeNi6Bbqyhz3wlDEyMo9/WpypzXyd+Fzs
-	 XGZW0EeN+bVJXwRl6zayRyyNZY9Cz1KlsBFKkBnvAuQ1OnP/rSo+/VR7/C2MBRrmK/tryXxvqNCP
-	 zgo+QA5QgimAxqvbX7UjiWoOWRLBFIoH4lAC5YrPOi2xhesQKnhAOChnEvO4hIS8DvR5D/h9mgPO
-	 6Zc4RQzObto2KnhGj066USSjULGAowzqSwWEq8KOcVqrtBJizFiTrYUXqD+4SJmWjlhb1n68Fa0E
-	 Rm3i13jbs8yyjnSTUc2528x1ooPQ8viq7RZQSHLXfwq5/ijIBHeqMR9zEfhI65XFxQwuINefjSSJ
-	 10c5jBOttmwaTEOVsfP6mExiwcCqDYXEBsIqbb1rgoq36idX5cRcghbeN26hgUP9e+9A+na5EOAx
-	 UCWsUhBcLFRgyHaBgF60RF/iRuLAg029XZHEJTt0AZGaANwBGXRB0j2Szz/oYBuIgzFHYlnl5Blu
-	 PrtdOlgyXCKQJgZ4nf3S4/FFsSGab7r0T3JfKxoeuR5jX89VF1DznhAmG5EW2JnV2Oh1nZ38PyG3
-	 /38MXIHCEUTklOmMAfvyGFQDJl8jzd4sT0Pydq//GnwM+0SsMTkZVfmPRs3QIaF6i9oloXtKw9hI
-	 E1nTPu1cXs+CVrdfkFrUdCNpEgcNXftqyfs6cHBBPepBxYFJ+GgLeayUlpx3x3GJYZAydcms7abv
-	 v4LhdsenrtxEfd6HXEImbTtjAcqJxTvsyc8nUu2bimY+4iC2GThgY+pUX7LnWBGyhp1SpVPNOx0W
-	 wqMhuMocY=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Yaxiong Tian <iambestgod@qq.com>
-To: lukasz.luba@arm.com,
-	rafael@kernel.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yaxiong Tian <tianyaxiong@kylinos.cn>
-Subject: [PATCH v3] PM: EM: Fix potential division-by-zero error in em_compute_costs()
-Date: Mon, 14 Apr 2025 17:04:06 +0800
-X-OQ-MSGID: <20250414090406.1255935-1-iambestgod@qq.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
-References: <tencent_EE27C7D1D6BDB3EE57A2C467CC59A866C405@qq.com>
+	s=arc-20240116; t=1744622108; c=relaxed/simple;
+	bh=tbf2Ml+im2U5RuM0vedTThyItIN7sEEhL5l/QHjL5o0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=s3AhVmW73173nGvi++ggsdoasCgme0sXiwB4/iYebvGP8J+EYD1IhWgWJcXqSvOGuMdUoVTF0aNx1CTzzk7SiEM0kvEa26rc90JwC/HFwH8bjZXlOE8WKEgr4N//V7MFlnT++xif+pObAgAmhuhHY5SSjU7WuCmyyQqmiUBfNc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=SThNxVR1; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ZbhHk3fWvz9sDW;
+	Mon, 14 Apr 2025 11:06:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1744621618; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tbf2Ml+im2U5RuM0vedTThyItIN7sEEhL5l/QHjL5o0=;
+	b=SThNxVR1vzQL7BET5P1K6nuJsueazkEi+KLxlj6xQUXphxIbKznNn2FLOscQWCk+FuI4HF
+	H0FUT7xq4or84vM2711OLYFfJvlmphetgICzJuGn2FdPZc3+q4w7dsEZBP/wE18eU0ye73
+	iZ6mThKow7JkzxMmh6cli2pmlNyFZ/AynGitljkjbo1U241VkrYX7HhvAqixtJG+BhxFdv
+	qgcTkYvv+DtqsQH2L7ajUW04wcyP1s9TpwhIi4XRoak66dzx/pewJWDJrL4o51jlInyw7M
+	wezMfzs4JEurV88SU4bueNomg31ufOehPf/AGMlhdwJHnEUtZg1kfVQi+yrxfg==
+Message-ID: <edf236654c39fbd3afb6db20e3ef42501a8628b0.camel@mailbox.org>
+Subject: Re: [PATCH 0/5] media: Replace deprecated PCI functions
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Philipp Stanner <phasta@kernel.org>, Yong Zhi <yong.zhi@intel.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Bingbu Cao
+ <bingbu.cao@intel.com>, Dan Scally <djrscally@gmail.com>, Tianshu Qiu
+ <tian.shu.qiu@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Akihiro Tsukada <tskd08@gmail.com>, Bluecherry Maintainers
+ <maintainers@bluecherrydvr.com>, Andrey Utkin <andrey_utkin@fastmail.com>, 
+ Ismael Luceno <ismael@iodev.co.uk>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 14 Apr 2025 11:06:54 +0200
+In-Reply-To: <20250404135344.93241-2-phasta@kernel.org>
+References: <20250404135344.93241-2-phasta@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: gmpbdfu87n44n7f5mo3d6tw1tu6ifmbr
+X-MBO-RS-ID: 7b9016a84fb764f1ee5
 
-From: Yaxiong Tian <tianyaxiong@kylinos.cn>
+On Fri, 2025-04-04 at 15:53 +0200, Philipp Stanner wrote:
+> Replaces pcim_iomap_regions() and pcim_iomap_table(), which have been
+> deprecated.
+>=20
+> The successor pcim_iomap_region() is already used in many places and
+> shouldn't cause trouble.
+>=20
+> I test-built it, but have no hardware for testing.
+>=20
+> P.
+>=20
+> Philipp Stanner (5):
+> =C2=A0 media: ipu3-cio2: Replace deprecated PCI functions
+> =C2=A0 media: pt3: Replace deprecated PCI functions
+> =C2=A0 media: intel/ipu6: Replace deprecated PCI functions
+> =C2=A0 media: solo6x10: Replace deprecated PCI functions
+> =C2=A0 media: tw5864: Replace deprecated PCI functions
 
-When the device is of a non-CPU type, table[i].performance won't be
-initialized in the previous em_init_performance(), resulting in division
-by zero when calculating costs in em_compute_costs().
+Hello,
 
-Since the 'cost' algorithm is only used for EAS energy efficiency
-calculations and is currently not utilized by other device drivers, we
-should add the _is_cpu_device(dev) check to prevent this division-by-zero
-issue.
+is there someone who's in charge of all of media: who could take this,
+or would it be more feasible to aim for the subcomponents?
 
-Fixes: <1b600da51073> ("PM: EM: Optimize em_cpu_energy() and remove division")
-Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
----
- kernel/power/energy_model.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+P.
 
-diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-index d9b7e2b38c7a..fc972cc1fc12 100644
---- a/kernel/power/energy_model.c
-+++ b/kernel/power/energy_model.c
-@@ -235,7 +235,7 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
- 
- 	/* Compute the cost of each performance state. */
- 	for (i = nr_states - 1; i >= 0; i--) {
--		unsigned long power_res, cost;
-+		unsigned long power_res, cost = 0;
- 
- 		if ((flags & EM_PERF_DOMAIN_ARTIFICIAL) && cb->get_cost) {
- 			ret = cb->get_cost(dev, table[i].frequency, &cost);
-@@ -244,7 +244,7 @@ static int em_compute_costs(struct device *dev, struct em_perf_state *table,
- 					cost, ret);
- 				return -EINVAL;
- 			}
--		} else {
-+		} else if (_is_cpu_device(dev)) {
- 			/* increase resolution of 'cost' precision */
- 			power_res = table[i].power * 10;
- 			cost = power_res / table[i].performance;
--- 
-2.25.1
-
+>=20
+> =C2=A0drivers/media/pci/intel/ipu3/ipu3-cio2.c=C2=A0=C2=A0 |=C2=A0 5 ++--=
+-
+> =C2=A0drivers/media/pci/intel/ipu6/ipu6.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 8 ++++----
+> =C2=A0drivers/media/pci/pt3/pt3.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 17 +++++++++++------
+> =C2=A0drivers/media/pci/solo6x10/solo6x10-core.c |=C2=A0 4 ++--
+> =C2=A0drivers/media/pci/tw5864/tw5864-core.c=C2=A0=C2=A0=C2=A0=C2=A0 | 13=
+ ++++++++-----
+> =C2=A05 files changed, 27 insertions(+), 20 deletions(-)
+>=20
 
 
