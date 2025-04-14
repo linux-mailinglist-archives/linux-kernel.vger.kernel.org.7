@@ -1,159 +1,129 @@
-Return-Path: <linux-kernel+bounces-603244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1018A8853C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:38:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59FF3A88509
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16530190615E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:32:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA6B07A2FA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B01F28467D;
-	Mon, 14 Apr 2025 14:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F9F288CA1;
+	Mon, 14 Apr 2025 14:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G52NMByh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hjkOl1s3"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403472797B7
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F6324728E;
+	Mon, 14 Apr 2025 14:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744639711; cv=none; b=W0ttyxTR2oWtYPMQ6h0tMPwfzPMl6tBNgPb+N3PJyiq2ahUWPj3gS2/jp86oHjF09fvM++hlzUndwnTkBMKWzE/4rOYLCzhp9NxYHi23RUMg4dwcnzctfncffuaWz8DZU6z0EhypAduNpogds/xabb74RTkE5oNB5FX9oy9z8Iw=
+	t=1744639748; cv=none; b=qkVumnrLLAD3mHYActKhZg0tOoFMU6tieH9vpUOR9CaV6OHoQYrdGHaucYFBBB9t/2ALRlOy/O8ngbdqmnatZXlqzwAB3JUIjmzHy3hnM0NbPOYy1lso6oV4cULJEXjEaYR00v+xoD4rJHxuUKiTR2NC591Vf/TvDpnC6etFjEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744639711; c=relaxed/simple;
-	bh=WqGTqa2wWw2oXDWJ5sPQzdsrwsWJMRcIj1r1cQCHE4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dseiO790cxkaQrykMjnhZjjIAmxHaNYK9+gAfJDcTLKiWWiBR80/OpRbBMo0Gpi/sbzM1UAFp1YH7rbyAH9hkLwH0D31UGKTeV2WtxrPni0slr3IcGZZLoSDRiAYSciMp9bLJ8mTBlA2Og9GoE2HGcjVsB6SosJXWO0h6nolUJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G52NMByh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744639709;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RVLsjYDvYBHlqk+yeP8jOnkwTdAVrBmSgCOK1FGYOz0=;
-	b=G52NMByha4EManTQsJGnVDCP5WhFkgWad8dVRBtlY9IAHrsN6FxZSLxz4RtcO8obJFqjV1
-	oOUft9GmkIiUms2/S7qSFJrbZmU+bIfv4oT2O1b3zTAYCLZW7KtDZmGZhw10rVfG0IQY2o
-	cxm616oKsrMvWZYPcGZNhC/GpVsYAXE=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-54-H_swq0IhO42Cqi9zOHrAjw-1; Mon,
- 14 Apr 2025 10:08:25 -0400
-X-MC-Unique: H_swq0IhO42Cqi9zOHrAjw-1
-X-Mimecast-MFC-AGG-ID: H_swq0IhO42Cqi9zOHrAjw_1744639701
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E63281955DCF;
-	Mon, 14 Apr 2025 14:08:20 +0000 (UTC)
-Received: from [10.44.32.81] (unknown [10.44.32.81])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5DEBA180AF7C;
-	Mon, 14 Apr 2025 14:08:16 +0000 (UTC)
-Message-ID: <79617a32-ddc3-42c4-bdb5-c21bf985c92c@redhat.com>
-Date: Mon, 14 Apr 2025 16:08:15 +0200
+	s=arc-20240116; t=1744639748; c=relaxed/simple;
+	bh=B12gaYxryrr/rPJ3pcLrF0Rl7Kt4JWDFN75r8W5U58A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NKMTM4kYavFgopqmQB+qdS8PAHKn1PO/gigGAwfjrP2qzsGi1TYCa0nUV/jpX1AB4CujdY/NXO41vSkAvmjsD+sfEIY4X7dlc4aGRcyjI7b1xTNQz+Vf2odsCUKnbIF/zQ4BFcYWGoDjih5cYiKbJKmTNvuZBGNtJJnKa/s/kGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hjkOl1s3; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e8f254b875so41522836d6.1;
+        Mon, 14 Apr 2025 07:09:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744639745; x=1745244545; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CnhmU/ZILoUaMWGd+8bGeiu5Y0rkdVWKSR+fUdJPinE=;
+        b=hjkOl1s3HttoAVOj66Pzj1xcohgenqmy/xhY5T3HloTZdOxAWFpkEdFfIYtNo+XBQv
+         0BpTq5jyJbeTRBNTyhiCeIxdr7GRBtWLLfzTvC5w0qFbHlRqpoDJ2NrLWLZjaV7rCSUp
+         AMNFylCoVh7R57XPh0vpkwQWVwh5mVt/B90uClG2HZ/rgeCOQiLVd+B1ycI7KvK7lmz0
+         kY+bnaEq59HGWzMQiBHkBw5q+3AyLmN7kVpfl3a6MJm3ZA67R4jt1M//7BePLCqBoBDC
+         lwx7brRqxGsDAoMxXTfzDXr7CPV4Z2eERK0A8HyHhbCAS+jk2thWK6w2/jxYIH9isNmH
+         trVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744639745; x=1745244545;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CnhmU/ZILoUaMWGd+8bGeiu5Y0rkdVWKSR+fUdJPinE=;
+        b=rjzUAk74KkNkOgP14KgFLkx+Rtmq34S/mJyX/nuT1mXmFe14Wi7yL445cB4z6nckyf
+         NE18ySettMJIP89T+sJpbuLSe3M2ChvDM9X/7Lsz45qXf36frcXK+Kg/6SAewt9DW8SF
+         4LIuteENe7zhw+6oSK2LXeXEpTYd14p1toC87ERQVnJAjhKI7v4FnjebHDMZvq+0cuYE
+         2uSCDpGcuDmNusaYMs7YTX2T0hihYniVBLF/HoAAQfxHT6jxg/R9KkCd2nUm13z5bcgW
+         Fpdb8SiQjpehHK24+iu336oxU5B54GBEAGA0nBUGgVZ9nQDMWzHDK4bXR8rwTSiJtcTZ
+         C86Q==
+X-Forwarded-Encrypted: i=1; AJvYcCULuxJRheCjn8oJ9p+Spx9E6d8exe69xmDQ/jyfMLR8TN32HqTbN6Fw1vwgLDwJjY+D60ERsEXVYBTni1h5@vger.kernel.org, AJvYcCVmf/7rl11QPHe6dh7aKtZaMPVdP4+d4rbaYlh+Cy1e2/IUf/19Z2YLx90ZTXk8/sTRVfyMLOcTiw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+AbNIFU0tETen75dvrsTkd0gHaotJR8E8jXQBqKpuEhvkg4wd
+	Ge6ZJcmaJ2gO03cwl406tgR5n79RQf+0aBcamTBIJJOb1KF1tIRt
+X-Gm-Gg: ASbGncvdfCo1dZisXWWRAOh9a27oCQ16S6cuPaXILUUSl94c3D2iZxfz/CeGNoWOQx9
+	z/sSXqIFRniGNamJpXrlxQ2DbFLPEiTer25zWzwS0LlRCF7P/z1zMIUT8ZNeo0x9bZ/iSLfeDfO
+	/RjggLQc/MpK3ogqIn/+ps25ipLaFlkWhCFqIpIyR4bmJpmmfNPPa7sa8awORQMCfMeRmOq0ItY
+	smaZ/ZSYgaSGUh6m1DsD/tqfanGLyWoxRdWQSfQQvcxWoRLPtI/HfZPI88TG3jxhpkgPPMUeP/C
+	tu5+FewSy3MCmioQ2WDPa18ndNavbjcfw8gsBmtneJGqf0BgIo36qkM9CH5Mc3XkCLHDTpGownA
+	cAPuWYga6vTWdNTwKgEw=
+X-Google-Smtp-Source: AGHT+IFGRinbFYIbEanUCrc0USF9meGu9XI5hh+1+7w8QKX2Q86t6AvSznRkMwFHVH86Mq5ooeGfGQ==
+X-Received: by 2002:a05:6214:d44:b0:6e8:e828:820d with SMTP id 6a1803df08f44-6f23f14bc14mr238912856d6.36.1744639745184;
+        Mon, 14 Apr 2025 07:09:05 -0700 (PDT)
+Received: from theriatric.mshome.net (c-73-123-232-110.hsd1.ma.comcast.net. [73.123.232.110])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f0de973552sm84019906d6.50.2025.04.14.07.09.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 07:09:04 -0700 (PDT)
+From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-iio@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: gshahrozui@gmail.com,
+	skhan@linuxfoundation.org,
+	kernelmentees@lists.linuxfoundation.org,
+	Gabriel Shahrouzi <gshahrouzi@gmail.com>
+Subject: [PATCH] iio: adc: Correct conditional logic for store mode
+Date: Mon, 14 Apr 2025 10:09:01 -0400
+Message-ID: <20250414140901.460719-1-gshahrouzi@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/28] mfd: Add Microchip ZL3073x support
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, netdev@vger.kernel.org,
- Michal Schmidt <mschmidt@redhat.com>,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
- Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20250407172836.1009461-1-ivecera@redhat.com>
- <20250407172836.1009461-2-ivecera@redhat.com>
- <Z_QTzwXvxcSh53Cq@smile.fi.intel.com>
- <eeddcda2-efe4-4563-bb2c-70009b374486@redhat.com>
- <Z_ys4Lo46KusTBIj@smile.fi.intel.com>
- <f3fc9556-60ba-48c0-95f2-4c030e5c309e@redhat.com>
- <79b9ee2f-091d-4e0f-bbe3-c56cf02c3532@redhat.com>
- <CAHp75VcumcH_9-2P2iayGWwD3Y87A7CZyO9vxqvbaUptS1FeQw@mail.gmail.com>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <CAHp75VcumcH_9-2P2iayGWwD3Y87A7CZyO9vxqvbaUptS1FeQw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+The mode setting logic in ad7816_store_mode was reversed due to
+incorrect handling of the strcmp return value. strcmp returns 0 on
+match, so the `if (strcmp(buf, "full"))` block executed when the
+input was not "full".
 
+This resulted in "full" setting the mode to AD7816_PD (power-down) and
+other inputs setting it to AD7816_FULL.
 
-On 14. 04. 25 3:55 odp., Andy Shevchenko wrote:
-> On Mon, Apr 14, 2025 at 2:52 PM Ivan Vecera <ivecera@redhat.com> wrote:
->> On 14. 04. 25 1:39 odp., Ivan Vecera wrote:
->>> On 14. 04. 25 8:36 dop., Andy Shevchenko wrote:
->>>>> What is wrong here?
->>>>>
->>>>> I have a device that uses 7-bit addresses and have 16 register pages.
->>>>> Each pages is from 0x00-0x7f and register 0x7f is used as page selector
->>>>> where bits 0-3 select the page.
->>>> The problem is that you overlap virtual page over the real one (the
->>>> main one).
->>>>
->>>> The drivers you mentioned in v2 discussions most likely are also buggy.
->>>> As I implied in the above question the developers hardly get the
->>>> regmap ranges
->>>> right. It took me quite a while to see the issue, so it's not
->>>> particularly your
->>>> fault.
->>> Hi Andy,
->>>
->>> thank you I see the point.
->>>
->>> Do you mean that the selector register should not be part of the range?
->>>
->>> If so, does it mean that I have to specify a range for each page? Like
->>> this:
->>>
->>>       {
->>>           /* Page 0 */
->>>           .range_min    = 0x000,
->>>           .range_max    = 0x07e,
->>>           .selector_reg    = ZL3073x_PAGE_SEL,
->>>           .selector_mask    = GENMASK(3, 0),
->>>           .selector_shift    = 0,
->>>           .window_start    = 0,
->>>           .window_len    = 0x7e,
->>>       },
->>>       {
->>>           /* Page 1 */
->>>           .range_min    = 0x080,
->>>           .range_max    = 0x0fe,
->>>           .selector_reg    = ZL3073x_PAGE_SEL,
->>>           .selector_mask    = GENMASK(3, 0),
->>>           .selector_shift    = 0,
->>>           .window_start    = 0,
->>>           .window_len    = 0x7e,
->>>       },
-> 
-> ...
-> 
->> Sorry,
->> .window_len = 0x7f /* Exclude selector reg */
-> 
-> It actually will make things worse. If selector register is accessible
-> to all of the pages, it's better to include it in all pages.
+Fix this by checking it against 0 to correctly check for "full" and
+"power-down", mapping them to AD7816_FULL and AD7816_PD respectively.
 
-Yes :-) I know this is non-sense.
-See my recent reply.
+Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+---
+ drivers/staging/iio/adc/ad7816.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Ivan
+diff --git a/drivers/staging/iio/adc/ad7816.c b/drivers/staging/iio/adc/ad7816.c
+index 6c14d7bcdd675..6b545547660dd 100644
+--- a/drivers/staging/iio/adc/ad7816.c
++++ b/drivers/staging/iio/adc/ad7816.c
+@@ -136,7 +136,7 @@ static ssize_t ad7816_store_mode(struct device *dev,
+ 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+ 	struct ad7816_chip_info *chip = iio_priv(indio_dev);
+ 
+-	if (strcmp(buf, "full")) {
++	if (sysfs_streq(buf, "full")) {
+ 		gpiod_set_value(chip->rdwr_pin, 1);
+ 		chip->mode = AD7816_FULL;
+ 	} else {
+-- 
+2.43.0
 
 
