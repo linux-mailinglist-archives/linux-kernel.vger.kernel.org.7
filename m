@@ -1,198 +1,145 @@
-Return-Path: <linux-kernel+bounces-602053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FE3DA875D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 04:29:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 296FEA875DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 04:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A41EE18912CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 02:30:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 741C0189131C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 02:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA332194A60;
-	Mon, 14 Apr 2025 02:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231A11885B4;
+	Mon, 14 Apr 2025 02:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Exx7YzVs"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="B5djlLy9"
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268BC1624E9
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 02:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C1E2F4A;
+	Mon, 14 Apr 2025 02:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744597775; cv=none; b=JXHCRd/03gNVqutB8SKJio+x6Z9G53C2ASwk7mkiQ6Nqp13id66F4Oda7+ePNkHZ+aCkKhrbiXNge/UAMYpaJVOVGaoVubnabekkQc4H7V7ICZy8RwEh5R4xWQYSmTWW+5LTMl0g8Buu0ZGg2X1+VIyHz7ThK6LYSrXhjhM2cX8=
+	t=1744597870; cv=none; b=Mbk2kkjgIev0ECNOo92qX3Ycg5p0SfPQAVTEQ88zn0eCsg3547f4X3g+FOMI00wm6wVCd61gr2CClrUO0xa7NQZGgchw8kAJQEGzl/3f/dQOSqQqytAlBMU0Pmj23HyCfj/vwp89TWkLGhCtTR+AysIjKbspx3J1ZG7aaOu35/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744597775; c=relaxed/simple;
-	bh=duUdqV/PyusSf4IrhTIyC8v5JbWgR40LB41+sVv0tUs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EmkQp0PqlqWCu3WjYWOvWIzoQkqYcJlR1EPfNeV9M7H2l3MEEOfCJvr8ygFl6V9HqFktY1MoNxdE2gA6HOkzZLxg/N7dC/pqFlkLLkCGpjnO10zQbWWTc8mO/V11FvEhM0weMhtIESNVtunOA9MNocoEKNn8XjBEiH9aqn5s4zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Exx7YzVs; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3912ebb8e88so184503f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Apr 2025 19:29:30 -0700 (PDT)
+	s=arc-20240116; t=1744597870; c=relaxed/simple;
+	bh=hrkt79QgwXIsiasCmcytf6NbadKuKHha5ialFnb48Ys=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZlXeH0Mx5rH06DzpSOBjDVzK69EBsCsDtxUKeUCvrsA+kvKrTuuVT6uX25lQpYwt87lYbSFg9ffxY2b2q8YtsgD272PNWws7U9f48juo8r+hzGdssIBqkdWCx6TZCOQfhDHnTlejsHaDuZ+pUIwEn73hAh0rsLBzRLRUyYTY7NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=B5djlLy9; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744597769; x=1745202569; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hR0gizsErti/TGxroMR8utxXV6Vg5v4cpuJKOHjP578=;
-        b=Exx7YzVsHGZC9VNeVjbEHmP6PMLO25U0I4Vqhqa2PqWbR/iSgMi3sVLVPJ/aDnF4pV
-         Zye16m+1CIun4bDGjOGJJL6BuJAglbf0N36ZfWUTVmJyZS1b331T9yYksCMqrPw5bA4k
-         7yiuJ/oqV6F1EeIab+lBgoq50y53wPRc/ba3xRot1HTLJbXLvhsnP0t1dLn4aH5ryVuT
-         iTw5BXDXJY4e10zTH+PBGRsE8Pt91461+i1XI1IsaEKg0/xD6n4P5jdLgqHz6+JHANsK
-         j1QGcefcuI40PcwC9bG1xTCgAiakfi+pKjlwlGgNwuFEkpxbbXt1INAWqq2ac7k03awd
-         irhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744597769; x=1745202569;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hR0gizsErti/TGxroMR8utxXV6Vg5v4cpuJKOHjP578=;
-        b=vpLc/oNWdpthVtjWev9CSyFNIlgazFrlR5M7AcLhZf66eqOEU2jiC6V15SHtdWqrkp
-         kXlWmY/VLUH810aWgqAwwwRqERAcMyW3wAo24YXkDv7JId6aFfVyPMlRlw1ByRSQh91j
-         VzKefQedioBhWayZRG2JjWE4a1leJsuk4fkp7ukBiKnSHuVC8dor6sJwxFJqaPDqbJJk
-         k7JLXkUQEvKvNtlgQFH2DoVIBLnFDpkn/VQFpOdGAn7Ar45FcGalNQ9pii9Gd93ujavH
-         dYQAwSI5JKlX5QEJUKonFKOHJHuwWFWSwaHOvl4n5eDbJtqovuGNz3IaO3xQQuD7abKU
-         jLkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDqi/w3wf83yiYlfooJCO5nyDrNfp5TU258zK0C/r4h8L3LuV0983sJmdHlhrDDNARDfy8r+SOJVj1WaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdt7CcFVDR6f83JvfGigzbhpQYb+tKuXcEXUweka0Y9skX4qFE
-	flIWSn+jOk7GCzx4nF4G3SJ73kOp5ppG9qO/jqifdvz9+mo5BaXBZFDogLOfskk=
-X-Gm-Gg: ASbGnctMebm8Hl7xQYZ0BcCBqUKfrC6wg3E84xBNGtl78AqluktIthRGO0y8U8xAKE2
-	jPVWjAeT3jfGaKp4xSdzEPyX9QZuFlLfwxPfHxxTqowUMpHfAblvD6OCCyrCCU8SrNNnzXLNJtt
-	vtZu3R0G0kynYMrje9kn1Wh4r8n2QPFXBDxByk7ehKPrB0HVCo9TM/4scCV9Le3diITi5YMkkJU
-	mfv21Iqkex+Gwze+pX/RO+PE0X+z8xj/0ZDEUZAAGGjgMBUubaKTeL75NkLWaqODOot+kVVHDGA
-	n8B8jNqeRQ+f8aULX/a9ChMzYxo8jhJURw7grrGzm7XGacY=
-X-Google-Smtp-Source: AGHT+IFmUpcwPvEBGN8XjxBXwOtk2acq8URqHo+Q36iwySwg1DCxzO2m9xibFGCavUkHKNEgnyHH+w==
-X-Received: by 2002:a05:6000:2484:b0:39c:1258:2c32 with SMTP id ffacd0b85a97d-39ec37565b1mr2676998f8f.16.1744597769246;
-        Sun, 13 Apr 2025 19:29:29 -0700 (PDT)
-Received: from [10.202.112.30] ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b02a11d2654sm8369962a12.35.2025.04.13.19.29.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Apr 2025 19:29:28 -0700 (PDT)
-Message-ID: <b8c3e32e-02d8-4f80-8c2c-5bad9a31ac59@suse.com>
-Date: Mon, 14 Apr 2025 10:29:24 +0800
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1744597868; x=1776133868;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=mXp++OhBZeDrR/eRrZugOW96Mk+uHmRbPf2RwqEupgk=;
+  b=B5djlLy9Ghhukpx6iPxTu+KqElHFbgCiiVuP3NRt2KPusfhyd3DGwKr4
+   iknGfqckzsP6rF2gOFh3nqpL6sFcr9MaDohReig/ckru8QMzgRG8r0IqB
+   3Kv0GSY/CMmPtO05Q94KwEwQwEY9BYdPS5esgFFFhbA0oPWLeICS3Etwz
+   Q=;
+X-IronPort-AV: E=Sophos;i="6.15,211,1739836800"; 
+   d="scan'208";a="187058078"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 02:31:07 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.7.35:39673]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.8.63:2525] with esmtp (Farcaster)
+ id 90f9a2c6-7278-4f22-8cb8-4f854b41179f; Mon, 14 Apr 2025 02:31:06 +0000 (UTC)
+X-Farcaster-Flow-ID: 90f9a2c6-7278-4f22-8cb8-4f854b41179f
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 14 Apr 2025 02:31:05 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.88.185.97) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 14 Apr 2025 02:31:03 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <syzbot+de1c7d68a10e3f123bdd@syzkaller.appspotmail.com>
+CC: <cratiu@nvidia.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<horms@kernel.org>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <sdf@fomichev.me>, <syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [net?] general protection fault in rtnl_create_link
+Date: Sun, 13 Apr 2025 19:30:46 -0700
+Message-ID: <20250414023048.44721-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <67fc6f85.050a0220.2970f9.039e.GAE@google.com>
+References: <67fc6f85.050a0220.2970f9.039e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] ocfs2: fix the issue with discontiguous allocation in
- the global_bitmap
-To: Joseph Qi <joseph.qi@linux.alibaba.com>, akpm <akpm@linux-foundation.org>
-Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- gautham.ananthakrishna@oracle.com
-References: <20250408152311.16196-1-heming.zhao@suse.com>
- <20250408152311.16196-2-heming.zhao@suse.com>
- <d48df38c-ff38-45c2-b941-8f51990e4699@linux.alibaba.com>
-From: Heming Zhao <heming.zhao@suse.com>
-Content-Language: en-US
-In-Reply-To: <d48df38c-ff38-45c2-b941-8f51990e4699@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D033UWC001.ant.amazon.com (10.13.139.218) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Hi Joseph & Andrew,
+From: syzbot <syzbot+de1c7d68a10e3f123bdd@syzkaller.appspotmail.com>
+Date: Sun, 13 Apr 2025 19:14:29 -0700
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    eaa517b77e63 ethtool: cmis_cdb: Fix incorrect read / write..
+> git tree:       net
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1541f23f980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f2054704dd53fb80
+> dashboard link: https://syzkaller.appspot.com/bug?extid=de1c7d68a10e3f123bdd
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1429874c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1353f74c580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/8ff6a34dbd2f/disk-eaa517b7.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/80dc0689a89b/vmlinux-eaa517b7.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/093b749f228d/bzImage-eaa517b7.xz
+> 
+> The issue was bisected to:
+> 
+> commit 04efcee6ef8d0f01eef495db047e7216d6e6e38f
+> Author: Stanislav Fomichev <sdf@fomichev.me>
+> Date:   Fri Apr 4 16:11:22 2025 +0000
+> 
+>     net: hold instance lock during NETDEV_CHANGE
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=151db7e4580000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=171db7e4580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=131db7e4580000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+de1c7d68a10e3f123bdd@syzkaller.appspotmail.com
+> Fixes: 04efcee6ef8d ("net: hold instance lock during NETDEV_CHANGE")
+> 
+> netlink: 4 bytes leftover after parsing attributes in process `syz-executor402'.
+> netlink: 'syz-executor402': attribute type 15 has an invalid length.
+> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000055: 0000 [#1] SMP KASAN PTI
+> KASAN: null-ptr-deref in range [0x00000000000002a8-0x00000000000002af]
+> CPU: 0 UID: 0 PID: 5841 Comm: syz-executor402 Not tainted 6.14.0-syzkaller-13348-geaa517b77e63 #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+> RIP: 0010:netdev_need_ops_lock include/net/netdev_lock.h:33 [inline]
+> RIP: 0010:netdev_lock_ops include/net/netdev_lock.h:41 [inline]
+> RIP: 0010:rtnl_create_link+0x6af/0xea0 net/core/rtnetlink.c:3680
 
-On 4/13/25 09:06, Joseph Qi wrote:
-> 
-> 
-> On 2025/4/8 23:23, Heming Zhao wrote:
->> The commit 4eb7b93e0310 ("ocfs2: improve write IO performance when
->> fragmentation is high") introduced another regression.
->>
->> The following ocfs2-test case can trigger this issue:
->>> ${RESV_UNWRITTEN_BIN} -f ${WORK_PLACE}/large_testfile -s 0 -l \
->>> $((${FILE_MAJOR_SIZE_M}*1024*1024))
->>
->> In my env, test disk size (by "fdisk -l <dev>"):
->>> 53687091200 bytes, 104857600 sectors.
->>
->> Above command is:
->>> /usr/local/ocfs2-test/bin/resv_unwritten -f \
->>> /mnt/ocfs2/ocfs2-activate-discontig-bg-dir/large_testfile -s 0 -l \
->>> 53187969024
->>
->> Error log:
->>> [*] Reserve 50724M space for a LARGE file, reserve 200M space for future test.
->>> ioctl error 28: "No space left on device"
->>> resv allocation failed Unknown error -1
->>> reserve unwritten region from 0 to 53187969024.
->>
->> Call flow:
->> __ocfs2_change_file_space //by ioctl OCFS2_IOC_RESVSP64
->>   ocfs2_allocate_unwritten_extents //start:0 len:53187969024
->>    while()
->>     + ocfs2_get_clusters //cpos:0, alloc_size:1623168 (cluster number)
->>     + ocfs2_extend_allocation
->>       + ocfs2_lock_allocators
->>       |  + choose OCFS2_AC_USE_MAIN & ocfs2_cluster_group_search
->>       |
->>       + ocfs2_add_inode_data
->>          ocfs2_add_clusters_in_btree
->>           __ocfs2_claim_clusters
->>            ocfs2_claim_suballoc_bits
->>            + During the allocation of the final part of the large file
->> 	    (around 47GB), no chain had the required contiguous
->>              bits_wanted. Consequently, the allocation failed.
->>
->> How to fix:
->> When OCFS2 is encountering fragmented allocation, the file system should
->> stop attempting bits_wanted contiguous allocation and instead provide the
->> largest available contiguous free bits from the cluster groups.
->>
->> Signed-off-by: Heming Zhao <heming.zhao@suse.com>
->> Fixes: 4eb7b93e0310 ("ocfs2: improve write IO performance when fragmentation is high")
->> ---
->>   fs/ocfs2/suballoc.c | 36 +++++++++++++++++++++++++++++-------
->>   1 file changed, 29 insertions(+), 7 deletions(-)
->>
->> diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
->> index fde75f2af37a..2e1689fc6cf7 100644
->> --- a/fs/ocfs2/suballoc.c
->> +++ b/fs/ocfs2/suballoc.c
->> @@ -1796,6 +1796,7 @@ static int ocfs2_search_chain(struct ocfs2_alloc_context *ac,
->>   {
->>   	int status;
->>   	u16 chain;
->> +	u32 contig_bits;
->>   	u64 next_group;
->>   	struct inode *alloc_inode = ac->ac_inode;
->>   	struct buffer_head *group_bh = NULL;
->> @@ -1821,10 +1822,23 @@ static int ocfs2_search_chain(struct ocfs2_alloc_context *ac,
->>   	status = -ENOSPC;
->>   	/* for now, the chain search is a bit simplistic. We just use
->>   	 * the 1st group with any empty bits. */
->> -	while ((status = ac->ac_group_search(alloc_inode, group_bh,
->> -					     bits_wanted, min_bits,
->> -					     ac->ac_max_block,
->> -					     res)) == -ENOSPC) {
->> +	while (1) {
->> +		if (ac->ac_which == OCFS2_AC_USE_MAIN_DISCONTIG) {
->> +			contig_bits = le16_to_cpu(bg->bg_contig_free_bits);
->> +			if (!contig_bits)
->> +				contig_bits = ocfs2_find_max_contig_free_bits(bg->bg_bitmap,
->> +						le16_to_cpu(bg->bg_bits), 0);
->> +			if (bits_wanted > contig_bits)
->> +				bits_wanted = contig_bits;
->> +			if (bits_wanted < min_bits)
->> +				bits_wanted = min_bits;
-> 
-> This seems only valid when bits_wanted changed?
-> 
-> BTW, the previous fix hasn't been merged yet:
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/fs/ocfs2?h=next-20250411&id=767ba8b7cba3ca7a560d632f267f7aea35d54810
-> 
-> So should we drop that first and fold it into a whole one?
+#syz test
 
-Thanks for the reminder, I rechecked the ocfs2-test cases.
-In my view, in Gautham's patch, the analysis is wrong.
-the call stack isn't from ocfs2_mkdir(), the correct one should be
-OCFS2_IOC_RESVSP64.
+diff --git a/include/net/netdev_lock.h b/include/net/netdev_lock.h
+index 5706835a660c..270e157a4a79 100644
+--- a/include/net/netdev_lock.h
++++ b/include/net/netdev_lock.h
+@@ -30,7 +30,8 @@ static inline bool netdev_need_ops_lock(const struct net_device *dev)
+ 	bool ret = dev->request_ops_lock || !!dev->queue_mgmt_ops;
+ 
+ #if IS_ENABLED(CONFIG_NET_SHAPER)
+-	ret |= !!dev->netdev_ops->net_shaper_ops;
++	if (dev->netdev_ops)
++		ret |= !!dev->netdev_ops->net_shaper_ops;
+ #endif
+ 
+ 	return ret;
 
-Let's recall the first patch, and let me resend the v2 patch with a whole one.
-
-- Heming
 
