@@ -1,222 +1,281 @@
-Return-Path: <linux-kernel+bounces-602541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EDE0A87C20
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:45:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A804A87C3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DD2C3AFB4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:45:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F11393AE0A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6864A2620D6;
-	Mon, 14 Apr 2025 09:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E6B265CD3;
+	Mon, 14 Apr 2025 09:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JI+gg1kJ"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2057.outbound.protection.outlook.com [40.107.237.57])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MGTAg3NE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37B7F9FE
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744623937; cv=fail; b=TedBYtCoLdpR5XiOFOdn3xSiaeCLopVm5o8DAbAgX3PlTGy91Q8uohC2JID0ZxiFSE1Ae8y79d1LGc1iw6Kyt1xCkLNdomn2cZ/SrX4CXrnjiCPPTMBEpDHYeHcsQheXb3EdSBucvwewqqa0EIRpgHjKBmjFnBPeUtTpLCw4U4w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744623937; c=relaxed/simple;
-	bh=8xV+3HLKYwCVe0XMpEtxHEZfYPlJ565ez5k9JhjfrqU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HOOqhm27+N0T5t8adgBwje38thFm15iHWn4289UZCxCs4+tRSEcxThvnB/8YXu/gwdnr3NF3RUyJgT9dQLYKuAFNYMterFrqANvtmanV9WqcuRL/y0tC91CYA4D/LpsQlr2K6oEW9G6OizQsBRZ31iDbYmLRUJM5Vg32jkHJ22E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JI+gg1kJ; arc=fail smtp.client-ip=40.107.237.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LTTS/CWSon5oaN9MLpblT5M29YRrJUroPxoA6vbgx3bQZMuQk4QTX81I4wv3ntaNrf3U9wPVU34bdwsY/wOC7JpJ6TxWJPmRcjXkBd6mSAFacEI9CiS8cGGtT6B9GOBByLwV2MlayZ+FEkcFbtOpUs/5ljXOvF1GdPCh8qrqPF4pPufknujR4vqPZq3Ik3tfuP2CYH+fF9Vx4MEd7oqFngfKW0wPX+Fhc4Dw1YYEr0r4tf4uWQxJiVyA4vyzsxAZBurQUNXzL8VHoyCLPARZbnbSLI1MZyckrUfUaZnMg3wkClk7MKn6tiD5YgYUWabPX4J4pd3Wv3dt0HmF6sS8Gw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5AfJg5MfZxHHuPQjb6EEN+YHotd23vvhg/TcgqQXiLk=;
- b=fY0Uuws27+qfggzGM6M7x2mMVsy3Jfrkoif98SwLo3hMaf+UfFD2veAY0DoV+42XoHZ4Cc33jibEkBpUrRqbxow8DqBK1zEslp6HpAANbY+rm7xPE2cOU00FPHUwfjKl4yaAe9nEgkNVob1YooHtUdev5dtmuPMeUO0PlX4e7bPwfyFrUvdcx/vZAYHm6ket73FBHlmQUjKZvEE7Ubw8wavuZCgwj4CFJIdMNFtJri+8HORhhqYJ5ZRKSoqRQn0Ur2CQ0IoOog+RJDlQHjKhv9ai8mlTMeGlcuR8U5XZEESrpXx2ltwr+2QMc1rOe42YVB3q+hIHKvdyhZL9CoE8Bw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5AfJg5MfZxHHuPQjb6EEN+YHotd23vvhg/TcgqQXiLk=;
- b=JI+gg1kJsH5TEFgocROE3njQ+PckYS4Ou0B1vaAmYSzF1f2+cGAxaEmhqmzu73x+/b9Fqaal2fwODV2fpQQFP4+Gkw0Z3T7hSwstiVyFBF4X3doXWEBOb83xzHV5pug2zCCwAJIfv1MiyplGhss4fldfCp1JLvWiH19zAVTxPwc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by LV8PR12MB9082.namprd12.prod.outlook.com (2603:10b6:408:180::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.32; Mon, 14 Apr
- 2025 09:45:33 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8632.025; Mon, 14 Apr 2025
- 09:45:32 +0000
-Message-ID: <4b6f9eb7-7de0-4d0f-b235-fd203f4a8542@amd.com>
-Date: Mon, 14 Apr 2025 11:45:25 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] dma/mapping.c: WARN_ONCE on dma_addressing_limited() being
- true
-To: Balbir Singh <balbirs@nvidia.com>, Christoph Hellwig <hch@infradead.org>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, Ingo Molnar <mingo@kernel.org>,
- Kees Cook <kees@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Andy Lutomirski <luto@kernel.org>,
- Alex Deucher <alexander.deucher@amd.com>, Bert Karwatzki <spasswolf@web.de>
-References: <20250412094110.3208838-1-balbirs@nvidia.com>
- <Z_yjDsmjjCAMHUrh@infradead.org>
- <22a1216b-4ab4-493e-a1f9-1588840339d8@nvidia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <22a1216b-4ab4-493e-a1f9-1588840339d8@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0215.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e4::16) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79568265CD1
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744624165; cv=none; b=i8/YW1HarmcWv/IsiAcDfIuOGU72WvX8P5IO7olf8pLT8Y8vA21sVlUnw2Tz7P1zG3e7YqcNUJw8noRh5suJhu6mUZpRrHJ2HTKHp8SjevhDZugxQYYBT/3bArxg70LYzsQrjpNd1516hzb88NL4hJ0Av/Z9TBkm4QD2ANXdl98=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744624165; c=relaxed/simple;
+	bh=yUKqCPPORdYVe342mQqddOKMLZ0bybmVAHWIG65MK4w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mZcjDjms/4Z7OidRO05zMiPrvGnhrsZW1S0c7SunLN6Q4trcD17/AG+IfAowMn0+fZ1z+TH2YH8t9vRnBYDcnR0XVXUPtZ7mUYKuewoDo+xYIVZei0ibHaq4EOZDwHrQdQ9wgAIPyF9qiyW1BZF2QqSvmwzb/RidVhWJ5yg2Rjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MGTAg3NE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53E99vr7001845
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:49:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/sdJrQAAPCExE5G43phs3Cg9sP4wasVXTslo08/sa84=; b=MGTAg3NEob7NbEkF
+	KwirsgchUJrFDt+xwKjcEdYD1rRCu6BM5E7bQv0ZxVRcBP2Dm4KHou/aNK5JWiBl
+	onbAxJKCP5xfRzwp+z6zhVwCJ7povMgpLO86sy3iA7o6/lZDtmP6zqlBJdFSToJ4
+	lBQcVdiv3AEQPfB10wdZRgaDbcLMNX5Y+hGLY0YOrU9tFIrZAsCBVtXcw86NHQCz
+	oWKORFiiU4Usd/Vt2FKCu5690IcrJFZyTi9QZOwQY6lgn2SEsI/IC8jYLXz8R+5S
+	U4YI9Jl1jNusicIYY+pLHnFwI5CS+/pOwUoRh9UF2WQgS7wDpqH4AgauSfYAIh+3
+	h3vkiw==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ydhq4ajc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:49:21 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e8fd4ef023so8003246d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 02:49:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744624161; x=1745228961;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/sdJrQAAPCExE5G43phs3Cg9sP4wasVXTslo08/sa84=;
+        b=iJVprkm8YzrG2tQOh2LEjhWy/XMgkgl5pht8w3Zm9EUma3Y5dhzITcO2sWr0LC5RCU
+         mEhmbSo8Z56Oau1ywX3Kv1/MFSZdrOzkok7BGxO3XXDA60+ezekgLNa0iuNu+LtvC6fV
+         VrAV1oJh/ST0giMqbudQgioYPmQvVm7MJX3mIVueVWmZMa8r9kBdcwiP/jpDEIeMkZDX
+         Ynl9HijTBTrFq0Pvdt+uGvDNdH8QJlc+YderzbW6hoSJIh1l5Fzugvg7aTY42XmgVMAW
+         Dlsw6JMvXgKA0vCfQHNcyRjYVnGdh/snExMj4Zq4oaUL2MvDRqQ76bpZixu/of0KySvL
+         lfZA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6UCbBtiC7z+TRWy0ZmdJLAnb4GBhE+mlVPU0sWvHYNRhs495l+6jczmwwS4hjFEvwU7xv3SOL2dNihnw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygeDrTJ6z2F1zP/ePmqoroacAv7ryH9gKuTNYmnNIeEnElpQld
+	o0lKyLtKsyqd83VZiPYIDq6fs+VyYersroEJKM1p6Jdz9nejPRn/z3d4cVL3+oBD+H7qs+XU9NR
+	VCkYlyiKTH6pfj+Zap65dXNHZnaSRbVWge7iVWIJgN1JJFWeJ9UTPnvcHaCgmksQ=
+X-Gm-Gg: ASbGncvKKJYtfnQ62TJySzAKd4CFKCGZiCvklgFt3tl3hjEYbZHntCsblGpuZmAKHf9
+	IbXX2XqfCUKlIwR9oiLU+zDlFllWukPw6Jr/CLbPjiV+0NvrMC6GYiEr/0LbwugYS0nYAqfuSNI
+	2UmV3Wtc+WfI6CSJ2WYEySsIojR2huVuOBOuiWZS4BlreRryJzOqoGH5xYn/e/Q0NlQa6KAc+If
+	Azg4X3v+A8MJSKUML3TxT7VO+hDuwQGmY1jfZ7+3kKDI0N0ukuhGfmSxEh5HEW6CK8pufxnMX6C
+	FThURuuz44c6NZ8Ma492QWNXDML50yxyCrs6WInPgf5lgSCGoNXALYBGY4kd2mIfDg==
+X-Received: by 2002:a05:6214:1ccc:b0:6e4:449c:ab1d with SMTP id 6a1803df08f44-6f230cb46cfmr64487986d6.2.1744624160753;
+        Mon, 14 Apr 2025 02:49:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhADRsGTwzKbE5j8WsaRwODBqXHXEGGv9BGd3uEhWTHB0foPltVfzAR/8ilB2KcoK3NHYsZg==
+X-Received: by 2002:a05:6214:1ccc:b0:6e4:449c:ab1d with SMTP id 6a1803df08f44-6f230cb46cfmr64487836d6.2.1744624160216;
+        Mon, 14 Apr 2025 02:49:20 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1cb422asm875859166b.115.2025.04.14.02.49.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Apr 2025 02:49:19 -0700 (PDT)
+Message-ID: <60239482-cc86-495c-9184-11f3453251aa@oss.qualcomm.com>
+Date: Mon, 14 Apr 2025 11:49:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|LV8PR12MB9082:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9de9d2d3-3ca1-46bc-5086-08dd7b39196f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TzVscGZZRDFtWWRHcldsQ0xhenlCLzl1VjlET0ZIazREdWkvTWFRdGRnSEx4?=
- =?utf-8?B?WlBQSzlQdlNKYktrblNPcVpESjhWc0tLS2ZSZEhETE1oK3dGMWI5K01PVlk2?=
- =?utf-8?B?LzVyU2xqVytvUk1HZ3E2SDNDNEdZeEJsalpvT2ZJMU9iVUc5V2ZSb3k2eVpm?=
- =?utf-8?B?RFg4VmlzelhGSlVhNlJKak5WMm5ENU5GWGNnZERGWXZ0b21BNXByMGhMTjF0?=
- =?utf-8?B?OGxWU3hDNW0rZEpzcjlLdC9mQVBXSTljQm5mMFVOYXdBcE42UENtVWw2eHU2?=
- =?utf-8?B?Q1FIWjZzWXVUM0pWaCszUDVpSzdpdGhPZ3RKZUxGcFVReFROZVpGSmtCZmM3?=
- =?utf-8?B?aWJWUVQxVUlmNG9LTFZ6alY1c3kreUdyUXNqR2lKKzNUVmQrZjZmd1N5Rlgy?=
- =?utf-8?B?MmUrZUgyQ3UrcFlkdWFIdXRzQUNLY3BJWlBpRTVPTHdDd1lQTFhqTitzMUth?=
- =?utf-8?B?Ump3UE0xZ2xVM1VDNFpsUUJPK3FDcWpLRzVGZ2U2eGh4dTBabmMvcnUxcWgy?=
- =?utf-8?B?V1JqRFhJSFd2S08zdHYwTFJiNXJMKy9YOWRObFgrYXNZNTRZSHMyRnRWYzhH?=
- =?utf-8?B?cGJhRTZGemZDdE9XUlhFdjdNWVhsTmU1VTh5NlJXUThtVi90TTJkNWpYNjhX?=
- =?utf-8?B?MW56NHM0Rnc0SDJPVzZ1T3I0Y2ovZVFicWdDNWVaMk5BcFRacUFLNGtWUi9Z?=
- =?utf-8?B?TDA0dTNPd0hVRXB3ZTl1dlAzbWxoRTFsaWVGVk5DZVZpR3BYaFRoRUJ5U0sv?=
- =?utf-8?B?RjZzcDlmb3BWUmRnUkI2ejd6TWZ5MStuZkJUb09NaEV5WU1ORzZtdHR4OTZl?=
- =?utf-8?B?eUdjS25FRjEyRzBRVjR6Z2ZLS21qMGt0TDJ6Y1R2SHZ6dUEyc2x5b3VIY29a?=
- =?utf-8?B?b3I1cW85cDlwRkVuMy9QcWVsTlUxNkRDR2FUUHAweVFIZWVTdThhUzBUQWRN?=
- =?utf-8?B?TXRpb1ZGakc4SnNRMUFIeCtkQ3JudE9hb0VwOVFOOEVqVmdWcERpeGtBb1pL?=
- =?utf-8?B?UDVhVUpVWU5XWG1vUXRqNXgyTUp6MGdBckZGSGlqMXZKOXI1K0JzZ242WXFq?=
- =?utf-8?B?bW9OcmpxU2NqRy9zaHVuQUhMUGlYbktSQ1ZvaFlMWlFQUVhITEpQM090STVX?=
- =?utf-8?B?NEdjOXN3SVMyMENLY0lGMnpSZ3crMVhEa2tsZHM5L2t5aHNqWXBSSHY1amp0?=
- =?utf-8?B?YjkwbjJHamF0UElCdStuWGV5ei9CeXk2SFhTcU84S2I0MlBHc1d0UjJ6elZ5?=
- =?utf-8?B?S1RCWVExVFNGOHRJUG5vR0E5ZVA0NGNXTUtVUUF0bGhxaUZoR1JSQ3h3Z04y?=
- =?utf-8?B?bHU0Y0pFdE1CMnpnTmZheHZnS2VXaFczaVRKMndOTTg1QXgyU0poNlp1NGlo?=
- =?utf-8?B?SnQ1Skc2R24wbGZhZGtDek9oS3Q0N2pTYm5zanluZWEwL0xNbVhRMnNJSHVQ?=
- =?utf-8?B?K2tXMXVaZVk3NytGbWlQU0lDeWliNnFwalk0ZG5laTNYZGFjeGhIN1g2eTRT?=
- =?utf-8?B?OXJJUmg4eEthUGoxZFFIZDloK2szM1lmaHBuUTNSWHZzSWNhV29xcTdOblg4?=
- =?utf-8?B?L0tGOHJwdjJkWlhvTTJOL2pwcndxMi9aVVN3NDBIcWlhQXB5SjdXV0JJZzlY?=
- =?utf-8?B?MlNhWXlUVWdoQi84NUVPTWxIWi82bGJkMWxkVjkxcjM4SXMwZFNnRTlPaTln?=
- =?utf-8?B?WUhXQ1FOYkxmVXpSaG85U2pDTktCZmNML1luSEw5aCtwemZRSHdhNzZUdllG?=
- =?utf-8?B?NTErUmFzbDNHcmx2S3BuM1AvcFpITkQvS1Q5cCt4WUdYU1E2YlZhRVhaMnJn?=
- =?utf-8?B?aWFVSDlQUWszUm51Z0dTODhTVzI5RHJZRkJiTmpCVXM0WTZQWW1LVjNBRXNh?=
- =?utf-8?B?UnRSZUl5QXBzdFVjU2gxTHRnSXRsVUtxb0tWQVVydlFyL2ZrTk5ybWx6NjhK?=
- =?utf-8?Q?5VjqxOgP+Ck=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VHErSGJub1BXTVNsdTVwcElzM2cySUtFZDlCOVZWRVI1em5hUXNzQW5uclZ6?=
- =?utf-8?B?YXpwQjdqTFhNQ3JWY3JoU3UvWnJFcUdOSDFvTXE3d0hjWld5cTVXT1BVMENB?=
- =?utf-8?B?cDd6SXFzZlVtOGpuSVI0bVd6SXpINnF5OWxIWE5KOTdZcUZPV0poMVUydDRI?=
- =?utf-8?B?UmFxdFlLcU5oQWhNTXFUK3RJbVhGWWphd0pDSjVDc3p2Wk1sNnNPL3dJNGhU?=
- =?utf-8?B?VnhNMEQveDZGdlZvRFlDcTZ1WnExWDVOcGhpZDhnemhMeE5nLzRXRXZ3anNX?=
- =?utf-8?B?dmFzOEl5ZndvU3R3R3dBU3E1YzFmRUVJL2FMMHd0d1dVZXkxZForb01CQWdV?=
- =?utf-8?B?NjhWQjdKUndoOGk3ak5KcWNIMFNoZGhabkhXamRkSXptZlNJTTFMa0FFN0pu?=
- =?utf-8?B?WDhUemE1VUlMSW83UUJtZHlVTWR6ZndzdTZYNEcxTmtOTk1pczBMaEhFV2l5?=
- =?utf-8?B?TStIU00rQVVxc2hVZ3Y4Q2R5UGFOcHpZcGEvem1vY3NDL1dkWDRHUE5zd2N1?=
- =?utf-8?B?VnBJZVEzM2NHdmNuRkFJa2ZVcDN2YXlnc0NKVzFmSDlsSDZDNThpcTBYNnAv?=
- =?utf-8?B?OWtMOGxadzRrSHZtejE5M1ZhTzFWaUVqblFaMmViQTBwa09CMzBNUUJNL3dR?=
- =?utf-8?B?SVliMXBHdkVvb1hRaE42UitLazdlTVl1Y05RYkVJUnhVeXYwaGx4Vll3ZkFm?=
- =?utf-8?B?WGlMN1FWcVZjVVJpUVp6UDBEaW1Pd1EvTkcwNDNHQzY1ell4RmprSEQ5MDNl?=
- =?utf-8?B?NEVjdG16VjRJMU5JamgrNGlQakFMNnJYTFQ3OXpQMzIyUndpekZhZ2kxakFh?=
- =?utf-8?B?bDdiendQTVowMzVnbHZGZzkwNU55WW9uZlJUMmNIMjFyRDVkdlVsSFJtSEJy?=
- =?utf-8?B?a1J6Z3F3MmJvT1E1enNERXdjMEpNVDJIN2hCYTNKVGt3RU9aRjV2STY3eDdV?=
- =?utf-8?B?bHZjSWhUTmZJNEtWNURWL1hERXUyaHZmT1N6dGJhVHFDK3BjZmt5NHNSQ2dQ?=
- =?utf-8?B?MExtY2FnY3VtbUlxcXZiVWkrNVhjN2NFOCtzZzhlVHp4NXFRb25BZlBHci9u?=
- =?utf-8?B?VW1wQWlBVy8vVTRQNHNZUHNnNCtJSEFGM1V4My9zV2FkTnN1emxrOGp1Z214?=
- =?utf-8?B?NWZVUFQrbEgzOTVaYnY4L0JEUWx2K3VtaWdsQkFYRzNGbi9Hc09FUldTYk5G?=
- =?utf-8?B?bkVPMlJLRTR6czZ5Z2w0WmlLNGM0VlN6ZGpoOERDL2hISHBseTEvQ2lZWkVt?=
- =?utf-8?B?YXFaWVBhQituc1VaMTJ3SWxDWGhqN3loNHp4U1BLR2c4cC9iL2dXOG1HWWdu?=
- =?utf-8?B?c3R1Q3k3WkxRZEZjSXFBSm9DVC9SKzRKN1lVa0hQM2NYOHo4VlFMeEY4bTB2?=
- =?utf-8?B?eGZWOUFIaFRJNVBpaTVFQm9GM293SmhlTDg4RlJYdGRseGN3dVNnSTZyS25h?=
- =?utf-8?B?UXltQjNDRHkyUHpFODZ5cHo0cW4rVnIzTDBmYXZiZkhlaEQ1Vk5kVEVTazA1?=
- =?utf-8?B?MDI0VEV3RzlrZ3BBZVdtY3lKQm55dkVOVS9ETHVxbVRhYjVXTXRSVG9ZR29s?=
- =?utf-8?B?NHpvbjRSSGJsOUNyM2xhd0NUemJ6Vkk2UEpPV3dBY2JoaS91bVpoSFpGbXFU?=
- =?utf-8?B?Rm5kR2ZYOFByMSswRExXSlcyYUl2SFFVTFN5bnBaQjFzR2FDWGRITGhYZlY4?=
- =?utf-8?B?M213TUhmNnRXN0JaNWR4NU9yTi9ESHMvRUZHbmlQazNGUU9HZmFjQk9udjlJ?=
- =?utf-8?B?MGpPQzZZYVBldjh3alkzKytXVG9tQlk0S1cwSUlGQm5MMnpiMG1xcVJMTXF4?=
- =?utf-8?B?MUcyazhKc3UrL1Uyd1dpMWNJUHJHZGpJMXhYZkF1b1YzY0JqcFZKYW5SUzVr?=
- =?utf-8?B?UjArWkpKdzlyMDZia2F3clBqY0xEbWJscDhLNU03b2tic3QzeUV1R1o0S1Mv?=
- =?utf-8?B?d1RLZkNQa0dILyt2WElxSXAyYmN2WUdLYzgzWXdZTlpMSTVabTZVRFdqNE1z?=
- =?utf-8?B?aUI0SGFNUm9zL3JrRytkY3p5NXFNMmt4TXFkWWxYbVlZQnNydVNHZEhIbVZW?=
- =?utf-8?B?Zk5Yc0dzRktEMkRieTUzMzVtYmg2TkxBNjUyRFByejZnNFlRSU5Vc2ZwMmQz?=
- =?utf-8?Q?eyoePx9uvGKiJIiiaF/YyJfbN?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9de9d2d3-3ca1-46bc-5086-08dd7b39196f
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2025 09:45:32.9106
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xVtF433zvXEpA6V6ziJfnKz8FIwM0my9NeXEsNqP9g6n78zAX04mXPgXP1eH1HrQ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9082
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: Add support for X1-based Asus
+ Zenbook A14
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, maud_spierings@hotmail.com,
+        dmitry.baryshkov@oss.qualcomm.com
+References: <20250402084646.10098-1-alex.vinarskis@gmail.com>
+ <20250402084646.10098-4-alex.vinarskis@gmail.com>
+ <2b9128be-1989-4511-995c-103c8ba71af7@oss.qualcomm.com>
+ <CAMcHhXrBw6a7gSndG2F-JNgnNsYrDN3nTJjM+NjuT=s9FFWZkw@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <CAMcHhXrBw6a7gSndG2F-JNgnNsYrDN3nTJjM+NjuT=s9FFWZkw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: 1y6yRtIyrXYIJkjlSNiW0CpUD_q2ioui
+X-Authority-Analysis: v=2.4 cv=C7DpyRP+ c=1 sm=1 tr=0 ts=67fcda21 cx=c_pps a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=OOIuroA6IYICTT_mFq8A:9 a=QEXdDO2ut3YA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-GUID: 1y6yRtIyrXYIJkjlSNiW0CpUD_q2ioui
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-14_03,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ priorityscore=1501 suspectscore=0 clxscore=1015 spamscore=0 bulkscore=0
+ impostorscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504140070
 
-Am 14.04.25 um 10:25 schrieb Balbir Singh:
-> On 4/14/25 15:54, Christoph Hellwig wrote:
->> On Sat, Apr 12, 2025 at 07:41:10PM +1000, Balbir Singh wrote:
->>> In the debug and resolution of an issue involving forced use of bounce
->>> buffers, 7170130e4c72 ("x86/mm/init: Handle the special case of device
->>> private pages in add_pages(), to not increase max_pfn and trigger
->>> dma_addressing_limited() bounce buffers"). It would have been easier
->>> to debug the issue if dma_addressing_limited() had a warning about a
->>> device not being able to address all of memory and thus forcing all
->>> accesses through a bounce buffer. Please see[2].
->>>
->>> A warning would have let the user of the system know that in their
->>> particular case, use_dma32 is set due to the addressing limitation
->>> and this would impact performance of the driver in use.
->>>
->>> Implement a WARN_ONCE() to point to the potential use of bounce buffers
->>> when we hit the condition. When swiotlb is used,
->>> dma_addressing_limited() is used to determine the size of maximum dma
->>> buffer size in dma_direct_max_mapping_size(). The warning could be
->>> triggered in that check as well.
->> dma_addressing_limited is a perfectly expected condition, and returns
->> true for many devices and still plenty system configuation.  A kernel
->> warning with a stacktrace is not acceptable for that.  A simple one-line
->> dev_info might be ok, but could still be rather spammy on many systems.
+On 4/12/25 1:47 PM, Aleksandrs Vinarskis wrote:
+> On Sat, 12 Apr 2025 at 01:36, Konrad Dybcio
+> <konrad.dybcio@oss.qualcomm.com> wrote:
 >>
-> Thanks for the review!
->
-> I'll convert it to a dev_info(). We can remove it, if it causes confusion
-> or users complain about it?
+>> On 4/2/25 10:44 AM, Aleksandrs Vinarskis wrote:
+>>> Initial support for Asus Zenbook A14. Particular moddel exists
+>>> in X1-26-100, X1P-42-100 (UX3407QA) and X1E-78-100 (UX3407RA).
+>>>
+>>> Mostly similar to other X1-based laptops. Notable differences are:
+>>> * Wifi/Bluetooth combo being Qualcomm FastConnect 6900 on UX3407QA
+>>>   and Qualcomm FastConnect 7800 on UX3407RA
+>>> * USB Type-C retimers are Parade PS8833, appear to behave identical
+>>>   to Parade PS8830
+>>> * gpio90 is TZ protected
+>>>
+>>> Working:
+>>> * Keyboard
+>>> * Touchpad
+>>> * NVME
+>>> * Lid switch
+>>> * Camera LED
+>>> * eDP (FHD OLED, SDC420D) with brightness control
+>>> * Bluetooth, WiFi (WCN6855)
+>>> * USB Type-A port
+>>> * USB Type-C ports in USB2/USB3/DP (both orientations)
+>>> * aDSP/cDPS firmware loading, battery info
+>>> * Sleep/suspend, nothing visibly broken on resume
+>>>
+>>> Out of scope of this series:
+>>> * Audio (Speakers/microphones/headphone jack)
+>>> * Camera (OmniVision OV02C10)
+>>> * HDMI (Parade PS185HDM)
+>>> * EC
+>>>
+>>> Add dtsi and create two configurations for UX3407QA, UX3407RA.
+>>> Tested on UX3407QA with X1-26-100.
+>>>
+>>> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+>>> ---
+>>
+>> [...]
+>>
+>>> +     /* Left-side display-adjacent port, PS8833 */
+>>> +     typec-mux@8 {
+>>> +             compatible = "parade,ps8830";
+>>
+>> What Krzysztof referred to with fallback compatible is this:
+>>
+>> diff --git a/Documentation/devicetree/bindings/usb/parade,ps8830.yaml b/Documentation/devicetree/bindings/usb/parade,ps8830.yaml
+>> index 935d57f5d26f..aeb33667818e 100644
+>> --- a/Documentation/devicetree/bindings/usb/parade,ps8830.yaml
+>> +++ b/Documentation/devicetree/bindings/usb/parade,ps8830.yaml
+>> @@ -11,8 +11,11 @@ maintainers:
+>>
+>>  properties:
+>>    compatible:
+>> -    enum:
+>> -      - parade,ps8830
+>> +    oneOf:
+>> +      - items:
+>> +          - const: parade,ps8833
+>> +          - const: parade,ps8830
+>> +      - const: parade,ps8830
+>>
+>>
+>> so that in case there are any sw changes down the line, people with older
+>> DT receive the fixes, as if "parade,ps8833" is attributed to a driver, it
+>> will match (due to being the primary entry) and if it's not (like today),
+>> it will fall back to matching the next compatible (and the driver currently
+>> looks for just that)
+>>
+> 
+> Hi,
+> 
+> Thanks, was not aware of that, found it in the examples now, will update.
+> As Krzysztof suggested to drop the patch adding compatible from
+> driver's code, If I understand correctly I also need the following dts
+> change, could you please confirm:
+> 
+> ```
+> compatible = "parade,ps8833", "parade,ps8830";
+> ```
 
-I would even say that this should be only debugging level.
+Yep!
 
-As Christoph explained it is perfectly normal for device to not be able to address everything in the system. So even an info print sounds like to much.
+>>> +     eusb6_repeater: redriver@4f {
+>>> +             compatible = "nxp,ptn3222";
+>>> +             reg = <0x4f>;
+>>> +             #phy-cells = <0>;
+>>> +
+>>> +             vdd3v3-supply = <&vreg_l13b_3p0>;
+>>> +             vdd1v8-supply = <&vreg_l4b_1p8>;
+>>> +
+>>> +             reset-gpios = <&tlmm 184 GPIO_ACTIVE_LOW>;
+>>> +
+>>> +             pinctrl-0 = <&eusb6_reset_n>;
+>>> +             pinctrl-names = "default";
+>>> +     };
+>>> +
+>>> +     /* EC */
+>>
+>> It's customary to leave the i2c address to make it slightly easier for
+>> the next tinkerer ;)
+> 
+> I am unsure about the address. There are multiple addresses showing up
+> when discovering the bus, 0x1d, 0x5b, 0x61, 0x6a. Did a quick SMBUS
+> analysis, they all have non-zero registers responding... My best guess
+> right now is its 0x5b, as messing with it enabled backlight and broke
+> the keyboard. Will add that one.
 
-But I totally agree that it is interesting for debugging, that issue was really hard to nail down.
+It may be that there are also some 'dumb' devices, like program-and-forget
+regulators or similar components, that aren't even described in your [SD]SDT
 
-Regards,
-Christian.
+>>> +&uart14 {
+>>> +     status = "okay";
+>>> +
+>>> +     bluetooth {
+>>> +             compatible = "qcom,wcn7850-bt";
+>>> +             pinctrl-names = "default";
+>>> +             pinctrl-0 = <&bt_en_default>;
+>>> +             enable-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
+>>> +             max-speed = <3000000>;
+>>
+>> You'll need to provide some supplies, coming out of a pwrseq device, see
+>> e.g. the QCP
+>>
+> 
+> I assume you are referring to change like this [1]. There were some
+> discussions on whether the supplies are modelled correctly as it seems
+> to be different when using m.2 card, so as I was not sure about this
+> platform I did not add it. At least in the variant that I have, the
+> wcn6855 is soldered onboard, so I would assume so is the wcn7850
+> variant.
+> It seems that the two use quite different supplies - are the platform
+> dependent, or only wlan card dependent? Ie. Can I just copy pwrseq for
+> wcn6855 from a different platform?
 
->
-> Balbir
+The power sequencer is a description of the hardware that's part of the
+same die as the wifi logic, IIUC
 
+The inputs are most likely fixed per SoC+PMIC combo for various reasons
+
+> For  wcn7850's pwrseq, I can add similarly to other platforms, but
+> cannot verify it. Should I still add it in this case?
+
+Let's not introduce it then
+
+> A bit unrelated question: in the meantime I managed to bring-up the
+> sound on Zenbook as well. Would it be more correct to wait for this
+> series to land, and then send it separately, or is it okay to add it
+> in directly on re-spin?
+
+Let's get what we have merged first
+
+Konrad
 
