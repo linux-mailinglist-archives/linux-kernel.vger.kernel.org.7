@@ -1,295 +1,217 @@
-Return-Path: <linux-kernel+bounces-603882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05EDAA88D72
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 22:55:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A241A88D7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 22:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADAA63A8DE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:55:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A54617BC5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F2E1E521C;
-	Mon, 14 Apr 2025 20:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A301EEA59;
+	Mon, 14 Apr 2025 20:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="W16IqfEg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PzVuOzT4"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B5C15575C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 20:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D72615575C;
+	Mon, 14 Apr 2025 20:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744664132; cv=none; b=GuZ6yMYKmwY0g7x/UsYYofLbMhQy6bzZdNhn7baVxsiBzeFuHb1X1aQKxjDJMfquvPqcZvWNn5cG1JjBoZS4NW4mIRFCdD3IJ+JECEgPdFhab740Qsf/RLHnxAqokIc7Cs5dyPq5osrKNA7OhsG7a44H0CbPI3SLfZz1s/K9lTU=
+	t=1744664218; cv=none; b=V0XcodPzBThM5j8OxvAAxiPm3uRbDuevIvq+esVRjg8YTXDJCDcSL9w5/A+JSu298tT/uMlfILA99WiO4Y3QjDEmqk58BXQmrl0i3bczYZz0N9lVttqk2awkOt5QHNFzjSpEcmT0dxKajDht58N1swK/AxVqBdEzQnv+BZtn5k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744664132; c=relaxed/simple;
-	bh=zjE3vRT+ssrRw7bL71CD3Oe95BvjsQfUHA6+heIvoZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KKtsqSLEwIWxFOo8brNLI7vnJYXuchPz2+iO4AGI/DL3oYL4TPfi4mTrvPAmf7LDiwsA/7wojNgqa3Il5G68CfCp/Vtc1743++RLCISQfNRA32k3fQZE96pWwVTBR/lblNZJodnKktBDOSr78D7f+PSDOa8+ipI4dDjaCxhEQ74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=W16IqfEg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53EKemJ1014912
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 20:55:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WxqIMMM+bD6pWCvSoOoUNZlHXMPZPcPy2ox/bPjumf4=; b=W16IqfEgr9ANz/Su
-	PT/7IXowclo9n8BNUIy5eNsu+iLRfEttOXQ0DOXxZk6EsByU9K4U/xc0AugxXZjZ
-	JhRWfIJXdvb8TGk2jtKw6xIkKujSxO1FMREqOei72PGhFq9pKIO2CcjF0lsk3DuD
-	CTw5qyK251zw7ETYI5SN4wWnjIs5q/5lozfs97LQHD7X5QglnaYg4j8tnA4GpZxQ
-	VACbYNT4b+zY018HIgXlnZvPvseQ2KI/FAhKl1v9tKQUfMXwIS3ZdV2pqFNhAwRd
-	qxLPwdCXrj2VB36MJjf2BVUSaKzIovig4Owq2NyhSuBxwNs1ozneWSqfl5wYnq7t
-	W9pWfw==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yg8wds1e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 20:55:29 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c76062c513so121782885a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:55:29 -0700 (PDT)
+	s=arc-20240116; t=1744664218; c=relaxed/simple;
+	bh=59DG5cicG2nYVNl6LJKyYhu1RhtD/HerSJsdOedeqQw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QXQBy45UPvIRgsrtn5rTxLk+qG75o/n2kD8ErdAFbaLQ94ip1JGPcZ/j4ZcbWv/stBEuO1wYe4Vhq/VD17X+LRLYfINKQFMoykoyDqke6ZZ2qQj8E5WLQzeGYKQYYlJOchRRgAS10JlxPMRU9ivxm9gCuhKwe8Y5FX26aXgFq4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PzVuOzT4; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso34860245e9.1;
+        Mon, 14 Apr 2025 13:56:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744664215; x=1745269015; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0TcZJJNpo591s6xoFqHx75vVN+ieiVBofj1AeFVZgrg=;
+        b=PzVuOzT4fBc3xml+NOLwoW9AiewIoYrS+AxPuBw9aMZ9YWSkvyhtYH5dbkEcxo9B/r
+         stCTCKdhU6cqHLXeJiBXBkiMtIrhuF3k/vMSy8ODhxN3RPXEpsFjmBvo6NiOnteZsY9S
+         cIOsOjogeKhejhCT+nIln6A01Xc8laP6ev2w5BYOQ8uXr7ca6+SgBrOYhD53WYP+hQ1X
+         Wnxv3oMQpYTyD79JFQKzkeBMAlTS2Clw002OQkDFtBMEJRvqyDrMlKSYWz7oCuwDw9hY
+         NFEJIxwtzmA7aAcpkR4iJzXxPgHuAwEhflTa0rHSlvLxnxHtBmbTR+uBMMiWGe22/ZAz
+         3Zzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744664129; x=1745268929;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WxqIMMM+bD6pWCvSoOoUNZlHXMPZPcPy2ox/bPjumf4=;
-        b=Dq3v+Se1LpT5n3wDLwkQFjhYclpOkiWbaB+dmWzos1kSiH4mWPvH7IjRt62epqNCeT
-         ImVMC1KZdncU1OhRixRXGSkqF6QyniMvh7gFiEhbArTxUxXldFcIgXQCB0L8xeVkVet4
-         +56P5t/66y0wi6uf3y5A1Ccs1bTGklONNM4WvtKD/bU621RGVbKczPWkY2CbWtUYJ+7A
-         vOdF+axw52iJyWiorIP1kOPzfBUJ+bglGtoiZhtSQKV7xmkKfsyn2T0jos5a1h1yMnt9
-         DxE3QoLyP9TiXyK37sonJZWjcNd9MsstVCN8FeRQJruJH7b0a/e5RIJYQDHOtsILH8W4
-         km0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXwxbjwrxVNtRkwuSLWL7rOekt0RmWntLxKcPN5lVfUJI46hRw1PY8qQHgKom64gTZW5qtK7Cj3R1XotJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv0bW51o/kmOfHDYt5NIPo2kgQr6D5RcOKqVMCDaEblfgBVajg
-	XhnjYAooPi1PbAt5j54rFsaAGpGFfX6uSUdRYHENaSGWAWk125tqCYevBPKax+NAi7b1MLBVyiy
-	KkUSLZdXuEpfFumpIjcyyCiglS6+3xDP2hdXaLitmpuvFkmwAmsVNoSCEdjOv7CI=
-X-Gm-Gg: ASbGncs0nC6dUKLqCFVDcri7jCJLqvuMx19RTFQNxZ6eFK72+quVvDEeATJDPxC3JDT
-	0UhB5v6Phyi55kNHlTifAxONVpl01XyRMLd45rwkE4MS51isOz8JgH62FQ9Bmvr/uL5meyt8Nvi
-	CjoAINWaZPlq5OhOYwGW9V99FGyxs6YwYkmFg4KuECbux8xhVadBtQLBP5UyEfNYjf5rcwcphtk
-	EJ96jb1fobCQ1ZJ3pZnsJhQLuvKcI71ZnCIqc+eq9P0E879ukLJApWWgL0IqgJwaAIGPylD/pHR
-	DE2GhIwaHf7myTOIMmr0p11o9sEkD9dKzdmOOciVUMaQmuvp3VoK77SEbP2HurM7ww==
-X-Received: by 2002:a05:620a:4627:b0:7c0:bb63:536c with SMTP id af79cd13be357-7c7af10641cmr597552185a.4.1744664128874;
-        Mon, 14 Apr 2025 13:55:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGoWIvNWBnu8DBGFjtGdagGBK2fyiZED6ibSgijR4nYQRmR9ck5XDihEjcIo4pATTzpB4UWZQ==
-X-Received: by 2002:a05:620a:4627:b0:7c0:bb63:536c with SMTP id af79cd13be357-7c7af10641cmr597548885a.4.1744664128405;
-        Mon, 14 Apr 2025 13:55:28 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f36f5056easm5692216a12.63.2025.04.14.13.55.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 13:55:27 -0700 (PDT)
-Message-ID: <f85195a1-f55e-41ea-967d-b758014cba06@oss.qualcomm.com>
-Date: Mon, 14 Apr 2025 22:55:24 +0200
+        d=1e100.net; s=20230601; t=1744664215; x=1745269015;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0TcZJJNpo591s6xoFqHx75vVN+ieiVBofj1AeFVZgrg=;
+        b=tZrmNXe46eokoYjTG44XVIOnhNkXWlK2so+m6PCs8Go8r/FuVvNLeK3x+bgMkv562o
+         pc/8hP6NTs4Jw6ddC2Jz/MWRYcsgoMcEUkATBN8vrNWSlZwKk6f3R3HlwrOD3kLM1VLT
+         Uq0ckhdd6aerUVozyXkixtlIclUtmDfhjlabgOgDQ4KcsnFBjk7+GRQRRS9Ub5yP55Xx
+         Cik2Cc9UX/Sy08Tx9DAPeKj3l5DTVqaMXXrdAAEH9bPs31se4XD4uDf4IkSHqviBD98F
+         gqZUwfTEftQB9sNgC2h8nXWABPQbbxAFtj+P1D3ZX83R1cJT3UV5H32GDfjkcbITBIm+
+         MkTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ9hRL9ZHFtEmEhx0PCz+tXcRrmfUnmgNzFJKWM1cuFr3MufTEg16j0FHJEYeG2Q65Xi0UswvKfr1a4xCx@vger.kernel.org, AJvYcCUfdgssTDPX71N7y301jCn1TkjTDoIIMo1WuoXZB47aEcadi2NdabZgqfwl9tAd4vsSoDNNM42DFFdJ@vger.kernel.org, AJvYcCUieUCHc+1uAli+HuXiX2E88609zdYIO0lRa7RemaxO0wgByl6IXc471sNJR61L3FfrmL1NBD8b+RE=@vger.kernel.org, AJvYcCV1YGDrP+Q1nCGtZGbgaiRGaJ210lhswG12tMAj6WdYjzmGoVZcWq6np/RxMpnbhGNOdme+fLNnDzYaCeJbp+Tw@vger.kernel.org, AJvYcCVBzcKFsErzncqZdn8MMjDFOde6rGP0khGNYqSqveOmbdqTflrYMrD5fQa/cWpvYTRy5uk=@vger.kernel.org, AJvYcCVhTCSJbRfrBAeJlHNCnFZCALarOCy5yspY12xRmPvY1F0dINepdRpkReQ2s9plQYQCqaW9irGlmBJ525b3@vger.kernel.org, AJvYcCWAyPnL43WxtqznTx1ipljrLwzQFoVUVO2hZiGosULE/+HewMmwIWubylOrH8Ki3R3Ld6F6flRkmrUVDM5aoHsFO+VkS4Vf@vger.kernel.org, AJvYcCWfLxqOvdm3PUs9B6nftTkGZDzyOla2vPDkfdsZy6vspO7SAukbJqB86Q23gHZ3elWkTsncod8TOiGFizlQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxryvs4wzvwZkYD+l4tgCl+58jbqSdGGiJS2lSvRDiKMkMbiwyF
+	pVShQXrUij/TMISUhWhRgahLVPHm5sZO5/CXEJtVft8hX8WDeuWy82+91nC5SD7B2dLKGYrK+yr
+	RvHGbiIp1cx6lO70z3ep9icQ3CHU=
+X-Gm-Gg: ASbGncvPZF5bgBGOEPZ0oXaZYAyVJ+sjN8ATMcLqUZaPH33PWqWvKWNw29xtgscgxnK
+	RVzgKd1B2t4/Rcq7npXlk1yQdPdIx90V7b0Nf9BjEBRH8zuaMMKJHfWSPlGvIRUmLv4K4FYiAD2
+	KhqK1gV6h+IGQgNoBYqP/gWst2uWd2lTP27xFE+Q==
+X-Google-Smtp-Source: AGHT+IFcREG/4yFEmC+ZxV8s2QA/5bd3ZV1RNpvIrg2UOkqeg3XFOew6fBn8aG27bqWGkg7Xi5BfChdrPFBmpTvrP3w=
+X-Received: by 2002:a7b:ce16:0:b0:43c:fabf:9146 with SMTP id
+ 5b1f17b1804b1-43f4aafa80dmr58064325e9.17.1744664214557; Mon, 14 Apr 2025
+ 13:56:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/6] arm64: dts: qcom: Add initial support for MSM8937
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
-        Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Dmitry Baryshkov <lumag@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, iommu@lists.linux.dev,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        linux@mainlining.org, Dang Huynh <danct12@riseup.net>
-References: <20250315-msm8937-v4-0-1f132e870a49@mainlining.org>
- <20250315-msm8937-v4-4-1f132e870a49@mainlining.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250315-msm8937-v4-4-1f132e870a49@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=E9TNpbdl c=1 sm=1 tr=0 ts=67fd7641 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=bBqXziUQAAAA:8 a=OuZLqq7tAAAA:8 a=zdbjSHh-4Hdwht_aKTEA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=BjKv_IHbNJvPKzgot4uq:22 a=AKGiAy9iJ-JzxKVHQNES:22
-X-Proofpoint-ORIG-GUID: czDd5IdZMsrouGy1KOHDwHKI0GdhccHG
-X-Proofpoint-GUID: czDd5IdZMsrouGy1KOHDwHKI0GdhccHG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-14_07,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- mlxscore=0 bulkscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
- suspectscore=0 mlxlogscore=999 spamscore=0 priorityscore=1501
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504140152
+References: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
+ <20250404215527.1563146-2-bboscaccy@linux.microsoft.com> <CAADnVQJyNRZVLPj_nzegCyo+BzM1-whbnajotCXu+GW+5-=P6w@mail.gmail.com>
+ <87semdjxcp.fsf@microsoft.com>
+In-Reply-To: <87semdjxcp.fsf@microsoft.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 14 Apr 2025 13:56:42 -0700
+X-Gm-Features: ATxdqUHCb53j5ciFtAcQCnJkNA0yls1KzsDz-H40EWEXDT9mEyWFo_Dj8Pa3eyk
+Message-ID: <CAADnVQ+JGfwRgsoe2=EHkXdTyQ8ycn0D9nh1k49am++4oXUPHg@mail.gmail.com>
+Subject: Re: [PATCH v2 security-next 1/4] security: Hornet LSM
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Jan Stancek <jstancek@redhat.com>, Neal Gompa <neal@gompa.dev>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	keyrings@vger.kernel.org, 
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	clang-built-linux <llvm@lists.linux.dev>, nkapron@google.com, 
+	Matteo Croce <teknoraver@meta.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Cong Wang <xiyou.wangcong@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/15/25 3:57 PM, Barnabás Czémán wrote:
-> From: Dang Huynh <danct12@riseup.net>
-> 
-> Add initial support for MSM8937 SoC.
-> 
-> Signed-off-by: Dang Huynh <danct12@riseup.net>
-> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
+On Sat, Apr 12, 2025 at 6:58=E2=80=AFAM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
+>
+> TAlexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+>
+> > On Fri, Apr 4, 2025 at 2:56=E2=80=AFPM Blaise Boscaccy
+> > <bboscaccy@linux.microsoft.com> wrote:
+> >> +
+> >> +static int hornet_find_maps(struct bpf_prog *prog, struct hornet_maps=
+ *maps)
+> >> +{
+> >> +       struct bpf_insn *insn =3D prog->insnsi;
+> >> +       int insn_cnt =3D prog->len;
+> >> +       int i;
+> >> +       int err;
+> >> +
+> >> +       for (i =3D 0; i < insn_cnt; i++, insn++) {
+> >> +               if (insn[0].code =3D=3D (BPF_LD | BPF_IMM | BPF_DW)) {
+> >> +                       switch (insn[0].src_reg) {
+> >> +                       case BPF_PSEUDO_MAP_IDX_VALUE:
+> >> +                       case BPF_PSEUDO_MAP_IDX:
+> >> +                               err =3D add_used_map(maps, insn[0].imm=
+);
+> >> +                               if (err < 0)
+> >> +                                       return err;
+> >> +                               break;
+> >> +                       default:
+> >> +                               break;
+> >> +                       }
+> >> +               }
+> >> +       }
+> >
+> > ...
+> >
+> >> +               if (!map->frozen) {
+> >> +                       attr.map_fd =3D fd;
+> >> +                       err =3D kern_sys_bpf(BPF_MAP_FREEZE, &attr, si=
+zeof(attr));
+> >
+> > Sorry for the delay. Still swamped after conferences and the merge wind=
+ow.
+> >
+>
+> No worries.
+>
+> > Above are serious layering violations.
+> > LSMs should not be looking that deep into bpf instructions.
+>
+> These aren't BPF internals; this is data passed in from
+> userspace. Inspecting userspace function inputs is definitely within the
+> purview of an LSM.
+>
+> Lskel signature verification doesn't actually need a full disassembly,
+> but it does need all the maps used by the lskel. Due to API design
+> choices, this unfortunately requires disassembling the program to see
+> which array indexes are being used.
+>
+> > Calling into sys_bpf from LSM is plain nack.
+> >
+>
+> kern_sys_bpf is an EXPORT_SYMBOL, which means that it should be callable
+> from a module.
 
-[...]
+It's a leftover.
+kern_sys_bpf() is not something that arbitrary kernel
+modules should call.
+It was added to work for cases where kernel modules
+carry their own lskels.
+That use case is gone, so EXPORT_SYMBOL will be removed.
 
-> +			power-domains = <&cpu_pd0>;
-> +			power-domain-names = "psci";
+> Lskels without frozen maps are vulnerable to a TOCTOU
+> attack from a sufficiently privileged user. Lskels currently pass
+> unfrozen maps into the kernel, and there is nothing stopping someone
+> from modifying them between BPF_PROG_LOAD and BPF_PROG_RUN.
+>
+> > The verification of module signatures is a job of the module loading pr=
+ocess.
+> > The same thing should be done by the bpf system.
+> > The signature needs to be passed into sys_bpf syscall
+> > as a part of BPF_PROG_LOAD command.
+> > It probably should be two new fields in union bpf_attr
+> > (signature and length),
+> > and the whole thing should be processed as part of the loading
+> > with human readable error reported back through the verifier log
+> > in case of signature mismatch, etc.
+> >
+>
+> I don't necessarily disagree, but my main concern with this is that
+> previous code signing patchsets seem to get gaslit or have the goalposts
+> moved until they die or are abandoned.
 
-So CPU4-7 get "nicer" idle, but 0-3 don't?
+Previous attempts to add signing failed because
+1. It's a difficult problem to solve
+2. people only cared about their own narrow use case and not
+considering the needs of bpf ecosystem as a whole.
 
-[...]
+> Are you saying that at this point, you would be amenable to an in-tree
+> set of patches that enforce signature verification of lskels during
+> BPF_PROG_LOAD that live in syscall.c,
 
-> +		cpu-map {
-> +			/* The MSM8937 has 2 cluster A53 setup. */
+that's the only way to do it.
 
-This comment seems superfluous
+> without adding extra non-code
+> signing requirements like attachment point verification, completely
+> eBPF-based solutions, or rich eBPF-based program run-time policy
+> enforcement?
 
-[...]
-
-> +	timer {
-
-'p' < 't', please sort top-level nodes alphabetically
-
-[...]
-
-> +				wcss-wlan2-pins {
-> +					pins = "gpio76";
-> +					function = "wcss_wlan2";
-> +					drive-strength = <6>;
-
-please unify this order (drive-strength before bias)
-
-> +					bias-pull-up;
-> +
-> +				};
-
-Extra newline
-
-[...]
-
-> +		gpu: gpu@1c00000 {
-> +			compatible = "qcom,adreno-505.0", "qcom,adreno";
-> +			reg = <0x1c00000 0x40000>;
-> +			reg-names = "kgsl_3d0_reg_memory";
-> +			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "kgsl_3d0_irq";
-> +			#cooling-cells = <2>;
-> +			clocks = <&gcc GCC_OXILI_GFX3D_CLK>,
-> +				<&gcc GCC_OXILI_AHB_CLK>,
-> +				<&gcc GCC_BIMC_GFX_CLK>,
-> +				<&gcc GCC_BIMC_GPU_CLK>,
-> +				<&gcc GCC_OXILI_TIMER_CLK>,
-> +				<&gcc GCC_OXILI_AON_CLK>;
-
-Please align the <s
-
-> +			clock-names = "core",
-> +				      "iface",
-> +				      "mem_iface",
-> +				      "alt_mem_iface",
-> +				      "rbbmtimer",
-> +				      "alwayson";
-> +			operating-points-v2 = <&gpu_opp_table>;
-> +			power-domains = <&gcc OXILI_GX_GDSC>;
-> +
-> +			iommus = <&adreno_smmu 0>;
-> +
-> +			status = "disabled";
-> +
-> +			gpu_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
-> +
-> +				opp-19200000 {
-> +					opp-hz = /bits/ 64 <19200000>;
-> +					opp-supported-hw = <0xFF>;
-
-0xff is overly broad, please document the existing known speed bins
-
-[...]
-
-> +		adreno_smmu: iommu@1c40000 {
-> +			compatible = "qcom,msm8996-smmu-v2",
-> +				     "qcom,adreno-smmu",
-> +				     "qcom,smmu-v2";
-> +			reg = <0x1c40000 0x10000>;
-
-Does it work as-is, without iommu changes?
-
-[...]
-
-> +	thermal_zones: thermal-zones {
-> +		aoss-thermal {
-> +			polling-delay-passive = <250>;
-
-There are no passive trip points> +
-> +			thermal-sensors = <&tsens 0>;
-> +
-> +			trips {
-> +				aoss_alert0: trip-point0 {
-> +					temperature = <85000>;
-> +					hysteresis = <2000>;
-> +					type = "hot";
-> +				};
-
-Please convert these to 'critical' instead
-
-[...]
-
-> +		cpuss1-thermal {
-> +			polling-delay-passive = <250>;
-
-You can drop polling-delay-passive under CPU tzones, as threshold
-crossing is interrupt-driven
-
-> +
-> +			thermal-sensors = <&tsens 4>;
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpuss1_alert0>;
-> +					cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
-> +
-> +			trips {
-> +				cpuss1_alert0: trip-point0 {
-> +					temperature = <75000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +
-> +				cpuss1_alert1: trip-point1 {
-> +					temperature = <85000>;
-> +					hysteresis = <2000>;
-> +					type = "hot";
-> +				};
-
-On newer platforms we rely on LMH to shut down the device if it
-were to reach the junction temperature, but let's leave them here
-as probably no one remembers for sure how reliable that is on these
-older platforms and you're most likely not willing to test that
-
-Konrad
+Those are secondary considerations that should also be discussed.
+Not necessarily a blocker.
 
