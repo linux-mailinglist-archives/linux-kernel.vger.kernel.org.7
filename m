@@ -1,313 +1,340 @@
-Return-Path: <linux-kernel+bounces-603444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29CB9A88784
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:41:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EEAA8878C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 17:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A9CB7A408A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:40:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93ED47A4EB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 15:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554062749DC;
-	Mon, 14 Apr 2025 15:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E911F279790;
+	Mon, 14 Apr 2025 15:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dwE6jZt2"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fd0VVZdf"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2057.outbound.protection.outlook.com [40.107.236.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21858274FF2
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 15:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744645285; cv=none; b=en9jqS52wq/OeatptWF/wMO/F4+4gM4+0Gyg56Aw/XA78H0m17FpDrm4hiQD/iHQcAwrlRa4JLaI+dGe77h2uzc+dGZrOQO6xx/m4GUCippkciwGHLX6Kld+Ih69fTgf+hU1bcyXY/mJZiBBEw3I4zQia6wbxcvq3swPdXXmdEo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744645285; c=relaxed/simple;
-	bh=pB129lonjxg4XBJVe106Pew5GKhSxXmd0b/2PNR8UBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3c6dVmq/fa12F4qWyYqW12NbVFtA1f+GpQiBtfg5MYmGYTSRgxv6EGGdwIn0za4T/kokJBdzNMBEAmylHYDIlxFhU2kd7FXg+C7OCNoUoRMfpx+0ceZnLXmFV7mnMYi0N5/Sv98TW7B/YyhV5fvf0X6UQbyczaV91yAUpvLzjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dwE6jZt2; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2254e0b4b79so60652075ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 08:41:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744645282; x=1745250082; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=elgj3ZOFdOekNxu9YHg784/p7U8yNMODKbzLcLEGcmw=;
-        b=dwE6jZt2IUbhmah3cwE0TDOcHi0tYy9ZZt7JfTXHmow7XSvJVXLt41FSif5FoAujpK
-         Ll8+ify3FblT5SMKnpgpBq7ZCR7O1a+uI+upCSzJ0KPRGqqbgirW5gq4ZoT0sci8PbvG
-         dOmmFEibWWp8uTz+20etImR4idX7EqaSzybLVPxo6XDYAXBnw4HTvpooyB0nBKHioJAx
-         f0bXSAW0xt0PtmLeatoFOEBC4WyS95JZpCUzUw28qBowYDJ5pYx+0gbwgpxJCq6vOAya
-         kCqTtLto1Le8mRIQYV3cB3zB365IaRwlUS48AhIpd3l+wLc9u1+MTlo4QASr0MqNJC/U
-         PL2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744645282; x=1745250082;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=elgj3ZOFdOekNxu9YHg784/p7U8yNMODKbzLcLEGcmw=;
-        b=W5YiSLxK3k/E2pBYO/ezHegBlvXABgY1G/AehBk4bYVKO8RUaRSZk1LlFEIMI6k1IO
-         Kg+SW8A7JW4fB9k6Bvf1KTpaKIJwD5uWOQsg8Ir3LDg6eD7yGf/EK8fssru88B9Zy2kE
-         8FHB45IL9kfNeSWWjYPQiq/p/LJKd1h5Z4Wv5tyW1lXhOd2GiKiDCoR7hTkIAMrIeoH3
-         +Lfgpdypcvcpf9b569RcyTsktbwUr4qWo6AWAjkkzdSmIpErt0GJwSdBcJWGVxpiCZCs
-         9UUdi1NKvu/zEgW9fbbgXiIzgVsA3ylMOr8+V/xbNDgYffMW4e9OL6LIIrLeIBeWuFpY
-         mOdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCsRyOe956LSVcUUr/Bm93WaqlHXlZQqjnE+SHZvsQRwapRise+bWozIkJKBTEuUo+HefBESiz9zvg3Po=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7PShzbXJ6DK+7X+agV1OObJQS9Q8HANaTxp6hSFZs9qbP2w68
-	B12Zu4/qhJa3f2Hk8j3yNOi93c/y2j0C8QvmnZyAoDMX+d7Cz/36Au6eIw/RkmM=
-X-Gm-Gg: ASbGncvBtZGkfPRMKFiARlkITaoKSuJM7luXPJV2J9Q4C+BCRZRbFsTZG5NATR+VMki
-	5+mSRIg3WNXqPLYSKg9GA1uKWPV6P5HEhhQJRLx1MLCRlg0+RatzCf3BRDB+PcexRFGgoWgJ8ZX
-	tuXi0A9cbiskxZDJjMRgbK/FK+EKhkoOZXbDtu5Bzqmeoz4FebyUsEa7JN18eBORwJenfhBM8Dz
-	FdM/9Y7IwvJiFkPBA1vG34MIn0VCTe32UdDgowaZ6IypHh6Kgu6tgFuWpNvDd6jxrca+3qm6W6Z
-	Pnfrk3BKWAJWl9GeKuhHDy41m3cbKYCVTpxWuRhZ4Q==
-X-Google-Smtp-Source: AGHT+IFmaJd8K2wTbkQ9KfdS3yzMTir1mRSVtiN6w//mvc5Njk/mc7f9WAGT+beU7YlMLRaLsVEzWw==
-X-Received: by 2002:a17:902:e842:b0:223:5c33:56b4 with SMTP id d9443c01a7336-22bea4ad1abmr164559865ad.20.1744645282220;
-        Mon, 14 Apr 2025 08:41:22 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:cc1f:6a:9d70:9f8b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccbfacsm99984745ad.249.2025.04.14.08.41.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 08:41:21 -0700 (PDT)
-Date: Mon, 14 Apr 2025 09:41:19 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	"S.J. Wang" <shengjiu.wang@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Mpuaudiosw <Mpuaudiosw@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>, imx@lists.linux.dev,
-	linux-remoteproc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH v4] remoteproc: imx_dsp_rproc: Add support for
- DSP-specific features
-Message-ID: <Z_0snwzpkPTJqjWX@p14s>
-References: <20250409213030.3489481-1-iuliana.prodan@oss.nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E582C2750F1;
+	Mon, 14 Apr 2025 15:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744645316; cv=fail; b=m2l65wurlaJFVk2plrPIq0lYW2+hUvVXJ3SWsdR8Ha9CIWJORtAcAHn7DclaWc8I/Zq0K+8YLdt0z+8TUh4xQrBVluPp+Ka9CVOxaga3dk/fcXIPn/JxgQaeOR29lq+qGt+846JJBi+7RBqNo7ubKbDIXfdAG6+/XT1lOGP6kWE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744645316; c=relaxed/simple;
+	bh=TRQKLC2IYzXpyrhL4SpFMAiRUqUFbI333X9hHbo1wcA=;
+	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
+	 Content-Type:MIME-Version; b=MfcmZ0Y2mwDqZR5SUN8SKZnEjyfH3/IuvaNGDnb78CPHKAYAZLGFDJ/55CW75T6uT7PHCCXq8hgOEjSP7IqVNmUiBYqWKAD17CejaToxaIv5KHU9cq8qS/GZbTmsGhFsbOPGC373VPfWNTEkmmbW7Fm503Cu7qzNHgO9fskHxQc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fd0VVZdf; arc=fail smtp.client-ip=40.107.236.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=af77BYhj6OQ14+mrd/FAnE/pbMVct3sdJ/UMwhlTWKYBSAOgo4t2ov+9Jcs4G5SKAm7np9/J4s6AkYGGe5wG2KYRnta71tbsxhFeJYaC6NtJkEsCvGsofJR490PHC/kvu+fVzobQCKkGRDGsHhlTGp2JcLHQAP3fB+lJd8iHZonSTFF6XKnP2rDRw7kOJROQLux7Of5RyLvIUgqbyRdANi/ZqFOZPh+gd+ut8ZedTXrGI09M67hq2SiKhcsjyDbFfR+I6Hwap1z6G0L6z1yfGHeVIq8PbZG8BhAJS/uDSiF8JGfyyfgVbbfiRdXE70INMHcyDBE9yzPfN0B0qhElpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ad3O72mVEW409uxCLfxxEQeyeCRXzZiFB3GrMqgFN50=;
+ b=neaUR7MrTPFylvUxlRSVMHAe9ohX+m0ECegtGeG3wUg2dQPNxyA2H+ndjnl8KImVaXgTr63Qe+C3R90pfOUj6EU5UBBk+f2THaecrXiKd3zBtzTpF70g5jCvkuFnSqoRJfBMfCPkOes40jM8BxEO+0gqkZoKBgOfd0qoupDoAKgAeseLzioUB/sY7jolA5t1OeglWnpEwG5i0WDUiqplzP0hP0V4IqgCzD8hrQGTT69Ga+WhKRZCNYVgdo2hblPYOCrp43EeExobcWhbgr1Yg01+KfD+jqPdCXV1aPa0WKSy5yqwIYdiLrEk+rT9GzWUQBvlOO23X3+IQwF+otAm7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ad3O72mVEW409uxCLfxxEQeyeCRXzZiFB3GrMqgFN50=;
+ b=fd0VVZdfRF3oBj55fXnyXcXRo6/wtOJmKJ7uImXDAOXrUp/SrIL2M/7/HjpVovs5J/Cwh6lSX4MkgCRCrPIqfaiLqfcKjcdgiVufaO1Ml45khQUsvFd7E3E1jwSCfNhmsmN2vz58R2UomnxTorxtTCaReY0uYIPBXu3fIVIVJmk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by CY3PR12MB9656.namprd12.prod.outlook.com (2603:10b6:930:101::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.35; Mon, 14 Apr
+ 2025 15:41:52 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8632.030; Mon, 14 Apr 2025
+ 15:41:52 +0000
+Message-ID: <f60f7f48-ae0d-2b16-6333-ffddb05ed792@amd.com>
+Date: Mon, 14 Apr 2025 10:41:50 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: Raju Rangoju <Raju.Rangoju@amd.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shyam-sundar.S-k@amd.com
+References: <20250408182001.4072954-1-Raju.Rangoju@amd.com>
+ <20250408182001.4072954-4-Raju.Rangoju@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH net-next 3/5] amd-xgbe: add support for new XPCS routines
+In-Reply-To: <20250408182001.4072954-4-Raju.Rangoju@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA0PR11CA0024.namprd11.prod.outlook.com
+ (2603:10b6:806:d3::29) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409213030.3489481-1-iuliana.prodan@oss.nxp.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|CY3PR12MB9656:EE_
+X-MS-Office365-Filtering-Correlation-Id: 49ecd8d9-54cd-4ed0-dc2d-08dd7b6ae0b6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WXVtU1M1a3FtdUlRblN0TWVFeFR5UlZhb3pKRVcvN1l0WGltNkt2MzdZTmVy?=
+ =?utf-8?B?M1FtMXVlLy9JU0l1aVZoUGg0OGdaWlVXVFVjQVpMUEtFTStGMWRHUjNpVTly?=
+ =?utf-8?B?cjhyaE50aTZ0UGN4VXAyaGNpK0xiQ3JCUFJQWTN0c0I2eGlSQVh6RVloWmxF?=
+ =?utf-8?B?eXcreitDbEVzMzcrWEVHcnNYY2FuQTBOaGVGbmFFYkViSmZyWXZhbVdvNURv?=
+ =?utf-8?B?TGlWUkNKZHd5WFVkaTh4QjVaV0FuVzVXVGdEdFE2b1g4RXd1SXBpZmU4QUcy?=
+ =?utf-8?B?TlpDVG1vaUg5dU5IL3E5eGhDcWxDUXZLTzUvK09oYmttd0VONHg3T1g3Q0pV?=
+ =?utf-8?B?ZGNtS1g3cnlVTUJvcVRkc0Z5NlNEWkpoZDdKSUZQd2V0SkhDcVFOaE9iTTUy?=
+ =?utf-8?B?eW1TVW1nT0Z4cFljbktPOENRT1JvUm5KTktPeDFqbU1QaHRaMGxwbVZZYXZD?=
+ =?utf-8?B?ejljWGRZbERQSnBwTlZyM3hEZmVEQ0UyMmp2WmNGL0RmbWU5RFpzS2RETW9V?=
+ =?utf-8?B?VmNZeUVIUzFhY0ZPSUZkNVMwMWZnNnh3K2pNTDMyQ2dFVEpsUjBFbXJpcjB4?=
+ =?utf-8?B?dWdWdENDU3NJbzhuQit2SHZ4emdkSnhkRlJubEYxVU1sZkFaell3ZmhsWlNQ?=
+ =?utf-8?B?VFdCR240eFFPSnNTcjdBOEcrZUhXcFVhenZmWW5VMFZFdkRmMVdOUzhBRnBR?=
+ =?utf-8?B?VVV1VnZ3ZnNoRE43WVcwMFZqTVZYZjlLYklVSlV2TU5ud29raVBETDh5N0s4?=
+ =?utf-8?B?bTNRaFpWcWM0MFNFTVh6Q1A4dXRONHkrMTVob3BjV0R3RUZOemV0QnBqVEYz?=
+ =?utf-8?B?bC9oVmwySCtqekRobGZIVmlWc1NFbmRwVk84Y0hLMG9zNk5nS0FPOHF1MXd3?=
+ =?utf-8?B?cVZZMW5EZmY5amRPRGF1eWFnM282bnBteDdnU1BoaHdYd2IrcjBaTVVxOU9F?=
+ =?utf-8?B?aUpTZFpCczgwcUpscW9PM3RVSzVIWmdNeXpoR0JZVllZWmtsYWdXd2JjZisr?=
+ =?utf-8?B?cEhNN1JWNUM4RjQyUjVXbVppeGc1NFVhREJkdXovcEF3Y3Z6SFBLaGJRSXNC?=
+ =?utf-8?B?NjJtZWdLNy9lbzkwTnNPeS9Pazc4aEpxcUtUSDVNY0hXTlh6eGlXNTZNell2?=
+ =?utf-8?B?dldRVitkSWFCeldCcEovQWI1dTJhdEYxRitaSUc4ZHUxQUVMbGxYSlNDc01w?=
+ =?utf-8?B?dFQyN2V2a0FKa2E4S0c2dnFnWW1ldWVmL3h5VmtuR29WSUxHZU9LUVJ3ZSsz?=
+ =?utf-8?B?TzlwTWRWVHdaTTNSZkFCS0IwNXJmNHdXdnl3R1UxOEpnekdsd210VnZvQzBK?=
+ =?utf-8?B?dGhtZjBseURaSFZVRnRjOTNUYVN1b0pMMGJERFpwN2JyeHhBMlRKbWhaZmRG?=
+ =?utf-8?B?T2o3UUlybzQvSU0rbU5kLzF5aFJUMTJVZytna0pUd3hVZW8zMncycFJ2cnFX?=
+ =?utf-8?B?dXhGNmRxYkozT3FrTytqbTZRaUthZFB5WjFYRGR5OTAvQ1AxaE1LZ1BORmhJ?=
+ =?utf-8?B?TldqZmlRMzAzTWZ3L0FTRjg3ZjNzS25jaXBFWlFrWk1pcUk2V1ZxMW1wODcv?=
+ =?utf-8?B?UDFXWXo3Q0RHallpaVkwUkQ0NjFSdWNwa3dic1pESjdFYjNKSitZSnNPTVFt?=
+ =?utf-8?B?NlhJZTJDZWhOendwajdEY25GTFVGc0VxdXg4Z2JVT2twU2o1dDZHeUM1UXVV?=
+ =?utf-8?B?ZUJ5bk53ZHNqQkJKejJ2RzI0cXNYRjFySHp0NnpweHdhY2dTc3NPaXJJMzY1?=
+ =?utf-8?B?YVhYS2hJR2hTVHd4U1JjeEVlUFBFN1c2NlZNTFVkN1M0UlJ5aWVpZkZzQWJ3?=
+ =?utf-8?B?T21QQXM5bkZKc3MwNkZSSjdDTEhrL1F2dEJHNkRNQmlSRHZ2eFpWbGxyTXN3?=
+ =?utf-8?B?U0JJRFMrRjdQazJYMzF2QmdFZEF2QWZobDhmY1BVTEFpYVJWeW1kam9BZ1VE?=
+ =?utf-8?Q?DqowOWF4q4k=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZWZKN3JKejArQit6eTh0RmI4RWlwS20rd0xTSi9wNVlxMVhabVV3UnA0d2Jp?=
+ =?utf-8?B?ckNVUUcvb3VQa0g4R2tCeWVubDd4US9NTjUzMkNKVGVBa2tUSFZiRFhBRlR4?=
+ =?utf-8?B?b095KzgybzZkdHdUN05FZnFZMXpONmhOYXl4dklzTzZOSW1Ubi9LZnlmZUdB?=
+ =?utf-8?B?dVZqYk1zd3NsM3VEajRtYzRneFpid25zWmtUd2R3ZGJNTzVlOHNXNUJwK1pH?=
+ =?utf-8?B?bnQxV2JmS3lIY1pNVkJ3MC83ckVjOERLZ0wwSXpQUVg2TGxVVTlRdzJjajRt?=
+ =?utf-8?B?bjN0cTZ1bnpwVE1CWlRqTzFuZ3FJVEM5WmpGamM1RUpOT244bjRZTEsvQUpv?=
+ =?utf-8?B?VHZ5T2Y5SnQwUkxZZ2Q5MVVvdW1WSVdLdDFxUHloYlNSbENMamZPSExqb2NU?=
+ =?utf-8?B?NDJZUmQzLzFTU0JEWFRlOTZtbTJIVEs0S2RPejc5YnBXYnNnQzJkNnc0WCtV?=
+ =?utf-8?B?WGtTMFVSQnhPbERIVFpURG9LN2dFTUVTYmdHREhieHpYckFYaDA5QndRaXZj?=
+ =?utf-8?B?SzVPQlRSQ3Q1NUpucFZid3lYdkZtbENlVXJ4ZWZ3VmRweFN3di90OUQ2NDBY?=
+ =?utf-8?B?dGVQZDFsUFNxcXR0WVhTaVB3TGlLSnV1V0I2RDZ5bnJlNVRJSDNUWldNU2gv?=
+ =?utf-8?B?Zi9TUytkdDNNL002RWUzMHpYSldESFBjMVdkSkJYUU9RbnNhTW9QS1VJd0hU?=
+ =?utf-8?B?ZTlpeEN0NS8yRm9DQlY1dmhIeEZkNE9zclR5VHNEeWVaSjFld2FEZzQyYUo1?=
+ =?utf-8?B?MXJZUWZVTiszQkZFMHpDRjUxSmhOcFhxMDhiNWFLb2VRTVM3SmFCanEzclBl?=
+ =?utf-8?B?NkM1cTdjdzBKSFVZNGpjTjJEUWxSZFlRQ2VkV1JSOFpBazRSYnhFeTZqNC84?=
+ =?utf-8?B?S0pHb0ptdlNFVkxveXY3TG42OS9yNU1aYi8vajEzODVxbDZNcmdpbTJ4dVB6?=
+ =?utf-8?B?clJ0MmdESCtadC9CWlc3ajh0b0xLUkloM25KM0hId2dMN3dMNXRPUXJUWis5?=
+ =?utf-8?B?STBCdlJzeHpDcHlmV0lPOWZvcENiTGUvVk1HUkYzNHJKdGlVU28rR2l4MHJ3?=
+ =?utf-8?B?U3FERzR2UEwvRUJSaTF5b095U2Z3bVdwRy9rOTdLL0gra29kTFdHd0tyK2t4?=
+ =?utf-8?B?L3BoZ3NERG5yd2E3Qjg2eWROLzArbkN0UHZWZTE5a3lSRkNjK2ZqcUVhSTcr?=
+ =?utf-8?B?R1FhY1pzQ2lZNVpJVzY3emQ2N01RTUdEdVowY0FrTHZFZVBEM0xpdk9NdTlh?=
+ =?utf-8?B?QjJpYVJMaDNHQ3dSVytNS1lUVDM3M1o1OWkwcnloQURDSVk4a1kxTjBKTEt6?=
+ =?utf-8?B?QXZSZ1lCaDJPWkFpeGlRVHBLaitoMXNIMnBkcm9iRHdEZExuTVJmRkxlZS8w?=
+ =?utf-8?B?QXErMnRwR3pRajg0UkxtYzQwQWtmUDdsTUJ4REZuWVRzTFNLMThaY2U0Sms2?=
+ =?utf-8?B?V25mSXFzMFQvYmZHa2RXMExnWFVGNTVsT3lSYTJDZ2JjbDV1dDVIdmEyZk93?=
+ =?utf-8?B?Umo2MTh4WG1PKzBTclZaYUQxVzcyVnZQQ2VCOVdHZFVESUgzWGs2N09mWjdD?=
+ =?utf-8?B?Y0VOd1dmQkVKR1dqLzZJTlJEOVFPUlBNS2lTNnU2dUtXWm1lL2xRT3JyTlJG?=
+ =?utf-8?B?cmU4RVpkNFVnSVVPUGhIb1loN0ZxZWxhdGhVbUVKdWQ3WlZwNUlSQmxEUHdr?=
+ =?utf-8?B?c0NYUWZLR3JFVkZORWdJNVM1bUpQUWxBRlZtdjJ3V1dlMVpucUlzcXZOay9q?=
+ =?utf-8?B?L1BJeC9pUFNHcWJuV25wODBteXpYR001aVVDeHJESUV3djcvQ2ZoR0dHN1VF?=
+ =?utf-8?B?U1ZjOEtra29xdldOM3RRUzIreXRwZ0ZZL1o5K3ZLN0NGczdIS1JHN3owS1JD?=
+ =?utf-8?B?OXBTN0IvRFJCV3VDd01TZVVLemFEc2JFZExoWCtiRFNNU1IvQmtacncvczhY?=
+ =?utf-8?B?RUFjTVlHLzhUOFdNUmlVdlFSM3JvUktFcmpYUnAybWp1UjVodzJyMXJyZzds?=
+ =?utf-8?B?b2hKNVpCZ1ZzcFVxTDFzdm1BU056Q0JyRlJ0OFdpYmMvQWxnM2E5Smc4Sis4?=
+ =?utf-8?B?aVh4NVBMSHhaam5QdXFBTXJQNDFXVUUzL2xXZWd4M3h6Z2t0N1dzeWQybklm?=
+ =?utf-8?Q?p5ABYICRfQfM7UQMEzloLZkE8?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 49ecd8d9-54cd-4ed0-dc2d-08dd7b6ae0b6
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2025 15:41:52.4991
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TEIvYfFIf6mo8Q1nOSWAg2z2uC2YLwji063J52Kpj41kssM21UDWLz2Ca3MKASgYB6yl12nQGMwjNWxytzB16w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9656
 
-On Thu, Apr 10, 2025 at 12:30:30AM +0300, Iuliana Prodan (OSS) wrote:
-> From: Iuliana Prodan <iuliana.prodan@nxp.com>
+On 4/8/25 13:19, Raju Rangoju wrote:
+> Add the necessary support to enable Crater ethernet device. Since the
+> BAR1 address cannot be used to access the XPCS registers on Crater, use
+> the smn functions.
 > 
-> Some DSP firmware requires a FW_READY signal before proceeding, while
-> others do not.
-> Therefore, add support to handle i.MX DSP-specific features.
-> 
-> Implement handle_rsc callback to handle resource table parsing and to
-> process DSP-specific resource, to determine if waiting is needed.
-> 
-> Update imx_dsp_rproc_start() to handle this condition accordingly.
-> 
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> Signed-off-by: Raju Rangoju <Raju.Rangoju@amd.com>
 > ---
-> Changes in v4:
-> - Reviews from Mathieu Poirier:
->   - Adjusted len to include the size of struct fw_rsc_imx_dsp.
->   - Updated len validation checks.
-> - Review from Frank Li:
->   - In imx_dsp_rproc_handle_rsc(), removed the goto ignored statement.
-> - In probe(), set flags to WAIT_FW_READY to ensure the host waits
-> for fw_ready when no vendor-specific resource is defined.
-> - Link to v3: https://lore.kernel.org/all/20250403100124.637889-1-iuliana.prodan@oss.nxp.com/
+>  drivers/net/ethernet/amd/xgbe/xgbe-dev.c | 79 ++++++++++++++++++++++++
+>  drivers/net/ethernet/amd/xgbe/xgbe.h     |  6 ++
+>  2 files changed, 85 insertions(+)
 > 
-> Changes in v3:
-> - Reviews from Mathieu Poirier:
->   - Added version and magic number to vendor-specific resource table entry.
->   - Updated defines to maintain backward compatibility with a resource table that doesn't have a vendor-specific resource.
->     - By default, wait for `fw_ready`, unless specified otherwise.
-> - Link to v2: https://lore.kernel.org/all/20250318215007.2109726-1-iuliana.prodan@oss.nxp.com
-> 
-> Changes in v2:
-> - Reviews from Mathieu Poirier:
->   - Use vendor-specific resource table entry.
->   - Implement resource handler specific to the i.MX DSP.
-> - Revise commit message to include recent updates.
-> - Link to v1: https://lore.kernel.org/all/20250305123923.514386-1-iuliana.prodan@oss.nxp.com/
-> 
->  drivers/remoteproc/imx_dsp_rproc.c | 98 +++++++++++++++++++++++++++++-
->  1 file changed, 96 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index b9bb15970966..e4212e624a91 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -35,9 +35,18 @@ module_param_named(no_mailboxes, no_mailboxes, int, 0644);
->  MODULE_PARM_DESC(no_mailboxes,
->  		 "There is no mailbox between cores, so ignore remote proc reply after start, default is 0 (off).");
+> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+> index ae82dc3ac460..d75cf8df272f 100644
+> --- a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+> +++ b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/bitrev.h>
+>  #include <linux/crc32.h>
+>  #include <linux/crc32poly.h>
+> +#include <linux/pci.h>
 >  
-> +/* Flag indicating that the remote is up and running */
->  #define REMOTE_IS_READY				BIT(0)
-> +/* Flag indicating that the host should wait for a firmware-ready response */
-> +#define WAIT_FW_READY				BIT(1)
->  #define REMOTE_READY_WAIT_MAX_RETRIES		500
->  
-> +/*
-> + * This flag is set in the DSP resource table's features field to indicate
-> + * that the firmware requires the host NOT to wait for a FW_READY response.
-> + */
-> +#define FEATURE_DONT_WAIT_FW_READY		BIT(0)
-> +
->  /* att flags */
->  /* DSP own area */
->  #define ATT_OWN					BIT(31)
-> @@ -72,6 +81,10 @@ MODULE_PARM_DESC(no_mailboxes,
->  
->  #define IMX8ULP_SIP_HIFI_XRDC			0xc200000e
->  
-> +#define FW_RSC_NXP_S_MAGIC			((uint32_t)'n' << 24 |	\
-> +						 (uint32_t)'x' << 16 |	\
-> +						 (uint32_t)'p' << 8 |	\
-> +						 (uint32_t)'s')
->  /*
->   * enum - Predefined Mailbox Messages
->   *
-> @@ -136,6 +149,24 @@ struct imx_dsp_rproc_dcfg {
->  	int (*reset)(struct imx_dsp_rproc *priv);
->  };
->  
-> +/**
-> + * struct fw_rsc_imx_dsp - i.MX DSP specific info
-> + *
-> + * @len: length of the resource entry
-> + * @magic_num: 32-bit magic number
-> + * @version: version of data structure
-> + * @features: feature flags supported by the i.MX DSP firmware
-> + *
-> + * This represents a DSP-specific resource in the firmware's
-> + * resource table, providing information on supported features.
-> + */
-> +struct fw_rsc_imx_dsp {
-> +	uint32_t len;
-> +	uint32_t magic_num;
-> +	uint32_t version;
-> +	uint32_t features;
-> +} __packed;
-> +
->  static const struct imx_rproc_att imx_dsp_rproc_att_imx8qm[] = {
->  	/* dev addr , sys addr  , size	    , flags */
->  	{ 0x596e8000, 0x556e8000, 0x00008000, ATT_OWN },
-> @@ -300,6 +331,66 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
->  	return -ETIMEDOUT;
+>  #include "xgbe.h"
+>  #include "xgbe-common.h"
+> @@ -1066,6 +1067,78 @@ static void get_pcs_index_and_offset(struct xgbe_prv_data *pdata,
+>  	*offset = pdata->xpcs_window + (mmd_address & pdata->xpcs_window_mask);
 >  }
 >  
-> +/**
-> + * imx_dsp_rproc_handle_rsc() - Handle DSP-specific resource table entries
-> + * @rproc: remote processor instance
-> + * @rsc_type: resource type identifier
-> + * @rsc: pointer to the resource entry
-> + * @offset: offset of the resource entry
-> + * @avail: available space in the resource table
-> + *
-> + * Parse the DSP-specific resource entry and update flags accordingly.
-> + * If the WAIT_FW_READY feature is set, the host must wait for the firmware
-> + * to signal readiness before proceeding with execution.
-> + *
-> + * Return: RSC_HANDLED if processed successfully, RSC_IGNORED otherwise.
-> + */
-> +static int imx_dsp_rproc_handle_rsc(struct rproc *rproc, u32 rsc_type,
-> +				    void *rsc, int offset, int avail)
+> +static int xgbe_read_mmd_regs_v3(struct xgbe_prv_data *pdata, int prtad,
+> +				 int mmd_reg)
 > +{
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +	struct fw_rsc_imx_dsp *imx_dsp_rsc = rsc;
-> +	struct device *dev = rproc->dev.parent;
+> +	unsigned int mmd_address, index, offset;
+> +	struct pci_dev *rdev;
+> +	unsigned long flags;
+> +	int mmd_data;
 > +
-> +	if (!imx_dsp_rsc) {
-> +		dev_dbg(dev, "Invalid fw_rsc_imx_dsp.\n");
-> +		return RSC_IGNORED;
-> +	}
+> +	rdev = pci_get_domain_bus_and_slot(0, 0, PCI_DEVFN(0, 0));
+> +	if (!rdev)
+> +		return 0;
 > +
-> +	/* Make sure resource isn't truncated */
-> +	if (sizeof(struct fw_rsc_imx_dsp) > avail ||
+> +	mmd_address = get_mmd_address(pdata, mmd_reg);
+> +
+> +	get_pcs_index_and_offset(pdata, mmd_address, &index, &offset);
+> +
+> +	spin_lock_irqsave(&pdata->xpcs_lock, flags);
 
-We agree on that part.
+These PCI config accesses can race with other drivers performing SMN
+accesses. You'll need to make use of the AMD SMN API (see
+arch/x86/kernel/amd_node.c, amd_smn_{read,write}()) to ensure protection.
 
-> +	    sizeof(struct fw_rsc_imx_dsp) < imx_dsp_rsc->len) {
-
-From the above, "sizeof(struct fw_rsc_imx_dsp) > imx_dsp_rsc->len" would be a
-valid condition when it clearly isn't.  I am still convinced the only
-valid option is:
-
-            sizeof(struct fw_rsc_imx_dsp) != imx_dsp_rsc->len)
-
-I am happy to change my mind but would need more information.
+The AMD SMN API uses a mutex to sync access, if you need to protect
+these accesses with a spinlock then you are looking at updating the AMD
+SMN API, too.
 
 Thanks,
-Mathieu
+Tom
 
-> +		dev_dbg(dev, "Resource fw_rsc_imx_dsp is truncated.\n");
-> +		return RSC_IGNORED;
-> +	}
+> +	pci_write_config_dword(rdev, 0x60, (pdata->xphy_base + pdata->xpcs_window_sel_reg));
+> +	pci_write_config_dword(rdev, 0x64, index);
+> +	pci_write_config_dword(rdev, 0x60, pdata->xphy_base + offset);
+> +	pci_read_config_dword(rdev, 0x64, &mmd_data);
+> +	mmd_data = (offset % 4) ? FIELD_GET(XGBE_GEN_HI_MASK, mmd_data) :
+> +				  FIELD_GET(XGBE_GEN_LO_MASK, mmd_data);
 > +
-> +	/*
-> +	 * If FW_RSC_NXP_S_MAGIC number is not found then
-> +	 * wait for fw_ready reply (default work flow)
-> +	 */
-> +	if (imx_dsp_rsc->magic_num != FW_RSC_NXP_S_MAGIC) {
-> +		dev_dbg(dev, "Invalid resource table magic number.\n");
-> +		return RSC_IGNORED;
-> +	}
+> +	pci_dev_put(rdev);
+> +	spin_unlock_irqrestore(&pdata->xpcs_lock, flags);
 > +
-> +	/*
-> +	 * For now, in struct fw_rsc_imx_dsp, version 0,
-> +	 * only FEATURE_DONT_WAIT_FW_READY is valid.
-> +	 *
-> +	 * When adding new features, please upgrade version.
-> +	 */
-> +	if (imx_dsp_rsc->version > 0) {
-> +		dev_warn(dev, "Unexpected fw_rsc_imx_dsp version %d.\n",
-> +			 imx_dsp_rsc->version);
-> +		return RSC_IGNORED;
-> +	}
-> +
-> +	if (imx_dsp_rsc->features & FEATURE_DONT_WAIT_FW_READY)
-> +		priv->flags &= ~WAIT_FW_READY;
-> +
-> +	return RSC_HANDLED;
+> +	return mmd_data;
 > +}
 > +
->  /*
->   * Start function for rproc_ops
->   *
-> @@ -335,8 +426,8 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
->  
->  	if (ret)
->  		dev_err(dev, "Failed to enable remote core!\n");
-> -	else
-> -		ret = imx_dsp_rproc_ready(rproc);
-> +	else if (priv->flags & WAIT_FW_READY)
-> +		return imx_dsp_rproc_ready(rproc);
->  
->  	return ret;
+> +static void xgbe_write_mmd_regs_v3(struct xgbe_prv_data *pdata, int prtad,
+> +				   int mmd_reg, int mmd_data)
+> +{
+> +	unsigned int pci_mmd_data, hi_mask, lo_mask;
+> +	unsigned int mmd_address, index, offset;
+> +	struct pci_dev *rdev;
+> +	unsigned long flags;
+> +
+> +	rdev = pci_get_domain_bus_and_slot(0, 0, PCI_DEVFN(0, 0));
+> +	if (!rdev)
+> +		return;
+> +
+> +	mmd_address = get_mmd_address(pdata, mmd_reg);
+> +
+> +	get_pcs_index_and_offset(pdata, mmd_address, &index, &offset);
+> +
+> +	spin_lock_irqsave(&pdata->xpcs_lock, flags);
+> +	pci_write_config_dword(rdev, 0x60, (pdata->xphy_base + pdata->xpcs_window_sel_reg));
+> +	pci_write_config_dword(rdev, 0x64, index);
+> +	pci_write_config_dword(rdev, 0x60, pdata->xphy_base + offset);
+> +	pci_read_config_dword(rdev, 0x64, &pci_mmd_data);
+> +
+> +	if (offset % 4) {
+> +		hi_mask = FIELD_PREP(XGBE_GEN_HI_MASK, mmd_data);
+> +		lo_mask = FIELD_GET(XGBE_GEN_LO_MASK, pci_mmd_data);
+> +	} else {
+> +		hi_mask = FIELD_PREP(XGBE_GEN_HI_MASK,
+> +				     FIELD_GET(XGBE_GEN_HI_MASK, pci_mmd_data));
+> +		lo_mask = FIELD_GET(XGBE_GEN_LO_MASK, mmd_data);
+> +	}
+> +
+> +	pci_mmd_data = hi_mask | lo_mask;
+> +
+> +	pci_write_config_dword(rdev, 0x60, (pdata->xphy_base + pdata->xpcs_window_sel_reg));
+> +	pci_write_config_dword(rdev, 0x64, index);
+> +	pci_write_config_dword(rdev, 0x60, (pdata->xphy_base + offset));
+> +	pci_write_config_dword(rdev, 0x64, pci_mmd_data);
+> +	pci_dev_put(rdev);
+> +
+> +	spin_unlock_irqrestore(&pdata->xpcs_lock, flags);
+> +}
+> +
+>  static int xgbe_read_mmd_regs_v2(struct xgbe_prv_data *pdata, int prtad,
+>  				 int mmd_reg)
+>  {
+> @@ -1160,6 +1233,9 @@ static int xgbe_read_mmd_regs(struct xgbe_prv_data *pdata, int prtad,
+>  	case XGBE_XPCS_ACCESS_V2:
+>  	default:
+>  		return xgbe_read_mmd_regs_v2(pdata, prtad, mmd_reg);
+> +
+> +	case XGBE_XPCS_ACCESS_V3:
+> +		return xgbe_read_mmd_regs_v3(pdata, prtad, mmd_reg);
+>  	}
 >  }
-> @@ -936,6 +1027,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
->  	.kick		= imx_dsp_rproc_kick,
->  	.load		= imx_dsp_rproc_elf_load_segments,
->  	.parse_fw	= imx_dsp_rproc_parse_fw,
-> +	.handle_rsc	= imx_dsp_rproc_handle_rsc,
->  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
->  	.sanity_check	= rproc_elf_sanity_check,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
-> @@ -1053,6 +1145,8 @@ static int imx_dsp_rproc_probe(struct platform_device *pdev)
->  	priv = rproc->priv;
->  	priv->rproc = rproc;
->  	priv->dsp_dcfg = dsp_dcfg;
-> +	/* By default, host waits for fw_ready reply */
-> +	priv->flags |= WAIT_FW_READY;
 >  
->  	if (no_mailboxes)
->  		imx_dsp_rproc_mbox_init = imx_dsp_rproc_mbox_no_alloc;
-> -- 
-> 2.25.1
-> 
+> @@ -1173,6 +1249,9 @@ static void xgbe_write_mmd_regs(struct xgbe_prv_data *pdata, int prtad,
+>  	case XGBE_XPCS_ACCESS_V2:
+>  	default:
+>  		return xgbe_write_mmd_regs_v2(pdata, prtad, mmd_reg, mmd_data);
+> +
+> +	case XGBE_XPCS_ACCESS_V3:
+> +		return xgbe_write_mmd_regs_v3(pdata, prtad, mmd_reg, mmd_data);
+>  	}
+>  }
+>  
+> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe.h b/drivers/net/ethernet/amd/xgbe/xgbe.h
+> index 2e9b3be44ff8..6c49bf19e537 100644
+> --- a/drivers/net/ethernet/amd/xgbe/xgbe.h
+> +++ b/drivers/net/ethernet/amd/xgbe/xgbe.h
+> @@ -242,6 +242,10 @@
+>  #define XGBE_RV_PCI_DEVICE_ID	0x15d0
+>  #define XGBE_YC_PCI_DEVICE_ID	0x14b5
+>  
+> + /* Generic low and high masks */
+> +#define XGBE_GEN_HI_MASK	GENMASK(31, 16)
+> +#define XGBE_GEN_LO_MASK	GENMASK(15, 0)
+> +
+>  struct xgbe_prv_data;
+>  
+>  struct xgbe_packet_data {
+> @@ -460,6 +464,7 @@ enum xgbe_speed {
+>  enum xgbe_xpcs_access {
+>  	XGBE_XPCS_ACCESS_V1 = 0,
+>  	XGBE_XPCS_ACCESS_V2,
+> +	XGBE_XPCS_ACCESS_V3,
+>  };
+>  
+>  enum xgbe_an_mode {
+> @@ -951,6 +956,7 @@ struct xgbe_prv_data {
+>  	struct device *dev;
+>  	struct platform_device *phy_platdev;
+>  	struct device *phy_dev;
+> +	unsigned int xphy_base;
+>  
+>  	/* Version related data */
+>  	struct xgbe_version_data *vdata;
 
