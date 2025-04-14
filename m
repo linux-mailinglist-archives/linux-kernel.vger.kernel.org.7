@@ -1,191 +1,181 @@
-Return-Path: <linux-kernel+bounces-603237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9675AA88513
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:34:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF05A8854D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62ADF16C55B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:30:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70D671902AA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992E128936E;
-	Mon, 14 Apr 2025 14:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E04D27465A;
+	Mon, 14 Apr 2025 14:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mD3zl81e"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LD+ulopz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1882DFA21;
-	Mon, 14 Apr 2025 14:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67A32DFA5D
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744639606; cv=none; b=EAxGtU2lc83LxDg8pmilPTxlooTnqoCGD6wUqaEU/kkygmvH/VSDWI6DnavzBJEvAQ+hsumKk03qKbUbZtLBEL/ISlTImmbUMfxwCSN477fZMESdl+ITA6THTtCB79i94L6jjtnhZ7BytH0xrZq2yXbh8JhLdje4WbhDVUOeyfw=
+	t=1744639651; cv=none; b=OIQclGnT0da2kYgYn94YYcg98/UBxOv2+qpNAJRzG8xEYp28PW+PelGhk9zbdvsC8LJzW8RDaz5Ntg5q/Y0SF+BweUIzLDiTgHqndl0/MELocyPzkcn2NXw7dfqd0CCiyTEI6W49JDewE0mKFjylq1fBz8H9OVFZ40qmBVSgllE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744639606; c=relaxed/simple;
-	bh=sq85iaZePSBodnWG8dw4mchGLQuXkq+ro1j3ch5BREc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uBVn4RjittJqxIaEhb+4wC1jg6piKiC6QjmPC16VriW22QtBiyjHIkMNCFy5S5CEqTrE7F9NCSnsLc4bj6lNtBzCncS9BapjPUVARb/+O99qZi/aZh2ahjugCxF8DXq5xWw1o5vVRxZu3zGU03TK0kzwtuXvVbzEnoEQYChwbdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mD3zl81e; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac297cbe017so978466166b.0;
-        Mon, 14 Apr 2025 07:06:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744639603; x=1745244403; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MqJHataDJN13GWdlaeETKdRNTar6wX0Omb0Dui9smng=;
-        b=mD3zl81emCLRpvfHaC5XjAZpfh7XkJirP0y4izQZnpi8SnCKqfdP+d7UkR9+kBXuiN
-         8+kxRUGepxEKAsH1VkuiGf8sakNH5KFYAwHpg0loNCwFm1YJYmiaZEFz8/8fMI7YEXNi
-         I2jGIQlDX3njmTpuHlMXaik/WLHWjX1QENHHtFBGa2G3wZrMYYwJLVxHo7IH3NT+4kC0
-         8ydOdiPotVZO/1LEv6w4zBXTieshVg8lwZSFzRE1KmZr8fjoJ56iw8Xqos+ZvRrgcPpU
-         KpqPNDccjn3IXNBk4Q8GRTkF1WH3BmOvTKHvwRAFp/8l6oUeZhSIzCvFkjAc8bcTtQGS
-         vBGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744639603; x=1745244403;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MqJHataDJN13GWdlaeETKdRNTar6wX0Omb0Dui9smng=;
-        b=DYtMCvfnamlZXhLHBrdYVuJFHAqhQVbgCCJlSyeoQJziMbXafXrr7q7RwzL4yVMtMh
-         bGxpDtv+AbOVLClR0xw/irgznY0u27xYAOfSn/I3Eusrmp/rufJd7vmT2HKfnA6L3ZMH
-         BXrbOKkLGGcX18B0J7Q7p7jabIGbDpkLHz1o9kd6G8xbhPpd7iRV9TO8eZJp/612w1w2
-         krgC2eL1trJRQJeRZ/H5oQhNVtm1ay5ZX9DtGoaVPHqRu5rqVGeN7kH11jdxwXFkn6sr
-         J4XAPNx989lRXI5skGd4FB8i8FeBzBNlovpcxkeMvbd8Ig7kFq37l1LDH0nrWuCrEEg+
-         AOjA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7MY0ut8U7Ksr8ZMcaJMp6qfeO0Ad60eCEIV9x2tZOkTsP0aLggW6wh3Ep9zFE9/F7RzLM5bs7Te9i4AIM@vger.kernel.org, AJvYcCVpq+hbkvOYyt1d0JByREbpKDmvxrbbSkbQbRdqNlzbXrn/komBDroeHPgJ3fDYGRStLkA=@vger.kernel.org, AJvYcCWm5h+qqtNJ1NZid4jq3Ro0hzH5cFxIOqhn5Po3ZZ8cjiP0CT6PvcqR7bMsc6XGBbemzlUVj86aZ5zf/dwf@vger.kernel.org, AJvYcCXYQFJvfS3hg+Dw5hMFOWEGJm5JDlcY3SZbAzI2broQ8mkxQmQ7HW9rNpl67DFKp00a8lCKbGKGsWrQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/AecL3RbXkTFk52E/Ft+cgVVALFW07mKUNPKLP5A+lTR+mw0m
-	Ekj4+zH37m4XDSVf15FsY4DsK4Avnuf9FXVh9WHV7t3gI3tIKrb8
-X-Gm-Gg: ASbGncstJ70KHtG8nmq56t/DLh/fMjt/BMNjgdoG3wvHtJCkx6BDrnqfrIArbdW1Vl/
-	DJRfSfMIWJL/LQXcHquWpHcNp8Q1ho8fxmaoRffjuX+J7qZGPlOnxQ1fav2lhzt0olt9xG+gW/e
-	AlbWAnsbitEF2hY1eC7wx6qWW5hq48IQw02QQEyZQrlsYqtoRNa56GodhG+HLjjVICa6OfIvE4E
-	+uvY4ETekCgAzwFxvVy7CkgRfelOyKx0sUGRiY85o1m40R9Lv8rSldsK6+bRjmrTS6iZapebRkT
-	j1zEHZ6BtqBvYnJ5OXd5+OV1kOjiCOeUhOk3Zg+Xig==
-X-Google-Smtp-Source: AGHT+IGv7I7mfcP3SkB2yL+BqA/SYvY6RgaRIDLCbA6d3KCPxX8mr0qnv7srH/JCsek7/hDZZbZ5NA==
-X-Received: by 2002:a17:907:1b10:b0:ac2:7ce7:cd2b with SMTP id a640c23a62f3a-acad1622b9emr958079466b.2.1744639603046;
-        Mon, 14 Apr 2025 07:06:43 -0700 (PDT)
-Received: from [192.168.1.100] ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ccd1cfsm916454566b.138.2025.04.14.07.06.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 07:06:42 -0700 (PDT)
-Message-ID: <01c65464-8535-28d8-a9b5-eb4f90114e2d@gmail.com>
-Date: Mon, 14 Apr 2025 16:06:41 +0200
+	s=arc-20240116; t=1744639651; c=relaxed/simple;
+	bh=owHWIY8G9dE/hySzkTSjv2xJMegT+zdNhRU1GpKxit4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=I9c4cHeEFbNqLpjWpMBKHnuCP5XBymaKoGZdQhR5ii6tIxGtIwr0mHfybIfeBblIne9TAvb40+Jea29I/lYN7D6oh4yzFVXGIwDgc/Znxw2PGIJ6cFufMfN9rfqkq8U7qW96q8AitVGCfJQ1iXJjDZxMuXJdIrXSmKKa+nUcDR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LD+ulopz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744639648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sw8iNW0CAqgedgdW2qInmCuGxnmBcBhtLpgF3wRIE48=;
+	b=LD+ulopz+7c6DeN8A7hAfm5uhSohwu/bq9pyRK3d0ysKN9hK1G37iJu9huiNq39XglWNWX
+	cfyJ1k4D3Pjfj9ZaLLicpqMXUhDj/AOqYjFdelwyU9DHeFKTCUV+Ci0IzMXi1nIoe6/ohP
+	qh+MKMrIHI4F5DhG0HCXMs0lRhACsOI=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-310-3dCrszCnP32jH9NoVP44KA-1; Mon,
+ 14 Apr 2025 10:07:23 -0400
+X-MC-Unique: 3dCrszCnP32jH9NoVP44KA-1
+X-Mimecast-MFC-AGG-ID: 3dCrszCnP32jH9NoVP44KA_1744639637
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 24ECF195422E;
+	Mon, 14 Apr 2025 14:07:17 +0000 (UTC)
+Received: from [10.44.32.81] (unknown [10.44.32.81])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 13E20180175D;
+	Mon, 14 Apr 2025 14:07:11 +0000 (UTC)
+Message-ID: <b54e4da8-20a5-4464-a4b7-f4d8f70af989@redhat.com>
+Date: Mon, 14 Apr 2025 16:07:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 4/6] x86,hyperv: Clean up hv_do_hypercall()
-To: Peter Zijlstra <peterz@infradead.org>, x86@kernel.org
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, jpoimboe@kernel.org,
- pawan.kumar.gupta@linux.intel.com, seanjc@google.com, pbonzini@redhat.com,
- ardb@kernel.org, kees@kernel.org, Arnd Bergmann <arnd@arndb.de>,
- gregkh@linuxfoundation.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-efi@vger.kernel.org, samitolvanen@google.com, ojeda@kernel.org
-References: <20250414111140.586315004@infradead.org>
- <20250414113754.285564821@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/28] mfd: Add Microchip ZL3073x support
+From: Ivan Vecera <ivecera@redhat.com>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: netdev@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250407172836.1009461-1-ivecera@redhat.com>
+ <20250407172836.1009461-2-ivecera@redhat.com>
+ <Z_QTzwXvxcSh53Cq@smile.fi.intel.com>
+ <eeddcda2-efe4-4563-bb2c-70009b374486@redhat.com>
+ <Z_ys4Lo46KusTBIj@smile.fi.intel.com>
+ <f3fc9556-60ba-48c0-95f2-4c030e5c309e@redhat.com>
+ <79b9ee2f-091d-4e0f-bbe3-c56cf02c3532@redhat.com>
 Content-Language: en-US
-From: Uros Bizjak <ubizjak@gmail.com>
-In-Reply-To: <20250414113754.285564821@infradead.org>
+In-Reply-To: <79b9ee2f-091d-4e0f-bbe3-c56cf02c3532@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-
-
-On 14. 04. 25 13:11, Peter Zijlstra wrote:
-> What used to be a simple few instructions has turned into a giant mess
-> (for x86_64). Not only does it use static_branch wrong, it mixes it
-> with dynamic branches for no apparent reason.
+On 14. 04. 25 1:52 odp., Ivan Vecera wrote:
 > 
-> Notably it uses static_branch through an out-of-line function call,
-> which completely defeats the purpose, since instead of a simple
-> JMP/NOP site, you get a CALL+RET+TEST+Jcc sequence in return, which is
-> absolutely idiotic.
 > 
-> Add to that a dynamic test of hyperv_paravisor_present, something
-> which is set once and never changed.
-> 
-> Replace all this idiocy with a single direct function call to the
-> right hypercall variant.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->   arch/x86/hyperv/hv_init.c       |   21 ++++++
->   arch/x86/hyperv/ivm.c           |   14 ++++
->   arch/x86/include/asm/mshyperv.h |  137 +++++++++++-----------------------------
->   arch/x86/kernel/cpu/mshyperv.c  |   18 +++--
->   4 files changed, 88 insertions(+), 102 deletions(-)
-> 
-> --- a/arch/x86/hyperv/hv_init.c
-> +++ b/arch/x86/hyperv/hv_init.c
-> @@ -35,7 +35,28 @@
->   #include <linux/highmem.h>
->   
->   void *hv_hypercall_pg;
-> +
-> +#ifdef CONFIG_X86_64
-> +u64 hv_pg_hypercall(u64 control, u64 param1, u64 param2)
-> +{
-> +	u64 hv_status;
-> +
-> +	if (!hv_hypercall_pg)
-> +		return U64_MAX;
-> +
-> +	register u64 __r8 asm("r8") = param2;
-> +	asm volatile (CALL_NOSPEC
-> +		      : "=a" (hv_status), ASM_CALL_CONSTRAINT,
-> +		        "+c" (control), "+d" (param1)
-> +		      : "r" (__r8),
+> On 14. 04. 25 1:39 odp., Ivan Vecera wrote:
+>>
+>>
+>> On 14. 04. 25 8:36 dop., Andy Shevchenko wrote:
+>>>> What is wrong here?
+>>>>
+>>>> I have a device that uses 7-bit addresses and have 16 register pages.
+>>>> Each pages is from 0x00-0x7f and register 0x7f is used as page selector
+>>>> where bits 0-3 select the page.
+>>> The problem is that you overlap virtual page over the real one (the 
+>>> main one).
+>>>
+>>> The drivers you mentioned in v2 discussions most likely are also buggy.
+>>> As I implied in the above question the developers hardly get the 
+>>> regmap ranges
+>>> right. It took me quite a while to see the issue, so it's not 
+>>> particularly your
+>>> fault.
+>> Hi Andy,
+>>
+>> thank you I see the point.
+>>
+>> Do you mean that the selector register should not be part of the range?
+>>
+>> If so, does it mean that I have to specify a range for each page? Like 
+>> this:
+>>
+>>      {
+>>          /* Page 0 */
+>>          .range_min    = 0x000,
+>>          .range_max    = 0x07e,
+>>          .selector_reg    = ZL3073x_PAGE_SEL,
+>>          .selector_mask    = GENMASK(3, 0),
+>>          .selector_shift    = 0,
+>>          .window_start    = 0,
+>>          .window_len    = 0x7e,
+>>      },
+>>      {
+>>          /* Page 1 */
+>>          .range_min    = 0x080,
+>>          .range_max    = 0x0fe,
+>>          .selector_reg    = ZL3073x_PAGE_SEL,
+>>          .selector_mask    = GENMASK(3, 0),
+>>          .selector_shift    = 0,
+>>          .window_start    = 0,
+>>          .window_len    = 0x7e,
+>>      },
+>> ...
 
-r8 is call-clobbered register, so you should use "+r" (__r8) to properly 
-clobber it:
+No, I will answer by myself... this is non-sense.... window_len has to 
+be 0x80. But I probably know what do you mean...
 
-		        "+c" (control), "+d" (param1), "+r" (__r8)
-		      : THUNK_TARGET(hv_hypercall_pg)
+regmap range should not overlap... so I should use something like:
 
-> +		      : "cc", "memory", "r9", "r10", "r11");
-> +
-> +	return hv_status;
-> +}
-> +#else
->   EXPORT_SYMBOL_GPL(hv_hypercall_pg);
-> +#endif
->   
->   union hv_ghcb * __percpu *hv_ghcb_pg;
->   
-> --- a/arch/x86/hyperv/ivm.c
-> +++ b/arch/x86/hyperv/ivm.c
-> @@ -376,6 +376,20 @@ int hv_snp_boot_ap(u32 cpu, unsigned lon
->   	return ret;
->   }
->   
-> +u64 hv_snp_hypercall(u64 control, u64 param1, u64 param2)
-> +{
-> +	u64 hv_status;
-> +
-> +	register u64 __r8 asm("r8") = param2;
-> +	asm volatile("vmmcall"
-> +		     : "=a" (hv_status), ASM_CALL_CONSTRAINT,
-> +		       "+c" (control), "+d" (param1)
-> +		     : "r" (__r8)
+       {
+           /* original <0x000-0x77f> with offset of 0x100 to move
+              the range outside of <0x00-0x7f> used by real one */
+           .range_min = 0x100,
+           .range_max = 0x87f,
+           .selector_reg = 0x7f,
+           .selector_mask = GENMASK(3, 0),
+           .selector_shift = 0,
+           .window_start = 0,
+           .window_len = 0x80,
+       },
 
-Also here:
-		        "+c" (control), "+d" (param1), "+r" (__r8)
-		      :
+With this I have to modify the driver to use this 0x100 offset. I mean 
+the datasheet says that register BLAH is at 0x201-0x202. So in the 
+driver I have to use 0x301-0x302.
 
-> +		     : "cc", "memory", "r9", "r10", "r11");
-> +
-> +	return hv_status;
-> +}
+Then the _regmap_select_page maps this 0x301 this way:
+window_offset = (0x301 - range_min) % window_len;
+window_page = (0x301 - range_min) / window len;
+thus
+window_offset = (0x301 - 0x100) % 0x80 = 0x001
+window_page = (0x301 - 0x100) / 0x80 = 4
 
-Uros.
+Long story short, I have to move virtual range outside real address 
+range and apply this offset in the driver code.
+
+Is this correct?
+
+Thanks,
+Ivan
+
 
