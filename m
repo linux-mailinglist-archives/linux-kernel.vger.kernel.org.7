@@ -1,93 +1,107 @@
-Return-Path: <linux-kernel+bounces-602226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF0A4A87847
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:57:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E070A8784E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99BAC3B2033
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 06:57:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F06316CE08
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FFF1B0435;
-	Mon, 14 Apr 2025 06:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C551B0F11;
+	Mon, 14 Apr 2025 07:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1mwHNTd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Q1TtBU5Q"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1231A2630;
-	Mon, 14 Apr 2025 06:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A76C1AF0C7
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 06:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744613837; cv=none; b=Fo9A7oJe02Fkt5JtlYELHxjB8FxwJUjk97kJVjy6Uu0Tp3pfP1yMMpt7Gu7vJzL3FOScb+KgkTsJvgjXhxWvKLRa9EuPNnwWfrZn+0yLN8eR+W0XmlqhaCH8REO9NCfiA+lKdUsWQbfmB21gCs6xUwQX2ZXnKUWCcAhKaSBX894=
+	t=1744614002; cv=none; b=ScHyXK8urbdUkXfM6lzEHPCx3l4I+qGsq+aXWYN6vvFI1RqbZ1i+U7MpFzreyjNWd4o4eL7qD52PqJKwASXODy58qFBF1ebuz5IKMx9KByWlIplYBZ9ysac/QkvwDd19Dswzkzy2jIy3zoxDA7OG29ZyXPMtX6wVsDc/Avk3I1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744613837; c=relaxed/simple;
-	bh=mqy+aOHjVKggByK6p/2KyFRHnUz1N9o7I6IVLGCDoWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EaoSzxsW/xXxFdq2sZPILcFKVZvlPVDA+xwKShVH9WUmW6krT2RenrpRD0rU8LO4a+x393ywv/Jjv8vMzww11fSIlV6P+xd59VSN0tMxrtu+KBJUVM499BTWRlyHA6sn2kZjn9rMlffpnevd7WtJ4kUH1ZrCWcCHs02GaO/kMnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1mwHNTd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53266C4CEE2;
-	Mon, 14 Apr 2025 06:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744613835;
-	bh=mqy+aOHjVKggByK6p/2KyFRHnUz1N9o7I6IVLGCDoWg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F1mwHNTd5ZYVAB7ZS8zFkWpRKfoBKT42FaZJgQlq2mkfY70IPlKdE5GqQxfRNcMu/
-	 9xsuLXjJKf8kzqzf6SGsqaFjrU9UwliEKl9wFTEoiKulve30/JW6EN9S0QV1QLCB8I
-	 vDjEXEKNM51fholDhVIi99y6EafYba7bhE7mxHQhWcXxlZYTAS+lUw2ql7Z0n5qcNi
-	 811gh/UUXgUR7PrJEuy0PxQpszQ0Amefim3MRPm4Zd+qegKEH0pnL/BZ84bAHyYB9H
-	 Fndg5BVfKqs311r70/4kEoQgsXrON7GIFFXGaAhWOxUFGYOTOMfRMljddNi6gOkoG+
-	 au8i/dKtTCmCw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u4Dkk-000000001A4-19TE;
-	Mon, 14 Apr 2025 08:57:11 +0200
-Date: Mon, 14 Apr 2025 08:57:10 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Chenyuan Yang <chenyuan0y@gmail.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, lumag@kernel.org,
-	quic_kriskura@quicinc.com, manivannan.sadhasivam@linaro.org,
-	konrad.dybcio@oss.qualcomm.com, quic_varada@quicinc.com,
-	quic_kbajaj@quicinc.com, johan+linaro@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	s=arc-20240116; t=1744614002; c=relaxed/simple;
+	bh=8jkBzcU2x8SA8XsDmjjKjMwFaN6foRAOjdfUUGsXjIc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TzKP6R8B5SCYqX6yuUHFPymQgf0EAnVjAMjsq+aV7sh4w/Ns7tkln2QFtfprZeuUWYYDecthFUUquQL1IpLYpgozi5opTDmYSa/Mh6tYrCH4iBPVl08+sWZsj7cmjbWlheXfYGRtQ1TgiIolPKZJUExCGr4NA0WaL8l1XlwHRSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Q1TtBU5Q; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744613986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AoJm+f6FnQK/O2OG0bHw+7ynZXalVbButioglhiA18s=;
+	b=Q1TtBU5QI85z8TTBoUD423w1sgzAOah1b52f0aJPYmy6spTEm11D0GEle5C/8tJ/YS3h0N
+	RXZwW9tZBEY1Po+k4MEPuYoSF3jlFkqGX5VlCMQaZ7BJ9M4RMzb3XskPvNaXygs7uskaOI
+	/aYZJOgcTxTXLY+8102RYgLdwNTdAMw=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: qcom-qmp-usb: Fix an NULL vs IS_ERR() bug
-Message-ID: <Z_yxxoa12N9rNn2z@hovoldconsulting.com>
-References: <20250413212518.2625540-1-chenyuan0y@gmail.com>
+Subject: [PATCH] ASoC: cs-amp-lib: Replace offsetof() with struct_size()
+Date: Mon, 14 Apr 2025 08:59:03 +0200
+Message-ID: <20250414065904.336749-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250413212518.2625540-1-chenyuan0y@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, Apr 13, 2025 at 04:25:18PM -0500, Chenyuan Yang wrote:
-> In qmp_usb_iomap(), one branch returns the result of devm_ioremap(), which
-> can be NULL. Since IS_ERR() does not catch a NULL pointer,
-> add an explicit NULL check in qmp_usb_parse_dt_legacy() to prevent
-> potential dereference issues.
+Use struct_size() to calculate the number of bytes to allocate and used
+by 'cirrus_amp_efi_data'. Compared to offsetof(), struct_size() provides
+additional compile-time checks (e.g., __must_be_array()).
 
-Good catch, but please move the handling of this into the
-qmp_usb_iomap() helper so that it returns an error pointer also if
-devm_ioremap() fails.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+Compile-tested only
+---
+ sound/soc/codecs/cs-amp-lib-test.c | 3 +--
+ sound/soc/codecs/cs-amp-lib.c      | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
-> Fixes: 2a55ec4f0a04 ("phy: qcom-qmp-usb: merge driver data")
+diff --git a/sound/soc/codecs/cs-amp-lib-test.c b/sound/soc/codecs/cs-amp-lib-test.c
+index 45626f99a417..2369fffb58f7 100644
+--- a/sound/soc/codecs/cs-amp-lib-test.c
++++ b/sound/soc/codecs/cs-amp-lib-test.c
+@@ -40,8 +40,7 @@ static void cs_amp_lib_test_init_dummy_cal_blob(struct kunit *test, int num_amps
+ 	unsigned int blob_size;
+ 	int i;
+ 
+-	blob_size = offsetof(struct cirrus_amp_efi_data, data) +
+-		    sizeof(struct cirrus_amp_cal_data) * num_amps;
++	blob_size = struct_size(priv->cal_blob, data, num_amps);
+ 
+ 	priv->cal_blob = kunit_kzalloc(test, blob_size, GFP_KERNEL);
+ 	KUNIT_ASSERT_NOT_NULL(test, priv->cal_blob);
+diff --git a/sound/soc/codecs/cs-amp-lib.c b/sound/soc/codecs/cs-amp-lib.c
+index c677868c5d5f..c2ce828a96ae 100644
+--- a/sound/soc/codecs/cs-amp-lib.c
++++ b/sound/soc/codecs/cs-amp-lib.c
+@@ -147,7 +147,7 @@ static struct cirrus_amp_efi_data *cs_amp_get_cal_efi_buffer(struct device *dev)
+ 	dev_dbg(dev, "Calibration: Size=%d, Amp Count=%d\n", efi_data->size, efi_data->count);
+ 
+ 	if ((efi_data->count > 128) ||
+-	    offsetof(struct cirrus_amp_efi_data, data[efi_data->count]) > data_size) {
++	    struct_size(efi_data, data, efi_data->count) > data_size) {
+ 		dev_err(dev, "EFI cal variable truncated\n");
+ 		ret = -EOVERFLOW;
+ 		goto err;
+-- 
+2.49.0
 
-This is not the commit that introduced the issue; this should be:
-
-Fixes: a5d6b1ac56cb ("phy: qcom-qmp-usb: fix memleak on probe deferral")
-  
->  	qmp->pcs = qmp_usb_iomap(dev, np, 2, exclusive);
-> +	if (!qmp->pcs)
-> +		return -ENOMEM;
->  	if (IS_ERR(qmp->pcs))
->  		return PTR_ERR(qmp->pcs);
-
-Johan
 
