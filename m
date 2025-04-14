@@ -1,177 +1,123 @@
-Return-Path: <linux-kernel+bounces-602329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD9A3A8796C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:51:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B26D3A87971
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDB307A3625
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:50:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9BB7168D9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BB72586C3;
-	Mon, 14 Apr 2025 07:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WhoEarbt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hEkKVgAz";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WhoEarbt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hEkKVgAz"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E7D2580F9;
+	Mon, 14 Apr 2025 07:52:50 +0000 (UTC)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085A31A2398
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 07:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F98F539A;
+	Mon, 14 Apr 2025 07:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744617078; cv=none; b=Ac+IBpNT352HhdMkTR90Qu2Lh5MZGFkh3RDICo0SQPwFsmoL/f2d6ZvzoxBA713px9mB28bKAxv1XPCtHcV4V7eFIikw5uy5BROmUFsLCv1prvfaBHNsKviVOwRlxHmKiCeal25R6VafyFpwMQaTSU67y8d3yCV+///Vbfoqw2A=
+	t=1744617169; cv=none; b=bq3onvop6PxehCsb/ENeheZcOOana7Hz0OL64HpUlLm+eVHRhmivCF6A/hmYqUr1JDzJ9pL8Tt66CunspTEsAeQtSQ1lgehOU4yJN5/GBbT4cM+LjkoCDDJ9aas970aT+EotVIXSJ1AT5vW5jQ9EneCf/9IbVMqToj7a97XEHLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744617078; c=relaxed/simple;
-	bh=ko/P1m7xZzhuBMwiB8qtH/1RMjxDoBHhgLxpW41nwrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mfRjKWmDu9M0qZclnWn2JHIZ7X1cLjzEryfvMwDMrflSs5SITJxesk5CQC2ePIfhTIhQOU0EJQZHNluL/HqeT5QQ4Qe+GifdZeZEzFjO8ntq5kvEH0QmLLBJe4He3RmyT7VB/b7QkL1S+gquIX6bSmleJOmYfNSZIq/tOJUNock=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WhoEarbt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hEkKVgAz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WhoEarbt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hEkKVgAz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3CB3C21169;
-	Mon, 14 Apr 2025 07:51:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744617069; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K4Nqye6OxjaWqK7MliMY16hKvt/ySbQ/u8awpN1fXXk=;
-	b=WhoEarbt2KDhHYG9b1UlMnX6hOz22z8J+t6QV7rAdPiEeeHnHMl2qvHHbhm4bD9dE7ERiz
-	Ixh6++Z52EFGC1mS3ZUFmvlIXKUept3teInRbiEplzG0hE4e2DEPXREfjwj8YpD7Q1KqM9
-	DwuQY8BHaIHLlzIWUq8tZpasxgRp76I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744617069;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K4Nqye6OxjaWqK7MliMY16hKvt/ySbQ/u8awpN1fXXk=;
-	b=hEkKVgAzTzHBBfYD714uYDsQ7LNVe6AzIkS3Qd2OjDueQ88ipDjzdX4gR4LK6mxgsNMESi
-	EnRbdpkXm/wPGVDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744617069; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K4Nqye6OxjaWqK7MliMY16hKvt/ySbQ/u8awpN1fXXk=;
-	b=WhoEarbt2KDhHYG9b1UlMnX6hOz22z8J+t6QV7rAdPiEeeHnHMl2qvHHbhm4bD9dE7ERiz
-	Ixh6++Z52EFGC1mS3ZUFmvlIXKUept3teInRbiEplzG0hE4e2DEPXREfjwj8YpD7Q1KqM9
-	DwuQY8BHaIHLlzIWUq8tZpasxgRp76I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744617069;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K4Nqye6OxjaWqK7MliMY16hKvt/ySbQ/u8awpN1fXXk=;
-	b=hEkKVgAzTzHBBfYD714uYDsQ7LNVe6AzIkS3Qd2OjDueQ88ipDjzdX4gR4LK6mxgsNMESi
-	EnRbdpkXm/wPGVDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1EF40136A7;
-	Mon, 14 Apr 2025 07:51:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eNVeBW2+/GeAEgAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Mon, 14 Apr 2025 07:51:09 +0000
-Date: Mon, 14 Apr 2025 09:51:08 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Daniel Wagner <wagi@kernel.org>, 
-	James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lpfc: use memcpy for bios version
-Message-ID: <6f6b4f8c-e9f3-4962-af48-baf48a91c0a9@flourine.local>
-References: <20250409-fix-lpfc-bios-str-v1-1-05dac9e51e13@kernel.org>
- <20250413190238.2cb8ec64@pumpkin>
+	s=arc-20240116; t=1744617169; c=relaxed/simple;
+	bh=nquDgEh5RnVpQx40oEhXtIB02iZOKReaSjU2Tt2wBmQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rJfhMGsXOYUotaFLMZMuXq+jPEuy33AoCNFbmZfZgELPOHlBHN+N383GzMhbcPvT+n10XFWm1/gzSLiZ5NYW79DMd5GNneMRniqJm5F8liGu9NxVK01ylof9I2roLfavlVNsosiWsZwV6cMdm9vS4nE5N8I1ETr31g8SFugOvg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-524038ba657so4021192e0c.0;
+        Mon, 14 Apr 2025 00:52:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744617165; x=1745221965;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HoumkQ8dLgCbW6zBj87ypAA+R7IZgKsFVu4nfGo0KZg=;
+        b=eeIH8D71C6OiLbNyaZS9owgdpAvHEDnRaOdPd3ecq+qxM87OlnfrWO/cIknuwofRU5
+         5Z/NcaIK+7leu4KoK0/YPgpa36c57imwjOhgabz5T/iRuoYxl4xz2JfP56Ihl8T206W5
+         oZPtR4Dw5f7AMcYiLncT0LBGMJtB0MSEqq4Z7LOfDHkGKX1neCTz2Uwurz7y2XFO0R+m
+         ZLQGvPefUqPTrSY/ybGTGUTt9a4Z6yG4tR4810pGd6XsxNANi147w9XurfnVoj8Q+xxN
+         DVKKeKRrHLos/lSrhwINKg424MmY/rzBFOUSb2IA4nhurksdC2re4/po+ZO6RW1S3KQF
+         Bxrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUazBt/QEr9RlqxE29dOsfa8gjIM+Yqmq0vtifbOUiVLEPQ3ShFhcvzsRGUSipIwvA9zhA8Hi0N6dwG@vger.kernel.org, AJvYcCX/Ul4wwY7fP0N2dISJqUEKx4Qxdgohs/fiqU1geuIbNt4vcYlDyHeVRnzSWng6OZEp5k0V/EHyLmLLu1vN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMD8N5bPusn5nP19GfOt/K6Mhe7GHg1a6NAmeaCO/WjfDhl7c9
+	yyvKy3AR9v/p4LUsnxl9WmrIwHDEI9+e+Gt9anmteeWdp3f+Wk3sdeQ4g+RP
+X-Gm-Gg: ASbGnctGSd6vB/Ji/fBtG3rIDFVBN3CWZ79k8yFAVdZhUyP715HRh1ADmsTfMdB/3Pt
+	JtGbY7NSjx0RmHN+p47x7AYobbUafo6mHZebp+ZxuwpOn7Asac9zetNZr2WMzPPRml6AI9k7vff
+	/NgjS7QFKiMA9WY/xuMnfzlLGQTm1q7CQEkE07EGvR0r+PmgIxq/4hoh4TcxjakWpeKWkbbLKnp
+	lTcQRBVlJ/xl47YpjQpDvq/CFDgooFmV8cYFfyT/S9oIb+5MkU1ZqfG8ShnyxZDIFNm+oRFHZta
+	YII1N7UHGDmG7zb0ngI/B3G30M/OSnENkzIz4wX8yCM2Mpn/vUiJf3cX+CA46taWhuEYRAQzse+
+	57wo=
+X-Google-Smtp-Source: AGHT+IG2yhm9gnUhxm3YW8SMgAimqRBWxNu5pHPW8xM20mW3D4LpQfAmc2dt0W4qBfmjGjQsOGBWXw==
+X-Received: by 2002:a05:6122:318f:b0:50d:39aa:7881 with SMTP id 71dfb90a1353d-527c2d2a282mr7786125e0c.0.1744617165502;
+        Mon, 14 Apr 2025 00:52:45 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-527abd4cdf8sm2122963e0c.3.2025.04.14.00.52.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Apr 2025 00:52:45 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86d30c329f2so3966469241.0;
+        Mon, 14 Apr 2025 00:52:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUaosL3MBIANXz/N3kys6NkGK1/JA0QlYiE+TSTddkE10zXKhFZ2/50lfDgoa3HNJ8EzJ9/BDN6T+8N@vger.kernel.org, AJvYcCWH/XC6AvSQUJOUQz+9JXc2guZzVgK2OJB8Pe7GUZJI4Yq1arQ+6/X5U6b7KzLTNClniaAMRXxStPMAQLaf@vger.kernel.org
+X-Received: by 2002:a67:bc0b:0:b0:4c2:fccb:a647 with SMTP id
+ ada2fe7eead31-4c9d3eac9b8mr11057852137.5.1744617165139; Mon, 14 Apr 2025
+ 00:52:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250413190238.2cb8ec64@pumpkin>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+References: <cover.1744452787.git.dan.carpenter@linaro.org> <30210ed77b40b4b6629de659cb56b9ec7832c447.1744452787.git.dan.carpenter@linaro.org>
+In-Reply-To: <30210ed77b40b4b6629de659cb56b9ec7832c447.1744452787.git.dan.carpenter@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Apr 2025 09:52:31 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVVo4hPExXtLf9UpFvqxX6RF4RJKgO64JpRVWtwwgqZAg@mail.gmail.com>
+X-Gm-Features: ATxdqUFL5j5FwdvCyWmzMHa5uv-jItExKzidxRmFV3hcvZ6ES-ON3sa-dq5nxLo
+Message-ID: <CAMuHMdVVo4hPExXtLf9UpFvqxX6RF4RJKgO64JpRVWtwwgqZAg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] gpio: aggregator: fix "_sysfs" prefix check in gpio_aggregator_make_group()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Koichiro Den <koichiro.den@canonical.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Apr 13, 2025 at 07:02:38PM +0100, David Laight wrote:
-> On Wed, 09 Apr 2025 13:34:22 +0200
-> Daniel Wagner <wagi@kernel.org> wrote:
-> 
-> > The strlcat with FORTIFY support is triggering a panic because it thinks
-> > the target buffer will overflow although the correct target buffer
-> > size is passed in.
+Hi Dan,
 
-BTW, still trying to figure out what is happening here. It was observed
-on ppc64el but so far creating a crash dump is not working.
+On Sat, 12 Apr 2025 at 12:15, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> This code is intended to reject strings that start with "_sysfs" but the
+> strcmp() limit is wrong so checks the whole string instead of the prefix.
+>
+> Fixes: 83c8e3df642f ("gpio: aggregator: expose aggregator created via legacy sysfs to configfs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-> > Anyway, instead memset with 0 followed by a strlcat, just use memcpy and
-> > ensure that the resulting buffer is NULL terminated.
-> > 
-> > BIOSVersion is only used for the lpfc_printf_log which expects a
-> > properly terminated string.
-> > 
-> > Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> > ---
-> >  drivers/scsi/lpfc/lpfc_sli.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
-> > index 6574f9e744766d49e245bd648667cc3ffc45289e..a335d34070d3c5fa4778bb1cb0eef797c7194f3b 100644
-> > --- a/drivers/scsi/lpfc/lpfc_sli.c
-> > +++ b/drivers/scsi/lpfc/lpfc_sli.c
-> > @@ -6003,9 +6003,9 @@ lpfc_sli4_get_ctl_attr(struct lpfc_hba *phba)
-> >  	phba->sli4_hba.flash_id = bf_get(lpfc_cntl_attr_flash_id, cntl_attr);
-> >  	phba->sli4_hba.asic_rev = bf_get(lpfc_cntl_attr_asic_rev, cntl_attr);
-> >  
-> > -	memset(phba->BIOSVersion, 0, sizeof(phba->BIOSVersion));
-> > -	strlcat(phba->BIOSVersion, (char *)cntl_attr->bios_ver_str,
-> > +	memcpy(phba->BIOSVersion, cntl_attr->bios_ver_str,
-> >  		sizeof(phba->BIOSVersion));
-> > +	phba->BIOSVersion[sizeof(phba->BIOSVersion) - 1] = '\0';
-> 
-> Isn't that just strscpy() ?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-strscpy does more work to ensure everything is correct and has the
-advantage that it wont copy the whole buffer unnecessary. Given how
-small the work is BIOSVersion is 8 bytes and bios_ver_str is 32 bytes
-and there are other places in the driver doing something similar thing,
-I opted for the traditional memcpy with an explicit NULLing. Obviously,
-it also avoids using any of the fortify features :)
+> --- a/drivers/gpio/gpio-aggregator.c
+> +++ b/drivers/gpio/gpio-aggregator.c
+> @@ -1016,7 +1016,7 @@ gpio_aggregator_make_group(struct config_group *group, const char *name)
+>          * for devices create via legacy sysfs interface.
+>          */
+>         if (strncmp(name, AGGREGATOR_LEGACY_PREFIX,
+> -                   sizeof(AGGREGATOR_LEGACY_PREFIX)) == 0)
+> +                   sizeof(AGGREGATOR_LEGACY_PREFIX) - 1) == 0)
+
+Or perhaps just strlen()? The compiler should optimize that to a constant, too.
+
+>                 return ERR_PTR(-EINVAL);
+>
+>         /* arg space is unneeded */
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
