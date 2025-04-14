@@ -1,141 +1,127 @@
-Return-Path: <linux-kernel+bounces-602569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD96A87C7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:55:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B978A87C78
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5395D1889B44
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:55:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A05651889318
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A62269891;
-	Mon, 14 Apr 2025 09:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F52266583;
+	Mon, 14 Apr 2025 09:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=etehtsea.me header.i=@etehtsea.me header.b="b9fJRN/G"
-Received: from pv50p00im-hyfv10011601.me.com (pv50p00im-hyfv10011601.me.com [17.58.6.43])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="meWazmN1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04341267F4E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185C0267386;
+	Mon, 14 Apr 2025 09:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744624442; cv=none; b=CFDvDKrwtxuiXi3yWt5i3A338rNSu/q5pMnHyv3o+oSyCcYFlarV1J7xUzvIn7j100oAjUEHvuKm3tPqmxEHj9EgxkERhHL8oGMMIwUbvu10vIOADlZiS7uvAniHcNtmVw0M2TnH5cJe2DY8S+T3CO4pxhdBOgMnOELOpCqIe/M=
+	t=1744624438; cv=none; b=LGrthAxnjPIHb75s/BcxLP7bVtGyqfGq5gP5c/MifDnDz0mjddL7hql5MPgOnhHrpVl5myJrdyu1ylLJZ8pKilLlOHb0A/QNHL0MJ1/SDTkd5m7Ze7ytWeLVkJN1Yj2ZcE0REu/qIJVHSbYWn/EcTrbTrRtebFUMBtizsl4e2j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744624442; c=relaxed/simple;
-	bh=gT+UhUX0QyqLLLrvyKECQCtxYK/Pau+ebvJTKqmnf0I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=efK6u6W+3EoYkk27IDnKO2aAiAhxMZ1hMCc/c/QaaUd9q8EH4tPRJN7cMw3h8uhDmi3v4GIclhPF9gzInsrQLoU6txB2KwxGJk0b8KuuE7JLG2YSO8qXVcTnlm70aw5h+j9syWTBYR54ekzPl82j7zasSqz8+j13tPk71TPLeps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etehtsea.me; spf=pass smtp.mailfrom=etehtsea.me; dkim=pass (2048-bit key) header.d=etehtsea.me header.i=@etehtsea.me header.b=b9fJRN/G; arc=none smtp.client-ip=17.58.6.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etehtsea.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etehtsea.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=etehtsea.me; s=sig1;
-	bh=Ybx8WjOqXxdOPt7jZILI3TQyxAH2lerFDHqdPBDPGyI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme;
-	b=b9fJRN/G8UE2xxLqmqQXE2YrxmbrCFA27S4njRGjhbbnIKSIpIydlaS8WBnimOrTZ
-	 7tq+yP5FZHB73dZYuqpBlDtkCPbvnp/vds+rcsVitrrdRuif2zTe9woenvAnYwSbcU
-	 LluGsewjMrU0TXxWv0pl0m5URMdYmwQe9CeP8ifgT0uTxdacdZh20pYo6mYHfY4U2N
-	 ycugs9vPnMc7yNtD9eKzliTD3eGMEFgBc7ssd2gE2FRtx6zVgzg6sASlFjWhyeyiS1
-	 i0JXC477vFsl9K6wN/5SUpQAS9URR3GEeHb0huaaYQH5RNUHaZqWm3C+zFRv20SqdS
-	 QHU/SN7VWOB1A==
-Received: from pv50p00im-hyfv10011601.me.com (pv50p00im-hyfv10011601.me.com [17.58.6.43])
-	by pv50p00im-hyfv10011601.me.com (Postfix) with ESMTPS id 30A2DC80118;
-	Mon, 14 Apr 2025 09:53:52 +0000 (UTC)
-Received: from localhost (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-hyfv10011601.me.com (Postfix) with ESMTPSA id 27735C8009F;
-	Mon, 14 Apr 2025 09:53:51 +0000 (UTC)
-From: Konstantin Shabanov <mail@etehtsea.me>
-To: Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Konstantin Shabanov <mail@etehtsea.me>,
-	Daniel Stone <daniel@fooishbar.org>,
-	Dan Callaghan <djc@djc.id.au>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] (drm/rockchip) Reject AFBC for resolutions >2560x1600
-Date: Mon, 14 Apr 2025 09:53:31 +0000
-Message-ID: <20250414095332.9674-1-mail@etehtsea.me>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250402125320.21836-1-mail@etehtsea.me>
-References: <20250402125320.21836-1-mail@etehtsea.me>
+	s=arc-20240116; t=1744624438; c=relaxed/simple;
+	bh=6dH+b9MaL6GsV1HwwP7gMxj2ujMAyYYOTi7g4Qz1eBE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=a0LYhXpjG0hnjoLtRhAm12P0vYTMu6phjpoOSCAVF1Q/k9rHMNsyQLU/0Hb0MlHLr2yiCk2EnHahx3P1XAC9dQH/FV88ngSuPB0bNz7cLSdD6JaYk/E+vtNeXhUgpccc8TMSB4i+4vyWOljriqMV1QFtdp6QbrILbJGtTePaR/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=meWazmN1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 755B8C4CEE2;
+	Mon, 14 Apr 2025 09:53:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744624437;
+	bh=6dH+b9MaL6GsV1HwwP7gMxj2ujMAyYYOTi7g4Qz1eBE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=meWazmN1Swt2j23Qjj6Fs6l9Uw7Yq3VFoPwuR05kiFG77PDcljvQW/sPr3vbPE7LC
+	 j3STWi7dU5DFauTvmBEXVkZDhn70i+c2iMkGhqs0F8eB+kC9S0cPJtFRthiv8EWj6S
+	 2tMXZB5uy+MZlGGiRSuyt62AU8IE72zre/Ur07cYfSIAZA/OXRYfhyHY4k+tDSftIy
+	 uad14pTq/5gTe/TWxL35zO3VtivsMiTejD0ieu3I2a+4kJ1+5vH1GQat4k05b5frfb
+	 mRHdsWeskWyOzoCit0bzbLk67rKAxxT9LugXw3g2+ylIOTjGoJy30C3sNFGPhSSVnq
+	 ippr6bI2IIXvA==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 0/3] coredump: hand a pidfd to the usermode coredump helper
+Date: Mon, 14 Apr 2025 11:53:35 +0200
+Message-Id: <20250414-work-coredump-v1-0-6caebc807ff4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 4idf3hj8_sYT2UrNeBvaZFeG976A8GMg
-X-Proofpoint-ORIG-GUID: 4idf3hj8_sYT2UrNeBvaZFeG976A8GMg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-14_03,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 clxscore=1030 bulkscore=0
- mlxscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2504140071
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB/b/GcC/x3MQQ6CMBBA0auQWTukAwUSr2JcDGUqjaElU0USw
+ t2tLt/i/wOyaJAM1+oAlS3kkGIBXSpwM8eHYJiKoTFNZyy1+En6RJdUpveyovGD50F6S9ZBaVY
+ VH/b/73YvHjkLjsrRzb/LwvklWm99TR2qIzjPL1poCHiCAAAA
+X-Change-ID: 20250413-work-coredump-0f7fa7e6414c
+To: linux-fsdevel@vger.kernel.org
+Cc: Oleg Nesterov <oleg@redhat.com>, 
+ Luca Boccassi <luca.boccassi@gmail.com>, 
+ Lennart Poettering <lennart@poettering.net>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, Mike Yuan <me@yhndnzj.com>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2517; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=6dH+b9MaL6GsV1HwwP7gMxj2ujMAyYYOTi7g4Qz1eBE=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/uW1UsG7jgqD/bCf3BWps/dUf6Dz9geU38wIDs2v1n
+ AqOpxkvd5SwMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyk6i3DN6XLTFZvm00kgk8Z
+ vlyxJ4qX7+DE2BfZAi/E3kQV8LzmZvinLHHpzCXJbYoqR0TYuPlvFIW5d8++F3ne8YPvrPgLQeJ
+ cAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-As it isn't supported by hardware. At least, RK3399 doesn't support
-it. From the datasheet[1]
-("1.2.10 Video IN/OUT", "Display Interface", p. 17):
+Give userspace a way to instruct the kernel to install a pidfd for the
+crashing process into the process started as a usermode helper. There's
+still tricky race-windows that cannot be easily or sometimes not closed
+at all by userspace. There's various ways like looking at the start time
+of a process to make sure that the usermode helper process is started
+after the crashing process but it's all very very brittle and fraught
+with peril.
 
-  Support AFBC function co-operation with GPU
-    * support 2560x1600 UI
+The crashed-but-not-reaped process can be killed by userspace before
+coredump processing programs like systemd-coredump have had time to
+manually open a PIDFD from the PID the kernel provides them, which means
+they can be tricked into reading from an arbitrary process, and they run
+with full privileges as they are usermode helper processes.
 
-Manually tested on RockPro64 (rk3399):
-- ARM_AFBC modifier is used for 1920x1080
-- DRM_FORMAT_MOD_LINEAR modifier us used for 3840x2160
-- No noise on the screen when sway is running in 4k
-- Dynamic resolution switching works correctly in sway
+Even if that specific race-window wouldn't exist it's still the safest
+and cleanest way to let the kernel provide the pidfd directly instead of
+requiring userspace to do it manually. In parallel with this commit we
+already have systemd adding support for this in [1].
 
-Signed-off-by: Konstantin Shabanov <mail@etehtsea.me>
-Cc: Daniel Stone <daniel@fooishbar.org>
-Reported-by: Dan Callaghan <djc@djc.id.au>
-Closes: https://gitlab.freedesktop.org/mesa/mesa/-/issues/7968
+We create a pidfs file for the coredumping process when we process the
+corename pattern. When the usermode helper process is forked we then
+install the pidfs file as file descriptor three into the usermode
+helpers file descriptor table so it's available to the exec'd program.
 
-[1]: https://opensource.rock-chips.com/images/d/d7/Rockchip_RK3399_Datasheet_V2.1-20200323.pdf
+Since usermode helpers are either children of the system_unbound_wq
+workqueue or kthreadd we know that the file descriptor table is empty
+and can thus always use three as the file descriptor number.
+
+Note, that we'll install a pidfd for the thread-group leader even if a
+subthread is calling do_coredump(). We know that task linkage hasn't
+been removed yet and even if this @current isn't the actual thread-group
+leader we know that the thread-group leader cannot be reaped until
+@current has exited.
+
+[1]: https://github.com/systemd/systemd/pull/37125
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Christian Brauner (3):
+      pidfs: move O_RDWR into pidfs_alloc_file()
+      coredump: fix error handling for replace_fd()
+      coredump: hand a pidfd to the usermode coredump helper
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-index dcc1f07632c3..1379bc3cd937 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-@@ -18,6 +18,8 @@
- #include "rockchip_drm_fb.h"
- #include "rockchip_drm_gem.h"
+ fs/coredump.c            | 92 +++++++++++++++++++++++++++++++++++++++++++++---
+ fs/pidfs.c               |  1 +
+ include/linux/coredump.h |  1 +
+ kernel/fork.c            |  2 +-
+ 4 files changed, 90 insertions(+), 6 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250413-work-coredump-0f7fa7e6414c
 
-+#define ROCKCHIP_AFBC_MAX_WIDTH		2560
-+
- static const struct drm_framebuffer_funcs rockchip_drm_fb_funcs = {
- 	.destroy       = drm_gem_fb_destroy,
- 	.create_handle = drm_gem_fb_create_handle,
-@@ -52,6 +54,13 @@ rockchip_fb_create(struct drm_device *dev, struct drm_file *file,
- 	}
-
- 	if (drm_is_afbc(mode_cmd->modifier[0])) {
-+		if (mode_cmd->width > ROCKCHIP_AFBC_MAX_WIDTH) {
-+			DRM_DEBUG_KMS("AFBC is not supported for the width %d (max %d)\n",
-+				      mode_cmd->width,
-+				      ROCKCHIP_AFBC_MAX_WIDTH);
-+			return ERR_PTR(-EINVAL);
-+		};
-+
- 		int ret, i;
-
- 		ret = drm_gem_fb_afbc_init(dev, mode_cmd, afbc_fb);
-
-base-commit: e7bb7d44c3b97aea1f0e354c6499900154ac67f2
---
-2.48.1
 
