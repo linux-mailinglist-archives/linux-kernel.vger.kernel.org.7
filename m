@@ -1,275 +1,146 @@
-Return-Path: <linux-kernel+bounces-602581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F45BA87C9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:59:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E50AA87CA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B673A7872
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:58:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1AC63AFAA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0437626563A;
-	Mon, 14 Apr 2025 09:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FB2267F7D;
+	Mon, 14 Apr 2025 09:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JaaHOeOT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JUbKnkWQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836D41AF0C7;
-	Mon, 14 Apr 2025 09:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280F8267AE5;
+	Mon, 14 Apr 2025 09:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744624748; cv=none; b=usWEbtHKbJ2qyns+nz7pUVm5wxG1VegsIF6CAkScKQk6dmEpZOlC39X6PbUwUbQsWoaVnBqBplP/qZzBu6qO7ySl9oniX010c8lXbqxYQYLIrHMz6xZ92OACSCxf+Qms2rwtlU4BstQ8UrMDVf7MOYCA5HW4BWFQHDudLwQhN5o=
+	t=1744624761; cv=none; b=kDSB9l0IM1dbPUADDO9o1q1gUrPGE9hiCOgY9CLNX1TXCIyLHQvYR6vFH2Z74joqfwccOyMcHYQVjVtEcM9Sx1KfiGwRIGsgb0WzgwFoad2RwYSuzG7LuHw+Pq9IafpHuz6IPhe9y/2W5l0Y3J9hYHJxacF45VTSFn8IDMAGYdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744624748; c=relaxed/simple;
-	bh=iiGlU+g2oVx240PkE3U3Cu9+raOq3Nm4P3VB8HCHE/Y=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=k8qvZCcOza4oVZbm8AZJnnIFgZvyNt4JTNYebgkls0ogJigOxfY3z6k9kFO/NDpGxBZpsZX++Mq8CwTGbOCqQeSmGa/gs1XMj8ihDosYdUnMDkTUVV5NEWEhFkqD55yXafBYmqlGMlLfKdvHGKUjfcP2tt4iYrc9/ybNWg+lcLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JaaHOeOT; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1744624761; c=relaxed/simple;
+	bh=x2MDu58h9JoknfphytpLlAqXi9FcUSFB38RkSqXHjWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SpTqEq38ZLUI4JMVOnaOsgYiCl+6gdTfGJuV+oe2c1TURSeelsWg3bW4FuxiEi1mUvBzUQEagh2M4IZAOgBTKroS/ZerqiouBN/1njEamC24KteZq9RJZywL6SoQlckWl6sBm3irZifWx/5JopYK3tHYoTt4YUC/uIRshn6PI4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JUbKnkWQ; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744624746; x=1776160746;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=iiGlU+g2oVx240PkE3U3Cu9+raOq3Nm4P3VB8HCHE/Y=;
-  b=JaaHOeOTNVETlLUzJQ5lKzREIIwAN8HLWnOI5HfuoXfHZX/98c/V6D23
-   coedHwadO5Af9Pdlz3oOjECOgALJzwLVCvoZ8uFVJ4iqB3JHHuAjPbXqx
-   ChzRVKjZzfw/lwQ8Ly2nx2BJaLhI3N82LPPnx6Q2/6Zvrztcj9Xcj0HqT
-   ick4Fo+jRcus+1UW+3cGKsVz0C9vFAN4zg5S1pkNvOA3sbEqqh85MzArF
-   Dj0hS/lb4lCqRWcQnsPvVm294LbY52IUMt+BNGTyE9CnMeOeMGvBVUI/4
-   k4HkaxYovgvXMLFz1H/CVRqalOuDuV12lVGTiAFBkyS1LzyNcoxyRiPlo
-   w==;
-X-CSE-ConnectionGUID: 5xVpGeeeQLy8x8pmynsX1g==
-X-CSE-MsgGUID: bfIzPFmrSVW9OIfyH31lKg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="45972025"
+  t=1744624759; x=1776160759;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=x2MDu58h9JoknfphytpLlAqXi9FcUSFB38RkSqXHjWA=;
+  b=JUbKnkWQMOnTxZGVwiEG4G0nj0FgDo0q6BvkI9vlNiLVD/Iz43SLsZDR
+   xYy1d6A09gY4Khl6AlMO14Q9o/I9RxRLKULzvm5U7jtMvPplWJ0RyLDc6
+   P/Sz7sTIys9H6AaVrtSNg6ye6YkIQlBSSPVBhAhV6/dOy2Pp6yN8kPjPq
+   RtahNApdxesKQhHPm9iFZVP76iB0hhMzbTNhsoaPQ7MsS9agx/qM5Cb9H
+   kWfGOyJUi4Fnb7mUPV85qst3Wk48MLKxbw9sTkFICuSYIYnXMeBRJ/XFe
+   sSK+F725lbkOTCpgfj/WYBoirQPJxrUQwlnpq5esn/tE2wuNxJk0EJFpD
+   Q==;
+X-CSE-ConnectionGUID: 9qGKcDlRTiikupEzx2hfvA==
+X-CSE-MsgGUID: 0tHzrsySSh2rSv82kBPwIQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11402"; a="71472237"
 X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="45972025"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 02:59:06 -0700
-X-CSE-ConnectionGUID: fWuUZwiLRKq+yXMJ4TUVlw==
-X-CSE-MsgGUID: oBdR6hmjR7eWiVR0/iyY/g==
+   d="scan'208";a="71472237"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 02:59:18 -0700
+X-CSE-ConnectionGUID: +nNSrTNoRui/IPBJmwCdgQ==
+X-CSE-MsgGUID: tg7BsxTMTjKQqkUBWcyipQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,212,1739865600"; 
-   d="scan'208";a="134615731"
-Received: from smoticic-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.8])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 02:59:04 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 14 Apr 2025 12:59:00 +0300 (EEST)
-To: Armin Wolf <W_Armin@gmx.de>
-cc: Hans de Goede <hdegoede@redhat.com>, lkml@antheas.dev, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86: msi-wmi-platform: Workaround a ACPI firmware
- bug
-In-Reply-To: <05f7b5b4-c692-4647-96d3-4935280e4097@gmx.de>
-Message-ID: <af2ee560-88f1-893a-1e21-47f67c5a1773@linux.intel.com>
-References: <20250410212853.334891-1-W_Armin@gmx.de> <60a6574f-d6cd-671c-89d8-0307b440937e@linux.intel.com> <05f7b5b4-c692-4647-96d3-4935280e4097@gmx.de>
+   d="scan'208";a="129756657"
+Received: from unknown (HELO [10.238.224.239]) ([10.238.224.239])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2025 02:59:16 -0700
+Message-ID: <f10f919e-7bdc-4a01-b131-41bdc9eb6573@intel.com>
+Date: Mon, 14 Apr 2025 17:59:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1502163799-1744624629=:7362"
-Content-ID: <faa9d702-9e3c-459d-7cc0-94e1c130853e@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] platform/x86: int3472: add hpd pin support
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ "Yan, Dongcheng" <dongcheng.yan@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
+ u.kleine-koenig@baylibre.com, ricardo.ribalda@gmail.com,
+ bingbu.cao@linux.intel.com, stable@vger.kernel.org, hao.yao@intel.com
+References: <20250411082357.392713-1-dongcheng.yan@intel.com>
+ <cfc709a8-85fc-4e44-9dcf-ae3ef7ee0738@redhat.com>
+ <c8ae2d43-157c-408a-af89-7248b30d52d1@linux.intel.com>
+ <Z_zDGYD1QXZYWwI9@smile.fi.intel.com>
+ <d9cab351-4850-42c7-8fee-a9340d157ed9@linux.intel.com>
+ <Z_zMMtUdJYpHuny7@smile.fi.intel.com>
+Content-Language: en-US
+From: "Yan, Dongcheng" <dongcheng.yan@intel.com>
+In-Reply-To: <Z_zMMtUdJYpHuny7@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Andy and Hans,
 
---8323328-1502163799-1744624629=:7362
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <4c49b911-faf2-b57c-050c-4fb075e41e6f@linux.intel.com>
+I found the description of lt6911uxe's GPIO in the spec:
+GPIO5 is used as the interrupt signal (50ms low level) to inform SOC
+start reading registers from 6911UXE;
 
-On Sat, 12 Apr 2025, Armin Wolf wrote:
+So setting the polarity as GPIO_ACTIVE_LOW is acceptable?
+We used RISING and FALLING in irq(not GPIO) to ensure that HDMI events
+will not be lost to the greatest extent possible.
 
-> Am 11.04.25 um 15:53 schrieb Ilpo J=E4rvinen:
->=20
-> > On Thu, 10 Apr 2025, Armin Wolf wrote:
-> >=20
-> > > The ACPI byte code inside the ACPI control method responsible for
-> > > handling the WMI method calls uses a global buffer for constructing
-> > > the return value, yet the ACPI control method itself is not marked
-> > > as "Serialized".
-> > > This means that calling WMI methods on this WMI device is not
-> > > thread-safe, as concurrent WMI method calls will corrupt the global
-> > > buffer.
-> > Please avoid non-full lines in middle of a paragraph. Either make thing=
-s
-> > truly own paragraphs or reflow the text in the paragraph.
-> >=20
-> > > Fix this by serializing the WMI method calls using a mutex.
-> > >=20
-> > > Fixes: 9c0beb6b29e7 ("platform/x86: wmi: Add MSI WMI Platform driver"=
-)
-> > > Tested-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > > Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> > > ---
-> > >   .../wmi/devices/msi-wmi-platform.rst          |  4 +
-> > >   drivers/platform/x86/msi-wmi-platform.c       | 99 ++++++++++++----=
----
-> > >   2 files changed, 67 insertions(+), 36 deletions(-)
-> > >=20
-> > > diff --git a/Documentation/wmi/devices/msi-wmi-platform.rst
-> > > b/Documentation/wmi/devices/msi-wmi-platform.rst
-> > > index 31a136942892..73197b31926a 100644
-> > > --- a/Documentation/wmi/devices/msi-wmi-platform.rst
-> > > +++ b/Documentation/wmi/devices/msi-wmi-platform.rst
-> > > @@ -138,6 +138,10 @@ input data, the meaning of which depends on the
-> > > subfeature being accessed.
-> > >   The output buffer contains a single byte which signals success or
-> > > failure (``0x00`` on failure)
-> > >   and 31 bytes of output data, the meaning if which depends on the
-> > > subfeature being accessed.
-> > >=20
-> > > +.. note::
-> > > +   The ACPI control method responsible for handling the WMI method c=
-alls
-> > > is not thread-safe.
-> > > +   This is a firmware bug that needs to be handled inside the driver
-> > > itself.
-> > > +
-> > >   WMI method Get_EC()
-> > >   -------------------
-> > >=20
-> > > diff --git a/drivers/platform/x86/msi-wmi-platform.c
-> > > b/drivers/platform/x86/msi-wmi-platform.c
-> > > index 9b5c7f8c79b0..dc5e9878cb68 100644
-> > > --- a/drivers/platform/x86/msi-wmi-platform.c
-> > > +++ b/drivers/platform/x86/msi-wmi-platform.c
-> > > @@ -10,6 +10,7 @@
-> > >   #include <linux/acpi.h>
-> > >   #include <linux/bits.h>
-> > >   #include <linux/bitfield.h>
-> > > +#include <linux/cleanup.h>
-> > >   #include <linux/debugfs.h>
-> > >   #include <linux/device.h>
-> > >   #include <linux/device/driver.h>
-> > > @@ -17,6 +18,7 @@
-> > >   #include <linux/hwmon.h>
-> > >   #include <linux/kernel.h>
-> > >   #include <linux/module.h>
-> > > +#include <linux/mutex.h>
-> > >   #include <linux/printk.h>
-> > >   #include <linux/rwsem.h>
-> > >   #include <linux/types.h>
-> > > @@ -76,8 +78,13 @@ enum msi_wmi_platform_method {
-> > >   =09MSI_PLATFORM_GET_WMI=09=09=3D 0x1d,
-> > >   };
-> > >=20
-> > > -struct msi_wmi_platform_debugfs_data {
-> > > +struct msi_wmi_platform_data {
-> > >   =09struct wmi_device *wdev;
-> > > +=09struct mutex wmi_lock;=09/* Necessary when calling WMI methods */
-> > > +};
-> > > +
-> > > +struct msi_wmi_platform_debugfs_data {
-> > > +=09struct msi_wmi_platform_data *data;
-> > >   =09enum msi_wmi_platform_method method;
-> > >   =09struct rw_semaphore buffer_lock;=09/* Protects debugfs buffer */
-> > >   =09size_t length;
-> > > @@ -132,8 +139,9 @@ static int msi_wmi_platform_parse_buffer(union
-> > > acpi_object *obj, u8 *output, siz
-> > >   =09return 0;
-> > >   }
-> > >=20
-> > > -static int msi_wmi_platform_query(struct wmi_device *wdev, enum
-> > > msi_wmi_platform_method method,
-> > > -=09=09=09=09  u8 *input, size_t input_length, u8 *output,
-> > > size_t output_length)
-> > > +static int msi_wmi_platform_query(struct msi_wmi_platform_data *data=
-,
-> > > +=09=09=09=09  enum msi_wmi_platform_method method, u8
-> > > *input,
-> > > +=09=09=09=09  size_t input_length, u8 *output, size_t
-> > > output_length)
-> > >   {
-> > >   =09struct acpi_buffer out =3D { ACPI_ALLOCATE_BUFFER, NULL };
-> > >   =09struct acpi_buffer in =3D {
-> > > @@ -147,9 +155,15 @@ static int msi_wmi_platform_query(struct wmi_dev=
-ice
-> > > *wdev, enum msi_wmi_platform
-> > >   =09if (!input_length || !output_length)
-> > >   =09=09return -EINVAL;
-> > >=20
-> > > -=09status =3D wmidev_evaluate_method(wdev, 0x0, method, &in, &out);
-> > > -=09if (ACPI_FAILURE(status))
-> > > -=09=09return -EIO;
-> > > +=09/*
-> > > +=09 * The ACPI control method responsible for handling the WMI metho=
-d
-> > > calls
-> > > +=09 * is not thread-safe. Because of this we have to do the locking
-> > > ourself.
-> > > +=09 */
-> > > +=09scoped_guard(mutex, &data->wmi_lock) {
-> > > +=09=09status =3D wmidev_evaluate_method(data->wdev, 0x0, method, &in=
-,
-> > > &out);
-> > > +=09=09if (ACPI_FAILURE(status))
-> > > +=09=09=09return -EIO;
-> > > +=09}
-> > >=20
-> > >   =09obj =3D out.pointer;
-> > >   =09if (!obj)
-> > > @@ -170,22 +184,22 @@ static umode_t msi_wmi_platform_is_visible(cons=
-t
-> > > void *drvdata, enum hwmon_senso
-> > >   static int msi_wmi_platform_read(struct device *dev, enum
-> > > hwmon_sensor_types type, u32 attr,
-> > >   =09=09=09=09 int channel, long *val)
-> > >   {
-> > > -=09struct wmi_device *wdev =3D dev_get_drvdata(dev);
-> > > +=09struct msi_wmi_platform_data *data =3D dev_get_drvdata(dev);
-> > >   =09u8 input[32] =3D { 0 };
-> > >   =09u8 output[32];
-> > > -=09u16 data;
-> > > +=09u16 value;
-> > >   =09int ret;
-> > >=20
-> > > -=09ret =3D msi_wmi_platform_query(wdev, MSI_PLATFORM_GET_FAN, input,
-> > > sizeof(input), output,
-> > > +=09ret =3D msi_wmi_platform_query(data, MSI_PLATFORM_GET_FAN, input,
-> > > sizeof(input), output,
-> > >   =09=09=09=09     sizeof(output));
-> > >   =09if (ret < 0)
-> > >   =09=09return ret;
-> > >=20
-> > > -=09data =3D get_unaligned_be16(&output[channel * 2 + 1]);
-> > > -=09if (!data)
-> > > +=09value =3D get_unaligned_be16(&output[channel * 2 + 1]);
-> > > +=09if (!value)
-> > >   =09=09*val =3D 0;
-> > >   =09else
-> > > -=09=09*val =3D 480000 / data;
-> > > +=09=09*val =3D 480000 / value;
-> > Please put this variable rename into own patch before the actual fix.
->=20
-> Hi,
->=20
-> the variable rename is necessary because there would be a naming conflict=
- with
-> the struct msi_wmi_platform_data *data.
-> Since the rename is rather small i would prefer keeping this as a single =
-patch
-> to make it easier for the stable
-> team to backport.
+Thanks,
+Dongcheng
 
-Hi,
+On 4/14/2025 4:49 PM, Andy Shevchenko wrote:
+> On Mon, Apr 14, 2025 at 04:40:26PM +0800, Yan, Dongcheng wrote:
+>> On 4/14/2025 4:11 PM, Andy Shevchenko wrote:
+>>> On Mon, Apr 14, 2025 at 03:52:50PM +0800, Yan, Dongcheng wrote:
+>>>> On 4/11/2025 4:33 PM, Hans de Goede wrote:
+>>>>> On 11-Apr-25 10:23 AM, Dongcheng Yan wrote:
+> 
+> ...
+> 
+>>>>>> +	case INT3472_GPIO_TYPE_HOTPLUG_DETECT:
+>>>>>> +		*con_id = "hpd";
+>>>>>> +		*gpio_flags = GPIO_LOOKUP_FLAGS_DEFAULT;
+>>>>>
+>>>>> This looks wrong, we really need to clearly provide a polarity
+>>>>> here since the ACPI GPIO resources do not provide one.
+>>>>>
+>>>> I tested gpio_flags=GPIO_LOOKUP_FLAGS_DEFAULT/HIGH/LOW, the lt6911uxe
+>>>> driver can pass the test and work normally.
+>>>
+>>> I doubt you tested that correctly. It's impossible to have level triggered
+>>> event to work with either polarity. It might be also a bug in the code lurking
+>>> somewhere, but it would be unlikely (taking into account amount of systems
+>>> relying on this).
+>>>
+>>> Is it edge triggered event?
+>>>
+>>
+>> It is an edge triggered event in lt6911uxe. In order to better adapt to
+>> other uses, "hpd" is meaningful to specify a polarity here.
+>>
+>> In lt6911uxe, GPIO "hpd" is used as irq, and set irq-flag to
+>> IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_ONESHOT. So no matter
+>> rising or falling, driver can work normally.
+>> "
+>> ret = request_threaded_irq(gpiod_to_irq(lt6911uxe->irq_gpio),	NULL,
+>> lt6911uxe_threaded_irq_fn, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING |
+>> IRQF_ONESHOT, NULL, lt6911uxe);
+>> "
+> 
+> So, the driver must not override the firmware, if there is no bugs.
+> So, why do you even use those flags there? It seems like a bad code
+> in the driver that doesn't look correct to me.
+> 
 
-I'm not buying it's "easier" when due to the rename, the patch ends up=20
-having one long context like that. Stable team is perfectly able to=20
-backport prerequisite patches.
-
-Please just split the rename into own patch, it will make the fix related=
-=20
-changes more obvious here, and the fix itself is quite long even without=20
-the rename.
-
---=20
- i.
---8323328-1502163799-1744624629=:7362--
 
