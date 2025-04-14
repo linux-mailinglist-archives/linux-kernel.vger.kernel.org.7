@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-602394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBC7A87A54
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:28:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495EEA87A5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC1B03A437E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:27:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCBBD7A4A71
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6142266B4D;
-	Mon, 14 Apr 2025 08:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1A425A34F;
+	Mon, 14 Apr 2025 08:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TIrUb6Ka";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b81luPP9"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3r8PQgr6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JGfa2HYB"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A68C25E45C;
-	Mon, 14 Apr 2025 08:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC191258CE9;
+	Mon, 14 Apr 2025 08:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744619181; cv=none; b=ns4l/oqArD2oXvmAsoG81/HW55LioW5CZxlQgpDgesRV5n4pI7J67D9Sps6bN3cAH1oFfYO16Q0qOgmDGKLnQHc7Lc25L+UsAveWAI3Iajo2VVOuLhTabsVCUgmbwSX7c/bIo1JhTgsPcDrc82+tUhrk8UQJQJ6qo0YNzh+fWXU=
+	t=1744619197; cv=none; b=neGDrvC7oceGXJNLR7yVzcUMvJmyGZwMBZovvj03ZUziM1SZqmPoY/ksxiC7dshnG5FujJrta6Pf2Ck+4zuGTWMGIxXIYQJocIud5aqjBR7eqmc9qENs37ePLZHw5/k0UXxWPecA5NgOzqlByWP0kY5bPX8U9lpJ0CnwfebYvmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744619181; c=relaxed/simple;
-	bh=WzJ/HmoEyIxMvJeEOlZ2czFzOQnDOjD3iHfVNkyBNQ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=L0FHdT1sWeqkJgP105HkpBro/KduSth2eFueiYYQt2ReieJ+DuRXjmCJpBJ6hwz+RgzV9B8w0a9OtWogMyi4WjYgd8NNN6LucjObwRwk9fWbLW4Mb6pOuXKGiSGW9NwQCrqIDTTJSVZ+dqaVI+Yba8gsucTMrolz7CIe1jo9qpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TIrUb6Ka; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b81luPP9; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1744619197; c=relaxed/simple;
+	bh=VxE5F99R+SrLxML4apwdbCFuWE1oJfmeWXeD/51Sql4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=G4xBKO4YOtRIbBqUy0A6NmergXP0sBRDghzKqvhhkC+SPHZUZtk9RrDSgBr5OTlNox0k+OE7aEvo6/lWn+Txnbn7syPQUBgMzo25jzFQrxEDlouAYO38SmaT6HxQuL3GUVN/klks2xo1GJraQztXyFrY9O/LvSnbgVOT4YmE9UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3r8PQgr6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JGfa2HYB; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744619177;
+	s=2020; t=1744619194;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+OyON1Yf1rr+8CzcSa4hkkYGRtID+dWFkGoiAoSKTwA=;
-	b=TIrUb6KaLTcpHArLnyDrZ1/XzY6utlfmyG99ojUWp1bMSzIHF1Vgi08/TVQvWG4iM+opbL
-	cWWo8YuQ2dBWBoxAayYDMVZlaw6Ioc86xZFPw3MD/rmV/AU9pxMCsjA3+1uR81ohZq6+Qa
-	kPP1Z+VG90nbHrkaymmkH78gr4q3g3rRDaoSHgaX1aD1/LbBlPUf1ZuHGcTQI0vfjfPb6j
-	ospQd6F5IkYTdO/VqmDmF2+V6Lnjo4B2Ga4yfmBs3b/EfvEMEgoz8I1fzPr6b5FZ1Lt53v
-	XI3GSuhhqbNqKW3qpT3asL9boRf5663GPlGNpqyxXpj1DUZRhDg1b+shCLaklQ==
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vR/KB4thQQifwibuCre+EV1u9if5PAU4bZEmpqmHzg4=;
+	b=3r8PQgr6IvuDHruxYoj/eCK3F7GeZ2GqEUIFZkCqJXgWr4IPer9uIYukdIZ83ZF53y4qIw
+	D/NKmcEqXthSnZ2dr2fFvYE0qnvgAVKIJPgbfx4wBSIJcBS6FHjZ3aHbG6qqkaGkOfLnui
+	UmjeoAN6H+/FuMur6iO4z1/HZqzs4oXHqSDXz+ybXFM3C55ScoKrsokiOUJbJt8gDKM0vc
+	SEeiMSxEpr9MmQzL60mZsqq9b4+hpmXgaSr2F258hQZvA5kUr0zZl92L0GWTXsFn5TvmFA
+	IdybxH6zlfw0wMhO9THN28ucAtyLOroGVav/ZNoj98XYwDFj3ohCTmuDXqrUrA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744619177;
+	s=2020e; t=1744619194;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+OyON1Yf1rr+8CzcSa4hkkYGRtID+dWFkGoiAoSKTwA=;
-	b=b81luPP9nxBvVUYPxsolvoc8ilyKeEV88+u2tvl6LB2jk2uYlffGU4Xys4Y38dexezpnwV
-	22324LRkDL8QYaBg==
-Date: Mon, 14 Apr 2025 10:26:08 +0200
-Subject: [PATCH net-next 7/7] net/mlx5: Don't use %pK through tracepoints
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vR/KB4thQQifwibuCre+EV1u9if5PAU4bZEmpqmHzg4=;
+	b=JGfa2HYB1QTbowHoiyLz1iNe+yZrbRbwObAlv8Hvh7uH2Jpe/9podSftYM4M64NuzAqttz
+	ThoKiSPXDGE1tDAg==
+Subject: [PATCH v2 0/2] kunit: qemu_configs: Add MIPS configurations
+Date: Mon, 14 Apr 2025 10:26:20 +0200
+Message-Id: <20250414-kunit-mips-v2-0-4cf01e1a29e6@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,67 +61,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250414-restricted-pointers-net-v1-7-12af0ce46cdd@linutronix.de>
-References: <20250414-restricted-pointers-net-v1-0-12af0ce46cdd@linutronix.de>
-In-Reply-To: <20250414-restricted-pointers-net-v1-0-12af0ce46cdd@linutronix.de>
-To: Jeff Johnson <jjohnson@kernel.org>, 
- Loic Poulain <loic.poulain@linaro.org>, 
- Brian Norris <briannorris@chromium.org>, 
- Francesco Dolcini <francesco@dolcini.it>, 
- Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
- Tariq Toukan <tariqt@nvidia.com>
-Cc: ath10k@lists.infradead.org, linux-kernel@vger.kernel.org, 
- ath11k@lists.infradead.org, ath12k@lists.infradead.org, 
- wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, 
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
- linux-rdma@vger.kernel.org, 
+X-B4-Tracking: v=1; b=H4sIAKzG/GcC/03MQQ6CMBCF4auQWTum0xQIrryHYaF0kIlaSFsIh
+ vTuFlYu/5e8b4PAXjjApdjA8yJBRpdDnwrohrt7MorNDVppQ4oMvmYnET8yBWTTM3W6KtnWkA+
+ T517WA7u1uQcJcfTfw15oX3emVJr0P7MQKuSHabrG1lVF5fUtbo5+dLKeLUObUvoBfJhMkqgAA
+ AA=
+X-Change-ID: 20241014-kunit-mips-e4fe1c265ed7
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744619172; l=1640;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744619194; l=1419;
  i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=WzJ/HmoEyIxMvJeEOlZ2czFzOQnDOjD3iHfVNkyBNQ4=;
- b=Zuho2QqTEJS0pVHFp2MmyTiIbCDfOTyQV+4ybcxy4I85pU30LrHxUGib19TU2f1V/3c3/DFBC
- e7ly/4/qAorA4GYLUQdHhuDpswxVWNrCo2fL5St4/wIo6zWsIBOTgfx
+ bh=VxE5F99R+SrLxML4apwdbCFuWE1oJfmeWXeD/51Sql4=;
+ b=DvySt0XsPNdR+vDCNqtOutMdFf3WpogWkT9QL2BkjImhmguTlIm4eGdph7Ncvo+fcxJdjVUz0
+ 1hTiKZK3627DUMUVoaDwq8BCnOOe7ISAu5GnGpN/zGPNtPR7HnkPXzw
 X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
  pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through tracepoints. They can still unintentionally leak raw pointers or
-acquire sleeping looks in atomic contexts.
+Add basic support to run various MIPS variants via kunit_tool using the
+virtualized malta platform.
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
-There are still a few users of %pK left, but these use it through seq_file,
-for which its usage is safe.
+Some of the cs_dsp unittests are broken. They are being disabled by default in
+the series "Fix up building KUnit tests for Cirrus Logic modules" [0].
+
+[0] https://lore.kernel.org/lkml/20250411123608.1676462-1-rf@opensource.cirrus.com/
 
 Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- Fix usercopy kunit test by handling ABI-less tasks in stack_top()
+- Drop change to mm initialization.
+  The broken test is not built by default anymore.
+- Link to v1: https://lore.kernel.org/r/20250212-kunit-mips-v1-0-eb49c9d76615@linutronix.de
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h b/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h
-index 0537de86f9817dc80bd897688c539135b1ad37ac..9b0f44253f332aa602a84a1f6d7532a500dd4f55 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/sf/dev/diag/dev_tracepoint.h
-@@ -28,7 +28,7 @@ DECLARE_EVENT_CLASS(mlx5_sf_dev_template,
- 				   __entry->hw_fn_id = sfdev->fn_id;
- 				   __entry->sfnum = sfdev->sfnum;
- 		    ),
--		    TP_printk("(%s) sfdev=%pK aux_id=%d hw_id=0x%x sfnum=%u\n",
-+		    TP_printk("(%s) sfdev=%p aux_id=%d hw_id=0x%x sfnum=%u\n",
- 			      __get_str(devname), __entry->sfdev,
- 			      __entry->aux_id, __entry->hw_fn_id,
- 			      __entry->sfnum)
+---
+Thomas Weißschuh (2):
+      MIPS: Don't crash in stack_top() for tasks without ABI or vDSO
+      kunit: qemu_configs: Add MIPS configurations
 
+ arch/mips/kernel/process.c                   |  8 +++++---
+ tools/testing/kunit/qemu_configs/mips.py     | 18 ++++++++++++++++++
+ tools/testing/kunit/qemu_configs/mips64.py   | 19 +++++++++++++++++++
+ tools/testing/kunit/qemu_configs/mips64el.py | 19 +++++++++++++++++++
+ tools/testing/kunit/qemu_configs/mipsel.py   | 18 ++++++++++++++++++
+ 5 files changed, 79 insertions(+), 3 deletions(-)
+---
+base-commit: 0466dc03fa779373afb807ce7496c404d98ace4b
+change-id: 20241014-kunit-mips-e4fe1c265ed7
+
+Best regards,
 -- 
-2.49.0
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
