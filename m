@@ -1,267 +1,186 @@
-Return-Path: <linux-kernel+bounces-604008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-604011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1CDA88F20
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 00:30:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D7BA88F2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Apr 2025 00:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A71B16A009
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 22:30:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DF4C189BAC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 22:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F57E1F4174;
-	Mon, 14 Apr 2025 22:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944431F3FE3;
+	Mon, 14 Apr 2025 22:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gdjcp/WI"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M7WwdZvx"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4731C1BC07B
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 22:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50601DB128;
+	Mon, 14 Apr 2025 22:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744669831; cv=none; b=JUVw/9j1RGzYq+c8fKFK32PHztQoQqo9ILFOrJhG8TeiXKraM4vUO9u3p59x7SBymDCht3i9yXYzbXKSxH4VzFb4cjS0A81hfWk2+Tzg+zXfh8LW2z9z2D3FYEhwylD2SMzM5LwrqMsYgr5Mx46jnrfmdquFjVuQEjgvhPtqVik=
+	t=1744670169; cv=none; b=aSRwZTNWooH0rBwrYBK67Gdg1NFgKHW6aZDHt56copvdCLOe/fPn+7vahn7SyOWQIPyqHA6Q0hMpERmWPpWVt79W1goxzKhp3HV4jgusEvg9rJ7NXPGwLP8bypH5kDcKL7l0rp8o3VZlkMJnyui3JxXUcqnF3fvlp8o8bKEq9ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744669831; c=relaxed/simple;
-	bh=qQBx3gwR7BoGNGR16e3u+TKdmh6EonNUcNYeazUzxLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t/Pt4oPO5rEsxIRFC4DsulKs90CXvvLrEjBUsRS7DKEkquVJ+qnGHThekLobFO9IIahHMHjiU7JToKG/eiLZCAp0juKbv7fZbv262K8+gKyYu9gSWgNSu9Rjse+GeZgIouWaf8bCakwpJF9kzIlRXaTGk+nug/TXdfpgKa+bqFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gdjcp/WI; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso9198164a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 15:30:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744669827; x=1745274627; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oJUU5/KwFR6EBw6HmiWZSj5H1CAAPNYinIfo2az6p00=;
-        b=gdjcp/WIV3gt+SboT9sxx8vm8OeWUKH211hGSr3SnDH+5634HqmHDUT4hlhTd8qH3r
-         JwRUSbhY6q1isNOfIP7BxqvqEl9LzDCcR8qo3QZ+LCFqmAkAkpMwjsGbwjUNaVhiTDPL
-         SZt8g9K0lXbcoVq7hokJCE11toyptL3t8bqaZjlMc9N97r+uQequ1EmQ9eVAQjI9oJrO
-         nYPNHWkb3WR4EIVZIekc2xsPnbWtIOuHW+4aNemm4abwfUE4fYWtrBmv0oabLOOGFaF6
-         R6lioOq4JHra8OShcXbldbeTl5jHPJWxWk9ePVk+xGxOxSbd25ltfF4zwb7G0ranjUw4
-         X1uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744669827; x=1745274627;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oJUU5/KwFR6EBw6HmiWZSj5H1CAAPNYinIfo2az6p00=;
-        b=L8NccyZEg3MjFo3wHaZbJfunOVn+BAPr733DEcJDv4I0BkSPv+p5pYurDSdTv3mIxu
-         7PwNBJtgGQC1oyzdV6Z9t5AhHBoNq8J5HboKnbFNOJGHqzA3jbN7Sl324FwTfPARVIdB
-         rAlx8I2FT5xmChvVNA4dthX/bHofu0pGlMD+P3ODOFX1jx1xzod/RQmU24DmlTW3T+J7
-         Le+beu3p0I4/SvC7GBdR7lga+z0U9g+tPCQNQYX1YMrTaOXoBXWw1W3pGWpQXlEkTk7B
-         HFsX0U1Wbfyzx2FXdMcOsCzIMpARWbbPRdp4tn7/mUOcu9IkGnl0H8KlfJD+3nfjapS0
-         1Vxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZGYV0eovEhLXkmnTf5W4bxEnRTl/O/vMnCV9lOoMXGgVaDvZgOtEZovNhe2raMih93o2JSj/4mUBnHGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXDRaLISf3O/Zk+qT0VSG2VovNmFCGAigWSBFxssS4oCdMsq4f
-	PgztV9UDsdoR5I3IxIT7X+3jRKzPNEf9SjdwhCBwxaeQjK8vvPYddyEUyDOPRZ4=
-X-Gm-Gg: ASbGncvibZVT56D1NO6rHSehc92Uhd0dMShlraqkOsSPq9dD9noXzs6Mw09LOb0JCi9
-	vq5fTNjbu2M3R6t3WWZ3MuJlUvKZrb6vQnIrS+eAAYEs8CF3Xeb1TRnM0WU6SZ40Lf9TMK2aXSg
-	lq2FwDDfQdTt4955vitOTQQabkIs1m5KoTubjsIcQdDVHBXoennSKcpw6Is/A2SRtH6YUdvHsuV
-	a879qE8tenDH+IdXEWcMSa6IzKdnc6G6ybohav1eZ9mXSoFjuz2ZsQvATh2QyI/LmSl9Fy9/JoD
-	xxPpGDZeubtGSr+MtRwXEslnPxhmpKNu0tjD9BJoSYunzw==
-X-Google-Smtp-Source: AGHT+IHZhK+qYZqSi1SpL+1u6PEyVqPY3kj7P/rJwDZYHQs5W9C/B5usPcBT3HSPzMoZrr6flIoa1w==
-X-Received: by 2002:a05:6402:3214:b0:5f4:370d:96c4 with SMTP id 4fb4d7f45d1cf-5f4370d9b5amr5203042a12.0.1744669827520;
-        Mon, 14 Apr 2025 15:30:27 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5f36ee54d84sm5746425a12.8.2025.04.14.15.30.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 15:30:26 -0700 (PDT)
-Date: Tue, 15 Apr 2025 00:30:25 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Eddie Huang <eddie.huang@mediatek.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rtc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] rtc: Fix the RTC time comparison issues adding
- cast
-Message-ID: <erttkpna2hzg7zuddzlocaou2wqcwmgcxfhldwdt55yleie6dm@nfg374fv66fq>
-References: <20250109-enable-rtc-v3-0-f003e8144419@baylibre.com>
- <20250109-enable-rtc-v3-3-f003e8144419@baylibre.com>
+	s=arc-20240116; t=1744670169; c=relaxed/simple;
+	bh=4BXi8C2tlu1/+zsff0oHHU23Mqhxy499n+viyd862NY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oKDQrFa8zRbf6G+jPFiIN8GruGR7iVX3Pk7YZVPGk7kOKD2XlJAhd3rRR75W+100f0Hqp57BHN+a6QcegI2LrowgYNihhTwc1q1M9b8mxKcxLtwFllWC2Q3ow262KzcKF1uw/oHSTz8+1LIQjPgk+Uxf/JwHjy5Jac0zm7Y8pEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M7WwdZvx; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=BD09sozXk7mDc/vLq4jmW/slDmud21XMtjmESSd0XDI=; b=M7WwdZvxYUIKye09kI1jeq2R3I
+	2qacZI5ou3EO0VHyC3ym7veCiHt4juqgxHKNQ/UwscJ5IKglZ0kuOnPEv8TI/ka3Y/N+/IbjBLzaC
+	9UObCzeCzOvc3HxV6m6q3BFTaduY5wgolfHn1OI5BH29hRaNqaYX/RnpYwBFG2OTpLkV8vbZNIivj
+	bgwruO3/5PjQ5x8yKrUpj/GkLqttS5MzPCOdFb+8kBANV5TEMjmV1trYQdVHMrdofdNzPK1+wHQVI
+	2ZM1tWh3T0TXhXEN9P9AtXlNr43tNqII+loTPSUdJeBuJA2us3Z+FgyUvsNv6jNL0gqP2LdiY9wgc
+	kkkLn69Q==;
+Received: from [50.39.124.201] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u4SNU-00000002mNv-3QOZ;
+	Mon, 14 Apr 2025 22:34:10 +0000
+Message-ID: <8fbdd651-c965-4fa7-a715-e01092f5de7b@infradead.org>
+Date: Mon, 14 Apr 2025 15:33:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tsmmcnqrrufeyjni"
-Content-Disposition: inline
-In-Reply-To: <20250109-enable-rtc-v3-3-f003e8144419@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] mm: document (m)THP defer usage
+To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Cc: akpm@linux-foundation.org, corbet@lwn.net, shuah@kernel.org,
+ david@redhat.com, baohua@kernel.org, baolin.wang@linux.alibaba.com,
+ ryan.roberts@arm.com, willy@infradead.org, peterx@redhat.com,
+ ioworker0@gmail.com, ziy@nvidia.com, wangkefeng.wang@huawei.com,
+ dev.jain@arm.com, mhocko@suse.com, rientjes@google.com, hannes@cmpxchg.org,
+ zokeefe@google.com, surenb@google.com, jglisse@google.com, cl@gentwo.org,
+ jack@suse.cz, dave.hansen@linux.intel.com, will@kernel.org, tiwai@suse.de,
+ catalin.marinas@arm.com, anshuman.khandual@arm.com, raquini@redhat.com,
+ aarcange@redhat.com, kirill.shutemov@linux.intel.com,
+ yang@os.amperecomputing.com, thomas.hellstrom@linux.intel.com,
+ vishal.moola@gmail.com, sunnanyong@huawei.com, usamaarif642@gmail.com,
+ mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org
+References: <20250414222456.43212-1-npache@redhat.com>
+ <20250414222456.43212-3-npache@redhat.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250414222456.43212-3-npache@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---tsmmcnqrrufeyjni
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 3/5] rtc: Fix the RTC time comparison issues adding
- cast
-MIME-Version: 1.0
 
-Hello Alex,
-
-On Fri, Apr 11, 2025 at 02:35:56PM +0200, Alexandre Mergnat wrote:
-> The RTC subsystem was experiencing comparison issues between signed and
-> unsigned time values. When comparing time64_t variables (signed) with
-> potentially unsigned range values, incorrect results could occur leading
-> to runtime errors.
->=20
-> Adds explicit type casts to time64_t for critical RTC time comparisons
-> in both class.c and interface.c files. The changes ensure proper
-> handling of negative time values during range validation and offset
-> calculations, particularly when dealing with timestamps before 1970.
->=20
-> The previous implementation might incorrectly interpret negative values
-> as extremely large positive values, causing unexpected behavior in the
-> RTC hardware abstraction logic.
->=20
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+On 4/14/25 3:24 PM, Nico Pache wrote:
+> The new defer option for (m)THPs allows for a more conservative
+> approach to (m)THPs. Document its usage in the transhuge admin-guide.
+> 
+> Signed-off-by: Nico Pache <npache@redhat.com>
 > ---
->  drivers/rtc/class.c     | 6 +++---
->  drivers/rtc/interface.c | 8 ++++----
->  2 files changed, 7 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
-> index e31fa0ad127e9..1ee3f609f92ea 100644
-> --- a/drivers/rtc/class.c
-> +++ b/drivers/rtc/class.c
-> @@ -282,7 +282,7 @@ static void rtc_device_get_offset(struct rtc_device *=
-rtc)
->  	 * then we can not expand the RTC range by adding or subtracting one
->  	 * offset.
->  	 */
-> -	if (rtc->range_min =3D=3D rtc->range_max)
-> +	if (rtc->range_min =3D=3D (time64_t)rtc->range_max)
->  		return;
+>  Documentation/admin-guide/mm/transhuge.rst | 31 ++++++++++++++++------
+>  1 file changed, 23 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+> index f0d4e78cedaa..d3f072bdd932 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -88,8 +88,9 @@ In certain cases when hugepages are enabled system wide, application
+>  may end up allocating more memory resources. An application may mmap a
+>  large region but only touch 1 byte of it, in that case a 2M page might
+>  be allocated instead of a 4k page for no good. This is why it's
+> -possible to disable hugepages system-wide and to only have them inside
+> -MADV_HUGEPAGE madvise regions.
+> +possible to disable hugepages system-wide, only have them inside
+> +MADV_HUGEPAGE madvise regions, or defer them away from the page fault
+> +handler to khugepaged.
+>  
+>  Embedded systems should enable hugepages only inside madvise regions
+>  to eliminate any risk of wasting any precious byte of memory and to
+> @@ -99,6 +100,15 @@ Applications that gets a lot of benefit from hugepages and that don't
+>  risk to lose memory by using hugepages, should use
+>  madvise(MADV_HUGEPAGE) on their critical mmapped regions.
+>  
+> +Applications that would like to benefit from THPs but would still like a
+> +more memory conservative approach can choose 'defer'. This avoids
+> +inserting THPs at the page fault handler unless they are MADV_HUGEPAGE.
+> +Khugepaged will then scan the mappings for potential collapses into (m)THP
+> +pages. Admins using this the 'defer' setting should consider
+> +tweaking khugepaged/max_ptes_none. The current default of 511 may
+> +aggressively collapse your PTEs into PMDs. Lower this value to conserve
+> +more memory (ie. max_ptes_none=64).
 
-For which values of range_min and range_max does this change result in a
-different semantic?
+                i.e.,
 
-Trying to answer that question myself I wrote two functions:
+> +
+>  .. _thp_sysfs:
+>  
+>  sysfs
+> @@ -109,11 +119,14 @@ Global THP controls
+>  
+>  Transparent Hugepage Support for anonymous memory can be entirely disabled
+>  (mostly for debugging purposes) or only enabled inside MADV_HUGEPAGE
+> -regions (to avoid the risk of consuming more memory resources) or enabled
+> -system wide. This can be achieved per-supported-THP-size with one of::
+> +regions (to avoid the risk of consuming more memory resources), defered to
 
-	#include <stdint.h>
+                                                                   deferred
 
-	int compare_unsigned(uint64_t a, int64_t b)
-	{
-		return a =3D=3D b;
-	}
+> +khugepaged, or enabled system wide.
+> +
+> +This can be achieved per-supported-THP-size with one of::
+>  
+>  	echo always >/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/enabled
+>  	echo madvise >/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/enabled
+> +	echo defer >/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/enabled
+>  	echo never >/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/enabled
+>  
+>  where <size> is the hugepage size being addressed, the available sizes
+> @@ -136,6 +149,7 @@ The top-level setting (for use with "inherit") can be set by issuing
+>  one of the following commands::
+>  
+>  	echo always >/sys/kernel/mm/transparent_hugepage/enabled
+> +	echo defer >/sys/kernel/mm/transparent_hugepage/enabled
+>  	echo madvise >/sys/kernel/mm/transparent_hugepage/enabled
+>  	echo never >/sys/kernel/mm/transparent_hugepage/enabled
+>  
+> @@ -281,7 +295,8 @@ of small pages into one large page::
+>  A higher value leads to use additional memory for programs.
+>  A lower value leads to gain less thp performance. Value of
+>  max_ptes_none can waste cpu time very little, you can
+> -ignore it.
+> +ignore it. Consider lowering this value when using
+> +``transparent_hugepage=defer``
+>  
+>  ``max_ptes_swap`` specifies how many pages can be brought in from
+>  swap when collapsing a group of pages into a transparent huge page::
+> @@ -306,14 +321,14 @@ Boot parameters
+>  
+>  You can change the sysfs boot time default for the top-level "enabled"
+>  control by passing the parameter ``transparent_hugepage=always`` or
+> -``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
+> -kernel command line.
+> +``transparent_hugepage=madvise`` or ``transparent_hugepage=defer`` or
+> +``transparent_hugepage=never`` to the kernel command line.
+>  
+>  Alternatively, each supported anonymous THP size can be controlled by
+>  passing ``thp_anon=<size>[KMG],<size>[KMG]:<state>;<size>[KMG]-<size>[KMG]:<state>``,
+>  where ``<size>`` is the THP size (must be a power of 2 of PAGE_SIZE and
+>  supported anonymous THP)  and ``<state>`` is one of ``always``, ``madvise``,
+> -``never`` or ``inherit``.
+> +``defer``, ``never`` or ``inherit``.
+>  
+>  For example, the following will set 16K, 32K, 64K THP to ``always``,
+>  set 128K, 512K to ``inherit``, set 256K to ``madvise`` and 1M, 2M
 
-	int compare_signed(uint64_t a, int64_t b)
-	{
-		return (int64_t)a =3D=3D b;
-	}
+-- 
+~Randy
 
-When I compile this (with gcc -Os) the assembly for both functions is
-the same (tested for x86_64 and arm32).
-
->  	ret =3D device_property_read_u32(rtc->dev.parent, "start-year",
-> @@ -299,7 +299,7 @@ static void rtc_device_get_offset(struct rtc_device *=
-rtc)
->  	if (!rtc->set_start_time)
->  		return;
-> =20
-> -	range_secs =3D rtc->range_max - rtc->range_min + 1;
-> +	range_secs =3D (time64_t)rtc->range_max - rtc->range_min + 1;
-
-In the case where no overflow (or underflow) happens, the result is the
-same, isn't it? If there is an overflow, the unsigned variant is
-probably the better choice because overflow for signed variables is
-undefined behaviour (UB).
-
-Respective demo program looks as follows:
-
-	#include <stdint.h>
-
-	int test_unsigned(uint64_t a)
-	{
-		return a + 3 > a;
-	}
-
-	int test_signed(int64_t a)
-	{
-		return a + 3 > a;
-	}
-
-Using again `gcc -Os`, the signed variant is compiled to a function that
-returns true unconditionally while the unsigned one implements the
-expected semantic.
-
->  	/*
->  	 * If the start_secs is larger than the maximum seconds (rtc->range_max)
-> @@ -327,7 +327,7 @@ static void rtc_device_get_offset(struct rtc_device *=
-rtc)
->  	 *
->  	 * Otherwise the offset seconds should be 0.
->  	 */
-> -	if (rtc->start_secs > rtc->range_max ||
-
-The original comparison uses unsigned semantics. With start_secs signed
-and range_max unsigned, this might become true if start_secs is less
-than 0.
-
-> +	if (rtc->start_secs > (time64_t)rtc->range_max ||
-
-This new comparison has a similar problem: If range_max is bigger than
-INT64_MAX, its value interpreted as signed 64bit integer might be a
-negative number and so this comparison might become true unexpectedly.
-
-So even if UB doesn't play a role here (I'm not sure), it's not clear to
-me why you consider the issue of the unsigned comparison worse than the
-signed one.
-
-If this is indeed beneficial, it needs a better explanation than "When
-comparing time64_t variables (signed) with potentially unsigned range
-values, incorrect results could occur leading to runtime errors.".
-
-Maybe you have to replace
-
-	rtc->start_secs > rtc->range_max
-
-by:
-
-	rtc->start_secs >=3D 0 && rtc->start_secs > rtc->range_max
-
-instead?
-
->  	    rtc->start_secs + range_secs - 1 < rtc->range_min)
->  		rtc->offset_secs =3D rtc->start_secs - rtc->range_min;
->  	else if (rtc->start_secs > rtc->range_min)
-
-I didn't check the other hunks.
-
-All in all I would suggest to split this series in two:
-
- - Adding support for mt6357 in the rtc-mt6359 driver
- - Fixing overflow issues in the rtc core
-
-Given that I don't understand the intend of this patch, I cannot say if
-it should be included in the 2nd series, or if this is yet another
-standalone topic.
-
-Best regards
-Uwe
-
---tsmmcnqrrufeyjni
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmf9jH4ACgkQj4D7WH0S
-/k51FwgAsL7mzjW04I3FbsimeTdILk9y1+3zCv9FAZYVpWnaNgF1Ug6wloE92sfC
-A6VZrP7eNxWVQ9EcrpIqph4n6AnLEukD2eY9MeSndzqnJJQWJuJ06aafMX7DvkJh
-lvvXOn6lX1VI0gjX/pYu4ayTiJ2iBLyXJXM5Pk1E2raJJfF1r5cuRJPXPk0HNwgL
-pHIOgpIQKEO1OxYFY8Q7W/af63h/ZmqvQadBh4gPEpDGDKvHG5DgA3G2BMAhqiDX
-fvNL/hqBmRa8FC7e274ACveXF00oTDU5uGP/ezWx+U5J2K5wIb3kBzd1BDhIaNFS
-oOLoIX9qnbCZ1GOtLtXWLAkT7Wjm4A==
-=bJIL
------END PGP SIGNATURE-----
-
---tsmmcnqrrufeyjni--
 
