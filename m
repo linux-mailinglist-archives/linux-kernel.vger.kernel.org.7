@@ -1,250 +1,208 @@
-Return-Path: <linux-kernel+bounces-603227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA626A88549
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:39:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC0F3A88503
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55351189F0A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:27:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6D61687BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A716C275845;
-	Mon, 14 Apr 2025 14:03:13 +0000 (UTC)
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1793E2C2AB7;
+	Mon, 14 Apr 2025 14:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IILEe/gv";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="WFD5vfOM"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90B62472AC
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 14:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744639393; cv=none; b=Smct9oaI5lTIgvQLQ0/OgmBS/1hsVlZRiOyzcjo5WhIEbktz1ZMuVz9wBXGkuKEayLn6GzRaFTySHe3TBPL57iaZy8eMdf1gr+xnz0LfCyc4i6xbHW6ofu/mGe+ypgq2DUAIWIhdZYH28iLlhjB2TWG7VoiTEzdUiAJDiUwnoGo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744639393; c=relaxed/simple;
-	bh=Z1otz9cSp4ena0kJ+MGGzF+jGF5EYazLvaOGTBa/c10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CvVNhCQQci/4MHTdYxCCXhRiVDhORIqCfnTSMenu0aZ2ZiN/uq5zVXv9qjwernm6xXq4VxkhRLl120fdNM6uEWNVnh7dexFMKr3hapcO0RL5SIteiNx+KLIcWlBTi4dF+PsSs/RWlAiRsPo8cax6d+J7YLvBlEbiEOe40bkRgnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8EB0B43B11;
-	Mon, 14 Apr 2025 14:03:04 +0000 (UTC)
-Message-ID: <109bdc38-b510-48bd-8c18-2a858bd9d168@ghiti.fr>
-Date: Mon, 14 Apr 2025 16:03:04 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A8C2C2AA8;
+	Mon, 14 Apr 2025 14:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744639460; cv=fail; b=OgyjrMVM9r+CWsOd1OmDt3LJcA0VOjK66nNu+jV5dqMTJePqPIxj6YEMewT5ufnm4aeO32jQUNMFCgCLanQx6NenQTiChJ3hViPY1i56tCZPTIRqBcOaj9Jw8GJphPCAuel5Kbw/BQrJxJeIsLQYQcerYKh2zZh/AFf1RhTUA5k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744639460; c=relaxed/simple;
+	bh=Vo18GSNxw7wbb9tqV2xZulHETxrJoiyhp+B97PTzd9Q=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=QAhDvUW8Dd8ap+OPHUy6dDpW8iHSRWAuUdQf5MCKpJjgnATbu0SOdl8ynFgkSMaLR/Gf0w4tf2g9LaC9oUW1yqWwVRZugJ9As4DMnRlsBMJWItr3HQjMUqzHMuENSJWNEyW5mS4eGlD3lNypZHPm2LRzZPdvM/aj68Z1upme9zE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=IILEe/gv; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=WFD5vfOM; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53ECq3sh021393;
+	Mon, 14 Apr 2025 14:03:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=SRpmcJa6uk+G5RIHXO
+	Tn4nfXMonGVNCo3bVOQS4FhsU=; b=IILEe/gvGlGQE5YZEnpck4sUrmLgroTkjr
+	Dx1LJIheevNl5O8hQ9/ppYUkT/Vg3ZXxs/VOW4b+NBHnhbb4cMvVGFDHvYrGrDUw
+	LmH/1jwJMG8WgfxILlQcABpNuIeG7kTDLu40yv596tpGHy08ELTxtBrchFuuyc0f
+	mj1LI9qBRzlR0N9xYptgsLlO8y5DnTm954m+9EwFmPRz68sS/5TxVbudAG95gQLf
+	Lc+2JcFGzfZRX5dFYCCtTDhicT1JGxKXH0If11Y75Qe/3sEzDYNocLnP/DwabKEu
+	4UNhg3J4IcrGNMfxWpw8L0gqI5HC5UxKN/m48Zs/I5RRdtfxOg0A==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4612r7869a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Apr 2025 14:03:59 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53ECG8ia009194;
+	Mon, 14 Apr 2025 14:03:59 GMT
+Received: from bl2pr02cu003.outbound.protection.outlook.com (mail-eastusazlp17010005.outbound.protection.outlook.com [40.93.11.5])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 460d3gjagc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Apr 2025 14:03:58 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pGSZlc6oPezQfLlkrVRm3Eao3WozkYsvZbqszIjqEG2xzFDzN3kv9nTcKuwpl1hDL33NOrwF/+f4pbXZJU+8TZ3P4skl8jiHuwEEzCQVe8ZYI5+eKmV6+IH3TiTlDcjTjAPi04KLxIhcVIPNU//Pn9KFZgWdYnWd2KW7W9eRU2L4hp69BlWoYn2rWKgB1yxC7Fn52wX7ZAcsdyLrcN3L5dbxSzY9X32ffxYOpk9aq2BvARgx0XoX+ofbXXeqqGGRUeyvQ2t/mGweSXgvR5dwfmt12j9ntfhAqWg/QNkVikiYITjc9QPiizuTU6XjVbMzM3ijfhUJLvSqcctkdvSlQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SRpmcJa6uk+G5RIHXOTn4nfXMonGVNCo3bVOQS4FhsU=;
+ b=IwnBJDDoRnHi/r85VZIB4WB5qN3QYxZiKW3QuoxoC5Ozppe85jFviZoBkzsDsCEAvTYCMDcJsoHVFJP7drLgfsJZLzkAVNWgcfgxdLhA80IV4cjHTaHNc5F6hCGwoFY3SK2pUIw2lHXIxF8kftp7VsqtiToMP5H4z5fRXrVwNDZxFpHSKRhgXW9amTsK5MwprOsewUr/565QkDCBYd792xEQDXa7rnqI2jC8bJozrsbWwTkrGSu1A/OhZi7AOinjj9xbgICnbMq8wP5EQX7Esu26QX2/qQkRyzR7CKQKYsgiQwf1n4ZYqe9DsCqtf0haArpSX67drTAeo1HQyrKJfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SRpmcJa6uk+G5RIHXOTn4nfXMonGVNCo3bVOQS4FhsU=;
+ b=WFD5vfOMDRLh98Xh4pZ0b3iREVoOCuu1neXkODOWv8nFB51Vn9OXe268pwhaGjmUuTEhlZdh/MD2oYYICXD/Ayr+CJHg9vrCF9iFkj5otrBsX7AJMjP3ZrO4Yy95WiNJ3+J8wd/ro2UnxACijRXKrklkhBlXvLYle1DXBZQxbDw=
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
+ by DS0PR10MB7400.namprd10.prod.outlook.com (2603:10b6:8:138::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.33; Mon, 14 Apr
+ 2025 14:03:56 +0000
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf%3]) with mapi id 15.20.8632.030; Mon, 14 Apr 2025
+ 14:03:56 +0000
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        Ard
+ Biesheuvel <ardb@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] lib/crc: make the CPU feature static keys __ro_after_init
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20250413154350.10819-1-ebiggers@kernel.org> (Eric Biggers's
+	message of "Sun, 13 Apr 2025 08:43:50 -0700")
+Organization: Oracle Corporation
+Message-ID: <yq1tt6qhmc2.fsf@ca-mkp.ca.oracle.com>
+References: <20250413154350.10819-1-ebiggers@kernel.org>
+Date: Mon, 14 Apr 2025 10:03:54 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR13CA0211.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c1::6) To CH0PR10MB5338.namprd10.prod.outlook.com
+ (2603:10b6:610:cb::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] riscv: mm: fix boot hang when the kernel is loaded
- into a non-canonical address
-Content-Language: en-US
-To: Ignacio Encinas <ignacio@iencinas.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
-Cc: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
- Palmer Dabbelt <palmer@rivosinc.com>, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, Nick Kossifidis <mick@ics.forth.gr>
-References: <20250411-riscv-dont-hang-on-noncanonical-paddr-v1-1-dc665a46246d@iencinas.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250411-riscv-dont-hang-on-noncanonical-paddr-v1-1-dc665a46246d@iencinas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvvddtjeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeejieeuudejieekveeutdeguefhkeduledugeevhefffeejudeggedufffgleeugfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemhegvfhgsmeeiieeikeemkeefiegsmegufhgrleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemhegvfhgsmeeiieeikeemkeefiegsmegufhgrledphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemhegvfhgsmeeiieeikeemkeefiegsmegufhgrlegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepledprhgtphhtthhopehighhnrggtihhosehivghntghinhgrshdrtghomhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhop
- ehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhdqmhgvnhhtvggvsheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehskhhhrghnsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepphgrlhhmvghrsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-X-GND-Sasl: alex@ghiti.fr
-
-Hi Ignacio,
-
-On 11/04/2025 22:15, Ignacio Encinas wrote:
-> Virtual memory systems usually impose restrictions on the virtual
-> addresses that can be translated. For RISC-V, this is specified in
-> the Subsection "Addressing and Memory protection" of "The RISC-V
-> Instruction Set Manual: Volume II: Privileged Architecture" associated
-> with each SV{39,48,59} mode.
->
-> Addresses that can be translated are also known as "canonical
-> addresses". Using SV39 as an example and quoting the ISA Manual:
->
-> 	Instruction fetch addresses and load and store effective
-> 	addresses, which are 64 bits, must have bits 63–39 all equal to
-> 	bit 38, or else a page-fault exception will occur.
->
-> Given that RISC-V systems don't advertise which SV modes are supported,
-> this has to be detected at boot time (this is currently done by
-> set_satp_mode). In order to do so, a temporary 1:1 mapping is set. If
-> the set_satp_mode function is loaded into a "non-canonical" physical
-> address, this 1:1 mapping will make the boot hang.
->
-> Fix the issue by avoiding SV modes that would trigger the aforementioned
-> bug.
->
-> Fixes: e8a62cc26ddf ("riscv: Implement sv48 support")
-> Reported-by: Nick Kossifidis <mick@ics.forth.gr>
-> Closes: https://lore.kernel.org/all/ff85cdc4-b1e3-06a3-19fc-a7e1acf99d40@ics.forth.gr/
-> Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
-> ---
-> This isn't bulletproof because we might skip the *only* level supported
-> by a CPU (AFAIK implementations are only required to support 1 SV mode).
-
-
-Implementations have to support all the lower sv modes (sv57 implies 
-sv48 which implies sv39).
-
-
->
-> SV48 might be the only supported mode and the kernel might be loaded
-> into a "non-canonical" address for SV48. The kernel will assume SV39
-> is supported and try to boot it. However, this is a strict improvement
-> over what is already there.
->
-> This issue would go away if we could do the SATP probing in Machine
-> mode, as that wouldn't turn virtual memory on. Perhaps this "SV mode
-> supported" discovery should be offered by SBI?
->
-> This was pointed out in the original patch review [1]. This issue seems
-> to be of no practical relevance (nobody has complained)
->
-> [1] https://lore.kernel.org/all/ff85cdc4-b1e3-06a3-19fc-a7e1acf99d40@ics.forth.gr/
->
-> In order to reproduce the issue it suffices to tweak qemu
->
-> --- START DIFF ---
->   diff --git a/hw/riscv/virt.c b/hw/riscv/virt.c
->   index 45a8c4f8190d..16c5a63176c5 100644
->   --- a/hw/riscv/virt.c
->   +++ b/hw/riscv/virt.c
->   @@ -88,7 +88,7 @@ static const MemMapEntry virt_memmap[] = {
->        [VIRT_IMSIC_S] =      { 0x28000000, VIRT_IMSIC_MAX_SIZE },
->        [VIRT_PCIE_ECAM] =    { 0x30000000,    0x10000000 },
->        [VIRT_PCIE_MMIO] =    { 0x40000000,    0x40000000 },
->   -    [VIRT_DRAM] =         { 0x80000000,           0x0 },
->   +    [VIRT_DRAM] =         { 0x800000000000,           0x0 },
->    };
->
->    /* PCIe high mmio is fixed for RV32 */
-> --- END DIFF ---
->
-> qemu-system-riscv64 -nographic -machine virt -kernel Image -initrd initramfs -append "no5lvl"
->
-> should work but
->
-> patched-qemu-system-riscv64 -nographic -machine virt -kernel Image -initrd initramfs -append "no5lvl"
->
-> will not boot.
->
-> (*) I use SV48 to trigger the issue (no5lvl) because doing this with
-> SV57 triggers a warning regarding PMP and I don't know if that might
-> affect something else. The SV mode doesn't really matter here.
->
-> A couple of things I'm not sure about:
-> 	1. canonical_vaddr won't be called outside CONFIG_64BIT. I
-> 	   figured the #ifdef doesn't hurt all that much despite being
-> 	   useless
-> 	2. Is panicking ok? I don't quite like it but I can't think of
-> 	   anything else
-> ---
->   arch/riscv/mm/init.c | 43 +++++++++++++++++++++++++++++++++++++++----
->   1 file changed, 39 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index ab475ec6ca42..6cd5abc0e26a 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -7,6 +7,7 @@
->    */
->   
->   #include <linux/init.h>
-> +#include <linux/bits.h>
->   #include <linux/mm.h>
->   #include <linux/memblock.h>
->   #include <linux/initrd.h>
-> @@ -844,6 +845,37 @@ static void __init set_mmap_rnd_bits_max(void)
->   	mmap_rnd_bits_max = MMAP_VA_BITS - PAGE_SHIFT - 3;
->   }
->   
-> +static int __init canonical_vaddr(unsigned long vaddr)
-> +{
-> +#ifdef CONFIG_64BIT
-> +	unsigned long sv_mode_mask;
-> +	unsigned long masked_vaddr;
-> +	unsigned long mask_begin;
-> +
-> +	switch (satp_mode) {
-> +	case SATP_MODE_57:
-> +		mask_begin = 56;
-> +		break;
-> +	case SATP_MODE_48:
-> +		mask_begin = 47;
-> +		break;
-> +	case SATP_MODE_39:
-> +		mask_begin = 38;
-> +		break;
-> +	default:
-> +		panic("Unknown Virtual Memory mode!");
-> +	}
-> +
-> +	sv_mode_mask = GENMASK(63, mask_begin);
-> +	masked_vaddr = vaddr & sv_mode_mask;
-> +
-> +	// For SV<X> bits [63, X-1] must be all ones or zeros
-> +	return masked_vaddr == 0 || masked_vaddr == sv_mode_mask;
-> +#else
-> +	return true;
-> +#endif
-> +}
-> +
->   /*
->    * There is a simple way to determine if 4-level is supported by the
->    * underlying hardware: establish 1:1 mapping in 4-level page table mode
-> @@ -887,12 +919,15 @@ static __init void set_satp_mode(uintptr_t dtb_pa)
->   				(uintptr_t)early_p4d : (uintptr_t)early_pud,
->   			   PGDIR_SIZE, PAGE_TABLE);
->   
-> +	hw_satp = 0ULL;
->   	identity_satp = PFN_DOWN((uintptr_t)&early_pg_dir) | satp_mode;
->   
-> -	local_flush_tlb_all();
-> -	csr_write(CSR_SATP, identity_satp);
-> -	hw_satp = csr_swap(CSR_SATP, 0ULL);
-> -	local_flush_tlb_all();
-> +	if (canonical_vaddr((uint64_t)set_satp_mode_pmd)) {
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|DS0PR10MB7400:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4bc269e9-5adc-400d-97d9-08dd7b5d325e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?heXeLHzB8if400Ajk3J40aSo9X1hoqeCcyrPninXZQ3JPYWZ285JMmPMqx2A?=
+ =?us-ascii?Q?MBB508UeSo7448uekwwwZgs9jczVHCkRKRKY7Mx7wYzo2J35jtzq9xQGO5FG?=
+ =?us-ascii?Q?pkdKmVgN5KkdFRX8OtDzJbAGucpJo6B3m0b+SimWk6kaNzpWmOBVODYayxaq?=
+ =?us-ascii?Q?qzyo/fucKT8NruKzA9HSg7MhopQiOtNMQeQ0aWStyI7rTTvaclkE10Jw6ESg?=
+ =?us-ascii?Q?2T0JtpSHmgbsE1aWRA2VETtYRfO/qfcJWVtgIyWe3tCxCTdmjQ036nm1qgma?=
+ =?us-ascii?Q?4hAROAU6KLojzKSlSLOmTJXxl+08witEYv92/cLca7RPPczkICfnGq35jzT+?=
+ =?us-ascii?Q?QPlpIlmSqPjezCbGJXnLgKbztiEOh+5ONXoybckeRY83Biym2wO8NXMqsZKT?=
+ =?us-ascii?Q?2gU0BldjRXwi5jmYqTN1JxHp7eJifkDBn4kFskE02Z0gCr+bv0mbWhsKnEMB?=
+ =?us-ascii?Q?fi59TXx1BoasPg5JtSe7aCL+u6kOZmTdxuk39TvlJQRt/8XkDN1oMTcjPu+B?=
+ =?us-ascii?Q?nCsDQrEYcB2aFD3X8E5ODCrmft8ybx2N6oXTbcxuWYHMG6BTf6Nel86fmyaz?=
+ =?us-ascii?Q?HDEyzdVS5oVb8kfnVzOPRGEsFknG4a9fvwuLFK8iNTRB11hBXHNrvEUEJXHG?=
+ =?us-ascii?Q?VIn3T7cG2IplfxAcMmLwYoVggdwvkGwn3zteGXU7TL0uaqxAf2ZSeFMsbX9N?=
+ =?us-ascii?Q?yMxUbz9fPSTDks3HEh/CYQUHvRGMlrDqIJjtzWkfOiah1VuW1nnu6ec5l4kq?=
+ =?us-ascii?Q?omucNXuilhVCQ2YHosiI0RBWKl7YhcGkK34SLNKbZwx0XdOCst8NX42IF6fG?=
+ =?us-ascii?Q?UdiXETXIvizenucaUcXHAj0SS9wQdbsEfbT39I0upGnc0DXQxIKhbEcN0DY+?=
+ =?us-ascii?Q?mhTHlE3RqtMhk4xg/x/xBeIEXASQE1KFO5zo7W+U+7hs/NgMLw1MK/HECG6w?=
+ =?us-ascii?Q?P2zsVMFQ91gACvKjlKbNVgh3CR1Y4tG8vF6Io2syerqhB2Qda9IatWz/ph+4?=
+ =?us-ascii?Q?LmSKFxKavPyoQ/UJkKesMye6iVJjcshzXxYGwAqWkfhjyfX6U/99/eoNucux?=
+ =?us-ascii?Q?LjxUXKYrhvyM0mz5XM6epXOeGaaSqnr/1mBu2ZmCwgOgGEExU+w7svbPM1MP?=
+ =?us-ascii?Q?dLXn7lwoyKDJT3dvaRYH36P2y3xQ+9H01kSvd9xxhNzQrxue9sg/BfaT1Rrv?=
+ =?us-ascii?Q?b0esuZ4aYN4OnQeFKHOiqF4TAwiuRZyq8eM+W8vW6tTGdm4dOKm74FdT+ucP?=
+ =?us-ascii?Q?UqBYXQhl9JDRG4v2Fk0Q5H6HfITmVpEvx6gUTQ7w2rTT5LdlM4X2/Warv0+G?=
+ =?us-ascii?Q?+RlsdlJjiDyCZCFZ2dCC78NDRhzS3YM1pRwR+bYdlgHCZvalYpbiuX8mMvQT?=
+ =?us-ascii?Q?FxG1KoZvdxf6eFOcmyiOASWCMks1MBjhLmiKN930hI/2cKQZyc3moTIyE+wV?=
+ =?us-ascii?Q?BABvBvMOumI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?RQv/m980/T2oPcUOhR+4NxD/UUzmm49Mfh2DZgWeCWwtzOc4PsiszNGmM9Z8?=
+ =?us-ascii?Q?s439wQE4x1kNIYt+kxY6ZvGO4XH+y94TDkunPHuxwzE0ZXf0s1dXTPi79Azm?=
+ =?us-ascii?Q?2qchTIQ26xRPuRqO1h8ZeIir1xDGdndTG/69Jg3wMKPJl+erJ3r/p+FjfjWh?=
+ =?us-ascii?Q?7kWQW3aOq/1iC8Bqwc29gCQ3qcjNwTsc8xtSzchvQze7G0wKs0NMmWRNiHdS?=
+ =?us-ascii?Q?mw31m525/iB292am+1d6W+rwa4GBRy7zikhwTZjNXJ+l6k7tcof+6JpTfaHj?=
+ =?us-ascii?Q?2H2XRCth65Z7ka/QRyMv2s8/j1M5Pja9MHlLnOT1BrZPe5KVDcWpPgt524ko?=
+ =?us-ascii?Q?JpOCSM/IZaecInoarMDv2AbGkumi+JmQUPlBf/Vxzyy0/7t9H7BIQsu7kicx?=
+ =?us-ascii?Q?0zhGYT8g+VCo8ly0WtyJWOksxQliqYaV5Bqzk1nxfmZSQ0ENRGPgFeKkWwC9?=
+ =?us-ascii?Q?AL7dbZtHe/TmZRmOGmFzAhuCdirgujoIA+8JHBexYvta/x6AG7I4KdkH0J/5?=
+ =?us-ascii?Q?pMVQqYEPkcd3gk7D7MzpOnhmikkVboBiFUvn+FI84zLPnqCMwGmPef3M3Qpe?=
+ =?us-ascii?Q?4k8k4uRoEb/Ee7hTjrm6P8SOh3LrGWKV6p+s0iZqj3fIEpm2/mkYYKWapK8C?=
+ =?us-ascii?Q?UJoesIWdLx0isJy9Y/n+IT/rrDDnfWuQalwkuZ3/MVN++7yWTpBLR4g6icMQ?=
+ =?us-ascii?Q?rhsf/d3cXEflowhpnLfhtjKGaLNig1HK4jtZUoqwVPBbbDTXyY61hlu6KB0O?=
+ =?us-ascii?Q?5ncvIbfsm3cd0etupY2j7ap/CHMJxSnU00GpUvp22KQ4J75wBtk2p3HnNpOv?=
+ =?us-ascii?Q?GYuUD8Af9slIDNpoCi/IJ5VaXK2HJ0RcCwasVHg5y/yI3S+xQHEtHfWMp5rm?=
+ =?us-ascii?Q?wGP+SsFLU+x6203j0MXzcW8ergKSCVCgkG6Mxu7ZdmDh3Lw3nia7F/NBi7Pp?=
+ =?us-ascii?Q?Cb5CQntLrawNYB6L2HIwa7aOzzRcZf03ijqd+7ca4kkyD9h2LAdlRmkcUgvC?=
+ =?us-ascii?Q?fG4DIfKfRUKPEBjAPkjUx3nhnjEPnc1x21Ww83rLdUN5Ry7JOcFEjFcw84Lr?=
+ =?us-ascii?Q?/I+727nKaEr+q+V6pb1e0YHel3xZEMDFgCDui645NsTyIQ38z51reVDMm37T?=
+ =?us-ascii?Q?f4q/hfXPCy8ie021/tKmkE5JHtPgHFyYQtFClelkspmXAeFd3hh5/zO/HBUs?=
+ =?us-ascii?Q?OlzTF6GowE9w/2uKJE10eT50Tnel9+GD/0cO6cfhmmXjKctD/8aod1KiUyUb?=
+ =?us-ascii?Q?fJGb2sXBTYTBOGYPoAavJBD7w3i4GoPrL7BI8w60gQ4rnCQFdzGsOHQMCnM7?=
+ =?us-ascii?Q?GpANaNJud+OY9GAC4hkhOvRd4/Lq2fv6WasuYn2v6cwRCGHUbSefxK2NQ/q7?=
+ =?us-ascii?Q?835J+e9yGDjBIR81AABGZ7o0V2Zze+imjXSDU6oNn1b/DLP0ggss/EUEE7ct?=
+ =?us-ascii?Q?QimTglFgeyMqJ8YgNctXIdYWv0hONFSKgqTCWgJ5DcrSpjMxl8ITtmhtjW/0?=
+ =?us-ascii?Q?tBGHGOcoPn8h6SUCfZTKzwQR8tl0CcU80KP6onv4UdqY19+YrR6XfybuuhnU?=
+ =?us-ascii?Q?cfoUykk3PRcTVpZ9BLJ+TDZi5CWaBIvyE6v/vGjlSCOvntx6R41vUM9D29mM?=
+ =?us-ascii?Q?Dg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Ze6LJ+sKipMYGBi0mWP+nXUYCyApofbmgUhApWvL0gfovcX0fOrp761PAZFkyYonKY4ZQQZW0pflFugGor8blNqoMcJySOIooBaqC+ANFiv/iHceTuWN+5wh0sAKOJUeohLLgYqjGkMmhAGbyu+wbLf4iX8mIYhLJD7n5psd4WScbwhvTUFpwoN6GrGw5H6bVGtGeMl3ooqYbMHxxzdjHcJwQTkHdzOMUOLAAQRyMaLFU/Azkjk4EsAeB0yyzfHsl9VOOj54EUbFt2pMiNm3YPAl+zRLh96d4BK5XFGDCNvPgoeGKcgNSnilq78H9EnuD7gKTb4e/8NaGPY8vxnfZKe8+dnJfLe4sd/T+ntnlnZjOgBxnubJZCjU4YLTTkTT2SRA3ofPTszKH+JdieaTtlAlHyvpK0kuboecYE8NkJuxlUgho6N7kJEkz8bz6m2akUDpsINWgzZ6Yrr5JNZwPYM3NVoMjjY7+TVimTbb1OCQ0E0SK9lUIZC3ESmhxc6Yf9vV9l7PYZMr1RL6ejSS30huQBDjhRmBeL2TO6Cy9rzZHrBLFi8HJA6UTWcvqyZsJ1e4BDfs3Vat2dIrrRaj9SlOWr/BZ74kAwMDvIPHzEg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4bc269e9-5adc-400d-97d9-08dd7b5d325e
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2025 14:03:56.5041
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ip6BensbNUgBvAoYNeXmya5s6HlsIeGe/dIYHIR6J9fCB8kti3jF2yNt9SoDWiZmtVtXiqOwfekM4J9ckoJE6qig5pKZKv7++EI1hoWXw+E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7400
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-14_04,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 malwarescore=0
+ mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
+ definitions=main-2504140102
+X-Proofpoint-GUID: BdyBqGi6kxUfUY6Qs1S880bGMkmBiiOF
+X-Proofpoint-ORIG-GUID: BdyBqGi6kxUfUY6Qs1S880bGMkmBiiOF
 
 
-set_satp_mode() starts by checking sv57, then falls back to sv48 and 
-finally boots using sv39.
+Eric,
 
-The thing is if the address where the kernel is loaded is not canonical 
-for sv57, it won't be for lower modes so no need to continue, the only 
-valid fallback would then be sv39.
+> All of the CRC library's CPU feature static_keys are initialized by
+> initcalls and never change afterwards, so there's no need for them to
+> be in the regular .data section. Put them in .data..ro_after_init
+> instead.
 
-So we indeed prevent booting in a higher mode just because we use this 
-1:1 mapping...
+LGTM.
 
-Maybe the right solution is to use the mode defined in the device tree 
-if there's one?
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 
-Thanks,
-
-Alex
-
-
-> +		local_flush_tlb_all();
-> +		csr_write(CSR_SATP, identity_satp);
-> +		hw_satp = csr_swap(CSR_SATP, 0ULL);
-> +		local_flush_tlb_all();
-> +	}
->   
->   	if (hw_satp != identity_satp) {
->   		if (pgtable_l5_enabled) {
->
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> change-id: 20250407-riscv-dont-hang-on-noncanonical-paddr-9d288f10df8a
->
-> Best regards,
+-- 
+Martin K. Petersen
 
