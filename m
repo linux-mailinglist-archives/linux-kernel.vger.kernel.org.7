@@ -1,144 +1,199 @@
-Return-Path: <linux-kernel+bounces-602809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DA3A87FA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:49:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9075EA87F9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 705881897F96
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:49:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D292170D84
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D393929DB72;
-	Mon, 14 Apr 2025 11:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DA628EA4C;
+	Mon, 14 Apr 2025 11:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcCd0OFE"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="m5DZBDYe"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE7929CB32
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 11:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B07E17A305;
+	Mon, 14 Apr 2025 11:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744631361; cv=none; b=YvqRBdom6igGrEhF5c4NkpFEaK0hFUiz31VGoeGls1yoyWDf51uEoPuAN7H6Pc8RY2JA3odrxV21H3HrwU3tmr1TVTBkRCDrhQCHwj7vooPz6EwHhtXoiwCCIA+r95PMQHMyjpfnMgC4GFjFgoZK1dq4pscloZuIEeAyDJu3i/w=
+	t=1744631351; cv=none; b=WleMMGUAxUGYLt5gTPAMeqACrsHkw2CG5I0lu7+NSWgNs6jaHlS+j9qyV776A1t6DjWsheMsdNvapv6KJGwZcXVsP7AFeKAhH8s/ghwB1TPJJ2pOQ6dpHO4yX5+t/RBYqjdyvhneW3e+rd3j2/4AHHfsKWFUq5NiacTe23T4cUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744631361; c=relaxed/simple;
-	bh=aEusxvWhtxsSU6c6RiVQfSnOin9Z96cw15RbGNdbXV4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WDyv/1C3iwQ0yTyAOKojuoPaQy85SHYeQNsVbk2eDNyAi+hv64IxzNs2mCuX1A0AMml0X41ZFT1olmTjAUcA1HcmmYEnwAcZXqJuXOiqBerxhy3KFTusNZrmdvWwP7BS9sHUC0SapHktoLdYpK3o+meOzaZCvom721Rc/19dBIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcCd0OFE; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2279915e06eso42301385ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 04:49:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744631359; x=1745236159; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SXO27tnNFypn90AJmN3DKAGd3jsvWoI9DoDd6wFIgYM=;
-        b=LcCd0OFEL6vSoaG/i5rMbopGHy9xQRQ6sQ6LcwWfllV/2IDQH5k+5x98oM43P/9L3j
-         RGhEGOSTZgMew9RonnFRDyKq1ZwbjK6sUg7GPd2GrWUj7FFROtPe2tROXRz1N+5xzinA
-         c8MKFHj2saZZV3YGSIYP7vqDE3y1WjNbH5BBm9GcS9s2dtCmDW6V//mlEwHI8NgRcVmb
-         xatAxdiPZdogOtBkN+GsQt9qe5IbHoit6j47bAkHAyB6EBXkE6qdWaaEySZzM1W2XyI2
-         BKzzQSOcez2WdiXvg6fNVDgRl94SZwGk/0OM50aEnJidbbVASpLa9OexJ1jspnXwQXl0
-         IYkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744631359; x=1745236159;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SXO27tnNFypn90AJmN3DKAGd3jsvWoI9DoDd6wFIgYM=;
-        b=FB1vF5mUnBzezdCdn4xTm4vPqmjGd9h7DM59MYumtPpFV91SdhX88KZtqwqBU9zYng
-         +3MoS04soYw0qYoNZvTEDLLiqEIisb9OhkqtbzbalL50ceO7qFAg5vx+QVXM3EsLV7ts
-         uan0ql2NFASgWQS8o5R2uf5MrxnWNqhAMZowDiqYoWCfwit+xWARbPw8ZflPJWOs7Kcs
-         6RvJV9+52E40WrmdmfncLAr1+GB0KjxUviN+KUYXb6Dt2sDPrRxvyEtMbmnonRQEd7XW
-         sGaOgbhYUD4ykkkRv/phzhawTBhZ1uXTgyit3KpHVcpR6eD/u5UNS1OEQZcE6vTBg4QN
-         BtEA==
-X-Gm-Message-State: AOJu0YznCDXsxsm6nJ2SzWYnteJ99NcgDcGxTS6j49Z4c5f4rXhrcG55
-	vIYVau05RCMWmOs707v5YJoO815IIQgR9SKhKxJ2HhaEk1EW1TElYueTph2Y4dU=
-X-Gm-Gg: ASbGncvW/CIdZlIdaM8zsZKExNJKs891qOU1n0+WexOeHj+e807/klyck3EDIfNE0FC
-	iH8OwUwwIVH3IjobJCr003rxtDjxGWQIEqwNBVJeOWbMtB5HDjITS4PbLPXbFSOnu9QzQPg/5kz
-	MxEIGz5e1pw24RQluJOrSmgs0Dw0lKdxGTk5Sr40NLN/KxB84ZrOw9XW0F1sksJTvymLB5x2bzo
-	igVfNIwbA+J/Ndc0dFSDMPC26dP7OBH5TAZWxpnyUGO1zv6/nRG+gnWfDjfVDmqBHYCdPx9lfjQ
-	XUo7yIRgaSTLs5WCLPDW+3/SdaRRyTsXnZC/kW7AVUFs3v32dZSD6d1K
-X-Google-Smtp-Source: AGHT+IEJ/IcNRkURRpTkd5ss2SVZHjIYK8naKSC50UqfwCtbPIp08ao38/9r4dDcjxy0EJEMuMOpJw==
-X-Received: by 2002:a17:902:d481:b0:223:fdac:2e4 with SMTP id d9443c01a7336-22bea4958f1mr142174595ad.1.1744631359031;
-        Mon, 14 Apr 2025 04:49:19 -0700 (PDT)
-Received: from PC.mioffice.cn ([43.224.245.227])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd230e4adsm6624156b3a.142.2025.04.14.04.49.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 04:49:18 -0700 (PDT)
-From: LiuJie Xie <xieliujie92@gmail.com>
-X-Google-Original-From: LiuJie Xie <xieliujie@xiaomi.com>
-To: mingo@redhat.com,
-	peterz@infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	xieliujie92@gmail.com,
-	LiuJie Xie <xieliujie@xiaomi.com>
-Subject: [PATCH] sched/rt: Update wait_time when doing migration.
-Date: Mon, 14 Apr 2025 19:48:41 +0800
-Message-ID: <20250414114841.2181865-1-xieliujie@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744631351; c=relaxed/simple;
+	bh=/v36ltzahpmGPcKjD7NxZ2v8Uexk1OPxWedQXja8tPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=dvGcVA0EHRqCTZfrA8EFaXP9iHVzO97+G598w875GuIwzs/MZqdvpaomn4CgKd8aajav88IjNvCuiRbu3wL/y2WWipwApBk2rx6GLsVhPWqvXZK91us6I8/6o6E67KFWS1PcQidjIfMcRIfECG929zTJjpgW2jIWiQFEUN615Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=m5DZBDYe; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1744631327; x=1745236127; i=wahrenst@gmx.net;
+	bh=K+4Cpie0T/NmOxvbbp6LArEVusYrUxyybbrudOe3VN4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=m5DZBDYeoNm1c69dLoupy36ujE6g73TlBVkqqpXE9312bIdVuRJnzIUDupL2/aLn
+	 UZr++AQrDlt6EzcazCMAoYNssJA/mvHmpiIvJUStzRQ7BprduVezaxAdketU7+0jq
+	 btZHbzwOMf64QQ/UpRF/gkSbwzPL+MczqNNhAeOKpzsI6CAApyqxM5GePmZwwj3fs
+	 KvDttgiyYVhyKjvXDW31uZuN4ggsdyBlxbh6pnencQqUVQERei+TFYDKI5koiI7eg
+	 dKnqjtC770IxxORivFoQ7rLY68JVeJC3gcg5F7oNfTXREecBPYKTsNb/BUGg3P3X5
+	 nhWJeVgphps3sFDt3Q==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.107] ([37.4.251.153]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N6sn7-1sxZOS2Z27-00sqVE; Mon, 14
+ Apr 2025 13:48:47 +0200
+Message-ID: <526751d2-c7e8-4097-9454-c9049b880225@gmx.net>
+Date: Mon, 14 Apr 2025 13:48:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 09/13] arm64: dts: Add board DTS for Rpi5 which
+ includes RP1 node
+To: Andrea della Porta <andrea.porta@suse.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof Wilczynski <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn
+ <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, kernel-list@raspberrypi.com
+References: <cover.1742418429.git.andrea.porta@suse.com>
+ <c6498d8cf8dfade1980b566e99a9a91551fd8b53.1742418429.git.andrea.porta@suse.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+Autocrypt: addr=wahrenst@gmx.net; keydata=
+ xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
+ IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
+ NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
+ JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
+ TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
+ f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
+ V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
+ aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
+In-Reply-To: <c6498d8cf8dfade1980b566e99a9a91551fd8b53.1742418429.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Q/uqLjrFuArPjirEjhXTJ5d3uJ7OdvCvVI+pv/Xt5or02vZztUA
+ YY/J9+90WDy098NKbupQsiWz932xEwp7WwuN9BiZIDHqp6zp/xZBODCbLogW+r1k8E/pwir
+ +0kLC28Y4V9siWI4uCrkwIO85UE9ATs8CCSE1Q/S2PzHIcWqHnO4I66Vp76XrGTYFxjJ+8c
+ uU9PSIB7qElvAnelIGPpg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:h1ERpLur5s8=;XszaV0pd/6wJsRYUEg+d0/xKRGH
+ mW+ii9MSTn/iz78dmGmvCFfqo32rASu6B5GIoMktr7PhV1oLfJVddRC6NLShfJo0ULfJEPFLI
+ OuxFNy9likSPgd4VIstZqiK4y4Tmd4g1s6IMLSVae3u9dd5pdZs9xnrUujvLYkwEa/U/qGYxA
+ 3q3G+GXmOoc/Q62qVBRC6w2Z/ZlyN+AN4al8Xm88YifwZsv3z8MNUk9TmtRBDjonZQuqKl0Dn
+ x7v8TRQCG3MZfVRhUs+7EK277PTaT9uL3v1timWb28dVKGHTWGrIhvtQtLlrhi/1YSdj0Mbbf
+ kr0iVBM9MNYwOQEGsVHmVa6WHZBhPEdcdeUJNIQroXdhQy/b6/+AEnEr//ifpAVvVaxVVg3Tw
+ HcdxPnWdzURHYMt3nGKoJtt86ibc935UjG6lF+67F80S50Dxu+/n5ovE8mmeqEFOQSAhAolTs
+ dOuy8EHKK41EKph0T271y2eleG7Wyx5GEVDgANtLznsNmk+YWFXbFjq7O1auV9i8n9qNAq6Sh
+ V4Jgf15wGMC7/b/BzvJ9wOmune/9krPYKs5KwHXD1pn4cvJydJ/cY91mSqU45aKydQZCun2Ft
+ l5n1PRDBapcaOc3hRmu8hK4alzfA24FpxI0AmmPO9wYsZ3Y2gKTEVlrgnhVnfgl/s/iJgvAkE
+ P5VvmIDTsE8I3mZVkkpRf5OHyu/TkmqsU4JdnESzwNNtxZegNRMha7CjGaoEkgUNPEQOMVxeg
+ 5pCNmJKdSumjj5HvNo5OnVKJLkfa0Vqneij049IoHCYtT9HwBX9bAX5DGmVVh+C5nqe+0Ss1k
+ VhkQjih5c2bkTYQEveuAf09eIngSpfWWpimzpVMf87BMSyNZ/+2pWbC5UE3AH5x+ziJOLO+jz
+ xwmeiuB6Btw1/Gxkg0ZPjw8xLHU6fe0M9auCBSPhYvKaSteoM9itSVjii4IU1SXfzXgFpKPrm
+ K/vJrgMbNpphIEu0NsLqCnSYQp5o18KAeZReSeCzjDCca09Ev7O76QC4OKW6HUP67u2fx+Gy6
+ PXtsDz2zTAXamXPyTuFb1TPlRFZwbVMGetHmROy/vmO/N3V+ZobHAHT8KSfx46izss5aJmLUe
+ 9il6aSvMuK6Sd5PXR70ddUOjKlM3IPE52Re1nI9dcA6FG/jmZuKoMBXDW+dvnpKe5wtlh3pPo
+ 4XFuiio793Yi4O+lFHKacGOgxn/jrR7oLe6clyT2UbvtXsf5p+mC3QmboSQxWsYunRi+go9qx
+ ZDC7PGUx2dMM3eQ4bkTJ4TijmLzbVM+uco8ofDjR94DEsq65HxKSKSE5LXCnwAVFkroJ26FnT
+ /iXH7RU2zI5+G2NNsvaq+EdtNC02Vi0/TZzzK4L97gc5/zeYZh657y+gOYfGbshKP/JsjcrId
+ sGCGcTrBdGwiFDuRShCkBJqV5EU0UWsraCgjLkhVQHMrggoc2Xfu6u5NB9HmKKtvHV4WBGG1z
+ Q0FtFZV3k/G0TNkawOVDl7hVwUtc=
 
-From: LiuJie Xie <xieliujie@xiaomi.com>
+Hi Andrea,
 
-With __update_stats_wait_start() and __update_stats_wait_end(), we track
-task's latency and the info can be seen in proc node '/proc/pid/sched'.
-But it seems that we loss updating wait_time when rt task doing migration.
-In update_stats_dequeue_fair() by calling update_stats_wait_end_fair(), the
-fair sched class make this update work.
+Am 19.03.25 um 22:52 schrieb Andrea della Porta:
+> Add the board 'monolithic' DTS for RaspberryPi 5 which includes
+> the RP1 node definition.  The inclusion treeis as follow (the
+> arrow points to the includer):
+>
+> rp1-common.dtsi ----> rp1-nexus.dtsi ----> bcm2712-rpi-5-b-monolithic.dt=
+s
+>                                                 ^
+>                                                 |
+>                                             bcm2712-rpi-5-b.dts
+sorry for the delay. I'm not happy with the monolithic appendix.
 
-When a rt doing migration, we can see:
-step1: wait_start=1503718063442 C:(__update_stats_wait_start<-ttwu_do_activate<-try_to_wake_up)
-step2: wait_start=124844 C:(__update_stats_wait_start<-activate_task<-push_rt_task<-push_rt_tasks<-finish_task_switch)
-step3: wait_start=124844 delta=1503718120473 C:(__update_stats_wait_end<-__schedule<-schedule)
-
-In step2, the wait_start become very small after doing the below logic
-and we will get a very big delta in step3.
-void __update_stats_wait_start()
-{
-    prev_wait_start = schedstat_val(stats->wait_start);
-
-    if (p && likely(wait_start > prev_wait_start))
-            wait_start -= prev_wait_start;
-
-    __schedstat_set(stats->wait_start, wait_start);
-}
-
-So, update_stats_dequeue_rt() should also update wait_time just like
-fair to get the correct delta.
-
-Signed-off-by: LiuJie Xie <xieliujie@xiaomi.com>
----
- kernel/sched/rt.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index fa03ec3ed56a..a93d23b839ad 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1346,6 +1346,13 @@ update_stats_dequeue_rt(struct rt_rq *rt_rq, struct sched_rt_entity *rt_se,
- 	if (rt_entity_is_task(rt_se))
- 		p = rt_task_of(rt_se);
- 
-+	/*
-+	 * Mark the end of the wait period if dequeueing a
-+	 * waiting task:
-+	 */
-+	if (p && !task_on_cpu(task_rq(p), p))
-+		update_stats_wait_end_rt(rt_rq, rt_se);
-+
- 	if ((flags & DEQUEUE_SLEEP) && p) {
- 		unsigned int state;
- 
--- 
-2.43.0
+How about bcm2712-rpi-5-b-rp1.dts or something more self-explaining?Regard=
+s
+> This is designed to maximize the compatibility with downstream DT
+> while ensuring that a fully defined DT (one which includes the RP1
+> node as opposed to load it from overlay at runtime) is present
+> since early boot stage.
+>
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+> Right now bcm2712-rpi-5-b.dts is the overlay-ready DT which will make
+> the RP1 driver to load the RP1 dtb overlay at runtime, while
+> bcm2712-rpi-5-b-monolithic.dts is the fully defined one (i.e. it
+> already contains RP1 node, so no overlay is loaded nor needed).
+> Depending on which one we want to be considered the default, we can
+> swap the file names to align with downstream naming convention that
+> has only the fully defined DT called bcm2712-rpi-5-b.dts.
+Could you please move some of this good explanation into this dts file=20
+as comment?
+> ---
+>   arch/arm64/boot/dts/broadcom/Makefile                     | 1 +
+>   .../boot/dts/broadcom/bcm2712-rpi-5-b-monolithic.dts      | 8 ++++++++
+>   2 files changed, 9 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b-monoli=
+thic.dts
+>
+> diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts=
+/broadcom/Makefile
+> index 3d0efb93b06d..4836c6da5bee 100644
+> --- a/arch/arm64/boot/dts/broadcom/Makefile
+> +++ b/arch/arm64/boot/dts/broadcom/Makefile
+> @@ -7,6 +7,7 @@ dtb-$(CONFIG_ARCH_BCM2835) +=3D bcm2711-rpi-400.dtb \
+>   			      bcm2711-rpi-4-b.dtb \
+>   			      bcm2711-rpi-cm4-io.dtb \
+>   			      bcm2712-rpi-5-b.dtb \
+> +			      bcm2712-rpi-5-b-monolithic.dtb \
+>   			      bcm2712-d-rpi-5-b.dtb \
+>   			      bcm2837-rpi-3-a-plus.dtb \
+>   			      bcm2837-rpi-3-b.dtb \
+> diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b-monolithic.dts=
+ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b-monolithic.dts
+> new file mode 100644
+> index 000000000000..3aeee678b0bc
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b-monolithic.dts
+> @@ -0,0 +1,8 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/dts-v1/;
+> +
+> +#include "bcm2712-rpi-5-b.dts"
+> +
+> +&pcie2 {
+> +	#include "rp1-nexus.dtsi"
+> +};
 
 
