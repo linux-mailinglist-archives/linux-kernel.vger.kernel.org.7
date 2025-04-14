@@ -1,123 +1,121 @@
-Return-Path: <linux-kernel+bounces-602752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8145A87EC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:16:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA767A87F5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 13:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EAB118973BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:15:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 801A13B8BA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 11:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC102D3A7C;
-	Mon, 14 Apr 2025 11:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B27A2BF3CC;
+	Mon, 14 Apr 2025 11:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fWJCysBS"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bG92G56O"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAFD2D1F79
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 11:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBF529CB4E;
+	Mon, 14 Apr 2025 11:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744629163; cv=none; b=i+hnxUbXXRo0yExMLw05RcP5c5gQrwHImehT9AW+XzsfqTscir1mXJcUhxFOW46bKX9eGH+KM+3jWiC0MSmwCHsw9/9oI1uKbIrJ4MlM5GNcuNrOnv1lJsk3iMkAhJd41905xoSS/xnB8UtbiVuVUrpDpKPI9tTaBtrhXMFauTE=
+	t=1744630782; cv=none; b=oD99ta3U7E14nJO+xUMNES1ar5NAkTjaWbly10rTFbaZfaHyr68k83rSU05i5DHZ6U+3jWXHWbXOm+NBbPZ0jt6SVRgDg9RlqHLOzYpN4WpoiwKsyPJOMfDWkqyqgrV1kGwwaNcr7dC2p1n+3/SrJvYmyis/7/xDzXsX7LyIos4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744629163; c=relaxed/simple;
-	bh=69nrMG5DnbkaVL38Gl4wYJj2zhVHWKcMLP3+Q92DfPk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YGppyr4P3H7UTyFRxTBU9hqZeZcU6wESa8A7FM61yjZ3W1H2+zxwVlQaXTQhnZdOPNqXRBmwctibcTUUHdCx4l+kgV4qbh/+YwbSVx5SULItQusL56kJ+Agy6gC2YleaAO7kKIsjGTpe4IwTJJ1Ie+50yYQaUcW7qqooSm3OpNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fWJCysBS; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 40ABC669;
-	Mon, 14 Apr 2025 13:10:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1744629023;
-	bh=69nrMG5DnbkaVL38Gl4wYJj2zhVHWKcMLP3+Q92DfPk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=fWJCysBSfI+kVgo0L+RE5IIl4JzC0AyzYPn/PHMJNtX9pNy4zIdsAPTHL4D03DO4X
-	 PK79+GXrinwrGii3mEXSbMisE/sfGfnE7EBGVAY3p3iKMK72l1b0E5WLOkLbJAfIob
-	 wDL4WmdJse8ZBGAkTKBDjyFEXa0e1bEGuBmBHyxM=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Mon, 14 Apr 2025 14:11:26 +0300
-Subject: [PATCH v3 17/17] drm/bridge: cdns-dsi: Don't fail on
- MIPI_DSI_MODE_VIDEO_BURST
+	s=arc-20240116; t=1744630782; c=relaxed/simple;
+	bh=6J3jpg6mZS1i6MwpK5znANzetPA7TPZoqiKkCd+kiGs=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=Z0HUCFi9UgLQ7CUltVcGTaeR3HtiAigvQeN03a7dleTZOua1VDl94xAesKoNy1YOA9aFhHScg34RftnVgSzfTXAchfEUqDelf0m/1V8cdU7BVazrq9B2rrgU7tCZXrs11D1x889h/9u1sT0gucNRGQfh49a2rAVJh1QeKy9oMyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bG92G56O; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Subject:Cc:To:From:Date:Message-ID:
+	Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=6J3jpg6mZS1i6MwpK5znANzetPA7TPZoqiKkCd+kiGs=; b=bG92G56OhWUV0ZKtc5qpU+fvvw
+	hkUgSGIXatqQm4Oguw2ZlsCnzCRrNU4q0WRuBWdxEqxrgt2cQcag8yPkAhzNbU+f6rHfAmtKdIM0H
+	BViuvEFjm+ZkIVYkYydg5RbgUaRQZaoHzkMJxfptl+gL2A+U34EW36N7kto23WaM76f9b/yYcB2RU
+	zsXQgG5XcpNzVetyPLw9JN1uvb2zyk/8rvs/msRzAbkhny2t8Z9rC0P08VBEkRDTzUuTzvGdwNWpP
+	oc2x5IM5697z1dGNlZ5ye6BJlTKwSfPBANNfZKJY1aLhCkyE7igOctawyqGzYVcb5nCkAF7o9RZ16
+	LQHcbSrQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u4I9u-000000084Gt-0pkr;
+	Mon, 14 Apr 2025 11:39:26 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
+	id 226A8300619; Mon, 14 Apr 2025 13:39:26 +0200 (CEST)
+Message-ID: <20250414111140.586315004@infradead.org>
+User-Agent: quilt/0.66
+Date: Mon, 14 Apr 2025 13:11:40 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: x86@kernel.org
+Cc: kys@microsoft.com,
+ haiyangz@microsoft.com,
+ wei.liu@kernel.org,
+ decui@microsoft.com,
+ tglx@linutronix.de,
+ mingo@redhat.com,
+ bp@alien8.de,
+ dave.hansen@linux.intel.com,
+ hpa@zytor.com,
+ peterz@infradead.org,
+ jpoimboe@kernel.org,
+ pawan.kumar.gupta@linux.intel.com,
+ seanjc@google.com,
+ pbonzini@redhat.com,
+ ardb@kernel.org,
+ kees@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>,
+ gregkh@linuxfoundation.org,
+ linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org,
+ linux-efi@vger.kernel.org,
+ samitolvanen@google.com,
+ ojeda@kernel.org
+Subject: [PATCH 0/6] objtool: Detect and warn about indirect calls in __nocfi functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250414-cdns-dsi-impro-v3-17-4e52551d4f07@ideasonboard.com>
-References: <20250414-cdns-dsi-impro-v3-0-4e52551d4f07@ideasonboard.com>
-In-Reply-To: <20250414-cdns-dsi-impro-v3-0-4e52551d4f07@ideasonboard.com>
-To: Jyri Sarha <jyri.sarha@iki.fi>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Jayesh Choudhary <j-choudhary@ti.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-phy@lists.infradead.org, Francesco Dolcini <francesco@dolcini.it>, 
- Aradhya Bhatia <aradhya.bhatia@linux.dev>, 
- Devarsh Thakkar <devarsht@ti.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1141;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=69nrMG5DnbkaVL38Gl4wYJj2zhVHWKcMLP3+Q92DfPk=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBn/O2CA9ju1mYvxCiAXlgpo8emf0J0rL9HT0ENz
- 8Ap8etsQu+JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ/ztggAKCRD6PaqMvJYe
- 9fCfD/49wbu4aplPobRJ8G+hCTlR4U5TI1rUjnLWOIuxloqP+pFk+nCh4CcuUdicNckYUzGK5g4
- 2vDdtb8FhrEfIreBXzTsgg6krnxIi5hzRI3FWFqZtwCn7ikYHlALhim6uiZlVPEsspzfg8a6KbO
- cI9OptfzRtoiMxXkhGY07Qyf6/aZ2bfJ9V1ANn7kg/APJGYoMHid5tGWTZgJdYwe2v9M2XY80A5
- dp11F+AaOcV5C5dqmLes/HLnyTBX3SkPGjQfln5FRsxFUSsuLDEZAvvgJCxCs6lVPjQVrzjSC/9
- 0lFPTlMFtamqmXYaf6tVJLNTIzEDKWqCuLZx6mJ7AcLhE1Ojti3rjQKTgqXSp0ggSG61fFCXJ8f
- RcqR+vJByBYVN3m9dPStR82+bDpt5gcQzhOzt+ZedYtFsB6DxSVGQXQDZ2aTq8E52/I1/rLXyuM
- pa0FDGI4jhcidCW05Yyc3T0ezStVThwXOqsjC9wHQNuj3zAT10E4DMVGy32YpDfC+tEQ9Lgh65f
- T1FWk6MOW7HarffnUMssEK7YkwRiRxXqZ6S0dv6OLUgohOFodZwnqXxRyyrpyY+CNMrf8zyqQAZ
- CxKfOwo6XOCv6BH8x7GwzBIlQ9PbmHz0aTlFzasGkTZMMIPiqT2rl+mXA0tmvsGKcfeeTNmk7ej
- 3O9hTKeqXoQatzg==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-While the cdns-dsi does not support DSI burst mode, the burst mode is
-essentially DSI event mode with more versatile clocking and timings.
-Thus cdns-dsi doesn't need to fail if the DSI peripheral driver requests
-MIPI_DSI_MODE_VIDEO_BURST.
+Hi!
 
-In my particular use case, this allows the use of ti-sn65dsi83 driver.
+On kCFI (CONFIG_CFI_CLANG=y) builds all indirect calls should have the CFI
+check on (with very few exceptions). Not having the CFI checks undermines the
+protection provided by CFI and will make these sites candidates for people
+wanting to steal your cookies.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
----
- drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 4 ----
- 1 file changed, 4 deletions(-)
+Specifically the ABI changes are so that doing indirect calls without the CFI
+magic, to a CFI adorned function is not compatible (although it happens to work
+for some setups, it very much does not for FineIBT).
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-index 165df5d595b8..0e9545139af9 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-@@ -1045,10 +1045,6 @@ static int cdns_dsi_attach(struct mipi_dsi_host *host,
- 	if (output->dev)
- 		return -EBUSY;
- 
--	/* We do not support burst mode yet. */
--	if (dev->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
--		return -ENOTSUPP;
--
- 	/*
- 	 * The host <-> device link might be described using an OF-graph
- 	 * representation, in this case we extract the device of_node from
+Rust people tripped over this the other day, since their 'core' happened to
+have some no_sanitize(kcfi) bits in, which promptly exploded when ran with
+FineIBT on.
 
--- 
-2.43.0
+Since this is very much not a supported model -- on purpose, have objtool
+detect and warn about such constructs.
+
+This effort [1] found all existins [2] non-cfi indirect calls in the kernel.
+
+Notably the KVM fastop emulation stuff -- which reminded me I still had pending
+patches there. Included here since they reduce the amount of fastop call sites,
+and the final patch includes an annotation for that. Although ideally we should
+look at means of doing fastops differently.
+
+KVM has another; the interrupt injection stuff calls the IDT handler directly.
+Is there an alternative? Can we keep a table of Linux functions slighly higher
+up the call stack (asm_\cfunc ?) and add CFI to those?
+
+HyperV hypercall page stuff, which I've previously suggested use direct calls,
+and which I've now converted (after getting properly annoyed with that code).
+
+
+[1] https://lkml.kernel.org/r/20250410154556.GB9003@noisy.programming.kicks-ass.net
+[2] https://lkml.kernel.org/r/20250410194334.GA3248459@google.com
+
 
 
