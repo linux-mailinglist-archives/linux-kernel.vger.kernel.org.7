@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-602277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3613AA878D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:35:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7243FA878DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 09:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F6361657D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:35:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B885D1635EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 07:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62C8259C9C;
-	Mon, 14 Apr 2025 07:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2B625A2C0;
+	Mon, 14 Apr 2025 07:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U87bmQjB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yr8pKLyd"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BAHz31KO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lfAYr1Aj"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9B62580EA;
-	Mon, 14 Apr 2025 07:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CEE258CD1;
+	Mon, 14 Apr 2025 07:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744616090; cv=none; b=PfuavI7wtx4atOBljuQYwipxUn+g5UkyhzfSafDEn9iTngB7qO7+S17rFie4jctTyek0UzxXxQ0xcE5ci7n45Twvoxw2ULmnMIJggnHx4a63dHdqY5Z9l0NmDw7VDMyhSQDygmz1axa1iWvm1Qb5sBXHKAvvOMpVCd0gQX4zKdc=
+	t=1744616091; cv=none; b=WXkd17fWRRvcbX1+YUVjvBuCZHSfQ7NA02+8tzDAzzqlR2JaKUTL8EYYRTSf8G9FVk+mbrzoZhIditxImBi6NQp8195MRNwRfjyf5jQ8T2ruUGSvx8GiYLcx1/oiNgzrNkYi5hX/D2lQeZ0AurOz4E9ktpBNHcCbjjCYz16baoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744616090; c=relaxed/simple;
-	bh=QJjRnfHrrCcf9d1bYJQ2uDCQ2DyYd4p2lN166ILqT/c=;
+	s=arc-20240116; t=1744616091; c=relaxed/simple;
+	bh=E/6AntGyGl9Dbs7IgIrXcGc8EjnJ/giiVsyu5K7Ojpg=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=AGQQMBqYy9TKfpo983173zn5flTIMH/0RO6/nuCL/t3twMXAEyc8LkJEOMNU5ML5jln2EgoE7ULtlqJ807OSq4DTF9+h0xgLWBZr6f0kuhkqi1JymAuQzU+UNZ+E4xAm5EQYvwLHykIYicqQOmDr5xLA2Re44mFVLR9PYG3Su0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U87bmQjB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yr8pKLyd; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=UzNsMzu0NxDlQbYzINNau/8+69lg7mutLc+S496zmBIVvL4w0BHnJGLPy0CxQDt1iHkqawbuVxgN0J3d1zNTgQqTUdYKona69vDN15rQz/0Iju3D/vGqzwtG4dhdHDljFqcA1E+CawG3C51FTl5C2AkI6dyUb7e1Ow2PEP7Qx6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BAHz31KO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lfAYr1Aj; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 14 Apr 2025 07:34:45 -0000
+Date: Mon, 14 Apr 2025 07:34:46 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744616086;
+	s=2020; t=1744616087;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YQWrLEgdYqVwPNYX0WNLUXZzoFmWZ1vapGBRNp2rCnE=;
-	b=U87bmQjBj/0r8gVfs+2HKyyofwml9ZhbFaupctELK/3rF3tIyt+n4Yd/PKGEAbRbWgJ194
-	O4b1ntzeO4Xoc8RV7wbGFKQOW1O+9EE2aJUMQwo34uyJE/N9V+hPV4UWLCehPL5aTsW9bS
-	HrCZpPzxOU94xcZvoAT1dFYwZVuMFPDN0GiSF0trFS7GD/ouZl/moxLoIvChJwCFvxH4j1
-	A3zLoVwXcV5yIm3y0f3Rl2on7XYfs1PrTmubmJ0efl58Sfy1D5LRurFCXeuAsVhsKQilrD
-	60zw1MytWhvYfPRMg2QwMD6WVIdpZUQ3JTjaYaZmv0GLN4pf9DU1BD/IIlyTsg==
+	bh=dagTIWiokxReXchhDuqcVKGxidfbB9hrqV3IiuAc6CU=;
+	b=BAHz31KO06f9vnSpfPsLFQtZwVhwWguehRjqlj297Ps5R3WUtIKXsmCdoNOcJtgN7WyjFL
+	TpT4Dp7aaeRhheIBKvI0LT0rZ0cNDtKAcUNNhQ5MAilIXUZTb6HSpuORwe7JO+nxqwl2ML
+	1s4/EKWmPDceZZNLNkfB7BSuUIJSOj4t/CD5ZbJJLwh7tgXyXNlrc6s+eD6xMWPXpn9UXP
+	687BO9Cdo7wGepr+QHebtLMPD2GwcIPw9fC2jcJvo4bBIXqDSoXKGy6KtH7p2noBqs/EBM
+	9ujtfTQAvPPyKNuoeDz6ME5PVG4Gm5vh32GRzCqSkre7Ltx2MjgiCkY40ISOsw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744616086;
+	s=2020e; t=1744616087;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YQWrLEgdYqVwPNYX0WNLUXZzoFmWZ1vapGBRNp2rCnE=;
-	b=yr8pKLydGNuxl42elY0jzbxO8siwARORyqLcAx/oKD9sG9nyKOJi0j5Sgxr+ghUCoydvP2
-	/cRKXaF6VO4wbdDg==
+	bh=dagTIWiokxReXchhDuqcVKGxidfbB9hrqV3IiuAc6CU=;
+	b=lfAYr1AjSI5ol/cmau6snRchurkaDwYPklWaqp6jXrCiM/6hIEydbTYv1SlvpQLtiZgXf+
+	52B69uJxJQag3uCQ==
 From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/merge] x86/fpu: Use 'fpstate' variable names consistently
+Subject: [tip: x86/merge] x86/fpu: Make sure x86_task_fpu() doesn't get called
+ for PF_KTHREAD|PF_USER_WORKER tasks during exit
 Cc: Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
- Brian Gerst <brgerst@gmail.com>, "Chang S. Bae" <chang.seok.bae@intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
+ Brian Gerst <brgerst@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
  Linus Torvalds <torvalds@linux-foundation.org>,
  Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250409211127.3544993-9-mingo@kernel.org>
-References: <20250409211127.3544993-9-mingo@kernel.org>
+In-Reply-To: <20250409211127.3544993-7-mingo@kernel.org>
+References: <20250409211127.3544993-7-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174461608539.31282.4778128040777997792.tip-bot2@tip-bot2>
+Message-ID: <174461608676.31282.200232256748421444.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -84,105 +84,68 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/merge branch of tip:
 
-Commit-ID:     8b2a7a7294b34fa00adbecbd352ef19eb780261b
-Gitweb:        https://git.kernel.org/tip/8b2a7a7294b34fa00adbecbd352ef19eb780261b
+Commit-ID:     c360bdc593b8a8b6e94166026728764085919cff
+Gitweb:        https://git.kernel.org/tip/c360bdc593b8a8b6e94166026728764085919cff
 Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Wed, 09 Apr 2025 23:11:27 +02:00
+AuthorDate:    Wed, 09 Apr 2025 23:11:25 +02:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Mon, 14 Apr 2025 08:18:29 +02:00
 
-x86/fpu: Use 'fpstate' variable names consistently
+x86/fpu: Make sure x86_task_fpu() doesn't get called for PF_KTHREAD|PF_USER_WORKER tasks during exit
 
-A few uses of 'fps' snuck in, which is rather confusing
-(to me) as it suggests frames-per-second. ;-)
+fpu__drop() and arch_release_task_struct() calls x86_task_fpu()
+unconditionally, while the FPU context area will not be present
+if it's the init task, and should not be in use when it's some
+other type of kthread.
 
-Rename them to the canonical 'fpstate' name.
+Return early for PF_KTHREAD or PF_USER_WORKER tasks. The debug
+warning in x86_task_fpu() will catch any kthreads attempting to
+use the FPU save area.
 
-No change in functionality.
-
+Fixed-by: Chang S. Bae <chang.seok.bae@intel.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Chang S. Bae <chang.seok.bae@intel.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250409211127.3544993-9-mingo@kernel.org
+Link: https://lore.kernel.org/r/20250409211127.3544993-7-mingo@kernel.org
 ---
- arch/x86/include/asm/fpu/api.h |  2 +-
- arch/x86/kernel/fpu/core.c     | 14 +++++++-------
- arch/x86/kernel/fpu/xstate.c   |  4 ++--
- 3 files changed, 10 insertions(+), 10 deletions(-)
+ arch/x86/kernel/fpu/core.c | 8 +++++++-
+ arch/x86/kernel/process.c  | 2 +-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
-index f42de5f..8e6848f 100644
---- a/arch/x86/include/asm/fpu/api.h
-+++ b/arch/x86/include/asm/fpu/api.h
-@@ -136,7 +136,7 @@ static inline void fpstate_free(struct fpu *fpu) { }
- #endif
- 
- /* fpstate-related functions which are exported to KVM */
--extern void fpstate_clear_xstate_component(struct fpstate *fps, unsigned int xfeature);
-+extern void fpstate_clear_xstate_component(struct fpstate *fpstate, unsigned int xfeature);
- 
- extern u64 xstate_get_guest_group_perm(void);
- 
 diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 4d1a205..d0a45f6 100644
+index e4c2090..4a21938 100644
 --- a/arch/x86/kernel/fpu/core.c
 +++ b/arch/x86/kernel/fpu/core.c
-@@ -273,16 +273,16 @@ EXPORT_SYMBOL_GPL(fpu_alloc_guest_fpstate);
- 
- void fpu_free_guest_fpstate(struct fpu_guest *gfpu)
- {
--	struct fpstate *fps = gfpu->fpstate;
-+	struct fpstate *fpstate = gfpu->fpstate;
- 
--	if (!fps)
-+	if (!fpstate)
- 		return;
- 
--	if (WARN_ON_ONCE(!fps->is_valloc || !fps->is_guest || fps->in_use))
-+	if (WARN_ON_ONCE(!fpstate->is_valloc || !fpstate->is_guest || fpstate->in_use))
- 		return;
- 
- 	gfpu->fpstate = NULL;
--	vfree(fps);
-+	vfree(fpstate);
- }
- EXPORT_SYMBOL_GPL(fpu_free_guest_fpstate);
- 
-@@ -333,12 +333,12 @@ EXPORT_SYMBOL_GPL(fpu_update_guest_xfd);
+@@ -683,7 +683,13 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
   */
- void fpu_sync_guest_vmexit_xfd_state(void)
+ void fpu__drop(struct task_struct *tsk)
  {
--	struct fpstate *fps = x86_task_fpu(current)->fpstate;
-+	struct fpstate *fpstate = x86_task_fpu(current)->fpstate;
+-	struct fpu *fpu = x86_task_fpu(tsk);
++	struct fpu *fpu;
++
++	/* PF_KTHREAD tasks do not use the FPU context area: */
++	if (tsk->flags & (PF_KTHREAD | PF_USER_WORKER))
++		return;
++
++	fpu = x86_task_fpu(tsk);
  
- 	lockdep_assert_irqs_disabled();
- 	if (fpu_state_size_dynamic()) {
--		rdmsrl(MSR_IA32_XFD, fps->xfd);
--		__this_cpu_write(xfd_state, fps->xfd);
-+		rdmsrl(MSR_IA32_XFD, fpstate->xfd);
-+		__this_cpu_write(xfd_state, fpstate->xfd);
- 	}
- }
- EXPORT_SYMBOL_GPL(fpu_sync_guest_vmexit_xfd_state);
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 4c771b9..a288597 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -1431,9 +1431,9 @@ void xrstors(struct xregs_state *xstate, u64 mask)
- }
+ 	preempt_disable();
  
- #if IS_ENABLED(CONFIG_KVM)
--void fpstate_clear_xstate_component(struct fpstate *fps, unsigned int xfeature)
-+void fpstate_clear_xstate_component(struct fpstate *fpstate, unsigned int xfeature)
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 5fb502c..7a1bfb6 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -109,7 +109,7 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
+ #ifdef CONFIG_X86_64
+ void arch_release_task_struct(struct task_struct *tsk)
  {
--	void *addr = get_xsave_addr(&fps->regs.xsave, xfeature);
-+	void *addr = get_xsave_addr(&fpstate->regs.xsave, xfeature);
- 
- 	if (addr)
- 		memset(addr, 0, xstate_sizes[xfeature]);
+-	if (fpu_state_size_dynamic())
++	if (fpu_state_size_dynamic() && !(tsk->flags & (PF_KTHREAD | PF_USER_WORKER)))
+ 		fpstate_free(x86_task_fpu(tsk));
+ }
+ #endif
 
