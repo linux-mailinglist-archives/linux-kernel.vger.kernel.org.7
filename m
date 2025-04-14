@@ -1,81 +1,159 @@
-Return-Path: <linux-kernel+bounces-602865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77900A8804F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:24:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDA6A88055
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 14:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3FF11691A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:24:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 109D33B05A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8FD29C345;
-	Mon, 14 Apr 2025 12:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0439629AB18;
+	Mon, 14 Apr 2025 12:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kHWyuBla"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYnvjh6Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C281E505;
-	Mon, 14 Apr 2025 12:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE881E505
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 12:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744633468; cv=none; b=X0UmXj2LnAQZR7yjeiZlkq3FIKCU/fQ7ovyR42HTW1hOl/zPnPpjd4GUUSbenZx9Ld6uW19oqo7m1eVDfgfclGNuracTxM17scIymBv7N5ZDAixZn6r7ZKB7ivlsi86p1BbPp5UoTxlrorgvorlFPPanf/pwqbM/3rWeeqSvMpQ=
+	t=1744633704; cv=none; b=RH91OmZvjMOijsLZyfmfHyRjcOxWLfQAvMpIc2wj3Ork5g1D7TKzbpm+j4nJSyaxX6J3jKcn89Zf1r5sjWNWQSHu8rAX1ngnOa3aj9UcfrPtGv7AdYlr4YmoQ7GO9Xty85JIyoC5WdDeA5EHfUKDDogW0jGAPl/TX2wZMh99xYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744633468; c=relaxed/simple;
-	bh=j2y7Sd85khWXnLC1ZR5qY0qfU5SvTx1/61VbGsYOK5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hxxvn8DZsl2elAFVDt6JGNOvqR0UOzrl2hXogbDNL2YiXjBdK6bPdNxjMXN9vSaEeQ7t5zCSsQvga74u5IyBSWOF1GP6qLrAPnhkCDn4ceo9A1bnFYGIarBmCfuKzJII/JSV6wwXr2RHS9o6TohO5IJfUW5DBTXX2L7HWOQQXfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kHWyuBla; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=rphO6DU1W0U+JZUnu44tb3QuUigIMOv2WypHCAsG23M=; b=kHWyuBlaLGhRYJpKgSt812x1Kj
-	x/PiUfgxSwTW5sNSBq2U30e0SVWBRdPzpuMOhOs+R5rwgTuVSJaBUp8mVssqV3gz3eLpmRLt33dXw
-	mH06suLUorRAjyVlrRF94kcwtMicDfk0OWGFsFflgHsCInZxIfB+nSo+DI+R/raWgQs0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u4IrN-009BNB-3c; Mon, 14 Apr 2025 14:24:21 +0200
-Date: Mon, 14 Apr 2025 14:24:21 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, andrew+netdev@lunn.ch,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	horms@kernel.org, pkshih@realtek.com, larry.chiu@realtek.com,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH net] rtase: Fix kernel test robot issue
-Message-ID: <3d5a5a7d-a8fb-4a6a-9f3d-3ea27f9d06e7@lunn.ch>
-References: <20250414093645.21181-1-justinlai0215@realtek.com>
+	s=arc-20240116; t=1744633704; c=relaxed/simple;
+	bh=ixX+aTSMxs21n/o59hXTar0t+IatGCpyamxq2gI482w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J5wHiTgwhls/zC1DU/zrdh8xDuq4gqpkiUdyX4dnKT5MmoMJwbLFIVOKyUTR0bF0xhUD6pIS/DZetugVnvVYyl0JPgQbWJX/JzMEeMqePf1tGXk43QCITHM/womQ0TOfUhwS/+jj5sSfCNcl2sigYwDGn5RkPp5Hz38wBQUd/zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TYnvjh6Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA715C4CEEB
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 12:28:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744633703;
+	bh=ixX+aTSMxs21n/o59hXTar0t+IatGCpyamxq2gI482w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TYnvjh6ZJJh9llFKwpdi2rKgaw/aYoo/5OTh8b2NPrW4idCos5cdlcW6JKzc6gVkK
+	 GD6Kj0Jsu8JgDDZw399RmmKxlbPqVW5x3QyZ89JPIKCHueDRjPG7n0AUWtXk85FqBU
+	 CKhI3RZg1+Ugqlv86MFOU3Rcd+IZuWWtA5+sR8ld9tamF0FNWyAssny1J+653Lat6F
+	 s8soQWMXqWpNn8mV6CahGrV01EWubZy4mTyyvB2fr6aPO8Nwsk6Bwc7unU/1bHhOYu
+	 88O3uOWfjRhk2YgSJcAZfm2XIJ6TfumCAAUqnX4eG9QbtC3+Y6n1GkkFs1d9MyZWkS
+	 63wQQH8UvzORw==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5499c5d9691so4536153e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 05:28:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXhT3VFhEZPL5AsCKcOIjfPKaUBQAgL6CDG7x1tWTUuQ3TX3b89uqHXPi0JYCl+aiDSBDlF5CPd32RttrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn5l+zKLdaqE/3jZ/j0h3oPOfqRrW2bqdTMe3/nJDEH6CpHRL4
+	gd65IHTkOviPVDRFR1OhO5+YgpW4RmPx7Cn5F92O2v3PfQ76FxTsCxYEGBqC1ge34UTi+j/79fn
+	tvxWTN9hpon4Xg0kFS64L2hN867A=
+X-Google-Smtp-Source: AGHT+IFzhIt2ejuDXn9Okk3Y8KB1rg/VBUn0uGKtytenAj+wyPYEIJ32ztqV+LpBKmoYT2VlQX5UZH28uiPnUCd19IA=
+X-Received: by 2002:a05:6512:1310:b0:54a:cc11:a94c with SMTP id
+ 2adb3069b0e04-54d4528e98bmr4369914e87.3.1744633702098; Mon, 14 Apr 2025
+ 05:28:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250414093645.21181-1-justinlai0215@realtek.com>
+References: <20250410074024.1545768-1-anshuman.khandual@arm.com>
+ <6e6305fd-3b93-43ec-8114-e81b2926adfc@arm.com> <CAMj1kXG5R1jVWLQ-XEcqF9U365T18pTW8u3DgC7OY4N53hchOA@mail.gmail.com>
+ <16602b97-2f49-4612-9e9a-d6d0ed964fd3@arm.com>
+In-Reply-To: <16602b97-2f49-4612-9e9a-d6d0ed964fd3@arm.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 14 Apr 2025 14:28:10 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEnmpu3Dc5zZz1aQJGVwEFwx=JdYisSFkDNjUJ44FjX9Q@mail.gmail.com>
+X-Gm-Features: ATxdqUGG3syj4r4Drcn8JQR1d7j0A7RWn7_D18-LehW_FREU0x2VqOAPU1pcR_k
+Message-ID: <CAMj1kXEnmpu3Dc5zZz1aQJGVwEFwx=JdYisSFkDNjUJ44FjX9Q@mail.gmail.com>
+Subject: Re: [PATCH] arm64/mm: Re-organise setting up FEAT_S1PIE registers
+ PIRE0_EL1 and PIR_EL1
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Apr 14, 2025 at 05:36:45PM +0800, Justin Lai wrote:
-> 1. Fix the compile error reported by the kernel test robot by modifying
-> the condition used to detect overflow in rtase_calc_time_mitigation.
-> 2. Fix the compile warning reported by the kernel test robot by
-> increasing the size of ivec->name.
-> 3. Fix a type error in min_t.
+On Mon, 14 Apr 2025 at 14:04, Ryan Roberts <ryan.roberts@arm.com> wrote:
+>
+> On 14/04/2025 10:41, Ard Biesheuvel wrote:
+> > On Mon, 14 Apr 2025 at 09:52, Ryan Roberts <ryan.roberts@arm.com> wrote:
+> >>
+> >> On 10/04/2025 08:40, Anshuman Khandual wrote:
+> >>> mov_q cannot really move PIE_E[0|1] macros into a general purpose register
+> >>> as expected if those macro constants contain some 128 bit layout elements,
+> >>> required for D128 page tables. Fix this problem via first loading up these
+> >>> macro constants into a given memory location and then subsequently setting
+> >>> up registers PIRE0_EL1 and PIR_EL1 by retrieving the memory stored values.
+> >>
+> >> From memory, the primary issue is that for D128, PIE_E[0|1] are defined in terms
+> >> of 128-bit types with shifting and masking, which the assembler can't do? It
+> >> would be good to spell this out.
+> >>
+> >>>
+> >>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >>> Cc: Will Deacon <will@kernel.org>
+> >>> Cc: Mark Rutland <mark.rutland@arm.com>
+> >>> Cc: Ard Biesheuvel <ardb@kernel.org>
+> >>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> >>> Cc: linux-arm-kernel@lists.infradead.org
+> >>> Cc: linux-kernel@vger.kernel.org
+> >>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> >>> ---
+> >>> This patch applies on v6.15-rc1
+> >>>
+> >>>  arch/arm64/kernel/head.S         | 3 +++
+> >>>  arch/arm64/kernel/pi/map_range.c | 6 ++++++
+> >>>  arch/arm64/kernel/pi/pi.h        | 1 +
+> >>>  arch/arm64/mm/mmu.c              | 1 +
+> >>>  arch/arm64/mm/proc.S             | 5 +++--
+> >>>  5 files changed, 14 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+> >>> index 2ce73525de2c..4950d9cc638a 100644
+> >>> --- a/arch/arm64/kernel/head.S
+> >>> +++ b/arch/arm64/kernel/head.S
+> >>> @@ -126,6 +126,9 @@ SYM_CODE_START(primary_entry)
+> >>>        * On return, the CPU will be ready for the MMU to be turned on and
+> >>>        * the TCR will have been set.
+> >>>        */
+> >>> +     adr_l   x0, pir_data
+> >>> +     bl      __pi_load_pir_data
+> >>
+> >> Using C code to pre-calculate the values into global variables that the assembly
+> >> code then loads and stuffs into the PIR registers feels hacky. I wonder if we
+> >> can instead pre-calculate into asm-offsets.h? e.g. add the following to
+> >> asm-offsets.c:
+> >>
+> >> DEFINE(PIE_E0_ASM, PIE_E0);
+> >> DEFINE(PIE_E1_ASM, PIE_E1);
+> >>
+> >> Which will generate the asm-offsets.h header with PIE_E[0|1]_ASM with the
+> >> pre-calculated values that you can then use in proc.S?
+> >>
+> >
+> > There is another issue, which is that mov_q tries to be smart, and
+> > emit fewer than 4 MOVZ/MOVK instructions if possible. So the .if
+> > directive evaluates the argument, which does not work with symbolic
+> > constants.
+>
+> I'm not quite understanding the detail here; what do you mean by "symbolic
+> constants"? asm-offsets.h will provide something like:
+>
+> #define PIE_E0_ASM 1234567890
+>
+> The current code is using a hash-define and that's working fine:
+>
+> mov_q   x0, PIE_E0
+>
+>
+> Won't the C preprocessor just substitute and everything will work out?
+>
 
-Looks like three patches should be used, not one. You can then include
-the details of what the test robot reported making it easier to
-understand each fix.
+Yeah, you're right. I was experimenting with something like
 
+.set .Lpie_e0, PIE_E0_ASM
+mov_q xN, .Lpie_e0
 
-    Andrew
-
----
-pw-bot: cr
+where this problem does exist, but we can just use PIE_E0_ASM directly
+and things should work as expected.
 
