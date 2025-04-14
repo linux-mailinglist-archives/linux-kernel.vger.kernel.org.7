@@ -1,102 +1,110 @@
-Return-Path: <linux-kernel+bounces-603493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 136E7A88889
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:25:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1611A88890
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2094A172067
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:25:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FF527A1FCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99C027FD6F;
-	Mon, 14 Apr 2025 16:25:08 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2716E2820A1;
+	Mon, 14 Apr 2025 16:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="h8AiMeby"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5230413D531
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 16:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E582DFA3D;
+	Mon, 14 Apr 2025 16:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744647908; cv=none; b=RIHEixeWYtfydzl8LZLH6wxuaSmNNdF+pnJiJmqU7KzADaiPzvICU5UMV4WZpERH+LKEIUS4/+hMY9ZQXoBIj+Jap1NaLsXASW3xjRISH5o7PWLnMRKK7ezVDsJ880QW6Qk97zmvpgYPnZnXtdSI3jlnwvDJaRp26svlbDBIsdA=
+	t=1744648073; cv=none; b=oI0+6BFa+O5ukGrsUQ8+vsmvXtlKBkGM8Dsh3UziElUlpQXcjt0WalSt6ExrgpU/KpyHoYodrWUPIOkcFiLVGKOfCEK7gbgpsv5LmzFvfzth7kETu4T7hy2qDAJwsTdSB/FI1RdH4SH/ecieZsA/a5gZvtzMdL2n1uwxRfOm3G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744647908; c=relaxed/simple;
-	bh=1UWhJ7dUMsXc7aOy1Cpk1vWzghBcYJn+Uiqsc1hIraI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GJh9ZWMOSPzMoN2iSBlX40Io2yvAW6EeomVHcDzsKe1WD9vIQsKZQmjiKZWGLw1m4+5yQGCU5SeStaUfJY+tyItEbKlHT/5sPtWU/kqqVHPZ4enmbVvPnWmeezxx5ivcQNi/8IJdp7E0DSnns4iQF+CBiFD9LAC8O4dxmQo47i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E2FEC4CEE2;
-	Mon, 14 Apr 2025 16:25:05 +0000 (UTC)
-Date: Mon, 14 Apr 2025 17:25:02 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Will Deacon <will@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 04/11] arm64/mm: Refactor __set_ptes() and
- __ptep_get_and_clear()
-Message-ID: <Z_023iswKD9NO3uH@arm.com>
-References: <20250304150444.3788920-1-ryan.roberts@arm.com>
- <20250304150444.3788920-5-ryan.roberts@arm.com>
+	s=arc-20240116; t=1744648073; c=relaxed/simple;
+	bh=GN6bGCm7c5dXhkkB/e5awNbM6ayXDhFIsgWWcafbMsk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KsUiSXqEbRoEjJOF8JOsJtTWwxmLs7R2aN87fJ19NZIzHhOcIWUSR3OykffK2ebn8pEHOyGLzskqSQdVJtKBcC3AzG8dv4itCYGGKV1S5/SrkMqqrojspOuKqzB2N8Y7/ggAykNx38k3mvz84wVYii671Zw/mO20K1xicNlKoXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=h8AiMeby; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4Zbt4Q4T4Zzm0djJ;
+	Mon, 14 Apr 2025 16:27:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1744648067; x=1747240068; bh=eNupomQxpwde+WQEUUu1iZPF
+	xc7hWF7E5h8lfr3oqq0=; b=h8AiMebya6nfhoA4vE5/mZP+oR4Xx3LGMGKZ79GZ
+	hX4Wvi2ZyE4kPy2Lnv+4sjJnzXCvbJk/yFQ6ALyZ2T6Svd0ZCoXpg2OugSZdm9x9
+	1pgEuoyXzXmOV190cMcvzVC+53bN7mZuf8oXz2fMFMN8QHTPwi9UZxoAC2y3hNO9
+	pIsplrV7c6/wLRVj8IAR6kCr22rk0b/jvCmD+lT/+38seIOg/S/425sDXgpXCwUk
+	Jjya4wDciU3XL2lDgCpBgma3n1POaYlEKTLftMPnClKMTnz49Pzg86BNXexpmMT5
+	7oN9rKourfGx3ZTx2SuGFxfX5aGq/edljYyrGEXEXZNWYw==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 3so8gtFosdKX; Mon, 14 Apr 2025 16:27:47 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4Zbt4D0g7fzm0ySq;
+	Mon, 14 Apr 2025 16:27:39 +0000 (UTC)
+Message-ID: <68dea32f-e1c9-4e17-902a-aadc0a8489f7@acm.org>
+Date: Mon, 14 Apr 2025 09:27:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304150444.3788920-5-ryan.roberts@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: core: Add NULL check in
+ ufshcd_mcq_compl_pending_transfer()
+To: Chenyuan Yang <chenyuan0y@gmail.com>, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, peter.wang@mediatek.com,
+ manivannan.sadhasivam@linaro.org, stanley.chu@mediatek.com,
+ quic_cang@quicinc.com, quic_nguyenb@quicinc.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250412195909.315418-1-chenyuan0y@gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250412195909.315418-1-chenyuan0y@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 03:04:34PM +0000, Ryan Roberts wrote:
-> +static inline void set_ptes_anysz(struct mm_struct *mm, pte_t *ptep, pte_t pte,
-> +				  unsigned int nr, unsigned long pgsize)
->  {
-> -	__sync_cache_and_tags(pte, nr);
-> -	__check_safe_pte_update(mm, ptep, pte);
-> -	__set_pte(ptep, pte);
-> +	unsigned long stride = pgsize >> PAGE_SHIFT;
-> +
-> +	switch (pgsize) {
-> +	case PAGE_SIZE:
-> +		page_table_check_ptes_set(mm, ptep, pte, nr);
-> +		break;
-> +	case PMD_SIZE:
-> +		page_table_check_pmds_set(mm, (pmd_t *)ptep, pte_pmd(pte), nr);
-> +		break;
-> +	case PUD_SIZE:
-> +		page_table_check_puds_set(mm, (pud_t *)ptep, pte_pud(pte), nr);
-> +		break;
-> +	default:
-> +		VM_WARN_ON(1);
-> +	}
-> +
-> +	__sync_cache_and_tags(pte, nr * stride);
-> +
-> +	for (;;) {
-> +		__check_safe_pte_update(mm, ptep, pte);
-> +		__set_pte(ptep, pte);
-> +		if (--nr == 0)
-> +			break;
-> +		ptep++;
-> +		pte = pte_advance_pfn(pte, stride);
-> +	}
->  }
+On 4/12/25 12:59 PM, Chenyuan Yang wrote:
+> Add a NULL check for the returned hwq pointer by ufshcd_mcq_req_to_hwq().
+> 
+> This is similar to the fix in commit 74736103fb41
+> ("scsi: ufs: core: Fix ufshcd_abort_one racing issue").
+> 
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> Fixes: ab248643d3d6 ("scsi: ufs: core: Add error handling for MCQ mode")
+> ---
+>   drivers/ufs/core/ufshcd.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 0534390c2a35..fd39e10c2043 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -5692,6 +5692,8 @@ static void ufshcd_mcq_compl_pending_transfer(struct ufs_hba *hba,
+>   			continue;
+>   
+>   		hwq = ufshcd_mcq_req_to_hwq(hba, scsi_cmd_to_rq(cmd));
+> +		if (!hwq)
+> +			continue;
+>   
+>   		if (force_compl) {
+>   			ufshcd_mcq_compl_all_cqes_lock(hba, hwq);
 
-I thought I replied to this one but somehow failed to send. The only
-comment I have is that I'd add a double underscore in front of the anysz
-functions to imply it's a private API. Otherwise it looks fine.
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
