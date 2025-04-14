@@ -1,139 +1,167 @@
-Return-Path: <linux-kernel+bounces-602436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C5AA87AD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:46:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E28A1A87AEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8F4B188933D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:46:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F816188B0AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 08:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F5826A0E9;
-	Mon, 14 Apr 2025 08:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969CC25EF92;
+	Mon, 14 Apr 2025 08:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMaaZInp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UYQCFl3O"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CF5269D1D;
-	Mon, 14 Apr 2025 08:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F412580CD;
+	Mon, 14 Apr 2025 08:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744620237; cv=none; b=oIkGMggqNIrvDkweZFPh72RuZ1wQ/Jso0ofWP375YV5GAVO4jODxgAcTICo9PCazVYj0D0QDXh1OI/BKSpeo4MJVcF6E3WuywwOjVmQiMentV0dhZxqjuF7O3LzAmKzI+HoJvcWb6xERnd2wf15t+b5ca2ecPDAjJdsC/wMORQQ=
+	t=1744620351; cv=none; b=az9Bi7KKqB6wmyw1RnDu/CeUHZKXXO8HzFkrlxCG4+Mq2JzTlHVzHk7hyTmzmTILGZqznFLARYSDT7D9yRCO2Dc+XUOr4Kmw6bHxUhRYWv1Ouadwse2oObQYzgUm2CM9+A8pjaQMDkMZvLtlrYH/rdUF0877sdQl5oxyeazkx4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744620237; c=relaxed/simple;
-	bh=eUd5GxwszVXXzpuC1+ozLa4oZQpxUDf8OIF6/2qk9Ho=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CWYPXfubCNqbOaXOYU3I+1fucp2jWJ22hs5CmHn/QbBMm2jui+MHsgonEDakEuJ2u/5zVa3twrkp4mZrfav2YzA2heTKpqSldbKKZe26LvNKz2aqLH4Tg+FXnjimmAF444VTn7WJAcH636w95my/3slWGpWrkIdHj9a60xskKs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMaaZInp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E0BEC4CEEC;
-	Mon, 14 Apr 2025 08:43:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744620236;
-	bh=eUd5GxwszVXXzpuC1+ozLa4oZQpxUDf8OIF6/2qk9Ho=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JMaaZInpYv91Z0K+UTSGxHcfCYpKA001Mh0LT58uFmgEBS7yNsE8y0wmXIakIm8qh
-	 A2FpWGTbbqX7VYBXIdHQhK5+ctAt7oVFygD5USlZSXL9RAQQwgp94Nos2jZr5bUfi2
-	 Z8Cc1YrDv6oFiHHVQ26a1DvpKVVSwZ2+S+YgOTsppjKiUwVfDKrOC8sTIsmggmRaly
-	 Y8Iv9FNtlTuZ+LWOKkRLxApeYCS2pWB/Mond34KJS3Ui+lNjq75E5zjZ4VSB73KjmI
-	 o77fpA+FWsNRMtOn3j/44u74tyOWZjzg0uCjCjIPmKA+PMHgh46b04gVjVoZpRNUyF
-	 r49Pc8F1Nhi9w==
-From: Michael Walle <mwalle@kernel.org>
-To: Saravana Kannan <saravanak@google.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH net-next v2 2/2] net: ethernet: ti: am65-cpsw: handle -EPROBE_DEFER
-Date: Mon, 14 Apr 2025 10:43:36 +0200
-Message-Id: <20250414084336.4017237-3-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250414084336.4017237-1-mwalle@kernel.org>
-References: <20250414084336.4017237-1-mwalle@kernel.org>
+	s=arc-20240116; t=1744620351; c=relaxed/simple;
+	bh=pEc2TXvVNzLpSozgoDM7+YONkPktZs8pw/fQbXJIB08=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WUejbi+owN9pyy+rqrZql9+ICpU+WpKQj5OIw/WURMSHNgrIOsfo0ossCnCBKKbUJPjmGZRHiGV4DHGmjI3c2nuK7vRzut9eDR8vrQBhxlOwGaAlX7/vurklph1bPyxMYjnZ4f7dbawhgVksgIGBmqdOwuK7ybTrOuW/I1O3P7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UYQCFl3O; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53DNEjSx014000;
+	Mon, 14 Apr 2025 08:45:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TC+cBorcPZtYI+BCAvI2mJGo1QM3DFfIBbzFnXVFQPA=; b=UYQCFl3OXi+wqvc2
+	DZRlz6RsG7REsZfOPUwRzi9jRBUnLLc2SFee1mqbhKlXi9fXO9SsxPb733oPwZlN
+	gEexTm51OqPnWVFDxEzlnKyKjO2zLbT4ZFBhis9WP0P+D/B3Js8xTNdbTELPy4SO
+	3GoyvfWOcR3J6ThrSX8N0hhRXk4Mt/UOgWEyj6X2cbsi4+Ygnfh0fqDrg7v3LGK1
+	B6FQ/RXjdzYLfuhlgdsgIyT52CmLvM7kxAqITNGABkF1xcCnVpOGnoyZclgLHpmB
+	rdaA5oXVyDEk4ALYXYqPtW92lMQYiud69mpxhFMY4dsVkYbPnPh2dfiyXTbpN6gP
+	LxUL9A==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yf4vbybr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Apr 2025 08:45:42 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53E8jfXc021023
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Apr 2025 08:45:42 GMT
+Received: from [10.239.29.178] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Apr
+ 2025 01:45:39 -0700
+Message-ID: <72e7ec4e-6a14-4a09-8498-42c2772da4fb@quicinc.com>
+Date: Mon, 14 Apr 2025 16:45:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: dwc: Set PORT_LOGIC_LINK_WIDTH to one lane
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "Wenbin Yao
+ (Consultant)" <quic_wenbyao@quicinc.com>
+CC: <jingoohan1@gmail.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_cang@quicinc.com>,
+        <mrana@quicinc.com>
+References: <1524e971-8433-1e2d-b39e-65bad0d6c6ce@quicinc.com>
+ <t7urbtpoy26muvqnvebdctm7545pllly44bymimy7wtazcd7gj@mofvna4v5sd3>
+Content-Language: en-US
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <t7urbtpoy26muvqnvebdctm7545pllly44bymimy7wtazcd7gj@mofvna4v5sd3>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: mvqhVk7rKe0B7SZWuqgopOFZZvbLuKFs
+X-Authority-Analysis: v=2.4 cv=IZ6HWXqa c=1 sm=1 tr=0 ts=67fccb36 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=4veHE8ydySSEcrfzLuYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: mvqhVk7rKe0B7SZWuqgopOFZZvbLuKFs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-14_02,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1011 malwarescore=0 spamscore=0 adultscore=0
+ mlxlogscore=968 mlxscore=0 bulkscore=0 impostorscore=0 suspectscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504140063
 
-of_get_mac_address() might fetch the MAC address from NVMEM and that
-driver might not have been loaded. In that case, -EPROBE_DEFER is
-returned. Right now, this will trigger an immediate fallback to
-am65_cpsw_am654_get_efuse_macid() possibly resulting in a random MAC
-address although the MAC address is stored in the referenced NVMEM.
 
-Fix it by handling the -EPROBE_DEFER return code correctly. This also
-means that the creation of the MDIO device has to be moved to a later
-stage as -EPROBE_DEFER must not be returned after child devices are
-created.
+On 4/8/2025 1:51 AM, Manivannan Sadhasivam wrote:
+> On Thu, Dec 12, 2024 at 04:19:12PM +0800, Wenbin Yao (Consultant) wrote:
+>> PORT_LOGIC_LINK_WIDTH field of the PCIE_LINK_WIDTH_SPEED_CONTROL register
+>> indicates the number of lanes to check for exit from Electrical Idle in
+>> Polling.Active and L2.Idle. It is used to limit the effective link width to
+>> ignore broken or unused lanes that detect a receiver to prevent one or more
+>> bad Receivers or Transmitters from holding up a valid Link from being
+>> configured.
+>>
+>> In a PCIe link that support muiltiple lanes, setting PORT_LOGIC_LINK_WIDTH
+>> to 1 will not affect the link width that is actually intended to be used.
+> Where in the spec it is defined?
+As per DWC registers data book, NUM_OF_LANES is referred to as the 
+"Predetermined Number of Lanes" in section 4.2.6.2.1 of the PCI Express 
+Base 3.0 Specification, revision 1.0.
+Section 4.2.6.2.1 explains the condtions need be satisfied for enter 
+Poll.Configuration from Polling.Active.
+The original statement is
 
-Signed-off-by: Michael Walle <mwalle@kernel.org>
----
-
-v2:
- - none
-
- drivers/net/ethernet/ti/am65-cpsw-nuss.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index 55a0c37da54c..988ce9119306 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -2679,7 +2679,9 @@ static int am65_cpsw_nuss_init_slave_ports(struct am65_cpsw_common *common)
- 			goto of_node_put;
- 
- 		ret = of_get_mac_address(port_np, port->slave.mac_addr);
--		if (ret) {
-+		if (ret == -EPROBE_DEFER) {
-+			goto of_node_put;
-+		} else if (ret) {
- 			am65_cpsw_am654_get_efuse_macid(port_np,
- 							port->port_id,
- 							port->slave.mac_addr);
-@@ -3561,6 +3563,16 @@ static int am65_cpsw_nuss_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	am65_cpsw_nuss_get_ver(common);
-+
-+	ret = am65_cpsw_nuss_init_host_p(common);
-+	if (ret)
-+		goto err_pm_clear;
-+
-+	ret = am65_cpsw_nuss_init_slave_ports(common);
-+	if (ret)
-+		goto err_pm_clear;
-+
- 	node = of_get_child_by_name(dev->of_node, "mdio");
- 	if (!node) {
- 		dev_warn(dev, "MDIO node not found\n");
-@@ -3577,16 +3589,6 @@ static int am65_cpsw_nuss_probe(struct platform_device *pdev)
- 	}
- 	of_node_put(node);
- 
--	am65_cpsw_nuss_get_ver(common);
--
--	ret = am65_cpsw_nuss_init_host_p(common);
--	if (ret)
--		goto err_of_clear;
--
--	ret = am65_cpsw_nuss_init_slave_ports(common);
--	if (ret)
--		goto err_of_clear;
--
- 	/* init common data */
- 	ale_params.dev = dev;
- 	ale_params.ale_ageout = AM65_CPSW_ALE_AGEOUT_DEFAULT;
+"Next state is Polling.Configuration after at least 1024 TS1 Ordered 
+Sets were transmitted, and all Lanes that detected a Receiver during 
+Detect receive eight consecutive training sequences (or
+their complement) satisfying any of the following conditions:
+...
+Otherwise, after a 24 ms timeout the next state is:
+Polling.Configuration if
+...
+(ii) At least a predetermined set of Lanes that detected a Receiver 
+during Detect have detected an exit from Electrical Idle at least once 
+since entering Polling.Active.
+     Note: _*This may prevent one or more bad Receivers or Transmitters 
+from holding up a valid Link from being configured*_, and allow for 
+additional training in Polling.Configuration. *_The exact set of 
+predetermined Lanes is implementation specific_*. Note that up to the 
+1.1 specification this predetermined set was equal to the total set of 
+Lanes that detected a Receiver.
+     Note: Any Lane that receives eight consecutive TS1 or TS2 Ordered 
+Sets should have detected an exit from Electrical Idle at least once 
+since entering Polling.Active."
+>
+>> But setting it to a value other than 1 will lead to link training fail if
+>> one or more lanes are broken.
+>>
+> Which means the link partner is not able to downsize the link during LTSSM?
+Yes, According to the theory metioned above, let's say in a 8 lanes PCIe 
+link, if we set NUM_OF_LANES to 8, then all lanes that detect a Receiver 
+during Detect need to receive eight consecutive training sequences, 
+otherwise the LTSSM can not enter Poll.Configuration and linktraing will 
+fail.
+>
+>> Hence, always set PORT_LOGIC_LINK_WIDTH to 1 no matter how many lanes the
+>> port actually supports to make linking up more robust. Link can still be
+>> established with one lane at least if other lanes are broken.
+>>
+> This looks like a specific endpoint/controller issue to me. Where exactly did
+> you see the issue?
+Althouh we met this issue on some Modem platforms where PCIe port works 
+in EP mode. But this is not a specific endpoint/controller issue. This 
+register will be set to 1 by default after reset in new QCOM platform. 
+But upstream kernel will still program it to other value here.
+>
+> - Mani
+>
 -- 
-2.39.5
+With best wishes
+Qiang Yu
 
 
