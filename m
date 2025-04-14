@@ -1,187 +1,148 @@
-Return-Path: <linux-kernel+bounces-603533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6675BA8891C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:56:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56DDFA88922
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 18:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6514D1740C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:56:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62A76175593
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 16:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674C727B4F8;
-	Mon, 14 Apr 2025 16:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8E21A29A;
+	Mon, 14 Apr 2025 16:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MP87YMnV"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LrQ6P41k"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A72719F130
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 16:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0138A27FD71
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 16:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744649792; cv=none; b=MieNxDThuEqcjqnlccnCH76f6mLhRrY22Okwsb0ny8AKiSoPc1JshxGnYHLSpnL/CykSXLLCf2RLqy2P5rRjgAKskXJhAA2QH4/ZliedTECKxcSJSL4OCqwmHa0WUUpTX9xwIVkixs21+ZBcu2pdfAV2aPG2kOnlY8PfDTNc+Bw=
+	t=1744649859; cv=none; b=Thp0HD/rUJfjUekzAXvNsAgZXgMJQyyC3LOb77HVA8fGCsaDkLNgAUBZ0f8MGVJQ8FFJAzCijvr4uJ7RrK+d2pLHXcBmCVXW3LhQqQ8oepkc5bo7K2KHJqbEExGYr8U+/idCx6Cgfw7K6pPjcw2IH0yqaxFTuUVw3vZkYpvM5yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744649792; c=relaxed/simple;
-	bh=6OpGJCyJUOcBlVWLO7rOs9y2+iVUF98SmlUbFpGYdq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rz7+t9LiJp6nQwMp3/PtDqfQrkvCkr/vLNRsVUXM0/A+xgpn/sS5GG0MqxF/nZdsiWGSMzJvMi0oLWPmHCInFEFqbryUJAq8I5A5cFLEWE5RBsI3N8GB3SIa7eU9lVp7W6Q1gxtY1sygR6f6SycsoRD9MI92tZ7ASlQOeL+t6v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MP87YMnV; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744649788;
-	bh=6OpGJCyJUOcBlVWLO7rOs9y2+iVUF98SmlUbFpGYdq8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MP87YMnVw+AmlpnZ/hARvTOJr1BB8Oxd0Da4BElyauKcEs9E4e/TcdWmNMqLGs9Ym
-	 7Lx5AfrttTtiY+mLb4MxQOjM+ss89ebmPcGYxmszzD49lhXIuxA7Lz0eOxY0oTwdRC
-	 kgoN1J2DTyNVvCAEzecwFZpup3jvxsV/IYJUHWQHKIcClb51+6SoydBizonntn/85W
-	 tFpj0yPZs46hJy9BjkbX8Vu5Fn4Fwvtz5i0GANnV00PgyZargYgNidu11YvIs07pal
-	 4FYUy+uNv9mlGTmcK14QNFnfx84L91xMQG6iaAIlbznKUJCi1XkEr/u9CvqyXLHVWx
-	 0J8F2/UbaeVWA==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id CC32A17E0809;
-	Mon, 14 Apr 2025 18:56:27 +0200 (CEST)
-Date: Mon, 14 Apr 2025 18:56:23 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Ashley Smith <ashley.smith@collabora.com>
-Cc: "Steven Price" <steven.price@arm.com>, "Liviu Dudau"
- <liviu.dudau@arm.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Heiko Stuebner"
- <heiko@sntech.de>, "kernel" <kernel@collabora.com>, "Daniel Stone"
- <daniels@collabora.com>, "dri-devel" <dri-devel@lists.freedesktop.org>,
- "linux-kernel" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] drm/panthor: Make the timeout per-queue instead of
- per-job
-Message-ID: <20250414185623.628543fb@collabora.com>
-In-Reply-To: <19635301a95.f859dc6e883590.3071663948141072628@collabora.com>
-References: <20250410125734.1005532-1-ashley.smith@collabora.com>
-	<3a5306c8-df44-430a-a24e-72d71b2dc8c1@arm.com>
-	<19635301a95.f859dc6e883590.3071663948141072628@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1744649859; c=relaxed/simple;
+	bh=eQEe/c5oftEZKvKUGmrhpEZY96s5kpSF+ZCfFScouec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qTnU+AFNTssZD/Prwc3dwqOTKBhzwJKoofIHuzPOihGJBe62OQ9uj04FN+l37dKZA4e80QX5L96NNQIbp+DSUxnDEFHnKQdoWoeG3l7uqvSSx0wvhyPBdBdNXYX6opU41cViS3PTVybdALjzWu4Rr89oGJiA5PA70WQn4AVjrxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LrQ6P41k; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaecf50578eso831720166b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:57:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1744649854; x=1745254654; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tYczQwi1ciTfnGeQQMxxbpGHfPdtJn0k+Nd8ZiAqFuY=;
+        b=LrQ6P41k217ToRlznwyVPCaOW+1Oy9eom3CYDYtXrwOE1OVConGrWUK1oSTANQhM3p
+         O0Ab8/rtwfbIeb5qBl1SUAmEFOnb3T9ew2ZyXIlGdZpyykdjrfRbNik4iW8bCYslTq4n
+         HkU9e07vTFaLvps5COJPmi2VxrT0NrjRuWy+o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744649854; x=1745254654;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tYczQwi1ciTfnGeQQMxxbpGHfPdtJn0k+Nd8ZiAqFuY=;
+        b=WP9SM3ByfuX94XJhbKsg0J78jkzFt+j4ulpG8l4GNC3KHBW3ciah2pMihL2ENVfMO0
+         4HUAzs8MUVq/n42uUTAWaEp/+RzqSFMKsFi6Q3SOaJAjfbs+E9/pcSG/sk6rCpa+vSHG
+         3Yxdg3vEHTnKC96b0WOgDuVlp5yJUguycXPN06IS9L4fbHfQJxXlKU4DSNwUZhPtB36p
+         jgmM2o3jhevCKPL4PH/eai1P7QQEV1516Y00Rln31Wzm6yTRfwfKwHPK3pjXuEwl1TqD
+         PpMiCiXvoxMyGWugcBitpBAWojJi7V1alwz+U2fP31e+p7BTz5Ri4JlJFpBnou1Rx6FB
+         cg5A==
+X-Gm-Message-State: AOJu0Yw2GQZbKgXgesccB06qyrUApEr/V+VIxMNxDjNvYlmv5MXG1jHu
+	wKCggVHfQnaOFUHSTmlvI3pEXTC45tmmCQ6jnQQ6uPP+jtJMTnvjKByKFaWOLgT8tICj0c9Dex+
+	9Ifs=
+X-Gm-Gg: ASbGncvzQ7AU/3QMTdJ7r7zKczDWEHLGtdtenRzAT2QQkXaVWdDQK6rWVdu0JE9KCnC
+	gaisiCEngiyGbOKWBS5QqFNpCjZEbCttFTDXjdV+wLtsCwqOmaMgEmbGMGBd/+iuwKRpu+syeWZ
+	AHyJSIrpGiPy9koBOHaXMvn9mvhZQji3EYVkTnCAb4b9H5zKswnhn3IkFKCmlNjEvj+RfadhrlK
+	MX2VzqKxv55kG6hE7JofXjvcN25ZWcAhY1LQRUnBBnfPnyqIwnb2lpjLBXmmmrU5MQiOV8/hp4O
+	Zpw+AqeJe54ivApAJb3Eq579tHB5297YrMkH4V8eInPtjUO4It4ZNFzQR4YM7IiPg1EQOS3psS9
+	84z95Ll4KwEsv6SI=
+X-Google-Smtp-Source: AGHT+IEKscqIKqhpvCpJ15MC4h84VRQbsGzjRxF5xUv7dI5d7FI7aNIh19N39MzB109kEnj8vOnTgA==
+X-Received: by 2002:a17:907:7b8e:b0:ac3:b44b:de24 with SMTP id a640c23a62f3a-acad343c611mr1016331466b.2.1744649853954;
+        Mon, 14 Apr 2025 09:57:33 -0700 (PDT)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ce6fd9sm919047366b.161.2025.04.14.09.57.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Apr 2025 09:57:33 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2a81e41e3so819668366b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 09:57:32 -0700 (PDT)
+X-Received: by 2002:a17:907:72ca:b0:abf:7453:1f1a with SMTP id
+ a640c23a62f3a-acad34fcb7fmr1049492366b.36.1744649852687; Mon, 14 Apr 2025
+ 09:57:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250414102301.332225-1-mingo@kernel.org> <20250414102301.332225-3-mingo@kernel.org>
+In-Reply-To: <20250414102301.332225-3-mingo@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 14 Apr 2025 09:57:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgCFJ923gMqPYq5YrqUuLM3He-O7wvLfpvwNrySSK0vMw@mail.gmail.com>
+X-Gm-Features: ATxdqUEdn57IYM89yqy9QUDf0w4C6re1J-RqA0cqcSJChu_u3ZclK1cuu7ISSv0
+Message-ID: <CAHk-=wgCFJ923gMqPYq5YrqUuLM3He-O7wvLfpvwNrySSK0vMw@mail.gmail.com>
+Subject: Re: [PATCH 02/17] scsi: bfa: Rename 'timer_mod' to 'timer_module'
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Anil Gurumurthy <anil.gurumurthy@qlogic.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, 
+	Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 14 Apr 2025 17:44:27 +0100
-Ashley Smith <ashley.smith@collabora.com> wrote:
+On Mon, 14 Apr 2025 at 03:23, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> We'd like to introduce timer_mod() in the kernel, so make
+> sure the namespace is clear.
 
-> On Fri, 11 Apr 2025 16:51:52 +0100 Steven Price  wrote:
->  > Hi Ashley,=20
->  > =20
->  > On 10/04/2025 13:57, Ashley Smith wrote:  =20
->  > > The timeout logic provided by drm_sched leads to races when we try=20
->  > > to suspend it while the drm_sched workqueue queues more jobs. Let's=
-=20
->  > > overhaul the timeout handling in panthor to have our own delayed wor=
-k=20
->  > > that's resumed/suspended when a group is resumed/suspended. When an=
-=20
->  > > actual timeout occurs, we call drm_sched_fault() to report it=20
->  > > through drm_sched, still. But otherwise, the drm_sched timeout is=20
->  > > disabled (set to MAX_SCHEDULE_TIMEOUT), which leaves us in control o=
-f=20
->  > > how we protect modifications on the timer.=20
->  > >=20
->  > > One issue seems to be when we call drm_sched_suspend_timeout() from=
-=20
->  > > both queue_run_job() and tick_work() which could lead to races due t=
-o=20
->  > > drm_sched_suspend_timeout() not having a lock. Another issue seems t=
-o=20
->  > > be in queue_run_job() if the group is not scheduled, we suspend the=
-=20
->  > > timeout again which undoes what drm_sched_job_begin() did when calli=
-ng=20
->  > > drm_sched_start_timeout(). So the timeout does not reset when a job=
-=20
->  > > is finished.=20
->  > >=20
->  > > Co-developed-by: Boris Brezillon boris.brezillon@collabora.com>=20
->  > > Signed-off-by: Boris Brezillon boris.brezillon@collabora.com>=20
->  > > Tested-by: Daniel Stone daniels@collabora.com>=20
->  > > Fixes: de8548813824 ("drm/panthor: Add the scheduler logical block")=
-=20
->  > > Signed-off-by: Ashley Smith ashley.smith@collabora.com>=20
->  > > ---=20
->  > >  drivers/gpu/drm/panthor/panthor_sched.c | 244 +++++++++++++++++----=
----=20
->  > >  1 file changed, 177 insertions(+), 67 deletions(-)=20
->  > >=20
->  > > diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/d=
-rm/panthor/panthor_sched.c=20
->  > > index 446ec780eb4a..32f5a75bc4f6 100644=20
->  > > --- a/drivers/gpu/drm/panthor/panthor_sched.c=20
->  > > +++ b/drivers/gpu/drm/panthor/panthor_sched.c  =20
->  > =20
->  > [...]=20
->  >   =20
->  > > @@ -2727,8 +2784,17 @@ void panthor_sched_suspend(struct panthor_dev=
-ice *ptdev)=20
->  > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 * automatically terminate all active groups, so let's=20
->  > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 * force the state to halted here.=20
->  > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 */=20
->  > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0if (csg_slot->group->state !=3D PANTHOR_CS_GROUP_TERMINATED)=20
->  > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0if (csg_slot->group->state !=3D PANTHOR_CS_GROUP_TERMINATED) {=20
->  > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0csg_slot->group->state =3D PANTHOR_CS_GROUP_T=
-ERMINATED;=20
->  > > +=20
->  > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Reset the queue slots manually if the term=
-ination=20
->  > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* request failed.=20
->  > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0*/=20
->  > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (i =3D 0; i queue_count; i++) {=20
->  > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (group->queues[i])=
-=20
->  > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0cs_slot_reset_locked(ptdev, csg_id, i);=20
->  > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}=20
->  > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0}=20
->  > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0slot_mask &=3D ~BIT(csg_id);=20
->  > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}=20
->  > >  =C2=A0=C2=A0=C2=A0=C2=A0}  =20
->  > =20
->  > So this seems to be the only change from v2 (a changelog can be=20
->  > helpful!). And I'm not convinced it belongs in this patch? It's not ju=
-st=20
->  > "[making] the timeout per-queue instead of per-job".=20
->  > =20
->  > I haven't dug through the details, but I think this belongs in a=20
->  > separate patch.
+No no, this is horribly wrong.
+> -       use_idlect1 = omap_dm_timer_modify_idlect_mask(use_idlect1);
+> +       use_idlect1 = omap_dm_timer_moduleify_idlect_mask(use_idlect1);
 
-Actually, it's related, but I agree it's not clear: we call
-cs_slot_reset_locked(), but the thing we're really interested in is the
-cancellation of the timeout work. Before the timeout changes, the
-timeout work was part of drm_sched and was cancelled inside
-drm_sched_stop(). Now, maybe we do need to reset the CS slot
-regardless, in which case it might make sense to have that done in a
-separate fix happening before the timeout changes.
+This was clearly all done with some completely bogus
+search-and-replace, and the end result is nonsensical.
+
+That "timer_mod" has *NOTHING* to do with a "module". It's "modify".
+
+> -enum s3c64xx_timer_mode {
+> +enum s3c64xx_timer_modulee {
+
+Same thing. It's not "mod" as in "module" it's "mode".
+
+> -                       apic->lapic_timer.timer_mode_mask = 3 << 17;
+> +                       apic->lapic_timer.timer_modulee_mask = 3 << 17;
+
+More nonsense.
+
+> -       return apic->lapic_timer.timer_mode == APIC_LVT_TIMER_ONESHOT;
+> +       return apic->lapic_timer.timer_modulee == APIC_LVT_TIMER_ONESHOT;
+
+More nonsense.
+
+> -       ti_32k_timer_module_init(np, ti_32k_timer.base);
+> +       ti_32k_timer_moduleule_init(np, ti_32k_timer.base);
+
+Even more crazy mindless and completely incorrect changes.
+
+> diff --git a/drivers/scsi/bfa/bfa_ioc.c b/drivers/scsi/bfa/bfa_ioc.c
+> index aa68d61a2d0d..4c11e3738f36 100644
+> --- a/drivers/scsi/bfa/bfa_ioc.c
+> +++ b/drivers/scsi/bfa/bfa_ioc.c
+>  #define bfa_ioc_timer_start(__ioc)                                     \
+> -       bfa_timer_begin((__ioc)->timer_mod, &(__ioc)->ioc_timer,        \
+> +       bfa_timer_begin((__ioc)->timer_module, &(__ioc)->ioc_timer,     \
+
+As far as I can tell, this is the *only* correct conversion, with 95%
+of the patch just being complete garbage.
+
+Stop doing search-and-replace.
+
+              Linus
 
