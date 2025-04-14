@@ -1,75 +1,126 @@
-Return-Path: <linux-kernel+bounces-603883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-603886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE41A88D77
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 22:56:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3904A88D83
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 22:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BD0D17B7B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:56:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67105189ACE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 20:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA841EA7D3;
-	Mon, 14 Apr 2025 20:56:07 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F38B1EB1B5;
+	Mon, 14 Apr 2025 20:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B3BJX9nD"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B8115575C;
-	Mon, 14 Apr 2025 20:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F752DFA3B
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 20:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744664167; cv=none; b=CXOmee98R8xBjBMYftJvExX92setmxLv63k2ogUaXtWH4dGJlxzE8Ob1K0qgLy9RYwL5NYE/wPzkhBjgWv5fF0XGE/up0X0cyhrEmkZhCKQdejmnQAJp+0DCx7KI3BdC6blQscWIwRhL2Iu2zSn2oBUXqKKeEWaTn/DvB9IKqCo=
+	t=1744664345; cv=none; b=AB7hs7Y39rZTkvnszcYCORuM0mVFKAS32KtDw49JedRCaENPQJ5hujloZX0rMdUKhNe+sikKWUxXFOhNQ5Cri+1h0mnzgRnudWUOj3HwnA6CYm4OMryafOOHIjz03RzREK+Bhyxd0piRgvIVi40v6bErpy7YuGWFcTpjTcfIdBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744664167; c=relaxed/simple;
-	bh=nNlenzc4R+LanzONpkiJeLCQmeC9r4SGdYX7aFxePys=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rKnv03mOhMj94wkNK8KKQMB5uK2JDPhcs5BpsEEiBofdxo1BDXBdMVV0omwwxK+JMt2D4H1cCGGGCTskkzckxiFqbRcG2UIuArgwmtYicuEopYe/1Pu5d/Ozup0ZY/AEwbhRykZrS1ZsG6uFP8RHqauf1a9XWghOHFh4Hr4h8+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A03FC4CEE2;
-	Mon, 14 Apr 2025 20:56:03 +0000 (UTC)
-Date: Mon, 14 Apr 2025 16:57:36 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Junxuan Liao <ljx@cs.wisc.edu>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, x86@kernel.org, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin"
- <hpa@zytor.com>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] x86/tracing: introduce enter/exit tracepoint pairs for
- page faults
-Message-ID: <20250414165736.77415836@gandalf.local.home>
-In-Reply-To: <214abd94-7fb3-4515-a1ae-a60abe81af88@intel.com>
-References: <e7d4cd81-c0a5-446c-95d2-6142d660c15b@cs.wisc.edu>
-	<214abd94-7fb3-4515-a1ae-a60abe81af88@intel.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744664345; c=relaxed/simple;
+	bh=9ejjMn07q3wk5DOpmKww1OzOGy5oLn8w/R7DTprpKGI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZY6Nat82M1GHqGKUNnibWkNhI7z7ym7lmXuu9DG957UAQRDksu9epeEkJTG4JnOtk+gk/WdopNa2EgX0XS/GxDynHJnSEc3Zj8H3LqL0oJF8LIjUYJEhKjNHRCw5CNYC3Um4+xOCopWy9GgOmLwuGtVi/pT3wVRcAuTL+6Ks3qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B3BJX9nD; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf3192d8bso6495e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 13:59:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744664342; x=1745269142; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9ejjMn07q3wk5DOpmKww1OzOGy5oLn8w/R7DTprpKGI=;
+        b=B3BJX9nDYwoX+6DTieZc7lwMPltDZbfXvp9/XFJYonqv4+NYI4ash1/ZW1arJjfzJf
+         KCBPYycwocsiA+Nw1YJX2R8tyl+tcGMeihLIA1RPm8R3CeFneF8PqbbwpVuDsOPqQ4Fi
+         F040e+rfRjL0D7vLSo5ONPV6K9w4DZHGAeupuqPqfNZXa84p+wz/s2VGBboMCpwJxaIz
+         Z7fHgBcUPS/9mEEnCouaU/OtRbOpfBBZHSo9GN3oVpAC4VY5b6wZyWdNpjcy9STl/xgQ
+         p5PC2D2Nf6HFsIkjIJTw6wpsVEyRv/9f2o1l6ssvn9QNdv8E5ewPJv79rNheNsiauhFU
+         eCLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744664342; x=1745269142;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9ejjMn07q3wk5DOpmKww1OzOGy5oLn8w/R7DTprpKGI=;
+        b=DOfSvdxu+ZtRzdQ/OQIjRFkCJIoq1T9Q7LBWIjj7NvQq6KwFnBqPL3z6QTC7NAp49H
+         r5f0iNlJD8+fCMSxVlHONezq3dKeKNvBzYjKYXIb7koQzGbC/rPlkqKCzXZfGtNVAA6A
+         9lNC08D5dwNrxr8SGZ7lcBD2okV37VAMtpEXhe2yvYRwSBLdRAG9uqHl0+i6ShhQHLg4
+         t4CSmkgOx15JHtq3WDZ4sVxfOrZnUFXK7swBpepWmtqJ7V3b/Cy5QctHdyZw7QRgqNlI
+         rAgnLYUhNJXEJdopjY/fClSoRL/nnuOVtGaAqS55P8Cna6rnFvW2YzEIPKf6xLAwjziD
+         wQxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVECT9tlPkA4FfyDBOn4dUxJlMFN4lRXRsVm5qo4RfVxE+K3y8GToLdVdmGbJ907Y4ExQBhSe3giLrtDvk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbeCS4oxOy6nj7+Zv4CgT5tf+tVamYtSGMz6JuooI5oc7eXRS4
+	wdY3bF2I52ufrUAMpLlzrdfLhZzYyvzu2iMXCDvop29CynMkMXeFytQQhzulDRcHjD+2OT0YBnE
+	Nta/nhu8CtofCIvGqDHY/ik4WsQGaq/2cu06K
+X-Gm-Gg: ASbGncuPPFBC8cCA3hHkgG95lG38Yd6TH+kAoHmNiPDlsTRWAbGVWzzm3Ou0+cz6BUj
+	3wosMSfhmueUiZU9hdJGeKiHN7zBGdbXXZIfjQP/zxITjYx6rusxLauEC4zP9U7dpL3/fLQGNPn
+	Uwn5nPeE1Xhj11rvOW6mvn
+X-Google-Smtp-Source: AGHT+IH7/tHz61BTtVznTXE39ajUC59qQLOsJyegs8OyBm3GQR24klNXs7iqiSmYTd23qYN9tIZXtLkatallEk/5pSU=
+X-Received: by 2002:a05:600c:1c82:b0:439:4a76:c246 with SMTP id
+ 5b1f17b1804b1-43ffe57ea31mr173715e9.6.1744664342022; Mon, 14 Apr 2025
+ 13:59:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250414162842.3407796-1-tjmercier@google.com>
+ <ysc4oguaisa7s5qvdevxyiqoerhmcvywhvfnmnpryaeookmjzc@667ethp4kp4p> <8ba51391-d4fc-41e7-8d71-cebc0feb6399@redhat.com>
+In-Reply-To: <8ba51391-d4fc-41e7-8d71-cebc0feb6399@redhat.com>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Mon, 14 Apr 2025 13:58:49 -0700
+X-Gm-Features: ATxdqUG00dp4x6Hri-Ods4PnDq3H-MWCK06nxn5fJWlwVPoVUZpSPZP1VYhzlsI
+Message-ID: <CABdmKX2CX_S_bTc11SBJELmGRS=gwiC1gFbTGHk_GTndTYFa+A@mail.gmail.com>
+Subject: Re: [PATCH] cgroup/cpuset-v1: Add missing support for cpuset_v2_mode
+To: Waiman Long <llong@redhat.com>
+Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 14 Apr 2025 13:42:23 -0700
-Dave Hansen <dave.hansen@intel.com> wrote:
+On Mon, Apr 14, 2025 at 1:11=E2=80=AFPM Waiman Long <llong@redhat.com> wrot=
+e:
+>
+>
+> On 4/14/25 2:26 PM, Michal Koutn=C3=BD wrote:
+> > Hello.
+> >
+> > On Mon, Apr 14, 2025 at 04:28:41PM +0000, "T.J. Mercier" <tjmercier@goo=
+gle.com> wrote:
+> >> Add cgroup v1 parameter parsing to the cpuset filesystem type so that =
+it
+> >> works like the cgroup filesystem type:
+> > Nothing against 'cpuset_v2_mode' for the cpuset_fs_type (when it's
+> > available on cgroup v1) but isn't it too benevolent reusing all of
+> > cgroup1_fs_parameters? AFAICS, this would allow overriding release agen=
+t
+> > also for cpuset fs hierarchies among other options from
+> > cgroup1_fs_parameters.
+> >
+> > (This would likely end up with a separate .parse_param callback but I
+> > think that's better than adding so many extra features to cpuset fs.)
+>
+> I concur. It should be a separate cpuset_fs_parameters() to handle it
+> instead of reusing cgroup1_fs_parameters() to allow so many other maybe
+> irrelevant cgroup1 parameters.
+>
+> Cheers,
+> Longman
 
-> On 4/14/25 13:35, Junxuan Liao wrote:
-> > Rename page_fault_{user,kernel} to page_fault_{user,kernel}_enter, and
-> > add the exit counterparts. This might be useful for measuring page fault
-> > handling latencies.  
-> 
-> Is there a reason kprobes don't work for this?
+Hi Michal and Longman,
 
-Kprobes is not always easy to add, and it does add more overhead.
+Yes, that's fair. I'll send a v2 tomorrow.
 
-I use to have measurements by using function graph tracing of all timings
-into the kernel, but when the noinstr was added, that broke. I still do
-timings but that's by manually adding hacks into the kernel. I haven't done
-timings on a vanilla kernel for some time. It would be nice to be able to
-do that again.
-
--- Steve
+Thanks,
+T.J.
 
