@@ -1,121 +1,98 @@
-Return-Path: <linux-kernel+bounces-602633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-602635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A6DA87D4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:16:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11958A87D55
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 12:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CE2B3B7870
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:16:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68DD9166D4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Apr 2025 10:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674D02676CA;
-	Mon, 14 Apr 2025 10:16:32 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11342676CA;
+	Mon, 14 Apr 2025 10:17:26 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A7A1C84BB
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 10:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0827525D906
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 10:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744625792; cv=none; b=kSVIF8fFe5w76n8oF0QFf+PzisPCZL/v9bnVg3nkkpm10Pd/eoKh2StGK+K+9ngsBrkGwth2QORaG5C3cJ6Krv3D44+czu1P2uFW6rcxThM63fDJyCNDhzyNIhMisybhOf5DAKDYrKEWkYnXSipbAzadFRCoWadWgLUtAqeoEi0=
+	t=1744625846; cv=none; b=AokQzwU70tiZJoEYn76A2T5WWyGm7MjC/7AoP2DzCxfeEg+CQqhGfRVOqayqxgenUaSzcv9bPXR2m1MgeOeqsk18DNzOXRUjuMJKW00Cby9sp3tv8o5H0PelXLvB6Npw6gr9aa1vVANeyYtKlzYKwAUJwpP+cMH2wANHfQ2dDNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744625792; c=relaxed/simple;
-	bh=ekCZbBCos0S4Puu581P14EFgtTwWWhyh9SvLVtgvp1I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bitwvysBHcXTgkCNwa5AP2o9aRRMJL8zMiM7tUQFnG8OHsQLTyQcvJx3s5jG/Bj8dJ2Ofwodrtik5uRPIFSozyb9X1L2fteqpW2ggni2ER+IhL725o0IarZyPUNuFLgovveyi5UeMzpMu0kT7VT1YOvs5zZxds2fMh8UJyjdquU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+	s=arc-20240116; t=1744625846; c=relaxed/simple;
+	bh=odDTN9VcBvmH7lQXsEvK8NZdfyWLsCw1Cm4NEalN4NM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bwqHRafGNpQeURJ08PEA7ftmeXhlREMsPYdNIeOAzrY/AnbxsIqApfLTahE/wRpYdo+ybnEhCu/eXZmK1IcjyLMACMHnGrXhwnMRPDqwSwRm3Veq5zDqVIZPd2AjjkBnoE+Z4Ftq+sr/X/QOHM8ySxRQtVshcVfDAkUk+5fQzEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d438be189bso37252165ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 03:16:30 -0700 (PDT)
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ce8dadfb67so49935585ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Apr 2025 03:17:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744625789; x=1745230589;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dmYDgpn0/9Z8AFIpfjgX1QLlrbCO0Q5CPYFxV/DJ7mE=;
-        b=V+w0laNUW3gy/1y2lS/OhSLtDTU9kvfTR+Z1XvS2d/zcDwMhGD+RqJH0HIo3tfCZjw
-         7YwexXSxI7Tks/SwVIQrR4q0ZlDWPxXpjwzYZ0wHLnXdEkMhASv1qTK3U4P5hjfazDYA
-         5jyFMuY72Bwhk/1lej5VBeCO1nsSvfQmpGbWAvpR1XcZmWLvjtRZ2G1CMLKuqcs3zPwh
-         6Z5xVlOkVMo7E+Pr9fmyvREpqFuJRVDA5rgvTlB0z9FZBSI94v3BzNf64nC0Iz8Rh/Z5
-         7sjOAHXduo2bB+bv9wgT505kCrWy9WzG09x36GKM2zCX+1ccbs+x2Gvp+E5fMEAvtHbJ
-         6dVw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6kAkBArpvnFdQvgaILFb5fW5z54PtagsMFFBV8wxfMl8j+mklyqNTY1aZNGrUh5AkToe1FswjAWYUfeg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDN0DH1I6YnsknHZ2yzNB0nmfyd/BvJXzGbWbFGKKZjsmqLSXX
-	udlRa0uCxMRhb5+fIg1nSK5v/c9RaTfqwKav3LCJvYeI1vImekZH/GXN4qpcIV1bTN+DboNINnI
-	zKvXZrOO+QbRNpOug5z/fxLxy99bJIJQzkGd4AeOMRrCSkKVUYwkD+JA=
-X-Google-Smtp-Source: AGHT+IEKncKMpvOAJujFDMTYAE0QLqvzTwv2Kfq+arFgnX1L3ZLUBdopA0CLq9aMMnfKiOyLKd05SMgtnjmqKNxUOSSMeR7XZjbm
+        d=1e100.net; s=20230601; t=1744625844; x=1745230644;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CzxcOMrq7SJpJks5dmooTkk/gac1NbvMuS7VOMpo8ww=;
+        b=lZ0M3XpmbcrVprgQobrPAs9U9YEusoWKGHDdV193rEreVikxUusH+qIyx3UHJ4p2xd
+         VwPNKIu0tv3YSVE+W854FLkqHs5ueF+dU8+ud/+dBrqPQkguoxZDXv2PHonbn+WyBkxC
+         PiEtgPsFo+a1AggMo2D3CW6Sjqt9uCHl751o3RynVWiBdgL5OoBLObLLdEk6z4hsPkEB
+         +sz9Xpc81tsVhQtka9zLu19Mv35tf+6y2MudxSZinZqPHj3ECMSBUhaBHsXJIfF4PZQg
+         EtXfFxmZPZRHWu7m26Vk6766U0a2Lj7SYo3cUSXlRR1oJManoSxtaxNnn5BB5pHNT2zB
+         HU6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWLI48+H30yKbvLVGf+oOGElXQTJVGjcirrOyXtcB6VO0XjoGvCzSGK+KMkr3XyQ+dRm1PkSaJDtNf5dk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhHgHrWSljq5om3sJaba+2/cX7JE4bX5mjc6Co4Q2WYw6YLUl8
+	nQSll5TfqrmN2IIqzLW2ofXP6+VgJmRbv7ydJm+D81Eq352uv5WNq4JVx/54IaqUZ7Jy5TE7Qu0
+	RkUbaF3ukt7jsbTCIqymj59jBPGiSam3JSdYnOmuDjpkikOlmKQjzkEg=
+X-Google-Smtp-Source: AGHT+IGf9PRtEClTFUKjlKcxvI4JF70SyZhF/6GSG/6VkEWT1i78GYcupudoQvMaErONMddpM64JxBwosJGxDFJ30Y9juOS82XL4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:190f:b0:3d4:3eed:2755 with SMTP id
- e9e14a558f8ab-3d7ec225f65mr125717715ab.12.1744625789522; Mon, 14 Apr 2025
- 03:16:29 -0700 (PDT)
-Date: Mon, 14 Apr 2025 03:16:29 -0700
-In-Reply-To: <67eaa161.050a0220.3c3d88.0043.GAE@google.com>
+X-Received: by 2002:a05:6e02:3b82:b0:3d5:890b:8db with SMTP id
+ e9e14a558f8ab-3d7ec1f3dd9mr122784015ab.8.1744625844006; Mon, 14 Apr 2025
+ 03:17:24 -0700 (PDT)
+Date: Mon, 14 Apr 2025 03:17:23 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67fce07d.050a0220.3483fc.0023.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfs_bnode_dump
-From: syzbot <syzbot+efd267470a41bc34bd98@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <67fce0b3.050a0220.3483fc.0025.GAE@google.com>
+Subject: [syzbot] Monthly v9fs report (Apr 2025)
+From: syzbot <syzbot+list433fdab3607fdab30f2f@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
+	lucho@ionkov.net, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has found a reproducer for the following issue on:
+Hello v9fs maintainers/developers,
 
-HEAD commit:    8ffd015db85f Linux 6.15-rc2
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=105820cc580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e30b69a28cc940e1
-dashboard link: https://syzkaller.appspot.com/bug?extid=efd267470a41bc34bd98
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=107c0470580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=158a6a3f980000
+This is a 31-day syzbot report for the v9fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/v9fs
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b099795f8c63/disk-8ffd015d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a10b15dc31a5/vmlinux-8ffd015d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/24a20f2e33c6/bzImage-8ffd015d.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/c80aacb02924/mount_0.gz
+During the period, 0 new issues were detected and 3 were fixed.
+In total, 8 issues are still open and 37 have already been fixed.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+efd267470a41bc34bd98@syzkaller.appspotmail.com
+Some of the still happening issues:
 
-=====================================================
-BUG: KMSAN: uninit-value in hfs_bnode_read_u8 fs/hfs/bnode.c:54 [inline]
-BUG: KMSAN: uninit-value in hfs_bnode_dump+0x30e/0x4c0 fs/hfs/bnode.c:172
- hfs_bnode_read_u8 fs/hfs/bnode.c:54 [inline]
- hfs_bnode_dump+0x30e/0x4c0 fs/hfs/bnode.c:172
- hfs_brec_remove+0x868/0x9a0 fs/hfs/brec.c:225
- hfs_cat_move+0xfc9/0x12e0 fs/hfs/catalog.c:364
- hfs_rename+0x344/0x500 fs/hfs/dir.c:299
- vfs_rename+0x1d9d/0x2280 fs/namei.c:5086
- do_renameat2+0x1577/0x1b80 fs/namei.c:5235
- __do_sys_rename fs/namei.c:5282 [inline]
- __se_sys_rename fs/namei.c:5280 [inline]
- __x64_sys_rename+0xe8/0x140 fs/namei.c:5280
- x64_sys_call+0x3a1e/0x3c80 arch/x86/include/generated/asm/syscalls_64.h:83
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Local variable data.i created at:
- hfs_bnode_read_u16 fs/hfs/bnode.c:-1 [inline]
- hfs_bnode_dump+0x3c5/0x4c0 fs/hfs/bnode.c:156
- hfs_brec_remove+0x868/0x9a0 fs/hfs/brec.c:225
-
-CPU: 0 UID: 0 PID: 5792 Comm: syz-executor395 Not tainted 6.15.0-rc2-syzkaller #0 PREEMPT(undef) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-=====================================================
-
+Ref Crashes Repro Title
+<1> 48      Yes   WARNING: refcount bug in p9_req_put (3)
+                  https://syzkaller.appspot.com/bug?extid=d99d2414db66171fccbb
+<2> 27      Yes   INFO: task hung in v9fs_evict_inode
+                  https://syzkaller.appspot.com/bug?extid=56bd5818697f0f93fdd9
+<3> 13      No    BUG: corrupted list in p9_fd_cancelled (3)
+                  https://syzkaller.appspot.com/bug?extid=15a08eabe3d3838fb641
 
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
